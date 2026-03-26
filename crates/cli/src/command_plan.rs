@@ -1,4 +1,16 @@
 use super::*;
+use serde::Deserialize;
+
+const SCOPED_REPLACEMENT_MANIFEST_KIND: &str = "scoped_component_replacement_plan_manifest";
+const SCOPED_REPLACEMENT_MANIFEST_VERSION: u32 = 1;
+
+#[derive(Deserialize)]
+struct LegacyScopedReplacementPlanManifestV0 {
+    board_path: PathBuf,
+    board_source_hash: String,
+    libraries: Vec<ManifestFileFingerprint>,
+    plan: ScopedComponentReplacementPlan,
+}
 
 pub(super) fn parse_scoped_replacement_override_arg(
     value: &str,
@@ -22,8 +34,8 @@ pub(super) fn scoped_replacement_manifest_from_parts(
     plan: ScopedComponentReplacementPlan,
 ) -> Result<ScopedReplacementPlanManifest> {
     Ok(ScopedReplacementPlanManifest {
-        kind: "scoped_component_replacement_plan_manifest".to_string(),
-        version: 1,
+        kind: SCOPED_REPLACEMENT_MANIFEST_KIND.to_string(),
+        version: SCOPED_REPLACEMENT_MANIFEST_VERSION,
         board_path: board_path.to_path_buf(),
         board_source_hash: eda_engine::import::ids_sidecar::compute_source_hash_file(board_path)?,
         libraries: libraries
@@ -42,23 +54,80 @@ pub(super) fn scoped_replacement_manifest_from_parts(
 pub(super) fn load_scoped_replacement_manifest(path: &Path) -> Result<ScopedReplacementPlanManifest> {
     let contents = std::fs::read_to_string(path)
         .with_context(|| format!("failed to read scoped replacement manifest {}", path.display()))?;
-    let manifest = serde_json::from_str::<ScopedReplacementPlanManifest>(&contents)
+    let value = serde_json::from_str::<serde_json::Value>(&contents)
         .with_context(|| format!("failed to parse scoped replacement manifest {}", path.display()))?;
-    if manifest.kind != "scoped_component_replacement_plan_manifest" {
-        bail!(
-            "unsupported scoped replacement manifest kind '{}' in {}",
-            manifest.kind,
-            path.display()
-        );
+
+    let kind = value.get("kind").and_then(serde_json::Value::as_str);
+    if let Some(kind) = kind {
+        if kind != SCOPED_REPLACEMENT_MANIFEST_KIND {
+            bail!(
+                "unsupported scoped replacement manifest kind '{}' in {}",
+                kind,
+                path.display()
+            );
+        }
     }
-    if manifest.version != 1 {
-        bail!(
-            "unsupported scoped replacement manifest version {} in {}",
-            manifest.version,
-            path.display()
-        );
+
+    let version = match value.get("version") {
+        Some(version) => {
+            let raw = version.as_u64().ok_or_else(|| {
+                let msg = format!(
+                    "invalid scoped replacement manifest version in {}",
+                    path.display()
+                );
+                anyhow::Error::msg(msg)
+            })?;
+            u32::try_from(raw).map_err(|_| {
+                let msg = format!(
+                    "invalid scoped replacement manifest version in {}",
+                    path.display()
+                );
+                anyhow::Error::msg(msg)
+            })?
+        }
+        None => 0,
+    };
+
+    match version {
+        0 => {
+            let manifest = serde_json::from_value::<LegacyScopedReplacementPlanManifestV0>(value)
+                .with_context(|| {
+                    format!(
+                        "failed to parse legacy scoped replacement manifest {}",
+                        path.display()
+                    )
+                })?;
+            Ok(ScopedReplacementPlanManifest {
+                kind: SCOPED_REPLACEMENT_MANIFEST_KIND.to_string(),
+                version: SCOPED_REPLACEMENT_MANIFEST_VERSION,
+                board_path: manifest.board_path,
+                board_source_hash: manifest.board_source_hash,
+                libraries: manifest.libraries,
+                plan: manifest.plan,
+            })
+        }
+        SCOPED_REPLACEMENT_MANIFEST_VERSION => {
+            let manifest = serde_json::from_value::<ScopedReplacementPlanManifest>(value)
+                .with_context(|| {
+                    format!("failed to parse scoped replacement manifest {}", path.display())
+                })?;
+            if manifest.kind != SCOPED_REPLACEMENT_MANIFEST_KIND {
+                bail!(
+                    "unsupported scoped replacement manifest kind '{}' in {}",
+                    manifest.kind,
+                    path.display()
+                );
+            }
+            Ok(manifest)
+        }
+        _ => {
+            bail!(
+                "unsupported scoped replacement manifest version {} in {}",
+                version,
+                path.display()
+            );
+        }
     }
-    Ok(manifest)
 }
 
 pub(super) fn validate_scoped_replacement_manifest(

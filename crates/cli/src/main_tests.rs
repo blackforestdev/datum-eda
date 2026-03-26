@@ -70,6 +70,8 @@ fn modify_board(
 mod main_tests_import_plan;
 #[path = "main_tests_plan_apply.rs"]
 mod main_tests_plan_apply;
+#[path = "main_tests_plan_apply_legacy_manifest.rs"]
+mod main_tests_plan_apply_legacy_manifest;
 #[path = "main_tests_query_surface.rs"]
 mod main_tests_query_surface;
 #[path = "main_tests_check.rs"]
