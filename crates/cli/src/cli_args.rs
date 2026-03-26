@@ -299,6 +299,11 @@ pub(crate) enum PlanCommands {
         #[arg(long = "library")]
         libraries: Vec<PathBuf>,
     },
+    /// Inspect a scoped replacement manifest and report current provenance/drift status
+    InspectScopedReplacementManifest {
+        /// Manifest path
+        path: PathBuf,
+    },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -315,4 +320,31 @@ pub(crate) struct ScopedReplacementPlanManifest {
     pub(crate) board_source_hash: String,
     pub(crate) libraries: Vec<ManifestFileFingerprint>,
     pub(crate) plan: ScopedComponentReplacementPlan,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub(crate) enum ManifestDriftStatus {
+    Match,
+    Drifted,
+    Missing,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub(crate) struct ManifestFileInspection {
+    pub(crate) path: PathBuf,
+    pub(crate) recorded_source_hash: String,
+    pub(crate) current_source_hash: Option<String>,
+    pub(crate) status: ManifestDriftStatus,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub(crate) struct ScopedReplacementPlanManifestInspection {
+    pub(crate) manifest_path: PathBuf,
+    pub(crate) kind: String,
+    pub(crate) version: u32,
+    pub(crate) replacements: usize,
+    pub(crate) all_inputs_match: bool,
+    pub(crate) board: ManifestFileInspection,
+    pub(crate) libraries: Vec<ManifestFileInspection>,
 }

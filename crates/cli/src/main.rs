@@ -34,14 +34,10 @@ mod command_exec;
 mod command_modify;
 mod command_plan;
 mod command_query;
-#[cfg(test)]
-mod test_support;
 
 use cli_args::*;
 use command_plan::*;
 use command_query::*;
-#[cfg(test)]
-use test_support::{execute, modify_board};
 
 fn main() {
     match run() {

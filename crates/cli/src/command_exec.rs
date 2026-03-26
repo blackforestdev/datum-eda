@@ -189,6 +189,10 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     0,
                 ))
             }
+            PlanCommands::InspectScopedReplacementManifest { path } => {
+                let inspection = inspect_scoped_replacement_manifest(&path)?;
+                Ok((render_output(&cli.format, &inspection), 0))
+            }
         },
         Commands::Modify {
             path,

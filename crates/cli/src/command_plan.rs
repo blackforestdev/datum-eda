@@ -83,3 +83,56 @@ pub(super) fn validate_scoped_replacement_manifest(
     }
     Ok(())
 }
+
+fn inspect_manifest_file(
+    path: &Path,
+    recorded_source_hash: &str,
+) -> Result<ManifestFileInspection> {
+    if !path.exists() {
+        return Ok(ManifestFileInspection {
+            path: path.to_path_buf(),
+            recorded_source_hash: recorded_source_hash.to_string(),
+            current_source_hash: None,
+            status: ManifestDriftStatus::Missing,
+        });
+    }
+
+    let current_source_hash = eda_engine::import::ids_sidecar::compute_source_hash_file(path)?;
+    let status = if current_source_hash == recorded_source_hash {
+        ManifestDriftStatus::Match
+    } else {
+        ManifestDriftStatus::Drifted
+    };
+    Ok(ManifestFileInspection {
+        path: path.to_path_buf(),
+        recorded_source_hash: recorded_source_hash.to_string(),
+        current_source_hash: Some(current_source_hash),
+        status,
+    })
+}
+
+pub(super) fn inspect_scoped_replacement_manifest(
+    manifest_path: &Path,
+) -> Result<ScopedReplacementPlanManifestInspection> {
+    let manifest = load_scoped_replacement_manifest(manifest_path)?;
+    let board = inspect_manifest_file(&manifest.board_path, &manifest.board_source_hash)?;
+    let libraries = manifest
+        .libraries
+        .iter()
+        .map(|library| inspect_manifest_file(&library.path, &library.source_hash))
+        .collect::<Result<Vec<_>>>()?;
+    let all_inputs_match = board.status == ManifestDriftStatus::Match
+        && libraries
+            .iter()
+            .all(|library| library.status == ManifestDriftStatus::Match);
+
+    Ok(ScopedReplacementPlanManifestInspection {
+        manifest_path: manifest_path.to_path_buf(),
+        kind: manifest.kind,
+        version: manifest.version,
+        replacements: manifest.plan.replacements.len(),
+        all_inputs_match,
+        board,
+        libraries,
+    })
+}

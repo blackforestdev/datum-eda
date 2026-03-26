@@ -18,6 +18,14 @@ query, ERC/DRC, transformation, and export.
 **Full CAD ambition**: Native editing, interactive routing, GUI, advanced
 constraints. This is the trajectory, not the launch.
 
+## Stabilization Track (2026-03-26)
+
+Structural debt retirement plan is tracked in
+`docs/STABILIZATION_PLAN.md` and runs in parallel with milestone delivery.
+This track is explicitly scoped to non-behavioral decomposition and guardrail
+enforcement. Phase 2 now includes repo-wide audit-discovered hotspots so the
+remaining monolithic/inline-test debt is fully tracked to closure.
+
 ---
 
 ## Milestones
