@@ -30,6 +30,8 @@ TEXT_CHECKS = (
         path="specs/PROGRAM_SPEC.md",
         must_contain=(
             "## Scope Integrity Terms",
+            "Status tracking rule:",
+            "`specs/PROGRESS.md` is the sole source of truth for implementation status.",
             "**Product identity**",
             "**Implementation slice**",
             "**Execution strategy**",
@@ -60,8 +62,9 @@ TEXT_CHECKS = (
     TextCheck(
         path="specs/INTEGRATED_PROGRAM_SPEC.md",
         must_contain=(
-            "- `M2` current implementation slice: complete (per `specs/PROGRESS.md`)",
-            "- Repo health: `cargo test -q`, `m2_quality`, `m2_perf`, and MCP self-test",
+            "Status authority rule:",
+            "`specs/PROGRESS.md` is the only source of truth for implementation status.",
+            "Milestone completion state must be recorded in `specs/PROGRESS.md` only.",
             "| Workspace health | Automated test run | `cargo test -q`",
             "m3_op_determinism",
             "m3_undo_redo_roundtrip",

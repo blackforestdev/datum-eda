@@ -33,6 +33,10 @@ Precedence rules:
 - Current explicit exception: `docs/CANONICAL_IR.md` remains canonical until it
   is promoted or subsumed by formal spec files.
 
+Status tracking rule:
+- `specs/PROGRESS.md` is the sole source of truth for implementation status.
+- This file defines milestone contracts and non-goals only.
+
 ## Scope Integrity Terms
 
 The following terms are normative for scope framing across this repository:
@@ -99,22 +103,6 @@ MCP, Eagle `.lbr` write-back.
 
 **Exit gate**: DOA2526 imports and queries correctly. Golden tests pass.
 
-**Current implementation status**:
-- KiCad-first import is active and ahead of the original `M1` floor:
-  `.kicad_pro`, `.kicad_sch`, and `.kicad_pcb` import slices exist.
-- Read-only board and schematic query surfaces already exist in the engine,
-  CLI, daemon, and MCP stub for summaries, net info, components, labels,
-  symbols, ports, buses, hierarchy, no-connects, diagnostics, and unified
-  check reporting.
-- Board-side `M1` is no longer just object counting:
-  imported footprint pads exist in canonical board state, board net pins are
-  derived from those pads, `get_unrouted` computes importer-backed airwires,
-  and board diagnostics already distinguish empty-copper, via-only, and
-  partially-routed nets.
-- Early schematic connectivity and ERC prechecks already exist, but `M1`
-  still closes on deterministic ingestion/query correctness, not on the
-  partial checking surface.
-
 | Criterion | Threshold |
 |-----------|-----------|
 | KiCad .kicad_pcb import | DOA2526 + 4 additional designs, 0 import errors |
@@ -138,34 +126,6 @@ operations, export, native format, GUI.
 **Exit gate**: An MCP-compatible AI client can open DOA2526 via MCP, query it,
 run ERC/DRC.
 `tool erc design.kicad_sch` and `tool drc board.kicad_pcb` work in CI.
-
-**Current implementation status**:
-- The transport and consumer surfaces are already in place ahead of full `M2`:
-  CLI read/check commands exist, the engine daemon exposes JSON-RPC methods,
-  and the Python MCP stdio host already proxies the current read/check surface.
-- Unified `CheckReport`, raw connectivity diagnostics, and raw ERC findings
-  already exist.
-- The currently implemented MCP/daemon method subset is:
-  `open_project`, `close_project`, `search_pool`, `get_part`, `get_package`,
-  `get_package_change_candidates`, `get_part_change_candidates`,
-  `get_component_replacement_plan`, `get_scoped_component_replacement_plan`,
-  `edit_scoped_component_replacement_plan`,
-  `replace_components`,
-  `apply_component_replacement_plan`,
-  `apply_component_replacement_policy`,
-  `apply_scoped_component_replacement_policy`,
-  `apply_scoped_component_replacement_plan`,
-  `get_board_summary`, `get_components`, `get_netlist`,
-  `get_schematic_summary`, `get_sheets`, `get_labels`, `get_symbols`,
-  `get_symbol_fields`, `get_ports`, `get_buses`, `get_bus_entries`,
-  `get_noconnects`, `get_hierarchy`, `get_net_info`,
-  `get_schematic_net_info`, `get_unrouted`, `get_connectivity_diagnostics`,
-  `get_design_rules`, `get_check_report`, `run_erc`, `run_drc`,
-  `explain_violation`.
-- The current `M2` implementation slice now covers the full M2 check/query
-  tool catalog and quality/performance gates tracked in `specs/PROGRESS.md`.
-- The controlling contract split for MCP wire schemas is in
-  `specs/MCP_API_SPEC.md` (`Current implementation contract` vs `Target M2`).
 
 | Criterion | Threshold |
 |-----------|-----------|

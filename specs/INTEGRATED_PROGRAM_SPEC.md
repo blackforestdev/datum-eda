@@ -14,6 +14,7 @@ It defines:
   specification
 
 It does not restate detailed type/API schemas already controlled elsewhere.
+It does not own live implementation status claims.
 
 ## 2. Naming Policy (Controlling)
 
@@ -37,21 +38,20 @@ When documents conflict, precedence is:
    - `specs/SCHEMATIC_CONNECTIVITY_SPEC.md`
    - `specs/SCHEMATIC_EDITOR_SPEC.md`
    - `specs/NATIVE_FORMAT_SPEC.md`
-3. Progress tracking: `specs/PROGRESS.md`
+3. Progress tracking authority: `specs/PROGRESS.md`
 4. Rationale documents in `docs/` (non-controlling unless promoted to `specs/`)
 
-## 4. Current Integrated Baseline
+Status authority rule:
+- `specs/PROGRESS.md` is the only source of truth for implementation status.
+- This file may define acceptance evidence and defer contracts, but must not
+  introduce independent milestone completion state.
 
-Baseline date: 2026-03-25
+## 4. Integrated Contract Baseline
 
-- `M2` current implementation slice: complete (per `specs/PROGRESS.md`)
-- MCP tool catalog parity: complete for M2 slice
-- ERC/DRC quality harness gates: passing (`m2_quality`)
-- Performance harness gates: tracked (`m2_perf`)
-- Repo health: `cargo test -q`, `m2_quality`, `m2_perf`, and MCP self-test
-  currently pass; implementation-slice status and workspace health are
-  reconciled at this checkpoint
-- Naming migration to `Datum EDA`: complete for repo/config references
+This section defines contract wiring only:
+- milestone gate definitions are controlled by `specs/PROGRAM_SPEC.md`
+- integrated acceptance mapping is controlled by Sections 12-13 in this file
+- implementation status for those gates is controlled by `specs/PROGRESS.md`
 
 ## 5. Cross-Spec Contracts (Must Stay Aligned)
 
@@ -62,7 +62,9 @@ Baseline date: 2026-03-25
 - Plan sequencing: `PLAN.md`
 
 Contract:
-- No milestone gate may be marked complete in one file and open in another.
+- Milestone completion state must be recorded in `specs/PROGRESS.md` only.
+- Supporting docs may summarize status but may not introduce independent
+  completion claims.
 
 ### 5.2 Engine/API/MCP Contract Split
 
@@ -100,7 +102,7 @@ Promote this scaffold to the full integrated program spec when:
 - all domain specs include explicit “current vs target” contract language where
   needed
 - cross-spec contract checklist in Section 5 has no unresolved conflicts
-- `specs/PROGRESS.md` and `PLAN.md` are synchronized with milestone states
+- `PLAN.md` remains execution-only and free of independent status claims
 - open deferrals for the next milestone phase are explicit and mutually
   referenced
 
@@ -275,33 +277,33 @@ Current behavior: returns structured `passed` status for the current
 engine/daemon/MCP/CLI `move_component`/`rotate_component`/`set_value`/`set_reference`/`assign_part`/`set_package`/`set_package_with_part`/`replace_component`/`replace_components`/`apply_component_replacement_plan`/`apply_component_replacement_policy`/`apply_scoped_component_replacement_policy`/`apply_scoped_component_replacement_plan`/`set_net_class`/`delete_component`/`delete_track`/`delete_via`/`set_design_rule`/`undo`/`redo`/`save`
 slice and should fail if current write-surface parity regresses.
 
-| M3 Gate (`specs/PROGRAM_SPEC.md`) | Evidence Type | Required Evidence Hook | Current State |
-|-----------------------------------|---------------|------------------------|---------------|
-| Operations implemented (18 listed ops) | Automated | Engine operation API tests + MCP write method tests covering each listed op | Partially proven for current `move_component`/`rotate_component`/`set_value`/`set_reference`/`assign_part`/`set_package`/`set_package_with_part`/`replace_component`/`replace_components`/`apply_component_replacement_plan`/`apply_component_replacement_policy`/`apply_scoped_component_replacement_policy`/`apply_scoped_component_replacement_plan`/`set_net_class`/`delete_component`/`set_design_rule`/`delete_track`/`delete_via` slice |
-| Undo/redo 100% undoable | Automated | Transaction replay/undo test suite with per-operation round-trip assertions | Partially proven for current `delete_track`/`delete_via`/`delete_component`/`move_component`/`rotate_component`/`set_value`/`set_reference`/`set_design_rule`/`assign_part`/`set_package`/`set_net_class` slice |
-| Operation determinism | Automated | Determinism harness: same op sequence on same input yields byte-identical save | Proven for the full current save-backed M3 mutation slice: `move_component`/`delete_track`/`delete_via`/`delete_component`/`rotate_component`/`set_value`/`set_reference`/`set_design_rule`/`assign_part`/`set_package`/`set_package_with_part`/`replace_component`/`replace_components`/`apply_component_replacement_plan`/`apply_component_replacement_policy`/`apply_scoped_component_replacement_policy`/`apply_scoped_component_replacement_plan`/`set_net_class` |
-| KiCad write-back | Automated + manual spot-check | import→modify→save→reimport tests; open output in KiCad without load errors | Partially proven for current `move_component`/`rotate_component`/`set_value`/`set_reference`/`delete_component`/`delete_track`/`delete_via`/save KiCad-board slice, package-backed footprint rewrite for `set_package`/`set_package_with_part`/`replace_component`/`replace_components`/`apply_component_replacement_plan`/`apply_component_replacement_policy`/`apply_scoped_component_replacement_policy`/`apply_scoped_component_replacement_plan`, sidecar-backed `set_design_rule`/`assign_part`/`set_package`/`set_package_with_part`/`replace_component`/`replace_components`/`apply_component_replacement_plan`/`apply_component_replacement_policy`/`apply_scoped_component_replacement_policy`/`apply_scoped_component_replacement_plan`/`set_net_class`, and unmodified imported KiCad boards |
-| Round-trip fidelity (unmodified objects) | Automated | Golden diff tests for unchanged objects across write-back | Partially proven for current `move_component`/`rotate_component`/`set_value`/`set_reference`/`delete_component`/`delete_track`/`delete_via`/save KiCad-board slice, package-backed footprint rewrite for `set_package` and `set_package_with_part`, sidecar-backed `set_design_rule`/`assign_part`/`set_package`/`set_package_with_part`/`set_net_class`, and unmodified imported KiCad boards; dedicated sidecar round-trip hook now behaviorally proves save→reimport→save artifact stability for `set_design_rule`, `assign_part`, `set_package`, `set_package_with_part`, `replace_component`, `replace_components`, `apply_component_replacement_plan`, `apply_component_replacement_policy`, `apply_scoped_component_replacement_policy`, `apply_scoped_component_replacement_plan`, and `set_net_class`, including unchanged KiCad-board bytes for the pure sidecar-backed `set_design_rule` and `set_net_class` paths |
-| MCP write tools parity | Automated | Daemon + MCP tests for `move_component`, `rotate_component`, `set_value`, `set_reference`, `assign_part`, `set_package`, `set_package_with_part`, `replace_component`, `replace_components`, `apply_component_replacement_plan`, `apply_component_replacement_policy`, `apply_scoped_component_replacement_policy`, `apply_scoped_component_replacement_plan`, `set_net_class`, `delete_component`, `set_design_rule`, `delete_track`, `delete_via`, `undo`, `redo`, `save` | Partially proven for `move_component`/`rotate_component`/`set_value`/`set_reference`/`assign_part`/`set_package`/`set_package_with_part`/`replace_component`/`replace_components`/`apply_component_replacement_plan`/`apply_component_replacement_policy`/`apply_scoped_component_replacement_policy`/`apply_scoped_component_replacement_plan`/`set_net_class`/`delete_component`/`set_design_rule`/`delete_track`/`delete_via`/`undo`/`redo`/`save` |
-| Derived data update | Automated | Post-op connectivity/airwire/DRC recompute assertions | Partially proven by engine tests for current `delete_track` connectivity/DRC updates, `move_component` airwire/DRC updates, `delete_via` net-info recompute, `assign_part` package-regenerated net-info recompute with logical remap preservation, and `set_package`/`set_package_with_part` logical-remap net-info preservation when a compatible target part exists; write-surface parity also proves follow-up query/check behavior for all current write ops across daemon/MCP/CLI: `delete_track`, `delete_via`, `delete_component`, `move_component`, `rotate_component`, `set_value`, `set_reference`, `assign_part`, `set_package`, `set_package_with_part`, `set_net_class`, and `set_design_rule` |
-| CLI modify command | Automated | CLI integration tests for `tool modify ...` with exit semantics | Partially proven for current `move_component`/`rotate_component`/`set_value`/`set_reference`/`assign_part`/`set_package`/`set_package_with_part`/`replace_component`/`replace_components`/`apply_component_replacement_plan`/`apply_component_replacement_policy`/`apply_scoped_component_replacement_policy`/`apply_scoped_component_replacement_plan`/`set_net_class`/`delete_component`/`delete_track`/`delete_via`/`set_design_rule`/`undo`/`redo`/`save` slice, plus follow-up `query components`/`query nets`/`query design-rules` coverage for current `delete_component`/`rotate_component`/`set_value`/`set_reference`/`assign_part`/`set_package`/`set_package_with_part`/`set_net_class`/`set_design_rule`, and CLI-scoped replacement manifest export/inspect/validate/upgrade/apply coverage including batch validation, legacy unversioned manifest upgrade-on-load, inspect-time migration metadata, apply-time migration reporting, in-place upgrade support, and human-readable text summaries |
+| M3 Gate (`specs/PROGRAM_SPEC.md`) | Evidence Type | Required Evidence Hook |
+|-----------------------------------|---------------|------------------------|
+| Operations implemented (18 listed ops) | Automated | Engine operation API tests + MCP write method tests covering each listed op |
+| Undo/redo 100% undoable | Automated | Transaction replay/undo test suite with per-operation round-trip assertions |
+| Operation determinism | Automated | Determinism harness: same op sequence on same input yields byte-identical save |
+| KiCad write-back | Automated + manual spot-check | import→modify→save→reimport tests; open output in KiCad without load errors |
+| Round-trip fidelity (unmodified objects) | Automated | Golden diff tests for unchanged objects across write-back |
+| MCP write tools parity | Automated | Daemon + MCP tests for `move_component`, `rotate_component`, `set_value`, `set_reference`, `assign_part`, `set_package`, `set_package_with_part`, `replace_component`, `replace_components`, `apply_component_replacement_plan`, `apply_component_replacement_policy`, `apply_scoped_component_replacement_policy`, `apply_scoped_component_replacement_plan`, `set_net_class`, `delete_component`, `set_design_rule`, `delete_track`, `delete_via`, `undo`, `redo`, `save` |
+| Derived data update | Automated | Post-op connectivity/airwire/DRC recompute assertions |
+| CLI modify command | Automated | CLI integration tests for `tool modify ...` with exit semantics |
 
 ## 13. M4 Acceptance Table (Gate-to-Evidence Mapping)
 
 This table is the controlling acceptance map for `M4` integrated review.
 
-| M4 Gate (`specs/PROGRAM_SPEC.md`) | Evidence Type | Required Evidence Hook | Current State |
-|-----------------------------------|---------------|------------------------|---------------|
-| Native format (JSON, schema, versioned) | Automated | Native save/load/save byte-stability tests + schema version migration tests | Deferred until M4 implementation |
-| Schematic operations (full listed set) | Automated | Operation acceptance tests for all required schematic operations from `specs/SCHEMATIC_EDITOR_SPEC.md` | Deferred until M4 implementation |
-| Board operations (6 listed ops) | Automated | Operation acceptance tests for M4 board operation set | Deferred until M4 implementation |
-| Schematic query parity | Automated | Engine/daemon/MCP/CLI parity tests for labels/buses/bus_entries/noconnects/hierarchy/fields | Partially available from M2 read surface; full M4 gate deferred |
-| Forward annotation (ECO review) | Automated + manual | ECO proposal generation tests + apply/reject flow tests with deterministic diff output | Deferred until M4 implementation |
-| Gerber export | Automated + manual | Export test fixtures + gerbv validation with zero warnings | Deferred until M4 implementation |
-| Drill export (Excellon) | Automated + manual | Export test fixtures + gerbv drill validation | Deferred until M4 implementation |
-| BOM export (CSV/JSON) | Automated | Format/schema tests + deterministic output tests | Deferred until M4 implementation |
-| PnP export (CSV) | Automated | Output schema and deterministic ordering tests | Deferred until M4 implementation |
-| Gerber comparison vs KiCad on DOA2526 | Automated + manual | Layer/alignment/aperture comparison script + manual visual diff audit | Deferred until M4 implementation |
+| M4 Gate (`specs/PROGRAM_SPEC.md`) | Evidence Type | Required Evidence Hook |
+|-----------------------------------|---------------|------------------------|
+| Native format (JSON, schema, versioned) | Automated | Native save/load/save byte-stability tests + schema version migration tests |
+| Schematic operations (full listed set) | Automated | Operation acceptance tests for all required schematic operations from `specs/SCHEMATIC_EDITOR_SPEC.md` |
+| Board operations (6 listed ops) | Automated | Operation acceptance tests for M4 board operation set |
+| Schematic query parity | Automated | Engine/daemon/MCP/CLI parity tests for labels/buses/bus_entries/noconnects/hierarchy/fields |
+| Forward annotation (ECO review) | Automated + manual | ECO proposal generation tests + apply/reject flow tests with deterministic diff output |
+| Gerber export | Automated + manual | Export test fixtures + gerbv validation with zero warnings |
+| Drill export (Excellon) | Automated + manual | Export test fixtures + gerbv drill validation |
+| BOM export (CSV/JSON) | Automated | Format/schema tests + deterministic output tests |
+| PnP export (CSV) | Automated | Output schema and deterministic ordering tests |
+| Gerber comparison vs KiCad on DOA2526 | Automated + manual | Layer/alignment/aperture comparison script + manual visual diff audit |
 
 ### 13.1 Evidence Wiring Rule
 

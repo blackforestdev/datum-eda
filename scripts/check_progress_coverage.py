@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Enforce PLAN/PROGRESS/spec parity against live repository state."""
+"""Enforce single-source status authority and spec parity checks."""
 
 from __future__ import annotations
 
@@ -64,52 +64,38 @@ def markdown_row_status(text: str, label: str) -> tuple[str, str] | None:
     return match.group(1), match.group(2)
 
 
-def section_slice(text: str, heading: str) -> str | None:
-    match = re.search(
-        rf"^### {re.escape(heading)}.*?(?=^### |\Z)",
-        text,
-        flags=re.S | re.M,
-    )
-    return match.group(0) if match else None
-
-
-def check_plan_progress_coverage(plan_text: str, failures: list[str]) -> None:
-    for heading in (
-        "M0: Canonical IR + Foundation",
-        "M1: Design Ingestion + Query Engine",
-        "M2: ERC + DRC + Reporting + MCP/CLI",
-        "R1: Commercial Interop Research Track",
-        "M3: Write Operations on Imported Designs",
-        "M4: Native Project Creation + Editing",
-    ):
-        section = section_slice(plan_text, heading)
-        if section is None:
-            failures.append(f"PLAN.md: missing section: {heading}")
-            continue
-        if "**Progress (" not in section:
-            failures.append(f"PLAN.md: missing progress block in section: {heading}")
-
-
-def check_completed_milestones_have_no_open_checkboxes(
-    plan_text: str, failures: list[str]
+def check_single_status_authority(
+    plan_text: str, program_text: str, integrated_text: str, failures: list[str]
 ) -> None:
-    for match in re.finditer(r"^### (M\d+: [^\n]+)\n(.*?)(?=^### |\Z)", plan_text, flags=re.S | re.M):
-        milestone = match.group(1)
-        body = match.group(2)
-        if "- [x] Milestone complete" not in body:
-            continue
+    authority_files = (
+        ("PLAN.md", plan_text),
+        ("specs/PROGRAM_SPEC.md", program_text),
+        ("specs/INTEGRATED_PROGRAM_SPEC.md", integrated_text),
+    )
 
-        open_items = []
-        for line in body.splitlines():
-            if re.match(r"^- \[ \] ", line):
-                open_items.append(line.strip())
-
-        if open_items:
-            preview = "; ".join(open_items[:5])
+    for path, text in authority_files:
+        if re.search(r"^- \[[x~ ]\] ", text, flags=re.M):
             failures.append(
-                "PLAN.md: milestone marked complete but still has open checklist items "
-                f"({milestone}): {preview}"
+                f"{path}: checklist-style status markers are not allowed outside specs/PROGRESS.md"
             )
+        if "Current implementation status" in text:
+            failures.append(
+                f"{path}: found forbidden status heading 'Current implementation status'"
+            )
+
+    if "Current State |" in integrated_text:
+        failures.append(
+            "specs/INTEGRATED_PROGRAM_SPEC.md: remove 'Current State' columns from acceptance tables"
+        )
+
+    if "Status source of truth" not in plan_text:
+        failures.append("PLAN.md: missing explicit status-authority statement")
+    if "Status tracking rule:" not in program_text:
+        failures.append("specs/PROGRAM_SPEC.md: missing explicit status-tracking rule")
+    if "specs/PROGRESS.md` is the only source of truth for implementation status" not in integrated_text:
+        failures.append(
+            "specs/INTEGRATED_PROGRAM_SPEC.md: missing explicit single-source status rule"
+        )
 
 
 def check_progress_sections(progress_text: str, failures: list[str]) -> None:
@@ -207,11 +193,12 @@ def check_mcp_contract_parity(mcp_text: str, failures: list[str]) -> None:
 def main() -> int:
     failures: list[str] = []
     plan_text = read_text("PLAN.md")
+    program_text = read_text("specs/PROGRAM_SPEC.md")
+    integrated_text = read_text("specs/INTEGRATED_PROGRAM_SPEC.md")
     progress_text = read_text("specs/PROGRESS.md")
     mcp_text = read_text("specs/MCP_API_SPEC.md")
 
-    check_plan_progress_coverage(plan_text, failures)
-    check_completed_milestones_have_no_open_checkboxes(plan_text, failures)
+    check_single_status_authority(plan_text, program_text, integrated_text, failures)
     check_progress_sections(progress_text, failures)
     check_infrastructure_rows(progress_text, failures)
     check_mcp_contract_parity(mcp_text, failures)
