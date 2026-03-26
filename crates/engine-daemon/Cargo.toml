@@ -1,0 +1,11 @@
+[package]
+name = "eda-engine-daemon"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+eda-engine = { path = "../engine" }
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+uuid.workspace = true

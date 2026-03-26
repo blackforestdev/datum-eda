@@ -1,0 +1,204 @@
+// import module — see specs/ENGINE_SPEC.md
+
+use std::collections::BTreeMap;
+use std::path::{Path, PathBuf};
+
+use serde::{Deserialize, Serialize};
+
+pub mod eagle;
+pub mod ids_sidecar;
+pub mod kicad;
+pub mod rules_sidecar;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ImportKind {
+    EagleLibrary,
+    KiCadBoard,
+    KiCadSchematic,
+    KiCadProject,
+    EagleBoard,
+    EagleSchematic,
+}
+
+impl ImportKind {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::EagleLibrary => "eagle_library",
+            Self::KiCadBoard => "kicad_board",
+            Self::KiCadSchematic => "kicad_schematic",
+            Self::KiCadProject => "kicad_project",
+            Self::EagleBoard => "eagle_board",
+            Self::EagleSchematic => "eagle_schematic",
+        }
+    }
+}
+
+pub fn detect_import_kind(path: &Path) -> Option<ImportKind> {
+    match path.extension().and_then(|ext| ext.to_str()) {
+        Some("lbr") => Some(ImportKind::EagleLibrary),
+        Some("kicad_pcb") => Some(ImportKind::KiCadBoard),
+        Some("kicad_sch") => Some(ImportKind::KiCadSchematic),
+        Some("kicad_pro") => Some(ImportKind::KiCadProject),
+        Some("brd") => Some(ImportKind::EagleBoard),
+        Some("sch") => Some(ImportKind::EagleSchematic),
+        _ => None,
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct ImportObjectCounts {
+    pub units: usize,
+    pub symbols: usize,
+    pub entities: usize,
+    pub padstacks: usize,
+    pub packages: usize,
+    pub parts: usize,
+}
+
+impl ImportObjectCounts {
+    pub fn is_empty(&self) -> bool {
+        self.units == 0
+            && self.symbols == 0
+            && self.entities == 0
+            && self.padstacks == 0
+            && self.packages == 0
+            && self.parts == 0
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ImportReport {
+    pub kind: ImportKind,
+    pub source: PathBuf,
+    pub counts: ImportObjectCounts,
+    pub warnings: Vec<String>,
+    pub metadata: BTreeMap<String, String>,
+}
+
+impl ImportReport {
+    pub fn new(kind: ImportKind, source: impl AsRef<Path>, counts: ImportObjectCounts) -> Self {
+        Self {
+            kind,
+            source: source.as_ref().to_path_buf(),
+            counts,
+            warnings: Vec::new(),
+            metadata: BTreeMap::new(),
+        }
+    }
+
+    pub fn with_warning(mut self, warning: impl Into<String>) -> Self {
+        self.warnings.push(warning.into());
+        self
+    }
+
+    pub fn with_metadata(mut self, key: impl Into<String>, value: impl Into<String>) -> Self {
+        self.metadata.insert(key.into(), value.into());
+        self
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::path::PathBuf;
+
+    use super::*;
+    use crate::ir::serialization::to_json_deterministic;
+
+    #[test]
+    fn import_kind_has_stable_string_name() {
+        assert_eq!(ImportKind::EagleLibrary.as_str(), "eagle_library");
+        assert_eq!(ImportKind::KiCadBoard.as_str(), "kicad_board");
+        assert_eq!(ImportKind::KiCadSchematic.as_str(), "kicad_schematic");
+        assert_eq!(ImportKind::KiCadProject.as_str(), "kicad_project");
+        assert_eq!(ImportKind::EagleBoard.as_str(), "eagle_board");
+        assert_eq!(ImportKind::EagleSchematic.as_str(), "eagle_schematic");
+    }
+
+    #[test]
+    fn import_object_counts_empty_detection_is_exact() {
+        assert!(ImportObjectCounts::default().is_empty());
+
+        let counts = ImportObjectCounts {
+            parts: 1,
+            ..ImportObjectCounts::default()
+        };
+        assert!(!counts.is_empty());
+    }
+
+    #[test]
+    fn import_report_serializes_deterministically() {
+        let report = ImportReport::new(
+            ImportKind::EagleLibrary,
+            PathBuf::from("fixtures/demo.lbr"),
+            ImportObjectCounts {
+                units: 1,
+                symbols: 1,
+                entities: 1,
+                padstacks: 2,
+                packages: 1,
+                parts: 1,
+            },
+        )
+        .with_metadata("zeta", "last")
+        .with_metadata("alpha", "first")
+        .with_warning("technology variants ignored in M0");
+
+        let json = to_json_deterministic(&report).expect("report should serialize");
+        assert_eq!(
+            json,
+            r#"{"counts":{"entities":1,"packages":1,"padstacks":2,"parts":1,"symbols":1,"units":1},"kind":"EagleLibrary","metadata":{"alpha":"first","zeta":"last"},"source":"fixtures/demo.lbr","warnings":["technology variants ignored in M0"]}"#
+        );
+    }
+
+    #[test]
+    fn import_report_round_trips_through_serde() {
+        let original = ImportReport::new(
+            ImportKind::EagleLibrary,
+            PathBuf::from("fixtures/demo.lbr"),
+            ImportObjectCounts {
+                units: 1,
+                symbols: 1,
+                entities: 1,
+                padstacks: 1,
+                packages: 1,
+                parts: 1,
+            },
+        )
+        .with_metadata("library_name", "demo")
+        .with_warning("warning");
+
+        let json = serde_json::to_string(&original).expect("report should serialize");
+        let restored: ImportReport =
+            serde_json::from_str(&json).expect("report should deserialize");
+        assert_eq!(restored, original);
+    }
+
+    #[test]
+    fn detects_import_kinds_from_file_extension() {
+        assert_eq!(
+            detect_import_kind(Path::new("board.kicad_pcb")),
+            Some(ImportKind::KiCadBoard)
+        );
+        assert_eq!(
+            detect_import_kind(Path::new("sheet.kicad_sch")),
+            Some(ImportKind::KiCadSchematic)
+        );
+        assert_eq!(
+            detect_import_kind(Path::new("project.kicad_pro")),
+            Some(ImportKind::KiCadProject)
+        );
+        assert_eq!(
+            detect_import_kind(Path::new("legacy.brd")),
+            Some(ImportKind::EagleBoard)
+        );
+        assert_eq!(
+            detect_import_kind(Path::new("legacy.sch")),
+            Some(ImportKind::EagleSchematic)
+        );
+        assert_eq!(
+            detect_import_kind(Path::new("parts.lbr")),
+            Some(ImportKind::EagleLibrary)
+        );
+        assert_eq!(detect_import_kind(Path::new("unknown.txt")), None);
+    }
+}

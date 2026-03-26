@@ -1,0 +1,16 @@
+[package]
+name = "eda-cli"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "eda"
+path = "src/main.rs"
+
+[dependencies]
+eda-engine = { path = "../engine" }
+clap.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+uuid.workspace = true

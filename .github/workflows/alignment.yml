@@ -1,0 +1,54 @@
+name: Alignment
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  alignment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Static alignment audit
+        run: python3 scripts/check_alignment.py
+
+      - name: Milestone gate audit
+        run: python3 scripts/check_alignment.py --run-gates
+
+      - name: Workspace health audit
+        run: python3 scripts/check_alignment.py --run-health
+
+      - name: M3 preflight audit
+        run: python3 scripts/check_alignment.py --run-m3-preflight
+
+  transport-smoke:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Daemon socket transport smoke
+        run: cargo test -q -p eda-engine-daemon handle_client_round_trips_open_project_and_get_check_report -- --ignored

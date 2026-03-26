@@ -1,0 +1,47 @@
+(kicad_pcb
+  (version 20221018)
+  (generator "datum-eda-test")
+  (general
+    (thickness 1.6))
+  (paper "A4")
+  (layers
+    (0 "F.Cu" signal)
+    (31 "B.Cu" signal)
+    (44 "Edge.Cuts" user))
+  (net 0 "")
+  (net 1 "NET_A")
+  (net 2 "NET_B")
+  (net 3 "NET_C")
+  (footprint "TestPoint:TP"
+    (layer "F.Cu")
+    (uuid 11111111-1111-1111-1111-111111111111)
+    (at 5 5 0)
+    (property "Reference" "TP1" (at 5 4 0) (layer "F.SilkS"))
+    (property "Value" "TP" (at 5 6 0) (layer "F.Fab"))
+    (pad "1" smd rect
+      (at 0 0 0)
+      (size 1 1)
+      (layers "F.Cu")
+      (net 3 "NET_C")
+      (uuid 22222222-2222-2222-2222-222222222222)))
+  (segment
+    (start 10 10)
+    (end 20 10)
+    (width 0.05)
+    (layer "F.Cu")
+    (net 1)
+    (uuid 33333333-3333-3333-3333-333333333333))
+  (segment
+    (start 10 30)
+    (end 20 30)
+    (width 0.25)
+    (layer "F.Cu")
+    (net 2)
+    (uuid 44444444-4444-4444-4444-444444444444))
+  (via
+    (at 25 25)
+    (size 0.20)
+    (drill 0.05)
+    (layers "F.Cu" "B.Cu")
+    (net 2)
+    (uuid 55555555-5555-5555-5555-555555555555)))

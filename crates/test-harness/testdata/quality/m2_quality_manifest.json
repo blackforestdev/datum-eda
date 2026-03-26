@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "corpus_min_designs": 10,
+  "erc_clean": [
+    "analog-input-demo.kicad_sch",
+    "analog-input-bias-demo.kicad_sch"
+  ],
+  "erc_violations": [
+    {
+      "fixture": "simple-demo.kicad_sch",
+      "required_codes": [
+        "unconnected_component_pin",
+        "undriven_power_net"
+      ]
+    },
+    {
+      "fixture": "erc-coverage-demo.kicad_sch",
+      "required_codes": [
+        "output_to_output_conflict",
+        "undriven_input_pin",
+        "power_in_without_source",
+        "noconnect_connected"
+      ]
+    },
+    {
+      "fixture": "hierarchy-mismatch-demo.kicad_sch",
+      "required_codes": [
+        "hierarchical_connectivity_mismatch"
+      ]
+    }
+  ],
+  "drc_clean": [
+    "simple-demo.kicad_pcb"
+  ],
+  "drc_violations": [
+    {
+      "fixture": "partial-route-demo.kicad_pcb",
+      "required_codes": [
+        "connectivity_unrouted_net"
+      ]
+    },
+    {
+      "fixture": "airwire-demo.kicad_pcb",
+      "required_codes": [
+        "connectivity_no_copper",
+        "connectivity_unrouted_net"
+      ]
+    },
+    {
+      "fixture": "clearance-violation-demo.kicad_pcb",
+      "required_codes": [
+        "clearance_copper"
+      ]
+    },
+    {
+      "fixture": "drc-coverage-demo.kicad_pcb",
+      "required_codes": [
+        "connectivity_unconnected_pin",
+        "track_width_below_min",
+        "via_hole_out_of_range",
+        "via_annular_below_min"
+      ]
+    },
+    {
+      "fixture": "silk-clearance-demo.kicad_pcb",
+      "required_codes": [
+        "silk_clearance_copper"
+      ]
+    }
+  ]
+}

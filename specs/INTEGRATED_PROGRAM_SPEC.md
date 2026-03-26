@@ -1,0 +1,305 @@
+# INTEGRATED_PROGRAM_SPEC.md
+
+Status: Draft scaffold for full integrated program specification write.
+
+## 1. Purpose
+
+This document is the integration layer above individual specs in `specs/`.
+It defines:
+
+- naming and identity policy for the project
+- source-of-truth precedence across specs
+- cross-spec contracts that must remain consistent
+- freeze gates for promoting this scaffold into the full integrated program
+  specification
+
+It does not restate detailed type/API schemas already controlled elsewhere.
+
+## 2. Naming Policy (Controlling)
+
+- Product name: `Datum EDA`
+- Machine identifier form: `datum-eda`
+- Prohibited: legacy placeholder project names in code, fixtures, docs, tests,
+  MCP registration, sockets, and automation paths
+
+## 3. Source-of-Truth Precedence
+
+When documents conflict, precedence is:
+
+1. `specs/INTEGRATED_PROGRAM_SPEC.md` (integration contracts only)
+2. Domain specs:
+   - `specs/PROGRAM_SPEC.md`
+   - `specs/ENGINE_SPEC.md`
+   - `specs/MCP_API_SPEC.md`
+   - `specs/IMPORT_SPEC.md`
+   - `specs/ERC_SPEC.md`
+   - `specs/CHECKING_ARCHITECTURE_SPEC.md`
+   - `specs/SCHEMATIC_CONNECTIVITY_SPEC.md`
+   - `specs/SCHEMATIC_EDITOR_SPEC.md`
+   - `specs/NATIVE_FORMAT_SPEC.md`
+3. Progress tracking: `specs/PROGRESS.md`
+4. Rationale documents in `docs/` (non-controlling unless promoted to `specs/`)
+
+## 4. Current Integrated Baseline
+
+Baseline date: 2026-03-25
+
+- `M2` current implementation slice: complete (per `specs/PROGRESS.md`)
+- MCP tool catalog parity: complete for M2 slice
+- ERC/DRC quality harness gates: passing (`m2_quality`)
+- Performance harness gates: tracked (`m2_perf`)
+- Repo health: `cargo test -q`, `m2_quality`, `m2_perf`, and MCP self-test
+  currently pass; implementation-slice status and workspace health are
+  reconciled at this checkpoint
+- Naming migration to `Datum EDA`: complete for repo/config references
+
+## 5. Cross-Spec Contracts (Must Stay Aligned)
+
+### 5.1 Milestone Contracts
+
+- Milestone gate definitions: `specs/PROGRAM_SPEC.md`
+- Concrete implementation status: `specs/PROGRESS.md`
+- Plan sequencing: `PLAN.md`
+
+Contract:
+- No milestone gate may be marked complete in one file and open in another.
+
+### 5.2 Engine/API/MCP Contract Split
+
+- Engine behavior surface: `specs/ENGINE_SPEC.md`
+- MCP wire schemas and method catalog: `specs/MCP_API_SPEC.md`
+- Program-level exit gates and tool expectations: `specs/PROGRAM_SPEC.md`
+
+Contract:
+- Each exposed tool/method must map 1:1 across engine capability, daemon/MCP
+  schema, and gate language (or be explicitly deferred in all three).
+
+### 5.3 Checking Contracts
+
+- Rule semantics: `specs/ERC_SPEC.md` and `specs/CHECKING_ARCHITECTURE_SPEC.md`
+- Execution/reporting exposure: `specs/PROGRAM_SPEC.md` and `specs/MCP_API_SPEC.md`
+
+Contract:
+- Violation identity, severity, waiver targeting, and report shape remain
+  coherent across engine, CLI, MCP, and progress gates.
+
+### 5.4 Schematic/Board Parity Contracts
+
+- Schematic connectivity and editor semantics:
+  `specs/SCHEMATIC_CONNECTIVITY_SPEC.md`, `specs/SCHEMATIC_EDITOR_SPEC.md`
+- Board + shared engine model: `specs/ENGINE_SPEC.md`
+
+Contract:
+- Board and schematic capability growth remains parity-tracked in milestones and
+  does not allow one side to become structurally underspecified.
+
+## 6. Promotion Criteria to Full Integrated Spec
+
+Promote this scaffold to the full integrated program spec when:
+
+- all domain specs include explicit “current vs target” contract language where
+  needed
+- cross-spec contract checklist in Section 5 has no unresolved conflicts
+- `specs/PROGRESS.md` and `PLAN.md` are synchronized with milestone states
+- open deferrals for the next milestone phase are explicit and mutually
+  referenced
+
+## 7. Next Write Order (Full Spec Authoring)
+
+1. Lock `M2` baseline snapshot (done)
+2. Write integrated contracts for `M3` operation model boundary
+3. Write integrated contracts for `M4` native format + schematic editor
+4. Add verification appendix mapping each integrated contract to an executable
+   check or explicit manual review step
+
+## 8. Contract Verification Matrix
+
+This matrix is the minimum verification layer for integrated-spec freeze.
+
+| Contract Area | Verification Method | Command / Evidence | Owner | Frequency |
+|---------------|---------------------|--------------------|-------|-----------|
+| Naming policy (`Datum EDA` / `datum-eda`) | Automated scan | `rg -n "horizon-ai|Horizon-ai|horizon ai|Horizon AI|horizon_ai" -g '!target/**' -g '!.git/**' /home/bfadmin/Documents/datum-eda /home/bfadmin/.claude/settings.json` must return no matches | release owner | pre-merge for spec-affecting changes |
+| Workspace health | Automated test run | `cargo test -q` | platform owner | pre-freeze and CI |
+| M2 quality gates | Automated harness | `cargo run -p eda-test-harness --bin m2_quality -- --json` with `"pass": true` | checking owner | pre-freeze and CI |
+| M2 performance baseline | Automated harness | `cargo run -p eda-test-harness --bin m2_perf -- --iterations 3 --compare-baseline crates/test-harness/testdata/perf/m2_doa2526_baseline.json` | checking owner | pre-freeze |
+| MCP server registration health | Config + self-test | `python3 mcp-server/server.py --self-test` and `~/.claude/settings.json` contains `mcpServers["datum-eda"]` | tooling owner | after MCP changes |
+| Engine/API/MCP surface parity | Manual cross-check + tests | `specs/PROGRAM_SPEC.md`, `specs/ENGINE_SPEC.md`, `specs/MCP_API_SPEC.md` reviewed together; parity tests in engine-daemon + mcp-server pass | platform owner | per milestone gate |
+| Daemon/MCP transport smoke | Automated transport smoke in unrestricted environment | `cargo test -q -p eda-engine-daemon handle_client_round_trips_open_project_and_get_check_report -- --ignored` | platform owner | unrestricted CI and release candidates |
+| Checking report/waiver consistency | Manual contract audit + targeted tests | `specs/ERC_SPEC.md` + `specs/CHECKING_ARCHITECTURE_SPEC.md` + `specs/MCP_API_SPEC.md` reviewed; ERC/DRC explanation/report tests pass | checking owner | per milestone gate |
+| Schematic/board parity | Manual contract audit | parity section in `specs/PROGRAM_SPEC.md` and `specs/INTEGRATED_PROGRAM_SPEC.md` updated in same change as any scope shift | architecture owner | per milestone planning pass |
+
+Transport note:
+- Socket transport proof is tracked separately from behavioral surface proof.
+- Sandbox-compatible audits (`check_alignment.py`, M3 preflight, workspace health)
+  must not require live Unix socket listeners or socket-pair IPC.
+- Unix socket transport is instead validated in unrestricted CI and release
+  candidate checks.
+
+### 8.1 Freeze Rule
+
+Integrated spec freeze requires all matrix rows to be either:
+
+- passing with reproducible evidence, or
+- explicitly deferred with a dated defer note in both
+  `specs/INTEGRATED_PROGRAM_SPEC.md` and `specs/PROGRESS.md`.
+
+## 9. M3 Integrated Boundary Contract (Imported-Design Writes)
+
+### 9.1 Scope Boundary
+
+`M3` is restricted to deterministic write operations on imported designs with
+KiCad board write-back. Imported-schematic editing remains out of scope.
+
+In scope:
+- board-side authored modifications listed in `specs/PROGRAM_SPEC.md` (`M3`)
+- operation execution, batch execution, undo/redo semantics
+- derived data recomputation after each committed write operation
+- CLI/MCP write exposure for M3-listed operations
+
+Out of scope:
+- native project creation/editing semantics (`M4`)
+- routing/placement solver behavior (`M5+`)
+- GUI-authoring semantics (`M7+`)
+
+### 9.2 Controlling Specs for M3
+
+- Exit gates: `specs/PROGRAM_SPEC.md` (`M3`)
+- Engine write semantics and API contracts: `specs/ENGINE_SPEC.md`
+- MCP write wire contracts: `specs/MCP_API_SPEC.md`
+- Progress state: `specs/PROGRESS.md`
+
+### 9.3 M3 Non-Negotiable Invariants
+
+- Every write operation is transactionally represented and undoable.
+- Undo/redo does not mutate operation meaning across runs.
+- Same operation sequence on same baseline input yields identical persisted
+  output.
+- Derived connectivity/airwire/checking recomputation is deterministic and
+  operation-bounded.
+- Exported KiCad output preserves unmodified authored objects exactly where
+  contract requires.
+
+### 9.4 M3 Verification Evidence
+
+At minimum:
+- operation determinism tests
+- undo/redo round-trip tests
+- import → modify → save → reimport fidelity checks
+- CLI exit semantics for write flows
+- MCP/daemon write-method parity tests for M3 surface
+
+## 10. M4 Integrated Boundary Contract (Native Authoring + Export)
+
+### 10.1 Scope Boundary
+
+`M4` introduces first-class native project authoring and manufacturing export.
+It is the parity milestone where schematic and board authoring surfaces must be
+equally spec-strong and scriptable.
+
+In scope:
+- native file format and schema-versioning contracts
+- schematic operation surface from `specs/SCHEMATIC_EDITOR_SPEC.md`
+- board operation surface listed under `M4` in `specs/PROGRAM_SPEC.md`
+- forward-annotation ECO flow with review/accept controls
+- Gerber/Excellon/BOM/PnP export contracts
+
+Out of scope:
+- automated placement/routing strategy engines (`M5+`)
+- GUI interaction models and tooling (`M7+`)
+- advanced collaboration semantics beyond defined single-writer assumptions
+
+### 10.2 Controlling Specs for M4
+
+- Exit gates: `specs/PROGRAM_SPEC.md` (`M4`)
+- Native persistence: `specs/NATIVE_FORMAT_SPEC.md`
+- Schematic authoring model and operations: `specs/SCHEMATIC_EDITOR_SPEC.md`
+- Engine type/API contracts: `specs/ENGINE_SPEC.md`
+- MCP/CLI tool contracts: `specs/MCP_API_SPEC.md`
+- Progress state: `specs/PROGRESS.md`
+
+### 10.3 M4 Parity Invariants (Board vs Schematic)
+
+- Schematic and board authored objects both use stable UUID identity and
+  deterministic serialization.
+- Schematic operation catalog is not treated as advisory; it is gate-level.
+- Query parity for schematic topology/state is exposed with the same rigor as
+  board query surfaces.
+- ECO boundaries (schematic→board and board→schematic where applicable) are
+  explicit and reviewable, never implicit side effects.
+
+### 10.4 M4 Verification Evidence
+
+At minimum:
+- native project open/save deterministic round-trip tests
+- schematic operation acceptance tests (minimum operation set)
+- board operation acceptance tests (minimum operation set)
+- ECO proposal generation + apply/reject tests
+- manufacturing artifact validation checks against reference viewers/tooling
+
+## 11. Integrated Defer Discipline
+
+Any contract intentionally deferred beyond the active milestone must include:
+
+- defer scope (exactly what is deferred)
+- defer reason (why it is outside current milestone)
+- target milestone for re-entry
+- cross-spec references where the defer is mirrored
+
+A defer is invalid unless it appears in both:
+- `specs/INTEGRATED_PROGRAM_SPEC.md` and
+- `specs/PROGRESS.md`.
+
+## 12. M3 Acceptance Table (Gate-to-Evidence Mapping)
+
+This table is the controlling acceptance map for `M3` integrated review.
+Primary executable hook:
+`cargo run -p eda-test-harness --bin m3_op_determinism -- --json`  
+Current behavior: returns structured `passed` status for the current save-backed
+`move_component`/save KiCad-board slice and should fail if save determinism
+regresses.
+Companion hook for stack behavior:
+`cargo run -p eda-test-harness --bin m3_undo_redo_roundtrip -- --json`
+Current behavior: returns structured `passed` status for the current
+`delete_track`/`move_component`/`set_design_rule` undo/redo slice and should fail if round-trip stack behavior
+regresses.
+Companion hook for CLI/MCP/daemon write-surface readiness:
+`cargo run -p eda-test-harness --bin m3_write_surface_parity -- --json`
+Current behavior: returns structured `passed` status for the current
+engine/daemon/MCP/CLI `move_component`/`set_value`/`set_reference`/`delete_track`/`delete_via`/`set_design_rule`/`undo`/`redo`/`save`
+slice and should fail if current write-surface parity regresses.
+
+| M3 Gate (`specs/PROGRAM_SPEC.md`) | Evidence Type | Required Evidence Hook | Current State |
+|-----------------------------------|---------------|------------------------|---------------|
+| Operations implemented (10 listed ops) | Automated | Engine operation API tests + MCP write method tests covering each listed op | Partially proven for current `move_component`/`set_value`/`set_reference`/`set_design_rule`/`delete_track`/`delete_via` slice |
+| Undo/redo 100% undoable | Automated | Transaction replay/undo test suite with per-operation round-trip assertions | Partially proven for current `delete_track`/`move_component`/`set_design_rule` slice; implementation also covers `delete_via`, `set_value`, and `set_reference` |
+| Operation determinism | Automated | Determinism harness: same op sequence on same input yields byte-identical save | Partially proven for current `move_component`/save KiCad-board slice; parity harness also covers current `set_design_rule`/`set_value`/`set_reference` persistence and `move_component` save/reimport behavior |
+| KiCad write-back | Automated + manual spot-check | import→modify→save→reimport tests; open output in KiCad without load errors | Partially proven for current `move_component`/`set_value`/`set_reference`/`delete_track`/`delete_via`/save KiCad-board slice plus sidecar-backed `set_design_rule` and unmodified imported KiCad boards |
+| Round-trip fidelity (unmodified objects) | Automated | Golden diff tests for unchanged objects across write-back | Partially proven for current `move_component`/`set_value`/`set_reference`/`delete_track`/`delete_via`/save KiCad-board slice plus sidecar-backed `set_design_rule` and unmodified imported KiCad boards |
+| MCP write tools parity | Automated | Daemon + MCP tests for `move_component`, `set_value`, `set_reference`, `set_design_rule`, `delete_track`, `delete_via`, `undo`, `redo`, `save` | Partially proven for `move_component`/`set_value`/`set_reference`/`set_design_rule`/`delete_track`/`delete_via`/`undo`/`redo`/`save` |
+| Derived data update | Automated | Post-op connectivity/airwire/DRC recompute assertions | Partially proven by engine tests for current `delete_track` connectivity/DRC updates, `move_component` airwire/DRC updates, and `delete_via` net-info recompute; write-surface parity also proves follow-up query/check behavior for all current write ops across daemon/MCP/CLI: `delete_track`, `delete_via`, `move_component`, `set_value`, `set_reference`, and `set_design_rule` |
+| CLI modify command | Automated | CLI integration tests for `tool modify ...` with exit semantics | Partially proven for current `move_component`/`set_value`/`set_reference`/`delete_track`/`delete_via`/`set_design_rule`/`undo`/`redo`/`save` slice, plus follow-up `query components`/`query design-rules` coverage for current `set_value`/`set_reference`/`set_design_rule` |
+
+## 13. M4 Acceptance Table (Gate-to-Evidence Mapping)
+
+This table is the controlling acceptance map for `M4` integrated review.
+
+| M4 Gate (`specs/PROGRAM_SPEC.md`) | Evidence Type | Required Evidence Hook | Current State |
+|-----------------------------------|---------------|------------------------|---------------|
+| Native format (JSON, schema, versioned) | Automated | Native save/load/save byte-stability tests + schema version migration tests | Deferred until M4 implementation |
+| Schematic operations (full listed set) | Automated | Operation acceptance tests for all required schematic operations from `specs/SCHEMATIC_EDITOR_SPEC.md` | Deferred until M4 implementation |
+| Board operations (6 listed ops) | Automated | Operation acceptance tests for M4 board operation set | Deferred until M4 implementation |
+| Schematic query parity | Automated | Engine/daemon/MCP/CLI parity tests for labels/buses/bus_entries/noconnects/hierarchy/fields | Partially available from M2 read surface; full M4 gate deferred |
+| Forward annotation (ECO review) | Automated + manual | ECO proposal generation tests + apply/reject flow tests with deterministic diff output | Deferred until M4 implementation |
+| Gerber export | Automated + manual | Export test fixtures + gerbv validation with zero warnings | Deferred until M4 implementation |
+| Drill export (Excellon) | Automated + manual | Export test fixtures + gerbv drill validation | Deferred until M4 implementation |
+| BOM export (CSV/JSON) | Automated | Format/schema tests + deterministic output tests | Deferred until M4 implementation |
+| PnP export (CSV) | Automated | Output schema and deterministic ordering tests | Deferred until M4 implementation |
+| Gerber comparison vs KiCad on DOA2526 | Automated + manual | Layer/alignment/aperture comparison script + manual visual diff audit | Deferred until M4 implementation |
+
+### 13.1 Evidence Wiring Rule
+
+For each row in Sections 12-13, the milestone cannot be marked complete until:
+
+- the evidence hook exists in repository code/tests or documented manual
+  procedure, and
+- the corresponding status row in `specs/PROGRESS.md` is synchronized.

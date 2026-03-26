@@ -1,0 +1,1 @@
+{"passed":false,"summary":[1,0],"violations":[{"code":"silk_clearance_copper","location":[15000000,10000000,37],"message":"silkscreen text 'R1' clearance -550000nm is below required 100000nm","objects":["11111111-aaaa-bbbb-cccc-000000000001","22222222-aaaa-bbbb-cccc-000000000002"],"rule_type":"SilkClearance","severity":"error"}]}

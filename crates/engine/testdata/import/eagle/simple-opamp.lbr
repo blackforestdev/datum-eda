@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<eagle version="9.6.2">
+  <drawing>
+    <library name="demo-analog">
+      <packages>
+        <package name="SOT23-5">
+          <wire x1="-0.05" y1="0.04" x2="0.05" y2="0.04" width="0.005" layer="21"/>
+          <smd name="1" x="-0.04" y="-0.02" dx="0.02" dy="0.05" layer="1"/>
+          <smd name="2" x="-0.04" y="0.00" dx="0.02" dy="0.05" layer="1"/>
+          <smd name="3" x="0.04" y="0.00" dx="0.02" dy="0.05" layer="1"/>
+        </package>
+      </packages>
+      <symbols>
+        <symbol name="OPAMP">
+          <pin name="IN+" x="-0.3" y="0.1" direction="in"/>
+          <pin name="IN-" x="-0.3" y="-0.1" direction="in"/>
+          <pin name="OUT" x="0.3" y="0.0" direction="out"/>
+        </symbol>
+      </symbols>
+      <devicesets>
+        <deviceset name="LMV321" prefix="U">
+          <gates>
+            <gate name="G$1" symbol="OPAMP" x="0" y="0"/>
+          </gates>
+          <devices>
+            <device name="" package="SOT23-5">
+              <connects>
+                <connect gate="G$1" pin="IN+" pad="1"/>
+                <connect gate="G$1" pin="IN-" pad="2"/>
+                <connect gate="G$1" pin="OUT" pad="3"/>
+              </connects>
+              <technologies>
+                <technology name=""/>
+              </technologies>
+            </device>
+          </devices>
+        </deviceset>
+      </devicesets>
+    </library>
+  </drawing>
+</eagle>

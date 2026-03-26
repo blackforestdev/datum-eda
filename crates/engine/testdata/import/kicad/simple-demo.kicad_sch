@@ -1,0 +1,83 @@
+(kicad_sch
+  (version 20230121)
+  (generator "datum-eda-test")
+  (uuid 11111111-1111-1111-1111-111111111111)
+  (paper "A4")
+  (lib_symbols
+    (symbol "Device:R"
+      (pin passive line
+        (at -5 0 0)
+        (length 2.54)
+        (name "~" (effects (font (size 1.27 1.27))))
+        (number "1" (effects (font (size 1.27 1.27)))))
+      (pin passive line
+        (at 0 5 90)
+        (length 2.54)
+        (name "~" (effects (font (size 1.27 1.27))))
+        (number "2" (effects (font (size 1.27 1.27)))))))
+  (symbol
+    (lib_id "Device:R")
+    (at 25 20 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (uuid 22222222-2222-2222-2222-222222222222)
+    (property "Reference" "R1" (at 25 18 0))
+    (property "Value" "10k" (at 25 22 0)))
+  (wire
+    (pts
+      (xy 20 20)
+      (xy 30 20))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 33333333-3333-3333-3333-333333333333))
+  (junction
+    (at 30 20)
+    (diameter 0)
+    (color 0 0 0 0)
+    (uuid 44444444-4444-4444-4444-444444444444))
+  (label "SCL"
+    (at 20 20 0)
+    (effects
+      (font (size 1.27 1.27)))
+    (uuid 55555555-5555-5555-5555-555555555555))
+  (global_label "VCC"
+    (shape input)
+    (at 40 20 0)
+    (effects
+      (font (size 1.27 1.27)))
+    (uuid 66666666-6666-6666-6666-666666666666))
+  (hierarchical_label "SUB_IN"
+    (shape input)
+    (at 80 15 0)
+    (effects
+      (font (size 1.27 1.27)))
+    (uuid aaaabbbb-cccc-dddd-eeee-ffffffffffff))
+  (bus
+    (pts
+      (xy 50 10)
+      (xy 50 30))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 77777777-7777-7777-7777-777777777777))
+  (sheet
+    (at 60 10)
+    (size 20 10)
+    (fields_autoplaced)
+    (stroke
+      (width 0)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid 88888888-8888-8888-8888-888888888888)
+    (pin "SUB_IN" input
+      (at 60 15 0)
+      (effects
+        (font (size 1.27 1.27))))
+    (property "Sheetname" "Sub" (at 60 10 0))
+    (property "Sheetfile" "sub.kicad_sch" (at 60 12 0)))
+  (no_connect
+    (at 70 20)
+    (uuid 99999999-9999-9999-9999-999999999999)))

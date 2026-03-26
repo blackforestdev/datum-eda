@@ -1,0 +1,1 @@
+{"passed":false,"summary":[1,0],"violations":[{"code":"clearance_copper","location":[20000000,10000000,0],"message":"track clearance -150000nm is below required 0nm on layer 0","objects":["bbbbbbbb-1000-0000-0000-000000000001","bbbbbbbb-1000-0000-0000-000000000002"],"rule_type":"ClearanceCopper","severity":"error"}]}

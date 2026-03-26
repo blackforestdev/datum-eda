@@ -1,0 +1,31 @@
+# Rust build artifacts
+/target
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# SQLite runtime databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Claude Code (local session config and project instructions)
+.claude/
+CLAUDE.md
+
+# Research symlinks (local sandbox only)
+/research
+
+# Editor artifacts
+/.idea
+/.vscode
+*.swp
+*.swo
+.DS_Store
+*~
+
+# Environment
+.env
+.env.*

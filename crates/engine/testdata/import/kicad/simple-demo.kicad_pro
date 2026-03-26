@@ -1,0 +1,24 @@
+{
+  "board": {
+    "design_settings": {},
+    "layer_presets": []
+  },
+  "boards": [],
+  "cvpcb": {},
+  "libraries": {},
+  "meta": {
+    "filename": "simple-demo",
+    "version": 1
+  },
+  "net_settings": {},
+  "pcbnew": {},
+  "schematic": {
+    "drawing": {}
+  },
+  "sheets": [
+    [
+      "sheet-1",
+      "simple-demo.kicad_sch"
+    ]
+  ]
+}

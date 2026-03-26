@@ -1,0 +1,36 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/engine",
+    "crates/engine-daemon",
+    "crates/cli",
+    "crates/test-harness",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "LicenseRef-Proprietary"
+
+[workspace.dependencies]
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Database
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+# Identity
+uuid = { version = "1", features = ["v4", "v5", "serde"] }
+
+# Error handling
+thiserror = "2"
+anyhow = "1"
+sha2 = "0.10"
+quick-xml = "0.38"
+
+# CLI
+clap = { version = "4", features = ["derive"] }
+
+# Testing
+proptest = "1"
