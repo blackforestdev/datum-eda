@@ -1430,7 +1430,7 @@ impl Engine {
         package.package = part.package;
         package.value = part.value.clone();
         let after = package.clone();
-        replace_component_pads_from_pool_package(board, &after, target_package)?;
+        replace_component_pads_for_assign_part(board, &before, &after, part, target_package, &self.pool)?;
         let after_pads = component_pads(board, input.uuid);
 
         self.undo_stack.push(TransactionRecord::AssignPart {
@@ -1468,6 +1468,22 @@ impl Engine {
                 object_type: "package",
                 uuid: input.package_uuid,
             })?;
+        let compatible_part_uuid = self
+            .design
+            .as_ref()
+            .and_then(|design| design.board.as_ref())
+            .and_then(|board| board.packages.get(&input.uuid))
+            .and_then(|component| {
+                (component.part != Uuid::nil())
+                    .then(|| {
+                        resolve_compatible_part_for_package_change(
+                            component.part,
+                            input.package_uuid,
+                            &self.pool,
+                        )
+                    })
+                    .flatten()
+            });
         let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
         let board = design.board.as_mut().ok_or_else(|| {
             EngineError::Operation(
@@ -1492,7 +1508,12 @@ impl Engine {
                 uuid: input.uuid,
             })?;
         package.package = input.package_uuid;
-        if package.part != Uuid::nil()
+        if let Some(part_uuid) = compatible_part_uuid {
+            if let Some(part) = self.pool.parts.get(&part_uuid) {
+                package.part = part.uuid;
+                package.value = part.value.clone();
+            }
+        } else if package.part != Uuid::nil()
             && self
                 .pool
                 .parts
@@ -1502,7 +1523,24 @@ impl Engine {
             package.part = Uuid::nil();
         }
         let after = package.clone();
-        replace_component_pads_from_pool_package(board, &after, target_package)?;
+        if let Some(part_uuid) = compatible_part_uuid {
+            let target_part = self.pool.parts.get(&part_uuid).ok_or(EngineError::DanglingReference {
+                source_type: "component",
+                source_uuid: input.uuid,
+                target_type: "part",
+                target_uuid: part_uuid,
+            })?;
+            replace_component_pads_for_assign_part(
+                board,
+                &before,
+                &after,
+                target_part,
+                target_package,
+                &self.pool,
+            )?;
+        } else {
+            replace_component_pads_from_pool_package(board, &after, target_package)?;
+        }
         let after_pads = component_pads(board, input.uuid);
 
         self.undo_stack.push(TransactionRecord::SetPackage {
@@ -2896,6 +2934,108 @@ fn replace_component_pads_from_pool_package(
     regenerated.sort_by_key(|pad| pad.uuid);
     restore_component_pads(board, component.uuid, &regenerated);
     Ok(())
+}
+
+fn replace_component_pads_for_assign_part(
+    board: &mut Board,
+    previous_component: &crate::board::PlacedPackage,
+    next_component: &crate::board::PlacedPackage,
+    target_part: &crate::pool::Part,
+    target_package: &crate::pool::Package,
+    pool: &Pool,
+) -> Result<(), EngineError> {
+    let net_by_name: BTreeMap<String, Option<uuid::Uuid>> = component_pads(board, previous_component.uuid)
+        .into_iter()
+        .map(|pad| (pad.name, pad.net))
+        .collect();
+    let mut net_by_pin = BTreeMap::new();
+
+    if previous_component.part != uuid::Uuid::nil() {
+        if let Some(current_part) = pool.parts.get(&previous_component.part) {
+            if current_part.package == previous_component.package {
+                let current_package = pool.packages.get(&previous_component.package).ok_or(
+                    EngineError::DanglingReference {
+                        source_type: "component",
+                        source_uuid: previous_component.uuid,
+                        target_type: "package",
+                        target_uuid: previous_component.package,
+                    },
+                )?;
+                let current_pad_name_by_uuid: BTreeMap<uuid::Uuid, &str> = current_package
+                    .pads
+                    .values()
+                    .map(|pad| (pad.uuid, pad.name.as_str()))
+                    .collect();
+
+                for (pad_uuid, entry) in &current_part.pad_map {
+                    if let Some(pad_name) = current_pad_name_by_uuid.get(pad_uuid) {
+                        if let Some(net) = net_by_name.get(*pad_name).copied().flatten() {
+                            net_by_pin.insert(entry.pin, net);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    let mut regenerated = Vec::new();
+    for package_pad in target_package.pads.values() {
+        let net = target_part
+            .pad_map
+            .get(&package_pad.uuid)
+            .and_then(|entry| net_by_pin.get(&entry.pin).copied())
+            .or_else(|| net_by_name.get(&package_pad.name).copied().flatten());
+        regenerated.push(crate::board::PlacedPad {
+            uuid: deterministic_component_pad_uuid(next_component.uuid, &package_pad.name),
+            package: next_component.uuid,
+            name: package_pad.name.clone(),
+            net,
+            position: transform_board_local_point(
+                next_component.position,
+                next_component.rotation,
+                package_pad.position,
+            ),
+            layer: package_pad.layer,
+        });
+    }
+    regenerated.sort_by_key(|pad| pad.uuid);
+    restore_component_pads(board, next_component.uuid, &regenerated);
+    Ok(())
+}
+
+fn resolve_compatible_part_for_package_change(
+    current_part_uuid: uuid::Uuid,
+    target_package_uuid: uuid::Uuid,
+    pool: &Pool,
+) -> Option<uuid::Uuid> {
+    let current_part = pool.parts.get(&current_part_uuid)?;
+    let current_signature = part_pin_signature(current_part, pool)?;
+    let mut candidates = pool
+        .parts
+        .values()
+        .filter(|part| {
+            part.package == target_package_uuid
+                && part_pin_signature(part, pool).as_ref() == Some(&current_signature)
+        })
+        .map(|part| part.uuid);
+    let first = candidates.next()?;
+    if candidates.next().is_some() {
+        None
+    } else {
+        Some(first)
+    }
+}
+
+fn part_pin_signature(part: &crate::pool::Part, pool: &Pool) -> Option<BTreeSet<String>> {
+    let entity = pool.entities.get(&part.entity)?;
+    let mut pins = BTreeSet::new();
+    for entry in part.pad_map.values() {
+        let gate = entity.gates.get(&entry.gate)?;
+        let unit = pool.units.get(&gate.unit)?;
+        let pin = unit.pins.get(&entry.pin)?;
+        pins.insert(pin.name.clone());
+    }
+    Some(pins)
 }
 
 fn deterministic_component_pad_uuid(component_uuid: uuid::Uuid, pad_name: &str) -> uuid::Uuid {
@@ -5368,6 +5508,66 @@ mod tests {
     }
 
     #[test]
+    fn assign_part_preserves_logical_nets_across_known_part_remap() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+            .expect("library import should succeed");
+        engine
+            .import(&fixture_path("partial-route-demo.kicad_pcb"))
+            .expect("fixture import should succeed");
+
+        let lmv321_part_uuid = engine
+            .search_pool("LMV321")
+            .expect("search should succeed")
+            .first()
+            .map(|part| part.uuid)
+            .expect("LMV321 part should exist");
+        let altamp_part_uuid = engine
+            .search_pool("ALTAMP")
+            .expect("search should succeed")
+            .first()
+            .map(|part| part.uuid)
+            .expect("ALTAMP part should exist");
+        let component_uuid = uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap();
+
+        engine
+            .assign_part(AssignPartInput {
+                uuid: component_uuid,
+                part_uuid: lmv321_part_uuid,
+            })
+            .expect("first assign_part should succeed");
+        let after_lmv321_sig = engine
+            .get_net_info()
+            .expect("net info should query")
+            .into_iter()
+            .find(|net| net.name == "SIG")
+            .expect("SIG net should exist");
+
+        engine
+            .assign_part(AssignPartInput {
+                uuid: component_uuid,
+                part_uuid: altamp_part_uuid,
+            })
+            .expect("second assign_part should succeed");
+        let after_altamp_sig = engine
+            .get_net_info()
+            .expect("net info should query")
+            .into_iter()
+            .find(|net| net.name == "SIG")
+            .expect("SIG net should exist");
+        let updated = engine
+            .get_components()
+            .expect("components should query")
+            .into_iter()
+            .find(|component| component.uuid == component_uuid)
+            .expect("updated component should exist");
+
+        assert_eq!(updated.value, "ALTAMP");
+        assert_eq!(after_altamp_sig.pins.len(), after_lmv321_sig.pins.len());
+    }
+
+    #[test]
     fn set_package_updates_board_and_undo_redo_restore_it() {
         let mut engine = Engine::new().expect("engine should initialize");
         engine
@@ -5476,6 +5676,81 @@ mod tests {
 
         let _ = fs::remove_file(&target);
         let _ = fs::remove_file(package_assignments_sidecar::sidecar_path_for_source(&target));
+    }
+
+    #[test]
+    fn set_package_preserves_logical_nets_across_known_part_remap() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+            .expect("library import should succeed");
+        engine
+            .import(&fixture_path("partial-route-demo.kicad_pcb"))
+            .expect("fixture import should succeed");
+
+        let lmv321_part_uuid = engine
+            .search_pool("LMV321")
+            .expect("search should succeed")
+            .first()
+            .map(|part| part.uuid)
+            .expect("LMV321 part should exist");
+        let altamp_package_uuid = engine
+            .search_pool("ALTAMP")
+            .expect("search should succeed")
+            .first()
+            .map(|part| part.package_uuid)
+            .expect("ALTAMP package should exist");
+        let altamp_part_uuid = engine
+            .search_pool("ALTAMP")
+            .expect("search should succeed")
+            .first()
+            .map(|part| part.uuid)
+            .expect("ALTAMP part should exist");
+        let component_uuid = uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap();
+
+        engine
+            .assign_part(AssignPartInput {
+                uuid: component_uuid,
+                part_uuid: lmv321_part_uuid,
+            })
+            .expect("assign_part should succeed");
+        let intermediate_sig = engine
+            .get_net_info()
+            .expect("net info should query")
+            .into_iter()
+            .find(|net| net.name == "SIG")
+            .expect("SIG net should exist");
+
+        engine
+            .set_package(SetPackageInput {
+                uuid: component_uuid,
+                package_uuid: altamp_package_uuid,
+            })
+            .expect("set_package should succeed");
+        let after_sig = engine
+            .get_net_info()
+            .expect("net info should query")
+            .into_iter()
+            .find(|net| net.name == "SIG")
+            .expect("SIG net should exist");
+        let updated = engine
+            .get_components()
+            .expect("components should query")
+            .into_iter()
+            .find(|component| component.uuid == component_uuid)
+            .expect("updated component should exist");
+        let assigned_part = engine
+            .design
+            .as_ref()
+            .and_then(|design| design.board.as_ref())
+            .and_then(|board| board.packages.get(&component_uuid))
+            .map(|component| component.part)
+            .expect("component should exist");
+
+        assert_eq!(updated.package_uuid, altamp_package_uuid);
+        assert_eq!(updated.value, "ALTAMP");
+        assert_eq!(assigned_part, altamp_part_uuid);
+        assert_eq!(after_sig.pins.len(), intermediate_sig.pins.len());
     }
 
     #[test]

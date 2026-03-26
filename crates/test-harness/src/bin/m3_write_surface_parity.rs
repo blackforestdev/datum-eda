@@ -501,6 +501,36 @@ fn engine_surface_result(cli: &Cli) -> Result<String> {
     if reloaded_assign_sig.pins.len() != 1 {
         bail!("assign_part did not change engine follow-up net-info state");
     }
+    let lmv321_part_uuid = assign_engine
+        .search_pool("LMV321")?
+        .into_iter()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("LMV321 part missing from pool"))?
+        .uuid;
+    let mut remap_engine = Engine::new()?;
+    remap_engine.import_eagle_library(&library_fixture)?;
+    remap_engine.import(&cli.roundtrip_board_fixture_path)?;
+    remap_engine.assign_part(AssignPartInput {
+        uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+        part_uuid: lmv321_part_uuid,
+    })?;
+    let remap_intermediate_sig = remap_engine
+        .get_net_info()?
+        .into_iter()
+        .find(|net| net.name == "SIG")
+        .ok_or_else(|| anyhow::anyhow!("intermediate assign_part nets missing SIG"))?;
+    remap_engine.assign_part(AssignPartInput {
+        uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+        part_uuid,
+    })?;
+    let remap_after_sig = remap_engine
+        .get_net_info()?
+        .into_iter()
+        .find(|net| net.name == "SIG")
+        .ok_or_else(|| anyhow::anyhow!("remapped assign_part nets missing SIG"))?;
+    if remap_after_sig.pins.len() != remap_intermediate_sig.pins.len() {
+        bail!("assign_part logical remap did not preserve engine follow-up net-info state");
+    }
 
     let mut package_engine = Engine::new()?;
     package_engine.import_eagle_library(&library_fixture)?;
@@ -544,6 +574,36 @@ fn engine_surface_result(cli: &Cli) -> Result<String> {
     }
     if baseline_package_r1.package_uuid == updated_package_r1.package_uuid {
         bail!("set_package did not change engine follow-up components state");
+    }
+    let lmv321_part_uuid = package_engine
+        .search_pool("LMV321")?
+        .into_iter()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("LMV321 part missing from pool"))?
+        .uuid;
+    let mut package_remap_engine = Engine::new()?;
+    package_remap_engine.import_eagle_library(&library_fixture)?;
+    package_remap_engine.import(&cli.roundtrip_board_fixture_path)?;
+    package_remap_engine.assign_part(AssignPartInput {
+        uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+        part_uuid: lmv321_part_uuid,
+    })?;
+    let package_remap_intermediate_sig = package_remap_engine
+        .get_net_info()?
+        .into_iter()
+        .find(|net| net.name == "SIG")
+        .ok_or_else(|| anyhow::anyhow!("intermediate set_package nets missing SIG"))?;
+    package_remap_engine.set_package(SetPackageInput {
+        uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+        package_uuid,
+    })?;
+    let package_remap_after_sig = package_remap_engine
+        .get_net_info()?
+        .into_iter()
+        .find(|net| net.name == "SIG")
+        .ok_or_else(|| anyhow::anyhow!("remapped set_package nets missing SIG"))?;
+    if package_remap_after_sig.pins.len() != package_remap_intermediate_sig.pins.len() {
+        bail!("set_package logical remap did not preserve engine follow-up net-info state");
     }
 
     let net_fixture = cli
@@ -592,7 +652,7 @@ fn engine_surface_result(cli: &Cli) -> Result<String> {
     }
 
     Ok(format!(
-        "delete={}, undo={}, redo={}, saved={}, reimported_deleted_state=true, delete_followup_check_changed=true, delete_via={}, via_saved={}, via_reimported_deleted_state=true, delete_via_followup_net_info_changed=true, delete_component={}, component_saved={}, component_followup_components_changed=true, set_rule={}, rule_saved={}, rule_reimported=true, rule_followup_query_changed=true, move_component={}, moved_saved={}, move_reimported=true, move_followup_unrouted_changed=true, rotate_component={}, rotate_saved={}, rotate_followup_components_changed=true, set_value={}, value_saved={}, value_followup_components_changed=true, set_reference={}, reference_saved={}, reference_followup_components_changed=true, assign_part={}, assign_saved={}, assign_part_rewrote_footprint=true, assign_part_followup_components_changed=true, assign_part_followup_net_info_changed=true, set_package={}, package_saved={}, set_package_followup_components_changed=true, set_package_followup_net_info_changed=true, set_net_class={}, net_class_saved={}, set_net_class_followup_net_info_changed=true",
+        "delete={}, undo={}, redo={}, saved={}, reimported_deleted_state=true, delete_followup_check_changed=true, delete_via={}, via_saved={}, via_reimported_deleted_state=true, delete_via_followup_net_info_changed=true, delete_component={}, component_saved={}, component_followup_components_changed=true, set_rule={}, rule_saved={}, rule_reimported=true, rule_followup_query_changed=true, move_component={}, moved_saved={}, move_reimported=true, move_followup_unrouted_changed=true, rotate_component={}, rotate_saved={}, rotate_followup_components_changed=true, set_value={}, value_saved={}, value_followup_components_changed=true, set_reference={}, reference_saved={}, reference_followup_components_changed=true, assign_part={}, assign_saved={}, assign_part_rewrote_footprint=true, assign_part_followup_components_changed=true, assign_part_followup_net_info_changed=true, assign_part_logical_remap_preserved=true, set_package={}, package_saved={}, set_package_followup_components_changed=true, set_package_followup_net_info_changed=true, set_package_logical_remap_preserved=true, set_net_class={}, net_class_saved={}, set_net_class_followup_net_info_changed=true",
         delete.description,
         undo.description,
         redo.description,
@@ -864,6 +924,18 @@ fn daemon_surface_result(cli: &Cli) -> Result<String> {
             .current_dir(&cli.repo_root),
         "daemon assign-part derived-state parity probe",
     )?;
+    let assign_part_remap_test = run_command_checked(
+        Command::new("cargo")
+            .args([
+                "test",
+                "-q",
+                "-p",
+                "eda-engine-daemon",
+                "assign_part_dispatch_preserves_logical_nets_across_known_part_remap",
+            ])
+            .current_dir(&cli.repo_root),
+        "daemon assign-part logical-remap parity probe",
+    )?;
     let set_package_test = run_command_checked(
         Command::new("cargo")
             .args([
@@ -887,6 +959,18 @@ fn daemon_surface_result(cli: &Cli) -> Result<String> {
             ])
             .current_dir(&cli.repo_root),
         "daemon set-package net-info derived-state parity probe",
+    )?;
+    let set_package_remap_test = run_command_checked(
+        Command::new("cargo")
+            .args([
+                "test",
+                "-q",
+                "-p",
+                "eda-engine-daemon",
+                "set_package_dispatch_preserves_logical_nets_across_known_part_remap",
+            ])
+            .current_dir(&cli.repo_root),
+        "daemon set-package logical-remap parity probe",
     )?;
     let set_net_class_test = run_command_checked(
         Command::new("cargo")
@@ -914,7 +998,7 @@ fn daemon_surface_result(cli: &Cli) -> Result<String> {
     )?;
 
     Ok(format!(
-        "behavioral dispatch tests passed: save_dispatch_writes_current_m3_slice_to_requested_path, delete_track_undo_and_redo_dispatch_round_trip, delete_track_dispatch_updates_followup_check_report, delete_via_undo_and_redo_dispatch_round_trip, delete_via_dispatch_updates_followup_net_info_query, delete_component_dispatch_updates_component_list, delete_component_dispatch_updates_followup_components_query, set_design_rule_dispatch_persists_rule_in_memory, set_design_rule_dispatch_updates_followup_design_rules_query, set_value_dispatch_updates_component_value, set_value_dispatch_updates_followup_components_query, set_reference_dispatch_updates_component_reference, set_reference_dispatch_updates_followup_components_query, move_component_dispatch_updates_component_position, move_component_dispatch_updates_followup_unrouted_query, rotate_component_dispatch_updates_component_rotation, rotate_component_dispatch_updates_followup_components_query, assign_part_dispatch_updates_component_value, assign_part_dispatch_updates_followup_net_info_query, set_package_dispatch_updates_component_package, set_package_dispatch_updates_followup_net_info_query, set_net_class_dispatch_updates_net_class, set_net_class_dispatch_updates_followup_net_info_query (outputs: {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})",
+        "behavioral dispatch tests passed: save_dispatch_writes_current_m3_slice_to_requested_path, delete_track_undo_and_redo_dispatch_round_trip, delete_track_dispatch_updates_followup_check_report, delete_via_undo_and_redo_dispatch_round_trip, delete_via_dispatch_updates_followup_net_info_query, delete_component_dispatch_updates_component_list, delete_component_dispatch_updates_followup_components_query, set_design_rule_dispatch_persists_rule_in_memory, set_design_rule_dispatch_updates_followup_design_rules_query, set_value_dispatch_updates_component_value, set_value_dispatch_updates_followup_components_query, set_reference_dispatch_updates_component_reference, set_reference_dispatch_updates_followup_components_query, move_component_dispatch_updates_component_position, move_component_dispatch_updates_followup_unrouted_query, rotate_component_dispatch_updates_component_rotation, rotate_component_dispatch_updates_followup_components_query, assign_part_dispatch_updates_component_value, assign_part_dispatch_updates_followup_net_info_query, assign_part_dispatch_preserves_logical_nets_across_known_part_remap, set_package_dispatch_updates_component_package, set_package_dispatch_updates_followup_net_info_query, set_package_dispatch_preserves_logical_nets_across_known_part_remap, set_net_class_dispatch_updates_net_class, set_net_class_dispatch_updates_followup_net_info_query (outputs: {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})",
         save_test,
         roundtrip_test,
         delete_followup_test,
@@ -934,8 +1018,10 @@ fn daemon_surface_result(cli: &Cli) -> Result<String> {
         rotate_followup_test,
         assign_part_test,
         assign_part_followup_test,
+        assign_part_remap_test,
         set_package_test,
         set_package_followup_test,
+        set_package_remap_test,
         set_net_class_test,
         set_net_class_followup_test
     ))
@@ -958,20 +1044,13 @@ fn check_mcp_surface(cli: &Cli) -> SurfaceCheck {
 
 fn mcp_surface_result(cli: &Cli) -> Result<String> {
     let script = r#"
-import importlib.util
 import pathlib
 import sys
 import unittest
 
 repo = pathlib.Path(sys.argv[1])
-spec = importlib.util.spec_from_file_location("datum_mcp_server", repo / "mcp-server" / "server.py")
-module = importlib.util.module_from_spec(spec)
-assert spec.loader is not None
-sys.modules[spec.name] = module
-spec.loader.exec_module(module)
-suite = unittest.TestSuite()
-loader = unittest.defaultTestLoader
-for name in [
+top = repo / "mcp-server"
+wanted = {
     "test_tools_call_dispatches_save",
     "test_tools_call_dispatches_delete_track",
     "test_tools_call_delete_track_changes_followup_check_report",
@@ -991,14 +1070,41 @@ for name in [
     "test_tools_call_set_reference_changes_followup_components_response",
     "test_tools_call_dispatches_assign_part",
     "test_tools_call_assign_part_changes_followup_net_info_response",
+    "test_tools_call_assign_part_preserves_logical_nets_across_known_part_remap_response",
     "test_tools_call_dispatches_set_package",
     "test_tools_call_set_package_changes_followup_net_info_response",
+    "test_tools_call_set_package_preserves_logical_nets_across_known_part_remap_response",
     "test_tools_call_dispatches_set_net_class",
     "test_tools_call_set_net_class_changes_followup_net_info_response",
     "test_tools_call_dispatches_undo_and_redo",
-]:
-    suite.addTests(loader.loadTestsFromName(f"ServerTests.{name}", module))
-result = unittest.TextTestRunner(verbosity=0).run(suite)
+}
+
+def iter_tests(suite):
+    for test in suite:
+        if isinstance(test, unittest.TestSuite):
+            yield from iter_tests(test)
+        else:
+            yield test
+
+discovered = unittest.defaultTestLoader.discover(
+    start_dir=top,
+    pattern="test_*.py",
+    top_level_dir=top,
+)
+selected = unittest.TestSuite()
+found = set()
+for test in iter_tests(discovered):
+    name = test.id().rsplit(".", 1)[-1]
+    if name in wanted:
+        selected.addTest(test)
+        found.add(name)
+
+missing = sorted(wanted - found)
+if missing:
+    print("missing MCP parity tests:", ", ".join(missing))
+    sys.exit(1)
+
+result = unittest.TextTestRunner(verbosity=0).run(selected)
 if not result.wasSuccessful():
     sys.exit(1)
 print("selected MCP write-surface dispatch tests passed")
@@ -1027,7 +1133,9 @@ fn check_cli_surface(cli: &Cli) -> SurfaceCheck {
         cli_value_surface_result(cli),
         cli_reference_surface_result(cli),
         cli_assign_part_surface_result(cli),
+        cli_assign_part_remap_surface_result(cli),
         cli_set_package_surface_result(cli),
+        cli_set_package_remap_surface_result(cli),
         cli_set_net_class_surface_result(cli),
     ) {
         (
@@ -1040,26 +1148,30 @@ fn check_cli_surface(cli: &Cli) -> SurfaceCheck {
             Ok(value_evidence),
             Ok(reference_evidence),
             Ok(assign_part_evidence),
+            Ok(assign_part_remap_evidence),
             Ok(set_package_evidence),
+            Ok(set_package_remap_evidence),
             Ok(net_class_evidence),
         ) => SurfaceCheck {
             surface: "cli_modify_surface".to_string(),
             status: Status::Passed,
             evidence: format!(
-                "{track_evidence}; {via_evidence}; {component_evidence}; {move_evidence}; {rotate_evidence}; {rule_evidence}; {value_evidence}; {reference_evidence}; {assign_part_evidence}; {set_package_evidence}; {net_class_evidence}"
+                "{track_evidence}; {via_evidence}; {component_evidence}; {move_evidence}; {rotate_evidence}; {rule_evidence}; {value_evidence}; {reference_evidence}; {assign_part_evidence}; {assign_part_remap_evidence}; {set_package_evidence}; {set_package_remap_evidence}; {net_class_evidence}"
             ),
         },
-        (Err(err), _, _, _, _, _, _, _, _, _, _)
-        | (_, Err(err), _, _, _, _, _, _, _, _, _)
-        | (_, _, Err(err), _, _, _, _, _, _, _, _)
-        | (_, _, _, Err(err), _, _, _, _, _, _, _)
-        | (_, _, _, _, Err(err), _, _, _, _, _, _)
-        | (_, _, _, _, _, Err(err), _, _, _, _, _)
-        | (_, _, _, _, _, _, Err(err), _, _, _, _)
-        | (_, _, _, _, _, _, _, Err(err), _, _, _)
-        | (_, _, _, _, _, _, _, _, Err(err), _, _)
-        | (_, _, _, _, _, _, _, _, _, Err(err), _)
-        | (_, _, _, _, _, _, _, _, _, _, Err(err)) => SurfaceCheck {
+        (Err(err), _, _, _, _, _, _, _, _, _, _, _, _)
+        | (_, Err(err), _, _, _, _, _, _, _, _, _, _, _)
+        | (_, _, Err(err), _, _, _, _, _, _, _, _, _, _)
+        | (_, _, _, Err(err), _, _, _, _, _, _, _, _, _)
+        | (_, _, _, _, Err(err), _, _, _, _, _, _, _, _)
+        | (_, _, _, _, _, Err(err), _, _, _, _, _, _, _)
+        | (_, _, _, _, _, _, Err(err), _, _, _, _, _, _)
+        | (_, _, _, _, _, _, _, Err(err), _, _, _, _, _)
+        | (_, _, _, _, _, _, _, _, Err(err), _, _, _, _)
+        | (_, _, _, _, _, _, _, _, _, Err(err), _, _, _)
+        | (_, _, _, _, _, _, _, _, _, _, Err(err), _, _)
+        | (_, _, _, _, _, _, _, _, _, _, _, Err(err), _)
+        | (_, _, _, _, _, _, _, _, _, _, _, _, Err(err)) => SurfaceCheck {
             surface: "cli_modify_surface".to_string(),
             status: Status::Failed,
             evidence: err.to_string(),
@@ -1610,6 +1722,95 @@ fn cli_assign_part_surface_result(cli: &Cli) -> Result<String> {
     ))
 }
 
+fn cli_assign_part_remap_surface_result(cli: &Cli) -> Result<String> {
+    let library = cli
+        .repo_root
+        .join("crates/engine/testdata/import/eagle/simple-opamp.lbr");
+    let mut engine = Engine::new()?;
+    engine.import_eagle_library(&library)?;
+    let lmv321_part_uuid = engine
+        .search_pool("LMV321")?
+        .into_iter()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("LMV321 part missing from pool"))?
+        .uuid;
+    let altamp_part_uuid = engine
+        .search_pool("ALTAMP")?
+        .into_iter()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("ALTAMP part missing from pool"))?
+        .uuid;
+
+    let target = unique_temp_path("cli-surface-assign-part-remap-save", "kicad_pcb");
+    let output = Command::new("cargo")
+        .args([
+            "run", "-q", "-p", "eda-cli", "--", "--format", "json", "modify",
+        ])
+        .arg(&cli.roundtrip_board_fixture_path)
+        .arg("--library")
+        .arg(&library)
+        .arg("--assign-part")
+        .arg(format!(
+            "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:{}",
+            lmv321_part_uuid
+        ))
+        .arg("--assign-part")
+        .arg(format!(
+            "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:{}",
+            altamp_part_uuid
+        ))
+        .arg("--save")
+        .arg(&target)
+        .current_dir(&cli.repo_root)
+        .output()
+        .context("failed to run CLI assign-part remap save parity probe")?;
+    if !output.status.success() {
+        bail!(
+            "CLI assign-part remap save parity probe failed with status {:?}: {}",
+            output.status.code(),
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    let save: CliModifyReport = serde_json::from_slice(&output.stdout)
+        .context("failed to parse CLI assign-part remap save JSON output")?;
+    let saved_path = save
+        .saved_path
+        .as_deref()
+        .ok_or_else(|| anyhow::anyhow!("CLI assign-part remap save report missing saved_path"))?;
+    let net_query_output = Command::new("cargo")
+        .args([
+            "run", "-q", "-p", "eda-cli", "--", "--format", "json", "query",
+        ])
+        .arg(saved_path)
+        .arg("nets")
+        .current_dir(&cli.repo_root)
+        .output()
+        .context("failed to run CLI assign-part remap follow-up net query")?;
+    if !net_query_output.status.success() {
+        bail!(
+            "CLI assign-part remap follow-up net query failed with status {:?}: {}",
+            net_query_output.status.code(),
+            String::from_utf8_lossy(&net_query_output.stderr).trim()
+        );
+    }
+    let net_payload: Value = serde_json::from_slice(&net_query_output.stdout)
+        .context("failed to parse CLI assign-part remap follow-up net JSON")?;
+    let nets = net_payload["nets"]
+        .as_array()
+        .ok_or_else(|| anyhow::anyhow!("CLI assign-part remap follow-up net query missing nets"))?;
+    let sig = nets
+        .iter()
+        .find(|net| net["name"] == "SIG")
+        .ok_or_else(|| anyhow::anyhow!("CLI assign-part remap follow-up net query missing SIG"))?;
+    if sig["pins"].as_array().map(|pins| pins.len()) != Some(2) {
+        bail!("CLI assign-part remap did not preserve logical net connectivity");
+    }
+    Ok(format!(
+        "assign_remap_saved={}, assign_part_logical_remap_preserved=true",
+        saved_path
+    ))
+}
+
 fn cli_set_package_surface_result(cli: &Cli) -> Result<String> {
     let library = cli
         .repo_root
@@ -1717,6 +1918,95 @@ fn cli_set_package_surface_result(cli: &Cli) -> Result<String> {
     }
     Ok(format!(
         "package_saved={}, set_package_then_save_persisted=true, set_package_rewrote_footprint=true, set_package_followup_components_changed=true, set_package_followup_net_info_changed=true",
+        saved_path
+    ))
+}
+
+fn cli_set_package_remap_surface_result(cli: &Cli) -> Result<String> {
+    let library = cli
+        .repo_root
+        .join("crates/engine/testdata/import/eagle/simple-opamp.lbr");
+    let mut engine = Engine::new()?;
+    engine.import_eagle_library(&library)?;
+    let lmv321_part_uuid = engine
+        .search_pool("LMV321")?
+        .into_iter()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("LMV321 part missing from pool"))?
+        .uuid;
+    let altamp_package_uuid = engine
+        .search_pool("ALTAMP")?
+        .into_iter()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("ALTAMP package missing from pool"))?
+        .package_uuid;
+
+    let target = unique_temp_path("cli-surface-set-package-remap-save", "kicad_pcb");
+    let output = Command::new("cargo")
+        .args([
+            "run", "-q", "-p", "eda-cli", "--", "--format", "json", "modify",
+        ])
+        .arg(&cli.roundtrip_board_fixture_path)
+        .arg("--library")
+        .arg(&library)
+        .arg("--assign-part")
+        .arg(format!(
+            "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:{}",
+            lmv321_part_uuid
+        ))
+        .arg("--set-package")
+        .arg(format!(
+            "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:{}",
+            altamp_package_uuid
+        ))
+        .arg("--save")
+        .arg(&target)
+        .current_dir(&cli.repo_root)
+        .output()
+        .context("failed to run CLI set-package remap save parity probe")?;
+    if !output.status.success() {
+        bail!(
+            "CLI set-package remap save parity probe failed with status {:?}: {}",
+            output.status.code(),
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    let save: CliModifyReport = serde_json::from_slice(&output.stdout)
+        .context("failed to parse CLI set-package remap save JSON output")?;
+    let saved_path = save
+        .saved_path
+        .as_deref()
+        .ok_or_else(|| anyhow::anyhow!("CLI set-package remap save report missing saved_path"))?;
+    let net_query_output = Command::new("cargo")
+        .args([
+            "run", "-q", "-p", "eda-cli", "--", "--format", "json", "query",
+        ])
+        .arg(saved_path)
+        .arg("nets")
+        .current_dir(&cli.repo_root)
+        .output()
+        .context("failed to run CLI set-package remap follow-up net query")?;
+    if !net_query_output.status.success() {
+        bail!(
+            "CLI set-package remap follow-up net query failed with status {:?}: {}",
+            net_query_output.status.code(),
+            String::from_utf8_lossy(&net_query_output.stderr).trim()
+        );
+    }
+    let net_payload: Value = serde_json::from_slice(&net_query_output.stdout)
+        .context("failed to parse CLI set-package remap follow-up net JSON")?;
+    let nets = net_payload["nets"]
+        .as_array()
+        .ok_or_else(|| anyhow::anyhow!("CLI set-package remap follow-up net query missing nets"))?;
+    let sig = nets
+        .iter()
+        .find(|net| net["name"] == "SIG")
+        .ok_or_else(|| anyhow::anyhow!("CLI set-package remap follow-up net query missing SIG"))?;
+    if sig["pins"].as_array().map(|pins| pins.len()) != Some(2) {
+        bail!("CLI set-package remap did not preserve logical net connectivity");
+    }
+    Ok(format!(
+        "package_remap_saved={}, set_package_logical_remap_preserved=true",
         saved_path
     ))
 }
