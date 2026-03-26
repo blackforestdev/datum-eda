@@ -176,8 +176,14 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     .expect("manifest serialization must succeed");
                 std::fs::write(&out, payload)
                     .with_context(|| format!("failed to write manifest {}", out.display()))?;
-                Ok((
-                    render_output(
+                let output = match cli.format {
+                    OutputFormat::Text => render_scoped_replacement_manifest_export_text(
+                        &out,
+                        &manifest.kind,
+                        manifest.version,
+                        manifest.plan.replacements.len(),
+                    ),
+                    OutputFormat::Json => render_output(
                         &cli.format,
                         &serde_json::json!({
                             "path": out.display().to_string(),
@@ -186,12 +192,53 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                             "replacements": manifest.plan.replacements.len(),
                         }),
                     ),
-                    0,
-                ))
+                };
+                Ok((output, 0))
             }
             PlanCommands::InspectScopedReplacementManifest { path } => {
                 let inspection = inspect_scoped_replacement_manifest(&path)?;
-                Ok((render_output(&cli.format, &inspection), 0))
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_scoped_replacement_manifest_inspection_text(&inspection)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &inspection),
+                };
+                Ok((output, 0))
+            }
+            PlanCommands::ValidateScopedReplacementManifest { paths } => {
+                let summary = validate_scoped_replacement_manifest_inputs_batch(&paths)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_scoped_replacement_manifest_validation_text(&summary),
+                    OutputFormat::Json => render_output(&cli.format, &summary),
+                };
+                let exit_code = if summary.manifests_failing == 0 { 0 } else { 1 };
+                Ok((output, exit_code))
+            }
+            PlanCommands::UpgradeScopedReplacementManifest {
+                path,
+                out,
+                in_place,
+            } => {
+                let output_path = match (out, in_place) {
+                    (Some(out), false) => out,
+                    (None, true) => path.clone(),
+                    (Some(_), true) => {
+                        bail!(
+                            "plan upgrade-scoped-replacement-manifest accepts either --out or --in-place, not both"
+                        );
+                    }
+                    (None, false) => {
+                        bail!(
+                            "plan upgrade-scoped-replacement-manifest requires either --out <path> or --in-place"
+                        );
+                    }
+                };
+                let report = upgrade_scoped_replacement_manifest(&path, &output_path)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_scoped_replacement_manifest_upgrade_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
             }
         },
         Commands::Modify {
@@ -274,14 +321,14 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             let scoped_replacement_manifests = apply_scoped_replacement_manifest
                 .iter()
                 .map(|manifest_path| {
-                    let manifest = load_scoped_replacement_manifest(manifest_path)?;
-                    validate_scoped_replacement_manifest(&manifest, &path)?;
-                    Ok(manifest)
+                    let loaded = load_scoped_replacement_manifest_with_metadata(manifest_path)?;
+                    validate_scoped_replacement_manifest(&loaded.manifest, &path)?;
+                    Ok(loaded)
                 })
-                .collect::<Result<Vec<_>>>()?;
+                .collect::<Result<Vec<LoadedScopedReplacementManifest>>>()?;
             let mut libraries = libraries;
             for manifest in &scoped_replacement_manifests {
-                for library in &manifest.libraries {
+                for library in &manifest.manifest.libraries {
                     if !libraries.iter().any(|existing| existing == &library.path) {
                         libraries.push(library.path.clone());
                     }
@@ -289,7 +336,17 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             }
             let mut apply_scoped_replacement_plan = apply_scoped_replacement_plan;
             apply_scoped_replacement_plan
-                .extend(scoped_replacement_manifests.into_iter().map(|manifest| manifest.plan));
+                .extend(scoped_replacement_manifests.iter().map(|loaded| loaded.manifest.plan.clone()));
+            let applied_scoped_replacement_manifests = scoped_replacement_manifests
+                .iter()
+                .map(|loaded| AppliedScopedReplacementManifestView {
+                    path: loaded.manifest_path.display().to_string(),
+                    source_version: loaded.source_version,
+                    version: loaded.manifest.version,
+                    migration_applied: loaded.source_version != loaded.manifest.version,
+                    replacements: loaded.manifest.plan.replacements.len(),
+                })
+                .collect::<Vec<_>>();
             let set_net_class = set_net_class
                 .iter()
                 .map(|value| parse_set_net_class_arg(value))
@@ -298,7 +355,7 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 .iter()
                 .map(|value| parse_set_reference_arg(value))
                 .collect::<Result<Vec<_>>>()?;
-            let report = modify_board_with_plan(
+            let mut report = modify_board_with_plan(
                 &path,
                 &delete_track,
                 &delete_via,
@@ -323,7 +380,12 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 &apply_scoped_replacement_policy,
                 &apply_scoped_replacement_plan,
             )?;
-            Ok((render_output(&cli.format, &report), 0))
+            report.applied_scoped_replacement_manifests = applied_scoped_replacement_manifests;
+            let output = match cli.format {
+                OutputFormat::Text => render_modify_report_text(&report),
+                OutputFormat::Json => render_output(&cli.format, &report),
+            };
+            Ok((output, 0))
         }
     }
 }

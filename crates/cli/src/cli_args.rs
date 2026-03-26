@@ -304,6 +304,22 @@ pub(crate) enum PlanCommands {
         /// Manifest path
         path: PathBuf,
     },
+    /// Validate a scoped replacement manifest for drift/missing inputs
+    ValidateScopedReplacementManifest {
+        /// Manifest path(s)
+        paths: Vec<PathBuf>,
+    },
+    /// Rewrite a scoped replacement manifest into the current schema version
+    UpgradeScopedReplacementManifest {
+        /// Input manifest path
+        path: PathBuf,
+        /// Output manifest path
+        #[arg(long)]
+        out: Option<PathBuf>,
+        /// Rewrite the input manifest in place
+        #[arg(long, default_value_t = false)]
+        in_place: bool,
+    },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -342,9 +358,42 @@ pub(crate) struct ManifestFileInspection {
 pub(crate) struct ScopedReplacementPlanManifestInspection {
     pub(crate) manifest_path: PathBuf,
     pub(crate) kind: String,
+    pub(crate) source_version: u32,
     pub(crate) version: u32,
+    pub(crate) migration_applied: bool,
     pub(crate) replacements: usize,
     pub(crate) all_inputs_match: bool,
     pub(crate) board: ManifestFileInspection,
     pub(crate) libraries: Vec<ManifestFileInspection>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub(crate) struct ScopedReplacementPlanManifestUpgradeReport {
+    pub(crate) input_path: PathBuf,
+    pub(crate) output_path: PathBuf,
+    pub(crate) kind: String,
+    pub(crate) source_version: u32,
+    pub(crate) version: u32,
+    pub(crate) migration_applied: bool,
+    pub(crate) replacements: usize,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub(crate) struct ScopedReplacementPlanManifestValidationReport {
+    pub(crate) manifest_path: PathBuf,
+    pub(crate) source_version: u32,
+    pub(crate) version: u32,
+    pub(crate) migration_applied: bool,
+    pub(crate) all_inputs_match: bool,
+    pub(crate) board_status: ManifestDriftStatus,
+    pub(crate) drifted_libraries: usize,
+    pub(crate) missing_libraries: usize,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub(crate) struct ScopedReplacementPlanManifestValidationSummary {
+    pub(crate) manifests_checked: usize,
+    pub(crate) manifests_passing: usize,
+    pub(crate) manifests_failing: usize,
+    pub(crate) reports: Vec<ScopedReplacementPlanManifestValidationReport>,
 }

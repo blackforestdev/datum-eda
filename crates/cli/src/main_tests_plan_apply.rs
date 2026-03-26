@@ -92,6 +92,7 @@ fn execute_plan_export_scoped_replacement_manifest_writes_versioned_artifact() {
     let _ = std::fs::remove_file(&manifest_path);
 }
 
+
 #[test]
 fn execute_modify_apply_scoped_replacement_plan_file_applies_preview_output() {
     let source = kicad_fixture_path("partial-route-demo.kicad_pcb");
@@ -303,7 +304,25 @@ fn execute_modify_apply_scoped_replacement_manifest_loads_recorded_libraries() {
     ])
     .expect("CLI should parse");
     let output = execute(modify_cli).expect("manifest apply should succeed");
-    assert!(output.contains("\"saved_path\""));
+    let payload: serde_json::Value =
+        serde_json::from_str(&output).expect("manifest apply JSON should parse");
+    assert!(payload["saved_path"].is_string());
+    assert_eq!(
+        payload["applied_scoped_replacement_manifests"][0]["source_version"].as_u64(),
+        Some(1)
+    );
+    assert_eq!(
+        payload["applied_scoped_replacement_manifests"][0]["version"].as_u64(),
+        Some(1)
+    );
+    assert_eq!(
+        payload["applied_scoped_replacement_manifests"][0]["migration_applied"].as_bool(),
+        Some(false)
+    );
+    assert_eq!(
+        payload["applied_scoped_replacement_manifests"][0]["replacements"].as_u64(),
+        Some(2)
+    );
 
     let components = match query_components(&target).expect("saved components should query") {
         ComponentListView::Board { components } => components,
@@ -504,7 +523,9 @@ fn execute_plan_inspect_scoped_replacement_manifest_reports_match_status() {
     let output = execute(inspect_cli).expect("manifest inspect should succeed");
     let payload: serde_json::Value =
         serde_json::from_str(&output).expect("manifest inspect JSON should parse");
+    assert_eq!(payload["source_version"].as_u64(), Some(1));
     assert_eq!(payload["version"].as_u64(), Some(1));
+    assert_eq!(payload["migration_applied"].as_bool(), Some(false));
     assert_eq!(payload["replacements"].as_u64(), Some(1));
     assert_eq!(payload["all_inputs_match"].as_bool(), Some(true));
     assert_eq!(payload["board"]["status"].as_str(), Some("match"));
@@ -517,6 +538,8 @@ fn execute_plan_inspect_scoped_replacement_manifest_reports_match_status() {
     )));
     let _ = std::fs::remove_file(&manifest_path);
 }
+
+
 
 #[test]
 fn execute_plan_inspect_scoped_replacement_manifest_reports_drift_status() {
@@ -599,6 +622,8 @@ fn execute_plan_inspect_scoped_replacement_manifest_reports_drift_status() {
     let output = execute(inspect_cli).expect("manifest inspect should succeed");
     let payload: serde_json::Value =
         serde_json::from_str(&output).expect("manifest inspect JSON should parse");
+    assert_eq!(payload["source_version"].as_u64(), Some(1));
+    assert_eq!(payload["migration_applied"].as_bool(), Some(false));
     assert_eq!(payload["all_inputs_match"].as_bool(), Some(false));
     assert_eq!(payload["board"]["status"].as_str(), Some("drifted"));
     assert_eq!(payload["libraries"][0]["status"].as_str(), Some("match"));

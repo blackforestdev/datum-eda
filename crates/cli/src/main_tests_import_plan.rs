@@ -56,6 +56,23 @@ fn render_output_text_joins_array_items() {
 }
 
 #[test]
+fn cli_upgrade_scoped_replacement_manifest_rejects_out_and_in_place_together() {
+    let cli = Cli::try_parse_from([
+        "eda",
+        "plan",
+        "upgrade-scoped-replacement-manifest",
+        "input.json",
+        "--out",
+        "output.json",
+        "--in-place",
+    ])
+    .expect("CLI should parse");
+    let err = execute(cli).expect_err("upgrade command should reject ambiguous output mode");
+    let msg = format!("{err:#}");
+    assert!(msg.contains("either --out or --in-place, not both"), "{msg}");
+}
+
+#[test]
 fn clap_parses_import_command_with_global_format_before_subcommand() {
     let cli = Cli::try_parse_from([
         "eda",

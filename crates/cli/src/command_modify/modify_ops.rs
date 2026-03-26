@@ -303,5 +303,6 @@ pub(crate) fn modify_board(
         actions,
         last_result,
         saved_path,
+        applied_scoped_replacement_manifests: Vec::new(),
     })
 }

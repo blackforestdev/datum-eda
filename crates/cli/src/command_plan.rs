@@ -12,6 +12,12 @@ struct LegacyScopedReplacementPlanManifestV0 {
     plan: ScopedComponentReplacementPlan,
 }
 
+pub(super) struct LoadedScopedReplacementManifest {
+    pub(super) manifest_path: PathBuf,
+    pub(super) manifest: ScopedReplacementPlanManifest,
+    pub(super) source_version: u32,
+}
+
 pub(super) fn parse_scoped_replacement_override_arg(
     value: &str,
 ) -> Result<ScopedComponentReplacementOverride> {
@@ -51,7 +57,28 @@ pub(super) fn scoped_replacement_manifest_from_parts(
     })
 }
 
+pub(super) fn render_scoped_replacement_manifest_export_text(
+    path: &Path,
+    kind: &str,
+    version: u32,
+    replacements: usize,
+) -> String {
+    [
+        format!("manifest: {}", path.display()),
+        format!("kind: {kind}"),
+        format!("version: {version}"),
+        format!("replacements: {replacements}"),
+    ]
+    .join("\n")
+}
+
 pub(super) fn load_scoped_replacement_manifest(path: &Path) -> Result<ScopedReplacementPlanManifest> {
+    Ok(load_scoped_replacement_manifest_with_metadata(path)?.manifest)
+}
+
+pub(super) fn load_scoped_replacement_manifest_with_metadata(
+    path: &Path,
+) -> Result<LoadedScopedReplacementManifest> {
     let contents = std::fs::read_to_string(path)
         .with_context(|| format!("failed to read scoped replacement manifest {}", path.display()))?;
     let value = serde_json::from_str::<serde_json::Value>(&contents)
@@ -97,13 +124,17 @@ pub(super) fn load_scoped_replacement_manifest(path: &Path) -> Result<ScopedRepl
                         path.display()
                     )
                 })?;
-            Ok(ScopedReplacementPlanManifest {
-                kind: SCOPED_REPLACEMENT_MANIFEST_KIND.to_string(),
-                version: SCOPED_REPLACEMENT_MANIFEST_VERSION,
-                board_path: manifest.board_path,
-                board_source_hash: manifest.board_source_hash,
-                libraries: manifest.libraries,
-                plan: manifest.plan,
+            Ok(LoadedScopedReplacementManifest {
+                manifest_path: path.to_path_buf(),
+                manifest: ScopedReplacementPlanManifest {
+                    kind: SCOPED_REPLACEMENT_MANIFEST_KIND.to_string(),
+                    version: SCOPED_REPLACEMENT_MANIFEST_VERSION,
+                    board_path: manifest.board_path,
+                    board_source_hash: manifest.board_source_hash,
+                    libraries: manifest.libraries,
+                    plan: manifest.plan,
+                },
+                source_version: 0,
             })
         }
         SCOPED_REPLACEMENT_MANIFEST_VERSION => {
@@ -118,7 +149,11 @@ pub(super) fn load_scoped_replacement_manifest(path: &Path) -> Result<ScopedRepl
                     path.display()
                 );
             }
-            Ok(manifest)
+            Ok(LoadedScopedReplacementManifest {
+                manifest_path: path.to_path_buf(),
+                manifest,
+                source_version: SCOPED_REPLACEMENT_MANIFEST_VERSION,
+            })
         }
         _ => {
             bail!(
@@ -128,6 +163,41 @@ pub(super) fn load_scoped_replacement_manifest(path: &Path) -> Result<ScopedRepl
             );
         }
     }
+}
+
+pub(super) fn upgrade_scoped_replacement_manifest(
+    input_path: &Path,
+    output_path: &Path,
+) -> Result<ScopedReplacementPlanManifestUpgradeReport> {
+    let loaded = load_scoped_replacement_manifest_with_metadata(input_path)?;
+    let payload = serde_json::to_string_pretty(&loaded.manifest)
+        .expect("manifest serialization must succeed");
+    std::fs::write(output_path, payload)
+        .with_context(|| format!("failed to write upgraded manifest {}", output_path.display()))?;
+    Ok(ScopedReplacementPlanManifestUpgradeReport {
+        input_path: input_path.to_path_buf(),
+        output_path: output_path.to_path_buf(),
+        kind: loaded.manifest.kind.clone(),
+        source_version: loaded.source_version,
+        version: loaded.manifest.version,
+        migration_applied: loaded.source_version != loaded.manifest.version,
+        replacements: loaded.manifest.plan.replacements.len(),
+    })
+}
+
+pub(super) fn render_scoped_replacement_manifest_upgrade_text(
+    report: &ScopedReplacementPlanManifestUpgradeReport,
+) -> String {
+    [
+        format!("input: {}", report.input_path.display()),
+        format!("output: {}", report.output_path.display()),
+        format!("kind: {}", report.kind),
+        format!("source_version: {}", report.source_version),
+        format!("version: {}", report.version),
+        format!("migration_applied: {}", report.migration_applied),
+        format!("replacements: {}", report.replacements),
+    ]
+    .join("\n")
 }
 
 pub(super) fn validate_scoped_replacement_manifest(
@@ -183,9 +253,10 @@ fn inspect_manifest_file(
 pub(super) fn inspect_scoped_replacement_manifest(
     manifest_path: &Path,
 ) -> Result<ScopedReplacementPlanManifestInspection> {
-    let manifest = load_scoped_replacement_manifest(manifest_path)?;
-    let board = inspect_manifest_file(&manifest.board_path, &manifest.board_source_hash)?;
-    let libraries = manifest
+    let loaded = load_scoped_replacement_manifest_with_metadata(manifest_path)?;
+    let board = inspect_manifest_file(&loaded.manifest.board_path, &loaded.manifest.board_source_hash)?;
+    let libraries = loaded
+        .manifest
         .libraries
         .iter()
         .map(|library| inspect_manifest_file(&library.path, &library.source_hash))
@@ -197,11 +268,119 @@ pub(super) fn inspect_scoped_replacement_manifest(
 
     Ok(ScopedReplacementPlanManifestInspection {
         manifest_path: manifest_path.to_path_buf(),
-        kind: manifest.kind,
-        version: manifest.version,
-        replacements: manifest.plan.replacements.len(),
+        kind: loaded.manifest.kind,
+        source_version: loaded.source_version,
+        version: loaded.manifest.version,
+        migration_applied: loaded.source_version != loaded.manifest.version,
+        replacements: loaded.manifest.plan.replacements.len(),
         all_inputs_match,
         board,
         libraries,
     })
+}
+
+pub(super) fn render_scoped_replacement_manifest_inspection_text(
+    inspection: &ScopedReplacementPlanManifestInspection,
+) -> String {
+    let mut lines = vec![
+        format!("manifest: {}", inspection.manifest_path.display()),
+        format!("kind: {}", inspection.kind),
+        format!("source_version: {}", inspection.source_version),
+        format!("version: {}", inspection.version),
+        format!("migration_applied: {}", inspection.migration_applied),
+        format!("replacements: {}", inspection.replacements),
+        format!("all_inputs_match: {}", inspection.all_inputs_match),
+        "board:".to_string(),
+        format!(
+            "  {} [{}]",
+            inspection.board.path.display(),
+            render_manifest_drift_status(inspection.board.status)
+        ),
+    ];
+    if !inspection.libraries.is_empty() {
+        lines.push("libraries:".to_string());
+        for library in &inspection.libraries {
+            lines.push(format!(
+                "  {} [{}]",
+                library.path.display(),
+                render_manifest_drift_status(library.status)
+            ));
+        }
+    }
+    lines.join("\n")
+}
+
+fn render_manifest_drift_status(status: ManifestDriftStatus) -> &'static str {
+    match status {
+        ManifestDriftStatus::Match => "match",
+        ManifestDriftStatus::Drifted => "drifted",
+        ManifestDriftStatus::Missing => "missing",
+    }
+}
+
+pub(super) fn validate_scoped_replacement_manifest_inputs(
+    manifest_path: &Path,
+) -> Result<ScopedReplacementPlanManifestValidationReport> {
+    let inspection = inspect_scoped_replacement_manifest(manifest_path)?;
+    let drifted_libraries = inspection
+        .libraries
+        .iter()
+        .filter(|library| library.status == ManifestDriftStatus::Drifted)
+        .count();
+    let missing_libraries = inspection
+        .libraries
+        .iter()
+        .filter(|library| library.status == ManifestDriftStatus::Missing)
+        .count();
+    Ok(ScopedReplacementPlanManifestValidationReport {
+        manifest_path: inspection.manifest_path,
+        source_version: inspection.source_version,
+        version: inspection.version,
+        migration_applied: inspection.migration_applied,
+        all_inputs_match: inspection.all_inputs_match,
+        board_status: inspection.board.status,
+        drifted_libraries,
+        missing_libraries,
+    })
+}
+
+pub(super) fn validate_scoped_replacement_manifest_inputs_batch(
+    manifest_paths: &[PathBuf],
+) -> Result<ScopedReplacementPlanManifestValidationSummary> {
+    let reports = manifest_paths
+        .iter()
+        .map(|path| validate_scoped_replacement_manifest_inputs(path))
+        .collect::<Result<Vec<_>>>()?;
+    let manifests_checked = reports.len();
+    let manifests_passing = reports.iter().filter(|report| report.all_inputs_match).count();
+    Ok(ScopedReplacementPlanManifestValidationSummary {
+        manifests_checked,
+        manifests_passing,
+        manifests_failing: manifests_checked - manifests_passing,
+        reports,
+    })
+}
+
+pub(super) fn render_scoped_replacement_manifest_validation_text(
+    summary: &ScopedReplacementPlanManifestValidationSummary,
+) -> String {
+    let mut lines = vec![
+        format!("manifests_checked: {}", summary.manifests_checked),
+        format!("manifests_passing: {}", summary.manifests_passing),
+        format!("manifests_failing: {}", summary.manifests_failing),
+    ];
+    for report in &summary.reports {
+        lines.push(format!("manifest: {}", report.manifest_path.display()));
+        lines.push(format!("  source_version: {}", report.source_version));
+        lines.push(format!("  version: {}", report.version));
+        lines.push(format!("  migration_applied: {}", report.migration_applied));
+        lines.push(format!("  all_inputs_match: {}", report.all_inputs_match));
+        lines.push(format!(
+            "  board_status: {}",
+            render_manifest_drift_status(report.board_status)
+        ));
+        lines.push(format!("  drifted_libraries: {}", report.drifted_libraries));
+        lines.push(format!("  missing_libraries: {}", report.missing_libraries));
+    }
+    lines.join("\n")
 }

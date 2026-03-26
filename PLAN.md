@@ -239,12 +239,16 @@ and explicit non-goals. No support claim yet.
 ### M3: Write Operations on Imported Designs
 **Goal**: Limited but safe modifications to imported designs.
 
-**Progress (2026-03-25)**:
+**Progress (2026-03-26)**:
 - [x] Write-operation vertical slice landed end-to-end for current board scope (`move_component`, `rotate_component`, `set_value`, `set_reference`, `assign_part`, `set_package`, `set_package_with_part`, `set_net_class`, `set_design_rule`, `delete_component`, `delete_track`, `delete_via`, `save`, `undo`, `redo`)
 - [x] Batch replacement flow landed (`replace_components` transaction + undo/redo integration)
 - [x] Current write-surface parity harnesses in place (`m3_write_surface_parity`, `m3_undo_redo_roundtrip`, `m3_op_determinism`)
+- [x] Determinism hook now covers the full current save-backed M3 mutation slice, including `delete_track`, `set_package_with_part`, and the replacement-plan family
+- [x] Sidecar-backed save/reimport fidelity harness landed (`m3_sidecar_roundtrip_fidelity`)
+- [x] Replacement-family artifact stability now covered in closure hooks (`replace_component`, `replace_components`, `apply_component_replacement_plan`, `apply_component_replacement_policy`, `apply_scoped_component_replacement_policy`, `apply_scoped_component_replacement_plan`)
+- [x] Aggregate M3 acceptance gate landed (`m3_acceptance_gate` composes determinism, undo/redo, sidecar fidelity, and write-surface parity)
 - [x] Large entry-point risk reduced for daemon/API/MCP test infrastructure through module splits and CI file-size budget checks
-- [ ] Full M3 milestone exit criteria still open (broader operation model + deeper fidelity envelope)
+- [ ] Full M3 milestone exit criteria still open (remaining gaps are milestone-close synthesis and any still-missing direct proof for rows not yet covered by determinism/undo/fidelity/parity hooks)
 
 - [ ] Operation model:
   - Operation trait (validate, execute, describe)
@@ -264,6 +268,7 @@ and explicit non-goals. No support claim yet.
 - [x] CLI: `tool modify <design> ...` current write-surface implemented for board-slice operations
 - [x] Export: KiCad .kicad_pcb write-back (current modified-board slice saves in original format)
 - [x] Test: import design → modify → export → re-import → verify changes (current board-slice coverage)
+- [x] Test: dedicated closure hooks now cover current determinism, undo/redo, write-surface parity, and sidecar-backed artifact fidelity for the implemented M3 slice
 
 **Deliverable**: AI agent can reorganize component placement on an imported
 design, update values, adjust rules, and save back to KiCad format.

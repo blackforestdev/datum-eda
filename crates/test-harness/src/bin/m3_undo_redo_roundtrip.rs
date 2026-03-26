@@ -2,8 +2,8 @@ use std::path::PathBuf;
 
 use anyhow::{Result, bail};
 use eda_engine::api::{
-    AssignPartInput, Engine, MoveComponentInput, SetDesignRuleInput, SetNetClassInput,
-    SetPackageInput,
+    AssignPartInput, Engine, MoveComponentInput, RotateComponentInput, SetDesignRuleInput,
+    SetNetClassInput, SetPackageInput, SetReferenceInput, SetValueInput,
 };
 use eda_engine::rules::ast::{RuleParams, RuleScope, RuleType};
 use eda_test_harness::canonical_json;
@@ -171,6 +171,22 @@ fn print_usage() {
 }
 
 fn build_report(cli: &Cli) -> Result<Report> {
+    let via_fixture_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../engine/testdata/import/kicad/simple-demo.kicad_pcb")
+        .canonicalize()
+        .map_err(|err| anyhow::anyhow!("failed to resolve via fixture path: {err}"))?;
+    let via_uuid =
+        Uuid::parse_str("cccccccc-cccc-cccc-cccc-cccccccccccc").expect("uuid should parse");
+    let mut via_engine = Engine::new()?;
+    via_engine.import(&via_fixture_path)?;
+    let baseline_via_net_info = via_engine.get_net_info()?;
+    let delete_via_result = via_engine.delete_via(&via_uuid)?;
+    let after_delete_via = via_engine.get_net_info()?;
+    let via_undo_result = via_engine.undo()?;
+    let after_via_undo = via_engine.get_net_info()?;
+    let via_redo_result = via_engine.redo()?;
+    let after_via_redo = via_engine.get_net_info()?;
+
     let mut engine = Engine::new()?;
     engine.import(&cli.board_fixture_path)?;
     let baseline = engine.get_net_info()?;
@@ -194,6 +210,55 @@ fn build_report(cli: &Cli) -> Result<Report> {
     let after_move_undo = move_engine.get_components()?;
     let move_redo_result = move_engine.redo()?;
     let after_move_redo = move_engine.get_components()?;
+
+    let mut delete_component_engine = Engine::new()?;
+    delete_component_engine.import(&cli.board_fixture_path)?;
+    let baseline_delete_component_components = delete_component_engine.get_components()?;
+    let delete_component_result = delete_component_engine.delete_component(&cli.component_uuid)?;
+    let after_delete_component = delete_component_engine.get_components()?;
+    let delete_component_undo_result = delete_component_engine.undo()?;
+    let after_delete_component_undo = delete_component_engine.get_components()?;
+    let delete_component_redo_result = delete_component_engine.redo()?;
+    let after_delete_component_redo = delete_component_engine.get_components()?;
+
+    let mut rotate_engine = Engine::new()?;
+    rotate_engine.import(&cli.board_fixture_path)?;
+    let baseline_rotate_components = rotate_engine.get_components()?;
+    let rotate_result = rotate_engine.rotate_component(RotateComponentInput {
+        uuid: cli.component_uuid,
+        rotation: 180,
+    })?;
+    let after_rotate = rotate_engine.get_components()?;
+    let rotate_undo_result = rotate_engine.undo()?;
+    let after_rotate_undo = rotate_engine.get_components()?;
+    let rotate_redo_result = rotate_engine.redo()?;
+    let after_rotate_redo = rotate_engine.get_components()?;
+
+    let mut set_value_engine = Engine::new()?;
+    set_value_engine.import(&cli.board_fixture_path)?;
+    let baseline_set_value_components = set_value_engine.get_components()?;
+    let set_value_result = set_value_engine.set_value(SetValueInput {
+        uuid: cli.component_uuid,
+        value: "22k".to_string(),
+    })?;
+    let after_set_value = set_value_engine.get_components()?;
+    let set_value_undo_result = set_value_engine.undo()?;
+    let after_set_value_undo = set_value_engine.get_components()?;
+    let set_value_redo_result = set_value_engine.redo()?;
+    let after_set_value_redo = set_value_engine.get_components()?;
+
+    let mut set_reference_engine = Engine::new()?;
+    set_reference_engine.import(&cli.board_fixture_path)?;
+    let baseline_set_reference_components = set_reference_engine.get_components()?;
+    let set_reference_result = set_reference_engine.set_reference(SetReferenceInput {
+        uuid: cli.component_uuid,
+        reference: "R10".to_string(),
+    })?;
+    let after_set_reference = set_reference_engine.get_components()?;
+    let set_reference_undo_result = set_reference_engine.undo()?;
+    let after_set_reference_undo = set_reference_engine.get_components()?;
+    let set_reference_redo_result = set_reference_engine.redo()?;
+    let after_set_reference_redo = set_reference_engine.get_components()?;
 
     let mut rule_engine = Engine::new()?;
     rule_engine.import(&cli.board_fixture_path)?;
@@ -285,6 +350,39 @@ fn build_report(cli: &Cli) -> Result<Report> {
 
     let checks = vec![
         Check {
+            name: "undo_restores_deleted_via_state".to_string(),
+            status: if after_via_undo == baseline_via_net_info
+                && after_delete_via != baseline_via_net_info
+            {
+                Status::Passed
+            } else {
+                Status::Failed
+            },
+            evidence: format!(
+                "delete_via={}, undo={}, baseline_eq_undo={}, baseline_eq_delete={}",
+                delete_via_result.description,
+                via_undo_result.description,
+                after_via_undo == baseline_via_net_info,
+                after_delete_via == baseline_via_net_info
+            ),
+        },
+        Check {
+            name: "redo_reapplies_deleted_via_state".to_string(),
+            status: if after_via_redo == after_delete_via && via_engine.can_undo() && !via_engine.can_redo()
+            {
+                Status::Passed
+            } else {
+                Status::Failed
+            },
+            evidence: format!(
+                "redo={}, delete_eq_redo={}, can_undo={}, can_redo={}",
+                via_redo_result.description,
+                after_via_redo == after_delete_via,
+                via_engine.can_undo(),
+                via_engine.can_redo()
+            ),
+        },
+        Check {
             name: "undo_restores_deleted_track_state".to_string(),
             status: if after_undo == baseline && after_delete != baseline {
                 Status::Passed
@@ -332,6 +430,86 @@ fn build_report(cli: &Cli) -> Result<Report> {
                 after_move != baseline_components,
                 after_move_undo == baseline_components,
                 after_move_redo == after_move
+            ),
+        },
+        Check {
+            name: "undo_restores_deleted_component_state".to_string(),
+            status: if after_delete_component != baseline_delete_component_components
+                && after_delete_component_undo == baseline_delete_component_components
+                && after_delete_component_redo == after_delete_component
+            {
+                Status::Passed
+            } else {
+                Status::Failed
+            },
+            evidence: format!(
+                "delete_component={}, undo={}, redo={}, delete_differs={}, undo_restored={}, redo_restored={}",
+                delete_component_result.description,
+                delete_component_undo_result.description,
+                delete_component_redo_result.description,
+                after_delete_component != baseline_delete_component_components,
+                after_delete_component_undo == baseline_delete_component_components,
+                after_delete_component_redo == after_delete_component
+            ),
+        },
+        Check {
+            name: "undo_restores_rotated_component_state".to_string(),
+            status: if after_rotate != baseline_rotate_components
+                && after_rotate_undo == baseline_rotate_components
+                && after_rotate_redo == after_rotate
+            {
+                Status::Passed
+            } else {
+                Status::Failed
+            },
+            evidence: format!(
+                "rotate_component={}, undo={}, redo={}, rotate_differs={}, undo_restored={}, redo_restored={}",
+                rotate_result.description,
+                rotate_undo_result.description,
+                rotate_redo_result.description,
+                after_rotate != baseline_rotate_components,
+                after_rotate_undo == baseline_rotate_components,
+                after_rotate_redo == after_rotate
+            ),
+        },
+        Check {
+            name: "undo_restores_set_value_state".to_string(),
+            status: if after_set_value != baseline_set_value_components
+                && after_set_value_undo == baseline_set_value_components
+                && after_set_value_redo == after_set_value
+            {
+                Status::Passed
+            } else {
+                Status::Failed
+            },
+            evidence: format!(
+                "set_value={}, undo={}, redo={}, value_differs={}, undo_restored={}, redo_restored={}",
+                set_value_result.description,
+                set_value_undo_result.description,
+                set_value_redo_result.description,
+                after_set_value != baseline_set_value_components,
+                after_set_value_undo == baseline_set_value_components,
+                after_set_value_redo == after_set_value
+            ),
+        },
+        Check {
+            name: "undo_restores_set_reference_state".to_string(),
+            status: if after_set_reference != baseline_set_reference_components
+                && after_set_reference_undo == baseline_set_reference_components
+                && after_set_reference_redo == after_set_reference
+            {
+                Status::Passed
+            } else {
+                Status::Failed
+            },
+            evidence: format!(
+                "set_reference={}, undo={}, redo={}, reference_differs={}, undo_restored={}, redo_restored={}",
+                set_reference_result.description,
+                set_reference_undo_result.description,
+                set_reference_redo_result.description,
+                after_set_reference != baseline_set_reference_components,
+                after_set_reference_undo == baseline_set_reference_components,
+                after_set_reference_redo == after_set_reference
             ),
         },
         Check {

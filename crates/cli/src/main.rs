@@ -71,6 +71,47 @@ struct ModifyReportView {
     actions: Vec<String>,
     last_result: Option<OperationResult>,
     saved_path: Option<String>,
+    applied_scoped_replacement_manifests: Vec<AppliedScopedReplacementManifestView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct AppliedScopedReplacementManifestView {
+    path: String,
+    source_version: u32,
+    version: u32,
+    migration_applied: bool,
+    replacements: usize,
+}
+
+fn render_modify_report_text(report: &ModifyReportView) -> String {
+    let mut lines = Vec::new();
+    if !report.actions.is_empty() {
+        lines.push("actions:".to_string());
+        for action in &report.actions {
+            lines.push(format!("  {action}"));
+        }
+    }
+    if let Some(saved_path) = &report.saved_path {
+        lines.push(format!("saved_path: {saved_path}"));
+    }
+    if !report.applied_scoped_replacement_manifests.is_empty() {
+        lines.push("applied_scoped_replacement_manifests:".to_string());
+        for manifest in &report.applied_scoped_replacement_manifests {
+            lines.push(format!(
+                "  {} source_version={} version={} migration_applied={} replacements={}",
+                manifest.path,
+                manifest.source_version,
+                manifest.version,
+                manifest.migration_applied,
+                manifest.replacements
+            ));
+        }
+    }
+    if lines.is_empty() {
+        serde_json::to_string_pretty(report).expect("CLI text formatting serialization must succeed")
+    } else {
+        lines.join("\n")
+    }
 }
 
 fn import_path(path: &Path) -> Result<ImportReport> {

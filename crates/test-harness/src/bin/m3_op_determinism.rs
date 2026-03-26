@@ -1,9 +1,16 @@
 use std::fs;
 use std::path::PathBuf;
 
-use anyhow::{Result, bail};
-use eda_engine::api::{Engine, MoveComponentInput};
+use anyhow::{Context, Result, bail};
+use eda_engine::api::{
+    AssignPartInput, ComponentReplacementPolicy, ComponentReplacementScope, Engine,
+    MoveComponentInput, PlannedComponentReplacementInput,
+    PolicyDrivenComponentReplacementInput, ReplaceComponentInput, RotateComponentInput,
+    ScopedComponentReplacementPolicyInput, SetDesignRuleInput, SetNetClassInput,
+    SetPackageInput, SetPackageWithPartInput, SetReferenceInput, SetValueInput,
+};
 use eda_test_harness::canonical_json;
+use eda_engine::rules::ast::{RuleParams, RuleScope, RuleType};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -168,44 +175,420 @@ fn print_usage() {
 }
 
 fn build_report(cli: &Cli) -> Result<DeterminismReport> {
-    let mut engine = Engine::new()?;
-    engine.import(&cli.board_fixture_path)?;
-    let moved = engine.move_component(MoveComponentInput {
-        uuid: cli.component_uuid,
-        position: eda_engine::ir::geometry::Point::new(cli.target_x_nm, cli.target_y_nm),
-        rotation: Some(cli.target_rotation_deg),
-    })?;
+    let simple_board_fixture_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../engine/testdata/import/kicad/simple-demo.kicad_pcb")
+        .canonicalize()
+        .map_err(|err| anyhow::anyhow!("failed to resolve simple-board determinism fixture path: {err}"))?;
+    let library_fixture_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../engine/testdata/import/eagle/simple-opamp.lbr")
+        .canonicalize()
+        .map_err(|err| anyhow::anyhow!("failed to resolve library determinism fixture path: {err}"))?;
+    let via_fixture_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../engine/testdata/import/kicad/simple-demo.kicad_pcb")
+        .canonicalize()
+        .map_err(|err| anyhow::anyhow!("failed to resolve via determinism fixture path: {err}"))?;
+    let via_uuid =
+        Uuid::parse_str("cccccccc-cccc-cccc-cccc-cccccccccccc").expect("uuid should parse");
+    let track_uuid =
+        Uuid::parse_str("cccccccc-cccc-cccc-cccc-cccccccccccc").expect("uuid should parse");
+    let second_component_uuid =
+        Uuid::parse_str("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb").expect("uuid should parse");
 
-    let second_probe_path = cli.save_probe_path.with_file_name(format!(
-        "{}-second.kicad_pcb",
-        cli.save_probe_path
-            .file_stem()
-            .and_then(|stem| stem.to_str())
-            .unwrap_or("datum-eda-m3-save-probe")
-    ));
-
-    let save_probe = match save_and_compare(&engine, &cli.save_probe_path, &second_probe_path) {
-        Ok(_) => GateResult {
-            gate: "save_byte_determinism".to_string(),
-            status: GateStatus::Passed,
-            evidence: format!(
-                "{}; Engine::save wrote byte-identical KiCad board output to {} and {}",
-                moved.description,
-                cli.save_probe_path.display(),
-                second_probe_path.display()
+    let gates = vec![
+        save_probe_gate(
+            "move_component_save_byte_determinism",
+            save_probe_paths(&cli.save_probe_path, "move_component"),
+            save_and_compare_after(&cli.board_fixture_path, |engine| {
+                let moved = engine.move_component(MoveComponentInput {
+                    uuid: cli.component_uuid,
+                    position: eda_engine::ir::geometry::Point::new(
+                        cli.target_x_nm,
+                        cli.target_y_nm,
+                    ),
+                    rotation: Some(cli.target_rotation_deg),
+                })?;
+                Ok(moved.description)
+            }),
+        ),
+        save_probe_gate(
+            "delete_via_save_byte_determinism",
+            save_probe_paths(&cli.save_probe_path, "delete_via"),
+            save_and_compare_after(&via_fixture_path, |engine| {
+                let deleted = engine.delete_via(&via_uuid)?;
+                Ok(deleted.description)
+            }),
+        ),
+        save_probe_gate(
+            "delete_component_save_byte_determinism",
+            save_probe_paths(&cli.save_probe_path, "delete_component"),
+            save_and_compare_after(&cli.board_fixture_path, |engine| {
+                let deleted = engine.delete_component(&cli.component_uuid)?;
+                Ok(deleted.description)
+            }),
+        ),
+        save_probe_gate(
+            "delete_track_save_byte_determinism",
+            save_probe_paths(&cli.save_probe_path, "delete_track"),
+            save_and_compare_after(&cli.board_fixture_path, |engine| {
+                let deleted = engine.delete_track(&track_uuid)?;
+                Ok(deleted.description)
+            }),
+        ),
+        save_probe_gate(
+            "rotate_component_save_byte_determinism",
+            save_probe_paths(&cli.save_probe_path, "rotate_component"),
+            save_and_compare_after(&cli.board_fixture_path, |engine| {
+                let rotated = engine.rotate_component(RotateComponentInput {
+                    uuid: cli.component_uuid,
+                    rotation: 180,
+                })?;
+                Ok(rotated.description)
+            }),
+        ),
+        save_probe_gate(
+            "set_value_save_byte_determinism",
+            save_probe_paths(&cli.save_probe_path, "set_value"),
+            save_and_compare_after(&cli.board_fixture_path, |engine| {
+                let updated = engine.set_value(SetValueInput {
+                    uuid: cli.component_uuid,
+                    value: "22k".to_string(),
+                })?;
+                Ok(updated.description)
+            }),
+        ),
+        save_probe_gate(
+            "set_reference_save_byte_determinism",
+            save_probe_paths(&cli.save_probe_path, "set_reference"),
+            save_and_compare_after(&cli.board_fixture_path, |engine| {
+                let updated = engine.set_reference(SetReferenceInput {
+                    uuid: cli.component_uuid,
+                    reference: "R10".to_string(),
+                })?;
+                Ok(updated.description)
+            }),
+        ),
+        save_probe_gate(
+            "set_design_rule_save_byte_determinism",
+            save_probe_paths(&cli.save_probe_path, "set_design_rule"),
+            save_and_compare_after(&simple_board_fixture_path, |engine| {
+                engine.set_design_rule(SetDesignRuleInput {
+                    rule_type: RuleType::ClearanceCopper,
+                    scope: RuleScope::All,
+                    parameters: RuleParams::Clearance { min: 125_000 },
+                    priority: 10,
+                    name: Some("default clearance".to_string()),
+                })?;
+                Ok("set_design_rule clearance_copper".to_string())
+            }),
+        ),
+        save_probe_gate(
+            "assign_part_save_byte_determinism",
+            save_probe_paths(&cli.save_probe_path, "assign_part"),
+            save_and_compare_after_with_setup(
+                &cli.board_fixture_path,
+                |engine| {
+                    engine.import_eagle_library(&library_fixture_path)?;
+                    Ok(())
+                },
+                |engine| {
+                    let part_uuid = engine
+                        .search_pool("ALTAMP")?
+                        .into_iter()
+                        .next()
+                        .context("ALTAMP part missing for determinism probe")?
+                        .uuid;
+                    let updated = engine.assign_part(AssignPartInput {
+                        uuid: cli.component_uuid,
+                        part_uuid,
+                    })?;
+                    Ok(updated.description)
+                },
             ),
-        },
-        Err(err) => GateResult {
-            gate: "save_byte_determinism".to_string(),
-            status: GateStatus::Failed,
-            evidence: format!("KiCad board save determinism probe failed: {err}"),
-        },
-    };
-
-    let _ = fs::remove_file(&cli.save_probe_path);
-    let _ = fs::remove_file(&second_probe_path);
-
-    let gates = vec![save_probe];
+        ),
+        save_probe_gate(
+            "set_package_save_byte_determinism",
+            save_probe_paths(&cli.save_probe_path, "set_package"),
+            save_and_compare_after_with_setup(
+                &cli.board_fixture_path,
+                |engine| {
+                    engine.import_eagle_library(&library_fixture_path)?;
+                    Ok(())
+                },
+                |engine| {
+                    let package_uuid = engine
+                        .search_pool("ALTAMP")?
+                        .into_iter()
+                        .next()
+                        .context("ALTAMP package missing for determinism probe")?
+                        .package_uuid;
+                    let updated = engine.set_package(SetPackageInput {
+                        uuid: cli.component_uuid,
+                        package_uuid,
+                    })?;
+                    Ok(updated.description)
+                },
+            ),
+        ),
+        save_probe_gate(
+            "set_net_class_save_byte_determinism",
+            save_probe_paths(&cli.save_probe_path, "set_net_class"),
+            save_and_compare_after(&simple_board_fixture_path, |engine| {
+                let gnd_uuid = engine
+                    .get_net_info()?
+                    .into_iter()
+                    .find(|net| net.name == "GND")
+                    .context("GND net missing for determinism probe")?
+                    .uuid;
+                let updated = engine.set_net_class(SetNetClassInput {
+                    net_uuid: gnd_uuid,
+                    class_name: "power".to_string(),
+                    clearance: 125_000,
+                    track_width: 250_000,
+                    via_drill: 300_000,
+                    via_diameter: 600_000,
+                    diffpair_width: 0,
+                    diffpair_gap: 0,
+                })?;
+                Ok(updated.description)
+            }),
+        ),
+        save_probe_gate(
+            "set_package_with_part_save_byte_determinism",
+            save_probe_paths(&cli.save_probe_path, "set_package_with_part"),
+            save_and_compare_after_with_setup(
+                &cli.board_fixture_path,
+                |engine| {
+                    engine.import_eagle_library(&library_fixture_path)?;
+                    Ok(())
+                },
+                |engine| {
+                    let lmv321_part_uuid = engine
+                        .search_pool("LMV321")?
+                        .into_iter()
+                        .next()
+                        .context("LMV321 part missing for explicit package determinism probe")?
+                        .uuid;
+                    let altamp = engine
+                        .search_pool("ALTAMP")?
+                        .into_iter()
+                        .next()
+                        .context("ALTAMP part missing for explicit package determinism probe")?;
+                    engine.assign_part(AssignPartInput {
+                        uuid: cli.component_uuid,
+                        part_uuid: lmv321_part_uuid,
+                    })?;
+                    let updated = engine.set_package_with_part(SetPackageWithPartInput {
+                        uuid: cli.component_uuid,
+                        package_uuid: altamp.package_uuid,
+                        part_uuid: altamp.uuid,
+                    })?;
+                    Ok(updated.description)
+                },
+            ),
+        ),
+        save_probe_gate(
+            "replace_component_save_byte_determinism",
+            save_probe_paths(&cli.save_probe_path, "replace_component"),
+            save_and_compare_after_with_setup(
+                &cli.board_fixture_path,
+                |engine| {
+                    engine.import_eagle_library(&library_fixture_path)?;
+                    Ok(())
+                },
+                |engine| {
+                    let lmv321_part_uuid = engine
+                        .search_pool("LMV321")?
+                        .into_iter()
+                        .next()
+                        .context("LMV321 part missing for replace_component determinism probe")?
+                        .uuid;
+                    let altamp = engine
+                        .search_pool("ALTAMP")?
+                        .into_iter()
+                        .next()
+                        .context("ALTAMP part missing for replace_component determinism probe")?;
+                    engine.assign_part(AssignPartInput {
+                        uuid: cli.component_uuid,
+                        part_uuid: lmv321_part_uuid,
+                    })?;
+                    let updated = engine.replace_component(ReplaceComponentInput {
+                        uuid: cli.component_uuid,
+                        package_uuid: altamp.package_uuid,
+                        part_uuid: altamp.uuid,
+                    })?;
+                    Ok(updated.description)
+                },
+            ),
+        ),
+        save_probe_gate(
+            "replace_components_save_byte_determinism",
+            save_probe_paths(&cli.save_probe_path, "replace_components"),
+            save_and_compare_after_with_setup(
+                &cli.board_fixture_path,
+                |engine| {
+                    engine.import_eagle_library(&library_fixture_path)?;
+                    Ok(())
+                },
+                |engine| {
+                    let altamp = engine
+                        .search_pool("ALTAMP")?
+                        .into_iter()
+                        .next()
+                        .context("ALTAMP part missing for replace_components determinism probe")?;
+                    let updated = engine.replace_components(vec![
+                        ReplaceComponentInput {
+                            uuid: cli.component_uuid,
+                            package_uuid: altamp.package_uuid,
+                            part_uuid: altamp.uuid,
+                        },
+                        ReplaceComponentInput {
+                            uuid: second_component_uuid,
+                            package_uuid: altamp.package_uuid,
+                            part_uuid: altamp.uuid,
+                        },
+                    ])?;
+                    Ok(updated.description)
+                },
+            ),
+        ),
+        save_probe_gate(
+            "apply_component_replacement_plan_save_byte_determinism",
+            save_probe_paths(&cli.save_probe_path, "apply_component_replacement_plan"),
+            save_and_compare_after_with_setup(
+                &cli.board_fixture_path,
+                |engine| {
+                    engine.import_eagle_library(&library_fixture_path)?;
+                    Ok(())
+                },
+                |engine| {
+                    let lmv321_part_uuid = engine
+                        .search_pool("LMV321")?
+                        .into_iter()
+                        .next()
+                        .context("LMV321 part missing for replacement-plan determinism probe")?
+                        .uuid;
+                    let altamp = engine
+                        .search_pool("ALTAMP")?
+                        .into_iter()
+                        .next()
+                        .context("ALTAMP part missing for replacement-plan determinism probe")?;
+                    engine.assign_part(AssignPartInput {
+                        uuid: cli.component_uuid,
+                        part_uuid: lmv321_part_uuid,
+                    })?;
+                    let updated = engine.apply_component_replacement_plan(vec![
+                        PlannedComponentReplacementInput {
+                            uuid: cli.component_uuid,
+                            package_uuid: Some(altamp.package_uuid),
+                            part_uuid: None,
+                        },
+                    ])?;
+                    Ok(updated.description)
+                },
+            ),
+        ),
+        save_probe_gate(
+            "apply_component_replacement_policy_save_byte_determinism",
+            save_probe_paths(&cli.save_probe_path, "apply_component_replacement_policy"),
+            save_and_compare_after_with_setup(
+                &cli.board_fixture_path,
+                |engine| {
+                    engine.import_eagle_library(&library_fixture_path)?;
+                    Ok(())
+                },
+                |engine| {
+                    let lmv321_part_uuid = engine
+                        .search_pool("LMV321")?
+                        .into_iter()
+                        .next()
+                        .context("LMV321 part missing for replacement-policy determinism probe")?
+                        .uuid;
+                    engine.assign_part(AssignPartInput {
+                        uuid: cli.component_uuid,
+                        part_uuid: lmv321_part_uuid,
+                    })?;
+                    let updated = engine.apply_component_replacement_policy(vec![
+                        PolicyDrivenComponentReplacementInput {
+                            uuid: cli.component_uuid,
+                            policy: ComponentReplacementPolicy::BestCompatiblePackage,
+                        },
+                    ])?;
+                    Ok(updated.description)
+                },
+            ),
+        ),
+        save_probe_gate(
+            "apply_scoped_component_replacement_policy_save_byte_determinism",
+            save_probe_paths(&cli.save_probe_path, "apply_scoped_component_replacement_policy"),
+            save_and_compare_after_with_setup(
+                &cli.board_fixture_path,
+                |engine| {
+                    engine.import_eagle_library(&library_fixture_path)?;
+                    Ok(())
+                },
+                |engine| {
+                    let lmv321_part_uuid = engine
+                        .search_pool("LMV321")?
+                        .into_iter()
+                        .next()
+                        .context("LMV321 part missing for scoped-policy determinism probe")?
+                        .uuid;
+                    engine.assign_part(AssignPartInput {
+                        uuid: cli.component_uuid,
+                        part_uuid: lmv321_part_uuid,
+                    })?;
+                    let updated = engine.apply_scoped_component_replacement_policy(
+                        ScopedComponentReplacementPolicyInput {
+                            scope: ComponentReplacementScope {
+                                reference_prefix: Some("R1".to_string()),
+                                value_equals: None,
+                                current_package_uuid: None,
+                                current_part_uuid: None,
+                            },
+                            policy: ComponentReplacementPolicy::BestCompatiblePackage,
+                        },
+                    )?;
+                    Ok(updated.description)
+                },
+            ),
+        ),
+        save_probe_gate(
+            "apply_scoped_component_replacement_plan_save_byte_determinism",
+            save_probe_paths(&cli.save_probe_path, "apply_scoped_component_replacement_plan"),
+            save_and_compare_after_with_setup(
+                &cli.board_fixture_path,
+                |engine| {
+                    engine.import_eagle_library(&library_fixture_path)?;
+                    Ok(())
+                },
+                |engine| {
+                    let lmv321_part_uuid = engine
+                        .search_pool("LMV321")?
+                        .into_iter()
+                        .next()
+                        .context("LMV321 part missing for scoped-plan determinism probe")?
+                        .uuid;
+                    engine.assign_part(AssignPartInput {
+                        uuid: cli.component_uuid,
+                        part_uuid: lmv321_part_uuid,
+                    })?;
+                    let plan = engine.get_scoped_component_replacement_plan(
+                        ScopedComponentReplacementPolicyInput {
+                            scope: ComponentReplacementScope {
+                                reference_prefix: Some("R1".to_string()),
+                                value_equals: None,
+                                current_package_uuid: None,
+                                current_part_uuid: None,
+                            },
+                            policy: ComponentReplacementPolicy::BestCompatiblePackage,
+                        },
+                    )?;
+                    let updated = engine.apply_scoped_component_replacement_plan(plan)?;
+                    Ok(updated.description)
+                },
+            ),
+        ),
+    ];
     let overall_status = if gates.iter().any(|g| g.status == GateStatus::Failed) {
         GateStatus::Failed
     } else {
@@ -214,8 +597,7 @@ fn build_report(cli: &Cli) -> Result<DeterminismReport> {
 
     let summary = match overall_status {
         GateStatus::Passed => {
-            "M3 determinism preflight passed for the current move_component/save write slice"
-                .to_string()
+            "M3 determinism preflight passed for the current board-write save slices".to_string()
         }
         GateStatus::Failed => {
             "M3 determinism preflight failed; unexpected write-capability state detected"
@@ -232,9 +614,94 @@ fn build_report(cli: &Cli) -> Result<DeterminismReport> {
     })
 }
 
-fn save_and_compare(engine: &Engine, first: &PathBuf, second: &PathBuf) -> Result<()> {
-    engine.save(first)?;
-    engine.save(second)?;
+fn save_probe_gate(gate: &str, paths: (PathBuf, PathBuf), probe: Result<String>) -> GateResult {
+    let (first, second) = paths;
+    match probe {
+        Ok(evidence) => GateResult {
+            gate: gate.to_string(),
+            status: GateStatus::Passed,
+            evidence: format!(
+                "{}; Engine::save wrote byte-identical KiCad board output to {} and {}",
+                evidence,
+                first.display(),
+                second.display()
+            ),
+        },
+        Err(err) => GateResult {
+            gate: gate.to_string(),
+            status: GateStatus::Failed,
+            evidence: format!("KiCad board save determinism probe failed: {err}"),
+        },
+    }
+}
+
+fn save_and_compare_after<F>(fixture: &PathBuf, mutate: F) -> Result<String>
+where
+    F: Fn(&mut Engine) -> Result<String>,
+{
+    save_and_compare_after_with_setup(fixture, |_engine| Ok(()), mutate)
+}
+
+fn save_and_compare_after_with_setup<S, F>(
+    fixture: &PathBuf,
+    setup: S,
+    mutate: F,
+) -> Result<String>
+where
+    S: Fn(&mut Engine) -> Result<()>,
+    F: Fn(&mut Engine) -> Result<String>,
+{
+    let mut first_engine = Engine::new()?;
+    setup(&mut first_engine)?;
+    first_engine.import(fixture)?;
+    let first_evidence = mutate(&mut first_engine)?;
+
+    let mut second_engine = Engine::new()?;
+    setup(&mut second_engine)?;
+    second_engine.import(fixture)?;
+    let second_evidence = mutate(&mut second_engine)?;
+
+    let (first_probe_path, second_probe_path) = save_probe_paths(
+        &std::env::temp_dir().join(format!("datum-eda-m3-save-probe-{}.kicad_pcb", Uuid::new_v4())),
+        "determinism",
+    );
+    let save_result = save_and_compare(
+        &first_engine,
+        &second_engine,
+        &first_probe_path,
+        &second_probe_path,
+    );
+    let _ = fs::remove_file(&first_probe_path);
+    let _ = fs::remove_file(&second_probe_path);
+    save_result?;
+
+    if first_evidence != second_evidence {
+        bail!("operation metadata was not identical across repeated runs");
+    }
+
+    Ok(first_evidence)
+}
+
+fn save_probe_paths(base: &PathBuf, label: &str) -> (PathBuf, PathBuf) {
+    let stem = base
+        .file_stem()
+        .and_then(|stem| stem.to_str())
+        .unwrap_or("datum-eda-m3-save-probe");
+    let dir = base.parent().unwrap_or_else(|| std::path::Path::new("."));
+    (
+        dir.join(format!("{stem}-{label}.kicad_pcb")),
+        dir.join(format!("{stem}-{label}-second.kicad_pcb")),
+    )
+}
+
+fn save_and_compare(
+    first_engine: &Engine,
+    second_engine: &Engine,
+    first: &PathBuf,
+    second: &PathBuf,
+) -> Result<()> {
+    first_engine.save(first)?;
+    second_engine.save(second)?;
 
     let first_bytes = fs::read(first)?;
     let second_bytes = fs::read(second)?;
