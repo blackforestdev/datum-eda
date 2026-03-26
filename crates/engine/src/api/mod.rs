@@ -215,6 +215,10 @@ enum TransactionRecord {
         previous: Option<Rule>,
         current: Rule,
     },
+    Batch {
+        description: String,
+        records: Vec<TransactionRecord>,
+    },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]

@@ -59,6 +59,20 @@ class TestDaemonClient(unittest.TestCase):
         replace_component = client.replace_component_request(
             "comp-uuid", "package-uuid", "part-uuid"
         )
+        replace_components = client.replace_components_request(
+            [
+                {
+                    "uuid": "comp-1",
+                    "package_uuid": "package-1",
+                    "part_uuid": "part-1",
+                },
+                {
+                    "uuid": "comp-2",
+                    "package_uuid": "package-2",
+                    "part_uuid": "part-2",
+                },
+            ]
+        )
         set_net_class = client.set_net_class_request(
             "net-uuid", "power", 125000, 250000, 300000, 600000
         )
@@ -116,6 +130,24 @@ class TestDaemonClient(unittest.TestCase):
                 "uuid": "comp-uuid",
                 "package_uuid": "package-uuid",
                 "part_uuid": "part-uuid",
+            },
+        )
+        self.assertEqual(replace_components.method, "replace_components")
+        self.assertEqual(
+            replace_components.params,
+            {
+                "replacements": [
+                    {
+                        "uuid": "comp-1",
+                        "package_uuid": "package-1",
+                        "part_uuid": "part-1",
+                    },
+                    {
+                        "uuid": "comp-2",
+                        "package_uuid": "package-2",
+                        "part_uuid": "part-2",
+                    },
+                ]
             },
         )
         self.assertEqual(set_net_class.method, "set_net_class")

@@ -134,6 +134,28 @@ TOOLS: list[dict[str, Any]] = [
         },
     },
     {
+        "name": "replace_components",
+        "description": "Replace multiple board components in one transaction using explicit compatible pool part+package selections in the current M3 slice.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "replacements": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "uuid": {"type": "string"},
+                            "package_uuid": {"type": "string"},
+                            "part_uuid": {"type": "string"},
+                        },
+                        "required": ["uuid", "package_uuid", "part_uuid"],
+                    },
+                }
+            },
+            "required": ["replacements"],
+        },
+    },
+    {
         "name": "set_reference",
         "description": "Set one board component reference by UUID in the current M3 slice.",
         "inputSchema": {

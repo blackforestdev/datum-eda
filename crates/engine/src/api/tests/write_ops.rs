@@ -1171,6 +1171,74 @@ fn replace_component_preserves_logical_nets_for_explicit_candidate() {
 }
 
 #[test]
+fn replace_components_batches_multiple_replacements_into_one_undo_step() {
+    let mut engine = Engine::new().expect("engine should initialize");
+    engine
+        .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+        .expect("library import should succeed");
+    engine
+        .import(&fixture_path("partial-route-demo.kicad_pcb"))
+        .expect("fixture import should succeed");
+
+    let altamp = engine
+        .search_pool("ALTAMP")
+        .expect("search should succeed")
+        .first()
+        .cloned()
+        .expect("ALTAMP part should exist");
+    let first_uuid = uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap();
+    let second_uuid = uuid::Uuid::parse_str("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb").unwrap();
+
+    let result = engine
+        .replace_components(vec![
+            ReplaceComponentInput {
+                uuid: first_uuid,
+                package_uuid: altamp.package_uuid,
+                part_uuid: altamp.uuid,
+            },
+            ReplaceComponentInput {
+                uuid: second_uuid,
+                package_uuid: altamp.package_uuid,
+                part_uuid: altamp.uuid,
+            },
+        ])
+        .expect("replace_components should succeed");
+    assert_eq!(result.description, "replace_components 2");
+    assert_eq!(result.diff.modified.len(), 2);
+
+    let replaced = engine.get_components().expect("components should query");
+    assert_eq!(
+        replaced
+            .iter()
+            .filter(|component| component.value == "ALTAMP")
+            .count(),
+        2
+    );
+
+    let undo = engine.undo().expect("undo should succeed");
+    assert_eq!(undo.description, "undo replace_components 2");
+    let reverted = engine.get_components().expect("components should query after undo");
+    assert_eq!(
+        reverted
+            .iter()
+            .filter(|component| component.value == "10k")
+            .count(),
+        2
+    );
+
+    let redo = engine.redo().expect("redo should succeed");
+    assert_eq!(redo.description, "redo replace_components 2");
+    let redone = engine.get_components().expect("components should query after redo");
+    assert_eq!(
+        redone
+            .iter()
+            .filter(|component| component.value == "ALTAMP")
+            .count(),
+        2
+    );
+}
+
+#[test]
 fn set_net_class_updates_board_and_undo_redo_restore_it() {
     let mut engine = Engine::new().expect("engine should initialize");
     engine

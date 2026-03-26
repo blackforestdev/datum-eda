@@ -156,6 +156,27 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
             }
         }
+        "replace_components" => {
+            match serde_json::from_value::<ReplaceComponentsParams>(request.params) {
+                Ok(params) => match engine.replace_components(
+                    params
+                        .replacements
+                        .into_iter()
+                        .map(|item| ReplaceComponentInput {
+                            uuid: item.uuid,
+                            package_uuid: item.package_uuid,
+                            part_uuid: item.part_uuid,
+                        })
+                        .collect(),
+                ) {
+                    Ok(result) => {
+                        success_response(request.id, serde_json::to_value(result).unwrap())
+                    }
+                    Err(err) => error_response(request.id, -32045, &err.to_string()),
+                },
+                Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+            }
+        }
         "set_net_class" => match serde_json::from_value::<SetNetClassParams>(request.params) {
             Ok(params) => match engine.set_net_class(SetNetClassInput {
                 net_uuid: params.net_uuid,

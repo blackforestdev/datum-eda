@@ -153,18 +153,31 @@ pub(super) fn modify_board(
         ));
         last_result = Some(result);
     }
-    for input in replace_component {
-        let result = engine.replace_component(input.clone()).with_context(|| {
-            format!(
-                "failed to replace component {} with package {} part {}",
+    if replace_component.len() > 1 {
+        let result = engine
+            .replace_components(replace_component.to_vec())
+            .context("failed to replace components in batch")?;
+        for input in replace_component {
+            actions.push(format!(
+                "replace_component {} {} {}",
                 input.uuid, input.package_uuid, input.part_uuid
-            )
-        })?;
-        actions.push(format!(
-            "replace_component {} {} {}",
-            input.uuid, input.package_uuid, input.part_uuid
-        ));
+            ));
+        }
         last_result = Some(result);
+    } else {
+        for input in replace_component {
+            let result = engine.replace_component(input.clone()).with_context(|| {
+                format!(
+                    "failed to replace component {} with package {} part {}",
+                    input.uuid, input.package_uuid, input.part_uuid
+                )
+            })?;
+            actions.push(format!(
+                "replace_component {} {} {}",
+                input.uuid, input.package_uuid, input.part_uuid
+            ));
+            last_result = Some(result);
+        }
     }
     for input in set_net_class {
         let result = engine

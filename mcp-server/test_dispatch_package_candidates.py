@@ -327,3 +327,111 @@ class TestDispatchPackageCandidates(unittest.TestCase):
                 ("get_net_info", None),
             ],
         )
+
+    def test_tools_call_replace_components_batches_into_one_undo_step(self) -> None:
+        class StatefulDaemon(FakeDaemonClient):
+            def __init__(self) -> None:
+                super().__init__()
+                self.values = {"comp-1": "10k", "comp-2": "10k"}
+
+            def replace_components(self, replacements: list[dict[str, str]]) -> JsonRpcResponse:
+                response = super().replace_components(replacements)
+                for replacement in replacements:
+                    self.values[replacement["uuid"]] = "ALTAMP"
+                return response
+
+            def undo(self) -> JsonRpcResponse:
+                response = super().undo()
+                self.values = {"comp-1": "10k", "comp-2": "10k"}
+                response.result["description"] = "undo replace_components 2"
+                return response
+
+            def get_components(self) -> JsonRpcResponse:
+                self.calls.append(("get_components", None))
+                return JsonRpcResponse(
+                    "2.0",
+                    42,
+                    [
+                        {"uuid": uuid, "reference": ref, "value": value}
+                        for uuid, ref, value in (
+                            ("comp-1", "R1", self.values["comp-1"]),
+                            ("comp-2", "R2", self.values["comp-2"]),
+                        )
+                    ],
+                    None,
+                )
+
+        daemon = StatefulDaemon()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 2638,
+                "method": "tools/call",
+                "params": {
+                    "name": "replace_components",
+                    "arguments": {
+                        "replacements": [
+                            {
+                                "uuid": "comp-1",
+                                "package_uuid": "altamp-package",
+                                "part_uuid": "altamp-part",
+                            },
+                            {
+                                "uuid": "comp-2",
+                                "package_uuid": "altamp-package",
+                                "part_uuid": "altamp-part",
+                            },
+                        ]
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            response["result"]["content"][0]["json"]["description"],
+            "replace_components 2",
+        )
+        undo = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 2639,
+                "method": "tools/call",
+                "params": {"name": "undo", "arguments": {}},
+            }
+        )
+        self.assertEqual(
+            undo["result"]["content"][0]["json"]["description"],
+            "undo replace_components 2",
+        )
+        after = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 2640,
+                "method": "tools/call",
+                "params": {"name": "get_components", "arguments": {}},
+            }
+        )
+        values = [component["value"] for component in after["result"]["content"][0]["json"]]
+        self.assertEqual(values, ["10k", "10k"])
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "replace_components",
+                    [
+                        {
+                            "uuid": "comp-1",
+                            "package_uuid": "altamp-package",
+                            "part_uuid": "altamp-part",
+                        },
+                        {
+                            "uuid": "comp-2",
+                            "package_uuid": "altamp-package",
+                            "part_uuid": "altamp-part",
+                        },
+                    ],
+                ),
+                ("undo", None),
+                ("get_components", None),
+            ],
+        )

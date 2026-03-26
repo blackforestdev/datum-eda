@@ -134,6 +134,25 @@ class FakeDaemonClient:
             1212, uuid, f"replace_component {uuid}"
         )
 
+    def replace_components(self, replacements: list[dict[str, str]]) -> JsonRpcResponse:
+        self.calls.append(("replace_components", replacements))
+        return JsonRpcResponse(
+            "2.0",
+            1213,
+            {
+                "diff": {
+                    "created": [],
+                    "modified": [
+                        {"object_type": "component", "uuid": item["uuid"]}
+                        for item in replacements
+                    ],
+                    "deleted": [],
+                },
+                "description": f"replace_components {len(replacements)}",
+            },
+            None,
+        )
+
     def set_net_class(
         self,
         net_uuid: str,

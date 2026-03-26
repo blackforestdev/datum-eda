@@ -235,6 +235,18 @@ Error:  component_not_found
 ```
 Current implementation note: implemented in the current daemon/stdio host.
 
+#### `replace_components`
+```
+Method: replace_components
+Input:  { "replacements": [
+            { "uuid": string, "package_uuid": string, "part_uuid": string }
+          ] }
+Output: { "diff": { "created": [], "modified": [{ "object_type": "component", "uuid": string }], "deleted": [] },
+          "description": string }
+Error:  invalid_params | component_not_found | part_not_found | package_not_found
+```
+Current implementation note: implemented in the current daemon/stdio host as a single transaction / single undo step for batch component replacement.
+
 ### Design Queries
 
 #### `get_schematic_summary`

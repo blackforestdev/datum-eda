@@ -233,6 +233,58 @@ class TestDispatchCore(unittest.TestCase):
             "component",
         )
 
+    def test_tools_call_dispatches_replace_components(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 20918,
+                "method": "tools/call",
+                "params": {
+                    "name": "replace_components",
+                    "arguments": {
+                        "replacements": [
+                            {
+                                "uuid": "comp-1",
+                                "package_uuid": "package-1",
+                                "part_uuid": "part-1",
+                            },
+                            {
+                                "uuid": "comp-2",
+                                "package_uuid": "package-2",
+                                "part_uuid": "part-2",
+                            },
+                        ]
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "replace_components",
+                    [
+                        {
+                            "uuid": "comp-1",
+                            "package_uuid": "package-1",
+                            "part_uuid": "part-1",
+                        },
+                        {
+                            "uuid": "comp-2",
+                            "package_uuid": "package-2",
+                            "part_uuid": "part-2",
+                        },
+                    ],
+                )
+            ],
+        )
+        self.assertEqual(
+            len(response["result"]["content"][0]["json"]["diff"]["modified"]),
+            2,
+        )
+
     def test_tools_call_dispatches_set_package(self) -> None:
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)

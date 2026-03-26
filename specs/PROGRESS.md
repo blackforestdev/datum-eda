@@ -330,9 +330,10 @@ Item 8 reconciliation notes (2026-03-25):
 | AssignPart | [~] | Engine/daemon/MCP/CLI current slice implemented for board components by UUID with sidecar-backed part assignment persistence and logical pin-net preservation when remapping between known pool parts |
 | SetPackage | [~] | Engine/daemon/MCP/CLI current slice implemented for board components by UUID with package-backed KiCad footprint rewrite, sidecar-backed package assignment persistence, and logical pin-net preservation when a unique compatible pool part exists for the target package |
 | SetPackageWithPart | [~] | Engine/daemon/MCP/CLI current slice implemented for board components by UUID with explicit caller-selected compatible part+package mutation, package-backed KiCad footprint rewrite, and logical pin-net preservation |
+| ReplaceComponents | [~] | Engine/daemon/MCP current slice implements batched explicit component replacement as one transaction / one undo step; CLI collapses repeated `--replace-component` flags into that same batch transaction |
 | Package-change introspection | [~] | Engine/daemon/MCP/CLI query surface exposes component-scoped package compatibility candidates and resolution status for current board slice |
 | Part-change introspection | [~] | Engine/daemon/MCP/CLI query surface exposes component-scoped compatible part candidates for current board slice |
-| Replacement-plan introspection | [~] | Engine/daemon/MCP/CLI query surface exposes a unified component replacement planning report combining package and part compatibility for current board slice |
+| Replacement-plan introspection | [~] | Engine/daemon/MCP/CLI query surface exposes a unified component replacement planning report combining package and part compatibility for current board slice, with batch apply support via `replace_components` |
 | SetNetClass | [~] | Engine/daemon/MCP/CLI current slice implemented for board nets by UUID with sidecar-backed net-class persistence |
 | SetDesignRule | [~] | Engine/daemon/MCP current slice implemented; CLI exposes the default all-scope clearance rule path and follow-up `query design-rules` verification surface |
 | DeleteTrack | [~] | Engine/daemon/MCP/CLI current slice implemented for board tracks by UUID |
@@ -481,6 +482,7 @@ Item 8 reconciliation notes (2026-03-25):
 | get_package_change_candidates() | [x] | Current engine API supports component-scoped package compatibility introspection |
 | get_part_change_candidates() | [x] | Current engine API supports component-scoped part compatibility introspection |
 | get_component_replacement_plan() | [x] | Current engine API supports unified component replacement planning introspection |
+| replace_components() | [~] | Current M3 board write slice supports batched explicit component replacement as one transaction / one undo step |
 | get_net_info() | [x] | Returns all nets, not single-net |
 | get_stackup() | [x] | |
 | get_unrouted() | [x] | |

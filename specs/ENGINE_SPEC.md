@@ -815,6 +815,10 @@ impl Engine {
     pub fn get_design_rules(&self) -> Result<Vec<Rule>>;
     pub fn get_check_report(&self) -> Result<CheckReport>;
 
+    // Writes (current M3 slice)
+    pub fn replace_components(&mut self, inputs: Vec<ReplaceComponentInput>)
+        -> Result<OperationResult>;
+
     // Checking
     pub fn run_erc_prechecks(&self) -> Result<Vec<ErcFinding>>;
     pub fn run_erc_prechecks_with_config(&self, config: &ErcConfig) -> Result<Vec<ErcFinding>>;

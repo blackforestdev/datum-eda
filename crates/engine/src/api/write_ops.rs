@@ -1,4 +1,11 @@
 use super::*;
+use std::collections::BTreeSet;
+
+fn merge_operation_diff(target: &mut OperationDiff, diff: &OperationDiff) {
+    target.created.extend(diff.created.iter().cloned());
+    target.modified.extend(diff.modified.iter().cloned());
+    target.deleted.extend(diff.deleted.iter().cloned());
+}
 
 impl Engine {
     pub fn delete_track(&mut self, uuid: &uuid::Uuid) -> Result<OperationResult, EngineError> {
@@ -625,6 +632,73 @@ impl Engine {
         )
     }
 
+    pub fn replace_components(
+        &mut self,
+        inputs: Vec<ReplaceComponentInput>,
+    ) -> Result<OperationResult, EngineError> {
+        if inputs.is_empty() {
+            return Err(EngineError::Operation(
+                "replace_components requires at least one replacement".to_string(),
+            ));
+        }
+        let mut seen = BTreeSet::new();
+        for input in &inputs {
+            if !seen.insert(input.uuid) {
+                return Err(EngineError::Operation(format!(
+                    "replace_components cannot target component {} more than once in one transaction",
+                    input.uuid
+                )));
+            }
+        }
+
+        let snapshot = self.design.clone();
+        let original_undo_len = self.undo_stack.len();
+        let original_redo = self.redo_stack.clone();
+        let original_undo_depth = self.undo_depth;
+        let original_redo_depth = self.redo_depth;
+        let mut records = Vec::with_capacity(inputs.len());
+        let mut merged_diff = OperationDiff::default();
+        for input in inputs {
+            match self.apply_explicit_component_replacement(
+                input.uuid,
+                input.package_uuid,
+                input.part_uuid,
+                "replace_components",
+            ) {
+                Ok(result) => {
+                    merge_operation_diff(&mut merged_diff, &result.diff);
+                    let record = self.undo_stack.pop().ok_or_else(|| {
+                        EngineError::Operation(
+                            "replace_components could not recover staged transaction".to_string(),
+                        )
+                    })?;
+                    records.push(record);
+                }
+                Err(err) => {
+                    self.design = snapshot;
+                    self.undo_stack.truncate(original_undo_len);
+                    self.redo_stack = original_redo;
+                    self.undo_depth = original_undo_depth;
+                    self.redo_depth = original_redo_depth;
+                    return Err(err);
+                }
+            }
+        }
+
+        self.undo_stack.push(TransactionRecord::Batch {
+            description: format!("replace_components {}", records.len()),
+            records,
+        });
+        self.redo_stack.clear();
+        self.undo_depth = self.undo_stack.len();
+        self.redo_depth = 0;
+
+        Ok(OperationResult {
+            diff: merged_diff,
+            description: format!("replace_components {}", seen.len()),
+        })
+    }
+
     pub fn set_net_class(
         &mut self,
         input: SetNetClassInput,
@@ -790,9 +864,11 @@ impl Engine {
         })
     }
 
-    pub fn undo(&mut self) -> Result<OperationResult, EngineError> {
-        let transaction = self.undo_stack.pop().ok_or(EngineError::NothingToUndo)?;
-        let result = match &transaction {
+    fn apply_undo_transaction(
+        &mut self,
+        transaction: &TransactionRecord,
+    ) -> Result<OperationResult, EngineError> {
+        Ok(match transaction {
             TransactionRecord::DeleteTrack { track } => {
                 let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
                 let board = design.board.as_mut().ok_or_else(|| {
@@ -1119,16 +1195,37 @@ impl Engine {
                     description: format!("undo set_net_class {}", before_net.uuid),
                 }
             }
-        };
+            TransactionRecord::Batch {
+                description,
+                records,
+            } => {
+                let mut merged_diff = OperationDiff::default();
+                for record in records.iter().rev() {
+                    let result = self.apply_undo_transaction(record)?;
+                    merge_operation_diff(&mut merged_diff, &result.diff);
+                }
+                OperationResult {
+                    diff: merged_diff,
+                    description: format!("undo {description}"),
+                }
+            }
+        })
+    }
+
+    pub fn undo(&mut self) -> Result<OperationResult, EngineError> {
+        let transaction = self.undo_stack.pop().ok_or(EngineError::NothingToUndo)?;
+        let result = self.apply_undo_transaction(&transaction)?;
         self.redo_stack.push(transaction);
         self.undo_depth = self.undo_stack.len();
         self.redo_depth = self.redo_stack.len();
         Ok(result)
     }
 
-    pub fn redo(&mut self) -> Result<OperationResult, EngineError> {
-        let transaction = self.redo_stack.pop().ok_or(EngineError::NothingToRedo)?;
-        let result = match &transaction {
+    fn apply_redo_transaction(
+        &mut self,
+        transaction: &TransactionRecord,
+    ) -> Result<OperationResult, EngineError> {
+        Ok(match transaction {
             TransactionRecord::DeleteTrack { track } => {
                 let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
                 let board = design.board.as_mut().ok_or_else(|| {
@@ -1463,7 +1560,26 @@ impl Engine {
                     description: format!("redo set_net_class {}", after_net.uuid),
                 }
             }
-        };
+            TransactionRecord::Batch {
+                description,
+                records,
+            } => {
+                let mut merged_diff = OperationDiff::default();
+                for record in records {
+                    let result = self.apply_redo_transaction(record)?;
+                    merge_operation_diff(&mut merged_diff, &result.diff);
+                }
+                OperationResult {
+                    diff: merged_diff,
+                    description: format!("redo {description}"),
+                }
+            }
+        })
+    }
+
+    pub fn redo(&mut self) -> Result<OperationResult, EngineError> {
+        let transaction = self.redo_stack.pop().ok_or(EngineError::NothingToRedo)?;
+        let result = self.apply_redo_transaction(&transaction)?;
         self.undo_stack.push(transaction);
         self.undo_depth = self.undo_stack.len();
         self.redo_depth = self.redo_stack.len();
