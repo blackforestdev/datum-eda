@@ -27,6 +27,26 @@ class TextCheck:
 
 TEXT_CHECKS = (
     TextCheck(
+        path="specs/PROGRAM_SPEC.md",
+        must_contain=(
+            "## Scope Integrity Terms",
+            "**Product identity**",
+            "**Implementation slice**",
+            "**Execution strategy**",
+            "**Non-goals**",
+            "Do not infer product identity from implementation-slice limits.",
+            "Do not infer permanent product limits from milestone non-goals.",
+        ),
+    ),
+    TextCheck(
+        path="README.md",
+        must_contain=(
+            "Canonical scope terminology is defined in",
+            "Implementation slice",
+            "Execution strategy",
+        ),
+    ),
+    TextCheck(
         path="specs/PROGRESS.md",
         must_contain=(
             "**M2 overall**: [x] Complete for the current implementation slice",

@@ -108,8 +108,39 @@ class EngineDaemonClient:
     def delete_via_request(self, uuid: str) -> JsonRpcRequest:
         return self.build_request("delete_via", {"uuid": uuid})
 
+    def delete_component_request(self, uuid: str) -> JsonRpcRequest:
+        return self.build_request("delete_component", {"uuid": uuid})
+
     def set_value_request(self, uuid: str, value: str) -> JsonRpcRequest:
         return self.build_request("set_value", {"uuid": uuid, "value": value})
+
+    def assign_part_request(self, uuid: str, part_uuid: str) -> JsonRpcRequest:
+        return self.build_request("assign_part", {"uuid": uuid, "part_uuid": part_uuid})
+
+    def set_net_class_request(
+        self,
+        net_uuid: str,
+        class_name: str,
+        clearance: int,
+        track_width: int,
+        via_drill: int,
+        via_diameter: int,
+        diffpair_width: int = 0,
+        diffpair_gap: int = 0,
+    ) -> JsonRpcRequest:
+        return self.build_request(
+            "set_net_class",
+            {
+                "net_uuid": net_uuid,
+                "class_name": class_name,
+                "clearance": clearance,
+                "track_width": track_width,
+                "via_drill": via_drill,
+                "via_diameter": via_diameter,
+                "diffpair_width": diffpair_width,
+                "diffpair_gap": diffpair_gap,
+            },
+        )
 
     def set_reference_request(self, uuid: str, reference: str) -> JsonRpcRequest:
         return self.build_request("set_reference", {"uuid": uuid, "reference": reference})
@@ -146,6 +177,17 @@ class EngineDaemonClient:
                 "uuid": uuid,
                 "x_mm": x_mm,
                 "y_mm": y_mm,
+                "rotation_deg": rotation_deg,
+            },
+        )
+
+    def rotate_component_request(self, uuid: str, rotation_deg: float) -> JsonRpcRequest:
+        return self.build_request(
+            "rotate_component",
+            {
+                "uuid": uuid,
+                "x_mm": 0.0,
+                "y_mm": 0.0,
                 "rotation_deg": rotation_deg,
             },
         )
@@ -267,8 +309,38 @@ class EngineDaemonClient:
     def delete_via(self, uuid: str) -> JsonRpcResponse:
         return self.call(self.delete_via_request(uuid))
 
+    def delete_component(self, uuid: str) -> JsonRpcResponse:
+        return self.call(self.delete_component_request(uuid))
+
     def set_value(self, uuid: str, value: str) -> JsonRpcResponse:
         return self.call(self.set_value_request(uuid, value))
+
+    def assign_part(self, uuid: str, part_uuid: str) -> JsonRpcResponse:
+        return self.call(self.assign_part_request(uuid, part_uuid))
+
+    def set_net_class(
+        self,
+        net_uuid: str,
+        class_name: str,
+        clearance: int,
+        track_width: int,
+        via_drill: int,
+        via_diameter: int,
+        diffpair_width: int = 0,
+        diffpair_gap: int = 0,
+    ) -> JsonRpcResponse:
+        return self.call(
+            self.set_net_class_request(
+                net_uuid,
+                class_name,
+                clearance,
+                track_width,
+                via_drill,
+                via_diameter,
+                diffpair_width,
+                diffpair_gap,
+            )
+        )
 
     def set_reference(self, uuid: str, reference: str) -> JsonRpcResponse:
         return self.call(self.set_reference_request(uuid, reference))
@@ -293,6 +365,9 @@ class EngineDaemonClient:
         rotation_deg: float | None = None,
     ) -> JsonRpcResponse:
         return self.call(self.move_component_request(uuid, x_mm, y_mm, rotation_deg))
+
+    def rotate_component(self, uuid: str, rotation_deg: float) -> JsonRpcResponse:
+        return self.call(self.rotate_component_request(uuid, rotation_deg))
 
     def undo(self) -> JsonRpcResponse:
         return self.call(self.undo_request())
@@ -406,6 +481,15 @@ TOOLS: list[dict[str, Any]] = [
         },
     },
     {
+        "name": "delete_component",
+        "description": "Delete one board component by UUID in the current M3 slice.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"uuid": {"type": "string"}},
+            "required": ["uuid"],
+        },
+    },
+    {
         "name": "move_component",
         "description": "Move one board component by UUID in the current M3 slice.",
         "inputSchema": {
@@ -417,6 +501,18 @@ TOOLS: list[dict[str, Any]] = [
                 "rotation_deg": {"type": ["number", "null"]},
             },
             "required": ["uuid", "x_mm", "y_mm"],
+        },
+    },
+    {
+        "name": "rotate_component",
+        "description": "Rotate one board component by UUID in the current M3 slice.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "uuid": {"type": "string"},
+                "rotation_deg": {"type": "number"},
+            },
+            "required": ["uuid", "rotation_deg"],
         },
     },
     {
@@ -432,6 +528,18 @@ TOOLS: list[dict[str, Any]] = [
         },
     },
     {
+        "name": "assign_part",
+        "description": "Assign one pool part to a board component by UUID in the current M3 slice.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "uuid": {"type": "string"},
+                "part_uuid": {"type": "string"},
+            },
+            "required": ["uuid", "part_uuid"],
+        },
+    },
+    {
         "name": "set_reference",
         "description": "Set one board component reference by UUID in the current M3 slice.",
         "inputSchema": {
@@ -441,6 +549,31 @@ TOOLS: list[dict[str, Any]] = [
                 "reference": {"type": "string"},
             },
             "required": ["uuid", "reference"],
+        },
+    },
+    {
+        "name": "set_net_class",
+        "description": "Assign one board net to a concrete net class in the current M3 slice.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "net_uuid": {"type": "string"},
+                "class_name": {"type": "string"},
+                "clearance": {"type": "integer"},
+                "track_width": {"type": "integer"},
+                "via_drill": {"type": "integer"},
+                "via_diameter": {"type": "integer"},
+                "diffpair_width": {"type": "integer"},
+                "diffpair_gap": {"type": "integer"},
+            },
+            "required": [
+                "net_uuid",
+                "class_name",
+                "clearance",
+                "track_width",
+                "via_drill",
+                "via_diameter",
+            ],
         },
     },
     {
@@ -668,6 +801,8 @@ class StdioToolHost:
             response = self._daemon.save(arguments.get("path"))
         elif name == "delete_track":
             response = self._daemon.delete_track(arguments["uuid"])
+        elif name == "delete_component":
+            response = self._daemon.delete_component(arguments["uuid"])
         elif name == "delete_via":
             response = self._daemon.delete_via(arguments["uuid"])
         elif name == "move_component":
@@ -677,11 +812,28 @@ class StdioToolHost:
                 arguments["y_mm"],
                 arguments.get("rotation_deg"),
             )
+        elif name == "rotate_component":
+            response = self._daemon.rotate_component(
+                arguments["uuid"], arguments["rotation_deg"]
+            )
         elif name == "set_value":
             response = self._daemon.set_value(arguments["uuid"], arguments["value"])
+        elif name == "assign_part":
+            response = self._daemon.assign_part(arguments["uuid"], arguments["part_uuid"])
         elif name == "set_reference":
             response = self._daemon.set_reference(
                 arguments["uuid"], arguments["reference"]
+            )
+        elif name == "set_net_class":
+            response = self._daemon.set_net_class(
+                arguments["net_uuid"],
+                arguments["class_name"],
+                arguments["clearance"],
+                arguments["track_width"],
+                arguments["via_drill"],
+                arguments["via_diameter"],
+                arguments.get("diffpair_width", 0),
+                arguments.get("diffpair_gap", 0),
             )
         elif name == "set_design_rule":
             response = self._daemon.set_design_rule(
@@ -807,6 +959,22 @@ class ServerTests(unittest.TestCase):
                 None,
             )
 
+        def delete_component(self, uuid: str) -> JsonRpcResponse:
+            self.calls.append(("delete_component", uuid))
+            return JsonRpcResponse(
+                "2.0",
+                118,
+                {
+                    "diff": {
+                        "created": [],
+                        "modified": [],
+                        "deleted": [{"object_type": "component", "uuid": uuid}],
+                    },
+                    "description": f"delete_component {uuid}",
+                },
+                None,
+            )
+
         def set_design_rule(
             self,
             rule_type: str,
@@ -848,6 +1016,60 @@ class ServerTests(unittest.TestCase):
                 None,
             )
 
+        def assign_part(self, uuid: str, part_uuid: str) -> JsonRpcResponse:
+            self.calls.append(("assign_part", uuid, part_uuid))
+            return JsonRpcResponse(
+                "2.0",
+                120,
+                {
+                    "diff": {
+                        "created": [],
+                        "modified": [{"object_type": "component", "uuid": uuid}],
+                        "deleted": [],
+                    },
+                    "description": f"assign_part {uuid}",
+                },
+                None,
+            )
+
+        def set_net_class(
+            self,
+            net_uuid: str,
+            class_name: str,
+            clearance: int,
+            track_width: int,
+            via_drill: int,
+            via_diameter: int,
+            diffpair_width: int = 0,
+            diffpair_gap: int = 0,
+        ) -> JsonRpcResponse:
+            self.calls.append(
+                (
+                    "set_net_class",
+                    net_uuid,
+                    class_name,
+                    clearance,
+                    track_width,
+                    via_drill,
+                    via_diameter,
+                    diffpair_width,
+                    diffpair_gap,
+                )
+            )
+            return JsonRpcResponse(
+                "2.0",
+                121,
+                {
+                    "diff": {
+                        "created": [],
+                        "modified": [{"object_type": "net", "uuid": net_uuid}],
+                        "deleted": [],
+                    },
+                    "description": f"set_net_class {net_uuid}",
+                },
+                None,
+            )
+
         def set_reference(self, uuid: str, reference: str) -> JsonRpcResponse:
             self.calls.append(("set_reference", uuid, reference))
             return JsonRpcResponse(
@@ -878,6 +1100,22 @@ class ServerTests(unittest.TestCase):
                         "deleted": [],
                     },
                     "description": f"move_component {uuid}",
+                },
+                None,
+            )
+
+        def rotate_component(self, uuid: str, rotation_deg: float) -> JsonRpcResponse:
+            self.calls.append(("rotate_component", uuid, rotation_deg))
+            return JsonRpcResponse(
+                "2.0",
+                119,
+                {
+                    "diff": {
+                        "created": [],
+                        "modified": [{"object_type": "component", "uuid": uuid}],
+                        "deleted": [],
+                    },
+                    "description": f"rotate_component {uuid}",
                 },
                 None,
             )
@@ -1260,8 +1498,14 @@ class ServerTests(unittest.TestCase):
         save = client.save_request("/tmp/out.kicad_pcb")
         delete = client.delete_track_request("track-uuid")
         delete_via = client.delete_via_request("via-uuid")
+        delete_component = client.delete_component_request("comp-uuid")
         move_component = client.move_component_request("comp-uuid", 15.0, 12.0, 90.0)
+        rotate_component = client.rotate_component_request("comp-uuid", 180.0)
         set_value = client.set_value_request("comp-uuid", "22k")
+        assign_part = client.assign_part_request("comp-uuid", "part-uuid")
+        set_net_class = client.set_net_class_request(
+            "net-uuid", "power", 125000, 250000, 300000, 600000
+        )
         set_reference = client.set_reference_request("comp-uuid", "R10")
         set_rule = client.set_design_rule_request(
             "ClearanceCopper",
@@ -1278,13 +1522,38 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(delete.params, {"uuid": "track-uuid"})
         self.assertEqual(delete_via.method, "delete_via")
         self.assertEqual(delete_via.params, {"uuid": "via-uuid"})
+        self.assertEqual(delete_component.method, "delete_component")
+        self.assertEqual(delete_component.params, {"uuid": "comp-uuid"})
         self.assertEqual(move_component.method, "move_component")
         self.assertEqual(
             move_component.params,
             {"uuid": "comp-uuid", "x_mm": 15.0, "y_mm": 12.0, "rotation_deg": 90.0},
         )
+        self.assertEqual(rotate_component.method, "rotate_component")
+        self.assertEqual(
+            rotate_component.params,
+            {"uuid": "comp-uuid", "x_mm": 0.0, "y_mm": 0.0, "rotation_deg": 180.0},
+        )
         self.assertEqual(set_value.method, "set_value")
         self.assertEqual(set_value.params, {"uuid": "comp-uuid", "value": "22k"})
+        self.assertEqual(assign_part.method, "assign_part")
+        self.assertEqual(
+            assign_part.params, {"uuid": "comp-uuid", "part_uuid": "part-uuid"}
+        )
+        self.assertEqual(set_net_class.method, "set_net_class")
+        self.assertEqual(
+            set_net_class.params,
+            {
+                "net_uuid": "net-uuid",
+                "class_name": "power",
+                "clearance": 125000,
+                "track_width": 250000,
+                "via_drill": 300000,
+                "via_diameter": 600000,
+                "diffpair_width": 0,
+                "diffpair_gap": 0,
+            },
+        )
         self.assertEqual(set_reference.method, "set_reference")
         self.assertEqual(
             set_reference.params, {"uuid": "comp-uuid", "reference": "R10"}
@@ -1513,9 +1782,13 @@ class ServerTests(unittest.TestCase):
             "close_project",
             "save",
             "delete_track",
+            "delete_component",
             "move_component",
+            "rotate_component",
             "set_value",
+            "assign_part",
             "set_reference",
+            "set_net_class",
             "delete_via",
             "set_design_rule",
             "undo",
@@ -1618,6 +1891,26 @@ class ServerTests(unittest.TestCase):
             "track-1",
         )
 
+    def test_tools_call_dispatches_delete_component(self) -> None:
+        daemon = self.FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 206,
+                "method": "tools/call",
+                "params": {
+                    "name": "delete_component",
+                    "arguments": {"uuid": "comp-1"},
+                },
+            }
+        )
+        self.assertEqual(daemon.calls, [("delete_component", "comp-1")])
+        self.assertEqual(
+            response["result"]["content"][0]["json"]["diff"]["deleted"][0]["uuid"],
+            "comp-1",
+        )
+
     def test_tools_call_dispatches_delete_via(self) -> None:
         daemon = self.FakeDaemonClient()
         host = StdioToolHost(daemon)
@@ -1696,6 +1989,68 @@ class ServerTests(unittest.TestCase):
             "component",
         )
 
+    def test_tools_call_dispatches_assign_part(self) -> None:
+        daemon = self.FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 20915,
+                "method": "tools/call",
+                "params": {
+                    "name": "assign_part",
+                    "arguments": {"uuid": "comp-1", "part_uuid": "part-1"},
+                },
+            }
+        )
+        self.assertEqual(daemon.calls, [("assign_part", "comp-1", "part-1")])
+        self.assertEqual(
+            response["result"]["content"][0]["json"]["diff"]["modified"][0]["object_type"],
+            "component",
+        )
+
+    def test_tools_call_dispatches_set_net_class(self) -> None:
+        daemon = self.FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 20916,
+                "method": "tools/call",
+                "params": {
+                    "name": "set_net_class",
+                    "arguments": {
+                        "net_uuid": "net-1",
+                        "class_name": "power",
+                        "clearance": 125000,
+                        "track_width": 250000,
+                        "via_drill": 300000,
+                        "via_diameter": 600000,
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "set_net_class",
+                    "net-1",
+                    "power",
+                    125000,
+                    250000,
+                    300000,
+                    600000,
+                    0,
+                    0,
+                )
+            ],
+        )
+        self.assertEqual(
+            response["result"]["content"][0]["json"]["diff"]["modified"][0]["object_type"],
+            "net",
+        )
+
     def test_tools_call_dispatches_set_reference(self) -> None:
         daemon = self.FakeDaemonClient()
         host = StdioToolHost(daemon)
@@ -1738,6 +2093,32 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(
             daemon.calls,
             [("move_component", "comp-1", 15.0, 12.0, 90.0)],
+        )
+        self.assertEqual(
+            response["result"]["content"][0]["json"]["diff"]["modified"][0]["object_type"],
+            "component",
+        )
+
+    def test_tools_call_dispatches_rotate_component(self) -> None:
+        daemon = self.FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 221,
+                "method": "tools/call",
+                "params": {
+                    "name": "rotate_component",
+                    "arguments": {
+                        "uuid": "comp-1",
+                        "rotation_deg": 180.0,
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [("rotate_component", "comp-1", 180.0)],
         )
         self.assertEqual(
             response["result"]["content"][0]["json"]["diff"]["modified"][0]["object_type"],
@@ -1850,6 +2231,79 @@ class ServerTests(unittest.TestCase):
             ],
         )
 
+    def test_tools_call_rotate_component_changes_followup_components_response(self) -> None:
+        class StatefulDaemon(self.FakeDaemonClient):
+            def __init__(self) -> None:
+                super().__init__()
+                self.rotation = 0
+
+            def rotate_component(self, uuid: str, rotation_deg: float) -> JsonRpcResponse:
+                response = super().rotate_component(uuid, rotation_deg)
+                self.rotation = int(rotation_deg)
+                return response
+
+            def get_components(self) -> JsonRpcResponse:
+                self.calls.append(("get_components", None))
+                return JsonRpcResponse(
+                    "2.0",
+                    27,
+                    [
+                        {
+                            "uuid": "comp-1",
+                            "reference": "R1",
+                            "value": "10k",
+                            "position": {"x": 10_000_000, "y": 10_000_000},
+                            "rotation": self.rotation,
+                            "layer": 0,
+                            "locked": False,
+                        }
+                    ],
+                    None,
+                )
+
+        daemon = StatefulDaemon()
+        host = StdioToolHost(daemon)
+        before = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 240,
+                "method": "tools/call",
+                "params": {"name": "get_components", "arguments": {}},
+            }
+        )
+        before_components = before["result"]["content"][0]["json"]
+        self.assertEqual(before_components[0]["rotation"], 0)
+
+        host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 241,
+                "method": "tools/call",
+                "params": {
+                    "name": "rotate_component",
+                    "arguments": {"uuid": "comp-1", "rotation_deg": 180.0},
+                },
+            }
+        )
+        after = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 242,
+                "method": "tools/call",
+                "params": {"name": "get_components", "arguments": {}},
+            }
+        )
+        after_components = after["result"]["content"][0]["json"]
+        self.assertEqual(after_components[0]["rotation"], 180)
+        self.assertEqual(
+            daemon.calls,
+            [
+                ("get_components", None),
+                ("rotate_component", "comp-1", 180.0),
+                ("get_components", None),
+            ],
+        )
+
     def test_tools_call_delete_track_changes_followup_check_report(self) -> None:
         class StatefulDaemon(self.FakeDaemonClient):
             def __init__(self) -> None:
@@ -1928,6 +2382,77 @@ class ServerTests(unittest.TestCase):
                 ("get_check_report", None),
                 ("delete_track", "track-1"),
                 ("get_check_report", None),
+            ],
+        )
+
+    def test_tools_call_delete_component_changes_followup_components_response(self) -> None:
+        class StatefulDaemon(self.FakeDaemonClient):
+            def __init__(self) -> None:
+                super().__init__()
+                self.present = True
+
+            def delete_component(self, uuid: str) -> JsonRpcResponse:
+                response = super().delete_component(uuid)
+                self.present = False
+                return response
+
+            def get_components(self) -> JsonRpcResponse:
+                self.calls.append(("get_components", None))
+                components: list[dict[str, Any]] = []
+                if self.present:
+                    components.append(
+                        {
+                            "uuid": "comp-1",
+                            "reference": "R1",
+                            "value": "10k",
+                            "position": {"x": 10_000_000, "y": 10_000_000},
+                            "rotation": 0,
+                            "layer": 0,
+                            "locked": False,
+                        }
+                    )
+                return JsonRpcResponse("2.0", 26, components, None)
+
+        daemon = StatefulDaemon()
+        host = StdioToolHost(daemon)
+        before = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 211,
+                "method": "tools/call",
+                "params": {"name": "get_components", "arguments": {}},
+            }
+        )
+        before_components = before["result"]["content"][0]["json"]
+        self.assertEqual(len(before_components), 1)
+
+        host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 212,
+                "method": "tools/call",
+                "params": {
+                    "name": "delete_component",
+                    "arguments": {"uuid": "comp-1"},
+                },
+            }
+        )
+        after = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 213,
+                "method": "tools/call",
+                "params": {"name": "get_components", "arguments": {}},
+            }
+        )
+        after_components = after["result"]["content"][0]["json"]
+        self.assertEqual(after_components, [])
+        self.assertEqual(
+            daemon.calls,
+            [
+                ("get_components", None),
+                ("delete_component", "comp-1"),
+                ("get_components", None),
             ],
         )
 
@@ -2512,6 +3037,190 @@ class ServerTests(unittest.TestCase):
                 ("get_components", None),
                 ("set_value", "comp-1", "22k"),
                 ("get_components", None),
+            ],
+        )
+
+    def test_tools_call_assign_part_changes_followup_components_response(self) -> None:
+        class StatefulDaemon(self.FakeDaemonClient):
+            def __init__(self) -> None:
+                super().__init__()
+                self.value = "10k"
+
+            def assign_part(self, uuid: str, part_uuid: str) -> JsonRpcResponse:
+                response = super().assign_part(uuid, part_uuid)
+                self.value = "LMV321"
+                return response
+
+            def get_components(self) -> JsonRpcResponse:
+                self.calls.append(("get_components", None))
+                return JsonRpcResponse(
+                    "2.0",
+                    28,
+                    [
+                        {
+                            "uuid": "comp-1",
+                            "reference": "R1",
+                            "value": self.value,
+                            "position": {"x": 10_000_000, "y": 10_000_000},
+                            "rotation": 0,
+                            "layer": 0,
+                            "locked": False,
+                        }
+                    ],
+                    None,
+                )
+
+        daemon = StatefulDaemon()
+        host = StdioToolHost(daemon)
+        before = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 243,
+                "method": "tools/call",
+                "params": {"name": "get_components", "arguments": {}},
+            }
+        )
+        before_components = before["result"]["content"][0]["json"]
+        self.assertEqual(before_components[0]["value"], "10k")
+
+        host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 244,
+                "method": "tools/call",
+                "params": {
+                    "name": "assign_part",
+                    "arguments": {"uuid": "comp-1", "part_uuid": "part-1"},
+                },
+            }
+        )
+        after = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 245,
+                "method": "tools/call",
+                "params": {"name": "get_components", "arguments": {}},
+            }
+        )
+        after_components = after["result"]["content"][0]["json"]
+        self.assertEqual(after_components[0]["value"], "LMV321")
+        self.assertEqual(
+            daemon.calls,
+            [
+                ("get_components", None),
+                ("assign_part", "comp-1", "part-1"),
+                ("get_components", None),
+            ],
+        )
+
+    def test_tools_call_set_net_class_changes_followup_net_info_response(self) -> None:
+        class StatefulDaemon(self.FakeDaemonClient):
+            def __init__(self) -> None:
+                super().__init__()
+                self.net_class = "Default"
+
+            def set_net_class(
+                self,
+                net_uuid: str,
+                class_name: str,
+                clearance: int,
+                track_width: int,
+                via_drill: int,
+                via_diameter: int,
+                diffpair_width: int = 0,
+                diffpair_gap: int = 0,
+            ) -> JsonRpcResponse:
+                response = super().set_net_class(
+                    net_uuid,
+                    class_name,
+                    clearance,
+                    track_width,
+                    via_drill,
+                    via_diameter,
+                    diffpair_width,
+                    diffpair_gap,
+                )
+                self.net_class = class_name
+                return response
+
+            def get_net_info(self) -> JsonRpcResponse:
+                self.calls.append(("get_net_info", None))
+                return JsonRpcResponse(
+                    "2.0",
+                    29,
+                    [
+                        {
+                            "uuid": "net-1",
+                            "name": "GND",
+                            "class": self.net_class,
+                            "pins": [],
+                            "tracks": 1,
+                            "vias": 1,
+                            "zones": 0,
+                            "routed_length_nm": 1000000,
+                            "routed_pct": 1.0,
+                        }
+                    ],
+                    None,
+                )
+
+        daemon = StatefulDaemon()
+        host = StdioToolHost(daemon)
+        before = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 246,
+                "method": "tools/call",
+                "params": {"name": "get_net_info", "arguments": {}},
+            }
+        )
+        before_nets = before["result"]["content"][0]["json"]
+        self.assertEqual(before_nets[0]["class"], "Default")
+
+        host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 247,
+                "method": "tools/call",
+                "params": {
+                    "name": "set_net_class",
+                    "arguments": {
+                        "net_uuid": "net-1",
+                        "class_name": "power",
+                        "clearance": 125000,
+                        "track_width": 250000,
+                        "via_drill": 300000,
+                        "via_diameter": 600000,
+                    },
+                },
+            }
+        )
+        after = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 248,
+                "method": "tools/call",
+                "params": {"name": "get_net_info", "arguments": {}},
+            }
+        )
+        after_nets = after["result"]["content"][0]["json"]
+        self.assertEqual(after_nets[0]["class"], "power")
+        self.assertEqual(
+            daemon.calls,
+            [
+                ("get_net_info", None),
+                (
+                    "set_net_class",
+                    "net-1",
+                    "power",
+                    125000,
+                    250000,
+                    300000,
+                    600000,
+                    0,
+                    0,
+                ),
+                ("get_net_info", None),
             ],
         )
 

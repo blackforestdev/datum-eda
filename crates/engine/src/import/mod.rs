@@ -8,6 +8,8 @@ use serde::{Deserialize, Serialize};
 pub mod eagle;
 pub mod ids_sidecar;
 pub mod kicad;
+pub mod net_classes_sidecar;
+pub mod part_assignments_sidecar;
 pub mod rules_sidecar;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

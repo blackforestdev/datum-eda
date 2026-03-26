@@ -2,6 +2,7 @@
 
 > **Status**: Non-normative research and positioning analysis.
 > This document does not define any contracts or API surfaces.
+> Scope terminology follows `specs/PROGRAM_SPEC.md` §Scope Integrity Terms.
 
 ## Purpose
 Maps the existing Linux EDA landscape, identifies what's broken or
@@ -211,14 +212,14 @@ and is actively developed. Why build something new?
 
 ## 4. Positioning Strategy
 
-### Phase 1 (M0-M2): Complement
-"The best way to analyze, query, and check your KiCad/Eagle designs
-from the command line or via AI."
+### Phase 1 (M0-M2): Beachhead
+"AI-native design analysis and checking with deterministic engine semantics,
+starting with KiCad/Eagle interoperability."
 
-- Not a replacement for anything
-- Works with existing designs
+- Establishes the new architecture in production use
+- Works with existing designs while the native stack matures
 - Adds capabilities no existing tool has
-- Zero cost to try (import your existing project)
+- Zero-cost entry path (import existing projects)
 
 ### Phase 2 (M3-M4): Alternative for automation
 "Create and modify PCB designs without a GUI. AI-native design

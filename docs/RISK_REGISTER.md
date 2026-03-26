@@ -1,10 +1,12 @@
 # Risk Register
 
+Scope terminology follows `specs/PROGRAM_SPEC.md` §Scope Integrity Terms.
+
 ## R1: Import Fidelity
 **Risk**: Imported KiCad/Eagle designs don't round-trip correctly.
 Misaligned pads, missing nets, wrong layer mapping, lost design rules.
 
-**Impact**: Critical — the product wedge depends on accurate import.
+**Impact**: Critical — the current execution slice depends on accurate import.
 If import is lossy, DRC results are wrong, queries return garbage,
 and the tool is useless.
 
@@ -59,7 +61,8 @@ geometry being bulletproof.
 **Status**: Not started. Architecture supports mitigation.
 
 ## R5: Scope Creep
-**Risk**: The full-CAD ambition pulls effort away from the product wedge.
+**Risk**: The full-CAD ambition pulls effort away from the current execution
+slice.
 Features like GUI, routing, 3D, supply chain get started before the
 foundation (import, query, DRC) is solid.
 

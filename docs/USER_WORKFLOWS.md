@@ -8,6 +8,7 @@
 > document uses a command or tool name not present in the controlling
 > specs, it is marked **[aspirational]** and represents a design direction,
 > not a committed contract.
+> Scope terminology follows `specs/PROGRAM_SPEC.md` §Scope Integrity Terms.
 
 ## Purpose
 Documents end-to-end usage scenarios for each milestone. These workflows
@@ -22,7 +23,7 @@ API specifications.
 ### Primary: Professional EE on Linux
 An electrical engineer who:
 - Works on Linux (by choice or workplace requirement)
-- Has existing KiCad or Eagle designs
+- May have existing KiCad/Eagle designs and needs migration continuity
 - Wants programmatic access to design data
 - Values CLI and scriptability over GUI clicking
 - May already use AI tools (Claude, Copilot) in their workflow

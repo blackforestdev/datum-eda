@@ -4,6 +4,7 @@
 > This document does not define current implementation contracts.
 > Current controlling import contracts remain in `specs/IMPORT_SPEC.md`
 > and `docs/INTEROP_SCOPE.md`.
+> Scope terminology follows `specs/PROGRAM_SPEC.md` §Scope Integrity Terms.
 
 ## Purpose
 Define how Altium, PADS, and OrCAD/Allegro enter the roadmap without
@@ -31,9 +32,8 @@ The strategic migration targets are:
 - **PADS**
 
 These are the tools many serious Linux users are trapped behind today.
-If this project eventually wants to become more than a KiCad/Eagle
-companion, it needs a credible path for bringing those users and their
-libraries forward.
+If this project is going to become a broadly adopted AI-native EDA platform,
+it needs a credible path for bringing those users and their libraries forward.
 
 ---
 
@@ -299,7 +299,7 @@ implement it early, but to avoid blocking it accidentally.
 
 Near-term:
 
-- keep KiCad + Eagle as the only supported import contracts
+- keep KiCad + Eagle as the `M0-M2` supported import contracts
 - keep Eagle library import as the `M0` proving ground
 - add commercial interop only as research and architecture discipline
 

@@ -7,8 +7,9 @@ use std::path::{Path, PathBuf};
 use anyhow::{Context, Result, bail};
 use clap::{Parser, Subcommand};
 use eda_engine::api::{
-    CheckReport, CheckStatus, Engine, MoveComponentInput, OperationResult, SetDesignRuleInput,
-    SetReferenceInput, SetValueInput,
+    AssignPartInput, CheckReport, CheckStatus, Engine, MoveComponentInput, OperationResult,
+    RotateComponentInput, SetDesignRuleInput, SetReferenceInput, SetValueInput,
+    SetNetClassInput,
 };
 use eda_engine::drc::DrcReport;
 use eda_engine::erc::ErcFinding;
@@ -99,13 +100,33 @@ enum Commands {
         #[arg(long = "delete-via")]
         delete_via: Vec<Uuid>,
 
+        /// Delete one component by UUID
+        #[arg(long = "delete-component")]
+        delete_component: Vec<Uuid>,
+
+        /// Load Eagle libraries into the in-memory pool before applying modify ops
+        #[arg(long = "library")]
+        libraries: Vec<PathBuf>,
+
         /// Move one component: <uuid>:<x_mm>:<y_mm>[:<rotation_deg>]
         #[arg(long = "move-component")]
         move_component: Vec<String>,
 
+        /// Rotate one component: <uuid>:<rotation_deg>
+        #[arg(long = "rotate-component")]
+        rotate_component: Vec<String>,
+
         /// Set one component value: <uuid>:<value>
         #[arg(long = "set-value")]
         set_value: Vec<String>,
+
+        /// Assign one component part: <uuid>:<part_uuid>
+        #[arg(long = "assign-part")]
+        assign_part: Vec<String>,
+
+        /// Set one net class: <net_uuid>:<class_name>:<clearance_nm>:<track_width_nm>:<via_drill_nm>:<via_diameter_nm>[:<diffpair_width_nm>:<diffpair_gap_nm>]
+        #[arg(long = "set-net-class")]
+        set_net_class: Vec<String>,
 
         /// Set one component reference: <uuid>:<reference>
         #[arg(long = "set-reference")]
@@ -278,8 +299,13 @@ fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             path,
             delete_track,
             delete_via,
+            delete_component,
+            libraries,
             move_component,
+            rotate_component,
             set_value,
+            assign_part,
+            set_net_class,
             set_reference,
             undo,
             redo,
@@ -291,9 +317,21 @@ fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 .iter()
                 .map(|value| parse_move_component_arg(value))
                 .collect::<Result<Vec<_>>>()?;
+            let rotate_component = rotate_component
+                .iter()
+                .map(|value| parse_rotate_component_arg(value))
+                .collect::<Result<Vec<_>>>()?;
             let set_value = set_value
                 .iter()
                 .map(|value| parse_set_value_arg(value))
+                .collect::<Result<Vec<_>>>()?;
+            let assign_part = assign_part
+                .iter()
+                .map(|value| parse_assign_part_arg(value))
+                .collect::<Result<Vec<_>>>()?;
+            let set_net_class = set_net_class
+                .iter()
+                .map(|value| parse_set_net_class_arg(value))
                 .collect::<Result<Vec<_>>>()?;
             let set_reference = set_reference
                 .iter()
@@ -303,8 +341,13 @@ fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 &path,
                 &delete_track,
                 &delete_via,
+                &delete_component,
+                &libraries,
                 &move_component,
+                &rotate_component,
                 &set_value,
+                &assign_part,
+                &set_net_class,
                 &set_reference,
                 set_clearance_min_nm,
                 undo,
@@ -404,8 +447,13 @@ fn modify_board(
     path: &Path,
     delete_track: &[Uuid],
     delete_via: &[Uuid],
+    delete_component: &[Uuid],
+    libraries: &[PathBuf],
     move_component: &[MoveComponentInput],
+    rotate_component: &[RotateComponentInput],
     set_value: &[SetValueInput],
+    assign_part: &[AssignPartInput],
+    set_net_class: &[SetNetClassInput],
     set_reference: &[SetReferenceInput],
     set_clearance_min_nm: Option<i64>,
     undo: usize,
@@ -421,8 +469,12 @@ fn modify_board(
     }
     if delete_track.is_empty()
         && delete_via.is_empty()
+        && delete_component.is_empty()
         && move_component.is_empty()
+        && rotate_component.is_empty()
         && set_value.is_empty()
+        && assign_part.is_empty()
+        && set_net_class.is_empty()
         && set_reference.is_empty()
         && set_clearance_min_nm.is_none()
         && undo == 0
@@ -437,6 +489,17 @@ fn modify_board(
     }
 
     let mut engine = Engine::new().context("failed to initialize engine")?;
+    for path in libraries {
+        if path.extension().and_then(|ext| ext.to_str()) != Some("lbr") {
+            bail!(
+                "modify --library currently only accepts Eagle .lbr inputs in the current M3 slice: {}",
+                path.display()
+            );
+        }
+        engine
+            .import_eagle_library(path)
+            .with_context(|| format!("failed to import Eagle library {}", path.display()))?;
+    }
     engine
         .import(path)
         .with_context(|| format!("failed to import board {}", path.display()))?;
@@ -457,6 +520,13 @@ fn modify_board(
         actions.push(format!("delete_via {uuid}"));
         last_result = Some(result);
     }
+    for uuid in delete_component {
+        let result = engine
+            .delete_component(uuid)
+            .with_context(|| format!("failed to delete component {uuid}"))?;
+        actions.push(format!("delete_component {uuid}"));
+        last_result = Some(result);
+    }
     for input in move_component {
         let result = engine
             .move_component(input.clone())
@@ -470,11 +540,35 @@ fn modify_board(
         ));
         last_result = Some(result);
     }
+    for input in rotate_component {
+        let result = engine
+            .rotate_component(input.clone())
+            .with_context(|| format!("failed to rotate component {}", input.uuid))?;
+        actions.push(format!("rotate_component {} {}", input.uuid, input.rotation));
+        last_result = Some(result);
+    }
     for input in set_value {
         let result = engine
             .set_value(input.clone())
             .with_context(|| format!("failed to set component value {}", input.uuid))?;
         actions.push(format!("set_value {} {}", input.uuid, input.value));
+        last_result = Some(result);
+    }
+    for input in assign_part {
+        let result = engine
+            .assign_part(input.clone())
+            .with_context(|| format!("failed to assign part {} to {}", input.part_uuid, input.uuid))?;
+        actions.push(format!("assign_part {} {}", input.uuid, input.part_uuid));
+        last_result = Some(result);
+    }
+    for input in set_net_class {
+        let result = engine
+            .set_net_class(input.clone())
+            .with_context(|| format!("failed to set net class on {}", input.net_uuid))?;
+        actions.push(format!(
+            "set_net_class {} {}",
+            input.net_uuid, input.class_name
+        ));
         last_result = Some(result);
     }
     for input in set_reference {
@@ -574,6 +668,16 @@ fn parse_set_value_arg(value: &str) -> Result<SetValueInput> {
     })
 }
 
+fn parse_rotate_component_arg(value: &str) -> Result<RotateComponentInput> {
+    let (uuid, rotation) = value
+        .split_once(':')
+        .ok_or_else(|| anyhow::anyhow!("--rotate-component expects <uuid>:<rotation_deg>"))?;
+    Ok(RotateComponentInput {
+        uuid: Uuid::parse_str(uuid)?,
+        rotation: rotation.parse::<i32>()?,
+    })
+}
+
 fn parse_set_reference_arg(value: &str) -> Result<SetReferenceInput> {
     let (uuid, reference) = value
         .split_once(':')
@@ -581,6 +685,43 @@ fn parse_set_reference_arg(value: &str) -> Result<SetReferenceInput> {
     Ok(SetReferenceInput {
         uuid: Uuid::parse_str(uuid)?,
         reference: reference.to_string(),
+    })
+}
+
+fn parse_assign_part_arg(value: &str) -> Result<AssignPartInput> {
+    let (uuid, part_uuid) = value
+        .split_once(':')
+        .ok_or_else(|| anyhow::anyhow!("--assign-part expects <uuid>:<part_uuid>"))?;
+    Ok(AssignPartInput {
+        uuid: Uuid::parse_str(uuid)?,
+        part_uuid: Uuid::parse_str(part_uuid)?,
+    })
+}
+
+fn parse_set_net_class_arg(value: &str) -> Result<SetNetClassInput> {
+    let parts: Vec<_> = value.split(':').collect();
+    if parts.len() != 6 && parts.len() != 8 {
+        bail!(
+            "--set-net-class expects <net_uuid>:<class_name>:<clearance_nm>:<track_width_nm>:<via_drill_nm>:<via_diameter_nm>[:<diffpair_width_nm>:<diffpair_gap_nm>]"
+        );
+    }
+    Ok(SetNetClassInput {
+        net_uuid: Uuid::parse_str(parts[0])?,
+        class_name: parts[1].to_string(),
+        clearance: parts[2].parse::<i64>()?,
+        track_width: parts[3].parse::<i64>()?,
+        via_drill: parts[4].parse::<i64>()?,
+        via_diameter: parts[5].parse::<i64>()?,
+        diffpair_width: if parts.len() == 8 {
+            parts[6].parse::<i64>()?
+        } else {
+            0
+        },
+        diffpair_gap: if parts.len() == 8 {
+            parts[7].parse::<i64>()?
+        } else {
+            0
+        },
     })
 }
 
@@ -1396,6 +1537,11 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
             Some(125_000),
             0,
             0,
@@ -1509,6 +1655,11 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
             None,
             0,
             0,
@@ -1539,6 +1690,11 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
             None,
             0,
             0,
@@ -1562,6 +1718,11 @@ mod tests {
         ));
         let report = modify_board(
             &source,
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
             &[],
             &[],
             &[],
@@ -1601,10 +1762,15 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
+            &[],
+            &[],
             &[SetValueInput {
                 uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
                 value: "22k".to_string(),
             }],
+            &[],
+            &[],
             &[],
             None,
             0,
@@ -1630,11 +1796,16 @@ mod tests {
             &source,
             &[],
             &[],
+            &[],
+            &[],
             &[MoveComponentInput {
                 uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
                 position: eda_engine::ir::geometry::Point::new(15_000_000, 12_000_000),
                 rotation: Some(90),
             }],
+            &[],
+            &[],
+            &[],
             &[],
             &[],
             None,
@@ -1663,6 +1834,11 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
             &[SetReferenceInput {
                 uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
                 reference: "R10".to_string(),
@@ -1677,6 +1853,184 @@ mod tests {
         assert_eq!(report.saved_path.as_deref(), Some(target.to_str().unwrap()));
         let saved = std::fs::read_to_string(&target).expect("saved file should read");
         assert!(saved.contains("(property \"Reference\" \"R10\""));
+        let _ = std::fs::remove_file(target);
+    }
+
+    #[test]
+    fn modify_board_supports_delete_component_slice() {
+        let source = kicad_fixture_path("partial-route-demo.kicad_pcb");
+        let target = std::env::temp_dir().join(format!(
+            "{}-cli-save-partial-route-delete-component.kicad_pcb",
+            Uuid::new_v4()
+        ));
+        let report = modify_board(
+            &source,
+            &[],
+            &[],
+            &[Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap()],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            None,
+            0,
+            0,
+            Some(&target),
+            false,
+        )
+        .expect("modify delete_component save should succeed");
+        assert_eq!(report.saved_path.as_deref(), Some(target.to_str().unwrap()));
+        let saved = std::fs::read_to_string(&target).expect("saved file should read");
+        assert!(!saved.contains("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"));
+        let _ = std::fs::remove_file(target);
+    }
+
+    #[test]
+    fn modify_board_supports_assign_part_slice() {
+        let source = kicad_fixture_path("partial-route-demo.kicad_pcb");
+        let target = std::env::temp_dir().join(format!(
+            "{}-cli-save-partial-route-assign-part.kicad_pcb",
+            Uuid::new_v4()
+        ));
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+            .expect("library import should succeed");
+        let part_uuid = engine
+            .search_pool("LMV321")
+            .expect("search should succeed")
+            .first()
+            .map(|part| part.uuid)
+            .expect("LMV321 part should exist");
+
+        let report = modify_board(
+            &source,
+            &[],
+            &[],
+            &[],
+            &[eagle_fixture_path("simple-opamp.lbr")],
+            &[],
+            &[],
+            &[],
+            &[AssignPartInput {
+                uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+                part_uuid,
+            }],
+            &[],
+            &[],
+            None,
+            0,
+            0,
+            Some(&target),
+            false,
+        )
+        .expect("modify assign_part save should succeed");
+        assert_eq!(report.saved_path.as_deref(), Some(target.to_str().unwrap()));
+        let saved = std::fs::read_to_string(&target).expect("saved file should read");
+        assert!(saved.contains("(property \"Value\" \"LMV321\""));
+        let _ = std::fs::remove_file(&target);
+        let _ = std::fs::remove_file(target.with_file_name(format!(
+            "{}.parts.json",
+            target.file_name().unwrap().to_string_lossy()
+        )));
+    }
+
+    #[test]
+    fn modify_board_supports_set_net_class_slice() {
+        let source = kicad_fixture_path("simple-demo.kicad_pcb");
+        let target = std::env::temp_dir().join(format!(
+            "{}-cli-save-simple-demo-net-class.kicad_pcb",
+            Uuid::new_v4()
+        ));
+        let net_uuid = match query_nets(&source).expect("nets should query") {
+            NetListView::Board { nets } => nets
+                .into_iter()
+                .find(|net| net.name == "GND")
+                .expect("GND net should exist")
+                .uuid,
+            NetListView::Schematic { .. } => panic!("expected board net list"),
+        };
+
+        let report = modify_board(
+            &source,
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[SetNetClassInput {
+                net_uuid,
+                class_name: "power".to_string(),
+                clearance: 125_000,
+                track_width: 250_000,
+                via_drill: 300_000,
+                via_diameter: 600_000,
+                diffpair_width: 0,
+                diffpair_gap: 0,
+            }],
+            &[],
+            None,
+            0,
+            0,
+            Some(&target),
+            false,
+        )
+        .expect("modify set_net_class save should succeed");
+        assert_eq!(report.saved_path.as_deref(), Some(target.to_str().unwrap()));
+        let nets = query_nets(&target).expect("saved nets should query");
+        let gnd = match nets {
+            NetListView::Board { nets } => nets
+                .into_iter()
+                .find(|net| net.uuid == net_uuid)
+                .expect("updated GND net should exist"),
+            NetListView::Schematic { .. } => panic!("expected board net list"),
+        };
+        assert_eq!(gnd.class, "power");
+        let _ = std::fs::remove_file(&target);
+        let _ = std::fs::remove_file(target.with_file_name(format!(
+            "{}.net-classes.json",
+            target.file_name().unwrap().to_string_lossy()
+        )));
+    }
+
+    #[test]
+    fn modify_board_supports_rotate_component_slice() {
+        let source = kicad_fixture_path("partial-route-demo.kicad_pcb");
+        let target = std::env::temp_dir().join(format!(
+            "{}-cli-save-partial-route-rotate.kicad_pcb",
+            Uuid::new_v4()
+        ));
+        let report = modify_board(
+            &source,
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[RotateComponentInput {
+                uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+                rotation: 180,
+            }],
+            &[],
+            &[],
+            &[],
+            &[],
+            None,
+            0,
+            0,
+            Some(&target),
+            false,
+        )
+        .expect("modify rotate_component save should succeed");
+        assert_eq!(report.saved_path.as_deref(), Some(target.to_str().unwrap()));
+        let saved = std::fs::read_to_string(&target).expect("saved file should read");
+        assert!(saved.contains("(at 10 10 180)"));
         let _ = std::fs::remove_file(target);
     }
 

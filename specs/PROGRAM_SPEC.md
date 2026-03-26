@@ -33,19 +33,43 @@ Precedence rules:
 - Current explicit exception: `docs/CANONICAL_IR.md` remains canonical until it
   is promoted or subsumed by formal spec files.
 
+## Scope Integrity Terms
+
+The following terms are normative for scope framing across this repository:
+
+- **Product identity**: Datum EDA as an AI-native EDA platform.
+  This is cross-milestone and does not shrink to current feature coverage.
+- **Implementation slice**: the currently shipped capability subset at a given
+  milestone boundary (for example `M2` import/query/check, current `M3` write
+  subset).
+- **Execution strategy**: sequencing choices used to deliver the implementation
+  slice with low risk (for example KiCad-first interoperability).
+- **Non-goals**: explicit exclusions for a milestone, used to control delivery
+  scope. Non-goals for one milestone are not permanent product exclusions.
+
+Interpretation rule:
+- Do not infer product identity from implementation-slice limits.
+- Do not infer permanent product limits from milestone non-goals.
+
 ## v1 Definition
 
 v1 = PLAN.md milestone M2.
 v1 is the first public release.
 
-**v1 is**: the best AI/CLI design analysis and automation environment
-for Linux PCB projects.
+**Product identity (all milestones)**: Datum EDA is an AI-native EDA platform
+with a deterministic engine core and machine-native control surfaces.
+
+**v1 implementation slice**: the best AI/CLI design analysis and automation
+environment for Linux PCB projects.
 
 **v1 does**: import KiCad/Eagle designs, query all design data, run ERC/DRC,
-expose everything via MCP and CLI.
+and expose that surface via MCP and CLI.
 
 **v1 does not**: create designs, edit designs, route, export manufacturing
 files, or provide a GUI.
+
+Note: KiCad/Eagle-first support in v1 is an execution strategy for rapid,
+verifiable delivery. It is not the long-term product boundary.
 
 ---
 

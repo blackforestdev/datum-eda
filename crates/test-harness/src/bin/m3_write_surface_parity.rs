@@ -3,7 +3,7 @@ use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use anyhow::{Context, Result, bail};
-use eda_engine::api::Engine;
+use eda_engine::api::{AssignPartInput, Engine, SetNetClassInput};
 use eda_test_harness::canonical_json;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -270,6 +270,30 @@ fn engine_surface_result(cli: &Cli) -> Result<String> {
         bail!("delete_via did not change engine follow-up net-info state");
     }
 
+    let mut component_engine = Engine::new()?;
+    component_engine.import(&cli.roundtrip_board_fixture_path)?;
+    let baseline_component_list = {
+        let mut baseline_engine = Engine::new()?;
+        baseline_engine.import(&cli.roundtrip_board_fixture_path)?;
+        baseline_engine.get_components()?
+    };
+    let delete_component = component_engine
+        .delete_component(&Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap())?;
+    let component_target = unique_temp_path("engine-surface-component-save", "kicad_pcb");
+    component_engine.save(&component_target)?;
+    let mut reloaded_component = Engine::new()?;
+    reloaded_component.import(&component_target)?;
+    let reloaded_component_list = reloaded_component.get_components()?;
+    if reloaded_component_list
+        .iter()
+        .any(|component| component.uuid == Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap())
+    {
+        bail!("saved delete_component board still reimported deleted component");
+    }
+    if baseline_component_list.len() == reloaded_component_list.len() {
+        bail!("delete_component did not change engine follow-up components state");
+    }
+
     let mut rule_engine = Engine::new()?;
     rule_engine.import(&via_fixture)?;
     let baseline_rules = rule_engine.get_design_rules()?;
@@ -328,6 +352,37 @@ fn engine_surface_result(cli: &Cli) -> Result<String> {
             .map(|airwire| airwire.distance_nm)
     {
         bail!("move_component did not change engine unrouted derived state");
+    }
+
+    let mut rotate_engine = Engine::new()?;
+    rotate_engine.import(&cli.roundtrip_board_fixture_path)?;
+    let baseline_rotate_components = {
+        let mut baseline_engine = Engine::new()?;
+        baseline_engine.import(&cli.roundtrip_board_fixture_path)?;
+        baseline_engine.get_components()?
+    };
+    let rotate = rotate_engine.rotate_component(eda_engine::api::RotateComponentInput {
+        uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+        rotation: 180,
+    })?;
+    let rotate_target = unique_temp_path("engine-surface-rotate-save", "kicad_pcb");
+    rotate_engine.save(&rotate_target)?;
+    let mut reloaded_rotate = Engine::new()?;
+    reloaded_rotate.import(&rotate_target)?;
+    let rotated_component = reloaded_rotate
+        .get_components()?
+        .into_iter()
+        .find(|component| component.uuid == Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap())
+        .ok_or_else(|| anyhow::anyhow!("reloaded rotated component missing target"))?;
+    if rotated_component.rotation != 180 {
+        bail!("saved rotated component did not reimport expected rotation");
+    }
+    let baseline_rotated = baseline_rotate_components
+        .iter()
+        .find(|component| component.uuid == Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap())
+        .ok_or_else(|| anyhow::anyhow!("baseline rotate components missing target"))?;
+    if baseline_rotated.rotation == rotated_component.rotation {
+        bail!("rotate_component did not change engine follow-up components state");
     }
 
     let mut value_engine = Engine::new()?;
@@ -392,22 +447,118 @@ fn engine_surface_result(cli: &Cli) -> Result<String> {
         bail!("set_reference did not change engine follow-up components state");
     }
 
+    let library_fixture = cli
+        .repo_root
+        .join("crates/engine/testdata/import/eagle/simple-opamp.lbr");
+    let mut assign_engine = Engine::new()?;
+    assign_engine.import_eagle_library(&library_fixture)?;
+    assign_engine.import(&cli.roundtrip_board_fixture_path)?;
+    let baseline_assign_components = {
+        let mut baseline_engine = Engine::new()?;
+        baseline_engine.import_eagle_library(&library_fixture)?;
+        baseline_engine.import(&cli.roundtrip_board_fixture_path)?;
+        baseline_engine.get_components()?
+    };
+    let part_uuid = assign_engine
+        .search_pool("LMV321")?
+        .into_iter()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("LMV321 part missing from pool"))?
+        .uuid;
+    let assign_part = assign_engine.assign_part(AssignPartInput {
+        uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+        part_uuid,
+    })?;
+    let assign_target = unique_temp_path("engine-surface-assign-part-save", "kicad_pcb");
+    assign_engine.save(&assign_target)?;
+    let mut reloaded_assign = Engine::new()?;
+    reloaded_assign.import_eagle_library(&library_fixture)?;
+    reloaded_assign.import(&assign_target)?;
+    let reloaded_assign_components = reloaded_assign.get_components()?;
+    let baseline_assign_r1 = baseline_assign_components
+        .iter()
+        .find(|component| component.reference == "R1")
+        .ok_or_else(|| anyhow::anyhow!("baseline assign_part components missing R1"))?;
+    let updated_assign_r1 = reloaded_assign_components
+        .iter()
+        .find(|component| component.reference == "R1")
+        .ok_or_else(|| anyhow::anyhow!("reloaded assign_part components missing R1"))?;
+    if updated_assign_r1.value != "LMV321" {
+        bail!("saved assign_part component did not reimport expected value");
+    }
+    if baseline_assign_r1.value == updated_assign_r1.value {
+        bail!("assign_part did not change engine follow-up components state");
+    }
+
+    let net_fixture = cli
+        .repo_root
+        .join("crates/engine/testdata/import/kicad/simple-demo.kicad_pcb");
+    let mut net_class_engine = Engine::new()?;
+    net_class_engine.import(&net_fixture)?;
+    let baseline_net_info = {
+        let mut baseline_engine = Engine::new()?;
+        baseline_engine.import(&net_fixture)?;
+        baseline_engine.get_net_info()?
+    };
+    let gnd_uuid = baseline_net_info
+        .iter()
+        .find(|net| net.name == "GND")
+        .ok_or_else(|| anyhow::anyhow!("baseline net info missing GND"))?
+        .uuid;
+    let set_net_class = net_class_engine.set_net_class(SetNetClassInput {
+        net_uuid: gnd_uuid,
+        class_name: "power".to_string(),
+        clearance: 125_000,
+        track_width: 250_000,
+        via_drill: 300_000,
+        via_diameter: 600_000,
+        diffpair_width: 0,
+        diffpair_gap: 0,
+    })?;
+    let net_class_target = unique_temp_path("engine-surface-net-class-save", "kicad_pcb");
+    net_class_engine.save(&net_class_target)?;
+    let mut reloaded_net_class = Engine::new()?;
+    reloaded_net_class.import(&net_class_target)?;
+    let reloaded_net_info = reloaded_net_class.get_net_info()?;
+    let baseline_gnd = baseline_net_info
+        .iter()
+        .find(|net| net.uuid == gnd_uuid)
+        .ok_or_else(|| anyhow::anyhow!("baseline net info missing GND uuid"))?;
+    let updated_gnd = reloaded_net_info
+        .iter()
+        .find(|net| net.uuid == gnd_uuid)
+        .ok_or_else(|| anyhow::anyhow!("reloaded net info missing GND uuid"))?;
+    if updated_gnd.class != "power" {
+        bail!("saved set_net_class net did not reimport expected class");
+    }
+    if baseline_gnd.class == updated_gnd.class {
+        bail!("set_net_class did not change engine follow-up net-info state");
+    }
+
     Ok(format!(
-        "delete={}, undo={}, redo={}, saved={}, reimported_deleted_state=true, delete_followup_check_changed=true, delete_via={}, via_saved={}, via_reimported_deleted_state=true, delete_via_followup_net_info_changed=true, set_rule={}, rule_saved={}, rule_reimported=true, rule_followup_query_changed=true, move_component={}, moved_saved={}, move_reimported=true, move_followup_unrouted_changed=true, set_value={}, value_saved={}, value_followup_components_changed=true, set_reference={}, reference_saved={}, reference_followup_components_changed=true",
+        "delete={}, undo={}, redo={}, saved={}, reimported_deleted_state=true, delete_followup_check_changed=true, delete_via={}, via_saved={}, via_reimported_deleted_state=true, delete_via_followup_net_info_changed=true, delete_component={}, component_saved={}, component_followup_components_changed=true, set_rule={}, rule_saved={}, rule_reimported=true, rule_followup_query_changed=true, move_component={}, moved_saved={}, move_reimported=true, move_followup_unrouted_changed=true, rotate_component={}, rotate_saved={}, rotate_followup_components_changed=true, set_value={}, value_saved={}, value_followup_components_changed=true, set_reference={}, reference_saved={}, reference_followup_components_changed=true, assign_part={}, assign_saved={}, assign_part_followup_components_changed=true, set_net_class={}, net_class_saved={}, set_net_class_followup_net_info_changed=true",
         delete.description,
         undo.description,
         redo.description,
         target.display(),
         delete_via.description,
         via_target.display(),
+        delete_component.description,
+        component_target.display(),
         set_rule.description,
         rule_target.display(),
         moved.description,
         move_target.display(),
+        rotate.description,
+        rotate_target.display(),
         set_value.description,
         value_target.display(),
         set_reference.description,
-        reference_target.display()
+        reference_target.display(),
+        assign_part.description,
+        assign_target.display(),
+        set_net_class.description,
+        net_class_target.display()
     ))
 }
 
@@ -486,6 +637,30 @@ fn daemon_surface_result(cli: &Cli) -> Result<String> {
             ])
             .current_dir(&cli.repo_root),
         "daemon delete-via derived-state parity probe",
+    )?;
+    let component_test = run_command_checked(
+        Command::new("cargo")
+            .args([
+                "test",
+                "-q",
+                "-p",
+                "eda-engine-daemon",
+                "delete_component_dispatch_updates_component_list",
+            ])
+            .current_dir(&cli.repo_root),
+        "daemon delete-component parity probe",
+    )?;
+    let component_followup_test = run_command_checked(
+        Command::new("cargo")
+            .args([
+                "test",
+                "-q",
+                "-p",
+                "eda-engine-daemon",
+                "delete_component_dispatch_updates_followup_components_query",
+            ])
+            .current_dir(&cli.repo_root),
+        "daemon delete-component derived-state parity probe",
     )?;
     let rule_test = run_command_checked(
         Command::new("cargo")
@@ -583,14 +758,88 @@ fn daemon_surface_result(cli: &Cli) -> Result<String> {
             .current_dir(&cli.repo_root),
         "daemon move-component derived-state parity probe",
     )?;
+    let rotate_test = run_command_checked(
+        Command::new("cargo")
+            .args([
+                "test",
+                "-q",
+                "-p",
+                "eda-engine-daemon",
+                "rotate_component_dispatch_updates_component_rotation",
+            ])
+            .current_dir(&cli.repo_root),
+        "daemon rotate-component parity probe",
+    )?;
+    let rotate_followup_test = run_command_checked(
+        Command::new("cargo")
+            .args([
+                "test",
+                "-q",
+                "-p",
+                "eda-engine-daemon",
+                "rotate_component_dispatch_updates_followup_components_query",
+            ])
+            .current_dir(&cli.repo_root),
+        "daemon rotate-component derived-state parity probe",
+    )?;
+    let assign_part_test = run_command_checked(
+        Command::new("cargo")
+            .args([
+                "test",
+                "-q",
+                "-p",
+                "eda-engine-daemon",
+                "assign_part_dispatch_updates_component_value",
+            ])
+            .current_dir(&cli.repo_root),
+        "daemon assign-part parity probe",
+    )?;
+    let assign_part_followup_test = run_command_checked(
+        Command::new("cargo")
+            .args([
+                "test",
+                "-q",
+                "-p",
+                "eda-engine-daemon",
+                "assign_part_dispatch_updates_followup_components_query",
+            ])
+            .current_dir(&cli.repo_root),
+        "daemon assign-part derived-state parity probe",
+    )?;
+    let set_net_class_test = run_command_checked(
+        Command::new("cargo")
+            .args([
+                "test",
+                "-q",
+                "-p",
+                "eda-engine-daemon",
+                "set_net_class_dispatch_updates_net_class",
+            ])
+            .current_dir(&cli.repo_root),
+        "daemon set-net-class parity probe",
+    )?;
+    let set_net_class_followup_test = run_command_checked(
+        Command::new("cargo")
+            .args([
+                "test",
+                "-q",
+                "-p",
+                "eda-engine-daemon",
+                "set_net_class_dispatch_updates_followup_net_info_query",
+            ])
+            .current_dir(&cli.repo_root),
+        "daemon set-net-class derived-state parity probe",
+    )?;
 
     Ok(format!(
-        "behavioral dispatch tests passed: save_dispatch_writes_current_m3_slice_to_requested_path, delete_track_undo_and_redo_dispatch_round_trip, delete_track_dispatch_updates_followup_check_report, delete_via_undo_and_redo_dispatch_round_trip, delete_via_dispatch_updates_followup_net_info_query, set_design_rule_dispatch_persists_rule_in_memory, set_design_rule_dispatch_updates_followup_design_rules_query, set_value_dispatch_updates_component_value, set_value_dispatch_updates_followup_components_query, set_reference_dispatch_updates_component_reference, set_reference_dispatch_updates_followup_components_query, move_component_dispatch_updates_component_position, move_component_dispatch_updates_followup_unrouted_query (outputs: {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})",
+        "behavioral dispatch tests passed: save_dispatch_writes_current_m3_slice_to_requested_path, delete_track_undo_and_redo_dispatch_round_trip, delete_track_dispatch_updates_followup_check_report, delete_via_undo_and_redo_dispatch_round_trip, delete_via_dispatch_updates_followup_net_info_query, delete_component_dispatch_updates_component_list, delete_component_dispatch_updates_followup_components_query, set_design_rule_dispatch_persists_rule_in_memory, set_design_rule_dispatch_updates_followup_design_rules_query, set_value_dispatch_updates_component_value, set_value_dispatch_updates_followup_components_query, set_reference_dispatch_updates_component_reference, set_reference_dispatch_updates_followup_components_query, move_component_dispatch_updates_component_position, move_component_dispatch_updates_followup_unrouted_query, rotate_component_dispatch_updates_component_rotation, rotate_component_dispatch_updates_followup_components_query, assign_part_dispatch_updates_component_value, assign_part_dispatch_updates_followup_components_query, set_net_class_dispatch_updates_net_class, set_net_class_dispatch_updates_followup_net_info_query (outputs: {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {})",
         save_test,
         roundtrip_test,
         delete_followup_test,
         via_roundtrip_test,
         via_followup_test,
+        component_test,
+        component_followup_test,
         rule_test,
         rule_followup_test,
         value_test,
@@ -598,7 +847,13 @@ fn daemon_surface_result(cli: &Cli) -> Result<String> {
         reference_test,
         reference_followup_test,
         move_test,
-        move_derived_test
+        move_derived_test,
+        rotate_test,
+        rotate_followup_test,
+        assign_part_test,
+        assign_part_followup_test,
+        set_net_class_test,
+        set_net_class_followup_test
     ))
 }
 
@@ -636,16 +891,24 @@ for name in [
     "test_tools_call_dispatches_save",
     "test_tools_call_dispatches_delete_track",
     "test_tools_call_delete_track_changes_followup_check_report",
+    "test_tools_call_dispatches_delete_component",
+    "test_tools_call_delete_component_changes_followup_components_response",
     "test_tools_call_dispatches_delete_via",
     "test_tools_call_delete_via_changes_followup_net_info_response",
     "test_tools_call_dispatches_move_component",
     "test_tools_call_move_component_changes_followup_unrouted_response",
+    "test_tools_call_dispatches_rotate_component",
+    "test_tools_call_rotate_component_changes_followup_components_response",
     "test_tools_call_dispatches_set_design_rule",
     "test_tools_call_set_design_rule_changes_followup_design_rules_response",
     "test_tools_call_dispatches_set_value",
     "test_tools_call_set_value_changes_followup_components_response",
     "test_tools_call_dispatches_set_reference",
     "test_tools_call_set_reference_changes_followup_components_response",
+    "test_tools_call_dispatches_assign_part",
+    "test_tools_call_assign_part_changes_followup_components_response",
+    "test_tools_call_dispatches_set_net_class",
+    "test_tools_call_set_net_class_changes_followup_net_info_response",
     "test_tools_call_dispatches_undo_and_redo",
 ]:
     suite.addTests(loader.loadTestsFromName(f"ServerTests.{name}", module))
@@ -671,31 +934,43 @@ fn check_cli_surface(cli: &Cli) -> SurfaceCheck {
     match (
         cli_surface_result(cli),
         cli_via_surface_result(cli),
+        cli_component_surface_result(cli),
         cli_move_surface_result(cli),
+        cli_rotate_surface_result(cli),
         cli_rule_surface_result(cli),
         cli_value_surface_result(cli),
         cli_reference_surface_result(cli),
+        cli_assign_part_surface_result(cli),
+        cli_set_net_class_surface_result(cli),
     ) {
         (
             Ok(track_evidence),
             Ok(via_evidence),
+            Ok(component_evidence),
             Ok(move_evidence),
+            Ok(rotate_evidence),
             Ok(rule_evidence),
             Ok(value_evidence),
             Ok(reference_evidence),
+            Ok(assign_part_evidence),
+            Ok(net_class_evidence),
         ) => SurfaceCheck {
             surface: "cli_modify_surface".to_string(),
             status: Status::Passed,
             evidence: format!(
-                "{track_evidence}; {via_evidence}; {move_evidence}; {rule_evidence}; {value_evidence}; {reference_evidence}"
+                "{track_evidence}; {via_evidence}; {component_evidence}; {move_evidence}; {rotate_evidence}; {rule_evidence}; {value_evidence}; {reference_evidence}; {assign_part_evidence}; {net_class_evidence}"
             ),
         },
-        (Err(err), _, _, _, _, _)
-        | (_, Err(err), _, _, _, _)
-        | (_, _, Err(err), _, _, _)
-        | (_, _, _, Err(err), _, _)
-        | (_, _, _, _, Err(err), _)
-        | (_, _, _, _, _, Err(err)) => SurfaceCheck {
+        (Err(err), _, _, _, _, _, _, _, _, _)
+        | (_, Err(err), _, _, _, _, _, _, _, _)
+        | (_, _, Err(err), _, _, _, _, _, _, _)
+        | (_, _, _, Err(err), _, _, _, _, _, _)
+        | (_, _, _, _, Err(err), _, _, _, _, _)
+        | (_, _, _, _, _, Err(err), _, _, _, _)
+        | (_, _, _, _, _, _, Err(err), _, _, _)
+        | (_, _, _, _, _, _, _, Err(err), _, _)
+        | (_, _, _, _, _, _, _, _, Err(err), _)
+        | (_, _, _, _, _, _, _, _, _, Err(err)) => SurfaceCheck {
             surface: "cli_modify_surface".to_string(),
             status: Status::Failed,
             evidence: err.to_string(),
@@ -888,6 +1163,66 @@ fn cli_via_surface_result(cli: &Cli) -> Result<String> {
     ))
 }
 
+fn cli_component_surface_result(cli: &Cli) -> Result<String> {
+    let target = unique_temp_path("cli-surface-component-save", "kicad_pcb");
+    let output = Command::new("cargo")
+        .args([
+            "run", "-q", "-p", "eda-cli", "--", "--format", "json", "modify",
+        ])
+        .arg(&cli.roundtrip_board_fixture_path)
+        .arg("--delete-component")
+        .arg("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+        .arg("--save")
+        .arg(&target)
+        .current_dir(&cli.repo_root)
+        .output()
+        .context("failed to run CLI delete-component save parity probe")?;
+    if !output.status.success() {
+        bail!(
+            "CLI delete-component save parity probe failed with status {:?}: {}",
+            output.status.code(),
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    let save: CliModifyReport = serde_json::from_slice(&output.stdout)
+        .context("failed to parse CLI delete-component save JSON output")?;
+    let saved_path = save
+        .saved_path
+        .as_deref()
+        .ok_or_else(|| anyhow::anyhow!("CLI delete-component save report missing saved_path"))?;
+    let query_output = Command::new("cargo")
+        .args([
+            "run", "-q", "-p", "eda-cli", "--", "--format", "json", "query",
+        ])
+        .arg(saved_path)
+        .arg("components")
+        .current_dir(&cli.repo_root)
+        .output()
+        .context("failed to run CLI delete-component follow-up components query")?;
+    if !query_output.status.success() {
+        bail!(
+            "CLI delete-component follow-up components query failed with status {:?}: {}",
+            query_output.status.code(),
+            String::from_utf8_lossy(&query_output.stderr).trim()
+        );
+    }
+    let payload: Value = serde_json::from_slice(&query_output.stdout)
+        .context("failed to parse CLI delete-component follow-up components JSON")?;
+    let components = payload["components"]
+        .as_array()
+        .ok_or_else(|| anyhow::anyhow!("CLI delete-component follow-up query missing components"))?;
+    if components
+        .iter()
+        .any(|component| component["uuid"] == "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+    {
+        bail!("CLI delete-component follow-up query still included deleted component");
+    }
+    Ok(format!(
+        "component_saved={}, delete_component_then_save_persisted=true, delete_component_followup_components_changed=true",
+        saved_path
+    ))
+}
+
 fn cli_rule_surface_result(cli: &Cli) -> Result<String> {
     let fixture = cli
         .repo_root
@@ -1075,6 +1410,160 @@ fn cli_reference_surface_result(cli: &Cli) -> Result<String> {
     ))
 }
 
+fn cli_assign_part_surface_result(cli: &Cli) -> Result<String> {
+    let library = cli
+        .repo_root
+        .join("crates/engine/testdata/import/eagle/simple-opamp.lbr");
+    let mut engine = Engine::new()?;
+    engine.import_eagle_library(&library)?;
+    let part_uuid = engine
+        .search_pool("LMV321")?
+        .into_iter()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("LMV321 part missing from pool"))?
+        .uuid;
+
+    let target = unique_temp_path("cli-surface-assign-part-save", "kicad_pcb");
+    let output = Command::new("cargo")
+        .args([
+            "run", "-q", "-p", "eda-cli", "--", "--format", "json", "modify",
+        ])
+        .arg(&cli.roundtrip_board_fixture_path)
+        .arg("--library")
+        .arg(&library)
+        .arg("--assign-part")
+        .arg(format!(
+            "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:{}",
+            part_uuid
+        ))
+        .arg("--save")
+        .arg(&target)
+        .current_dir(&cli.repo_root)
+        .output()
+        .context("failed to run CLI assign-part save parity probe")?;
+    if !output.status.success() {
+        bail!(
+            "CLI assign-part save parity probe failed with status {:?}: {}",
+            output.status.code(),
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    let save: CliModifyReport = serde_json::from_slice(&output.stdout)
+        .context("failed to parse CLI assign-part save JSON output")?;
+    let saved_path = save
+        .saved_path
+        .as_deref()
+        .ok_or_else(|| anyhow::anyhow!("CLI assign-part save report missing saved_path"))?;
+    let query_output = Command::new("cargo")
+        .args([
+            "run", "-q", "-p", "eda-cli", "--", "--format", "json", "query",
+        ])
+        .arg(saved_path)
+        .arg("components")
+        .current_dir(&cli.repo_root)
+        .output()
+        .context("failed to run CLI assign-part follow-up components query")?;
+    if !query_output.status.success() {
+        bail!(
+            "CLI assign-part follow-up components query failed with status {:?}: {}",
+            query_output.status.code(),
+            String::from_utf8_lossy(&query_output.stderr).trim()
+        );
+    }
+    let payload: Value = serde_json::from_slice(&query_output.stdout)
+        .context("failed to parse CLI assign-part follow-up components JSON")?;
+    let components = payload["components"]
+        .as_array()
+        .ok_or_else(|| anyhow::anyhow!("CLI assign-part follow-up query missing components"))?;
+    let target_component = components
+        .iter()
+        .find(|component| component["uuid"] == "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+        .ok_or_else(|| anyhow::anyhow!("CLI assign-part follow-up query missing target component"))?;
+    if target_component["value"] != "LMV321" {
+        bail!("CLI assign-part follow-up query did not reflect updated component value");
+    }
+    Ok(format!(
+        "assign_saved={}, assign_part_then_save_persisted=true, assign_part_followup_components_changed=true",
+        saved_path
+    ))
+}
+
+fn cli_set_net_class_surface_result(cli: &Cli) -> Result<String> {
+    let fixture = cli
+        .repo_root
+        .join("crates/engine/testdata/import/kicad/simple-demo.kicad_pcb");
+    let mut engine = Engine::new()?;
+    engine.import(&fixture)?;
+    let net_uuid = engine
+        .get_net_info()?
+        .into_iter()
+        .find(|net| net.name == "GND")
+        .ok_or_else(|| anyhow::anyhow!("GND net missing from CLI set-net-class fixture"))?
+        .uuid;
+
+    let target = unique_temp_path("cli-surface-net-class-save", "kicad_pcb");
+    let output = Command::new("cargo")
+        .args([
+            "run", "-q", "-p", "eda-cli", "--", "--format", "json", "modify",
+        ])
+        .arg(&fixture)
+        .arg("--set-net-class")
+        .arg(format!(
+            "{}:power:125000:250000:300000:600000",
+            net_uuid
+        ))
+        .arg("--save")
+        .arg(&target)
+        .current_dir(&cli.repo_root)
+        .output()
+        .context("failed to run CLI set-net-class save parity probe")?;
+    if !output.status.success() {
+        bail!(
+            "CLI set-net-class save parity probe failed with status {:?}: {}",
+            output.status.code(),
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    let save: CliModifyReport = serde_json::from_slice(&output.stdout)
+        .context("failed to parse CLI set-net-class save JSON output")?;
+    let saved_path = save
+        .saved_path
+        .as_deref()
+        .ok_or_else(|| anyhow::anyhow!("CLI set-net-class save report missing saved_path"))?;
+    let query_output = Command::new("cargo")
+        .args([
+            "run", "-q", "-p", "eda-cli", "--", "--format", "json", "query",
+        ])
+        .arg(saved_path)
+        .arg("nets")
+        .current_dir(&cli.repo_root)
+        .output()
+        .context("failed to run CLI set-net-class follow-up net query")?;
+    if !query_output.status.success() {
+        bail!(
+            "CLI set-net-class follow-up net query failed with status {:?}: {}",
+            query_output.status.code(),
+            String::from_utf8_lossy(&query_output.stderr).trim()
+        );
+    }
+    let payload: Value = serde_json::from_slice(&query_output.stdout)
+        .context("failed to parse CLI set-net-class follow-up net JSON")?;
+    let nets = payload["nets"]
+        .as_array()
+        .ok_or_else(|| anyhow::anyhow!("CLI set-net-class follow-up query missing nets"))?;
+    let gnd = nets
+        .iter()
+        .find(|net| net["uuid"] == net_uuid.to_string())
+        .ok_or_else(|| anyhow::anyhow!("CLI set-net-class follow-up query missing target net"))?;
+    if gnd["class"] != "power" {
+        bail!("CLI set-net-class follow-up query did not reflect updated class");
+    }
+    Ok(format!(
+        "net_class_saved={}, set_net_class_then_save_persisted=true, set_net_class_followup_net_info_changed=true",
+        saved_path
+    ))
+}
+
 fn cli_move_surface_result(cli: &Cli) -> Result<String> {
     let baseline_distance =
         cli_unrouted_distance(&cli.repo_root, &cli.roundtrip_board_fixture_path)?;
@@ -1120,6 +1609,67 @@ fn cli_move_surface_result(cli: &Cli) -> Result<String> {
     }
     Ok(format!(
         "move_saved={}, move_component_then_save_persisted=true, cli_followup_unrouted_changed=true",
+        saved_path
+    ))
+}
+
+fn cli_rotate_surface_result(cli: &Cli) -> Result<String> {
+    let target = unique_temp_path("cli-surface-rotate-save", "kicad_pcb");
+    let output = Command::new("cargo")
+        .args([
+            "run", "-q", "-p", "eda-cli", "--", "--format", "json", "modify",
+        ])
+        .arg(&cli.roundtrip_board_fixture_path)
+        .arg("--rotate-component")
+        .arg("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:180")
+        .arg("--save")
+        .arg(&target)
+        .current_dir(&cli.repo_root)
+        .output()
+        .context("failed to run CLI rotate-component save parity probe")?;
+    if !output.status.success() {
+        bail!(
+            "CLI rotate-component save parity probe failed with status {:?}: {}",
+            output.status.code(),
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    let save: CliModifyReport = serde_json::from_slice(&output.stdout)
+        .context("failed to parse CLI rotate-component save JSON output")?;
+    let saved_path = save
+        .saved_path
+        .as_deref()
+        .ok_or_else(|| anyhow::anyhow!("CLI rotate-component save report missing saved_path"))?;
+    let query_output = Command::new("cargo")
+        .args([
+            "run", "-q", "-p", "eda-cli", "--", "--format", "json", "query",
+        ])
+        .arg(saved_path)
+        .arg("components")
+        .current_dir(&cli.repo_root)
+        .output()
+        .context("failed to run CLI rotate-component follow-up components query")?;
+    if !query_output.status.success() {
+        bail!(
+            "CLI rotate-component follow-up components query failed with status {:?}: {}",
+            query_output.status.code(),
+            String::from_utf8_lossy(&query_output.stderr).trim()
+        );
+    }
+    let payload: Value = serde_json::from_slice(&query_output.stdout)
+        .context("failed to parse CLI rotate-component follow-up components JSON")?;
+    let components = payload["components"]
+        .as_array()
+        .ok_or_else(|| anyhow::anyhow!("CLI rotate-component follow-up query missing components"))?;
+    let target_component = components
+        .iter()
+        .find(|component| component["uuid"] == "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+        .ok_or_else(|| anyhow::anyhow!("CLI rotate-component follow-up query missing target component"))?;
+    if target_component["rotation"] != 180 {
+        bail!("CLI rotate-component follow-up query did not reflect updated rotation");
+    }
+    Ok(format!(
+        "rotate_saved={}, rotate_component_then_save_persisted=true, rotate_component_followup_components_changed=true",
         saved_path
     ))
 }

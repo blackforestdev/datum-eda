@@ -2,14 +2,16 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
-use crate::board::{Airwire, Board, BoardNetInfo, BoardSummary, ComponentInfo, StackupInfo};
+use crate::board::{Airwire, Board, BoardNetInfo, BoardSummary, ComponentInfo, NetClass, StackupInfo};
 use crate::connectivity;
 use crate::drc::{self, DrcReport};
 use crate::erc::{self, ErcConfig, ErcFinding};
 use crate::error::EngineError;
 use crate::import::{
-    ImportKind, ImportReport, detect_import_kind, eagle, ids_sidecar, kicad, rules_sidecar,
+    ImportKind, ImportReport, detect_import_kind, eagle, ids_sidecar, kicad,
+    net_classes_sidecar, part_assignments_sidecar, rules_sidecar,
 };
 use crate::ir::units::nm_to_mm;
 use crate::pool::{PartSummary, Pool, PoolIndex};
@@ -51,6 +53,8 @@ struct ImportedDesignSource {
     source_path: std::path::PathBuf,
     original_contents: String,
     loaded_rule_sidecar: bool,
+    loaded_part_assignment_sidecar: bool,
+    loaded_net_class_sidecar: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -89,6 +93,12 @@ pub struct MoveComponentInput {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RotateComponentInput {
+    pub uuid: uuid::Uuid,
+    pub rotation: i32,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SetValueInput {
     pub uuid: uuid::Uuid,
     pub value: String,
@@ -100,6 +110,24 @@ pub struct SetReferenceInput {
     pub reference: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct AssignPartInput {
+    pub uuid: uuid::Uuid,
+    pub part_uuid: uuid::Uuid,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct SetNetClassInput {
+    pub net_uuid: uuid::Uuid,
+    pub class_name: String,
+    pub clearance: i64,
+    pub track_width: i64,
+    pub via_drill: i64,
+    pub via_diameter: i64,
+    pub diffpair_width: i64,
+    pub diffpair_gap: i64,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum TransactionRecord {
     DeleteTrack {
@@ -108,7 +136,17 @@ enum TransactionRecord {
     DeleteVia {
         via: crate::board::Via,
     },
+    DeleteComponent {
+        package: crate::board::PlacedPackage,
+        pads: Vec<crate::board::PlacedPad>,
+    },
     MoveComponent {
+        before: crate::board::PlacedPackage,
+        after: crate::board::PlacedPackage,
+        before_pads: Vec<(uuid::Uuid, crate::ir::geometry::Point)>,
+        after_pads: Vec<(uuid::Uuid, crate::ir::geometry::Point)>,
+    },
+    RotateComponent {
         before: crate::board::PlacedPackage,
         after: crate::board::PlacedPackage,
         before_pads: Vec<(uuid::Uuid, crate::ir::geometry::Point)>,
@@ -121,6 +159,16 @@ enum TransactionRecord {
     SetReference {
         before: crate::board::PlacedPackage,
         after: crate::board::PlacedPackage,
+    },
+    AssignPart {
+        before: crate::board::PlacedPackage,
+        after: crate::board::PlacedPackage,
+    },
+    SetNetClass {
+        before_net: crate::board::Net,
+        after_net: crate::board::Net,
+        previous_class: Option<crate::board::NetClass>,
+        current_class: crate::board::NetClass,
     },
     SetDesignRule {
         previous: Option<Rule>,
@@ -322,11 +370,58 @@ impl Engine {
                     board: Some(board),
                     schematic: None,
                 });
+                let mut loaded_part_assignment_sidecar = false;
+                let part_sidecar_path = part_assignments_sidecar::sidecar_path_for_source(path);
+                if part_sidecar_path.exists() {
+                    match part_assignments_sidecar::read_sidecar(&part_sidecar_path) {
+                        Ok(sidecar) if sidecar.source_hash == source_hash => {
+                            if let Some(design) = self.design.as_mut()
+                                && let Some(board) = design.board.as_mut()
+                            {
+                                for (component_uuid, part_uuid) in sidecar.assignments {
+                                    if let Some(package) = board.packages.get_mut(&component_uuid) {
+                                        package.part = part_uuid;
+                                    }
+                                }
+                                loaded_part_assignment_sidecar = true;
+                            }
+                        }
+                        Ok(_) => {}
+                        Err(_) => {}
+                    }
+                }
+                let mut loaded_net_class_sidecar = false;
+                let net_class_sidecar_path = net_classes_sidecar::sidecar_path_for_source(path);
+                if net_class_sidecar_path.exists() {
+                    match net_classes_sidecar::read_sidecar(&net_class_sidecar_path) {
+                        Ok(sidecar) if sidecar.source_hash == source_hash => {
+                            if let Some(design) = self.design.as_mut()
+                                && let Some(board) = design.board.as_mut()
+                            {
+                                for class in sidecar.classes {
+                                    board.net_classes.insert(class.uuid, class);
+                                }
+                                for (net_uuid, class_uuid) in sidecar.assignments {
+                                    if board.net_classes.contains_key(&class_uuid)
+                                        && let Some(net) = board.nets.get_mut(&net_uuid)
+                                    {
+                                        net.class = class_uuid;
+                                    }
+                                }
+                                loaded_net_class_sidecar = true;
+                            }
+                        }
+                        Ok(_) => {}
+                        Err(_) => {}
+                    }
+                }
                 self.imported_source = Some(ImportedDesignSource {
                     kind: ImportKind::KiCadBoard,
                     source_path: path.to_path_buf(),
                     original_contents,
                     loaded_rule_sidecar,
+                    loaded_part_assignment_sidecar,
+                    loaded_net_class_sidecar,
                 });
                 self.undo_stack.clear();
                 self.redo_stack.clear();
@@ -346,6 +441,8 @@ impl Engine {
                     source_path: path.to_path_buf(),
                     original_contents,
                     loaded_rule_sidecar: false,
+                    loaded_part_assignment_sidecar: false,
+                    loaded_net_class_sidecar: false,
                 });
                 self.undo_stack.clear();
                 self.redo_stack.clear();
@@ -1009,6 +1106,54 @@ impl Engine {
         })
     }
 
+    pub fn delete_component(&mut self, uuid: &uuid::Uuid) -> Result<OperationResult, EngineError> {
+        let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
+        let board = design.board.as_mut().ok_or_else(|| {
+            EngineError::Operation(
+                "delete_component is currently implemented only for board projects".to_string(),
+            )
+        })?;
+        let package = board.packages.remove(uuid).ok_or(EngineError::NotFound {
+            object_type: "component",
+            uuid: *uuid,
+        })?;
+        let pad_uuids: Vec<_> = board
+            .pads
+            .values()
+            .filter(|pad| pad.package == *uuid)
+            .map(|pad| pad.uuid)
+            .collect();
+        let mut pads = Vec::with_capacity(pad_uuids.len());
+        for pad_uuid in pad_uuids {
+            let pad = board.pads.remove(&pad_uuid).ok_or(EngineError::NotFound {
+                object_type: "pad",
+                uuid: pad_uuid,
+            })?;
+            pads.push(pad);
+        }
+        pads.sort_by_key(|pad| pad.uuid);
+
+        self.undo_stack.push(TransactionRecord::DeleteComponent {
+            package: package.clone(),
+            pads,
+        });
+        self.redo_stack.clear();
+        self.undo_depth = self.undo_stack.len();
+        self.redo_depth = 0;
+
+        Ok(OperationResult {
+            diff: OperationDiff {
+                created: Vec::new(),
+                modified: Vec::new(),
+                deleted: vec![OperationRef {
+                    object_type: "component".to_string(),
+                    uuid: *uuid,
+                }],
+            },
+            description: format!("delete_component {}", uuid),
+        })
+    }
+
     pub fn move_component(
         &mut self,
         input: MoveComponentInput,
@@ -1055,6 +1200,54 @@ impl Engine {
                 deleted: Vec::new(),
             },
             description: format!("move_component {}", input.uuid),
+        })
+    }
+
+    pub fn rotate_component(
+        &mut self,
+        input: RotateComponentInput,
+    ) -> Result<OperationResult, EngineError> {
+        let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
+        let board = design.board.as_mut().ok_or_else(|| {
+            EngineError::Operation(
+                "rotate_component is currently implemented only for board projects".to_string(),
+            )
+        })?;
+
+        let before = board
+            .packages
+            .get(&input.uuid)
+            .cloned()
+            .ok_or(EngineError::NotFound {
+                object_type: "component",
+                uuid: input.uuid,
+            })?;
+        let after = crate::board::PlacedPackage {
+            rotation: input.rotation,
+            ..before.clone()
+        };
+        let (before_pads, after_pads) = apply_package_transform(board, &before, &after)?;
+
+        self.undo_stack.push(TransactionRecord::RotateComponent {
+            before: before.clone(),
+            after: after.clone(),
+            before_pads,
+            after_pads,
+        });
+        self.redo_stack.clear();
+        self.undo_depth = self.undo_stack.len();
+        self.redo_depth = 0;
+
+        Ok(OperationResult {
+            diff: OperationDiff {
+                created: Vec::new(),
+                modified: vec![OperationRef {
+                    object_type: "component".to_string(),
+                    uuid: input.uuid,
+                }],
+                deleted: Vec::new(),
+            },
+            description: format!("rotate_component {}", input.uuid),
         })
     }
 
@@ -1152,6 +1345,134 @@ impl Engine {
                 deleted: Vec::new(),
             },
             description: format!("set_reference {}", input.uuid),
+        })
+    }
+
+    pub fn assign_part(&mut self, input: AssignPartInput) -> Result<OperationResult, EngineError> {
+        let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
+        let board = design.board.as_mut().ok_or_else(|| {
+            EngineError::Operation(
+                "assign_part is currently implemented only for board projects".to_string(),
+            )
+        })?;
+        let part = self.pool.parts.get(&input.part_uuid).ok_or(EngineError::NotFound {
+            object_type: "part",
+            uuid: input.part_uuid,
+        })?;
+
+        let before = board
+            .packages
+            .get(&input.uuid)
+            .cloned()
+            .ok_or(EngineError::NotFound {
+                object_type: "component",
+                uuid: input.uuid,
+            })?;
+        let package = board
+            .packages
+            .get_mut(&input.uuid)
+            .ok_or(EngineError::NotFound {
+                object_type: "component",
+                uuid: input.uuid,
+            })?;
+        package.part = input.part_uuid;
+        package.value = part.value.clone();
+        let after = package.clone();
+
+        self.undo_stack.push(TransactionRecord::AssignPart {
+            before: before.clone(),
+            after: after.clone(),
+        });
+        self.redo_stack.clear();
+        self.undo_depth = self.undo_stack.len();
+        self.redo_depth = 0;
+
+        Ok(OperationResult {
+            diff: OperationDiff {
+                created: Vec::new(),
+                modified: vec![OperationRef {
+                    object_type: "component".to_string(),
+                    uuid: input.uuid,
+                }],
+                deleted: Vec::new(),
+            },
+            description: format!("assign_part {}", input.uuid),
+        })
+    }
+
+    pub fn set_net_class(
+        &mut self,
+        input: SetNetClassInput,
+    ) -> Result<OperationResult, EngineError> {
+        let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
+        let board = design.board.as_mut().ok_or_else(|| {
+            EngineError::Operation(
+                "set_net_class is currently implemented only for board projects".to_string(),
+            )
+        })?;
+
+        let before_net = board
+            .nets
+            .get(&input.net_uuid)
+            .cloned()
+            .ok_or(EngineError::NotFound {
+                object_type: "net",
+                uuid: input.net_uuid,
+            })?;
+        let target_class_uuid = if before_net.class != Uuid::nil() {
+            before_net.class
+        } else {
+            deterministic_net_class_uuid(input.net_uuid, &input.class_name)
+        };
+        let previous_class = board.net_classes.get(&target_class_uuid).cloned();
+        let current_class = NetClass {
+            uuid: target_class_uuid,
+            name: input.class_name,
+            clearance: input.clearance,
+            track_width: input.track_width,
+            via_drill: input.via_drill,
+            via_diameter: input.via_diameter,
+            diffpair_width: input.diffpair_width,
+            diffpair_gap: input.diffpair_gap,
+        };
+        board.net_classes.insert(target_class_uuid, current_class.clone());
+        let net = board
+            .nets
+            .get_mut(&input.net_uuid)
+            .ok_or(EngineError::NotFound {
+                object_type: "net",
+                uuid: input.net_uuid,
+            })?;
+        net.class = target_class_uuid;
+        let after_net = net.clone();
+
+        self.undo_stack.push(TransactionRecord::SetNetClass {
+            before_net: before_net.clone(),
+            after_net: after_net.clone(),
+            previous_class: previous_class.clone(),
+            current_class: current_class.clone(),
+        });
+        self.redo_stack.clear();
+        self.undo_depth = self.undo_stack.len();
+        self.redo_depth = 0;
+
+        Ok(OperationResult {
+            diff: OperationDiff {
+                created: if previous_class.is_none() {
+                    vec![OperationRef {
+                        object_type: "net_class".to_string(),
+                        uuid: current_class.uuid,
+                    }]
+                } else {
+                    Vec::new()
+                },
+                modified: vec![OperationRef {
+                    object_type: "net".to_string(),
+                    uuid: input.net_uuid,
+                }],
+                deleted: Vec::new(),
+            },
+            description: format!("set_net_class {}", input.net_uuid),
         })
     }
 
@@ -1287,6 +1608,29 @@ impl Engine {
                     description: format!("undo delete_via {}", via.uuid),
                 }
             }
+            TransactionRecord::DeleteComponent { package, pads } => {
+                let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
+                let board = design.board.as_mut().ok_or_else(|| {
+                    EngineError::Operation(
+                        "undo is currently implemented only for board transactions".to_string(),
+                    )
+                })?;
+                board.packages.insert(package.uuid, package.clone());
+                for pad in pads {
+                    board.pads.insert(pad.uuid, pad.clone());
+                }
+                OperationResult {
+                    diff: OperationDiff {
+                        created: vec![OperationRef {
+                            object_type: "component".to_string(),
+                            uuid: package.uuid,
+                        }],
+                        modified: Vec::new(),
+                        deleted: Vec::new(),
+                    },
+                    description: format!("undo delete_component {}", package.uuid),
+                }
+            }
             TransactionRecord::MoveComponent {
                 before,
                 after,
@@ -1310,6 +1654,31 @@ impl Engine {
                         deleted: Vec::new(),
                     },
                     description: format!("undo move_component {}", after.uuid),
+                }
+            }
+            TransactionRecord::RotateComponent {
+                before,
+                after,
+                before_pads,
+                after_pads: _,
+            } => {
+                let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
+                let board = design.board.as_mut().ok_or_else(|| {
+                    EngineError::Operation(
+                        "undo is currently implemented only for board transactions".to_string(),
+                    )
+                })?;
+                restore_package_transform(board, after.uuid, before.clone(), before_pads)?;
+                OperationResult {
+                    diff: OperationDiff {
+                        created: Vec::new(),
+                        modified: vec![OperationRef {
+                            object_type: "component".to_string(),
+                            uuid: after.uuid,
+                        }],
+                        deleted: Vec::new(),
+                    },
+                    description: format!("undo rotate_component {}", after.uuid),
                 }
             }
             TransactionRecord::SetDesignRule { previous, current } => {
@@ -1420,6 +1789,72 @@ impl Engine {
                     description: format!("undo set_reference {}", after.uuid),
                 }
             }
+            TransactionRecord::AssignPart { before, after } => {
+                let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
+                let board = design.board.as_mut().ok_or_else(|| {
+                    EngineError::Operation(
+                        "undo is currently implemented only for board transactions".to_string(),
+                    )
+                })?;
+                let package = board
+                    .packages
+                    .get_mut(&after.uuid)
+                    .ok_or(EngineError::NotFound {
+                        object_type: "component",
+                        uuid: after.uuid,
+                    })?;
+                *package = before.clone();
+                OperationResult {
+                    diff: OperationDiff {
+                        created: Vec::new(),
+                        modified: vec![OperationRef {
+                            object_type: "component".to_string(),
+                            uuid: after.uuid,
+                        }],
+                        deleted: Vec::new(),
+                    },
+                    description: format!("undo assign_part {}", after.uuid),
+                }
+            }
+            TransactionRecord::SetNetClass {
+                before_net,
+                after_net: _,
+                previous_class,
+                current_class,
+            } => {
+                let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
+                let board = design.board.as_mut().ok_or_else(|| {
+                    EngineError::Operation(
+                        "undo is currently implemented only for board transactions".to_string(),
+                    )
+                })?;
+                let net = board
+                    .nets
+                    .get_mut(&before_net.uuid)
+                    .ok_or(EngineError::NotFound {
+                        object_type: "net",
+                        uuid: before_net.uuid,
+                    })?;
+                *net = before_net.clone();
+                if let Some(previous_class) = previous_class {
+                    board
+                        .net_classes
+                        .insert(previous_class.uuid, previous_class.clone());
+                } else if current_class.uuid != Uuid::nil() {
+                    board.net_classes.remove(&current_class.uuid);
+                }
+                OperationResult {
+                    diff: OperationDiff {
+                        created: Vec::new(),
+                        modified: vec![OperationRef {
+                            object_type: "net".to_string(),
+                            uuid: before_net.uuid,
+                        }],
+                        deleted: Vec::new(),
+                    },
+                    description: format!("undo set_net_class {}", before_net.uuid),
+                }
+            }
         };
         self.redo_stack.push(transaction);
         self.undo_depth = self.undo_stack.len();
@@ -1479,6 +1914,38 @@ impl Engine {
                     description: format!("redo delete_via {}", via.uuid),
                 }
             }
+            TransactionRecord::DeleteComponent { package, pads } => {
+                let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
+                let board = design.board.as_mut().ok_or_else(|| {
+                    EngineError::Operation(
+                        "redo is currently implemented only for board transactions".to_string(),
+                    )
+                })?;
+                let removed = board
+                    .packages
+                    .remove(&package.uuid)
+                    .ok_or(EngineError::NotFound {
+                        object_type: "component",
+                        uuid: package.uuid,
+                    })?;
+                for pad in pads {
+                    board.pads.remove(&pad.uuid).ok_or(EngineError::NotFound {
+                        object_type: "pad",
+                        uuid: pad.uuid,
+                    })?;
+                }
+                OperationResult {
+                    diff: OperationDiff {
+                        created: Vec::new(),
+                        modified: Vec::new(),
+                        deleted: vec![OperationRef {
+                            object_type: "component".to_string(),
+                            uuid: removed.uuid,
+                        }],
+                    },
+                    description: format!("redo delete_component {}", package.uuid),
+                }
+            }
             TransactionRecord::MoveComponent {
                 before: _,
                 after,
@@ -1502,6 +1969,31 @@ impl Engine {
                         deleted: Vec::new(),
                     },
                     description: format!("redo move_component {}", after.uuid),
+                }
+            }
+            TransactionRecord::RotateComponent {
+                before: _,
+                after,
+                before_pads: _,
+                after_pads,
+            } => {
+                let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
+                let board = design.board.as_mut().ok_or_else(|| {
+                    EngineError::Operation(
+                        "redo is currently implemented only for board transactions".to_string(),
+                    )
+                })?;
+                restore_package_transform(board, after.uuid, after.clone(), after_pads)?;
+                OperationResult {
+                    diff: OperationDiff {
+                        created: Vec::new(),
+                        modified: vec![OperationRef {
+                            object_type: "component".to_string(),
+                            uuid: after.uuid,
+                        }],
+                        deleted: Vec::new(),
+                    },
+                    description: format!("redo rotate_component {}", after.uuid),
                 }
             }
             TransactionRecord::SetDesignRule {
@@ -1606,6 +2098,68 @@ impl Engine {
                     description: format!("redo set_reference {}", after.uuid),
                 }
             }
+            TransactionRecord::AssignPart { before: _, after } => {
+                let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
+                let board = design.board.as_mut().ok_or_else(|| {
+                    EngineError::Operation(
+                        "redo is currently implemented only for board transactions".to_string(),
+                    )
+                })?;
+                let package = board
+                    .packages
+                    .get_mut(&after.uuid)
+                    .ok_or(EngineError::NotFound {
+                        object_type: "component",
+                        uuid: after.uuid,
+                    })?;
+                *package = after.clone();
+                OperationResult {
+                    diff: OperationDiff {
+                        created: Vec::new(),
+                        modified: vec![OperationRef {
+                            object_type: "component".to_string(),
+                            uuid: after.uuid,
+                        }],
+                        deleted: Vec::new(),
+                    },
+                    description: format!("redo assign_part {}", after.uuid),
+                }
+            }
+            TransactionRecord::SetNetClass {
+                before_net: _,
+                after_net,
+                previous_class: _,
+                current_class,
+            } => {
+                let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
+                let board = design.board.as_mut().ok_or_else(|| {
+                    EngineError::Operation(
+                        "redo is currently implemented only for board transactions".to_string(),
+                    )
+                })?;
+                board
+                    .net_classes
+                    .insert(current_class.uuid, current_class.clone());
+                let net = board
+                    .nets
+                    .get_mut(&after_net.uuid)
+                    .ok_or(EngineError::NotFound {
+                        object_type: "net",
+                        uuid: after_net.uuid,
+                    })?;
+                *net = after_net.clone();
+                OperationResult {
+                    diff: OperationDiff {
+                        created: Vec::new(),
+                        modified: vec![OperationRef {
+                            object_type: "net".to_string(),
+                            uuid: after_net.uuid,
+                        }],
+                        deleted: Vec::new(),
+                    },
+                    description: format!("redo set_net_class {}", after_net.uuid),
+                }
+            }
         };
         self.undo_stack.push(transaction);
         self.undo_depth = self.undo_stack.len();
@@ -1650,6 +2204,33 @@ impl Engine {
                 .unwrap_or_default(),
             imported.loaded_rule_sidecar,
         )?;
+        persist_part_assignment_sidecar(
+            path,
+            &serialized,
+            design
+                .board
+                .as_ref()
+                .map(|board| {
+                    board
+                        .packages
+                        .values()
+                        .filter(|package| package.part != uuid::Uuid::nil())
+                        .map(|package| (package.uuid, package.part))
+                        .collect()
+                })
+                .unwrap_or_default(),
+            imported.loaded_part_assignment_sidecar,
+        )?;
+        persist_net_class_sidecar(
+            path,
+            &serialized,
+            design
+                .board
+                .as_ref()
+                .map(net_class_sidecar_payload)
+                .unwrap_or_default(),
+            imported.loaded_net_class_sidecar,
+        )?;
         Ok(())
     }
 
@@ -1685,17 +2266,27 @@ fn serialize_current_kicad_board_slice(
 ) -> Result<String, EngineError> {
     let deleted_tracks = active_deleted_track_uuids(undo_stack);
     let deleted_vias = active_deleted_via_uuids(undo_stack);
+    let deleted_components = active_deleted_component_uuids(undo_stack);
     let moved_components = active_moved_components(undo_stack);
     let valued_components = active_set_value_components(undo_stack);
     let referenced_components = active_set_reference_components(undo_stack);
-    let forms = [("segment", &deleted_tracks), ("via", &deleted_vias)];
-    let without_removed = if deleted_tracks.is_empty() && deleted_vias.is_empty() {
+    let assigned_components = active_assigned_part_components(undo_stack);
+    let forms = [
+        ("segment", &deleted_tracks),
+        ("via", &deleted_vias),
+        ("footprint", &deleted_components),
+    ];
+    let without_removed = if deleted_tracks.is_empty()
+        && deleted_vias.is_empty()
+        && deleted_components.is_empty()
+    {
         original_contents.to_string()
     } else {
         remove_kicad_top_level_forms(original_contents, &forms)?
     };
     let moved = rewrite_moved_footprints(&without_removed, &moved_components)?;
-    let valued = rewrite_value_footprints(&moved, &valued_components)?;
+    let assigned_values = merge_component_value_overrides(&valued_components, &assigned_components);
+    let valued = rewrite_value_footprints(&moved, &assigned_values)?;
     rewrite_reference_footprints(&valued, &referenced_components)
 }
 
@@ -1719,13 +2310,27 @@ fn active_deleted_via_uuids(undo_stack: &[TransactionRecord]) -> BTreeSet<uuid::
     deleted
 }
 
+fn active_deleted_component_uuids(undo_stack: &[TransactionRecord]) -> BTreeSet<uuid::Uuid> {
+    let mut deleted = BTreeSet::new();
+    for transaction in undo_stack {
+        if let TransactionRecord::DeleteComponent { package, .. } = transaction {
+            deleted.insert(package.uuid);
+        }
+    }
+    deleted
+}
+
 fn active_moved_components(
     undo_stack: &[TransactionRecord],
 ) -> BTreeMap<uuid::Uuid, crate::board::PlacedPackage> {
     let mut moved = BTreeMap::new();
     for transaction in undo_stack {
-        if let TransactionRecord::MoveComponent { after, .. } = transaction {
-            moved.insert(after.uuid, after.clone());
+        match transaction {
+            TransactionRecord::MoveComponent { after, .. }
+            | TransactionRecord::RotateComponent { after, .. } => {
+                moved.insert(after.uuid, after.clone());
+            }
+            _ => {}
         }
     }
     moved
@@ -1753,6 +2358,29 @@ fn active_set_reference_components(
         }
     }
     referenced
+}
+
+fn active_assigned_part_components(
+    undo_stack: &[TransactionRecord],
+) -> BTreeMap<uuid::Uuid, crate::board::PlacedPackage> {
+    let mut assigned = BTreeMap::new();
+    for transaction in undo_stack {
+        if let TransactionRecord::AssignPart { after, .. } = transaction {
+            assigned.insert(after.uuid, after.clone());
+        }
+    }
+    assigned
+}
+
+fn merge_component_value_overrides(
+    valued_components: &BTreeMap<uuid::Uuid, crate::board::PlacedPackage>,
+    assigned_components: &BTreeMap<uuid::Uuid, crate::board::PlacedPackage>,
+) -> BTreeMap<uuid::Uuid, crate::board::PlacedPackage> {
+    let mut merged = valued_components.clone();
+    for (uuid, package) in assigned_components {
+        merged.insert(*uuid, package.clone());
+    }
+    merged
 }
 
 fn remove_kicad_top_level_forms(
@@ -2154,6 +2782,10 @@ fn default_rule_name(rule_type: &RuleType) -> String {
     }
 }
 
+fn deterministic_net_class_uuid(net_uuid: Uuid, class_name: &str) -> Uuid {
+    Uuid::new_v5(&Uuid::NAMESPACE_OID, format!("{net_uuid}:{class_name}").as_bytes())
+}
+
 fn persist_rule_sidecar(
     board_path: &Path,
     board_contents: &str,
@@ -2175,6 +2807,69 @@ fn persist_rule_sidecar(
         .unwrap_or_else(|| board_path.display().to_string());
     let sidecar = rules_sidecar::RuleSidecar::new(source_file, source_hash, rules);
     rules_sidecar::write_sidecar(&sidecar_path, &sidecar)
+}
+
+fn persist_part_assignment_sidecar(
+    board_path: &Path,
+    board_contents: &str,
+    assignments: BTreeMap<uuid::Uuid, uuid::Uuid>,
+    loaded_part_assignment_sidecar: bool,
+) -> Result<(), EngineError> {
+    let sidecar_path = part_assignments_sidecar::sidecar_path_for_source(board_path);
+    if assignments.is_empty() {
+        if loaded_part_assignment_sidecar && sidecar_path.exists() {
+            std::fs::remove_file(&sidecar_path)?;
+        }
+        return Ok(());
+    }
+
+    let source_hash = ids_sidecar::compute_source_hash_bytes(board_contents.as_bytes());
+    let source_file = board_path
+        .file_name()
+        .map(|name| name.to_string_lossy().to_string())
+        .unwrap_or_else(|| board_path.display().to_string());
+    let sidecar =
+        part_assignments_sidecar::PartAssignmentsSidecar::new(source_file, source_hash, assignments);
+    part_assignments_sidecar::write_sidecar(&sidecar_path, &sidecar)
+}
+
+fn net_class_sidecar_payload(board: &Board) -> (Vec<NetClass>, BTreeMap<Uuid, Uuid>) {
+    let assignments: BTreeMap<Uuid, Uuid> = board
+        .nets
+        .values()
+        .filter(|net| net.class != Uuid::nil())
+        .map(|net| (net.uuid, net.class))
+        .collect();
+    let classes = assignments
+        .values()
+        .filter_map(|uuid| board.net_classes.get(uuid).cloned())
+        .collect();
+    (classes, assignments)
+}
+
+fn persist_net_class_sidecar(
+    board_path: &Path,
+    board_contents: &str,
+    payload: (Vec<NetClass>, BTreeMap<Uuid, Uuid>),
+    loaded_net_class_sidecar: bool,
+) -> Result<(), EngineError> {
+    let sidecar_path = net_classes_sidecar::sidecar_path_for_source(board_path);
+    let (classes, assignments) = payload;
+    if classes.is_empty() || assignments.is_empty() {
+        if loaded_net_class_sidecar && sidecar_path.exists() {
+            std::fs::remove_file(&sidecar_path)?;
+        }
+        return Ok(());
+    }
+
+    let source_hash = ids_sidecar::compute_source_hash_bytes(board_contents.as_bytes());
+    let source_file = board_path
+        .file_name()
+        .map(|name| name.to_string_lossy().to_string())
+        .unwrap_or_else(|| board_path.display().to_string());
+    let sidecar =
+        net_classes_sidecar::NetClassesSidecar::new(source_file, source_hash, classes, assignments);
+    net_classes_sidecar::write_sidecar(&sidecar_path, &sidecar)
 }
 
 fn summarize_schematic_checks(
@@ -3512,6 +4207,40 @@ mod tests {
     }
 
     #[test]
+    fn delete_component_updates_board_and_undo_redo_restore_it() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import(&fixture_path("partial-route-demo.kicad_pcb"))
+            .expect("fixture import should succeed");
+
+        let before = engine.get_components().expect("components should query");
+        let deleted_uuid = uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap();
+
+        let delete = engine
+            .delete_component(&deleted_uuid)
+            .expect("delete_component should succeed");
+        assert_eq!(delete.diff.deleted.len(), 1);
+        assert_eq!(delete.diff.deleted[0].object_type, "component");
+        assert!(engine.can_undo());
+
+        let after_delete = engine.get_components().expect("components should query");
+        assert!(after_delete.iter().all(|component| component.uuid != deleted_uuid));
+
+        let undo = engine.undo().expect("undo should succeed");
+        assert_eq!(undo.diff.created.len(), 1);
+        assert_eq!(undo.diff.created[0].object_type, "component");
+        let after_undo = engine.get_components().expect("components should query");
+        assert_eq!(before, after_undo);
+        assert!(engine.can_redo());
+
+        let redo = engine.redo().expect("redo should succeed");
+        assert_eq!(redo.diff.deleted.len(), 1);
+        assert_eq!(redo.diff.deleted[0].object_type, "component");
+        let after_redo = engine.get_components().expect("components should query");
+        assert_eq!(after_delete, after_redo);
+    }
+
+    #[test]
     fn delete_track_updates_derived_board_views_immediately() {
         let mut engine = Engine::new().expect("engine should initialize");
         engine
@@ -3704,6 +4433,39 @@ mod tests {
     }
 
     #[test]
+    fn save_persists_deleted_component_for_current_m3_slice() {
+        let source = fixture_path("partial-route-demo.kicad_pcb");
+        let target = unique_temp_path("datum-eda-save-deleted-component-board.kicad_pcb");
+
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import(&source)
+            .expect("fixture import should succeed");
+        let deleted_uuid = uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap();
+        engine
+            .delete_component(&deleted_uuid)
+            .expect("delete_component should succeed");
+
+        let expected_after_delete = engine.get_components().expect("components should query");
+
+        engine
+            .save(&target)
+            .expect("save should persist current delete_component slice");
+
+        let saved = fs::read_to_string(&target).expect("saved file should read");
+        assert!(!saved.contains(&deleted_uuid.to_string()));
+
+        let mut reloaded = Engine::new().expect("engine should initialize");
+        reloaded
+            .import(&target)
+            .expect("saved board should reimport successfully");
+        let actual_after_reload = reloaded.get_components().expect("components should query");
+        assert_eq!(actual_after_reload, expected_after_delete);
+
+        let _ = fs::remove_file(&target);
+    }
+
+    #[test]
     fn set_design_rule_updates_board_and_undo_redo_restore_it() {
         let mut engine = Engine::new().expect("engine should initialize");
         engine
@@ -3878,6 +4640,277 @@ mod tests {
         assert_eq!(r1.reference, "R10");
 
         let _ = fs::remove_file(&target);
+    }
+
+    #[test]
+    fn rotate_component_updates_board_and_undo_redo_restore_it() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import(&fixture_path("partial-route-demo.kicad_pcb"))
+            .expect("fixture import should succeed");
+
+        let before = engine.get_components().expect("components should query");
+        let package_uuid = uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap();
+        let rotate_result = engine
+            .rotate_component(RotateComponentInput {
+                uuid: package_uuid,
+                rotation: 180,
+            })
+            .expect("rotate_component should succeed");
+        assert_eq!(rotate_result.diff.modified.len(), 1);
+
+        let after_rotate = engine.get_components().expect("components should query");
+        let rotated = after_rotate
+            .iter()
+            .find(|component| component.uuid == package_uuid)
+            .unwrap();
+        assert_eq!(rotated.rotation, 180);
+
+        let undo = engine.undo().expect("undo should succeed");
+        assert_eq!(undo.diff.modified.len(), 1);
+        let after_undo = engine.get_components().expect("components should query");
+        assert_eq!(before, after_undo);
+
+        let redo = engine.redo().expect("redo should succeed");
+        assert_eq!(redo.diff.modified.len(), 1);
+        let after_redo = engine.get_components().expect("components should query");
+        assert_eq!(after_rotate, after_redo);
+    }
+
+    #[test]
+    fn save_persists_rotate_component_for_current_m3_slice() {
+        let source = fixture_path("partial-route-demo.kicad_pcb");
+        let target = unique_temp_path("datum-eda-save-rotate-component-board.kicad_pcb");
+
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import(&source)
+            .expect("fixture import should succeed");
+        engine
+            .rotate_component(RotateComponentInput {
+                uuid: uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+                rotation: 180,
+            })
+            .expect("rotate_component should succeed");
+
+        engine.save(&target).expect("save should succeed");
+
+        let saved = fs::read_to_string(&target).expect("saved file should read");
+        assert!(saved.contains("(at 10 10 180)"));
+
+        let mut reloaded = Engine::new().expect("engine should initialize");
+        reloaded
+            .import(&target)
+            .expect("saved board should reimport successfully");
+        let components = reloaded.get_components().expect("components should query");
+        let rotated = components
+            .iter()
+            .find(|component| component.uuid == uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap())
+            .unwrap();
+        assert_eq!(rotated.rotation, 180);
+
+        let _ = fs::remove_file(&target);
+    }
+
+    #[test]
+    fn assign_part_updates_board_and_undo_redo_restore_it() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+            .expect("library import should succeed");
+        engine
+            .import(&fixture_path("partial-route-demo.kicad_pcb"))
+            .expect("fixture import should succeed");
+
+        let part_uuid = engine
+            .search_pool("LMV321")
+            .expect("search should succeed")
+            .first()
+            .map(|part| part.uuid)
+            .expect("LMV321 part should exist");
+        let before = engine.get_components().expect("components should query");
+        let package_uuid = uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap();
+        let assign_result = engine
+            .assign_part(AssignPartInput {
+                uuid: package_uuid,
+                part_uuid,
+            })
+            .expect("assign_part should succeed");
+        assert_eq!(assign_result.diff.modified.len(), 1);
+
+        let after_assign = engine.get_components().expect("components should query");
+        let updated = after_assign
+            .iter()
+            .find(|component| component.uuid == package_uuid)
+            .unwrap();
+        assert_eq!(updated.value, "LMV321");
+
+        let undo = engine.undo().expect("undo should succeed");
+        assert_eq!(undo.diff.modified.len(), 1);
+        let after_undo = engine.get_components().expect("components should query");
+        assert_eq!(before, after_undo);
+
+        let redo = engine.redo().expect("redo should succeed");
+        assert_eq!(redo.diff.modified.len(), 1);
+        let after_redo = engine.get_components().expect("components should query");
+        assert_eq!(after_assign, after_redo);
+    }
+
+    #[test]
+    fn save_persists_assign_part_for_current_m3_slice() {
+        let source = fixture_path("partial-route-demo.kicad_pcb");
+        let target = unique_temp_path("datum-eda-save-assign-part-board.kicad_pcb");
+
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+            .expect("library import should succeed");
+        engine
+            .import(&source)
+            .expect("fixture import should succeed");
+        let part_uuid = engine
+            .search_pool("LMV321")
+            .expect("search should succeed")
+            .first()
+            .map(|part| part.uuid)
+            .expect("LMV321 part should exist");
+        engine
+            .assign_part(AssignPartInput {
+                uuid: uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+                part_uuid,
+            })
+            .expect("assign_part should succeed");
+
+        engine.save(&target).expect("save should succeed");
+
+        let saved = fs::read_to_string(&target).expect("saved file should read");
+        assert!(saved.contains("(property \"Value\" \"LMV321\""));
+
+        let mut reloaded = Engine::new().expect("engine should initialize");
+        reloaded
+            .import(&target)
+            .expect("saved board should reimport successfully");
+        let components = reloaded.get_components().expect("components should query");
+        let updated = components
+            .iter()
+            .find(|component| component.uuid == uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap())
+            .unwrap();
+        assert_eq!(updated.value, "LMV321");
+        let restored_part = reloaded
+            .design
+            .as_ref()
+            .and_then(|design| design.board.as_ref())
+            .and_then(|board| board.packages.get(&uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap()))
+            .map(|package| package.part)
+            .expect("reloaded package should exist");
+        assert_eq!(restored_part, part_uuid);
+
+        let _ = fs::remove_file(&target);
+        let _ = fs::remove_file(part_assignments_sidecar::sidecar_path_for_source(&target));
+    }
+
+    #[test]
+    fn set_net_class_updates_board_and_undo_redo_restore_it() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import(&fixture_path("simple-demo.kicad_pcb"))
+            .expect("fixture import should succeed");
+
+        let before = engine.get_net_info().expect("net info should query");
+        let gnd = before
+            .iter()
+            .find(|net| net.name == "GND")
+            .expect("GND net should exist");
+        assert_eq!(gnd.class, "Default");
+
+        let set_result = engine
+            .set_net_class(SetNetClassInput {
+                net_uuid: gnd.uuid,
+                class_name: "power".to_string(),
+                clearance: 125_000,
+                track_width: 250_000,
+                via_drill: 300_000,
+                via_diameter: 600_000,
+                diffpair_width: 0,
+                diffpair_gap: 0,
+            })
+            .expect("set_net_class should succeed");
+        assert_eq!(set_result.diff.modified.len(), 1);
+
+        let after_set = engine.get_net_info().expect("net info should query");
+        let gnd_after_set = after_set
+            .iter()
+            .find(|net| net.name == "GND")
+            .expect("GND net should exist after set");
+        assert_eq!(gnd_after_set.class, "power");
+
+        let undo = engine.undo().expect("undo should succeed");
+        assert_eq!(undo.diff.modified.len(), 1);
+        let after_undo = engine.get_net_info().expect("net info should query");
+        let gnd_after_undo = after_undo
+            .iter()
+            .find(|net| net.name == "GND")
+            .expect("GND net should exist after undo");
+        assert_eq!(gnd_after_undo.class, "Default");
+
+        let redo = engine.redo().expect("redo should succeed");
+        assert_eq!(redo.diff.modified.len(), 1);
+        let after_redo = engine.get_net_info().expect("net info should query");
+        let gnd_after_redo = after_redo
+            .iter()
+            .find(|net| net.name == "GND")
+            .expect("GND net should exist after redo");
+        assert_eq!(gnd_after_redo.class, "power");
+    }
+
+    #[test]
+    fn save_persists_set_net_class_sidecar_for_current_m3_slice() {
+        let source = fixture_path("simple-demo.kicad_pcb");
+        let target = unique_temp_path("datum-eda-save-net-class-board.kicad_pcb");
+
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import(&source)
+            .expect("fixture import should succeed");
+        let gnd_uuid = engine
+            .get_net_info()
+            .expect("net info should query")
+            .into_iter()
+            .find(|net| net.name == "GND")
+            .expect("GND net should exist")
+            .uuid;
+        engine
+            .set_net_class(SetNetClassInput {
+                net_uuid: gnd_uuid,
+                class_name: "power".to_string(),
+                clearance: 125_000,
+                track_width: 250_000,
+                via_drill: 300_000,
+                via_diameter: 600_000,
+                diffpair_width: 0,
+                diffpair_gap: 0,
+            })
+            .expect("set_net_class should succeed");
+
+        engine.save(&target).expect("save should succeed");
+
+        let sidecar = net_classes_sidecar::sidecar_path_for_source(&target);
+        assert!(sidecar.exists());
+
+        let mut reloaded = Engine::new().expect("engine should initialize");
+        reloaded
+            .import(&target)
+            .expect("saved board should reimport successfully");
+        let gnd = reloaded
+            .get_net_info()
+            .expect("net info should query")
+            .into_iter()
+            .find(|net| net.name == "GND")
+            .expect("GND net should exist after reload");
+        assert_eq!(gnd.class, "power");
+
+        let _ = fs::remove_file(&target);
+        let _ = fs::remove_file(sidecar);
     }
 
     #[test]

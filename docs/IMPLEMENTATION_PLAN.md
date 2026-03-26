@@ -4,6 +4,8 @@
 > controlling specifications in `specs/`.
 > This document sequences implementation work and assigns module ownership.
 > If it conflicts with a formal specification, the spec wins.
+>
+> Scope terminology follows `specs/PROGRAM_SPEC.md` §Scope Integrity Terms.
 
 ## Purpose
 
@@ -159,7 +161,7 @@ Tests required before moving on:
 ### Phase B: M1 Import + Query
 
 Goal:
-- ingest KiCad/Eagle designs into canonical IR
+- ingest KiCad/Eagle designs into canonical IR for the initial interop slice
 - resolve connectivity
 - answer read-only queries
 
@@ -194,7 +196,7 @@ Remaining work to close `M1`:
 - keep Eagle design import bounded and secondary to KiCad correctness
 
 Priority:
-- KiCad first: this is the primary live ecosystem and the main product wedge
+- KiCad first: this is the primary live ecosystem and the current execution wedge
 - Eagle second: bounded migration support and regression coverage only
 - Do not let Eagle parity delay KiCad import, connectivity, or query work
 

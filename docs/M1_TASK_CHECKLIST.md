@@ -3,6 +3,7 @@
 > **Status**: Historical `M1` implementation checklist.
 > This document records the intended `M1` execution posture when that
 > milestone was active. Current repo status lives in `specs/PROGRESS.md`.
+> Scope terminology follows `specs/PROGRAM_SPEC.md` §Scope Integrity Terms.
 
 ## Purpose
 
@@ -73,7 +74,7 @@ Blocked until later milestones:
 7. Implement read-only query summaries and info types.
 8. Add corpus-backed golden tests and DOA2526 query assertions.
 
-This order keeps the read-only product wedge honest and avoids dragging
+This order keeps the read-only execution slice honest and avoids dragging
 checking or write operations forward.
 
 Decision rule:

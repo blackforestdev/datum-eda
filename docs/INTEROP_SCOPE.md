@@ -1,10 +1,16 @@
 # Interoperability Scope
 
+Scope terminology follows `specs/PROGRAM_SPEC.md` §Scope Integrity Terms.
+
 ## Principle
-For v1, imported formats are first-class citizens. The engine does not
+For v1, imported formats are first-class citizens in the current execution
+slice. The engine does not
 require designs to be in its native format. A KiCad project opened via
 import is as fully functional as a native project for all supported
 operations (query, DRC, limited modification, export).
+
+This interoperability-first slice is an implementation strategy, not the
+long-term product boundary.
 
 Native format is introduced in M4. Until then, the canonical IR exists
 only in memory and in golden test files.

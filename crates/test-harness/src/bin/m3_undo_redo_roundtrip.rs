@@ -1,7 +1,9 @@
 use std::path::PathBuf;
 
 use anyhow::{Result, bail};
-use eda_engine::api::{Engine, MoveComponentInput, SetDesignRuleInput};
+use eda_engine::api::{
+    AssignPartInput, Engine, MoveComponentInput, SetDesignRuleInput, SetNetClassInput,
+};
 use eda_engine::rules::ast::{RuleParams, RuleScope, RuleType};
 use eda_test_harness::canonical_json;
 use serde::{Deserialize, Serialize};
@@ -208,6 +210,58 @@ fn build_report(cli: &Cli) -> Result<Report> {
     let rule_redo_result = rule_engine.redo()?;
     let after_rule_redo = rule_engine.get_design_rules()?;
 
+    let library_fixture_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../engine/testdata/import/eagle/simple-opamp.lbr")
+        .canonicalize()
+        .map_err(|err| anyhow::anyhow!("failed to resolve assign-part library fixture: {err}"))?;
+    let mut assign_engine = Engine::new()?;
+    assign_engine.import_eagle_library(&library_fixture_path)?;
+    assign_engine.import(&cli.board_fixture_path)?;
+    let assign_part_uuid = assign_engine
+        .search_pool("LMV321")?
+        .into_iter()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("LMV321 part missing for undo/redo roundtrip"))?
+        .uuid;
+    let baseline_assign_components = assign_engine.get_components()?;
+    let assign_part_result = assign_engine.assign_part(AssignPartInput {
+        uuid: cli.component_uuid,
+        part_uuid: assign_part_uuid,
+    })?;
+    let after_assign_part = assign_engine.get_components()?;
+    let assign_undo_result = assign_engine.undo()?;
+    let after_assign_undo = assign_engine.get_components()?;
+    let assign_redo_result = assign_engine.redo()?;
+    let after_assign_redo = assign_engine.get_components()?;
+
+    let net_fixture_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../engine/testdata/import/kicad/simple-demo.kicad_pcb")
+        .canonicalize()
+        .map_err(|err| anyhow::anyhow!("failed to resolve set-net-class fixture: {err}"))?;
+    let mut net_class_engine = Engine::new()?;
+    net_class_engine.import(&net_fixture_path)?;
+    let baseline_net_info = net_class_engine.get_net_info()?;
+    let gnd_uuid = baseline_net_info
+        .iter()
+        .find(|net| net.name == "GND")
+        .ok_or_else(|| anyhow::anyhow!("GND net missing from undo/redo fixture"))?
+        .uuid;
+    let set_net_class_result = net_class_engine.set_net_class(SetNetClassInput {
+        net_uuid: gnd_uuid,
+        class_name: "power".to_string(),
+        clearance: 125_000,
+        track_width: 250_000,
+        via_drill: 300_000,
+        via_diameter: 600_000,
+        diffpair_width: 0,
+        diffpair_gap: 0,
+    })?;
+    let after_set_net_class = net_class_engine.get_net_info()?;
+    let net_class_undo_result = net_class_engine.undo()?;
+    let after_net_class_undo = net_class_engine.get_net_info()?;
+    let net_class_redo_result = net_class_engine.redo()?;
+    let after_net_class_redo = net_class_engine.get_net_info()?;
+
     let checks = vec![
         Check {
             name: "undo_restores_deleted_track_state".to_string(),
@@ -277,6 +331,46 @@ fn build_report(cli: &Cli) -> Result<Report> {
                 after_set_rule != baseline_rules,
                 after_rule_undo == baseline_rules,
                 after_rule_redo == after_set_rule
+            ),
+        },
+        Check {
+            name: "undo_restores_assigned_part_state".to_string(),
+            status: if after_assign_part != baseline_assign_components
+                && after_assign_undo == baseline_assign_components
+                && after_assign_redo == after_assign_part
+            {
+                Status::Passed
+            } else {
+                Status::Failed
+            },
+            evidence: format!(
+                "assign_part={}, undo={}, redo={}, assign_differs={}, undo_restored={}, redo_restored={}",
+                assign_part_result.description,
+                assign_undo_result.description,
+                assign_redo_result.description,
+                after_assign_part != baseline_assign_components,
+                after_assign_undo == baseline_assign_components,
+                after_assign_redo == after_assign_part
+            ),
+        },
+        Check {
+            name: "undo_restores_net_class_state".to_string(),
+            status: if after_set_net_class != baseline_net_info
+                && after_net_class_undo == baseline_net_info
+                && after_net_class_redo == after_set_net_class
+            {
+                Status::Passed
+            } else {
+                Status::Failed
+            },
+            evidence: format!(
+                "set_net_class={}, undo={}, redo={}, class_differs={}, undo_restored={}, redo_restored={}",
+                set_net_class_result.description,
+                net_class_undo_result.description,
+                net_class_redo_result.description,
+                after_set_net_class != baseline_net_info,
+                after_net_class_undo == baseline_net_info,
+                after_net_class_redo == after_set_net_class
             ),
         },
     ];

@@ -15,8 +15,9 @@ use std::path::{Path, PathBuf};
 
 use anyhow::Result;
 use eda_engine::api::{
-    Engine, MoveComponentInput, SetDesignRuleInput, SetReferenceInput, SetValueInput,
-    ViolationDomain,
+    AssignPartInput, Engine, MoveComponentInput, RotateComponentInput, SetDesignRuleInput,
+    SetNetClassInput,
+    SetReferenceInput, SetValueInput, ViolationDomain,
 };
 use eda_engine::ir::geometry::Point;
 use eda_engine::ir::units::mm_to_nm;
@@ -118,6 +119,24 @@ struct SetReferenceParams {
     reference: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct AssignPartParams {
+    uuid: uuid::Uuid,
+    part_uuid: uuid::Uuid,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct SetNetClassParams {
+    net_uuid: uuid::Uuid,
+    class_name: String,
+    clearance: i64,
+    track_width: i64,
+    via_drill: i64,
+    via_diameter: i64,
+    diffpair_width: i64,
+    diffpair_gap: i64,
+}
+
 fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> JsonRpcResponse {
     if request.jsonrpc != "2.0" {
         return error_response(request.id, -32600, "invalid jsonrpc version");
@@ -164,6 +183,13 @@ fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> JsonRpcResp
             },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
+        "delete_component" => match serde_json::from_value::<UuidParams>(request.params) {
+            Ok(params) => match engine.delete_component(&params.uuid) {
+                Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
+                Err(err) => error_response(request.id, -32036, &err.to_string()),
+            },
+            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+        },
         "move_component" => match serde_json::from_value::<MoveComponentParams>(request.params) {
             Ok(params) => match engine.move_component(MoveComponentInput {
                 uuid: params.uuid,
@@ -173,6 +199,28 @@ fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> JsonRpcResp
                 Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
                 Err(err) => error_response(request.id, -32033, &err.to_string()),
             },
+            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+        },
+        "rotate_component" => match serde_json::from_value::<MoveComponentParams>(request.params) {
+            Ok(params) => {
+                let rotation = match params.rotation_deg {
+                    Some(deg) => deg.round() as i32,
+                    None => {
+                        return error_response(
+                            request.id,
+                            -32602,
+                            "invalid params: rotate_component requires rotation_deg",
+                        );
+                    }
+                };
+                match engine.rotate_component(RotateComponentInput {
+                    uuid: params.uuid,
+                    rotation,
+                }) {
+                    Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
+                    Err(err) => error_response(request.id, -32037, &err.to_string()),
+                }
+            }
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
         "set_value" => match serde_json::from_value::<SetValueParams>(request.params) {
@@ -192,6 +240,32 @@ fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> JsonRpcResp
             }) {
                 Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
                 Err(err) => error_response(request.id, -32035, &err.to_string()),
+            },
+            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+        },
+        "assign_part" => match serde_json::from_value::<AssignPartParams>(request.params) {
+            Ok(params) => match engine.assign_part(AssignPartInput {
+                uuid: params.uuid,
+                part_uuid: params.part_uuid,
+            }) {
+                Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
+                Err(err) => error_response(request.id, -32038, &err.to_string()),
+            },
+            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+        },
+        "set_net_class" => match serde_json::from_value::<SetNetClassParams>(request.params) {
+            Ok(params) => match engine.set_net_class(SetNetClassInput {
+                net_uuid: params.net_uuid,
+                class_name: params.class_name,
+                clearance: params.clearance,
+                track_width: params.track_width,
+                via_drill: params.via_drill,
+                via_diameter: params.via_diameter,
+                diffpair_width: params.diffpair_width,
+                diffpair_gap: params.diffpair_gap,
+            }) {
+                Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
+                Err(err) => error_response(request.id, -32039, &err.to_string()),
             },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
@@ -1904,6 +1978,107 @@ mod tests {
     }
 
     #[test]
+    fn delete_component_dispatch_updates_component_list() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        let fixture = kicad_fixture_path("partial-route-demo.kicad_pcb");
+        let open = JsonRpcRequest {
+            jsonrpc: "2.0".into(),
+            id: json!(1),
+            method: "open_project".into(),
+            params: serde_json::to_value(OpenProjectParams { path: fixture }).unwrap(),
+        };
+        let open_response = dispatch_request(&mut engine, open);
+        assert!(open_response.error.is_none(), "{open_response:?}");
+
+        let delete_component = JsonRpcRequest {
+            jsonrpc: "2.0".into(),
+            id: json!(2),
+            method: "delete_component".into(),
+            params: json!({
+                "uuid": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+            }),
+        };
+        let response = dispatch_request(&mut engine, delete_component);
+        assert!(response.error.is_none(), "{response:?}");
+        assert_eq!(
+            response.result.expect("result should exist")["diff"]["deleted"][0]["object_type"],
+            "component"
+        );
+        let components = engine.get_components().expect("components should query");
+        assert!(
+            components
+                .iter()
+                .all(|component| component.uuid
+                    != uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap())
+        );
+    }
+
+    #[test]
+    fn delete_component_dispatch_updates_followup_components_query() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        let fixture = kicad_fixture_path("partial-route-demo.kicad_pcb");
+        let open = JsonRpcRequest {
+            jsonrpc: "2.0".into(),
+            id: json!(1),
+            method: "open_project".into(),
+            params: serde_json::to_value(OpenProjectParams { path: fixture }).unwrap(),
+        };
+        let open_response = dispatch_request(&mut engine, open);
+        assert!(open_response.error.is_none(), "{open_response:?}");
+
+        let baseline = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(2),
+                method: "get_components".into(),
+                params: json!({}),
+            },
+        );
+        assert!(baseline.error.is_none(), "{baseline:?}");
+        let baseline_components = baseline.result.expect("result should exist");
+        assert!(
+            baseline_components
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|component| component["uuid"] == "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+        );
+
+        let delete_component = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(3),
+                method: "delete_component".into(),
+                params: json!({
+                    "uuid": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+                }),
+            },
+        );
+        assert!(delete_component.error.is_none(), "{delete_component:?}");
+
+        let after = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(4),
+                method: "get_components".into(),
+                params: json!({}),
+            },
+        );
+        assert!(after.error.is_none(), "{after:?}");
+        let after_components = after.result.expect("result should exist");
+        assert!(
+            after_components
+                .as_array()
+                .unwrap()
+                .iter()
+                .all(|component| component["uuid"] != "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+        );
+    }
+
+    #[test]
     fn set_design_rule_dispatch_persists_rule_in_memory() {
         let mut engine = Engine::new().expect("engine should initialize");
         let fixture = kicad_fixture_path("simple-demo.kicad_pcb");
@@ -2046,6 +2221,40 @@ mod tests {
         assert_eq!(moved.position.x, 15_000_000);
         assert_eq!(moved.position.y, 12_000_000);
         assert_eq!(moved.rotation, 90);
+    }
+
+    #[test]
+    fn rotate_component_dispatch_updates_component_rotation() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        let fixture = kicad_fixture_path("partial-route-demo.kicad_pcb");
+        let open = JsonRpcRequest {
+            jsonrpc: "2.0".into(),
+            id: json!(1),
+            method: "open_project".into(),
+            params: serde_json::to_value(OpenProjectParams { path: fixture }).unwrap(),
+        };
+        let open_response = dispatch_request(&mut engine, open);
+        assert!(open_response.error.is_none(), "{open_response:?}");
+
+        let rotate_component = JsonRpcRequest {
+            jsonrpc: "2.0".into(),
+            id: json!(2),
+            method: "rotate_component".into(),
+            params: json!({
+                "uuid": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+                "x_mm": 10.0,
+                "y_mm": 10.0,
+                "rotation_deg": 180.0
+            }),
+        };
+        let response = dispatch_request(&mut engine, rotate_component);
+        assert!(response.error.is_none(), "{response:?}");
+        let components = engine.get_components().expect("components should query");
+        let rotated = components
+            .iter()
+            .find(|component| component.reference == "R1")
+            .unwrap();
+        assert_eq!(rotated.rotation, 180);
     }
 
     #[test]
@@ -2254,6 +2463,256 @@ mod tests {
     }
 
     #[test]
+    fn assign_part_dispatch_updates_component_value() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        let _ = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(1),
+                method: "open_project".into(),
+                params: serde_json::to_value(OpenProjectParams {
+                    path: eagle_fixture_path("simple-opamp.lbr"),
+                })
+                .unwrap(),
+            },
+        );
+        let _ = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(2),
+                method: "open_project".into(),
+                params: serde_json::to_value(OpenProjectParams {
+                    path: kicad_fixture_path("partial-route-demo.kicad_pcb"),
+                })
+                .unwrap(),
+            },
+        );
+        let search = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(3),
+                method: "search_pool".into(),
+                params: json!({"query": "LMV321"}),
+            },
+        );
+        let part_uuid = search.result.as_ref().unwrap()[0]["uuid"].clone();
+
+        let response = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(4),
+                method: "assign_part".into(),
+                params: json!({
+                    "uuid": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+                    "part_uuid": part_uuid,
+                }),
+            },
+        );
+        assert!(response.error.is_none(), "{response:?}");
+        let components = engine.get_components().expect("components should query");
+        let updated = components.iter().find(|component| component.reference == "R1").unwrap();
+        assert_eq!(updated.value, "LMV321");
+    }
+
+    #[test]
+    fn assign_part_dispatch_updates_followup_components_query() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        let _ = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(1),
+                method: "open_project".into(),
+                params: serde_json::to_value(OpenProjectParams {
+                    path: eagle_fixture_path("simple-opamp.lbr"),
+                })
+                .unwrap(),
+            },
+        );
+        let _ = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(2),
+                method: "open_project".into(),
+                params: serde_json::to_value(OpenProjectParams {
+                    path: kicad_fixture_path("partial-route-demo.kicad_pcb"),
+                })
+                .unwrap(),
+            },
+        );
+        let search = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(3),
+                method: "search_pool".into(),
+                params: json!({"query": "LMV321"}),
+            },
+        );
+        let part_uuid = search.result.as_ref().unwrap()[0]["uuid"].clone();
+
+        let baseline = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(4),
+                method: "get_components".into(),
+                params: json!({}),
+            },
+        );
+        assert_eq!(baseline.result.as_ref().unwrap()[0]["value"], "10k");
+
+        let assign = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(5),
+                method: "assign_part".into(),
+                params: json!({
+                    "uuid": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+                    "part_uuid": part_uuid,
+                }),
+            },
+        );
+        assert!(assign.error.is_none(), "{assign:?}");
+
+        let after = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(6),
+                method: "get_components".into(),
+                params: json!({}),
+            },
+        );
+        assert_eq!(after.result.as_ref().unwrap()[0]["value"], "LMV321");
+    }
+
+    #[test]
+    fn set_net_class_dispatch_updates_net_class() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        let _ = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(1),
+                method: "open_project".into(),
+                params: serde_json::to_value(OpenProjectParams {
+                    path: kicad_fixture_path("simple-demo.kicad_pcb"),
+                })
+                .unwrap(),
+            },
+        );
+        let net_uuid = engine
+            .get_net_info()
+            .expect("net info should query")
+            .into_iter()
+            .find(|net| net.name == "GND")
+            .expect("GND net should exist")
+            .uuid;
+        let response = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(2),
+                method: "set_net_class".into(),
+                params: json!({
+                    "net_uuid": net_uuid,
+                    "class_name": "power",
+                    "clearance": 125000,
+                    "track_width": 250000,
+                    "via_drill": 300000,
+                    "via_diameter": 600000,
+                    "diffpair_width": 0,
+                    "diffpair_gap": 0,
+                }),
+            },
+        );
+        assert!(response.error.is_none(), "{response:?}");
+        let updated = engine
+            .get_net_info()
+            .expect("net info should query")
+            .into_iter()
+            .find(|net| net.uuid == net_uuid)
+            .expect("updated net should exist");
+        assert_eq!(updated.class, "power");
+    }
+
+    #[test]
+    fn set_net_class_dispatch_updates_followup_net_info_query() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        let _ = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(1),
+                method: "open_project".into(),
+                params: serde_json::to_value(OpenProjectParams {
+                    path: kicad_fixture_path("simple-demo.kicad_pcb"),
+                })
+                .unwrap(),
+            },
+        );
+        let baseline = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(2),
+                method: "get_net_info".into(),
+                params: json!({}),
+            },
+        );
+        let baseline_gnd = baseline.result.as_ref().unwrap()
+            .as_array().unwrap()
+            .iter()
+            .find(|net| net["name"] == "GND")
+            .expect("baseline GND should exist");
+        let net_uuid = uuid::Uuid::parse_str(baseline_gnd["uuid"].as_str().unwrap()).unwrap();
+        assert_eq!(baseline_gnd["class"], "Default");
+
+        let set = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(3),
+                method: "set_net_class".into(),
+                params: json!({
+                    "net_uuid": net_uuid,
+                    "class_name": "power",
+                    "clearance": 125000,
+                    "track_width": 250000,
+                    "via_drill": 300000,
+                    "via_diameter": 600000,
+                    "diffpair_width": 0,
+                    "diffpair_gap": 0,
+                }),
+            },
+        );
+        assert!(set.error.is_none(), "{set:?}");
+
+        let after = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(4),
+                method: "get_net_info".into(),
+                params: json!({}),
+            },
+        );
+        let after_gnd = after.result.as_ref().unwrap()
+            .as_array().unwrap()
+            .iter()
+            .find(|net| net["uuid"] == net_uuid.to_string())
+            .expect("updated GND should exist");
+        assert_eq!(after_gnd["class"], "power");
+    }
+
+    #[test]
     fn move_component_dispatch_updates_followup_unrouted_query() {
         let mut engine = Engine::new().expect("engine should initialize");
         let fixture = kicad_fixture_path("partial-route-demo.kicad_pcb");
@@ -2311,6 +2770,74 @@ mod tests {
             .expect("distance should be an integer");
 
         assert_ne!(after_distance, baseline_distance);
+    }
+
+    #[test]
+    fn rotate_component_dispatch_updates_followup_components_query() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        let fixture = kicad_fixture_path("partial-route-demo.kicad_pcb");
+        let open = JsonRpcRequest {
+            jsonrpc: "2.0".into(),
+            id: json!(1),
+            method: "open_project".into(),
+            params: serde_json::to_value(OpenProjectParams { path: fixture }).unwrap(),
+        };
+        let open_response = dispatch_request(&mut engine, open);
+        assert!(open_response.error.is_none(), "{open_response:?}");
+
+        let baseline = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(2),
+                method: "get_components".into(),
+                params: json!({}),
+            },
+        );
+        assert!(baseline.error.is_none(), "{baseline:?}");
+        let baseline_components = baseline.result.expect("result should exist");
+        let baseline_target = baseline_components
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|component| component["uuid"] == "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+            .unwrap();
+        assert_eq!(baseline_target["rotation"], 0);
+
+        let rotate_component = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(3),
+                method: "rotate_component".into(),
+                params: json!({
+                    "uuid": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+                    "x_mm": 10.0,
+                    "y_mm": 10.0,
+                    "rotation_deg": 180.0
+                }),
+            },
+        );
+        assert!(rotate_component.error.is_none(), "{rotate_component:?}");
+
+        let after = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(4),
+                method: "get_components".into(),
+                params: json!({}),
+            },
+        );
+        assert!(after.error.is_none(), "{after:?}");
+        let after_components = after.result.expect("result should exist");
+        let after_target = after_components
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|component| component["uuid"] == "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+            .unwrap();
+        assert_eq!(after_target["rotation"], 180);
     }
 
     #[test]

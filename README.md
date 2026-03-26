@@ -1,24 +1,37 @@
 # Datum EDA
 
-A headless-first PCB design engine for Linux. AI agents and CLI scripts are
-the primary interfaces; the GUI is a later consumer.
+Datum EDA is an AI-native electronics design platform.
 
-Datum EDA is built to be useful before it is complete: a headless AI/CLI-first
-engine with a KiCad-first implementation path today, bounded Eagle migration
-support, and an explicit roadmap to broaden interoperability across additional
-industry-standard EDA ecosystems over time.
+Datum is being built as a new class of EDA system: deterministic engine core,
+machine-native interfaces, and automation-first workflows from day one.
+
+What Datum EDA is:
+- A standalone core architecture for analysis, checking, modification, and
+  eventually native design authoring.
+- AI/CLI-first control surfaces with a shared deterministic execution model.
+- A foundation intended to scale across multiple EDA ecosystems over time.
+
+What Datum EDA is not:
+- A CLI facade for another tool.
+- A compatibility layer whose long-term value is format translation.
+
+KiCad-first support is the current execution beachhead for rapid validation on
+real projects. It is not the product boundary.
 
 ---
 
 ## Why
 
-Every major EDA tool on Linux was designed for humans clicking a GUI. The
-command-line and scripting interfaces are afterthoughts. AI integration is
-nonexistent or bolted on.
+Most EDA systems were built GUI-first. Automation and AI were added later.
 
-Datum EDA inverts that: the engine is a pure Rust library with no GUI
-dependency. The GUI is a future consumer, not a prerequisite. This makes the
-engine the best possible host for AI-driven design analysis and automation.
+Datum EDA inverts that model:
+- Engine-first deterministic core.
+- AI/CLI interfaces as first-class surfaces.
+- GUI as a downstream consumer, not the system of record.
+
+The objective is not to replicate existing UX with scripts attached. The
+objective is to define a modern EDA architecture where AI-native workflows are
+fundamental.
 
 ---
 
@@ -33,7 +46,12 @@ The current roadmap intentionally sequences delivery:
 - Then: broader ecosystem interoperability, including commercial-tool migration
   paths.
 
-This sequencing is about execution risk, not product ambition.
+This sequencing is about execution risk and engineering quality, not limited
+ambition. Datum is being built as its own system.
+
+Canonical scope terminology is defined in
+[`specs/PROGRAM_SPEC.md`](specs/PROGRAM_SPEC.md) (`Product identity`,
+`Implementation slice`, `Execution strategy`, `Non-goals`).
 
 ---
 
@@ -59,6 +77,8 @@ Current limitations (intentional, milestone-scoped):
 - Eagle `.brd` / `.sch` design import is not implemented yet.
 - KiCad import/write-back currently targets a defined subset while fidelity and
   corpus confidence continue to expand.
+
+Current state should be read as implementation maturity, not product identity.
 
 See [`docs/USER_WORKFLOWS.md`](docs/USER_WORKFLOWS.md) for end-to-end usage
 examples and [`specs/MCP_API_SPEC.md`](specs/MCP_API_SPEC.md) for the full
@@ -162,6 +182,7 @@ Key documentation:
 |----------|----------|
 | [`docs/CANONICAL_IR.md`](docs/CANONICAL_IR.md) | Core data model and invariants |
 | [`docs/ENGINE_DESIGN.md`](docs/ENGINE_DESIGN.md) | Operation model and API surface |
+| [`docs/RESEARCH_TRACEABILITY.md`](docs/RESEARCH_TRACEABILITY.md) | Research conclusions mapped to roadmap/spec sequencing |
 | [`specs/PROGRAM_SPEC.md`](specs/PROGRAM_SPEC.md) | Controlling feature specification |
 | [`specs/MCP_API_SPEC.md`](specs/MCP_API_SPEC.md) | Full MCP tool catalog |
 | [`specs/PROGRESS.md`](specs/PROGRESS.md) | Implementation status per spec requirement |
@@ -172,11 +193,14 @@ Key documentation:
 
 See [`PLAN.md`](PLAN.md).
 
-Directionally, the long-term interoperability intent is explicitly broader than
-KiCad + Eagle. The current roadmap prioritizes getting the core engine correct,
-deterministic, and automatable first, then expanding format coverage with a
-commercial interop track (Altium, PADS, OrCAD/Allegro) once core milestones are
-stable.
+Directionally, Datum EDA targets a full AI-native EDA stack:
+- independent core architecture
+- broad format interoperability
+- native design-authoring capability
+- advanced automation and strategy layers on top of deterministic primitives
+
+Format coverage starts where execution is fastest and safest, then expands.
+Long-term scope includes both open-tool and commercial-tool migration paths.
 
 Formal milestone contracts live in [`specs/PROGRAM_SPEC.md`](specs/PROGRAM_SPEC.md).
 

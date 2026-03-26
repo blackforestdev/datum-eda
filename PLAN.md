@@ -2,8 +2,15 @@
 
 ## Mission Layers
 
-**Product wedge**: Best AI/CLI design analysis and automation environment
-for Linux PCB projects.
+Terminology in this document follows `specs/PROGRAM_SPEC.md`:
+`Product identity`, `Implementation slice`, `Execution strategy`, and
+`Non-goals`.
+
+**Product identity**: AI-native EDA platform with deterministic core semantics
+and machine-native interfaces.
+
+**Launch wedge**: Best AI/CLI design analysis and automation environment
+for Linux PCB projects, validated first through a KiCad-first execution path.
 
 **Core platform**: Canonical design IR plus operation engine with import,
 query, ERC/DRC, transformation, and export.
@@ -52,7 +59,8 @@ canonical round-trip, and has tests. Import harness scaffolded.
 store them, query them, and serialize canonical pool data deterministically.
 
 ### M1: Design Ingestion + Query Engine
-**Goal**: Import real KiCad and Eagle designs. Query everything about them.
+**Goal**: Deliver the initial interop slice by importing real KiCad and Eagle
+designs and querying everything about them.
 Golden tests against known-good designs.
 
 **Progress (2026-03-25)**:
