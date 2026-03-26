@@ -193,6 +193,11 @@ struct ApplyScopedComponentReplacementPolicyParams {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct ApplyScopedComponentReplacementPlanParams {
+    plan: eda_engine::api::ScopedComponentReplacementPlan,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 struct GetScopedComponentReplacementPlanParams {
     scope: ComponentReplacementScopeParams,
     policy: ComponentReplacementPolicy,
@@ -3779,6 +3784,93 @@ mod tests {
             .filter_map(|component| component["value"].as_str())
             .collect();
         assert_eq!(values.iter().filter(|value| **value == "ALTAMP").count(), 2);
+    }
+
+    #[test]
+    fn apply_scoped_component_replacement_plan_dispatch_applies_preview_without_reresolving() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        let _ = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(1),
+                method: "open_project".into(),
+                params: serde_json::to_value(OpenProjectParams {
+                    path: eagle_fixture_path("simple-opamp.lbr"),
+                })
+                .unwrap(),
+            },
+        );
+        let _ = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(2),
+                method: "open_project".into(),
+                params: serde_json::to_value(OpenProjectParams {
+                    path: kicad_fixture_path("partial-route-demo.kicad_pcb"),
+                })
+                .unwrap(),
+            },
+        );
+        let search = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(3),
+                method: "search_pool".into(),
+                params: json!({"query": "LMV321"}),
+            },
+        );
+        let lmv321_part_uuid = search.result.as_ref().unwrap()[0]["uuid"].clone();
+        for (id, uuid) in [
+            (4, "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+            (5, "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+        ] {
+            let assign = dispatch_request(
+                &mut engine,
+                JsonRpcRequest {
+                    jsonrpc: "2.0".into(),
+                    id: json!(id),
+                    method: "assign_part".into(),
+                    params: json!({
+                        "uuid": uuid,
+                        "part_uuid": lmv321_part_uuid,
+                    }),
+                },
+            );
+            assert!(assign.error.is_none(), "{assign:?}");
+        }
+        let preview = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(6),
+                method: "get_scoped_component_replacement_plan".into(),
+                params: json!({
+                    "scope": {
+                        "reference_prefix": "R",
+                        "value_equals": "LMV321",
+                    },
+                    "policy": "best_compatible_package",
+                }),
+            },
+        );
+        assert!(preview.error.is_none(), "{preview:?}");
+
+        let apply = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(7),
+                method: "apply_scoped_component_replacement_plan".into(),
+                params: json!({
+                    "plan": preview.result.unwrap(),
+                }),
+            },
+        );
+        assert!(apply.error.is_none(), "{apply:?}");
+        assert_eq!(apply.result.as_ref().unwrap()["description"], "replace_components 2");
     }
 
     #[test]

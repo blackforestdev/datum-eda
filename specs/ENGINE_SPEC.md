@@ -834,6 +834,10 @@ impl Engine {
         &mut self,
         input: ScopedComponentReplacementPolicyInput,
     ) -> Result<OperationResult>;
+    pub fn apply_scoped_component_replacement_plan(
+        &mut self,
+        plan: ScopedComponentReplacementPlan,
+    ) -> Result<OperationResult>;
 
     // Checking
     pub fn run_erc_prechecks(&self) -> Result<Vec<ErcFinding>>;

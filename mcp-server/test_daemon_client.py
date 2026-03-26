@@ -90,6 +90,27 @@ class TestDaemonClient(unittest.TestCase):
                 {"reference_prefix": "R", "value_equals": "LMV321"}, "best_compatible_package"
             )
         )
+        apply_scoped_replacement_plan = (
+            client.apply_scoped_component_replacement_plan_request(
+                {
+                    "scope": {"reference_prefix": "R", "value_equals": "LMV321"},
+                    "policy": "best_compatible_package",
+                    "replacements": [
+                        {
+                            "component_uuid": "comp-1",
+                            "current_reference": "R1",
+                            "current_value": "LMV321",
+                            "current_part_uuid": "part-uuid",
+                            "current_package_uuid": "package-uuid",
+                            "target_part_uuid": "alt-part-uuid",
+                            "target_package_uuid": "alt-package-uuid",
+                            "target_value": "ALTAMP",
+                            "target_package_name": "ALT-3",
+                        }
+                    ],
+                }
+            )
+        )
         get_scoped_replacement_plan = (
             client.get_scoped_component_replacement_plan_request(
                 {"reference_prefix": "R", "value_equals": "LMV321"}, "best_compatible_package"
@@ -206,6 +227,18 @@ class TestDaemonClient(unittest.TestCase):
                 "scope": {"reference_prefix": "R", "value_equals": "LMV321"},
                 "policy": "best_compatible_package",
             },
+        )
+        self.assertEqual(
+            apply_scoped_replacement_plan.method,
+            "apply_scoped_component_replacement_plan",
+        )
+        self.assertEqual(
+            apply_scoped_replacement_plan.params["plan"]["policy"],
+            "best_compatible_package",
+        )
+        self.assertEqual(
+            apply_scoped_replacement_plan.params["plan"]["replacements"][0]["target_package_name"],
+            "ALT-3",
         )
         self.assertEqual(
             get_scoped_replacement_plan.method,

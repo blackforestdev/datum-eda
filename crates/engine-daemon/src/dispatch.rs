@@ -239,6 +239,18 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
             }
         }
+        "apply_scoped_component_replacement_plan" => {
+            match serde_json::from_value::<ApplyScopedComponentReplacementPlanParams>(request.params)
+            {
+                Ok(params) => match engine.apply_scoped_component_replacement_plan(params.plan) {
+                    Ok(result) => {
+                        success_response(request.id, serde_json::to_value(result).unwrap())
+                    }
+                    Err(err) => error_response(request.id, -32050, &err.to_string()),
+                },
+                Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+            }
+        }
         "set_net_class" => match serde_json::from_value::<SetNetClassParams>(request.params) {
             Ok(params) => match engine.set_net_class(SetNetClassInput {
                 net_uuid: params.net_uuid,

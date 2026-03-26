@@ -430,6 +430,46 @@ class TestDispatchCore(unittest.TestCase):
             2,
         )
 
+    def test_tools_call_dispatches_apply_scoped_component_replacement_plan(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        plan = {
+            "scope": {"reference_prefix": "R", "value_equals": "LMV321"},
+            "policy": "best_compatible_package",
+            "replacements": [
+                {
+                    "component_uuid": "comp-1",
+                    "current_reference": "R1",
+                    "current_value": "LMV321",
+                    "current_part_uuid": "part-uuid",
+                    "current_package_uuid": "package-uuid",
+                    "target_part_uuid": "alt-part-uuid",
+                    "target_package_uuid": "alt-package-uuid",
+                    "target_value": "ALTAMP",
+                    "target_package_name": "ALT-3",
+                }
+            ],
+        }
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 20922,
+                "method": "tools/call",
+                "params": {
+                    "name": "apply_scoped_component_replacement_plan",
+                    "arguments": {"plan": plan},
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [("apply_scoped_component_replacement_plan", plan)],
+        )
+        self.assertEqual(
+            len(response["result"]["content"][0]["json"]["diff"]["modified"]),
+            2,
+        )
+
     def test_tools_call_dispatches_set_package(self) -> None:
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)

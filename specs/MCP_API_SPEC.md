@@ -91,6 +91,7 @@ normalized MCP surface.
 `set_reference`, `assign_part`, `set_package`, `set_package_with_part`,
 `replace_component`, `replace_components`, `apply_component_replacement_plan`,
 `apply_component_replacement_policy`, `apply_scoped_component_replacement_policy`,
+`apply_scoped_component_replacement_plan`,
 `set_net_class`, `set_design_rule`, `undo`, `redo`, `search_pool`, `get_part`,
 `get_package`,
 `get_package_change_candidates`, `get_part_change_candidates`,
@@ -323,6 +324,30 @@ Output: { "diff": { "created": [], "modified": [{ "object_type": "component", "u
 Error:  invalid_params | component_not_found | part_not_found | package_not_found
 ```
 Current implementation note: implemented in the current daemon/stdio host for deterministic best-candidate replacement selection over a scoped component filter.
+
+#### `apply_scoped_component_replacement_plan`
+```
+Method: apply_scoped_component_replacement_plan
+Input:  { "plan": {
+            "scope": json,
+            "policy": "best_compatible_package" | "best_compatible_part",
+            "replacements": [
+              { "component_uuid": string,
+                "current_reference": string,
+                "current_value": string,
+                "current_part_uuid": string|null,
+                "current_package_uuid": string,
+                "target_part_uuid": string,
+                "target_package_uuid": string,
+                "target_value": string,
+                "target_package_name": string }
+            ]
+          } }
+Output: { "diff": { "created": [], "modified": [{ "object_type": "component", "uuid": string }], "deleted": [] },
+          "description": string }
+Error:  invalid_params | component_not_found | part_not_found | package_not_found
+```
+Current implementation note: implemented in the current daemon/stdio host to apply a previously previewed scoped replacement plan without re-resolving policy; the current CLI slice consumes this via `--apply-scoped-replacement-plan-file` and still requires matching pool libraries to be loaded.
 
 ### Design Queries
 

@@ -195,6 +195,27 @@ class FakeDaemonClient:
             None,
         )
 
+    def apply_scoped_component_replacement_plan(
+        self, plan: dict[str, object]
+    ) -> JsonRpcResponse:
+        self.calls.append(("apply_scoped_component_replacement_plan", plan))
+        return JsonRpcResponse(
+            "2.0",
+            1217,
+            {
+                "diff": {
+                    "created": [],
+                    "modified": [
+                        {"object_type": "component", "uuid": "comp-1"},
+                        {"object_type": "component", "uuid": "comp-2"},
+                    ],
+                    "deleted": [],
+                },
+                "description": "replace_components 2",
+            },
+            None,
+        )
+
     def set_net_class(
         self,
         net_uuid: str,

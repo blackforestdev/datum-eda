@@ -156,6 +156,10 @@ enum Commands {
         #[arg(long = "apply-scoped-replacement-policy")]
         apply_scoped_replacement_policy: Vec<String>,
 
+        /// Apply a previously exported scoped replacement preview JSON file without re-resolving policy
+        #[arg(long = "apply-scoped-replacement-plan-file")]
+        apply_scoped_replacement_plan_file: Vec<PathBuf>,
+
         /// Set one net class: <net_uuid>:<class_name>:<clearance_nm>:<track_width_nm>:<via_drill_nm>:<via_diameter_nm>[:<diffpair_width_nm>:<diffpair_gap_nm>]
         #[arg(long = "set-net-class")]
         set_net_class: Vec<String>,
@@ -433,6 +437,7 @@ fn modify_board(
         &[],
         &[],
         &[],
+        &[],
     )
 }
 
@@ -459,6 +464,7 @@ fn modify_board_with_plan(
     apply_replacement_plan: &[PlannedComponentReplacementInput],
     apply_replacement_policy: &[PolicyDrivenComponentReplacementInput],
     apply_scoped_replacement_policy: &[ScopedComponentReplacementPolicyInput],
+    apply_scoped_replacement_plan: &[ScopedComponentReplacementPlan],
 ) -> Result<ModifyReportView> {
     command_modify::modify_board(
         path,
@@ -483,6 +489,7 @@ fn modify_board_with_plan(
         apply_replacement_plan,
         apply_replacement_policy,
         apply_scoped_replacement_policy,
+        apply_scoped_replacement_plan,
     )
 }
 
@@ -1363,6 +1370,127 @@ mod tests {
         let _ = std::fs::remove_file(&target);
         let _ = std::fs::remove_file(target.with_file_name(format!(
             "{}.parts.json",
+            target.file_name().unwrap().to_string_lossy()
+        )));
+    }
+
+    #[test]
+    fn execute_modify_apply_scoped_replacement_plan_file_applies_preview_output() {
+        let source = kicad_fixture_path("partial-route-demo.kicad_pcb");
+        let seeded = std::env::temp_dir().join(format!(
+            "{}-cli-apply-scoped-replacement-plan-seeded.kicad_pcb",
+            Uuid::new_v4()
+        ));
+        let plan_path = std::env::temp_dir().join(format!(
+            "{}-cli-apply-scoped-replacement-plan.json",
+            Uuid::new_v4()
+        ));
+        let target = std::env::temp_dir().join(format!(
+            "{}-cli-apply-scoped-replacement-plan-out.kicad_pcb",
+            Uuid::new_v4()
+        ));
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+            .expect("library import should succeed");
+        let lmv321_part_uuid = engine
+            .search_pool("LMV321")
+            .expect("search should succeed")
+            .first()
+            .map(|part| part.uuid)
+            .expect("LMV321 part should exist");
+        modify_board(
+            &source,
+            &[],
+            &[],
+            &[],
+            &[eagle_fixture_path("simple-opamp.lbr")],
+            &[],
+            &[],
+            &[],
+            &[
+                AssignPartInput {
+                    uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+                    part_uuid: lmv321_part_uuid,
+                },
+                AssignPartInput {
+                    uuid: Uuid::parse_str("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb").unwrap(),
+                    part_uuid: lmv321_part_uuid,
+                },
+            ],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            None,
+            0,
+            0,
+            Some(&seeded),
+            false,
+        )
+        .expect("modify assign_part save should succeed");
+
+        let query_cli = Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "query",
+            seeded.to_str().unwrap(),
+            "scoped-replacement-plan",
+            "package",
+            "--ref-prefix",
+            "R",
+            "--value",
+            "LMV321",
+            "--library",
+            eagle_fixture_path("simple-opamp.lbr").to_str().unwrap(),
+        ])
+        .expect("CLI should parse");
+        let preview = execute(query_cli).expect("scoped replacement preview query should succeed");
+        std::fs::write(&plan_path, preview).expect("preview file should write");
+
+        let modify_cli = Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "modify",
+            seeded.to_str().unwrap(),
+            "--library",
+            eagle_fixture_path("simple-opamp.lbr").to_str().unwrap(),
+            "--apply-scoped-replacement-plan-file",
+            plan_path.to_str().unwrap(),
+            "--save",
+            target.to_str().unwrap(),
+        ])
+        .expect("CLI should parse");
+        let output = execute(modify_cli).expect("scoped replacement apply should succeed");
+        assert!(output.contains("\"saved_path\""));
+
+        let components = match query_components(&target).expect("saved components should query") {
+            ComponentListView::Board { components } => components,
+        };
+        assert_eq!(
+            components
+                .iter()
+                .filter(|component| component.value == "ALTAMP")
+                .count(),
+            2
+        );
+
+        let _ = std::fs::remove_file(&seeded);
+        let _ = std::fs::remove_file(seeded.with_file_name(format!(
+            "{}.parts.json",
+            seeded.file_name().unwrap().to_string_lossy()
+        )));
+        let _ = std::fs::remove_file(&plan_path);
+        let _ = std::fs::remove_file(&target);
+        let _ = std::fs::remove_file(target.with_file_name(format!(
+            "{}.parts.json",
+            target.file_name().unwrap().to_string_lossy()
+        )));
+        let _ = std::fs::remove_file(target.with_file_name(format!(
+            "{}.packages.json",
             target.file_name().unwrap().to_string_lossy()
         )));
     }
@@ -2607,6 +2735,7 @@ mod tests {
             ],
             &[],
             &[],
+            &[],
         )
         .expect("modify apply_replacement_plan save should succeed");
         assert_eq!(report.saved_path.as_deref(), Some(target.to_str().unwrap()));
@@ -2692,6 +2821,7 @@ mod tests {
                 },
             ],
             &[],
+            &[],
         )
         .expect("modify apply_replacement_policy save should succeed");
         assert_eq!(report.saved_path.as_deref(), Some(target.to_str().unwrap()));
@@ -2776,6 +2906,7 @@ mod tests {
                 },
                 policy: ComponentReplacementPolicy::BestCompatiblePackage,
             }],
+            &[],
         )
         .expect("modify apply_scoped_replacement_policy save should succeed");
         assert_eq!(report.saved_path.as_deref(), Some(target.to_str().unwrap()));

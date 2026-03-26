@@ -354,6 +354,7 @@ Item 8 reconciliation notes (2026-03-25):
 | ApplyComponentReplacementPlan | [~] | Engine/daemon/MCP current slice implements plan-driven replacement selection from `get_component_replacement_plan`; CLI exposes the same path via `--apply-replacement-plan` |
 | ApplyComponentReplacementPolicy | [~] | Engine/daemon/MCP current slice implements deterministic best-candidate replacement selection from the current replacement plan; CLI exposes the same path via `--apply-replacement-policy` |
 | ApplyScopedComponentReplacementPolicy | [~] | Engine/daemon/MCP current slice implements deterministic best-candidate replacement selection over a scoped component filter; CLI exposes the same path via `--apply-scoped-replacement-policy` |
+| ApplyScopedComponentReplacementPlan | [~] | Engine/daemon/MCP current slice applies a previously previewed scoped replacement plan without re-resolving policy; CLI exposes the same path via `--apply-scoped-replacement-plan-file` and requires matching pool libraries for target part/package resolution |
 | Package-change introspection | [~] | Engine/daemon/MCP/CLI query surface exposes component-scoped package compatibility candidates and resolution status for current board slice |
 | Part-change introspection | [~] | Engine/daemon/MCP/CLI query surface exposes component-scoped compatible part candidates for current board slice |
 | Replacement-plan introspection | [~] | Engine/daemon/MCP/CLI query surface exposes unified per-component and scoped replacement planning reports combining compatibility data with resolved selection preview for current board slice, with batch apply support via `replace_components` |
@@ -510,6 +511,7 @@ Item 8 reconciliation notes (2026-03-25):
 | apply_component_replacement_plan() | [~] | Current M3 board write slice resolves package/part selections from the unified replacement plan and applies them as one transaction |
 | apply_component_replacement_policy() | [~] | Current M3 board write slice resolves deterministic best-candidate replacement policies from the unified replacement plan and applies them as one transaction |
 | apply_scoped_component_replacement_policy() | [~] | Current M3 board write slice resolves deterministic best-candidate replacement policies over a scoped component filter and applies them as one transaction |
+| apply_scoped_component_replacement_plan() | [~] | Current M3 board write slice validates and applies a previously previewed scoped replacement plan without re-resolving policy |
 | get_net_info() | [x] | Returns all nets, not single-net |
 | get_stackup() | [x] | |
 | get_unrouted() | [x] | |
@@ -635,7 +637,7 @@ All items: [ ] Not started (M4 scope)
 | Engine compiles without GUI deps | [x] | |
 | Test harness (golden file utilities) | [x] | test-harness crate |
 | Test corpus (real designs) | [ ] | tests/corpus/ empty |
-| Daemon JSON-RPC dispatch | [x] | 50 methods in `dispatch.rs`, with coverage in daemon tests |
+| Daemon JSON-RPC dispatch | [x] | 51 methods in `dispatch.rs`, with coverage in daemon tests |
 | Daemon socket transport | [x] | `main()` parses `--socket` and serves Unix socket; live smoke is environment-gated because sandboxed local runs deny socket IPC |
 | MCP Python server (tool host) | [x] | Tool definitions + stdio dispatch |
 | MCP→daemon transport | [x] | `EngineDaemonClient.call()` uses Unix socket JSON-RPC; behavioral parity remains covered separately from live socket smoke |

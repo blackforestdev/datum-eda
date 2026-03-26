@@ -897,6 +897,67 @@ impl Engine {
         self.replace_components(resolved)
     }
 
+    pub fn apply_scoped_component_replacement_plan(
+        &mut self,
+        plan: ScopedComponentReplacementPlan,
+    ) -> Result<OperationResult, EngineError> {
+        if plan.replacements.is_empty() {
+            return Err(EngineError::Operation(
+                "apply_scoped_component_replacement_plan requires at least one replacement"
+                    .to_string(),
+            ));
+        }
+        let scoped = self.scoped_replacement_candidates(&plan.scope)?;
+        let mut matched_component_uuids: Vec<_> = scoped.into_iter().map(|item| item.uuid).collect();
+        matched_component_uuids.sort();
+        let mut preview_component_uuids: Vec<_> =
+            plan.replacements.iter().map(|item| item.component_uuid).collect();
+        preview_component_uuids.sort();
+        if matched_component_uuids != preview_component_uuids {
+            return Err(EngineError::Operation(
+                "apply_scoped_component_replacement_plan no longer matches the previewed scoped component set"
+                    .to_string(),
+            ));
+        }
+
+        let design = self.design.as_ref().ok_or(EngineError::NoProjectOpen)?;
+        let board = design.board.as_ref().ok_or_else(|| {
+            EngineError::Operation(
+                "apply_scoped_component_replacement_plan is currently implemented only for board projects".to_string(),
+            )
+        })?;
+        let resolved = plan
+            .replacements
+            .iter()
+            .map(|item| {
+                let component = board
+                    .packages
+                    .get(&item.component_uuid)
+                    .ok_or(EngineError::NotFound {
+                        object_type: "component",
+                        uuid: item.component_uuid,
+                    })?;
+                let current_part_uuid = (component.part != Uuid::nil()).then_some(component.part);
+                if component.reference != item.current_reference
+                    || component.value != item.current_value
+                    || current_part_uuid != item.current_part_uuid
+                    || component.package != item.current_package_uuid
+                {
+                    return Err(EngineError::Operation(format!(
+                        "apply_scoped_component_replacement_plan preview drifted for component {}; refresh get_scoped_component_replacement_plan first",
+                        item.component_uuid
+                    )));
+                }
+                Ok(ReplaceComponentInput {
+                    uuid: item.component_uuid,
+                    package_uuid: item.target_package_uuid,
+                    part_uuid: item.target_part_uuid,
+                })
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+        self.replace_components(resolved)
+    }
+
     pub fn set_net_class(
         &mut self,
         input: SetNetClassInput,

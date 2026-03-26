@@ -24,7 +24,6 @@ from typing import Any
 from tool_dispatch import dispatch_tool_call
 from tools_catalog import TOOLS
 
-
 @dataclass(frozen=True)
 class JsonRpcRequest:
     jsonrpc: str
@@ -161,6 +160,14 @@ class EngineDaemonClient:
         return self.build_request(
             "apply_scoped_component_replacement_policy",
             {"scope": scope, "policy": policy},
+        )
+
+    def apply_scoped_component_replacement_plan_request(
+        self, plan: dict[str, object]
+    ) -> JsonRpcRequest:
+        return self.build_request(
+            "apply_scoped_component_replacement_plan",
+            {"plan": plan},
         )
 
     def set_net_class_request(
@@ -415,6 +422,11 @@ class EngineDaemonClient:
         return self.call(
             self.apply_scoped_component_replacement_policy_request(scope, policy)
         )
+
+    def apply_scoped_component_replacement_plan(
+        self, plan: dict[str, object]
+    ) -> JsonRpcResponse:
+        return self.call(self.apply_scoped_component_replacement_plan_request(plan))
 
     def set_net_class(
         self,

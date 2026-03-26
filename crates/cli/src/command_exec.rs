@@ -139,6 +139,7 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             apply_replacement_plan,
             apply_replacement_policy,
             apply_scoped_replacement_policy,
+            apply_scoped_replacement_plan_file,
             set_net_class,
             set_reference,
             undo,
@@ -187,6 +188,25 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 .iter()
                 .map(|value| parse_apply_scoped_replacement_policy_arg(value))
                 .collect::<Result<Vec<_>>>()?;
+            let apply_scoped_replacement_plan = apply_scoped_replacement_plan_file
+                .iter()
+                .map(|path| {
+                    let contents = std::fs::read_to_string(path).with_context(|| {
+                        format!(
+                            "failed to read scoped replacement plan file {}",
+                            path.display()
+                        )
+                    })?;
+                    serde_json::from_str::<ScopedComponentReplacementPlan>(&contents).with_context(
+                        || {
+                            format!(
+                                "failed to parse scoped replacement plan file {}",
+                                path.display()
+                            )
+                        },
+                    )
+                })
+                .collect::<Result<Vec<_>>>()?;
             let set_net_class = set_net_class
                 .iter()
                 .map(|value| parse_set_net_class_arg(value))
@@ -218,6 +238,7 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 &apply_replacement_plan,
                 &apply_replacement_policy,
                 &apply_scoped_replacement_policy,
+                &apply_scoped_replacement_plan,
             )?;
             Ok((render_output(&cli.format, &report), 0))
         }

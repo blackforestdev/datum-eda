@@ -226,6 +226,55 @@ TOOLS: list[dict[str, Any]] = [
         },
     },
     {
+        "name": "apply_scoped_component_replacement_plan",
+        "description": "Apply a previously previewed scoped component replacement plan without re-resolving policy.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "plan": {
+                    "type": "object",
+                    "properties": {
+                        "scope": {"type": "object"},
+                        "policy": {
+                            "type": "string",
+                            "enum": ["best_compatible_package", "best_compatible_part"],
+                        },
+                        "replacements": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "component_uuid": {"type": "string"},
+                                    "current_reference": {"type": "string"},
+                                    "current_value": {"type": "string"},
+                                    "current_part_uuid": {"type": ["string", "null"]},
+                                    "current_package_uuid": {"type": "string"},
+                                    "target_part_uuid": {"type": "string"},
+                                    "target_package_uuid": {"type": "string"},
+                                    "target_value": {"type": "string"},
+                                    "target_package_name": {"type": "string"},
+                                },
+                                "required": [
+                                    "component_uuid",
+                                    "current_reference",
+                                    "current_value",
+                                    "current_part_uuid",
+                                    "current_package_uuid",
+                                    "target_part_uuid",
+                                    "target_package_uuid",
+                                    "target_value",
+                                    "target_package_name",
+                                ],
+                            },
+                        },
+                    },
+                    "required": ["scope", "policy", "replacements"],
+                }
+            },
+            "required": ["plan"],
+        },
+    },
+    {
         "name": "set_reference",
         "description": "Set one board component reference by UUID in the current M3 slice.",
         "inputSchema": {
