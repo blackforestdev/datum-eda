@@ -193,6 +193,12 @@ struct ApplyScopedComponentReplacementPolicyParams {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct GetScopedComponentReplacementPlanParams {
+    scope: ComponentReplacementScopeParams,
+    policy: ComponentReplacementPolicy,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 struct SetNetClassParams {
     net_uuid: uuid::Uuid,
     class_name: String,
@@ -844,6 +850,86 @@ mod tests {
         assert_eq!(report["current_part_uuid"], lmv321_part_uuid);
         assert_eq!(report["package_change"]["status"], "candidates_available");
         assert_eq!(report["part_change"]["status"], "candidates_available");
+    }
+
+    #[test]
+    fn get_scoped_component_replacement_plan_dispatch_returns_resolved_preview() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        let _ = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(1),
+                method: "open_project".into(),
+                params: serde_json::to_value(OpenProjectParams {
+                    path: eagle_fixture_path("simple-opamp.lbr"),
+                })
+                .unwrap(),
+            },
+        );
+        let _ = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(2),
+                method: "open_project".into(),
+                params: serde_json::to_value(OpenProjectParams {
+                    path: kicad_fixture_path("partial-route-demo.kicad_pcb"),
+                })
+                .unwrap(),
+            },
+        );
+        let search = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(3),
+                method: "search_pool".into(),
+                params: json!({"query": "LMV321"}),
+            },
+        );
+        let lmv321_part_uuid = search.result.as_ref().unwrap()[0]["uuid"].clone();
+        for (id, uuid) in [
+            (4, "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+            (5, "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+        ] {
+            let assign = dispatch_request(
+                &mut engine,
+                JsonRpcRequest {
+                    jsonrpc: "2.0".into(),
+                    id: json!(id),
+                    method: "assign_part".into(),
+                    params: json!({
+                        "uuid": uuid,
+                        "part_uuid": lmv321_part_uuid,
+                    }),
+                },
+            );
+            assert!(assign.error.is_none(), "{assign:?}");
+        }
+
+        let response = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(6),
+                method: "get_scoped_component_replacement_plan".into(),
+                params: json!({
+                    "scope": {
+                        "reference_prefix": "R",
+                        "value_equals": "LMV321",
+                    },
+                    "policy": "best_compatible_package",
+                }),
+            },
+        );
+        assert!(response.error.is_none(), "{response:?}");
+        let report = response.result.expect("response should contain result");
+        assert_eq!(report["policy"], "best_compatible_package");
+        assert_eq!(report["replacements"].as_array().unwrap().len(), 2);
+        assert_eq!(report["replacements"][0]["current_reference"], "R1");
+        assert_eq!(report["replacements"][0]["target_package_name"], "ALT-3");
+        assert_eq!(report["replacements"][0]["target_value"], "ALTAMP");
     }
 
     #[test]

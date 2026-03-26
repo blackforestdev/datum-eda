@@ -63,6 +63,33 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 let report = query_component_replacement_plan(&path, &uuid, &libraries)?;
                 Ok((render_output(&cli.format, &report), 0))
             }
+            QueryCommands::ScopedReplacementPlan {
+                policy,
+                ref_prefix,
+                value,
+                package_uuid,
+                part_uuid,
+                libraries,
+            } => {
+                let policy = match policy {
+                    ReplacementPolicyArg::Package => ComponentReplacementPolicy::BestCompatiblePackage,
+                    ReplacementPolicyArg::Part => ComponentReplacementPolicy::BestCompatiblePart,
+                };
+                let report = query_scoped_component_replacement_plan(
+                    &path,
+                    ScopedComponentReplacementPolicyInput {
+                        scope: ComponentReplacementScope {
+                            reference_prefix: ref_prefix,
+                            value_equals: value,
+                            current_package_uuid: package_uuid,
+                            current_part_uuid: part_uuid,
+                        },
+                        policy,
+                    },
+                    &libraries,
+                )?;
+                Ok((render_output(&cli.format, &report), 0))
+            }
         },
         Commands::Drc { path } => {
             let report = run_drc(Path::new(&path))?;

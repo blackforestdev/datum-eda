@@ -356,7 +356,7 @@ Item 8 reconciliation notes (2026-03-25):
 | ApplyScopedComponentReplacementPolicy | [~] | Engine/daemon/MCP current slice implements deterministic best-candidate replacement selection over a scoped component filter; CLI exposes the same path via `--apply-scoped-replacement-policy` |
 | Package-change introspection | [~] | Engine/daemon/MCP/CLI query surface exposes component-scoped package compatibility candidates and resolution status for current board slice |
 | Part-change introspection | [~] | Engine/daemon/MCP/CLI query surface exposes component-scoped compatible part candidates for current board slice |
-| Replacement-plan introspection | [~] | Engine/daemon/MCP/CLI query surface exposes a unified component replacement planning report combining package and part compatibility for current board slice, with batch apply support via `replace_components` |
+| Replacement-plan introspection | [~] | Engine/daemon/MCP/CLI query surface exposes unified per-component and scoped replacement planning reports combining compatibility data with resolved selection preview for current board slice, with batch apply support via `replace_components` |
 | SetNetClass | [~] | Engine/daemon/MCP/CLI current slice implemented for board nets by UUID with sidecar-backed net-class persistence |
 | SetDesignRule | [~] | Engine/daemon/MCP current slice implemented; CLI exposes the default all-scope clearance rule path and follow-up `query design-rules` verification surface |
 | DeleteTrack | [~] | Engine/daemon/MCP/CLI current slice implemented for board tracks by UUID |
@@ -505,6 +505,7 @@ Item 8 reconciliation notes (2026-03-25):
 | get_package_change_candidates() | [x] | Current engine API supports component-scoped package compatibility introspection |
 | get_part_change_candidates() | [x] | Current engine API supports component-scoped part compatibility introspection |
 | get_component_replacement_plan() | [x] | Current engine API supports unified component replacement planning introspection |
+| get_scoped_component_replacement_plan() | [x] | Current engine API supports scoped policy-driven replacement preview introspection |
 | replace_components() | [~] | Current M3 board write slice supports batched explicit component replacement as one transaction / one undo step |
 | apply_component_replacement_plan() | [~] | Current M3 board write slice resolves package/part selections from the unified replacement plan and applies them as one transaction |
 | apply_component_replacement_policy() | [~] | Current M3 board write slice resolves deterministic best-candidate replacement policies from the unified replacement plan and applies them as one transaction |

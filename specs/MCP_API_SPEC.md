@@ -94,7 +94,8 @@ normalized MCP surface.
 `set_net_class`, `set_design_rule`, `undo`, `redo`, `search_pool`, `get_part`,
 `get_package`,
 `get_package_change_candidates`, `get_part_change_candidates`,
-`get_component_replacement_plan`, `get_board_summary`, `get_components`,
+`get_component_replacement_plan`, `get_scoped_component_replacement_plan`,
+`get_board_summary`, `get_components`,
 `get_netlist`, `get_schematic_summary`, `get_sheets`, `get_labels`,
 `get_symbols`, `get_symbol_fields`, `get_ports`, `get_buses`,
 `get_bus_entries`, `get_noconnects`, `get_hierarchy`, `get_net_info`,
@@ -240,6 +241,33 @@ Output: { "component_uuid": string,
 Error:  component_not_found
 ```
 Current implementation note: implemented in the current daemon/stdio host.
+
+#### `get_scoped_component_replacement_plan`
+```
+Method: get_scoped_component_replacement_plan
+Input:  { "scope": {
+            "reference_prefix": string|null,
+            "value_equals": string|null,
+            "current_package_uuid": string|null,
+            "current_part_uuid": string|null
+          },
+          "policy": "best_compatible_package" | "best_compatible_part" }
+Output: { "scope": json,
+          "policy": string,
+          "replacements": [
+            { "component_uuid": string,
+              "current_reference": string,
+              "current_value": string,
+              "current_part_uuid": string|null,
+              "current_package_uuid": string,
+              "target_part_uuid": string,
+              "target_package_uuid": string,
+              "target_value": string,
+              "target_package_name": string }
+          ] }
+Error:  invalid_params | component_not_found | part_not_found | package_not_found
+```
+Current implementation note: implemented in the current daemon/stdio host as a read-only preview of the exact replacements a scoped policy would apply.
 
 #### `replace_components`
 ```

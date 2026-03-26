@@ -450,6 +450,26 @@ pub struct ComponentReplacementPlan {
     pub part_change: PartChangeCompatibilityReport,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ScopedComponentReplacementPlanItem {
+    pub component_uuid: uuid::Uuid,
+    pub current_reference: String,
+    pub current_value: String,
+    pub current_part_uuid: Option<uuid::Uuid>,
+    pub current_package_uuid: uuid::Uuid,
+    pub target_part_uuid: uuid::Uuid,
+    pub target_package_uuid: uuid::Uuid,
+    pub target_value: String,
+    pub target_package_name: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ScopedComponentReplacementPlan {
+    pub scope: ComponentReplacementScope,
+    pub policy: ComponentReplacementPolicy,
+    pub replacements: Vec<ScopedComponentReplacementPlanItem>,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ViolationDomain {

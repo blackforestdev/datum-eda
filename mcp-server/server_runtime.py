@@ -262,6 +262,14 @@ class EngineDaemonClient:
     def get_component_replacement_plan_request(self, uuid: str) -> JsonRpcRequest:
         return self.build_request("get_component_replacement_plan", {"uuid": uuid})
 
+    def get_scoped_component_replacement_plan_request(
+        self, scope: dict[str, str | None], policy: str
+    ) -> JsonRpcRequest:
+        return self.build_request(
+            "get_scoped_component_replacement_plan",
+            {"scope": scope, "policy": policy},
+        )
+
     def get_board_summary_request(self) -> JsonRpcRequest:
         return self.build_request("get_board_summary", {})
 
@@ -482,6 +490,13 @@ class EngineDaemonClient:
 
     def get_component_replacement_plan(self, uuid: str) -> JsonRpcResponse:
         return self.call(self.get_component_replacement_plan_request(uuid))
+
+    def get_scoped_component_replacement_plan(
+        self, scope: dict[str, str | None], policy: str
+    ) -> JsonRpcResponse:
+        return self.call(
+            self.get_scoped_component_replacement_plan_request(scope, policy)
+        )
 
     def get_board_summary(self) -> JsonRpcResponse:
         return self.call(self.get_board_summary_request())

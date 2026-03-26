@@ -351,6 +351,29 @@ TOOLS: list[dict[str, Any]] = [
         },
     },
     {
+        "name": "get_scoped_component_replacement_plan",
+        "description": "Preview the exact replacements a scoped compatibility policy would choose before mutation.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "scope": {
+                    "type": "object",
+                    "properties": {
+                        "reference_prefix": {"type": ["string", "null"]},
+                        "value_equals": {"type": ["string", "null"]},
+                        "current_package_uuid": {"type": ["string", "null"]},
+                        "current_part_uuid": {"type": ["string", "null"]},
+                    },
+                },
+                "policy": {
+                    "type": "string",
+                    "enum": ["best_compatible_package", "best_compatible_part"],
+                },
+            },
+            "required": ["scope", "policy"],
+        },
+    },
+    {
         "name": "get_components",
         "description": "Return the imported board component list for the open project.",
         "inputSchema": {"type": "object", "properties": {}},

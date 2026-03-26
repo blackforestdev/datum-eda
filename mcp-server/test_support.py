@@ -345,6 +345,33 @@ class FakeDaemonClient:
             None,
         )
 
+    def get_scoped_component_replacement_plan(
+        self, scope: dict[str, str | None], policy: str
+    ) -> JsonRpcResponse:
+        self.calls.append(("get_scoped_component_replacement_plan", scope, policy))
+        return JsonRpcResponse(
+            "2.0",
+            1083,
+            {
+                "scope": scope,
+                "policy": policy,
+                "replacements": [
+                    {
+                        "component_uuid": "comp-1",
+                        "current_reference": "R1",
+                        "current_value": "LMV321",
+                        "current_part_uuid": "part-uuid",
+                        "current_package_uuid": "package-uuid",
+                        "target_part_uuid": "alt-part-uuid",
+                        "target_package_uuid": "alt-package-uuid",
+                        "target_value": "ALTAMP",
+                        "target_package_name": "ALT-3",
+                    }
+                ],
+            },
+            None,
+        )
+
     def get_check_report(self) -> JsonRpcResponse:
         self.calls.append(("get_check_report", None))
         return JsonRpcResponse(

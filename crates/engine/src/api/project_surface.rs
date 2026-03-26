@@ -504,6 +504,61 @@ impl Engine {
         })
     }
 
+    pub fn get_scoped_component_replacement_plan(
+        &self,
+        input: ScopedComponentReplacementPolicyInput,
+    ) -> Result<ScopedComponentReplacementPlan, EngineError> {
+        let resolved = self.resolve_scoped_component_replacement_policy(&input)?;
+        let design = self.design.as_ref().ok_or(EngineError::NoProjectOpen)?;
+        let board = design.board.as_ref().ok_or_else(|| EngineError::NotFound {
+            object_type: "board",
+            uuid: uuid::Uuid::nil(),
+        })?;
+        let mut replacements = Vec::with_capacity(resolved.len());
+        for replacement in resolved {
+            let component = board
+                .packages
+                .get(&replacement.uuid)
+                .ok_or(EngineError::NotFound {
+                    object_type: "component",
+                    uuid: replacement.uuid,
+                })?;
+            let target_part =
+                self.pool
+                    .parts
+                    .get(&replacement.part_uuid)
+                    .ok_or(EngineError::NotFound {
+                        object_type: "part",
+                        uuid: replacement.part_uuid,
+                    })?;
+            let target_package =
+                self.pool
+                    .packages
+                    .get(&replacement.package_uuid)
+                    .ok_or(EngineError::NotFound {
+                        object_type: "package",
+                        uuid: replacement.package_uuid,
+                    })?;
+            replacements.push(ScopedComponentReplacementPlanItem {
+                component_uuid: replacement.uuid,
+                current_reference: component.reference.clone(),
+                current_value: component.value.clone(),
+                current_part_uuid: (component.part != uuid::Uuid::nil()).then_some(component.part),
+                current_package_uuid: component.package,
+                target_part_uuid: replacement.part_uuid,
+                target_package_uuid: replacement.package_uuid,
+                target_value: target_part.value.clone(),
+                target_package_name: target_package.name.clone(),
+            });
+        }
+
+        Ok(ScopedComponentReplacementPlan {
+            scope: input.scope,
+            policy: input.policy,
+            replacements,
+        })
+    }
+
     pub fn close_project(&mut self) {
         self.design = None;
         self.imported_source = None;

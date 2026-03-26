@@ -769,7 +769,7 @@ impl Engine {
         self.replace_components(resolved)
     }
 
-    fn resolve_policy_driven_component_replacement(
+    pub(crate) fn resolve_policy_driven_component_replacement(
         &self,
         input: &PolicyDrivenComponentReplacementInput,
     ) -> Result<ReplaceComponentInput, EngineError> {
@@ -820,7 +820,7 @@ impl Engine {
         self.replace_components(resolved)
     }
 
-    fn scoped_replacement_candidates(
+    pub(crate) fn scoped_replacement_candidates(
         &self,
         scope: &ComponentReplacementScope,
     ) -> Result<Vec<PolicyDrivenComponentReplacementInput>, EngineError> {
@@ -870,10 +870,10 @@ impl Engine {
             .collect())
     }
 
-    pub fn apply_scoped_component_replacement_policy(
-        &mut self,
-        input: ScopedComponentReplacementPolicyInput,
-    ) -> Result<OperationResult, EngineError> {
+    pub(crate) fn resolve_scoped_component_replacement_policy(
+        &self,
+        input: &ScopedComponentReplacementPolicyInput,
+    ) -> Result<Vec<ReplaceComponentInput>, EngineError> {
         let mut scoped = self.scoped_replacement_candidates(&input.scope)?;
         if scoped.is_empty() {
             return Err(EngineError::Operation(
@@ -883,7 +883,18 @@ impl Engine {
         for candidate in &mut scoped {
             candidate.policy = input.policy;
         }
-        self.apply_component_replacement_policy(scoped)
+        scoped
+            .iter()
+            .map(|candidate| self.resolve_policy_driven_component_replacement(candidate))
+            .collect()
+    }
+
+    pub fn apply_scoped_component_replacement_policy(
+        &mut self,
+        input: ScopedComponentReplacementPolicyInput,
+    ) -> Result<OperationResult, EngineError> {
+        let resolved = self.resolve_scoped_component_replacement_policy(&input)?;
+        self.replace_components(resolved)
     }
 
     pub fn set_net_class(

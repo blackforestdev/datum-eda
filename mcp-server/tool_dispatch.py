@@ -88,6 +88,10 @@ def dispatch_tool_call(daemon: Any, name: str, arguments: dict[str, Any]) -> Any
         return daemon.get_part_change_candidates(arguments["uuid"])
     if name == "get_component_replacement_plan":
         return daemon.get_component_replacement_plan(arguments["uuid"])
+    if name == "get_scoped_component_replacement_plan":
+        return daemon.get_scoped_component_replacement_plan(
+            arguments["scope"], arguments["policy"]
+        )
     if name == "get_components":
         return daemon.get_components()
     if name == "get_netlist":

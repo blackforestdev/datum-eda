@@ -44,6 +44,7 @@ class TestProtocolCatalog(unittest.TestCase):
             "get_package_change_candidates",
             "get_part_change_candidates",
             "get_component_replacement_plan",
+            "get_scoped_component_replacement_plan",
             "get_components",
             "get_netlist",
             "get_check_report",

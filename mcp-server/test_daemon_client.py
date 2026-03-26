@@ -90,6 +90,11 @@ class TestDaemonClient(unittest.TestCase):
                 {"reference_prefix": "R", "value_equals": "LMV321"}, "best_compatible_package"
             )
         )
+        get_scoped_replacement_plan = (
+            client.get_scoped_component_replacement_plan_request(
+                {"reference_prefix": "R", "value_equals": "LMV321"}, "best_compatible_package"
+            )
+        )
         set_net_class = client.set_net_class_request(
             "net-uuid", "power", 125000, 250000, 300000, 600000
         )
@@ -197,6 +202,17 @@ class TestDaemonClient(unittest.TestCase):
         )
         self.assertEqual(
             apply_scoped_replacement_policy.params,
+            {
+                "scope": {"reference_prefix": "R", "value_equals": "LMV321"},
+                "policy": "best_compatible_package",
+            },
+        )
+        self.assertEqual(
+            get_scoped_replacement_plan.method,
+            "get_scoped_component_replacement_plan",
+        )
+        self.assertEqual(
+            get_scoped_replacement_plan.params,
             {
                 "scope": {"reference_prefix": "R", "value_equals": "LMV321"},
                 "policy": "best_compatible_package",
