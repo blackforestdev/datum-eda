@@ -484,49 +484,51 @@ impl Engine {
         })
     }
 
-    pub fn set_package_with_part(
+    fn apply_explicit_component_replacement(
         &mut self,
-        input: SetPackageWithPartInput,
+        uuid: Uuid,
+        package_uuid: Uuid,
+        part_uuid: Uuid,
+        description: &str,
     ) -> Result<OperationResult, EngineError> {
         let target_part = self
             .pool
             .parts
-            .get(&input.part_uuid)
+            .get(&part_uuid)
             .ok_or(EngineError::NotFound {
                 object_type: "part",
-                uuid: input.part_uuid,
+                uuid: part_uuid,
             })?
             .clone();
-        if target_part.package != input.package_uuid {
+        if target_part.package != package_uuid {
             return Err(EngineError::Operation(format!(
-                "set_package_with_part requires part {} to use package {}",
-                input.part_uuid, input.package_uuid
+                "{description} requires part {} to use package {}",
+                part_uuid, package_uuid
             )));
         }
         let target_package = self
             .pool
             .packages
-            .get(&input.package_uuid)
+            .get(&package_uuid)
             .ok_or(EngineError::NotFound {
                 object_type: "package",
-                uuid: input.package_uuid,
+                uuid: package_uuid,
             })?
             .clone();
         let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
         let board = design.board.as_mut().ok_or_else(|| {
             EngineError::Operation(
-                "set_package_with_part is currently implemented only for board projects"
-                    .to_string(),
+                format!("{description} is currently implemented only for board projects"),
             )
         })?;
 
         let before = board
             .packages
-            .get(&input.uuid)
+            .get(&uuid)
             .cloned()
             .ok_or(EngineError::NotFound {
                 object_type: "component",
-                uuid: input.uuid,
+                uuid,
             })?;
         if before.part != Uuid::nil() && self.pool.parts.contains_key(&before.part) {
             let current_part = self.pool.parts.get(&before.part).ok_or(EngineError::NotFound {
@@ -549,21 +551,21 @@ impl Engine {
                 })?;
             if current_signature != target_signature {
                 return Err(EngineError::Operation(format!(
-                    "set_package_with_part target part {} is not logically compatible with current component {}; inspect get_package_change_candidates first",
-                    input.part_uuid, input.uuid
+                    "{description} target part {} is not logically compatible with current component {}; inspect get_component_replacement_plan first",
+                    part_uuid, uuid
                 )));
             }
         }
-        let before_pads = component_pads(board, input.uuid);
+        let before_pads = component_pads(board, uuid);
         let package = board
             .packages
-            .get_mut(&input.uuid)
+            .get_mut(&uuid)
             .ok_or(EngineError::NotFound {
                 object_type: "component",
-                uuid: input.uuid,
+                uuid,
             })?;
-        package.package = input.package_uuid;
-        package.part = input.part_uuid;
+        package.package = package_uuid;
+        package.part = part_uuid;
         package.value = target_part.value.clone();
         let after = package.clone();
         replace_component_pads_for_assign_part(
@@ -574,7 +576,7 @@ impl Engine {
             &target_package,
             &self.pool,
         )?;
-        let after_pads = component_pads(board, input.uuid);
+        let after_pads = component_pads(board, uuid);
 
         self.undo_stack.push(TransactionRecord::SetPackage {
             before: before.clone(),
@@ -591,12 +593,36 @@ impl Engine {
                 created: Vec::new(),
                 modified: vec![OperationRef {
                     object_type: "component".to_string(),
-                    uuid: input.uuid,
+                    uuid,
                 }],
                 deleted: Vec::new(),
             },
-            description: format!("set_package_with_part {}", input.uuid),
+            description: format!("{description} {uuid}"),
         })
+    }
+
+    pub fn set_package_with_part(
+        &mut self,
+        input: SetPackageWithPartInput,
+    ) -> Result<OperationResult, EngineError> {
+        self.apply_explicit_component_replacement(
+            input.uuid,
+            input.package_uuid,
+            input.part_uuid,
+            "set_package_with_part",
+        )
+    }
+
+    pub fn replace_component(
+        &mut self,
+        input: ReplaceComponentInput,
+    ) -> Result<OperationResult, EngineError> {
+        self.apply_explicit_component_replacement(
+            input.uuid,
+            input.package_uuid,
+            input.part_uuid,
+            "replace_component",
+        )
     }
 
     pub fn set_net_class(

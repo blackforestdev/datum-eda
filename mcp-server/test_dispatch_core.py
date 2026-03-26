@@ -206,6 +206,33 @@ class TestDispatchCore(unittest.TestCase):
             "component",
         )
 
+    def test_tools_call_dispatches_replace_component(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 20917,
+                "method": "tools/call",
+                "params": {
+                    "name": "replace_component",
+                    "arguments": {
+                        "uuid": "comp-1",
+                        "package_uuid": "package-1",
+                        "part_uuid": "part-1",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [("replace_component", "comp-1", "package-1", "part-1")],
+        )
+        self.assertEqual(
+            response["result"]["content"][0]["json"]["diff"]["modified"][0]["object_type"],
+            "component",
+        )
+
     def test_tools_call_dispatches_set_package(self) -> None:
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)

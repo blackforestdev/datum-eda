@@ -9,7 +9,7 @@ use clap::{Parser, Subcommand};
 use eda_engine::api::{
     AssignPartInput, CheckReport, CheckStatus, Engine, MoveComponentInput, OperationResult,
     ComponentReplacementPlan, PackageChangeCompatibilityReport, PartChangeCompatibilityReport,
-    RotateComponentInput, SetDesignRuleInput, SetNetClassInput, SetPackageInput,
+    ReplaceComponentInput, RotateComponentInput, SetDesignRuleInput, SetNetClassInput, SetPackageInput,
     SetPackageWithPartInput, SetReferenceInput, SetValueInput,
 };
 use eda_engine::drc::DrcReport;
@@ -136,6 +136,10 @@ enum Commands {
         /// Set one component package with an explicit compatible part: <uuid>:<package_uuid>:<part_uuid>
         #[arg(long = "set-package-with-part")]
         set_package_with_part: Vec<String>,
+
+        /// Replace one component with an explicit compatible part+package: <uuid>:<package_uuid>:<part_uuid>
+        #[arg(long = "replace-component")]
+        replace_component: Vec<String>,
 
         /// Set one net class: <net_uuid>:<class_name>:<clearance_nm>:<track_width_nm>:<via_drill_nm>:<via_diameter_nm>[:<diffpair_width_nm>:<diffpair_gap_nm>]
         #[arg(long = "set-net-class")]
@@ -355,6 +359,7 @@ fn modify_board(
     assign_part: &[AssignPartInput],
     set_package: &[SetPackageInput],
     set_package_with_part: &[SetPackageWithPartInput],
+    replace_component: &[ReplaceComponentInput],
     set_net_class: &[SetNetClassInput],
     set_reference: &[SetReferenceInput],
     set_clearance_min_nm: Option<i64>,
@@ -375,6 +380,7 @@ fn modify_board(
         assign_part,
         set_package,
         set_package_with_part,
+        replace_component,
         set_net_class,
         set_reference,
         set_clearance_min_nm,
@@ -1065,6 +1071,7 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
             None,
             0,
             0,
@@ -1128,6 +1135,7 @@ mod tests {
                 uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
                 part_uuid: lmv321_part_uuid,
             }],
+            &[],
             &[],
             &[],
             &[],
@@ -1436,6 +1444,7 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
             Some(125_000),
             0,
             0,
@@ -1556,6 +1565,7 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
             None,
             0,
             0,
@@ -1593,6 +1603,7 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
             None,
             0,
             0,
@@ -1616,6 +1627,7 @@ mod tests {
         ));
         let report = modify_board(
             &source,
+            &[],
             &[],
             &[],
             &[],
@@ -1674,6 +1686,7 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
             None,
             0,
             0,
@@ -1705,6 +1718,7 @@ mod tests {
                 position: eda_engine::ir::geometry::Point::new(15_000_000, 12_000_000),
                 rotation: Some(90),
             }],
+            &[],
             &[],
             &[],
             &[],
@@ -1745,6 +1759,7 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
             &[SetReferenceInput {
                 uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
                 reference: "R10".to_string(),
@@ -1774,6 +1789,7 @@ mod tests {
             &[],
             &[],
             &[Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap()],
+            &[],
             &[],
             &[],
             &[],
@@ -1827,6 +1843,7 @@ mod tests {
                 uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
                 part_uuid,
             }],
+            &[],
             &[],
             &[],
             &[],
@@ -1896,6 +1913,7 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
             None,
             0,
             0,
@@ -1961,6 +1979,7 @@ mod tests {
                 uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
                 package_uuid,
             }],
+            &[],
             &[],
             &[],
             &[],
@@ -2035,6 +2054,7 @@ mod tests {
                 uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
                 package_uuid: altamp_package_uuid,
             }],
+            &[],
             &[],
             &[],
             &[],
@@ -2116,6 +2136,7 @@ mod tests {
             }],
             &[],
             &[],
+            &[],
             None,
             0,
             0,
@@ -2124,6 +2145,99 @@ mod tests {
         )
         .expect("modify set_package_with_part save should succeed");
         assert_eq!(report.saved_path.as_deref(), Some(target.to_str().unwrap()));
+
+        let mut reloaded = Engine::new().expect("engine should initialize");
+        reloaded
+            .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+            .expect("library import should succeed");
+        reloaded.import(&target).expect("saved board should reimport");
+        let sig = reloaded
+            .get_net_info()
+            .expect("net info should query")
+            .into_iter()
+            .find(|net| net.name == "SIG")
+            .expect("SIG net should exist");
+        let component = match query_components(&target).expect("saved components should query") {
+            ComponentListView::Board { components } => components
+                .into_iter()
+                .find(|component| component.uuid == Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap())
+                .expect("target component should exist"),
+        };
+        assert_eq!(component.package_uuid, altamp.package_uuid);
+        assert_eq!(component.value, "ALTAMP");
+        assert_eq!(sig.pins.len(), 2);
+
+        let _ = std::fs::remove_file(&target);
+        let _ = std::fs::remove_file(target.with_file_name(format!(
+            "{}.parts.json",
+            target.file_name().unwrap().to_string_lossy()
+        )));
+        let _ = std::fs::remove_file(target.with_file_name(format!(
+            "{}.packages.json",
+            target.file_name().unwrap().to_string_lossy()
+        )));
+    }
+
+    #[test]
+    fn modify_board_supports_replace_component_slice() {
+        let source = kicad_fixture_path("partial-route-demo.kicad_pcb");
+        let target = std::env::temp_dir().join(format!(
+            "{}-cli-save-partial-route-replace-component.kicad_pcb",
+            Uuid::new_v4()
+        ));
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+            .expect("library import should succeed");
+        let lmv321_part_uuid = engine
+            .search_pool("LMV321")
+            .expect("search should succeed")
+            .first()
+            .map(|part| part.uuid)
+            .expect("LMV321 part should exist");
+        let altamp = engine
+            .search_pool("ALTAMP")
+            .expect("search should succeed")
+            .first()
+            .cloned()
+            .expect("ALTAMP part should exist");
+
+        let report = modify_board(
+            &source,
+            &[],
+            &[],
+            &[],
+            &[eagle_fixture_path("simple-opamp.lbr")],
+            &[],
+            &[],
+            &[],
+            &[AssignPartInput {
+                uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+                part_uuid: lmv321_part_uuid,
+            }],
+            &[],
+            &[],
+            &[ReplaceComponentInput {
+                uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+                package_uuid: altamp.package_uuid,
+                part_uuid: altamp.uuid,
+            }],
+            &[],
+            &[],
+            None,
+            0,
+            0,
+            Some(&target),
+            false,
+        )
+        .expect("modify replace_component save should succeed");
+        assert_eq!(report.saved_path.as_deref(), Some(target.to_str().unwrap()));
+        assert!(
+            report
+                .actions
+                .iter()
+                .any(|action| action.starts_with("replace_component "))
+        );
 
         let mut reloaded = Engine::new().expect("engine should initialize");
         reloaded
@@ -2175,6 +2289,7 @@ mod tests {
 
         let report = modify_board(
             &source,
+            &[],
             &[],
             &[],
             &[],
@@ -2238,6 +2353,7 @@ mod tests {
                 uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
                 rotation: 180,
             }],
+            &[],
             &[],
             &[],
             &[],

@@ -128,6 +128,14 @@ class EngineDaemonClient:
             {"uuid": uuid, "package_uuid": package_uuid, "part_uuid": part_uuid},
         )
 
+    def replace_component_request(
+        self, uuid: str, package_uuid: str, part_uuid: str
+    ) -> JsonRpcRequest:
+        return self.build_request(
+            "replace_component",
+            {"uuid": uuid, "package_uuid": package_uuid, "part_uuid": part_uuid},
+        )
+
     def set_net_class_request(
         self,
         net_uuid: str,
@@ -345,6 +353,11 @@ class EngineDaemonClient:
         self, uuid: str, package_uuid: str, part_uuid: str
     ) -> JsonRpcResponse:
         return self.call(self.set_package_with_part_request(uuid, package_uuid, part_uuid))
+
+    def replace_component(
+        self, uuid: str, package_uuid: str, part_uuid: str
+    ) -> JsonRpcResponse:
+        return self.call(self.replace_component_request(uuid, package_uuid, part_uuid))
 
     def set_net_class(
         self,

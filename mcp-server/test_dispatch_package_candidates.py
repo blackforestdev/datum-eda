@@ -218,3 +218,112 @@ class TestDispatchPackageCandidates(unittest.TestCase):
                 ("get_net_info", None),
             ],
         )
+
+    def test_tools_call_replace_component_preserves_logical_nets_for_explicit_candidate(
+        self,
+    ) -> None:
+        class StatefulDaemon(FakeDaemonClient):
+            def __init__(self) -> None:
+                super().__init__()
+                self.pin_count = 0
+
+            def assign_part(self, uuid: str, part_uuid: str) -> JsonRpcResponse:
+                response = super().assign_part(uuid, part_uuid)
+                if part_uuid == "lmv321-part":
+                    self.pin_count = 2
+                return response
+
+            def replace_component(
+                self, uuid: str, package_uuid: str, part_uuid: str
+            ) -> JsonRpcResponse:
+                response = super().replace_component(uuid, package_uuid, part_uuid)
+                if package_uuid == "altamp-package" and part_uuid == "altamp-part":
+                    self.pin_count = 2
+                return response
+
+            def get_net_info(self) -> JsonRpcResponse:
+                self.calls.append(("get_net_info", None))
+                return JsonRpcResponse(
+                    "2.0",
+                    41,
+                    [
+                        {
+                            "uuid": "net-1",
+                            "name": "SIG",
+                            "class": "Default",
+                            "pins": [
+                                {"component": "R1", "pin": "1"}
+                                for _ in range(self.pin_count)
+                            ],
+                            "tracks": 1,
+                            "vias": 0,
+                            "zones": 0,
+                            "routed_length_nm": 11000000,
+                            "routed_pct": 1.0,
+                        }
+                    ],
+                    None,
+                )
+
+        daemon = StatefulDaemon()
+        host = StdioToolHost(daemon)
+        host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 2634,
+                "method": "tools/call",
+                "params": {
+                    "name": "assign_part",
+                    "arguments": {"uuid": "comp-1", "part_uuid": "lmv321-part"},
+                },
+            }
+        )
+        intermediate = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 2635,
+                "method": "tools/call",
+                "params": {"name": "get_net_info", "arguments": {}},
+            }
+        )
+        intermediate_nets = intermediate["result"]["content"][0]["json"]
+        self.assertEqual(len(intermediate_nets[0]["pins"]), 2)
+
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 2636,
+                "method": "tools/call",
+                "params": {
+                    "name": "replace_component",
+                    "arguments": {
+                        "uuid": "comp-1",
+                        "package_uuid": "altamp-package",
+                        "part_uuid": "altamp-part",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            response["result"]["content"][0]["json"]["description"],
+            "replace_component comp-1",
+        )
+        after = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 2637,
+                "method": "tools/call",
+                "params": {"name": "get_net_info", "arguments": {}},
+            }
+        )
+        after_nets = after["result"]["content"][0]["json"]
+        self.assertEqual(len(after_nets[0]["pins"]), 2)
+        self.assertEqual(
+            daemon.calls,
+            [
+                ("assign_part", "comp-1", "lmv321-part"),
+                ("get_net_info", None),
+                ("replace_component", "comp-1", "altamp-package", "altamp-part"),
+                ("get_net_info", None),
+            ],
+        )

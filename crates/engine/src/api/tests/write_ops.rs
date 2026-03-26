@@ -1100,6 +1100,77 @@ fn set_package_with_part_preserves_logical_nets_for_explicit_candidate() {
 }
 
 #[test]
+fn replace_component_preserves_logical_nets_for_explicit_candidate() {
+    let mut engine = Engine::new().expect("engine should initialize");
+    engine
+        .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+        .expect("library import should succeed");
+    engine
+        .import(&fixture_path("partial-route-demo.kicad_pcb"))
+        .expect("fixture import should succeed");
+
+    let lmv321_part_uuid = engine
+        .search_pool("LMV321")
+        .expect("search should succeed")
+        .first()
+        .map(|part| part.uuid)
+        .expect("LMV321 part should exist");
+    let altamp = engine
+        .search_pool("ALTAMP")
+        .expect("search should succeed")
+        .first()
+        .cloned()
+        .expect("ALTAMP part should exist");
+    let component_uuid = uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap();
+
+    engine
+        .assign_part(AssignPartInput {
+            uuid: component_uuid,
+            part_uuid: lmv321_part_uuid,
+        })
+        .expect("assign_part should succeed");
+    let intermediate_sig = engine
+        .get_net_info()
+        .expect("net info should query")
+        .into_iter()
+        .find(|net| net.name == "SIG")
+        .expect("SIG net should exist");
+
+    let result = engine
+        .replace_component(ReplaceComponentInput {
+            uuid: component_uuid,
+            package_uuid: altamp.package_uuid,
+            part_uuid: altamp.uuid,
+        })
+        .expect("replace_component should succeed");
+    assert_eq!(result.description, format!("replace_component {}", component_uuid));
+    let after_sig = engine
+        .get_net_info()
+        .expect("net info should query")
+        .into_iter()
+        .find(|net| net.name == "SIG")
+        .expect("SIG net should exist");
+    let updated = engine
+        .get_components()
+        .expect("components should query")
+        .into_iter()
+        .find(|component| component.uuid == component_uuid)
+        .expect("updated component should exist");
+    let assigned_part = engine
+        .design
+        .as_ref()
+        .and_then(|design| design.board.as_ref())
+        .and_then(|board| board.packages.get(&component_uuid))
+        .map(|component| component.part)
+        .expect("component should exist");
+
+    assert_eq!(updated.package_uuid, altamp.package_uuid);
+    assert_eq!(updated.value, "ALTAMP");
+    assert_eq!(assigned_part, altamp.uuid);
+    assert_eq!(after_sig.pins.len(), intermediate_sig.pins.len());
+}
+
+#[test]
 fn set_net_class_updates_board_and_undo_redo_restore_it() {
     let mut engine = Engine::new().expect("engine should initialize");
     engine

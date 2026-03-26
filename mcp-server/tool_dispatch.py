@@ -37,6 +37,10 @@ def dispatch_tool_call(daemon: Any, name: str, arguments: dict[str, Any]) -> Any
         return daemon.set_package_with_part(
             arguments["uuid"], arguments["package_uuid"], arguments["part_uuid"]
         )
+    if name == "replace_component":
+        return daemon.replace_component(
+            arguments["uuid"], arguments["package_uuid"], arguments["part_uuid"]
+        )
     if name == "set_reference":
         return daemon.set_reference(arguments["uuid"], arguments["reference"])
     if name == "set_net_class":

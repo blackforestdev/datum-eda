@@ -11,6 +11,28 @@ class FakeDaemonClient:
     def __init__(self) -> None:
         self.calls: list[tuple[str, Any]] = []
 
+    def _diff_response(
+        self, request_id: int, object_type: str, uuid: str, description: str
+    ) -> JsonRpcResponse:
+        return JsonRpcResponse(
+            "2.0",
+            request_id,
+            {
+                "diff": {
+                    "created": [],
+                    "modified": [{"object_type": object_type, "uuid": uuid}],
+                    "deleted": [],
+                },
+                "description": description,
+            },
+            None,
+        )
+
+    def _component_modified_response(
+        self, request_id: int, uuid: str, description: str
+    ) -> JsonRpcResponse:
+        return self._diff_response(request_id, "component", uuid, description)
+
     def open_project(self, path: str) -> JsonRpcResponse:
         self.calls.append(("open_project", path))
         return JsonRpcResponse("2.0", 1, {"kind": "kicad_board", "source": path}, None)
@@ -86,68 +108,30 @@ class FakeDaemonClient:
 
     def set_value(self, uuid: str, value: str) -> JsonRpcResponse:
         self.calls.append(("set_value", uuid, value))
-        return JsonRpcResponse(
-            "2.0",
-            116,
-            {
-                "diff": {
-                    "created": [],
-                    "modified": [{"object_type": "component", "uuid": uuid}],
-                    "deleted": [],
-                },
-                "description": f"set_value {uuid}",
-            },
-            None,
-        )
+        return self._component_modified_response(116, uuid, f"set_value {uuid}")
 
     def assign_part(self, uuid: str, part_uuid: str) -> JsonRpcResponse:
         self.calls.append(("assign_part", uuid, part_uuid))
-        return JsonRpcResponse(
-            "2.0",
-            120,
-            {
-                "diff": {
-                    "created": [],
-                    "modified": [{"object_type": "component", "uuid": uuid}],
-                    "deleted": [],
-                },
-                "description": f"assign_part {uuid}",
-            },
-            None,
-        )
+        return self._component_modified_response(120, uuid, f"assign_part {uuid}")
 
     def set_package(self, uuid: str, package_uuid: str) -> JsonRpcResponse:
         self.calls.append(("set_package", uuid, package_uuid))
-        return JsonRpcResponse(
-            "2.0",
-            121,
-            {
-                "diff": {
-                    "created": [],
-                    "modified": [{"object_type": "component", "uuid": uuid}],
-                    "deleted": [],
-                },
-                "description": f"set_package {uuid}",
-            },
-            None,
-        )
+        return self._component_modified_response(121, uuid, f"set_package {uuid}")
 
     def set_package_with_part(
         self, uuid: str, package_uuid: str, part_uuid: str
     ) -> JsonRpcResponse:
         self.calls.append(("set_package_with_part", uuid, package_uuid, part_uuid))
-        return JsonRpcResponse(
-            "2.0",
-            1211,
-            {
-                "diff": {
-                    "created": [],
-                    "modified": [{"object_type": "component", "uuid": uuid}],
-                    "deleted": [],
-                },
-                "description": f"set_package_with_part {uuid}",
-            },
-            None,
+        return self._component_modified_response(
+            1211, uuid, f"set_package_with_part {uuid}"
+        )
+
+    def replace_component(
+        self, uuid: str, package_uuid: str, part_uuid: str
+    ) -> JsonRpcResponse:
+        self.calls.append(("replace_component", uuid, package_uuid, part_uuid))
+        return self._component_modified_response(
+            1212, uuid, f"replace_component {uuid}"
         )
 
     def set_net_class(
@@ -190,53 +174,17 @@ class FakeDaemonClient:
 
     def set_reference(self, uuid: str, reference: str) -> JsonRpcResponse:
         self.calls.append(("set_reference", uuid, reference))
-        return JsonRpcResponse(
-            "2.0",
-            117,
-            {
-                "diff": {
-                    "created": [],
-                    "modified": [{"object_type": "component", "uuid": uuid}],
-                    "deleted": [],
-                },
-                "description": f"set_reference {uuid}",
-            },
-            None,
-        )
+        return self._component_modified_response(117, uuid, f"set_reference {uuid}")
 
     def move_component(
         self, uuid: str, x_mm: float, y_mm: float, rotation_deg: float | None
     ) -> JsonRpcResponse:
         self.calls.append(("move_component", uuid, x_mm, y_mm, rotation_deg))
-        return JsonRpcResponse(
-            "2.0",
-            115,
-            {
-                "diff": {
-                    "created": [],
-                    "modified": [{"object_type": "component", "uuid": uuid}],
-                    "deleted": [],
-                },
-                "description": f"move_component {uuid}",
-            },
-            None,
-        )
+        return self._component_modified_response(115, uuid, f"move_component {uuid}")
 
     def rotate_component(self, uuid: str, rotation_deg: float) -> JsonRpcResponse:
         self.calls.append(("rotate_component", uuid, rotation_deg))
-        return JsonRpcResponse(
-            "2.0",
-            119,
-            {
-                "diff": {
-                    "created": [],
-                    "modified": [{"object_type": "component", "uuid": uuid}],
-                    "deleted": [],
-                },
-                "description": f"rotate_component {uuid}",
-            },
-            None,
-        )
+        return self._component_modified_response(119, uuid, f"rotate_component {uuid}")
 
     def undo(self) -> JsonRpcResponse:
         self.calls.append(("undo", None))
@@ -314,24 +262,7 @@ class FakeDaemonClient:
         return JsonRpcResponse(
             "2.0",
             108,
-            {
-                "component_uuid": uuid,
-                "current_part_uuid": "part-uuid",
-                "current_package_uuid": "package-uuid",
-                "current_package_name": "SOT23",
-                "current_value": "LMV321",
-                "status": "candidates_available",
-                "ambiguous_package_count": 0,
-                "candidates": [
-                    {
-                        "package_uuid": "alt-package-uuid",
-                        "package_name": "ALT-3",
-                        "compatible_part_uuid": "alt-part-uuid",
-                        "compatible_part_value": "ALTAMP",
-                        "pin_names": ["IN+", "IN-", "OUT"],
-                    }
-                ],
-            },
+            {"component_uuid": uuid, "current_part_uuid": "part-uuid", "current_package_uuid": "package-uuid", "current_package_name": "SOT23", "current_value": "LMV321", "status": "candidates_available", "ambiguous_package_count": 0, "candidates": [{"package_uuid": "alt-package-uuid", "package_name": "ALT-3", "compatible_part_uuid": "alt-part-uuid", "compatible_part_value": "ALTAMP", "pin_names": ["IN+", "IN-", "OUT"]}]},
             None,
         )
 
@@ -340,25 +271,7 @@ class FakeDaemonClient:
         return JsonRpcResponse(
             "2.0",
             1081,
-            {
-                "component_uuid": uuid,
-                "current_part_uuid": "part-uuid",
-                "current_package_uuid": "package-uuid",
-                "current_package_name": "SOT23",
-                "current_value": "LMV321",
-                "status": "candidates_available",
-                "candidates": [
-                    {
-                        "part_uuid": "alt-part-uuid",
-                        "package_uuid": "alt-package-uuid",
-                        "package_name": "ALT-3",
-                        "value": "ALTAMP",
-                        "mpn": "ALTAMP-001",
-                        "manufacturer": "Datum",
-                        "pin_names": ["IN+", "IN-", "OUT"],
-                    }
-                ],
-            },
+            {"component_uuid": uuid, "current_part_uuid": "part-uuid", "current_package_uuid": "package-uuid", "current_package_name": "SOT23", "current_value": "LMV321", "status": "candidates_available", "candidates": [{"part_uuid": "alt-part-uuid", "package_uuid": "alt-package-uuid", "package_name": "ALT-3", "value": "ALTAMP", "mpn": "ALTAMP-001", "manufacturer": "Datum", "pin_names": ["IN+", "IN-", "OUT"]}]},
             None,
         )
 
@@ -367,51 +280,7 @@ class FakeDaemonClient:
         return JsonRpcResponse(
             "2.0",
             1082,
-            {
-                "component_uuid": uuid,
-                "current_reference": "R1",
-                "current_value": "LMV321",
-                "current_part_uuid": "part-uuid",
-                "current_package_uuid": "package-uuid",
-                "current_package_name": "SOT23",
-                "package_change": {
-                    "component_uuid": uuid,
-                    "current_part_uuid": "part-uuid",
-                    "current_package_uuid": "package-uuid",
-                    "current_package_name": "SOT23",
-                    "current_value": "LMV321",
-                    "status": "candidates_available",
-                    "ambiguous_package_count": 0,
-                    "candidates": [
-                        {
-                            "package_uuid": "alt-package-uuid",
-                            "package_name": "ALT-3",
-                            "compatible_part_uuid": "alt-part-uuid",
-                            "compatible_part_value": "ALTAMP",
-                            "pin_names": ["IN+", "IN-", "OUT"],
-                        }
-                    ],
-                },
-                "part_change": {
-                    "component_uuid": uuid,
-                    "current_part_uuid": "part-uuid",
-                    "current_package_uuid": "package-uuid",
-                    "current_package_name": "SOT23",
-                    "current_value": "LMV321",
-                    "status": "candidates_available",
-                    "candidates": [
-                        {
-                            "part_uuid": "alt-part-uuid",
-                            "package_uuid": "alt-package-uuid",
-                            "package_name": "ALT-3",
-                            "value": "ALTAMP",
-                            "mpn": "ALTAMP-001",
-                            "manufacturer": "Datum",
-                            "pin_names": ["IN+", "IN-", "OUT"],
-                        }
-                    ],
-                },
-            },
+            {"component_uuid": uuid, "current_reference": "R1", "current_value": "LMV321", "current_part_uuid": "part-uuid", "current_package_uuid": "package-uuid", "current_package_name": "SOT23", "package_change": {"component_uuid": uuid, "current_part_uuid": "part-uuid", "current_package_uuid": "package-uuid", "current_package_name": "SOT23", "current_value": "LMV321", "status": "candidates_available", "ambiguous_package_count": 0, "candidates": [{"package_uuid": "alt-package-uuid", "package_name": "ALT-3", "compatible_part_uuid": "alt-part-uuid", "compatible_part_value": "ALTAMP", "pin_names": ["IN+", "IN-", "OUT"]}]}, "part_change": {"component_uuid": uuid, "current_part_uuid": "part-uuid", "current_package_uuid": "package-uuid", "current_package_name": "SOT23", "current_value": "LMV321", "status": "candidates_available", "candidates": [{"part_uuid": "alt-part-uuid", "package_uuid": "alt-package-uuid", "package_name": "ALT-3", "value": "ALTAMP", "mpn": "ALTAMP-001", "manufacturer": "Datum", "pin_names": ["IN+", "IN-", "OUT"]}]}},
             None,
         )
 

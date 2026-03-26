@@ -13,6 +13,7 @@ pub(super) fn modify_board(
     assign_part: &[AssignPartInput],
     set_package: &[SetPackageInput],
     set_package_with_part: &[SetPackageWithPartInput],
+    replace_component: &[ReplaceComponentInput],
     set_net_class: &[SetNetClassInput],
     set_reference: &[SetReferenceInput],
     set_clearance_min_nm: Option<i64>,
@@ -36,6 +37,7 @@ pub(super) fn modify_board(
         && assign_part.is_empty()
         && set_package.is_empty()
         && set_package_with_part.is_empty()
+        && replace_component.is_empty()
         && set_net_class.is_empty()
         && set_reference.is_empty()
         && set_clearance_min_nm.is_none()
@@ -147,6 +149,19 @@ pub(super) fn modify_board(
             })?;
         actions.push(format!(
             "set_package_with_part {} {} {}",
+            input.uuid, input.package_uuid, input.part_uuid
+        ));
+        last_result = Some(result);
+    }
+    for input in replace_component {
+        let result = engine.replace_component(input.clone()).with_context(|| {
+            format!(
+                "failed to replace component {} with package {} part {}",
+                input.uuid, input.package_uuid, input.part_uuid
+            )
+        })?;
+        actions.push(format!(
+            "replace_component {} {} {}",
             input.uuid, input.package_uuid, input.part_uuid
         ));
         last_result = Some(result);
@@ -294,6 +309,18 @@ pub(super) fn parse_set_package_with_part_arg(value: &str) -> Result<SetPackageW
         bail!("--set-package-with-part expects <uuid>:<package_uuid>:<part_uuid>");
     }
     Ok(SetPackageWithPartInput {
+        uuid: Uuid::parse_str(parts[0])?,
+        package_uuid: Uuid::parse_str(parts[1])?,
+        part_uuid: Uuid::parse_str(parts[2])?,
+    })
+}
+
+pub(super) fn parse_replace_component_arg(value: &str) -> Result<ReplaceComponentInput> {
+    let parts: Vec<_> = value.split(':').collect();
+    if parts.len() != 3 {
+        bail!("--replace-component expects <uuid>:<package_uuid>:<part_uuid>");
+    }
+    Ok(ReplaceComponentInput {
         uuid: Uuid::parse_str(parts[0])?,
         package_uuid: Uuid::parse_str(parts[1])?,
         part_uuid: Uuid::parse_str(parts[2])?,

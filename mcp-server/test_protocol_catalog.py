@@ -27,6 +27,7 @@ class TestProtocolCatalog(unittest.TestCase):
             "assign_part",
             "set_package",
             "set_package_with_part",
+            "replace_component",
             "set_reference",
             "set_net_class",
             "delete_via",

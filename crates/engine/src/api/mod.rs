@@ -143,6 +143,13 @@ pub struct SetPackageWithPartInput {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ReplaceComponentInput {
+    pub uuid: uuid::Uuid,
+    pub package_uuid: uuid::Uuid,
+    pub part_uuid: uuid::Uuid,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SetNetClassInput {
     pub net_uuid: uuid::Uuid,
     pub class_name: String,
