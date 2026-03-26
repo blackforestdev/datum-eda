@@ -357,7 +357,7 @@ Item 8 reconciliation notes (2026-03-25):
 | ApplyScopedComponentReplacementPlan | [~] | Engine/daemon/MCP current slice applies a previously previewed scoped replacement plan without re-resolving policy; CLI exposes the same path via `--apply-scoped-replacement-plan-file` and requires matching pool libraries for target part/package resolution |
 | Package-change introspection | [~] | Engine/daemon/MCP/CLI query surface exposes component-scoped package compatibility candidates and resolution status for current board slice |
 | Part-change introspection | [~] | Engine/daemon/MCP/CLI query surface exposes component-scoped compatible part candidates for current board slice |
-| Replacement-plan introspection | [~] | Engine/daemon/MCP/CLI query surface exposes unified per-component and scoped replacement planning reports combining compatibility data with resolved selection preview for current board slice, with batch apply support via `replace_components` |
+| Replacement-plan introspection | [~] | Engine/daemon/MCP/CLI query surface exposes unified per-component and scoped replacement planning reports plus first-class scoped-plan exclusion/override editing for current board slice, with batch apply support via `replace_components` |
 | SetNetClass | [~] | Engine/daemon/MCP/CLI current slice implemented for board nets by UUID with sidecar-backed net-class persistence |
 | SetDesignRule | [~] | Engine/daemon/MCP current slice implemented; CLI exposes the default all-scope clearance rule path and follow-up `query design-rules` verification surface |
 | DeleteTrack | [~] | Engine/daemon/MCP/CLI current slice implemented for board tracks by UUID |
@@ -507,6 +507,7 @@ Item 8 reconciliation notes (2026-03-25):
 | get_part_change_candidates() | [x] | Current engine API supports component-scoped part compatibility introspection |
 | get_component_replacement_plan() | [x] | Current engine API supports unified component replacement planning introspection |
 | get_scoped_component_replacement_plan() | [x] | Current engine API supports scoped policy-driven replacement preview introspection |
+| edit_scoped_component_replacement_plan() | [x] | Current engine API supports scoped replacement preview post-processing via exclusions and explicit compatible target overrides |
 | replace_components() | [~] | Current M3 board write slice supports batched explicit component replacement as one transaction / one undo step |
 | apply_component_replacement_plan() | [~] | Current M3 board write slice resolves package/part selections from the unified replacement plan and applies them as one transaction |
 | apply_component_replacement_policy() | [~] | Current M3 board write slice resolves deterministic best-candidate replacement policies from the unified replacement plan and applies them as one transaction |
@@ -637,7 +638,7 @@ All items: [ ] Not started (M4 scope)
 | Engine compiles without GUI deps | [x] | |
 | Test harness (golden file utilities) | [x] | test-harness crate |
 | Test corpus (real designs) | [ ] | tests/corpus/ empty |
-| Daemon JSON-RPC dispatch | [x] | 51 methods in `dispatch.rs`, with coverage in daemon tests |
+| Daemon JSON-RPC dispatch | [x] | 53 methods in `dispatch.rs`, with coverage in daemon tests |
 | Daemon socket transport | [x] | `main()` parses `--socket` and serves Unix socket; live smoke is environment-gated because sandboxed local runs deny socket IPC |
 | MCP Python server (tool host) | [x] | Tool definitions + stdio dispatch |
 | MCP→daemon transport | [x] | `EngineDaemonClient.call()` uses Unix socket JSON-RPC; behavioral parity remains covered separately from live socket smoke |

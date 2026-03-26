@@ -352,6 +352,30 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
             }
         }
+        "edit_scoped_component_replacement_plan" => {
+            match serde_json::from_value::<EditScopedComponentReplacementPlanParams>(request.params)
+            {
+                Ok(params) => match engine.edit_scoped_component_replacement_plan(
+                    params.plan,
+                    ScopedComponentReplacementPlanEdit {
+                        exclude_component_uuids: params.exclude_component_uuids,
+                        overrides: params
+                            .overrides
+                            .into_iter()
+                            .map(|item| ScopedComponentReplacementOverride {
+                                component_uuid: item.component_uuid,
+                                target_package_uuid: item.target_package_uuid,
+                                target_part_uuid: item.target_part_uuid,
+                            })
+                            .collect(),
+                    },
+                ) {
+                    Ok(report) => success_response(request.id, serde_json::to_value(report).unwrap()),
+                    Err(err) => error_response(request.id, -32051, &err.to_string()),
+                },
+                Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+            }
+        }
         "get_board_summary" => match engine.get_board_summary() {
             Ok(summary) => success_response(request.id, serde_json::to_value(summary).unwrap()),
             Err(err) => error_response(request.id, -32004, &err.to_string()),

@@ -154,6 +154,79 @@ class TestDispatchReadSurface(unittest.TestCase):
         self.assertEqual(payload["replacements"][0]["current_reference"], "R1")
         self.assertEqual(payload["replacements"][0]["target_package_name"], "ALT-3")
 
+    def test_tools_call_dispatches_edit_scoped_component_replacement_plan(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        plan = {
+            "scope": {"reference_prefix": "R", "value_equals": "LMV321"},
+            "policy": "best_compatible_package",
+            "replacements": [
+                {
+                    "component_uuid": "comp-1",
+                    "current_reference": "R1",
+                    "current_value": "LMV321",
+                    "current_part_uuid": "part-uuid",
+                    "current_package_uuid": "package-uuid",
+                    "target_part_uuid": "alt-part-uuid",
+                    "target_package_uuid": "alt-package-uuid",
+                    "target_value": "ALTAMP",
+                    "target_package_name": "ALT-3",
+                },
+                {
+                    "component_uuid": "comp-2",
+                    "current_reference": "R2",
+                    "current_value": "LMV321",
+                    "current_part_uuid": "part-uuid",
+                    "current_package_uuid": "package-uuid",
+                    "target_part_uuid": "alt-part-uuid",
+                    "target_package_uuid": "alt-package-uuid",
+                    "target_value": "ALTAMP",
+                    "target_package_name": "ALT-3",
+                },
+            ],
+        }
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 2035,
+                "method": "tools/call",
+                "params": {
+                    "name": "edit_scoped_component_replacement_plan",
+                    "arguments": {
+                        "plan": plan,
+                        "exclude_component_uuids": ["comp-2"],
+                        "overrides": [
+                            {
+                                "component_uuid": "comp-1",
+                                "target_package_uuid": "alt-package-uuid",
+                                "target_part_uuid": "alt-part-uuid",
+                            }
+                        ],
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "edit_scoped_component_replacement_plan",
+                    plan,
+                    ["comp-2"],
+                    [
+                        {
+                            "component_uuid": "comp-1",
+                            "target_package_uuid": "alt-package-uuid",
+                            "target_part_uuid": "alt-part-uuid",
+                        }
+                    ],
+                )
+            ],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(len(payload["replacements"]), 1)
+        self.assertEqual(payload["replacements"][0]["component_uuid"], "comp-1")
+
     def test_tools_call_dispatches_check_report(self) -> None:
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)

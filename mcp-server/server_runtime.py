@@ -4,12 +4,6 @@ EDA MCP Server — thin translation layer between MCP clients and the engine dae
 
 Communicates with eda-engine-daemon via JSON-RPC over Unix socket.
 See specs/MCP_API_SPEC.md for the full tool catalog.
-
-Current slice:
-- typed JSON-RPC request/response helpers
-- daemon client contract for open_project + read/check methods
-- minimal stdio tool registration/dispatch layer
-- no MCP SDK dependency yet
 """
 
 from __future__ import annotations
@@ -70,14 +64,6 @@ class JsonRpcResponse:
 
 
 class EngineDaemonClient:
-    """
-    Minimal future daemon client contract.
-
-    Transport is intentionally unimplemented in this slice. The important part
-    is that MCP-facing methods build the same daemon RPC requests the Rust side
-    already exposes.
-    """
-
     def __init__(self, socket_path: str | None = None) -> None:
         self._next_id = 1
         self._socket_path = socket_path or os.environ.get("EDA_ENGINE_SOCKET")
@@ -275,6 +261,21 @@ class EngineDaemonClient:
         return self.build_request(
             "get_scoped_component_replacement_plan",
             {"scope": scope, "policy": policy},
+        )
+
+    def edit_scoped_component_replacement_plan_request(
+        self,
+        plan: dict[str, object],
+        exclude_component_uuids: list[str],
+        overrides: list[dict[str, str]],
+    ) -> JsonRpcRequest:
+        return self.build_request(
+            "edit_scoped_component_replacement_plan",
+            {
+                "plan": plan,
+                "exclude_component_uuids": exclude_component_uuids,
+                "overrides": overrides,
+            },
         )
 
     def get_board_summary_request(self) -> JsonRpcRequest:
@@ -510,6 +511,18 @@ class EngineDaemonClient:
             self.get_scoped_component_replacement_plan_request(scope, policy)
         )
 
+    def edit_scoped_component_replacement_plan(
+        self,
+        plan: dict[str, object],
+        exclude_component_uuids: list[str],
+        overrides: list[dict[str, str]],
+    ) -> JsonRpcResponse:
+        return self.call(
+            self.edit_scoped_component_replacement_plan_request(
+                plan, exclude_component_uuids, overrides
+            )
+        )
+
     def get_board_summary(self) -> JsonRpcResponse:
         return self.call(self.get_board_summary_request())
 
@@ -583,7 +596,6 @@ class StdioToolHost:
         msg_id = message.get("id")
         params = message.get("params", {})
 
-        # Standard MCP initialization and liveness methods.
         if method == "initialize":
             return {
                 "jsonrpc": "2.0",
@@ -595,7 +607,6 @@ class StdioToolHost:
                 },
             }
 
-        # Notification: no response.
         if method == "notifications/initialized":
             return None
 
@@ -618,7 +629,6 @@ class StdioToolHost:
                 }
             return {"jsonrpc": "2.0", "id": msg_id, "result": result}
 
-        # For unknown notifications, remain silent. For unknown requests, return error.
         if msg_id is None:
             return None
 
@@ -652,12 +662,8 @@ class StdioToolHost:
             response = self.handle_message(message)
             if response is not None:
                 print(json.dumps(response), flush=True)
-
-
 def run_server() -> None:
     host = StdioToolHost(EngineDaemonClient())
     host.run_stdio()
-
-
 if __name__ == "__main__":
     run_server()

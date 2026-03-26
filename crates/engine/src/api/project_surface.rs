@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
 use super::*;
@@ -557,6 +557,97 @@ impl Engine {
             policy: input.policy,
             replacements,
         })
+    }
+
+    pub fn edit_scoped_component_replacement_plan(
+        &self,
+        mut plan: ScopedComponentReplacementPlan,
+        edit: ScopedComponentReplacementPlanEdit,
+    ) -> Result<ScopedComponentReplacementPlan, EngineError> {
+        let mut excluded = BTreeSet::new();
+        for uuid in &edit.exclude_component_uuids {
+            if !excluded.insert(*uuid) {
+                return Err(EngineError::Operation(format!(
+                    "edit_scoped_component_replacement_plan cannot exclude component {} more than once",
+                    uuid
+                )));
+            }
+        }
+
+        let mut seen_overrides = BTreeSet::new();
+        for override_item in &edit.overrides {
+            if !seen_overrides.insert(override_item.component_uuid) {
+                return Err(EngineError::Operation(format!(
+                    "edit_scoped_component_replacement_plan cannot override component {} more than once",
+                    override_item.component_uuid
+                )));
+            }
+            if excluded.contains(&override_item.component_uuid) {
+                return Err(EngineError::Operation(format!(
+                    "edit_scoped_component_replacement_plan cannot both exclude and override component {}",
+                    override_item.component_uuid
+                )));
+            }
+        }
+
+        plan.replacements
+            .retain(|item| !excluded.contains(&item.component_uuid));
+
+        for override_item in edit.overrides {
+            let replacement =
+                plan.replacements
+                    .iter_mut()
+                    .find(|item| item.component_uuid == override_item.component_uuid)
+                    .ok_or_else(|| {
+                        EngineError::Operation(format!(
+                            "edit_scoped_component_replacement_plan override targets component {} outside the current scoped plan",
+                            override_item.component_uuid
+                        ))
+                    })?;
+            let target_part = self.pool.parts.get(&override_item.target_part_uuid).ok_or(
+                EngineError::NotFound {
+                    object_type: "part",
+                    uuid: override_item.target_part_uuid,
+                },
+            )?;
+            let target_package = self.pool.packages.get(&override_item.target_package_uuid).ok_or(
+                EngineError::NotFound {
+                    object_type: "package",
+                    uuid: override_item.target_package_uuid,
+                },
+            )?;
+            if target_part.package != override_item.target_package_uuid {
+                return Err(EngineError::Operation(format!(
+                    "edit_scoped_component_replacement_plan requires part {} to use package {}",
+                    override_item.target_part_uuid, override_item.target_package_uuid
+                )));
+            }
+
+            let component_plan = self.get_component_replacement_plan(&override_item.component_uuid)?;
+            let package_match = component_plan.package_change.candidates.iter().any(|candidate| {
+                candidate.package_uuid == override_item.target_package_uuid
+                    && candidate.compatible_part_uuid == override_item.target_part_uuid
+            });
+            let part_match = component_plan.part_change.candidates.iter().any(|candidate| {
+                candidate.part_uuid == override_item.target_part_uuid
+                    && candidate.package_uuid == override_item.target_package_uuid
+            });
+            if !package_match && !part_match {
+                return Err(EngineError::Operation(format!(
+                    "edit_scoped_component_replacement_plan override {} -> ({}, {}) is not compatible; inspect get_component_replacement_plan first",
+                    override_item.component_uuid,
+                    override_item.target_package_uuid,
+                    override_item.target_part_uuid
+                )));
+            }
+
+            replacement.target_package_uuid = override_item.target_package_uuid;
+            replacement.target_part_uuid = override_item.target_part_uuid;
+            replacement.target_value = target_part.value.clone();
+            replacement.target_package_name = target_package.name.clone();
+        }
+
+        Ok(plan)
     }
 
     pub fn close_project(&mut self) {

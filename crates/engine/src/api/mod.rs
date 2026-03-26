@@ -470,6 +470,19 @@ pub struct ScopedComponentReplacementPlan {
     pub replacements: Vec<ScopedComponentReplacementPlanItem>,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ScopedComponentReplacementOverride {
+    pub component_uuid: uuid::Uuid,
+    pub target_package_uuid: uuid::Uuid,
+    pub target_part_uuid: uuid::Uuid,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct ScopedComponentReplacementPlanEdit {
+    pub exclude_component_uuids: Vec<uuid::Uuid>,
+    pub overrides: Vec<ScopedComponentReplacementOverride>,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ViolationDomain {

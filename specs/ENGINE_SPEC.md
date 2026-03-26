@@ -795,6 +795,11 @@ impl Engine {
         &self,
         input: ScopedComponentReplacementPolicyInput,
     ) -> Result<ScopedComponentReplacementPlan>;
+    pub fn edit_scoped_component_replacement_plan(
+        &self,
+        plan: ScopedComponentReplacementPlan,
+        edit: ScopedComponentReplacementPlanEdit,
+    ) -> Result<ScopedComponentReplacementPlan>;
     pub fn import_eagle_library(&mut self, path: &Path) -> Result<ImportReport>;
 
     // Queries (read-only)

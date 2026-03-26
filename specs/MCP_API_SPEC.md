@@ -91,7 +91,7 @@ normalized MCP surface.
 `set_reference`, `assign_part`, `set_package`, `set_package_with_part`,
 `replace_component`, `replace_components`, `apply_component_replacement_plan`,
 `apply_component_replacement_policy`, `apply_scoped_component_replacement_policy`,
-`apply_scoped_component_replacement_plan`,
+`apply_scoped_component_replacement_plan`, `edit_scoped_component_replacement_plan`,
 `set_net_class`, `set_design_rule`, `undo`, `redo`, `search_pool`, `get_part`,
 `get_package`,
 `get_package_change_candidates`, `get_part_change_candidates`,
@@ -269,6 +269,24 @@ Output: { "scope": json,
 Error:  invalid_params | component_not_found | part_not_found | package_not_found
 ```
 Current implementation note: implemented in the current daemon/stdio host as a read-only preview of the exact replacements a scoped policy would apply.
+
+#### `edit_scoped_component_replacement_plan`
+```
+Method: edit_scoped_component_replacement_plan
+Input:  { "plan": json,
+          "exclude_component_uuids": [string],
+          "overrides": [
+            { "component_uuid": string,
+              "target_package_uuid": string,
+              "target_part_uuid": string }
+          ] }
+Output: { "scope": json,
+          "policy": string,
+          "replacements": [json] }
+Error:  invalid_params
+```
+Current implementation note: implemented in the current daemon/stdio host for
+plan post-processing (exclude/override) before apply.
 
 #### `replace_components`
 ```

@@ -12,8 +12,9 @@ use eda_engine::api::{
     OperationResult, PackageChangeCompatibilityReport, PartChangeCompatibilityReport,
     PlannedComponentReplacementInput, PolicyDrivenComponentReplacementInput,
     ReplaceComponentInput, RotateComponentInput, ScopedComponentReplacementPlan,
-    ScopedComponentReplacementPolicyInput, SetDesignRuleInput, SetNetClassInput,
-    SetPackageInput, SetPackageWithPartInput, SetReferenceInput, SetValueInput,
+    ScopedComponentReplacementPlanEdit, ScopedComponentReplacementOverride,
+    ScopedComponentReplacementPolicyInput, SetDesignRuleInput, SetNetClassInput, SetPackageInput,
+    SetPackageWithPartInput, SetReferenceInput, SetValueInput,
 };
 use eda_engine::drc::DrcReport;
 use eda_engine::erc::ErcFinding;
@@ -251,6 +252,12 @@ enum QueryCommands {
         /// Restrict matches by current part UUID
         #[arg(long = "part-uuid")]
         part_uuid: Option<Uuid>,
+        /// Exclude one component UUID from the previewed plan
+        #[arg(long = "exclude-component")]
+        exclude_component: Vec<Uuid>,
+        /// Override one component target: <component_uuid>:<target_package_uuid>:<target_part_uuid>
+        #[arg(long = "override-component")]
+        override_component: Vec<String>,
         /// Load Eagle libraries into the in-memory pool before querying the plan
         #[arg(long = "library")]
         libraries: Vec<PathBuf>,
@@ -953,11 +960,19 @@ fn query_component_replacement_plan(
 fn query_scoped_component_replacement_plan(
     path: &Path,
     input: ScopedComponentReplacementPolicyInput,
+    edit: ScopedComponentReplacementPlanEdit,
     libraries: &[PathBuf],
 ) -> Result<ScopedComponentReplacementPlan> {
     let engine = import_design_for_query_with_libraries(path, libraries)?;
     match engine.get_board_summary() {
-        Ok(_) => Ok(engine.get_scoped_component_replacement_plan(input)?),
+        Ok(_) => {
+            let plan = engine.get_scoped_component_replacement_plan(input)?;
+            if edit.exclude_component_uuids.is_empty() && edit.overrides.is_empty() {
+                Ok(plan)
+            } else {
+                Ok(engine.edit_scoped_component_replacement_plan(plan, edit)?)
+            }
+        }
         Err(EngineError::NotFound {
             object_type: "board",
             ..
@@ -967,6 +982,20 @@ fn query_scoped_component_replacement_plan(
         ),
         Err(err) => Err(err.into()),
     }
+}
+
+fn parse_scoped_replacement_override_arg(value: &str) -> Result<ScopedComponentReplacementOverride> {
+    let parts: Vec<_> = value.split(':').collect();
+    if parts.len() != 3 {
+        bail!(
+            "--override-component expects <component_uuid>:<target_package_uuid>:<target_part_uuid>"
+        );
+    }
+    Ok(ScopedComponentReplacementOverride {
+        component_uuid: Uuid::parse_str(parts[0])?,
+        target_package_uuid: Uuid::parse_str(parts[1])?,
+        target_part_uuid: Uuid::parse_str(parts[2])?,
+    })
 }
 
 fn render_output<T: Serialize>(format: &OutputFormat, value: &T) -> String {
@@ -1366,6 +1395,97 @@ mod tests {
         assert!(output.contains("\"current_reference\": \"R1\""));
         assert!(output.contains("\"target_package_name\": \"ALT-3\""));
         assert!(output.contains("\"target_value\": \"ALTAMP\""));
+
+        let _ = std::fs::remove_file(&target);
+        let _ = std::fs::remove_file(target.with_file_name(format!(
+            "{}.parts.json",
+            target.file_name().unwrap().to_string_lossy()
+        )));
+    }
+
+    #[test]
+    fn execute_query_scoped_replacement_plan_supports_exclusions_and_overrides() {
+        let source = kicad_fixture_path("partial-route-demo.kicad_pcb");
+        let target = std::env::temp_dir().join(format!(
+            "{}-cli-query-scoped-replacement-plan-edited.kicad_pcb",
+            Uuid::new_v4()
+        ));
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+            .expect("library import should succeed");
+        let lmv321_part_uuid = engine
+            .search_pool("LMV321")
+            .expect("search should succeed")
+            .first()
+            .map(|part| part.uuid)
+            .expect("LMV321 part should exist");
+        let altamp = engine
+            .search_pool("ALTAMP")
+            .expect("search should succeed")
+            .first()
+            .cloned()
+            .expect("ALTAMP part should exist");
+        modify_board(
+            &source,
+            &[],
+            &[],
+            &[],
+            &[eagle_fixture_path("simple-opamp.lbr")],
+            &[],
+            &[],
+            &[],
+            &[
+                AssignPartInput {
+                    uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+                    part_uuid: lmv321_part_uuid,
+                },
+                AssignPartInput {
+                    uuid: Uuid::parse_str("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb").unwrap(),
+                    part_uuid: lmv321_part_uuid,
+                },
+            ],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            None,
+            0,
+            0,
+            Some(&target),
+            false,
+        )
+        .expect("modify assign_part save should succeed");
+
+        let cli = Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "query",
+            target.to_str().unwrap(),
+            "scoped-replacement-plan",
+            "package",
+            "--ref-prefix",
+            "R",
+            "--value",
+            "LMV321",
+            "--exclude-component",
+            "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+            "--override-component",
+            &format!(
+                "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:{}:{}",
+                altamp.package_uuid, altamp.uuid
+            ),
+            "--library",
+            eagle_fixture_path("simple-opamp.lbr").to_str().unwrap(),
+        ])
+        .expect("CLI should parse");
+
+        let output = execute(cli).expect("edited scoped replacement preview query should succeed");
+        assert!(output.contains("\"component_uuid\": \"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa\""));
+        assert!(!output.contains("\"component_uuid\": \"bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb\""));
+        assert!(output.contains("\"target_package_name\": \"ALT-3\""));
 
         let _ = std::fs::remove_file(&target);
         let _ = std::fs::remove_file(target.with_file_name(format!(

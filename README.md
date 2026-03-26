@@ -95,6 +95,12 @@ cargo build
 cargo test
 ```
 
+Pre-merge drift gate (required for feature handoff):
+
+```bash
+scripts/run_drift_gates.sh
+```
+
 Run the engine daemon (required for MCP):
 
 ```bash

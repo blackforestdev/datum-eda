@@ -94,6 +94,12 @@ def dispatch_tool_call(daemon: Any, name: str, arguments: dict[str, Any]) -> Any
         return daemon.get_scoped_component_replacement_plan(
             arguments["scope"], arguments["policy"]
         )
+    if name == "edit_scoped_component_replacement_plan":
+        return daemon.edit_scoped_component_replacement_plan(
+            arguments["plan"],
+            arguments.get("exclude_component_uuids", []),
+            arguments.get("overrides", []),
+        )
     if name == "get_components":
         return daemon.get_components()
     if name == "get_netlist":

@@ -423,6 +423,37 @@ TOOLS: list[dict[str, Any]] = [
         },
     },
     {
+        "name": "edit_scoped_component_replacement_plan",
+        "description": "Exclude or override items in a scoped replacement preview without hand-editing raw JSON.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "plan": {"type": "object"},
+                "exclude_component_uuids": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                },
+                "overrides": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "component_uuid": {"type": "string"},
+                            "target_package_uuid": {"type": "string"},
+                            "target_part_uuid": {"type": "string"},
+                        },
+                        "required": [
+                            "component_uuid",
+                            "target_package_uuid",
+                            "target_part_uuid",
+                        ],
+                    },
+                },
+            },
+            "required": ["plan"],
+        },
+    },
+    {
         "name": "get_components",
         "description": "Return the imported board component list for the open project.",
         "inputSchema": {"type": "object", "properties": {}},

@@ -116,6 +116,35 @@ class TestDaemonClient(unittest.TestCase):
                 {"reference_prefix": "R", "value_equals": "LMV321"}, "best_compatible_package"
             )
         )
+        edit_scoped_replacement_plan = (
+            client.edit_scoped_component_replacement_plan_request(
+                {
+                    "scope": {"reference_prefix": "R", "value_equals": "LMV321"},
+                    "policy": "best_compatible_package",
+                    "replacements": [
+                        {
+                            "component_uuid": "comp-1",
+                            "current_reference": "R1",
+                            "current_value": "LMV321",
+                            "current_part_uuid": "part-uuid",
+                            "current_package_uuid": "package-uuid",
+                            "target_part_uuid": "alt-part-uuid",
+                            "target_package_uuid": "alt-package-uuid",
+                            "target_value": "ALTAMP",
+                            "target_package_name": "ALT-3",
+                        }
+                    ],
+                },
+                ["comp-2"],
+                [
+                    {
+                        "component_uuid": "comp-1",
+                        "target_package_uuid": "alt-package-uuid",
+                        "target_part_uuid": "alt-part-uuid",
+                    }
+                ],
+            )
+        )
         set_net_class = client.set_net_class_request(
             "net-uuid", "power", 125000, 250000, 300000, 600000
         )
@@ -250,6 +279,18 @@ class TestDaemonClient(unittest.TestCase):
                 "scope": {"reference_prefix": "R", "value_equals": "LMV321"},
                 "policy": "best_compatible_package",
             },
+        )
+        self.assertEqual(
+            edit_scoped_replacement_plan.method,
+            "edit_scoped_component_replacement_plan",
+        )
+        self.assertEqual(
+            edit_scoped_replacement_plan.params["exclude_component_uuids"],
+            ["comp-2"],
+        )
+        self.assertEqual(
+            edit_scoped_replacement_plan.params["overrides"][0]["component_uuid"],
+            "comp-1",
         )
         self.assertEqual(set_net_class.method, "set_net_class")
         self.assertEqual(

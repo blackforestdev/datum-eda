@@ -174,45 +174,21 @@ class FakeDaemonClient:
             None,
         )
 
-    def apply_scoped_component_replacement_policy(
-        self, scope: dict[str, str | None], policy: str
-    ) -> JsonRpcResponse:
+    def apply_scoped_component_replacement_policy(self, scope: dict[str, str | None], policy: str) -> JsonRpcResponse:
         self.calls.append(("apply_scoped_component_replacement_policy", scope, policy))
         return JsonRpcResponse(
             "2.0",
             1216,
-            {
-                "diff": {
-                    "created": [],
-                    "modified": [
-                        {"object_type": "component", "uuid": "comp-1"},
-                        {"object_type": "component", "uuid": "comp-2"},
-                    ],
-                    "deleted": [],
-                },
-                "description": "replace_components 2",
-            },
+            {"diff": {"created": [], "modified": [{"object_type": "component", "uuid": "comp-1"}, {"object_type": "component", "uuid": "comp-2"}], "deleted": []}, "description": "replace_components 2"},
             None,
         )
 
-    def apply_scoped_component_replacement_plan(
-        self, plan: dict[str, object]
-    ) -> JsonRpcResponse:
+    def apply_scoped_component_replacement_plan(self, plan: dict[str, object]) -> JsonRpcResponse:
         self.calls.append(("apply_scoped_component_replacement_plan", plan))
         return JsonRpcResponse(
             "2.0",
             1217,
-            {
-                "diff": {
-                    "created": [],
-                    "modified": [
-                        {"object_type": "component", "uuid": "comp-1"},
-                        {"object_type": "component", "uuid": "comp-2"},
-                    ],
-                    "deleted": [],
-                },
-                "description": "replace_components 2",
-            },
+            {"diff": {"created": [], "modified": [{"object_type": "component", "uuid": "comp-1"}, {"object_type": "component", "uuid": "comp-2"}], "deleted": []}, "description": "replace_components 2"},
             None,
         )
 
@@ -366,9 +342,7 @@ class FakeDaemonClient:
             None,
         )
 
-    def get_scoped_component_replacement_plan(
-        self, scope: dict[str, str | None], policy: str
-    ) -> JsonRpcResponse:
+    def get_scoped_component_replacement_plan(self, scope: dict[str, str | None], policy: str) -> JsonRpcResponse:
         self.calls.append(("get_scoped_component_replacement_plan", scope, policy))
         return JsonRpcResponse(
             "2.0",
@@ -389,6 +363,28 @@ class FakeDaemonClient:
                         "target_package_name": "ALT-3",
                     }
                 ],
+            },
+            None,
+        )
+
+    def edit_scoped_component_replacement_plan(self, plan: dict[str, object], exclude_component_uuids: list[str], overrides: list[dict[str, str]]) -> JsonRpcResponse:
+        self.calls.append(("edit_scoped_component_replacement_plan", plan, exclude_component_uuids, overrides))
+        replacements = list(plan["replacements"])
+        replacements = [item for item in replacements if item["component_uuid"] not in set(exclude_component_uuids)]
+        for override in overrides:
+            for item in replacements:
+                if item["component_uuid"] == override["component_uuid"]:
+                    item["target_package_uuid"] = override["target_package_uuid"]
+                    item["target_part_uuid"] = override["target_part_uuid"]
+                    item["target_value"] = "ALTAMP"
+                    item["target_package_name"] = "ALT-3"
+        return JsonRpcResponse(
+            "2.0",
+            1084,
+            {
+                "scope": plan["scope"],
+                "policy": plan["policy"],
+                "replacements": replacements,
             },
             None,
         )

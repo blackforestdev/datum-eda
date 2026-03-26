@@ -69,12 +69,18 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 value,
                 package_uuid,
                 part_uuid,
+                exclude_component,
+                override_component,
                 libraries,
             } => {
                 let policy = match policy {
                     ReplacementPolicyArg::Package => ComponentReplacementPolicy::BestCompatiblePackage,
                     ReplacementPolicyArg::Part => ComponentReplacementPolicy::BestCompatiblePart,
                 };
+                let overrides = override_component
+                    .iter()
+                    .map(|value| parse_scoped_replacement_override_arg(value))
+                    .collect::<Result<Vec<_>>>()?;
                 let report = query_scoped_component_replacement_plan(
                     &path,
                     ScopedComponentReplacementPolicyInput {
@@ -85,6 +91,10 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                             current_part_uuid: part_uuid,
                         },
                         policy,
+                    },
+                    ScopedComponentReplacementPlanEdit {
+                        exclude_component_uuids: exclude_component,
+                        overrides,
                     },
                     &libraries,
                 )?;
