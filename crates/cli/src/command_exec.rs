@@ -1,8 +1,9 @@
 use super::*;
 use crate::command_modify::{
-    modify_board, parse_assign_part_arg, parse_move_component_arg, parse_rotate_component_arg,
-    parse_replace_component_arg, parse_set_net_class_arg, parse_set_package_arg, parse_set_package_with_part_arg,
-    parse_set_reference_arg, parse_set_value_arg,
+    parse_apply_replacement_plan_arg, parse_apply_replacement_policy_arg,
+    parse_assign_part_arg, parse_move_component_arg, parse_replace_component_arg,
+    parse_rotate_component_arg, parse_set_net_class_arg, parse_set_package_arg,
+    parse_set_package_with_part_arg, parse_set_reference_arg, parse_set_value_arg,
 };
 
 pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
@@ -107,6 +108,8 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             set_package,
             set_package_with_part,
             replace_component,
+            apply_replacement_plan,
+            apply_replacement_policy,
             set_net_class,
             set_reference,
             undo,
@@ -143,6 +146,14 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 .iter()
                 .map(|value| parse_replace_component_arg(value))
                 .collect::<Result<Vec<_>>>()?;
+            let apply_replacement_plan = apply_replacement_plan
+                .iter()
+                .map(|value| parse_apply_replacement_plan_arg(value))
+                .collect::<Result<Vec<_>>>()?;
+            let apply_replacement_policy = apply_replacement_policy
+                .iter()
+                .map(|value| parse_apply_replacement_policy_arg(value))
+                .collect::<Result<Vec<_>>>()?;
             let set_net_class = set_net_class
                 .iter()
                 .map(|value| parse_set_net_class_arg(value))
@@ -151,7 +162,7 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 .iter()
                 .map(|value| parse_set_reference_arg(value))
                 .collect::<Result<Vec<_>>>()?;
-            let report = modify_board(
+            let report = modify_board_with_plan(
                 &path,
                 &delete_track,
                 &delete_via,
@@ -171,6 +182,8 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 redo,
                 save.as_deref(),
                 save_original,
+                &apply_replacement_plan,
+                &apply_replacement_policy,
             )?;
             Ok((render_output(&cli.format, &report), 0))
         }

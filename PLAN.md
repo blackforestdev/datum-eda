@@ -28,7 +28,7 @@ canonical round-trip, and has tests. Import harness scaffolded.
 
 **Progress (2026-03-25)**:
 - [x] Milestone complete (`M0` closed)
-- [ ] Project name selected
+- [x] Project name selected (`datum-eda`)
 
 - [ ] Choose project name
 - [ ] Initialize Rust workspace (engine lib, cli bin, workspace Cargo.toml)
@@ -230,6 +230,13 @@ and explicit non-goals. No support claim yet.
 ### M3: Write Operations on Imported Designs
 **Goal**: Limited but safe modifications to imported designs.
 
+**Progress (2026-03-25)**:
+- [x] Write-operation vertical slice landed end-to-end for current board scope (`move_component`, `rotate_component`, `set_value`, `set_reference`, `assign_part`, `set_package`, `set_package_with_part`, `set_net_class`, `set_design_rule`, `delete_component`, `delete_track`, `delete_via`, `save`, `undo`, `redo`)
+- [x] Batch replacement flow landed (`replace_components` transaction + undo/redo integration)
+- [x] Current write-surface parity harnesses in place (`m3_write_surface_parity`, `m3_undo_redo_roundtrip`, `m3_op_determinism`)
+- [x] Large entry-point risk reduced for daemon/API/MCP test infrastructure through module splits and CI file-size budget checks
+- [ ] Full M3 milestone exit criteria still open (broader operation model + deeper fidelity envelope)
+
 - [ ] Operation model:
   - Operation trait (validate, execute, describe)
   - Operation diff (what changed, for undo and sync)
@@ -254,6 +261,9 @@ design, update values, adjust rules, and save back to KiCad format.
 
 ### M4: Native Project Creation + Editing
 **Goal**: Create new designs from scratch, not just modify imports.
+
+**Progress (2026-03-25)**:
+- [ ] Not started (intentionally held until M3 write-contract maturity gates are closed)
 
 - [ ] Native file format (JSON, schema documented)
 - [ ] Project structure (pool reference, board, schematic, rules, settings)

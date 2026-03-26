@@ -699,6 +699,127 @@ impl Engine {
         })
     }
 
+    fn resolve_planned_component_replacement(
+        &self,
+        input: &PlannedComponentReplacementInput,
+    ) -> Result<ReplaceComponentInput, EngineError> {
+        match (input.package_uuid, input.part_uuid) {
+            (Some(package_uuid), Some(part_uuid)) => Ok(ReplaceComponentInput {
+                uuid: input.uuid,
+                package_uuid,
+                part_uuid,
+            }),
+            (Some(package_uuid), None) => {
+                let plan = self.get_component_replacement_plan(&input.uuid)?;
+                let candidate = plan
+                    .package_change
+                    .candidates
+                    .iter()
+                    .find(|candidate| candidate.package_uuid == package_uuid)
+                    .ok_or_else(|| {
+                        EngineError::Operation(format!(
+                            "apply_component_replacement_plan could not resolve package {} for component {}; inspect get_component_replacement_plan first",
+                            package_uuid, input.uuid
+                        ))
+                    })?;
+                Ok(ReplaceComponentInput {
+                    uuid: input.uuid,
+                    package_uuid: candidate.package_uuid,
+                    part_uuid: candidate.compatible_part_uuid,
+                })
+            }
+            (None, Some(part_uuid)) => {
+                let plan = self.get_component_replacement_plan(&input.uuid)?;
+                let candidate = plan
+                    .part_change
+                    .candidates
+                    .iter()
+                    .find(|candidate| candidate.part_uuid == part_uuid)
+                    .ok_or_else(|| {
+                        EngineError::Operation(format!(
+                            "apply_component_replacement_plan could not resolve part {} for component {}; inspect get_component_replacement_plan first",
+                            part_uuid, input.uuid
+                        ))
+                    })?;
+                Ok(ReplaceComponentInput {
+                    uuid: input.uuid,
+                    package_uuid: candidate.package_uuid,
+                    part_uuid: candidate.part_uuid,
+                })
+            }
+            (None, None) => Err(EngineError::Operation(
+                "apply_component_replacement_plan requires a package_uuid, a part_uuid, or both".to_string(),
+            )),
+        }
+    }
+
+    pub fn apply_component_replacement_plan(
+        &mut self,
+        inputs: Vec<PlannedComponentReplacementInput>,
+    ) -> Result<OperationResult, EngineError> {
+        if inputs.is_empty() {
+            return Err(EngineError::Operation(
+                "apply_component_replacement_plan requires at least one replacement".to_string(),
+            ));
+        }
+        let resolved = inputs
+            .iter()
+            .map(|input| self.resolve_planned_component_replacement(input))
+            .collect::<Result<Vec<_>, _>>()?;
+        self.replace_components(resolved)
+    }
+
+    fn resolve_policy_driven_component_replacement(
+        &self,
+        input: &PolicyDrivenComponentReplacementInput,
+    ) -> Result<ReplaceComponentInput, EngineError> {
+        let plan = self.get_component_replacement_plan(&input.uuid)?;
+        match input.policy {
+            ComponentReplacementPolicy::BestCompatiblePackage => {
+                let candidate = plan.package_change.candidates.first().ok_or_else(|| {
+                    EngineError::Operation(format!(
+                        "apply_component_replacement_policy could not find a compatible package candidate for component {}; inspect get_component_replacement_plan first",
+                        input.uuid
+                    ))
+                })?;
+                Ok(ReplaceComponentInput {
+                    uuid: input.uuid,
+                    package_uuid: candidate.package_uuid,
+                    part_uuid: candidate.compatible_part_uuid,
+                })
+            }
+            ComponentReplacementPolicy::BestCompatiblePart => {
+                let candidate = plan.part_change.candidates.first().ok_or_else(|| {
+                    EngineError::Operation(format!(
+                        "apply_component_replacement_policy could not find a compatible part candidate for component {}; inspect get_component_replacement_plan first",
+                        input.uuid
+                    ))
+                })?;
+                Ok(ReplaceComponentInput {
+                    uuid: input.uuid,
+                    package_uuid: candidate.package_uuid,
+                    part_uuid: candidate.part_uuid,
+                })
+            }
+        }
+    }
+
+    pub fn apply_component_replacement_policy(
+        &mut self,
+        inputs: Vec<PolicyDrivenComponentReplacementInput>,
+    ) -> Result<OperationResult, EngineError> {
+        if inputs.is_empty() {
+            return Err(EngineError::Operation(
+                "apply_component_replacement_policy requires at least one replacement".to_string(),
+            ));
+        }
+        let resolved = inputs
+            .iter()
+            .map(|input| self.resolve_policy_driven_component_replacement(input))
+            .collect::<Result<Vec<_>, _>>()?;
+        self.replace_components(resolved)
+    }
+
     pub fn set_net_class(
         &mut self,
         input: SetNetClassInput,

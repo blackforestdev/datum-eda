@@ -7,10 +7,12 @@ use std::path::{Path, PathBuf};
 use anyhow::{Context, Result, bail};
 use clap::{Parser, Subcommand};
 use eda_engine::api::{
-    AssignPartInput, CheckReport, CheckStatus, Engine, MoveComponentInput, OperationResult,
-    ComponentReplacementPlan, PackageChangeCompatibilityReport, PartChangeCompatibilityReport,
-    ReplaceComponentInput, RotateComponentInput, SetDesignRuleInput, SetNetClassInput, SetPackageInput,
-    SetPackageWithPartInput, SetReferenceInput, SetValueInput,
+    AssignPartInput, CheckReport, CheckStatus, ComponentReplacementPlan,
+    ComponentReplacementPolicy, Engine, MoveComponentInput, OperationResult,
+    PackageChangeCompatibilityReport, PartChangeCompatibilityReport,
+    PlannedComponentReplacementInput, PolicyDrivenComponentReplacementInput,
+    ReplaceComponentInput, RotateComponentInput, SetDesignRuleInput, SetNetClassInput,
+    SetPackageInput, SetPackageWithPartInput, SetReferenceInput, SetValueInput,
 };
 use eda_engine::drc::DrcReport;
 use eda_engine::erc::ErcFinding;
@@ -140,6 +142,14 @@ enum Commands {
         /// Replace one component with an explicit compatible part+package: <uuid>:<package_uuid>:<part_uuid>
         #[arg(long = "replace-component")]
         replace_component: Vec<String>,
+
+        /// Apply replacement-plan selection: <uuid>:package:<package_uuid> | <uuid>:part:<part_uuid> | <uuid>:package:<package_uuid>:part:<part_uuid>
+        #[arg(long = "apply-replacement-plan")]
+        apply_replacement_plan: Vec<String>,
+
+        /// Apply replacement policy: <uuid>:package | <uuid>:part
+        #[arg(long = "apply-replacement-policy")]
+        apply_replacement_policy: Vec<String>,
 
         /// Set one net class: <net_uuid>:<class_name>:<clearance_nm>:<track_width_nm>:<via_drill_nm>:<via_diameter_nm>[:<diffpair_width_nm>:<diffpair_gap_nm>]
         #[arg(long = "set-net-class")]
@@ -368,6 +378,54 @@ fn modify_board(
     save: Option<&Path>,
     save_original: bool,
 ) -> Result<ModifyReportView> {
+    modify_board_with_plan(
+        path,
+        delete_track,
+        delete_via,
+        delete_component,
+        libraries,
+        move_component,
+        rotate_component,
+        set_value,
+        assign_part,
+        set_package,
+        set_package_with_part,
+        replace_component,
+        set_net_class,
+        set_reference,
+        set_clearance_min_nm,
+        undo,
+        redo,
+        save,
+        save_original,
+        &[],
+        &[],
+    )
+}
+
+fn modify_board_with_plan(
+    path: &Path,
+    delete_track: &[Uuid],
+    delete_via: &[Uuid],
+    delete_component: &[Uuid],
+    libraries: &[PathBuf],
+    move_component: &[MoveComponentInput],
+    rotate_component: &[RotateComponentInput],
+    set_value: &[SetValueInput],
+    assign_part: &[AssignPartInput],
+    set_package: &[SetPackageInput],
+    set_package_with_part: &[SetPackageWithPartInput],
+    replace_component: &[ReplaceComponentInput],
+    set_net_class: &[SetNetClassInput],
+    set_reference: &[SetReferenceInput],
+    set_clearance_min_nm: Option<i64>,
+    undo: usize,
+    redo: usize,
+    save: Option<&Path>,
+    save_original: bool,
+    apply_replacement_plan: &[PlannedComponentReplacementInput],
+    apply_replacement_policy: &[PolicyDrivenComponentReplacementInput],
+) -> Result<ModifyReportView> {
     command_modify::modify_board(
         path,
         delete_track,
@@ -388,6 +446,8 @@ fn modify_board(
         redo,
         save,
         save_original,
+        apply_replacement_plan,
+        apply_replacement_policy,
     )
 }
 
@@ -2332,6 +2392,182 @@ mod tests {
             components
                 .iter()
                 .filter(|component| component.value == "10k")
+                .count(),
+            2
+        );
+
+        let _ = std::fs::remove_file(&target);
+        let _ = std::fs::remove_file(target.with_file_name(format!(
+            "{}.parts.json",
+            target.file_name().unwrap().to_string_lossy()
+        )));
+        let _ = std::fs::remove_file(target.with_file_name(format!(
+            "{}.packages.json",
+            target.file_name().unwrap().to_string_lossy()
+        )));
+    }
+
+    #[test]
+    fn modify_board_with_plan_resolves_package_and_part_selectors() {
+        let source = kicad_fixture_path("partial-route-demo.kicad_pcb");
+        let target = std::env::temp_dir().join(format!(
+            "{}-cli-save-partial-route-apply-replacement-plan.kicad_pcb",
+            Uuid::new_v4()
+        ));
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+            .expect("library import should succeed");
+        let lmv321 = engine
+            .search_pool("LMV321")
+            .expect("search should succeed")
+            .first()
+            .cloned()
+            .expect("LMV321 part should exist");
+        let altamp = engine
+            .search_pool("ALTAMP")
+            .expect("search should succeed")
+            .first()
+            .cloned()
+            .expect("ALTAMP part should exist");
+
+        let report = modify_board_with_plan(
+            &source,
+            &[],
+            &[],
+            &[],
+            &[eagle_fixture_path("simple-opamp.lbr")],
+            &[],
+            &[],
+            &[],
+            &[
+                AssignPartInput {
+                    uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+                    part_uuid: lmv321.uuid,
+                },
+                AssignPartInput {
+                    uuid: Uuid::parse_str("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb").unwrap(),
+                    part_uuid: lmv321.uuid,
+                },
+            ],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            None,
+            0,
+            0,
+            Some(&target),
+            false,
+            &[
+                PlannedComponentReplacementInput {
+                    uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+                    package_uuid: Some(altamp.package_uuid),
+                    part_uuid: None,
+                },
+                PlannedComponentReplacementInput {
+                    uuid: Uuid::parse_str("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb").unwrap(),
+                    package_uuid: None,
+                    part_uuid: Some(altamp.uuid),
+                },
+            ],
+            &[],
+        )
+        .expect("modify apply_replacement_plan save should succeed");
+        assert_eq!(report.saved_path.as_deref(), Some(target.to_str().unwrap()));
+
+        let components = match query_components(&target).expect("saved components should query") {
+            ComponentListView::Board { components } => components,
+        };
+        assert_eq!(
+            components
+                .iter()
+                .filter(|component| component.value == "ALTAMP")
+                .count(),
+            2
+        );
+
+        let _ = std::fs::remove_file(&target);
+        let _ = std::fs::remove_file(target.with_file_name(format!(
+            "{}.parts.json",
+            target.file_name().unwrap().to_string_lossy()
+        )));
+        let _ = std::fs::remove_file(target.with_file_name(format!(
+            "{}.packages.json",
+            target.file_name().unwrap().to_string_lossy()
+        )));
+    }
+
+    #[test]
+    fn modify_board_with_plan_resolves_best_policy_candidates() {
+        let source = kicad_fixture_path("partial-route-demo.kicad_pcb");
+        let target = std::env::temp_dir().join(format!(
+            "{}-cli-save-partial-route-apply-replacement-policy.kicad_pcb",
+            Uuid::new_v4()
+        ));
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+            .expect("library import should succeed");
+        let lmv321 = engine
+            .search_pool("LMV321")
+            .expect("search should succeed")
+            .first()
+            .cloned()
+            .expect("LMV321 part should exist");
+
+        let report = modify_board_with_plan(
+            &source,
+            &[],
+            &[],
+            &[],
+            &[eagle_fixture_path("simple-opamp.lbr")],
+            &[],
+            &[],
+            &[],
+            &[
+                AssignPartInput {
+                    uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+                    part_uuid: lmv321.uuid,
+                },
+                AssignPartInput {
+                    uuid: Uuid::parse_str("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb").unwrap(),
+                    part_uuid: lmv321.uuid,
+                },
+            ],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            None,
+            0,
+            0,
+            Some(&target),
+            false,
+            &[],
+            &[
+                PolicyDrivenComponentReplacementInput {
+                    uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+                    policy: ComponentReplacementPolicy::BestCompatiblePackage,
+                },
+                PolicyDrivenComponentReplacementInput {
+                    uuid: Uuid::parse_str("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb").unwrap(),
+                    policy: ComponentReplacementPolicy::BestCompatiblePart,
+                },
+            ],
+        )
+        .expect("modify apply_replacement_policy save should succeed");
+        assert_eq!(report.saved_path.as_deref(), Some(target.to_str().unwrap()));
+
+        let components = match query_components(&target).expect("saved components should query") {
+            ComponentListView::Board { components } => components,
+        };
+        assert_eq!(
+            components
+                .iter()
+                .filter(|component| component.value == "ALTAMP")
                 .count(),
             2
         );

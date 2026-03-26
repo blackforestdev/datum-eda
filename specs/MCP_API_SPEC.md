@@ -28,11 +28,11 @@ The MCP server is **stateful**: it holds one open project at a time.
 Session lifecycle:
   1. open_project → engine loads design into memory
   2. [queries, checks — any number, any order]
-  3. (future M3+) save → engine writes to disk
+  3. save → engine writes to disk (optional)
   4. close_project → engine releases memory
 
-Current slice is read/check-focused with explicit close-project lifecycle
-control. Write operations and save remain deferred.
+Current implementation includes read/check and current M3 write operations
+with explicit close-project lifecycle control.
 ```
 
 Operations are **not idempotent**. `move_component` applied twice moves
@@ -86,18 +86,24 @@ normalized MCP surface.
 
 ### Current Implemented Methods (2026-03-25)
 
-`open_project`, `close_project`, `search_pool`, `get_part`, `get_package`,
+`open_project`, `close_project`, `save`, `delete_track`, `delete_via`,
+`delete_component`, `move_component`, `rotate_component`, `set_value`,
+`set_reference`, `assign_part`, `set_package`, `set_package_with_part`,
+`replace_component`, `replace_components`, `apply_component_replacement_plan`,
+`apply_component_replacement_policy`,
+`set_net_class`, `set_design_rule`, `undo`, `redo`, `search_pool`, `get_part`,
+`get_package`,
 `get_package_change_candidates`, `get_part_change_candidates`,
-`get_component_replacement_plan`,
-`get_board_summary`, `get_schematic_summary`, `get_sheets`, `get_symbols`,
-`get_ports`, `get_labels`, `get_buses`, `get_bus_entries`, `get_noconnects`,
-`get_symbol_fields`, `get_hierarchy`, `get_netlist`, `get_components`,
-`get_net_info`, `get_schematic_net_info`, `get_connectivity_diagnostics`,
-`get_design_rules`, `get_unrouted`, `get_check_report`, `run_erc`,
-`run_drc`, `explain_violation`.
+`get_component_replacement_plan`, `get_board_summary`, `get_components`,
+`get_netlist`, `get_schematic_summary`, `get_sheets`, `get_labels`,
+`get_symbols`, `get_symbol_fields`, `get_ports`, `get_buses`,
+`get_bus_entries`, `get_noconnects`, `get_hierarchy`, `get_net_info`,
+`get_unrouted`, `get_schematic_net_info`, `get_check_report`,
+`get_connectivity_diagnostics`, `get_design_rules`, `run_erc`, `run_drc`,
+`explain_violation`.
 
-Methods listed later in this document without a current implementation note are
-`Target M2+` and are not yet part of the enforced daemon/MCP contract.
+Methods in later `M4+` sections are target-state and are not part of the
+current enforced daemon/MCP contract.
 
 ### Project
 
@@ -246,6 +252,33 @@ Output: { "diff": { "created": [], "modified": [{ "object_type": "component", "u
 Error:  invalid_params | component_not_found | part_not_found | package_not_found
 ```
 Current implementation note: implemented in the current daemon/stdio host as a single transaction / single undo step for batch component replacement.
+
+#### `apply_component_replacement_plan`
+```
+Method: apply_component_replacement_plan
+Input:  { "replacements": [
+            { "uuid": string,
+              "package_uuid": string|null,
+              "part_uuid": string|null }
+          ] }
+Output: { "diff": { "created": [], "modified": [{ "object_type": "component", "uuid": string }], "deleted": [] },
+          "description": string }
+Error:  invalid_params | component_not_found | part_not_found | package_not_found
+```
+Current implementation note: implemented in the current daemon/stdio host for plan-driven replacement selection; callers may provide a package selector, a part selector, or both for each component.
+
+#### `apply_component_replacement_policy`
+```
+Method: apply_component_replacement_policy
+Input:  { "replacements": [
+            { "uuid": string,
+              "policy": "best_compatible_package" | "best_compatible_part" }
+          ] }
+Output: { "diff": { "created": [], "modified": [{ "object_type": "component", "uuid": string }], "deleted": [] },
+          "description": string }
+Error:  invalid_params | component_not_found | part_not_found | package_not_found
+```
+Current implementation note: implemented in the current daemon/stdio host for deterministic best-candidate replacement selection from the current replacement plan.
 
 ### Design Queries
 
@@ -596,33 +629,46 @@ Current implementation note: implemented in the current daemon/stdio host.
 #### `move_component`
 ```
 Method: move_component
-Input:  { "reference": string, "x_mm": float, "y_mm": float,
+Input:  { "uuid": uuid, "x_mm": float, "y_mm": float,
           "rotation_deg": float | null }
 Output: { "diff": json }
 Error:  component_not_found, invalid_operation
 ```
+Current implementation note: implemented in the current daemon/stdio host.
+
+#### `rotate_component`
+```
+Method: rotate_component
+Input:  { "uuid": uuid, "rotation_deg": float }
+Output: { "diff": json }
+Error:  component_not_found, invalid_operation
+```
+Current implementation note: implemented in the current daemon/stdio host.
 
 #### `set_value`
 ```
 Method: set_value
-Input:  { "reference": string, "value": string }
+Input:  { "uuid": uuid, "value": string }
 Output: { "diff": json }
 ```
+Current implementation note: implemented in the current daemon/stdio host.
 
 #### `set_reference`
 ```
 Method: set_reference
-Input:  { "reference": string, "new_reference": string }
+Input:  { "uuid": uuid, "reference": string }
 Output: { "diff": json }
 ```
+Current implementation note: implemented in the current daemon/stdio host.
 
 #### `assign_part`
 ```
 Method: assign_part
-Input:  { "reference": string, "part_uuid": uuid }
+Input:  { "uuid": uuid, "part_uuid": uuid }
 Output: { "diff": json }
 Error:  component_not_found, part_not_found
 ```
+Current implementation note: implemented in the current daemon/stdio host.
 
 #### `set_package`
 ```
@@ -631,6 +677,7 @@ Input:  { "uuid": uuid, "package_uuid": uuid }
 Output: { "diff": json }
 Error:  component_not_found, package_not_found, invalid_operation
 ```
+Current implementation note: implemented in the current daemon/stdio host.
 
 #### `set_package_with_part`
 ```
@@ -639,6 +686,57 @@ Input:  { "uuid": uuid, "package_uuid": uuid, "part_uuid": uuid }
 Output: { "diff": json }
 Error:  component_not_found, package_not_found, part_not_found, invalid_operation
 ```
+Current implementation note: implemented in the current daemon/stdio host.
+
+#### `replace_component`
+```
+Method: replace_component
+Input:  { "uuid": uuid, "package_uuid": uuid, "part_uuid": uuid }
+Output: { "diff": json, "description": string }
+Error:  component_not_found, part_not_found, package_not_found, invalid_operation
+```
+Current implementation note: implemented in the current daemon/stdio host.
+
+#### `replace_components`
+```
+Method: replace_components
+Input:  { "replacements": [
+            { "uuid": uuid, "package_uuid": uuid, "part_uuid": uuid }
+          ] }
+Output: { "diff": json, "description": string }
+Error:  component_not_found, part_not_found, package_not_found, invalid_operation
+```
+Current implementation note: implemented in the current daemon/stdio host as a
+single transaction / single undo step.
+
+#### `apply_component_replacement_plan`
+```
+Method: apply_component_replacement_plan
+Input:  { "replacements": [
+            { "uuid": uuid,
+              "package_uuid": uuid | null,
+              "part_uuid": uuid | null }
+          ] }
+Output: { "diff": json, "description": string }
+Error:  component_not_found, part_not_found, package_not_found, invalid_operation
+```
+Current implementation note: implemented in the current daemon/stdio host.
+
+#### `set_net_class`
+```
+Method: set_net_class
+Input:  { "net_uuid": uuid,
+          "class_name": string,
+          "clearance": int,
+          "track_width": int,
+          "via_drill": int,
+          "via_diameter": int,
+          "diffpair_width": int | null,
+          "diffpair_gap": int | null }
+Output: { "diff": json }
+Error:  net_not_found, invalid_operation
+```
+Current implementation note: implemented in the current daemon/stdio host.
 
 #### `set_design_rule`
 ```
@@ -647,6 +745,16 @@ Input:  { "rule_type": string, "scope": json, "parameters": json,
           "priority": int, "name": string | null }
 Output: { "rule_uuid": uuid, "diff": json }
 ```
+Current implementation note: implemented in the current daemon/stdio host.
+
+#### `delete_component`
+```
+Method: delete_component
+Input:  { "uuid": uuid }
+Output: { "diff": json }
+Error:  not_found
+```
+Current implementation note: implemented in the current daemon/stdio host.
 
 #### `delete_track`
 ```
@@ -655,6 +763,16 @@ Input:  { "uuid": uuid }
 Output: { "diff": json }
 Error:  not_found
 ```
+Current implementation note: implemented in the current daemon/stdio host.
+
+#### `delete_via`
+```
+Method: delete_via
+Input:  { "uuid": uuid }
+Output: { "diff": json }
+Error:  not_found
+```
+Current implementation note: implemented in the current daemon/stdio host.
 
 #### `undo`
 ```
@@ -663,6 +781,7 @@ Input:  {}
 Output: { "diff": json, "description": string }
 Error:  { "code": "nothing_to_undo" }
 ```
+Current implementation note: implemented in the current daemon/stdio host.
 
 #### `redo`
 ```
@@ -671,6 +790,7 @@ Input:  {}
 Output: { "diff": json, "description": string }
 Error:  { "code": "nothing_to_redo" }
 ```
+Current implementation note: implemented in the current daemon/stdio host.
 
 #### `save`
 ```
@@ -678,6 +798,7 @@ Method: save
 Input:  { "path": string | null }    // null = save to original location
 Output: { "path": string }
 ```
+Current implementation note: implemented in the current daemon/stdio host.
 
 ---
 

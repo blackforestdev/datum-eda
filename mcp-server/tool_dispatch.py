@@ -43,6 +43,10 @@ def dispatch_tool_call(daemon: Any, name: str, arguments: dict[str, Any]) -> Any
         )
     if name == "replace_components":
         return daemon.replace_components(arguments["replacements"])
+    if name == "apply_component_replacement_plan":
+        return daemon.apply_component_replacement_plan(arguments["replacements"])
+    if name == "apply_component_replacement_policy":
+        return daemon.apply_component_replacement_policy(arguments["replacements"])
     if name == "set_reference":
         return daemon.set_reference(arguments["uuid"], arguments["reference"])
     if name == "set_net_class":

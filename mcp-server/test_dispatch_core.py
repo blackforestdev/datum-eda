@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import unittest
 
-from server_runtime import StdioToolHost
+from server_runtime import JsonRpcResponse, StdioToolHost
 from test_support import FakeDaemonClient
 
 
@@ -276,6 +276,116 @@ class TestDispatchCore(unittest.TestCase):
                             "package_uuid": "package-2",
                             "part_uuid": "part-2",
                         },
+                    ],
+                )
+            ],
+        )
+        self.assertEqual(
+            len(response["result"]["content"][0]["json"]["diff"]["modified"]),
+            2,
+        )
+
+    def test_tools_call_dispatches_apply_component_replacement_plan(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 20919,
+                "method": "tools/call",
+                "params": {
+                    "name": "apply_component_replacement_plan",
+                    "arguments": {
+                        "replacements": [
+                            {
+                                "uuid": "comp-1",
+                                "package_uuid": "package-1",
+                                "part_uuid": None,
+                            },
+                            {
+                                "uuid": "comp-2",
+                                "package_uuid": None,
+                                "part_uuid": "part-2",
+                            },
+                        ]
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "apply_component_replacement_plan",
+                    [
+                        {
+                            "uuid": "comp-1",
+                            "package_uuid": "package-1",
+                            "part_uuid": None,
+                        },
+                        {
+                            "uuid": "comp-2",
+                            "package_uuid": None,
+                            "part_uuid": "part-2",
+                        },
+                    ],
+                )
+            ],
+        )
+        self.assertEqual(
+            len(response["result"]["content"][0]["json"]["diff"]["modified"]),
+            2,
+        )
+
+    def test_tools_call_dispatches_apply_component_replacement_policy(self) -> None:
+        class PolicyDaemon(FakeDaemonClient):
+            def apply_component_replacement_policy(
+                self, replacements: list[dict[str, str]]
+            ) -> JsonRpcResponse:
+                self.calls.append(("apply_component_replacement_policy", replacements))
+                return JsonRpcResponse(
+                    "2.0",
+                    1215,
+                    {
+                        "diff": {
+                            "created": [],
+                            "modified": [
+                                {"object_type": "component", "uuid": item["uuid"]}
+                                for item in replacements
+                            ],
+                            "deleted": [],
+                        },
+                        "description": f"replace_components {len(replacements)}",
+                    },
+                    None,
+                )
+
+        daemon = PolicyDaemon()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 20920,
+                "method": "tools/call",
+                "params": {
+                    "name": "apply_component_replacement_policy",
+                    "arguments": {
+                        "replacements": [
+                            {"uuid": "comp-1", "policy": "best_compatible_package"},
+                            {"uuid": "comp-2", "policy": "best_compatible_part"},
+                        ]
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "apply_component_replacement_policy",
+                    [
+                        {"uuid": "comp-1", "policy": "best_compatible_package"},
+                        {"uuid": "comp-2", "policy": "best_compatible_part"},
                     ],
                 )
             ],

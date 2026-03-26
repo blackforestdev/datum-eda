@@ -37,6 +37,9 @@ jobs:
       - name: Static alignment audit
         run: python3 scripts/check_alignment.py
 
+      - name: Progress coverage audit
+        run: python3 scripts/check_progress_coverage.py
+
       - name: Milestone gate audit
         run: python3 scripts/check_alignment.py --run-gates
 

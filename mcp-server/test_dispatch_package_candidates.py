@@ -435,3 +435,186 @@ class TestDispatchPackageCandidates(unittest.TestCase):
                 ("get_components", None),
             ],
         )
+
+    def test_tools_call_apply_component_replacement_plan_resolves_selectors(self) -> None:
+        class StatefulDaemon(FakeDaemonClient):
+            def __init__(self) -> None:
+                super().__init__()
+                self.values = {"comp-1": "10k", "comp-2": "10k"}
+
+            def apply_component_replacement_plan(
+                self, replacements: list[dict[str, str | None]]
+            ) -> JsonRpcResponse:
+                response = super().apply_component_replacement_plan(replacements)
+                for replacement in replacements:
+                    self.values[replacement["uuid"]] = "ALTAMP"
+                return response
+
+            def get_components(self) -> JsonRpcResponse:
+                self.calls.append(("get_components", None))
+                return JsonRpcResponse(
+                    "2.0",
+                    43,
+                    [
+                        {"uuid": uuid, "reference": ref, "value": value}
+                        for uuid, ref, value in (
+                            ("comp-1", "R1", self.values["comp-1"]),
+                            ("comp-2", "R2", self.values["comp-2"]),
+                        )
+                    ],
+                    None,
+                )
+
+        daemon = StatefulDaemon()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 2641,
+                "method": "tools/call",
+                "params": {
+                    "name": "apply_component_replacement_plan",
+                    "arguments": {
+                        "replacements": [
+                            {
+                                "uuid": "comp-1",
+                                "package_uuid": "altamp-package",
+                                "part_uuid": None,
+                            },
+                            {
+                                "uuid": "comp-2",
+                                "package_uuid": None,
+                                "part_uuid": "altamp-part",
+                            },
+                        ]
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            response["result"]["content"][0]["json"]["description"],
+            "replace_components 2",
+        )
+        after = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 2642,
+                "method": "tools/call",
+                "params": {"name": "get_components", "arguments": {}},
+            }
+        )
+        values = [component["value"] for component in after["result"]["content"][0]["json"]]
+        self.assertEqual(values, ["ALTAMP", "ALTAMP"])
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "apply_component_replacement_plan",
+                    [
+                        {
+                            "uuid": "comp-1",
+                            "package_uuid": "altamp-package",
+                            "part_uuid": None,
+                        },
+                        {
+                            "uuid": "comp-2",
+                            "package_uuid": None,
+                            "part_uuid": "altamp-part",
+                        },
+                    ],
+                ),
+                ("get_components", None),
+            ],
+        )
+
+    def test_tools_call_apply_component_replacement_policy_resolves_best_candidates(
+        self,
+    ) -> None:
+        class StatefulDaemon(FakeDaemonClient):
+            def __init__(self) -> None:
+                super().__init__()
+                self.values = {"comp-1": "10k", "comp-2": "10k"}
+
+            def apply_component_replacement_policy(
+                self, replacements: list[dict[str, str]]
+            ) -> JsonRpcResponse:
+                self.calls.append(("apply_component_replacement_policy", replacements))
+                for replacement in replacements:
+                    self.values[replacement["uuid"]] = "ALTAMP"
+                return JsonRpcResponse(
+                    "2.0",
+                    44,
+                    {
+                        "diff": {
+                            "created": [],
+                            "modified": [
+                                {"object_type": "component", "uuid": item["uuid"]}
+                                for item in replacements
+                            ],
+                            "deleted": [],
+                        },
+                        "description": f"replace_components {len(replacements)}",
+                    },
+                    None,
+                )
+
+            def get_components(self) -> JsonRpcResponse:
+                self.calls.append(("get_components", None))
+                return JsonRpcResponse(
+                    "2.0",
+                    45,
+                    [
+                        {"uuid": uuid, "reference": ref, "value": value}
+                        for uuid, ref, value in (
+                            ("comp-1", "R1", self.values["comp-1"]),
+                            ("comp-2", "R2", self.values["comp-2"]),
+                        )
+                    ],
+                    None,
+                )
+
+        daemon = StatefulDaemon()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 2643,
+                "method": "tools/call",
+                "params": {
+                    "name": "apply_component_replacement_policy",
+                    "arguments": {
+                        "replacements": [
+                            {"uuid": "comp-1", "policy": "best_compatible_package"},
+                            {"uuid": "comp-2", "policy": "best_compatible_part"},
+                        ]
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            response["result"]["content"][0]["json"]["description"],
+            "replace_components 2",
+        )
+        after = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 2644,
+                "method": "tools/call",
+                "params": {"name": "get_components", "arguments": {}},
+            }
+        )
+        values = [component["value"] for component in after["result"]["content"][0]["json"]]
+        self.assertEqual(values, ["ALTAMP", "ALTAMP"])
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "apply_component_replacement_policy",
+                    [
+                        {"uuid": "comp-1", "policy": "best_compatible_package"},
+                        {"uuid": "comp-2", "policy": "best_compatible_part"},
+                    ],
+                ),
+                ("get_components", None),
+            ],
+        )

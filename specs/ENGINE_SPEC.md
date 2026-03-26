@@ -818,6 +818,14 @@ impl Engine {
     // Writes (current M3 slice)
     pub fn replace_components(&mut self, inputs: Vec<ReplaceComponentInput>)
         -> Result<OperationResult>;
+    pub fn apply_component_replacement_plan(
+        &mut self,
+        inputs: Vec<PlannedComponentReplacementInput>,
+    ) -> Result<OperationResult>;
+    pub fn apply_component_replacement_policy(
+        &mut self,
+        inputs: Vec<PolicyDrivenComponentReplacementInput>,
+    ) -> Result<OperationResult>;
 
     // Checking
     pub fn run_erc_prechecks(&self) -> Result<Vec<ErcFinding>>;

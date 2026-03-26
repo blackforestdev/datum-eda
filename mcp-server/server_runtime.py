@@ -141,6 +141,20 @@ class EngineDaemonClient:
     ) -> JsonRpcRequest:
         return self.build_request("replace_components", {"replacements": replacements})
 
+    def apply_component_replacement_plan_request(
+        self, replacements: list[dict[str, str | None]]
+    ) -> JsonRpcRequest:
+        return self.build_request(
+            "apply_component_replacement_plan", {"replacements": replacements}
+        )
+
+    def apply_component_replacement_policy_request(
+        self, replacements: list[dict[str, str]]
+    ) -> JsonRpcRequest:
+        return self.build_request(
+            "apply_component_replacement_policy", {"replacements": replacements}
+        )
+
     def set_net_class_request(
         self,
         net_uuid: str,
@@ -368,6 +382,16 @@ class EngineDaemonClient:
         self, replacements: list[dict[str, str]]
     ) -> JsonRpcResponse:
         return self.call(self.replace_components_request(replacements))
+
+    def apply_component_replacement_plan(
+        self, replacements: list[dict[str, str | None]]
+    ) -> JsonRpcResponse:
+        return self.call(self.apply_component_replacement_plan_request(replacements))
+
+    def apply_component_replacement_policy(
+        self, replacements: list[dict[str, str]]
+    ) -> JsonRpcResponse:
+        return self.call(self.apply_component_replacement_policy_request(replacements))
 
     def set_net_class(
         self,

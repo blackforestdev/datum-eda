@@ -21,6 +21,8 @@ pub(super) fn modify_board(
     redo: usize,
     save: Option<&Path>,
     save_original: bool,
+    apply_replacement_plan: &[PlannedComponentReplacementInput],
+    apply_replacement_policy: &[PolicyDrivenComponentReplacementInput],
 ) -> Result<ModifyReportView> {
     if path.extension().and_then(|ext| ext.to_str()) != Some("kicad_pcb") {
         bail!(
@@ -38,6 +40,8 @@ pub(super) fn modify_board(
         && set_package.is_empty()
         && set_package_with_part.is_empty()
         && replace_component.is_empty()
+        && apply_replacement_plan.is_empty()
+        && apply_replacement_policy.is_empty()
         && set_net_class.is_empty()
         && set_reference.is_empty()
         && set_clearance_min_nm.is_none()
@@ -178,6 +182,36 @@ pub(super) fn modify_board(
             ));
             last_result = Some(result);
         }
+    }
+    if !apply_replacement_plan.is_empty() {
+        let result = engine
+            .apply_component_replacement_plan(apply_replacement_plan.to_vec())
+            .context("failed to apply component replacement plan")?;
+        for input in apply_replacement_plan {
+            let selector = match (input.package_uuid, input.part_uuid) {
+                (Some(package_uuid), Some(part_uuid)) => {
+                    format!("package={package_uuid} part={part_uuid}")
+                }
+                (Some(package_uuid), None) => format!("package={package_uuid}"),
+                (None, Some(part_uuid)) => format!("part={part_uuid}"),
+                (None, None) => "unresolved".to_string(),
+            };
+            actions.push(format!("apply_replacement_plan {} {}", input.uuid, selector));
+        }
+        last_result = Some(result);
+    }
+    if !apply_replacement_policy.is_empty() {
+        let result = engine
+            .apply_component_replacement_policy(apply_replacement_policy.to_vec())
+            .context("failed to apply component replacement policy")?;
+        for input in apply_replacement_policy {
+            let selector = match input.policy {
+                ComponentReplacementPolicy::BestCompatiblePackage => "best_compatible_package",
+                ComponentReplacementPolicy::BestCompatiblePart => "best_compatible_part",
+            };
+            actions.push(format!("apply_replacement_policy {} {}", input.uuid, selector));
+        }
+        last_result = Some(result);
     }
     for input in set_net_class {
         let result = engine
@@ -337,6 +371,53 @@ pub(super) fn parse_replace_component_arg(value: &str) -> Result<ReplaceComponen
         uuid: Uuid::parse_str(parts[0])?,
         package_uuid: Uuid::parse_str(parts[1])?,
         part_uuid: Uuid::parse_str(parts[2])?,
+    })
+}
+
+pub(super) fn parse_apply_replacement_plan_arg(
+    value: &str,
+) -> Result<PlannedComponentReplacementInput> {
+    let parts: Vec<_> = value.split(':').collect();
+    if parts.len() != 3 && parts.len() != 5 {
+        bail!(
+            "--apply-replacement-plan expects <uuid>:package:<package_uuid> | <uuid>:part:<part_uuid> | <uuid>:package:<package_uuid>:part:<part_uuid>"
+        );
+    }
+    let uuid = Uuid::parse_str(parts[0])?;
+    let mut package_uuid = None;
+    let mut part_uuid = None;
+    let mut index = 1;
+    while index + 1 < parts.len() {
+        match parts[index] {
+            "package" => package_uuid = Some(Uuid::parse_str(parts[index + 1])?),
+            "part" => part_uuid = Some(Uuid::parse_str(parts[index + 1])?),
+            other => bail!(
+                "--apply-replacement-plan selector must be 'package' or 'part', got {other}"
+            ),
+        }
+        index += 2;
+    }
+    Ok(PlannedComponentReplacementInput {
+        uuid,
+        package_uuid,
+        part_uuid,
+    })
+}
+
+pub(super) fn parse_apply_replacement_policy_arg(
+    value: &str,
+) -> Result<PolicyDrivenComponentReplacementInput> {
+    let (uuid, selector) = value.split_once(':').ok_or_else(|| {
+        anyhow::anyhow!("--apply-replacement-policy expects <uuid>:package|part")
+    })?;
+    let policy = match selector {
+        "package" => ComponentReplacementPolicy::BestCompatiblePackage,
+        "part" => ComponentReplacementPolicy::BestCompatiblePart,
+        other => bail!("--apply-replacement-policy selector must be 'package' or 'part', got {other}"),
+    };
+    Ok(PolicyDrivenComponentReplacementInput {
+        uuid: Uuid::parse_str(uuid)?,
+        policy,
     })
 }
 

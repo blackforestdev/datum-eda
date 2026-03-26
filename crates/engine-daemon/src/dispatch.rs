@@ -177,6 +177,47 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
             }
         }
+        "apply_component_replacement_plan" => {
+            match serde_json::from_value::<ApplyComponentReplacementPlanParams>(request.params) {
+                Ok(params) => match engine.apply_component_replacement_plan(
+                    params
+                        .replacements
+                        .into_iter()
+                        .map(|item| PlannedComponentReplacementInput {
+                            uuid: item.uuid,
+                            package_uuid: item.package_uuid,
+                            part_uuid: item.part_uuid,
+                        })
+                        .collect(),
+                ) {
+                    Ok(result) => {
+                        success_response(request.id, serde_json::to_value(result).unwrap())
+                    }
+                    Err(err) => error_response(request.id, -32046, &err.to_string()),
+                },
+                Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+            }
+        }
+        "apply_component_replacement_policy" => {
+            match serde_json::from_value::<ApplyComponentReplacementPolicyParams>(request.params) {
+                Ok(params) => match engine.apply_component_replacement_policy(
+                    params
+                        .replacements
+                        .into_iter()
+                        .map(|item| PolicyDrivenComponentReplacementInput {
+                            uuid: item.uuid,
+                            policy: item.policy,
+                        })
+                        .collect(),
+                ) {
+                    Ok(result) => {
+                        success_response(request.id, serde_json::to_value(result).unwrap())
+                    }
+                    Err(err) => error_response(request.id, -32047, &err.to_string()),
+                },
+                Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+            }
+        }
         "set_net_class" => match serde_json::from_value::<SetNetClassParams>(request.params) {
             Ok(params) => match engine.set_net_class(SetNetClassInput {
                 net_uuid: params.net_uuid,

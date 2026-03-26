@@ -73,6 +73,18 @@ class TestDaemonClient(unittest.TestCase):
                 },
             ]
         )
+        apply_replacement_plan = client.apply_component_replacement_plan_request(
+            [
+                {"uuid": "comp-1", "package_uuid": "package-1", "part_uuid": None},
+                {"uuid": "comp-2", "package_uuid": None, "part_uuid": "part-2"},
+            ]
+        )
+        apply_replacement_policy = client.apply_component_replacement_policy_request(
+            [
+                {"uuid": "comp-1", "policy": "best_compatible_package"},
+                {"uuid": "comp-2", "policy": "best_compatible_part"},
+            ]
+        )
         set_net_class = client.set_net_class_request(
             "net-uuid", "power", 125000, 250000, 300000, 600000
         )
@@ -147,6 +159,30 @@ class TestDaemonClient(unittest.TestCase):
                         "package_uuid": "package-2",
                         "part_uuid": "part-2",
                     },
+                ]
+            },
+        )
+        self.assertEqual(
+            apply_replacement_plan.method, "apply_component_replacement_plan"
+        )
+        self.assertEqual(
+            apply_replacement_plan.params,
+            {
+                "replacements": [
+                    {"uuid": "comp-1", "package_uuid": "package-1", "part_uuid": None},
+                    {"uuid": "comp-2", "package_uuid": None, "part_uuid": "part-2"},
+                ]
+            },
+        )
+        self.assertEqual(
+            apply_replacement_policy.method, "apply_component_replacement_policy"
+        )
+        self.assertEqual(
+            apply_replacement_policy.params,
+            {
+                "replacements": [
+                    {"uuid": "comp-1", "policy": "best_compatible_package"},
+                    {"uuid": "comp-2", "policy": "best_compatible_part"},
                 ]
             },
         )

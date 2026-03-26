@@ -150,6 +150,26 @@ pub struct ReplaceComponentInput {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct PlannedComponentReplacementInput {
+    pub uuid: uuid::Uuid,
+    pub package_uuid: Option<uuid::Uuid>,
+    pub part_uuid: Option<uuid::Uuid>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ComponentReplacementPolicy {
+    BestCompatiblePackage,
+    BestCompatiblePart,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct PolicyDrivenComponentReplacementInput {
+    pub uuid: uuid::Uuid,
+    pub policy: ComponentReplacementPolicy,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SetNetClassInput {
     pub net_uuid: uuid::Uuid,
     pub class_name: String,

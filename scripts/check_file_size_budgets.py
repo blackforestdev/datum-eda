@@ -24,6 +24,7 @@ BUDGETS: tuple[Budget, ...] = (
     Budget("crates/cli/src/main.rs", 350, mode="pre_test"),
     Budget("mcp-server/server_runtime.py", 650, mode="total"),
     Budget("mcp-server/tools_catalog.py", 400, mode="total"),
+    Budget("mcp-server/tools_catalog_data.py", 700, mode="total"),
     Budget("mcp-server/tool_dispatch.py", 180, mode="total"),
 )
 
