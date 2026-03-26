@@ -9,6 +9,7 @@ pub mod eagle;
 pub mod ids_sidecar;
 pub mod kicad;
 pub mod net_classes_sidecar;
+pub mod package_assignments_sidecar;
 pub mod part_assignments_sidecar;
 pub mod rules_sidecar;
 

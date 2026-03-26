@@ -9,6 +9,12 @@
           <smd name="2" x="-0.04" y="0.00" dx="0.02" dy="0.05" layer="1"/>
           <smd name="3" x="0.04" y="0.00" dx="0.02" dy="0.05" layer="1"/>
         </package>
+        <package name="ALT-3">
+          <wire x1="-0.06" y1="0.05" x2="0.06" y2="0.05" width="0.005" layer="21"/>
+          <smd name="A" x="-0.05" y="-0.02" dx="0.02" dy="0.05" layer="1"/>
+          <smd name="B" x="0.00" y="0.00" dx="0.02" dy="0.05" layer="1"/>
+          <smd name="C" x="0.05" y="0.02" dx="0.02" dy="0.05" layer="1"/>
+        </package>
       </packages>
       <symbols>
         <symbol name="OPAMP">
@@ -28,6 +34,23 @@
                 <connect gate="G$1" pin="IN+" pad="1"/>
                 <connect gate="G$1" pin="IN-" pad="2"/>
                 <connect gate="G$1" pin="OUT" pad="3"/>
+              </connects>
+              <technologies>
+                <technology name=""/>
+              </technologies>
+            </device>
+          </devices>
+        </deviceset>
+        <deviceset name="ALTAMP" prefix="U">
+          <gates>
+            <gate name="G$1" symbol="OPAMP" x="0" y="0"/>
+          </gates>
+          <devices>
+            <device name="" package="ALT-3">
+              <connects>
+                <connect gate="G$1" pin="IN+" pad="A"/>
+                <connect gate="G$1" pin="IN-" pad="B"/>
+                <connect gate="G$1" pin="OUT" pad="C"/>
               </connects>
               <technologies>
                 <technology name=""/>

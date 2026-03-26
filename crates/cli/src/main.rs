@@ -9,7 +9,7 @@ use clap::{Parser, Subcommand};
 use eda_engine::api::{
     AssignPartInput, CheckReport, CheckStatus, Engine, MoveComponentInput, OperationResult,
     RotateComponentInput, SetDesignRuleInput, SetReferenceInput, SetValueInput,
-    SetNetClassInput,
+    SetNetClassInput, SetPackageInput,
 };
 use eda_engine::drc::DrcReport;
 use eda_engine::erc::ErcFinding;
@@ -123,6 +123,10 @@ enum Commands {
         /// Assign one component part: <uuid>:<part_uuid>
         #[arg(long = "assign-part")]
         assign_part: Vec<String>,
+
+        /// Set one component package: <uuid>:<package_uuid>
+        #[arg(long = "set-package")]
+        set_package: Vec<String>,
 
         /// Set one net class: <net_uuid>:<class_name>:<clearance_nm>:<track_width_nm>:<via_drill_nm>:<via_diameter_nm>[:<diffpair_width_nm>:<diffpair_gap_nm>]
         #[arg(long = "set-net-class")]
@@ -305,6 +309,7 @@ fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             rotate_component,
             set_value,
             assign_part,
+            set_package,
             set_net_class,
             set_reference,
             undo,
@@ -329,6 +334,10 @@ fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 .iter()
                 .map(|value| parse_assign_part_arg(value))
                 .collect::<Result<Vec<_>>>()?;
+            let set_package = set_package
+                .iter()
+                .map(|value| parse_set_package_arg(value))
+                .collect::<Result<Vec<_>>>()?;
             let set_net_class = set_net_class
                 .iter()
                 .map(|value| parse_set_net_class_arg(value))
@@ -347,6 +356,7 @@ fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 &rotate_component,
                 &set_value,
                 &assign_part,
+                &set_package,
                 &set_net_class,
                 &set_reference,
                 set_clearance_min_nm,
@@ -453,6 +463,7 @@ fn modify_board(
     rotate_component: &[RotateComponentInput],
     set_value: &[SetValueInput],
     assign_part: &[AssignPartInput],
+    set_package: &[SetPackageInput],
     set_net_class: &[SetNetClassInput],
     set_reference: &[SetReferenceInput],
     set_clearance_min_nm: Option<i64>,
@@ -474,6 +485,7 @@ fn modify_board(
         && rotate_component.is_empty()
         && set_value.is_empty()
         && assign_part.is_empty()
+        && set_package.is_empty()
         && set_net_class.is_empty()
         && set_reference.is_empty()
         && set_clearance_min_nm.is_none()
@@ -559,6 +571,13 @@ fn modify_board(
             .assign_part(input.clone())
             .with_context(|| format!("failed to assign part {} to {}", input.part_uuid, input.uuid))?;
         actions.push(format!("assign_part {} {}", input.uuid, input.part_uuid));
+        last_result = Some(result);
+    }
+    for input in set_package {
+        let result = engine
+            .set_package(input.clone())
+            .with_context(|| format!("failed to set package {} on {}", input.package_uuid, input.uuid))?;
+        actions.push(format!("set_package {} {}", input.uuid, input.package_uuid));
         last_result = Some(result);
     }
     for input in set_net_class {
@@ -695,6 +714,16 @@ fn parse_assign_part_arg(value: &str) -> Result<AssignPartInput> {
     Ok(AssignPartInput {
         uuid: Uuid::parse_str(uuid)?,
         part_uuid: Uuid::parse_str(part_uuid)?,
+    })
+}
+
+fn parse_set_package_arg(value: &str) -> Result<SetPackageInput> {
+    let (uuid, package_uuid) = value
+        .split_once(':')
+        .ok_or_else(|| anyhow::anyhow!("--set-package expects <uuid>:<package_uuid>"))?;
+    Ok(SetPackageInput {
+        uuid: Uuid::parse_str(uuid)?,
+        package_uuid: Uuid::parse_str(package_uuid)?,
     })
 }
 
@@ -1191,7 +1220,7 @@ mod tests {
         let report =
             import_path(&eagle_fixture_path("simple-opamp.lbr")).expect("fixture should import");
         assert!(matches!(report.kind, ImportKind::EagleLibrary));
-        assert_eq!(report.counts.parts, 1);
+        assert_eq!(report.counts.parts, 2);
         assert_eq!(
             report.metadata.get("library_name").map(String::as_str),
             Some("demo-analog")
@@ -1271,7 +1300,7 @@ mod tests {
 
         let output = execute(cli).expect("import command should succeed");
         assert!(output.contains("\"kind\": \"eagle_library\""));
-        assert!(output.contains("\"parts\": 1"));
+        assert!(output.contains("\"parts\": 2"));
     }
 
     #[test]
@@ -1542,6 +1571,7 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
             Some(125_000),
             0,
             0,
@@ -1660,6 +1690,7 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
             None,
             0,
             0,
@@ -1695,6 +1726,7 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
             None,
             0,
             0,
@@ -1718,6 +1750,7 @@ mod tests {
         ));
         let report = modify_board(
             &source,
+            &[],
             &[],
             &[],
             &[],
@@ -1772,6 +1805,7 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
             None,
             0,
             0,
@@ -1808,6 +1842,7 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
             None,
             0,
             0,
@@ -1830,6 +1865,7 @@ mod tests {
         ));
         let report = modify_board(
             &source,
+            &[],
             &[],
             &[],
             &[],
@@ -1875,6 +1911,7 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
             None,
             0,
             0,
@@ -1900,11 +1937,11 @@ mod tests {
             .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
             .expect("library import should succeed");
         let part_uuid = engine
-            .search_pool("LMV321")
+            .search_pool("ALTAMP")
             .expect("search should succeed")
             .first()
             .map(|part| part.uuid)
-            .expect("LMV321 part should exist");
+            .expect("ALTAMP part should exist");
 
         let report = modify_board(
             &source,
@@ -1921,6 +1958,7 @@ mod tests {
             }],
             &[],
             &[],
+            &[],
             None,
             0,
             0,
@@ -1930,10 +1968,75 @@ mod tests {
         .expect("modify assign_part save should succeed");
         assert_eq!(report.saved_path.as_deref(), Some(target.to_str().unwrap()));
         let saved = std::fs::read_to_string(&target).expect("saved file should read");
-        assert!(saved.contains("(property \"Value\" \"LMV321\""));
+        assert!(saved.contains("(property \"Value\" \"ALTAMP\""));
+        assert!(saved.contains("(footprint \"ALT-3\""));
         let _ = std::fs::remove_file(&target);
         let _ = std::fs::remove_file(target.with_file_name(format!(
             "{}.parts.json",
+            target.file_name().unwrap().to_string_lossy()
+        )));
+    }
+
+    #[test]
+    fn modify_board_supports_set_package_slice() {
+        let source = kicad_fixture_path("partial-route-demo.kicad_pcb");
+        let target = std::env::temp_dir().join(format!(
+            "{}-cli-save-partial-route-set-package.kicad_pcb",
+            Uuid::new_v4()
+        ));
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+            .expect("library import should succeed");
+        let package_uuid = engine
+            .search_pool("ALTAMP")
+            .expect("search should succeed")
+            .first()
+            .map(|part| part.package_uuid)
+            .expect("ALTAMP package should exist");
+
+        let report = modify_board(
+            &source,
+            &[],
+            &[],
+            &[],
+            &[eagle_fixture_path("simple-opamp.lbr")],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[SetPackageInput {
+                uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+                package_uuid,
+            }],
+            &[],
+            &[],
+            None,
+            0,
+            0,
+            Some(&target),
+            false,
+        )
+        .expect("modify set_package save should succeed");
+        assert_eq!(report.saved_path.as_deref(), Some(target.to_str().unwrap()));
+        let updated = match query_components(&target).expect("saved components should query") {
+            ComponentListView::Board { components } => components
+                .into_iter()
+                .find(|component| component.uuid == Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap())
+                .expect("target component should exist"),
+        };
+        assert_eq!(updated.package_uuid, package_uuid);
+        let sig = match query_nets(&target).expect("saved nets should query") {
+            NetListView::Board { nets } => nets
+                .into_iter()
+                .find(|net| net.name == "SIG")
+                .expect("SIG net should exist"),
+            NetListView::Schematic { .. } => panic!("expected board net list"),
+        };
+        assert_eq!(sig.pins.len(), 1);
+        let _ = std::fs::remove_file(&target);
+        let _ = std::fs::remove_file(target.with_file_name(format!(
+            "{}.packages.json",
             target.file_name().unwrap().to_string_lossy()
         )));
     }
@@ -1956,6 +2059,7 @@ mod tests {
 
         let report = modify_board(
             &source,
+            &[],
             &[],
             &[],
             &[],
@@ -2017,6 +2121,7 @@ mod tests {
                 uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
                 rotation: 180,
             }],
+            &[],
             &[],
             &[],
             &[],

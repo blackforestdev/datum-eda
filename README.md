@@ -68,8 +68,8 @@ Canonical scope terminology is defined in
   configurable severity, and waiver support
 - **DRC** — physical rule checking: clearance, track width, via geometry,
   silk clearance, unrouted nets
-- **MCP server** — all of the above accessible to AI agents (Claude Code,
-  any MCP-compatible client) via Unix socket JSON-RPC
+- **MCP server** — all of the above accessible to AI agents through any
+  MCP-compatible client via Unix socket JSON-RPC
 - **CLI** — `eda import`, `query`, `erc`, `drc`, `check`, `modify`,
   `pool search` with JSON output and CI-friendly exit codes
 
@@ -141,7 +141,7 @@ cargo run -p eda-engine-daemon -- --socket /tmp/datum-eda-engine.sock
 python3 mcp-server/server.py
 ```
 
-Register in Claude Code `~/.claude/settings.json`:
+Example MCP client registration:
 
 ```json
 {
@@ -156,6 +156,8 @@ Register in Claude Code `~/.claude/settings.json`:
   }
 }
 ```
+
+Client-specific config file locations vary by MCP host.
 
 ---
 

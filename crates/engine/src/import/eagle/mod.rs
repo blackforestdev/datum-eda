@@ -907,26 +907,38 @@ mod tests {
 
         assert_eq!(pool.units.len(), 1);
         assert_eq!(pool.symbols.len(), 1);
-        assert_eq!(pool.entities.len(), 1);
-        assert_eq!(pool.packages.len(), 1);
-        assert_eq!(pool.parts.len(), 1);
-        assert_eq!(pool.padstacks.len(), 3);
+        assert_eq!(pool.entities.len(), 2);
+        assert_eq!(pool.packages.len(), 2);
+        assert_eq!(pool.parts.len(), 2);
+        assert_eq!(pool.padstacks.len(), 6);
 
         let unit = pool.units.values().next().unwrap();
         assert_eq!(unit.name, "OPAMP");
         assert_eq!(unit.pins.len(), 3);
 
-        let entity = pool.entities.values().next().unwrap();
+        let entity = pool
+            .entities
+            .values()
+            .find(|entity| entity.name == "LMV321")
+            .unwrap();
         assert_eq!(entity.name, "LMV321");
         assert_eq!(entity.prefix, "U");
         assert_eq!(entity.gates.len(), 1);
 
-        let package = pool.packages.values().next().unwrap();
+        let package = pool
+            .packages
+            .values()
+            .find(|package| package.name == "SOT23-5")
+            .unwrap();
         assert_eq!(package.name, "SOT23-5");
         assert_eq!(package.pads.len(), 3);
         assert_eq!(package.silkscreen.len(), 1);
 
-        let part = pool.parts.values().next().unwrap();
+        let part = pool
+            .parts
+            .values()
+            .find(|part| part.value == "LMV321")
+            .unwrap();
         assert_eq!(part.entity, entity.uuid);
         assert_eq!(part.package, package.uuid);
         assert_eq!(part.pad_map.len(), 3);
@@ -999,7 +1011,7 @@ mod tests {
 
         assert_eq!(report.kind, ImportKind::EagleLibrary);
         assert_eq!(report.counts.units, 1);
-        assert_eq!(report.counts.parts, 1);
+        assert_eq!(report.counts.parts, 2);
         assert!(report.warnings.is_empty());
         assert_eq!(
             report.metadata.get("library_name").map(String::as_str),
@@ -1010,6 +1022,10 @@ mod tests {
             .search_pool("SOT23")
             .expect("pool search should work");
         assert_eq!(search.len(), 1);
+        let alt_search = engine
+            .search_pool("ALTAMP")
+            .expect("pool search should work");
+        assert_eq!(alt_search.len(), 1);
     }
 
     #[test]

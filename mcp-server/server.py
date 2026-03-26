@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-EDA MCP Server — thin translation layer between Claude Code and the engine daemon.
+EDA MCP Server — thin translation layer between MCP clients and the engine daemon.
 
 Communicates with eda-engine-daemon via JSON-RPC over Unix socket.
 See specs/MCP_API_SPEC.md for the full tool catalog.
@@ -116,6 +116,9 @@ class EngineDaemonClient:
 
     def assign_part_request(self, uuid: str, part_uuid: str) -> JsonRpcRequest:
         return self.build_request("assign_part", {"uuid": uuid, "part_uuid": part_uuid})
+
+    def set_package_request(self, uuid: str, package_uuid: str) -> JsonRpcRequest:
+        return self.build_request("set_package", {"uuid": uuid, "package_uuid": package_uuid})
 
     def set_net_class_request(
         self,
@@ -317,6 +320,9 @@ class EngineDaemonClient:
 
     def assign_part(self, uuid: str, part_uuid: str) -> JsonRpcResponse:
         return self.call(self.assign_part_request(uuid, part_uuid))
+
+    def set_package(self, uuid: str, package_uuid: str) -> JsonRpcResponse:
+        return self.call(self.set_package_request(uuid, package_uuid))
 
     def set_net_class(
         self,
@@ -537,6 +543,18 @@ TOOLS: list[dict[str, Any]] = [
                 "part_uuid": {"type": "string"},
             },
             "required": ["uuid", "part_uuid"],
+        },
+    },
+    {
+        "name": "set_package",
+        "description": "Assign one pool package to a board component by UUID in the current M3 slice.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "uuid": {"type": "string"},
+                "package_uuid": {"type": "string"},
+            },
+            "required": ["uuid", "package_uuid"],
         },
     },
     {
@@ -765,10 +783,29 @@ class StdioToolHost:
     def __init__(self, daemon: EngineDaemonClient) -> None:
         self._daemon = daemon
 
-    def handle_message(self, message: dict[str, Any]) -> dict[str, Any]:
+    def handle_message(self, message: dict[str, Any]) -> dict[str, Any] | None:
         method = message.get("method")
         msg_id = message.get("id")
         params = message.get("params", {})
+
+        # Standard MCP initialization and liveness methods.
+        if method == "initialize":
+            return {
+                "jsonrpc": "2.0",
+                "id": msg_id,
+                "result": {
+                    "protocolVersion": "2024-11-05",
+                    "capabilities": {"tools": {}},
+                    "serverInfo": {"name": "datum-eda", "version": "0.1.0"},
+                },
+            }
+
+        # Notification: no response.
+        if method == "notifications/initialized":
+            return None
+
+        if method == "ping":
+            return {"jsonrpc": "2.0", "id": msg_id, "result": {}}
 
         if method == "tools/list":
             return {"jsonrpc": "2.0", "id": msg_id, "result": {"tools": TOOLS}}
@@ -785,6 +822,10 @@ class StdioToolHost:
                     "error": {"code": -32010, "message": str(exc)},
                 }
             return {"jsonrpc": "2.0", "id": msg_id, "result": result}
+
+        # For unknown notifications, remain silent. For unknown requests, return error.
+        if msg_id is None:
+            return None
 
         return {
             "jsonrpc": "2.0",
@@ -820,6 +861,8 @@ class StdioToolHost:
             response = self._daemon.set_value(arguments["uuid"], arguments["value"])
         elif name == "assign_part":
             response = self._daemon.assign_part(arguments["uuid"], arguments["part_uuid"])
+        elif name == "set_package":
+            response = self._daemon.set_package(arguments["uuid"], arguments["package_uuid"])
         elif name == "set_reference":
             response = self._daemon.set_reference(
                 arguments["uuid"], arguments["reference"]
@@ -919,7 +962,8 @@ class StdioToolHost:
                 continue
             message = json.loads(line)
             response = self.handle_message(message)
-            print(json.dumps(response), flush=True)
+            if response is not None:
+                print(json.dumps(response), flush=True)
 
 
 class ServerTests(unittest.TestCase):
@@ -1028,6 +1072,22 @@ class ServerTests(unittest.TestCase):
                         "deleted": [],
                     },
                     "description": f"assign_part {uuid}",
+                },
+                None,
+            )
+
+        def set_package(self, uuid: str, package_uuid: str) -> JsonRpcResponse:
+            self.calls.append(("set_package", uuid, package_uuid))
+            return JsonRpcResponse(
+                "2.0",
+                121,
+                {
+                    "diff": {
+                        "created": [],
+                        "modified": [{"object_type": "component", "uuid": uuid}],
+                        "deleted": [],
+                    },
+                    "description": f"set_package {uuid}",
                 },
                 None,
             )
@@ -1290,7 +1350,13 @@ class ServerTests(unittest.TestCase):
                 "2.0",
                 24,
                 [
-                    {"reference": "R1", "value": "10k", "footprint": "Resistor_SMD:R_0603_1608Metric"}
+                    {
+                        "uuid": "comp-1",
+                        "package_uuid": "00000000-0000-0000-0000-000000000000",
+                        "reference": "R1",
+                        "value": "10k",
+                        "footprint": "Resistor_SMD:R_0603_1608Metric",
+                    }
                 ],
                 None,
             )
@@ -1503,6 +1569,7 @@ class ServerTests(unittest.TestCase):
         rotate_component = client.rotate_component_request("comp-uuid", 180.0)
         set_value = client.set_value_request("comp-uuid", "22k")
         assign_part = client.assign_part_request("comp-uuid", "part-uuid")
+        set_package = client.set_package_request("comp-uuid", "package-uuid")
         set_net_class = client.set_net_class_request(
             "net-uuid", "power", 125000, 250000, 300000, 600000
         )
@@ -1539,6 +1606,10 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(assign_part.method, "assign_part")
         self.assertEqual(
             assign_part.params, {"uuid": "comp-uuid", "part_uuid": "part-uuid"}
+        )
+        self.assertEqual(set_package.method, "set_package")
+        self.assertEqual(
+            set_package.params, {"uuid": "comp-uuid", "package_uuid": "package-uuid"}
         )
         self.assertEqual(set_net_class.method, "set_net_class")
         self.assertEqual(
@@ -1787,6 +1858,7 @@ class ServerTests(unittest.TestCase):
             "rotate_component",
             "set_value",
             "assign_part",
+            "set_package",
             "set_reference",
             "set_net_class",
             "delete_via",
@@ -1819,6 +1891,29 @@ class ServerTests(unittest.TestCase):
             "run_drc",
             "explain_violation",
         ])
+
+    def test_initialize_returns_server_info_and_capabilities(self) -> None:
+        host = StdioToolHost(self.FakeDaemonClient())
+        response = host.handle_message({"jsonrpc": "2.0", "id": 1, "method": "initialize"})
+        assert isinstance(response, dict)
+        self.assertEqual(response["jsonrpc"], "2.0")
+        self.assertEqual(response["id"], 1)
+        self.assertEqual(response["result"]["protocolVersion"], "2024-11-05")
+        self.assertEqual(response["result"]["serverInfo"]["name"], "datum-eda")
+        self.assertIn("tools", response["result"]["capabilities"])
+
+    def test_ping_returns_empty_result(self) -> None:
+        host = StdioToolHost(self.FakeDaemonClient())
+        response = host.handle_message({"jsonrpc": "2.0", "id": 7, "method": "ping"})
+        assert isinstance(response, dict)
+        self.assertEqual(response, {"jsonrpc": "2.0", "id": 7, "result": {}})
+
+    def test_initialized_notification_returns_no_response(self) -> None:
+        host = StdioToolHost(self.FakeDaemonClient())
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}}
+        )
+        self.assertIsNone(response)
 
     def test_tools_call_dispatches_open_project(self) -> None:
         daemon = self.FakeDaemonClient()
@@ -2004,6 +2099,26 @@ class ServerTests(unittest.TestCase):
             }
         )
         self.assertEqual(daemon.calls, [("assign_part", "comp-1", "part-1")])
+        self.assertEqual(
+            response["result"]["content"][0]["json"]["diff"]["modified"][0]["object_type"],
+            "component",
+        )
+
+    def test_tools_call_dispatches_set_package(self) -> None:
+        daemon = self.FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 2093,
+                "method": "tools/call",
+                "params": {
+                    "name": "set_package",
+                    "arguments": {"uuid": "comp-1", "package_uuid": "package-1"},
+                },
+            }
+        )
+        self.assertEqual(daemon.calls, [("set_package", "comp-1", "package-1")])
         self.assertEqual(
             response["result"]["content"][0]["json"]["diff"]["modified"][0]["object_type"],
             "component",
@@ -3040,31 +3155,36 @@ class ServerTests(unittest.TestCase):
             ],
         )
 
-    def test_tools_call_assign_part_changes_followup_components_response(self) -> None:
+    def test_tools_call_assign_part_changes_followup_net_info_response(self) -> None:
         class StatefulDaemon(self.FakeDaemonClient):
             def __init__(self) -> None:
                 super().__init__()
-                self.value = "10k"
+                self.pin_count = 2
 
             def assign_part(self, uuid: str, part_uuid: str) -> JsonRpcResponse:
                 response = super().assign_part(uuid, part_uuid)
-                self.value = "LMV321"
+                self.pin_count = 1
                 return response
 
-            def get_components(self) -> JsonRpcResponse:
-                self.calls.append(("get_components", None))
+            def get_net_info(self) -> JsonRpcResponse:
+                self.calls.append(("get_net_info", None))
                 return JsonRpcResponse(
                     "2.0",
                     28,
                     [
                         {
-                            "uuid": "comp-1",
-                            "reference": "R1",
-                            "value": self.value,
-                            "position": {"x": 10_000_000, "y": 10_000_000},
-                            "rotation": 0,
-                            "layer": 0,
-                            "locked": False,
+                            "uuid": "net-1",
+                            "name": "SIG",
+                            "class": "Default",
+                            "pins": [
+                                {"component": "R1", "pin": "1"}
+                                for _ in range(self.pin_count)
+                            ],
+                            "tracks": 1,
+                            "vias": 0,
+                            "zones": 0,
+                            "routed_length_nm": 11000000,
+                            "routed_pct": 1.0,
                         }
                     ],
                     None,
@@ -3077,11 +3197,11 @@ class ServerTests(unittest.TestCase):
                 "jsonrpc": "2.0",
                 "id": 243,
                 "method": "tools/call",
-                "params": {"name": "get_components", "arguments": {}},
+                "params": {"name": "get_net_info", "arguments": {}},
             }
         )
-        before_components = before["result"]["content"][0]["json"]
-        self.assertEqual(before_components[0]["value"], "10k")
+        before_nets = before["result"]["content"][0]["json"]
+        self.assertEqual(len(before_nets[0]["pins"]), 2)
 
         host.handle_message(
             {
@@ -3099,17 +3219,95 @@ class ServerTests(unittest.TestCase):
                 "jsonrpc": "2.0",
                 "id": 245,
                 "method": "tools/call",
-                "params": {"name": "get_components", "arguments": {}},
+                "params": {"name": "get_net_info", "arguments": {}},
             }
         )
-        after_components = after["result"]["content"][0]["json"]
-        self.assertEqual(after_components[0]["value"], "LMV321")
+        after_nets = after["result"]["content"][0]["json"]
+        self.assertEqual(len(after_nets[0]["pins"]), 1)
         self.assertEqual(
             daemon.calls,
             [
-                ("get_components", None),
+                ("get_net_info", None),
                 ("assign_part", "comp-1", "part-1"),
-                ("get_components", None),
+                ("get_net_info", None),
+            ],
+        )
+
+    def test_tools_call_set_package_changes_followup_net_info_response(self) -> None:
+        class StatefulDaemon(self.FakeDaemonClient):
+            def __init__(self) -> None:
+                super().__init__()
+                self.pin_count = 2
+
+            def set_package(self, uuid: str, package_uuid: str) -> JsonRpcResponse:
+                response = super().set_package(uuid, package_uuid)
+                self.pin_count = 1
+                return response
+
+            def get_net_info(self) -> JsonRpcResponse:
+                self.calls.append(("get_net_info", None))
+                return JsonRpcResponse(
+                    "2.0",
+                    28,
+                    [
+                        {
+                            "uuid": "net-1",
+                            "name": "SIG",
+                            "class": "Default",
+                            "pins": [
+                                {"component": "R1", "pin": "1"}
+                                for _ in range(self.pin_count)
+                            ],
+                            "tracks": 1,
+                            "vias": 0,
+                            "zones": 0,
+                            "routed_length_nm": 11000000,
+                            "routed_pct": 1.0,
+                        }
+                    ],
+                    None,
+                )
+
+        daemon = StatefulDaemon()
+        host = StdioToolHost(daemon)
+        before = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 2431,
+                "method": "tools/call",
+                "params": {"name": "get_net_info", "arguments": {}},
+            }
+        )
+        before_nets = before["result"]["content"][0]["json"]
+        self.assertEqual(len(before_nets[0]["pins"]), 2)
+
+        host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 2432,
+                "method": "tools/call",
+                "params": {
+                    "name": "set_package",
+                    "arguments": {"uuid": "comp-1", "package_uuid": "package-1"},
+                },
+            }
+        )
+        after = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 2433,
+                "method": "tools/call",
+                "params": {"name": "get_net_info", "arguments": {}},
+            }
+        )
+        after_nets = after["result"]["content"][0]["json"]
+        self.assertEqual(len(after_nets[0]["pins"]), 1)
+        self.assertEqual(
+            daemon.calls,
+            [
+                ("get_net_info", None),
+                ("set_package", "comp-1", "package-1"),
+                ("get_net_info", None),
             ],
         )
 

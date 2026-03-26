@@ -135,7 +135,8 @@ operations, export, native format, GUI.
 
 ### M2: ERC + DRC + Reporting + MCP/CLI (v1)
 
-**Exit gate**: Claude can open DOA2526 via MCP, query it, run ERC/DRC.
+**Exit gate**: An MCP-compatible AI client can open DOA2526 via MCP, query it,
+run ERC/DRC.
 `tool erc design.kicad_sch` and `tool drc board.kicad_pcb` work in CI.
 
 **Current implementation status**:
@@ -168,7 +169,7 @@ operations, export, native format, GUI.
 | DRC correctness | 0% false negative rate on known violations in test corpus |
 | MCP tools | open_project, close_project, search_pool, get_part, get_package, get_board_summary, get_schematic_summary, get_sheets, get_symbols, get_ports, get_labels, get_buses, get_bus_entries, get_noconnects, get_symbol_fields, get_hierarchy, get_netlist, get_components, get_net_info, get_schematic_net_info, get_connectivity_diagnostics, get_design_rules, get_unrouted, run_erc, run_drc, explain_violation |
 | CLI commands | `tool import`, `tool query`, `tool erc`, `tool drc`, `tool pool search` |
-| MCP registration | Works in ~/.claude/settings.json, Claude can call tools |
+| MCP registration | Works in host MCP client config; tools callable via a standards-compliant MCP client |
 | Test corpus | 10+ designs with ERC/DRC golden files |
 | CLI exit codes | 0 = pass, 1 = violations, 2 = error |
 | Response time | DRC on DOA2526 < 5 seconds |
@@ -204,12 +205,12 @@ by forcing fragile imported-schematic write-back into `M3`.
 
 | Criterion | Threshold |
 |-----------|-----------|
-| Operations implemented | MoveComponent, RotateComponent, DeleteComponent, SetValue, SetReference, AssignPart, SetNetClass, SetDesignRule, DeleteTrack, DeleteVia |
+| Operations implemented | MoveComponent, RotateComponent, DeleteComponent, SetValue, SetReference, AssignPart, SetPackage, SetNetClass, SetDesignRule, DeleteTrack, DeleteVia |
 | Undo/redo | 100% of operations undoable |
 | Operation determinism | Same operation sequence → identical result |
 | KiCad write-back | Import → modify → export → opens in KiCad without errors |
 | Round-trip fidelity | Unmodified objects byte-identical after round-trip |
-| MCP write tools | move_component, set_value, set_reference, set_design_rule, delete_track, undo, redo, save |
+| MCP write tools | move_component, rotate_component, set_value, set_reference, assign_part, set_package, set_net_class, set_design_rule, delete_component, delete_track, delete_via, undo, redo, save |
 | Derived data update | Connectivity, airwires, DRC recompute after each operation |
 | CLI modify command | `tool modify <design> --move U1 50,30` works |
 
@@ -246,15 +247,15 @@ milestone.
 ### M2 (v1) User Stories
 - As an EE, I run `tool erc design.kicad_sch` in CI and the build fails on electrical mistakes.
 - As an EE, I run `tool drc board.kicad_pcb` in CI and the build fails on clearance violations.
-- As an EE, I ask Claude "what nets are in this design?" and get a structured answer via MCP.
-- As an EE, I ask Claude "run ERC and tell me what is undriven" and get a human-readable explanation.
-- As an EE, I ask Claude "run DRC and explain the worst violation" and get a human-readable explanation.
+- As an EE, I ask my MCP-compatible AI client "what nets are in this design?" and get a structured answer via MCP.
+- As an EE, I ask my MCP-compatible AI client "run ERC and tell me what is undriven" and get a human-readable explanation.
+- As an EE, I ask my MCP-compatible AI client "run DRC and explain the worst violation" and get a human-readable explanation.
 - As an EE, I search the pool for "100nF 0402" and get matching parts with MPNs.
 - As an EE, I import an Eagle design and query its component list.
 
 ### M3 User Stories
-- As an EE, I ask Claude "move U1 to (25, 15) and rotate 90 degrees" and it modifies my KiCad design.
-- As an EE, I ask Claude "change all 10k resistors to 4.7k" and it does a batch modification.
+- As an EE, I ask my MCP-compatible AI client "move U1 to (25, 15) and rotate 90 degrees" and it modifies my KiCad design.
+- As an EE, I ask my MCP-compatible AI client "change all 10k resistors to 4.7k" and it does a batch modification.
 - As an EE, I undo the last change via CLI.
 - As an EE, I save modifications back to .kicad_pcb and open in KiCad.
 

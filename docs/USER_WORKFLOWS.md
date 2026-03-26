@@ -26,11 +26,11 @@ An electrical engineer who:
 - May have existing KiCad/Eagle designs and needs migration continuity
 - Wants programmatic access to design data
 - Values CLI and scriptability over GUI clicking
-- May already use AI tools (Claude, Copilot) in their workflow
+- May already use AI coding/assistant tools in their workflow
 - Needs CI/CD integration for design verification
 
 ### Secondary: AI Agent (autonomous or semi-autonomous)
-Claude Code or similar AI agent that:
+An MCP-compatible AI agent/client that:
 - Opens designs via MCP
 - Queries design data to answer engineering questions
 - Runs ERC/DRC and explains results
@@ -89,10 +89,10 @@ Exit codes (per `specs/PROGRAM_SPEC.md`):
 Using MCP tools defined in `specs/MCP_API_SPEC.md`:
 
 ```
-Claude → MCP: open_project({ path: "amplifier.kicad_pcb" })
-Claude → MCP: get_board_summary({})
-Claude → MCP: get_net_info({})
-Claude → MCP: get_unrouted({})
+AI client → MCP: open_project({ path: "amplifier.kicad_pcb" })
+AI client → MCP: get_board_summary({})
+AI client → MCP: get_net_info({})
+AI client → MCP: get_unrouted({})
 ```
 
 The AI agent uses the structured responses to compose a human-readable
@@ -101,9 +101,9 @@ answer about the design.
 ### 2.4 "AI, run ERC and explain what's wrong" (MCP workflow)
 
 ```
-Claude → MCP: open_project({ path: "sensor.kicad_sch" })
-Claude → MCP: run_erc({})
-Claude → MCP: get_check_report({})
+AI client → MCP: open_project({ path: "sensor.kicad_sch" })
+AI client → MCP: run_erc({})
+AI client → MCP: get_check_report({})
 ```
 
 `explain_violation` is part of the current `M2` MCP surface. The agent can use
@@ -125,10 +125,10 @@ These workflows use MCP tools defined in `specs/MCP_API_SPEC.md` §M3.
 ### 3.1 "AI, reorganize the component placement"
 
 ```
-Claude → MCP: move_component({ reference: "U1", x_mm: 25.0, y_mm: 15.0, rotation_deg: 90 })
-Claude → MCP: move_component({ reference: "C1", x_mm: 24.0, y_mm: 16.5 })
-Claude → MCP: run_drc({})
-Claude → MCP: save({})
+AI client → MCP: move_component({ reference: "U1", x_mm: 25.0, y_mm: 15.0, rotation_deg: 90 })
+AI client → MCP: move_component({ reference: "C1", x_mm: 24.0, y_mm: 16.5 })
+AI client → MCP: run_drc({})
+AI client → MCP: save({})
 ```
 
 ### 3.2 "Batch modify via CLI"

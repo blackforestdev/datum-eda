@@ -11,7 +11,7 @@ use crate::erc::{self, ErcConfig, ErcFinding};
 use crate::error::EngineError;
 use crate::import::{
     ImportKind, ImportReport, detect_import_kind, eagle, ids_sidecar, kicad,
-    net_classes_sidecar, part_assignments_sidecar, rules_sidecar,
+    net_classes_sidecar, package_assignments_sidecar, part_assignments_sidecar, rules_sidecar,
 };
 use crate::ir::units::nm_to_mm;
 use crate::pool::{PartSummary, Pool, PoolIndex};
@@ -53,6 +53,7 @@ struct ImportedDesignSource {
     source_path: std::path::PathBuf,
     original_contents: String,
     loaded_rule_sidecar: bool,
+    loaded_package_assignment_sidecar: bool,
     loaded_part_assignment_sidecar: bool,
     loaded_net_class_sidecar: bool,
 }
@@ -117,6 +118,12 @@ pub struct AssignPartInput {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct SetPackageInput {
+    pub uuid: uuid::Uuid,
+    pub package_uuid: uuid::Uuid,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SetNetClassInput {
     pub net_uuid: uuid::Uuid,
     pub class_name: String,
@@ -163,6 +170,14 @@ enum TransactionRecord {
     AssignPart {
         before: crate::board::PlacedPackage,
         after: crate::board::PlacedPackage,
+        before_pads: Vec<crate::board::PlacedPad>,
+        after_pads: Vec<crate::board::PlacedPad>,
+    },
+    SetPackage {
+        before: crate::board::PlacedPackage,
+        after: crate::board::PlacedPackage,
+        before_pads: Vec<crate::board::PlacedPad>,
+        after_pads: Vec<crate::board::PlacedPad>,
     },
     SetNetClass {
         before_net: crate::board::Net,
@@ -371,6 +386,27 @@ impl Engine {
                     board: Some(board),
                     schematic: None,
                 });
+                let mut loaded_package_assignment_sidecar = false;
+                let package_sidecar_path =
+                    package_assignments_sidecar::sidecar_path_for_source(path);
+                if package_sidecar_path.exists() {
+                    match package_assignments_sidecar::read_sidecar(&package_sidecar_path) {
+                        Ok(sidecar) if sidecar.source_hash == source_hash => {
+                            if let Some(design) = self.design.as_mut()
+                                && let Some(board) = design.board.as_mut()
+                            {
+                                for (component_uuid, package_uuid) in sidecar.assignments {
+                                    if let Some(package) = board.packages.get_mut(&component_uuid) {
+                                        package.package = package_uuid;
+                                    }
+                                }
+                                loaded_package_assignment_sidecar = true;
+                            }
+                        }
+                        Ok(_) => {}
+                        Err(_) => {}
+                    }
+                }
                 let mut loaded_part_assignment_sidecar = false;
                 let part_sidecar_path = part_assignments_sidecar::sidecar_path_for_source(path);
                 if part_sidecar_path.exists() {
@@ -421,6 +457,7 @@ impl Engine {
                     source_path: path.to_path_buf(),
                     original_contents,
                     loaded_rule_sidecar,
+                    loaded_package_assignment_sidecar,
                     loaded_part_assignment_sidecar,
                     loaded_net_class_sidecar,
                 });
@@ -442,6 +479,7 @@ impl Engine {
                     source_path: path.to_path_buf(),
                     original_contents,
                     loaded_rule_sidecar: false,
+                    loaded_package_assignment_sidecar: false,
                     loaded_part_assignment_sidecar: false,
                     loaded_net_class_sidecar: false,
                 });
@@ -1351,15 +1389,25 @@ impl Engine {
     }
 
     pub fn assign_part(&mut self, input: AssignPartInput) -> Result<OperationResult, EngineError> {
+        let part = self.pool.parts.get(&input.part_uuid).ok_or(EngineError::NotFound {
+            object_type: "part",
+            uuid: input.part_uuid,
+        })?;
+        let target_package = self
+            .pool
+            .packages
+            .get(&part.package)
+            .ok_or(EngineError::DanglingReference {
+                source_type: "part",
+                source_uuid: input.part_uuid,
+                target_type: "package",
+                target_uuid: part.package,
+            })?;
         let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
         let board = design.board.as_mut().ok_or_else(|| {
             EngineError::Operation(
                 "assign_part is currently implemented only for board projects".to_string(),
             )
-        })?;
-        let part = self.pool.parts.get(&input.part_uuid).ok_or(EngineError::NotFound {
-            object_type: "part",
-            uuid: input.part_uuid,
         })?;
 
         let before = board
@@ -1370,6 +1418,7 @@ impl Engine {
                 object_type: "component",
                 uuid: input.uuid,
             })?;
+        let before_pads = component_pads(board, input.uuid);
         let package = board
             .packages
             .get_mut(&input.uuid)
@@ -1378,12 +1427,17 @@ impl Engine {
                 uuid: input.uuid,
             })?;
         package.part = input.part_uuid;
+        package.package = part.package;
         package.value = part.value.clone();
         let after = package.clone();
+        replace_component_pads_from_pool_package(board, &after, target_package)?;
+        let after_pads = component_pads(board, input.uuid);
 
         self.undo_stack.push(TransactionRecord::AssignPart {
             before: before.clone(),
             after: after.clone(),
+            before_pads,
+            after_pads,
         });
         self.redo_stack.clear();
         self.undo_depth = self.undo_stack.len();
@@ -1399,6 +1453,78 @@ impl Engine {
                 deleted: Vec::new(),
             },
             description: format!("assign_part {}", input.uuid),
+        })
+    }
+
+    pub fn set_package(
+        &mut self,
+        input: SetPackageInput,
+    ) -> Result<OperationResult, EngineError> {
+        let target_package = self
+            .pool
+            .packages
+            .get(&input.package_uuid)
+            .ok_or(EngineError::NotFound {
+                object_type: "package",
+                uuid: input.package_uuid,
+            })?;
+        let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
+        let board = design.board.as_mut().ok_or_else(|| {
+            EngineError::Operation(
+                "set_package is currently implemented only for board projects".to_string(),
+            )
+        })?;
+
+        let before = board
+            .packages
+            .get(&input.uuid)
+            .cloned()
+            .ok_or(EngineError::NotFound {
+                object_type: "component",
+                uuid: input.uuid,
+            })?;
+        let before_pads = component_pads(board, input.uuid);
+        let package = board
+            .packages
+            .get_mut(&input.uuid)
+            .ok_or(EngineError::NotFound {
+                object_type: "component",
+                uuid: input.uuid,
+            })?;
+        package.package = input.package_uuid;
+        if package.part != Uuid::nil()
+            && self
+                .pool
+                .parts
+                .get(&package.part)
+                .is_some_and(|part| part.package != input.package_uuid)
+        {
+            package.part = Uuid::nil();
+        }
+        let after = package.clone();
+        replace_component_pads_from_pool_package(board, &after, target_package)?;
+        let after_pads = component_pads(board, input.uuid);
+
+        self.undo_stack.push(TransactionRecord::SetPackage {
+            before: before.clone(),
+            after: after.clone(),
+            before_pads,
+            after_pads,
+        });
+        self.redo_stack.clear();
+        self.undo_depth = self.undo_stack.len();
+        self.redo_depth = 0;
+
+        Ok(OperationResult {
+            diff: OperationDiff {
+                created: Vec::new(),
+                modified: vec![OperationRef {
+                    object_type: "component".to_string(),
+                    uuid: input.uuid,
+                }],
+                deleted: Vec::new(),
+            },
+            description: format!("set_package {}", input.uuid),
         })
     }
 
@@ -1791,7 +1917,12 @@ impl Engine {
                     description: format!("undo set_reference {}", after.uuid),
                 }
             }
-            TransactionRecord::AssignPart { before, after } => {
+            TransactionRecord::AssignPart {
+                before,
+                after,
+                before_pads,
+                after_pads: _,
+            } => {
                 let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
                 let board = design.board.as_mut().ok_or_else(|| {
                     EngineError::Operation(
@@ -1806,6 +1937,7 @@ impl Engine {
                         uuid: after.uuid,
                     })?;
                 *package = before.clone();
+                restore_component_pads(board, after.uuid, before_pads);
                 OperationResult {
                     diff: OperationDiff {
                         created: Vec::new(),
@@ -1816,6 +1948,39 @@ impl Engine {
                         deleted: Vec::new(),
                     },
                     description: format!("undo assign_part {}", after.uuid),
+                }
+            }
+            TransactionRecord::SetPackage {
+                before,
+                after,
+                before_pads,
+                after_pads: _,
+            } => {
+                let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
+                let board = design.board.as_mut().ok_or_else(|| {
+                    EngineError::Operation(
+                        "undo is currently implemented only for board transactions".to_string(),
+                    )
+                })?;
+                let package = board
+                    .packages
+                    .get_mut(&after.uuid)
+                    .ok_or(EngineError::NotFound {
+                        object_type: "component",
+                        uuid: after.uuid,
+                    })?;
+                *package = before.clone();
+                restore_component_pads(board, after.uuid, before_pads);
+                OperationResult {
+                    diff: OperationDiff {
+                        created: Vec::new(),
+                        modified: vec![OperationRef {
+                            object_type: "component".to_string(),
+                            uuid: after.uuid,
+                        }],
+                        deleted: Vec::new(),
+                    },
+                    description: format!("undo set_package {}", after.uuid),
                 }
             }
             TransactionRecord::SetNetClass {
@@ -2100,7 +2265,12 @@ impl Engine {
                     description: format!("redo set_reference {}", after.uuid),
                 }
             }
-            TransactionRecord::AssignPart { before: _, after } => {
+            TransactionRecord::AssignPart {
+                before: _,
+                after,
+                before_pads: _,
+                after_pads,
+            } => {
                 let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
                 let board = design.board.as_mut().ok_or_else(|| {
                     EngineError::Operation(
@@ -2115,6 +2285,7 @@ impl Engine {
                         uuid: after.uuid,
                     })?;
                 *package = after.clone();
+                restore_component_pads(board, after.uuid, after_pads);
                 OperationResult {
                     diff: OperationDiff {
                         created: Vec::new(),
@@ -2125,6 +2296,39 @@ impl Engine {
                         deleted: Vec::new(),
                     },
                     description: format!("redo assign_part {}", after.uuid),
+                }
+            }
+            TransactionRecord::SetPackage {
+                before: _,
+                after,
+                before_pads: _,
+                after_pads,
+            } => {
+                let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
+                let board = design.board.as_mut().ok_or_else(|| {
+                    EngineError::Operation(
+                        "redo is currently implemented only for board transactions".to_string(),
+                    )
+                })?;
+                let package = board
+                    .packages
+                    .get_mut(&after.uuid)
+                    .ok_or(EngineError::NotFound {
+                        object_type: "component",
+                        uuid: after.uuid,
+                    })?;
+                *package = after.clone();
+                restore_component_pads(board, after.uuid, after_pads);
+                OperationResult {
+                    diff: OperationDiff {
+                        created: Vec::new(),
+                        modified: vec![OperationRef {
+                            object_type: "component".to_string(),
+                            uuid: after.uuid,
+                        }],
+                        deleted: Vec::new(),
+                    },
+                    description: format!("redo set_package {}", after.uuid),
                 }
             }
             TransactionRecord::SetNetClass {
@@ -2193,8 +2397,15 @@ impl Engine {
             )));
         }
 
-        let serialized =
-            serialize_current_kicad_board_slice(&imported.original_contents, &self.undo_stack)?;
+        let serialized = serialize_current_kicad_board_slice(
+            &imported.original_contents,
+            design
+                .board
+                .as_ref()
+                .ok_or_else(|| EngineError::Operation("save requires imported board".to_string()))?,
+            &self.pool,
+            &self.undo_stack,
+        )?;
         std::fs::write(path, serialized.as_bytes())?;
         persist_rule_sidecar(
             path,
@@ -2222,6 +2433,23 @@ impl Engine {
                 })
                 .unwrap_or_default(),
             imported.loaded_part_assignment_sidecar,
+        )?;
+        persist_package_assignment_sidecar(
+            path,
+            &serialized,
+            design
+                .board
+                .as_ref()
+                .map(|board| {
+                    board
+                        .packages
+                        .values()
+                        .filter(|package| package.package != uuid::Uuid::nil())
+                        .map(|package| (package.uuid, package.package))
+                        .collect()
+                })
+                .unwrap_or_default(),
+            imported.loaded_package_assignment_sidecar,
         )?;
         persist_net_class_sidecar(
             path,
@@ -2264,6 +2492,8 @@ impl Engine {
 
 fn serialize_current_kicad_board_slice(
     original_contents: &str,
+    board: &Board,
+    pool: &Pool,
     undo_stack: &[TransactionRecord],
 ) -> Result<String, EngineError> {
     let deleted_tracks = active_deleted_track_uuids(undo_stack);
@@ -2273,6 +2503,7 @@ fn serialize_current_kicad_board_slice(
     let valued_components = active_set_value_components(undo_stack);
     let referenced_components = active_set_reference_components(undo_stack);
     let assigned_components = active_assigned_part_components(undo_stack);
+    let package_rewritten_components = active_package_rewritten_components(board);
     let forms = [
         ("segment", &deleted_tracks),
         ("via", &deleted_vias),
@@ -2286,10 +2517,25 @@ fn serialize_current_kicad_board_slice(
     } else {
         remove_kicad_top_level_forms(original_contents, &forms)?
     };
-    let moved = rewrite_moved_footprints(&without_removed, &moved_components)?;
+    let package_rewritten = rewrite_package_footprints(
+        &without_removed,
+        board,
+        pool,
+        &package_rewritten_components,
+    )?;
+    let moved = rewrite_moved_footprints(
+        &package_rewritten,
+        &filter_component_map(&moved_components, &package_rewritten_components),
+    )?;
     let assigned_values = merge_component_value_overrides(&valued_components, &assigned_components);
-    let valued = rewrite_value_footprints(&moved, &assigned_values)?;
-    rewrite_reference_footprints(&valued, &referenced_components)
+    let valued = rewrite_value_footprints(
+        &moved,
+        &filter_component_map(&assigned_values, &package_rewritten_components),
+    )?;
+    rewrite_reference_footprints(
+        &valued,
+        &filter_component_map(&referenced_components, &package_rewritten_components),
+    )
 }
 
 fn active_deleted_track_uuids(undo_stack: &[TransactionRecord]) -> BTreeSet<uuid::Uuid> {
@@ -2383,6 +2629,25 @@ fn merge_component_value_overrides(
         merged.insert(*uuid, package.clone());
     }
     merged
+}
+
+fn active_package_rewritten_components(board: &Board) -> BTreeSet<uuid::Uuid> {
+    board.packages
+        .values()
+        .filter(|package| package.package != uuid::Uuid::nil())
+        .map(|package| package.uuid)
+        .collect()
+}
+
+fn filter_component_map(
+    components: &BTreeMap<uuid::Uuid, crate::board::PlacedPackage>,
+    exclude: &BTreeSet<uuid::Uuid>,
+) -> BTreeMap<uuid::Uuid, crate::board::PlacedPackage> {
+    components
+        .iter()
+        .filter(|(uuid, _)| !exclude.contains(uuid))
+        .map(|(uuid, package)| (*uuid, package.clone()))
+        .collect()
 }
 
 fn remove_kicad_top_level_forms(
@@ -2574,6 +2839,72 @@ fn restore_package_transform(
     Ok(())
 }
 
+fn component_pads(board: &Board, component_uuid: uuid::Uuid) -> Vec<crate::board::PlacedPad> {
+    let mut pads: Vec<_> = board
+        .pads
+        .values()
+        .filter(|pad| pad.package == component_uuid)
+        .cloned()
+        .collect();
+    pads.sort_by_key(|pad| pad.uuid);
+    pads
+}
+
+fn restore_component_pads(
+    board: &mut Board,
+    component_uuid: uuid::Uuid,
+    pads: &[crate::board::PlacedPad],
+) {
+    let stale_pad_uuids: Vec<_> = board
+        .pads
+        .values()
+        .filter(|pad| pad.package == component_uuid)
+        .map(|pad| pad.uuid)
+        .collect();
+    for pad_uuid in stale_pad_uuids {
+        board.pads.remove(&pad_uuid);
+    }
+    for pad in pads {
+        board.pads.insert(pad.uuid, pad.clone());
+    }
+}
+
+fn replace_component_pads_from_pool_package(
+    board: &mut Board,
+    component: &crate::board::PlacedPackage,
+    package: &crate::pool::Package,
+) -> Result<(), EngineError> {
+    let net_by_name: BTreeMap<String, Option<uuid::Uuid>> = component_pads(board, component.uuid)
+        .into_iter()
+        .map(|pad| (pad.name, pad.net))
+        .collect();
+    let mut regenerated = Vec::new();
+    for package_pad in package.pads.values() {
+        regenerated.push(crate::board::PlacedPad {
+            uuid: deterministic_component_pad_uuid(component.uuid, &package_pad.name),
+            package: component.uuid,
+            name: package_pad.name.clone(),
+            net: net_by_name.get(&package_pad.name).copied().flatten(),
+            position: transform_board_local_point(
+                component.position,
+                component.rotation,
+                package_pad.position,
+            ),
+            layer: package_pad.layer,
+        });
+    }
+    regenerated.sort_by_key(|pad| pad.uuid);
+    restore_component_pads(board, component.uuid, &regenerated);
+    Ok(())
+}
+
+fn deterministic_component_pad_uuid(component_uuid: uuid::Uuid, pad_name: &str) -> uuid::Uuid {
+    crate::ir::ids::import_uuid(
+        &crate::ir::ids::namespace_kicad(),
+        &format!("board/pad/{component_uuid}/{pad_name}"),
+    )
+}
+
 fn transform_board_local_point(
     origin: crate::ir::geometry::Point,
     rotation_deg: i32,
@@ -2632,6 +2963,38 @@ fn rewrite_reference_footprints(
     for (uuid, package) in referenced_components {
         updated =
             rewrite_footprint_property_line(&updated, *uuid, "Reference", &package.reference)?;
+    }
+    Ok(updated)
+}
+
+fn rewrite_package_footprints(
+    contents: &str,
+    board: &Board,
+    pool: &Pool,
+    component_uuids: &BTreeSet<uuid::Uuid>,
+) -> Result<String, EngineError> {
+    if component_uuids.is_empty() {
+        return Ok(contents.to_string());
+    }
+    let net_codes = kicad_net_code_map(contents)?;
+    let mut updated = contents.to_string();
+    for component_uuid in component_uuids {
+        let component = board
+            .packages
+            .get(component_uuid)
+            .ok_or(EngineError::NotFound {
+                object_type: "component",
+                uuid: *component_uuid,
+            })?;
+        let package = pool
+            .packages
+            .get(&component.package)
+            .ok_or(EngineError::NotFound {
+                object_type: "package",
+                uuid: component.package,
+            })?;
+        let replacement = render_kicad_footprint_block(component, package, board, &net_codes)?;
+        updated = replace_kicad_top_level_form(&updated, "footprint", *component_uuid, &replacement)?;
     }
     Ok(updated)
 }
@@ -2734,6 +3097,152 @@ fn rewrite_footprint_property_line(
     ))
 }
 
+fn replace_kicad_top_level_form(
+    contents: &str,
+    form_name: &str,
+    form_uuid: uuid::Uuid,
+    replacement: &str,
+) -> Result<String, EngineError> {
+    let lookup = BTreeSet::from([form_uuid]);
+    let ranges = find_kicad_top_level_form_ranges(contents, &[(form_name, &lookup)])?;
+    let (start, end) = *ranges.first().ok_or_else(|| {
+        EngineError::Operation(format!(
+            "save could not locate {form_name} {} in imported KiCad source",
+            form_uuid
+        ))
+    })?;
+    Ok(format!(
+        "{}{}{}",
+        &contents[..start],
+        replacement,
+        &contents[end..]
+    ))
+}
+
+fn render_kicad_footprint_block(
+    component: &crate::board::PlacedPackage,
+    package: &crate::pool::Package,
+    board: &Board,
+    net_codes: &BTreeMap<uuid::Uuid, i32>,
+) -> Result<String, EngineError> {
+    let mut lines = Vec::new();
+    lines.push(format!("  (footprint \"{}\"", package.name));
+    lines.push(format!(
+        "    (layer \"{}\")",
+        kicad_layer_name_for_id(component.layer)
+    ));
+    lines.push(format!("    (uuid {})", component.uuid));
+    lines.push(format!(
+        "    (at {} {} {})",
+        format_mm(component.position.x),
+        format_mm(component.position.y),
+        component.rotation
+    ));
+    lines.push(format!(
+        "    (property \"Reference\" \"{}\" (at 0 -2 0) (layer \"F.SilkS\"))",
+        component.reference
+    ));
+    lines.push(format!(
+        "    (property \"Value\" \"{}\" (at 0 2 0) (layer \"F.Fab\"))",
+        component.value
+    ));
+    let mut pads: Vec<_> = package.pads.values().collect();
+    pads.sort_by(|a, b| a.name.cmp(&b.name).then_with(|| a.uuid.cmp(&b.uuid)));
+    for pad in pads {
+        lines.push(format!("    (pad \"{}\" smd rect", pad.name));
+        lines.push(format!(
+            "      (at {} {})",
+            format_mm(pad.position.x),
+            format_mm(pad.position.y)
+        ));
+        lines.push("      (size 1 1)".to_string());
+        lines.push(format!(
+            "      (layers \"{}\" \"F.Paste\" \"F.Mask\")",
+            kicad_layer_name_for_id(pad.layer)
+        ));
+        let pad_state = board
+            .pads
+            .values()
+            .find(|candidate| candidate.package == component.uuid && candidate.name == pad.name);
+        if let Some(net_uuid) = pad_state.and_then(|pad| pad.net)
+            && let Some(net_code) = net_codes.get(&net_uuid)
+        {
+            let net_name = board
+                .nets
+                .get(&net_uuid)
+                .map(|net| net.name.as_str())
+                .unwrap_or("");
+            lines.push(format!("      (net {} \"{}\")", net_code, net_name));
+        }
+        lines.push("    )".to_string());
+    }
+    lines.push("  )".to_string());
+    Ok(format!("{}\n", lines.join("\n")))
+}
+
+fn kicad_net_code_map(contents: &str) -> Result<BTreeMap<uuid::Uuid, i32>, EngineError> {
+    let mut net_codes = BTreeMap::new();
+    for block in contents
+        .lines()
+        .collect::<Vec<_>>()
+        .join("\n")
+        .split("\n  (net ")
+    {
+        let candidate = if block.starts_with("(kicad_pcb") {
+            continue;
+        } else {
+            format!("  (net {block}")
+        };
+        if let Some((code, _name)) = parse_simple_net_block(&candidate)
+            && code >= 0
+        {
+            let uuid = deterministic_kicad_net_uuid(code);
+            net_codes.insert(uuid, code);
+        }
+    }
+    Ok(net_codes)
+}
+
+fn parse_simple_net_block(block: &str) -> Option<(i32, String)> {
+    let first = block.lines().next()?.trim_start();
+    if !first.starts_with("(net ") {
+        return None;
+    }
+    let after = first.trim_start_matches("(net ").trim_end_matches(')');
+    let mut chars = after.chars().peekable();
+    let mut code = String::new();
+    while let Some(ch) = chars.peek() {
+        if ch.is_ascii_whitespace() {
+            break;
+        }
+        code.push(*ch);
+        chars.next();
+    }
+    let code = code.parse::<i32>().ok()?;
+    let rest: String = chars.collect();
+    let start = rest.find('"')?;
+    let rest = &rest[start + 1..];
+    let end = rest.find('"')?;
+    Some((code, rest[..end].to_string()))
+}
+
+fn deterministic_kicad_net_uuid(code: i32) -> uuid::Uuid {
+    crate::ir::ids::import_uuid(
+        &crate::ir::ids::namespace_kicad(),
+        &format!("board/net/{code}"),
+    )
+}
+
+fn kicad_layer_name_for_id(layer: i32) -> &'static str {
+    match layer {
+        31 => "B.Cu",
+        36 => "B.SilkS",
+        37 => "F.SilkS",
+        44 => "Edge.Cuts",
+        _ => "F.Cu",
+    }
+}
+
 fn format_mm(nm: i64) -> String {
     let value = nm_to_mm(nm);
     if (value.fract()).abs() < f64::EPSILON {
@@ -2833,6 +3342,33 @@ fn persist_part_assignment_sidecar(
     let sidecar =
         part_assignments_sidecar::PartAssignmentsSidecar::new(source_file, source_hash, assignments);
     part_assignments_sidecar::write_sidecar(&sidecar_path, &sidecar)
+}
+
+fn persist_package_assignment_sidecar(
+    board_path: &Path,
+    board_contents: &str,
+    assignments: BTreeMap<uuid::Uuid, uuid::Uuid>,
+    loaded_package_assignment_sidecar: bool,
+) -> Result<(), EngineError> {
+    let sidecar_path = package_assignments_sidecar::sidecar_path_for_source(board_path);
+    if assignments.is_empty() {
+        if loaded_package_assignment_sidecar && sidecar_path.exists() {
+            std::fs::remove_file(&sidecar_path)?;
+        }
+        return Ok(());
+    }
+
+    let source_hash = ids_sidecar::compute_source_hash_bytes(board_contents.as_bytes());
+    let source_file = board_path
+        .file_name()
+        .map(|name| name.to_string_lossy().to_string())
+        .unwrap_or_else(|| board_path.display().to_string());
+    let sidecar = package_assignments_sidecar::PackageAssignmentsSidecar::new(
+        source_file,
+        source_hash,
+        assignments,
+    );
+    package_assignments_sidecar::write_sidecar(&sidecar_path, &sidecar)
 }
 
 fn net_class_sidecar_payload(board: &Board) -> (Vec<NetClass>, BTreeMap<Uuid, Uuid>) {
@@ -3072,6 +3608,7 @@ mod tests {
                     PlacedPackage {
                         uuid: uuid::Uuid::new_v4(),
                         part: uuid::Uuid::new_v4(),
+                        package: uuid::Uuid::nil(),
                         reference: "R1".into(),
                         value: "10k".into(),
                         position: Point::new(0, 0),
@@ -4725,11 +5262,11 @@ mod tests {
             .expect("fixture import should succeed");
 
         let part_uuid = engine
-            .search_pool("LMV321")
+            .search_pool("ALTAMP")
             .expect("search should succeed")
             .first()
             .map(|part| part.uuid)
-            .expect("LMV321 part should exist");
+            .expect("ALTAMP part should exist");
         let before = engine.get_components().expect("components should query");
         let package_uuid = uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap();
         let assign_result = engine
@@ -4745,7 +5282,18 @@ mod tests {
             .iter()
             .find(|component| component.uuid == package_uuid)
             .unwrap();
-        assert_eq!(updated.value, "LMV321");
+        assert_eq!(updated.value, "ALTAMP");
+        assert_eq!(
+            updated.package_uuid,
+            uuid::Uuid::parse_str("3bbffc1f-f562-563a-b9da-4e0d73ab019e").unwrap()
+        );
+        let sig = engine
+            .get_net_info()
+            .expect("net info should query")
+            .into_iter()
+            .find(|net| net.name == "SIG")
+            .expect("SIG net should exist");
+        assert_eq!(sig.pins.len(), 1);
 
         let undo = engine.undo().expect("undo should succeed");
         assert_eq!(undo.diff.modified.len(), 1);
@@ -4771,11 +5319,11 @@ mod tests {
             .import(&source)
             .expect("fixture import should succeed");
         let part_uuid = engine
-            .search_pool("LMV321")
+            .search_pool("ALTAMP")
             .expect("search should succeed")
             .first()
             .map(|part| part.uuid)
-            .expect("LMV321 part should exist");
+            .expect("ALTAMP part should exist");
         engine
             .assign_part(AssignPartInput {
                 uuid: uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
@@ -4786,7 +5334,8 @@ mod tests {
         engine.save(&target).expect("save should succeed");
 
         let saved = fs::read_to_string(&target).expect("saved file should read");
-        assert!(saved.contains("(property \"Value\" \"LMV321\""));
+        assert!(saved.contains("(property \"Value\" \"ALTAMP\""));
+        assert!(saved.contains("(footprint \"ALT-3\""));
 
         let mut reloaded = Engine::new().expect("engine should initialize");
         reloaded
@@ -4797,7 +5346,7 @@ mod tests {
             .iter()
             .find(|component| component.uuid == uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap())
             .unwrap();
-        assert_eq!(updated.value, "LMV321");
+        assert_eq!(updated.value, "ALTAMP");
         let restored_part = reloaded
             .design
             .as_ref()
@@ -4806,9 +5355,127 @@ mod tests {
             .map(|package| package.part)
             .expect("reloaded package should exist");
         assert_eq!(restored_part, part_uuid);
+        let restored_sig = reloaded
+            .get_net_info()
+            .expect("reloaded net info should query")
+            .into_iter()
+            .find(|net| net.name == "SIG")
+            .expect("reloaded SIG net should exist");
+        assert_eq!(restored_sig.pins.len(), 1);
 
         let _ = fs::remove_file(&target);
         let _ = fs::remove_file(part_assignments_sidecar::sidecar_path_for_source(&target));
+    }
+
+    #[test]
+    fn set_package_updates_board_and_undo_redo_restore_it() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+            .expect("library import should succeed");
+        engine
+            .import(&fixture_path("partial-route-demo.kicad_pcb"))
+            .expect("fixture import should succeed");
+
+        let package_uuid = engine
+            .search_pool("ALTAMP")
+            .expect("search should succeed")
+            .first()
+            .map(|part| part.package_uuid)
+            .expect("ALTAMP package should exist");
+        let before = engine.get_components().expect("components should query");
+        let component_uuid = uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap();
+        let set_result = engine
+            .set_package(SetPackageInput {
+                uuid: component_uuid,
+                package_uuid,
+            })
+            .expect("set_package should succeed");
+        assert_eq!(set_result.diff.modified.len(), 1);
+
+        let after_set = engine.get_components().expect("components should query");
+        let updated = after_set
+            .iter()
+            .find(|component| component.uuid == component_uuid)
+            .unwrap();
+        assert_eq!(updated.package_uuid, package_uuid);
+        let pad_count_after_set = engine
+            .design
+            .as_ref()
+            .and_then(|design| design.board.as_ref())
+            .map(|board| board.pads.values().filter(|pad| pad.package == component_uuid).count())
+            .expect("board should exist");
+        assert_eq!(pad_count_after_set, 3);
+        let net_info_after_set = engine.get_net_info().expect("net info should query");
+        let sig_after_set = net_info_after_set
+            .iter()
+            .find(|net| net.name == "SIG")
+            .expect("SIG net should exist");
+        assert_eq!(sig_after_set.pins.len(), 1);
+
+        let undo = engine.undo().expect("undo should succeed");
+        assert_eq!(undo.diff.modified.len(), 1);
+        let after_undo = engine.get_components().expect("components should query");
+        assert_eq!(before, after_undo);
+
+        let redo = engine.redo().expect("redo should succeed");
+        assert_eq!(redo.diff.modified.len(), 1);
+        let after_redo = engine.get_components().expect("components should query");
+        assert_eq!(after_set, after_redo);
+    }
+
+    #[test]
+    fn save_persists_set_package_for_current_m3_slice() {
+        let source = fixture_path("partial-route-demo.kicad_pcb");
+        let target = unique_temp_path("datum-eda-save-set-package-board.kicad_pcb");
+
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+            .expect("library import should succeed");
+        engine
+            .import(&source)
+            .expect("fixture import should succeed");
+        let package_uuid = engine
+            .search_pool("ALTAMP")
+            .expect("search should succeed")
+            .first()
+            .map(|part| part.package_uuid)
+            .expect("ALTAMP package should exist");
+        engine
+            .set_package(SetPackageInput {
+                uuid: uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+                package_uuid,
+            })
+            .expect("set_package should succeed");
+
+        engine.save(&target).expect("save should succeed");
+
+        let saved = fs::read_to_string(&target).expect("saved file should read");
+        assert!(saved.contains("(footprint \"ALT-3\""));
+        assert_eq!(saved.matches("(pad \"").count(), 4);
+
+        let mut reloaded = Engine::new().expect("engine should initialize");
+        reloaded
+            .import(&target)
+            .expect("saved board should reimport successfully");
+        let components = reloaded.get_components().expect("components should query");
+        let updated = components
+            .iter()
+            .find(|component| component.uuid == uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap())
+            .unwrap();
+        assert_eq!(updated.package_uuid, package_uuid);
+        let restored_package = reloaded
+            .design
+            .as_ref()
+            .and_then(|design| design.board.as_ref())
+            .and_then(|board| board.packages.get(&uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap()))
+            .map(|package| package.package)
+            .expect("reloaded package should exist");
+        assert_eq!(restored_package, package_uuid);
+
+        let _ = fs::remove_file(&target);
+        let _ = fs::remove_file(package_assignments_sidecar::sidecar_path_for_source(&target));
     }
 
     #[test]

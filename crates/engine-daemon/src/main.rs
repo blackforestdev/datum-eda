@@ -16,7 +16,7 @@ use std::path::{Path, PathBuf};
 use anyhow::Result;
 use eda_engine::api::{
     AssignPartInput, Engine, MoveComponentInput, RotateComponentInput, SetDesignRuleInput,
-    SetNetClassInput,
+    SetNetClassInput, SetPackageInput,
     SetReferenceInput, SetValueInput, ViolationDomain,
 };
 use eda_engine::ir::geometry::Point;
@@ -123,6 +123,12 @@ struct SetReferenceParams {
 struct AssignPartParams {
     uuid: uuid::Uuid,
     part_uuid: uuid::Uuid,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct SetPackageParams {
+    uuid: uuid::Uuid,
+    package_uuid: uuid::Uuid,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -250,6 +256,16 @@ fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> JsonRpcResp
             }) {
                 Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
                 Err(err) => error_response(request.id, -32038, &err.to_string()),
+            },
+            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+        },
+        "set_package" => match serde_json::from_value::<SetPackageParams>(request.params) {
+            Ok(params) => match engine.set_package(SetPackageInput {
+                uuid: params.uuid,
+                package_uuid: params.package_uuid,
+            }) {
+                Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
+                Err(err) => error_response(request.id, -32040, &err.to_string()),
             },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
@@ -2495,7 +2511,7 @@ mod tests {
                 jsonrpc: "2.0".into(),
                 id: json!(3),
                 method: "search_pool".into(),
-                params: json!({"query": "LMV321"}),
+                params: json!({"query": "ALTAMP"}),
             },
         );
         let part_uuid = search.result.as_ref().unwrap()[0]["uuid"].clone();
@@ -2515,11 +2531,104 @@ mod tests {
         assert!(response.error.is_none(), "{response:?}");
         let components = engine.get_components().expect("components should query");
         let updated = components.iter().find(|component| component.reference == "R1").unwrap();
-        assert_eq!(updated.value, "LMV321");
+        assert_eq!(updated.value, "ALTAMP");
     }
 
     #[test]
-    fn assign_part_dispatch_updates_followup_components_query() {
+    fn assign_part_dispatch_updates_followup_net_info_query() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        let _ = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(1),
+                method: "open_project".into(),
+                params: serde_json::to_value(OpenProjectParams {
+                    path: eagle_fixture_path("simple-opamp.lbr"),
+                })
+                .unwrap(),
+            },
+        );
+        let _ = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(2),
+                method: "open_project".into(),
+                params: serde_json::to_value(OpenProjectParams {
+                    path: kicad_fixture_path("partial-route-demo.kicad_pcb"),
+                })
+                .unwrap(),
+            },
+        );
+        let search = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(3),
+                method: "search_pool".into(),
+                params: json!({"query": "ALTAMP"}),
+            },
+        );
+        let part_uuid = search.result.as_ref().unwrap()[0]["uuid"].clone();
+
+        let baseline = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(4),
+                method: "get_net_info".into(),
+                params: json!({}),
+            },
+        );
+        let baseline_sig = baseline
+            .result
+            .as_ref()
+            .unwrap()
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|net| net["name"] == "SIG")
+            .expect("SIG net should exist");
+        assert_eq!(baseline_sig["pins"].as_array().unwrap().len(), 2);
+
+        let assign = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(5),
+                method: "assign_part".into(),
+                params: json!({
+                    "uuid": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+                    "part_uuid": part_uuid,
+                }),
+            },
+        );
+        assert!(assign.error.is_none(), "{assign:?}");
+
+        let after = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(6),
+                method: "get_net_info".into(),
+                params: json!({}),
+            },
+        );
+        let sig = after
+            .result
+            .as_ref()
+            .unwrap()
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|net| net["name"] == "SIG")
+            .expect("SIG net should exist");
+        assert_eq!(sig["pins"].as_array().unwrap().len(), 1);
+    }
+
+    #[test]
+    fn set_package_dispatch_updates_component_package() {
         let mut engine = Engine::new().expect("engine should initialize");
         let _ = dispatch_request(
             &mut engine,
@@ -2554,7 +2663,63 @@ mod tests {
                 params: json!({"query": "LMV321"}),
             },
         );
-        let part_uuid = search.result.as_ref().unwrap()[0]["uuid"].clone();
+        let package_uuid = search.result.as_ref().unwrap()[0]["package_uuid"].clone();
+
+        let response = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(4),
+                method: "set_package".into(),
+                params: json!({
+                    "uuid": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+                    "package_uuid": package_uuid,
+                }),
+            },
+        );
+        assert!(response.error.is_none(), "{response:?}");
+        let components = engine.get_components().expect("components should query");
+        let updated = components.iter().find(|component| component.reference == "R1").unwrap();
+        assert_eq!(updated.package_uuid.to_string(), package_uuid.as_str().unwrap());
+    }
+
+    #[test]
+    fn set_package_dispatch_updates_followup_components_query() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        let _ = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(1),
+                method: "open_project".into(),
+                params: serde_json::to_value(OpenProjectParams {
+                    path: eagle_fixture_path("simple-opamp.lbr"),
+                })
+                .unwrap(),
+            },
+        );
+        let _ = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(2),
+                method: "open_project".into(),
+                params: serde_json::to_value(OpenProjectParams {
+                    path: kicad_fixture_path("partial-route-demo.kicad_pcb"),
+                })
+                .unwrap(),
+            },
+        );
+        let search = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(3),
+                method: "search_pool".into(),
+                params: json!({"query": "LMV321"}),
+            },
+        );
+        let package_uuid = search.result.as_ref().unwrap()[0]["package_uuid"].clone();
 
         let baseline = dispatch_request(
             &mut engine,
@@ -2565,21 +2730,24 @@ mod tests {
                 params: json!({}),
             },
         );
-        assert_eq!(baseline.result.as_ref().unwrap()[0]["value"], "10k");
+        assert_eq!(
+            baseline.result.as_ref().unwrap()[0]["package_uuid"],
+            "00000000-0000-0000-0000-000000000000"
+        );
 
-        let assign = dispatch_request(
+        let set_package = dispatch_request(
             &mut engine,
             JsonRpcRequest {
                 jsonrpc: "2.0".into(),
                 id: json!(5),
-                method: "assign_part".into(),
+                method: "set_package".into(),
                 params: json!({
                     "uuid": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
-                    "part_uuid": part_uuid,
+                    "package_uuid": package_uuid,
                 }),
             },
         );
-        assert!(assign.error.is_none(), "{assign:?}");
+        assert!(set_package.error.is_none(), "{set_package:?}");
 
         let after = dispatch_request(
             &mut engine,
@@ -2590,7 +2758,92 @@ mod tests {
                 params: json!({}),
             },
         );
-        assert_eq!(after.result.as_ref().unwrap()[0]["value"], "LMV321");
+        assert_eq!(after.result.as_ref().unwrap()[0]["package_uuid"], package_uuid);
+    }
+
+    #[test]
+    fn set_package_dispatch_updates_followup_net_info_query() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        let _ = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(1),
+                method: "open_project".into(),
+                params: serde_json::to_value(OpenProjectParams {
+                    path: eagle_fixture_path("simple-opamp.lbr"),
+                })
+                .unwrap(),
+            },
+        );
+        let _ = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(2),
+                method: "open_project".into(),
+                params: serde_json::to_value(OpenProjectParams {
+                    path: kicad_fixture_path("partial-route-demo.kicad_pcb"),
+                })
+                .unwrap(),
+            },
+        );
+        let search = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(3),
+                method: "search_pool".into(),
+                params: json!({"query": "ALTAMP"}),
+            },
+        );
+        let package_uuid = search.result.as_ref().unwrap()[0]["package_uuid"].clone();
+
+        let baseline = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(4),
+                method: "get_net_info".into(),
+                params: json!({}),
+            },
+        );
+        let baseline_sig = baseline.result.as_ref().unwrap()
+            .as_array().unwrap()
+            .iter()
+            .find(|net| net["name"] == "SIG")
+            .expect("SIG net should exist");
+        assert_eq!(baseline_sig["pins"].as_array().unwrap().len(), 2);
+
+        let set_package = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(5),
+                method: "set_package".into(),
+                params: json!({
+                    "uuid": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+                    "package_uuid": package_uuid,
+                }),
+            },
+        );
+        assert!(set_package.error.is_none(), "{set_package:?}");
+
+        let after = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(6),
+                method: "get_net_info".into(),
+                params: json!({}),
+            },
+        );
+        let after_sig = after.result.as_ref().unwrap()
+            .as_array().unwrap()
+            .iter()
+            .find(|net| net["name"] == "SIG")
+            .expect("SIG net should exist");
+        assert_eq!(after_sig["pins"].as_array().unwrap().len(), 1);
     }
 
     #[test]

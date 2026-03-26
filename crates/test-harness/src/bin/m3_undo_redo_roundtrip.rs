@@ -3,6 +3,7 @@ use std::path::PathBuf;
 use anyhow::{Result, bail};
 use eda_engine::api::{
     AssignPartInput, Engine, MoveComponentInput, SetDesignRuleInput, SetNetClassInput,
+    SetPackageInput,
 };
 use eda_engine::rules::ast::{RuleParams, RuleScope, RuleType};
 use eda_test_harness::canonical_json;
@@ -218,10 +219,10 @@ fn build_report(cli: &Cli) -> Result<Report> {
     assign_engine.import_eagle_library(&library_fixture_path)?;
     assign_engine.import(&cli.board_fixture_path)?;
     let assign_part_uuid = assign_engine
-        .search_pool("LMV321")?
+        .search_pool("ALTAMP")?
         .into_iter()
         .next()
-        .ok_or_else(|| anyhow::anyhow!("LMV321 part missing for undo/redo roundtrip"))?
+        .ok_or_else(|| anyhow::anyhow!("ALTAMP part missing for undo/redo roundtrip"))?
         .uuid;
     let baseline_assign_components = assign_engine.get_components()?;
     let assign_part_result = assign_engine.assign_part(AssignPartInput {
@@ -233,6 +234,26 @@ fn build_report(cli: &Cli) -> Result<Report> {
     let after_assign_undo = assign_engine.get_components()?;
     let assign_redo_result = assign_engine.redo()?;
     let after_assign_redo = assign_engine.get_components()?;
+
+    let mut package_engine = Engine::new()?;
+    package_engine.import_eagle_library(&library_fixture_path)?;
+    package_engine.import(&cli.board_fixture_path)?;
+    let set_package_uuid = package_engine
+        .search_pool("ALTAMP")?
+        .into_iter()
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("ALTAMP package missing for undo/redo roundtrip"))?
+        .package_uuid;
+    let baseline_package_components = package_engine.get_components()?;
+    let set_package_result = package_engine.set_package(SetPackageInput {
+        uuid: cli.component_uuid,
+        package_uuid: set_package_uuid,
+    })?;
+    let after_set_package = package_engine.get_components()?;
+    let package_undo_result = package_engine.undo()?;
+    let after_package_undo = package_engine.get_components()?;
+    let package_redo_result = package_engine.redo()?;
+    let after_package_redo = package_engine.get_components()?;
 
     let net_fixture_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../engine/testdata/import/kicad/simple-demo.kicad_pcb")
@@ -351,6 +372,26 @@ fn build_report(cli: &Cli) -> Result<Report> {
                 after_assign_part != baseline_assign_components,
                 after_assign_undo == baseline_assign_components,
                 after_assign_redo == after_assign_part
+            ),
+        },
+        Check {
+            name: "undo_restores_set_package_state".to_string(),
+            status: if after_set_package != baseline_package_components
+                && after_package_undo == baseline_package_components
+                && after_package_redo == after_set_package
+            {
+                Status::Passed
+            } else {
+                Status::Failed
+            },
+            evidence: format!(
+                "set_package={}, undo={}, redo={}, package_differs={}, undo_restored={}, redo_restored={}",
+                set_package_result.description,
+                package_undo_result.description,
+                package_redo_result.description,
+                after_set_package != baseline_package_components,
+                after_package_undo == baseline_package_components,
+                after_package_redo == after_set_package
             ),
         },
         Check {

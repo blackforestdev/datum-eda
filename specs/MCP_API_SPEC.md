@@ -3,7 +3,7 @@
 ## Transport
 
 ```
-Claude Code ←→ MCP Server (Python, stdio) ←→ Engine (Rust, JSON-RPC over Unix socket)
+MCP Client ←→ MCP Server (Python, stdio) ←→ Engine (Rust, JSON-RPC over Unix socket)
 ```
 
 The MCP server is a thin translation layer. It holds a reference to one

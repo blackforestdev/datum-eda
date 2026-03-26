@@ -450,6 +450,7 @@ fn parse_board_skeleton(path: &Path, contents: &str) -> Result<Board, EngineErro
             PlacedPackage {
                 uuid,
                 part: Uuid::nil(),
+                package: Uuid::nil(),
                 reference,
                 value,
                 position,

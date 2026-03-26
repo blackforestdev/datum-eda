@@ -17,7 +17,7 @@ JSON-RPC over a Unix socket. All tools map 1:1 to engine API methods.
 ## Architecture
 
 ```
-Claude Code / AI Agent
+MCP Client / AI Agent
         │
         │ MCP Protocol (stdio)
         ▼
@@ -43,7 +43,7 @@ Claude Code / AI Agent
 ## Configuration
 
 ```json
-// ~/.claude/settings.json
+// Example MCP host config
 {
   "mcpServers": {
     "eda": {

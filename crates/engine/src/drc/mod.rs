@@ -549,6 +549,7 @@ mod tests {
             PlacedPackage {
                 uuid: pkg_a,
                 part: Uuid::new_v4(),
+                package: Uuid::nil(),
                 reference: "R1".into(),
                 value: "10k".into(),
                 position: Point::new(10_000_000, 10_000_000),
@@ -562,6 +563,7 @@ mod tests {
             PlacedPackage {
                 uuid: pkg_b,
                 part: Uuid::new_v4(),
+                package: Uuid::nil(),
                 reference: "R2".into(),
                 value: "10k".into(),
                 position: Point::new(40_000_000, 10_000_000),
@@ -810,6 +812,7 @@ mod tests {
             PlacedPackage {
                 uuid: pkg,
                 part: Uuid::new_v4(),
+                package: Uuid::nil(),
                 reference: "TP1".into(),
                 value: "TP".into(),
                 position: Point::new(10_000_000, 10_000_000),

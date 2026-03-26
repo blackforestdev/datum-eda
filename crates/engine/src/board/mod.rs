@@ -32,6 +32,7 @@ pub struct Board {
 pub struct PlacedPackage {
     pub uuid: Uuid,
     pub part: Uuid,
+    pub package: Uuid,
     pub reference: String,
     pub value: String,
     pub position: Point,
@@ -166,6 +167,7 @@ pub struct BoardNetInfo {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ComponentInfo {
     pub uuid: Uuid,
+    pub package_uuid: Uuid,
     pub reference: String,
     pub value: String,
     pub position: Point,
@@ -218,6 +220,7 @@ impl Board {
             .values()
             .map(|package| ComponentInfo {
                 uuid: package.uuid,
+                package_uuid: package.package,
                 reference: package.reference.clone(),
                 value: package.value.clone(),
                 position: package.position,
@@ -732,6 +735,7 @@ mod tests {
                 PlacedPackage {
                     uuid: Uuid::new_v4(),
                     part: Uuid::new_v4(),
+                    package: Uuid::nil(),
                     reference: "R1".into(),
                     value: "10k".into(),
                     position: Point::new(0, 0),
@@ -786,6 +790,7 @@ mod tests {
                     PlacedPackage {
                         uuid: a,
                         part: Uuid::nil(),
+                        package: Uuid::nil(),
                         reference: "R10".into(),
                         value: "10k".into(),
                         position: Point::new(0, 0),
@@ -799,6 +804,7 @@ mod tests {
                     PlacedPackage {
                         uuid: b,
                         part: Uuid::nil(),
+                        package: Uuid::nil(),
                         reference: "R1".into(),
                         value: "1k".into(),
                         position: Point::new(1, 1),
@@ -855,6 +861,7 @@ mod tests {
                     PlacedPackage {
                         uuid: pkg_a,
                         part: Uuid::nil(),
+                        package: Uuid::nil(),
                         reference: "R1".into(),
                         value: "10k".into(),
                         position: Point::new(0, 0),
@@ -868,6 +875,7 @@ mod tests {
                     PlacedPackage {
                         uuid: pkg_b,
                         part: Uuid::nil(),
+                        package: Uuid::nil(),
                         reference: "R2".into(),
                         value: "10k".into(),
                         position: Point::new(5_000_000, 0),
@@ -1074,6 +1082,7 @@ mod tests {
                     PlacedPackage {
                         uuid: pkg_a,
                         part: Uuid::nil(),
+                        package: Uuid::nil(),
                         reference: "R1".into(),
                         value: "10k".into(),
                         position: Point::new(0, 0),
@@ -1087,6 +1096,7 @@ mod tests {
                     PlacedPackage {
                         uuid: pkg_b,
                         part: Uuid::nil(),
+                        package: Uuid::nil(),
                         reference: "R2".into(),
                         value: "10k".into(),
                         position: Point::new(10_000_000, 0),
@@ -1234,6 +1244,7 @@ mod tests {
                     PlacedPackage {
                         uuid: pkg_a,
                         part: Uuid::nil(),
+                        package: Uuid::nil(),
                         reference: "R1".into(),
                         value: "10k".into(),
                         position: Point::new(0, 0),
@@ -1247,6 +1258,7 @@ mod tests {
                     PlacedPackage {
                         uuid: pkg_b,
                         part: Uuid::nil(),
+                        package: Uuid::nil(),
                         reference: "R2".into(),
                         value: "10k".into(),
                         position: Point::new(10_000_000, 0),
