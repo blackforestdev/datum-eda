@@ -188,6 +188,7 @@ pub struct PartSummary {
     pub mpn: String,
     pub manufacturer: String,
     pub value: String,
+    pub package_uuid: Uuid,
     pub package: String,
 }
 
@@ -219,6 +220,7 @@ impl PoolIndex {
                 manufacturer TEXT NOT NULL,
                 value TEXT NOT NULL,
                 description TEXT NOT NULL,
+                package_uuid TEXT NOT NULL,
                 package_name TEXT NOT NULL
             );
 
@@ -243,9 +245,9 @@ impl PoolIndex {
         self.conn.execute(
             r#"
             INSERT OR REPLACE INTO parts
-                (uuid, mpn, manufacturer, value, description, package_name)
+                (uuid, mpn, manufacturer, value, description, package_uuid, package_name)
             VALUES
-                (?1, ?2, ?3, ?4, ?5, ?6)
+                (?1, ?2, ?3, ?4, ?5, ?6, ?7)
             "#,
             params![
                 part.uuid.to_string(),
@@ -253,6 +255,7 @@ impl PoolIndex {
                 part.manufacturer,
                 part.value,
                 part.description,
+                part.package.to_string(),
                 package_name
             ],
         )?;
@@ -303,7 +306,7 @@ impl PoolIndex {
         let pattern = format!("%{}%", query.to_lowercase());
         let mut stmt = self.conn.prepare(
             r#"
-            SELECT DISTINCT p.uuid, p.mpn, p.manufacturer, p.value, p.package_name
+            SELECT DISTINCT p.uuid, p.mpn, p.manufacturer, p.value, p.package_uuid, p.package_name
             FROM parts p
             LEFT JOIN part_tags t ON t.part_uuid = p.uuid
             WHERE lower(p.mpn) LIKE ?1
@@ -322,7 +325,9 @@ impl PoolIndex {
                 mpn: row.get(1)?,
                 manufacturer: row.get(2)?,
                 value: row.get(3)?,
-                package: row.get(4)?,
+                package_uuid: Uuid::parse_str(&row.get::<_, String>(4)?)
+                    .expect("stored package UUID must parse"),
+                package: row.get(5)?,
             })
         })?;
 
@@ -336,7 +341,7 @@ impl PoolIndex {
     ) -> Result<Vec<PartSummary>, rusqlite::Error> {
         let mut stmt = self.conn.prepare(
             r#"
-            SELECT p.uuid, p.mpn, p.manufacturer, p.value, p.package_name
+            SELECT p.uuid, p.mpn, p.manufacturer, p.value, p.package_uuid, p.package_name
             FROM parts p
             JOIN part_parametric pp ON pp.part_uuid = p.uuid
             WHERE pp.key = ?1 AND pp.value = ?2
@@ -350,7 +355,9 @@ impl PoolIndex {
                 mpn: row.get(1)?,
                 manufacturer: row.get(2)?,
                 value: row.get(3)?,
-                package: row.get(4)?,
+                package_uuid: Uuid::parse_str(&row.get::<_, String>(4)?)
+                    .expect("stored package UUID must parse"),
+                package: row.get(5)?,
             })
         })?;
 

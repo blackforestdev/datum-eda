@@ -249,6 +249,7 @@ pub struct PartEntityDetail {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PartPackageDetail {
+    pub uuid: uuid::Uuid,
     pub name: String,
     pub pads: usize,
 }
@@ -535,6 +536,7 @@ impl Engine {
                 gates,
             },
             package: PartPackageDetail {
+                uuid: package.uuid,
                 name: package.name.clone(),
                 pads: package.pads.len(),
             },
