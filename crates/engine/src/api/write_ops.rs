@@ -820,6 +820,72 @@ impl Engine {
         self.replace_components(resolved)
     }
 
+    fn scoped_replacement_candidates(
+        &self,
+        scope: &ComponentReplacementScope,
+    ) -> Result<Vec<PolicyDrivenComponentReplacementInput>, EngineError> {
+        if scope.reference_prefix.is_none()
+            && scope.value_equals.is_none()
+            && scope.current_package_uuid.is_none()
+            && scope.current_part_uuid.is_none()
+        {
+            return Err(EngineError::Operation(
+                "apply_scoped_component_replacement_policy requires at least one scope selector"
+                    .to_string(),
+            ));
+        }
+        let design = self.design.as_ref().ok_or(EngineError::NoProjectOpen)?;
+        let board = design.board.as_ref().ok_or_else(|| {
+            EngineError::Operation(
+                "apply_scoped_component_replacement_policy is currently implemented only for board projects".to_string(),
+            )
+        })?;
+        let mut packages: Vec<_> = board.packages.values().cloned().collect();
+        packages.sort_by(|a, b| a.reference.cmp(&b.reference).then_with(|| a.uuid.cmp(&b.uuid)));
+        Ok(packages
+            .into_iter()
+            .filter(|package| {
+                scope
+                    .reference_prefix
+                    .as_ref()
+                    .is_none_or(|prefix| package.reference.starts_with(prefix))
+                    && scope
+                        .value_equals
+                        .as_ref()
+                        .is_none_or(|value| &package.value == value)
+                    && scope
+                        .current_package_uuid
+                        .is_none_or(|package_uuid| package.package == package_uuid)
+                    && scope
+                        .current_part_uuid
+                        .is_none_or(|part_uuid| package.part == part_uuid)
+            })
+            .map(|package| package.uuid)
+            .collect::<Vec<_>>()
+            .into_iter()
+            .map(|uuid| PolicyDrivenComponentReplacementInput {
+                uuid,
+                policy: ComponentReplacementPolicy::BestCompatiblePackage,
+            })
+            .collect())
+    }
+
+    pub fn apply_scoped_component_replacement_policy(
+        &mut self,
+        input: ScopedComponentReplacementPolicyInput,
+    ) -> Result<OperationResult, EngineError> {
+        let mut scoped = self.scoped_replacement_candidates(&input.scope)?;
+        if scoped.is_empty() {
+            return Err(EngineError::Operation(
+                "apply_scoped_component_replacement_policy matched no components".to_string(),
+            ));
+        }
+        for candidate in &mut scoped {
+            candidate.policy = input.policy;
+        }
+        self.apply_component_replacement_policy(scoped)
+    }
+
     pub fn set_net_class(
         &mut self,
         input: SetNetClassInput,

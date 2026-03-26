@@ -8,11 +8,12 @@ use anyhow::{Context, Result, bail};
 use clap::{Parser, Subcommand};
 use eda_engine::api::{
     AssignPartInput, CheckReport, CheckStatus, ComponentReplacementPlan,
-    ComponentReplacementPolicy, Engine, MoveComponentInput, OperationResult,
-    PackageChangeCompatibilityReport, PartChangeCompatibilityReport,
+    ComponentReplacementPolicy, ComponentReplacementScope, Engine, MoveComponentInput,
+    OperationResult, PackageChangeCompatibilityReport, PartChangeCompatibilityReport,
     PlannedComponentReplacementInput, PolicyDrivenComponentReplacementInput,
-    ReplaceComponentInput, RotateComponentInput, SetDesignRuleInput, SetNetClassInput,
-    SetPackageInput, SetPackageWithPartInput, SetReferenceInput, SetValueInput,
+    ReplaceComponentInput, RotateComponentInput, ScopedComponentReplacementPolicyInput,
+    SetDesignRuleInput, SetNetClassInput, SetPackageInput, SetPackageWithPartInput,
+    SetReferenceInput, SetValueInput,
 };
 use eda_engine::drc::DrcReport;
 use eda_engine::erc::ErcFinding;
@@ -150,6 +151,10 @@ enum Commands {
         /// Apply replacement policy: <uuid>:package | <uuid>:part
         #[arg(long = "apply-replacement-policy")]
         apply_replacement_policy: Vec<String>,
+
+        /// Apply scoped replacement policy: package|part[:ref_prefix=<text>][:value=<text>][:package_uuid=<uuid>][:part_uuid=<uuid>]
+        #[arg(long = "apply-scoped-replacement-policy")]
+        apply_scoped_replacement_policy: Vec<String>,
 
         /// Set one net class: <net_uuid>:<class_name>:<clearance_nm>:<track_width_nm>:<via_drill_nm>:<via_diameter_nm>[:<diffpair_width_nm>:<diffpair_gap_nm>]
         #[arg(long = "set-net-class")]
@@ -400,6 +405,7 @@ fn modify_board(
         save_original,
         &[],
         &[],
+        &[],
     )
 }
 
@@ -425,6 +431,7 @@ fn modify_board_with_plan(
     save_original: bool,
     apply_replacement_plan: &[PlannedComponentReplacementInput],
     apply_replacement_policy: &[PolicyDrivenComponentReplacementInput],
+    apply_scoped_replacement_policy: &[ScopedComponentReplacementPolicyInput],
 ) -> Result<ModifyReportView> {
     command_modify::modify_board(
         path,
@@ -448,6 +455,7 @@ fn modify_board_with_plan(
         save_original,
         apply_replacement_plan,
         apply_replacement_policy,
+        apply_scoped_replacement_policy,
     )
 }
 
@@ -2473,6 +2481,7 @@ mod tests {
                 },
             ],
             &[],
+            &[],
         )
         .expect("modify apply_replacement_plan save should succeed");
         assert_eq!(report.saved_path.as_deref(), Some(target.to_str().unwrap()));
@@ -2557,8 +2566,93 @@ mod tests {
                     policy: ComponentReplacementPolicy::BestCompatiblePart,
                 },
             ],
+            &[],
         )
         .expect("modify apply_replacement_policy save should succeed");
+        assert_eq!(report.saved_path.as_deref(), Some(target.to_str().unwrap()));
+
+        let components = match query_components(&target).expect("saved components should query") {
+            ComponentListView::Board { components } => components,
+        };
+        assert_eq!(
+            components
+                .iter()
+                .filter(|component| component.value == "ALTAMP")
+                .count(),
+            2
+        );
+
+        let _ = std::fs::remove_file(&target);
+        let _ = std::fs::remove_file(target.with_file_name(format!(
+            "{}.parts.json",
+            target.file_name().unwrap().to_string_lossy()
+        )));
+        let _ = std::fs::remove_file(target.with_file_name(format!(
+            "{}.packages.json",
+            target.file_name().unwrap().to_string_lossy()
+        )));
+    }
+
+    #[test]
+    fn modify_board_with_plan_applies_scoped_replacement_policy() {
+        let source = kicad_fixture_path("partial-route-demo.kicad_pcb");
+        let target = std::env::temp_dir().join(format!(
+            "{}-cli-save-partial-route-apply-scoped-replacement-policy.kicad_pcb",
+            Uuid::new_v4()
+        ));
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+            .expect("library import should succeed");
+        let lmv321 = engine
+            .search_pool("LMV321")
+            .expect("search should succeed")
+            .first()
+            .cloned()
+            .expect("LMV321 part should exist");
+
+        let report = modify_board_with_plan(
+            &source,
+            &[],
+            &[],
+            &[],
+            &[eagle_fixture_path("simple-opamp.lbr")],
+            &[],
+            &[],
+            &[],
+            &[
+                AssignPartInput {
+                    uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+                    part_uuid: lmv321.uuid,
+                },
+                AssignPartInput {
+                    uuid: Uuid::parse_str("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb").unwrap(),
+                    part_uuid: lmv321.uuid,
+                },
+            ],
+            &[],
+            &[],
+            &[],
+            &[],
+            &[],
+            None,
+            0,
+            0,
+            Some(&target),
+            false,
+            &[],
+            &[],
+            &[ScopedComponentReplacementPolicyInput {
+                scope: ComponentReplacementScope {
+                    reference_prefix: Some("R".to_string()),
+                    value_equals: Some("LMV321".to_string()),
+                    current_package_uuid: None,
+                    current_part_uuid: None,
+                },
+                policy: ComponentReplacementPolicy::BestCompatiblePackage,
+            }],
+        )
+        .expect("modify apply_scoped_replacement_policy save should succeed");
         assert_eq!(report.saved_path.as_deref(), Some(target.to_str().unwrap()));
 
         let components = match query_components(&target).expect("saved components should query") {

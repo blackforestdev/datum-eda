@@ -90,6 +90,28 @@ def check_plan_progress_coverage(plan_text: str, failures: list[str]) -> None:
             failures.append(f"PLAN.md: missing progress block in section: {heading}")
 
 
+def check_completed_milestones_have_no_open_checkboxes(
+    plan_text: str, failures: list[str]
+) -> None:
+    for match in re.finditer(r"^### (M\d+: [^\n]+)\n(.*?)(?=^### |\Z)", plan_text, flags=re.S | re.M):
+        milestone = match.group(1)
+        body = match.group(2)
+        if "- [x] Milestone complete" not in body:
+            continue
+
+        open_items = []
+        for line in body.splitlines():
+            if re.match(r"^- \[ \] ", line):
+                open_items.append(line.strip())
+
+        if open_items:
+            preview = "; ".join(open_items[:5])
+            failures.append(
+                "PLAN.md: milestone marked complete but still has open checklist items "
+                f"({milestone}): {preview}"
+            )
+
+
 def check_progress_sections(progress_text: str, failures: list[str]) -> None:
     required_headers = (
         "## PROGRAM_SPEC.md — M0 Exit Criteria",
@@ -189,6 +211,7 @@ def main() -> int:
     mcp_text = read_text("specs/MCP_API_SPEC.md")
 
     check_plan_progress_coverage(plan_text, failures)
+    check_completed_milestones_have_no_open_checkboxes(plan_text, failures)
     check_progress_sections(progress_text, failures)
     check_infrastructure_rows(progress_text, failures)
     check_mcp_contract_parity(mcp_text, failures)

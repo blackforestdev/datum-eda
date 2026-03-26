@@ -30,29 +30,29 @@ canonical round-trip, and has tests. Import harness scaffolded.
 - [x] Milestone complete (`M0` closed)
 - [x] Project name selected (`datum-eda`)
 
-- [ ] Choose project name
-- [ ] Initialize Rust workspace (engine lib, cli bin, workspace Cargo.toml)
-- [ ] Define canonical IR (see docs/CANONICAL_IR.md):
+- [x] Choose project name
+- [x] Initialize Rust workspace (engine lib, cli bin, workspace Cargo.toml)
+- [x] Define canonical IR (see docs/CANONICAL_IR.md):
   - Stable identity strategy (UUID generation, reference semantics)
   - Unit/precision model (nanometers internally, user-facing unit conversion)
   - Authored vs. derived data boundary
   - Transaction/operation envelope
   - Deterministic serialization (sorted keys, stable float repr)
-- [ ] Implement pool foundation:
+- [x] Implement pool foundation:
   - Unit, Pin (with direction, swap group, alternates)
   - Entity, Gate
   - Package, Pad, Padstack
   - Part (entity + package + pad_map + attributes + parametric)
   - Symbol (graphics primitives)
-- [ ] SQLite pool index (create, insert, query, search)
-- [ ] JSON serialization with round-trip golden tests
-- [ ] Import harness scaffold (trait-based, format-pluggable)
-- [ ] Eagle .lbr XML parser (validate against 300+ shipped libraries)
-- [ ] Test corpus: minimum 20 Eagle libraries import into the pool without
+- [x] SQLite pool index (create, insert, query, search)
+- [x] JSON serialization with round-trip golden tests
+- [x] Import harness scaffold (trait-based, format-pluggable)
+- [x] Eagle .lbr XML parser (validate against 300+ shipped libraries)
+- [x] Test corpus: minimum 20 Eagle libraries import into the pool without
   error and canonicalize deterministically
-- [ ] Deterministic Eagle re-import: same `.lbr` imported twice yields
+- [x] Deterministic Eagle re-import: same `.lbr` imported twice yields
   identical canonical pool objects and UUIDs
-- [ ] Explicitly import-only Eagle library support in `M0` (no `.lbr`
+- [x] Explicitly import-only Eagle library support in `M0` (no `.lbr`
   write-back)
 
 **Deliverable**: `cargo test` passes. Pool can ingest Eagle libraries,
@@ -71,32 +71,32 @@ Golden tests against known-good designs.
 - [ ] Eagle `.brd` / `.sch` import implementation (still unimplemented)
 - [ ] Corpus/fidelity exit gates fully proven at `M1` spec threshold
 
-- [ ] Board data model:
+- [x] Board data model:
   - Layers, stackup (copper + dielectric, no solver yet)
   - Placed components (part reference + position + rotation + layer)
   - Tracks, vias, zones/pours (authored geometry)
   - Nets, net classes
   - Keepouts, dimensions, text
-- [ ] Schematic data model:
+- [x] Schematic data model:
   - Sheets, placed symbols, wires, junctions, labels
   - Net segments, buses, power symbols
   - Hierarchical blocks (sub-sheets)
-- [ ] Schematic connectivity engine:
+- [ ] Schematic connectivity engine (partial in current slice):
   - Hierarchy-aware net resolution across sheets and ports
   - Global labels, local labels, and power symbol propagation
   - Bus/member expansion into scalar nets
   - Pin-to-net attachment graph for ERC
-- [ ] Connectivity engine:
+- [ ] Connectivity engine (partial in current slice):
   - Net-to-pin resolution
   - Board connectivity (track/via/pour graph)
   - Airwire computation (unrouted connections)
   - Incremental recomputation on change
-- [ ] Import: KiCad .kicad_pcb + .kicad_sch parser
+- [ ] Import: KiCad .kicad_pcb + .kicad_sch parser (partial in current slice)
   - Target: DOA2526 imports without errors
   - Golden test: re-export and diff against source
 - [ ] Import: Eagle .brd + .sch XML parser (using DTD from research)
   - Scope: bounded migration support, secondary to KiCad
-- [ ] Query API:
+- [x] Query API (engine/daemon/MCP implemented for current M1 slice):
   - get_netlist, get_components, get_nets, get_net_info
   - get_board_summary (dimensions, layer count, component count)
   - get_unrouted (airwire list)
@@ -137,12 +137,12 @@ check designs. CLI is useful for CI/CD pipelines.
 - [x] Full DRC rule-set parity with all `M2` exit-gate checks
 - [x] Full CLI/MCP `M2` catalog parity for the current M2 surface
 
-- [ ] ERC foundation:
+- [x] ERC foundation (current M2 slice):
   - Pin electrical semantics (input, output, passive, power_in, power_out,
     bidirectional, tri_state, no_connect, etc.)
   - Net driving analysis on schematic connectivity graph
   - Waiver/suppression model as authored data
-- [ ] ERC checks:
+- [x] ERC checks (current M2 slice):
   - Output-to-output conflict
   - Undriven input
   - Power pin with no valid source
@@ -150,40 +150,41 @@ check designs. CLI is useful for CI/CD pipelines.
   - Unconnected required pin
   - Passive-only net warning
   - Hierarchical port / sheet connectivity mismatch
-- [ ] Rule engine:
+- [x] Rule engine (current M2 slice):
   - Rule definition (clearance, width, via, hole size, connectivity)
   - Rule scoping: expression-based IR from day one (see docs/CANONICAL_IR.md)
     M2 evaluator supports leaf nodes: All, Net, NetClass, Layer
     Later milestones add combinators: And, Or, Not, InComponent, etc.
     The data model never migrates — only the evaluator expands.
   - Priority ordering with first-match-wins
-- [ ] DRC checks:
+- [x] DRC checks (current M2 slice):
   - Copper-to-copper clearance
   - Track width vs. rule
   - Via drill/annular ring vs. rule
   - Board connectivity (all nets routed?)
   - Unconnected pins
   - Silk-to-copper clearance
-- [ ] DRC reporting:
+- [x] DRC reporting:
   - Structured results (violation type, location, objects, rule, severity)
   - Human-readable summary
   - JSON output for programmatic consumption
-- [ ] ERC reporting:
+- [x] ERC reporting:
   - Structured results (violation type, schematic location, objects, severity)
   - Human-readable summary
   - JSON output for programmatic consumption
-- [ ] MCP server:
-  - Pool tools: search_parts, get_part, get_package
-  - Query tools: get_netlist, get_components, get_nets, get_board_summary
-  - Checking tools: run_erc, run_drc, get_violations, explain_violation
-  - Register in ~/.claude/settings.json
-- [ ] CLI:
+- [x] MCP server:
+  - Pool tools: search_pool, get_part, get_package, get_package_change_candidates, get_part_change_candidates
+  - Query tools: get_netlist, get_components, get_net_info, get_schematic_net_info, get_board_summary, get_schematic_summary, get_sheets, get_symbols, get_ports, get_labels, get_buses, get_bus_entries, get_noconnects, get_hierarchy, get_connectivity_diagnostics, get_design_rules, get_unrouted
+  - Checking tools: run_erc, run_drc, get_check_report, explain_violation
+  - Lifecycle tools: open_project, close_project
+  - Registered in ~/.claude/settings.json
+- [x] CLI:
   - `tool import <file>` — import KiCad/Eagle design
   - `tool query <design> --nets|--components|--summary`
   - `tool erc <design>` — run ERC, exit code reflects pass/fail
   - `tool drc <design>` — run DRC, exit code reflects pass/fail
   - `tool pool search <query>` — search pool
-- [ ] Test: Claude can open DOA2526 via MCP, query it, run ERC/DRC, explain results
+- [x] Test: MCP-compatible client can open DOA2526 via MCP, query it, run ERC/DRC, and explain results
 
 **Deliverable**: Useful. A CI pipeline can run `tool erc design.kicad_sch`
 or `tool drc board.kicad_pcb` and fail the build on violations. Claude can
@@ -242,19 +243,19 @@ and explicit non-goals. No support claim yet.
   - Operation diff (what changed, for undo and sync)
   - Undo/redo stack (operation replay)
   - Batch execution
-- [ ] Operations (authored-data modifications only):
+- [x] Operations (current M3 board-slice authored-data modifications):
   - MoveComponent, RotateComponent, DeleteComponent
   - SetValue, SetReference, AssignPart
   - SetNetClass, SetDesignRule
   - DeleteTrack, DeleteVia (remove routing)
-- [ ] Derived data recomputation after operations:
+- [x] Derived data recomputation after operations (current M3 slice):
   - Connectivity update
   - Airwire update
   - DRC incremental re-check
-- [ ] MCP write tools: move_component, set_value, set_rule, delete_track
-- [ ] CLI: `tool modify <design> --move U1 50,30 --rotate U1 90`
-- [ ] Export: KiCad .kicad_pcb write-back (modified design saves in original format)
-- [ ] Test: import design → modify → export → re-import → verify changes
+- [x] MCP write tools (current slice): save, move_component, rotate_component, set_value, set_reference, assign_part, set_package, set_package_with_part, replace_component, replace_components, apply_component_replacement_plan, apply_component_replacement_policy, apply_scoped_component_replacement_policy, set_net_class, set_design_rule, delete_component, delete_track, delete_via, undo, redo
+- [x] CLI: `tool modify <design> ...` current write-surface implemented for board-slice operations
+- [x] Export: KiCad .kicad_pcb write-back (current modified-board slice saves in original format)
+- [x] Test: import design → modify → export → re-import → verify changes (current board-slice coverage)
 
 **Deliverable**: AI agent can reorganize component placement on an imported
 design, update values, adjust rules, and save back to KiCad format.

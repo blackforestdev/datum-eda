@@ -23,6 +23,7 @@ pub(super) fn modify_board(
     save_original: bool,
     apply_replacement_plan: &[PlannedComponentReplacementInput],
     apply_replacement_policy: &[PolicyDrivenComponentReplacementInput],
+    apply_scoped_replacement_policy: &[ScopedComponentReplacementPolicyInput],
 ) -> Result<ModifyReportView> {
     if path.extension().and_then(|ext| ext.to_str()) != Some("kicad_pcb") {
         bail!(
@@ -42,6 +43,7 @@ pub(super) fn modify_board(
         && replace_component.is_empty()
         && apply_replacement_plan.is_empty()
         && apply_replacement_policy.is_empty()
+        && apply_scoped_replacement_policy.is_empty()
         && set_net_class.is_empty()
         && set_reference.is_empty()
         && set_clearance_min_nm.is_none()
@@ -211,6 +213,17 @@ pub(super) fn modify_board(
             };
             actions.push(format!("apply_replacement_policy {} {}", input.uuid, selector));
         }
+        last_result = Some(result);
+    }
+    for input in apply_scoped_replacement_policy {
+        let result = engine
+            .apply_scoped_component_replacement_policy(input.clone())
+            .context("failed to apply scoped component replacement policy")?;
+        let selector = match input.policy {
+            ComponentReplacementPolicy::BestCompatiblePackage => "best_compatible_package",
+            ComponentReplacementPolicy::BestCompatiblePart => "best_compatible_part",
+        };
+        actions.push(format!("apply_scoped_replacement_policy {selector}"));
         last_result = Some(result);
     }
     for input in set_net_class {
@@ -419,6 +432,40 @@ pub(super) fn parse_apply_replacement_policy_arg(
         uuid: Uuid::parse_str(uuid)?,
         policy,
     })
+}
+
+pub(super) fn parse_apply_scoped_replacement_policy_arg(
+    value: &str,
+) -> Result<ScopedComponentReplacementPolicyInput> {
+    let mut parts = value.split(':');
+    let policy = match parts
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("--apply-scoped-replacement-policy expects a policy"))?
+    {
+        "package" => ComponentReplacementPolicy::BestCompatiblePackage,
+        "part" => ComponentReplacementPolicy::BestCompatiblePart,
+        other => bail!(
+            "--apply-scoped-replacement-policy policy must be 'package' or 'part', got {other}"
+        ),
+    };
+    let mut scope = ComponentReplacementScope::default();
+    for segment in parts {
+        let (key, raw_value) = segment.split_once('=').ok_or_else(|| {
+            anyhow::anyhow!(
+                "--apply-scoped-replacement-policy scope selectors must use key=value segments"
+            )
+        })?;
+        match key {
+            "ref_prefix" => scope.reference_prefix = Some(raw_value.to_string()),
+            "value" => scope.value_equals = Some(raw_value.to_string()),
+            "package_uuid" => scope.current_package_uuid = Some(Uuid::parse_str(raw_value)?),
+            "part_uuid" => scope.current_part_uuid = Some(Uuid::parse_str(raw_value)?),
+            other => bail!(
+                "--apply-scoped-replacement-policy selector must be one of ref_prefix,value,package_uuid,part_uuid; got {other}"
+            ),
+        }
+    }
+    Ok(ScopedComponentReplacementPolicyInput { scope, policy })
 }
 
 pub(super) fn parse_set_net_class_arg(value: &str) -> Result<SetNetClassInput> {

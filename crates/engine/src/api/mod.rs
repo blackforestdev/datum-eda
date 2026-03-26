@@ -169,6 +169,20 @@ pub struct PolicyDrivenComponentReplacementInput {
     pub policy: ComponentReplacementPolicy,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct ComponentReplacementScope {
+    pub reference_prefix: Option<String>,
+    pub value_equals: Option<String>,
+    pub current_package_uuid: Option<uuid::Uuid>,
+    pub current_part_uuid: Option<uuid::Uuid>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ScopedComponentReplacementPolicyInput {
+    pub scope: ComponentReplacementScope,
+    pub policy: ComponentReplacementPolicy,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SetNetClassInput {
     pub net_uuid: uuid::Uuid,

@@ -90,7 +90,7 @@ normalized MCP surface.
 `delete_component`, `move_component`, `rotate_component`, `set_value`,
 `set_reference`, `assign_part`, `set_package`, `set_package_with_part`,
 `replace_component`, `replace_components`, `apply_component_replacement_plan`,
-`apply_component_replacement_policy`,
+`apply_component_replacement_policy`, `apply_scoped_component_replacement_policy`,
 `set_net_class`, `set_design_rule`, `undo`, `redo`, `search_pool`, `get_part`,
 `get_package`,
 `get_package_change_candidates`, `get_part_change_candidates`,
@@ -279,6 +279,22 @@ Output: { "diff": { "created": [], "modified": [{ "object_type": "component", "u
 Error:  invalid_params | component_not_found | part_not_found | package_not_found
 ```
 Current implementation note: implemented in the current daemon/stdio host for deterministic best-candidate replacement selection from the current replacement plan.
+
+#### `apply_scoped_component_replacement_policy`
+```
+Method: apply_scoped_component_replacement_policy
+Input:  { "scope": {
+            "reference_prefix": string|null,
+            "value_equals": string|null,
+            "current_package_uuid": string|null,
+            "current_part_uuid": string|null
+          },
+          "policy": "best_compatible_package" | "best_compatible_part" }
+Output: { "diff": { "created": [], "modified": [{ "object_type": "component", "uuid": string }], "deleted": [] },
+          "description": string }
+Error:  invalid_params | component_not_found | part_not_found | package_not_found
+```
+Current implementation note: implemented in the current daemon/stdio host for deterministic best-candidate replacement selection over a scoped component filter.
 
 ### Design Queries
 
@@ -717,6 +733,21 @@ Input:  { "replacements": [
               "package_uuid": uuid | null,
               "part_uuid": uuid | null }
           ] }
+Output: { "diff": json, "description": string }
+Error:  component_not_found, part_not_found, package_not_found, invalid_operation
+```
+Current implementation note: implemented in the current daemon/stdio host.
+
+#### `apply_scoped_component_replacement_policy`
+```
+Method: apply_scoped_component_replacement_policy
+Input:  { "scope": {
+            "reference_prefix": string | null,
+            "value_equals": string | null,
+            "current_package_uuid": uuid | null,
+            "current_part_uuid": uuid | null
+          },
+          "policy": "best_compatible_package" | "best_compatible_part" }
 Output: { "diff": json, "description": string }
 Error:  component_not_found, part_not_found, package_not_found, invalid_operation
 ```

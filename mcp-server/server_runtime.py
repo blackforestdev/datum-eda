@@ -155,6 +155,14 @@ class EngineDaemonClient:
             "apply_component_replacement_policy", {"replacements": replacements}
         )
 
+    def apply_scoped_component_replacement_policy_request(
+        self, scope: dict[str, str | None], policy: str
+    ) -> JsonRpcRequest:
+        return self.build_request(
+            "apply_scoped_component_replacement_policy",
+            {"scope": scope, "policy": policy},
+        )
+
     def set_net_class_request(
         self,
         net_uuid: str,
@@ -392,6 +400,13 @@ class EngineDaemonClient:
         self, replacements: list[dict[str, str]]
     ) -> JsonRpcResponse:
         return self.call(self.apply_component_replacement_policy_request(replacements))
+
+    def apply_scoped_component_replacement_policy(
+        self, scope: dict[str, str | None], policy: str
+    ) -> JsonRpcResponse:
+        return self.call(
+            self.apply_scoped_component_replacement_policy_request(scope, policy)
+        )
 
     def set_net_class(
         self,

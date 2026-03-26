@@ -826,6 +826,10 @@ impl Engine {
         &mut self,
         inputs: Vec<PolicyDrivenComponentReplacementInput>,
     ) -> Result<OperationResult>;
+    pub fn apply_scoped_component_replacement_policy(
+        &mut self,
+        input: ScopedComponentReplacementPolicyInput,
+    ) -> Result<OperationResult>;
 
     // Checking
     pub fn run_erc_prechecks(&self) -> Result<Vec<ErcFinding>>;

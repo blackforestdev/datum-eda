@@ -203,6 +203,29 @@ TOOLS: list[dict[str, Any]] = [
         },
     },
     {
+        "name": "apply_scoped_component_replacement_policy",
+        "description": "Apply a deterministic replacement policy to all components matching a scoped filter in one transaction.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "scope": {
+                    "type": "object",
+                    "properties": {
+                        "reference_prefix": {"type": ["string", "null"]},
+                        "value_equals": {"type": ["string", "null"]},
+                        "current_package_uuid": {"type": ["string", "null"]},
+                        "current_part_uuid": {"type": ["string", "null"]},
+                    },
+                },
+                "policy": {
+                    "type": "string",
+                    "enum": ["best_compatible_package", "best_compatible_part"],
+                },
+            },
+            "required": ["scope", "policy"],
+        },
+    },
+    {
         "name": "set_reference",
         "description": "Set one board component reference by UUID in the current M3 slice.",
         "inputSchema": {

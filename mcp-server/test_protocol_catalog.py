@@ -31,6 +31,7 @@ class TestProtocolCatalog(unittest.TestCase):
             "replace_components",
             "apply_component_replacement_plan",
             "apply_component_replacement_policy",
+            "apply_scoped_component_replacement_policy",
             "set_reference",
             "set_net_class",
             "delete_via",
