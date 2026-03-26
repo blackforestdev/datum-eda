@@ -365,6 +365,36 @@ pub struct PackageChangeCompatibilityReport {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
+pub enum PartChangeCompatibilityStatus {
+    NoKnownPart,
+    NoCompatibleParts,
+    CandidatesAvailable,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct PartChangeCandidate {
+    pub part_uuid: uuid::Uuid,
+    pub package_uuid: uuid::Uuid,
+    pub package_name: String,
+    pub value: String,
+    pub mpn: String,
+    pub manufacturer: String,
+    pub pin_names: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct PartChangeCompatibilityReport {
+    pub component_uuid: uuid::Uuid,
+    pub current_part_uuid: Option<uuid::Uuid>,
+    pub current_package_uuid: uuid::Uuid,
+    pub current_package_name: String,
+    pub current_value: String,
+    pub status: PartChangeCompatibilityStatus,
+    pub candidates: Vec<PartChangeCandidate>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum ViolationDomain {
     Erc,
     Drc,

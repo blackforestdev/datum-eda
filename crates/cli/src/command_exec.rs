@@ -53,6 +53,10 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 let report = query_package_change_candidates(&path, &uuid, &libraries)?;
                 Ok((render_output(&cli.format, &report), 0))
             }
+            QueryCommands::PartChangeCandidates { uuid, libraries } => {
+                let report = query_part_change_candidates(&path, &uuid, &libraries)?;
+                Ok((render_output(&cli.format, &report), 0))
+            }
         },
         Commands::Drc { path } => {
             let report = run_drc(Path::new(&path))?;

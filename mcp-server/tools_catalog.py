@@ -228,6 +228,15 @@ TOOLS: list[dict[str, Any]] = [
         },
     },
     {
+        "name": "get_part_change_candidates",
+        "description": "Return compatible target-part candidates for a board component UUID.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"uuid": {"type": "string"}},
+            "required": ["uuid"],
+        },
+    },
+    {
         "name": "get_components",
         "description": "Return the imported board component list for the open project.",
         "inputSchema": {"type": "object", "properties": {}},

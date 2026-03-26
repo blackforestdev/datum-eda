@@ -206,6 +206,13 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
             },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
+        "get_part_change_candidates" => match serde_json::from_value::<UuidParams>(request.params) {
+            Ok(params) => match engine.get_part_change_candidates(&params.uuid) {
+                Ok(report) => success_response(request.id, serde_json::to_value(report).unwrap()),
+                Err(err) => error_response(request.id, -32042, &err.to_string()),
+            },
+            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+        },
         "get_board_summary" => match engine.get_board_summary() {
             Ok(summary) => success_response(request.id, serde_json::to_value(summary).unwrap()),
             Err(err) => error_response(request.id, -32004, &err.to_string()),

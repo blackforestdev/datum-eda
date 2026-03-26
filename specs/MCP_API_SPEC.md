@@ -87,7 +87,7 @@ normalized MCP surface.
 ### Current Implemented Methods (2026-03-25)
 
 `open_project`, `close_project`, `search_pool`, `get_part`, `get_package`,
-`get_package_change_candidates`,
+`get_package_change_candidates`, `get_part_change_candidates`,
 `get_board_summary`, `get_schematic_summary`, `get_sheets`, `get_symbols`,
 `get_ports`, `get_labels`, `get_buses`, `get_bus_entries`, `get_noconnects`,
 `get_symbol_fields`, `get_hierarchy`, `get_netlist`, `get_components`,
@@ -189,6 +189,29 @@ Output: { "component_uuid": string,
               "package_name": string,
               "compatible_part_uuid": string,
               "compatible_part_value": string,
+              "pin_names": [string] }
+          ] }
+Error:  component_not_found
+```
+Current implementation note: implemented in the current daemon/stdio host.
+
+#### `get_part_change_candidates`
+```
+Method: get_part_change_candidates
+Input:  { "uuid": string }   // component UUID
+Output: { "component_uuid": string,
+          "current_part_uuid": string|null,
+          "current_package_uuid": string,
+          "current_package_name": string,
+          "current_value": string,
+          "status": "no_known_part"|"no_compatible_parts"|"candidates_available",
+          "candidates": [
+            { "part_uuid": string,
+              "package_uuid": string,
+              "package_name": string,
+              "value": string,
+              "mpn": string,
+              "manufacturer": string,
               "pin_names": [string] }
           ] }
 Error:  component_not_found

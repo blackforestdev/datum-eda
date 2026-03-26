@@ -70,6 +70,8 @@ def dispatch_tool_call(daemon: Any, name: str, arguments: dict[str, Any]) -> Any
         return daemon.get_package(arguments["uuid"])
     if name == "get_package_change_candidates":
         return daemon.get_package_change_candidates(arguments["uuid"])
+    if name == "get_part_change_candidates":
+        return daemon.get_part_change_candidates(arguments["uuid"])
     if name == "get_components":
         return daemon.get_components()
     if name == "get_netlist":

@@ -153,6 +153,9 @@ class TestDaemonClient(unittest.TestCase):
         package_candidates = client.get_package_change_candidates_request(
             "33333333-3333-3333-3333-333333333333"
         )
+        part_candidates = client.get_part_change_candidates_request(
+            "44444444-4444-4444-4444-444444444444"
+        )
         self.assertEqual(part.method, "get_part")
         self.assertEqual(part.params, {"uuid": "11111111-1111-1111-1111-111111111111"})
         self.assertEqual(package.method, "get_package")
@@ -161,6 +164,11 @@ class TestDaemonClient(unittest.TestCase):
         self.assertEqual(
             package_candidates.params,
             {"uuid": "33333333-3333-3333-3333-333333333333"},
+        )
+        self.assertEqual(part_candidates.method, "get_part_change_candidates")
+        self.assertEqual(
+            part_candidates.params,
+            {"uuid": "44444444-4444-4444-4444-444444444444"},
         )
 
     def test_builds_explain_violation_request(self) -> None:

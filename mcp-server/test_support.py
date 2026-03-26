@@ -335,6 +335,33 @@ class FakeDaemonClient:
             None,
         )
 
+    def get_part_change_candidates(self, uuid: str) -> JsonRpcResponse:
+        self.calls.append(("get_part_change_candidates", uuid))
+        return JsonRpcResponse(
+            "2.0",
+            1081,
+            {
+                "component_uuid": uuid,
+                "current_part_uuid": "part-uuid",
+                "current_package_uuid": "package-uuid",
+                "current_package_name": "SOT23",
+                "current_value": "LMV321",
+                "status": "candidates_available",
+                "candidates": [
+                    {
+                        "part_uuid": "alt-part-uuid",
+                        "package_uuid": "alt-package-uuid",
+                        "package_name": "ALT-3",
+                        "value": "ALTAMP",
+                        "mpn": "ALTAMP-001",
+                        "manufacturer": "Datum",
+                        "pin_names": ["IN+", "IN-", "OUT"],
+                    }
+                ],
+            },
+            None,
+        )
+
     def get_check_report(self) -> JsonRpcResponse:
         self.calls.append(("get_check_report", None))
         return JsonRpcResponse(

@@ -787,6 +787,8 @@ impl Engine {
     pub fn get_package(&self, uuid: &Uuid) -> Result<PackageDetail>;
     pub fn get_package_change_candidates(&self, component_uuid: &Uuid)
         -> Result<PackageChangeCompatibilityReport>;
+    pub fn get_part_change_candidates(&self, component_uuid: &Uuid)
+        -> Result<PartChangeCompatibilityReport>;
     pub fn import_eagle_library(&mut self, path: &Path) -> Result<ImportReport>;
 
     // Queries (read-only)

@@ -8,8 +8,9 @@ use anyhow::{Context, Result, bail};
 use clap::{Parser, Subcommand};
 use eda_engine::api::{
     AssignPartInput, CheckReport, CheckStatus, Engine, MoveComponentInput, OperationResult,
-    PackageChangeCompatibilityReport, RotateComponentInput, SetDesignRuleInput, SetReferenceInput,
-    SetNetClassInput, SetPackageInput, SetPackageWithPartInput, SetValueInput,
+    PackageChangeCompatibilityReport, PartChangeCompatibilityReport, RotateComponentInput,
+    SetDesignRuleInput, SetNetClassInput, SetPackageInput, SetPackageWithPartInput,
+    SetReferenceInput, SetValueInput,
 };
 use eda_engine::drc::DrcReport;
 use eda_engine::erc::ErcFinding;
@@ -188,6 +189,14 @@ enum QueryCommands {
     DesignRules,
     /// Show package-change compatibility candidates for a component UUID
     PackageChangeCandidates {
+        /// Component UUID
+        uuid: Uuid,
+        /// Load Eagle libraries into the in-memory pool before querying candidates
+        #[arg(long = "library")]
+        libraries: Vec<PathBuf>,
+    },
+    /// Show part-change compatibility candidates for a component UUID
+    PartChangeCandidates {
         /// Component UUID
         uuid: Uuid,
         /// Load Eagle libraries into the in-memory pool before querying candidates
@@ -787,6 +796,25 @@ fn query_package_change_candidates(
     }
 }
 
+fn query_part_change_candidates(
+    path: &Path,
+    uuid: &Uuid,
+    libraries: &[PathBuf],
+) -> Result<PartChangeCompatibilityReport> {
+    let engine = import_design_for_query_with_libraries(path, libraries)?;
+    match engine.get_board_summary() {
+        Ok(_) => Ok(engine.get_part_change_candidates(uuid)?),
+        Err(EngineError::NotFound {
+            object_type: "board",
+            ..
+        }) => bail!(
+            "query part-change-candidates is currently only implemented for boards in M3: {}",
+            path.display()
+        ),
+        Err(err) => Err(err.into()),
+    }
+}
+
 fn render_output<T: Serialize>(format: &OutputFormat, value: &T) -> String {
     match format {
         OutputFormat::Text => render_text(value),
@@ -974,6 +1002,73 @@ mod tests {
 
         let output = execute(cli).expect("candidate query should succeed");
         assert!(output.contains("\"status\": \"no_known_part\""));
+    }
+
+    #[test]
+    fn execute_query_part_change_candidates_returns_report_output() {
+        let source = kicad_fixture_path("partial-route-demo.kicad_pcb");
+        let target = std::env::temp_dir().join(format!(
+            "{}-cli-query-part-change-candidates.kicad_pcb",
+            Uuid::new_v4()
+        ));
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+            .expect("library import should succeed");
+        let lmv321_part_uuid = engine
+            .search_pool("LMV321")
+            .expect("search should succeed")
+            .first()
+            .map(|part| part.uuid)
+            .expect("LMV321 part should exist");
+        modify_board(
+            &source,
+            &[],
+            &[],
+            &[],
+            &[eagle_fixture_path("simple-opamp.lbr")],
+            &[],
+            &[],
+            &[],
+            &[AssignPartInput {
+                uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+                part_uuid: lmv321_part_uuid,
+            }],
+            &[],
+            &[],
+            &[],
+            &[],
+            None,
+            0,
+            0,
+            Some(&target),
+            false,
+        )
+        .expect("modify assign_part save should succeed");
+
+        let cli = Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "query",
+            target.to_str().unwrap(),
+            "part-change-candidates",
+            "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "--library",
+            eagle_fixture_path("simple-opamp.lbr").to_str().unwrap(),
+        ])
+        .expect("CLI should parse");
+
+        let output = execute(cli).expect("part-change candidate query should succeed");
+        assert!(output.contains("\"status\": \"candidates_available\""));
+        assert!(output.contains("\"package_name\": \"ALT-3\""));
+        assert!(output.contains("\"value\": \"ALTAMP\""));
+
+        let _ = std::fs::remove_file(&target);
+        let _ = std::fs::remove_file(target.with_file_name(format!(
+            "{}.parts.json",
+            target.file_name().unwrap().to_string_lossy()
+        )));
     }
 
     #[test]

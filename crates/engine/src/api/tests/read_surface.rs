@@ -734,6 +734,47 @@ fn get_package_change_candidates_reports_unique_compatible_packages() {
 }
 
 #[test]
+fn get_part_change_candidates_reports_compatible_parts() {
+    let mut engine = Engine::new().expect("engine should initialize");
+    engine
+        .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+        .expect("library import should succeed");
+    engine
+        .import(&fixture_path("partial-route-demo.kicad_pcb"))
+        .expect("fixture should import");
+    let lmv321_part_uuid = engine
+        .search_pool("LMV321")
+        .expect("search should succeed")
+        .first()
+        .expect("LMV321 part should exist")
+        .uuid;
+    engine
+        .assign_part(AssignPartInput {
+            uuid: uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+            part_uuid: lmv321_part_uuid,
+        })
+        .expect("assign_part should succeed");
+
+    let report = engine
+        .get_part_change_candidates(
+            &uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+        )
+        .expect("candidate query should succeed");
+    assert_eq!(
+        report.status,
+        PartChangeCompatibilityStatus::CandidatesAvailable
+    );
+    assert_eq!(report.current_part_uuid, Some(lmv321_part_uuid));
+    assert!(!report.candidates.is_empty());
+    assert!(
+        report
+            .candidates
+            .iter()
+            .any(|candidate| candidate.package_name == "ALT-3" && candidate.value == "ALTAMP")
+    );
+}
+
+#[test]
 fn get_netlist_returns_board_nets_for_board_project() {
     let mut engine = Engine::new().expect("engine should initialize");
     engine

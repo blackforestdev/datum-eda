@@ -373,6 +373,102 @@ impl Engine {
         })
     }
 
+    pub fn get_part_change_candidates(
+        &self,
+        component_uuid: &uuid::Uuid,
+    ) -> Result<PartChangeCompatibilityReport, EngineError> {
+        let design = self.design.as_ref().ok_or(EngineError::NoProjectOpen)?;
+        let board = design.board.as_ref().ok_or_else(|| EngineError::NotFound {
+            object_type: "board",
+            uuid: uuid::Uuid::nil(),
+        })?;
+        let component = board
+            .packages
+            .get(component_uuid)
+            .ok_or(EngineError::NotFound {
+                object_type: "component",
+                uuid: *component_uuid,
+            })?;
+        let current_package_name = self
+            .pool
+            .packages
+            .get(&component.package)
+            .map(|package| package.name.clone())
+            .unwrap_or_default();
+
+        if component.part == uuid::Uuid::nil() || !self.pool.parts.contains_key(&component.part) {
+            return Ok(PartChangeCompatibilityReport {
+                component_uuid: *component_uuid,
+                current_part_uuid: None,
+                current_package_uuid: component.package,
+                current_package_name,
+                current_value: component.value.clone(),
+                status: PartChangeCompatibilityStatus::NoKnownPart,
+                candidates: Vec::new(),
+            });
+        }
+
+        let current_part_uuid = component.part;
+        let current_part = self.pool.parts.get(&current_part_uuid).ok_or(EngineError::NotFound {
+            object_type: "part",
+            uuid: current_part_uuid,
+        })?;
+        let current_signature = part_pin_signature(current_part, &self.pool).ok_or_else(|| {
+            EngineError::DanglingReference {
+                source_type: "part",
+                source_uuid: current_part_uuid,
+                target_type: "entity",
+                target_uuid: current_part.entity,
+            }
+        })?;
+
+        let mut candidates = Vec::new();
+        for part in self.pool.parts.values() {
+            if part.uuid == current_part_uuid {
+                continue;
+            }
+            if part_pin_signature(part, &self.pool).as_ref() != Some(&current_signature) {
+                continue;
+            }
+            let package = self.pool.packages.get(&part.package).ok_or(EngineError::NotFound {
+                object_type: "package",
+                uuid: part.package,
+            })?;
+            let mut pin_names: Vec<_> = current_signature.iter().cloned().collect();
+            pin_names.sort();
+            candidates.push(PartChangeCandidate {
+                part_uuid: part.uuid,
+                package_uuid: part.package,
+                package_name: package.name.clone(),
+                value: part.value.clone(),
+                mpn: part.mpn.clone(),
+                manufacturer: part.manufacturer.clone(),
+                pin_names,
+            });
+        }
+        candidates.sort_by(|a, b| {
+            a.package_name
+                .cmp(&b.package_name)
+                .then_with(|| a.value.cmp(&b.value))
+                .then_with(|| a.mpn.cmp(&b.mpn))
+                .then_with(|| a.part_uuid.cmp(&b.part_uuid))
+        });
+
+        Ok(PartChangeCompatibilityReport {
+            component_uuid: *component_uuid,
+            current_part_uuid: Some(current_part_uuid),
+            current_package_uuid: component.package,
+            current_package_name,
+            current_value: component.value.clone(),
+            status: if candidates.is_empty() {
+                PartChangeCompatibilityStatus::NoCompatibleParts
+            } else {
+                PartChangeCompatibilityStatus::CandidatesAvailable
+            },
+            candidates,
+        })
+    }
+
     pub fn close_project(&mut self) {
         self.design = None;
         self.imported_source = None;
