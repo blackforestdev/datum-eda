@@ -224,6 +224,9 @@ class EngineDaemonClient:
     def get_part_change_candidates_request(self, uuid: str) -> JsonRpcRequest:
         return self.build_request("get_part_change_candidates", {"uuid": uuid})
 
+    def get_component_replacement_plan_request(self, uuid: str) -> JsonRpcRequest:
+        return self.build_request("get_component_replacement_plan", {"uuid": uuid})
+
     def get_board_summary_request(self) -> JsonRpcRequest:
         return self.build_request("get_board_summary", {})
 
@@ -414,6 +417,9 @@ class EngineDaemonClient:
 
     def get_part_change_candidates(self, uuid: str) -> JsonRpcResponse:
         return self.call(self.get_part_change_candidates_request(uuid))
+
+    def get_component_replacement_plan(self, uuid: str) -> JsonRpcResponse:
+        return self.call(self.get_component_replacement_plan_request(uuid))
 
     def get_board_summary(self) -> JsonRpcResponse:
         return self.call(self.get_board_summary_request())

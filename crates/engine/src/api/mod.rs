@@ -393,6 +393,18 @@ pub struct PartChangeCompatibilityReport {
     pub candidates: Vec<PartChangeCandidate>,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ComponentReplacementPlan {
+    pub component_uuid: uuid::Uuid,
+    pub current_reference: String,
+    pub current_value: String,
+    pub current_part_uuid: Option<uuid::Uuid>,
+    pub current_package_uuid: uuid::Uuid,
+    pub current_package_name: String,
+    pub package_change: PackageChangeCompatibilityReport,
+    pub part_change: PartChangeCompatibilityReport,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ViolationDomain {

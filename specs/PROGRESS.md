@@ -332,6 +332,7 @@ Item 8 reconciliation notes (2026-03-25):
 | SetPackageWithPart | [~] | Engine/daemon/MCP/CLI current slice implemented for board components by UUID with explicit caller-selected compatible part+package mutation, package-backed KiCad footprint rewrite, and logical pin-net preservation |
 | Package-change introspection | [~] | Engine/daemon/MCP/CLI query surface exposes component-scoped package compatibility candidates and resolution status for current board slice |
 | Part-change introspection | [~] | Engine/daemon/MCP/CLI query surface exposes component-scoped compatible part candidates for current board slice |
+| Replacement-plan introspection | [~] | Engine/daemon/MCP/CLI query surface exposes a unified component replacement planning report combining package and part compatibility for current board slice |
 | SetNetClass | [~] | Engine/daemon/MCP/CLI current slice implemented for board nets by UUID with sidecar-backed net-class persistence |
 | SetDesignRule | [~] | Engine/daemon/MCP current slice implemented; CLI exposes the default all-scope clearance rule path and follow-up `query design-rules` verification surface |
 | DeleteTrack | [~] | Engine/daemon/MCP/CLI current slice implemented for board tracks by UUID |
@@ -479,6 +480,7 @@ Item 8 reconciliation notes (2026-03-25):
 | get_components() | [x] | |
 | get_package_change_candidates() | [x] | Current engine API supports component-scoped package compatibility introspection |
 | get_part_change_candidates() | [x] | Current engine API supports component-scoped part compatibility introspection |
+| get_component_replacement_plan() | [x] | Current engine API supports unified component replacement planning introspection |
 | get_net_info() | [x] | Returns all nets, not single-net |
 | get_stackup() | [x] | |
 | get_unrouted() | [x] | |

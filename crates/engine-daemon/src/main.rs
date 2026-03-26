@@ -728,6 +728,74 @@ mod tests {
     }
 
     #[test]
+    fn get_component_replacement_plan_dispatch_returns_combined_report() {
+        let mut engine = Engine::new().expect("engine should initialize");
+        let _ = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(1),
+                method: "open_project".into(),
+                params: serde_json::to_value(OpenProjectParams {
+                    path: eagle_fixture_path("simple-opamp.lbr"),
+                })
+                .unwrap(),
+            },
+        );
+        let _ = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(2),
+                method: "open_project".into(),
+                params: serde_json::to_value(OpenProjectParams {
+                    path: kicad_fixture_path("partial-route-demo.kicad_pcb"),
+                })
+                .unwrap(),
+            },
+        );
+        let search = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(3),
+                method: "search_pool".into(),
+                params: json!({"query": "LMV321"}),
+            },
+        );
+        let lmv321_part_uuid = search.result.as_ref().unwrap()[0]["uuid"].clone();
+        let assign = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(4),
+                method: "assign_part".into(),
+                params: json!({
+                    "uuid": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+                    "part_uuid": lmv321_part_uuid,
+                }),
+            },
+        );
+        assert!(assign.error.is_none(), "{assign:?}");
+
+        let response = dispatch_request(
+            &mut engine,
+            JsonRpcRequest {
+                jsonrpc: "2.0".into(),
+                id: json!(5),
+                method: "get_component_replacement_plan".into(),
+                params: json!({"uuid": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"}),
+            },
+        );
+        assert!(response.error.is_none(), "{response:?}");
+        let report = response.result.expect("response should contain result");
+        assert_eq!(report["current_reference"], "R1");
+        assert_eq!(report["current_part_uuid"], lmv321_part_uuid);
+        assert_eq!(report["package_change"]["status"], "candidates_available");
+        assert_eq!(report["part_change"]["status"], "candidates_available");
+    }
+
+    #[test]
     fn get_net_info_dispatch_returns_board_nets() {
         let mut engine = Engine::new().expect("engine should initialize");
         let open = JsonRpcRequest {

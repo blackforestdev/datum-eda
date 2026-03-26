@@ -362,6 +362,59 @@ class FakeDaemonClient:
             None,
         )
 
+    def get_component_replacement_plan(self, uuid: str) -> JsonRpcResponse:
+        self.calls.append(("get_component_replacement_plan", uuid))
+        return JsonRpcResponse(
+            "2.0",
+            1082,
+            {
+                "component_uuid": uuid,
+                "current_reference": "R1",
+                "current_value": "LMV321",
+                "current_part_uuid": "part-uuid",
+                "current_package_uuid": "package-uuid",
+                "current_package_name": "SOT23",
+                "package_change": {
+                    "component_uuid": uuid,
+                    "current_part_uuid": "part-uuid",
+                    "current_package_uuid": "package-uuid",
+                    "current_package_name": "SOT23",
+                    "current_value": "LMV321",
+                    "status": "candidates_available",
+                    "ambiguous_package_count": 0,
+                    "candidates": [
+                        {
+                            "package_uuid": "alt-package-uuid",
+                            "package_name": "ALT-3",
+                            "compatible_part_uuid": "alt-part-uuid",
+                            "compatible_part_value": "ALTAMP",
+                            "pin_names": ["IN+", "IN-", "OUT"],
+                        }
+                    ],
+                },
+                "part_change": {
+                    "component_uuid": uuid,
+                    "current_part_uuid": "part-uuid",
+                    "current_package_uuid": "package-uuid",
+                    "current_package_name": "SOT23",
+                    "current_value": "LMV321",
+                    "status": "candidates_available",
+                    "candidates": [
+                        {
+                            "part_uuid": "alt-part-uuid",
+                            "package_uuid": "alt-package-uuid",
+                            "package_name": "ALT-3",
+                            "value": "ALTAMP",
+                            "mpn": "ALTAMP-001",
+                            "manufacturer": "Datum",
+                            "pin_names": ["IN+", "IN-", "OUT"],
+                        }
+                    ],
+                },
+            },
+            None,
+        )
+
     def get_check_report(self) -> JsonRpcResponse:
         self.calls.append(("get_check_report", None))
         return JsonRpcResponse(

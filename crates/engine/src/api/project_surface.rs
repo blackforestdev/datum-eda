@@ -469,6 +469,41 @@ impl Engine {
         })
     }
 
+    pub fn get_component_replacement_plan(
+        &self,
+        component_uuid: &uuid::Uuid,
+    ) -> Result<ComponentReplacementPlan, EngineError> {
+        let design = self.design.as_ref().ok_or(EngineError::NoProjectOpen)?;
+        let board = design.board.as_ref().ok_or_else(|| EngineError::NotFound {
+            object_type: "board",
+            uuid: uuid::Uuid::nil(),
+        })?;
+        let component = board
+            .packages
+            .get(component_uuid)
+            .ok_or(EngineError::NotFound {
+                object_type: "component",
+                uuid: *component_uuid,
+            })?;
+        let current_package_name = self
+            .pool
+            .packages
+            .get(&component.package)
+            .map(|package| package.name.clone())
+            .unwrap_or_default();
+
+        Ok(ComponentReplacementPlan {
+            component_uuid: *component_uuid,
+            current_reference: component.reference.clone(),
+            current_value: component.value.clone(),
+            current_part_uuid: (component.part != uuid::Uuid::nil()).then_some(component.part),
+            current_package_uuid: component.package,
+            current_package_name,
+            package_change: self.get_package_change_candidates(component_uuid)?,
+            part_change: self.get_part_change_candidates(component_uuid)?,
+        })
+    }
+
     pub fn close_project(&mut self) {
         self.design = None;
         self.imported_source = None;

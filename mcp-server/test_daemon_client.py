@@ -156,6 +156,9 @@ class TestDaemonClient(unittest.TestCase):
         part_candidates = client.get_part_change_candidates_request(
             "44444444-4444-4444-4444-444444444444"
         )
+        replacement_plan = client.get_component_replacement_plan_request(
+            "55555555-5555-5555-5555-555555555555"
+        )
         self.assertEqual(part.method, "get_part")
         self.assertEqual(part.params, {"uuid": "11111111-1111-1111-1111-111111111111"})
         self.assertEqual(package.method, "get_package")
@@ -169,6 +172,11 @@ class TestDaemonClient(unittest.TestCase):
         self.assertEqual(
             part_candidates.params,
             {"uuid": "44444444-4444-4444-4444-444444444444"},
+        )
+        self.assertEqual(replacement_plan.method, "get_component_replacement_plan")
+        self.assertEqual(
+            replacement_plan.params,
+            {"uuid": "55555555-5555-5555-5555-555555555555"},
         )
 
     def test_builds_explain_violation_request(self) -> None:

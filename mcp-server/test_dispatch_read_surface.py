@@ -99,6 +99,26 @@ class TestDispatchReadSurface(unittest.TestCase):
         self.assertEqual(payload["status"], "candidates_available")
         self.assertEqual(payload["candidates"][0]["value"], "ALTAMP")
 
+    def test_tools_call_dispatches_get_component_replacement_plan(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 2033,
+                "method": "tools/call",
+                "params": {
+                    "name": "get_component_replacement_plan",
+                    "arguments": {"uuid": "comp-uuid"},
+                },
+            }
+        )
+        self.assertEqual(daemon.calls, [("get_component_replacement_plan", "comp-uuid")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["current_reference"], "R1")
+        self.assertEqual(payload["package_change"]["status"], "candidates_available")
+        self.assertEqual(payload["part_change"]["status"], "candidates_available")
+
     def test_tools_call_dispatches_check_report(self) -> None:
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)

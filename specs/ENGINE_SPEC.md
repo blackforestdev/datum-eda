@@ -789,6 +789,8 @@ impl Engine {
         -> Result<PackageChangeCompatibilityReport>;
     pub fn get_part_change_candidates(&self, component_uuid: &Uuid)
         -> Result<PartChangeCompatibilityReport>;
+    pub fn get_component_replacement_plan(&self, component_uuid: &Uuid)
+        -> Result<ComponentReplacementPlan>;
     pub fn import_eagle_library(&mut self, path: &Path) -> Result<ImportReport>;
 
     // Queries (read-only)

@@ -237,6 +237,15 @@ TOOLS: list[dict[str, Any]] = [
         },
     },
     {
+        "name": "get_component_replacement_plan",
+        "description": "Return a unified replacement-planning report for a board component UUID.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"uuid": {"type": "string"}},
+            "required": ["uuid"],
+        },
+    },
+    {
         "name": "get_components",
         "description": "Return the imported board component list for the open project.",
         "inputSchema": {"type": "object", "properties": {}},

@@ -88,6 +88,7 @@ normalized MCP surface.
 
 `open_project`, `close_project`, `search_pool`, `get_part`, `get_package`,
 `get_package_change_candidates`, `get_part_change_candidates`,
+`get_component_replacement_plan`,
 `get_board_summary`, `get_schematic_summary`, `get_sheets`, `get_symbols`,
 `get_ports`, `get_labels`, `get_buses`, `get_bus_entries`, `get_noconnects`,
 `get_symbol_fields`, `get_hierarchy`, `get_netlist`, `get_components`,
@@ -214,6 +215,22 @@ Output: { "component_uuid": string,
               "manufacturer": string,
               "pin_names": [string] }
           ] }
+Error:  component_not_found
+```
+Current implementation note: implemented in the current daemon/stdio host.
+
+#### `get_component_replacement_plan`
+```
+Method: get_component_replacement_plan
+Input:  { "uuid": string }   // component UUID
+Output: { "component_uuid": string,
+          "current_reference": string,
+          "current_value": string,
+          "current_part_uuid": string|null,
+          "current_package_uuid": string,
+          "current_package_name": string,
+          "package_change": json,
+          "part_change": json }
 Error:  component_not_found
 ```
 Current implementation note: implemented in the current daemon/stdio host.
