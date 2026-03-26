@@ -147,6 +147,7 @@ run ERC/DRC.
   already exist.
 - The currently implemented MCP/daemon method subset is:
   `open_project`, `close_project`, `search_pool`, `get_part`, `get_package`,
+  `get_package_change_candidates`,
   `get_board_summary`, `get_components`, `get_netlist`,
   `get_schematic_summary`, `get_sheets`, `get_labels`, `get_symbols`,
   `get_symbol_fields`, `get_ports`, `get_buses`, `get_bus_entries`,
@@ -167,7 +168,7 @@ run ERC/DRC.
 | DRC rules implemented | clearance_copper, track_width, via_hole, via_annular, connectivity, unconnected_pins, silk_clearance |
 | DRC correctness | ≤ 5% false positive rate vs. KiCad DRC on DOA2526 |
 | DRC correctness | 0% false negative rate on known violations in test corpus |
-| MCP tools | open_project, close_project, search_pool, get_part, get_package, get_board_summary, get_schematic_summary, get_sheets, get_symbols, get_ports, get_labels, get_buses, get_bus_entries, get_noconnects, get_symbol_fields, get_hierarchy, get_netlist, get_components, get_net_info, get_schematic_net_info, get_connectivity_diagnostics, get_design_rules, get_unrouted, run_erc, run_drc, explain_violation |
+| MCP tools | open_project, close_project, search_pool, get_part, get_package, get_package_change_candidates, get_board_summary, get_schematic_summary, get_sheets, get_symbols, get_ports, get_labels, get_buses, get_bus_entries, get_noconnects, get_symbol_fields, get_hierarchy, get_netlist, get_components, get_net_info, get_schematic_net_info, get_connectivity_diagnostics, get_design_rules, get_unrouted, run_erc, run_drc, explain_violation |
 | CLI commands | `tool import`, `tool query`, `tool erc`, `tool drc`, `tool pool search` |
 | MCP registration | Works in host MCP client config; tools callable via a standards-compliant MCP client |
 | Test corpus | 10+ designs with ERC/DRC golden files |
@@ -205,12 +206,12 @@ by forcing fragile imported-schematic write-back into `M3`.
 
 | Criterion | Threshold |
 |-----------|-----------|
-| Operations implemented | MoveComponent, RotateComponent, DeleteComponent, SetValue, SetReference, AssignPart, SetPackage, SetNetClass, SetDesignRule, DeleteTrack, DeleteVia |
+| Operations implemented | MoveComponent, RotateComponent, DeleteComponent, SetValue, SetReference, AssignPart, SetPackage, SetPackageWithPart, SetNetClass, SetDesignRule, DeleteTrack, DeleteVia |
 | Undo/redo | 100% of operations undoable |
 | Operation determinism | Same operation sequence → identical result |
 | KiCad write-back | Import → modify → export → opens in KiCad without errors |
 | Round-trip fidelity | Unmodified objects byte-identical after round-trip |
-| MCP write tools | move_component, rotate_component, set_value, set_reference, assign_part, set_package, set_net_class, set_design_rule, delete_component, delete_track, delete_via, undo, redo, save |
+| MCP write tools | move_component, rotate_component, set_value, set_reference, assign_part, set_package, set_package_with_part, set_net_class, set_design_rule, delete_component, delete_track, delete_via, undo, redo, save |
 | Derived data update | Connectivity, airwires, DRC recompute after each operation |
 | CLI modify command | `tool modify <design> --move U1 50,30` works |
 

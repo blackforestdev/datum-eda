@@ -33,6 +33,10 @@ def dispatch_tool_call(daemon: Any, name: str, arguments: dict[str, Any]) -> Any
         return daemon.assign_part(arguments["uuid"], arguments["part_uuid"])
     if name == "set_package":
         return daemon.set_package(arguments["uuid"], arguments["package_uuid"])
+    if name == "set_package_with_part":
+        return daemon.set_package_with_part(
+            arguments["uuid"], arguments["package_uuid"], arguments["part_uuid"]
+        )
     if name == "set_reference":
         return daemon.set_reference(arguments["uuid"], arguments["reference"])
     if name == "set_net_class":
@@ -64,6 +68,8 @@ def dispatch_tool_call(daemon: Any, name: str, arguments: dict[str, Any]) -> Any
         return daemon.get_part(arguments["uuid"])
     if name == "get_package":
         return daemon.get_package(arguments["uuid"])
+    if name == "get_package_change_candidates":
+        return daemon.get_package_change_candidates(arguments["uuid"])
     if name == "get_components":
         return daemon.get_components()
     if name == "get_netlist":

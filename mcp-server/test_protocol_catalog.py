@@ -26,6 +26,7 @@ class TestProtocolCatalog(unittest.TestCase):
             "set_value",
             "assign_part",
             "set_package",
+            "set_package_with_part",
             "set_reference",
             "set_net_class",
             "delete_via",
@@ -35,6 +36,7 @@ class TestProtocolCatalog(unittest.TestCase):
             "search_pool",
             "get_part",
             "get_package",
+            "get_package_change_candidates",
             "get_components",
             "get_netlist",
             "get_check_report",
@@ -81,4 +83,3 @@ class TestProtocolCatalog(unittest.TestCase):
             {"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}}
         )
         self.assertIsNone(response)
-

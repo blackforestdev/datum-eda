@@ -785,6 +785,8 @@ impl Engine {
     pub fn search_pool(&self, query: &str) -> Result<Vec<PartSummary>>;
     pub fn get_part(&self, uuid: &Uuid) -> Result<PartDetail>;
     pub fn get_package(&self, uuid: &Uuid) -> Result<PackageDetail>;
+    pub fn get_package_change_candidates(&self, component_uuid: &Uuid)
+        -> Result<PackageChangeCompatibilityReport>;
     pub fn import_eagle_library(&mut self, path: &Path) -> Result<ImportReport>;
 
     // Queries (read-only)

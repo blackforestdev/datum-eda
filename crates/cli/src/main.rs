@@ -8,8 +8,8 @@ use anyhow::{Context, Result, bail};
 use clap::{Parser, Subcommand};
 use eda_engine::api::{
     AssignPartInput, CheckReport, CheckStatus, Engine, MoveComponentInput, OperationResult,
-    RotateComponentInput, SetDesignRuleInput, SetReferenceInput, SetValueInput,
-    SetNetClassInput, SetPackageInput,
+    PackageChangeCompatibilityReport, RotateComponentInput, SetDesignRuleInput, SetReferenceInput,
+    SetNetClassInput, SetPackageInput, SetPackageWithPartInput, SetValueInput,
 };
 use eda_engine::drc::DrcReport;
 use eda_engine::erc::ErcFinding;
@@ -23,6 +23,9 @@ use eda_engine::schematic::{
 use eda_engine::{board::Airwire, board::BoardNetInfo, board::ComponentInfo};
 use serde::Serialize;
 use uuid::Uuid;
+
+mod command_exec;
+mod command_modify;
 
 #[derive(Parser)]
 #[command(name = "eda", about = "PCB design analysis and automation")]
@@ -49,6 +52,7 @@ enum FailOn {
 }
 
 #[derive(Subcommand)]
+#[allow(clippy::large_enum_variant)]
 enum Commands {
     /// Import a KiCad or Eagle design
     Import {
@@ -128,6 +132,10 @@ enum Commands {
         #[arg(long = "set-package")]
         set_package: Vec<String>,
 
+        /// Set one component package with an explicit compatible part: <uuid>:<package_uuid>:<part_uuid>
+        #[arg(long = "set-package-with-part")]
+        set_package_with_part: Vec<String>,
+
         /// Set one net class: <net_uuid>:<class_name>:<clearance_nm>:<track_width_nm>:<via_drill_nm>:<via_diameter_nm>[:<diffpair_width_nm>:<diffpair_gap_nm>]
         #[arg(long = "set-net-class")]
         set_net_class: Vec<String>,
@@ -178,6 +186,14 @@ enum QueryCommands {
     Unrouted,
     /// Show design rules
     DesignRules,
+    /// Show package-change compatibility candidates for a component UUID
+    PackageChangeCandidates {
+        /// Component UUID
+        uuid: Uuid,
+        /// Load Eagle libraries into the in-memory pool before querying candidates
+        #[arg(long = "library")]
+        libraries: Vec<PathBuf>,
+    },
 }
 
 #[derive(Subcommand)]
@@ -223,151 +239,7 @@ fn execute(cli: Cli) -> Result<String> {
 }
 
 fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
-    match cli.command {
-        Commands::Import { path } => {
-            let report = import_path(&path)?;
-            let view = ImportReportView::from(report);
-            Ok((render_output(&cli.format, &view), 0))
-        }
-        Commands::Query { path, what } => match what {
-            QueryCommands::Summary => {
-                let summary = query_summary(&path)?;
-                Ok((render_output(&cli.format, &summary), 0))
-            }
-            QueryCommands::Nets => {
-                let nets = query_nets(&path)?;
-                Ok((render_output(&cli.format, &nets), 0))
-            }
-            QueryCommands::Components => {
-                let components = query_components(&path)?;
-                Ok((render_output(&cli.format, &components), 0))
-            }
-            QueryCommands::Labels => {
-                let labels = query_labels(&path)?;
-                Ok((render_output(&cli.format, &labels), 0))
-            }
-            QueryCommands::Ports => {
-                let ports = query_ports(&path)?;
-                Ok((render_output(&cli.format, &ports), 0))
-            }
-            QueryCommands::Hierarchy => {
-                let hierarchy = query_hierarchy(&path)?;
-                Ok((render_output(&cli.format, &hierarchy), 0))
-            }
-            QueryCommands::Diagnostics => {
-                let diagnostics = query_diagnostics(&path)?;
-                Ok((render_output(&cli.format, &diagnostics), 0))
-            }
-            QueryCommands::Unrouted => {
-                let airwires = query_unrouted(&path)?;
-                Ok((render_output(&cli.format, &airwires), 0))
-            }
-            QueryCommands::DesignRules => {
-                let rules = query_design_rules(&path)?;
-                Ok((render_output(&cli.format, &rules), 0))
-            }
-        },
-        Commands::Drc { path } => {
-            let report = run_drc(Path::new(&path))?;
-            let output = match cli.format {
-                OutputFormat::Text => render_drc_report_text(&report),
-                OutputFormat::Json => render_output(&cli.format, &report),
-            };
-            let exit_code = if report.passed { 0 } else { 1 };
-            Ok((output, exit_code))
-        }
-        Commands::Erc { path } => {
-            let findings = run_erc(&path)?;
-            let exit_code = if findings.iter().any(|finding| !finding.waived) {
-                1
-            } else {
-                0
-            };
-            Ok((render_output(&cli.format, &findings), exit_code))
-        }
-        Commands::Check { path, fail_on } => {
-            let report = run_check(&path)?;
-            let output = match cli.format {
-                OutputFormat::Text => render_check_report_text(&report),
-                OutputFormat::Json => render_output(&cli.format, &report),
-            };
-            Ok((output, check_exit_code(&report, fail_on)))
-        }
-        Commands::Pool { action } => match action {
-            PoolCommands::Search { query, libraries } => {
-                let results = search_pool(&query, &libraries)?;
-                Ok((render_output(&cli.format, &results), 0))
-            }
-        },
-        Commands::Modify {
-            path,
-            delete_track,
-            delete_via,
-            delete_component,
-            libraries,
-            move_component,
-            rotate_component,
-            set_value,
-            assign_part,
-            set_package,
-            set_net_class,
-            set_reference,
-            undo,
-            redo,
-            save,
-            set_clearance_min_nm,
-            save_original,
-        } => {
-            let move_component = move_component
-                .iter()
-                .map(|value| parse_move_component_arg(value))
-                .collect::<Result<Vec<_>>>()?;
-            let rotate_component = rotate_component
-                .iter()
-                .map(|value| parse_rotate_component_arg(value))
-                .collect::<Result<Vec<_>>>()?;
-            let set_value = set_value
-                .iter()
-                .map(|value| parse_set_value_arg(value))
-                .collect::<Result<Vec<_>>>()?;
-            let assign_part = assign_part
-                .iter()
-                .map(|value| parse_assign_part_arg(value))
-                .collect::<Result<Vec<_>>>()?;
-            let set_package = set_package
-                .iter()
-                .map(|value| parse_set_package_arg(value))
-                .collect::<Result<Vec<_>>>()?;
-            let set_net_class = set_net_class
-                .iter()
-                .map(|value| parse_set_net_class_arg(value))
-                .collect::<Result<Vec<_>>>()?;
-            let set_reference = set_reference
-                .iter()
-                .map(|value| parse_set_reference_arg(value))
-                .collect::<Result<Vec<_>>>()?;
-            let report = modify_board(
-                &path,
-                &delete_track,
-                &delete_via,
-                &delete_component,
-                &libraries,
-                &move_component,
-                &rotate_component,
-                &set_value,
-                &assign_part,
-                &set_package,
-                &set_net_class,
-                &set_reference,
-                set_clearance_min_nm,
-                undo,
-                redo,
-                save.as_deref(),
-                save_original,
-            )?;
-            Ok((render_output(&cli.format, &report), 0))
-        }
-    }
+    command_exec::execute_with_exit_code(cli)
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -453,6 +325,7 @@ fn run_drc(path: &Path) -> Result<DrcReport> {
 }
 
 #[allow(clippy::too_many_arguments)]
+#[cfg(test)]
 fn modify_board(
     path: &Path,
     delete_track: &[Uuid],
@@ -464,6 +337,7 @@ fn modify_board(
     set_value: &[SetValueInput],
     assign_part: &[AssignPartInput],
     set_package: &[SetPackageInput],
+    set_package_with_part: &[SetPackageWithPartInput],
     set_net_class: &[SetNetClassInput],
     set_reference: &[SetReferenceInput],
     set_clearance_min_nm: Option<i64>,
@@ -472,176 +346,26 @@ fn modify_board(
     save: Option<&Path>,
     save_original: bool,
 ) -> Result<ModifyReportView> {
-    if path.extension().and_then(|ext| ext.to_str()) != Some("kicad_pcb") {
-        bail!(
-            "modify is currently only implemented for KiCad .kicad_pcb inputs in the current M3 slice: {}",
-            path.display()
-        );
-    }
-    if delete_track.is_empty()
-        && delete_via.is_empty()
-        && delete_component.is_empty()
-        && move_component.is_empty()
-        && rotate_component.is_empty()
-        && set_value.is_empty()
-        && assign_part.is_empty()
-        && set_package.is_empty()
-        && set_net_class.is_empty()
-        && set_reference.is_empty()
-        && set_clearance_min_nm.is_none()
-        && undo == 0
-        && redo == 0
-        && save.is_none()
-        && !save_original
-    {
-        bail!("modify requires at least one action in the current M3 slice");
-    }
-    if save.is_some() && save_original {
-        bail!("specify either --save or --save-original, not both");
-    }
-
-    let mut engine = Engine::new().context("failed to initialize engine")?;
-    for path in libraries {
-        if path.extension().and_then(|ext| ext.to_str()) != Some("lbr") {
-            bail!(
-                "modify --library currently only accepts Eagle .lbr inputs in the current M3 slice: {}",
-                path.display()
-            );
-        }
-        engine
-            .import_eagle_library(path)
-            .with_context(|| format!("failed to import Eagle library {}", path.display()))?;
-    }
-    engine
-        .import(path)
-        .with_context(|| format!("failed to import board {}", path.display()))?;
-
-    let mut actions = Vec::new();
-    let mut last_result = None;
-    for uuid in delete_track {
-        let result = engine
-            .delete_track(uuid)
-            .with_context(|| format!("failed to delete track {uuid}"))?;
-        actions.push(format!("delete_track {uuid}"));
-        last_result = Some(result);
-    }
-    for uuid in delete_via {
-        let result = engine
-            .delete_via(uuid)
-            .with_context(|| format!("failed to delete via {uuid}"))?;
-        actions.push(format!("delete_via {uuid}"));
-        last_result = Some(result);
-    }
-    for uuid in delete_component {
-        let result = engine
-            .delete_component(uuid)
-            .with_context(|| format!("failed to delete component {uuid}"))?;
-        actions.push(format!("delete_component {uuid}"));
-        last_result = Some(result);
-    }
-    for input in move_component {
-        let result = engine
-            .move_component(input.clone())
-            .with_context(|| format!("failed to move component {}", input.uuid))?;
-        actions.push(format!(
-            "move_component {} {} {} {}",
-            input.uuid,
-            input.position.x,
-            input.position.y,
-            input.rotation.unwrap_or_default()
-        ));
-        last_result = Some(result);
-    }
-    for input in rotate_component {
-        let result = engine
-            .rotate_component(input.clone())
-            .with_context(|| format!("failed to rotate component {}", input.uuid))?;
-        actions.push(format!("rotate_component {} {}", input.uuid, input.rotation));
-        last_result = Some(result);
-    }
-    for input in set_value {
-        let result = engine
-            .set_value(input.clone())
-            .with_context(|| format!("failed to set component value {}", input.uuid))?;
-        actions.push(format!("set_value {} {}", input.uuid, input.value));
-        last_result = Some(result);
-    }
-    for input in assign_part {
-        let result = engine
-            .assign_part(input.clone())
-            .with_context(|| format!("failed to assign part {} to {}", input.part_uuid, input.uuid))?;
-        actions.push(format!("assign_part {} {}", input.uuid, input.part_uuid));
-        last_result = Some(result);
-    }
-    for input in set_package {
-        let result = engine
-            .set_package(input.clone())
-            .with_context(|| format!("failed to set package {} on {}", input.package_uuid, input.uuid))?;
-        actions.push(format!("set_package {} {}", input.uuid, input.package_uuid));
-        last_result = Some(result);
-    }
-    for input in set_net_class {
-        let result = engine
-            .set_net_class(input.clone())
-            .with_context(|| format!("failed to set net class on {}", input.net_uuid))?;
-        actions.push(format!(
-            "set_net_class {} {}",
-            input.net_uuid, input.class_name
-        ));
-        last_result = Some(result);
-    }
-    for input in set_reference {
-        let result = engine
-            .set_reference(input.clone())
-            .with_context(|| format!("failed to set component reference {}", input.uuid))?;
-        actions.push(format!("set_reference {} {}", input.uuid, input.reference));
-        last_result = Some(result);
-    }
-    if let Some(min) = set_clearance_min_nm {
-        let result = engine
-            .set_design_rule(SetDesignRuleInput {
-                rule_type: RuleType::ClearanceCopper,
-                scope: RuleScope::All,
-                parameters: RuleParams::Clearance { min },
-                priority: 10,
-                name: Some("default clearance".to_string()),
-            })
-            .context("failed to set default clearance rule")?;
-        actions.push(format!("set_design_rule clearance_copper {min}"));
-        last_result = Some(result);
-    }
-    for _ in 0..undo {
-        let result = engine.undo().context("failed to undo board transaction")?;
-        actions.push("undo".to_string());
-        last_result = Some(result);
-    }
-    for _ in 0..redo {
-        let result = engine.redo().context("failed to redo board transaction")?;
-        actions.push("redo".to_string());
-        last_result = Some(result);
-    }
-
-    let saved_path = if let Some(target) = save {
-        engine
-            .save(target)
-            .with_context(|| format!("failed to save board to {}", target.display()))?;
-        actions.push(format!("save {}", target.display()));
-        Some(target.display().to_string())
-    } else if save_original {
-        let target = engine
-            .save_to_original()
-            .context("failed to save board to original path")?;
-        actions.push(format!("save {}", target.display()));
-        Some(target.display().to_string())
-    } else {
-        None
-    };
-
-    Ok(ModifyReportView {
-        actions,
-        last_result,
-        saved_path,
-    })
+    command_modify::modify_board(
+        path,
+        delete_track,
+        delete_via,
+        delete_component,
+        libraries,
+        move_component,
+        rotate_component,
+        set_value,
+        assign_part,
+        set_package,
+        set_package_with_part,
+        set_net_class,
+        set_reference,
+        set_clearance_min_nm,
+        undo,
+        redo,
+        save,
+        save_original,
+    )
 }
 
 fn run_check(path: &Path) -> Result<CheckReport> {
@@ -652,106 +376,6 @@ fn run_check(path: &Path) -> Result<CheckReport> {
     engine
         .get_check_report()
         .with_context(|| format!("failed to build check report for {}", path.display()))
-}
-
-fn parse_move_component_arg(value: &str) -> Result<MoveComponentInput> {
-    let parts: Vec<_> = value.split(':').collect();
-    if parts.len() != 3 && parts.len() != 4 {
-        bail!("--move-component expects <uuid>:<x_mm>:<y_mm>[:<rotation_deg>]");
-    }
-    let uuid = Uuid::parse_str(parts[0])?;
-    let x_mm = parts[1].parse::<f64>()?;
-    let y_mm = parts[2].parse::<f64>()?;
-    let rotation = if parts.len() == 4 {
-        Some(parts[3].parse::<i32>()?)
-    } else {
-        None
-    };
-    Ok(MoveComponentInput {
-        uuid,
-        position: eda_engine::ir::geometry::Point::new(
-            eda_engine::ir::units::mm_to_nm(x_mm),
-            eda_engine::ir::units::mm_to_nm(y_mm),
-        ),
-        rotation,
-    })
-}
-
-fn parse_set_value_arg(value: &str) -> Result<SetValueInput> {
-    let (uuid, component_value) = value
-        .split_once(':')
-        .ok_or_else(|| anyhow::anyhow!("--set-value expects <uuid>:<value>"))?;
-    Ok(SetValueInput {
-        uuid: Uuid::parse_str(uuid)?,
-        value: component_value.to_string(),
-    })
-}
-
-fn parse_rotate_component_arg(value: &str) -> Result<RotateComponentInput> {
-    let (uuid, rotation) = value
-        .split_once(':')
-        .ok_or_else(|| anyhow::anyhow!("--rotate-component expects <uuid>:<rotation_deg>"))?;
-    Ok(RotateComponentInput {
-        uuid: Uuid::parse_str(uuid)?,
-        rotation: rotation.parse::<i32>()?,
-    })
-}
-
-fn parse_set_reference_arg(value: &str) -> Result<SetReferenceInput> {
-    let (uuid, reference) = value
-        .split_once(':')
-        .ok_or_else(|| anyhow::anyhow!("--set-reference expects <uuid>:<reference>"))?;
-    Ok(SetReferenceInput {
-        uuid: Uuid::parse_str(uuid)?,
-        reference: reference.to_string(),
-    })
-}
-
-fn parse_assign_part_arg(value: &str) -> Result<AssignPartInput> {
-    let (uuid, part_uuid) = value
-        .split_once(':')
-        .ok_or_else(|| anyhow::anyhow!("--assign-part expects <uuid>:<part_uuid>"))?;
-    Ok(AssignPartInput {
-        uuid: Uuid::parse_str(uuid)?,
-        part_uuid: Uuid::parse_str(part_uuid)?,
-    })
-}
-
-fn parse_set_package_arg(value: &str) -> Result<SetPackageInput> {
-    let (uuid, package_uuid) = value
-        .split_once(':')
-        .ok_or_else(|| anyhow::anyhow!("--set-package expects <uuid>:<package_uuid>"))?;
-    Ok(SetPackageInput {
-        uuid: Uuid::parse_str(uuid)?,
-        package_uuid: Uuid::parse_str(package_uuid)?,
-    })
-}
-
-fn parse_set_net_class_arg(value: &str) -> Result<SetNetClassInput> {
-    let parts: Vec<_> = value.split(':').collect();
-    if parts.len() != 6 && parts.len() != 8 {
-        bail!(
-            "--set-net-class expects <net_uuid>:<class_name>:<clearance_nm>:<track_width_nm>:<via_drill_nm>:<via_diameter_nm>[:<diffpair_width_nm>:<diffpair_gap_nm>]"
-        );
-    }
-    Ok(SetNetClassInput {
-        net_uuid: Uuid::parse_str(parts[0])?,
-        class_name: parts[1].to_string(),
-        clearance: parts[2].parse::<i64>()?,
-        track_width: parts[3].parse::<i64>()?,
-        via_drill: parts[4].parse::<i64>()?,
-        via_diameter: parts[5].parse::<i64>()?,
-        diffpair_width: if parts.len() == 8 {
-            parts[6].parse::<i64>()?
-        } else {
-            0
-        },
-        diffpair_gap: if parts.len() == 8 {
-            parts[7].parse::<i64>()?
-        } else {
-            0
-        },
-    })
 }
 
 fn check_exit_code(report: &CheckReport, fail_on: Option<FailOn>) -> i32 {
@@ -983,7 +607,16 @@ enum DesignRuleListView {
 }
 
 fn import_design_for_query(path: &Path) -> Result<Engine> {
+    import_design_for_query_with_libraries(path, &[])
+}
+
+fn import_design_for_query_with_libraries(path: &Path, libraries: &[PathBuf]) -> Result<Engine> {
     let mut engine = Engine::new().context("failed to initialize engine")?;
+    for library in libraries {
+        engine
+            .import_eagle_library(library)
+            .with_context(|| format!("failed to import library {}", library.display()))?;
+    }
     engine
         .import(path)
         .with_context(|| format!("failed to import design {}", path.display()))?;
@@ -1129,6 +762,25 @@ fn query_design_rules(path: &Path) -> Result<DesignRuleListView> {
             ..
         }) => bail!(
             "query design-rules is currently only implemented for boards in M3: {}",
+            path.display()
+        ),
+        Err(err) => Err(err.into()),
+    }
+}
+
+fn query_package_change_candidates(
+    path: &Path,
+    uuid: &Uuid,
+    libraries: &[PathBuf],
+) -> Result<PackageChangeCompatibilityReport> {
+    let engine = import_design_for_query_with_libraries(path, libraries)?;
+    match engine.get_board_summary() {
+        Ok(_) => Ok(engine.get_package_change_candidates(uuid)?),
+        Err(EngineError::NotFound {
+            object_type: "board",
+            ..
+        }) => bail!(
+            "query package-change-candidates is currently only implemented for boards in M3: {}",
             path.display()
         ),
         Err(err) => Err(err.into()),
@@ -1301,6 +953,27 @@ mod tests {
         let output = execute(cli).expect("import command should succeed");
         assert!(output.contains("\"kind\": \"eagle_library\""));
         assert!(output.contains("\"parts\": 2"));
+    }
+
+    #[test]
+    fn execute_query_package_change_candidates_returns_report_output() {
+        let cli = Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "query",
+            kicad_fixture_path("partial-route-demo.kicad_pcb")
+                .to_str()
+                .unwrap(),
+            "package-change-candidates",
+            "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "--library",
+            eagle_fixture_path("simple-opamp.lbr").to_str().unwrap(),
+        ])
+        .expect("CLI should parse");
+
+        let output = execute(cli).expect("candidate query should succeed");
+        assert!(output.contains("\"status\": \"no_known_part\""));
     }
 
     #[test]
@@ -1572,6 +1245,7 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
             Some(125_000),
             0,
             0,
@@ -1691,6 +1365,7 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
             None,
             0,
             0,
@@ -1727,6 +1402,7 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
             None,
             0,
             0,
@@ -1750,6 +1426,7 @@ mod tests {
         ));
         let report = modify_board(
             &source,
+            &[],
             &[],
             &[],
             &[],
@@ -1806,6 +1483,7 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
             None,
             0,
             0,
@@ -1843,6 +1521,7 @@ mod tests {
             &[],
             &[],
             &[],
+            &[],
             None,
             0,
             0,
@@ -1865,6 +1544,7 @@ mod tests {
         ));
         let report = modify_board(
             &source,
+            &[],
             &[],
             &[],
             &[],
@@ -1904,6 +1584,7 @@ mod tests {
             &[],
             &[],
             &[Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap()],
+            &[],
             &[],
             &[],
             &[],
@@ -1956,6 +1637,7 @@ mod tests {
                 uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
                 part_uuid,
             }],
+            &[],
             &[],
             &[],
             &[],
@@ -2020,6 +1702,7 @@ mod tests {
                     part_uuid: altamp_part_uuid,
                 },
             ],
+            &[],
             &[],
             &[],
             &[],
@@ -2088,6 +1771,7 @@ mod tests {
                 uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
                 package_uuid,
             }],
+            &[],
             &[],
             &[],
             None,
@@ -2163,6 +1847,7 @@ mod tests {
             }],
             &[],
             &[],
+            &[],
             None,
             0,
             0,
@@ -2197,6 +1882,92 @@ mod tests {
     }
 
     #[test]
+    fn modify_board_supports_set_package_with_part_slice() {
+        let source = kicad_fixture_path("partial-route-demo.kicad_pcb");
+        let target = std::env::temp_dir().join(format!(
+            "{}-cli-save-partial-route-set-package-with-part.kicad_pcb",
+            Uuid::new_v4()
+        ));
+        let mut engine = Engine::new().expect("engine should initialize");
+        engine
+            .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+            .expect("library import should succeed");
+        let lmv321_part_uuid = engine
+            .search_pool("LMV321")
+            .expect("search should succeed")
+            .first()
+            .map(|part| part.uuid)
+            .expect("LMV321 part should exist");
+        let altamp = engine
+            .search_pool("ALTAMP")
+            .expect("search should succeed")
+            .first()
+            .cloned()
+            .expect("ALTAMP part should exist");
+
+        let report = modify_board(
+            &source,
+            &[],
+            &[],
+            &[],
+            &[eagle_fixture_path("simple-opamp.lbr")],
+            &[],
+            &[],
+            &[],
+            &[AssignPartInput {
+                uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+                part_uuid: lmv321_part_uuid,
+            }],
+            &[],
+            &[SetPackageWithPartInput {
+                uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
+                package_uuid: altamp.package_uuid,
+                part_uuid: altamp.uuid,
+            }],
+            &[],
+            &[],
+            None,
+            0,
+            0,
+            Some(&target),
+            false,
+        )
+        .expect("modify set_package_with_part save should succeed");
+        assert_eq!(report.saved_path.as_deref(), Some(target.to_str().unwrap()));
+
+        let mut reloaded = Engine::new().expect("engine should initialize");
+        reloaded
+            .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
+            .expect("library import should succeed");
+        reloaded.import(&target).expect("saved board should reimport");
+        let sig = reloaded
+            .get_net_info()
+            .expect("net info should query")
+            .into_iter()
+            .find(|net| net.name == "SIG")
+            .expect("SIG net should exist");
+        let component = match query_components(&target).expect("saved components should query") {
+            ComponentListView::Board { components } => components
+                .into_iter()
+                .find(|component| component.uuid == Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap())
+                .expect("target component should exist"),
+        };
+        assert_eq!(component.package_uuid, altamp.package_uuid);
+        assert_eq!(component.value, "ALTAMP");
+        assert_eq!(sig.pins.len(), 2);
+
+        let _ = std::fs::remove_file(&target);
+        let _ = std::fs::remove_file(target.with_file_name(format!(
+            "{}.parts.json",
+            target.file_name().unwrap().to_string_lossy()
+        )));
+        let _ = std::fs::remove_file(target.with_file_name(format!(
+            "{}.packages.json",
+            target.file_name().unwrap().to_string_lossy()
+        )));
+    }
+
+    #[test]
     fn modify_board_supports_set_net_class_slice() {
         let source = kicad_fixture_path("simple-demo.kicad_pcb");
         let target = std::env::temp_dir().join(format!(
@@ -2214,6 +1985,7 @@ mod tests {
 
         let report = modify_board(
             &source,
+            &[],
             &[],
             &[],
             &[],
@@ -2276,6 +2048,7 @@ mod tests {
                 uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
                 rotation: 180,
             }],
+            &[],
             &[],
             &[],
             &[],

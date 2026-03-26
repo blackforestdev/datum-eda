@@ -132,6 +132,24 @@ class FakeDaemonClient:
             None,
         )
 
+    def set_package_with_part(
+        self, uuid: str, package_uuid: str, part_uuid: str
+    ) -> JsonRpcResponse:
+        self.calls.append(("set_package_with_part", uuid, package_uuid, part_uuid))
+        return JsonRpcResponse(
+            "2.0",
+            1211,
+            {
+                "diff": {
+                    "created": [],
+                    "modified": [{"object_type": "component", "uuid": uuid}],
+                    "deleted": [],
+                },
+                "description": f"set_package_with_part {uuid}",
+            },
+            None,
+        )
+
     def set_net_class(
         self,
         net_uuid: str,
@@ -287,6 +305,32 @@ class FakeDaemonClient:
                 "name": "SOT23",
                 "pads": [{"name": "1", "x_mm": 0.0, "y_mm": 0.0, "layer": "1"}],
                 "courtyard_mm": {"width": 3.0, "height": 1.5},
+            },
+            None,
+        )
+
+    def get_package_change_candidates(self, uuid: str) -> JsonRpcResponse:
+        self.calls.append(("get_package_change_candidates", uuid))
+        return JsonRpcResponse(
+            "2.0",
+            108,
+            {
+                "component_uuid": uuid,
+                "current_part_uuid": "part-uuid",
+                "current_package_uuid": "package-uuid",
+                "current_package_name": "SOT23",
+                "current_value": "LMV321",
+                "status": "candidates_available",
+                "ambiguous_package_count": 0,
+                "candidates": [
+                    {
+                        "package_uuid": "alt-package-uuid",
+                        "package_name": "ALT-3",
+                        "compatible_part_uuid": "alt-part-uuid",
+                        "compatible_part_value": "ALTAMP",
+                        "pin_names": ["IN+", "IN-", "OUT"],
+                    }
+                ],
             },
             None,
         )
@@ -570,4 +614,3 @@ class FakeDaemonClient:
             },
             None,
         )
-

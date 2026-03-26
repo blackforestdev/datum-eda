@@ -108,6 +108,19 @@ TOOLS: list[dict[str, Any]] = [
         },
     },
     {
+        "name": "set_package_with_part",
+        "description": "Assign one pool package plus an explicit compatible pool part to a board component by UUID in the current M3 slice.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "uuid": {"type": "string"},
+                "package_uuid": {"type": "string"},
+                "part_uuid": {"type": "string"},
+            },
+            "required": ["uuid", "package_uuid", "part_uuid"],
+        },
+    },
+    {
         "name": "set_reference",
         "description": "Set one board component reference by UUID in the current M3 slice.",
         "inputSchema": {
@@ -199,6 +212,15 @@ TOOLS: list[dict[str, Any]] = [
     {
         "name": "get_package",
         "description": "Return detailed package geometry/footprint metadata for a UUID.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"uuid": {"type": "string"}},
+            "required": ["uuid"],
+        },
+    },
+    {
+        "name": "get_package_change_candidates",
+        "description": "Return compatible target-package candidates for a board component UUID.",
         "inputSchema": {
             "type": "object",
             "properties": {"uuid": {"type": "string"}},

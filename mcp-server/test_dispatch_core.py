@@ -179,6 +179,33 @@ class TestDispatchCore(unittest.TestCase):
             "component",
         )
 
+    def test_tools_call_dispatches_set_package_with_part(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 20916,
+                "method": "tools/call",
+                "params": {
+                    "name": "set_package_with_part",
+                    "arguments": {
+                        "uuid": "comp-1",
+                        "package_uuid": "package-1",
+                        "part_uuid": "part-1",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [("set_package_with_part", "comp-1", "package-1", "part-1")],
+        )
+        self.assertEqual(
+            response["result"]["content"][0]["json"]["diff"]["modified"][0]["object_type"],
+            "component",
+        )
+
     def test_tools_call_dispatches_set_package(self) -> None:
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)
@@ -260,4 +287,3 @@ class TestDispatchCore(unittest.TestCase):
             response["result"]["content"][0]["json"]["diff"]["modified"][0]["object_type"],
             "component",
         )
-

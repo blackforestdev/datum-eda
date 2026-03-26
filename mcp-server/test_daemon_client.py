@@ -53,6 +53,9 @@ class TestDaemonClient(unittest.TestCase):
         set_value = client.set_value_request("comp-uuid", "22k")
         assign_part = client.assign_part_request("comp-uuid", "part-uuid")
         set_package = client.set_package_request("comp-uuid", "package-uuid")
+        set_package_with_part = client.set_package_with_part_request(
+            "comp-uuid", "package-uuid", "part-uuid"
+        )
         set_net_class = client.set_net_class_request(
             "net-uuid", "power", 125000, 250000, 300000, 600000
         )
@@ -93,6 +96,15 @@ class TestDaemonClient(unittest.TestCase):
         self.assertEqual(set_package.method, "set_package")
         self.assertEqual(
             set_package.params, {"uuid": "comp-uuid", "package_uuid": "package-uuid"}
+        )
+        self.assertEqual(set_package_with_part.method, "set_package_with_part")
+        self.assertEqual(
+            set_package_with_part.params,
+            {
+                "uuid": "comp-uuid",
+                "package_uuid": "package-uuid",
+                "part_uuid": "part-uuid",
+            },
         )
         self.assertEqual(set_net_class.method, "set_net_class")
         self.assertEqual(
@@ -138,10 +150,18 @@ class TestDaemonClient(unittest.TestCase):
         client = EngineDaemonClient()
         part = client.get_part_request("11111111-1111-1111-1111-111111111111")
         package = client.get_package_request("22222222-2222-2222-2222-222222222222")
+        package_candidates = client.get_package_change_candidates_request(
+            "33333333-3333-3333-3333-333333333333"
+        )
         self.assertEqual(part.method, "get_part")
         self.assertEqual(part.params, {"uuid": "11111111-1111-1111-1111-111111111111"})
         self.assertEqual(package.method, "get_package")
         self.assertEqual(package.params, {"uuid": "22222222-2222-2222-2222-222222222222"})
+        self.assertEqual(package_candidates.method, "get_package_change_candidates")
+        self.assertEqual(
+            package_candidates.params,
+            {"uuid": "33333333-3333-3333-3333-333333333333"},
+        )
 
     def test_builds_explain_violation_request(self) -> None:
         client = EngineDaemonClient()
@@ -325,4 +345,3 @@ class TestDaemonClient(unittest.TestCase):
             )
             thread.join(timeout=2)
             self.assertFalse(thread.is_alive())
-

@@ -61,6 +61,25 @@ class TestDispatchReadSurface(unittest.TestCase):
         self.assertEqual(daemon.calls, [("get_package", "package-uuid")])
         self.assertEqual(response["result"]["content"][0]["json"]["name"], "SOT23")
 
+    def test_tools_call_dispatches_get_package_change_candidates(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 2031,
+                "method": "tools/call",
+                "params": {
+                    "name": "get_package_change_candidates",
+                    "arguments": {"uuid": "comp-uuid"},
+                },
+            }
+        )
+        self.assertEqual(daemon.calls, [("get_package_change_candidates", "comp-uuid")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["status"], "candidates_available")
+        self.assertEqual(payload["candidates"][0]["package_name"], "ALT-3")
+
     def test_tools_call_dispatches_check_report(self) -> None:
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)

@@ -120,6 +120,14 @@ class EngineDaemonClient:
     def set_package_request(self, uuid: str, package_uuid: str) -> JsonRpcRequest:
         return self.build_request("set_package", {"uuid": uuid, "package_uuid": package_uuid})
 
+    def set_package_with_part_request(
+        self, uuid: str, package_uuid: str, part_uuid: str
+    ) -> JsonRpcRequest:
+        return self.build_request(
+            "set_package_with_part",
+            {"uuid": uuid, "package_uuid": package_uuid, "part_uuid": part_uuid},
+        )
+
     def set_net_class_request(
         self,
         net_uuid: str,
@@ -209,6 +217,9 @@ class EngineDaemonClient:
 
     def get_package_request(self, uuid: str) -> JsonRpcRequest:
         return self.build_request("get_package", {"uuid": uuid})
+
+    def get_package_change_candidates_request(self, uuid: str) -> JsonRpcRequest:
+        return self.build_request("get_package_change_candidates", {"uuid": uuid})
 
     def get_board_summary_request(self) -> JsonRpcRequest:
         return self.build_request("get_board_summary", {})
@@ -324,6 +335,11 @@ class EngineDaemonClient:
     def set_package(self, uuid: str, package_uuid: str) -> JsonRpcResponse:
         return self.call(self.set_package_request(uuid, package_uuid))
 
+    def set_package_with_part(
+        self, uuid: str, package_uuid: str, part_uuid: str
+    ) -> JsonRpcResponse:
+        return self.call(self.set_package_with_part_request(uuid, package_uuid, part_uuid))
+
     def set_net_class(
         self,
         net_uuid: str,
@@ -389,6 +405,9 @@ class EngineDaemonClient:
 
     def get_package(self, uuid: str) -> JsonRpcResponse:
         return self.call(self.get_package_request(uuid))
+
+    def get_package_change_candidates(self, uuid: str) -> JsonRpcResponse:
+        return self.call(self.get_package_change_candidates_request(uuid))
 
     def get_board_summary(self) -> JsonRpcResponse:
         return self.call(self.get_board_summary_request())

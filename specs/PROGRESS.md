@@ -120,6 +120,7 @@ DRC correctness: [x] `m2_quality` harness reports 0.0% FP / 0.0% FN on current D
 | search_pool | [x] | Current implementation contract |
 | get_part | [x] | Current implementation contract |
 | get_package | [x] | Current implementation contract |
+| get_package_change_candidates | [x] | Current implementation contract |
 | get_board_summary | [x] | Current implementation contract |
 | get_schematic_summary | [x] | Current implementation contract |
 | get_sheets | [x] | Current implementation contract |
@@ -306,7 +307,7 @@ Item 8 reconciliation notes (2026-03-25):
 | Integrated M3/M4 acceptance tables drafted | [x] | `specs/INTEGRATED_PROGRAM_SPEC.md` §§12-13 |
 | M3 determinism evidence hook behavioral | [x] | `crates/test-harness/src/bin/m3_op_determinism.rs` passes for current `move_component`/`save` slice |
 | M3 undo/redo evidence hook behavioral | [x] | `crates/test-harness/src/bin/m3_undo_redo_roundtrip.rs` passes for current `delete_track`, `move_component`, `set_design_rule`, `assign_part`, `set_package`, and `set_net_class` undo/redo slice |
-| M3 write-surface parity hook behavioral | [x] | `crates/test-harness/src/bin/m3_write_surface_parity.rs` passes for current engine/daemon/MCP/CLI `move_component`/`rotate_component`/`set_value`/`set_reference`/`assign_part`/`set_package`/`set_net_class`/`delete_component`/`delete_track`/`delete_via`/`set_design_rule`/`undo`/`redo`/`save` slice, including follow-up derived-state checks |
+| M3 write-surface parity hook behavioral | [x] | `crates/test-harness/src/bin/m3_write_surface_parity.rs` passes for current engine/daemon/MCP/CLI `move_component`/`rotate_component`/`set_value`/`set_reference`/`assign_part`/`set_package`/`set_package_with_part`/`set_net_class`/`delete_component`/`delete_track`/`delete_via`/`set_design_rule`/`undo`/`redo`/`save` slice, including follow-up derived-state checks |
 | PLAN progress ticks added for M0/M1/M2/R1 | [x] | `PLAN.md` now has dated progress blocks |
 | MCP contract split (current vs target) | [x] | `specs/MCP_API_SPEC.md` |
 | PROGRAM spec references MCP contract split | [x] | `specs/PROGRAM_SPEC.md` M2 status section |
@@ -328,19 +329,21 @@ Item 8 reconciliation notes (2026-03-25):
 | SetReference | [~] | Engine/daemon/MCP/CLI current slice implemented for board components by UUID with persisted KiCad `Reference` property rewrites |
 | AssignPart | [~] | Engine/daemon/MCP/CLI current slice implemented for board components by UUID with sidecar-backed part assignment persistence and logical pin-net preservation when remapping between known pool parts |
 | SetPackage | [~] | Engine/daemon/MCP/CLI current slice implemented for board components by UUID with package-backed KiCad footprint rewrite, sidecar-backed package assignment persistence, and logical pin-net preservation when a unique compatible pool part exists for the target package |
+| SetPackageWithPart | [~] | Engine/daemon/MCP/CLI current slice implemented for board components by UUID with explicit caller-selected compatible part+package mutation, package-backed KiCad footprint rewrite, and logical pin-net preservation |
+| Package-change introspection | [~] | Engine/daemon/MCP/CLI query surface exposes component-scoped package compatibility candidates and resolution status for current board slice |
 | SetNetClass | [~] | Engine/daemon/MCP/CLI current slice implemented for board nets by UUID with sidecar-backed net-class persistence |
 | SetDesignRule | [~] | Engine/daemon/MCP current slice implemented; CLI exposes the default all-scope clearance rule path and follow-up `query design-rules` verification surface |
 | DeleteTrack | [~] | Engine/daemon/MCP/CLI current slice implemented for board tracks by UUID |
 | DeleteVia | [~] | Engine/daemon/MCP/CLI current slice implemented for board vias by UUID |
 | Undo/redo (100% undoable) | [~] | Current slice supports undo/redo for `delete_track`, `delete_via`, `delete_component`, `set_design_rule`, `set_value`, `set_reference`, `assign_part`, `set_package`, `set_net_class`, `move_component`, and `rotate_component`; dedicated round-trip hook now behaviorally proves `delete_track`, `move_component`, `set_design_rule`, `assign_part`, `set_package`, and `set_net_class` |
 | Operation determinism | [~] | `m3_op_determinism` now passes for current `move_component`/`save` KiCad-board slice; write-surface parity also covers `rotate_component`, `set_design_rule`, `set_value`, `set_reference`, `assign_part`, `set_package`, and `set_net_class` persistence and `move_component` save/reimport behavior |
-| KiCad write-back | [~] | `save()` writes unmodified imported KiCad boards byte-identically, persists current `delete_track`/`delete_via`/`delete_component` removals, rewrites current `move_component`/`rotate_component` footprint `(at ...)` state and component `Value`/`Reference` properties, rewrites package-backed footprint bodies for current `set_package` slice, and writes authored-rule, part-assignment, package-assignment, and net-class sidecars for current `set_design_rule`/`assign_part`/`set_package`/`set_net_class` slice |
-| Round-trip fidelity | [~] | Current `save()` supports import→`delete_track`/`delete_via`/`delete_component`/`move_component`/`rotate_component`/`set_value`/`set_reference`→save→reimport and import→`set_design_rule`/`assign_part`/`set_package`/`set_net_class`→save→reimport, including package-backed footprint rewrite for the implemented `set_package` slice |
-| MCP write tools | [~] | `save`, `move_component`, `rotate_component`, `set_value`, `set_reference`, `assign_part`, `set_package`, `set_net_class`, `set_design_rule`, `delete_component`, `delete_track`, `delete_via`, `undo`, and `redo` wired in current slice |
-| Derived data recomputation | [~] | Engine tests prove immediate post-op updates for current `delete_track` net/diagnostic/DRC state, `move_component` airwire/DRC state, `delete_via` net-info state, `assign_part` package-regenerated net-info state, and `set_package` logical-remap net-info preservation when a compatible target part exists; write-surface parity now also proves follow-up query/check behavior across daemon/MCP/CLI for all current write ops: `delete_track`, `delete_via`, `delete_component`, `move_component`, `rotate_component`, `set_value`, `set_reference`, `assign_part`, `set_package`, `set_net_class`, and `set_design_rule` |
-| CLI modify command | [~] | Current slice supports `modify <board> --move-component/--rotate-component/--set-value/--set-reference/--assign-part/--set-package/--set-net-class/--delete-component/--delete-track/--delete-via/--set-clearance-min-nm/--undo/--redo/--save`, with follow-up `query components`/`query nets`/`query design-rules` verification for current `delete_component`/`rotate_component`/`set_value`/`set_reference`/`assign_part`/`set_package`/`set_net_class`/`set_design_rule` |
+| KiCad write-back | [~] | `save()` writes unmodified imported KiCad boards byte-identically, persists current `delete_track`/`delete_via`/`delete_component` removals, rewrites current `move_component`/`rotate_component` footprint `(at ...)` state and component `Value`/`Reference` properties, rewrites package-backed footprint bodies for current `set_package` and `set_package_with_part` slices, and writes authored-rule, part-assignment, package-assignment, and net-class sidecars for current `set_design_rule`/`assign_part`/`set_package`/`set_package_with_part`/`set_net_class` slice |
+| Round-trip fidelity | [~] | Current `save()` supports import→`delete_track`/`delete_via`/`delete_component`/`move_component`/`rotate_component`/`set_value`/`set_reference`→save→reimport and import→`set_design_rule`/`assign_part`/`set_package`/`set_package_with_part`/`set_net_class`→save→reimport, including package-backed footprint rewrite for the implemented package-change slice |
+| MCP write tools | [~] | `save`, `move_component`, `rotate_component`, `set_value`, `set_reference`, `assign_part`, `set_package`, `set_package_with_part`, `set_net_class`, `set_design_rule`, `delete_component`, `delete_track`, `delete_via`, `undo`, and `redo` wired in current slice |
+| Derived data recomputation | [~] | Engine tests prove immediate post-op updates for current `delete_track` net/diagnostic/DRC state, `move_component` airwire/DRC state, `delete_via` net-info state, `assign_part` package-regenerated net-info state, and `set_package`/`set_package_with_part` logical-remap net-info preservation when a compatible target part exists; write-surface parity now also proves follow-up query/check behavior across daemon/MCP/CLI for all current write ops: `delete_track`, `delete_via`, `delete_component`, `move_component`, `rotate_component`, `set_value`, `set_reference`, `assign_part`, `set_package`, `set_package_with_part`, `set_net_class`, and `set_design_rule` |
+| CLI modify command | [~] | Current slice supports `modify <board> --move-component/--rotate-component/--set-value/--set-reference/--assign-part/--set-package/--set-package-with-part/--set-net-class/--delete-component/--delete-track/--delete-via/--set-clearance-min-nm/--undo/--redo/--save`, with follow-up `query components`/`query nets`/`query design-rules` verification for current `delete_component`/`rotate_component`/`set_value`/`set_reference`/`assign_part`/`set_package`/`set_package_with_part`/`set_net_class`/`set_design_rule` |
 
-**M3 overall**: [~] Initial board write vertical slice landed: save-backed KiCad-board write-back for `move_component`/`rotate_component`/`set_value`/`set_reference`/`delete_component`/`delete_track`/`delete_via`, package-backed footprint rewrite for `set_package`, sidecar-backed `set_design_rule`/`assign_part`/`set_package`/`set_net_class`, and transport exposure for the current write slice
+**M3 overall**: [~] Initial board write vertical slice landed: save-backed KiCad-board write-back for `move_component`/`rotate_component`/`set_value`/`set_reference`/`delete_component`/`delete_track`/`delete_via`, package-backed footprint rewrite for `set_package` and `set_package_with_part`, sidecar-backed `set_design_rule`/`assign_part`/`set_package`/`set_package_with_part`/`set_net_class`, and transport exposure for the current write slice
 
 ---
 
@@ -467,12 +470,13 @@ Item 8 reconciliation notes (2026-03-25):
 | new() | [x] | |
 | has_open_project() | [x] | |
 | import() | [x] | KiCad skeleton + Eagle .lbr |
-| save() | [~] | Writes unmodified imported KiCad boards byte-identically, persists current `delete_track`/`delete_via`/`delete_component` removals, rewrites current `move_component`/`rotate_component` footprint placement and component `Value`/`Reference` properties, rewrites package-backed footprint bodies for current `set_package` slice, and writes rule/part-assignment/package-assignment/net-class sidecars for current `set_design_rule`/`assign_part`/`set_package`/`set_net_class` slice |
+| save() | [~] | Writes unmodified imported KiCad boards byte-identically, persists current `delete_track`/`delete_via`/`delete_component` removals, rewrites current `move_component`/`rotate_component` footprint placement and component `Value`/`Reference` properties, rewrites package-backed footprint bodies for current `set_package` and `set_package_with_part` slices, and writes rule/part-assignment/package-assignment/net-class sidecars for current `set_design_rule`/`assign_part`/`set_package`/`set_package_with_part`/`set_net_class` slice |
 | save_to_original() | [~] | Current M3 helper for imported-design write-back to original file |
 | search_pool() | [x] | |
 | import_eagle_library() | [x] | |
 | get_board_summary() | [x] | |
 | get_components() | [x] | |
+| get_package_change_candidates() | [x] | Current engine API supports component-scoped package compatibility introspection |
 | get_net_info() | [x] | Returns all nets, not single-net |
 | get_stackup() | [x] | |
 | get_unrouted() | [x] | |
@@ -496,12 +500,13 @@ Item 8 reconciliation notes (2026-03-25):
 | set_reference() | [~] | Current M3 board write slice |
 | assign_part() | [~] | Current M3 board write slice |
 | set_package() | [~] | Current M3 board write slice |
+| set_package_with_part() | [~] | Current M3 board write slice |
 | set_net_class() | [~] | Current M3 board write slice |
 | set_design_rule() | [~] | Current M3 board write slice |
 | run_erc_prechecks() | [x] | |
 | run_drc() | [x] | Engine API method implemented (connectivity + clearance checks currently) |
 | execute() / execute_batch() | [ ] | |
-| undo() / redo() | [~] | Current engine API supports transaction reversal for `delete_component`, `delete_track`, `delete_via`, `move_component`, `rotate_component`, `set_value`, `set_reference`, `assign_part`, `set_package`, `set_net_class`, and `set_design_rule` |
+| undo() / redo() | [~] | Current engine API supports transaction reversal for `delete_component`, `delete_track`, `delete_via`, `move_component`, `rotate_component`, `set_value`, `set_reference`, `assign_part`, `set_package`, `set_package_with_part`, `set_net_class`, and `set_design_rule` |
 
 ---
 
