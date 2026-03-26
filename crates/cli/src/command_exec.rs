@@ -133,6 +133,63 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 Ok((render_output(&cli.format, &results), 0))
             }
         },
+        Commands::Plan { action } => match action {
+            PlanCommands::ExportScopedReplacementManifest {
+                path,
+                out,
+                policy,
+                ref_prefix,
+                value,
+                package_uuid,
+                part_uuid,
+                exclude_component,
+                override_component,
+                libraries,
+            } => {
+                let policy = match policy {
+                    ReplacementPolicyArg::Package => ComponentReplacementPolicy::BestCompatiblePackage,
+                    ReplacementPolicyArg::Part => ComponentReplacementPolicy::BestCompatiblePart,
+                };
+                let overrides = override_component
+                    .iter()
+                    .map(|value| parse_scoped_replacement_override_arg(value))
+                    .collect::<Result<Vec<_>>>()?;
+                let plan = query_scoped_component_replacement_plan(
+                    &path,
+                    ScopedComponentReplacementPolicyInput {
+                        scope: ComponentReplacementScope {
+                            reference_prefix: ref_prefix,
+                            value_equals: value,
+                            current_package_uuid: package_uuid,
+                            current_part_uuid: part_uuid,
+                        },
+                        policy,
+                    },
+                    ScopedComponentReplacementPlanEdit {
+                        exclude_component_uuids: exclude_component,
+                        overrides,
+                    },
+                    &libraries,
+                )?;
+                let manifest = scoped_replacement_manifest_from_parts(&path, &libraries, plan)?;
+                let payload = serde_json::to_string_pretty(&manifest)
+                    .expect("manifest serialization must succeed");
+                std::fs::write(&out, payload)
+                    .with_context(|| format!("failed to write manifest {}", out.display()))?;
+                Ok((
+                    render_output(
+                        &cli.format,
+                        &serde_json::json!({
+                            "path": out.display().to_string(),
+                            "kind": manifest.kind,
+                            "version": manifest.version,
+                            "replacements": manifest.plan.replacements.len(),
+                        }),
+                    ),
+                    0,
+                ))
+            }
+        },
         Commands::Modify {
             path,
             delete_track,
@@ -150,6 +207,7 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             apply_replacement_policy,
             apply_scoped_replacement_policy,
             apply_scoped_replacement_plan_file,
+            apply_scoped_replacement_manifest,
             set_net_class,
             set_reference,
             undo,
@@ -202,21 +260,32 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 .iter()
                 .map(|path| {
                     let contents = std::fs::read_to_string(path).with_context(|| {
-                        format!(
-                            "failed to read scoped replacement plan file {}",
-                            path.display()
-                        )
+                        format!("failed to read scoped replacement plan file {}", path.display())
                     })?;
-                    serde_json::from_str::<ScopedComponentReplacementPlan>(&contents).with_context(
-                        || {
-                            format!(
-                                "failed to parse scoped replacement plan file {}",
-                                path.display()
-                            )
-                        },
-                    )
+                    serde_json::from_str::<ScopedComponentReplacementPlan>(&contents).with_context(|| {
+                        format!("failed to parse scoped replacement plan file {}", path.display())
+                    })
                 })
                 .collect::<Result<Vec<_>>>()?;
+            let scoped_replacement_manifests = apply_scoped_replacement_manifest
+                .iter()
+                .map(|manifest_path| {
+                    let manifest = load_scoped_replacement_manifest(manifest_path)?;
+                    validate_scoped_replacement_manifest(&manifest, &path)?;
+                    Ok(manifest)
+                })
+                .collect::<Result<Vec<_>>>()?;
+            let mut libraries = libraries;
+            for manifest in &scoped_replacement_manifests {
+                for library in &manifest.libraries {
+                    if !libraries.iter().any(|existing| existing == &library.path) {
+                        libraries.push(library.path.clone());
+                    }
+                }
+            }
+            let mut apply_scoped_replacement_plan = apply_scoped_replacement_plan;
+            apply_scoped_replacement_plan
+                .extend(scoped_replacement_manifests.into_iter().map(|manifest| manifest.plan));
             let set_net_class = set_net_class
                 .iter()
                 .map(|value| parse_set_net_class_arg(value))
