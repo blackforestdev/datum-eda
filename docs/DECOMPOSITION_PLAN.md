@@ -40,10 +40,16 @@ The following governance is now required:
 - New oversized modules are blocked unless budgeted and tracked.
 - Existing oversized modules are non-growth frozen via explicit caps.
 - Caps must trend downward over time as decomposition lands.
+- Touched-monolith policy:
+  - if a known monolith file is touched in a PR, it must not grow
+  - decomposition PRs should reduce touched monolith baselines
+  - baseline values are enforced by tooling and ratcheted downward after each
+    structural reduction
 
 CI enforcement:
 - `scripts/check_file_size_budgets.py`
 - `scripts/check_decomposition_coverage.py`
+- `scripts/check_touched_monolith_growth.py`
 - `scripts/check_test_file_sizes.py`
 
 ## 4. Decomposition Sequencing
@@ -107,6 +113,8 @@ Exit criteria:
 - Do not combine milestone feature work with structural decomposition in one PR.
 - Any size-cap increase requires explicit written justification and reviewer signoff.
 - Prefer adding modules over growing existing monoliths.
+- Tripwire failures are merge blockers and must follow the response playbook in
+  `docs/DECOMPOSITION_BACKLOG.md`.
 
 ## 6. Reporting
 

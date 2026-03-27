@@ -69,6 +69,10 @@ mod main_tests_project_gerber_plan;
 mod main_tests_project_gerber_plan_compare;
 #[path = "main_tests_project_gerber_silk_compare.rs"]
 mod main_tests_project_gerber_silk_compare;
+#[path = "main_tests_project_gerber_silk_component_arc.rs"]
+mod main_tests_project_gerber_silk_component_arc;
+#[path = "main_tests_project_gerber_silk_component_circle.rs"]
+mod main_tests_project_gerber_silk_component_circle;
 #[path = "main_tests_project_gerber_silk_export.rs"]
 mod main_tests_project_gerber_silk_export;
 #[path = "main_tests_project_gerber_silk_validate.rs"]

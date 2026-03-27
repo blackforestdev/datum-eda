@@ -20,9 +20,48 @@ Required in every decomposition PR description:
 Required checks:
 - `python3 scripts/check_file_size_budgets.py`
 - `python3 scripts/check_decomposition_coverage.py`
+- `python3 scripts/check_touched_monolith_growth.py`
 - `python3 scripts/check_test_file_sizes.py --max-lines 700`
 - `python3 scripts/check_alignment.py`
 - `python3 scripts/check_progress_coverage.py`
+
+Touched-monolith explicit policy:
+- If a PR touches a known monolith file, that file must not grow.
+- Structural PRs should reduce touched monolith line counts.
+- Baselines are enforced in `scripts/check_touched_monolith_growth.py` and must
+  be ratcheted downward after decomposition merges.
+
+Structural-only rule:
+- Decomposition lane PRs are structural-only by policy.
+- They must not intentionally change CLI/API behavior, payload schemas, or
+  milestone semantics.
+- Any behavior change discovered during decomposition must be moved to a
+  separate feature-lane PR.
+
+## Tripwire Response Playbook
+
+When a tripwire fails, use this runbook:
+
+1. `check_touched_monolith_growth.py` fails:
+- Action: split/move newly added logic into shards until touched monolith
+  returns to baseline or below.
+- Merge status: blocked until fixed.
+
+2. `check_decomposition_coverage.py` fails:
+- Action: add explicit budget entry in `scripts/check_file_size_budgets.py` and
+  add/refresh the file in decomposition planning docs.
+- Merge status: blocked until budget + plan coverage exists.
+
+3. `check_file_size_budgets.py` fails:
+- Action: decompose to get under cap, or reduce cap debt in the same PR.
+- Exception policy: cap increases are discouraged; if unavoidable, require
+  explicit written justification, owner signoff, and follow-up decomposition
+  item in this backlog.
+- Merge status: blocked unless exception is approved.
+
+4. Mixed-lane PR (feature + decomposition) detected:
+- Action: split into two PRs (`m4-feature` and `decomp`).
+- Merge status: blocked until split.
 
 ## Sequenced Backlog
 

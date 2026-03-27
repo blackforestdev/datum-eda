@@ -221,11 +221,13 @@ Current live slice:
   or broader layer-set emission yet.
 - `eda project export-gerber-silkscreen-layer <dir> --layer <id> --out
   <path>` now writes a narrow RS-274X Gerber file for authored native board
-  text plus persisted explicit component-silkscreen text and line strokes on
-  one selected silkscreen layer through `eda_engine::export`, using explicit
-  stored text height/stroke-width plus the current fixed stroke-font renderer
-  for board text and component text, and explicit stored stroke widths for
-  component lines, without claiming broader package silkscreen arc/shape
+  text plus persisted explicit component-silkscreen text, line, arc, and
+  circle geometry on one selected silkscreen layer through
+  `eda_engine::export`, using explicit stored text height/stroke-width plus
+  the current fixed stroke-font renderer for board text and component text,
+  explicit stored stroke widths for component lines, deterministic 15-degree
+  chordization for component arcs, and deterministic 24-segment chordization
+  for component circles, without claiming broader package silkscreen shape
   export or broader text/font coverage yet.
 - `eda project export-gerber-paste-layer <dir> --layer <id> --out <path>` now
   writes a narrow RS-274X Gerber file for persisted native pad openings on one
@@ -272,9 +274,10 @@ Current live slice:
 - `eda project compare-gerber-silkscreen-layer <dir> --layer <id> --gerber
   <path>` now parses the currently emitted silkscreen-layer RS-274X subset and
   compares authored board-text strokes plus persisted explicit
-  component-silkscreen text and line strokes semantically against the
-  persisted native silkscreen geometry on that layer, without claiming broader
-  package silkscreen arc/shape export or broader font coverage.
+  component-silkscreen text, line, chordized-arc, and chordized-circle strokes
+  semantically against the persisted native silkscreen geometry on that layer,
+  without claiming broader package silkscreen shape export or broader font
+  coverage.
 - `eda project compare-gerber-paste-layer <dir> --layer <id> --gerber
   <path>` now parses the currently emitted paste-layer RS-274X subset and
   compares circular/rectangular flashed pad openings semantically against the

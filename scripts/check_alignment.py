@@ -240,6 +240,21 @@ def main() -> int:
 
     if args.run_gates:
         run_exec_check(
+            "decomposition_coverage",
+            ["python3", "scripts/check_decomposition_coverage.py"],
+            failures,
+        )
+        run_exec_check(
+            "touched_monolith_growth",
+            ["python3", "scripts/check_touched_monolith_growth.py"],
+            failures,
+        )
+        run_exec_check(
+            "source_file_size_budgets",
+            ["python3", "scripts/check_file_size_budgets.py"],
+            failures,
+        )
+        run_exec_check(
             "m2_quality",
             ["cargo", "run", "-q", "-p", "eda-test-harness", "--bin", "m2_quality", "--", "--json"],
             failures,

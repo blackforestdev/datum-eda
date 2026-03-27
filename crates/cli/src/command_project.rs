@@ -188,6 +188,10 @@ struct NativeBoardRoot {
     #[serde(default)]
     component_silkscreen_texts: BTreeMap<String, Vec<NativeComponentSilkscreenText>>,
     #[serde(default)]
+    component_silkscreen_arcs: BTreeMap<String, Vec<NativeComponentSilkscreenArc>>,
+    #[serde(default)]
+    component_silkscreen_circles: BTreeMap<String, Vec<NativeComponentSilkscreenCircle>>,
+    #[serde(default)]
     pads: BTreeMap<String, serde_json::Value>,
     #[serde(default)]
     tracks: BTreeMap<String, serde_json::Value>,
@@ -239,6 +243,24 @@ struct NativeComponentSilkscreenText {
     rotation: i32,
     height_nm: i64,
     stroke_width_nm: i64,
+    layer: i32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct NativeComponentSilkscreenArc {
+    center: NativePoint,
+    radius_nm: i64,
+    start_angle: i32,
+    end_angle: i32,
+    width_nm: i64,
+    layer: i32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct NativeComponentSilkscreenCircle {
+    center: NativePoint,
+    radius_nm: i64,
+    width_nm: i64,
     layer: i32,
 }
 
@@ -325,6 +347,8 @@ pub(crate) fn create_native_project(
         packages: BTreeMap::new(),
         component_silkscreen: BTreeMap::new(),
         component_silkscreen_texts: BTreeMap::new(),
+        component_silkscreen_arcs: BTreeMap::new(),
+        component_silkscreen_circles: BTreeMap::new(),
         pads: BTreeMap::new(),
         tracks: BTreeMap::new(),
         vias: BTreeMap::new(),
@@ -3584,7 +3608,46 @@ fn resolve_native_project_silkscreen_context(
         })
         .flatten()
         .collect::<Vec<_>>();
-    Ok((silk_layer, texts, component_strokes))
+    let component_arc_strokes = project
+        .board
+        .component_silkscreen_arcs
+        .iter()
+        .filter_map(|(component_uuid, entries)| {
+            let component = project.board.packages.get(component_uuid)?;
+            let component: PlacedPackage = serde_json::from_value(component.clone()).ok()?;
+            Some(
+                entries
+                    .iter()
+                    .filter(|entry| entry.layer == layer)
+                    .flat_map(|entry| native_component_silkscreen_arc_to_strokes(&component, entry))
+                    .collect::<Vec<_>>(),
+            )
+        })
+        .flatten()
+        .collect::<Vec<_>>();
+    let component_circle_strokes = project
+        .board
+        .component_silkscreen_circles
+        .iter()
+        .filter_map(|(component_uuid, entries)| {
+            let component = project.board.packages.get(component_uuid)?;
+            let component: PlacedPackage = serde_json::from_value(component.clone()).ok()?;
+            Some(
+                entries
+                    .iter()
+                    .filter(|entry| entry.layer == layer)
+                    .flat_map(|entry| {
+                        native_component_silkscreen_circle_to_strokes(&component, entry)
+                    })
+                    .collect::<Vec<_>>(),
+            )
+        })
+        .flatten()
+        .collect::<Vec<_>>();
+    let mut strokes = component_strokes;
+    strokes.extend(component_arc_strokes);
+    strokes.extend(component_circle_strokes);
+    Ok((silk_layer, texts, strokes))
 }
 
 fn native_component_silkscreen_line_to_stroke(
@@ -3621,10 +3684,93 @@ fn count_native_component_silkscreen_texts(board: &NativeBoardRoot, layer: i32) 
         .sum()
 }
 
+fn count_native_component_silkscreen_lines(board: &NativeBoardRoot, layer: i32) -> usize {
+    board
+        .component_silkscreen
+        .values()
+        .map(|entries| entries.iter().filter(|entry| entry.layer == layer).count())
+        .sum()
+}
+
+fn count_native_component_silkscreen_arcs(board: &NativeBoardRoot, layer: i32) -> usize {
+    board
+        .component_silkscreen_arcs
+        .values()
+        .map(|entries| entries.iter().filter(|entry| entry.layer == layer).count())
+        .sum()
+}
+
+fn count_native_component_silkscreen_circles(board: &NativeBoardRoot, layer: i32) -> usize {
+    board
+        .component_silkscreen_circles
+        .values()
+        .map(|entries| entries.iter().filter(|entry| entry.layer == layer).count())
+        .sum()
+}
+
+fn native_component_silkscreen_arc_to_strokes(
+    component: &PlacedPackage,
+    arc: &NativeComponentSilkscreenArc,
+) -> Vec<SilkscreenStroke> {
+    const ARC_SEGMENT_ANGLE_TENTHS: i32 = 150;
+
+    let mut sweep = arc.end_angle - arc.start_angle;
+    if sweep <= 0 {
+        sweep += 3600;
+    }
+    let segment_count = ((sweep + ARC_SEGMENT_ANGLE_TENTHS - 1) / ARC_SEGMENT_ANGLE_TENTHS).max(1);
+    let points = (0..=segment_count)
+        .map(|idx| {
+            let angle_tenths = arc.start_angle + sweep * idx / segment_count;
+            let radians = (f64::from(angle_tenths) / 10.0).to_radians();
+            let local_x = arc.center.x as f64 + (arc.radius_nm as f64 * radians.cos());
+            let local_y = arc.center.y as f64 + (arc.radius_nm as f64 * radians.sin());
+            transform_component_local_xy(component, local_x.round() as i64, local_y.round() as i64)
+        })
+        .collect::<Vec<_>>();
+    points
+        .windows(2)
+        .map(|segment| SilkscreenStroke {
+            from: segment[0],
+            to: segment[1],
+            width_nm: arc.width_nm,
+        })
+        .collect()
+}
+
+fn native_component_silkscreen_circle_to_strokes(
+    component: &PlacedPackage,
+    circle: &NativeComponentSilkscreenCircle,
+) -> Vec<SilkscreenStroke> {
+    const CIRCLE_SEGMENT_ANGLE_TENTHS: i32 = 150;
+    let segment_count = 3600 / CIRCLE_SEGMENT_ANGLE_TENTHS;
+    let points = (0..=segment_count)
+        .map(|idx| {
+            let angle_tenths = idx * CIRCLE_SEGMENT_ANGLE_TENTHS;
+            let radians = (f64::from(angle_tenths) / 10.0).to_radians();
+            let local_x = circle.center.x as f64 + (circle.radius_nm as f64 * radians.cos());
+            let local_y = circle.center.y as f64 + (circle.radius_nm as f64 * radians.sin());
+            transform_component_local_xy(component, local_x.round() as i64, local_y.round() as i64)
+        })
+        .collect::<Vec<_>>();
+    points
+        .windows(2)
+        .map(|segment| SilkscreenStroke {
+            from: segment[0],
+            to: segment[1],
+            width_nm: circle.width_nm,
+        })
+        .collect()
+}
+
 fn transform_component_local_point(component: &PlacedPackage, point: &NativePoint) -> Point {
+    transform_component_local_xy(component, point.x, point.y)
+}
+
+fn transform_component_local_xy(component: &PlacedPackage, x_nm: i64, y_nm: i64) -> Point {
     let radians = f64::from(component.rotation).to_radians();
-    let x = point.x as f64;
-    let y = point.y as f64;
+    let x = x_nm as f64;
+    let y = y_nm as f64;
     let rotated_x = x * radians.cos() - y * radians.sin();
     let rotated_y = x * radians.sin() + y * radians.cos();
     Point {
@@ -3784,6 +3930,9 @@ pub(crate) fn export_native_project_gerber_silkscreen_layer(
 ) -> Result<NativeProjectGerberSilkscreenExportView> {
     let project = load_native_project(root)?;
     let component_text_count = count_native_component_silkscreen_texts(&project.board, layer);
+    let component_line_count = count_native_component_silkscreen_lines(&project.board, layer);
+    let component_arc_count = count_native_component_silkscreen_arcs(&project.board, layer);
+    let component_circle_count = count_native_component_silkscreen_circles(&project.board, layer);
     let (_silk_layer, texts, component_strokes) =
         resolve_native_project_silkscreen_context(root, layer)?;
     let gerber = render_rs274x_silkscreen_layer(layer, &texts, &component_strokes)
@@ -3798,7 +3947,9 @@ pub(crate) fn export_native_project_gerber_silkscreen_layer(
         layer,
         text_count: texts.len().saturating_sub(component_text_count),
         component_text_count,
-        component_stroke_count: component_strokes.len(),
+        component_stroke_count: component_line_count,
+        component_arc_count,
+        component_circle_count,
     })
 }
 
@@ -3951,6 +4102,9 @@ pub(crate) fn validate_native_project_gerber_silkscreen_layer(
 ) -> Result<NativeProjectGerberSilkscreenValidationView> {
     let project = load_native_project(root)?;
     let component_text_count = count_native_component_silkscreen_texts(&project.board, layer);
+    let component_line_count = count_native_component_silkscreen_lines(&project.board, layer);
+    let component_arc_count = count_native_component_silkscreen_arcs(&project.board, layer);
+    let component_circle_count = count_native_component_silkscreen_circles(&project.board, layer);
     let (_silk_layer, texts, component_strokes) =
         resolve_native_project_silkscreen_context(root, layer)?;
     let expected = render_rs274x_silkscreen_layer(layer, &texts, &component_strokes)
@@ -3969,7 +4123,9 @@ pub(crate) fn validate_native_project_gerber_silkscreen_layer(
         actual_bytes: actual.len(),
         text_count: texts.len().saturating_sub(component_text_count),
         component_text_count,
-        component_stroke_count: component_strokes.len(),
+        component_stroke_count: component_line_count,
+        component_arc_count,
+        component_circle_count,
     })
 }
 
@@ -4214,6 +4370,9 @@ pub(crate) fn compare_native_project_gerber_silkscreen_layer(
 ) -> Result<NativeProjectGerberSilkscreenComparisonView> {
     let project = load_native_project(root)?;
     let component_text_count = count_native_component_silkscreen_texts(&project.board, layer);
+    let component_line_count = count_native_component_silkscreen_lines(&project.board, layer);
+    let component_arc_count = count_native_component_silkscreen_arcs(&project.board, layer);
+    let component_circle_count = count_native_component_silkscreen_circles(&project.board, layer);
     let (_silk_layer, texts, component_strokes) =
         resolve_native_project_silkscreen_context(root, layer)?;
     let expected_gerber = render_rs274x_silkscreen_layer(layer, &texts, &component_strokes)
@@ -4238,7 +4397,9 @@ pub(crate) fn compare_native_project_gerber_silkscreen_layer(
         layer,
         expected_text_count: texts.len().saturating_sub(component_text_count),
         expected_component_text_count: component_text_count,
-        expected_component_stroke_count: component_strokes.len(),
+        expected_component_stroke_count: component_line_count,
+        expected_component_arc_count: component_arc_count,
+        expected_component_circle_count: component_circle_count,
         actual_geometry_count: actual_parsed.geometries.len(),
         matched_count,
         missing_count,
@@ -7292,6 +7453,16 @@ pub(crate) fn place_native_project_board_component(
         .component_silkscreen_texts
         .entry(component_uuid.to_string())
         .or_default();
+    project
+        .board
+        .component_silkscreen_arcs
+        .entry(component_uuid.to_string())
+        .or_default();
+    project
+        .board
+        .component_silkscreen_circles
+        .entry(component_uuid.to_string())
+        .or_default();
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
         "place_board_component",
@@ -7527,6 +7698,8 @@ pub(crate) fn set_native_project_board_component_package(
     );
     project.board.component_silkscreen.remove(&key);
     project.board.component_silkscreen_texts.remove(&key);
+    project.board.component_silkscreen_arcs.remove(&key);
+    project.board.component_silkscreen_circles.remove(&key);
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
         "set_board_component_package",
@@ -7654,6 +7827,14 @@ pub(crate) fn delete_native_project_board_component(
     project
         .board
         .component_silkscreen_texts
+        .remove(&component_uuid.to_string());
+    project
+        .board
+        .component_silkscreen_arcs
+        .remove(&component_uuid.to_string());
+    project
+        .board
+        .component_silkscreen_circles
         .remove(&component_uuid.to_string());
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(

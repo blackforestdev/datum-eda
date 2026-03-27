@@ -336,6 +336,8 @@ struct NativeProjectGerberSilkscreenExportView {
     text_count: usize,
     component_text_count: usize,
     component_stroke_count: usize,
+    component_arc_count: usize,
+    component_circle_count: usize,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -415,6 +417,8 @@ struct NativeProjectGerberSilkscreenValidationView {
     text_count: usize,
     component_text_count: usize,
     component_stroke_count: usize,
+    component_arc_count: usize,
+    component_circle_count: usize,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -518,6 +522,8 @@ struct NativeProjectGerberSilkscreenComparisonView {
     expected_text_count: usize,
     expected_component_text_count: usize,
     expected_component_stroke_count: usize,
+    expected_component_arc_count: usize,
+    expected_component_circle_count: usize,
     actual_geometry_count: usize,
     matched_count: usize,
     missing_count: usize,
@@ -1662,6 +1668,8 @@ fn render_native_project_gerber_silkscreen_export_text(
         format!("text_count: {}", report.text_count),
         format!("component_text_count: {}", report.component_text_count),
         format!("component_stroke_count: {}", report.component_stroke_count),
+        format!("component_arc_count: {}", report.component_arc_count),
+        format!("component_circle_count: {}", report.component_circle_count),
     ]
     .join("\n")
 }
@@ -1765,6 +1773,8 @@ fn render_native_project_gerber_silkscreen_validation_text(
         format!("text_count: {}", report.text_count),
         format!("component_text_count: {}", report.component_text_count),
         format!("component_stroke_count: {}", report.component_stroke_count),
+        format!("component_arc_count: {}", report.component_arc_count),
+        format!("component_circle_count: {}", report.component_circle_count),
     ]
     .join("\n")
 }
@@ -1890,6 +1900,14 @@ fn render_native_project_gerber_silkscreen_comparison_text(
         format!(
             "expected_component_stroke_count: {}",
             report.expected_component_stroke_count
+        ),
+        format!(
+            "expected_component_arc_count: {}",
+            report.expected_component_arc_count
+        ),
+        format!(
+            "expected_component_circle_count: {}",
+            report.expected_component_circle_count
         ),
         format!("actual_geometry_count: {}", report.actual_geometry_count),
         format!("matched_count: {}", report.matched_count),
