@@ -112,6 +112,7 @@ struct NativeProjectInspectReportView {
     sheet_instance_count: usize,
     variant_count: usize,
     board_package_count: usize,
+    board_pad_count: usize,
     board_net_count: usize,
     board_track_count: usize,
     board_via_count: usize,
@@ -153,7 +154,9 @@ struct NativeProjectBoardSummaryView {
     name: String,
     layers: usize,
     components: usize,
+    pads: usize,
     nets: usize,
+    net_classes: usize,
     tracks: usize,
     vias: usize,
     zones: usize,
@@ -400,6 +403,107 @@ struct NativeProjectBoardStackupMutationReportView {
 }
 
 #[derive(Debug, Clone, Serialize)]
+struct NativeProjectBoardNetMutationReportView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    net_uuid: String,
+    name: String,
+    class_uuid: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectBoardComponentMutationReportView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    component_uuid: String,
+    part_uuid: String,
+    package_uuid: String,
+    reference: String,
+    value: String,
+    x_nm: i64,
+    y_nm: i64,
+    rotation_deg: i32,
+    layer: i32,
+    locked: bool,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectBoardTrackMutationReportView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    track_uuid: String,
+    net_uuid: String,
+    from_x_nm: i64,
+    from_y_nm: i64,
+    to_x_nm: i64,
+    to_y_nm: i64,
+    width_nm: i64,
+    layer: i32,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectBoardViaMutationReportView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    via_uuid: String,
+    net_uuid: String,
+    x_nm: i64,
+    y_nm: i64,
+    drill_nm: i64,
+    diameter_nm: i64,
+    from_layer: i32,
+    to_layer: i32,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectBoardZoneMutationReportView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    zone_uuid: String,
+    net_uuid: String,
+    layer: i32,
+    priority: u32,
+    thermal_relief: bool,
+    thermal_gap_nm: i64,
+    thermal_spoke_width_nm: i64,
+    vertex_count: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectBoardPadMutationReportView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    pad_uuid: String,
+    package_uuid: String,
+    name: String,
+    net_uuid: Option<String>,
+    x_nm: i64,
+    y_nm: i64,
+    layer: i32,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectBoardNetClassMutationReportView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    net_class_uuid: String,
+    name: String,
+    clearance_nm: i64,
+    track_width_nm: i64,
+    via_drill_nm: i64,
+    via_diameter_nm: i64,
+    diffpair_width_nm: i64,
+    diffpair_gap_nm: i64,
+}
+
+#[derive(Debug, Clone, Serialize)]
 struct NativeProjectBoardDimensionMutationReportView {
     action: String,
     project_root: String,
@@ -446,6 +550,7 @@ fn render_native_project_inspect_report_text(report: &NativeProjectInspectReport
         format!("sheet_instance_count: {}", report.sheet_instance_count),
         format!("variant_count: {}", report.variant_count),
         format!("board_package_count: {}", report.board_package_count),
+        format!("board_pad_count: {}", report.board_pad_count),
         format!("board_net_count: {}", report.board_net_count),
         format!("board_track_count: {}", report.board_track_count),
         format!("board_via_count: {}", report.board_via_count),
@@ -483,7 +588,9 @@ fn render_native_project_summary_text(report: &NativeProjectSummaryView) -> Stri
         format!("board_name: {}", report.board.name),
         format!("board_layers: {}", report.board.layers),
         format!("board_components: {}", report.board.components),
+        format!("board_pads: {}", report.board.pads),
         format!("board_nets: {}", report.board.nets),
+        format!("board_net_classes: {}", report.board.net_classes),
         format!("board_tracks: {}", report.board.tracks),
         format!("board_vias: {}", report.board.vias),
         format!("board_zones: {}", report.board.zones),
@@ -787,6 +894,137 @@ fn render_native_project_board_stackup_mutation_text(
         format!("project_root: {}", report.project_root),
         format!("board_path: {}", report.board_path),
         format!("layer_count: {}", report.layer_count),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_board_net_mutation_text(
+    report: &NativeProjectBoardNetMutationReportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("net_uuid: {}", report.net_uuid),
+        format!("name: {}", report.name),
+        format!("class_uuid: {}", report.class_uuid),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_board_component_mutation_text(
+    report: &NativeProjectBoardComponentMutationReportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("component_uuid: {}", report.component_uuid),
+        format!("part_uuid: {}", report.part_uuid),
+        format!("package_uuid: {}", report.package_uuid),
+        format!("reference: {}", report.reference),
+        format!("value: {}", report.value),
+        format!("x_nm: {}", report.x_nm),
+        format!("y_nm: {}", report.y_nm),
+        format!("rotation_deg: {}", report.rotation_deg),
+        format!("layer: {}", report.layer),
+        format!("locked: {}", report.locked),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_board_track_mutation_text(
+    report: &NativeProjectBoardTrackMutationReportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("track_uuid: {}", report.track_uuid),
+        format!("net_uuid: {}", report.net_uuid),
+        format!("from_x_nm: {}", report.from_x_nm),
+        format!("from_y_nm: {}", report.from_y_nm),
+        format!("to_x_nm: {}", report.to_x_nm),
+        format!("to_y_nm: {}", report.to_y_nm),
+        format!("width_nm: {}", report.width_nm),
+        format!("layer: {}", report.layer),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_board_via_mutation_text(
+    report: &NativeProjectBoardViaMutationReportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("via_uuid: {}", report.via_uuid),
+        format!("net_uuid: {}", report.net_uuid),
+        format!("x_nm: {}", report.x_nm),
+        format!("y_nm: {}", report.y_nm),
+        format!("drill_nm: {}", report.drill_nm),
+        format!("diameter_nm: {}", report.diameter_nm),
+        format!("from_layer: {}", report.from_layer),
+        format!("to_layer: {}", report.to_layer),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_board_zone_mutation_text(
+    report: &NativeProjectBoardZoneMutationReportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("zone_uuid: {}", report.zone_uuid),
+        format!("net_uuid: {}", report.net_uuid),
+        format!("layer: {}", report.layer),
+        format!("priority: {}", report.priority),
+        format!("thermal_relief: {}", report.thermal_relief),
+        format!("thermal_gap_nm: {}", report.thermal_gap_nm),
+        format!("thermal_spoke_width_nm: {}", report.thermal_spoke_width_nm),
+        format!("vertex_count: {}", report.vertex_count),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_board_pad_mutation_text(
+    report: &NativeProjectBoardPadMutationReportView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("pad_uuid: {}", report.pad_uuid),
+        format!("package_uuid: {}", report.package_uuid),
+        format!("name: {}", report.name),
+        format!("x_nm: {}", report.x_nm),
+        format!("y_nm: {}", report.y_nm),
+        format!("layer: {}", report.layer),
+    ];
+    if let Some(net_uuid) = &report.net_uuid {
+        lines.push(format!("net_uuid: {}", net_uuid));
+    }
+    lines.join("\n")
+}
+
+fn render_native_project_board_net_class_mutation_text(
+    report: &NativeProjectBoardNetClassMutationReportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("net_class_uuid: {}", report.net_class_uuid),
+        format!("name: {}", report.name),
+        format!("clearance_nm: {}", report.clearance_nm),
+        format!("track_width_nm: {}", report.track_width_nm),
+        format!("via_drill_nm: {}", report.via_drill_nm),
+        format!("via_diameter_nm: {}", report.via_diameter_nm),
+        format!("diffpair_width_nm: {}", report.diffpair_width_nm),
+        format!("diffpair_gap_nm: {}", report.diffpair_gap_nm),
     ]
     .join("\n")
 }

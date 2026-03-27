@@ -288,6 +288,50 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     let report = query_native_project_board_stackup(&path)?;
                     Ok((render_output(&cli.format, &report), 0))
                 }
+                NativeProjectQueryCommands::BoardComponents => {
+                    let report = query_native_project_board_components(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::BoardTracks => {
+                    let report = query_native_project_board_tracks(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::BoardVias => {
+                    let report = query_native_project_board_vias(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::BoardZones => {
+                    let report = query_native_project_board_zones(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::BoardDiagnostics => {
+                    let report = query_native_project_board_diagnostics(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::BoardUnrouted => {
+                    let report = query_native_project_board_unrouted(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::BoardCheck => {
+                    let report = query_native_project_board_check(&path)?;
+                    let output = match cli.format {
+                        OutputFormat::Text => render_check_report_text(&report),
+                        OutputFormat::Json => render_output(&cli.format, &report),
+                    };
+                    Ok((output, 0))
+                }
+                NativeProjectQueryCommands::BoardPads => {
+                    let report = query_native_project_board_pads(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::BoardNets => {
+                    let report = query_native_project_board_nets(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::BoardNetClasses => {
+                    let report = query_native_project_board_net_classes(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
                 NativeProjectQueryCommands::BoardDimensions => {
                     let report = query_native_project_board_dimensions(&path)?;
                     Ok((render_output(&cli.format, &report), 0))
@@ -1201,6 +1245,366 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 let report = set_native_project_board_stackup(&path, stackup_layers)?;
                 let output = match cli.format {
                     OutputFormat::Text => render_native_project_board_stackup_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::PlaceBoardNet {
+                path,
+                name,
+                class_uuid,
+            } => {
+                let report = place_native_project_board_net(&path, name, class_uuid)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_net_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::PlaceBoardComponent {
+                path,
+                part_uuid,
+                package_uuid,
+                reference,
+                value,
+                x_nm,
+                y_nm,
+                layer,
+            } => {
+                let report = place_native_project_board_component(
+                    &path,
+                    part_uuid,
+                    package_uuid,
+                    reference,
+                    value,
+                    eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
+                    layer,
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_component_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::PlaceBoardNetClass {
+                path,
+                name,
+                clearance_nm,
+                track_width_nm,
+                via_drill_nm,
+                via_diameter_nm,
+                diffpair_width_nm,
+                diffpair_gap_nm,
+            } => {
+                let report = place_native_project_board_net_class(
+                    &path,
+                    name,
+                    clearance_nm,
+                    track_width_nm,
+                    via_drill_nm,
+                    via_diameter_nm,
+                    diffpair_width_nm,
+                    diffpair_gap_nm,
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_net_class_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::EditBoardNetClass {
+                path,
+                net_class_uuid,
+                name,
+                clearance_nm,
+                track_width_nm,
+                via_drill_nm,
+                via_diameter_nm,
+                diffpair_width_nm,
+                diffpair_gap_nm,
+            } => {
+                let report = edit_native_project_board_net_class(
+                    &path,
+                    net_class_uuid,
+                    name,
+                    clearance_nm,
+                    track_width_nm,
+                    via_drill_nm,
+                    via_diameter_nm,
+                    diffpair_width_nm,
+                    diffpair_gap_nm,
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_net_class_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::EditBoardNet {
+                path,
+                net_uuid,
+                name,
+                class_uuid,
+            } => {
+                let report = edit_native_project_board_net(&path, net_uuid, name, class_uuid)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_net_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::MoveBoardComponent {
+                path,
+                component_uuid,
+                x_nm,
+                y_nm,
+            } => {
+                let report = move_native_project_board_component(
+                    &path,
+                    component_uuid,
+                    eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_component_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::RotateBoardComponent {
+                path,
+                component_uuid,
+                rotation_deg,
+            } => {
+                let report =
+                    rotate_native_project_board_component(&path, component_uuid, rotation_deg)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_component_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::SetBoardComponentLocked {
+                path,
+                component_uuid,
+            } => {
+                let report = set_native_project_board_component_locked(&path, component_uuid, true)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_component_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ClearBoardComponentLocked {
+                path,
+                component_uuid,
+            } => {
+                let report =
+                    set_native_project_board_component_locked(&path, component_uuid, false)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_component_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::DeleteBoardComponent {
+                path,
+                component_uuid,
+            } => {
+                let report = delete_native_project_board_component(&path, component_uuid)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_component_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::DrawBoardTrack {
+                path,
+                net_uuid,
+                from_x_nm,
+                from_y_nm,
+                to_x_nm,
+                to_y_nm,
+                width_nm,
+                layer,
+            } => {
+                let report = place_native_project_board_track(
+                    &path,
+                    net_uuid,
+                    eda_engine::ir::geometry::Point {
+                        x: from_x_nm,
+                        y: from_y_nm,
+                    },
+                    eda_engine::ir::geometry::Point {
+                        x: to_x_nm,
+                        y: to_y_nm,
+                    },
+                    width_nm,
+                    layer,
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_track_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::DeleteBoardTrack { path, track_uuid } => {
+                let report = delete_native_project_board_track(&path, track_uuid)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_track_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::PlaceBoardVia {
+                path,
+                net_uuid,
+                x_nm,
+                y_nm,
+                drill_nm,
+                diameter_nm,
+                from_layer,
+                to_layer,
+            } => {
+                let report = place_native_project_board_via(
+                    &path,
+                    net_uuid,
+                    eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
+                    drill_nm,
+                    diameter_nm,
+                    from_layer,
+                    to_layer,
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_via_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::DeleteBoardVia { path, via_uuid } => {
+                let report = delete_native_project_board_via(&path, via_uuid)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_via_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::PlaceBoardZone {
+                path,
+                net_uuid,
+                vertices,
+                layer,
+                priority,
+                thermal_relief,
+                thermal_gap_nm,
+                thermal_spoke_width_nm,
+            } => {
+                let polygon = parse_native_polygon_vertices(&vertices)?;
+                let report = place_native_project_board_zone(
+                    &path,
+                    net_uuid,
+                    polygon,
+                    layer,
+                    priority,
+                    thermal_relief,
+                    thermal_gap_nm,
+                    thermal_spoke_width_nm,
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_zone_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::DeleteBoardZone { path, zone_uuid } => {
+                let report = delete_native_project_board_zone(&path, zone_uuid)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_zone_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::SetBoardPadNet {
+                path,
+                pad_uuid,
+                net_uuid,
+            } => {
+                let report = set_native_project_board_pad_net(&path, pad_uuid, Some(net_uuid))?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_pad_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ClearBoardPadNet { path, pad_uuid } => {
+                let report = set_native_project_board_pad_net(&path, pad_uuid, None)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_pad_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::EditBoardPad {
+                path,
+                pad_uuid,
+                x_nm,
+                y_nm,
+                layer,
+            } => {
+                let position = match (x_nm, y_nm) {
+                    (None, None) => None,
+                    (Some(x), Some(y)) => Some(eda_engine::ir::geometry::Point { x, y }),
+                    _ => bail!("board pad position requires both --x-nm and --y-nm"),
+                };
+                let report = edit_native_project_board_pad(&path, pad_uuid, position, layer)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_pad_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::PlaceBoardPad {
+                path,
+                package_uuid,
+                name,
+                x_nm,
+                y_nm,
+                layer,
+                net_uuid,
+            } => {
+                let report = place_native_project_board_pad(
+                    &path,
+                    package_uuid,
+                    name,
+                    eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
+                    layer,
+                    net_uuid,
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_pad_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::DeleteBoardPad { path, pad_uuid } => {
+                let report = delete_native_project_board_pad(&path, pad_uuid)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_pad_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::DeleteBoardNetClass { path, net_class_uuid } => {
+                let report = delete_native_project_board_net_class(&path, net_class_uuid)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_net_class_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::DeleteBoardNet { path, net_uuid } => {
+                let report = delete_native_project_board_net(&path, net_uuid)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_net_mutation_text(&report),
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))

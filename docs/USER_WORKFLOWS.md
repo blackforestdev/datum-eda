@@ -169,6 +169,16 @@ Current live slice:
 - `eda project query <dir> board-dimensions` reports the current native board dimension inventory from `board/board.json`.
 - `eda project query <dir> board-outline` reports the current native board outline polygon from `board/board.json`.
 - `eda project query <dir> board-stackup` reports the current native board stackup from `board/board.json`.
+- `eda project query <dir> board-components` reports the current native placed-package inventory from `board/board.json`.
+- `eda project query <dir> board-pads` reports the current native placed-pad inventory from `board/board.json`.
+- `eda project query <dir> board-tracks` reports the current native routed-track inventory from `board/board.json`.
+- `eda project query <dir> board-vias` reports the current native via inventory from `board/board.json`.
+- `eda project query <dir> board-zones` reports the current native copper-zone inventory from `board/board.json`.
+- `eda project query <dir> board-diagnostics` reports the current native board connectivity findings from `board/board.json`.
+- `eda project query <dir> board-unrouted` reports the current native unrouted airwires from `board/board.json`.
+- `eda project query <dir> board-check` reports the current native board check report from `board/board.json`.
+- `eda project query <dir> board-nets` reports the current native board net inventory from `board/board.json`.
+- `eda project query <dir> board-net-classes` reports the current native board net-class inventory from `board/board.json`.
 - `eda project place-symbol <dir> --sheet <uuid> --reference <text> --value <text> [--lib-id <text>] --x-nm <i64> --y-nm <i64> [--rotation-deg <i32>] [--mirrored]` places a native schematic symbol into a referenced sheet file.
 - `eda project move-symbol <dir> --symbol <uuid> --x-nm <i64> --y-nm <i64>` repositions an existing native schematic symbol.
 - `eda project rotate-symbol <dir> --symbol <uuid> --rotation-deg <i32>` updates the stored rotation for an existing native schematic symbol.
@@ -238,6 +248,29 @@ Current live slice:
 - `eda project delete-board-dimension <dir> --dimension <uuid>` removes an existing native board dimension.
 - `eda project set-board-outline <dir> --vertex <x:y>...` replaces the native board outline polygon.
 - `eda project set-board-stackup <dir> --layer <id:name:type:thickness_nm>...` replaces the native board stackup layer list.
+- `eda project place-board-component <dir> --part <uuid> --package <uuid> --reference <text> --value <text> --x-nm <i64> --y-nm <i64> --layer <i32>` places a native board component/package.
+- `eda project move-board-component <dir> --component <uuid> --x-nm <i64> --y-nm <i64>` repositions an existing native board component/package.
+- `eda project rotate-board-component <dir> --component <uuid> --rotation-deg <i32>` updates the stored rotation on an existing native board component/package.
+- `eda project set-board-component-locked <dir> --component <uuid>` marks an existing native board component/package as locked.
+- `eda project clear-board-component-locked <dir> --component <uuid>` clears the locked state on an existing native board component/package.
+- `eda project delete-board-component <dir> --component <uuid>` removes an existing native board component/package.
+- `eda project set-board-pad-net <dir> --pad <uuid> --net <uuid>` assigns a native board pad to a board net.
+- `eda project clear-board-pad-net <dir> --pad <uuid>` clears the native board net assignment on a pad.
+- `eda project edit-board-pad <dir> --pad <uuid> [--x-nm <i64> --y-nm <i64>] [--layer <i32>]` edits the stored position and/or layer of a native board pad.
+- `eda project place-board-pad <dir> --package <uuid> --name <text> --x-nm <i64> --y-nm <i64> --layer <i32> [--net <uuid>]` places a native board pad.
+- `eda project delete-board-pad <dir> --pad <uuid>` removes an existing native board pad.
+- `eda project draw-board-track <dir> --net <uuid> --from-x-nm <i64> --from-y-nm <i64> --to-x-nm <i64> --to-y-nm <i64> --width-nm <i64> --layer <i32>` draws a native board track.
+- `eda project delete-board-track <dir> --track <uuid>` removes an existing native board track.
+- `eda project place-board-via <dir> --net <uuid> --x-nm <i64> --y-nm <i64> --drill-nm <i64> --diameter-nm <i64> --from-layer <i32> --to-layer <i32>` places a native board via.
+- `eda project delete-board-via <dir> --via <uuid>` removes an existing native board via.
+- `eda project place-board-zone <dir> --net <uuid> --vertex <x:y>... --layer <i32> --priority <u32> --thermal-relief <bool> --thermal-gap-nm <i64> --thermal-spoke-width-nm <i64>` places a native board copper zone.
+- `eda project delete-board-zone <dir> --zone <uuid>` removes an existing native board copper zone.
+- `eda project place-board-net <dir> --name <text> --class <uuid>` creates a native board net.
+- `eda project edit-board-net <dir> --net <uuid> [--name <text>] [--class <uuid>]` edits an existing native board net.
+- `eda project delete-board-net <dir> --net <uuid>` removes an existing native board net.
+- `eda project place-board-net-class <dir> --name <text> --clearance-nm <i64> --track-width-nm <i64> --via-drill-nm <i64> --via-diameter-nm <i64> [--diffpair-width-nm <i64>] [--diffpair-gap-nm <i64>]` creates a native board net class.
+- `eda project edit-board-net-class <dir> --net-class <uuid> ...` edits an existing native board net class.
+- `eda project delete-board-net-class <dir> --net-class <uuid>` removes an existing native board net class.
 
 MCP tools for this flow are defined in `specs/MCP_API_SPEC.md` §M4:
 `place_symbol`, `draw_wire`, `place_label`, `annotate`,

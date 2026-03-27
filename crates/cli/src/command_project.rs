@@ -3,12 +3,13 @@ use std::path::Path;
 
 use anyhow::{Context, Result, bail};
 use eda_engine::api::{CheckCodeCount, CheckReport, CheckStatus, CheckSummary};
-use eda_engine::board::{BoardText, Dimension, Keepout, StackupLayer, StackupLayerType};
+use eda_engine::board::{Board, BoardText, Dimension, Keepout, Net, NetClass, PlacedPackage, PlacedPad, Stackup, StackupLayer, StackupLayerType, Track, Via, Zone};
 use eda_engine::connectivity::{schematic_diagnostics, schematic_net_info};
 use eda_engine::ir::geometry::{Arc, Point};
 use eda_engine::ir::geometry::Polygon;
 use eda_engine::ir::serialization::to_json_deterministic;
 use eda_engine::erc::{ErcFinding, run_prechecks};
+use eda_engine::rules::ast::Rule;
 use eda_engine::schematic::{
     Bus, BusEntry, BusEntryInfo, BusInfo, CheckWaiver, ConnectivityDiagnosticInfo,
     HiddenPowerBehavior, HierarchicalPort, Junction, LabelInfo, LabelKind, NetLabel,
@@ -30,6 +31,13 @@ use super::{
     NativeProjectBoardKeepoutMutationReportView,
     NativeProjectBoardOutlineMutationReportView,
     NativeProjectBoardStackupMutationReportView,
+    NativeProjectBoardComponentMutationReportView,
+    NativeProjectBoardNetMutationReportView,
+    NativeProjectBoardTrackMutationReportView,
+    NativeProjectBoardViaMutationReportView,
+    NativeProjectBoardZoneMutationReportView,
+    NativeProjectBoardPadMutationReportView,
+    NativeProjectBoardNetClassMutationReportView,
     NativeProjectBoardDimensionMutationReportView,
     NativeProjectBoardTextMutationReportView,
     NativeProjectPinOverrideMutationReportView,
@@ -39,6 +47,7 @@ use super::{
     NativeProjectSymbolMutationReportView,
     NativeProjectTextMutationReportView,
     NativeProjectWireMutationReportView,
+    DiagnosticsView, UnroutedView,
     NativeProjectRulesSummaryView, NativeProjectRulesView, NativeProjectSchematicSummaryView,
     NativeProjectSummaryView,
 };
@@ -111,14 +120,25 @@ struct NativeBoardRoot {
     name: String,
     stackup: NativeStackup,
     outline: NativeOutline,
+    #[serde(default)]
     packages: BTreeMap<String, serde_json::Value>,
+    #[serde(default)]
+    pads: BTreeMap<String, serde_json::Value>,
+    #[serde(default)]
     tracks: BTreeMap<String, serde_json::Value>,
+    #[serde(default)]
     vias: BTreeMap<String, serde_json::Value>,
+    #[serde(default)]
     zones: BTreeMap<String, serde_json::Value>,
+    #[serde(default)]
     nets: BTreeMap<String, serde_json::Value>,
+    #[serde(default)]
     net_classes: BTreeMap<String, serde_json::Value>,
+    #[serde(default)]
     keepouts: Vec<serde_json::Value>,
+    #[serde(default)]
     dimensions: Vec<serde_json::Value>,
+    #[serde(default)]
     texts: Vec<serde_json::Value>,
 }
 
@@ -219,6 +239,7 @@ pub(crate) fn create_native_project(
             closed: true,
         },
         packages: BTreeMap::new(),
+        pads: BTreeMap::new(),
         tracks: BTreeMap::new(),
         vias: BTreeMap::new(),
         zones: BTreeMap::new(),
@@ -291,6 +312,7 @@ pub(crate) fn inspect_native_project(root: &Path) -> Result<NativeProjectInspect
         sheet_instance_count: project.schematic.instances.len(),
         variant_count: project.schematic.variants.len(),
         board_package_count: project.board.packages.len(),
+        board_pad_count: project.board.pads.len(),
         board_net_count: project.board.nets.len(),
         board_track_count: project.board.tracks.len(),
         board_via_count: project.board.vias.len(),
@@ -327,7 +349,9 @@ pub(crate) fn query_native_project_summary(root: &Path) -> Result<NativeProjectS
             name: project.board.name,
             layers: project.board.stackup.layers.len(),
             components: project.board.packages.len(),
+            pads: project.board.pads.len(),
             nets: project.board.nets.len(),
+            net_classes: project.board.net_classes.len(),
             tracks: project.board.tracks.len(),
             vias: project.board.vias.len(),
             zones: project.board.zones.len(),
@@ -808,6 +832,114 @@ pub(crate) fn query_native_project_board_stackup(root: &Path) -> Result<Vec<Stac
         .into_iter()
         .map(|value| serde_json::from_value(value).context("failed to parse board stackup layer"))
         .collect::<Result<Vec<StackupLayer>>>()
+}
+
+pub(crate) fn query_native_project_board_components(root: &Path) -> Result<Vec<PlacedPackage>> {
+    let project = load_native_project(root)?;
+    let mut packages = project
+        .board
+        .packages
+        .into_values()
+        .map(|value| serde_json::from_value(value).context("failed to parse board component"))
+        .collect::<Result<Vec<PlacedPackage>>>()?;
+    packages.sort_by(|a, b| a.reference.cmp(&b.reference).then_with(|| a.uuid.cmp(&b.uuid)));
+    Ok(packages)
+}
+
+pub(crate) fn query_native_project_board_pads(root: &Path) -> Result<Vec<PlacedPad>> {
+    let project = load_native_project(root)?;
+    let mut pads = project
+        .board
+        .pads
+        .into_values()
+        .map(|value| serde_json::from_value(value).context("failed to parse board pad"))
+        .collect::<Result<Vec<PlacedPad>>>()?;
+    pads.sort_by(|a, b| a.package.cmp(&b.package).then_with(|| a.name.cmp(&b.name)).then_with(|| a.uuid.cmp(&b.uuid)));
+    Ok(pads)
+}
+
+pub(crate) fn query_native_project_board_tracks(root: &Path) -> Result<Vec<Track>> {
+    let project = load_native_project(root)?;
+    let mut tracks = project
+        .board
+        .tracks
+        .into_values()
+        .map(|value| serde_json::from_value(value).context("failed to parse board track"))
+        .collect::<Result<Vec<Track>>>()?;
+    tracks.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    Ok(tracks)
+}
+
+pub(crate) fn query_native_project_board_vias(root: &Path) -> Result<Vec<Via>> {
+    let project = load_native_project(root)?;
+    let mut vias = project
+        .board
+        .vias
+        .into_values()
+        .map(|value| serde_json::from_value(value).context("failed to parse board via"))
+        .collect::<Result<Vec<Via>>>()?;
+    vias.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    Ok(vias)
+}
+
+pub(crate) fn query_native_project_board_zones(root: &Path) -> Result<Vec<Zone>> {
+    let project = load_native_project(root)?;
+    let mut zones = project
+        .board
+        .zones
+        .into_values()
+        .map(|value| serde_json::from_value(value).context("failed to parse board zone"))
+        .collect::<Result<Vec<Zone>>>()?;
+    zones.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    Ok(zones)
+}
+
+pub(crate) fn query_native_project_board_diagnostics(root: &Path) -> Result<DiagnosticsView> {
+    let project = load_native_project(root)?;
+    Ok(DiagnosticsView::Board {
+        diagnostics: build_native_project_board(&project)?.diagnostics(),
+    })
+}
+
+pub(crate) fn query_native_project_board_unrouted(root: &Path) -> Result<UnroutedView> {
+    let project = load_native_project(root)?;
+    Ok(UnroutedView::Board {
+        airwires: build_native_project_board(&project)?.unrouted(),
+    })
+}
+
+pub(crate) fn query_native_project_board_check(root: &Path) -> Result<CheckReport> {
+    let project = load_native_project(root)?;
+    let board = build_native_project_board(&project)?;
+    let diagnostics = board.diagnostics();
+    Ok(CheckReport::Board {
+        summary: summarize_native_board_checks(&diagnostics),
+        diagnostics,
+    })
+}
+
+pub(crate) fn query_native_project_board_nets(root: &Path) -> Result<Vec<Net>> {
+    let project = load_native_project(root)?;
+    let mut nets = project
+        .board
+        .nets
+        .into_values()
+        .map(|value| serde_json::from_value(value).context("failed to parse board net"))
+        .collect::<Result<Vec<Net>>>()?;
+    nets.sort_by(|a, b| a.name.cmp(&b.name).then_with(|| a.uuid.cmp(&b.uuid)));
+    Ok(nets)
+}
+
+pub(crate) fn query_native_project_board_net_classes(root: &Path) -> Result<Vec<NetClass>> {
+    let project = load_native_project(root)?;
+    let mut net_classes = project
+        .board
+        .net_classes
+        .into_values()
+        .map(|value| serde_json::from_value(value).context("failed to parse board net class"))
+        .collect::<Result<Vec<NetClass>>>()?;
+    net_classes.sort_by(|a, b| a.name.cmp(&b.name).then_with(|| a.uuid.cmp(&b.uuid)));
+    Ok(net_classes)
 }
 
 pub(crate) fn query_native_project_board_dimensions(root: &Path) -> Result<Vec<Dimension>> {
@@ -2885,6 +3017,151 @@ fn build_native_project_schematic(project: &LoadedNativeProject) -> Result<Schem
     })
 }
 
+fn build_native_project_board(project: &LoadedNativeProject) -> Result<Board> {
+    let stackup_layers = project
+        .board
+        .stackup
+        .layers
+        .iter()
+        .cloned()
+        .map(|value| serde_json::from_value(value).context("failed to parse board stackup layer"))
+        .collect::<Result<Vec<StackupLayer>>>()?;
+    let packages = project
+        .board
+        .packages
+        .values()
+        .cloned()
+        .map(|value| {
+            let package: PlacedPackage =
+                serde_json::from_value(value).context("failed to parse board component")?;
+            Ok((package.uuid, package))
+        })
+        .collect::<Result<HashMap<Uuid, PlacedPackage>>>()?;
+    let pads = project
+        .board
+        .pads
+        .values()
+        .cloned()
+        .map(|value| {
+            let pad: PlacedPad =
+                serde_json::from_value(value).context("failed to parse board pad")?;
+            Ok((pad.uuid, pad))
+        })
+        .collect::<Result<HashMap<Uuid, PlacedPad>>>()?;
+    let tracks = project
+        .board
+        .tracks
+        .values()
+        .cloned()
+        .map(|value| {
+            let track: Track =
+                serde_json::from_value(value).context("failed to parse board track")?;
+            Ok((track.uuid, track))
+        })
+        .collect::<Result<HashMap<Uuid, Track>>>()?;
+    let vias = project
+        .board
+        .vias
+        .values()
+        .cloned()
+        .map(|value| {
+            let via: Via = serde_json::from_value(value).context("failed to parse board via")?;
+            Ok((via.uuid, via))
+        })
+        .collect::<Result<HashMap<Uuid, Via>>>()?;
+    let zones = project
+        .board
+        .zones
+        .values()
+        .cloned()
+        .map(|value| {
+            let zone: Zone = serde_json::from_value(value).context("failed to parse board zone")?;
+            Ok((zone.uuid, zone))
+        })
+        .collect::<Result<HashMap<Uuid, Zone>>>()?;
+    let nets = project
+        .board
+        .nets
+        .values()
+        .cloned()
+        .map(|value| {
+            let net: Net = serde_json::from_value(value).context("failed to parse board net")?;
+            Ok((net.uuid, net))
+        })
+        .collect::<Result<HashMap<Uuid, Net>>>()?;
+    let net_classes = project
+        .board
+        .net_classes
+        .values()
+        .cloned()
+        .map(|value| {
+            let net_class: NetClass =
+                serde_json::from_value(value).context("failed to parse board net class")?;
+            Ok((net_class.uuid, net_class))
+        })
+        .collect::<Result<HashMap<Uuid, NetClass>>>()?;
+    let keepouts = project
+        .board
+        .keepouts
+        .iter()
+        .cloned()
+        .map(|value| serde_json::from_value(value).context("failed to parse board keepout"))
+        .collect::<Result<Vec<Keepout>>>()?;
+    let dimensions = project
+        .board
+        .dimensions
+        .iter()
+        .cloned()
+        .map(|value| serde_json::from_value(value).context("failed to parse board dimension"))
+        .collect::<Result<Vec<Dimension>>>()?;
+    let texts = project
+        .board
+        .texts
+        .iter()
+        .cloned()
+        .map(|value| serde_json::from_value(value).context("failed to parse board text"))
+        .collect::<Result<Vec<BoardText>>>()?;
+    let rules = project
+        .rules
+        .rules
+        .iter()
+        .cloned()
+        .map(|value| serde_json::from_value(value).context("failed to parse board rule"))
+        .collect::<Result<Vec<Rule>>>()?;
+
+    Ok(Board {
+        uuid: project.board.uuid,
+        name: project.board.name.clone(),
+        stackup: Stackup {
+            layers: stackup_layers,
+        },
+        outline: Polygon {
+            vertices: project
+                .board
+                .outline
+                .vertices
+                .iter()
+                .map(|point| Point {
+                    x: point.x,
+                    y: point.y,
+                })
+                .collect(),
+            closed: project.board.outline.closed,
+        },
+        packages,
+        pads,
+        tracks,
+        vias,
+        zones,
+        nets,
+        net_classes,
+        rules,
+        keepouts,
+        dimensions,
+        texts,
+    })
+}
+
 fn summarize_native_schematic_checks(
     diagnostics: &[ConnectivityDiagnosticInfo],
     erc_findings: &[ErcFinding],
@@ -2939,6 +3216,47 @@ fn summarize_native_schematic_checks(
         warnings,
         infos,
         waived,
+        by_code,
+    }
+}
+
+fn summarize_native_board_checks(diagnostics: &[ConnectivityDiagnosticInfo]) -> CheckSummary {
+    let mut by_code: BTreeMap<String, usize> = BTreeMap::new();
+    let mut errors = 0usize;
+    let mut warnings = 0usize;
+    let mut infos = 0usize;
+
+    for diagnostic in diagnostics {
+        *by_code.entry(diagnostic.kind.clone()).or_default() += 1;
+        match diagnostic.severity.as_str() {
+            "error" => errors += 1,
+            "warning" => warnings += 1,
+            _ => infos += 1,
+        }
+    }
+
+    let status = if errors > 0 {
+        CheckStatus::Error
+    } else if warnings > 0 {
+        CheckStatus::Warning
+    } else if infos > 0 {
+        CheckStatus::Info
+    } else {
+        CheckStatus::Ok
+    };
+
+    let mut by_code = by_code
+        .into_iter()
+        .map(|(code, count)| CheckCodeCount { code, count })
+        .collect::<Vec<_>>();
+    by_code.sort_by(|a, b| a.code.cmp(&b.code));
+
+    CheckSummary {
+        status,
+        errors,
+        warnings,
+        infos,
+        waived: 0,
         by_code,
     }
 }
@@ -3209,6 +3527,614 @@ pub(crate) fn set_native_project_board_stackup(
     })
 }
 
+pub(crate) fn place_native_project_board_net(
+    root: &Path,
+    name: String,
+    class_uuid: Uuid,
+) -> Result<NativeProjectBoardNetMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let net_uuid = Uuid::new_v4();
+    let net = Net {
+        uuid: net_uuid,
+        name,
+        class: class_uuid,
+    };
+    project.board.nets.insert(
+        net_uuid.to_string(),
+        serde_json::to_value(&net).expect("native board net serialization must succeed"),
+    );
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_net_report("place_board_net", &project, net))
+}
+
+pub(crate) fn place_native_project_board_component(
+    root: &Path,
+    part_uuid: Uuid,
+    package_uuid: Uuid,
+    reference: String,
+    value: String,
+    position: Point,
+    layer: i32,
+) -> Result<NativeProjectBoardComponentMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let component_uuid = Uuid::new_v4();
+    let component = PlacedPackage {
+        uuid: component_uuid,
+        part: part_uuid,
+        package: package_uuid,
+        reference,
+        value,
+        position,
+        rotation: 0,
+        layer,
+        locked: false,
+    };
+    project.board.packages.insert(
+        component_uuid.to_string(),
+        serde_json::to_value(&component).expect("native board component serialization must succeed"),
+    );
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_component_report(
+        "place_board_component",
+        &project,
+        component,
+    ))
+}
+
+pub(crate) fn place_native_project_board_track(
+    root: &Path,
+    net_uuid: Uuid,
+    from: Point,
+    to: Point,
+    width_nm: i64,
+    layer: i32,
+) -> Result<NativeProjectBoardTrackMutationReportView> {
+    let mut project = load_native_project(root)?;
+    if !project.board.nets.contains_key(&net_uuid.to_string()) {
+        bail!("board net not found in native project: {net_uuid}");
+    }
+    let track_uuid = Uuid::new_v4();
+    let track = Track {
+        uuid: track_uuid,
+        net: net_uuid,
+        from,
+        to,
+        width: width_nm,
+        layer,
+    };
+    project.board.tracks.insert(
+        track_uuid.to_string(),
+        serde_json::to_value(&track).expect("native board track serialization must succeed"),
+    );
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_track_report(
+        "draw_board_track",
+        &project,
+        track,
+    ))
+}
+
+pub(crate) fn place_native_project_board_via(
+    root: &Path,
+    net_uuid: Uuid,
+    position: Point,
+    drill_nm: i64,
+    diameter_nm: i64,
+    from_layer: i32,
+    to_layer: i32,
+) -> Result<NativeProjectBoardViaMutationReportView> {
+    let mut project = load_native_project(root)?;
+    if !project.board.nets.contains_key(&net_uuid.to_string()) {
+        bail!("board net not found in native project: {net_uuid}");
+    }
+    let via_uuid = Uuid::new_v4();
+    let via = Via {
+        uuid: via_uuid,
+        net: net_uuid,
+        position,
+        drill: drill_nm,
+        diameter: diameter_nm,
+        from_layer,
+        to_layer,
+    };
+    project.board.vias.insert(
+        via_uuid.to_string(),
+        serde_json::to_value(&via).expect("native board via serialization must succeed"),
+    );
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_via_report(
+        "place_board_via",
+        &project,
+        via,
+    ))
+}
+
+pub(crate) fn place_native_project_board_zone(
+    root: &Path,
+    net_uuid: Uuid,
+    polygon: Polygon,
+    layer: i32,
+    priority: u32,
+    thermal_relief: bool,
+    thermal_gap_nm: i64,
+    thermal_spoke_width_nm: i64,
+) -> Result<NativeProjectBoardZoneMutationReportView> {
+    let mut project = load_native_project(root)?;
+    if !project.board.nets.contains_key(&net_uuid.to_string()) {
+        bail!("board net not found in native project: {net_uuid}");
+    }
+    let zone_uuid = Uuid::new_v4();
+    let zone = Zone {
+        uuid: zone_uuid,
+        net: net_uuid,
+        polygon,
+        layer,
+        priority,
+        thermal_relief,
+        thermal_gap: thermal_gap_nm,
+        thermal_spoke_width: thermal_spoke_width_nm,
+    };
+    project.board.zones.insert(
+        zone_uuid.to_string(),
+        serde_json::to_value(&zone).expect("native board zone serialization must succeed"),
+    );
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_zone_report(
+        "place_board_zone",
+        &project,
+        zone,
+    ))
+}
+
+pub(crate) fn edit_native_project_board_net(
+    root: &Path,
+    net_uuid: Uuid,
+    name: Option<String>,
+    class_uuid: Option<Uuid>,
+) -> Result<NativeProjectBoardNetMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let key = net_uuid.to_string();
+    let entry = project
+        .board
+        .nets
+        .get(&key)
+        .cloned()
+        .ok_or_else(|| anyhow::anyhow!("board net not found in native project: {net_uuid}"))?;
+    let mut net: Net = serde_json::from_value(entry)
+        .with_context(|| format!("failed to parse board net in {}", project.board_path.display()))?;
+    if let Some(name) = name {
+        net.name = name;
+    }
+    if let Some(class_uuid) = class_uuid {
+        net.class = class_uuid;
+    }
+    project.board.nets.insert(
+        key,
+        serde_json::to_value(&net).expect("native board net serialization must succeed"),
+    );
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_net_report("edit_board_net", &project, net))
+}
+
+pub(crate) fn move_native_project_board_component(
+    root: &Path,
+    component_uuid: Uuid,
+    position: Point,
+) -> Result<NativeProjectBoardComponentMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let key = component_uuid.to_string();
+    let entry = project
+        .board
+        .packages
+        .get(&key)
+        .cloned()
+        .ok_or_else(|| anyhow::anyhow!("board component not found in native project: {component_uuid}"))?;
+    let mut component: PlacedPackage = serde_json::from_value(entry)
+        .with_context(|| format!("failed to parse board component in {}", project.board_path.display()))?;
+    component.position = position;
+    project.board.packages.insert(
+        key,
+        serde_json::to_value(&component).expect("native board component serialization must succeed"),
+    );
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_component_report(
+        "move_board_component",
+        &project,
+        component,
+    ))
+}
+
+pub(crate) fn rotate_native_project_board_component(
+    root: &Path,
+    component_uuid: Uuid,
+    rotation_deg: i32,
+) -> Result<NativeProjectBoardComponentMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let key = component_uuid.to_string();
+    let entry = project.board.packages.get(&key).cloned().ok_or_else(|| {
+        anyhow::anyhow!("board component not found in native project: {component_uuid}")
+    })?;
+    let mut component: PlacedPackage = serde_json::from_value(entry).with_context(|| {
+        format!(
+            "failed to parse board component in {}",
+            project.board_path.display()
+        )
+    })?;
+    component.rotation = rotation_deg;
+    project.board.packages.insert(
+        key,
+        serde_json::to_value(&component).expect("native board component serialization must succeed"),
+    );
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_component_report(
+        "rotate_board_component",
+        &project,
+        component,
+    ))
+}
+
+pub(crate) fn set_native_project_board_component_locked(
+    root: &Path,
+    component_uuid: Uuid,
+    locked: bool,
+) -> Result<NativeProjectBoardComponentMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let key = component_uuid.to_string();
+    let entry = project.board.packages.get(&key).cloned().ok_or_else(|| {
+        anyhow::anyhow!("board component not found in native project: {component_uuid}")
+    })?;
+    let mut component: PlacedPackage = serde_json::from_value(entry).with_context(|| {
+        format!(
+            "failed to parse board component in {}",
+            project.board_path.display()
+        )
+    })?;
+    component.locked = locked;
+    project.board.packages.insert(
+        key,
+        serde_json::to_value(&component).expect("native board component serialization must succeed"),
+    );
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_component_report(
+        if locked {
+            "set_board_component_locked"
+        } else {
+            "clear_board_component_locked"
+        },
+        &project,
+        component,
+    ))
+}
+
+pub(crate) fn delete_native_project_board_component(
+    root: &Path,
+    component_uuid: Uuid,
+) -> Result<NativeProjectBoardComponentMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let value = project
+        .board
+        .packages
+        .remove(&component_uuid.to_string())
+        .ok_or_else(|| anyhow::anyhow!("board component not found in native project: {component_uuid}"))?;
+    let component: PlacedPackage = serde_json::from_value(value).with_context(|| {
+        format!(
+            "failed to parse board component in {}",
+            project.board_path.display()
+        )
+    })?;
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_component_report(
+        "delete_board_component",
+        &project,
+        component,
+    ))
+}
+
+pub(crate) fn set_native_project_board_pad_net(
+    root: &Path,
+    pad_uuid: Uuid,
+    net_uuid: Option<Uuid>,
+) -> Result<NativeProjectBoardPadMutationReportView> {
+    let mut project = load_native_project(root)?;
+    if let Some(net_uuid) = net_uuid
+        && !project.board.nets.contains_key(&net_uuid.to_string())
+    {
+        bail!("board net not found in native project: {net_uuid}");
+    }
+    let key = pad_uuid.to_string();
+    let entry = project
+        .board
+        .pads
+        .get(&key)
+        .cloned()
+        .ok_or_else(|| anyhow::anyhow!("board pad not found in native project: {pad_uuid}"))?;
+    let mut pad: PlacedPad = serde_json::from_value(entry)
+        .with_context(|| format!("failed to parse board pad in {}", project.board_path.display()))?;
+    pad.net = net_uuid;
+    project.board.pads.insert(
+        key,
+        serde_json::to_value(&pad).expect("native board pad serialization must succeed"),
+    );
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_pad_report(
+        if net_uuid.is_some() {
+            "set_board_pad_net"
+        } else {
+            "clear_board_pad_net"
+        },
+        &project,
+        pad,
+    ))
+}
+
+pub(crate) fn place_native_project_board_pad(
+    root: &Path,
+    package_uuid: Uuid,
+    name: String,
+    position: Point,
+    layer: i32,
+    net_uuid: Option<Uuid>,
+) -> Result<NativeProjectBoardPadMutationReportView> {
+    let mut project = load_native_project(root)?;
+    if let Some(net_uuid) = net_uuid
+        && !project.board.nets.contains_key(&net_uuid.to_string())
+    {
+        bail!("board net not found in native project: {net_uuid}");
+    }
+    let pad_uuid = Uuid::new_v4();
+    let pad = PlacedPad {
+        uuid: pad_uuid,
+        package: package_uuid,
+        name,
+        net: net_uuid,
+        position,
+        layer,
+    };
+    project.board.pads.insert(
+        pad_uuid.to_string(),
+        serde_json::to_value(&pad).expect("native board pad serialization must succeed"),
+    );
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_pad_report("place_board_pad", &project, pad))
+}
+
+pub(crate) fn edit_native_project_board_pad(
+    root: &Path,
+    pad_uuid: Uuid,
+    position: Option<Point>,
+    layer: Option<i32>,
+) -> Result<NativeProjectBoardPadMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let key = pad_uuid.to_string();
+    let entry = project
+        .board
+        .pads
+        .get(&key)
+        .cloned()
+        .ok_or_else(|| anyhow::anyhow!("board pad not found in native project: {pad_uuid}"))?;
+    let mut pad: PlacedPad = serde_json::from_value(entry)
+        .with_context(|| format!("failed to parse board pad in {}", project.board_path.display()))?;
+    if let Some(position) = position {
+        pad.position = position;
+    }
+    if let Some(layer) = layer {
+        pad.layer = layer;
+    }
+    project.board.pads.insert(
+        key,
+        serde_json::to_value(&pad).expect("native board pad serialization must succeed"),
+    );
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_pad_report("edit_board_pad", &project, pad))
+}
+
+pub(crate) fn delete_native_project_board_pad(
+    root: &Path,
+    pad_uuid: Uuid,
+) -> Result<NativeProjectBoardPadMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let value = project
+        .board
+        .pads
+        .remove(&pad_uuid.to_string())
+        .ok_or_else(|| anyhow::anyhow!("board pad not found in native project: {pad_uuid}"))?;
+    let pad: PlacedPad = serde_json::from_value(value)
+        .with_context(|| format!("failed to parse board pad in {}", project.board_path.display()))?;
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_pad_report("delete_board_pad", &project, pad))
+}
+
+pub(crate) fn delete_native_project_board_track(
+    root: &Path,
+    track_uuid: Uuid,
+) -> Result<NativeProjectBoardTrackMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let value = project
+        .board
+        .tracks
+        .remove(&track_uuid.to_string())
+        .ok_or_else(|| anyhow::anyhow!("board track not found in native project: {track_uuid}"))?;
+    let track: Track = serde_json::from_value(value).with_context(|| {
+        format!(
+            "failed to parse board track in {}",
+            project.board_path.display()
+        )
+    })?;
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_track_report(
+        "delete_board_track",
+        &project,
+        track,
+    ))
+}
+
+pub(crate) fn delete_native_project_board_via(
+    root: &Path,
+    via_uuid: Uuid,
+) -> Result<NativeProjectBoardViaMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let value = project
+        .board
+        .vias
+        .remove(&via_uuid.to_string())
+        .ok_or_else(|| anyhow::anyhow!("board via not found in native project: {via_uuid}"))?;
+    let via: Via = serde_json::from_value(value).with_context(|| {
+        format!("failed to parse board via in {}", project.board_path.display())
+    })?;
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_via_report(
+        "delete_board_via",
+        &project,
+        via,
+    ))
+}
+
+pub(crate) fn delete_native_project_board_zone(
+    root: &Path,
+    zone_uuid: Uuid,
+) -> Result<NativeProjectBoardZoneMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let value = project
+        .board
+        .zones
+        .remove(&zone_uuid.to_string())
+        .ok_or_else(|| anyhow::anyhow!("board zone not found in native project: {zone_uuid}"))?;
+    let zone: Zone = serde_json::from_value(value).with_context(|| {
+        format!("failed to parse board zone in {}", project.board_path.display())
+    })?;
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_zone_report(
+        "delete_board_zone",
+        &project,
+        zone,
+    ))
+}
+
+pub(crate) fn delete_native_project_board_net(
+    root: &Path,
+    net_uuid: Uuid,
+) -> Result<NativeProjectBoardNetMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let value = project
+        .board
+        .nets
+        .remove(&net_uuid.to_string())
+        .ok_or_else(|| anyhow::anyhow!("board net not found in native project: {net_uuid}"))?;
+    let net: Net = serde_json::from_value(value)
+        .with_context(|| format!("failed to parse board net in {}", project.board_path.display()))?;
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_net_report("delete_board_net", &project, net))
+}
+
+pub(crate) fn place_native_project_board_net_class(
+    root: &Path,
+    name: String,
+    clearance_nm: i64,
+    track_width_nm: i64,
+    via_drill_nm: i64,
+    via_diameter_nm: i64,
+    diffpair_width_nm: i64,
+    diffpair_gap_nm: i64,
+) -> Result<NativeProjectBoardNetClassMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let net_class_uuid = Uuid::new_v4();
+    let net_class = NetClass {
+        uuid: net_class_uuid,
+        name,
+        clearance: clearance_nm,
+        track_width: track_width_nm,
+        via_drill: via_drill_nm,
+        via_diameter: via_diameter_nm,
+        diffpair_width: diffpair_width_nm,
+        diffpair_gap: diffpair_gap_nm,
+    };
+    project.board.net_classes.insert(
+        net_class_uuid.to_string(),
+        serde_json::to_value(&net_class).expect("native board net class serialization must succeed"),
+    );
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_net_class_report(
+        "place_board_net_class",
+        &project,
+        net_class,
+    ))
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn edit_native_project_board_net_class(
+    root: &Path,
+    net_class_uuid: Uuid,
+    name: Option<String>,
+    clearance_nm: Option<i64>,
+    track_width_nm: Option<i64>,
+    via_drill_nm: Option<i64>,
+    via_diameter_nm: Option<i64>,
+    diffpair_width_nm: Option<i64>,
+    diffpair_gap_nm: Option<i64>,
+) -> Result<NativeProjectBoardNetClassMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let key = net_class_uuid.to_string();
+    let entry = project
+        .board
+        .net_classes
+        .get(&key)
+        .cloned()
+        .ok_or_else(|| anyhow::anyhow!("board net class not found in native project: {net_class_uuid}"))?;
+    let mut net_class: NetClass = serde_json::from_value(entry)
+        .with_context(|| format!("failed to parse board net class in {}", project.board_path.display()))?;
+    if let Some(name) = name {
+        net_class.name = name;
+    }
+    if let Some(clearance_nm) = clearance_nm {
+        net_class.clearance = clearance_nm;
+    }
+    if let Some(track_width_nm) = track_width_nm {
+        net_class.track_width = track_width_nm;
+    }
+    if let Some(via_drill_nm) = via_drill_nm {
+        net_class.via_drill = via_drill_nm;
+    }
+    if let Some(via_diameter_nm) = via_diameter_nm {
+        net_class.via_diameter = via_diameter_nm;
+    }
+    if let Some(diffpair_width_nm) = diffpair_width_nm {
+        net_class.diffpair_width = diffpair_width_nm;
+    }
+    if let Some(diffpair_gap_nm) = diffpair_gap_nm {
+        net_class.diffpair_gap = diffpair_gap_nm;
+    }
+    project.board.net_classes.insert(
+        key,
+        serde_json::to_value(&net_class).expect("native board net class serialization must succeed"),
+    );
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_net_class_report(
+        "edit_board_net_class",
+        &project,
+        net_class,
+    ))
+}
+
+pub(crate) fn delete_native_project_board_net_class(
+    root: &Path,
+    net_class_uuid: Uuid,
+) -> Result<NativeProjectBoardNetClassMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let value = project
+        .board
+        .net_classes
+        .remove(&net_class_uuid.to_string())
+        .ok_or_else(|| anyhow::anyhow!("board net class not found in native project: {net_class_uuid}"))?;
+    let net_class: NetClass = serde_json::from_value(value)
+        .with_context(|| format!("failed to parse board net class in {}", project.board_path.display()))?;
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_net_class_report(
+        "delete_board_net_class",
+        &project,
+        net_class,
+    ))
+}
+
 pub(crate) fn place_native_project_board_dimension(
     root: &Path,
     from: Point,
@@ -3377,6 +4303,142 @@ fn parse_stackup_layer_type(value: &str) -> Result<StackupLayerType> {
         "Paste" | "paste" => Ok(StackupLayerType::Paste),
         "Mechanical" | "mechanical" => Ok(StackupLayerType::Mechanical),
         _ => bail!("unknown stackup layer type `{value}`"),
+    }
+}
+
+fn native_project_board_net_class_report(
+    action: &str,
+    project: &LoadedNativeProject,
+    net_class: NetClass,
+) -> NativeProjectBoardNetClassMutationReportView {
+    NativeProjectBoardNetClassMutationReportView {
+        action: action.to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        net_class_uuid: net_class.uuid.to_string(),
+        name: net_class.name,
+        clearance_nm: net_class.clearance,
+        track_width_nm: net_class.track_width,
+        via_drill_nm: net_class.via_drill,
+        via_diameter_nm: net_class.via_diameter,
+        diffpair_width_nm: net_class.diffpair_width,
+        diffpair_gap_nm: net_class.diffpair_gap,
+    }
+}
+
+fn native_project_board_net_report(
+    action: &str,
+    project: &LoadedNativeProject,
+    net: Net,
+) -> NativeProjectBoardNetMutationReportView {
+    NativeProjectBoardNetMutationReportView {
+        action: action.to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        net_uuid: net.uuid.to_string(),
+        name: net.name,
+        class_uuid: net.class.to_string(),
+    }
+}
+
+fn native_project_board_component_report(
+    action: &str,
+    project: &LoadedNativeProject,
+    component: PlacedPackage,
+) -> NativeProjectBoardComponentMutationReportView {
+    NativeProjectBoardComponentMutationReportView {
+        action: action.to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        component_uuid: component.uuid.to_string(),
+        part_uuid: component.part.to_string(),
+        package_uuid: component.package.to_string(),
+        reference: component.reference,
+        value: component.value,
+        x_nm: component.position.x,
+        y_nm: component.position.y,
+        rotation_deg: component.rotation,
+        layer: component.layer,
+        locked: component.locked,
+    }
+}
+
+fn native_project_board_track_report(
+    action: &str,
+    project: &LoadedNativeProject,
+    track: Track,
+) -> NativeProjectBoardTrackMutationReportView {
+    NativeProjectBoardTrackMutationReportView {
+        action: action.to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        track_uuid: track.uuid.to_string(),
+        net_uuid: track.net.to_string(),
+        from_x_nm: track.from.x,
+        from_y_nm: track.from.y,
+        to_x_nm: track.to.x,
+        to_y_nm: track.to.y,
+        width_nm: track.width,
+        layer: track.layer,
+    }
+}
+
+fn native_project_board_via_report(
+    action: &str,
+    project: &LoadedNativeProject,
+    via: Via,
+) -> NativeProjectBoardViaMutationReportView {
+    NativeProjectBoardViaMutationReportView {
+        action: action.to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        via_uuid: via.uuid.to_string(),
+        net_uuid: via.net.to_string(),
+        x_nm: via.position.x,
+        y_nm: via.position.y,
+        drill_nm: via.drill,
+        diameter_nm: via.diameter,
+        from_layer: via.from_layer,
+        to_layer: via.to_layer,
+    }
+}
+
+fn native_project_board_zone_report(
+    action: &str,
+    project: &LoadedNativeProject,
+    zone: Zone,
+) -> NativeProjectBoardZoneMutationReportView {
+    NativeProjectBoardZoneMutationReportView {
+        action: action.to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        zone_uuid: zone.uuid.to_string(),
+        net_uuid: zone.net.to_string(),
+        layer: zone.layer,
+        priority: zone.priority,
+        thermal_relief: zone.thermal_relief,
+        thermal_gap_nm: zone.thermal_gap,
+        thermal_spoke_width_nm: zone.thermal_spoke_width,
+        vertex_count: zone.polygon.vertices.len(),
+    }
+}
+
+fn native_project_board_pad_report(
+    action: &str,
+    project: &LoadedNativeProject,
+    pad: PlacedPad,
+) -> NativeProjectBoardPadMutationReportView {
+    NativeProjectBoardPadMutationReportView {
+        action: action.to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        pad_uuid: pad.uuid.to_string(),
+        package_uuid: pad.package.to_string(),
+        name: pad.name,
+        net_uuid: pad.net.map(|uuid| uuid.to_string()),
+        x_nm: pad.position.x,
+        y_nm: pad.position.y,
+        layer: pad.layer,
     }
 }
 

@@ -90,6 +90,26 @@ mod main_tests_project_board_dimension;
 mod main_tests_project_board_outline;
 #[path = "main_tests_project_board_stackup.rs"]
 mod main_tests_project_board_stackup;
+#[path = "main_tests_project_board_net_class.rs"]
+mod main_tests_project_board_net_class;
+#[path = "main_tests_project_board_net.rs"]
+mod main_tests_project_board_net;
+#[path = "main_tests_project_board_component_query.rs"]
+mod main_tests_project_board_component_query;
+#[path = "main_tests_project_board_component.rs"]
+mod main_tests_project_board_component;
+#[path = "main_tests_project_board_track.rs"]
+mod main_tests_project_board_track;
+#[path = "main_tests_project_board_via.rs"]
+mod main_tests_project_board_via;
+#[path = "main_tests_project_board_zone.rs"]
+mod main_tests_project_board_zone;
+#[path = "main_tests_project_board_pad.rs"]
+mod main_tests_project_board_pad;
+#[path = "main_tests_project_board_connectivity.rs"]
+mod main_tests_project_board_connectivity;
+#[path = "main_tests_project_board_check.rs"]
+mod main_tests_project_board_check;
 #[path = "main_tests_project_symbol.rs"]
 mod main_tests_project_symbol;
 #[path = "main_tests_project_symbol_semantics.rs"]

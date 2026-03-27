@@ -1129,6 +1129,350 @@ pub(crate) enum ProjectCommands {
         #[arg(long = "layer")]
         layers: Vec<String>,
     },
+    /// Create one native board net class
+    PlaceBoardNetClass {
+        /// Project root directory
+        path: PathBuf,
+        /// Net class name
+        #[arg(long)]
+        name: String,
+        /// Clearance in nm
+        #[arg(long = "clearance-nm")]
+        clearance_nm: i64,
+        /// Track width in nm
+        #[arg(long = "track-width-nm")]
+        track_width_nm: i64,
+        /// Via drill in nm
+        #[arg(long = "via-drill-nm")]
+        via_drill_nm: i64,
+        /// Via diameter in nm
+        #[arg(long = "via-diameter-nm")]
+        via_diameter_nm: i64,
+        /// Differential pair width in nm
+        #[arg(long = "diffpair-width-nm", default_value_t = 0)]
+        diffpair_width_nm: i64,
+        /// Differential pair gap in nm
+        #[arg(long = "diffpair-gap-nm", default_value_t = 0)]
+        diffpair_gap_nm: i64,
+    },
+    /// Create one native board net
+    PlaceBoardNet {
+        /// Project root directory
+        path: PathBuf,
+        /// Net name
+        #[arg(long)]
+        name: String,
+        /// Assigned net-class UUID
+        #[arg(long = "class")]
+        class_uuid: Uuid,
+    },
+    /// Place one native board component/package
+    PlaceBoardComponent {
+        /// Project root directory
+        path: PathBuf,
+        /// Part UUID
+        #[arg(long = "part")]
+        part_uuid: Uuid,
+        /// Package UUID
+        #[arg(long = "package")]
+        package_uuid: Uuid,
+        /// Reference designator
+        #[arg(long)]
+        reference: String,
+        /// Value text
+        #[arg(long)]
+        value: String,
+        /// X coordinate in nm
+        #[arg(long = "x-nm")]
+        x_nm: i64,
+        /// Y coordinate in nm
+        #[arg(long = "y-nm")]
+        y_nm: i64,
+        /// Layer identifier
+        #[arg(long)]
+        layer: i32,
+    },
+    /// Edit one native board net class
+    EditBoardNetClass {
+        /// Project root directory
+        path: PathBuf,
+        /// Net class UUID
+        #[arg(long = "net-class")]
+        net_class_uuid: Uuid,
+        /// Replacement net class name
+        #[arg(long)]
+        name: Option<String>,
+        /// Replacement clearance in nm
+        #[arg(long = "clearance-nm")]
+        clearance_nm: Option<i64>,
+        /// Replacement track width in nm
+        #[arg(long = "track-width-nm")]
+        track_width_nm: Option<i64>,
+        /// Replacement via drill in nm
+        #[arg(long = "via-drill-nm")]
+        via_drill_nm: Option<i64>,
+        /// Replacement via diameter in nm
+        #[arg(long = "via-diameter-nm")]
+        via_diameter_nm: Option<i64>,
+        /// Replacement differential pair width in nm
+        #[arg(long = "diffpair-width-nm")]
+        diffpair_width_nm: Option<i64>,
+        /// Replacement differential pair gap in nm
+        #[arg(long = "diffpair-gap-nm")]
+        diffpair_gap_nm: Option<i64>,
+    },
+    /// Edit one native board net
+    EditBoardNet {
+        /// Project root directory
+        path: PathBuf,
+        /// Net UUID
+        #[arg(long = "net")]
+        net_uuid: Uuid,
+        /// Replacement net name
+        #[arg(long)]
+        name: Option<String>,
+        /// Replacement net-class UUID
+        #[arg(long = "class")]
+        class_uuid: Option<Uuid>,
+    },
+    /// Move one native board component/package
+    MoveBoardComponent {
+        /// Project root directory
+        path: PathBuf,
+        /// Component UUID
+        #[arg(long = "component")]
+        component_uuid: Uuid,
+        /// X coordinate in nm
+        #[arg(long = "x-nm")]
+        x_nm: i64,
+        /// Y coordinate in nm
+        #[arg(long = "y-nm")]
+        y_nm: i64,
+    },
+    /// Rotate one native board component/package
+    RotateBoardComponent {
+        /// Project root directory
+        path: PathBuf,
+        /// Component UUID
+        #[arg(long = "component")]
+        component_uuid: Uuid,
+        /// Rotation in degrees
+        #[arg(long = "rotation-deg")]
+        rotation_deg: i32,
+    },
+    /// Lock one native board component/package
+    SetBoardComponentLocked {
+        /// Project root directory
+        path: PathBuf,
+        /// Component UUID
+        #[arg(long = "component")]
+        component_uuid: Uuid,
+    },
+    /// Clear the locked state on one native board component/package
+    ClearBoardComponentLocked {
+        /// Project root directory
+        path: PathBuf,
+        /// Component UUID
+        #[arg(long = "component")]
+        component_uuid: Uuid,
+    },
+    /// Delete one native board component/package
+    DeleteBoardComponent {
+        /// Project root directory
+        path: PathBuf,
+        /// Component UUID
+        #[arg(long = "component")]
+        component_uuid: Uuid,
+    },
+    /// Draw one native board track
+    DrawBoardTrack {
+        /// Project root directory
+        path: PathBuf,
+        /// Net UUID
+        #[arg(long = "net")]
+        net_uuid: Uuid,
+        /// Start X coordinate in nm
+        #[arg(long = "from-x-nm")]
+        from_x_nm: i64,
+        /// Start Y coordinate in nm
+        #[arg(long = "from-y-nm")]
+        from_y_nm: i64,
+        /// End X coordinate in nm
+        #[arg(long = "to-x-nm")]
+        to_x_nm: i64,
+        /// End Y coordinate in nm
+        #[arg(long = "to-y-nm")]
+        to_y_nm: i64,
+        /// Track width in nm
+        #[arg(long = "width-nm")]
+        width_nm: i64,
+        /// Layer identifier
+        #[arg(long)]
+        layer: i32,
+    },
+    /// Delete one native board track
+    DeleteBoardTrack {
+        /// Project root directory
+        path: PathBuf,
+        /// Track UUID
+        #[arg(long = "track")]
+        track_uuid: Uuid,
+    },
+    /// Place one native board via
+    PlaceBoardVia {
+        /// Project root directory
+        path: PathBuf,
+        /// Net UUID
+        #[arg(long = "net")]
+        net_uuid: Uuid,
+        /// X coordinate in nm
+        #[arg(long = "x-nm")]
+        x_nm: i64,
+        /// Y coordinate in nm
+        #[arg(long = "y-nm")]
+        y_nm: i64,
+        /// Via drill in nm
+        #[arg(long = "drill-nm")]
+        drill_nm: i64,
+        /// Via diameter in nm
+        #[arg(long = "diameter-nm")]
+        diameter_nm: i64,
+        /// Starting layer identifier
+        #[arg(long = "from-layer")]
+        from_layer: i32,
+        /// Ending layer identifier
+        #[arg(long = "to-layer")]
+        to_layer: i32,
+    },
+    /// Delete one native board via
+    DeleteBoardVia {
+        /// Project root directory
+        path: PathBuf,
+        /// Via UUID
+        #[arg(long = "via")]
+        via_uuid: Uuid,
+    },
+    /// Place one native board zone
+    PlaceBoardZone {
+        /// Project root directory
+        path: PathBuf,
+        /// Net UUID
+        #[arg(long = "net")]
+        net_uuid: Uuid,
+        /// Polygon vertices as x_nm:y_nm
+        #[arg(long = "vertex")]
+        vertices: Vec<String>,
+        /// Layer identifier
+        #[arg(long)]
+        layer: i32,
+        /// Zone priority
+        #[arg(long, default_value_t = 0)]
+        priority: u32,
+        /// Thermal relief enabled
+        #[arg(
+            long = "thermal-relief",
+            default_value_t = true,
+            action = clap::ArgAction::Set
+        )]
+        thermal_relief: bool,
+        /// Thermal gap in nm
+        #[arg(long = "thermal-gap-nm")]
+        thermal_gap_nm: i64,
+        /// Thermal spoke width in nm
+        #[arg(long = "thermal-spoke-width-nm")]
+        thermal_spoke_width_nm: i64,
+    },
+    /// Delete one native board zone
+    DeleteBoardZone {
+        /// Project root directory
+        path: PathBuf,
+        /// Zone UUID
+        #[arg(long = "zone")]
+        zone_uuid: Uuid,
+    },
+    /// Set one native board pad net assignment
+    SetBoardPadNet {
+        /// Project root directory
+        path: PathBuf,
+        /// Pad UUID
+        #[arg(long = "pad")]
+        pad_uuid: Uuid,
+        /// Net UUID
+        #[arg(long = "net")]
+        net_uuid: Uuid,
+    },
+    /// Clear one native board pad net assignment
+    ClearBoardPadNet {
+        /// Project root directory
+        path: PathBuf,
+        /// Pad UUID
+        #[arg(long = "pad")]
+        pad_uuid: Uuid,
+    },
+    /// Edit one native board pad position and/or layer
+    EditBoardPad {
+        /// Project root directory
+        path: PathBuf,
+        /// Pad UUID
+        #[arg(long = "pad")]
+        pad_uuid: Uuid,
+        /// Replacement X coordinate in nm
+        #[arg(long = "x-nm")]
+        x_nm: Option<i64>,
+        /// Replacement Y coordinate in nm
+        #[arg(long = "y-nm")]
+        y_nm: Option<i64>,
+        /// Replacement layer identifier
+        #[arg(long)]
+        layer: Option<i32>,
+    },
+    /// Place one native board pad
+    PlaceBoardPad {
+        /// Project root directory
+        path: PathBuf,
+        /// Package UUID
+        #[arg(long = "package")]
+        package_uuid: Uuid,
+        /// Pad name
+        #[arg(long)]
+        name: String,
+        /// X coordinate in nm
+        #[arg(long = "x-nm")]
+        x_nm: i64,
+        /// Y coordinate in nm
+        #[arg(long = "y-nm")]
+        y_nm: i64,
+        /// Layer identifier
+        #[arg(long)]
+        layer: i32,
+        /// Optional net UUID
+        #[arg(long = "net")]
+        net_uuid: Option<Uuid>,
+    },
+    /// Delete one native board pad
+    DeleteBoardPad {
+        /// Project root directory
+        path: PathBuf,
+        /// Pad UUID
+        #[arg(long = "pad")]
+        pad_uuid: Uuid,
+    },
+    /// Delete one native board net class
+    DeleteBoardNetClass {
+        /// Project root directory
+        path: PathBuf,
+        /// Net class UUID
+        #[arg(long = "net-class")]
+        net_class_uuid: Uuid,
+    },
+    /// Delete one native board net
+    DeleteBoardNet {
+        /// Project root directory
+        path: PathBuf,
+        /// Net UUID
+        #[arg(long = "net")]
+        net_uuid: Uuid,
+    },
     /// Place one board dimension into the native board file
     PlaceBoardDimension {
         /// Project root directory
@@ -1245,6 +1589,26 @@ pub(crate) enum NativeProjectQueryCommands {
     BoardOutline,
     /// Current native board stackup
     BoardStackup,
+    /// Current native board placed packages/components
+    BoardComponents,
+    /// Current native board tracks
+    BoardTracks,
+    /// Current native board vias
+    BoardVias,
+    /// Current native board zones
+    BoardZones,
+    /// Current native board connectivity diagnostics
+    BoardDiagnostics,
+    /// Current native board unrouted airwires
+    BoardUnrouted,
+    /// Current native combined board check report
+    BoardCheck,
+    /// Current native board pads
+    BoardPads,
+    /// Current native board nets
+    BoardNets,
+    /// Current native board net classes
+    BoardNetClasses,
     /// Current native board dimensions
     BoardDimensions,
 }

@@ -28,7 +28,12 @@ Current live slice:
   same bridge to expose the first native electrical-check read surface, and
   `eda project query <dir> check` now returns the combined schematic
   `CheckReport` shape on top of that same bridge; `eda project query <dir>
-  board-texts` exposes the first authored native board-object read surface.
+  board-diagnostics`, `eda project query <dir> board-unrouted`, and
+  `eda project query <dir> board-check` now project authored native board
+  files through the engine `Board` model to expose the first native board
+  connectivity-aware and board-check read surface, and `eda project query
+  <dir> board-texts` exposes the first authored native board-object read
+  surface.
 - `eda project place-symbol <dir> --sheet <uuid> --reference <text> --value <text>
   [--lib-id <text>] --x-nm <i64> --y-nm <i64> [--rotation-deg <i32>] [--mirrored]`,
   `eda project move-symbol <dir> --symbol <uuid> --x-nm <i64> --y-nm <i64>`, and
@@ -138,6 +143,72 @@ Current live slice:
   replaces the ordered native board stackup layer list directly on
   `board/board.json`, while `eda project query <dir> board-stackup` reads back
   that persisted stackup slice.
+- `eda project place-board-net <dir> --name <text> --class <uuid>`,
+  `eda project edit-board-net <dir> --net <uuid> ...`, and
+  `eda project delete-board-net <dir> --net <uuid>` add the first native board
+  net lifecycle on `board/board.json`, while `eda project query <dir>
+  board-nets` reads back that persisted net slice.
+- `eda project query <dir> board-components` reads back the persisted native
+  placed-package inventory from `board/board.json`, establishing the read-side
+  contract for future native package placement work.
+- `eda project query <dir> board-pads` reads back the persisted native
+  placed-pad inventory from `board/board.json`, establishing the first native
+  package-linked pad read surface.
+- `eda project query <dir> board-tracks` reads back the persisted native routed
+  track inventory from `board/board.json`, establishing the first native copper
+  read surface.
+- `eda project query <dir> board-vias` reads back the persisted native via
+  inventory from `board/board.json`, extending the first native copper read
+  surface beyond tracks.
+- `eda project query <dir> board-zones` reads back the persisted native copper
+  zone inventory from `board/board.json`, completing the first native copper
+  read surface across tracks, vias, and zones.
+- `eda project query <dir> board-diagnostics`, `eda project query <dir>
+  board-unrouted`, and `eda project query <dir> board-check` derive native
+  board connectivity findings, airwires, and the board-side `CheckReport`
+  shape from the persisted package/pad/track/via/zone/net state without
+  requiring an imported-board session.
+- `eda project place-board-component <dir> --part <uuid> --package <uuid>
+  --reference <text> --value <text> --x-nm <i64> --y-nm <i64> --layer <i32>`
+  plus `eda project move-board-component <dir> --component <uuid> --x-nm <i64>
+  --y-nm <i64>`, `eda project rotate-board-component <dir> --component <uuid>
+  --rotation-deg <i32>`, `eda project set-board-component-locked <dir>
+  --component <uuid>`, and `eda project clear-board-component-locked <dir>
+  --component <uuid>`, and `eda project delete-board-component <dir>
+  --component <uuid>` add the first native placed-package full lifecycle on
+  `board/board.json`, while `eda project query <dir> board-components` verifies
+  the persisted component state.
+- `eda project set-board-pad-net <dir> --pad <uuid> --net <uuid>` and
+  `eda project clear-board-pad-net <dir> --pad <uuid>` plus
+  `eda project edit-board-pad <dir> --pad <uuid> [--x-nm <i64> --y-nm <i64>]
+  [--layer <i32>]` plus `eda project place-board-pad <dir> --package <uuid>
+  --name <text> --x-nm <i64> --y-nm <i64> --layer <i32> [--net <uuid>]` and
+  `eda project delete-board-pad <dir> --pad <uuid>` add the first
+  package-linked pad lifecycle/edit path on `board/board.json`, while `eda
+  project query <dir> board-pads` verifies the persisted pad inventory,
+  placement, and net assignment state.
+- `eda project draw-board-track <dir> --net <uuid> --from-x-nm <i64>
+  --from-y-nm <i64> --to-x-nm <i64> --to-y-nm <i64> --width-nm <i64> --layer
+  <i32>` and `eda project delete-board-track <dir> --track <uuid>` add the
+  first native copper authoring path on `board/board.json`, while `eda project
+  query <dir> board-tracks` verifies the persisted routed geometry.
+- `eda project place-board-via <dir> --net <uuid> --x-nm <i64> --y-nm <i64>
+  --drill-nm <i64> --diameter-nm <i64> --from-layer <i32> --to-layer <i32>`
+  and `eda project delete-board-via <dir> --via <uuid>` extend that native
+  copper authoring path to vias, while `eda project query <dir> board-vias`
+  verifies the persisted via geometry.
+- `eda project place-board-zone <dir> --net <uuid> --vertex <x:y>... --layer
+  <i32> --priority <u32> --thermal-relief <bool> --thermal-gap-nm <i64>
+  --thermal-spoke-width-nm <i64>` and `eda project delete-board-zone <dir>
+  --zone <uuid>` extend that native copper authoring path to zones, while
+  `eda project query <dir> board-zones` verifies the persisted copper fill
+  geometry and thermal settings.
+- `eda project place-board-net-class <dir> ...`,
+  `eda project edit-board-net-class <dir> --net-class <uuid> ...`, and
+  `eda project delete-board-net-class <dir> --net-class <uuid>` add the first
+  native board net-class lifecycle on `board/board.json`, while
+  `eda project query <dir> board-net-classes` reads back that persisted rule
+  slice.
 
 ## Design Principle
 The native format is a direct serialization of the canonical IR. No
