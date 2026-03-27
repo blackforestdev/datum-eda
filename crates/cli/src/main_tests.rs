@@ -110,6 +110,24 @@ mod main_tests_project_board_pad;
 mod main_tests_project_board_connectivity;
 #[path = "main_tests_project_board_check.rs"]
 mod main_tests_project_board_check;
+#[path = "main_tests_project_forward_annotation.rs"]
+mod main_tests_project_forward_annotation;
+#[path = "main_tests_project_forward_annotation_proposal.rs"]
+mod main_tests_project_forward_annotation_proposal;
+#[path = "main_tests_project_forward_annotation_apply.rs"]
+mod main_tests_project_forward_annotation_apply;
+#[path = "main_tests_project_forward_annotation_batch_apply.rs"]
+mod main_tests_project_forward_annotation_batch_apply;
+#[path = "main_tests_project_forward_annotation_export.rs"]
+mod main_tests_project_forward_annotation_export;
+#[path = "main_tests_project_forward_annotation_artifact_compare.rs"]
+mod main_tests_project_forward_annotation_artifact_compare;
+#[path = "main_tests_project_forward_annotation_artifact_filter.rs"]
+mod main_tests_project_forward_annotation_artifact_filter;
+#[path = "main_tests_project_forward_annotation_artifact_plan.rs"]
+mod main_tests_project_forward_annotation_artifact_plan;
+#[path = "main_tests_project_forward_annotation_review.rs"]
+mod main_tests_project_forward_annotation_review;
 #[path = "main_tests_project_symbol.rs"]
 mod main_tests_project_symbol;
 #[path = "main_tests_project_symbol_semantics.rs"]

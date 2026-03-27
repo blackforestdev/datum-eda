@@ -200,6 +200,30 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     };
                     Ok((output, 0))
                 }
+                NativeProjectQueryCommands::ForwardAnnotationAudit => {
+                    let report = query_native_project_forward_annotation_audit(&path)?;
+                    let output = match cli.format {
+                        OutputFormat::Text => render_native_forward_annotation_audit_text(&report),
+                        OutputFormat::Json => render_output(&cli.format, &report),
+                    };
+                    Ok((output, 0))
+                }
+                NativeProjectQueryCommands::ForwardAnnotationProposal => {
+                    let report = query_native_project_forward_annotation_proposal(&path)?;
+                    let output = match cli.format {
+                        OutputFormat::Text => render_native_forward_annotation_proposal_text(&report),
+                        OutputFormat::Json => render_output(&cli.format, &report),
+                    };
+                    Ok((output, 0))
+                }
+                NativeProjectQueryCommands::ForwardAnnotationReview => {
+                    let report = query_native_project_forward_annotation_review(&path)?;
+                    let output = match cli.format {
+                        OutputFormat::Text => render_native_forward_annotation_review_text(&report),
+                        OutputFormat::Json => render_output(&cli.format, &report),
+                    };
+                    Ok((output, 0))
+                }
                 NativeProjectQueryCommands::Symbols => {
                     let report = query_native_project_symbols(&path)?;
                     Ok((render_output(&cli.format, &report), 0))
@@ -1370,6 +1394,31 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 };
                 Ok((output, 0))
             }
+            ProjectCommands::SetBoardComponentPart {
+                path,
+                component_uuid,
+                part_uuid,
+            } => {
+                let report = set_native_project_board_component_part(&path, component_uuid, part_uuid)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_component_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::SetBoardComponentPackage {
+                path,
+                component_uuid,
+                package_uuid,
+            } => {
+                let report =
+                    set_native_project_board_component_package(&path, component_uuid, package_uuid)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_component_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
             ProjectCommands::RotateBoardComponent {
                 path,
                 component_uuid,
@@ -1413,6 +1462,114 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 let report = delete_native_project_board_component(&path, component_uuid)?;
                 let output = match cli.format {
                     OutputFormat::Text => render_native_project_board_component_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ApplyForwardAnnotationAction {
+                path,
+                action_id,
+                package_uuid,
+                part_uuid,
+                x_nm,
+                y_nm,
+                layer,
+            } => {
+                let report = apply_native_project_forward_annotation_action(
+                    &path,
+                    &action_id,
+                    package_uuid,
+                    part_uuid,
+                    x_nm,
+                    y_nm,
+                    layer,
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_forward_annotation_apply_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ApplyForwardAnnotationReviewed { path } => {
+                let report = apply_native_project_forward_annotation_reviewed(&path)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_forward_annotation_batch_apply_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ExportForwardAnnotationProposal { path, out } => {
+                let report = export_native_project_forward_annotation_proposal(&path, &out)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_forward_annotation_export_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::InspectForwardAnnotationProposalArtifact { path } => {
+                let report = inspect_forward_annotation_proposal_artifact(&path)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_forward_annotation_artifact_inspection_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::CompareForwardAnnotationProposalArtifact { path, artifact } => {
+                let report = compare_forward_annotation_proposal_artifact(&path, &artifact)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_forward_annotation_artifact_comparison_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::FilterForwardAnnotationProposalArtifact { path, artifact, out } => {
+                let report = filter_forward_annotation_proposal_artifact(&path, &artifact, &out)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_forward_annotation_artifact_filter_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::PlanForwardAnnotationProposalArtifactApply { path, artifact } => {
+                let report = plan_forward_annotation_proposal_artifact_apply(&path, &artifact)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_forward_annotation_artifact_apply_plan_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::DeferForwardAnnotationAction { path, action_id } => {
+                let report =
+                    record_native_project_forward_annotation_review(&path, &action_id, "deferred")?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_forward_annotation_review_report_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::RejectForwardAnnotationAction { path, action_id } => {
+                let report =
+                    record_native_project_forward_annotation_review(&path, &action_id, "rejected")?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_forward_annotation_review_report_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ClearForwardAnnotationActionReview { path, action_id } => {
+                let report = clear_native_project_forward_annotation_review(&path, &action_id)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_forward_annotation_review_report_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))

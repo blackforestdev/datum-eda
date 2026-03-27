@@ -1,9 +1,10 @@
-use std::collections::{BTreeMap, HashMap};
-use std::path::Path;
+use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result, bail};
 use eda_engine::api::{CheckCodeCount, CheckReport, CheckStatus, CheckSummary};
 use eda_engine::board::{Board, BoardText, Dimension, Keepout, Net, NetClass, PlacedPackage, PlacedPad, Stackup, StackupLayer, StackupLayerType, Track, Via, Zone};
+use eda_engine::import::ids_sidecar::compute_source_hash_bytes;
 use eda_engine::connectivity::{schematic_diagnostics, schematic_net_info};
 use eda_engine::ir::geometry::{Arc, Point};
 use eda_engine::ir::geometry::Polygon;
@@ -40,6 +41,26 @@ use super::{
     NativeProjectBoardNetClassMutationReportView,
     NativeProjectBoardDimensionMutationReportView,
     NativeProjectBoardTextMutationReportView,
+    NativeProjectForwardAnnotationAuditView,
+    NativeProjectForwardAnnotationMissingView,
+    NativeProjectForwardAnnotationOrphanView,
+    NativeProjectForwardAnnotationApplyReportView,
+    NativeProjectForwardAnnotationBatchApplyReportView,
+    NativeProjectForwardAnnotationBatchApplySkippedActionView,
+    NativeProjectForwardAnnotationExportReportView,
+    NativeProjectForwardAnnotationArtifactInspectionView,
+    NativeProjectForwardAnnotationArtifactFilterView,
+    NativeProjectForwardAnnotationArtifactApplyPlanActionView,
+    NativeProjectForwardAnnotationArtifactApplyPlanView,
+    NativeProjectForwardAnnotationArtifactComparisonActionView,
+    NativeProjectForwardAnnotationArtifactComparisonView,
+    NativeProjectForwardAnnotationPartMismatchView,
+    NativeProjectForwardAnnotationProposalActionView,
+    NativeProjectForwardAnnotationProposalView,
+    NativeProjectForwardAnnotationReviewActionView,
+    NativeProjectForwardAnnotationReviewReportView,
+    NativeProjectForwardAnnotationReviewView,
+    NativeProjectForwardAnnotationValueMismatchView,
     NativeProjectPinOverrideMutationReportView,
     NativeProjectSymbolFieldMutationReportView,
     NativeProjectSymbolPinInfoView,
@@ -79,12 +100,42 @@ struct NativeProjectManifest {
     schematic: String,
     board: String,
     rules: String,
+    #[serde(default)]
+    forward_annotation_review: BTreeMap<String, NativeForwardAnnotationReviewRecord>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct NativeProjectPoolRef {
     path: String,
     priority: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct NativeForwardAnnotationReviewRecord {
+    action_id: String,
+    decision: String,
+    proposal_action: String,
+    reference: String,
+    reason: String,
+}
+
+const FORWARD_ANNOTATION_ARTIFACT_KIND: &str = "native_forward_annotation_proposal_artifact";
+const FORWARD_ANNOTATION_ARTIFACT_VERSION: u32 = 1;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct ForwardAnnotationProposalArtifact {
+    kind: String,
+    version: u32,
+    project_uuid: Uuid,
+    project_name: String,
+    actions: Vec<NativeProjectForwardAnnotationProposalActionView>,
+    reviews: Vec<NativeProjectForwardAnnotationReviewActionView>,
+}
+
+struct LoadedForwardAnnotationProposalArtifact {
+    artifact_path: PathBuf,
+    source_version: u32,
+    artifact: ForwardAnnotationProposalArtifact,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -219,6 +270,7 @@ pub(crate) fn create_native_project(
         schematic: "schematic/schematic.json".to_string(),
         board: "board/board.json".to_string(),
         rules: "rules/rules.json".to_string(),
+        forward_annotation_review: BTreeMap::new(),
     };
     let schematic = NativeSchematicRoot {
         schema_version: 1,
@@ -372,6 +424,940 @@ pub(crate) fn query_native_project_rules(root: &Path) -> Result<NativeProjectRul
         count: project.rules.rules.len(),
         rules: project.rules.rules,
     })
+}
+
+pub(crate) fn query_native_project_forward_annotation_audit(
+    root: &Path,
+) -> Result<NativeProjectForwardAnnotationAuditView> {
+    let symbols = query_native_project_symbols(root)?;
+    let components = query_native_project_board_components(root)?;
+
+    let mut symbols_by_reference = BTreeMap::new();
+    for symbol in symbols {
+        symbols_by_reference.insert(symbol.reference.clone(), symbol);
+    }
+    let mut components_by_reference = BTreeMap::new();
+    for component in components {
+        components_by_reference.insert(component.reference.clone(), component);
+    }
+
+    let mut missing_on_board = Vec::new();
+    let mut orphaned_on_board = Vec::new();
+    let mut value_mismatches = Vec::new();
+    let mut part_mismatches = Vec::new();
+    let mut unresolved_symbol_count = 0usize;
+    let mut matched_count = 0usize;
+
+    for (reference, symbol) in &symbols_by_reference {
+        if symbol.part_uuid.is_none() {
+            unresolved_symbol_count += 1;
+        }
+
+        if let Some(component) = components_by_reference.get(reference) {
+            matched_count += 1;
+            if symbol.value != component.value {
+                value_mismatches.push(NativeProjectForwardAnnotationValueMismatchView {
+                    reference: reference.clone(),
+                    symbol_uuid: symbol.uuid.to_string(),
+                    component_uuid: component.uuid.to_string(),
+                    schematic_value: symbol.value.clone(),
+                    board_value: component.value.clone(),
+                });
+            }
+            if let Some(part_uuid) = symbol.part_uuid {
+                if part_uuid != component.part {
+                    part_mismatches.push(NativeProjectForwardAnnotationPartMismatchView {
+                        reference: reference.clone(),
+                        symbol_uuid: symbol.uuid.to_string(),
+                        component_uuid: component.uuid.to_string(),
+                        schematic_part_uuid: part_uuid.to_string(),
+                        board_part_uuid: component.part.to_string(),
+                    });
+                }
+            }
+        } else {
+            missing_on_board.push(NativeProjectForwardAnnotationMissingView {
+                symbol_uuid: symbol.uuid.to_string(),
+                sheet_uuid: symbol.sheet.to_string(),
+                reference: reference.clone(),
+                value: symbol.value.clone(),
+                part_uuid: symbol.part_uuid.map(|uuid| uuid.to_string()),
+            });
+        }
+    }
+
+    for (reference, component) in &components_by_reference {
+        if !symbols_by_reference.contains_key(reference) {
+            orphaned_on_board.push(NativeProjectForwardAnnotationOrphanView {
+                component_uuid: component.uuid.to_string(),
+                reference: reference.clone(),
+                value: component.value.clone(),
+                part_uuid: component.part.to_string(),
+            });
+        }
+    }
+
+    Ok(NativeProjectForwardAnnotationAuditView {
+        domain: "native_project",
+        schematic_symbol_count: symbols_by_reference.len(),
+        board_component_count: components_by_reference.len(),
+        matched_count,
+        unresolved_symbol_count,
+        missing_on_board,
+        orphaned_on_board,
+        value_mismatches,
+        part_mismatches,
+    })
+}
+
+pub(crate) fn query_native_project_forward_annotation_proposal(
+    root: &Path,
+) -> Result<NativeProjectForwardAnnotationProposalView> {
+    let audit = query_native_project_forward_annotation_audit(root)?;
+    let mut actions = Vec::new();
+
+    for entry in &audit.missing_on_board {
+        actions.push(NativeProjectForwardAnnotationProposalActionView {
+            action_id: forward_annotation_action_id(
+                "add_component",
+                &entry.reference,
+                Some(&entry.symbol_uuid),
+                None,
+                if entry.part_uuid.is_some() {
+                    "symbol_missing_on_board"
+                } else {
+                    "symbol_missing_on_board_unresolved_part"
+                },
+            ),
+            action: "add_component".to_string(),
+            reference: entry.reference.clone(),
+            symbol_uuid: Some(entry.symbol_uuid.clone()),
+            component_uuid: None,
+            reason: if entry.part_uuid.is_some() {
+                "symbol_missing_on_board".to_string()
+            } else {
+                "symbol_missing_on_board_unresolved_part".to_string()
+            },
+            schematic_value: Some(entry.value.clone()),
+            board_value: None,
+            schematic_part_uuid: entry.part_uuid.clone(),
+            board_part_uuid: None,
+        });
+    }
+
+    for entry in &audit.orphaned_on_board {
+        actions.push(NativeProjectForwardAnnotationProposalActionView {
+            action_id: forward_annotation_action_id(
+                "remove_component",
+                &entry.reference,
+                None,
+                Some(&entry.component_uuid),
+                "board_component_missing_in_schematic",
+            ),
+            action: "remove_component".to_string(),
+            reference: entry.reference.clone(),
+            symbol_uuid: None,
+            component_uuid: Some(entry.component_uuid.clone()),
+            reason: "board_component_missing_in_schematic".to_string(),
+            schematic_value: None,
+            board_value: Some(entry.value.clone()),
+            schematic_part_uuid: None,
+            board_part_uuid: Some(entry.part_uuid.clone()),
+        });
+    }
+
+    for entry in &audit.value_mismatches {
+        actions.push(NativeProjectForwardAnnotationProposalActionView {
+            action_id: forward_annotation_action_id(
+                "update_component",
+                &entry.reference,
+                Some(&entry.symbol_uuid),
+                Some(&entry.component_uuid),
+                "value_mismatch",
+            ),
+            action: "update_component".to_string(),
+            reference: entry.reference.clone(),
+            symbol_uuid: Some(entry.symbol_uuid.clone()),
+            component_uuid: Some(entry.component_uuid.clone()),
+            reason: "value_mismatch".to_string(),
+            schematic_value: Some(entry.schematic_value.clone()),
+            board_value: Some(entry.board_value.clone()),
+            schematic_part_uuid: None,
+            board_part_uuid: None,
+        });
+    }
+
+    for entry in &audit.part_mismatches {
+        actions.push(NativeProjectForwardAnnotationProposalActionView {
+            action_id: forward_annotation_action_id(
+                "update_component",
+                &entry.reference,
+                Some(&entry.symbol_uuid),
+                Some(&entry.component_uuid),
+                "part_mismatch",
+            ),
+            action: "update_component".to_string(),
+            reference: entry.reference.clone(),
+            symbol_uuid: Some(entry.symbol_uuid.clone()),
+            component_uuid: Some(entry.component_uuid.clone()),
+            reason: "part_mismatch".to_string(),
+            schematic_value: None,
+            board_value: None,
+            schematic_part_uuid: Some(entry.schematic_part_uuid.clone()),
+            board_part_uuid: Some(entry.board_part_uuid.clone()),
+        });
+    }
+
+    actions.sort_by(|a, b| {
+        a.reference
+            .cmp(&b.reference)
+            .then_with(|| a.action.cmp(&b.action))
+            .then_with(|| a.reason.cmp(&b.reason))
+    });
+
+    let add_component_actions = actions.iter().filter(|action| action.action == "add_component").count();
+    let remove_component_actions = actions
+        .iter()
+        .filter(|action| action.action == "remove_component")
+        .count();
+    let update_component_actions = actions
+        .iter()
+        .filter(|action| action.action == "update_component")
+        .count();
+    let add_component_group = actions
+        .iter()
+        .filter(|action| action.action == "add_component")
+        .cloned()
+        .collect::<Vec<_>>();
+    let remove_component_group = actions
+        .iter()
+        .filter(|action| action.action == "remove_component")
+        .cloned()
+        .collect::<Vec<_>>();
+    let update_component_group = actions
+        .iter()
+        .filter(|action| action.action == "update_component")
+        .cloned()
+        .collect::<Vec<_>>();
+
+    Ok(NativeProjectForwardAnnotationProposalView {
+        domain: "native_project",
+        total_actions: actions.len(),
+        add_component_actions,
+        remove_component_actions,
+        update_component_actions,
+        add_component_group,
+        remove_component_group,
+        update_component_group,
+        actions,
+    })
+}
+
+pub(crate) fn apply_native_project_forward_annotation_action(
+    root: &Path,
+    action_id: &str,
+    package_uuid: Option<Uuid>,
+    part_uuid: Option<Uuid>,
+    x_nm: Option<i64>,
+    y_nm: Option<i64>,
+    layer: Option<i32>,
+) -> Result<NativeProjectForwardAnnotationApplyReportView> {
+    let proposal = query_native_project_forward_annotation_proposal(root)?;
+    let action = proposal
+        .actions
+        .into_iter()
+        .find(|action| action.action_id == action_id)
+        .ok_or_else(|| anyhow::anyhow!("forward-annotation proposal action not found: {action_id}"))?;
+
+    execute_native_project_forward_annotation_action(
+        root,
+        action,
+        package_uuid,
+        part_uuid,
+        x_nm,
+        y_nm,
+        layer,
+    )
+}
+
+fn execute_native_project_forward_annotation_action(
+    root: &Path,
+    action: NativeProjectForwardAnnotationProposalActionView,
+    package_uuid: Option<Uuid>,
+    part_uuid: Option<Uuid>,
+    x_nm: Option<i64>,
+    y_nm: Option<i64>,
+    layer: Option<i32>,
+) -> Result<NativeProjectForwardAnnotationApplyReportView> {
+
+    let component_report = match (action.action.as_str(), action.reason.as_str()) {
+        ("remove_component", "board_component_missing_in_schematic") => {
+            let component_uuid = Uuid::parse_str(
+                action
+                    .component_uuid
+                    .as_deref()
+                    .ok_or_else(|| anyhow::anyhow!("proposal action missing component UUID"))?,
+            )
+            .context("invalid component UUID in forward-annotation proposal")?;
+            delete_native_project_board_component(root, component_uuid)?
+        }
+        ("update_component", "value_mismatch") => {
+            let component_uuid = Uuid::parse_str(
+                action
+                    .component_uuid
+                    .as_deref()
+                    .ok_or_else(|| anyhow::anyhow!("proposal action missing component UUID"))?,
+            )
+            .context("invalid component UUID in forward-annotation proposal")?;
+            set_native_project_board_component_value(
+                root,
+                component_uuid,
+                action
+                    .schematic_value
+                    .clone()
+                    .ok_or_else(|| anyhow::anyhow!("proposal action missing schematic value"))?,
+            )?
+        }
+        ("add_component", _) => {
+            let package_uuid = package_uuid.ok_or_else(|| {
+                anyhow::anyhow!(
+                    "forward-annotation add_component apply requires --package <uuid>"
+                )
+            })?;
+            let x_nm = x_nm.ok_or_else(|| {
+                anyhow::anyhow!("forward-annotation add_component apply requires --x-nm <i64>")
+            })?;
+            let y_nm = y_nm.ok_or_else(|| {
+                anyhow::anyhow!("forward-annotation add_component apply requires --y-nm <i64>")
+            })?;
+            let layer = layer.ok_or_else(|| {
+                anyhow::anyhow!("forward-annotation add_component apply requires --layer <i32>")
+            })?;
+            let resolved_part_uuid = match (part_uuid, action.schematic_part_uuid.as_deref()) {
+                (Some(part_uuid), _) => part_uuid,
+                (None, Some(part_uuid)) => Uuid::parse_str(part_uuid)
+                    .context("invalid schematic part UUID in forward-annotation proposal")?,
+                (None, None) => {
+                    bail!(
+                        "forward-annotation add_component apply requires --part <uuid> when the proposal does not carry a resolved schematic part"
+                    )
+                }
+            };
+            place_native_project_board_component(
+                root,
+                resolved_part_uuid,
+                package_uuid,
+                action.reference.clone(),
+                action
+                    .schematic_value
+                    .clone()
+                    .ok_or_else(|| anyhow::anyhow!("proposal action missing schematic value"))?,
+                Point::new(x_nm, y_nm),
+                layer,
+            )?
+        }
+        ("update_component", "part_mismatch") => {
+            let component_uuid = Uuid::parse_str(
+                action
+                    .component_uuid
+                    .as_deref()
+                    .ok_or_else(|| anyhow::anyhow!("proposal action missing component UUID"))?,
+            )
+            .context("invalid component UUID in forward-annotation proposal")?;
+            let package_uuid = package_uuid.ok_or_else(|| {
+                anyhow::anyhow!(
+                    "forward-annotation part_mismatch apply requires --package <uuid>"
+                )
+            })?;
+            let resolved_part_uuid = match (part_uuid, action.schematic_part_uuid.as_deref()) {
+                (Some(part_uuid), _) => part_uuid,
+                (None, Some(part_uuid)) => Uuid::parse_str(part_uuid)
+                    .context("invalid schematic part UUID in forward-annotation proposal")?,
+                (None, None) => {
+                    bail!(
+                        "forward-annotation part_mismatch apply requires --part <uuid> when the proposal does not carry a resolved schematic part"
+                    )
+                }
+            };
+            let _ =
+                set_native_project_board_component_package(root, component_uuid, package_uuid)?;
+            set_native_project_board_component_part(root, component_uuid, resolved_part_uuid)?
+        }
+        _ => bail!(
+            "forward-annotation apply is not supported for {} reason={}",
+            action.action,
+            action.reason
+        ),
+    };
+
+    Ok(NativeProjectForwardAnnotationApplyReportView {
+        action: "apply_forward_annotation_action".to_string(),
+        action_id: action.action_id,
+        proposal_action: action.action,
+        reason: action.reason,
+        component_report,
+    })
+}
+
+pub(crate) fn apply_native_project_forward_annotation_reviewed(
+    root: &Path,
+) -> Result<NativeProjectForwardAnnotationBatchApplyReportView> {
+    let proposal = query_native_project_forward_annotation_proposal(root)?;
+    let project = load_native_project(root)?;
+    let review = project.manifest.forward_annotation_review;
+    let mut applied = Vec::new();
+    let mut skipped = Vec::new();
+
+    for action in proposal.actions {
+        if let Some(review_record) = review.get(&action.action_id) {
+            let skip_reason = match review_record.decision.as_str() {
+                "deferred" => Some("deferred_by_review"),
+                "rejected" => Some("rejected_by_review"),
+                _ => None,
+            };
+            if let Some(skip_reason) = skip_reason {
+                skipped.push(NativeProjectForwardAnnotationBatchApplySkippedActionView {
+                    action_id: action.action_id.clone(),
+                    proposal_action: action.action.clone(),
+                    reference: action.reference.clone(),
+                    reason: action.reason.clone(),
+                    skip_reason: skip_reason.to_string(),
+                });
+                continue;
+            }
+        }
+
+        match (action.action.as_str(), action.reason.as_str()) {
+            ("remove_component", "board_component_missing_in_schematic")
+            | ("update_component", "value_mismatch") => {
+                applied.push(execute_native_project_forward_annotation_action(
+                    root, action, None, None, None, None, None,
+                )?);
+            }
+            ("add_component", _) | ("update_component", "part_mismatch") => {
+                skipped.push(NativeProjectForwardAnnotationBatchApplySkippedActionView {
+                    action_id: action.action_id.clone(),
+                    proposal_action: action.action.clone(),
+                    reference: action.reference.clone(),
+                    reason: action.reason.clone(),
+                    skip_reason: "requires_explicit_input".to_string(),
+                });
+            }
+            _ => {
+                skipped.push(NativeProjectForwardAnnotationBatchApplySkippedActionView {
+                    action_id: action.action_id.clone(),
+                    proposal_action: action.action.clone(),
+                    reference: action.reference.clone(),
+                    reason: action.reason.clone(),
+                    skip_reason: "unsupported_action".to_string(),
+                });
+            }
+        }
+    }
+
+    let skipped_deferred_actions = skipped
+        .iter()
+        .filter(|entry| entry.skip_reason == "deferred_by_review")
+        .count();
+    let skipped_rejected_actions = skipped
+        .iter()
+        .filter(|entry| entry.skip_reason == "rejected_by_review")
+        .count();
+    let skipped_requires_input_actions = skipped
+        .iter()
+        .filter(|entry| entry.skip_reason == "requires_explicit_input")
+        .count();
+
+    Ok(NativeProjectForwardAnnotationBatchApplyReportView {
+        action: "apply_forward_annotation_reviewed".to_string(),
+        domain: "native_project",
+        proposal_actions: applied.len() + skipped.len(),
+        applied_actions: applied.len(),
+        skipped_deferred_actions,
+        skipped_rejected_actions,
+        skipped_requires_input_actions,
+        applied,
+        skipped,
+    })
+}
+
+pub(crate) fn query_native_project_forward_annotation_review(
+    root: &Path,
+) -> Result<NativeProjectForwardAnnotationReviewView> {
+    let project = load_native_project(root)?;
+    let mut actions = project
+        .manifest
+        .forward_annotation_review
+        .values()
+        .map(|record| NativeProjectForwardAnnotationReviewActionView {
+            action_id: record.action_id.clone(),
+            decision: record.decision.clone(),
+            proposal_action: record.proposal_action.clone(),
+            reference: record.reference.clone(),
+            reason: record.reason.clone(),
+        })
+        .collect::<Vec<_>>();
+    actions.sort_by(|a, b| {
+        a.reference
+            .cmp(&b.reference)
+            .then_with(|| a.proposal_action.cmp(&b.proposal_action))
+            .then_with(|| a.reason.cmp(&b.reason))
+            .then_with(|| a.action_id.cmp(&b.action_id))
+    });
+    let deferred_actions = actions.iter().filter(|action| action.decision == "deferred").count();
+    let rejected_actions = actions.iter().filter(|action| action.decision == "rejected").count();
+    Ok(NativeProjectForwardAnnotationReviewView {
+        domain: "native_project",
+        total_reviews: actions.len(),
+        deferred_actions,
+        rejected_actions,
+        actions,
+    })
+}
+
+pub(crate) fn record_native_project_forward_annotation_review(
+    root: &Path,
+    action_id: &str,
+    decision: &str,
+) -> Result<NativeProjectForwardAnnotationReviewReportView> {
+    if decision != "deferred" && decision != "rejected" {
+        bail!("unsupported forward-annotation review decision: {decision}");
+    }
+
+    let proposal = query_native_project_forward_annotation_proposal(root)?;
+    let action = proposal
+        .actions
+        .into_iter()
+        .find(|action| action.action_id == action_id)
+        .ok_or_else(|| anyhow::anyhow!("forward-annotation proposal action not found: {action_id}"))?;
+
+    let mut project = load_native_project(root)?;
+    project.manifest.forward_annotation_review.insert(
+        action.action_id.clone(),
+        NativeForwardAnnotationReviewRecord {
+            action_id: action.action_id.clone(),
+            decision: decision.to_string(),
+            proposal_action: action.action.clone(),
+            reference: action.reference.clone(),
+            reason: action.reason.clone(),
+        },
+    );
+    write_canonical_json(&project.root.join("project.json"), &project.manifest)?;
+
+    Ok(NativeProjectForwardAnnotationReviewReportView {
+        action: format!("{decision}_forward_annotation_action"),
+        action_id: action.action_id,
+        decision: decision.to_string(),
+        proposal_action: action.action,
+        reference: action.reference,
+        reason: action.reason,
+    })
+}
+
+pub(crate) fn clear_native_project_forward_annotation_review(
+    root: &Path,
+    action_id: &str,
+) -> Result<NativeProjectForwardAnnotationReviewReportView> {
+    let mut project = load_native_project(root)?;
+    let cleared = project
+        .manifest
+        .forward_annotation_review
+        .remove(action_id)
+        .ok_or_else(|| anyhow::anyhow!("forward-annotation review action not found: {action_id}"))?;
+    write_canonical_json(&project.root.join("project.json"), &project.manifest)?;
+    Ok(NativeProjectForwardAnnotationReviewReportView {
+        action: "clear_forward_annotation_action_review".to_string(),
+        action_id: cleared.action_id,
+        decision: cleared.decision,
+        proposal_action: cleared.proposal_action,
+        reference: cleared.reference,
+        reason: cleared.reason,
+    })
+}
+
+pub(crate) fn export_native_project_forward_annotation_proposal(
+    root: &Path,
+    output_path: &Path,
+) -> Result<NativeProjectForwardAnnotationExportReportView> {
+    let project = load_native_project(root)?;
+    let proposal = query_native_project_forward_annotation_proposal(root)?;
+    let review = query_native_project_forward_annotation_review(root)?;
+    let artifact = ForwardAnnotationProposalArtifact {
+        kind: FORWARD_ANNOTATION_ARTIFACT_KIND.to_string(),
+        version: FORWARD_ANNOTATION_ARTIFACT_VERSION,
+        project_uuid: project.manifest.uuid,
+        project_name: project.manifest.name.clone(),
+        actions: proposal.actions,
+        reviews: review.actions,
+    };
+    write_canonical_json(output_path, &artifact)?;
+    Ok(NativeProjectForwardAnnotationExportReportView {
+        action: "export_forward_annotation_proposal".to_string(),
+        artifact_path: output_path.display().to_string(),
+        kind: artifact.kind,
+        version: artifact.version,
+        project_uuid: artifact.project_uuid.to_string(),
+        actions: artifact.actions.len(),
+        reviews: artifact.reviews.len(),
+    })
+}
+
+fn load_forward_annotation_proposal_artifact(
+    artifact_path: &Path,
+) -> Result<LoadedForwardAnnotationProposalArtifact> {
+    let contents = std::fs::read_to_string(artifact_path)
+        .with_context(|| format!("failed to read forward-annotation artifact {}", artifact_path.display()))?;
+    let value = serde_json::from_str::<serde_json::Value>(&contents)
+        .with_context(|| format!("failed to parse forward-annotation artifact {}", artifact_path.display()))?;
+
+    let kind = value.get("kind").and_then(serde_json::Value::as_str);
+    if let Some(kind) = kind
+        && kind != FORWARD_ANNOTATION_ARTIFACT_KIND
+    {
+        bail!(
+            "unsupported forward-annotation artifact kind '{}' in {}",
+            kind,
+            artifact_path.display()
+        );
+    }
+
+    let version = match value.get("version") {
+        Some(version) => {
+            let raw = version.as_u64().ok_or_else(|| {
+                anyhow::Error::msg(format!(
+                    "invalid forward-annotation artifact version in {}",
+                    artifact_path.display()
+                ))
+            })?;
+            u32::try_from(raw).map_err(|_| {
+                anyhow::Error::msg(format!(
+                    "invalid forward-annotation artifact version in {}",
+                    artifact_path.display()
+                ))
+            })?
+        }
+        None => 0,
+    };
+
+    match version {
+        FORWARD_ANNOTATION_ARTIFACT_VERSION => {
+            let artifact = serde_json::from_value::<ForwardAnnotationProposalArtifact>(value)
+                .with_context(|| {
+                    format!(
+                        "failed to parse forward-annotation artifact {}",
+                        artifact_path.display()
+                    )
+                })?;
+            if artifact.kind != FORWARD_ANNOTATION_ARTIFACT_KIND {
+                bail!(
+                    "unsupported forward-annotation artifact kind '{}' in {}",
+                    artifact.kind,
+                    artifact_path.display()
+                );
+            }
+            Ok(LoadedForwardAnnotationProposalArtifact {
+                artifact_path: artifact_path.to_path_buf(),
+                source_version: FORWARD_ANNOTATION_ARTIFACT_VERSION,
+                artifact,
+            })
+        }
+        _ => {
+            bail!(
+                "unsupported forward-annotation artifact version {} in {}",
+                version,
+                artifact_path.display()
+            );
+        }
+    }
+}
+
+pub(crate) fn inspect_forward_annotation_proposal_artifact(
+    artifact_path: &Path,
+) -> Result<NativeProjectForwardAnnotationArtifactInspectionView> {
+    let loaded = load_forward_annotation_proposal_artifact(artifact_path)?;
+    let add_component_actions = loaded
+        .artifact
+        .actions
+        .iter()
+        .filter(|action| action.action == "add_component")
+        .count();
+    let remove_component_actions = loaded
+        .artifact
+        .actions
+        .iter()
+        .filter(|action| action.action == "remove_component")
+        .count();
+    let update_component_actions = loaded
+        .artifact
+        .actions
+        .iter()
+        .filter(|action| action.action == "update_component")
+        .count();
+    let deferred_reviews = loaded
+        .artifact
+        .reviews
+        .iter()
+        .filter(|review| review.decision == "deferred")
+        .count();
+    let rejected_reviews = loaded
+        .artifact
+        .reviews
+        .iter()
+        .filter(|review| review.decision == "rejected")
+        .count();
+
+    Ok(NativeProjectForwardAnnotationArtifactInspectionView {
+        artifact_path: loaded.artifact_path.display().to_string(),
+        kind: loaded.artifact.kind,
+        source_version: loaded.source_version,
+        version: loaded.artifact.version,
+        migration_applied: false,
+        project_uuid: loaded.artifact.project_uuid.to_string(),
+        project_name: loaded.artifact.project_name,
+        actions: loaded.artifact.actions.len(),
+        reviews: loaded.artifact.reviews.len(),
+        add_component_actions,
+        remove_component_actions,
+        update_component_actions,
+        deferred_reviews,
+        rejected_reviews,
+    })
+}
+
+pub(crate) fn compare_forward_annotation_proposal_artifact(
+    root: &Path,
+    artifact_path: &Path,
+) -> Result<NativeProjectForwardAnnotationArtifactComparisonView> {
+    let project = load_native_project(root)?;
+    let loaded = load_forward_annotation_proposal_artifact(artifact_path)?;
+    let current_proposal = query_native_project_forward_annotation_proposal(root)?;
+
+    let mut current_by_id = BTreeMap::new();
+    let mut current_by_reference_and_action = BTreeMap::new();
+    for action in current_proposal.actions {
+        current_by_reference_and_action.insert(
+            (action.reference.clone(), action.action.clone()),
+            action.action_id.clone(),
+        );
+        current_by_id.insert(action.action_id.clone(), action);
+    }
+
+    let review_by_id = loaded
+        .artifact
+        .reviews
+        .iter()
+        .map(|review| (review.action_id.clone(), review.decision.clone()))
+        .collect::<BTreeMap<_, _>>();
+
+    let mut actions = Vec::new();
+    for action in &loaded.artifact.actions {
+        let status = if current_by_id.contains_key(&action.action_id) {
+            "applicable"
+        } else if current_by_reference_and_action
+            .contains_key(&(action.reference.clone(), action.action.clone()))
+        {
+            "drifted"
+        } else {
+            "stale"
+        };
+        actions.push(NativeProjectForwardAnnotationArtifactComparisonActionView {
+            action_id: action.action_id.clone(),
+            proposal_action: action.action.clone(),
+            reference: action.reference.clone(),
+            reason: action.reason.clone(),
+            status: status.to_string(),
+            review_decision: review_by_id.get(&action.action_id).cloned(),
+        });
+    }
+    actions.sort_by(|a, b| {
+        a.reference
+            .cmp(&b.reference)
+            .then_with(|| a.proposal_action.cmp(&b.proposal_action))
+            .then_with(|| a.reason.cmp(&b.reason))
+            .then_with(|| a.action_id.cmp(&b.action_id))
+    });
+
+    let applicable_actions = actions.iter().filter(|action| action.status == "applicable").count();
+    let drifted_actions = actions.iter().filter(|action| action.status == "drifted").count();
+    let stale_actions = actions.iter().filter(|action| action.status == "stale").count();
+
+    Ok(NativeProjectForwardAnnotationArtifactComparisonView {
+        artifact_path: loaded.artifact_path.display().to_string(),
+        project_root: project.root.display().to_string(),
+        kind: loaded.artifact.kind,
+        artifact_version: loaded.artifact.version,
+        current_project_uuid: project.manifest.uuid.to_string(),
+        artifact_project_uuid: loaded.artifact.project_uuid.to_string(),
+        artifact_actions: actions.len(),
+        applicable_actions,
+        drifted_actions,
+        stale_actions,
+        actions,
+    })
+}
+
+pub(crate) fn filter_forward_annotation_proposal_artifact(
+    root: &Path,
+    artifact_path: &Path,
+    output_path: &Path,
+) -> Result<NativeProjectForwardAnnotationArtifactFilterView> {
+    let project = load_native_project(root)?;
+    let loaded = load_forward_annotation_proposal_artifact(artifact_path)?;
+    let comparison = compare_forward_annotation_proposal_artifact(root, artifact_path)?;
+    let applicable_action_ids = comparison
+        .actions
+        .iter()
+        .filter(|action| action.status == "applicable")
+        .map(|action| action.action_id.as_str())
+        .collect::<BTreeSet<_>>();
+
+    let filtered_artifact = ForwardAnnotationProposalArtifact {
+        kind: loaded.artifact.kind,
+        version: loaded.artifact.version,
+        project_uuid: loaded.artifact.project_uuid,
+        project_name: loaded.artifact.project_name,
+        actions: loaded
+            .artifact
+            .actions
+            .into_iter()
+            .filter(|action| applicable_action_ids.contains(action.action_id.as_str()))
+            .collect(),
+        reviews: loaded
+            .artifact
+            .reviews
+            .into_iter()
+            .filter(|review| applicable_action_ids.contains(review.action_id.as_str()))
+            .collect(),
+    };
+    write_canonical_json(output_path, &filtered_artifact)?;
+
+    Ok(NativeProjectForwardAnnotationArtifactFilterView {
+        action: "filter_forward_annotation_proposal_artifact".to_string(),
+        input_artifact_path: loaded.artifact_path.display().to_string(),
+        output_artifact_path: output_path.display().to_string(),
+        project_root: project.root.display().to_string(),
+        kind: filtered_artifact.kind,
+        version: filtered_artifact.version,
+        artifact_actions: comparison.artifact_actions,
+        applicable_actions: filtered_artifact.actions.len(),
+        filtered_reviews: filtered_artifact.reviews.len(),
+    })
+}
+
+fn forward_annotation_apply_required_inputs(
+    action: &NativeProjectForwardAnnotationProposalActionView,
+) -> (&'static str, Vec<String>) {
+    match (action.action.as_str(), action.reason.as_str()) {
+        ("remove_component", "board_component_missing_in_schematic") => {
+            ("self_sufficient", Vec::new())
+        }
+        ("update_component", "value_mismatch") => ("self_sufficient", Vec::new()),
+        ("add_component", _) => {
+            let mut required = vec![
+                "package_uuid".to_string(),
+                "x_nm".to_string(),
+                "y_nm".to_string(),
+                "layer".to_string(),
+            ];
+            if action.schematic_part_uuid.is_none() {
+                required.push("part_uuid".to_string());
+            }
+            ("requires_explicit_input", required)
+        }
+        ("update_component", "part_mismatch") => {
+            let mut required = vec!["package_uuid".to_string()];
+            if action.schematic_part_uuid.is_none() {
+                required.push("part_uuid".to_string());
+            }
+            ("requires_explicit_input", required)
+        }
+        _ => ("unsupported", Vec::new()),
+    }
+}
+
+pub(crate) fn plan_forward_annotation_proposal_artifact_apply(
+    root: &Path,
+    artifact_path: &Path,
+) -> Result<NativeProjectForwardAnnotationArtifactApplyPlanView> {
+    let comparison = compare_forward_annotation_proposal_artifact(root, artifact_path)?;
+    let loaded = load_forward_annotation_proposal_artifact(artifact_path)?;
+    let review_by_id = loaded
+        .artifact
+        .reviews
+        .iter()
+        .map(|review| (review.action_id.clone(), review.decision.clone()))
+        .collect::<BTreeMap<_, _>>();
+    let actions_by_id = loaded
+        .artifact
+        .actions
+        .iter()
+        .map(|action| (action.action_id.clone(), action.clone()))
+        .collect::<BTreeMap<_, _>>();
+
+    let mut actions = Vec::new();
+    for comparison_action in comparison.actions {
+        let artifact_action = actions_by_id
+            .get(&comparison_action.action_id)
+            .ok_or_else(|| anyhow::anyhow!("artifact action missing during apply planning"))?;
+        let (execution, required_inputs) = if comparison_action.status == "applicable" {
+            let (execution, required_inputs) =
+                forward_annotation_apply_required_inputs(artifact_action);
+            (execution.to_string(), required_inputs)
+        } else {
+            ("not_applicable".to_string(), Vec::new())
+        };
+        actions.push(NativeProjectForwardAnnotationArtifactApplyPlanActionView {
+            action_id: comparison_action.action_id,
+            proposal_action: comparison_action.proposal_action,
+            reference: comparison_action.reference,
+            reason: comparison_action.reason,
+            applicability: comparison_action.status,
+            execution,
+            review_decision: review_by_id.get(&artifact_action.action_id).cloned(),
+            required_inputs,
+        });
+    }
+
+    let self_sufficient_actions = actions
+        .iter()
+        .filter(|action| action.execution == "self_sufficient")
+        .count();
+    let requires_input_actions = actions
+        .iter()
+        .filter(|action| action.execution == "requires_explicit_input")
+        .count();
+    let not_applicable_actions = actions
+        .iter()
+        .filter(|action| action.execution == "not_applicable")
+        .count();
+
+    Ok(NativeProjectForwardAnnotationArtifactApplyPlanView {
+        action: "plan_forward_annotation_proposal_artifact_apply".to_string(),
+        artifact_path: loaded.artifact_path.display().to_string(),
+        project_root: root.display().to_string(),
+        kind: loaded.artifact.kind,
+        artifact_version: loaded.artifact.version,
+        artifact_actions: actions.len(),
+        self_sufficient_actions,
+        requires_input_actions,
+        not_applicable_actions,
+        actions,
+    })
+}
+
+fn forward_annotation_action_id(
+    action: &str,
+    reference: &str,
+    symbol_uuid: Option<&str>,
+    component_uuid: Option<&str>,
+    reason: &str,
+) -> String {
+    let stable_key = format!(
+        "{action}|{reference}|{}|{}|{reason}",
+        symbol_uuid.unwrap_or(""),
+        component_uuid.unwrap_or("")
+    );
+    compute_source_hash_bytes(stable_key.as_bytes())
 }
 
 pub(crate) fn query_native_project_symbols(root: &Path) -> Result<Vec<SymbolInfo>> {
@@ -3739,6 +4725,90 @@ pub(crate) fn move_native_project_board_component(
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
         "move_board_component",
+        &project,
+        component,
+    ))
+}
+
+pub(crate) fn set_native_project_board_component_part(
+    root: &Path,
+    component_uuid: Uuid,
+    part_uuid: Uuid,
+) -> Result<NativeProjectBoardComponentMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let key = component_uuid.to_string();
+    let entry = project
+        .board
+        .packages
+        .get(&key)
+        .cloned()
+        .ok_or_else(|| anyhow::anyhow!("board component not found in native project: {component_uuid}"))?;
+    let mut component: PlacedPackage = serde_json::from_value(entry)
+        .with_context(|| format!("failed to parse board component in {}", project.board_path.display()))?;
+    component.part = part_uuid;
+    project.board.packages.insert(
+        key,
+        serde_json::to_value(&component).expect("native board component serialization must succeed"),
+    );
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_component_report(
+        "set_board_component_part",
+        &project,
+        component,
+    ))
+}
+
+pub(crate) fn set_native_project_board_component_package(
+    root: &Path,
+    component_uuid: Uuid,
+    package_uuid: Uuid,
+) -> Result<NativeProjectBoardComponentMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let key = component_uuid.to_string();
+    let entry = project
+        .board
+        .packages
+        .get(&key)
+        .cloned()
+        .ok_or_else(|| anyhow::anyhow!("board component not found in native project: {component_uuid}"))?;
+    let mut component: PlacedPackage = serde_json::from_value(entry)
+        .with_context(|| format!("failed to parse board component in {}", project.board_path.display()))?;
+    component.package = package_uuid;
+    project.board.packages.insert(
+        key,
+        serde_json::to_value(&component).expect("native board component serialization must succeed"),
+    );
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_component_report(
+        "set_board_component_package",
+        &project,
+        component,
+    ))
+}
+
+pub(crate) fn set_native_project_board_component_value(
+    root: &Path,
+    component_uuid: Uuid,
+    value: String,
+) -> Result<NativeProjectBoardComponentMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let key = component_uuid.to_string();
+    let entry = project
+        .board
+        .packages
+        .get(&key)
+        .cloned()
+        .ok_or_else(|| anyhow::anyhow!("board component not found in native project: {component_uuid}"))?;
+    let mut component: PlacedPackage = serde_json::from_value(entry)
+        .with_context(|| format!("failed to parse board component in {}", project.board_path.display()))?;
+    component.value = value;
+    project.board.packages.insert(
+        key,
+        serde_json::to_value(&component).expect("native board component serialization must succeed"),
+    );
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(native_project_board_component_report(
+        "set_board_component_value",
         &project,
         component,
     ))

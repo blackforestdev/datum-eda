@@ -19,7 +19,7 @@ fn board_components_query_cli(root: &Path) -> Cli {
 }
 
 #[test]
-fn project_board_component_place_move_rotate_and_lock_round_trip_through_native_query() {
+fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_through_native_query() {
     let root = unique_project_root("datum-eda-cli-project-board-component");
     create_native_project(&root, Some("Board Component Demo".to_string()))
         .expect("initial scaffold should succeed");
@@ -99,6 +99,48 @@ fn project_board_component_place_move_rotate_and_lock_round_trip_through_native_
     assert_eq!(components[0].rotation, 0);
     assert_eq!(components[0].layer, 1);
     assert!(!components[0].locked);
+
+    let replacement_part_uuid = Uuid::new_v4();
+    let set_part_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "set-board-component-part",
+        root.to_str().unwrap(),
+        "--component",
+        &component_uuid,
+        "--part",
+        &replacement_part_uuid.to_string(),
+    ])
+    .expect("CLI should parse");
+    let _ = execute(set_part_cli).expect("set board component part should succeed");
+
+    let replacement_package_uuid = Uuid::new_v4();
+    let set_package_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "set-board-component-package",
+        root.to_str().unwrap(),
+        "--component",
+        &component_uuid,
+        "--package",
+        &replacement_package_uuid.to_string(),
+    ])
+    .expect("CLI should parse");
+    let _ = execute(set_package_cli).expect("set board component package should succeed");
+
+    let components_output = execute(board_components_query_cli(&root))
+        .expect("board components query should succeed");
+    let components: Vec<PlacedPackage> =
+        serde_json::from_str(&components_output).expect("query output should parse");
+    assert_eq!(components.len(), 1);
+    assert_eq!(components[0].part, replacement_part_uuid);
+    assert_eq!(components[0].package, replacement_package_uuid);
+    assert_eq!(components[0].position.x, 3000);
+    assert_eq!(components[0].position.y, 4000);
 
     let rotate_cli = Cli::try_parse_from([
         "eda",

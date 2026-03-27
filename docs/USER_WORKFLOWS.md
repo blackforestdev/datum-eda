@@ -160,6 +160,16 @@ Current live slice:
 - `eda project inspect <dir>` validates that native scaffold and reports the resolved schema, UUIDs, paths, and current object counts.
 - `eda project query <dir> summary` reports the current native schematic/board/rule summary from the scaffold.
 - `eda project query <dir> design-rules` reports the current native rules payload.
+- `eda project query <dir> forward-annotation-audit` reports the current native schematic-vs-board reference alignment, including missing board components, orphaned board components, unresolved symbols, and value/part mismatches.
+- `eda project query <dir> forward-annotation-proposal` reports the current deterministic add/update/remove component ECO proposal derived from that native schematic-vs-board alignment, including stable `action_id` values and grouped add/remove/update action lists.
+- `eda project defer-forward-annotation-action <dir> --action-id <sha256:...>`, `eda project reject-forward-annotation-action <dir> --action-id <sha256:...>`, `eda project clear-forward-annotation-action-review <dir> --action-id <sha256:...>`, and `eda project query <dir> forward-annotation-review` persist, clear, and report explicit review decisions by stable proposal key without applying the ECO action.
+- `eda project export-forward-annotation-proposal <dir> --out <path>` writes the current forward-annotation proposal plus persisted review decisions as a versioned artifact file, so the review package can move independently of the live project directory.
+- `eda project inspect-forward-annotation-proposal-artifact <path>` loads that exported artifact and reports its version, project identity, action counts, and review counts without mutating project state.
+- `eda project compare-forward-annotation-proposal-artifact <dir> --artifact <path>` compares that exported artifact against the current live project proposal and reports which exported actions are still applicable versus drifted or stale.
+- `eda project filter-forward-annotation-proposal-artifact <dir> --artifact <path> --out <path>` writes a new versioned artifact containing only the exported actions that are still `applicable` against the current live project plus the retained review records for those actions.
+- `eda project plan-forward-annotation-proposal-artifact-apply <dir> --artifact <path>` reports which artifact actions are currently self-sufficient to apply versus which still require explicit caller input such as `package_uuid`, placement coordinates, layer, or `part_uuid`.
+- `eda project apply-forward-annotation-action <dir> --action-id <sha256:...>` applies one currently supported forward-annotation proposal by stable key; the current slice supports `remove_component`, `update_component` for `value_mismatch`, `add_component` when the caller provides `--package <uuid> --x-nm <i64> --y-nm <i64> --layer <i32>` plus `--part <uuid>` only when the proposal lacks a resolved schematic part, and `part_mismatch` when the caller provides an explicit `--package <uuid>` target plus `--part <uuid>` only when the proposal lacks a resolved schematic part.
+- `eda project apply-forward-annotation-reviewed <dir>` batch-applies the current self-sufficient proposal actions while honoring persisted `deferred` and `rejected` review decisions; in the current slice it auto-applies removals and `value_mismatch` updates and reports `add_component` / `part_mismatch` entries as skipped when they still require explicit keyed input.
 - `eda project query <dir> nets` reports the current native schematic connectivity net inventory.
 - `eda project query <dir> diagnostics` reports the current native schematic connectivity findings.
 - `eda project query <dir> erc` reports the current native schematic ERC precheck findings.
@@ -170,6 +180,7 @@ Current live slice:
 - `eda project query <dir> board-outline` reports the current native board outline polygon from `board/board.json`.
 - `eda project query <dir> board-stackup` reports the current native board stackup from `board/board.json`.
 - `eda project query <dir> board-components` reports the current native placed-package inventory from `board/board.json`.
+- `eda project set-board-component-part <dir> --component <uuid> --part <uuid>` and `eda project set-board-component-package <dir> --component <uuid> --package <uuid>` reassign the stored native part/package identity for an existing board component.
 - `eda project query <dir> board-pads` reports the current native placed-pad inventory from `board/board.json`.
 - `eda project query <dir> board-tracks` reports the current native routed-track inventory from `board/board.json`.
 - `eda project query <dir> board-vias` reports the current native via inventory from `board/board.json`.

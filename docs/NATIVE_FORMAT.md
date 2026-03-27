@@ -25,7 +25,13 @@ Current live slice:
   `eda project query <dir> diagnostics` now project authored native sheet files
   through an in-memory `Schematic` bridge to expose the first native
   connectivity-aware read surface; `eda project query <dir> erc` reuses that
-  same bridge to expose the first native electrical-check read surface, and
+  same bridge to expose the first native electrical-check read surface,
+  `eda project query <dir> forward-annotation-audit` now compares native
+  schematic symbol intent against native board component presence by reference,
+  `eda project query <dir> forward-annotation-proposal` now classifies those
+  findings into deterministic add/update/remove component ECO actions,
+  `eda project query <dir> forward-annotation-review` now reports persisted
+  defer/reject decisions keyed by stable proposal `action_id`, and
   `eda project query <dir> check` now returns the combined schematic
   `CheckReport` shape on top of that same bridge; `eda project query <dir>
   board-diagnostics`, `eda project query <dir> board-unrouted`, and
@@ -168,6 +174,65 @@ Current live slice:
   board connectivity findings, airwires, and the board-side `CheckReport`
   shape from the persisted package/pad/track/via/zone/net state without
   requiring an imported-board session.
+- `eda project query <dir> forward-annotation-audit` derives a read-only
+  schematic-vs-board comparison report from the persisted native symbol and
+  board component inventories without attempting ECO mutation yet.
+- `eda project query <dir> forward-annotation-proposal` derives a read-only
+  ECO proposal from that same persisted native symbol and board component
+  inventory without attempting apply/reject mutation yet; each proposed action
+  now carries a stable `action_id` plus grouped add/remove/update views so the
+  later review/apply layer can target actions deterministically.
+- `eda project defer-forward-annotation-action <dir> --action-id <sha256:...>`,
+  `eda project reject-forward-annotation-action <dir> --action-id <sha256:...>`,
+  `eda project clear-forward-annotation-action-review <dir> --action-id <sha256:...>`,
+  and `eda project query <dir> forward-annotation-review` now persist, clear,
+  and expose deterministic review decisions by stable proposal key without
+  applying the ECO action itself.
+- `eda project apply-forward-annotation-action <dir> --action-id <sha256:...>`
+  now applies the currently supported proposal kinds by stable key:
+  `remove_component`, `update_component` when the reason is `value_mismatch`,
+  and `add_component` when the caller supplies explicit
+  `--package <uuid> --x-nm <i64> --y-nm <i64> --layer <i32>` input; unresolved
+  add proposals also require `--part <uuid>` when the proposal does not carry a
+  resolved schematic part. `part_mismatch` now applies through the same stable
+  action key when the caller supplies an explicit `--package <uuid>` target;
+  unresolved part-mismatch proposals also require `--part <uuid>` when the
+  proposal does not carry a resolved schematic part.
+- `eda project set-board-component-part <dir> --component <uuid> --part <uuid>`
+  and `eda project set-board-component-package <dir> --component <uuid>
+  --package <uuid>` now expose the board-side reassignment semantics directly,
+  so forward-annotation `part_mismatch` apply reuses the same native component
+  mutation surface instead of writing bespoke ECO-only state.
+- `eda project apply-forward-annotation-reviewed <dir>` now batch-applies the
+  current self-sufficient proposal actions while honoring persisted
+  `deferred`/`rejected` review decisions. In the current slice that means
+  `remove_component` and `value_mismatch` updates apply automatically, while
+  `add_component` and `part_mismatch` remain visible in the batch report as
+  `requires_explicit_input` until the caller supplies per-action package or
+  placement input through the keyed single-action command.
+- `eda project export-forward-annotation-proposal <dir> --out <path>` now
+  writes a versioned `native_forward_annotation_proposal_artifact` file
+  containing the current proposal actions plus persisted review decisions, so
+  the forward-annotation review package can be preserved and moved independently
+  of the live native project state.
+- `eda project inspect-forward-annotation-proposal-artifact <path>` now loads
+  that artifact and reports version, project identity, action counts, and
+  review counts through a deterministic read-only inspection surface.
+- `eda project compare-forward-annotation-proposal-artifact <dir> --artifact <path>`
+  now compares the exported artifact against the current live project proposal
+  and classifies each artifact action as `applicable`, `drifted`, or `stale`
+  before any artifact-driven apply path exists.
+- `eda project filter-forward-annotation-proposal-artifact <dir> --artifact <path>
+  --out <path>` now writes a new versioned artifact containing only the exported
+  actions that are still `applicable` against the current live project plus the
+  retained review records for those actions, so later artifact-driven apply can
+  start from a deterministic prefiltered package instead of the original stale
+  export.
+- `eda project plan-forward-annotation-proposal-artifact-apply <dir> --artifact
+  <path>` now reports which artifact actions are currently `self_sufficient`
+  versus `requires_explicit_input`, including the exact caller inputs still
+  needed for `add_component` and `part_mismatch`, so artifact-driven apply can
+  preflight mutation readiness without touching live project state.
 - `eda project place-board-component <dir> --part <uuid> --package <uuid>
   --reference <text> --value <text> --x-nm <i64> --y-nm <i64> --layer <i32>`
   plus `eda project move-board-component <dir> --component <uuid> --x-nm <i64>

@@ -1249,6 +1249,28 @@ pub(crate) enum ProjectCommands {
         #[arg(long = "y-nm")]
         y_nm: i64,
     },
+    /// Set the part UUID on one native board component/package
+    SetBoardComponentPart {
+        /// Project root directory
+        path: PathBuf,
+        /// Component UUID
+        #[arg(long = "component")]
+        component_uuid: Uuid,
+        /// Replacement part UUID
+        #[arg(long = "part")]
+        part_uuid: Uuid,
+    },
+    /// Set the package UUID on one native board component/package
+    SetBoardComponentPackage {
+        /// Project root directory
+        path: PathBuf,
+        /// Component UUID
+        #[arg(long = "component")]
+        component_uuid: Uuid,
+        /// Replacement package UUID
+        #[arg(long = "package")]
+        package_uuid: Uuid,
+    },
     /// Rotate one native board component/package
     RotateBoardComponent {
         /// Project root directory
@@ -1283,6 +1305,98 @@ pub(crate) enum ProjectCommands {
         /// Component UUID
         #[arg(long = "component")]
         component_uuid: Uuid,
+    },
+    /// Apply one supported forward-annotation proposal action by stable action ID
+    ApplyForwardAnnotationAction {
+        /// Project root directory
+        path: PathBuf,
+        /// Stable proposal action ID
+        #[arg(long = "action-id")]
+        action_id: String,
+        /// Explicit package UUID for add_component actions
+        #[arg(long = "package")]
+        package_uuid: Option<Uuid>,
+        /// Explicit part UUID override for add_component actions
+        #[arg(long = "part")]
+        part_uuid: Option<Uuid>,
+        /// Placement X coordinate in nm for add_component actions
+        #[arg(long = "x-nm")]
+        x_nm: Option<i64>,
+        /// Placement Y coordinate in nm for add_component actions
+        #[arg(long = "y-nm")]
+        y_nm: Option<i64>,
+        /// Placement layer for add_component actions
+        #[arg(long = "layer")]
+        layer: Option<i32>,
+    },
+    /// Apply all currently self-sufficient forward-annotation proposal actions while honoring persisted defer/reject review state
+    ApplyForwardAnnotationReviewed {
+        /// Project root directory
+        path: PathBuf,
+    },
+    /// Export the current forward-annotation proposal and review state as a versioned artifact
+    ExportForwardAnnotationProposal {
+        /// Project root directory
+        path: PathBuf,
+        /// Output artifact path
+        #[arg(long = "out")]
+        out: PathBuf,
+    },
+    /// Inspect a versioned forward-annotation proposal artifact
+    InspectForwardAnnotationProposalArtifact {
+        /// Artifact path
+        path: PathBuf,
+    },
+    /// Compare a forward-annotation proposal artifact against the current live project proposal state
+    CompareForwardAnnotationProposalArtifact {
+        /// Project root directory
+        path: PathBuf,
+        /// Artifact path
+        #[arg(long = "artifact")]
+        artifact: PathBuf,
+    },
+    /// Filter a forward-annotation proposal artifact down to actions still applicable against the current live project proposal
+    FilterForwardAnnotationProposalArtifact {
+        /// Project root directory
+        path: PathBuf,
+        /// Artifact path
+        #[arg(long = "artifact")]
+        artifact: PathBuf,
+        /// Output artifact path
+        #[arg(long = "out")]
+        out: PathBuf,
+    },
+    /// Plan artifact-driven forward-annotation apply without mutating project state
+    PlanForwardAnnotationProposalArtifactApply {
+        /// Project root directory
+        path: PathBuf,
+        /// Artifact path
+        #[arg(long = "artifact")]
+        artifact: PathBuf,
+    },
+    /// Mark one forward-annotation proposal action as deferred by stable action ID
+    DeferForwardAnnotationAction {
+        /// Project root directory
+        path: PathBuf,
+        /// Stable proposal action ID
+        #[arg(long = "action-id")]
+        action_id: String,
+    },
+    /// Mark one forward-annotation proposal action as rejected by stable action ID
+    RejectForwardAnnotationAction {
+        /// Project root directory
+        path: PathBuf,
+        /// Stable proposal action ID
+        #[arg(long = "action-id")]
+        action_id: String,
+    },
+    /// Clear one persisted forward-annotation review decision by stable action ID
+    ClearForwardAnnotationActionReview {
+        /// Project root directory
+        path: PathBuf,
+        /// Stable proposal action ID
+        #[arg(long = "action-id")]
+        action_id: String,
     },
     /// Draw one native board track
     DrawBoardTrack {
@@ -1603,6 +1717,12 @@ pub(crate) enum NativeProjectQueryCommands {
     BoardUnrouted,
     /// Current native combined board check report
     BoardCheck,
+    /// Current forward-annotation audit between native schematic and board state
+    ForwardAnnotationAudit,
+    /// Current read-only forward-annotation ECO proposal between native schematic and board state
+    ForwardAnnotationProposal,
+    /// Current persisted forward-annotation review decisions by stable action ID
+    ForwardAnnotationReview,
     /// Current native board pads
     BoardPads,
     /// Current native board nets
