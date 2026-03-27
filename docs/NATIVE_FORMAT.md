@@ -19,6 +19,25 @@ Current live slice:
 - `eda project inspect <dir>` loads that scaffold, validates the resolved file
   layout, and reports current schema/UUID/path/count summary without opening a
   mutable editing session.
+- `eda project query <dir> summary` and
+  `eda project query <dir> design-rules` provide the first native read surface
+  directly from the on-disk scaffold.
+- `eda project place-label <dir> --sheet <uuid> --name <text> --x-nm <i64>
+  --y-nm <i64>` is the first native authored schematic mutation and writes
+  directly to a referenced sheet file.
+- `eda project rename-label <dir> --label <uuid> --name <text>` and
+  `eda project delete-label <dir> --label <uuid>` complete the first native
+  schematic object family on the same deterministic sheet-file mutation path.
+- `eda project draw-wire <dir> --sheet <uuid> --from-x-nm <i64> --from-y-nm <i64>
+  --to-x-nm <i64> --to-y-nm <i64>` and `eda project delete-wire <dir> --wire <uuid>`
+  add the first connectivity-bearing native schematic geometry mutation path.
+- `eda project place-junction <dir> --sheet <uuid> --x-nm <i64> --y-nm <i64>`
+  and `eda project delete-junction <dir> --junction <uuid>` extend that path
+  to authored net-topology join points.
+- `eda project place-port <dir> --sheet <uuid> --name <text> --direction <...>
+  --x-nm <i64> --y-nm <i64>`, `eda project edit-port <dir> --port <uuid> ...`,
+  and `eda project delete-port <dir> --port <uuid>` add the first cross-sheet
+  connectivity-interface object family on the same deterministic mutation path.
 
 ## Design Principle
 The native format is a direct serialization of the canonical IR. No

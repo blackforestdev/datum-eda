@@ -285,6 +285,183 @@ pub(crate) enum ProjectCommands {
         /// Project root directory
         path: PathBuf,
     },
+    /// Query native project data from the on-disk scaffold
+    Query {
+        /// Project root directory
+        path: PathBuf,
+        /// What to query
+        #[command(subcommand)]
+        what: NativeProjectQueryCommands,
+    },
+    /// Place one schematic label into an existing native sheet file
+    PlaceLabel {
+        /// Project root directory
+        path: PathBuf,
+        /// Target sheet UUID
+        #[arg(long)]
+        sheet: Uuid,
+        /// Label name
+        #[arg(long)]
+        name: String,
+        /// Label kind
+        #[arg(long, value_enum, default_value = "local")]
+        kind: NativeLabelKindArg,
+        /// X coordinate in nm
+        #[arg(long)]
+        x_nm: i64,
+        /// Y coordinate in nm
+        #[arg(long)]
+        y_nm: i64,
+    },
+    /// Rename one schematic label in a native sheet file
+    RenameLabel {
+        /// Project root directory
+        path: PathBuf,
+        /// Label UUID
+        #[arg(long)]
+        label: Uuid,
+        /// New label name
+        #[arg(long)]
+        name: String,
+    },
+    /// Delete one schematic label from a native sheet file
+    DeleteLabel {
+        /// Project root directory
+        path: PathBuf,
+        /// Label UUID
+        #[arg(long)]
+        label: Uuid,
+    },
+    /// Draw one schematic wire into an existing native sheet file
+    DrawWire {
+        /// Project root directory
+        path: PathBuf,
+        /// Target sheet UUID
+        #[arg(long)]
+        sheet: Uuid,
+        /// Start X coordinate in nm
+        #[arg(long)]
+        from_x_nm: i64,
+        /// Start Y coordinate in nm
+        #[arg(long)]
+        from_y_nm: i64,
+        /// End X coordinate in nm
+        #[arg(long)]
+        to_x_nm: i64,
+        /// End Y coordinate in nm
+        #[arg(long)]
+        to_y_nm: i64,
+    },
+    /// Delete one schematic wire from a native sheet file
+    DeleteWire {
+        /// Project root directory
+        path: PathBuf,
+        /// Wire UUID
+        #[arg(long)]
+        wire: Uuid,
+    },
+    /// Place one schematic junction into an existing native sheet file
+    PlaceJunction {
+        /// Project root directory
+        path: PathBuf,
+        /// Target sheet UUID
+        #[arg(long)]
+        sheet: Uuid,
+        /// X coordinate in nm
+        #[arg(long)]
+        x_nm: i64,
+        /// Y coordinate in nm
+        #[arg(long)]
+        y_nm: i64,
+    },
+    /// Delete one schematic junction from a native sheet file
+    DeleteJunction {
+        /// Project root directory
+        path: PathBuf,
+        /// Junction UUID
+        #[arg(long)]
+        junction: Uuid,
+    },
+    /// Place one hierarchical port into an existing native sheet file
+    PlacePort {
+        /// Project root directory
+        path: PathBuf,
+        /// Target sheet UUID
+        #[arg(long)]
+        sheet: Uuid,
+        /// Port name
+        #[arg(long)]
+        name: String,
+        /// Port direction
+        #[arg(long, value_enum)]
+        direction: NativePortDirectionArg,
+        /// X coordinate in nm
+        #[arg(long)]
+        x_nm: i64,
+        /// Y coordinate in nm
+        #[arg(long)]
+        y_nm: i64,
+    },
+    /// Edit one hierarchical port in a native sheet file
+    EditPort {
+        /// Project root directory
+        path: PathBuf,
+        /// Port UUID
+        #[arg(long)]
+        port: Uuid,
+        /// New port name
+        #[arg(long)]
+        name: Option<String>,
+        /// New port direction
+        #[arg(long, value_enum)]
+        direction: Option<NativePortDirectionArg>,
+        /// New X coordinate in nm
+        #[arg(long)]
+        x_nm: Option<i64>,
+        /// New Y coordinate in nm
+        #[arg(long)]
+        y_nm: Option<i64>,
+    },
+    /// Delete one hierarchical port from a native sheet file
+    DeletePort {
+        /// Project root directory
+        path: PathBuf,
+        /// Port UUID
+        #[arg(long)]
+        port: Uuid,
+    },
+}
+
+#[derive(Subcommand)]
+pub(crate) enum NativeProjectQueryCommands {
+    /// Aggregated native project summary
+    Summary,
+    /// Current native design rules payload
+    DesignRules,
+    /// Current native schematic labels
+    Labels,
+    /// Current native schematic wires
+    Wires,
+    /// Current native schematic junctions
+    Junctions,
+    /// Current native schematic hierarchical ports
+    Ports,
+}
+
+#[derive(Clone, clap::ValueEnum)]
+pub(crate) enum NativeLabelKindArg {
+    Local,
+    Global,
+    Hierarchical,
+    Power,
+}
+
+#[derive(Clone, clap::ValueEnum)]
+pub(crate) enum NativePortDirectionArg {
+    Input,
+    Output,
+    Bidirectional,
+    Passive,
 }
 
 #[derive(Subcommand)]

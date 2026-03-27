@@ -158,6 +158,18 @@ files — all via CLI or MCP, no GUI required.
 Current live slice:
 - `eda project new <dir> [--name <project-name>]` creates a deterministic native project scaffold with `project.json`, `schematic/schematic.json`, `board/board.json`, and `rules/rules.json`.
 - `eda project inspect <dir>` validates that native scaffold and reports the resolved schema, UUIDs, paths, and current object counts.
+- `eda project query <dir> summary` reports the current native schematic/board/rule summary from the scaffold.
+- `eda project query <dir> design-rules` reports the current native rules payload.
+- `eda project place-label <dir> --sheet <uuid> --name <text> --x-nm <i64> --y-nm <i64>` writes the first native authored schematic object into a referenced sheet file.
+- `eda project rename-label <dir> --label <uuid> --name <text>` renames an existing native schematic label.
+- `eda project delete-label <dir> --label <uuid>` removes an existing native schematic label.
+- `eda project draw-wire <dir> --sheet <uuid> --from-x-nm <i64> --from-y-nm <i64> --to-x-nm <i64> --to-y-nm <i64>` adds a native schematic wire to a referenced sheet file.
+- `eda project delete-wire <dir> --wire <uuid>` removes an existing native schematic wire.
+- `eda project place-junction <dir> --sheet <uuid> --x-nm <i64> --y-nm <i64>` places a native schematic junction in a referenced sheet file.
+- `eda project delete-junction <dir> --junction <uuid>` removes an existing native schematic junction.
+- `eda project place-port <dir> --sheet <uuid> --name <text> --direction <input|output|bidirectional|passive> --x-nm <i64> --y-nm <i64>` places a native hierarchical port.
+- `eda project edit-port <dir> --port <uuid> [--name <text>] [--direction <...>] [--x-nm <i64>] [--y-nm <i64>]` edits an existing native hierarchical port.
+- `eda project delete-port <dir> --port <uuid>` removes an existing native hierarchical port.
 
 MCP tools for this flow are defined in `specs/MCP_API_SPEC.md` §M4:
 `place_symbol`, `draw_wire`, `place_label`, `annotate`,

@@ -6,6 +6,7 @@ use crate::command_modify::{
     parse_set_net_class_arg, parse_set_package_arg, parse_set_package_with_part_arg,
     parse_set_reference_arg, parse_set_value_arg,
 };
+use eda_engine::schematic::{LabelKind, PortDirection};
 
 pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
     match cli.command {
@@ -146,6 +147,193 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 let report = inspect_native_project(&path)?;
                 let output = match cli.format {
                     OutputFormat::Text => render_native_project_inspect_report_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::Query { path, what } => match what {
+                NativeProjectQueryCommands::Summary => {
+                    let report = query_native_project_summary(&path)?;
+                    let output = match cli.format {
+                        OutputFormat::Text => render_native_project_summary_text(&report),
+                        OutputFormat::Json => render_output(&cli.format, &report),
+                    };
+                    Ok((output, 0))
+                }
+                NativeProjectQueryCommands::DesignRules => {
+                    let report = query_native_project_rules(&path)?;
+                    let output = match cli.format {
+                        OutputFormat::Text => render_native_project_rules_text(&report),
+                        OutputFormat::Json => render_output(&cli.format, &report),
+                    };
+                    Ok((output, 0))
+                }
+                NativeProjectQueryCommands::Labels => {
+                    let report = query_native_project_labels(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::Wires => {
+                    let report = query_native_project_wires(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::Junctions => {
+                    let report = query_native_project_junctions(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::Ports => {
+                    let report = query_native_project_ports(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+            },
+            ProjectCommands::PlaceLabel {
+                path,
+                sheet,
+                name,
+                kind,
+                x_nm,
+                y_nm,
+            } => {
+                let kind = match kind {
+                    NativeLabelKindArg::Local => LabelKind::Local,
+                    NativeLabelKindArg::Global => LabelKind::Global,
+                    NativeLabelKindArg::Hierarchical => LabelKind::Hierarchical,
+                    NativeLabelKindArg::Power => LabelKind::Power,
+                };
+                let report = place_native_project_label(
+                    &path,
+                    sheet,
+                    name,
+                    kind,
+                    eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_label_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::RenameLabel { path, label, name } => {
+                let report = rename_native_project_label(&path, label, name)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_label_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::DeleteLabel { path, label } => {
+                let report = delete_native_project_label(&path, label)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_label_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::DrawWire {
+                path,
+                sheet,
+                from_x_nm,
+                from_y_nm,
+                to_x_nm,
+                to_y_nm,
+            } => {
+                let report = draw_native_project_wire(
+                    &path,
+                    sheet,
+                    eda_engine::ir::geometry::Point {
+                        x: from_x_nm,
+                        y: from_y_nm,
+                    },
+                    eda_engine::ir::geometry::Point {
+                        x: to_x_nm,
+                        y: to_y_nm,
+                    },
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_wire_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::DeleteWire { path, wire } => {
+                let report = delete_native_project_wire(&path, wire)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_wire_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::PlaceJunction { path, sheet, x_nm, y_nm } => {
+                let report = place_native_project_junction(
+                    &path,
+                    sheet,
+                    eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_junction_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::DeleteJunction { path, junction } => {
+                let report = delete_native_project_junction(&path, junction)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_junction_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::PlacePort {
+                path,
+                sheet,
+                name,
+                direction,
+                x_nm,
+                y_nm,
+            } => {
+                let direction = match direction {
+                    NativePortDirectionArg::Input => PortDirection::Input,
+                    NativePortDirectionArg::Output => PortDirection::Output,
+                    NativePortDirectionArg::Bidirectional => PortDirection::Bidirectional,
+                    NativePortDirectionArg::Passive => PortDirection::Passive,
+                };
+                let report = place_native_project_port(
+                    &path,
+                    sheet,
+                    name,
+                    direction,
+                    eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_port_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::EditPort {
+                path,
+                port,
+                name,
+                direction,
+                x_nm,
+                y_nm,
+            } => {
+                let direction = direction.map(|value| match value {
+                    NativePortDirectionArg::Input => PortDirection::Input,
+                    NativePortDirectionArg::Output => PortDirection::Output,
+                    NativePortDirectionArg::Bidirectional => PortDirection::Bidirectional,
+                    NativePortDirectionArg::Passive => PortDirection::Passive,
+                });
+                let report = edit_native_project_port(&path, port, name, direction, x_nm, y_nm)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_port_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::DeletePort { path, port } => {
+                let report = delete_native_project_port(&path, port)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_port_mutation_text(&report),
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))

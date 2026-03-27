@@ -396,16 +396,18 @@ Item 8 reconciliation notes (2026-03-25):
 
 | Criterion | Status | Notes |
 |-----------|--------|-------|
-| Native file format | [~] | Current M4 CLI slice supports deterministic scaffold creation plus scaffold inspection: `project new <dir> [--name]` writes versioned native `project.json`, `schematic/schematic.json`, `board/board.json`, and `rules/rules.json`, while `project inspect <dir>` resolves and validates that layout and reports current schema/UUID/path/count summary; focused CLI tests prove idempotent rewrite and inspect-path correctness for the existing scaffold |
-| Schematic operations (30 ops) | [ ] | Spec in specs/SCHEMATIC_EDITOR_SPEC.md |
-| Board operations (6 ops) | [ ] | |
-| Forward annotation (ECO) | [ ] | |
+| Native format | [~] | Current M4 CLI slice supports deterministic scaffold creation, scaffold inspection, and first native read/query surface: `project new <dir> [--name]` writes versioned native `project.json`, `schematic/schematic.json`, `board/board.json`, and `rules/rules.json`; `project inspect <dir>` validates the resolved file layout; `project query <dir> summary` and `project query <dir> design-rules` read the native scaffold directly and report aggregated native schematic/board/rule state; focused CLI tests prove idempotent rewrite, inspect-path correctness, referenced-sheet summary counts, and native rules payload reporting |
+| Schematic operations | [~] | Four native authored schematic object families now have focused coverage: labels (`project place-label <dir> --sheet <uuid> --name <text> [--kind local|global|hierarchical|power] --x-nm <i64> --y-nm <i64>`, `project rename-label <dir> --label <uuid> --name <text>`, `project delete-label <dir> --label <uuid>`), wires (`project draw-wire <dir> --sheet <uuid> --from-x-nm <i64> --from-y-nm <i64> --to-x-nm <i64> --to-y-nm <i64>`, `project delete-wire <dir> --wire <uuid>`), junctions (`project place-junction <dir> --sheet <uuid> --x-nm <i64> --y-nm <i64>`, `project delete-junction <dir> --junction <uuid>`), and hierarchical ports (`project place-port <dir> --sheet <uuid> --name <text> --direction <input|output|bidirectional|passive> --x-nm <i64> --y-nm <i64>`, `project edit-port <dir> --port <uuid> [--name <text>] [--direction ...] [--x-nm <i64>] [--y-nm <i64>]`, `project delete-port <dir> --port <uuid>`); `project query <dir> labels`, `project query <dir> wires`, `project query <dir> junctions`, `project query <dir> ports`, and `project query <dir> summary` verify the persisted results through the native read surface |
+| Board operations | [ ] | |
+| Schematic query parity | [~] | Native CLI read/query currently covers labels, hierarchy ports, wires, junctions, summary aggregation, and design-rules inspection; buses, bus entries, no-connects, and full engine/daemon/MCP/CLI parity for all required schematic topology queries remain open |
+| Forward annotation | [ ] | |
 | Gerber export | [ ] | `export/mod.rs` empty |
 | Drill export | [ ] | |
 | BOM export | [ ] | |
 | PnP export | [ ] | |
+| Gerber comparison | [ ] | |
 
-**M4 overall**: [~] Native-project persistence now has deterministic scaffold creation plus a minimal read/inspect surface; authoring operations, ECO, and manufacturing exports remain open
+**M4 overall**: [~] Native-project persistence now has deterministic scaffold creation, minimal native inspect/query surfaces, and focused authored coverage for labels, wires, junctions, and hierarchical ports; most schematic ops, all board authoring ops, ECO, and manufacturing exports remain open
 
 ---
 

@@ -72,6 +72,16 @@ mod main_tests_import_plan;
 mod main_tests_project_new;
 #[path = "main_tests_project_inspect.rs"]
 mod main_tests_project_inspect;
+#[path = "main_tests_project_query.rs"]
+mod main_tests_project_query;
+#[path = "main_tests_project_label.rs"]
+mod main_tests_project_label;
+#[path = "main_tests_project_wire.rs"]
+mod main_tests_project_wire;
+#[path = "main_tests_project_junction.rs"]
+mod main_tests_project_junction;
+#[path = "main_tests_project_port.rs"]
+mod main_tests_project_port;
 #[path = "main_tests_plan_apply.rs"]
 mod main_tests_plan_apply;
 #[path = "main_tests_plan_apply_validate.rs"]

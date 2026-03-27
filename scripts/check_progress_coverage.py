@@ -75,6 +75,75 @@ def markdown_overall_status(text: str, label: str) -> tuple[str, str] | None:
     return match.group(1), match.group(2)
 
 
+def parse_markdown_table_first_column(text: str, section_heading: str) -> list[str]:
+    section_match = re.search(
+        rf"^## {re.escape(section_heading)}\n(.*?)(?=^## |\Z)",
+        text,
+        flags=re.S | re.M,
+    )
+    if not section_match:
+        return []
+    section = section_match.group(1)
+
+    table_match = re.search(
+        r"^\|[^\n]*\|\n^\|[-| :]+\|\n(.*?)(?=\n\n|\Z)",
+        section,
+        flags=re.S | re.M,
+    )
+    if not table_match:
+        return []
+
+    rows = []
+    for line in table_match.group(1).splitlines():
+        if not line.startswith("|"):
+            continue
+        cols = [c.strip() for c in line.strip().strip("|").split("|")]
+        if cols and cols[0]:
+            rows.append(cols[0])
+    return rows
+
+
+def parse_program_m4_gate_names(program_text: str) -> list[str]:
+    match = re.search(
+        r"### M4:.*?\n\n\| Criterion \| Threshold \|\n\|[-| ]+\n(.*?)\n\n\*\*Non-goals for M4",
+        program_text,
+        flags=re.S,
+    )
+    if not match:
+        return []
+    names: list[str] = []
+    for line in match.group(1).splitlines():
+        if not line.startswith("|"):
+            continue
+        cols = [c.strip() for c in line.strip().strip("|").split("|")]
+        if cols and cols[0] and cols[0] != "Criterion":
+            names.append(cols[0])
+    return names
+
+
+def parse_integrated_m4_gate_names(integrated_text: str) -> list[str]:
+    match = re.search(
+        r"\| M4 Gate \(`specs/PROGRAM_SPEC\.md`\) \| Evidence Type \| Required Evidence Hook \|\n"
+        r"\|[-| ]+\n(.*?)\n\n### 13\.1",
+        integrated_text,
+        flags=re.S,
+    )
+    if not match:
+        return []
+    names: list[str] = []
+    for line in match.group(1).splitlines():
+        if not line.startswith("|"):
+            continue
+        cols = [c.strip() for c in line.strip().strip("|").split("|")]
+        if cols and cols[0] and not cols[0].startswith("M4 Gate"):
+            names.append(cols[0])
+    return names
+
+
+def parse_progress_m4_gate_names(progress_text: str) -> list[str]:
+    return parse_markdown_table_first_column(progress_text, "PROGRAM_SPEC.md — M4 Exit Criteria")
+
+
 def check_single_status_authority(
     plan_text: str, program_text: str, integrated_text: str, failures: list[str]
 ) -> None:
@@ -187,6 +256,33 @@ def check_r1_g0_gate(progress_text: str, failures: list[str]) -> None:
             )
 
 
+def check_m4_gate_parity(program_text: str, integrated_text: str, progress_text: str, failures: list[str]) -> None:
+    program_gates = parse_program_m4_gate_names(program_text)
+    integrated_gates = parse_integrated_m4_gate_names(integrated_text)
+    progress_gates = parse_progress_m4_gate_names(progress_text)
+
+    if not program_gates:
+        failures.append("specs/PROGRAM_SPEC.md: unable to parse M4 gate table")
+        return
+    if not integrated_gates:
+        failures.append("specs/INTEGRATED_PROGRAM_SPEC.md: unable to parse M4 acceptance table")
+        return
+    if not progress_gates:
+        failures.append("specs/PROGRESS.md: unable to parse M4 exit-criteria table")
+        return
+
+    if integrated_gates != program_gates:
+        failures.append(
+            "M4 gate-name mismatch (PROGRAM_SPEC vs INTEGRATED): "
+            f"program={program_gates} integrated={integrated_gates}"
+        )
+    if progress_gates != program_gates:
+        failures.append(
+            "M4 gate-name mismatch (PROGRAM_SPEC vs PROGRESS): "
+            f"program={program_gates} progress={progress_gates}"
+        )
+
+
 def check_mcp_contract_parity(mcp_text: str, failures: list[str]) -> None:
     daemon_methods = parse_daemon_methods()
     tool_methods = parse_tool_catalog_methods()
@@ -233,6 +329,7 @@ def main() -> int:
     check_progress_sections(progress_text, failures)
     check_infrastructure_rows(progress_text, failures)
     check_r1_g0_gate(progress_text, failures)
+    check_m4_gate_parity(program_text, integrated_text, progress_text, failures)
     check_mcp_contract_parity(mcp_text, failures)
 
     if failures:

@@ -119,6 +119,108 @@ struct NativeProjectInspectReportView {
     rule_count: usize,
 }
 
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectSummaryView {
+    domain: &'static str,
+    project_name: String,
+    schema_version: u32,
+    pools: usize,
+    schematic: NativeProjectSchematicSummaryView,
+    board: NativeProjectBoardSummaryView,
+    rules: NativeProjectRulesSummaryView,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectSchematicSummaryView {
+    sheets: usize,
+    sheet_definitions: usize,
+    sheet_instances: usize,
+    variants: usize,
+    symbols: usize,
+    wires: usize,
+    junctions: usize,
+    labels: usize,
+    ports: usize,
+    buses: usize,
+    bus_entries: usize,
+    noconnects: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectBoardSummaryView {
+    name: String,
+    layers: usize,
+    components: usize,
+    nets: usize,
+    tracks: usize,
+    vias: usize,
+    zones: usize,
+    keepouts: usize,
+    texts: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectRulesSummaryView {
+    count: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectRulesView {
+    domain: &'static str,
+    count: usize,
+    rules: Vec<serde_json::Value>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectLabelMutationReportView {
+    action: String,
+    project_root: String,
+    sheet_uuid: String,
+    sheet_path: String,
+    label_uuid: String,
+    name: String,
+    kind: String,
+    x_nm: i64,
+    y_nm: i64,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectWireMutationReportView {
+    action: String,
+    project_root: String,
+    sheet_uuid: String,
+    sheet_path: String,
+    wire_uuid: String,
+    from_x_nm: i64,
+    from_y_nm: i64,
+    to_x_nm: i64,
+    to_y_nm: i64,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectJunctionMutationReportView {
+    action: String,
+    project_root: String,
+    sheet_uuid: String,
+    sheet_path: String,
+    junction_uuid: String,
+    x_nm: i64,
+    y_nm: i64,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectPortMutationReportView {
+    action: String,
+    project_root: String,
+    sheet_uuid: String,
+    sheet_path: String,
+    port_uuid: String,
+    name: String,
+    direction: String,
+    x_nm: i64,
+    y_nm: i64,
+}
+
 fn render_native_project_create_report_text(report: &NativeProjectCreateReportView) -> String {
     let mut lines = vec![
         format!("project_root: {}", report.project_root),
@@ -158,6 +260,118 @@ fn render_native_project_inspect_report_text(report: &NativeProjectInspectReport
         format!("board_via_count: {}", report.board_via_count),
         format!("board_zone_count: {}", report.board_zone_count),
         format!("rule_count: {}", report.rule_count),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_summary_text(report: &NativeProjectSummaryView) -> String {
+    [
+        format!("project_name: {}", report.project_name),
+        format!("schema_version: {}", report.schema_version),
+        format!("pools: {}", report.pools),
+        format!("schematic_sheets: {}", report.schematic.sheets),
+        format!(
+            "schematic_sheet_definitions: {}",
+            report.schematic.sheet_definitions
+        ),
+        format!(
+            "schematic_sheet_instances: {}",
+            report.schematic.sheet_instances
+        ),
+        format!("schematic_variants: {}", report.schematic.variants),
+        format!("schematic_symbols: {}", report.schematic.symbols),
+        format!("schematic_wires: {}", report.schematic.wires),
+        format!("schematic_junctions: {}", report.schematic.junctions),
+        format!("schematic_labels: {}", report.schematic.labels),
+        format!("schematic_ports: {}", report.schematic.ports),
+        format!("schematic_buses: {}", report.schematic.buses),
+        format!("schematic_bus_entries: {}", report.schematic.bus_entries),
+        format!("schematic_noconnects: {}", report.schematic.noconnects),
+        format!("board_name: {}", report.board.name),
+        format!("board_layers: {}", report.board.layers),
+        format!("board_components: {}", report.board.components),
+        format!("board_nets: {}", report.board.nets),
+        format!("board_tracks: {}", report.board.tracks),
+        format!("board_vias: {}", report.board.vias),
+        format!("board_zones: {}", report.board.zones),
+        format!("board_keepouts: {}", report.board.keepouts),
+        format!("board_texts: {}", report.board.texts),
+        format!("rule_count: {}", report.rules.count),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_rules_text(report: &NativeProjectRulesView) -> String {
+    let mut lines = vec![format!("rule_count: {}", report.count)];
+    if !report.rules.is_empty() {
+        lines.push("rules:".to_string());
+        for rule in &report.rules {
+            lines.push(format!(
+                "  {}",
+                serde_json::to_string(rule)
+                    .expect("CLI text formatting rule serialization must succeed")
+            ));
+        }
+    }
+    lines.join("\n")
+}
+
+fn render_native_project_label_mutation_text(report: &NativeProjectLabelMutationReportView) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("sheet_uuid: {}", report.sheet_uuid),
+        format!("sheet_path: {}", report.sheet_path),
+        format!("label_uuid: {}", report.label_uuid),
+        format!("name: {}", report.name),
+        format!("kind: {}", report.kind),
+        format!("x_nm: {}", report.x_nm),
+        format!("y_nm: {}", report.y_nm),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_wire_mutation_text(report: &NativeProjectWireMutationReportView) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("sheet_uuid: {}", report.sheet_uuid),
+        format!("sheet_path: {}", report.sheet_path),
+        format!("wire_uuid: {}", report.wire_uuid),
+        format!("from_x_nm: {}", report.from_x_nm),
+        format!("from_y_nm: {}", report.from_y_nm),
+        format!("to_x_nm: {}", report.to_x_nm),
+        format!("to_y_nm: {}", report.to_y_nm),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_junction_mutation_text(
+    report: &NativeProjectJunctionMutationReportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("sheet_uuid: {}", report.sheet_uuid),
+        format!("sheet_path: {}", report.sheet_path),
+        format!("junction_uuid: {}", report.junction_uuid),
+        format!("x_nm: {}", report.x_nm),
+        format!("y_nm: {}", report.y_nm),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_port_mutation_text(report: &NativeProjectPortMutationReportView) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("sheet_uuid: {}", report.sheet_uuid),
+        format!("sheet_path: {}", report.sheet_path),
+        format!("port_uuid: {}", report.port_uuid),
+        format!("name: {}", report.name),
+        format!("direction: {}", report.direction),
+        format!("x_nm: {}", report.x_nm),
+        format!("y_nm: {}", report.y_nm),
     ]
     .join("\n")
 }

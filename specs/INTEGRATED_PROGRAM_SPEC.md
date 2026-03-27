@@ -270,6 +270,10 @@ A defer is invalid unless it appears in both:
 ## 12. M3 Acceptance Table (Gate-to-Evidence Mapping)
 
 This table is the controlling acceptance map for `M3` integrated review.
+Documentation-parity note:
+- This section normalizes gate naming to `specs/PROGRAM_SPEC.md` only.
+- It does not reopen `M3` implementation scope or alter `M3 overall` status in
+  `specs/PROGRESS.md`.
 Primary executable hook:
 `cargo run -p eda-test-harness --bin m3_acceptance_gate -- --json`  
 Current behavior: returns structured `passed` status only when the current
@@ -308,12 +312,12 @@ slice and should fail if current write-surface parity regresses.
 
 | M3 Gate (`specs/PROGRAM_SPEC.md`) | Evidence Type | Required Evidence Hook |
 |-----------------------------------|---------------|------------------------|
-| Operations implemented (18 listed ops) | Automated | Engine operation API tests + MCP write method tests covering each listed op |
-| Undo/redo 100% undoable | Automated | Transaction replay/undo test suite with per-operation round-trip assertions |
+| Operations implemented | Automated | Engine operation API tests + MCP write method tests covering each listed op |
+| Undo/redo | Automated | Transaction replay/undo test suite with per-operation round-trip assertions |
 | Operation determinism | Automated | Determinism harness: same op sequence on same input yields byte-identical save |
 | KiCad write-back | Automated + manual spot-check | import→modify→save→reimport tests; open output in KiCad without load errors |
-| Round-trip fidelity (unmodified objects) | Automated | Golden diff tests for unchanged objects across write-back |
-| MCP write tools parity | Automated | Daemon + MCP tests for `move_component`, `rotate_component`, `set_value`, `set_reference`, `assign_part`, `set_package`, `set_package_with_part`, `replace_component`, `replace_components`, `apply_component_replacement_plan`, `apply_component_replacement_policy`, `apply_scoped_component_replacement_policy`, `apply_scoped_component_replacement_plan`, `set_net_class`, `delete_component`, `set_design_rule`, `delete_track`, `delete_via`, `undo`, `redo`, `save` |
+| Round-trip fidelity | Automated | Golden diff tests for unchanged objects across write-back |
+| MCP write tools | Automated | Daemon + MCP tests for `move_component`, `rotate_component`, `set_value`, `set_reference`, `assign_part`, `set_package`, `set_package_with_part`, `replace_component`, `replace_components`, `apply_component_replacement_plan`, `apply_component_replacement_policy`, `apply_scoped_component_replacement_policy`, `apply_scoped_component_replacement_plan`, `set_net_class`, `delete_component`, `set_design_rule`, `delete_track`, `delete_via`, `undo`, `redo`, `save` |
 | Derived data update | Automated | Post-op connectivity/airwire/DRC recompute assertions |
 | CLI modify command | Automated | CLI integration tests for `tool modify ...` with exit semantics |
 
@@ -327,16 +331,16 @@ R1 dependency rule:
 
 | M4 Gate (`specs/PROGRAM_SPEC.md`) | Evidence Type | Required Evidence Hook |
 |-----------------------------------|---------------|------------------------|
-| Native format (JSON, schema, versioned) | Automated | Native save/load/save byte-stability tests + schema version migration tests |
-| Schematic operations (full listed set) | Automated | Operation acceptance tests for all required schematic operations from `specs/SCHEMATIC_EDITOR_SPEC.md` |
-| Board operations (6 listed ops) | Automated | Operation acceptance tests for M4 board operation set |
+| Native format | Automated | Native save/load/save byte-stability tests + schema version migration tests |
+| Schematic operations | Automated | Operation acceptance tests for all required schematic operations from `specs/SCHEMATIC_EDITOR_SPEC.md` |
+| Board operations | Automated | Operation acceptance tests for M4 board operation set |
 | Schematic query parity | Automated | Engine/daemon/MCP/CLI parity tests for labels/buses/bus_entries/noconnects/hierarchy/fields |
-| Forward annotation (ECO review) | Automated + manual | ECO proposal generation tests + apply/reject flow tests with deterministic diff output |
+| Forward annotation | Automated + manual | ECO proposal generation tests + apply/reject flow tests with deterministic diff output |
 | Gerber export | Automated + manual | Export test fixtures + gerbv validation with zero warnings |
-| Drill export (Excellon) | Automated + manual | Export test fixtures + gerbv drill validation |
-| BOM export (CSV/JSON) | Automated | Format/schema tests + deterministic output tests |
-| PnP export (CSV) | Automated | Output schema and deterministic ordering tests |
-| Gerber comparison vs KiCad on DOA2526 | Automated + manual | Layer/alignment/aperture comparison script + manual visual diff audit |
+| Drill export | Automated + manual | Export test fixtures + gerbv drill validation |
+| BOM export | Automated | Format/schema tests + deterministic output tests |
+| PnP export | Automated | Output schema and deterministic ordering tests |
+| Gerber comparison | Automated + manual | Layer/alignment/aperture comparison script + manual visual diff audit |
 
 ### 13.1 Evidence Wiring Rule
 
