@@ -76,6 +76,12 @@ mod main_tests_project_inspect;
 mod main_tests_project_query;
 #[path = "main_tests_project_symbol.rs"]
 mod main_tests_project_symbol;
+#[path = "main_tests_project_symbol_semantics.rs"]
+mod main_tests_project_symbol_semantics;
+#[path = "main_tests_project_text.rs"]
+mod main_tests_project_text;
+#[path = "main_tests_project_drawing.rs"]
+mod main_tests_project_drawing;
 #[path = "main_tests_project_label.rs"]
 mod main_tests_project_label;
 #[path = "main_tests_project_wire.rs"]

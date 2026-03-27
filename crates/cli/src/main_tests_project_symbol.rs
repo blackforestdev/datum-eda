@@ -262,3 +262,306 @@ fn project_move_rotate_and_delete_symbol_update_native_query_surface() {
 
     let _ = std::fs::remove_dir_all(&root);
 }
+
+#[test]
+fn project_set_symbol_reference_and_value_update_native_query_surface() {
+    let root = unique_project_root("datum-eda-cli-project-symbol-annotation");
+    create_native_project(&root, Some("Symbol Annotation Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    let sheet_uuid = seed_native_sheet(&root);
+
+    let place_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "place-symbol",
+        root.to_str().unwrap(),
+        "--sheet",
+        &sheet_uuid.to_string(),
+        "--reference",
+        "U3",
+        "--value",
+        "OPA2134",
+        "--x-nm",
+        "15",
+        "--y-nm",
+        "25",
+    ])
+    .expect("CLI should parse");
+    let place_output = execute(place_cli).expect("project place-symbol should succeed");
+    let placed: serde_json::Value =
+        serde_json::from_str(&place_output).expect("place-symbol JSON should parse");
+    let symbol_uuid = placed["symbol_uuid"].as_str().unwrap().to_string();
+
+    let set_reference_cli = Cli::try_parse_from([
+        "eda",
+        "project",
+        "set-symbol-reference",
+        root.to_str().unwrap(),
+        "--symbol",
+        &symbol_uuid,
+        "--reference",
+        "U7",
+    ])
+    .expect("CLI should parse");
+    let set_reference_output =
+        execute(set_reference_cli).expect("project set-symbol-reference should succeed");
+    assert!(set_reference_output.contains("action: set_symbol_reference"));
+    assert!(set_reference_output.contains("reference: U7"));
+
+    let set_value_cli = Cli::try_parse_from([
+        "eda",
+        "project",
+        "set-symbol-value",
+        root.to_str().unwrap(),
+        "--symbol",
+        &symbol_uuid,
+        "--value",
+        "OPA1642",
+    ])
+    .expect("CLI should parse");
+    let set_value_output =
+        execute(set_value_cli).expect("project set-symbol-value should succeed");
+    assert!(set_value_output.contains("action: set_symbol_value"));
+    assert!(set_value_output.contains("value: OPA1642"));
+
+    let query_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "symbols",
+    ])
+    .expect("CLI should parse");
+    let symbols_output = execute(query_cli).expect("project query symbols should succeed");
+    let symbols: serde_json::Value =
+        serde_json::from_str(&symbols_output).expect("symbols JSON should parse");
+    assert_eq!(symbols.as_array().unwrap().len(), 1);
+    assert_eq!(symbols[0]["uuid"], symbol_uuid);
+    assert_eq!(symbols[0]["reference"], "U7");
+    assert_eq!(symbols[0]["value"], "OPA1642");
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_mirror_symbol_updates_native_query_surface() {
+    let root = unique_project_root("datum-eda-cli-project-symbol-mirror");
+    create_native_project(&root, Some("Symbol Mirror Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    let sheet_uuid = seed_native_sheet(&root);
+
+    let place_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "place-symbol",
+        root.to_str().unwrap(),
+        "--sheet",
+        &sheet_uuid.to_string(),
+        "--reference",
+        "U9",
+        "--value",
+        "TL072",
+        "--x-nm",
+        "12",
+        "--y-nm",
+        "34",
+    ])
+    .expect("CLI should parse");
+    let place_output = execute(place_cli).expect("project place-symbol should succeed");
+    let placed: serde_json::Value =
+        serde_json::from_str(&place_output).expect("place-symbol JSON should parse");
+    let symbol_uuid = placed["symbol_uuid"].as_str().unwrap().to_string();
+    assert_eq!(placed["mirrored"], false);
+
+    let mirror_cli = Cli::try_parse_from([
+        "eda",
+        "project",
+        "mirror-symbol",
+        root.to_str().unwrap(),
+        "--symbol",
+        &symbol_uuid,
+    ])
+    .expect("CLI should parse");
+    let mirror_output = execute(mirror_cli).expect("project mirror-symbol should succeed");
+    assert!(mirror_output.contains("action: mirror_symbol"));
+    assert!(mirror_output.contains("mirrored: true"));
+
+    let query_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "symbols",
+    ])
+    .expect("CLI should parse");
+    let symbols_output = execute(query_cli).expect("project query symbols should succeed");
+    let symbols: serde_json::Value =
+        serde_json::from_str(&symbols_output).expect("symbols JSON should parse");
+    assert_eq!(symbols.as_array().unwrap().len(), 1);
+    assert_eq!(symbols[0]["uuid"], symbol_uuid);
+    assert_eq!(symbols[0]["mirrored"], true);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_add_edit_and_delete_symbol_field_updates_native_query_surface() {
+    let root = unique_project_root("datum-eda-cli-project-symbol-field");
+    create_native_project(&root, Some("Symbol Field Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    let sheet_uuid = seed_native_sheet(&root);
+
+    let place_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "place-symbol",
+        root.to_str().unwrap(),
+        "--sheet",
+        &sheet_uuid.to_string(),
+        "--reference",
+        "U2",
+        "--value",
+        "NE5532",
+        "--x-nm",
+        "50",
+        "--y-nm",
+        "60",
+    ])
+    .expect("CLI should parse");
+    let place_output = execute(place_cli).expect("project place-symbol should succeed");
+    let placed: serde_json::Value =
+        serde_json::from_str(&place_output).expect("place-symbol JSON should parse");
+    let symbol_uuid = placed["symbol_uuid"].as_str().unwrap().to_string();
+
+    let add_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "add-symbol-field",
+        root.to_str().unwrap(),
+        "--symbol",
+        &symbol_uuid,
+        "--key",
+        "Footprint",
+        "--value",
+        "Package_SO:SOIC-8",
+        "--hidden",
+        "--x-nm",
+        "500",
+        "--y-nm",
+        "600",
+    ])
+    .expect("CLI should parse");
+    let add_output = execute(add_cli).expect("project add-symbol-field should succeed");
+    let added: serde_json::Value =
+        serde_json::from_str(&add_output).expect("add-symbol-field JSON should parse");
+    let field_uuid = added["field_uuid"].as_str().unwrap().to_string();
+    assert_eq!(added["key"], "Footprint");
+    assert_eq!(added["value"], "Package_SO:SOIC-8");
+    assert_eq!(added["visible"], false);
+    assert_eq!(added["x_nm"], 500);
+    assert_eq!(added["y_nm"], 600);
+
+    let query_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "symbol-fields",
+        "--symbol",
+        &symbol_uuid,
+    ])
+    .expect("CLI should parse");
+    let fields_output = execute(query_cli).expect("project query symbol-fields should succeed");
+    let fields: serde_json::Value =
+        serde_json::from_str(&fields_output).expect("symbol-fields JSON should parse");
+    assert_eq!(fields.as_array().unwrap().len(), 1);
+    assert_eq!(fields[0]["uuid"], field_uuid);
+    assert_eq!(fields[0]["symbol"], symbol_uuid);
+    assert_eq!(fields[0]["key"], "Footprint");
+    assert_eq!(fields[0]["value"], "Package_SO:SOIC-8");
+    assert_eq!(fields[0]["visible"], false);
+    assert_eq!(fields[0]["position"]["x"], 500);
+    assert_eq!(fields[0]["position"]["y"], 600);
+
+    let edit_cli = Cli::try_parse_from([
+        "eda",
+        "project",
+        "edit-symbol-field",
+        root.to_str().unwrap(),
+        "--field",
+        &field_uuid,
+        "--value",
+        "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm",
+        "--visible",
+        "true",
+    ])
+    .expect("CLI should parse");
+    let edit_output = execute(edit_cli).expect("project edit-symbol-field should succeed");
+    assert!(edit_output.contains("action: edit_symbol_field"));
+    assert!(edit_output.contains("visible: true"));
+
+    let query_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "symbol-fields",
+        "--symbol",
+        &symbol_uuid,
+    ])
+    .expect("CLI should parse");
+    let fields_output = execute(query_cli).expect("project query symbol-fields should succeed");
+    let fields: serde_json::Value =
+        serde_json::from_str(&fields_output).expect("symbol-fields JSON should parse");
+    assert_eq!(fields.as_array().unwrap().len(), 1);
+    assert_eq!(fields[0]["value"], "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm");
+    assert_eq!(fields[0]["visible"], true);
+
+    let delete_cli = Cli::try_parse_from([
+        "eda",
+        "project",
+        "delete-symbol-field",
+        root.to_str().unwrap(),
+        "--field",
+        &field_uuid,
+    ])
+    .expect("CLI should parse");
+    let delete_output = execute(delete_cli).expect("project delete-symbol-field should succeed");
+    assert!(delete_output.contains("action: delete_symbol_field"));
+    assert!(delete_output.contains("key: Footprint"));
+
+    let query_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "symbol-fields",
+        "--symbol",
+        &symbol_uuid,
+    ])
+    .expect("CLI should parse");
+    let fields_output = execute(query_cli).expect("project query symbol-fields should succeed");
+    let fields: serde_json::Value =
+        serde_json::from_str(&fields_output).expect("symbol-fields JSON should parse");
+    assert_eq!(fields.as_array().unwrap().len(), 0);
+
+    let _ = std::fs::remove_dir_all(&root);
+}

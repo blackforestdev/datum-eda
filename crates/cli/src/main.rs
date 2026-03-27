@@ -144,6 +144,8 @@ struct NativeProjectSchematicSummaryView {
     buses: usize,
     bus_entries: usize,
     noconnects: usize,
+    texts: usize,
+    drawings: usize,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -272,6 +274,87 @@ struct NativeProjectSymbolMutationReportView {
     y_nm: i64,
     rotation_deg: i32,
     mirrored: bool,
+    gate_uuid: Option<String>,
+    unit_selection: Option<String>,
+    display_mode: String,
+    hidden_power_behavior: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectSymbolFieldMutationReportView {
+    action: String,
+    project_root: String,
+    sheet_uuid: String,
+    sheet_path: String,
+    symbol_uuid: String,
+    field_uuid: String,
+    key: String,
+    value: String,
+    visible: bool,
+    x_nm: Option<i64>,
+    y_nm: Option<i64>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectSymbolSemanticsView {
+    symbol_uuid: String,
+    gate_uuid: Option<String>,
+    unit_selection: Option<String>,
+    hidden_power_behavior: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectSymbolPinInfoView {
+    symbol_uuid: String,
+    pin_uuid: String,
+    number: String,
+    name: String,
+    electrical_type: String,
+    x_nm: i64,
+    y_nm: i64,
+    visible_override: Option<bool>,
+    override_x_nm: Option<i64>,
+    override_y_nm: Option<i64>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectPinOverrideMutationReportView {
+    action: String,
+    project_root: String,
+    sheet_uuid: String,
+    sheet_path: String,
+    symbol_uuid: String,
+    pin_uuid: String,
+    visible: Option<bool>,
+    x_nm: Option<i64>,
+    y_nm: Option<i64>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectTextMutationReportView {
+    action: String,
+    project_root: String,
+    sheet_uuid: String,
+    sheet_path: String,
+    text_uuid: String,
+    text: String,
+    x_nm: i64,
+    y_nm: i64,
+    rotation_deg: i32,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectDrawingMutationReportView {
+    action: String,
+    project_root: String,
+    sheet_uuid: String,
+    sheet_path: String,
+    drawing_uuid: String,
+    kind: String,
+    from_x_nm: i64,
+    from_y_nm: i64,
+    to_x_nm: i64,
+    to_y_nm: i64,
 }
 
 fn render_native_project_create_report_text(report: &NativeProjectCreateReportView) -> String {
@@ -340,6 +423,8 @@ fn render_native_project_summary_text(report: &NativeProjectSummaryView) -> Stri
         format!("schematic_buses: {}", report.schematic.buses),
         format!("schematic_bus_entries: {}", report.schematic.bus_entries),
         format!("schematic_noconnects: {}", report.schematic.noconnects),
+        format!("schematic_texts: {}", report.schematic.texts),
+        format!("schematic_drawings: {}", report.schematic.drawings),
         format!("board_name: {}", report.board.name),
         format!("board_layers: {}", report.board.layers),
         format!("board_components: {}", report.board.components),
@@ -500,7 +585,97 @@ fn render_native_project_symbol_mutation_text(report: &NativeProjectSymbolMutati
     if let Some(lib_id) = &report.lib_id {
         lines.push(format!("lib_id: {}", lib_id));
     }
+    if let Some(gate_uuid) = &report.gate_uuid {
+        lines.push(format!("gate_uuid: {}", gate_uuid));
+    }
+    if let Some(unit_selection) = &report.unit_selection {
+        lines.push(format!("unit_selection: {}", unit_selection));
+    }
+    lines.push(format!("display_mode: {}", report.display_mode));
+    lines.push(format!(
+        "hidden_power_behavior: {}",
+        report.hidden_power_behavior
+    ));
     lines.join("\n")
+}
+
+fn render_native_project_pin_override_mutation_text(
+    report: &NativeProjectPinOverrideMutationReportView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("sheet_uuid: {}", report.sheet_uuid),
+        format!("sheet_path: {}", report.sheet_path),
+        format!("symbol_uuid: {}", report.symbol_uuid),
+        format!("pin_uuid: {}", report.pin_uuid),
+    ];
+    if let Some(visible) = report.visible {
+        lines.push(format!("visible: {}", visible));
+    }
+    if let Some(x_nm) = report.x_nm {
+        lines.push(format!("x_nm: {}", x_nm));
+    }
+    if let Some(y_nm) = report.y_nm {
+        lines.push(format!("y_nm: {}", y_nm));
+    }
+    lines.join("\n")
+}
+
+fn render_native_project_symbol_field_mutation_text(
+    report: &NativeProjectSymbolFieldMutationReportView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("sheet_uuid: {}", report.sheet_uuid),
+        format!("sheet_path: {}", report.sheet_path),
+        format!("symbol_uuid: {}", report.symbol_uuid),
+        format!("field_uuid: {}", report.field_uuid),
+        format!("key: {}", report.key),
+        format!("value: {}", report.value),
+        format!("visible: {}", report.visible),
+    ];
+    if let Some(x_nm) = report.x_nm {
+        lines.push(format!("x_nm: {}", x_nm));
+    }
+    if let Some(y_nm) = report.y_nm {
+        lines.push(format!("y_nm: {}", y_nm));
+    }
+    lines.join("\n")
+}
+
+fn render_native_project_text_mutation_text(report: &NativeProjectTextMutationReportView) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("sheet_uuid: {}", report.sheet_uuid),
+        format!("sheet_path: {}", report.sheet_path),
+        format!("text_uuid: {}", report.text_uuid),
+        format!("text: {}", report.text),
+        format!("x_nm: {}", report.x_nm),
+        format!("y_nm: {}", report.y_nm),
+        format!("rotation_deg: {}", report.rotation_deg),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_drawing_mutation_text(
+    report: &NativeProjectDrawingMutationReportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("sheet_uuid: {}", report.sheet_uuid),
+        format!("sheet_path: {}", report.sheet_path),
+        format!("drawing_uuid: {}", report.drawing_uuid),
+        format!("kind: {}", report.kind),
+        format!("from_x_nm: {}", report.from_x_nm),
+        format!("from_y_nm: {}", report.from_y_nm),
+        format!("to_x_nm: {}", report.to_x_nm),
+        format!("to_y_nm: {}", report.to_y_nm),
+    ]
+    .join("\n")
 }
 
 fn render_modify_report_text(report: &ModifyReportView) -> String {

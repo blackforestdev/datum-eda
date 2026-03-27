@@ -163,8 +163,39 @@ Current live slice:
 - `eda project place-symbol <dir> --sheet <uuid> --reference <text> --value <text> [--lib-id <text>] --x-nm <i64> --y-nm <i64> [--rotation-deg <i32>] [--mirrored]` places a native schematic symbol into a referenced sheet file.
 - `eda project move-symbol <dir> --symbol <uuid> --x-nm <i64> --y-nm <i64>` repositions an existing native schematic symbol.
 - `eda project rotate-symbol <dir> --symbol <uuid> --rotation-deg <i32>` updates the stored rotation for an existing native schematic symbol.
+- `eda project mirror-symbol <dir> --symbol <uuid>` toggles the stored mirrored state for an existing native schematic symbol.
 - `eda project delete-symbol <dir> --symbol <uuid>` removes an existing native schematic symbol.
+- `eda project set-symbol-reference <dir> --symbol <uuid> --reference <text>` updates the stored reference designator for an existing native schematic symbol.
+- `eda project set-symbol-value <dir> --symbol <uuid> --value <text>` updates the stored value text for an existing native schematic symbol.
+- `eda project set-symbol-unit <dir> --symbol <uuid> --unit <text>` records the current native unit-selection token for an existing schematic symbol.
+- `eda project clear-symbol-unit <dir> --symbol <uuid>` clears the stored native unit-selection token for an existing schematic symbol.
+- `eda project set-symbol-gate <dir> --symbol <uuid> --gate <uuid>` records the current native gate-selection UUID for an existing schematic symbol.
+- `eda project clear-symbol-gate <dir> --symbol <uuid>` clears the stored native gate-selection UUID for an existing schematic symbol.
+- `eda project set-symbol-display-mode <dir> --symbol <uuid> --mode <library-default|show-hidden-pins|hide-optional-pins>` updates the stored native symbol display mode.
+- `eda project set-symbol-hidden-power-behavior <dir> --symbol <uuid> --behavior <source-defined-implicit|explicit-power-object|preserved-as-imported-metadata>` updates the stored native hidden-power handling mode for an existing symbol.
+- `eda project set-pin-override <dir> --symbol <uuid> --pin <uuid> --visible <true|false> [--x-nm <i64> --y-nm <i64>]` updates one stored per-pin display override on a native symbol.
+- `eda project clear-pin-override <dir> --symbol <uuid> --pin <uuid>` removes one stored per-pin display override from a native symbol.
+- `eda project add-symbol-field <dir> --symbol <uuid> --key <text> --value <text> [--hidden] [--x-nm <i64> --y-nm <i64>]` adds a native symbol field.
+- `eda project edit-symbol-field <dir> --field <uuid> [--key <text>] [--value <text>] [--visible <true|false>] [--x-nm <i64> --y-nm <i64>]` edits an existing native symbol field.
+- `eda project delete-symbol-field <dir> --field <uuid>` removes an existing native symbol field.
 - `eda project query <dir> symbols` reports the current native symbol inventory from referenced sheet files.
+- `eda project query <dir> symbol-fields --symbol <uuid>` reports the current field list for one native symbol.
+- `eda project query <dir> symbol-semantics --symbol <uuid>` reports the current native gate/unit selection state for one native symbol.
+- `eda project query <dir> symbol-pins --symbol <uuid>` reports the stored pin list and any per-pin override state for one native symbol.
+- `eda project place-text <dir> --sheet <uuid> --text <text> --x-nm <i64> --y-nm <i64> [--rotation-deg <i32>]` places a native schematic text object.
+- `eda project edit-text <dir> --text <uuid> [--value <text>] [--x-nm <i64> --y-nm <i64>] [--rotation-deg <i32>]` edits an existing native schematic text object.
+- `eda project delete-text <dir> --text <uuid>` removes an existing native schematic text object.
+- `eda project query <dir> texts` reports the current native text inventory from referenced sheet files.
+- `eda project place-drawing-line <dir> --sheet <uuid> --from-x-nm <i64> --from-y-nm <i64> --to-x-nm <i64> --to-y-nm <i64>` places a native schematic drawing line.
+- `eda project place-drawing-rect <dir> --sheet <uuid> --min-x-nm <i64> --min-y-nm <i64> --max-x-nm <i64> --max-y-nm <i64>` places a native schematic drawing rectangle.
+- `eda project place-drawing-circle <dir> --sheet <uuid> --center-x-nm <i64> --center-y-nm <i64> --radius-nm <i64>` places a native schematic drawing circle.
+- `eda project place-drawing-arc <dir> --sheet <uuid> --center-x-nm <i64> --center-y-nm <i64> --radius-nm <i64> --start-angle-mdeg <i64> --end-angle-mdeg <i64>` places a native schematic drawing arc.
+- `eda project edit-drawing-line <dir> --drawing <uuid> [--from-x-nm <i64> --from-y-nm <i64>] [--to-x-nm <i64> --to-y-nm <i64>]` edits an existing native schematic drawing line.
+- `eda project edit-drawing-rect <dir> --drawing <uuid> ...` edits an existing native schematic drawing rectangle.
+- `eda project edit-drawing-circle <dir> --drawing <uuid> ...` edits an existing native schematic drawing circle.
+- `eda project edit-drawing-arc <dir> --drawing <uuid> ...` edits an existing native schematic drawing arc.
+- `eda project delete-drawing <dir> --drawing <uuid>` removes an existing native schematic drawing primitive.
+- `eda project query <dir> drawings` reports the current native drawing inventory from referenced sheet files.
 - `eda project place-label <dir> --sheet <uuid> --name <text> --x-nm <i64> --y-nm <i64>` writes the first native authored schematic object into a referenced sheet file.
 - `eda project rename-label <dir> --label <uuid> --name <text>` renames an existing native schematic label.
 - `eda project delete-label <dir> --label <uuid>` removes an existing native schematic label.

@@ -72,7 +72,7 @@ pub(crate) enum Commands {
     /// Create and manage native projects
     Project {
         #[command(subcommand)]
-        action: ProjectCommands,
+        action: Box<ProjectCommands>,
     },
     /// Persist and reuse scoped replacement workflow artifacts
     Plan {
@@ -347,6 +347,14 @@ pub(crate) enum ProjectCommands {
         #[arg(long = "rotation-deg")]
         rotation_deg: i32,
     },
+    /// Mirror one schematic symbol in a native sheet file
+    MirrorSymbol {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+    },
     /// Delete one schematic symbol from a native sheet file
     DeleteSymbol {
         /// Project root directory
@@ -354,6 +362,389 @@ pub(crate) enum ProjectCommands {
         /// Symbol UUID
         #[arg(long)]
         symbol: Uuid,
+    },
+    /// Set one schematic symbol reference in a native sheet file
+    SetSymbolReference {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+        /// Replacement reference designator
+        #[arg(long)]
+        reference: String,
+    },
+    /// Set one schematic symbol value in a native sheet file
+    SetSymbolValue {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+        /// Replacement value text
+        #[arg(long)]
+        value: String,
+    },
+    /// Set one schematic symbol unit selection in a native sheet file
+    SetSymbolUnit {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+        /// Replacement unit selection token
+        #[arg(long = "unit")]
+        unit_selection: String,
+    },
+    /// Clear one schematic symbol unit selection in a native sheet file
+    ClearSymbolUnit {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+    },
+    /// Set one schematic symbol gate selection in a native sheet file
+    SetSymbolGate {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+        /// Gate UUID
+        #[arg(long = "gate")]
+        gate_uuid: Uuid,
+    },
+    /// Clear one schematic symbol gate selection in a native sheet file
+    ClearSymbolGate {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+    },
+    /// Set one schematic symbol display mode in a native sheet file
+    SetSymbolDisplayMode {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+        /// Replacement display mode
+        #[arg(long = "mode", value_enum)]
+        display_mode: NativeSymbolDisplayModeArg,
+    },
+    /// Set one per-pin display override in a native schematic symbol
+    SetPinOverride {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+        /// Pin UUID
+        #[arg(long = "pin")]
+        pin_uuid: Uuid,
+        /// Replacement visible state
+        #[arg(long, action = clap::ArgAction::Set)]
+        visible: bool,
+        /// Replacement pin X coordinate in nm
+        #[arg(long)]
+        x_nm: Option<i64>,
+        /// Replacement pin Y coordinate in nm
+        #[arg(long)]
+        y_nm: Option<i64>,
+    },
+    /// Clear one per-pin display override in a native schematic symbol
+    ClearPinOverride {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+        /// Pin UUID
+        #[arg(long = "pin")]
+        pin_uuid: Uuid,
+    },
+    /// Set one schematic symbol hidden-power behavior in a native sheet file
+    SetSymbolHiddenPowerBehavior {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+        /// Replacement hidden-power behavior
+        #[arg(long = "behavior", value_enum)]
+        hidden_power_behavior: NativeHiddenPowerBehaviorArg,
+    },
+    /// Add one field to a native schematic symbol
+    AddSymbolField {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+        /// Field key
+        #[arg(long)]
+        key: String,
+        /// Field value
+        #[arg(long)]
+        value: String,
+        /// Mark the field hidden instead of visible
+        #[arg(long, default_value_t = false)]
+        hidden: bool,
+        /// Optional field X coordinate in nm
+        #[arg(long)]
+        x_nm: Option<i64>,
+        /// Optional field Y coordinate in nm
+        #[arg(long)]
+        y_nm: Option<i64>,
+    },
+    /// Edit one field on a native schematic symbol
+    EditSymbolField {
+        /// Project root directory
+        path: PathBuf,
+        /// Field UUID
+        #[arg(long)]
+        field: Uuid,
+        /// Replacement field key
+        #[arg(long)]
+        key: Option<String>,
+        /// Replacement field value
+        #[arg(long)]
+        value: Option<String>,
+        /// Replacement visible state
+        #[arg(long)]
+        visible: Option<bool>,
+        /// Replacement field X coordinate in nm
+        #[arg(long)]
+        x_nm: Option<i64>,
+        /// Replacement field Y coordinate in nm
+        #[arg(long)]
+        y_nm: Option<i64>,
+    },
+    /// Delete one field from a native schematic symbol
+    DeleteSymbolField {
+        /// Project root directory
+        path: PathBuf,
+        /// Field UUID
+        #[arg(long)]
+        field: Uuid,
+    },
+    /// Place one schematic text object into an existing native sheet file
+    PlaceText {
+        /// Project root directory
+        path: PathBuf,
+        /// Target sheet UUID
+        #[arg(long)]
+        sheet: Uuid,
+        /// Text content
+        #[arg(long)]
+        text: String,
+        /// X coordinate in nm
+        #[arg(long)]
+        x_nm: i64,
+        /// Y coordinate in nm
+        #[arg(long)]
+        y_nm: i64,
+        /// Rotation in degrees
+        #[arg(long = "rotation-deg", default_value_t = 0)]
+        rotation_deg: i32,
+    },
+    /// Edit one schematic text object in a native sheet file
+    EditText {
+        /// Project root directory
+        path: PathBuf,
+        /// Text UUID
+        #[arg(long)]
+        text: Uuid,
+        /// Replacement text content
+        #[arg(long)]
+        value: Option<String>,
+        /// Replacement X coordinate in nm
+        #[arg(long)]
+        x_nm: Option<i64>,
+        /// Replacement Y coordinate in nm
+        #[arg(long)]
+        y_nm: Option<i64>,
+        /// Replacement rotation in degrees
+        #[arg(long = "rotation-deg")]
+        rotation_deg: Option<i32>,
+    },
+    /// Delete one schematic text object from a native sheet file
+    DeleteText {
+        /// Project root directory
+        path: PathBuf,
+        /// Text UUID
+        #[arg(long)]
+        text: Uuid,
+    },
+    /// Place one schematic drawing line into an existing native sheet file
+    PlaceDrawingLine {
+        /// Project root directory
+        path: PathBuf,
+        /// Target sheet UUID
+        #[arg(long)]
+        sheet: Uuid,
+        /// Start X coordinate in nm
+        #[arg(long)]
+        from_x_nm: i64,
+        /// Start Y coordinate in nm
+        #[arg(long)]
+        from_y_nm: i64,
+        /// End X coordinate in nm
+        #[arg(long)]
+        to_x_nm: i64,
+        /// End Y coordinate in nm
+        #[arg(long)]
+        to_y_nm: i64,
+    },
+    /// Place one schematic drawing rectangle into an existing native sheet file
+    PlaceDrawingRect {
+        /// Project root directory
+        path: PathBuf,
+        /// Target sheet UUID
+        #[arg(long)]
+        sheet: Uuid,
+        /// Minimum X coordinate in nm
+        #[arg(long)]
+        min_x_nm: i64,
+        /// Minimum Y coordinate in nm
+        #[arg(long)]
+        min_y_nm: i64,
+        /// Maximum X coordinate in nm
+        #[arg(long)]
+        max_x_nm: i64,
+        /// Maximum Y coordinate in nm
+        #[arg(long)]
+        max_y_nm: i64,
+    },
+    /// Place one schematic drawing circle into an existing native sheet file
+    PlaceDrawingCircle {
+        /// Project root directory
+        path: PathBuf,
+        /// Target sheet UUID
+        #[arg(long)]
+        sheet: Uuid,
+        /// Center X coordinate in nm
+        #[arg(long)]
+        center_x_nm: i64,
+        /// Center Y coordinate in nm
+        #[arg(long)]
+        center_y_nm: i64,
+        /// Radius in nm
+        #[arg(long)]
+        radius_nm: i64,
+    },
+    /// Place one schematic drawing arc into an existing native sheet file
+    PlaceDrawingArc {
+        /// Project root directory
+        path: PathBuf,
+        /// Target sheet UUID
+        #[arg(long)]
+        sheet: Uuid,
+        /// Center X coordinate in nm
+        #[arg(long)]
+        center_x_nm: i64,
+        /// Center Y coordinate in nm
+        #[arg(long)]
+        center_y_nm: i64,
+        /// Radius in nm
+        #[arg(long)]
+        radius_nm: i64,
+        /// Start angle in millidegrees
+        #[arg(long)]
+        start_angle_mdeg: i32,
+        /// End angle in millidegrees
+        #[arg(long)]
+        end_angle_mdeg: i32,
+    },
+    /// Edit one schematic drawing line in a native sheet file
+    EditDrawingLine {
+        /// Project root directory
+        path: PathBuf,
+        /// Drawing UUID
+        #[arg(long = "drawing")]
+        drawing: Uuid,
+        /// Replacement start X coordinate in nm
+        #[arg(long)]
+        from_x_nm: Option<i64>,
+        /// Replacement start Y coordinate in nm
+        #[arg(long)]
+        from_y_nm: Option<i64>,
+        /// Replacement end X coordinate in nm
+        #[arg(long)]
+        to_x_nm: Option<i64>,
+        /// Replacement end Y coordinate in nm
+        #[arg(long)]
+        to_y_nm: Option<i64>,
+    },
+    /// Edit one schematic drawing rectangle in a native sheet file
+    EditDrawingRect {
+        /// Project root directory
+        path: PathBuf,
+        /// Drawing UUID
+        #[arg(long = "drawing")]
+        drawing: Uuid,
+        /// Replacement minimum X coordinate in nm
+        #[arg(long)]
+        min_x_nm: Option<i64>,
+        /// Replacement minimum Y coordinate in nm
+        #[arg(long)]
+        min_y_nm: Option<i64>,
+        /// Replacement maximum X coordinate in nm
+        #[arg(long)]
+        max_x_nm: Option<i64>,
+        /// Replacement maximum Y coordinate in nm
+        #[arg(long)]
+        max_y_nm: Option<i64>,
+    },
+    /// Edit one schematic drawing circle in a native sheet file
+    EditDrawingCircle {
+        /// Project root directory
+        path: PathBuf,
+        /// Drawing UUID
+        #[arg(long = "drawing")]
+        drawing: Uuid,
+        /// Replacement center X coordinate in nm
+        #[arg(long)]
+        center_x_nm: Option<i64>,
+        /// Replacement center Y coordinate in nm
+        #[arg(long)]
+        center_y_nm: Option<i64>,
+        /// Replacement radius in nm
+        #[arg(long)]
+        radius_nm: Option<i64>,
+    },
+    /// Edit one schematic drawing arc in a native sheet file
+    EditDrawingArc {
+        /// Project root directory
+        path: PathBuf,
+        /// Drawing UUID
+        #[arg(long = "drawing")]
+        drawing: Uuid,
+        /// Replacement center X coordinate in nm
+        #[arg(long)]
+        center_x_nm: Option<i64>,
+        /// Replacement center Y coordinate in nm
+        #[arg(long)]
+        center_y_nm: Option<i64>,
+        /// Replacement radius in nm
+        #[arg(long)]
+        radius_nm: Option<i64>,
+        /// Replacement start angle in millidegrees
+        #[arg(long)]
+        start_angle_mdeg: Option<i32>,
+        /// Replacement end angle in millidegrees
+        #[arg(long)]
+        end_angle_mdeg: Option<i32>,
+    },
+    /// Delete one schematic drawing primitive from a native sheet file
+    DeleteDrawing {
+        /// Project root directory
+        path: PathBuf,
+        /// Drawing UUID
+        #[arg(long = "drawing")]
+        drawing: Uuid,
     },
     /// Place one schematic label into an existing native sheet file
     PlaceLabel {
@@ -585,6 +976,28 @@ pub(crate) enum NativeProjectQueryCommands {
     DesignRules,
     /// Current native schematic symbols
     Symbols,
+    /// Current fields for one native schematic symbol
+    SymbolFields {
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+    },
+    /// Current semantic selection state for one native schematic symbol
+    SymbolSemantics {
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+    },
+    /// Current stored pins for one native schematic symbol
+    SymbolPins {
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+    },
+    /// Current native schematic text objects
+    Texts,
+    /// Current native schematic drawing primitives
+    Drawings,
     /// Current native schematic labels
     Labels,
     /// Current native schematic wires
@@ -615,6 +1028,20 @@ pub(crate) enum NativePortDirectionArg {
     Output,
     Bidirectional,
     Passive,
+}
+
+#[derive(Clone, clap::ValueEnum)]
+pub(crate) enum NativeSymbolDisplayModeArg {
+    LibraryDefault,
+    ShowHiddenPins,
+    HideOptionalPins,
+}
+
+#[derive(Clone, clap::ValueEnum)]
+pub(crate) enum NativeHiddenPowerBehaviorArg {
+    SourceDefinedImplicit,
+    ExplicitPowerObject,
+    PreservedAsImportedMetadata,
 }
 
 #[derive(Subcommand)]

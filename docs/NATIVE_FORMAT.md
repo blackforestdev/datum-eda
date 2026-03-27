@@ -25,10 +25,46 @@ Current live slice:
 - `eda project place-symbol <dir> --sheet <uuid> --reference <text> --value <text>
   [--lib-id <text>] --x-nm <i64> --y-nm <i64> [--rotation-deg <i32>] [--mirrored]`,
   `eda project move-symbol <dir> --symbol <uuid> --x-nm <i64> --y-nm <i64>`, and
-  `eda project rotate-symbol <dir> --symbol <uuid> --rotation-deg <i32>`, and
-  `eda project delete-symbol <dir> --symbol <uuid>` add the first native
-  authored schematic symbol placement/transform/delete path, and
-  `eda project query <dir> symbols` reads back the persisted symbol slice.
+  `eda project rotate-symbol <dir> --symbol <uuid> --rotation-deg <i32>`,
+  `eda project mirror-symbol <dir> --symbol <uuid>`, and
+  `eda project delete-symbol <dir> --symbol <uuid>`, `eda project set-symbol-reference <dir> --symbol <uuid> --reference <text>`, and
+  `eda project set-symbol-value <dir> --symbol <uuid> --value <text>`,
+  `eda project set-symbol-unit <dir> --symbol <uuid> --unit <text>`,
+  `eda project clear-symbol-unit <dir> --symbol <uuid>`,
+  `eda project set-symbol-gate <dir> --symbol <uuid> --gate <uuid>`, and
+  `eda project clear-symbol-gate <dir> --symbol <uuid>`,
+  `eda project set-symbol-display-mode <dir> --symbol <uuid> --mode <...>`,
+  `eda project set-symbol-hidden-power-behavior <dir> --symbol <uuid> --behavior <...>`,
+  `eda project set-pin-override <dir> --symbol <uuid> --pin <uuid> --visible <true|false>
+  [--x-nm <i64> --y-nm <i64>]`, and
+  `eda project clear-pin-override <dir> --symbol <uuid> --pin <uuid>` add the first native
+  authored schematic symbol placement/transform/delete/semantic-selection path, and
+  `eda project add-symbol-field <dir> --symbol <uuid> --key <text> --value <text>
+  [--hidden] [--x-nm <i64> --y-nm <i64>]`,
+  `eda project edit-symbol-field <dir> --field <uuid> ...`, and
+  `eda project delete-symbol-field <dir> --field <uuid>` extend that path to
+  native symbol field authoring, while `eda project query <dir> symbols`,
+  `eda project query <dir> symbol-fields --symbol <uuid>`, and
+  `eda project query <dir> symbol-semantics --symbol <uuid>`, and
+  `eda project query <dir> symbol-pins --symbol <uuid>` read back the
+  persisted symbol slice, including any stored per-pin override state.
+- `eda project place-text <dir> --sheet <uuid> --text <text> --x-nm <i64>
+  --y-nm <i64> [--rotation-deg <i32>]`, `eda project edit-text <dir> --text <uuid> ...`,
+  and `eda project delete-text <dir> --text <uuid>` add the first native
+  non-electrical schematic text object family, while
+  `eda project query <dir> texts` reads back the persisted text slice.
+- `eda project place-drawing-line <dir> --sheet <uuid> --from-x-nm <i64>
+  --from-y-nm <i64> --to-x-nm <i64> --to-y-nm <i64>`,
+  `eda project place-drawing-rect <dir> --sheet <uuid> ...`,
+  `eda project place-drawing-circle <dir> --sheet <uuid> ...`,
+  `eda project place-drawing-arc <dir> --sheet <uuid> ...`,
+  `eda project edit-drawing-line <dir> --drawing <uuid> ...`,
+  `eda project edit-drawing-rect <dir> --drawing <uuid> ...`,
+  `eda project edit-drawing-circle <dir> --drawing <uuid> ...`,
+  `eda project edit-drawing-arc <dir> --drawing <uuid> ...`, and
+  `eda project delete-drawing <dir> --drawing <uuid>` add the first native
+  schematic drawing primitive family, while `eda project query <dir> drawings`
+  reads back the persisted drawing slice with kind-tagged objects.
 - `eda project place-label <dir> --sheet <uuid> --name <text> --x-nm <i64>
   --y-nm <i64>` is the first native authored schematic mutation and writes
   directly to a referenced sheet file.
