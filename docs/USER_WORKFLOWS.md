@@ -155,6 +155,10 @@ The M4 workflow enables creating a project, placing symbols, wiring,
 annotating, forward-annotating to board, and exporting manufacturing
 files — all via CLI or MCP, no GUI required.
 
+Current live slice:
+- `eda project new <dir> [--name <project-name>]` creates a deterministic native project scaffold with `project.json`, `schematic/schematic.json`, `board/board.json`, and `rules/rules.json`.
+- `eda project inspect <dir>` validates that native scaffold and reports the resolved schema, UUIDs, paths, and current object counts.
+
 MCP tools for this flow are defined in `specs/MCP_API_SPEC.md` §M4:
 `place_symbol`, `draw_wire`, `place_label`, `annotate`,
 `sync_schematic_to_board`, `export_gerber`, `export_bom`, etc.

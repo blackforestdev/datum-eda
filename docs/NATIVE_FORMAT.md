@@ -12,6 +12,14 @@ Proposes the on-disk representation for projects created natively by this
 tool. The native format is introduced in M4. Before M4, designs exist only
 as imported formats (KiCad/Eagle files) with the canonical IR held in memory.
 
+Current live slice:
+- `eda project new <dir> [--name <project-name>]` creates the initial native
+  scaffold for `project.json`, `schematic/schematic.json`, `board/board.json`,
+  and `rules/rules.json`.
+- `eda project inspect <dir>` loads that scaffold, validates the resolved file
+  layout, and reports current schema/UUID/path/count summary without opening a
+  mutable editing session.
+
 ## Design Principle
 The native format is a direct serialization of the canonical IR. No
 translation layer, no lossy conversion. What is in memory is what is on

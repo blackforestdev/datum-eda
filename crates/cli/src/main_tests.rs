@@ -68,6 +68,10 @@ fn modify_board(
 
 #[path = "main_tests_import_plan.rs"]
 mod main_tests_import_plan;
+#[path = "main_tests_project_new.rs"]
+mod main_tests_project_new;
+#[path = "main_tests_project_inspect.rs"]
+mod main_tests_project_inspect;
 #[path = "main_tests_plan_apply.rs"]
 mod main_tests_plan_apply;
 #[path = "main_tests_plan_apply_validate.rs"]

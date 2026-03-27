@@ -64,6 +64,17 @@ def markdown_row_status(text: str, label: str) -> tuple[str, str] | None:
     return match.group(1), match.group(2)
 
 
+def markdown_overall_status(text: str, label: str) -> tuple[str, str] | None:
+    pattern = re.compile(
+        rf"^\*\*{re.escape(label)}\*\*:\s*(\[[x~ —]\])\s*(.*?)$",
+        flags=re.M,
+    )
+    match = pattern.search(text)
+    if not match:
+        return None
+    return match.group(1), match.group(2)
+
+
 def check_single_status_authority(
     plan_text: str, program_text: str, integrated_text: str, failures: list[str]
 ) -> None:
@@ -103,6 +114,7 @@ def check_progress_sections(progress_text: str, failures: list[str]) -> None:
         "## PROGRAM_SPEC.md — M0 Exit Criteria",
         "## PROGRAM_SPEC.md — M1 Exit Criteria",
         "## PROGRAM_SPEC.md — M2 Exit Criteria",
+        "## PROGRAM_SPEC.md — R1 Research Gates",
         "## PROGRAM_SPEC.md — M3 Exit Criteria",
         "## PROGRAM_SPEC.md — M4 Exit Criteria",
         "## Infrastructure",
@@ -156,6 +168,25 @@ def check_infrastructure_rows(progress_text: str, failures: list[str]) -> None:
             )
 
 
+def check_r1_g0_gate(progress_text: str, failures: list[str]) -> None:
+    gate_row = markdown_row_status(progress_text, "R1-G0 Foundation Gate")
+    if gate_row is None:
+        failures.append("specs/PROGRESS.md: missing 'R1-G0 Foundation Gate' row")
+        return
+
+    gate_status, _ = gate_row
+    for overall_label in ("M3 overall", "M4 overall"):
+        overall = markdown_overall_status(progress_text, overall_label)
+        if overall is None:
+            failures.append(f"specs/PROGRESS.md: missing '{overall_label}' line")
+            continue
+        overall_status, _ = overall
+        if overall_status == "[x]" and gate_status != "[x]":
+            failures.append(
+                f"specs/PROGRESS.md: {overall_label} cannot be [x] while R1-G0 Foundation Gate is {gate_status}"
+            )
+
+
 def check_mcp_contract_parity(mcp_text: str, failures: list[str]) -> None:
     daemon_methods = parse_daemon_methods()
     tool_methods = parse_tool_catalog_methods()
@@ -201,6 +232,7 @@ def main() -> int:
     check_single_status_authority(plan_text, program_text, integrated_text, failures)
     check_progress_sections(progress_text, failures)
     check_infrastructure_rows(progress_text, failures)
+    check_r1_g0_gate(progress_text, failures)
     check_mcp_contract_parity(mcp_text, failures)
 
     if failures:

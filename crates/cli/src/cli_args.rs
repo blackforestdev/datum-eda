@@ -69,6 +69,11 @@ pub(crate) enum Commands {
         #[command(subcommand)]
         action: PoolCommands,
     },
+    /// Create and manage native projects
+    Project {
+        #[command(subcommand)]
+        action: ProjectCommands,
+    },
     /// Persist and reuse scoped replacement workflow artifacts
     Plan {
         #[command(subcommand)]
@@ -262,6 +267,23 @@ pub(crate) enum PoolCommands {
         /// Eagle library files to load into the in-memory pool for this search
         #[arg(long = "library", required = true)]
         libraries: Vec<PathBuf>,
+    },
+}
+
+#[derive(Subcommand)]
+pub(crate) enum ProjectCommands {
+    /// Create a deterministic native project scaffold
+    New {
+        /// Project root directory
+        path: PathBuf,
+        /// Project display name; defaults to the directory basename
+        #[arg(long)]
+        name: Option<String>,
+    },
+    /// Inspect a native project scaffold and report resolved file layout
+    Inspect {
+        /// Project root directory
+        path: PathBuf,
     },
 }
 

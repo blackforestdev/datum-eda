@@ -2,6 +2,10 @@
 
 Scope terminology follows `specs/PROGRAM_SPEC.md` §Scope Integrity Terms.
 
+`docs/R1_G0_FOUNDATION.md` defines the minimum history/context gate for
+downstream interop claims. This document consumes that foundation; it does not
+replace it.
+
 ## Principle
 For v1, imported formats are first-class citizens in the current execution
 slice. The engine does not
@@ -14,6 +18,12 @@ long-term product boundary.
 
 Native format is introduced in M4. Until then, the canonical IR exists
 only in memory and in golden test files.
+
+Interop interpretation rule:
+- distinguish the currently implemented slice from broad migration claims
+- classify fidelity as `exact`, `approximated`, `preserved-as-metadata`, or
+  `unsupported`
+- do not treat "file opens" as sufficient evidence of faithful migration
 
 ## Import Formats
 
@@ -43,7 +53,7 @@ only in memory and in golden test files.
 - **Files**: `.PcbDoc`, `.SchDoc` (OLE compound documents)
 - **Complexity**: High — binary format, poorly documented
 - **Approach**: staged commercial migration path; see
-  `docs/COMMERCIAL_INTEROP_STRATEGY.md`
+  `docs/COMMERCIAL_INTEROP_STRATEGY.md` and `docs/R1_G0_FOUNDATION.md`
 - **Not in v1 scope**
 
 ### Commercial Tools (Future — M5+)
@@ -54,7 +64,8 @@ only in memory and in golden test files.
   - library extraction before full design import
   - read-only migration before write-back claims
   - explicit fidelity/loss reporting
-- **Reference**: `docs/COMMERCIAL_INTEROP_STRATEGY.md`
+- **Reference**: `docs/COMMERCIAL_INTEROP_STRATEGY.md`,
+  `docs/R1_G0_FOUNDATION.md`
 
 ## Export Formats
 
@@ -70,6 +81,8 @@ only in memory and in golden test files.
   - Goal: import → modify → export → opens cleanly in KiCad
   - Acceptable: formatting changes, reordered sections
   - Unacceptable: data loss, coordinate drift, broken connectivity
+  - Fidelity framing: apply `R1-G0` policy categories; successful open is
+    necessary but not sufficient
 - **Native JSON format**: Canonical IR serialized (introduced in M4)
 
 ### Future (M5+)

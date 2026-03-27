@@ -162,6 +162,17 @@ commercial Windows-only EDA tools without distorting the `M0-M2` foundation.
 
 **Non-goals for R1**: shipping commercial import support, write-back, fidelity guarantees, CLI or MCP surface changes.
 
+R1 foundation dependency:
+- `R1-G0` is the minimum history/context gate for downstream milestone closure.
+- `M3` and `M4` must not be marked complete in `specs/PROGRESS.md` until
+  `R1-G0 Foundation Gate` is `[x]`.
+- `docs/R1_G0_FOUNDATION.md` is the controlling foundation for downstream
+  interop-claim framing:
+  - tool lineage and ingestion-path assumptions
+  - migration pain taxonomy
+  - fidelity boundary policy (`exact` / `approximated` /
+    `preserved-as-metadata` / `unsupported`)
+
 ### M3: Write Operations on Imported Designs
 
 **Exit gate**: AI agent can move components and save back to KiCad format.
@@ -170,6 +181,14 @@ Imported schematic editing is intentionally deferred. `M3` remains board-side
 write-back on imported designs only. Schematic parity is achieved by making the
 native schematic editor in `M4` equally specified and equally scriptable, not
 by forcing fragile imported-schematic write-back into `M3`.
+
+`M3` closure must be interpreted through `R1-G0`:
+- `M3` write-back claims apply only to the implemented KiCad imported-board
+  slice, not to a generic "interop is solved" narrative.
+- Accepted `M3` lossiness must remain explicitly bounded and reportable.
+- `opens in KiCad without errors` is necessary but not sufficient; fidelity
+  claims must respect the exact/approximated/preserved-as-metadata/unsupported
+  categories defined by `R1-G0`.
 
 | Criterion | Threshold |
 |-----------|-----------|
@@ -187,6 +206,15 @@ by forcing fragile imported-schematic write-back into `M3`.
 ### M4: Native Project Creation + Export
 
 **Exit gate**: Create a design from schematic to Gerber without a GUI.
+
+`M4` must also consume `R1-G0`:
+- native-format and export claims must keep vendor-specific migration
+  semantics out of the canonical model unless they have a stable cross-tool
+  meaning
+- future migration/versioning rules must preserve provenance and explicit
+  loss reporting rather than silently flatten source semantics
+- milestone completion remains gated on `R1-G0` because native persistence is
+  one of the prerequisites for credible future commercial migration paths
 
 | Criterion | Threshold |
 |-----------|-----------|

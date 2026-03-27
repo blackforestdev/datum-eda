@@ -168,6 +168,8 @@ Out of scope:
 - Exit gates: `specs/PROGRAM_SPEC.md` (`M3`)
 - Engine write semantics and API contracts: `specs/ENGINE_SPEC.md`
 - MCP write wire contracts: `specs/MCP_API_SPEC.md`
+- History/context gate and fidelity-claim framing:
+  `docs/R1_G0_FOUNDATION.md`
 - Progress state: `specs/PROGRESS.md`
 
 ### 9.3 M3 Non-Negotiable Invariants
@@ -180,6 +182,11 @@ Out of scope:
   operation-bounded.
 - Exported KiCad output preserves unmodified authored objects exactly where
   contract requires.
+- `M3` evidence must be scoped to the implemented KiCad imported-board slice
+  and must not be generalized into broader interop-completeness claims.
+- Fidelity claims for `M3` outputs must remain classifiable as `exact`,
+  `approximated`, `preserved-as-metadata`, or `unsupported` per
+  `docs/R1_G0_FOUNDATION.md`.
 
 ### 9.4 M3 Verification Evidence
 
@@ -189,6 +196,8 @@ At minimum:
 - import → modify → save → reimport fidelity checks
 - CLI exit semantics for write flows
 - MCP/daemon write-method parity tests for M3 surface
+- explicit evidence that accepted lossiness remains bounded and documented,
+  rather than inferred from successful file opening alone
 
 ## 10. M4 Integrated Boundary Contract (Native Authoring + Export)
 
@@ -217,6 +226,8 @@ Out of scope:
 - Schematic authoring model and operations: `specs/SCHEMATIC_EDITOR_SPEC.md`
 - Engine type/API contracts: `specs/ENGINE_SPEC.md`
 - MCP/CLI tool contracts: `specs/MCP_API_SPEC.md`
+- History/context gate and migration-boundary framing:
+  `docs/R1_G0_FOUNDATION.md`
 - Progress state: `specs/PROGRESS.md`
 
 ### 10.3 M4 Parity Invariants (Board vs Schematic)
@@ -228,6 +239,11 @@ Out of scope:
   board query surfaces.
 - ECO boundaries (schematic→board and board→schematic where applicable) are
   explicit and reviewable, never implicit side effects.
+- Native persistence must not absorb vendor-specific migration semantics into
+  canonical state without either a stable cross-tool mapping or structured
+  metadata preservation.
+- Schema/version evolution must support explicit migration reporting rather
+  than silent semantic flattening.
 
 ### 10.4 M4 Verification Evidence
 
@@ -304,6 +320,10 @@ slice and should fail if current write-surface parity regresses.
 ## 13. M4 Acceptance Table (Gate-to-Evidence Mapping)
 
 This table is the controlling acceptance map for `M4` integrated review.
+
+R1 dependency rule:
+- `M3 overall` and `M4 overall` completion state in `specs/PROGRESS.md`
+  remains gated by `R1-G0 Foundation Gate`.
 
 | M4 Gate (`specs/PROGRAM_SPEC.md`) | Evidence Type | Required Evidence Hook |
 |-----------------------------------|---------------|------------------------|

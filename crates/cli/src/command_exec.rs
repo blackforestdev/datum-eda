@@ -133,6 +133,24 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 Ok((render_output(&cli.format, &results), 0))
             }
         },
+        Commands::Project { action } => match action {
+            ProjectCommands::New { path, name } => {
+                let report = create_native_project(&path, name)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_create_report_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::Inspect { path } => {
+                let report = inspect_native_project(&path)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_inspect_report_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+        },
         Commands::Plan { action } => match action {
             PlanCommands::ExportScopedReplacementManifest {
                 path,

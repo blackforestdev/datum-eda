@@ -5,7 +5,7 @@
 >
 > Legend: `[x]` done, `[~]` partial, `[ ]` not started, `[—]` deferred/N/A
 
-Last updated: 2026-03-25
+Last updated: 2026-03-26
 
 ---
 
@@ -342,6 +342,19 @@ Item 8 reconciliation notes (2026-03-25):
 
 ---
 
+## PROGRAM_SPEC.md — R1 Research Gates
+
+| Criterion | Status | Notes |
+|-----------|--------|-------|
+| R1-G0 Foundation Gate | [x] | Minimum history/context gate is now evidenced in `docs/R1_G0_FOUNDATION.md` and blocks downstream milestone completion claims unless maintained |
+| R1-G0 tool lineage + format evolution map | [x] | Evidence: `docs/R1_G0_FOUNDATION.md` §1 covers KiCad/Eagle/Altium/PADS/OrCAD lineage, likely ingestion surfaces, and roadmap implications |
+| R1-G0 migration pain taxonomy | [x] | Evidence: `docs/R1_G0_FOUNDATION.md` §2 classifies migration failure modes using the current KiCad/Eagle design/library corpus and current interop workflow evidence |
+| R1-G0 fidelity boundary policy | [x] | Evidence: `docs/R1_G0_FOUNDATION.md` §3 defines exactness, approximation, preservation-as-metadata, and unsupported-loss boundaries for future interop claims |
+
+**R1 overall**: [~] Minimal context gate is complete, but broader commercial-interop research exit criteria remain open (corpus, legal posture, prototypes, recommendation)
+
+---
+
 ## PROGRAM_SPEC.md — M3 Exit Criteria
 
 | Criterion | Status | Notes |
@@ -375,7 +388,7 @@ Item 8 reconciliation notes (2026-03-25):
 | Derived data recomputation | [x] | Engine tests prove immediate post-op updates for current `delete_track` net/diagnostic/DRC state, `move_component` airwire/DRC state, `delete_via` net-info state, `assign_part` package-regenerated net-info state, and `set_package`/`set_package_with_part` logical-remap net-info preservation when a compatible target part exists; write-surface parity now also proves follow-up query/check behavior across daemon/MCP/CLI for all current write ops: `delete_track`, `delete_via`, `delete_component`, `move_component`, `rotate_component`, `set_value`, `set_reference`, `assign_part`, `set_package`, `set_package_with_part`, `set_net_class`, and `set_design_rule` |
 | CLI modify command | [x] | Current slice supports `modify <board> --move-component/--rotate-component/--set-value/--set-reference/--assign-part/--set-package/--set-package-with-part/--set-net-class/--delete-component/--delete-track/--delete-via/--set-clearance-min-nm/--undo/--redo/--save`, with follow-up `query components`/`query nets`/`query design-rules` verification for current `delete_component`/`rotate_component`/`set_value`/`set_reference`/`assign_part`/`set_package`/`set_package_with_part`/`set_net_class`/`set_design_rule` |
 
-**M3 overall**: [x] Current imported-board write milestone is closed for the implemented scope: board-write transport surfaces are aligned, current save-backed mutations are deterministic and undoable, KiCad write-back and round-trip fidelity are behaviorally proven for pure-board and sidecar-backed paths, and the scoped replacement manifest workflow is complete for export/inspect/validate/upgrade/apply on the current CLI slice
+**M3 overall**: [x] Complete for the implemented imported-board write slice; closure evidence remains in place and the milestone/spec wording has been audited against `R1-G0` so the completion claim stays scoped to the actual KiCad imported-board slice and its explicit fidelity boundaries
 
 ---
 
@@ -383,7 +396,7 @@ Item 8 reconciliation notes (2026-03-25):
 
 | Criterion | Status | Notes |
 |-----------|--------|-------|
-| Native file format | [ ] | Design rationale in docs/NATIVE_FORMAT.md; spec exists at specs/NATIVE_FORMAT_SPEC.md |
+| Native file format | [~] | Current M4 CLI slice supports deterministic scaffold creation plus scaffold inspection: `project new <dir> [--name]` writes versioned native `project.json`, `schematic/schematic.json`, `board/board.json`, and `rules/rules.json`, while `project inspect <dir>` resolves and validates that layout and reports current schema/UUID/path/count summary; focused CLI tests prove idempotent rewrite and inspect-path correctness for the existing scaffold |
 | Schematic operations (30 ops) | [ ] | Spec in specs/SCHEMATIC_EDITOR_SPEC.md |
 | Board operations (6 ops) | [ ] | |
 | Forward annotation (ECO) | [ ] | |
@@ -392,7 +405,7 @@ Item 8 reconciliation notes (2026-03-25):
 | BOM export | [ ] | |
 | PnP export | [ ] | |
 
-**M4 overall**: [ ] Not started
+**M4 overall**: [~] Native-project persistence now has deterministic scaffold creation plus a minimal read/inspect surface; authoring operations, ECO, and manufacturing exports remain open
 
 ---
 

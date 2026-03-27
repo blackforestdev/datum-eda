@@ -5,6 +5,8 @@
 > Current controlling import contracts remain in `specs/IMPORT_SPEC.md`
 > and `docs/INTEROP_SCOPE.md`.
 > Scope terminology follows `specs/PROGRAM_SPEC.md` §Scope Integrity Terms.
+> `docs/R1_G0_FOUNDATION.md` is the controlling foundation for lineage,
+> migration-pain taxonomy, and fidelity-boundary language used here.
 
 ## Purpose
 Define how Altium, PADS, and OrCAD/Allegro enter the roadmap without
@@ -17,6 +19,12 @@ The main objective is not "open any proprietary file on day one." It is:
 - preserve the engine-first, Linux-first value proposition
 - avoid baking vendor-specific assumptions into the canonical IR
 - stage reverse-engineering and fidelity work after the foundation is proven
+
+Consumption rule:
+- this document inherits the `R1-G0` categories `exact`, `approximated`,
+  `preserved-as-metadata`, and `unsupported`
+- this document must not make broader migration claims than the lineage map,
+  pain taxonomy, and fidelity policy support
 
 ---
 
@@ -143,6 +151,8 @@ one special representation.
 - `.PcbDoc` / `.SchDoc` complexity
 - format accessibility and library quality variance
 - many embedded workflow concepts beyond simple geometry/connectivity
+- strong risk of hidden semantics unless provenance and unsupported constructs
+  are reported explicitly
 
 **Recommended first step**
 - library/component extraction first
@@ -166,6 +176,8 @@ one special representation.
 - format complexity
 - split product lineage and different data domains
 - enterprise-specific database/process assumptions
+- high probability of metadata-preservation requirements before clean canonical
+  mapping is possible
 
 **Recommended first step**
 - import from exported interchange artifacts before native project files
@@ -186,6 +198,8 @@ one special representation.
 - multiple historical format generations
 - different ownership across product eras
 - library and rules semantics vary by vintage
+- target definition is ambiguous unless version/generation and ingestion path
+  are named explicitly
 
 **Recommended first step**
 - identify the most common text/exportable format path
@@ -228,6 +242,12 @@ Do not start Altium/PADS/OrCAD implementation until all of these hold:
 4. Query and checking layers are mature enough to validate migrated data
 5. A representative corpus exists for the target tool
 6. Legal/licensing posture is documented for the chosen approach
+
+All implementation proposals must also state:
+
+7. Which source family/version is in scope
+8. Which data is expected to be exact vs approximated vs preserved-as-metadata
+9. Which unsupported-loss boundaries are accepted for the slice
 
 ---
 
