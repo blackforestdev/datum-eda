@@ -210,9 +210,35 @@ Current live slice:
   now writes a narrow RS-274X Gerber file for persisted native board pads,
   tracks, vias, and zones on one selected copper layer through
   `eda_engine::export`, with pads emitted only from explicitly stored circular
-  copper diameter on native board pads, establishing the first real copper-
-  layer writer without claiming broader pad geometry or full layer-set emission
-  yet.
+  or rectangular copper geometry on native board pads, establishing the first
+  real copper-layer writer without claiming broader pad geometry or full
+  layer-set emission yet.
+- `eda project export-gerber-soldermask-layer <dir> --layer <id> --out
+  <path>` now writes a narrow RS-274X Gerber file for persisted native pad
+  openings on one selected soldermask layer through `eda_engine::export`,
+  deriving circular/rectangular flashed openings from pads on the nearest
+  copper layer in stackup order without claiming mask expansion, via tenting,
+  or broader layer-set emission yet.
+- `eda project export-gerber-silkscreen-layer <dir> --layer <id> --out
+  <path>` now writes a narrow RS-274X Gerber file for authored native board
+  text plus persisted explicit component-silkscreen text and line strokes on
+  one selected silkscreen layer through `eda_engine::export`, using explicit
+  stored text height/stroke-width plus the current fixed stroke-font renderer
+  for board text and component text, and explicit stored stroke widths for
+  component lines, without claiming broader package silkscreen arc/shape
+  export or broader text/font coverage yet.
+- `eda project export-gerber-paste-layer <dir> --layer <id> --out <path>` now
+  writes a narrow RS-274X Gerber file for persisted native pad openings on one
+  selected paste layer through `eda_engine::export`, deriving
+  circular/rectangular flashed openings from pads on the nearest copper layer
+  in stackup order without claiming paste reduction, stencil policy, or
+  broader layer-set emission yet.
+- `eda project export-gerber-mechanical-layer <dir> --layer <id> --out
+  <path>` now writes a narrow RS-274X Gerber file for persisted native board
+  keepout polygons on one selected mechanical layer through
+  `eda_engine::export`, emitting closed keepouts as filled regions without
+  claiming dimensions, package geometry, or broader documentation-layer
+  coverage yet.
 - `eda project validate-gerber-copper-layer <dir> --layer <id> --gerber
   <path>` now re-renders that expected native copper-layer Gerber and reports
   byte-for-byte match/mismatch with CI-usable exit status, establishing the
@@ -233,10 +259,33 @@ Current live slice:
   byte identity to review drift.
 - `eda project compare-gerber-copper-layer <dir> --layer <id> --gerber
   <path>` now parses the currently emitted copper-layer RS-274X subset and
-  compares circular flashed pads, tracks, flashed vias, and region zones
-  semantically against the persisted native layer geometry with deterministic
-  matched/missing/extra reporting, without claiming broader RS-274X feature
-  coverage.
+  compares circular/rectangular flashed pads, tracks, flashed vias, and region
+  zones semantically against the persisted native layer geometry with
+  deterministic matched/missing/extra reporting, without claiming broader
+  RS-274X feature coverage.
+- `eda project compare-gerber-soldermask-layer <dir> --layer <id> --gerber
+  <path>` now parses the currently emitted soldermask-layer RS-274X subset and
+  compares circular/rectangular flashed pad openings semantically against the
+  persisted native openings derived from the nearest copper layer in stackup
+  order, without claiming mask expansion, via tenting, or broader RS-274X
+  feature coverage.
+- `eda project compare-gerber-silkscreen-layer <dir> --layer <id> --gerber
+  <path>` now parses the currently emitted silkscreen-layer RS-274X subset and
+  compares authored board-text strokes plus persisted explicit
+  component-silkscreen text and line strokes semantically against the
+  persisted native silkscreen geometry on that layer, without claiming broader
+  package silkscreen arc/shape export or broader font coverage.
+- `eda project compare-gerber-paste-layer <dir> --layer <id> --gerber
+  <path>` now parses the currently emitted paste-layer RS-274X subset and
+  compares circular/rectangular flashed pad openings semantically against the
+  persisted native openings derived from the nearest copper layer in stackup
+  order, without claiming paste reduction, stencil policy, or broader RS-274X
+  feature coverage.
+- `eda project compare-gerber-mechanical-layer <dir> --layer <id> --gerber
+  <path>` now parses the currently emitted mechanical-layer RS-274X subset and
+  compares persisted native keepout polygons on that selected mechanical layer
+  semantically against emitted filled regions, without claiming dimensions,
+  package geometry, or broader RS-274X feature coverage.
 - `eda project query <dir> board-pads` reads back the persisted native
   placed-pad inventory from `board/board.json`, establishing the first native
   package-linked pad read surface.
@@ -349,12 +398,23 @@ Current live slice:
 - `eda project set-board-pad-net <dir> --pad <uuid> --net <uuid>` and
   `eda project clear-board-pad-net <dir> --pad <uuid>` plus
   `eda project edit-board-pad <dir> --pad <uuid> [--x-nm <i64> --y-nm <i64>]
-  [--layer <i32>]` plus `eda project place-board-pad <dir> --package <uuid>
-  --name <text> --x-nm <i64> --y-nm <i64> --layer <i32> [--net <uuid>]` and
-  `eda project delete-board-pad <dir> --pad <uuid>` add the first
-  package-linked pad lifecycle/edit path on `board/board.json`, while `eda
-  project query <dir> board-pads` verifies the persisted pad inventory,
-  placement, and net assignment state.
+  [--layer <i32>] [--shape <circle|rect>] [--diameter-nm <i64>]
+  [--width-nm <i64>] [--height-nm <i64>]` plus `eda project place-board-pad
+  <dir> --package <uuid> --name <text> --x-nm <i64> --y-nm <i64> --layer
+  <i32> [--shape <circle|rect>] [--diameter-nm <i64>] [--width-nm <i64>]
+  [--height-nm <i64>] [--net <uuid>]` and `eda project delete-board-pad <dir>
+  --pad <uuid>` add the first package-linked pad lifecycle/edit path on
+  `board/board.json`, while `eda project query <dir> board-pads` verifies the
+  persisted pad inventory, placement, net assignment, and explicit copper
+  geometry state.
+- `eda project place-board-text <dir> --text <text> --x-nm <i64> --y-nm
+  <i64> [--rotation-deg <i32>] [--height-nm <i64>] [--stroke-width-nm <i64>]
+  --layer <i32>`, `eda project edit-board-text <dir> --text <uuid> ...`, and
+  `eda project delete-board-text <dir> --text <uuid>` now persist authored
+  native board text with explicit render geometry for the current fixed
+  stroke-font silkscreen/export contract, while `eda project query <dir>
+  board-texts` verifies the stored text inventory directly from
+  `board/board.json`.
 - `eda project draw-board-track <dir> --net <uuid> --from-x-nm <i64>
   --from-y-nm <i64> --to-x-nm <i64> --to-y-nm <i64> --width-nm <i64> --layer
   <i32>` and `eda project delete-board-track <dir> --track <uuid>` add the

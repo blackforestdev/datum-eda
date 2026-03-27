@@ -4,13 +4,15 @@ use std::path::{Path, PathBuf};
 use anyhow::{Context, Result, bail};
 use eda_engine::api::{CheckCodeCount, CheckReport, CheckStatus, CheckSummary};
 use eda_engine::board::{
-    Board, BoardText, Dimension, Keepout, Net, NetClass, PlacedPackage, PlacedPad, Stackup,
-    StackupLayer, StackupLayerType, Track, Via, Zone,
+    Board, BoardText, Dimension, Keepout, Net, NetClass, PadAperture, PadShape, PlacedPackage,
+    PlacedPad, Stackup, StackupLayer, StackupLayerType, Track, Via, Zone,
 };
 use eda_engine::connectivity::{schematic_diagnostics, schematic_net_info};
 use eda_engine::erc::{ErcFinding, run_prechecks};
 use eda_engine::export::{
-    render_excellon_drill, render_rs274x_copper_layer, render_rs274x_outline_default,
+    SilkscreenStroke, render_excellon_drill, render_rs274x_copper_layer,
+    render_rs274x_mechanical_layer, render_rs274x_outline_default, render_rs274x_paste_layer,
+    render_rs274x_silkscreen_layer, render_rs274x_soldermask_layer,
 };
 use eda_engine::import::ids_sidecar::compute_source_hash_bytes;
 use eda_engine::ir::geometry::Polygon;
@@ -61,9 +63,15 @@ use super::{
     NativeProjectForwardAnnotationReviewView, NativeProjectForwardAnnotationValueMismatchView,
     NativeProjectGerberCopperComparisonView, NativeProjectGerberCopperExportView,
     NativeProjectGerberCopperValidationView, NativeProjectGerberGeometryEntryView,
-    NativeProjectGerberOutlineComparisonView, NativeProjectGerberOutlineExportView,
-    NativeProjectGerberOutlineValidationView, NativeProjectGerberPlanArtifactView,
+    NativeProjectGerberMechanicalComparisonView, NativeProjectGerberMechanicalExportView,
+    NativeProjectGerberMechanicalValidationView, NativeProjectGerberOutlineComparisonView,
+    NativeProjectGerberOutlineExportView, NativeProjectGerberOutlineValidationView,
+    NativeProjectGerberPasteComparisonView, NativeProjectGerberPasteExportView,
+    NativeProjectGerberPasteValidationView, NativeProjectGerberPlanArtifactView,
     NativeProjectGerberPlanComparisonView, NativeProjectGerberPlanView,
+    NativeProjectGerberSilkscreenComparisonView, NativeProjectGerberSilkscreenExportView,
+    NativeProjectGerberSilkscreenValidationView, NativeProjectGerberSoldermaskComparisonView,
+    NativeProjectGerberSoldermaskExportView, NativeProjectGerberSoldermaskValidationView,
     NativeProjectInspectReportView, NativeProjectJunctionMutationReportView,
     NativeProjectLabelMutationReportView, NativeProjectNoConnectMutationReportView,
     NativeProjectPinOverrideMutationReportView, NativeProjectPnpComparisonView,
@@ -176,6 +184,10 @@ struct NativeBoardRoot {
     #[serde(default)]
     packages: BTreeMap<String, serde_json::Value>,
     #[serde(default)]
+    component_silkscreen: BTreeMap<String, Vec<NativeComponentSilkscreenLine>>,
+    #[serde(default)]
+    component_silkscreen_texts: BTreeMap<String, Vec<NativeComponentSilkscreenText>>,
+    #[serde(default)]
     pads: BTreeMap<String, serde_json::Value>,
     #[serde(default)]
     tracks: BTreeMap<String, serde_json::Value>,
@@ -210,6 +222,24 @@ struct NativeOutline {
 struct NativePoint {
     x: i64,
     y: i64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct NativeComponentSilkscreenLine {
+    from: NativePoint,
+    to: NativePoint,
+    width_nm: i64,
+    layer: i32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct NativeComponentSilkscreenText {
+    text: String,
+    position: NativePoint,
+    rotation: i32,
+    height_nm: i64,
+    stroke_width_nm: i64,
+    layer: i32,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -293,6 +323,8 @@ pub(crate) fn create_native_project(
             closed: true,
         },
         packages: BTreeMap::new(),
+        component_silkscreen: BTreeMap::new(),
+        component_silkscreen_texts: BTreeMap::new(),
         pads: BTreeMap::new(),
         tracks: BTreeMap::new(),
         vias: BTreeMap::new(),
@@ -2758,13 +2790,19 @@ fn classify_via_hole_class(
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
+enum ParsedGerberAperture {
+    Circle { diameter_nm: i64 },
+    Rect { width_nm: i64, height_nm: i64 },
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 enum ParsedGerberGeometry {
     Stroke {
         aperture_diameter_nm: i64,
         points: Vec<Point>,
     },
     Flash {
-        aperture_diameter_nm: i64,
+        aperture: ParsedGerberAperture,
         position: Point,
     },
     Region {
@@ -2878,12 +2916,9 @@ fn gerber_outline_actual_entries(gerber: &ParsedGerber) -> BTreeMap<(String, Str
                 "outline".to_string(),
                 render_stroke_geometry(*aperture_diameter_nm, points),
             ),
-            ParsedGerberGeometry::Flash {
-                aperture_diameter_nm,
-                position,
-            } => (
+            ParsedGerberGeometry::Flash { aperture, position } => (
                 "flash".to_string(),
-                render_flash_geometry(*aperture_diameter_nm, position),
+                render_parsed_flash_geometry(aperture, position),
             ),
             ParsedGerberGeometry::Region { points } => {
                 ("region".to_string(), render_region_geometry(points))
@@ -2903,10 +2938,7 @@ fn gerber_copper_expected_entries(
     let mut entries = BTreeMap::new();
     for pad in pads {
         *entries
-            .entry((
-                "pad".to_string(),
-                render_flash_geometry(pad.diameter, &pad.position),
-            ))
+            .entry(("pad".to_string(), render_pad_flash_geometry(pad)))
             .or_insert(0) += 1;
     }
     for track in tracks {
@@ -2929,7 +2961,7 @@ fn gerber_copper_expected_entries(
         *entries
             .entry((
                 "via".to_string(),
-                render_flash_geometry(via.diameter, &via.position),
+                render_circular_flash_geometry(via.diameter, &via.position),
             ))
             .or_insert(0) += 1;
     }
@@ -2951,11 +2983,8 @@ fn gerber_copper_actual_entries(
                 "track".to_string(),
                 render_stroke_geometry(*aperture_diameter_nm, points),
             ),
-            ParsedGerberGeometry::Flash {
-                aperture_diameter_nm,
-                position,
-            } => {
-                let signature = render_flash_geometry(*aperture_diameter_nm, position);
+            ParsedGerberGeometry::Flash { aperture, position } => {
+                let signature = render_parsed_flash_geometry(aperture, position);
                 let kind = if expected_pads.contains(&signature) {
                     "pad"
                 } else if expected_vias.contains(&signature) {
@@ -2974,6 +3003,115 @@ fn gerber_copper_actual_entries(
     entries
 }
 
+fn gerber_soldermask_expected_entries(pads: &[PlacedPad]) -> BTreeMap<(String, String), usize> {
+    let mut entries = BTreeMap::new();
+    for pad in pads {
+        *entries
+            .entry(("pad".to_string(), render_pad_flash_geometry(pad)))
+            .or_insert(0) += 1;
+    }
+    entries
+}
+
+fn gerber_soldermask_actual_entries(
+    gerber: &ParsedGerber,
+    expected_pads: &BTreeSet<String>,
+) -> BTreeMap<(String, String), usize> {
+    let mut entries = BTreeMap::new();
+    for geometry in &gerber.geometries {
+        let (kind, signature) = match geometry {
+            ParsedGerberGeometry::Stroke {
+                aperture_diameter_nm,
+                points,
+            } => (
+                "track".to_string(),
+                render_stroke_geometry(*aperture_diameter_nm, points),
+            ),
+            ParsedGerberGeometry::Flash { aperture, position } => {
+                let signature = render_parsed_flash_geometry(aperture, position);
+                let kind = if expected_pads.contains(&signature) {
+                    "pad"
+                } else {
+                    "flash"
+                };
+                (kind.to_string(), signature)
+            }
+            ParsedGerberGeometry::Region { points } => {
+                ("region".to_string(), render_region_geometry(points))
+            }
+        };
+        *entries.entry((kind, signature)).or_insert(0) += 1;
+    }
+    entries
+}
+
+fn gerber_silkscreen_expected_entries(gerber: &ParsedGerber) -> BTreeMap<(String, String), usize> {
+    let mut entries = BTreeMap::new();
+    for geometry in &gerber.geometries {
+        let (kind, signature) = match geometry {
+            ParsedGerberGeometry::Stroke {
+                aperture_diameter_nm,
+                points,
+            } => (
+                "stroke".to_string(),
+                render_stroke_geometry(*aperture_diameter_nm, points),
+            ),
+            ParsedGerberGeometry::Flash { aperture, position } => (
+                "flash".to_string(),
+                render_parsed_flash_geometry(aperture, position),
+            ),
+            ParsedGerberGeometry::Region { points } => {
+                ("region".to_string(), render_region_geometry(points))
+            }
+        };
+        *entries.entry((kind, signature)).or_insert(0) += 1;
+    }
+    entries
+}
+
+fn gerber_mechanical_expected_entries(polygons: &[Polygon]) -> BTreeMap<(String, String), usize> {
+    let mut entries = BTreeMap::new();
+    for polygon in polygons {
+        let (kind, signature) = if polygon.closed {
+            (
+                "keepout".to_string(),
+                render_region_geometry(&polygon.vertices),
+            )
+        } else {
+            (
+                "outline".to_string(),
+                render_stroke_geometry(DEFAULT_GERBER_OUTLINE_APERTURE_NM, &polygon.vertices),
+            )
+        };
+        *entries.entry((kind, signature)).or_insert(0) += 1;
+    }
+    entries
+}
+
+fn gerber_mechanical_actual_entries(gerber: &ParsedGerber) -> BTreeMap<(String, String), usize> {
+    let mut entries = BTreeMap::new();
+    for geometry in &gerber.geometries {
+        let (kind, signature) = match geometry {
+            ParsedGerberGeometry::Stroke {
+                aperture_diameter_nm,
+                points,
+            } => (
+                "outline".to_string(),
+                render_stroke_geometry(*aperture_diameter_nm, points),
+            ),
+            ParsedGerberGeometry::Flash { aperture, position } => (
+                "flash".to_string(),
+                render_parsed_flash_geometry(aperture, position),
+            ),
+            ParsedGerberGeometry::Region { points } => {
+                ("keepout".to_string(), render_region_geometry(points))
+            }
+        };
+        *entries.entry((kind, signature)).or_insert(0) += 1;
+    }
+    entries
+}
+
 fn render_stroke_geometry(aperture_diameter_nm: i64, points: &[Point]) -> String {
     let points = canonicalize_path_points(points);
     format!(
@@ -2983,13 +3121,47 @@ fn render_stroke_geometry(aperture_diameter_nm: i64, points: &[Point]) -> String
     )
 }
 
-fn render_flash_geometry(aperture_diameter_nm: i64, position: &Point) -> String {
+fn render_circular_flash_geometry(aperture_diameter_nm: i64, position: &Point) -> String {
     format!(
-        "diameter_mm={} at=({}, {})",
+        "shape=circle diameter_mm={} at=({}, {})",
         render_mm_6(aperture_diameter_nm),
         position.x,
         position.y
     )
+}
+
+fn render_rect_flash_geometry(width_nm: i64, height_nm: i64, position: &Point) -> String {
+    format!(
+        "shape=rect width_mm={} height_mm={} at=({}, {})",
+        render_mm_6(width_nm),
+        render_mm_6(height_nm),
+        position.x,
+        position.y
+    )
+}
+
+fn render_pad_flash_geometry(pad: &PlacedPad) -> String {
+    match pad.aperture() {
+        PadAperture::Circle { diameter_nm } => {
+            render_circular_flash_geometry(diameter_nm, &pad.position)
+        }
+        PadAperture::Rect {
+            width_nm,
+            height_nm,
+        } => render_rect_flash_geometry(width_nm, height_nm, &pad.position),
+    }
+}
+
+fn render_parsed_flash_geometry(aperture: &ParsedGerberAperture, position: &Point) -> String {
+    match aperture {
+        ParsedGerberAperture::Circle { diameter_nm } => {
+            render_circular_flash_geometry(*diameter_nm, position)
+        }
+        ParsedGerberAperture::Rect {
+            width_nm,
+            height_nm,
+        } => render_rect_flash_geometry(*width_nm, *height_nm, position),
+    }
 }
 
 fn render_region_geometry(points: &[Point]) -> String {
@@ -3008,7 +3180,7 @@ fn render_point_path(points: &[Point]) -> String {
 const DEFAULT_GERBER_OUTLINE_APERTURE_NM: i64 = 100_000;
 
 fn parse_rs274x_subset(gerber: &str) -> Result<ParsedGerber> {
-    let mut aperture_map = BTreeMap::<usize, i64>::new();
+    let mut aperture_map = BTreeMap::<usize, ParsedGerberAperture>::new();
     let mut current_aperture = None;
     let mut current_position = None;
     let mut pending_stroke = None::<PendingStroke>;
@@ -3025,18 +3197,40 @@ fn parse_rs274x_subset(gerber: &str) -> Result<ParsedGerber> {
             continue;
         }
         if let Some(rest) = line.strip_prefix("%ADD") {
-            let (code_str, diameter_str) = rest
-                .split_once("C,")
+            let split_idx = rest
+                .find(|ch: char| ch.is_ascii_alphabetic())
                 .context("unsupported Gerber aperture definition in comparison input")?;
-            let diameter_str = diameter_str
+            let (code_str, definition) = rest.split_at(split_idx);
+            let (kind, params) = definition.split_at(1);
+            let params = params
+                .strip_prefix(',')
+                .context("unsupported Gerber aperture definition in comparison input")?
                 .strip_suffix("*%")
                 .context("unterminated Gerber aperture definition in comparison input")?;
             let code = code_str
                 .parse::<usize>()
                 .context("invalid Gerber aperture code in comparison input")?;
-            let diameter_nm = parse_mm_6_to_nm(diameter_str)
-                .context("invalid Gerber circular aperture diameter in comparison input")?;
-            aperture_map.insert(code, diameter_nm);
+            let aperture = match kind {
+                "C" => ParsedGerberAperture::Circle {
+                    diameter_nm: parse_mm_6_to_nm(params)
+                        .context("invalid Gerber circular aperture diameter in comparison input")?,
+                },
+                "R" => {
+                    let (width_str, height_str) = params.split_once('X').context(
+                        "invalid Gerber rectangular aperture definition in comparison input",
+                    )?;
+                    ParsedGerberAperture::Rect {
+                        width_nm: parse_mm_6_to_nm(width_str).context(
+                            "invalid Gerber rectangular aperture width in comparison input",
+                        )?,
+                        height_nm: parse_mm_6_to_nm(height_str).context(
+                            "invalid Gerber rectangular aperture height in comparison input",
+                        )?,
+                    }
+                }
+                _ => bail!("unsupported Gerber aperture definition in comparison input: {line}"),
+            };
+            aperture_map.insert(code, aperture);
             continue;
         }
         if line == "G36*" {
@@ -3098,12 +3292,18 @@ fn parse_rs274x_subset(gerber: &str) -> Result<ParsedGerber> {
         let aperture_code = current_aperture.context(
             "Gerber semantic comparison requires an active circular aperture before geometry",
         )?;
-        let aperture_diameter_nm = *aperture_map.get(&aperture_code).with_context(|| {
+        let aperture = aperture_map.get(&aperture_code).with_context(|| {
             format!("unknown Gerber aperture D{aperture_code} in comparison input")
         })?;
 
         match operation {
             2 => {
+                let aperture_diameter_nm = match aperture {
+                    ParsedGerberAperture::Circle { diameter_nm } => *diameter_nm,
+                    ParsedGerberAperture::Rect { .. } => bail!(
+                        "Gerber semantic comparison only supports circular apertures for strokes"
+                    ),
+                };
                 finalize_pending_stroke(&mut pending_stroke, &mut geometries);
                 pending_stroke = Some(PendingStroke {
                     aperture_diameter_nm,
@@ -3111,6 +3311,12 @@ fn parse_rs274x_subset(gerber: &str) -> Result<ParsedGerber> {
                 });
             }
             1 => {
+                let aperture_diameter_nm = match aperture {
+                    ParsedGerberAperture::Circle { diameter_nm } => *diameter_nm,
+                    ParsedGerberAperture::Rect { .. } => bail!(
+                        "Gerber semantic comparison only supports circular apertures for strokes"
+                    ),
+                };
                 let stroke = pending_stroke.get_or_insert_with(|| PendingStroke {
                     aperture_diameter_nm,
                     points: previous_position.into_iter().collect::<Vec<_>>(),
@@ -3131,7 +3337,7 @@ fn parse_rs274x_subset(gerber: &str) -> Result<ParsedGerber> {
             3 => {
                 finalize_pending_stroke(&mut pending_stroke, &mut geometries);
                 geometries.push(ParsedGerberGeometry::Flash {
-                    aperture_diameter_nm,
+                    aperture: aperture.clone(),
                     position: point,
                 });
             }
@@ -3288,6 +3494,203 @@ fn parse_mm_6_to_nm(value: &str) -> Option<i64> {
     }
 }
 
+fn resolve_native_project_soldermask_context(
+    root: &Path,
+    layer: i32,
+) -> Result<(StackupLayer, i32, Vec<PlacedPad>)> {
+    let stackup = query_native_project_board_stackup(root)?;
+    let mask_layer = stackup
+        .iter()
+        .find(|entry| entry.id == layer)
+        .cloned()
+        .ok_or_else(|| {
+            anyhow::anyhow!("board stackup layer not found in native project: {layer}")
+        })?;
+    if !matches!(mask_layer.layer_type, StackupLayerType::SolderMask) {
+        bail!("board stackup layer is not a soldermask layer: {layer}");
+    }
+
+    let associated_copper_layer = stackup
+        .iter()
+        .filter(|entry| matches!(entry.layer_type, StackupLayerType::Copper))
+        .min_by(|a, b| {
+            (i64::from((a.id - layer).abs()), a.id).cmp(&(i64::from((b.id - layer).abs()), b.id))
+        })
+        .map(|entry| entry.id)
+        .ok_or_else(|| {
+            anyhow::anyhow!("no copper layer available to derive soldermask openings")
+        })?;
+
+    let pads = query_native_project_board_pads(root)?
+        .into_iter()
+        .filter(|pad| pad.layer == associated_copper_layer)
+        .collect::<Vec<_>>();
+
+    Ok((mask_layer, associated_copper_layer, pads))
+}
+
+fn resolve_native_project_silkscreen_context(
+    root: &Path,
+    layer: i32,
+) -> Result<(StackupLayer, Vec<BoardText>, Vec<SilkscreenStroke>)> {
+    let project = load_native_project(root)?;
+    let stackup = query_native_project_board_stackup(root)?;
+    let silk_layer = stackup
+        .iter()
+        .find(|entry| entry.id == layer)
+        .cloned()
+        .ok_or_else(|| {
+            anyhow::anyhow!("board stackup layer not found in native project: {layer}")
+        })?;
+    if !matches!(silk_layer.layer_type, StackupLayerType::Silkscreen) {
+        bail!("board stackup layer is not a silkscreen layer: {layer}");
+    }
+    let mut texts = query_native_project_board_texts(root)?
+        .into_iter()
+        .filter(|text| text.layer == layer)
+        .collect::<Vec<_>>();
+    let component_texts = project
+        .board
+        .component_silkscreen_texts
+        .iter()
+        .filter_map(|(component_uuid, entries)| {
+            let component = project.board.packages.get(component_uuid)?;
+            let component: PlacedPackage = serde_json::from_value(component.clone()).ok()?;
+            Some(
+                entries
+                    .iter()
+                    .filter(|entry| entry.layer == layer)
+                    .map(|entry| native_component_silkscreen_text_to_board_text(&component, entry))
+                    .collect::<Vec<_>>(),
+            )
+        })
+        .flatten()
+        .collect::<Vec<_>>();
+    texts.extend(component_texts);
+    let component_strokes = project
+        .board
+        .component_silkscreen
+        .iter()
+        .filter_map(|(component_uuid, lines)| {
+            let component = project.board.packages.get(component_uuid)?;
+            let component: PlacedPackage = serde_json::from_value(component.clone()).ok()?;
+            Some(
+                lines
+                    .iter()
+                    .filter(|line| line.layer == layer)
+                    .map(|line| native_component_silkscreen_line_to_stroke(&component, line))
+                    .collect::<Vec<_>>(),
+            )
+        })
+        .flatten()
+        .collect::<Vec<_>>();
+    Ok((silk_layer, texts, component_strokes))
+}
+
+fn native_component_silkscreen_line_to_stroke(
+    component: &PlacedPackage,
+    line: &NativeComponentSilkscreenLine,
+) -> SilkscreenStroke {
+    SilkscreenStroke {
+        from: transform_component_local_point(component, &line.from),
+        to: transform_component_local_point(component, &line.to),
+        width_nm: line.width_nm,
+    }
+}
+
+fn native_component_silkscreen_text_to_board_text(
+    component: &PlacedPackage,
+    text: &NativeComponentSilkscreenText,
+) -> BoardText {
+    BoardText {
+        uuid: Uuid::new_v4(),
+        text: text.text.clone(),
+        position: transform_component_local_point(component, &text.position),
+        rotation: component.rotation + text.rotation,
+        layer: text.layer,
+        height_nm: text.height_nm,
+        stroke_width_nm: text.stroke_width_nm,
+    }
+}
+
+fn count_native_component_silkscreen_texts(board: &NativeBoardRoot, layer: i32) -> usize {
+    board
+        .component_silkscreen_texts
+        .values()
+        .map(|entries| entries.iter().filter(|entry| entry.layer == layer).count())
+        .sum()
+}
+
+fn transform_component_local_point(component: &PlacedPackage, point: &NativePoint) -> Point {
+    let radians = f64::from(component.rotation).to_radians();
+    let x = point.x as f64;
+    let y = point.y as f64;
+    let rotated_x = x * radians.cos() - y * radians.sin();
+    let rotated_y = x * radians.sin() + y * radians.cos();
+    Point {
+        x: component.position.x + rotated_x.round() as i64,
+        y: component.position.y + rotated_y.round() as i64,
+    }
+}
+
+fn resolve_native_project_paste_context(
+    root: &Path,
+    layer: i32,
+) -> Result<(StackupLayer, i32, Vec<PlacedPad>)> {
+    let stackup = query_native_project_board_stackup(root)?;
+    let paste_layer = stackup
+        .iter()
+        .find(|entry| entry.id == layer)
+        .cloned()
+        .ok_or_else(|| {
+            anyhow::anyhow!("board stackup layer not found in native project: {layer}")
+        })?;
+    if !matches!(paste_layer.layer_type, StackupLayerType::Paste) {
+        bail!("board stackup layer is not a paste layer: {layer}");
+    }
+
+    let associated_copper_layer = stackup
+        .iter()
+        .filter(|entry| matches!(entry.layer_type, StackupLayerType::Copper))
+        .min_by(|a, b| {
+            (i64::from((a.id - layer).abs()), a.id).cmp(&(i64::from((b.id - layer).abs()), b.id))
+        })
+        .map(|entry| entry.id)
+        .ok_or_else(|| anyhow::anyhow!("no copper layer available to derive paste openings"))?;
+
+    let pads = query_native_project_board_pads(root)?
+        .into_iter()
+        .filter(|pad| pad.layer == associated_copper_layer)
+        .collect::<Vec<_>>();
+
+    Ok((paste_layer, associated_copper_layer, pads))
+}
+
+fn resolve_native_project_mechanical_context(
+    root: &Path,
+    layer: i32,
+) -> Result<(StackupLayer, Vec<Polygon>)> {
+    let stackup = query_native_project_board_stackup(root)?;
+    let mechanical_layer = stackup
+        .iter()
+        .find(|entry| entry.id == layer)
+        .cloned()
+        .ok_or_else(|| {
+            anyhow::anyhow!("board stackup layer not found in native project: {layer}")
+        })?;
+    if !matches!(mechanical_layer.layer_type, StackupLayerType::Mechanical) {
+        bail!("board stackup layer is not a mechanical layer: {layer}");
+    }
+
+    let polygons = query_native_project_board_keepouts(root)?
+        .into_iter()
+        .filter(|keepout| keepout.layers.contains(&layer))
+        .map(|keepout| keepout.polygon)
+        .collect::<Vec<_>>();
+
+    Ok((mechanical_layer, polygons))
+}
+
 pub(crate) fn export_native_project_gerber_outline(
     root: &Path,
     output_path: &Path,
@@ -3348,6 +3751,98 @@ pub(crate) fn export_native_project_gerber_copper_layer(
         track_count: tracks.len(),
         zone_count: zones.len(),
         via_count: vias.len(),
+    })
+}
+
+pub(crate) fn export_native_project_gerber_soldermask_layer(
+    root: &Path,
+    layer: i32,
+    output_path: &Path,
+) -> Result<NativeProjectGerberSoldermaskExportView> {
+    let project = load_native_project(root)?;
+    let (_mask_layer, source_copper_layer, pads) =
+        resolve_native_project_soldermask_context(root, layer)?;
+    let gerber = render_rs274x_soldermask_layer(layer, &pads)
+        .context("failed to render native board soldermask layer as RS-274X")?;
+    std::fs::write(output_path, gerber)
+        .with_context(|| format!("failed to write {}", output_path.display()))?;
+    Ok(NativeProjectGerberSoldermaskExportView {
+        action: "export_gerber_soldermask_layer".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        gerber_path: output_path.display().to_string(),
+        layer,
+        source_copper_layer,
+        pad_count: pads.len(),
+    })
+}
+
+pub(crate) fn export_native_project_gerber_silkscreen_layer(
+    root: &Path,
+    layer: i32,
+    output_path: &Path,
+) -> Result<NativeProjectGerberSilkscreenExportView> {
+    let project = load_native_project(root)?;
+    let component_text_count = count_native_component_silkscreen_texts(&project.board, layer);
+    let (_silk_layer, texts, component_strokes) =
+        resolve_native_project_silkscreen_context(root, layer)?;
+    let gerber = render_rs274x_silkscreen_layer(layer, &texts, &component_strokes)
+        .context("failed to render native board silkscreen layer as RS-274X")?;
+    std::fs::write(output_path, gerber)
+        .with_context(|| format!("failed to write {}", output_path.display()))?;
+    Ok(NativeProjectGerberSilkscreenExportView {
+        action: "export_gerber_silkscreen_layer".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        gerber_path: output_path.display().to_string(),
+        layer,
+        text_count: texts.len().saturating_sub(component_text_count),
+        component_text_count,
+        component_stroke_count: component_strokes.len(),
+    })
+}
+
+pub(crate) fn export_native_project_gerber_paste_layer(
+    root: &Path,
+    layer: i32,
+    output_path: &Path,
+) -> Result<NativeProjectGerberPasteExportView> {
+    let project = load_native_project(root)?;
+    let (_paste_layer, source_copper_layer, pads) =
+        resolve_native_project_paste_context(root, layer)?;
+    let gerber = render_rs274x_paste_layer(layer, &pads)
+        .context("failed to render native board paste layer as RS-274X")?;
+    std::fs::write(output_path, gerber)
+        .with_context(|| format!("failed to write {}", output_path.display()))?;
+    Ok(NativeProjectGerberPasteExportView {
+        action: "export_gerber_paste_layer".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        gerber_path: output_path.display().to_string(),
+        layer,
+        source_copper_layer,
+        pad_count: pads.len(),
+    })
+}
+
+pub(crate) fn export_native_project_gerber_mechanical_layer(
+    root: &Path,
+    layer: i32,
+    output_path: &Path,
+) -> Result<NativeProjectGerberMechanicalExportView> {
+    let project = load_native_project(root)?;
+    let (_mechanical_layer, polygons) = resolve_native_project_mechanical_context(root, layer)?;
+    let gerber = render_rs274x_mechanical_layer(layer, &polygons)
+        .context("failed to render native board mechanical layer as RS-274X")?;
+    std::fs::write(output_path, gerber)
+        .with_context(|| format!("failed to write {}", output_path.display()))?;
+    Ok(NativeProjectGerberMechanicalExportView {
+        action: "export_gerber_mechanical_layer".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        gerber_path: output_path.display().to_string(),
+        layer,
+        keepout_count: polygons.len(),
     })
 }
 
@@ -3422,6 +3917,114 @@ pub(crate) fn validate_native_project_gerber_copper_layer(
     })
 }
 
+pub(crate) fn validate_native_project_gerber_soldermask_layer(
+    root: &Path,
+    layer: i32,
+    gerber_path: &Path,
+) -> Result<NativeProjectGerberSoldermaskValidationView> {
+    let project = load_native_project(root)?;
+    let (_mask_layer, source_copper_layer, pads) =
+        resolve_native_project_soldermask_context(root, layer)?;
+    let expected = render_rs274x_soldermask_layer(layer, &pads)
+        .context("failed to render expected native board soldermask layer as RS-274X")?;
+    let actual = std::fs::read_to_string(gerber_path)
+        .with_context(|| format!("failed to read {}", gerber_path.display()))?;
+
+    Ok(NativeProjectGerberSoldermaskValidationView {
+        action: "validate_gerber_soldermask_layer".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        gerber_path: gerber_path.display().to_string(),
+        layer,
+        source_copper_layer,
+        matches_expected: actual == expected,
+        expected_bytes: expected.len(),
+        actual_bytes: actual.len(),
+        pad_count: pads.len(),
+    })
+}
+
+pub(crate) fn validate_native_project_gerber_silkscreen_layer(
+    root: &Path,
+    layer: i32,
+    gerber_path: &Path,
+) -> Result<NativeProjectGerberSilkscreenValidationView> {
+    let project = load_native_project(root)?;
+    let component_text_count = count_native_component_silkscreen_texts(&project.board, layer);
+    let (_silk_layer, texts, component_strokes) =
+        resolve_native_project_silkscreen_context(root, layer)?;
+    let expected = render_rs274x_silkscreen_layer(layer, &texts, &component_strokes)
+        .context("failed to render expected native board silkscreen layer as RS-274X")?;
+    let actual = std::fs::read_to_string(gerber_path)
+        .with_context(|| format!("failed to read {}", gerber_path.display()))?;
+
+    Ok(NativeProjectGerberSilkscreenValidationView {
+        action: "validate_gerber_silkscreen_layer".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        gerber_path: gerber_path.display().to_string(),
+        layer,
+        matches_expected: actual == expected,
+        expected_bytes: expected.len(),
+        actual_bytes: actual.len(),
+        text_count: texts.len().saturating_sub(component_text_count),
+        component_text_count,
+        component_stroke_count: component_strokes.len(),
+    })
+}
+
+pub(crate) fn validate_native_project_gerber_paste_layer(
+    root: &Path,
+    layer: i32,
+    gerber_path: &Path,
+) -> Result<NativeProjectGerberPasteValidationView> {
+    let project = load_native_project(root)?;
+    let (_paste_layer, source_copper_layer, pads) =
+        resolve_native_project_paste_context(root, layer)?;
+    let expected = render_rs274x_paste_layer(layer, &pads)
+        .context("failed to render expected native board paste layer as RS-274X")?;
+    let actual = std::fs::read_to_string(gerber_path)
+        .with_context(|| format!("failed to read {}", gerber_path.display()))?;
+
+    Ok(NativeProjectGerberPasteValidationView {
+        action: "validate_gerber_paste_layer".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        gerber_path: gerber_path.display().to_string(),
+        layer,
+        source_copper_layer,
+        matches_expected: actual == expected,
+        expected_bytes: expected.len(),
+        actual_bytes: actual.len(),
+        pad_count: pads.len(),
+    })
+}
+
+pub(crate) fn validate_native_project_gerber_mechanical_layer(
+    root: &Path,
+    layer: i32,
+    gerber_path: &Path,
+) -> Result<NativeProjectGerberMechanicalValidationView> {
+    let project = load_native_project(root)?;
+    let (_mechanical_layer, polygons) = resolve_native_project_mechanical_context(root, layer)?;
+    let expected = render_rs274x_mechanical_layer(layer, &polygons)
+        .context("failed to render expected native board mechanical layer as RS-274X")?;
+    let actual = std::fs::read_to_string(gerber_path)
+        .with_context(|| format!("failed to read {}", gerber_path.display()))?;
+
+    Ok(NativeProjectGerberMechanicalValidationView {
+        action: "validate_gerber_mechanical_layer".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        gerber_path: gerber_path.display().to_string(),
+        layer,
+        matches_expected: actual == expected,
+        expected_bytes: expected.len(),
+        actual_bytes: actual.len(),
+        keepout_count: polygons.len(),
+    })
+}
+
 pub(crate) fn compare_native_project_gerber_outline(
     root: &Path,
     gerber_path: &Path,
@@ -3487,11 +4090,11 @@ pub(crate) fn compare_native_project_gerber_copper_layer(
 
     let expected_pad_signatures = pads
         .iter()
-        .map(|pad| render_flash_geometry(pad.diameter, &pad.position))
+        .map(render_pad_flash_geometry)
         .collect::<BTreeSet<_>>();
     let expected_via_signatures = vias
         .iter()
-        .map(|via| render_flash_geometry(via.diameter, &via.position))
+        .map(|via| render_circular_flash_geometry(via.diameter, &via.position))
         .collect::<BTreeSet<_>>();
     let expected_entries = gerber_copper_expected_entries(&pads, &tracks, &zones, &vias);
     let actual_entries =
@@ -3503,11 +4106,9 @@ pub(crate) fn compare_native_project_gerber_copper_layer(
         .geometries
         .iter()
         .filter(|geometry| match geometry {
-            ParsedGerberGeometry::Flash {
-                aperture_diameter_nm,
-                position,
-            } => expected_pad_signatures
-                .contains(&render_flash_geometry(*aperture_diameter_nm, position)),
+            ParsedGerberGeometry::Flash { aperture, position } => {
+                expected_pad_signatures.contains(&render_parsed_flash_geometry(aperture, position))
+            }
             _ => false,
         })
         .count();
@@ -3521,12 +4122,16 @@ pub(crate) fn compare_native_project_gerber_copper_layer(
         .iter()
         .filter(|geometry| matches!(geometry, ParsedGerberGeometry::Region { .. }))
         .count();
-    let actual_flash_count = parsed
+    let actual_via_count = parsed
         .geometries
         .iter()
-        .filter(|geometry| matches!(geometry, ParsedGerberGeometry::Flash { .. }))
+        .filter(|geometry| match geometry {
+            ParsedGerberGeometry::Flash { aperture, position } => {
+                expected_via_signatures.contains(&render_parsed_flash_geometry(aperture, position))
+            }
+            _ => false,
+        })
         .count();
-    let actual_via_count = actual_flash_count.saturating_sub(actual_pad_count);
 
     Ok(NativeProjectGerberCopperComparisonView {
         action: "compare_gerber_copper_layer".to_string(),
@@ -3542,6 +4147,184 @@ pub(crate) fn compare_native_project_gerber_copper_layer(
         actual_zone_count,
         expected_via_count: vias.len(),
         actual_via_count,
+        matched_count,
+        missing_count,
+        extra_count,
+        matched,
+        missing,
+        extra,
+    })
+}
+
+pub(crate) fn compare_native_project_gerber_soldermask_layer(
+    root: &Path,
+    layer: i32,
+    gerber_path: &Path,
+) -> Result<NativeProjectGerberSoldermaskComparisonView> {
+    let project = load_native_project(root)?;
+    let (_mask_layer, source_copper_layer, pads) =
+        resolve_native_project_soldermask_context(root, layer)?;
+    let actual_gerber = std::fs::read_to_string(gerber_path)
+        .with_context(|| format!("failed to read {}", gerber_path.display()))?;
+    let parsed = parse_rs274x_subset(&actual_gerber)
+        .context("failed to parse Gerber soldermask layer for semantic comparison")?;
+
+    let expected_pad_signatures = pads
+        .iter()
+        .map(render_pad_flash_geometry)
+        .collect::<BTreeSet<_>>();
+    let expected_entries = gerber_soldermask_expected_entries(&pads);
+    let actual_entries = gerber_soldermask_actual_entries(&parsed, &expected_pad_signatures);
+    let (matched_count, missing_count, extra_count, matched, missing, extra) =
+        compare_entry_views(expected_entries, actual_entries);
+
+    let actual_pad_count = parsed
+        .geometries
+        .iter()
+        .filter(|geometry| match geometry {
+            ParsedGerberGeometry::Flash { aperture, position } => {
+                expected_pad_signatures.contains(&render_parsed_flash_geometry(aperture, position))
+            }
+            _ => false,
+        })
+        .count();
+
+    Ok(NativeProjectGerberSoldermaskComparisonView {
+        action: "compare_gerber_soldermask_layer".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        gerber_path: gerber_path.display().to_string(),
+        layer,
+        source_copper_layer,
+        expected_pad_count: pads.len(),
+        actual_pad_count,
+        matched_count,
+        missing_count,
+        extra_count,
+        matched,
+        missing,
+        extra,
+    })
+}
+
+pub(crate) fn compare_native_project_gerber_silkscreen_layer(
+    root: &Path,
+    layer: i32,
+    gerber_path: &Path,
+) -> Result<NativeProjectGerberSilkscreenComparisonView> {
+    let project = load_native_project(root)?;
+    let component_text_count = count_native_component_silkscreen_texts(&project.board, layer);
+    let (_silk_layer, texts, component_strokes) =
+        resolve_native_project_silkscreen_context(root, layer)?;
+    let expected_gerber = render_rs274x_silkscreen_layer(layer, &texts, &component_strokes)
+        .context("failed to render expected native board silkscreen layer as RS-274X")?;
+    let actual_gerber = std::fs::read_to_string(gerber_path)
+        .with_context(|| format!("failed to read {}", gerber_path.display()))?;
+    let expected_parsed = parse_rs274x_subset(&expected_gerber)
+        .context("failed to parse expected Gerber silkscreen layer for semantic comparison")?;
+    let actual_parsed = parse_rs274x_subset(&actual_gerber)
+        .context("failed to parse Gerber silkscreen layer for semantic comparison")?;
+
+    let expected_entries = gerber_silkscreen_expected_entries(&expected_parsed);
+    let actual_entries = gerber_silkscreen_expected_entries(&actual_parsed);
+    let (matched_count, missing_count, extra_count, matched, missing, extra) =
+        compare_entry_views(expected_entries, actual_entries);
+
+    Ok(NativeProjectGerberSilkscreenComparisonView {
+        action: "compare_gerber_silkscreen_layer".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        gerber_path: gerber_path.display().to_string(),
+        layer,
+        expected_text_count: texts.len().saturating_sub(component_text_count),
+        expected_component_text_count: component_text_count,
+        expected_component_stroke_count: component_strokes.len(),
+        actual_geometry_count: actual_parsed.geometries.len(),
+        matched_count,
+        missing_count,
+        extra_count,
+        matched,
+        missing,
+        extra,
+    })
+}
+
+pub(crate) fn compare_native_project_gerber_paste_layer(
+    root: &Path,
+    layer: i32,
+    gerber_path: &Path,
+) -> Result<NativeProjectGerberPasteComparisonView> {
+    let project = load_native_project(root)?;
+    let (_paste_layer, source_copper_layer, pads) =
+        resolve_native_project_paste_context(root, layer)?;
+    let actual_gerber = std::fs::read_to_string(gerber_path)
+        .with_context(|| format!("failed to read {}", gerber_path.display()))?;
+    let parsed = parse_rs274x_subset(&actual_gerber)
+        .context("failed to parse Gerber paste layer for semantic comparison")?;
+
+    let expected_pad_signatures = pads
+        .iter()
+        .map(render_pad_flash_geometry)
+        .collect::<BTreeSet<_>>();
+    let expected_entries = gerber_soldermask_expected_entries(&pads);
+    let actual_entries = gerber_soldermask_actual_entries(&parsed, &expected_pad_signatures);
+    let (matched_count, missing_count, extra_count, matched, missing, extra) =
+        compare_entry_views(expected_entries, actual_entries);
+
+    let actual_pad_count = parsed
+        .geometries
+        .iter()
+        .filter(|geometry| match geometry {
+            ParsedGerberGeometry::Flash { aperture, position } => {
+                expected_pad_signatures.contains(&render_parsed_flash_geometry(aperture, position))
+            }
+            _ => false,
+        })
+        .count();
+
+    Ok(NativeProjectGerberPasteComparisonView {
+        action: "compare_gerber_paste_layer".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        gerber_path: gerber_path.display().to_string(),
+        layer,
+        source_copper_layer,
+        expected_pad_count: pads.len(),
+        actual_pad_count,
+        matched_count,
+        missing_count,
+        extra_count,
+        matched,
+        missing,
+        extra,
+    })
+}
+
+pub(crate) fn compare_native_project_gerber_mechanical_layer(
+    root: &Path,
+    layer: i32,
+    gerber_path: &Path,
+) -> Result<NativeProjectGerberMechanicalComparisonView> {
+    let project = load_native_project(root)?;
+    let (_mechanical_layer, polygons) = resolve_native_project_mechanical_context(root, layer)?;
+    let actual_gerber = std::fs::read_to_string(gerber_path)
+        .with_context(|| format!("failed to read {}", gerber_path.display()))?;
+    let parsed = parse_rs274x_subset(&actual_gerber)
+        .context("failed to parse Gerber mechanical layer for semantic comparison")?;
+
+    let expected_entries = gerber_mechanical_expected_entries(&polygons);
+    let actual_entries = gerber_mechanical_actual_entries(&parsed);
+    let (matched_count, missing_count, extra_count, matched, missing, extra) =
+        compare_entry_views(expected_entries, actual_entries);
+
+    Ok(NativeProjectGerberMechanicalComparisonView {
+        action: "compare_gerber_mechanical_layer".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        gerber_path: gerber_path.display().to_string(),
+        layer,
+        expected_keepout_count: polygons.len(),
+        actual_geometry_count: parsed.geometries.len(),
         matched_count,
         missing_count,
         extra_count,
@@ -6132,15 +6915,25 @@ pub(crate) fn place_native_project_board_text(
     text: String,
     position: Point,
     rotation_deg: i32,
+    height_nm: i64,
+    stroke_width_nm: i64,
     layer: i32,
 ) -> Result<NativeProjectBoardTextMutationReportView> {
     let mut project = load_native_project(root)?;
     let text_uuid = Uuid::new_v4();
+    if height_nm <= 0 {
+        bail!("board text height must be positive");
+    }
+    if stroke_width_nm <= 0 {
+        bail!("board text stroke width must be positive");
+    }
     let board_text = BoardText {
         uuid: text_uuid,
         text: text.clone(),
         position,
         rotation: rotation_deg,
+        height_nm,
+        stroke_width_nm,
         layer,
     };
     project.board.texts.push(
@@ -6156,6 +6949,8 @@ pub(crate) fn place_native_project_board_text(
         x_nm: position.x,
         y_nm: position.y,
         rotation_deg,
+        height_nm,
+        stroke_width_nm,
         layer,
     })
 }
@@ -6167,6 +6962,8 @@ pub(crate) fn edit_native_project_board_text(
     x_nm: Option<i64>,
     y_nm: Option<i64>,
     rotation_deg: Option<i32>,
+    height_nm: Option<i64>,
+    stroke_width_nm: Option<i64>,
     layer: Option<i32>,
 ) -> Result<NativeProjectBoardTextMutationReportView> {
     let mut project = load_native_project(root)?;
@@ -6198,8 +6995,20 @@ pub(crate) fn edit_native_project_board_text(
     if let Some(rotation_deg) = rotation_deg {
         board_text.rotation = rotation_deg;
     }
+    if let Some(height_nm) = height_nm {
+        board_text.height_nm = height_nm;
+    }
+    if let Some(stroke_width_nm) = stroke_width_nm {
+        board_text.stroke_width_nm = stroke_width_nm;
+    }
     if let Some(layer) = layer {
         board_text.layer = layer;
+    }
+    if board_text.height_nm <= 0 {
+        bail!("board text height must be positive");
+    }
+    if board_text.stroke_width_nm <= 0 {
+        bail!("board text stroke width must be positive");
     }
     project.board.texts[index] =
         serde_json::to_value(&board_text).expect("native board text serialization must succeed");
@@ -6213,6 +7022,8 @@ pub(crate) fn edit_native_project_board_text(
         x_nm: board_text.position.x,
         y_nm: board_text.position.y,
         rotation_deg: board_text.rotation,
+        height_nm: board_text.height_nm,
+        stroke_width_nm: board_text.stroke_width_nm,
         layer: board_text.layer,
     })
 }
@@ -6249,6 +7060,8 @@ pub(crate) fn delete_native_project_board_text(
         x_nm: board_text.position.x,
         y_nm: board_text.position.y,
         rotation_deg: board_text.rotation,
+        height_nm: board_text.height_nm,
+        stroke_width_nm: board_text.stroke_width_nm,
         layer: board_text.layer,
     })
 }
@@ -6469,6 +7282,16 @@ pub(crate) fn place_native_project_board_component(
         serde_json::to_value(&component)
             .expect("native board component serialization must succeed"),
     );
+    project
+        .board
+        .component_silkscreen
+        .entry(component_uuid.to_string())
+        .or_default();
+    project
+        .board
+        .component_silkscreen_texts
+        .entry(component_uuid.to_string())
+        .or_default();
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
         "place_board_component",
@@ -6638,7 +7461,7 @@ pub(crate) fn move_native_project_board_component(
     })?;
     component.position = position;
     project.board.packages.insert(
-        key,
+        key.clone(),
         serde_json::to_value(&component)
             .expect("native board component serialization must succeed"),
     );
@@ -6668,7 +7491,7 @@ pub(crate) fn set_native_project_board_component_part(
     })?;
     component.part = part_uuid;
     project.board.packages.insert(
-        key,
+        key.clone(),
         serde_json::to_value(&component)
             .expect("native board component serialization must succeed"),
     );
@@ -6698,10 +7521,12 @@ pub(crate) fn set_native_project_board_component_package(
     })?;
     component.package = package_uuid;
     project.board.packages.insert(
-        key,
+        key.clone(),
         serde_json::to_value(&component)
             .expect("native board component serialization must succeed"),
     );
+    project.board.component_silkscreen.remove(&key);
+    project.board.component_silkscreen_texts.remove(&key);
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
         "set_board_component_package",
@@ -6822,6 +7647,14 @@ pub(crate) fn delete_native_project_board_component(
             project.board_path.display()
         )
     })?;
+    project
+        .board
+        .component_silkscreen
+        .remove(&component_uuid.to_string());
+    project
+        .board
+        .component_silkscreen_texts
+        .remove(&component_uuid.to_string());
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
         "delete_board_component",
@@ -6871,13 +7704,39 @@ pub(crate) fn set_native_project_board_pad_net(
     ))
 }
 
+fn parse_native_board_pad_shape(shape: &str) -> Result<PadShape> {
+    match shape {
+        "circle" => Ok(PadShape::Circle),
+        "rect" => Ok(PadShape::Rect),
+        _ => bail!("unsupported board pad shape: {shape}"),
+    }
+}
+
+fn validate_native_board_pad_geometry(pad: &PlacedPad) -> Result<()> {
+    match pad.aperture() {
+        PadAperture::Circle { diameter_nm } if diameter_nm <= 0 => {
+            bail!("board pad circular diameter must be positive");
+        }
+        PadAperture::Rect { width_nm, .. } if width_nm <= 0 => {
+            bail!("board pad rectangular width must be positive");
+        }
+        PadAperture::Rect { height_nm, .. } if height_nm <= 0 => {
+            bail!("board pad rectangular height must be positive");
+        }
+        _ => Ok(()),
+    }
+}
+
 pub(crate) fn place_native_project_board_pad(
     root: &Path,
     package_uuid: Uuid,
     name: String,
     position: Point,
     layer: i32,
-    diameter_nm: i64,
+    shape: Option<String>,
+    diameter_nm: Option<i64>,
+    width_nm: Option<i64>,
+    height_nm: Option<i64>,
     net_uuid: Option<Uuid>,
 ) -> Result<NativeProjectBoardPadMutationReportView> {
     let mut project = load_native_project(root)?;
@@ -6887,6 +7746,11 @@ pub(crate) fn place_native_project_board_pad(
         bail!("board net not found in native project: {net_uuid}");
     }
     let pad_uuid = Uuid::new_v4();
+    let shape = shape
+        .as_deref()
+        .map(parse_native_board_pad_shape)
+        .transpose()?
+        .unwrap_or(PadShape::Circle);
     let pad = PlacedPad {
         uuid: pad_uuid,
         package: package_uuid,
@@ -6894,8 +7758,12 @@ pub(crate) fn place_native_project_board_pad(
         net: net_uuid,
         position,
         layer,
-        diameter: diameter_nm,
+        shape,
+        diameter: diameter_nm.unwrap_or(0),
+        width: width_nm.unwrap_or(0),
+        height: height_nm.unwrap_or(0),
     };
+    validate_native_board_pad_geometry(&pad)?;
     project.board.pads.insert(
         pad_uuid.to_string(),
         serde_json::to_value(&pad).expect("native board pad serialization must succeed"),
@@ -6913,7 +7781,10 @@ pub(crate) fn edit_native_project_board_pad(
     pad_uuid: Uuid,
     position: Option<Point>,
     layer: Option<i32>,
+    shape: Option<String>,
     diameter_nm: Option<i64>,
+    width_nm: Option<i64>,
+    height_nm: Option<i64>,
 ) -> Result<NativeProjectBoardPadMutationReportView> {
     let mut project = load_native_project(root)?;
     let key = pad_uuid.to_string();
@@ -6935,9 +7806,19 @@ pub(crate) fn edit_native_project_board_pad(
     if let Some(layer) = layer {
         pad.layer = layer;
     }
+    if let Some(shape) = shape {
+        pad.shape = parse_native_board_pad_shape(&shape)?;
+    }
     if let Some(diameter_nm) = diameter_nm {
         pad.diameter = diameter_nm;
     }
+    if let Some(width_nm) = width_nm {
+        pad.width = width_nm;
+    }
+    if let Some(height_nm) = height_nm {
+        pad.height = height_nm;
+    }
+    validate_native_board_pad_geometry(&pad)?;
     project.board.pads.insert(
         key,
         serde_json::to_value(&pad).expect("native board pad serialization must succeed"),
@@ -7512,7 +8393,13 @@ fn native_project_board_pad_report(
         x_nm: pad.position.x,
         y_nm: pad.position.y,
         layer: pad.layer,
+        shape: match pad.shape {
+            PadShape::Circle => "circle".to_string(),
+            PadShape::Rect => "rect".to_string(),
+        },
         diameter_nm: pad.diameter,
+        width_nm: pad.width,
+        height_nm: pad.height,
     }
 }
 

@@ -1,5 +1,5 @@
 use super::*;
-use eda_engine::board::PlacedPad;
+use eda_engine::board::{PadShape, PlacedPad};
 use eda_engine::ir::serialization::to_json_deterministic;
 
 fn unique_project_root(label: &str) -> PathBuf {
@@ -96,7 +96,10 @@ fn project_board_pad_query_edit_and_net_assignment_round_trip() {
     assert_eq!(pads[0].position.x, 1000);
     assert_eq!(pads[0].position.y, 2000);
     assert_eq!(pads[0].layer, 1);
+    assert_eq!(pads[0].shape, PadShape::Circle);
     assert_eq!(pads[0].diameter, 450000);
+    assert_eq!(pads[0].width, 0);
+    assert_eq!(pads[0].height, 0);
 
     let edit_cli = Cli::try_parse_from([
         "eda",
@@ -124,7 +127,10 @@ fn project_board_pad_query_edit_and_net_assignment_round_trip() {
     assert_eq!(edit_report["x_nm"].as_i64(), Some(3000));
     assert_eq!(edit_report["y_nm"].as_i64(), Some(4000));
     assert_eq!(edit_report["layer"].as_i64(), Some(2));
+    assert_eq!(edit_report["shape"].as_str(), Some("circle"));
     assert_eq!(edit_report["diameter_nm"].as_i64(), Some(600000));
+    assert_eq!(edit_report["width_nm"].as_i64(), Some(0));
+    assert_eq!(edit_report["height_nm"].as_i64(), Some(0));
 
     let pads_output =
         execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
@@ -134,7 +140,10 @@ fn project_board_pad_query_edit_and_net_assignment_round_trip() {
     assert_eq!(pads[0].position.x, 3000);
     assert_eq!(pads[0].position.y, 4000);
     assert_eq!(pads[0].layer, 2);
+    assert_eq!(pads[0].shape, PadShape::Circle);
     assert_eq!(pads[0].diameter, 600000);
+    assert_eq!(pads[0].width, 0);
+    assert_eq!(pads[0].height, 0);
 
     let set_cli = Cli::try_parse_from([
         "eda",
@@ -226,7 +235,10 @@ fn project_board_pad_query_edit_and_net_assignment_round_trip() {
     assert_eq!(created.name, "2");
     assert_eq!(created.position.x, 7000);
     assert_eq!(created.position.y, 8000);
+    assert_eq!(created.shape, PadShape::Circle);
     assert_eq!(created.diameter, 700000);
+    assert_eq!(created.width, 0);
+    assert_eq!(created.height, 0);
     assert_eq!(created.layer, 3);
     assert_eq!(created.net, Some(net_uuid));
 
@@ -253,6 +265,86 @@ fn project_board_pad_query_edit_and_net_assignment_round_trip() {
             .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("summary query should succeed");
     assert!(summary_output.contains("board_pads: 1"));
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_board_pad_place_and_edit_rectangular_geometry() {
+    let root = unique_project_root("datum-eda-cli-project-board-pad-rect");
+    create_native_project(&root, Some("Board Pad Rect Demo".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let package_uuid = Uuid::new_v4();
+
+    let place_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "place-board-pad",
+        root.to_str().unwrap(),
+        "--package",
+        &package_uuid.to_string(),
+        "--name",
+        "R1",
+        "--x-nm",
+        "9000",
+        "--y-nm",
+        "10000",
+        "--layer",
+        "1",
+        "--shape",
+        "rect",
+        "--width-nm",
+        "800000",
+        "--height-nm",
+        "400000",
+    ])
+    .expect("CLI should parse");
+    let place_output = execute(place_cli).expect("rectangular board pad should succeed");
+    let place_report: serde_json::Value =
+        serde_json::from_str(&place_output).expect("place output should parse");
+    let pad_uuid = place_report["pad_uuid"].as_str().unwrap().to_string();
+    assert_eq!(place_report["shape"].as_str(), Some("rect"));
+    assert_eq!(place_report["diameter_nm"].as_i64(), Some(0));
+    assert_eq!(place_report["width_nm"].as_i64(), Some(800000));
+    assert_eq!(place_report["height_nm"].as_i64(), Some(400000));
+
+    let edit_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "edit-board-pad",
+        root.to_str().unwrap(),
+        "--pad",
+        &pad_uuid,
+        "--width-nm",
+        "900000",
+        "--height-nm",
+        "500000",
+    ])
+    .expect("CLI should parse");
+    let edit_output = execute(edit_cli).expect("rectangular board pad edit should succeed");
+    let edit_report: serde_json::Value =
+        serde_json::from_str(&edit_output).expect("edit output should parse");
+    assert_eq!(edit_report["shape"].as_str(), Some("rect"));
+    assert_eq!(edit_report["width_nm"].as_i64(), Some(900000));
+    assert_eq!(edit_report["height_nm"].as_i64(), Some(500000));
+
+    let pads_output =
+        execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
+    let pads: Vec<PlacedPad> =
+        serde_json::from_str(&pads_output).expect("query output should parse");
+    let pad = pads
+        .iter()
+        .find(|pad| pad.uuid.to_string() == pad_uuid)
+        .expect("placed rect pad should be present");
+    assert_eq!(pad.shape, PadShape::Rect);
+    assert_eq!(pad.diameter, 0);
+    assert_eq!(pad.width, 900000);
+    assert_eq!(pad.height, 500000);
 
     let _ = std::fs::remove_dir_all(&root);
 }

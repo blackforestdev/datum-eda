@@ -134,6 +134,8 @@ fn silk_clearance_reports_text_too_close_to_track() {
         text: "REF".into(),
         position: Point::new(10_000_000, 10_000_000),
         rotation: 0,
+        height_nm: 1_000_000,
+        stroke_width_nm: 100_000,
         layer: 37,
     });
     let track_uuid = Uuid::new_v4();

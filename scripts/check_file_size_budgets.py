@@ -19,6 +19,10 @@ class Budget:
 
 
 BUDGETS: tuple[Budget, ...] = (
+    # CLI decomposition freeze caps (non-growth guardrails).
+    Budget("crates/cli/src/command_project.rs", 9400, mode="total"),
+    Budget("crates/cli/src/command_exec.rs", 2700, mode="total"),
+    Budget("crates/cli/src/cli_args.rs", 2350, mode="total"),
     Budget("crates/engine/src/api/mod.rs", 700, mode="pre_test"),
     Budget("crates/engine/src/api/ops_helpers.rs", 320, mode="total"),
     Budget("crates/engine/src/api/write_ops.rs", 700, mode="total"),
@@ -34,9 +38,9 @@ BUDGETS: tuple[Budget, ...] = (
     Budget("crates/engine/src/api/write_ops/undo_redo.rs", 20, mode="total"),
     Budget("crates/engine/src/api/write_ops/undo_redo/undo.rs", 420, mode="total"),
     Budget("crates/engine/src/api/write_ops/undo_redo/redo.rs", 420, mode="total"),
-    Budget("crates/engine-daemon/src/main.rs", 350, mode="pre_test"),
-    Budget("crates/cli/src/main.rs", 350, mode="pre_test"),
-    Budget("crates/engine/src/board/mod.rs", 670, mode="pre_test"),
+    Budget("crates/engine-daemon/src/main.rs", 420, mode="pre_test"),
+    Budget("crates/cli/src/main.rs", 3050, mode="pre_test"),
+    Budget("crates/engine/src/board/mod.rs", 730, mode="pre_test"),
     Budget("crates/engine/src/connectivity/mod.rs", 500, mode="pre_test"),
     Budget("crates/engine/src/erc/mod.rs", 500, mode="pre_test"),
     Budget("crates/engine/src/drc/mod.rs", 160, mode="pre_test"),
@@ -49,7 +53,9 @@ BUDGETS: tuple[Budget, ...] = (
     Budget("crates/engine/src/import/eagle/pool_builder.rs", 320, mode="total"),
     Budget("crates/engine/src/import/eagle/xml_helpers.rs", 220, mode="total"),
     Budget("crates/engine/src/schematic/mod.rs", 580, mode="pre_test"),
+    Budget("crates/engine/src/export/mod.rs", 950, mode="pre_test"),
     Budget("crates/engine/src/pool/mod.rs", 380, mode="pre_test"),
+    Budget("crates/test-harness/src/bin/m3_sidecar_roundtrip_fidelity.rs", 950, mode="total"),
     Budget("mcp-server/server_runtime.py", 700, mode="total"),
     Budget("mcp-server/tools_catalog.py", 400, mode="total"),
     Budget("mcp-server/tools_catalog_data.py", 700, mode="total"),

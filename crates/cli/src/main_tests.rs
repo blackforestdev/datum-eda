@@ -39,16 +39,40 @@ mod main_tests_project_gerber_copper_compare;
 mod main_tests_project_gerber_copper_export;
 #[path = "main_tests_project_gerber_copper_validate.rs"]
 mod main_tests_project_gerber_copper_validate;
+#[path = "main_tests_project_gerber_mask_compare.rs"]
+mod main_tests_project_gerber_mask_compare;
+#[path = "main_tests_project_gerber_mask_export.rs"]
+mod main_tests_project_gerber_mask_export;
+#[path = "main_tests_project_gerber_mask_validate.rs"]
+mod main_tests_project_gerber_mask_validate;
+#[path = "main_tests_project_gerber_mech_compare.rs"]
+mod main_tests_project_gerber_mech_compare;
+#[path = "main_tests_project_gerber_mech_export.rs"]
+mod main_tests_project_gerber_mech_export;
+#[path = "main_tests_project_gerber_mech_validate.rs"]
+mod main_tests_project_gerber_mech_validate;
 #[path = "main_tests_project_gerber_outline_compare.rs"]
 mod main_tests_project_gerber_outline_compare;
 #[path = "main_tests_project_gerber_outline_export.rs"]
 mod main_tests_project_gerber_outline_export;
 #[path = "main_tests_project_gerber_outline_validate.rs"]
 mod main_tests_project_gerber_outline_validate;
+#[path = "main_tests_project_gerber_paste_compare.rs"]
+mod main_tests_project_gerber_paste_compare;
+#[path = "main_tests_project_gerber_paste_export.rs"]
+mod main_tests_project_gerber_paste_export;
+#[path = "main_tests_project_gerber_paste_validate.rs"]
+mod main_tests_project_gerber_paste_validate;
 #[path = "main_tests_project_gerber_plan.rs"]
 mod main_tests_project_gerber_plan;
 #[path = "main_tests_project_gerber_plan_compare.rs"]
 mod main_tests_project_gerber_plan_compare;
+#[path = "main_tests_project_gerber_silk_compare.rs"]
+mod main_tests_project_gerber_silk_compare;
+#[path = "main_tests_project_gerber_silk_export.rs"]
+mod main_tests_project_gerber_silk_export;
+#[path = "main_tests_project_gerber_silk_validate.rs"]
+mod main_tests_project_gerber_silk_validate;
 #[path = "main_tests_project_pnp_compare.rs"]
 mod main_tests_project_pnp_compare;
 #[path = "main_tests_project_pnp_export.rs"]

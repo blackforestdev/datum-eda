@@ -69,7 +69,10 @@ fn connectivity_check_reports_no_copper_net_with_two_pins() {
             net: Some(net_uuid),
             position: Point::new(10_000_000, 10_000_000),
             layer: 1,
+            shape: crate::board::PadShape::Circle,
             diameter: 0,
+            width: 0,
+            height: 0,
         },
     );
     board.pads.insert(
@@ -81,7 +84,10 @@ fn connectivity_check_reports_no_copper_net_with_two_pins() {
             net: Some(net_uuid),
             position: Point::new(40_000_000, 10_000_000),
             layer: 1,
+            shape: crate::board::PadShape::Circle,
             diameter: 0,
+            width: 0,
+            height: 0,
         },
     );
 
@@ -223,7 +229,10 @@ fn connectivity_reports_single_pin_unconnected_pin_violation() {
             net: Some(net_uuid),
             position: Point::new(10_000_000, 10_000_000),
             layer: 1,
+            shape: crate::board::PadShape::Circle,
             diameter: 0,
+            width: 0,
+            height: 0,
         },
     );
 

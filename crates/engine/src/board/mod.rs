@@ -41,6 +41,25 @@ pub struct PlacedPackage {
     pub locked: bool,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum PadShape {
+    Circle,
+    Rect,
+}
+
+impl Default for PadShape {
+    fn default() -> Self {
+        Self::Circle
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum PadAperture {
+    Circle { diameter_nm: i64 },
+    Rect { width_nm: i64, height_nm: i64 },
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PlacedPad {
     pub uuid: Uuid,
@@ -50,7 +69,27 @@ pub struct PlacedPad {
     pub position: Point,
     pub layer: LayerId,
     #[serde(default)]
+    pub shape: PadShape,
+    #[serde(default)]
     pub diameter: i64,
+    #[serde(default)]
+    pub width: i64,
+    #[serde(default)]
+    pub height: i64,
+}
+
+impl PlacedPad {
+    pub fn aperture(&self) -> PadAperture {
+        match self.shape {
+            PadShape::Circle => PadAperture::Circle {
+                diameter_nm: self.diameter,
+            },
+            PadShape::Rect => PadAperture::Rect {
+                width_nm: self.width,
+                height_nm: self.height,
+            },
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -151,6 +190,18 @@ pub struct BoardText {
     pub position: Point,
     pub rotation: i32,
     pub layer: LayerId,
+    #[serde(default = "default_board_text_height_nm")]
+    pub height_nm: i64,
+    #[serde(default = "default_board_text_stroke_width_nm")]
+    pub stroke_width_nm: i64,
+}
+
+fn default_board_text_height_nm() -> i64 {
+    1_000_000
+}
+
+fn default_board_text_stroke_width_nm() -> i64 {
+    100_000
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

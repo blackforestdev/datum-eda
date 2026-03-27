@@ -118,7 +118,10 @@ pub(super) fn replace_component_pads_from_pool_package(
                 package_pad.position,
             ),
             layer: package_pad.layer,
+            shape: crate::board::PadShape::Circle,
             diameter: 0,
+            width: 0,
+            height: 0,
         });
     }
     regenerated.sort_by_key(|pad| pad.uuid);
@@ -186,7 +189,10 @@ pub(super) fn replace_component_pads_for_assign_part(
                 package_pad.position,
             ),
             layer: package_pad.layer,
+            shape: crate::board::PadShape::Circle,
             diameter: 0,
+            width: 0,
+            height: 0,
         });
     }
     regenerated.sort_by_key(|pad| pad.uuid);

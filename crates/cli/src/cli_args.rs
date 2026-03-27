@@ -378,6 +378,50 @@ pub(crate) enum ProjectCommands {
         #[arg(long = "out")]
         out: PathBuf,
     },
+    /// Export one native board soldermask layer as a narrow RS-274X Gerber file
+    ExportGerberSoldermaskLayer {
+        /// Project root directory
+        path: PathBuf,
+        /// Soldermask layer identifier
+        #[arg(long = "layer")]
+        layer: i32,
+        /// Output Gerber path
+        #[arg(long = "out")]
+        out: PathBuf,
+    },
+    /// Export one native board silkscreen layer as a narrow RS-274X Gerber file
+    ExportGerberSilkscreenLayer {
+        /// Project root directory
+        path: PathBuf,
+        /// Silkscreen layer identifier
+        #[arg(long = "layer")]
+        layer: i32,
+        /// Output Gerber path
+        #[arg(long = "out")]
+        out: PathBuf,
+    },
+    /// Export one native board paste layer as a narrow RS-274X Gerber file
+    ExportGerberPasteLayer {
+        /// Project root directory
+        path: PathBuf,
+        /// Paste layer identifier
+        #[arg(long = "layer")]
+        layer: i32,
+        /// Output Gerber path
+        #[arg(long = "out")]
+        out: PathBuf,
+    },
+    /// Export one native board mechanical layer as a narrow RS-274X Gerber file
+    ExportGerberMechanicalLayer {
+        /// Project root directory
+        path: PathBuf,
+        /// Mechanical layer identifier
+        #[arg(long = "layer")]
+        layer: i32,
+        /// Output Gerber path
+        #[arg(long = "out")]
+        out: PathBuf,
+    },
     /// Validate a narrow RS-274X board-outline Gerber against the current native board outline
     ValidateGerberOutline {
         /// Project root directory
@@ -397,6 +441,50 @@ pub(crate) enum ProjectCommands {
         #[arg(long = "gerber")]
         gerber: PathBuf,
     },
+    /// Validate a narrow RS-274X soldermask-layer Gerber against the current native pad openings on one layer
+    ValidateGerberSoldermaskLayer {
+        /// Project root directory
+        path: PathBuf,
+        /// Soldermask layer identifier
+        #[arg(long = "layer")]
+        layer: i32,
+        /// Gerber path to validate
+        #[arg(long = "gerber")]
+        gerber: PathBuf,
+    },
+    /// Validate a narrow RS-274X silkscreen-layer Gerber against the current native board text on one layer
+    ValidateGerberSilkscreenLayer {
+        /// Project root directory
+        path: PathBuf,
+        /// Silkscreen layer identifier
+        #[arg(long = "layer")]
+        layer: i32,
+        /// Gerber path to validate
+        #[arg(long = "gerber")]
+        gerber: PathBuf,
+    },
+    /// Validate a narrow RS-274X paste-layer Gerber against the current native pad openings on one layer
+    ValidateGerberPasteLayer {
+        /// Project root directory
+        path: PathBuf,
+        /// Paste layer identifier
+        #[arg(long = "layer")]
+        layer: i32,
+        /// Gerber path to validate
+        #[arg(long = "gerber")]
+        gerber: PathBuf,
+    },
+    /// Validate a narrow RS-274X mechanical-layer Gerber against the current native keepout polygons on one layer
+    ValidateGerberMechanicalLayer {
+        /// Project root directory
+        path: PathBuf,
+        /// Mechanical layer identifier
+        #[arg(long = "layer")]
+        layer: i32,
+        /// Gerber path to validate
+        #[arg(long = "gerber")]
+        gerber: PathBuf,
+    },
     /// Compare a narrow RS-274X board-outline Gerber semantically against the current native board outline
     CompareGerberOutline {
         /// Project root directory
@@ -410,6 +498,50 @@ pub(crate) enum ProjectCommands {
         /// Project root directory
         path: PathBuf,
         /// Layer identifier
+        #[arg(long = "layer")]
+        layer: i32,
+        /// Gerber path to compare
+        #[arg(long = "gerber")]
+        gerber: PathBuf,
+    },
+    /// Compare a narrow RS-274X soldermask-layer Gerber semantically against the current native pad openings on one layer
+    CompareGerberSoldermaskLayer {
+        /// Project root directory
+        path: PathBuf,
+        /// Soldermask layer identifier
+        #[arg(long = "layer")]
+        layer: i32,
+        /// Gerber path to compare
+        #[arg(long = "gerber")]
+        gerber: PathBuf,
+    },
+    /// Compare a narrow RS-274X silkscreen-layer Gerber semantically against the current native board text on one layer
+    CompareGerberSilkscreenLayer {
+        /// Project root directory
+        path: PathBuf,
+        /// Silkscreen layer identifier
+        #[arg(long = "layer")]
+        layer: i32,
+        /// Gerber path to compare
+        #[arg(long = "gerber")]
+        gerber: PathBuf,
+    },
+    /// Compare a narrow RS-274X paste-layer Gerber semantically against the current native pad openings on one layer
+    CompareGerberPasteLayer {
+        /// Project root directory
+        path: PathBuf,
+        /// Paste layer identifier
+        #[arg(long = "layer")]
+        layer: i32,
+        /// Gerber path to compare
+        #[arg(long = "gerber")]
+        gerber: PathBuf,
+    },
+    /// Compare a narrow RS-274X mechanical-layer Gerber semantically against the current native keepout polygons on one layer
+    CompareGerberMechanicalLayer {
+        /// Project root directory
+        path: PathBuf,
+        /// Mechanical layer identifier
         #[arg(long = "layer")]
         layer: i32,
         /// Gerber path to compare
@@ -1189,6 +1321,12 @@ pub(crate) enum ProjectCommands {
         /// Rotation in degrees
         #[arg(long = "rotation-deg", default_value_t = 0)]
         rotation_deg: i32,
+        /// Text height in nm
+        #[arg(long = "height-nm", default_value_t = 1_000_000)]
+        height_nm: i64,
+        /// Stroke width in nm
+        #[arg(long = "stroke-width-nm", default_value_t = 100_000)]
+        stroke_width_nm: i64,
         /// Layer identifier
         #[arg(long)]
         layer: i32,
@@ -1212,6 +1350,12 @@ pub(crate) enum ProjectCommands {
         /// Replacement rotation in degrees
         #[arg(long = "rotation-deg")]
         rotation_deg: Option<i32>,
+        /// Replacement text height in nm
+        #[arg(long = "height-nm")]
+        height_nm: Option<i64>,
+        /// Replacement stroke width in nm
+        #[arg(long = "stroke-width-nm")]
+        stroke_width_nm: Option<i64>,
         /// Replacement layer identifier
         #[arg(long)]
         layer: Option<i32>,
@@ -1736,9 +1880,18 @@ pub(crate) enum ProjectCommands {
         /// Replacement layer identifier
         #[arg(long)]
         layer: Option<i32>,
+        /// Replacement pad shape (`circle` or `rect`)
+        #[arg(long)]
+        shape: Option<String>,
         /// Replacement circular copper diameter in nm
         #[arg(long = "diameter-nm")]
         diameter_nm: Option<i64>,
+        /// Replacement rectangular copper width in nm
+        #[arg(long = "width-nm")]
+        width_nm: Option<i64>,
+        /// Replacement rectangular copper height in nm
+        #[arg(long = "height-nm")]
+        height_nm: Option<i64>,
     },
     /// Place one native board pad
     PlaceBoardPad {
@@ -1759,9 +1912,18 @@ pub(crate) enum ProjectCommands {
         /// Layer identifier
         #[arg(long)]
         layer: i32,
+        /// Pad shape (`circle` or `rect`)
+        #[arg(long)]
+        shape: Option<String>,
         /// Circular copper diameter in nm
         #[arg(long = "diameter-nm")]
-        diameter_nm: i64,
+        diameter_nm: Option<i64>,
+        /// Rectangular copper width in nm
+        #[arg(long = "width-nm")]
+        width_nm: Option<i64>,
+        /// Rectangular copper height in nm
+        #[arg(long = "height-nm")]
+        height_nm: Option<i64>,
         /// Optional net UUID
         #[arg(long = "net")]
         net_uuid: Option<Uuid>,

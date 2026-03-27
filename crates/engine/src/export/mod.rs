@@ -1,5 +1,5 @@
-use crate::board::{PlacedPad, Track, Via, Zone};
-use crate::ir::geometry::{LayerId, Polygon};
+use crate::board::{BoardText, PadAperture, PlacedPad, Track, Via, Zone};
+use crate::ir::geometry::{LayerId, Point, Polygon};
 use thiserror::Error;
 
 const DEFAULT_OUTLINE_APERTURE_MM: &str = "0.100000";
@@ -16,8 +16,25 @@ pub enum ExportError {
     InvalidViaDiameter,
     #[error("copper-layer export requires positive pad diameters")]
     InvalidPadDiameter,
+    #[error("copper-layer export requires positive pad rectangle widths")]
+    InvalidPadWidth,
+    #[error("copper-layer export requires positive pad rectangle heights")]
+    InvalidPadHeight,
+    #[error("silkscreen export requires positive text heights")]
+    InvalidTextHeight,
+    #[error("silkscreen export requires positive text stroke widths")]
+    InvalidTextStrokeWidth,
+    #[error("silkscreen export encountered unsupported text character: {0}")]
+    UnsupportedSilkscreenTextCharacter(char),
     #[error("drill export requires positive via drill diameters")]
     InvalidViaDrill,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct SilkscreenStroke {
+    pub from: Point,
+    pub to: Point,
+    pub width_nm: i64,
 }
 
 pub fn render_rs274x_outline(
@@ -83,18 +100,40 @@ pub fn render_rs274x_copper_layer(
     if vias.iter().any(|via| via.diameter <= 0) {
         return Err(ExportError::InvalidViaDiameter);
     }
-    if pads.iter().any(|pad| pad.diameter <= 0) {
-        return Err(ExportError::InvalidPadDiameter);
+    for pad in pads {
+        match pad.aperture() {
+            PadAperture::Circle { diameter_nm } if diameter_nm <= 0 => {
+                return Err(ExportError::InvalidPadDiameter);
+            }
+            PadAperture::Rect { width_nm, .. } if width_nm <= 0 => {
+                return Err(ExportError::InvalidPadWidth);
+            }
+            PadAperture::Rect { height_nm, .. } if height_nm <= 0 => {
+                return Err(ExportError::InvalidPadHeight);
+            }
+            _ => {}
+        }
     }
 
     let mut circle_apertures = tracks
         .iter()
         .map(|track| track.width)
-        .chain(pads.iter().map(|pad| pad.diameter))
         .chain(vias.iter().map(|via| via.diameter))
         .collect::<Vec<_>>();
+    let mut rect_apertures = Vec::new();
+    for pad in pads {
+        match pad.aperture() {
+            PadAperture::Circle { diameter_nm } => circle_apertures.push(diameter_nm),
+            PadAperture::Rect {
+                width_nm,
+                height_nm,
+            } => rect_apertures.push((width_nm, height_nm)),
+        }
+    }
     circle_apertures.sort_unstable();
     circle_apertures.dedup();
+    rect_apertures.sort_unstable();
+    rect_apertures.dedup();
 
     let mut lines = vec![
         format!("G04 datum-eda native copper layer {layer_id}*"),
@@ -106,6 +145,15 @@ pub fn render_rs274x_copper_layer(
     for (idx, diameter) in circle_apertures.iter().enumerate() {
         let d_code = 10 + idx;
         lines.push(format!("%ADD{d_code}C,{}*%", format_mm_6(*diameter)));
+    }
+    let rect_base_code = 10 + circle_apertures.len();
+    for (idx, (width_nm, height_nm)) in rect_apertures.iter().enumerate() {
+        let d_code = rect_base_code + idx;
+        lines.push(format!(
+            "%ADD{d_code}R,{}X{}*%",
+            format_mm_6(*width_nm),
+            format_mm_6(*height_nm)
+        ));
     }
 
     let mut ordered_tracks = tracks.to_vec();
@@ -163,8 +211,11 @@ pub fn render_rs274x_copper_layer(
 
     let mut ordered_pads = pads.to_vec();
     ordered_pads.sort_by(|a, b| {
-        a.diameter
-            .cmp(&b.diameter)
+        a.shape
+            .cmp(&b.shape)
+            .then_with(|| a.diameter.cmp(&b.diameter))
+            .then_with(|| a.width.cmp(&b.width))
+            .then_with(|| a.height.cmp(&b.height))
             .then_with(|| a.position.x.cmp(&b.position.x))
             .then_with(|| a.position.y.cmp(&b.position.y))
             .then_with(|| a.layer.cmp(&b.layer))
@@ -174,10 +225,22 @@ pub fn render_rs274x_copper_layer(
     });
 
     for pad in ordered_pads {
-        let d_code = 10
-            + circle_apertures
-                .binary_search(&pad.diameter)
-                .expect("known pad aperture");
+        let d_code = match pad.aperture() {
+            PadAperture::Circle { diameter_nm } => {
+                10 + circle_apertures
+                    .binary_search(&diameter_nm)
+                    .expect("known pad aperture")
+            }
+            PadAperture::Rect {
+                width_nm,
+                height_nm,
+            } => {
+                rect_base_code
+                    + rect_apertures
+                        .binary_search(&(width_nm, height_nm))
+                        .expect("known rectangular pad aperture")
+            }
+        };
         lines.push(format!("D{d_code}*"));
         lines.push(format!(
             "X{}Y{}D03*",
@@ -224,6 +287,562 @@ pub fn render_rs274x_copper_layer(
 
     lines.push(String::from("M02*"));
     Ok(lines.join("\n") + "\n")
+}
+
+pub fn render_rs274x_soldermask_layer(
+    layer_id: LayerId,
+    pads: &[PlacedPad],
+) -> Result<String, ExportError> {
+    for pad in pads {
+        match pad.aperture() {
+            PadAperture::Circle { diameter_nm } if diameter_nm <= 0 => {
+                return Err(ExportError::InvalidPadDiameter);
+            }
+            PadAperture::Rect { width_nm, .. } if width_nm <= 0 => {
+                return Err(ExportError::InvalidPadWidth);
+            }
+            PadAperture::Rect { height_nm, .. } if height_nm <= 0 => {
+                return Err(ExportError::InvalidPadHeight);
+            }
+            _ => {}
+        }
+    }
+
+    let mut circle_apertures = Vec::new();
+    let mut rect_apertures = Vec::new();
+    for pad in pads {
+        match pad.aperture() {
+            PadAperture::Circle { diameter_nm } => circle_apertures.push(diameter_nm),
+            PadAperture::Rect {
+                width_nm,
+                height_nm,
+            } => rect_apertures.push((width_nm, height_nm)),
+        }
+    }
+    circle_apertures.sort_unstable();
+    circle_apertures.dedup();
+    rect_apertures.sort_unstable();
+    rect_apertures.dedup();
+
+    let mut lines = vec![
+        format!("G04 datum-eda native soldermask layer {layer_id}*"),
+        String::from("%FSLAX46Y46*%"),
+        String::from("%MOMM*%"),
+        String::from("%LPD*%"),
+    ];
+
+    for (idx, diameter) in circle_apertures.iter().enumerate() {
+        let d_code = 10 + idx;
+        lines.push(format!("%ADD{d_code}C,{}*%", format_mm_6(*diameter)));
+    }
+    let rect_base_code = 10 + circle_apertures.len();
+    for (idx, (width_nm, height_nm)) in rect_apertures.iter().enumerate() {
+        let d_code = rect_base_code + idx;
+        lines.push(format!(
+            "%ADD{d_code}R,{}X{}*%",
+            format_mm_6(*width_nm),
+            format_mm_6(*height_nm)
+        ));
+    }
+
+    let mut ordered_pads = pads.to_vec();
+    ordered_pads.sort_by(|a, b| {
+        a.shape
+            .cmp(&b.shape)
+            .then_with(|| a.diameter.cmp(&b.diameter))
+            .then_with(|| a.width.cmp(&b.width))
+            .then_with(|| a.height.cmp(&b.height))
+            .then_with(|| a.position.x.cmp(&b.position.x))
+            .then_with(|| a.position.y.cmp(&b.position.y))
+            .then_with(|| a.layer.cmp(&b.layer))
+            .then_with(|| a.package.cmp(&b.package))
+            .then_with(|| a.name.cmp(&b.name))
+            .then_with(|| a.uuid.cmp(&b.uuid))
+    });
+
+    for pad in ordered_pads {
+        let d_code = match pad.aperture() {
+            PadAperture::Circle { diameter_nm } => {
+                10 + circle_apertures
+                    .binary_search(&diameter_nm)
+                    .expect("known pad aperture")
+            }
+            PadAperture::Rect {
+                width_nm,
+                height_nm,
+            } => {
+                rect_base_code
+                    + rect_apertures
+                        .binary_search(&(width_nm, height_nm))
+                        .expect("known rectangular pad aperture")
+            }
+        };
+        lines.push(format!("D{d_code}*"));
+        lines.push(format!(
+            "X{}Y{}D03*",
+            format_coord(pad.position.x),
+            format_coord(pad.position.y)
+        ));
+    }
+
+    lines.push(String::from("M02*"));
+    Ok(lines.join("\n") + "\n")
+}
+
+pub fn render_rs274x_paste_layer(
+    layer_id: LayerId,
+    pads: &[PlacedPad],
+) -> Result<String, ExportError> {
+    for pad in pads {
+        match pad.aperture() {
+            PadAperture::Circle { diameter_nm } if diameter_nm <= 0 => {
+                return Err(ExportError::InvalidPadDiameter);
+            }
+            PadAperture::Rect { width_nm, .. } if width_nm <= 0 => {
+                return Err(ExportError::InvalidPadWidth);
+            }
+            PadAperture::Rect { height_nm, .. } if height_nm <= 0 => {
+                return Err(ExportError::InvalidPadHeight);
+            }
+            _ => {}
+        }
+    }
+
+    let mut circle_apertures = Vec::new();
+    let mut rect_apertures = Vec::new();
+    for pad in pads {
+        match pad.aperture() {
+            PadAperture::Circle { diameter_nm } => circle_apertures.push(diameter_nm),
+            PadAperture::Rect {
+                width_nm,
+                height_nm,
+            } => rect_apertures.push((width_nm, height_nm)),
+        }
+    }
+    circle_apertures.sort_unstable();
+    circle_apertures.dedup();
+    rect_apertures.sort_unstable();
+    rect_apertures.dedup();
+
+    let mut lines = vec![
+        format!("G04 datum-eda native paste layer {layer_id}*"),
+        String::from("%FSLAX46Y46*%"),
+        String::from("%MOMM*%"),
+        String::from("%LPD*%"),
+    ];
+
+    for (idx, diameter) in circle_apertures.iter().enumerate() {
+        let d_code = 10 + idx;
+        lines.push(format!("%ADD{d_code}C,{}*%", format_mm_6(*diameter)));
+    }
+    let rect_base_code = 10 + circle_apertures.len();
+    for (idx, (width_nm, height_nm)) in rect_apertures.iter().enumerate() {
+        let d_code = rect_base_code + idx;
+        lines.push(format!(
+            "%ADD{d_code}R,{}X{}*%",
+            format_mm_6(*width_nm),
+            format_mm_6(*height_nm)
+        ));
+    }
+
+    let mut ordered_pads = pads.to_vec();
+    ordered_pads.sort_by(|a, b| {
+        a.shape
+            .cmp(&b.shape)
+            .then_with(|| a.diameter.cmp(&b.diameter))
+            .then_with(|| a.width.cmp(&b.width))
+            .then_with(|| a.height.cmp(&b.height))
+            .then_with(|| a.position.x.cmp(&b.position.x))
+            .then_with(|| a.position.y.cmp(&b.position.y))
+            .then_with(|| a.layer.cmp(&b.layer))
+            .then_with(|| a.package.cmp(&b.package))
+            .then_with(|| a.name.cmp(&b.name))
+            .then_with(|| a.uuid.cmp(&b.uuid))
+    });
+
+    for pad in ordered_pads {
+        let d_code = match pad.aperture() {
+            PadAperture::Circle { diameter_nm } => {
+                10 + circle_apertures
+                    .binary_search(&diameter_nm)
+                    .expect("known pad aperture")
+            }
+            PadAperture::Rect {
+                width_nm,
+                height_nm,
+            } => {
+                rect_base_code
+                    + rect_apertures
+                        .binary_search(&(width_nm, height_nm))
+                        .expect("known rectangular pad aperture")
+            }
+        };
+        lines.push(format!("D{d_code}*"));
+        lines.push(format!(
+            "X{}Y{}D03*",
+            format_coord(pad.position.x),
+            format_coord(pad.position.y)
+        ));
+    }
+
+    lines.push(String::from("M02*"));
+    Ok(lines.join("\n") + "\n")
+}
+
+pub fn render_rs274x_mechanical_layer(
+    layer_id: LayerId,
+    polygons: &[Polygon],
+) -> Result<String, ExportError> {
+    let aperture_nm = parse_mm_6_to_nm(DEFAULT_OUTLINE_APERTURE_MM)
+        .expect("default RS-274X outline aperture must parse");
+    let mut lines = vec![
+        format!("G04 datum-eda native mechanical layer {layer_id}*"),
+        String::from("%FSLAX46Y46*%"),
+        String::from("%MOMM*%"),
+        String::from("%LPD*%"),
+        format!("%ADD10C,{}*%", format_mm_6(aperture_nm)),
+        String::from("D10*"),
+    ];
+
+    let mut ordered_polygons = polygons.to_vec();
+    ordered_polygons.sort_by(|a, b| {
+        render_polygon_points(&a.vertices)
+            .cmp(&render_polygon_points(&b.vertices))
+            .then_with(|| a.closed.cmp(&b.closed))
+    });
+
+    for polygon in ordered_polygons {
+        if polygon.vertices.len() < 2 {
+            continue;
+        }
+        let first = polygon.vertices[0];
+        if polygon.closed {
+            lines.push(String::from("G36*"));
+        }
+        lines.push(format!(
+            "X{}Y{}D02*",
+            format_coord(first.x),
+            format_coord(first.y)
+        ));
+        for vertex in polygon.vertices.iter().skip(1) {
+            lines.push(format!(
+                "X{}Y{}D01*",
+                format_coord(vertex.x),
+                format_coord(vertex.y)
+            ));
+        }
+        if polygon.closed {
+            lines.push(format!(
+                "X{}Y{}D01*",
+                format_coord(first.x),
+                format_coord(first.y)
+            ));
+            lines.push(String::from("G37*"));
+        }
+    }
+
+    lines.push(String::from("M02*"));
+    Ok(lines.join("\n") + "\n")
+}
+
+pub fn render_rs274x_silkscreen_layer(
+    layer_id: LayerId,
+    texts: &[BoardText],
+    strokes: &[SilkscreenStroke],
+) -> Result<String, ExportError> {
+    if texts.iter().any(|text| text.height_nm <= 0) {
+        return Err(ExportError::InvalidTextHeight);
+    }
+    if texts.iter().any(|text| text.stroke_width_nm <= 0) {
+        return Err(ExportError::InvalidTextStrokeWidth);
+    }
+    if strokes.iter().any(|stroke| stroke.width_nm <= 0) {
+        return Err(ExportError::InvalidTrackWidth);
+    }
+
+    let mut stroke_widths = texts
+        .iter()
+        .map(|text| text.stroke_width_nm)
+        .chain(strokes.iter().map(|stroke| stroke.width_nm))
+        .collect::<Vec<_>>();
+    stroke_widths.sort_unstable();
+    stroke_widths.dedup();
+
+    let mut lines = vec![
+        format!("G04 datum-eda native silkscreen layer {layer_id}*"),
+        String::from("%FSLAX46Y46*%"),
+        String::from("%MOMM*%"),
+        String::from("%LPD*%"),
+    ];
+    for (idx, width_nm) in stroke_widths.iter().enumerate() {
+        let d_code = 10 + idx;
+        lines.push(format!("%ADD{d_code}C,{}*%", format_mm_6(*width_nm)));
+    }
+
+    let mut ordered_texts = texts.to_vec();
+    ordered_texts.sort_by(|a, b| {
+        a.stroke_width_nm
+            .cmp(&b.stroke_width_nm)
+            .then_with(|| a.position.x.cmp(&b.position.x))
+            .then_with(|| a.position.y.cmp(&b.position.y))
+            .then_with(|| a.rotation.cmp(&b.rotation))
+            .then_with(|| a.text.cmp(&b.text))
+            .then_with(|| a.uuid.cmp(&b.uuid))
+    });
+
+    for text in ordered_texts {
+        let d_code = 10
+            + stroke_widths
+                .binary_search(&text.stroke_width_nm)
+                .expect("known text stroke width aperture");
+        lines.push(format!("D{d_code}*"));
+        for (from, to) in render_silkscreen_text_strokes(&text)? {
+            lines.push(format!(
+                "X{}Y{}D02*",
+                format_coord(from.x),
+                format_coord(from.y)
+            ));
+            lines.push(format!(
+                "X{}Y{}D01*",
+                format_coord(to.x),
+                format_coord(to.y)
+            ));
+        }
+    }
+
+    let mut ordered_strokes = strokes.to_vec();
+    ordered_strokes.sort_by(|a, b| {
+        a.width_nm
+            .cmp(&b.width_nm)
+            .then_with(|| a.from.x.cmp(&b.from.x))
+            .then_with(|| a.from.y.cmp(&b.from.y))
+            .then_with(|| a.to.x.cmp(&b.to.x))
+            .then_with(|| a.to.y.cmp(&b.to.y))
+    });
+
+    for stroke in ordered_strokes {
+        let d_code = 10
+            + stroke_widths
+                .binary_search(&stroke.width_nm)
+                .expect("known stroke width aperture");
+        lines.push(format!("D{d_code}*"));
+        lines.push(format!(
+            "X{}Y{}D02*",
+            format_coord(stroke.from.x),
+            format_coord(stroke.from.y)
+        ));
+        lines.push(format!(
+            "X{}Y{}D01*",
+            format_coord(stroke.to.x),
+            format_coord(stroke.to.y)
+        ));
+    }
+
+    lines.push(String::from("M02*"));
+    Ok(lines.join("\n") + "\n")
+}
+
+fn render_silkscreen_text_strokes(
+    text: &BoardText,
+) -> Result<Vec<(crate::ir::geometry::Point, crate::ir::geometry::Point)>, ExportError> {
+    let mut strokes = Vec::new();
+    let scale_nm = text.height_nm / 5;
+    let advance_nm = scale_nm * 4;
+    let mut cursor_x = 0_i64;
+    for ch in text.text.chars() {
+        for ((x1, y1), (x2, y2)) in glyph_strokes(ch)? {
+            let from = rotate_text_point(
+                text.position,
+                text.rotation,
+                cursor_x + x1 * scale_nm,
+                y1 * scale_nm,
+            );
+            let to = rotate_text_point(
+                text.position,
+                text.rotation,
+                cursor_x + x2 * scale_nm,
+                y2 * scale_nm,
+            );
+            strokes.push((from, to));
+        }
+        cursor_x += advance_nm;
+    }
+    Ok(strokes)
+}
+
+fn rotate_text_point(
+    origin: crate::ir::geometry::Point,
+    rotation_deg: i32,
+    x_nm: i64,
+    y_nm: i64,
+) -> crate::ir::geometry::Point {
+    let radians = f64::from(rotation_deg).to_radians();
+    let x = x_nm as f64;
+    let y = y_nm as f64;
+    let rotated_x = x * radians.cos() - y * radians.sin();
+    let rotated_y = x * radians.sin() + y * radians.cos();
+    crate::ir::geometry::Point {
+        x: origin.x + rotated_x.round() as i64,
+        y: origin.y + rotated_y.round() as i64,
+    }
+}
+
+type GlyphStroke = ((i64, i64), (i64, i64));
+
+fn glyph_strokes(ch: char) -> Result<&'static [GlyphStroke], ExportError> {
+    let glyph = match ch {
+        ' ' => &[][..],
+        '-' => &[((0, 2), (2, 2))][..],
+        '_' => &[((0, 0), (2, 0))][..],
+        '.' => &[((1, 0), (1, 0))][..],
+        '/' => &[((0, 0), (2, 4))][..],
+        '+' => &[((1, 0), (1, 4)), ((0, 2), (2, 2))][..],
+        '0' => &[
+            ((0, 0), (0, 4)),
+            ((0, 4), (2, 4)),
+            ((2, 4), (2, 0)),
+            ((2, 0), (0, 0)),
+        ][..],
+        '1' => &[((1, 0), (1, 4))][..],
+        '2' => &[
+            ((0, 4), (2, 4)),
+            ((2, 4), (2, 2)),
+            ((2, 2), (0, 2)),
+            ((0, 2), (0, 0)),
+            ((0, 0), (2, 0)),
+        ][..],
+        '3' => &[
+            ((0, 4), (2, 4)),
+            ((2, 4), (2, 0)),
+            ((0, 2), (2, 2)),
+            ((0, 0), (2, 0)),
+        ][..],
+        '4' => &[((0, 4), (0, 2)), ((0, 2), (2, 2)), ((2, 4), (2, 0))][..],
+        '5' => &[
+            ((2, 4), (0, 4)),
+            ((0, 4), (0, 2)),
+            ((0, 2), (2, 2)),
+            ((2, 2), (2, 0)),
+            ((2, 0), (0, 0)),
+        ][..],
+        '6' => &[
+            ((2, 4), (0, 4)),
+            ((0, 4), (0, 0)),
+            ((0, 0), (2, 0)),
+            ((2, 0), (2, 2)),
+            ((2, 2), (0, 2)),
+        ][..],
+        '7' => &[((0, 4), (2, 4)), ((2, 4), (1, 0))][..],
+        '8' => &[
+            ((0, 0), (0, 4)),
+            ((0, 4), (2, 4)),
+            ((2, 4), (2, 0)),
+            ((2, 0), (0, 0)),
+            ((0, 2), (2, 2)),
+        ][..],
+        '9' => &[
+            ((2, 0), (2, 4)),
+            ((2, 4), (0, 4)),
+            ((0, 4), (0, 2)),
+            ((0, 2), (2, 2)),
+            ((2, 0), (0, 0)),
+        ][..],
+        'A' => &[
+            ((0, 0), (0, 4)),
+            ((2, 0), (2, 4)),
+            ((0, 4), (2, 4)),
+            ((0, 2), (2, 2)),
+        ][..],
+        'B' => &[
+            ((0, 0), (0, 4)),
+            ((0, 4), (2, 4)),
+            ((2, 4), (2, 2)),
+            ((2, 2), (0, 2)),
+            ((2, 2), (2, 0)),
+            ((2, 0), (0, 0)),
+        ][..],
+        'C' => &[((2, 4), (0, 4)), ((0, 4), (0, 0)), ((0, 0), (2, 0))][..],
+        'D' => &[
+            ((0, 0), (0, 4)),
+            ((0, 4), (2, 3)),
+            ((2, 3), (2, 1)),
+            ((2, 1), (0, 0)),
+        ][..],
+        'E' => &[
+            ((2, 4), (0, 4)),
+            ((0, 4), (0, 0)),
+            ((0, 2), (2, 2)),
+            ((0, 0), (2, 0)),
+        ][..],
+        'F' => &[((0, 0), (0, 4)), ((0, 4), (2, 4)), ((0, 2), (2, 2))][..],
+        'G' => &[
+            ((2, 4), (0, 4)),
+            ((0, 4), (0, 0)),
+            ((0, 0), (2, 0)),
+            ((2, 0), (2, 2)),
+            ((2, 2), (1, 2)),
+        ][..],
+        'H' => &[((0, 0), (0, 4)), ((2, 0), (2, 4)), ((0, 2), (2, 2))][..],
+        'I' => &[((0, 4), (2, 4)), ((1, 4), (1, 0)), ((0, 0), (2, 0))][..],
+        'J' => &[((0, 4), (2, 4)), ((1, 4), (1, 0)), ((1, 0), (0, 0))][..],
+        'K' => &[((0, 0), (0, 4)), ((2, 4), (0, 2)), ((0, 2), (2, 0))][..],
+        'L' => &[((0, 4), (0, 0)), ((0, 0), (2, 0))][..],
+        'M' => &[
+            ((0, 0), (0, 4)),
+            ((0, 4), (1, 2)),
+            ((1, 2), (2, 4)),
+            ((2, 4), (2, 0)),
+        ][..],
+        'N' => &[((0, 0), (0, 4)), ((0, 4), (2, 0)), ((2, 0), (2, 4))][..],
+        'O' => &[
+            ((0, 0), (0, 4)),
+            ((0, 4), (2, 4)),
+            ((2, 4), (2, 0)),
+            ((2, 0), (0, 0)),
+        ][..],
+        'P' => &[
+            ((0, 0), (0, 4)),
+            ((0, 4), (2, 4)),
+            ((2, 4), (2, 2)),
+            ((2, 2), (0, 2)),
+        ][..],
+        'Q' => &[
+            ((0, 0), (0, 4)),
+            ((0, 4), (2, 4)),
+            ((2, 4), (2, 0)),
+            ((2, 0), (0, 0)),
+            ((1, 1), (2, 0)),
+        ][..],
+        'R' => &[
+            ((0, 0), (0, 4)),
+            ((0, 4), (2, 4)),
+            ((2, 4), (2, 2)),
+            ((2, 2), (0, 2)),
+            ((0, 2), (2, 0)),
+        ][..],
+        'S' => &[
+            ((2, 4), (0, 4)),
+            ((0, 4), (0, 2)),
+            ((0, 2), (2, 2)),
+            ((2, 2), (2, 0)),
+            ((2, 0), (0, 0)),
+        ][..],
+        'T' => &[((0, 4), (2, 4)), ((1, 4), (1, 0))][..],
+        'U' => &[((0, 4), (0, 0)), ((0, 0), (2, 0)), ((2, 0), (2, 4))][..],
+        'V' => &[((0, 4), (1, 0)), ((1, 0), (2, 4))][..],
+        'W' => &[
+            ((0, 4), (0, 0)),
+            ((0, 0), (1, 2)),
+            ((1, 2), (2, 0)),
+            ((2, 0), (2, 4)),
+        ][..],
+        'X' => &[((0, 4), (2, 0)), ((0, 0), (2, 4))][..],
+        'Y' => &[((0, 4), (1, 2)), ((2, 4), (1, 2)), ((1, 2), (1, 0))][..],
+        'Z' => &[((0, 4), (2, 4)), ((2, 4), (0, 0)), ((0, 0), (2, 0))][..],
+        'a'..='z' => return glyph_strokes(ch.to_ascii_uppercase()),
+        _ => return Err(ExportError::UnsupportedSilkscreenTextCharacter(ch)),
+    };
+    Ok(glyph)
 }
 
 pub fn render_excellon_drill(vias: &[Via]) -> Result<String, ExportError> {
@@ -281,6 +900,14 @@ fn format_mm_6(nm: i64) -> String {
     format!("{sign}{whole}.{frac:06}")
 }
 
+fn render_polygon_points(points: &[crate::ir::geometry::Point]) -> String {
+    points
+        .iter()
+        .map(|point| format!("({}, {})", point.x, point.y))
+        .collect::<Vec<_>>()
+        .join(" -> ")
+}
+
 fn parse_mm_6_to_nm(value: &str) -> Option<i64> {
     let mut parts = value.split('.');
     let whole = parts.next()?.parse::<i64>().ok()?;
@@ -300,277 +927,4 @@ fn parse_mm_6_to_nm(value: &str) -> Option<i64> {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::ir::geometry::Point;
-
-    #[test]
-    fn render_rs274x_outline_closed_polygon() {
-        let polygon = Polygon {
-            vertices: vec![
-                Point { x: 0, y: 0 },
-                Point { x: 1_000_000, y: 0 },
-                Point {
-                    x: 1_000_000,
-                    y: 500_000,
-                },
-            ],
-            closed: true,
-        };
-
-        let gerber = render_rs274x_outline_default(&polygon).expect("outline should render");
-        assert!(gerber.contains("%FSLAX46Y46*%"));
-        assert!(gerber.contains("%MOMM*%"));
-        assert!(gerber.contains("%ADD10C,0.100000*%"));
-        assert!(gerber.contains("X0Y0D02*"));
-        assert!(gerber.contains("X1000000Y0D01*"));
-        assert!(gerber.contains("X1000000Y500000D01*"));
-        assert!(gerber.contains("X0Y0D01*"));
-        assert!(gerber.ends_with("M02*\n"));
-    }
-
-    #[test]
-    fn render_rs274x_outline_open_polygon_does_not_close() {
-        let polygon = Polygon {
-            vertices: vec![
-                Point { x: 0, y: 0 },
-                Point {
-                    x: 500_000,
-                    y: 500_000,
-                },
-            ],
-            closed: false,
-        };
-
-        let gerber = render_rs274x_outline_default(&polygon).expect("outline should render");
-        let occurrences = gerber.matches("X0Y0").count();
-        assert_eq!(occurrences, 1);
-    }
-
-    #[test]
-    fn render_rs274x_outline_requires_two_vertices() {
-        let polygon = Polygon {
-            vertices: vec![Point { x: 0, y: 0 }],
-            closed: true,
-        };
-
-        let err = render_rs274x_outline_default(&polygon).expect_err("outline should fail");
-        assert!(matches!(err, ExportError::OutlineTooShort));
-    }
-
-    #[test]
-    fn render_rs274x_copper_layer_assigns_apertures_by_width() {
-        let tracks = vec![
-            Track {
-                uuid: uuid::Uuid::nil(),
-                net: uuid::Uuid::nil(),
-                from: Point { x: 0, y: 0 },
-                to: Point { x: 1_000_000, y: 0 },
-                width: 200_000,
-                layer: 1,
-            },
-            Track {
-                uuid: uuid::Uuid::from_u128(1),
-                net: uuid::Uuid::nil(),
-                from: Point { x: 0, y: 500_000 },
-                to: Point {
-                    x: 1_000_000,
-                    y: 500_000,
-                },
-                width: 300_000,
-                layer: 1,
-            },
-        ];
-
-        let gerber =
-            render_rs274x_copper_layer(1, &[], &tracks, &[], &[]).expect("copper should render");
-        assert!(gerber.contains("%ADD10C,0.200000*%"));
-        assert!(gerber.contains("%ADD11C,0.300000*%"));
-        assert!(gerber.contains("D10*"));
-        assert!(gerber.contains("D11*"));
-        assert!(gerber.contains("X0Y0D02*"));
-        assert!(gerber.contains("X1000000Y0D01*"));
-        assert!(gerber.ends_with("M02*\n"));
-    }
-
-    #[test]
-    fn render_rs274x_copper_layer_rejects_non_positive_width() {
-        let tracks = vec![Track {
-            uuid: uuid::Uuid::nil(),
-            net: uuid::Uuid::nil(),
-            from: Point { x: 0, y: 0 },
-            to: Point { x: 1, y: 1 },
-            width: 0,
-            layer: 1,
-        }];
-
-        let err =
-            render_rs274x_copper_layer(1, &[], &tracks, &[], &[]).expect_err("copper should fail");
-        assert!(matches!(err, ExportError::InvalidTrackWidth));
-    }
-
-    #[test]
-    fn render_rs274x_copper_layer_emits_zone_region() {
-        let zones = vec![Zone {
-            uuid: uuid::Uuid::nil(),
-            net: uuid::Uuid::nil(),
-            polygon: Polygon {
-                vertices: vec![
-                    Point { x: 0, y: 0 },
-                    Point { x: 1_000_000, y: 0 },
-                    Point {
-                        x: 1_000_000,
-                        y: 500_000,
-                    },
-                ],
-                closed: true,
-            },
-            layer: 1,
-            priority: 1,
-            thermal_relief: true,
-            thermal_gap: 0,
-            thermal_spoke_width: 0,
-        }];
-
-        let gerber =
-            render_rs274x_copper_layer(1, &[], &[], &zones, &[]).expect("zone should render");
-        assert!(gerber.contains("G36*"));
-        assert!(gerber.contains("G37*"));
-        assert!(gerber.contains("X0Y0D02*"));
-        assert!(gerber.contains("X1000000Y0D01*"));
-        assert!(gerber.contains("X1000000Y500000D01*"));
-    }
-
-    #[test]
-    fn render_rs274x_copper_layer_emits_via_flashes() {
-        let vias = vec![Via {
-            uuid: uuid::Uuid::nil(),
-            net: uuid::Uuid::nil(),
-            position: Point {
-                x: 250_000,
-                y: 750_000,
-            },
-            drill: 300_000,
-            diameter: 600_000,
-            from_layer: 1,
-            to_layer: 2,
-        }];
-
-        let gerber =
-            render_rs274x_copper_layer(1, &[], &[], &[], &vias).expect("via should render");
-        assert!(gerber.contains("%ADD10C,0.600000*%"));
-        assert!(gerber.contains("D10*"));
-        assert!(gerber.contains("X250000Y750000D03*"));
-    }
-
-    #[test]
-    fn render_rs274x_copper_layer_rejects_non_positive_via_diameter() {
-        let vias = vec![Via {
-            uuid: uuid::Uuid::nil(),
-            net: uuid::Uuid::nil(),
-            position: Point { x: 0, y: 0 },
-            drill: 300_000,
-            diameter: 0,
-            from_layer: 1,
-            to_layer: 2,
-        }];
-
-        let err = render_rs274x_copper_layer(1, &[], &[], &[], &vias)
-            .expect_err("via diameter should fail");
-        assert!(matches!(err, ExportError::InvalidViaDiameter));
-    }
-
-    #[test]
-    fn render_rs274x_copper_layer_emits_pad_flashes() {
-        let pads = vec![PlacedPad {
-            uuid: uuid::Uuid::nil(),
-            package: uuid::Uuid::from_u128(42),
-            name: "1".to_string(),
-            net: None,
-            position: Point {
-                x: 500_000,
-                y: 250_000,
-            },
-            layer: 1,
-            diameter: 450_000,
-        }];
-
-        let gerber =
-            render_rs274x_copper_layer(1, &pads, &[], &[], &[]).expect("pad should render");
-        assert!(gerber.contains("%ADD10C,0.450000*%"));
-        assert!(gerber.contains("D10*"));
-        assert!(gerber.contains("X500000Y250000D03*"));
-    }
-
-    #[test]
-    fn render_rs274x_copper_layer_rejects_non_positive_pad_diameter() {
-        let pads = vec![PlacedPad {
-            uuid: uuid::Uuid::nil(),
-            package: uuid::Uuid::from_u128(42),
-            name: "1".to_string(),
-            net: None,
-            position: Point { x: 0, y: 0 },
-            layer: 1,
-            diameter: 0,
-        }];
-
-        let err = render_rs274x_copper_layer(1, &pads, &[], &[], &[])
-            .expect_err("pad diameter should fail");
-        assert!(matches!(err, ExportError::InvalidPadDiameter));
-    }
-
-    #[test]
-    fn render_excellon_drill_assigns_tools_by_drill() {
-        let vias = vec![
-            Via {
-                uuid: uuid::Uuid::nil(),
-                net: uuid::Uuid::nil(),
-                position: Point {
-                    x: 1_000_000,
-                    y: 1_500_000,
-                },
-                drill: 300_000,
-                diameter: 600_000,
-                from_layer: 1,
-                to_layer: 2,
-            },
-            Via {
-                uuid: uuid::Uuid::from_u128(1),
-                net: uuid::Uuid::nil(),
-                position: Point {
-                    x: 2_000_000,
-                    y: 3_000_000,
-                },
-                drill: 350_000,
-                diameter: 700_000,
-                from_layer: 1,
-                to_layer: 2,
-            },
-        ];
-
-        let excellon = render_excellon_drill(&vias).expect("drill should render");
-        assert!(excellon.contains("M48"));
-        assert!(excellon.contains("METRIC,TZ"));
-        assert!(excellon.contains("T01C0.300000"));
-        assert!(excellon.contains("T02C0.350000"));
-        assert!(excellon.contains("T01\nX1.000000Y1.500000"));
-        assert!(excellon.contains("T02\nX2.000000Y3.000000"));
-        assert!(excellon.ends_with("M30\n"));
-    }
-
-    #[test]
-    fn render_excellon_drill_rejects_non_positive_drill() {
-        let vias = vec![Via {
-            uuid: uuid::Uuid::nil(),
-            net: uuid::Uuid::nil(),
-            position: Point { x: 0, y: 0 },
-            drill: 0,
-            diameter: 600_000,
-            from_layer: 1,
-            to_layer: 2,
-        }];
-
-        let err = render_excellon_drill(&vias).expect_err("drill should fail");
-        assert!(matches!(err, ExportError::InvalidViaDrill));
-    }
-}
+mod tests;

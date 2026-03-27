@@ -198,9 +198,21 @@ Current live slice:
 - `eda project export-gerber-outline <dir> --out <path>` writes a narrow RS-274X Gerber file for the current native board outline.
 - `eda project validate-gerber-outline <dir> --gerber <path>` validates that a narrow RS-274X board-outline Gerber still matches the current native board outline exactly.
 - `eda project compare-gerber-outline <dir> --gerber <path>` compares that narrow RS-274X board-outline Gerber semantically against the current native board outline geometry.
-- `eda project export-gerber-copper-layer <dir> --layer <id> --out <path>` writes a narrow RS-274X Gerber file for persisted native board pads, tracks, vias, and zones on one selected copper layer; pads are currently emitted only as explicit circular flashes from stored pad diameter.
+- `eda project export-gerber-copper-layer <dir> --layer <id> --out <path>` writes a narrow RS-274X Gerber file for persisted native board pads, tracks, vias, and zones on one selected copper layer; pads are currently emitted only as explicit circular or rectangular flashes from stored native pad geometry.
+- `eda project export-gerber-soldermask-layer <dir> --layer <id> --out <path>` writes a narrow RS-274X Gerber file for persisted native pad openings on one selected soldermask layer; openings are currently derived only from explicit circular or rectangular pad geometry on the nearest copper layer in stackup order.
+- `eda project export-gerber-silkscreen-layer <dir> --layer <id> --out <path>` writes a narrow RS-274X Gerber file for authored native board text plus persisted explicit component-silkscreen text and line strokes on one selected silkscreen layer; board text and component text are currently rendered through the fixed built-in stroke-font contract using stored `height_nm` and `stroke_width_nm`, while component silkscreen lines remain limited to explicit stored line strokes.
+- `eda project export-gerber-paste-layer <dir> --layer <id> --out <path>` writes a narrow RS-274X Gerber file for persisted native pad openings on one selected paste layer; openings are currently derived only from explicit circular or rectangular pad geometry on the nearest copper layer in stackup order.
+- `eda project export-gerber-mechanical-layer <dir> --layer <id> --out <path>` writes a narrow RS-274X Gerber file for persisted native board keepout polygons on one selected mechanical layer; closed keepouts are currently emitted as filled regions.
 - `eda project validate-gerber-copper-layer <dir> --layer <id> --gerber <path>` validates that a narrow RS-274X copper-layer Gerber still matches the current native board pads, tracks, vias, and zones on that layer exactly.
+- `eda project validate-gerber-soldermask-layer <dir> --layer <id> --gerber <path>` validates that a narrow RS-274X soldermask-layer Gerber still matches the current native pad openings on that layer exactly.
+- `eda project validate-gerber-silkscreen-layer <dir> --layer <id> --gerber <path>` validates that a narrow RS-274X silkscreen-layer Gerber still matches the current native board text plus explicit component-silkscreen text and line strokes on that layer exactly.
+- `eda project validate-gerber-paste-layer <dir> --layer <id> --gerber <path>` validates that a narrow RS-274X paste-layer Gerber still matches the current native pad openings on that layer exactly.
+- `eda project validate-gerber-mechanical-layer <dir> --layer <id> --gerber <path>` validates that a narrow RS-274X mechanical-layer Gerber still matches the current native keepout polygons on that layer exactly.
 - `eda project compare-gerber-copper-layer <dir> --layer <id> --gerber <path>` compares that narrow RS-274X copper-layer Gerber semantically against the current native pads, tracks, vias, and zones on that layer.
+- `eda project compare-gerber-soldermask-layer <dir> --layer <id> --gerber <path>` compares that narrow RS-274X soldermask-layer Gerber semantically against the current native pad openings on that layer.
+- `eda project compare-gerber-silkscreen-layer <dir> --layer <id> --gerber <path>` compares that narrow RS-274X silkscreen-layer Gerber semantically against the current native board text plus explicit component-silkscreen text and line geometry on that layer.
+- `eda project compare-gerber-paste-layer <dir> --layer <id> --gerber <path>` compares that narrow RS-274X paste-layer Gerber semantically against the current native pad openings on that layer.
+- `eda project compare-gerber-mechanical-layer <dir> --layer <id> --gerber <path>` compares that narrow RS-274X mechanical-layer Gerber semantically against the current native keepout polygons on that layer.
 - `eda project plan-gerber-export <dir> [--prefix <text>]` reports the deterministic Gerber artifact set implied by the current native board outline and stackup.
 - `eda project compare-gerber-export-plan <dir> --output-dir <path> [--prefix <text>]` compares that planned Gerber artifact set against a directory and reports matched, missing, and extra files.
 - `eda project set-board-component-part <dir> --component <uuid> --part <uuid>` and `eda project set-board-component-package <dir> --component <uuid> --package <uuid>` reassign the stored native part/package identity for an existing board component.
@@ -271,8 +283,8 @@ Current live slice:
 - `eda project delete-bus-entry <dir> --bus-entry <uuid>` removes an existing native bus entry.
 - `eda project place-noconnect <dir> --sheet <uuid> --symbol <uuid> --pin <uuid> --x-nm <i64> --y-nm <i64>` places a native no-connect marker.
 - `eda project delete-noconnect <dir> --noconnect <uuid>` removes an existing native no-connect marker.
-- `eda project place-board-text <dir> --text <text> --x-nm <i64> --y-nm <i64> [--rotation-deg <i32>] --layer <i32>` places a native board text object.
-- `eda project edit-board-text <dir> --text <uuid> [--value <text>] [--x-nm <i64> --y-nm <i64>] [--rotation-deg <i32>] [--layer <i32>]` edits an existing native board text object.
+- `eda project place-board-text <dir> --text <text> --x-nm <i64> --y-nm <i64> [--rotation-deg <i32>] [--height-nm <i64>] [--stroke-width-nm <i64>] --layer <i32>` places a native board text object with explicit render geometry.
+- `eda project edit-board-text <dir> --text <uuid> [--value <text>] [--x-nm <i64> --y-nm <i64>] [--rotation-deg <i32>] [--height-nm <i64>] [--stroke-width-nm <i64>] [--layer <i32>]` edits an existing native board text object and/or its render geometry.
 - `eda project delete-board-text <dir> --text <uuid>` removes an existing native board text object.
 - `eda project place-board-keepout <dir> --kind <text> --layer <i32>... --vertex <x:y>...` places a native board keepout polygon.
 - `eda project edit-board-keepout <dir> --keepout <uuid> [--kind <text>] [--layer <i32>...] [--vertex <x:y>...]` edits an existing native board keepout polygon.
@@ -290,8 +302,8 @@ Current live slice:
 - `eda project delete-board-component <dir> --component <uuid>` removes an existing native board component/package.
 - `eda project set-board-pad-net <dir> --pad <uuid> --net <uuid>` assigns a native board pad to a board net.
 - `eda project clear-board-pad-net <dir> --pad <uuid>` clears the native board net assignment on a pad.
-- `eda project edit-board-pad <dir> --pad <uuid> [--x-nm <i64> --y-nm <i64>] [--layer <i32>]` edits the stored position and/or layer of a native board pad.
-- `eda project place-board-pad <dir> --package <uuid> --name <text> --x-nm <i64> --y-nm <i64> --layer <i32> [--net <uuid>]` places a native board pad.
+- `eda project edit-board-pad <dir> --pad <uuid> [--x-nm <i64> --y-nm <i64>] [--layer <i32>] [--shape <circle|rect>] [--diameter-nm <i64>] [--width-nm <i64>] [--height-nm <i64>]` edits the stored position, layer, and/or explicit copper geometry of a native board pad.
+- `eda project place-board-pad <dir> --package <uuid> --name <text> --x-nm <i64> --y-nm <i64> --layer <i32> [--shape <circle|rect>] [--diameter-nm <i64>] [--width-nm <i64>] [--height-nm <i64>] [--net <uuid>]` places a native board pad with explicit circle or rectangle copper geometry.
 - `eda project delete-board-pad <dir> --pad <uuid>` removes an existing native board pad.
 - `eda project draw-board-track <dir> --net <uuid> --from-x-nm <i64> --from-y-nm <i64> --to-x-nm <i64> --to-y-nm <i64> --width-nm <i64> --layer <i32>` draws a native board track.
 - `eda project delete-board-track <dir> --track <uuid>` removes an existing native board track.

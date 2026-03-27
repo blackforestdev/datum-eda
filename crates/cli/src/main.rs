@@ -316,6 +316,50 @@ struct NativeProjectGerberCopperExportView {
 }
 
 #[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberSoldermaskExportView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    gerber_path: String,
+    layer: i32,
+    source_copper_layer: i32,
+    pad_count: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberSilkscreenExportView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    gerber_path: String,
+    layer: i32,
+    text_count: usize,
+    component_text_count: usize,
+    component_stroke_count: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberPasteExportView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    gerber_path: String,
+    layer: i32,
+    source_copper_layer: i32,
+    pad_count: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberMechanicalExportView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    gerber_path: String,
+    layer: i32,
+    keepout_count: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
 struct NativeProjectGerberOutlineValidationView {
     action: String,
     project_root: String,
@@ -342,6 +386,62 @@ struct NativeProjectGerberCopperValidationView {
     track_count: usize,
     zone_count: usize,
     via_count: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberSoldermaskValidationView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    gerber_path: String,
+    layer: i32,
+    source_copper_layer: i32,
+    matches_expected: bool,
+    expected_bytes: usize,
+    actual_bytes: usize,
+    pad_count: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberSilkscreenValidationView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    gerber_path: String,
+    layer: i32,
+    matches_expected: bool,
+    expected_bytes: usize,
+    actual_bytes: usize,
+    text_count: usize,
+    component_text_count: usize,
+    component_stroke_count: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberPasteValidationView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    gerber_path: String,
+    layer: i32,
+    source_copper_layer: i32,
+    matches_expected: bool,
+    expected_bytes: usize,
+    actual_bytes: usize,
+    pad_count: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberMechanicalValidationView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    gerber_path: String,
+    layer: i32,
+    matches_expected: bool,
+    expected_bytes: usize,
+    actual_bytes: usize,
+    keepout_count: usize,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -382,6 +482,78 @@ struct NativeProjectGerberCopperComparisonView {
     actual_zone_count: usize,
     expected_via_count: usize,
     actual_via_count: usize,
+    matched_count: usize,
+    missing_count: usize,
+    extra_count: usize,
+    matched: Vec<NativeProjectGerberGeometryEntryView>,
+    missing: Vec<NativeProjectGerberGeometryEntryView>,
+    extra: Vec<NativeProjectGerberGeometryEntryView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberSoldermaskComparisonView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    gerber_path: String,
+    layer: i32,
+    source_copper_layer: i32,
+    expected_pad_count: usize,
+    actual_pad_count: usize,
+    matched_count: usize,
+    missing_count: usize,
+    extra_count: usize,
+    matched: Vec<NativeProjectGerberGeometryEntryView>,
+    missing: Vec<NativeProjectGerberGeometryEntryView>,
+    extra: Vec<NativeProjectGerberGeometryEntryView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberSilkscreenComparisonView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    gerber_path: String,
+    layer: i32,
+    expected_text_count: usize,
+    expected_component_text_count: usize,
+    expected_component_stroke_count: usize,
+    actual_geometry_count: usize,
+    matched_count: usize,
+    missing_count: usize,
+    extra_count: usize,
+    matched: Vec<NativeProjectGerberGeometryEntryView>,
+    missing: Vec<NativeProjectGerberGeometryEntryView>,
+    extra: Vec<NativeProjectGerberGeometryEntryView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberPasteComparisonView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    gerber_path: String,
+    layer: i32,
+    source_copper_layer: i32,
+    expected_pad_count: usize,
+    actual_pad_count: usize,
+    matched_count: usize,
+    missing_count: usize,
+    extra_count: usize,
+    matched: Vec<NativeProjectGerberGeometryEntryView>,
+    missing: Vec<NativeProjectGerberGeometryEntryView>,
+    extra: Vec<NativeProjectGerberGeometryEntryView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberMechanicalComparisonView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    gerber_path: String,
+    layer: i32,
+    expected_keepout_count: usize,
+    actual_geometry_count: usize,
     matched_count: usize,
     missing_count: usize,
     extra_count: usize,
@@ -930,6 +1102,8 @@ struct NativeProjectBoardTextMutationReportView {
     x_nm: i64,
     y_nm: i64,
     rotation_deg: i32,
+    height_nm: i64,
+    stroke_width_nm: i64,
     layer: i32,
 }
 
@@ -1045,7 +1219,10 @@ struct NativeProjectBoardPadMutationReportView {
     x_nm: i64,
     y_nm: i64,
     layer: i32,
+    shape: String,
     diameter_nm: i64,
+    width_nm: i64,
+    height_nm: i64,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -1458,6 +1635,66 @@ fn render_native_project_gerber_copper_export_text(
     .join("\n")
 }
 
+fn render_native_project_gerber_soldermask_export_text(
+    report: &NativeProjectGerberSoldermaskExportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("gerber_path: {}", report.gerber_path),
+        format!("layer: {}", report.layer),
+        format!("source_copper_layer: {}", report.source_copper_layer),
+        format!("pad_count: {}", report.pad_count),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_gerber_silkscreen_export_text(
+    report: &NativeProjectGerberSilkscreenExportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("gerber_path: {}", report.gerber_path),
+        format!("layer: {}", report.layer),
+        format!("text_count: {}", report.text_count),
+        format!("component_text_count: {}", report.component_text_count),
+        format!("component_stroke_count: {}", report.component_stroke_count),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_gerber_paste_export_text(
+    report: &NativeProjectGerberPasteExportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("gerber_path: {}", report.gerber_path),
+        format!("layer: {}", report.layer),
+        format!("source_copper_layer: {}", report.source_copper_layer),
+        format!("pad_count: {}", report.pad_count),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_gerber_mechanical_export_text(
+    report: &NativeProjectGerberMechanicalExportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("gerber_path: {}", report.gerber_path),
+        format!("layer: {}", report.layer),
+        format!("keepout_count: {}", report.keepout_count),
+    ]
+    .join("\n")
+}
+
 fn render_native_project_gerber_outline_validation_text(
     report: &NativeProjectGerberOutlineValidationView,
 ) -> String {
@@ -1491,6 +1728,78 @@ fn render_native_project_gerber_copper_validation_text(
         format!("track_count: {}", report.track_count),
         format!("zone_count: {}", report.zone_count),
         format!("via_count: {}", report.via_count),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_gerber_soldermask_validation_text(
+    report: &NativeProjectGerberSoldermaskValidationView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("gerber_path: {}", report.gerber_path),
+        format!("layer: {}", report.layer),
+        format!("source_copper_layer: {}", report.source_copper_layer),
+        format!("matches_expected: {}", report.matches_expected),
+        format!("expected_bytes: {}", report.expected_bytes),
+        format!("actual_bytes: {}", report.actual_bytes),
+        format!("pad_count: {}", report.pad_count),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_gerber_silkscreen_validation_text(
+    report: &NativeProjectGerberSilkscreenValidationView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("gerber_path: {}", report.gerber_path),
+        format!("layer: {}", report.layer),
+        format!("matches_expected: {}", report.matches_expected),
+        format!("expected_bytes: {}", report.expected_bytes),
+        format!("actual_bytes: {}", report.actual_bytes),
+        format!("text_count: {}", report.text_count),
+        format!("component_text_count: {}", report.component_text_count),
+        format!("component_stroke_count: {}", report.component_stroke_count),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_gerber_paste_validation_text(
+    report: &NativeProjectGerberPasteValidationView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("gerber_path: {}", report.gerber_path),
+        format!("layer: {}", report.layer),
+        format!("source_copper_layer: {}", report.source_copper_layer),
+        format!("matches_expected: {}", report.matches_expected),
+        format!("expected_bytes: {}", report.expected_bytes),
+        format!("actual_bytes: {}", report.actual_bytes),
+        format!("pad_count: {}", report.pad_count),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_gerber_mechanical_validation_text(
+    report: &NativeProjectGerberMechanicalValidationView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("gerber_path: {}", report.gerber_path),
+        format!("layer: {}", report.layer),
+        format!("matches_expected: {}", report.matches_expected),
+        format!("expected_bytes: {}", report.expected_bytes),
+        format!("actual_bytes: {}", report.actual_bytes),
+        format!("keepout_count: {}", report.keepout_count),
     ]
     .join("\n")
 }
@@ -1532,6 +1841,100 @@ fn render_native_project_gerber_copper_comparison_text(
         format!("actual_zone_count: {}", report.actual_zone_count),
         format!("expected_via_count: {}", report.expected_via_count),
         format!("actual_via_count: {}", report.actual_via_count),
+        format!("matched_count: {}", report.matched_count),
+        format!("missing_count: {}", report.missing_count),
+        format!("extra_count: {}", report.extra_count),
+    ];
+    append_gerber_geometry_entries(&mut lines, "matched", &report.matched);
+    append_gerber_geometry_entries(&mut lines, "missing", &report.missing);
+    append_gerber_geometry_entries(&mut lines, "extra", &report.extra);
+    lines.join("\n")
+}
+
+fn render_native_project_gerber_soldermask_comparison_text(
+    report: &NativeProjectGerberSoldermaskComparisonView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("gerber_path: {}", report.gerber_path),
+        format!("layer: {}", report.layer),
+        format!("source_copper_layer: {}", report.source_copper_layer),
+        format!("expected_pad_count: {}", report.expected_pad_count),
+        format!("actual_pad_count: {}", report.actual_pad_count),
+        format!("matched_count: {}", report.matched_count),
+        format!("missing_count: {}", report.missing_count),
+        format!("extra_count: {}", report.extra_count),
+    ];
+    append_gerber_geometry_entries(&mut lines, "matched", &report.matched);
+    append_gerber_geometry_entries(&mut lines, "missing", &report.missing);
+    append_gerber_geometry_entries(&mut lines, "extra", &report.extra);
+    lines.join("\n")
+}
+
+fn render_native_project_gerber_silkscreen_comparison_text(
+    report: &NativeProjectGerberSilkscreenComparisonView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("gerber_path: {}", report.gerber_path),
+        format!("layer: {}", report.layer),
+        format!("expected_text_count: {}", report.expected_text_count),
+        format!(
+            "expected_component_text_count: {}",
+            report.expected_component_text_count
+        ),
+        format!(
+            "expected_component_stroke_count: {}",
+            report.expected_component_stroke_count
+        ),
+        format!("actual_geometry_count: {}", report.actual_geometry_count),
+        format!("matched_count: {}", report.matched_count),
+        format!("missing_count: {}", report.missing_count),
+        format!("extra_count: {}", report.extra_count),
+    ];
+    append_gerber_geometry_entries(&mut lines, "matched", &report.matched);
+    append_gerber_geometry_entries(&mut lines, "missing", &report.missing);
+    append_gerber_geometry_entries(&mut lines, "extra", &report.extra);
+    lines.join("\n")
+}
+
+fn render_native_project_gerber_paste_comparison_text(
+    report: &NativeProjectGerberPasteComparisonView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("gerber_path: {}", report.gerber_path),
+        format!("layer: {}", report.layer),
+        format!("source_copper_layer: {}", report.source_copper_layer),
+        format!("expected_pad_count: {}", report.expected_pad_count),
+        format!("actual_pad_count: {}", report.actual_pad_count),
+        format!("matched_count: {}", report.matched_count),
+        format!("missing_count: {}", report.missing_count),
+        format!("extra_count: {}", report.extra_count),
+    ];
+    append_gerber_geometry_entries(&mut lines, "matched", &report.matched);
+    append_gerber_geometry_entries(&mut lines, "missing", &report.missing);
+    append_gerber_geometry_entries(&mut lines, "extra", &report.extra);
+    lines.join("\n")
+}
+
+fn render_native_project_gerber_mechanical_comparison_text(
+    report: &NativeProjectGerberMechanicalComparisonView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("gerber_path: {}", report.gerber_path),
+        format!("layer: {}", report.layer),
+        format!("expected_keepout_count: {}", report.expected_keepout_count),
+        format!("actual_geometry_count: {}", report.actual_geometry_count),
         format!("matched_count: {}", report.matched_count),
         format!("missing_count: {}", report.missing_count),
         format!("extra_count: {}", report.extra_count),
@@ -2268,6 +2671,8 @@ fn render_native_project_board_text_mutation_text(
         format!("x_nm: {}", report.x_nm),
         format!("y_nm: {}", report.y_nm),
         format!("rotation_deg: {}", report.rotation_deg),
+        format!("height_nm: {}", report.height_nm),
+        format!("stroke_width_nm: {}", report.stroke_width_nm),
         format!("layer: {}", report.layer),
     ]
     .join("\n")
@@ -2418,7 +2823,10 @@ fn render_native_project_board_pad_mutation_text(
         format!("x_nm: {}", report.x_nm),
         format!("y_nm: {}", report.y_nm),
         format!("layer: {}", report.layer),
+        format!("shape: {}", report.shape),
         format!("diameter_nm: {}", report.diameter_nm),
+        format!("width_nm: {}", report.width_nm),
+        format!("height_nm: {}", report.height_nm),
     ];
     if let Some(net_uuid) = &report.net_uuid {
         lines.push(format!("net_uuid: {}", net_uuid));

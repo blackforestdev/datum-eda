@@ -459,6 +459,44 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 };
                 Ok((output, 0))
             }
+            ProjectCommands::ExportGerberSoldermaskLayer { path, layer, out } => {
+                let report = export_native_project_gerber_soldermask_layer(&path, layer, &out)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_project_gerber_soldermask_export_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ExportGerberSilkscreenLayer { path, layer, out } => {
+                let report = export_native_project_gerber_silkscreen_layer(&path, layer, &out)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_project_gerber_silkscreen_export_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ExportGerberPasteLayer { path, layer, out } => {
+                let report = export_native_project_gerber_paste_layer(&path, layer, &out)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_gerber_paste_export_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ExportGerberMechanicalLayer { path, layer, out } => {
+                let report = export_native_project_gerber_mechanical_layer(&path, layer, &out)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_project_gerber_mechanical_export_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
             ProjectCommands::ValidateGerberOutline { path, gerber } => {
                 let report = validate_native_project_gerber_outline(&path, &gerber)?;
                 let output = match cli.format {
@@ -485,6 +523,69 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 let exit_code = if report.matches_expected { 0 } else { 1 };
                 Ok((output, exit_code))
             }
+            ProjectCommands::ValidateGerberSoldermaskLayer {
+                path,
+                layer,
+                gerber,
+            } => {
+                let report =
+                    validate_native_project_gerber_soldermask_layer(&path, layer, &gerber)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_project_gerber_soldermask_validation_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                let exit_code = if report.matches_expected { 0 } else { 1 };
+                Ok((output, exit_code))
+            }
+            ProjectCommands::ValidateGerberSilkscreenLayer {
+                path,
+                layer,
+                gerber,
+            } => {
+                let report =
+                    validate_native_project_gerber_silkscreen_layer(&path, layer, &gerber)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_project_gerber_silkscreen_validation_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                let exit_code = if report.matches_expected { 0 } else { 1 };
+                Ok((output, exit_code))
+            }
+            ProjectCommands::ValidateGerberPasteLayer {
+                path,
+                layer,
+                gerber,
+            } => {
+                let report = validate_native_project_gerber_paste_layer(&path, layer, &gerber)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_project_gerber_paste_validation_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                let exit_code = if report.matches_expected { 0 } else { 1 };
+                Ok((output, exit_code))
+            }
+            ProjectCommands::ValidateGerberMechanicalLayer {
+                path,
+                layer,
+                gerber,
+            } => {
+                let report =
+                    validate_native_project_gerber_mechanical_layer(&path, layer, &gerber)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_project_gerber_mechanical_validation_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                let exit_code = if report.matches_expected { 0 } else { 1 };
+                Ok((output, exit_code))
+            }
             ProjectCommands::CompareGerberOutline { path, gerber } => {
                 let report = compare_native_project_gerber_outline(&path, &gerber)?;
                 let output = match cli.format {
@@ -504,6 +605,62 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 let output = match cli.format {
                     OutputFormat::Text => {
                         render_native_project_gerber_copper_comparison_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::CompareGerberSoldermaskLayer {
+                path,
+                layer,
+                gerber,
+            } => {
+                let report = compare_native_project_gerber_soldermask_layer(&path, layer, &gerber)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_project_gerber_soldermask_comparison_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::CompareGerberSilkscreenLayer {
+                path,
+                layer,
+                gerber,
+            } => {
+                let report = compare_native_project_gerber_silkscreen_layer(&path, layer, &gerber)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_project_gerber_silkscreen_comparison_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::CompareGerberPasteLayer {
+                path,
+                layer,
+                gerber,
+            } => {
+                let report = compare_native_project_gerber_paste_layer(&path, layer, &gerber)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_project_gerber_paste_comparison_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::CompareGerberMechanicalLayer {
+                path,
+                layer,
+                gerber,
+            } => {
+                let report = compare_native_project_gerber_mechanical_layer(&path, layer, &gerber)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_project_gerber_mechanical_comparison_text(&report)
                     }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
@@ -1357,6 +1514,8 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 x_nm,
                 y_nm,
                 rotation_deg,
+                height_nm,
+                stroke_width_nm,
                 layer,
             } => {
                 let report = place_native_project_board_text(
@@ -1364,6 +1523,8 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     text,
                     eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
                     rotation_deg,
+                    height_nm,
+                    stroke_width_nm,
                     layer,
                 )?;
                 let output = match cli.format {
@@ -1379,6 +1540,8 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 x_nm,
                 y_nm,
                 rotation_deg,
+                height_nm,
+                stroke_width_nm,
                 layer,
             } => {
                 let report = edit_native_project_board_text(
@@ -1388,6 +1551,8 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     x_nm,
                     y_nm,
                     rotation_deg,
+                    height_nm,
+                    stroke_width_nm,
                     layer,
                 )?;
                 let output = match cli.format {
@@ -2001,15 +2166,26 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 x_nm,
                 y_nm,
                 layer,
+                shape,
                 diameter_nm,
+                width_nm,
+                height_nm,
             } => {
                 let position = match (x_nm, y_nm) {
                     (None, None) => None,
                     (Some(x), Some(y)) => Some(eda_engine::ir::geometry::Point { x, y }),
                     _ => bail!("board pad position requires both --x-nm and --y-nm"),
                 };
-                let report =
-                    edit_native_project_board_pad(&path, pad_uuid, position, layer, diameter_nm)?;
+                let report = edit_native_project_board_pad(
+                    &path,
+                    pad_uuid,
+                    position,
+                    layer,
+                    shape,
+                    diameter_nm,
+                    width_nm,
+                    height_nm,
+                )?;
                 let output = match cli.format {
                     OutputFormat::Text => render_native_project_board_pad_mutation_text(&report),
                     OutputFormat::Json => render_output(&cli.format, &report),
@@ -2023,7 +2199,10 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 x_nm,
                 y_nm,
                 layer,
+                shape,
                 diameter_nm,
+                width_nm,
+                height_nm,
                 net_uuid,
             } => {
                 let report = place_native_project_board_pad(
@@ -2032,7 +2211,10 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     name,
                     eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
                     layer,
+                    shape,
                     diameter_nm,
+                    width_nm,
+                    height_nm,
                     net_uuid,
                 )?;
                 let output = match cli.format {

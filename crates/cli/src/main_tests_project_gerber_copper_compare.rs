@@ -13,7 +13,8 @@ fn project_compare_gerber_copper_layer_is_semantic_and_reports_drift() {
 
     let net_uuid = Uuid::new_v4();
     let class_uuid = Uuid::new_v4();
-    let pad_uuid = Uuid::new_v4();
+    let circle_pad_uuid = Uuid::new_v4();
+    let rect_pad_uuid = Uuid::new_v4();
     let track_a_uuid = Uuid::new_v4();
     let track_b_uuid = Uuid::new_v4();
     let zone_uuid = Uuid::new_v4();
@@ -31,14 +32,26 @@ fn project_compare_gerber_copper_layer_is_semantic_and_reports_drift() {
                 "outline": { "vertices": [], "closed": true },
                 "packages": {},
                 "pads": {
-                    pad_uuid.to_string(): {
-                        "uuid": pad_uuid,
+                    circle_pad_uuid.to_string(): {
+                        "uuid": circle_pad_uuid,
                         "package": Uuid::new_v4(),
                         "name": "1",
                         "net": net_uuid,
                         "position": { "x": 750000, "y": 250000 },
                         "layer": 1,
                         "diameter": 450000
+                    },
+                    rect_pad_uuid.to_string(): {
+                        "uuid": rect_pad_uuid,
+                        "package": Uuid::new_v4(),
+                        "name": "2",
+                        "net": net_uuid,
+                        "position": { "x": 1250000, "y": 250000 },
+                        "layer": 1,
+                        "shape": "rect",
+                        "diameter": 0,
+                        "width": 800000,
+                        "height": 400000
                     }
                 },
                 "tracks": {
@@ -130,10 +143,13 @@ fn project_compare_gerber_copper_layer_is_semantic_and_reports_drift() {
             "%ADD13C,0.450000*%\n",
             "%ADD14C,0.600000*%\n",
             "%ADD15C,0.200000*%\n",
+            "%ADD16R,0.800000X0.400000*%\n",
             "D14*\n",
             "X250000Y250000D03*\n",
             "D13*\n",
             "X750000Y250000D03*\n",
+            "D16*\n",
+            "X1250000Y250000D03*\n",
             "G36*\n",
             "X0Y1000000D02*\n",
             "X1000000Y1000000D01*\n",
@@ -168,15 +184,15 @@ fn project_compare_gerber_copper_layer_is_semantic_and_reports_drift() {
     let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
     assert_eq!(report["action"], "compare_gerber_copper_layer");
     assert_eq!(report["layer"], 1);
-    assert_eq!(report["expected_pad_count"], 1);
-    assert_eq!(report["actual_pad_count"], 1);
+    assert_eq!(report["expected_pad_count"], 2);
+    assert_eq!(report["actual_pad_count"], 2);
     assert_eq!(report["expected_track_count"], 2);
     assert_eq!(report["actual_track_count"], 2);
     assert_eq!(report["expected_zone_count"], 1);
     assert_eq!(report["actual_zone_count"], 1);
     assert_eq!(report["expected_via_count"], 1);
     assert_eq!(report["actual_via_count"], 1);
-    assert_eq!(report["matched_count"], 5);
+    assert_eq!(report["matched_count"], 6);
     assert_eq!(report["missing_count"], 0);
     assert_eq!(report["extra_count"], 0);
 
@@ -191,6 +207,7 @@ fn project_compare_gerber_copper_layer_is_semantic_and_reports_drift() {
             "%ADD11C,0.300000*%\n",
             "%ADD12C,0.450000*%\n",
             "%ADD13C,0.700000*%\n",
+            "%ADD14R,0.800000X0.400000*%\n",
             "D11*\n",
             "X0Y500000D02*\n",
             "X1000000Y500000D01*\n",
@@ -198,6 +215,8 @@ fn project_compare_gerber_copper_layer_is_semantic_and_reports_drift() {
             "X750000Y250000D03*\n",
             "D13*\n",
             "X250000Y250000D03*\n",
+            "D14*\n",
+            "X1250000Y250000D03*\n",
             "G36*\n",
             "X0Y1000000D02*\n",
             "X1000000Y1000000D01*\n",
@@ -224,11 +243,11 @@ fn project_compare_gerber_copper_layer_is_semantic_and_reports_drift() {
     .expect("CLI should parse");
     let output = execute(cli).expect("copper compare should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
-    assert_eq!(report["actual_pad_count"], 1);
+    assert_eq!(report["actual_pad_count"], 2);
     assert_eq!(report["actual_track_count"], 1);
     assert_eq!(report["actual_zone_count"], 1);
-    assert_eq!(report["actual_via_count"], 1);
-    assert_eq!(report["matched_count"], 3);
+    assert_eq!(report["actual_via_count"], 0);
+    assert_eq!(report["matched_count"], 4);
     assert_eq!(report["missing_count"], 2);
     assert_eq!(report["extra_count"], 1);
 
@@ -246,7 +265,8 @@ fn project_compare_gerber_copper_layer_matches_equivalent_reordered_geometry() {
 
     let net_uuid = Uuid::new_v4();
     let class_uuid = Uuid::new_v4();
-    let pad_uuid = Uuid::new_v4();
+    let circle_pad_uuid = Uuid::new_v4();
+    let rect_pad_uuid = Uuid::new_v4();
     let track_uuid = Uuid::new_v4();
     let zone_uuid = Uuid::new_v4();
     let via_uuid = Uuid::new_v4();
@@ -263,14 +283,26 @@ fn project_compare_gerber_copper_layer_matches_equivalent_reordered_geometry() {
                 "outline": { "vertices": [], "closed": true },
                 "packages": {},
                 "pads": {
-                    pad_uuid.to_string(): {
-                        "uuid": pad_uuid,
+                    circle_pad_uuid.to_string(): {
+                        "uuid": circle_pad_uuid,
                         "package": Uuid::new_v4(),
                         "name": "1",
                         "net": net_uuid,
                         "position": { "x": 750000, "y": 250000 },
                         "layer": 1,
                         "diameter": 450000
+                    },
+                    rect_pad_uuid.to_string(): {
+                        "uuid": rect_pad_uuid,
+                        "package": Uuid::new_v4(),
+                        "name": "2",
+                        "net": net_uuid,
+                        "position": { "x": 1250000, "y": 250000 },
+                        "layer": 1,
+                        "shape": "rect",
+                        "diameter": 0,
+                        "width": 800000,
+                        "height": 400000
                     }
                 },
                 "tracks": {
@@ -353,6 +385,7 @@ fn project_compare_gerber_copper_layer_matches_equivalent_reordered_geometry() {
             "%ADD21C,0.450000*%\n",
             "%ADD22C,0.600000*%\n",
             "%ADD23C,0.200000*%\n",
+            "%ADD24R,0.800000X0.400000*%\n",
             "G36*\n",
             "X1000000Y1500000D02*\n",
             "X1000000Y1000000D01*\n",
@@ -363,6 +396,8 @@ fn project_compare_gerber_copper_layer_matches_equivalent_reordered_geometry() {
             "X750000Y250000D03*\n",
             "D22*\n",
             "X250000Y250000D03*\n",
+            "D24*\n",
+            "X1250000Y250000D03*\n",
             "D23*\n",
             "X1000000Y0D02*\n",
             "X0Y0D01*\n",
@@ -386,15 +421,15 @@ fn project_compare_gerber_copper_layer_matches_equivalent_reordered_geometry() {
     .expect("CLI should parse");
     let output = execute(cli).expect("copper compare should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
-    assert_eq!(report["expected_pad_count"], 1);
-    assert_eq!(report["actual_pad_count"], 1);
+    assert_eq!(report["expected_pad_count"], 2);
+    assert_eq!(report["actual_pad_count"], 2);
     assert_eq!(report["expected_track_count"], 1);
     assert_eq!(report["actual_track_count"], 1);
     assert_eq!(report["expected_zone_count"], 1);
     assert_eq!(report["actual_zone_count"], 1);
     assert_eq!(report["expected_via_count"], 1);
     assert_eq!(report["actual_via_count"], 1);
-    assert_eq!(report["matched_count"], 4);
+    assert_eq!(report["matched_count"], 5);
     assert_eq!(report["missing_count"], 0);
     assert_eq!(report["extra_count"], 0);
 

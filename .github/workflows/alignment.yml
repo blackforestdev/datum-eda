@@ -31,6 +31,9 @@ jobs:
       - name: Source file size budget guardrail
         run: python3 scripts/check_file_size_budgets.py
 
+      - name: Decomposition coverage guardrail
+        run: python3 scripts/check_decomposition_coverage.py
+
       - name: MCP server self-test
         run: python3 mcp-server/server.py --self-test
 

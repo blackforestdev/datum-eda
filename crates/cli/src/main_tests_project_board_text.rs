@@ -60,6 +60,8 @@ fn project_board_text_mutations_round_trip_through_native_query() {
     assert_eq!(texts[0].position.x, 1000);
     assert_eq!(texts[0].position.y, 2000);
     assert_eq!(texts[0].rotation, 90);
+    assert_eq!(texts[0].height_nm, 1_000_000);
+    assert_eq!(texts[0].stroke_width_nm, 100_000);
     assert_eq!(texts[0].layer, 1);
 
     let edit_cli = Cli::try_parse_from([
@@ -79,6 +81,10 @@ fn project_board_text_mutations_round_trip_through_native_query() {
         "4000",
         "--rotation-deg",
         "180",
+        "--height-nm",
+        "1200000",
+        "--stroke-width-nm",
+        "150000",
         "--layer",
         "2",
     ])
@@ -94,6 +100,8 @@ fn project_board_text_mutations_round_trip_through_native_query() {
     assert_eq!(texts[0].position.x, 3000);
     assert_eq!(texts[0].position.y, 4000);
     assert_eq!(texts[0].rotation, 180);
+    assert_eq!(texts[0].height_nm, 1_200_000);
+    assert_eq!(texts[0].stroke_width_nm, 150_000);
     assert_eq!(texts[0].layer, 2);
 
     let delete_cli = Cli::try_parse_from([
@@ -153,6 +161,8 @@ fn project_query_board_texts_reads_existing_native_board_file() {
                     "text": "FAB",
                     "position": { "x": 10, "y": 20 },
                     "rotation": 0,
+                    "height_nm": 900000,
+                    "stroke_width_nm": 120000,
                     "layer": 21
                 }]
             }))
@@ -165,6 +175,8 @@ fn project_query_board_texts_reads_existing_native_board_file() {
     let texts: Vec<BoardText> = serde_json::from_str(&output).expect("query output should parse");
     assert_eq!(texts.len(), 1);
     assert_eq!(texts[0].text, "FAB");
+    assert_eq!(texts[0].height_nm, 900_000);
+    assert_eq!(texts[0].stroke_width_nm, 120_000);
     assert_eq!(texts[0].layer, 21);
 
     let _ = std::fs::remove_dir_all(&root);

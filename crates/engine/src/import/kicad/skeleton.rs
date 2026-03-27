@@ -393,6 +393,8 @@ pub(super) fn parse_board_skeleton(path: &Path, contents: &str) -> Result<Board,
             text,
             position,
             rotation: block_rotation(&block).unwrap_or(0),
+            height_nm: 1_000_000,
+            stroke_width_nm: 100_000,
             layer,
         });
     }
@@ -452,7 +454,10 @@ fn footprint_pads(
                     local,
                 ),
                 layer: package_layer,
+                shape: crate::board::PadShape::Circle,
                 diameter: 0,
+                width: 0,
+                height: 0,
             })
         })
         .collect()
