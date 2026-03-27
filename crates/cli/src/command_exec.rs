@@ -252,6 +252,46 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     let report = query_native_project_noconnects(&path)?;
                     Ok((render_output(&cli.format, &report), 0))
                 }
+                NativeProjectQueryCommands::Nets => {
+                    let report = query_native_project_nets(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::Diagnostics => {
+                    let report = query_native_project_diagnostics(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::Erc => {
+                    let report = query_native_project_erc(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::Check => {
+                    let report = query_native_project_check(&path)?;
+                    let output = match cli.format {
+                        OutputFormat::Text => render_check_report_text(&report),
+                        OutputFormat::Json => render_output(&cli.format, &report),
+                    };
+                    Ok((output, 0))
+                }
+                NativeProjectQueryCommands::BoardTexts => {
+                    let report = query_native_project_board_texts(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::BoardKeepouts => {
+                    let report = query_native_project_board_keepouts(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::BoardOutline => {
+                    let report = query_native_project_board_outline(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::BoardStackup => {
+                    let report = query_native_project_board_stackup(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::BoardDimensions => {
+                    let report = query_native_project_board_dimensions(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
             },
             ProjectCommands::PlaceSymbol {
                 path,
@@ -343,6 +383,66 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 value,
             } => {
                 let report = set_native_project_symbol_value(&path, symbol, value)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_symbol_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::SetSymbolLibId {
+                path,
+                symbol,
+                lib_id,
+            } => {
+                let report = set_native_project_symbol_lib_id(&path, symbol, lib_id)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_symbol_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ClearSymbolLibId { path, symbol } => {
+                let report = clear_native_project_symbol_lib_id(&path, symbol)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_symbol_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::SetSymbolEntity {
+                path,
+                symbol,
+                entity_uuid,
+            } => {
+                let report = set_native_project_symbol_entity(&path, symbol, entity_uuid)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_symbol_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ClearSymbolEntity { path, symbol } => {
+                let report = clear_native_project_symbol_entity(&path, symbol)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_symbol_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::SetSymbolPart {
+                path,
+                symbol,
+                part_uuid,
+            } => {
+                let report = set_native_project_symbol_part(&path, symbol, part_uuid)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_symbol_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ClearSymbolPart { path, symbol } => {
+                let report = clear_native_project_symbol_part(&path, symbol)?;
                 let output = match cli.format {
                     OutputFormat::Text => render_native_project_symbol_mutation_text(&report),
                     OutputFormat::Json => render_output(&cli.format, &report),
@@ -988,6 +1088,179 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 let report = delete_native_project_noconnect(&path, noconnect)?;
                 let output = match cli.format {
                     OutputFormat::Text => render_native_project_noconnect_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::PlaceBoardText {
+                path,
+                text,
+                x_nm,
+                y_nm,
+                rotation_deg,
+                layer,
+            } => {
+                let report = place_native_project_board_text(
+                    &path,
+                    text,
+                    eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
+                    rotation_deg,
+                    layer,
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_text_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::EditBoardText {
+                path,
+                text_uuid,
+                value,
+                x_nm,
+                y_nm,
+                rotation_deg,
+                layer,
+            } => {
+                let report = edit_native_project_board_text(
+                    &path,
+                    text_uuid,
+                    value,
+                    x_nm,
+                    y_nm,
+                    rotation_deg,
+                    layer,
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_text_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::DeleteBoardText { path, text_uuid } => {
+                let report = delete_native_project_board_text(&path, text_uuid)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_text_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::PlaceBoardKeepout {
+                path,
+                kind,
+                layers,
+                vertices,
+            } => {
+                let polygon = parse_native_polygon_vertices(&vertices)?;
+                let report = place_native_project_board_keepout(&path, kind, layers, polygon)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_keepout_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::EditBoardKeepout {
+                path,
+                keepout_uuid,
+                kind,
+                layers,
+                vertices,
+            } => {
+                let polygon = if vertices.is_empty() {
+                    None
+                } else {
+                    Some(parse_native_polygon_vertices(&vertices)?)
+                };
+                let report =
+                    edit_native_project_board_keepout(&path, keepout_uuid, kind, layers, polygon)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_keepout_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::DeleteBoardKeepout { path, keepout_uuid } => {
+                let report = delete_native_project_board_keepout(&path, keepout_uuid)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_keepout_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::SetBoardOutline { path, vertices } => {
+                let polygon = parse_native_polygon_vertices(&vertices)?;
+                let report = set_native_project_board_outline(&path, polygon)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_outline_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::SetBoardStackup { path, layers } => {
+                let stackup_layers = parse_native_stackup_layers(&layers)?;
+                let report = set_native_project_board_stackup(&path, stackup_layers)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_stackup_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::PlaceBoardDimension {
+                path,
+                from_x_nm,
+                from_y_nm,
+                to_x_nm,
+                to_y_nm,
+                text,
+            } => {
+                let report = place_native_project_board_dimension(
+                    &path,
+                    eda_engine::ir::geometry::Point {
+                        x: from_x_nm,
+                        y: from_y_nm,
+                    },
+                    eda_engine::ir::geometry::Point {
+                        x: to_x_nm,
+                        y: to_y_nm,
+                    },
+                    text,
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_dimension_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::EditBoardDimension {
+                path,
+                dimension_uuid,
+                from_x_nm,
+                from_y_nm,
+                to_x_nm,
+                to_y_nm,
+                text,
+                clear_text,
+            } => {
+                let report = edit_native_project_board_dimension(
+                    &path,
+                    dimension_uuid,
+                    from_x_nm,
+                    from_y_nm,
+                    to_x_nm,
+                    to_y_nm,
+                    text,
+                    clear_text,
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_dimension_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::DeleteBoardDimension { path, dimension_uuid } => {
+                let report = delete_native_project_board_dimension(&path, dimension_uuid)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_board_dimension_mutation_text(&report),
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))

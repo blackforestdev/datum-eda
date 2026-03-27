@@ -348,6 +348,103 @@ fn project_set_symbol_reference_and_value_update_native_query_surface() {
 }
 
 #[test]
+fn project_set_and_clear_symbol_lib_id_update_native_query_surface() {
+    let root = unique_project_root("datum-eda-cli-project-symbol-lib-id");
+    create_native_project(&root, Some("Symbol LibId Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    let sheet_uuid = seed_native_sheet(&root);
+
+    let place_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "place-symbol",
+        root.to_str().unwrap(),
+        "--sheet",
+        &sheet_uuid.to_string(),
+        "--reference",
+        "U4",
+        "--value",
+        "LM2904",
+        "--x-nm",
+        "15",
+        "--y-nm",
+        "25",
+    ])
+    .expect("CLI should parse");
+    let place_output = execute(place_cli).expect("project place-symbol should succeed");
+    let placed: serde_json::Value =
+        serde_json::from_str(&place_output).expect("place-symbol JSON should parse");
+    let symbol_uuid = placed["symbol_uuid"].as_str().unwrap().to_string();
+    assert!(placed["lib_id"].is_null());
+
+    let set_lib_id_cli = Cli::try_parse_from([
+        "eda",
+        "project",
+        "set-symbol-lib-id",
+        root.to_str().unwrap(),
+        "--symbol",
+        &symbol_uuid,
+        "--lib-id",
+        "device:dual_opamp",
+    ])
+    .expect("CLI should parse");
+    let set_lib_id_output =
+        execute(set_lib_id_cli).expect("project set-symbol-lib-id should succeed");
+    assert!(set_lib_id_output.contains("action: set_symbol_lib_id"));
+    assert!(set_lib_id_output.contains("lib_id: device:dual_opamp"));
+
+    let query_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "symbols",
+    ])
+    .expect("CLI should parse");
+    let symbols_output = execute(query_cli).expect("project query symbols should succeed");
+    let symbols: serde_json::Value =
+        serde_json::from_str(&symbols_output).expect("symbols JSON should parse");
+    assert_eq!(symbols.as_array().unwrap().len(), 1);
+    assert_eq!(symbols[0]["uuid"], symbol_uuid);
+    assert_eq!(symbols[0]["lib_id"], "device:dual_opamp");
+
+    let clear_lib_id_cli = Cli::try_parse_from([
+        "eda",
+        "project",
+        "clear-symbol-lib-id",
+        root.to_str().unwrap(),
+        "--symbol",
+        &symbol_uuid,
+    ])
+    .expect("CLI should parse");
+    let clear_lib_id_output =
+        execute(clear_lib_id_cli).expect("project clear-symbol-lib-id should succeed");
+    assert!(clear_lib_id_output.contains("action: clear_symbol_lib_id"));
+
+    let query_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "symbols",
+    ])
+    .expect("CLI should parse");
+    let symbols_output = execute(query_cli).expect("project query symbols should succeed");
+    let symbols: serde_json::Value =
+        serde_json::from_str(&symbols_output).expect("symbols JSON should parse");
+    assert_eq!(symbols.as_array().unwrap().len(), 1);
+    assert!(symbols[0]["lib_id"].is_null());
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
 fn project_mirror_symbol_updates_native_query_surface() {
     let root = unique_project_root("datum-eda-cli-project-symbol-mirror");
     create_native_project(&root, Some("Symbol Mirror Demo".to_string()))

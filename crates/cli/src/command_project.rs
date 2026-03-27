@@ -1,14 +1,20 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
-use eda_engine::ir::serialization::to_json_deterministic;
+use eda_engine::api::{CheckCodeCount, CheckReport, CheckStatus, CheckSummary};
+use eda_engine::board::{BoardText, Dimension, Keepout, StackupLayer, StackupLayerType};
+use eda_engine::connectivity::{schematic_diagnostics, schematic_net_info};
 use eda_engine::ir::geometry::{Arc, Point};
+use eda_engine::ir::geometry::Polygon;
+use eda_engine::ir::serialization::to_json_deterministic;
+use eda_engine::erc::{ErcFinding, run_prechecks};
 use eda_engine::schematic::{
-    Bus, BusEntry, BusEntryInfo, BusInfo, HiddenPowerBehavior, HierarchicalPort, Junction,
-    LabelInfo, LabelKind, NetLabel, NoConnectInfo, NoConnectMarker, PinDisplayOverride,
-    PlacedSymbol, PortDirection, PortInfo, SchematicWire, SymbolDisplayMode, SymbolField,
-    SymbolFieldInfo, SymbolInfo, SymbolPin, SchematicPrimitive, SchematicText,
+    Bus, BusEntry, BusEntryInfo, BusInfo, CheckWaiver, ConnectivityDiagnosticInfo,
+    HiddenPowerBehavior, HierarchicalPort, Junction, LabelInfo, LabelKind, NetLabel,
+    NoConnectInfo, NoConnectMarker, PinDisplayOverride, PlacedSymbol, PortDirection, PortInfo,
+    Schematic, SchematicNetInfo, SchematicPrimitive, SchematicText, SchematicWire, Sheet,
+    SheetFrame, SymbolDisplayMode, SymbolField, SymbolFieldInfo, SymbolInfo, SymbolPin,
 };
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -21,6 +27,11 @@ use super::{
     NativeProjectNoConnectMutationReportView,
     NativeProjectPortMutationReportView,
     NativeProjectDrawingMutationReportView,
+    NativeProjectBoardKeepoutMutationReportView,
+    NativeProjectBoardOutlineMutationReportView,
+    NativeProjectBoardStackupMutationReportView,
+    NativeProjectBoardDimensionMutationReportView,
+    NativeProjectBoardTextMutationReportView,
     NativeProjectPinOverrideMutationReportView,
     NativeProjectSymbolFieldMutationReportView,
     NativeProjectSymbolPinInfoView,
@@ -132,6 +143,24 @@ struct NativePoint {
 struct NativeRulesRoot {
     schema_version: u32,
     rules: Vec<serde_json::Value>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct NativeSheetRoot {
+    schema_version: u32,
+    uuid: Uuid,
+    name: String,
+    frame: Option<SheetFrame>,
+    symbols: BTreeMap<String, PlacedSymbol>,
+    wires: BTreeMap<String, SchematicWire>,
+    junctions: BTreeMap<String, Junction>,
+    labels: BTreeMap<String, NetLabel>,
+    buses: BTreeMap<String, Bus>,
+    bus_entries: BTreeMap<String, BusEntry>,
+    ports: BTreeMap<String, HierarchicalPort>,
+    noconnects: BTreeMap<String, NoConnectMarker>,
+    texts: BTreeMap<String, SchematicText>,
+    drawings: BTreeMap<String, SchematicPrimitive>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -303,6 +332,7 @@ pub(crate) fn query_native_project_summary(root: &Path) -> Result<NativeProjectS
             vias: project.board.vias.len(),
             zones: project.board.zones.len(),
             keepouts: project.board.keepouts.len(),
+            dimensions: project.board.dimensions.len(),
             texts: project.board.texts.len(),
         },
         rules: NativeProjectRulesSummaryView {
@@ -340,6 +370,7 @@ pub(crate) fn query_native_project_symbols(root: &Path) -> Result<Vec<SymbolInfo
                     sheet: sheet_uuid,
                     reference: symbol.reference,
                     value: symbol.value,
+                    lib_id: symbol.lib_id,
                     position: symbol.position,
                     rotation: symbol.rotation,
                     mirrored: symbol.mirrored,
@@ -698,6 +729,99 @@ pub(crate) fn query_native_project_noconnects(root: &Path) -> Result<Vec<NoConne
     Ok(noconnects)
 }
 
+pub(crate) fn query_native_project_nets(root: &Path) -> Result<Vec<SchematicNetInfo>> {
+    let project = load_native_project(root)?;
+    Ok(schematic_net_info(&build_native_project_schematic(&project)?))
+}
+
+pub(crate) fn query_native_project_diagnostics(
+    root: &Path,
+) -> Result<Vec<ConnectivityDiagnosticInfo>> {
+    let project = load_native_project(root)?;
+    Ok(schematic_diagnostics(&build_native_project_schematic(&project)?))
+}
+
+pub(crate) fn query_native_project_erc(root: &Path) -> Result<Vec<ErcFinding>> {
+    let project = load_native_project(root)?;
+    Ok(run_prechecks(&build_native_project_schematic(&project)?))
+}
+
+pub(crate) fn query_native_project_check(root: &Path) -> Result<CheckReport> {
+    let project = load_native_project(root)?;
+    let schematic = build_native_project_schematic(&project)?;
+    let diagnostics = schematic_diagnostics(&schematic);
+    let erc = run_prechecks(&schematic);
+    Ok(CheckReport::Schematic {
+        summary: summarize_native_schematic_checks(&diagnostics, &erc),
+        diagnostics,
+        erc,
+    })
+}
+
+pub(crate) fn query_native_project_board_texts(root: &Path) -> Result<Vec<BoardText>> {
+    let project = load_native_project(root)?;
+    let mut texts = project
+        .board
+        .texts
+        .into_iter()
+        .map(|value| serde_json::from_value(value).context("failed to parse board text"))
+        .collect::<Result<Vec<BoardText>>>()?;
+    texts.sort_by(|a, b| a.text.cmp(&b.text).then_with(|| a.uuid.cmp(&b.uuid)));
+    Ok(texts)
+}
+
+pub(crate) fn query_native_project_board_keepouts(root: &Path) -> Result<Vec<Keepout>> {
+    let project = load_native_project(root)?;
+    let mut keepouts = project
+        .board
+        .keepouts
+        .into_iter()
+        .map(|value| serde_json::from_value(value).context("failed to parse board keepout"))
+        .collect::<Result<Vec<Keepout>>>()?;
+    keepouts.sort_by(|a, b| a.kind.cmp(&b.kind).then_with(|| a.uuid.cmp(&b.uuid)));
+    Ok(keepouts)
+}
+
+pub(crate) fn query_native_project_board_outline(root: &Path) -> Result<Polygon> {
+    let project = load_native_project(root)?;
+    Ok(Polygon {
+        vertices: project
+            .board
+            .outline
+            .vertices
+            .into_iter()
+            .map(|point| Point {
+                x: point.x,
+                y: point.y,
+            })
+            .collect(),
+        closed: project.board.outline.closed,
+    })
+}
+
+pub(crate) fn query_native_project_board_stackup(root: &Path) -> Result<Vec<StackupLayer>> {
+    let project = load_native_project(root)?;
+    project
+        .board
+        .stackup
+        .layers
+        .into_iter()
+        .map(|value| serde_json::from_value(value).context("failed to parse board stackup layer"))
+        .collect::<Result<Vec<StackupLayer>>>()
+}
+
+pub(crate) fn query_native_project_board_dimensions(root: &Path) -> Result<Vec<Dimension>> {
+    let project = load_native_project(root)?;
+    let mut dimensions = project
+        .board
+        .dimensions
+        .into_iter()
+        .map(|value| serde_json::from_value(value).context("failed to parse board dimension"))
+        .collect::<Result<Vec<Dimension>>>()?;
+    dimensions.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+    Ok(dimensions)
+}
+
 pub(crate) fn place_native_project_label(
     root: &Path,
     sheet_uuid: Uuid,
@@ -1000,6 +1124,197 @@ pub(crate) fn set_native_project_symbol_value(
 
     Ok(NativeProjectSymbolMutationReportView {
         action: "set_symbol_value".to_string(),
+        project_root: project.root.display().to_string(),
+        sheet_uuid: sheet_uuid.to_string(),
+        sheet_path: sheet_path.display().to_string(),
+        symbol_uuid: symbol.uuid.to_string(),
+        reference: symbol.reference,
+        value: symbol.value,
+        lib_id: symbol.lib_id,
+        x_nm: symbol.position.x,
+        y_nm: symbol.position.y,
+        rotation_deg: symbol.rotation,
+        mirrored: symbol.mirrored,
+        gate_uuid: symbol.gate.map(|uuid| uuid.to_string()),
+        unit_selection: symbol.unit_selection,
+        display_mode: render_symbol_display_mode(&symbol.display_mode),
+        hidden_power_behavior: render_hidden_power_behavior(&symbol.hidden_power_behavior),
+    })
+}
+
+pub(crate) fn set_native_project_symbol_lib_id(
+    root: &Path,
+    symbol_uuid: Uuid,
+    lib_id: String,
+) -> Result<NativeProjectSymbolMutationReportView> {
+    let project = load_native_project(root)?;
+    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+        load_native_symbol_mutation_target(&project, symbol_uuid)?;
+    symbol.lib_id = Some(lib_id);
+    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
+    write_canonical_json(&sheet_path, &sheet_value)?;
+
+    Ok(NativeProjectSymbolMutationReportView {
+        action: "set_symbol_lib_id".to_string(),
+        project_root: project.root.display().to_string(),
+        sheet_uuid: sheet_uuid.to_string(),
+        sheet_path: sheet_path.display().to_string(),
+        symbol_uuid: symbol.uuid.to_string(),
+        reference: symbol.reference,
+        value: symbol.value,
+        lib_id: symbol.lib_id,
+        x_nm: symbol.position.x,
+        y_nm: symbol.position.y,
+        rotation_deg: symbol.rotation,
+        mirrored: symbol.mirrored,
+        gate_uuid: symbol.gate.map(|uuid| uuid.to_string()),
+        unit_selection: symbol.unit_selection,
+        display_mode: render_symbol_display_mode(&symbol.display_mode),
+        hidden_power_behavior: render_hidden_power_behavior(&symbol.hidden_power_behavior),
+    })
+}
+
+pub(crate) fn clear_native_project_symbol_lib_id(
+    root: &Path,
+    symbol_uuid: Uuid,
+) -> Result<NativeProjectSymbolMutationReportView> {
+    let project = load_native_project(root)?;
+    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+        load_native_symbol_mutation_target(&project, symbol_uuid)?;
+    symbol.lib_id = None;
+    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
+    write_canonical_json(&sheet_path, &sheet_value)?;
+
+    Ok(NativeProjectSymbolMutationReportView {
+        action: "clear_symbol_lib_id".to_string(),
+        project_root: project.root.display().to_string(),
+        sheet_uuid: sheet_uuid.to_string(),
+        sheet_path: sheet_path.display().to_string(),
+        symbol_uuid: symbol.uuid.to_string(),
+        reference: symbol.reference,
+        value: symbol.value,
+        lib_id: symbol.lib_id,
+        x_nm: symbol.position.x,
+        y_nm: symbol.position.y,
+        rotation_deg: symbol.rotation,
+        mirrored: symbol.mirrored,
+        gate_uuid: symbol.gate.map(|uuid| uuid.to_string()),
+        unit_selection: symbol.unit_selection,
+        display_mode: render_symbol_display_mode(&symbol.display_mode),
+        hidden_power_behavior: render_hidden_power_behavior(&symbol.hidden_power_behavior),
+    })
+}
+
+pub(crate) fn set_native_project_symbol_entity(
+    root: &Path,
+    symbol_uuid: Uuid,
+    entity_uuid: Uuid,
+) -> Result<NativeProjectSymbolMutationReportView> {
+    let project = load_native_project(root)?;
+    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+        load_native_symbol_mutation_target(&project, symbol_uuid)?;
+    symbol.entity = Some(entity_uuid);
+    symbol.part = None;
+    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
+    write_canonical_json(&sheet_path, &sheet_value)?;
+
+    Ok(NativeProjectSymbolMutationReportView {
+        action: "set_symbol_entity".to_string(),
+        project_root: project.root.display().to_string(),
+        sheet_uuid: sheet_uuid.to_string(),
+        sheet_path: sheet_path.display().to_string(),
+        symbol_uuid: symbol.uuid.to_string(),
+        reference: symbol.reference,
+        value: symbol.value,
+        lib_id: symbol.lib_id,
+        x_nm: symbol.position.x,
+        y_nm: symbol.position.y,
+        rotation_deg: symbol.rotation,
+        mirrored: symbol.mirrored,
+        gate_uuid: symbol.gate.map(|uuid| uuid.to_string()),
+        unit_selection: symbol.unit_selection,
+        display_mode: render_symbol_display_mode(&symbol.display_mode),
+        hidden_power_behavior: render_hidden_power_behavior(&symbol.hidden_power_behavior),
+    })
+}
+
+pub(crate) fn clear_native_project_symbol_entity(
+    root: &Path,
+    symbol_uuid: Uuid,
+) -> Result<NativeProjectSymbolMutationReportView> {
+    let project = load_native_project(root)?;
+    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+        load_native_symbol_mutation_target(&project, symbol_uuid)?;
+    symbol.entity = None;
+    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
+    write_canonical_json(&sheet_path, &sheet_value)?;
+
+    Ok(NativeProjectSymbolMutationReportView {
+        action: "clear_symbol_entity".to_string(),
+        project_root: project.root.display().to_string(),
+        sheet_uuid: sheet_uuid.to_string(),
+        sheet_path: sheet_path.display().to_string(),
+        symbol_uuid: symbol.uuid.to_string(),
+        reference: symbol.reference,
+        value: symbol.value,
+        lib_id: symbol.lib_id,
+        x_nm: symbol.position.x,
+        y_nm: symbol.position.y,
+        rotation_deg: symbol.rotation,
+        mirrored: symbol.mirrored,
+        gate_uuid: symbol.gate.map(|uuid| uuid.to_string()),
+        unit_selection: symbol.unit_selection,
+        display_mode: render_symbol_display_mode(&symbol.display_mode),
+        hidden_power_behavior: render_hidden_power_behavior(&symbol.hidden_power_behavior),
+    })
+}
+
+pub(crate) fn set_native_project_symbol_part(
+    root: &Path,
+    symbol_uuid: Uuid,
+    part_uuid: Uuid,
+) -> Result<NativeProjectSymbolMutationReportView> {
+    let project = load_native_project(root)?;
+    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+        load_native_symbol_mutation_target(&project, symbol_uuid)?;
+    symbol.part = Some(part_uuid);
+    symbol.entity = None;
+    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
+    write_canonical_json(&sheet_path, &sheet_value)?;
+
+    Ok(NativeProjectSymbolMutationReportView {
+        action: "set_symbol_part".to_string(),
+        project_root: project.root.display().to_string(),
+        sheet_uuid: sheet_uuid.to_string(),
+        sheet_path: sheet_path.display().to_string(),
+        symbol_uuid: symbol.uuid.to_string(),
+        reference: symbol.reference,
+        value: symbol.value,
+        lib_id: symbol.lib_id,
+        x_nm: symbol.position.x,
+        y_nm: symbol.position.y,
+        rotation_deg: symbol.rotation,
+        mirrored: symbol.mirrored,
+        gate_uuid: symbol.gate.map(|uuid| uuid.to_string()),
+        unit_selection: symbol.unit_selection,
+        display_mode: render_symbol_display_mode(&symbol.display_mode),
+        hidden_power_behavior: render_hidden_power_behavior(&symbol.hidden_power_behavior),
+    })
+}
+
+pub(crate) fn clear_native_project_symbol_part(
+    root: &Path,
+    symbol_uuid: Uuid,
+) -> Result<NativeProjectSymbolMutationReportView> {
+    let project = load_native_project(root)?;
+    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+        load_native_symbol_mutation_target(&project, symbol_uuid)?;
+    symbol.part = None;
+    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
+    write_canonical_json(&sheet_path, &sheet_value)?;
+
+    Ok(NativeProjectSymbolMutationReportView {
+        action: "clear_symbol_part".to_string(),
         project_root: project.root.display().to_string(),
         sheet_uuid: sheet_uuid.to_string(),
         sheet_path: sheet_path.display().to_string(),
@@ -2538,6 +2853,595 @@ fn collect_schematic_counts(root: &Path, schematic: &NativeSchematicRoot) -> Res
         texts,
         drawings,
     })
+}
+
+fn build_native_project_schematic(project: &LoadedNativeProject) -> Result<Schematic> {
+    let mut sheets = HashMap::new();
+
+    for (sheet_uuid, relative_path) in &project.schematic.sheets {
+        let expected_uuid = Uuid::parse_str(sheet_uuid)
+            .with_context(|| format!("invalid sheet UUID key `{sheet_uuid}` in schematic root"))?;
+        let path = project.root.join("schematic").join(relative_path);
+        let native_sheet = load_native_sheet(&path)?;
+        if native_sheet.uuid != expected_uuid {
+            bail!(
+                "sheet UUID mismatch: schematic root key {} does not match {} in {}",
+                expected_uuid,
+                native_sheet.uuid,
+                path.display()
+            );
+        }
+        sheets.insert(expected_uuid, native_sheet_into_engine_sheet(native_sheet));
+    }
+
+    Ok(Schematic {
+        uuid: project.schematic.uuid,
+        sheets,
+        // Native connectivity queries only need the authored sheet graph for now.
+        sheet_definitions: HashMap::new(),
+        sheet_instances: HashMap::new(),
+        variants: HashMap::new(),
+        waivers: Vec::<CheckWaiver>::new(),
+    })
+}
+
+fn summarize_native_schematic_checks(
+    diagnostics: &[ConnectivityDiagnosticInfo],
+    erc_findings: &[ErcFinding],
+) -> CheckSummary {
+    let mut by_code: BTreeMap<String, usize> = BTreeMap::new();
+    let mut errors = 0usize;
+    let mut warnings = 0usize;
+    let mut infos = 0usize;
+    let mut waived = 0usize;
+
+    for diagnostic in diagnostics {
+        *by_code.entry(diagnostic.kind.clone()).or_default() += 1;
+        match diagnostic.severity.as_str() {
+            "error" => errors += 1,
+            "warning" => warnings += 1,
+            _ => infos += 1,
+        }
+    }
+
+    for finding in erc_findings {
+        *by_code.entry(finding.code.to_string()).or_default() += 1;
+        if finding.waived {
+            waived += 1;
+            continue;
+        }
+        match finding.severity {
+            eda_engine::erc::ErcSeverity::Error => errors += 1,
+            eda_engine::erc::ErcSeverity::Warning => warnings += 1,
+            eda_engine::erc::ErcSeverity::Info => infos += 1,
+        }
+    }
+
+    let status = if errors > 0 {
+        CheckStatus::Error
+    } else if warnings > 0 {
+        CheckStatus::Warning
+    } else if infos > 0 {
+        CheckStatus::Info
+    } else {
+        CheckStatus::Ok
+    };
+
+    let mut by_code = by_code
+        .into_iter()
+        .map(|(code, count)| CheckCodeCount { code, count })
+        .collect::<Vec<_>>();
+    by_code.sort_by(|a, b| a.code.cmp(&b.code));
+
+    CheckSummary {
+        status,
+        errors,
+        warnings,
+        infos,
+        waived,
+        by_code,
+    }
+}
+
+pub(crate) fn place_native_project_board_text(
+    root: &Path,
+    text: String,
+    position: Point,
+    rotation_deg: i32,
+    layer: i32,
+) -> Result<NativeProjectBoardTextMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let text_uuid = Uuid::new_v4();
+    let board_text = BoardText {
+        uuid: text_uuid,
+        text: text.clone(),
+        position,
+        rotation: rotation_deg,
+        layer,
+    };
+    project.board.texts.push(
+        serde_json::to_value(&board_text).expect("native board text serialization must succeed"),
+    );
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(NativeProjectBoardTextMutationReportView {
+        action: "place_board_text".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        text_uuid: text_uuid.to_string(),
+        text,
+        x_nm: position.x,
+        y_nm: position.y,
+        rotation_deg,
+        layer,
+    })
+}
+
+pub(crate) fn edit_native_project_board_text(
+    root: &Path,
+    text_uuid: Uuid,
+    value: Option<String>,
+    x_nm: Option<i64>,
+    y_nm: Option<i64>,
+    rotation_deg: Option<i32>,
+    layer: Option<i32>,
+) -> Result<NativeProjectBoardTextMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let index = project
+        .board
+        .texts
+        .iter()
+        .position(|entry| {
+            serde_json::from_value::<BoardText>(entry.clone())
+                .map(|text| text.uuid == text_uuid)
+                .unwrap_or(false)
+        })
+        .ok_or_else(|| anyhow::anyhow!("board text not found in native project: {text_uuid}"))?;
+    let mut board_text: BoardText = serde_json::from_value(project.board.texts[index].clone())
+        .with_context(|| format!("failed to parse board text in {}", project.board_path.display()))?;
+    if let Some(value) = value {
+        board_text.text = value;
+    }
+    match (x_nm, y_nm) {
+        (None, None) => {}
+        (Some(x), Some(y)) => board_text.position = Point { x, y },
+        _ => bail!("board text position requires both --x-nm and --y-nm"),
+    }
+    if let Some(rotation_deg) = rotation_deg {
+        board_text.rotation = rotation_deg;
+    }
+    if let Some(layer) = layer {
+        board_text.layer = layer;
+    }
+    project.board.texts[index] =
+        serde_json::to_value(&board_text).expect("native board text serialization must succeed");
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(NativeProjectBoardTextMutationReportView {
+        action: "edit_board_text".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        text_uuid: board_text.uuid.to_string(),
+        text: board_text.text,
+        x_nm: board_text.position.x,
+        y_nm: board_text.position.y,
+        rotation_deg: board_text.rotation,
+        layer: board_text.layer,
+    })
+}
+
+pub(crate) fn delete_native_project_board_text(
+    root: &Path,
+    text_uuid: Uuid,
+) -> Result<NativeProjectBoardTextMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let index = project
+        .board
+        .texts
+        .iter()
+        .position(|entry| {
+            serde_json::from_value::<BoardText>(entry.clone())
+                .map(|text| text.uuid == text_uuid)
+                .unwrap_or(false)
+        })
+        .ok_or_else(|| anyhow::anyhow!("board text not found in native project: {text_uuid}"))?;
+    let board_text: BoardText = serde_json::from_value(project.board.texts.remove(index))
+        .with_context(|| format!("failed to parse board text in {}", project.board_path.display()))?;
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(NativeProjectBoardTextMutationReportView {
+        action: "delete_board_text".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        text_uuid: board_text.uuid.to_string(),
+        text: board_text.text,
+        x_nm: board_text.position.x,
+        y_nm: board_text.position.y,
+        rotation_deg: board_text.rotation,
+        layer: board_text.layer,
+    })
+}
+
+pub(crate) fn place_native_project_board_keepout(
+    root: &Path,
+    kind: String,
+    layers: Vec<i32>,
+    polygon: Polygon,
+) -> Result<NativeProjectBoardKeepoutMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let keepout_uuid = Uuid::new_v4();
+    let keepout = Keepout {
+        uuid: keepout_uuid,
+        polygon,
+        layers,
+        kind: kind.clone(),
+    };
+    project.board.keepouts.push(
+        serde_json::to_value(&keepout).expect("native board keepout serialization must succeed"),
+    );
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(NativeProjectBoardKeepoutMutationReportView {
+        action: "place_board_keepout".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        keepout_uuid: keepout_uuid.to_string(),
+        kind,
+        layer_count: keepout.layers.len(),
+        vertex_count: keepout.polygon.vertices.len(),
+    })
+}
+
+pub(crate) fn edit_native_project_board_keepout(
+    root: &Path,
+    keepout_uuid: Uuid,
+    kind: Option<String>,
+    layers: Vec<i32>,
+    polygon: Option<Polygon>,
+) -> Result<NativeProjectBoardKeepoutMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let index = project
+        .board
+        .keepouts
+        .iter()
+        .position(|entry| {
+            serde_json::from_value::<Keepout>(entry.clone())
+                .map(|keepout| keepout.uuid == keepout_uuid)
+                .unwrap_or(false)
+        })
+        .ok_or_else(|| anyhow::anyhow!("board keepout not found in native project: {keepout_uuid}"))?;
+    let mut keepout: Keepout = serde_json::from_value(project.board.keepouts[index].clone())
+        .with_context(|| format!("failed to parse board keepout in {}", project.board_path.display()))?;
+    if let Some(kind) = kind {
+        keepout.kind = kind;
+    }
+    if !layers.is_empty() {
+        keepout.layers = layers;
+    }
+    if let Some(polygon) = polygon {
+        keepout.polygon = polygon;
+    }
+    project.board.keepouts[index] =
+        serde_json::to_value(&keepout).expect("native board keepout serialization must succeed");
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(NativeProjectBoardKeepoutMutationReportView {
+        action: "edit_board_keepout".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        keepout_uuid: keepout.uuid.to_string(),
+        kind: keepout.kind,
+        layer_count: keepout.layers.len(),
+        vertex_count: keepout.polygon.vertices.len(),
+    })
+}
+
+pub(crate) fn delete_native_project_board_keepout(
+    root: &Path,
+    keepout_uuid: Uuid,
+) -> Result<NativeProjectBoardKeepoutMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let index = project
+        .board
+        .keepouts
+        .iter()
+        .position(|entry| {
+            serde_json::from_value::<Keepout>(entry.clone())
+                .map(|keepout| keepout.uuid == keepout_uuid)
+                .unwrap_or(false)
+        })
+        .ok_or_else(|| anyhow::anyhow!("board keepout not found in native project: {keepout_uuid}"))?;
+    let keepout: Keepout = serde_json::from_value(project.board.keepouts.remove(index))
+        .with_context(|| format!("failed to parse board keepout in {}", project.board_path.display()))?;
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(NativeProjectBoardKeepoutMutationReportView {
+        action: "delete_board_keepout".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        keepout_uuid: keepout.uuid.to_string(),
+        kind: keepout.kind,
+        layer_count: keepout.layers.len(),
+        vertex_count: keepout.polygon.vertices.len(),
+    })
+}
+
+pub(crate) fn set_native_project_board_outline(
+    root: &Path,
+    polygon: Polygon,
+) -> Result<NativeProjectBoardOutlineMutationReportView> {
+    let mut project = load_native_project(root)?;
+    project.board.outline = NativeOutline {
+        vertices: polygon
+            .vertices
+            .iter()
+            .map(|point| NativePoint {
+                x: point.x,
+                y: point.y,
+            })
+            .collect(),
+        closed: polygon.closed,
+    };
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(NativeProjectBoardOutlineMutationReportView {
+        action: "set_board_outline".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        vertex_count: polygon.vertices.len(),
+        closed: polygon.closed,
+    })
+}
+
+pub(crate) fn set_native_project_board_stackup(
+    root: &Path,
+    layers: Vec<StackupLayer>,
+) -> Result<NativeProjectBoardStackupMutationReportView> {
+    let mut project = load_native_project(root)?;
+    project.board.stackup = NativeStackup {
+        layers: layers
+            .into_iter()
+            .map(|layer| {
+                serde_json::to_value(layer).expect("native board stackup serialization must succeed")
+            })
+            .collect(),
+    };
+    let layer_count = project.board.stackup.layers.len();
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(NativeProjectBoardStackupMutationReportView {
+        action: "set_board_stackup".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        layer_count,
+    })
+}
+
+pub(crate) fn place_native_project_board_dimension(
+    root: &Path,
+    from: Point,
+    to: Point,
+    text: Option<String>,
+) -> Result<NativeProjectBoardDimensionMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let dimension_uuid = Uuid::new_v4();
+    let dimension = Dimension {
+        uuid: dimension_uuid,
+        from,
+        to,
+        text,
+    };
+    project.board.dimensions.push(
+        serde_json::to_value(&dimension).expect("native board dimension serialization must succeed"),
+    );
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(NativeProjectBoardDimensionMutationReportView {
+        action: "place_board_dimension".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        dimension_uuid: dimension.uuid.to_string(),
+        from_x_nm: dimension.from.x,
+        from_y_nm: dimension.from.y,
+        to_x_nm: dimension.to.x,
+        to_y_nm: dimension.to.y,
+        text: dimension.text,
+    })
+}
+
+pub(crate) fn edit_native_project_board_dimension(
+    root: &Path,
+    dimension_uuid: Uuid,
+    from_x_nm: Option<i64>,
+    from_y_nm: Option<i64>,
+    to_x_nm: Option<i64>,
+    to_y_nm: Option<i64>,
+    text: Option<String>,
+    clear_text: bool,
+) -> Result<NativeProjectBoardDimensionMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let index = project
+        .board
+        .dimensions
+        .iter()
+        .position(|entry| {
+            serde_json::from_value::<Dimension>(entry.clone())
+                .map(|dimension| dimension.uuid == dimension_uuid)
+                .unwrap_or(false)
+        })
+        .ok_or_else(|| anyhow::anyhow!("board dimension not found in native project: {dimension_uuid}"))?;
+    let mut dimension: Dimension = serde_json::from_value(project.board.dimensions[index].clone())
+        .with_context(|| format!("failed to parse board dimension in {}", project.board_path.display()))?;
+    match (from_x_nm, from_y_nm) {
+        (None, None) => {}
+        (Some(x), Some(y)) => dimension.from = Point { x, y },
+        _ => bail!("board dimension start requires both --from-x-nm and --from-y-nm"),
+    }
+    match (to_x_nm, to_y_nm) {
+        (None, None) => {}
+        (Some(x), Some(y)) => dimension.to = Point { x, y },
+        _ => bail!("board dimension end requires both --to-x-nm and --to-y-nm"),
+    }
+    if clear_text {
+        dimension.text = None;
+    } else if let Some(text) = text {
+        dimension.text = Some(text);
+    }
+    project.board.dimensions[index] =
+        serde_json::to_value(&dimension).expect("native board dimension serialization must succeed");
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(NativeProjectBoardDimensionMutationReportView {
+        action: "edit_board_dimension".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        dimension_uuid: dimension.uuid.to_string(),
+        from_x_nm: dimension.from.x,
+        from_y_nm: dimension.from.y,
+        to_x_nm: dimension.to.x,
+        to_y_nm: dimension.to.y,
+        text: dimension.text,
+    })
+}
+
+pub(crate) fn delete_native_project_board_dimension(
+    root: &Path,
+    dimension_uuid: Uuid,
+) -> Result<NativeProjectBoardDimensionMutationReportView> {
+    let mut project = load_native_project(root)?;
+    let index = project
+        .board
+        .dimensions
+        .iter()
+        .position(|entry| {
+            serde_json::from_value::<Dimension>(entry.clone())
+                .map(|dimension| dimension.uuid == dimension_uuid)
+                .unwrap_or(false)
+        })
+        .ok_or_else(|| anyhow::anyhow!("board dimension not found in native project: {dimension_uuid}"))?;
+    let dimension: Dimension = serde_json::from_value(project.board.dimensions.remove(index))
+        .with_context(|| format!("failed to parse board dimension in {}", project.board_path.display()))?;
+    write_canonical_json(&project.board_path, &project.board)?;
+    Ok(NativeProjectBoardDimensionMutationReportView {
+        action: "delete_board_dimension".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        dimension_uuid: dimension.uuid.to_string(),
+        from_x_nm: dimension.from.x,
+        from_y_nm: dimension.from.y,
+        to_x_nm: dimension.to.x,
+        to_y_nm: dimension.to.y,
+        text: dimension.text,
+    })
+}
+
+pub(crate) fn parse_native_polygon_vertices(vertices: &[String]) -> Result<Polygon> {
+    if vertices.len() < 3 {
+        bail!("polygon requires at least three --vertex entries");
+    }
+    let points = vertices
+        .iter()
+        .map(|value| {
+            let (x, y) = value
+                .split_once(':')
+                .ok_or_else(|| anyhow::anyhow!("vertex must be x_nm:y_nm, got `{value}`"))?;
+            Ok(Point {
+                x: x.parse::<i64>()?,
+                y: y.parse::<i64>()?,
+            })
+        })
+        .collect::<Result<Vec<Point>>>()?;
+    Ok(Polygon {
+        vertices: points,
+        closed: true,
+    })
+}
+
+pub(crate) fn parse_native_stackup_layers(layers: &[String]) -> Result<Vec<StackupLayer>> {
+    if layers.is_empty() {
+        bail!("stackup requires at least one --layer entry");
+    }
+    layers
+        .iter()
+        .map(|value| {
+            let parts = value.splitn(4, ':').collect::<Vec<_>>();
+            if parts.len() != 4 {
+                bail!("layer must be id:name:type:thickness_nm, got `{value}`");
+            }
+            Ok(StackupLayer {
+                id: parts[0].parse::<i32>()?,
+                name: parts[1].to_string(),
+                layer_type: parse_stackup_layer_type(parts[2])?,
+                thickness_nm: parts[3].parse::<i64>()?,
+            })
+        })
+        .collect()
+}
+
+fn parse_stackup_layer_type(value: &str) -> Result<StackupLayerType> {
+    match value {
+        "Copper" | "copper" => Ok(StackupLayerType::Copper),
+        "Dielectric" | "dielectric" => Ok(StackupLayerType::Dielectric),
+        "SolderMask" | "soldermask" | "solder_mask" => Ok(StackupLayerType::SolderMask),
+        "Silkscreen" | "silkscreen" => Ok(StackupLayerType::Silkscreen),
+        "Paste" | "paste" => Ok(StackupLayerType::Paste),
+        "Mechanical" | "mechanical" => Ok(StackupLayerType::Mechanical),
+        _ => bail!("unknown stackup layer type `{value}`"),
+    }
+}
+
+fn load_native_sheet(path: &Path) -> Result<NativeSheetRoot> {
+    let sheet_text = std::fs::read_to_string(path)
+        .with_context(|| format!("failed to read {}", path.display()))?;
+    serde_json::from_str(&sheet_text).with_context(|| format!("failed to parse {}", path.display()))
+}
+
+fn native_sheet_into_engine_sheet(native_sheet: NativeSheetRoot) -> Sheet {
+    Sheet {
+        uuid: native_sheet.uuid,
+        name: native_sheet.name,
+        frame: native_sheet.frame,
+        symbols: native_sheet
+            .symbols
+            .into_values()
+            .map(|symbol| (symbol.uuid, symbol))
+            .collect(),
+        wires: native_sheet
+            .wires
+            .into_values()
+            .map(|wire| (wire.uuid, wire))
+            .collect(),
+        junctions: native_sheet
+            .junctions
+            .into_values()
+            .map(|junction| (junction.uuid, junction))
+            .collect(),
+        labels: native_sheet
+            .labels
+            .into_values()
+            .map(|label| (label.uuid, label))
+            .collect(),
+        buses: native_sheet
+            .buses
+            .into_values()
+            .map(|bus| (bus.uuid, bus))
+            .collect(),
+        bus_entries: native_sheet
+            .bus_entries
+            .into_values()
+            .map(|entry| (entry.uuid, entry))
+            .collect(),
+        ports: native_sheet
+            .ports
+            .into_values()
+            .map(|port| (port.uuid, port))
+            .collect(),
+        noconnects: native_sheet
+            .noconnects
+            .into_values()
+            .map(|marker| (marker.uuid, marker))
+            .collect(),
+        texts: native_sheet
+            .texts
+            .into_values()
+            .map(|text| (text.uuid, text))
+            .collect(),
+        drawings: native_sheet
+            .drawings
+            .into_values()
+            .map(|drawing| (drawing_uuid(&drawing), drawing))
+            .collect(),
+    }
 }
 
 fn json_object_len(value: &serde_json::Value, key: &str) -> usize {

@@ -160,6 +160,15 @@ Current live slice:
 - `eda project inspect <dir>` validates that native scaffold and reports the resolved schema, UUIDs, paths, and current object counts.
 - `eda project query <dir> summary` reports the current native schematic/board/rule summary from the scaffold.
 - `eda project query <dir> design-rules` reports the current native rules payload.
+- `eda project query <dir> nets` reports the current native schematic connectivity net inventory.
+- `eda project query <dir> diagnostics` reports the current native schematic connectivity findings.
+- `eda project query <dir> erc` reports the current native schematic ERC precheck findings.
+- `eda project query <dir> check` reports the current native combined schematic check report.
+- `eda project query <dir> board-texts` reports the current native board text inventory from `board/board.json`.
+- `eda project query <dir> board-keepouts` reports the current native board keepout inventory from `board/board.json`.
+- `eda project query <dir> board-dimensions` reports the current native board dimension inventory from `board/board.json`.
+- `eda project query <dir> board-outline` reports the current native board outline polygon from `board/board.json`.
+- `eda project query <dir> board-stackup` reports the current native board stackup from `board/board.json`.
 - `eda project place-symbol <dir> --sheet <uuid> --reference <text> --value <text> [--lib-id <text>] --x-nm <i64> --y-nm <i64> [--rotation-deg <i32>] [--mirrored]` places a native schematic symbol into a referenced sheet file.
 - `eda project move-symbol <dir> --symbol <uuid> --x-nm <i64> --y-nm <i64>` repositions an existing native schematic symbol.
 - `eda project rotate-symbol <dir> --symbol <uuid> --rotation-deg <i32>` updates the stored rotation for an existing native schematic symbol.
@@ -167,6 +176,12 @@ Current live slice:
 - `eda project delete-symbol <dir> --symbol <uuid>` removes an existing native schematic symbol.
 - `eda project set-symbol-reference <dir> --symbol <uuid> --reference <text>` updates the stored reference designator for an existing native schematic symbol.
 - `eda project set-symbol-value <dir> --symbol <uuid> --value <text>` updates the stored value text for an existing native schematic symbol.
+- `eda project set-symbol-lib-id <dir> --symbol <uuid> --lib-id <text>` updates the stored native library identifier for an existing schematic symbol.
+- `eda project clear-symbol-lib-id <dir> --symbol <uuid>` clears the stored native library identifier for an existing schematic symbol.
+- `eda project set-symbol-entity <dir> --symbol <uuid> --entity <uuid>` records unresolved symbol identity and clears any existing resolved `part_uuid`.
+- `eda project clear-symbol-entity <dir> --symbol <uuid>` clears the stored unresolved `entity_uuid`.
+- `eda project set-symbol-part <dir> --symbol <uuid> --part <uuid>` records resolved symbol identity and clears any existing unresolved `entity_uuid`.
+- `eda project clear-symbol-part <dir> --symbol <uuid>` clears the stored resolved `part_uuid`.
 - `eda project set-symbol-unit <dir> --symbol <uuid> --unit <text>` records the current native unit-selection token for an existing schematic symbol.
 - `eda project clear-symbol-unit <dir> --symbol <uuid>` clears the stored native unit-selection token for an existing schematic symbol.
 - `eda project set-symbol-gate <dir> --symbol <uuid> --gate <uuid>` records the current native gate-selection UUID for an existing schematic symbol.
@@ -212,6 +227,17 @@ Current live slice:
 - `eda project delete-bus-entry <dir> --bus-entry <uuid>` removes an existing native bus entry.
 - `eda project place-noconnect <dir> --sheet <uuid> --symbol <uuid> --pin <uuid> --x-nm <i64> --y-nm <i64>` places a native no-connect marker.
 - `eda project delete-noconnect <dir> --noconnect <uuid>` removes an existing native no-connect marker.
+- `eda project place-board-text <dir> --text <text> --x-nm <i64> --y-nm <i64> [--rotation-deg <i32>] --layer <i32>` places a native board text object.
+- `eda project edit-board-text <dir> --text <uuid> [--value <text>] [--x-nm <i64> --y-nm <i64>] [--rotation-deg <i32>] [--layer <i32>]` edits an existing native board text object.
+- `eda project delete-board-text <dir> --text <uuid>` removes an existing native board text object.
+- `eda project place-board-keepout <dir> --kind <text> --layer <i32>... --vertex <x:y>...` places a native board keepout polygon.
+- `eda project edit-board-keepout <dir> --keepout <uuid> [--kind <text>] [--layer <i32>...] [--vertex <x:y>...]` edits an existing native board keepout polygon.
+- `eda project delete-board-keepout <dir> --keepout <uuid>` removes an existing native board keepout polygon.
+- `eda project place-board-dimension <dir> --from-x-nm <i64> --from-y-nm <i64> --to-x-nm <i64> --to-y-nm <i64> [--text <text>]` places a native board dimension.
+- `eda project edit-board-dimension <dir> --dimension <uuid> [--from-x-nm <i64> --from-y-nm <i64>] [--to-x-nm <i64> --to-y-nm <i64>] [--text <text>] [--clear-text]` edits an existing native board dimension.
+- `eda project delete-board-dimension <dir> --dimension <uuid>` removes an existing native board dimension.
+- `eda project set-board-outline <dir> --vertex <x:y>...` replaces the native board outline polygon.
+- `eda project set-board-stackup <dir> --layer <id:name:type:thickness_nm>...` replaces the native board stackup layer list.
 
 MCP tools for this flow are defined in `specs/MCP_API_SPEC.md` §M4:
 `place_symbol`, `draw_wire`, `place_label`, `annotate`,

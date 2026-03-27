@@ -158,6 +158,7 @@ struct NativeProjectBoardSummaryView {
     vias: usize,
     zones: usize,
     keepouts: usize,
+    dimensions: usize,
     texts: usize,
 }
 
@@ -357,6 +358,60 @@ struct NativeProjectDrawingMutationReportView {
     to_y_nm: i64,
 }
 
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectBoardTextMutationReportView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    text_uuid: String,
+    text: String,
+    x_nm: i64,
+    y_nm: i64,
+    rotation_deg: i32,
+    layer: i32,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectBoardKeepoutMutationReportView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    keepout_uuid: String,
+    kind: String,
+    layer_count: usize,
+    vertex_count: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectBoardOutlineMutationReportView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    vertex_count: usize,
+    closed: bool,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectBoardStackupMutationReportView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    layer_count: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectBoardDimensionMutationReportView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    dimension_uuid: String,
+    from_x_nm: i64,
+    from_y_nm: i64,
+    to_x_nm: i64,
+    to_y_nm: i64,
+    text: Option<String>,
+}
+
 fn render_native_project_create_report_text(report: &NativeProjectCreateReportView) -> String {
     let mut lines = vec![
         format!("project_root: {}", report.project_root),
@@ -433,6 +488,7 @@ fn render_native_project_summary_text(report: &NativeProjectSummaryView) -> Stri
         format!("board_vias: {}", report.board.vias),
         format!("board_zones: {}", report.board.zones),
         format!("board_keepouts: {}", report.board.keepouts),
+        format!("board_dimensions: {}", report.board.dimensions),
         format!("board_texts: {}", report.board.texts),
         format!("rule_count: {}", report.rules.count),
     ]
@@ -676,6 +732,82 @@ fn render_native_project_drawing_mutation_text(
         format!("to_y_nm: {}", report.to_y_nm),
     ]
     .join("\n")
+}
+
+fn render_native_project_board_text_mutation_text(
+    report: &NativeProjectBoardTextMutationReportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("text_uuid: {}", report.text_uuid),
+        format!("text: {}", report.text),
+        format!("x_nm: {}", report.x_nm),
+        format!("y_nm: {}", report.y_nm),
+        format!("rotation_deg: {}", report.rotation_deg),
+        format!("layer: {}", report.layer),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_board_keepout_mutation_text(
+    report: &NativeProjectBoardKeepoutMutationReportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("keepout_uuid: {}", report.keepout_uuid),
+        format!("kind: {}", report.kind),
+        format!("layer_count: {}", report.layer_count),
+        format!("vertex_count: {}", report.vertex_count),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_board_outline_mutation_text(
+    report: &NativeProjectBoardOutlineMutationReportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("vertex_count: {}", report.vertex_count),
+        format!("closed: {}", report.closed),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_board_stackup_mutation_text(
+    report: &NativeProjectBoardStackupMutationReportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("layer_count: {}", report.layer_count),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_board_dimension_mutation_text(
+    report: &NativeProjectBoardDimensionMutationReportView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("dimension_uuid: {}", report.dimension_uuid),
+        format!("from_x_nm: {}", report.from_x_nm),
+        format!("from_y_nm: {}", report.from_y_nm),
+        format!("to_x_nm: {}", report.to_x_nm),
+        format!("to_y_nm: {}", report.to_y_nm),
+    ];
+    if let Some(text) = &report.text {
+        lines.push(format!("text: {}", text));
+    }
+    lines.join("\n")
 }
 
 fn render_modify_report_text(report: &ModifyReportView) -> String {

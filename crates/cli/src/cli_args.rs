@@ -385,6 +385,63 @@ pub(crate) enum ProjectCommands {
         #[arg(long)]
         value: String,
     },
+    /// Set one schematic symbol library identifier in a native sheet file
+    SetSymbolLibId {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+        /// Replacement library identifier
+        #[arg(long = "lib-id")]
+        lib_id: String,
+    },
+    /// Clear one schematic symbol library identifier in a native sheet file
+    ClearSymbolLibId {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+    },
+    /// Set one schematic symbol unresolved entity identifier in a native sheet file
+    SetSymbolEntity {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+        /// Replacement entity UUID
+        #[arg(long = "entity")]
+        entity_uuid: Uuid,
+    },
+    /// Clear one schematic symbol unresolved entity identifier in a native sheet file
+    ClearSymbolEntity {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+    },
+    /// Set one schematic symbol resolved part identifier in a native sheet file
+    SetSymbolPart {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+        /// Replacement part UUID
+        #[arg(long = "part")]
+        part_uuid: Uuid,
+    },
+    /// Clear one schematic symbol resolved part identifier in a native sheet file
+    ClearSymbolPart {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+    },
     /// Set one schematic symbol unit selection in a native sheet file
     SetSymbolUnit {
         /// Project root directory
@@ -966,6 +1023,166 @@ pub(crate) enum ProjectCommands {
         #[arg(long = "noconnect")]
         noconnect: Uuid,
     },
+    /// Place one board text object into the native board file
+    PlaceBoardText {
+        /// Project root directory
+        path: PathBuf,
+        /// Text content
+        #[arg(long)]
+        text: String,
+        /// X coordinate in nm
+        #[arg(long)]
+        x_nm: i64,
+        /// Y coordinate in nm
+        #[arg(long)]
+        y_nm: i64,
+        /// Rotation in degrees
+        #[arg(long = "rotation-deg", default_value_t = 0)]
+        rotation_deg: i32,
+        /// Layer identifier
+        #[arg(long)]
+        layer: i32,
+    },
+    /// Edit one board text object in the native board file
+    EditBoardText {
+        /// Project root directory
+        path: PathBuf,
+        /// Board text UUID
+        #[arg(long = "text")]
+        text_uuid: Uuid,
+        /// Replacement text content
+        #[arg(long)]
+        value: Option<String>,
+        /// Replacement X coordinate in nm
+        #[arg(long)]
+        x_nm: Option<i64>,
+        /// Replacement Y coordinate in nm
+        #[arg(long)]
+        y_nm: Option<i64>,
+        /// Replacement rotation in degrees
+        #[arg(long = "rotation-deg")]
+        rotation_deg: Option<i32>,
+        /// Replacement layer identifier
+        #[arg(long)]
+        layer: Option<i32>,
+    },
+    /// Delete one board text object from the native board file
+    DeleteBoardText {
+        /// Project root directory
+        path: PathBuf,
+        /// Board text UUID
+        #[arg(long = "text")]
+        text_uuid: Uuid,
+    },
+    /// Place one board keepout into the native board file
+    PlaceBoardKeepout {
+        /// Project root directory
+        path: PathBuf,
+        /// Keepout kind
+        #[arg(long)]
+        kind: String,
+        /// Board layers affected by the keepout
+        #[arg(long = "layer")]
+        layers: Vec<i32>,
+        /// Polygon vertices as x_nm:y_nm
+        #[arg(long = "vertex")]
+        vertices: Vec<String>,
+    },
+    /// Edit one board keepout in the native board file
+    EditBoardKeepout {
+        /// Project root directory
+        path: PathBuf,
+        /// Keepout UUID
+        #[arg(long = "keepout")]
+        keepout_uuid: Uuid,
+        /// Replacement keepout kind
+        #[arg(long)]
+        kind: Option<String>,
+        /// Replacement board layers
+        #[arg(long = "layer")]
+        layers: Vec<i32>,
+        /// Replacement polygon vertices as x_nm:y_nm
+        #[arg(long = "vertex")]
+        vertices: Vec<String>,
+    },
+    /// Delete one board keepout from the native board file
+    DeleteBoardKeepout {
+        /// Project root directory
+        path: PathBuf,
+        /// Keepout UUID
+        #[arg(long = "keepout")]
+        keepout_uuid: Uuid,
+    },
+    /// Replace the native board outline polygon
+    SetBoardOutline {
+        /// Project root directory
+        path: PathBuf,
+        /// Polygon vertices as x_nm:y_nm
+        #[arg(long = "vertex")]
+        vertices: Vec<String>,
+    },
+    /// Replace the native board stackup layer list
+    SetBoardStackup {
+        /// Project root directory
+        path: PathBuf,
+        /// Layer spec as id:name:type:thickness_nm
+        #[arg(long = "layer")]
+        layers: Vec<String>,
+    },
+    /// Place one board dimension into the native board file
+    PlaceBoardDimension {
+        /// Project root directory
+        path: PathBuf,
+        /// Start X coordinate in nm
+        #[arg(long = "from-x-nm")]
+        from_x_nm: i64,
+        /// Start Y coordinate in nm
+        #[arg(long = "from-y-nm")]
+        from_y_nm: i64,
+        /// End X coordinate in nm
+        #[arg(long = "to-x-nm")]
+        to_x_nm: i64,
+        /// End Y coordinate in nm
+        #[arg(long = "to-y-nm")]
+        to_y_nm: i64,
+        /// Optional dimension text
+        #[arg(long)]
+        text: Option<String>,
+    },
+    /// Edit one board dimension in the native board file
+    EditBoardDimension {
+        /// Project root directory
+        path: PathBuf,
+        /// Dimension UUID
+        #[arg(long = "dimension")]
+        dimension_uuid: Uuid,
+        /// Replacement start X coordinate in nm
+        #[arg(long = "from-x-nm")]
+        from_x_nm: Option<i64>,
+        /// Replacement start Y coordinate in nm
+        #[arg(long = "from-y-nm")]
+        from_y_nm: Option<i64>,
+        /// Replacement end X coordinate in nm
+        #[arg(long = "to-x-nm")]
+        to_x_nm: Option<i64>,
+        /// Replacement end Y coordinate in nm
+        #[arg(long = "to-y-nm")]
+        to_y_nm: Option<i64>,
+        /// Replacement dimension text
+        #[arg(long)]
+        text: Option<String>,
+        /// Clear stored dimension text
+        #[arg(long = "clear-text", default_value_t = false)]
+        clear_text: bool,
+    },
+    /// Delete one board dimension from the native board file
+    DeleteBoardDimension {
+        /// Project root directory
+        path: PathBuf,
+        /// Dimension UUID
+        #[arg(long = "dimension")]
+        dimension_uuid: Uuid,
+    },
 }
 
 #[derive(Subcommand)]
@@ -1012,6 +1229,24 @@ pub(crate) enum NativeProjectQueryCommands {
     BusEntries,
     /// Current native schematic no-connect markers
     Noconnects,
+    /// Current native schematic connectivity nets
+    Nets,
+    /// Current native schematic connectivity diagnostics
+    Diagnostics,
+    /// Current native schematic ERC findings
+    Erc,
+    /// Current native combined schematic check report
+    Check,
+    /// Current native board text objects
+    BoardTexts,
+    /// Current native board keepouts
+    BoardKeepouts,
+    /// Current native board outline polygon
+    BoardOutline,
+    /// Current native board stackup
+    BoardStackup,
+    /// Current native board dimensions
+    BoardDimensions,
 }
 
 #[derive(Clone, clap::ValueEnum)]

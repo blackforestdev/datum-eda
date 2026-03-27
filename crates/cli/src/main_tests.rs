@@ -74,10 +74,28 @@ mod main_tests_project_new;
 mod main_tests_project_inspect;
 #[path = "main_tests_project_query.rs"]
 mod main_tests_project_query;
+#[path = "main_tests_project_connectivity.rs"]
+mod main_tests_project_connectivity;
+#[path = "main_tests_project_erc.rs"]
+mod main_tests_project_erc;
+#[path = "main_tests_project_check.rs"]
+mod main_tests_project_check;
+#[path = "main_tests_project_board_text.rs"]
+mod main_tests_project_board_text;
+#[path = "main_tests_project_board_keepout.rs"]
+mod main_tests_project_board_keepout;
+#[path = "main_tests_project_board_dimension.rs"]
+mod main_tests_project_board_dimension;
+#[path = "main_tests_project_board_outline.rs"]
+mod main_tests_project_board_outline;
+#[path = "main_tests_project_board_stackup.rs"]
+mod main_tests_project_board_stackup;
 #[path = "main_tests_project_symbol.rs"]
 mod main_tests_project_symbol;
 #[path = "main_tests_project_symbol_semantics.rs"]
 mod main_tests_project_symbol_semantics;
+#[path = "main_tests_project_symbol_resolution.rs"]
+mod main_tests_project_symbol_resolution;
 #[path = "main_tests_project_text.rs"]
 mod main_tests_project_text;
 #[path = "main_tests_project_drawing.rs"]

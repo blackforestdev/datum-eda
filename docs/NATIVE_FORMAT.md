@@ -21,7 +21,14 @@ Current live slice:
   mutable editing session.
 - `eda project query <dir> summary` and
   `eda project query <dir> design-rules` provide the first native read surface
-  directly from the on-disk scaffold.
+  directly from the on-disk scaffold, and `eda project query <dir> nets` plus
+  `eda project query <dir> diagnostics` now project authored native sheet files
+  through an in-memory `Schematic` bridge to expose the first native
+  connectivity-aware read surface; `eda project query <dir> erc` reuses that
+  same bridge to expose the first native electrical-check read surface, and
+  `eda project query <dir> check` now returns the combined schematic
+  `CheckReport` shape on top of that same bridge; `eda project query <dir>
+  board-texts` exposes the first authored native board-object read surface.
 - `eda project place-symbol <dir> --sheet <uuid> --reference <text> --value <text>
   [--lib-id <text>] --x-nm <i64> --y-nm <i64> [--rotation-deg <i32>] [--mirrored]`,
   `eda project move-symbol <dir> --symbol <uuid> --x-nm <i64> --y-nm <i64>`, and
@@ -33,12 +40,20 @@ Current live slice:
   `eda project clear-symbol-unit <dir> --symbol <uuid>`,
   `eda project set-symbol-gate <dir> --symbol <uuid> --gate <uuid>`, and
   `eda project clear-symbol-gate <dir> --symbol <uuid>`,
+  `eda project set-symbol-lib-id <dir> --symbol <uuid> --lib-id <text>`, and
+  `eda project clear-symbol-lib-id <dir> --symbol <uuid>`,
+  `eda project set-symbol-entity <dir> --symbol <uuid> --entity <uuid>`,
+  `eda project clear-symbol-entity <dir> --symbol <uuid>`,
+  `eda project set-symbol-part <dir> --symbol <uuid> --part <uuid>`, and
+  `eda project clear-symbol-part <dir> --symbol <uuid>`,
   `eda project set-symbol-display-mode <dir> --symbol <uuid> --mode <...>`,
   `eda project set-symbol-hidden-power-behavior <dir> --symbol <uuid> --behavior <...>`,
   `eda project set-pin-override <dir> --symbol <uuid> --pin <uuid> --visible <true|false>
   [--x-nm <i64> --y-nm <i64>]`, and
   `eda project clear-pin-override <dir> --symbol <uuid> --pin <uuid>` add the first native
   authored schematic symbol placement/transform/delete/semantic-selection path, and
+  on the current native path `set-symbol-entity` clears any existing `part`, while
+  `set-symbol-part` clears any existing `entity`.
   `eda project add-symbol-field <dir> --symbol <uuid> --key <text> --value <text>
   [--hidden] [--x-nm <i64> --y-nm <i64>]`,
   `eda project edit-symbol-field <dir> --field <uuid> ...`, and
@@ -89,6 +104,40 @@ Current live slice:
 - `eda project place-noconnect <dir> --sheet <uuid> --symbol <uuid> --pin <uuid>
   --x-nm <i64> --y-nm <i64>` and `eda project delete-noconnect <dir> --noconnect <uuid>`
   add the no-connect marker object family on the same deterministic sheet-file path.
+- `eda project query <dir> nets` and `eda project query <dir> diagnostics`
+  derive native connectivity output from the persisted sheet objects without
+  requiring an imported-design session.
+- `eda project query <dir> erc` derives native ERC precheck findings from the
+  persisted sheet objects without requiring an imported-design session.
+- `eda project query <dir> check` derives the combined native schematic check
+  report from the persisted sheet objects without requiring an imported-design
+  session.
+- `eda project place-board-text <dir> --text <text> --x-nm <i64> --y-nm <i64>
+  [--rotation-deg <i32>] --layer <i32>`, `eda project edit-board-text <dir>
+  --text <uuid> ...`, and `eda project delete-board-text <dir> --text <uuid>`
+  add the first native board-authored object family directly on
+  `board/board.json`, while `eda project query <dir> board-texts` reads back
+  that persisted board slice.
+- `eda project place-board-keepout <dir> --kind <text> --layer <i32>...
+  --vertex <x:y>...`, `eda project edit-board-keepout <dir> --keepout <uuid> ...`,
+  and `eda project delete-board-keepout <dir> --keepout <uuid>` extend the
+  same native board path to keepout polygons, while
+  `eda project query <dir> board-keepouts` reads back that persisted keepout
+  slice.
+- `eda project place-board-dimension <dir> --from-x-nm <i64> --from-y-nm <i64>
+  --to-x-nm <i64> --to-y-nm <i64> [--text <text>]`,
+  `eda project edit-board-dimension <dir> --dimension <uuid> ...`, and
+  `eda project delete-board-dimension <dir> --dimension <uuid>` extend the
+  same native board path to persisted dimension annotations, while
+  `eda project query <dir> board-dimensions` reads back that dimension slice.
+- `eda project set-board-outline <dir> --vertex <x:y>...` replaces the
+  persisted native board outline polygon directly on `board/board.json`, while
+  `eda project query <dir> board-outline` reads back that canonical outline
+  slice.
+- `eda project set-board-stackup <dir> --layer <id:name:type:thickness_nm>...`
+  replaces the ordered native board stackup layer list directly on
+  `board/board.json`, while `eda project query <dir> board-stackup` reads back
+  that persisted stackup slice.
 
 ## Design Principle
 The native format is a direct serialization of the canonical IR. No
