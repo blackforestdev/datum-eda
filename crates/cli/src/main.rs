@@ -132,6 +132,102 @@ struct NativeProjectSummaryView {
 }
 
 #[derive(Debug, Clone, Serialize)]
+struct NativeProjectBomExportView {
+    action: String,
+    project_root: String,
+    bom_path: String,
+    rows: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectPnpExportView {
+    action: String,
+    project_root: String,
+    pnp_path: String,
+    rows: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectDrillExportView {
+    action: String,
+    project_root: String,
+    drill_path: String,
+    rows: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberOutlineExportView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    gerber_path: String,
+    outline_vertex_count: usize,
+    outline_closed: bool,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberCopperExportView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    gerber_path: String,
+    layer: i32,
+    track_count: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberOutlineValidationView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    gerber_path: String,
+    matches_expected: bool,
+    expected_bytes: usize,
+    actual_bytes: usize,
+    outline_vertex_count: usize,
+    outline_closed: bool,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberPlanArtifactView {
+    kind: String,
+    layer_id: Option<i32>,
+    layer_name: Option<String>,
+    filename: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberPlanView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    prefix: String,
+    outline_vertex_count: usize,
+    outline_closed: bool,
+    copper_layers: usize,
+    soldermask_layers: usize,
+    silkscreen_layers: usize,
+    paste_layers: usize,
+    mechanical_layers: usize,
+    artifacts: Vec<NativeProjectGerberPlanArtifactView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberPlanComparisonView {
+    action: String,
+    project_root: String,
+    output_dir: String,
+    prefix: String,
+    expected_count: usize,
+    present_count: usize,
+    missing_count: usize,
+    extra_count: usize,
+    matched: Vec<String>,
+    missing: Vec<String>,
+    extra: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize)]
 struct NativeProjectSchematicSummaryView {
     sheets: usize,
     sheet_definitions: usize,
@@ -402,6 +498,40 @@ struct NativeProjectForwardAnnotationArtifactApplyPlanView {
     requires_input_actions: usize,
     not_applicable_actions: usize,
     actions: Vec<NativeProjectForwardAnnotationArtifactApplyPlanActionView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectForwardAnnotationArtifactApplyView {
+    action: String,
+    artifact_path: String,
+    project_root: String,
+    artifact_actions: usize,
+    applied_actions: usize,
+    skipped_deferred_actions: usize,
+    skipped_rejected_actions: usize,
+    applied: Vec<NativeProjectForwardAnnotationApplyReportView>,
+    skipped: Vec<NativeProjectForwardAnnotationBatchApplySkippedActionView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectForwardAnnotationArtifactReviewImportView {
+    action: String,
+    artifact_path: String,
+    project_root: String,
+    imported_reviews: usize,
+    skipped_missing_live_actions: usize,
+    total_artifact_reviews: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectForwardAnnotationArtifactReviewReplaceView {
+    action: String,
+    artifact_path: String,
+    project_root: String,
+    replaced_reviews: usize,
+    removed_existing_reviews: usize,
+    skipped_missing_live_actions: usize,
+    total_artifact_reviews: usize,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -829,6 +959,146 @@ fn render_native_project_summary_text(report: &NativeProjectSummaryView) -> Stri
     .join("\n")
 }
 
+fn render_native_project_bom_export_text(report: &NativeProjectBomExportView) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("bom_path: {}", report.bom_path),
+        format!("rows: {}", report.rows),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_pnp_export_text(report: &NativeProjectPnpExportView) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("pnp_path: {}", report.pnp_path),
+        format!("rows: {}", report.rows),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_drill_export_text(report: &NativeProjectDrillExportView) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("drill_path: {}", report.drill_path),
+        format!("rows: {}", report.rows),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_gerber_outline_export_text(
+    report: &NativeProjectGerberOutlineExportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("gerber_path: {}", report.gerber_path),
+        format!("outline_vertex_count: {}", report.outline_vertex_count),
+        format!("outline_closed: {}", report.outline_closed),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_gerber_copper_export_text(
+    report: &NativeProjectGerberCopperExportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("gerber_path: {}", report.gerber_path),
+        format!("layer: {}", report.layer),
+        format!("track_count: {}", report.track_count),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_gerber_outline_validation_text(
+    report: &NativeProjectGerberOutlineValidationView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("gerber_path: {}", report.gerber_path),
+        format!("matches_expected: {}", report.matches_expected),
+        format!("expected_bytes: {}", report.expected_bytes),
+        format!("actual_bytes: {}", report.actual_bytes),
+        format!("outline_vertex_count: {}", report.outline_vertex_count),
+        format!("outline_closed: {}", report.outline_closed),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_gerber_plan_text(report: &NativeProjectGerberPlanView) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("prefix: {}", report.prefix),
+        format!("outline_vertex_count: {}", report.outline_vertex_count),
+        format!("outline_closed: {}", report.outline_closed),
+        format!("copper_layers: {}", report.copper_layers),
+        format!("soldermask_layers: {}", report.soldermask_layers),
+        format!("silkscreen_layers: {}", report.silkscreen_layers),
+        format!("paste_layers: {}", report.paste_layers),
+        format!("mechanical_layers: {}", report.mechanical_layers),
+    ];
+    if !report.artifacts.is_empty() {
+        lines.push("artifacts:".to_string());
+        for artifact in &report.artifacts {
+            let layer_suffix = match (artifact.layer_id, artifact.layer_name.as_ref()) {
+                (Some(layer_id), Some(layer_name)) => format!(" layer={layer_id}:{layer_name}"),
+                (Some(layer_id), None) => format!(" layer={layer_id}"),
+                _ => String::new(),
+            };
+            lines.push(format!(
+                "  {}:{}{}",
+                artifact.kind, artifact.filename, layer_suffix
+            ));
+        }
+    }
+    lines.join("\n")
+}
+
+fn render_native_project_gerber_plan_comparison_text(
+    report: &NativeProjectGerberPlanComparisonView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("output_dir: {}", report.output_dir),
+        format!("prefix: {}", report.prefix),
+        format!("expected_count: {}", report.expected_count),
+        format!("present_count: {}", report.present_count),
+        format!("missing_count: {}", report.missing_count),
+        format!("extra_count: {}", report.extra_count),
+    ];
+    if !report.matched.is_empty() {
+        lines.push("matched:".to_string());
+        for file in &report.matched {
+            lines.push(format!("  {file}"));
+        }
+    }
+    if !report.missing.is_empty() {
+        lines.push("missing:".to_string());
+        for file in &report.missing {
+            lines.push(format!("  {file}"));
+        }
+    }
+    if !report.extra.is_empty() {
+        lines.push("extra:".to_string());
+        for file in &report.extra {
+            lines.push(format!("  {file}"));
+        }
+    }
+    lines.join("\n")
+}
+
 fn render_native_project_rules_text(report: &NativeProjectRulesView) -> String {
     let mut lines = vec![format!("rule_count: {}", report.count)];
     if !report.rules.is_empty() {
@@ -1121,6 +1391,74 @@ fn render_native_forward_annotation_artifact_apply_plan_text(
         }
     }
     lines.join("\n")
+}
+
+fn render_native_forward_annotation_artifact_apply_text(
+    report: &NativeProjectForwardAnnotationArtifactApplyView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("artifact_path: {}", report.artifact_path),
+        format!("project_root: {}", report.project_root),
+        format!("artifact_actions: {}", report.artifact_actions),
+        format!("applied_actions: {}", report.applied_actions),
+        format!("skipped_deferred_actions: {}", report.skipped_deferred_actions),
+        format!("skipped_rejected_actions: {}", report.skipped_rejected_actions),
+    ];
+    for applied in &report.applied {
+        lines.push(String::new());
+        lines.push(format!("applied_action_id: {}", applied.action_id));
+        lines.push(format!("proposal_action: {}", applied.proposal_action));
+        lines.push(format!("reason: {}", applied.reason));
+        lines.push(format!(
+            "component_reference: {}",
+            applied.component_report.reference
+        ));
+    }
+    for skipped in &report.skipped {
+        lines.push(String::new());
+        lines.push(format!("skipped_action_id: {}", skipped.action_id));
+        lines.push(format!("proposal_action: {}", skipped.proposal_action));
+        lines.push(format!("reference: {}", skipped.reference));
+        lines.push(format!("reason: {}", skipped.reason));
+        lines.push(format!("skip_reason: {}", skipped.skip_reason));
+    }
+    lines.join("\n")
+}
+
+fn render_native_forward_annotation_artifact_review_import_text(
+    report: &NativeProjectForwardAnnotationArtifactReviewImportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("artifact_path: {}", report.artifact_path),
+        format!("project_root: {}", report.project_root),
+        format!("total_artifact_reviews: {}", report.total_artifact_reviews),
+        format!("imported_reviews: {}", report.imported_reviews),
+        format!(
+            "skipped_missing_live_actions: {}",
+            report.skipped_missing_live_actions
+        ),
+    ]
+    .join("\n")
+}
+
+fn render_native_forward_annotation_artifact_review_replace_text(
+    report: &NativeProjectForwardAnnotationArtifactReviewReplaceView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("artifact_path: {}", report.artifact_path),
+        format!("project_root: {}", report.project_root),
+        format!("total_artifact_reviews: {}", report.total_artifact_reviews),
+        format!("replaced_reviews: {}", report.replaced_reviews),
+        format!("removed_existing_reviews: {}", report.removed_existing_reviews),
+        format!(
+            "skipped_missing_live_actions: {}",
+            report.skipped_missing_live_actions
+        ),
+    ]
+    .join("\n")
 }
 
 fn render_native_project_label_mutation_text(report: &NativeProjectLabelMutationReportView) -> String {

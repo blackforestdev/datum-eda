@@ -157,6 +157,41 @@ Current live slice:
 - `eda project query <dir> board-components` reads back the persisted native
   placed-package inventory from `board/board.json`, establishing the read-side
   contract for future native package placement work.
+- `eda project export-bom <dir> --out <path>` writes a deterministic CSV BOM
+  directly from that persisted native board-component inventory, establishing
+  the first native manufacturing-export slice without depending on pool lookup,
+  manufacturer metadata, or variant expansion.
+- `eda project export-pnp <dir> --out <path>` writes a deterministic CSV
+  pick-and-place export directly from that same persisted native
+  board-component inventory, establishing the second native manufacturing-
+  export slice without depending on feeder setup, origin calibration, or
+  variant expansion.
+- `eda project export-drill <dir> --out <path>` writes a deterministic CSV
+  drill export directly from the persisted native via inventory, establishing
+  the first native drill-export slice without claiming full Excellon tooling,
+  slot support, or fabrication-ready hole tables yet.
+- `eda project export-gerber-outline <dir> --out <path>` now writes a narrow
+  RS-274X Gerber file for the persisted native board outline through
+  `eda_engine::export`, establishing the first real native Gerber writer on
+  the board-outline slice.
+- `eda project validate-gerber-outline <dir> --gerber <path>` now re-renders
+  that expected native board-outline Gerber and reports byte-for-byte
+  match/mismatch with CI-usable exit status, establishing the first native
+  validation surface for a real Gerber writer.
+- `eda project export-gerber-copper-layer <dir> --layer <id> --out <path>`
+  now writes a narrow RS-274X Gerber file for persisted native board tracks on
+  one selected copper layer through `eda_engine::export`, establishing the
+  first real copper-layer writer without claiming pads, zones, or full layer-
+  set emission yet.
+- `eda project plan-gerber-export <dir> [--prefix <text>]` reports the
+  deterministic broader Gerber artifact set implied by the current native
+  board outline and stackup, without claiming that the full planned layer set
+  is writable yet.
+- `eda project compare-gerber-export-plan <dir> --output-dir <path>
+  [--prefix <text>]` compares that deterministic planned artifact set against a
+  directory and reports matched, missing, and extra files, establishing the
+  first native Gerber drift/comparison slice without claiming aperture or
+  geometry-level validation yet.
 - `eda project query <dir> board-pads` reads back the persisted native
   placed-pad inventory from `board/board.json`, establishing the first native
   package-linked pad read surface.
@@ -215,6 +250,15 @@ Current live slice:
   containing the current proposal actions plus persisted review decisions, so
   the forward-annotation review package can be preserved and moved independently
   of the live native project state.
+- `eda project export-forward-annotation-proposal-selection <dir> --action-id
+  <sha256:...>... --out <path>` now writes that same artifact kind with only
+  the selected proposal actions and matching review records, so scoped review
+  exchange does not require exporting the entire live proposal package.
+- `eda project select-forward-annotation-proposal-artifact --artifact <path>
+  --action-id <sha256:...>... --out <path>` now narrows an existing artifact
+  down to the selected proposal actions and matching review records without
+  consulting live project state, so scoped artifact exchange can stay entirely
+  artifact-local when needed.
 - `eda project inspect-forward-annotation-proposal-artifact <path>` now loads
   that artifact and reports version, project identity, action counts, and
   review counts through a deterministic read-only inspection surface.
@@ -233,6 +277,20 @@ Current live slice:
   versus `requires_explicit_input`, including the exact caller inputs still
   needed for `add_component` and `part_mismatch`, so artifact-driven apply can
   preflight mutation readiness without touching live project state.
+- `eda project apply-forward-annotation-proposal-artifact <dir> --artifact
+  <path>` now applies a filtered artifact only when it still targets the same
+  native project UUID and every retained action remains both `applicable` and
+  `self_sufficient`; retained `deferred` and `rejected` review decisions still
+  suppress execution inside that artifact-driven apply path.
+- `eda project import-forward-annotation-artifact-review <dir> --artifact
+  <path>` now merges artifact review decisions back into live project state
+  only for `action_id`s that still exist in the current live proposal, so the
+  artifact can restore active review intent without reviving stale decisions.
+- `eda project replace-forward-annotation-artifact-review <dir> --artifact
+  <path>` now replaces the live review map with that same validated artifact
+  subset, so review import can be either additive or authoritative depending on
+  whether the caller wants to preserve or discard unrelated existing live
+  review state.
 - `eda project place-board-component <dir> --part <uuid> --package <uuid>
   --reference <text> --value <text> --x-nm <i64> --y-nm <i64> --layer <i32>`
   plus `eda project move-board-component <dir> --component <uuid> --x-nm <i64>

@@ -5,6 +5,7 @@ use anyhow::{Context, Result, bail};
 use eda_engine::api::{CheckCodeCount, CheckReport, CheckStatus, CheckSummary};
 use eda_engine::board::{Board, BoardText, Dimension, Keepout, Net, NetClass, PlacedPackage, PlacedPad, Stackup, StackupLayer, StackupLayerType, Track, Via, Zone};
 use eda_engine::import::ids_sidecar::compute_source_hash_bytes;
+use eda_engine::export::{render_rs274x_copper_layer, render_rs274x_outline_default};
 use eda_engine::connectivity::{schematic_diagnostics, schematic_net_info};
 use eda_engine::ir::geometry::{Arc, Point};
 use eda_engine::ir::geometry::Polygon;
@@ -22,6 +23,15 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use super::{
+    NativeProjectBomExportView,
+    NativeProjectDrillExportView,
+    NativeProjectGerberCopperExportView,
+    NativeProjectGerberOutlineExportView,
+    NativeProjectGerberOutlineValidationView,
+    NativeProjectGerberPlanArtifactView,
+    NativeProjectGerberPlanComparisonView,
+    NativeProjectGerberPlanView,
+    NativeProjectPnpExportView,
     NativeProjectBoardSummaryView, NativeProjectCreateReportView, NativeProjectInspectReportView,
     NativeProjectBusEntryMutationReportView, NativeProjectBusMutationReportView,
     NativeProjectJunctionMutationReportView,
@@ -52,6 +62,9 @@ use super::{
     NativeProjectForwardAnnotationArtifactFilterView,
     NativeProjectForwardAnnotationArtifactApplyPlanActionView,
     NativeProjectForwardAnnotationArtifactApplyPlanView,
+    NativeProjectForwardAnnotationArtifactApplyView,
+    NativeProjectForwardAnnotationArtifactReviewImportView,
+    NativeProjectForwardAnnotationArtifactReviewReplaceView,
     NativeProjectForwardAnnotationArtifactComparisonActionView,
     NativeProjectForwardAnnotationArtifactComparisonView,
     NativeProjectForwardAnnotationPartMismatchView,
@@ -1002,6 +1015,124 @@ pub(crate) fn export_native_project_forward_annotation_proposal(
     })
 }
 
+pub(crate) fn export_native_project_forward_annotation_proposal_selection(
+    root: &Path,
+    action_ids: &[String],
+    output_path: &Path,
+) -> Result<NativeProjectForwardAnnotationExportReportView> {
+    if action_ids.is_empty() {
+        bail!("forward-annotation proposal selection export requires at least one --action-id");
+    }
+
+    let project = load_native_project(root)?;
+    let proposal = query_native_project_forward_annotation_proposal(root)?;
+    let review = query_native_project_forward_annotation_review(root)?;
+    let selected_action_ids = action_ids.iter().cloned().collect::<BTreeSet<_>>();
+    let actions = proposal
+        .actions
+        .into_iter()
+        .filter(|action| selected_action_ids.contains(&action.action_id))
+        .collect::<Vec<_>>();
+    if actions.len() != selected_action_ids.len() {
+        let exported_action_ids = actions
+            .iter()
+            .map(|action| action.action_id.as_str())
+            .collect::<BTreeSet<_>>();
+        let missing = selected_action_ids
+            .iter()
+            .filter(|action_id| !exported_action_ids.contains(action_id.as_str()))
+            .cloned()
+            .collect::<Vec<_>>();
+        bail!(
+            "forward-annotation proposal action not found for selection export: {}",
+            missing.join(", ")
+        );
+    }
+
+    let reviews = review
+        .actions
+        .into_iter()
+        .filter(|entry| selected_action_ids.contains(&entry.action_id))
+        .collect::<Vec<_>>();
+    let artifact = ForwardAnnotationProposalArtifact {
+        kind: FORWARD_ANNOTATION_ARTIFACT_KIND.to_string(),
+        version: FORWARD_ANNOTATION_ARTIFACT_VERSION,
+        project_uuid: project.manifest.uuid,
+        project_name: project.manifest.name.clone(),
+        actions,
+        reviews,
+    };
+    write_canonical_json(output_path, &artifact)?;
+    Ok(NativeProjectForwardAnnotationExportReportView {
+        action: "export_forward_annotation_proposal_selection".to_string(),
+        artifact_path: output_path.display().to_string(),
+        kind: artifact.kind,
+        version: artifact.version,
+        project_uuid: artifact.project_uuid.to_string(),
+        actions: artifact.actions.len(),
+        reviews: artifact.reviews.len(),
+    })
+}
+
+pub(crate) fn select_forward_annotation_proposal_artifact(
+    artifact_path: &Path,
+    action_ids: &[String],
+    output_path: &Path,
+) -> Result<NativeProjectForwardAnnotationExportReportView> {
+    if action_ids.is_empty() {
+        bail!("forward-annotation artifact selection requires at least one --action-id");
+    }
+
+    let loaded = load_forward_annotation_proposal_artifact(artifact_path)?;
+    let selected_action_ids = action_ids.iter().cloned().collect::<BTreeSet<_>>();
+    let actions = loaded
+        .artifact
+        .actions
+        .into_iter()
+        .filter(|action| selected_action_ids.contains(&action.action_id))
+        .collect::<Vec<_>>();
+    if actions.len() != selected_action_ids.len() {
+        let exported_action_ids = actions
+            .iter()
+            .map(|action| action.action_id.as_str())
+            .collect::<BTreeSet<_>>();
+        let missing = selected_action_ids
+            .iter()
+            .filter(|action_id| !exported_action_ids.contains(action_id.as_str()))
+            .cloned()
+            .collect::<Vec<_>>();
+        bail!(
+            "forward-annotation artifact action not found for selection: {}",
+            missing.join(", ")
+        );
+    }
+
+    let reviews = loaded
+        .artifact
+        .reviews
+        .into_iter()
+        .filter(|entry| selected_action_ids.contains(&entry.action_id))
+        .collect::<Vec<_>>();
+    let artifact = ForwardAnnotationProposalArtifact {
+        kind: FORWARD_ANNOTATION_ARTIFACT_KIND.to_string(),
+        version: FORWARD_ANNOTATION_ARTIFACT_VERSION,
+        project_uuid: loaded.artifact.project_uuid,
+        project_name: loaded.artifact.project_name,
+        actions,
+        reviews,
+    };
+    write_canonical_json(output_path, &artifact)?;
+    Ok(NativeProjectForwardAnnotationExportReportView {
+        action: "select_forward_annotation_proposal_artifact".to_string(),
+        artifact_path: output_path.display().to_string(),
+        kind: artifact.kind,
+        version: artifact.version,
+        project_uuid: artifact.project_uuid.to_string(),
+        actions: artifact.actions.len(),
+        reviews: artifact.reviews.len(),
+    })
+}
+
 fn load_forward_annotation_proposal_artifact(
     artifact_path: &Path,
 ) -> Result<LoadedForwardAnnotationProposalArtifact> {
@@ -1342,6 +1473,209 @@ pub(crate) fn plan_forward_annotation_proposal_artifact_apply(
         requires_input_actions,
         not_applicable_actions,
         actions,
+    })
+}
+
+pub(crate) fn apply_forward_annotation_proposal_artifact(
+    root: &Path,
+    artifact_path: &Path,
+) -> Result<NativeProjectForwardAnnotationArtifactApplyView> {
+    let project = load_native_project(root)?;
+    let loaded = load_forward_annotation_proposal_artifact(artifact_path)?;
+    if loaded.artifact.project_uuid != project.manifest.uuid {
+        bail!(
+            "forward-annotation artifact project UUID {} does not match current project UUID {}",
+            loaded.artifact.project_uuid,
+            project.manifest.uuid
+        );
+    }
+
+    let plan = plan_forward_annotation_proposal_artifact_apply(root, artifact_path)?;
+    let non_applicable = plan
+        .actions
+        .iter()
+        .find(|action| action.applicability != "applicable");
+    if let Some(action) = non_applicable {
+        bail!(
+            "forward-annotation artifact apply requires only applicable actions; action {} is {}",
+            action.action_id,
+            action.applicability
+        );
+    }
+    let input_bound = plan
+        .actions
+        .iter()
+        .find(|action| action.execution != "self_sufficient");
+    if let Some(action) = input_bound {
+        bail!(
+            "forward-annotation artifact apply requires only self-sufficient actions; action {} is {}",
+            action.action_id,
+            action.execution
+        );
+    }
+
+    let review_by_id = loaded
+        .artifact
+        .reviews
+        .iter()
+        .map(|review| (review.action_id.clone(), review.decision.clone()))
+        .collect::<BTreeMap<_, _>>();
+
+    let mut applied = Vec::new();
+    let mut skipped = Vec::new();
+    for action in loaded.artifact.actions {
+        if let Some(review_decision) = review_by_id.get(&action.action_id) {
+            let skip_reason = match review_decision.as_str() {
+                "deferred" => Some("deferred_by_review"),
+                "rejected" => Some("rejected_by_review"),
+                _ => None,
+            };
+            if let Some(skip_reason) = skip_reason {
+                skipped.push(NativeProjectForwardAnnotationBatchApplySkippedActionView {
+                    action_id: action.action_id.clone(),
+                    proposal_action: action.action.clone(),
+                    reference: action.reference.clone(),
+                    reason: action.reason.clone(),
+                    skip_reason: skip_reason.to_string(),
+                });
+                continue;
+            }
+        }
+
+        applied.push(execute_native_project_forward_annotation_action(
+            root, action, None, None, None, None, None,
+        )?);
+    }
+
+    let skipped_deferred_actions = skipped
+        .iter()
+        .filter(|entry| entry.skip_reason == "deferred_by_review")
+        .count();
+    let skipped_rejected_actions = skipped
+        .iter()
+        .filter(|entry| entry.skip_reason == "rejected_by_review")
+        .count();
+
+    Ok(NativeProjectForwardAnnotationArtifactApplyView {
+        action: "apply_forward_annotation_proposal_artifact".to_string(),
+        artifact_path: loaded.artifact_path.display().to_string(),
+        project_root: project.root.display().to_string(),
+        artifact_actions: plan.artifact_actions,
+        applied_actions: applied.len(),
+        skipped_deferred_actions,
+        skipped_rejected_actions,
+        applied,
+        skipped,
+    })
+}
+
+pub(crate) fn import_forward_annotation_artifact_review(
+    root: &Path,
+    artifact_path: &Path,
+) -> Result<NativeProjectForwardAnnotationArtifactReviewImportView> {
+    let mut project = load_native_project(root)?;
+    let loaded = load_forward_annotation_proposal_artifact(artifact_path)?;
+    if loaded.artifact.project_uuid != project.manifest.uuid {
+        bail!(
+            "forward-annotation artifact project UUID {} does not match current project UUID {}",
+            loaded.artifact.project_uuid,
+            project.manifest.uuid
+        );
+    }
+
+    let live_proposal = query_native_project_forward_annotation_proposal(root)?;
+    let live_actions = live_proposal
+        .actions
+        .into_iter()
+        .map(|action| (action.action_id.clone(), action))
+        .collect::<BTreeMap<_, _>>();
+
+    let total_artifact_reviews = loaded.artifact.reviews.len();
+    let mut imported_reviews = 0usize;
+    let mut skipped_missing_live_actions = 0usize;
+    for review in loaded.artifact.reviews {
+        if let Some(live_action) = live_actions.get(&review.action_id) {
+            project.manifest.forward_annotation_review.insert(
+                review.action_id.clone(),
+                NativeForwardAnnotationReviewRecord {
+                    action_id: review.action_id,
+                    decision: review.decision,
+                    proposal_action: live_action.action.clone(),
+                    reference: live_action.reference.clone(),
+                    reason: live_action.reason.clone(),
+                },
+            );
+            imported_reviews += 1;
+        } else {
+            skipped_missing_live_actions += 1;
+        }
+    }
+
+    write_canonical_json(&project.root.join("project.json"), &project.manifest)?;
+    Ok(NativeProjectForwardAnnotationArtifactReviewImportView {
+        action: "import_forward_annotation_artifact_review".to_string(),
+        artifact_path: loaded.artifact_path.display().to_string(),
+        project_root: project.root.display().to_string(),
+        imported_reviews,
+        skipped_missing_live_actions,
+        total_artifact_reviews,
+    })
+}
+
+pub(crate) fn replace_forward_annotation_artifact_review(
+    root: &Path,
+    artifact_path: &Path,
+) -> Result<NativeProjectForwardAnnotationArtifactReviewReplaceView> {
+    let mut project = load_native_project(root)?;
+    let loaded = load_forward_annotation_proposal_artifact(artifact_path)?;
+    if loaded.artifact.project_uuid != project.manifest.uuid {
+        bail!(
+            "forward-annotation artifact project UUID {} does not match current project UUID {}",
+            loaded.artifact.project_uuid,
+            project.manifest.uuid
+        );
+    }
+
+    let live_proposal = query_native_project_forward_annotation_proposal(root)?;
+    let live_actions = live_proposal
+        .actions
+        .into_iter()
+        .map(|action| (action.action_id.clone(), action))
+        .collect::<BTreeMap<_, _>>();
+
+    let total_artifact_reviews = loaded.artifact.reviews.len();
+    let removed_existing_reviews = project.manifest.forward_annotation_review.len();
+    let mut replacement_reviews = BTreeMap::new();
+    let mut replaced_reviews = 0usize;
+    let mut skipped_missing_live_actions = 0usize;
+    for review in loaded.artifact.reviews {
+        if let Some(live_action) = live_actions.get(&review.action_id) {
+            replacement_reviews.insert(
+                review.action_id.clone(),
+                NativeForwardAnnotationReviewRecord {
+                    action_id: review.action_id,
+                    decision: review.decision,
+                    proposal_action: live_action.action.clone(),
+                    reference: live_action.reference.clone(),
+                    reason: live_action.reason.clone(),
+                },
+            );
+            replaced_reviews += 1;
+        } else {
+            skipped_missing_live_actions += 1;
+        }
+    }
+
+    project.manifest.forward_annotation_review = replacement_reviews;
+    write_canonical_json(&project.root.join("project.json"), &project.manifest)?;
+    Ok(NativeProjectForwardAnnotationArtifactReviewReplaceView {
+        action: "replace_forward_annotation_artifact_review".to_string(),
+        artifact_path: loaded.artifact_path.display().to_string(),
+        project_root: project.root.display().to_string(),
+        replaced_reviews,
+        removed_existing_reviews,
+        skipped_missing_live_actions,
+        total_artifact_reviews,
     })
 }
 
@@ -1830,6 +2164,296 @@ pub(crate) fn query_native_project_board_components(root: &Path) -> Result<Vec<P
         .collect::<Result<Vec<PlacedPackage>>>()?;
     packages.sort_by(|a, b| a.reference.cmp(&b.reference).then_with(|| a.uuid.cmp(&b.uuid)));
     Ok(packages)
+}
+
+pub(crate) fn export_native_project_bom(
+    root: &Path,
+    output_path: &Path,
+) -> Result<NativeProjectBomExportView> {
+    let project = load_native_project(root)?;
+    let components = query_native_project_board_components(root)?;
+    let mut csv =
+        String::from("reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked\n");
+    for component in &components {
+        let row = [
+            csv_escape(&component.reference),
+            csv_escape(&component.value),
+            csv_escape(&component.part.to_string()),
+            csv_escape(&component.package.to_string()),
+            component.layer.to_string(),
+            component.position.x.to_string(),
+            component.position.y.to_string(),
+            component.rotation.to_string(),
+            component.locked.to_string(),
+        ]
+        .join(",");
+        csv.push_str(&row);
+        csv.push('\n');
+    }
+    std::fs::write(output_path, csv)
+        .with_context(|| format!("failed to write {}", output_path.display()))?;
+    Ok(NativeProjectBomExportView {
+        action: "export_bom".to_string(),
+        project_root: project.root.display().to_string(),
+        bom_path: output_path.display().to_string(),
+        rows: components.len(),
+    })
+}
+
+pub(crate) fn export_native_project_pnp(
+    root: &Path,
+    output_path: &Path,
+) -> Result<NativeProjectPnpExportView> {
+    let project = load_native_project(root)?;
+    let components = query_native_project_board_components(root)?;
+    let mut csv = String::from(
+        "reference,x_nm,y_nm,rotation_deg,layer,side,package_uuid,part_uuid,value,locked\n",
+    );
+    for component in &components {
+        let side = if component.layer <= 16 { "top" } else { "bottom" };
+        let row = [
+            csv_escape(&component.reference),
+            component.position.x.to_string(),
+            component.position.y.to_string(),
+            component.rotation.to_string(),
+            component.layer.to_string(),
+            side.to_string(),
+            csv_escape(&component.package.to_string()),
+            csv_escape(&component.part.to_string()),
+            csv_escape(&component.value),
+            component.locked.to_string(),
+        ]
+        .join(",");
+        csv.push_str(&row);
+        csv.push('\n');
+    }
+    std::fs::write(output_path, csv)
+        .with_context(|| format!("failed to write {}", output_path.display()))?;
+    Ok(NativeProjectPnpExportView {
+        action: "export_pnp".to_string(),
+        project_root: project.root.display().to_string(),
+        pnp_path: output_path.display().to_string(),
+        rows: components.len(),
+    })
+}
+
+pub(crate) fn export_native_project_drill(
+    root: &Path,
+    output_path: &Path,
+) -> Result<NativeProjectDrillExportView> {
+    let project = load_native_project(root)?;
+    let mut vias = query_native_project_board_vias(root)?;
+    vias.sort_by(|a, b| {
+        a.position
+            .x
+            .cmp(&b.position.x)
+            .then_with(|| a.position.y.cmp(&b.position.y))
+            .then_with(|| a.uuid.cmp(&b.uuid))
+    });
+    let mut csv =
+        String::from("via_uuid,net_uuid,x_nm,y_nm,drill_nm,diameter_nm,from_layer,to_layer\n");
+    for via in &vias {
+        let row = [
+            csv_escape(&via.uuid.to_string()),
+            csv_escape(&via.net.to_string()),
+            via.position.x.to_string(),
+            via.position.y.to_string(),
+            via.drill.to_string(),
+            via.diameter.to_string(),
+            via.from_layer.to_string(),
+            via.to_layer.to_string(),
+        ]
+        .join(",");
+        csv.push_str(&row);
+        csv.push('\n');
+    }
+    std::fs::write(output_path, csv)
+        .with_context(|| format!("failed to write {}", output_path.display()))?;
+    Ok(NativeProjectDrillExportView {
+        action: "export_drill".to_string(),
+        project_root: project.root.display().to_string(),
+        drill_path: output_path.display().to_string(),
+        rows: vias.len(),
+    })
+}
+
+pub(crate) fn export_native_project_gerber_outline(
+    root: &Path,
+    output_path: &Path,
+) -> Result<NativeProjectGerberOutlineExportView> {
+    let project = load_native_project(root)?;
+    let outline = native_outline_to_polygon(&project.board.outline);
+    let gerber = render_rs274x_outline_default(&outline)
+        .context("failed to render native board outline as RS-274X")?;
+    std::fs::write(output_path, gerber)
+        .with_context(|| format!("failed to write {}", output_path.display()))?;
+    Ok(NativeProjectGerberOutlineExportView {
+        action: "export_gerber_outline".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        gerber_path: output_path.display().to_string(),
+        outline_vertex_count: project.board.outline.vertices.len(),
+        outline_closed: project.board.outline.closed,
+    })
+}
+
+pub(crate) fn export_native_project_gerber_copper_layer(
+    root: &Path,
+    layer: i32,
+    output_path: &Path,
+) -> Result<NativeProjectGerberCopperExportView> {
+    let project = load_native_project(root)?;
+    let tracks = query_native_project_board_tracks(root)?
+        .into_iter()
+        .filter(|track| track.layer == layer)
+        .collect::<Vec<_>>();
+    let gerber = render_rs274x_copper_layer(layer, &tracks)
+        .context("failed to render native board copper layer as RS-274X")?;
+    std::fs::write(output_path, gerber)
+        .with_context(|| format!("failed to write {}", output_path.display()))?;
+    Ok(NativeProjectGerberCopperExportView {
+        action: "export_gerber_copper_layer".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        gerber_path: output_path.display().to_string(),
+        layer,
+        track_count: tracks.len(),
+    })
+}
+
+pub(crate) fn validate_native_project_gerber_outline(
+    root: &Path,
+    gerber_path: &Path,
+) -> Result<NativeProjectGerberOutlineValidationView> {
+    let project = load_native_project(root)?;
+    let outline = native_outline_to_polygon(&project.board.outline);
+    let expected = render_rs274x_outline_default(&outline)
+        .context("failed to render expected native board outline as RS-274X")?;
+    let actual = std::fs::read_to_string(gerber_path)
+        .with_context(|| format!("failed to read {}", gerber_path.display()))?;
+
+    Ok(NativeProjectGerberOutlineValidationView {
+        action: "validate_gerber_outline".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        gerber_path: gerber_path.display().to_string(),
+        matches_expected: actual == expected,
+        expected_bytes: expected.len(),
+        actual_bytes: actual.len(),
+        outline_vertex_count: project.board.outline.vertices.len(),
+        outline_closed: project.board.outline.closed,
+    })
+}
+
+pub(crate) fn plan_native_project_gerber_export(
+    root: &Path,
+    prefix_override: Option<&str>,
+) -> Result<NativeProjectGerberPlanView> {
+    let project = load_native_project(root)?;
+    let mut layers = project
+        .board
+        .stackup
+        .layers
+        .iter()
+        .map(|value| {
+            serde_json::from_value::<StackupLayer>(value.clone())
+                .context("failed to parse board stackup layer")
+        })
+        .collect::<Result<Vec<_>>>()?;
+    layers.sort_by(|a, b| a.id.cmp(&b.id).then_with(|| a.name.cmp(&b.name)));
+
+    let prefix = sanitize_export_prefix(prefix_override.unwrap_or(&project.board.name));
+    let mut artifacts = vec![NativeProjectGerberPlanArtifactView {
+        kind: "outline".to_string(),
+        layer_id: None,
+        layer_name: None,
+        filename: format!("{prefix}-outline.gbr"),
+    }];
+
+    let mut copper_layers = 0;
+    let mut soldermask_layers = 0;
+    let mut silkscreen_layers = 0;
+    let mut paste_layers = 0;
+    let mut mechanical_layers = 0;
+
+    for layer in layers {
+        let (kind, suffix, count_ref) = match layer.layer_type {
+            StackupLayerType::Copper => ("copper", "copper", &mut copper_layers),
+            StackupLayerType::SolderMask => ("soldermask", "mask", &mut soldermask_layers),
+            StackupLayerType::Silkscreen => ("silkscreen", "silk", &mut silkscreen_layers),
+            StackupLayerType::Paste => ("paste", "paste", &mut paste_layers),
+            StackupLayerType::Mechanical => ("mechanical", "mech", &mut mechanical_layers),
+            StackupLayerType::Dielectric => continue,
+        };
+        *count_ref += 1;
+        let layer_slug = sanitize_export_prefix(&layer.name);
+        artifacts.push(NativeProjectGerberPlanArtifactView {
+            kind: kind.to_string(),
+            layer_id: Some(layer.id),
+            layer_name: Some(layer.name.clone()),
+            filename: format!("{prefix}-l{}-{layer_slug}-{suffix}.gbr", layer.id),
+        });
+    }
+
+    Ok(NativeProjectGerberPlanView {
+        action: "plan_gerber_export".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        prefix,
+        outline_vertex_count: project.board.outline.vertices.len(),
+        outline_closed: project.board.outline.closed,
+        copper_layers,
+        soldermask_layers,
+        silkscreen_layers,
+        paste_layers,
+        mechanical_layers,
+        artifacts,
+    })
+}
+
+pub(crate) fn compare_native_project_gerber_export_plan(
+    root: &Path,
+    output_dir: &Path,
+    prefix_override: Option<&str>,
+) -> Result<NativeProjectGerberPlanComparisonView> {
+    let plan = plan_native_project_gerber_export(root, prefix_override)?;
+    let expected = plan
+        .artifacts
+        .iter()
+        .map(|artifact| artifact.filename.clone())
+        .collect::<BTreeSet<_>>();
+
+    let mut present = BTreeSet::new();
+    for entry in std::fs::read_dir(output_dir)
+        .with_context(|| format!("failed to read {}", output_dir.display()))?
+    {
+        let entry = entry.with_context(|| format!("failed to read {}", output_dir.display()))?;
+        if entry
+            .file_type()
+            .with_context(|| format!("failed to inspect {}", entry.path().display()))?
+            .is_file()
+        {
+            present.insert(entry.file_name().to_string_lossy().into_owned());
+        }
+    }
+
+    let matched = expected.intersection(&present).cloned().collect::<Vec<_>>();
+    let missing = expected.difference(&present).cloned().collect::<Vec<_>>();
+    let extra = present.difference(&expected).cloned().collect::<Vec<_>>();
+
+    Ok(NativeProjectGerberPlanComparisonView {
+        action: "compare_gerber_export_plan".to_string(),
+        project_root: plan.project_root,
+        output_dir: output_dir.display().to_string(),
+        prefix: plan.prefix,
+        expected_count: expected.len(),
+        present_count: present.len(),
+        missing_count: missing.len(),
+        extra_count: extra.len(),
+        matched,
+        missing,
+        extra,
+    })
 }
 
 pub(crate) fn query_native_project_board_pads(root: &Path) -> Result<Vec<PlacedPad>> {
@@ -6059,4 +6683,43 @@ fn write_canonical_json<T: Serialize>(path: &Path, value: &T) -> Result<()> {
     let json = to_json_deterministic(value).context("failed to serialize canonical JSON")?;
     std::fs::write(path, format!("{json}\n"))
         .with_context(|| format!("failed to write {}", path.display()))
+}
+
+fn csv_escape(value: &str) -> String {
+    if value.contains([',', '"', '\n']) {
+        format!("\"{}\"", value.replace('"', "\"\""))
+    } else {
+        value.to_string()
+    }
+}
+
+fn sanitize_export_prefix(value: &str) -> String {
+    let mut out = String::with_capacity(value.len());
+    let mut last_was_sep = false;
+    for ch in value.chars() {
+        if ch.is_ascii_alphanumeric() {
+            out.push(ch.to_ascii_lowercase());
+            last_was_sep = false;
+        } else if !last_was_sep {
+            out.push('-');
+            last_was_sep = true;
+        }
+    }
+    let trimmed = out.trim_matches('-').to_string();
+    if trimmed.is_empty() {
+        "board".to_string()
+    } else {
+        trimmed
+    }
+}
+
+fn native_outline_to_polygon(outline: &NativeOutline) -> Polygon {
+    Polygon {
+        vertices: outline
+            .vertices
+            .iter()
+            .map(|point| Point { x: point.x, y: point.y })
+            .collect(),
+        closed: outline.closed,
+    }
 }

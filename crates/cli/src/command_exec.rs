@@ -361,6 +361,81 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     Ok((render_output(&cli.format, &report), 0))
                 }
             },
+            ProjectCommands::ExportBom { path, out } => {
+                let report = export_native_project_bom(&path, &out)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_bom_export_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ExportPnp { path, out } => {
+                let report = export_native_project_pnp(&path, &out)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_pnp_export_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ExportDrill { path, out } => {
+                let report = export_native_project_drill(&path, &out)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_drill_export_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ExportGerberOutline { path, out } => {
+                let report = export_native_project_gerber_outline(&path, &out)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_gerber_outline_export_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ExportGerberCopperLayer { path, layer, out } => {
+                let report = export_native_project_gerber_copper_layer(&path, layer, &out)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_gerber_copper_export_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ValidateGerberOutline { path, gerber } => {
+                let report = validate_native_project_gerber_outline(&path, &gerber)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_project_gerber_outline_validation_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                let exit_code = if report.matches_expected { 0 } else { 1 };
+                Ok((output, exit_code))
+            }
+            ProjectCommands::PlanGerberExport { path, prefix } => {
+                let report = plan_native_project_gerber_export(&path, prefix.as_deref())?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_gerber_plan_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::CompareGerberExportPlan {
+                path,
+                output_dir,
+                prefix,
+            } => {
+                let report = compare_native_project_gerber_export_plan(
+                    &path,
+                    &output_dir,
+                    prefix.as_deref(),
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_gerber_plan_comparison_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
             ProjectCommands::PlaceSymbol {
                 path,
                 sheet,
@@ -1506,6 +1581,27 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 };
                 Ok((output, 0))
             }
+            ProjectCommands::ExportForwardAnnotationProposalSelection { path, action_ids, out } => {
+                let report = export_native_project_forward_annotation_proposal_selection(
+                    &path,
+                    &action_ids,
+                    &out,
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_forward_annotation_export_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::SelectForwardAnnotationProposalArtifact { artifact, action_ids, out } => {
+                let report =
+                    select_forward_annotation_proposal_artifact(&artifact, &action_ids, &out)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_forward_annotation_export_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
             ProjectCommands::InspectForwardAnnotationProposalArtifact { path } => {
                 let report = inspect_forward_annotation_proposal_artifact(&path)?;
                 let output = match cli.format {
@@ -1538,6 +1634,34 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 let report = plan_forward_annotation_proposal_artifact_apply(&path, &artifact)?;
                 let output = match cli.format {
                     OutputFormat::Text => render_native_forward_annotation_artifact_apply_plan_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ApplyForwardAnnotationProposalArtifact { path, artifact } => {
+                let report = apply_forward_annotation_proposal_artifact(&path, &artifact)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_forward_annotation_artifact_apply_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ImportForwardAnnotationArtifactReview { path, artifact } => {
+                let report = import_forward_annotation_artifact_review(&path, &artifact)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_forward_annotation_artifact_review_import_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ReplaceForwardAnnotationArtifactReview { path, artifact } => {
+                let report = replace_forward_annotation_artifact_review(&path, &artifact)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_forward_annotation_artifact_review_replace_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))

@@ -17,6 +17,23 @@ fn execute(cli: Cli) -> Result<String> {
     Ok(output)
 }
 
+#[path = "main_tests_project_bom_export.rs"]
+mod main_tests_project_bom_export;
+#[path = "main_tests_project_pnp_export.rs"]
+mod main_tests_project_pnp_export;
+#[path = "main_tests_project_drill_export.rs"]
+mod main_tests_project_drill_export;
+#[path = "main_tests_project_gerber_outline_export.rs"]
+mod main_tests_project_gerber_outline_export;
+#[path = "main_tests_project_gerber_copper_export.rs"]
+mod main_tests_project_gerber_copper_export;
+#[path = "main_tests_project_gerber_outline_validate.rs"]
+mod main_tests_project_gerber_outline_validate;
+#[path = "main_tests_project_gerber_plan.rs"]
+mod main_tests_project_gerber_plan;
+#[path = "main_tests_project_gerber_plan_compare.rs"]
+mod main_tests_project_gerber_plan_compare;
+
 #[allow(clippy::too_many_arguments)]
 fn modify_board(
     path: &Path,
@@ -126,6 +143,12 @@ mod main_tests_project_forward_annotation_artifact_compare;
 mod main_tests_project_forward_annotation_artifact_filter;
 #[path = "main_tests_project_forward_annotation_artifact_plan.rs"]
 mod main_tests_project_forward_annotation_artifact_plan;
+#[path = "main_tests_project_forward_annotation_artifact_apply.rs"]
+mod main_tests_project_forward_annotation_artifact_apply;
+#[path = "main_tests_project_forward_annotation_artifact_review_import.rs"]
+mod main_tests_project_forward_annotation_artifact_review_import;
+#[path = "main_tests_project_forward_annotation_artifact_review_replace.rs"]
+mod main_tests_project_forward_annotation_artifact_review_replace;
 #[path = "main_tests_project_forward_annotation_review.rs"]
 mod main_tests_project_forward_annotation_review;
 #[path = "main_tests_project_symbol.rs"]

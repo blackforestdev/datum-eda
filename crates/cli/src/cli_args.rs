@@ -293,6 +293,76 @@ pub(crate) enum ProjectCommands {
         #[command(subcommand)]
         what: NativeProjectQueryCommands,
     },
+    /// Export a native project BOM as deterministic CSV from persisted board components
+    ExportBom {
+        /// Project root directory
+        path: PathBuf,
+        /// Output CSV path
+        #[arg(long = "out")]
+        out: PathBuf,
+    },
+    /// Export a native project pick-and-place file as deterministic CSV from persisted board components
+    ExportPnp {
+        /// Project root directory
+        path: PathBuf,
+        /// Output CSV path
+        #[arg(long = "out")]
+        out: PathBuf,
+    },
+    /// Export a native project drill file as deterministic CSV from persisted vias
+    ExportDrill {
+        /// Project root directory
+        path: PathBuf,
+        /// Output CSV path
+        #[arg(long = "out")]
+        out: PathBuf,
+    },
+    /// Export the native board outline as a narrow RS-274X Gerber file
+    ExportGerberOutline {
+        /// Project root directory
+        path: PathBuf,
+        /// Output Gerber path
+        #[arg(long = "out")]
+        out: PathBuf,
+    },
+    /// Export one native board copper layer as a narrow RS-274X Gerber file
+    ExportGerberCopperLayer {
+        /// Project root directory
+        path: PathBuf,
+        /// Layer identifier
+        #[arg(long = "layer")]
+        layer: i32,
+        /// Output Gerber path
+        #[arg(long = "out")]
+        out: PathBuf,
+    },
+    /// Validate a narrow RS-274X board-outline Gerber against the current native board outline
+    ValidateGerberOutline {
+        /// Project root directory
+        path: PathBuf,
+        /// Gerber path to validate
+        #[arg(long = "gerber")]
+        gerber: PathBuf,
+    },
+    /// Plan the native Gerber export artifact set from the current board outline and stackup
+    PlanGerberExport {
+        /// Project root directory
+        path: PathBuf,
+        /// Optional artifact filename prefix; defaults to the board name
+        #[arg(long)]
+        prefix: Option<String>,
+    },
+    /// Compare the planned native Gerber artifact set against an output directory
+    CompareGerberExportPlan {
+        /// Project root directory
+        path: PathBuf,
+        /// Directory to compare against the planned artifact set
+        #[arg(long = "output-dir")]
+        output_dir: PathBuf,
+        /// Optional artifact filename prefix; defaults to the board name
+        #[arg(long)]
+        prefix: Option<String>,
+    },
     /// Place one schematic symbol into an existing native sheet file
     PlaceSymbol {
         /// Project root directory
@@ -1342,6 +1412,29 @@ pub(crate) enum ProjectCommands {
         #[arg(long = "out")]
         out: PathBuf,
     },
+    /// Export a selected subset of the current forward-annotation proposal and matching review state as a versioned artifact
+    ExportForwardAnnotationProposalSelection {
+        /// Project root directory
+        path: PathBuf,
+        /// Stable proposal action IDs to retain
+        #[arg(long = "action-id")]
+        action_ids: Vec<String>,
+        /// Output artifact path
+        #[arg(long = "out")]
+        out: PathBuf,
+    },
+    /// Select a subset of actions from an existing forward-annotation proposal artifact
+    SelectForwardAnnotationProposalArtifact {
+        /// Artifact path
+        #[arg(long = "artifact")]
+        artifact: PathBuf,
+        /// Stable proposal action IDs to retain
+        #[arg(long = "action-id")]
+        action_ids: Vec<String>,
+        /// Output artifact path
+        #[arg(long = "out")]
+        out: PathBuf,
+    },
     /// Inspect a versioned forward-annotation proposal artifact
     InspectForwardAnnotationProposalArtifact {
         /// Artifact path
@@ -1368,6 +1461,30 @@ pub(crate) enum ProjectCommands {
     },
     /// Plan artifact-driven forward-annotation apply without mutating project state
     PlanForwardAnnotationProposalArtifactApply {
+        /// Project root directory
+        path: PathBuf,
+        /// Artifact path
+        #[arg(long = "artifact")]
+        artifact: PathBuf,
+    },
+    /// Apply one filtered forward-annotation proposal artifact when all retained actions are still self-sufficient
+    ApplyForwardAnnotationProposalArtifact {
+        /// Project root directory
+        path: PathBuf,
+        /// Artifact path
+        #[arg(long = "artifact")]
+        artifact: PathBuf,
+    },
+    /// Import forward-annotation review decisions from an artifact into the current live project state
+    ImportForwardAnnotationArtifactReview {
+        /// Project root directory
+        path: PathBuf,
+        /// Artifact path
+        #[arg(long = "artifact")]
+        artifact: PathBuf,
+    },
+    /// Replace live forward-annotation review state with validated review decisions from an artifact
+    ReplaceForwardAnnotationArtifactReview {
         /// Project root directory
         path: PathBuf,
         /// Artifact path

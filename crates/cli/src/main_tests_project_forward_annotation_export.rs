@@ -323,3 +323,285 @@ fn project_inspect_forward_annotation_proposal_artifact_reports_counts() {
 
     let _ = std::fs::remove_dir_all(&root);
 }
+
+#[test]
+fn project_export_forward_annotation_proposal_selection_writes_only_selected_actions_and_reviews() {
+    let root = unique_project_root("datum-eda-cli-project-forward-annotation-export-selection");
+    create_native_project(&root, Some("Forward Annotation Export Selection Demo".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let sheet_uuid = Uuid::new_v4();
+    let symbol_uuid = Uuid::new_v4();
+    let part_uuid = Uuid::new_v4();
+    write_native_sheet(
+        &root,
+        sheet_uuid,
+        "Main",
+        BTreeMap::from([(
+            symbol_uuid.to_string(),
+            serde_json::to_value(PlacedSymbol {
+                uuid: symbol_uuid,
+                part: Some(part_uuid),
+                entity: None,
+                gate: None,
+                lib_id: Some("Device:C".into()),
+                reference: "C1".into(),
+                value: "1u".into(),
+                fields: Vec::new(),
+                pins: Vec::new(),
+                position: Point::new(0, 0),
+                rotation: 0,
+                mirrored: false,
+                unit_selection: None,
+                display_mode: SymbolDisplayMode::LibraryDefault,
+                pin_overrides: Vec::new(),
+                hidden_power_behavior: HiddenPowerBehavior::PreservedAsImportedMetadata,
+            })
+            .expect("symbol should serialize"),
+        )]),
+    );
+
+    let orphan_component_uuid = Uuid::new_v4();
+    let board_json = root.join("board/board.json");
+    std::fs::write(
+        &board_json,
+        format!(
+            "{}\n",
+            to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "uuid": Uuid::new_v4(),
+                "name": "Forward Annotation Export Selection Demo Board",
+                "stackup": { "layers": [] },
+                "outline": { "vertices": [], "closed": true },
+                "packages": {
+                    orphan_component_uuid.to_string(): serde_json::to_value(PlacedPackage {
+                        uuid: orphan_component_uuid,
+                        part: Uuid::new_v4(),
+                        package: Uuid::new_v4(),
+                        reference: "U1".into(),
+                        value: "MCU".into(),
+                        position: Point::new(0, 0),
+                        rotation: 0,
+                        layer: 1,
+                        locked: false,
+                    }).expect("component should serialize")
+                },
+                "pads": {},
+                "tracks": {},
+                "vias": {},
+                "zones": {},
+                "nets": {},
+                "net_classes": {},
+                "rules": [],
+                "keepouts": [],
+                "dimensions": [],
+                "texts": []
+            }))
+            .expect("canonical serialization should succeed")
+        ),
+    )
+    .expect("board file should write");
+
+    let proposal_cli = Cli::try_parse_from([
+        "eda", "--format", "json", "project", "query", root.to_str().unwrap(),
+        "forward-annotation-proposal",
+    ])
+    .expect("CLI should parse");
+    let proposal_output = execute(proposal_cli).expect("proposal should succeed");
+    let proposal: serde_json::Value = serde_json::from_str(&proposal_output).expect("proposal JSON");
+    let add_action_id = proposal["actions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|entry| entry["action"] == "add_component")
+        .unwrap()["action_id"]
+        .as_str()
+        .unwrap()
+        .to_string();
+    let remove_action_id = proposal["actions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|entry| entry["action"] == "remove_component")
+        .unwrap()["action_id"]
+        .as_str()
+        .unwrap()
+        .to_string();
+
+    let defer_cli = Cli::try_parse_from([
+        "eda", "project", "defer-forward-annotation-action",
+        root.to_str().unwrap(), "--action-id", &add_action_id,
+    ])
+    .expect("CLI should parse");
+    let _ = execute(defer_cli).expect("defer should succeed");
+
+    let artifact_path = root.join("forward-annotation-proposal-selection.json");
+    let export_cli = Cli::try_parse_from([
+        "eda", "--format", "json", "project", "export-forward-annotation-proposal-selection",
+        root.to_str().unwrap(), "--action-id", &add_action_id, "--out",
+        artifact_path.to_str().unwrap(),
+    ])
+    .expect("CLI should parse");
+    let export_output = execute(export_cli).expect("selection export should succeed");
+    let report: serde_json::Value =
+        serde_json::from_str(&export_output).expect("selection export JSON");
+    assert_eq!(report["action"], "export_forward_annotation_proposal_selection");
+    assert_eq!(report["actions"], 1);
+    assert_eq!(report["reviews"], 1);
+
+    let artifact_text = std::fs::read_to_string(&artifact_path).expect("artifact should read");
+    let artifact: serde_json::Value =
+        serde_json::from_str(&artifact_text).expect("artifact should parse");
+    assert_eq!(artifact["actions"].as_array().unwrap().len(), 1);
+    assert_eq!(artifact["actions"][0]["action_id"], add_action_id);
+    assert_ne!(artifact["actions"][0]["action_id"], remove_action_id);
+    assert_eq!(artifact["reviews"].as_array().unwrap().len(), 1);
+    assert_eq!(artifact["reviews"][0]["action_id"], add_action_id);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_select_forward_annotation_proposal_artifact_writes_only_selected_artifact_actions_and_reviews() {
+    let root = unique_project_root("datum-eda-cli-project-forward-annotation-select-artifact");
+    create_native_project(&root, Some("Forward Annotation Select Artifact Demo".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let sheet_uuid = Uuid::new_v4();
+    let symbol_uuid = Uuid::new_v4();
+    let part_uuid = Uuid::new_v4();
+    write_native_sheet(
+        &root,
+        sheet_uuid,
+        "Main",
+        BTreeMap::from([(
+            symbol_uuid.to_string(),
+            serde_json::to_value(PlacedSymbol {
+                uuid: symbol_uuid,
+                part: Some(part_uuid),
+                entity: None,
+                gate: None,
+                lib_id: Some("Device:C".into()),
+                reference: "C1".into(),
+                value: "1u".into(),
+                fields: Vec::new(),
+                pins: Vec::new(),
+                position: Point::new(0, 0),
+                rotation: 0,
+                mirrored: false,
+                unit_selection: None,
+                display_mode: SymbolDisplayMode::LibraryDefault,
+                pin_overrides: Vec::new(),
+                hidden_power_behavior: HiddenPowerBehavior::PreservedAsImportedMetadata,
+            })
+            .expect("symbol should serialize"),
+        )]),
+    );
+
+    let orphan_component_uuid = Uuid::new_v4();
+    let board_json = root.join("board/board.json");
+    std::fs::write(
+        &board_json,
+        format!(
+            "{}\n",
+            to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "uuid": Uuid::new_v4(),
+                "name": "Forward Annotation Select Artifact Demo Board",
+                "stackup": { "layers": [] },
+                "outline": { "vertices": [], "closed": true },
+                "packages": {
+                    orphan_component_uuid.to_string(): serde_json::to_value(PlacedPackage {
+                        uuid: orphan_component_uuid,
+                        part: Uuid::new_v4(),
+                        package: Uuid::new_v4(),
+                        reference: "U1".into(),
+                        value: "MCU".into(),
+                        position: Point::new(0, 0),
+                        rotation: 0,
+                        layer: 1,
+                        locked: false,
+                    }).expect("component should serialize")
+                },
+                "pads": {},
+                "tracks": {},
+                "vias": {},
+                "zones": {},
+                "nets": {},
+                "net_classes": {},
+                "rules": [],
+                "keepouts": [],
+                "dimensions": [],
+                "texts": []
+            }))
+            .expect("canonical serialization should succeed")
+        ),
+    )
+    .expect("board file should write");
+
+    let proposal_cli = Cli::try_parse_from([
+        "eda", "--format", "json", "project", "query", root.to_str().unwrap(),
+        "forward-annotation-proposal",
+    ])
+    .expect("CLI should parse");
+    let proposal_output = execute(proposal_cli).expect("proposal should succeed");
+    let proposal: serde_json::Value = serde_json::from_str(&proposal_output).expect("proposal JSON");
+    let add_action_id = proposal["actions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|entry| entry["action"] == "add_component")
+        .unwrap()["action_id"]
+        .as_str()
+        .unwrap()
+        .to_string();
+    let remove_action_id = proposal["actions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|entry| entry["action"] == "remove_component")
+        .unwrap()["action_id"]
+        .as_str()
+        .unwrap()
+        .to_string();
+
+    let defer_cli = Cli::try_parse_from([
+        "eda", "project", "defer-forward-annotation-action",
+        root.to_str().unwrap(), "--action-id", &add_action_id,
+    ])
+    .expect("CLI should parse");
+    let _ = execute(defer_cli).expect("defer should succeed");
+
+    let source_artifact_path = root.join("forward-annotation-proposal.json");
+    let export_cli = Cli::try_parse_from([
+        "eda", "project", "export-forward-annotation-proposal",
+        root.to_str().unwrap(), "--out", source_artifact_path.to_str().unwrap(),
+    ])
+    .expect("CLI should parse");
+    let _ = execute(export_cli).expect("export should succeed");
+
+    let selected_artifact_path = root.join("forward-annotation-proposal-selected.json");
+    let select_cli = Cli::try_parse_from([
+        "eda", "--format", "json", "project", "select-forward-annotation-proposal-artifact",
+        "--artifact", source_artifact_path.to_str().unwrap(), "--action-id", &remove_action_id,
+        "--out", selected_artifact_path.to_str().unwrap(),
+    ])
+    .expect("CLI should parse");
+    let select_output = execute(select_cli).expect("artifact selection should succeed");
+    let report: serde_json::Value =
+        serde_json::from_str(&select_output).expect("artifact selection JSON");
+    assert_eq!(report["action"], "select_forward_annotation_proposal_artifact");
+    assert_eq!(report["actions"], 1);
+    assert_eq!(report["reviews"], 0);
+
+    let artifact_text =
+        std::fs::read_to_string(&selected_artifact_path).expect("selected artifact should read");
+    let artifact: serde_json::Value =
+        serde_json::from_str(&artifact_text).expect("selected artifact should parse");
+    assert_eq!(artifact["actions"].as_array().unwrap().len(), 1);
+    assert_eq!(artifact["actions"][0]["action_id"], remove_action_id);
+    assert_ne!(artifact["actions"][0]["action_id"], add_action_id);
+    assert_eq!(artifact["reviews"].as_array().unwrap().len(), 0);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
