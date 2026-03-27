@@ -47,7 +47,8 @@ fn seed_native_sheet(root: &Path) -> Uuid {
         &schematic_json,
         format!(
             "{}\n",
-            to_json_deterministic(&schematic_value).expect("canonical serialization should succeed")
+            to_json_deterministic(&schematic_value)
+                .expect("canonical serialization should succeed")
         ),
     )
     .expect("schematic.json should write");
@@ -108,14 +109,9 @@ fn project_place_and_delete_noconnect_update_native_query_surface() {
     assert_eq!(markers[0]["position"]["x"], 70);
     assert_eq!(markers[0]["position"]["y"], 80);
 
-    let summary_cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("project query summary should succeed");
     assert!(summary_output.contains("schematic_noconnects: 1"));
 
@@ -146,14 +142,9 @@ fn project_place_and_delete_noconnect_update_native_query_surface() {
         serde_json::from_str(&deleted_output).expect("noconnects JSON should parse");
     assert_eq!(deleted.as_array().unwrap().len(), 0);
 
-    let summary_cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("project query summary should succeed");
     assert!(summary_output.contains("schematic_noconnects: 0"));
 

@@ -1,53 +1,32 @@
 # Datum EDA
 
-Datum EDA is an AI-native electronics design platform.
+Datum EDA is an AI-native electronics design platform with a deterministic
+engine core and machine-native control surfaces.
 
-Datum is being built as a new class of EDA system: deterministic engine core,
-machine-native interfaces, and automation-first workflows from day one.
+It is being built as an independent EDA system, not as a wrapper around
+another tool.
 
-What Datum EDA is:
-- A standalone core architecture for analysis, checking, modification, and
-  eventually native design authoring.
-- AI/CLI-first control surfaces with a shared deterministic execution model.
-- A foundation intended to scale across multiple EDA ecosystems over time.
-
-What Datum EDA is not:
-- A CLI facade for another tool.
-- A compatibility layer whose long-term value is format translation.
-
-KiCad-first support is the current execution beachhead for rapid validation on
-real projects. It is not the product boundary.
+KiCad-first support is the current execution path for fast, verifiable
+delivery. It is not the long-term product boundary.
 
 ---
 
 ## Why
 
-Most EDA systems were built GUI-first. Automation and AI were added later.
-
-Datum EDA inverts that model:
+Most EDA systems were built GUI-first and automation was layered in later.
+Datum inverts that model:
 - Engine-first deterministic core.
-- AI/CLI interfaces as first-class surfaces.
+- AI/CLI as first-class interfaces.
 - GUI as a downstream consumer, not the system of record.
-
-The objective is not to replicate existing UX with scripts attached. The
-objective is to define a modern EDA architecture where AI-native workflows are
-fundamental.
 
 ---
 
 ## Direction and Scope
 
-Datum EDA is not scoped to KiCad + Eagle as a permanent ceiling.
-
-The current roadmap intentionally sequences delivery:
-- First: deterministic core IR, import/query/check correctness, and reliable
-  AI/CLI automation.
-- Next: safe write operations and native authoring.
-- Then: broader ecosystem interoperability, including commercial-tool migration
-  paths.
-
-This sequencing is about execution risk and engineering quality, not limited
-ambition. Datum is being built as its own system.
+Roadmap sequencing is intentional:
+- foundation: deterministic IR and reliable import/query/check surfaces
+- expansion: safe write operations and native authoring
+- later: broader ecosystem interop, including commercial migration paths
 
 Canonical scope terminology is defined in
 [`specs/PROGRAM_SPEC.md`](specs/PROGRAM_SPEC.md) (`Product identity`,
@@ -57,32 +36,19 @@ Canonical scope terminology is defined in
 
 ## What it can do today
 
-- **Import/query/check** KiCad `.kicad_pcb` and `.kicad_sch` designs
-- **Import** Eagle `.lbr` component libraries (pool ingestion)
-- **Modify (current M3 slice)** imported KiCad boards:
-  `move_component`, `delete_track`, `delete_via`, `set_design_rule`,
-  `undo`/`redo`, `save`
-- **Query** any design: components, nets, stackup, hierarchy, airwires,
-  connectivity diagnostics
-- **ERC** — electrical rule checking with structured violation reports,
-  configurable severity, and waiver support
-- **DRC** — physical rule checking: clearance, track width, via geometry,
-  silk clearance, unrouted nets
-- **MCP server** — all of the above accessible to AI agents through any
-  MCP-compatible client via Unix socket JSON-RPC
-- **CLI** — `eda import`, `query`, `erc`, `drc`, `check`, `modify`,
-  `pool search` with JSON output and CI-friendly exit codes
-
-Current limitations (intentional, milestone-scoped):
-- Eagle `.brd` / `.sch` design import is not implemented yet.
-- KiCad import/write-back currently targets a defined subset while fidelity and
-  corpus confidence continue to expand.
-
-Current state should be read as implementation maturity, not product identity.
+- Import/query/check KiCad `.kicad_pcb` and `.kicad_sch` designs.
+- Import Eagle `.lbr` libraries into the pool.
+- Run ERC/DRC and consume structured check reports in CLI and MCP.
+- Modify imported KiCad board slices via deterministic operation flows.
+- Create and edit native project slices (`project new`, native query/check,
+  forward-annotation review/apply slices, early manufacturing-export slices).
 
 See [`docs/USER_WORKFLOWS.md`](docs/USER_WORKFLOWS.md) for end-to-end usage
 examples and [`specs/MCP_API_SPEC.md`](specs/MCP_API_SPEC.md) for the full
 MCP tool catalog.
+
+For milestone-scoped status and limitations, use
+[`specs/PROGRESS.md`](specs/PROGRESS.md).
 
 ---
 
@@ -127,8 +93,12 @@ cargo run -p eda-cli -- query design.kicad_pcb components
 # Search the component pool
 cargo run -p eda-cli -- pool search "100nF 0402" --library library.lbr
 
-# Current M3 board modify slice
+# Imported-board modify slice
 cargo run -p eda-cli -- modify design.kicad_pcb --move-component "<uuid>:25:15:90" --save out.kicad_pcb
+
+# Native project slice (M4 in progress)
+cargo run -p eda-cli -- project new ./demo --name "Demo"
+cargo run -p eda-cli -- project query ./demo summary
 ```
 
 Exit codes: `0` = pass, `1` = violations found, `2` = execution error.
@@ -137,7 +107,7 @@ Exit codes: `0` = pass, `1` = violations found, `2` = execution error.
 
 ## MCP server
 
-The MCP server exposes the full engine surface to AI agents over stdio.
+The MCP server exposes the current engine surface to AI agents over stdio.
 
 ```bash
 # Start the engine daemon
@@ -180,9 +150,9 @@ Client-specific config file locations vary by MCP host.
 └─────────────┘    └──────────┘
 ```
 
-The engine is a Rust library crate with no GUI or rendering dependencies.
-The daemon exposes it over a Unix socket for multi-client access. The MCP
-server is a thin Python translation layer on top of that socket.
+The engine is a Rust library crate with no GUI/rendering dependency.
+The daemon exposes it over Unix socket JSON-RPC.
+The MCP server is a thin Python translation layer over that daemon.
 
 Key documentation:
 
@@ -201,14 +171,11 @@ Key documentation:
 
 See [`PLAN.md`](PLAN.md).
 
-Directionally, Datum EDA targets a full AI-native EDA stack:
-- independent core architecture
+Directionally, Datum targets a full AI-native EDA stack:
+- independent deterministic core architecture
 - broad format interoperability
 - native design-authoring capability
-- advanced automation and strategy layers on top of deterministic primitives
-
-Format coverage starts where execution is fastest and safest, then expands.
-Long-term scope includes both open-tool and commercial-tool migration paths.
+- higher-level automation and strategy layers
 
 Formal milestone contracts live in [`specs/PROGRAM_SPEC.md`](specs/PROGRAM_SPEC.md).
 

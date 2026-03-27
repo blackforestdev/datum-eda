@@ -63,7 +63,9 @@ pub(super) fn parse_package_pad(start: &BytesStart<'_>, smd: bool) -> Result<Raw
     })
 }
 
-pub(super) fn parse_silkscreen_wire(start: &BytesStart<'_>) -> Result<Option<Primitive>, EngineError> {
+pub(super) fn parse_silkscreen_wire(
+    start: &BytesStart<'_>,
+) -> Result<Option<Primitive>, EngineError> {
     let layer = parse_i32_attr(start, b"layer")?.unwrap_or_default();
     if layer != 21 && layer != 22 {
         return Ok(None);

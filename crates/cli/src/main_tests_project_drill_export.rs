@@ -69,8 +69,14 @@ fn project_export_drill_writes_deterministic_csv_from_board_vias() {
 
     let drill_path = root.join("drill.csv");
     let cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "export-drill",
-        root.to_str().unwrap(), "--out", drill_path.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "export-drill",
+        root.to_str().unwrap(),
+        "--out",
+        drill_path.to_str().unwrap(),
     ])
     .expect("CLI should parse");
     let output = execute(cli).expect("drill export should succeed");

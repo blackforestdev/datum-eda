@@ -69,7 +69,8 @@ fn project_board_net_mutations_round_trip_through_native_query() {
         serde_json::from_str(&placed_output).expect("place output should parse");
     let net_uuid = placed["net_uuid"].as_str().unwrap().to_string();
 
-    let nets_output = execute(board_nets_query_cli(&root)).expect("board nets query should succeed");
+    let nets_output =
+        execute(board_nets_query_cli(&root)).expect("board nets query should succeed");
     let nets: Vec<Net> = serde_json::from_str(&nets_output).expect("query output should parse");
     assert_eq!(nets.len(), 1);
     assert_eq!(nets[0].uuid.to_string(), net_uuid);
@@ -118,7 +119,8 @@ fn project_board_net_mutations_round_trip_through_native_query() {
     .expect("CLI should parse");
     let _ = execute(edit_cli).expect("edit board net should succeed");
 
-    let nets_output = execute(board_nets_query_cli(&root)).expect("board nets query should succeed");
+    let nets_output =
+        execute(board_nets_query_cli(&root)).expect("board nets query should succeed");
     let nets: Vec<Net> = serde_json::from_str(&nets_output).expect("query output should parse");
     assert_eq!(nets.len(), 1);
     assert_eq!(nets[0].name, "PWR_GND");
@@ -136,18 +138,14 @@ fn project_board_net_mutations_round_trip_through_native_query() {
     let delete_output = execute(delete_cli).expect("delete board net should succeed");
     assert!(delete_output.contains("action: delete_board_net"));
 
-    let nets_output = execute(board_nets_query_cli(&root)).expect("board nets query should succeed");
+    let nets_output =
+        execute(board_nets_query_cli(&root)).expect("board nets query should succeed");
     let nets: Vec<Net> = serde_json::from_str(&nets_output).expect("query output should parse");
     assert!(nets.is_empty());
 
-    let summary_cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("summary query should succeed");
     assert!(summary_output.contains("board_nets: 0"));
 

@@ -56,14 +56,9 @@ fn project_board_stackup_replacement_round_trips_through_native_query() {
     assert_eq!(stackup[1].layer_type, StackupLayerType::Dielectric);
     assert_eq!(stackup[2].thickness_nm, 35000);
 
-    let summary_cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("summary query should succeed");
     assert!(summary_output.contains("board_layers: 3"));
 
@@ -107,8 +102,10 @@ fn project_query_board_stackup_reads_existing_native_board_file() {
     )
     .expect("board file should write");
 
-    let output = execute(board_stackup_query_cli(&root)).expect("board stackup query should succeed");
-    let stackup: Vec<StackupLayer> = serde_json::from_str(&output).expect("query output should parse");
+    let output =
+        execute(board_stackup_query_cli(&root)).expect("board stackup query should succeed");
+    let stackup: Vec<StackupLayer> =
+        serde_json::from_str(&output).expect("query output should parse");
     assert_eq!(stackup.len(), 2);
     assert_eq!(stackup[0].name, "Top");
     assert_eq!(stackup[1].layer_type, StackupLayerType::Dielectric);

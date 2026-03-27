@@ -24,7 +24,9 @@ fn run_erc_dispatch_returns_raw_schematic_findings() {
     let response = dispatch_request(&mut engine, request);
     assert!(response.error.is_none(), "{response:?}");
     let result = response.result.expect("result should exist");
-    let findings = result.as_array().expect("run_erc result should be an array");
+    let findings = result
+        .as_array()
+        .expect("run_erc result should be an array");
     assert_eq!(findings.len(), 2);
     assert!(
         findings
@@ -62,7 +64,9 @@ fn run_erc_dispatch_returns_input_without_explicit_driver_finding() {
     let response = dispatch_request(&mut engine, request);
     assert!(response.error.is_none(), "{response:?}");
     let result = response.result.expect("result should exist");
-    let findings = result.as_array().expect("run_erc result should be an array");
+    let findings = result
+        .as_array()
+        .expect("run_erc result should be an array");
     assert_eq!(findings.len(), 1);
     assert_eq!(findings[0]["code"], "input_without_explicit_driver");
     assert_eq!(findings[0]["severity"], "Info");

@@ -120,14 +120,23 @@ fn project_query_board_check_reports_native_board_check_json() {
     let report: serde_json::Value = serde_json::from_str(&output).expect("query JSON should parse");
     assert_eq!(report["domain"], "board");
     assert_eq!(report["summary"]["status"], "info");
-    assert!(report["summary"]["by_code"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .any(|entry| entry["code"] == "net_without_copper" && entry["count"] == 1));
-    assert!(report["diagnostics"].as_array().unwrap().iter().any(|entry| {
-        entry["kind"] == "net_without_copper" && entry["message"].as_str().unwrap().contains("SIG")
-    }));
+    assert!(
+        report["summary"]["by_code"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|entry| entry["code"] == "net_without_copper" && entry["count"] == 1)
+    );
+    assert!(
+        report["diagnostics"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|entry| {
+                entry["kind"] == "net_without_copper"
+                    && entry["message"].as_str().unwrap().contains("SIG")
+            })
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }

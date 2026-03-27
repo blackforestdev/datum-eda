@@ -230,9 +230,9 @@ pub(super) fn cli_component_surface_result(cli: &Cli) -> Result<String> {
     }
     let payload: Value = serde_json::from_slice(&query_output.stdout)
         .context("failed to parse CLI delete-component follow-up components JSON")?;
-    let components = payload["components"]
-        .as_array()
-        .ok_or_else(|| anyhow::anyhow!("CLI delete-component follow-up query missing components"))?;
+    let components = payload["components"].as_array().ok_or_else(|| {
+        anyhow::anyhow!("CLI delete-component follow-up query missing components")
+    })?;
     if components
         .iter()
         .any(|component| component["uuid"] == "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
@@ -422,7 +422,9 @@ pub(super) fn cli_reference_surface_result(cli: &Cli) -> Result<String> {
     let target_component = components
         .iter()
         .find(|component| component["uuid"] == "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
-        .ok_or_else(|| anyhow::anyhow!("CLI set-reference follow-up query missing target component"))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("CLI set-reference follow-up query missing target component")
+        })?;
     if target_component["reference"] != "R10" {
         bail!("CLI set-reference follow-up query did not reflect updated component reference");
     }

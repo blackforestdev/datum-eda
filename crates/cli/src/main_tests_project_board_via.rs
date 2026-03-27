@@ -94,7 +94,8 @@ fn project_board_via_mutations_round_trip_through_native_query() {
         serde_json::from_str(&place_output).expect("place output should parse");
     let via_uuid = placed["via_uuid"].as_str().unwrap().to_string();
 
-    let vias_output = execute(board_vias_query_cli(&root)).expect("board vias query should succeed");
+    let vias_output =
+        execute(board_vias_query_cli(&root)).expect("board vias query should succeed");
     let vias: Vec<Via> = serde_json::from_str(&vias_output).expect("query output should parse");
     assert_eq!(vias.len(), 1);
     assert_eq!(vias[0].uuid.to_string(), via_uuid);
@@ -118,18 +119,14 @@ fn project_board_via_mutations_round_trip_through_native_query() {
     let delete_output = execute(delete_cli).expect("delete board via should succeed");
     assert!(delete_output.contains("action: delete_board_via"));
 
-    let vias_output = execute(board_vias_query_cli(&root)).expect("board vias query should succeed");
+    let vias_output =
+        execute(board_vias_query_cli(&root)).expect("board vias query should succeed");
     let vias: Vec<Via> = serde_json::from_str(&vias_output).expect("query output should parse");
     assert!(vias.is_empty());
 
-    let summary_cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("summary query should succeed");
     assert!(summary_output.contains("board_vias: 0"));
 

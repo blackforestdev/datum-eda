@@ -49,15 +49,25 @@ fn project_validate_gerber_outline_reports_match_and_mismatch() {
 
     let gerber_path = root.join("outline.gbr");
     let export_cli = Cli::try_parse_from([
-        "eda", "project", "export-gerber-outline",
-        root.to_str().unwrap(), "--out", gerber_path.to_str().unwrap(),
+        "eda",
+        "project",
+        "export-gerber-outline",
+        root.to_str().unwrap(),
+        "--out",
+        gerber_path.to_str().unwrap(),
     ])
     .expect("export CLI should parse");
     let _ = execute(export_cli).expect("gerber outline export should succeed");
 
     let validate_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "validate-gerber-outline",
-        root.to_str().unwrap(), "--gerber", gerber_path.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "validate-gerber-outline",
+        root.to_str().unwrap(),
+        "--gerber",
+        gerber_path.to_str().unwrap(),
     ])
     .expect("validate CLI should parse");
     let (output, exit_code) = execute_with_exit_code(validate_cli).expect("validation should run");
@@ -68,8 +78,14 @@ fn project_validate_gerber_outline_reports_match_and_mismatch() {
 
     std::fs::write(&gerber_path, "corrupted\n").expect("gerber overwrite should succeed");
     let validate_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "validate-gerber-outline",
-        root.to_str().unwrap(), "--gerber", gerber_path.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "validate-gerber-outline",
+        root.to_str().unwrap(),
+        "--gerber",
+        gerber_path.to_str().unwrap(),
     ])
     .expect("validate CLI should parse");
     let (output, exit_code) = execute_with_exit_code(validate_cli).expect("validation should run");

@@ -45,7 +45,8 @@ fn imports_real_doa2526_schematic_without_collapsing_anonymous_nets() {
         return;
     };
 
-    let (schematic, report) = import_schematic_document(&path).expect("DOA2526 schematic should parse");
+    let (schematic, report) =
+        import_schematic_document(&path).expect("DOA2526 schematic should parse");
 
     assert_eq!(report.kind, ImportKind::KiCadSchematic);
 
@@ -76,7 +77,8 @@ fn imports_real_doa2526_plusin_pin_at_expected_position() {
         return;
     };
 
-    let (schematic, _report) = import_schematic_document(&path).expect("DOA2526 schematic should parse");
+    let (schematic, _report) =
+        import_schematic_document(&path).expect("DOA2526 schematic should parse");
     let root = schematic
         .sheets
         .values()
@@ -103,7 +105,8 @@ fn real_doa2526_named_nets_attach_expected_pins() {
         return;
     };
 
-    let (schematic, _report) = import_schematic_document(&path).expect("DOA2526 schematic should parse");
+    let (schematic, _report) =
+        import_schematic_document(&path).expect("DOA2526 schematic should parse");
     let nets = crate::connectivity::schematic_net_info(&schematic);
 
     let in_p = nets
@@ -194,7 +197,8 @@ fn real_doa2526_mirrored_transistors_are_not_reported_as_unconnected() {
         return;
     };
 
-    let (schematic, _report) = import_schematic_document(&path).expect("DOA2526 schematic should parse");
+    let (schematic, _report) =
+        import_schematic_document(&path).expect("DOA2526 schematic should parse");
     let findings = crate::erc::run_prechecks(&schematic);
 
     for pin in ["Q2.1", "Q2.2", "Q2.3", "Q4.1", "Q4.2", "Q4.3"] {

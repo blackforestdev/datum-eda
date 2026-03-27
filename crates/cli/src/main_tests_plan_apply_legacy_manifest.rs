@@ -264,7 +264,6 @@ fn execute_modify_apply_scoped_replacement_manifest_upgrades_legacy_unversioned_
     )));
 }
 
-
 #[test]
 fn execute_plan_upgrade_scoped_replacement_manifest_rewrites_legacy_artifact() {
     let source = kicad_fixture_path("partial-route-demo.kicad_pcb");
@@ -382,7 +381,6 @@ fn execute_plan_upgrade_scoped_replacement_manifest_rewrites_legacy_artifact() {
     let _ = std::fs::remove_file(&manifest_path);
     let _ = std::fs::remove_file(&upgraded_path);
 }
-
 
 #[test]
 fn execute_plan_upgrade_scoped_replacement_manifest_reports_noop_for_current_artifact() {

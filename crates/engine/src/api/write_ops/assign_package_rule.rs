@@ -2,20 +2,24 @@ use super::*;
 
 impl Engine {
     pub fn assign_part(&mut self, input: AssignPartInput) -> Result<OperationResult, EngineError> {
-        let part = self.pool.parts.get(&input.part_uuid).ok_or(EngineError::NotFound {
-            object_type: "part",
-            uuid: input.part_uuid,
-        })?;
-        let target_package = self
+        let part = self
             .pool
-            .packages
-            .get(&part.package)
-            .ok_or(EngineError::DanglingReference {
-                source_type: "part",
-                source_uuid: input.part_uuid,
-                target_type: "package",
-                target_uuid: part.package,
+            .parts
+            .get(&input.part_uuid)
+            .ok_or(EngineError::NotFound {
+                object_type: "part",
+                uuid: input.part_uuid,
             })?;
+        let target_package =
+            self.pool
+                .packages
+                .get(&part.package)
+                .ok_or(EngineError::DanglingReference {
+                    source_type: "part",
+                    source_uuid: input.part_uuid,
+                    target_type: "package",
+                    target_uuid: part.package,
+                })?;
         let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
         let board = design.board.as_mut().ok_or_else(|| {
             EngineError::Operation(
@@ -43,7 +47,14 @@ impl Engine {
         package.package = part.package;
         package.value = part.value.clone();
         let after = package.clone();
-        replace_component_pads_for_assign_part(board, &before, &after, part, target_package, &self.pool)?;
+        replace_component_pads_for_assign_part(
+            board,
+            &before,
+            &after,
+            part,
+            target_package,
+            &self.pool,
+        )?;
         let after_pads = component_pads(board, input.uuid);
 
         self.undo_stack.push(TransactionRecord::AssignPart {
@@ -69,18 +80,15 @@ impl Engine {
         })
     }
 
-    pub fn set_package(
-        &mut self,
-        input: SetPackageInput,
-    ) -> Result<OperationResult, EngineError> {
-        let target_package = self
-            .pool
-            .packages
-            .get(&input.package_uuid)
-            .ok_or(EngineError::NotFound {
-                object_type: "package",
-                uuid: input.package_uuid,
-            })?;
+    pub fn set_package(&mut self, input: SetPackageInput) -> Result<OperationResult, EngineError> {
+        let target_package =
+            self.pool
+                .packages
+                .get(&input.package_uuid)
+                .ok_or(EngineError::NotFound {
+                    object_type: "package",
+                    uuid: input.package_uuid,
+                })?;
         let compatible_part_uuid = self
             .design
             .as_ref()
@@ -137,12 +145,16 @@ impl Engine {
         }
         let after = package.clone();
         if let Some(part_uuid) = compatible_part_uuid {
-            let target_part = self.pool.parts.get(&part_uuid).ok_or(EngineError::DanglingReference {
-                source_type: "component",
-                source_uuid: input.uuid,
-                target_type: "part",
-                target_uuid: part_uuid,
-            })?;
+            let target_part =
+                self.pool
+                    .parts
+                    .get(&part_uuid)
+                    .ok_or(EngineError::DanglingReference {
+                        source_type: "component",
+                        source_uuid: input.uuid,
+                        target_type: "part",
+                        target_uuid: part_uuid,
+                    })?;
             replace_component_pads_for_assign_part(
                 board,
                 &before,
@@ -214,7 +226,9 @@ impl Engine {
             diffpair_width: input.diffpair_width,
             diffpair_gap: input.diffpair_gap,
         };
-        board.net_classes.insert(target_class_uuid, current_class.clone());
+        board
+            .net_classes
+            .insert(target_class_uuid, current_class.clone());
         let net = board
             .nets
             .get_mut(&input.net_uuid)

@@ -18,7 +18,9 @@ fn write_native_sheet(
     sheet_name: &str,
     symbols: BTreeMap<String, serde_json::Value>,
 ) {
-    let sheet_path = root.join("schematic/sheets").join(format!("{sheet_uuid}.json"));
+    let sheet_path = root
+        .join("schematic/sheets")
+        .join(format!("{sheet_uuid}.json"));
     std::fs::write(
         &sheet_path,
         format!(
@@ -56,7 +58,8 @@ fn write_native_sheet(
         &schematic_json,
         format!(
             "{}\n",
-            to_json_deterministic(&schematic_value).expect("canonical serialization should succeed")
+            to_json_deterministic(&schematic_value)
+                .expect("canonical serialization should succeed")
         ),
     )
     .expect("schematic.json should write");
@@ -227,12 +230,22 @@ fn project_query_forward_annotation_audit_reports_native_reference_alignment() {
     assert_eq!(report["matched_count"], 1);
     assert_eq!(report["unresolved_symbol_count"], 1);
     assert_eq!(report["missing_on_board"].as_array().unwrap().len(), 2);
-    assert!(report["missing_on_board"].as_array().unwrap().iter().any(|entry| {
-        entry["reference"] == "C1" && entry["part_uuid"] == missing_part_uuid.to_string()
-    }));
-    assert!(report["missing_on_board"].as_array().unwrap().iter().any(|entry| {
-        entry["reference"] == "D1" && entry["part_uuid"].is_null()
-    }));
+    assert!(
+        report["missing_on_board"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|entry| {
+                entry["reference"] == "C1" && entry["part_uuid"] == missing_part_uuid.to_string()
+            })
+    );
+    assert!(
+        report["missing_on_board"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|entry| { entry["reference"] == "D1" && entry["part_uuid"].is_null() })
+    );
     assert_eq!(report["orphaned_on_board"].as_array().unwrap().len(), 1);
     assert_eq!(report["orphaned_on_board"][0]["reference"], "U1");
     assert_eq!(report["value_mismatches"].as_array().unwrap().len(), 1);

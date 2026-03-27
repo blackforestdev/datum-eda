@@ -50,8 +50,10 @@ fn project_board_text_mutations_round_trip_through_native_query() {
         serde_json::from_str(&placed_output).expect("place output should parse");
     let text_uuid = placed["text_uuid"].as_str().unwrap().to_string();
 
-    let texts_output = execute(board_text_query_cli(&root)).expect("board text query should succeed");
-    let texts: Vec<BoardText> = serde_json::from_str(&texts_output).expect("query output should parse");
+    let texts_output =
+        execute(board_text_query_cli(&root)).expect("board text query should succeed");
+    let texts: Vec<BoardText> =
+        serde_json::from_str(&texts_output).expect("query output should parse");
     assert_eq!(texts.len(), 1);
     assert_eq!(texts[0].uuid.to_string(), text_uuid);
     assert_eq!(texts[0].text, "PCB TOP");
@@ -83,8 +85,10 @@ fn project_board_text_mutations_round_trip_through_native_query() {
     .expect("CLI should parse");
     let _ = execute(edit_cli).expect("edit board text should succeed");
 
-    let texts_output = execute(board_text_query_cli(&root)).expect("board text query should succeed");
-    let texts: Vec<BoardText> = serde_json::from_str(&texts_output).expect("query output should parse");
+    let texts_output =
+        execute(board_text_query_cli(&root)).expect("board text query should succeed");
+    let texts: Vec<BoardText> =
+        serde_json::from_str(&texts_output).expect("query output should parse");
     assert_eq!(texts.len(), 1);
     assert_eq!(texts[0].text, "PCB BOT");
     assert_eq!(texts[0].position.x, 3000);
@@ -104,18 +108,15 @@ fn project_board_text_mutations_round_trip_through_native_query() {
     let delete_output = execute(delete_cli).expect("delete board text should succeed");
     assert!(delete_output.contains("action: delete_board_text"));
 
-    let texts_output = execute(board_text_query_cli(&root)).expect("board text query should succeed");
-    let texts: Vec<BoardText> = serde_json::from_str(&texts_output).expect("query output should parse");
+    let texts_output =
+        execute(board_text_query_cli(&root)).expect("board text query should succeed");
+    let texts: Vec<BoardText> =
+        serde_json::from_str(&texts_output).expect("query output should parse");
     assert!(texts.is_empty());
 
-    let summary_cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("summary query should succeed");
     assert!(summary_output.contains("board_texts: 0"));
 

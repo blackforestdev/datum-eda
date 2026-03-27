@@ -93,8 +93,14 @@ fn project_plan_gerber_export_reports_deterministic_artifact_set() {
     .expect("board file should write");
 
     let cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "plan-gerber-export",
-        root.to_str().unwrap(), "--prefix", "Release A",
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "plan-gerber-export",
+        root.to_str().unwrap(),
+        "--prefix",
+        "Release A",
     ])
     .expect("CLI should parse");
     let output = execute(cli).expect("gerber plan should succeed");
@@ -113,12 +119,21 @@ fn project_plan_gerber_export_reports_deterministic_artifact_set() {
     assert_eq!(artifacts.len(), 8);
     assert_eq!(artifacts[0]["kind"], "outline");
     assert_eq!(artifacts[0]["filename"], "release-a-outline.gbr");
-    assert_eq!(artifacts[1]["filename"], "release-a-l1-top-copper-copper.gbr");
+    assert_eq!(
+        artifacts[1]["filename"],
+        "release-a-l1-top-copper-copper.gbr"
+    );
     assert_eq!(artifacts[2]["filename"], "release-a-l2-top-mask-mask.gbr");
     assert_eq!(artifacts[3]["filename"], "release-a-l3-top-silk-silk.gbr");
     assert_eq!(artifacts[4]["filename"], "release-a-l4-top-paste-paste.gbr");
-    assert_eq!(artifacts[5]["filename"], "release-a-l31-bottom-copper-copper.gbr");
-    assert_eq!(artifacts[6]["filename"], "release-a-l32-bottom-mask-mask.gbr");
+    assert_eq!(
+        artifacts[5]["filename"],
+        "release-a-l31-bottom-copper-copper.gbr"
+    );
+    assert_eq!(
+        artifacts[6]["filename"],
+        "release-a-l32-bottom-mask-mask.gbr"
+    );
     assert_eq!(artifacts[7]["filename"], "release-a-l50-fab-notes-mech.gbr");
 
     let _ = std::fs::remove_dir_all(&root);

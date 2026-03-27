@@ -13,6 +13,7 @@ fn project_validate_gerber_copper_layer_reports_match_and_mismatch() {
 
     let net_uuid = Uuid::new_v4();
     let class_uuid = Uuid::new_v4();
+    let pad_uuid = Uuid::new_v4();
     let track_uuid = Uuid::new_v4();
     let zone_uuid = Uuid::new_v4();
     let via_uuid = Uuid::new_v4();
@@ -28,7 +29,17 @@ fn project_validate_gerber_copper_layer_reports_match_and_mismatch() {
                 "stackup": { "layers": [] },
                 "outline": { "vertices": [], "closed": true },
                 "packages": {},
-                "pads": {},
+                "pads": {
+                    pad_uuid.to_string(): {
+                        "uuid": pad_uuid,
+                        "package": Uuid::new_v4(),
+                        "name": "1",
+                        "net": net_uuid,
+                        "position": { "x": 750000, "y": 250000 },
+                        "layer": 1,
+                        "diameter": 450000
+                    }
+                },
                 "tracks": {
                     track_uuid.to_string(): {
                         "uuid": track_uuid,
@@ -100,15 +111,29 @@ fn project_validate_gerber_copper_layer_reports_match_and_mismatch() {
 
     let gerber_path = root.join("top-copper.gbr");
     let export_cli = Cli::try_parse_from([
-        "eda", "project", "export-gerber-copper-layer",
-        root.to_str().unwrap(), "--layer", "1", "--out", gerber_path.to_str().unwrap(),
+        "eda",
+        "project",
+        "export-gerber-copper-layer",
+        root.to_str().unwrap(),
+        "--layer",
+        "1",
+        "--out",
+        gerber_path.to_str().unwrap(),
     ])
     .expect("export CLI should parse");
     let _ = execute(export_cli).expect("gerber copper export should succeed");
 
     let validate_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "validate-gerber-copper-layer",
-        root.to_str().unwrap(), "--layer", "1", "--gerber", gerber_path.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "validate-gerber-copper-layer",
+        root.to_str().unwrap(),
+        "--layer",
+        "1",
+        "--gerber",
+        gerber_path.to_str().unwrap(),
     ])
     .expect("validate CLI should parse");
     let (output, exit_code) = execute_with_exit_code(validate_cli).expect("validation should run");
@@ -117,20 +142,30 @@ fn project_validate_gerber_copper_layer_reports_match_and_mismatch() {
     assert_eq!(report["action"], "validate_gerber_copper_layer");
     assert_eq!(report["matches_expected"], true);
     assert_eq!(report["layer"], 1);
+    assert_eq!(report["pad_count"], 1);
     assert_eq!(report["track_count"], 1);
     assert_eq!(report["zone_count"], 1);
     assert_eq!(report["via_count"], 1);
 
     std::fs::write(&gerber_path, "corrupted\n").expect("gerber overwrite should succeed");
     let validate_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "validate-gerber-copper-layer",
-        root.to_str().unwrap(), "--layer", "1", "--gerber", gerber_path.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "validate-gerber-copper-layer",
+        root.to_str().unwrap(),
+        "--layer",
+        "1",
+        "--gerber",
+        gerber_path.to_str().unwrap(),
     ])
     .expect("validate CLI should parse");
     let (output, exit_code) = execute_with_exit_code(validate_cli).expect("validation should run");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
     assert_eq!(exit_code, 1);
     assert_eq!(report["matches_expected"], false);
+    assert_eq!(report["pad_count"], 1);
     assert_eq!(report["zone_count"], 1);
     assert_eq!(report["via_count"], 1);
 

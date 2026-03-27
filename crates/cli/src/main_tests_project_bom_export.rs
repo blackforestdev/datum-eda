@@ -70,8 +70,14 @@ fn project_export_bom_writes_deterministic_csv_from_board_components() {
 
     let bom_path = root.join("bom.csv");
     let cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "export-bom",
-        root.to_str().unwrap(), "--out", bom_path.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "export-bom",
+        root.to_str().unwrap(),
+        "--out",
+        bom_path.to_str().unwrap(),
     ])
     .expect("CLI should parse");
     let output = execute(cli).expect("BOM export should succeed");

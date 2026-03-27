@@ -28,7 +28,9 @@ fn get_design_rules_returns_empty_rules_for_imported_fixture() {
     engine
         .import(&fixture_path("simple-demo.kicad_pcb"))
         .expect("fixture import should succeed");
-    let rules = engine.get_design_rules().expect("design rules should query");
+    let rules = engine
+        .get_design_rules()
+        .expect("design rules should query");
     assert!(rules.is_empty());
 }
 
@@ -162,7 +164,11 @@ fn delete_component_updates_board_and_undo_redo_restore_it() {
     assert!(engine.can_undo());
 
     let after_delete = engine.get_components().expect("components should query");
-    assert!(after_delete.iter().all(|component| component.uuid != deleted_uuid));
+    assert!(
+        after_delete
+            .iter()
+            .all(|component| component.uuid != deleted_uuid)
+    );
 
     let undo = engine.undo().expect("undo should succeed");
     assert_eq!(undo.diff.created.len(), 1);

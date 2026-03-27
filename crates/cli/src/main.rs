@@ -10,15 +10,13 @@ use eda_engine::api::{
     AssignPartInput, CheckReport, CheckStatus, ComponentReplacementPlan,
     ComponentReplacementPolicy, ComponentReplacementScope, Engine, MoveComponentInput,
     OperationResult, PackageChangeCompatibilityReport, PartChangeCompatibilityReport,
-    PlannedComponentReplacementInput, PolicyDrivenComponentReplacementInput,
-    ReplaceComponentInput, RotateComponentInput, ScopedComponentReplacementPlan,
-    ScopedComponentReplacementPlanEdit, ScopedComponentReplacementOverride,
-    ScopedComponentReplacementPolicyInput, SetDesignRuleInput, SetNetClassInput, SetPackageInput,
-    SetPackageWithPartInput, SetReferenceInput, SetValueInput,
+    PlannedComponentReplacementInput, PolicyDrivenComponentReplacementInput, ReplaceComponentInput,
+    RotateComponentInput, ScopedComponentReplacementOverride, ScopedComponentReplacementPlan,
+    ScopedComponentReplacementPlanEdit, ScopedComponentReplacementPolicyInput, SetDesignRuleInput,
+    SetNetClassInput, SetPackageInput, SetPackageWithPartInput, SetReferenceInput, SetValueInput,
 };
 use eda_engine::drc::DrcReport;
 use eda_engine::erc::ErcFinding;
-use serde::{Deserialize, Serialize};
 use eda_engine::error::EngineError;
 use eda_engine::import::ImportReport;
 use eda_engine::pool::PartSummary;
@@ -27,6 +25,7 @@ use eda_engine::schematic::{
     ConnectivityDiagnosticInfo, HierarchyInfo, LabelInfo, PortInfo, SchematicNetInfo,
 };
 use eda_engine::{board::Airwire, board::BoardNetInfo, board::ComponentInfo};
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 mod cli_args;
@@ -310,6 +309,7 @@ struct NativeProjectGerberCopperExportView {
     board_path: String,
     gerber_path: String,
     layer: i32,
+    pad_count: usize,
     track_count: usize,
     zone_count: usize,
     via_count: usize,
@@ -338,9 +338,56 @@ struct NativeProjectGerberCopperValidationView {
     matches_expected: bool,
     expected_bytes: usize,
     actual_bytes: usize,
+    pad_count: usize,
     track_count: usize,
     zone_count: usize,
     via_count: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberGeometryEntryView {
+    kind: String,
+    geometry: String,
+    count: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberOutlineComparisonView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    gerber_path: String,
+    expected_outline_count: usize,
+    actual_geometry_count: usize,
+    matched_count: usize,
+    missing_count: usize,
+    extra_count: usize,
+    matched: Vec<NativeProjectGerberGeometryEntryView>,
+    missing: Vec<NativeProjectGerberGeometryEntryView>,
+    extra: Vec<NativeProjectGerberGeometryEntryView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberCopperComparisonView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    gerber_path: String,
+    layer: i32,
+    expected_pad_count: usize,
+    actual_pad_count: usize,
+    expected_track_count: usize,
+    actual_track_count: usize,
+    expected_zone_count: usize,
+    actual_zone_count: usize,
+    expected_via_count: usize,
+    actual_via_count: usize,
+    matched_count: usize,
+    missing_count: usize,
+    extra_count: usize,
+    matched: Vec<NativeProjectGerberGeometryEntryView>,
+    missing: Vec<NativeProjectGerberGeometryEntryView>,
+    extra: Vec<NativeProjectGerberGeometryEntryView>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -998,6 +1045,7 @@ struct NativeProjectBoardPadMutationReportView {
     x_nm: i64,
     y_nm: i64,
     layer: i32,
+    diameter_nm: i64,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -1158,7 +1206,11 @@ fn render_native_project_bom_comparison_text(report: &NativeProjectBomComparison
     if !report.drift.is_empty() {
         lines.push("drift:".to_string());
         for entry in &report.drift {
-            lines.push(format!("- {} [{}]", entry.reference, entry.fields.join(", ")));
+            lines.push(format!(
+                "- {} [{}]",
+                entry.reference,
+                entry.fields.join(", ")
+            ));
         }
     }
     lines.join("\n")
@@ -1208,7 +1260,11 @@ fn render_native_project_pnp_comparison_text(report: &NativeProjectPnpComparison
     if !report.drift.is_empty() {
         lines.push("drift:".to_string());
         for entry in &report.drift {
-            lines.push(format!("- {} fields={}", entry.reference, entry.fields.join(",")));
+            lines.push(format!(
+                "- {} fields={}",
+                entry.reference,
+                entry.fields.join(",")
+            ));
         }
     }
     lines.join("\n")
@@ -1394,6 +1450,7 @@ fn render_native_project_gerber_copper_export_text(
         format!("board_path: {}", report.board_path),
         format!("gerber_path: {}", report.gerber_path),
         format!("layer: {}", report.layer),
+        format!("pad_count: {}", report.pad_count),
         format!("track_count: {}", report.track_count),
         format!("zone_count: {}", report.zone_count),
         format!("via_count: {}", report.via_count),
@@ -1430,11 +1487,76 @@ fn render_native_project_gerber_copper_validation_text(
         format!("matches_expected: {}", report.matches_expected),
         format!("expected_bytes: {}", report.expected_bytes),
         format!("actual_bytes: {}", report.actual_bytes),
+        format!("pad_count: {}", report.pad_count),
         format!("track_count: {}", report.track_count),
         format!("zone_count: {}", report.zone_count),
         format!("via_count: {}", report.via_count),
     ]
     .join("\n")
+}
+
+fn render_native_project_gerber_outline_comparison_text(
+    report: &NativeProjectGerberOutlineComparisonView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("gerber_path: {}", report.gerber_path),
+        format!("expected_outline_count: {}", report.expected_outline_count),
+        format!("actual_geometry_count: {}", report.actual_geometry_count),
+        format!("matched_count: {}", report.matched_count),
+        format!("missing_count: {}", report.missing_count),
+        format!("extra_count: {}", report.extra_count),
+    ];
+    append_gerber_geometry_entries(&mut lines, "matched", &report.matched);
+    append_gerber_geometry_entries(&mut lines, "missing", &report.missing);
+    append_gerber_geometry_entries(&mut lines, "extra", &report.extra);
+    lines.join("\n")
+}
+
+fn render_native_project_gerber_copper_comparison_text(
+    report: &NativeProjectGerberCopperComparisonView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("gerber_path: {}", report.gerber_path),
+        format!("layer: {}", report.layer),
+        format!("expected_pad_count: {}", report.expected_pad_count),
+        format!("actual_pad_count: {}", report.actual_pad_count),
+        format!("expected_track_count: {}", report.expected_track_count),
+        format!("actual_track_count: {}", report.actual_track_count),
+        format!("expected_zone_count: {}", report.expected_zone_count),
+        format!("actual_zone_count: {}", report.actual_zone_count),
+        format!("expected_via_count: {}", report.expected_via_count),
+        format!("actual_via_count: {}", report.actual_via_count),
+        format!("matched_count: {}", report.matched_count),
+        format!("missing_count: {}", report.missing_count),
+        format!("extra_count: {}", report.extra_count),
+    ];
+    append_gerber_geometry_entries(&mut lines, "matched", &report.matched);
+    append_gerber_geometry_entries(&mut lines, "missing", &report.missing);
+    append_gerber_geometry_entries(&mut lines, "extra", &report.extra);
+    lines.join("\n")
+}
+
+fn append_gerber_geometry_entries(
+    lines: &mut Vec<String>,
+    label: &str,
+    entries: &[NativeProjectGerberGeometryEntryView],
+) {
+    if entries.is_empty() {
+        return;
+    }
+    lines.push(format!("{label}:"));
+    for entry in entries {
+        lines.push(format!(
+            "- kind={} count={} geometry={}",
+            entry.kind, entry.count, entry.geometry
+        ));
+    }
 }
 
 fn render_native_project_gerber_plan_text(report: &NativeProjectGerberPlanView) -> String {
@@ -1524,9 +1646,15 @@ fn render_native_forward_annotation_audit_text(
         format!("schematic_symbol_count: {}", report.schematic_symbol_count),
         format!("board_component_count: {}", report.board_component_count),
         format!("matched_count: {}", report.matched_count),
-        format!("unresolved_symbol_count: {}", report.unresolved_symbol_count),
+        format!(
+            "unresolved_symbol_count: {}",
+            report.unresolved_symbol_count
+        ),
         format!("missing_on_board_count: {}", report.missing_on_board.len()),
-        format!("orphaned_on_board_count: {}", report.orphaned_on_board.len()),
+        format!(
+            "orphaned_on_board_count: {}",
+            report.orphaned_on_board.len()
+        ),
         format!("value_mismatch_count: {}", report.value_mismatches.len()),
         format!("part_mismatch_count: {}", report.part_mismatches.len()),
     ];
@@ -1577,8 +1705,14 @@ fn render_native_forward_annotation_proposal_text(
     let mut lines = vec![
         format!("total_actions: {}", report.total_actions),
         format!("add_component_actions: {}", report.add_component_actions),
-        format!("remove_component_actions: {}", report.remove_component_actions),
-        format!("update_component_actions: {}", report.update_component_actions),
+        format!(
+            "remove_component_actions: {}",
+            report.remove_component_actions
+        ),
+        format!(
+            "update_component_actions: {}",
+            report.update_component_actions
+        ),
     ];
     if !report.actions.is_empty() {
         lines.push("actions:".to_string());
@@ -1656,8 +1790,14 @@ fn render_native_forward_annotation_batch_apply_text(
         format!("domain: {}", report.domain),
         format!("proposal_actions: {}", report.proposal_actions),
         format!("applied_actions: {}", report.applied_actions),
-        format!("skipped_deferred_actions: {}", report.skipped_deferred_actions),
-        format!("skipped_rejected_actions: {}", report.skipped_rejected_actions),
+        format!(
+            "skipped_deferred_actions: {}",
+            report.skipped_deferred_actions
+        ),
+        format!(
+            "skipped_rejected_actions: {}",
+            report.skipped_rejected_actions
+        ),
         format!(
             "skipped_requires_input_actions: {}",
             report.skipped_requires_input_actions
@@ -1710,8 +1850,14 @@ fn render_native_forward_annotation_artifact_inspection_text(
         format!("actions: {}", report.actions),
         format!("reviews: {}", report.reviews),
         format!("add_component_actions: {}", report.add_component_actions),
-        format!("remove_component_actions: {}", report.remove_component_actions),
-        format!("update_component_actions: {}", report.update_component_actions),
+        format!(
+            "remove_component_actions: {}",
+            report.remove_component_actions
+        ),
+        format!(
+            "update_component_actions: {}",
+            report.update_component_actions
+        ),
         format!("deferred_reviews: {}", report.deferred_reviews),
         format!("rejected_reviews: {}", report.rejected_reviews),
     ]
@@ -1774,7 +1920,10 @@ fn render_native_forward_annotation_artifact_apply_plan_text(
         format!("kind: {}", report.kind),
         format!("artifact_version: {}", report.artifact_version),
         format!("artifact_actions: {}", report.artifact_actions),
-        format!("self_sufficient_actions: {}", report.self_sufficient_actions),
+        format!(
+            "self_sufficient_actions: {}",
+            report.self_sufficient_actions
+        ),
         format!("requires_input_actions: {}", report.requires_input_actions),
         format!("not_applicable_actions: {}", report.not_applicable_actions),
     ];
@@ -1805,8 +1954,14 @@ fn render_native_forward_annotation_artifact_apply_text(
         format!("project_root: {}", report.project_root),
         format!("artifact_actions: {}", report.artifact_actions),
         format!("applied_actions: {}", report.applied_actions),
-        format!("skipped_deferred_actions: {}", report.skipped_deferred_actions),
-        format!("skipped_rejected_actions: {}", report.skipped_rejected_actions),
+        format!(
+            "skipped_deferred_actions: {}",
+            report.skipped_deferred_actions
+        ),
+        format!(
+            "skipped_rejected_actions: {}",
+            report.skipped_rejected_actions
+        ),
     ];
     for applied in &report.applied {
         lines.push(String::new());
@@ -1855,7 +2010,10 @@ fn render_native_forward_annotation_artifact_review_replace_text(
         format!("project_root: {}", report.project_root),
         format!("total_artifact_reviews: {}", report.total_artifact_reviews),
         format!("replaced_reviews: {}", report.replaced_reviews),
-        format!("removed_existing_reviews: {}", report.removed_existing_reviews),
+        format!(
+            "removed_existing_reviews: {}",
+            report.removed_existing_reviews
+        ),
         format!(
             "skipped_missing_live_actions: {}",
             report.skipped_missing_live_actions
@@ -1864,7 +2022,9 @@ fn render_native_forward_annotation_artifact_review_replace_text(
     .join("\n")
 }
 
-fn render_native_project_label_mutation_text(report: &NativeProjectLabelMutationReportView) -> String {
+fn render_native_project_label_mutation_text(
+    report: &NativeProjectLabelMutationReportView,
+) -> String {
     [
         format!("action: {}", report.action),
         format!("project_root: {}", report.project_root),
@@ -1879,7 +2039,9 @@ fn render_native_project_label_mutation_text(report: &NativeProjectLabelMutation
     .join("\n")
 }
 
-fn render_native_project_wire_mutation_text(report: &NativeProjectWireMutationReportView) -> String {
+fn render_native_project_wire_mutation_text(
+    report: &NativeProjectWireMutationReportView,
+) -> String {
     [
         format!("action: {}", report.action),
         format!("project_root: {}", report.project_root),
@@ -1909,7 +2071,9 @@ fn render_native_project_junction_mutation_text(
     .join("\n")
 }
 
-fn render_native_project_port_mutation_text(report: &NativeProjectPortMutationReportView) -> String {
+fn render_native_project_port_mutation_text(
+    report: &NativeProjectPortMutationReportView,
+) -> String {
     [
         format!("action: {}", report.action),
         format!("project_root: {}", report.project_root),
@@ -1978,7 +2142,9 @@ fn render_native_project_noconnect_mutation_text(
     .join("\n")
 }
 
-fn render_native_project_symbol_mutation_text(report: &NativeProjectSymbolMutationReportView) -> String {
+fn render_native_project_symbol_mutation_text(
+    report: &NativeProjectSymbolMutationReportView,
+) -> String {
     let mut lines = vec![
         format!("action: {}", report.action),
         format!("project_root: {}", report.project_root),
@@ -2055,7 +2221,9 @@ fn render_native_project_symbol_field_mutation_text(
     lines.join("\n")
 }
 
-fn render_native_project_text_mutation_text(report: &NativeProjectTextMutationReportView) -> String {
+fn render_native_project_text_mutation_text(
+    report: &NativeProjectTextMutationReportView,
+) -> String {
     [
         format!("action: {}", report.action),
         format!("project_root: {}", report.project_root),
@@ -2250,6 +2418,7 @@ fn render_native_project_board_pad_mutation_text(
         format!("x_nm: {}", report.x_nm),
         format!("y_nm: {}", report.y_nm),
         format!("layer: {}", report.layer),
+        format!("diameter_nm: {}", report.diameter_nm),
     ];
     if let Some(net_uuid) = &report.net_uuid {
         lines.push(format!("net_uuid: {}", net_uuid));
@@ -2320,7 +2489,8 @@ fn render_modify_report_text(report: &ModifyReportView) -> String {
         }
     }
     if lines.is_empty() {
-        serde_json::to_string_pretty(report).expect("CLI text formatting serialization must succeed")
+        serde_json::to_string_pretty(report)
+            .expect("CLI text formatting serialization must succeed")
     } else {
         lines.join("\n")
     }

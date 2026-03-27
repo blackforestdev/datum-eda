@@ -149,6 +149,7 @@ fn board_diagnostics_report_partially_routed_net() {
                     net: Some(net_uuid),
                     position: Point::new(0, 0),
                     layer: 0,
+                    diameter: 0,
                 },
             ),
             (
@@ -160,6 +161,7 @@ fn board_diagnostics_report_partially_routed_net() {
                     net: Some(net_uuid),
                     position: Point::new(10_000_000, 0),
                     layer: 0,
+                    diameter: 0,
                 },
             ),
         ]),
@@ -311,6 +313,7 @@ fn board_unrouted_computes_airwires_from_pad_endpoints() {
                     net: Some(net_uuid),
                     position: Point::new(0, 0),
                     layer: 0,
+                    diameter: 0,
                 },
             ),
             (
@@ -322,6 +325,7 @@ fn board_unrouted_computes_airwires_from_pad_endpoints() {
                     net: Some(net_uuid),
                     position: Point::new(10_000_000, 0),
                     layer: 0,
+                    diameter: 0,
                 },
             ),
         ]),

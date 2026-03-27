@@ -21,7 +21,9 @@ fn write_native_sheet(
     labels: BTreeMap<String, serde_json::Value>,
     ports: BTreeMap<String, serde_json::Value>,
 ) {
-    let sheet_path = root.join("schematic/sheets").join(format!("{sheet_uuid}.json"));
+    let sheet_path = root
+        .join("schematic/sheets")
+        .join(format!("{sheet_uuid}.json"));
     std::fs::write(
         &sheet_path,
         format!(
@@ -59,7 +61,8 @@ fn write_native_sheet(
         &schematic_json,
         format!(
             "{}\n",
-            to_json_deterministic(&schematic_value).expect("canonical serialization should succeed")
+            to_json_deterministic(&schematic_value)
+                .expect("canonical serialization should succeed")
         ),
     )
     .expect("schematic.json should write");
@@ -290,7 +293,9 @@ fn project_query_diagnostics_reports_native_connectivity_findings() {
     let output = execute(cli).expect("project query diagnostics should succeed");
     let diagnostics: serde_json::Value =
         serde_json::from_str(&output).expect("query JSON should parse");
-    let diagnostics = diagnostics.as_array().expect("diagnostics should be an array");
+    let diagnostics = diagnostics
+        .as_array()
+        .expect("diagnostics should be an array");
     assert_eq!(diagnostics.len(), 3);
     assert!(diagnostics.iter().any(|entry| {
         entry["kind"] == "dangling_component_pin"

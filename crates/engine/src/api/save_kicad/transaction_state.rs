@@ -98,7 +98,8 @@ pub(super) fn merge_component_value_overrides(
 }
 
 pub(super) fn active_package_rewritten_components(board: &Board) -> BTreeSet<uuid::Uuid> {
-    board.packages
+    board
+        .packages
         .values()
         .filter(|package| package.package != uuid::Uuid::nil())
         .map(|package| package.uuid)

@@ -46,7 +46,8 @@ fn seed_native_sheet(root: &Path) -> Uuid {
         &schematic_json,
         format!(
             "{}\n",
-            to_json_deterministic(&schematic_value).expect("canonical serialization should succeed")
+            to_json_deterministic(&schematic_value)
+                .expect("canonical serialization should succeed")
         ),
     )
     .expect("schematic.json should write");
@@ -104,14 +105,9 @@ fn project_place_label_writes_native_sheet_and_query_labels_reports_it() {
     assert_eq!(labels[0]["position"]["x"], 123);
     assert_eq!(labels[0]["position"]["y"], 456);
 
-    let summary_cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("project query summary should succeed");
     assert!(summary_output.contains("schematic_labels: 1"));
 
@@ -209,14 +205,9 @@ fn project_rename_and_delete_label_update_native_query_surface() {
         serde_json::from_str(&deleted_labels_output).expect("labels JSON should parse");
     assert_eq!(deleted_labels.as_array().unwrap().len(), 0);
 
-    let summary_cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("project query summary should succeed");
     assert!(summary_output.contains("schematic_labels: 0"));
 

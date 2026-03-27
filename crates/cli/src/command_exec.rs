@@ -1,10 +1,10 @@
 use super::*;
 use crate::command_modify::{
     parse_apply_replacement_plan_arg, parse_apply_replacement_policy_arg,
-    parse_apply_scoped_replacement_policy_arg, parse_assign_part_arg,
-    parse_move_component_arg, parse_replace_component_arg, parse_rotate_component_arg,
-    parse_set_net_class_arg, parse_set_package_arg, parse_set_package_with_part_arg,
-    parse_set_reference_arg, parse_set_value_arg,
+    parse_apply_scoped_replacement_policy_arg, parse_assign_part_arg, parse_move_component_arg,
+    parse_replace_component_arg, parse_rotate_component_arg, parse_set_net_class_arg,
+    parse_set_package_arg, parse_set_package_with_part_arg, parse_set_reference_arg,
+    parse_set_value_arg,
 };
 use eda_engine::schematic::{LabelKind, PortDirection};
 
@@ -107,7 +107,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 libraries,
             } => {
                 let policy = match policy {
-                    ReplacementPolicyArg::Package => ComponentReplacementPolicy::BestCompatiblePackage,
+                    ReplacementPolicyArg::Package => {
+                        ComponentReplacementPolicy::BestCompatiblePackage
+                    }
                     ReplacementPolicyArg::Part => ComponentReplacementPolicy::BestCompatiblePart,
                 };
                 let overrides = override_component
@@ -211,7 +213,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 NativeProjectQueryCommands::ForwardAnnotationProposal => {
                     let report = query_native_project_forward_annotation_proposal(&path)?;
                     let output = match cli.format {
-                        OutputFormat::Text => render_native_forward_annotation_proposal_text(&report),
+                        OutputFormat::Text => {
+                            render_native_forward_annotation_proposal_text(&report)
+                        }
                         OutputFormat::Json => render_output(&cli.format, &report),
                     };
                     Ok((output, 0))
@@ -412,7 +416,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             ProjectCommands::InspectExcellonDrill { path } => {
                 let report = inspect_excellon_drill(&path)?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_excellon_drill_inspection_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_excellon_drill_inspection_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -420,7 +426,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             ProjectCommands::CompareExcellonDrill { path, drill } => {
                 let report = compare_native_project_excellon_drill(&path, &drill)?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_excellon_drill_comparison_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_excellon_drill_comparison_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -428,7 +436,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             ProjectCommands::ReportDrillHoleClasses { path } => {
                 let report = report_native_project_drill_hole_classes(&path)?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_drill_hole_class_report_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_drill_hole_class_report_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -460,7 +470,11 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 let exit_code = if report.matches_expected { 0 } else { 1 };
                 Ok((output, exit_code))
             }
-            ProjectCommands::ValidateGerberCopperLayer { path, layer, gerber } => {
+            ProjectCommands::ValidateGerberCopperLayer {
+                path,
+                layer,
+                gerber,
+            } => {
                 let report = validate_native_project_gerber_copper_layer(&path, layer, &gerber)?;
                 let output = match cli.format {
                     OutputFormat::Text => {
@@ -470,6 +484,30 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 };
                 let exit_code = if report.matches_expected { 0 } else { 1 };
                 Ok((output, exit_code))
+            }
+            ProjectCommands::CompareGerberOutline { path, gerber } => {
+                let report = compare_native_project_gerber_outline(&path, &gerber)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_project_gerber_outline_comparison_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::CompareGerberCopperLayer {
+                path,
+                layer,
+                gerber,
+            } => {
+                let report = compare_native_project_gerber_copper_layer(&path, layer, &gerber)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_project_gerber_copper_comparison_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
             }
             ProjectCommands::ValidateExcellonDrill { path, drill } => {
                 let report = validate_native_project_excellon_drill(&path, &drill)?;
@@ -501,7 +539,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     prefix.as_deref(),
                 )?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_gerber_plan_comparison_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_gerber_plan_comparison_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -727,8 +767,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 y_nm,
             } => {
                 let position = parse_native_field_position(x_nm, y_nm)?;
-                let report =
-                    set_native_project_symbol_pin_override(&path, symbol, pin_uuid, visible, position)?;
+                let report = set_native_project_symbol_pin_override(
+                    &path, symbol, pin_uuid, visible, position,
+                )?;
                 let output = match cli.format {
                     OutputFormat::Text => render_native_project_pin_override_mutation_text(&report),
                     OutputFormat::Json => render_output(&cli.format, &report),
@@ -1150,7 +1191,12 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 };
                 Ok((output, 0))
             }
-            ProjectCommands::PlaceJunction { path, sheet, x_nm, y_nm } => {
+            ProjectCommands::PlaceJunction {
+                path,
+                sheet,
+                x_nm,
+                y_nm,
+            } => {
                 let report = place_native_project_junction(
                     &path,
                     sheet,
@@ -1367,7 +1413,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 let polygon = parse_native_polygon_vertices(&vertices)?;
                 let report = place_native_project_board_keepout(&path, kind, layers, polygon)?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_keepout_mutation_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_board_keepout_mutation_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -1387,7 +1435,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 let report =
                     edit_native_project_board_keepout(&path, keepout_uuid, kind, layers, polygon)?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_keepout_mutation_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_board_keepout_mutation_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -1395,7 +1445,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             ProjectCommands::DeleteBoardKeepout { path, keepout_uuid } => {
                 let report = delete_native_project_board_keepout(&path, keepout_uuid)?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_keepout_mutation_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_board_keepout_mutation_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -1404,7 +1456,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 let polygon = parse_native_polygon_vertices(&vertices)?;
                 let report = set_native_project_board_outline(&path, polygon)?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_outline_mutation_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_board_outline_mutation_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -1413,7 +1467,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 let stackup_layers = parse_native_stackup_layers(&layers)?;
                 let report = set_native_project_board_stackup(&path, stackup_layers)?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_stackup_mutation_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_board_stackup_mutation_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -1450,7 +1506,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     layer,
                 )?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_component_mutation_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_board_component_mutation_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -1476,7 +1534,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     diffpair_gap_nm,
                 )?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_net_class_mutation_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_board_net_class_mutation_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -1504,7 +1564,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     diffpair_gap_nm,
                 )?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_net_class_mutation_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_board_net_class_mutation_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -1534,7 +1596,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
                 )?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_component_mutation_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_board_component_mutation_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -1544,9 +1608,12 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 component_uuid,
                 part_uuid,
             } => {
-                let report = set_native_project_board_component_part(&path, component_uuid, part_uuid)?;
+                let report =
+                    set_native_project_board_component_part(&path, component_uuid, part_uuid)?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_component_mutation_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_board_component_mutation_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -1556,10 +1623,15 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 component_uuid,
                 package_uuid,
             } => {
-                let report =
-                    set_native_project_board_component_package(&path, component_uuid, package_uuid)?;
+                let report = set_native_project_board_component_package(
+                    &path,
+                    component_uuid,
+                    package_uuid,
+                )?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_component_mutation_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_board_component_mutation_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -1572,7 +1644,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 let report =
                     rotate_native_project_board_component(&path, component_uuid, rotation_deg)?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_component_mutation_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_board_component_mutation_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -1581,9 +1655,12 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 path,
                 component_uuid,
             } => {
-                let report = set_native_project_board_component_locked(&path, component_uuid, true)?;
+                let report =
+                    set_native_project_board_component_locked(&path, component_uuid, true)?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_component_mutation_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_board_component_mutation_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -1595,7 +1672,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 let report =
                     set_native_project_board_component_locked(&path, component_uuid, false)?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_component_mutation_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_board_component_mutation_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -1606,7 +1685,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             } => {
                 let report = delete_native_project_board_component(&path, component_uuid)?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_component_mutation_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_board_component_mutation_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -1638,7 +1719,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             ProjectCommands::ApplyForwardAnnotationReviewed { path } => {
                 let report = apply_native_project_forward_annotation_reviewed(&path)?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_forward_annotation_batch_apply_text(&report),
+                    OutputFormat::Text => {
+                        render_native_forward_annotation_batch_apply_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -1651,7 +1734,11 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 };
                 Ok((output, 0))
             }
-            ProjectCommands::ExportForwardAnnotationProposalSelection { path, action_ids, out } => {
+            ProjectCommands::ExportForwardAnnotationProposalSelection {
+                path,
+                action_ids,
+                out,
+            } => {
                 let report = export_native_project_forward_annotation_proposal_selection(
                     &path,
                     &action_ids,
@@ -1663,7 +1750,11 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 };
                 Ok((output, 0))
             }
-            ProjectCommands::SelectForwardAnnotationProposalArtifact { artifact, action_ids, out } => {
+            ProjectCommands::SelectForwardAnnotationProposalArtifact {
+                artifact,
+                action_ids,
+                out,
+            } => {
                 let report =
                     select_forward_annotation_proposal_artifact(&artifact, &action_ids, &out)?;
                 let output = match cli.format {
@@ -1692,10 +1783,16 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 };
                 Ok((output, 0))
             }
-            ProjectCommands::FilterForwardAnnotationProposalArtifact { path, artifact, out } => {
+            ProjectCommands::FilterForwardAnnotationProposalArtifact {
+                path,
+                artifact,
+                out,
+            } => {
                 let report = filter_forward_annotation_proposal_artifact(&path, &artifact, &out)?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_forward_annotation_artifact_filter_text(&report),
+                    OutputFormat::Text => {
+                        render_native_forward_annotation_artifact_filter_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -1703,7 +1800,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             ProjectCommands::PlanForwardAnnotationProposalArtifactApply { path, artifact } => {
                 let report = plan_forward_annotation_proposal_artifact_apply(&path, &artifact)?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_forward_annotation_artifact_apply_plan_text(&report),
+                    OutputFormat::Text => {
+                        render_native_forward_annotation_artifact_apply_plan_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -1711,7 +1810,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             ProjectCommands::ApplyForwardAnnotationProposalArtifact { path, artifact } => {
                 let report = apply_forward_annotation_proposal_artifact(&path, &artifact)?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_forward_annotation_artifact_apply_text(&report),
+                    OutputFormat::Text => {
+                        render_native_forward_annotation_artifact_apply_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -1900,13 +2001,15 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 x_nm,
                 y_nm,
                 layer,
+                diameter_nm,
             } => {
                 let position = match (x_nm, y_nm) {
                     (None, None) => None,
                     (Some(x), Some(y)) => Some(eda_engine::ir::geometry::Point { x, y }),
                     _ => bail!("board pad position requires both --x-nm and --y-nm"),
                 };
-                let report = edit_native_project_board_pad(&path, pad_uuid, position, layer)?;
+                let report =
+                    edit_native_project_board_pad(&path, pad_uuid, position, layer, diameter_nm)?;
                 let output = match cli.format {
                     OutputFormat::Text => render_native_project_board_pad_mutation_text(&report),
                     OutputFormat::Json => render_output(&cli.format, &report),
@@ -1920,6 +2023,7 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 x_nm,
                 y_nm,
                 layer,
+                diameter_nm,
                 net_uuid,
             } => {
                 let report = place_native_project_board_pad(
@@ -1928,6 +2032,7 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     name,
                     eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
                     layer,
+                    diameter_nm,
                     net_uuid,
                 )?;
                 let output = match cli.format {
@@ -1944,10 +2049,15 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 };
                 Ok((output, 0))
             }
-            ProjectCommands::DeleteBoardNetClass { path, net_class_uuid } => {
+            ProjectCommands::DeleteBoardNetClass {
+                path,
+                net_class_uuid,
+            } => {
                 let report = delete_native_project_board_net_class(&path, net_class_uuid)?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_net_class_mutation_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_board_net_class_mutation_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -1981,7 +2091,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     text,
                 )?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_dimension_mutation_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_board_dimension_mutation_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -2007,15 +2119,22 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     clear_text,
                 )?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_dimension_mutation_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_board_dimension_mutation_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
             }
-            ProjectCommands::DeleteBoardDimension { path, dimension_uuid } => {
+            ProjectCommands::DeleteBoardDimension {
+                path,
+                dimension_uuid,
+            } => {
                 let report = delete_native_project_board_dimension(&path, dimension_uuid)?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_dimension_mutation_text(&report),
+                    OutputFormat::Text => {
+                        render_native_project_board_dimension_mutation_text(&report)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -2035,7 +2154,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 libraries,
             } => {
                 let policy = match policy {
-                    ReplacementPolicyArg::Package => ComponentReplacementPolicy::BestCompatiblePackage,
+                    ReplacementPolicyArg::Package => {
+                        ComponentReplacementPolicy::BestCompatiblePackage
+                    }
                     ReplacementPolicyArg::Part => ComponentReplacementPolicy::BestCompatiblePart,
                 };
                 let overrides = override_component
@@ -2096,7 +2217,9 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             PlanCommands::ValidateScopedReplacementManifest { paths } => {
                 let summary = validate_scoped_replacement_manifest_inputs_batch(&paths)?;
                 let output = match cli.format {
-                    OutputFormat::Text => render_scoped_replacement_manifest_validation_text(&summary),
+                    OutputFormat::Text => {
+                        render_scoped_replacement_manifest_validation_text(&summary)
+                    }
                     OutputFormat::Json => render_output(&cli.format, &summary),
                 };
                 let exit_code = if summary.manifests_failing == 0 { 0 } else { 1 };
@@ -2199,11 +2322,19 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 .iter()
                 .map(|path| {
                     let contents = std::fs::read_to_string(path).with_context(|| {
-                        format!("failed to read scoped replacement plan file {}", path.display())
+                        format!(
+                            "failed to read scoped replacement plan file {}",
+                            path.display()
+                        )
                     })?;
-                    serde_json::from_str::<ScopedComponentReplacementPlan>(&contents).with_context(|| {
-                        format!("failed to parse scoped replacement plan file {}", path.display())
-                    })
+                    serde_json::from_str::<ScopedComponentReplacementPlan>(&contents).with_context(
+                        || {
+                            format!(
+                                "failed to parse scoped replacement plan file {}",
+                                path.display()
+                            )
+                        },
+                    )
                 })
                 .collect::<Result<Vec<_>>>()?;
             let scoped_replacement_manifests = apply_scoped_replacement_manifest
@@ -2223,8 +2354,11 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 }
             }
             let mut apply_scoped_replacement_plan = apply_scoped_replacement_plan;
-            apply_scoped_replacement_plan
-                .extend(scoped_replacement_manifests.iter().map(|loaded| loaded.manifest.plan.clone()));
+            apply_scoped_replacement_plan.extend(
+                scoped_replacement_manifests
+                    .iter()
+                    .map(|loaded| loaded.manifest.plan.clone()),
+            );
             let applied_scoped_replacement_manifests = scoped_replacement_manifests
                 .iter()
                 .map(|loaded| AppliedScopedReplacementManifestView {

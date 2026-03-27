@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use uuid::Uuid;
 
 use crate::erc::{
-    run_prechecks, run_prechecks_with_config, run_prechecks_with_config_and_waivers, ErcConfig,
-    ErcSeverity,
+    ErcConfig, ErcSeverity, run_prechecks, run_prechecks_with_config,
+    run_prechecks_with_config_and_waivers,
 };
 use crate::ir::geometry::Point;
 use crate::schematic::{
@@ -180,8 +180,7 @@ fn extra_waiver_matches_rule_objects_independent_of_order() {
                             unit_selection: None,
                             display_mode: SymbolDisplayMode::LibraryDefault,
                             pin_overrides: Vec::new(),
-                            hidden_power_behavior:
-                                HiddenPowerBehavior::PreservedAsImportedMetadata,
+                            hidden_power_behavior: HiddenPowerBehavior::PreservedAsImportedMetadata,
                         },
                     ),
                     (
@@ -208,8 +207,7 @@ fn extra_waiver_matches_rule_objects_independent_of_order() {
                             unit_selection: None,
                             display_mode: SymbolDisplayMode::LibraryDefault,
                             pin_overrides: Vec::new(),
-                            hidden_power_behavior:
-                                HiddenPowerBehavior::PreservedAsImportedMetadata,
+                            hidden_power_behavior: HiddenPowerBehavior::PreservedAsImportedMetadata,
                         },
                     ),
                 ]),

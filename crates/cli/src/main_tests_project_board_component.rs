@@ -56,8 +56,8 @@ fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_throug
         serde_json::from_str(&placed_output).expect("place output should parse");
     let component_uuid = placed["component_uuid"].as_str().unwrap().to_string();
 
-    let components_output = execute(board_components_query_cli(&root))
-        .expect("board components query should succeed");
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
     let components: Vec<PlacedPackage> =
         serde_json::from_str(&components_output).expect("query output should parse");
     assert_eq!(components.len(), 1);
@@ -89,8 +89,8 @@ fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_throug
     .expect("CLI should parse");
     let _ = execute(move_cli).expect("move board component should succeed");
 
-    let components_output = execute(board_components_query_cli(&root))
-        .expect("board components query should succeed");
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
     let components: Vec<PlacedPackage> =
         serde_json::from_str(&components_output).expect("query output should parse");
     assert_eq!(components.len(), 1);
@@ -132,8 +132,8 @@ fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_throug
     .expect("CLI should parse");
     let _ = execute(set_package_cli).expect("set board component package should succeed");
 
-    let components_output = execute(board_components_query_cli(&root))
-        .expect("board components query should succeed");
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
     let components: Vec<PlacedPackage> =
         serde_json::from_str(&components_output).expect("query output should parse");
     assert_eq!(components.len(), 1);
@@ -157,8 +157,8 @@ fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_throug
     .expect("CLI should parse");
     let _ = execute(rotate_cli).expect("rotate board component should succeed");
 
-    let components_output = execute(board_components_query_cli(&root))
-        .expect("board components query should succeed");
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
     let components: Vec<PlacedPackage> =
         serde_json::from_str(&components_output).expect("query output should parse");
     assert_eq!(components.len(), 1);
@@ -178,8 +178,8 @@ fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_throug
     .expect("CLI should parse");
     let _ = execute(lock_cli).expect("lock board component should succeed");
 
-    let components_output = execute(board_components_query_cli(&root))
-        .expect("board components query should succeed");
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
     let components: Vec<PlacedPackage> =
         serde_json::from_str(&components_output).expect("query output should parse");
     assert_eq!(components.len(), 1);
@@ -199,8 +199,8 @@ fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_throug
     .expect("CLI should parse");
     let _ = execute(unlock_cli).expect("unlock board component should succeed");
 
-    let components_output = execute(board_components_query_cli(&root))
-        .expect("board components query should succeed");
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
     let components: Vec<PlacedPackage> =
         serde_json::from_str(&components_output).expect("query output should parse");
     assert_eq!(components.len(), 1);
@@ -222,22 +222,20 @@ fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_throug
     let deleted: serde_json::Value =
         serde_json::from_str(&deleted_output).expect("delete output should parse");
     assert_eq!(deleted["action"].as_str(), Some("delete_board_component"));
-    assert_eq!(deleted["component_uuid"].as_str(), Some(component_uuid.as_str()));
+    assert_eq!(
+        deleted["component_uuid"].as_str(),
+        Some(component_uuid.as_str())
+    );
 
-    let components_output = execute(board_components_query_cli(&root))
-        .expect("board components query should succeed");
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
     let components: Vec<PlacedPackage> =
         serde_json::from_str(&components_output).expect("query output should parse");
     assert!(components.is_empty());
 
-    let summary_cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("summary query should succeed");
     assert!(summary_output.contains("board_components: 0"));
 

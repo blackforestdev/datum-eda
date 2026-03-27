@@ -84,7 +84,9 @@ fn get_unrouted_dispatch_returns_board_airwires() {
     let response = dispatch_request(&mut engine, request);
     assert!(response.error.is_none(), "{response:?}");
     let result = response.result.expect("result should exist");
-    let airwires = result.as_array().expect("airwire result should be an array");
+    let airwires = result
+        .as_array()
+        .expect("airwire result should be an array");
     assert_eq!(airwires.len(), 1);
     assert_eq!(airwires[0]["net_name"], "SIG");
     assert_eq!(airwires[0]["from"]["component"], "R1");

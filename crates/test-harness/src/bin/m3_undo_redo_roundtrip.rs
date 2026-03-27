@@ -368,7 +368,9 @@ fn build_report(cli: &Cli) -> Result<Report> {
         },
         Check {
             name: "redo_reapplies_deleted_via_state".to_string(),
-            status: if after_via_redo == after_delete_via && via_engine.can_undo() && !via_engine.can_redo()
+            status: if after_via_redo == after_delete_via
+                && via_engine.can_undo()
+                && !via_engine.can_redo()
             {
                 Status::Passed
             } else {

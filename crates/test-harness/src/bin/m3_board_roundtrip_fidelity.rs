@@ -89,7 +89,9 @@ fn parse_args() -> Result<Cli> {
     let mut simple_board_fixture_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../engine/testdata/import/kicad/simple-demo.kicad_pcb")
         .canonicalize()
-        .map_err(|err| anyhow::anyhow!("failed to resolve default simple board fixture path: {err}"))?;
+        .map_err(|err| {
+            anyhow::anyhow!("failed to resolve default simple board fixture path: {err}")
+        })?;
     let mut component_uuid =
         Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").expect("uuid should parse");
     let mut track_uuid =
@@ -195,20 +197,38 @@ fn print_usage() {
 
 fn build_report(cli: &Cli) -> Result<Report> {
     let checks = vec![
-        check("unmodified_board_writeback_identity", unmodified_board_identity(cli)),
-        check("delete_track_board_roundtrip_fidelity", delete_track_fidelity(cli)),
-        check("delete_via_board_roundtrip_fidelity", delete_via_fidelity(cli)),
+        check(
+            "unmodified_board_writeback_identity",
+            unmodified_board_identity(cli),
+        ),
+        check(
+            "delete_track_board_roundtrip_fidelity",
+            delete_track_fidelity(cli),
+        ),
+        check(
+            "delete_via_board_roundtrip_fidelity",
+            delete_via_fidelity(cli),
+        ),
         check(
             "delete_component_board_roundtrip_fidelity",
             delete_component_fidelity(cli),
         ),
-        check("move_component_board_roundtrip_fidelity", move_component_fidelity(cli)),
+        check(
+            "move_component_board_roundtrip_fidelity",
+            move_component_fidelity(cli),
+        ),
         check(
             "rotate_component_board_roundtrip_fidelity",
             rotate_component_fidelity(cli),
         ),
-        check("set_value_board_roundtrip_fidelity", set_value_fidelity(cli)),
-        check("set_reference_board_roundtrip_fidelity", set_reference_fidelity(cli)),
+        check(
+            "set_value_board_roundtrip_fidelity",
+            set_value_fidelity(cli),
+        ),
+        check(
+            "set_reference_board_roundtrip_fidelity",
+            set_reference_fidelity(cli),
+        ),
     ];
 
     let overall_status = if checks.iter().any(|check| check.status == Status::Failed) {
@@ -261,18 +281,17 @@ fn unmodified_board_identity(cli: &Cli) -> Result<String> {
     }
 
     cleanup_paths(&[first_board, second_board]);
-    Ok("unmodified_board_bytes_identical=true, reimported_unmodified_board_stable=true".to_string())
+    Ok(
+        "unmodified_board_bytes_identical=true, reimported_unmodified_board_stable=true"
+            .to_string(),
+    )
 }
 
 fn delete_track_fidelity(cli: &Cli) -> Result<String> {
-    run_netinfo_roundtrip(
-        "m3-board-delete-track",
-        &cli.board_fixture_path,
-        |engine| {
-            let deleted = engine.delete_track(&cli.track_uuid)?;
-            Ok((engine.get_net_info()?, deleted.description))
-        },
-    )
+    run_netinfo_roundtrip("m3-board-delete-track", &cli.board_fixture_path, |engine| {
+        let deleted = engine.delete_track(&cli.track_uuid)?;
+        Ok((engine.get_net_info()?, deleted.description))
+    })
 }
 
 fn delete_via_fidelity(cli: &Cli) -> Result<String> {
@@ -295,7 +314,10 @@ fn delete_component_fidelity(cli: &Cli) -> Result<String> {
             Ok((engine.get_components()?, deleted.description))
         },
         |components| {
-            if components.iter().any(|component| component.uuid == cli.component_uuid) {
+            if components
+                .iter()
+                .any(|component| component.uuid == cli.component_uuid)
+            {
                 bail!("reimported delete_component save still contains deleted component");
             }
             Ok(())
@@ -403,11 +425,7 @@ fn set_reference_fidelity(cli: &Cli) -> Result<String> {
     )
 }
 
-fn run_netinfo_roundtrip<M>(
-    prefix: &str,
-    fixture: &PathBuf,
-    mutate: M,
-) -> Result<String>
+fn run_netinfo_roundtrip<M>(prefix: &str, fixture: &PathBuf, mutate: M) -> Result<String>
 where
     M: Fn(&mut Engine) -> Result<(Vec<eda_engine::board::BoardNetInfo>, String)>,
 {

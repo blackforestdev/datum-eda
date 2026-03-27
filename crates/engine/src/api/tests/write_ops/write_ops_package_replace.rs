@@ -38,7 +38,13 @@ fn set_package_updates_board_and_undo_redo_restore_it() {
         .design
         .as_ref()
         .and_then(|design| design.board.as_ref())
-        .map(|board| board.pads.values().filter(|pad| pad.package == component_uuid).count())
+        .map(|board| {
+            board
+                .pads
+                .values()
+                .filter(|pad| pad.package == component_uuid)
+                .count()
+        })
         .expect("board should exist");
     assert_eq!(pad_count_after_set, 3);
     let net_info_after_set = engine.get_net_info().expect("net info should query");
@@ -98,8 +104,7 @@ fn save_persists_set_package_for_current_m3_slice() {
     let updated = components
         .iter()
         .find(|component| {
-            component.uuid
-                == uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap()
+            component.uuid == uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap()
         })
         .unwrap();
     assert_eq!(updated.package_uuid, package_uuid);
@@ -108,7 +113,8 @@ fn save_persists_set_package_for_current_m3_slice() {
         .as_ref()
         .and_then(|design| design.board.as_ref())
         .and_then(|board| {
-            board.packages
+            board
+                .packages
                 .get(&uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap())
         })
         .map(|package| package.package)
@@ -116,7 +122,9 @@ fn save_persists_set_package_for_current_m3_slice() {
     assert_eq!(restored_package, package_uuid);
 
     let _ = fs::remove_file(&target);
-    let _ = fs::remove_file(package_assignments_sidecar::sidecar_path_for_source(&target));
+    let _ = fs::remove_file(package_assignments_sidecar::sidecar_path_for_source(
+        &target,
+    ));
 }
 
 #[test]
@@ -308,7 +316,10 @@ fn replace_component_preserves_logical_nets_for_explicit_candidate() {
             part_uuid: altamp.uuid,
         })
         .expect("replace_component should succeed");
-    assert_eq!(result.description, format!("replace_component {}", component_uuid));
+    assert_eq!(
+        result.description,
+        format!("replace_component {}", component_uuid)
+    );
     let after_sig = engine
         .get_net_info()
         .expect("net info should query")
@@ -382,7 +393,9 @@ fn replace_components_batches_multiple_replacements_into_one_undo_step() {
 
     let undo = engine.undo().expect("undo should succeed");
     assert_eq!(undo.description, "undo replace_components 2");
-    let reverted = engine.get_components().expect("components should query after undo");
+    let reverted = engine
+        .get_components()
+        .expect("components should query after undo");
     assert_eq!(
         reverted
             .iter()
@@ -393,7 +406,9 @@ fn replace_components_batches_multiple_replacements_into_one_undo_step() {
 
     let redo = engine.redo().expect("redo should succeed");
     assert_eq!(redo.description, "redo replace_components 2");
-    let redone = engine.get_components().expect("components should query after redo");
+    let redone = engine
+        .get_components()
+        .expect("components should query after redo");
     assert_eq!(
         redone
             .iter()

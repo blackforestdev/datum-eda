@@ -91,7 +91,10 @@ fn apply_component_replacement_plan_dispatch_resolves_package_and_part_selectors
         },
     );
     assert!(apply.error.is_none(), "{apply:?}");
-    assert_eq!(apply.result.as_ref().unwrap()["description"], "replace_components 2");
+    assert_eq!(
+        apply.result.as_ref().unwrap()["description"],
+        "replace_components 2"
+    );
 
     let components = dispatch_request(
         &mut engine,
@@ -191,7 +194,10 @@ fn apply_component_replacement_policy_dispatch_resolves_best_candidates() {
         },
     );
     assert!(apply.error.is_none(), "{apply:?}");
-    assert_eq!(apply.result.as_ref().unwrap()["description"], "replace_components 2");
+    assert_eq!(
+        apply.result.as_ref().unwrap()["description"],
+        "replace_components 2"
+    );
 
     let components = dispatch_request(
         &mut engine,
@@ -286,7 +292,10 @@ fn apply_scoped_component_replacement_policy_dispatch_targets_filtered_component
         },
     );
     assert!(apply.error.is_none(), "{apply:?}");
-    assert_eq!(apply.result.as_ref().unwrap()["description"], "replace_components 2");
+    assert_eq!(
+        apply.result.as_ref().unwrap()["description"],
+        "replace_components 2"
+    );
 
     let components = dispatch_request(
         &mut engine,
@@ -393,5 +402,8 @@ fn apply_scoped_component_replacement_plan_dispatch_applies_preview_without_rere
         },
     );
     assert!(apply.error.is_none(), "{apply:?}");
-    assert_eq!(apply.result.as_ref().unwrap()["description"], "replace_components 2");
+    assert_eq!(
+        apply.result.as_ref().unwrap()["description"],
+        "replace_components 2"
+    );
 }

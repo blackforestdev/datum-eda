@@ -56,7 +56,10 @@ fn set_package_dispatch_updates_component_package() {
         .iter()
         .find(|component| component.reference == "R1")
         .unwrap();
-    assert_eq!(updated.package_uuid.to_string(), package_uuid.as_str().unwrap());
+    assert_eq!(
+        updated.package_uuid.to_string(),
+        package_uuid.as_str().unwrap()
+    );
 }
 
 #[test]
@@ -134,7 +137,10 @@ fn set_package_dispatch_updates_followup_components_query() {
             params: json!({}),
         },
     );
-    assert_eq!(after.result.as_ref().unwrap()[0]["package_uuid"], package_uuid);
+    assert_eq!(
+        after.result.as_ref().unwrap()[0]["package_uuid"],
+        package_uuid
+    );
 }
 
 #[test]
@@ -184,8 +190,12 @@ fn set_package_dispatch_updates_followup_net_info_query() {
             params: json!({}),
         },
     );
-    let baseline_sig = baseline.result.as_ref().unwrap()
-        .as_array().unwrap()
+    let baseline_sig = baseline
+        .result
+        .as_ref()
+        .unwrap()
+        .as_array()
+        .unwrap()
         .iter()
         .find(|net| net["name"] == "SIG")
         .expect("SIG net should exist");
@@ -214,8 +224,12 @@ fn set_package_dispatch_updates_followup_net_info_query() {
             params: json!({}),
         },
     );
-    let after_sig = after.result.as_ref().unwrap()
-        .as_array().unwrap()
+    let after_sig = after
+        .result
+        .as_ref()
+        .unwrap()
+        .as_array()
+        .unwrap()
         .iter()
         .find(|net| net["name"] == "SIG")
         .expect("SIG net should exist");
@@ -336,5 +350,8 @@ fn set_package_dispatch_preserves_logical_nets_across_known_part_remap() {
         .iter()
         .find(|net| net["name"] == "SIG")
         .expect("SIG net should exist");
-    assert_eq!(after_sig["pins"].as_array().unwrap().len(), intermediate_pin_count);
+    assert_eq!(
+        after_sig["pins"].as_array().unwrap().len(),
+        intermediate_pin_count
+    );
 }

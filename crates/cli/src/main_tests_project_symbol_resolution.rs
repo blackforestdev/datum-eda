@@ -47,7 +47,8 @@ fn seed_native_sheet(root: &Path) -> Uuid {
         &schematic_json,
         format!(
             "{}\n",
-            to_json_deterministic(&schematic_value).expect("canonical serialization should succeed")
+            to_json_deterministic(&schematic_value)
+                .expect("canonical serialization should succeed")
         ),
     )
     .expect("schematic.json should write");
@@ -208,8 +209,7 @@ fn project_set_and_clear_symbol_part_updates_native_query_surface() {
         &part_uuid,
     ])
     .expect("CLI should parse");
-    let set_part_output =
-        execute(set_part_cli).expect("project set-symbol-part should succeed");
+    let set_part_output = execute(set_part_cli).expect("project set-symbol-part should succeed");
     assert!(set_part_output.contains("action: set_symbol_part"));
 
     let query_cli = Cli::try_parse_from([

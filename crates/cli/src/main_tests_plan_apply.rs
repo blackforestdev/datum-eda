@@ -80,7 +80,10 @@ fn execute_plan_export_scoped_replacement_manifest_writes_versioned_artifact() {
     assert_eq!(manifest.version, 1);
     assert!(manifest.board_source_hash.starts_with("sha256:"));
     assert_eq!(manifest.libraries.len(), 1);
-    assert_eq!(manifest.libraries[0].path, eagle_fixture_path("simple-opamp.lbr"));
+    assert_eq!(
+        manifest.libraries[0].path,
+        eagle_fixture_path("simple-opamp.lbr")
+    );
     assert!(manifest.libraries[0].source_hash.starts_with("sha256:"));
     assert_eq!(manifest.plan.replacements.len(), 2);
 
@@ -91,7 +94,6 @@ fn execute_plan_export_scoped_replacement_manifest_writes_versioned_artifact() {
     )));
     let _ = std::fs::remove_file(&manifest_path);
 }
-
 
 #[test]
 fn execute_modify_apply_scoped_replacement_plan_file_applies_preview_output() {
@@ -538,8 +540,6 @@ fn execute_plan_inspect_scoped_replacement_manifest_reports_match_status() {
     )));
     let _ = std::fs::remove_file(&manifest_path);
 }
-
-
 
 #[test]
 fn execute_plan_inspect_scoped_replacement_manifest_reports_drift_status() {

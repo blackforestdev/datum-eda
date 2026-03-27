@@ -3,9 +3,7 @@ use std::path::Path;
 
 use uuid::Uuid;
 
-use crate::board::{
-    Board, Net, NetClass, PlacedPackage, PlacedPad, Track, Via, Zone,
-};
+use crate::board::{Board, Net, NetClass, PlacedPackage, PlacedPad, Track, Via, Zone};
 use crate::error::EngineError;
 use crate::ir::geometry::Point;
 use crate::schematic::{
@@ -454,6 +452,7 @@ fn footprint_pads(
                     local,
                 ),
                 layer: package_layer,
+                diameter: 0,
             })
         })
         .collect()

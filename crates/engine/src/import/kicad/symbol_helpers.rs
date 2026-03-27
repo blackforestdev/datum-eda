@@ -115,7 +115,9 @@ pub(super) fn symbol_fields(block: &str) -> Vec<SymbolField> {
     fields
 }
 
-pub(super) fn parse_library_symbol_pins(contents: &str) -> HashMap<String, Vec<LibraryPinTemplate>> {
+pub(super) fn parse_library_symbol_pins(
+    contents: &str,
+) -> HashMap<String, Vec<LibraryPinTemplate>> {
     let mut libraries = HashMap::new();
     let Some(lib_symbols_block) = top_level_blocks(contents, "lib_symbols").into_iter().next()
     else {

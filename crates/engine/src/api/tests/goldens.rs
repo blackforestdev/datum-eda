@@ -265,7 +265,11 @@ fn normalize_drc_report(report: &DrcReport) -> DrcGoldenReport {
                 .location
                 .as_ref()
                 .map(|loc| (loc.x_nm, loc.y_nm, loc.layer)),
-            objects: violation.objects.iter().map(|uuid| uuid.to_string()).collect(),
+            objects: violation
+                .objects
+                .iter()
+                .map(|uuid| uuid.to_string())
+                .collect(),
         })
         .collect();
     violations.sort_by(|a, b| {

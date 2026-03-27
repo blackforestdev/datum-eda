@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use uuid::Uuid;
 
-use crate::erc::{run_prechecks, ErcSeverity};
+use crate::erc::{ErcSeverity, run_prechecks};
 use crate::ir::geometry::Point;
 use crate::schematic::{
     CheckWaiver, HiddenPowerBehavior, LabelKind, NetLabel, PinElectricalType, PlacedSymbol,
@@ -135,8 +135,7 @@ fn reports_output_to_output_conflict() {
                             unit_selection: None,
                             display_mode: SymbolDisplayMode::LibraryDefault,
                             pin_overrides: Vec::new(),
-                            hidden_power_behavior:
-                                HiddenPowerBehavior::PreservedAsImportedMetadata,
+                            hidden_power_behavior: HiddenPowerBehavior::PreservedAsImportedMetadata,
                         },
                     ),
                     (
@@ -163,8 +162,7 @@ fn reports_output_to_output_conflict() {
                             unit_selection: None,
                             display_mode: SymbolDisplayMode::LibraryDefault,
                             pin_overrides: Vec::new(),
-                            hidden_power_behavior:
-                                HiddenPowerBehavior::PreservedAsImportedMetadata,
+                            hidden_power_behavior: HiddenPowerBehavior::PreservedAsImportedMetadata,
                         },
                     ),
                 ]),

@@ -1,4 +1,4 @@
-use crate::board::{Track, Via, Zone};
+use crate::board::{PlacedPad, Track, Via, Zone};
 use crate::ir::geometry::{LayerId, Polygon};
 use thiserror::Error;
 
@@ -14,11 +14,16 @@ pub enum ExportError {
     InvalidTrackWidth,
     #[error("copper-layer export requires positive via diameters")]
     InvalidViaDiameter,
+    #[error("copper-layer export requires positive pad diameters")]
+    InvalidPadDiameter,
     #[error("drill export requires positive via drill diameters")]
     InvalidViaDrill,
 }
 
-pub fn render_rs274x_outline(polygon: &Polygon, aperture_diameter_nm: i64) -> Result<String, ExportError> {
+pub fn render_rs274x_outline(
+    polygon: &Polygon,
+    aperture_diameter_nm: i64,
+) -> Result<String, ExportError> {
     if polygon.vertices.len() < 2 {
         return Err(ExportError::OutlineTooShort);
     }
@@ -36,7 +41,11 @@ pub fn render_rs274x_outline(polygon: &Polygon, aperture_diameter_nm: i64) -> Re
     ];
 
     let first = polygon.vertices[0];
-    lines.push(format!("X{}Y{}D02*", format_coord(first.x), format_coord(first.y)));
+    lines.push(format!(
+        "X{}Y{}D02*",
+        format_coord(first.x),
+        format_coord(first.y)
+    ));
     for vertex in polygon.vertices.iter().skip(1) {
         lines.push(format!(
             "X{}Y{}D01*",
@@ -63,6 +72,7 @@ pub fn render_rs274x_outline_default(polygon: &Polygon) -> Result<String, Export
 
 pub fn render_rs274x_copper_layer(
     layer_id: LayerId,
+    pads: &[PlacedPad],
     tracks: &[Track],
     zones: &[Zone],
     vias: &[Via],
@@ -73,10 +83,14 @@ pub fn render_rs274x_copper_layer(
     if vias.iter().any(|via| via.diameter <= 0) {
         return Err(ExportError::InvalidViaDiameter);
     }
+    if pads.iter().any(|pad| pad.diameter <= 0) {
+        return Err(ExportError::InvalidPadDiameter);
+    }
 
     let mut circle_apertures = tracks
         .iter()
         .map(|track| track.width)
+        .chain(pads.iter().map(|pad| pad.diameter))
         .chain(vias.iter().map(|via| via.diameter))
         .collect::<Vec<_>>();
     circle_apertures.sort_unstable();
@@ -144,6 +158,31 @@ pub fn render_rs274x_copper_layer(
             "X{}Y{}D03*",
             format_coord(via.position.x),
             format_coord(via.position.y)
+        ));
+    }
+
+    let mut ordered_pads = pads.to_vec();
+    ordered_pads.sort_by(|a, b| {
+        a.diameter
+            .cmp(&b.diameter)
+            .then_with(|| a.position.x.cmp(&b.position.x))
+            .then_with(|| a.position.y.cmp(&b.position.y))
+            .then_with(|| a.layer.cmp(&b.layer))
+            .then_with(|| a.package.cmp(&b.package))
+            .then_with(|| a.name.cmp(&b.name))
+            .then_with(|| a.uuid.cmp(&b.uuid))
+    });
+
+    for pad in ordered_pads {
+        let d_code = 10
+            + circle_apertures
+                .binary_search(&pad.diameter)
+                .expect("known pad aperture");
+        lines.push(format!("D{d_code}*"));
+        lines.push(format!(
+            "X{}Y{}D03*",
+            format_coord(pad.position.x),
+            format_coord(pad.position.y)
         ));
     }
 
@@ -271,7 +310,10 @@ mod tests {
             vertices: vec![
                 Point { x: 0, y: 0 },
                 Point { x: 1_000_000, y: 0 },
-                Point { x: 1_000_000, y: 500_000 },
+                Point {
+                    x: 1_000_000,
+                    y: 500_000,
+                },
             ],
             closed: true,
         };
@@ -292,7 +334,10 @@ mod tests {
         let polygon = Polygon {
             vertices: vec![
                 Point { x: 0, y: 0 },
-                Point { x: 500_000, y: 500_000 },
+                Point {
+                    x: 500_000,
+                    y: 500_000,
+                },
             ],
             closed: false,
         };
@@ -320,20 +365,14 @@ mod tests {
                 uuid: uuid::Uuid::nil(),
                 net: uuid::Uuid::nil(),
                 from: Point { x: 0, y: 0 },
-                to: Point {
-                    x: 1_000_000,
-                    y: 0,
-                },
+                to: Point { x: 1_000_000, y: 0 },
                 width: 200_000,
                 layer: 1,
             },
             Track {
                 uuid: uuid::Uuid::from_u128(1),
                 net: uuid::Uuid::nil(),
-                from: Point {
-                    x: 0,
-                    y: 500_000,
-                },
+                from: Point { x: 0, y: 500_000 },
                 to: Point {
                     x: 1_000_000,
                     y: 500_000,
@@ -344,7 +383,7 @@ mod tests {
         ];
 
         let gerber =
-            render_rs274x_copper_layer(1, &tracks, &[], &[]).expect("copper should render");
+            render_rs274x_copper_layer(1, &[], &tracks, &[], &[]).expect("copper should render");
         assert!(gerber.contains("%ADD10C,0.200000*%"));
         assert!(gerber.contains("%ADD11C,0.300000*%"));
         assert!(gerber.contains("D10*"));
@@ -366,7 +405,7 @@ mod tests {
         }];
 
         let err =
-            render_rs274x_copper_layer(1, &tracks, &[], &[]).expect_err("copper should fail");
+            render_rs274x_copper_layer(1, &[], &tracks, &[], &[]).expect_err("copper should fail");
         assert!(matches!(err, ExportError::InvalidTrackWidth));
     }
 
@@ -393,7 +432,8 @@ mod tests {
             thermal_spoke_width: 0,
         }];
 
-        let gerber = render_rs274x_copper_layer(1, &[], &zones, &[]).expect("zone should render");
+        let gerber =
+            render_rs274x_copper_layer(1, &[], &[], &zones, &[]).expect("zone should render");
         assert!(gerber.contains("G36*"));
         assert!(gerber.contains("G37*"));
         assert!(gerber.contains("X0Y0D02*"));
@@ -416,7 +456,8 @@ mod tests {
             to_layer: 2,
         }];
 
-        let gerber = render_rs274x_copper_layer(1, &[], &[], &vias).expect("via should render");
+        let gerber =
+            render_rs274x_copper_layer(1, &[], &[], &[], &vias).expect("via should render");
         assert!(gerber.contains("%ADD10C,0.600000*%"));
         assert!(gerber.contains("D10*"));
         assert!(gerber.contains("X250000Y750000D03*"));
@@ -434,9 +475,48 @@ mod tests {
             to_layer: 2,
         }];
 
-        let err =
-            render_rs274x_copper_layer(1, &[], &[], &vias).expect_err("via diameter should fail");
+        let err = render_rs274x_copper_layer(1, &[], &[], &[], &vias)
+            .expect_err("via diameter should fail");
         assert!(matches!(err, ExportError::InvalidViaDiameter));
+    }
+
+    #[test]
+    fn render_rs274x_copper_layer_emits_pad_flashes() {
+        let pads = vec![PlacedPad {
+            uuid: uuid::Uuid::nil(),
+            package: uuid::Uuid::from_u128(42),
+            name: "1".to_string(),
+            net: None,
+            position: Point {
+                x: 500_000,
+                y: 250_000,
+            },
+            layer: 1,
+            diameter: 450_000,
+        }];
+
+        let gerber =
+            render_rs274x_copper_layer(1, &pads, &[], &[], &[]).expect("pad should render");
+        assert!(gerber.contains("%ADD10C,0.450000*%"));
+        assert!(gerber.contains("D10*"));
+        assert!(gerber.contains("X500000Y250000D03*"));
+    }
+
+    #[test]
+    fn render_rs274x_copper_layer_rejects_non_positive_pad_diameter() {
+        let pads = vec![PlacedPad {
+            uuid: uuid::Uuid::nil(),
+            package: uuid::Uuid::from_u128(42),
+            name: "1".to_string(),
+            net: None,
+            position: Point { x: 0, y: 0 },
+            layer: 1,
+            diameter: 0,
+        }];
+
+        let err = render_rs274x_copper_layer(1, &pads, &[], &[], &[])
+            .expect_err("pad diameter should fail");
+        assert!(matches!(err, ExportError::InvalidPadDiameter));
     }
 
     #[test]

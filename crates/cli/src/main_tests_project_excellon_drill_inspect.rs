@@ -69,14 +69,22 @@ fn project_inspect_excellon_drill_reports_tool_table_and_hits() {
 
     let drill_path = root.join("drill.drl");
     let export_cli = Cli::try_parse_from([
-        "eda", "project", "export-excellon-drill",
-        root.to_str().unwrap(), "--out", drill_path.to_str().unwrap(),
+        "eda",
+        "project",
+        "export-excellon-drill",
+        root.to_str().unwrap(),
+        "--out",
+        drill_path.to_str().unwrap(),
     ])
     .expect("export CLI should parse");
     let _ = execute(export_cli).expect("excellon drill export should succeed");
 
     let inspect_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "inspect-excellon-drill",
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "inspect-excellon-drill",
         drill_path.to_str().unwrap(),
     ])
     .expect("inspect CLI should parse");

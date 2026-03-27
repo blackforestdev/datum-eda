@@ -266,5 +266,8 @@ fn assign_part_dispatch_preserves_logical_nets_across_known_part_remap() {
         .iter()
         .find(|net| net["name"] == "SIG")
         .expect("SIG net should exist");
-    assert_eq!(after_sig["pins"].as_array().unwrap().len(), intermediate_pin_count);
+    assert_eq!(
+        after_sig["pins"].as_array().unwrap().len(),
+        intermediate_pin_count
+    );
 }

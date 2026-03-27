@@ -66,9 +66,10 @@ fn project_query_board_components_reads_existing_native_board_file() {
     )
     .expect("board file should write");
 
-    let output = execute(board_components_query_cli(&root))
-        .expect("board components query should succeed");
-    let components: Vec<PlacedPackage> = serde_json::from_str(&output).expect("query output should parse");
+    let output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
+    let components: Vec<PlacedPackage> =
+        serde_json::from_str(&output).expect("query output should parse");
     assert_eq!(components.len(), 1);
     assert_eq!(components[0].uuid, component_uuid);
     assert_eq!(components[0].part, part_uuid);
@@ -80,14 +81,9 @@ fn project_query_board_components_reads_existing_native_board_file() {
     assert_eq!(components[0].layer, 1);
     assert!(!components[0].locked);
 
-    let summary_cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("summary query should succeed");
     assert!(summary_output.contains("board_components: 1"));
 

@@ -16,7 +16,9 @@ fn write_native_sheet(
     sheet_name: &str,
     symbols: BTreeMap<String, serde_json::Value>,
 ) {
-    let sheet_path = root.join("schematic/sheets").join(format!("{sheet_uuid}.json"));
+    let sheet_path = root
+        .join("schematic/sheets")
+        .join(format!("{sheet_uuid}.json"));
     std::fs::write(
         &sheet_path,
         format!(
@@ -54,7 +56,8 @@ fn write_native_sheet(
         &schematic_json,
         format!(
             "{}\n",
-            to_json_deterministic(&schematic_value).expect("canonical serialization should succeed")
+            to_json_deterministic(&schematic_value)
+                .expect("canonical serialization should succeed")
         ),
     )
     .expect("schematic.json should write");
@@ -201,12 +204,18 @@ fn project_compare_forward_annotation_artifact_reports_applicable_drifted_and_st
     .expect("board file should write");
 
     let proposal_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "query", root.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
         "forward-annotation-proposal",
     ])
     .expect("CLI should parse");
     let proposal_output = execute(proposal_cli).expect("proposal should succeed");
-    let proposal: serde_json::Value = serde_json::from_str(&proposal_output).expect("proposal JSON");
+    let proposal: serde_json::Value =
+        serde_json::from_str(&proposal_output).expect("proposal JSON");
     let add_action_id = proposal["actions"]
         .as_array()
         .unwrap()
@@ -218,65 +227,105 @@ fn project_compare_forward_annotation_artifact_reports_applicable_drifted_and_st
         .to_string();
 
     let defer_cli = Cli::try_parse_from([
-        "eda", "project", "defer-forward-annotation-action",
-        root.to_str().unwrap(), "--action-id", &add_action_id,
+        "eda",
+        "project",
+        "defer-forward-annotation-action",
+        root.to_str().unwrap(),
+        "--action-id",
+        &add_action_id,
     ])
     .expect("CLI should parse");
     let _ = execute(defer_cli).expect("defer should succeed");
 
     let artifact_path = root.join("forward-annotation-proposal.json");
     let export_cli = Cli::try_parse_from([
-        "eda", "project", "export-forward-annotation-proposal",
-        root.to_str().unwrap(), "--out", artifact_path.to_str().unwrap(),
+        "eda",
+        "project",
+        "export-forward-annotation-proposal",
+        root.to_str().unwrap(),
+        "--out",
+        artifact_path.to_str().unwrap(),
     ])
     .expect("CLI should parse");
     let _ = execute(export_cli).expect("export should succeed");
 
     let delete_r1_cli = Cli::try_parse_from([
-        "eda", "project", "delete-board-component",
-        root.to_str().unwrap(), "--component", &r1_component_uuid.to_string(),
+        "eda",
+        "project",
+        "delete-board-component",
+        root.to_str().unwrap(),
+        "--component",
+        &r1_component_uuid.to_string(),
     ])
     .expect("CLI should parse");
     let _ = execute(delete_r1_cli).expect("delete should succeed");
 
     let delete_q1_cli = Cli::try_parse_from([
-        "eda", "project", "delete-board-component",
-        root.to_str().unwrap(), "--component", &q1_component_uuid.to_string(),
+        "eda",
+        "project",
+        "delete-board-component",
+        root.to_str().unwrap(),
+        "--component",
+        &q1_component_uuid.to_string(),
     ])
     .expect("CLI should parse");
     let _ = execute(delete_q1_cli).expect("delete Q1 should succeed");
 
     let place_q1_cli = Cli::try_parse_from([
-        "eda", "project", "place-board-component",
+        "eda",
+        "project",
+        "place-board-component",
         root.to_str().unwrap(),
-        "--part", &Uuid::new_v4().to_string(),
-        "--package", &Uuid::new_v4().to_string(),
-        "--reference", "Q1",
-        "--value", "BJT",
-        "--x-nm", "1500",
-        "--y-nm", "2500",
-        "--layer", "1",
+        "--part",
+        &Uuid::new_v4().to_string(),
+        "--package",
+        &Uuid::new_v4().to_string(),
+        "--reference",
+        "Q1",
+        "--value",
+        "BJT",
+        "--x-nm",
+        "1500",
+        "--y-nm",
+        "2500",
+        "--layer",
+        "1",
     ])
     .expect("CLI should parse");
     let _ = execute(place_q1_cli).expect("place replacement Q1 should succeed");
 
     let place_u1_cli = Cli::try_parse_from([
-        "eda", "project", "place-board-component",
+        "eda",
+        "project",
+        "place-board-component",
         root.to_str().unwrap(),
-        "--part", &Uuid::new_v4().to_string(),
-        "--package", &Uuid::new_v4().to_string(),
-        "--reference", "U1",
-        "--value", "MCU",
-        "--x-nm", "1000",
-        "--y-nm", "2000",
-        "--layer", "1",
+        "--part",
+        &Uuid::new_v4().to_string(),
+        "--package",
+        &Uuid::new_v4().to_string(),
+        "--reference",
+        "U1",
+        "--value",
+        "MCU",
+        "--x-nm",
+        "1000",
+        "--y-nm",
+        "2000",
+        "--layer",
+        "1",
     ])
     .expect("CLI should parse");
     let _ = execute(place_u1_cli).expect("place U1 should succeed");
 
     let compare_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "compare-forward-annotation-proposal-artifact",
-        root.to_str().unwrap(), "--artifact", artifact_path.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "compare-forward-annotation-proposal-artifact",
+        root.to_str().unwrap(),
+        "--artifact",
+        artifact_path.to_str().unwrap(),
     ])
     .expect("CLI should parse");
     let compare_output = execute(compare_cli).expect("compare should succeed");

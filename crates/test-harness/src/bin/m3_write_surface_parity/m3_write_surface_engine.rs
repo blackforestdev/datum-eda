@@ -16,8 +16,7 @@ pub(super) fn engine_surface_result(cli: &Cli) -> Result<String> {
     let reference = m3_write_surface_engine_basic::engine_reference_surface_result(cli)?;
     let assign = m3_write_surface_engine_replacements::engine_assign_part_surface_result(cli)?;
     let package = m3_write_surface_engine_replacements::engine_set_package_surface_result(cli)?;
-    let net_class =
-        m3_write_surface_engine_replacements::engine_set_net_class_surface_result(cli)?;
+    let net_class = m3_write_surface_engine_replacements::engine_set_net_class_surface_result(cli)?;
 
     Ok(format!(
         "{track}, {via}, {component}, {rule}, {moved}, {rotate}, {value}, {reference}, {assign}, {package}, {net_class}"

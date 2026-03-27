@@ -397,6 +397,25 @@ pub(crate) enum ProjectCommands {
         #[arg(long = "gerber")]
         gerber: PathBuf,
     },
+    /// Compare a narrow RS-274X board-outline Gerber semantically against the current native board outline
+    CompareGerberOutline {
+        /// Project root directory
+        path: PathBuf,
+        /// Gerber path to compare
+        #[arg(long = "gerber")]
+        gerber: PathBuf,
+    },
+    /// Compare a narrow RS-274X copper-layer Gerber semantically against the current native copper geometry on one layer
+    CompareGerberCopperLayer {
+        /// Project root directory
+        path: PathBuf,
+        /// Layer identifier
+        #[arg(long = "layer")]
+        layer: i32,
+        /// Gerber path to compare
+        #[arg(long = "gerber")]
+        gerber: PathBuf,
+    },
     /// Validate a narrow Excellon drill file against the current native via inventory
     ValidateExcellonDrill {
         /// Project root directory
@@ -1717,6 +1736,9 @@ pub(crate) enum ProjectCommands {
         /// Replacement layer identifier
         #[arg(long)]
         layer: Option<i32>,
+        /// Replacement circular copper diameter in nm
+        #[arg(long = "diameter-nm")]
+        diameter_nm: Option<i64>,
     },
     /// Place one native board pad
     PlaceBoardPad {
@@ -1737,6 +1759,9 @@ pub(crate) enum ProjectCommands {
         /// Layer identifier
         #[arg(long)]
         layer: i32,
+        /// Circular copper diameter in nm
+        #[arg(long = "diameter-nm")]
+        diameter_nm: i64,
         /// Optional net UUID
         #[arg(long = "net")]
         net_uuid: Option<Uuid>,

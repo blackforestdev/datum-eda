@@ -12,7 +12,9 @@ fn project_query_summary_reports_native_scaffold_counts() {
         .expect("initial scaffold should succeed");
 
     let sheet_uuid = Uuid::new_v4().to_string();
-    let sheet_path = root.join("schematic/sheets").join(format!("{sheet_uuid}.json"));
+    let sheet_path = root
+        .join("schematic/sheets")
+        .join(format!("{sheet_uuid}.json"));
     std::fs::write(
         &sheet_path,
         serde_json::to_string_pretty(&serde_json::json!({
@@ -60,19 +62,14 @@ fn project_query_summary_reports_native_scaffold_counts() {
         &schematic_json,
         format!(
             "{}\n",
-            to_json_deterministic(&schematic_value).expect("canonical serialization should succeed")
+            to_json_deterministic(&schematic_value)
+                .expect("canonical serialization should succeed")
         ),
     )
     .expect("schematic.json should write");
 
-    let cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let cli = Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+        .expect("CLI should parse");
 
     let output = execute(cli).expect("project query summary should succeed");
     assert!(output.contains("project_name: Query Demo"));

@@ -76,7 +76,8 @@ pub(super) fn engine_via_surface_result(cli: &Cli) -> Result<String> {
     };
     let delete_via = via_engine.delete_via(&via_uuid)?;
     let via_deleted_state = via_engine.get_net_info()?;
-    let via_target = m3_write_surface_common::unique_temp_path("engine-surface-via-save", "kicad_pcb");
+    let via_target =
+        m3_write_surface_common::unique_temp_path("engine-surface-via-save", "kicad_pcb");
     via_engine.save(&via_target)?;
     let mut reloaded_via = Engine::new()?;
     reloaded_via.import(&via_target)?;
@@ -148,7 +149,8 @@ pub(super) fn engine_rule_surface_result(cli: &Cli) -> Result<String> {
         priority: 10,
         name: Some("default clearance".to_string()),
     })?;
-    let rule_target = m3_write_surface_common::unique_temp_path("engine-surface-rule-save", "kicad_pcb");
+    let rule_target =
+        m3_write_surface_common::unique_temp_path("engine-surface-rule-save", "kicad_pcb");
     rule_engine.save(&rule_target)?;
     let mut reloaded_rule = Engine::new()?;
     reloaded_rule.import(&rule_target)?;
@@ -174,7 +176,8 @@ pub(super) fn engine_move_surface_result(cli: &Cli) -> Result<String> {
         position: eda_engine::ir::geometry::Point::new(15_000_000, 12_000_000),
         rotation: Some(90),
     })?;
-    let move_target = m3_write_surface_common::unique_temp_path("engine-surface-move-save", "kicad_pcb");
+    let move_target =
+        m3_write_surface_common::unique_temp_path("engine-surface-move-save", "kicad_pcb");
     move_engine.save(&move_target)?;
     let mut reloaded_move = Engine::new()?;
     reloaded_move.import(&move_target)?;
@@ -199,7 +202,9 @@ pub(super) fn engine_move_surface_result(cli: &Cli) -> Result<String> {
         bail!("move_component changed engine airwire count unexpectedly");
     }
     if moved_airwires.first().map(|airwire| airwire.distance_nm)
-        == baseline_move_airwires.first().map(|airwire| airwire.distance_nm)
+        == baseline_move_airwires
+            .first()
+            .map(|airwire| airwire.distance_nm)
     {
         bail!("move_component did not change engine unrouted derived state");
     }
@@ -223,7 +228,8 @@ pub(super) fn engine_rotate_surface_result(cli: &Cli) -> Result<String> {
         uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
         rotation: 180,
     })?;
-    let rotate_target = m3_write_surface_common::unique_temp_path("engine-surface-rotate-save", "kicad_pcb");
+    let rotate_target =
+        m3_write_surface_common::unique_temp_path("engine-surface-rotate-save", "kicad_pcb");
     rotate_engine.save(&rotate_target)?;
     let mut reloaded_rotate = Engine::new()?;
     reloaded_rotate.import(&rotate_target)?;
@@ -266,7 +272,8 @@ pub(super) fn engine_value_surface_result(cli: &Cli) -> Result<String> {
         uuid: Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap(),
         value: "22k".to_string(),
     })?;
-    let value_target = m3_write_surface_common::unique_temp_path("engine-surface-value-save", "kicad_pcb");
+    let value_target =
+        m3_write_surface_common::unique_temp_path("engine-surface-value-save", "kicad_pcb");
     value_engine.save(&value_target)?;
     let mut reloaded_value = Engine::new()?;
     reloaded_value.import(&value_target)?;

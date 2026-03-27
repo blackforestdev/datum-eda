@@ -197,8 +197,10 @@ Current live slice:
 - `eda project validate-excellon-drill <dir> --drill <path>` validates that a narrow Excellon drill file still matches the current native via inventory exactly.
 - `eda project export-gerber-outline <dir> --out <path>` writes a narrow RS-274X Gerber file for the current native board outline.
 - `eda project validate-gerber-outline <dir> --gerber <path>` validates that a narrow RS-274X board-outline Gerber still matches the current native board outline exactly.
-- `eda project export-gerber-copper-layer <dir> --layer <id> --out <path>` writes a narrow RS-274X Gerber file for persisted native board tracks, vias, and zones on one selected copper layer.
-- `eda project validate-gerber-copper-layer <dir> --layer <id> --gerber <path>` validates that a narrow RS-274X copper-layer Gerber still matches the current native board tracks, vias, and zones on that layer exactly.
+- `eda project compare-gerber-outline <dir> --gerber <path>` compares that narrow RS-274X board-outline Gerber semantically against the current native board outline geometry.
+- `eda project export-gerber-copper-layer <dir> --layer <id> --out <path>` writes a narrow RS-274X Gerber file for persisted native board pads, tracks, vias, and zones on one selected copper layer; pads are currently emitted only as explicit circular flashes from stored pad diameter.
+- `eda project validate-gerber-copper-layer <dir> --layer <id> --gerber <path>` validates that a narrow RS-274X copper-layer Gerber still matches the current native board pads, tracks, vias, and zones on that layer exactly.
+- `eda project compare-gerber-copper-layer <dir> --layer <id> --gerber <path>` compares that narrow RS-274X copper-layer Gerber semantically against the current native pads, tracks, vias, and zones on that layer.
 - `eda project plan-gerber-export <dir> [--prefix <text>]` reports the deterministic Gerber artifact set implied by the current native board outline and stackup.
 - `eda project compare-gerber-export-plan <dir> --output-dir <path> [--prefix <text>]` compares that planned Gerber artifact set against a directory and reports matched, missing, and extra files.
 - `eda project set-board-component-part <dir> --component <uuid> --part <uuid>` and `eda project set-board-component-package <dir> --component <uuid> --package <uuid>` reassign the stored native part/package identity for an existing board component.

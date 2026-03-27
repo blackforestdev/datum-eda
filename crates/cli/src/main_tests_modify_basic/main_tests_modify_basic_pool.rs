@@ -115,7 +115,9 @@ fn modify_board_assign_part_preserves_logical_nets_across_known_part_remap() {
     reloaded
         .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
         .expect("library import should succeed");
-    reloaded.import(&target).expect("saved board should reimport");
+    reloaded
+        .import(&target)
+        .expect("saved board should reimport");
     let sig = reloaded
         .get_net_info()
         .expect("net info should query")
@@ -211,11 +213,12 @@ fn modify_board_supports_set_net_class_slice() {
         Uuid::new_v4()
     ));
     let net_uuid = match query_nets(&source).expect("nets should query") {
-        NetListView::Board { nets } => nets
-            .into_iter()
-            .find(|net| net.name == "GND")
-            .expect("GND net should exist")
-            .uuid,
+        NetListView::Board { nets } => {
+            nets.into_iter()
+                .find(|net| net.name == "GND")
+                .expect("GND net should exist")
+                .uuid
+        }
         NetListView::Schematic { .. } => panic!("expected board net list"),
     };
 

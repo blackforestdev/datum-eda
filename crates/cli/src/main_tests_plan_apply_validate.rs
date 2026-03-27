@@ -84,8 +84,14 @@ fn execute_plan_validate_scoped_replacement_manifest_reports_match_exit_zero() {
     assert_eq!(payload["manifests_checked"].as_u64(), Some(1));
     assert_eq!(payload["manifests_passing"].as_u64(), Some(1));
     assert_eq!(payload["manifests_failing"].as_u64(), Some(0));
-    assert_eq!(payload["reports"][0]["all_inputs_match"].as_bool(), Some(true));
-    assert_eq!(payload["reports"][0]["board_status"].as_str(), Some("match"));
+    assert_eq!(
+        payload["reports"][0]["all_inputs_match"].as_bool(),
+        Some(true)
+    );
+    assert_eq!(
+        payload["reports"][0]["board_status"].as_str(),
+        Some("match")
+    );
     assert_eq!(payload["reports"][0]["drifted_libraries"].as_u64(), Some(0));
     assert_eq!(payload["reports"][0]["missing_libraries"].as_u64(), Some(0));
 
@@ -251,7 +257,10 @@ fn execute_plan_validate_scoped_replacement_manifest_batches_results() {
         .expect("modify assign_part save should succeed");
     }
 
-    for (seeded, manifest_path) in [(&seeded_ok, &manifest_ok), (&seeded_drifted, &manifest_drifted)] {
+    for (seeded, manifest_path) in [
+        (&seeded_ok, &manifest_ok),
+        (&seeded_drifted, &manifest_drifted),
+    ] {
         let export_cli = Cli::try_parse_from([
             "eda",
             "--format",

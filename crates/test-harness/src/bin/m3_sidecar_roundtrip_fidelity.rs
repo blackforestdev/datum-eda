@@ -88,11 +88,15 @@ fn parse_args() -> Result<Cli> {
     let mut roundtrip_board_fixture_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../engine/testdata/import/kicad/partial-route-demo.kicad_pcb")
         .canonicalize()
-        .map_err(|err| anyhow::anyhow!("failed to resolve default roundtrip board fixture path: {err}"))?;
+        .map_err(|err| {
+            anyhow::anyhow!("failed to resolve default roundtrip board fixture path: {err}")
+        })?;
     let mut simple_board_fixture_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../engine/testdata/import/kicad/simple-demo.kicad_pcb")
         .canonicalize()
-        .map_err(|err| anyhow::anyhow!("failed to resolve default simple board fixture path: {err}"))?;
+        .map_err(|err| {
+            anyhow::anyhow!("failed to resolve default simple board fixture path: {err}")
+        })?;
     let mut library_fixture_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../engine/testdata/import/eagle/simple-opamp.lbr")
         .canonicalize()
@@ -181,19 +185,22 @@ fn build_report(cli: &Cli) -> Result<Report> {
         check("replace_components_sidecar_roundtrip_fidelity", || {
             replace_components_fidelity_evidence(cli)
         }),
-        check("apply_component_replacement_plan_sidecar_roundtrip_fidelity", || {
-            apply_component_replacement_plan_fidelity_evidence(cli)
-        }),
-        check("apply_component_replacement_policy_sidecar_roundtrip_fidelity", || {
-            apply_component_replacement_policy_fidelity_evidence(cli)
-        }),
+        check(
+            "apply_component_replacement_plan_sidecar_roundtrip_fidelity",
+            || apply_component_replacement_plan_fidelity_evidence(cli),
+        ),
+        check(
+            "apply_component_replacement_policy_sidecar_roundtrip_fidelity",
+            || apply_component_replacement_policy_fidelity_evidence(cli),
+        ),
         check(
             "apply_scoped_component_replacement_policy_sidecar_roundtrip_fidelity",
             || apply_scoped_component_replacement_policy_fidelity_evidence(cli),
         ),
-        check("apply_scoped_component_replacement_plan_sidecar_roundtrip_fidelity", || {
-            apply_scoped_component_replacement_plan_fidelity_evidence(cli)
-        }),
+        check(
+            "apply_scoped_component_replacement_plan_sidecar_roundtrip_fidelity",
+            || apply_scoped_component_replacement_plan_fidelity_evidence(cli),
+        ),
         check("set_net_class_sidecar_roundtrip_fidelity", || {
             set_net_class_fidelity_evidence(cli)
         }),
@@ -248,7 +255,9 @@ fn set_design_rule_fidelity_evidence(cli: &Cli) -> Result<String> {
 
     let first_board_bytes = fs::read(&first_board)?;
     if first_board_bytes != fixture_bytes {
-        bail!("set_design_rule mutated KiCad board bytes; expected authored rule state to live in sidecar only");
+        bail!(
+            "set_design_rule mutated KiCad board bytes; expected authored rule state to live in sidecar only"
+        );
     }
 
     let first_rules_sidecar = rules_sidecar::sidecar_path_for_source(&first_board);
@@ -367,8 +376,7 @@ fn set_package_fidelity_evidence(cli: &Cli) -> Result<String> {
     engine.save(&first_board)?;
 
     let first_board_bytes = fs::read(&first_board)?;
-    let first_packages_sidecar =
-        package_assignments_sidecar::sidecar_path_for_source(&first_board);
+    let first_packages_sidecar = package_assignments_sidecar::sidecar_path_for_source(&first_board);
     let first_packages = package_assignments_sidecar::read_sidecar(&first_packages_sidecar)
         .context("failed to decode first package-assignment sidecar")?;
 
@@ -437,7 +445,9 @@ fn set_net_class_fidelity_evidence(cli: &Cli) -> Result<String> {
 
     let first_board_bytes = fs::read(&first_board)?;
     if first_board_bytes != fixture_bytes {
-        bail!("set_net_class mutated KiCad board bytes; expected authored net-class state to live in sidecar only");
+        bail!(
+            "set_net_class mutated KiCad board bytes; expected authored net-class state to live in sidecar only"
+        );
     }
 
     let first_net_classes_sidecar = net_classes_sidecar::sidecar_path_for_source(&first_board);
@@ -514,8 +524,7 @@ fn set_package_with_part_fidelity_evidence(cli: &Cli) -> Result<String> {
     let first_parts_sidecar = part_assignments_sidecar::sidecar_path_for_source(&first_board);
     let first_parts = part_assignments_sidecar::read_sidecar(&first_parts_sidecar)
         .context("failed to decode first explicit part-assignment sidecar")?;
-    let first_packages_sidecar =
-        package_assignments_sidecar::sidecar_path_for_source(&first_board);
+    let first_packages_sidecar = package_assignments_sidecar::sidecar_path_for_source(&first_board);
     let first_packages = package_assignments_sidecar::read_sidecar(&first_packages_sidecar)
         .context("failed to decode first explicit package-assignment sidecar")?;
 
@@ -531,7 +540,9 @@ fn set_package_with_part_fidelity_evidence(cli: &Cli) -> Result<String> {
         bail!("reimported set_package_with_part save did not restore expected package assignment");
     }
     if target_component.value != "ALTAMP" {
-        bail!("reimported set_package_with_part save did not restore expected explicit part assignment");
+        bail!(
+            "reimported set_package_with_part save did not restore expected explicit part assignment"
+        );
     }
     let sig = reloaded
         .get_net_info()?
@@ -539,7 +550,9 @@ fn set_package_with_part_fidelity_evidence(cli: &Cli) -> Result<String> {
         .find(|net| net.name == "SIG")
         .context("reimported set_package_with_part save missing SIG net")?;
     if sig.pins.len() != 2 {
-        bail!("reimported set_package_with_part save did not preserve expected logical net mapping");
+        bail!(
+            "reimported set_package_with_part save did not preserve expected logical net mapping"
+        );
     }
     reloaded.save(&second_board)?;
 
@@ -559,13 +572,17 @@ fn set_package_with_part_fidelity_evidence(cli: &Cli) -> Result<String> {
         || first_parts.source_hash != second_parts.source_hash
         || first_parts.assignments != second_parts.assignments
     {
-        bail!("set_package_with_part save→reimport→save changed semantic part-assignment sidecar content");
+        bail!(
+            "set_package_with_part save→reimport→save changed semantic part-assignment sidecar content"
+        );
     }
     if first_packages.schema_version != second_packages.schema_version
         || first_packages.source_hash != second_packages.source_hash
         || first_packages.assignments != second_packages.assignments
     {
-        bail!("set_package_with_part save→reimport→save changed semantic package-assignment sidecar content");
+        bail!(
+            "set_package_with_part save→reimport→save changed semantic package-assignment sidecar content"
+        );
     }
 
     cleanup_paths(&[
@@ -595,7 +612,9 @@ fn replace_component_fidelity_evidence(cli: &Cli) -> Result<String> {
         |engine, component_uuid, altamp| {
             let target = component_by_uuid(engine, component_uuid)?;
             if target.package_uuid != altamp.package_uuid || target.value != "ALTAMP" {
-                bail!("reimported replace_component save did not restore expected replacement state");
+                bail!(
+                    "reimported replace_component save did not restore expected replacement state"
+                );
             }
             Ok("board_roundtrip_stable=true, replace_component_sidecars_roundtrip_stable=true, reimport_restored_replacement=true".to_string())
         },
@@ -654,7 +673,9 @@ fn apply_component_replacement_plan_fidelity_evidence(cli: &Cli) -> Result<Strin
         |engine, component_uuid, altamp| {
             let target = component_by_uuid(engine, component_uuid)?;
             if target.package_uuid != altamp.package_uuid || target.value != "ALTAMP" {
-                bail!("reimported apply_component_replacement_plan save did not restore expected replacement state");
+                bail!(
+                    "reimported apply_component_replacement_plan save did not restore expected replacement state"
+                );
             }
             Ok("board_roundtrip_stable=true, replacement_plan_sidecars_roundtrip_stable=true, reimport_restored_planned_replacement=true".to_string())
         },
@@ -670,16 +691,20 @@ fn apply_component_replacement_policy_fidelity_evidence(cli: &Cli) -> Result<Str
                 uuid: component_uuid,
                 part_uuid: lmv321_uuid,
             })?;
-            engine.apply_component_replacement_policy(vec![PolicyDrivenComponentReplacementInput {
-                uuid: component_uuid,
-                policy: ComponentReplacementPolicy::BestCompatiblePackage,
-            }])?;
+            engine.apply_component_replacement_policy(vec![
+                PolicyDrivenComponentReplacementInput {
+                    uuid: component_uuid,
+                    policy: ComponentReplacementPolicy::BestCompatiblePackage,
+                },
+            ])?;
             Ok(())
         },
         |engine, component_uuid, _altamp| {
             let target = component_by_uuid(engine, component_uuid)?;
             if target.value.is_empty() {
-                bail!("reimported apply_component_replacement_policy save missing replacement value");
+                bail!(
+                    "reimported apply_component_replacement_policy save missing replacement value"
+                );
             }
             Ok("board_roundtrip_stable=true, replacement_policy_sidecars_roundtrip_stable=true, reimport_restored_policy_replacement=true".to_string())
         },
@@ -695,15 +720,17 @@ fn apply_scoped_component_replacement_policy_fidelity_evidence(cli: &Cli) -> Res
                 uuid: component_uuid,
                 part_uuid: lmv321_uuid,
             })?;
-            engine.apply_scoped_component_replacement_policy(ScopedComponentReplacementPolicyInput {
-                scope: ComponentReplacementScope {
-                    reference_prefix: Some("R1".to_string()),
-                    value_equals: None,
-                    current_package_uuid: None,
-                    current_part_uuid: None,
+            engine.apply_scoped_component_replacement_policy(
+                ScopedComponentReplacementPolicyInput {
+                    scope: ComponentReplacementScope {
+                        reference_prefix: Some("R1".to_string()),
+                        value_equals: None,
+                        current_package_uuid: None,
+                        current_part_uuid: None,
+                    },
+                    policy: ComponentReplacementPolicy::BestCompatiblePackage,
                 },
-                policy: ComponentReplacementPolicy::BestCompatiblePackage,
-            })?;
+            )?;
             Ok(())
         },
         |_engine, _component_uuid, _altamp| {

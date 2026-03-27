@@ -58,7 +58,9 @@ fn modify_board_set_package_preserves_logical_nets_across_known_part_remap() {
     reloaded
         .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
         .expect("library import should succeed");
-    reloaded.import(&target).expect("saved board should reimport");
+    reloaded
+        .import(&target)
+        .expect("saved board should reimport");
     let sig = reloaded
         .get_net_info()
         .expect("net info should query")
@@ -137,7 +139,9 @@ fn modify_board_supports_set_package_with_part_slice() {
     reloaded
         .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
         .expect("library import should succeed");
-    reloaded.import(&target).expect("saved board should reimport");
+    reloaded
+        .import(&target)
+        .expect("saved board should reimport");
     let sig = reloaded
         .get_net_info()
         .expect("net info should query")
@@ -232,7 +236,9 @@ fn modify_board_supports_replace_component_slice() {
     reloaded
         .import_eagle_library(&eagle_fixture_path("simple-opamp.lbr"))
         .expect("library import should succeed");
-    reloaded.import(&target).expect("saved board should reimport");
+    reloaded
+        .import(&target)
+        .expect("saved board should reimport");
     let sig = reloaded
         .get_net_info()
         .expect("net info should query")

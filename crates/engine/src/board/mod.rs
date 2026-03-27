@@ -49,6 +49,8 @@ pub struct PlacedPad {
     pub net: Option<Uuid>,
     pub position: Point,
     pub layer: LayerId,
+    #[serde(default)]
+    pub diameter: i64,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

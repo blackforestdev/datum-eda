@@ -214,7 +214,9 @@ fn get_symbols_dispatch_returns_schematic_symbols() {
     let response = dispatch_request(&mut engine, request);
     assert!(response.error.is_none(), "{response:?}");
     let result = response.result.expect("result should exist");
-    let symbols = result.as_array().expect("symbols result should be an array");
+    let symbols = result
+        .as_array()
+        .expect("symbols result should be an array");
     assert_eq!(symbols.len(), 1);
     assert_eq!(symbols[0]["reference"], "R1");
     assert_eq!(symbols[0]["value"], "10k");

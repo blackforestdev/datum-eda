@@ -114,9 +114,9 @@ pub(crate) fn parse_apply_replacement_plan_arg(
         match parts[index] {
             "package" => package_uuid = Some(Uuid::parse_str(parts[index + 1])?),
             "part" => part_uuid = Some(Uuid::parse_str(parts[index + 1])?),
-            other => bail!(
-                "--apply-replacement-plan selector must be 'package' or 'part', got {other}"
-            ),
+            other => {
+                bail!("--apply-replacement-plan selector must be 'package' or 'part', got {other}")
+            }
         }
         index += 2;
     }
@@ -130,13 +130,15 @@ pub(crate) fn parse_apply_replacement_plan_arg(
 pub(crate) fn parse_apply_replacement_policy_arg(
     value: &str,
 ) -> Result<PolicyDrivenComponentReplacementInput> {
-    let (uuid, selector) = value.split_once(':').ok_or_else(|| {
-        anyhow::anyhow!("--apply-replacement-policy expects <uuid>:package|part")
-    })?;
+    let (uuid, selector) = value
+        .split_once(':')
+        .ok_or_else(|| anyhow::anyhow!("--apply-replacement-policy expects <uuid>:package|part"))?;
     let policy = match selector {
         "package" => ComponentReplacementPolicy::BestCompatiblePackage,
         "part" => ComponentReplacementPolicy::BestCompatiblePart,
-        other => bail!("--apply-replacement-policy selector must be 'package' or 'part', got {other}"),
+        other => {
+            bail!("--apply-replacement-policy selector must be 'package' or 'part', got {other}")
+        }
     };
     Ok(PolicyDrivenComponentReplacementInput {
         uuid: Uuid::parse_str(uuid)?,

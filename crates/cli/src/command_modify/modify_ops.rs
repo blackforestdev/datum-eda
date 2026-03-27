@@ -116,7 +116,10 @@ pub(crate) fn modify_board(
         let result = engine
             .rotate_component(input.clone())
             .with_context(|| format!("failed to rotate component {}", input.uuid))?;
-        actions.push(format!("rotate_component {} {}", input.uuid, input.rotation));
+        actions.push(format!(
+            "rotate_component {} {}",
+            input.uuid, input.rotation
+        ));
         last_result = Some(result);
     }
     for input in set_value {
@@ -200,7 +203,10 @@ pub(crate) fn modify_board(
                 (None, Some(part_uuid)) => format!("part={part_uuid}"),
                 (None, None) => "unresolved".to_string(),
             };
-            actions.push(format!("apply_replacement_plan {} {}", input.uuid, selector));
+            actions.push(format!(
+                "apply_replacement_plan {} {}",
+                input.uuid, selector
+            ));
         }
         last_result = Some(result);
     }
@@ -213,7 +219,10 @@ pub(crate) fn modify_board(
                 ComponentReplacementPolicy::BestCompatiblePackage => "best_compatible_package",
                 ComponentReplacementPolicy::BestCompatiblePart => "best_compatible_part",
             };
-            actions.push(format!("apply_replacement_policy {} {}", input.uuid, selector));
+            actions.push(format!(
+                "apply_replacement_policy {} {}",
+                input.uuid, selector
+            ));
         }
         last_result = Some(result);
     }

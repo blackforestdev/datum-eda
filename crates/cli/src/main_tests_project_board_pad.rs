@@ -48,7 +48,8 @@ fn project_board_pad_query_edit_and_net_assignment_round_trip() {
                         "name": "1",
                         "net": null,
                         "position": { "x": 1000, "y": 2000 },
-                        "layer": 1
+                        "layer": 1,
+                        "diameter": 450000
                     }
                 },
                 "tracks": {},
@@ -83,8 +84,10 @@ fn project_board_pad_query_edit_and_net_assignment_round_trip() {
     )
     .expect("board file should write");
 
-    let pads_output = execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
-    let pads: Vec<PlacedPad> = serde_json::from_str(&pads_output).expect("query output should parse");
+    let pads_output =
+        execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
+    let pads: Vec<PlacedPad> =
+        serde_json::from_str(&pads_output).expect("query output should parse");
     assert_eq!(pads.len(), 1);
     assert_eq!(pads[0].uuid, seeded_pad_uuid);
     assert_eq!(pads[0].package, package_uuid);
@@ -93,6 +96,7 @@ fn project_board_pad_query_edit_and_net_assignment_round_trip() {
     assert_eq!(pads[0].position.x, 1000);
     assert_eq!(pads[0].position.y, 2000);
     assert_eq!(pads[0].layer, 1);
+    assert_eq!(pads[0].diameter, 450000);
 
     let edit_cli = Cli::try_parse_from([
         "eda",
@@ -109,6 +113,8 @@ fn project_board_pad_query_edit_and_net_assignment_round_trip() {
         "4000",
         "--layer",
         "2",
+        "--diameter-nm",
+        "600000",
     ])
     .expect("CLI should parse");
     let edit_output = execute(edit_cli).expect("edit board pad should succeed");
@@ -118,13 +124,17 @@ fn project_board_pad_query_edit_and_net_assignment_round_trip() {
     assert_eq!(edit_report["x_nm"].as_i64(), Some(3000));
     assert_eq!(edit_report["y_nm"].as_i64(), Some(4000));
     assert_eq!(edit_report["layer"].as_i64(), Some(2));
+    assert_eq!(edit_report["diameter_nm"].as_i64(), Some(600000));
 
-    let pads_output = execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
-    let pads: Vec<PlacedPad> = serde_json::from_str(&pads_output).expect("query output should parse");
+    let pads_output =
+        execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
+    let pads: Vec<PlacedPad> =
+        serde_json::from_str(&pads_output).expect("query output should parse");
     assert_eq!(pads.len(), 1);
     assert_eq!(pads[0].position.x, 3000);
     assert_eq!(pads[0].position.y, 4000);
     assert_eq!(pads[0].layer, 2);
+    assert_eq!(pads[0].diameter, 600000);
 
     let set_cli = Cli::try_parse_from([
         "eda",
@@ -143,10 +153,15 @@ fn project_board_pad_query_edit_and_net_assignment_round_trip() {
     let set_report: serde_json::Value =
         serde_json::from_str(&set_output).expect("set output should parse");
     assert_eq!(set_report["action"].as_str(), Some("set_board_pad_net"));
-    assert_eq!(set_report["net_uuid"].as_str(), Some(net_uuid.to_string().as_str()));
+    assert_eq!(
+        set_report["net_uuid"].as_str(),
+        Some(net_uuid.to_string().as_str())
+    );
 
-    let pads_output = execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
-    let pads: Vec<PlacedPad> = serde_json::from_str(&pads_output).expect("query output should parse");
+    let pads_output =
+        execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
+    let pads: Vec<PlacedPad> =
+        serde_json::from_str(&pads_output).expect("query output should parse");
     assert_eq!(pads.len(), 1);
     assert_eq!(pads[0].net, Some(net_uuid));
 
@@ -162,8 +177,10 @@ fn project_board_pad_query_edit_and_net_assignment_round_trip() {
     let clear_output = execute(clear_cli).expect("clear board pad net should succeed");
     assert!(clear_output.contains("action: clear_board_pad_net"));
 
-    let pads_output = execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
-    let pads: Vec<PlacedPad> = serde_json::from_str(&pads_output).expect("query output should parse");
+    let pads_output =
+        execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
+    let pads: Vec<PlacedPad> =
+        serde_json::from_str(&pads_output).expect("query output should parse");
     assert_eq!(pads.len(), 1);
     assert_eq!(pads[0].net, None);
 
@@ -184,6 +201,8 @@ fn project_board_pad_query_edit_and_net_assignment_round_trip() {
         "8000",
         "--layer",
         "3",
+        "--diameter-nm",
+        "700000",
         "--net",
         &net_uuid.to_string(),
     ])
@@ -194,8 +213,10 @@ fn project_board_pad_query_edit_and_net_assignment_round_trip() {
     let placed_pad_uuid = place_report["pad_uuid"].as_str().unwrap().to_string();
     assert_eq!(place_report["action"].as_str(), Some("place_board_pad"));
 
-    let pads_output = execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
-    let pads: Vec<PlacedPad> = serde_json::from_str(&pads_output).expect("query output should parse");
+    let pads_output =
+        execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
+    let pads: Vec<PlacedPad> =
+        serde_json::from_str(&pads_output).expect("query output should parse");
     assert_eq!(pads.len(), 2);
     let created = pads
         .iter()
@@ -205,6 +226,7 @@ fn project_board_pad_query_edit_and_net_assignment_round_trip() {
     assert_eq!(created.name, "2");
     assert_eq!(created.position.x, 7000);
     assert_eq!(created.position.y, 8000);
+    assert_eq!(created.diameter, 700000);
     assert_eq!(created.layer, 3);
     assert_eq!(created.net, Some(net_uuid));
 
@@ -220,18 +242,15 @@ fn project_board_pad_query_edit_and_net_assignment_round_trip() {
     let delete_output = execute(delete_cli).expect("delete board pad should succeed");
     assert!(delete_output.contains("action: delete_board_pad"));
 
-    let pads_output = execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
-    let pads: Vec<PlacedPad> = serde_json::from_str(&pads_output).expect("query output should parse");
+    let pads_output =
+        execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
+    let pads: Vec<PlacedPad> =
+        serde_json::from_str(&pads_output).expect("query output should parse");
     assert_eq!(pads.len(), 1);
 
-    let summary_cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("summary query should succeed");
     assert!(summary_output.contains("board_pads: 1"));
 

@@ -16,7 +16,9 @@ fn write_native_sheet(
     sheet_name: &str,
     symbols: BTreeMap<String, serde_json::Value>,
 ) {
-    let sheet_path = root.join("schematic/sheets").join(format!("{sheet_uuid}.json"));
+    let sheet_path = root
+        .join("schematic/sheets")
+        .join(format!("{sheet_uuid}.json"));
     std::fs::write(
         &sheet_path,
         format!(
@@ -54,17 +56,22 @@ fn write_native_sheet(
         &schematic_json,
         format!(
             "{}\n",
-            to_json_deterministic(&schematic_value).expect("canonical serialization should succeed")
+            to_json_deterministic(&schematic_value)
+                .expect("canonical serialization should succeed")
         ),
     )
     .expect("schematic.json should write");
 }
 
 #[test]
-fn project_apply_forward_annotation_artifact_applies_only_self_sufficient_actions_and_honors_reviews() {
+fn project_apply_forward_annotation_artifact_applies_only_self_sufficient_actions_and_honors_reviews()
+ {
     let root = unique_project_root("datum-eda-cli-project-forward-annotation-apply-artifact");
-    create_native_project(&root, Some("Forward Annotation Artifact Apply Demo".to_string()))
-        .expect("initial scaffold should succeed");
+    create_native_project(
+        &root,
+        Some("Forward Annotation Artifact Apply Demo".to_string()),
+    )
+    .expect("initial scaffold should succeed");
 
     let sheet_uuid = Uuid::new_v4();
     let r1_symbol_uuid = Uuid::new_v4();
@@ -151,12 +158,18 @@ fn project_apply_forward_annotation_artifact_applies_only_self_sufficient_action
     .expect("board file should write");
 
     let proposal_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "query", root.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
         "forward-annotation-proposal",
     ])
     .expect("CLI should parse");
     let proposal_output = execute(proposal_cli).expect("proposal should succeed");
-    let proposal: serde_json::Value = serde_json::from_str(&proposal_output).expect("proposal JSON");
+    let proposal: serde_json::Value =
+        serde_json::from_str(&proposal_output).expect("proposal JSON");
     let remove_action_id = proposal["actions"]
         .as_array()
         .unwrap()
@@ -168,37 +181,59 @@ fn project_apply_forward_annotation_artifact_applies_only_self_sufficient_action
         .to_string();
 
     let reject_cli = Cli::try_parse_from([
-        "eda", "project", "reject-forward-annotation-action",
-        root.to_str().unwrap(), "--action-id", &remove_action_id,
+        "eda",
+        "project",
+        "reject-forward-annotation-action",
+        root.to_str().unwrap(),
+        "--action-id",
+        &remove_action_id,
     ])
     .expect("CLI should parse");
     let _ = execute(reject_cli).expect("reject should succeed");
 
     let artifact_path = root.join("forward-annotation-proposal.json");
     let export_cli = Cli::try_parse_from([
-        "eda", "project", "export-forward-annotation-proposal",
-        root.to_str().unwrap(), "--out", artifact_path.to_str().unwrap(),
+        "eda",
+        "project",
+        "export-forward-annotation-proposal",
+        root.to_str().unwrap(),
+        "--out",
+        artifact_path.to_str().unwrap(),
     ])
     .expect("CLI should parse");
     let _ = execute(export_cli).expect("export should succeed");
 
     let filtered_artifact_path = root.join("forward-annotation-proposal-filtered.json");
     let filter_cli = Cli::try_parse_from([
-        "eda", "project", "filter-forward-annotation-proposal-artifact",
-        root.to_str().unwrap(), "--artifact", artifact_path.to_str().unwrap(),
-        "--out", filtered_artifact_path.to_str().unwrap(),
+        "eda",
+        "project",
+        "filter-forward-annotation-proposal-artifact",
+        root.to_str().unwrap(),
+        "--artifact",
+        artifact_path.to_str().unwrap(),
+        "--out",
+        filtered_artifact_path.to_str().unwrap(),
     ])
     .expect("CLI should parse");
     let _ = execute(filter_cli).expect("filter should succeed");
 
     let apply_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "apply-forward-annotation-proposal-artifact",
-        root.to_str().unwrap(), "--artifact", filtered_artifact_path.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "apply-forward-annotation-proposal-artifact",
+        root.to_str().unwrap(),
+        "--artifact",
+        filtered_artifact_path.to_str().unwrap(),
     ])
     .expect("CLI should parse");
     let apply_output = execute(apply_cli).expect("artifact apply should succeed");
     let apply: serde_json::Value = serde_json::from_str(&apply_output).expect("apply JSON");
-    assert_eq!(apply["action"], "apply_forward_annotation_proposal_artifact");
+    assert_eq!(
+        apply["action"],
+        "apply_forward_annotation_proposal_artifact"
+    );
     assert_eq!(apply["artifact_actions"], 2);
     assert_eq!(apply["applied_actions"], 1);
     assert_eq!(apply["skipped_deferred_actions"], 0);
@@ -213,16 +248,29 @@ fn project_apply_forward_annotation_artifact_applies_only_self_sufficient_action
     }));
 
     let components_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "query", root.to_str().unwrap(), "board-components",
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "board-components",
     ])
     .expect("CLI should parse");
     let components_output = execute(components_cli).expect("components query should succeed");
     let components: Vec<PlacedPackage> =
         serde_json::from_str(&components_output).expect("components parse");
     assert_eq!(components.len(), 2);
-    let r1 = components.iter().find(|component| component.reference == "R1").unwrap();
+    let r1 = components
+        .iter()
+        .find(|component| component.reference == "R1")
+        .unwrap();
     assert_eq!(r1.value, "10k");
-    assert!(components.iter().any(|component| component.reference == "U1"));
+    assert!(
+        components
+            .iter()
+            .any(|component| component.reference == "U1")
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }
@@ -230,8 +278,11 @@ fn project_apply_forward_annotation_artifact_applies_only_self_sufficient_action
 #[test]
 fn project_apply_forward_annotation_artifact_rejects_input_bound_actions() {
     let root = unique_project_root("datum-eda-cli-project-forward-annotation-apply-artifact-input");
-    create_native_project(&root, Some("Forward Annotation Artifact Apply Input Demo".to_string()))
-        .expect("initial scaffold should succeed");
+    create_native_project(
+        &root,
+        Some("Forward Annotation Artifact Apply Input Demo".to_string()),
+    )
+    .expect("initial scaffold should succeed");
 
     let sheet_uuid = Uuid::new_v4();
     let c1_symbol_uuid = Uuid::new_v4();
@@ -266,29 +317,44 @@ fn project_apply_forward_annotation_artifact_rejects_input_bound_actions() {
 
     let artifact_path = root.join("forward-annotation-proposal.json");
     let export_cli = Cli::try_parse_from([
-        "eda", "project", "export-forward-annotation-proposal",
-        root.to_str().unwrap(), "--out", artifact_path.to_str().unwrap(),
+        "eda",
+        "project",
+        "export-forward-annotation-proposal",
+        root.to_str().unwrap(),
+        "--out",
+        artifact_path.to_str().unwrap(),
     ])
     .expect("CLI should parse");
     let _ = execute(export_cli).expect("export should succeed");
 
     let filtered_artifact_path = root.join("forward-annotation-proposal-filtered.json");
     let filter_cli = Cli::try_parse_from([
-        "eda", "project", "filter-forward-annotation-proposal-artifact",
-        root.to_str().unwrap(), "--artifact", artifact_path.to_str().unwrap(),
-        "--out", filtered_artifact_path.to_str().unwrap(),
+        "eda",
+        "project",
+        "filter-forward-annotation-proposal-artifact",
+        root.to_str().unwrap(),
+        "--artifact",
+        artifact_path.to_str().unwrap(),
+        "--out",
+        filtered_artifact_path.to_str().unwrap(),
     ])
     .expect("CLI should parse");
     let _ = execute(filter_cli).expect("filter should succeed");
 
     let apply_cli = Cli::try_parse_from([
-        "eda", "project", "apply-forward-annotation-proposal-artifact",
-        root.to_str().unwrap(), "--artifact", filtered_artifact_path.to_str().unwrap(),
+        "eda",
+        "project",
+        "apply-forward-annotation-proposal-artifact",
+        root.to_str().unwrap(),
+        "--artifact",
+        filtered_artifact_path.to_str().unwrap(),
     ])
     .expect("CLI should parse");
     let err = execute(apply_cli).expect_err("artifact apply should fail");
     let msg = format!("{err:#}");
-    assert!(msg.contains("forward-annotation artifact apply requires only self-sufficient actions"));
+    assert!(
+        msg.contains("forward-annotation artifact apply requires only self-sufficient actions")
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }

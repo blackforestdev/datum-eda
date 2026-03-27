@@ -214,7 +214,10 @@ fn run_subharness_inner(cli: &Cli, bin: &str, success_summary: &str) -> Result<S
             if output.stdout.is_empty() {
                 "".to_string()
             } else {
-                format!(" | stdout: {}", String::from_utf8_lossy(&output.stdout).trim())
+                format!(
+                    " | stdout: {}",
+                    String::from_utf8_lossy(&output.stdout).trim()
+                )
             }
         );
     }
@@ -234,13 +237,16 @@ fn run_subharness_inner(cli: &Cli, bin: &str, success_summary: &str) -> Result<S
         .or_else(|| payload.get("gates"))
         .and_then(Value::as_array)
         .map(|items| {
-            items.iter()
+            items
+                .iter()
                 .filter(|item| item.get("status").and_then(Value::as_str) == Some("passed"))
                 .count()
         })
         .unwrap_or(0);
 
-    Ok(format!("{success_summary}; subchecks_passed={passed_count}"))
+    Ok(format!(
+        "{success_summary}; subchecks_passed={passed_count}"
+    ))
 }
 
 fn print_human(report: &Report) {

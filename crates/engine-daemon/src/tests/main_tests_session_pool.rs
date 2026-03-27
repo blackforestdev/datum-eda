@@ -46,7 +46,10 @@ fn get_check_report_dispatch_returns_board_report_shape() {
     let result = response.result.expect("result should exist");
     assert_eq!(result["domain"], "board");
     assert_eq!(result["summary"]["status"], "info");
-    assert_eq!(result["summary"]["by_code"][0]["code"], "net_without_copper");
+    assert_eq!(
+        result["summary"]["by_code"][0]["code"],
+        "net_without_copper"
+    );
 }
 
 #[test]

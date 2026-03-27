@@ -69,7 +69,10 @@ fn cli_upgrade_scoped_replacement_manifest_rejects_out_and_in_place_together() {
     .expect("CLI should parse");
     let err = execute(cli).expect_err("upgrade command should reject ambiguous output mode");
     let msg = format!("{err:#}");
-    assert!(msg.contains("either --out or --in-place, not both"), "{msg}");
+    assert!(
+        msg.contains("either --out or --in-place, not both"),
+        "{msg}"
+    );
 }
 
 #[test]

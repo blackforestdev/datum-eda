@@ -47,7 +47,8 @@ fn seed_native_sheet(root: &Path) -> Uuid {
         &schematic_json,
         format!(
             "{}\n",
-            to_json_deterministic(&schematic_value).expect("canonical serialization should succeed")
+            to_json_deterministic(&schematic_value)
+                .expect("canonical serialization should succeed")
         ),
     )
     .expect("schematic.json should write");
@@ -109,14 +110,9 @@ fn project_place_edit_and_delete_drawing_line_update_native_query_surface() {
     assert_eq!(drawings[0]["to"]["x"], 300);
     assert_eq!(drawings[0]["to"]["y"], 400);
 
-    let summary_cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("project query summary should succeed");
     assert!(summary_output.contains("schematic_drawings: 1"));
 
@@ -189,14 +185,9 @@ fn project_place_edit_and_delete_drawing_line_update_native_query_surface() {
         serde_json::from_str(&drawings_output).expect("drawings JSON should parse");
     assert_eq!(drawings.as_array().unwrap().len(), 0);
 
-    let summary_cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("project query summary should succeed");
     assert!(summary_output.contains("schematic_drawings: 0"));
 
@@ -359,8 +350,7 @@ fn project_place_and_edit_rect_circle_and_arc_update_native_query_surface() {
         "91000",
     ])
     .expect("CLI should parse");
-    let edit_arc_output =
-        execute(edit_arc_cli).expect("project edit-drawing-arc should succeed");
+    let edit_arc_output = execute(edit_arc_cli).expect("project edit-drawing-arc should succeed");
     assert!(edit_arc_output.contains("action: edit_drawing_arc"));
 
     let query_cli = Cli::try_parse_from([
@@ -377,9 +367,27 @@ fn project_place_and_edit_rect_circle_and_arc_update_native_query_surface() {
     let drawings: serde_json::Value =
         serde_json::from_str(&drawings_output).expect("drawings JSON should parse");
     assert_eq!(drawings.as_array().unwrap().len(), 3);
-    assert!(drawings.as_array().unwrap().iter().any(|drawing| drawing["kind"] == "rect"));
-    assert!(drawings.as_array().unwrap().iter().any(|drawing| drawing["kind"] == "circle"));
-    assert!(drawings.as_array().unwrap().iter().any(|drawing| drawing["kind"] == "arc"));
+    assert!(
+        drawings
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|drawing| drawing["kind"] == "rect")
+    );
+    assert!(
+        drawings
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|drawing| drawing["kind"] == "circle")
+    );
+    assert!(
+        drawings
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|drawing| drawing["kind"] == "arc")
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }

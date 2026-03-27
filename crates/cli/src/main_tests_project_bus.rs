@@ -47,7 +47,8 @@ fn seed_native_sheet(root: &Path) -> Uuid {
         &schematic_json,
         format!(
             "{}\n",
-            to_json_deterministic(&schematic_value).expect("canonical serialization should succeed")
+            to_json_deterministic(&schematic_value)
+                .expect("canonical serialization should succeed")
         ),
     )
     .expect("schematic.json should write");
@@ -175,14 +176,9 @@ fn project_bus_and_bus_entry_family_update_native_query_surface() {
     assert_eq!(entries[0]["uuid"], bus_entry_uuid);
     assert_eq!(entries[0]["bus"], bus_uuid);
 
-    let summary_cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("project query summary should succeed");
     assert!(summary_output.contains("schematic_buses: 1"));
     assert!(summary_output.contains("schematic_bus_entries: 1"));

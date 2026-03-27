@@ -16,7 +16,9 @@ fn write_native_sheet(
     sheet_name: &str,
     symbols: BTreeMap<String, serde_json::Value>,
 ) {
-    let sheet_path = root.join("schematic/sheets").join(format!("{sheet_uuid}.json"));
+    let sheet_path = root
+        .join("schematic/sheets")
+        .join(format!("{sheet_uuid}.json"));
     std::fs::write(
         &sheet_path,
         format!(
@@ -54,7 +56,8 @@ fn write_native_sheet(
         &schematic_json,
         format!(
             "{}\n",
-            to_json_deterministic(&schematic_value).expect("canonical serialization should succeed")
+            to_json_deterministic(&schematic_value)
+                .expect("canonical serialization should succeed")
         ),
     )
     .expect("schematic.json should write");
@@ -195,8 +198,14 @@ fn project_query_forward_annotation_proposal_reports_deterministic_actions() {
     assert_eq!(report["remove_component_actions"], 1);
     assert_eq!(report["update_component_actions"], 1);
     assert_eq!(report["add_component_group"].as_array().unwrap().len(), 1);
-    assert_eq!(report["remove_component_group"].as_array().unwrap().len(), 1);
-    assert_eq!(report["update_component_group"].as_array().unwrap().len(), 1);
+    assert_eq!(
+        report["remove_component_group"].as_array().unwrap().len(),
+        1
+    );
+    assert_eq!(
+        report["update_component_group"].as_array().unwrap().len(),
+        1
+    );
     assert!(report["actions"].as_array().unwrap().iter().any(|entry| {
         entry["action"] == "add_component"
             && entry["reference"] == "C1"

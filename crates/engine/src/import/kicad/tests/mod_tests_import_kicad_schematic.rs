@@ -4,7 +4,8 @@ use uuid::Uuid;
 
 #[test]
 fn imports_kicad_schematic_header_and_skeleton_counts() {
-    let report = import_schematic_file(&fixture_path("simple-demo.kicad_sch")).expect("fixture should parse");
+    let report = import_schematic_file(&fixture_path("simple-demo.kicad_sch"))
+        .expect("fixture should parse");
 
     assert_eq!(report.kind, ImportKind::KiCadSchematic);
     assert!(report.counts.is_empty());
@@ -29,7 +30,10 @@ fn imports_kicad_schematic_header_and_skeleton_counts() {
         Some("1")
     );
     assert_eq!(
-        report.metadata.get("global_label_count").map(String::as_str),
+        report
+            .metadata
+            .get("global_label_count")
+            .map(String::as_str),
         Some("1")
     );
     assert_eq!(
@@ -56,8 +60,8 @@ fn imports_kicad_schematic_header_and_skeleton_counts() {
 
 #[test]
 fn imports_kicad_schematic_into_canonical_objects() {
-    let (schematic, report) =
-        import_schematic_document(&fixture_path("simple-demo.kicad_sch")).expect("fixture should parse");
+    let (schematic, report) = import_schematic_document(&fixture_path("simple-demo.kicad_sch"))
+        .expect("fixture should parse");
 
     assert_eq!(report.kind, ImportKind::KiCadSchematic);
     assert_eq!(schematic.sheets.len(), 1);
@@ -115,7 +119,8 @@ fn imports_kicad_schematic_into_canonical_objects() {
 #[test]
 fn imports_kicad_noconnect_with_pin_binding_when_marker_overlaps_pin() {
     let (schematic, _report) =
-        import_schematic_document(&fixture_path("erc-coverage-demo.kicad_sch")).expect("fixture should parse");
+        import_schematic_document(&fixture_path("erc-coverage-demo.kicad_sch"))
+            .expect("fixture should parse");
     let root = schematic
         .sheets
         .values()

@@ -70,8 +70,14 @@ fn project_export_pnp_writes_deterministic_csv_from_board_components() {
 
     let pnp_path = root.join("pnp.csv");
     let cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "export-pnp",
-        root.to_str().unwrap(), "--out", pnp_path.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "export-pnp",
+        root.to_str().unwrap(),
+        "--out",
+        pnp_path.to_str().unwrap(),
     ])
     .expect("CLI should parse");
     let output = execute(cli).expect("PnP export should succeed");
@@ -87,7 +93,9 @@ fn project_export_pnp_writes_deterministic_csv_from_board_components() {
     );
     assert_eq!(
         lines[1],
-        format!("U1,1000,1500,90,1,top,{u1_package_uuid},{u1_part_uuid},\"SOIC-8, \"\"Analog\"\"\",false")
+        format!(
+            "U1,1000,1500,90,1,top,{u1_package_uuid},{u1_part_uuid},\"SOIC-8, \"\"Analog\"\"\",false"
+        )
     );
     assert_eq!(
         lines[2],

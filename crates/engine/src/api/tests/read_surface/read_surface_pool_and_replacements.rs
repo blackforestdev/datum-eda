@@ -12,7 +12,9 @@ fn get_part_returns_pool_part_details() {
         .first()
         .expect("part should exist")
         .uuid;
-    let part = engine.get_part(&part_uuid).expect("part query should succeed");
+    let part = engine
+        .get_part(&part_uuid)
+        .expect("part query should succeed");
     assert_eq!(part.uuid, part_uuid);
     assert!(!part.package.name.is_empty());
     assert!(part.package.pads > 0);
@@ -31,7 +33,9 @@ fn get_package_returns_pool_package_details() {
         .first()
         .expect("part should exist")
         .uuid;
-    let part = engine.get_part(&part_uuid).expect("part query should succeed");
+    let part = engine
+        .get_part(&part_uuid)
+        .expect("part query should succeed");
     let package_uuid = engine
         .pool
         .parts

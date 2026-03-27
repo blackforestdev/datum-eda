@@ -75,8 +75,14 @@ fn project_compare_excellon_drill_reports_missing_extra_and_hit_drift() {
     .expect("drill file should write");
 
     let cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "compare-excellon-drill",
-        root.to_str().unwrap(), "--drill", drill_path.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "compare-excellon-drill",
+        root.to_str().unwrap(),
+        "--drill",
+        drill_path.to_str().unwrap(),
     ])
     .expect("CLI should parse");
     let output = execute(cli).expect("excellon compare should succeed");

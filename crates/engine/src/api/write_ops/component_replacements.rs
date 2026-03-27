@@ -49,24 +49,30 @@ impl Engine {
                 uuid,
             })?;
         if before.part != Uuid::nil() && self.pool.parts.contains_key(&before.part) {
-            let current_part = self.pool.parts.get(&before.part).ok_or(EngineError::NotFound {
-                object_type: "part",
-                uuid: before.part,
-            })?;
-            let current_signature =
-                part_pin_signature(current_part, &self.pool).ok_or(EngineError::DanglingReference {
+            let current_part = self
+                .pool
+                .parts
+                .get(&before.part)
+                .ok_or(EngineError::NotFound {
+                    object_type: "part",
+                    uuid: before.part,
+                })?;
+            let current_signature = part_pin_signature(current_part, &self.pool).ok_or(
+                EngineError::DanglingReference {
                     source_type: "part",
                     source_uuid: current_part.uuid,
                     target_type: "entity",
                     target_uuid: current_part.entity,
-                })?;
-            let target_signature =
-                part_pin_signature(&target_part, &self.pool).ok_or(EngineError::DanglingReference {
+                },
+            )?;
+            let target_signature = part_pin_signature(&target_part, &self.pool).ok_or(
+                EngineError::DanglingReference {
                     source_type: "part",
                     source_uuid: target_part.uuid,
                     target_type: "entity",
                     target_uuid: target_part.entity,
-                })?;
+                },
+            )?;
             if current_signature != target_signature {
                 return Err(EngineError::Operation(format!(
                     "{description} target part {} is not logically compatible with current component {}; inspect get_component_replacement_plan first",
@@ -75,13 +81,10 @@ impl Engine {
             }
         }
         let before_pads = component_pads(board, uuid);
-        let package = board
-            .packages
-            .get_mut(&uuid)
-            .ok_or(EngineError::NotFound {
-                object_type: "component",
-                uuid,
-            })?;
+        let package = board.packages.get_mut(&uuid).ok_or(EngineError::NotFound {
+            object_type: "component",
+            uuid,
+        })?;
         package.package = package_uuid;
         package.part = part_uuid;
         package.value = target_part.value.clone();
@@ -353,7 +356,11 @@ impl Engine {
             )
         })?;
         let mut packages: Vec<_> = board.packages.values().cloned().collect();
-        packages.sort_by(|a, b| a.reference.cmp(&b.reference).then_with(|| a.uuid.cmp(&b.uuid)));
+        packages.sort_by(|a, b| {
+            a.reference
+                .cmp(&b.reference)
+                .then_with(|| a.uuid.cmp(&b.uuid))
+        });
         Ok(packages
             .into_iter()
             .filter(|package| {
@@ -420,10 +427,14 @@ impl Engine {
             ));
         }
         let scoped = self.scoped_replacement_candidates(&plan.scope)?;
-        let mut matched_component_uuids: Vec<_> = scoped.into_iter().map(|item| item.uuid).collect();
+        let mut matched_component_uuids: Vec<_> =
+            scoped.into_iter().map(|item| item.uuid).collect();
         matched_component_uuids.sort();
-        let mut preview_component_uuids: Vec<_> =
-            plan.replacements.iter().map(|item| item.component_uuid).collect();
+        let mut preview_component_uuids: Vec<_> = plan
+            .replacements
+            .iter()
+            .map(|item| item.component_uuid)
+            .collect();
         preview_component_uuids.sort();
         if matched_component_uuids != preview_component_uuids {
             return Err(EngineError::Operation(

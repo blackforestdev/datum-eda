@@ -49,8 +49,14 @@ fn project_export_gerber_outline_writes_rs274x_file() {
 
     let gerber_path = root.join("outline.gbr");
     let cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "export-gerber-outline",
-        root.to_str().unwrap(), "--out", gerber_path.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "export-gerber-outline",
+        root.to_str().unwrap(),
+        "--out",
+        gerber_path.to_str().unwrap(),
     ])
     .expect("CLI should parse");
     let output = execute(cli).expect("gerber outline export should succeed");

@@ -50,8 +50,9 @@ pub fn write_sidecar(
 
 pub fn read_sidecar(path: impl AsRef<Path>) -> Result<PartAssignmentsSidecar, EngineError> {
     let text = std::fs::read_to_string(path)?;
-    let sidecar: PartAssignmentsSidecar = serde_json::from_str(&text)
-        .map_err(|e| EngineError::Validation(format!("invalid part-assignment sidecar JSON: {e}")))?;
+    let sidecar: PartAssignmentsSidecar = serde_json::from_str(&text).map_err(|e| {
+        EngineError::Validation(format!("invalid part-assignment sidecar JSON: {e}"))
+    })?;
     if sidecar.schema_version != 1 {
         return Err(EngineError::Validation(format!(
             "unsupported part-assignment sidecar schema version: {}",

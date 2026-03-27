@@ -118,14 +118,9 @@ fn project_board_keepout_mutations_round_trip_through_native_query() {
         serde_json::from_str(&keepouts_output).expect("query output should parse");
     assert!(keepouts.is_empty());
 
-    let summary_cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("summary query should succeed");
     assert!(summary_output.contains("board_keepouts: 0"));
 
@@ -177,7 +172,8 @@ fn project_query_board_keepouts_reads_existing_native_board_file() {
     )
     .expect("board file should write");
 
-    let output = execute(board_keepout_query_cli(&root)).expect("board keepout query should succeed");
+    let output =
+        execute(board_keepout_query_cli(&root)).expect("board keepout query should succeed");
     let keepouts: Vec<Keepout> = serde_json::from_str(&output).expect("query output should parse");
     assert_eq!(keepouts.len(), 1);
     assert_eq!(keepouts[0].uuid, keepout_uuid);

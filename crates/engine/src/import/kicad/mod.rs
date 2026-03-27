@@ -1,8 +1,8 @@
 use std::path::Path;
 
-use crate::ir::geometry::Point;
 use crate::error::EngineError;
 use crate::import::{ImportKind, ImportObjectCounts, ImportReport};
+use crate::ir::geometry::Point;
 use crate::schematic::PinElectricalType;
 
 mod parser_helpers;
@@ -19,7 +19,9 @@ pub fn import_board_file(path: &Path) -> Result<ImportReport, EngineError> {
     Ok(report)
 }
 
-pub fn import_board_document(path: &Path) -> Result<(crate::board::Board, ImportReport), EngineError> {
+pub fn import_board_document(
+    path: &Path,
+) -> Result<(crate::board::Board, ImportReport), EngineError> {
     let contents = std::fs::read_to_string(path)?;
     let board = parse_board_skeleton(path, &contents)?;
     let mut report =

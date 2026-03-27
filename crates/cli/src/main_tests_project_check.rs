@@ -4,8 +4,8 @@ use super::*;
 use eda_engine::ir::geometry::Point;
 use eda_engine::ir::serialization::to_json_deterministic;
 use eda_engine::schematic::{
-    HiddenPowerBehavior, LabelKind, NetLabel, PinElectricalType, PlacedSymbol,
-    SymbolDisplayMode, SymbolPin,
+    HiddenPowerBehavior, LabelKind, NetLabel, PinElectricalType, PlacedSymbol, SymbolDisplayMode,
+    SymbolPin,
 };
 
 fn unique_project_root(label: &str) -> PathBuf {
@@ -19,7 +19,9 @@ fn write_native_sheet(
     symbols: BTreeMap<String, serde_json::Value>,
     labels: BTreeMap<String, serde_json::Value>,
 ) {
-    let sheet_path = root.join("schematic/sheets").join(format!("{sheet_uuid}.json"));
+    let sheet_path = root
+        .join("schematic/sheets")
+        .join(format!("{sheet_uuid}.json"));
     std::fs::write(
         &sheet_path,
         format!(
@@ -57,7 +59,8 @@ fn write_native_sheet(
         &schematic_json,
         format!(
             "{}\n",
-            to_json_deterministic(&schematic_value).expect("canonical serialization should succeed")
+            to_json_deterministic(&schematic_value)
+                .expect("canonical serialization should succeed")
         ),
     )
     .expect("schematic.json should write");
@@ -168,25 +171,37 @@ fn project_query_check_reports_native_schematic_check_json() {
     let report: serde_json::Value = serde_json::from_str(&output).expect("query JSON should parse");
     assert_eq!(report["domain"], "schematic");
     assert_eq!(report["summary"]["status"], "warning");
-    assert!(report["summary"]["by_code"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .any(|entry| entry["code"] == "dangling_component_pin" && entry["count"] == 1));
-    assert!(report["summary"]["by_code"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .any(|entry| entry["code"] == "unconnected_component_pin" && entry["count"] == 1));
-    assert!(report["summary"]["by_code"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .any(|entry| entry["code"] == "power_in_without_source" && entry["count"] == 1));
-    assert!(report["diagnostics"].as_array().unwrap().iter().any(|entry| {
-        entry["kind"] == "dangling_component_pin"
-            && entry["objects"] == serde_json::json!([passive_pin_uuid.to_string()])
-    }));
+    assert!(
+        report["summary"]["by_code"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|entry| entry["code"] == "dangling_component_pin" && entry["count"] == 1)
+    );
+    assert!(
+        report["summary"]["by_code"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|entry| entry["code"] == "unconnected_component_pin" && entry["count"] == 1)
+    );
+    assert!(
+        report["summary"]["by_code"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|entry| entry["code"] == "power_in_without_source" && entry["count"] == 1)
+    );
+    assert!(
+        report["diagnostics"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|entry| {
+                entry["kind"] == "dangling_component_pin"
+                    && entry["objects"] == serde_json::json!([passive_pin_uuid.to_string()])
+            })
+    );
     assert!(report["erc"].as_array().unwrap().iter().any(|entry| {
         entry["code"] == "unconnected_component_pin"
             && entry["object_uuids"] == serde_json::json!([passive_pin_uuid.to_string()])
@@ -206,14 +221,8 @@ fn project_query_check_reports_native_schematic_check_text() {
         .expect("initial scaffold should succeed");
     let _ = build_native_check_fixture(&root);
 
-    let cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "check",
-    ])
-    .expect("CLI should parse");
+    let cli = Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "check"])
+        .expect("CLI should parse");
 
     let output = execute(cli).expect("project query check should succeed");
     assert!(output.contains("schematic check: status=warning"));

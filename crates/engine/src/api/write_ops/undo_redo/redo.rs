@@ -62,13 +62,14 @@ impl Engine {
                         "redo is currently implemented only for board transactions".to_string(),
                     )
                 })?;
-                let removed = board
-                    .packages
-                    .remove(&package.uuid)
-                    .ok_or(EngineError::NotFound {
-                        object_type: "component",
-                        uuid: package.uuid,
-                    })?;
+                let removed =
+                    board
+                        .packages
+                        .remove(&package.uuid)
+                        .ok_or(EngineError::NotFound {
+                            object_type: "component",
+                            uuid: package.uuid,
+                        })?;
                 for pad in pads {
                     board.pads.remove(&pad.uuid).ok_or(EngineError::NotFound {
                         object_type: "pad",
@@ -147,7 +148,10 @@ impl Engine {
                         "redo is currently implemented only for board transactions".to_string(),
                     )
                 })?;
-                if let Some(existing) = board.rules.iter_mut().find(|rule| rule.uuid == current.uuid)
+                if let Some(existing) = board
+                    .rules
+                    .iter_mut()
+                    .find(|rule| rule.uuid == current.uuid)
                 {
                     *existing = current.clone();
                     OperationResult {

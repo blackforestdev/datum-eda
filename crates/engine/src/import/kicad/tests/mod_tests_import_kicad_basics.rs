@@ -3,7 +3,8 @@ use crate::import::kicad::symbol_helpers::transform_symbol_pin;
 
 #[test]
 fn imports_kicad_project_metadata() {
-    let report = import_project_file(&fixture_path("simple-demo.kicad_pro")).expect("fixture should parse");
+    let report =
+        import_project_file(&fixture_path("simple-demo.kicad_pro")).expect("fixture should parse");
 
     assert_eq!(report.kind, ImportKind::KiCadProject);
     assert!(report.counts.is_empty());
@@ -20,8 +21,8 @@ fn imports_kicad_project_metadata() {
 
 #[test]
 fn imports_kicad_board_header_and_skeleton_counts() {
-    let (board, report) =
-        import_board_document(&fixture_path("simple-demo.kicad_pcb")).expect("fixture should parse");
+    let (board, report) = import_board_document(&fixture_path("simple-demo.kicad_pcb"))
+        .expect("fixture should parse");
 
     assert_eq!(report.kind, ImportKind::KiCadBoard);
     assert!(report.counts.is_empty());
@@ -80,8 +81,8 @@ fn imports_kicad_board_header_and_skeleton_counts() {
 
 #[test]
 fn imports_kicad_board_pads_for_unrouted_computation() {
-    let (board, report) =
-        import_board_document(&fixture_path("airwire-demo.kicad_pcb")).expect("fixture should parse");
+    let (board, report) = import_board_document(&fixture_path("airwire-demo.kicad_pcb"))
+        .expect("fixture should parse");
 
     assert_eq!(report.kind, ImportKind::KiCadBoard);
     assert_eq!(board.packages.len(), 2);

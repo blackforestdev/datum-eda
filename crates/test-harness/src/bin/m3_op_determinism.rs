@@ -6,8 +6,8 @@ use eda_engine::api::{
     AssignPartInput, Engine, MoveComponentInput, RotateComponentInput, SetDesignRuleInput,
     SetNetClassInput, SetPackageInput, SetReferenceInput, SetValueInput,
 };
-use eda_test_harness::canonical_json;
 use eda_engine::rules::ast::{RuleParams, RuleScope, RuleType};
+use eda_test_harness::canonical_json;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -175,11 +175,15 @@ fn build_report(cli: &Cli) -> Result<DeterminismReport> {
     let simple_board_fixture_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../engine/testdata/import/kicad/simple-demo.kicad_pcb")
         .canonicalize()
-        .map_err(|err| anyhow::anyhow!("failed to resolve simple-board determinism fixture path: {err}"))?;
+        .map_err(|err| {
+            anyhow::anyhow!("failed to resolve simple-board determinism fixture path: {err}")
+        })?;
     let library_fixture_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../engine/testdata/import/eagle/simple-opamp.lbr")
         .canonicalize()
-        .map_err(|err| anyhow::anyhow!("failed to resolve library determinism fixture path: {err}"))?;
+        .map_err(|err| {
+            anyhow::anyhow!("failed to resolve library determinism fixture path: {err}")
+        })?;
     let via_fixture_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../engine/testdata/import/kicad/simple-demo.kicad_pcb")
         .canonicalize()
@@ -400,11 +404,7 @@ where
     save_and_compare_after_with_setup(fixture, |_engine| Ok(()), mutate)
 }
 
-fn save_and_compare_after_with_setup<S, F>(
-    fixture: &PathBuf,
-    setup: S,
-    mutate: F,
-) -> Result<String>
+fn save_and_compare_after_with_setup<S, F>(fixture: &PathBuf, setup: S, mutate: F) -> Result<String>
 where
     S: Fn(&mut Engine) -> Result<()>,
     F: Fn(&mut Engine) -> Result<String>,
@@ -420,7 +420,10 @@ where
     let second_evidence = mutate(&mut second_engine)?;
 
     let (first_probe_path, second_probe_path) = save_probe_paths(
-        &std::env::temp_dir().join(format!("datum-eda-m3-save-probe-{}.kicad_pcb", Uuid::new_v4())),
+        &std::env::temp_dir().join(format!(
+            "datum-eda-m3-save-probe-{}.kicad_pcb",
+            Uuid::new_v4()
+        )),
         "determinism",
     );
     let save_result = save_and_compare(

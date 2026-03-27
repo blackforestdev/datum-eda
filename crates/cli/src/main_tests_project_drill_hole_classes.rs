@@ -85,7 +85,12 @@ fn project_report_drill_hole_classes_groups_through_blind_and_buried() {
     .expect("board file should write");
 
     let cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "report-drill-hole-classes", root.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "report-drill-hole-classes",
+        root.to_str().unwrap(),
     ])
     .expect("CLI should parse");
     let output = execute(cli).expect("hole-class report should succeed");

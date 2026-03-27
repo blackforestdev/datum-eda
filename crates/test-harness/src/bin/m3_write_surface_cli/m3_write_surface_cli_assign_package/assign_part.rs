@@ -44,8 +44,8 @@ pub(crate) fn cli_assign_part_surface_result(cli: &Cli) -> Result<String> {
         .saved_path
         .as_deref()
         .ok_or_else(|| anyhow::anyhow!("CLI assign-part save report missing saved_path"))?;
-    let saved_contents =
-        std::fs::read_to_string(saved_path).context("failed to read CLI assign-part saved board")?;
+    let saved_contents = std::fs::read_to_string(saved_path)
+        .context("failed to read CLI assign-part saved board")?;
     if !saved_contents.contains("(footprint \"ALT-3\"") {
         bail!("CLI assign-part save did not rewrite expected footprint name");
     }
@@ -73,7 +73,9 @@ pub(crate) fn cli_assign_part_surface_result(cli: &Cli) -> Result<String> {
     let target_component = components
         .iter()
         .find(|component| component["uuid"] == "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
-        .ok_or_else(|| anyhow::anyhow!("CLI assign-part follow-up query missing target component"))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("CLI assign-part follow-up query missing target component")
+        })?;
     if target_component["value"] != "ALTAMP" {
         bail!("CLI assign-part follow-up query did not reflect updated component value");
     }

@@ -4,9 +4,7 @@ use uuid::Uuid;
 
 use crate::connectivity::{schematic_diagnostics, schematic_net_info};
 use crate::ir::geometry::Point;
-use crate::schematic::{
-    HierarchicalPort, LabelKind, NetLabel, PortDirection, Schematic, Sheet,
-};
+use crate::schematic::{HierarchicalPort, LabelKind, NetLabel, PortDirection, Schematic, Sheet};
 
 #[test]
 fn reports_connectivity_diagnostics_for_dangling_and_anonymous_nets() {

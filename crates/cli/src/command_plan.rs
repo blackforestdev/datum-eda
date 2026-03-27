@@ -72,17 +72,27 @@ pub(super) fn render_scoped_replacement_manifest_export_text(
     .join("\n")
 }
 
-pub(super) fn load_scoped_replacement_manifest(path: &Path) -> Result<ScopedReplacementPlanManifest> {
+pub(super) fn load_scoped_replacement_manifest(
+    path: &Path,
+) -> Result<ScopedReplacementPlanManifest> {
     Ok(load_scoped_replacement_manifest_with_metadata(path)?.manifest)
 }
 
 pub(super) fn load_scoped_replacement_manifest_with_metadata(
     path: &Path,
 ) -> Result<LoadedScopedReplacementManifest> {
-    let contents = std::fs::read_to_string(path)
-        .with_context(|| format!("failed to read scoped replacement manifest {}", path.display()))?;
-    let value = serde_json::from_str::<serde_json::Value>(&contents)
-        .with_context(|| format!("failed to parse scoped replacement manifest {}", path.display()))?;
+    let contents = std::fs::read_to_string(path).with_context(|| {
+        format!(
+            "failed to read scoped replacement manifest {}",
+            path.display()
+        )
+    })?;
+    let value = serde_json::from_str::<serde_json::Value>(&contents).with_context(|| {
+        format!(
+            "failed to parse scoped replacement manifest {}",
+            path.display()
+        )
+    })?;
 
     let kind = value.get("kind").and_then(serde_json::Value::as_str);
     if let Some(kind) = kind {
@@ -119,11 +129,11 @@ pub(super) fn load_scoped_replacement_manifest_with_metadata(
         0 => {
             let manifest = serde_json::from_value::<LegacyScopedReplacementPlanManifestV0>(value)
                 .with_context(|| {
-                    format!(
-                        "failed to parse legacy scoped replacement manifest {}",
-                        path.display()
-                    )
-                })?;
+                format!(
+                    "failed to parse legacy scoped replacement manifest {}",
+                    path.display()
+                )
+            })?;
             Ok(LoadedScopedReplacementManifest {
                 manifest_path: path.to_path_buf(),
                 manifest: ScopedReplacementPlanManifest {
@@ -140,7 +150,10 @@ pub(super) fn load_scoped_replacement_manifest_with_metadata(
         SCOPED_REPLACEMENT_MANIFEST_VERSION => {
             let manifest = serde_json::from_value::<ScopedReplacementPlanManifest>(value)
                 .with_context(|| {
-                    format!("failed to parse scoped replacement manifest {}", path.display())
+                    format!(
+                        "failed to parse scoped replacement manifest {}",
+                        path.display()
+                    )
                 })?;
             if manifest.kind != SCOPED_REPLACEMENT_MANIFEST_KIND {
                 bail!(
@@ -172,8 +185,12 @@ pub(super) fn upgrade_scoped_replacement_manifest(
     let loaded = load_scoped_replacement_manifest_with_metadata(input_path)?;
     let payload = serde_json::to_string_pretty(&loaded.manifest)
         .expect("manifest serialization must succeed");
-    std::fs::write(output_path, payload)
-        .with_context(|| format!("failed to write upgraded manifest {}", output_path.display()))?;
+    std::fs::write(output_path, payload).with_context(|| {
+        format!(
+            "failed to write upgraded manifest {}",
+            output_path.display()
+        )
+    })?;
     Ok(ScopedReplacementPlanManifestUpgradeReport {
         input_path: input_path.to_path_buf(),
         output_path: output_path.to_path_buf(),
@@ -212,7 +229,8 @@ pub(super) fn validate_scoped_replacement_manifest(
         );
     }
     for library in &manifest.libraries {
-        let current_hash = eda_engine::import::ids_sidecar::compute_source_hash_file(&library.path)?;
+        let current_hash =
+            eda_engine::import::ids_sidecar::compute_source_hash_file(&library.path)?;
         if current_hash != library.source_hash {
             bail!(
                 "scoped replacement manifest library hash drifted for {}; refresh the manifest before apply",
@@ -254,7 +272,10 @@ pub(super) fn inspect_scoped_replacement_manifest(
     manifest_path: &Path,
 ) -> Result<ScopedReplacementPlanManifestInspection> {
     let loaded = load_scoped_replacement_manifest_with_metadata(manifest_path)?;
-    let board = inspect_manifest_file(&loaded.manifest.board_path, &loaded.manifest.board_source_hash)?;
+    let board = inspect_manifest_file(
+        &loaded.manifest.board_path,
+        &loaded.manifest.board_source_hash,
+    )?;
     let libraries = loaded
         .manifest
         .libraries
@@ -352,7 +373,10 @@ pub(super) fn validate_scoped_replacement_manifest_inputs_batch(
         .map(|path| validate_scoped_replacement_manifest_inputs(path))
         .collect::<Result<Vec<_>>>()?;
     let manifests_checked = reports.len();
-    let manifests_passing = reports.iter().filter(|report| report.all_inputs_match).count();
+    let manifests_passing = reports
+        .iter()
+        .filter(|report| report.all_inputs_match)
+        .count();
     Ok(ScopedReplacementPlanManifestValidationSummary {
         manifests_checked,
         manifests_passing,

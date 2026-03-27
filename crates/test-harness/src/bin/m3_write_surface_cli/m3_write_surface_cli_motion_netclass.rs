@@ -20,10 +20,7 @@ pub(super) fn cli_set_net_class_surface_result(cli: &Cli) -> Result<String> {
         ])
         .arg(&fixture)
         .arg("--set-net-class")
-        .arg(format!(
-            "{}:power:125000:250000:300000:600000",
-            net_uuid
-        ))
+        .arg(format!("{}:power:125000:250000:300000:600000", net_uuid))
         .arg("--save")
         .arg(&target)
         .current_dir(&cli.repo_root)
@@ -170,13 +167,15 @@ pub(super) fn cli_rotate_surface_result(cli: &Cli) -> Result<String> {
     }
     let payload: Value = serde_json::from_slice(&query_output.stdout)
         .context("failed to parse CLI rotate-component follow-up components JSON")?;
-    let components = payload["components"]
-        .as_array()
-        .ok_or_else(|| anyhow::anyhow!("CLI rotate-component follow-up query missing components"))?;
+    let components = payload["components"].as_array().ok_or_else(|| {
+        anyhow::anyhow!("CLI rotate-component follow-up query missing components")
+    })?;
     let target_component = components
         .iter()
         .find(|component| component["uuid"] == "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
-        .ok_or_else(|| anyhow::anyhow!("CLI rotate-component follow-up query missing target component"))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("CLI rotate-component follow-up query missing target component")
+        })?;
     if target_component["rotation"] != 180 {
         bail!("CLI rotate-component follow-up query did not reflect updated rotation");
     }

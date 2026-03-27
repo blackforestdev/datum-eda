@@ -16,7 +16,9 @@ fn write_native_sheet(
     sheet_name: &str,
     symbols: BTreeMap<String, serde_json::Value>,
 ) {
-    let sheet_path = root.join("schematic/sheets").join(format!("{sheet_uuid}.json"));
+    let sheet_path = root
+        .join("schematic/sheets")
+        .join(format!("{sheet_uuid}.json"));
     std::fs::write(
         &sheet_path,
         format!(
@@ -54,14 +56,16 @@ fn write_native_sheet(
         &schematic_json,
         format!(
             "{}\n",
-            to_json_deterministic(&schematic_value).expect("canonical serialization should succeed")
+            to_json_deterministic(&schematic_value)
+                .expect("canonical serialization should succeed")
         ),
     )
     .expect("schematic.json should write");
 }
 
 #[test]
-fn project_plan_forward_annotation_artifact_apply_reports_self_sufficient_and_input_bound_actions() {
+fn project_plan_forward_annotation_artifact_apply_reports_self_sufficient_and_input_bound_actions()
+{
     let root = unique_project_root("datum-eda-cli-project-forward-annotation-plan-artifact");
     create_native_project(&root, Some("Forward Annotation Plan Demo".to_string()))
         .expect("initial scaffold should succeed");
@@ -214,12 +218,18 @@ fn project_plan_forward_annotation_artifact_apply_reports_self_sufficient_and_in
     .expect("board file should write");
 
     let proposal_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "query", root.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
         "forward-annotation-proposal",
     ])
     .expect("CLI should parse");
     let proposal_output = execute(proposal_cli).expect("proposal should succeed");
-    let proposal: serde_json::Value = serde_json::from_str(&proposal_output).expect("proposal JSON");
+    let proposal: serde_json::Value =
+        serde_json::from_str(&proposal_output).expect("proposal JSON");
     let add_action_id = proposal["actions"]
         .as_array()
         .unwrap()
@@ -231,28 +241,45 @@ fn project_plan_forward_annotation_artifact_apply_reports_self_sufficient_and_in
         .to_string();
 
     let defer_cli = Cli::try_parse_from([
-        "eda", "project", "defer-forward-annotation-action",
-        root.to_str().unwrap(), "--action-id", &add_action_id,
+        "eda",
+        "project",
+        "defer-forward-annotation-action",
+        root.to_str().unwrap(),
+        "--action-id",
+        &add_action_id,
     ])
     .expect("CLI should parse");
     let _ = execute(defer_cli).expect("defer should succeed");
 
     let artifact_path = root.join("forward-annotation-proposal.json");
     let export_cli = Cli::try_parse_from([
-        "eda", "project", "export-forward-annotation-proposal",
-        root.to_str().unwrap(), "--out", artifact_path.to_str().unwrap(),
+        "eda",
+        "project",
+        "export-forward-annotation-proposal",
+        root.to_str().unwrap(),
+        "--out",
+        artifact_path.to_str().unwrap(),
     ])
     .expect("CLI should parse");
     let _ = execute(export_cli).expect("export should succeed");
 
     let plan_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "plan-forward-annotation-proposal-artifact-apply",
-        root.to_str().unwrap(), "--artifact", artifact_path.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "plan-forward-annotation-proposal-artifact-apply",
+        root.to_str().unwrap(),
+        "--artifact",
+        artifact_path.to_str().unwrap(),
     ])
     .expect("CLI should parse");
     let plan_output = execute(plan_cli).expect("plan should succeed");
     let plan: serde_json::Value = serde_json::from_str(&plan_output).expect("plan JSON");
-    assert_eq!(plan["action"], "plan_forward_annotation_proposal_artifact_apply");
+    assert_eq!(
+        plan["action"],
+        "plan_forward_annotation_proposal_artifact_apply"
+    );
     assert_eq!(plan["artifact_actions"], 4);
     assert_eq!(plan["self_sufficient_actions"], 2);
     assert_eq!(plan["requires_input_actions"], 2);
@@ -260,8 +287,7 @@ fn project_plan_forward_annotation_artifact_apply_reports_self_sufficient_and_in
 
     let actions = plan["actions"].as_array().unwrap();
     assert!(actions.iter().any(|entry| {
-        entry["proposal_action"] == "remove_component"
-            && entry["execution"] == "self_sufficient"
+        entry["proposal_action"] == "remove_component" && entry["execution"] == "self_sufficient"
     }));
     assert!(actions.iter().any(|entry| {
         entry["proposal_action"] == "update_component"

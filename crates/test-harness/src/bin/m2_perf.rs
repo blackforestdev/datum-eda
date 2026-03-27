@@ -11,8 +11,9 @@ use serde::{Deserialize, Serialize};
 mod m2_perf_helpers;
 
 use m2_perf_helpers::{
-    compare_against_baseline, detect_repo_root, elapsed_ms, median_u64, parse_args, print_human_comparison,
-    print_human_report, read_baseline, resolve_board_path, resolve_schematic_path,
+    compare_against_baseline, detect_repo_root, elapsed_ms, median_u64, parse_args,
+    print_human_comparison, print_human_report, read_baseline, resolve_board_path,
+    resolve_schematic_path,
 };
 
 const SPEC_LIMIT_ERC_MS: u64 = 3_000;

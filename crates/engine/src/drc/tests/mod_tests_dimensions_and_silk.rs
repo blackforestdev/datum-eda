@@ -1,6 +1,6 @@
 use super::empty_board;
 use crate::board::{Net, NetClass, Track, Via};
-use crate::drc::{run, RuleType};
+use crate::drc::{RuleType, run};
 use crate::ir::geometry::Point;
 use uuid::Uuid;
 

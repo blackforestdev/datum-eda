@@ -234,6 +234,7 @@ fn board_net_info_counts_tracks_and_vias() {
                     net: Some(net_uuid),
                     position: Point::new(0, 0),
                     layer: 31,
+                    diameter: 0,
                 },
             ),
             (
@@ -245,6 +246,7 @@ fn board_net_info_counts_tracks_and_vias() {
                     net: Some(net_uuid),
                     position: Point::new(5_000_000, 0),
                     layer: 31,
+                    diameter: 0,
                 },
             ),
         ]),

@@ -50,20 +50,16 @@ fn project_board_outline_replacement_round_trips_through_native_query() {
 
     let outline_output =
         execute(board_outline_query_cli(&root)).expect("board outline query should succeed");
-    let outline: Polygon = serde_json::from_str(&outline_output).expect("query output should parse");
+    let outline: Polygon =
+        serde_json::from_str(&outline_output).expect("query output should parse");
     assert_eq!(outline.vertices.len(), 4);
     assert!(outline.closed);
     assert_eq!(outline.vertices[1].x, 2000);
     assert_eq!(outline.vertices[2].y, 1000);
 
-    let summary_cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("summary query should succeed");
     assert!(summary_output.contains("board_dimensions: 0"));
     assert!(summary_output.contains("board_keepouts: 0"));
@@ -110,7 +106,8 @@ fn project_query_board_outline_reads_existing_native_board_file() {
     )
     .expect("board file should write");
 
-    let output = execute(board_outline_query_cli(&root)).expect("board outline query should succeed");
+    let output =
+        execute(board_outline_query_cli(&root)).expect("board outline query should succeed");
     let outline: Polygon = serde_json::from_str(&output).expect("query output should parse");
     assert_eq!(outline.vertices.len(), 3);
     assert_eq!(outline.vertices[0].x, 1);

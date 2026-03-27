@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use uuid::Uuid;
 
-use crate::erc::{run_prechecks, ErcSeverity};
+use crate::erc::{ErcSeverity, run_prechecks};
 use crate::ir::geometry::Point;
 use crate::schematic::{
     CheckWaiver, HiddenPowerBehavior, HierarchicalPort, LabelKind, NetLabel, PinElectricalType,
@@ -202,7 +202,6 @@ fn finding_ids_are_stable_for_same_input() {
     assert_eq!(b.len(), 1);
     assert_eq!(a[0].id, b[0].id);
 }
-
 
 #[test]
 fn ignores_pin_on_named_net() {

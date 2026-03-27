@@ -80,7 +80,9 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                     uuid: params.uuid,
                     rotation,
                 }) {
-                    Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
+                    Ok(result) => {
+                        success_response(request.id, serde_json::to_value(result).unwrap())
+                    }
                     Err(err) => error_response(request.id, -32037, &err.to_string()),
                 }
             }
@@ -219,7 +221,9 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
             }
         }
         "apply_scoped_component_replacement_policy" => {
-            match serde_json::from_value::<ApplyScopedComponentReplacementPolicyParams>(request.params) {
+            match serde_json::from_value::<ApplyScopedComponentReplacementPolicyParams>(
+                request.params,
+            ) {
                 Ok(params) => match engine.apply_scoped_component_replacement_policy(
                     ScopedComponentReplacementPolicyInput {
                         scope: ComponentReplacementScope {
@@ -240,8 +244,9 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
             }
         }
         "apply_scoped_component_replacement_plan" => {
-            match serde_json::from_value::<ApplyScopedComponentReplacementPlanParams>(request.params)
-            {
+            match serde_json::from_value::<ApplyScopedComponentReplacementPlanParams>(
+                request.params,
+            ) {
                 Ok(params) => match engine.apply_scoped_component_replacement_plan(params.plan) {
                     Ok(result) => {
                         success_response(request.id, serde_json::to_value(result).unwrap())
@@ -309,24 +314,34 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
             },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
-        "get_package_change_candidates" => match serde_json::from_value::<UuidParams>(request.params) {
-            Ok(params) => match engine.get_package_change_candidates(&params.uuid) {
-                Ok(report) => success_response(request.id, serde_json::to_value(report).unwrap()),
-                Err(err) => error_response(request.id, -32031, &err.to_string()),
-            },
-            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-        },
-        "get_part_change_candidates" => match serde_json::from_value::<UuidParams>(request.params) {
-            Ok(params) => match engine.get_part_change_candidates(&params.uuid) {
-                Ok(report) => success_response(request.id, serde_json::to_value(report).unwrap()),
-                Err(err) => error_response(request.id, -32042, &err.to_string()),
-            },
-            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-        },
+        "get_package_change_candidates" => {
+            match serde_json::from_value::<UuidParams>(request.params) {
+                Ok(params) => match engine.get_package_change_candidates(&params.uuid) {
+                    Ok(report) => {
+                        success_response(request.id, serde_json::to_value(report).unwrap())
+                    }
+                    Err(err) => error_response(request.id, -32031, &err.to_string()),
+                },
+                Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+            }
+        }
+        "get_part_change_candidates" => {
+            match serde_json::from_value::<UuidParams>(request.params) {
+                Ok(params) => match engine.get_part_change_candidates(&params.uuid) {
+                    Ok(report) => {
+                        success_response(request.id, serde_json::to_value(report).unwrap())
+                    }
+                    Err(err) => error_response(request.id, -32042, &err.to_string()),
+                },
+                Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+            }
+        }
         "get_component_replacement_plan" => {
             match serde_json::from_value::<UuidParams>(request.params) {
                 Ok(params) => match engine.get_component_replacement_plan(&params.uuid) {
-                    Ok(report) => success_response(request.id, serde_json::to_value(report).unwrap()),
+                    Ok(report) => {
+                        success_response(request.id, serde_json::to_value(report).unwrap())
+                    }
                     Err(err) => error_response(request.id, -32043, &err.to_string()),
                 },
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -346,7 +361,9 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                         policy: params.policy,
                     },
                 ) {
-                    Ok(report) => success_response(request.id, serde_json::to_value(report).unwrap()),
+                    Ok(report) => {
+                        success_response(request.id, serde_json::to_value(report).unwrap())
+                    }
                     Err(err) => error_response(request.id, -32049, &err.to_string()),
                 },
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -370,7 +387,9 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                             .collect(),
                     },
                 ) {
-                    Ok(report) => success_response(request.id, serde_json::to_value(report).unwrap()),
+                    Ok(report) => {
+                        success_response(request.id, serde_json::to_value(report).unwrap())
+                    }
                     Err(err) => error_response(request.id, -32051, &err.to_string()),
                 },
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),

@@ -135,8 +135,7 @@ fn save_persists_set_reference_for_current_m3_slice() {
     let r1 = components
         .iter()
         .find(|component| {
-            component.uuid
-                == uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap()
+            component.uuid == uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap()
         })
         .unwrap();
     assert_eq!(r1.reference, "R10");
@@ -208,8 +207,7 @@ fn save_persists_rotate_component_for_current_m3_slice() {
     let rotated = components
         .iter()
         .find(|component| {
-            component.uuid
-                == uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap()
+            component.uuid == uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap()
         })
         .unwrap();
     assert_eq!(rotated.rotation, 180);

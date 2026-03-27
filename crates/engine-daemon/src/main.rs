@@ -18,9 +18,9 @@ use eda_engine::api::{
     AssignPartInput, ComponentReplacementPolicy, ComponentReplacementScope, Engine,
     MoveComponentInput, PlannedComponentReplacementInput, PolicyDrivenComponentReplacementInput,
     ReplaceComponentInput, RotateComponentInput, ScopedComponentReplacementOverride,
-    ScopedComponentReplacementPlanEdit, ScopedComponentReplacementPolicyInput,
-    SetDesignRuleInput, SetNetClassInput, SetPackageInput, SetPackageWithPartInput,
-    SetReferenceInput, SetValueInput, ViolationDomain,
+    ScopedComponentReplacementPlanEdit, ScopedComponentReplacementPolicyInput, SetDesignRuleInput,
+    SetNetClassInput, SetPackageInput, SetPackageWithPartInput, SetReferenceInput, SetValueInput,
+    ViolationDomain,
 };
 use eda_engine::ir::geometry::Point;
 use eda_engine::ir::units::mm_to_nm;
@@ -366,24 +366,24 @@ mod tests {
         JsonRpcResponse::from_json(&line).expect("response should parse")
     }
 
-    #[path = "main_tests_session_pool.rs"]
-    mod session_pool;
-    #[path = "main_tests_session_pool_replacements.rs"]
-    mod session_pool_replacements;
-    #[path = "main_tests_query_check.rs"]
-    mod query_check;
-    #[path = "main_tests_query_check_runs.rs"]
-    mod query_check_runs;
-    #[path = "main_tests_mutation_basics.rs"]
-    mod mutation_basics;
     #[path = "main_tests_component_mutation_core.rs"]
     mod component_mutation_core;
+    #[path = "main_tests_dispatch_followups_transport.rs"]
+    mod dispatch_followups_transport;
+    #[path = "main_tests_dispatch_replacements.rs"]
+    mod dispatch_replacements;
+    #[path = "main_tests_mutation_basics.rs"]
+    mod mutation_basics;
     #[path = "main_tests_package_replacements.rs"]
     mod package_replacements;
     #[path = "main_tests_package_replacements_apply.rs"]
     mod package_replacements_apply;
-    #[path = "main_tests_dispatch_replacements.rs"]
-    mod dispatch_replacements;
-    #[path = "main_tests_dispatch_followups_transport.rs"]
-    mod dispatch_followups_transport;
+    #[path = "main_tests_query_check.rs"]
+    mod query_check;
+    #[path = "main_tests_query_check_runs.rs"]
+    mod query_check_runs;
+    #[path = "main_tests_session_pool.rs"]
+    mod session_pool;
+    #[path = "main_tests_session_pool_replacements.rs"]
+    mod session_pool_replacements;
 }

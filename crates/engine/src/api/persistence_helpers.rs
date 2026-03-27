@@ -1,7 +1,10 @@
 use super::*;
 
 pub(super) fn deterministic_net_class_uuid(net_uuid: Uuid, class_name: &str) -> Uuid {
-    Uuid::new_v5(&Uuid::NAMESPACE_OID, format!("{net_uuid}:{class_name}").as_bytes())
+    Uuid::new_v5(
+        &Uuid::NAMESPACE_OID,
+        format!("{net_uuid}:{class_name}").as_bytes(),
+    )
 }
 
 pub(super) fn persist_rule_sidecar(
@@ -46,8 +49,11 @@ pub(super) fn persist_part_assignment_sidecar(
         .file_name()
         .map(|name| name.to_string_lossy().to_string())
         .unwrap_or_else(|| board_path.display().to_string());
-    let sidecar =
-        part_assignments_sidecar::PartAssignmentsSidecar::new(source_file, source_hash, assignments);
+    let sidecar = part_assignments_sidecar::PartAssignmentsSidecar::new(
+        source_file,
+        source_hash,
+        assignments,
+    );
     part_assignments_sidecar::write_sidecar(&sidecar_path, &sidecar)
 }
 

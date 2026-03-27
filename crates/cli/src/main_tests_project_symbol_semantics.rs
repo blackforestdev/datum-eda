@@ -52,7 +52,8 @@ fn seed_native_sheet(root: &Path) -> Uuid {
         &schematic_json,
         format!(
             "{}\n",
-            to_json_deterministic(&schematic_value).expect("canonical serialization should succeed")
+            to_json_deterministic(&schematic_value)
+                .expect("canonical serialization should succeed")
         ),
     )
     .expect("schematic.json should write");
@@ -410,8 +411,8 @@ fn project_set_symbol_hidden_power_behavior_updates_symbol_semantics_query_surfa
         "explicit-power-object",
     ])
     .expect("CLI should parse");
-    let behavior_output = execute(behavior_cli)
-        .expect("project set-symbol-hidden-power-behavior should succeed");
+    let behavior_output =
+        execute(behavior_cli).expect("project set-symbol-hidden-power-behavior should succeed");
     assert!(behavior_output.contains("action: set_symbol_hidden_power_behavior"));
     assert!(behavior_output.contains("hidden_power_behavior: ExplicitPowerObject"));
 

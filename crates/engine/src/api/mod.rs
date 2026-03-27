@@ -7,7 +7,9 @@ use uuid::Uuid;
 mod api_types;
 pub use api_types::*;
 mod check_summary;
-use check_summary::{drc_suggestion, erc_suggestion, summarize_diagnostics, summarize_schematic_checks};
+use check_summary::{
+    drc_suggestion, erc_suggestion, summarize_diagnostics, summarize_schematic_checks,
+};
 mod ops_helpers;
 use ops_helpers::*;
 mod persistence_helpers;
@@ -20,14 +22,16 @@ mod query_surface;
 mod save_kicad;
 mod write_ops;
 
-use crate::board::{Airwire, Board, BoardNetInfo, BoardSummary, ComponentInfo, NetClass, StackupInfo};
+use crate::board::{
+    Airwire, Board, BoardNetInfo, BoardSummary, ComponentInfo, NetClass, StackupInfo,
+};
 use crate::connectivity;
 use crate::drc::{self, DrcReport};
 use crate::erc::{self, ErcConfig, ErcFinding};
 use crate::error::EngineError;
 use crate::import::{
-    ImportKind, ImportReport, detect_import_kind, eagle, ids_sidecar, kicad,
-    net_classes_sidecar, package_assignments_sidecar, part_assignments_sidecar, rules_sidecar,
+    ImportKind, ImportReport, detect_import_kind, eagle, ids_sidecar, kicad, net_classes_sidecar,
+    package_assignments_sidecar, part_assignments_sidecar, rules_sidecar,
 };
 use crate::ir::units::nm_to_mm;
 use crate::pool::{PartSummary, Pool, PoolIndex};

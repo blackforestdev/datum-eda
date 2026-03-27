@@ -96,8 +96,7 @@ fn save_persists_assign_part_for_current_m3_slice() {
     let updated = components
         .iter()
         .find(|component| {
-            component.uuid
-                == uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap()
+            component.uuid == uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap()
         })
         .unwrap();
     assert_eq!(updated.value, "ALTAMP");
@@ -106,7 +105,8 @@ fn save_persists_assign_part_for_current_m3_slice() {
         .as_ref()
         .and_then(|design| design.board.as_ref())
         .and_then(|board| {
-            board.packages
+            board
+                .packages
                 .get(&uuid::Uuid::parse_str("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa").unwrap())
         })
         .map(|package| package.part)

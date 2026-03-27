@@ -13,6 +13,7 @@ fn project_export_gerber_copper_layer_writes_rs274x_track_file() {
 
     let net_uuid = Uuid::new_v4();
     let class_uuid = Uuid::new_v4();
+    let pad_uuid = Uuid::new_v4();
     let track_a_uuid = Uuid::new_v4();
     let track_b_uuid = Uuid::new_v4();
     let zone_uuid = Uuid::new_v4();
@@ -29,7 +30,17 @@ fn project_export_gerber_copper_layer_writes_rs274x_track_file() {
                 "stackup": { "layers": [] },
                 "outline": { "vertices": [], "closed": true },
                 "packages": {},
-                "pads": {},
+                "pads": {
+                    pad_uuid.to_string(): {
+                        "uuid": pad_uuid,
+                        "package": Uuid::new_v4(),
+                        "name": "1",
+                        "net": net_uuid,
+                        "position": { "x": 750000, "y": 250000 },
+                        "layer": 1,
+                        "diameter": 450000
+                    }
+                },
                 "tracks": {
                     track_b_uuid.to_string(): {
                         "uuid": track_b_uuid,
@@ -109,14 +120,23 @@ fn project_export_gerber_copper_layer_writes_rs274x_track_file() {
 
     let gerber_path = root.join("top-copper.gbr");
     let cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "export-gerber-copper-layer",
-        root.to_str().unwrap(), "--layer", "1", "--out", gerber_path.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "export-gerber-copper-layer",
+        root.to_str().unwrap(),
+        "--layer",
+        "1",
+        "--out",
+        gerber_path.to_str().unwrap(),
     ])
     .expect("CLI should parse");
     let output = execute(cli).expect("gerber copper export should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
     assert_eq!(report["action"], "export_gerber_copper_layer");
     assert_eq!(report["layer"], 1);
+    assert_eq!(report["pad_count"], 1);
     assert_eq!(report["track_count"], 2);
     assert_eq!(report["zone_count"], 1);
     assert_eq!(report["via_count"], 1);
@@ -124,6 +144,8 @@ fn project_export_gerber_copper_layer_writes_rs274x_track_file() {
     let gerber = std::fs::read_to_string(&gerber_path).expect("gerber should read");
     assert!(gerber.contains("%ADD10C,0.200000*%"));
     assert!(gerber.contains("%ADD11C,0.300000*%"));
+    assert!(gerber.contains("%ADD12C,0.450000*%"));
+    assert!(gerber.contains("%ADD13C,0.600000*%"));
     assert!(gerber.contains("D10*"));
     assert!(gerber.contains("D11*"));
     assert!(gerber.contains("X0Y0D02*"));
@@ -132,8 +154,9 @@ fn project_export_gerber_copper_layer_writes_rs274x_track_file() {
     assert!(gerber.contains("X1000000Y500000D01*"));
     assert!(gerber.contains("G36*"));
     assert!(gerber.contains("G37*"));
-    assert!(gerber.contains("%ADD12C,0.600000*%"));
     assert!(gerber.contains("D12*"));
+    assert!(gerber.contains("X750000Y250000D03*"));
+    assert!(gerber.contains("D13*"));
     assert!(gerber.contains("X250000Y250000D03*"));
     assert!(gerber.contains("X0Y1000000D02*"));
     assert!(gerber.contains("X1000000Y1000000D01*"));

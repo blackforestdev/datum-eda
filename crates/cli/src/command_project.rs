@@ -3,102 +3,76 @@ use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result, bail};
 use eda_engine::api::{CheckCodeCount, CheckReport, CheckStatus, CheckSummary};
-use eda_engine::board::{Board, BoardText, Dimension, Keepout, Net, NetClass, PlacedPackage, PlacedPad, Stackup, StackupLayer, StackupLayerType, Track, Via, Zone};
-use eda_engine::import::ids_sidecar::compute_source_hash_bytes;
+use eda_engine::board::{
+    Board, BoardText, Dimension, Keepout, Net, NetClass, PlacedPackage, PlacedPad, Stackup,
+    StackupLayer, StackupLayerType, Track, Via, Zone,
+};
+use eda_engine::connectivity::{schematic_diagnostics, schematic_net_info};
+use eda_engine::erc::{ErcFinding, run_prechecks};
 use eda_engine::export::{
     render_excellon_drill, render_rs274x_copper_layer, render_rs274x_outline_default,
 };
-use eda_engine::connectivity::{schematic_diagnostics, schematic_net_info};
-use eda_engine::ir::geometry::{Arc, Point};
+use eda_engine::import::ids_sidecar::compute_source_hash_bytes;
 use eda_engine::ir::geometry::Polygon;
+use eda_engine::ir::geometry::{Arc, Point};
 use eda_engine::ir::serialization::to_json_deterministic;
-use eda_engine::erc::{ErcFinding, run_prechecks};
 use eda_engine::rules::ast::Rule;
 use eda_engine::schematic::{
     Bus, BusEntry, BusEntryInfo, BusInfo, CheckWaiver, ConnectivityDiagnosticInfo,
-    HiddenPowerBehavior, HierarchicalPort, Junction, LabelInfo, LabelKind, NetLabel,
-    NoConnectInfo, NoConnectMarker, PinDisplayOverride, PlacedSymbol, PortDirection, PortInfo,
-    Schematic, SchematicNetInfo, SchematicPrimitive, SchematicText, SchematicWire, Sheet,
-    SheetFrame, SymbolDisplayMode, SymbolField, SymbolFieldInfo, SymbolInfo, SymbolPin,
+    HiddenPowerBehavior, HierarchicalPort, Junction, LabelInfo, LabelKind, NetLabel, NoConnectInfo,
+    NoConnectMarker, PinDisplayOverride, PlacedSymbol, PortDirection, PortInfo, Schematic,
+    SchematicNetInfo, SchematicPrimitive, SchematicText, SchematicWire, Sheet, SheetFrame,
+    SymbolDisplayMode, SymbolField, SymbolFieldInfo, SymbolInfo, SymbolPin,
 };
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use super::{
-    NativeProjectBomComparisonView,
-    NativeProjectBomDriftView,
-    NativeProjectBomExportView,
-    NativeProjectDrillExportView,
-    NativeProjectPnpComparisonView,
-    NativeProjectPnpDriftView,
-    NativeProjectDrillHoleClassBucketView,
-    NativeProjectDrillHoleClassReportView,
-    NativeProjectExcellonDrillExportView,
-    NativeProjectExcellonDrillComparisonView,
-    NativeProjectExcellonDrillHitDriftView,
-    NativeProjectExcellonDrillInspectionView,
-    NativeProjectExcellonDrillToolView,
-    NativeProjectExcellonDrillValidationView,
-    NativeProjectGerberCopperExportView,
-    NativeProjectGerberCopperValidationView,
-    NativeProjectGerberOutlineExportView,
-    NativeProjectGerberOutlineValidationView,
-    NativeProjectGerberPlanArtifactView,
-    NativeProjectGerberPlanComparisonView,
-    NativeProjectGerberPlanView,
-    NativeProjectPnpExportView,
-    NativeProjectBoardSummaryView, NativeProjectCreateReportView, NativeProjectInspectReportView,
+    DiagnosticsView, NativeProjectBoardComponentMutationReportView,
+    NativeProjectBoardDimensionMutationReportView, NativeProjectBoardKeepoutMutationReportView,
+    NativeProjectBoardNetClassMutationReportView, NativeProjectBoardNetMutationReportView,
+    NativeProjectBoardOutlineMutationReportView, NativeProjectBoardPadMutationReportView,
+    NativeProjectBoardStackupMutationReportView, NativeProjectBoardSummaryView,
+    NativeProjectBoardTextMutationReportView, NativeProjectBoardTrackMutationReportView,
+    NativeProjectBoardViaMutationReportView, NativeProjectBoardZoneMutationReportView,
+    NativeProjectBomComparisonView, NativeProjectBomDriftView, NativeProjectBomExportView,
     NativeProjectBusEntryMutationReportView, NativeProjectBusMutationReportView,
-    NativeProjectJunctionMutationReportView,
-    NativeProjectLabelMutationReportView,
-    NativeProjectNoConnectMutationReportView,
-    NativeProjectPortMutationReportView,
-    NativeProjectDrawingMutationReportView,
-    NativeProjectBoardKeepoutMutationReportView,
-    NativeProjectBoardOutlineMutationReportView,
-    NativeProjectBoardStackupMutationReportView,
-    NativeProjectBoardComponentMutationReportView,
-    NativeProjectBoardNetMutationReportView,
-    NativeProjectBoardTrackMutationReportView,
-    NativeProjectBoardViaMutationReportView,
-    NativeProjectBoardZoneMutationReportView,
-    NativeProjectBoardPadMutationReportView,
-    NativeProjectBoardNetClassMutationReportView,
-    NativeProjectBoardDimensionMutationReportView,
-    NativeProjectBoardTextMutationReportView,
-    NativeProjectForwardAnnotationAuditView,
-    NativeProjectForwardAnnotationMissingView,
-    NativeProjectForwardAnnotationOrphanView,
-    NativeProjectForwardAnnotationApplyReportView,
-    NativeProjectForwardAnnotationBatchApplyReportView,
-    NativeProjectForwardAnnotationBatchApplySkippedActionView,
-    NativeProjectForwardAnnotationExportReportView,
-    NativeProjectForwardAnnotationArtifactInspectionView,
-    NativeProjectForwardAnnotationArtifactFilterView,
+    NativeProjectCreateReportView, NativeProjectDrawingMutationReportView,
+    NativeProjectDrillExportView, NativeProjectDrillHoleClassBucketView,
+    NativeProjectDrillHoleClassReportView, NativeProjectExcellonDrillComparisonView,
+    NativeProjectExcellonDrillExportView, NativeProjectExcellonDrillHitDriftView,
+    NativeProjectExcellonDrillInspectionView, NativeProjectExcellonDrillToolView,
+    NativeProjectExcellonDrillValidationView, NativeProjectForwardAnnotationApplyReportView,
     NativeProjectForwardAnnotationArtifactApplyPlanActionView,
     NativeProjectForwardAnnotationArtifactApplyPlanView,
     NativeProjectForwardAnnotationArtifactApplyView,
-    NativeProjectForwardAnnotationArtifactReviewImportView,
-    NativeProjectForwardAnnotationArtifactReviewReplaceView,
     NativeProjectForwardAnnotationArtifactComparisonActionView,
     NativeProjectForwardAnnotationArtifactComparisonView,
-    NativeProjectForwardAnnotationPartMismatchView,
-    NativeProjectForwardAnnotationProposalActionView,
-    NativeProjectForwardAnnotationProposalView,
-    NativeProjectForwardAnnotationReviewActionView,
-    NativeProjectForwardAnnotationReviewReportView,
-    NativeProjectForwardAnnotationReviewView,
-    NativeProjectForwardAnnotationValueMismatchView,
-    NativeProjectPinOverrideMutationReportView,
-    NativeProjectSymbolFieldMutationReportView,
-    NativeProjectSymbolPinInfoView,
-    NativeProjectSymbolSemanticsView,
-    NativeProjectSymbolMutationReportView,
-    NativeProjectTextMutationReportView,
-    NativeProjectWireMutationReportView,
-    DiagnosticsView, UnroutedView,
+    NativeProjectForwardAnnotationArtifactFilterView,
+    NativeProjectForwardAnnotationArtifactInspectionView,
+    NativeProjectForwardAnnotationArtifactReviewImportView,
+    NativeProjectForwardAnnotationArtifactReviewReplaceView,
+    NativeProjectForwardAnnotationAuditView, NativeProjectForwardAnnotationBatchApplyReportView,
+    NativeProjectForwardAnnotationBatchApplySkippedActionView,
+    NativeProjectForwardAnnotationExportReportView, NativeProjectForwardAnnotationMissingView,
+    NativeProjectForwardAnnotationOrphanView, NativeProjectForwardAnnotationPartMismatchView,
+    NativeProjectForwardAnnotationProposalActionView, NativeProjectForwardAnnotationProposalView,
+    NativeProjectForwardAnnotationReviewActionView, NativeProjectForwardAnnotationReviewReportView,
+    NativeProjectForwardAnnotationReviewView, NativeProjectForwardAnnotationValueMismatchView,
+    NativeProjectGerberCopperComparisonView, NativeProjectGerberCopperExportView,
+    NativeProjectGerberCopperValidationView, NativeProjectGerberGeometryEntryView,
+    NativeProjectGerberOutlineComparisonView, NativeProjectGerberOutlineExportView,
+    NativeProjectGerberOutlineValidationView, NativeProjectGerberPlanArtifactView,
+    NativeProjectGerberPlanComparisonView, NativeProjectGerberPlanView,
+    NativeProjectInspectReportView, NativeProjectJunctionMutationReportView,
+    NativeProjectLabelMutationReportView, NativeProjectNoConnectMutationReportView,
+    NativeProjectPinOverrideMutationReportView, NativeProjectPnpComparisonView,
+    NativeProjectPnpDriftView, NativeProjectPnpExportView, NativeProjectPortMutationReportView,
     NativeProjectRulesSummaryView, NativeProjectRulesView, NativeProjectSchematicSummaryView,
-    NativeProjectSummaryView,
+    NativeProjectSummaryView, NativeProjectSymbolFieldMutationReportView,
+    NativeProjectSymbolMutationReportView, NativeProjectSymbolPinInfoView,
+    NativeProjectSymbolSemanticsView, NativeProjectTextMutationReportView,
+    NativeProjectWireMutationReportView, UnroutedView,
 };
 
 fn render_symbol_display_mode(mode: &SymbolDisplayMode) -> String {
@@ -643,7 +617,10 @@ pub(crate) fn query_native_project_forward_annotation_proposal(
             .then_with(|| a.reason.cmp(&b.reason))
     });
 
-    let add_component_actions = actions.iter().filter(|action| action.action == "add_component").count();
+    let add_component_actions = actions
+        .iter()
+        .filter(|action| action.action == "add_component")
+        .count();
     let remove_component_actions = actions
         .iter()
         .filter(|action| action.action == "remove_component")
@@ -695,7 +672,9 @@ pub(crate) fn apply_native_project_forward_annotation_action(
         .actions
         .into_iter()
         .find(|action| action.action_id == action_id)
-        .ok_or_else(|| anyhow::anyhow!("forward-annotation proposal action not found: {action_id}"))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("forward-annotation proposal action not found: {action_id}")
+        })?;
 
     execute_native_project_forward_annotation_action(
         root,
@@ -717,7 +696,6 @@ fn execute_native_project_forward_annotation_action(
     y_nm: Option<i64>,
     layer: Option<i32>,
 ) -> Result<NativeProjectForwardAnnotationApplyReportView> {
-
     let component_report = match (action.action.as_str(), action.reason.as_str()) {
         ("remove_component", "board_component_missing_in_schematic") => {
             let component_uuid = Uuid::parse_str(
@@ -748,9 +726,7 @@ fn execute_native_project_forward_annotation_action(
         }
         ("add_component", _) => {
             let package_uuid = package_uuid.ok_or_else(|| {
-                anyhow::anyhow!(
-                    "forward-annotation add_component apply requires --package <uuid>"
-                )
+                anyhow::anyhow!("forward-annotation add_component apply requires --package <uuid>")
             })?;
             let x_nm = x_nm.ok_or_else(|| {
                 anyhow::anyhow!("forward-annotation add_component apply requires --x-nm <i64>")
@@ -793,9 +769,7 @@ fn execute_native_project_forward_annotation_action(
             )
             .context("invalid component UUID in forward-annotation proposal")?;
             let package_uuid = package_uuid.ok_or_else(|| {
-                anyhow::anyhow!(
-                    "forward-annotation part_mismatch apply requires --package <uuid>"
-                )
+                anyhow::anyhow!("forward-annotation part_mismatch apply requires --package <uuid>")
             })?;
             let resolved_part_uuid = match (part_uuid, action.schematic_part_uuid.as_deref()) {
                 (Some(part_uuid), _) => part_uuid,
@@ -807,8 +781,7 @@ fn execute_native_project_forward_annotation_action(
                     )
                 }
             };
-            let _ =
-                set_native_project_board_component_package(root, component_uuid, package_uuid)?;
+            let _ = set_native_project_board_component_package(root, component_uuid, package_uuid)?;
             set_native_project_board_component_part(root, component_uuid, resolved_part_uuid)?
         }
         _ => bail!(
@@ -932,8 +905,14 @@ pub(crate) fn query_native_project_forward_annotation_review(
             .then_with(|| a.reason.cmp(&b.reason))
             .then_with(|| a.action_id.cmp(&b.action_id))
     });
-    let deferred_actions = actions.iter().filter(|action| action.decision == "deferred").count();
-    let rejected_actions = actions.iter().filter(|action| action.decision == "rejected").count();
+    let deferred_actions = actions
+        .iter()
+        .filter(|action| action.decision == "deferred")
+        .count();
+    let rejected_actions = actions
+        .iter()
+        .filter(|action| action.decision == "rejected")
+        .count();
     Ok(NativeProjectForwardAnnotationReviewView {
         domain: "native_project",
         total_reviews: actions.len(),
@@ -957,7 +936,9 @@ pub(crate) fn record_native_project_forward_annotation_review(
         .actions
         .into_iter()
         .find(|action| action.action_id == action_id)
-        .ok_or_else(|| anyhow::anyhow!("forward-annotation proposal action not found: {action_id}"))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("forward-annotation proposal action not found: {action_id}")
+        })?;
 
     let mut project = load_native_project(root)?;
     project.manifest.forward_annotation_review.insert(
@@ -991,7 +972,9 @@ pub(crate) fn clear_native_project_forward_annotation_review(
         .manifest
         .forward_annotation_review
         .remove(action_id)
-        .ok_or_else(|| anyhow::anyhow!("forward-annotation review action not found: {action_id}"))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("forward-annotation review action not found: {action_id}")
+        })?;
     write_canonical_json(&project.root.join("project.json"), &project.manifest)?;
     Ok(NativeProjectForwardAnnotationReviewReportView {
         action: "clear_forward_annotation_action_review".to_string(),
@@ -1151,10 +1134,18 @@ pub(crate) fn select_forward_annotation_proposal_artifact(
 fn load_forward_annotation_proposal_artifact(
     artifact_path: &Path,
 ) -> Result<LoadedForwardAnnotationProposalArtifact> {
-    let contents = std::fs::read_to_string(artifact_path)
-        .with_context(|| format!("failed to read forward-annotation artifact {}", artifact_path.display()))?;
-    let value = serde_json::from_str::<serde_json::Value>(&contents)
-        .with_context(|| format!("failed to parse forward-annotation artifact {}", artifact_path.display()))?;
+    let contents = std::fs::read_to_string(artifact_path).with_context(|| {
+        format!(
+            "failed to read forward-annotation artifact {}",
+            artifact_path.display()
+        )
+    })?;
+    let value = serde_json::from_str::<serde_json::Value>(&contents).with_context(|| {
+        format!(
+            "failed to parse forward-annotation artifact {}",
+            artifact_path.display()
+        )
+    })?;
 
     let kind = value.get("kind").and_then(serde_json::Value::as_str);
     if let Some(kind) = kind
@@ -1323,9 +1314,18 @@ pub(crate) fn compare_forward_annotation_proposal_artifact(
             .then_with(|| a.action_id.cmp(&b.action_id))
     });
 
-    let applicable_actions = actions.iter().filter(|action| action.status == "applicable").count();
-    let drifted_actions = actions.iter().filter(|action| action.status == "drifted").count();
-    let stale_actions = actions.iter().filter(|action| action.status == "stale").count();
+    let applicable_actions = actions
+        .iter()
+        .filter(|action| action.status == "applicable")
+        .count();
+    let drifted_actions = actions
+        .iter()
+        .filter(|action| action.status == "drifted")
+        .count();
+    let stale_actions = actions
+        .iter()
+        .filter(|action| action.status == "stale")
+        .count();
 
     Ok(NativeProjectForwardAnnotationArtifactComparisonView {
         artifact_path: loaded.artifact_path.display().to_string(),
@@ -1720,7 +1720,10 @@ pub(crate) fn query_native_project_symbols(root: &Path) -> Result<Vec<SymbolInfo
             .with_context(|| format!("failed to read {}", path.display()))?;
         let sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
             .with_context(|| format!("failed to parse {}", path.display()))?;
-        if let Some(entries) = sheet_value.get("symbols").and_then(serde_json::Value::as_object) {
+        if let Some(entries) = sheet_value
+            .get("symbols")
+            .and_then(serde_json::Value::as_object)
+        {
             for value in entries.values() {
                 let symbol: PlacedSymbol = serde_json::from_value(value.clone())
                     .with_context(|| format!("failed to parse symbol in {}", path.display()))?;
@@ -1740,7 +1743,11 @@ pub(crate) fn query_native_project_symbols(root: &Path) -> Result<Vec<SymbolInfo
             }
         }
     }
-    symbols.sort_by(|a, b| a.reference.cmp(&b.reference).then_with(|| a.uuid.cmp(&b.uuid)));
+    symbols.sort_by(|a, b| {
+        a.reference
+            .cmp(&b.reference)
+            .then_with(|| a.uuid.cmp(&b.uuid))
+    });
     Ok(symbols)
 }
 
@@ -1790,7 +1797,10 @@ pub(crate) fn query_native_project_symbol_pins(
         .pins
         .into_iter()
         .map(|pin| {
-            let pin_override = symbol.pin_overrides.iter().find(|entry| entry.pin == pin.uuid);
+            let pin_override = symbol
+                .pin_overrides
+                .iter()
+                .find(|entry| entry.pin == pin.uuid);
             NativeProjectSymbolPinInfoView {
                 symbol_uuid: symbol_uuid.to_string(),
                 pin_uuid: pin.uuid.to_string(),
@@ -1805,7 +1815,11 @@ pub(crate) fn query_native_project_symbol_pins(
             }
         })
         .collect::<Vec<_>>();
-    pins.sort_by(|a, b| a.number.cmp(&b.number).then_with(|| a.pin_uuid.cmp(&b.pin_uuid)));
+    pins.sort_by(|a, b| {
+        a.number
+            .cmp(&b.number)
+            .then_with(|| a.pin_uuid.cmp(&b.pin_uuid))
+    });
     Ok(pins)
 }
 
@@ -1820,7 +1834,10 @@ pub(crate) fn query_native_project_texts(root: &Path) -> Result<Vec<serde_json::
             .with_context(|| format!("failed to read {}", path.display()))?;
         let sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
             .with_context(|| format!("failed to parse {}", path.display()))?;
-        if let Some(entries) = sheet_value.get("texts").and_then(serde_json::Value::as_object) {
+        if let Some(entries) = sheet_value
+            .get("texts")
+            .and_then(serde_json::Value::as_object)
+        {
             for value in entries.values() {
                 let text: SchematicText = serde_json::from_value(value.clone())
                     .with_context(|| format!("failed to parse text in {}", path.display()))?;
@@ -1885,7 +1902,10 @@ pub(crate) fn query_native_project_labels(root: &Path) -> Result<Vec<LabelInfo>>
             .with_context(|| format!("failed to read {}", path.display()))?;
         let sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
             .with_context(|| format!("failed to parse {}", path.display()))?;
-        if let Some(entries) = sheet_value.get("labels").and_then(serde_json::Value::as_object) {
+        if let Some(entries) = sheet_value
+            .get("labels")
+            .and_then(serde_json::Value::as_object)
+        {
             for value in entries.values() {
                 let label: NetLabel = serde_json::from_value(value.clone())
                     .with_context(|| format!("failed to parse label in {}", path.display()))?;
@@ -1914,7 +1934,10 @@ pub(crate) fn query_native_project_wires(root: &Path) -> Result<Vec<serde_json::
             .with_context(|| format!("failed to read {}", path.display()))?;
         let sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
             .with_context(|| format!("failed to parse {}", path.display()))?;
-        if let Some(entries) = sheet_value.get("wires").and_then(serde_json::Value::as_object) {
+        if let Some(entries) = sheet_value
+            .get("wires")
+            .and_then(serde_json::Value::as_object)
+        {
             for value in entries.values() {
                 let wire: SchematicWire = serde_json::from_value(value.clone())
                     .with_context(|| format!("failed to parse wire in {}", path.display()))?;
@@ -1980,7 +2003,10 @@ pub(crate) fn query_native_project_ports(root: &Path) -> Result<Vec<PortInfo>> {
             .with_context(|| format!("failed to read {}", path.display()))?;
         let sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
             .with_context(|| format!("failed to parse {}", path.display()))?;
-        if let Some(entries) = sheet_value.get("ports").and_then(serde_json::Value::as_object) {
+        if let Some(entries) = sheet_value
+            .get("ports")
+            .and_then(serde_json::Value::as_object)
+        {
             for value in entries.values() {
                 let port: HierarchicalPort = serde_json::from_value(value.clone())
                     .with_context(|| format!("failed to parse port in {}", path.display()))?;
@@ -2009,7 +2035,10 @@ pub(crate) fn query_native_project_buses(root: &Path) -> Result<Vec<BusInfo>> {
             .with_context(|| format!("failed to read {}", path.display()))?;
         let sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
             .with_context(|| format!("failed to parse {}", path.display()))?;
-        if let Some(entries) = sheet_value.get("buses").and_then(serde_json::Value::as_object) {
+        if let Some(entries) = sheet_value
+            .get("buses")
+            .and_then(serde_json::Value::as_object)
+        {
             for value in entries.values() {
                 let bus: Bus = serde_json::from_value(value.clone())
                     .with_context(|| format!("failed to parse bus in {}", path.display()))?;
@@ -2037,7 +2066,9 @@ pub(crate) fn query_native_project_bus_entries(root: &Path) -> Result<Vec<BusEnt
             .with_context(|| format!("failed to read {}", path.display()))?;
         let sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
             .with_context(|| format!("failed to parse {}", path.display()))?;
-        if let Some(values) = sheet_value.get("bus_entries").and_then(serde_json::Value::as_object)
+        if let Some(values) = sheet_value
+            .get("bus_entries")
+            .and_then(serde_json::Value::as_object)
         {
             for value in values.values() {
                 let entry: BusEntry = serde_json::from_value(value.clone())
@@ -2090,14 +2121,18 @@ pub(crate) fn query_native_project_noconnects(root: &Path) -> Result<Vec<NoConne
 
 pub(crate) fn query_native_project_nets(root: &Path) -> Result<Vec<SchematicNetInfo>> {
     let project = load_native_project(root)?;
-    Ok(schematic_net_info(&build_native_project_schematic(&project)?))
+    Ok(schematic_net_info(&build_native_project_schematic(
+        &project,
+    )?))
 }
 
 pub(crate) fn query_native_project_diagnostics(
     root: &Path,
 ) -> Result<Vec<ConnectivityDiagnosticInfo>> {
     let project = load_native_project(root)?;
-    Ok(schematic_diagnostics(&build_native_project_schematic(&project)?))
+    Ok(schematic_diagnostics(&build_native_project_schematic(
+        &project,
+    )?))
 }
 
 pub(crate) fn query_native_project_erc(root: &Path) -> Result<Vec<ErcFinding>> {
@@ -2177,7 +2212,11 @@ pub(crate) fn query_native_project_board_components(root: &Path) -> Result<Vec<P
         .into_values()
         .map(|value| serde_json::from_value(value).context("failed to parse board component"))
         .collect::<Result<Vec<PlacedPackage>>>()?;
-    packages.sort_by(|a, b| a.reference.cmp(&b.reference).then_with(|| a.uuid.cmp(&b.uuid)));
+    packages.sort_by(|a, b| {
+        a.reference
+            .cmp(&b.reference)
+            .then_with(|| a.uuid.cmp(&b.uuid))
+    });
     Ok(packages)
 }
 
@@ -2187,8 +2226,9 @@ pub(crate) fn export_native_project_bom(
 ) -> Result<NativeProjectBomExportView> {
     let project = load_native_project(root)?;
     let components = query_native_project_board_components(root)?;
-    let mut csv =
-        String::from("reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked\n");
+    let mut csv = String::from(
+        "reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked\n",
+    );
     for component in &components {
         let row = [
             csv_escape(&component.reference),
@@ -2299,7 +2339,11 @@ pub(crate) fn export_native_project_pnp(
         "reference,x_nm,y_nm,rotation_deg,layer,side,package_uuid,part_uuid,value,locked\n",
     );
     for component in &components {
-        let side = if component.layer <= 16 { "top" } else { "bottom" };
+        let side = if component.layer <= 16 {
+            "top"
+        } else {
+            "bottom"
+        };
         let row = [
             csv_escape(&component.reference),
             component.position.x.to_string(),
@@ -2527,11 +2571,14 @@ pub(crate) fn inspect_excellon_drill(
             continue;
         }
         if line.starts_with('X') {
-            let tool = current_tool
-                .clone()
-                .with_context(|| format!("drill hit without active tool in {}", drill_path.display()))?;
+            let tool = current_tool.clone().with_context(|| {
+                format!("drill hit without active tool in {}", drill_path.display())
+            })?;
             let entry = tools.get_mut(&tool).with_context(|| {
-                format!("drill hit references unknown tool `{tool}` in {}", drill_path.display())
+                format!(
+                    "drill hit references unknown tool `{tool}` in {}",
+                    drill_path.display()
+                )
             })?;
             entry.hits += 1;
             hit_count += 1;
@@ -2678,11 +2725,13 @@ fn build_excellon_tool_views(vias: &[Via]) -> Vec<NativeProjectExcellonDrillTool
     grouped
         .into_iter()
         .enumerate()
-        .map(|(idx, (drill_nm, hits))| NativeProjectExcellonDrillToolView {
-            tool: format!("T{:02}", idx + 1),
-            diameter_mm: render_mm_6(drill_nm),
-            hits,
-        })
+        .map(
+            |(idx, (drill_nm, hits))| NativeProjectExcellonDrillToolView {
+                tool: format!("T{:02}", idx + 1),
+                diameter_mm: render_mm_6(drill_nm),
+                hits,
+            },
+        )
         .collect()
 }
 
@@ -2705,6 +2754,537 @@ fn classify_via_hole_class(
         (Some(top), Some(bottom)) if start == top || end == bottom => "blind".to_string(),
         (Some(_), Some(_)) => "buried".to_string(),
         _ => "unclassified".to_string(),
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum ParsedGerberGeometry {
+    Stroke {
+        aperture_diameter_nm: i64,
+        points: Vec<Point>,
+    },
+    Flash {
+        aperture_diameter_nm: i64,
+        position: Point,
+    },
+    Region {
+        points: Vec<Point>,
+    },
+}
+
+#[derive(Debug)]
+struct ParsedGerber {
+    geometries: Vec<ParsedGerberGeometry>,
+}
+
+#[derive(Debug, Default)]
+struct PendingStroke {
+    aperture_diameter_nm: i64,
+    points: Vec<Point>,
+}
+
+fn compare_entry_views(
+    expected: BTreeMap<(String, String), usize>,
+    actual: BTreeMap<(String, String), usize>,
+) -> (
+    usize,
+    usize,
+    usize,
+    Vec<NativeProjectGerberGeometryEntryView>,
+    Vec<NativeProjectGerberGeometryEntryView>,
+    Vec<NativeProjectGerberGeometryEntryView>,
+) {
+    let keys = expected
+        .keys()
+        .chain(actual.keys())
+        .cloned()
+        .collect::<BTreeSet<_>>();
+    let mut matched_count = 0;
+    let mut missing_count = 0;
+    let mut extra_count = 0;
+    let mut matched = Vec::new();
+    let mut missing = Vec::new();
+    let mut extra = Vec::new();
+
+    for (kind, geometry) in keys {
+        let key = (kind.clone(), geometry.clone());
+        let expected_count = *expected.get(&key).unwrap_or(&0);
+        let actual_count = *actual.get(&key).unwrap_or(&0);
+        let matched_instances = expected_count.min(actual_count);
+        let missing_instances = expected_count.saturating_sub(actual_count);
+        let extra_instances = actual_count.saturating_sub(expected_count);
+
+        if matched_instances > 0 {
+            matched_count += matched_instances;
+            matched.push(NativeProjectGerberGeometryEntryView {
+                kind: kind.clone(),
+                geometry: geometry.clone(),
+                count: matched_instances,
+            });
+        }
+        if missing_instances > 0 {
+            missing_count += missing_instances;
+            missing.push(NativeProjectGerberGeometryEntryView {
+                kind: kind.clone(),
+                geometry: geometry.clone(),
+                count: missing_instances,
+            });
+        }
+        if extra_instances > 0 {
+            extra_count += extra_instances;
+            extra.push(NativeProjectGerberGeometryEntryView {
+                kind,
+                geometry,
+                count: extra_instances,
+            });
+        }
+    }
+
+    (
+        matched_count,
+        missing_count,
+        extra_count,
+        matched,
+        missing,
+        extra,
+    )
+}
+
+fn gerber_outline_expected_entries(outline: &Polygon) -> BTreeMap<(String, String), usize> {
+    let mut entries = BTreeMap::new();
+    let outline_points = if outline.closed {
+        canonicalize_closed_loop(&outline.vertices)
+    } else {
+        canonicalize_open_path(&outline.vertices)
+    };
+    entries.insert(
+        (
+            "outline".to_string(),
+            render_stroke_geometry(DEFAULT_GERBER_OUTLINE_APERTURE_NM, &outline_points),
+        ),
+        1,
+    );
+    entries
+}
+
+fn gerber_outline_actual_entries(gerber: &ParsedGerber) -> BTreeMap<(String, String), usize> {
+    let mut entries = BTreeMap::new();
+    for geometry in &gerber.geometries {
+        let (kind, signature) = match geometry {
+            ParsedGerberGeometry::Stroke {
+                aperture_diameter_nm,
+                points,
+            } => (
+                "outline".to_string(),
+                render_stroke_geometry(*aperture_diameter_nm, points),
+            ),
+            ParsedGerberGeometry::Flash {
+                aperture_diameter_nm,
+                position,
+            } => (
+                "flash".to_string(),
+                render_flash_geometry(*aperture_diameter_nm, position),
+            ),
+            ParsedGerberGeometry::Region { points } => {
+                ("region".to_string(), render_region_geometry(points))
+            }
+        };
+        *entries.entry((kind, signature)).or_insert(0) += 1;
+    }
+    entries
+}
+
+fn gerber_copper_expected_entries(
+    pads: &[PlacedPad],
+    tracks: &[Track],
+    zones: &[Zone],
+    vias: &[Via],
+) -> BTreeMap<(String, String), usize> {
+    let mut entries = BTreeMap::new();
+    for pad in pads {
+        *entries
+            .entry((
+                "pad".to_string(),
+                render_flash_geometry(pad.diameter, &pad.position),
+            ))
+            .or_insert(0) += 1;
+    }
+    for track in tracks {
+        *entries
+            .entry((
+                "track".to_string(),
+                render_stroke_geometry(track.width, &[track.from, track.to]),
+            ))
+            .or_insert(0) += 1;
+    }
+    for zone in zones {
+        *entries
+            .entry((
+                "zone".to_string(),
+                render_region_geometry(&zone.polygon.vertices),
+            ))
+            .or_insert(0) += 1;
+    }
+    for via in vias {
+        *entries
+            .entry((
+                "via".to_string(),
+                render_flash_geometry(via.diameter, &via.position),
+            ))
+            .or_insert(0) += 1;
+    }
+    entries
+}
+
+fn gerber_copper_actual_entries(
+    gerber: &ParsedGerber,
+    expected_pads: &BTreeSet<String>,
+    expected_vias: &BTreeSet<String>,
+) -> BTreeMap<(String, String), usize> {
+    let mut entries = BTreeMap::new();
+    for geometry in &gerber.geometries {
+        let (kind, signature) = match geometry {
+            ParsedGerberGeometry::Stroke {
+                aperture_diameter_nm,
+                points,
+            } => (
+                "track".to_string(),
+                render_stroke_geometry(*aperture_diameter_nm, points),
+            ),
+            ParsedGerberGeometry::Flash {
+                aperture_diameter_nm,
+                position,
+            } => {
+                let signature = render_flash_geometry(*aperture_diameter_nm, position);
+                let kind = if expected_pads.contains(&signature) {
+                    "pad"
+                } else if expected_vias.contains(&signature) {
+                    "via"
+                } else {
+                    "flash"
+                };
+                (kind.to_string(), signature)
+            }
+            ParsedGerberGeometry::Region { points } => {
+                ("zone".to_string(), render_region_geometry(points))
+            }
+        };
+        *entries.entry((kind, signature)).or_insert(0) += 1;
+    }
+    entries
+}
+
+fn render_stroke_geometry(aperture_diameter_nm: i64, points: &[Point]) -> String {
+    let points = canonicalize_path_points(points);
+    format!(
+        "aperture_mm={} points={}",
+        render_mm_6(aperture_diameter_nm),
+        render_point_path(&points)
+    )
+}
+
+fn render_flash_geometry(aperture_diameter_nm: i64, position: &Point) -> String {
+    format!(
+        "diameter_mm={} at=({}, {})",
+        render_mm_6(aperture_diameter_nm),
+        position.x,
+        position.y
+    )
+}
+
+fn render_region_geometry(points: &[Point]) -> String {
+    let points = canonicalize_path_points(points);
+    format!("points={}", render_point_path(&points))
+}
+
+fn render_point_path(points: &[Point]) -> String {
+    points
+        .iter()
+        .map(|point| format!("({}, {})", point.x, point.y))
+        .collect::<Vec<_>>()
+        .join(" -> ")
+}
+
+const DEFAULT_GERBER_OUTLINE_APERTURE_NM: i64 = 100_000;
+
+fn parse_rs274x_subset(gerber: &str) -> Result<ParsedGerber> {
+    let mut aperture_map = BTreeMap::<usize, i64>::new();
+    let mut current_aperture = None;
+    let mut current_position = None;
+    let mut pending_stroke = None::<PendingStroke>;
+    let mut in_region = false;
+    let mut region_points = Vec::<Point>::new();
+    let mut geometries = Vec::new();
+
+    for raw_line in gerber.lines() {
+        let line = raw_line.trim();
+        if line.is_empty() || line.starts_with("G04") {
+            continue;
+        }
+        if line == "%FSLAX46Y46*%" || line == "%MOMM*%" || line == "%LPD*%" {
+            continue;
+        }
+        if let Some(rest) = line.strip_prefix("%ADD") {
+            let (code_str, diameter_str) = rest
+                .split_once("C,")
+                .context("unsupported Gerber aperture definition in comparison input")?;
+            let diameter_str = diameter_str
+                .strip_suffix("*%")
+                .context("unterminated Gerber aperture definition in comparison input")?;
+            let code = code_str
+                .parse::<usize>()
+                .context("invalid Gerber aperture code in comparison input")?;
+            let diameter_nm = parse_mm_6_to_nm(diameter_str)
+                .context("invalid Gerber circular aperture diameter in comparison input")?;
+            aperture_map.insert(code, diameter_nm);
+            continue;
+        }
+        if line == "G36*" {
+            finalize_pending_stroke(&mut pending_stroke, &mut geometries);
+            if in_region {
+                bail!("nested Gerber regions are not supported by semantic comparison");
+            }
+            in_region = true;
+            region_points.clear();
+            continue;
+        }
+        if line == "G37*" {
+            if !in_region {
+                bail!("Gerber region end encountered without region start");
+            }
+            in_region = false;
+            if region_points.len() >= 2 {
+                geometries.push(ParsedGerberGeometry::Region {
+                    points: canonicalize_path_points(&region_points),
+                });
+            }
+            region_points.clear();
+            continue;
+        }
+        if let Some(code) = parse_aperture_select(line)? {
+            finalize_pending_stroke(&mut pending_stroke, &mut geometries);
+            current_aperture = Some(code);
+            continue;
+        }
+        if line == "M02*" {
+            break;
+        }
+
+        let Some((point, operation)) = parse_gerber_coordinate_operation(line)? else {
+            bail!("unsupported Gerber command in semantic comparison input: {line}");
+        };
+        let previous_position = current_position;
+        current_position = Some(point);
+
+        if in_region {
+            match operation {
+                2 => {
+                    region_points.clear();
+                    region_points.push(point);
+                }
+                1 => {
+                    if region_points.is_empty() {
+                        region_points.push(point);
+                    } else {
+                        region_points.push(point);
+                    }
+                }
+                3 => bail!("Gerber flashes inside regions are not supported"),
+                _ => bail!("unsupported Gerber interpolation operation D0{operation}"),
+            }
+            continue;
+        }
+
+        let aperture_code = current_aperture.context(
+            "Gerber semantic comparison requires an active circular aperture before geometry",
+        )?;
+        let aperture_diameter_nm = *aperture_map.get(&aperture_code).with_context(|| {
+            format!("unknown Gerber aperture D{aperture_code} in comparison input")
+        })?;
+
+        match operation {
+            2 => {
+                finalize_pending_stroke(&mut pending_stroke, &mut geometries);
+                pending_stroke = Some(PendingStroke {
+                    aperture_diameter_nm,
+                    points: vec![point],
+                });
+            }
+            1 => {
+                let stroke = pending_stroke.get_or_insert_with(|| PendingStroke {
+                    aperture_diameter_nm,
+                    points: previous_position.into_iter().collect::<Vec<_>>(),
+                });
+                if stroke.aperture_diameter_nm != aperture_diameter_nm {
+                    finalize_pending_stroke(&mut pending_stroke, &mut geometries);
+                    pending_stroke = Some(PendingStroke {
+                        aperture_diameter_nm,
+                        points: previous_position
+                            .into_iter()
+                            .chain(std::iter::once(point))
+                            .collect::<Vec<_>>(),
+                    });
+                } else {
+                    stroke.points.push(point);
+                }
+            }
+            3 => {
+                finalize_pending_stroke(&mut pending_stroke, &mut geometries);
+                geometries.push(ParsedGerberGeometry::Flash {
+                    aperture_diameter_nm,
+                    position: point,
+                });
+            }
+            _ => bail!("unsupported Gerber interpolation operation D0{operation}"),
+        }
+    }
+
+    if in_region {
+        bail!("unterminated Gerber region in comparison input");
+    }
+    finalize_pending_stroke(&mut pending_stroke, &mut geometries);
+    Ok(ParsedGerber { geometries })
+}
+
+fn finalize_pending_stroke(
+    pending_stroke: &mut Option<PendingStroke>,
+    geometries: &mut Vec<ParsedGerberGeometry>,
+) {
+    if let Some(stroke) = pending_stroke.take() {
+        if stroke.points.len() >= 2 {
+            geometries.push(ParsedGerberGeometry::Stroke {
+                aperture_diameter_nm: stroke.aperture_diameter_nm,
+                points: canonicalize_path_points(&stroke.points),
+            });
+        }
+    }
+}
+
+fn canonicalize_path_points(points: &[Point]) -> Vec<Point> {
+    let mut normalized = points.to_vec();
+    if normalized.len() >= 2 && normalized.first() == normalized.last() {
+        normalized.pop();
+        return canonicalize_closed_loop(&normalized);
+    }
+    canonicalize_open_path(&normalized)
+}
+
+fn canonicalize_open_path(points: &[Point]) -> Vec<Point> {
+    let reversed = points.iter().rev().copied().collect::<Vec<_>>();
+    if point_path_cmp(points, &reversed).is_gt() {
+        reversed
+    } else {
+        points.to_vec()
+    }
+}
+
+fn canonicalize_closed_loop(points: &[Point]) -> Vec<Point> {
+    if points.is_empty() {
+        return Vec::new();
+    }
+
+    let mut best = rotate_points(points, 0);
+    for start in 1..points.len() {
+        let candidate = rotate_points(points, start);
+        if point_path_cmp(&candidate, &best).is_lt() {
+            best = candidate;
+        }
+    }
+
+    let reversed_points = points.iter().rev().copied().collect::<Vec<_>>();
+    for start in 0..reversed_points.len() {
+        let candidate = rotate_points(&reversed_points, start);
+        if point_path_cmp(&candidate, &best).is_lt() {
+            best = candidate;
+        }
+    }
+
+    best
+}
+
+fn rotate_points(points: &[Point], start: usize) -> Vec<Point> {
+    points[start..]
+        .iter()
+        .chain(points[..start].iter())
+        .copied()
+        .collect()
+}
+
+fn point_path_cmp(a: &[Point], b: &[Point]) -> std::cmp::Ordering {
+    for (lhs, rhs) in a.iter().zip(b.iter()) {
+        let ordering = point_cmp(lhs, rhs);
+        if !ordering.is_eq() {
+            return ordering;
+        }
+    }
+    a.len().cmp(&b.len())
+}
+
+fn point_cmp(a: &Point, b: &Point) -> std::cmp::Ordering {
+    a.x.cmp(&b.x).then_with(|| a.y.cmp(&b.y))
+}
+
+fn parse_aperture_select(line: &str) -> Result<Option<usize>> {
+    if !line.starts_with('D') || !line.ends_with('*') {
+        return Ok(None);
+    }
+    let code = line[1..line.len() - 1]
+        .parse::<usize>()
+        .context("invalid Gerber aperture selection in comparison input")?;
+    if code < 10 {
+        return Ok(None);
+    }
+    Ok(Some(code))
+}
+
+fn parse_gerber_coordinate_operation(line: &str) -> Result<Option<(Point, u8)>> {
+    let Some(rest) = line.strip_prefix('X') else {
+        return Ok(None);
+    };
+    let (x_str, rest) = rest
+        .split_once('Y')
+        .context("invalid Gerber coordinate command in comparison input")?;
+    let (y_str, d_str) = rest
+        .split_once('D')
+        .context("invalid Gerber coordinate command in comparison input")?;
+    let operation = d_str
+        .strip_suffix('*')
+        .context("unterminated Gerber coordinate command in comparison input")?
+        .parse::<u8>()
+        .context("invalid Gerber coordinate operation in comparison input")?;
+    Ok(Some((
+        Point {
+            x: x_str
+                .parse::<i64>()
+                .context("invalid Gerber X coordinate in comparison input")?,
+            y: y_str
+                .parse::<i64>()
+                .context("invalid Gerber Y coordinate in comparison input")?,
+        },
+        operation,
+    )))
+}
+
+fn parse_mm_6_to_nm(value: &str) -> Option<i64> {
+    let mut parts = value.split('.');
+    let whole = parts.next()?.parse::<i64>().ok()?;
+    let frac_str = parts.next().unwrap_or("0");
+    if parts.next().is_some() {
+        return None;
+    }
+    let mut frac = frac_str.to_string();
+    if frac.len() > 6 {
+        return None;
+    }
+    while frac.len() < 6 {
+        frac.push('0');
+    }
+    let frac = frac.parse::<i64>().ok()?;
+    let whole_nm = whole.checked_mul(1_000_000)?;
+    if whole >= 0 {
+        whole_nm.checked_add(frac)
+    } else {
+        whole_nm.checked_sub(frac)
     }
 }
 
@@ -2734,6 +3314,10 @@ pub(crate) fn export_native_project_gerber_copper_layer(
     output_path: &Path,
 ) -> Result<NativeProjectGerberCopperExportView> {
     let project = load_native_project(root)?;
+    let pads = query_native_project_board_pads(root)?
+        .into_iter()
+        .filter(|pad| pad.layer == layer)
+        .collect::<Vec<_>>();
     let tracks = query_native_project_board_tracks(root)?
         .into_iter()
         .filter(|track| track.layer == layer)
@@ -2750,7 +3334,7 @@ pub(crate) fn export_native_project_gerber_copper_layer(
             layer >= min_layer && layer <= max_layer
         })
         .collect::<Vec<_>>();
-    let gerber = render_rs274x_copper_layer(layer, &tracks, &zones, &vias)
+    let gerber = render_rs274x_copper_layer(layer, &pads, &tracks, &zones, &vias)
         .context("failed to render native board copper layer as RS-274X")?;
     std::fs::write(output_path, gerber)
         .with_context(|| format!("failed to write {}", output_path.display()))?;
@@ -2760,6 +3344,7 @@ pub(crate) fn export_native_project_gerber_copper_layer(
         board_path: project.board_path.display().to_string(),
         gerber_path: output_path.display().to_string(),
         layer,
+        pad_count: pads.len(),
         track_count: tracks.len(),
         zone_count: zones.len(),
         via_count: vias.len(),
@@ -2796,6 +3381,10 @@ pub(crate) fn validate_native_project_gerber_copper_layer(
     gerber_path: &Path,
 ) -> Result<NativeProjectGerberCopperValidationView> {
     let project = load_native_project(root)?;
+    let pads = query_native_project_board_pads(root)?
+        .into_iter()
+        .filter(|pad| pad.layer == layer)
+        .collect::<Vec<_>>();
     let tracks = query_native_project_board_tracks(root)?
         .into_iter()
         .filter(|track| track.layer == layer)
@@ -2812,7 +3401,7 @@ pub(crate) fn validate_native_project_gerber_copper_layer(
             layer >= min_layer && layer <= max_layer
         })
         .collect::<Vec<_>>();
-    let expected = render_rs274x_copper_layer(layer, &tracks, &zones, &vias)
+    let expected = render_rs274x_copper_layer(layer, &pads, &tracks, &zones, &vias)
         .context("failed to render expected native board copper layer as RS-274X")?;
     let actual = std::fs::read_to_string(gerber_path)
         .with_context(|| format!("failed to read {}", gerber_path.display()))?;
@@ -2826,9 +3415,139 @@ pub(crate) fn validate_native_project_gerber_copper_layer(
         matches_expected: actual == expected,
         expected_bytes: expected.len(),
         actual_bytes: actual.len(),
+        pad_count: pads.len(),
         track_count: tracks.len(),
         zone_count: zones.len(),
         via_count: vias.len(),
+    })
+}
+
+pub(crate) fn compare_native_project_gerber_outline(
+    root: &Path,
+    gerber_path: &Path,
+) -> Result<NativeProjectGerberOutlineComparisonView> {
+    let project = load_native_project(root)?;
+    let outline = native_outline_to_polygon(&project.board.outline);
+    let actual_gerber = std::fs::read_to_string(gerber_path)
+        .with_context(|| format!("failed to read {}", gerber_path.display()))?;
+    let parsed = parse_rs274x_subset(&actual_gerber)
+        .context("failed to parse Gerber outline for semantic comparison")?;
+
+    let expected_entries = gerber_outline_expected_entries(&outline);
+    let actual_entries = gerber_outline_actual_entries(&parsed);
+    let (matched_count, missing_count, extra_count, matched, missing, extra) =
+        compare_entry_views(expected_entries, actual_entries);
+
+    Ok(NativeProjectGerberOutlineComparisonView {
+        action: "compare_gerber_outline".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        gerber_path: gerber_path.display().to_string(),
+        expected_outline_count: 1,
+        actual_geometry_count: parsed.geometries.len(),
+        matched_count,
+        missing_count,
+        extra_count,
+        matched,
+        missing,
+        extra,
+    })
+}
+
+pub(crate) fn compare_native_project_gerber_copper_layer(
+    root: &Path,
+    layer: i32,
+    gerber_path: &Path,
+) -> Result<NativeProjectGerberCopperComparisonView> {
+    let project = load_native_project(root)?;
+    let pads = query_native_project_board_pads(root)?
+        .into_iter()
+        .filter(|pad| pad.layer == layer)
+        .collect::<Vec<_>>();
+    let tracks = query_native_project_board_tracks(root)?
+        .into_iter()
+        .filter(|track| track.layer == layer)
+        .collect::<Vec<_>>();
+    let zones = query_native_project_board_zones(root)?
+        .into_iter()
+        .filter(|zone| zone.layer == layer)
+        .collect::<Vec<_>>();
+    let vias = query_native_project_board_vias(root)?
+        .into_iter()
+        .filter(|via| {
+            let min_layer = via.from_layer.min(via.to_layer);
+            let max_layer = via.from_layer.max(via.to_layer);
+            layer >= min_layer && layer <= max_layer
+        })
+        .collect::<Vec<_>>();
+    let actual_gerber = std::fs::read_to_string(gerber_path)
+        .with_context(|| format!("failed to read {}", gerber_path.display()))?;
+    let parsed = parse_rs274x_subset(&actual_gerber)
+        .context("failed to parse Gerber copper layer for semantic comparison")?;
+
+    let expected_pad_signatures = pads
+        .iter()
+        .map(|pad| render_flash_geometry(pad.diameter, &pad.position))
+        .collect::<BTreeSet<_>>();
+    let expected_via_signatures = vias
+        .iter()
+        .map(|via| render_flash_geometry(via.diameter, &via.position))
+        .collect::<BTreeSet<_>>();
+    let expected_entries = gerber_copper_expected_entries(&pads, &tracks, &zones, &vias);
+    let actual_entries =
+        gerber_copper_actual_entries(&parsed, &expected_pad_signatures, &expected_via_signatures);
+    let (matched_count, missing_count, extra_count, matched, missing, extra) =
+        compare_entry_views(expected_entries, actual_entries);
+
+    let actual_pad_count = parsed
+        .geometries
+        .iter()
+        .filter(|geometry| match geometry {
+            ParsedGerberGeometry::Flash {
+                aperture_diameter_nm,
+                position,
+            } => expected_pad_signatures
+                .contains(&render_flash_geometry(*aperture_diameter_nm, position)),
+            _ => false,
+        })
+        .count();
+    let actual_track_count = parsed
+        .geometries
+        .iter()
+        .filter(|geometry| matches!(geometry, ParsedGerberGeometry::Stroke { .. }))
+        .count();
+    let actual_zone_count = parsed
+        .geometries
+        .iter()
+        .filter(|geometry| matches!(geometry, ParsedGerberGeometry::Region { .. }))
+        .count();
+    let actual_flash_count = parsed
+        .geometries
+        .iter()
+        .filter(|geometry| matches!(geometry, ParsedGerberGeometry::Flash { .. }))
+        .count();
+    let actual_via_count = actual_flash_count.saturating_sub(actual_pad_count);
+
+    Ok(NativeProjectGerberCopperComparisonView {
+        action: "compare_gerber_copper_layer".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        gerber_path: gerber_path.display().to_string(),
+        layer,
+        expected_pad_count: pads.len(),
+        actual_pad_count,
+        expected_track_count: tracks.len(),
+        actual_track_count,
+        expected_zone_count: zones.len(),
+        actual_zone_count,
+        expected_via_count: vias.len(),
+        actual_via_count,
+        matched_count,
+        missing_count,
+        extra_count,
+        matched,
+        missing,
+        extra,
     })
 }
 
@@ -2951,7 +3670,12 @@ pub(crate) fn query_native_project_board_pads(root: &Path) -> Result<Vec<PlacedP
         .into_values()
         .map(|value| serde_json::from_value(value).context("failed to parse board pad"))
         .collect::<Result<Vec<PlacedPad>>>()?;
-    pads.sort_by(|a, b| a.package.cmp(&b.package).then_with(|| a.name.cmp(&b.name)).then_with(|| a.uuid.cmp(&b.uuid)));
+    pads.sort_by(|a, b| {
+        a.package
+            .cmp(&b.package)
+            .then_with(|| a.name.cmp(&b.name))
+            .then_with(|| a.uuid.cmp(&b.uuid))
+    });
     Ok(pads)
 }
 
@@ -3060,11 +3784,10 @@ pub(crate) fn place_native_project_label(
 ) -> Result<NativeProjectLabelMutationReportView> {
     let project = load_native_project(root)?;
     let sheet_key = sheet_uuid.to_string();
-    let relative_path = project
-        .schematic
-        .sheets
-        .get(&sheet_key)
-        .ok_or_else(|| anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}"))?;
+    let relative_path =
+        project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
+            anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
+        })?;
     let sheet_path = project.root.join("schematic").join(relative_path);
     let sheet_text = std::fs::read_to_string(&sheet_path)
         .with_context(|| format!("failed to read {}", sheet_path.display()))?;
@@ -3074,7 +3797,9 @@ pub(crate) fn place_native_project_label(
         .as_object_mut()
         .and_then(|object| object.get_mut("labels"))
         .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| anyhow::anyhow!("sheet labels object missing in {}", sheet_path.display()))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("sheet labels object missing in {}", sheet_path.display())
+        })?;
 
     let label_uuid = Uuid::new_v4();
     labels.insert(
@@ -3115,11 +3840,10 @@ pub(crate) fn place_native_project_symbol(
 ) -> Result<NativeProjectSymbolMutationReportView> {
     let project = load_native_project(root)?;
     let sheet_key = sheet_uuid.to_string();
-    let relative_path = project
-        .schematic
-        .sheets
-        .get(&sheet_key)
-        .ok_or_else(|| anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}"))?;
+    let relative_path =
+        project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
+            anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
+        })?;
     let sheet_path = project.root.join("schematic").join(relative_path);
     let sheet_text = std::fs::read_to_string(&sheet_path)
         .with_context(|| format!("failed to read {}", sheet_path.display()))?;
@@ -3129,7 +3853,9 @@ pub(crate) fn place_native_project_symbol(
         .as_object_mut()
         .and_then(|object| object.get_mut("symbols"))
         .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| anyhow::anyhow!("sheet symbols object missing in {}", sheet_path.display()))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("sheet symbols object missing in {}", sheet_path.display())
+        })?;
 
     let symbol_uuid = Uuid::new_v4();
     symbols.insert(
@@ -3173,7 +3899,9 @@ pub(crate) fn place_native_project_symbol(
         gate_uuid: None,
         unit_selection: None,
         display_mode: render_symbol_display_mode(&SymbolDisplayMode::LibraryDefault),
-        hidden_power_behavior: render_hidden_power_behavior(&HiddenPowerBehavior::SourceDefinedImplicit),
+        hidden_power_behavior: render_hidden_power_behavior(
+            &HiddenPowerBehavior::SourceDefinedImplicit,
+        ),
     })
 }
 
@@ -3283,7 +4011,9 @@ pub(crate) fn delete_native_project_symbol(
         .as_object_mut()
         .and_then(|object| object.get_mut("symbols"))
         .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| anyhow::anyhow!("sheet symbols object missing in {}", sheet_path.display()))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("sheet symbols object missing in {}", sheet_path.display())
+        })?;
     symbols.remove(&symbol_uuid.to_string());
     write_canonical_json(&sheet_path, &sheet_value)?;
 
@@ -3765,7 +4495,11 @@ pub(crate) fn set_native_project_symbol_pin_override(
     if !symbol.pins.iter().any(|pin| pin.uuid == pin_uuid) {
         bail!("pin not found on native symbol: {pin_uuid}");
     }
-    if let Some(entry) = symbol.pin_overrides.iter_mut().find(|entry| entry.pin == pin_uuid) {
+    if let Some(entry) = symbol
+        .pin_overrides
+        .iter_mut()
+        .find(|entry| entry.pin == pin_uuid)
+    {
         entry.visible = visible;
         entry.position = position;
     } else {
@@ -3939,11 +4673,10 @@ pub(crate) fn place_native_project_text(
 ) -> Result<NativeProjectTextMutationReportView> {
     let project = load_native_project(root)?;
     let sheet_key = sheet_uuid.to_string();
-    let relative_path = project
-        .schematic
-        .sheets
-        .get(&sheet_key)
-        .ok_or_else(|| anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}"))?;
+    let relative_path =
+        project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
+            anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
+        })?;
     let sheet_path = project.root.join("schematic").join(relative_path);
     let sheet_text = std::fs::read_to_string(&sheet_path)
         .with_context(|| format!("failed to read {}", sheet_path.display()))?;
@@ -4052,11 +4785,10 @@ pub(crate) fn place_native_project_drawing_line(
 ) -> Result<NativeProjectDrawingMutationReportView> {
     let project = load_native_project(root)?;
     let sheet_key = sheet_uuid.to_string();
-    let relative_path = project
-        .schematic
-        .sheets
-        .get(&sheet_key)
-        .ok_or_else(|| anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}"))?;
+    let relative_path =
+        project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
+            anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
+        })?;
     let sheet_path = project.root.join("schematic").join(relative_path);
     let sheet_text = std::fs::read_to_string(&sheet_path)
         .with_context(|| format!("failed to read {}", sheet_path.display()))?;
@@ -4066,7 +4798,9 @@ pub(crate) fn place_native_project_drawing_line(
         .as_object_mut()
         .and_then(|object| object.get_mut("drawings"))
         .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| anyhow::anyhow!("sheet drawings object missing in {}", sheet_path.display()))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("sheet drawings object missing in {}", sheet_path.display())
+        })?;
 
     let drawing_uuid = Uuid::new_v4();
     drawings.insert(
@@ -4357,7 +5091,9 @@ pub(crate) fn delete_native_project_drawing(
         .as_object_mut()
         .and_then(|object| object.get_mut("drawings"))
         .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| anyhow::anyhow!("sheet drawings object missing in {}", sheet_path.display()))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("sheet drawings object missing in {}", sheet_path.display())
+        })?;
     drawings.remove(&drawing_uuid.to_string());
     write_canonical_json(&sheet_path, &sheet_value)?;
 
@@ -4425,7 +5161,9 @@ pub(crate) fn delete_native_project_label(
         .as_object_mut()
         .and_then(|object| object.get_mut("labels"))
         .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| anyhow::anyhow!("sheet labels object missing in {}", sheet_path.display()))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("sheet labels object missing in {}", sheet_path.display())
+        })?;
     labels.remove(&label_uuid.to_string());
     write_canonical_json(&sheet_path, &sheet_value)?;
 
@@ -4450,11 +5188,10 @@ pub(crate) fn draw_native_project_wire(
 ) -> Result<NativeProjectWireMutationReportView> {
     let project = load_native_project(root)?;
     let sheet_key = sheet_uuid.to_string();
-    let relative_path = project
-        .schematic
-        .sheets
-        .get(&sheet_key)
-        .ok_or_else(|| anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}"))?;
+    let relative_path =
+        project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
+            anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
+        })?;
     let sheet_path = project.root.join("schematic").join(relative_path);
     let sheet_text = std::fs::read_to_string(&sheet_path)
         .with_context(|| format!("failed to read {}", sheet_path.display()))?;
@@ -4469,8 +5206,12 @@ pub(crate) fn draw_native_project_wire(
     let wire_uuid = Uuid::new_v4();
     wires.insert(
         wire_uuid.to_string(),
-        serde_json::to_value(SchematicWire { uuid: wire_uuid, from, to })
-            .expect("native wire serialization must succeed"),
+        serde_json::to_value(SchematicWire {
+            uuid: wire_uuid,
+            from,
+            to,
+        })
+        .expect("native wire serialization must succeed"),
     );
 
     write_canonical_json(&sheet_path, &sheet_value)?;
@@ -4523,11 +5264,10 @@ pub(crate) fn place_native_project_junction(
 ) -> Result<NativeProjectJunctionMutationReportView> {
     let project = load_native_project(root)?;
     let sheet_key = sheet_uuid.to_string();
-    let relative_path = project
-        .schematic
-        .sheets
-        .get(&sheet_key)
-        .ok_or_else(|| anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}"))?;
+    let relative_path =
+        project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
+            anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
+        })?;
     let sheet_path = project.root.join("schematic").join(relative_path);
     let sheet_text = std::fs::read_to_string(&sheet_path)
         .with_context(|| format!("failed to read {}", sheet_path.display()))?;
@@ -4537,7 +5277,9 @@ pub(crate) fn place_native_project_junction(
         .as_object_mut()
         .and_then(|object| object.get_mut("junctions"))
         .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| anyhow::anyhow!("sheet junctions object missing in {}", sheet_path.display()))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("sheet junctions object missing in {}", sheet_path.display())
+        })?;
 
     let junction_uuid = Uuid::new_v4();
     junctions.insert(
@@ -4573,7 +5315,9 @@ pub(crate) fn delete_native_project_junction(
         .as_object_mut()
         .and_then(|object| object.get_mut("junctions"))
         .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| anyhow::anyhow!("sheet junctions object missing in {}", sheet_path.display()))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("sheet junctions object missing in {}", sheet_path.display())
+        })?;
     junctions.remove(&junction_uuid.to_string());
     write_canonical_json(&sheet_path, &sheet_value)?;
 
@@ -4597,11 +5341,10 @@ pub(crate) fn place_native_project_port(
 ) -> Result<NativeProjectPortMutationReportView> {
     let project = load_native_project(root)?;
     let sheet_key = sheet_uuid.to_string();
-    let relative_path = project
-        .schematic
-        .sheets
-        .get(&sheet_key)
-        .ok_or_else(|| anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}"))?;
+    let relative_path =
+        project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
+            anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
+        })?;
     let sheet_path = project.root.join("schematic").join(relative_path);
     let sheet_text = std::fs::read_to_string(&sheet_path)
         .with_context(|| format!("failed to read {}", sheet_path.display()))?;
@@ -4715,11 +5458,10 @@ pub(crate) fn create_native_project_bus(
 ) -> Result<NativeProjectBusMutationReportView> {
     let project = load_native_project(root)?;
     let sheet_key = sheet_uuid.to_string();
-    let relative_path = project
-        .schematic
-        .sheets
-        .get(&sheet_key)
-        .ok_or_else(|| anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}"))?;
+    let relative_path =
+        project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
+            anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
+        })?;
     let sheet_path = project.root.join("schematic").join(relative_path);
     let sheet_text = std::fs::read_to_string(&sheet_path)
         .with_context(|| format!("failed to read {}", sheet_path.display()))?;
@@ -4786,11 +5528,10 @@ pub(crate) fn place_native_project_bus_entry(
 ) -> Result<NativeProjectBusEntryMutationReportView> {
     let project = load_native_project(root)?;
     let sheet_key = sheet_uuid.to_string();
-    let relative_path = project
-        .schematic
-        .sheets
-        .get(&sheet_key)
-        .ok_or_else(|| anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}"))?;
+    let relative_path =
+        project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
+            anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
+        })?;
     let sheet_path = project.root.join("schematic").join(relative_path);
     let sheet_text = std::fs::read_to_string(&sheet_path)
         .with_context(|| format!("failed to read {}", sheet_path.display()))?;
@@ -4800,7 +5541,12 @@ pub(crate) fn place_native_project_bus_entry(
         .as_object_mut()
         .and_then(|object| object.get_mut("bus_entries"))
         .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| anyhow::anyhow!("sheet bus_entries object missing in {}", sheet_path.display()))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!(
+                "sheet bus_entries object missing in {}",
+                sheet_path.display()
+            )
+        })?;
 
     let bus_entry_uuid = Uuid::new_v4();
     bus_entries.insert(
@@ -4839,7 +5585,12 @@ pub(crate) fn delete_native_project_bus_entry(
         .as_object_mut()
         .and_then(|object| object.get_mut("bus_entries"))
         .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| anyhow::anyhow!("sheet bus_entries object missing in {}", sheet_path.display()))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!(
+                "sheet bus_entries object missing in {}",
+                sheet_path.display()
+            )
+        })?;
     bus_entries.remove(&bus_entry_uuid.to_string());
     write_canonical_json(&sheet_path, &sheet_value)?;
 
@@ -4865,11 +5616,10 @@ pub(crate) fn place_native_project_noconnect(
 ) -> Result<NativeProjectNoConnectMutationReportView> {
     let project = load_native_project(root)?;
     let sheet_key = sheet_uuid.to_string();
-    let relative_path = project
-        .schematic
-        .sheets
-        .get(&sheet_key)
-        .ok_or_else(|| anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}"))?;
+    let relative_path =
+        project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
+            anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
+        })?;
     let sheet_path = project.root.join("schematic").join(relative_path);
     let sheet_text = std::fs::read_to_string(&sheet_path)
         .with_context(|| format!("failed to read {}", sheet_path.display()))?;
@@ -4879,7 +5629,12 @@ pub(crate) fn place_native_project_noconnect(
         .as_object_mut()
         .and_then(|object| object.get_mut("noconnects"))
         .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| anyhow::anyhow!("sheet noconnects object missing in {}", sheet_path.display()))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!(
+                "sheet noconnects object missing in {}",
+                sheet_path.display()
+            )
+        })?;
 
     let noconnect_uuid = Uuid::new_v4();
     noconnects.insert(
@@ -4918,7 +5673,12 @@ pub(crate) fn delete_native_project_noconnect(
         .as_object_mut()
         .and_then(|object| object.get_mut("noconnects"))
         .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| anyhow::anyhow!("sheet noconnects object missing in {}", sheet_path.display()))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!(
+                "sheet noconnects object missing in {}",
+                sheet_path.display()
+            )
+        })?;
     noconnects.remove(&noconnect_uuid.to_string());
     write_canonical_json(&sheet_path, &sheet_value)?;
 
@@ -4938,7 +5698,10 @@ pub(crate) fn delete_native_project_noconnect(
 fn ensure_project_root(root: &Path) -> Result<()> {
     if root.exists() {
         if !root.is_dir() {
-            bail!("project root exists but is not a directory: {}", root.display());
+            bail!(
+                "project root exists but is not a directory: {}",
+                root.display()
+            );
         }
     } else {
         std::fs::create_dir_all(root)
@@ -5003,7 +5766,10 @@ struct NativeSchematicCounts {
 fn load_native_project(root: &Path) -> Result<LoadedNativeProject> {
     let root = root.to_path_buf();
     if !root.is_dir() {
-        bail!("project root does not exist or is not a directory: {}", root.display());
+        bail!(
+            "project root does not exist or is not a directory: {}",
+            root.display()
+        );
     }
 
     let manifest_path = root.join("project.json");
@@ -5040,7 +5806,10 @@ fn load_native_project(root: &Path) -> Result<LoadedNativeProject> {
     })
 }
 
-fn collect_schematic_counts(root: &Path, schematic: &NativeSchematicRoot) -> Result<NativeSchematicCounts> {
+fn collect_schematic_counts(
+    root: &Path,
+    schematic: &NativeSchematicRoot,
+) -> Result<NativeSchematicCounts> {
     let mut symbols = 0usize;
     let mut wires = 0usize;
     let mut junctions = 0usize;
@@ -5412,7 +6181,12 @@ pub(crate) fn edit_native_project_board_text(
         })
         .ok_or_else(|| anyhow::anyhow!("board text not found in native project: {text_uuid}"))?;
     let mut board_text: BoardText = serde_json::from_value(project.board.texts[index].clone())
-        .with_context(|| format!("failed to parse board text in {}", project.board_path.display()))?;
+        .with_context(|| {
+            format!(
+                "failed to parse board text in {}",
+                project.board_path.display()
+            )
+        })?;
     if let Some(value) = value {
         board_text.text = value;
     }
@@ -5459,7 +6233,12 @@ pub(crate) fn delete_native_project_board_text(
         })
         .ok_or_else(|| anyhow::anyhow!("board text not found in native project: {text_uuid}"))?;
     let board_text: BoardText = serde_json::from_value(project.board.texts.remove(index))
-        .with_context(|| format!("failed to parse board text in {}", project.board_path.display()))?;
+        .with_context(|| {
+            format!(
+                "failed to parse board text in {}",
+                project.board_path.display()
+            )
+        })?;
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(NativeProjectBoardTextMutationReportView {
         action: "delete_board_text".to_string(),
@@ -5520,9 +6299,16 @@ pub(crate) fn edit_native_project_board_keepout(
                 .map(|keepout| keepout.uuid == keepout_uuid)
                 .unwrap_or(false)
         })
-        .ok_or_else(|| anyhow::anyhow!("board keepout not found in native project: {keepout_uuid}"))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("board keepout not found in native project: {keepout_uuid}")
+        })?;
     let mut keepout: Keepout = serde_json::from_value(project.board.keepouts[index].clone())
-        .with_context(|| format!("failed to parse board keepout in {}", project.board_path.display()))?;
+        .with_context(|| {
+            format!(
+                "failed to parse board keepout in {}",
+                project.board_path.display()
+            )
+        })?;
     if let Some(kind) = kind {
         keepout.kind = kind;
     }
@@ -5560,9 +6346,16 @@ pub(crate) fn delete_native_project_board_keepout(
                 .map(|keepout| keepout.uuid == keepout_uuid)
                 .unwrap_or(false)
         })
-        .ok_or_else(|| anyhow::anyhow!("board keepout not found in native project: {keepout_uuid}"))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("board keepout not found in native project: {keepout_uuid}")
+        })?;
     let keepout: Keepout = serde_json::from_value(project.board.keepouts.remove(index))
-        .with_context(|| format!("failed to parse board keepout in {}", project.board_path.display()))?;
+        .with_context(|| {
+            format!(
+                "failed to parse board keepout in {}",
+                project.board_path.display()
+            )
+        })?;
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(NativeProjectBoardKeepoutMutationReportView {
         action: "delete_board_keepout".to_string(),
@@ -5610,7 +6403,8 @@ pub(crate) fn set_native_project_board_stackup(
         layers: layers
             .into_iter()
             .map(|layer| {
-                serde_json::to_value(layer).expect("native board stackup serialization must succeed")
+                serde_json::to_value(layer)
+                    .expect("native board stackup serialization must succeed")
             })
             .collect(),
     };
@@ -5641,7 +6435,11 @@ pub(crate) fn place_native_project_board_net(
         serde_json::to_value(&net).expect("native board net serialization must succeed"),
     );
     write_canonical_json(&project.board_path, &project.board)?;
-    Ok(native_project_board_net_report("place_board_net", &project, net))
+    Ok(native_project_board_net_report(
+        "place_board_net",
+        &project,
+        net,
+    ))
 }
 
 pub(crate) fn place_native_project_board_component(
@@ -5668,7 +6466,8 @@ pub(crate) fn place_native_project_board_component(
     };
     project.board.packages.insert(
         component_uuid.to_string(),
-        serde_json::to_value(&component).expect("native board component serialization must succeed"),
+        serde_json::to_value(&component)
+            .expect("native board component serialization must succeed"),
     );
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
@@ -5797,8 +6596,12 @@ pub(crate) fn edit_native_project_board_net(
         .get(&key)
         .cloned()
         .ok_or_else(|| anyhow::anyhow!("board net not found in native project: {net_uuid}"))?;
-    let mut net: Net = serde_json::from_value(entry)
-        .with_context(|| format!("failed to parse board net in {}", project.board_path.display()))?;
+    let mut net: Net = serde_json::from_value(entry).with_context(|| {
+        format!(
+            "failed to parse board net in {}",
+            project.board_path.display()
+        )
+    })?;
     if let Some(name) = name {
         net.name = name;
     }
@@ -5810,7 +6613,11 @@ pub(crate) fn edit_native_project_board_net(
         serde_json::to_value(&net).expect("native board net serialization must succeed"),
     );
     write_canonical_json(&project.board_path, &project.board)?;
-    Ok(native_project_board_net_report("edit_board_net", &project, net))
+    Ok(native_project_board_net_report(
+        "edit_board_net",
+        &project,
+        net,
+    ))
 }
 
 pub(crate) fn move_native_project_board_component(
@@ -5820,18 +6627,20 @@ pub(crate) fn move_native_project_board_component(
 ) -> Result<NativeProjectBoardComponentMutationReportView> {
     let mut project = load_native_project(root)?;
     let key = component_uuid.to_string();
-    let entry = project
-        .board
-        .packages
-        .get(&key)
-        .cloned()
-        .ok_or_else(|| anyhow::anyhow!("board component not found in native project: {component_uuid}"))?;
-    let mut component: PlacedPackage = serde_json::from_value(entry)
-        .with_context(|| format!("failed to parse board component in {}", project.board_path.display()))?;
+    let entry = project.board.packages.get(&key).cloned().ok_or_else(|| {
+        anyhow::anyhow!("board component not found in native project: {component_uuid}")
+    })?;
+    let mut component: PlacedPackage = serde_json::from_value(entry).with_context(|| {
+        format!(
+            "failed to parse board component in {}",
+            project.board_path.display()
+        )
+    })?;
     component.position = position;
     project.board.packages.insert(
         key,
-        serde_json::to_value(&component).expect("native board component serialization must succeed"),
+        serde_json::to_value(&component)
+            .expect("native board component serialization must succeed"),
     );
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
@@ -5848,18 +6657,20 @@ pub(crate) fn set_native_project_board_component_part(
 ) -> Result<NativeProjectBoardComponentMutationReportView> {
     let mut project = load_native_project(root)?;
     let key = component_uuid.to_string();
-    let entry = project
-        .board
-        .packages
-        .get(&key)
-        .cloned()
-        .ok_or_else(|| anyhow::anyhow!("board component not found in native project: {component_uuid}"))?;
-    let mut component: PlacedPackage = serde_json::from_value(entry)
-        .with_context(|| format!("failed to parse board component in {}", project.board_path.display()))?;
+    let entry = project.board.packages.get(&key).cloned().ok_or_else(|| {
+        anyhow::anyhow!("board component not found in native project: {component_uuid}")
+    })?;
+    let mut component: PlacedPackage = serde_json::from_value(entry).with_context(|| {
+        format!(
+            "failed to parse board component in {}",
+            project.board_path.display()
+        )
+    })?;
     component.part = part_uuid;
     project.board.packages.insert(
         key,
-        serde_json::to_value(&component).expect("native board component serialization must succeed"),
+        serde_json::to_value(&component)
+            .expect("native board component serialization must succeed"),
     );
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
@@ -5876,18 +6687,20 @@ pub(crate) fn set_native_project_board_component_package(
 ) -> Result<NativeProjectBoardComponentMutationReportView> {
     let mut project = load_native_project(root)?;
     let key = component_uuid.to_string();
-    let entry = project
-        .board
-        .packages
-        .get(&key)
-        .cloned()
-        .ok_or_else(|| anyhow::anyhow!("board component not found in native project: {component_uuid}"))?;
-    let mut component: PlacedPackage = serde_json::from_value(entry)
-        .with_context(|| format!("failed to parse board component in {}", project.board_path.display()))?;
+    let entry = project.board.packages.get(&key).cloned().ok_or_else(|| {
+        anyhow::anyhow!("board component not found in native project: {component_uuid}")
+    })?;
+    let mut component: PlacedPackage = serde_json::from_value(entry).with_context(|| {
+        format!(
+            "failed to parse board component in {}",
+            project.board_path.display()
+        )
+    })?;
     component.package = package_uuid;
     project.board.packages.insert(
         key,
-        serde_json::to_value(&component).expect("native board component serialization must succeed"),
+        serde_json::to_value(&component)
+            .expect("native board component serialization must succeed"),
     );
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
@@ -5904,18 +6717,20 @@ pub(crate) fn set_native_project_board_component_value(
 ) -> Result<NativeProjectBoardComponentMutationReportView> {
     let mut project = load_native_project(root)?;
     let key = component_uuid.to_string();
-    let entry = project
-        .board
-        .packages
-        .get(&key)
-        .cloned()
-        .ok_or_else(|| anyhow::anyhow!("board component not found in native project: {component_uuid}"))?;
-    let mut component: PlacedPackage = serde_json::from_value(entry)
-        .with_context(|| format!("failed to parse board component in {}", project.board_path.display()))?;
+    let entry = project.board.packages.get(&key).cloned().ok_or_else(|| {
+        anyhow::anyhow!("board component not found in native project: {component_uuid}")
+    })?;
+    let mut component: PlacedPackage = serde_json::from_value(entry).with_context(|| {
+        format!(
+            "failed to parse board component in {}",
+            project.board_path.display()
+        )
+    })?;
     component.value = value;
     project.board.packages.insert(
         key,
-        serde_json::to_value(&component).expect("native board component serialization must succeed"),
+        serde_json::to_value(&component)
+            .expect("native board component serialization must succeed"),
     );
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
@@ -5944,7 +6759,8 @@ pub(crate) fn rotate_native_project_board_component(
     component.rotation = rotation_deg;
     project.board.packages.insert(
         key,
-        serde_json::to_value(&component).expect("native board component serialization must succeed"),
+        serde_json::to_value(&component)
+            .expect("native board component serialization must succeed"),
     );
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
@@ -5973,7 +6789,8 @@ pub(crate) fn set_native_project_board_component_locked(
     component.locked = locked;
     project.board.packages.insert(
         key,
-        serde_json::to_value(&component).expect("native board component serialization must succeed"),
+        serde_json::to_value(&component)
+            .expect("native board component serialization must succeed"),
     );
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
@@ -5996,7 +6813,9 @@ pub(crate) fn delete_native_project_board_component(
         .board
         .packages
         .remove(&component_uuid.to_string())
-        .ok_or_else(|| anyhow::anyhow!("board component not found in native project: {component_uuid}"))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("board component not found in native project: {component_uuid}")
+        })?;
     let component: PlacedPackage = serde_json::from_value(value).with_context(|| {
         format!(
             "failed to parse board component in {}",
@@ -6029,8 +6848,12 @@ pub(crate) fn set_native_project_board_pad_net(
         .get(&key)
         .cloned()
         .ok_or_else(|| anyhow::anyhow!("board pad not found in native project: {pad_uuid}"))?;
-    let mut pad: PlacedPad = serde_json::from_value(entry)
-        .with_context(|| format!("failed to parse board pad in {}", project.board_path.display()))?;
+    let mut pad: PlacedPad = serde_json::from_value(entry).with_context(|| {
+        format!(
+            "failed to parse board pad in {}",
+            project.board_path.display()
+        )
+    })?;
     pad.net = net_uuid;
     project.board.pads.insert(
         key,
@@ -6054,6 +6877,7 @@ pub(crate) fn place_native_project_board_pad(
     name: String,
     position: Point,
     layer: i32,
+    diameter_nm: i64,
     net_uuid: Option<Uuid>,
 ) -> Result<NativeProjectBoardPadMutationReportView> {
     let mut project = load_native_project(root)?;
@@ -6070,13 +6894,18 @@ pub(crate) fn place_native_project_board_pad(
         net: net_uuid,
         position,
         layer,
+        diameter: diameter_nm,
     };
     project.board.pads.insert(
         pad_uuid.to_string(),
         serde_json::to_value(&pad).expect("native board pad serialization must succeed"),
     );
     write_canonical_json(&project.board_path, &project.board)?;
-    Ok(native_project_board_pad_report("place_board_pad", &project, pad))
+    Ok(native_project_board_pad_report(
+        "place_board_pad",
+        &project,
+        pad,
+    ))
 }
 
 pub(crate) fn edit_native_project_board_pad(
@@ -6084,6 +6913,7 @@ pub(crate) fn edit_native_project_board_pad(
     pad_uuid: Uuid,
     position: Option<Point>,
     layer: Option<i32>,
+    diameter_nm: Option<i64>,
 ) -> Result<NativeProjectBoardPadMutationReportView> {
     let mut project = load_native_project(root)?;
     let key = pad_uuid.to_string();
@@ -6093,20 +6923,31 @@ pub(crate) fn edit_native_project_board_pad(
         .get(&key)
         .cloned()
         .ok_or_else(|| anyhow::anyhow!("board pad not found in native project: {pad_uuid}"))?;
-    let mut pad: PlacedPad = serde_json::from_value(entry)
-        .with_context(|| format!("failed to parse board pad in {}", project.board_path.display()))?;
+    let mut pad: PlacedPad = serde_json::from_value(entry).with_context(|| {
+        format!(
+            "failed to parse board pad in {}",
+            project.board_path.display()
+        )
+    })?;
     if let Some(position) = position {
         pad.position = position;
     }
     if let Some(layer) = layer {
         pad.layer = layer;
     }
+    if let Some(diameter_nm) = diameter_nm {
+        pad.diameter = diameter_nm;
+    }
     project.board.pads.insert(
         key,
         serde_json::to_value(&pad).expect("native board pad serialization must succeed"),
     );
     write_canonical_json(&project.board_path, &project.board)?;
-    Ok(native_project_board_pad_report("edit_board_pad", &project, pad))
+    Ok(native_project_board_pad_report(
+        "edit_board_pad",
+        &project,
+        pad,
+    ))
 }
 
 pub(crate) fn delete_native_project_board_pad(
@@ -6119,10 +6960,18 @@ pub(crate) fn delete_native_project_board_pad(
         .pads
         .remove(&pad_uuid.to_string())
         .ok_or_else(|| anyhow::anyhow!("board pad not found in native project: {pad_uuid}"))?;
-    let pad: PlacedPad = serde_json::from_value(value)
-        .with_context(|| format!("failed to parse board pad in {}", project.board_path.display()))?;
+    let pad: PlacedPad = serde_json::from_value(value).with_context(|| {
+        format!(
+            "failed to parse board pad in {}",
+            project.board_path.display()
+        )
+    })?;
     write_canonical_json(&project.board_path, &project.board)?;
-    Ok(native_project_board_pad_report("delete_board_pad", &project, pad))
+    Ok(native_project_board_pad_report(
+        "delete_board_pad",
+        &project,
+        pad,
+    ))
 }
 
 pub(crate) fn delete_native_project_board_track(
@@ -6160,7 +7009,10 @@ pub(crate) fn delete_native_project_board_via(
         .remove(&via_uuid.to_string())
         .ok_or_else(|| anyhow::anyhow!("board via not found in native project: {via_uuid}"))?;
     let via: Via = serde_json::from_value(value).with_context(|| {
-        format!("failed to parse board via in {}", project.board_path.display())
+        format!(
+            "failed to parse board via in {}",
+            project.board_path.display()
+        )
     })?;
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_via_report(
@@ -6181,7 +7033,10 @@ pub(crate) fn delete_native_project_board_zone(
         .remove(&zone_uuid.to_string())
         .ok_or_else(|| anyhow::anyhow!("board zone not found in native project: {zone_uuid}"))?;
     let zone: Zone = serde_json::from_value(value).with_context(|| {
-        format!("failed to parse board zone in {}", project.board_path.display())
+        format!(
+            "failed to parse board zone in {}",
+            project.board_path.display()
+        )
     })?;
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_zone_report(
@@ -6201,10 +7056,18 @@ pub(crate) fn delete_native_project_board_net(
         .nets
         .remove(&net_uuid.to_string())
         .ok_or_else(|| anyhow::anyhow!("board net not found in native project: {net_uuid}"))?;
-    let net: Net = serde_json::from_value(value)
-        .with_context(|| format!("failed to parse board net in {}", project.board_path.display()))?;
+    let net: Net = serde_json::from_value(value).with_context(|| {
+        format!(
+            "failed to parse board net in {}",
+            project.board_path.display()
+        )
+    })?;
     write_canonical_json(&project.board_path, &project.board)?;
-    Ok(native_project_board_net_report("delete_board_net", &project, net))
+    Ok(native_project_board_net_report(
+        "delete_board_net",
+        &project,
+        net,
+    ))
 }
 
 pub(crate) fn place_native_project_board_net_class(
@@ -6231,7 +7094,8 @@ pub(crate) fn place_native_project_board_net_class(
     };
     project.board.net_classes.insert(
         net_class_uuid.to_string(),
-        serde_json::to_value(&net_class).expect("native board net class serialization must succeed"),
+        serde_json::to_value(&net_class)
+            .expect("native board net class serialization must succeed"),
     );
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_net_class_report(
@@ -6260,9 +7124,15 @@ pub(crate) fn edit_native_project_board_net_class(
         .net_classes
         .get(&key)
         .cloned()
-        .ok_or_else(|| anyhow::anyhow!("board net class not found in native project: {net_class_uuid}"))?;
-    let mut net_class: NetClass = serde_json::from_value(entry)
-        .with_context(|| format!("failed to parse board net class in {}", project.board_path.display()))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("board net class not found in native project: {net_class_uuid}")
+        })?;
+    let mut net_class: NetClass = serde_json::from_value(entry).with_context(|| {
+        format!(
+            "failed to parse board net class in {}",
+            project.board_path.display()
+        )
+    })?;
     if let Some(name) = name {
         net_class.name = name;
     }
@@ -6286,7 +7156,8 @@ pub(crate) fn edit_native_project_board_net_class(
     }
     project.board.net_classes.insert(
         key,
-        serde_json::to_value(&net_class).expect("native board net class serialization must succeed"),
+        serde_json::to_value(&net_class)
+            .expect("native board net class serialization must succeed"),
     );
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_net_class_report(
@@ -6305,9 +7176,15 @@ pub(crate) fn delete_native_project_board_net_class(
         .board
         .net_classes
         .remove(&net_class_uuid.to_string())
-        .ok_or_else(|| anyhow::anyhow!("board net class not found in native project: {net_class_uuid}"))?;
-    let net_class: NetClass = serde_json::from_value(value)
-        .with_context(|| format!("failed to parse board net class in {}", project.board_path.display()))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("board net class not found in native project: {net_class_uuid}")
+        })?;
+    let net_class: NetClass = serde_json::from_value(value).with_context(|| {
+        format!(
+            "failed to parse board net class in {}",
+            project.board_path.display()
+        )
+    })?;
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_net_class_report(
         "delete_board_net_class",
@@ -6331,7 +7208,8 @@ pub(crate) fn place_native_project_board_dimension(
         text,
     };
     project.board.dimensions.push(
-        serde_json::to_value(&dimension).expect("native board dimension serialization must succeed"),
+        serde_json::to_value(&dimension)
+            .expect("native board dimension serialization must succeed"),
     );
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(NativeProjectBoardDimensionMutationReportView {
@@ -6367,9 +7245,16 @@ pub(crate) fn edit_native_project_board_dimension(
                 .map(|dimension| dimension.uuid == dimension_uuid)
                 .unwrap_or(false)
         })
-        .ok_or_else(|| anyhow::anyhow!("board dimension not found in native project: {dimension_uuid}"))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("board dimension not found in native project: {dimension_uuid}")
+        })?;
     let mut dimension: Dimension = serde_json::from_value(project.board.dimensions[index].clone())
-        .with_context(|| format!("failed to parse board dimension in {}", project.board_path.display()))?;
+        .with_context(|| {
+            format!(
+                "failed to parse board dimension in {}",
+                project.board_path.display()
+            )
+        })?;
     match (from_x_nm, from_y_nm) {
         (None, None) => {}
         (Some(x), Some(y)) => dimension.from = Point { x, y },
@@ -6385,8 +7270,8 @@ pub(crate) fn edit_native_project_board_dimension(
     } else if let Some(text) = text {
         dimension.text = Some(text);
     }
-    project.board.dimensions[index] =
-        serde_json::to_value(&dimension).expect("native board dimension serialization must succeed");
+    project.board.dimensions[index] = serde_json::to_value(&dimension)
+        .expect("native board dimension serialization must succeed");
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(NativeProjectBoardDimensionMutationReportView {
         action: "edit_board_dimension".to_string(),
@@ -6415,9 +7300,16 @@ pub(crate) fn delete_native_project_board_dimension(
                 .map(|dimension| dimension.uuid == dimension_uuid)
                 .unwrap_or(false)
         })
-        .ok_or_else(|| anyhow::anyhow!("board dimension not found in native project: {dimension_uuid}"))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("board dimension not found in native project: {dimension_uuid}")
+        })?;
     let dimension: Dimension = serde_json::from_value(project.board.dimensions.remove(index))
-        .with_context(|| format!("failed to parse board dimension in {}", project.board_path.display()))?;
+        .with_context(|| {
+            format!(
+                "failed to parse board dimension in {}",
+                project.board_path.display()
+            )
+        })?;
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(NativeProjectBoardDimensionMutationReportView {
         action: "delete_board_dimension".to_string(),
@@ -6620,6 +7512,7 @@ fn native_project_board_pad_report(
         x_nm: pad.position.x,
         y_nm: pad.position.y,
         layer: pad.layer,
+        diameter_nm: pad.diameter,
     }
 }
 
@@ -6768,7 +7661,14 @@ fn load_native_symbol_mutation_target(
 fn load_native_field_mutation_target(
     project: &LoadedNativeProject,
     field_uuid: Uuid,
-) -> Result<(Uuid, std::path::PathBuf, serde_json::Value, Uuid, PlacedSymbol, SymbolField)> {
+) -> Result<(
+    Uuid,
+    std::path::PathBuf,
+    serde_json::Value,
+    Uuid,
+    PlacedSymbol,
+    SymbolField,
+)> {
     for (sheet_uuid, relative_path) in &project.schematic.sheets {
         let parsed_sheet_uuid = Uuid::parse_str(sheet_uuid)
             .with_context(|| format!("invalid sheet UUID key `{sheet_uuid}` in schematic root"))?;
@@ -6777,11 +7677,15 @@ fn load_native_field_mutation_target(
             .with_context(|| format!("failed to read {}", sheet_path.display()))?;
         let sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
             .with_context(|| format!("failed to parse {}", sheet_path.display()))?;
-        if let Some(entries) = sheet_value.get("symbols").and_then(serde_json::Value::as_object) {
+        if let Some(entries) = sheet_value
+            .get("symbols")
+            .and_then(serde_json::Value::as_object)
+        {
             for entry in entries.values() {
-                let symbol: PlacedSymbol = serde_json::from_value(entry.clone()).with_context(|| {
-                    format!("failed to parse symbol in {}", sheet_path.display())
-                })?;
+                let symbol: PlacedSymbol =
+                    serde_json::from_value(entry.clone()).with_context(|| {
+                        format!("failed to parse symbol in {}", sheet_path.display())
+                    })?;
                 if let Some(field) = symbol.fields.iter().find(|field| field.uuid == field_uuid) {
                     return Ok((
                         parsed_sheet_uuid,
@@ -6830,11 +7734,10 @@ fn load_native_sheet_for_insert(
     sheet_uuid: Uuid,
 ) -> Result<(std::path::PathBuf, serde_json::Value)> {
     let sheet_key = sheet_uuid.to_string();
-    let relative_path = project
-        .schematic
-        .sheets
-        .get(&sheet_key)
-        .ok_or_else(|| anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}"))?;
+    let relative_path =
+        project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
+            anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
+        })?;
     let sheet_path = project.root.join("schematic").join(relative_path);
     let sheet_text = std::fs::read_to_string(&sheet_path)
         .with_context(|| format!("failed to read {}", sheet_path.display()))?;
@@ -6846,7 +7749,12 @@ fn load_native_sheet_for_insert(
 fn load_native_drawing_mutation_target(
     project: &LoadedNativeProject,
     drawing_uuid: Uuid,
-) -> Result<(Uuid, std::path::PathBuf, serde_json::Value, SchematicPrimitive)> {
+) -> Result<(
+    Uuid,
+    std::path::PathBuf,
+    serde_json::Value,
+    SchematicPrimitive,
+)> {
     for (sheet_uuid, relative_path) in &project.schematic.sheets {
         let parsed_sheet_uuid = Uuid::parse_str(sheet_uuid)
             .with_context(|| format!("invalid sheet UUID key `{sheet_uuid}` in schematic root"))?;
@@ -6869,7 +7777,10 @@ fn load_native_drawing_mutation_target(
     bail!("drawing not found in native project: {drawing_uuid}");
 }
 
-pub(crate) fn parse_native_field_position(x_nm: Option<i64>, y_nm: Option<i64>) -> Result<Option<Point>> {
+pub(crate) fn parse_native_field_position(
+    x_nm: Option<i64>,
+    y_nm: Option<i64>,
+) -> Result<Option<Point>> {
     match (x_nm, y_nm) {
         (None, None) => Ok(None),
         (Some(x), Some(y)) => Ok(Some(Point { x, y })),
@@ -6877,7 +7788,10 @@ pub(crate) fn parse_native_field_position(x_nm: Option<i64>, y_nm: Option<i64>) 
     }
 }
 
-fn write_symbol_into_sheet(sheet_value: &mut serde_json::Value, symbol: &PlacedSymbol) -> Result<()> {
+fn write_symbol_into_sheet(
+    sheet_value: &mut serde_json::Value,
+    symbol: &PlacedSymbol,
+) -> Result<()> {
     let symbols = sheet_value
         .as_object_mut()
         .and_then(|object| object.get_mut("symbols"))
@@ -6929,7 +7843,10 @@ fn drawing_uuid(drawing: &SchematicPrimitive) -> Uuid {
     }
 }
 
-fn render_drawing_query_view(sheet_uuid: Uuid, drawing: SchematicPrimitive) -> Option<serde_json::Value> {
+fn render_drawing_query_view(
+    sheet_uuid: Uuid,
+    drawing: SchematicPrimitive,
+) -> Option<serde_json::Value> {
     match drawing {
         SchematicPrimitive::Line { uuid, from, to } => Some(serde_json::json!({
             "uuid": uuid,
@@ -7021,9 +7938,8 @@ fn load_native_junction_mutation_target(
             .and_then(serde_json::Value::as_object)
             .and_then(|junctions| junctions.get(&junction_uuid.to_string()))
         {
-            let junction: Junction = serde_json::from_value(entry.clone()).with_context(|| {
-                format!("failed to parse junction in {}", sheet_path.display())
-            })?;
+            let junction: Junction = serde_json::from_value(entry.clone())
+                .with_context(|| format!("failed to parse junction in {}", sheet_path.display()))?;
             return Ok((parsed_sheet_uuid, sheet_path, sheet_value, junction));
         }
     }
@@ -7034,7 +7950,12 @@ fn load_native_junction_mutation_target(
 fn load_native_port_mutation_target(
     project: &LoadedNativeProject,
     port_uuid: Uuid,
-) -> Result<(Uuid, std::path::PathBuf, serde_json::Value, HierarchicalPort)> {
+) -> Result<(
+    Uuid,
+    std::path::PathBuf,
+    serde_json::Value,
+    HierarchicalPort,
+)> {
     for (sheet_uuid, relative_path) in &project.schematic.sheets {
         let parsed_sheet_uuid = Uuid::parse_str(sheet_uuid)
             .with_context(|| format!("invalid sheet UUID key `{sheet_uuid}` in schematic root"))?;
@@ -7156,9 +8077,10 @@ fn load_native_noconnect_mutation_target(
             .and_then(serde_json::Value::as_object)
             .and_then(|markers| markers.get(&noconnect_uuid.to_string()))
         {
-            let marker: NoConnectMarker = serde_json::from_value(entry.clone()).with_context(|| {
-                format!("failed to parse no-connect in {}", sheet_path.display())
-            })?;
+            let marker: NoConnectMarker =
+                serde_json::from_value(entry.clone()).with_context(|| {
+                    format!("failed to parse no-connect in {}", sheet_path.display())
+                })?;
             return Ok((parsed_sheet_uuid, sheet_path, sheet_value, marker));
         }
     }
@@ -7342,9 +8264,7 @@ fn parse_pnp_csv(path: &Path) -> Result<Vec<NativePnpRow>> {
     let header = lines
         .next()
         .ok_or_else(|| anyhow::anyhow!("missing PnP CSV header in {}", path.display()))?;
-    if header
-        != "reference,x_nm,y_nm,rotation_deg,layer,side,package_uuid,part_uuid,value,locked"
-    {
+    if header != "reference,x_nm,y_nm,rotation_deg,layer,side,package_uuid,part_uuid,value,locked" {
         bail!("unexpected PnP CSV header in {}", path.display());
     }
 
@@ -7428,7 +8348,10 @@ fn native_outline_to_polygon(outline: &NativeOutline) -> Polygon {
         vertices: outline
             .vertices
             .iter()
-            .map(|point| Point { x: point.x, y: point.y })
+            .map(|point| Point {
+                x: point.x,
+                y: point.y,
+            })
             .collect(),
         closed: outline.closed,
     }

@@ -128,14 +128,9 @@ fn project_board_zone_mutations_round_trip_through_native_query() {
     let zones: Vec<Zone> = serde_json::from_str(&zones_output).expect("query output should parse");
     assert!(zones.is_empty());
 
-    let summary_cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("summary query should succeed");
     assert!(summary_output.contains("board_zones: 0"));
 

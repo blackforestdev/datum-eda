@@ -25,7 +25,9 @@ fn import_dispatch_recognizes_kicad_and_eagle_paths() {
     assert_eq!(board_summary.name, "simple-demo");
     assert_eq!(board_summary.component_count, 1);
     assert_eq!(board_summary.net_count, 2);
-    let components = engine.get_components().expect("component query should succeed");
+    let components = engine
+        .get_components()
+        .expect("component query should succeed");
     assert_eq!(components.len(), 1);
     assert_eq!(components[0].reference, "R1");
     let nets = engine.get_net_info().expect("net query should succeed");
@@ -71,7 +73,9 @@ fn import_dispatch_recognizes_kicad_and_eagle_paths() {
         .import(&fixture_path("airwire-demo.kicad_pcb"))
         .expect("airwire fixture import should succeed");
     assert!(matches!(airwire_report.kind, ImportKind::KiCadBoard));
-    let unrouted = engine.get_unrouted().expect("unrouted query should succeed");
+    let unrouted = engine
+        .get_unrouted()
+        .expect("unrouted query should succeed");
     assert_eq!(unrouted.len(), 1);
     assert_eq!(unrouted[0].net_name, "SIG");
     assert_eq!(unrouted[0].from.component, "R1");
@@ -92,12 +96,18 @@ fn import_dispatch_recognizes_kicad_and_eagle_paths() {
         .get_connectivity_diagnostics()
         .expect("partial-route diagnostics query should succeed");
     assert_eq!(partial_diagnostics.len(), 2);
-    assert!(partial_diagnostics.iter().any(
-        |diagnostic| diagnostic.kind == "partially_routed_net" && diagnostic.severity == "warning"
-    ));
-    assert!(partial_diagnostics.iter().any(
-        |diagnostic| diagnostic.kind == "net_without_copper" && diagnostic.severity == "info"
-    ));
+    assert!(
+        partial_diagnostics
+            .iter()
+            .any(|diagnostic| diagnostic.kind == "partially_routed_net"
+                && diagnostic.severity == "warning")
+    );
+    assert!(
+        partial_diagnostics
+            .iter()
+            .any(|diagnostic| diagnostic.kind == "net_without_copper"
+                && diagnostic.severity == "info")
+    );
     let partial_report = engine
         .get_check_report()
         .expect("partial-route check report should succeed");
@@ -156,7 +166,9 @@ fn import_dispatch_recognizes_kicad_and_eagle_paths() {
     assert_eq!(sheets[0].labels, 3);
     assert_eq!(sheets[0].symbols, 1);
     assert_eq!(sheets[0].ports, 1);
-    let symbols = engine.get_symbols(None).expect("symbol query should succeed");
+    let symbols = engine
+        .get_symbols(None)
+        .expect("symbol query should succeed");
     assert_eq!(symbols.len(), 1);
     assert_eq!(symbols[0].reference, "R1");
     let ports = engine.get_ports(None).expect("port query should succeed");
@@ -170,7 +182,9 @@ fn import_dispatch_recognizes_kicad_and_eagle_paths() {
         .get_noconnects(None)
         .expect("no-connect query should succeed");
     assert_eq!(noconnects.len(), 1);
-    let hierarchy = engine.get_hierarchy().expect("hierarchy query should succeed");
+    let hierarchy = engine
+        .get_hierarchy()
+        .expect("hierarchy query should succeed");
     assert_eq!(hierarchy.instances.len(), 1);
     assert!(hierarchy.links.is_empty());
     assert_eq!(hierarchy.instances[0].name, "Sub");
@@ -253,7 +267,9 @@ fn import_dispatch_recognizes_kicad_and_eagle_paths() {
     assert_eq!(dangling.pins.len(), 1);
     assert_eq!(dangling.pins[0].component, "R1");
     assert_eq!(dangling.pins[0].pin, "2");
-    let erc = engine.run_erc_prechecks().expect("ERC precheck should succeed");
+    let erc = engine
+        .run_erc_prechecks()
+        .expect("ERC precheck should succeed");
     assert_eq!(erc.len(), 2);
     let dangling_pin = erc
         .iter()

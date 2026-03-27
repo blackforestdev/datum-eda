@@ -4,8 +4,8 @@ use super::*;
 use eda_engine::ir::geometry::Point;
 use eda_engine::ir::serialization::to_json_deterministic;
 use eda_engine::schematic::{
-    HiddenPowerBehavior, LabelKind, NetLabel, PinElectricalType, PlacedSymbol,
-    SymbolDisplayMode, SymbolPin,
+    HiddenPowerBehavior, LabelKind, NetLabel, PinElectricalType, PlacedSymbol, SymbolDisplayMode,
+    SymbolPin,
 };
 
 fn unique_project_root(label: &str) -> PathBuf {
@@ -19,7 +19,9 @@ fn write_native_sheet(
     symbols: BTreeMap<String, serde_json::Value>,
     labels: BTreeMap<String, serde_json::Value>,
 ) {
-    let sheet_path = root.join("schematic/sheets").join(format!("{sheet_uuid}.json"));
+    let sheet_path = root
+        .join("schematic/sheets")
+        .join(format!("{sheet_uuid}.json"));
     std::fs::write(
         &sheet_path,
         format!(
@@ -57,7 +59,8 @@ fn write_native_sheet(
         &schematic_json,
         format!(
             "{}\n",
-            to_json_deterministic(&schematic_value).expect("canonical serialization should succeed")
+            to_json_deterministic(&schematic_value)
+                .expect("canonical serialization should succeed")
         ),
     )
     .expect("schematic.json should write");
@@ -160,7 +163,8 @@ fn project_query_erc_reports_native_precheck_findings() {
     .expect("CLI should parse");
 
     let output = execute(cli).expect("project query erc should succeed");
-    let findings: serde_json::Value = serde_json::from_str(&output).expect("query JSON should parse");
+    let findings: serde_json::Value =
+        serde_json::from_str(&output).expect("query JSON should parse");
     let findings = findings.as_array().expect("findings should be an array");
     assert!(findings.iter().any(|entry| {
         entry["code"] == "unconnected_component_pin"

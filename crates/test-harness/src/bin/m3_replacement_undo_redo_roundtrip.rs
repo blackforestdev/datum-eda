@@ -3,8 +3,8 @@ use std::path::PathBuf;
 use anyhow::{Context, Result, bail};
 use eda_engine::api::{
     AssignPartInput, ComponentReplacementPolicy, ComponentReplacementScope, Engine,
-    PlannedComponentReplacementInput, PolicyDrivenComponentReplacementInput,
-    ReplaceComponentInput, ScopedComponentReplacementPolicyInput, SetPackageWithPartInput,
+    PlannedComponentReplacementInput, PolicyDrivenComponentReplacementInput, ReplaceComponentInput,
+    ScopedComponentReplacementPolicyInput, SetPackageWithPartInput,
 };
 use eda_test_harness::canonical_json;
 use serde::{Deserialize, Serialize};
@@ -271,13 +271,12 @@ fn run_apply_component_replacement_plan_roundtrip(cli: &Cli) -> Result<String> {
             part_uuid: lmv321_uuid,
         })?;
         let baseline = engine.get_components()?;
-        let result = engine.apply_component_replacement_plan(vec![
-            PlannedComponentReplacementInput {
+        let result =
+            engine.apply_component_replacement_plan(vec![PlannedComponentReplacementInput {
                 uuid: component_uuid,
                 package_uuid: Some(altamp.package_uuid),
                 part_uuid: None,
-            },
-        ])?;
+            }])?;
         Ok((baseline, result.description))
     })
 }
@@ -328,8 +327,8 @@ fn run_apply_scoped_component_replacement_plan_roundtrip(cli: &Cli) -> Result<St
             part_uuid: lmv321_uuid,
         })?;
         let baseline = engine.get_components()?;
-        let plan =
-            engine.get_scoped_component_replacement_plan(ScopedComponentReplacementPolicyInput {
+        let plan = engine.get_scoped_component_replacement_plan(
+            ScopedComponentReplacementPolicyInput {
                 scope: ComponentReplacementScope {
                     reference_prefix: Some("R1".to_string()),
                     value_equals: None,
@@ -337,7 +336,8 @@ fn run_apply_scoped_component_replacement_plan_roundtrip(cli: &Cli) -> Result<St
                     current_part_uuid: None,
                 },
                 policy: ComponentReplacementPolicy::BestCompatiblePackage,
-            })?;
+            },
+        )?;
         let result = engine.apply_scoped_component_replacement_plan(plan)?;
         Ok((baseline, result.description))
     })
@@ -367,7 +367,8 @@ where
         .next()
         .context("ALTAMP part missing for replacement undo/redo probe")?;
 
-    let (baseline, operation_description) = mutate(&mut engine, cli.component_uuid, &altamp, lmv321_uuid)?;
+    let (baseline, operation_description) =
+        mutate(&mut engine, cli.component_uuid, &altamp, lmv321_uuid)?;
     let after_apply = engine.get_components()?;
     if after_apply == baseline {
         bail!("target operation did not change component state");

@@ -47,7 +47,8 @@ fn seed_native_sheet(root: &Path) -> Uuid {
         &schematic_json,
         format!(
             "{}\n",
-            to_json_deterministic(&schematic_value).expect("canonical serialization should succeed")
+            to_json_deterministic(&schematic_value)
+                .expect("canonical serialization should succeed")
         ),
     )
     .expect("schematic.json should write");
@@ -122,14 +123,9 @@ fn project_place_symbol_updates_native_query_surface() {
     assert!(symbols[0]["entity_uuid"].is_null());
     assert!(symbols[0]["gate_uuid"].is_null());
 
-    let summary_cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("project query summary should succeed");
     assert!(summary_output.contains("schematic_symbols: 1"));
 
@@ -249,14 +245,9 @@ fn project_move_rotate_and_delete_symbol_update_native_query_surface() {
         serde_json::from_str(&symbols_output).expect("symbols JSON should parse");
     assert_eq!(symbols.as_array().unwrap().len(), 0);
 
-    let summary_cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("project query summary should succeed");
     assert!(summary_output.contains("schematic_symbols: 0"));
 
@@ -321,8 +312,7 @@ fn project_set_symbol_reference_and_value_update_native_query_surface() {
         "OPA1642",
     ])
     .expect("CLI should parse");
-    let set_value_output =
-        execute(set_value_cli).expect("project set-symbol-value should succeed");
+    let set_value_output = execute(set_value_cli).expect("project set-symbol-value should succeed");
     assert!(set_value_output.contains("action: set_symbol_value"));
     assert!(set_value_output.contains("value: OPA1642"));
 

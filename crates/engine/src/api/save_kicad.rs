@@ -4,7 +4,6 @@ mod kicad_text;
 mod transaction_state;
 
 impl Engine {
-
     /// M3 save entry point for the current implemented write-back slice.
     ///
     /// Current scope: imported KiCad boards can be written back byte-identically
@@ -31,10 +30,9 @@ impl Engine {
 
         let serialized = serialize_current_kicad_board_slice(
             &imported.original_contents,
-            design
-                .board
-                .as_ref()
-                .ok_or_else(|| EngineError::Operation("save requires imported board".to_string()))?,
+            design.board.as_ref().ok_or_else(|| {
+                EngineError::Operation("save requires imported board".to_string())
+            })?,
             &self.pool,
             &self.undo_stack,
         )?;
@@ -118,20 +116,19 @@ fn serialize_current_kicad_board_slice(
     let valued_components = transaction_state::active_set_value_components(undo_stack);
     let referenced_components = transaction_state::active_set_reference_components(undo_stack);
     let assigned_components = transaction_state::active_assigned_part_components(undo_stack);
-    let package_rewritten_components = transaction_state::active_package_rewritten_components(board);
+    let package_rewritten_components =
+        transaction_state::active_package_rewritten_components(board);
     let forms = [
         ("segment", &deleted_tracks),
         ("via", &deleted_vias),
         ("footprint", &deleted_components),
     ];
-    let without_removed = if deleted_tracks.is_empty()
-        && deleted_vias.is_empty()
-        && deleted_components.is_empty()
-    {
-        original_contents.to_string()
-    } else {
-        kicad_text::remove_kicad_top_level_forms(original_contents, &forms)?
-    };
+    let without_removed =
+        if deleted_tracks.is_empty() && deleted_vias.is_empty() && deleted_components.is_empty() {
+            original_contents.to_string()
+        } else {
+            kicad_text::remove_kicad_top_level_forms(original_contents, &forms)?
+        };
     let package_rewritten = kicad_text::rewrite_package_footprints(
         &without_removed,
         board,
@@ -142,8 +139,10 @@ fn serialize_current_kicad_board_slice(
         &package_rewritten,
         &transaction_state::filter_component_map(&moved_components, &package_rewritten_components),
     )?;
-    let assigned_values =
-        transaction_state::merge_component_value_overrides(&valued_components, &assigned_components);
+    let assigned_values = transaction_state::merge_component_value_overrides(
+        &valued_components,
+        &assigned_components,
+    );
     let valued = kicad_text::rewrite_value_footprints(
         &moved,
         &transaction_state::filter_component_map(&assigned_values, &package_rewritten_components),

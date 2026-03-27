@@ -23,7 +23,11 @@ pub(super) fn apply_package_transform(
 
     let mut before_pads = Vec::new();
     let mut after_pads = Vec::new();
-    for pad in board.pads.values_mut().filter(|pad| pad.package == before.uuid) {
+    for pad in board
+        .pads
+        .values_mut()
+        .filter(|pad| pad.package == before.uuid)
+    {
         before_pads.push((pad.uuid, pad.position));
         let local =
             inverse_transform_board_local_point(before.position, before.rotation, pad.position);
@@ -114,6 +118,7 @@ pub(super) fn replace_component_pads_from_pool_package(
                 package_pad.position,
             ),
             layer: package_pad.layer,
+            diameter: 0,
         });
     }
     regenerated.sort_by_key(|pad| pad.uuid);
@@ -181,6 +186,7 @@ pub(super) fn replace_component_pads_for_assign_part(
                 package_pad.position,
             ),
             layer: package_pad.layer,
+            diameter: 0,
         });
     }
     regenerated.sort_by_key(|pad| pad.uuid);

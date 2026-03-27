@@ -44,8 +44,8 @@ pub(crate) fn cli_set_package_surface_result(cli: &Cli) -> Result<String> {
         .saved_path
         .as_deref()
         .ok_or_else(|| anyhow::anyhow!("CLI set-package save report missing saved_path"))?;
-    let saved_contents =
-        std::fs::read_to_string(saved_path).context("failed to read CLI set-package saved board")?;
+    let saved_contents = std::fs::read_to_string(saved_path)
+        .context("failed to read CLI set-package saved board")?;
     if !saved_contents.contains("(footprint \"ALT-3\"") {
         bail!("CLI set-package save did not rewrite expected footprint name");
     }
@@ -73,7 +73,9 @@ pub(crate) fn cli_set_package_surface_result(cli: &Cli) -> Result<String> {
     let target_component = components
         .iter()
         .find(|component| component["uuid"] == "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
-        .ok_or_else(|| anyhow::anyhow!("CLI set-package follow-up query missing target component"))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("CLI set-package follow-up query missing target component")
+        })?;
     if target_component["package_uuid"] != package_uuid.to_string() {
         bail!("CLI set-package follow-up query did not reflect updated package assignment");
     }
@@ -279,7 +281,9 @@ pub(crate) fn cli_set_package_with_part_surface_result(cli: &Cli) -> Result<Stri
     let target_component = components
         .iter()
         .find(|component| component["uuid"] == "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
-        .ok_or_else(|| anyhow::anyhow!("CLI set-package-with-part query missing target component"))?;
+        .ok_or_else(|| {
+            anyhow::anyhow!("CLI set-package-with-part query missing target component")
+        })?;
     if target_component["package_uuid"] != altamp.package_uuid.to_string() {
         bail!("CLI set-package-with-part follow-up query did not reflect updated package");
     }
@@ -304,9 +308,9 @@ pub(crate) fn cli_set_package_with_part_surface_result(cli: &Cli) -> Result<Stri
     }
     let net_payload: Value = serde_json::from_slice(&net_query_output.stdout)
         .context("failed to parse CLI set-package-with-part follow-up net JSON")?;
-    let nets = net_payload["nets"].as_array().ok_or_else(|| {
-        anyhow::anyhow!("CLI set-package-with-part follow-up query missing nets")
-    })?;
+    let nets = net_payload["nets"]
+        .as_array()
+        .ok_or_else(|| anyhow::anyhow!("CLI set-package-with-part follow-up query missing nets"))?;
     let sig = nets
         .iter()
         .find(|net| net["name"] == "SIG")

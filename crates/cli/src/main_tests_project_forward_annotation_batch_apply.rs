@@ -16,7 +16,9 @@ fn write_native_sheet(
     sheet_name: &str,
     symbols: BTreeMap<String, serde_json::Value>,
 ) {
-    let sheet_path = root.join("schematic/sheets").join(format!("{sheet_uuid}.json"));
+    let sheet_path = root
+        .join("schematic/sheets")
+        .join(format!("{sheet_uuid}.json"));
     std::fs::write(
         &sheet_path,
         format!(
@@ -54,18 +56,22 @@ fn write_native_sheet(
         &schematic_json,
         format!(
             "{}\n",
-            to_json_deterministic(&schematic_value).expect("canonical serialization should succeed")
+            to_json_deterministic(&schematic_value)
+                .expect("canonical serialization should succeed")
         ),
     )
     .expect("schematic.json should write");
 }
 
 #[test]
-fn project_apply_forward_annotation_reviewed_applies_supported_and_skips_reviewed_or_input_bound_actions(
-) {
+fn project_apply_forward_annotation_reviewed_applies_supported_and_skips_reviewed_or_input_bound_actions()
+ {
     let root = unique_project_root("datum-eda-cli-project-forward-annotation-batch-apply");
-    create_native_project(&root, Some("Forward Annotation Batch Apply Demo".to_string()))
-        .expect("initial scaffold should succeed");
+    create_native_project(
+        &root,
+        Some("Forward Annotation Batch Apply Demo".to_string()),
+    )
+    .expect("initial scaffold should succeed");
 
     let sheet_uuid = Uuid::new_v4();
     let c1_symbol_uuid = Uuid::new_v4();
@@ -216,12 +222,18 @@ fn project_apply_forward_annotation_reviewed_applies_supported_and_skips_reviewe
     .expect("board file should write");
 
     let proposal_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "query", root.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
         "forward-annotation-proposal",
     ])
     .expect("CLI should parse");
     let proposal_output = execute(proposal_cli).expect("proposal should succeed");
-    let proposal: serde_json::Value = serde_json::from_str(&proposal_output).expect("proposal JSON");
+    let proposal: serde_json::Value =
+        serde_json::from_str(&proposal_output).expect("proposal JSON");
     let add_action_id = proposal["actions"]
         .as_array()
         .unwrap()
@@ -242,21 +254,33 @@ fn project_apply_forward_annotation_reviewed_applies_supported_and_skips_reviewe
         .to_string();
 
     let defer_cli = Cli::try_parse_from([
-        "eda", "project", "defer-forward-annotation-action",
-        root.to_str().unwrap(), "--action-id", &add_action_id,
+        "eda",
+        "project",
+        "defer-forward-annotation-action",
+        root.to_str().unwrap(),
+        "--action-id",
+        &add_action_id,
     ])
     .expect("CLI should parse");
     let _ = execute(defer_cli).expect("defer should succeed");
 
     let reject_cli = Cli::try_parse_from([
-        "eda", "project", "reject-forward-annotation-action",
-        root.to_str().unwrap(), "--action-id", &remove_action_id,
+        "eda",
+        "project",
+        "reject-forward-annotation-action",
+        root.to_str().unwrap(),
+        "--action-id",
+        &remove_action_id,
     ])
     .expect("CLI should parse");
     let _ = execute(reject_cli).expect("reject should succeed");
 
     let batch_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "apply-forward-annotation-reviewed",
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "apply-forward-annotation-reviewed",
         root.to_str().unwrap(),
     ])
     .expect("CLI should parse");
@@ -295,20 +319,40 @@ fn project_apply_forward_annotation_reviewed_applies_supported_and_skips_reviewe
     }));
 
     let components_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "query", root.to_str().unwrap(), "board-components",
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "board-components",
     ])
     .expect("CLI should parse");
     let components_output = execute(components_cli).expect("components query should succeed");
     let components: Vec<PlacedPackage> =
         serde_json::from_str(&components_output).expect("components parse");
     assert_eq!(components.len(), 3);
-    let r1 = components.iter().find(|component| component.reference == "R1").unwrap();
+    let r1 = components
+        .iter()
+        .find(|component| component.reference == "R1")
+        .unwrap();
     assert_eq!(r1.value, "10k");
-    let q1 = components.iter().find(|component| component.reference == "Q1").unwrap();
+    let q1 = components
+        .iter()
+        .find(|component| component.reference == "Q1")
+        .unwrap();
     assert_eq!(q1.part, q1_board_part_uuid);
     assert_eq!(q1.package, q1_board_package_uuid);
-    assert!(components.iter().any(|component| component.reference == "U1"));
-    assert!(!components.iter().any(|component| component.reference == "C1"));
+    assert!(
+        components
+            .iter()
+            .any(|component| component.reference == "U1")
+    );
+    assert!(
+        !components
+            .iter()
+            .any(|component| component.reference == "C1")
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }

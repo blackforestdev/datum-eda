@@ -16,7 +16,9 @@ fn write_native_sheet(
     sheet_name: &str,
     symbols: BTreeMap<String, serde_json::Value>,
 ) {
-    let sheet_path = root.join("schematic/sheets").join(format!("{sheet_uuid}.json"));
+    let sheet_path = root
+        .join("schematic/sheets")
+        .join(format!("{sheet_uuid}.json"));
     std::fs::write(
         &sheet_path,
         format!(
@@ -54,7 +56,8 @@ fn write_native_sheet(
         &schematic_json,
         format!(
             "{}\n",
-            to_json_deterministic(&schematic_value).expect("canonical serialization should succeed")
+            to_json_deterministic(&schematic_value)
+                .expect("canonical serialization should succeed")
         ),
     )
     .expect("schematic.json should write");
@@ -176,12 +179,18 @@ fn project_forward_annotation_review_persists_defer_and_reject_by_action_id() {
     .expect("board file should write");
 
     let proposal_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "query", root.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
         "forward-annotation-proposal",
     ])
     .expect("CLI should parse");
     let proposal_output = execute(proposal_cli).expect("proposal should succeed");
-    let proposal: serde_json::Value = serde_json::from_str(&proposal_output).expect("proposal JSON");
+    let proposal: serde_json::Value =
+        serde_json::from_str(&proposal_output).expect("proposal JSON");
     let defer_action_id = proposal["actions"]
         .as_array()
         .unwrap()
@@ -202,8 +211,14 @@ fn project_forward_annotation_review_persists_defer_and_reject_by_action_id() {
         .to_string();
 
     let defer_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "defer-forward-annotation-action",
-        root.to_str().unwrap(), "--action-id", &defer_action_id,
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "defer-forward-annotation-action",
+        root.to_str().unwrap(),
+        "--action-id",
+        &defer_action_id,
     ])
     .expect("CLI should parse");
     let defer_output = execute(defer_cli).expect("defer should succeed");
@@ -212,8 +227,14 @@ fn project_forward_annotation_review_persists_defer_and_reject_by_action_id() {
     assert_eq!(deferred["proposal_action"], "add_component");
 
     let reject_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "reject-forward-annotation-action",
-        root.to_str().unwrap(), "--action-id", &reject_action_id,
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "reject-forward-annotation-action",
+        root.to_str().unwrap(),
+        "--action-id",
+        &reject_action_id,
     ])
     .expect("CLI should parse");
     let reject_output = execute(reject_cli).expect("reject should succeed");
@@ -222,7 +243,12 @@ fn project_forward_annotation_review_persists_defer_and_reject_by_action_id() {
     assert_eq!(rejected["proposal_action"], "remove_component");
 
     let review_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "query", root.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
         "forward-annotation-review",
     ])
     .expect("CLI should parse");
@@ -232,16 +258,24 @@ fn project_forward_annotation_review_persists_defer_and_reject_by_action_id() {
     assert_eq!(review["deferred_actions"], 1);
     assert_eq!(review["rejected_actions"], 1);
     let actions = review["actions"].as_array().unwrap();
-    assert!(actions.iter().any(|entry| {
-        entry["action_id"] == defer_action_id && entry["decision"] == "deferred"
-    }));
+    assert!(
+        actions.iter().any(|entry| {
+            entry["action_id"] == defer_action_id && entry["decision"] == "deferred"
+        })
+    );
     assert!(actions.iter().any(|entry| {
         entry["action_id"] == reject_action_id && entry["decision"] == "rejected"
     }));
 
     let clear_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "clear-forward-annotation-action-review",
-        root.to_str().unwrap(), "--action-id", &defer_action_id,
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "clear-forward-annotation-action-review",
+        root.to_str().unwrap(),
+        "--action-id",
+        &defer_action_id,
     ])
     .expect("CLI should parse");
     let clear_output = execute(clear_cli).expect("clear should succeed");
@@ -251,7 +285,12 @@ fn project_forward_annotation_review_persists_defer_and_reject_by_action_id() {
     assert_eq!(cleared["decision"], "deferred");
 
     let review_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "query", root.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
         "forward-annotation-review",
     ])
     .expect("CLI should parse");
@@ -261,8 +300,16 @@ fn project_forward_annotation_review_persists_defer_and_reject_by_action_id() {
     assert_eq!(review["deferred_actions"], 0);
     assert_eq!(review["rejected_actions"], 1);
     let actions = review["actions"].as_array().unwrap();
-    assert!(!actions.iter().any(|entry| entry["action_id"] == defer_action_id));
-    assert!(actions.iter().any(|entry| entry["action_id"] == reject_action_id));
+    assert!(
+        !actions
+            .iter()
+            .any(|entry| entry["action_id"] == defer_action_id)
+    );
+    assert!(
+        actions
+            .iter()
+            .any(|entry| entry["action_id"] == reject_action_id)
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }
@@ -274,8 +321,12 @@ fn project_forward_annotation_review_rejects_unknown_action_id() {
         .expect("initial scaffold should succeed");
 
     let reject_cli = Cli::try_parse_from([
-        "eda", "project", "reject-forward-annotation-action",
-        root.to_str().unwrap(), "--action-id", "sha256:missing",
+        "eda",
+        "project",
+        "reject-forward-annotation-action",
+        root.to_str().unwrap(),
+        "--action-id",
+        "sha256:missing",
     ])
     .expect("CLI should parse");
     let err = execute(reject_cli).expect_err("unknown action should fail");
@@ -292,8 +343,12 @@ fn project_forward_annotation_review_rejects_unknown_clear_action_id() {
         .expect("initial scaffold should succeed");
 
     let clear_cli = Cli::try_parse_from([
-        "eda", "project", "clear-forward-annotation-action-review",
-        root.to_str().unwrap(), "--action-id", "sha256:missing",
+        "eda",
+        "project",
+        "clear-forward-annotation-action-review",
+        root.to_str().unwrap(),
+        "--action-id",
+        "sha256:missing",
     ])
     .expect("CLI should parse");
     let err = execute(clear_cli).expect_err("unknown review clear should fail");

@@ -59,15 +59,25 @@ fn project_validate_excellon_drill_reports_match_and_mismatch() {
 
     let drill_path = root.join("drill.drl");
     let export_cli = Cli::try_parse_from([
-        "eda", "project", "export-excellon-drill",
-        root.to_str().unwrap(), "--out", drill_path.to_str().unwrap(),
+        "eda",
+        "project",
+        "export-excellon-drill",
+        root.to_str().unwrap(),
+        "--out",
+        drill_path.to_str().unwrap(),
     ])
     .expect("export CLI should parse");
     let _ = execute(export_cli).expect("excellon drill export should succeed");
 
     let validate_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "validate-excellon-drill",
-        root.to_str().unwrap(), "--drill", drill_path.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "validate-excellon-drill",
+        root.to_str().unwrap(),
+        "--drill",
+        drill_path.to_str().unwrap(),
     ])
     .expect("validate CLI should parse");
     let (output, exit_code) = execute_with_exit_code(validate_cli).expect("validation should run");
@@ -83,8 +93,14 @@ fn project_validate_excellon_drill_reports_match_and_mismatch() {
 
     std::fs::write(&drill_path, "corrupted\n").expect("drill overwrite should succeed");
     let validate_cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "validate-excellon-drill",
-        root.to_str().unwrap(), "--drill", drill_path.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "validate-excellon-drill",
+        root.to_str().unwrap(),
+        "--drill",
+        drill_path.to_str().unwrap(),
     ])
     .expect("validate CLI should parse");
     let (output, exit_code) = execute_with_exit_code(validate_cli).expect("validation should run");

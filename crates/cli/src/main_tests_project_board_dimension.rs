@@ -135,14 +135,9 @@ fn project_board_dimension_mutations_round_trip_through_native_query() {
         serde_json::from_str(&dimensions_output).expect("query output should parse");
     assert!(dimensions.is_empty());
 
-    let summary_cli = Cli::try_parse_from([
-        "eda",
-        "project",
-        "query",
-        root.to_str().unwrap(),
-        "summary",
-    ])
-    .expect("CLI should parse");
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("summary query should succeed");
     assert!(summary_output.contains("board_dimensions: 0"));
 
@@ -187,8 +182,10 @@ fn project_query_board_dimensions_reads_existing_native_board_file() {
     )
     .expect("board file should write");
 
-    let output = execute(board_dimension_query_cli(&root)).expect("board dimension query should succeed");
-    let dimensions: Vec<Dimension> = serde_json::from_str(&output).expect("query output should parse");
+    let output =
+        execute(board_dimension_query_cli(&root)).expect("board dimension query should succeed");
+    let dimensions: Vec<Dimension> =
+        serde_json::from_str(&output).expect("query output should parse");
     assert_eq!(dimensions.len(), 1);
     assert_eq!(dimensions[0].uuid, dimension_uuid);
     assert_eq!(dimensions[0].from.x, 5);

@@ -119,7 +119,10 @@ fn set_package_with_part_dispatch_preserves_logical_nets_for_explicit_candidate(
         .iter()
         .find(|net| net["name"] == "SIG")
         .expect("SIG net should exist");
-    assert_eq!(after_sig["pins"].as_array().unwrap().len(), intermediate_pin_count);
+    assert_eq!(
+        after_sig["pins"].as_array().unwrap().len(),
+        intermediate_pin_count
+    );
 }
 
 #[test]
@@ -242,7 +245,10 @@ fn replace_component_dispatch_preserves_logical_nets_for_explicit_candidate() {
         .iter()
         .find(|net| net["name"] == "SIG")
         .expect("SIG net should exist");
-    assert_eq!(after_sig["pins"].as_array().unwrap().len(), intermediate_pin_count);
+    assert_eq!(
+        after_sig["pins"].as_array().unwrap().len(),
+        intermediate_pin_count
+    );
 }
 
 #[test]
@@ -322,7 +328,10 @@ fn replace_components_dispatch_batches_multiple_replacements_into_one_undo_step(
         },
     );
     assert!(undo.error.is_none(), "{undo:?}");
-    assert_eq!(undo.result.as_ref().unwrap()["description"], "undo replace_components 2");
+    assert_eq!(
+        undo.result.as_ref().unwrap()["description"],
+        "undo replace_components 2"
+    );
 
     let components = dispatch_request(
         &mut engine,

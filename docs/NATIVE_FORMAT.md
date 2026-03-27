@@ -207,10 +207,12 @@ Current live slice:
   match/mismatch with CI-usable exit status, establishing the first native
   validation surface for a real Gerber writer.
 - `eda project export-gerber-copper-layer <dir> --layer <id> --out <path>`
-  now writes a narrow RS-274X Gerber file for persisted native board tracks,
-  vias, and zones on one selected copper layer through `eda_engine::export`,
-  establishing the first real copper-layer writer without claiming pads or full
-  layer-set emission yet.
+  now writes a narrow RS-274X Gerber file for persisted native board pads,
+  tracks, vias, and zones on one selected copper layer through
+  `eda_engine::export`, with pads emitted only from explicitly stored circular
+  copper diameter on native board pads, establishing the first real copper-
+  layer writer without claiming broader pad geometry or full layer-set emission
+  yet.
 - `eda project validate-gerber-copper-layer <dir> --layer <id> --gerber
   <path>` now re-renders that expected native copper-layer Gerber and reports
   byte-for-byte match/mismatch with CI-usable exit status, establishing the
@@ -222,8 +224,19 @@ Current live slice:
 - `eda project compare-gerber-export-plan <dir> --output-dir <path>
   [--prefix <text>]` compares that deterministic planned artifact set against a
   directory and reports matched, missing, and extra files, establishing the
-  first native Gerber drift/comparison slice without claiming aperture or
-  geometry-level validation yet.
+  first native Gerber artifact-plan drift/comparison slice without claiming
+  geometry-level comparison yet.
+- `eda project compare-gerber-outline <dir> --gerber <path>` now parses the
+  currently emitted board-outline RS-274X subset and compares its stroked
+  geometry semantically against the persisted native outline, so reordered
+  aperture codes or equivalent statement ordering no longer require byte-for-
+  byte identity to review drift.
+- `eda project compare-gerber-copper-layer <dir> --layer <id> --gerber
+  <path>` now parses the currently emitted copper-layer RS-274X subset and
+  compares circular flashed pads, tracks, flashed vias, and region zones
+  semantically against the persisted native layer geometry with deterministic
+  matched/missing/extra reporting, without claiming broader RS-274X feature
+  coverage.
 - `eda project query <dir> board-pads` reads back the persisted native
   placed-pad inventory from `board/board.json`, establishing the first native
   package-linked pad read surface.

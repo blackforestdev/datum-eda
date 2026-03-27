@@ -128,8 +128,8 @@ fn project_query_board_connectivity_reports_diagnostics_and_airwires() {
     )
     .expect("board file should write");
 
-    let diagnostics_output =
-        execute(board_diagnostics_query_cli(&root)).expect("board diagnostics query should succeed");
+    let diagnostics_output = execute(board_diagnostics_query_cli(&root))
+        .expect("board diagnostics query should succeed");
     let diagnostics: serde_json::Value =
         serde_json::from_str(&diagnostics_output).expect("diagnostics output should parse");
     assert_eq!(diagnostics["domain"], "board");
@@ -138,10 +138,7 @@ fn project_query_board_connectivity_reports_diagnostics_and_airwires() {
         .expect("diagnostics should be an array");
     assert_eq!(entries.len(), 1);
     assert_eq!(entries[0]["kind"], "net_without_copper");
-    assert!(entries[0]["message"]
-        .as_str()
-        .unwrap()
-        .contains("SIG"));
+    assert!(entries[0]["message"].as_str().unwrap().contains("SIG"));
 
     let unrouted_output =
         execute(board_unrouted_query_cli(&root)).expect("board unrouted query should succeed");

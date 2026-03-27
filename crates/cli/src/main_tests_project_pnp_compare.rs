@@ -78,8 +78,14 @@ fn project_compare_pnp_reports_matched_missing_extra_and_drift() {
     .expect("pnp file should write");
 
     let cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "compare-pnp",
-        root.to_str().unwrap(), "--pnp", pnp_path.to_str().unwrap(),
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "compare-pnp",
+        root.to_str().unwrap(),
+        "--pnp",
+        pnp_path.to_str().unwrap(),
     ])
     .expect("CLI should parse");
     let output = execute(cli).expect("PnP compare should succeed");

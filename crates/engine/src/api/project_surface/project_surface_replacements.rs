@@ -40,10 +40,14 @@ impl Engine {
         }
 
         let current_part_uuid = component.part;
-        let current_part = self.pool.parts.get(&current_part_uuid).ok_or(EngineError::NotFound {
-            object_type: "part",
-            uuid: current_part_uuid,
-        })?;
+        let current_part =
+            self.pool
+                .parts
+                .get(&current_part_uuid)
+                .ok_or(EngineError::NotFound {
+                    object_type: "part",
+                    uuid: current_part_uuid,
+                })?;
         let current_signature = part_pin_signature(current_part, &self.pool).ok_or_else(|| {
             EngineError::DanglingReference {
                 source_type: "part",
@@ -71,10 +75,14 @@ impl Engine {
                 continue;
             }
             let part = parts[0];
-            let package = self.pool.packages.get(&package_uuid).ok_or(EngineError::NotFound {
-                object_type: "package",
-                uuid: package_uuid,
-            })?;
+            let package = self
+                .pool
+                .packages
+                .get(&package_uuid)
+                .ok_or(EngineError::NotFound {
+                    object_type: "package",
+                    uuid: package_uuid,
+                })?;
             let mut pin_names: Vec<_> = current_signature.iter().cloned().collect();
             pin_names.sort();
             candidates.push(PackageChangeCandidate {
@@ -143,10 +151,14 @@ impl Engine {
         }
 
         let current_part_uuid = component.part;
-        let current_part = self.pool.parts.get(&current_part_uuid).ok_or(EngineError::NotFound {
-            object_type: "part",
-            uuid: current_part_uuid,
-        })?;
+        let current_part =
+            self.pool
+                .parts
+                .get(&current_part_uuid)
+                .ok_or(EngineError::NotFound {
+                    object_type: "part",
+                    uuid: current_part_uuid,
+                })?;
         let current_signature = part_pin_signature(current_part, &self.pool).ok_or_else(|| {
             EngineError::DanglingReference {
                 source_type: "part",
@@ -164,10 +176,14 @@ impl Engine {
             if part_pin_signature(part, &self.pool).as_ref() != Some(&current_signature) {
                 continue;
             }
-            let package = self.pool.packages.get(&part.package).ok_or(EngineError::NotFound {
-                object_type: "package",
-                uuid: part.package,
-            })?;
+            let package = self
+                .pool
+                .packages
+                .get(&part.package)
+                .ok_or(EngineError::NotFound {
+                    object_type: "package",
+                    uuid: part.package,
+                })?;
             let mut pin_names: Vec<_> = current_signature.iter().cloned().collect();
             pin_names.sort();
             candidates.push(PartChangeCandidate {
@@ -344,12 +360,14 @@ impl Engine {
                     uuid: override_item.target_part_uuid,
                 },
             )?;
-            let target_package = self.pool.packages.get(&override_item.target_package_uuid).ok_or(
-                EngineError::NotFound {
+            let target_package = self
+                .pool
+                .packages
+                .get(&override_item.target_package_uuid)
+                .ok_or(EngineError::NotFound {
                     object_type: "package",
                     uuid: override_item.target_package_uuid,
-                },
-            )?;
+                })?;
             if target_part.package != override_item.target_package_uuid {
                 return Err(EngineError::Operation(format!(
                     "edit_scoped_component_replacement_plan requires part {} to use package {}",
@@ -357,15 +375,24 @@ impl Engine {
                 )));
             }
 
-            let component_plan = self.get_component_replacement_plan(&override_item.component_uuid)?;
-            let package_match = component_plan.package_change.candidates.iter().any(|candidate| {
-                candidate.package_uuid == override_item.target_package_uuid
-                    && candidate.compatible_part_uuid == override_item.target_part_uuid
-            });
-            let part_match = component_plan.part_change.candidates.iter().any(|candidate| {
-                candidate.part_uuid == override_item.target_part_uuid
-                    && candidate.package_uuid == override_item.target_package_uuid
-            });
+            let component_plan =
+                self.get_component_replacement_plan(&override_item.component_uuid)?;
+            let package_match = component_plan
+                .package_change
+                .candidates
+                .iter()
+                .any(|candidate| {
+                    candidate.package_uuid == override_item.target_package_uuid
+                        && candidate.compatible_part_uuid == override_item.target_part_uuid
+                });
+            let part_match = component_plan
+                .part_change
+                .candidates
+                .iter()
+                .any(|candidate| {
+                    candidate.part_uuid == override_item.target_part_uuid
+                        && candidate.package_uuid == override_item.target_package_uuid
+                });
             if !package_match && !part_match {
                 return Err(EngineError::Operation(format!(
                     "edit_scoped_component_replacement_plan override {} -> ({}, {}) is not compatible; inspect get_component_replacement_plan first",
