@@ -301,6 +301,14 @@ pub(crate) enum ProjectCommands {
         #[arg(long = "out")]
         out: PathBuf,
     },
+    /// Compare a BOM CSV against the current native board-component inventory
+    CompareBom {
+        /// Project root directory
+        path: PathBuf,
+        /// BOM CSV path to compare
+        #[arg(long = "bom")]
+        bom: PathBuf,
+    },
     /// Export a native project pick-and-place file as deterministic CSV from persisted board components
     ExportPnp {
         /// Project root directory
@@ -309,6 +317,14 @@ pub(crate) enum ProjectCommands {
         #[arg(long = "out")]
         out: PathBuf,
     },
+    /// Compare a PnP CSV against the current native board-component inventory
+    ComparePnp {
+        /// Project root directory
+        path: PathBuf,
+        /// PnP CSV path to compare
+        #[arg(long = "pnp")]
+        pnp: PathBuf,
+    },
     /// Export a native project drill file as deterministic CSV from persisted vias
     ExportDrill {
         /// Project root directory
@@ -316,6 +332,32 @@ pub(crate) enum ProjectCommands {
         /// Output CSV path
         #[arg(long = "out")]
         out: PathBuf,
+    },
+    /// Export a native project drill file as narrow Excellon from persisted vias
+    ExportExcellonDrill {
+        /// Project root directory
+        path: PathBuf,
+        /// Output drill path
+        #[arg(long = "out")]
+        out: PathBuf,
+    },
+    /// Inspect a narrow Excellon drill file and report its tool table and hit counts
+    InspectExcellonDrill {
+        /// Drill path to inspect
+        path: PathBuf,
+    },
+    /// Compare a narrow Excellon drill file against the current native via inventory
+    CompareExcellonDrill {
+        /// Project root directory
+        path: PathBuf,
+        /// Drill path to compare
+        #[arg(long = "drill")]
+        drill: PathBuf,
+    },
+    /// Report native drill hole classes from via span and stackup data
+    ReportDrillHoleClasses {
+        /// Project root directory
+        path: PathBuf,
     },
     /// Export the native board outline as a narrow RS-274X Gerber file
     ExportGerberOutline {
@@ -343,6 +385,25 @@ pub(crate) enum ProjectCommands {
         /// Gerber path to validate
         #[arg(long = "gerber")]
         gerber: PathBuf,
+    },
+    /// Validate a narrow RS-274X copper-layer Gerber against the current native board tracks on one layer
+    ValidateGerberCopperLayer {
+        /// Project root directory
+        path: PathBuf,
+        /// Layer identifier
+        #[arg(long = "layer")]
+        layer: i32,
+        /// Gerber path to validate
+        #[arg(long = "gerber")]
+        gerber: PathBuf,
+    },
+    /// Validate a narrow Excellon drill file against the current native via inventory
+    ValidateExcellonDrill {
+        /// Project root directory
+        path: PathBuf,
+        /// Drill path to validate
+        #[arg(long = "drill")]
+        drill: PathBuf,
     },
     /// Plan the native Gerber export artifact set from the current board outline and stackup
     PlanGerberExport {

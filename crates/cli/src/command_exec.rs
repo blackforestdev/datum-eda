@@ -369,6 +369,14 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 };
                 Ok((output, 0))
             }
+            ProjectCommands::CompareBom { path, bom } => {
+                let report = compare_native_project_bom(&path, &bom)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_bom_comparison_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
             ProjectCommands::ExportPnp { path, out } => {
                 let report = export_native_project_pnp(&path, &out)?;
                 let output = match cli.format {
@@ -377,10 +385,50 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 };
                 Ok((output, 0))
             }
+            ProjectCommands::ComparePnp { path, pnp } => {
+                let report = compare_native_project_pnp(&path, &pnp)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_pnp_comparison_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
             ProjectCommands::ExportDrill { path, out } => {
                 let report = export_native_project_drill(&path, &out)?;
                 let output = match cli.format {
                     OutputFormat::Text => render_native_project_drill_export_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ExportExcellonDrill { path, out } => {
+                let report = export_native_project_excellon_drill(&path, &out)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_excellon_drill_export_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::InspectExcellonDrill { path } => {
+                let report = inspect_excellon_drill(&path)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_excellon_drill_inspection_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::CompareExcellonDrill { path, drill } => {
+                let report = compare_native_project_excellon_drill(&path, &drill)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_excellon_drill_comparison_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::ReportDrillHoleClasses { path } => {
+                let report = report_native_project_drill_hole_classes(&path)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_drill_hole_class_report_text(&report),
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
@@ -406,6 +454,28 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 let output = match cli.format {
                     OutputFormat::Text => {
                         render_native_project_gerber_outline_validation_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                let exit_code = if report.matches_expected { 0 } else { 1 };
+                Ok((output, exit_code))
+            }
+            ProjectCommands::ValidateGerberCopperLayer { path, layer, gerber } => {
+                let report = validate_native_project_gerber_copper_layer(&path, layer, &gerber)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_project_gerber_copper_validation_text(&report)
+                    }
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                let exit_code = if report.matches_expected { 0 } else { 1 };
+                Ok((output, exit_code))
+            }
+            ProjectCommands::ValidateExcellonDrill { path, drill } => {
+                let report = validate_native_project_excellon_drill(&path, &drill)?;
+                let output = match cli.format {
+                    OutputFormat::Text => {
+                        render_native_project_excellon_drill_validation_text(&report)
                     }
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };

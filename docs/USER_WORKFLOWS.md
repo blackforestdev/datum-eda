@@ -186,11 +186,19 @@ Current live slice:
 - `eda project query <dir> board-stackup` reports the current native board stackup from `board/board.json`.
 - `eda project query <dir> board-components` reports the current native placed-package inventory from `board/board.json`.
 - `eda project export-bom <dir> --out <path>` writes a deterministic CSV BOM from the current native board-component inventory in `board/board.json`.
+- `eda project compare-bom <dir> --bom <path>` compares that BOM CSV against the current native board-component inventory by component identity and placement/state fields.
 - `eda project export-pnp <dir> --out <path>` writes a deterministic CSV pick-and-place export from the current native board-component inventory in `board/board.json`.
+- `eda project compare-pnp <dir> --pnp <path>` compares that PnP CSV against the current native board-component inventory by placement and component identity fields.
 - `eda project export-drill <dir> --out <path>` writes a deterministic CSV drill export from the current native via inventory in `board/board.json`.
+- `eda project export-excellon-drill <dir> --out <path>` writes a narrow Excellon drill file from the current native via inventory.
+- `eda project inspect-excellon-drill <path>` reports the parsed tool table and hit counts from a narrow Excellon drill file.
+- `eda project compare-excellon-drill <dir> --drill <path>` compares that narrow Excellon drill file against the current native via inventory by drill diameter and hit counts.
+- `eda project report-drill-hole-classes <dir>` reports through/blind/buried hole classes from the current native via inventory and stackup.
+- `eda project validate-excellon-drill <dir> --drill <path>` validates that a narrow Excellon drill file still matches the current native via inventory exactly.
 - `eda project export-gerber-outline <dir> --out <path>` writes a narrow RS-274X Gerber file for the current native board outline.
 - `eda project validate-gerber-outline <dir> --gerber <path>` validates that a narrow RS-274X board-outline Gerber still matches the current native board outline exactly.
-- `eda project export-gerber-copper-layer <dir> --layer <id> --out <path>` writes a narrow RS-274X Gerber file for persisted native board tracks on one selected copper layer.
+- `eda project export-gerber-copper-layer <dir> --layer <id> --out <path>` writes a narrow RS-274X Gerber file for persisted native board tracks, vias, and zones on one selected copper layer.
+- `eda project validate-gerber-copper-layer <dir> --layer <id> --gerber <path>` validates that a narrow RS-274X copper-layer Gerber still matches the current native board tracks, vias, and zones on that layer exactly.
 - `eda project plan-gerber-export <dir> [--prefix <text>]` reports the deterministic Gerber artifact set implied by the current native board outline and stackup.
 - `eda project compare-gerber-export-plan <dir> --output-dir <path> [--prefix <text>]` compares that planned Gerber artifact set against a directory and reports matched, missing, and extra files.
 - `eda project set-board-component-part <dir> --component <uuid> --part <uuid>` and `eda project set-board-component-package <dir> --component <uuid> --package <uuid>` reassign the stored native part/package identity for an existing board component.

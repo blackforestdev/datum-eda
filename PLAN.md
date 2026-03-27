@@ -38,16 +38,18 @@ guardrails, not feature expansion.
 
 ## Active Execution Window
 
-Current planning focus: `M3` closure evidence and `M4` entry readiness.
+Current planning focus: `M4` proof-depth expansion and targeted closure audits.
 
 Near-term execution order:
-1. Close remaining `M3` gate evidence gaps required by
-   `specs/INTEGRATED_PROGRAM_SPEC.md` and `specs/PROGRAM_SPEC.md`.
-2. Run and record gate evidence in `specs/PROGRESS.md` before any milestone
-   close claim.
-3. Freeze `M3` boundary language after evidence is complete.
-4. Start `M4` implementation kickoff with native format + schematic editor
-   contract wiring.
+1. Keep `M3` closed except for regression fixes; do not widen imported-design
+   scope without an explicit new milestone need.
+2. Expand `M4` only where proof depth is still thin relative to the existing
+   authored/query/export surface.
+3. Use `specs/PROGRESS.md` as the audit target before selecting each new `M4`
+   slice, so execution follows the thinnest still-open lane instead of local
+   momentum.
+4. Prioritize real writer/check/compare contracts over planning-only surfaces
+   when the underlying native geometry/model is strong enough to support them.
 
 ## Milestones
 

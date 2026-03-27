@@ -19,16 +19,32 @@ fn execute(cli: Cli) -> Result<String> {
 
 #[path = "main_tests_project_bom_export.rs"]
 mod main_tests_project_bom_export;
+#[path = "main_tests_project_bom_compare.rs"]
+mod main_tests_project_bom_compare;
 #[path = "main_tests_project_pnp_export.rs"]
 mod main_tests_project_pnp_export;
+#[path = "main_tests_project_pnp_compare.rs"]
+mod main_tests_project_pnp_compare;
 #[path = "main_tests_project_drill_export.rs"]
 mod main_tests_project_drill_export;
+#[path = "main_tests_project_excellon_drill_export.rs"]
+mod main_tests_project_excellon_drill_export;
+#[path = "main_tests_project_excellon_drill_inspect.rs"]
+mod main_tests_project_excellon_drill_inspect;
+#[path = "main_tests_project_excellon_drill_compare.rs"]
+mod main_tests_project_excellon_drill_compare;
+#[path = "main_tests_project_drill_hole_classes.rs"]
+mod main_tests_project_drill_hole_classes;
+#[path = "main_tests_project_excellon_drill_validate.rs"]
+mod main_tests_project_excellon_drill_validate;
 #[path = "main_tests_project_gerber_outline_export.rs"]
 mod main_tests_project_gerber_outline_export;
 #[path = "main_tests_project_gerber_copper_export.rs"]
 mod main_tests_project_gerber_copper_export;
 #[path = "main_tests_project_gerber_outline_validate.rs"]
 mod main_tests_project_gerber_outline_validate;
+#[path = "main_tests_project_gerber_copper_validate.rs"]
+mod main_tests_project_gerber_copper_validate;
 #[path = "main_tests_project_gerber_plan.rs"]
 mod main_tests_project_gerber_plan;
 #[path = "main_tests_project_gerber_plan_compare.rs"]

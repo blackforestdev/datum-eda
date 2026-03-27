@@ -5,7 +5,9 @@ use anyhow::{Context, Result, bail};
 use eda_engine::api::{CheckCodeCount, CheckReport, CheckStatus, CheckSummary};
 use eda_engine::board::{Board, BoardText, Dimension, Keepout, Net, NetClass, PlacedPackage, PlacedPad, Stackup, StackupLayer, StackupLayerType, Track, Via, Zone};
 use eda_engine::import::ids_sidecar::compute_source_hash_bytes;
-use eda_engine::export::{render_rs274x_copper_layer, render_rs274x_outline_default};
+use eda_engine::export::{
+    render_excellon_drill, render_rs274x_copper_layer, render_rs274x_outline_default,
+};
 use eda_engine::connectivity::{schematic_diagnostics, schematic_net_info};
 use eda_engine::ir::geometry::{Arc, Point};
 use eda_engine::ir::geometry::Polygon;
@@ -23,9 +25,22 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use super::{
+    NativeProjectBomComparisonView,
+    NativeProjectBomDriftView,
     NativeProjectBomExportView,
     NativeProjectDrillExportView,
+    NativeProjectPnpComparisonView,
+    NativeProjectPnpDriftView,
+    NativeProjectDrillHoleClassBucketView,
+    NativeProjectDrillHoleClassReportView,
+    NativeProjectExcellonDrillExportView,
+    NativeProjectExcellonDrillComparisonView,
+    NativeProjectExcellonDrillHitDriftView,
+    NativeProjectExcellonDrillInspectionView,
+    NativeProjectExcellonDrillToolView,
+    NativeProjectExcellonDrillValidationView,
     NativeProjectGerberCopperExportView,
+    NativeProjectGerberCopperValidationView,
     NativeProjectGerberOutlineExportView,
     NativeProjectGerberOutlineValidationView,
     NativeProjectGerberPlanArtifactView,
@@ -2200,6 +2215,80 @@ pub(crate) fn export_native_project_bom(
     })
 }
 
+pub(crate) fn compare_native_project_bom(
+    root: &Path,
+    bom_path: &Path,
+) -> Result<NativeProjectBomComparisonView> {
+    let project = load_native_project(root)?;
+    let expected = query_native_project_board_components(root)?
+        .into_iter()
+        .map(component_to_bom_row)
+        .collect::<Vec<_>>();
+    let actual = parse_bom_csv(bom_path)?;
+
+    let expected_by_reference = expected
+        .iter()
+        .map(|row| (row.reference.clone(), row.clone()))
+        .collect::<BTreeMap<_, _>>();
+    let actual_by_reference = actual
+        .iter()
+        .map(|row| (row.reference.clone(), row.clone()))
+        .collect::<BTreeMap<_, _>>();
+
+    let matched = expected_by_reference
+        .iter()
+        .filter_map(|(reference, expected)| {
+            actual_by_reference
+                .get(reference)
+                .filter(|actual| *actual == expected)
+                .map(|_| reference.clone())
+        })
+        .collect::<Vec<_>>();
+    let missing = expected_by_reference
+        .keys()
+        .filter(|reference| !actual_by_reference.contains_key(*reference))
+        .cloned()
+        .collect::<Vec<_>>();
+    let extra = actual_by_reference
+        .keys()
+        .filter(|reference| !expected_by_reference.contains_key(*reference))
+        .cloned()
+        .collect::<Vec<_>>();
+    let drift = expected_by_reference
+        .iter()
+        .filter_map(|(reference, expected)| {
+            actual_by_reference.get(reference).and_then(|actual| {
+                let fields = expected.diff_fields(actual);
+                if fields.is_empty() {
+                    None
+                } else {
+                    Some(NativeProjectBomDriftView {
+                        reference: reference.clone(),
+                        fields,
+                    })
+                }
+            })
+        })
+        .collect::<Vec<_>>();
+
+    Ok(NativeProjectBomComparisonView {
+        action: "compare_bom".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        bom_path: bom_path.display().to_string(),
+        expected_count: expected.len(),
+        actual_count: actual.len(),
+        matched_count: matched.len(),
+        missing_count: missing.len(),
+        extra_count: extra.len(),
+        drift_count: drift.len(),
+        matched,
+        missing,
+        extra,
+        drift,
+    })
+}
+
 pub(crate) fn export_native_project_pnp(
     root: &Path,
     output_path: &Path,
@@ -2234,6 +2323,80 @@ pub(crate) fn export_native_project_pnp(
         project_root: project.root.display().to_string(),
         pnp_path: output_path.display().to_string(),
         rows: components.len(),
+    })
+}
+
+pub(crate) fn compare_native_project_pnp(
+    root: &Path,
+    pnp_path: &Path,
+) -> Result<NativeProjectPnpComparisonView> {
+    let project = load_native_project(root)?;
+    let expected = query_native_project_board_components(root)?
+        .into_iter()
+        .map(component_to_pnp_row)
+        .collect::<Vec<_>>();
+    let actual = parse_pnp_csv(pnp_path)?;
+
+    let expected_by_reference = expected
+        .iter()
+        .map(|row| (row.reference.clone(), row.clone()))
+        .collect::<BTreeMap<_, _>>();
+    let actual_by_reference = actual
+        .iter()
+        .map(|row| (row.reference.clone(), row.clone()))
+        .collect::<BTreeMap<_, _>>();
+
+    let matched = expected_by_reference
+        .iter()
+        .filter_map(|(reference, expected)| {
+            actual_by_reference
+                .get(reference)
+                .filter(|actual| *actual == expected)
+                .map(|_| reference.clone())
+        })
+        .collect::<Vec<_>>();
+    let missing = expected_by_reference
+        .keys()
+        .filter(|reference| !actual_by_reference.contains_key(*reference))
+        .cloned()
+        .collect::<Vec<_>>();
+    let extra = actual_by_reference
+        .keys()
+        .filter(|reference| !expected_by_reference.contains_key(*reference))
+        .cloned()
+        .collect::<Vec<_>>();
+    let drift = expected_by_reference
+        .iter()
+        .filter_map(|(reference, expected)| {
+            actual_by_reference.get(reference).and_then(|actual| {
+                let fields = expected.diff_fields(actual);
+                if fields.is_empty() {
+                    None
+                } else {
+                    Some(NativeProjectPnpDriftView {
+                        reference: reference.clone(),
+                        fields,
+                    })
+                }
+            })
+        })
+        .collect::<Vec<_>>();
+
+    Ok(NativeProjectPnpComparisonView {
+        action: "compare_pnp".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        pnp_path: pnp_path.display().to_string(),
+        expected_count: expected.len(),
+        actual_count: actual.len(),
+        matched_count: matched.len(),
+        missing_count: missing.len(),
+        extra_count: extra.len(),
+        drift_count: drift.len(),
+        matched,
+        missing,
+        extra,
+        drift,
     })
 }
 
@@ -2277,6 +2440,274 @@ pub(crate) fn export_native_project_drill(
     })
 }
 
+pub(crate) fn export_native_project_excellon_drill(
+    root: &Path,
+    output_path: &Path,
+) -> Result<NativeProjectExcellonDrillExportView> {
+    let project = load_native_project(root)?;
+    let vias = query_native_project_board_vias(root)?;
+    let tools = build_excellon_tool_views(&vias);
+    let tool_count = tools.len();
+    let excellon = render_excellon_drill(&vias)
+        .context("failed to render native board vias as Excellon drill")?;
+    std::fs::write(output_path, excellon)
+        .with_context(|| format!("failed to write {}", output_path.display()))?;
+    Ok(NativeProjectExcellonDrillExportView {
+        action: "export_excellon_drill".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        drill_path: output_path.display().to_string(),
+        via_count: vias.len(),
+        tool_count,
+        tools,
+    })
+}
+
+pub(crate) fn validate_native_project_excellon_drill(
+    root: &Path,
+    drill_path: &Path,
+) -> Result<NativeProjectExcellonDrillValidationView> {
+    let project = load_native_project(root)?;
+    let vias = query_native_project_board_vias(root)?;
+    let tools = build_excellon_tool_views(&vias);
+    let tool_count = tools.len();
+    let expected = render_excellon_drill(&vias)
+        .context("failed to render expected native board vias as Excellon drill")?;
+    let actual = std::fs::read_to_string(drill_path)
+        .with_context(|| format!("failed to read {}", drill_path.display()))?;
+
+    Ok(NativeProjectExcellonDrillValidationView {
+        action: "validate_excellon_drill".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        drill_path: drill_path.display().to_string(),
+        matches_expected: actual == expected,
+        expected_bytes: expected.len(),
+        actual_bytes: actual.len(),
+        via_count: vias.len(),
+        tool_count,
+        tools,
+    })
+}
+
+pub(crate) fn inspect_excellon_drill(
+    drill_path: &Path,
+) -> Result<NativeProjectExcellonDrillInspectionView> {
+    let contents = std::fs::read_to_string(drill_path)
+        .with_context(|| format!("failed to read {}", drill_path.display()))?;
+
+    let mut metric = false;
+    let mut tools = BTreeMap::<String, NativeProjectExcellonDrillToolView>::new();
+    let mut current_tool = None::<String>;
+    let mut hit_count = 0usize;
+
+    for raw_line in contents.lines() {
+        let line = raw_line.trim();
+        if line.is_empty() || line == "M48" || line == "%" || line == "M30" {
+            continue;
+        }
+        if line == "METRIC,TZ" {
+            metric = true;
+            continue;
+        }
+        if let Some(rest) = line.strip_prefix('T') {
+            if let Some((tool_digits, diameter)) = rest.split_once('C') {
+                let tool = format!("T{tool_digits}");
+                tools.insert(
+                    tool.clone(),
+                    NativeProjectExcellonDrillToolView {
+                        tool,
+                        diameter_mm: diameter.to_string(),
+                        hits: 0,
+                    },
+                );
+                continue;
+            }
+            current_tool = Some(format!("T{rest}"));
+            continue;
+        }
+        if line.starts_with('X') {
+            let tool = current_tool
+                .clone()
+                .with_context(|| format!("drill hit without active tool in {}", drill_path.display()))?;
+            let entry = tools.get_mut(&tool).with_context(|| {
+                format!("drill hit references unknown tool `{tool}` in {}", drill_path.display())
+            })?;
+            entry.hits += 1;
+            hit_count += 1;
+        }
+    }
+
+    Ok(NativeProjectExcellonDrillInspectionView {
+        action: "inspect_excellon_drill".to_string(),
+        drill_path: drill_path.display().to_string(),
+        metric,
+        tool_count: tools.len(),
+        hit_count,
+        tools: tools.into_values().collect(),
+    })
+}
+
+pub(crate) fn compare_native_project_excellon_drill(
+    root: &Path,
+    drill_path: &Path,
+) -> Result<NativeProjectExcellonDrillComparisonView> {
+    let project = load_native_project(root)?;
+    let vias = query_native_project_board_vias(root)?;
+    let expected_tools = build_excellon_tool_views(&vias);
+    let actual = inspect_excellon_drill(drill_path)?;
+
+    let expected_by_diameter = expected_tools
+        .iter()
+        .map(|tool| (tool.diameter_mm.clone(), tool.hits))
+        .collect::<BTreeMap<_, _>>();
+    let actual_by_diameter = actual
+        .tools
+        .iter()
+        .map(|tool| (tool.diameter_mm.clone(), tool.hits))
+        .collect::<BTreeMap<_, _>>();
+
+    let matched = expected_by_diameter
+        .iter()
+        .filter_map(|(diameter, expected_hits)| {
+            actual_by_diameter
+                .get(diameter)
+                .filter(|actual_hits| **actual_hits == *expected_hits)
+                .map(|_| diameter.clone())
+        })
+        .collect::<Vec<_>>();
+    let missing = expected_by_diameter
+        .keys()
+        .filter(|diameter| !actual_by_diameter.contains_key(*diameter))
+        .cloned()
+        .collect::<Vec<_>>();
+    let extra = actual_by_diameter
+        .keys()
+        .filter(|diameter| !expected_by_diameter.contains_key(*diameter))
+        .cloned()
+        .collect::<Vec<_>>();
+    let hit_drift = expected_by_diameter
+        .iter()
+        .filter_map(|(diameter, expected_hits)| {
+            actual_by_diameter.get(diameter).and_then(|actual_hits| {
+                if actual_hits == expected_hits {
+                    None
+                } else {
+                    Some(NativeProjectExcellonDrillHitDriftView {
+                        diameter_mm: diameter.clone(),
+                        expected_hits: *expected_hits,
+                        actual_hits: *actual_hits,
+                    })
+                }
+            })
+        })
+        .collect::<Vec<_>>();
+
+    Ok(NativeProjectExcellonDrillComparisonView {
+        action: "compare_excellon_drill".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        drill_path: drill_path.display().to_string(),
+        expected_tool_count: expected_tools.len(),
+        actual_tool_count: actual.tools.len(),
+        expected_hit_count: vias.len(),
+        actual_hit_count: actual.hit_count,
+        matched_count: matched.len(),
+        missing_count: missing.len(),
+        extra_count: extra.len(),
+        hit_drift_count: hit_drift.len(),
+        matched,
+        missing,
+        extra,
+        hit_drift,
+    })
+}
+
+pub(crate) fn report_native_project_drill_hole_classes(
+    root: &Path,
+) -> Result<NativeProjectDrillHoleClassReportView> {
+    let project = load_native_project(root)?;
+    let vias = query_native_project_board_vias(root)?;
+    let copper_layers = query_native_project_board_stackup(root)?
+        .into_iter()
+        .filter(|layer| matches!(layer.layer_type, StackupLayerType::Copper))
+        .map(|layer| layer.id)
+        .collect::<Vec<_>>();
+    let top_copper = copper_layers.iter().min().copied();
+    let bottom_copper = copper_layers.iter().max().copied();
+
+    let mut grouped = BTreeMap::<(String, i32, i32), Vec<Via>>::new();
+    for via in vias.iter().cloned() {
+        let start = via.from_layer.min(via.to_layer);
+        let end = via.from_layer.max(via.to_layer);
+        let class = classify_via_hole_class(start, end, top_copper, bottom_copper);
+        grouped.entry((class, start, end)).or_default().push(via);
+    }
+
+    let classes = grouped
+        .into_iter()
+        .map(|((class, from_layer, to_layer), vias)| {
+            let tools = build_excellon_tool_views(&vias);
+            NativeProjectDrillHoleClassBucketView {
+                class,
+                from_layer,
+                to_layer,
+                via_count: vias.len(),
+                tool_count: tools.len(),
+                tools,
+            }
+        })
+        .collect::<Vec<_>>();
+
+    Ok(NativeProjectDrillHoleClassReportView {
+        action: "report_drill_hole_classes".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        copper_layer_count: copper_layers.len(),
+        via_count: vias.len(),
+        class_count: classes.len(),
+        classes,
+    })
+}
+
+fn build_excellon_tool_views(vias: &[Via]) -> Vec<NativeProjectExcellonDrillToolView> {
+    let mut grouped = BTreeMap::<i64, usize>::new();
+    for via in vias {
+        *grouped.entry(via.drill).or_default() += 1;
+    }
+    grouped
+        .into_iter()
+        .enumerate()
+        .map(|(idx, (drill_nm, hits))| NativeProjectExcellonDrillToolView {
+            tool: format!("T{:02}", idx + 1),
+            diameter_mm: render_mm_6(drill_nm),
+            hits,
+        })
+        .collect()
+}
+
+fn render_mm_6(nm: i64) -> String {
+    let sign = if nm < 0 { "-" } else { "" };
+    let abs = nm.abs();
+    let whole = abs / 1_000_000;
+    let frac = abs % 1_000_000;
+    format!("{sign}{whole}.{frac:06}")
+}
+
+fn classify_via_hole_class(
+    start: i32,
+    end: i32,
+    top_copper: Option<i32>,
+    bottom_copper: Option<i32>,
+) -> String {
+    match (top_copper, bottom_copper) {
+        (Some(top), Some(bottom)) if start == top && end == bottom => "through".to_string(),
+        (Some(top), Some(bottom)) if start == top || end == bottom => "blind".to_string(),
+        (Some(_), Some(_)) => "buried".to_string(),
+        _ => "unclassified".to_string(),
+    }
+}
+
 pub(crate) fn export_native_project_gerber_outline(
     root: &Path,
     output_path: &Path,
@@ -2307,7 +2738,19 @@ pub(crate) fn export_native_project_gerber_copper_layer(
         .into_iter()
         .filter(|track| track.layer == layer)
         .collect::<Vec<_>>();
-    let gerber = render_rs274x_copper_layer(layer, &tracks)
+    let zones = query_native_project_board_zones(root)?
+        .into_iter()
+        .filter(|zone| zone.layer == layer)
+        .collect::<Vec<_>>();
+    let vias = query_native_project_board_vias(root)?
+        .into_iter()
+        .filter(|via| {
+            let min_layer = via.from_layer.min(via.to_layer);
+            let max_layer = via.from_layer.max(via.to_layer);
+            layer >= min_layer && layer <= max_layer
+        })
+        .collect::<Vec<_>>();
+    let gerber = render_rs274x_copper_layer(layer, &tracks, &zones, &vias)
         .context("failed to render native board copper layer as RS-274X")?;
     std::fs::write(output_path, gerber)
         .with_context(|| format!("failed to write {}", output_path.display()))?;
@@ -2318,6 +2761,8 @@ pub(crate) fn export_native_project_gerber_copper_layer(
         gerber_path: output_path.display().to_string(),
         layer,
         track_count: tracks.len(),
+        zone_count: zones.len(),
+        via_count: vias.len(),
     })
 }
 
@@ -2342,6 +2787,48 @@ pub(crate) fn validate_native_project_gerber_outline(
         actual_bytes: actual.len(),
         outline_vertex_count: project.board.outline.vertices.len(),
         outline_closed: project.board.outline.closed,
+    })
+}
+
+pub(crate) fn validate_native_project_gerber_copper_layer(
+    root: &Path,
+    layer: i32,
+    gerber_path: &Path,
+) -> Result<NativeProjectGerberCopperValidationView> {
+    let project = load_native_project(root)?;
+    let tracks = query_native_project_board_tracks(root)?
+        .into_iter()
+        .filter(|track| track.layer == layer)
+        .collect::<Vec<_>>();
+    let zones = query_native_project_board_zones(root)?
+        .into_iter()
+        .filter(|zone| zone.layer == layer)
+        .collect::<Vec<_>>();
+    let vias = query_native_project_board_vias(root)?
+        .into_iter()
+        .filter(|via| {
+            let min_layer = via.from_layer.min(via.to_layer);
+            let max_layer = via.from_layer.max(via.to_layer);
+            layer >= min_layer && layer <= max_layer
+        })
+        .collect::<Vec<_>>();
+    let expected = render_rs274x_copper_layer(layer, &tracks, &zones, &vias)
+        .context("failed to render expected native board copper layer as RS-274X")?;
+    let actual = std::fs::read_to_string(gerber_path)
+        .with_context(|| format!("failed to read {}", gerber_path.display()))?;
+
+    Ok(NativeProjectGerberCopperValidationView {
+        action: "validate_gerber_copper_layer".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        gerber_path: gerber_path.display().to_string(),
+        layer,
+        matches_expected: actual == expected,
+        expected_bytes: expected.len(),
+        actual_bytes: actual.len(),
+        track_count: tracks.len(),
+        zone_count: zones.len(),
+        via_count: vias.len(),
     })
 }
 
@@ -6691,6 +7178,229 @@ fn csv_escape(value: &str) -> String {
     } else {
         value.to_string()
     }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct NativeBomRow {
+    reference: String,
+    value: String,
+    part_uuid: String,
+    package_uuid: String,
+    layer: i32,
+    x_nm: i64,
+    y_nm: i64,
+    rotation_deg: i32,
+    locked: bool,
+}
+
+impl NativeBomRow {
+    fn diff_fields(&self, other: &Self) -> Vec<String> {
+        let mut fields = Vec::new();
+        if self.value != other.value {
+            fields.push("value".to_string());
+        }
+        if self.part_uuid != other.part_uuid {
+            fields.push("part_uuid".to_string());
+        }
+        if self.package_uuid != other.package_uuid {
+            fields.push("package_uuid".to_string());
+        }
+        if self.layer != other.layer {
+            fields.push("layer".to_string());
+        }
+        if self.x_nm != other.x_nm || self.y_nm != other.y_nm {
+            fields.push("position".to_string());
+        }
+        if self.rotation_deg != other.rotation_deg {
+            fields.push("rotation_deg".to_string());
+        }
+        if self.locked != other.locked {
+            fields.push("locked".to_string());
+        }
+        fields
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct NativePnpRow {
+    reference: String,
+    x_nm: i64,
+    y_nm: i64,
+    rotation_deg: i32,
+    layer: i32,
+    side: String,
+    package_uuid: String,
+    part_uuid: String,
+    value: String,
+    locked: bool,
+}
+
+impl NativePnpRow {
+    fn diff_fields(&self, other: &Self) -> Vec<String> {
+        let mut fields = Vec::new();
+        if self.x_nm != other.x_nm || self.y_nm != other.y_nm {
+            fields.push("position".to_string());
+        }
+        if self.rotation_deg != other.rotation_deg {
+            fields.push("rotation_deg".to_string());
+        }
+        if self.layer != other.layer {
+            fields.push("layer".to_string());
+        }
+        if self.side != other.side {
+            fields.push("side".to_string());
+        }
+        if self.package_uuid != other.package_uuid {
+            fields.push("package_uuid".to_string());
+        }
+        if self.part_uuid != other.part_uuid {
+            fields.push("part_uuid".to_string());
+        }
+        if self.value != other.value {
+            fields.push("value".to_string());
+        }
+        if self.locked != other.locked {
+            fields.push("locked".to_string());
+        }
+        fields
+    }
+}
+
+fn component_to_bom_row(component: PlacedPackage) -> NativeBomRow {
+    NativeBomRow {
+        reference: component.reference,
+        value: component.value,
+        part_uuid: component.part.to_string(),
+        package_uuid: component.package.to_string(),
+        layer: component.layer,
+        x_nm: component.position.x,
+        y_nm: component.position.y,
+        rotation_deg: component.rotation,
+        locked: component.locked,
+    }
+}
+
+fn component_to_pnp_row(component: PlacedPackage) -> NativePnpRow {
+    NativePnpRow {
+        reference: component.reference,
+        x_nm: component.position.x,
+        y_nm: component.position.y,
+        rotation_deg: component.rotation,
+        layer: component.layer,
+        side: if component.layer <= 16 {
+            "top".to_string()
+        } else {
+            "bottom".to_string()
+        },
+        package_uuid: component.package.to_string(),
+        part_uuid: component.part.to_string(),
+        value: component.value,
+        locked: component.locked,
+    }
+}
+
+fn parse_bom_csv(path: &Path) -> Result<Vec<NativeBomRow>> {
+    let contents = std::fs::read_to_string(path)
+        .with_context(|| format!("failed to read {}", path.display()))?;
+    let mut lines = contents.lines();
+    let header = lines
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("missing BOM CSV header in {}", path.display()))?;
+    if header != "reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked" {
+        bail!("unexpected BOM CSV header in {}", path.display());
+    }
+
+    let mut rows = Vec::new();
+    for line in lines {
+        if line.is_empty() {
+            continue;
+        }
+        let fields = parse_csv_line(line)
+            .with_context(|| format!("failed to parse BOM CSV row in {}", path.display()))?;
+        if fields.len() != 9 {
+            bail!("unexpected BOM CSV column count in {}", path.display());
+        }
+        rows.push(NativeBomRow {
+            reference: fields[0].clone(),
+            value: fields[1].clone(),
+            part_uuid: fields[2].clone(),
+            package_uuid: fields[3].clone(),
+            layer: fields[4].parse().context("invalid layer")?,
+            x_nm: fields[5].parse().context("invalid x_nm")?,
+            y_nm: fields[6].parse().context("invalid y_nm")?,
+            rotation_deg: fields[7].parse().context("invalid rotation_deg")?,
+            locked: fields[8].parse().context("invalid locked")?,
+        });
+    }
+    Ok(rows)
+}
+
+fn parse_pnp_csv(path: &Path) -> Result<Vec<NativePnpRow>> {
+    let contents = std::fs::read_to_string(path)
+        .with_context(|| format!("failed to read {}", path.display()))?;
+    let mut lines = contents.lines();
+    let header = lines
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("missing PnP CSV header in {}", path.display()))?;
+    if header
+        != "reference,x_nm,y_nm,rotation_deg,layer,side,package_uuid,part_uuid,value,locked"
+    {
+        bail!("unexpected PnP CSV header in {}", path.display());
+    }
+
+    let mut rows = Vec::new();
+    for line in lines {
+        if line.is_empty() {
+            continue;
+        }
+        let fields = parse_csv_line(line)
+            .with_context(|| format!("failed to parse PnP CSV row in {}", path.display()))?;
+        if fields.len() != 10 {
+            bail!("unexpected PnP CSV column count in {}", path.display());
+        }
+        rows.push(NativePnpRow {
+            reference: fields[0].clone(),
+            x_nm: fields[1].parse().context("invalid x_nm")?,
+            y_nm: fields[2].parse().context("invalid y_nm")?,
+            rotation_deg: fields[3].parse().context("invalid rotation_deg")?,
+            layer: fields[4].parse().context("invalid layer")?,
+            side: fields[5].clone(),
+            package_uuid: fields[6].clone(),
+            part_uuid: fields[7].clone(),
+            value: fields[8].clone(),
+            locked: fields[9].parse().context("invalid locked")?,
+        });
+    }
+    Ok(rows)
+}
+
+fn parse_csv_line(line: &str) -> Result<Vec<String>> {
+    let mut fields = Vec::new();
+    let mut current = String::new();
+    let mut chars = line.chars().peekable();
+    let mut in_quotes = false;
+    while let Some(ch) = chars.next() {
+        match ch {
+            '"' => {
+                if in_quotes && chars.peek() == Some(&'"') {
+                    current.push('"');
+                    chars.next();
+                } else {
+                    in_quotes = !in_quotes;
+                }
+            }
+            ',' if !in_quotes => {
+                fields.push(current);
+                current = String::new();
+            }
+            _ => current.push(ch),
+        }
+    }
+    if in_quotes {
+        bail!("unterminated quoted field");
+    }
+    fields.push(current);
+    Ok(fields)
 }
 
 fn sanitize_export_prefix(value: &str) -> String {

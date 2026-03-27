@@ -6,15 +6,14 @@ fn unique_project_root(label: &str) -> PathBuf {
 }
 
 #[test]
-fn project_export_gerber_copper_layer_writes_rs274x_track_file() {
-    let root = unique_project_root("datum-eda-cli-project-gerber-copper-export");
-    create_native_project(&root, Some("Gerber Copper Demo".to_string()))
+fn project_validate_gerber_copper_layer_reports_match_and_mismatch() {
+    let root = unique_project_root("datum-eda-cli-project-gerber-copper-validate");
+    create_native_project(&root, Some("Gerber Copper Validate Demo".to_string()))
         .expect("initial scaffold should succeed");
 
     let net_uuid = Uuid::new_v4();
     let class_uuid = Uuid::new_v4();
-    let track_a_uuid = Uuid::new_v4();
-    let track_b_uuid = Uuid::new_v4();
+    let track_uuid = Uuid::new_v4();
     let zone_uuid = Uuid::new_v4();
     let via_uuid = Uuid::new_v4();
     let board_json = root.join("board/board.json");
@@ -25,22 +24,14 @@ fn project_export_gerber_copper_layer_writes_rs274x_track_file() {
             to_json_deterministic(&serde_json::json!({
                 "schema_version": 1,
                 "uuid": Uuid::new_v4(),
-                "name": "Gerber Copper Demo Board",
+                "name": "Gerber Copper Validate Demo Board",
                 "stackup": { "layers": [] },
                 "outline": { "vertices": [], "closed": true },
                 "packages": {},
                 "pads": {},
                 "tracks": {
-                    track_b_uuid.to_string(): {
-                        "uuid": track_b_uuid,
-                        "net": net_uuid,
-                        "from": { "x": 0, "y": 500000 },
-                        "to": { "x": 1000000, "y": 500000 },
-                        "width": 300000,
-                        "layer": 1
-                    },
-                    track_a_uuid.to_string(): {
-                        "uuid": track_a_uuid,
+                    track_uuid.to_string(): {
+                        "uuid": track_uuid,
                         "net": net_uuid,
                         "from": { "x": 0, "y": 0 },
                         "to": { "x": 1000000, "y": 0 },
@@ -108,37 +99,40 @@ fn project_export_gerber_copper_layer_writes_rs274x_track_file() {
     .expect("board file should write");
 
     let gerber_path = root.join("top-copper.gbr");
-    let cli = Cli::try_parse_from([
-        "eda", "--format", "json", "project", "export-gerber-copper-layer",
+    let export_cli = Cli::try_parse_from([
+        "eda", "project", "export-gerber-copper-layer",
         root.to_str().unwrap(), "--layer", "1", "--out", gerber_path.to_str().unwrap(),
     ])
-    .expect("CLI should parse");
-    let output = execute(cli).expect("gerber copper export should succeed");
+    .expect("export CLI should parse");
+    let _ = execute(export_cli).expect("gerber copper export should succeed");
+
+    let validate_cli = Cli::try_parse_from([
+        "eda", "--format", "json", "project", "validate-gerber-copper-layer",
+        root.to_str().unwrap(), "--layer", "1", "--gerber", gerber_path.to_str().unwrap(),
+    ])
+    .expect("validate CLI should parse");
+    let (output, exit_code) = execute_with_exit_code(validate_cli).expect("validation should run");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
-    assert_eq!(report["action"], "export_gerber_copper_layer");
+    assert_eq!(exit_code, 0);
+    assert_eq!(report["action"], "validate_gerber_copper_layer");
+    assert_eq!(report["matches_expected"], true);
     assert_eq!(report["layer"], 1);
-    assert_eq!(report["track_count"], 2);
+    assert_eq!(report["track_count"], 1);
     assert_eq!(report["zone_count"], 1);
     assert_eq!(report["via_count"], 1);
 
-    let gerber = std::fs::read_to_string(&gerber_path).expect("gerber should read");
-    assert!(gerber.contains("%ADD10C,0.200000*%"));
-    assert!(gerber.contains("%ADD11C,0.300000*%"));
-    assert!(gerber.contains("D10*"));
-    assert!(gerber.contains("D11*"));
-    assert!(gerber.contains("X0Y0D02*"));
-    assert!(gerber.contains("X1000000Y0D01*"));
-    assert!(gerber.contains("X0Y500000D02*"));
-    assert!(gerber.contains("X1000000Y500000D01*"));
-    assert!(gerber.contains("G36*"));
-    assert!(gerber.contains("G37*"));
-    assert!(gerber.contains("%ADD12C,0.600000*%"));
-    assert!(gerber.contains("D12*"));
-    assert!(gerber.contains("X250000Y250000D03*"));
-    assert!(gerber.contains("X0Y1000000D02*"));
-    assert!(gerber.contains("X1000000Y1000000D01*"));
-    assert!(gerber.contains("X1000000Y1500000D01*"));
-    assert!(gerber.ends_with("M02*\n"));
+    std::fs::write(&gerber_path, "corrupted\n").expect("gerber overwrite should succeed");
+    let validate_cli = Cli::try_parse_from([
+        "eda", "--format", "json", "project", "validate-gerber-copper-layer",
+        root.to_str().unwrap(), "--layer", "1", "--gerber", gerber_path.to_str().unwrap(),
+    ])
+    .expect("validate CLI should parse");
+    let (output, exit_code) = execute_with_exit_code(validate_cli).expect("validation should run");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
+    assert_eq!(exit_code, 1);
+    assert_eq!(report["matches_expected"], false);
+    assert_eq!(report["zone_count"], 1);
+    assert_eq!(report["via_count"], 1);
 
     let _ = std::fs::remove_dir_all(&root);
 }

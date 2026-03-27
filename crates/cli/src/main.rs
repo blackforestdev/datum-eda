@@ -140,6 +140,30 @@ struct NativeProjectBomExportView {
 }
 
 #[derive(Debug, Clone, Serialize)]
+struct NativeProjectBomDriftView {
+    reference: String,
+    fields: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectBomComparisonView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    bom_path: String,
+    expected_count: usize,
+    actual_count: usize,
+    matched_count: usize,
+    missing_count: usize,
+    extra_count: usize,
+    drift_count: usize,
+    matched: Vec<String>,
+    missing: Vec<String>,
+    extra: Vec<String>,
+    drift: Vec<NativeProjectBomDriftView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
 struct NativeProjectPnpExportView {
     action: String,
     project_root: String,
@@ -148,11 +172,125 @@ struct NativeProjectPnpExportView {
 }
 
 #[derive(Debug, Clone, Serialize)]
+struct NativeProjectPnpDriftView {
+    reference: String,
+    fields: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectPnpComparisonView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    pnp_path: String,
+    expected_count: usize,
+    actual_count: usize,
+    matched_count: usize,
+    missing_count: usize,
+    extra_count: usize,
+    drift_count: usize,
+    matched: Vec<String>,
+    missing: Vec<String>,
+    extra: Vec<String>,
+    drift: Vec<NativeProjectPnpDriftView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
 struct NativeProjectDrillExportView {
     action: String,
     project_root: String,
     drill_path: String,
     rows: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectExcellonDrillExportView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    drill_path: String,
+    via_count: usize,
+    tool_count: usize,
+    tools: Vec<NativeProjectExcellonDrillToolView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectExcellonDrillValidationView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    drill_path: String,
+    matches_expected: bool,
+    expected_bytes: usize,
+    actual_bytes: usize,
+    via_count: usize,
+    tool_count: usize,
+    tools: Vec<NativeProjectExcellonDrillToolView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectExcellonDrillToolView {
+    tool: String,
+    diameter_mm: String,
+    hits: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectExcellonDrillInspectionView {
+    action: String,
+    drill_path: String,
+    metric: bool,
+    tool_count: usize,
+    hit_count: usize,
+    tools: Vec<NativeProjectExcellonDrillToolView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectExcellonDrillHitDriftView {
+    diameter_mm: String,
+    expected_hits: usize,
+    actual_hits: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectExcellonDrillComparisonView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    drill_path: String,
+    expected_tool_count: usize,
+    actual_tool_count: usize,
+    expected_hit_count: usize,
+    actual_hit_count: usize,
+    matched_count: usize,
+    missing_count: usize,
+    extra_count: usize,
+    hit_drift_count: usize,
+    matched: Vec<String>,
+    missing: Vec<String>,
+    extra: Vec<String>,
+    hit_drift: Vec<NativeProjectExcellonDrillHitDriftView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectDrillHoleClassBucketView {
+    class: String,
+    from_layer: i32,
+    to_layer: i32,
+    via_count: usize,
+    tool_count: usize,
+    tools: Vec<NativeProjectExcellonDrillToolView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectDrillHoleClassReportView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    copper_layer_count: usize,
+    via_count: usize,
+    class_count: usize,
+    classes: Vec<NativeProjectDrillHoleClassBucketView>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -173,6 +311,8 @@ struct NativeProjectGerberCopperExportView {
     gerber_path: String,
     layer: i32,
     track_count: usize,
+    zone_count: usize,
+    via_count: usize,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -186,6 +326,21 @@ struct NativeProjectGerberOutlineValidationView {
     actual_bytes: usize,
     outline_vertex_count: usize,
     outline_closed: bool,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectGerberCopperValidationView {
+    action: String,
+    project_root: String,
+    board_path: String,
+    gerber_path: String,
+    layer: i32,
+    matches_expected: bool,
+    expected_bytes: usize,
+    actual_bytes: usize,
+    track_count: usize,
+    zone_count: usize,
+    via_count: usize,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -969,6 +1124,46 @@ fn render_native_project_bom_export_text(report: &NativeProjectBomExportView) ->
     .join("\n")
 }
 
+fn render_native_project_bom_comparison_text(report: &NativeProjectBomComparisonView) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("bom_path: {}", report.bom_path),
+        format!("expected_count: {}", report.expected_count),
+        format!("actual_count: {}", report.actual_count),
+        format!("matched_count: {}", report.matched_count),
+        format!("missing_count: {}", report.missing_count),
+        format!("extra_count: {}", report.extra_count),
+        format!("drift_count: {}", report.drift_count),
+    ];
+    if !report.matched.is_empty() {
+        lines.push("matched:".to_string());
+        for entry in &report.matched {
+            lines.push(format!("- {}", entry));
+        }
+    }
+    if !report.missing.is_empty() {
+        lines.push("missing:".to_string());
+        for entry in &report.missing {
+            lines.push(format!("- {}", entry));
+        }
+    }
+    if !report.extra.is_empty() {
+        lines.push("extra:".to_string());
+        for entry in &report.extra {
+            lines.push(format!("- {}", entry));
+        }
+    }
+    if !report.drift.is_empty() {
+        lines.push("drift:".to_string());
+        for entry in &report.drift {
+            lines.push(format!("- {} [{}]", entry.reference, entry.fields.join(", ")));
+        }
+    }
+    lines.join("\n")
+}
+
 fn render_native_project_pnp_export_text(report: &NativeProjectPnpExportView) -> String {
     [
         format!("action: {}", report.action),
@@ -979,6 +1174,46 @@ fn render_native_project_pnp_export_text(report: &NativeProjectPnpExportView) ->
     .join("\n")
 }
 
+fn render_native_project_pnp_comparison_text(report: &NativeProjectPnpComparisonView) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("pnp_path: {}", report.pnp_path),
+        format!("expected_count: {}", report.expected_count),
+        format!("actual_count: {}", report.actual_count),
+        format!("matched_count: {}", report.matched_count),
+        format!("missing_count: {}", report.missing_count),
+        format!("extra_count: {}", report.extra_count),
+        format!("drift_count: {}", report.drift_count),
+    ];
+    if !report.matched.is_empty() {
+        lines.push("matched:".to_string());
+        for entry in &report.matched {
+            lines.push(format!("- {}", entry));
+        }
+    }
+    if !report.missing.is_empty() {
+        lines.push("missing:".to_string());
+        for entry in &report.missing {
+            lines.push(format!("- {}", entry));
+        }
+    }
+    if !report.extra.is_empty() {
+        lines.push("extra:".to_string());
+        for entry in &report.extra {
+            lines.push(format!("- {}", entry));
+        }
+    }
+    if !report.drift.is_empty() {
+        lines.push("drift:".to_string());
+        for entry in &report.drift {
+            lines.push(format!("- {} fields={}", entry.reference, entry.fields.join(",")));
+        }
+    }
+    lines.join("\n")
+}
+
 fn render_native_project_drill_export_text(report: &NativeProjectDrillExportView) -> String {
     [
         format!("action: {}", report.action),
@@ -987,6 +1222,153 @@ fn render_native_project_drill_export_text(report: &NativeProjectDrillExportView
         format!("rows: {}", report.rows),
     ]
     .join("\n")
+}
+
+fn render_native_project_excellon_drill_export_text(
+    report: &NativeProjectExcellonDrillExportView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("drill_path: {}", report.drill_path),
+        format!("via_count: {}", report.via_count),
+        format!("tool_count: {}", report.tool_count),
+    ];
+    if !report.tools.is_empty() {
+        lines.push("tools:".to_string());
+        for tool in &report.tools {
+            lines.push(format!(
+                "- {} diameter_mm={} hits={}",
+                tool.tool, tool.diameter_mm, tool.hits
+            ));
+        }
+    }
+    lines.join("\n")
+}
+
+fn render_native_project_excellon_drill_validation_text(
+    report: &NativeProjectExcellonDrillValidationView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("drill_path: {}", report.drill_path),
+        format!("matches_expected: {}", report.matches_expected),
+        format!("expected_bytes: {}", report.expected_bytes),
+        format!("actual_bytes: {}", report.actual_bytes),
+        format!("via_count: {}", report.via_count),
+        format!("tool_count: {}", report.tool_count),
+    ];
+    if !report.tools.is_empty() {
+        lines.push("tools:".to_string());
+        for tool in &report.tools {
+            lines.push(format!(
+                "- {} diameter_mm={} hits={}",
+                tool.tool, tool.diameter_mm, tool.hits
+            ));
+        }
+    }
+    lines.join("\n")
+}
+
+fn render_native_project_excellon_drill_inspection_text(
+    report: &NativeProjectExcellonDrillInspectionView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("drill_path: {}", report.drill_path),
+        format!("metric: {}", report.metric),
+        format!("tool_count: {}", report.tool_count),
+        format!("hit_count: {}", report.hit_count),
+    ];
+    if !report.tools.is_empty() {
+        lines.push("tools:".to_string());
+        for tool in &report.tools {
+            lines.push(format!(
+                "- {} diameter_mm={} hits={}",
+                tool.tool, tool.diameter_mm, tool.hits
+            ));
+        }
+    }
+    lines.join("\n")
+}
+
+fn render_native_project_excellon_drill_comparison_text(
+    report: &NativeProjectExcellonDrillComparisonView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("drill_path: {}", report.drill_path),
+        format!("expected_tool_count: {}", report.expected_tool_count),
+        format!("actual_tool_count: {}", report.actual_tool_count),
+        format!("expected_hit_count: {}", report.expected_hit_count),
+        format!("actual_hit_count: {}", report.actual_hit_count),
+        format!("matched_count: {}", report.matched_count),
+        format!("missing_count: {}", report.missing_count),
+        format!("extra_count: {}", report.extra_count),
+        format!("hit_drift_count: {}", report.hit_drift_count),
+    ];
+    if !report.matched.is_empty() {
+        lines.push("matched:".to_string());
+        for entry in &report.matched {
+            lines.push(format!("- {}", entry));
+        }
+    }
+    if !report.missing.is_empty() {
+        lines.push("missing:".to_string());
+        for entry in &report.missing {
+            lines.push(format!("- {}", entry));
+        }
+    }
+    if !report.extra.is_empty() {
+        lines.push("extra:".to_string());
+        for entry in &report.extra {
+            lines.push(format!("- {}", entry));
+        }
+    }
+    if !report.hit_drift.is_empty() {
+        lines.push("hit_drift:".to_string());
+        for entry in &report.hit_drift {
+            lines.push(format!(
+                "- diameter_mm={} expected_hits={} actual_hits={}",
+                entry.diameter_mm, entry.expected_hits, entry.actual_hits
+            ));
+        }
+    }
+    lines.join("\n")
+}
+
+fn render_native_project_drill_hole_class_report_text(
+    report: &NativeProjectDrillHoleClassReportView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("copper_layer_count: {}", report.copper_layer_count),
+        format!("via_count: {}", report.via_count),
+        format!("class_count: {}", report.class_count),
+    ];
+    if !report.classes.is_empty() {
+        lines.push("classes:".to_string());
+        for class in &report.classes {
+            lines.push(format!(
+                "- class={} span=L{}-L{} via_count={} tool_count={}",
+                class.class, class.from_layer, class.to_layer, class.via_count, class.tool_count
+            ));
+            for tool in &class.tools {
+                lines.push(format!(
+                    "  tool={} diameter_mm={} hits={}",
+                    tool.tool, tool.diameter_mm, tool.hits
+                ));
+            }
+        }
+    }
+    lines.join("\n")
 }
 
 fn render_native_project_gerber_outline_export_text(
@@ -1013,6 +1395,8 @@ fn render_native_project_gerber_copper_export_text(
         format!("gerber_path: {}", report.gerber_path),
         format!("layer: {}", report.layer),
         format!("track_count: {}", report.track_count),
+        format!("zone_count: {}", report.zone_count),
+        format!("via_count: {}", report.via_count),
     ]
     .join("\n")
 }
@@ -1030,6 +1414,25 @@ fn render_native_project_gerber_outline_validation_text(
         format!("actual_bytes: {}", report.actual_bytes),
         format!("outline_vertex_count: {}", report.outline_vertex_count),
         format!("outline_closed: {}", report.outline_closed),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_gerber_copper_validation_text(
+    report: &NativeProjectGerberCopperValidationView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("gerber_path: {}", report.gerber_path),
+        format!("layer: {}", report.layer),
+        format!("matches_expected: {}", report.matches_expected),
+        format!("expected_bytes: {}", report.expected_bytes),
+        format!("actual_bytes: {}", report.actual_bytes),
+        format!("track_count: {}", report.track_count),
+        format!("zone_count: {}", report.zone_count),
+        format!("via_count: {}", report.via_count),
     ]
     .join("\n")
 }

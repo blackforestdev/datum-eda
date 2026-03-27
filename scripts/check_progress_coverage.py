@@ -144,6 +144,91 @@ def parse_progress_m4_gate_names(progress_text: str) -> list[str]:
     return parse_markdown_table_first_column(progress_text, "PROGRAM_SPEC.md — M4 Exit Criteria")
 
 
+def parse_m4_required_schematic_ops(schematic_editor_text: str) -> list[str]:
+    match = re.search(
+        r"### 4\.1 M4 Required Operations\s+```rust\s+(.*?)\s+```",
+        schematic_editor_text,
+        flags=re.S,
+    )
+    if not match:
+        return []
+    ops: list[str] = []
+    for raw in match.group(1).splitlines():
+        op = raw.strip()
+        if not op:
+            continue
+        if re.fullmatch(r"[A-Za-z][A-Za-z0-9]*", op):
+            ops.append(op)
+    return ops
+
+
+def parse_cli_project_command_variants(cli_args_text: str) -> set[str]:
+    return set(re.findall(r"^\s{4}([A-Z][A-Za-z0-9]+)\s*\{", cli_args_text, flags=re.M))
+
+
+def parse_command_exec_project_variants(command_exec_text: str) -> set[str]:
+    return set(re.findall(r"ProjectCommands::([A-Z][A-Za-z0-9]+)", command_exec_text))
+
+
+def schematic_op_to_cli_variant(op: str) -> str:
+    aliases = {
+        "PlaceHierarchicalPort": "PlacePort",
+        "EditHierarchicalPort": "EditPort",
+        "DeleteHierarchicalPort": "DeletePort",
+        "SetFieldValue": "EditSymbolField",
+        "MoveField": "EditSymbolField",
+        "SetFieldVisibility": "EditSymbolField",
+        "AssignPart": "SetSymbolPart",
+        "AssignGate": "SetSymbolGate",
+    }
+    return aliases.get(op, op)
+
+
+def section_slice_by_h2(text: str, heading: str) -> str | None:
+    match = re.search(
+        rf"^## {re.escape(heading)}\n(.*?)(?=^## |\Z)",
+        text,
+        flags=re.S | re.M,
+    )
+    return match.group(1) if match else None
+
+
+def check_schematic_editor_progress_drift(progress_text: str, failures: list[str]) -> None:
+    schematic_editor_text = read_text("specs/SCHEMATIC_EDITOR_SPEC.md")
+    cli_args_text = read_text("crates/cli/src/cli_args.rs")
+    command_exec_text = read_text("crates/cli/src/command_exec.rs")
+
+    required_ops = parse_m4_required_schematic_ops(schematic_editor_text)
+    if not required_ops:
+        failures.append("specs/SCHEMATIC_EDITOR_SPEC.md: unable to parse M4 required operations")
+        return
+
+    cli_variants = parse_cli_project_command_variants(cli_args_text)
+    exec_variants = parse_command_exec_project_variants(command_exec_text)
+    implemented = [
+        op
+        for op in required_ops
+        if (mapped := schematic_op_to_cli_variant(op)) in cli_variants and mapped in exec_variants
+    ]
+
+    section = section_slice_by_h2(progress_text, "SCHEMATIC_EDITOR_SPEC.md — M4 Operations")
+    if section is None:
+        failures.append("specs/PROGRESS.md: missing SCHEMATIC_EDITOR_SPEC progress section")
+        return
+
+    if implemented:
+        if "Not started" in section or "[ ] Not started" in section:
+            failures.append(
+                "specs/PROGRESS.md: SCHEMATIC_EDITOR_SPEC section claims not started, "
+                f"but code audit detects {len(implemented)} implemented M4 schematic operations"
+            )
+        if "Status: [~]" not in section and "Status: [x]" not in section:
+            failures.append(
+                "specs/PROGRESS.md: SCHEMATIC_EDITOR_SPEC section must declare Status: [~] or [x] "
+                "when code-backed schematic operations exist"
+            )
+
+
 def check_single_status_authority(
     plan_text: str, program_text: str, integrated_text: str, failures: list[str]
 ) -> None:
@@ -330,6 +415,7 @@ def main() -> int:
     check_infrastructure_rows(progress_text, failures)
     check_r1_g0_gate(progress_text, failures)
     check_m4_gate_parity(program_text, integrated_text, progress_text, failures)
+    check_schematic_editor_progress_drift(progress_text, failures)
     check_mcp_contract_parity(mcp_text, failures)
 
     if failures:

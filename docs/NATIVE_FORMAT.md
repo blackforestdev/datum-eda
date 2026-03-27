@@ -161,15 +161,43 @@ Current live slice:
   directly from that persisted native board-component inventory, establishing
   the first native manufacturing-export slice without depending on pool lookup,
   manufacturer metadata, or variant expansion.
+- `eda project compare-bom <dir> --bom <path>` now compares that BOM CSV
+  against the current native board-component inventory by reference, value,
+  part/package identity, layer, position, rotation, and locked state, so BOM
+  drift is reviewable semantically instead of only by file generation.
 - `eda project export-pnp <dir> --out <path>` writes a deterministic CSV
   pick-and-place export directly from that same persisted native
   board-component inventory, establishing the second native manufacturing-
   export slice without depending on feeder setup, origin calibration, or
   variant expansion.
+- `eda project compare-pnp <dir> --pnp <path>` now compares that PnP CSV
+  against the current native board-component inventory by reference, placement,
+  rotation, side/layer, part/package identity, value, and locked state, so PnP
+  drift is reviewable semantically instead of only by file generation.
 - `eda project export-drill <dir> --out <path>` writes a deterministic CSV
   drill export directly from the persisted native via inventory, establishing
   the first native drill-export slice without claiming full Excellon tooling,
   slot support, or fabrication-ready hole tables yet.
+- `eda project export-excellon-drill <dir> --out <path>` now writes a narrow
+  Excellon drill file directly from the persisted native via inventory through
+  `eda_engine::export`, establishing the first real drill writer on the native
+  board path.
+- `eda project validate-excellon-drill <dir> --drill <path>` now re-renders
+  that expected native Excellon drill file and reports byte-for-byte
+  match/mismatch with CI-usable exit status, establishing the first validation
+  surface for a real drill writer.
+- `eda project inspect-excellon-drill <path>` now reads that narrow Excellon
+  drill file and reports the parsed tool table plus hit counts, establishing
+  the first Excellon read/inspection surface without claiming broader drill
+  interchange support.
+- `eda project compare-excellon-drill <dir> --drill <path>` now compares that
+  narrow Excellon file against the current native via inventory by normalized
+  drill diameter and hit count, reporting matched, missing, extra, and hit-
+  drift drill buckets without requiring byte-for-byte identity.
+- `eda project report-drill-hole-classes <dir>` now groups the current native
+  via inventory into explicit through/blind/buried hole classes using copper
+  layer span from the persisted native stackup, reporting per-class tool tables
+  and hit counts.
 - `eda project export-gerber-outline <dir> --out <path>` now writes a narrow
   RS-274X Gerber file for the persisted native board outline through
   `eda_engine::export`, establishing the first real native Gerber writer on
@@ -179,10 +207,14 @@ Current live slice:
   match/mismatch with CI-usable exit status, establishing the first native
   validation surface for a real Gerber writer.
 - `eda project export-gerber-copper-layer <dir> --layer <id> --out <path>`
-  now writes a narrow RS-274X Gerber file for persisted native board tracks on
-  one selected copper layer through `eda_engine::export`, establishing the
-  first real copper-layer writer without claiming pads, zones, or full layer-
-  set emission yet.
+  now writes a narrow RS-274X Gerber file for persisted native board tracks,
+  vias, and zones on one selected copper layer through `eda_engine::export`,
+  establishing the first real copper-layer writer without claiming pads or full
+  layer-set emission yet.
+- `eda project validate-gerber-copper-layer <dir> --layer <id> --gerber
+  <path>` now re-renders that expected native copper-layer Gerber and reports
+  byte-for-byte match/mismatch with CI-usable exit status, establishing the
+  first native validation surface for the copper-layer writer.
 - `eda project plan-gerber-export <dir> [--prefix <text>]` reports the
   deterministic broader Gerber artifact set implied by the current native
   board outline and stackup, without claiming that the full planned layer set
