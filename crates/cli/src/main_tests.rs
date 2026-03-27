@@ -74,6 +74,8 @@ mod main_tests_project_new;
 mod main_tests_project_inspect;
 #[path = "main_tests_project_query.rs"]
 mod main_tests_project_query;
+#[path = "main_tests_project_symbol.rs"]
+mod main_tests_project_symbol;
 #[path = "main_tests_project_label.rs"]
 mod main_tests_project_label;
 #[path = "main_tests_project_wire.rs"]
@@ -82,6 +84,10 @@ mod main_tests_project_wire;
 mod main_tests_project_junction;
 #[path = "main_tests_project_port.rs"]
 mod main_tests_project_port;
+#[path = "main_tests_project_bus.rs"]
+mod main_tests_project_bus;
+#[path = "main_tests_project_noconnect.rs"]
+mod main_tests_project_noconnect;
 #[path = "main_tests_plan_apply.rs"]
 mod main_tests_plan_apply;
 #[path = "main_tests_plan_apply_validate.rs"]

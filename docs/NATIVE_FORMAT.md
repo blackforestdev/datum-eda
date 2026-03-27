@@ -22,6 +22,13 @@ Current live slice:
 - `eda project query <dir> summary` and
   `eda project query <dir> design-rules` provide the first native read surface
   directly from the on-disk scaffold.
+- `eda project place-symbol <dir> --sheet <uuid> --reference <text> --value <text>
+  [--lib-id <text>] --x-nm <i64> --y-nm <i64> [--rotation-deg <i32>] [--mirrored]`,
+  `eda project move-symbol <dir> --symbol <uuid> --x-nm <i64> --y-nm <i64>`, and
+  `eda project rotate-symbol <dir> --symbol <uuid> --rotation-deg <i32>`, and
+  `eda project delete-symbol <dir> --symbol <uuid>` add the first native
+  authored schematic symbol placement/transform/delete path, and
+  `eda project query <dir> symbols` reads back the persisted symbol slice.
 - `eda project place-label <dir> --sheet <uuid> --name <text> --x-nm <i64>
   --y-nm <i64>` is the first native authored schematic mutation and writes
   directly to a referenced sheet file.
@@ -38,6 +45,14 @@ Current live slice:
   --x-nm <i64> --y-nm <i64>`, `eda project edit-port <dir> --port <uuid> ...`,
   and `eda project delete-port <dir> --port <uuid>` add the first cross-sheet
   connectivity-interface object family on the same deterministic mutation path.
+- `eda project create-bus <dir> --sheet <uuid> --name <text> --member <text>...`,
+  `eda project edit-bus-members <dir> --bus <uuid> --member <text>...`,
+  `eda project place-bus-entry <dir> --sheet <uuid> --bus <uuid> [--wire <uuid>]`,
+  and `eda project delete-bus-entry <dir> --bus-entry <uuid>` extend that path
+  to structured multi-net connectivity objects.
+- `eda project place-noconnect <dir> --sheet <uuid> --symbol <uuid> --pin <uuid>
+  --x-nm <i64> --y-nm <i64>` and `eda project delete-noconnect <dir> --noconnect <uuid>`
+  add the no-connect marker object family on the same deterministic sheet-file path.
 
 ## Design Principle
 The native format is a direct serialization of the canonical IR. No

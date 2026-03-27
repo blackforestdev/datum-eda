@@ -160,6 +160,11 @@ Current live slice:
 - `eda project inspect <dir>` validates that native scaffold and reports the resolved schema, UUIDs, paths, and current object counts.
 - `eda project query <dir> summary` reports the current native schematic/board/rule summary from the scaffold.
 - `eda project query <dir> design-rules` reports the current native rules payload.
+- `eda project place-symbol <dir> --sheet <uuid> --reference <text> --value <text> [--lib-id <text>] --x-nm <i64> --y-nm <i64> [--rotation-deg <i32>] [--mirrored]` places a native schematic symbol into a referenced sheet file.
+- `eda project move-symbol <dir> --symbol <uuid> --x-nm <i64> --y-nm <i64>` repositions an existing native schematic symbol.
+- `eda project rotate-symbol <dir> --symbol <uuid> --rotation-deg <i32>` updates the stored rotation for an existing native schematic symbol.
+- `eda project delete-symbol <dir> --symbol <uuid>` removes an existing native schematic symbol.
+- `eda project query <dir> symbols` reports the current native symbol inventory from referenced sheet files.
 - `eda project place-label <dir> --sheet <uuid> --name <text> --x-nm <i64> --y-nm <i64>` writes the first native authored schematic object into a referenced sheet file.
 - `eda project rename-label <dir> --label <uuid> --name <text>` renames an existing native schematic label.
 - `eda project delete-label <dir> --label <uuid>` removes an existing native schematic label.
@@ -170,6 +175,12 @@ Current live slice:
 - `eda project place-port <dir> --sheet <uuid> --name <text> --direction <input|output|bidirectional|passive> --x-nm <i64> --y-nm <i64>` places a native hierarchical port.
 - `eda project edit-port <dir> --port <uuid> [--name <text>] [--direction <...>] [--x-nm <i64>] [--y-nm <i64>]` edits an existing native hierarchical port.
 - `eda project delete-port <dir> --port <uuid>` removes an existing native hierarchical port.
+- `eda project create-bus <dir> --sheet <uuid> --name <text> --member <text>...` creates a native schematic bus.
+- `eda project edit-bus-members <dir> --bus <uuid> --member <text>...` edits the member list for an existing native schematic bus.
+- `eda project place-bus-entry <dir> --sheet <uuid> --bus <uuid> [--wire <uuid>] --x-nm <i64> --y-nm <i64>` places a native bus entry.
+- `eda project delete-bus-entry <dir> --bus-entry <uuid>` removes an existing native bus entry.
+- `eda project place-noconnect <dir> --sheet <uuid> --symbol <uuid> --pin <uuid> --x-nm <i64> --y-nm <i64>` places a native no-connect marker.
+- `eda project delete-noconnect <dir> --noconnect <uuid>` removes an existing native no-connect marker.
 
 MCP tools for this flow are defined in `specs/MCP_API_SPEC.md` §M4:
 `place_symbol`, `draw_wire`, `place_label`, `annotate`,

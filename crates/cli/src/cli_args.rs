@@ -293,6 +293,68 @@ pub(crate) enum ProjectCommands {
         #[command(subcommand)]
         what: NativeProjectQueryCommands,
     },
+    /// Place one schematic symbol into an existing native sheet file
+    PlaceSymbol {
+        /// Project root directory
+        path: PathBuf,
+        /// Target sheet UUID
+        #[arg(long)]
+        sheet: Uuid,
+        /// Reference designator
+        #[arg(long)]
+        reference: String,
+        /// Display value
+        #[arg(long)]
+        value: String,
+        /// Optional library identifier for future resolution
+        #[arg(long = "lib-id")]
+        lib_id: Option<String>,
+        /// X coordinate in nm
+        #[arg(long)]
+        x_nm: i64,
+        /// Y coordinate in nm
+        #[arg(long)]
+        y_nm: i64,
+        /// Rotation in degrees
+        #[arg(long = "rotation-deg", default_value_t = 0)]
+        rotation_deg: i32,
+        /// Mirror the symbol about its local Y axis
+        #[arg(long, default_value_t = false)]
+        mirrored: bool,
+    },
+    /// Move one schematic symbol in a native sheet file
+    MoveSymbol {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+        /// New X coordinate in nm
+        #[arg(long)]
+        x_nm: i64,
+        /// New Y coordinate in nm
+        #[arg(long)]
+        y_nm: i64,
+    },
+    /// Rotate one schematic symbol in a native sheet file
+    RotateSymbol {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+        /// New rotation in degrees
+        #[arg(long = "rotation-deg")]
+        rotation_deg: i32,
+    },
+    /// Delete one schematic symbol from a native sheet file
+    DeleteSymbol {
+        /// Project root directory
+        path: PathBuf,
+        /// Symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+    },
     /// Place one schematic label into an existing native sheet file
     PlaceLabel {
         /// Project root directory
@@ -430,6 +492,89 @@ pub(crate) enum ProjectCommands {
         #[arg(long)]
         port: Uuid,
     },
+    /// Create one bus in an existing native sheet file
+    CreateBus {
+        /// Project root directory
+        path: PathBuf,
+        /// Target sheet UUID
+        #[arg(long)]
+        sheet: Uuid,
+        /// Bus name
+        #[arg(long)]
+        name: String,
+        /// Bus members
+        #[arg(long = "member")]
+        members: Vec<String>,
+    },
+    /// Edit one bus member list in a native sheet file
+    EditBusMembers {
+        /// Project root directory
+        path: PathBuf,
+        /// Bus UUID
+        #[arg(long)]
+        bus: Uuid,
+        /// Replacement member list
+        #[arg(long = "member")]
+        members: Vec<String>,
+    },
+    /// Place one bus entry in an existing native sheet file
+    PlaceBusEntry {
+        /// Project root directory
+        path: PathBuf,
+        /// Target sheet UUID
+        #[arg(long)]
+        sheet: Uuid,
+        /// Parent bus UUID
+        #[arg(long)]
+        bus: Uuid,
+        /// Optional attached wire UUID
+        #[arg(long)]
+        wire: Option<Uuid>,
+        /// X coordinate in nm
+        #[arg(long)]
+        x_nm: i64,
+        /// Y coordinate in nm
+        #[arg(long)]
+        y_nm: i64,
+    },
+    /// Delete one bus entry from a native sheet file
+    DeleteBusEntry {
+        /// Project root directory
+        path: PathBuf,
+        /// Bus entry UUID
+        #[arg(long = "bus-entry")]
+        bus_entry: Uuid,
+    },
+    /// Place one no-connect marker into an existing native sheet file
+    #[command(name = "place-noconnect")]
+    PlaceNoConnect {
+        /// Project root directory
+        path: PathBuf,
+        /// Target sheet UUID
+        #[arg(long)]
+        sheet: Uuid,
+        /// Target symbol UUID
+        #[arg(long)]
+        symbol: Uuid,
+        /// Target pin UUID
+        #[arg(long)]
+        pin: Uuid,
+        /// X coordinate in nm
+        #[arg(long)]
+        x_nm: i64,
+        /// Y coordinate in nm
+        #[arg(long)]
+        y_nm: i64,
+    },
+    /// Delete one no-connect marker from a native sheet file
+    #[command(name = "delete-noconnect")]
+    DeleteNoConnect {
+        /// Project root directory
+        path: PathBuf,
+        /// No-connect UUID
+        #[arg(long = "noconnect")]
+        noconnect: Uuid,
+    },
 }
 
 #[derive(Subcommand)]
@@ -438,6 +583,8 @@ pub(crate) enum NativeProjectQueryCommands {
     Summary,
     /// Current native design rules payload
     DesignRules,
+    /// Current native schematic symbols
+    Symbols,
     /// Current native schematic labels
     Labels,
     /// Current native schematic wires
@@ -446,6 +593,12 @@ pub(crate) enum NativeProjectQueryCommands {
     Junctions,
     /// Current native schematic hierarchical ports
     Ports,
+    /// Current native schematic buses
+    Buses,
+    /// Current native schematic bus entries
+    BusEntries,
+    /// Current native schematic no-connect markers
+    Noconnects,
 }
 
 #[derive(Clone, clap::ValueEnum)]

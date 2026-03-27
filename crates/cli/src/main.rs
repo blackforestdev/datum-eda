@@ -221,6 +221,59 @@ struct NativeProjectPortMutationReportView {
     y_nm: i64,
 }
 
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectBusMutationReportView {
+    action: String,
+    project_root: String,
+    sheet_uuid: String,
+    sheet_path: String,
+    bus_uuid: String,
+    name: String,
+    members: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectBusEntryMutationReportView {
+    action: String,
+    project_root: String,
+    sheet_uuid: String,
+    sheet_path: String,
+    bus_entry_uuid: String,
+    bus_uuid: String,
+    wire_uuid: Option<String>,
+    x_nm: i64,
+    y_nm: i64,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectNoConnectMutationReportView {
+    action: String,
+    project_root: String,
+    sheet_uuid: String,
+    sheet_path: String,
+    noconnect_uuid: String,
+    symbol_uuid: String,
+    pin_uuid: String,
+    x_nm: i64,
+    y_nm: i64,
+}
+
+#[derive(Debug, Clone, Serialize)]
+struct NativeProjectSymbolMutationReportView {
+    action: String,
+    project_root: String,
+    sheet_uuid: String,
+    sheet_path: String,
+    symbol_uuid: String,
+    reference: String,
+    value: String,
+    lib_id: Option<String>,
+    x_nm: i64,
+    y_nm: i64,
+    rotation_deg: i32,
+    mirrored: bool,
+}
+
 fn render_native_project_create_report_text(report: &NativeProjectCreateReportView) -> String {
     let mut lines = vec![
         format!("project_root: {}", report.project_root),
@@ -374,6 +427,80 @@ fn render_native_project_port_mutation_text(report: &NativeProjectPortMutationRe
         format!("y_nm: {}", report.y_nm),
     ]
     .join("\n")
+}
+
+fn render_native_project_bus_mutation_text(report: &NativeProjectBusMutationReportView) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("sheet_uuid: {}", report.sheet_uuid),
+        format!("sheet_path: {}", report.sheet_path),
+        format!("bus_uuid: {}", report.bus_uuid),
+        format!("name: {}", report.name),
+    ];
+    if !report.members.is_empty() {
+        lines.push("members:".to_string());
+        for member in &report.members {
+            lines.push(format!("  {member}"));
+        }
+    }
+    lines.join("\n")
+}
+
+fn render_native_project_bus_entry_mutation_text(
+    report: &NativeProjectBusEntryMutationReportView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("sheet_uuid: {}", report.sheet_uuid),
+        format!("sheet_path: {}", report.sheet_path),
+        format!("bus_entry_uuid: {}", report.bus_entry_uuid),
+        format!("bus_uuid: {}", report.bus_uuid),
+        format!("x_nm: {}", report.x_nm),
+        format!("y_nm: {}", report.y_nm),
+    ];
+    if let Some(wire_uuid) = &report.wire_uuid {
+        lines.push(format!("wire_uuid: {}", wire_uuid));
+    }
+    lines.join("\n")
+}
+
+fn render_native_project_noconnect_mutation_text(
+    report: &NativeProjectNoConnectMutationReportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("sheet_uuid: {}", report.sheet_uuid),
+        format!("sheet_path: {}", report.sheet_path),
+        format!("noconnect_uuid: {}", report.noconnect_uuid),
+        format!("symbol_uuid: {}", report.symbol_uuid),
+        format!("pin_uuid: {}", report.pin_uuid),
+        format!("x_nm: {}", report.x_nm),
+        format!("y_nm: {}", report.y_nm),
+    ]
+    .join("\n")
+}
+
+fn render_native_project_symbol_mutation_text(report: &NativeProjectSymbolMutationReportView) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("sheet_uuid: {}", report.sheet_uuid),
+        format!("sheet_path: {}", report.sheet_path),
+        format!("symbol_uuid: {}", report.symbol_uuid),
+        format!("reference: {}", report.reference),
+        format!("value: {}", report.value),
+        format!("x_nm: {}", report.x_nm),
+        format!("y_nm: {}", report.y_nm),
+        format!("rotation_deg: {}", report.rotation_deg),
+        format!("mirrored: {}", report.mirrored),
+    ];
+    if let Some(lib_id) = &report.lib_id {
+        lines.push(format!("lib_id: {}", lib_id));
+    }
+    lines.join("\n")
 }
 
 fn render_modify_report_text(report: &ModifyReportView) -> String {

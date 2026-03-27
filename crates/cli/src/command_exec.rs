@@ -168,6 +168,10 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     };
                     Ok((output, 0))
                 }
+                NativeProjectQueryCommands::Symbols => {
+                    let report = query_native_project_symbols(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
                 NativeProjectQueryCommands::Labels => {
                     let report = query_native_project_labels(&path)?;
                     Ok((render_output(&cli.format, &report), 0))
@@ -184,7 +188,83 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     let report = query_native_project_ports(&path)?;
                     Ok((render_output(&cli.format, &report), 0))
                 }
+                NativeProjectQueryCommands::Buses => {
+                    let report = query_native_project_buses(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::BusEntries => {
+                    let report = query_native_project_bus_entries(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::Noconnects => {
+                    let report = query_native_project_noconnects(&path)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
             },
+            ProjectCommands::PlaceSymbol {
+                path,
+                sheet,
+                reference,
+                value,
+                lib_id,
+                x_nm,
+                y_nm,
+                rotation_deg,
+                mirrored,
+            } => {
+                let report = place_native_project_symbol(
+                    &path,
+                    sheet,
+                    reference,
+                    value,
+                    lib_id,
+                    eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
+                    rotation_deg,
+                    mirrored,
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_symbol_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::MoveSymbol {
+                path,
+                symbol,
+                x_nm,
+                y_nm,
+            } => {
+                let report = move_native_project_symbol(
+                    &path,
+                    symbol,
+                    eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_symbol_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::RotateSymbol {
+                path,
+                symbol,
+                rotation_deg,
+            } => {
+                let report = rotate_native_project_symbol(&path, symbol, rotation_deg)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_symbol_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::DeleteSymbol { path, symbol } => {
+                let report = delete_native_project_symbol(&path, symbol)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_symbol_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
             ProjectCommands::PlaceLabel {
                 path,
                 sheet,
@@ -334,6 +414,85 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 let report = delete_native_project_port(&path, port)?;
                 let output = match cli.format {
                     OutputFormat::Text => render_native_project_port_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::CreateBus {
+                path,
+                sheet,
+                name,
+                members,
+            } => {
+                let report = create_native_project_bus(&path, sheet, name, members)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_bus_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::EditBusMembers { path, bus, members } => {
+                let report = edit_native_project_bus_members(&path, bus, members)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_bus_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::PlaceBusEntry {
+                path,
+                sheet,
+                bus,
+                wire,
+                x_nm,
+                y_nm,
+            } => {
+                let report = place_native_project_bus_entry(
+                    &path,
+                    sheet,
+                    bus,
+                    wire,
+                    eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_bus_entry_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::DeleteBusEntry { path, bus_entry } => {
+                let report = delete_native_project_bus_entry(&path, bus_entry)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_bus_entry_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::PlaceNoConnect {
+                path,
+                sheet,
+                symbol,
+                pin,
+                x_nm,
+                y_nm,
+            } => {
+                let report = place_native_project_noconnect(
+                    &path,
+                    sheet,
+                    symbol,
+                    pin,
+                    eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
+                )?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_noconnect_mutation_text(&report),
+                    OutputFormat::Json => render_output(&cli.format, &report),
+                };
+                Ok((output, 0))
+            }
+            ProjectCommands::DeleteNoConnect { path, noconnect } => {
+                let report = delete_native_project_noconnect(&path, noconnect)?;
+                let output = match cli.format {
+                    OutputFormat::Text => render_native_project_noconnect_mutation_text(&report),
                     OutputFormat::Json => render_output(&cli.format, &report),
                 };
                 Ok((output, 0))
