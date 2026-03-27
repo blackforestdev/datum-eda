@@ -124,9 +124,27 @@ fn build_report(cli: &Cli) -> Result<Report> {
         ),
         run_subharness(
             cli,
+            "m3_replacement_op_determinism",
+            "replacement_determinism",
+            "current replacement-family save slices remain byte-deterministic",
+        ),
+        run_subharness(
+            cli,
             "m3_undo_redo_roundtrip",
             "undo_redo",
             "current transaction stack remains round-trip safe for covered M3 ops",
+        ),
+        run_subharness(
+            cli,
+            "m3_replacement_undo_redo_roundtrip",
+            "replacement_undo_redo",
+            "current replacement-family transactions remain round-trip safe",
+        ),
+        run_subharness(
+            cli,
+            "m3_board_roundtrip_fidelity",
+            "board_roundtrip_fidelity",
+            "current pure board-write save paths remain stable across save→reimport→save",
         ),
         run_subharness(
             cli,
@@ -251,6 +269,6 @@ mod tests {
 
         let report = build_report(&cli).expect("report should build");
         assert_eq!(report.overall_status, Status::Passed);
-        assert_eq!(report.checks.len(), 4);
+        assert_eq!(report.checks.len(), 7);
     }
 }

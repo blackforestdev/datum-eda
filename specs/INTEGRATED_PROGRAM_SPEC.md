@@ -257,16 +257,29 @@ This table is the controlling acceptance map for `M3` integrated review.
 Primary executable hook:
 `cargo run -p eda-test-harness --bin m3_acceptance_gate -- --json`  
 Current behavior: returns structured `passed` status only when the current
-determinism, undo/redo, sidecar-backed round-trip fidelity, and
+base determinism, replacement determinism, undo/redo, replacement undo/redo,
+board round-trip fidelity, sidecar-backed round-trip fidelity, and
 engine/daemon/MCP/CLI write-surface parity hooks all pass together.
 Companion hook for save determinism:
 `cargo run -p eda-test-harness --bin m3_op_determinism -- --json`
 Current behavior: returns structured `passed` status for the current save-backed
-`move_component`/`delete_track`/`delete_via`/`delete_component`/`rotate_component`/`set_value`/`set_reference`/`set_design_rule`/`assign_part`/`set_package`/`set_package_with_part`/`replace_component`/`replace_components`/`apply_component_replacement_plan`/`apply_component_replacement_policy`/`apply_scoped_component_replacement_policy`/`apply_scoped_component_replacement_plan`/`set_net_class` KiCad-board slices and should fail if save determinism regresses.
+`move_component`/`delete_track`/`delete_via`/`delete_component`/`rotate_component`/`set_value`/`set_reference`/`set_design_rule`/`assign_part`/`set_package`/`set_net_class` KiCad-board slices and should fail if save determinism regresses.
+Companion hook for replacement-family save determinism:
+`cargo run -p eda-test-harness --bin m3_replacement_op_determinism -- --json`
+Current behavior: returns structured `passed` status for the current
+`set_package_with_part`/`replace_component`/`replace_components`/`apply_component_replacement_plan`/`apply_component_replacement_policy`/`apply_scoped_component_replacement_policy`/`apply_scoped_component_replacement_plan` save-backed replacement slice and should fail if replacement save determinism regresses.
 Companion hook for stack behavior:
 `cargo run -p eda-test-harness --bin m3_undo_redo_roundtrip -- --json`
 Current behavior: returns structured `passed` status for the current
 `delete_track`/`delete_via`/`delete_component`/`move_component`/`rotate_component`/`set_value`/`set_reference`/`set_design_rule`/`assign_part`/`set_package`/`set_net_class` undo/redo slice and should fail if round-trip stack behavior regresses.
+Companion hook for replacement-family stack behavior:
+`cargo run -p eda-test-harness --bin m3_replacement_undo_redo_roundtrip -- --json`
+Current behavior: returns structured `passed` status for the current
+`set_package_with_part`/`replace_component`/`replace_components`/`apply_component_replacement_plan`/`apply_component_replacement_policy`/`apply_scoped_component_replacement_policy`/`apply_scoped_component_replacement_plan` undo/redo slice and should fail if replacement transaction round-trip behavior regresses.
+Companion hook for pure board-write artifact fidelity:
+`cargo run -p eda-test-harness --bin m3_board_roundtrip_fidelity -- --json`
+Current behavior: returns structured `passed` status for unmodified KiCad-board identity plus current
+`delete_track`/`delete_via`/`delete_component`/`move_component`/`rotate_component`/`set_value`/`set_reference` save→reimport→save artifact stability and should fail if pure board-write round-trip fidelity regresses.
 Companion hook for sidecar-backed save fidelity:
 `cargo run -p eda-test-harness --bin m3_sidecar_roundtrip_fidelity -- --json`
 Current behavior: returns structured `passed` status for the current
