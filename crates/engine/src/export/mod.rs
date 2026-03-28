@@ -2,6 +2,10 @@ use crate::board::{BoardText, PadAperture, PlacedPad, Track, Via, Zone};
 use crate::ir::geometry::{LayerId, Point, Polygon};
 use thiserror::Error;
 
+mod gerber_mechanical;
+
+pub use gerber_mechanical::{MechanicalStroke, render_rs274x_mechanical_layer};
+
 const DEFAULT_OUTLINE_APERTURE_MM: &str = "0.100000";
 
 #[derive(Debug, Error)]
@@ -483,62 +487,6 @@ pub fn render_rs274x_paste_layer(
             format_coord(pad.position.x),
             format_coord(pad.position.y)
         ));
-    }
-
-    lines.push(String::from("M02*"));
-    Ok(lines.join("\n") + "\n")
-}
-
-pub fn render_rs274x_mechanical_layer(
-    layer_id: LayerId,
-    polygons: &[Polygon],
-) -> Result<String, ExportError> {
-    let aperture_nm = parse_mm_6_to_nm(DEFAULT_OUTLINE_APERTURE_MM)
-        .expect("default RS-274X outline aperture must parse");
-    let mut lines = vec![
-        format!("G04 datum-eda native mechanical layer {layer_id}*"),
-        String::from("%FSLAX46Y46*%"),
-        String::from("%MOMM*%"),
-        String::from("%LPD*%"),
-        format!("%ADD10C,{}*%", format_mm_6(aperture_nm)),
-        String::from("D10*"),
-    ];
-
-    let mut ordered_polygons = polygons.to_vec();
-    ordered_polygons.sort_by(|a, b| {
-        render_polygon_points(&a.vertices)
-            .cmp(&render_polygon_points(&b.vertices))
-            .then_with(|| a.closed.cmp(&b.closed))
-    });
-
-    for polygon in ordered_polygons {
-        if polygon.vertices.len() < 2 {
-            continue;
-        }
-        let first = polygon.vertices[0];
-        if polygon.closed {
-            lines.push(String::from("G36*"));
-        }
-        lines.push(format!(
-            "X{}Y{}D02*",
-            format_coord(first.x),
-            format_coord(first.y)
-        ));
-        for vertex in polygon.vertices.iter().skip(1) {
-            lines.push(format!(
-                "X{}Y{}D01*",
-                format_coord(vertex.x),
-                format_coord(vertex.y)
-            ));
-        }
-        if polygon.closed {
-            lines.push(format!(
-                "X{}Y{}D01*",
-                format_coord(first.x),
-                format_coord(first.y)
-            ));
-            lines.push(String::from("G37*"));
-        }
     }
 
     lines.push(String::from("M02*"));

@@ -26,8 +26,10 @@ Required checks:
 - `python3 scripts/check_progress_coverage.py`
 
 Touched-monolith explicit policy:
-- If a PR touches a known monolith file, that file must not grow.
-- Structural PRs should reduce touched monolith line counts.
+- If a PR touches a known monolith file, that file must shrink versus branch
+  base (burn-down in the same PR).
+- Touched monolith files must also remain at or below freeze baselines.
+- Structural PRs should continue reducing touched monolith line counts.
 - Baselines are enforced in `scripts/check_touched_monolith_growth.py` and must
   be ratcheted downward after decomposition merges.
 
@@ -43,8 +45,8 @@ Structural-only rule:
 When a tripwire fails, use this runbook:
 
 1. `check_touched_monolith_growth.py` fails:
-- Action: split/move newly added logic into shards until touched monolith
-  returns to baseline or below.
+- Action: split/move logic into shards until touched monolith shows net
+  burn-down versus branch base and remains at/below baseline.
 - Merge status: blocked until fixed.
 
 2. `check_decomposition_coverage.py` fails:

@@ -423,7 +423,8 @@ fn render_rs274x_mechanical_layer_emits_closed_keepout_regions() {
         closed: true,
     }];
 
-    let gerber = render_rs274x_mechanical_layer(41, &polygons).expect("mechanical should render");
+    let gerber =
+        render_rs274x_mechanical_layer(41, &polygons, &[]).expect("mechanical should render");
     assert!(gerber.contains("G04 datum-eda native mechanical layer 41*"));
     assert!(gerber.contains("%ADD10C,0.100000*%"));
     assert!(gerber.contains("G36*"));
@@ -431,6 +432,42 @@ fn render_rs274x_mechanical_layer_emits_closed_keepout_regions() {
     assert!(gerber.contains("X0Y0D02*"));
     assert!(gerber.contains("X1000000Y0D01*"));
     assert!(gerber.contains("X1000000Y500000D01*"));
+}
+
+#[test]
+fn render_rs274x_mechanical_layer_emits_component_strokes() {
+    let strokes = vec![MechanicalStroke {
+        from: Point {
+            x: 100_000,
+            y: 200_000,
+        },
+        to: Point {
+            x: 900_000,
+            y: 200_000,
+        },
+        width_nm: 150_000,
+    }];
+
+    let gerber =
+        render_rs274x_mechanical_layer(41, &[], &strokes).expect("mechanical should render");
+    assert!(gerber.contains("%ADD10C,0.100000*%"));
+    assert!(gerber.contains("%ADD11C,0.150000*%"));
+    assert!(gerber.contains("D11*"));
+    assert!(gerber.contains("X100000Y200000D02*"));
+    assert!(gerber.contains("X900000Y200000D01*"));
+}
+
+#[test]
+fn render_rs274x_mechanical_layer_rejects_non_positive_stroke_width() {
+    let strokes = vec![MechanicalStroke {
+        from: Point { x: 0, y: 0 },
+        to: Point { x: 1, y: 1 },
+        width_nm: 0,
+    }];
+
+    let err = render_rs274x_mechanical_layer(41, &[], &strokes)
+        .expect_err("mechanical stroke width should fail");
+    assert!(matches!(err, ExportError::InvalidTrackWidth));
 }
 
 #[test]

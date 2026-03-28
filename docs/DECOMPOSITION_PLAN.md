@@ -41,8 +41,10 @@ The following governance is now required:
 - Existing oversized modules are non-growth frozen via explicit caps.
 - Caps must trend downward over time as decomposition lands.
 - Touched-monolith policy:
-  - if a known monolith file is touched in a PR, it must not grow
-  - decomposition PRs should reduce touched monolith baselines
+  - if a known monolith file is touched in a PR, it must show burn-down
+    against branch base (net line reduction)
+  - touched monoliths must still remain at or below explicit freeze baselines
+  - decomposition PRs should continue to ratchet touched monolith baselines
   - baseline values are enforced by tooling and ratcheted downward after each
     structural reduction
 

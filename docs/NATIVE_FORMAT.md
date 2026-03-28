@@ -221,14 +221,16 @@ Current live slice:
   or broader layer-set emission yet.
 - `eda project export-gerber-silkscreen-layer <dir> --layer <id> --out
   <path>` now writes a narrow RS-274X Gerber file for authored native board
-  text plus persisted explicit component-silkscreen text, line, arc, and
-  circle geometry on one selected silkscreen layer through
-  `eda_engine::export`, using explicit stored text height/stroke-width plus
-  the current fixed stroke-font renderer for board text and component text,
-  explicit stored stroke widths for component lines, deterministic 15-degree
-  chordization for component arcs, and deterministic 24-segment chordization
-  for component circles, without claiming broader package silkscreen shape
-  export or broader text/font coverage yet.
+  text plus persisted explicit component-silkscreen text, line, arc, circle,
+  closed-polygon, and open-polyline geometry on one selected silkscreen layer
+  through `eda_engine::export`, using explicit stored text height/stroke-width
+  plus the current fixed stroke-font renderer for board text and component
+  text, explicit stored stroke widths for component lines, deterministic
+  15-degree chordization for component arcs, deterministic 24-segment
+  chordization for component circles, deterministic stroked-loop emission for
+  component polygons, and deterministic stroked-chain emission for component
+  polylines, without claiming broader package silkscreen shape export or
+  broader text/font coverage yet.
 - `eda project export-gerber-paste-layer <dir> --layer <id> --out <path>` now
   writes a narrow RS-274X Gerber file for persisted native pad openings on one
   selected paste layer through `eda_engine::export`, deriving
@@ -237,10 +239,13 @@ Current live slice:
   broader layer-set emission yet.
 - `eda project export-gerber-mechanical-layer <dir> --layer <id> --out
   <path>` now writes a narrow RS-274X Gerber file for persisted native board
-  keepout polygons on one selected mechanical layer through
-  `eda_engine::export`, emitting closed keepouts as filled regions without
-  claiming dimensions, package geometry, or broader documentation-layer
-  coverage yet.
+  keepout polygons plus explicit persisted component-mechanical line,
+  closed-polygon, and open-polyline geometry on one selected mechanical layer
+  through
+  `eda_engine::export`, emitting closed keepouts and component polygons as
+  filled regions and component lines/polylines as circular-aperture strokes
+  without claiming dimensions, package auto-resolution, or broader
+  documentation-layer coverage yet.
 - `eda project validate-gerber-copper-layer <dir> --layer <id> --gerber
   <path>` now re-renders that expected native copper-layer Gerber and reports
   byte-for-byte match/mismatch with CI-usable exit status, establishing the
@@ -274,10 +279,10 @@ Current live slice:
 - `eda project compare-gerber-silkscreen-layer <dir> --layer <id> --gerber
   <path>` now parses the currently emitted silkscreen-layer RS-274X subset and
   compares authored board-text strokes plus persisted explicit
-  component-silkscreen text, line, chordized-arc, and chordized-circle strokes
-  semantically against the persisted native silkscreen geometry on that layer,
-  without claiming broader package silkscreen shape export or broader font
-  coverage.
+  component-silkscreen text, line, chordized-arc, chordized-circle,
+  stroked-loop polygon, and stroked-chain polyline strokes semantically
+  against the persisted native silkscreen geometry on that layer, without
+  claiming broader package silkscreen shape export or broader font coverage.
 - `eda project compare-gerber-paste-layer <dir> --layer <id> --gerber
   <path>` now parses the currently emitted paste-layer RS-274X subset and
   compares circular/rectangular flashed pad openings semantically against the
@@ -286,9 +291,11 @@ Current live slice:
   feature coverage.
 - `eda project compare-gerber-mechanical-layer <dir> --layer <id> --gerber
   <path>` now parses the currently emitted mechanical-layer RS-274X subset and
-  compares persisted native keepout polygons on that selected mechanical layer
-  semantically against emitted filled regions, without claiming dimensions,
-  package geometry, or broader RS-274X feature coverage.
+  compares persisted native keepout polygons plus explicit persisted
+  component-mechanical line, closed-polygon, and open-polyline geometry on
+  that selected mechanical layer semantically against emitted filled regions
+  and stroked lines, without claiming dimensions, package auto-resolution, or
+  broader RS-274X feature coverage.
 - `eda project query <dir> board-pads` reads back the persisted native
   placed-pad inventory from `board/board.json`, establishing the first native
   package-linked pad read surface.

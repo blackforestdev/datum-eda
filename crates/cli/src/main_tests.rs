@@ -47,6 +47,8 @@ mod main_tests_project_gerber_mask_export;
 mod main_tests_project_gerber_mask_validate;
 #[path = "main_tests_project_gerber_mech_compare.rs"]
 mod main_tests_project_gerber_mech_compare;
+#[path = "main_tests_project_gerber_mech_component.rs"]
+mod main_tests_project_gerber_mech_component;
 #[path = "main_tests_project_gerber_mech_export.rs"]
 mod main_tests_project_gerber_mech_export;
 #[path = "main_tests_project_gerber_mech_validate.rs"]
@@ -73,6 +75,10 @@ mod main_tests_project_gerber_silk_compare;
 mod main_tests_project_gerber_silk_component_arc;
 #[path = "main_tests_project_gerber_silk_component_circle.rs"]
 mod main_tests_project_gerber_silk_component_circle;
+#[path = "main_tests_project_gerber_silk_component_polygon.rs"]
+mod main_tests_project_gerber_silk_component_polygon;
+#[path = "main_tests_project_gerber_silk_component_polyline.rs"]
+mod main_tests_project_gerber_silk_component_polyline;
 #[path = "main_tests_project_gerber_silk_export.rs"]
 mod main_tests_project_gerber_silk_export;
 #[path = "main_tests_project_gerber_silk_validate.rs"]

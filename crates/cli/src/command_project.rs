@@ -1,6 +1,24 @@
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::path::{Path, PathBuf};
 
+#[path = "command_project_gerber_mechanical.rs"]
+mod command_project_gerber_mechanical;
+#[path = "command_project_gerber_silkscreen.rs"]
+mod command_project_gerber_silkscreen;
+
+pub(crate) use self::command_project_gerber_mechanical::{
+    NativeComponentMechanicalLine, NativeComponentMechanicalPolygon,
+    NativeComponentMechanicalPolyline, compare_native_project_gerber_mechanical_layer,
+    export_native_project_gerber_mechanical_layer, validate_native_project_gerber_mechanical_layer,
+};
+use self::command_project_gerber_silkscreen::{
+    NativeComponentSilkscreenArc, NativeComponentSilkscreenCircle, NativeComponentSilkscreenLine,
+    NativeComponentSilkscreenPolygon, NativeComponentSilkscreenPolyline,
+    NativeComponentSilkscreenText, count_native_component_silkscreen_arcs,
+    count_native_component_silkscreen_circles, count_native_component_silkscreen_lines,
+    count_native_component_silkscreen_polygons, count_native_component_silkscreen_polylines,
+    count_native_component_silkscreen_texts, resolve_native_project_silkscreen_context,
+};
 use anyhow::{Context, Result, bail};
 use eda_engine::api::{CheckCodeCount, CheckReport, CheckStatus, CheckSummary};
 use eda_engine::board::{
@@ -10,9 +28,8 @@ use eda_engine::board::{
 use eda_engine::connectivity::{schematic_diagnostics, schematic_net_info};
 use eda_engine::erc::{ErcFinding, run_prechecks};
 use eda_engine::export::{
-    SilkscreenStroke, render_excellon_drill, render_rs274x_copper_layer,
-    render_rs274x_mechanical_layer, render_rs274x_outline_default, render_rs274x_paste_layer,
-    render_rs274x_silkscreen_layer, render_rs274x_soldermask_layer,
+    render_excellon_drill, render_rs274x_copper_layer, render_rs274x_outline_default,
+    render_rs274x_paste_layer, render_rs274x_silkscreen_layer, render_rs274x_soldermask_layer,
 };
 use eda_engine::import::ids_sidecar::compute_source_hash_bytes;
 use eda_engine::ir::geometry::Polygon;
@@ -192,6 +209,16 @@ struct NativeBoardRoot {
     #[serde(default)]
     component_silkscreen_circles: BTreeMap<String, Vec<NativeComponentSilkscreenCircle>>,
     #[serde(default)]
+    component_silkscreen_polygons: BTreeMap<String, Vec<NativeComponentSilkscreenPolygon>>,
+    #[serde(default)]
+    component_silkscreen_polylines: BTreeMap<String, Vec<NativeComponentSilkscreenPolyline>>,
+    #[serde(default)]
+    component_mechanical_lines: BTreeMap<String, Vec<NativeComponentMechanicalLine>>,
+    #[serde(default)]
+    component_mechanical_polygons: BTreeMap<String, Vec<NativeComponentMechanicalPolygon>>,
+    #[serde(default)]
+    component_mechanical_polylines: BTreeMap<String, Vec<NativeComponentMechanicalPolyline>>,
+    #[serde(default)]
     pads: BTreeMap<String, serde_json::Value>,
     #[serde(default)]
     tracks: BTreeMap<String, serde_json::Value>,
@@ -226,42 +253,6 @@ struct NativeOutline {
 struct NativePoint {
     x: i64,
     y: i64,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct NativeComponentSilkscreenLine {
-    from: NativePoint,
-    to: NativePoint,
-    width_nm: i64,
-    layer: i32,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct NativeComponentSilkscreenText {
-    text: String,
-    position: NativePoint,
-    rotation: i32,
-    height_nm: i64,
-    stroke_width_nm: i64,
-    layer: i32,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct NativeComponentSilkscreenArc {
-    center: NativePoint,
-    radius_nm: i64,
-    start_angle: i32,
-    end_angle: i32,
-    width_nm: i64,
-    layer: i32,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct NativeComponentSilkscreenCircle {
-    center: NativePoint,
-    radius_nm: i64,
-    width_nm: i64,
-    layer: i32,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -349,6 +340,11 @@ pub(crate) fn create_native_project(
         component_silkscreen_texts: BTreeMap::new(),
         component_silkscreen_arcs: BTreeMap::new(),
         component_silkscreen_circles: BTreeMap::new(),
+        component_silkscreen_polygons: BTreeMap::new(),
+        component_silkscreen_polylines: BTreeMap::new(),
+        component_mechanical_lines: BTreeMap::new(),
+        component_mechanical_polygons: BTreeMap::new(),
+        component_mechanical_polylines: BTreeMap::new(),
         pads: BTreeMap::new(),
         tracks: BTreeMap::new(),
         vias: BTreeMap::new(),
@@ -3093,49 +3089,6 @@ fn gerber_silkscreen_expected_entries(gerber: &ParsedGerber) -> BTreeMap<(String
     entries
 }
 
-fn gerber_mechanical_expected_entries(polygons: &[Polygon]) -> BTreeMap<(String, String), usize> {
-    let mut entries = BTreeMap::new();
-    for polygon in polygons {
-        let (kind, signature) = if polygon.closed {
-            (
-                "keepout".to_string(),
-                render_region_geometry(&polygon.vertices),
-            )
-        } else {
-            (
-                "outline".to_string(),
-                render_stroke_geometry(DEFAULT_GERBER_OUTLINE_APERTURE_NM, &polygon.vertices),
-            )
-        };
-        *entries.entry((kind, signature)).or_insert(0) += 1;
-    }
-    entries
-}
-
-fn gerber_mechanical_actual_entries(gerber: &ParsedGerber) -> BTreeMap<(String, String), usize> {
-    let mut entries = BTreeMap::new();
-    for geometry in &gerber.geometries {
-        let (kind, signature) = match geometry {
-            ParsedGerberGeometry::Stroke {
-                aperture_diameter_nm,
-                points,
-            } => (
-                "outline".to_string(),
-                render_stroke_geometry(*aperture_diameter_nm, points),
-            ),
-            ParsedGerberGeometry::Flash { aperture, position } => (
-                "flash".to_string(),
-                render_parsed_flash_geometry(aperture, position),
-            ),
-            ParsedGerberGeometry::Region { points } => {
-                ("keepout".to_string(), render_region_geometry(points))
-            }
-        };
-        *entries.entry((kind, signature)).or_insert(0) += 1;
-    }
-    entries
-}
-
 fn render_stroke_geometry(aperture_diameter_nm: i64, points: &[Point]) -> String {
     let points = canonicalize_path_points(points);
     format!(
@@ -3553,232 +3506,6 @@ fn resolve_native_project_soldermask_context(
     Ok((mask_layer, associated_copper_layer, pads))
 }
 
-fn resolve_native_project_silkscreen_context(
-    root: &Path,
-    layer: i32,
-) -> Result<(StackupLayer, Vec<BoardText>, Vec<SilkscreenStroke>)> {
-    let project = load_native_project(root)?;
-    let stackup = query_native_project_board_stackup(root)?;
-    let silk_layer = stackup
-        .iter()
-        .find(|entry| entry.id == layer)
-        .cloned()
-        .ok_or_else(|| {
-            anyhow::anyhow!("board stackup layer not found in native project: {layer}")
-        })?;
-    if !matches!(silk_layer.layer_type, StackupLayerType::Silkscreen) {
-        bail!("board stackup layer is not a silkscreen layer: {layer}");
-    }
-    let mut texts = query_native_project_board_texts(root)?
-        .into_iter()
-        .filter(|text| text.layer == layer)
-        .collect::<Vec<_>>();
-    let component_texts = project
-        .board
-        .component_silkscreen_texts
-        .iter()
-        .filter_map(|(component_uuid, entries)| {
-            let component = project.board.packages.get(component_uuid)?;
-            let component: PlacedPackage = serde_json::from_value(component.clone()).ok()?;
-            Some(
-                entries
-                    .iter()
-                    .filter(|entry| entry.layer == layer)
-                    .map(|entry| native_component_silkscreen_text_to_board_text(&component, entry))
-                    .collect::<Vec<_>>(),
-            )
-        })
-        .flatten()
-        .collect::<Vec<_>>();
-    texts.extend(component_texts);
-    let component_strokes = project
-        .board
-        .component_silkscreen
-        .iter()
-        .filter_map(|(component_uuid, lines)| {
-            let component = project.board.packages.get(component_uuid)?;
-            let component: PlacedPackage = serde_json::from_value(component.clone()).ok()?;
-            Some(
-                lines
-                    .iter()
-                    .filter(|line| line.layer == layer)
-                    .map(|line| native_component_silkscreen_line_to_stroke(&component, line))
-                    .collect::<Vec<_>>(),
-            )
-        })
-        .flatten()
-        .collect::<Vec<_>>();
-    let component_arc_strokes = project
-        .board
-        .component_silkscreen_arcs
-        .iter()
-        .filter_map(|(component_uuid, entries)| {
-            let component = project.board.packages.get(component_uuid)?;
-            let component: PlacedPackage = serde_json::from_value(component.clone()).ok()?;
-            Some(
-                entries
-                    .iter()
-                    .filter(|entry| entry.layer == layer)
-                    .flat_map(|entry| native_component_silkscreen_arc_to_strokes(&component, entry))
-                    .collect::<Vec<_>>(),
-            )
-        })
-        .flatten()
-        .collect::<Vec<_>>();
-    let component_circle_strokes = project
-        .board
-        .component_silkscreen_circles
-        .iter()
-        .filter_map(|(component_uuid, entries)| {
-            let component = project.board.packages.get(component_uuid)?;
-            let component: PlacedPackage = serde_json::from_value(component.clone()).ok()?;
-            Some(
-                entries
-                    .iter()
-                    .filter(|entry| entry.layer == layer)
-                    .flat_map(|entry| {
-                        native_component_silkscreen_circle_to_strokes(&component, entry)
-                    })
-                    .collect::<Vec<_>>(),
-            )
-        })
-        .flatten()
-        .collect::<Vec<_>>();
-    let mut strokes = component_strokes;
-    strokes.extend(component_arc_strokes);
-    strokes.extend(component_circle_strokes);
-    Ok((silk_layer, texts, strokes))
-}
-
-fn native_component_silkscreen_line_to_stroke(
-    component: &PlacedPackage,
-    line: &NativeComponentSilkscreenLine,
-) -> SilkscreenStroke {
-    SilkscreenStroke {
-        from: transform_component_local_point(component, &line.from),
-        to: transform_component_local_point(component, &line.to),
-        width_nm: line.width_nm,
-    }
-}
-
-fn native_component_silkscreen_text_to_board_text(
-    component: &PlacedPackage,
-    text: &NativeComponentSilkscreenText,
-) -> BoardText {
-    BoardText {
-        uuid: Uuid::new_v4(),
-        text: text.text.clone(),
-        position: transform_component_local_point(component, &text.position),
-        rotation: component.rotation + text.rotation,
-        layer: text.layer,
-        height_nm: text.height_nm,
-        stroke_width_nm: text.stroke_width_nm,
-    }
-}
-
-fn count_native_component_silkscreen_texts(board: &NativeBoardRoot, layer: i32) -> usize {
-    board
-        .component_silkscreen_texts
-        .values()
-        .map(|entries| entries.iter().filter(|entry| entry.layer == layer).count())
-        .sum()
-}
-
-fn count_native_component_silkscreen_lines(board: &NativeBoardRoot, layer: i32) -> usize {
-    board
-        .component_silkscreen
-        .values()
-        .map(|entries| entries.iter().filter(|entry| entry.layer == layer).count())
-        .sum()
-}
-
-fn count_native_component_silkscreen_arcs(board: &NativeBoardRoot, layer: i32) -> usize {
-    board
-        .component_silkscreen_arcs
-        .values()
-        .map(|entries| entries.iter().filter(|entry| entry.layer == layer).count())
-        .sum()
-}
-
-fn count_native_component_silkscreen_circles(board: &NativeBoardRoot, layer: i32) -> usize {
-    board
-        .component_silkscreen_circles
-        .values()
-        .map(|entries| entries.iter().filter(|entry| entry.layer == layer).count())
-        .sum()
-}
-
-fn native_component_silkscreen_arc_to_strokes(
-    component: &PlacedPackage,
-    arc: &NativeComponentSilkscreenArc,
-) -> Vec<SilkscreenStroke> {
-    const ARC_SEGMENT_ANGLE_TENTHS: i32 = 150;
-
-    let mut sweep = arc.end_angle - arc.start_angle;
-    if sweep <= 0 {
-        sweep += 3600;
-    }
-    let segment_count = ((sweep + ARC_SEGMENT_ANGLE_TENTHS - 1) / ARC_SEGMENT_ANGLE_TENTHS).max(1);
-    let points = (0..=segment_count)
-        .map(|idx| {
-            let angle_tenths = arc.start_angle + sweep * idx / segment_count;
-            let radians = (f64::from(angle_tenths) / 10.0).to_radians();
-            let local_x = arc.center.x as f64 + (arc.radius_nm as f64 * radians.cos());
-            let local_y = arc.center.y as f64 + (arc.radius_nm as f64 * radians.sin());
-            transform_component_local_xy(component, local_x.round() as i64, local_y.round() as i64)
-        })
-        .collect::<Vec<_>>();
-    points
-        .windows(2)
-        .map(|segment| SilkscreenStroke {
-            from: segment[0],
-            to: segment[1],
-            width_nm: arc.width_nm,
-        })
-        .collect()
-}
-
-fn native_component_silkscreen_circle_to_strokes(
-    component: &PlacedPackage,
-    circle: &NativeComponentSilkscreenCircle,
-) -> Vec<SilkscreenStroke> {
-    const CIRCLE_SEGMENT_ANGLE_TENTHS: i32 = 150;
-    let segment_count = 3600 / CIRCLE_SEGMENT_ANGLE_TENTHS;
-    let points = (0..=segment_count)
-        .map(|idx| {
-            let angle_tenths = idx * CIRCLE_SEGMENT_ANGLE_TENTHS;
-            let radians = (f64::from(angle_tenths) / 10.0).to_radians();
-            let local_x = circle.center.x as f64 + (circle.radius_nm as f64 * radians.cos());
-            let local_y = circle.center.y as f64 + (circle.radius_nm as f64 * radians.sin());
-            transform_component_local_xy(component, local_x.round() as i64, local_y.round() as i64)
-        })
-        .collect::<Vec<_>>();
-    points
-        .windows(2)
-        .map(|segment| SilkscreenStroke {
-            from: segment[0],
-            to: segment[1],
-            width_nm: circle.width_nm,
-        })
-        .collect()
-}
-
-fn transform_component_local_point(component: &PlacedPackage, point: &NativePoint) -> Point {
-    transform_component_local_xy(component, point.x, point.y)
-}
-
-fn transform_component_local_xy(component: &PlacedPackage, x_nm: i64, y_nm: i64) -> Point {
-    let radians = f64::from(component.rotation).to_radians();
-    let x = x_nm as f64;
-    let y = y_nm as f64;
-    let rotated_x = x * radians.cos() - y * radians.sin();
-    let rotated_y = x * radians.sin() + y * radians.cos();
-    Point {
-        x: component.position.x + rotated_x.round() as i64,
-        y: component.position.y + rotated_y.round() as i64,
-    }
-}
-
 fn resolve_native_project_paste_context(
     root: &Path,
     layer: i32,
@@ -3810,31 +3537,6 @@ fn resolve_native_project_paste_context(
         .collect::<Vec<_>>();
 
     Ok((paste_layer, associated_copper_layer, pads))
-}
-
-fn resolve_native_project_mechanical_context(
-    root: &Path,
-    layer: i32,
-) -> Result<(StackupLayer, Vec<Polygon>)> {
-    let stackup = query_native_project_board_stackup(root)?;
-    let mechanical_layer = stackup
-        .iter()
-        .find(|entry| entry.id == layer)
-        .cloned()
-        .ok_or_else(|| {
-            anyhow::anyhow!("board stackup layer not found in native project: {layer}")
-        })?;
-    if !matches!(mechanical_layer.layer_type, StackupLayerType::Mechanical) {
-        bail!("board stackup layer is not a mechanical layer: {layer}");
-    }
-
-    let polygons = query_native_project_board_keepouts(root)?
-        .into_iter()
-        .filter(|keepout| keepout.layers.contains(&layer))
-        .map(|keepout| keepout.polygon)
-        .collect::<Vec<_>>();
-
-    Ok((mechanical_layer, polygons))
 }
 
 pub(crate) fn export_native_project_gerber_outline(
@@ -3933,6 +3635,9 @@ pub(crate) fn export_native_project_gerber_silkscreen_layer(
     let component_line_count = count_native_component_silkscreen_lines(&project.board, layer);
     let component_arc_count = count_native_component_silkscreen_arcs(&project.board, layer);
     let component_circle_count = count_native_component_silkscreen_circles(&project.board, layer);
+    let component_polygon_count = count_native_component_silkscreen_polygons(&project.board, layer);
+    let component_polyline_count =
+        count_native_component_silkscreen_polylines(&project.board, layer);
     let (_silk_layer, texts, component_strokes) =
         resolve_native_project_silkscreen_context(root, layer)?;
     let gerber = render_rs274x_silkscreen_layer(layer, &texts, &component_strokes)
@@ -3950,6 +3655,8 @@ pub(crate) fn export_native_project_gerber_silkscreen_layer(
         component_stroke_count: component_line_count,
         component_arc_count,
         component_circle_count,
+        component_polygon_count,
+        component_polyline_count,
     })
 }
 
@@ -3973,27 +3680,6 @@ pub(crate) fn export_native_project_gerber_paste_layer(
         layer,
         source_copper_layer,
         pad_count: pads.len(),
-    })
-}
-
-pub(crate) fn export_native_project_gerber_mechanical_layer(
-    root: &Path,
-    layer: i32,
-    output_path: &Path,
-) -> Result<NativeProjectGerberMechanicalExportView> {
-    let project = load_native_project(root)?;
-    let (_mechanical_layer, polygons) = resolve_native_project_mechanical_context(root, layer)?;
-    let gerber = render_rs274x_mechanical_layer(layer, &polygons)
-        .context("failed to render native board mechanical layer as RS-274X")?;
-    std::fs::write(output_path, gerber)
-        .with_context(|| format!("failed to write {}", output_path.display()))?;
-    Ok(NativeProjectGerberMechanicalExportView {
-        action: "export_gerber_mechanical_layer".to_string(),
-        project_root: project.root.display().to_string(),
-        board_path: project.board_path.display().to_string(),
-        gerber_path: output_path.display().to_string(),
-        layer,
-        keepout_count: polygons.len(),
     })
 }
 
@@ -4105,6 +3791,9 @@ pub(crate) fn validate_native_project_gerber_silkscreen_layer(
     let component_line_count = count_native_component_silkscreen_lines(&project.board, layer);
     let component_arc_count = count_native_component_silkscreen_arcs(&project.board, layer);
     let component_circle_count = count_native_component_silkscreen_circles(&project.board, layer);
+    let component_polygon_count = count_native_component_silkscreen_polygons(&project.board, layer);
+    let component_polyline_count =
+        count_native_component_silkscreen_polylines(&project.board, layer);
     let (_silk_layer, texts, component_strokes) =
         resolve_native_project_silkscreen_context(root, layer)?;
     let expected = render_rs274x_silkscreen_layer(layer, &texts, &component_strokes)
@@ -4126,6 +3815,8 @@ pub(crate) fn validate_native_project_gerber_silkscreen_layer(
         component_stroke_count: component_line_count,
         component_arc_count,
         component_circle_count,
+        component_polygon_count,
+        component_polyline_count,
     })
 }
 
@@ -4153,31 +3844,6 @@ pub(crate) fn validate_native_project_gerber_paste_layer(
         expected_bytes: expected.len(),
         actual_bytes: actual.len(),
         pad_count: pads.len(),
-    })
-}
-
-pub(crate) fn validate_native_project_gerber_mechanical_layer(
-    root: &Path,
-    layer: i32,
-    gerber_path: &Path,
-) -> Result<NativeProjectGerberMechanicalValidationView> {
-    let project = load_native_project(root)?;
-    let (_mechanical_layer, polygons) = resolve_native_project_mechanical_context(root, layer)?;
-    let expected = render_rs274x_mechanical_layer(layer, &polygons)
-        .context("failed to render expected native board mechanical layer as RS-274X")?;
-    let actual = std::fs::read_to_string(gerber_path)
-        .with_context(|| format!("failed to read {}", gerber_path.display()))?;
-
-    Ok(NativeProjectGerberMechanicalValidationView {
-        action: "validate_gerber_mechanical_layer".to_string(),
-        project_root: project.root.display().to_string(),
-        board_path: project.board_path.display().to_string(),
-        gerber_path: gerber_path.display().to_string(),
-        layer,
-        matches_expected: actual == expected,
-        expected_bytes: expected.len(),
-        actual_bytes: actual.len(),
-        keepout_count: polygons.len(),
     })
 }
 
@@ -4373,6 +4039,9 @@ pub(crate) fn compare_native_project_gerber_silkscreen_layer(
     let component_line_count = count_native_component_silkscreen_lines(&project.board, layer);
     let component_arc_count = count_native_component_silkscreen_arcs(&project.board, layer);
     let component_circle_count = count_native_component_silkscreen_circles(&project.board, layer);
+    let component_polygon_count = count_native_component_silkscreen_polygons(&project.board, layer);
+    let component_polyline_count =
+        count_native_component_silkscreen_polylines(&project.board, layer);
     let (_silk_layer, texts, component_strokes) =
         resolve_native_project_silkscreen_context(root, layer)?;
     let expected_gerber = render_rs274x_silkscreen_layer(layer, &texts, &component_strokes)
@@ -4400,6 +4069,8 @@ pub(crate) fn compare_native_project_gerber_silkscreen_layer(
         expected_component_stroke_count: component_line_count,
         expected_component_arc_count: component_arc_count,
         expected_component_circle_count: component_circle_count,
+        expected_component_polygon_count: component_polygon_count,
+        expected_component_polyline_count: component_polyline_count,
         actual_geometry_count: actual_parsed.geometries.len(),
         matched_count,
         missing_count,
@@ -4452,40 +4123,6 @@ pub(crate) fn compare_native_project_gerber_paste_layer(
         source_copper_layer,
         expected_pad_count: pads.len(),
         actual_pad_count,
-        matched_count,
-        missing_count,
-        extra_count,
-        matched,
-        missing,
-        extra,
-    })
-}
-
-pub(crate) fn compare_native_project_gerber_mechanical_layer(
-    root: &Path,
-    layer: i32,
-    gerber_path: &Path,
-) -> Result<NativeProjectGerberMechanicalComparisonView> {
-    let project = load_native_project(root)?;
-    let (_mechanical_layer, polygons) = resolve_native_project_mechanical_context(root, layer)?;
-    let actual_gerber = std::fs::read_to_string(gerber_path)
-        .with_context(|| format!("failed to read {}", gerber_path.display()))?;
-    let parsed = parse_rs274x_subset(&actual_gerber)
-        .context("failed to parse Gerber mechanical layer for semantic comparison")?;
-
-    let expected_entries = gerber_mechanical_expected_entries(&polygons);
-    let actual_entries = gerber_mechanical_actual_entries(&parsed);
-    let (matched_count, missing_count, extra_count, matched, missing, extra) =
-        compare_entry_views(expected_entries, actual_entries);
-
-    Ok(NativeProjectGerberMechanicalComparisonView {
-        action: "compare_gerber_mechanical_layer".to_string(),
-        project_root: project.root.display().to_string(),
-        board_path: project.board_path.display().to_string(),
-        gerber_path: gerber_path.display().to_string(),
-        layer,
-        expected_keepout_count: polygons.len(),
-        actual_geometry_count: parsed.geometries.len(),
         matched_count,
         missing_count,
         extra_count,
@@ -7463,6 +7100,31 @@ pub(crate) fn place_native_project_board_component(
         .component_silkscreen_circles
         .entry(component_uuid.to_string())
         .or_default();
+    project
+        .board
+        .component_silkscreen_polygons
+        .entry(component_uuid.to_string())
+        .or_default();
+    project
+        .board
+        .component_silkscreen_polylines
+        .entry(component_uuid.to_string())
+        .or_default();
+    project
+        .board
+        .component_mechanical_lines
+        .entry(component_uuid.to_string())
+        .or_default();
+    project
+        .board
+        .component_mechanical_polygons
+        .entry(component_uuid.to_string())
+        .or_default();
+    project
+        .board
+        .component_mechanical_polylines
+        .entry(component_uuid.to_string())
+        .or_default();
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
         "place_board_component",
@@ -7700,6 +7362,11 @@ pub(crate) fn set_native_project_board_component_package(
     project.board.component_silkscreen_texts.remove(&key);
     project.board.component_silkscreen_arcs.remove(&key);
     project.board.component_silkscreen_circles.remove(&key);
+    project.board.component_silkscreen_polygons.remove(&key);
+    project.board.component_silkscreen_polylines.remove(&key);
+    project.board.component_mechanical_lines.remove(&key);
+    project.board.component_mechanical_polygons.remove(&key);
+    project.board.component_mechanical_polylines.remove(&key);
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
         "set_board_component_package",
@@ -7835,6 +7502,26 @@ pub(crate) fn delete_native_project_board_component(
     project
         .board
         .component_silkscreen_circles
+        .remove(&component_uuid.to_string());
+    project
+        .board
+        .component_silkscreen_polygons
+        .remove(&component_uuid.to_string());
+    project
+        .board
+        .component_silkscreen_polylines
+        .remove(&component_uuid.to_string());
+    project
+        .board
+        .component_mechanical_lines
+        .remove(&component_uuid.to_string());
+    project
+        .board
+        .component_mechanical_polygons
+        .remove(&component_uuid.to_string());
+    project
+        .board
+        .component_mechanical_polylines
         .remove(&component_uuid.to_string());
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(

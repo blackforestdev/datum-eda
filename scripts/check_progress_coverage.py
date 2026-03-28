@@ -103,6 +103,34 @@ def parse_markdown_table_first_column(text: str, section_heading: str) -> list[s
     return rows
 
 
+def parse_markdown_table_rows(text: str, section_heading: str) -> list[list[str]]:
+    section_match = re.search(
+        rf"^## {re.escape(section_heading)}\n(.*?)(?=^## |\Z)",
+        text,
+        flags=re.S | re.M,
+    )
+    if not section_match:
+        return []
+    section = section_match.group(1)
+
+    table_match = re.search(
+        r"^\|[^\n]*\|\n^\|[-| :]+\|\n(.*?)(?=\n\n|\Z)",
+        section,
+        flags=re.S | re.M,
+    )
+    if not table_match:
+        return []
+
+    rows: list[list[str]] = []
+    for line in table_match.group(1).splitlines():
+        if not line.startswith("|"):
+            continue
+        cols = [c.strip() for c in line.strip().strip("|").split("|")]
+        if cols:
+            rows.append(cols)
+    return rows
+
+
 def parse_program_m4_gate_names(program_text: str) -> list[str]:
     match = re.search(
         r"### M4:.*?\n\n\| Criterion \| Threshold \|\n\|[-| ]+\n(.*?)\n\n\*\*Non-goals for M4",
@@ -142,6 +170,18 @@ def parse_integrated_m4_gate_names(integrated_text: str) -> list[str]:
 
 def parse_progress_m4_gate_names(progress_text: str) -> list[str]:
     return parse_markdown_table_first_column(progress_text, "PROGRAM_SPEC.md — M4 Exit Criteria")
+
+
+def parse_progress_milestone_numbers(progress_text: str) -> list[int]:
+    numbers = {
+        int(raw)
+        for raw in re.findall(
+            r"^## PROGRAM_SPEC\.md — M(\d+) Exit Criteria$",
+            progress_text,
+            flags=re.M,
+        )
+    }
+    return sorted(numbers)
 
 
 def parse_m4_required_schematic_ops(schematic_editor_text: str) -> list[str]:
@@ -368,6 +408,60 @@ def check_m4_gate_parity(program_text: str, integrated_text: str, progress_text:
         )
 
 
+def check_milestone_progress_compaction(progress_text: str, failures: list[str]) -> None:
+    # Structural compaction is required from M3 onward.
+    for milestone in parse_progress_milestone_numbers(progress_text):
+        if milestone < 3:
+            continue
+
+        section_heading = f"PROGRAM_SPEC.md — M{milestone} Exit Criteria"
+        rows = parse_markdown_table_rows(progress_text, section_heading)
+        if not rows:
+            failures.append(
+                f"specs/PROGRESS.md: unable to parse compact M{milestone} table rows"
+            )
+            continue
+
+        shard_rel = f"specs/progress/m{milestone}_details.md"
+        shard = ROOT / shard_rel
+        if not shard.exists():
+            failures.append(
+                f"specs/PROGRESS.md: M{milestone} compaction requires shard file {shard_rel}"
+            )
+
+        expected_prefix = (
+            "Detailed status and evidence anchors are maintained in "
+            f"`{shard_rel}#"
+        )
+        for row in rows:
+            if len(row) < 3:
+                failures.append(f"specs/PROGRESS.md: malformed M{milestone} table row")
+                continue
+            criterion, _, notes = row[0], row[1], row[2]
+            if len(notes) > 200:
+                failures.append(
+                    f"specs/PROGRESS.md: M{milestone} '{criterion}' note exceeds compact limit (200 chars)"
+                )
+            if not notes.startswith(expected_prefix):
+                failures.append(
+                    f"specs/PROGRESS.md: M{milestone} '{criterion}' note must reference {shard_rel} anchor"
+                )
+
+        overall = markdown_overall_status(progress_text, f"M{milestone} overall")
+        if overall is None:
+            failures.append(f"specs/PROGRESS.md: missing 'M{milestone} overall' line")
+            continue
+        _, overall_note = overall
+        if len(overall_note) > 180:
+            failures.append(
+                f"specs/PROGRESS.md: 'M{milestone} overall' note exceeds compact limit (180 chars)"
+            )
+        if shard_rel not in overall_note:
+            failures.append(
+                f"specs/PROGRESS.md: 'M{milestone} overall' note must reference {shard_rel}"
+            )
+
+
 def check_mcp_contract_parity(mcp_text: str, failures: list[str]) -> None:
     daemon_methods = parse_daemon_methods()
     tool_methods = parse_tool_catalog_methods()
@@ -415,6 +509,7 @@ def main() -> int:
     check_infrastructure_rows(progress_text, failures)
     check_r1_g0_gate(progress_text, failures)
     check_m4_gate_parity(program_text, integrated_text, progress_text, failures)
+    check_milestone_progress_compaction(progress_text, failures)
     check_schematic_editor_progress_drift(progress_text, failures)
     check_mcp_contract_parity(mcp_text, failures)
 
