@@ -27,7 +27,6 @@ use eda_engine::schematic::{
 use eda_engine::{board::Airwire, board::BoardNetInfo, board::ComponentInfo};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-
 mod cli_args;
 mod command_exec;
 mod command_modify;
@@ -35,6 +34,8 @@ mod command_plan;
 mod command_project;
 mod command_query;
 mod main_board_component;
+mod main_inspect;
+mod main_summary;
 mod main_gerber_inspect;
 mod main_gerber_mechanical;
 mod main_gerber_silkscreen;
@@ -44,6 +45,8 @@ use command_plan::*;
 use command_project::*;
 use command_query::*;
 pub(crate) use main_board_component::*;
+pub(crate) use main_inspect::*;
+pub(crate) use main_summary::*;
 pub(crate) use main_gerber_inspect::*;
 pub(crate) use main_gerber_mechanical::*;
 pub(crate) use main_gerber_silkscreen::*;
@@ -100,52 +103,6 @@ struct NativeProjectCreateReportView {
     schematic_uuid: String,
     board_uuid: String,
     files_written: Vec<String>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectInspectReportView {
-    project_root: String,
-    project_name: String,
-    schema_version: u32,
-    project_uuid: String,
-    schematic_uuid: String,
-    board_uuid: String,
-    pools: usize,
-    pool_refs: Vec<NativeProjectInspectPoolRefView>,
-    schematic_path: String,
-    board_path: String,
-    rules_path: String,
-    sheet_count: usize,
-    sheet_definition_count: usize,
-    sheet_instance_count: usize,
-    variant_count: usize,
-    board_package_count: usize,
-    board_pad_count: usize,
-    board_net_count: usize,
-    board_track_count: usize,
-    board_via_count: usize,
-    board_zone_count: usize,
-    rule_count: usize,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectInspectPoolRefView {
-    manifest_path: String,
-    priority: u32,
-    resolved_path: String,
-    exists: bool,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectSummaryView {
-    domain: &'static str,
-    project_name: String,
-    schema_version: u32,
-    pools: usize,
-    pool_refs: Vec<NativeProjectInspectPoolRefView>,
-    schematic: NativeProjectSchematicSummaryView,
-    board: NativeProjectBoardSummaryView,
-    rules: NativeProjectRulesSummaryView,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -531,45 +488,6 @@ struct NativeProjectGerberPlanComparisonView {
     matched: Vec<String>,
     missing: Vec<String>,
     extra: Vec<String>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectSchematicSummaryView {
-    sheets: usize,
-    sheet_definitions: usize,
-    sheet_instances: usize,
-    variants: usize,
-    symbols: usize,
-    wires: usize,
-    junctions: usize,
-    labels: usize,
-    ports: usize,
-    buses: usize,
-    bus_entries: usize,
-    noconnects: usize,
-    texts: usize,
-    drawings: usize,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectBoardSummaryView {
-    name: String,
-    layers: usize,
-    components: usize,
-    pads: usize,
-    nets: usize,
-    net_classes: usize,
-    tracks: usize,
-    vias: usize,
-    zones: usize,
-    keepouts: usize,
-    dimensions: usize,
-    texts: usize,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectRulesSummaryView {
-    count: usize,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -1181,93 +1099,6 @@ fn render_native_project_create_report_text(report: &NativeProjectCreateReportVi
         lines.push("files_written:".to_string());
         for path in &report.files_written {
             lines.push(format!("  {path}"));
-        }
-    }
-    lines.join("\n")
-}
-
-fn render_native_project_inspect_report_text(report: &NativeProjectInspectReportView) -> String {
-    let mut lines = vec![
-        format!("project_root: {}", report.project_root),
-        format!("project_name: {}", report.project_name),
-        format!("schema_version: {}", report.schema_version),
-        format!("project_uuid: {}", report.project_uuid),
-        format!("schematic_uuid: {}", report.schematic_uuid),
-        format!("board_uuid: {}", report.board_uuid),
-        format!("pools: {}", report.pools),
-        format!("schematic_path: {}", report.schematic_path),
-        format!("board_path: {}", report.board_path),
-        format!("rules_path: {}", report.rules_path),
-        format!("sheet_count: {}", report.sheet_count),
-        format!("sheet_definition_count: {}", report.sheet_definition_count),
-        format!("sheet_instance_count: {}", report.sheet_instance_count),
-        format!("variant_count: {}", report.variant_count),
-        format!("board_package_count: {}", report.board_package_count),
-        format!("board_pad_count: {}", report.board_pad_count),
-        format!("board_net_count: {}", report.board_net_count),
-        format!("board_track_count: {}", report.board_track_count),
-        format!("board_via_count: {}", report.board_via_count),
-        format!("board_zone_count: {}", report.board_zone_count),
-        format!("rule_count: {}", report.rule_count),
-    ];
-    if !report.pool_refs.is_empty() {
-        lines.push("pool_refs:".to_string());
-        for pool_ref in &report.pool_refs {
-            lines.push(format!(
-                "  path={} priority={} resolved_path={} exists={}",
-                pool_ref.manifest_path, pool_ref.priority, pool_ref.resolved_path, pool_ref.exists
-            ));
-        }
-    }
-    lines.join("\n")
-}
-
-fn render_native_project_summary_text(report: &NativeProjectSummaryView) -> String {
-    let mut lines = vec![
-        format!("project_name: {}", report.project_name),
-        format!("schema_version: {}", report.schema_version),
-        format!("pools: {}", report.pools),
-        format!("schematic_sheets: {}", report.schematic.sheets),
-        format!(
-            "schematic_sheet_definitions: {}",
-            report.schematic.sheet_definitions
-        ),
-        format!(
-            "schematic_sheet_instances: {}",
-            report.schematic.sheet_instances
-        ),
-        format!("schematic_variants: {}", report.schematic.variants),
-        format!("schematic_symbols: {}", report.schematic.symbols),
-        format!("schematic_wires: {}", report.schematic.wires),
-        format!("schematic_junctions: {}", report.schematic.junctions),
-        format!("schematic_labels: {}", report.schematic.labels),
-        format!("schematic_ports: {}", report.schematic.ports),
-        format!("schematic_buses: {}", report.schematic.buses),
-        format!("schematic_bus_entries: {}", report.schematic.bus_entries),
-        format!("schematic_noconnects: {}", report.schematic.noconnects),
-        format!("schematic_texts: {}", report.schematic.texts),
-        format!("schematic_drawings: {}", report.schematic.drawings),
-        format!("board_name: {}", report.board.name),
-        format!("board_layers: {}", report.board.layers),
-        format!("board_components: {}", report.board.components),
-        format!("board_pads: {}", report.board.pads),
-        format!("board_nets: {}", report.board.nets),
-        format!("board_net_classes: {}", report.board.net_classes),
-        format!("board_tracks: {}", report.board.tracks),
-        format!("board_vias: {}", report.board.vias),
-        format!("board_zones: {}", report.board.zones),
-        format!("board_keepouts: {}", report.board.keepouts),
-        format!("board_dimensions: {}", report.board.dimensions),
-        format!("board_texts: {}", report.board.texts),
-        format!("rule_count: {}", report.rules.count),
-    ];
-    if !report.pool_refs.is_empty() {
-        lines.push("pool_refs:".to_string());
-        for pool_ref in &report.pool_refs {
-            lines.push(format!(
-                "  path={} priority={} resolved_path={} exists={}",
-                pool_ref.manifest_path, pool_ref.priority, pool_ref.resolved_path, pool_ref.exists
-            ));
         }
     }
     lines.join("\n")

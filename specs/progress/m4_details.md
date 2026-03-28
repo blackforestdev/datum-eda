@@ -11,13 +11,20 @@ surfaces.
 Current truth boundary: `project.json` pool references are now resolved during
 native board mutation flow, but only the truthful supported package-linked
 subset is materialized into persisted board state. Current support is limited
-to package silkscreen non-text primitives; package text and package-linked
-mechanical persistence remain open.
+to package silkscreen non-text primitives only; the
+`component_silkscreen_texts` map remains schema-only and empty by design in
+this slice. Package text and package-linked mechanical persistence remain
+open.
 The native inspect surface now also reports each declared pool reference with
 its priority, resolved path, and current existence state so the native pool
 contract is auditable without mutating project state. The native summary query
-now reports the same resolved pool-reference detail for automation-facing read
-parity.
+now reports the same resolved pool-reference detail plus aggregate
+board-level persisted component silkscreen counts plus persisted
+component-mechanical counts, plus how many components currently carry each
+persisted subset, for automation-facing read parity, and the native
+board-components query now reports per-component presence flags plus the
+currently materialized silkscreen subset counts and persisted
+component-mechanical counts.
 
 Evidence anchors:
 - CLI/native surface: `crates/cli/src/command_project.rs`

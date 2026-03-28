@@ -7,8 +7,10 @@ use uuid::Uuid;
 
 #[path = "cli_args_board_dimension.rs"]
 mod cli_args_board_dimension;
+#[path = "cli_args_output.rs"]
+mod cli_args_output;
 use self::cli_args_board_dimension::{EditBoardDimensionArgs, PlaceBoardDimensionArgs};
-
+pub(crate) use self::cli_args_output::{FailOn, OutputFormat};
 #[derive(Parser)]
 #[command(name = "eda", about = "PCB design analysis and automation")]
 pub(crate) struct Cli {
@@ -18,19 +20,6 @@ pub(crate) struct Cli {
     /// Output format
     #[arg(long, default_value = "text")]
     pub(crate) format: OutputFormat,
-}
-
-#[derive(Clone, clap::ValueEnum)]
-pub(crate) enum OutputFormat {
-    Text,
-    Json,
-}
-
-#[derive(Clone, Copy, clap::ValueEnum)]
-pub(crate) enum FailOn {
-    Info,
-    Warning,
-    Error,
 }
 
 #[derive(Subcommand)]

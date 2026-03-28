@@ -42,7 +42,10 @@ Current live slice:
   <dir> board-texts` exposes the first authored native board-object read
   surface.
   The summary query now also reports resolved pool-reference details from
-  `project.json` for automation-facing native read parity.
+  `project.json` plus aggregate counts for the currently materialized
+  board-level component silkscreen subset and persisted component-mechanical
+  subset, along with how many components currently carry each persisted
+  subset, for automation-facing native read parity.
 - `eda project place-symbol <dir> --sheet <uuid> --reference <text> --value <text>
   [--lib-id <text>] --x-nm <i64> --y-nm <i64> [--rotation-deg <i32>] [--mirrored]`,
   `eda project move-symbol <dir> --symbol <uuid> --x-nm <i64> --y-nm <i64>`, and
@@ -160,7 +163,9 @@ Current live slice:
   net lifecycle on `board/board.json`, while `eda project query <dir>
   board-nets` reads back that persisted net slice.
 - `eda project query <dir> board-components` reads back the persisted native
-  placed-package inventory from `board/board.json`, establishing the read-side
+  placed-package inventory from `board/board.json`, including per-component
+  presence flags plus the currently materialized silkscreen subset counts and
+  persisted component-mechanical subset counts, establishing the read-side
   contract for future native package placement work.
 - `eda project export-bom <dir> --out <path>` writes a deterministic CSV BOM
   directly from that persisted native board-component inventory, establishing
@@ -419,7 +424,8 @@ Current live slice:
   --component <uuid>`, and `eda project delete-board-component <dir>
   --component <uuid>` add the first native placed-package full lifecycle on
   `board/board.json`, while `eda project query <dir> board-components` verifies
-  the persisted component state.
+  the persisted component state plus the currently materialized per-component
+  silkscreen subset counts and persisted component-mechanical subset counts.
 - `eda project set-board-pad-net <dir> --pad <uuid> --net <uuid>` and
   `eda project clear-board-pad-net <dir> --pad <uuid>` plus
   `eda project edit-board-pad <dir> --pad <uuid> [--x-nm <i64> --y-nm <i64>]
@@ -560,8 +566,11 @@ myproject/
 slice the board mutation path resolves package JSON from those roots during
 component placement and package reassignment and persists only the supported
 truthful package-graphics subset into `board/board.json`; export and compare
-continue to read only persisted board state. Relative pool paths are resolved
-from the project root and absolute paths remain valid for external pool refs.
+continue to read only persisted board state. Current support is limited to
+package silkscreen non-text primitives only; the `component_silkscreen_texts`
+map is schema-only in this slice and remains empty by design. Relative pool
+paths are resolved from the project root and absolute paths remain valid for
+external pool refs.
 
 ### 2.2 schematic.json
 

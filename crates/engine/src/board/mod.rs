@@ -2,15 +2,14 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-
 use crate::ir::geometry::{LayerId, Point, Polygon};
-use crate::rules::ast::Rule;
 use crate::schematic::ConnectivityDiagnosticInfo;
 
 mod dimension;
 mod polygon;
+mod rule_set;
 
-pub type RuleSet = Vec<Rule>;
+pub use rule_set::RuleSet;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Board {

@@ -7,6 +7,12 @@ mod command_project_gerber_inspect;
 mod command_project_gerber_mechanical;
 #[path = "command_project_gerber_silkscreen.rs"]
 mod command_project_gerber_silkscreen;
+#[path = "command_project_board_component_query.rs"]
+mod command_project_board_component_query;
+#[path = "command_project_native_inspect.rs"]
+mod command_project_native_inspect;
+#[path = "command_project_summary.rs"]
+mod command_project_summary;
 #[path = "command_project_pool_materialization.rs"]
 mod command_project_pool_materialization;
 #[path = "command_project_native_types.rs"]
@@ -17,12 +23,19 @@ pub(crate) use self::command_project_gerber_mechanical::{
     compare_native_project_gerber_mechanical_layer, export_native_project_gerber_mechanical_layer,
     validate_native_project_gerber_mechanical_layer,
 };
+use self::command_project_board_component_query::{
+    component_has_persisted_mechanical, component_has_persisted_silkscreen,
+};
+pub(crate) use self::command_project_board_component_query::query_native_project_board_component_views;
+pub(crate) use self::command_project_native_inspect::inspect_native_project;
+pub(crate) use self::command_project_summary::query_native_project_summary;
 use self::command_project_gerber_silkscreen::{
     count_native_component_silkscreen_arcs, count_native_component_silkscreen_circles,
     count_native_component_silkscreen_lines, count_native_component_silkscreen_polygons,
     count_native_component_silkscreen_polylines, count_native_component_silkscreen_texts,
     resolve_native_project_silkscreen_context,
 };
+use self::command_project_board_component_query::component_graphic_count;
 use self::command_project_pool_materialization::{
     materialize_supported_pool_package_graphics, resolve_native_project_pool_path,
 };
@@ -58,6 +71,7 @@ use uuid::Uuid;
 
 use super::{
     DiagnosticsView, NativeProjectBoardComponentMutationReportView,
+    NativeProjectBoardComponentQueryPointView, NativeProjectBoardComponentQueryView,
     NativeProjectBoardDimensionMutationReportView, NativeProjectBoardKeepoutMutationReportView,
     NativeProjectBoardNetClassMutationReportView, NativeProjectBoardNetMutationReportView,
     NativeProjectBoardOutlineMutationReportView, NativeProjectBoardPadMutationReportView,
@@ -346,108 +360,6 @@ pub(crate) fn create_native_project(
             board_json.display().to_string(),
             rules_json.display().to_string(),
         ],
-    })
-}
-
-pub(crate) fn inspect_native_project(root: &Path) -> Result<NativeProjectInspectReportView> {
-    let project = load_native_project(root)?;
-    let pool_refs = project
-        .manifest
-        .pools
-        .iter()
-        .map(|pool_ref| {
-            let resolved_path = resolve_native_project_pool_path(&project.root, &pool_ref.path);
-            NativeProjectInspectPoolRefView {
-                manifest_path: pool_ref.path.clone(),
-                priority: pool_ref.priority,
-                resolved_path: resolved_path.display().to_string(),
-                exists: resolved_path.exists(),
-            }
-        })
-        .collect();
-
-    Ok(NativeProjectInspectReportView {
-        project_root: project.root.display().to_string(),
-        project_name: project.manifest.name.clone(),
-        schema_version: project.manifest.schema_version,
-        project_uuid: project.manifest.uuid.to_string(),
-        schematic_uuid: project.schematic.uuid.to_string(),
-        board_uuid: project.board.uuid.to_string(),
-        pools: project.manifest.pools.len(),
-        pool_refs,
-        schematic_path: project.schematic_path.display().to_string(),
-        board_path: project.board_path.display().to_string(),
-        rules_path: project.rules_path.display().to_string(),
-        sheet_count: project.schematic.sheets.len(),
-        sheet_definition_count: project.schematic.definitions.len(),
-        sheet_instance_count: project.schematic.instances.len(),
-        variant_count: project.schematic.variants.len(),
-        board_package_count: project.board.packages.len(),
-        board_pad_count: project.board.pads.len(),
-        board_net_count: project.board.nets.len(),
-        board_track_count: project.board.tracks.len(),
-        board_via_count: project.board.vias.len(),
-        board_zone_count: project.board.zones.len(),
-        rule_count: project.rules.rules.len(),
-    })
-}
-
-pub(crate) fn query_native_project_summary(root: &Path) -> Result<NativeProjectSummaryView> {
-    let project = load_native_project(root)?;
-    let schematic_counts = collect_schematic_counts(&project.root, &project.schematic)?;
-    let pool_refs = project
-        .manifest
-        .pools
-        .iter()
-        .map(|pool_ref| {
-            let resolved_path = resolve_native_project_pool_path(&project.root, &pool_ref.path);
-            NativeProjectInspectPoolRefView {
-                manifest_path: pool_ref.path.clone(),
-                priority: pool_ref.priority,
-                resolved_path: resolved_path.display().to_string(),
-                exists: resolved_path.exists(),
-            }
-        })
-        .collect();
-    Ok(NativeProjectSummaryView {
-        domain: "native_project",
-        project_name: project.manifest.name,
-        schema_version: project.manifest.schema_version,
-        pools: project.manifest.pools.len(),
-        pool_refs,
-        schematic: NativeProjectSchematicSummaryView {
-            sheets: project.schematic.sheets.len(),
-            sheet_definitions: project.schematic.definitions.len(),
-            sheet_instances: project.schematic.instances.len(),
-            variants: project.schematic.variants.len(),
-            symbols: schematic_counts.symbols,
-            wires: schematic_counts.wires,
-            junctions: schematic_counts.junctions,
-            labels: schematic_counts.labels,
-            ports: schematic_counts.ports,
-            buses: schematic_counts.buses,
-            bus_entries: schematic_counts.bus_entries,
-            noconnects: schematic_counts.noconnects,
-            texts: schematic_counts.texts,
-            drawings: schematic_counts.drawings,
-        },
-        board: NativeProjectBoardSummaryView {
-            name: project.board.name,
-            layers: project.board.stackup.layers.len(),
-            components: project.board.packages.len(),
-            pads: project.board.pads.len(),
-            nets: project.board.nets.len(),
-            net_classes: project.board.net_classes.len(),
-            tracks: project.board.tracks.len(),
-            vias: project.board.vias.len(),
-            zones: project.board.zones.len(),
-            keepouts: project.board.keepouts.len(),
-            dimensions: project.board.dimensions.len(),
-            texts: project.board.texts.len(),
-        },
-        rules: NativeProjectRulesSummaryView {
-            count: project.rules.rules.len(),
-        },
     })
 }
 
@@ -7427,6 +7339,7 @@ pub(crate) fn delete_native_project_board_component(
             project.board_path.display()
         )
     })?;
+    let report = native_project_board_component_report("delete_board_component", &project, component);
     project
         .board
         .component_silkscreen
@@ -7476,11 +7389,7 @@ pub(crate) fn delete_native_project_board_component(
         .component_mechanical_arcs
         .remove(&component_uuid.to_string());
     write_canonical_json(&project.board_path, &project.board)?;
-    Ok(native_project_board_component_report(
-        "delete_board_component",
-        &project,
-        component,
-    ))
+    Ok(report)
 }
 
 pub(crate) fn set_native_project_board_pad_net(
@@ -8144,6 +8053,7 @@ fn native_project_board_component_report(
         rotation_deg: component.rotation,
         layer: component.layer,
         locked: component.locked,
+        has_persisted_component_silkscreen: component_has_persisted_silkscreen(project, &key),
         persisted_component_silkscreen_text_count: component_graphic_count(
             &project.board.component_silkscreen_texts,
             &key,
@@ -8168,14 +8078,32 @@ fn native_project_board_component_report(
             &project.board.component_silkscreen_polylines,
             &key,
         ),
+        has_persisted_component_mechanical: component_has_persisted_mechanical(project, &key),
+        persisted_component_mechanical_text_count: component_graphic_count(
+            &project.board.component_mechanical_texts,
+            &key,
+        ),
+        persisted_component_mechanical_line_count: component_graphic_count(
+            &project.board.component_mechanical_lines,
+            &key,
+        ),
+        persisted_component_mechanical_arc_count: component_graphic_count(
+            &project.board.component_mechanical_arcs,
+            &key,
+        ),
+        persisted_component_mechanical_circle_count: component_graphic_count(
+            &project.board.component_mechanical_circles,
+            &key,
+        ),
+        persisted_component_mechanical_polygon_count: component_graphic_count(
+            &project.board.component_mechanical_polygons,
+            &key,
+        ),
+        persisted_component_mechanical_polyline_count: component_graphic_count(
+            &project.board.component_mechanical_polylines,
+            &key,
+        ),
     }
-}
-
-fn component_graphic_count<T>(
-    map: &std::collections::BTreeMap<String, Vec<T>>,
-    component_key: &str,
-) -> usize {
-    map.get(component_key).map_or(0, Vec::len)
 }
 
 fn native_project_board_track_report(

@@ -1,6 +1,8 @@
 use super::*;
 #[path = "command_exec_project_inspect.rs"]
 mod command_exec_project_inspect;
+#[path = "command_exec_native_support.rs"]
+mod command_exec_native_support;
 use crate::command_modify::{
     parse_apply_replacement_plan_arg, parse_apply_replacement_policy_arg,
     parse_apply_scoped_replacement_policy_arg, parse_assign_part_arg, parse_move_component_arg,
@@ -8,29 +10,10 @@ use crate::command_modify::{
     parse_set_package_arg, parse_set_package_with_part_arg, parse_set_reference_arg,
     parse_set_value_arg,
 };
-use eda_engine::schematic::{HiddenPowerBehavior, LabelKind, PortDirection, SymbolDisplayMode};
-
-fn parse_native_symbol_display_mode(value: NativeSymbolDisplayModeArg) -> SymbolDisplayMode {
-    match value {
-        NativeSymbolDisplayModeArg::LibraryDefault => SymbolDisplayMode::LibraryDefault,
-        NativeSymbolDisplayModeArg::ShowHiddenPins => SymbolDisplayMode::ShowHiddenPins,
-        NativeSymbolDisplayModeArg::HideOptionalPins => SymbolDisplayMode::HideOptionalPins,
-    }
-}
-
-fn parse_native_hidden_power_behavior(value: NativeHiddenPowerBehaviorArg) -> HiddenPowerBehavior {
-    match value {
-        NativeHiddenPowerBehaviorArg::SourceDefinedImplicit => {
-            HiddenPowerBehavior::SourceDefinedImplicit
-        }
-        NativeHiddenPowerBehaviorArg::ExplicitPowerObject => {
-            HiddenPowerBehavior::ExplicitPowerObject
-        }
-        NativeHiddenPowerBehaviorArg::PreservedAsImportedMetadata => {
-            HiddenPowerBehavior::PreservedAsImportedMetadata
-        }
-    }
-}
+use eda_engine::schematic::{LabelKind, PortDirection};
+use self::command_exec_native_support::{
+    parse_native_hidden_power_behavior, parse_native_symbol_display_mode,
+};
 
 pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
     match cli.command {
@@ -309,7 +292,7 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     Ok((render_output(&cli.format, &report), 0))
                 }
                 NativeProjectQueryCommands::BoardComponents => {
-                    let report = query_native_project_board_components(&path)?;
+                    let report = query_native_project_board_component_views(&path)?;
                     Ok((render_output(&cli.format, &report), 0))
                 }
                 NativeProjectQueryCommands::BoardTracks => {

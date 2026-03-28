@@ -1,14 +1,13 @@
 use crate::board::{BoardText, PadAperture, PlacedPad, Track, Via, Zone};
 use crate::ir::geometry::{LayerId, Polygon};
 use thiserror::Error;
-
 mod gerber_mechanical;
+mod outline;
 mod silkscreen;
 
 pub use gerber_mechanical::{MechanicalStroke, render_rs274x_mechanical_layer};
 pub use silkscreen::{SilkscreenStroke, render_silkscreen_text_strokes};
-
-const DEFAULT_OUTLINE_APERTURE_MM: &str = "0.100000";
+use outline::DEFAULT_OUTLINE_APERTURE_MM;
 
 #[derive(Debug, Error)]
 pub enum ExportError {
