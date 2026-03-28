@@ -39,6 +39,8 @@ pub(crate) struct NativeProjectBoardSummaryView {
     pub(crate) components: usize,
     pub(crate) components_with_persisted_silkscreen: usize,
     pub(crate) components_with_persisted_mechanical: usize,
+    pub(crate) components_with_persisted_pads: usize,
+    pub(crate) components_with_persisted_models_3d: usize,
     pub(crate) pads: usize,
     pub(crate) nets: usize,
     pub(crate) net_classes: usize,
@@ -60,6 +62,8 @@ pub(crate) struct NativeProjectBoardSummaryView {
     pub(crate) persisted_component_mechanical_circles: usize,
     pub(crate) persisted_component_mechanical_polygons: usize,
     pub(crate) persisted_component_mechanical_polylines: usize,
+    pub(crate) persisted_component_pads: usize,
+    pub(crate) persisted_component_models_3d: usize,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -102,6 +106,14 @@ pub(crate) fn render_native_project_summary_text(report: &NativeProjectSummaryVi
         format!(
             "board_components_with_persisted_mechanical: {}",
             report.board.components_with_persisted_mechanical
+        ),
+        format!(
+            "board_components_with_persisted_pads: {}",
+            report.board.components_with_persisted_pads
+        ),
+        format!(
+            "board_components_with_persisted_models_3d: {}",
+            report.board.components_with_persisted_models_3d
         ),
         format!("board_pads: {}", report.board.pads),
         format!("board_nets: {}", report.board.nets),
@@ -159,6 +171,14 @@ pub(crate) fn render_native_project_summary_text(report: &NativeProjectSummaryVi
         format!(
             "board_persisted_component_mechanical_polylines: {}",
             report.board.persisted_component_mechanical_polylines
+        ),
+        format!(
+            "board_persisted_component_pads: {}",
+            report.board.persisted_component_pads
+        ),
+        format!(
+            "board_persisted_component_models_3d: {}",
+            report.board.persisted_component_models_3d
         ),
         format!("rule_count: {}", report.rules.count),
     ];

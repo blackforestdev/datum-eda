@@ -1,4 +1,5 @@
 use super::*;
+use eda_engine::board::{StackupLayer, StackupLayerType};
 use eda_engine::ir::serialization::to_json_deterministic;
 
 fn unique_project_root(label: &str) -> PathBuf {
@@ -40,6 +41,67 @@ fn project_new_creates_native_scaffold() {
     assert_eq!(project_value["schematic"], "schematic/schematic.json");
     assert_eq!(project_value["board"], "board/board.json");
     assert_eq!(project_value["rules"], "rules/rules.json");
+
+    let board_value: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(&board_json).expect("board.json should read"),
+    )
+    .expect("board.json should parse");
+    let stackup: Vec<StackupLayer> =
+        serde_json::from_value(board_value["stackup"]["layers"].clone())
+            .expect("stackup should parse");
+    assert_eq!(stackup.len(), 5);
+    assert_eq!(stackup[0].id, 1);
+    assert_eq!(stackup[0].layer_type, StackupLayerType::Copper);
+    assert_eq!(stackup[1].id, 2);
+    assert_eq!(stackup[1].layer_type, StackupLayerType::SolderMask);
+    assert_eq!(stackup[2].id, 3);
+    assert_eq!(stackup[2].layer_type, StackupLayerType::Silkscreen);
+    assert_eq!(stackup[3].id, 4);
+    assert_eq!(stackup[3].layer_type, StackupLayerType::Paste);
+    assert_eq!(stackup[4].id, 41);
+    assert_eq!(stackup[4].layer_type, StackupLayerType::Mechanical);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_new_seeded_stackup_supports_topside_gerber_plan() {
+    let root = unique_project_root("datum-eda-cli-project-new-gerber-plan");
+    create_native_project(&root, Some("Seeded Plan".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "plan-gerber-export",
+        root.to_str().unwrap(),
+        "--prefix",
+        "Seeded",
+    ])
+    .expect("CLI should parse");
+    let output = execute(cli).expect("gerber plan should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
+
+    assert_eq!(report["action"], "plan_gerber_export");
+    assert_eq!(report["copper_layers"], 1);
+    assert_eq!(report["soldermask_layers"], 1);
+    assert_eq!(report["silkscreen_layers"], 1);
+    assert_eq!(report["paste_layers"], 1);
+    assert_eq!(report["mechanical_layers"], 1);
+
+    let artifacts = report["artifacts"].as_array().expect("artifacts array");
+    assert_eq!(artifacts.len(), 6);
+    assert_eq!(artifacts[0]["filename"], "seeded-outline.gbr");
+    assert_eq!(artifacts[1]["filename"], "seeded-l1-top-copper-copper.gbr");
+    assert_eq!(artifacts[2]["filename"], "seeded-l2-top-mask-mask.gbr");
+    assert_eq!(artifacts[3]["filename"], "seeded-l3-top-silk-silk.gbr");
+    assert_eq!(artifacts[4]["filename"], "seeded-l4-top-paste-paste.gbr");
+    assert_eq!(
+        artifacts[5]["filename"],
+        "seeded-l41-mechanical-41-mech.gbr"
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }

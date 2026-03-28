@@ -2,13 +2,30 @@ use std::collections::BTreeMap;
 
 #[path = "command_project_gerber_mechanical_support.rs"]
 mod support;
+use self::support::{
+    count_native_board_dimensions, count_native_board_texts,
+    count_native_component_mechanical_arcs, count_native_component_mechanical_circles,
+    count_native_component_mechanical_lines, count_native_component_mechanical_polygons,
+    count_native_component_mechanical_polylines, native_board_dimension_to_stroke,
+    native_board_text_to_strokes, native_component_mechanical_arc_to_strokes,
+    native_component_mechanical_circle_to_strokes, native_component_mechanical_line_to_stroke,
+    native_component_mechanical_polygon_to_polygon,
+    native_component_mechanical_polyline_to_strokes, native_component_mechanical_text_to_strokes,
+};
+use super::{
+    NativeBoardRoot, NativePoint, NativeProjectGerberMechanicalComparisonView,
+    NativeProjectGerberMechanicalExportView, NativeProjectGerberMechanicalValidationView,
+    ParsedGerber, ParsedGerberGeometry, compare_entry_views, load_native_project,
+    parse_rs274x_subset, query_native_project_board_dimensions,
+    query_native_project_board_keepouts, query_native_project_board_stackup,
+    query_native_project_board_texts, render_parsed_flash_geometry, render_region_geometry,
+    render_stroke_geometry,
+};
 use anyhow::{Context, Result, bail};
 use eda_engine::board::{PlacedPackage, StackupLayer, StackupLayerType};
 use eda_engine::export::{MechanicalStroke, render_rs274x_mechanical_layer};
 use eda_engine::ir::geometry::Polygon;
 use serde::{Deserialize, Serialize};
-use self::support::{count_native_board_dimensions, count_native_board_texts, count_native_component_mechanical_arcs, count_native_component_mechanical_circles, count_native_component_mechanical_lines, count_native_component_mechanical_polygons, count_native_component_mechanical_polylines, native_board_dimension_to_stroke, native_board_text_to_strokes, native_component_mechanical_arc_to_strokes, native_component_mechanical_circle_to_strokes, native_component_mechanical_line_to_stroke, native_component_mechanical_polygon_to_polygon, native_component_mechanical_polyline_to_strokes, native_component_mechanical_text_to_strokes};
-use super::{NativeBoardRoot, NativePoint, NativeProjectGerberMechanicalComparisonView, NativeProjectGerberMechanicalExportView, NativeProjectGerberMechanicalValidationView, ParsedGerber, ParsedGerberGeometry, compare_entry_views, load_native_project, parse_rs274x_subset, query_native_project_board_dimensions, query_native_project_board_keepouts, query_native_project_board_stackup, query_native_project_board_texts, render_parsed_flash_geometry, render_region_geometry, render_stroke_geometry};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub(crate) struct NativeComponentMechanicalLine {
@@ -415,7 +432,7 @@ pub(crate) fn compare_native_project_gerber_mechanical_layer(
 
     let expected_component_polygon_signatures = component_polygons
         .iter()
-        .map(|polygon| render_region_geometry(&polygon.vertices))
+        .map(render_polygon_region_geometry)
         .collect::<std::collections::BTreeSet<_>>();
     let expected_component_signatures = component_strokes
         .iter()
@@ -511,7 +528,7 @@ pub(crate) fn gerber_mechanical_expected_entries(
         let (kind, signature) = if polygon.closed {
             (
                 "keepout".to_string(),
-                render_region_geometry(&polygon.vertices),
+                render_polygon_region_geometry(polygon),
             )
         } else {
             (
@@ -525,7 +542,7 @@ pub(crate) fn gerber_mechanical_expected_entries(
         *entries.entry((kind, signature)).or_insert(0) += 1;
     }
     for polygon in component_polygons {
-        let signature = render_region_geometry(&polygon.vertices);
+        let signature = render_polygon_region_geometry(polygon);
         *entries
             .entry(("component_polygon".to_string(), signature))
             .or_insert(0) += 1;
@@ -587,6 +604,14 @@ pub(crate) fn gerber_mechanical_expected_entries(
             .or_insert(0) += 1;
     }
     entries
+}
+
+fn render_polygon_region_geometry(polygon: &Polygon) -> String {
+    let mut points = polygon.vertices.clone();
+    if polygon.closed && !points.is_empty() && points.first() != points.last() {
+        points.push(points[0]);
+    }
+    render_region_geometry(&points)
 }
 
 pub(crate) fn gerber_mechanical_actual_entries(

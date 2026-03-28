@@ -5,12 +5,30 @@ use eda_engine::api::ScopedComponentReplacementPlan;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+#[path = "cli_args_board_component.rs"]
+mod cli_args_board_component;
 #[path = "cli_args_board_dimension.rs"]
 mod cli_args_board_dimension;
+#[path = "cli_args_gerber_plan.rs"]
+mod cli_args_gerber_plan;
+#[path = "cli_args_manufacturing.rs"]
+mod cli_args_manufacturing;
 #[path = "cli_args_output.rs"]
 mod cli_args_output;
+#[path = "cli_args_pool.rs"]
+mod cli_args_pool;
+pub(crate) use self::cli_args_board_component::{
+    SetBoardComponentLayerArgs, SetBoardComponentPackageArgs, SetBoardComponentPartArgs,
+    SetBoardComponentReferenceArgs, SetBoardComponentValueArgs,
+};
 use self::cli_args_board_dimension::{EditBoardDimensionArgs, PlaceBoardDimensionArgs};
+pub(crate) use self::cli_args_gerber_plan::{
+    CompareGerberExportPlanArgs, CompareGerberSetArgs, ExportGerberSetArgs, PlanGerberExportArgs,
+    ValidateGerberSetArgs,
+};
+pub(crate) use self::cli_args_manufacturing::ReportManufacturingArgs;
 pub(crate) use self::cli_args_output::{FailOn, OutputFormat};
+pub(crate) use self::cli_args_pool::{PoolCommands, ReplacementPolicyArg};
 #[derive(Parser)]
 #[command(name = "eda", about = "PCB design analysis and automation")]
 pub(crate) struct Cli {
@@ -240,25 +258,6 @@ pub(crate) enum QueryCommands {
         override_component: Vec<String>,
         /// Load Eagle libraries into the in-memory pool before querying the plan
         #[arg(long = "library")]
-        libraries: Vec<PathBuf>,
-    },
-}
-
-#[derive(Clone, Copy, clap::ValueEnum)]
-pub(crate) enum ReplacementPolicyArg {
-    Package,
-    Part,
-}
-
-#[derive(Subcommand)]
-pub(crate) enum PoolCommands {
-    /// Search for parts
-    Search {
-        /// Search query
-        query: String,
-
-        /// Eagle library files to load into the in-memory pool for this search
-        #[arg(long = "library", required = true)]
         libraries: Vec<PathBuf>,
     },
 }
@@ -549,24 +548,17 @@ pub(crate) enum ProjectCommands {
         drill: PathBuf,
     },
     /// Plan the native Gerber export artifact set from the current board outline and stackup
-    PlanGerberExport {
-        /// Project root directory
-        path: PathBuf,
-        /// Optional artifact filename prefix; defaults to the board name
-        #[arg(long)]
-        prefix: Option<String>,
-    },
+    PlanGerberExport(PlanGerberExportArgs),
+    /// Export the planned native Gerber artifact set into one output directory
+    ExportGerberSet(ExportGerberSetArgs),
     /// Compare the planned native Gerber artifact set against an output directory
-    CompareGerberExportPlan {
-        /// Project root directory
-        path: PathBuf,
-        /// Directory to compare against the planned artifact set
-        #[arg(long = "output-dir")]
-        output_dir: PathBuf,
-        /// Optional artifact filename prefix; defaults to the board name
-        #[arg(long)]
-        prefix: Option<String>,
-    },
+    CompareGerberExportPlan(CompareGerberExportPlanArgs),
+    /// Validate the planned native Gerber artifact set in one output directory
+    ValidateGerberSet(ValidateGerberSetArgs),
+    /// Compare the planned native Gerber artifact set semantically in one output directory
+    CompareGerberSet(CompareGerberSetArgs),
+    /// Report the current persisted-state manufacturing output surface without writing artifacts
+    ReportManufacturing(ReportManufacturingArgs),
     /// Place one schematic symbol into an existing native sheet file
     PlaceSymbol {
         /// Project root directory
@@ -1415,6 +1407,11 @@ pub(crate) enum ProjectCommands {
         #[arg(long = "layer")]
         layers: Vec<String>,
     },
+    /// Add the canonical top-side default stackup layers if they are missing
+    AddDefaultTopStackup {
+        /// Project root directory
+        path: PathBuf,
+    },
     /// Create one native board net class
     PlaceBoardNetClass {
         /// Project root directory
@@ -1536,27 +1533,15 @@ pub(crate) enum ProjectCommands {
         y_nm: i64,
     },
     /// Set the part UUID on one native board component/package
-    SetBoardComponentPart {
-        /// Project root directory
-        path: PathBuf,
-        /// Component UUID
-        #[arg(long = "component")]
-        component_uuid: Uuid,
-        /// Replacement part UUID
-        #[arg(long = "part")]
-        part_uuid: Uuid,
-    },
+    SetBoardComponentPart(SetBoardComponentPartArgs),
     /// Set the package UUID on one native board component/package
-    SetBoardComponentPackage {
-        /// Project root directory
-        path: PathBuf,
-        /// Component UUID
-        #[arg(long = "component")]
-        component_uuid: Uuid,
-        /// Replacement package UUID
-        #[arg(long = "package")]
-        package_uuid: Uuid,
-    },
+    SetBoardComponentPackage(SetBoardComponentPackageArgs),
+    /// Set the layer on one native board component/package
+    SetBoardComponentLayer(SetBoardComponentLayerArgs),
+    /// Set the reference text on one native board component/package
+    SetBoardComponentReference(SetBoardComponentReferenceArgs),
+    /// Set the value text on one native board component/package
+    SetBoardComponentValue(SetBoardComponentValueArgs),
     /// Rotate one native board component/package
     RotateBoardComponent {
         /// Project root directory

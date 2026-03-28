@@ -41,6 +41,7 @@ pub(super) struct RawPad {
     pub(super) position: Point,
     pub(super) layer: LayerId,
     pub(super) padstack_name: String,
+    pub(super) drill_nm: Option<i64>,
 }
 
 #[derive(Debug, Default)]

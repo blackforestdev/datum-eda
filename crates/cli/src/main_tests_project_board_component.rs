@@ -56,8 +56,12 @@ fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_throug
     let component_uuid = placed["component_uuid"].as_str().unwrap().to_string();
     assert_eq!(placed["has_persisted_component_silkscreen"], false);
     assert_eq!(placed["has_persisted_component_mechanical"], false);
+    assert_eq!(placed["has_persisted_component_pads"], false);
+    assert_eq!(placed["has_persisted_component_models_3d"], false);
     assert_eq!(placed["persisted_component_silkscreen_line_count"], 0);
     assert_eq!(placed["persisted_component_mechanical_line_count"], 0);
+    assert_eq!(placed["persisted_component_pad_count"], 0);
+    assert_eq!(placed["persisted_component_model_3d_count"], 0);
 
     let components_output =
         execute(board_components_query_cli(&root)).expect("board components query should succeed");
@@ -75,19 +79,53 @@ fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_throug
     assert_eq!(components[0]["layer"], 1);
     assert_eq!(components[0]["locked"], false);
     assert_eq!(components[0]["has_persisted_component_silkscreen"], false);
-    assert_eq!(components[0]["persisted_component_silkscreen_text_count"], 0);
-    assert_eq!(components[0]["persisted_component_silkscreen_line_count"], 0);
+    assert_eq!(
+        components[0]["persisted_component_silkscreen_text_count"],
+        0
+    );
+    assert_eq!(
+        components[0]["persisted_component_silkscreen_line_count"],
+        0
+    );
     assert_eq!(components[0]["persisted_component_silkscreen_arc_count"], 0);
-    assert_eq!(components[0]["persisted_component_silkscreen_circle_count"], 0);
-    assert_eq!(components[0]["persisted_component_silkscreen_polygon_count"], 0);
-    assert_eq!(components[0]["persisted_component_silkscreen_polyline_count"], 0);
+    assert_eq!(
+        components[0]["persisted_component_silkscreen_circle_count"],
+        0
+    );
+    assert_eq!(
+        components[0]["persisted_component_silkscreen_polygon_count"],
+        0
+    );
+    assert_eq!(
+        components[0]["persisted_component_silkscreen_polyline_count"],
+        0
+    );
     assert_eq!(components[0]["has_persisted_component_mechanical"], false);
-    assert_eq!(components[0]["persisted_component_mechanical_text_count"], 0);
-    assert_eq!(components[0]["persisted_component_mechanical_line_count"], 0);
+    assert_eq!(
+        components[0]["persisted_component_mechanical_text_count"],
+        0
+    );
+    assert_eq!(
+        components[0]["persisted_component_mechanical_line_count"],
+        0
+    );
     assert_eq!(components[0]["persisted_component_mechanical_arc_count"], 0);
-    assert_eq!(components[0]["persisted_component_mechanical_circle_count"], 0);
-    assert_eq!(components[0]["persisted_component_mechanical_polygon_count"], 0);
-    assert_eq!(components[0]["persisted_component_mechanical_polyline_count"], 0);
+    assert_eq!(
+        components[0]["persisted_component_mechanical_circle_count"],
+        0
+    );
+    assert_eq!(
+        components[0]["persisted_component_mechanical_polygon_count"],
+        0
+    );
+    assert_eq!(
+        components[0]["persisted_component_mechanical_polyline_count"],
+        0
+    );
+    assert_eq!(components[0]["has_persisted_component_pads"], false);
+    assert_eq!(components[0]["persisted_component_pad_count"], 0);
+    assert_eq!(components[0]["has_persisted_component_models_3d"], false);
+    assert_eq!(components[0]["persisted_component_model_3d_count"], 0);
 
     let move_cli = Cli::try_parse_from([
         "eda",
@@ -142,8 +180,14 @@ fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_throug
         serde_json::from_str(&set_part_output).expect("set part output should parse");
     assert_eq!(set_part_report["has_persisted_component_silkscreen"], false);
     assert_eq!(set_part_report["has_persisted_component_mechanical"], false);
-    assert_eq!(set_part_report["persisted_component_silkscreen_line_count"], 0);
-    assert_eq!(set_part_report["persisted_component_mechanical_line_count"], 0);
+    assert_eq!(
+        set_part_report["persisted_component_silkscreen_line_count"],
+        0
+    );
+    assert_eq!(
+        set_part_report["persisted_component_mechanical_line_count"],
+        0
+    );
 
     let replacement_package_uuid = Uuid::new_v4();
     let set_package_cli = Cli::try_parse_from([
@@ -163,10 +207,22 @@ fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_throug
         execute(set_package_cli).expect("set board component package should succeed");
     let set_package_report: serde_json::Value =
         serde_json::from_str(&set_package_output).expect("set package output should parse");
-    assert_eq!(set_package_report["has_persisted_component_silkscreen"], false);
-    assert_eq!(set_package_report["has_persisted_component_mechanical"], false);
-    assert_eq!(set_package_report["persisted_component_silkscreen_line_count"], 0);
-    assert_eq!(set_package_report["persisted_component_mechanical_line_count"], 0);
+    assert_eq!(
+        set_package_report["has_persisted_component_silkscreen"],
+        false
+    );
+    assert_eq!(
+        set_package_report["has_persisted_component_mechanical"],
+        false
+    );
+    assert_eq!(
+        set_package_report["persisted_component_silkscreen_line_count"],
+        0
+    );
+    assert_eq!(
+        set_package_report["persisted_component_mechanical_line_count"],
+        0
+    );
 
     let components_output =
         execute(board_components_query_cli(&root)).expect("board components query should succeed");
@@ -174,9 +230,133 @@ fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_throug
         serde_json::from_str(&components_output).expect("query output should parse");
     assert_eq!(components.len(), 1);
     assert_eq!(components[0]["part"], replacement_part_uuid.to_string());
-    assert_eq!(components[0]["package"], replacement_package_uuid.to_string());
+    assert_eq!(
+        components[0]["package"],
+        replacement_package_uuid.to_string()
+    );
+    assert_eq!(components[0]["value"], "MCU");
+    assert_eq!(components[0]["reference"], "U1");
     assert_eq!(components[0]["position"]["x"], 3000);
     assert_eq!(components[0]["position"]["y"], 4000);
+
+    let set_reference_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "set-board-component-reference",
+        root.to_str().unwrap(),
+        "--component",
+        &component_uuid,
+        "--reference",
+        "U42",
+    ])
+    .expect("CLI should parse");
+    let set_reference_output =
+        execute(set_reference_cli).expect("set board component reference should succeed");
+    let set_reference_report: serde_json::Value =
+        serde_json::from_str(&set_reference_output).expect("set reference output should parse");
+    assert_eq!(set_reference_report["reference"], "U42");
+    assert_eq!(
+        set_reference_report["has_persisted_component_silkscreen"],
+        false
+    );
+    assert_eq!(
+        set_reference_report["has_persisted_component_mechanical"],
+        false
+    );
+    assert_eq!(
+        set_reference_report["persisted_component_silkscreen_line_count"],
+        0
+    );
+    assert_eq!(
+        set_reference_report["persisted_component_mechanical_line_count"],
+        0
+    );
+
+    let set_value_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "set-board-component-value",
+        root.to_str().unwrap(),
+        "--component",
+        &component_uuid,
+        "--value",
+        "MCU-REV2",
+    ])
+    .expect("CLI should parse");
+    let set_value_output =
+        execute(set_value_cli).expect("set board component value should succeed");
+    let set_value_report: serde_json::Value =
+        serde_json::from_str(&set_value_output).expect("set value output should parse");
+    assert_eq!(set_value_report["value"], "MCU-REV2");
+    assert_eq!(
+        set_value_report["has_persisted_component_silkscreen"],
+        false
+    );
+    assert_eq!(
+        set_value_report["has_persisted_component_mechanical"],
+        false
+    );
+    assert_eq!(
+        set_value_report["persisted_component_silkscreen_line_count"],
+        0
+    );
+    assert_eq!(
+        set_value_report["persisted_component_mechanical_line_count"],
+        0
+    );
+
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
+    let components: Vec<serde_json::Value> =
+        serde_json::from_str(&components_output).expect("query output should parse");
+    assert_eq!(components.len(), 1);
+    assert_eq!(components[0]["reference"], "U42");
+    assert_eq!(components[0]["value"], "MCU-REV2");
+    assert_eq!(components[0]["part"], replacement_part_uuid.to_string());
+    assert_eq!(
+        components[0]["package"],
+        replacement_package_uuid.to_string()
+    );
+    assert_eq!(components[0]["layer"], 1);
+
+    let set_layer_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "set-board-component-layer",
+        root.to_str().unwrap(),
+        "--component",
+        &component_uuid,
+        "--layer",
+        "2",
+    ])
+    .expect("CLI should parse");
+    let set_layer_output =
+        execute(set_layer_cli).expect("set board component layer should succeed");
+    let set_layer_report: serde_json::Value =
+        serde_json::from_str(&set_layer_output).expect("set layer output should parse");
+    assert_eq!(set_layer_report["layer"], 2);
+    assert_eq!(
+        set_layer_report["has_persisted_component_silkscreen"],
+        false
+    );
+    assert_eq!(
+        set_layer_report["has_persisted_component_mechanical"],
+        false
+    );
+    assert_eq!(
+        set_layer_report["persisted_component_silkscreen_line_count"],
+        0
+    );
+    assert_eq!(
+        set_layer_report["persisted_component_mechanical_line_count"],
+        0
+    );
 
     let rotate_cli = Cli::try_parse_from([
         "eda",
@@ -196,14 +376,21 @@ fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_throug
         serde_json::from_str(&rotate_output).expect("rotate output should parse");
     assert_eq!(rotate_report["has_persisted_component_silkscreen"], false);
     assert_eq!(rotate_report["has_persisted_component_mechanical"], false);
-    assert_eq!(rotate_report["persisted_component_silkscreen_line_count"], 0);
-    assert_eq!(rotate_report["persisted_component_mechanical_line_count"], 0);
+    assert_eq!(
+        rotate_report["persisted_component_silkscreen_line_count"],
+        0
+    );
+    assert_eq!(
+        rotate_report["persisted_component_mechanical_line_count"],
+        0
+    );
 
     let components_output =
         execute(board_components_query_cli(&root)).expect("board components query should succeed");
     let components: Vec<serde_json::Value> =
         serde_json::from_str(&components_output).expect("query output should parse");
     assert_eq!(components.len(), 1);
+    assert_eq!(components[0]["layer"], 2);
     assert_eq!(components[0]["rotation"], 180);
     assert_eq!(components[0]["locked"], false);
 
@@ -250,8 +437,14 @@ fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_throug
         serde_json::from_str(&unlock_output).expect("unlock output should parse");
     assert_eq!(unlock_report["has_persisted_component_silkscreen"], false);
     assert_eq!(unlock_report["has_persisted_component_mechanical"], false);
-    assert_eq!(unlock_report["persisted_component_silkscreen_line_count"], 0);
-    assert_eq!(unlock_report["persisted_component_mechanical_line_count"], 0);
+    assert_eq!(
+        unlock_report["persisted_component_silkscreen_line_count"],
+        0
+    );
+    assert_eq!(
+        unlock_report["persisted_component_mechanical_line_count"],
+        0
+    );
 
     let components_output =
         execute(board_components_query_cli(&root)).expect("board components query should succeed");

@@ -12,6 +12,7 @@ fn project_validate_gerber_paste_layer_reports_match_and_mismatch() {
         .expect("initial scaffold should succeed");
 
     let pad_uuid = Uuid::new_v4();
+    let component_uuid = Uuid::new_v4();
     let board_json = root.join("board/board.json");
     std::fs::write(
         &board_json,
@@ -29,6 +30,32 @@ fn project_validate_gerber_paste_layer_reports_match_and_mismatch() {
                 },
                 "outline": { "vertices": [], "closed": true },
                 "packages": {},
+                "component_pads": {
+                    component_uuid.to_string(): [
+                        {
+                            "uuid": Uuid::new_v4(),
+                            "name": "CP1",
+                            "position": { "x": 1750000, "y": 250000 },
+                            "padstack": Uuid::new_v4(),
+                            "layer": 1,
+                            "shape": "circle",
+                            "diameter_nm": 500000,
+                            "width_nm": 0,
+                            "height_nm": 0
+                        },
+                        {
+                            "uuid": Uuid::new_v4(),
+                            "name": "CP2",
+                            "position": { "x": 2250000, "y": 250000 },
+                            "padstack": Uuid::new_v4(),
+                            "layer": 1,
+                            "shape": null,
+                            "diameter_nm": 0,
+                            "width_nm": 0,
+                            "height_nm": 0
+                        }
+                    ]
+                },
                 "pads": {
                     pad_uuid.to_string(): {
                         "uuid": pad_uuid,
@@ -87,7 +114,7 @@ fn project_validate_gerber_paste_layer_reports_match_and_mismatch() {
     assert_eq!(exit_code, 0);
     assert_eq!(report["matches_expected"], true);
     assert_eq!(report["source_copper_layer"], 1);
-    assert_eq!(report["pad_count"], 1);
+    assert_eq!(report["pad_count"], 2);
 
     std::fs::write(&gerber_path, "corrupted\n").expect("gerber overwrite should succeed");
     let validate_cli = Cli::try_parse_from([
@@ -107,7 +134,7 @@ fn project_validate_gerber_paste_layer_reports_match_and_mismatch() {
     let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
     assert_eq!(exit_code, 1);
     assert_eq!(report["matches_expected"], false);
-    assert_eq!(report["pad_count"], 1);
+    assert_eq!(report["pad_count"], 2);
 
     let _ = std::fs::remove_dir_all(&root);
 }

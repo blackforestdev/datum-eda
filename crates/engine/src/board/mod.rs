@@ -1,13 +1,14 @@
 use std::collections::HashMap;
 
-use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 use crate::ir::geometry::{LayerId, Point, Polygon};
 use crate::schematic::ConnectivityDiagnosticInfo;
+use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 mod dimension;
 mod polygon;
 mod rule_set;
+mod text;
 
 pub use rule_set::RuleSet;
 
@@ -189,18 +190,10 @@ pub struct BoardText {
     pub position: Point,
     pub rotation: i32,
     pub layer: LayerId,
-    #[serde(default = "default_board_text_height_nm")]
+    #[serde(default = "text::default_board_text_height_nm")]
     pub height_nm: i64,
-    #[serde(default = "default_board_text_stroke_width_nm")]
+    #[serde(default = "text::default_board_text_stroke_width_nm")]
     pub stroke_width_nm: i64,
-}
-
-fn default_board_text_height_nm() -> i64 {
-    1_000_000
-}
-
-fn default_board_text_stroke_width_nm() -> i64 {
-    100_000
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

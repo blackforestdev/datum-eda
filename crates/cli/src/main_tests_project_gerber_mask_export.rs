@@ -13,6 +13,7 @@ fn project_export_gerber_soldermask_layer_writes_rs274x_pad_openings() {
 
     let pad_circle_uuid = Uuid::new_v4();
     let pad_rect_uuid = Uuid::new_v4();
+    let component_uuid = Uuid::new_v4();
     let board_json = root.join("board/board.json");
     std::fs::write(
         &board_json,
@@ -32,6 +33,32 @@ fn project_export_gerber_soldermask_layer_writes_rs274x_pad_openings() {
                 },
                 "outline": { "vertices": [], "closed": true },
                 "packages": {},
+                "component_pads": {
+                    component_uuid.to_string(): [
+                        {
+                            "uuid": Uuid::new_v4(),
+                            "name": "CP1",
+                            "position": { "x": 1750000, "y": 250000 },
+                            "padstack": Uuid::new_v4(),
+                            "layer": 1,
+                            "shape": "circle",
+                            "diameter_nm": 500000,
+                            "width_nm": 0,
+                            "height_nm": 0
+                        },
+                        {
+                            "uuid": Uuid::new_v4(),
+                            "name": "CP2",
+                            "position": { "x": 2250000, "y": 250000 },
+                            "padstack": Uuid::new_v4(),
+                            "layer": 1,
+                            "shape": null,
+                            "diameter_nm": 0,
+                            "width_nm": 0,
+                            "height_nm": 0
+                        }
+                    ]
+                },
                 "pads": {
                     pad_circle_uuid.to_string(): {
                         "uuid": pad_circle_uuid,
@@ -89,16 +116,20 @@ fn project_export_gerber_soldermask_layer_writes_rs274x_pad_openings() {
     assert_eq!(report["action"], "export_gerber_soldermask_layer");
     assert_eq!(report["layer"], 2);
     assert_eq!(report["source_copper_layer"], 1);
-    assert_eq!(report["pad_count"], 2);
+    assert_eq!(report["pad_count"], 3);
 
     let gerber = std::fs::read_to_string(&gerber_path).expect("gerber should read");
     assert!(gerber.contains("G04 datum-eda native soldermask layer 2*"));
     assert!(gerber.contains("%ADD10C,0.450000*%"));
-    assert!(gerber.contains("%ADD11R,0.800000X0.400000*%"));
+    assert!(gerber.contains("%ADD11C,0.500000*%"));
+    assert!(gerber.contains("%ADD12R,0.800000X0.400000*%"));
     assert!(gerber.contains("D10*"));
     assert!(gerber.contains("X750000Y250000D03*"));
-    assert!(gerber.contains("D11*"));
+    assert!(gerber.contains("D12*"));
     assert!(gerber.contains("X1250000Y250000D03*"));
+    assert!(gerber.contains("D11*"));
+    assert!(gerber.contains("X1750000Y250000D03*"));
+    assert!(!gerber.contains("X2250000Y250000D03*"));
     assert!(gerber.ends_with("M02*\n"));
 
     let _ = std::fs::remove_dir_all(&root);

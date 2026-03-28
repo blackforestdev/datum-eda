@@ -9,7 +9,7 @@ use clap::Parser;
 use eda_engine::api::{
     AssignPartInput, CheckReport, CheckStatus, ComponentReplacementPlan,
     ComponentReplacementPolicy, ComponentReplacementScope, Engine, MoveComponentInput,
-    OperationResult, PackageChangeCompatibilityReport, PartChangeCompatibilityReport,
+    PackageChangeCompatibilityReport, PartChangeCompatibilityReport,
     PlannedComponentReplacementInput, PolicyDrivenComponentReplacementInput, ReplaceComponentInput,
     RotateComponentInput, ScopedComponentReplacementOverride, ScopedComponentReplacementPlan,
     ScopedComponentReplacementPlanEdit, ScopedComponentReplacementPolicyInput, SetDesignRuleInput,
@@ -34,22 +34,30 @@ mod command_plan;
 mod command_project;
 mod command_query;
 mod main_board_component;
-mod main_inspect;
-mod main_summary;
+mod main_drill;
 mod main_gerber_inspect;
 mod main_gerber_mechanical;
+mod main_gerber_set;
 mod main_gerber_silkscreen;
+mod main_inspect;
+mod main_manufacturing;
+mod main_modify;
+mod main_summary;
 
 use cli_args::*;
 use command_plan::*;
 use command_project::*;
 use command_query::*;
 pub(crate) use main_board_component::*;
-pub(crate) use main_inspect::*;
-pub(crate) use main_summary::*;
+pub(crate) use main_drill::*;
 pub(crate) use main_gerber_inspect::*;
 pub(crate) use main_gerber_mechanical::*;
+pub(crate) use main_gerber_set::*;
 pub(crate) use main_gerber_silkscreen::*;
+pub(crate) use main_inspect::*;
+pub(crate) use main_manufacturing::*;
+pub(crate) use main_modify::*;
+pub(crate) use main_summary::*;
 
 fn main() {
     match run() {
@@ -76,23 +84,6 @@ fn run() -> Result<i32> {
 
 fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
     command_exec::execute_with_exit_code(cli)
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct ModifyReportView {
-    actions: Vec<String>,
-    last_result: Option<OperationResult>,
-    saved_path: Option<String>,
-    applied_scoped_replacement_manifests: Vec<AppliedScopedReplacementManifestView>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct AppliedScopedReplacementManifestView {
-    path: String,
-    source_version: u32,
-    version: u32,
-    migration_applied: bool,
-    replacements: usize,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -167,104 +158,6 @@ struct NativeProjectPnpComparisonView {
     missing: Vec<String>,
     extra: Vec<String>,
     drift: Vec<NativeProjectPnpDriftView>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectDrillExportView {
-    action: String,
-    project_root: String,
-    drill_path: String,
-    rows: usize,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectExcellonDrillExportView {
-    action: String,
-    project_root: String,
-    board_path: String,
-    drill_path: String,
-    via_count: usize,
-    tool_count: usize,
-    tools: Vec<NativeProjectExcellonDrillToolView>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectExcellonDrillValidationView {
-    action: String,
-    project_root: String,
-    board_path: String,
-    drill_path: String,
-    matches_expected: bool,
-    expected_bytes: usize,
-    actual_bytes: usize,
-    via_count: usize,
-    tool_count: usize,
-    tools: Vec<NativeProjectExcellonDrillToolView>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectExcellonDrillToolView {
-    tool: String,
-    diameter_mm: String,
-    hits: usize,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectExcellonDrillInspectionView {
-    action: String,
-    drill_path: String,
-    metric: bool,
-    tool_count: usize,
-    hit_count: usize,
-    tools: Vec<NativeProjectExcellonDrillToolView>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectExcellonDrillHitDriftView {
-    diameter_mm: String,
-    expected_hits: usize,
-    actual_hits: usize,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectExcellonDrillComparisonView {
-    action: String,
-    project_root: String,
-    board_path: String,
-    drill_path: String,
-    expected_tool_count: usize,
-    actual_tool_count: usize,
-    expected_hit_count: usize,
-    actual_hit_count: usize,
-    matched_count: usize,
-    missing_count: usize,
-    extra_count: usize,
-    hit_drift_count: usize,
-    matched: Vec<String>,
-    missing: Vec<String>,
-    extra: Vec<String>,
-    hit_drift: Vec<NativeProjectExcellonDrillHitDriftView>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectDrillHoleClassBucketView {
-    class: String,
-    from_layer: i32,
-    to_layer: i32,
-    via_count: usize,
-    tool_count: usize,
-    tools: Vec<NativeProjectExcellonDrillToolView>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectDrillHoleClassReportView {
-    action: String,
-    project_root: String,
-    board_path: String,
-    copper_layer_count: usize,
-    via_count: usize,
-    class_count: usize,
-    classes: Vec<NativeProjectDrillHoleClassBucketView>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -1207,163 +1100,6 @@ fn render_native_project_pnp_comparison_text(report: &NativeProjectPnpComparison
                 entry.reference,
                 entry.fields.join(",")
             ));
-        }
-    }
-    lines.join("\n")
-}
-
-fn render_native_project_drill_export_text(report: &NativeProjectDrillExportView) -> String {
-    [
-        format!("action: {}", report.action),
-        format!("project_root: {}", report.project_root),
-        format!("drill_path: {}", report.drill_path),
-        format!("rows: {}", report.rows),
-    ]
-    .join("\n")
-}
-
-fn render_native_project_excellon_drill_export_text(
-    report: &NativeProjectExcellonDrillExportView,
-) -> String {
-    let mut lines = vec![
-        format!("action: {}", report.action),
-        format!("project_root: {}", report.project_root),
-        format!("board_path: {}", report.board_path),
-        format!("drill_path: {}", report.drill_path),
-        format!("via_count: {}", report.via_count),
-        format!("tool_count: {}", report.tool_count),
-    ];
-    if !report.tools.is_empty() {
-        lines.push("tools:".to_string());
-        for tool in &report.tools {
-            lines.push(format!(
-                "- {} diameter_mm={} hits={}",
-                tool.tool, tool.diameter_mm, tool.hits
-            ));
-        }
-    }
-    lines.join("\n")
-}
-
-fn render_native_project_excellon_drill_validation_text(
-    report: &NativeProjectExcellonDrillValidationView,
-) -> String {
-    let mut lines = vec![
-        format!("action: {}", report.action),
-        format!("project_root: {}", report.project_root),
-        format!("board_path: {}", report.board_path),
-        format!("drill_path: {}", report.drill_path),
-        format!("matches_expected: {}", report.matches_expected),
-        format!("expected_bytes: {}", report.expected_bytes),
-        format!("actual_bytes: {}", report.actual_bytes),
-        format!("via_count: {}", report.via_count),
-        format!("tool_count: {}", report.tool_count),
-    ];
-    if !report.tools.is_empty() {
-        lines.push("tools:".to_string());
-        for tool in &report.tools {
-            lines.push(format!(
-                "- {} diameter_mm={} hits={}",
-                tool.tool, tool.diameter_mm, tool.hits
-            ));
-        }
-    }
-    lines.join("\n")
-}
-
-fn render_native_project_excellon_drill_inspection_text(
-    report: &NativeProjectExcellonDrillInspectionView,
-) -> String {
-    let mut lines = vec![
-        format!("action: {}", report.action),
-        format!("drill_path: {}", report.drill_path),
-        format!("metric: {}", report.metric),
-        format!("tool_count: {}", report.tool_count),
-        format!("hit_count: {}", report.hit_count),
-    ];
-    if !report.tools.is_empty() {
-        lines.push("tools:".to_string());
-        for tool in &report.tools {
-            lines.push(format!(
-                "- {} diameter_mm={} hits={}",
-                tool.tool, tool.diameter_mm, tool.hits
-            ));
-        }
-    }
-    lines.join("\n")
-}
-
-fn render_native_project_excellon_drill_comparison_text(
-    report: &NativeProjectExcellonDrillComparisonView,
-) -> String {
-    let mut lines = vec![
-        format!("action: {}", report.action),
-        format!("project_root: {}", report.project_root),
-        format!("board_path: {}", report.board_path),
-        format!("drill_path: {}", report.drill_path),
-        format!("expected_tool_count: {}", report.expected_tool_count),
-        format!("actual_tool_count: {}", report.actual_tool_count),
-        format!("expected_hit_count: {}", report.expected_hit_count),
-        format!("actual_hit_count: {}", report.actual_hit_count),
-        format!("matched_count: {}", report.matched_count),
-        format!("missing_count: {}", report.missing_count),
-        format!("extra_count: {}", report.extra_count),
-        format!("hit_drift_count: {}", report.hit_drift_count),
-    ];
-    if !report.matched.is_empty() {
-        lines.push("matched:".to_string());
-        for entry in &report.matched {
-            lines.push(format!("- {}", entry));
-        }
-    }
-    if !report.missing.is_empty() {
-        lines.push("missing:".to_string());
-        for entry in &report.missing {
-            lines.push(format!("- {}", entry));
-        }
-    }
-    if !report.extra.is_empty() {
-        lines.push("extra:".to_string());
-        for entry in &report.extra {
-            lines.push(format!("- {}", entry));
-        }
-    }
-    if !report.hit_drift.is_empty() {
-        lines.push("hit_drift:".to_string());
-        for entry in &report.hit_drift {
-            lines.push(format!(
-                "- diameter_mm={} expected_hits={} actual_hits={}",
-                entry.diameter_mm, entry.expected_hits, entry.actual_hits
-            ));
-        }
-    }
-    lines.join("\n")
-}
-
-fn render_native_project_drill_hole_class_report_text(
-    report: &NativeProjectDrillHoleClassReportView,
-) -> String {
-    let mut lines = vec![
-        format!("action: {}", report.action),
-        format!("project_root: {}", report.project_root),
-        format!("board_path: {}", report.board_path),
-        format!("copper_layer_count: {}", report.copper_layer_count),
-        format!("via_count: {}", report.via_count),
-        format!("class_count: {}", report.class_count),
-    ];
-    if !report.classes.is_empty() {
-        lines.push("classes:".to_string());
-        for class in &report.classes {
-            lines.push(format!(
-                "- class={} span=L{}-L{} via_count={} tool_count={}",
-                class.class, class.from_layer, class.to_layer, class.via_count, class.tool_count
-            ));
-            for tool in &class.tools {
-                lines.push(format!(
-                    "  tool={} diameter_mm={} hits={}",
-                    tool.tool, tool.diameter_mm, tool.hits
-                ));
-            }
         }
     }
     lines.join("\n")

@@ -79,6 +79,17 @@ pub struct Entity {
 pub struct Padstack {
     pub uuid: Uuid,
     pub name: String,
+    #[serde(default)]
+    pub aperture: Option<PadstackAperture>,
+    #[serde(default)]
+    pub drill_nm: Option<i64>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum PadstackAperture {
+    Circle { diameter_nm: i64 },
+    Rect { width_nm: i64, height_nm: i64 },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

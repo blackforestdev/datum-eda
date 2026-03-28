@@ -27,6 +27,8 @@ mod main_tests_project_drill_export;
 mod main_tests_project_drill_hole_classes;
 #[path = "main_tests_project_excellon_drill_compare.rs"]
 mod main_tests_project_excellon_drill_compare;
+#[path = "main_tests_project_excellon_drill_component_pads.rs"]
+mod main_tests_project_excellon_drill_component_pads;
 #[path = "main_tests_project_excellon_drill_export.rs"]
 mod main_tests_project_excellon_drill_export;
 #[path = "main_tests_project_excellon_drill_inspect.rs"]
@@ -77,6 +79,10 @@ mod main_tests_project_gerber_paste_validate;
 mod main_tests_project_gerber_plan;
 #[path = "main_tests_project_gerber_plan_compare.rs"]
 mod main_tests_project_gerber_plan_compare;
+#[path = "main_tests_project_gerber_set.rs"]
+mod main_tests_project_gerber_set;
+#[path = "main_tests_project_manufacturing.rs"]
+mod main_tests_project_manufacturing;
 #[path = "main_tests_project_gerber_silk_compare.rs"]
 mod main_tests_project_gerber_silk_compare;
 #[path = "main_tests_project_gerber_silk_component_arc.rs"]

@@ -156,7 +156,16 @@ Current live slice:
 - `eda project set-board-stackup <dir> --layer <id:name:type:thickness_nm>...`
   replaces the ordered native board stackup layer list directly on
   `board/board.json`, while `eda project query <dir> board-stackup` reads back
-  that persisted stackup slice.
+  that persisted stackup slice. Fresh native projects now seed a minimal
+  default stackup with `1:Top Copper:Copper:35000`,
+  `2:Top Mask:SolderMask:10000`, `3:Top Silk:Silkscreen:10000`,
+  `4:Top Paste:Paste:10000`, and `41:Mechanical 41:Mechanical:0` so the
+  current top-side Gerber slices plus the package-linked silkscreen/courtyard
+  contracts are usable immediately.
+- `eda project add-default-top-stackup <dir>` retrofits those same canonical
+  top-side default layers into an existing native project by adding only
+  missing default IDs and leaving matching existing layers unchanged; it fails
+  instead of overwriting conflicting occupied default IDs.
 - `eda project place-board-net <dir> --name <text> --class <uuid>`,
   `eda project edit-board-net <dir> --net <uuid> ...`, and
   `eda project delete-board-net <dir> --net <uuid>` add the first native board
@@ -167,6 +176,18 @@ Current live slice:
   presence flags plus the currently materialized silkscreen subset counts and
   persisted component-mechanical subset counts, establishing the read-side
   contract for future native package placement work.
+- `eda project place-board-component <dir> ...`, `eda project move-board-component
+  <dir> ...`, `eda project set-board-component-part <dir> ...`,
+  `eda project set-board-component-package <dir> ...`, `eda project
+  set-board-component-layer <dir> ...`, `eda project
+  set-board-component-reference <dir> ...`, `eda project
+  set-board-component-value <dir> ...`, `eda project rotate-board-component
+  <dir> ...`, `eda project set-board-component-locked <dir> ...`, `eda
+  project clear-board-component-locked <dir> ...`, and `eda project
+  delete-board-component <dir> ...` now expose the current native
+  board-component lifecycle through CLI on persisted `board/board.json`, with
+  mutation reports that include the currently persisted package-graphics
+  presence/count subset for that component.
 - `eda project export-bom <dir> --out <path>` writes a deterministic CSV BOM
   directly from that persisted native board-component inventory, establishing
   the first native manufacturing-export slice without depending on pool lookup,
@@ -189,9 +210,11 @@ Current live slice:
   the first native drill-export slice without claiming full Excellon tooling,
   slot support, or fabrication-ready hole tables yet.
 - `eda project export-excellon-drill <dir> --out <path>` now writes a narrow
-  Excellon drill file directly from the persisted native via inventory through
-  `eda_engine::export`, establishing the first real drill writer on the native
-  board path.
+  Excellon drill file directly from the persisted native via inventory plus
+  drill-bearing package `component_pads` through `eda_engine::export`,
+  treating those package pads as plated through holes spanning the outer
+  copper pair in the current slice, establishing the first real drill writer
+  on the native board path.
 - `eda project validate-excellon-drill <dir> --drill <path>` now re-renders
   that expected native Excellon drill file and reports byte-for-byte
   match/mismatch with CI-usable exit status, establishing the first validation
@@ -201,13 +224,16 @@ Current live slice:
   the first Excellon read/inspection surface without claiming broader drill
   interchange support.
 - `eda project compare-excellon-drill <dir> --drill <path>` now compares that
-  narrow Excellon file against the current native via inventory by normalized
-  drill diameter and hit count, reporting matched, missing, extra, and hit-
-  drift drill buckets without requiring byte-for-byte identity.
+  narrow Excellon file against the current native via inventory plus
+  drill-bearing package `component_pads` by normalized drill diameter and hit
+  count, reporting matched, missing, extra, and hit-drift drill buckets
+  without requiring byte-for-byte identity.
 - `eda project report-drill-hole-classes <dir>` now groups the current native
-  via inventory into explicit through/blind/buried hole classes using copper
-  layer span from the persisted native stackup, reporting per-class tool tables
-  and hit counts.
+  via inventory plus drill-bearing package `component_pads` into explicit
+  through/blind/buried hole classes using copper layer span from the persisted
+  native stackup, treating package pads as through holes on the outer copper
+  pair in the current slice and reporting per-class tool tables and hit
+  counts.
 - `eda project export-gerber-outline <dir> --out <path>` now writes a narrow
   RS-274X Gerber file for the persisted native board outline through
   `eda_engine::export`, establishing the first real native Gerber writer on
@@ -218,15 +244,19 @@ Current live slice:
   validation surface for a real Gerber writer.
 - `eda project export-gerber-copper-layer <dir> --layer <id> --out <path>`
   now writes a narrow RS-274X Gerber file for persisted native board pads,
-  tracks, vias, and zones on one selected copper layer through
-  `eda_engine::export`, with pads emitted only from explicitly stored circular
-  or rectangular copper geometry on native board pads, establishing the first
-  real copper-layer writer without claiming broader pad geometry or full
-  layer-set emission yet.
+  persisted package `component_pads` with explicit apertures, tracks, vias,
+  and zones on one selected copper layer through `eda_engine::export`, with
+  pads emitted only from explicitly stored circular or rectangular copper
+  geometry on native board pads or resolved package pads whose source
+  padstacks explicitly defined circle/rect apertures. Aperture-less persisted
+  package pads remain non-emitting in this slice, establishing the first real
+  copper-layer writer without claiming broader pad geometry or full layer-set
+  emission yet.
 - `eda project export-gerber-soldermask-layer <dir> --layer <id> --out
   <path>` now writes a narrow RS-274X Gerber file for persisted native pad
   openings on one selected soldermask layer through `eda_engine::export`,
-  deriving circular/rectangular flashed openings from pads on the nearest
+  deriving circular/rectangular flashed openings from authored board pads plus
+  persisted package `component_pads` with explicit apertures on the nearest
   copper layer in stackup order without claiming mask expansion, via tenting,
   or broader layer-set emission yet.
 - `eda project export-gerber-silkscreen-layer <dir> --layer <id> --out
@@ -244,9 +274,10 @@ Current live slice:
 - `eda project export-gerber-paste-layer <dir> --layer <id> --out <path>` now
   writes a narrow RS-274X Gerber file for persisted native pad openings on one
   selected paste layer through `eda_engine::export`, deriving
-  circular/rectangular flashed openings from pads on the nearest copper layer
-  in stackup order without claiming paste reduction, stencil policy, or
-  broader layer-set emission yet.
+  circular/rectangular flashed openings from authored board pads plus
+  persisted package `component_pads` with explicit apertures on the nearest
+  copper layer in stackup order without claiming paste reduction, stencil
+  policy, or broader layer-set emission yet.
 - `eda project export-gerber-mechanical-layer <dir> --layer <id> --out
   <path>` now writes a narrow RS-274X Gerber file for persisted native board
   keepout polygons, board-dimension span lines, authored board text, plus
@@ -258,8 +289,8 @@ Current live slice:
   spans as fixed-width baseline strokes only, and authored board text plus
   explicit component-mechanical text through the same fixed stroke-font
   contract used by the current silkscreen subset, without claiming dimension
-  text, arrowheads, package auto-resolution, or broader documentation-layer
-  coverage yet.
+  text, arrowheads, broader package-linked mechanical primitives beyond
+  courtyard, or broader documentation-layer coverage yet.
 - `eda project validate-gerber-copper-layer <dir> --layer <id> --gerber
   <path>` now re-renders that expected native copper-layer Gerber and reports
   byte-for-byte match/mismatch with CI-usable exit status, establishing the
@@ -268,6 +299,23 @@ Current live slice:
   deterministic broader Gerber artifact set implied by the current native
   board outline and stackup, without claiming that the full planned layer set
   is writable yet.
+- `eda project export-gerber-set <dir> --output-dir <path> [--prefix <text>]`
+  writes that currently supported planned Gerber artifact set into one output
+  directory using the existing outline/copper/soldermask/silkscreen/paste and
+  mechanical writers for the current stackup-backed subset only.
+- `eda project validate-gerber-set <dir> --output-dir <path> [--prefix <text>]`
+  validates that same currently supported planned Gerber artifact set in one
+  output directory, reporting missing, mismatched, and extra files by
+  delegating to the existing byte-strict per-artifact validators.
+- `eda project compare-gerber-set <dir> --output-dir <path> [--prefix <text>]`
+  semantically compares that same currently supported planned Gerber artifact
+  set in one output directory, reporting missing, mismatched, and extra files
+  by delegating to the existing per-artifact geometry-aware compare paths.
+- `eda project report-manufacturing <dir> [--prefix <text>]` now reports the
+  current persisted-state manufacturing surface without writing artifacts:
+  BOM/PnP component counts, via-only CSV drill row count, Excellon/hole-class
+  drill counts, and the planned Gerber artifact filenames for the currently
+  supported stackup-backed subset.
 - `eda project compare-gerber-export-plan <dir> --output-dir <path>
   [--prefix <text>]` compares that deterministic planned artifact set against a
   directory and reports matched, missing, and extra files, establishing the
@@ -285,15 +333,16 @@ Current live slice:
 - `eda project compare-gerber-copper-layer <dir> --layer <id> --gerber
   <path>` now parses the currently emitted copper-layer RS-274X subset and
   compares circular/rectangular flashed pads, tracks, flashed vias, and region
-  zones semantically against the persisted native layer geometry with
-  deterministic matched/missing/extra reporting, without claiming broader
-  RS-274X feature coverage.
+  zones semantically against the persisted native layer geometry, including
+  explicit-aperture package `component_pads`, with deterministic
+  matched/missing/extra reporting, without claiming broader RS-274X feature
+  coverage.
 - `eda project compare-gerber-soldermask-layer <dir> --layer <id> --gerber
   <path>` now parses the currently emitted soldermask-layer RS-274X subset and
   compares circular/rectangular flashed pad openings semantically against the
   persisted native openings derived from the nearest copper layer in stackup
-  order, without claiming mask expansion, via tenting, or broader RS-274X
-  feature coverage.
+  order, including explicit-aperture package `component_pads`, without
+  claiming mask expansion, via tenting, or broader RS-274X feature coverage.
 - `eda project compare-gerber-silkscreen-layer <dir> --layer <id> --gerber
   <path>` now parses the currently emitted silkscreen-layer RS-274X subset and
   compares authored board-text strokes plus persisted explicit
@@ -305,8 +354,9 @@ Current live slice:
   <path>` now parses the currently emitted paste-layer RS-274X subset and
   compares circular/rectangular flashed pad openings semantically against the
   persisted native openings derived from the nearest copper layer in stackup
-  order, without claiming paste reduction, stencil policy, or broader RS-274X
-  feature coverage.
+  order, including explicit-aperture package `component_pads`, without
+  claiming paste reduction, stencil policy, or broader RS-274X feature
+  coverage.
 - `eda project compare-gerber-mechanical-layer <dir> --layer <id> --gerber
   <path>` now parses the currently emitted mechanical-layer RS-274X subset and
   compares persisted native keepout polygons, fixed-width board-dimension span
@@ -476,15 +526,26 @@ Current M4 truth boundary for package-linked graphics:
   search roots, honoring manifest priority order, and materialize only the
   currently supported subset into persisted `board/board.json`.
 - The currently supported package-linked materialization subset is silkscreen
-  non-text primitives with explicit truthful source fields: lines, rectangles
-  (persisted as closed polygons), circles, arcs, closed polygons, and open
-  polygons (persisted as open polylines).
+  non-text primitives with explicit truthful source fields plus package
+  courtyard as a fixed-layer mechanical polygon, resolved package pads, and
+  package 3D model refs: lines, rectangles (persisted as closed polygons),
+  circles, arcs, closed polygons, and open polygons (persisted as open
+  polylines) on silkscreen, plus `courtyard` persisted into
+  `component_mechanical_polygons` on mechanical layer `41`, plus package pads
+  persisted into `component_pads` with optional circle/rect aperture geometry
+  only when the source padstack carries explicit aperture fields, plus
+  optional source-backed `drill_nm` when the resolved padstack defines it, plus
+  `models_3d` persisted into `component_models_3d`.
 - Package text remains out of scope because pool package text does not yet
   carry explicit native render sizing needed for the current stroke-font
   contract.
 - Native Gerber export/validate/compare still operates only from persisted
-  board state. Mechanical/package-linked expansion beyond the explicit
-  persisted subset remains open.
+  board state. In the current slice, copper/soldermask/paste manufacturing
+  consumes only authored board pads plus persisted package `component_pads`
+  whose resolved source padstacks carried explicit circle/rect apertures;
+  aperture-less persisted package pads remain out of manufacturing claims.
+  Package-linked mechanical expansion beyond fixed-layer `courtyard` polygons
+  remains open.
 
 ## Design Principle
 The native format is a direct serialization of the canonical IR. No
@@ -565,10 +626,22 @@ myproject/
 `pools` declares pool search roots for native projects. In the current M4
 slice the board mutation path resolves package JSON from those roots during
 component placement and package reassignment and persists only the supported
-truthful package-graphics subset into `board/board.json`; export and compare
+truthful package-linked subset into `board/board.json`; export and compare
 continue to read only persisted board state. Current support is limited to
-package silkscreen non-text primitives only; the `component_silkscreen_texts`
-map is schema-only in this slice and remains empty by design. Relative pool
+package silkscreen non-text primitives, `courtyard` on fixed mechanical layer
+`41`, resolved package pads in `component_pads`, and `models_3d`; the
+`component_silkscreen_texts` map is schema-only in this slice and remains
+empty by design. Package pads only carry aperture geometry in this slice when
+the resolved source padstack explicitly defines it; otherwise the persisted
+pad remains aperture-less rather than inventing copper shape. Copper,
+soldermask, and paste Gerber flows consume only the explicit-aperture subset
+of persisted `component_pads`; aperture-less package pads remain non-emitting.
+Persisted package pads may now also carry optional source-backed `drill_nm`,
+and the Excellon drill plus drill-hole-class reporting slices now consume that
+drill-bearing subset as plated through holes spanning the outer copper pair.
+The CSV `export-drill` surface remains via-only in this slice, and broader
+package-linked drill semantics remain out of scope.
+Relative pool
 paths are resolved from the project root and absolute paths remain valid for
 external pool refs.
 

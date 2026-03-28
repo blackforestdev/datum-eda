@@ -119,6 +119,12 @@ Exit criteria:
 - Prefer adding modules over growing existing monoliths.
 - Tripwire failures are merge blockers and must follow the response playbook in
   `docs/DECOMPOSITION_BACKLOG.md`.
+- Lane execution must follow exit-on-closure protocol:
+  - once a lane is `closed` or `blocked-awaiting-contract`, stop same-lane
+    exploratory audits
+  - require immediate branch selection: define next contract or switch slices
+  - if no contract decision is provided, switch to one pre-approved unblocked
+    slice by default
 
 ## 6. Reporting
 

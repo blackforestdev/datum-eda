@@ -15,6 +15,7 @@ fn project_compare_gerber_copper_layer_is_semantic_and_reports_drift() {
     let class_uuid = Uuid::new_v4();
     let circle_pad_uuid = Uuid::new_v4();
     let rect_pad_uuid = Uuid::new_v4();
+    let component_uuid = Uuid::new_v4();
     let track_a_uuid = Uuid::new_v4();
     let track_b_uuid = Uuid::new_v4();
     let zone_uuid = Uuid::new_v4();
@@ -31,6 +32,43 @@ fn project_compare_gerber_copper_layer_is_semantic_and_reports_drift() {
                 "stackup": { "layers": [] },
                 "outline": { "vertices": [], "closed": true },
                 "packages": {},
+                "component_pads": {
+                    component_uuid.to_string(): [
+                        {
+                            "uuid": Uuid::new_v4(),
+                            "name": "CP1",
+                            "position": { "x": 1750000, "y": 250000 },
+                            "padstack": Uuid::new_v4(),
+                            "layer": 1,
+                            "shape": "circle",
+                            "diameter_nm": 500000,
+                            "width_nm": 0,
+                            "height_nm": 0
+                        },
+                        {
+                            "uuid": Uuid::new_v4(),
+                            "name": "CP2",
+                            "position": { "x": 2250000, "y": 250000 },
+                            "padstack": Uuid::new_v4(),
+                            "layer": 1,
+                            "shape": "rect",
+                            "diameter_nm": 0,
+                            "width_nm": 900000,
+                            "height_nm": 450000
+                        },
+                        {
+                            "uuid": Uuid::new_v4(),
+                            "name": "CP3",
+                            "position": { "x": 2750000, "y": 250000 },
+                            "padstack": Uuid::new_v4(),
+                            "layer": 1,
+                            "shape": null,
+                            "diameter_nm": 0,
+                            "width_nm": 0,
+                            "height_nm": 0
+                        }
+                    ]
+                },
                 "pads": {
                     circle_pad_uuid.to_string(): {
                         "uuid": circle_pad_uuid,
@@ -141,15 +179,21 @@ fn project_compare_gerber_copper_layer_is_semantic_and_reports_drift() {
             "%LPD*%\n",
             "%ADD12C,0.300000*%\n",
             "%ADD13C,0.450000*%\n",
-            "%ADD14C,0.600000*%\n",
-            "%ADD15C,0.200000*%\n",
-            "%ADD16R,0.800000X0.400000*%\n",
+            "%ADD14C,0.500000*%\n",
+            "%ADD15C,0.600000*%\n",
+            "%ADD16C,0.200000*%\n",
+            "%ADD17R,0.800000X0.400000*%\n",
+            "%ADD18R,0.900000X0.450000*%\n",
             "D14*\n",
+            "X1750000Y250000D03*\n",
+            "D15*\n",
             "X250000Y250000D03*\n",
             "D13*\n",
             "X750000Y250000D03*\n",
-            "D16*\n",
+            "D17*\n",
             "X1250000Y250000D03*\n",
+            "D18*\n",
+            "X2250000Y250000D03*\n",
             "G36*\n",
             "X0Y1000000D02*\n",
             "X1000000Y1000000D01*\n",
@@ -159,7 +203,7 @@ fn project_compare_gerber_copper_layer_is_semantic_and_reports_drift() {
             "D12*\n",
             "X0Y500000D02*\n",
             "X1000000Y500000D01*\n",
-            "D15*\n",
+            "D16*\n",
             "X0Y0D02*\n",
             "X1000000Y0D01*\n",
             "M02*\n"
@@ -184,15 +228,15 @@ fn project_compare_gerber_copper_layer_is_semantic_and_reports_drift() {
     let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
     assert_eq!(report["action"], "compare_gerber_copper_layer");
     assert_eq!(report["layer"], 1);
-    assert_eq!(report["expected_pad_count"], 2);
-    assert_eq!(report["actual_pad_count"], 2);
+    assert_eq!(report["expected_pad_count"], 4);
+    assert_eq!(report["actual_pad_count"], 4);
     assert_eq!(report["expected_track_count"], 2);
     assert_eq!(report["actual_track_count"], 2);
     assert_eq!(report["expected_zone_count"], 1);
     assert_eq!(report["actual_zone_count"], 1);
     assert_eq!(report["expected_via_count"], 1);
     assert_eq!(report["actual_via_count"], 1);
-    assert_eq!(report["matched_count"], 6);
+    assert_eq!(report["matched_count"], 8);
     assert_eq!(report["missing_count"], 0);
     assert_eq!(report["extra_count"], 0);
 
@@ -207,7 +251,8 @@ fn project_compare_gerber_copper_layer_is_semantic_and_reports_drift() {
             "%ADD11C,0.300000*%\n",
             "%ADD12C,0.450000*%\n",
             "%ADD13C,0.700000*%\n",
-            "%ADD14R,0.800000X0.400000*%\n",
+            "%ADD14C,0.500000*%\n",
+            "%ADD15R,0.800000X0.400000*%\n",
             "D11*\n",
             "X0Y500000D02*\n",
             "X1000000Y500000D01*\n",
@@ -216,6 +261,8 @@ fn project_compare_gerber_copper_layer_is_semantic_and_reports_drift() {
             "D13*\n",
             "X250000Y250000D03*\n",
             "D14*\n",
+            "X1750000Y250000D03*\n",
+            "D15*\n",
             "X1250000Y250000D03*\n",
             "G36*\n",
             "X0Y1000000D02*\n",
@@ -243,12 +290,12 @@ fn project_compare_gerber_copper_layer_is_semantic_and_reports_drift() {
     .expect("CLI should parse");
     let output = execute(cli).expect("copper compare should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
-    assert_eq!(report["actual_pad_count"], 2);
+    assert_eq!(report["actual_pad_count"], 3);
     assert_eq!(report["actual_track_count"], 1);
     assert_eq!(report["actual_zone_count"], 1);
     assert_eq!(report["actual_via_count"], 0);
-    assert_eq!(report["matched_count"], 4);
-    assert_eq!(report["missing_count"], 2);
+    assert_eq!(report["matched_count"], 5);
+    assert_eq!(report["missing_count"], 3);
     assert_eq!(report["extra_count"], 1);
 
     let _ = std::fs::remove_dir_all(&root);

@@ -1,5 +1,7 @@
 use std::collections::BTreeMap;
 
+use eda_engine::board::PadShape;
+use eda_engine::pool::ModelRef;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -52,6 +54,10 @@ pub(crate) struct NativeBoardRoot {
     #[serde(default)]
     pub(crate) component_mechanical_arcs: BTreeMap<String, Vec<NativeComponentMechanicalArc>>,
     #[serde(default)]
+    pub(crate) component_pads: BTreeMap<String, Vec<NativeComponentPad>>,
+    #[serde(default)]
+    pub(crate) component_models_3d: BTreeMap<String, Vec<ModelRef>>,
+    #[serde(default)]
     pub(crate) pads: BTreeMap<String, serde_json::Value>,
     #[serde(default)]
     pub(crate) tracks: BTreeMap<String, serde_json::Value>,
@@ -86,4 +92,23 @@ pub(crate) struct NativeOutline {
 pub(crate) struct NativePoint {
     pub(crate) x: i64,
     pub(crate) y: i64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub(crate) struct NativeComponentPad {
+    pub(crate) uuid: Uuid,
+    pub(crate) name: String,
+    pub(crate) position: NativePoint,
+    pub(crate) padstack: Uuid,
+    pub(crate) layer: i32,
+    #[serde(default)]
+    pub(crate) drill_nm: Option<i64>,
+    #[serde(default)]
+    pub(crate) shape: Option<PadShape>,
+    #[serde(default)]
+    pub(crate) diameter_nm: i64,
+    #[serde(default)]
+    pub(crate) width_nm: i64,
+    #[serde(default)]
+    pub(crate) height_nm: i64,
 }

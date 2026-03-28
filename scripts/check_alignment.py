@@ -188,6 +188,43 @@ def run_text_checks() -> list[str]:
     return failures
 
 
+def run_workflow_compaction_checks() -> list[str]:
+    failures: list[str] = []
+    path = ROOT / "docs/USER_WORKFLOWS.md"
+    lines = path.read_text().splitlines()
+
+    try:
+        start = next(i for i, line in enumerate(lines) if line.strip() == "Current live slice:")
+    except StopIteration:
+        failures.append("docs/USER_WORKFLOWS.md: missing 'Current live slice:' marker")
+        return failures
+
+    try:
+        end = next(
+            i for i, line in enumerate(lines[start + 1 :], start + 1)
+            if line.startswith("MCP tools for this flow")
+        )
+    except StopIteration:
+        failures.append("docs/USER_WORKFLOWS.md: missing 'MCP tools for this flow' marker")
+        return failures
+
+    live_slice_lines = lines[start + 1 : end]
+    live_slice_bullets = sum(1 for line in live_slice_lines if line.startswith("- "))
+    if live_slice_bullets > 8:
+        failures.append(
+            "docs/USER_WORKFLOWS.md: M4 'Current live slice' section is overgrown; "
+            "keep it compact and move detailed ledger content to docs/workflows/m4_live_slice.md"
+        )
+
+    text = "\n".join(lines)
+    if "docs/workflows/m4_live_slice.md" not in text:
+        failures.append(
+            "docs/USER_WORKFLOWS.md: missing pointer to docs/workflows/m4_live_slice.md"
+        )
+
+    return failures
+
+
 def run_exec_check(label: str, command: list[str], failures: list[str]) -> None:
     code, output = run_command(command)
     if code != 0:
@@ -237,6 +274,7 @@ def main() -> int:
     args = parser.parse_args()
 
     failures = run_text_checks()
+    failures.extend(run_workflow_compaction_checks())
 
     if args.run_gates:
         run_exec_check(

@@ -120,6 +120,8 @@ fn project_query_summary_reports_native_scaffold_counts() {
     assert!(output.contains("board_components: 0"));
     assert!(output.contains("board_components_with_persisted_silkscreen: 0"));
     assert!(output.contains("board_components_with_persisted_mechanical: 0"));
+    assert!(output.contains("board_components_with_persisted_pads: 0"));
+    assert!(output.contains("board_components_with_persisted_models_3d: 0"));
     assert!(output.contains("board_persisted_component_silkscreen_texts: 0"));
     assert!(output.contains("board_persisted_component_silkscreen_lines: 0"));
     assert!(output.contains("board_persisted_component_silkscreen_arcs: 0"));
@@ -132,6 +134,8 @@ fn project_query_summary_reports_native_scaffold_counts() {
     assert!(output.contains("board_persisted_component_mechanical_circles: 0"));
     assert!(output.contains("board_persisted_component_mechanical_polygons: 0"));
     assert!(output.contains("board_persisted_component_mechanical_polylines: 0"));
+    assert!(output.contains("board_persisted_component_pads: 0"));
+    assert!(output.contains("board_persisted_component_models_3d: 0"));
     assert!(output.contains("rule_count: 0"));
 
     let json_output = execute(
@@ -164,18 +168,34 @@ fn project_query_summary_reports_native_scaffold_counts() {
     assert_eq!(report["pool_refs"][1]["exists"], true);
     assert_eq!(report["board"]["components_with_persisted_silkscreen"], 0);
     assert_eq!(report["board"]["components_with_persisted_mechanical"], 0);
+    assert_eq!(report["board"]["components_with_persisted_pads"], 0);
+    assert_eq!(report["board"]["components_with_persisted_models_3d"], 0);
     assert_eq!(report["board"]["persisted_component_silkscreen_texts"], 0);
     assert_eq!(report["board"]["persisted_component_silkscreen_lines"], 0);
     assert_eq!(report["board"]["persisted_component_silkscreen_arcs"], 0);
     assert_eq!(report["board"]["persisted_component_silkscreen_circles"], 0);
-    assert_eq!(report["board"]["persisted_component_silkscreen_polygons"], 0);
-    assert_eq!(report["board"]["persisted_component_silkscreen_polylines"], 0);
+    assert_eq!(
+        report["board"]["persisted_component_silkscreen_polygons"],
+        0
+    );
+    assert_eq!(
+        report["board"]["persisted_component_silkscreen_polylines"],
+        0
+    );
     assert_eq!(report["board"]["persisted_component_mechanical_texts"], 0);
     assert_eq!(report["board"]["persisted_component_mechanical_lines"], 0);
     assert_eq!(report["board"]["persisted_component_mechanical_arcs"], 0);
     assert_eq!(report["board"]["persisted_component_mechanical_circles"], 0);
-    assert_eq!(report["board"]["persisted_component_mechanical_polygons"], 0);
-    assert_eq!(report["board"]["persisted_component_mechanical_polylines"], 0);
+    assert_eq!(
+        report["board"]["persisted_component_mechanical_polygons"],
+        0
+    );
+    assert_eq!(
+        report["board"]["persisted_component_mechanical_polylines"],
+        0
+    );
+    assert_eq!(report["board"]["persisted_component_pads"], 0);
+    assert_eq!(report["board"]["persisted_component_models_3d"], 0);
 
     let _ = std::fs::remove_dir_all(&root);
     let _ = std::fs::remove_dir_all(&absolute_pool);

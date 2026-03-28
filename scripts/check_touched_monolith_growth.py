@@ -221,6 +221,11 @@ def main() -> int:
                     f"{rel}: burn-down lacks structural extraction evidence "
                     f"(reduced {reduction}, companion shard additions {extracted})"
                 )
+            elif extracted * 100 < reduction * 70:
+                violations.append(
+                    f"{rel}: burn-down appears compression-heavy; "
+                    f"companion extraction {extracted} < 70% of reduced {reduction}"
+                )
         if current > baseline:
             violations.append(f"{rel}: {current} lines > baseline {baseline}")
 

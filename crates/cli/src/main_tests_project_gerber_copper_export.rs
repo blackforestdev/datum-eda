@@ -15,6 +15,7 @@ fn project_export_gerber_copper_layer_writes_rs274x_track_file() {
     let class_uuid = Uuid::new_v4();
     let circle_pad_uuid = Uuid::new_v4();
     let rect_pad_uuid = Uuid::new_v4();
+    let component_uuid = Uuid::new_v4();
     let track_a_uuid = Uuid::new_v4();
     let track_b_uuid = Uuid::new_v4();
     let zone_uuid = Uuid::new_v4();
@@ -31,6 +32,43 @@ fn project_export_gerber_copper_layer_writes_rs274x_track_file() {
                 "stackup": { "layers": [] },
                 "outline": { "vertices": [], "closed": true },
                 "packages": {},
+                "component_pads": {
+                    component_uuid.to_string(): [
+                        {
+                            "uuid": Uuid::new_v4(),
+                            "name": "CP1",
+                            "position": { "x": 1750000, "y": 250000 },
+                            "padstack": Uuid::new_v4(),
+                            "layer": 1,
+                            "shape": "circle",
+                            "diameter_nm": 500000,
+                            "width_nm": 0,
+                            "height_nm": 0
+                        },
+                        {
+                            "uuid": Uuid::new_v4(),
+                            "name": "CP2",
+                            "position": { "x": 2250000, "y": 250000 },
+                            "padstack": Uuid::new_v4(),
+                            "layer": 1,
+                            "shape": "rect",
+                            "diameter_nm": 0,
+                            "width_nm": 900000,
+                            "height_nm": 450000
+                        },
+                        {
+                            "uuid": Uuid::new_v4(),
+                            "name": "CP3",
+                            "position": { "x": 2750000, "y": 250000 },
+                            "padstack": Uuid::new_v4(),
+                            "layer": 1,
+                            "shape": null,
+                            "diameter_nm": 0,
+                            "width_nm": 0,
+                            "height_nm": 0
+                        }
+                    ]
+                },
                 "pads": {
                     circle_pad_uuid.to_string(): {
                         "uuid": circle_pad_uuid,
@@ -149,7 +187,7 @@ fn project_export_gerber_copper_layer_writes_rs274x_track_file() {
     let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
     assert_eq!(report["action"], "export_gerber_copper_layer");
     assert_eq!(report["layer"], 1);
-    assert_eq!(report["pad_count"], 2);
+    assert_eq!(report["pad_count"], 4);
     assert_eq!(report["track_count"], 2);
     assert_eq!(report["zone_count"], 1);
     assert_eq!(report["via_count"], 1);
@@ -158,8 +196,10 @@ fn project_export_gerber_copper_layer_writes_rs274x_track_file() {
     assert!(gerber.contains("%ADD10C,0.200000*%"));
     assert!(gerber.contains("%ADD11C,0.300000*%"));
     assert!(gerber.contains("%ADD12C,0.450000*%"));
-    assert!(gerber.contains("%ADD13C,0.600000*%"));
-    assert!(gerber.contains("%ADD14R,0.800000X0.400000*%"));
+    assert!(gerber.contains("%ADD13C,0.500000*%"));
+    assert!(gerber.contains("%ADD14C,0.600000*%"));
+    assert!(gerber.contains("%ADD15R,0.800000X0.400000*%"));
+    assert!(gerber.contains("%ADD16R,0.900000X0.450000*%"));
     assert!(gerber.contains("D10*"));
     assert!(gerber.contains("D11*"));
     assert!(gerber.contains("X0Y0D02*"));
@@ -170,10 +210,15 @@ fn project_export_gerber_copper_layer_writes_rs274x_track_file() {
     assert!(gerber.contains("G37*"));
     assert!(gerber.contains("D12*"));
     assert!(gerber.contains("X750000Y250000D03*"));
-    assert!(gerber.contains("D13*"));
-    assert!(gerber.contains("X250000Y250000D03*"));
     assert!(gerber.contains("D14*"));
+    assert!(gerber.contains("X250000Y250000D03*"));
+    assert!(gerber.contains("D15*"));
     assert!(gerber.contains("X1250000Y250000D03*"));
+    assert!(gerber.contains("D13*"));
+    assert!(gerber.contains("X1750000Y250000D03*"));
+    assert!(gerber.contains("D16*"));
+    assert!(gerber.contains("X2250000Y250000D03*"));
+    assert!(!gerber.contains("X2750000Y250000D03*"));
     assert!(gerber.contains("X0Y1000000D02*"));
     assert!(gerber.contains("X1000000Y1000000D01*"));
     assert!(gerber.contains("X1000000Y1500000D01*"));

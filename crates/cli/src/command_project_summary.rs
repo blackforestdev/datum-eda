@@ -3,10 +3,10 @@ use std::path::Path;
 use anyhow::Result;
 
 use super::{
-    NativeProjectBoardSummaryView, NativeProjectInspectPoolRefView,
-    NativeProjectRulesSummaryView, NativeProjectSchematicSummaryView, NativeProjectSummaryView,
-    collect_schematic_counts, component_has_persisted_mechanical,
-    component_has_persisted_silkscreen, load_native_project, resolve_native_project_pool_path,
+    NativeProjectBoardSummaryView, NativeProjectInspectPoolRefView, NativeProjectRulesSummaryView,
+    NativeProjectSchematicSummaryView, NativeProjectSummaryView, collect_schematic_counts,
+    component_has_persisted_mechanical, component_has_persisted_silkscreen, component_model_count,
+    component_package_pad_count, load_native_project, resolve_native_project_pool_path,
 };
 
 pub(crate) fn query_native_project_summary(root: &Path) -> Result<NativeProjectSummaryView> {
@@ -23,6 +23,18 @@ pub(crate) fn query_native_project_summary(root: &Path) -> Result<NativeProjectS
         .packages
         .keys()
         .filter(|key| component_has_persisted_mechanical(&project, key))
+        .count();
+    let components_with_persisted_models_3d = project
+        .board
+        .packages
+        .keys()
+        .filter(|key| component_model_count(&project, key) > 0)
+        .count();
+    let components_with_persisted_pads = project
+        .board
+        .packages
+        .keys()
+        .filter(|key| component_package_pad_count(&project, key) > 0)
         .count();
     let pool_refs = project
         .manifest
@@ -66,6 +78,8 @@ pub(crate) fn query_native_project_summary(root: &Path) -> Result<NativeProjectS
             components: project.board.packages.len(),
             components_with_persisted_silkscreen,
             components_with_persisted_mechanical,
+            components_with_persisted_pads,
+            components_with_persisted_models_3d,
             pads: project.board.pads.len(),
             nets: project.board.nets.len(),
             net_classes: project.board.net_classes.len(),
@@ -144,6 +158,18 @@ pub(crate) fn query_native_project_summary(root: &Path) -> Result<NativeProjectS
             persisted_component_mechanical_polylines: project
                 .board
                 .component_mechanical_polylines
+                .values()
+                .map(Vec::len)
+                .sum(),
+            persisted_component_pads: project
+                .board
+                .component_pads
+                .values()
+                .map(Vec::len)
+                .sum(),
+            persisted_component_models_3d: project
+                .board
+                .component_models_3d
                 .values()
                 .map(Vec::len)
                 .sum(),

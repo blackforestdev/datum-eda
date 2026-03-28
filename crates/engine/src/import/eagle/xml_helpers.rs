@@ -60,6 +60,13 @@ pub(super) fn parse_package_pad(start: &BytesStart<'_>, smd: bool) -> Result<Raw
         } else {
             format!("th:{name}")
         },
+        drill_nm: if smd {
+            None
+        } else {
+            optional_attr(start, b"drill")
+                .map(|value| parse_eagle_coord(&value))
+                .transpose()?
+        },
     })
 }
 

@@ -11,20 +11,31 @@ surfaces.
 Current truth boundary: `project.json` pool references are now resolved during
 native board mutation flow, but only the truthful supported package-linked
 subset is materialized into persisted board state. Current support is limited
-to package silkscreen non-text primitives only; the
-`component_silkscreen_texts` map remains schema-only and empty by design in
-this slice. Package text and package-linked mechanical persistence remain
-open.
+to package silkscreen non-text primitives, package `courtyard` on mechanical
+layer `41`, resolved package pads in `component_pads`, and package
+`models_3d`; the `component_silkscreen_texts` map remains schema-only and
+empty by design in this slice. Package text and broader package-linked
+mechanical persistence remain open. Package pad aperture geometry is now
+persisted only when the resolved source padstack explicitly defines it;
+the current copper/soldermask/paste Gerber slices consume only that
+explicit-aperture persisted subset, and broader package-linked pad
+manufacturing remains open. Package pads may now also persist optional
+source-backed `drill_nm` from resolved padstacks. The current Excellon drill
+and drill-hole-class reporting slices consume that drill-bearing persisted
+subset as through holes spanning the outer copper pair, while CSV drill export
+and broader package-linked drill semantics remain open.
 The native inspect surface now also reports each declared pool reference with
 its priority, resolved path, and current existence state so the native pool
 contract is auditable without mutating project state. The native summary query
 now reports the same resolved pool-reference detail plus aggregate
 board-level persisted component silkscreen counts plus persisted
-component-mechanical counts, plus how many components currently carry each
-persisted subset, for automation-facing read parity, and the native
-board-components query now reports per-component presence flags plus the
-currently materialized silkscreen subset counts and persisted
-component-mechanical counts.
+component-mechanical counts plus persisted component package-pad and
+`models_3d` counts, plus how many components currently carry each persisted
+subset, for automation-facing read parity, and the native board-components
+query now reports per-component presence flags plus the currently
+materialized silkscreen subset counts, persisted component-mechanical counts,
+persisted component package-pad counts, and persisted component `models_3d`
+counts.
 
 Evidence anchors:
 - CLI/native surface: `crates/cli/src/command_project.rs`
@@ -44,12 +55,26 @@ Evidence anchors:
 
 ## Board operations
 
-Implemented operation families include component placement/motion/locking and
-part/package reassignment, pads with net assignment, tracks/vias/zones,
+Implemented operation families include component placement/motion/locking,
+part/package/layer/reference/value reassignment, pads with net assignment, tracks/vias/zones,
 texts/keepouts/dimensions, outline/stackup, nets, and net classes. Component
 placement and package reassignment now also resolve packages from native
-project pool roots and persist the supported silkscreen non-text subset into
-`board/board.json`.
+project pool roots and persist the supported silkscreen non-text subset plus
+package `courtyard` on mechanical layer `41`, resolved package pads, and
+package `models_3d` into `board/board.json`. Resolved package pads now carry
+circle/rect aperture geometry only when the loaded source padstack defines
+explicit aperture fields; otherwise the persisted pad remains aperture-less.
+They may also carry optional source-backed `drill_nm` when the resolved
+padstack defines it.
+Current copper/soldermask/paste Gerber flows consume only the
+explicit-aperture persisted package-pad subset.
+The current Excellon drill and drill-hole-class slices also consume
+drill-bearing persisted package pads as through holes on the outer copper
+pair.
+Fresh native project scaffolds now seed minimal default layers for top
+copper, top soldermask, top silkscreen, top paste, and mechanical `41`, and
+existing native projects can be retrofitted to that same canonical top-side
+default stackup without overwriting conflicting occupied default layer IDs.
 
 Evidence anchors:
 - CLI mutations: `crates/cli/src/command_project.rs`
@@ -88,9 +113,20 @@ current mechanical subset covers board
 keepout polygons, fixed-width board-dimension span lines, authored board
 text, plus explicit component-local mechanical text, lines, closed polygons,
 open polylines, circles, and arcs persisted in native board state. Full
-layer-set and richer geometry parity remain open.
+layer-set and richer geometry parity remain open. The deterministic Gerber
+artifact plan is now executable as a batch export for the currently supported
+stackup-backed subset via `export-gerber-set`, and that same subset can be
+batch-validated in one directory via `validate-gerber-set` and batch-compared
+semantically in one directory via `compare-gerber-set`. A read-only
+`report-manufacturing` slice now summarizes the same persisted-state
+manufacturing surface without writing artifacts, covering BOM/PnP component
+counts, via-only CSV drill rows, Excellon/hole-class drill counts, and the
+planned Gerber artifact filenames.
+Copper, soldermask, and paste now also consume the persisted package-pad
+subset from `component_pads` when, and only when, those pads carry explicit
+circle/rect aperture geometry resolved from source padstacks.
 Truth boundary for next expansion: do not claim package-linked text or
-package-linked mechanical persistence until the source package model carries
+broader package-linked mechanical persistence until the source package model carries
 explicit truthful fields for those subsets and the resolved data is persisted
 into native board state.
 
@@ -101,7 +137,10 @@ Evidence anchors:
 ## Drill export
 
 Deterministic drill CSV and narrow Excellon export/inspect/validate/compare
-slices are in place. Broader fabrication semantics remain open.
+slices are in place. Excellon and drill-hole-class reporting now include
+drill-bearing package `component_pads` as through holes spanning the outer
+copper pair; CSV drill export remains via-only. Broader fabrication semantics
+remain open.
 
 Evidence anchors:
 - Engine export: `crates/engine/src/export/mod.rs`

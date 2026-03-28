@@ -30,6 +30,8 @@ Touched-monolith explicit policy:
   base (burn-down in the same PR).
 - Burn-down must include structural extraction evidence (added companion shard
   lines in the same PR); pure deletion is not sufficient.
+- Burn-down credit is denied when companion shard extraction is smaller than
+  monolith line reduction (compression-only "line shaving" is not accepted).
 - Touched monolith files must also remain at or below freeze baselines.
 - Structural PRs should continue reducing touched monolith line counts.
 - Baselines are enforced in `scripts/check_touched_monolith_growth.py` and must
@@ -66,6 +68,34 @@ When a tripwire fails, use this runbook:
 4. Mixed-lane PR (feature + decomposition) detected:
 - Action: split into two PRs (`m4-feature` and `decomp`).
 - Merge status: blocked until split.
+
+## Lane Exit-on-Closure Protocol
+
+To prevent audit loops, every active lane must use explicit state and forced
+branching once closure or contract-block is reached.
+
+Required lane state values:
+- `active`
+- `closed`
+- `blocked-awaiting-contract`
+- `switched`
+
+Required behavior:
+- A lane may run at most one audit-only pass after implementation completion.
+- If lane status is `closed` or `blocked-awaiting-contract`, do not continue
+  exploratory audits in that same lane.
+- The next handoff must choose exactly one branch:
+  - define next contract now (explicit semantics + acceptance + tests), or
+  - switch to one pre-approved unblocked slice and implement end-to-end.
+- If no contract decision is provided at handoff, auto-switch to the fallback
+  unblocked slice.
+
+Required blocked-lane handoff payload:
+- `lane_state`
+- `why_blocked` (single concrete blocker)
+- `contract_decision_needed` (single explicit decision)
+- `fallback_slice` (single unblocked implementation target)
+- `next_action` (`define-contract` or `switch-slice`)
 
 ## Sequenced Backlog
 

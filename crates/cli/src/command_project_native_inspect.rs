@@ -4,8 +4,8 @@ use anyhow::Result;
 
 use super::{
     NativeProjectInspectPoolRefView, NativeProjectInspectReportView,
-    component_has_persisted_mechanical, component_has_persisted_silkscreen, load_native_project,
-    resolve_native_project_pool_path,
+    component_has_persisted_mechanical, component_has_persisted_silkscreen, component_model_count,
+    component_package_pad_count, load_native_project, resolve_native_project_pool_path,
 };
 
 pub(crate) fn inspect_native_project(root: &Path) -> Result<NativeProjectInspectReportView> {
@@ -53,6 +53,18 @@ pub(crate) fn inspect_native_project(root: &Path) -> Result<NativeProjectInspect
             .packages
             .keys()
             .filter(|key| component_has_persisted_mechanical(&project, key))
+            .count(),
+        board_components_with_persisted_pads: project
+            .board
+            .packages
+            .keys()
+            .filter(|key| component_package_pad_count(&project, key) > 0)
+            .count(),
+        board_components_with_persisted_models_3d: project
+            .board
+            .packages
+            .keys()
+            .filter(|key| component_model_count(&project, key) > 0)
             .count(),
         board_pad_count: project.board.pads.len(),
         board_net_count: project.board.nets.len(),
@@ -128,6 +140,18 @@ pub(crate) fn inspect_native_project(root: &Path) -> Result<NativeProjectInspect
         persisted_component_mechanical_polylines: project
             .board
             .component_mechanical_polylines
+            .values()
+            .map(Vec::len)
+            .sum(),
+        persisted_component_pads: project
+            .board
+            .component_pads
+            .values()
+            .map(Vec::len)
+            .sum(),
+        persisted_component_models_3d: project
+            .board
+            .component_models_3d
             .values()
             .map(Vec::len)
             .sum(),

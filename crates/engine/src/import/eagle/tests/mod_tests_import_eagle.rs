@@ -98,6 +98,12 @@ fn imports_multi_gate_device_and_through_hole_pad() {
         })
         .count();
     assert_eq!(through_hole_count, 4);
+    assert!(package.pads.values().all(|pad| {
+        pool.padstacks
+            .get(&pad.padstack)
+            .map(|stack| stack.drill_nm.is_some())
+            .unwrap_or(false)
+    }));
 
     let part = pool.parts.values().next().unwrap();
     assert_eq!(part.pad_map.len(), 4);

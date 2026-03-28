@@ -29,6 +29,10 @@ pub(crate) struct NativeProjectBoardComponentMutationReportView {
     pub(crate) persisted_component_mechanical_circle_count: usize,
     pub(crate) persisted_component_mechanical_polygon_count: usize,
     pub(crate) persisted_component_mechanical_polyline_count: usize,
+    pub(crate) has_persisted_component_pads: bool,
+    pub(crate) persisted_component_pad_count: usize,
+    pub(crate) has_persisted_component_models_3d: bool,
+    pub(crate) persisted_component_model_3d_count: usize,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -56,6 +60,10 @@ pub(crate) struct NativeProjectBoardComponentQueryView {
     pub(crate) persisted_component_mechanical_circle_count: usize,
     pub(crate) persisted_component_mechanical_polygon_count: usize,
     pub(crate) persisted_component_mechanical_polyline_count: usize,
+    pub(crate) has_persisted_component_pads: bool,
+    pub(crate) persisted_component_pad_count: usize,
+    pub(crate) has_persisted_component_models_3d: bool,
+    pub(crate) persisted_component_model_3d_count: usize,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -136,6 +144,22 @@ pub(crate) fn render_native_project_board_component_mutation_text(
         format!(
             "persisted_component_mechanical_polyline_count: {}",
             report.persisted_component_mechanical_polyline_count
+        ),
+        format!(
+            "has_persisted_component_pads: {}",
+            report.has_persisted_component_pads
+        ),
+        format!(
+            "persisted_component_pad_count: {}",
+            report.persisted_component_pad_count
+        ),
+        format!(
+            "has_persisted_component_models_3d: {}",
+            report.has_persisted_component_models_3d
+        ),
+        format!(
+            "persisted_component_model_3d_count: {}",
+            report.persisted_component_model_3d_count
         ),
     ]
     .join("\n")

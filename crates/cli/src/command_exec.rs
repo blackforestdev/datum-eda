@@ -1,8 +1,21 @@
 use super::*;
-#[path = "command_exec_project_inspect.rs"]
-mod command_exec_project_inspect;
+#[path = "command_exec_board_component.rs"]
+mod command_exec_board_component;
+#[path = "command_exec_board_net.rs"]
+mod command_exec_board_net;
+#[path = "command_exec_board_stackup.rs"]
+mod command_exec_board_stackup;
+#[path = "command_exec_gerber_plan.rs"]
+mod command_exec_gerber_plan;
+#[path = "command_exec_manufacturing.rs"]
+mod command_exec_manufacturing;
 #[path = "command_exec_native_support.rs"]
 mod command_exec_native_support;
+#[path = "command_exec_project_inspect.rs"]
+mod command_exec_project_inspect;
+use self::command_exec_native_support::{
+    parse_native_hidden_power_behavior, parse_native_symbol_display_mode,
+};
 use crate::command_modify::{
     parse_apply_replacement_plan_arg, parse_apply_replacement_policy_arg,
     parse_apply_scoped_replacement_policy_arg, parse_assign_part_arg, parse_move_component_arg,
@@ -11,9 +24,6 @@ use crate::command_modify::{
     parse_set_value_arg,
 };
 use eda_engine::schematic::{LabelKind, PortDirection};
-use self::command_exec_native_support::{
-    parse_native_hidden_power_behavior, parse_native_symbol_display_mode,
-};
 
 pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
     match cli.command {
@@ -651,31 +661,15 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 let exit_code = if report.matches_expected { 0 } else { 1 };
                 Ok((output, exit_code))
             }
-            ProjectCommands::PlanGerberExport { path, prefix } => {
-                let report = plan_native_project_gerber_export(&path, prefix.as_deref())?;
-                let output = match cli.format {
-                    OutputFormat::Text => render_native_project_gerber_plan_text(&report),
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
+            command @ ProjectCommands::PlanGerberExport(_)
+            | command @ ProjectCommands::ExportGerberSet(_)
+            | command @ ProjectCommands::CompareGerberExportPlan(_)
+            | command @ ProjectCommands::ValidateGerberSet(_)
+            | command @ ProjectCommands::CompareGerberSet(_) => {
+                command_exec_gerber_plan::execute_gerber_workflow_command(&cli.format, command)
             }
-            ProjectCommands::CompareGerberExportPlan {
-                path,
-                output_dir,
-                prefix,
-            } => {
-                let report = compare_native_project_gerber_export_plan(
-                    &path,
-                    &output_dir,
-                    prefix.as_deref(),
-                )?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_project_gerber_plan_comparison_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
+            command @ ProjectCommands::ReportManufacturing(_) => {
+                command_exec_manufacturing::execute_manufacturing_command(&cli.format, command)
             }
             ProjectCommands::PlaceSymbol {
                 path,
@@ -1603,27 +1597,17 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 Ok((output, 0))
             }
             ProjectCommands::SetBoardStackup { path, layers } => {
-                let stackup_layers = parse_native_stackup_layers(&layers)?;
-                let report = set_native_project_board_stackup(&path, stackup_layers)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_project_board_stackup_mutation_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
+                command_exec_board_stackup::execute_set_board_stackup(&cli.format, path, layers)
+            }
+            ProjectCommands::AddDefaultTopStackup { path } => {
+                command_exec_board_stackup::execute_add_default_top_stackup(&cli.format, path)
             }
             ProjectCommands::PlaceBoardNet {
                 path,
                 name,
                 class_uuid,
             } => {
-                let report = place_native_project_board_net(&path, name, class_uuid)?;
-                let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_net_mutation_text(&report),
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
+                command_exec_board_net::execute_place_board_net(&cli.format, path, name, class_uuid)
             }
             ProjectCommands::PlaceBoardComponent {
                 path,
@@ -1661,25 +1645,17 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 via_diameter_nm,
                 diffpair_width_nm,
                 diffpair_gap_nm,
-            } => {
-                let report = place_native_project_board_net_class(
-                    &path,
-                    name,
-                    clearance_nm,
-                    track_width_nm,
-                    via_drill_nm,
-                    via_diameter_nm,
-                    diffpair_width_nm,
-                    diffpair_gap_nm,
-                )?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_project_board_net_class_mutation_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
+            } => command_exec_board_net::execute_place_board_net_class(
+                &cli.format,
+                path,
+                name,
+                clearance_nm,
+                track_width_nm,
+                via_drill_nm,
+                via_diameter_nm,
+                diffpair_width_nm,
+                diffpair_gap_nm,
+            ),
             ProjectCommands::EditBoardNetClass {
                 path,
                 net_class_uuid,
@@ -1690,134 +1666,120 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 via_diameter_nm,
                 diffpair_width_nm,
                 diffpair_gap_nm,
-            } => {
-                let report = edit_native_project_board_net_class(
-                    &path,
-                    net_class_uuid,
-                    name,
-                    clearance_nm,
-                    track_width_nm,
-                    via_drill_nm,
-                    via_diameter_nm,
-                    diffpair_width_nm,
-                    diffpair_gap_nm,
-                )?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_project_board_net_class_mutation_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
+            } => command_exec_board_net::execute_edit_board_net_class(
+                &cli.format,
+                path,
+                net_class_uuid,
+                name,
+                clearance_nm,
+                track_width_nm,
+                via_drill_nm,
+                via_diameter_nm,
+                diffpair_width_nm,
+                diffpair_gap_nm,
+            ),
             ProjectCommands::EditBoardNet {
                 path,
                 net_uuid,
                 name,
                 class_uuid,
-            } => {
-                let report = edit_native_project_board_net(&path, net_uuid, name, class_uuid)?;
-                let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_net_mutation_text(&report),
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
+            } => command_exec_board_net::execute_edit_board_net(
+                &cli.format,
+                path,
+                net_uuid,
+                name,
+                class_uuid,
+            ),
             ProjectCommands::MoveBoardComponent {
                 path,
                 component_uuid,
                 x_nm,
                 y_nm,
-            } => {
-                let report = move_native_project_board_component(
-                    &path,
-                    component_uuid,
-                    eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
-                )?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_project_board_component_mutation_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::SetBoardComponentPart {
+            } => command_exec_board_component::execute_move_board_component(
+                &cli.format,
+                path,
+                component_uuid,
+                x_nm,
+                y_nm,
+            ),
+            ProjectCommands::SetBoardComponentPart(SetBoardComponentPartArgs {
                 path,
                 component_uuid,
                 part_uuid,
-            } => {
-                let report =
-                    set_native_project_board_component_part(&path, component_uuid, part_uuid)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_project_board_component_mutation_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::SetBoardComponentPackage {
+            }) => command_exec_board_component::execute_set_board_component_part(
+                &cli.format,
+                path,
+                component_uuid,
+                part_uuid,
+            ),
+            ProjectCommands::SetBoardComponentPackage(SetBoardComponentPackageArgs {
                 path,
                 component_uuid,
                 package_uuid,
-            } => {
-                let report = set_native_project_board_component_package(
-                    &path,
-                    component_uuid,
-                    package_uuid,
-                )?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_project_board_component_mutation_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
+            }) => command_exec_board_component::execute_set_board_component_package(
+                &cli.format,
+                path,
+                component_uuid,
+                package_uuid,
+            ),
+            ProjectCommands::SetBoardComponentLayer(SetBoardComponentLayerArgs {
+                path,
+                component_uuid,
+                layer,
+            }) => command_exec_board_component::execute_set_board_component_layer(
+                &cli.format,
+                path,
+                component_uuid,
+                layer,
+            ),
+            ProjectCommands::SetBoardComponentReference(SetBoardComponentReferenceArgs {
+                path,
+                component_uuid,
+                reference,
+            }) => command_exec_board_component::execute_set_board_component_reference(
+                &cli.format,
+                path,
+                component_uuid,
+                reference,
+            ),
+            ProjectCommands::SetBoardComponentValue(SetBoardComponentValueArgs {
+                path,
+                component_uuid,
+                value,
+            }) => command_exec_board_component::execute_set_board_component_value(
+                &cli.format,
+                path,
+                component_uuid,
+                value,
+            ),
             ProjectCommands::RotateBoardComponent {
                 path,
                 component_uuid,
                 rotation_deg,
-            } => {
-                let report =
-                    rotate_native_project_board_component(&path, component_uuid, rotation_deg)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_project_board_component_mutation_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
+            } => command_exec_board_component::execute_rotate_board_component(
+                &cli.format,
+                path,
+                component_uuid,
+                rotation_deg,
+            ),
             ProjectCommands::SetBoardComponentLocked {
                 path,
                 component_uuid,
-            } => {
-                let report =
-                    set_native_project_board_component_locked(&path, component_uuid, true)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_project_board_component_mutation_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
+            } => command_exec_board_component::execute_set_board_component_locked(
+                &cli.format,
+                path,
+                component_uuid,
+                true,
+            ),
             ProjectCommands::ClearBoardComponentLocked {
                 path,
                 component_uuid,
-            } => {
-                let report =
-                    set_native_project_board_component_locked(&path, component_uuid, false)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_project_board_component_mutation_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
+            } => command_exec_board_component::execute_set_board_component_locked(
+                &cli.format,
+                path,
+                component_uuid,
+                false,
+            ),
             ProjectCommands::DeleteBoardComponent {
                 path,
                 component_uuid,
@@ -2208,23 +2170,13 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             ProjectCommands::DeleteBoardNetClass {
                 path,
                 net_class_uuid,
-            } => {
-                let report = delete_native_project_board_net_class(&path, net_class_uuid)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_project_board_net_class_mutation_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
+            } => command_exec_board_net::execute_delete_board_net_class(
+                &cli.format,
+                path,
+                net_class_uuid,
+            ),
             ProjectCommands::DeleteBoardNet { path, net_uuid } => {
-                let report = delete_native_project_board_net(&path, net_uuid)?;
-                let output = match cli.format {
-                    OutputFormat::Text => render_native_project_board_net_mutation_text(&report),
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
+                command_exec_board_net::execute_delete_board_net(&cli.format, path, net_uuid)
             }
             ProjectCommands::PlaceBoardDimension(args) => {
                 let report = place_native_project_board_dimension(

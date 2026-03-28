@@ -15,6 +15,7 @@ fn project_validate_gerber_copper_layer_reports_match_and_mismatch() {
     let class_uuid = Uuid::new_v4();
     let circle_pad_uuid = Uuid::new_v4();
     let rect_pad_uuid = Uuid::new_v4();
+    let component_uuid = Uuid::new_v4();
     let track_uuid = Uuid::new_v4();
     let zone_uuid = Uuid::new_v4();
     let via_uuid = Uuid::new_v4();
@@ -30,6 +31,32 @@ fn project_validate_gerber_copper_layer_reports_match_and_mismatch() {
                 "stackup": { "layers": [] },
                 "outline": { "vertices": [], "closed": true },
                 "packages": {},
+                "component_pads": {
+                    component_uuid.to_string(): [
+                        {
+                            "uuid": Uuid::new_v4(),
+                            "name": "CP1",
+                            "position": { "x": 1750000, "y": 250000 },
+                            "padstack": Uuid::new_v4(),
+                            "layer": 1,
+                            "shape": "circle",
+                            "diameter_nm": 500000,
+                            "width_nm": 0,
+                            "height_nm": 0
+                        },
+                        {
+                            "uuid": Uuid::new_v4(),
+                            "name": "CP2",
+                            "position": { "x": 2250000, "y": 250000 },
+                            "padstack": Uuid::new_v4(),
+                            "layer": 1,
+                            "shape": null,
+                            "diameter_nm": 0,
+                            "width_nm": 0,
+                            "height_nm": 0
+                        }
+                    ]
+                },
                 "pads": {
                     circle_pad_uuid.to_string(): {
                         "uuid": circle_pad_uuid,
@@ -155,7 +182,7 @@ fn project_validate_gerber_copper_layer_reports_match_and_mismatch() {
     assert_eq!(report["action"], "validate_gerber_copper_layer");
     assert_eq!(report["matches_expected"], true);
     assert_eq!(report["layer"], 1);
-    assert_eq!(report["pad_count"], 2);
+    assert_eq!(report["pad_count"], 3);
     assert_eq!(report["track_count"], 1);
     assert_eq!(report["zone_count"], 1);
     assert_eq!(report["via_count"], 1);
@@ -178,7 +205,7 @@ fn project_validate_gerber_copper_layer_reports_match_and_mismatch() {
     let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
     assert_eq!(exit_code, 1);
     assert_eq!(report["matches_expected"], false);
-    assert_eq!(report["pad_count"], 2);
+    assert_eq!(report["pad_count"], 3);
     assert_eq!(report["zone_count"], 1);
     assert_eq!(report["via_count"], 1);
 

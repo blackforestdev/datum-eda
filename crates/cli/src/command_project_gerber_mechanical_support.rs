@@ -10,7 +10,8 @@ use super::{
     NativeComponentMechanicalPolyline, NativeComponentMechanicalText, NativePoint,
 };
 
-pub(crate) const DIMENSION_SPAN_STROKE_WIDTH_NM: i64 = super::super::DEFAULT_GERBER_OUTLINE_APERTURE_NM;
+pub(crate) const DIMENSION_SPAN_STROKE_WIDTH_NM: i64 =
+    super::super::DEFAULT_GERBER_OUTLINE_APERTURE_NM;
 
 pub(crate) fn count_native_board_dimensions(board: &NativeBoardRoot, layer: i32) -> usize {
     board

@@ -94,6 +94,8 @@ pub(super) fn build_pool(
                 Padstack {
                     uuid: padstack_uuid,
                     name: pad.padstack_name,
+                    aperture: None,
+                    drill_nm: pad.drill_nm,
                 },
             );
 

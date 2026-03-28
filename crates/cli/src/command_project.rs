@@ -1,47 +1,79 @@
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::path::{Path, PathBuf};
 
+#[path = "command_project_board_component_layer.rs"]
+mod command_project_board_component_layer;
+#[path = "command_project_board_component_query.rs"]
+mod command_project_board_component_query;
+#[path = "command_project_board_component_reference.rs"]
+mod command_project_board_component_reference;
+#[path = "command_project_board_component_value.rs"]
+mod command_project_board_component_value;
+#[path = "command_project_default_stackup.rs"]
+mod command_project_default_stackup;
+#[path = "command_project_drill.rs"]
+mod command_project_drill;
 #[path = "command_project_gerber_inspect.rs"]
 mod command_project_gerber_inspect;
 #[path = "command_project_gerber_mechanical.rs"]
 mod command_project_gerber_mechanical;
+#[path = "command_project_gerber_plan.rs"]
+mod command_project_gerber_plan;
 #[path = "command_project_gerber_silkscreen.rs"]
 mod command_project_gerber_silkscreen;
-#[path = "command_project_board_component_query.rs"]
-mod command_project_board_component_query;
+#[path = "command_project_manufacturing.rs"]
+mod command_project_manufacturing;
 #[path = "command_project_native_inspect.rs"]
 mod command_project_native_inspect;
-#[path = "command_project_summary.rs"]
-mod command_project_summary;
-#[path = "command_project_pool_materialization.rs"]
-mod command_project_pool_materialization;
 #[path = "command_project_native_types.rs"]
 mod command_project_native_types;
+#[path = "command_project_pool_materialization.rs"]
+mod command_project_pool_materialization;
+#[path = "command_project_summary.rs"]
+mod command_project_summary;
 
+pub(crate) use self::command_project_board_component_layer::set_native_project_board_component_layer;
+use self::command_project_board_component_query::{
+    component_graphic_count, component_model_count, component_package_pad_count,
+};
+pub(crate) use self::command_project_board_component_query::query_native_project_board_component_views;
+use self::command_project_board_component_query::{
+    component_has_persisted_mechanical, component_has_persisted_silkscreen,
+};
+pub(crate) use self::command_project_board_component_reference::set_native_project_board_component_reference;
+pub(crate) use self::command_project_board_component_value::set_native_project_board_component_value;
+pub(crate) use self::command_project_default_stackup::add_native_project_default_top_stackup;
+use self::command_project_default_stackup::default_native_project_stackup_layers;
+pub(crate) use self::command_project_drill::{
+    compare_native_project_excellon_drill, export_native_project_drill,
+    export_native_project_excellon_drill, inspect_excellon_drill,
+    report_native_project_drill_hole_classes, validate_native_project_excellon_drill,
+};
 pub(crate) use self::command_project_gerber_inspect::inspect_gerber;
 pub(crate) use self::command_project_gerber_mechanical::{
     compare_native_project_gerber_mechanical_layer, export_native_project_gerber_mechanical_layer,
     validate_native_project_gerber_mechanical_layer,
 };
-use self::command_project_board_component_query::{
-    component_has_persisted_mechanical, component_has_persisted_silkscreen,
+pub(crate) use self::command_project_gerber_plan::{
+    compare_native_project_gerber_export_plan, compare_native_project_gerber_set,
+    export_native_project_gerber_set, plan_native_project_gerber_export,
+    validate_native_project_gerber_set,
 };
-pub(crate) use self::command_project_board_component_query::query_native_project_board_component_views;
-pub(crate) use self::command_project_native_inspect::inspect_native_project;
-pub(crate) use self::command_project_summary::query_native_project_summary;
 use self::command_project_gerber_silkscreen::{
     count_native_component_silkscreen_arcs, count_native_component_silkscreen_circles,
     count_native_component_silkscreen_lines, count_native_component_silkscreen_polygons,
     count_native_component_silkscreen_polylines, count_native_component_silkscreen_texts,
     resolve_native_project_silkscreen_context,
 };
-use self::command_project_board_component_query::component_graphic_count;
+pub(crate) use self::command_project_manufacturing::report_native_project_manufacturing;
+pub(crate) use self::command_project_native_inspect::inspect_native_project;
+pub(crate) use self::command_project_native_types::{
+    NativeBoardRoot, NativeComponentPad, NativeOutline, NativePoint, NativeStackup,
+};
 use self::command_project_pool_materialization::{
     materialize_supported_pool_package_graphics, resolve_native_project_pool_path,
 };
-pub(crate) use self::command_project_native_types::{
-    NativeBoardRoot, NativeOutline, NativePoint, NativeStackup,
-};
+pub(crate) use self::command_project_summary::query_native_project_summary;
 use anyhow::{Context, Result, bail};
 use eda_engine::api::{CheckCodeCount, CheckReport, CheckStatus, CheckSummary};
 use eda_engine::board::{
@@ -51,8 +83,8 @@ use eda_engine::board::{
 use eda_engine::connectivity::{schematic_diagnostics, schematic_net_info};
 use eda_engine::erc::{ErcFinding, run_prechecks};
 use eda_engine::export::{
-    render_excellon_drill, render_rs274x_copper_layer, render_rs274x_outline_default,
-    render_rs274x_paste_layer, render_rs274x_silkscreen_layer, render_rs274x_soldermask_layer,
+    render_rs274x_copper_layer, render_rs274x_outline_default, render_rs274x_paste_layer,
+    render_rs274x_silkscreen_layer, render_rs274x_soldermask_layer,
 };
 use eda_engine::import::ids_sidecar::compute_source_hash_bytes;
 use eda_engine::ir::geometry::Polygon;
@@ -115,14 +147,14 @@ use super::{
     NativeProjectGerberSoldermaskComparisonView, NativeProjectGerberSoldermaskExportView,
     NativeProjectGerberSoldermaskValidationView, NativeProjectInspectPoolRefView,
     NativeProjectInspectReportView, NativeProjectJunctionMutationReportView,
-    NativeProjectLabelMutationReportView,
-    NativeProjectNoConnectMutationReportView, NativeProjectPinOverrideMutationReportView,
-    NativeProjectPnpComparisonView, NativeProjectPnpDriftView, NativeProjectPnpExportView,
-    NativeProjectPortMutationReportView, NativeProjectRulesSummaryView, NativeProjectRulesView,
-    NativeProjectSchematicSummaryView, NativeProjectSummaryView,
-    NativeProjectSymbolFieldMutationReportView, NativeProjectSymbolMutationReportView,
-    NativeProjectSymbolPinInfoView, NativeProjectSymbolSemanticsView,
-    NativeProjectTextMutationReportView, NativeProjectWireMutationReportView, UnroutedView,
+    NativeProjectLabelMutationReportView, NativeProjectNoConnectMutationReportView,
+    NativeProjectPinOverrideMutationReportView, NativeProjectPnpComparisonView,
+    NativeProjectPnpDriftView, NativeProjectPnpExportView, NativeProjectPortMutationReportView,
+    NativeProjectRulesSummaryView, NativeProjectRulesView, NativeProjectSchematicSummaryView,
+    NativeProjectSummaryView, NativeProjectSymbolFieldMutationReportView,
+    NativeProjectSymbolMutationReportView, NativeProjectSymbolPinInfoView,
+    NativeProjectSymbolSemanticsView, NativeProjectTextMutationReportView,
+    NativeProjectWireMutationReportView, UnroutedView,
 };
 
 fn render_symbol_display_mode(mode: &SymbolDisplayMode) -> String {
@@ -291,7 +323,9 @@ pub(crate) fn create_native_project(
         schema_version: 1,
         uuid: ids.board_uuid,
         name: format!("{project_name} Board"),
-        stackup: NativeStackup { layers: Vec::new() },
+        stackup: NativeStackup {
+            layers: default_native_project_stackup_layers(),
+        },
         outline: NativeOutline {
             vertices: Vec::new(),
             closed: true,
@@ -309,6 +343,8 @@ pub(crate) fn create_native_project(
         component_mechanical_polylines: BTreeMap::new(),
         component_mechanical_circles: BTreeMap::new(),
         component_mechanical_arcs: BTreeMap::new(),
+        component_pads: BTreeMap::new(),
+        component_models_3d: BTreeMap::new(),
         pads: BTreeMap::new(),
         tracks: BTreeMap::new(),
         vias: BTreeMap::new(),
@@ -2388,297 +2424,6 @@ pub(crate) fn compare_native_project_pnp(
     })
 }
 
-pub(crate) fn export_native_project_drill(
-    root: &Path,
-    output_path: &Path,
-) -> Result<NativeProjectDrillExportView> {
-    let project = load_native_project(root)?;
-    let mut vias = query_native_project_board_vias(root)?;
-    vias.sort_by(|a, b| {
-        a.position
-            .x
-            .cmp(&b.position.x)
-            .then_with(|| a.position.y.cmp(&b.position.y))
-            .then_with(|| a.uuid.cmp(&b.uuid))
-    });
-    let mut csv =
-        String::from("via_uuid,net_uuid,x_nm,y_nm,drill_nm,diameter_nm,from_layer,to_layer\n");
-    for via in &vias {
-        let row = [
-            csv_escape(&via.uuid.to_string()),
-            csv_escape(&via.net.to_string()),
-            via.position.x.to_string(),
-            via.position.y.to_string(),
-            via.drill.to_string(),
-            via.diameter.to_string(),
-            via.from_layer.to_string(),
-            via.to_layer.to_string(),
-        ]
-        .join(",");
-        csv.push_str(&row);
-        csv.push('\n');
-    }
-    std::fs::write(output_path, csv)
-        .with_context(|| format!("failed to write {}", output_path.display()))?;
-    Ok(NativeProjectDrillExportView {
-        action: "export_drill".to_string(),
-        project_root: project.root.display().to_string(),
-        drill_path: output_path.display().to_string(),
-        rows: vias.len(),
-    })
-}
-
-pub(crate) fn export_native_project_excellon_drill(
-    root: &Path,
-    output_path: &Path,
-) -> Result<NativeProjectExcellonDrillExportView> {
-    let project = load_native_project(root)?;
-    let vias = query_native_project_board_vias(root)?;
-    let tools = build_excellon_tool_views(&vias);
-    let tool_count = tools.len();
-    let excellon = render_excellon_drill(&vias)
-        .context("failed to render native board vias as Excellon drill")?;
-    std::fs::write(output_path, excellon)
-        .with_context(|| format!("failed to write {}", output_path.display()))?;
-    Ok(NativeProjectExcellonDrillExportView {
-        action: "export_excellon_drill".to_string(),
-        project_root: project.root.display().to_string(),
-        board_path: project.board_path.display().to_string(),
-        drill_path: output_path.display().to_string(),
-        via_count: vias.len(),
-        tool_count,
-        tools,
-    })
-}
-
-pub(crate) fn validate_native_project_excellon_drill(
-    root: &Path,
-    drill_path: &Path,
-) -> Result<NativeProjectExcellonDrillValidationView> {
-    let project = load_native_project(root)?;
-    let vias = query_native_project_board_vias(root)?;
-    let tools = build_excellon_tool_views(&vias);
-    let tool_count = tools.len();
-    let expected = render_excellon_drill(&vias)
-        .context("failed to render expected native board vias as Excellon drill")?;
-    let actual = std::fs::read_to_string(drill_path)
-        .with_context(|| format!("failed to read {}", drill_path.display()))?;
-
-    Ok(NativeProjectExcellonDrillValidationView {
-        action: "validate_excellon_drill".to_string(),
-        project_root: project.root.display().to_string(),
-        board_path: project.board_path.display().to_string(),
-        drill_path: drill_path.display().to_string(),
-        matches_expected: actual == expected,
-        expected_bytes: expected.len(),
-        actual_bytes: actual.len(),
-        via_count: vias.len(),
-        tool_count,
-        tools,
-    })
-}
-
-pub(crate) fn inspect_excellon_drill(
-    drill_path: &Path,
-) -> Result<NativeProjectExcellonDrillInspectionView> {
-    let contents = std::fs::read_to_string(drill_path)
-        .with_context(|| format!("failed to read {}", drill_path.display()))?;
-
-    let mut metric = false;
-    let mut tools = BTreeMap::<String, NativeProjectExcellonDrillToolView>::new();
-    let mut current_tool = None::<String>;
-    let mut hit_count = 0usize;
-
-    for raw_line in contents.lines() {
-        let line = raw_line.trim();
-        if line.is_empty() || line == "M48" || line == "%" || line == "M30" {
-            continue;
-        }
-        if line == "METRIC,TZ" {
-            metric = true;
-            continue;
-        }
-        if let Some(rest) = line.strip_prefix('T') {
-            if let Some((tool_digits, diameter)) = rest.split_once('C') {
-                let tool = format!("T{tool_digits}");
-                tools.insert(
-                    tool.clone(),
-                    NativeProjectExcellonDrillToolView {
-                        tool,
-                        diameter_mm: diameter.to_string(),
-                        hits: 0,
-                    },
-                );
-                continue;
-            }
-            current_tool = Some(format!("T{rest}"));
-            continue;
-        }
-        if line.starts_with('X') {
-            let tool = current_tool.clone().with_context(|| {
-                format!("drill hit without active tool in {}", drill_path.display())
-            })?;
-            let entry = tools.get_mut(&tool).with_context(|| {
-                format!(
-                    "drill hit references unknown tool `{tool}` in {}",
-                    drill_path.display()
-                )
-            })?;
-            entry.hits += 1;
-            hit_count += 1;
-        }
-    }
-
-    Ok(NativeProjectExcellonDrillInspectionView {
-        action: "inspect_excellon_drill".to_string(),
-        drill_path: drill_path.display().to_string(),
-        metric,
-        tool_count: tools.len(),
-        hit_count,
-        tools: tools.into_values().collect(),
-    })
-}
-
-pub(crate) fn compare_native_project_excellon_drill(
-    root: &Path,
-    drill_path: &Path,
-) -> Result<NativeProjectExcellonDrillComparisonView> {
-    let project = load_native_project(root)?;
-    let vias = query_native_project_board_vias(root)?;
-    let expected_tools = build_excellon_tool_views(&vias);
-    let actual = inspect_excellon_drill(drill_path)?;
-
-    let expected_by_diameter = expected_tools
-        .iter()
-        .map(|tool| (tool.diameter_mm.clone(), tool.hits))
-        .collect::<BTreeMap<_, _>>();
-    let actual_by_diameter = actual
-        .tools
-        .iter()
-        .map(|tool| (tool.diameter_mm.clone(), tool.hits))
-        .collect::<BTreeMap<_, _>>();
-
-    let matched = expected_by_diameter
-        .iter()
-        .filter_map(|(diameter, expected_hits)| {
-            actual_by_diameter
-                .get(diameter)
-                .filter(|actual_hits| **actual_hits == *expected_hits)
-                .map(|_| diameter.clone())
-        })
-        .collect::<Vec<_>>();
-    let missing = expected_by_diameter
-        .keys()
-        .filter(|diameter| !actual_by_diameter.contains_key(*diameter))
-        .cloned()
-        .collect::<Vec<_>>();
-    let extra = actual_by_diameter
-        .keys()
-        .filter(|diameter| !expected_by_diameter.contains_key(*diameter))
-        .cloned()
-        .collect::<Vec<_>>();
-    let hit_drift = expected_by_diameter
-        .iter()
-        .filter_map(|(diameter, expected_hits)| {
-            actual_by_diameter.get(diameter).and_then(|actual_hits| {
-                if actual_hits == expected_hits {
-                    None
-                } else {
-                    Some(NativeProjectExcellonDrillHitDriftView {
-                        diameter_mm: diameter.clone(),
-                        expected_hits: *expected_hits,
-                        actual_hits: *actual_hits,
-                    })
-                }
-            })
-        })
-        .collect::<Vec<_>>();
-
-    Ok(NativeProjectExcellonDrillComparisonView {
-        action: "compare_excellon_drill".to_string(),
-        project_root: project.root.display().to_string(),
-        board_path: project.board_path.display().to_string(),
-        drill_path: drill_path.display().to_string(),
-        expected_tool_count: expected_tools.len(),
-        actual_tool_count: actual.tools.len(),
-        expected_hit_count: vias.len(),
-        actual_hit_count: actual.hit_count,
-        matched_count: matched.len(),
-        missing_count: missing.len(),
-        extra_count: extra.len(),
-        hit_drift_count: hit_drift.len(),
-        matched,
-        missing,
-        extra,
-        hit_drift,
-    })
-}
-
-pub(crate) fn report_native_project_drill_hole_classes(
-    root: &Path,
-) -> Result<NativeProjectDrillHoleClassReportView> {
-    let project = load_native_project(root)?;
-    let vias = query_native_project_board_vias(root)?;
-    let copper_layers = query_native_project_board_stackup(root)?
-        .into_iter()
-        .filter(|layer| matches!(layer.layer_type, StackupLayerType::Copper))
-        .map(|layer| layer.id)
-        .collect::<Vec<_>>();
-    let top_copper = copper_layers.iter().min().copied();
-    let bottom_copper = copper_layers.iter().max().copied();
-
-    let mut grouped = BTreeMap::<(String, i32, i32), Vec<Via>>::new();
-    for via in vias.iter().cloned() {
-        let start = via.from_layer.min(via.to_layer);
-        let end = via.from_layer.max(via.to_layer);
-        let class = classify_via_hole_class(start, end, top_copper, bottom_copper);
-        grouped.entry((class, start, end)).or_default().push(via);
-    }
-
-    let classes = grouped
-        .into_iter()
-        .map(|((class, from_layer, to_layer), vias)| {
-            let tools = build_excellon_tool_views(&vias);
-            NativeProjectDrillHoleClassBucketView {
-                class,
-                from_layer,
-                to_layer,
-                via_count: vias.len(),
-                tool_count: tools.len(),
-                tools,
-            }
-        })
-        .collect::<Vec<_>>();
-
-    Ok(NativeProjectDrillHoleClassReportView {
-        action: "report_drill_hole_classes".to_string(),
-        project_root: project.root.display().to_string(),
-        board_path: project.board_path.display().to_string(),
-        copper_layer_count: copper_layers.len(),
-        via_count: vias.len(),
-        class_count: classes.len(),
-        classes,
-    })
-}
-
-fn build_excellon_tool_views(vias: &[Via]) -> Vec<NativeProjectExcellonDrillToolView> {
-    let mut grouped = BTreeMap::<i64, usize>::new();
-    for via in vias {
-        *grouped.entry(via.drill).or_default() += 1;
-    }
-    grouped
-        .into_iter()
-        .enumerate()
-        .map(
-            |(idx, (drill_nm, hits))| NativeProjectExcellonDrillToolView {
-                tool: format!("T{:02}", idx + 1),
-                diameter_mm: render_mm_6(drill_nm),
-                hits,
-            },
-        )
-        .collect()
-}
-
 fn render_mm_6(nm: i64) -> String {
     let sign = if nm < 0 { "-" } else { "" };
     let abs = nm.abs();
@@ -3390,7 +3135,7 @@ fn resolve_native_project_soldermask_context(
             anyhow::anyhow!("no copper layer available to derive soldermask openings")
         })?;
 
-    let pads = query_native_project_board_pads(root)?
+    let pads = query_native_project_emitted_copper_pads(root)?
         .into_iter()
         .filter(|pad| pad.layer == associated_copper_layer)
         .collect::<Vec<_>>();
@@ -3423,7 +3168,7 @@ fn resolve_native_project_paste_context(
         .map(|entry| entry.id)
         .ok_or_else(|| anyhow::anyhow!("no copper layer available to derive paste openings"))?;
 
-    let pads = query_native_project_board_pads(root)?
+    let pads = query_native_project_emitted_copper_pads(root)?
         .into_iter()
         .filter(|pad| pad.layer == associated_copper_layer)
         .collect::<Vec<_>>();
@@ -3457,7 +3202,7 @@ pub(crate) fn export_native_project_gerber_copper_layer(
     output_path: &Path,
 ) -> Result<NativeProjectGerberCopperExportView> {
     let project = load_native_project(root)?;
-    let pads = query_native_project_board_pads(root)?
+    let pads = query_native_project_emitted_copper_pads(root)?
         .into_iter()
         .filter(|pad| pad.layer == layer)
         .collect::<Vec<_>>();
@@ -3605,7 +3350,7 @@ pub(crate) fn validate_native_project_gerber_copper_layer(
     gerber_path: &Path,
 ) -> Result<NativeProjectGerberCopperValidationView> {
     let project = load_native_project(root)?;
-    let pads = query_native_project_board_pads(root)?
+    let pads = query_native_project_emitted_copper_pads(root)?
         .into_iter()
         .filter(|pad| pad.layer == layer)
         .collect::<Vec<_>>();
@@ -3777,7 +3522,7 @@ pub(crate) fn compare_native_project_gerber_copper_layer(
     gerber_path: &Path,
 ) -> Result<NativeProjectGerberCopperComparisonView> {
     let project = load_native_project(root)?;
-    let pads = query_native_project_board_pads(root)?
+    let pads = query_native_project_emitted_copper_pads(root)?
         .into_iter()
         .filter(|pad| pad.layer == layer)
         .collect::<Vec<_>>();
@@ -4024,117 +3769,6 @@ pub(crate) fn compare_native_project_gerber_paste_layer(
     })
 }
 
-pub(crate) fn plan_native_project_gerber_export(
-    root: &Path,
-    prefix_override: Option<&str>,
-) -> Result<NativeProjectGerberPlanView> {
-    let project = load_native_project(root)?;
-    let mut layers = project
-        .board
-        .stackup
-        .layers
-        .iter()
-        .map(|value| {
-            serde_json::from_value::<StackupLayer>(value.clone())
-                .context("failed to parse board stackup layer")
-        })
-        .collect::<Result<Vec<_>>>()?;
-    layers.sort_by(|a, b| a.id.cmp(&b.id).then_with(|| a.name.cmp(&b.name)));
-
-    let prefix = sanitize_export_prefix(prefix_override.unwrap_or(&project.board.name));
-    let mut artifacts = vec![NativeProjectGerberPlanArtifactView {
-        kind: "outline".to_string(),
-        layer_id: None,
-        layer_name: None,
-        filename: format!("{prefix}-outline.gbr"),
-    }];
-
-    let mut copper_layers = 0;
-    let mut soldermask_layers = 0;
-    let mut silkscreen_layers = 0;
-    let mut paste_layers = 0;
-    let mut mechanical_layers = 0;
-
-    for layer in layers {
-        let (kind, suffix, count_ref) = match layer.layer_type {
-            StackupLayerType::Copper => ("copper", "copper", &mut copper_layers),
-            StackupLayerType::SolderMask => ("soldermask", "mask", &mut soldermask_layers),
-            StackupLayerType::Silkscreen => ("silkscreen", "silk", &mut silkscreen_layers),
-            StackupLayerType::Paste => ("paste", "paste", &mut paste_layers),
-            StackupLayerType::Mechanical => ("mechanical", "mech", &mut mechanical_layers),
-            StackupLayerType::Dielectric => continue,
-        };
-        *count_ref += 1;
-        let layer_slug = sanitize_export_prefix(&layer.name);
-        artifacts.push(NativeProjectGerberPlanArtifactView {
-            kind: kind.to_string(),
-            layer_id: Some(layer.id),
-            layer_name: Some(layer.name.clone()),
-            filename: format!("{prefix}-l{}-{layer_slug}-{suffix}.gbr", layer.id),
-        });
-    }
-
-    Ok(NativeProjectGerberPlanView {
-        action: "plan_gerber_export".to_string(),
-        project_root: project.root.display().to_string(),
-        board_path: project.board_path.display().to_string(),
-        prefix,
-        outline_vertex_count: project.board.outline.vertices.len(),
-        outline_closed: project.board.outline.closed,
-        copper_layers,
-        soldermask_layers,
-        silkscreen_layers,
-        paste_layers,
-        mechanical_layers,
-        artifacts,
-    })
-}
-
-pub(crate) fn compare_native_project_gerber_export_plan(
-    root: &Path,
-    output_dir: &Path,
-    prefix_override: Option<&str>,
-) -> Result<NativeProjectGerberPlanComparisonView> {
-    let plan = plan_native_project_gerber_export(root, prefix_override)?;
-    let expected = plan
-        .artifacts
-        .iter()
-        .map(|artifact| artifact.filename.clone())
-        .collect::<BTreeSet<_>>();
-
-    let mut present = BTreeSet::new();
-    for entry in std::fs::read_dir(output_dir)
-        .with_context(|| format!("failed to read {}", output_dir.display()))?
-    {
-        let entry = entry.with_context(|| format!("failed to read {}", output_dir.display()))?;
-        if entry
-            .file_type()
-            .with_context(|| format!("failed to inspect {}", entry.path().display()))?
-            .is_file()
-        {
-            present.insert(entry.file_name().to_string_lossy().into_owned());
-        }
-    }
-
-    let matched = expected.intersection(&present).cloned().collect::<Vec<_>>();
-    let missing = expected.difference(&present).cloned().collect::<Vec<_>>();
-    let extra = present.difference(&expected).cloned().collect::<Vec<_>>();
-
-    Ok(NativeProjectGerberPlanComparisonView {
-        action: "compare_gerber_export_plan".to_string(),
-        project_root: plan.project_root,
-        output_dir: output_dir.display().to_string(),
-        prefix: plan.prefix,
-        expected_count: expected.len(),
-        present_count: present.len(),
-        missing_count: missing.len(),
-        extra_count: extra.len(),
-        matched,
-        missing,
-        extra,
-    })
-}
-
 pub(crate) fn query_native_project_board_pads(root: &Path) -> Result<Vec<PlacedPad>> {
     let project = load_native_project(root)?;
     let mut pads = project
@@ -4150,6 +3784,63 @@ pub(crate) fn query_native_project_board_pads(root: &Path) -> Result<Vec<PlacedP
             .then_with(|| a.uuid.cmp(&b.uuid))
     });
     Ok(pads)
+}
+
+fn query_native_project_component_pads(root: &Path) -> Result<Vec<PlacedPad>> {
+    let project = load_native_project(root)?;
+    let mut pads = Vec::new();
+    for (component_key, component_pads) in &project.board.component_pads {
+        let component_uuid = Uuid::parse_str(component_key).with_context(|| {
+            format!("failed to parse component UUID in {}", project.board_path.display())
+        })?;
+        for pad in component_pads {
+            if let Some(resolved) = native_component_pad_to_placed_pad(component_uuid, pad) {
+                pads.push(resolved);
+            }
+        }
+    }
+    pads.sort_by(|a, b| {
+        a.package
+            .cmp(&b.package)
+            .then_with(|| a.name.cmp(&b.name))
+            .then_with(|| a.uuid.cmp(&b.uuid))
+    });
+    Ok(pads)
+}
+
+fn query_native_project_emitted_copper_pads(root: &Path) -> Result<Vec<PlacedPad>> {
+    let mut pads = query_native_project_board_pads(root)?;
+    pads.extend(query_native_project_component_pads(root)?);
+    pads.sort_by(|a, b| {
+        a.layer
+            .cmp(&b.layer)
+            .then_with(|| a.package.cmp(&b.package))
+            .then_with(|| a.name.cmp(&b.name))
+            .then_with(|| a.uuid.cmp(&b.uuid))
+    });
+    Ok(pads)
+}
+
+fn native_component_pad_to_placed_pad(
+    component_uuid: Uuid,
+    pad: &NativeComponentPad,
+) -> Option<PlacedPad> {
+    let shape = pad.shape?;
+    Some(PlacedPad {
+        uuid: pad.uuid,
+        package: component_uuid,
+        name: pad.name.clone(),
+        net: None,
+        position: Point {
+            x: pad.position.x,
+            y: pad.position.y,
+        },
+        layer: pad.layer,
+        shape,
+        diameter: pad.diameter_nm,
+        width: pad.width_nm,
+        height: pad.height_nm,
+    })
 }
 
 pub(crate) fn query_native_project_board_tracks(root: &Path) -> Result<Vec<Track>> {
@@ -7218,40 +6909,12 @@ pub(crate) fn set_native_project_board_component_package(
     project.board.component_mechanical_polylines.remove(&key);
     project.board.component_mechanical_circles.remove(&key);
     project.board.component_mechanical_arcs.remove(&key);
+    project.board.component_pads.remove(&key);
+    project.board.component_models_3d.remove(&key);
     materialize_supported_pool_package_graphics(&mut project, &component)?;
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
         "set_board_component_package",
-        &project,
-        component,
-    ))
-}
-
-pub(crate) fn set_native_project_board_component_value(
-    root: &Path,
-    component_uuid: Uuid,
-    value: String,
-) -> Result<NativeProjectBoardComponentMutationReportView> {
-    let mut project = load_native_project(root)?;
-    let key = component_uuid.to_string();
-    let entry = project.board.packages.get(&key).cloned().ok_or_else(|| {
-        anyhow::anyhow!("board component not found in native project: {component_uuid}")
-    })?;
-    let mut component: PlacedPackage = serde_json::from_value(entry).with_context(|| {
-        format!(
-            "failed to parse board component in {}",
-            project.board_path.display()
-        )
-    })?;
-    component.value = value;
-    project.board.packages.insert(
-        key,
-        serde_json::to_value(&component)
-            .expect("native board component serialization must succeed"),
-    );
-    write_canonical_json(&project.board_path, &project.board)?;
-    Ok(native_project_board_component_report(
-        "set_board_component_value",
         &project,
         component,
     ))
@@ -7339,7 +7002,8 @@ pub(crate) fn delete_native_project_board_component(
             project.board_path.display()
         )
     })?;
-    let report = native_project_board_component_report("delete_board_component", &project, component);
+    let report =
+        native_project_board_component_report("delete_board_component", &project, component);
     project
         .board
         .component_silkscreen
@@ -7387,6 +7051,14 @@ pub(crate) fn delete_native_project_board_component(
     project
         .board
         .component_mechanical_arcs
+        .remove(&component_uuid.to_string());
+    project
+        .board
+        .component_pads
+        .remove(&component_uuid.to_string());
+    project
+        .board
+        .component_models_3d
         .remove(&component_uuid.to_string());
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(report)
@@ -8103,6 +7775,10 @@ fn native_project_board_component_report(
             &project.board.component_mechanical_polylines,
             &key,
         ),
+        has_persisted_component_pads: component_package_pad_count(project, &key) > 0,
+        persisted_component_pad_count: component_package_pad_count(project, &key),
+        has_persisted_component_models_3d: component_model_count(project, &key) > 0,
+        persisted_component_model_3d_count: component_model_count(project, &key),
     }
 }
 
@@ -8997,26 +8673,6 @@ fn parse_csv_line(line: &str) -> Result<Vec<String>> {
     }
     fields.push(current);
     Ok(fields)
-}
-
-fn sanitize_export_prefix(value: &str) -> String {
-    let mut out = String::with_capacity(value.len());
-    let mut last_was_sep = false;
-    for ch in value.chars() {
-        if ch.is_ascii_alphanumeric() {
-            out.push(ch.to_ascii_lowercase());
-            last_was_sep = false;
-        } else if !last_was_sep {
-            out.push('-');
-            last_was_sep = true;
-        }
-    }
-    let trimmed = out.trim_matches('-').to_string();
-    if trimmed.is_empty() {
-        "board".to_string()
-    } else {
-        trimmed
-    }
 }
 
 fn native_outline_to_polygon(outline: &NativeOutline) -> Polygon {

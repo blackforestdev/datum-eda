@@ -99,6 +99,10 @@ pub(crate) fn native_project_board_component_query_view(
             &project.board.component_mechanical_polylines,
             &key,
         ),
+        has_persisted_component_pads: component_package_pad_count(project, &key) > 0,
+        persisted_component_pad_count: component_package_pad_count(project, &key),
+        has_persisted_component_models_3d: component_model_count(project, &key) > 0,
+        persisted_component_model_3d_count: component_model_count(project, &key),
     }
 }
 
@@ -131,4 +135,23 @@ pub(super) fn component_has_persisted_mechanical(
         || component_graphic_count(&project.board.component_mechanical_circles, component_key) > 0
         || component_graphic_count(&project.board.component_mechanical_polygons, component_key) > 0
         || component_graphic_count(&project.board.component_mechanical_polylines, component_key) > 0
+}
+
+pub(super) fn component_model_count(project: &LoadedNativeProject, component_key: &str) -> usize {
+    project
+        .board
+        .component_models_3d
+        .get(component_key)
+        .map_or(0, Vec::len)
+}
+
+pub(super) fn component_package_pad_count(
+    project: &LoadedNativeProject,
+    component_key: &str,
+) -> usize {
+    project
+        .board
+        .component_pads
+        .get(component_key)
+        .map_or(0, Vec::len)
 }

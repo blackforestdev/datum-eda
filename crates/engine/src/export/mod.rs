@@ -1,13 +1,15 @@
 use crate::board::{BoardText, PadAperture, PlacedPad, Track, Via, Zone};
 use crate::ir::geometry::{LayerId, Polygon};
 use thiserror::Error;
+mod formatting;
 mod gerber_mechanical;
 mod outline;
 mod silkscreen;
 
+use formatting::{format_coord, format_mm_6, parse_mm_6_to_nm, render_polygon_points};
 pub use gerber_mechanical::{MechanicalStroke, render_rs274x_mechanical_layer};
-pub use silkscreen::{SilkscreenStroke, render_silkscreen_text_strokes};
 use outline::DEFAULT_OUTLINE_APERTURE_MM;
+pub use silkscreen::{SilkscreenStroke, render_silkscreen_text_strokes};
 
 #[derive(Debug, Error)]
 pub enum ExportError {
@@ -624,44 +626,6 @@ pub fn render_excellon_drill(vias: &[Via]) -> Result<String, ExportError> {
 
     lines.push(String::from("M30"));
     Ok(lines.join("\n") + "\n")
-}
-
-fn format_coord(nm: i64) -> String {
-    nm.to_string()
-}
-
-fn format_mm_6(nm: i64) -> String {
-    let sign = if nm < 0 { "-" } else { "" };
-    let abs = nm.abs();
-    let whole = abs / 1_000_000;
-    let frac = abs % 1_000_000;
-    format!("{sign}{whole}.{frac:06}")
-}
-
-fn render_polygon_points(points: &[crate::ir::geometry::Point]) -> String {
-    points
-        .iter()
-        .map(|point| format!("({}, {})", point.x, point.y))
-        .collect::<Vec<_>>()
-        .join(" -> ")
-}
-
-fn parse_mm_6_to_nm(value: &str) -> Option<i64> {
-    let mut parts = value.split('.');
-    let whole = parts.next()?.parse::<i64>().ok()?;
-    let frac_str = parts.next().unwrap_or("0");
-    if parts.next().is_some() {
-        return None;
-    }
-    let mut frac = frac_str.to_string();
-    if frac.len() > 6 {
-        return None;
-    }
-    while frac.len() < 6 {
-        frac.push('0');
-    }
-    let frac = frac.parse::<i64>().ok()?;
-    Some(whole * 1_000_000 + frac)
 }
 
 #[cfg(test)]
