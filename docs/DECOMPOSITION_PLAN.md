@@ -43,6 +43,8 @@ The following governance is now required:
 - Touched-monolith policy:
   - if a known monolith file is touched in a PR, it must show burn-down
     against branch base (net line reduction)
+  - burn-down must include structural extraction evidence via added companion
+    shard lines in the same change set (pure deletion does not satisfy policy)
   - touched monoliths must still remain at or below explicit freeze baselines
   - decomposition PRs should continue to ratchet touched monolith baselines
   - baseline values are enforced by tooling and ratcheted downward after each

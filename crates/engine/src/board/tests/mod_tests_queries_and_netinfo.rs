@@ -110,6 +110,18 @@ fn board_summary_counts_core_objects() {
 }
 
 #[test]
+fn dimension_layer_defaults_to_zero_when_missing_from_json() {
+    let dimension: Dimension = serde_json::from_value(serde_json::json!({
+        "uuid": Uuid::new_v4(),
+        "from": { "x": 5, "y": 10 },
+        "to": { "x": 15, "y": 20 },
+        "text": "10mm"
+    }))
+    .expect("dimension should deserialize");
+    assert_eq!(dimension.layer, 0);
+}
+
+#[test]
 fn component_query_is_sorted_by_reference() {
     let a = Uuid::new_v4();
     let b = Uuid::new_v4();

@@ -17,8 +17,9 @@ Current live slice:
   scaffold for `project.json`, `schematic/schematic.json`, `board/board.json`,
   and `rules/rules.json`.
 - `eda project inspect <dir>` loads that scaffold, validates the resolved file
-  layout, and reports current schema/UUID/path/count summary without opening a
-  mutable editing session.
+  layout, and reports current schema/UUID/path/count summary plus resolved
+  pool-reference details from `project.json` without opening a mutable editing
+  session.
 - `eda project query <dir> summary` and
   `eda project query <dir> design-rules` provide the first native read surface
   directly from the on-disk scaffold, and `eda project query <dir> nets` plus
@@ -40,6 +41,8 @@ Current live slice:
   connectivity-aware and board-check read surface, and `eda project query
   <dir> board-texts` exposes the first authored native board-object read
   surface.
+  The summary query now also reports resolved pool-reference details from
+  `project.json` for automation-facing native read parity.
 - `eda project place-symbol <dir> --sheet <uuid> --reference <text> --value <text>
   [--lib-id <text>] --x-nm <i64> --y-nm <i64> [--rotation-deg <i32>] [--mirrored]`,
   `eda project move-symbol <dir> --symbol <uuid> --x-nm <i64> --y-nm <i64>`, and
@@ -136,11 +139,13 @@ Current live slice:
   `eda project query <dir> board-keepouts` reads back that persisted keepout
   slice.
 - `eda project place-board-dimension <dir> --from-x-nm <i64> --from-y-nm <i64>
-  --to-x-nm <i64> --to-y-nm <i64> [--text <text>]`,
+  --to-x-nm <i64> --to-y-nm <i64> --layer <i32> [--text <text>]`,
   `eda project edit-board-dimension <dir> --dimension <uuid> ...`, and
   `eda project delete-board-dimension <dir> --dimension <uuid>` extend the
   same native board path to persisted dimension annotations, while
   `eda project query <dir> board-dimensions` reads back that dimension slice.
+  Board dimensions now persist an explicit `layer` field, defaulting legacy
+  native data that lacks it to layer `0` for compatibility.
 - `eda project set-board-outline <dir> --vertex <x:y>...` replaces the
   persisted native board outline polygon directly on `board/board.json`, while
   `eda project query <dir> board-outline` reads back that canonical outline
@@ -239,13 +244,17 @@ Current live slice:
   broader layer-set emission yet.
 - `eda project export-gerber-mechanical-layer <dir> --layer <id> --out
   <path>` now writes a narrow RS-274X Gerber file for persisted native board
-  keepout polygons plus explicit persisted component-mechanical line,
-  closed-polygon, and open-polyline geometry on one selected mechanical layer
-  through
-  `eda_engine::export`, emitting closed keepouts and component polygons as
-  filled regions and component lines/polylines as circular-aperture strokes
-  without claiming dimensions, package auto-resolution, or broader
-  documentation-layer coverage yet.
+  keepout polygons, board-dimension span lines, authored board text, plus
+  explicit persisted component-mechanical text, line, closed-polygon,
+  open-polyline, circle, and arc geometry on one selected mechanical layer
+  through `eda_engine::export`, emitting closed keepouts and component
+  polygons as filled regions, component lines/polylines/circles plus
+  chordized arcs as circular-aperture strokes, persisted board-dimension
+  spans as fixed-width baseline strokes only, and authored board text plus
+  explicit component-mechanical text through the same fixed stroke-font
+  contract used by the current silkscreen subset, without claiming dimension
+  text, arrowheads, package auto-resolution, or broader documentation-layer
+  coverage yet.
 - `eda project validate-gerber-copper-layer <dir> --layer <id> --gerber
   <path>` now re-renders that expected native copper-layer Gerber and reports
   byte-for-byte match/mismatch with CI-usable exit status, establishing the
@@ -259,6 +268,10 @@ Current live slice:
   directory and reports matched, missing, and extra files, establishing the
   first native Gerber artifact-plan drift/comparison slice without claiming
   geometry-level comparison yet.
+- `eda project inspect-gerber <path>` now parses the currently supported
+  narrow RS-274X subset and reports deterministic stroke/flash/region counts
+  plus normalized geometry entries for debugging and workflow review, without
+  claiming full RS-274X inspection coverage.
 - `eda project compare-gerber-outline <dir> --gerber <path>` now parses the
   currently emitted board-outline RS-274X subset and compares its stroked
   geometry semantically against the persisted native outline, so reordered
@@ -291,11 +304,13 @@ Current live slice:
   feature coverage.
 - `eda project compare-gerber-mechanical-layer <dir> --layer <id> --gerber
   <path>` now parses the currently emitted mechanical-layer RS-274X subset and
-  compares persisted native keepout polygons plus explicit persisted
-  component-mechanical line, closed-polygon, and open-polyline geometry on
-  that selected mechanical layer semantically against emitted filled regions
-  and stroked lines, without claiming dimensions, package auto-resolution, or
-  broader RS-274X feature coverage.
+  compares persisted native keepout polygons, fixed-width board-dimension span
+  strokes, authored board-text strokes, explicit component-mechanical text
+  strokes, plus explicit persisted component-mechanical line, closed-polygon,
+  open-polyline, circle, and arc geometry on that selected mechanical layer
+  semantically against emitted filled regions and stroked lines, without
+  claiming dimension text, arrowheads, package auto-resolution, or broader
+  RS-274X feature coverage.
 - `eda project query <dir> board-pads` reads back the persisted native
   placed-pad inventory from `board/board.json`, establishing the first native
   package-linked pad read surface.
@@ -448,6 +463,23 @@ Current live slice:
   `eda project query <dir> board-net-classes` reads back that persisted rule
   slice.
 
+Current M4 truth boundary for package-linked graphics:
+- `project.json` pool references are now a real native package-load surface
+  for board mutation flow. `place-board-component` and
+  `set-board-component-package` resolve package JSON from the declared pool
+  search roots, honoring manifest priority order, and materialize only the
+  currently supported subset into persisted `board/board.json`.
+- The currently supported package-linked materialization subset is silkscreen
+  non-text primitives with explicit truthful source fields: lines, rectangles
+  (persisted as closed polygons), circles, arcs, closed polygons, and open
+  polygons (persisted as open polylines).
+- Package text remains out of scope because pool package text does not yet
+  carry explicit native render sizing needed for the current stroke-font
+  contract.
+- Native Gerber export/validate/compare still operates only from persisted
+  board state. Mechanical/package-linked expansion beyond the explicit
+  persisted subset remains open.
+
 ## Design Principle
 The native format is a direct serialization of the canonical IR. No
 translation layer, no lossy conversion. What is in memory is what is on
@@ -523,6 +555,13 @@ myproject/
   }
 }
 ```
+
+`pools` declares pool search roots for native projects. In the current M4
+slice the board mutation path resolves package JSON from those roots during
+component placement and package reassignment and persists only the supported
+truthful package-graphics subset into `board/board.json`; export and compare
+continue to read only persisted board state. Relative pool paths are resolved
+from the project root and absolute paths remain valid for external pool refs.
 
 ### 2.2 schematic.json
 

@@ -8,6 +8,16 @@ This file holds detailed M4 implementation notes referenced by
 Current native scaffold and read/query/check slices are implemented across
 project scaffold creation, deterministic schema layout, and broad native query
 surfaces.
+Current truth boundary: `project.json` pool references are now resolved during
+native board mutation flow, but only the truthful supported package-linked
+subset is materialized into persisted board state. Current support is limited
+to package silkscreen non-text primitives; package text and package-linked
+mechanical persistence remain open.
+The native inspect surface now also reports each declared pool reference with
+its priority, resolved path, and current existence state so the native pool
+contract is auditable without mutating project state. The native summary query
+now reports the same resolved pool-reference detail for automation-facing read
+parity.
 
 Evidence anchors:
 - CLI/native surface: `crates/cli/src/command_project.rs`
@@ -29,7 +39,10 @@ Evidence anchors:
 
 Implemented operation families include component placement/motion/locking and
 part/package reassignment, pads with net assignment, tracks/vias/zones,
-texts/keepouts/dimensions, outline/stackup, nets, and net classes.
+texts/keepouts/dimensions, outline/stackup, nets, and net classes. Component
+placement and package reassignment now also resolve packages from native
+project pool roots and persist the supported silkscreen non-text subset into
+`board/board.json`.
 
 Evidence anchors:
 - CLI mutations: `crates/cli/src/command_project.rs`
@@ -61,10 +74,18 @@ Narrow RS-274X outline and manufacturing-layer slices are in place, including
 single-layer copper, soldermask, silkscreen, paste, and mechanical output.
 The current silkscreen subset covers authored board text plus explicit
 component text, lines, arcs, circles, closed polygons, and open polylines via
-deterministic stroke-only emission. The current mechanical subset covers board
-keepout polygons plus explicit component-local mechanical lines, closed
-polygons, and open polylines persisted in native board state. Full layer-set
-and richer geometry parity remain open.
+deterministic stroke-only emission. Package-linked silkscreen support is now
+truthfully limited to the non-text pool package subset materialized into those
+persisted component silkscreen maps during placement/package reassignment. The
+current mechanical subset covers board
+keepout polygons, fixed-width board-dimension span lines, authored board
+text, plus explicit component-local mechanical text, lines, closed polygons,
+open polylines, circles, and arcs persisted in native board state. Full
+layer-set and richer geometry parity remain open.
+Truth boundary for next expansion: do not claim package-linked text or
+package-linked mechanical persistence until the source package model carries
+explicit truthful fields for those subsets and the resolved data is persisted
+into native board state.
 
 Evidence anchors:
 - Engine export: `crates/engine/src/export/mod.rs`
@@ -91,9 +112,11 @@ implemented; richer manufacturing metadata remains open.
 
 ## Gerber comparison
 
-Plan-vs-directory Gerber artifact comparison is implemented, and semantic
-comparison covers the currently emitted subset including outline, copper,
-soldermask, silkscreen, paste, and mechanical slices. The current mechanical
-comparison subset covers keepout regions plus explicit persisted component
-mechanical line strokes, closed polygons, and open polyline strokes. Full
-geometry/viewer-level comparison remains open.
+Plan-vs-directory Gerber artifact comparison is implemented, a file-level
+inspection surface is available for the currently supported RS-274X subset,
+and semantic comparison covers the currently emitted subset including outline,
+copper, soldermask, silkscreen, paste, and mechanical slices. The current
+mechanical comparison subset covers keepout regions plus explicit persisted
+component mechanical line strokes, closed polygons, open polyline strokes,
+circle strokes, and chordized arc strokes. Full geometry/viewer-level
+comparison remains open.

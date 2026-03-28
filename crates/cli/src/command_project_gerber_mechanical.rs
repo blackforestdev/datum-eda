@@ -1,18 +1,14 @@
 use std::collections::BTreeMap;
 
+#[path = "command_project_gerber_mechanical_support.rs"]
+mod support;
 use anyhow::{Context, Result, bail};
 use eda_engine::board::{PlacedPackage, StackupLayer, StackupLayerType};
 use eda_engine::export::{MechanicalStroke, render_rs274x_mechanical_layer};
-use eda_engine::ir::geometry::{Point, Polygon};
+use eda_engine::ir::geometry::Polygon;
 use serde::{Deserialize, Serialize};
-
-use super::{
-    NativeBoardRoot, NativePoint, NativeProjectGerberMechanicalComparisonView,
-    NativeProjectGerberMechanicalExportView, NativeProjectGerberMechanicalValidationView,
-    ParsedGerber, ParsedGerberGeometry, compare_entry_views, load_native_project,
-    parse_rs274x_subset, query_native_project_board_keepouts, query_native_project_board_stackup,
-    render_parsed_flash_geometry, render_region_geometry, render_stroke_geometry,
-};
+use self::support::{count_native_board_dimensions, count_native_board_texts, count_native_component_mechanical_arcs, count_native_component_mechanical_circles, count_native_component_mechanical_lines, count_native_component_mechanical_polygons, count_native_component_mechanical_polylines, native_board_dimension_to_stroke, native_board_text_to_strokes, native_component_mechanical_arc_to_strokes, native_component_mechanical_circle_to_strokes, native_component_mechanical_line_to_stroke, native_component_mechanical_polygon_to_polygon, native_component_mechanical_polyline_to_strokes, native_component_mechanical_text_to_strokes};
+use super::{NativeBoardRoot, NativePoint, NativeProjectGerberMechanicalComparisonView, NativeProjectGerberMechanicalExportView, NativeProjectGerberMechanicalValidationView, ParsedGerber, ParsedGerberGeometry, compare_entry_views, load_native_project, parse_rs274x_subset, query_native_project_board_dimensions, query_native_project_board_keepouts, query_native_project_board_stackup, query_native_project_board_texts, render_parsed_flash_geometry, render_region_geometry, render_stroke_geometry};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub(crate) struct NativeComponentMechanicalLine {
@@ -35,6 +31,34 @@ pub(crate) struct NativeComponentMechanicalPolyline {
     pub(crate) layer: i32,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub(crate) struct NativeComponentMechanicalCircle {
+    pub(crate) center: NativePoint,
+    pub(crate) radius_nm: i64,
+    pub(crate) width_nm: i64,
+    pub(crate) layer: i32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub(crate) struct NativeComponentMechanicalArc {
+    pub(crate) center: NativePoint,
+    pub(crate) radius_nm: i64,
+    pub(crate) start_angle: i32,
+    pub(crate) end_angle: i32,
+    pub(crate) width_nm: i64,
+    pub(crate) layer: i32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub(crate) struct NativeComponentMechanicalText {
+    pub(crate) text: String,
+    pub(crate) position: NativePoint,
+    pub(crate) rotation: i32,
+    pub(crate) height_nm: i64,
+    pub(crate) stroke_width_nm: i64,
+    pub(crate) layer: i32,
+}
+
 pub(crate) fn resolve_native_project_mechanical_context(
     root: &std::path::Path,
     layer: i32,
@@ -42,6 +66,11 @@ pub(crate) fn resolve_native_project_mechanical_context(
     StackupLayer,
     Vec<Polygon>,
     Vec<Polygon>,
+    Vec<MechanicalStroke>,
+    Vec<MechanicalStroke>,
+    Vec<MechanicalStroke>,
+    Vec<MechanicalStroke>,
+    Vec<MechanicalStroke>,
     Vec<MechanicalStroke>,
     Vec<MechanicalStroke>,
 )> {
@@ -62,6 +91,39 @@ pub(crate) fn resolve_native_project_mechanical_context(
         .into_iter()
         .filter(|keepout| keepout.layers.contains(&layer))
         .map(|keepout| keepout.polygon)
+        .collect::<Vec<_>>();
+    let dimension_strokes = query_native_project_board_dimensions(root)?
+        .into_iter()
+        .filter(|dimension| dimension.layer == layer)
+        .map(native_board_dimension_to_stroke)
+        .collect::<Vec<_>>();
+    let board_text_strokes = query_native_project_board_texts(root)?
+        .into_iter()
+        .filter(|text| text.layer == layer)
+        .map(|text| native_board_text_to_strokes(&text))
+        .collect::<Result<Vec<_>>>()?
+        .into_iter()
+        .flatten()
+        .collect::<Vec<_>>();
+    let component_text_strokes = project
+        .board
+        .component_mechanical_texts
+        .iter()
+        .filter_map(|(component_uuid, entries)| {
+            let component = project.board.packages.get(component_uuid)?;
+            let component: PlacedPackage = serde_json::from_value(component.clone()).ok()?;
+            Some(
+                entries
+                    .iter()
+                    .filter(|entry| entry.layer == layer)
+                    .map(|entry| native_component_mechanical_text_to_strokes(&component, entry))
+                    .collect::<Result<Vec<_>>>(),
+            )
+        })
+        .collect::<Result<Vec<_>>>()?
+        .into_iter()
+        .flatten()
+        .flatten()
         .collect::<Vec<_>>();
 
     let component_polygons = project
@@ -122,46 +184,54 @@ pub(crate) fn resolve_native_project_mechanical_context(
         .flatten()
         .collect::<Vec<_>>();
 
+    let component_circle_strokes = project
+        .board
+        .component_mechanical_circles
+        .iter()
+        .filter_map(|(component_uuid, circles)| {
+            let component = project.board.packages.get(component_uuid)?;
+            let component: PlacedPackage = serde_json::from_value(component.clone()).ok()?;
+            Some(
+                circles
+                    .iter()
+                    .filter(|circle| circle.layer == layer)
+                    .flat_map(|circle| {
+                        native_component_mechanical_circle_to_strokes(&component, circle)
+                    })
+                    .collect::<Vec<_>>(),
+            )
+        })
+        .flatten()
+        .collect::<Vec<_>>();
+    let component_arc_strokes = project
+        .board
+        .component_mechanical_arcs
+        .iter()
+        .filter_map(|(component_uuid, arcs)| {
+            let component = project.board.packages.get(component_uuid)?;
+            let component: PlacedPackage = serde_json::from_value(component.clone()).ok()?;
+            Some(
+                arcs.iter()
+                    .filter(|arc| arc.layer == layer)
+                    .flat_map(|arc| native_component_mechanical_arc_to_strokes(&component, arc))
+                    .collect::<Vec<_>>(),
+            )
+        })
+        .flatten()
+        .collect::<Vec<_>>();
+
     Ok((
         mechanical_layer,
         polygons,
         component_polygons,
         component_strokes,
         component_polyline_strokes,
+        component_circle_strokes,
+        component_arc_strokes,
+        dimension_strokes,
+        board_text_strokes,
+        component_text_strokes,
     ))
-}
-
-pub(crate) fn count_native_component_mechanical_lines(
-    board: &NativeBoardRoot,
-    layer: i32,
-) -> usize {
-    board
-        .component_mechanical_lines
-        .values()
-        .map(|entries| entries.iter().filter(|entry| entry.layer == layer).count())
-        .sum()
-}
-
-pub(crate) fn count_native_component_mechanical_polygons(
-    board: &NativeBoardRoot,
-    layer: i32,
-) -> usize {
-    board
-        .component_mechanical_polygons
-        .values()
-        .map(|entries| entries.iter().filter(|entry| entry.layer == layer).count())
-        .sum()
-}
-
-pub(crate) fn count_native_component_mechanical_polylines(
-    board: &NativeBoardRoot,
-    layer: i32,
-) -> usize {
-    board
-        .component_mechanical_polylines
-        .values()
-        .map(|entries| entries.iter().filter(|entry| entry.layer == layer).count())
-        .sum()
 }
 
 pub(crate) fn export_native_project_gerber_mechanical_layer(
@@ -170,16 +240,31 @@ pub(crate) fn export_native_project_gerber_mechanical_layer(
     output_path: &std::path::Path,
 ) -> Result<NativeProjectGerberMechanicalExportView> {
     let project = load_native_project(root)?;
+    let dimension_count = count_native_board_dimensions(&project.board, layer);
+    let board_text_count = count_native_board_texts(&project.board, layer);
+    let component_text_count = project
+        .board
+        .component_mechanical_texts
+        .values()
+        .map(|entries| entries.iter().filter(|entry| entry.layer == layer).count())
+        .sum::<usize>();
     let component_polygon_count = count_native_component_mechanical_polygons(&project.board, layer);
     let component_stroke_count = count_native_component_mechanical_lines(&project.board, layer);
     let component_polyline_count =
         count_native_component_mechanical_polylines(&project.board, layer);
+    let component_circle_count = count_native_component_mechanical_circles(&project.board, layer);
+    let component_arc_count = count_native_component_mechanical_arcs(&project.board, layer);
     let (
         _mechanical_layer,
         polygons,
         component_polygons,
         component_strokes,
         component_polyline_strokes,
+        component_circle_strokes,
+        component_arc_strokes,
+        dimension_strokes,
+        board_text_strokes,
+        component_text_strokes,
     ) = resolve_native_project_mechanical_context(root, layer)?;
     let all_polygons = polygons
         .iter()
@@ -190,6 +275,11 @@ pub(crate) fn export_native_project_gerber_mechanical_layer(
         .iter()
         .copied()
         .chain(component_polyline_strokes.iter().copied())
+        .chain(component_circle_strokes.iter().copied())
+        .chain(component_arc_strokes.iter().copied())
+        .chain(dimension_strokes.iter().copied())
+        .chain(board_text_strokes.iter().copied())
+        .chain(component_text_strokes.iter().copied())
         .collect::<Vec<_>>();
     let gerber = render_rs274x_mechanical_layer(layer, &all_polygons, &all_strokes)
         .context("failed to render native board mechanical layer as RS-274X")?;
@@ -202,9 +292,14 @@ pub(crate) fn export_native_project_gerber_mechanical_layer(
         gerber_path: output_path.display().to_string(),
         layer,
         keepout_count: polygons.len(),
+        dimension_count,
+        board_text_count,
+        component_text_count,
         component_polygon_count,
         component_stroke_count,
         component_polyline_count,
+        component_circle_count,
+        component_arc_count,
     })
 }
 
@@ -214,16 +309,31 @@ pub(crate) fn validate_native_project_gerber_mechanical_layer(
     gerber_path: &std::path::Path,
 ) -> Result<NativeProjectGerberMechanicalValidationView> {
     let project = load_native_project(root)?;
+    let dimension_count = count_native_board_dimensions(&project.board, layer);
+    let board_text_count = count_native_board_texts(&project.board, layer);
+    let component_text_count = project
+        .board
+        .component_mechanical_texts
+        .values()
+        .map(|entries| entries.iter().filter(|entry| entry.layer == layer).count())
+        .sum::<usize>();
     let component_polygon_count = count_native_component_mechanical_polygons(&project.board, layer);
     let component_stroke_count = count_native_component_mechanical_lines(&project.board, layer);
     let component_polyline_count =
         count_native_component_mechanical_polylines(&project.board, layer);
+    let component_circle_count = count_native_component_mechanical_circles(&project.board, layer);
+    let component_arc_count = count_native_component_mechanical_arcs(&project.board, layer);
     let (
         _mechanical_layer,
         polygons,
         component_polygons,
         component_strokes,
         component_polyline_strokes,
+        component_circle_strokes,
+        component_arc_strokes,
+        dimension_strokes,
+        board_text_strokes,
+        component_text_strokes,
     ) = resolve_native_project_mechanical_context(root, layer)?;
     let all_polygons = polygons
         .iter()
@@ -234,6 +344,11 @@ pub(crate) fn validate_native_project_gerber_mechanical_layer(
         .iter()
         .copied()
         .chain(component_polyline_strokes.iter().copied())
+        .chain(component_circle_strokes.iter().copied())
+        .chain(component_arc_strokes.iter().copied())
+        .chain(dimension_strokes.iter().copied())
+        .chain(board_text_strokes.iter().copied())
+        .chain(component_text_strokes.iter().copied())
         .collect::<Vec<_>>();
     let expected = render_rs274x_mechanical_layer(layer, &all_polygons, &all_strokes)
         .context("failed to render expected native board mechanical layer as RS-274X")?;
@@ -250,9 +365,14 @@ pub(crate) fn validate_native_project_gerber_mechanical_layer(
         expected_bytes: expected.len(),
         actual_bytes: actual.len(),
         keepout_count: polygons.len(),
+        dimension_count,
+        board_text_count,
+        component_text_count,
         component_polygon_count,
         component_stroke_count,
         component_polyline_count,
+        component_circle_count,
+        component_arc_count,
     })
 }
 
@@ -262,16 +382,31 @@ pub(crate) fn compare_native_project_gerber_mechanical_layer(
     gerber_path: &std::path::Path,
 ) -> Result<NativeProjectGerberMechanicalComparisonView> {
     let project = load_native_project(root)?;
+    let dimension_count = count_native_board_dimensions(&project.board, layer);
+    let board_text_count = count_native_board_texts(&project.board, layer);
+    let component_text_count = project
+        .board
+        .component_mechanical_texts
+        .values()
+        .map(|entries| entries.iter().filter(|entry| entry.layer == layer).count())
+        .sum::<usize>();
     let component_polygon_count = count_native_component_mechanical_polygons(&project.board, layer);
     let component_stroke_count = count_native_component_mechanical_lines(&project.board, layer);
     let component_polyline_count =
         count_native_component_mechanical_polylines(&project.board, layer);
+    let component_circle_count = count_native_component_mechanical_circles(&project.board, layer);
+    let component_arc_count = count_native_component_mechanical_arcs(&project.board, layer);
     let (
         _mechanical_layer,
         polygons,
         component_polygons,
         component_strokes,
         component_polyline_strokes,
+        component_circle_strokes,
+        component_arc_strokes,
+        dimension_strokes,
+        board_text_strokes,
+        component_text_strokes,
     ) = resolve_native_project_mechanical_context(root, layer)?;
     let actual_gerber = std::fs::read_to_string(gerber_path)
         .with_context(|| format!("failed to read {}", gerber_path.display()))?;
@@ -290,17 +425,47 @@ pub(crate) fn compare_native_project_gerber_mechanical_layer(
         .iter()
         .map(|stroke| render_stroke_geometry(stroke.width_nm, &[stroke.from, stroke.to]))
         .collect::<std::collections::BTreeSet<_>>();
+    let expected_component_circle_signatures = component_circle_strokes
+        .iter()
+        .map(|stroke| render_stroke_geometry(stroke.width_nm, &[stroke.from, stroke.to]))
+        .collect::<std::collections::BTreeSet<_>>();
+    let expected_component_arc_signatures = component_arc_strokes
+        .iter()
+        .map(|stroke| render_stroke_geometry(stroke.width_nm, &[stroke.from, stroke.to]))
+        .collect::<std::collections::BTreeSet<_>>();
+    let expected_dimension_signatures = dimension_strokes
+        .iter()
+        .map(|stroke| render_stroke_geometry(stroke.width_nm, &[stroke.from, stroke.to]))
+        .collect::<std::collections::BTreeSet<_>>();
+    let expected_board_text_signatures = board_text_strokes
+        .iter()
+        .map(|stroke| render_stroke_geometry(stroke.width_nm, &[stroke.from, stroke.to]))
+        .collect::<std::collections::BTreeSet<_>>();
+    let expected_component_text_signatures = component_text_strokes
+        .iter()
+        .map(|stroke| render_stroke_geometry(stroke.width_nm, &[stroke.from, stroke.to]))
+        .collect::<std::collections::BTreeSet<_>>();
     let expected_entries = gerber_mechanical_expected_entries(
         &polygons,
         &component_polygons,
         &component_strokes,
         &component_polyline_strokes,
+        &component_circle_strokes,
+        &component_arc_strokes,
+        &dimension_strokes,
+        &board_text_strokes,
+        &component_text_strokes,
     );
     let actual_entries = gerber_mechanical_actual_entries(
         &parsed,
         &expected_component_polygon_signatures,
         &expected_component_signatures,
         &expected_component_polyline_signatures,
+        &expected_component_circle_signatures,
+        &expected_component_arc_signatures,
+        &expected_dimension_signatures,
+        &expected_board_text_signatures,
+        &expected_component_text_signatures,
     );
     let (matched_count, missing_count, extra_count, matched, missing, extra) =
         compare_entry_views(expected_entries, actual_entries);
@@ -312,9 +477,14 @@ pub(crate) fn compare_native_project_gerber_mechanical_layer(
         gerber_path: gerber_path.display().to_string(),
         layer,
         expected_keepout_count: polygons.len(),
+        expected_dimension_count: dimension_count,
+        expected_board_text_count: board_text_count,
+        expected_component_text_count: component_text_count,
         expected_component_polygon_count: component_polygon_count,
         expected_component_stroke_count: component_stroke_count,
         expected_component_polyline_count: component_polyline_count,
+        expected_component_circle_count: component_circle_count,
+        expected_component_arc_count: component_arc_count,
         actual_geometry_count: parsed.geometries.len(),
         matched_count,
         missing_count,
@@ -330,6 +500,11 @@ pub(crate) fn gerber_mechanical_expected_entries(
     component_polygons: &[Polygon],
     component_strokes: &[MechanicalStroke],
     component_polyline_strokes: &[MechanicalStroke],
+    component_circle_strokes: &[MechanicalStroke],
+    component_arc_strokes: &[MechanicalStroke],
+    dimension_strokes: &[MechanicalStroke],
+    board_text_strokes: &[MechanicalStroke],
+    component_text_strokes: &[MechanicalStroke],
 ) -> BTreeMap<(String, String), usize> {
     let mut entries = BTreeMap::new();
     for polygon in keepout_polygons {
@@ -371,6 +546,46 @@ pub(crate) fn gerber_mechanical_expected_entries(
             ))
             .or_insert(0) += 1;
     }
+    for stroke in component_circle_strokes {
+        *entries
+            .entry((
+                "component_circle_stroke".to_string(),
+                render_stroke_geometry(stroke.width_nm, &[stroke.from, stroke.to]),
+            ))
+            .or_insert(0) += 1;
+    }
+    for stroke in component_arc_strokes {
+        *entries
+            .entry((
+                "component_arc_stroke".to_string(),
+                render_stroke_geometry(stroke.width_nm, &[stroke.from, stroke.to]),
+            ))
+            .or_insert(0) += 1;
+    }
+    for stroke in dimension_strokes {
+        *entries
+            .entry((
+                "dimension_span".to_string(),
+                render_stroke_geometry(stroke.width_nm, &[stroke.from, stroke.to]),
+            ))
+            .or_insert(0) += 1;
+    }
+    for stroke in board_text_strokes {
+        *entries
+            .entry((
+                "board_text_stroke".to_string(),
+                render_stroke_geometry(stroke.width_nm, &[stroke.from, stroke.to]),
+            ))
+            .or_insert(0) += 1;
+    }
+    for stroke in component_text_strokes {
+        *entries
+            .entry((
+                "component_text_stroke".to_string(),
+                render_stroke_geometry(stroke.width_nm, &[stroke.from, stroke.to]),
+            ))
+            .or_insert(0) += 1;
+    }
     entries
 }
 
@@ -379,6 +594,11 @@ pub(crate) fn gerber_mechanical_actual_entries(
     expected_component_polygons: &std::collections::BTreeSet<String>,
     expected_component_strokes: &std::collections::BTreeSet<String>,
     expected_component_polyline_strokes: &std::collections::BTreeSet<String>,
+    expected_component_circle_strokes: &std::collections::BTreeSet<String>,
+    expected_component_arc_strokes: &std::collections::BTreeSet<String>,
+    expected_dimension_strokes: &std::collections::BTreeSet<String>,
+    expected_board_text_strokes: &std::collections::BTreeSet<String>,
+    expected_component_text_strokes: &std::collections::BTreeSet<String>,
 ) -> BTreeMap<(String, String), usize> {
     let mut entries = BTreeMap::new();
     for geometry in &gerber.geometries {
@@ -392,6 +612,16 @@ pub(crate) fn gerber_mechanical_actual_entries(
                     "component_stroke".to_string()
                 } else if expected_component_polyline_strokes.contains(&signature) {
                     "component_polyline_stroke".to_string()
+                } else if expected_component_circle_strokes.contains(&signature) {
+                    "component_circle_stroke".to_string()
+                } else if expected_component_arc_strokes.contains(&signature) {
+                    "component_arc_stroke".to_string()
+                } else if expected_dimension_strokes.contains(&signature) {
+                    "dimension_span".to_string()
+                } else if expected_board_text_strokes.contains(&signature) {
+                    "board_text_stroke".to_string()
+                } else if expected_component_text_strokes.contains(&signature) {
+                    "component_text_stroke".to_string()
                 } else {
                     "outline".to_string()
                 };
@@ -414,66 +644,4 @@ pub(crate) fn gerber_mechanical_actual_entries(
         *entries.entry((kind, signature)).or_insert(0) += 1;
     }
     entries
-}
-
-fn native_component_mechanical_line_to_stroke(
-    component: &PlacedPackage,
-    line: &NativeComponentMechanicalLine,
-) -> MechanicalStroke {
-    MechanicalStroke {
-        from: transform_component_local_point(component, &line.from),
-        to: transform_component_local_point(component, &line.to),
-        width_nm: line.width_nm,
-    }
-}
-
-fn native_component_mechanical_polygon_to_polygon(
-    component: &PlacedPackage,
-    polygon: &NativeComponentMechanicalPolygon,
-) -> Option<Polygon> {
-    if polygon.vertices.len() < 2 {
-        return None;
-    }
-    Some(Polygon {
-        vertices: polygon
-            .vertices
-            .iter()
-            .map(|point| transform_component_local_point(component, point))
-            .collect(),
-        closed: true,
-    })
-}
-
-fn native_component_mechanical_polyline_to_strokes(
-    component: &PlacedPackage,
-    polyline: &NativeComponentMechanicalPolyline,
-) -> Vec<MechanicalStroke> {
-    let points = polyline
-        .vertices
-        .iter()
-        .map(|point| transform_component_local_point(component, point))
-        .collect::<Vec<_>>();
-    if points.len() < 2 {
-        return Vec::new();
-    }
-    points
-        .windows(2)
-        .map(|segment| MechanicalStroke {
-            from: segment[0],
-            to: segment[1],
-            width_nm: polyline.width_nm,
-        })
-        .collect()
-}
-
-fn transform_component_local_point(component: &PlacedPackage, point: &NativePoint) -> Point {
-    let radians = f64::from(component.rotation).to_radians();
-    let x = point.x as f64;
-    let y = point.y as f64;
-    let rotated_x = x * radians.cos() - y * radians.sin();
-    let rotated_y = x * radians.sin() + y * radians.cos();
-    Point {
-        x: component.position.x + rotated_x.round() as i64,
-        y: component.position.y + rotated_y.round() as i64,
-    }
 }

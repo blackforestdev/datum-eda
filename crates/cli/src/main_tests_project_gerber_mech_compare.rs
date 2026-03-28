@@ -48,7 +48,13 @@ fn project_compare_gerber_mechanical_layer_is_semantic_and_reports_drift() {
                     "layers": [41],
                     "kind": "mechanical"
                 }],
-                "dimensions": [],
+                "dimensions": [{
+                    "uuid": Uuid::new_v4(),
+                    "from": { "x": 200000, "y": 800000 },
+                    "to": { "x": 1200000, "y": 800000 },
+                    "layer": 41,
+                    "text": "1.0 mm"
+                }],
                 "texts": []
             }))
             .expect("canonical serialization should succeed")
@@ -72,6 +78,8 @@ fn project_compare_gerber_mechanical_layer_is_semantic_and_reports_drift() {
             "X1000000Y500000D01*\n",
             "X0Y0D01*\n",
             "G37*\n",
+            "X200000Y800000D02*\n",
+            "X1200000Y800000D01*\n",
             "M02*\n"
         ),
     )
@@ -95,7 +103,8 @@ fn project_compare_gerber_mechanical_layer_is_semantic_and_reports_drift() {
     assert_eq!(report["action"], "compare_gerber_mechanical_layer");
     assert_eq!(report["layer"], 41);
     assert_eq!(report["expected_keepout_count"], 1);
-    assert_eq!(report["matched_count"], 1);
+    assert_eq!(report["expected_dimension_count"], 1);
+    assert_eq!(report["matched_count"], 2);
     assert_eq!(report["missing_count"], 0);
     assert_eq!(report["extra_count"], 0);
 
@@ -114,6 +123,8 @@ fn project_compare_gerber_mechanical_layer_is_semantic_and_reports_drift() {
             "X900000Y500000D01*\n",
             "X0Y0D01*\n",
             "G37*\n",
+            "X200000Y800000D02*\n",
+            "X1100000Y800000D01*\n",
             "M02*\n"
         ),
     )
@@ -135,8 +146,8 @@ fn project_compare_gerber_mechanical_layer_is_semantic_and_reports_drift() {
     let output = execute(cli).expect("mechanical compare should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
     assert_eq!(report["matched_count"], 0);
-    assert_eq!(report["missing_count"], 1);
-    assert_eq!(report["extra_count"], 1);
+    assert_eq!(report["missing_count"], 2);
+    assert_eq!(report["extra_count"], 2);
 
     let _ = std::fs::remove_dir_all(&root);
 }

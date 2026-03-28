@@ -7,6 +7,9 @@ use crate::ir::geometry::{LayerId, Point, Polygon};
 use crate::rules::ast::Rule;
 use crate::schematic::ConnectivityDiagnosticInfo;
 
+mod dimension;
+mod polygon;
+
 pub type RuleSet = Vec<Rule>;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -43,16 +46,11 @@ pub struct PlacedPackage {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
-pub enum PadShape {
-    Circle,
-    Rect,
-}
+#[rustfmt::skip]
+pub enum PadShape { Circle, Rect }
 
-impl Default for PadShape {
-    fn default() -> Self {
-        Self::Circle
-    }
-}
+#[rustfmt::skip]
+impl Default for PadShape { fn default() -> Self { Self::Circle } }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum PadAperture {
@@ -180,6 +178,8 @@ pub struct Dimension {
     pub uuid: Uuid,
     pub from: Point,
     pub to: Point,
+    #[serde(default = "dimension::default_dimension_layer")]
+    pub layer: LayerId,
     pub text: Option<String>,
 }
 
@@ -619,7 +619,8 @@ impl BoardNetGraph {
                 .iter()
                 .enumerate()
                 .filter(|(_, anchor)| {
-                    anchor.layer == zone.layer && point_in_polygon(anchor.point, &zone.polygon)
+                    anchor.layer == zone.layer
+                        && polygon::point_in_polygon(anchor.point, &zone.polygon)
                 })
                 .map(|(idx, _)| idx)
                 .collect();
@@ -666,39 +667,6 @@ impl UnionFind {
             self.parent[root_b] = root_a;
         }
     }
-}
-
-fn point_in_polygon(point: Point, polygon: &Polygon) -> bool {
-    let Some(bounds) = polygon.bounding_box() else {
-        return false;
-    };
-    if !bounds.contains(&point) {
-        return false;
-    }
-
-    let vertices = &polygon.vertices;
-    if vertices.len() < 3 {
-        return false;
-    }
-
-    let mut inside = false;
-    let mut j = vertices.len() - 1;
-    for i in 0..vertices.len() {
-        let xi = vertices[i].x as f64;
-        let yi = vertices[i].y as f64;
-        let xj = vertices[j].x as f64;
-        let yj = vertices[j].y as f64;
-        let px = point.x as f64;
-        let py = point.y as f64;
-
-        let intersects =
-            ((yi > py) != (yj > py)) && (px < (xj - xi) * (py - yi) / ((yj - yi).max(1.0)) + xi);
-        if intersects {
-            inside = !inside;
-        }
-        j = i;
-    }
-    inside
 }
 
 fn nearest_pin_pair(from: &[PadPoint], to: &[PadPoint]) -> (usize, usize, i64) {

@@ -6,12 +6,11 @@ fn unique_project_root(label: &str) -> PathBuf {
 }
 
 #[test]
-fn project_validate_gerber_mechanical_layer_reports_match_and_mismatch() {
-    let root = unique_project_root("datum-eda-cli-project-gerber-mech-validate");
-    create_native_project(&root, Some("Gerber Mech Validate Demo".to_string()))
+fn project_mechanical_gerber_supports_board_text_strokes() {
+    let root = unique_project_root("datum-eda-cli-project-gerber-mech-text");
+    create_native_project(&root, Some("Gerber Mech Text Demo".to_string()))
         .expect("initial scaffold should succeed");
 
-    let keepout_uuid = Uuid::new_v4();
     let board_json = root.join("board/board.json");
     std::fs::write(
         &board_json,
@@ -20,7 +19,7 @@ fn project_validate_gerber_mechanical_layer_reports_match_and_mismatch() {
             to_json_deterministic(&serde_json::json!({
                 "schema_version": 1,
                 "uuid": Uuid::new_v4(),
-                "name": "Gerber Mech Validate Demo Board",
+                "name": "Gerber Mech Text Demo Board",
                 "stackup": {
                     "layers": [
                         {"id": 41, "name": "Mechanical 1", "layer_type": "Mechanical", "thickness_nm": 0}
@@ -35,36 +34,28 @@ fn project_validate_gerber_mechanical_layer_reports_match_and_mismatch() {
                 "nets": {},
                 "net_classes": {},
                 "rules": [],
-                "keepouts": [{
-                    "uuid": keepout_uuid,
-                    "polygon": {
-                        "vertices": [
-                            { "x": 0, "y": 0 },
-                            { "x": 1000000, "y": 0 },
-                            { "x": 1000000, "y": 500000 }
-                        ],
-                        "closed": true
-                    },
-                    "layers": [41],
-                    "kind": "mechanical"
-                }],
-                "dimensions": [{
+                "keepouts": [],
+                "dimensions": [],
+                "texts": [{
                     "uuid": Uuid::new_v4(),
-                    "from": { "x": 200000, "y": 800000 },
-                    "to": { "x": 1200000, "y": 800000 },
+                    "text": "L",
+                    "position": { "x": 200000, "y": 400000 },
+                    "rotation": 0,
                     "layer": 41,
-                    "text": "1.0 mm"
-                }],
-                "texts": []
+                    "height_nm": 1000000,
+                    "stroke_width_nm": 100000
+                }]
             }))
             .expect("canonical serialization should succeed")
         ),
     )
     .expect("board file should write");
 
-    let gerber_path = root.join("mech1.gbr");
+    let gerber_path = root.join("mech-text.gbr");
     let export_cli = Cli::try_parse_from([
         "eda",
+        "--format",
+        "json",
         "project",
         "export-gerber-mechanical-layer",
         root.to_str().unwrap(),
@@ -74,7 +65,15 @@ fn project_validate_gerber_mechanical_layer_reports_match_and_mismatch() {
         gerber_path.to_str().unwrap(),
     ])
     .expect("export CLI should parse");
-    let _ = execute(export_cli).expect("gerber mechanical export should succeed");
+    let output = execute(export_cli).expect("mechanical export should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
+    assert_eq!(report["board_text_count"], 1);
+
+    let gerber = std::fs::read_to_string(&gerber_path).expect("gerber should read");
+    assert!(gerber.contains("X200000Y1200000D02*"));
+    assert!(gerber.contains("X200000Y400000D01*"));
+    assert!(gerber.contains("X200000Y400000D02*"));
+    assert!(gerber.contains("X600000Y400000D01*"));
 
     let validate_cli = Cli::try_parse_from([
         "eda",
@@ -92,30 +91,46 @@ fn project_validate_gerber_mechanical_layer_reports_match_and_mismatch() {
     let (output, exit_code) = execute_with_exit_code(validate_cli).expect("validation should run");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
     assert_eq!(exit_code, 0);
+    assert_eq!(report["board_text_count"], 1);
     assert_eq!(report["matches_expected"], true);
-    assert_eq!(report["keepout_count"], 1);
-    assert_eq!(report["dimension_count"], 1);
 
-    std::fs::write(&gerber_path, "corrupted\n").expect("gerber overwrite should succeed");
-    let validate_cli = Cli::try_parse_from([
+    std::fs::write(
+        &gerber_path,
+        concat!(
+            "G04 semantic mech text fixture*\n",
+            "%FSLAX46Y46*%\n",
+            "%MOMM*%\n",
+            "%LPD*%\n",
+            "%ADD10C,0.100000*%\n",
+            "D10*\n",
+            "X200000Y1200000D02*\n",
+            "X200000Y400000D01*\n",
+            "X200000Y400000D02*\n",
+            "X600000Y400000D01*\n",
+            "M02*\n"
+        ),
+    )
+    .expect("compare gerber should write");
+
+    let compare_cli = Cli::try_parse_from([
         "eda",
         "--format",
         "json",
         "project",
-        "validate-gerber-mechanical-layer",
+        "compare-gerber-mechanical-layer",
         root.to_str().unwrap(),
         "--layer",
         "41",
         "--gerber",
         gerber_path.to_str().unwrap(),
     ])
-    .expect("validate CLI should parse");
-    let (output, exit_code) = execute_with_exit_code(validate_cli).expect("validation should run");
+    .expect("compare CLI should parse");
+    let output = execute(compare_cli).expect("compare should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
-    assert_eq!(exit_code, 1);
-    assert_eq!(report["matches_expected"], false);
-    assert_eq!(report["keepout_count"], 1);
-    assert_eq!(report["dimension_count"], 1);
+    assert_eq!(report["expected_board_text_count"], 1);
+    assert_eq!(report["matched_count"], 2);
+    assert_eq!(report["missing_count"], 0);
+    assert_eq!(report["extra_count"], 0);
 
     let _ = std::fs::remove_dir_all(&root);
 }

@@ -28,6 +28,8 @@ Required checks:
 Touched-monolith explicit policy:
 - If a PR touches a known monolith file, that file must shrink versus branch
   base (burn-down in the same PR).
+- Burn-down must include structural extraction evidence (added companion shard
+  lines in the same PR); pure deletion is not sufficient.
 - Touched monolith files must also remain at or below freeze baselines.
 - Structural PRs should continue reducing touched monolith line counts.
 - Baselines are enforced in `scripts/check_touched_monolith_growth.py` and must

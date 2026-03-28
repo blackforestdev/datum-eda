@@ -40,6 +40,8 @@ fn project_board_dimension_mutations_round_trip_through_native_query() {
         "1000",
         "--to-y-nm",
         "500",
+        "--layer",
+        "41",
         "--text",
         "1000x500",
     ])
@@ -60,6 +62,7 @@ fn project_board_dimension_mutations_round_trip_through_native_query() {
     assert_eq!(dimensions[0].from.y, 0);
     assert_eq!(dimensions[0].to.x, 1000);
     assert_eq!(dimensions[0].to.y, 500);
+    assert_eq!(dimensions[0].layer, 41);
     assert_eq!(dimensions[0].text.as_deref(), Some("1000x500"));
 
     let edit_cli = Cli::try_parse_from([
@@ -79,6 +82,8 @@ fn project_board_dimension_mutations_round_trip_through_native_query() {
         "1010",
         "--to-y-nm",
         "520",
+        "--layer",
+        "42",
         "--text",
         "revised",
     ])
@@ -94,6 +99,7 @@ fn project_board_dimension_mutations_round_trip_through_native_query() {
     assert_eq!(dimensions[0].from.y, 20);
     assert_eq!(dimensions[0].to.x, 1010);
     assert_eq!(dimensions[0].to.y, 520);
+    assert_eq!(dimensions[0].layer, 42);
     assert_eq!(dimensions[0].text.as_deref(), Some("revised"));
 
     let clear_text_cli = Cli::try_parse_from([
@@ -190,6 +196,7 @@ fn project_query_board_dimensions_reads_existing_native_board_file() {
     assert_eq!(dimensions[0].uuid, dimension_uuid);
     assert_eq!(dimensions[0].from.x, 5);
     assert_eq!(dimensions[0].to.y, 20);
+    assert_eq!(dimensions[0].layer, 0);
     assert_eq!(dimensions[0].text.as_deref(), Some("10mm"));
 
     let _ = std::fs::remove_dir_all(&root);

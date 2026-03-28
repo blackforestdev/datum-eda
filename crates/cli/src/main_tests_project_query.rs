@@ -68,6 +68,29 @@ fn project_query_summary_reports_native_scaffold_counts() {
     )
     .expect("schematic.json should write");
 
+    let relative_pool = root.join("pool");
+    std::fs::create_dir_all(&relative_pool).expect("relative pool dir should exist");
+    let absolute_pool = unique_project_root("datum-eda-cli-project-query-summary-abs-pool");
+    std::fs::create_dir_all(&absolute_pool).expect("absolute pool dir should exist");
+
+    let project_json = root.join("project.json");
+    let mut manifest: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(&project_json).expect("project.json should read"),
+    )
+    .expect("project.json should parse");
+    manifest["pools"] = serde_json::json!([
+        { "path": "pool", "priority": 1 },
+        { "path": absolute_pool.to_str().unwrap(), "priority": 2 }
+    ]);
+    std::fs::write(
+        &project_json,
+        format!(
+            "{}\n",
+            to_json_deterministic(&manifest).expect("canonical serialization should succeed")
+        ),
+    )
+    .expect("project.json should write");
+
     let cli = Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
         .expect("CLI should parse");
 
@@ -82,10 +105,52 @@ fn project_query_summary_reports_native_scaffold_counts() {
     assert!(output.contains("schematic_buses: 1"));
     assert!(output.contains("schematic_bus_entries: 1"));
     assert!(output.contains("schematic_noconnects: 1"));
+    assert!(output.contains("pools: 2"));
+    assert!(output.contains("pool_refs:"));
+    assert!(output.contains("path=pool priority=1"));
+    assert!(output.contains(&format!(
+        "resolved_path={} exists=true",
+        relative_pool.display()
+    )));
+    assert!(output.contains(&format!(
+        "path={} priority=2 resolved_path={} exists=true",
+        absolute_pool.display(),
+        absolute_pool.display()
+    )));
     assert!(output.contains("board_components: 0"));
     assert!(output.contains("rule_count: 0"));
 
+    let json_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "summary",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("project query summary should succeed");
+    let report: serde_json::Value =
+        serde_json::from_str(&json_output).expect("project query summary JSON should parse");
+    assert_eq!(report["pools"], 2);
+    assert_eq!(report["pool_refs"].as_array().unwrap().len(), 2);
+    assert_eq!(report["pool_refs"][0]["manifest_path"], "pool");
+    assert_eq!(
+        report["pool_refs"][0]["resolved_path"],
+        relative_pool.display().to_string()
+    );
+    assert_eq!(report["pool_refs"][0]["exists"], true);
+    assert_eq!(
+        report["pool_refs"][1]["manifest_path"],
+        absolute_pool.display().to_string()
+    );
+    assert_eq!(report["pool_refs"][1]["exists"], true);
+
     let _ = std::fs::remove_dir_all(&root);
+    let _ = std::fs::remove_dir_all(&absolute_pool);
 }
 
 #[test]

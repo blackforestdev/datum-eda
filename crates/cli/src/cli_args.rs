@@ -5,6 +5,10 @@ use eda_engine::api::ScopedComponentReplacementPlan;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+#[path = "cli_args_board_dimension.rs"]
+mod cli_args_board_dimension;
+use self::cli_args_board_dimension::{EditBoardDimensionArgs, PlaceBoardDimensionArgs};
+
 #[derive(Parser)]
 #[command(name = "eda", about = "PCB design analysis and automation")]
 pub(crate) struct Cli {
@@ -341,9 +345,10 @@ pub(crate) enum ProjectCommands {
         #[arg(long = "out")]
         out: PathBuf,
     },
-    /// Inspect a narrow Excellon drill file and report its tool table and hit counts
     InspectExcellonDrill {
-        /// Drill path to inspect
+        path: PathBuf,
+    },
+    InspectGerber {
         path: PathBuf,
     },
     /// Compare a narrow Excellon drill file against the current native via inventory
@@ -354,9 +359,7 @@ pub(crate) enum ProjectCommands {
         #[arg(long = "drill")]
         drill: PathBuf,
     },
-    /// Report native drill hole classes from via span and stackup data
     ReportDrillHoleClasses {
-        /// Project root directory
         path: PathBuf,
     },
     /// Export the native board outline as a narrow RS-274X Gerber file
@@ -1952,57 +1955,10 @@ pub(crate) enum ProjectCommands {
         #[arg(long = "net")]
         net_uuid: Uuid,
     },
-    /// Place one board dimension into the native board file
-    PlaceBoardDimension {
-        /// Project root directory
-        path: PathBuf,
-        /// Start X coordinate in nm
-        #[arg(long = "from-x-nm")]
-        from_x_nm: i64,
-        /// Start Y coordinate in nm
-        #[arg(long = "from-y-nm")]
-        from_y_nm: i64,
-        /// End X coordinate in nm
-        #[arg(long = "to-x-nm")]
-        to_x_nm: i64,
-        /// End Y coordinate in nm
-        #[arg(long = "to-y-nm")]
-        to_y_nm: i64,
-        /// Optional dimension text
-        #[arg(long)]
-        text: Option<String>,
-    },
-    /// Edit one board dimension in the native board file
-    EditBoardDimension {
-        /// Project root directory
-        path: PathBuf,
-        /// Dimension UUID
-        #[arg(long = "dimension")]
-        dimension_uuid: Uuid,
-        /// Replacement start X coordinate in nm
-        #[arg(long = "from-x-nm")]
-        from_x_nm: Option<i64>,
-        /// Replacement start Y coordinate in nm
-        #[arg(long = "from-y-nm")]
-        from_y_nm: Option<i64>,
-        /// Replacement end X coordinate in nm
-        #[arg(long = "to-x-nm")]
-        to_x_nm: Option<i64>,
-        /// Replacement end Y coordinate in nm
-        #[arg(long = "to-y-nm")]
-        to_y_nm: Option<i64>,
-        /// Replacement dimension text
-        #[arg(long)]
-        text: Option<String>,
-        /// Clear stored dimension text
-        #[arg(long = "clear-text", default_value_t = false)]
-        clear_text: bool,
-    },
-    /// Delete one board dimension from the native board file
+    PlaceBoardDimension(PlaceBoardDimensionArgs),
+    EditBoardDimension(EditBoardDimensionArgs),
     DeleteBoardDimension {
-        /// Project root directory
         path: PathBuf,
-        /// Dimension UUID
         #[arg(long = "dimension")]
         dimension_uuid: Uuid,
     },

@@ -1,23 +1,33 @@
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::path::{Path, PathBuf};
 
+#[path = "command_project_gerber_inspect.rs"]
+mod command_project_gerber_inspect;
 #[path = "command_project_gerber_mechanical.rs"]
 mod command_project_gerber_mechanical;
 #[path = "command_project_gerber_silkscreen.rs"]
 mod command_project_gerber_silkscreen;
+#[path = "command_project_pool_materialization.rs"]
+mod command_project_pool_materialization;
+#[path = "command_project_native_types.rs"]
+mod command_project_native_types;
 
+pub(crate) use self::command_project_gerber_inspect::inspect_gerber;
 pub(crate) use self::command_project_gerber_mechanical::{
-    NativeComponentMechanicalLine, NativeComponentMechanicalPolygon,
-    NativeComponentMechanicalPolyline, compare_native_project_gerber_mechanical_layer,
-    export_native_project_gerber_mechanical_layer, validate_native_project_gerber_mechanical_layer,
+    compare_native_project_gerber_mechanical_layer, export_native_project_gerber_mechanical_layer,
+    validate_native_project_gerber_mechanical_layer,
 };
 use self::command_project_gerber_silkscreen::{
-    NativeComponentSilkscreenArc, NativeComponentSilkscreenCircle, NativeComponentSilkscreenLine,
-    NativeComponentSilkscreenPolygon, NativeComponentSilkscreenPolyline,
-    NativeComponentSilkscreenText, count_native_component_silkscreen_arcs,
-    count_native_component_silkscreen_circles, count_native_component_silkscreen_lines,
-    count_native_component_silkscreen_polygons, count_native_component_silkscreen_polylines,
-    count_native_component_silkscreen_texts, resolve_native_project_silkscreen_context,
+    count_native_component_silkscreen_arcs, count_native_component_silkscreen_circles,
+    count_native_component_silkscreen_lines, count_native_component_silkscreen_polygons,
+    count_native_component_silkscreen_polylines, count_native_component_silkscreen_texts,
+    resolve_native_project_silkscreen_context,
+};
+use self::command_project_pool_materialization::{
+    materialize_supported_pool_package_graphics, resolve_native_project_pool_path,
+};
+pub(crate) use self::command_project_native_types::{
+    NativeBoardRoot, NativeOutline, NativePoint, NativeStackup,
 };
 use anyhow::{Context, Result, bail};
 use eda_engine::api::{CheckCodeCount, CheckReport, CheckStatus, CheckSummary};
@@ -80,24 +90,25 @@ use super::{
     NativeProjectForwardAnnotationReviewView, NativeProjectForwardAnnotationValueMismatchView,
     NativeProjectGerberCopperComparisonView, NativeProjectGerberCopperExportView,
     NativeProjectGerberCopperValidationView, NativeProjectGerberGeometryEntryView,
-    NativeProjectGerberMechanicalComparisonView, NativeProjectGerberMechanicalExportView,
-    NativeProjectGerberMechanicalValidationView, NativeProjectGerberOutlineComparisonView,
-    NativeProjectGerberOutlineExportView, NativeProjectGerberOutlineValidationView,
-    NativeProjectGerberPasteComparisonView, NativeProjectGerberPasteExportView,
-    NativeProjectGerberPasteValidationView, NativeProjectGerberPlanArtifactView,
-    NativeProjectGerberPlanComparisonView, NativeProjectGerberPlanView,
-    NativeProjectGerberSilkscreenComparisonView, NativeProjectGerberSilkscreenExportView,
-    NativeProjectGerberSilkscreenValidationView, NativeProjectGerberSoldermaskComparisonView,
-    NativeProjectGerberSoldermaskExportView, NativeProjectGerberSoldermaskValidationView,
+    NativeProjectGerberInspectionView, NativeProjectGerberMechanicalComparisonView,
+    NativeProjectGerberMechanicalExportView, NativeProjectGerberMechanicalValidationView,
+    NativeProjectGerberOutlineComparisonView, NativeProjectGerberOutlineExportView,
+    NativeProjectGerberOutlineValidationView, NativeProjectGerberPasteComparisonView,
+    NativeProjectGerberPasteExportView, NativeProjectGerberPasteValidationView,
+    NativeProjectGerberPlanArtifactView, NativeProjectGerberPlanComparisonView,
+    NativeProjectGerberPlanView, NativeProjectGerberSilkscreenComparisonView,
+    NativeProjectGerberSilkscreenExportView, NativeProjectGerberSilkscreenValidationView,
+    NativeProjectGerberSoldermaskComparisonView, NativeProjectGerberSoldermaskExportView,
+    NativeProjectGerberSoldermaskValidationView, NativeProjectInspectPoolRefView,
     NativeProjectInspectReportView, NativeProjectJunctionMutationReportView,
-    NativeProjectLabelMutationReportView, NativeProjectNoConnectMutationReportView,
-    NativeProjectPinOverrideMutationReportView, NativeProjectPnpComparisonView,
-    NativeProjectPnpDriftView, NativeProjectPnpExportView, NativeProjectPortMutationReportView,
-    NativeProjectRulesSummaryView, NativeProjectRulesView, NativeProjectSchematicSummaryView,
-    NativeProjectSummaryView, NativeProjectSymbolFieldMutationReportView,
-    NativeProjectSymbolMutationReportView, NativeProjectSymbolPinInfoView,
-    NativeProjectSymbolSemanticsView, NativeProjectTextMutationReportView,
-    NativeProjectWireMutationReportView, UnroutedView,
+    NativeProjectLabelMutationReportView,
+    NativeProjectNoConnectMutationReportView, NativeProjectPinOverrideMutationReportView,
+    NativeProjectPnpComparisonView, NativeProjectPnpDriftView, NativeProjectPnpExportView,
+    NativeProjectPortMutationReportView, NativeProjectRulesSummaryView, NativeProjectRulesView,
+    NativeProjectSchematicSummaryView, NativeProjectSummaryView,
+    NativeProjectSymbolFieldMutationReportView, NativeProjectSymbolMutationReportView,
+    NativeProjectSymbolPinInfoView, NativeProjectSymbolSemanticsView,
+    NativeProjectTextMutationReportView, NativeProjectWireMutationReportView, UnroutedView,
 };
 
 fn render_symbol_display_mode(mode: &SymbolDisplayMode) -> String {
@@ -192,70 +203,6 @@ struct NativeVariant {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-struct NativeBoardRoot {
-    schema_version: u32,
-    uuid: Uuid,
-    name: String,
-    stackup: NativeStackup,
-    outline: NativeOutline,
-    #[serde(default)]
-    packages: BTreeMap<String, serde_json::Value>,
-    #[serde(default)]
-    component_silkscreen: BTreeMap<String, Vec<NativeComponentSilkscreenLine>>,
-    #[serde(default)]
-    component_silkscreen_texts: BTreeMap<String, Vec<NativeComponentSilkscreenText>>,
-    #[serde(default)]
-    component_silkscreen_arcs: BTreeMap<String, Vec<NativeComponentSilkscreenArc>>,
-    #[serde(default)]
-    component_silkscreen_circles: BTreeMap<String, Vec<NativeComponentSilkscreenCircle>>,
-    #[serde(default)]
-    component_silkscreen_polygons: BTreeMap<String, Vec<NativeComponentSilkscreenPolygon>>,
-    #[serde(default)]
-    component_silkscreen_polylines: BTreeMap<String, Vec<NativeComponentSilkscreenPolyline>>,
-    #[serde(default)]
-    component_mechanical_lines: BTreeMap<String, Vec<NativeComponentMechanicalLine>>,
-    #[serde(default)]
-    component_mechanical_polygons: BTreeMap<String, Vec<NativeComponentMechanicalPolygon>>,
-    #[serde(default)]
-    component_mechanical_polylines: BTreeMap<String, Vec<NativeComponentMechanicalPolyline>>,
-    #[serde(default)]
-    pads: BTreeMap<String, serde_json::Value>,
-    #[serde(default)]
-    tracks: BTreeMap<String, serde_json::Value>,
-    #[serde(default)]
-    vias: BTreeMap<String, serde_json::Value>,
-    #[serde(default)]
-    zones: BTreeMap<String, serde_json::Value>,
-    #[serde(default)]
-    nets: BTreeMap<String, serde_json::Value>,
-    #[serde(default)]
-    net_classes: BTreeMap<String, serde_json::Value>,
-    #[serde(default)]
-    keepouts: Vec<serde_json::Value>,
-    #[serde(default)]
-    dimensions: Vec<serde_json::Value>,
-    #[serde(default)]
-    texts: Vec<serde_json::Value>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct NativeStackup {
-    layers: Vec<serde_json::Value>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct NativeOutline {
-    vertices: Vec<NativePoint>,
-    closed: bool,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct NativePoint {
-    x: i64,
-    y: i64,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
 struct NativeRulesRoot {
     schema_version: u32,
     rules: Vec<serde_json::Value>,
@@ -343,8 +290,11 @@ pub(crate) fn create_native_project(
         component_silkscreen_polygons: BTreeMap::new(),
         component_silkscreen_polylines: BTreeMap::new(),
         component_mechanical_lines: BTreeMap::new(),
+        component_mechanical_texts: BTreeMap::new(),
         component_mechanical_polygons: BTreeMap::new(),
         component_mechanical_polylines: BTreeMap::new(),
+        component_mechanical_circles: BTreeMap::new(),
+        component_mechanical_arcs: BTreeMap::new(),
         pads: BTreeMap::new(),
         tracks: BTreeMap::new(),
         vias: BTreeMap::new(),
@@ -401,6 +351,20 @@ pub(crate) fn create_native_project(
 
 pub(crate) fn inspect_native_project(root: &Path) -> Result<NativeProjectInspectReportView> {
     let project = load_native_project(root)?;
+    let pool_refs = project
+        .manifest
+        .pools
+        .iter()
+        .map(|pool_ref| {
+            let resolved_path = resolve_native_project_pool_path(&project.root, &pool_ref.path);
+            NativeProjectInspectPoolRefView {
+                manifest_path: pool_ref.path.clone(),
+                priority: pool_ref.priority,
+                resolved_path: resolved_path.display().to_string(),
+                exists: resolved_path.exists(),
+            }
+        })
+        .collect();
 
     Ok(NativeProjectInspectReportView {
         project_root: project.root.display().to_string(),
@@ -410,6 +374,7 @@ pub(crate) fn inspect_native_project(root: &Path) -> Result<NativeProjectInspect
         schematic_uuid: project.schematic.uuid.to_string(),
         board_uuid: project.board.uuid.to_string(),
         pools: project.manifest.pools.len(),
+        pool_refs,
         schematic_path: project.schematic_path.display().to_string(),
         board_path: project.board_path.display().to_string(),
         rules_path: project.rules_path.display().to_string(),
@@ -430,11 +395,26 @@ pub(crate) fn inspect_native_project(root: &Path) -> Result<NativeProjectInspect
 pub(crate) fn query_native_project_summary(root: &Path) -> Result<NativeProjectSummaryView> {
     let project = load_native_project(root)?;
     let schematic_counts = collect_schematic_counts(&project.root, &project.schematic)?;
+    let pool_refs = project
+        .manifest
+        .pools
+        .iter()
+        .map(|pool_ref| {
+            let resolved_path = resolve_native_project_pool_path(&project.root, &pool_ref.path);
+            NativeProjectInspectPoolRefView {
+                manifest_path: pool_ref.path.clone(),
+                priority: pool_ref.priority,
+                resolved_path: resolved_path.display().to_string(),
+                exists: resolved_path.exists(),
+            }
+        })
+        .collect();
     Ok(NativeProjectSummaryView {
         domain: "native_project",
         project_name: project.manifest.name,
         schema_version: project.manifest.schema_version,
         pools: project.manifest.pools.len(),
+        pool_refs,
         schematic: NativeProjectSchematicSummaryView {
             sheets: project.schematic.sheets.len(),
             sheet_definitions: project.schematic.definitions.len(),
@@ -7080,51 +7060,7 @@ pub(crate) fn place_native_project_board_component(
         serde_json::to_value(&component)
             .expect("native board component serialization must succeed"),
     );
-    project
-        .board
-        .component_silkscreen
-        .entry(component_uuid.to_string())
-        .or_default();
-    project
-        .board
-        .component_silkscreen_texts
-        .entry(component_uuid.to_string())
-        .or_default();
-    project
-        .board
-        .component_silkscreen_arcs
-        .entry(component_uuid.to_string())
-        .or_default();
-    project
-        .board
-        .component_silkscreen_circles
-        .entry(component_uuid.to_string())
-        .or_default();
-    project
-        .board
-        .component_silkscreen_polygons
-        .entry(component_uuid.to_string())
-        .or_default();
-    project
-        .board
-        .component_silkscreen_polylines
-        .entry(component_uuid.to_string())
-        .or_default();
-    project
-        .board
-        .component_mechanical_lines
-        .entry(component_uuid.to_string())
-        .or_default();
-    project
-        .board
-        .component_mechanical_polygons
-        .entry(component_uuid.to_string())
-        .or_default();
-    project
-        .board
-        .component_mechanical_polylines
-        .entry(component_uuid.to_string())
-        .or_default();
+    materialize_supported_pool_package_graphics(&mut project, &component)?;
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
         "place_board_component",
@@ -7365,8 +7301,12 @@ pub(crate) fn set_native_project_board_component_package(
     project.board.component_silkscreen_polygons.remove(&key);
     project.board.component_silkscreen_polylines.remove(&key);
     project.board.component_mechanical_lines.remove(&key);
+    project.board.component_mechanical_texts.remove(&key);
     project.board.component_mechanical_polygons.remove(&key);
     project.board.component_mechanical_polylines.remove(&key);
+    project.board.component_mechanical_circles.remove(&key);
+    project.board.component_mechanical_arcs.remove(&key);
+    materialize_supported_pool_package_graphics(&mut project, &component)?;
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
         "set_board_component_package",
@@ -7517,11 +7457,23 @@ pub(crate) fn delete_native_project_board_component(
         .remove(&component_uuid.to_string());
     project
         .board
+        .component_mechanical_texts
+        .remove(&component_uuid.to_string());
+    project
+        .board
         .component_mechanical_polygons
         .remove(&component_uuid.to_string());
     project
         .board
         .component_mechanical_polylines
+        .remove(&component_uuid.to_string());
+    project
+        .board
+        .component_mechanical_circles
+        .remove(&component_uuid.to_string());
+    project
+        .board
+        .component_mechanical_arcs
         .remove(&component_uuid.to_string());
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
@@ -7946,6 +7898,7 @@ pub(crate) fn place_native_project_board_dimension(
     root: &Path,
     from: Point,
     to: Point,
+    layer: i32,
     text: Option<String>,
 ) -> Result<NativeProjectBoardDimensionMutationReportView> {
     let mut project = load_native_project(root)?;
@@ -7954,6 +7907,7 @@ pub(crate) fn place_native_project_board_dimension(
         uuid: dimension_uuid,
         from,
         to,
+        layer,
         text,
     };
     project.board.dimensions.push(
@@ -7970,6 +7924,7 @@ pub(crate) fn place_native_project_board_dimension(
         from_y_nm: dimension.from.y,
         to_x_nm: dimension.to.x,
         to_y_nm: dimension.to.y,
+        layer: dimension.layer,
         text: dimension.text,
     })
 }
@@ -7981,6 +7936,7 @@ pub(crate) fn edit_native_project_board_dimension(
     from_y_nm: Option<i64>,
     to_x_nm: Option<i64>,
     to_y_nm: Option<i64>,
+    layer: Option<i32>,
     text: Option<String>,
     clear_text: bool,
 ) -> Result<NativeProjectBoardDimensionMutationReportView> {
@@ -8014,6 +7970,9 @@ pub(crate) fn edit_native_project_board_dimension(
         (Some(x), Some(y)) => dimension.to = Point { x, y },
         _ => bail!("board dimension end requires both --to-x-nm and --to-y-nm"),
     }
+    if let Some(layer) = layer {
+        dimension.layer = layer;
+    }
     if clear_text {
         dimension.text = None;
     } else if let Some(text) = text {
@@ -8031,6 +7990,7 @@ pub(crate) fn edit_native_project_board_dimension(
         from_y_nm: dimension.from.y,
         to_x_nm: dimension.to.x,
         to_y_nm: dimension.to.y,
+        layer: dimension.layer,
         text: dimension.text,
     })
 }
@@ -8069,6 +8029,7 @@ pub(crate) fn delete_native_project_board_dimension(
         from_y_nm: dimension.from.y,
         to_x_nm: dimension.to.x,
         to_y_nm: dimension.to.y,
+        layer: dimension.layer,
         text: dimension.text,
     })
 }
@@ -8168,11 +8129,12 @@ fn native_project_board_component_report(
     project: &LoadedNativeProject,
     component: PlacedPackage,
 ) -> NativeProjectBoardComponentMutationReportView {
+    let key = component.uuid.to_string();
     NativeProjectBoardComponentMutationReportView {
         action: action.to_string(),
         project_root: project.root.display().to_string(),
         board_path: project.board_path.display().to_string(),
-        component_uuid: component.uuid.to_string(),
+        component_uuid: key.clone(),
         part_uuid: component.part.to_string(),
         package_uuid: component.package.to_string(),
         reference: component.reference,
@@ -8182,7 +8144,38 @@ fn native_project_board_component_report(
         rotation_deg: component.rotation,
         layer: component.layer,
         locked: component.locked,
+        persisted_component_silkscreen_text_count: component_graphic_count(
+            &project.board.component_silkscreen_texts,
+            &key,
+        ),
+        persisted_component_silkscreen_line_count: component_graphic_count(
+            &project.board.component_silkscreen,
+            &key,
+        ),
+        persisted_component_silkscreen_arc_count: component_graphic_count(
+            &project.board.component_silkscreen_arcs,
+            &key,
+        ),
+        persisted_component_silkscreen_circle_count: component_graphic_count(
+            &project.board.component_silkscreen_circles,
+            &key,
+        ),
+        persisted_component_silkscreen_polygon_count: component_graphic_count(
+            &project.board.component_silkscreen_polygons,
+            &key,
+        ),
+        persisted_component_silkscreen_polyline_count: component_graphic_count(
+            &project.board.component_silkscreen_polylines,
+            &key,
+        ),
     }
+}
+
+fn component_graphic_count<T>(
+    map: &std::collections::BTreeMap<String, Vec<T>>,
+    component_key: &str,
+) -> usize {
+    map.get(component_key).map_or(0, Vec::len)
 }
 
 fn native_project_board_track_report(

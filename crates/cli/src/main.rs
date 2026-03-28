@@ -34,6 +34,8 @@ mod command_modify;
 mod command_plan;
 mod command_project;
 mod command_query;
+mod main_board_component;
+mod main_gerber_inspect;
 mod main_gerber_mechanical;
 mod main_gerber_silkscreen;
 
@@ -41,20 +43,10 @@ use cli_args::*;
 use command_plan::*;
 use command_project::*;
 use command_query::*;
-pub(crate) use main_gerber_mechanical::{
-    NativeProjectGerberMechanicalComparisonView, NativeProjectGerberMechanicalExportView,
-    NativeProjectGerberMechanicalValidationView,
-    render_native_project_gerber_mechanical_comparison_text,
-    render_native_project_gerber_mechanical_export_text,
-    render_native_project_gerber_mechanical_validation_text,
-};
-pub(crate) use main_gerber_silkscreen::{
-    NativeProjectGerberSilkscreenComparisonView, NativeProjectGerberSilkscreenExportView,
-    NativeProjectGerberSilkscreenValidationView,
-    render_native_project_gerber_silkscreen_comparison_text,
-    render_native_project_gerber_silkscreen_export_text,
-    render_native_project_gerber_silkscreen_validation_text,
-};
+pub(crate) use main_board_component::*;
+pub(crate) use main_gerber_inspect::*;
+pub(crate) use main_gerber_mechanical::*;
+pub(crate) use main_gerber_silkscreen::*;
 
 fn main() {
     match run() {
@@ -119,6 +111,7 @@ struct NativeProjectInspectReportView {
     schematic_uuid: String,
     board_uuid: String,
     pools: usize,
+    pool_refs: Vec<NativeProjectInspectPoolRefView>,
     schematic_path: String,
     board_path: String,
     rules_path: String,
@@ -136,11 +129,20 @@ struct NativeProjectInspectReportView {
 }
 
 #[derive(Debug, Clone, Serialize)]
+struct NativeProjectInspectPoolRefView {
+    manifest_path: String,
+    priority: u32,
+    resolved_path: String,
+    exists: bool,
+}
+
+#[derive(Debug, Clone, Serialize)]
 struct NativeProjectSummaryView {
     domain: &'static str,
     project_name: String,
     schema_version: u32,
     pools: usize,
+    pool_refs: Vec<NativeProjectInspectPoolRefView>,
     schematic: NativeProjectSchematicSummaryView,
     board: NativeProjectBoardSummaryView,
     rules: NativeProjectRulesSummaryView,
@@ -411,7 +413,7 @@ struct NativeProjectGerberPasteValidationView {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct NativeProjectGerberGeometryEntryView {
+pub(crate) struct NativeProjectGerberGeometryEntryView {
     kind: String,
     geometry: String,
     count: usize,
@@ -1076,23 +1078,6 @@ struct NativeProjectBoardNetMutationReportView {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct NativeProjectBoardComponentMutationReportView {
-    action: String,
-    project_root: String,
-    board_path: String,
-    component_uuid: String,
-    part_uuid: String,
-    package_uuid: String,
-    reference: String,
-    value: String,
-    x_nm: i64,
-    y_nm: i64,
-    rotation_deg: i32,
-    layer: i32,
-    locked: bool,
-}
-
-#[derive(Debug, Clone, Serialize)]
 struct NativeProjectBoardTrackMutationReportView {
     action: String,
     project_root: String,
@@ -1180,6 +1165,7 @@ struct NativeProjectBoardDimensionMutationReportView {
     from_y_nm: i64,
     to_x_nm: i64,
     to_y_nm: i64,
+    layer: i32,
     text: Option<String>,
 }
 
@@ -1201,7 +1187,7 @@ fn render_native_project_create_report_text(report: &NativeProjectCreateReportVi
 }
 
 fn render_native_project_inspect_report_text(report: &NativeProjectInspectReportView) -> String {
-    [
+    let mut lines = vec![
         format!("project_root: {}", report.project_root),
         format!("project_name: {}", report.project_name),
         format!("schema_version: {}", report.schema_version),
@@ -1223,12 +1209,21 @@ fn render_native_project_inspect_report_text(report: &NativeProjectInspectReport
         format!("board_via_count: {}", report.board_via_count),
         format!("board_zone_count: {}", report.board_zone_count),
         format!("rule_count: {}", report.rule_count),
-    ]
-    .join("\n")
+    ];
+    if !report.pool_refs.is_empty() {
+        lines.push("pool_refs:".to_string());
+        for pool_ref in &report.pool_refs {
+            lines.push(format!(
+                "  path={} priority={} resolved_path={} exists={}",
+                pool_ref.manifest_path, pool_ref.priority, pool_ref.resolved_path, pool_ref.exists
+            ));
+        }
+    }
+    lines.join("\n")
 }
 
 fn render_native_project_summary_text(report: &NativeProjectSummaryView) -> String {
-    [
+    let mut lines = vec![
         format!("project_name: {}", report.project_name),
         format!("schema_version: {}", report.schema_version),
         format!("pools: {}", report.pools),
@@ -1265,8 +1260,17 @@ fn render_native_project_summary_text(report: &NativeProjectSummaryView) -> Stri
         format!("board_dimensions: {}", report.board.dimensions),
         format!("board_texts: {}", report.board.texts),
         format!("rule_count: {}", report.rules.count),
-    ]
-    .join("\n")
+    ];
+    if !report.pool_refs.is_empty() {
+        lines.push("pool_refs:".to_string());
+        for pool_ref in &report.pool_refs {
+            lines.push(format!(
+                "  path={} priority={} resolved_path={} exists={}",
+                pool_ref.manifest_path, pool_ref.priority, pool_ref.resolved_path, pool_ref.exists
+            ));
+        }
+    }
+    lines.join("\n")
 }
 
 fn render_native_project_bom_export_text(report: &NativeProjectBomExportView) -> String {
@@ -1759,7 +1763,7 @@ fn render_native_project_gerber_paste_comparison_text(
     lines.join("\n")
 }
 
-fn append_gerber_geometry_entries(
+pub(crate) fn append_gerber_geometry_entries(
     lines: &mut Vec<String>,
     label: &str,
     entries: &[NativeProjectGerberGeometryEntryView],
@@ -2546,27 +2550,6 @@ fn render_native_project_board_net_mutation_text(
     .join("\n")
 }
 
-fn render_native_project_board_component_mutation_text(
-    report: &NativeProjectBoardComponentMutationReportView,
-) -> String {
-    [
-        format!("action: {}", report.action),
-        format!("project_root: {}", report.project_root),
-        format!("board_path: {}", report.board_path),
-        format!("component_uuid: {}", report.component_uuid),
-        format!("part_uuid: {}", report.part_uuid),
-        format!("package_uuid: {}", report.package_uuid),
-        format!("reference: {}", report.reference),
-        format!("value: {}", report.value),
-        format!("x_nm: {}", report.x_nm),
-        format!("y_nm: {}", report.y_nm),
-        format!("rotation_deg: {}", report.rotation_deg),
-        format!("layer: {}", report.layer),
-        format!("locked: {}", report.locked),
-    ]
-    .join("\n")
-}
-
 fn render_native_project_board_track_mutation_text(
     report: &NativeProjectBoardTrackMutationReportView,
 ) -> String {
@@ -2679,6 +2662,7 @@ fn render_native_project_board_dimension_mutation_text(
         format!("from_y_nm: {}", report.from_y_nm),
         format!("to_x_nm: {}", report.to_x_nm),
         format!("to_y_nm: {}", report.to_y_nm),
+        format!("layer: {}", report.layer),
     ];
     if let Some(text) = &report.text {
         lines.push(format!("text: {}", text));

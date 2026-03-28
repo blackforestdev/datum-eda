@@ -34,7 +34,7 @@ jobs:
       - name: Decomposition coverage guardrail
         run: python3 scripts/check_decomposition_coverage.py
 
-      - name: Touched monolith non-growth guardrail
+      - name: Touched monolith burn-down guardrail
         run: python3 scripts/check_touched_monolith_growth.py
 
       - name: MCP server self-test

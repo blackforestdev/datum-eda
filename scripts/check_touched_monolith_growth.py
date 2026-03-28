@@ -4,6 +4,8 @@
 Policy intent:
 - feature work may continue in parallel
 - if a known monolith file is touched, it must shrink in the current branch
+- monolith shrink must come from structural extraction into companion shards,
+  not pure deletion
 - decomposition baselines must trend downward over time (ratchet-down)
 """
 
@@ -99,6 +101,78 @@ def changed_files() -> set[str]:
     return changed
 
 
+def diff_numstat(base: str) -> dict[str, tuple[int, int]]:
+    code, out = run(["git", "diff", "--numstat", base, "--"])
+    if code != 0:
+        return {}
+    stats: dict[str, tuple[int, int]] = {}
+    for line in out.splitlines():
+        parts = line.split("\t")
+        if len(parts) != 3:
+            continue
+        added_raw, deleted_raw, path = parts
+        if added_raw == "-" or deleted_raw == "-":
+            continue
+        try:
+            added = int(added_raw)
+            deleted = int(deleted_raw)
+        except ValueError:
+            continue
+        stats[path] = (added, deleted)
+    return stats
+
+
+def untracked_files() -> set[str]:
+    code, out = run(["git", "ls-files", "--others", "--exclude-standard"])
+    if code != 0:
+        return set()
+    return {line.strip() for line in out.splitlines() if line.strip()}
+
+
+def companion_paths(monolith_rel: str) -> list[str]:
+    monolith_path = Path(monolith_rel)
+    parent = monolith_path.parent.as_posix()
+    name = monolith_path.name
+
+    # `*/mod.rs` decomposition typically extracts into sibling files under the
+    # same module directory.
+    if name == "mod.rs":
+        return [
+            p.relative_to(ROOT).as_posix()
+            for p in (ROOT / parent).glob("*.rs")
+            if p.relative_to(ROOT).as_posix() != monolith_rel and p.name != "mod.rs"
+        ]
+
+    # Flat monolith decomposition typically extracts into same-dir stem shards
+    # such as `command_project_*.rs`, `main_*.rs`, `cli_args_*.rs`.
+    stem = monolith_path.stem
+    prefix = f"{parent}/{stem}_"
+    return [
+        p.relative_to(ROOT).as_posix()
+        for p in (ROOT / parent).glob(f"{stem}_*.rs")
+        if p.relative_to(ROOT).as_posix() != monolith_rel
+        and p.relative_to(ROOT).as_posix().startswith(prefix)
+        and p.name.endswith(".rs")
+    ]
+
+
+def companion_added_lines(
+    monolith_rel: str,
+    stats: dict[str, tuple[int, int]],
+    untracked: set[str],
+) -> int:
+    total = 0
+    for path in companion_paths(monolith_rel):
+        if path in stats:
+            total += stats[path][0]
+            continue
+        if path in untracked:
+            full = ROOT / path
+            if full.exists():
+                total += line_count(full)
+    return total
+
+
 def line_count(path: Path) -> int:
     return len(path.read_text(encoding="utf-8").splitlines())
 
@@ -106,6 +180,8 @@ def line_count(path: Path) -> int:
 def main() -> int:
     touched = changed_files()
     base = merge_base_commit()
+    stats = diff_numstat(base) if base else {}
+    untracked = untracked_files()
     violations: list[str] = []
     checked = 0
 
@@ -137,13 +213,22 @@ def main() -> int:
             violations.append(
                 f"{rel}: no burn-down vs base ({current} lines >= base {before})"
             )
+        else:
+            reduction = before - current
+            extracted = companion_added_lines(rel, stats, untracked)
+            if extracted <= 0:
+                violations.append(
+                    f"{rel}: burn-down lacks structural extraction evidence "
+                    f"(reduced {reduction}, companion shard additions {extracted})"
+                )
         if current > baseline:
             violations.append(f"{rel}: {current} lines > baseline {baseline}")
 
     if violations:
         print("Touched monolith burn-down check failed:", file=sys.stderr)
         print(
-            "  Touched monolith files must shrink versus branch base. Split or move logic into shards.",
+            "  Touched monolith files must shrink versus branch base and show "
+            "companion shard extraction, not pure deletion.",
             file=sys.stderr,
         )
         for violation in violations:

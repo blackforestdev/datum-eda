@@ -48,7 +48,13 @@ fn project_export_gerber_mechanical_layer_writes_keepout_regions() {
                     "layers": [41],
                     "kind": "mechanical"
                 }],
-                "dimensions": [],
+                "dimensions": [{
+                    "uuid": Uuid::new_v4(),
+                    "from": { "x": 200000, "y": 800000 },
+                    "to": { "x": 1200000, "y": 800000 },
+                    "layer": 41,
+                    "text": "1.0 mm"
+                }],
                 "texts": []
             }))
             .expect("canonical serialization should succeed")
@@ -75,6 +81,7 @@ fn project_export_gerber_mechanical_layer_writes_keepout_regions() {
     assert_eq!(report["action"], "export_gerber_mechanical_layer");
     assert_eq!(report["layer"], 41);
     assert_eq!(report["keepout_count"], 1);
+    assert_eq!(report["dimension_count"], 1);
 
     let gerber = std::fs::read_to_string(&gerber_path).expect("gerber should read");
     assert!(gerber.contains("G04 datum-eda native mechanical layer 41*"));
@@ -84,6 +91,8 @@ fn project_export_gerber_mechanical_layer_writes_keepout_regions() {
     assert!(gerber.contains("X0Y0D02*"));
     assert!(gerber.contains("X1000000Y0D01*"));
     assert!(gerber.contains("X1000000Y500000D01*"));
+    assert!(gerber.contains("X200000Y800000D02*"));
+    assert!(gerber.contains("X1200000Y800000D01*"));
 
     let _ = std::fs::remove_dir_all(&root);
 }

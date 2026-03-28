@@ -1,10 +1,12 @@
 use crate::board::{BoardText, PadAperture, PlacedPad, Track, Via, Zone};
-use crate::ir::geometry::{LayerId, Point, Polygon};
+use crate::ir::geometry::{LayerId, Polygon};
 use thiserror::Error;
 
 mod gerber_mechanical;
+mod silkscreen;
 
 pub use gerber_mechanical::{MechanicalStroke, render_rs274x_mechanical_layer};
+pub use silkscreen::{SilkscreenStroke, render_silkscreen_text_strokes};
 
 const DEFAULT_OUTLINE_APERTURE_MM: &str = "0.100000";
 
@@ -32,13 +34,6 @@ pub enum ExportError {
     UnsupportedSilkscreenTextCharacter(char),
     #[error("drill export requires positive via drill diameters")]
     InvalidViaDrill,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct SilkscreenStroke {
-    pub from: Point,
-    pub to: Point,
-    pub width_nm: i64,
 }
 
 pub fn render_rs274x_outline(
@@ -544,16 +539,16 @@ pub fn render_rs274x_silkscreen_layer(
                 .binary_search(&text.stroke_width_nm)
                 .expect("known text stroke width aperture");
         lines.push(format!("D{d_code}*"));
-        for (from, to) in render_silkscreen_text_strokes(&text)? {
+        for stroke in render_silkscreen_text_strokes(&text)? {
             lines.push(format!(
                 "X{}Y{}D02*",
-                format_coord(from.x),
-                format_coord(from.y)
+                format_coord(stroke.from.x),
+                format_coord(stroke.from.y)
             ));
             lines.push(format!(
                 "X{}Y{}D01*",
-                format_coord(to.x),
-                format_coord(to.y)
+                format_coord(stroke.to.x),
+                format_coord(stroke.to.y)
             ));
         }
     }
@@ -589,210 +584,6 @@ pub fn render_rs274x_silkscreen_layer(
     lines.push(String::from("M02*"));
     Ok(lines.join("\n") + "\n")
 }
-
-fn render_silkscreen_text_strokes(
-    text: &BoardText,
-) -> Result<Vec<(crate::ir::geometry::Point, crate::ir::geometry::Point)>, ExportError> {
-    let mut strokes = Vec::new();
-    let scale_nm = text.height_nm / 5;
-    let advance_nm = scale_nm * 4;
-    let mut cursor_x = 0_i64;
-    for ch in text.text.chars() {
-        for ((x1, y1), (x2, y2)) in glyph_strokes(ch)? {
-            let from = rotate_text_point(
-                text.position,
-                text.rotation,
-                cursor_x + x1 * scale_nm,
-                y1 * scale_nm,
-            );
-            let to = rotate_text_point(
-                text.position,
-                text.rotation,
-                cursor_x + x2 * scale_nm,
-                y2 * scale_nm,
-            );
-            strokes.push((from, to));
-        }
-        cursor_x += advance_nm;
-    }
-    Ok(strokes)
-}
-
-fn rotate_text_point(
-    origin: crate::ir::geometry::Point,
-    rotation_deg: i32,
-    x_nm: i64,
-    y_nm: i64,
-) -> crate::ir::geometry::Point {
-    let radians = f64::from(rotation_deg).to_radians();
-    let x = x_nm as f64;
-    let y = y_nm as f64;
-    let rotated_x = x * radians.cos() - y * radians.sin();
-    let rotated_y = x * radians.sin() + y * radians.cos();
-    crate::ir::geometry::Point {
-        x: origin.x + rotated_x.round() as i64,
-        y: origin.y + rotated_y.round() as i64,
-    }
-}
-
-type GlyphStroke = ((i64, i64), (i64, i64));
-
-fn glyph_strokes(ch: char) -> Result<&'static [GlyphStroke], ExportError> {
-    let glyph = match ch {
-        ' ' => &[][..],
-        '-' => &[((0, 2), (2, 2))][..],
-        '_' => &[((0, 0), (2, 0))][..],
-        '.' => &[((1, 0), (1, 0))][..],
-        '/' => &[((0, 0), (2, 4))][..],
-        '+' => &[((1, 0), (1, 4)), ((0, 2), (2, 2))][..],
-        '0' => &[
-            ((0, 0), (0, 4)),
-            ((0, 4), (2, 4)),
-            ((2, 4), (2, 0)),
-            ((2, 0), (0, 0)),
-        ][..],
-        '1' => &[((1, 0), (1, 4))][..],
-        '2' => &[
-            ((0, 4), (2, 4)),
-            ((2, 4), (2, 2)),
-            ((2, 2), (0, 2)),
-            ((0, 2), (0, 0)),
-            ((0, 0), (2, 0)),
-        ][..],
-        '3' => &[
-            ((0, 4), (2, 4)),
-            ((2, 4), (2, 0)),
-            ((0, 2), (2, 2)),
-            ((0, 0), (2, 0)),
-        ][..],
-        '4' => &[((0, 4), (0, 2)), ((0, 2), (2, 2)), ((2, 4), (2, 0))][..],
-        '5' => &[
-            ((2, 4), (0, 4)),
-            ((0, 4), (0, 2)),
-            ((0, 2), (2, 2)),
-            ((2, 2), (2, 0)),
-            ((2, 0), (0, 0)),
-        ][..],
-        '6' => &[
-            ((2, 4), (0, 4)),
-            ((0, 4), (0, 0)),
-            ((0, 0), (2, 0)),
-            ((2, 0), (2, 2)),
-            ((2, 2), (0, 2)),
-        ][..],
-        '7' => &[((0, 4), (2, 4)), ((2, 4), (1, 0))][..],
-        '8' => &[
-            ((0, 0), (0, 4)),
-            ((0, 4), (2, 4)),
-            ((2, 4), (2, 0)),
-            ((2, 0), (0, 0)),
-            ((0, 2), (2, 2)),
-        ][..],
-        '9' => &[
-            ((2, 0), (2, 4)),
-            ((2, 4), (0, 4)),
-            ((0, 4), (0, 2)),
-            ((0, 2), (2, 2)),
-            ((2, 0), (0, 0)),
-        ][..],
-        'A' => &[
-            ((0, 0), (0, 4)),
-            ((2, 0), (2, 4)),
-            ((0, 4), (2, 4)),
-            ((0, 2), (2, 2)),
-        ][..],
-        'B' => &[
-            ((0, 0), (0, 4)),
-            ((0, 4), (2, 4)),
-            ((2, 4), (2, 2)),
-            ((2, 2), (0, 2)),
-            ((2, 2), (2, 0)),
-            ((2, 0), (0, 0)),
-        ][..],
-        'C' => &[((2, 4), (0, 4)), ((0, 4), (0, 0)), ((0, 0), (2, 0))][..],
-        'D' => &[
-            ((0, 0), (0, 4)),
-            ((0, 4), (2, 3)),
-            ((2, 3), (2, 1)),
-            ((2, 1), (0, 0)),
-        ][..],
-        'E' => &[
-            ((2, 4), (0, 4)),
-            ((0, 4), (0, 0)),
-            ((0, 2), (2, 2)),
-            ((0, 0), (2, 0)),
-        ][..],
-        'F' => &[((0, 0), (0, 4)), ((0, 4), (2, 4)), ((0, 2), (2, 2))][..],
-        'G' => &[
-            ((2, 4), (0, 4)),
-            ((0, 4), (0, 0)),
-            ((0, 0), (2, 0)),
-            ((2, 0), (2, 2)),
-            ((2, 2), (1, 2)),
-        ][..],
-        'H' => &[((0, 0), (0, 4)), ((2, 0), (2, 4)), ((0, 2), (2, 2))][..],
-        'I' => &[((0, 4), (2, 4)), ((1, 4), (1, 0)), ((0, 0), (2, 0))][..],
-        'J' => &[((0, 4), (2, 4)), ((1, 4), (1, 0)), ((1, 0), (0, 0))][..],
-        'K' => &[((0, 0), (0, 4)), ((2, 4), (0, 2)), ((0, 2), (2, 0))][..],
-        'L' => &[((0, 4), (0, 0)), ((0, 0), (2, 0))][..],
-        'M' => &[
-            ((0, 0), (0, 4)),
-            ((0, 4), (1, 2)),
-            ((1, 2), (2, 4)),
-            ((2, 4), (2, 0)),
-        ][..],
-        'N' => &[((0, 0), (0, 4)), ((0, 4), (2, 0)), ((2, 0), (2, 4))][..],
-        'O' => &[
-            ((0, 0), (0, 4)),
-            ((0, 4), (2, 4)),
-            ((2, 4), (2, 0)),
-            ((2, 0), (0, 0)),
-        ][..],
-        'P' => &[
-            ((0, 0), (0, 4)),
-            ((0, 4), (2, 4)),
-            ((2, 4), (2, 2)),
-            ((2, 2), (0, 2)),
-        ][..],
-        'Q' => &[
-            ((0, 0), (0, 4)),
-            ((0, 4), (2, 4)),
-            ((2, 4), (2, 0)),
-            ((2, 0), (0, 0)),
-            ((1, 1), (2, 0)),
-        ][..],
-        'R' => &[
-            ((0, 0), (0, 4)),
-            ((0, 4), (2, 4)),
-            ((2, 4), (2, 2)),
-            ((2, 2), (0, 2)),
-            ((0, 2), (2, 0)),
-        ][..],
-        'S' => &[
-            ((2, 4), (0, 4)),
-            ((0, 4), (0, 2)),
-            ((0, 2), (2, 2)),
-            ((2, 2), (2, 0)),
-            ((2, 0), (0, 0)),
-        ][..],
-        'T' => &[((0, 4), (2, 4)), ((1, 4), (1, 0))][..],
-        'U' => &[((0, 4), (0, 0)), ((0, 0), (2, 0)), ((2, 0), (2, 4))][..],
-        'V' => &[((0, 4), (1, 0)), ((1, 0), (2, 4))][..],
-        'W' => &[
-            ((0, 4), (0, 0)),
-            ((0, 0), (1, 2)),
-            ((1, 2), (2, 0)),
-            ((2, 0), (2, 4)),
-        ][..],
-        'X' => &[((0, 4), (2, 0)), ((0, 0), (2, 4))][..],
-        'Y' => &[((0, 4), (1, 2)), ((2, 4), (1, 2)), ((1, 2), (1, 0))][..],
-        'Z' => &[((0, 4), (2, 4)), ((2, 4), (0, 0)), ((0, 0), (2, 0))][..],
-        'a'..='z' => return glyph_strokes(ch.to_ascii_uppercase()),
-        _ => return Err(ExportError::UnsupportedSilkscreenTextCharacter(ch)),
-    };
-    Ok(glyph)
-}
-
 pub fn render_excellon_drill(vias: &[Via]) -> Result<String, ExportError> {
     if vias.iter().any(|via| via.drill <= 0) {
         return Err(ExportError::InvalidViaDrill);

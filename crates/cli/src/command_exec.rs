@@ -1,4 +1,6 @@
 use super::*;
+#[path = "command_exec_project_inspect.rs"]
+mod command_exec_project_inspect;
 use crate::command_modify::{
     parse_apply_replacement_plan_arg, parse_apply_replacement_policy_arg,
     parse_apply_scoped_replacement_policy_arg, parse_assign_part_arg, parse_move_component_arg,
@@ -6,36 +8,26 @@ use crate::command_modify::{
     parse_set_package_arg, parse_set_package_with_part_arg, parse_set_reference_arg,
     parse_set_value_arg,
 };
-use eda_engine::schematic::{LabelKind, PortDirection};
+use eda_engine::schematic::{HiddenPowerBehavior, LabelKind, PortDirection, SymbolDisplayMode};
 
-fn parse_native_symbol_display_mode(
-    value: NativeSymbolDisplayModeArg,
-) -> eda_engine::schematic::SymbolDisplayMode {
+fn parse_native_symbol_display_mode(value: NativeSymbolDisplayModeArg) -> SymbolDisplayMode {
     match value {
-        NativeSymbolDisplayModeArg::LibraryDefault => {
-            eda_engine::schematic::SymbolDisplayMode::LibraryDefault
-        }
-        NativeSymbolDisplayModeArg::ShowHiddenPins => {
-            eda_engine::schematic::SymbolDisplayMode::ShowHiddenPins
-        }
-        NativeSymbolDisplayModeArg::HideOptionalPins => {
-            eda_engine::schematic::SymbolDisplayMode::HideOptionalPins
-        }
+        NativeSymbolDisplayModeArg::LibraryDefault => SymbolDisplayMode::LibraryDefault,
+        NativeSymbolDisplayModeArg::ShowHiddenPins => SymbolDisplayMode::ShowHiddenPins,
+        NativeSymbolDisplayModeArg::HideOptionalPins => SymbolDisplayMode::HideOptionalPins,
     }
 }
 
-fn parse_native_hidden_power_behavior(
-    value: NativeHiddenPowerBehaviorArg,
-) -> eda_engine::schematic::HiddenPowerBehavior {
+fn parse_native_hidden_power_behavior(value: NativeHiddenPowerBehaviorArg) -> HiddenPowerBehavior {
     match value {
         NativeHiddenPowerBehaviorArg::SourceDefinedImplicit => {
-            eda_engine::schematic::HiddenPowerBehavior::SourceDefinedImplicit
+            HiddenPowerBehavior::SourceDefinedImplicit
         }
         NativeHiddenPowerBehaviorArg::ExplicitPowerObject => {
-            eda_engine::schematic::HiddenPowerBehavior::ExplicitPowerObject
+            HiddenPowerBehavior::ExplicitPowerObject
         }
         NativeHiddenPowerBehaviorArg::PreservedAsImportedMetadata => {
-            eda_engine::schematic::HiddenPowerBehavior::PreservedAsImportedMetadata
+            HiddenPowerBehavior::PreservedAsImportedMetadata
         }
     }
 }
@@ -414,14 +406,13 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 Ok((output, 0))
             }
             ProjectCommands::InspectExcellonDrill { path } => {
-                let report = inspect_excellon_drill(&path)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_project_excellon_drill_inspection_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
+                command_exec_project_inspect::execute_project_excellon_drill_inspection(
+                    &cli.format,
+                    &path,
+                )
+            }
+            ProjectCommands::InspectGerber { path } => {
+                command_exec_project_inspect::execute_project_gerber_inspection(&cli.format, &path)
             }
             ProjectCommands::CompareExcellonDrill { path, drill } => {
                 let report = compare_native_project_excellon_drill(&path, &drill)?;
@@ -2252,25 +2243,19 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 };
                 Ok((output, 0))
             }
-            ProjectCommands::PlaceBoardDimension {
-                path,
-                from_x_nm,
-                from_y_nm,
-                to_x_nm,
-                to_y_nm,
-                text,
-            } => {
+            ProjectCommands::PlaceBoardDimension(args) => {
                 let report = place_native_project_board_dimension(
-                    &path,
+                    &args.path,
                     eda_engine::ir::geometry::Point {
-                        x: from_x_nm,
-                        y: from_y_nm,
+                        x: args.from_x_nm,
+                        y: args.from_y_nm,
                     },
                     eda_engine::ir::geometry::Point {
-                        x: to_x_nm,
-                        y: to_y_nm,
+                        x: args.to_x_nm,
+                        y: args.to_y_nm,
                     },
-                    text,
+                    args.layer,
+                    args.text,
                 )?;
                 let output = match cli.format {
                     OutputFormat::Text => {
@@ -2280,25 +2265,17 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 };
                 Ok((output, 0))
             }
-            ProjectCommands::EditBoardDimension {
-                path,
-                dimension_uuid,
-                from_x_nm,
-                from_y_nm,
-                to_x_nm,
-                to_y_nm,
-                text,
-                clear_text,
-            } => {
+            ProjectCommands::EditBoardDimension(args) => {
                 let report = edit_native_project_board_dimension(
-                    &path,
-                    dimension_uuid,
-                    from_x_nm,
-                    from_y_nm,
-                    to_x_nm,
-                    to_y_nm,
-                    text,
-                    clear_text,
+                    &args.path,
+                    args.dimension_uuid,
+                    args.from_x_nm,
+                    args.from_y_nm,
+                    args.to_x_nm,
+                    args.to_y_nm,
+                    args.layer,
+                    args.text,
+                    args.clear_text,
                 )?;
                 let output = match cli.format {
                     OutputFormat::Text => {

@@ -39,6 +39,8 @@ mod main_tests_project_gerber_copper_compare;
 mod main_tests_project_gerber_copper_export;
 #[path = "main_tests_project_gerber_copper_validate.rs"]
 mod main_tests_project_gerber_copper_validate;
+#[path = "main_tests_project_gerber_inspect.rs"]
+mod main_tests_project_gerber_inspect;
 #[path = "main_tests_project_gerber_mask_compare.rs"]
 mod main_tests_project_gerber_mask_compare;
 #[path = "main_tests_project_gerber_mask_export.rs"]
@@ -49,8 +51,14 @@ mod main_tests_project_gerber_mask_validate;
 mod main_tests_project_gerber_mech_compare;
 #[path = "main_tests_project_gerber_mech_component.rs"]
 mod main_tests_project_gerber_mech_component;
+#[path = "main_tests_project_gerber_mech_component_arc.rs"]
+mod main_tests_project_gerber_mech_component_arc;
+#[path = "main_tests_project_gerber_mech_component_text.rs"]
+mod main_tests_project_gerber_mech_component_text;
 #[path = "main_tests_project_gerber_mech_export.rs"]
 mod main_tests_project_gerber_mech_export;
+#[path = "main_tests_project_gerber_mech_text.rs"]
+mod main_tests_project_gerber_mech_text;
 #[path = "main_tests_project_gerber_mech_validate.rs"]
 mod main_tests_project_gerber_mech_validate;
 #[path = "main_tests_project_gerber_outline_compare.rs"]
@@ -161,6 +169,8 @@ mod main_tests_plan_apply_validate;
 mod main_tests_project_board_check;
 #[path = "main_tests_project_board_component.rs"]
 mod main_tests_project_board_component;
+#[path = "main_tests_project_board_component_pool_materialization.rs"]
+mod main_tests_project_board_component_pool_materialization;
 #[path = "main_tests_project_board_component_query.rs"]
 mod main_tests_project_board_component_query;
 #[path = "main_tests_project_board_connectivity.rs"]

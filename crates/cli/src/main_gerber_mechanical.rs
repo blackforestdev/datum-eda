@@ -10,9 +10,14 @@ pub(crate) struct NativeProjectGerberMechanicalExportView {
     pub(crate) gerber_path: String,
     pub(crate) layer: i32,
     pub(crate) keepout_count: usize,
+    pub(crate) dimension_count: usize,
+    pub(crate) board_text_count: usize,
+    pub(crate) component_text_count: usize,
     pub(crate) component_polygon_count: usize,
     pub(crate) component_stroke_count: usize,
     pub(crate) component_polyline_count: usize,
+    pub(crate) component_circle_count: usize,
+    pub(crate) component_arc_count: usize,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -26,9 +31,14 @@ pub(crate) struct NativeProjectGerberMechanicalValidationView {
     pub(crate) expected_bytes: usize,
     pub(crate) actual_bytes: usize,
     pub(crate) keepout_count: usize,
+    pub(crate) dimension_count: usize,
+    pub(crate) board_text_count: usize,
+    pub(crate) component_text_count: usize,
     pub(crate) component_polygon_count: usize,
     pub(crate) component_stroke_count: usize,
     pub(crate) component_polyline_count: usize,
+    pub(crate) component_circle_count: usize,
+    pub(crate) component_arc_count: usize,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -39,9 +49,14 @@ pub(crate) struct NativeProjectGerberMechanicalComparisonView {
     pub(crate) gerber_path: String,
     pub(crate) layer: i32,
     pub(crate) expected_keepout_count: usize,
+    pub(crate) expected_dimension_count: usize,
+    pub(crate) expected_board_text_count: usize,
+    pub(crate) expected_component_text_count: usize,
     pub(crate) expected_component_polygon_count: usize,
     pub(crate) expected_component_stroke_count: usize,
     pub(crate) expected_component_polyline_count: usize,
+    pub(crate) expected_component_circle_count: usize,
+    pub(crate) expected_component_arc_count: usize,
     pub(crate) actual_geometry_count: usize,
     pub(crate) matched_count: usize,
     pub(crate) missing_count: usize,
@@ -61,6 +76,9 @@ pub(crate) fn render_native_project_gerber_mechanical_export_text(
         format!("gerber_path: {}", report.gerber_path),
         format!("layer: {}", report.layer),
         format!("keepout_count: {}", report.keepout_count),
+        format!("dimension_count: {}", report.dimension_count),
+        format!("board_text_count: {}", report.board_text_count),
+        format!("component_text_count: {}", report.component_text_count),
         format!(
             "component_polygon_count: {}",
             report.component_polygon_count
@@ -70,6 +88,8 @@ pub(crate) fn render_native_project_gerber_mechanical_export_text(
             "component_polyline_count: {}",
             report.component_polyline_count
         ),
+        format!("component_circle_count: {}", report.component_circle_count),
+        format!("component_arc_count: {}", report.component_arc_count),
     ]
     .join("\n")
 }
@@ -87,6 +107,9 @@ pub(crate) fn render_native_project_gerber_mechanical_validation_text(
         format!("expected_bytes: {}", report.expected_bytes),
         format!("actual_bytes: {}", report.actual_bytes),
         format!("keepout_count: {}", report.keepout_count),
+        format!("dimension_count: {}", report.dimension_count),
+        format!("board_text_count: {}", report.board_text_count),
+        format!("component_text_count: {}", report.component_text_count),
         format!(
             "component_polygon_count: {}",
             report.component_polygon_count
@@ -96,6 +119,8 @@ pub(crate) fn render_native_project_gerber_mechanical_validation_text(
             "component_polyline_count: {}",
             report.component_polyline_count
         ),
+        format!("component_circle_count: {}", report.component_circle_count),
+        format!("component_arc_count: {}", report.component_arc_count),
     ]
     .join("\n")
 }
@@ -111,6 +136,18 @@ pub(crate) fn render_native_project_gerber_mechanical_comparison_text(
         format!("layer: {}", report.layer),
         format!("expected_keepout_count: {}", report.expected_keepout_count),
         format!(
+            "expected_dimension_count: {}",
+            report.expected_dimension_count
+        ),
+        format!(
+            "expected_board_text_count: {}",
+            report.expected_board_text_count
+        ),
+        format!(
+            "expected_component_text_count: {}",
+            report.expected_component_text_count
+        ),
+        format!(
             "expected_component_polygon_count: {}",
             report.expected_component_polygon_count
         ),
@@ -121,6 +158,14 @@ pub(crate) fn render_native_project_gerber_mechanical_comparison_text(
         format!(
             "expected_component_polyline_count: {}",
             report.expected_component_polyline_count
+        ),
+        format!(
+            "expected_component_circle_count: {}",
+            report.expected_component_circle_count
+        ),
+        format!(
+            "expected_component_arc_count: {}",
+            report.expected_component_arc_count
         ),
         format!("actual_geometry_count: {}", report.actual_geometry_count),
         format!("matched_count: {}", report.matched_count),

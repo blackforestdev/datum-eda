@@ -45,12 +45,7 @@ pub fn render_rs274x_mechanical_layer(
             .expect("default mechanical aperture must be defined");
     lines.push(format!("D{default_d_code}*"));
 
-    let mut ordered_polygons = polygons.to_vec();
-    ordered_polygons.sort_by(|a, b| {
-        render_polygon_points(&a.vertices)
-            .cmp(&render_polygon_points(&b.vertices))
-            .then_with(|| a.closed.cmp(&b.closed))
-    });
+    let ordered_polygons = ordered_mechanical_polygons(polygons);
 
     for polygon in ordered_polygons {
         if polygon.vertices.len() < 2 {
@@ -82,15 +77,7 @@ pub fn render_rs274x_mechanical_layer(
         }
     }
 
-    let mut ordered_strokes = strokes.to_vec();
-    ordered_strokes.sort_by(|a, b| {
-        a.width_nm
-            .cmp(&b.width_nm)
-            .then_with(|| a.from.x.cmp(&b.from.x))
-            .then_with(|| a.from.y.cmp(&b.from.y))
-            .then_with(|| a.to.x.cmp(&b.to.x))
-            .then_with(|| a.to.y.cmp(&b.to.y))
-    });
+    let ordered_strokes = ordered_mechanical_strokes(strokes);
     for stroke in ordered_strokes {
         let d_code = 10
             + stroke_widths
@@ -111,4 +98,27 @@ pub fn render_rs274x_mechanical_layer(
 
     lines.push(String::from("M02*"));
     Ok(lines.join("\n") + "\n")
+}
+
+fn ordered_mechanical_polygons(polygons: &[Polygon]) -> Vec<Polygon> {
+    let mut ordered = polygons.to_vec();
+    ordered.sort_by(|a, b| {
+        render_polygon_points(&a.vertices)
+            .cmp(&render_polygon_points(&b.vertices))
+            .then_with(|| a.closed.cmp(&b.closed))
+    });
+    ordered
+}
+
+fn ordered_mechanical_strokes(strokes: &[MechanicalStroke]) -> Vec<MechanicalStroke> {
+    let mut ordered = strokes.to_vec();
+    ordered.sort_by(|a, b| {
+        a.width_nm
+            .cmp(&b.width_nm)
+            .then_with(|| a.from.x.cmp(&b.from.x))
+            .then_with(|| a.from.y.cmp(&b.from.y))
+            .then_with(|| a.to.x.cmp(&b.to.x))
+            .then_with(|| a.to.y.cmp(&b.to.y))
+    });
+    ordered
 }
