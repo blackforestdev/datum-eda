@@ -35,7 +35,14 @@ subset, for automation-facing read parity, and the native board-components
 query now reports per-component presence flags plus the currently
 materialized silkscreen subset counts, persisted component-mechanical counts,
 persisted component package-pad counts, and persisted component `models_3d`
-counts.
+counts. A direct `board-component-models-3d` query now exposes the persisted
+`component_models_3d` refs for one component instead of only counts. A direct
+`board-component-pads` query now exposes the persisted `component_pads`
+subset for one component instead of only counts. A direct
+`board-component-silkscreen` query now exposes the persisted package-linked
+silkscreen subset for one component instead of only counts. A direct
+`board-component-mechanical` query now exposes the persisted package-linked
+mechanical subset for one component instead of only counts.
 
 Evidence anchors:
 - CLI/native surface: `crates/cli/src/command_project.rs`
@@ -66,6 +73,8 @@ circle/rect aperture geometry only when the loaded source padstack defines
 explicit aperture fields; otherwise the persisted pad remains aperture-less.
 They may also carry optional source-backed `drill_nm` when the resolved
 padstack defines it.
+The native query surface now includes a direct per-component readback for
+persisted `models_3d` refs.
 Current copper/soldermask/paste Gerber flows consume only the
 explicit-aperture persisted package-pad subset.
 The current Excellon drill and drill-hole-class slices also consume
@@ -121,7 +130,19 @@ semantically in one directory via `compare-gerber-set`. A read-only
 `report-manufacturing` slice now summarizes the same persisted-state
 manufacturing surface without writing artifacts, covering BOM/PnP component
 counts, via-only CSV drill rows, Excellon/hole-class drill counts, and the
-planned Gerber artifact filenames.
+planned Gerber artifact filenames. `export-manufacturing-set` now writes that
+same currently supported subset into one directory by composing the existing
+BOM, PnP, via-only CSV drill, Excellon drill, and Gerber-set exporters.
+`validate-manufacturing-set` now validates that same directory-level subset
+using semantic BOM/PnP checks, deterministic CSV drill comparison, strict
+Excellon validation, and per-artifact Gerber validation.
+`compare-manufacturing-set` now semantically compares that same directory-level
+subset using semantic BOM/PnP, semantic Excellon and Gerber comparison, plus
+deterministic CSV drill comparison.
+`manifest-manufacturing-set` now reports the deterministic expected
+directory-level artifact set for that same persisted-state subset, including
+artifact kind, comparison contract, and filename in stable order, without
+writing files.
 Copper, soldermask, and paste now also consume the persisted package-pad
 subset from `component_pads` when, and only when, those pads carry explicit
 circle/rect aperture geometry resolved from source padstacks.
@@ -136,8 +157,9 @@ Evidence anchors:
 
 ## Drill export
 
-Deterministic drill CSV and narrow Excellon export/inspect/validate/compare
-slices are in place. Excellon and drill-hole-class reporting now include
+Deterministic drill CSV export/inspect/validate/compare and narrow Excellon
+export/inspect/validate/compare slices are in place. Excellon and
+drill-hole-class reporting now include
 drill-bearing package `component_pads` as through holes spanning the outer
 copper pair; CSV drill export remains via-only. Broader fabrication semantics
 remain open.
@@ -148,8 +170,8 @@ Evidence anchors:
 
 ## BOM export
 
-Deterministic board-component BOM CSV export is implemented; richer purchasing
-metadata remains open.
+Deterministic board-component BOM CSV export, inspection, and semantic compare
+are implemented; richer purchasing metadata remains open.
 
 ## PnP export
 

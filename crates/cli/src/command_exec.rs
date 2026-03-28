@@ -5,8 +5,12 @@ mod command_exec_board_component;
 mod command_exec_board_net;
 #[path = "command_exec_board_stackup.rs"]
 mod command_exec_board_stackup;
+#[path = "command_exec_drill.rs"]
+mod command_exec_drill;
 #[path = "command_exec_gerber_plan.rs"]
 mod command_exec_gerber_plan;
+#[path = "command_exec_inventory.rs"]
+mod command_exec_inventory;
 #[path = "command_exec_manufacturing.rs"]
 mod command_exec_manufacturing;
 #[path = "command_exec_native_support.rs"]
@@ -305,6 +309,30 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     let report = query_native_project_board_component_views(&path)?;
                     Ok((render_output(&cli.format, &report), 0))
                 }
+                NativeProjectQueryCommands::BoardComponentModels3d(args) => {
+                    let report =
+                        query_native_project_board_component_models_3d(&path, args.component_uuid)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::BoardComponentPads(args) => {
+                    let report =
+                        query_native_project_board_component_pads(&path, args.component_uuid)?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::BoardComponentSilkscreen(args) => {
+                    let report = query_native_project_board_component_silkscreen(
+                        &path,
+                        args.component_uuid,
+                    )?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
+                NativeProjectQueryCommands::BoardComponentMechanical(args) => {
+                    let report = query_native_project_board_component_mechanical(
+                        &path,
+                        args.component_uuid,
+                    )?;
+                    Ok((render_output(&cli.format, &report), 0))
+                }
                 NativeProjectQueryCommands::BoardTracks => {
                     let report = query_native_project_board_tracks(&path)?;
                     Ok((render_output(&cli.format, &report), 0))
@@ -350,53 +378,22 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     Ok((render_output(&cli.format, &report), 0))
                 }
             },
-            ProjectCommands::ExportBom { path, out } => {
-                let report = export_native_project_bom(&path, &out)?;
-                let output = match cli.format {
-                    OutputFormat::Text => render_native_project_bom_export_text(&report),
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
+            command @ ProjectCommands::ExportBom { .. }
+            | command @ ProjectCommands::CompareBom { .. }
+            | command @ ProjectCommands::InspectBom { .. }
+            | command @ ProjectCommands::ExportPnp { .. }
+            | command @ ProjectCommands::ComparePnp { .. } => {
+                command_exec_inventory::execute_inventory_command(&cli.format, command)
             }
-            ProjectCommands::CompareBom { path, bom } => {
-                let report = compare_native_project_bom(&path, &bom)?;
-                let output = match cli.format {
-                    OutputFormat::Text => render_native_project_bom_comparison_text(&report),
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::ExportPnp { path, out } => {
-                let report = export_native_project_pnp(&path, &out)?;
-                let output = match cli.format {
-                    OutputFormat::Text => render_native_project_pnp_export_text(&report),
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::ComparePnp { path, pnp } => {
-                let report = compare_native_project_pnp(&path, &pnp)?;
-                let output = match cli.format {
-                    OutputFormat::Text => render_native_project_pnp_comparison_text(&report),
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::ExportDrill { path, out } => {
-                let report = export_native_project_drill(&path, &out)?;
-                let output = match cli.format {
-                    OutputFormat::Text => render_native_project_drill_export_text(&report),
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::ExportExcellonDrill { path, out } => {
-                let report = export_native_project_excellon_drill(&path, &out)?;
-                let output = match cli.format {
-                    OutputFormat::Text => render_native_project_excellon_drill_export_text(&report),
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
+            command @ ProjectCommands::ExportDrill(_)
+            | command @ ProjectCommands::ValidateDrill(_)
+            | command @ ProjectCommands::CompareDrill(_)
+            | command @ ProjectCommands::ExportExcellonDrill(_)
+            | command @ ProjectCommands::InspectDrill(_)
+            | command @ ProjectCommands::CompareExcellonDrill(_)
+            | command @ ProjectCommands::ValidateExcellonDrill(_)
+            | command @ ProjectCommands::ReportDrillHoleClasses(_) => {
+                command_exec_drill::execute_drill_command(&cli.format, command)
             }
             ProjectCommands::InspectExcellonDrill { path } => {
                 command_exec_project_inspect::execute_project_excellon_drill_inspection(
@@ -406,26 +403,6 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             }
             ProjectCommands::InspectGerber { path } => {
                 command_exec_project_inspect::execute_project_gerber_inspection(&cli.format, &path)
-            }
-            ProjectCommands::CompareExcellonDrill { path, drill } => {
-                let report = compare_native_project_excellon_drill(&path, &drill)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_project_excellon_drill_comparison_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::ReportDrillHoleClasses { path } => {
-                let report = report_native_project_drill_hole_classes(&path)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_project_drill_hole_class_report_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
             }
             ProjectCommands::ExportGerberOutline { path, out } => {
                 let report = export_native_project_gerber_outline(&path, &out)?;
@@ -650,17 +627,6 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 };
                 Ok((output, 0))
             }
-            ProjectCommands::ValidateExcellonDrill { path, drill } => {
-                let report = validate_native_project_excellon_drill(&path, &drill)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_project_excellon_drill_validation_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                let exit_code = if report.matches_expected { 0 } else { 1 };
-                Ok((output, exit_code))
-            }
             command @ ProjectCommands::PlanGerberExport(_)
             | command @ ProjectCommands::ExportGerberSet(_)
             | command @ ProjectCommands::CompareGerberExportPlan(_)
@@ -669,6 +635,18 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 command_exec_gerber_plan::execute_gerber_workflow_command(&cli.format, command)
             }
             command @ ProjectCommands::ReportManufacturing(_) => {
+                command_exec_manufacturing::execute_manufacturing_command(&cli.format, command)
+            }
+            command @ ProjectCommands::ExportManufacturingSet(_) => {
+                command_exec_manufacturing::execute_manufacturing_command(&cli.format, command)
+            }
+            command @ ProjectCommands::ValidateManufacturingSet(_) => {
+                command_exec_manufacturing::execute_manufacturing_command(&cli.format, command)
+            }
+            command @ ProjectCommands::CompareManufacturingSet(_) => {
+                command_exec_manufacturing::execute_manufacturing_command(&cli.format, command)
+            }
+            command @ ProjectCommands::ManifestManufacturingSet(_) => {
                 command_exec_manufacturing::execute_manufacturing_command(&cli.format, command)
             }
             ProjectCommands::PlaceSymbol {

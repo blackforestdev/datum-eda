@@ -9,24 +9,39 @@ use uuid::Uuid;
 mod cli_args_board_component;
 #[path = "cli_args_board_dimension.rs"]
 mod cli_args_board_dimension;
+#[path = "cli_args_drill.rs"]
+mod cli_args_drill;
 #[path = "cli_args_gerber_plan.rs"]
 mod cli_args_gerber_plan;
 #[path = "cli_args_manufacturing.rs"]
 mod cli_args_manufacturing;
+#[path = "cli_args_native_support.rs"]
+mod cli_args_native_support;
 #[path = "cli_args_output.rs"]
 mod cli_args_output;
 #[path = "cli_args_pool.rs"]
 mod cli_args_pool;
 pub(crate) use self::cli_args_board_component::{
-    SetBoardComponentLayerArgs, SetBoardComponentPackageArgs, SetBoardComponentPartArgs,
-    SetBoardComponentReferenceArgs, SetBoardComponentValueArgs,
+    BoardComponentMechanicalArgs, BoardComponentModels3dArgs, BoardComponentPadsArgs,
+    BoardComponentSilkscreenArgs, SetBoardComponentLayerArgs, SetBoardComponentPackageArgs,
+    SetBoardComponentPartArgs, SetBoardComponentReferenceArgs, SetBoardComponentValueArgs,
 };
 use self::cli_args_board_dimension::{EditBoardDimensionArgs, PlaceBoardDimensionArgs};
+pub(crate) use self::cli_args_drill::{
+    CompareDrillArgs, CompareExcellonDrillArgs, ExportDrillArgs, ExportExcellonDrillArgs,
+    InspectDrillArgs, ReportDrillHoleClassesArgs, ValidateDrillArgs, ValidateExcellonDrillArgs,
+};
 pub(crate) use self::cli_args_gerber_plan::{
     CompareGerberExportPlanArgs, CompareGerberSetArgs, ExportGerberSetArgs, PlanGerberExportArgs,
     ValidateGerberSetArgs,
 };
-pub(crate) use self::cli_args_manufacturing::ReportManufacturingArgs;
+pub(crate) use self::cli_args_manufacturing::{
+    CompareManufacturingSetArgs, ExportManufacturingSetArgs, ManifestManufacturingSetArgs,
+    ReportManufacturingArgs, ValidateManufacturingSetArgs,
+};
+pub(crate) use self::cli_args_native_support::{
+    NativeHiddenPowerBehaviorArg, NativePortDirectionArg, NativeSymbolDisplayModeArg,
+};
 pub(crate) use self::cli_args_output::{FailOn, OutputFormat};
 pub(crate) use self::cli_args_pool::{PoolCommands, ReplacementPolicyArg};
 #[derive(Parser)]
@@ -301,6 +316,11 @@ pub(crate) enum ProjectCommands {
         #[arg(long = "bom")]
         bom: PathBuf,
     },
+    /// Inspect a BOM CSV using the deterministic native inventory contract
+    InspectBom {
+        /// BOM CSV path to inspect
+        path: PathBuf,
+    },
     /// Export a native project pick-and-place file as deterministic CSV from persisted board components
     ExportPnp {
         /// Project root directory
@@ -318,21 +338,15 @@ pub(crate) enum ProjectCommands {
         pnp: PathBuf,
     },
     /// Export a native project drill file as deterministic CSV from persisted vias
-    ExportDrill {
-        /// Project root directory
-        path: PathBuf,
-        /// Output CSV path
-        #[arg(long = "out")]
-        out: PathBuf,
-    },
+    ExportDrill(ExportDrillArgs),
+    /// Validate a native project drill CSV against the current persisted via inventory
+    ValidateDrill(ValidateDrillArgs),
+    /// Compare a native project drill CSV semantically against the current persisted via inventory
+    CompareDrill(CompareDrillArgs),
     /// Export a native project drill file as narrow Excellon from persisted vias
-    ExportExcellonDrill {
-        /// Project root directory
-        path: PathBuf,
-        /// Output drill path
-        #[arg(long = "out")]
-        out: PathBuf,
-    },
+    ExportExcellonDrill(ExportExcellonDrillArgs),
+    /// Inspect a native project drill CSV file
+    InspectDrill(InspectDrillArgs),
     InspectExcellonDrill {
         path: PathBuf,
     },
@@ -340,16 +354,8 @@ pub(crate) enum ProjectCommands {
         path: PathBuf,
     },
     /// Compare a narrow Excellon drill file against the current native via inventory
-    CompareExcellonDrill {
-        /// Project root directory
-        path: PathBuf,
-        /// Drill path to compare
-        #[arg(long = "drill")]
-        drill: PathBuf,
-    },
-    ReportDrillHoleClasses {
-        path: PathBuf,
-    },
+    CompareExcellonDrill(CompareExcellonDrillArgs),
+    ReportDrillHoleClasses(ReportDrillHoleClassesArgs),
     /// Export the native board outline as a narrow RS-274X Gerber file
     ExportGerberOutline {
         /// Project root directory
@@ -540,13 +546,7 @@ pub(crate) enum ProjectCommands {
         gerber: PathBuf,
     },
     /// Validate a narrow Excellon drill file against the current native via inventory
-    ValidateExcellonDrill {
-        /// Project root directory
-        path: PathBuf,
-        /// Drill path to validate
-        #[arg(long = "drill")]
-        drill: PathBuf,
-    },
+    ValidateExcellonDrill(ValidateExcellonDrillArgs),
     /// Plan the native Gerber export artifact set from the current board outline and stackup
     PlanGerberExport(PlanGerberExportArgs),
     /// Export the planned native Gerber artifact set into one output directory
@@ -559,6 +559,14 @@ pub(crate) enum ProjectCommands {
     CompareGerberSet(CompareGerberSetArgs),
     /// Report the current persisted-state manufacturing output surface without writing artifacts
     ReportManufacturing(ReportManufacturingArgs),
+    /// Export the current supported persisted-state manufacturing set into one output directory
+    ExportManufacturingSet(ExportManufacturingSetArgs),
+    /// Validate the current supported persisted-state manufacturing set in one output directory
+    ValidateManufacturingSet(ValidateManufacturingSetArgs),
+    /// Compare the current supported persisted-state manufacturing set semantically in one output directory
+    CompareManufacturingSet(CompareManufacturingSetArgs),
+    /// Describe the deterministic current supported persisted-state manufacturing set for one output directory
+    ManifestManufacturingSet(ManifestManufacturingSetArgs),
     /// Place one schematic symbol into an existing native sheet file
     PlaceSymbol {
         /// Project root directory
@@ -2000,6 +2008,18 @@ pub(crate) enum NativeProjectQueryCommands {
     BoardStackup,
     /// Current native board placed packages/components
     BoardComponents,
+    /// Current persisted 3D model refs for one native board component
+    #[command(name = "board-component-models-3d")]
+    BoardComponentModels3d(BoardComponentModels3dArgs),
+    /// Current persisted package-pad subset for one native board component
+    #[command(name = "board-component-pads")]
+    BoardComponentPads(BoardComponentPadsArgs),
+    /// Current persisted package silkscreen subset for one native board component
+    #[command(name = "board-component-silkscreen")]
+    BoardComponentSilkscreen(BoardComponentSilkscreenArgs),
+    /// Current persisted package mechanical subset for one native board component
+    #[command(name = "board-component-mechanical")]
+    BoardComponentMechanical(BoardComponentMechanicalArgs),
     /// Current native board tracks
     BoardTracks,
     /// Current native board vias
@@ -2034,28 +2054,6 @@ pub(crate) enum NativeLabelKindArg {
     Global,
     Hierarchical,
     Power,
-}
-
-#[derive(Clone, clap::ValueEnum)]
-pub(crate) enum NativePortDirectionArg {
-    Input,
-    Output,
-    Bidirectional,
-    Passive,
-}
-
-#[derive(Clone, clap::ValueEnum)]
-pub(crate) enum NativeSymbolDisplayModeArg {
-    LibraryDefault,
-    ShowHiddenPins,
-    HideOptionalPins,
-}
-
-#[derive(Clone, clap::ValueEnum)]
-pub(crate) enum NativeHiddenPowerBehaviorArg {
-    SourceDefinedImplicit,
-    ExplicitPowerObject,
-    PreservedAsImportedMetadata,
 }
 
 #[derive(Subcommand)]

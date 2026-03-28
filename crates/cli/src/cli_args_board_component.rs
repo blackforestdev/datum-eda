@@ -39,6 +39,34 @@ pub(crate) struct SetBoardComponentValueArgs {
 }
 
 #[derive(Args)]
+pub(crate) struct BoardComponentModels3dArgs {
+    /// Component UUID
+    #[arg(long = "component")]
+    pub(crate) component_uuid: Uuid,
+}
+
+#[derive(Args)]
+pub(crate) struct BoardComponentPadsArgs {
+    /// Component UUID
+    #[arg(long = "component")]
+    pub(crate) component_uuid: Uuid,
+}
+
+#[derive(Args)]
+pub(crate) struct BoardComponentSilkscreenArgs {
+    /// Component UUID
+    #[arg(long = "component")]
+    pub(crate) component_uuid: Uuid,
+}
+
+#[derive(Args)]
+pub(crate) struct BoardComponentMechanicalArgs {
+    /// Component UUID
+    #[arg(long = "component")]
+    pub(crate) component_uuid: Uuid,
+}
+
+#[derive(Args)]
 pub(crate) struct SetBoardComponentReferenceArgs {
     /// Project root directory
     pub(crate) path: PathBuf,

@@ -39,6 +39,7 @@ mod main_gerber_inspect;
 mod main_gerber_mechanical;
 mod main_gerber_set;
 mod main_gerber_silkscreen;
+mod main_inventory;
 mod main_inspect;
 mod main_manufacturing;
 mod main_modify;
@@ -54,6 +55,7 @@ pub(crate) use main_gerber_inspect::*;
 pub(crate) use main_gerber_mechanical::*;
 pub(crate) use main_gerber_set::*;
 pub(crate) use main_gerber_silkscreen::*;
+pub(crate) use main_inventory::*;
 pub(crate) use main_inspect::*;
 pub(crate) use main_manufacturing::*;
 pub(crate) use main_modify::*;
@@ -94,70 +96,6 @@ struct NativeProjectCreateReportView {
     schematic_uuid: String,
     board_uuid: String,
     files_written: Vec<String>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectBomExportView {
-    action: String,
-    project_root: String,
-    bom_path: String,
-    rows: usize,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectBomDriftView {
-    reference: String,
-    fields: Vec<String>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectBomComparisonView {
-    action: String,
-    project_root: String,
-    board_path: String,
-    bom_path: String,
-    expected_count: usize,
-    actual_count: usize,
-    matched_count: usize,
-    missing_count: usize,
-    extra_count: usize,
-    drift_count: usize,
-    matched: Vec<String>,
-    missing: Vec<String>,
-    extra: Vec<String>,
-    drift: Vec<NativeProjectBomDriftView>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectPnpExportView {
-    action: String,
-    project_root: String,
-    pnp_path: String,
-    rows: usize,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectPnpDriftView {
-    reference: String,
-    fields: Vec<String>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectPnpComparisonView {
-    action: String,
-    project_root: String,
-    board_path: String,
-    pnp_path: String,
-    expected_count: usize,
-    actual_count: usize,
-    matched_count: usize,
-    missing_count: usize,
-    extra_count: usize,
-    drift_count: usize,
-    matched: Vec<String>,
-    missing: Vec<String>,
-    extra: Vec<String>,
-    drift: Vec<NativeProjectPnpDriftView>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -992,114 +930,6 @@ fn render_native_project_create_report_text(report: &NativeProjectCreateReportVi
         lines.push("files_written:".to_string());
         for path in &report.files_written {
             lines.push(format!("  {path}"));
-        }
-    }
-    lines.join("\n")
-}
-
-fn render_native_project_bom_export_text(report: &NativeProjectBomExportView) -> String {
-    [
-        format!("action: {}", report.action),
-        format!("project_root: {}", report.project_root),
-        format!("bom_path: {}", report.bom_path),
-        format!("rows: {}", report.rows),
-    ]
-    .join("\n")
-}
-
-fn render_native_project_bom_comparison_text(report: &NativeProjectBomComparisonView) -> String {
-    let mut lines = vec![
-        format!("action: {}", report.action),
-        format!("project_root: {}", report.project_root),
-        format!("board_path: {}", report.board_path),
-        format!("bom_path: {}", report.bom_path),
-        format!("expected_count: {}", report.expected_count),
-        format!("actual_count: {}", report.actual_count),
-        format!("matched_count: {}", report.matched_count),
-        format!("missing_count: {}", report.missing_count),
-        format!("extra_count: {}", report.extra_count),
-        format!("drift_count: {}", report.drift_count),
-    ];
-    if !report.matched.is_empty() {
-        lines.push("matched:".to_string());
-        for entry in &report.matched {
-            lines.push(format!("- {}", entry));
-        }
-    }
-    if !report.missing.is_empty() {
-        lines.push("missing:".to_string());
-        for entry in &report.missing {
-            lines.push(format!("- {}", entry));
-        }
-    }
-    if !report.extra.is_empty() {
-        lines.push("extra:".to_string());
-        for entry in &report.extra {
-            lines.push(format!("- {}", entry));
-        }
-    }
-    if !report.drift.is_empty() {
-        lines.push("drift:".to_string());
-        for entry in &report.drift {
-            lines.push(format!(
-                "- {} [{}]",
-                entry.reference,
-                entry.fields.join(", ")
-            ));
-        }
-    }
-    lines.join("\n")
-}
-
-fn render_native_project_pnp_export_text(report: &NativeProjectPnpExportView) -> String {
-    [
-        format!("action: {}", report.action),
-        format!("project_root: {}", report.project_root),
-        format!("pnp_path: {}", report.pnp_path),
-        format!("rows: {}", report.rows),
-    ]
-    .join("\n")
-}
-
-fn render_native_project_pnp_comparison_text(report: &NativeProjectPnpComparisonView) -> String {
-    let mut lines = vec![
-        format!("action: {}", report.action),
-        format!("project_root: {}", report.project_root),
-        format!("board_path: {}", report.board_path),
-        format!("pnp_path: {}", report.pnp_path),
-        format!("expected_count: {}", report.expected_count),
-        format!("actual_count: {}", report.actual_count),
-        format!("matched_count: {}", report.matched_count),
-        format!("missing_count: {}", report.missing_count),
-        format!("extra_count: {}", report.extra_count),
-        format!("drift_count: {}", report.drift_count),
-    ];
-    if !report.matched.is_empty() {
-        lines.push("matched:".to_string());
-        for entry in &report.matched {
-            lines.push(format!("- {}", entry));
-        }
-    }
-    if !report.missing.is_empty() {
-        lines.push("missing:".to_string());
-        for entry in &report.missing {
-            lines.push(format!("- {}", entry));
-        }
-    }
-    if !report.extra.is_empty() {
-        lines.push("extra:".to_string());
-        for entry in &report.extra {
-            lines.push(format!("- {}", entry));
-        }
-    }
-    if !report.drift.is_empty() {
-        lines.push("drift:".to_string());
-        for entry in &report.drift {
-            lines.push(format!(
-                "- {} fields={}",
-                entry.reference,
-                entry.fields.join(",")
-            ));
         }
     }
     lines.join("\n")

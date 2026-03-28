@@ -366,7 +366,7 @@ pub(crate) fn compare_native_project_gerber_set(
     })
 }
 
-fn sanitize_export_prefix(value: &str) -> String {
+pub(crate) fn sanitize_export_prefix(value: &str) -> String {
     let mut prefix = String::new();
     let mut last_dash = false;
     for ch in value.chars() {

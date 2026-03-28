@@ -176,6 +176,22 @@ Current live slice:
   presence flags plus the currently materialized silkscreen subset counts and
   persisted component-mechanical subset counts, establishing the read-side
   contract for future native package placement work.
+- `eda project query <dir> board-component-models-3d --component <uuid>` now
+  reads back the persisted `component_models_3d` refs for one native board
+  component directly from `board/board.json`, establishing the first direct
+  read surface for that package-linked subset instead of only counts.
+- `eda project query <dir> board-component-pads --component <uuid>` now reads
+  back the persisted `component_pads` subset for one native board component
+  directly from `board/board.json`, including position, layer, padstack UUID,
+  optional `drill_nm`, and any explicitly persisted aperture fields.
+- `eda project query <dir> board-component-silkscreen --component <uuid>` now
+  reads back the persisted package-linked silkscreen subset for one native
+  board component directly from `board/board.json`, including the currently
+  supported text, line, arc, circle, polygon, and polyline buckets.
+- `eda project query <dir> board-component-mechanical --component <uuid>` now
+  reads back the persisted package-linked mechanical subset for one native
+  board component directly from `board/board.json`, including the currently
+  supported text, line, arc, circle, polygon, and polyline buckets.
 - `eda project place-board-component <dir> ...`, `eda project move-board-component
   <dir> ...`, `eda project set-board-component-part <dir> ...`,
   `eda project set-board-component-package <dir> ...`, `eda project
@@ -192,6 +208,8 @@ Current live slice:
   directly from that persisted native board-component inventory, establishing
   the first native manufacturing-export slice without depending on pool lookup,
   manufacturer metadata, or variant expansion.
+- `eda project inspect-bom <path>` now reads that deterministic BOM CSV
+  contract directly and reports parsed rows in file order.
 - `eda project compare-bom <dir> --bom <path>` now compares that BOM CSV
   against the current native board-component inventory by reference, value,
   part/package identity, layer, position, rotation, and locked state, so BOM
@@ -209,6 +227,16 @@ Current live slice:
   drill export directly from the persisted native via inventory, establishing
   the first native drill-export slice without claiming full Excellon tooling,
   slot support, or fabrication-ready hole tables yet.
+- `eda project inspect-drill <path>` now reads that deterministic CSV drill
+  file and reports the parsed row set in file order, establishing the first
+  direct inspection surface for the via-only CSV drill contract.
+- `eda project validate-drill <dir> --drill <path>` now re-renders that
+  expected native via-only CSV drill file and reports byte-for-byte
+  match/mismatch with CI-usable exit status.
+- `eda project compare-drill <dir> --drill <path>` now compares that native
+  via-only CSV drill file semantically by via UUID and persisted drill fields,
+  reporting matched, missing, extra, and drifted rows without requiring byte
+  identity.
 - `eda project export-excellon-drill <dir> --out <path>` now writes a narrow
   Excellon drill file directly from the persisted native via inventory plus
   drill-bearing package `component_pads` through `eda_engine::export`,
@@ -316,6 +344,23 @@ Current live slice:
   BOM/PnP component counts, via-only CSV drill row count, Excellon/hole-class
   drill counts, and the planned Gerber artifact filenames for the currently
   supported stackup-backed subset.
+- `eda project export-manufacturing-set <dir> --output-dir <path> [--prefix
+  <text>]` now writes that same currently supported persisted-state
+  manufacturing subset into one directory by delegating to the existing BOM,
+  PnP, via-only CSV drill, Excellon drill, and Gerber-set exporters.
+- `eda project validate-manufacturing-set <dir> --output-dir <path> [--prefix
+  <text>]` now validates that same directory-level persisted-state
+  manufacturing subset, using semantic BOM/PnP checks, deterministic CSV drill
+  byte comparison, strict Excellon validation, and existing per-artifact
+  Gerber validation.
+- `eda project compare-manufacturing-set <dir> --output-dir <path> [--prefix
+  <text>]` now semantically compares that same directory-level persisted-state
+  manufacturing subset, using semantic BOM/PnP and Gerber comparison, semantic
+  Excellon drill comparison, and deterministic CSV drill comparison.
+- `eda project manifest-manufacturing-set <dir> --output-dir <path> [--prefix
+  <text>]` now reports the deterministic expected directory-level artifact set
+  for that same persisted-state manufacturing subset, including artifact kind,
+  comparison contract, and filename in stable order, without writing files.
 - `eda project compare-gerber-export-plan <dir> --output-dir <path>
   [--prefix <text>]` compares that deterministic planned artifact set against a
   directory and reports matched, missing, and extra files, establishing the

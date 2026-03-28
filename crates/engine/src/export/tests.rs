@@ -1,5 +1,5 @@
 use super::*;
-use crate::board::{BoardText, PadShape};
+use crate::board::{BoardText, PadShape, Track, Zone};
 use crate::ir::geometry::Point;
 
 #[test]

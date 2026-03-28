@@ -3,9 +3,14 @@ use std::path::Path;
 
 use anyhow::{Context, Result};
 use eda_engine::board::PlacedPackage;
+use crate::{
+    NativeProjectBoardComponentMechanicalView, NativeProjectBoardComponentSilkscreenView,
+};
+use uuid::Uuid;
 
 use super::{
-    LoadedNativeProject, NativeProjectBoardComponentQueryPointView,
+    LoadedNativeProject, NativeProjectBoardComponentModels3dView,
+    NativeProjectBoardComponentPadsView, NativeProjectBoardComponentQueryPointView,
     NativeProjectBoardComponentQueryView, load_native_project,
 };
 
@@ -29,6 +34,162 @@ pub(crate) fn query_native_project_board_component_views(
         .into_iter()
         .map(|component| native_project_board_component_query_view(&project, component))
         .collect())
+}
+
+pub(crate) fn query_native_project_board_component_models_3d(
+    root: &Path,
+    component_uuid: Uuid,
+) -> Result<NativeProjectBoardComponentModels3dView> {
+    let project = load_native_project(root)?;
+    let key = component_uuid.to_string();
+    let models = project
+        .board
+        .component_models_3d
+        .get(&key)
+        .cloned()
+        .unwrap_or_default();
+    Ok(NativeProjectBoardComponentModels3dView {
+        component_uuid: key,
+        model_count: models.len(),
+        models,
+    })
+}
+
+pub(crate) fn query_native_project_board_component_pads(
+    root: &Path,
+    component_uuid: Uuid,
+) -> Result<NativeProjectBoardComponentPadsView> {
+    let project = load_native_project(root)?;
+    let key = component_uuid.to_string();
+    let pads = project
+        .board
+        .component_pads
+        .get(&key)
+        .cloned()
+        .unwrap_or_default();
+    Ok(NativeProjectBoardComponentPadsView {
+        component_uuid: key,
+        pad_count: pads.len(),
+        pads,
+    })
+}
+
+pub(crate) fn query_native_project_board_component_silkscreen(
+    root: &Path,
+    component_uuid: Uuid,
+) -> Result<NativeProjectBoardComponentSilkscreenView> {
+    let project = load_native_project(root)?;
+    let key = component_uuid.to_string();
+    let texts = project
+        .board
+        .component_silkscreen_texts
+        .get(&key)
+        .cloned()
+        .unwrap_or_default();
+    let lines = project
+        .board
+        .component_silkscreen
+        .get(&key)
+        .cloned()
+        .unwrap_or_default();
+    let arcs = project
+        .board
+        .component_silkscreen_arcs
+        .get(&key)
+        .cloned()
+        .unwrap_or_default();
+    let circles = project
+        .board
+        .component_silkscreen_circles
+        .get(&key)
+        .cloned()
+        .unwrap_or_default();
+    let polygons = project
+        .board
+        .component_silkscreen_polygons
+        .get(&key)
+        .cloned()
+        .unwrap_or_default();
+    let polylines = project
+        .board
+        .component_silkscreen_polylines
+        .get(&key)
+        .cloned()
+        .unwrap_or_default();
+    Ok(NativeProjectBoardComponentSilkscreenView {
+        component_uuid: key,
+        text_count: texts.len(),
+        line_count: lines.len(),
+        arc_count: arcs.len(),
+        circle_count: circles.len(),
+        polygon_count: polygons.len(),
+        polyline_count: polylines.len(),
+        texts,
+        lines,
+        arcs,
+        circles,
+        polygons,
+        polylines,
+    })
+}
+
+pub(crate) fn query_native_project_board_component_mechanical(
+    root: &Path,
+    component_uuid: Uuid,
+) -> Result<NativeProjectBoardComponentMechanicalView> {
+    let project = load_native_project(root)?;
+    let key = component_uuid.to_string();
+    let texts = project
+        .board
+        .component_mechanical_texts
+        .get(&key)
+        .cloned()
+        .unwrap_or_default();
+    let lines = project
+        .board
+        .component_mechanical_lines
+        .get(&key)
+        .cloned()
+        .unwrap_or_default();
+    let arcs = project
+        .board
+        .component_mechanical_arcs
+        .get(&key)
+        .cloned()
+        .unwrap_or_default();
+    let circles = project
+        .board
+        .component_mechanical_circles
+        .get(&key)
+        .cloned()
+        .unwrap_or_default();
+    let polygons = project
+        .board
+        .component_mechanical_polygons
+        .get(&key)
+        .cloned()
+        .unwrap_or_default();
+    let polylines = project
+        .board
+        .component_mechanical_polylines
+        .get(&key)
+        .cloned()
+        .unwrap_or_default();
+    Ok(NativeProjectBoardComponentMechanicalView {
+        component_uuid: key,
+        text_count: texts.len(),
+        line_count: lines.len(),
+        arc_count: arcs.len(),
+        circle_count: circles.len(),
+        polygon_count: polygons.len(),
+        polyline_count: polylines.len(),
+        texts,
+        lines,
+        arcs,
+        circles,
+        polygons,
+        polylines,
+    })
 }
 
 pub(crate) fn native_project_board_component_query_view(

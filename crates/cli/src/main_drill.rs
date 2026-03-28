@@ -9,6 +9,54 @@ pub(crate) struct NativeProjectDrillExportView {
 }
 
 #[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectDrillValidationView {
+    pub(crate) action: String,
+    pub(crate) project_root: String,
+    pub(crate) drill_path: String,
+    pub(crate) matches_expected: bool,
+    pub(crate) expected_bytes: usize,
+    pub(crate) actual_bytes: usize,
+    pub(crate) rows: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectDrillComparisonView {
+    pub(crate) action: String,
+    pub(crate) project_root: String,
+    pub(crate) drill_path: String,
+    pub(crate) expected_row_count: usize,
+    pub(crate) actual_row_count: usize,
+    pub(crate) matched_count: usize,
+    pub(crate) missing_count: usize,
+    pub(crate) extra_count: usize,
+    pub(crate) drift_count: usize,
+    pub(crate) matched: Vec<String>,
+    pub(crate) missing: Vec<String>,
+    pub(crate) extra: Vec<String>,
+    pub(crate) drift: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectDrillInspectionRowView {
+    pub(crate) via_uuid: String,
+    pub(crate) net_uuid: String,
+    pub(crate) x_nm: i64,
+    pub(crate) y_nm: i64,
+    pub(crate) drill_nm: i64,
+    pub(crate) diameter_nm: i64,
+    pub(crate) from_layer: i32,
+    pub(crate) to_layer: i32,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectDrillInspectionView {
+    pub(crate) action: String,
+    pub(crate) drill_path: String,
+    pub(crate) row_count: usize,
+    pub(crate) rows: Vec<NativeProjectDrillInspectionRowView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectExcellonDrillExportView {
     pub(crate) action: String,
     pub(crate) project_root: String,
@@ -116,6 +164,89 @@ pub(crate) fn render_native_project_drill_export_text(
         format!("rows: {}", report.rows),
     ]
     .join("\n")
+}
+
+pub(crate) fn render_native_project_drill_validation_text(
+    report: &NativeProjectDrillValidationView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("drill_path: {}", report.drill_path),
+        format!("matches_expected: {}", report.matches_expected),
+        format!("expected_bytes: {}", report.expected_bytes),
+        format!("actual_bytes: {}", report.actual_bytes),
+        format!("rows: {}", report.rows),
+    ]
+    .join("\n")
+}
+
+pub(crate) fn render_native_project_drill_comparison_text(
+    report: &NativeProjectDrillComparisonView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("drill_path: {}", report.drill_path),
+        format!("expected_row_count: {}", report.expected_row_count),
+        format!("actual_row_count: {}", report.actual_row_count),
+        format!("matched_count: {}", report.matched_count),
+        format!("missing_count: {}", report.missing_count),
+        format!("extra_count: {}", report.extra_count),
+        format!("drift_count: {}", report.drift_count),
+    ];
+    if !report.matched.is_empty() {
+        lines.push("matched:".to_string());
+        for entry in &report.matched {
+            lines.push(format!("- {}", entry));
+        }
+    }
+    if !report.missing.is_empty() {
+        lines.push("missing:".to_string());
+        for entry in &report.missing {
+            lines.push(format!("- {}", entry));
+        }
+    }
+    if !report.extra.is_empty() {
+        lines.push("extra:".to_string());
+        for entry in &report.extra {
+            lines.push(format!("- {}", entry));
+        }
+    }
+    if !report.drift.is_empty() {
+        lines.push("drift:".to_string());
+        for entry in &report.drift {
+            lines.push(format!("- {}", entry));
+        }
+    }
+    lines.join("\n")
+}
+
+pub(crate) fn render_native_project_drill_inspection_text(
+    report: &NativeProjectDrillInspectionView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("drill_path: {}", report.drill_path),
+        format!("row_count: {}", report.row_count),
+    ];
+    if !report.rows.is_empty() {
+        lines.push("rows:".to_string());
+        for row in &report.rows {
+            lines.push(format!(
+                "- {} {} {} {} {} {} {} {}",
+                row.via_uuid,
+                row.net_uuid,
+                row.x_nm,
+                row.y_nm,
+                row.drill_nm,
+                row.diameter_nm,
+                row.from_layer,
+                row.to_layer
+            ));
+        }
+    }
+    lines.join("\n")
 }
 
 pub(crate) fn render_native_project_excellon_drill_export_text(
