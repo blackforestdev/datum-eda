@@ -146,7 +146,9 @@ fn project_manifest_manufacturing_set_reports_deterministic_expected_artifacts()
     assert_eq!(report["action"], "manifest_manufacturing_set");
     assert_eq!(report["prefix"], "release-a");
     assert_eq!(report["expected_count"], 11);
-    let entries = report["entries"].as_array().expect("entries should be an array");
+    let entries = report["entries"]
+        .as_array()
+        .expect("entries should be an array");
     assert_eq!(entries.len(), 11);
     assert_eq!(entries[0]["kind"], "bom");
     assert_eq!(entries[0]["contract"], "semantic");
@@ -156,7 +158,10 @@ fn project_manifest_manufacturing_set_reports_deterministic_expected_artifacts()
     assert_eq!(entries[3]["kind"], "excellon_drill");
     assert_eq!(entries[3]["contract"], "semantic");
     assert_eq!(entries[4]["kind"], "gerber_outline");
-    assert_eq!(entries[10]["filename"], "release-a-l41-mechanical-41-mech.gbr");
+    assert_eq!(
+        entries[10]["filename"],
+        "release-a-l41-mechanical-41-mech.gbr"
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }

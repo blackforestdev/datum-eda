@@ -6,12 +6,12 @@ use eda_engine::board::{PlacedPackage, StackupLayer, StackupLayerType};
 use eda_engine::ir::geometry::{Point, Polygon};
 use eda_engine::pool::{Package, Padstack, PadstackAperture, Primitive};
 
-use super::command_project_native_types::NativeComponentPad;
 use super::command_project_gerber_mechanical::NativeComponentMechanicalPolygon;
 use super::command_project_gerber_silkscreen::{
     NativeComponentSilkscreenArc, NativeComponentSilkscreenCircle, NativeComponentSilkscreenLine,
     NativeComponentSilkscreenPolygon, NativeComponentSilkscreenPolyline,
 };
+use super::command_project_native_types::NativeComponentPad;
 use super::{LoadedNativeProject, NativePoint, query_native_project_board_stackup};
 
 const PACKAGE_COURTYARD_MECHANICAL_LAYER_ID: i32 = 41;
@@ -227,16 +227,17 @@ fn native_component_pad(
     pad: eda_engine::pool::Pad,
     padstack: Option<&Padstack>,
 ) -> NativeComponentPad {
-    let (shape, diameter_nm, width_nm, height_nm) = match padstack.and_then(|padstack| padstack.aperture.as_ref()) {
-        Some(PadstackAperture::Circle { diameter_nm }) => {
-            (Some(PadShape::Circle), *diameter_nm, 0, 0)
-        }
-        Some(PadstackAperture::Rect {
-            width_nm,
-            height_nm,
-        }) => (Some(PadShape::Rect), 0, *width_nm, *height_nm),
-        None => (None, 0, 0, 0),
-    };
+    let (shape, diameter_nm, width_nm, height_nm) =
+        match padstack.and_then(|padstack| padstack.aperture.as_ref()) {
+            Some(PadstackAperture::Circle { diameter_nm }) => {
+                (Some(PadShape::Circle), *diameter_nm, 0, 0)
+            }
+            Some(PadstackAperture::Rect {
+                width_nm,
+                height_nm,
+            }) => (Some(PadShape::Rect), 0, *width_nm, *height_nm),
+            None => (None, 0, 0, 0),
+        };
     NativeComponentPad {
         uuid: pad.uuid,
         name: pad.name,

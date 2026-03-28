@@ -40,8 +40,13 @@ fn project_query_board_component_mechanical_reads_persisted_component_mechanical
     };
 
     std::fs::write(
-        pool_root.join("packages").join(format!("{package_uuid}.json")),
-        format!("{}\n", to_json_deterministic(&package).expect("package should serialize")),
+        pool_root
+            .join("packages")
+            .join(format!("{package_uuid}.json")),
+        format!(
+            "{}\n",
+            to_json_deterministic(&package).expect("package should serialize")
+        ),
     )
     .expect("package should write");
 
@@ -116,7 +121,10 @@ fn project_query_board_component_mechanical_reads_persisted_component_mechanical
     assert_eq!(report["polygon_count"], 1);
     assert_eq!(report["polyline_count"], 0);
     assert_eq!(report["polygons"][0]["layer"], 41);
-    assert_eq!(report["polygons"][0]["vertices"].as_array().unwrap().len(), 4);
+    assert_eq!(
+        report["polygons"][0]["vertices"].as_array().unwrap().len(),
+        4
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }

@@ -153,13 +153,41 @@ fn project_report_manufacturing_summarizes_supported_outputs_from_persisted_stat
     let gerber_artifacts = report["gerber_artifacts"]
         .as_array()
         .expect("gerber artifact array");
-    assert!(gerber_artifacts.iter().any(|artifact| artifact["filename"] == "release-a-outline.gbr"));
-    assert!(gerber_artifacts.iter().any(|artifact| artifact["filename"] == "release-a-l1-top-copper-copper.gbr"));
-    assert!(gerber_artifacts.iter().any(|artifact| artifact["filename"] == "release-a-l2-top-mask-mask.gbr"));
-    assert!(gerber_artifacts.iter().any(|artifact| artifact["filename"] == "release-a-l3-top-silk-silk.gbr"));
-    assert!(gerber_artifacts.iter().any(|artifact| artifact["filename"] == "release-a-l4-top-paste-paste.gbr"));
-    assert!(gerber_artifacts.iter().any(|artifact| artifact["filename"] == "release-a-l31-bottom-copper-copper.gbr"));
-    assert!(gerber_artifacts.iter().any(|artifact| artifact["filename"] == "release-a-l41-mechanical-41-mech.gbr"));
+    assert!(
+        gerber_artifacts
+            .iter()
+            .any(|artifact| artifact["filename"] == "release-a-outline.gbr")
+    );
+    assert!(
+        gerber_artifacts
+            .iter()
+            .any(|artifact| artifact["filename"] == "release-a-l1-top-copper-copper.gbr")
+    );
+    assert!(
+        gerber_artifacts
+            .iter()
+            .any(|artifact| artifact["filename"] == "release-a-l2-top-mask-mask.gbr")
+    );
+    assert!(
+        gerber_artifacts
+            .iter()
+            .any(|artifact| artifact["filename"] == "release-a-l3-top-silk-silk.gbr")
+    );
+    assert!(
+        gerber_artifacts
+            .iter()
+            .any(|artifact| artifact["filename"] == "release-a-l4-top-paste-paste.gbr")
+    );
+    assert!(
+        gerber_artifacts
+            .iter()
+            .any(|artifact| artifact["filename"] == "release-a-l31-bottom-copper-copper.gbr")
+    );
+    assert!(
+        gerber_artifacts
+            .iter()
+            .any(|artifact| artifact["filename"] == "release-a-l41-mechanical-41-mech.gbr")
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }

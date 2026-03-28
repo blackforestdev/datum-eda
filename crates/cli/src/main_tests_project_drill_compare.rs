@@ -147,9 +147,27 @@ fn project_compare_drill_reports_missing_extra_and_drift() {
     assert_eq!(report["missing_count"], 1);
     assert_eq!(report["extra_count"], 1);
     assert_eq!(report["drift_count"], 1);
-    assert!(report["missing"].as_array().unwrap().iter().any(|v| v == &serde_json::Value::String(via_b_uuid.to_string())));
-    assert!(report["extra"].as_array().unwrap().iter().any(|v| v == &serde_json::Value::String(extra_via.to_string())));
-    assert!(report["drift"].as_array().unwrap().iter().any(|v| v == &serde_json::Value::String(via_a_uuid.to_string())));
+    assert!(
+        report["missing"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|v| v == &serde_json::Value::String(via_b_uuid.to_string()))
+    );
+    assert!(
+        report["extra"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|v| v == &serde_json::Value::String(extra_via.to_string()))
+    );
+    assert!(
+        report["drift"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|v| v == &serde_json::Value::String(via_a_uuid.to_string()))
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }

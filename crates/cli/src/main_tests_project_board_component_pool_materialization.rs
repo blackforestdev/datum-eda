@@ -255,7 +255,9 @@ fn project_board_component_materializes_supported_pool_graphics_into_persisted_b
         &Padstack {
             uuid: padstack_circle_uuid,
             name: "round-0.5mm".to_string(),
-            aperture: Some(PadstackAperture::Circle { diameter_nm: 500_000 }),
+            aperture: Some(PadstackAperture::Circle {
+                diameter_nm: 500_000,
+            }),
             drill_nm: Some(300_000),
         },
     );
@@ -276,7 +278,9 @@ fn project_board_component_materializes_supported_pool_graphics_into_persisted_b
         &Padstack {
             uuid: replacement_padstack_uuid,
             name: "round-0.6mm".to_string(),
-            aperture: Some(PadstackAperture::Circle { diameter_nm: 600_000 }),
+            aperture: Some(PadstackAperture::Circle {
+                diameter_nm: 600_000,
+            }),
             drill_nm: Some(325_000),
         },
     );
@@ -291,7 +295,10 @@ fn project_board_component_materializes_supported_pool_graphics_into_persisted_b
                     eda_engine::pool::Pad {
                         uuid: Uuid::new_v4(),
                         name: "1".to_string(),
-                        position: Point { x: 100_000, y: 200_000 },
+                        position: Point {
+                            x: 100_000,
+                            y: 200_000,
+                        },
                         padstack: padstack_circle_uuid,
                         layer: 1,
                     },
@@ -301,7 +308,10 @@ fn project_board_component_materializes_supported_pool_graphics_into_persisted_b
                     eda_engine::pool::Pad {
                         uuid: Uuid::new_v4(),
                         name: "2".to_string(),
-                        position: Point { x: 300_000, y: 400_000 },
+                        position: Point {
+                            x: 300_000,
+                            y: 400_000,
+                        },
                         padstack: padstack_rect_uuid,
                         layer: 1,
                     },
@@ -311,7 +321,10 @@ fn project_board_component_materializes_supported_pool_graphics_into_persisted_b
                     eda_engine::pool::Pad {
                         uuid: Uuid::new_v4(),
                         name: "3".to_string(),
-                        position: Point { x: 500_000, y: 700_000 },
+                        position: Point {
+                            x: 500_000,
+                            y: 700_000,
+                        },
                         padstack: padstack_unknown_uuid,
                         layer: 1,
                     },
@@ -428,7 +441,10 @@ fn project_board_component_materializes_supported_pool_graphics_into_persisted_b
                 eda_engine::pool::Pad {
                     uuid: Uuid::new_v4(),
                     name: "A".to_string(),
-                    position: Point { x: 500_000, y: 600_000 },
+                    position: Point {
+                        x: 500_000,
+                        y: 600_000,
+                    },
                     padstack: replacement_padstack_uuid,
                     layer: 1,
                 },
@@ -551,7 +567,10 @@ fn project_board_component_materializes_supported_pool_graphics_into_persisted_b
     );
     assert_eq!(board_components[0]["has_persisted_component_pads"], true);
     assert_eq!(board_components[0]["persisted_component_pad_count"], 3);
-    assert_eq!(board_components[0]["has_persisted_component_models_3d"], true);
+    assert_eq!(
+        board_components[0]["has_persisted_component_models_3d"],
+        true
+    );
     assert_eq!(board_components[0]["persisted_component_model_3d_count"], 2);
 
     let summary_output = execute(
@@ -1038,7 +1057,10 @@ fn project_board_component_materializes_supported_pool_graphics_into_persisted_b
     );
     assert_eq!(set_package_report["has_persisted_component_pads"], true);
     assert_eq!(set_package_report["persisted_component_pad_count"], 1);
-    assert_eq!(set_package_report["has_persisted_component_models_3d"], true);
+    assert_eq!(
+        set_package_report["has_persisted_component_models_3d"],
+        true
+    );
     assert_eq!(set_package_report["persisted_component_model_3d_count"], 1);
     assert_eq!(
         set_package_report["persisted_component_silkscreen_text_count"],

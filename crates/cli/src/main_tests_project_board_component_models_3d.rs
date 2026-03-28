@@ -1,7 +1,7 @@
 use super::*;
-use eda_engine::pool::{ModelRef, Package};
-use eda_engine::ir::serialization::to_json_deterministic;
 use eda_engine::ir::geometry::Polygon;
+use eda_engine::ir::serialization::to_json_deterministic;
+use eda_engine::pool::{ModelRef, Package};
 use std::collections::{HashMap, HashSet};
 
 fn unique_project_root(label: &str) -> PathBuf {
@@ -45,16 +45,23 @@ fn project_query_board_component_models_3d_reads_persisted_model_refs() {
         tags: HashSet::new(),
     };
     std::fs::write(
-        pool_root.join("packages").join(format!("{package_uuid}.json")),
-        format!("{}\n", to_json_deterministic(&package).expect("package should serialize")),
+        pool_root
+            .join("packages")
+            .join(format!("{package_uuid}.json")),
+        format!(
+            "{}\n",
+            to_json_deterministic(&package).expect("package should serialize")
+        ),
     )
     .expect("package should write");
 
     let project_json_path = root.join("project.json");
-    let mut project_json: serde_json::Value =
-        serde_json::from_str(&std::fs::read_to_string(&project_json_path).expect("project should read"))
-            .expect("project json should parse");
-    project_json["pools"] = serde_json::json!([{ "path": pool_root.to_string_lossy().to_string(), "priority": 1 }]);
+    let mut project_json: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(&project_json_path).expect("project should read"),
+    )
+    .expect("project json should parse");
+    project_json["pools"] =
+        serde_json::json!([{ "path": pool_root.to_string_lossy().to_string(), "priority": 1 }]);
     std::fs::write(
         &project_json_path,
         format!(

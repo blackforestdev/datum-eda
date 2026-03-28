@@ -7,6 +7,8 @@ mod command_exec_board_net;
 mod command_exec_board_stackup;
 #[path = "command_exec_drill.rs"]
 mod command_exec_drill;
+#[path = "command_exec_forward_annotation.rs"]
+mod command_exec_forward_annotation;
 #[path = "command_exec_gerber_plan.rs"]
 mod command_exec_gerber_plan;
 #[path = "command_exec_inventory.rs"]
@@ -1771,182 +1773,25 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 };
                 Ok((output, 0))
             }
-            ProjectCommands::ApplyForwardAnnotationAction {
-                path,
-                action_id,
-                package_uuid,
-                part_uuid,
-                x_nm,
-                y_nm,
-                layer,
-            } => {
-                let report = apply_native_project_forward_annotation_action(
-                    &path,
-                    &action_id,
-                    package_uuid,
-                    part_uuid,
-                    x_nm,
-                    y_nm,
-                    layer,
-                )?;
-                let output = match cli.format {
-                    OutputFormat::Text => render_native_forward_annotation_apply_text(&report),
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::ApplyForwardAnnotationReviewed { path } => {
-                let report = apply_native_project_forward_annotation_reviewed(&path)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_forward_annotation_batch_apply_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::ExportForwardAnnotationProposal { path, out } => {
-                let report = export_native_project_forward_annotation_proposal(&path, &out)?;
-                let output = match cli.format {
-                    OutputFormat::Text => render_native_forward_annotation_export_text(&report),
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::ExportForwardAnnotationProposalSelection {
-                path,
-                action_ids,
-                out,
-            } => {
-                let report = export_native_project_forward_annotation_proposal_selection(
-                    &path,
-                    &action_ids,
-                    &out,
-                )?;
-                let output = match cli.format {
-                    OutputFormat::Text => render_native_forward_annotation_export_text(&report),
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::SelectForwardAnnotationProposalArtifact {
-                artifact,
-                action_ids,
-                out,
-            } => {
-                let report =
-                    select_forward_annotation_proposal_artifact(&artifact, &action_ids, &out)?;
-                let output = match cli.format {
-                    OutputFormat::Text => render_native_forward_annotation_export_text(&report),
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::InspectForwardAnnotationProposalArtifact { path } => {
-                let report = inspect_forward_annotation_proposal_artifact(&path)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_forward_annotation_artifact_inspection_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::CompareForwardAnnotationProposalArtifact { path, artifact } => {
-                let report = compare_forward_annotation_proposal_artifact(&path, &artifact)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_forward_annotation_artifact_comparison_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::FilterForwardAnnotationProposalArtifact {
-                path,
-                artifact,
-                out,
-            } => {
-                let report = filter_forward_annotation_proposal_artifact(&path, &artifact, &out)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_forward_annotation_artifact_filter_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::PlanForwardAnnotationProposalArtifactApply { path, artifact } => {
-                let report = plan_forward_annotation_proposal_artifact_apply(&path, &artifact)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_forward_annotation_artifact_apply_plan_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::ApplyForwardAnnotationProposalArtifact { path, artifact } => {
-                let report = apply_forward_annotation_proposal_artifact(&path, &artifact)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_forward_annotation_artifact_apply_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::ImportForwardAnnotationArtifactReview { path, artifact } => {
-                let report = import_forward_annotation_artifact_review(&path, &artifact)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_forward_annotation_artifact_review_import_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::ReplaceForwardAnnotationArtifactReview { path, artifact } => {
-                let report = replace_forward_annotation_artifact_review(&path, &artifact)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_forward_annotation_artifact_review_replace_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::DeferForwardAnnotationAction { path, action_id } => {
-                let report =
-                    record_native_project_forward_annotation_review(&path, &action_id, "deferred")?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_forward_annotation_review_report_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::RejectForwardAnnotationAction { path, action_id } => {
-                let report =
-                    record_native_project_forward_annotation_review(&path, &action_id, "rejected")?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_forward_annotation_review_report_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-            ProjectCommands::ClearForwardAnnotationActionReview { path, action_id } => {
-                let report = clear_native_project_forward_annotation_review(&path, &action_id)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_native_forward_annotation_review_report_text(&report)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
+            command @ ProjectCommands::ApplyForwardAnnotationAction { .. }
+            | command @ ProjectCommands::ApplyForwardAnnotationReviewed { .. }
+            | command @ ProjectCommands::ExportForwardAnnotationProposal { .. }
+            | command @ ProjectCommands::ExportForwardAnnotationProposalSelection { .. }
+            | command @ ProjectCommands::SelectForwardAnnotationProposalArtifact { .. }
+            | command @ ProjectCommands::InspectForwardAnnotationProposalArtifact { .. }
+            | command @ ProjectCommands::CompareForwardAnnotationProposalArtifact { .. }
+            | command @ ProjectCommands::FilterForwardAnnotationProposalArtifact { .. }
+            | command @ ProjectCommands::PlanForwardAnnotationProposalArtifactApply { .. }
+            | command @ ProjectCommands::ApplyForwardAnnotationProposalArtifact { .. }
+            | command @ ProjectCommands::ImportForwardAnnotationArtifactReview { .. }
+            | command @ ProjectCommands::ReplaceForwardAnnotationArtifactReview { .. }
+            | command @ ProjectCommands::DeferForwardAnnotationAction { .. }
+            | command @ ProjectCommands::RejectForwardAnnotationAction { .. }
+            | command @ ProjectCommands::ClearForwardAnnotationActionReview { .. } => {
+                command_exec_forward_annotation::execute_forward_annotation_command(
+                    &cli.format,
+                    command,
+                )
             }
             ProjectCommands::DrawBoardTrack {
                 path,

@@ -29,7 +29,10 @@ fn project_query_board_component_pads_reads_persisted_component_pads() {
             Pad {
                 uuid: pad_uuid,
                 name: "P1".to_string(),
-                position: Point { x: 123_000, y: 456_000 },
+                position: Point {
+                    x: 123_000,
+                    y: 456_000,
+                },
                 padstack: padstack_uuid,
                 layer: 1,
             },
@@ -45,17 +48,29 @@ fn project_query_board_component_pads_reads_persisted_component_pads() {
     let padstack = Padstack {
         uuid: padstack_uuid,
         name: "ROUND".to_string(),
-        aperture: Some(PadstackAperture::Circle { diameter_nm: 600_000 }),
+        aperture: Some(PadstackAperture::Circle {
+            diameter_nm: 600_000,
+        }),
         drill_nm: Some(300_000),
     };
     std::fs::write(
-        pool_root.join("packages").join(format!("{package_uuid}.json")),
-        format!("{}\n", to_json_deterministic(&package).expect("package should serialize")),
+        pool_root
+            .join("packages")
+            .join(format!("{package_uuid}.json")),
+        format!(
+            "{}\n",
+            to_json_deterministic(&package).expect("package should serialize")
+        ),
     )
     .expect("package should write");
     std::fs::write(
-        pool_root.join("padstacks").join(format!("{padstack_uuid}.json")),
-        format!("{}\n", to_json_deterministic(&padstack).expect("padstack should serialize")),
+        pool_root
+            .join("padstacks")
+            .join(format!("{padstack_uuid}.json")),
+        format!(
+            "{}\n",
+            to_json_deterministic(&padstack).expect("padstack should serialize")
+        ),
     )
     .expect("padstack should write");
 

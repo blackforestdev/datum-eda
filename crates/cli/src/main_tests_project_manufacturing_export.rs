@@ -155,12 +155,28 @@ fn project_export_manufacturing_set_writes_supported_artifacts() {
     assert!(output_dir.join("release-a-drill.csv").is_file());
     assert!(output_dir.join("release-a-drill.drl").is_file());
     assert!(output_dir.join("release-a-outline.gbr").is_file());
-    assert!(output_dir.join("release-a-l1-top-copper-copper.gbr").is_file());
+    assert!(
+        output_dir
+            .join("release-a-l1-top-copper-copper.gbr")
+            .is_file()
+    );
     assert!(output_dir.join("release-a-l2-top-mask-mask.gbr").is_file());
     assert!(output_dir.join("release-a-l3-top-silk-silk.gbr").is_file());
-    assert!(output_dir.join("release-a-l4-top-paste-paste.gbr").is_file());
-    assert!(output_dir.join("release-a-l31-bottom-copper-copper.gbr").is_file());
-    assert!(output_dir.join("release-a-l41-mechanical-41-mech.gbr").is_file());
+    assert!(
+        output_dir
+            .join("release-a-l4-top-paste-paste.gbr")
+            .is_file()
+    );
+    assert!(
+        output_dir
+            .join("release-a-l31-bottom-copper-copper.gbr")
+            .is_file()
+    );
+    assert!(
+        output_dir
+            .join("release-a-l41-mechanical-41-mech.gbr")
+            .is_file()
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }

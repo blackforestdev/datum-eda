@@ -133,7 +133,9 @@ fn sample_pool() -> Pool {
         Padstack {
             uuid: Uuid::from_u128(20),
             name: "round-0.5mm".into(),
-            aperture: Some(PadstackAperture::Circle { diameter_nm: 500_000 }),
+            aperture: Some(PadstackAperture::Circle {
+                diameter_nm: 500_000,
+            }),
             drill_nm: Some(300_000),
         },
     );

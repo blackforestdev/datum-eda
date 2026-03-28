@@ -29,13 +29,22 @@ fn project_query_board_component_silkscreen_reads_persisted_component_silkscreen
         },
         silkscreen: vec![
             Primitive::Line {
-                from: Point { x: 10_000, y: 20_000 },
-                to: Point { x: 30_000, y: 40_000 },
+                from: Point {
+                    x: 10_000,
+                    y: 20_000,
+                },
+                to: Point {
+                    x: 30_000,
+                    y: 40_000,
+                },
                 width: 5_000,
             },
             Primitive::Arc {
                 arc: Arc {
-                    center: Point { x: 50_000, y: 60_000 },
+                    center: Point {
+                        x: 50_000,
+                        y: 60_000,
+                    },
                     radius: 25_000,
                     start_angle: 0,
                     end_angle: 900,
@@ -43,7 +52,10 @@ fn project_query_board_component_silkscreen_reads_persisted_component_silkscreen
                 width: 4_000,
             },
             Primitive::Circle {
-                center: Point { x: 70_000, y: 80_000 },
+                center: Point {
+                    x: 70_000,
+                    y: 80_000,
+                },
                 radius: 15_000,
                 width: 3_000,
             },
@@ -52,7 +64,10 @@ fn project_query_board_component_silkscreen_reads_persisted_component_silkscreen
                     vertices: vec![
                         Point { x: 0, y: 0 },
                         Point { x: 10_000, y: 0 },
-                        Point { x: 10_000, y: 10_000 },
+                        Point {
+                            x: 10_000,
+                            y: 10_000,
+                        },
                     ],
                     closed: true,
                 },
@@ -61,9 +76,18 @@ fn project_query_board_component_silkscreen_reads_persisted_component_silkscreen
             Primitive::Polygon {
                 polygon: Polygon {
                     vertices: vec![
-                        Point { x: 20_000, y: 20_000 },
-                        Point { x: 25_000, y: 30_000 },
-                        Point { x: 35_000, y: 30_000 },
+                        Point {
+                            x: 20_000,
+                            y: 20_000,
+                        },
+                        Point {
+                            x: 25_000,
+                            y: 30_000,
+                        },
+                        Point {
+                            x: 35_000,
+                            y: 30_000,
+                        },
                     ],
                     closed: false,
                 },
@@ -75,8 +99,13 @@ fn project_query_board_component_silkscreen_reads_persisted_component_silkscreen
     };
 
     std::fs::write(
-        pool_root.join("packages").join(format!("{package_uuid}.json")),
-        format!("{}\n", to_json_deterministic(&package).expect("package should serialize")),
+        pool_root
+            .join("packages")
+            .join(format!("{package_uuid}.json")),
+        format!(
+            "{}\n",
+            to_json_deterministic(&package).expect("package should serialize")
+        ),
     )
     .expect("package should write");
 
@@ -153,8 +182,14 @@ fn project_query_board_component_silkscreen_reads_persisted_component_silkscreen
     assert_eq!(report["lines"][0]["from"]["x"], 10_000);
     assert_eq!(report["arcs"][0]["radius_nm"], 25_000);
     assert_eq!(report["circles"][0]["radius_nm"], 15_000);
-    assert_eq!(report["polygons"][0]["vertices"].as_array().unwrap().len(), 3);
-    assert_eq!(report["polylines"][0]["vertices"].as_array().unwrap().len(), 3);
+    assert_eq!(
+        report["polygons"][0]["vertices"].as_array().unwrap().len(),
+        3
+    );
+    assert_eq!(
+        report["polylines"][0]["vertices"].as_array().unwrap().len(),
+        3
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }

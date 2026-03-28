@@ -4,9 +4,9 @@ use anyhow::{Context, Result};
 use std::collections::BTreeSet;
 
 use crate::{
-    NativeProjectManufacturingArtifactView, NativeProjectManufacturingExportView,
-    NativeProjectManufacturingManifestEntryView, NativeProjectManufacturingManifestView,
-    NativeProjectManufacturingComparisonView, NativeProjectManufacturingReportView,
+    NativeProjectManufacturingArtifactView, NativeProjectManufacturingComparisonView,
+    NativeProjectManufacturingExportView, NativeProjectManufacturingManifestEntryView,
+    NativeProjectManufacturingManifestView, NativeProjectManufacturingReportView,
     NativeProjectManufacturingValidationView,
 };
 
@@ -14,15 +14,14 @@ use super::command_project_gerber_plan::sanitize_export_prefix;
 use super::{
     NativeProjectGerberPlanArtifactView, compare_native_project_bom,
     compare_native_project_excellon_drill, compare_native_project_gerber_set,
-    compare_native_project_pnp, export_native_project_bom,
-    export_native_project_drill, export_native_project_excellon_drill, export_native_project_pnp,
-    export_native_project_gerber_set, load_native_project, plan_native_project_gerber_export,
+    compare_native_project_pnp, export_native_project_bom, export_native_project_drill,
+    export_native_project_excellon_drill, export_native_project_gerber_set,
+    export_native_project_pnp, load_native_project, plan_native_project_gerber_export,
     query_native_project_board_components, query_native_project_board_vias,
-    render_expected_native_project_drill_csv,
-    report_native_project_drill_hole_classes, validate_native_project_excellon_drill,
-    validate_native_project_gerber_copper_layer, validate_native_project_gerber_mechanical_layer,
-    validate_native_project_gerber_outline, validate_native_project_gerber_paste_layer,
-    validate_native_project_gerber_silkscreen_layer,
+    render_expected_native_project_drill_csv, report_native_project_drill_hole_classes,
+    validate_native_project_excellon_drill, validate_native_project_gerber_copper_layer,
+    validate_native_project_gerber_mechanical_layer, validate_native_project_gerber_outline,
+    validate_native_project_gerber_paste_layer, validate_native_project_gerber_silkscreen_layer,
     validate_native_project_gerber_soldermask_layer,
 };
 
@@ -160,15 +159,12 @@ pub(crate) fn export_native_project_manufacturing_set(
             output_path: excellon_path.display().to_string(),
         },
     ];
-    artifacts.extend(
-        gerber_report
-            .artifacts
-            .into_iter()
-            .map(|artifact| NativeProjectManufacturingArtifactView {
-                kind: format!("gerber_{}", artifact.kind),
-                output_path: artifact.output_path,
-            }),
-    );
+    artifacts.extend(gerber_report.artifacts.into_iter().map(|artifact| {
+        NativeProjectManufacturingArtifactView {
+            kind: format!("gerber_{}", artifact.kind),
+            output_path: artifact.output_path,
+        }
+    }));
 
     Ok(NativeProjectManufacturingExportView {
         action: "export_manufacturing_set".to_string(),
@@ -247,8 +243,9 @@ pub(crate) fn validate_native_project_manufacturing_set(
                 .find(|artifact| artifact.filename == *filename)
                 .expect("expected Gerber artifact should be present in plan");
             match (gerber_artifact.kind.as_str(), gerber_artifact.layer_id) {
-                ("outline", None) => validate_native_project_gerber_outline(root, &artifact_path)?
-                    .matches_expected,
+                ("outline", None) => {
+                    validate_native_project_gerber_outline(root, &artifact_path)?.matches_expected
+                }
                 ("copper", Some(layer)) => {
                     validate_native_project_gerber_copper_layer(root, layer, &artifact_path)?
                         .matches_expected

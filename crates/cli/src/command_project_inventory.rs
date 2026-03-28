@@ -1,8 +1,8 @@
 use std::collections::BTreeMap;
 use std::path::Path;
 
-use anyhow::{Context, Result, bail};
 use crate::{NativeProjectBomInspectionRowView, NativeProjectBomInspectionView};
+use anyhow::{Context, Result, bail};
 use eda_engine::board::PlacedPackage;
 
 use super::{
@@ -206,7 +206,9 @@ pub(crate) fn compare_native_project_bom(
     })
 }
 
-pub(crate) fn inspect_native_project_bom(bom_path: &Path) -> Result<NativeProjectBomInspectionView> {
+pub(crate) fn inspect_native_project_bom(
+    bom_path: &Path,
+) -> Result<NativeProjectBomInspectionView> {
     let rows = parse_bom_csv(bom_path)?
         .into_iter()
         .map(|row| NativeProjectBomInspectionRowView {
@@ -239,7 +241,11 @@ pub(crate) fn export_native_project_pnp(
         "reference,x_nm,y_nm,rotation_deg,layer,side,package_uuid,part_uuid,value,locked\n",
     );
     for component in &components {
-        let side = if component.layer <= 16 { "top" } else { "bottom" };
+        let side = if component.layer <= 16 {
+            "top"
+        } else {
+            "bottom"
+        };
         let row = [
             csv_escape(&component.reference),
             component.position.x.to_string(),

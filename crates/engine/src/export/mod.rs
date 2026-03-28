@@ -1,13 +1,15 @@
-use crate::board::{BoardText, PadAperture, PlacedPad, Via};
+use crate::board::{BoardText, PadAperture, PlacedPad};
 use crate::ir::geometry::{LayerId, Polygon};
 use thiserror::Error;
 mod copper;
+mod excellon;
 mod formatting;
 mod gerber_mechanical;
 mod outline;
 mod silkscreen;
 
 pub use copper::render_rs274x_copper_layer;
+pub use excellon::render_excellon_drill;
 use formatting::{format_coord, format_mm_6, parse_mm_6_to_nm, render_polygon_points};
 pub use gerber_mechanical::{MechanicalStroke, render_rs274x_mechanical_layer};
 use outline::DEFAULT_OUTLINE_APERTURE_MM;
@@ -385,48 +387,5 @@ pub fn render_rs274x_silkscreen_layer(
     lines.push(String::from("M02*"));
     Ok(lines.join("\n") + "\n")
 }
-pub fn render_excellon_drill(vias: &[Via]) -> Result<String, ExportError> {
-    if vias.iter().any(|via| via.drill <= 0) {
-        return Err(ExportError::InvalidViaDrill);
-    }
-
-    let mut drills = vias.iter().map(|via| via.drill).collect::<Vec<_>>();
-    drills.sort_unstable();
-    drills.dedup();
-
-    let mut lines = vec![String::from("M48"), String::from("METRIC,TZ")];
-    for (idx, drill) in drills.iter().enumerate() {
-        let tool_code = idx + 1;
-        lines.push(format!("T{tool_code:02}C{}", format_mm_6(*drill)));
-    }
-    lines.push(String::from("%"));
-
-    let mut ordered_vias = vias.to_vec();
-    ordered_vias.sort_by(|a, b| {
-        a.drill
-            .cmp(&b.drill)
-            .then_with(|| a.position.x.cmp(&b.position.x))
-            .then_with(|| a.position.y.cmp(&b.position.y))
-            .then_with(|| a.uuid.cmp(&b.uuid))
-    });
-
-    let mut current_tool = None;
-    for via in ordered_vias {
-        let tool_code = drills.binary_search(&via.drill).expect("known drill tool") + 1;
-        if current_tool != Some(tool_code) {
-            lines.push(format!("T{tool_code:02}"));
-            current_tool = Some(tool_code);
-        }
-        lines.push(format!(
-            "X{}Y{}",
-            format_mm_6(via.position.x),
-            format_mm_6(via.position.y)
-        ));
-    }
-
-    lines.push(String::from("M30"));
-    Ok(lines.join("\n") + "\n")
-}
-
 #[cfg(test)]
 mod tests;

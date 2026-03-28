@@ -23,16 +23,16 @@ mod main_tests_project_bom_compare;
 mod main_tests_project_bom_export;
 #[path = "main_tests_project_bom_inspect.rs"]
 mod main_tests_project_bom_inspect;
+#[path = "main_tests_project_drill_compare.rs"]
+mod main_tests_project_drill_compare;
 #[path = "main_tests_project_drill_export.rs"]
 mod main_tests_project_drill_export;
+#[path = "main_tests_project_drill_hole_classes.rs"]
+mod main_tests_project_drill_hole_classes;
 #[path = "main_tests_project_drill_inspect.rs"]
 mod main_tests_project_drill_inspect;
 #[path = "main_tests_project_drill_validate.rs"]
 mod main_tests_project_drill_validate;
-#[path = "main_tests_project_drill_compare.rs"]
-mod main_tests_project_drill_compare;
-#[path = "main_tests_project_drill_hole_classes.rs"]
-mod main_tests_project_drill_hole_classes;
 #[path = "main_tests_project_excellon_drill_compare.rs"]
 mod main_tests_project_excellon_drill_compare;
 #[path = "main_tests_project_excellon_drill_component_pads.rs"]
@@ -89,16 +89,6 @@ mod main_tests_project_gerber_plan;
 mod main_tests_project_gerber_plan_compare;
 #[path = "main_tests_project_gerber_set.rs"]
 mod main_tests_project_gerber_set;
-#[path = "main_tests_project_manufacturing.rs"]
-mod main_tests_project_manufacturing;
-#[path = "main_tests_project_manufacturing_export.rs"]
-mod main_tests_project_manufacturing_export;
-#[path = "main_tests_project_manufacturing_validate.rs"]
-mod main_tests_project_manufacturing_validate;
-#[path = "main_tests_project_manufacturing_compare.rs"]
-mod main_tests_project_manufacturing_compare;
-#[path = "main_tests_project_manufacturing_manifest.rs"]
-mod main_tests_project_manufacturing_manifest;
 #[path = "main_tests_project_gerber_silk_compare.rs"]
 mod main_tests_project_gerber_silk_compare;
 #[path = "main_tests_project_gerber_silk_component_arc.rs"]
@@ -113,6 +103,16 @@ mod main_tests_project_gerber_silk_component_polyline;
 mod main_tests_project_gerber_silk_export;
 #[path = "main_tests_project_gerber_silk_validate.rs"]
 mod main_tests_project_gerber_silk_validate;
+#[path = "main_tests_project_manufacturing.rs"]
+mod main_tests_project_manufacturing;
+#[path = "main_tests_project_manufacturing_compare.rs"]
+mod main_tests_project_manufacturing_compare;
+#[path = "main_tests_project_manufacturing_export.rs"]
+mod main_tests_project_manufacturing_export;
+#[path = "main_tests_project_manufacturing_manifest.rs"]
+mod main_tests_project_manufacturing_manifest;
+#[path = "main_tests_project_manufacturing_validate.rs"]
+mod main_tests_project_manufacturing_validate;
 #[path = "main_tests_project_pnp_compare.rs"]
 mod main_tests_project_pnp_compare;
 #[path = "main_tests_project_pnp_export.rs"]
@@ -191,18 +191,18 @@ mod main_tests_plan_apply_validate;
 mod main_tests_project_board_check;
 #[path = "main_tests_project_board_component.rs"]
 mod main_tests_project_board_component;
-#[path = "main_tests_project_board_component_models_3d.rs"]
-mod main_tests_project_board_component_models_3d;
 #[path = "main_tests_project_board_component_mechanical.rs"]
 mod main_tests_project_board_component_mechanical;
-#[path = "main_tests_project_board_component_silkscreen.rs"]
-mod main_tests_project_board_component_silkscreen;
+#[path = "main_tests_project_board_component_models_3d.rs"]
+mod main_tests_project_board_component_models_3d;
 #[path = "main_tests_project_board_component_pads.rs"]
 mod main_tests_project_board_component_pads;
 #[path = "main_tests_project_board_component_pool_materialization.rs"]
 mod main_tests_project_board_component_pool_materialization;
 #[path = "main_tests_project_board_component_query.rs"]
 mod main_tests_project_board_component_query;
+#[path = "main_tests_project_board_component_silkscreen.rs"]
+mod main_tests_project_board_component_silkscreen;
 #[path = "main_tests_project_board_connectivity.rs"]
 mod main_tests_project_board_connectivity;
 #[path = "main_tests_project_board_dimension.rs"]

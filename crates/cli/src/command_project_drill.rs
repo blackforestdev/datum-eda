@@ -9,13 +9,12 @@ use uuid::Uuid;
 
 use super::{
     NativeProjectDrillComparisonView, NativeProjectDrillExportView,
-    NativeProjectDrillHoleClassBucketView,
-    NativeProjectDrillHoleClassReportView, NativeProjectExcellonDrillComparisonView,
+    NativeProjectDrillHoleClassBucketView, NativeProjectDrillHoleClassReportView,
+    NativeProjectDrillInspectionRowView, NativeProjectDrillInspectionView,
+    NativeProjectDrillValidationView, NativeProjectExcellonDrillComparisonView,
     NativeProjectExcellonDrillExportView, NativeProjectExcellonDrillHitDriftView,
     NativeProjectExcellonDrillInspectionView, NativeProjectExcellonDrillToolView,
-    NativeProjectExcellonDrillValidationView, NativeProjectDrillValidationView,
-    NativeProjectDrillInspectionRowView, NativeProjectDrillInspectionView,
-    classify_via_hole_class, csv_escape,
+    NativeProjectExcellonDrillValidationView, classify_via_hole_class, csv_escape,
     load_native_project, query_native_project_board_stackup, query_native_project_board_vias,
     render_mm_6,
 };
@@ -578,19 +577,35 @@ fn parse_native_project_drill_csv_rows(
             );
         }
         let via_uuid = Uuid::parse_str(columns[0]).with_context(|| {
-            format!("invalid via_uuid on line {} in {}", index + 2, drill_path.display())
+            format!(
+                "invalid via_uuid on line {} in {}",
+                index + 2,
+                drill_path.display()
+            )
         })?;
         rows.push((
             via_uuid,
             NativeProjectDrillCsvRow {
                 net_uuid: Uuid::parse_str(columns[1]).with_context(|| {
-                    format!("invalid net_uuid on line {} in {}", index + 2, drill_path.display())
+                    format!(
+                        "invalid net_uuid on line {} in {}",
+                        index + 2,
+                        drill_path.display()
+                    )
                 })?,
                 x_nm: columns[2].parse().with_context(|| {
-                    format!("invalid x_nm on line {} in {}", index + 2, drill_path.display())
+                    format!(
+                        "invalid x_nm on line {} in {}",
+                        index + 2,
+                        drill_path.display()
+                    )
                 })?,
                 y_nm: columns[3].parse().with_context(|| {
-                    format!("invalid y_nm on line {} in {}", index + 2, drill_path.display())
+                    format!(
+                        "invalid y_nm on line {} in {}",
+                        index + 2,
+                        drill_path.display()
+                    )
                 })?,
                 drill_nm: columns[4].parse().with_context(|| {
                     format!(

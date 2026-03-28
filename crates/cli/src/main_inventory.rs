@@ -131,7 +131,11 @@ pub(crate) fn render_native_project_bom_comparison_text(
     if !report.drift.is_empty() {
         lines.push("drift:".to_string());
         for entry in &report.drift {
-            lines.push(format!("- {} [{}]", entry.reference, entry.fields.join(", ")));
+            lines.push(format!(
+                "- {} [{}]",
+                entry.reference,
+                entry.fields.join(", ")
+            ));
         }
     }
     lines.join("\n")
@@ -211,7 +215,11 @@ pub(crate) fn render_native_project_pnp_comparison_text(
     if !report.drift.is_empty() {
         lines.push("drift:".to_string());
         for entry in &report.drift {
-            lines.push(format!("- {} fields={}", entry.reference, entry.fields.join(",")));
+            lines.push(format!(
+                "- {} fields={}",
+                entry.reference,
+                entry.fields.join(",")
+            ));
         }
     }
     lines.join("\n")

@@ -161,12 +161,7 @@ pub(crate) fn query_native_project_summary(root: &Path) -> Result<NativeProjectS
                 .values()
                 .map(Vec::len)
                 .sum(),
-            persisted_component_pads: project
-                .board
-                .component_pads
-                .values()
-                .map(Vec::len)
-                .sum(),
+            persisted_component_pads: project.board.component_pads.values().map(Vec::len).sum(),
             persisted_component_models_3d: project
                 .board
                 .component_models_3d

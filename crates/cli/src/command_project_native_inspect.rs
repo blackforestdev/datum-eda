@@ -143,12 +143,7 @@ pub(crate) fn inspect_native_project(root: &Path) -> Result<NativeProjectInspect
             .values()
             .map(Vec::len)
             .sum(),
-        persisted_component_pads: project
-            .board
-            .component_pads
-            .values()
-            .map(Vec::len)
-            .sum(),
+        persisted_component_pads: project.board.component_pads.values().map(Vec::len).sum(),
         persisted_component_models_3d: project
             .board
             .component_models_3d

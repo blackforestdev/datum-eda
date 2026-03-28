@@ -1,11 +1,9 @@
 use std::collections::BTreeMap;
 use std::path::Path;
 
+use crate::{NativeProjectBoardComponentMechanicalView, NativeProjectBoardComponentSilkscreenView};
 use anyhow::{Context, Result};
 use eda_engine::board::PlacedPackage;
-use crate::{
-    NativeProjectBoardComponentMechanicalView, NativeProjectBoardComponentSilkscreenView,
-};
 use uuid::Uuid;
 
 use super::{
@@ -34,6 +32,22 @@ pub(crate) fn query_native_project_board_component_views(
         .into_iter()
         .map(|component| native_project_board_component_query_view(&project, component))
         .collect())
+}
+
+pub(crate) fn query_native_project_board_components(root: &Path) -> Result<Vec<PlacedPackage>> {
+    let project = load_native_project(root)?;
+    let mut components = project
+        .board
+        .packages
+        .into_values()
+        .map(|value| serde_json::from_value(value).context("failed to parse board component"))
+        .collect::<Result<Vec<PlacedPackage>>>()?;
+    components.sort_by(|a, b| {
+        a.reference
+            .cmp(&b.reference)
+            .then_with(|| a.uuid.cmp(&b.uuid))
+    });
+    Ok(components)
 }
 
 pub(crate) fn query_native_project_board_component_models_3d(
