@@ -49,6 +49,48 @@ exactly two already-authored persisted vias under an explicit ascending
 `(via_a_uuid, via_b_uuid)` rule when they connect the requested anchor layers
 through one intermediate copper layer. It still does not create vias, infer
 transition permissions, or open free multilayer search.
+`route-path-candidate-three-via` extends that same contract family by allowing
+exactly three already-authored persisted vias under an explicit ascending
+`(via_a_uuid, via_b_uuid, via_c_uuid)` rule when they connect the requested
+anchor layers through two intermediate copper layers. It still does not create
+vias, infer transition permissions, or open free multilayer search.
+`route-path-candidate-three-via-explain` is the paired read-only explanation
+surface for that three-via contract, reporting the selected via triple when
+found or whether failure came from no matching authored via triple versus all
+matching via triples blocked, using only existing three-via/path facts without
+adding new routing semantics.
+`route-path-candidate-four-via` extends that same contract family by allowing
+exactly four already-authored persisted vias under an explicit ascending
+`(via_a_uuid, via_b_uuid, via_c_uuid, via_d_uuid)` rule when they connect the
+requested anchor layers through three intermediate copper layers. It still does
+not create vias, infer transition permissions, or open free multilayer search.
+`route-path-candidate-four-via-explain` is the paired read-only explanation
+surface for that four-via contract, reporting the selected via quadruple when
+found or whether failure came from no matching authored via quadruple versus all
+matching via quadruples blocked, using only existing four-via/path facts
+without adding new routing semantics.
+`route-path-candidate-five-via` extends that same contract family by allowing
+exactly five already-authored persisted vias under an explicit ascending
+`(via_a_uuid, via_b_uuid, via_c_uuid, via_d_uuid, via_e_uuid)` rule when they
+connect the requested anchor layers through four intermediate copper layers. It
+still does not create vias, infer transition permissions, or open free
+multilayer search.
+`route-path-candidate-six-via` extends that same contract family by allowing
+exactly six already-authored persisted vias under an explicit ascending
+`(via_a_uuid, via_b_uuid, via_c_uuid, via_d_uuid, via_e_uuid, via_f_uuid)`
+rule when they connect the requested anchor layers through five intermediate
+copper layers. It still does not create vias, infer transition permissions, or
+open free multilayer search.
+`route-path-candidate-six-via-explain` is the paired read-only explanation
+surface for that six-via contract, reporting the selected via sextuple when
+found or whether failure came from no matching authored via sextuple versus all
+matching via sextuples blocked, using only existing six-via/path facts without
+adding new routing semantics.
+`route-path-candidate-five-via-explain` is the paired read-only explanation
+surface for that five-via contract, reporting the selected via quintuple when
+found or whether failure came from no matching authored via quintuple versus
+all matching via quintuples blocked, using only existing five-via/path facts
+without adding new routing semantics.
 `route-path-candidate-two-via-explain` is the paired read-only explanation
 surface for that two-via contract, reporting the selected via pair when found
 or whether failure came from no matching authored via pair versus all matching
@@ -58,6 +100,57 @@ routing semantics.
 for that via contract, reporting the selected via when found or whether failure
 came from no matching authored via versus all matching vias blocked, using only
 existing via/path blockage facts without adding new transition semantics.
+`route-path-candidate-authored-via-chain` replaces further fixed-arity via
+expansion with one generalized deterministic contract: it reuses only authored
+target-net vias, enumerates matching chains that bridge the requested anchor
+layers, orders those chains by `(via_count, via_uuid_sequence)`, and returns
+the first unblocked chain only. It still does not create vias, infer
+transition permissions, or open free multilayer routing behavior.
+`route-path-candidate-authored-via-chain-explain` is the paired read-only
+explanation surface for that generalized chain contract, reporting the selected
+authored via chain when found or whether failure came from no matching chain
+versus all matching chains blocked, using only existing authored-via-chain/path
+facts without adding new routing semantics.
+`route-path-candidate-authored-copper-graph` is the next capability slice in
+that family: it no longer synthesizes candidate transitions, but instead reads
+back one deterministic existing-copper path over persisted target-net tracks
+and vias only. Selection is by minimum authored-copper graph step count with a
+stable lexicographic tie-break from the sorted graph traversal; it still does
+not invent geometry, create copper, or open autorouting behavior.
+`route-path-candidate-authored-copper-graph-explain` is the paired read-only
+explanation surface for that existing-copper graph contract, reporting the
+selected existing-copper path when found or explicit
+`no_existing_authored_copper_path` when the persisted target-net copper graph
+does not connect the requested anchors, using only existing graph/path facts
+without adding new routing semantics.
+`route-path-candidate-authored-copper-graph-zone-aware` is the next thin
+capability slice in that family: it extends the persisted authored-copper
+graph with target-net zone continuity on-layer, allowing deterministic path
+selection across already-authored target-net zones without creating copper,
+inferring transition permissions, or opening autorouting behavior.
+`route-path-candidate-authored-copper-graph-zone-aware-explain` is the paired
+read-only explanation surface for that zone-aware graph contract, reporting
+the selected path when found or explicit `no_existing_authored_copper_path`
+when the persisted target-net track/via/zone graph does not connect the
+requested anchors, using only existing graph/path facts without adding new
+routing semantics.
+`route-path-candidate-authored-copper-graph-zone-obstacle-aware` is the next
+thin capability slice in that family: it keeps the persisted authored-copper
+graph with target-net zone continuity on-layer, but filters reused target-net
+track, via, and zone-connection edges through the current authored obstacle
+checks before deterministic path selection. It still does not create copper,
+negotiate reroutes, or open general router behavior.
+`route-path-candidate-authored-copper-graph-obstacle-aware` is the next thin
+capability slice in that family: it keeps the existing authored-copper graph
+readback contract, but filters reused target-net track/via edges through the
+current authored obstacle checks before deterministic path selection. It still
+does not create copper, negotiate reroutes, or open general router behavior.
+`route-path-candidate-authored-copper-graph-obstacle-aware-explain` is the
+paired read-only explanation surface for that obstacle-aware graph contract,
+reporting the selected path when found or explicit
+`no_existing_authored_copper_path` when authored obstacle filtering leaves no
+connecting persisted target-net copper path, using only existing graph/path
+facts without adding new routing semantics.
 
 ---
 

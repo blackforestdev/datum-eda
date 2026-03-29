@@ -10,6 +10,40 @@ mod command_project_route_path_candidate;
 mod command_project_route_path_candidate_via;
 #[path = "command_project_route_path_candidate_two_via.rs"]
 mod command_project_route_path_candidate_two_via;
+#[path = "command_project_route_path_candidate_three_via.rs"]
+mod command_project_route_path_candidate_three_via;
+#[path = "command_project_route_path_candidate_four_via.rs"]
+mod command_project_route_path_candidate_four_via;
+#[path = "command_project_route_path_candidate_five_via.rs"]
+mod command_project_route_path_candidate_five_via;
+#[path = "command_project_route_path_candidate_six_via.rs"]
+mod command_project_route_path_candidate_six_via;
+#[path = "command_project_route_path_candidate_authored_via_chain.rs"]
+mod command_project_route_path_candidate_authored_via_chain;
+#[path = "command_project_route_path_candidate_authored_via_chain_explain.rs"]
+mod command_project_route_path_candidate_authored_via_chain_explain;
+#[path = "command_project_route_path_candidate_authored_copper_graph.rs"]
+mod command_project_route_path_candidate_authored_copper_graph;
+#[path = "command_project_route_path_candidate_authored_copper_graph_explain.rs"]
+mod command_project_route_path_candidate_authored_copper_graph_explain;
+#[path = "command_project_route_path_candidate_authored_copper_graph_zone_aware.rs"]
+mod command_project_route_path_candidate_authored_copper_graph_zone_aware;
+#[path = "command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware.rs"]
+mod command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware;
+#[path = "command_project_route_path_candidate_authored_copper_graph_zone_aware_explain.rs"]
+mod command_project_route_path_candidate_authored_copper_graph_zone_aware_explain;
+#[path = "command_project_route_path_candidate_authored_copper_graph_obstacle_aware.rs"]
+mod command_project_route_path_candidate_authored_copper_graph_obstacle_aware;
+#[path = "command_project_route_path_candidate_authored_copper_graph_obstacle_aware_explain.rs"]
+mod command_project_route_path_candidate_authored_copper_graph_obstacle_aware_explain;
+#[path = "command_project_route_path_candidate_six_via_explain.rs"]
+mod command_project_route_path_candidate_six_via_explain;
+#[path = "command_project_route_path_candidate_five_via_explain.rs"]
+mod command_project_route_path_candidate_five_via_explain;
+#[path = "command_project_route_path_candidate_four_via_explain.rs"]
+mod command_project_route_path_candidate_four_via_explain;
+#[path = "command_project_route_path_candidate_three_via_explain.rs"]
+mod command_project_route_path_candidate_three_via_explain;
 #[path = "command_project_route_path_candidate_two_via_explain.rs"]
 mod command_project_route_path_candidate_two_via_explain;
 #[path = "command_project_route_path_candidate_via_explain.rs"]
@@ -35,6 +69,74 @@ pub(crate) use self::command_project_route_path_candidate_via::{
 pub(crate) use self::command_project_route_path_candidate_two_via::{
     query_native_project_route_path_candidate_two_via,
     render_native_project_route_path_candidate_two_via_text,
+};
+pub(crate) use self::command_project_route_path_candidate_three_via::{
+    query_native_project_route_path_candidate_three_via,
+    render_native_project_route_path_candidate_three_via_text,
+};
+pub(crate) use self::command_project_route_path_candidate_four_via::{
+    query_native_project_route_path_candidate_four_via,
+    render_native_project_route_path_candidate_four_via_text,
+};
+pub(crate) use self::command_project_route_path_candidate_five_via::{
+    query_native_project_route_path_candidate_five_via,
+    render_native_project_route_path_candidate_five_via_text,
+};
+pub(crate) use self::command_project_route_path_candidate_six_via::{
+    query_native_project_route_path_candidate_six_via,
+    render_native_project_route_path_candidate_six_via_text,
+};
+pub(crate) use self::command_project_route_path_candidate_authored_via_chain::{
+    query_native_project_route_path_candidate_authored_via_chain,
+    render_native_project_route_path_candidate_authored_via_chain_text,
+};
+pub(crate) use self::command_project_route_path_candidate_authored_via_chain_explain::{
+    query_native_project_route_path_candidate_authored_via_chain_explain,
+    render_native_project_route_path_candidate_authored_via_chain_explain_text,
+};
+pub(crate) use self::command_project_route_path_candidate_authored_copper_graph::{
+    query_native_project_route_path_candidate_authored_copper_graph,
+    render_native_project_route_path_candidate_authored_copper_graph_text,
+};
+pub(crate) use self::command_project_route_path_candidate_authored_copper_graph_explain::{
+    query_native_project_route_path_candidate_authored_copper_graph_explain,
+    render_native_project_route_path_candidate_authored_copper_graph_explain_text,
+};
+pub(crate) use self::command_project_route_path_candidate_authored_copper_graph_zone_aware::{
+    query_native_project_route_path_candidate_authored_copper_graph_zone_aware,
+    render_native_project_route_path_candidate_authored_copper_graph_zone_aware_text,
+};
+pub(crate) use self::command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware::{
+    query_native_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware,
+    render_native_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_text,
+};
+pub(crate) use self::command_project_route_path_candidate_authored_copper_graph_zone_aware_explain::{
+    query_native_project_route_path_candidate_authored_copper_graph_zone_aware_explain,
+    render_native_project_route_path_candidate_authored_copper_graph_zone_aware_explain_text,
+};
+pub(crate) use self::command_project_route_path_candidate_authored_copper_graph_obstacle_aware::{
+    query_native_project_route_path_candidate_authored_copper_graph_obstacle_aware,
+    render_native_project_route_path_candidate_authored_copper_graph_obstacle_aware_text,
+};
+pub(crate) use self::command_project_route_path_candidate_authored_copper_graph_obstacle_aware_explain::{
+    query_native_project_route_path_candidate_authored_copper_graph_obstacle_aware_explain,
+    render_native_project_route_path_candidate_authored_copper_graph_obstacle_aware_explain_text,
+};
+pub(crate) use self::command_project_route_path_candidate_six_via_explain::{
+    query_native_project_route_path_candidate_six_via_explain,
+    render_native_project_route_path_candidate_six_via_explain_text,
+};
+pub(crate) use self::command_project_route_path_candidate_five_via_explain::{
+    query_native_project_route_path_candidate_five_via_explain,
+    render_native_project_route_path_candidate_five_via_explain_text,
+};
+pub(crate) use self::command_project_route_path_candidate_four_via_explain::{
+    query_native_project_route_path_candidate_four_via_explain,
+    render_native_project_route_path_candidate_four_via_explain_text,
+};
+pub(crate) use self::command_project_route_path_candidate_three_via_explain::{
+    query_native_project_route_path_candidate_three_via_explain,
+    render_native_project_route_path_candidate_three_via_explain_text,
 };
 pub(crate) use self::command_project_route_path_candidate_two_via_explain::{
     query_native_project_route_path_candidate_two_via_explain,

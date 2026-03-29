@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 mod board_types;
+mod board_info;
 mod dimension;
 mod net_graph;
 mod pad;
@@ -19,6 +20,7 @@ use net_graph::{BoardNetGraph, PadPoint, nearest_pin_pair, segment_length_nm};
 pub use board_types::{
     BoardText, Dimension, Keepout, Net, NetClass, PlacedPackage, Track, Via, Zone,
 };
+pub use board_info::{Airwire, BoardNetInfo, BoardSummary, ComponentInfo, NetPinRef};
 pub use pad::{PadAperture, PadShape, PlacedPad};
 pub use route_surface::*;
 pub use rule_set::RuleSet;
@@ -41,54 +43,6 @@ pub struct Board {
     pub keepouts: Vec<Keepout>,
     pub dimensions: Vec<Dimension>,
     pub texts: Vec<BoardText>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct BoardNetInfo {
-    pub uuid: Uuid,
-    pub name: String,
-    pub class: String,
-    pub pins: Vec<NetPinRef>,
-    pub tracks: usize,
-    pub vias: usize,
-    pub zones: usize,
-    pub routed_length_nm: i64,
-    pub routed_pct: f32,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ComponentInfo {
-    pub uuid: Uuid,
-    pub package_uuid: Uuid,
-    pub reference: String,
-    pub value: String,
-    pub position: Point,
-    pub rotation: i32,
-    pub layer: LayerId,
-    pub locked: bool,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct NetPinRef {
-    pub component: String,
-    pub pin: String,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct Airwire {
-    pub net: Uuid,
-    pub net_name: String,
-    pub from: NetPinRef,
-    pub to: NetPinRef,
-    pub distance_nm: i64,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct BoardSummary {
-    pub name: String,
-    pub layer_count: usize,
-    pub component_count: usize,
-    pub net_count: usize,
 }
 
 impl Board {

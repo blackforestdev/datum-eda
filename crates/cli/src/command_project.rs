@@ -66,6 +66,8 @@ mod command_project_pool_materialization;
 mod command_project_pool_query;
 #[path = "command_project_project_core.rs"]
 mod command_project_project_core;
+#[path = "command_project_root_imports.rs"]
+mod command_project_root_imports;
 #[path = "command_project_native_surface.rs"]
 mod command_project_native_surface;
 #[path = "command_project_schematic_connectivity_mutations.rs"]
@@ -89,9 +91,5 @@ mod command_project_support;
 #[path = "command_project_views.rs"]
 mod command_project_views;
 
-use self::command_project_board_component_query::{
-    component_graphic_count, component_has_persisted_mechanical,
-    component_has_persisted_silkscreen, component_model_count, component_package_pad_count,
-};
-use self::command_project_pool_query::collect_native_project_pool_ref_views;
+use self::command_project_root_imports::*;
 pub(crate) use self::command_project_surface::*;

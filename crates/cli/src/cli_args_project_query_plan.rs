@@ -119,6 +119,227 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
+    /// Deterministic three-via path candidate reusing exactly three authored target-net vias
+    #[command(name = "route-path-candidate-three-via")]
+    RoutePathCandidateThreeVia {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic four-via path candidate reusing exactly four authored target-net vias
+    #[command(name = "route-path-candidate-four-via")]
+    RoutePathCandidateFourVia {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic five-via path candidate reusing exactly five authored target-net vias
+    #[command(name = "route-path-candidate-five-via")]
+    RoutePathCandidateFiveVia {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic six-via path candidate reusing exactly six authored target-net vias
+    #[command(name = "route-path-candidate-six-via")]
+    RoutePathCandidateSixVia {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic authored via-chain path candidate reusing persisted target-net vias only
+    #[command(name = "route-path-candidate-authored-via-chain")]
+    RoutePathCandidateAuthoredViaChain {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic explanation for the current authored-via-chain path candidate result
+    #[command(name = "route-path-candidate-authored-via-chain-explain")]
+    RoutePathCandidateAuthoredViaChainExplain {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic existing-authored-copper path candidate over persisted target-net tracks and vias
+    #[command(name = "route-path-candidate-authored-copper-graph")]
+    RoutePathCandidateAuthoredCopperGraph {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic explanation for the current existing-authored-copper path candidate result
+    #[command(name = "route-path-candidate-authored-copper-graph-explain")]
+    RoutePathCandidateAuthoredCopperGraphExplain {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic existing-authored-copper path candidate including authored target-net zone continuity
+    #[command(name = "route-path-candidate-authored-copper-graph-zone-aware")]
+    RoutePathCandidateAuthoredCopperGraphZoneAware {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic explanation for the current zone-aware existing-authored-copper path candidate result
+    #[command(name = "route-path-candidate-authored-copper-graph-zone-aware-explain")]
+    RoutePathCandidateAuthoredCopperGraphZoneAwareExplain {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic existing-authored-copper path candidate reusing only zone/track/via graph edges unblocked by current authored obstacles
+    #[command(name = "route-path-candidate-authored-copper-graph-zone-obstacle-aware")]
+    RoutePathCandidateAuthoredCopperGraphZoneObstacleAware {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic existing-authored-copper path candidate reusing only unblocked authored track/via geometry
+    #[command(name = "route-path-candidate-authored-copper-graph-obstacle-aware")]
+    RoutePathCandidateAuthoredCopperGraphObstacleAware {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic explanation for the current obstacle-aware existing-authored-copper path candidate result
+    #[command(name = "route-path-candidate-authored-copper-graph-obstacle-aware-explain")]
+    RoutePathCandidateAuthoredCopperGraphObstacleAwareExplain {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic explanation for the current six-via path candidate result
+    #[command(name = "route-path-candidate-six-via-explain")]
+    RoutePathCandidateSixViaExplain {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic explanation for the current five-via path candidate result
+    #[command(name = "route-path-candidate-five-via-explain")]
+    RoutePathCandidateFiveViaExplain {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic explanation for the current four-via path candidate result
+    #[command(name = "route-path-candidate-four-via-explain")]
+    RoutePathCandidateFourViaExplain {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic explanation for the current three-via path candidate result
+    #[command(name = "route-path-candidate-three-via-explain")]
+    RoutePathCandidateThreeViaExplain {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
     /// Deterministic explanation for the current two-via path candidate result
     #[command(name = "route-path-candidate-two-via-explain")]
     RoutePathCandidateTwoViaExplain {

@@ -205,6 +205,346 @@ pub(super) fn execute_native_project_query_command(
             };
             Ok((output, 0))
         }
+        NativeProjectQueryCommands::RoutePathCandidateThreeVia {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report = query_native_project_route_path_candidate_three_via(
+                &path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_three_via_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateFourVia {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report = query_native_project_route_path_candidate_four_via(
+                &path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_four_via_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateFiveVia {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report = query_native_project_route_path_candidate_five_via(
+                &path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_five_via_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateSixVia {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report = query_native_project_route_path_candidate_six_via(
+                &path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_six_via_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateAuthoredViaChain {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report = query_native_project_route_path_candidate_authored_via_chain(
+                &path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_authored_via_chain_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateAuthoredViaChainExplain {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report = query_native_project_route_path_candidate_authored_via_chain_explain(
+                &path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_authored_via_chain_explain_text(
+                        &report,
+                    )
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperGraph {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report = query_native_project_route_path_candidate_authored_copper_graph(
+                &path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_authored_copper_graph_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperGraphExplain {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report = query_native_project_route_path_candidate_authored_copper_graph_explain(
+                &path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_authored_copper_graph_explain_text(
+                        &report,
+                    )
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperGraphZoneAware {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report = query_native_project_route_path_candidate_authored_copper_graph_zone_aware(
+                &path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_authored_copper_graph_zone_aware_text(
+                        &report,
+                    )
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperGraphZoneAwareExplain {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report =
+                query_native_project_route_path_candidate_authored_copper_graph_zone_aware_explain(
+                    &path,
+                    net,
+                    from_anchor,
+                    to_anchor,
+                )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_authored_copper_graph_zone_aware_explain_text(
+                        &report,
+                    )
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperGraphZoneObstacleAware {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report =
+                query_native_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware(
+                    &path,
+                    net,
+                    from_anchor,
+                    to_anchor,
+                )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_text(
+                        &report,
+                    )
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperGraphObstacleAware {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report = query_native_project_route_path_candidate_authored_copper_graph_obstacle_aware(
+                &path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_authored_copper_graph_obstacle_aware_text(
+                        &report,
+                    )
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperGraphObstacleAwareExplain {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report =
+                query_native_project_route_path_candidate_authored_copper_graph_obstacle_aware_explain(
+                    &path,
+                    net,
+                    from_anchor,
+                    to_anchor,
+                )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_authored_copper_graph_obstacle_aware_explain_text(
+                        &report,
+                    )
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateSixViaExplain {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report = query_native_project_route_path_candidate_six_via_explain(
+                &path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_six_via_explain_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateFiveViaExplain {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report = query_native_project_route_path_candidate_five_via_explain(
+                &path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_five_via_explain_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateFourViaExplain {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report = query_native_project_route_path_candidate_four_via_explain(
+                &path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_four_via_explain_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateThreeViaExplain {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report = query_native_project_route_path_candidate_three_via_explain(
+                &path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_three_via_explain_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
         NativeProjectQueryCommands::RoutePathCandidateTwoViaExplain {
             net,
             from_anchor,

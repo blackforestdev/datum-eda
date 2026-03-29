@@ -36,6 +36,7 @@ mod command_query;
 mod main_board_component;
 mod main_drill;
 mod main_forward_annotation;
+mod main_forward_annotation_audit_views;
 mod main_forward_annotation_views;
 mod main_gerber_views;
 mod main_gerber_inspect;
@@ -57,6 +58,7 @@ use command_query::*;
 pub(crate) use main_board_component::*;
 pub(crate) use main_drill::*;
 pub(crate) use main_forward_annotation::*;
+pub(crate) use main_forward_annotation_audit_views::*;
 pub(crate) use main_forward_annotation_views::*;
 pub(crate) use main_gerber_views::*;
 pub(crate) use main_gerber_inspect::*;
@@ -103,54 +105,6 @@ struct NativeProjectRulesView {
     domain: &'static str,
     count: usize,
     rules: Vec<serde_json::Value>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationAuditView {
-    domain: &'static str,
-    schematic_symbol_count: usize,
-    board_component_count: usize,
-    matched_count: usize,
-    unresolved_symbol_count: usize,
-    missing_on_board: Vec<NativeProjectForwardAnnotationMissingView>,
-    orphaned_on_board: Vec<NativeProjectForwardAnnotationOrphanView>,
-    value_mismatches: Vec<NativeProjectForwardAnnotationValueMismatchView>,
-    part_mismatches: Vec<NativeProjectForwardAnnotationPartMismatchView>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationMissingView {
-    symbol_uuid: String,
-    sheet_uuid: String,
-    reference: String,
-    value: String,
-    part_uuid: Option<String>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationOrphanView {
-    component_uuid: String,
-    reference: String,
-    value: String,
-    part_uuid: String,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationValueMismatchView {
-    reference: String,
-    symbol_uuid: String,
-    component_uuid: String,
-    schematic_value: String,
-    board_value: String,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationPartMismatchView {
-    reference: String,
-    symbol_uuid: String,
-    component_uuid: String,
-    schematic_part_uuid: String,
-    board_part_uuid: String,
 }
 
 #[derive(Debug, Clone, Serialize)]

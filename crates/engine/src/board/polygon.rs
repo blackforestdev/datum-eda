@@ -130,7 +130,7 @@ fn segments_intersect(a0: Point, a1: Point, b0: Point, b1: Point) -> bool {
         || (o4 == 0 && point_on_segment(a1, b0, b1))
 }
 
-fn point_in_or_on_polygon(point: Point, polygon: &Polygon) -> bool {
+pub(super) fn point_in_or_on_polygon(point: Point, polygon: &Polygon) -> bool {
     point_in_polygon(point, polygon) || point_on_polygon_boundary(point, polygon)
 }
 

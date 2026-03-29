@@ -481,6 +481,121 @@ Status: [~] In progress
   whether failure came from no matching authored via pair versus all matching
   via pairs blocked, using only existing two-via/path facts from the accepted
   two-via slice.
+- Current reopened capability slice (2026-03-29): `project query <dir>
+  route-path-candidate-three-via --net <uuid> --from-anchor <pad_uuid>
+  --to-anchor <pad_uuid>` reports a deterministic point-to-point path
+  candidate that reuses exactly three already-authored persisted vias only,
+  chosen by an explicit ascending `(via_a_uuid, via_b_uuid, via_c_uuid)` rule
+  when their layer sequence connects the requested anchor layers through two
+  intermediate copper layers.
+- Current follow-on explanation slice (2026-03-29): `project query <dir>
+  route-path-candidate-three-via-explain --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid>` reports the current selected via triple
+  when found, or whether failure came from no matching authored via triple
+  versus all matching via triples blocked, using only existing three-via/path
+  facts from the accepted three-via slice.
+- Current reopened capability slice (2026-03-29): `project query <dir>
+  route-path-candidate-four-via --net <uuid> --from-anchor <pad_uuid>
+  --to-anchor <pad_uuid>` reports a deterministic point-to-point path
+  candidate that reuses exactly four already-authored persisted vias only,
+  chosen by an explicit ascending `(via_a_uuid, via_b_uuid, via_c_uuid,
+  via_d_uuid)` rule when their layer sequence connects the requested anchor
+  layers through three intermediate copper layers.
+- Current follow-on explanation slice (2026-03-29): `project query <dir>
+  route-path-candidate-four-via-explain --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid>` reports the current selected via
+  quadruple when found, or whether failure came from no matching authored via
+  quadruple versus all matching via quadruples blocked, using only existing
+  four-via/path facts from the accepted four-via slice.
+- Current reopened capability slice (2026-03-29): `project query <dir>
+  route-path-candidate-five-via --net <uuid> --from-anchor <pad_uuid>
+  --to-anchor <pad_uuid>` reports a deterministic point-to-point path
+  candidate that reuses exactly five already-authored persisted vias only,
+  chosen by an explicit ascending `(via_a_uuid, via_b_uuid, via_c_uuid,
+  via_d_uuid, via_e_uuid)` rule when their layer sequence connects the
+  requested anchor layers through four intermediate copper layers.
+- Current adjacent explanation slice (2026-03-29): `project query <dir>
+  route-path-candidate-five-via-explain --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid>` reports the selected via quintuple when
+  found, or whether failure came from no matching authored via quintuple
+  versus all matching via quintuples blocked, using only existing five-via/path
+  facts from the accepted five-via slice.
+- Current reopened capability slice (2026-03-29): `project query <dir>
+  route-path-candidate-six-via --net <uuid> --from-anchor <pad_uuid>
+  --to-anchor <pad_uuid>` reports a deterministic point-to-point path
+  candidate that reuses exactly six already-authored persisted vias only,
+  chosen by an explicit ascending `(via_a_uuid, via_b_uuid, via_c_uuid,
+  via_d_uuid, via_e_uuid, via_f_uuid)` rule when their layer sequence connects
+  the requested anchor layers through five intermediate copper layers.
+- Current adjacent explanation slice (2026-03-29): `project query <dir>
+  route-path-candidate-six-via-explain --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid>` reports the selected via sextuple when
+  found, or whether failure came from no matching authored via sextuple
+  versus all matching via sextuples blocked, using only existing six-via/path
+  facts from the accepted six-via slice.
+- Current generalized replacement slice (2026-03-29): `project query <dir>
+  route-path-candidate-authored-via-chain --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid>` reports a deterministic point-to-point
+  path candidate that reuses only already-authored persisted target-net vias,
+  enumerates matching chains under existing corridor/span facts, orders them
+  by `(via_count, via_uuid_sequence)` ascending, and selects the first
+  unblocked matching chain only.
+- Current adjacent explanation slice (2026-03-29): `project query <dir>
+  route-path-candidate-authored-via-chain-explain --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` reports the selected
+  authored via chain when found, or whether failure came from no matching
+  authored via chain versus all matching via chains blocked, using only
+  existing authored-via-chain/path facts from the accepted generalized slice.
+- Current capability slice (2026-03-29): `project query <dir>
+  route-path-candidate-authored-copper-graph --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid>` reports one deterministic existing-copper
+  path over persisted target-net tracks and vias only, selected by the
+  explicit minimum-step sorted graph traversal rule without inventing any new
+  routing geometry.
+- Current adjacent explanation slice (2026-03-29): `project query <dir>
+  route-path-candidate-authored-copper-graph-explain --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` reports the selected
+  existing-copper path when found, or explicit
+  `no_existing_authored_copper_path` when the persisted target-net copper
+  graph does not connect the requested anchors, using only existing
+  authored-copper graph/path facts from the accepted capability slice.
+- Current capability slice (2026-03-29): `project query <dir>
+  route-path-candidate-authored-copper-graph-zone-aware --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` extends the persisted
+  authored-copper graph with target-net zone continuity on-layer, allowing one
+  deterministic existing-copper path over persisted target-net tracks, vias,
+  and zone-supported continuity only, selected by the explicit minimum-step
+  sorted graph traversal rule without inventing any new routing geometry.
+- Current adjacent explanation slice (2026-03-29): `project query <dir>
+  route-path-candidate-authored-copper-graph-zone-aware-explain --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` reports the selected
+  zone-aware existing-copper path when found, or explicit
+  `no_existing_authored_copper_path` when the persisted target-net track/via/zone
+  graph does not connect the requested anchors, using only existing
+  zone-aware authored-copper graph/path facts from the accepted capability slice.
+- Current capability slice (2026-03-29): `project query <dir>
+  route-path-candidate-authored-copper-graph-zone-obstacle-aware --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` filters the persisted
+  authored-copper graph with target-net zone continuity to graph edges whose
+  reused geometry is unblocked under the current authored obstacle checks,
+  then returns one deterministic existing-copper path under the explicit
+  minimum-step sorted graph traversal rule without inventing any new routing
+  geometry.
+- Current capability slice (2026-03-29): `project query <dir>
+  route-path-candidate-authored-copper-graph-obstacle-aware --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` filters the persisted
+  authored-copper graph to target-net track/via edges whose reused geometry is
+  unblocked under the current authored obstacle checks, then returns one
+  deterministic existing-copper path under the explicit minimum-step sorted
+  graph traversal rule without inventing any new routing geometry.
+- Current adjacent explanation slice (2026-03-29): `project query <dir>
+  route-path-candidate-authored-copper-graph-obstacle-aware-explain --net
+  <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` reports the selected
+  obstacle-aware existing-copper path when found, or explicit
+  `no_existing_authored_copper_path` when authored obstacle filtering leaves no
+  connecting persisted target-net copper path, using only existing
+  obstacle-aware authored-copper graph/path facts from the accepted capability
+  slice.
 - Acceptance checks for the opening slice:
   - deterministic repeated output on unchanged persisted state
   - no pool re-resolution or live import-session dependence

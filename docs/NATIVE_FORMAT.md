@@ -225,6 +225,60 @@ Current live slice:
   order when their layer sequence connects the requested anchor layers through
   one intermediate copper layer. It does not create vias or infer transition
   permissions.
+- `eda project query <dir> route-path-candidate-three-via --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a deterministic
+  point-to-point path candidate that may reuse exactly three already-authored
+  persisted vias only, selected by explicit ascending
+  `(via_a_uuid, via_b_uuid, via_c_uuid)` order when their layer sequence
+  connects the requested anchor layers through two intermediate copper layers.
+  It does not create vias or infer transition permissions.
+- `eda project query <dir> route-path-candidate-three-via-explain --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports the current
+  three-via path-candidate result as a deterministic explanation surface:
+  selected via triple when found, or whether failure came from no matching
+  authored via triple versus all matching via triples blocked, using only
+  existing three-via/path facts without adding new routing semantics.
+- `eda project query <dir> route-path-candidate-four-via --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a deterministic
+  point-to-point path candidate that may reuse exactly four already-authored
+  persisted vias only, selected by explicit ascending
+  `(via_a_uuid, via_b_uuid, via_c_uuid, via_d_uuid)` order when their layer
+  sequence connects the requested anchor layers through three intermediate
+  copper layers. It does not create vias or infer transition permissions.
+- `eda project query <dir> route-path-candidate-four-via-explain --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports the current
+  four-via path-candidate result as a deterministic explanation surface:
+  selected via quadruple when found, or whether failure came from no matching
+  authored via quadruple versus all matching via quadruples blocked, using only
+  existing four-via/path facts without adding new routing semantics.
+- `eda project query <dir> route-path-candidate-five-via --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a deterministic
+  point-to-point path candidate that may reuse exactly five already-authored
+  persisted vias only, selected by explicit ascending
+  `(via_a_uuid, via_b_uuid, via_c_uuid, via_d_uuid, via_e_uuid)` order when
+  their layer sequence connects the requested anchor layers through four
+  intermediate copper layers. It does not create vias or infer transition
+  permissions.
+- `eda project query <dir> route-path-candidate-six-via --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a deterministic
+  point-to-point path candidate that may reuse exactly six already-authored
+  persisted vias only, selected by explicit ascending
+  `(via_a_uuid, via_b_uuid, via_c_uuid, via_d_uuid, via_e_uuid, via_f_uuid)`
+  order when their layer sequence connects the requested anchor layers through
+  five intermediate copper layers. It does not create vias or infer transition
+  permissions.
+- `eda project query <dir> route-path-candidate-six-via-explain --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports the current
+  six-via path-candidate result as a deterministic explanation surface:
+  selected via sextuple when found, or whether failure came from no matching
+  authored via sextuple versus all matching via sextuples blocked, using only
+  existing six-via/path facts without adding new routing semantics.
+- `eda project query <dir> route-path-candidate-five-via-explain --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports the current
+  five-via path-candidate result as a deterministic explanation surface:
+  selected via quintuple when found, or whether failure came from no matching
+  authored via quintuple versus all matching via quintuples blocked, using only
+  existing five-via/path facts without adding new routing semantics.
 - `eda project query <dir> route-path-candidate-two-via-explain --net <uuid>
   --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports the current
   two-via path-candidate result as a deterministic explanation surface:
@@ -237,6 +291,70 @@ Current live slice:
   selected via when found, or whether failure came from no matching authored
   via versus all matching vias blocked, using only existing via/path facts
   without adding new transition semantics.
+- `eda project query <dir> route-path-candidate-authored-via-chain --net
+  <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a
+  deterministic point-to-point path candidate that may reuse an authored
+  target-net via chain only. Candidate chains are ordered by
+  `(via_count, via_uuid_sequence)` ascending, and the first unblocked matching
+  chain is selected without creating vias or inferring transition permissions.
+- `eda project query <dir> route-path-candidate-authored-via-chain-explain
+  --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports
+  the current authored-via-chain path-candidate result as a deterministic
+  explanation surface: selected chain when found, or whether failure came from
+  no matching authored via chain versus all matching via chains blocked, using
+  only existing authored-via-chain/path facts without adding new routing
+  semantics.
+- `eda project query <dir> route-path-candidate-authored-copper-graph --net
+  <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a
+  deterministic existing-copper path candidate over persisted target-net tracks
+  and vias only. It selects the first minimum-step authored-copper graph path
+  under the explicit sorted breadth-first traversal rule and does not invent
+  any new routing geometry.
+- `eda project query <dir> route-path-candidate-authored-copper-graph-explain
+  --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports
+  that existing-copper path candidate as a deterministic explanation surface:
+  selected existing-copper path when found, or explicit
+  `no_existing_authored_copper_path` when the persisted target-net copper
+  graph does not connect the requested anchors, using only existing
+  authored-copper graph/path facts without adding new routing semantics.
+- `eda project query <dir> route-path-candidate-authored-copper-graph-zone-aware
+  --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a
+  deterministic existing-copper path candidate that also reuses persisted
+  target-net zone continuity on-layer. It builds the same persisted
+  authored-copper graph but adds target-net zone edges between authored anchor,
+  track-end, and via-end points that lie within the same persisted zone, then
+  selects the first minimum-step path under the explicit sorted graph
+  traversal rule without inventing any new copper geometry.
+- `eda project query <dir> route-path-candidate-authored-copper-graph-zone-aware-explain
+  --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports
+  that zone-aware existing-copper path candidate as a deterministic
+  explanation surface: selected path when found, or explicit
+  `no_existing_authored_copper_path` when the persisted target-net track/via/zone
+  graph does not connect the requested anchors, using only existing
+  zone-aware authored-copper graph/path facts without adding new routing
+  semantics.
+- `eda project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware
+  --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a
+  deterministic existing-copper path candidate over persisted target-net
+  tracks, vias, and zone continuity only, but includes only reused graph
+  edges whose geometry is unblocked under the current authored obstacle
+  checks. It selects the first minimum-step path under the explicit sorted
+  graph traversal rule without inventing new copper or new ranking semantics.
+- `eda project query <dir> route-path-candidate-authored-copper-graph-obstacle-aware
+  --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a
+  deterministic existing-copper path candidate over persisted target-net
+  tracks and vias only, but includes only reused authored graph edges whose
+  geometry is unblocked under the current authored obstacle checks. It selects
+  the first minimum-step path under the explicit sorted graph traversal rule
+  without inventing new copper or new ranking semantics.
+- `eda project query <dir> route-path-candidate-authored-copper-graph-obstacle-aware-explain
+  --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` reports the
+  current obstacle-aware existing-copper path result as a deterministic
+  explanation surface: selected path when found, or explicit
+  `no_existing_authored_copper_path` when authored obstacle filtering leaves
+  no connecting persisted target-net copper path, using only existing
+  obstacle-aware authored-copper graph/path facts without adding new routing
+  semantics.
 - `eda project query <dir> board-components` reads back the persisted native
   placed-package inventory from `board/board.json`, including per-component
   presence flags plus the currently materialized silkscreen subset counts and

@@ -311,6 +311,40 @@ mod main_tests_project_route_path_candidate;
 mod main_tests_project_route_path_candidate_via;
 #[path = "main_tests_project_route_path_candidate_two_via.rs"]
 mod main_tests_project_route_path_candidate_two_via;
+#[path = "main_tests_project_route_path_candidate_three_via.rs"]
+mod main_tests_project_route_path_candidate_three_via;
+#[path = "main_tests_project_route_path_candidate_four_via.rs"]
+mod main_tests_project_route_path_candidate_four_via;
+#[path = "main_tests_project_route_path_candidate_five_via.rs"]
+mod main_tests_project_route_path_candidate_five_via;
+#[path = "main_tests_project_route_path_candidate_six_via.rs"]
+mod main_tests_project_route_path_candidate_six_via;
+#[path = "main_tests_project_route_path_candidate_authored_via_chain.rs"]
+mod main_tests_project_route_path_candidate_authored_via_chain;
+#[path = "main_tests_project_route_path_candidate_authored_via_chain_explain.rs"]
+mod main_tests_project_route_path_candidate_authored_via_chain_explain;
+#[path = "main_tests_project_route_path_candidate_authored_copper_graph.rs"]
+mod main_tests_project_route_path_candidate_authored_copper_graph;
+#[path = "main_tests_project_route_path_candidate_authored_copper_graph_explain.rs"]
+mod main_tests_project_route_path_candidate_authored_copper_graph_explain;
+#[path = "main_tests_project_route_path_candidate_authored_copper_graph_zone_aware.rs"]
+mod main_tests_project_route_path_candidate_authored_copper_graph_zone_aware;
+#[path = "main_tests_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware.rs"]
+mod main_tests_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware;
+#[path = "main_tests_project_route_path_candidate_authored_copper_graph_zone_aware_explain.rs"]
+mod main_tests_project_route_path_candidate_authored_copper_graph_zone_aware_explain;
+#[path = "main_tests_project_route_path_candidate_authored_copper_graph_obstacle_aware.rs"]
+mod main_tests_project_route_path_candidate_authored_copper_graph_obstacle_aware;
+#[path = "main_tests_project_route_path_candidate_authored_copper_graph_obstacle_aware_explain.rs"]
+mod main_tests_project_route_path_candidate_authored_copper_graph_obstacle_aware_explain;
+#[path = "main_tests_project_route_path_candidate_six_via_explain.rs"]
+mod main_tests_project_route_path_candidate_six_via_explain;
+#[path = "main_tests_project_route_path_candidate_five_via_explain.rs"]
+mod main_tests_project_route_path_candidate_five_via_explain;
+#[path = "main_tests_project_route_path_candidate_four_via_explain.rs"]
+mod main_tests_project_route_path_candidate_four_via_explain;
+#[path = "main_tests_project_route_path_candidate_three_via_explain.rs"]
+mod main_tests_project_route_path_candidate_three_via_explain;
 #[path = "main_tests_project_route_path_candidate_two_via_explain.rs"]
 mod main_tests_project_route_path_candidate_two_via_explain;
 #[path = "main_tests_project_route_path_candidate_via_explain.rs"]

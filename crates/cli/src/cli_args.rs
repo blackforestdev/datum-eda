@@ -1,16 +1,11 @@
-use std::path::PathBuf;
-
-use clap::{Parser, Subcommand};
-use eda_engine::api::ScopedComponentReplacementPlan;
-use serde::{Deserialize, Serialize};
-use uuid::Uuid;
-
 #[path = "cli_args_board_component.rs"]
 mod cli_args_board_component;
 #[path = "cli_args_board_dimension.rs"]
 mod cli_args_board_dimension;
 #[path = "cli_args_commands.rs"]
 mod cli_args_commands;
+#[path = "cli_args_prelude.rs"]
+mod cli_args_prelude;
 #[path = "cli_args_drill.rs"]
 mod cli_args_drill;
 #[path = "cli_args_gerber_plan.rs"]
@@ -40,4 +35,5 @@ mod cli_args_project_query_plan;
 #[path = "cli_args_surface.rs"]
 mod cli_args_surface;
 
+use self::cli_args_prelude::*;
 pub(crate) use self::cli_args_surface::*;
