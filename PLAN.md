@@ -10,6 +10,16 @@ Status source of truth:
 - Status changes must be recorded in `specs/PROGRESS.md` first.
 - This file may describe planned execution order and priorities, but must not
   introduce independent completion claims.
+- If `PLAN.md` conflicts with `specs/PROGRESS.md` or `specs/progress/*.md`,
+  treat `PLAN.md` as stale and follow the milestone status/frontier recorded in
+  those spec files instead.
+- Dirty worktree state is implementation context only. It may help complete an
+  already-selected slice, but it must not redefine roadmap priority or the next
+  logical contract when milestone docs point elsewhere.
+- A landed slice with passing focused proof should normally advance to the
+  next capability contract. Paired `...-explain` follow-ons are optional and
+  should be chosen only when the milestone docs explicitly require added
+  observability before advancement.
 
 Terminology follows `specs/PROGRAM_SPEC.md`:
 `Product identity`, `Implementation slice`, `Execution strategy`, and
@@ -38,18 +48,20 @@ guardrails, not feature expansion.
 
 ## Active Execution Window
 
-Current planning focus: `M4` proof-depth expansion and targeted closure audits.
+Current planning focus: `M5` deterministic layout-kernel development from
+persisted native board state, following the current frontier recorded in
+`specs/PROGRESS.md` and `specs/progress/m5_opening.md`.
 
 Near-term execution order:
 1. Keep `M3` closed except for regression fixes; do not widen imported-design
    scope without an explicit new milestone need.
-2. Expand `M4` only where proof depth is still thin relative to the existing
-   authored/query/export surface.
-3. Use `specs/PROGRESS.md` as the audit target before selecting each new `M4`
-   slice, so execution follows the thinnest still-open lane instead of local
-   momentum.
-4. Prioritize real writer/check/compare contracts over planning-only surfaces
-   when the underlying native geometry/model is strong enough to support them.
+2. Keep `M4` closed for scope except for regression fixes or explicit
+   documentation/governance maintenance.
+3. Use `specs/PROGRESS.md` plus the active milestone shard in
+   `specs/progress/` as the source for the next `M5` slice; do not let local
+   worktree momentum redefine roadmap priority.
+4. Prioritize real capability contracts over adjacent review/checkpoint/query
+   expansion once the routing-kernel read surfaces are proven.
 
 ## Milestones
 

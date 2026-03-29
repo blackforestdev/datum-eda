@@ -403,6 +403,16 @@ Next explicit contract selected on 2026-03-29:
   - select the first path found by breadth-first traversal after sorting graph
     edges by `(step_kind, object_uuid, destination_anchor)`, yielding a
     deterministic minimum-step path with lexicographic tie-breaks
+- generalized preferred replacement for further authored-copper-graph suffix growth:
+  `project query <dir> route-path-candidate-authored-copper-graph --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --policy <policy>`
+  - accepted bounded policy enum:
+    - `plain`
+    - `zone_aware`
+    - `obstacle_aware`
+    - `zone_obstacle_aware`
+    - `zone_obstacle_topology_aware`
+    - `zone_obstacle_topology_layer_balance_aware`
+  - suffix contracts remain for compatibility, but no longer define the preferred growth path for this family
 - non-goals:
   - no new copper creation
   - no inferred transitions beyond persisted target-net vias
@@ -410,7 +420,7 @@ Next explicit contract selected on 2026-03-29:
 
 Follow-on explanation surface selected on 2026-03-29:
 - deterministic existing-authored-copper graph path candidate explanation
-  `project query <dir> route-path-candidate-authored-copper-graph-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+  `project query <dir> route-path-candidate-authored-copper-graph-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --policy <policy>`
 - input: persisted native board state only
 - output:
   - current selected existing-authored-copper path when found
@@ -420,6 +430,24 @@ Follow-on explanation surface selected on 2026-03-29:
   - no new routing semantics
   - no blockage inference beyond the accepted authored-copper graph slice
   - no ranking output beyond the selected existing-copper path
+  - bounded to the accepted policy set already proven by the generalized
+    `route-path-candidate-authored-copper-graph --policy <policy>` surface
+
+Next routing-facing bridge slice selected on 2026-03-29:
+- deterministic authored-copper path candidate with exactly one eligible gap
+  `project query <dir> route-path-candidate-authored-copper-plus-one-gap --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- input: persisted native board state only
+- output:
+  - one deterministic path composed of authored target-net copper plus exactly
+    one eligible same-layer synthetic gap
+  - or `no_path_under_current_authored_constraints`
+- guardrails:
+  - no rip-up/reroute
+  - no negotiated routing
+  - no push-shove
+  - no invented constraints or permissions
+  - the synthetic gap must be justified entirely by existing candidate copper
+    layer facts and persisted obstacle-truth segment checks
 
 Next explicit contract selected on 2026-03-29:
 - deterministic zone-aware existing-authored-copper graph path candidate

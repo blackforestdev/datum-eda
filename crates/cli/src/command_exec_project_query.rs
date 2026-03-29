@@ -326,7 +326,20 @@ pub(super) fn execute_native_project_query_command(
             net,
             from_anchor,
             to_anchor,
+            policy,
         } => execute_native_project_route_path_candidate_authored_copper_graph_query(
+            format,
+            &path,
+            net,
+            from_anchor,
+            to_anchor,
+            policy,
+        ),
+        NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperPlusOneGap {
+            net,
+            from_anchor,
+            to_anchor,
+        } => execute_native_project_route_path_candidate_authored_copper_plus_one_gap_query(
             format,
             &path,
             net,
@@ -337,12 +350,14 @@ pub(super) fn execute_native_project_query_command(
             net,
             from_anchor,
             to_anchor,
+            policy,
         } => execute_native_project_route_path_candidate_authored_copper_graph_explain_query(
             format,
             &path,
             net,
             from_anchor,
             to_anchor,
+            policy,
         ),
         NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperGraphZoneAware {
             net,

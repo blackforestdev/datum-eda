@@ -10,6 +10,7 @@ fn route_path_candidate_authored_copper_graph_query_cli(
     net_uuid: Uuid,
     from_anchor: Uuid,
     to_anchor: Uuid,
+    policy: &str,
 ) -> Cli {
     Cli::try_parse_from([
         "eda",
@@ -25,6 +26,8 @@ fn route_path_candidate_authored_copper_graph_query_cli(
         &from_anchor.to_string(),
         "--to-anchor",
         &to_anchor.to_string(),
+        "--policy",
+        policy,
     ])
     .expect("CLI should parse")
 }
@@ -142,15 +145,17 @@ fn project_query_route_path_candidate_authored_copper_graph_reports_deterministi
         target_net_uuid,
         anchor_a_uuid,
         anchor_b_uuid,
+        "plain",
     ))
     .expect("query should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report should parse");
 
     assert_eq!(
         report["contract"],
-        "m5_route_path_candidate_authored_copper_graph_v1"
+        "m5_route_path_candidate_authored_copper_graph_policy_v1"
     );
     assert_eq!(report["persisted_native_board_state_only"], true);
+    assert_eq!(report["policy"], "plain");
     assert_eq!(report["status"], "deterministic_path_found");
     assert_eq!(report["summary"]["candidate_track_count"], 1);
     assert_eq!(report["summary"]["candidate_via_count"], 0);
@@ -162,6 +167,7 @@ fn project_query_route_path_candidate_authored_copper_graph_reports_deterministi
         target_net_uuid,
         anchor_a_uuid,
         anchor_b_uuid,
+        "plain",
     ))
     .expect("repeat should succeed");
     assert_eq!(output, repeated);
@@ -179,11 +185,14 @@ fn project_query_route_path_candidate_authored_copper_graph_reports_deterministi
             &anchor_a_uuid.to_string(),
             "--to-anchor",
             &anchor_b_uuid.to_string(),
+            "--policy",
+            "plain",
         ])
         .expect("CLI should parse"),
     )
     .expect("text query should succeed");
-    assert!(text_output.contains("contract: m5_route_path_candidate_authored_copper_graph_v1"));
+    assert!(text_output.contains("contract: m5_route_path_candidate_authored_copper_graph_policy_v1"));
+    assert!(text_output.contains("policy: plain"));
     assert!(text_output.contains("status: deterministic_path_found"));
     assert!(text_output.contains("path_steps: 1"));
 

@@ -20,6 +20,12 @@ mod route_path_candidate_authored_via_chain;
 mod route_path_candidate_authored_via_chain_explain;
 #[path = "route_path_candidate_authored_copper_graph.rs"]
 mod route_path_candidate_authored_copper_graph;
+#[path = "route_path_candidate_authored_copper_plus_one_gap.rs"]
+mod route_path_candidate_authored_copper_plus_one_gap;
+#[path = "route_path_candidate_authored_copper_graph_policy.rs"]
+mod route_path_candidate_authored_copper_graph_policy;
+#[path = "route_path_candidate_authored_copper_graph_policy_explain.rs"]
+mod route_path_candidate_authored_copper_graph_policy_explain;
 #[path = "route_path_candidate_authored_copper_graph_explain.rs"]
 mod route_path_candidate_authored_copper_graph_explain;
 #[path = "route_path_candidate_authored_copper_graph_zone_aware.rs"]
@@ -70,6 +76,8 @@ mod route_path_candidate_six_via_selection;
 mod route_path_candidate_authored_via_chain_selection;
 #[path = "route_path_candidate_authored_copper_graph_selection.rs"]
 mod route_path_candidate_authored_copper_graph_selection;
+#[path = "route_path_candidate_authored_copper_plus_one_gap_selection.rs"]
+mod route_path_candidate_authored_copper_plus_one_gap_selection;
 #[path = "route_path_candidate_authored_copper_graph_zone_aware_selection.rs"]
 mod route_path_candidate_authored_copper_graph_zone_aware_selection;
 #[path = "route_path_candidate_authored_copper_graph_zone_obstacle_aware_selection.rs"]
@@ -144,6 +152,27 @@ pub use self::route_path_candidate_authored_copper_graph::{
     RoutePathCandidateAuthoredCopperGraphStep,
     RoutePathCandidateAuthoredCopperGraphStepKindView,
     RoutePathCandidateAuthoredCopperGraphSummary,
+};
+pub use self::route_path_candidate_authored_copper_plus_one_gap::{
+    RoutePathCandidateAuthoredCopperPlusOneGapPath,
+    RoutePathCandidateAuthoredCopperPlusOneGapReport,
+    RoutePathCandidateAuthoredCopperPlusOneGapStep,
+    RoutePathCandidateAuthoredCopperPlusOneGapStepKindView,
+    RoutePathCandidateAuthoredCopperPlusOneGapSummary,
+};
+pub use self::route_path_candidate_authored_copper_graph_policy::{
+    RoutePathCandidateAuthoredCopperGraphPolicy,
+    RoutePathCandidateAuthoredCopperGraphPolicyPath,
+    RoutePathCandidateAuthoredCopperGraphPolicyReport,
+    RoutePathCandidateAuthoredCopperGraphPolicyStep,
+    RoutePathCandidateAuthoredCopperGraphPolicyStepKindView,
+    RoutePathCandidateAuthoredCopperGraphPolicySummary,
+};
+pub use self::route_path_candidate_authored_copper_graph_policy_explain::{
+    RoutePathCandidateAuthoredCopperGraphPolicyExplainKind,
+    RoutePathCandidateAuthoredCopperGraphPolicyExplainReport,
+    RoutePathCandidateAuthoredCopperGraphPolicyExplainSelectedPath,
+    RoutePathCandidateAuthoredCopperGraphPolicyExplainSummary,
 };
 pub use self::route_path_candidate_authored_copper_graph_explain::{
     RoutePathCandidateAuthoredCopperGraphExplainKind,

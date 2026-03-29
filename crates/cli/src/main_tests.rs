@@ -325,6 +325,8 @@ mod main_tests_project_route_path_candidate_authored_via_chain;
 mod main_tests_project_route_path_candidate_authored_via_chain_explain;
 #[path = "main_tests_project_route_path_candidate_authored_copper_graph.rs"]
 mod main_tests_project_route_path_candidate_authored_copper_graph;
+#[path = "main_tests_project_route_path_candidate_authored_copper_plus_one_gap.rs"]
+mod main_tests_project_route_path_candidate_authored_copper_plus_one_gap;
 #[path = "main_tests_project_route_path_candidate_authored_copper_graph_explain.rs"]
 mod main_tests_project_route_path_candidate_authored_copper_graph_explain;
 #[path = "main_tests_project_route_path_candidate_authored_copper_graph_zone_aware.rs"]

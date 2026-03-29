@@ -441,8 +441,18 @@ Status: [~] In progress
   - deterministic authored-copper graph path queries now exist in
     increasingly filtered/readback-focused forms recorded in
     `specs/progress/m5_opening.md`
-  - the current frontier is the layer-balance-aware authored-copper path
-    family plus its explanation companion
+  - the preferred generalized query surface is `project query <dir>
+    route-path-candidate-authored-copper-graph --net <uuid> --from-anchor
+    <pad_uuid> --to-anchor <pad_uuid> --policy <policy>`
+  - the preferred generalized explanation surface is `project query <dir>
+    route-path-candidate-authored-copper-graph-explain --net <uuid>
+    --from-anchor <pad_uuid> --to-anchor <pad_uuid> --policy <policy>`
+  - accepted bounded policies are `plain`, `zone_aware`, `obstacle_aware`,
+    `zone_obstacle_aware`, `zone_obstacle_topology_aware`, and
+    `zone_obstacle_topology_layer_balance_aware`
+  - the next routing-facing bridge now exists as `project query <dir>
+    route-path-candidate-authored-copper-plus-one-gap --net <uuid>
+    --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
   - `specs/PROGRESS.md` tracks only the checkpoint/frontier; detailed per-slice
     history stays in `specs/progress/m5_opening.md`
 - Current M5 frontier:

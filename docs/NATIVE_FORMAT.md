@@ -305,18 +305,27 @@ Current live slice:
   only existing authored-via-chain/path facts without adding new routing
   semantics.
 - `eda project query <dir> route-path-candidate-authored-copper-graph --net
-  <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a
-  deterministic existing-copper path candidate over persisted target-net tracks
-  and vias only. It selects the first minimum-step authored-copper graph path
-  under the explicit sorted breadth-first traversal rule and does not invent
-  any new routing geometry.
+  <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --policy <policy>` is
+  now the preferred generalized surface for the existing authored-copper graph
+  family. The accepted policy set is bounded to `plain`, `zone_aware`,
+  `obstacle_aware`, `zone_obstacle_aware`, `zone_obstacle_topology_aware`, and
+  `zone_obstacle_topology_layer_balance_aware`; each policy preserves the
+  already-proven deterministic persisted-state contract of its corresponding
+  suffix surface.
 - `eda project query <dir> route-path-candidate-authored-copper-graph-explain
-  --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports
-  that existing-copper path candidate as a deterministic explanation surface:
-  selected existing-copper path when found, or explicit
+  --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --policy
+  <policy>` is the preferred generalized explanation surface for the existing
+  authored-copper graph family. It preserves the accepted bounded policy set
+  and reports the selected existing-copper path when found, or explicit
   `no_existing_authored_copper_path` when the persisted target-net copper
   graph does not connect the requested anchors, using only existing
   authored-copper graph/path facts without adding new routing semantics.
+- `eda project query <dir> route-path-candidate-authored-copper-plus-one-gap
+  --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` reports a
+  deterministic path candidate that reuses existing authored target-net copper
+  plus exactly one eligible synthetic same-layer gap segment. The gap is
+  allowed only when its straight segment is unblocked under the persisted
+  authored obstacle checks and it does not replace an existing authored edge.
 - `eda project query <dir> route-path-candidate-authored-copper-graph-zone-aware
   --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a
   deterministic existing-copper path candidate that also reuses persisted

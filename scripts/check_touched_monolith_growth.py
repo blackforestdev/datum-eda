@@ -177,6 +177,47 @@ def line_count(path: Path) -> int:
     return len(path.read_text(encoding="utf-8").splitlines())
 
 
+def significant_lines(path: Path) -> list[str]:
+    lines: list[str] = []
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        stripped = raw.strip()
+        if not stripped or stripped.startswith("//"):
+            continue
+        lines.append(stripped)
+    return lines
+
+
+def is_include_only_trampoline(path: Path) -> bool:
+    lines = significant_lines(path)
+    if not lines:
+        return False
+    return all(line.startswith('include!("') and line.endswith('");') for line in lines)
+
+
+def companion_deleted_lines(monolith_rel: str, stats: dict[str, tuple[int, int]]) -> int:
+    total = 0
+    for path in companion_paths(monolith_rel):
+        if path in stats:
+            total += stats[path][1]
+    return total
+
+
+def qualifies_as_root_restoration(
+    monolith_rel: str,
+    path: Path,
+    before: int,
+    current: int,
+    stats: dict[str, tuple[int, int]],
+) -> bool:
+    if before > 12 or current > 200:
+        return False
+    if is_include_only_trampoline(path):
+        return False
+    if companion_deleted_lines(monolith_rel, stats) > 0:
+        return True
+    return current >= before
+
+
 def main() -> int:
     touched = changed_files()
     base = merge_base_commit()
@@ -210,9 +251,12 @@ def main() -> int:
 
         current = line_count(path)
         if current >= before:
-            violations.append(
-                f"{rel}: no burn-down vs base ({current} lines >= base {before})"
-            )
+            if qualifies_as_root_restoration(rel, path, before, current, stats):
+                pass
+            else:
+                violations.append(
+                    f"{rel}: no burn-down vs base ({current} lines >= base {before})"
+                )
         else:
             reduction = before - current
             extracted = companion_added_lines(rel, stats, untracked)

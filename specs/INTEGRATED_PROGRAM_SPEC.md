@@ -65,6 +65,10 @@ Contract:
 - Milestone completion state must be recorded in `specs/PROGRESS.md` only.
 - Supporting docs may summarize status but may not introduce independent
   completion claims.
+- Fresh execution or takeover must anchor first to `specs/PROGRESS.md` and the
+  active milestone shard docs in `specs/progress/`. `PLAN.md` is sequencing
+  guidance only, and uncommitted worktree state must not override the recorded
+  milestone frontier when they conflict.
 
 ### 5.2 Engine/API/MCP Contract Split
 
@@ -102,6 +106,66 @@ Contract:
   mechanical succession indefinitely; once the pattern is proven, development
   must either declare a stopping boundary or replace the family with one
   generalized contract.
+- Repeated qualifier/suffix contract families (`foo-aware`,
+  `foo-aware-bar-aware`, `...-explain`, and similar stacked variants) must not
+  grow by mechanical adjective or suffix accretion once the underlying pattern
+  is proven.
+- When qualifier/suffix stacking starts describing policy combinations more
+  than new milestone semantics, development must stop and either:
+  - replace the family with one bounded generalized contract that exposes the
+    accepted policy dimensions explicitly, or
+  - declare a stopping boundary and defer further expansion.
+- Further qualifier/suffix-family growth is not acceptable until one of those
+  two actions has been taken.
+- Generalization must be evidence-based within the same contract family.
+  A family may be collapsed into a bounded policy/parameter surface only when
+  multiple accepted variants already exist inside that family and those
+  variants differ along a real, bounded semantic axis.
+- Cross-family analogy is not sufficient justification for generalization.
+  A successful `--policy` or parameterized surface in one family does not, by
+  itself, justify introducing the same abstraction into a neighboring family.
+- Each new contract family or generalized surface must carry an explicit
+  stopping boundary or generalization trigger. If neither can be stated
+  clearly, the family is not ready for repeated adjacent expansion.
+- Adjacent-slice growth must justify itself by one of three values only:
+  real capability increase, real observability/debuggability increase, or real
+  simplification/generalization of an already-proven family. Mere adjacency is
+  not enough.
+- Paired `...-explain` or other observability surfaces are optional, not
+  mandatory. They should be added only when they unlock materially needed
+  debugging/review value for the current frontier; symmetry with an earlier
+  family is not enough.
+- A landed slice with passing focused proof does not imply that a paired
+  observability surface is the default next step. Unless milestone docs
+  explicitly require observability before advancement, the next slice should
+  default to the next capability contract.
+- When a generalized surface replaces a repeated family, the same change must
+  record which surface is now preferred and whether the older family is frozen,
+  compatibility-only, or scheduled for later removal.
+- Contract naming complexity is bounded. If a new surface name is growing by
+  repeated qualifiers or chained semantics to explain what it does, that is a
+  signal to generalize or stop rather than keep extending the name.
+- Completion reporting must be diff-grounded. The declared implemented
+  contract in a handoff/report must match the actual landed core files and
+  tests for that slice; prior narrative or previously declared intent is not
+  authoritative if the diff says otherwise.
+- Dirty worktree momentum is not roadmap authority. Uncommitted or partially
+  implemented files may inform the implementation plan for an already-selected
+  slice, but they must not decide what the next contract should be when the
+  milestone docs point elsewhere.
+- Audit/review/checkpoint work is exceptional, not the default adjacent slice.
+  After a contract lands cleanly, the next slice should normally be the next
+  thin capability contract unless a test/gate failure, a real defect, or a
+  genuine contract ambiguity requires review work.
+- Touched-monolith burn-down must move real ownership into coherent companion
+  shards; it must not be satisfied by facade-shell proliferation.
+- Root modules may be thin, but they must remain readable module roots with
+  visible ownership boundaries. One-line `include!` trampolines, root-to-root
+  forwarding shells, and extraction layers that consist primarily of
+  registration/re-export churn are not acceptable as structural burn-down.
+- Companion shards created for burn-down must own real behavior, types,
+  helpers, or tests. Pure import/re-export/include indirection does not count
+  as architectural decomposition.
 
 ## 6. Promotion Criteria to Full Integrated Spec
 

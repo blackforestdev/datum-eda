@@ -1,5 +1,17 @@
 use super::*;
 use crate::cli_args::cli_args_board_component::BoardComponentArgs;
+use clap::ValueEnum;
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, ValueEnum)]
+#[value(rename_all = "snake_case")]
+pub(crate) enum NativeRoutePathCandidateAuthoredCopperGraphPolicy {
+    Plain,
+    ZoneAware,
+    ObstacleAware,
+    ZoneObstacleAware,
+    ZoneObstacleTopologyAware,
+    ZoneObstacleTopologyLayerBalanceAware,
+}
 
 #[derive(Subcommand)]
 pub(crate) enum NativeProjectQueryCommands {
@@ -209,10 +221,29 @@ pub(crate) enum NativeProjectQueryCommands {
         /// Target anchor pad UUID
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
+        /// Accepted authored-copper graph policy
+        #[arg(long = "policy", value_enum)]
+        policy: NativeRoutePathCandidateAuthoredCopperGraphPolicy,
     },
     /// Deterministic explanation for the current existing-authored-copper path candidate result
     #[command(name = "route-path-candidate-authored-copper-graph-explain")]
     RoutePathCandidateAuthoredCopperGraphExplain {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+        /// Accepted authored-copper graph policy
+        #[arg(long = "policy", value_enum)]
+        policy: NativeRoutePathCandidateAuthoredCopperGraphPolicy,
+    },
+    /// Deterministic path candidate using existing authored target-net copper plus exactly one eligible synthetic corridor-constrained gap
+    #[command(name = "route-path-candidate-authored-copper-plus-one-gap")]
+    RoutePathCandidateAuthoredCopperPlusOneGap {
         /// Net UUID
         #[arg(long = "net")]
         net: Uuid,

@@ -1,3 +1,7 @@
 use super::*;
-include!("command_exec_mods.rs");
+#[path = "command_exec_surface.rs"]
+mod command_exec_surface;
+#[path = "command_exec_entry.rs"]
+mod command_exec_entry;
+
 pub(crate) use self::command_exec_entry::execute_with_exit_code;

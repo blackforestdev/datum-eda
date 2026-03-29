@@ -5,12 +5,11 @@ fn unique_project_root(label: &str) -> PathBuf {
     std::env::temp_dir().join(format!("{}-{}", label, Uuid::new_v4()))
 }
 
-fn route_path_candidate_authored_copper_graph_explain_query_cli(
+fn route_path_candidate_authored_copper_plus_one_gap_query_cli(
     root: &Path,
     net_uuid: Uuid,
     from_anchor: Uuid,
     to_anchor: Uuid,
-    policy: &str,
 ) -> Cli {
     Cli::try_parse_from([
         "eda",
@@ -19,37 +18,34 @@ fn route_path_candidate_authored_copper_graph_explain_query_cli(
         "project",
         "query",
         root.to_str().unwrap(),
-        "route-path-candidate-authored-copper-graph-explain",
+        "route-path-candidate-authored-copper-plus-one-gap",
         "--net",
         &net_uuid.to_string(),
         "--from-anchor",
         &from_anchor.to_string(),
         "--to-anchor",
         &to_anchor.to_string(),
-        "--policy",
-        policy,
     ])
     .expect("CLI should parse")
 }
 
 #[test]
-fn project_query_route_path_candidate_authored_copper_graph_explain_reports_selected_path() {
-    let root = unique_project_root(
-        "datum-eda-cli-project-route-path-candidate-authored-copper-graph-explain",
-    );
+fn project_query_route_path_candidate_authored_copper_plus_one_gap_reports_deterministic_path() {
+    let root = unique_project_root("datum-eda-cli-project-route-path-candidate-authored-copper-plus-one-gap");
     create_native_project(
         &root,
-        Some("Route Path Candidate Authored Copper Graph Explain Demo".to_string()),
+        Some("Route Path Candidate Authored Copper Plus One Gap Demo".to_string()),
     )
     .expect("initial scaffold should succeed");
 
-    let target_net_uuid = Uuid::from_u128(0x3350);
-    let class_uuid = Uuid::from_u128(0x3351);
-    let package_a_uuid = Uuid::from_u128(0x3352);
-    let package_b_uuid = Uuid::from_u128(0x3353);
-    let anchor_a_uuid = Uuid::from_u128(0x3354);
-    let anchor_b_uuid = Uuid::from_u128(0x3355);
-    let track_uuid = Uuid::from_u128(0x3356);
+    let target_net_uuid = Uuid::from_u128(0xa200);
+    let class_uuid = Uuid::from_u128(0xa201);
+    let package_a_uuid = Uuid::from_u128(0xa202);
+    let package_b_uuid = Uuid::from_u128(0xa203);
+    let anchor_a_uuid = Uuid::from_u128(0xa204);
+    let anchor_b_uuid = Uuid::from_u128(0xa205);
+    let track_a_uuid = Uuid::from_u128(0xa206);
+    let track_b_uuid = Uuid::from_u128(0xa207);
     let board_json = root.join("board/board.json");
 
     std::fs::write(
@@ -58,8 +54,8 @@ fn project_query_route_path_candidate_authored_copper_graph_explain_reports_sele
             "{}\n",
             to_json_deterministic(&serde_json::json!({
                 "schema_version": 1,
-                "uuid": Uuid::from_u128(0x3357),
-                "name": "Route Path Candidate Authored Copper Graph Explain Demo Board",
+                "uuid": Uuid::from_u128(0xa208),
+                "name": "Route Path Candidate Authored Copper Plus One Gap Demo Board",
                 "stackup": {
                     "layers": [
                         { "id": 1, "name": "Top Copper", "layer_type": "Copper", "thickness_nm": 35000 }
@@ -68,9 +64,9 @@ fn project_query_route_path_candidate_authored_copper_graph_explain_reports_sele
                 "outline": {
                     "vertices": [
                         { "x": 0, "y": 0 },
-                        { "x": 5000000, "y": 0 },
-                        { "x": 5000000, "y": 3000000 },
-                        { "x": 0, "y": 3000000 }
+                        { "x": 2000000, "y": 0 },
+                        { "x": 2000000, "y": 1000000 },
+                        { "x": 0, "y": 1000000 }
                     ],
                     "closed": true
                 },
@@ -81,10 +77,10 @@ fn project_query_route_path_candidate_authored_copper_graph_explain_reports_sele
                         "package": package_a_uuid,
                         "name": "1",
                         "net": target_net_uuid,
-                        "position": { "x": 500000, "y": 600000 },
+                        "position": { "x": 100000, "y": 500000 },
                         "layer": 1,
                         "shape": "circle",
-                        "diameter": 450000,
+                        "diameter": 300000,
                         "width": 0,
                         "height": 0
                     },
@@ -93,21 +89,29 @@ fn project_query_route_path_candidate_authored_copper_graph_explain_reports_sele
                         "package": package_b_uuid,
                         "name": "1",
                         "net": target_net_uuid,
-                        "position": { "x": 4500000, "y": 2400000 },
+                        "position": { "x": 1900000, "y": 500000 },
                         "layer": 1,
                         "shape": "circle",
-                        "diameter": 450000,
+                        "diameter": 300000,
                         "width": 0,
                         "height": 0
                     }
                 },
                 "tracks": {
-                    track_uuid.to_string(): {
-                        "uuid": track_uuid,
+                    track_a_uuid.to_string(): {
+                        "uuid": track_a_uuid,
                         "net": target_net_uuid,
-                        "from": { "x": 500000, "y": 600000 },
-                        "to": { "x": 4500000, "y": 2400000 },
-                        "width": 200000,
+                        "from": { "x": 100000, "y": 500000 },
+                        "to": { "x": 700000, "y": 500000 },
+                        "width": 150000,
+                        "layer": 1
+                    },
+                    track_b_uuid.to_string(): {
+                        "uuid": track_b_uuid,
+                        "net": target_net_uuid,
+                        "from": { "x": 1300000, "y": 500000 },
+                        "to": { "x": 1900000, "y": 500000 },
+                        "width": 150000,
                         "layer": 1
                     }
                 },
@@ -125,7 +129,7 @@ fn project_query_route_path_candidate_authored_copper_graph_explain_reports_sele
                         "uuid": class_uuid,
                         "name": "Default",
                         "clearance": 150000,
-                        "track_width": 200000,
+                        "track_width": 150000,
                         "via_drill": 300000,
                         "via_diameter": 600000,
                         "diffpair_width": 0,
@@ -141,35 +145,34 @@ fn project_query_route_path_candidate_authored_copper_graph_explain_reports_sele
     )
     .expect("board file should write");
 
-    let output = execute(route_path_candidate_authored_copper_graph_explain_query_cli(
+    let output = execute(route_path_candidate_authored_copper_plus_one_gap_query_cli(
         &root,
         target_net_uuid,
         anchor_a_uuid,
         anchor_b_uuid,
-        "plain",
     ))
     .expect("query should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report should parse");
 
     assert_eq!(
         report["contract"],
-        "m5_route_path_candidate_authored_copper_graph_policy_explain_v1"
+        "m5_route_path_candidate_authored_copper_plus_one_gap_v1"
     );
     assert_eq!(report["persisted_native_board_state_only"], true);
-    assert_eq!(report["policy"], "plain");
     assert_eq!(report["status"], "deterministic_path_found");
-    assert_eq!(report["explanation_kind"], "deterministic_path_found");
-    assert_eq!(report["summary"]["candidate_track_count"], 1);
+    assert_eq!(report["summary"]["candidate_track_count"], 2);
     assert_eq!(report["summary"]["candidate_via_count"], 0);
-    assert_eq!(report["selected_path"]["steps"].as_array().unwrap().len(), 1);
-    assert_eq!(report["selected_path"]["steps"][0]["object_uuid"], track_uuid.to_string());
+    assert_eq!(report["summary"]["path_gap_step_count"], 1);
+    assert_eq!(report["path"]["steps"].as_array().unwrap().len(), 3);
+    assert_eq!(report["path"]["steps"][0]["object_uuid"], track_a_uuid.to_string());
+    assert_eq!(report["path"]["steps"][1]["object_uuid"], serde_json::Value::Null);
+    assert_eq!(report["path"]["steps"][2]["object_uuid"], track_b_uuid.to_string());
 
-    let repeated = execute(route_path_candidate_authored_copper_graph_explain_query_cli(
+    let repeated = execute(route_path_candidate_authored_copper_plus_one_gap_query_cli(
         &root,
         target_net_uuid,
         anchor_a_uuid,
         anchor_b_uuid,
-        "plain",
     ))
     .expect("repeat should succeed");
     assert_eq!(output, repeated);
@@ -180,25 +183,20 @@ fn project_query_route_path_candidate_authored_copper_graph_explain_reports_sele
             "project",
             "query",
             root.to_str().unwrap(),
-            "route-path-candidate-authored-copper-graph-explain",
+            "route-path-candidate-authored-copper-plus-one-gap",
             "--net",
             &target_net_uuid.to_string(),
             "--from-anchor",
             &anchor_a_uuid.to_string(),
             "--to-anchor",
             &anchor_b_uuid.to_string(),
-            "--policy",
-            "plain",
         ])
         .expect("CLI should parse"),
     )
     .expect("text query should succeed");
-    assert!(text_output.contains(
-        "contract: m5_route_path_candidate_authored_copper_graph_policy_explain_v1"
-    ));
-    assert!(text_output.contains("policy: plain"));
+    assert!(text_output.contains("contract: m5_route_path_candidate_authored_copper_plus_one_gap_v1"));
     assert!(text_output.contains("status: deterministic_path_found"));
-    assert!(text_output.contains("selected_path_steps: 1"));
+    assert!(text_output.contains("path_gap_steps: 1"));
 
     let _ = std::fs::remove_dir_all(&root);
 }

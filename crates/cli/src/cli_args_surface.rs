@@ -33,7 +33,9 @@ pub(crate) use self::cli_args_project_command_args_board::*;
 pub(crate) use self::cli_args_project_command_args_schematic_connectivity::*;
 pub(crate) use self::cli_args_project_command_args_schematic_symbols::*;
 pub(crate) use self::cli_args_project_commands::ProjectCommands;
-pub(crate) use self::cli_args_project_query_plan::{NativeProjectQueryCommands, PlanCommands};
+pub(crate) use self::cli_args_project_query_plan::{
+    NativeProjectQueryCommands, NativeRoutePathCandidateAuthoredCopperGraphPolicy, PlanCommands,
+};
 
 #[derive(Clone, clap::ValueEnum)]
 pub(crate) enum NativeLabelKindArg {

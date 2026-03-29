@@ -27,7 +27,54 @@ use eda_engine::schematic::{
 use eda_engine::{board::Airwire, board::BoardNetInfo, board::ComponentInfo};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-include!("main_surface.rs");
+
+mod cli_args;
+mod command_exec;
+mod command_modify;
+mod command_plan;
+mod command_project;
+mod command_query;
+mod main_board_component;
+mod main_drill;
+mod main_forward_annotation;
+mod main_forward_annotation_audit_views;
+mod main_forward_annotation_reports;
+mod main_forward_annotation_views;
+mod main_gerber_views;
+mod main_gerber_inspect;
+mod main_gerber_mechanical;
+mod main_gerber_set;
+mod main_gerber_silkscreen;
+mod main_inspect;
+mod main_inventory;
+mod main_import_report;
+mod main_manufacturing;
+mod main_modify;
+mod main_project;
+mod main_summary;
+
+use cli_args::*;
+use command_plan::*;
+use command_project::*;
+use command_query::*;
+pub(crate) use main_board_component::*;
+pub(crate) use main_drill::*;
+pub(crate) use main_forward_annotation::*;
+pub(crate) use main_forward_annotation_audit_views::*;
+pub(crate) use main_forward_annotation_reports::*;
+pub(crate) use main_forward_annotation_views::*;
+pub(crate) use main_gerber_views::*;
+pub(crate) use main_gerber_inspect::*;
+pub(crate) use main_gerber_mechanical::*;
+pub(crate) use main_gerber_set::*;
+pub(crate) use main_gerber_silkscreen::*;
+pub(crate) use main_inspect::*;
+pub(crate) use main_inventory::*;
+pub(crate) use main_import_report::*;
+pub(crate) use main_manufacturing::*;
+pub(crate) use main_modify::*;
+pub(crate) use main_project::*;
+pub(crate) use main_summary::*;
 
 fn main() {
     match run() {
@@ -63,91 +110,7 @@ struct NativeProjectRulesView {
     rules: Vec<serde_json::Value>,
 }
 
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationProposalView {
-    domain: &'static str,
-    total_actions: usize,
-    add_component_actions: usize,
-    remove_component_actions: usize,
-    update_component_actions: usize,
-    add_component_group: Vec<NativeProjectForwardAnnotationProposalActionView>,
-    remove_component_group: Vec<NativeProjectForwardAnnotationProposalActionView>,
-    update_component_group: Vec<NativeProjectForwardAnnotationProposalActionView>,
-    actions: Vec<NativeProjectForwardAnnotationProposalActionView>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct NativeProjectForwardAnnotationProposalActionView {
-    action_id: String,
-    action: String,
-    reference: String,
-    symbol_uuid: Option<String>,
-    component_uuid: Option<String>,
-    reason: String,
-    schematic_value: Option<String>,
-    board_value: Option<String>,
-    schematic_part_uuid: Option<String>,
-    board_part_uuid: Option<String>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationReviewView {
-    domain: &'static str,
-    total_reviews: usize,
-    deferred_actions: usize,
-    rejected_actions: usize,
-    actions: Vec<NativeProjectForwardAnnotationReviewActionView>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct NativeProjectForwardAnnotationReviewActionView {
-    action_id: String,
-    decision: String,
-    proposal_action: String,
-    reference: String,
-    reason: String,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationReviewReportView {
-    action: String,
-    action_id: String,
-    decision: String,
-    proposal_action: String,
-    reference: String,
-    reason: String,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationApplyReportView {
-    action: String,
-    action_id: String,
-    proposal_action: String,
-    reason: String,
-    component_report: NativeProjectBoardComponentMutationReportView,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationBatchApplySkippedActionView {
-    action_id: String,
-    proposal_action: String,
-    reference: String,
-    reason: String,
-    skip_reason: String,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationBatchApplyReportView {
-    action: String,
-    domain: &'static str,
-    proposal_actions: usize,
-    applied_actions: usize,
-    skipped_deferred_actions: usize,
-    skipped_rejected_actions: usize,
-    skipped_requires_input_actions: usize,
-    applied: Vec<NativeProjectForwardAnnotationApplyReportView>,
-    skipped: Vec<NativeProjectForwardAnnotationBatchApplySkippedActionView>,
-}
+pub(crate) use main_forward_annotation_reports::*;
 
 #[derive(Debug, Clone, Serialize)]
 struct NativeProjectLabelMutationReportView {

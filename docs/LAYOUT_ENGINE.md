@@ -111,18 +111,26 @@ explanation surface for that generalized chain contract, reporting the selected
 authored via chain when found or whether failure came from no matching chain
 versus all matching chains blocked, using only existing authored-via-chain/path
 facts without adding new routing semantics.
-`route-path-candidate-authored-copper-graph` is the next capability slice in
-that family: it no longer synthesizes candidate transitions, but instead reads
-back one deterministic existing-copper path over persisted target-net tracks
-and vias only. Selection is by minimum authored-copper graph step count with a
-stable lexicographic tie-break from the sorted graph traversal; it still does
-not invent geometry, create copper, or open autorouting behavior.
-`route-path-candidate-authored-copper-graph-explain` is the paired read-only
-explanation surface for that existing-copper graph contract, reporting the
-selected existing-copper path when found or explicit
+`route-path-candidate-authored-copper-graph --policy <policy>` is now the
+preferred generalized surface for this family. The accepted bounded policy set
+is `plain`, `zone_aware`, `obstacle_aware`, `zone_obstacle_aware`,
+`zone_obstacle_topology_aware`, and
+`zone_obstacle_topology_layer_balance_aware`; each policy dispatches to the
+already-proven deterministic persisted-state contract rather than introducing
+new pathfinding semantics.
+`route-path-candidate-authored-copper-graph-explain --policy <policy>` is the
+paired read-only explanation surface for that generalized existing-copper graph
+contract. It preserves the accepted bounded policy set and reports the selected
+existing-copper path when found or explicit
 `no_existing_authored_copper_path` when the persisted target-net copper graph
 does not connect the requested anchors, using only existing graph/path facts
 without adding new routing semantics.
+`route-path-candidate-authored-copper-plus-one-gap` is the first routing-facing
+bridge beyond pure authored-copper readback: it allows exactly one synthetic
+same-layer gap segment between persisted target-net authored-copper subpaths.
+The gap remains deterministic and persisted-state-only because eligibility is
+checked entirely through the existing obstacle-truth segment analysis and
+candidate copper layer facts.
 `route-path-candidate-authored-copper-graph-zone-aware` is the next thin
 capability slice in that family: it extends the persisted authored-copper
 graph with target-net zone continuity on-layer, allowing deterministic path

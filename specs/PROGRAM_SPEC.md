@@ -36,6 +36,9 @@ Precedence rules:
 Status tracking rule:
 - `specs/PROGRESS.md` is the sole source of truth for implementation status.
 - This file defines milestone contracts and non-goals only.
+- `specs/PROGRESS.md` should remain a compact milestone/checkpoint/frontier
+  tracker; slice-by-slice ledgers and detailed adjacent-contract history belong
+  in milestone shard docs such as `specs/progress/*.md`.
 
 ## Scope Integrity Terms
 
