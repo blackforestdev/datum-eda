@@ -201,6 +201,42 @@ Current live slice:
   This slice remains read-only and does not perform pathfinding, route
   proposal, or any scoring/inference beyond the persisted geometry already
   present in native state.
+- `eda project query <dir> route-path-candidate --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid>` now reports a deterministic single-layer
+  point-to-point path result for one authored anchor pair under that existing
+  corridor/span model, selecting the first unblocked matching corridor span in
+  corridor report order and returning that selected span geometry as the
+  ordered polyline, or explicit `no_path_under_current_authored_constraints`,
+  without introducing layer transitions, ranking, or proposal behavior.
+- `eda project query <dir> route-path-candidate-explain --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports the current
+  single-layer path-candidate result as a deterministic explanation surface:
+  selected span when found, or whether failure came from no matching corridor
+  span versus all matching spans blocked, using only existing corridor/path
+  facts without adding routing semantics.
+- `eda project query <dir> route-path-candidate-via --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a deterministic
+  point-to-point path candidate that may reuse one already-authored persisted
+  via only. It does not create vias or infer transition permissions.
+- `eda project query <dir> route-path-candidate-two-via --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a deterministic
+  point-to-point path candidate that may reuse exactly two already-authored
+  persisted vias only, selected by explicit ascending `(via_a_uuid, via_b_uuid)`
+  order when their layer sequence connects the requested anchor layers through
+  one intermediate copper layer. It does not create vias or infer transition
+  permissions.
+- `eda project query <dir> route-path-candidate-two-via-explain --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports the current
+  two-via path-candidate result as a deterministic explanation surface:
+  selected via pair when found, or whether failure came from no matching
+  authored via pair versus all matching via pairs blocked, using only existing
+  two-via/path facts without adding new routing semantics.
+- `eda project query <dir> route-path-candidate-via-explain --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports the current
+  single-via path-candidate result as a deterministic explanation surface:
+  selected via when found, or whether failure came from no matching authored
+  via versus all matching vias blocked, using only existing via/path facts
+  without adding new transition semantics.
 - `eda project query <dir> board-components` reads back the persisted native
   placed-package inventory from `board/board.json`, including per-component
   presence flags plus the currently materialized silkscreen subset counts and

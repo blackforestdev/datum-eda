@@ -29,6 +29,36 @@ Traditional algorithms are not replaced. They are subsumed into a
 properly-formalized constraint pipeline with placement/routing
 co-optimization and an AI strategy layer on top.
 
+Current accepted M5 kernel boundary stays narrower than the long-term thesis:
+persisted-state `routing-substrate`, `route-preflight`, `route-corridor`, and
+single-layer `route-path-candidate` are deterministic read-only
+routing-kernel primitives, not full router behavior. `route-path-candidate`
+selects the first unblocked matching corridor span in corridor report order
+(candidate copper layer order, then pair index) and emits that selected span
+geometry directly. `route-path-candidate-explain` is the paired read-only
+explanation surface for that contract, reporting selected-span or blocked/no-
+match reasons without adding new path semantics. This accepted chain is the
+current intentional M5 checkpoint boundary; any next routing-semantic contract
+should be opened only by a separate explicit planning decision.
+`route-path-candidate-via` is the next reopened M5 slice and stays narrow as
+well: it may reuse one already-authored persisted via under an explicit
+ascending-UUID selection rule, but it does not create vias, infer transition
+permissions, or open general multilayer routing.
+`route-path-candidate-two-via` extends that same contract family by allowing
+exactly two already-authored persisted vias under an explicit ascending
+`(via_a_uuid, via_b_uuid)` rule when they connect the requested anchor layers
+through one intermediate copper layer. It still does not create vias, infer
+transition permissions, or open free multilayer search.
+`route-path-candidate-two-via-explain` is the paired read-only explanation
+surface for that two-via contract, reporting the selected via pair when found
+or whether failure came from no matching authored via pair versus all matching
+via pairs blocked, using only existing two-via/path facts without adding new
+routing semantics.
+`route-path-candidate-via-explain` is the paired read-only explanation surface
+for that via contract, reporting the selected via when found or whether failure
+came from no matching authored via versus all matching vias blocked, using only
+existing via/path blockage facts without adding new transition semantics.
+
 ---
 
 ## 1. Problem Formulation

@@ -162,6 +162,104 @@ pub(super) fn execute_native_project_query_command(
             };
             Ok((output, 0))
         }
+        NativeProjectQueryCommands::RoutePathCandidate {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report =
+                query_native_project_route_path_candidate(&path, net, from_anchor, to_anchor)?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_route_path_candidate_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateVia {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report =
+                query_native_project_route_path_candidate_via(&path, net, from_anchor, to_anchor)?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_route_path_candidate_via_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateTwoVia {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report = query_native_project_route_path_candidate_two_via(
+                &path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_route_path_candidate_two_via_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateTwoViaExplain {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report = query_native_project_route_path_candidate_two_via_explain(
+                &path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_two_via_explain_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateViaExplain {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report = query_native_project_route_path_candidate_via_explain(
+                &path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_via_explain_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePathCandidateExplain {
+            net,
+            from_anchor,
+            to_anchor,
+        } => {
+            let report = query_native_project_route_path_candidate_explain(
+                &path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_route_path_candidate_explain_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
         NativeProjectQueryCommands::BoardComponents => {
             let report = query_native_project_board_component_views(&path)?;
             Ok((render_output(format, &report), 0))

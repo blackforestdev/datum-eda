@@ -80,6 +80,84 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "net")]
         net: Uuid,
     },
+    /// Deterministic single-layer path candidate for one authored anchor pair
+    #[command(name = "route-path-candidate")]
+    RoutePathCandidate {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic single-via path candidate reusing one authored target-net via
+    #[command(name = "route-path-candidate-via")]
+    RoutePathCandidateVia {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic two-via path candidate reusing exactly two authored target-net vias
+    #[command(name = "route-path-candidate-two-via")]
+    RoutePathCandidateTwoVia {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic explanation for the current two-via path candidate result
+    #[command(name = "route-path-candidate-two-via-explain")]
+    RoutePathCandidateTwoViaExplain {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic explanation for the current single-via path candidate result
+    #[command(name = "route-path-candidate-via-explain")]
+    RoutePathCandidateViaExplain {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic explanation for the current single-layer path candidate result
+    #[command(name = "route-path-candidate-explain")]
+    RoutePathCandidateExplain {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
     /// Current native board placed packages/components
     BoardComponents,
     /// Current native board component for one component UUID

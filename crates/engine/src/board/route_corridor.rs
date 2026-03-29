@@ -4,12 +4,9 @@ use uuid::Uuid;
 
 use crate::board::{
     Board, RoutePreflightAnchor, RoutePreflightConstraintFacts, RoutePreflightStatus, StackupLayer,
-    Track, Via, Zone,
-    polygon::{
-        point_in_polygon, point_to_segment_distance_nm, segment_escapes_polygon,
-        segment_intersects_polygon, segment_intersects_segment,
-    },
 };
+
+use super::route_segment_blockage::analyze_route_segment;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -164,177 +161,20 @@ fn corridor_geometry(
     let mut spans = Vec::new();
     let anchor_pairs = anchor_pairs(anchors);
 
-    let foreign_tracks = sorted_foreign_tracks(board, net_uuid);
-    let foreign_vias = sorted_foreign_vias(board, net_uuid);
-    let foreign_zones = sorted_foreign_zones(board, net_uuid);
-
     for layer in candidate_copper_layers {
         for (pair_index, (from_anchor, to_anchor)) in anchor_pairs.iter().enumerate() {
-            let mut blockages = Vec::new();
             let span_from = from_anchor.position;
             let span_to = to_anchor.position;
-
-            for keepout in board.keepouts.iter().filter(|keepout| keepout.layers.contains(&layer.id)) {
-                if segment_intersects_polygon(span_from, span_to, &keepout.polygon) {
-                    let reason = format!(
-                        "span {} on layer {} crosses keepout {}",
-                        pair_index, layer.id, keepout.kind
-                    );
-                    blockages.push(RouteCorridorSpanBlockage {
-                        kind: RouteCorridorObstacleKind::Keepout,
-                        object_uuid: Some(keepout.uuid),
-                        layer: Some(layer.id),
-                        reason: reason.clone(),
-                    });
-                    obstacles.push(RouteCorridorObstacleGeometry {
-                        kind: RouteCorridorObstacleKind::Keepout,
-                        object_uuid: Some(keepout.uuid),
-                        layer: Some(layer.id),
-                        net_uuid: None,
-                        net_name: None,
-                        polygon: Some(keepout.polygon.clone()),
-                        from: None,
-                        to: None,
-                        position: None,
-                        diameter_nm: None,
-                        reason,
-                    });
-                }
-            }
-
-            for track in foreign_tracks.iter().filter(|track| track.layer == layer.id) {
-                if segment_intersects_segment(span_from, span_to, track.from, track.to) {
-                    let net_name = board.nets.get(&track.net).map(|net| net.name.clone());
-                    let reason = format!(
-                        "span {} on layer {} crosses foreign track {}",
-                        pair_index, layer.id, track.uuid
-                    );
-                    blockages.push(RouteCorridorSpanBlockage {
-                        kind: RouteCorridorObstacleKind::ForeignTrack,
-                        object_uuid: Some(track.uuid),
-                        layer: Some(layer.id),
-                        reason: reason.clone(),
-                    });
-                    obstacles.push(RouteCorridorObstacleGeometry {
-                        kind: RouteCorridorObstacleKind::ForeignTrack,
-                        object_uuid: Some(track.uuid),
-                        layer: Some(layer.id),
-                        net_uuid: Some(track.net),
-                        net_name,
-                        polygon: None,
-                        from: Some(track.from),
-                        to: Some(track.to),
-                        position: None,
-                        diameter_nm: Some(track.width),
-                        reason,
-                    });
-                }
-            }
-
-            for via in foreign_vias
-                .iter()
-                .filter(|via| layer.id >= via.from_layer && layer.id <= via.to_layer)
-            {
-                if point_to_segment_distance_nm(via.position, span_from, span_to)
-                    <= via.diameter / 2
-                {
-                    let net_name = board.nets.get(&via.net).map(|net| net.name.clone());
-                    let reason = format!(
-                        "span {} on layer {} intersects foreign via {}",
-                        pair_index, layer.id, via.uuid
-                    );
-                    blockages.push(RouteCorridorSpanBlockage {
-                        kind: RouteCorridorObstacleKind::ForeignVia,
-                        object_uuid: Some(via.uuid),
-                        layer: Some(layer.id),
-                        reason: reason.clone(),
-                    });
-                    obstacles.push(RouteCorridorObstacleGeometry {
-                        kind: RouteCorridorObstacleKind::ForeignVia,
-                        object_uuid: Some(via.uuid),
-                        layer: Some(layer.id),
-                        net_uuid: Some(via.net),
-                        net_name,
-                        polygon: None,
-                        from: None,
-                        to: None,
-                        position: Some(via.position),
-                        diameter_nm: Some(via.diameter),
-                        reason,
-                    });
-                }
-            }
-
-            for zone in foreign_zones.iter().filter(|zone| zone.layer == layer.id) {
-                if segment_intersects_polygon(span_from, span_to, &zone.polygon) {
-                    let net_name = board.nets.get(&zone.net).map(|net| net.name.clone());
-                    let reason = format!(
-                        "span {} on layer {} crosses foreign zone {}",
-                        pair_index, layer.id, zone.uuid
-                    );
-                    blockages.push(RouteCorridorSpanBlockage {
-                        kind: RouteCorridorObstacleKind::ForeignZone,
-                        object_uuid: Some(zone.uuid),
-                        layer: Some(layer.id),
-                        reason: reason.clone(),
-                    });
-                    obstacles.push(RouteCorridorObstacleGeometry {
-                        kind: RouteCorridorObstacleKind::ForeignZone,
-                        object_uuid: Some(zone.uuid),
-                        layer: Some(layer.id),
-                        net_uuid: Some(zone.net),
-                        net_name,
-                        polygon: Some(zone.polygon.clone()),
-                        from: None,
-                        to: None,
-                        position: None,
-                        diameter_nm: None,
-                        reason,
-                    });
-                }
-            }
-
-            if !point_in_polygon(span_from, &board.outline)
-                || !point_in_polygon(span_to, &board.outline)
-                || segment_escapes_polygon(span_from, span_to, &board.outline)
-            {
-                let reason = format!(
-                    "span {} on layer {} leaves the board outline",
-                    pair_index, layer.id
-                );
-                blockages.push(RouteCorridorSpanBlockage {
-                    kind: RouteCorridorObstacleKind::OutsideOutline,
-                    object_uuid: None,
-                    layer: Some(layer.id),
-                    reason: reason.clone(),
-                });
-                obstacles.push(RouteCorridorObstacleGeometry {
-                    kind: RouteCorridorObstacleKind::OutsideOutline,
-                    object_uuid: None,
-                    layer: Some(layer.id),
-                    net_uuid: None,
-                    net_name: None,
-                    polygon: Some(board.outline.clone()),
-                    from: None,
-                    to: None,
-                    position: None,
-                    diameter_nm: None,
-                    reason,
-                });
-            }
-
-            blockages.sort_by(|a, b| {
-                a.kind
-                    .cmp(&b.kind)
-                    .then_with(|| a.object_uuid.cmp(&b.object_uuid))
-                    .then_with(|| a.reason.cmp(&b.reason))
-            });
-            blockages.dedup_by(|a, b| {
-                a.kind == b.kind
-                    && a.object_uuid == b.object_uuid
-                    && a.layer == b.layer
-                    && a.reason == b.reason
-            });
+            let analysis = analyze_route_segment(
+                board,
+                net_uuid,
+                layer.id,
+                span_from,
+                span_to,
+                &format!("span {} on layer {}", pair_index, layer.id),
+            );
+            let blockages = analysis.blockages;
+            obstacles.extend(analysis.obstacles);
 
             spans.push(RouteCorridorSpan {
                 pair_index,
@@ -365,37 +205,4 @@ fn corridor_geometry(
     spans.sort_by(|a, b| a.layer.cmp(&b.layer).then_with(|| a.pair_index.cmp(&b.pair_index)));
 
     (obstacles, spans)
-}
-
-fn sorted_foreign_tracks(board: &Board, target_net_uuid: Uuid) -> Vec<Track> {
-    let mut tracks = board
-        .tracks
-        .values()
-        .filter(|track| track.net != target_net_uuid)
-        .cloned()
-        .collect::<Vec<_>>();
-    tracks.sort_by(|a, b| a.uuid.cmp(&b.uuid));
-    tracks
-}
-
-fn sorted_foreign_vias(board: &Board, target_net_uuid: Uuid) -> Vec<Via> {
-    let mut vias = board
-        .vias
-        .values()
-        .filter(|via| via.net != target_net_uuid)
-        .cloned()
-        .collect::<Vec<_>>();
-    vias.sort_by(|a, b| a.uuid.cmp(&b.uuid));
-    vias
-}
-
-fn sorted_foreign_zones(board: &Board, target_net_uuid: Uuid) -> Vec<Zone> {
-    let mut zones = board
-        .zones
-        .values()
-        .filter(|zone| zone.net != target_net_uuid)
-        .cloned()
-        .collect::<Vec<_>>();
-    zones.sort_by(|a, b| a.uuid.cmp(&b.uuid));
-    zones
 }

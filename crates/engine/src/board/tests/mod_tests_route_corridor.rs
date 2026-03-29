@@ -259,3 +259,157 @@ fn route_corridor_detects_foreign_zone_crossing_with_segment_polygon_truth_bound
             matches!(entry.kind, RouteCorridorObstacleKind::ForeignZone)
         })));
 }
+
+#[test]
+fn route_corridor_detects_concave_foreign_zone_crossing() {
+    let (mut board, net_uuid, other_net_uuid, _, _, _) = demo_board();
+    for layer in [1, 3] {
+        let zone_uuid = Uuid::new_v4();
+        board.zones.insert(
+            zone_uuid,
+            Zone {
+                uuid: zone_uuid,
+                net: other_net_uuid,
+                polygon: Polygon::new(vec![
+                    Point::new(400_000, 200_000),
+                    Point::new(800_000, 200_000),
+                    Point::new(800_000, 400_000),
+                    Point::new(600_000, 400_000),
+                    Point::new(600_000, 800_000),
+                    Point::new(400_000, 800_000),
+                ]),
+                layer,
+                priority: 1,
+                thermal_relief: true,
+                thermal_gap: 150_000,
+                thermal_spoke_width: 120_000,
+            },
+        );
+    }
+
+    let report = board.route_corridor(net_uuid).expect("net should exist");
+
+    assert_eq!(report.status, RouteCorridorStatus::CorridorBlocked);
+    assert_eq!(report.summary.blocked_span_count, 2);
+    assert!(report.corridor_spans.iter().all(|span| {
+        span.blockages
+            .iter()
+            .any(|entry| matches!(entry.kind, RouteCorridorObstacleKind::ForeignZone))
+    }));
+}
+
+#[test]
+fn route_corridor_sorts_and_deduplicates_blockages_deterministically() {
+    let (mut board, net_uuid, other_net_uuid, _, _, _) = demo_board();
+    let duplicated_keepout_uuid = Uuid::from_u128(0x900);
+    board.keepouts.push(Keepout {
+        uuid: duplicated_keepout_uuid,
+        polygon: Polygon::new(vec![
+            Point::new(450_000, 450_000),
+            Point::new(550_000, 450_000),
+            Point::new(550_000, 550_000),
+            Point::new(450_000, 550_000),
+        ]),
+        layers: vec![1],
+        kind: "route".into(),
+    });
+    board.keepouts.push(Keepout {
+        uuid: duplicated_keepout_uuid,
+        polygon: Polygon::new(vec![
+            Point::new(450_000, 450_000),
+            Point::new(550_000, 450_000),
+            Point::new(550_000, 550_000),
+            Point::new(450_000, 550_000),
+        ]),
+        layers: vec![1],
+        kind: "route".into(),
+    });
+
+    let foreign_track_uuid = Uuid::from_u128(0x901);
+    board.tracks.insert(
+        foreign_track_uuid,
+        Track {
+            uuid: foreign_track_uuid,
+            net: other_net_uuid,
+            from: Point::new(300_000, 300_000),
+            to: Point::new(300_000, 700_000),
+            width: 150_000,
+            layer: 1,
+        },
+    );
+
+    let foreign_via_uuid = Uuid::from_u128(0x902);
+    board.vias.insert(
+        foreign_via_uuid,
+        Via {
+            uuid: foreign_via_uuid,
+            net: other_net_uuid,
+            position: Point::new(700_000, 700_000),
+            drill: 300_000,
+            diameter: 600_000,
+            from_layer: 1,
+            to_layer: 3,
+        },
+    );
+
+    let foreign_zone_uuid = Uuid::from_u128(0x903);
+    board.zones.insert(
+        foreign_zone_uuid,
+        Zone {
+            uuid: foreign_zone_uuid,
+            net: other_net_uuid,
+            polygon: Polygon::new(vec![
+                Point::new(600_000, 200_000),
+                Point::new(800_000, 200_000),
+                Point::new(800_000, 800_000),
+                Point::new(600_000, 800_000),
+            ]),
+            layer: 1,
+            priority: 1,
+            thermal_relief: true,
+            thermal_gap: 150_000,
+            thermal_spoke_width: 120_000,
+        },
+    );
+
+    let report = board.route_corridor(net_uuid).expect("net should exist");
+    let top_span = report
+        .corridor_spans
+        .iter()
+        .find(|span| span.layer == 1)
+        .expect("top span should exist");
+
+    assert_eq!(
+        top_span
+            .blockages
+            .iter()
+            .map(|entry| entry.kind.clone())
+            .collect::<Vec<_>>(),
+        vec![
+            RouteCorridorObstacleKind::Keepout,
+            RouteCorridorObstacleKind::ForeignTrack,
+            RouteCorridorObstacleKind::ForeignVia,
+            RouteCorridorObstacleKind::ForeignZone,
+        ]
+    );
+    assert_eq!(
+        top_span
+            .blockages
+            .iter()
+            .filter(|entry| entry.kind == RouteCorridorObstacleKind::Keepout)
+            .count(),
+        1
+    );
+    assert_eq!(
+        report
+            .authored_obstacle_geometry
+            .iter()
+            .filter(|entry| {
+                entry.kind == RouteCorridorObstacleKind::Keepout
+                    && entry.object_uuid == Some(duplicated_keepout_uuid)
+                    && entry.layer == Some(1)
+            })
+            .count(),
+        1
+    );
+}

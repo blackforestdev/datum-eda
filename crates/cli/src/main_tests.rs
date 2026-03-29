@@ -305,6 +305,18 @@ mod main_tests_project_query;
 mod main_tests_project_route_preflight;
 #[path = "main_tests_project_route_corridor.rs"]
 mod main_tests_project_route_corridor;
+#[path = "main_tests_project_route_path_candidate.rs"]
+mod main_tests_project_route_path_candidate;
+#[path = "main_tests_project_route_path_candidate_via.rs"]
+mod main_tests_project_route_path_candidate_via;
+#[path = "main_tests_project_route_path_candidate_two_via.rs"]
+mod main_tests_project_route_path_candidate_two_via;
+#[path = "main_tests_project_route_path_candidate_two_via_explain.rs"]
+mod main_tests_project_route_path_candidate_two_via_explain;
+#[path = "main_tests_project_route_path_candidate_via_explain.rs"]
+mod main_tests_project_route_path_candidate_via_explain;
+#[path = "main_tests_project_route_path_candidate_explain.rs"]
+mod main_tests_project_route_path_candidate_explain;
 #[path = "main_tests_project_routing_substrate.rs"]
 mod main_tests_project_routing_substrate;
 #[path = "main_tests_project_symbol.rs"]

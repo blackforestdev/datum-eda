@@ -436,6 +436,51 @@ Status: [~] In progress
   copper layers as `route-preflight` while adding deterministic authored
   obstacle geometry plus available/blocked corridor spans without entering
   route search or path scoring.
+- Current path slice (2026-03-28): `project query <dir> route-path-candidate
+  --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` reports a
+  deterministic single-layer point-to-point path result for one authored
+  anchor pair under the existing corridor/span model, returning exactly
+  `deterministic_path_found` with one ordered polyline taken directly from the
+  first unblocked matching corridor span in corridor report order, or
+  `no_path_under_current_authored_constraints`.
+- Current explanation slice (2026-03-28): `project query <dir>
+  route-path-candidate-explain --net <uuid> --from-anchor <pad_uuid>
+  --to-anchor <pad_uuid>` reports the current single-layer path-candidate
+  result as a deterministic explanation surface, including selected span when
+  found or explicit no-match/all-blocked cause buckets from existing
+  corridor/path facts only.
+- Current M5 checkpoint boundary (2026-03-28): the accepted deterministic
+  read-only kernel chain is `routing-substrate` -> `route-preflight` ->
+  `route-corridor` -> `route-path-candidate` ->
+  `route-path-candidate-explain`. This state is intentionally checkpointed;
+  the next contract is not opened implicitly from here.
+- Next planning question after this checkpoint is explicit and separate:
+  either stop M5 here temporarily or open one new tightly-scoped contract in a
+  later planning step.
+- Current reopened slice (2026-03-29): `project query <dir>
+  route-path-candidate-via --net <uuid> --from-anchor <pad_uuid>
+  --to-anchor <pad_uuid>` reports a deterministic point-to-point path
+  candidate that reuses one already-authored persisted via only, chosen by an
+  explicit ascending-UUID via selection rule with no invented transition
+  permissions.
+- Current follow-on explanation slice (2026-03-29): `project query <dir>
+  route-path-candidate-via-explain --net <uuid> --from-anchor <pad_uuid>
+  --to-anchor <pad_uuid>` reports the current selected via when found, or
+  whether failure came from no matching authored via versus all matching vias
+  blocked, using only existing via/path facts from the accepted via slice.
+- Current reopened capability slice (2026-03-29): `project query <dir>
+  route-path-candidate-two-via --net <uuid> --from-anchor <pad_uuid>
+  --to-anchor <pad_uuid>` reports a deterministic point-to-point path
+  candidate that reuses exactly two already-authored persisted vias only,
+  chosen by an explicit ascending `(via_a_uuid, via_b_uuid)` rule when their
+  layer sequence connects the requested anchor layers through one intermediate
+  copper layer.
+- Current follow-on explanation slice (2026-03-29): `project query <dir>
+  route-path-candidate-two-via-explain --net <uuid> --from-anchor <pad_uuid>
+  --to-anchor <pad_uuid>` reports the current selected via pair when found, or
+  whether failure came from no matching authored via pair versus all matching
+  via pairs blocked, using only existing two-via/path facts from the accepted
+  two-via slice.
 - Acceptance checks for the opening slice:
   - deterministic repeated output on unchanged persisted state
   - no pool re-resolution or live import-session dependence

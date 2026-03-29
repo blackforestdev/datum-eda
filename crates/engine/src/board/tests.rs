@@ -12,3 +12,21 @@ mod route_preflight;
 
 #[path = "tests/mod_tests_route_corridor.rs"]
 mod route_corridor;
+
+#[path = "tests/mod_tests_route_path_candidate.rs"]
+mod route_path_candidate;
+
+#[path = "tests/mod_tests_route_path_candidate_explain.rs"]
+mod route_path_candidate_explain;
+
+#[path = "tests/mod_tests_route_path_candidate_via.rs"]
+mod route_path_candidate_via;
+
+#[path = "tests/mod_tests_route_path_candidate_two_via.rs"]
+mod route_path_candidate_two_via;
+
+#[path = "tests/mod_tests_route_path_candidate_two_via_explain.rs"]
+mod route_path_candidate_two_via_explain;
+
+#[path = "tests/mod_tests_route_path_candidate_via_explain.rs"]
+mod route_path_candidate_via_explain;

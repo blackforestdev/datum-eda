@@ -1,6 +1,6 @@
 use super::*;
 use crate::board::{BoardText, PadShape, PlacedPad, Track, Via, Zone};
-use crate::ir::geometry::Point;
+use crate::ir::geometry::{Point, Polygon};
 
 #[test]
 fn render_rs274x_outline_closed_polygon() {

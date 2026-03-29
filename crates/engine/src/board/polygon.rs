@@ -58,7 +58,26 @@ pub(super) fn segment_intersects_segment(a0: Point, a1: Point, b0: Point, b1: Po
 }
 
 pub(super) fn segment_escapes_polygon(from: Point, to: Point, polygon: &Polygon) -> bool {
-    !point_in_polygon(midpoint(from, to), polygon) && segment_intersects_polygon(from, to, polygon)
+    if !point_in_or_on_polygon(from, polygon) || !point_in_or_on_polygon(to, polygon) {
+        return true;
+    }
+
+    let mut crossings = vec![0.0, 1.0];
+    for (edge_from, edge_to) in polygon_edges(polygon) {
+        crossings.extend(segment_edge_crossing_parameters(from, to, edge_from, edge_to));
+    }
+    crossings.sort_by(|a, b| a.total_cmp(b));
+    crossings.dedup_by(|a, b| (*a - *b).abs() <= 1e-9);
+
+    crossings.windows(2).any(|window| {
+        let start = window[0];
+        let end = window[1];
+        if end - start <= 1e-9 {
+            return false;
+        }
+        let sample = point_at(from, to, (start + end) / 2.0);
+        !point_in_or_on_polygon(sample, polygon)
+    })
 }
 
 pub(super) fn polygon_escapes_polygon(candidate: &Polygon, boundary: &Polygon) -> bool {
@@ -111,6 +130,14 @@ fn segments_intersect(a0: Point, a1: Point, b0: Point, b1: Point) -> bool {
         || (o4 == 0 && point_on_segment(a1, b0, b1))
 }
 
+fn point_in_or_on_polygon(point: Point, polygon: &Polygon) -> bool {
+    point_in_polygon(point, polygon) || point_on_polygon_boundary(point, polygon)
+}
+
+fn point_on_polygon_boundary(point: Point, polygon: &Polygon) -> bool {
+    polygon_edges(polygon).any(|(from, to)| orientation(from, to, point) == 0 && point_on_segment(point, from, to))
+}
+
 fn point_on_segment(point: Point, from: Point, to: Point) -> bool {
     point.x >= from.x.min(to.x)
         && point.x <= from.x.max(to.x)
@@ -129,6 +156,74 @@ fn orientation(a: Point, b: Point, c: Point) -> i32 {
     }
 }
 
-fn midpoint(a: Point, b: Point) -> Point {
-    Point::new((a.x + b.x) / 2, (a.y + b.y) / 2)
+fn segment_edge_crossing_parameters(
+    from: Point,
+    to: Point,
+    edge_from: Point,
+    edge_to: Point,
+) -> Vec<f64> {
+    let p = (from.x as f64, from.y as f64);
+    let r = ((to.x - from.x) as f64, (to.y - from.y) as f64);
+    let q = (edge_from.x as f64, edge_from.y as f64);
+    let s = (
+        (edge_to.x - edge_from.x) as f64,
+        (edge_to.y - edge_from.y) as f64,
+    );
+    let r_cross_s = cross(r, s);
+    let q_minus_p = (q.0 - p.0, q.1 - p.1);
+    let qmp_cross_r = cross(q_minus_p, r);
+
+    if r_cross_s.abs() <= 1e-9 && qmp_cross_r.abs() <= 1e-9 {
+        let mut parameters = Vec::new();
+        if let Some(t) = parameter_on_segment(from, to, edge_from) {
+            parameters.push(t);
+        }
+        if let Some(t) = parameter_on_segment(from, to, edge_to) {
+            parameters.push(t);
+        }
+        return parameters;
+    }
+
+    if r_cross_s.abs() <= 1e-9 {
+        return Vec::new();
+    }
+
+    let t = cross(q_minus_p, s) / r_cross_s;
+    let u = cross(q_minus_p, r) / r_cross_s;
+    if (-1e-9..=1.0 + 1e-9).contains(&t) && (-1e-9..=1.0 + 1e-9).contains(&u) {
+        vec![t.clamp(0.0, 1.0)]
+    } else {
+        Vec::new()
+    }
+}
+
+fn parameter_on_segment(from: Point, to: Point, point: Point) -> Option<f64> {
+    if orientation(from, to, point) != 0 || !point_on_segment(point, from, to) {
+        return None;
+    }
+
+    let dx = (to.x - from.x) as f64;
+    let dy = (to.y - from.y) as f64;
+    if dx.abs() >= dy.abs() {
+        if dx.abs() <= 1e-9 {
+            Some(0.0)
+        } else {
+            Some(((point.x - from.x) as f64 / dx).clamp(0.0, 1.0))
+        }
+    } else if dy.abs() <= 1e-9 {
+        Some(0.0)
+    } else {
+        Some(((point.y - from.y) as f64 / dy).clamp(0.0, 1.0))
+    }
+}
+
+fn point_at(from: Point, to: Point, t: f64) -> Point {
+    Point::new(
+        (from.x as f64 + ((to.x - from.x) as f64 * t)).round() as i64,
+        (from.y as f64 + ((to.y - from.y) as f64 * t)).round() as i64,
+    )
+}
+
+fn cross(a: (f64, f64), b: (f64, f64)) -> f64 {
+    a.0 * b.1 - a.1 * b.0
 }
