@@ -340,6 +340,40 @@ Current live slice:
   edges whose geometry is unblocked under the current authored obstacle
   checks. It selects the first minimum-step path under the explicit sorted
   graph traversal rule without inventing new copper or new ranking semantics.
+- `eda project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware-explain
+  --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` reports the
+  current zone-obstacle-aware existing-copper path result as a deterministic
+  explanation surface: selected path when found, or explicit
+  `no_existing_authored_copper_path` when authored obstacle filtering leaves
+  no connecting persisted target-net copper path, using only existing
+  zone-obstacle-aware authored-copper graph/path facts without adding new
+  routing semantics.
+- `eda project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware
+  --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` reports the
+  current zone-obstacle-aware existing-copper path family under a stronger
+  whole-path deterministic ordering rule: candidate persisted paths are
+  ordered by `(step_count, topology_transition_count, via_step_count,
+  zone_step_count, step_signature_sequence)` ascending after authored
+  obstacle filtering, still without inventing any new copper or transition
+  permissions.
+- `eda project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-explain
+  --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` reports the
+  current topology-aware zone-obstacle-aware existing-copper path result as a
+  deterministic explanation surface: selected path when found, or explicit
+  `no_existing_authored_copper_path` when authored obstacle filtering leaves
+  no connecting persisted target-net copper path under the whole-path
+  topology ordering rule.
+- `eda project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware
+  --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` reports the
+  same topology-aware zone-obstacle-aware existing-copper path family, but
+  refines whole-path selection with an explicit `layer_balance_score`
+  tie-break after topology transitions and before via/zone step counts.
+- `eda project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware-explain
+  --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` reports the
+  same layer-balance-aware path result as a deterministic explanation surface:
+  selected path when found, or explicit `no_existing_authored_copper_path`
+  when no persisted target-net authored-copper path survives the same
+  whole-path ordering with the explicit layer-balance tie-break.
 - `eda project query <dir> route-path-candidate-authored-copper-graph-obstacle-aware
   --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a
   deterministic existing-copper path candidate over persisted target-net

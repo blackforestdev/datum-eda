@@ -27,51 +27,7 @@ use eda_engine::schematic::{
 use eda_engine::{board::Airwire, board::BoardNetInfo, board::ComponentInfo};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-mod cli_args;
-mod command_exec;
-mod command_modify;
-mod command_plan;
-mod command_project;
-mod command_query;
-mod main_board_component;
-mod main_drill;
-mod main_forward_annotation;
-mod main_forward_annotation_audit_views;
-mod main_forward_annotation_views;
-mod main_gerber_views;
-mod main_gerber_inspect;
-mod main_gerber_mechanical;
-mod main_gerber_set;
-mod main_gerber_silkscreen;
-mod main_inspect;
-mod main_inventory;
-mod main_import_report;
-mod main_manufacturing;
-mod main_modify;
-mod main_project;
-mod main_summary;
-
-use cli_args::*;
-use command_plan::*;
-use command_project::*;
-use command_query::*;
-pub(crate) use main_board_component::*;
-pub(crate) use main_drill::*;
-pub(crate) use main_forward_annotation::*;
-pub(crate) use main_forward_annotation_audit_views::*;
-pub(crate) use main_forward_annotation_views::*;
-pub(crate) use main_gerber_views::*;
-pub(crate) use main_gerber_inspect::*;
-pub(crate) use main_gerber_mechanical::*;
-pub(crate) use main_gerber_set::*;
-pub(crate) use main_gerber_silkscreen::*;
-pub(crate) use main_inspect::*;
-pub(crate) use main_inventory::*;
-pub(crate) use main_import_report::*;
-pub(crate) use main_manufacturing::*;
-pub(crate) use main_modify::*;
-pub(crate) use main_project::*;
-pub(crate) use main_summary::*;
+include!("main_surface.rs");
 
 fn main() {
     match run() {

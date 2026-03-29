@@ -485,6 +485,72 @@ Next explicit contract selected on 2026-03-29:
   - no inferred transitions beyond persisted target-net vias
   - no ranking output beyond the selected existing-copper path
 
+Follow-on explanation surface selected on 2026-03-29:
+- deterministic zone-obstacle-aware existing-authored-copper graph path candidate explanation
+  `project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- input: persisted native board state only
+- output:
+  - current selected zone-obstacle-aware existing-authored-copper path when found
+  - or explicit `no_existing_authored_copper_path` when authored obstacle
+
+Next explicit contract selected on 2026-03-29:
+- deterministic topology-aware zone-obstacle-aware existing-authored-copper graph path candidate
+  `project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- input: persisted native board state only
+- output:
+  - current single-net source/target anchor pair
+  - explicit status exactly one of:
+    - `deterministic_path_found`
+    - `no_path_under_current_authored_constraints`
+  - when found, exactly one deterministic geometric path made only of
+    already-authored persisted target-net tracks, vias, and zone-supported
+    continuity whose reused graph edges are unblocked under the current
+    authored obstacle checks
+- deterministic rule:
+  - build the existing authored-copper graph from persisted target-net tracks,
+    vias, and zone continuity only
+  - exclude any track, via, or zone-connection edge whose reused geometry is
+    blocked under the current authored obstacle checks
+  - order surviving candidate paths by `(step_count,
+    topology_transition_count, via_step_count, zone_step_count,
+    step_signature_sequence)` ascending
+  - select the first path under that explicit whole-path ordering
+
+Follow-on explanation surface selected on 2026-03-29:
+- deterministic topology-aware zone-obstacle-aware existing-authored-copper graph path candidate explanation
+  `project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- input: persisted native board state only
+- output:
+  - current selected topology-aware zone-obstacle-aware existing-authored-copper path when found
+  - or explicit `no_existing_authored_copper_path` when authored obstacle
+    filtering leaves no connecting persisted target-net copper path under the
+    same whole-path ordering rule
+
+Next explicit contract selected on 2026-03-29:
+- deterministic layer-balance-aware topology-aware zone-obstacle-aware existing-authored-copper graph path candidate
+  `project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- deterministic explanation surface for the current layer-balance-aware topology-aware zone-obstacle-aware existing-authored-copper graph path candidate result
+  `project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- input: persisted native board state only
+- output:
+  - current single-net source/target anchor pair
+  - explicit status exactly one of:
+    - `deterministic_path_found`
+    - `no_path_under_current_authored_constraints`
+  - when found, exactly one deterministic geometric path made only of
+    already-authored persisted target-net tracks, vias, and zone-supported
+    continuity whose reused graph edges are unblocked under the current
+    authored obstacle checks
+- deterministic rule:
+  - preserve the topology-aware whole-path ordering
+  - refine ties with `layer_balance_score` computed as max-minus-min reused
+    step count across candidate copper layers
+    filtering leaves no connecting persisted target-net copper path
+- guardrails:
+  - no new routing semantics
+  - no new obstacle interpretation beyond the accepted zone-obstacle-aware graph slice
+  - no ranking output beyond the selected existing-copper path
+
 Next explicit contract selected on 2026-03-29:
 - deterministic obstacle-aware existing-authored-copper graph path candidate
   `project query <dir> route-path-candidate-authored-copper-graph-obstacle-aware --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`

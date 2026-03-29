@@ -7,12 +7,21 @@
 > Tool-availability notes below include historical planning text; current
 > method availability is tracked in `specs/MCP_API_SPEC.md` and
 > `specs/PROGRESS.md`.
+> Native CLI/M4/M5 surface growth may outpace MCP implementation. Those gaps
+> must be tracked in `specs/MCP_API_SPEC.md` as deferred parity items rather
+> than silently assumed to exist in MCP.
 
 ## Overview
 
 The MCP server provides AI agents with structured access to the design
 engine. It is a Python process communicating with the Rust engine via
 JSON-RPC over a Unix socket. All tools map 1:1 to engine API methods.
+
+Current parity stance:
+- MCP is not required to track native CLI growth in lock step
+- MCP parity must be tracked explicitly when native slices land
+- deferred parity is a documentation/governance obligation, not automatic
+  implementation scope
 
 ## Architecture
 

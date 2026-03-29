@@ -1,4 +1,5 @@
 use super::*;
+use super::command_exec_project_query_route_graph::*;
 
 pub(super) fn execute_native_project_query_command(
     format: &OutputFormat,
@@ -325,150 +326,134 @@ pub(super) fn execute_native_project_query_command(
             net,
             from_anchor,
             to_anchor,
-        } => {
-            let report = query_native_project_route_path_candidate_authored_copper_graph(
-                &path,
-                net,
-                from_anchor,
-                to_anchor,
-            )?;
-            let output = match format {
-                OutputFormat::Text => {
-                    render_native_project_route_path_candidate_authored_copper_graph_text(&report)
-                }
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
+        } => execute_native_project_route_path_candidate_authored_copper_graph_query(
+            format,
+            &path,
+            net,
+            from_anchor,
+            to_anchor,
+        ),
         NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperGraphExplain {
             net,
             from_anchor,
             to_anchor,
-        } => {
-            let report = query_native_project_route_path_candidate_authored_copper_graph_explain(
-                &path,
-                net,
-                from_anchor,
-                to_anchor,
-            )?;
-            let output = match format {
-                OutputFormat::Text => {
-                    render_native_project_route_path_candidate_authored_copper_graph_explain_text(
-                        &report,
-                    )
-                }
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
+        } => execute_native_project_route_path_candidate_authored_copper_graph_explain_query(
+            format,
+            &path,
+            net,
+            from_anchor,
+            to_anchor,
+        ),
         NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperGraphZoneAware {
             net,
             from_anchor,
             to_anchor,
-        } => {
-            let report = query_native_project_route_path_candidate_authored_copper_graph_zone_aware(
-                &path,
-                net,
-                from_anchor,
-                to_anchor,
-            )?;
-            let output = match format {
-                OutputFormat::Text => {
-                    render_native_project_route_path_candidate_authored_copper_graph_zone_aware_text(
-                        &report,
-                    )
-                }
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
+        } => execute_native_project_route_path_candidate_authored_copper_graph_zone_aware_query(
+            format,
+            &path,
+            net,
+            from_anchor,
+            to_anchor,
+        ),
         NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperGraphZoneAwareExplain {
             net,
             from_anchor,
             to_anchor,
-        } => {
-            let report =
-                query_native_project_route_path_candidate_authored_copper_graph_zone_aware_explain(
-                    &path,
-                    net,
-                    from_anchor,
-                    to_anchor,
-                )?;
-            let output = match format {
-                OutputFormat::Text => {
-                    render_native_project_route_path_candidate_authored_copper_graph_zone_aware_explain_text(
-                        &report,
-                    )
-                }
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
+        } => execute_native_project_route_path_candidate_authored_copper_graph_zone_aware_explain_query(
+            format,
+            &path,
+            net,
+            from_anchor,
+            to_anchor,
+        ),
         NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperGraphZoneObstacleAware {
             net,
             from_anchor,
             to_anchor,
-        } => {
-            let report =
-                query_native_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware(
-                    &path,
-                    net,
-                    from_anchor,
-                    to_anchor,
-                )?;
-            let output = match format {
-                OutputFormat::Text => {
-                    render_native_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_text(
-                        &report,
-                    )
-                }
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
+        } => execute_native_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_query(
+            format,
+            &path,
+            net,
+            from_anchor,
+            to_anchor,
+        ),
+        NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareExplain {
+            net,
+            from_anchor,
+            to_anchor,
+        } => execute_native_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_explain_query(
+            format,
+            &path,
+            net,
+            from_anchor,
+            to_anchor,
+        ),
+        NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAware {
+            net,
+            from_anchor,
+            to_anchor,
+        } => execute_native_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_query(
+            format,
+            &path,
+            net,
+            from_anchor,
+            to_anchor,
+        ),
+        NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareExplain {
+            net,
+            from_anchor,
+            to_anchor,
+        } => execute_native_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_explain_query(
+            format,
+            &path,
+            net,
+            from_anchor,
+            to_anchor,
+        ),
+        NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAware {
+            net,
+            from_anchor,
+            to_anchor,
+        } => execute_native_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_query(
+            format,
+            &path,
+            net,
+            from_anchor,
+            to_anchor,
+        ),
+        NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareExplain {
+            net,
+            from_anchor,
+            to_anchor,
+        } => execute_native_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_explain_query(
+            format,
+            &path,
+            net,
+            from_anchor,
+            to_anchor,
+        ),
         NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperGraphObstacleAware {
             net,
             from_anchor,
             to_anchor,
-        } => {
-            let report = query_native_project_route_path_candidate_authored_copper_graph_obstacle_aware(
-                &path,
-                net,
-                from_anchor,
-                to_anchor,
-            )?;
-            let output = match format {
-                OutputFormat::Text => {
-                    render_native_project_route_path_candidate_authored_copper_graph_obstacle_aware_text(
-                        &report,
-                    )
-                }
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
+        } => execute_native_project_route_path_candidate_authored_copper_graph_obstacle_aware_query(
+            format,
+            &path,
+            net,
+            from_anchor,
+            to_anchor,
+        ),
         NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperGraphObstacleAwareExplain {
             net,
             from_anchor,
             to_anchor,
-        } => {
-            let report =
-                query_native_project_route_path_candidate_authored_copper_graph_obstacle_aware_explain(
-                    &path,
-                    net,
-                    from_anchor,
-                    to_anchor,
-                )?;
-            let output = match format {
-                OutputFormat::Text => {
-                    render_native_project_route_path_candidate_authored_copper_graph_obstacle_aware_explain_text(
-                        &report,
-                    )
-                }
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
+        } => execute_native_project_route_path_candidate_authored_copper_graph_obstacle_aware_explain_query(
+            format,
+            &path,
+            net,
+            from_anchor,
+            to_anchor,
+        ),
         NativeProjectQueryCommands::RoutePathCandidateSixViaExplain {
             net,
             from_anchor,

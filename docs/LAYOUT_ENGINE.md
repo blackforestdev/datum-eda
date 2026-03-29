@@ -140,6 +140,32 @@ graph with target-net zone continuity on-layer, but filters reused target-net
 track, via, and zone-connection edges through the current authored obstacle
 checks before deterministic path selection. It still does not create copper,
 negotiate reroutes, or open general router behavior.
+`route-path-candidate-authored-copper-graph-zone-obstacle-aware-explain` is
+the paired read-only explanation surface for that zone-obstacle-aware graph
+contract, reporting the selected path when found or explicit
+`no_existing_authored_copper_path` when authored obstacle filtering leaves no
+connecting persisted target-net copper path, using only existing graph/path
+facts without adding new routing semantics.
+`route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware`
+is the next thin capability slice in that same family: it keeps the same
+persisted target-net track/via/zone graph and authored obstacle truth
+boundary, but upgrades path selection from local sorted BFS order to an
+explicit whole-path ordering rule over step count, topology transitions,
+via-step count, zone-step count, and step-signature sequence.
+`route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-explain`
+is the paired read-only explanation surface for that topology-aware graph
+contract, reporting the selected path when found or explicit
+`no_existing_authored_copper_path` when authored obstacle filtering leaves no
+connecting persisted target-net copper path under the same whole-path
+ordering rule.
+`route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware`
+keeps the same persisted graph and authored obstacle truth boundary again,
+but refines whole-path ordering with a `layer_balance_score` tie-break that
+measures max-minus-min reused step count across candidate copper layers.
+`route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware-explain`
+is the read-only explanation companion for that contract. It reports the
+selected path and explicit layer-balance selection reason without adding new
+routing semantics.
 `route-path-candidate-authored-copper-graph-obstacle-aware` is the next thin
 capability slice in that family: it keeps the existing authored-copper graph
 readback contract, but filters reused target-net track/via edges through the

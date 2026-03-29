@@ -107,6 +107,79 @@ normalized MCP surface.
 Methods in later `M4+` sections are target-state and are not part of the
 current enforced daemon/MCP contract.
 
+### Native CLI Parity Tracking (2026-03-29)
+
+The native CLI/engine surface has advanced beyond the currently implemented
+daemon/MCP contract. That is intentional for now: MCP parity is tracked here,
+but deferred unless a milestone explicitly reopens MCP implementation work.
+
+Parity policy for current development:
+- native slices may land without same-slice MCP implementation
+- new native contracts must be tracked here as one of:
+  - `deferred_mcp_parity`
+  - `implemented_in_mcp`
+  - `not_planned_for_mcp`
+- MCP implementation authority remains the current method list above; the
+  entries below are tracking records, not claims of implemented MCP support
+
+Currently tracked native contracts that are not implemented in MCP:
+
+#### Deferred M4 native parity
+
+- `project query <dir> pools`
+- `project query <dir> board-net --net <uuid>`
+- `project query <dir> board-net-class --net-class <uuid>`
+- `project query <dir> board-component-models-3d --component <uuid>`
+- `project query <dir> board-component-pads --component <uuid>`
+- `project query <dir> board-component-silkscreen --component <uuid>`
+- `project query <dir> board-component-mechanical --component <uuid>`
+- `project report-manufacturing <dir> [--prefix <text>]`
+- `project export-manufacturing-set <dir> --output-dir <path> [--prefix <text>]`
+- `project inspect-manufacturing-set <dir> --output-dir <path> [--prefix <text>]`
+- `project validate-manufacturing-set <dir> --output-dir <path> [--prefix <text>]`
+- `project compare-manufacturing-set <dir> --output-dir <path> [--prefix <text>]`
+- `project manifest-manufacturing-set <dir> --output-dir <path> [--prefix <text>]`
+- `project inspect-bom <path>`
+- `project validate-bom <dir> --bom <path>`
+- `project inspect-pnp <path>`
+- `project validate-pnp <dir> --pnp <path>`
+- `project inspect-drill <path>`
+- `project validate-drill <dir> --drill <path>`
+- `project compare-drill <dir> --drill <path>`
+- `project export-gerber-set <dir> --output-dir <path> [--prefix <text>]`
+- `project validate-gerber-set <dir> --output-dir <path> [--prefix <text>]`
+- `project compare-gerber-set <dir> --output-dir <path> [--prefix <text>]`
+
+#### Deferred M5 native parity
+
+- `project query <dir> routing-substrate`
+- `project query <dir> route-preflight --net <uuid>`
+- `project query <dir> route-corridor --net <uuid>`
+- `project query <dir> route-path-candidate --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-two-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-two-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-three-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-three-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-four-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-four-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-five-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-five-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-six-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-six-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-authored-via-chain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-authored-via-chain-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-authored-copper-graph --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-authored-copper-graph-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-authored-copper-graph-zone-aware --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-authored-copper-graph-zone-aware-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-authored-copper-graph-obstacle-aware --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-authored-copper-graph-obstacle-aware-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+
 ### Project
 
 #### `open_project`

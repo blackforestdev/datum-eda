@@ -94,6 +94,14 @@ Contract:
 Contract:
 - Board and schematic capability growth remains parity-tracked in milestones and
   does not allow one side to become structurally underspecified.
+- Native CLI/engine surface growth beyond current daemon/MCP implementation is
+  allowed only when the same change updates deferred MCP parity tracking in
+  `specs/MCP_API_SPEC.md`; silent MCP drift is not acceptable even when MCP
+  code parity is intentionally deferred.
+- Repeated ordinal contract families (`n=1,2,3...`) must not grow by
+  mechanical succession indefinitely; once the pattern is proven, development
+  must either declare a stopping boundary or replace the family with one
+  generalized contract.
 
 ## 6. Promotion Criteria to Full Integrated Spec
 

@@ -30,6 +30,8 @@ mod command_exec_project_command;
 mod command_exec_project_board_surface;
 #[path = "command_exec_project_query.rs"]
 mod command_exec_project_query;
+#[path = "command_exec_project_query_route_graph.rs"]
+mod command_exec_project_query_route_graph;
 #[path = "command_exec_project_schematic_connectivity.rs"]
 mod command_exec_project_schematic_connectivity;
 #[path = "command_exec_project_schematic_symbols.rs"]

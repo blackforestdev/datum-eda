@@ -41,7 +41,11 @@ Canonical scope terminology is defined in
 - Run ERC/DRC and consume structured check reports in CLI and MCP.
 - Modify imported KiCad board slices via deterministic operation flows.
 - Create and edit native project slices (`project new`, native query/check,
-  forward-annotation review/apply slices, early manufacturing-export slices).
+  forward-annotation review/apply + artifact slices, and manufacturing exports
+  (Gerber/drill/set report/export/validate/compare surfaces).
+- Run deterministic M5 routing-kernel query slices from persisted native board
+  state (routing substrate, preflight/corridor, and path-candidate explain
+  surfaces).
 
 See [`docs/USER_WORKFLOWS.md`](docs/USER_WORKFLOWS.md) for end-to-end usage
 examples and [`specs/MCP_API_SPEC.md`](specs/MCP_API_SPEC.md) for the full
@@ -96,9 +100,10 @@ cargo run -p eda-cli -- pool search "100nF 0402" --library library.lbr
 # Imported-board modify slice
 cargo run -p eda-cli -- modify design.kicad_pcb --move-component "<uuid>:25:15:90" --save out.kicad_pcb
 
-# Native project slice (M4 in progress)
+# Native project slice (M4 closed for scope; M5 in progress)
 cargo run -p eda-cli -- project new ./demo --name "Demo"
 cargo run -p eda-cli -- project query ./demo summary
+cargo run -p eda-cli -- project query ./demo routing-substrate
 ```
 
 Exit codes: `0` = pass, `1` = violations found, `2` = execution error.
@@ -178,6 +183,8 @@ Directionally, Datum targets a full AI-native EDA stack:
 - higher-level automation and strategy layers
 
 Formal milestone contracts live in [`specs/PROGRAM_SPEC.md`](specs/PROGRAM_SPEC.md).
+Current M5 entry boundary is defined in
+[`specs/progress/m5_opening.md`](specs/progress/m5_opening.md).
 
 ---
 
