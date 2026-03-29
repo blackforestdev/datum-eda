@@ -708,6 +708,36 @@ These map to PLAN.md milestones M5, M6, M7.
 
 ### M5: Deterministic Layout Kernel (engineering milestone)
 
+Current opening slice (2026-03-28):
+- implemented contract: deterministic routing-substrate extraction report from
+  persisted native board state only
+- included facts: outline, stackup/layer set, keepouts, authored/persisted
+  pads, tracks, vias, zones, nets, and net classes
+- explicit non-goals for the opening slice: route search, feasibility
+  decisions, corridor synthesis, autorouting, and any geometry inferred beyond
+  persisted state
+
+Current follow-on slice (2026-03-28):
+- implemented contract: deterministic single-net route preflight from
+  persisted native board state only
+- authored anchors: persisted board pads already assigned to the target net
+- candidate copper layers: derived only from persisted stackup plus currently
+  available persisted routing facts in native state
+- explicit non-goals for the follow-on slice: pathfinding, obstacle inflation,
+  corridor synthesis, or any inferred per-net layer permissions not already
+  present in persisted state
+
+Current corridor slice (2026-03-28):
+- implemented contract: deterministic single-net route corridor from persisted
+  native board state only
+- corridor primitive: deterministic anchor-to-anchor spans evaluated on the
+  candidate copper layers already proven by `route-preflight`
+- obstacle geometry: only persisted keepouts, foreign-net tracks/vias/zones,
+  and board-outline escape conditions relevant to those spans
+- explicit non-goals for the corridor slice: pathfinding, A*, route proposals,
+  negotiated reroute, push-shove, or any invented constraints beyond the
+  persisted native board state already present on disk
+
 Placement:
 - Component grouping (explicit + schematic hierarchy + netlist clustering)
 - Force-directed placement within groups

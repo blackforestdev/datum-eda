@@ -9,12 +9,14 @@ mod dimension;
 mod net_graph;
 mod pad;
 mod polygon;
+mod route_surface;
 mod rule_set;
 mod stackup;
 mod text;
 use net_graph::{BoardNetGraph, PadPoint, nearest_pin_pair, segment_length_nm};
 
 pub use pad::{PadAperture, PadShape, PlacedPad};
+pub use route_surface::*;
 pub use rule_set::RuleSet;
 pub use stackup::{Stackup, StackupInfo, StackupLayer, StackupLayerType};
 
@@ -455,10 +457,4 @@ impl Board {
 }
 
 #[cfg(test)]
-mod tests {
-    #[path = "mod_tests_queries_and_netinfo.rs"]
-    mod queries_and_netinfo;
-
-    #[path = "mod_tests_diagnostics_and_unrouted.rs"]
-    mod diagnostics_and_unrouted;
-}
+mod tests;

@@ -179,6 +179,28 @@ Current live slice:
 - `eda project query <dir> board-net-class --net-class <uuid>` now reads back
   one persisted native board net class directly, instead of requiring
   automation to filter the full `board-net-classes` list.
+- `eda project query <dir> routing-substrate` now extracts a deterministic
+  routing-kernel substrate report directly from persisted native board state,
+  covering only explicit persisted outline, stackup/layer set, keepouts,
+  authored/persisted pads, tracks, vias, zones, nets, and net classes. This
+  opening `M5` slice is read-only and does not perform route search, obstacle
+  inflation, or any other invented geometry step.
+- `eda project query <dir> route-preflight --net <uuid>` now reports a
+  deterministic single-net routing preflight directly from persisted native
+  board state, using only persisted board pads already assigned to that net as
+  authored anchors and deriving candidate copper layers only from persisted
+  stackup plus the currently available persisted routing facts in native state.
+  This slice inventories authored keepout conflicts, foreign-net
+  tracks/vias/zones, and outside-outline condition without performing route
+  search or inventing corridor geometry.
+- `eda project query <dir> route-corridor --net <uuid>` now reports a
+  deterministic single-net corridor geometry view directly from persisted
+  native board state, reusing the same authored anchors and candidate copper
+  layers proven by `route-preflight` while adding deterministic authored
+  obstacle geometry plus available/blocked anchor-to-anchor corridor spans.
+  This slice remains read-only and does not perform pathfinding, route
+  proposal, or any scoring/inference beyond the persisted geometry already
+  present in native state.
 - `eda project query <dir> board-components` reads back the persisted native
   placed-package inventory from `board/board.json`, including per-component
   presence flags plus the currently materialized silkscreen subset counts and

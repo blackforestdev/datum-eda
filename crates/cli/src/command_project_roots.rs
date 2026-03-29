@@ -1,6 +1,13 @@
-use super::*;
+use std::collections::BTreeMap;
+use std::path::Path;
 
-pub(super) fn render_symbol_display_mode(mode: &SymbolDisplayMode) -> String {
+use anyhow::{Context, Result};
+use serde::{Deserialize, Serialize};
+use uuid::Uuid;
+
+use super::super::*;
+
+pub(crate) fn render_symbol_display_mode(mode: &SymbolDisplayMode) -> String {
     match mode {
         SymbolDisplayMode::LibraryDefault => "LibraryDefault",
         SymbolDisplayMode::ShowHiddenPins => "ShowHiddenPins",
@@ -9,7 +16,7 @@ pub(super) fn render_symbol_display_mode(mode: &SymbolDisplayMode) -> String {
     .to_string()
 }
 
-pub(super) fn render_hidden_power_behavior(mode: &HiddenPowerBehavior) -> String {
+pub(crate) fn render_hidden_power_behavior(mode: &HiddenPowerBehavior) -> String {
     match mode {
         HiddenPowerBehavior::SourceDefinedImplicit => "SourceDefinedImplicit",
         HiddenPowerBehavior::ExplicitPowerObject => "ExplicitPowerObject",
@@ -19,88 +26,88 @@ pub(super) fn render_hidden_power_behavior(mode: &HiddenPowerBehavior) -> String
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub(super) struct NativeProjectManifest {
-    pub(super) schema_version: u32,
-    pub(super) uuid: Uuid,
-    pub(super) name: String,
-    pub(super) pools: Vec<NativeProjectPoolRef>,
-    pub(super) schematic: String,
-    pub(super) board: String,
-    pub(super) rules: String,
+pub(crate) struct NativeProjectManifest {
+    pub(crate) schema_version: u32,
+    pub(crate) uuid: Uuid,
+    pub(crate) name: String,
+    pub(crate) pools: Vec<NativeProjectPoolRef>,
+    pub(crate) schematic: String,
+    pub(crate) board: String,
+    pub(crate) rules: String,
     #[serde(default)]
-    pub(super) forward_annotation_review: BTreeMap<String, NativeForwardAnnotationReviewRecord>,
+    pub(crate) forward_annotation_review: BTreeMap<String, NativeForwardAnnotationReviewRecord>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub(super) struct NativeProjectPoolRef {
-    pub(super) path: String,
-    pub(super) priority: u32,
+pub(crate) struct NativeProjectPoolRef {
+    pub(crate) path: String,
+    pub(crate) priority: u32,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub(super) struct NativeForwardAnnotationReviewRecord {
-    pub(super) action_id: String,
-    pub(super) decision: String,
-    pub(super) proposal_action: String,
-    pub(super) reference: String,
-    pub(super) reason: String,
+pub(crate) struct NativeForwardAnnotationReviewRecord {
+    pub(crate) action_id: String,
+    pub(crate) decision: String,
+    pub(crate) proposal_action: String,
+    pub(crate) reference: String,
+    pub(crate) reason: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub(super) struct NativeSchematicRoot {
-    pub(super) schema_version: u32,
-    pub(super) uuid: Uuid,
-    pub(super) sheets: BTreeMap<String, String>,
-    pub(super) definitions: BTreeMap<String, String>,
-    pub(super) instances: Vec<NativeSchematicInstance>,
-    pub(super) variants: BTreeMap<String, NativeVariant>,
-    pub(super) waivers: Vec<serde_json::Value>,
+pub(crate) struct NativeSchematicRoot {
+    pub(crate) schema_version: u32,
+    pub(crate) uuid: Uuid,
+    pub(crate) sheets: BTreeMap<String, String>,
+    pub(crate) definitions: BTreeMap<String, String>,
+    pub(crate) instances: Vec<NativeSchematicInstance>,
+    pub(crate) variants: BTreeMap<String, NativeVariant>,
+    pub(crate) waivers: Vec<serde_json::Value>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub(super) struct NativeSchematicInstance {
-    pub(super) uuid: Uuid,
-    pub(super) definition: Uuid,
-    pub(super) parent_sheet: Option<Uuid>,
-    pub(super) position: NativePoint,
-    pub(super) name: String,
+pub(crate) struct NativeSchematicInstance {
+    pub(crate) uuid: Uuid,
+    pub(crate) definition: Uuid,
+    pub(crate) parent_sheet: Option<Uuid>,
+    pub(crate) position: NativePoint,
+    pub(crate) name: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub(super) struct NativeVariant {
-    pub(super) name: String,
-    pub(super) fitted_components: BTreeMap<String, bool>,
+pub(crate) struct NativeVariant {
+    pub(crate) name: String,
+    pub(crate) fitted_components: BTreeMap<String, bool>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub(super) struct NativeRulesRoot {
-    pub(super) schema_version: u32,
-    pub(super) rules: Vec<serde_json::Value>,
+pub(crate) struct NativeRulesRoot {
+    pub(crate) schema_version: u32,
+    pub(crate) rules: Vec<serde_json::Value>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub(super) struct NativeSheetRoot {
-    pub(super) schema_version: u32,
-    pub(super) uuid: Uuid,
-    pub(super) name: String,
-    pub(super) frame: Option<SheetFrame>,
-    pub(super) symbols: BTreeMap<String, PlacedSymbol>,
-    pub(super) wires: BTreeMap<String, SchematicWire>,
-    pub(super) junctions: BTreeMap<String, Junction>,
-    pub(super) labels: BTreeMap<String, NetLabel>,
-    pub(super) buses: BTreeMap<String, Bus>,
-    pub(super) bus_entries: BTreeMap<String, BusEntry>,
-    pub(super) ports: BTreeMap<String, HierarchicalPort>,
-    pub(super) noconnects: BTreeMap<String, NoConnectMarker>,
-    pub(super) texts: BTreeMap<String, SchematicText>,
-    pub(super) drawings: BTreeMap<String, SchematicPrimitive>,
+pub(crate) struct NativeSheetRoot {
+    pub(crate) schema_version: u32,
+    pub(crate) uuid: Uuid,
+    pub(crate) name: String,
+    pub(crate) frame: Option<SheetFrame>,
+    pub(crate) symbols: BTreeMap<String, PlacedSymbol>,
+    pub(crate) wires: BTreeMap<String, SchematicWire>,
+    pub(crate) junctions: BTreeMap<String, Junction>,
+    pub(crate) labels: BTreeMap<String, NetLabel>,
+    pub(crate) buses: BTreeMap<String, Bus>,
+    pub(crate) bus_entries: BTreeMap<String, BusEntry>,
+    pub(crate) ports: BTreeMap<String, HierarchicalPort>,
+    pub(crate) noconnects: BTreeMap<String, NoConnectMarker>,
+    pub(crate) texts: BTreeMap<String, SchematicText>,
+    pub(crate) drawings: BTreeMap<String, SchematicPrimitive>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub(super) struct ExistingProjectIds {
-    pub(super) project_uuid: Uuid,
-    pub(super) schematic_uuid: Uuid,
-    pub(super) board_uuid: Uuid,
+pub(crate) struct ExistingProjectIds {
+    pub(crate) project_uuid: Uuid,
+    pub(crate) schematic_uuid: Uuid,
+    pub(crate) board_uuid: Uuid,
 }
 
 pub(crate) fn create_native_project(

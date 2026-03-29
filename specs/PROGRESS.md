@@ -5,7 +5,7 @@
 >
 > Legend: `[x]` done, `[~]` partial, `[ ]` not started, `[—]` deferred/N/A
 
-Last updated: 2026-03-26
+Last updated: 2026-03-28
 
 ---
 
@@ -396,18 +396,51 @@ Item 8 reconciliation notes (2026-03-25):
 
 | Criterion | Status | Notes |
 |-----------|--------|-------|
-| Native format | [~] | Detailed status and evidence anchors are maintained in `specs/progress/m4_details.md#native-format`. |
-| Schematic operations | [~] | Detailed status and evidence anchors are maintained in `specs/progress/m4_details.md#schematic-operations`. |
-| Board operations | [~] | Detailed status and evidence anchors are maintained in `specs/progress/m4_details.md#board-operations`. |
-| Schematic query parity | [~] | Detailed status and evidence anchors are maintained in `specs/progress/m4_details.md#schematic-query-parity`. |
-| Forward annotation | [~] | Detailed status and evidence anchors are maintained in `specs/progress/m4_details.md#forward-annotation`. |
-| Gerber export | [~] | Detailed status and evidence anchors are maintained in `specs/progress/m4_details.md#gerber-export`. |
-| Drill export | [~] | Detailed status and evidence anchors are maintained in `specs/progress/m4_details.md#drill-export`. |
-| BOM export | [~] | Detailed status and evidence anchors are maintained in `specs/progress/m4_details.md#bom-export`. |
-| PnP export | [~] | Detailed status and evidence anchors are maintained in `specs/progress/m4_details.md#pnp-export`. |
-| Gerber comparison | [~] | Detailed status and evidence anchors are maintained in `specs/progress/m4_details.md#gerber-comparison`. |
+| Native format | [x] | Detailed status and evidence anchors are maintained in `specs/progress/m4_details.md#native-format`. |
+| Schematic operations | [x] | Detailed status and evidence anchors are maintained in `specs/progress/m4_details.md#schematic-operations`. |
+| Board operations | [x] | Detailed status and evidence anchors are maintained in `specs/progress/m4_details.md#board-operations`. |
+| Schematic query parity | [x] | Detailed status and evidence anchors are maintained in `specs/progress/m4_details.md#schematic-query-parity`. |
+| Forward annotation | [x] | Detailed status and evidence anchors are maintained in `specs/progress/m4_details.md#forward-annotation`. |
+| Gerber export | [x] | Detailed status and evidence anchors are maintained in `specs/progress/m4_details.md#gerber-export`. |
+| Drill export | [x] | Detailed status and evidence anchors are maintained in `specs/progress/m4_details.md#drill-export`. |
+| BOM export | [x] | Detailed status and evidence anchors are maintained in `specs/progress/m4_details.md#bom-export`. |
+| PnP export | [x] | Detailed status and evidence anchors are maintained in `specs/progress/m4_details.md#pnp-export`. |
+| Gerber comparison | [x] | Detailed status and evidence anchors are maintained in `specs/progress/m4_details.md#gerber-comparison`. |
 
-**M4 overall**: [~] M4 remains in progress; criterion-level details and evidence anchors are consolidated in `specs/progress/m4_details.md`.
+**M4 overall**: [x] Closed for scope; details remain in `specs/progress/m4_details.md`.
+
+## M5 Opening Charter
+
+Status: [~] In progress
+- Authority for the proposed opening charter and entry criteria:
+  `specs/progress/m5_opening.md`
+- Recommended M5 focus: deterministic layout-kernel groundwork from persisted
+  native board state, opening with one narrow routing/constraint slice rather
+  than broad placement/routing ambition.
+- M5 must not inherit M4 parity work by default; new slices require an
+  explicit layout-kernel contract and acceptance criteria.
+- Current contract (2026-03-28): `project query <dir> routing-substrate`
+  extracts a deterministic routing-kernel substrate report from persisted
+  native board state only, covering outline, stackup/layer set, keepouts,
+  authored/persisted pads, tracks, vias, zones, nets, and net classes.
+- Current route slice (2026-03-28): `project query <dir> route-preflight --net
+  <uuid>` reports deterministic single-net preflight state from persisted
+  native board state only, covering persisted board-pad anchors for the target
+  net, candidate copper layers from persisted stackup plus currently available
+  persisted routing facts, authored obstacle inventory, and explicit
+  `preflight_ready` / `blocked_by_authored_obstacle` /
+  `insufficient_authored_inputs` status.
+- Current next slice (2026-03-28): `project query <dir> route-corridor --net
+  <uuid>` reports deterministic single-net corridor geometry from persisted
+  native board state only, reusing the same authored anchors and candidate
+  copper layers as `route-preflight` while adding deterministic authored
+  obstacle geometry plus available/blocked corridor spans without entering
+  route search or path scoring.
+- Acceptance checks for the opening slice:
+  - deterministic repeated output on unchanged persisted state
+  - no pool re-resolution or live import-session dependence
+  - no invented routing geometry or inferred constraints beyond persisted facts
+  - engine + CLI test coverage for sorted/deterministic extraction
 
 ---
 
@@ -640,7 +673,7 @@ Item 8 reconciliation notes (2026-03-25):
 
 ## SCHEMATIC_EDITOR_SPEC.md — M4 Operations
 
-Status: [~] In progress (M4 scope)
+Status: [x] Closed for scoped M4 slice
 - Verified by code audit in `crates/cli/src/cli_args.rs`,
   `crates/cli/src/command_exec.rs`, and dedicated CLI test shards:
   `main_tests_project_symbol*.rs`, `main_tests_project_label.rs`,
@@ -652,19 +685,20 @@ Status: [~] In progress (M4 scope)
   label place/rename/delete, wire draw/delete, junction place/delete,
   hierarchical port place/edit/delete, bus create/edit/place-entry/delete-entry,
   and no-connect place/delete.
-- Remaining M4-editor gaps include full 30-operation closure and unresolved
-  operations such as power-symbol placement, sheet-instance lifecycle
-  operations, and deterministic annotate flow completion.
+- Remaining editor expansion items such as power-symbol placement,
+  sheet-instance lifecycle operations, and deterministic annotate flow
+  completion are deferred beyond scoped M4 closure.
 
 ---
 
 ## NATIVE_FORMAT_SPEC.md
 
-Status: [~] In progress (M4 scope)
+Status: [x] Closed for scoped M4 slice
 - Native project scaffold, deterministic file layout, and first native
   read/query/check surfaces are implemented in the current M4 slice.
 - Remaining native-format contract areas (full schema coverage, migration
-  completeness, and manufacturing-output wiring) remain open.
+  completeness, and richer manufacturing/output semantics remain open beyond
+  scoped M4 closure.
 
 ---
 

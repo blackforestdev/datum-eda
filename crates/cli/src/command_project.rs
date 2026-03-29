@@ -31,10 +31,10 @@ mod command_project_forward_annotation_apply_review;
 mod command_project_forward_annotation_artifact;
 #[path = "command_project_forward_annotation_artifact_review.rs"]
 mod command_project_forward_annotation_artifact_review;
-#[path = "command_project_forward_annotation_surface.rs"]
-mod command_project_forward_annotation_surface;
 #[path = "command_project_forward_annotation_proposal.rs"]
 mod command_project_forward_annotation_proposal;
+#[path = "command_project_forward_annotation_surface.rs"]
+mod command_project_forward_annotation_surface;
 #[path = "command_project_gerber_inspect.rs"]
 mod command_project_gerber_inspect;
 #[path = "command_project_gerber_layers.rs"]
@@ -65,8 +65,8 @@ mod command_project_pool_materialization;
 mod command_project_pool_query;
 #[path = "command_project_project_core.rs"]
 mod command_project_project_core;
-#[path = "command_project_roots.rs"]
-mod command_project_roots;
+#[path = "command_project_native_surface.rs"]
+mod command_project_native_surface;
 #[path = "command_project_schematic_connectivity_mutations.rs"]
 mod command_project_schematic_connectivity_mutations;
 #[path = "command_project_schematic_connectivity_queries.rs"]
@@ -101,10 +101,9 @@ use self::command_project_board_component_query::{
 };
 pub(crate) use self::command_project_board_component_query::{
     query_native_project_board_component_mechanical,
-    query_native_project_board_component_view,
     query_native_project_board_component_models_3d, query_native_project_board_component_pads,
-    query_native_project_board_component_silkscreen, query_native_project_board_component_views,
-    query_native_project_board_components,
+    query_native_project_board_component_silkscreen, query_native_project_board_component_view,
+    query_native_project_board_component_views, query_native_project_board_components,
 };
 pub(crate) use self::command_project_board_component_reference::set_native_project_board_component_reference;
 pub(crate) use self::command_project_board_component_value::set_native_project_board_component_value;
@@ -138,9 +137,8 @@ pub(crate) use self::command_project_board_routing_net::{
     edit_native_project_board_net, place_native_project_board_net,
     place_native_project_board_track, place_native_project_board_via,
     place_native_project_board_zone, query_native_project_board_net,
-    query_native_project_board_nets,
-    query_native_project_board_tracks, query_native_project_board_vias,
-    query_native_project_board_zones,
+    query_native_project_board_nets, query_native_project_board_tracks,
+    query_native_project_board_vias, query_native_project_board_zones,
 };
 pub(crate) use self::command_project_default_stackup::add_native_project_default_top_stackup;
 use self::command_project_default_stackup::default_native_project_stackup_layers;
@@ -213,8 +211,7 @@ use self::command_project_pool_materialization::{
 use self::command_project_pool_query::collect_native_project_pool_ref_views;
 pub(crate) use self::command_project_pool_query::query_native_project_pools;
 use self::command_project_project_core::*;
-use self::command_project_roots::*;
-pub(crate) use self::command_project_roots::{create_native_project, query_native_project_rules};
+pub(crate) use self::command_project_native_surface::*;
 pub(crate) use self::command_project_schematic_connectivity_mutations::{
     create_native_project_bus, delete_native_project_bus_entry, delete_native_project_junction,
     delete_native_project_label, delete_native_project_noconnect, delete_native_project_port,

@@ -5,7 +5,7 @@ pub(super) fn execute_forward_annotation_command(
     command: ProjectCommands,
 ) -> Result<(String, i32)> {
     match command {
-        ProjectCommands::ApplyForwardAnnotationAction {
+        ProjectCommands::ApplyForwardAnnotationAction(ProjectApplyForwardAnnotationActionArgs {
             path,
             action_id,
             package_uuid,
@@ -13,7 +13,7 @@ pub(super) fn execute_forward_annotation_command(
             x_nm,
             y_nm,
             layer,
-        } => {
+        }) => {
             let report = apply_native_project_forward_annotation_action(
                 &path,
                 &action_id,
@@ -29,7 +29,7 @@ pub(super) fn execute_forward_annotation_command(
             };
             Ok((output, 0))
         }
-        ProjectCommands::ApplyForwardAnnotationReviewed { path } => {
+        ProjectCommands::ApplyForwardAnnotationReviewed(ProjectApplyForwardAnnotationReviewedArgs { path }) => {
             let report = apply_native_project_forward_annotation_reviewed(&path)?;
             let output = match format {
                 OutputFormat::Text => render_native_forward_annotation_batch_apply_text(&report),
@@ -37,7 +37,7 @@ pub(super) fn execute_forward_annotation_command(
             };
             Ok((output, 0))
         }
-        ProjectCommands::ExportForwardAnnotationProposal { path, out } => {
+        ProjectCommands::ExportForwardAnnotationProposal(ProjectExportForwardAnnotationProposalArgs { path, out }) => {
             let report = export_native_project_forward_annotation_proposal(&path, &out)?;
             let output = match format {
                 OutputFormat::Text => render_native_forward_annotation_export_text(&report),
@@ -45,11 +45,11 @@ pub(super) fn execute_forward_annotation_command(
             };
             Ok((output, 0))
         }
-        ProjectCommands::ExportForwardAnnotationProposalSelection {
+        ProjectCommands::ExportForwardAnnotationProposalSelection(ProjectExportForwardAnnotationProposalSelectionArgs {
             path,
             action_ids,
             out,
-        } => {
+        }) => {
             let report = export_native_project_forward_annotation_proposal_selection(
                 &path,
                 &action_ids,
@@ -61,11 +61,11 @@ pub(super) fn execute_forward_annotation_command(
             };
             Ok((output, 0))
         }
-        ProjectCommands::SelectForwardAnnotationProposalArtifact {
+        ProjectCommands::SelectForwardAnnotationProposalArtifact(ProjectSelectForwardAnnotationProposalArtifactArgs {
             artifact,
             action_ids,
             out,
-        } => {
+        }) => {
             let report = select_forward_annotation_proposal_artifact(&artifact, &action_ids, &out)?;
             let output = match format {
                 OutputFormat::Text => render_native_forward_annotation_export_text(&report),
@@ -73,7 +73,7 @@ pub(super) fn execute_forward_annotation_command(
             };
             Ok((output, 0))
         }
-        ProjectCommands::InspectForwardAnnotationProposalArtifact { path } => {
+        ProjectCommands::InspectForwardAnnotationProposalArtifact(ProjectInspectForwardAnnotationProposalArtifactArgs { path }) => {
             let report = inspect_forward_annotation_proposal_artifact(&path)?;
             let output = match format {
                 OutputFormat::Text => {
@@ -83,7 +83,7 @@ pub(super) fn execute_forward_annotation_command(
             };
             Ok((output, 0))
         }
-        ProjectCommands::ValidateForwardAnnotationProposalArtifact { path } => {
+        ProjectCommands::ValidateForwardAnnotationProposalArtifact(ProjectValidateForwardAnnotationProposalArtifactArgs { path }) => {
             let report = validate_forward_annotation_proposal_artifact(&path)?;
             let exit_code = if report.matches_expected { 0 } else { 1 };
             let output = match format {
@@ -94,7 +94,7 @@ pub(super) fn execute_forward_annotation_command(
             };
             Ok((output, exit_code))
         }
-        ProjectCommands::CompareForwardAnnotationProposalArtifact { path, artifact } => {
+        ProjectCommands::CompareForwardAnnotationProposalArtifact(ProjectCompareForwardAnnotationProposalArtifactArgs { path, artifact }) => {
             let report = compare_forward_annotation_proposal_artifact(&path, &artifact)?;
             let output = match format {
                 OutputFormat::Text => {
@@ -104,11 +104,11 @@ pub(super) fn execute_forward_annotation_command(
             };
             Ok((output, 0))
         }
-        ProjectCommands::FilterForwardAnnotationProposalArtifact {
+        ProjectCommands::FilterForwardAnnotationProposalArtifact(ProjectFilterForwardAnnotationProposalArtifactArgs {
             path,
             artifact,
             out,
-        } => {
+        }) => {
             let report = filter_forward_annotation_proposal_artifact(&path, &artifact, &out)?;
             let output = match format {
                 OutputFormat::Text => {
@@ -118,7 +118,7 @@ pub(super) fn execute_forward_annotation_command(
             };
             Ok((output, 0))
         }
-        ProjectCommands::PlanForwardAnnotationProposalArtifactApply { path, artifact } => {
+        ProjectCommands::PlanForwardAnnotationProposalArtifactApply(ProjectPlanForwardAnnotationProposalArtifactApplyArgs { path, artifact }) => {
             let report = plan_forward_annotation_proposal_artifact_apply(&path, &artifact)?;
             let output = match format {
                 OutputFormat::Text => {
@@ -128,7 +128,7 @@ pub(super) fn execute_forward_annotation_command(
             };
             Ok((output, 0))
         }
-        ProjectCommands::ApplyForwardAnnotationProposalArtifact { path, artifact } => {
+        ProjectCommands::ApplyForwardAnnotationProposalArtifact(ProjectApplyForwardAnnotationProposalArtifactArgs { path, artifact }) => {
             let report = apply_forward_annotation_proposal_artifact(&path, &artifact)?;
             let output = match format {
                 OutputFormat::Text => render_native_forward_annotation_artifact_apply_text(&report),
@@ -136,7 +136,7 @@ pub(super) fn execute_forward_annotation_command(
             };
             Ok((output, 0))
         }
-        ProjectCommands::ImportForwardAnnotationArtifactReview { path, artifact } => {
+        ProjectCommands::ImportForwardAnnotationArtifactReview(ProjectImportForwardAnnotationArtifactReviewArgs { path, artifact }) => {
             let report = import_forward_annotation_artifact_review(&path, &artifact)?;
             let output = match format {
                 OutputFormat::Text => {
@@ -146,7 +146,7 @@ pub(super) fn execute_forward_annotation_command(
             };
             Ok((output, 0))
         }
-        ProjectCommands::ReplaceForwardAnnotationArtifactReview { path, artifact } => {
+        ProjectCommands::ReplaceForwardAnnotationArtifactReview(ProjectReplaceForwardAnnotationArtifactReviewArgs { path, artifact }) => {
             let report = replace_forward_annotation_artifact_review(&path, &artifact)?;
             let output = match format {
                 OutputFormat::Text => {
@@ -156,7 +156,7 @@ pub(super) fn execute_forward_annotation_command(
             };
             Ok((output, 0))
         }
-        ProjectCommands::DeferForwardAnnotationAction { path, action_id } => {
+        ProjectCommands::DeferForwardAnnotationAction(ProjectDeferForwardAnnotationActionArgs { path, action_id }) => {
             let report =
                 record_native_project_forward_annotation_review(&path, &action_id, "deferred")?;
             let output = match format {
@@ -165,7 +165,7 @@ pub(super) fn execute_forward_annotation_command(
             };
             Ok((output, 0))
         }
-        ProjectCommands::RejectForwardAnnotationAction { path, action_id } => {
+        ProjectCommands::RejectForwardAnnotationAction(ProjectRejectForwardAnnotationActionArgs { path, action_id }) => {
             let report =
                 record_native_project_forward_annotation_review(&path, &action_id, "rejected")?;
             let output = match format {
@@ -174,7 +174,7 @@ pub(super) fn execute_forward_annotation_command(
             };
             Ok((output, 0))
         }
-        ProjectCommands::ClearForwardAnnotationActionReview { path, action_id } => {
+        ProjectCommands::ClearForwardAnnotationActionReview(ProjectClearForwardAnnotationActionReviewArgs { path, action_id }) => {
             let report = clear_native_project_forward_annotation_review(&path, &action_id)?;
             let output = match format {
                 OutputFormat::Text => render_native_forward_annotation_review_report_text(&report),

@@ -43,6 +43,7 @@ mod main_gerber_set;
 mod main_gerber_silkscreen;
 mod main_inspect;
 mod main_inventory;
+mod main_import_report;
 mod main_manufacturing;
 mod main_modify;
 mod main_project;
@@ -62,6 +63,7 @@ pub(crate) use main_gerber_set::*;
 pub(crate) use main_gerber_silkscreen::*;
 pub(crate) use main_inspect::*;
 pub(crate) use main_inventory::*;
+pub(crate) use main_import_report::*;
 pub(crate) use main_manufacturing::*;
 pub(crate) use main_modify::*;
 pub(crate) use main_project::*;
@@ -1669,44 +1671,6 @@ fn modify_board_with_plan(
         apply_scoped_replacement_policy,
         apply_scoped_replacement_plan,
     )
-}
-
-#[derive(Debug, Serialize)]
-struct ImportReportView {
-    kind: &'static str,
-    source: String,
-    counts: ImportCountsView,
-    warnings: Vec<String>,
-    metadata: std::collections::BTreeMap<String, String>,
-}
-
-#[derive(Debug, Serialize)]
-struct ImportCountsView {
-    units: usize,
-    symbols: usize,
-    entities: usize,
-    padstacks: usize,
-    packages: usize,
-    parts: usize,
-}
-
-impl From<ImportReport> for ImportReportView {
-    fn from(report: ImportReport) -> Self {
-        Self {
-            kind: report.kind.as_str(),
-            source: report.source.display().to_string(),
-            counts: ImportCountsView {
-                units: report.counts.units,
-                symbols: report.counts.symbols,
-                entities: report.counts.entities,
-                padstacks: report.counts.padstacks,
-                packages: report.counts.packages,
-                parts: report.counts.parts,
-            },
-            warnings: report.warnings,
-            metadata: report.metadata,
-        }
-    }
 }
 
 #[cfg(test)]

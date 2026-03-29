@@ -138,6 +138,30 @@ pub(super) fn execute_native_project_query_command(
             let report = query_native_project_board_stackup(&path)?;
             Ok((render_output(format, &report), 0))
         }
+        NativeProjectQueryCommands::RoutingSubstrate => {
+            let report = query_native_project_routing_substrate(&path)?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_routing_substrate_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RoutePreflight { net } => {
+            let report = query_native_project_route_preflight(&path, net)?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_route_preflight_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectQueryCommands::RouteCorridor { net } => {
+            let report = query_native_project_route_corridor(&path, net)?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_route_corridor_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
         NativeProjectQueryCommands::BoardComponents => {
             let report = query_native_project_board_component_views(&path)?;
             Ok((render_output(format, &report), 0))
@@ -147,7 +171,8 @@ pub(super) fn execute_native_project_query_command(
             Ok((render_output(format, &report), 0))
         }
         NativeProjectQueryCommands::BoardComponentModels3d(args) => {
-            let report = query_native_project_board_component_models_3d(&path, args.component_uuid)?;
+            let report =
+                query_native_project_board_component_models_3d(&path, args.component_uuid)?;
             Ok((render_output(format, &report), 0))
         }
         NativeProjectQueryCommands::BoardComponentPads(args) => {
@@ -155,11 +180,13 @@ pub(super) fn execute_native_project_query_command(
             Ok((render_output(format, &report), 0))
         }
         NativeProjectQueryCommands::BoardComponentSilkscreen(args) => {
-            let report = query_native_project_board_component_silkscreen(&path, args.component_uuid)?;
+            let report =
+                query_native_project_board_component_silkscreen(&path, args.component_uuid)?;
             Ok((render_output(format, &report), 0))
         }
         NativeProjectQueryCommands::BoardComponentMechanical(args) => {
-            let report = query_native_project_board_component_mechanical(&path, args.component_uuid)?;
+            let report =
+                query_native_project_board_component_mechanical(&path, args.component_uuid)?;
             Ok((render_output(format, &report), 0))
         }
         NativeProjectQueryCommands::BoardTracks => {

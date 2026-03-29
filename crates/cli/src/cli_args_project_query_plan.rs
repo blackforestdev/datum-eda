@@ -63,6 +63,23 @@ pub(crate) enum NativeProjectQueryCommands {
     BoardOutline,
     /// Current native board stackup
     BoardStackup,
+    /// Deterministic routing-kernel substrate from persisted native board state
+    #[command(name = "routing-substrate")]
+    RoutingSubstrate,
+    /// Deterministic single-net routing preflight from persisted native board state
+    #[command(name = "route-preflight")]
+    RoutePreflight {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+    },
+    /// Deterministic single-net corridor geometry from persisted native board state
+    #[command(name = "route-corridor")]
+    RouteCorridor {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+    },
     /// Current native board placed packages/components
     BoardComponents,
     /// Current native board component for one component UUID

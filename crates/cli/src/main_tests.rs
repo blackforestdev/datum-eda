@@ -187,6 +187,10 @@ mod main_tests_modify_advanced_plan;
 mod main_tests_modify_basic;
 #[path = "main_tests_plan_apply.rs"]
 mod main_tests_plan_apply;
+#[path = "main_tests_plan_apply_compare_artifact.rs"]
+mod main_tests_plan_apply_compare_artifact;
+#[path = "main_tests_plan_apply_inspect_artifact.rs"]
+mod main_tests_plan_apply_inspect_artifact;
 #[path = "main_tests_plan_apply_legacy_manifest.rs"]
 mod main_tests_plan_apply_legacy_manifest;
 #[path = "main_tests_plan_apply_legacy_manifest_text.rs"]
@@ -197,16 +201,10 @@ mod main_tests_plan_apply_text;
 mod main_tests_plan_apply_validate;
 #[path = "main_tests_plan_apply_validate_artifact.rs"]
 mod main_tests_plan_apply_validate_artifact;
-#[path = "main_tests_plan_apply_compare_artifact.rs"]
-mod main_tests_plan_apply_compare_artifact;
-#[path = "main_tests_plan_apply_inspect_artifact.rs"]
-mod main_tests_plan_apply_inspect_artifact;
 #[path = "main_tests_project_board_check.rs"]
 mod main_tests_project_board_check;
 #[path = "main_tests_project_board_component.rs"]
 mod main_tests_project_board_component;
-#[path = "main_tests_project_board_component_query_single.rs"]
-mod main_tests_project_board_component_query_single;
 #[path = "main_tests_project_board_component_mechanical.rs"]
 mod main_tests_project_board_component_mechanical;
 #[path = "main_tests_project_board_component_models_3d.rs"]
@@ -217,6 +215,8 @@ mod main_tests_project_board_component_pads;
 mod main_tests_project_board_component_pool_materialization;
 #[path = "main_tests_project_board_component_query.rs"]
 mod main_tests_project_board_component_query;
+#[path = "main_tests_project_board_component_query_single.rs"]
+mod main_tests_project_board_component_query_single;
 #[path = "main_tests_project_board_component_silkscreen.rs"]
 mod main_tests_project_board_component_silkscreen;
 #[path = "main_tests_project_board_connectivity.rs"]
@@ -273,12 +273,12 @@ mod main_tests_project_forward_annotation_artifact_plan;
 mod main_tests_project_forward_annotation_artifact_review_import;
 #[path = "main_tests_project_forward_annotation_artifact_review_replace.rs"]
 mod main_tests_project_forward_annotation_artifact_review_replace;
+#[path = "main_tests_project_forward_annotation_artifact_validate.rs"]
+mod main_tests_project_forward_annotation_artifact_validate;
 #[path = "main_tests_project_forward_annotation_batch_apply.rs"]
 mod main_tests_project_forward_annotation_batch_apply;
 #[path = "main_tests_project_forward_annotation_export_inspect.rs"]
 mod main_tests_project_forward_annotation_export_inspect;
-#[path = "main_tests_project_forward_annotation_artifact_validate.rs"]
-mod main_tests_project_forward_annotation_artifact_validate;
 #[path = "main_tests_project_forward_annotation_export_selection.rs"]
 mod main_tests_project_forward_annotation_export_selection;
 #[path = "main_tests_project_forward_annotation_proposal.rs"]
@@ -301,6 +301,12 @@ mod main_tests_project_noconnect;
 mod main_tests_project_port;
 #[path = "main_tests_project_query.rs"]
 mod main_tests_project_query;
+#[path = "main_tests_project_route_preflight.rs"]
+mod main_tests_project_route_preflight;
+#[path = "main_tests_project_route_corridor.rs"]
+mod main_tests_project_route_corridor;
+#[path = "main_tests_project_routing_substrate.rs"]
+mod main_tests_project_routing_substrate;
 #[path = "main_tests_project_symbol.rs"]
 mod main_tests_project_symbol;
 #[path = "main_tests_project_symbol_resolution.rs"]
