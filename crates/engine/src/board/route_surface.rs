@@ -2,38 +2,34 @@
 mod route_corridor;
 #[path = "route_path_candidate.rs"]
 mod route_path_candidate;
-#[path = "route_path_candidate_via.rs"]
-mod route_path_candidate_via;
-#[path = "route_path_candidate_two_via.rs"]
-mod route_path_candidate_two_via;
-#[path = "route_path_candidate_three_via.rs"]
-mod route_path_candidate_three_via;
-#[path = "route_path_candidate_four_via.rs"]
-mod route_path_candidate_four_via;
-#[path = "route_path_candidate_five_via.rs"]
-mod route_path_candidate_five_via;
-#[path = "route_path_candidate_six_via.rs"]
-mod route_path_candidate_six_via;
-#[path = "route_path_candidate_authored_via_chain.rs"]
-mod route_path_candidate_authored_via_chain;
-#[path = "route_path_candidate_authored_via_chain_explain.rs"]
-mod route_path_candidate_authored_via_chain_explain;
 #[path = "route_path_candidate_authored_copper_graph.rs"]
 mod route_path_candidate_authored_copper_graph;
-#[path = "route_path_candidate_authored_copper_plus_one_gap.rs"]
-mod route_path_candidate_authored_copper_plus_one_gap;
+#[path = "route_path_candidate_authored_copper_graph_explain.rs"]
+mod route_path_candidate_authored_copper_graph_explain;
+#[path = "route_path_candidate_authored_copper_graph_obstacle_aware.rs"]
+mod route_path_candidate_authored_copper_graph_obstacle_aware;
+#[path = "route_path_candidate_authored_copper_graph_obstacle_aware_explain.rs"]
+mod route_path_candidate_authored_copper_graph_obstacle_aware_explain;
+#[path = "route_path_candidate_authored_copper_graph_obstacle_aware_selection.rs"]
+mod route_path_candidate_authored_copper_graph_obstacle_aware_selection;
 #[path = "route_path_candidate_authored_copper_graph_policy.rs"]
 mod route_path_candidate_authored_copper_graph_policy;
 #[path = "route_path_candidate_authored_copper_graph_policy_explain.rs"]
 mod route_path_candidate_authored_copper_graph_policy_explain;
-#[path = "route_path_candidate_authored_copper_graph_explain.rs"]
-mod route_path_candidate_authored_copper_graph_explain;
+#[path = "route_path_candidate_authored_copper_graph_selection.rs"]
+mod route_path_candidate_authored_copper_graph_selection;
 #[path = "route_path_candidate_authored_copper_graph_zone_aware.rs"]
 mod route_path_candidate_authored_copper_graph_zone_aware;
+#[path = "route_path_candidate_authored_copper_graph_zone_aware_explain.rs"]
+mod route_path_candidate_authored_copper_graph_zone_aware_explain;
+#[path = "route_path_candidate_authored_copper_graph_zone_aware_selection.rs"]
+mod route_path_candidate_authored_copper_graph_zone_aware_selection;
 #[path = "route_path_candidate_authored_copper_graph_zone_obstacle_aware.rs"]
 mod route_path_candidate_authored_copper_graph_zone_obstacle_aware;
 #[path = "route_path_candidate_authored_copper_graph_zone_obstacle_aware_explain.rs"]
 mod route_path_candidate_authored_copper_graph_zone_obstacle_aware_explain;
+#[path = "route_path_candidate_authored_copper_graph_zone_obstacle_aware_selection.rs"]
+mod route_path_candidate_authored_copper_graph_zone_obstacle_aware_selection;
 #[path = "route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware.rs"]
 mod route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware;
 #[path = "route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_explain.rs"]
@@ -42,60 +38,64 @@ mod route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_awar
 mod route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware;
 #[path = "route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_explain.rs"]
 mod route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_explain;
-#[path = "route_path_candidate_authored_copper_graph_zone_aware_explain.rs"]
-mod route_path_candidate_authored_copper_graph_zone_aware_explain;
-#[path = "route_path_candidate_authored_copper_graph_obstacle_aware.rs"]
-mod route_path_candidate_authored_copper_graph_obstacle_aware;
-#[path = "route_path_candidate_authored_copper_graph_obstacle_aware_explain.rs"]
-mod route_path_candidate_authored_copper_graph_obstacle_aware_explain;
-#[path = "route_path_candidate_six_via_explain.rs"]
-mod route_path_candidate_six_via_explain;
+#[path = "route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_selection.rs"]
+mod route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_selection;
+#[path = "route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_selection.rs"]
+mod route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_selection;
+#[path = "route_path_candidate_authored_copper_plus_one_gap.rs"]
+mod route_path_candidate_authored_copper_plus_one_gap;
+#[path = "route_path_candidate_authored_copper_plus_one_gap_selection.rs"]
+mod route_path_candidate_authored_copper_plus_one_gap_selection;
+#[path = "route_path_candidate_authored_via_chain.rs"]
+mod route_path_candidate_authored_via_chain;
+#[path = "route_path_candidate_authored_via_chain_explain.rs"]
+mod route_path_candidate_authored_via_chain_explain;
+#[path = "route_path_candidate_authored_via_chain_selection.rs"]
+mod route_path_candidate_authored_via_chain_selection;
+#[path = "route_path_candidate_explain.rs"]
+mod route_path_candidate_explain;
+#[path = "route_path_candidate_five_via.rs"]
+mod route_path_candidate_five_via;
 #[path = "route_path_candidate_five_via_explain.rs"]
 mod route_path_candidate_five_via_explain;
+#[path = "route_path_candidate_five_via_selection.rs"]
+mod route_path_candidate_five_via_selection;
+#[path = "route_path_candidate_four_via.rs"]
+mod route_path_candidate_four_via;
 #[path = "route_path_candidate_four_via_explain.rs"]
 mod route_path_candidate_four_via_explain;
+#[path = "route_path_candidate_four_via_selection.rs"]
+mod route_path_candidate_four_via_selection;
+#[path = "route_path_candidate_selection.rs"]
+mod route_path_candidate_selection;
+#[path = "route_path_candidate_six_via.rs"]
+mod route_path_candidate_six_via;
+#[path = "route_path_candidate_six_via_explain.rs"]
+mod route_path_candidate_six_via_explain;
+#[path = "route_path_candidate_six_via_selection.rs"]
+mod route_path_candidate_six_via_selection;
+#[path = "route_path_candidate_three_via.rs"]
+mod route_path_candidate_three_via;
 #[path = "route_path_candidate_three_via_explain.rs"]
 mod route_path_candidate_three_via_explain;
+#[path = "route_path_candidate_three_via_selection.rs"]
+mod route_path_candidate_three_via_selection;
+#[path = "route_path_candidate_two_via.rs"]
+mod route_path_candidate_two_via;
 #[path = "route_path_candidate_two_via_explain.rs"]
 mod route_path_candidate_two_via_explain;
+#[path = "route_path_candidate_two_via_selection.rs"]
+mod route_path_candidate_two_via_selection;
+#[path = "route_path_candidate_via.rs"]
+mod route_path_candidate_via;
 #[path = "route_path_candidate_via_explain.rs"]
 mod route_path_candidate_via_explain;
 #[path = "route_path_candidate_via_selection.rs"]
 mod route_path_candidate_via_selection;
-#[path = "route_path_candidate_two_via_selection.rs"]
-mod route_path_candidate_two_via_selection;
-#[path = "route_path_candidate_three_via_selection.rs"]
-mod route_path_candidate_three_via_selection;
-#[path = "route_path_candidate_four_via_selection.rs"]
-mod route_path_candidate_four_via_selection;
-#[path = "route_path_candidate_five_via_selection.rs"]
-mod route_path_candidate_five_via_selection;
-#[path = "route_path_candidate_six_via_selection.rs"]
-mod route_path_candidate_six_via_selection;
-#[path = "route_path_candidate_authored_via_chain_selection.rs"]
-mod route_path_candidate_authored_via_chain_selection;
-#[path = "route_path_candidate_authored_copper_graph_selection.rs"]
-mod route_path_candidate_authored_copper_graph_selection;
-#[path = "route_path_candidate_authored_copper_plus_one_gap_selection.rs"]
-mod route_path_candidate_authored_copper_plus_one_gap_selection;
-#[path = "route_path_candidate_authored_copper_graph_zone_aware_selection.rs"]
-mod route_path_candidate_authored_copper_graph_zone_aware_selection;
-#[path = "route_path_candidate_authored_copper_graph_zone_obstacle_aware_selection.rs"]
-mod route_path_candidate_authored_copper_graph_zone_obstacle_aware_selection;
-#[path = "route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_selection.rs"]
-mod route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_selection;
-#[path = "route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_selection.rs"]
-mod route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_selection;
-#[path = "route_path_candidate_authored_copper_graph_obstacle_aware_selection.rs"]
-mod route_path_candidate_authored_copper_graph_obstacle_aware_selection;
-#[path = "route_path_candidate_selection.rs"]
-mod route_path_candidate_selection;
-#[path = "route_path_candidate_explain.rs"]
-mod route_path_candidate_explain;
-#[path = "route_segment_blockage.rs"]
-mod route_segment_blockage;
 #[path = "route_preflight.rs"]
 mod route_preflight;
+#[path = "route_segment_blockage.rs"]
+mod route_segment_blockage;
 #[path = "routing_substrate.rs"]
 mod routing_substrate;
 

@@ -142,14 +142,29 @@ fn route_path_candidate_via_reports_deterministic_path_using_authored_via() {
         .route_path_candidate_via(net_uuid, anchor_top_uuid, anchor_bottom_uuid)
         .expect("via path candidate should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.summary.candidate_via_count, 1);
     assert_eq!(report.summary.matching_via_count, 1);
     assert_eq!(report.summary.available_via_count, 1);
-    assert_eq!(report.path.as_ref().map(|path| path.via_uuid), Some(via_uuid));
-    assert_eq!(report.path.as_ref().map(|path| path.segments.len()), Some(2));
-    assert_eq!(report.path.as_ref().map(|path| path.segments[0].layer), Some(1));
-    assert_eq!(report.path.as_ref().map(|path| path.segments[1].layer), Some(3));
+    assert_eq!(
+        report.path.as_ref().map(|path| path.via_uuid),
+        Some(via_uuid)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.segments.len()),
+        Some(2)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.segments[0].layer),
+        Some(1)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.segments[1].layer),
+        Some(3)
+    );
 }
 
 #[test]
@@ -160,23 +175,41 @@ fn route_path_candidate_via_preserves_segment_orientation_for_reversed_anchor_or
         .route_path_candidate_via(net_uuid, anchor_bottom_uuid, anchor_top_uuid)
         .expect("via path candidate should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
-    assert_eq!(report.path.as_ref().map(|path| path.via_uuid), Some(via_uuid));
-    assert_eq!(report.path.as_ref().map(|path| path.segments[0].layer), Some(3));
-    assert_eq!(report.path.as_ref().map(|path| path.segments[1].layer), Some(1));
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.via_uuid),
+        Some(via_uuid)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.segments[0].layer),
+        Some(3)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.segments[1].layer),
+        Some(1)
+    );
     assert_eq!(
         report
             .path
             .as_ref()
             .map(|path| path.segments[0].points.clone()),
-        Some(vec![Point::new(900_000, 900_000), Point::new(500_000, 500_000)])
+        Some(vec![
+            Point::new(900_000, 900_000),
+            Point::new(500_000, 500_000)
+        ])
     );
     assert_eq!(
         report
             .path
             .as_ref()
             .map(|path| path.segments[1].points.clone()),
-        Some(vec![Point::new(500_000, 500_000), Point::new(100_000, 100_000)])
+        Some(vec![
+            Point::new(500_000, 500_000),
+            Point::new(100_000, 100_000)
+        ])
     );
 }
 
@@ -213,13 +246,22 @@ fn route_path_candidate_via_selects_next_matching_via_when_earlier_via_is_blocke
         .route_path_candidate_via(net_uuid, anchor_top_uuid, anchor_bottom_uuid)
         .expect("via path candidate should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.summary.candidate_via_count, 2);
     assert_eq!(report.summary.matching_via_count, 2);
     assert_eq!(report.summary.blocked_via_count, 1);
     assert_eq!(report.summary.available_via_count, 1);
-    assert_eq!(report.path.as_ref().map(|path| path.via_uuid), Some(second_via_uuid));
-    assert_ne!(report.path.as_ref().map(|path| path.via_uuid), Some(first_via_uuid));
+    assert_eq!(
+        report.path.as_ref().map(|path| path.via_uuid),
+        Some(second_via_uuid)
+    );
+    assert_ne!(
+        report.path.as_ref().map(|path| path.via_uuid),
+        Some(first_via_uuid)
+    );
 }
 
 #[test]

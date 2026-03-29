@@ -184,7 +184,10 @@ fn project_query_route_path_candidate_four_via_explain_reports_selected_quadrupl
     .expect("query should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report should parse");
 
-    assert_eq!(report["contract"], "m5_route_path_candidate_four_via_explain_v1");
+    assert_eq!(
+        report["contract"],
+        "m5_route_path_candidate_four_via_explain_v1"
+    );
     assert_eq!(report["persisted_native_board_state_only"], true);
     assert_eq!(report["status"], "deterministic_path_found");
     assert_eq!(report["explanation_kind"], "deterministic_path_found");
@@ -193,10 +196,22 @@ fn project_query_route_path_candidate_four_via_explain_reports_selected_quadrupl
         "select the first unblocked matching authored via quadruple in ascending (via_a_uuid, via_b_uuid, via_c_uuid, via_d_uuid) order whose layer sequence connects the requested anchor layers through three intermediate copper layers"
     );
     assert_eq!(report["summary"]["matching_via_quadruple_count"], 1);
-    assert_eq!(report["selected_quadruple"]["via_a_uuid"], via_a_uuid.to_string());
-    assert_eq!(report["selected_quadruple"]["via_b_uuid"], via_b_uuid.to_string());
-    assert_eq!(report["selected_quadruple"]["via_c_uuid"], via_c_uuid.to_string());
-    assert_eq!(report["selected_quadruple"]["via_d_uuid"], via_d_uuid.to_string());
+    assert_eq!(
+        report["selected_quadruple"]["via_a_uuid"],
+        via_a_uuid.to_string()
+    );
+    assert_eq!(
+        report["selected_quadruple"]["via_b_uuid"],
+        via_b_uuid.to_string()
+    );
+    assert_eq!(
+        report["selected_quadruple"]["via_c_uuid"],
+        via_c_uuid.to_string()
+    );
+    assert_eq!(
+        report["selected_quadruple"]["via_d_uuid"],
+        via_d_uuid.to_string()
+    );
 
     let repeated = execute(route_path_candidate_four_via_explain_query_cli(
         &root,

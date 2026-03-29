@@ -187,7 +187,10 @@ fn route_corridor_reports_insufficient_authored_inputs_when_only_one_anchor_exis
 
     let report = board.route_corridor(net_uuid).expect("net should exist");
 
-    assert_eq!(report.status, RouteCorridorStatus::InsufficientAuthoredInputs);
+    assert_eq!(
+        report.status,
+        RouteCorridorStatus::InsufficientAuthoredInputs
+    );
     assert_eq!(report.summary.anchor_count, 1);
     assert!(report.corridor_spans.is_empty());
 }
@@ -252,12 +255,11 @@ fn route_corridor_detects_foreign_zone_crossing_with_segment_polygon_truth_bound
     assert_eq!(report.status, RouteCorridorStatus::CorridorBlocked);
     assert_eq!(report.summary.blocked_span_count, 2);
     assert_eq!(report.summary.obstacle_count, 2);
-    assert!(report
-        .corridor_spans
-        .iter()
-        .all(|span| span.blockages.iter().any(|entry| {
-            matches!(entry.kind, RouteCorridorObstacleKind::ForeignZone)
-        })));
+    assert!(report.corridor_spans.iter().all(|span| {
+        span.blockages
+            .iter()
+            .any(|entry| matches!(entry.kind, RouteCorridorObstacleKind::ForeignZone))
+    }));
 }
 
 #[test]

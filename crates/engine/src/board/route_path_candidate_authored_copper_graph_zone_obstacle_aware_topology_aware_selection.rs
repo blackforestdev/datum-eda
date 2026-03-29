@@ -209,15 +209,12 @@ impl AuthoredCopperGraphZoneObstacleAwareTopologyAware {
         let mut blocked_zone_connection_count = 0;
 
         for track in tracks {
-            let subject = format!("existing track edge {} on layer {}", track.uuid, track.layer);
-            let analysis = analyze_route_segment(
-                board,
-                net_uuid,
-                track.layer,
-                track.from,
-                track.to,
-                &subject,
+            let subject = format!(
+                "existing track edge {} on layer {}",
+                track.uuid, track.layer
             );
+            let analysis =
+                analyze_route_segment(board, net_uuid, track.layer, track.from, track.to, &subject);
             if !analysis.blockages.is_empty() {
                 blocked_track_count += 1;
                 continue;
@@ -337,7 +334,8 @@ impl AuthoredCopperGraphZoneObstacleAwareTopologyAware {
                 .iter()
                 .enumerate()
                 .filter(|(_, anchor)| {
-                    anchor.layer == zone.layer && point_in_or_on_polygon(anchor.point, &zone.polygon)
+                    anchor.layer == zone.layer
+                        && point_in_or_on_polygon(anchor.point, &zone.polygon)
                 })
                 .map(|(index, _)| index)
                 .collect::<Vec<_>>();
@@ -479,10 +477,15 @@ fn compare_search_state(left: &SearchState, right: &SearchState) -> Ordering {
     left.steps
         .len()
         .cmp(&right.steps.len())
-        .then_with(|| left.topology_transition_count.cmp(&right.topology_transition_count))
+        .then_with(|| {
+            left.topology_transition_count
+                .cmp(&right.topology_transition_count)
+        })
         .then_with(|| left.via_step_count.cmp(&right.via_step_count))
         .then_with(|| left.zone_step_count.cmp(&right.zone_step_count))
-        .then_with(|| step_signature_sequence(&left.steps).cmp(&step_signature_sequence(&right.steps)))
+        .then_with(|| {
+            step_signature_sequence(&left.steps).cmp(&step_signature_sequence(&right.steps))
+        })
         .then_with(|| left.node_id.cmp(&right.node_id))
 }
 

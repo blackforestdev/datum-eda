@@ -107,6 +107,30 @@ pub(crate) enum ProjectCommands {
     ApplyForwardAnnotationAction(ProjectApplyForwardAnnotationActionArgs),
     /// Apply all currently self-sufficient forward-annotation proposal actions while honoring persisted defer/reject review state
     ApplyForwardAnnotationReviewed(ProjectApplyForwardAnnotationReviewedArgs),
+    /// Export one deterministic route proposal artifact from the current plus-one-gap route candidate
+    ExportRouteProposal(ProjectExportRouteProposalArgs),
+    /// Export one deterministic route proposal artifact from the current single-layer route-path-candidate result
+    ExportRoutePathCandidateProposal(ProjectExportRoutePathCandidateProposalArgs),
+    /// Export one deterministic route proposal artifact from the current single-via route-path-candidate result
+    ExportRoutePathCandidateViaProposal(ProjectExportRoutePathCandidateViaProposalArgs),
+    /// Export one deterministic route proposal artifact from the current two-via route-path-candidate result
+    ExportRoutePathCandidateTwoViaProposal(ProjectExportRoutePathCandidateTwoViaProposalArgs),
+    /// Export one deterministic route proposal artifact from the current three-via route-path-candidate result
+    ExportRoutePathCandidateThreeViaProposal(ProjectExportRoutePathCandidateThreeViaProposalArgs),
+    /// Export one deterministic route proposal artifact from the current four-via route-path-candidate result
+    ExportRoutePathCandidateFourViaProposal(ProjectExportRoutePathCandidateFourViaProposalArgs),
+    /// Export one deterministic route proposal artifact from the current five-via route-path-candidate result
+    ExportRoutePathCandidateFiveViaProposal(ProjectExportRoutePathCandidateFiveViaProposalArgs),
+    /// Export one deterministic route proposal artifact from the current six-via route-path-candidate result
+    ExportRoutePathCandidateSixViaProposal(ProjectExportRoutePathCandidateSixViaProposalArgs),
+    /// Export one deterministic route proposal artifact from the current authored-via-chain route-path-candidate result
+    ExportRoutePathCandidateAuthoredViaChainProposal(
+        ProjectExportRoutePathCandidateAuthoredViaChainProposalArgs,
+    ),
+    /// Inspect a versioned route proposal artifact
+    InspectRouteProposalArtifact(ProjectInspectRouteProposalArtifactArgs),
+    /// Apply a versioned route proposal artifact when it still matches the current live project state
+    ApplyRouteProposalArtifact(ProjectApplyRouteProposalArtifactArgs),
     /// Export the current forward-annotation proposal and review state as a versioned artifact
     ExportForwardAnnotationProposal(ProjectExportForwardAnnotationProposalArgs),
     /// Export a selected subset of the current forward-annotation proposal and matching review state as a versioned artifact
@@ -122,7 +146,9 @@ pub(crate) enum ProjectCommands {
     /// Filter a forward-annotation proposal artifact down to actions still applicable against the current live project proposal
     FilterForwardAnnotationProposalArtifact(ProjectFilterForwardAnnotationProposalArtifactArgs),
     /// Plan artifact-driven forward-annotation apply without mutating project state
-    PlanForwardAnnotationProposalArtifactApply(ProjectPlanForwardAnnotationProposalArtifactApplyArgs),
+    PlanForwardAnnotationProposalArtifactApply(
+        ProjectPlanForwardAnnotationProposalArtifactApplyArgs,
+    ),
     /// Apply one filtered forward-annotation proposal artifact when all retained actions are still self-sufficient
     ApplyForwardAnnotationProposalArtifact(ProjectApplyForwardAnnotationProposalArtifactArgs),
     /// Import forward-annotation review decisions from an artifact into the current live project state

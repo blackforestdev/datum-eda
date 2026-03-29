@@ -1,7 +1,7 @@
-use super::*;
 use super::command_exec_native_support::{
     parse_native_hidden_power_behavior, parse_native_symbol_display_mode,
 };
+use super::*;
 use crate::command_modify::{
     parse_apply_replacement_plan_arg, parse_apply_replacement_policy_arg,
     parse_apply_scoped_replacement_policy_arg, parse_assign_part_arg, parse_move_component_arg,
@@ -190,23 +190,36 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                         &path,
                     )
                 }
-                ProjectCommands::ExportGerberOutline(ProjectExportGerberOutlineArgs { path, out }) => {
+                ProjectCommands::ExportGerberOutline(ProjectExportGerberOutlineArgs {
+                    path,
+                    out,
+                }) => {
                     let report = export_native_project_gerber_outline(&path, &out)?;
                     let output = match cli.format {
-                        OutputFormat::Text => render_native_project_gerber_outline_export_text(&report),
+                        OutputFormat::Text => {
+                            render_native_project_gerber_outline_export_text(&report)
+                        }
                         OutputFormat::Json => render_output(&cli.format, &report),
                     };
                     Ok((output, 0))
                 }
-                ProjectCommands::ExportGerberCopperLayer(ProjectExportGerberCopperLayerArgs { path, layer, out }) => {
+                ProjectCommands::ExportGerberCopperLayer(ProjectExportGerberCopperLayerArgs {
+                    path,
+                    layer,
+                    out,
+                }) => {
                     let report = export_native_project_gerber_copper_layer(&path, layer, &out)?;
                     let output = match cli.format {
-                        OutputFormat::Text => render_native_project_gerber_copper_export_text(&report),
+                        OutputFormat::Text => {
+                            render_native_project_gerber_copper_export_text(&report)
+                        }
                         OutputFormat::Json => render_output(&cli.format, &report),
                     };
                     Ok((output, 0))
                 }
-                ProjectCommands::ExportGerberSoldermaskLayer(ProjectExportGerberSoldermaskLayerArgs { path, layer, out }) => {
+                ProjectCommands::ExportGerberSoldermaskLayer(
+                    ProjectExportGerberSoldermaskLayerArgs { path, layer, out },
+                ) => {
                     let report = export_native_project_gerber_soldermask_layer(&path, layer, &out)?;
                     let output = match cli.format {
                         OutputFormat::Text => {
@@ -216,7 +229,9 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     };
                     Ok((output, 0))
                 }
-                ProjectCommands::ExportGerberSilkscreenLayer(ProjectExportGerberSilkscreenLayerArgs { path, layer, out }) => {
+                ProjectCommands::ExportGerberSilkscreenLayer(
+                    ProjectExportGerberSilkscreenLayerArgs { path, layer, out },
+                ) => {
                     let report = export_native_project_gerber_silkscreen_layer(&path, layer, &out)?;
                     let output = match cli.format {
                         OutputFormat::Text => {
@@ -226,15 +241,23 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     };
                     Ok((output, 0))
                 }
-                ProjectCommands::ExportGerberPasteLayer(ProjectExportGerberPasteLayerArgs { path, layer, out }) => {
+                ProjectCommands::ExportGerberPasteLayer(ProjectExportGerberPasteLayerArgs {
+                    path,
+                    layer,
+                    out,
+                }) => {
                     let report = export_native_project_gerber_paste_layer(&path, layer, &out)?;
                     let output = match cli.format {
-                        OutputFormat::Text => render_native_project_gerber_paste_export_text(&report),
+                        OutputFormat::Text => {
+                            render_native_project_gerber_paste_export_text(&report)
+                        }
                         OutputFormat::Json => render_output(&cli.format, &report),
                     };
                     Ok((output, 0))
                 }
-                ProjectCommands::ExportGerberMechanicalLayer(ProjectExportGerberMechanicalLayerArgs { path, layer, out }) => {
+                ProjectCommands::ExportGerberMechanicalLayer(
+                    ProjectExportGerberMechanicalLayerArgs { path, layer, out },
+                ) => {
                     let report = export_native_project_gerber_mechanical_layer(&path, layer, &out)?;
                     let output = match cli.format {
                         OutputFormat::Text => {
@@ -244,7 +267,10 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     };
                     Ok((output, 0))
                 }
-                ProjectCommands::ValidateGerberOutline(ProjectValidateGerberOutlineArgs { path, gerber }) => {
+                ProjectCommands::ValidateGerberOutline(ProjectValidateGerberOutlineArgs {
+                    path,
+                    gerber,
+                }) => {
                     let report = validate_native_project_gerber_outline(&path, &gerber)?;
                     let output = match cli.format {
                         OutputFormat::Text => {
@@ -254,12 +280,15 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     };
                     Ok((output, if report.matches_expected { 0 } else { 1 }))
                 }
-                ProjectCommands::ValidateGerberCopperLayer(ProjectValidateGerberCopperLayerArgs {
-                    path,
-                    layer,
-                    gerber,
-                }) => {
-                    let report = validate_native_project_gerber_copper_layer(&path, layer, &gerber)?;
+                ProjectCommands::ValidateGerberCopperLayer(
+                    ProjectValidateGerberCopperLayerArgs {
+                        path,
+                        layer,
+                        gerber,
+                    },
+                ) => {
+                    let report =
+                        validate_native_project_gerber_copper_layer(&path, layer, &gerber)?;
                     let output = match cli.format {
                         OutputFormat::Text => {
                             render_native_project_gerber_copper_validation_text(&report)
@@ -269,11 +298,13 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     let exit_code = if report.matches_expected { 0 } else { 1 };
                     Ok((output, exit_code))
                 }
-                ProjectCommands::ValidateGerberSoldermaskLayer(ProjectValidateGerberSoldermaskLayerArgs {
-                    path,
-                    layer,
-                    gerber,
-                }) => {
+                ProjectCommands::ValidateGerberSoldermaskLayer(
+                    ProjectValidateGerberSoldermaskLayerArgs {
+                        path,
+                        layer,
+                        gerber,
+                    },
+                ) => {
                     let report =
                         validate_native_project_gerber_soldermask_layer(&path, layer, &gerber)?;
                     let output = match cli.format {
@@ -285,11 +316,13 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     let exit_code = if report.matches_expected { 0 } else { 1 };
                     Ok((output, exit_code))
                 }
-                ProjectCommands::ValidateGerberSilkscreenLayer(ProjectValidateGerberSilkscreenLayerArgs {
-                    path,
-                    layer,
-                    gerber,
-                }) => {
+                ProjectCommands::ValidateGerberSilkscreenLayer(
+                    ProjectValidateGerberSilkscreenLayerArgs {
+                        path,
+                        layer,
+                        gerber,
+                    },
+                ) => {
                     let report =
                         validate_native_project_gerber_silkscreen_layer(&path, layer, &gerber)?;
                     let output = match cli.format {
@@ -301,11 +334,13 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     let exit_code = if report.matches_expected { 0 } else { 1 };
                     Ok((output, exit_code))
                 }
-                ProjectCommands::ValidateGerberPasteLayer(ProjectValidateGerberPasteLayerArgs {
-                    path,
-                    layer,
-                    gerber,
-                }) => {
+                ProjectCommands::ValidateGerberPasteLayer(
+                    ProjectValidateGerberPasteLayerArgs {
+                        path,
+                        layer,
+                        gerber,
+                    },
+                ) => {
                     let report = validate_native_project_gerber_paste_layer(&path, layer, &gerber)?;
                     let output = match cli.format {
                         OutputFormat::Text => {
@@ -316,11 +351,13 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     let exit_code = if report.matches_expected { 0 } else { 1 };
                     Ok((output, exit_code))
                 }
-                ProjectCommands::ValidateGerberMechanicalLayer(ProjectValidateGerberMechanicalLayerArgs {
-                    path,
-                    layer,
-                    gerber,
-                }) => {
+                ProjectCommands::ValidateGerberMechanicalLayer(
+                    ProjectValidateGerberMechanicalLayerArgs {
+                        path,
+                        layer,
+                        gerber,
+                    },
+                ) => {
                     let report =
                         validate_native_project_gerber_mechanical_layer(&path, layer, &gerber)?;
                     let output = match cli.format {
@@ -332,7 +369,10 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     let exit_code = if report.matches_expected { 0 } else { 1 };
                     Ok((output, exit_code))
                 }
-                ProjectCommands::CompareGerberOutline(ProjectCompareGerberOutlineArgs { path, gerber }) => {
+                ProjectCommands::CompareGerberOutline(ProjectCompareGerberOutlineArgs {
+                    path,
+                    gerber,
+                }) => {
                     let report = compare_native_project_gerber_outline(&path, &gerber)?;
                     let output = match cli.format {
                         OutputFormat::Text => {
@@ -342,11 +382,13 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     };
                     Ok((output, 0))
                 }
-                ProjectCommands::CompareGerberCopperLayer(ProjectCompareGerberCopperLayerArgs {
-                    path,
-                    layer,
-                    gerber,
-                }) => {
+                ProjectCommands::CompareGerberCopperLayer(
+                    ProjectCompareGerberCopperLayerArgs {
+                        path,
+                        layer,
+                        gerber,
+                    },
+                ) => {
                     let report = compare_native_project_gerber_copper_layer(&path, layer, &gerber)?;
                     let output = match cli.format {
                         OutputFormat::Text => {
@@ -356,11 +398,13 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     };
                     Ok((output, 0))
                 }
-                ProjectCommands::CompareGerberSoldermaskLayer(ProjectCompareGerberSoldermaskLayerArgs {
-                    path,
-                    layer,
-                    gerber,
-                }) => {
+                ProjectCommands::CompareGerberSoldermaskLayer(
+                    ProjectCompareGerberSoldermaskLayerArgs {
+                        path,
+                        layer,
+                        gerber,
+                    },
+                ) => {
                     let report =
                         compare_native_project_gerber_soldermask_layer(&path, layer, &gerber)?;
                     let output = match cli.format {
@@ -371,11 +415,13 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     };
                     Ok((output, 0))
                 }
-                ProjectCommands::CompareGerberSilkscreenLayer(ProjectCompareGerberSilkscreenLayerArgs {
-                    path,
-                    layer,
-                    gerber,
-                }) => {
+                ProjectCommands::CompareGerberSilkscreenLayer(
+                    ProjectCompareGerberSilkscreenLayerArgs {
+                        path,
+                        layer,
+                        gerber,
+                    },
+                ) => {
                     let report =
                         compare_native_project_gerber_silkscreen_layer(&path, layer, &gerber)?;
                     let output = match cli.format {
@@ -400,11 +446,13 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     };
                     Ok((output, 0))
                 }
-                ProjectCommands::CompareGerberMechanicalLayer(ProjectCompareGerberMechanicalLayerArgs {
-                    path,
-                    layer,
-                    gerber,
-                }) => {
+                ProjectCommands::CompareGerberMechanicalLayer(
+                    ProjectCompareGerberMechanicalLayerArgs {
+                        path,
+                        layer,
+                        gerber,
+                    },
+                ) => {
                     let report =
                         compare_native_project_gerber_mechanical_layer(&path, layer, &gerber)?;
                     let output = match cli.format {
@@ -430,30 +478,102 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 | command @ ProjectCommands::ManifestManufacturingSet(_) => {
                     command_exec_manufacturing::execute_manufacturing_command(&cli.format, command)
                 }
-                command @ ProjectCommands::ExportForwardAnnotationAudit(ProjectExportForwardAnnotationAuditArgs { .. })
-                | command @ ProjectCommands::ForwardAnnotationAudit(ProjectForwardAnnotationAuditArgs { .. })
-                | command @ ProjectCommands::ExportForwardAnnotationProposal(ProjectExportForwardAnnotationProposalArgs { .. })
-                | command @ ProjectCommands::ApplyForwardAnnotationAction(ProjectApplyForwardAnnotationActionArgs { .. })
-                | command @ ProjectCommands::ApplyForwardAnnotationReviewed(ProjectApplyForwardAnnotationReviewedArgs { .. })
-                | command @ ProjectCommands::ExportForwardAnnotationProposalSelection(ProjectExportForwardAnnotationProposalSelectionArgs { .. })
-                | command @ ProjectCommands::SelectForwardAnnotationProposalArtifact(ProjectSelectForwardAnnotationProposalArtifactArgs { .. })
-                | command @ ProjectCommands::InspectForwardAnnotationProposalArtifact(ProjectInspectForwardAnnotationProposalArtifactArgs { .. })
-                | command @ ProjectCommands::ValidateForwardAnnotationProposalArtifact(ProjectValidateForwardAnnotationProposalArtifactArgs { .. })
-                | command @ ProjectCommands::CompareForwardAnnotationProposalArtifact(ProjectCompareForwardAnnotationProposalArtifactArgs { .. })
-                | command @ ProjectCommands::FilterForwardAnnotationProposalArtifact(ProjectFilterForwardAnnotationProposalArtifactArgs { .. })
-                | command @ ProjectCommands::PlanForwardAnnotationProposalArtifactApply(ProjectPlanForwardAnnotationProposalArtifactApplyArgs { .. })
-                | command @ ProjectCommands::ApplyForwardAnnotationProposalArtifact(ProjectApplyForwardAnnotationProposalArtifactArgs { .. })
-                | command @ ProjectCommands::ImportForwardAnnotationArtifactReview(ProjectImportForwardAnnotationArtifactReviewArgs { .. })
-                | command @ ProjectCommands::ReplaceForwardAnnotationArtifactReview(ProjectReplaceForwardAnnotationArtifactReviewArgs { .. })
-                | command @ ProjectCommands::DeferForwardAnnotationAction(ProjectDeferForwardAnnotationActionArgs { .. })
-                | command @ ProjectCommands::RejectForwardAnnotationAction(ProjectRejectForwardAnnotationActionArgs { .. })
-                | command @ ProjectCommands::ClearForwardAnnotationActionReview(ProjectClearForwardAnnotationActionReviewArgs { .. }) => {
-                    command_exec_forward_annotation::execute_forward_annotation_command(
-                        &cli.format,
-                        command,
-                    )
+                command @ ProjectCommands::ExportForwardAnnotationAudit(
+                    ProjectExportForwardAnnotationAuditArgs { .. },
+                )
+                | command @ ProjectCommands::ForwardAnnotationAudit(
+                    ProjectForwardAnnotationAuditArgs { .. },
+                )
+                | command @ ProjectCommands::ExportForwardAnnotationProposal(
+                    ProjectExportForwardAnnotationProposalArgs { .. },
+                )
+                | command @ ProjectCommands::ApplyForwardAnnotationAction(
+                    ProjectApplyForwardAnnotationActionArgs { .. },
+                )
+                | command @ ProjectCommands::ApplyForwardAnnotationReviewed(
+                    ProjectApplyForwardAnnotationReviewedArgs { .. },
+                )
+                | command @ ProjectCommands::ExportForwardAnnotationProposalSelection(
+                    ProjectExportForwardAnnotationProposalSelectionArgs { .. },
+                )
+                | command @ ProjectCommands::SelectForwardAnnotationProposalArtifact(
+                    ProjectSelectForwardAnnotationProposalArtifactArgs { .. },
+                )
+                | command @ ProjectCommands::InspectForwardAnnotationProposalArtifact(
+                    ProjectInspectForwardAnnotationProposalArtifactArgs { .. },
+                )
+                | command @ ProjectCommands::ValidateForwardAnnotationProposalArtifact(
+                    ProjectValidateForwardAnnotationProposalArtifactArgs { .. },
+                )
+                | command @ ProjectCommands::CompareForwardAnnotationProposalArtifact(
+                    ProjectCompareForwardAnnotationProposalArtifactArgs { .. },
+                )
+                | command @ ProjectCommands::FilterForwardAnnotationProposalArtifact(
+                    ProjectFilterForwardAnnotationProposalArtifactArgs { .. },
+                )
+                | command @ ProjectCommands::PlanForwardAnnotationProposalArtifactApply(
+                    ProjectPlanForwardAnnotationProposalArtifactApplyArgs { .. },
+                )
+                | command @ ProjectCommands::ApplyForwardAnnotationProposalArtifact(
+                    ProjectApplyForwardAnnotationProposalArtifactArgs { .. },
+                )
+                | command @ ProjectCommands::ImportForwardAnnotationArtifactReview(
+                    ProjectImportForwardAnnotationArtifactReviewArgs { .. },
+                )
+                | command @ ProjectCommands::ReplaceForwardAnnotationArtifactReview(
+                    ProjectReplaceForwardAnnotationArtifactReviewArgs { .. },
+                )
+                | command @ ProjectCommands::DeferForwardAnnotationAction(
+                    ProjectDeferForwardAnnotationActionArgs { .. },
+                )
+                | command @ ProjectCommands::RejectForwardAnnotationAction(
+                    ProjectRejectForwardAnnotationActionArgs { .. },
+                )
+                | command @ ProjectCommands::ClearForwardAnnotationActionReview(
+                    ProjectClearForwardAnnotationActionReviewArgs { .. },
+                ) => command_exec_forward_annotation::execute_forward_annotation_command(
+                    &cli.format,
+                    command,
+                ),
+                command @ ProjectCommands::ExportRouteProposal(ProjectExportRouteProposalArgs {
+                    ..
+                })
+                | command @ ProjectCommands::ExportRoutePathCandidateProposal(
+                    ProjectExportRoutePathCandidateProposalArgs { .. },
+                )
+                | command @ ProjectCommands::ExportRoutePathCandidateViaProposal(
+                    ProjectExportRoutePathCandidateViaProposalArgs { .. },
+                )
+                | command @ ProjectCommands::ExportRoutePathCandidateTwoViaProposal(
+                    ProjectExportRoutePathCandidateTwoViaProposalArgs { .. },
+                )
+                | command @ ProjectCommands::ExportRoutePathCandidateThreeViaProposal(
+                    ProjectExportRoutePathCandidateThreeViaProposalArgs { .. },
+                )
+                | command @ ProjectCommands::ExportRoutePathCandidateFourViaProposal(
+                    ProjectExportRoutePathCandidateFourViaProposalArgs { .. },
+                )
+                | command @ ProjectCommands::ExportRoutePathCandidateFiveViaProposal(
+                    ProjectExportRoutePathCandidateFiveViaProposalArgs { .. },
+                )
+                | command @ ProjectCommands::ExportRoutePathCandidateSixViaProposal(
+                    ProjectExportRoutePathCandidateSixViaProposalArgs { .. },
+                )
+                | command @ ProjectCommands::ExportRoutePathCandidateAuthoredViaChainProposal(
+                    ProjectExportRoutePathCandidateAuthoredViaChainProposalArgs { .. },
+                )
+                | command @ ProjectCommands::InspectRouteProposalArtifact(
+                    ProjectInspectRouteProposalArtifactArgs { .. },
+                )
+                | command @ ProjectCommands::ApplyRouteProposalArtifact(
+                    ProjectApplyRouteProposalArtifactArgs { .. },
+                ) => command_exec_route_proposal::execute_route_proposal_command(
+                    &cli.format,
+                    command,
+                ),
+                command => {
+                    command_exec_project_command::execute_project_command(&cli.format, command)
                 }
-                command => command_exec_project_command::execute_project_command(&cli.format, command),
             }
         }
         Commands::Plan { action } => command_exec_plan::execute_plan_command(&cli.format, action),
@@ -532,13 +652,14 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                             plan_path.display()
                         )
                     })?;
-                    serde_json::from_str::<ScopedComponentReplacementPlan>(&plan_text)
-                        .with_context(|| {
+                    serde_json::from_str::<ScopedComponentReplacementPlan>(&plan_text).with_context(
+                        || {
                             format!(
                                 "failed to parse scoped replacement plan file {}",
                                 plan_path.display()
                             )
-                        })
+                        },
+                    )
                 })
                 .collect::<Result<Vec<_>>>()?;
             let scoped_replacement_manifests = apply_scoped_replacement_manifest

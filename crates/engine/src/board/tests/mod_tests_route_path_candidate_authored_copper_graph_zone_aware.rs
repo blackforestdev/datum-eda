@@ -152,7 +152,10 @@ fn route_path_candidate_authored_copper_graph_zone_aware_reports_zone_supported_
         )
         .expect("zone-aware authored copper graph path candidate should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.summary.candidate_track_count, 0);
     assert_eq!(report.summary.candidate_zone_count, 1);
     assert_eq!(report.path.as_ref().map(|path| path.steps.len()), Some(1));
@@ -167,8 +170,8 @@ fn route_path_candidate_authored_copper_graph_zone_aware_reports_zone_supported_
 }
 
 #[test]
-fn route_path_candidate_authored_copper_graph_zone_aware_prefers_track_over_zone_on_equal_step_count(
-) {
+fn route_path_candidate_authored_copper_graph_zone_aware_prefers_track_over_zone_on_equal_step_count()
+ {
     let (board, net_uuid, anchor_a_uuid, anchor_b_uuid, zone_uuid, track_uuid, _) =
         zone_demo_board();
 
@@ -180,7 +183,10 @@ fn route_path_candidate_authored_copper_graph_zone_aware_prefers_track_over_zone
         )
         .expect("zone-aware authored copper graph path candidate should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.path.as_ref().map(|path| path.steps.len()), Some(1));
     assert_eq!(
         report.path.as_ref().map(|path| path.steps[0].object_uuid),
@@ -193,8 +199,8 @@ fn route_path_candidate_authored_copper_graph_zone_aware_prefers_track_over_zone
 }
 
 #[test]
-fn route_path_candidate_authored_copper_graph_zone_aware_reports_no_path_when_zone_does_not_bridge_anchors(
-) {
+fn route_path_candidate_authored_copper_graph_zone_aware_reports_no_path_when_zone_does_not_bridge_anchors()
+ {
     let (mut board, net_uuid, anchor_a_uuid, anchor_b_uuid, zone_uuid, track_uuid, _) =
         zone_demo_board();
     board.tracks.remove(&track_uuid);

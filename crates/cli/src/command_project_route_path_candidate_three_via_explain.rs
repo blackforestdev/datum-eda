@@ -43,10 +43,22 @@ pub(crate) fn render_native_project_route_path_candidate_three_via_explain_text(
             report.summary.candidate_copper_layer_count
         ),
         format!("candidate_vias: {}", report.summary.candidate_via_count),
-        format!("candidate_via_triples: {}", report.summary.candidate_via_triple_count),
-        format!("matching_via_triples: {}", report.summary.matching_via_triple_count),
-        format!("available_via_triples: {}", report.summary.available_via_triple_count),
-        format!("blocked_via_triples: {}", report.summary.blocked_via_triple_count),
+        format!(
+            "candidate_via_triples: {}",
+            report.summary.candidate_via_triple_count
+        ),
+        format!(
+            "matching_via_triples: {}",
+            report.summary.matching_via_triple_count
+        ),
+        format!(
+            "available_via_triples: {}",
+            report.summary.available_via_triple_count
+        ),
+        format!(
+            "blocked_via_triples: {}",
+            report.summary.blocked_via_triple_count
+        ),
     ];
 
     if let Some(triple) = &report.selected_triple {
@@ -88,9 +100,7 @@ fn render_status(report: &RoutePathCandidateThreeViaExplainReport) -> &'static s
 
 fn render_kind(report: &RoutePathCandidateThreeViaExplainReport) -> &'static str {
     match report.explanation_kind {
-        RoutePathCandidateThreeViaExplainKind::DeterministicPathFound => {
-            "deterministic_path_found"
-        }
+        RoutePathCandidateThreeViaExplainKind::DeterministicPathFound => "deterministic_path_found",
         RoutePathCandidateThreeViaExplainKind::NoMatchingAuthoredViaTriple => {
             "no_matching_authored_via_triple"
         }

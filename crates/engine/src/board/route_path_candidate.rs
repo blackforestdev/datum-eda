@@ -25,7 +25,10 @@ impl Display for RoutePathCandidateError {
                 write!(f, "board net not found in native project: {net_uuid}")
             }
             Self::AnchorNotOnNet { pad_uuid, net_uuid } => {
-                write!(f, "anchor pad {pad_uuid} is not an authored anchor on net {net_uuid}")
+                write!(
+                    f,
+                    "anchor pad {pad_uuid} is not an authored anchor on net {net_uuid}"
+                )
             }
             Self::DuplicateAnchorPair { pad_uuid } => {
                 write!(f, "source and target anchors must differ: {pad_uuid}")

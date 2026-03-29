@@ -22,12 +22,12 @@ mod command_exec_manufacturing;
 mod command_exec_native_support;
 #[path = "command_exec_plan.rs"]
 mod command_exec_plan;
-#[path = "command_exec_project_inspect.rs"]
-mod command_exec_project_inspect;
-#[path = "command_exec_project_command.rs"]
-mod command_exec_project_command;
 #[path = "command_exec_project_board_surface.rs"]
 mod command_exec_project_board_surface;
+#[path = "command_exec_project_command.rs"]
+mod command_exec_project_command;
+#[path = "command_exec_project_inspect.rs"]
+mod command_exec_project_inspect;
 #[path = "command_exec_project_query.rs"]
 mod command_exec_project_query;
 #[path = "command_exec_project_query_route_graph.rs"]
@@ -36,5 +36,7 @@ mod command_exec_project_query_route_graph;
 mod command_exec_project_schematic_connectivity;
 #[path = "command_exec_project_schematic_symbols.rs"]
 mod command_exec_project_schematic_symbols;
+#[path = "command_exec_route_proposal.rs"]
+mod command_exec_route_proposal;
 
 pub(crate) use self::command_exec_dispatch::execute_with_exit_code;

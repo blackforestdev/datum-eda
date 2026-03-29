@@ -287,6 +287,158 @@ pub(crate) struct ProjectApplyForwardAnnotationReviewedArgs {
 }
 
 #[derive(clap::Args)]
+pub(crate) struct ProjectExportRouteProposalArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Net UUID
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Uuid,
+    /// Source anchor pad UUID
+    #[arg(long = "from-anchor")]
+    pub(crate) from_anchor_pad_uuid: Uuid,
+    /// Target anchor pad UUID
+    #[arg(long = "to-anchor")]
+    pub(crate) to_anchor_pad_uuid: Uuid,
+    /// Output artifact path
+    #[arg(long = "out")]
+    pub(crate) out: PathBuf,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectExportRoutePathCandidateProposalArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Net UUID
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Uuid,
+    /// Source anchor pad UUID
+    #[arg(long = "from-anchor")]
+    pub(crate) from_anchor_pad_uuid: Uuid,
+    /// Target anchor pad UUID
+    #[arg(long = "to-anchor")]
+    pub(crate) to_anchor_pad_uuid: Uuid,
+    /// Output artifact path
+    #[arg(long = "out")]
+    pub(crate) out: PathBuf,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectExportRoutePathCandidateViaProposalArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Net UUID
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Uuid,
+    /// Source anchor pad UUID
+    #[arg(long = "from-anchor")]
+    pub(crate) from_anchor_pad_uuid: Uuid,
+    /// Target anchor pad UUID
+    #[arg(long = "to-anchor")]
+    pub(crate) to_anchor_pad_uuid: Uuid,
+    /// Output artifact path
+    #[arg(long = "out")]
+    pub(crate) out: PathBuf,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectExportRoutePathCandidateTwoViaProposalArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Net UUID
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Uuid,
+    /// Source anchor pad UUID
+    #[arg(long = "from-anchor")]
+    pub(crate) from_anchor_pad_uuid: Uuid,
+    /// Target anchor pad UUID
+    #[arg(long = "to-anchor")]
+    pub(crate) to_anchor_pad_uuid: Uuid,
+    /// Output artifact path
+    #[arg(long = "out")]
+    pub(crate) out: PathBuf,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectExportRoutePathCandidateThreeViaProposalArgs {
+    pub(crate) path: PathBuf,
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Uuid,
+    #[arg(long = "from-anchor")]
+    pub(crate) from_anchor_pad_uuid: Uuid,
+    #[arg(long = "to-anchor")]
+    pub(crate) to_anchor_pad_uuid: Uuid,
+    #[arg(long = "out")]
+    pub(crate) out: PathBuf,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectExportRoutePathCandidateFourViaProposalArgs {
+    pub(crate) path: PathBuf,
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Uuid,
+    #[arg(long = "from-anchor")]
+    pub(crate) from_anchor_pad_uuid: Uuid,
+    #[arg(long = "to-anchor")]
+    pub(crate) to_anchor_pad_uuid: Uuid,
+    #[arg(long = "out")]
+    pub(crate) out: PathBuf,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectExportRoutePathCandidateFiveViaProposalArgs {
+    pub(crate) path: PathBuf,
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Uuid,
+    #[arg(long = "from-anchor")]
+    pub(crate) from_anchor_pad_uuid: Uuid,
+    #[arg(long = "to-anchor")]
+    pub(crate) to_anchor_pad_uuid: Uuid,
+    #[arg(long = "out")]
+    pub(crate) out: PathBuf,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectExportRoutePathCandidateSixViaProposalArgs {
+    pub(crate) path: PathBuf,
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Uuid,
+    #[arg(long = "from-anchor")]
+    pub(crate) from_anchor_pad_uuid: Uuid,
+    #[arg(long = "to-anchor")]
+    pub(crate) to_anchor_pad_uuid: Uuid,
+    #[arg(long = "out")]
+    pub(crate) out: PathBuf,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectExportRoutePathCandidateAuthoredViaChainProposalArgs {
+    pub(crate) path: PathBuf,
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Uuid,
+    #[arg(long = "from-anchor")]
+    pub(crate) from_anchor_pad_uuid: Uuid,
+    #[arg(long = "to-anchor")]
+    pub(crate) to_anchor_pad_uuid: Uuid,
+    #[arg(long = "out")]
+    pub(crate) out: PathBuf,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectInspectRouteProposalArtifactArgs {
+    /// Artifact path
+    pub(crate) path: PathBuf,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectApplyRouteProposalArtifactArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Artifact path
+    #[arg(long = "artifact")]
+    pub(crate) artifact: PathBuf,
+}
+
+#[derive(clap::Args)]
 pub(crate) struct ProjectExportForwardAnnotationProposalArgs {
     /// Project root directory
     pub(crate) path: PathBuf,
@@ -415,4 +567,3 @@ pub(crate) struct ProjectClearForwardAnnotationActionReviewArgs {
     #[arg(long = "action-id")]
     pub(crate) action_id: String,
 }
-

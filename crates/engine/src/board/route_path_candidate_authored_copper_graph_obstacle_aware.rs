@@ -100,11 +100,13 @@ impl Board {
                 to_anchor,
             );
 
-        let path = path_match.map(|entry| RoutePathCandidateAuthoredCopperGraphObstacleAwarePath {
-            steps: entry
-                .steps
-                .iter()
-                .map(|step| RoutePathCandidateAuthoredCopperGraphObstacleAwareStep {
+        let path = path_match.map(
+            |entry| RoutePathCandidateAuthoredCopperGraphObstacleAwarePath {
+                steps: entry
+                    .steps
+                    .iter()
+                    .map(|step| {
+                        RoutePathCandidateAuthoredCopperGraphObstacleAwareStep {
                     kind: match step.kind {
                         AuthoredCopperGraphObstacleAwareStepKind::Track => {
                             RoutePathCandidateAuthoredCopperGraphObstacleAwareStepKindView::Track
@@ -119,9 +121,11 @@ impl Board {
                     to: step.to,
                     from_layer: step.from_layer,
                     to_layer: step.to_layer,
-                })
-                .collect(),
-        });
+                }
+                    })
+                    .collect(),
+            },
+        );
         let status = if path.is_some() {
             RoutePathCandidateStatus::DeterministicPathFound
         } else {
@@ -129,12 +133,10 @@ impl Board {
         };
 
         Ok(RoutePathCandidateAuthoredCopperGraphObstacleAwareReport {
-            contract: "m5_route_path_candidate_authored_copper_graph_obstacle_aware_v1"
-                .to_string(),
+            contract: "m5_route_path_candidate_authored_copper_graph_obstacle_aware_v1".to_string(),
             persisted_native_board_state_only: true,
             selection_rule:
-                ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_OBSTACLE_AWARE_SELECTION_RULE
-                    .to_string(),
+                ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_OBSTACLE_AWARE_SELECTION_RULE.to_string(),
             status,
             net_uuid: preflight.net_uuid,
             net_name: preflight.net_name,

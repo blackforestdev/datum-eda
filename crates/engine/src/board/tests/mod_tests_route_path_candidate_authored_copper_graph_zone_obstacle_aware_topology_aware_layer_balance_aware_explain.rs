@@ -158,7 +158,10 @@ fn layer_balance_aware_explain_reports_selected_path_and_balance_reason() {
         )
         .expect("layer-balance-aware explain should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(
         report.explanation_kind,
         RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareExplainKind::DeterministicPathFound

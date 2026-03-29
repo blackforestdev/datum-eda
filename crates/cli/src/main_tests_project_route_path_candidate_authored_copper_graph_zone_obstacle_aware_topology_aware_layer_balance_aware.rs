@@ -26,7 +26,8 @@ fn layer_balance_aware_query_cli(
 }
 
 #[test]
-fn project_query_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_is_deterministic() {
+fn project_query_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_is_deterministic()
+ {
     let root = std::env::temp_dir().join(format!(
         "datum-eda-cli-route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware-{}",
         Uuid::new_v4()
@@ -182,8 +183,14 @@ fn project_query_route_path_candidate_authored_copper_graph_zone_obstacle_aware_
     assert_eq!(report["status"], "deterministic_path_found");
     assert_eq!(report["summary"]["topology_transition_count"], 1);
     assert_eq!(report["summary"]["layer_balance_score"], 0);
-    assert_eq!(report["path"]["steps"][0]["object_uuid"], Uuid::from_u128(20).to_string());
-    assert_eq!(report["path"]["steps"][1]["object_uuid"], Uuid::from_u128(21).to_string());
+    assert_eq!(
+        report["path"]["steps"][0]["object_uuid"],
+        Uuid::from_u128(20).to_string()
+    );
+    assert_eq!(
+        report["path"]["steps"][1]["object_uuid"],
+        Uuid::from_u128(21).to_string()
+    );
 
     let repeated = execute(layer_balance_aware_query_cli(
         &root,

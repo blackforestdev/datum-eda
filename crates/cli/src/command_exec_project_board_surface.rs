@@ -100,7 +100,10 @@ pub(super) fn execute_project_board_surface_command(
             };
             Ok((output, 0))
         }
-        ProjectCommands::DeleteBoardKeepout(ProjectDeleteBoardKeepoutArgs { path, keepout_uuid }) => {
+        ProjectCommands::DeleteBoardKeepout(ProjectDeleteBoardKeepoutArgs {
+            path,
+            keepout_uuid,
+        }) => {
             let report = delete_native_project_board_keepout(&path, keepout_uuid)?;
             let output = match format {
                 OutputFormat::Text => render_native_project_board_keepout_mutation_text(&report),
@@ -200,7 +203,9 @@ pub(super) fn execute_project_board_surface_command(
             net_uuid,
             name,
             class_uuid,
-        }) => command_exec_board_net::execute_edit_board_net(format, path, net_uuid, name, class_uuid),
+        }) => {
+            command_exec_board_net::execute_edit_board_net(format, path, net_uuid, name, class_uuid)
+        }
         ProjectCommands::MoveBoardComponent(ProjectMoveBoardComponentArgs {
             path,
             component_uuid,
@@ -502,11 +507,7 @@ pub(super) fn execute_project_board_surface_command(
         ProjectCommands::DeleteBoardNetClass(ProjectDeleteBoardNetClassArgs {
             path,
             net_class_uuid,
-        }) => command_exec_board_net::execute_delete_board_net_class(
-            format,
-            path,
-            net_class_uuid,
-        ),
+        }) => command_exec_board_net::execute_delete_board_net_class(format, path, net_class_uuid),
         ProjectCommands::DeleteBoardNet(ProjectDeleteBoardNetArgs { path, net_uuid }) => {
             command_exec_board_net::execute_delete_board_net(format, path, net_uuid)
         }

@@ -26,7 +26,11 @@ pub(super) fn analyze_route_segment(
     let mut blockages = Vec::new();
     let mut obstacles = Vec::new();
 
-    for keepout in board.keepouts.iter().filter(|keepout| keepout.layers.contains(&layer)) {
+    for keepout in board
+        .keepouts
+        .iter()
+        .filter(|keepout| keepout.layers.contains(&layer))
+    {
         if segment_intersects_polygon(from, to, &keepout.polygon) {
             let reason = format!("{subject} crosses keepout {}", keepout.kind);
             blockages.push(RouteCorridorSpanBlockage {
@@ -87,7 +91,9 @@ pub(super) fn analyze_route_segment(
     let mut foreign_vias = board
         .vias
         .values()
-        .filter(|via| via.net != target_net_uuid && layer >= via.from_layer && layer <= via.to_layer)
+        .filter(|via| {
+            via.net != target_net_uuid && layer >= via.from_layer && layer <= via.to_layer
+        })
         .cloned()
         .collect::<Vec<_>>();
     foreign_vias.sort_by(|a, b| a.uuid.cmp(&b.uuid));
@@ -203,5 +209,8 @@ pub(super) fn analyze_route_segment(
             && a.reason == b.reason
     });
 
-    RouteSegmentBlockageAnalysis { blockages, obstacles }
+    RouteSegmentBlockageAnalysis {
+        blockages,
+        obstacles,
+    }
 }

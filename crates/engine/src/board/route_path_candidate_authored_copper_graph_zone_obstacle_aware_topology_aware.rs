@@ -70,8 +70,10 @@ impl Board {
         net_uuid: Uuid,
         from_anchor_pad_uuid: Uuid,
         to_anchor_pad_uuid: Uuid,
-    ) -> Result<RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareReport, RoutePathCandidateError>
-    {
+    ) -> Result<
+        RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareReport,
+        RoutePathCandidateError,
+    > {
         if from_anchor_pad_uuid == to_anchor_pad_uuid {
             return Err(RoutePathCandidateError::DuplicateAnchorPair {
                 pad_uuid: from_anchor_pad_uuid,

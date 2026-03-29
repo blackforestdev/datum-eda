@@ -4,8 +4,6 @@ mod cli_args_board_component;
 mod cli_args_board_dimension;
 #[path = "cli_args_commands.rs"]
 mod cli_args_commands;
-#[path = "cli_args_prelude.rs"]
-mod cli_args_prelude;
 #[path = "cli_args_drill.rs"]
 mod cli_args_drill;
 #[path = "cli_args_gerber_plan.rs"]
@@ -20,6 +18,8 @@ mod cli_args_native_support;
 mod cli_args_output;
 #[path = "cli_args_pool.rs"]
 mod cli_args_pool;
+#[path = "cli_args_prelude.rs"]
+mod cli_args_prelude;
 #[path = "cli_args_project_command_args_artifacts.rs"]
 mod cli_args_project_command_args_artifacts;
 #[path = "cli_args_project_command_args_board.rs"]

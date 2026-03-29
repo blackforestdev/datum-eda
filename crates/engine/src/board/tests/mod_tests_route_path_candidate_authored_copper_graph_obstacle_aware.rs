@@ -174,7 +174,10 @@ fn route_path_candidate_authored_copper_graph_obstacle_aware_reports_unblocked_e
         )
         .expect("obstacle-aware authored copper graph path candidate should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.summary.blocked_track_count, 0);
     assert_eq!(report.summary.blocked_via_count, 0);
     assert_eq!(report.path.as_ref().map(|path| path.steps.len()), Some(3));
@@ -195,8 +198,16 @@ fn route_path_candidate_authored_copper_graph_obstacle_aware_reports_unblocked_e
 #[test]
 fn route_path_candidate_authored_copper_graph_obstacle_aware_excludes_blocked_existing_track_edges()
 {
-    let (mut board, net_uuid, anchor_a_uuid, anchor_b_uuid, _track_a_uuid, _track_b_uuid, _via_uuid, _) =
-        demo_board();
+    let (
+        mut board,
+        net_uuid,
+        anchor_a_uuid,
+        anchor_b_uuid,
+        _track_a_uuid,
+        _track_b_uuid,
+        _via_uuid,
+        _,
+    ) = demo_board();
     board.keepouts.push(Keepout {
         uuid: Uuid::from_u128(0x3620),
         polygon: Polygon::new(vec![
@@ -227,10 +238,18 @@ fn route_path_candidate_authored_copper_graph_obstacle_aware_excludes_blocked_ex
 }
 
 #[test]
-fn route_path_candidate_authored_copper_graph_obstacle_aware_prefers_unblocked_direct_track_when_via_path_is_blocked(
-) {
-    let (mut board, net_uuid, anchor_a_uuid, anchor_b_uuid, _track_a_uuid, track_b_uuid, _via_uuid, _) =
-        demo_board();
+fn route_path_candidate_authored_copper_graph_obstacle_aware_prefers_unblocked_direct_track_when_via_path_is_blocked()
+ {
+    let (
+        mut board,
+        net_uuid,
+        anchor_a_uuid,
+        anchor_b_uuid,
+        _track_a_uuid,
+        track_b_uuid,
+        _via_uuid,
+        _,
+    ) = demo_board();
     let direct_track_uuid = Uuid::from_u128(0x3621);
     board.pads.get_mut(&anchor_b_uuid).expect("anchor b").layer = 1;
     board.tracks.insert(
@@ -265,7 +284,10 @@ fn route_path_candidate_authored_copper_graph_obstacle_aware_prefers_unblocked_d
         )
         .expect("obstacle-aware authored copper graph path candidate should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.path.as_ref().map(|path| path.steps.len()), Some(1));
     assert_eq!(
         report.path.as_ref().map(|path| path.steps[0].object_uuid),

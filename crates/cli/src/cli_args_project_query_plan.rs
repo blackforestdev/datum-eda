@@ -307,7 +307,9 @@ pub(crate) enum NativeProjectQueryCommands {
         to_anchor: Uuid,
     },
     /// Deterministic existing-authored-copper path candidate reusing only zone/track/via graph edges unblocked by current authored obstacles and ordered by whole-path topology tie-breaks
-    #[command(name = "route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware")]
+    #[command(
+        name = "route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware"
+    )]
     RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAware {
         /// Net UUID
         #[arg(long = "net")]
@@ -320,7 +322,9 @@ pub(crate) enum NativeProjectQueryCommands {
         to_anchor: Uuid,
     },
     /// Deterministic explanation for the current topology-aware zone-obstacle-aware existing-authored-copper path candidate result
-    #[command(name = "route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-explain")]
+    #[command(
+        name = "route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-explain"
+    )]
     RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareExplain {
         /// Net UUID
         #[arg(long = "net")]
@@ -333,7 +337,9 @@ pub(crate) enum NativeProjectQueryCommands {
         to_anchor: Uuid,
     },
     /// Deterministic existing-authored-copper path candidate under whole-path topology ordering with an explicit layer-balance tie-break
-    #[command(name = "route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware")]
+    #[command(
+        name = "route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware"
+    )]
     RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAware {
         /// Net UUID
         #[arg(long = "net")]
@@ -346,7 +352,9 @@ pub(crate) enum NativeProjectQueryCommands {
         to_anchor: Uuid,
     },
     /// Deterministic explanation for the current topology-aware zone-obstacle-aware layer-balance-aware existing-authored-copper path candidate result
-    #[command(name = "route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware-explain")]
+    #[command(
+        name = "route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware-explain"
+    )]
     RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareExplain {
         /// Net UUID
         #[arg(long = "net")]

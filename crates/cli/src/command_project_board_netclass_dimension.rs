@@ -23,7 +23,9 @@ pub(crate) fn query_native_project_board_net_class(
         .net_classes
         .get(&key)
         .cloned()
-        .with_context(|| format!("board net class not found in native project: {net_class_uuid}"))?;
+        .with_context(|| {
+            format!("board net class not found in native project: {net_class_uuid}")
+        })?;
     serde_json::from_value(entry).context("failed to parse board net class")
 }
 

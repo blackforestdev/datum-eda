@@ -20,9 +20,24 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
             name: "path-candidate-authored-copper-graph".into(),
             stackup: Stackup {
                 layers: vec![
-                    StackupLayer { id: 1, name: "Top".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 2, name: "Core".into(), layer_type: StackupLayerType::Dielectric, thickness_nm: 1_000_000 },
-                    StackupLayer { id: 3, name: "Bottom".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
+                    StackupLayer {
+                        id: 1,
+                        name: "Top".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 2,
+                        name: "Core".into(),
+                        layer_type: StackupLayerType::Dielectric,
+                        thickness_nm: 1_000_000,
+                    },
+                    StackupLayer {
+                        id: 3,
+                        name: "Bottom".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
                 ],
             },
             outline: Polygon::new(vec![
@@ -113,8 +128,22 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
             )]),
             zones: HashMap::new(),
             nets: HashMap::from([
-                (net_uuid, Net { uuid: net_uuid, name: "SIG".into(), class: class_uuid }),
-                (other_net_uuid, Net { uuid: other_net_uuid, name: "OTHER".into(), class: class_uuid }),
+                (
+                    net_uuid,
+                    Net {
+                        uuid: net_uuid,
+                        name: "SIG".into(),
+                        class: class_uuid,
+                    },
+                ),
+                (
+                    other_net_uuid,
+                    Net {
+                        uuid: other_net_uuid,
+                        name: "OTHER".into(),
+                        class: class_uuid,
+                    },
+                ),
             ]),
             net_classes: HashMap::from([(
                 class_uuid,
@@ -147,15 +176,27 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
 
 #[test]
 fn route_path_candidate_authored_copper_graph_reports_existing_track_via_path() {
-    let (mut board, net_uuid, _, anchor_top_uuid, anchor_bottom_uuid, track_a_uuid, track_b_uuid, via_uuid, long_track_uuid) =
-        demo_board();
+    let (
+        mut board,
+        net_uuid,
+        _,
+        anchor_top_uuid,
+        anchor_bottom_uuid,
+        track_a_uuid,
+        track_b_uuid,
+        via_uuid,
+        long_track_uuid,
+    ) = demo_board();
     board.tracks.remove(&long_track_uuid);
 
     let report = board
         .route_path_candidate_authored_copper_graph(net_uuid, anchor_top_uuid, anchor_bottom_uuid)
         .expect("authored copper graph path candidate should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.summary.candidate_track_count, 2);
     assert_eq!(report.summary.candidate_via_count, 1);
     assert_eq!(report.path.as_ref().map(|path| path.steps.len()), Some(3));
@@ -300,7 +341,10 @@ fn route_path_candidate_authored_copper_graph_prefers_shorter_existing_copper_pa
         .route_path_candidate_authored_copper_graph(net_uuid, anchor_left_uuid, anchor_right_uuid)
         .expect("authored copper graph path candidate should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.path.as_ref().map(|path| path.steps.len()), Some(1));
     assert_eq!(
         report.path.as_ref().map(|path| path.steps[0].object_uuid),
@@ -310,8 +354,17 @@ fn route_path_candidate_authored_copper_graph_prefers_shorter_existing_copper_pa
 
 #[test]
 fn route_path_candidate_authored_copper_graph_breaks_equal_length_ties_by_object_uuid_sequence() {
-    let (mut board, net_uuid, _, anchor_top_uuid, anchor_bottom_uuid, _, track_b_uuid, via_uuid, long_track_uuid) =
-        demo_board();
+    let (
+        mut board,
+        net_uuid,
+        _,
+        anchor_top_uuid,
+        anchor_bottom_uuid,
+        _,
+        track_b_uuid,
+        via_uuid,
+        long_track_uuid,
+    ) = demo_board();
     board.tracks.remove(&long_track_uuid);
     let alt_track_a_uuid = Uuid::from_u128(0x3204f);
     board.tracks.insert(
@@ -330,7 +383,10 @@ fn route_path_candidate_authored_copper_graph_breaks_equal_length_ties_by_object
         .route_path_candidate_authored_copper_graph(net_uuid, anchor_top_uuid, anchor_bottom_uuid)
         .expect("authored copper graph path candidate should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.path.as_ref().map(|path| path.steps.len()), Some(3));
     assert_eq!(
         report.path.as_ref().map(|path| path.steps[0].object_uuid),
@@ -347,9 +403,19 @@ fn route_path_candidate_authored_copper_graph_breaks_equal_length_ties_by_object
 }
 
 #[test]
-fn route_path_candidate_authored_copper_graph_reports_no_path_when_existing_copper_is_disconnected() {
-    let (mut board, net_uuid, _, anchor_top_uuid, anchor_bottom_uuid, _, track_b_uuid, via_uuid, long_track_uuid) =
-        demo_board();
+fn route_path_candidate_authored_copper_graph_reports_no_path_when_existing_copper_is_disconnected()
+{
+    let (
+        mut board,
+        net_uuid,
+        _,
+        anchor_top_uuid,
+        anchor_bottom_uuid,
+        _,
+        track_b_uuid,
+        via_uuid,
+        long_track_uuid,
+    ) = demo_board();
     board.tracks.remove(&track_b_uuid);
     board.vias.remove(&via_uuid);
     board.tracks.remove(&long_track_uuid);

@@ -43,16 +43,31 @@ pub(crate) fn render_native_project_route_path_candidate_two_via_explain_text(
             report.summary.candidate_copper_layer_count
         ),
         format!("candidate_vias: {}", report.summary.candidate_via_count),
-        format!("candidate_via_pairs: {}", report.summary.candidate_via_pair_count),
-        format!("matching_via_pairs: {}", report.summary.matching_via_pair_count),
-        format!("available_via_pairs: {}", report.summary.available_via_pair_count),
-        format!("blocked_via_pairs: {}", report.summary.blocked_via_pair_count),
+        format!(
+            "candidate_via_pairs: {}",
+            report.summary.candidate_via_pair_count
+        ),
+        format!(
+            "matching_via_pairs: {}",
+            report.summary.matching_via_pair_count
+        ),
+        format!(
+            "available_via_pairs: {}",
+            report.summary.available_via_pair_count
+        ),
+        format!(
+            "blocked_via_pairs: {}",
+            report.summary.blocked_via_pair_count
+        ),
     ];
 
     if let Some(pair) = &report.selected_pair {
         lines.push(format!("selected_via_a_uuid: {}", pair.via_a_uuid));
         lines.push(format!("selected_via_b_uuid: {}", pair.via_b_uuid));
-        lines.push(format!("selected_intermediate_layer: {}", pair.intermediate_layer));
+        lines.push(format!(
+            "selected_intermediate_layer: {}",
+            pair.intermediate_layer
+        ));
         lines.push(format!("selection_reason: {}", pair.selection_reason));
     } else {
         lines.push("selected_via_a_uuid: none".to_string());

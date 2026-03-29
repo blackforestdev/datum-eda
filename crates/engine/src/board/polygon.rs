@@ -42,15 +42,20 @@ pub(super) fn segment_intersects_polygon(from: Point, to: Point, polygon: &Polyg
 }
 
 pub(super) fn polygons_intersect(a: &Polygon, b: &Polygon) -> bool {
-    if a.vertices.iter().copied().any(|point| point_in_polygon(point, b))
-        || b.vertices.iter().copied().any(|point| point_in_polygon(point, a))
+    if a.vertices
+        .iter()
+        .copied()
+        .any(|point| point_in_polygon(point, b))
+        || b.vertices
+            .iter()
+            .copied()
+            .any(|point| point_in_polygon(point, a))
     {
         return true;
     }
 
-    polygon_edges(a).any(|(a0, a1)| {
-        polygon_edges(b).any(|(b0, b1)| segments_intersect(a0, a1, b0, b1))
-    })
+    polygon_edges(a)
+        .any(|(a0, a1)| polygon_edges(b).any(|(b0, b1)| segments_intersect(a0, a1, b0, b1)))
 }
 
 pub(super) fn segment_intersects_segment(a0: Point, a1: Point, b0: Point, b1: Point) -> bool {
@@ -64,7 +69,9 @@ pub(super) fn segment_escapes_polygon(from: Point, to: Point, polygon: &Polygon)
 
     let mut crossings = vec![0.0, 1.0];
     for (edge_from, edge_to) in polygon_edges(polygon) {
-        crossings.extend(segment_edge_crossing_parameters(from, to, edge_from, edge_to));
+        crossings.extend(segment_edge_crossing_parameters(
+            from, to, edge_from, edge_to,
+        ));
     }
     crossings.sort_by(|a, b| a.total_cmp(b));
     crossings.dedup_by(|a, b| (*a - *b).abs() <= 1e-9);
@@ -135,7 +142,8 @@ pub(super) fn point_in_or_on_polygon(point: Point, polygon: &Polygon) -> bool {
 }
 
 fn point_on_polygon_boundary(point: Point, polygon: &Polygon) -> bool {
-    polygon_edges(polygon).any(|(from, to)| orientation(from, to, point) == 0 && point_on_segment(point, from, to))
+    polygon_edges(polygon)
+        .any(|(from, to)| orientation(from, to, point) == 0 && point_on_segment(point, from, to))
 }
 
 fn point_on_segment(point: Point, from: Point, to: Point) -> bool {
@@ -146,7 +154,8 @@ fn point_on_segment(point: Point, from: Point, to: Point) -> bool {
 }
 
 fn orientation(a: Point, b: Point, c: Point) -> i32 {
-    let cross = (b.y - a.y) as i128 * (c.x - b.x) as i128 - (b.x - a.x) as i128 * (c.y - b.y) as i128;
+    let cross =
+        (b.y - a.y) as i128 * (c.x - b.x) as i128 - (b.x - a.x) as i128 * (c.y - b.y) as i128;
     if cross == 0 {
         0
     } else if cross > 0 {

@@ -167,10 +167,12 @@ impl Board {
                     segments: points
                         .iter()
                         .enumerate()
-                        .map(|(index, segment)| RoutePathCandidateAuthoredViaChainExplainSegment {
-                            layer: entry.segment_layers[index],
-                            points: segment.to_vec(),
-                        })
+                        .map(
+                            |(index, segment)| RoutePathCandidateAuthoredViaChainExplainSegment {
+                                layer: entry.segment_layers[index],
+                                points: segment.to_vec(),
+                            },
+                        )
                         .collect(),
                     segment_blockages: entry
                         .segment_analyses

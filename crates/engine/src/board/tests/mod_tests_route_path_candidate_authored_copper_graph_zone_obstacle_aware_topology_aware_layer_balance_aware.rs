@@ -112,7 +112,8 @@ fn layer_balance_aware_prefers_more_even_layer_usage_for_equal_step_and_topology
                     drill: 150_000,
                 },
             ),
-            (preferred_via_down_uuid,
+            (
+                preferred_via_down_uuid,
                 Via {
                     uuid: preferred_via_down_uuid,
                     net: net_uuid,
@@ -172,7 +173,10 @@ fn layer_balance_aware_prefers_more_even_layer_usage_for_equal_step_and_topology
         )
         .expect("layer-balance-aware query should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.summary.path_step_count, 2);
     assert_eq!(report.summary.topology_transition_count, 1);
     assert_eq!(report.summary.path_via_step_count, 1);

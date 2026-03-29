@@ -29,7 +29,10 @@ pub(crate) fn render_native_project_route_path_candidate_three_via_text(
             report.persisted_native_board_state_only
         ),
         format!("selection_rule: {}", report.selection_rule),
-        format!("status: {}", render_route_path_candidate_three_via_status(report)),
+        format!(
+            "status: {}",
+            render_route_path_candidate_three_via_status(report)
+        ),
         format!("net_uuid: {}", report.net_uuid),
         format!("net_name: {}", report.net_name),
         format!("from_anchor_pad_uuid: {}", report.from_anchor_pad_uuid),

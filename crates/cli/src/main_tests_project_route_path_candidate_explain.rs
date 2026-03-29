@@ -181,8 +181,11 @@ fn project_query_route_path_candidate_explain_reports_deterministic_reasoning() 
 #[test]
 fn project_query_route_path_candidate_explain_preserves_reversed_anchor_orientation() {
     let root = unique_project_root("datum-eda-cli-project-route-path-candidate-explain-reversed");
-    create_native_project(&root, Some("Route Path Candidate Explain Reversed".to_string()))
-        .expect("initial scaffold should succeed");
+    create_native_project(
+        &root,
+        Some("Route Path Candidate Explain Reversed".to_string()),
+    )
+    .expect("initial scaffold should succeed");
 
     let target_net_uuid = Uuid::from_u128(0x820);
     let class_uuid = Uuid::from_u128(0x821);
@@ -300,8 +303,11 @@ fn project_query_route_path_candidate_explain_preserves_reversed_anchor_orientat
 #[test]
 fn project_query_route_path_candidate_explain_distinguishes_no_match_from_all_blocked() {
     let root = unique_project_root("datum-eda-cli-project-route-path-candidate-explain-negative");
-    create_native_project(&root, Some("Route Path Candidate Explain Negative".to_string()))
-        .expect("initial scaffold should succeed");
+    create_native_project(
+        &root,
+        Some("Route Path Candidate Explain Negative".to_string()),
+    )
+    .expect("initial scaffold should succeed");
 
     let target_net_uuid = Uuid::from_u128(0x830);
     let class_uuid = Uuid::from_u128(0x831);
@@ -446,9 +452,15 @@ fn project_query_route_path_candidate_explain_distinguishes_no_match_from_all_bl
     .expect("no-match query should succeed");
     let no_match_report: serde_json::Value =
         serde_json::from_str(&no_match_output).expect("no-match report should parse");
-    assert_eq!(no_match_report["explanation_kind"], "no_matching_corridor_span");
+    assert_eq!(
+        no_match_report["explanation_kind"],
+        "no_matching_corridor_span"
+    );
     assert_eq!(no_match_report["summary"]["matching_span_count"], 0);
-    assert_eq!(no_match_report["blocked_matching_spans"], serde_json::json!([]));
+    assert_eq!(
+        no_match_report["blocked_matching_spans"],
+        serde_json::json!([])
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }

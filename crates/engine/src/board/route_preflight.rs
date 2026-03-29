@@ -3,12 +3,11 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::board::{
-    Board, NetClass, PlacedPad, StackupLayer, Track, Via, Zone,
+    Board, NetClass, PlacedPad, StackupLayer, StackupLayerType, Track, Via, Zone,
     polygon::{
         point_in_polygon, polygon_escapes_polygon, polygons_intersect, segment_escapes_polygon,
         segment_intersects_polygon,
     },
-    StackupLayerType,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

@@ -2,34 +2,22 @@ use super::*;
 
 #[path = "command_project_roots.rs"]
 mod command_project_roots;
-#[path = "command_project_route_preflight.rs"]
-mod command_project_route_preflight;
+#[path = "command_project_route_corridor.rs"]
+mod command_project_route_corridor;
 #[path = "command_project_route_path_candidate.rs"]
 mod command_project_route_path_candidate;
-#[path = "command_project_route_path_candidate_via.rs"]
-mod command_project_route_path_candidate_via;
-#[path = "command_project_route_path_candidate_two_via.rs"]
-mod command_project_route_path_candidate_two_via;
-#[path = "command_project_route_path_candidate_three_via.rs"]
-mod command_project_route_path_candidate_three_via;
-#[path = "command_project_route_path_candidate_four_via.rs"]
-mod command_project_route_path_candidate_four_via;
-#[path = "command_project_route_path_candidate_five_via.rs"]
-mod command_project_route_path_candidate_five_via;
-#[path = "command_project_route_path_candidate_six_via.rs"]
-mod command_project_route_path_candidate_six_via;
-#[path = "command_project_route_path_candidate_authored_via_chain.rs"]
-mod command_project_route_path_candidate_authored_via_chain;
-#[path = "command_project_route_path_candidate_authored_via_chain_explain.rs"]
-mod command_project_route_path_candidate_authored_via_chain_explain;
 #[path = "command_project_route_path_candidate_authored_copper_graph.rs"]
 mod command_project_route_path_candidate_authored_copper_graph;
-#[path = "command_project_route_path_candidate_authored_copper_plus_one_gap.rs"]
-mod command_project_route_path_candidate_authored_copper_plus_one_gap;
 #[path = "command_project_route_path_candidate_authored_copper_graph_explain.rs"]
 mod command_project_route_path_candidate_authored_copper_graph_explain;
+#[path = "command_project_route_path_candidate_authored_copper_graph_obstacle_aware.rs"]
+mod command_project_route_path_candidate_authored_copper_graph_obstacle_aware;
+#[path = "command_project_route_path_candidate_authored_copper_graph_obstacle_aware_explain.rs"]
+mod command_project_route_path_candidate_authored_copper_graph_obstacle_aware_explain;
 #[path = "command_project_route_path_candidate_authored_copper_graph_zone_aware.rs"]
 mod command_project_route_path_candidate_authored_copper_graph_zone_aware;
+#[path = "command_project_route_path_candidate_authored_copper_graph_zone_aware_explain.rs"]
+mod command_project_route_path_candidate_authored_copper_graph_zone_aware_explain;
 #[path = "command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware.rs"]
 mod command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware;
 #[path = "command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_explain.rs"]
@@ -42,28 +30,40 @@ mod command_project_route_path_candidate_authored_copper_graph_zone_obstacle_awa
 mod command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware;
 #[path = "command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_explain.rs"]
 mod command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_explain;
-#[path = "command_project_route_path_candidate_authored_copper_graph_zone_aware_explain.rs"]
-mod command_project_route_path_candidate_authored_copper_graph_zone_aware_explain;
-#[path = "command_project_route_path_candidate_authored_copper_graph_obstacle_aware.rs"]
-mod command_project_route_path_candidate_authored_copper_graph_obstacle_aware;
-#[path = "command_project_route_path_candidate_authored_copper_graph_obstacle_aware_explain.rs"]
-mod command_project_route_path_candidate_authored_copper_graph_obstacle_aware_explain;
-#[path = "command_project_route_path_candidate_six_via_explain.rs"]
-mod command_project_route_path_candidate_six_via_explain;
-#[path = "command_project_route_path_candidate_five_via_explain.rs"]
-mod command_project_route_path_candidate_five_via_explain;
-#[path = "command_project_route_path_candidate_four_via_explain.rs"]
-mod command_project_route_path_candidate_four_via_explain;
-#[path = "command_project_route_path_candidate_three_via_explain.rs"]
-mod command_project_route_path_candidate_three_via_explain;
-#[path = "command_project_route_path_candidate_two_via_explain.rs"]
-mod command_project_route_path_candidate_two_via_explain;
-#[path = "command_project_route_path_candidate_via_explain.rs"]
-mod command_project_route_path_candidate_via_explain;
+#[path = "command_project_route_path_candidate_authored_copper_plus_one_gap.rs"]
+mod command_project_route_path_candidate_authored_copper_plus_one_gap;
+#[path = "command_project_route_path_candidate_authored_via_chain.rs"]
+mod command_project_route_path_candidate_authored_via_chain;
+#[path = "command_project_route_path_candidate_authored_via_chain_explain.rs"]
+mod command_project_route_path_candidate_authored_via_chain_explain;
 #[path = "command_project_route_path_candidate_explain.rs"]
 mod command_project_route_path_candidate_explain;
-#[path = "command_project_route_corridor.rs"]
-mod command_project_route_corridor;
+#[path = "command_project_route_path_candidate_five_via.rs"]
+mod command_project_route_path_candidate_five_via;
+#[path = "command_project_route_path_candidate_five_via_explain.rs"]
+mod command_project_route_path_candidate_five_via_explain;
+#[path = "command_project_route_path_candidate_four_via.rs"]
+mod command_project_route_path_candidate_four_via;
+#[path = "command_project_route_path_candidate_four_via_explain.rs"]
+mod command_project_route_path_candidate_four_via_explain;
+#[path = "command_project_route_path_candidate_six_via.rs"]
+mod command_project_route_path_candidate_six_via;
+#[path = "command_project_route_path_candidate_six_via_explain.rs"]
+mod command_project_route_path_candidate_six_via_explain;
+#[path = "command_project_route_path_candidate_three_via.rs"]
+mod command_project_route_path_candidate_three_via;
+#[path = "command_project_route_path_candidate_three_via_explain.rs"]
+mod command_project_route_path_candidate_three_via_explain;
+#[path = "command_project_route_path_candidate_two_via.rs"]
+mod command_project_route_path_candidate_two_via;
+#[path = "command_project_route_path_candidate_two_via_explain.rs"]
+mod command_project_route_path_candidate_two_via_explain;
+#[path = "command_project_route_path_candidate_via.rs"]
+mod command_project_route_path_candidate_via;
+#[path = "command_project_route_path_candidate_via_explain.rs"]
+mod command_project_route_path_candidate_via_explain;
+#[path = "command_project_route_preflight.rs"]
+mod command_project_route_preflight;
 #[path = "command_project_routing_substrate.rs"]
 mod command_project_routing_substrate;
 

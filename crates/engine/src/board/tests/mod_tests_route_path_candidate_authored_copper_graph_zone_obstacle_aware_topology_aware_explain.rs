@@ -181,14 +181,21 @@ fn topology_aware_explain_reports_selected_path_and_topology_reason() {
         )
         .expect("topology-aware explain should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(
         report.explanation_kind,
         RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareExplainKind::DeterministicPathFound
     );
     assert_eq!(report.summary.topology_transition_count, 1);
     let selected = report.selected_path.expect("selected path should exist");
-    assert!(selected.selection_reason.contains("whole-path ordering rule"));
+    assert!(
+        selected
+            .selection_reason
+            .contains("whole-path ordering rule")
+    );
     assert_eq!(selected.steps[0].object_uuid, anchor_via_uuid);
     assert_eq!(selected.steps[1].object_uuid, lower_track_first_uuid);
     assert_eq!(selected.steps[2].object_uuid, lower_track_second_uuid);

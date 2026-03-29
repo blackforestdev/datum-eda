@@ -326,6 +326,58 @@ Current live slice:
   plus exactly one eligible synthetic same-layer gap segment. The gap is
   allowed only when its straight segment is unblocked under the persisted
   authored obstacle checks and it does not replace an existing authored edge.
+- `eda project export-route-proposal <dir> --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid> --out <path>` now writes a versioned
+  `native_route_proposal_artifact` file for the accepted plus-one-gap bridge
+  slice. In the current contract the artifact contains exactly one
+  self-sufficient `draw_track` action that materializes the selected synthetic
+  gap segment only, using persisted net-class width and no invented geometry.
+- `eda project export-route-path-candidate-proposal <dir> --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>` now writes
+  that same versioned `native_route_proposal_artifact` kind for the accepted
+  single-layer `route-path-candidate` contract. In the current contract the
+  artifact contains the ordered self-sufficient `draw_track` action sequence
+  needed to materialize the selected deterministic single-layer polyline using
+  persisted net-class width only.
+- `eda project export-route-path-candidate-via-proposal <dir> --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>` now writes
+  that same versioned `native_route_proposal_artifact` kind for the accepted
+  bounded single-via `route-path-candidate-via` contract. In the current
+  contract the artifact contains the ordered self-sufficient `draw_track`
+  action sequence for the two selected copper segments around the reused
+  authored via, and the reused via UUID is retained as drift-check metadata
+  rather than becoming a new creation action.
+- `eda project export-route-path-candidate-two-via-proposal <dir> --net
+  <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>` now
+  writes that same versioned `native_route_proposal_artifact` kind for the
+  accepted bounded `route-path-candidate-two-via` contract. In the current
+  contract the artifact contains the ordered self-sufficient `draw_track`
+  action sequence for the three selected copper segments around the reused
+  authored via pair, and both reused via UUIDs are retained as drift-check
+  metadata rather than becoming new creation actions.
+- `eda project export-route-path-candidate-three-via-proposal <dir> --net
+  <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`,
+  `eda project export-route-path-candidate-four-via-proposal <dir> --net
+  <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`,
+  `eda project export-route-path-candidate-five-via-proposal <dir> --net
+  <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`,
+  `eda project export-route-path-candidate-six-via-proposal <dir> --net
+  <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`, and
+  `eda project export-route-path-candidate-authored-via-chain-proposal <dir>
+  --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  now extend that same versioned `native_route_proposal_artifact` lane through
+  the remaining bounded via-path contracts. In the current contract each
+  artifact contains the ordered self-sufficient `draw_track` action sequence
+  for the selected path segments only, while the full reused authored via
+  sequence is retained as drift-check metadata and is never recreated on apply.
+- `eda project inspect-route-proposal-artifact <path>` now loads that artifact
+  and reports version, project identity, contract, and action counts without
+  consulting live project state.
+- `eda project apply-route-proposal-artifact <dir> --artifact <path>` now
+  applies that artifact only when the current live deterministic proposal still
+  matches the exported action set exactly; apply writes the selected authored
+  target-net track segment or ordered segment sequence and rejects proposal
+  drift instead of re-resolving against changed state.
 - `eda project query <dir> route-path-candidate-authored-copper-graph-zone-aware
   --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a
   deterministic existing-copper path candidate that also reuses persisted

@@ -348,7 +348,9 @@ pub(crate) fn compare_native_project_pnp(
     })
 }
 
-pub(crate) fn inspect_native_project_pnp(pnp_path: &Path) -> Result<NativeProjectPnpInspectionView> {
+pub(crate) fn inspect_native_project_pnp(
+    pnp_path: &Path,
+) -> Result<NativeProjectPnpInspectionView> {
     let rows = parse_pnp_csv(pnp_path)?
         .into_iter()
         .map(|row| NativeProjectPnpInspectionRowView {
@@ -387,8 +389,9 @@ fn component_to_bom_row(component: PlacedPackage) -> NativeBomRow {
 }
 
 fn render_expected_native_project_bom_csv_rows(components: &[PlacedPackage]) -> String {
-    let mut csv =
-        String::from("reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked\n");
+    let mut csv = String::from(
+        "reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked\n",
+    );
     for component in components {
         let row = [
             csv_escape(&component.reference),

@@ -1,9 +1,7 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::board::{
-    Board, RoutePathCandidateError, RoutePathCandidateStatus, StackupLayer,
-};
+use crate::board::{Board, RoutePathCandidateError, RoutePathCandidateStatus, StackupLayer};
 use crate::ir::geometry::{LayerId, Point};
 
 use super::route_path_candidate_authored_via_chain_selection::{
@@ -100,8 +98,9 @@ impl Board {
                     .any(|segment| !segment.blockages.is_empty())
             })
             .count();
-        let available_via_chain_count =
-            matching_chains.len().saturating_sub(blocked_via_chain_count);
+        let available_via_chain_count = matching_chains
+            .len()
+            .saturating_sub(blocked_via_chain_count);
         let selected_path = selected_matching_authored_via_chain(&matching_chains).map(|entry| {
             let points = authored_via_chain_path_points(entry, from_anchor, to_anchor);
             RoutePathCandidateAuthoredViaChainPath {
@@ -118,10 +117,12 @@ impl Board {
                 segments: points
                     .iter()
                     .enumerate()
-                    .map(|(index, segment)| RoutePathCandidateAuthoredViaChainSegment {
-                        layer: entry.segment_layers[index],
-                        points: segment.to_vec(),
-                    })
+                    .map(
+                        |(index, segment)| RoutePathCandidateAuthoredViaChainSegment {
+                            layer: entry.segment_layers[index],
+                            points: segment.to_vec(),
+                        },
+                    )
                     .collect(),
             }
         });

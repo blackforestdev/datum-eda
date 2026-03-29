@@ -364,8 +364,10 @@ pub(super) fn compare_scoped_replacement_manifest_artifact(
         artifact_source_version: artifact_loaded.source_version,
         manifest_version: manifest_loaded.manifest.version,
         artifact_version: artifact_loaded.manifest.version,
-        manifest_migration_applied: manifest_loaded.source_version != manifest_loaded.manifest.version,
-        artifact_migration_applied: artifact_loaded.source_version != artifact_loaded.manifest.version,
+        manifest_migration_applied: manifest_loaded.source_version
+            != manifest_loaded.manifest.version,
+        artifact_migration_applied: artifact_loaded.source_version
+            != artifact_loaded.manifest.version,
         manifest_replacements: manifest_loaded.manifest.plan.replacements.len(),
         artifact_replacements: artifact_loaded.manifest.plan.replacements.len(),
         matches_artifact: drift_fields.is_empty(),
@@ -379,8 +381,14 @@ pub(super) fn render_scoped_replacement_manifest_artifact_comparison_text(
     [
         format!("manifest: {}", report.manifest_path.display()),
         format!("artifact: {}", report.artifact_path.display()),
-        format!("manifest_source_version: {}", report.manifest_source_version),
-        format!("artifact_source_version: {}", report.artifact_source_version),
+        format!(
+            "manifest_source_version: {}",
+            report.manifest_source_version
+        ),
+        format!(
+            "artifact_source_version: {}",
+            report.artifact_source_version
+        ),
         format!("manifest_version: {}", report.manifest_version),
         format!("artifact_version: {}", report.artifact_version),
         format!(

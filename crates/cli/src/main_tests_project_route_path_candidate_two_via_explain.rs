@@ -32,8 +32,11 @@ fn route_path_candidate_two_via_explain_query_cli(
 #[test]
 fn project_query_route_path_candidate_two_via_explain_reports_selected_pair_reasoning() {
     let root = unique_project_root("datum-eda-cli-project-route-path-candidate-two-via-explain");
-    create_native_project(&root, Some("Route Path Candidate Two Via Explain Demo".to_string()))
-        .expect("initial scaffold should succeed");
+    create_native_project(
+        &root,
+        Some("Route Path Candidate Two Via Explain Demo".to_string()),
+    )
+    .expect("initial scaffold should succeed");
 
     let target_net_uuid = Uuid::from_u128(0x1010);
     let class_uuid = Uuid::from_u128(0x1011);
@@ -157,7 +160,10 @@ fn project_query_route_path_candidate_two_via_explain_reports_selected_pair_reas
     .expect("query should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report should parse");
 
-    assert_eq!(report["contract"], "m5_route_path_candidate_two_via_explain_v1");
+    assert_eq!(
+        report["contract"],
+        "m5_route_path_candidate_two_via_explain_v1"
+    );
     assert_eq!(report["persisted_native_board_state_only"], true);
     assert_eq!(report["status"], "deterministic_path_found");
     assert_eq!(report["explanation_kind"], "deterministic_path_found");
@@ -166,8 +172,14 @@ fn project_query_route_path_candidate_two_via_explain_reports_selected_pair_reas
         "select the first unblocked matching authored via pair in ascending (via_a_uuid, via_b_uuid) order whose layer sequence connects the requested anchor layers through one intermediate copper layer"
     );
     assert_eq!(report["summary"]["matching_via_pair_count"], 1);
-    assert_eq!(report["selected_pair"]["via_a_uuid"], via_a_uuid.to_string());
-    assert_eq!(report["selected_pair"]["via_b_uuid"], via_b_uuid.to_string());
+    assert_eq!(
+        report["selected_pair"]["via_a_uuid"],
+        via_a_uuid.to_string()
+    );
+    assert_eq!(
+        report["selected_pair"]["via_b_uuid"],
+        via_b_uuid.to_string()
+    );
 
     let repeated = execute(route_path_candidate_two_via_explain_query_cli(
         &root,

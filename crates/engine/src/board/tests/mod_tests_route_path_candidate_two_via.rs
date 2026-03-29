@@ -171,18 +171,42 @@ fn route_path_candidate_two_via_reports_deterministic_path_using_authored_via_pa
         .route_path_candidate_two_via(net_uuid, anchor_top_uuid, anchor_bottom_uuid)
         .expect("two-via path candidate should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.summary.candidate_via_count, 2);
     assert_eq!(report.summary.candidate_via_pair_count, 2);
     assert_eq!(report.summary.matching_via_pair_count, 1);
     assert_eq!(report.summary.available_via_pair_count, 1);
-    assert_eq!(report.path.as_ref().map(|path| path.via_a_uuid), Some(via_a_uuid));
-    assert_eq!(report.path.as_ref().map(|path| path.via_b_uuid), Some(via_b_uuid));
-    assert_eq!(report.path.as_ref().map(|path| path.intermediate_layer), Some(3));
-    assert_eq!(report.path.as_ref().map(|path| path.segments.len()), Some(3));
-    assert_eq!(report.path.as_ref().map(|path| path.segments[0].layer), Some(1));
-    assert_eq!(report.path.as_ref().map(|path| path.segments[1].layer), Some(3));
-    assert_eq!(report.path.as_ref().map(|path| path.segments[2].layer), Some(5));
+    assert_eq!(
+        report.path.as_ref().map(|path| path.via_a_uuid),
+        Some(via_a_uuid)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.via_b_uuid),
+        Some(via_b_uuid)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.intermediate_layer),
+        Some(3)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.segments.len()),
+        Some(3)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.segments[0].layer),
+        Some(1)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.segments[1].layer),
+        Some(3)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.segments[2].layer),
+        Some(5)
+    );
 }
 
 #[test]
@@ -218,13 +242,25 @@ fn route_path_candidate_two_via_selects_next_matching_pair_when_earlier_pair_is_
         .route_path_candidate_two_via(net_uuid, anchor_top_uuid, anchor_bottom_uuid)
         .expect("two-via path candidate should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.summary.matching_via_pair_count, 2);
     assert_eq!(report.summary.blocked_via_pair_count, 1);
     assert_eq!(report.summary.available_via_pair_count, 1);
-    assert_eq!(report.path.as_ref().map(|path| path.via_a_uuid), Some(second_via_a_uuid));
-    assert_ne!(report.path.as_ref().map(|path| path.via_a_uuid), Some(first_via_a_uuid));
-    assert_eq!(report.path.as_ref().map(|path| path.via_b_uuid), Some(via_b_uuid));
+    assert_eq!(
+        report.path.as_ref().map(|path| path.via_a_uuid),
+        Some(second_via_a_uuid)
+    );
+    assert_ne!(
+        report.path.as_ref().map(|path| path.via_a_uuid),
+        Some(first_via_a_uuid)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.via_b_uuid),
+        Some(via_b_uuid)
+    );
 }
 
 #[test]

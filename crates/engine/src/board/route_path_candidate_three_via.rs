@@ -98,8 +98,9 @@ impl Board {
                     && entry.target_segment.blockages.is_empty())
             })
             .count();
-        let available_via_triple_count =
-            matching_triples.len().saturating_sub(blocked_via_triple_count);
+        let available_via_triple_count = matching_triples
+            .len()
+            .saturating_sub(blocked_via_triple_count);
         let selected_path = selected_matching_three_via(&matching_triples).map(|entry| {
             let points = three_via_path_points(entry, from_anchor, to_anchor);
             RoutePathCandidateThreeViaPath {

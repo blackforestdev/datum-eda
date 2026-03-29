@@ -5,8 +5,9 @@ use crate::board::{Board, RoutePathCandidateError, RoutePathCandidateStatus, Sta
 use crate::ir::geometry::{LayerId, Point};
 
 use super::route_path_candidate_authored_copper_plus_one_gap_selection::{
-    selected_authored_copper_plus_one_gap_path, AuthoredCopperPlusOneGapStepKind,
+    AuthoredCopperPlusOneGapStepKind,
     ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_PLUS_ONE_GAP_SELECTION_RULE,
+    selected_authored_copper_plus_one_gap_path,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -100,40 +101,45 @@ impl Board {
                 to_anchor,
             );
 
-        let path = selected_path_match.map(|entry| RoutePathCandidateAuthoredCopperPlusOneGapPath {
-            steps: entry
-                .steps
-                .into_iter()
-                .map(|step| RoutePathCandidateAuthoredCopperPlusOneGapStep {
-                    kind: match step.kind {
-                        AuthoredCopperPlusOneGapStepKind::Track => {
-                            RoutePathCandidateAuthoredCopperPlusOneGapStepKindView::Track
-                        }
-                        AuthoredCopperPlusOneGapStepKind::Via => {
-                            RoutePathCandidateAuthoredCopperPlusOneGapStepKindView::Via
-                        }
-                        AuthoredCopperPlusOneGapStepKind::Gap => {
-                            RoutePathCandidateAuthoredCopperPlusOneGapStepKindView::Gap
-                        }
-                    },
-                    object_uuid: step.object_uuid,
-                    layer: step.layer,
-                    from: step.from,
-                    to: step.to,
-                    from_layer: step.from_layer,
-                    to_layer: step.to_layer,
-                })
-                .collect(),
-        });
+        let path =
+            selected_path_match.map(|entry| RoutePathCandidateAuthoredCopperPlusOneGapPath {
+                steps: entry
+                    .steps
+                    .into_iter()
+                    .map(|step| RoutePathCandidateAuthoredCopperPlusOneGapStep {
+                        kind: match step.kind {
+                            AuthoredCopperPlusOneGapStepKind::Track => {
+                                RoutePathCandidateAuthoredCopperPlusOneGapStepKindView::Track
+                            }
+                            AuthoredCopperPlusOneGapStepKind::Via => {
+                                RoutePathCandidateAuthoredCopperPlusOneGapStepKindView::Via
+                            }
+                            AuthoredCopperPlusOneGapStepKind::Gap => {
+                                RoutePathCandidateAuthoredCopperPlusOneGapStepKindView::Gap
+                            }
+                        },
+                        object_uuid: step.object_uuid,
+                        layer: step.layer,
+                        from: step.from,
+                        to: step.to,
+                        from_layer: step.from_layer,
+                        to_layer: step.to_layer,
+                    })
+                    .collect(),
+            });
         let path_gap_step_count = path
             .as_ref()
             .map(|entry| {
-                entry.steps.iter().filter(|step| {
-                    matches!(
-                        step.kind,
-                        RoutePathCandidateAuthoredCopperPlusOneGapStepKindView::Gap
-                    )
-                }).count()
+                entry
+                    .steps
+                    .iter()
+                    .filter(|step| {
+                        matches!(
+                            step.kind,
+                            RoutePathCandidateAuthoredCopperPlusOneGapStepKindView::Gap
+                        )
+                    })
+                    .count()
             })
             .unwrap_or(0);
         let status = if path.is_some() {
@@ -145,8 +151,8 @@ impl Board {
         Ok(RoutePathCandidateAuthoredCopperPlusOneGapReport {
             contract: "m5_route_path_candidate_authored_copper_plus_one_gap_v1".to_string(),
             persisted_native_board_state_only: true,
-            selection_rule:
-                ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_PLUS_ONE_GAP_SELECTION_RULE.to_string(),
+            selection_rule: ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_PLUS_ONE_GAP_SELECTION_RULE
+                .to_string(),
             status,
             net_uuid: preflight.net_uuid,
             net_name: preflight.net_name,

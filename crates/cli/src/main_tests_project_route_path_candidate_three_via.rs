@@ -32,8 +32,11 @@ fn route_path_candidate_three_via_query_cli(
 #[test]
 fn project_query_route_path_candidate_three_via_reports_deterministic_authored_three_via_path() {
     let root = unique_project_root("datum-eda-cli-project-route-path-candidate-three-via");
-    create_native_project(&root, Some("Route Path Candidate Three Via Demo".to_string()))
-        .expect("initial scaffold should succeed");
+    create_native_project(
+        &root,
+        Some("Route Path Candidate Three Via Demo".to_string()),
+    )
+    .expect("initial scaffold should succeed");
 
     let target_net_uuid = Uuid::from_u128(0xf30);
     let class_uuid = Uuid::from_u128(0xf31);

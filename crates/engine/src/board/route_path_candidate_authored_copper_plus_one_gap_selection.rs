@@ -3,9 +3,7 @@ use std::collections::{HashMap, HashSet, VecDeque};
 
 use uuid::Uuid;
 
-use crate::board::{
-    Board, RoutePreflightAnchor, StackupLayer, Track, Via,
-};
+use crate::board::{Board, RoutePreflightAnchor, StackupLayer, Track, Via};
 use crate::ir::geometry::{LayerId, Point};
 
 use super::route_segment_blockage::analyze_route_segment;
@@ -39,8 +37,7 @@ pub(super) struct AuthoredCopperPlusOneGapPathMatch {
     pub steps: Vec<AuthoredCopperPlusOneGapStep>,
 }
 
-pub const ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_PLUS_ONE_GAP_SELECTION_RULE: &str =
-    "select the first exact-one-gap path found by breadth-first traversal over persisted target-net track/via graph edges plus eligible same-layer gap edges after sorting edges by (step_kind, object_uuid_or_gap_geometry, destination_anchor); gap edges are eligible only on candidate copper layers, only when the straight segment is unblocked by persisted authored geometry checks, and only when they do not replace an existing authored edge";
+pub const ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_PLUS_ONE_GAP_SELECTION_RULE: &str = "select the first exact-one-gap path found by breadth-first traversal over persisted target-net track/via graph edges plus eligible same-layer gap edges after sorting edges by (step_kind, object_uuid_or_gap_geometry, destination_anchor); gap edges are eligible only on candidate copper layers, only when the straight segment is unblocked by persisted authored geometry checks, and only when they do not replace an existing authored edge";
 
 pub(super) fn candidate_authored_copper_plus_one_gap_objects(
     board: &Board,
@@ -359,8 +356,7 @@ impl AuthoredCopperPlusOneGapGraph {
         let mut visited: HashMap<
             (usize, GapUsageState),
             Option<((usize, GapUsageState), AuthoredCopperPlusOneGapStep)>,
-        > =
-            HashMap::new();
+        > = HashMap::new();
 
         queue.push_back((start, GapUsageState::BeforeGapNoAuthored));
         visited.insert((start, GapUsageState::BeforeGapNoAuthored), None);
@@ -376,15 +372,21 @@ impl AuthoredCopperPlusOneGapGraph {
                         continue;
                     }
                     (GapUsageState::BeforeGapNoAuthored, _) => GapUsageState::BeforeGapWithAuthored,
-                    (GapUsageState::BeforeGapWithAuthored, AuthoredCopperPlusOneGapStepKind::Gap) => {
-                        GapUsageState::AfterGapNoAuthored
+                    (
+                        GapUsageState::BeforeGapWithAuthored,
+                        AuthoredCopperPlusOneGapStepKind::Gap,
+                    ) => GapUsageState::AfterGapNoAuthored,
+                    (GapUsageState::BeforeGapWithAuthored, _) => {
+                        GapUsageState::BeforeGapWithAuthored
                     }
-                    (GapUsageState::BeforeGapWithAuthored, _) => GapUsageState::BeforeGapWithAuthored,
                     (GapUsageState::AfterGapNoAuthored, AuthoredCopperPlusOneGapStepKind::Gap) => {
                         continue;
                     }
                     (GapUsageState::AfterGapNoAuthored, _) => GapUsageState::AfterGapWithAuthored,
-                    (GapUsageState::AfterGapWithAuthored, AuthoredCopperPlusOneGapStepKind::Gap) => {
+                    (
+                        GapUsageState::AfterGapWithAuthored,
+                        AuthoredCopperPlusOneGapStepKind::Gap,
+                    ) => {
                         continue;
                     }
                     (GapUsageState::AfterGapWithAuthored, _) => GapUsageState::AfterGapWithAuthored,

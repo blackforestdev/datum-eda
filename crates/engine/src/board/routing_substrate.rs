@@ -3,8 +3,8 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::board::{
-    Board, Keepout, Net, NetClass, PadShape, PlacedPad, StackupLayer, StackupLayerType, Track,
-    Via, Zone,
+    Board, Keepout, Net, NetClass, PadShape, PlacedPad, StackupLayer, StackupLayerType, Track, Via,
+    Zone,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]

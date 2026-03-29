@@ -1,9 +1,7 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::board::{
-    Board, RoutePathCandidateError, RoutePathCandidateStatus, StackupLayer,
-};
+use crate::board::{Board, RoutePathCandidateError, RoutePathCandidateStatus, StackupLayer};
 use crate::ir::geometry::{LayerId, Point};
 
 use super::route_path_candidate_via_selection::{
@@ -88,7 +86,8 @@ impl Board {
         let blocked_via_count = matching_vias
             .iter()
             .filter(|entry| {
-                !(entry.source_segment.blockages.is_empty() && entry.target_segment.blockages.is_empty())
+                !(entry.source_segment.blockages.is_empty()
+                    && entry.target_segment.blockages.is_empty())
             })
             .count();
         let available_via_count = matching_vias.len().saturating_sub(blocked_via_count);

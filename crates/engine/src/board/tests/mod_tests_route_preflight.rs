@@ -261,7 +261,8 @@ fn route_preflight_detects_non_convex_outline_escape_when_track_endpoints_remain
 }
 
 #[test]
-fn route_preflight_detects_non_convex_outline_escape_when_segment_leaves_and_reenters_with_midpoint_inside() {
+fn route_preflight_detects_non_convex_outline_escape_when_segment_leaves_and_reenters_with_midpoint_inside()
+ {
     let (mut board, net_uuid, _, _, _, _) = demo_board();
     board.outline = Polygon::new(vec![
         Point::new(0, 0),

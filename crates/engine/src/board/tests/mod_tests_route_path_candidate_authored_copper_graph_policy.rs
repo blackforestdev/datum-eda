@@ -239,9 +239,24 @@ pub(super) fn obstacle_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
             name: "policy-obstacle".into(),
             stackup: Stackup {
                 layers: vec![
-                    StackupLayer { id: 1, name: "Top".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 2, name: "Core".into(), layer_type: StackupLayerType::Dielectric, thickness_nm: 1_000_000 },
-                    StackupLayer { id: 3, name: "Bottom".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
+                    StackupLayer {
+                        id: 1,
+                        name: "Top".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 2,
+                        name: "Core".into(),
+                        layer_type: StackupLayerType::Dielectric,
+                        thickness_nm: 1_000_000,
+                    },
+                    StackupLayer {
+                        id: 3,
+                        name: "Bottom".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
                 ],
             },
             outline: Polygon::new(vec![
@@ -479,8 +494,18 @@ fn topology_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
             name: "policy-topology".into(),
             stackup: Stackup {
                 layers: vec![
-                    StackupLayer { id: 1, name: "Top".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 2, name: "Inner".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
+                    StackupLayer {
+                        id: 1,
+                        name: "Top".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 2,
+                        name: "Inner".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
                 ],
             },
             outline: Polygon::new(vec![
@@ -607,8 +632,18 @@ fn layer_balance_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid) {
             name: "policy-layer-balance".into(),
             stackup: Stackup {
                 layers: vec![
-                    StackupLayer { id: 1, name: "Top".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 2, name: "Inner".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
+                    StackupLayer {
+                        id: 1,
+                        name: "Top".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 2,
+                        name: "Inner".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
                 ],
             },
             outline: Polygon::new(vec![
@@ -752,7 +787,10 @@ fn authored_copper_graph_policy_preserves_plain_behavior() {
 
     assert_eq!(report.status, direct.status);
     assert_eq!(report.selection_rule, direct.selection_rule);
-    assert_eq!(report.summary.candidate_track_count, direct.summary.candidate_track_count);
+    assert_eq!(
+        report.summary.candidate_track_count,
+        direct.summary.candidate_track_count
+    );
     assert_eq!(path_ids(&report), vec![track_uuid]);
 }
 
@@ -773,7 +811,10 @@ fn authored_copper_graph_policy_preserves_zone_aware_behavior() {
 
     assert_eq!(report.status, direct.status);
     assert_eq!(report.selection_rule, direct.selection_rule);
-    assert_eq!(report.summary.candidate_zone_count, direct.summary.candidate_zone_count);
+    assert_eq!(
+        report.summary.candidate_zone_count,
+        direct.summary.candidate_zone_count
+    );
     assert_eq!(path_ids(&report), vec![zone_uuid]);
 }
 
@@ -799,8 +840,14 @@ fn authored_copper_graph_policy_preserves_obstacle_aware_behavior() {
 
     assert_eq!(report.status, direct.status);
     assert_eq!(report.selection_rule, direct.selection_rule);
-    assert_eq!(report.summary.blocked_track_count, direct.summary.blocked_track_count);
-    assert_eq!(path_ids(&report), vec![track_a_uuid, via_uuid, track_b_uuid]);
+    assert_eq!(
+        report.summary.blocked_track_count,
+        direct.summary.blocked_track_count
+    );
+    assert_eq!(
+        path_ids(&report),
+        vec![track_a_uuid, via_uuid, track_b_uuid]
+    );
 }
 
 #[test]
@@ -857,7 +904,10 @@ fn authored_copper_graph_policy_preserves_topology_aware_behavior() {
         report.summary.topology_transition_count,
         direct.summary.topology_transition_count
     );
-    assert_eq!(path_ids(&report), vec![via_uuid, track_a_uuid, track_b_uuid]);
+    assert_eq!(
+        path_ids(&report),
+        vec![via_uuid, track_a_uuid, track_b_uuid]
+    );
 }
 
 #[test]
@@ -881,6 +931,9 @@ fn authored_copper_graph_policy_preserves_layer_balance_aware_behavior() {
 
     assert_eq!(report.status, direct.status);
     assert_eq!(report.selection_rule, direct.selection_rule);
-    assert_eq!(report.summary.layer_balance_score, direct.summary.layer_balance_score);
+    assert_eq!(
+        report.summary.layer_balance_score,
+        direct.summary.layer_balance_score
+    );
     assert_eq!(path_ids(&report), vec![via_uuid, track_uuid]);
 }

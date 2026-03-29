@@ -531,4 +531,3 @@ pub(crate) struct ProjectDeleteBoardDimensionArgs {
     #[arg(long = "dimension")]
     pub(crate) dimension_uuid: Uuid,
 }
-

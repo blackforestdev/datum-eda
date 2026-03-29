@@ -153,7 +153,12 @@ fn candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_bala
 struct AuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAware {
     candidate_layer_ids: Vec<LayerId>,
     node_ids: HashMap<GraphAnchor, usize>,
-    adjacency: Vec<Vec<(usize, AuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareStep)>>,
+    adjacency: Vec<
+        Vec<(
+            usize,
+            AuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareStep,
+        )>,
+    >,
     blocked_track_count: usize,
     blocked_via_count: usize,
     blocked_zone_connection_count: usize,
@@ -217,15 +222,12 @@ impl AuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAware {
         let mut blocked_zone_connection_count = 0;
 
         for track in tracks {
-            let subject = format!("existing track edge {} on layer {}", track.uuid, track.layer);
-            let analysis = analyze_route_segment(
-                board,
-                net_uuid,
-                track.layer,
-                track.from,
-                track.to,
-                &subject,
+            let subject = format!(
+                "existing track edge {} on layer {}",
+                track.uuid, track.layer
             );
+            let analysis =
+                analyze_route_segment(board, net_uuid, track.layer, track.from, track.to, &subject);
             if !analysis.blockages.is_empty() {
                 blocked_track_count += 1;
                 continue;
@@ -349,7 +351,8 @@ impl AuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAware {
                 .iter()
                 .enumerate()
                 .filter(|(_, anchor)| {
-                    anchor.layer == zone.layer && point_in_or_on_polygon(anchor.point, &zone.polygon)
+                    anchor.layer == zone.layer
+                        && point_in_or_on_polygon(anchor.point, &zone.polygon)
                 })
                 .map(|(index, _)| index)
                 .collect::<Vec<_>>();
@@ -413,7 +416,10 @@ impl AuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAware {
         }
 
         Self {
-            candidate_layer_ids: candidate_copper_layers.iter().map(|layer| layer.id).collect(),
+            candidate_layer_ids: candidate_copper_layers
+                .iter()
+                .map(|layer| layer.id)
+                .collect(),
             node_ids,
             adjacency,
             blocked_track_count,
@@ -519,11 +525,16 @@ fn compare_search_state(left: &SearchState, right: &SearchState) -> Ordering {
     left.steps
         .len()
         .cmp(&right.steps.len())
-        .then_with(|| left.topology_transition_count.cmp(&right.topology_transition_count))
+        .then_with(|| {
+            left.topology_transition_count
+                .cmp(&right.topology_transition_count)
+        })
         .then_with(|| left.layer_balance_score.cmp(&right.layer_balance_score))
         .then_with(|| left.via_step_count.cmp(&right.via_step_count))
         .then_with(|| left.zone_step_count.cmp(&right.zone_step_count))
-        .then_with(|| step_signature_sequence(&left.steps).cmp(&step_signature_sequence(&right.steps)))
+        .then_with(|| {
+            step_signature_sequence(&left.steps).cmp(&step_signature_sequence(&right.steps))
+        })
         .then_with(|| left.node_id.cmp(&right.node_id))
 }
 

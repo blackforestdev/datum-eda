@@ -31,7 +31,9 @@ fn route_path_candidate_authored_copper_plus_one_gap_query_cli(
 
 #[test]
 fn project_query_route_path_candidate_authored_copper_plus_one_gap_reports_deterministic_path() {
-    let root = unique_project_root("datum-eda-cli-project-route-path-candidate-authored-copper-plus-one-gap");
+    let root = unique_project_root(
+        "datum-eda-cli-project-route-path-candidate-authored-copper-plus-one-gap",
+    );
     create_native_project(
         &root,
         Some("Route Path Candidate Authored Copper Plus One Gap Demo".to_string()),
@@ -164,9 +166,18 @@ fn project_query_route_path_candidate_authored_copper_plus_one_gap_reports_deter
     assert_eq!(report["summary"]["candidate_via_count"], 0);
     assert_eq!(report["summary"]["path_gap_step_count"], 1);
     assert_eq!(report["path"]["steps"].as_array().unwrap().len(), 3);
-    assert_eq!(report["path"]["steps"][0]["object_uuid"], track_a_uuid.to_string());
-    assert_eq!(report["path"]["steps"][1]["object_uuid"], serde_json::Value::Null);
-    assert_eq!(report["path"]["steps"][2]["object_uuid"], track_b_uuid.to_string());
+    assert_eq!(
+        report["path"]["steps"][0]["object_uuid"],
+        track_a_uuid.to_string()
+    );
+    assert_eq!(
+        report["path"]["steps"][1]["object_uuid"],
+        serde_json::Value::Null
+    );
+    assert_eq!(
+        report["path"]["steps"][2]["object_uuid"],
+        track_b_uuid.to_string()
+    );
 
     let repeated = execute(route_path_candidate_authored_copper_plus_one_gap_query_cli(
         &root,
@@ -194,7 +205,9 @@ fn project_query_route_path_candidate_authored_copper_plus_one_gap_reports_deter
         .expect("CLI should parse"),
     )
     .expect("text query should succeed");
-    assert!(text_output.contains("contract: m5_route_path_candidate_authored_copper_plus_one_gap_v1"));
+    assert!(
+        text_output.contains("contract: m5_route_path_candidate_authored_copper_plus_one_gap_v1")
+    );
     assert!(text_output.contains("status: deterministic_path_found"));
     assert!(text_output.contains("path_gap_steps: 1"));
 

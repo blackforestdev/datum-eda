@@ -39,8 +39,7 @@ pub(super) struct AuthoredCopperGraphZoneObstacleAwarePathMatch {
     pub steps: Vec<AuthoredCopperGraphZoneObstacleAwareStep>,
 }
 
-pub const ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE_SELECTION_RULE: &str =
-    "select the first existing authored-copper path found by breadth-first traversal over persisted target-net track/via/zone graph edges whose reused geometry is unblocked under current authored obstacle checks after sorting edges by (step_kind, object_uuid, destination_anchor), which yields deterministic minimum-step path selection with lexicographic tie-breaks";
+pub const ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE_SELECTION_RULE: &str = "select the first existing authored-copper path found by breadth-first traversal over persisted target-net track/via/zone graph edges whose reused geometry is unblocked under current authored obstacle checks after sorting edges by (step_kind, object_uuid, destination_anchor), which yields deterministic minimum-step path selection with lexicographic tie-breaks";
 
 pub(super) fn candidate_authored_copper_graph_zone_obstacle_aware_objects(
     board: &Board,
@@ -187,15 +186,12 @@ impl AuthoredCopperGraphZoneObstacleAware {
         let mut blocked_zone_connection_count = 0;
 
         for track in tracks {
-            let subject = format!("existing track edge {} on layer {}", track.uuid, track.layer);
-            let analysis = analyze_route_segment(
-                board,
-                net_uuid,
-                track.layer,
-                track.from,
-                track.to,
-                &subject,
+            let subject = format!(
+                "existing track edge {} on layer {}",
+                track.uuid, track.layer
             );
+            let analysis =
+                analyze_route_segment(board, net_uuid, track.layer, track.from, track.to, &subject);
             if !analysis.blockages.is_empty() {
                 blocked_track_count += 1;
                 continue;
@@ -315,7 +311,8 @@ impl AuthoredCopperGraphZoneObstacleAware {
                 .iter()
                 .enumerate()
                 .filter(|(_, anchor)| {
-                    anchor.layer == zone.layer && point_in_or_on_polygon(anchor.point, &zone.polygon)
+                    anchor.layer == zone.layer
+                        && point_in_or_on_polygon(anchor.point, &zone.polygon)
                 })
                 .map(|(index, _)| index)
                 .collect::<Vec<_>>();
@@ -393,10 +390,8 @@ impl AuthoredCopperGraphZoneObstacleAware {
         let start = *self.node_ids.get(&from_anchor)?;
         let target = *self.node_ids.get(&to_anchor)?;
         let mut queue = VecDeque::new();
-        let mut visited: HashMap<
-            usize,
-            Option<(usize, AuthoredCopperGraphZoneObstacleAwareStep)>,
-        > = HashMap::new();
+        let mut visited: HashMap<usize, Option<(usize, AuthoredCopperGraphZoneObstacleAwareStep)>> =
+            HashMap::new();
 
         queue.push_back(start);
         visited.insert(start, None);

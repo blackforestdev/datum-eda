@@ -93,8 +93,8 @@ impl Board {
 
         let (candidate_tracks, candidate_vias, candidate_zones, selected_path_match) =
             selected_authored_copper_graph_zone_aware_path(self, net_uuid, from_anchor, to_anchor);
-        let path = selected_path_match.map(|entry| {
-            RoutePathCandidateAuthoredCopperGraphZoneAwarePath {
+        let path =
+            selected_path_match.map(|entry| RoutePathCandidateAuthoredCopperGraphZoneAwarePath {
                 steps: entry
                     .steps
                     .iter()
@@ -118,8 +118,7 @@ impl Board {
                         to_layer: step.to_layer,
                     })
                     .collect(),
-            }
-        });
+            });
         let status = if path.is_some() {
             RoutePathCandidateStatus::DeterministicPathFound
         } else {
@@ -129,8 +128,8 @@ impl Board {
         Ok(RoutePathCandidateAuthoredCopperGraphZoneAwareReport {
             contract: "m5_route_path_candidate_authored_copper_graph_zone_aware_v1".to_string(),
             persisted_native_board_state_only: true,
-            selection_rule:
-                ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_AWARE_SELECTION_RULE.to_string(),
+            selection_rule: ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_AWARE_SELECTION_RULE
+                .to_string(),
             status,
             net_uuid: preflight.net_uuid,
             net_name: preflight.net_name,

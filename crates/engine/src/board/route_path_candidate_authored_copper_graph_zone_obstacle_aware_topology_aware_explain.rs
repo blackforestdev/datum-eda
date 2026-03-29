@@ -61,8 +61,9 @@ pub struct RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareEx
     pub selection_rule: String,
     pub candidate_copper_layers: Vec<StackupLayer>,
     pub summary: RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareExplainSummary,
-    pub selected_path:
-        Option<RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareExplainSelectedPath>,
+    pub selected_path: Option<
+        RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareExplainSelectedPath,
+    >,
 }
 
 impl Board {

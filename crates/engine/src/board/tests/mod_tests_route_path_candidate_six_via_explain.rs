@@ -34,19 +34,84 @@ fn demo_board() -> (
             name: "path-candidate-six-via-explain".into(),
             stackup: Stackup {
                 layers: vec![
-                    StackupLayer { id: 1, name: "Top".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 2, name: "Core A".into(), layer_type: StackupLayerType::Dielectric, thickness_nm: 1_000_000 },
-                    StackupLayer { id: 3, name: "Inner 1".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 4, name: "Core B".into(), layer_type: StackupLayerType::Dielectric, thickness_nm: 1_000_000 },
-                    StackupLayer { id: 5, name: "Inner 2".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 6, name: "Core C".into(), layer_type: StackupLayerType::Dielectric, thickness_nm: 1_000_000 },
-                    StackupLayer { id: 7, name: "Inner 3".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 8, name: "Core D".into(), layer_type: StackupLayerType::Dielectric, thickness_nm: 1_000_000 },
-                    StackupLayer { id: 9, name: "Inner 4".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 10, name: "Core E".into(), layer_type: StackupLayerType::Dielectric, thickness_nm: 1_000_000 },
-                    StackupLayer { id: 11, name: "Inner 5".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 12, name: "Core F".into(), layer_type: StackupLayerType::Dielectric, thickness_nm: 1_000_000 },
-                    StackupLayer { id: 13, name: "Bottom".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
+                    StackupLayer {
+                        id: 1,
+                        name: "Top".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 2,
+                        name: "Core A".into(),
+                        layer_type: StackupLayerType::Dielectric,
+                        thickness_nm: 1_000_000,
+                    },
+                    StackupLayer {
+                        id: 3,
+                        name: "Inner 1".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 4,
+                        name: "Core B".into(),
+                        layer_type: StackupLayerType::Dielectric,
+                        thickness_nm: 1_000_000,
+                    },
+                    StackupLayer {
+                        id: 5,
+                        name: "Inner 2".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 6,
+                        name: "Core C".into(),
+                        layer_type: StackupLayerType::Dielectric,
+                        thickness_nm: 1_000_000,
+                    },
+                    StackupLayer {
+                        id: 7,
+                        name: "Inner 3".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 8,
+                        name: "Core D".into(),
+                        layer_type: StackupLayerType::Dielectric,
+                        thickness_nm: 1_000_000,
+                    },
+                    StackupLayer {
+                        id: 9,
+                        name: "Inner 4".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 10,
+                        name: "Core E".into(),
+                        layer_type: StackupLayerType::Dielectric,
+                        thickness_nm: 1_000_000,
+                    },
+                    StackupLayer {
+                        id: 11,
+                        name: "Inner 5".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 12,
+                        name: "Core F".into(),
+                        layer_type: StackupLayerType::Dielectric,
+                        thickness_nm: 1_000_000,
+                    },
+                    StackupLayer {
+                        id: 13,
+                        name: "Bottom".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
                 ],
             },
             outline: Polygon::new(vec![
@@ -90,17 +155,97 @@ fn demo_board() -> (
             ]),
             tracks: HashMap::new(),
             vias: HashMap::from([
-                (via_a_uuid, Via { uuid: via_a_uuid, net: net_uuid, position: Point::new(160_000, 160_000), drill: 300_000, diameter: 600_000, from_layer: 1, to_layer: 3 }),
-                (via_b_uuid, Via { uuid: via_b_uuid, net: net_uuid, position: Point::new(260_000, 260_000), drill: 300_000, diameter: 600_000, from_layer: 3, to_layer: 5 }),
-                (via_c_uuid, Via { uuid: via_c_uuid, net: net_uuid, position: Point::new(400_000, 400_000), drill: 300_000, diameter: 600_000, from_layer: 5, to_layer: 7 }),
-                (via_d_uuid, Via { uuid: via_d_uuid, net: net_uuid, position: Point::new(560_000, 560_000), drill: 300_000, diameter: 600_000, from_layer: 7, to_layer: 9 }),
-                (via_e_uuid, Via { uuid: via_e_uuid, net: net_uuid, position: Point::new(700_000, 700_000), drill: 300_000, diameter: 600_000, from_layer: 9, to_layer: 11 }),
-                (via_f_uuid, Via { uuid: via_f_uuid, net: net_uuid, position: Point::new(840_000, 840_000), drill: 300_000, diameter: 600_000, from_layer: 11, to_layer: 13 }),
+                (
+                    via_a_uuid,
+                    Via {
+                        uuid: via_a_uuid,
+                        net: net_uuid,
+                        position: Point::new(160_000, 160_000),
+                        drill: 300_000,
+                        diameter: 600_000,
+                        from_layer: 1,
+                        to_layer: 3,
+                    },
+                ),
+                (
+                    via_b_uuid,
+                    Via {
+                        uuid: via_b_uuid,
+                        net: net_uuid,
+                        position: Point::new(260_000, 260_000),
+                        drill: 300_000,
+                        diameter: 600_000,
+                        from_layer: 3,
+                        to_layer: 5,
+                    },
+                ),
+                (
+                    via_c_uuid,
+                    Via {
+                        uuid: via_c_uuid,
+                        net: net_uuid,
+                        position: Point::new(400_000, 400_000),
+                        drill: 300_000,
+                        diameter: 600_000,
+                        from_layer: 5,
+                        to_layer: 7,
+                    },
+                ),
+                (
+                    via_d_uuid,
+                    Via {
+                        uuid: via_d_uuid,
+                        net: net_uuid,
+                        position: Point::new(560_000, 560_000),
+                        drill: 300_000,
+                        diameter: 600_000,
+                        from_layer: 7,
+                        to_layer: 9,
+                    },
+                ),
+                (
+                    via_e_uuid,
+                    Via {
+                        uuid: via_e_uuid,
+                        net: net_uuid,
+                        position: Point::new(700_000, 700_000),
+                        drill: 300_000,
+                        diameter: 600_000,
+                        from_layer: 9,
+                        to_layer: 11,
+                    },
+                ),
+                (
+                    via_f_uuid,
+                    Via {
+                        uuid: via_f_uuid,
+                        net: net_uuid,
+                        position: Point::new(840_000, 840_000),
+                        drill: 300_000,
+                        diameter: 600_000,
+                        from_layer: 11,
+                        to_layer: 13,
+                    },
+                ),
             ]),
             zones: HashMap::new(),
             nets: HashMap::from([
-                (net_uuid, Net { uuid: net_uuid, name: "SIG".into(), class: class_uuid }),
-                (other_net_uuid, Net { uuid: other_net_uuid, name: "OTHER".into(), class: class_uuid }),
+                (
+                    net_uuid,
+                    Net {
+                        uuid: net_uuid,
+                        name: "SIG".into(),
+                        class: class_uuid,
+                    },
+                ),
+                (
+                    other_net_uuid,
+                    Net {
+                        uuid: other_net_uuid,
+                        name: "OTHER".into(),
+                        class: class_uuid,
+                    },
+                ),
             ]),
             net_classes: HashMap::from([(
                 class_uuid,
@@ -135,41 +280,73 @@ fn demo_board() -> (
 
 #[test]
 fn route_path_candidate_six_via_explain_reports_selected_sextuple_reasoning() {
-    let (board, net_uuid, _, anchor_top_uuid, anchor_bottom_uuid, via_a_uuid, via_b_uuid, via_c_uuid, via_d_uuid, via_e_uuid, via_f_uuid) =
-        demo_board();
+    let (
+        board,
+        net_uuid,
+        _,
+        anchor_top_uuid,
+        anchor_bottom_uuid,
+        via_a_uuid,
+        via_b_uuid,
+        via_c_uuid,
+        via_d_uuid,
+        via_e_uuid,
+        via_f_uuid,
+    ) = demo_board();
 
     let report = board
         .route_path_candidate_six_via_explain(net_uuid, anchor_top_uuid, anchor_bottom_uuid)
         .expect("six-via explain should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(
         report.explanation_kind,
         RoutePathCandidateSixViaExplainKind::DeterministicPathFound
     );
     assert_eq!(report.summary.matching_via_sextuple_count, 1);
     assert_eq!(
-        report.selected_sextuple.as_ref().map(|path| path.via_a_uuid),
+        report
+            .selected_sextuple
+            .as_ref()
+            .map(|path| path.via_a_uuid),
         Some(via_a_uuid)
     );
     assert_eq!(
-        report.selected_sextuple.as_ref().map(|path| path.via_b_uuid),
+        report
+            .selected_sextuple
+            .as_ref()
+            .map(|path| path.via_b_uuid),
         Some(via_b_uuid)
     );
     assert_eq!(
-        report.selected_sextuple.as_ref().map(|path| path.via_c_uuid),
+        report
+            .selected_sextuple
+            .as_ref()
+            .map(|path| path.via_c_uuid),
         Some(via_c_uuid)
     );
     assert_eq!(
-        report.selected_sextuple.as_ref().map(|path| path.via_d_uuid),
+        report
+            .selected_sextuple
+            .as_ref()
+            .map(|path| path.via_d_uuid),
         Some(via_d_uuid)
     );
     assert_eq!(
-        report.selected_sextuple.as_ref().map(|path| path.via_e_uuid),
+        report
+            .selected_sextuple
+            .as_ref()
+            .map(|path| path.via_e_uuid),
         Some(via_e_uuid)
     );
     assert_eq!(
-        report.selected_sextuple.as_ref().map(|path| path.via_f_uuid),
+        report
+            .selected_sextuple
+            .as_ref()
+            .map(|path| path.via_f_uuid),
         Some(via_f_uuid)
     );
     assert_eq!(report.blocked_matching_sextuples.len(), 0);

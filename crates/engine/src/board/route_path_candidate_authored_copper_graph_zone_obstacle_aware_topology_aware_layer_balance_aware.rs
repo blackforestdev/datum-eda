@@ -12,7 +12,8 @@ use super::route_path_candidate_authored_copper_graph_zone_obstacle_aware_topolo
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
-pub enum RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareStepKindView {
+pub enum RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareStepKindView
+{
     Track,
     Via,
     Zone,
@@ -31,14 +32,16 @@ pub struct RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLa
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwarePath {
+pub struct RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwarePath
+{
     pub steps: Vec<
         RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareStep,
     >,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareSummary {
+pub struct RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareSummary
+{
     pub candidate_copper_layer_count: usize,
     pub candidate_track_count: usize,
     pub candidate_via_count: usize,
@@ -54,7 +57,8 @@ pub struct RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLa
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareReport {
+pub struct RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareReport
+{
     pub contract: String,
     pub persisted_native_board_state_only: bool,
     pub selection_rule: String,
@@ -66,8 +70,9 @@ pub struct RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLa
     pub candidate_copper_layers: Vec<StackupLayer>,
     pub summary:
         RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareSummary,
-    pub path:
-        Option<RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwarePath>,
+    pub path: Option<
+        RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwarePath,
+    >,
 }
 
 impl Board {

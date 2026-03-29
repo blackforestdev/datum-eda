@@ -1,7 +1,7 @@
-use super::*;
 use super::command_exec_native_support::{
     parse_native_hidden_power_behavior, parse_native_symbol_display_mode,
 };
+use super::*;
 
 pub(super) fn execute_project_schematic_symbols_command(
     format: &OutputFormat,
@@ -237,11 +237,13 @@ pub(super) fn execute_project_schematic_symbols_command(
             };
             Ok((output, 0))
         }
-        ProjectCommands::SetSymbolHiddenPowerBehavior(ProjectSetSymbolHiddenPowerBehaviorArgs {
-            path,
-            symbol,
-            hidden_power_behavior,
-        }) => {
+        ProjectCommands::SetSymbolHiddenPowerBehavior(
+            ProjectSetSymbolHiddenPowerBehaviorArgs {
+                path,
+                symbol,
+                hidden_power_behavior,
+            },
+        ) => {
             let report = set_native_project_symbol_hidden_power_behavior(
                 &path,
                 symbol,

@@ -31,7 +31,7 @@ fn route_path_candidate_authored_copper_graph_obstacle_aware_query_cli(
 
 #[test]
 fn project_query_route_path_candidate_authored_copper_graph_obstacle_aware_reports_blocked_existing_path()
-{
+ {
     let root = unique_project_root(
         "datum-eda-cli-project-route-path-candidate-authored-copper-graph-obstacle-aware",
     );
@@ -154,12 +154,14 @@ fn project_query_route_path_candidate_authored_copper_graph_obstacle_aware_repor
     )
     .expect("board file should write");
 
-    let output = execute(route_path_candidate_authored_copper_graph_obstacle_aware_query_cli(
-        &root,
-        target_net_uuid,
-        anchor_a_uuid,
-        anchor_b_uuid,
-    ))
+    let output = execute(
+        route_path_candidate_authored_copper_graph_obstacle_aware_query_cli(
+            &root,
+            target_net_uuid,
+            anchor_a_uuid,
+            anchor_b_uuid,
+        ),
+    )
     .expect("query should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report should parse");
 
@@ -168,18 +170,23 @@ fn project_query_route_path_candidate_authored_copper_graph_obstacle_aware_repor
         "m5_route_path_candidate_authored_copper_graph_obstacle_aware_v1"
     );
     assert_eq!(report["persisted_native_board_state_only"], true);
-    assert_eq!(report["status"], "no_path_under_current_authored_constraints");
+    assert_eq!(
+        report["status"],
+        "no_path_under_current_authored_constraints"
+    );
     assert_eq!(report["summary"]["candidate_track_count"], 1);
     assert_eq!(report["summary"]["blocked_track_count"], 1);
     assert_eq!(report["summary"]["blocked_via_count"], 0);
     assert!(report["path"].is_null());
 
-    let repeated = execute(route_path_candidate_authored_copper_graph_obstacle_aware_query_cli(
-        &root,
-        target_net_uuid,
-        anchor_a_uuid,
-        anchor_b_uuid,
-    ))
+    let repeated = execute(
+        route_path_candidate_authored_copper_graph_obstacle_aware_query_cli(
+            &root,
+            target_net_uuid,
+            anchor_a_uuid,
+            anchor_b_uuid,
+        ),
+    )
     .expect("repeat should succeed");
     assert_eq!(output, repeated);
 
@@ -200,9 +207,10 @@ fn project_query_route_path_candidate_authored_copper_graph_obstacle_aware_repor
         .expect("CLI should parse"),
     )
     .expect("text query should succeed");
-    assert!(text_output.contains(
-        "contract: m5_route_path_candidate_authored_copper_graph_obstacle_aware_v1"
-    ));
+    assert!(
+        text_output
+            .contains("contract: m5_route_path_candidate_authored_copper_graph_obstacle_aware_v1")
+    );
     assert!(text_output.contains("status: no_path_under_current_authored_constraints"));
     assert!(text_output.contains("blocked_tracks: 1"));
     assert!(text_output.contains("path_steps: 0"));

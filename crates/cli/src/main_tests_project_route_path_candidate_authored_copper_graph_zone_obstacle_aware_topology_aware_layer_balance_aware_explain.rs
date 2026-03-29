@@ -26,7 +26,8 @@ fn layer_balance_aware_explain_query_cli(
 }
 
 #[test]
-fn project_query_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_explain_is_deterministic() {
+fn project_query_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_explain_is_deterministic()
+ {
     let root = std::env::temp_dir().join(format!(
         "datum-eda-cli-route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware-explain-{}",
         Uuid::new_v4()
@@ -178,10 +179,12 @@ fn project_query_route_path_candidate_authored_copper_graph_zone_obstacle_aware_
         report["selected_path"]["steps"][0]["object_uuid"],
         Uuid::from_u128(20).to_string()
     );
-    assert!(report["selected_path"]["selection_reason"]
-        .as_str()
-        .unwrap()
-        .contains("layer balance score 0"));
+    assert!(
+        report["selected_path"]["selection_reason"]
+            .as_str()
+            .unwrap()
+            .contains("layer balance score 0")
+    );
 
     let repeated = execute(layer_balance_aware_explain_query_cli(
         &root,

@@ -147,7 +147,10 @@ fn execute_plan_compare_scoped_replacement_manifest_artifact_reports_match_and_d
         serde_json::from_str(&drift.0).expect("artifact compare JSON should parse");
     assert_eq!(drift.1, 1);
     assert_eq!(drift_payload["matches_artifact"], false);
-    assert_eq!(drift_payload["drift_fields"], serde_json::json!(["board_path"]));
+    assert_eq!(
+        drift_payload["drift_fields"],
+        serde_json::json!(["board_path"])
+    );
 
     let _ = std::fs::remove_file(&seeded);
     let _ = std::fs::remove_file(seeded.with_file_name(format!(

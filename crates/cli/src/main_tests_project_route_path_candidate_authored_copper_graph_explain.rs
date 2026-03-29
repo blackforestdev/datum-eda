@@ -141,13 +141,15 @@ fn project_query_route_path_candidate_authored_copper_graph_explain_reports_sele
     )
     .expect("board file should write");
 
-    let output = execute(route_path_candidate_authored_copper_graph_explain_query_cli(
-        &root,
-        target_net_uuid,
-        anchor_a_uuid,
-        anchor_b_uuid,
-        "plain",
-    ))
+    let output = execute(
+        route_path_candidate_authored_copper_graph_explain_query_cli(
+            &root,
+            target_net_uuid,
+            anchor_a_uuid,
+            anchor_b_uuid,
+            "plain",
+        ),
+    )
     .expect("query should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report should parse");
 
@@ -161,16 +163,24 @@ fn project_query_route_path_candidate_authored_copper_graph_explain_reports_sele
     assert_eq!(report["explanation_kind"], "deterministic_path_found");
     assert_eq!(report["summary"]["candidate_track_count"], 1);
     assert_eq!(report["summary"]["candidate_via_count"], 0);
-    assert_eq!(report["selected_path"]["steps"].as_array().unwrap().len(), 1);
-    assert_eq!(report["selected_path"]["steps"][0]["object_uuid"], track_uuid.to_string());
+    assert_eq!(
+        report["selected_path"]["steps"].as_array().unwrap().len(),
+        1
+    );
+    assert_eq!(
+        report["selected_path"]["steps"][0]["object_uuid"],
+        track_uuid.to_string()
+    );
 
-    let repeated = execute(route_path_candidate_authored_copper_graph_explain_query_cli(
-        &root,
-        target_net_uuid,
-        anchor_a_uuid,
-        anchor_b_uuid,
-        "plain",
-    ))
+    let repeated = execute(
+        route_path_candidate_authored_copper_graph_explain_query_cli(
+            &root,
+            target_net_uuid,
+            anchor_a_uuid,
+            anchor_b_uuid,
+            "plain",
+        ),
+    )
     .expect("repeat should succeed");
     assert_eq!(output, repeated);
 
@@ -193,9 +203,10 @@ fn project_query_route_path_candidate_authored_copper_graph_explain_reports_sele
         .expect("CLI should parse"),
     )
     .expect("text query should succeed");
-    assert!(text_output.contains(
-        "contract: m5_route_path_candidate_authored_copper_graph_policy_explain_v1"
-    ));
+    assert!(
+        text_output
+            .contains("contract: m5_route_path_candidate_authored_copper_graph_policy_explain_v1")
+    );
     assert!(text_output.contains("policy: plain"));
     assert!(text_output.contains("status: deterministic_path_found"));
     assert!(text_output.contains("selected_path_steps: 1"));

@@ -37,7 +37,10 @@ pub(super) fn component_package_pad_count(
     project: &LoadedNativeProject,
     component_key: &str,
 ) -> usize {
-    super::command_project_board_component_query::component_package_pad_count(project, component_key)
+    super::command_project_board_component_query::component_package_pad_count(
+        project,
+        component_key,
+    )
 }
 
 pub(super) fn collect_native_project_pool_ref_views(

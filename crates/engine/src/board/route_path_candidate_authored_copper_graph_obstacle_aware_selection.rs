@@ -36,8 +36,7 @@ pub(super) struct AuthoredCopperGraphObstacleAwarePathMatch {
     pub steps: Vec<AuthoredCopperGraphObstacleAwareStep>,
 }
 
-pub const ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_OBSTACLE_AWARE_SELECTION_RULE: &str =
-    "select the first existing authored-copper path found by breadth-first traversal over persisted target-net track/via graph edges whose reused geometry is unblocked under current authored obstacle checks after sorting edges by (step_kind, object_uuid, destination_anchor), which yields deterministic minimum-step path selection with lexicographic tie-breaks";
+pub const ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_OBSTACLE_AWARE_SELECTION_RULE: &str = "select the first existing authored-copper path found by breadth-first traversal over persisted target-net track/via graph edges whose reused geometry is unblocked under current authored obstacle checks after sorting edges by (step_kind, object_uuid, destination_anchor), which yields deterministic minimum-step path selection with lexicographic tie-breaks";
 
 pub(super) fn candidate_authored_copper_graph_obstacle_aware_objects(
     board: &Board,
@@ -75,7 +74,14 @@ pub(super) fn selected_authored_copper_graph_obstacle_aware_path(
     Option<AuthoredCopperGraphObstacleAwarePathMatch>,
 ) {
     let (tracks, vias) = candidate_authored_copper_graph_obstacle_aware_objects(board, net_uuid);
-    let graph = AuthoredCopperGraphObstacleAware::build(board, net_uuid, from_anchor, to_anchor, &tracks, &vias);
+    let graph = AuthoredCopperGraphObstacleAware::build(
+        board,
+        net_uuid,
+        from_anchor,
+        to_anchor,
+        &tracks,
+        &vias,
+    );
     let path = graph
         .shortest_path(
             GraphAnchor {
@@ -160,15 +166,12 @@ impl AuthoredCopperGraphObstacleAware {
         let mut blocked_via_count = 0;
 
         for track in tracks {
-            let subject = format!("existing track edge {} on layer {}", track.uuid, track.layer);
-            let analysis = analyze_route_segment(
-                board,
-                net_uuid,
-                track.layer,
-                track.from,
-                track.to,
-                &subject,
+            let subject = format!(
+                "existing track edge {} on layer {}",
+                track.uuid, track.layer
             );
+            let analysis =
+                analyze_route_segment(board, net_uuid, track.layer, track.from, track.to, &subject);
             if !analysis.blockages.is_empty() {
                 blocked_track_count += 1;
                 continue;

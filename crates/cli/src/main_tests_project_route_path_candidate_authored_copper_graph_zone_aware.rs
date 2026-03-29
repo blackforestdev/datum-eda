@@ -31,8 +31,9 @@ fn route_path_candidate_authored_copper_graph_zone_aware_query_cli(
 
 #[test]
 fn project_query_route_path_candidate_authored_copper_graph_zone_aware_reports_zone_step() {
-    let root =
-        unique_project_root("datum-eda-cli-project-route-path-candidate-authored-copper-graph-zone-aware");
+    let root = unique_project_root(
+        "datum-eda-cli-project-route-path-candidate-authored-copper-graph-zone-aware",
+    );
     create_native_project(
         &root,
         Some("Route Path Candidate Authored Copper Graph Zone Aware Demo".to_string()),
@@ -147,12 +148,14 @@ fn project_query_route_path_candidate_authored_copper_graph_zone_aware_reports_z
     )
     .expect("board file should write");
 
-    let output = execute(route_path_candidate_authored_copper_graph_zone_aware_query_cli(
-        &root,
-        target_net_uuid,
-        anchor_a_uuid,
-        anchor_b_uuid,
-    ))
+    let output = execute(
+        route_path_candidate_authored_copper_graph_zone_aware_query_cli(
+            &root,
+            target_net_uuid,
+            anchor_a_uuid,
+            anchor_b_uuid,
+        ),
+    )
     .expect("query should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report should parse");
 
@@ -167,14 +170,19 @@ fn project_query_route_path_candidate_authored_copper_graph_zone_aware_reports_z
     assert_eq!(report["summary"]["candidate_zone_count"], 1);
     assert_eq!(report["path"]["steps"].as_array().unwrap().len(), 1);
     assert_eq!(report["path"]["steps"][0]["kind"], "zone");
-    assert_eq!(report["path"]["steps"][0]["object_uuid"], zone_uuid.to_string());
+    assert_eq!(
+        report["path"]["steps"][0]["object_uuid"],
+        zone_uuid.to_string()
+    );
 
-    let repeated = execute(route_path_candidate_authored_copper_graph_zone_aware_query_cli(
-        &root,
-        target_net_uuid,
-        anchor_a_uuid,
-        anchor_b_uuid,
-    ))
+    let repeated = execute(
+        route_path_candidate_authored_copper_graph_zone_aware_query_cli(
+            &root,
+            target_net_uuid,
+            anchor_a_uuid,
+            anchor_b_uuid,
+        ),
+    )
     .expect("repeat should succeed");
     assert_eq!(output, repeated);
 
@@ -195,7 +203,10 @@ fn project_query_route_path_candidate_authored_copper_graph_zone_aware_reports_z
         .expect("CLI should parse"),
     )
     .expect("text query should succeed");
-    assert!(text_output.contains("contract: m5_route_path_candidate_authored_copper_graph_zone_aware_v1"));
+    assert!(
+        text_output
+            .contains("contract: m5_route_path_candidate_authored_copper_graph_zone_aware_v1")
+    );
     assert!(text_output.contains("status: deterministic_path_found"));
     assert!(text_output.contains("candidate_zones: 1"));
     assert!(text_output.contains("path_steps: 1"));

@@ -65,7 +65,9 @@ pub(crate) fn query_native_project_board_component_view(
         .and_then(|value| {
             serde_json::from_value(value).context("failed to parse board component")
         })?;
-    Ok(native_project_board_component_query_view(&project, component))
+    Ok(native_project_board_component_query_view(
+        &project, component,
+    ))
 }
 
 pub(crate) fn query_native_project_board_component_models_3d(

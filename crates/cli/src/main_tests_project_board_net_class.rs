@@ -235,8 +235,7 @@ fn project_query_board_net_class_reads_one_existing_native_board_file() {
 
     let output = execute(board_net_class_query_cli(&root, net_class_uuid))
         .expect("board net class query should succeed");
-    let net_class: NetClass =
-        serde_json::from_str(&output).expect("query output should parse");
+    let net_class: NetClass = serde_json::from_str(&output).expect("query output should parse");
     assert_eq!(net_class.uuid, net_class_uuid);
     assert_eq!(net_class.name, "DiffPair");
     assert_eq!(net_class.diffpair_width, 180000);

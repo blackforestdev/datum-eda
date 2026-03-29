@@ -5,8 +5,8 @@ use crate::board::{Board, RoutePathCandidateError, RoutePathCandidateStatus, Sta
 use crate::ir::geometry::{LayerId, Point};
 
 use super::route_path_candidate_five_via_selection::{
-    ROUTE_PATH_CANDIDATE_FIVE_VIA_SELECTION_RULE, candidate_five_via_matches,
-    five_via_path_points, selected_matching_five_via,
+    ROUTE_PATH_CANDIDATE_FIVE_VIA_SELECTION_RULE, candidate_five_via_matches, five_via_path_points,
+    selected_matching_five_via,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -106,8 +106,9 @@ impl Board {
                     && entry.target_segment.blockages.is_empty())
             })
             .count();
-        let available_via_quintuple_count =
-            matching_quintuples.len().saturating_sub(blocked_via_quintuple_count);
+        let available_via_quintuple_count = matching_quintuples
+            .len()
+            .saturating_sub(blocked_via_quintuple_count);
         let selected_path = selected_matching_five_via(&matching_quintuples).map(|entry| {
             let points = five_via_path_points(entry, from_anchor, to_anchor);
             RoutePathCandidateFiveViaPath {

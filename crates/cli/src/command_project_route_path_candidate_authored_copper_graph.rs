@@ -63,7 +63,10 @@ pub(crate) fn render_native_project_route_path_candidate_authored_copper_graph_t
             "topology_transitions: {}",
             report.summary.topology_transition_count
         ),
-        format!("layer_balance_score: {}", report.summary.layer_balance_score),
+        format!(
+            "layer_balance_score: {}",
+            report.summary.layer_balance_score
+        ),
         format!("path_via_steps: {}", report.summary.path_via_step_count),
         format!("path_zone_steps: {}", report.summary.path_zone_step_count),
     ];

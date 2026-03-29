@@ -92,8 +92,12 @@ impl Board {
     pub fn route_corridor(&self, net_uuid: Uuid) -> Option<RouteCorridorReport> {
         let preflight = self.route_preflight(net_uuid)?;
         let anchor_pairs = anchor_pairs(&preflight.anchors);
-        let (authored_obstacle_geometry, corridor_spans) =
-            corridor_geometry(self, net_uuid, &preflight.anchors, &preflight.candidate_copper_layers);
+        let (authored_obstacle_geometry, corridor_spans) = corridor_geometry(
+            self,
+            net_uuid,
+            &preflight.anchors,
+            &preflight.candidate_copper_layers,
+        );
 
         let available_pair_count = pair_availability_count(anchor_pairs.len(), &corridor_spans);
         let available_span_count = corridor_spans.iter().filter(|span| !span.blocked).count();
@@ -135,7 +139,9 @@ impl Board {
     }
 }
 
-fn anchor_pairs(anchors: &[RoutePreflightAnchor]) -> Vec<(&RoutePreflightAnchor, &RoutePreflightAnchor)> {
+fn anchor_pairs(
+    anchors: &[RoutePreflightAnchor],
+) -> Vec<(&RoutePreflightAnchor, &RoutePreflightAnchor)> {
     anchors
         .windows(2)
         .map(|window| (&window[0], &window[1]))
@@ -145,7 +151,8 @@ fn anchor_pairs(anchors: &[RoutePreflightAnchor]) -> Vec<(&RoutePreflightAnchor,
 fn pair_availability_count(pair_count: usize, spans: &[RouteCorridorSpan]) -> usize {
     (0..pair_count)
         .filter(|pair_index| {
-            spans.iter()
+            spans
+                .iter()
                 .any(|span| span.pair_index == *pair_index && !span.blocked)
         })
         .count()
@@ -202,7 +209,11 @@ fn corridor_geometry(
             && a.layer == b.layer
             && a.reason == b.reason
     });
-    spans.sort_by(|a, b| a.layer.cmp(&b.layer).then_with(|| a.pair_index.cmp(&b.pair_index)));
+    spans.sort_by(|a, b| {
+        a.layer
+            .cmp(&b.layer)
+            .then_with(|| a.pair_index.cmp(&b.pair_index))
+    });
 
     (obstacles, spans)
 }

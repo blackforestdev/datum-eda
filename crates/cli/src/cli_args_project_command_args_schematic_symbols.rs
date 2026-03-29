@@ -545,4 +545,3 @@ pub(crate) struct ProjectDeleteDrawingArgs {
     #[arg(long = "drawing")]
     pub(crate) drawing: Uuid,
 }
-

@@ -32,8 +32,11 @@ fn route_path_candidate_via_explain_query_cli(
 #[test]
 fn project_query_route_path_candidate_via_explain_reports_selected_via_reasoning() {
     let root = unique_project_root("datum-eda-cli-project-route-path-candidate-via-explain");
-    create_native_project(&root, Some("Route Path Candidate Via Explain Demo".to_string()))
-        .expect("initial scaffold should succeed");
+    create_native_project(
+        &root,
+        Some("Route Path Candidate Via Explain Demo".to_string()),
+    )
+    .expect("initial scaffold should succeed");
 
     let target_net_uuid = Uuid::from_u128(0xc10);
     let class_uuid = Uuid::from_u128(0xc11);
@@ -191,9 +194,13 @@ fn project_query_route_path_candidate_via_explain_reports_selected_via_reasoning
 
 #[test]
 fn project_query_route_path_candidate_via_explain_reports_blocked_matching_vias() {
-    let root = unique_project_root("datum-eda-cli-project-route-path-candidate-via-explain-blocked");
-    create_native_project(&root, Some("Route Path Candidate Via Explain Blocked".to_string()))
-        .expect("initial scaffold should succeed");
+    let root =
+        unique_project_root("datum-eda-cli-project-route-path-candidate-via-explain-blocked");
+    create_native_project(
+        &root,
+        Some("Route Path Candidate Via Explain Blocked".to_string()),
+    )
+    .expect("initial scaffold should succeed");
 
     let target_net_uuid = Uuid::from_u128(0xc20);
     let class_uuid = Uuid::from_u128(0xc21);
@@ -321,7 +328,10 @@ fn project_query_route_path_candidate_via_explain_reports_blocked_matching_vias(
     .expect("query should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report should parse");
 
-    assert_eq!(report["status"], "no_path_under_current_authored_constraints");
+    assert_eq!(
+        report["status"],
+        "no_path_under_current_authored_constraints"
+    );
     assert_eq!(report["explanation_kind"], "all_matching_vias_blocked");
     assert_eq!(report["summary"]["matching_via_count"], 1);
     assert_eq!(report["summary"]["blocked_via_count"], 1);

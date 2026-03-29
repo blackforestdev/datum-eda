@@ -150,11 +150,20 @@ fn route_path_candidate_explain_reports_selected_span_and_rule_for_found_path() 
         report.explanation_kind,
         RoutePathCandidateExplainKind::DeterministicPathFound
     );
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
-    assert_eq!(report.summary.matching_span_count, 2);
-    assert_eq!(report.selected_span.as_ref().map(|span| span.layer), Some(1));
     assert_eq!(
-        report.selected_span.as_ref().map(|span| (span.from, span.to)),
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
+    assert_eq!(report.summary.matching_span_count, 2);
+    assert_eq!(
+        report.selected_span.as_ref().map(|span| span.layer),
+        Some(1)
+    );
+    assert_eq!(
+        report
+            .selected_span
+            .as_ref()
+            .map(|span| (span.from, span.to)),
         Some((Point::new(100_000, 100_000), Point::new(500_000, 500_000)))
     );
 }
@@ -171,9 +180,15 @@ fn route_path_candidate_explain_preserves_selected_span_orientation_for_reversed
         report.explanation_kind,
         RoutePathCandidateExplainKind::DeterministicPathFound
     );
-    assert_eq!(report.selected_span.as_ref().map(|span| span.layer), Some(1));
     assert_eq!(
-        report.selected_span.as_ref().map(|span| (span.from, span.to)),
+        report.selected_span.as_ref().map(|span| span.layer),
+        Some(1)
+    );
+    assert_eq!(
+        report
+            .selected_span
+            .as_ref()
+            .map(|span| (span.from, span.to)),
         Some((Point::new(500_000, 500_000), Point::new(100_000, 100_000)))
     );
 }
@@ -219,14 +234,17 @@ fn route_path_candidate_explain_reports_blocked_matching_spans_and_reasons() {
     );
     assert_eq!(report.summary.blocked_span_count, 2);
     assert_eq!(report.blocked_matching_spans.len(), 2);
-    assert!(report
-        .blocked_matching_spans
-        .iter()
-        .all(|span| !span.blockages.is_empty()));
+    assert!(
+        report
+            .blocked_matching_spans
+            .iter()
+            .all(|span| !span.blockages.is_empty())
+    );
 }
 
 #[test]
-fn route_path_candidate_explain_classifies_all_matching_spans_blocked_even_with_irrelevant_available_spans() {
+fn route_path_candidate_explain_classifies_all_matching_spans_blocked_even_with_irrelevant_available_spans()
+ {
     let (mut board, net_uuid, _, anchor_a_uuid, anchor_b_uuid, anchor_c_uuid) = demo_board();
     board.keepouts.push(Keepout {
         uuid: Uuid::from_u128(0x501),
@@ -282,7 +300,10 @@ fn route_path_candidate_explain_selected_span_matches_fallback_path_candidate_sp
         .route_path_candidate_explain(net_uuid, anchor_a_uuid, anchor_b_uuid)
         .expect("explain should succeed");
 
-    assert_eq!(path_report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        path_report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(
         explain_report.explanation_kind,
         RoutePathCandidateExplainKind::DeterministicPathFound
@@ -293,7 +314,10 @@ fn route_path_candidate_explain_selected_span_matches_fallback_path_candidate_sp
         Some(3)
     );
     assert_eq!(
-        explain_report.selected_span.as_ref().map(|span| (span.from, span.to)),
+        explain_report
+            .selected_span
+            .as_ref()
+            .map(|span| (span.from, span.to)),
         path_report
             .path
             .as_ref()

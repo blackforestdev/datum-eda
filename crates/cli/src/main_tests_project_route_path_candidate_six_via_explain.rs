@@ -160,7 +160,10 @@ fn project_query_route_path_candidate_six_via_explain_reports_selected_sextuple_
     .expect("query should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report should parse");
 
-    assert_eq!(report["contract"], "m5_route_path_candidate_six_via_explain_v1");
+    assert_eq!(
+        report["contract"],
+        "m5_route_path_candidate_six_via_explain_v1"
+    );
     assert_eq!(report["persisted_native_board_state_only"], true);
     assert_eq!(report["status"], "deterministic_path_found");
     assert_eq!(report["explanation_kind"], "deterministic_path_found");
@@ -169,12 +172,30 @@ fn project_query_route_path_candidate_six_via_explain_reports_selected_sextuple_
         "select the first unblocked matching authored via sextuple in ascending (via_a_uuid, via_b_uuid, via_c_uuid, via_d_uuid, via_e_uuid, via_f_uuid) order whose layer sequence connects the requested anchor layers through five intermediate copper layers"
     );
     assert_eq!(report["summary"]["matching_via_sextuple_count"], 1);
-    assert_eq!(report["selected_sextuple"]["via_a_uuid"], via_a_uuid.to_string());
-    assert_eq!(report["selected_sextuple"]["via_b_uuid"], via_b_uuid.to_string());
-    assert_eq!(report["selected_sextuple"]["via_c_uuid"], via_c_uuid.to_string());
-    assert_eq!(report["selected_sextuple"]["via_d_uuid"], via_d_uuid.to_string());
-    assert_eq!(report["selected_sextuple"]["via_e_uuid"], via_e_uuid.to_string());
-    assert_eq!(report["selected_sextuple"]["via_f_uuid"], via_f_uuid.to_string());
+    assert_eq!(
+        report["selected_sextuple"]["via_a_uuid"],
+        via_a_uuid.to_string()
+    );
+    assert_eq!(
+        report["selected_sextuple"]["via_b_uuid"],
+        via_b_uuid.to_string()
+    );
+    assert_eq!(
+        report["selected_sextuple"]["via_c_uuid"],
+        via_c_uuid.to_string()
+    );
+    assert_eq!(
+        report["selected_sextuple"]["via_d_uuid"],
+        via_d_uuid.to_string()
+    );
+    assert_eq!(
+        report["selected_sextuple"]["via_e_uuid"],
+        via_e_uuid.to_string()
+    );
+    assert_eq!(
+        report["selected_sextuple"]["via_f_uuid"],
+        via_f_uuid.to_string()
+    );
 
     let repeated = execute(route_path_candidate_six_via_explain_query_cli(
         &root,

@@ -1,5 +1,5 @@
-use super::*;
 use super::command_exec_project_query_route_graph::*;
+use super::*;
 
 pub(super) fn execute_native_project_query_command(
     format: &OutputFormat,

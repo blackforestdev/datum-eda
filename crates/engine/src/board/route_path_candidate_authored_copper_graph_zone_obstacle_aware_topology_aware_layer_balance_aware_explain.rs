@@ -2,7 +2,8 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::board::{
-    Board, RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareReport,
+    Board,
+    RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareReport,
     RoutePathCandidateError, RoutePathCandidateStatus, StackupLayer,
 };
 use crate::ir::geometry::{LayerId, Point};
@@ -84,7 +85,7 @@ impl Board {
     ) -> Result<
         RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareExplainReport,
         RoutePathCandidateError,
-    > {
+    >{
         let path_candidate = self
             .route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware(
                 net_uuid,

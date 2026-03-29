@@ -34,8 +34,7 @@ pub(super) struct AuthoredCopperGraphPathMatch {
     pub steps: Vec<AuthoredCopperGraphStep>,
 }
 
-pub const ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_SELECTION_RULE: &str =
-    "select the first existing authored-copper path found by breadth-first traversal over persisted target-net track/via graph edges after sorting edges by (step_kind, object_uuid, destination_anchor), which yields deterministic minimum-step path selection with lexicographic tie-breaks";
+pub const ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_SELECTION_RULE: &str = "select the first existing authored-copper path found by breadth-first traversal over persisted target-net track/via graph edges after sorting edges by (step_kind, object_uuid, destination_anchor), which yields deterministic minimum-step path selection with lexicographic tie-breaks";
 
 pub(super) fn candidate_authored_copper_graph_objects(
     board: &Board,

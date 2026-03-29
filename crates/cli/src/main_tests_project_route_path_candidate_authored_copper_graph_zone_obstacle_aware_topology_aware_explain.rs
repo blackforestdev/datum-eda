@@ -26,7 +26,8 @@ fn topology_aware_explain_query_cli(
 }
 
 #[test]
-fn project_query_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_explain_is_deterministic() {
+fn project_query_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_explain_is_deterministic()
+ {
     let root = std::env::temp_dir().join(format!(
         "datum-eda-cli-route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-explain-{}",
         Uuid::new_v4()
@@ -173,11 +174,16 @@ fn project_query_route_path_candidate_authored_copper_graph_zone_obstacle_aware_
     assert_eq!(report["status"], "deterministic_path_found");
     assert_eq!(report["explanation_kind"], "deterministic_path_found");
     assert_eq!(report["summary"]["topology_transition_count"], 1);
-    assert_eq!(report["selected_path"]["steps"][0]["object_uuid"], anchor_via_uuid.to_string());
-    assert!(report["selected_path"]["selection_reason"]
-        .as_str()
-        .unwrap()
-        .contains("whole-path ordering rule"));
+    assert_eq!(
+        report["selected_path"]["steps"][0]["object_uuid"],
+        anchor_via_uuid.to_string()
+    );
+    assert!(
+        report["selected_path"]["selection_reason"]
+            .as_str()
+            .unwrap()
+            .contains("whole-path ordering rule")
+    );
 
     let repeated = execute(topology_aware_explain_query_cli(
         &root,

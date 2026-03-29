@@ -161,7 +161,13 @@ fn project_query_route_path_candidate_authored_via_chain_explain_reports_selecte
     assert_eq!(report["explanation_kind"], "deterministic_path_found");
     assert_eq!(report["summary"]["candidate_via_count"], 4);
     assert_eq!(report["summary"]["matching_via_chain_count"], 2);
-    assert_eq!(report["selected_chain"]["via_chain"].as_array().unwrap().len(), 2);
+    assert_eq!(
+        report["selected_chain"]["via_chain"]
+            .as_array()
+            .unwrap()
+            .len(),
+        2
+    );
     assert_eq!(
         report["selected_chain"]["via_chain"][0]["via_uuid"],
         via_a_uuid.to_string()
@@ -170,7 +176,10 @@ fn project_query_route_path_candidate_authored_via_chain_explain_reports_selecte
         report["selected_chain"]["via_chain"][1]["via_uuid"],
         via_b_uuid.to_string()
     );
-    assert_eq!(report["blocked_matching_chains"].as_array().unwrap().len(), 0);
+    assert_eq!(
+        report["blocked_matching_chains"].as_array().unwrap().len(),
+        0
+    );
 
     let repeated = execute(route_path_candidate_authored_via_chain_explain_query_cli(
         &root,
@@ -198,7 +207,9 @@ fn project_query_route_path_candidate_authored_via_chain_explain_reports_selecte
         .expect("CLI should parse"),
     )
     .expect("text query should succeed");
-    assert!(text_output.contains("contract: m5_route_path_candidate_authored_via_chain_explain_v1"));
+    assert!(
+        text_output.contains("contract: m5_route_path_candidate_authored_via_chain_explain_v1")
+    );
     assert!(text_output.contains("status: deterministic_path_found"));
     assert!(text_output.contains("selected_via_chain_uuids:"));
 

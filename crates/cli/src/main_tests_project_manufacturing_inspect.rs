@@ -84,10 +84,16 @@ fn project_inspect_manufacturing_set_reports_present_missing_and_extra_files() {
 
     let output_dir = root.join("out");
     std::fs::create_dir_all(&output_dir).expect("output dir should exist");
-    std::fs::write(output_dir.join("manufacturing-inspect-demo-board-bom.csv"), "stub\n")
-        .expect("bom should write");
-    std::fs::write(output_dir.join("manufacturing-inspect-demo-board-drill.csv"), "stub\n")
-        .expect("drill csv should write");
+    std::fs::write(
+        output_dir.join("manufacturing-inspect-demo-board-bom.csv"),
+        "stub\n",
+    )
+    .expect("bom should write");
+    std::fs::write(
+        output_dir.join("manufacturing-inspect-demo-board-drill.csv"),
+        "stub\n",
+    )
+    .expect("drill csv should write");
     std::fs::write(output_dir.join("unexpected.txt"), "extra\n").expect("extra should write");
 
     let output = execute(
@@ -106,11 +112,17 @@ fn project_inspect_manufacturing_set_reports_present_missing_and_extra_files() {
     .expect("inspect should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
     assert_eq!(report["action"], "inspect_manufacturing_set");
-    assert_eq!(report["expected_count"], report["entries"].as_array().unwrap().len());
+    assert_eq!(
+        report["expected_count"],
+        report["entries"].as_array().unwrap().len()
+    );
     assert_eq!(report["present_count"], 2);
     assert_eq!(report["missing_count"].as_u64().unwrap() > 0, true);
     assert_eq!(report["extra_count"], 1);
-    assert_eq!(report["entries"][0]["filename"], "manufacturing-inspect-demo-board-bom.csv");
+    assert_eq!(
+        report["entries"][0]["filename"],
+        "manufacturing-inspect-demo-board-bom.csv"
+    );
     assert_eq!(report["entries"][0]["present"], true);
     assert_eq!(report["extra"][0], "unexpected.txt");
 

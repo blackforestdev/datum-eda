@@ -449,6 +449,110 @@ Next routing-facing bridge slice selected on 2026-03-29:
   - the synthetic gap must be justified entirely by existing candidate copper
     layer facts and persisted obstacle-truth segment checks
 
+Adjacent write-capable bridge implemented on 2026-03-29:
+- deterministic route proposal artifact/export/apply lane for the accepted
+  plus-one-gap contract
+  - `project export-route-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - `project inspect-route-proposal-artifact <path>`
+  - `project apply-route-proposal-artifact <dir> --artifact <path>`
+- input: persisted native board state only
+- output:
+  - one versioned route-proposal artifact containing exactly one
+    self-sufficient `draw_track` action for the selected synthetic gap segment
+  - apply mutates persisted board state by materializing only that selected gap
+    segment as one authored target-net track using persisted net-class width
+- guardrails:
+  - no route search beyond the accepted plus-one-gap query contract
+  - no duplication of already-authored copper or vias
+  - no invented track width; width comes from persisted net-class facts only
+  - apply rejects artifact drift and requires the live deterministic proposal to
+    still match the exported action exactly
+
+Adjacent write-capable route-application slice implemented on 2026-03-29:
+- deterministic route proposal artifact export for the accepted single-layer
+  `route-path-candidate` contract
+  - `project export-route-path-candidate-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - reuses the same `project inspect-route-proposal-artifact <path>` and
+    `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
+- input: persisted native board state only
+- output:
+  - one versioned route-proposal artifact containing an ordered
+    self-sufficient `draw_track` action sequence for the selected
+    deterministic single-layer polyline
+  - apply mutates persisted board state by materializing that full selected
+    path as authored target-net tracks using persisted net-class width
+- guardrails:
+  - no reranking or re-search beyond the accepted `route-path-candidate`
+    query contract
+  - no invented track width; width comes from persisted net-class facts only
+  - apply rejects artifact drift and requires the live deterministic proposal to
+    still match the exported action sequence exactly
+
+Adjacent write-capable route-application slice implemented on 2026-03-29:
+- deterministic route proposal artifact export for the accepted bounded
+  single-via `route-path-candidate-via` contract
+  - `project export-route-path-candidate-via-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - reuses the same `project inspect-route-proposal-artifact <path>` and
+    `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
+- input: persisted native board state only
+- output:
+  - one versioned route-proposal artifact containing the ordered
+    self-sufficient `draw_track` action sequence for the two selected copper
+    segments around the reused authored via
+  - apply mutates persisted board state by materializing those selected
+    segments only; the chosen via remains reused authored state and is not
+    recreated
+- guardrails:
+  - no via creation
+  - no re-search beyond the accepted `route-path-candidate-via` query contract
+  - apply drift-check includes the selected reused via UUID as part of the live
+    deterministic proposal match
+
+Adjacent write-capable route-application slice implemented on 2026-03-29:
+- deterministic route proposal artifact export for the accepted bounded
+  two-via `route-path-candidate-two-via` contract
+  - `project export-route-path-candidate-two-via-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - reuses the same `project inspect-route-proposal-artifact <path>` and
+    `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
+- input: persisted native board state only
+- output:
+  - one versioned route-proposal artifact containing the ordered
+    self-sufficient `draw_track` action sequence for the three selected copper
+    segments around the reused authored via pair
+  - apply mutates persisted board state by materializing those selected
+    segments only; the chosen vias remain reused authored state and are not
+    recreated
+- guardrails:
+  - no via creation
+  - no re-search beyond the accepted `route-path-candidate-two-via` query
+    contract
+  - apply drift-check includes the selected reused via pair as part of the
+    live deterministic proposal match
+
+Adjacent write-capable route-application slice implemented on 2026-03-29:
+- deterministic route proposal artifact export for the remaining bounded
+  via-path contracts
+  - `project export-route-path-candidate-three-via-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - `project export-route-path-candidate-four-via-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - `project export-route-path-candidate-five-via-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - `project export-route-path-candidate-six-via-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - `project export-route-path-candidate-authored-via-chain-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - reuses the same `project inspect-route-proposal-artifact <path>` and
+    `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
+- input: persisted native board state only
+- output:
+  - one versioned route-proposal artifact containing the ordered
+    self-sufficient `draw_track` action sequence for the selected copper
+    segments of each accepted deterministic via-path contract
+  - apply mutates persisted board state by materializing those selected
+    segments only; every selected via remains reused authored state and is not
+    recreated
+- guardrails:
+  - no via creation
+  - no re-search beyond the accepted deterministic via-path query contracts
+  - apply drift-check includes the exact selected reused via UUID sequence as
+    part of the live deterministic proposal match
+
 Next explicit contract selected on 2026-03-29:
 - deterministic zone-aware existing-authored-copper graph path candidate
   `project query <dir> route-path-candidate-authored-copper-graph-zone-aware --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`

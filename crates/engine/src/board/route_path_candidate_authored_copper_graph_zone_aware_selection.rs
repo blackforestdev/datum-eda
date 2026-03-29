@@ -3,7 +3,9 @@ use std::collections::{HashMap, VecDeque};
 
 use uuid::Uuid;
 
-use crate::board::{Board, RoutePreflightAnchor, Track, Via, Zone, polygon::point_in_or_on_polygon};
+use crate::board::{
+    Board, RoutePreflightAnchor, Track, Via, Zone, polygon::point_in_or_on_polygon,
+};
 use crate::ir::geometry::{LayerId, Point};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -35,8 +37,7 @@ pub(super) struct AuthoredCopperGraphZoneAwarePathMatch {
     pub steps: Vec<AuthoredCopperGraphZoneAwareStep>,
 }
 
-pub const ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_AWARE_SELECTION_RULE: &str =
-    "select the first existing authored-copper path found by breadth-first traversal over persisted target-net track/via/zone graph edges after sorting edges by (step_kind, object_uuid, destination_anchor), which yields deterministic minimum-step path selection with lexicographic tie-breaks";
+pub const ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_AWARE_SELECTION_RULE: &str = "select the first existing authored-copper path found by breadth-first traversal over persisted target-net track/via/zone graph edges after sorting edges by (step_kind, object_uuid, destination_anchor), which yields deterministic minimum-step path selection with lexicographic tie-breaks";
 
 pub(super) fn candidate_authored_copper_graph_zone_aware_objects(
     board: &Board,
@@ -74,7 +75,12 @@ pub(super) fn selected_authored_copper_graph_zone_aware_path(
     net_uuid: Uuid,
     from_anchor: &RoutePreflightAnchor,
     to_anchor: &RoutePreflightAnchor,
-) -> (Vec<Track>, Vec<Via>, Vec<Zone>, Option<AuthoredCopperGraphZoneAwarePathMatch>) {
+) -> (
+    Vec<Track>,
+    Vec<Via>,
+    Vec<Zone>,
+    Option<AuthoredCopperGraphZoneAwarePathMatch>,
+) {
     let (tracks, vias, zones) = candidate_authored_copper_graph_zone_aware_objects(board, net_uuid);
     let graph = AuthoredCopperGraphZoneAware::build(from_anchor, to_anchor, &tracks, &vias, &zones);
     let path = graph
@@ -230,7 +236,8 @@ impl AuthoredCopperGraphZoneAware {
                 .iter()
                 .enumerate()
                 .filter(|(_, anchor)| {
-                    anchor.layer == zone.layer && point_in_or_on_polygon(anchor.point, &zone.polygon)
+                    anchor.layer == zone.layer
+                        && point_in_or_on_polygon(anchor.point, &zone.polygon)
                 })
                 .map(|(index, _)| index)
                 .collect::<Vec<_>>();
@@ -262,9 +269,8 @@ impl AuthoredCopperGraphZoneAware {
 
         for edges in &mut adjacency {
             edges.sort_by(|(left_dest, left_step), (right_dest, right_step)| {
-                compare_step(left_step, right_step).then_with(|| {
-                    compare_anchor(anchors[*left_dest], anchors[*right_dest])
-                })
+                compare_step(left_step, right_step)
+                    .then_with(|| compare_anchor(anchors[*left_dest], anchors[*right_dest]))
             });
         }
 

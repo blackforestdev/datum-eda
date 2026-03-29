@@ -184,7 +184,10 @@ fn topology_aware_authored_copper_graph_prefers_fewer_topology_transitions_for_e
         )
         .expect("topology-aware query should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.summary.path_step_count, 3);
     assert_eq!(report.summary.topology_transition_count, 1);
     assert_eq!(report.summary.path_via_step_count, 1);

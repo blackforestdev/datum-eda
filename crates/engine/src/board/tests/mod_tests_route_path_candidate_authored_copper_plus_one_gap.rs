@@ -130,7 +130,10 @@ fn route_path_candidate_authored_copper_plus_one_gap_reports_deterministic_path(
         .route_path_candidate_authored_copper_plus_one_gap(net_uuid, from_pad_uuid, to_pad_uuid)
         .expect("query should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.summary.candidate_track_count, 2);
     assert_eq!(report.summary.candidate_via_count, 0);
     assert_eq!(report.summary.candidate_gap_count, 1);

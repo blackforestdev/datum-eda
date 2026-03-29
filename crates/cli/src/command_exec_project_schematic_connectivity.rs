@@ -243,6 +243,8 @@ pub(super) fn execute_project_schematic_connectivity_command(
             };
             Ok((output, 0))
         }
-        _ => unreachable!("schematic connectivity command should dispatch before connectivity match"),
+        _ => {
+            unreachable!("schematic connectivity command should dispatch before connectivity match")
+        }
     }
 }

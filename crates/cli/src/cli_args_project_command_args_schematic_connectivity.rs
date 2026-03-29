@@ -233,4 +233,3 @@ pub(crate) struct ProjectDeleteNoConnectArgs {
     #[arg(long = "noconnect")]
     pub(crate) noconnect: Uuid,
 }
-

@@ -143,30 +143,32 @@ impl Board {
             RoutePathCandidateStatus::NoPathUnderCurrentAuthoredConstraints
         };
 
-        Ok(RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareReport {
-            contract: "m5_route_path_candidate_authored_copper_graph_zone_obstacle_aware_v1"
-                .to_string(),
-            persisted_native_board_state_only: true,
-            selection_rule:
-                ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE_SELECTION_RULE
+        Ok(
+            RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareReport {
+                contract: "m5_route_path_candidate_authored_copper_graph_zone_obstacle_aware_v1"
                     .to_string(),
-            status,
-            net_uuid: preflight.net_uuid,
-            net_name: preflight.net_name,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid,
-            candidate_copper_layers: preflight.candidate_copper_layers.clone(),
-            summary: RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareSummary {
-                candidate_copper_layer_count: preflight.candidate_copper_layers.len(),
-                candidate_track_count: candidate_tracks.len(),
-                candidate_via_count: candidate_vias.len(),
-                candidate_zone_count: candidate_zones.len(),
-                blocked_track_count,
-                blocked_via_count,
-                blocked_zone_connection_count,
-                path_step_count: path.as_ref().map(|entry| entry.steps.len()).unwrap_or(0),
+                persisted_native_board_state_only: true,
+                selection_rule:
+                    ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE_SELECTION_RULE
+                        .to_string(),
+                status,
+                net_uuid: preflight.net_uuid,
+                net_name: preflight.net_name,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+                candidate_copper_layers: preflight.candidate_copper_layers.clone(),
+                summary: RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareSummary {
+                    candidate_copper_layer_count: preflight.candidate_copper_layers.len(),
+                    candidate_track_count: candidate_tracks.len(),
+                    candidate_via_count: candidate_vias.len(),
+                    candidate_zone_count: candidate_zones.len(),
+                    blocked_track_count,
+                    blocked_via_count,
+                    blocked_zone_connection_count,
+                    path_step_count: path.as_ref().map(|entry| entry.steps.len()).unwrap_or(0),
+                },
+                path,
             },
-            path,
-        })
+        )
     }
 }

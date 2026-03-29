@@ -127,8 +127,7 @@ fn zone_demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid) {
 }
 
 #[test]
-fn route_path_candidate_authored_copper_graph_zone_aware_explain_reports_selected_path_reasoning()
-{
+fn route_path_candidate_authored_copper_graph_zone_aware_explain_reports_selected_path_reasoning() {
     let (board, net_uuid, anchor_a_uuid, anchor_b_uuid, zone_uuid, _) = zone_demo_board();
 
     let report = board
@@ -139,7 +138,10 @@ fn route_path_candidate_authored_copper_graph_zone_aware_explain_reports_selecte
         )
         .expect("zone-aware authored copper graph explain should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(
         report.explanation_kind,
         RoutePathCandidateAuthoredCopperGraphZoneAwareExplainKind::DeterministicPathFound
@@ -147,9 +149,15 @@ fn route_path_candidate_authored_copper_graph_zone_aware_explain_reports_selecte
     assert_eq!(report.summary.candidate_track_count, 0);
     assert_eq!(report.summary.candidate_via_count, 0);
     assert_eq!(report.summary.candidate_zone_count, 1);
-    assert_eq!(report.selected_path.as_ref().map(|path| path.steps.len()), Some(1));
     assert_eq!(
-        report.selected_path.as_ref().map(|path| path.steps[0].object_uuid),
+        report.selected_path.as_ref().map(|path| path.steps.len()),
+        Some(1)
+    );
+    assert_eq!(
+        report
+            .selected_path
+            .as_ref()
+            .map(|path| path.steps[0].object_uuid),
         Some(zone_uuid)
     );
 }

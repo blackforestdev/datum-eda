@@ -18,11 +18,36 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
             name: "path-candidate-two-via-explain".into(),
             stackup: Stackup {
                 layers: vec![
-                    StackupLayer { id: 1, name: "Top".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 2, name: "Core A".into(), layer_type: StackupLayerType::Dielectric, thickness_nm: 1_000_000 },
-                    StackupLayer { id: 3, name: "Inner".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 4, name: "Core B".into(), layer_type: StackupLayerType::Dielectric, thickness_nm: 1_000_000 },
-                    StackupLayer { id: 5, name: "Bottom".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
+                    StackupLayer {
+                        id: 1,
+                        name: "Top".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 2,
+                        name: "Core A".into(),
+                        layer_type: StackupLayerType::Dielectric,
+                        thickness_nm: 1_000_000,
+                    },
+                    StackupLayer {
+                        id: 3,
+                        name: "Inner".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 4,
+                        name: "Core B".into(),
+                        layer_type: StackupLayerType::Dielectric,
+                        thickness_nm: 1_000_000,
+                    },
+                    StackupLayer {
+                        id: 5,
+                        name: "Bottom".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
                 ],
             },
             outline: Polygon::new(vec![
@@ -95,11 +120,19 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
             nets: HashMap::from([
                 (
                     net_uuid,
-                    Net { uuid: net_uuid, name: "SIG".into(), class: class_uuid },
+                    Net {
+                        uuid: net_uuid,
+                        name: "SIG".into(),
+                        class: class_uuid,
+                    },
                 ),
                 (
                     other_net_uuid,
-                    Net { uuid: other_net_uuid, name: "OTHER".into(), class: class_uuid },
+                    Net {
+                        uuid: other_net_uuid,
+                        name: "OTHER".into(),
+                        class: class_uuid,
+                    },
                 ),
             ]),
             net_classes: HashMap::from([(
@@ -142,12 +175,24 @@ fn route_path_candidate_two_via_explain_reports_selected_pair_for_found_path() {
         report.explanation_kind,
         RoutePathCandidateTwoViaExplainKind::DeterministicPathFound
     );
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
-    assert_eq!(report.summary.matching_via_pair_count, 1);
-    assert_eq!(report.selected_pair.as_ref().map(|entry| entry.via_a_uuid), Some(via_a_uuid));
-    assert_eq!(report.selected_pair.as_ref().map(|entry| entry.via_b_uuid), Some(via_b_uuid));
     assert_eq!(
-        report.selected_pair.as_ref().map(|entry| entry.intermediate_layer),
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
+    assert_eq!(report.summary.matching_via_pair_count, 1);
+    assert_eq!(
+        report.selected_pair.as_ref().map(|entry| entry.via_a_uuid),
+        Some(via_a_uuid)
+    );
+    assert_eq!(
+        report.selected_pair.as_ref().map(|entry| entry.via_b_uuid),
+        Some(via_b_uuid)
+    );
+    assert_eq!(
+        report
+            .selected_pair
+            .as_ref()
+            .map(|entry| entry.intermediate_layer),
         Some(3)
     );
     assert_eq!(
@@ -155,7 +200,10 @@ fn route_path_candidate_two_via_explain_reports_selected_pair_for_found_path() {
             .selected_pair
             .as_ref()
             .map(|entry| entry.middle_segment.points.clone()),
-        Some(vec![Point::new(300_000, 300_000), Point::new(700_000, 700_000)])
+        Some(vec![
+            Point::new(300_000, 300_000),
+            Point::new(700_000, 700_000)
+        ])
     );
 }
 
@@ -265,20 +313,38 @@ fn route_path_candidate_two_via_explain_selected_pair_matches_fallback_path_cand
         .route_path_candidate_two_via_explain(net_uuid, anchor_top_uuid, anchor_bottom_uuid)
         .expect("two-via explain should succeed");
 
-    assert_eq!(path_report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        path_report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(
         explain_report.explanation_kind,
         RoutePathCandidateTwoViaExplainKind::DeterministicPathFound
     );
-    assert_eq!(path_report.path.as_ref().map(|path| path.via_a_uuid), Some(second_via_a_uuid));
-    assert_ne!(path_report.path.as_ref().map(|path| path.via_a_uuid), Some(first_via_a_uuid));
-    assert_eq!(path_report.path.as_ref().map(|path| path.via_b_uuid), Some(via_b_uuid));
     assert_eq!(
-        explain_report.selected_pair.as_ref().map(|entry| entry.via_a_uuid),
+        path_report.path.as_ref().map(|path| path.via_a_uuid),
+        Some(second_via_a_uuid)
+    );
+    assert_ne!(
+        path_report.path.as_ref().map(|path| path.via_a_uuid),
+        Some(first_via_a_uuid)
+    );
+    assert_eq!(
+        path_report.path.as_ref().map(|path| path.via_b_uuid),
+        Some(via_b_uuid)
+    );
+    assert_eq!(
+        explain_report
+            .selected_pair
+            .as_ref()
+            .map(|entry| entry.via_a_uuid),
         path_report.path.as_ref().map(|path| path.via_a_uuid)
     );
     assert_eq!(
-        explain_report.selected_pair.as_ref().map(|entry| entry.via_b_uuid),
+        explain_report
+            .selected_pair
+            .as_ref()
+            .map(|entry| entry.via_b_uuid),
         path_report.path.as_ref().map(|path| path.via_b_uuid)
     );
     assert_eq!(
@@ -286,6 +352,9 @@ fn route_path_candidate_two_via_explain_selected_pair_matches_fallback_path_cand
             .selected_pair
             .as_ref()
             .map(|entry| entry.middle_segment.points.clone()),
-        path_report.path.as_ref().map(|path| path.segments[1].points.clone())
+        path_report
+            .path
+            .as_ref()
+            .map(|path| path.segments[1].points.clone())
     );
 }

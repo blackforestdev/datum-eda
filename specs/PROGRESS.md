@@ -453,11 +453,39 @@ Status: [~] In progress
   - the next routing-facing bridge now exists as `project query <dir>
     route-path-candidate-authored-copper-plus-one-gap --net <uuid>
     --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+  - a first write-capable bridge now exists for that accepted query contract:
+    `project export-route-proposal <dir> --net <uuid> --from-anchor <pad_uuid>
+    --to-anchor <pad_uuid> --out <path>`,
+    `project inspect-route-proposal-artifact <path>`, and
+    `project apply-route-proposal-artifact <dir> --artifact <path>`
+  - the same route-proposal artifact lane now also covers the accepted
+    baseline single-layer path contract via `project
+    export-route-path-candidate-proposal <dir> --net <uuid> --from-anchor
+    <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - the same route-proposal artifact lane now also covers the accepted bounded
+    single-via contract via `project
+    export-route-path-candidate-via-proposal <dir> --net <uuid> --from-anchor
+    <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - the same route-proposal artifact lane now also covers the accepted bounded
+    two-via contract via `project
+    export-route-path-candidate-two-via-proposal <dir> --net <uuid>
+    --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - the same route-proposal artifact lane now also covers the accepted bounded
+    three-via, four-via, five-via, six-via, and authored-via-chain contracts
+    via the matching `project
+    export-route-path-candidate-<contract>-proposal <dir> --net <uuid>
+    --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>` surfaces
   - `specs/PROGRESS.md` tracks only the checkpoint/frontier; detailed per-slice
     history stays in `specs/progress/m5_opening.md`
 - Current M5 frontier:
   - deterministic persisted-state layout-kernel/routing queries continue under
     explicit contract selection from `specs/progress/m5_opening.md`
+  - the first artifact/export/apply write lane now covers:
+    the accepted plus-one-gap bridge, the accepted single-layer
+    `route-path-candidate` contract, and the accepted bounded single-via
+    `route-path-candidate-via` contract, and the accepted bounded two-via
+    `route-path-candidate-two-via` contract, and the remaining bounded
+    `three`/`four`/`five`/`six`-via plus `authored-via-chain` contracts
   - new slices must still avoid broad autorouting semantics, invented
     constraints, and untracked MCP drift
 - Acceptance checks for the opening slice:

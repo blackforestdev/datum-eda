@@ -96,8 +96,11 @@ impl Board {
         from_anchor_pad_uuid: Uuid,
         to_anchor_pad_uuid: Uuid,
     ) -> Result<RoutePathCandidateThreeViaExplainReport, RoutePathCandidateError> {
-        let path_candidate =
-            self.route_path_candidate_three_via(net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid)?;
+        let path_candidate = self.route_path_candidate_three_via(
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+        )?;
         let preflight = self
             .route_preflight(net_uuid)
             .ok_or(RoutePathCandidateError::NetNotFound { net_uuid })?;

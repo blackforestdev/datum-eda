@@ -170,7 +170,10 @@ fn project_query_route_path_candidate_authored_copper_graph_zone_obstacle_aware_
     assert_eq!(report["summary"]["blocked_zone_connection_count"], 0);
     assert_eq!(report["path"]["steps"].as_array().unwrap().len(), 1);
     assert_eq!(report["path"]["steps"][0]["kind"], "zone");
-    assert_eq!(report["path"]["steps"][0]["object_uuid"], zone_uuid.to_string());
+    assert_eq!(
+        report["path"]["steps"][0]["object_uuid"],
+        zone_uuid.to_string()
+    );
 
     let repeated = execute(
         route_path_candidate_authored_copper_graph_zone_obstacle_aware_query_cli(

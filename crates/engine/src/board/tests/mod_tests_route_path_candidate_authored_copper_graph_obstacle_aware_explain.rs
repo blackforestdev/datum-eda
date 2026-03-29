@@ -118,8 +118,8 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid) {
 }
 
 #[test]
-fn route_path_candidate_authored_copper_graph_obstacle_aware_explain_reports_selected_path_reasoning(
-) {
+fn route_path_candidate_authored_copper_graph_obstacle_aware_explain_reports_selected_path_reasoning()
+ {
     let (board, net_uuid, anchor_a_uuid, anchor_b_uuid, track_uuid) = demo_board();
 
     let report = board
@@ -130,7 +130,10 @@ fn route_path_candidate_authored_copper_graph_obstacle_aware_explain_reports_sel
         )
         .expect("obstacle-aware authored copper graph explain should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(
         report.explanation_kind,
         RoutePathCandidateAuthoredCopperGraphObstacleAwareExplainKind::DeterministicPathFound
@@ -138,9 +141,15 @@ fn route_path_candidate_authored_copper_graph_obstacle_aware_explain_reports_sel
     assert_eq!(report.summary.candidate_track_count, 1);
     assert_eq!(report.summary.candidate_via_count, 0);
     assert_eq!(report.summary.blocked_track_count, 0);
-    assert_eq!(report.selected_path.as_ref().map(|path| path.steps.len()), Some(1));
     assert_eq!(
-        report.selected_path.as_ref().map(|path| path.steps[0].object_uuid),
+        report.selected_path.as_ref().map(|path| path.steps.len()),
+        Some(1)
+    );
+    assert_eq!(
+        report
+            .selected_path
+            .as_ref()
+            .map(|path| path.steps[0].object_uuid),
         Some(track_uuid)
     );
 }

@@ -33,9 +33,24 @@ fn authored_copper_graph_policy_explain_preserves_plain_behavior() {
 
     assert_eq!(policy.status, direct.status);
     assert_eq!(policy.selection_rule, direct.selection_rule);
-    assert_eq!(policy.summary.candidate_track_count, direct.summary.candidate_track_count);
-    assert_eq!(policy.summary.candidate_via_count, direct.summary.candidate_via_count);
-    assert_eq!(path_ids(&policy), direct.selected_path.unwrap().steps.iter().map(|s| s.object_uuid).collect::<Vec<_>>());
+    assert_eq!(
+        policy.summary.candidate_track_count,
+        direct.summary.candidate_track_count
+    );
+    assert_eq!(
+        policy.summary.candidate_via_count,
+        direct.summary.candidate_via_count
+    );
+    assert_eq!(
+        path_ids(&policy),
+        direct
+            .selected_path
+            .unwrap()
+            .steps
+            .iter()
+            .map(|s| s.object_uuid)
+            .collect::<Vec<_>>()
+    );
 }
 
 #[test]
@@ -59,8 +74,20 @@ fn authored_copper_graph_policy_explain_preserves_zone_aware_behavior() {
 
     assert_eq!(policy.status, direct.status);
     assert_eq!(policy.selection_rule, direct.selection_rule);
-    assert_eq!(policy.summary.candidate_zone_count, direct.summary.candidate_zone_count);
-    assert_eq!(path_ids(&policy), direct.selected_path.unwrap().steps.iter().map(|s| s.object_uuid).collect::<Vec<_>>());
+    assert_eq!(
+        policy.summary.candidate_zone_count,
+        direct.summary.candidate_zone_count
+    );
+    assert_eq!(
+        path_ids(&policy),
+        direct
+            .selected_path
+            .unwrap()
+            .steps
+            .iter()
+            .map(|s| s.object_uuid)
+            .collect::<Vec<_>>()
+    );
 }
 
 #[test]
@@ -84,9 +111,24 @@ fn authored_copper_graph_policy_explain_preserves_obstacle_aware_behavior() {
 
     assert_eq!(policy.status, direct.status);
     assert_eq!(policy.selection_rule, direct.selection_rule);
-    assert_eq!(policy.summary.blocked_track_count, direct.summary.blocked_track_count);
-    assert_eq!(policy.summary.blocked_via_count, direct.summary.blocked_via_count);
-    assert_eq!(path_ids(&policy), direct.selected_path.unwrap().steps.iter().map(|s| s.object_uuid).collect::<Vec<_>>());
+    assert_eq!(
+        policy.summary.blocked_track_count,
+        direct.summary.blocked_track_count
+    );
+    assert_eq!(
+        policy.summary.blocked_via_count,
+        direct.summary.blocked_via_count
+    );
+    assert_eq!(
+        path_ids(&policy),
+        direct
+            .selected_path
+            .unwrap()
+            .steps
+            .iter()
+            .map(|s| s.object_uuid)
+            .collect::<Vec<_>>()
+    );
 }
 
 #[test]
@@ -114,7 +156,16 @@ fn authored_copper_graph_policy_explain_preserves_zone_obstacle_aware_behavior()
         policy.summary.blocked_zone_connection_count,
         direct.summary.blocked_zone_connection_count
     );
-    assert_eq!(path_ids(&policy), direct.selected_path.unwrap().steps.iter().map(|s| s.object_uuid).collect::<Vec<_>>());
+    assert_eq!(
+        path_ids(&policy),
+        direct
+            .selected_path
+            .unwrap()
+            .steps
+            .iter()
+            .map(|s| s.object_uuid)
+            .collect::<Vec<_>>()
+    );
 }
 
 #[test]
@@ -142,7 +193,16 @@ fn authored_copper_graph_policy_explain_preserves_topology_aware_behavior() {
         policy.summary.topology_transition_count,
         direct.summary.topology_transition_count
     );
-    assert_eq!(path_ids(&policy), direct.selected_path.unwrap().steps.iter().map(|s| s.object_uuid).collect::<Vec<_>>());
+    assert_eq!(
+        path_ids(&policy),
+        direct
+            .selected_path
+            .unwrap()
+            .steps
+            .iter()
+            .map(|s| s.object_uuid)
+            .collect::<Vec<_>>()
+    );
 }
 
 #[test]
@@ -166,6 +226,18 @@ fn authored_copper_graph_policy_explain_preserves_layer_balance_aware_behavior()
 
     assert_eq!(policy.status, direct.status);
     assert_eq!(policy.selection_rule, direct.selection_rule);
-    assert_eq!(policy.summary.layer_balance_score, direct.summary.layer_balance_score);
-    assert_eq!(path_ids(&policy), direct.selected_path.unwrap().steps.iter().map(|s| s.object_uuid).collect::<Vec<_>>());
+    assert_eq!(
+        policy.summary.layer_balance_score,
+        direct.summary.layer_balance_score
+    );
+    assert_eq!(
+        path_ids(&policy),
+        direct
+            .selected_path
+            .unwrap()
+            .steps
+            .iter()
+            .map(|s| s.object_uuid)
+            .collect::<Vec<_>>()
+    );
 }

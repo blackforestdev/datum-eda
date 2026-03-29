@@ -93,27 +93,31 @@ impl Board {
             }
         });
 
-        Ok(RoutePathCandidateAuthoredCopperGraphZoneAwareExplainReport {
-            contract: "m5_route_path_candidate_authored_copper_graph_zone_aware_explain_v1"
-                .to_string(),
-            persisted_native_board_state_only: true,
-            status: path_candidate.status.clone(),
-            explanation_kind: explanation_kind(&path_candidate),
-            net_uuid: path_candidate.net_uuid,
-            net_name: path_candidate.net_name,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid,
-            selection_rule: path_candidate.selection_rule,
-            candidate_copper_layers: path_candidate.candidate_copper_layers,
-            summary: RoutePathCandidateAuthoredCopperGraphZoneAwareExplainSummary {
-                candidate_copper_layer_count: path_candidate.summary.candidate_copper_layer_count,
-                candidate_track_count: path_candidate.summary.candidate_track_count,
-                candidate_via_count: path_candidate.summary.candidate_via_count,
-                candidate_zone_count: path_candidate.summary.candidate_zone_count,
-                path_step_count: path_candidate.summary.path_step_count,
+        Ok(
+            RoutePathCandidateAuthoredCopperGraphZoneAwareExplainReport {
+                contract: "m5_route_path_candidate_authored_copper_graph_zone_aware_explain_v1"
+                    .to_string(),
+                persisted_native_board_state_only: true,
+                status: path_candidate.status.clone(),
+                explanation_kind: explanation_kind(&path_candidate),
+                net_uuid: path_candidate.net_uuid,
+                net_name: path_candidate.net_name,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+                selection_rule: path_candidate.selection_rule,
+                candidate_copper_layers: path_candidate.candidate_copper_layers,
+                summary: RoutePathCandidateAuthoredCopperGraphZoneAwareExplainSummary {
+                    candidate_copper_layer_count: path_candidate
+                        .summary
+                        .candidate_copper_layer_count,
+                    candidate_track_count: path_candidate.summary.candidate_track_count,
+                    candidate_via_count: path_candidate.summary.candidate_via_count,
+                    candidate_zone_count: path_candidate.summary.candidate_zone_count,
+                    path_step_count: path_candidate.summary.path_step_count,
+                },
+                selected_path,
             },
-            selected_path,
-        })
+        )
     }
 }
 

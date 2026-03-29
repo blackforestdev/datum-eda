@@ -5,8 +5,8 @@ use crate::board::{Board, RoutePathCandidateError, RoutePathCandidateStatus, Sta
 use crate::ir::geometry::{LayerId, Point};
 
 use super::route_path_candidate_six_via_selection::{
-    ROUTE_PATH_CANDIDATE_SIX_VIA_SELECTION_RULE, candidate_six_via_matches, six_via_path_points,
-    selected_matching_six_via,
+    ROUTE_PATH_CANDIDATE_SIX_VIA_SELECTION_RULE, candidate_six_via_matches,
+    selected_matching_six_via, six_via_path_points,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -110,8 +110,9 @@ impl Board {
                     && entry.target_segment.blockages.is_empty())
             })
             .count();
-        let available_via_sextuple_count =
-            matching_sextuples.len().saturating_sub(blocked_via_sextuple_count);
+        let available_via_sextuple_count = matching_sextuples
+            .len()
+            .saturating_sub(blocked_via_sextuple_count);
         let selected_path = selected_matching_six_via(&matching_sextuples).map(|entry| {
             let points = six_via_path_points(entry, from_anchor, to_anchor);
             RoutePathCandidateSixViaPath {

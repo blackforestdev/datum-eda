@@ -99,9 +99,8 @@ impl Board {
                 net_uuid,
             })?;
 
-        let candidate_vias = super::route_path_candidate_via_selection::candidate_vias_for_net(
-            self, net_uuid,
-        );
+        let candidate_vias =
+            super::route_path_candidate_via_selection::candidate_vias_for_net(self, net_uuid);
         let matching_vias =
             matching_via_analyses(self, net_uuid, from_anchor, to_anchor, &candidate_vias);
 
@@ -128,7 +127,8 @@ impl Board {
         let blocked_matching_vias = matching_vias
             .iter()
             .filter(|entry| {
-                !(entry.source_segment.blockages.is_empty() && entry.target_segment.blockages.is_empty())
+                !(entry.source_segment.blockages.is_empty()
+                    && entry.target_segment.blockages.is_empty())
             })
             .map(|entry| {
                 let points = via_path_points(entry, from_anchor, to_anchor);

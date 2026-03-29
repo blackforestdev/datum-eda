@@ -1,9 +1,7 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::board::{
-    Board, RoutePathCandidateError, RoutePathCandidateStatus, StackupLayer,
-};
+use crate::board::{Board, RoutePathCandidateError, RoutePathCandidateStatus, StackupLayer};
 use crate::ir::geometry::{LayerId, Point};
 
 use super::route_path_candidate_authored_copper_graph_selection::{

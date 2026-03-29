@@ -76,8 +76,22 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid) {
             vias: HashMap::new(),
             zones: HashMap::new(),
             nets: HashMap::from([
-                (net_uuid, Net { uuid: net_uuid, name: "SIG".into(), class: class_uuid }),
-                (other_net_uuid, Net { uuid: other_net_uuid, name: "OTHER".into(), class: class_uuid }),
+                (
+                    net_uuid,
+                    Net {
+                        uuid: net_uuid,
+                        name: "SIG".into(),
+                        class: class_uuid,
+                    },
+                ),
+                (
+                    other_net_uuid,
+                    Net {
+                        uuid: other_net_uuid,
+                        name: "OTHER".into(),
+                        class: class_uuid,
+                    },
+                ),
             ]),
             net_classes: HashMap::from([(
                 class_uuid,
@@ -113,16 +127,25 @@ fn route_path_candidate_authored_copper_graph_explain_reports_selected_path_reas
         .route_path_candidate_authored_copper_graph_explain(net_uuid, anchor_a_uuid, anchor_b_uuid)
         .expect("authored copper graph explain should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(
         report.explanation_kind,
         RoutePathCandidateAuthoredCopperGraphExplainKind::DeterministicPathFound
     );
     assert_eq!(report.summary.candidate_track_count, 1);
     assert_eq!(report.summary.candidate_via_count, 0);
-    assert_eq!(report.selected_path.as_ref().map(|path| path.steps.len()), Some(1));
     assert_eq!(
-        report.selected_path.as_ref().map(|path| path.steps[0].object_uuid),
+        report.selected_path.as_ref().map(|path| path.steps.len()),
+        Some(1)
+    );
+    assert_eq!(
+        report
+            .selected_path
+            .as_ref()
+            .map(|path| path.steps[0].object_uuid),
         Some(track_uuid)
     );
 }

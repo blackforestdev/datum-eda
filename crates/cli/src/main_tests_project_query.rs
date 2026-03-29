@@ -257,11 +257,20 @@ fn project_query_pools_reports_resolved_pool_refs_directly() {
     assert_eq!(report.as_array().unwrap().len(), 2);
     assert_eq!(report[0]["manifest_path"], "pool");
     assert_eq!(report[0]["priority"], 1);
-    assert_eq!(report[0]["resolved_path"], relative_pool.display().to_string());
+    assert_eq!(
+        report[0]["resolved_path"],
+        relative_pool.display().to_string()
+    );
     assert_eq!(report[0]["exists"], true);
-    assert_eq!(report[1]["manifest_path"], absolute_pool.display().to_string());
+    assert_eq!(
+        report[1]["manifest_path"],
+        absolute_pool.display().to_string()
+    );
     assert_eq!(report[1]["priority"], 2);
-    assert_eq!(report[1]["resolved_path"], absolute_pool.display().to_string());
+    assert_eq!(
+        report[1]["resolved_path"],
+        absolute_pool.display().to_string()
+    );
     assert_eq!(report[1]["exists"], true);
 
     let _ = std::fs::remove_dir_all(&root);

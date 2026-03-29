@@ -5,8 +5,8 @@ use crate::board::{Board, RoutePathCandidateError, RoutePathCandidateStatus, Sta
 use crate::ir::geometry::{LayerId, Point};
 
 use super::route_path_candidate_four_via_selection::{
-    ROUTE_PATH_CANDIDATE_FOUR_VIA_SELECTION_RULE, candidate_four_via_matches,
-    four_via_path_points, selected_matching_four_via,
+    ROUTE_PATH_CANDIDATE_FOUR_VIA_SELECTION_RULE, candidate_four_via_matches, four_via_path_points,
+    selected_matching_four_via,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -102,8 +102,9 @@ impl Board {
                     && entry.target_segment.blockages.is_empty())
             })
             .count();
-        let available_via_quadruple_count =
-            matching_quadruples.len().saturating_sub(blocked_via_quadruple_count);
+        let available_via_quadruple_count = matching_quadruples
+            .len()
+            .saturating_sub(blocked_via_quadruple_count);
         let selected_path = selected_matching_four_via(&matching_quadruples).map(|entry| {
             let points = four_via_path_points(entry, from_anchor, to_anchor);
             RoutePathCandidateFourViaPath {

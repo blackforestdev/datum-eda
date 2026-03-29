@@ -44,7 +44,8 @@ fn project_validate_forward_annotation_proposal_artifact_reports_match_and_drift
     assert_eq!(ok_report["canonical_bytes_match"], true);
 
     let drifted = std::fs::read_to_string(&artifact_path).expect("artifact should read");
-    std::fs::write(&artifact_path, format!(" \n{}", drifted)).expect("drifted artifact should write");
+    std::fs::write(&artifact_path, format!(" \n{}", drifted))
+        .expect("drifted artifact should write");
 
     let drift = execute_with_exit_code(
         Cli::try_parse_from([

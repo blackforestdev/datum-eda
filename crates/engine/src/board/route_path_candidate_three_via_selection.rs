@@ -129,7 +129,8 @@ fn intermediate_layers_for_triple(
     to_layer: LayerId,
 ) -> Option<(LayerId, LayerId)> {
     let first_intermediate_layer = other_boundary_layer(via_a, from_layer)?;
-    let second_intermediate_layer = other_boundary_layer_for_middle_via(via_b, first_intermediate_layer)?;
+    let second_intermediate_layer =
+        other_boundary_layer_for_middle_via(via_b, first_intermediate_layer)?;
     if second_intermediate_layer == first_intermediate_layer {
         return None;
     }

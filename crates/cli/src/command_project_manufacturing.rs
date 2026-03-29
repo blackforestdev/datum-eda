@@ -5,8 +5,8 @@ use std::collections::BTreeSet;
 
 use crate::{
     NativeProjectManufacturingArtifactView, NativeProjectManufacturingComparisonView,
-    NativeProjectManufacturingExportView, NativeProjectManufacturingManifestEntryView,
-    NativeProjectManufacturingInspectionEntryView, NativeProjectManufacturingInspectionView,
+    NativeProjectManufacturingExportView, NativeProjectManufacturingInspectionEntryView,
+    NativeProjectManufacturingInspectionView, NativeProjectManufacturingManifestEntryView,
     NativeProjectManufacturingManifestView, NativeProjectManufacturingReportView,
     NativeProjectManufacturingValidationView,
 };
@@ -157,7 +157,10 @@ pub(crate) fn inspect_native_project_manufacturing_set(
             contract: entry.contract,
         })
         .collect::<Vec<_>>();
-    let present_count = inspection_entries.iter().filter(|entry| entry.present).count();
+    let present_count = inspection_entries
+        .iter()
+        .filter(|entry| entry.present)
+        .count();
     let missing_count = inspection_entries.len() - present_count;
     let extra = present
         .into_iter()

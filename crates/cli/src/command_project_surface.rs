@@ -70,11 +70,10 @@ pub(crate) use self::command_project_gerber_layers::{
     validate_native_project_gerber_soldermask_layer,
 };
 pub(crate) use self::command_project_gerber_mechanical::{
-    compare_native_project_gerber_mechanical_layer, export_native_project_gerber_mechanical_layer,
-    validate_native_project_gerber_mechanical_layer, NativeComponentMechanicalArc,
-    NativeComponentMechanicalCircle, NativeComponentMechanicalLine,
+    NativeComponentMechanicalArc, NativeComponentMechanicalCircle, NativeComponentMechanicalLine,
     NativeComponentMechanicalPolygon, NativeComponentMechanicalPolyline,
-    NativeComponentMechanicalText,
+    NativeComponentMechanicalText, compare_native_project_gerber_mechanical_layer,
+    export_native_project_gerber_mechanical_layer, validate_native_project_gerber_mechanical_layer,
 };
 pub(crate) use self::command_project_gerber_plan::{
     compare_native_project_gerber_export_plan, compare_native_project_gerber_set,
@@ -82,13 +81,13 @@ pub(crate) use self::command_project_gerber_plan::{
     validate_native_project_gerber_set,
 };
 pub(crate) use self::command_project_gerber_semantics::{
+    DEFAULT_GERBER_OUTLINE_APERTURE_NM, ParsedGerber, ParsedGerberGeometry,
     classify_via_hole_class, compare_entry_views, gerber_copper_actual_entries,
     gerber_copper_expected_entries, gerber_outline_actual_entries, gerber_outline_expected_entries,
     gerber_silkscreen_expected_entries, gerber_soldermask_actual_entries,
     gerber_soldermask_expected_entries, parse_rs274x_subset, render_circular_flash_geometry,
     render_mm_6, render_pad_flash_geometry, render_parsed_flash_geometry, render_region_geometry,
     render_stroke_geometry, resolve_native_project_soldermask_context,
-    DEFAULT_GERBER_OUTLINE_APERTURE_NM, ParsedGerber, ParsedGerberGeometry,
 };
 pub(crate) use self::command_project_gerber_silkscreen::{
     NativeComponentSilkscreenArc, NativeComponentSilkscreenCircle, NativeComponentSilkscreenLine,
@@ -117,6 +116,18 @@ pub(crate) use self::command_project_pool_materialization::{
 };
 pub(crate) use self::command_project_pool_query::query_native_project_pools;
 pub(crate) use self::command_project_project_core::*;
+pub(crate) use self::command_project_route_proposal::{
+    apply_route_proposal_artifact,
+    export_native_project_route_path_candidate_authored_via_chain_proposal,
+    export_native_project_route_path_candidate_five_via_proposal,
+    export_native_project_route_path_candidate_four_via_proposal,
+    export_native_project_route_path_candidate_proposal,
+    export_native_project_route_path_candidate_six_via_proposal,
+    export_native_project_route_path_candidate_three_via_proposal,
+    export_native_project_route_path_candidate_two_via_proposal,
+    export_native_project_route_path_candidate_via_proposal, export_native_project_route_proposal,
+    inspect_route_proposal_artifact,
+};
 pub(crate) use self::command_project_schematic_connectivity_mutations::{
     create_native_project_bus, delete_native_project_bus_entry, delete_native_project_junction,
     delete_native_project_label, delete_native_project_noconnect, delete_native_project_port,
@@ -164,14 +175,14 @@ pub(crate) use self::command_project_support::{
     parse_native_field_position, parse_native_polygon_vertices, parse_native_stackup_layers,
 };
 pub(crate) use self::command_project_views::*;
-pub(crate) use anyhow::{bail, Context, Result};
+pub(crate) use anyhow::{Context, Result, bail};
 pub(crate) use eda_engine::api::{CheckCodeCount, CheckReport, CheckStatus, CheckSummary};
 pub(crate) use eda_engine::board::{
     Board, BoardText, Dimension, Keepout, Net, NetClass, PadAperture, PadShape, PlacedPackage,
     PlacedPad, Stackup, StackupLayer, StackupLayerType, Track, Via, Zone,
 };
 pub(crate) use eda_engine::connectivity::{schematic_diagnostics, schematic_net_info};
-pub(crate) use eda_engine::erc::{run_prechecks, ErcFinding};
+pub(crate) use eda_engine::erc::{ErcFinding, run_prechecks};
 pub(crate) use eda_engine::export::{
     render_rs274x_copper_layer, render_rs274x_outline_default, render_rs274x_paste_layer,
     render_rs274x_silkscreen_layer, render_rs274x_soldermask_layer,

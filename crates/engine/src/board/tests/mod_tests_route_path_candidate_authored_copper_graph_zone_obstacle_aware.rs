@@ -138,7 +138,10 @@ fn route_path_candidate_authored_copper_graph_zone_obstacle_aware_reports_unbloc
         )
         .expect("zone obstacle-aware authored copper graph path candidate should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.summary.candidate_track_count, 0);
     assert_eq!(report.summary.candidate_via_count, 0);
     assert_eq!(report.summary.candidate_zone_count, 1);

@@ -5,8 +5,8 @@ use crate::board::{Board, RoutePathCandidateError, RoutePathCandidateStatus, Sta
 use crate::ir::geometry::{LayerId, Point};
 
 use super::route_path_candidate_two_via_selection::{
-    ROUTE_PATH_CANDIDATE_TWO_VIA_SELECTION_RULE, candidate_two_via_matches, selected_matching_two_via,
-    two_via_path_points,
+    ROUTE_PATH_CANDIDATE_TWO_VIA_SELECTION_RULE, candidate_two_via_matches,
+    selected_matching_two_via, two_via_path_points,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

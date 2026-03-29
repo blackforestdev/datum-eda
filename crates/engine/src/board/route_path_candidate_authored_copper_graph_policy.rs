@@ -4,8 +4,7 @@ use uuid::Uuid;
 use crate::board::{
     Board, RoutePathCandidateAuthoredCopperGraphObstacleAwareReport,
     RoutePathCandidateAuthoredCopperGraphObstacleAwareStepKindView,
-    RoutePathCandidateAuthoredCopperGraphReport,
-    RoutePathCandidateAuthoredCopperGraphStepKindView,
+    RoutePathCandidateAuthoredCopperGraphReport, RoutePathCandidateAuthoredCopperGraphStepKindView,
     RoutePathCandidateAuthoredCopperGraphZoneAwarePath,
     RoutePathCandidateAuthoredCopperGraphZoneAwareReport,
     RoutePathCandidateAuthoredCopperGraphZoneAwareStepKindView,
@@ -202,35 +201,40 @@ fn map_plain_report(
                     path.steps
                         .iter()
                         .filter(|step| {
-                            matches!(step.kind, RoutePathCandidateAuthoredCopperGraphStepKindView::Via)
+                            matches!(
+                                step.kind,
+                                RoutePathCandidateAuthoredCopperGraphStepKindView::Via
+                            )
                         })
                         .count()
                 })
                 .unwrap_or(0),
             path_zone_step_count: 0,
         },
-        report.path.map(|path| RoutePathCandidateAuthoredCopperGraphPolicyPath {
-            steps: path
-                .steps
-                .into_iter()
-                .map(|step| RoutePathCandidateAuthoredCopperGraphPolicyStep {
-                    kind: match step.kind {
-                        RoutePathCandidateAuthoredCopperGraphStepKindView::Track => {
-                            RoutePathCandidateAuthoredCopperGraphPolicyStepKindView::Track
-                        }
-                        RoutePathCandidateAuthoredCopperGraphStepKindView::Via => {
-                            RoutePathCandidateAuthoredCopperGraphPolicyStepKindView::Via
-                        }
-                    },
-                    object_uuid: step.object_uuid,
-                    layer: step.layer,
-                    from: step.from,
-                    to: step.to,
-                    from_layer: step.from_layer,
-                    to_layer: step.to_layer,
-                })
-                .collect(),
-        }),
+        report
+            .path
+            .map(|path| RoutePathCandidateAuthoredCopperGraphPolicyPath {
+                steps: path
+                    .steps
+                    .into_iter()
+                    .map(|step| RoutePathCandidateAuthoredCopperGraphPolicyStep {
+                        kind: match step.kind {
+                            RoutePathCandidateAuthoredCopperGraphStepKindView::Track => {
+                                RoutePathCandidateAuthoredCopperGraphPolicyStepKindView::Track
+                            }
+                            RoutePathCandidateAuthoredCopperGraphStepKindView::Via => {
+                                RoutePathCandidateAuthoredCopperGraphPolicyStepKindView::Via
+                            }
+                        },
+                        object_uuid: step.object_uuid,
+                        layer: step.layer,
+                        from: step.from,
+                        to: step.to,
+                        from_layer: step.from_layer,
+                        to_layer: step.to_layer,
+                    })
+                    .collect(),
+            }),
     )
 }
 
@@ -265,7 +269,10 @@ fn map_zone_aware_report(
                     path.steps
                         .iter()
                         .filter(|step| {
-                            matches!(step.kind, RoutePathCandidateAuthoredCopperGraphZoneAwareStepKindView::Via)
+                            matches!(
+                                step.kind,
+                                RoutePathCandidateAuthoredCopperGraphZoneAwareStepKindView::Via
+                            )
                         })
                         .count()
                 })
@@ -277,7 +284,10 @@ fn map_zone_aware_report(
                     path.steps
                         .iter()
                         .filter(|step| {
-                            matches!(step.kind, RoutePathCandidateAuthoredCopperGraphZoneAwareStepKindView::Zone)
+                            matches!(
+                                step.kind,
+                                RoutePathCandidateAuthoredCopperGraphZoneAwareStepKindView::Zone
+                            )
                         })
                         .count()
                 })

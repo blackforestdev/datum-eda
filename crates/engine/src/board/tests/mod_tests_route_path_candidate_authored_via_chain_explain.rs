@@ -20,13 +20,48 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
             name: "path-candidate-authored-via-chain-explain".into(),
             stackup: Stackup {
                 layers: vec![
-                    StackupLayer { id: 1, name: "Top".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 2, name: "Core A".into(), layer_type: StackupLayerType::Dielectric, thickness_nm: 1_000_000 },
-                    StackupLayer { id: 3, name: "Inner 1".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 4, name: "Core B".into(), layer_type: StackupLayerType::Dielectric, thickness_nm: 1_000_000 },
-                    StackupLayer { id: 5, name: "Inner 2".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 6, name: "Core C".into(), layer_type: StackupLayerType::Dielectric, thickness_nm: 1_000_000 },
-                    StackupLayer { id: 7, name: "Bottom".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
+                    StackupLayer {
+                        id: 1,
+                        name: "Top".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 2,
+                        name: "Core A".into(),
+                        layer_type: StackupLayerType::Dielectric,
+                        thickness_nm: 1_000_000,
+                    },
+                    StackupLayer {
+                        id: 3,
+                        name: "Inner 1".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 4,
+                        name: "Core B".into(),
+                        layer_type: StackupLayerType::Dielectric,
+                        thickness_nm: 1_000_000,
+                    },
+                    StackupLayer {
+                        id: 5,
+                        name: "Inner 2".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 6,
+                        name: "Core C".into(),
+                        layer_type: StackupLayerType::Dielectric,
+                        thickness_nm: 1_000_000,
+                    },
+                    StackupLayer {
+                        id: 7,
+                        name: "Bottom".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
                 ],
             },
             outline: Polygon::new(vec![
@@ -70,15 +105,73 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
             ]),
             tracks: HashMap::new(),
             vias: HashMap::from([
-                (via_a_uuid, Via { uuid: via_a_uuid, net: net_uuid, position: Point::new(250_000, 250_000), drill: 300_000, diameter: 600_000, from_layer: 1, to_layer: 3 }),
-                (via_b_uuid, Via { uuid: via_b_uuid, net: net_uuid, position: Point::new(500_000, 500_000), drill: 300_000, diameter: 600_000, from_layer: 3, to_layer: 7 }),
-                (via_c_uuid, Via { uuid: via_c_uuid, net: net_uuid, position: Point::new(420_000, 420_000), drill: 300_000, diameter: 600_000, from_layer: 3, to_layer: 5 }),
-                (via_d_uuid, Via { uuid: via_d_uuid, net: net_uuid, position: Point::new(680_000, 680_000), drill: 300_000, diameter: 600_000, from_layer: 5, to_layer: 7 }),
+                (
+                    via_a_uuid,
+                    Via {
+                        uuid: via_a_uuid,
+                        net: net_uuid,
+                        position: Point::new(250_000, 250_000),
+                        drill: 300_000,
+                        diameter: 600_000,
+                        from_layer: 1,
+                        to_layer: 3,
+                    },
+                ),
+                (
+                    via_b_uuid,
+                    Via {
+                        uuid: via_b_uuid,
+                        net: net_uuid,
+                        position: Point::new(500_000, 500_000),
+                        drill: 300_000,
+                        diameter: 600_000,
+                        from_layer: 3,
+                        to_layer: 7,
+                    },
+                ),
+                (
+                    via_c_uuid,
+                    Via {
+                        uuid: via_c_uuid,
+                        net: net_uuid,
+                        position: Point::new(420_000, 420_000),
+                        drill: 300_000,
+                        diameter: 600_000,
+                        from_layer: 3,
+                        to_layer: 5,
+                    },
+                ),
+                (
+                    via_d_uuid,
+                    Via {
+                        uuid: via_d_uuid,
+                        net: net_uuid,
+                        position: Point::new(680_000, 680_000),
+                        drill: 300_000,
+                        diameter: 600_000,
+                        from_layer: 5,
+                        to_layer: 7,
+                    },
+                ),
             ]),
             zones: HashMap::new(),
             nets: HashMap::from([
-                (net_uuid, Net { uuid: net_uuid, name: "SIG".into(), class: class_uuid }),
-                (other_net_uuid, Net { uuid: other_net_uuid, name: "OTHER".into(), class: class_uuid }),
+                (
+                    net_uuid,
+                    Net {
+                        uuid: net_uuid,
+                        name: "SIG".into(),
+                        class: class_uuid,
+                    },
+                ),
+                (
+                    other_net_uuid,
+                    Net {
+                        uuid: other_net_uuid,
+                        name: "OTHER".into(),
+                        class: class_uuid,
+                    },
+                ),
             ]),
             net_classes: HashMap::from([(
                 class_uuid,
@@ -122,7 +215,10 @@ fn route_path_candidate_authored_via_chain_explain_reports_selected_chain_reason
         )
         .expect("authored via chain explain should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(
         report.explanation_kind,
         RoutePathCandidateAuthoredViaChainExplainKind::DeterministicPathFound
@@ -137,7 +233,13 @@ fn route_path_candidate_authored_via_chain_explain_reports_selected_chain_reason
         }),
         Some(vec![via_a_uuid, via_b_uuid])
     );
-    assert_eq!(report.selected_chain.as_ref().map(|path| path.segments.len()), Some(3));
+    assert_eq!(
+        report
+            .selected_chain
+            .as_ref()
+            .map(|path| path.segments.len()),
+        Some(3)
+    );
     assert_eq!(report.blocked_matching_chains.len(), 0);
 }
 

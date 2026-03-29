@@ -43,8 +43,8 @@ pub(super) fn execute_plan_command(
                 &libraries,
             )?;
             let manifest = scoped_replacement_manifest_from_parts(&path, &libraries, plan)?;
-            let payload =
-                serde_json::to_string_pretty(&manifest).expect("manifest serialization must succeed");
+            let payload = serde_json::to_string_pretty(&manifest)
+                .expect("manifest serialization must succeed");
             std::fs::write(&out, payload)
                 .with_context(|| format!("failed to write manifest {}", out.display()))?;
             let output = match format {
@@ -69,7 +69,9 @@ pub(super) fn execute_plan_command(
         PlanCommands::InspectScopedReplacementManifest { path } => {
             let inspection = inspect_scoped_replacement_manifest(&path)?;
             let output = match format {
-                OutputFormat::Text => render_scoped_replacement_manifest_inspection_text(&inspection),
+                OutputFormat::Text => {
+                    render_scoped_replacement_manifest_inspection_text(&inspection)
+                }
                 OutputFormat::Json => render_output(format, &inspection),
             };
             Ok((output, 0))

@@ -30,9 +30,9 @@ fn route_path_candidate_authored_via_chain_query_cli(
 }
 
 #[test]
-fn project_query_route_path_candidate_authored_via_chain_reports_deterministic_authored_via_chain_path() {
-    let root =
-        unique_project_root("datum-eda-cli-project-route-path-candidate-authored-via-chain");
+fn project_query_route_path_candidate_authored_via_chain_reports_deterministic_authored_via_chain_path()
+ {
+    let root = unique_project_root("datum-eda-cli-project-route-path-candidate-authored-via-chain");
     create_native_project(
         &root,
         Some("Route Path Candidate Authored Via Chain Demo".to_string()),
@@ -151,15 +151,24 @@ fn project_query_route_path_candidate_authored_via_chain_reports_deterministic_a
     .expect("query should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report should parse");
 
-    assert_eq!(report["contract"], "m5_route_path_candidate_authored_via_chain_v1");
+    assert_eq!(
+        report["contract"],
+        "m5_route_path_candidate_authored_via_chain_v1"
+    );
     assert_eq!(report["persisted_native_board_state_only"], true);
     assert_eq!(report["status"], "deterministic_path_found");
     assert_eq!(report["summary"]["candidate_via_count"], 4);
     assert_eq!(report["summary"]["matching_via_chain_count"], 2);
     assert_eq!(report["summary"]["available_via_chain_count"], 2);
     assert_eq!(report["path"]["via_chain"].as_array().unwrap().len(), 2);
-    assert_eq!(report["path"]["via_chain"][0]["via_uuid"], via_a_uuid.to_string());
-    assert_eq!(report["path"]["via_chain"][1]["via_uuid"], via_b_uuid.to_string());
+    assert_eq!(
+        report["path"]["via_chain"][0]["via_uuid"],
+        via_a_uuid.to_string()
+    );
+    assert_eq!(
+        report["path"]["via_chain"][1]["via_uuid"],
+        via_b_uuid.to_string()
+    );
     assert_eq!(report["path"]["segments"].as_array().unwrap().len(), 3);
 
     let repeated = execute(route_path_candidate_authored_via_chain_query_cli(

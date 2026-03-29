@@ -146,24 +146,27 @@ fn route_path_candidate_via_explain_reports_selected_via_for_found_path() {
         report.explanation_kind,
         RoutePathCandidateViaExplainKind::DeterministicPathFound
     );
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.summary.matching_via_count, 1);
     assert_eq!(
         report.selected_via.as_ref().map(|entry| entry.via_uuid),
         Some(via_uuid)
     );
     assert_eq!(
-        report
-            .selected_via
-            .as_ref()
-            .map(|entry| (entry.source_segment.points[0], entry.source_segment.points[1])),
+        report.selected_via.as_ref().map(|entry| (
+            entry.source_segment.points[0],
+            entry.source_segment.points[1]
+        )),
         Some((Point::new(100_000, 100_000), Point::new(500_000, 500_000)))
     );
     assert_eq!(
-        report
-            .selected_via
-            .as_ref()
-            .map(|entry| (entry.target_segment.points[0], entry.target_segment.points[1])),
+        report.selected_via.as_ref().map(|entry| (
+            entry.target_segment.points[0],
+            entry.target_segment.points[1]
+        )),
         Some((Point::new(500_000, 500_000), Point::new(900_000, 900_000)))
     );
 }
@@ -196,14 +199,20 @@ fn route_path_candidate_via_explain_preserves_selected_via_orientation_for_rever
             .selected_via
             .as_ref()
             .map(|entry| entry.source_segment.points.clone()),
-        Some(vec![Point::new(900_000, 900_000), Point::new(500_000, 500_000)])
+        Some(vec![
+            Point::new(900_000, 900_000),
+            Point::new(500_000, 500_000)
+        ])
     );
     assert_eq!(
         report
             .selected_via
             .as_ref()
             .map(|entry| entry.target_segment.points.clone()),
-        Some(vec![Point::new(500_000, 500_000), Point::new(100_000, 100_000)])
+        Some(vec![
+            Point::new(500_000, 500_000),
+            Point::new(100_000, 100_000)
+        ])
     );
 }
 
@@ -301,18 +310,27 @@ fn route_path_candidate_via_explain_selected_via_matches_fallback_path_candidate
         .route_path_candidate_via_explain(net_uuid, anchor_top_uuid, anchor_bottom_uuid)
         .expect("via explain should succeed");
 
-    assert_eq!(path_report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        path_report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(
         explain_report.explanation_kind,
         RoutePathCandidateViaExplainKind::DeterministicPathFound
     );
-    assert_eq!(path_report.path.as_ref().map(|path| path.via_uuid), Some(second_via_uuid));
+    assert_eq!(
+        path_report.path.as_ref().map(|path| path.via_uuid),
+        Some(second_via_uuid)
+    );
     assert_ne!(
         path_report.path.as_ref().map(|path| path.via_uuid),
         Some(first_via_uuid)
     );
     assert_eq!(
-        explain_report.selected_via.as_ref().map(|entry| entry.via_uuid),
+        explain_report
+            .selected_via
+            .as_ref()
+            .map(|entry| entry.via_uuid),
         path_report.path.as_ref().map(|path| path.via_uuid)
     );
     assert_eq!(
@@ -320,13 +338,19 @@ fn route_path_candidate_via_explain_selected_via_matches_fallback_path_candidate
             .selected_via
             .as_ref()
             .map(|entry| entry.source_segment.points.clone()),
-        path_report.path.as_ref().map(|path| path.segments[0].points.clone())
+        path_report
+            .path
+            .as_ref()
+            .map(|path| path.segments[0].points.clone())
     );
     assert_eq!(
         explain_report
             .selected_via
             .as_ref()
             .map(|entry| entry.target_segment.points.clone()),
-        path_report.path.as_ref().map(|path| path.segments[1].points.clone())
+        path_report
+            .path
+            .as_ref()
+            .map(|path| path.segments[1].points.clone())
     );
 }

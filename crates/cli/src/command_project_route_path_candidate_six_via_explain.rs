@@ -121,9 +121,7 @@ fn render_status(report: &RoutePathCandidateSixViaExplainReport) -> &'static str
 
 fn render_kind(report: &RoutePathCandidateSixViaExplainReport) -> &'static str {
     match report.explanation_kind {
-        RoutePathCandidateSixViaExplainKind::DeterministicPathFound => {
-            "deterministic_path_found"
-        }
+        RoutePathCandidateSixViaExplainKind::DeterministicPathFound => "deterministic_path_found",
         RoutePathCandidateSixViaExplainKind::NoMatchingAuthoredViaSextuple => {
             "no_matching_authored_via_sextuple"
         }

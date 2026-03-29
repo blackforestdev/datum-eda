@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use anyhow::{Result, anyhow};
-use eda_engine::board::{RoutePathCandidateExplainReport, RoutePathCandidateExplainKind};
+use eda_engine::board::{RoutePathCandidateExplainKind, RoutePathCandidateExplainReport};
 use uuid::Uuid;
 
 use super::super::{build_native_project_board, load_native_project};

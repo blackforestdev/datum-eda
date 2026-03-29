@@ -125,8 +125,8 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid) {
 }
 
 #[test]
-fn route_path_candidate_authored_copper_graph_zone_obstacle_aware_explain_reports_selected_path_reasoning(
-) {
+fn route_path_candidate_authored_copper_graph_zone_obstacle_aware_explain_reports_selected_path_reasoning()
+ {
     let (board, net_uuid, anchor_a_uuid, anchor_b_uuid, zone_uuid) = demo_board();
 
     let report = board
@@ -137,7 +137,10 @@ fn route_path_candidate_authored_copper_graph_zone_obstacle_aware_explain_report
         )
         .expect("zone obstacle-aware authored copper graph explain should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(
         report.explanation_kind,
         RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareExplainKind::DeterministicPathFound
@@ -146,16 +149,22 @@ fn route_path_candidate_authored_copper_graph_zone_obstacle_aware_explain_report
     assert_eq!(report.summary.candidate_via_count, 0);
     assert_eq!(report.summary.candidate_zone_count, 1);
     assert_eq!(report.summary.blocked_zone_connection_count, 0);
-    assert_eq!(report.selected_path.as_ref().map(|path| path.steps.len()), Some(1));
     assert_eq!(
-        report.selected_path.as_ref().map(|path| path.steps[0].object_uuid),
+        report.selected_path.as_ref().map(|path| path.steps.len()),
+        Some(1)
+    );
+    assert_eq!(
+        report
+            .selected_path
+            .as_ref()
+            .map(|path| path.steps[0].object_uuid),
         Some(zone_uuid)
     );
 }
 
 #[test]
-fn route_path_candidate_authored_copper_graph_zone_obstacle_aware_explain_reports_no_existing_path(
-) {
+fn route_path_candidate_authored_copper_graph_zone_obstacle_aware_explain_reports_no_existing_path()
+{
     let (mut board, net_uuid, anchor_a_uuid, anchor_b_uuid, _) = demo_board();
     board.keepouts.push(Keepout {
         uuid: Uuid::from_u128(0x3913),

@@ -58,6 +58,8 @@ mod command_project_inventory_surface;
 mod command_project_manufacturing;
 #[path = "command_project_native_inspect.rs"]
 mod command_project_native_inspect;
+#[path = "command_project_native_surface.rs"]
+mod command_project_native_surface;
 #[path = "command_project_native_types.rs"]
 mod command_project_native_types;
 #[path = "command_project_pool_materialization.rs"]
@@ -68,8 +70,8 @@ mod command_project_pool_query;
 mod command_project_project_core;
 #[path = "command_project_root_imports.rs"]
 mod command_project_root_imports;
-#[path = "command_project_native_surface.rs"]
-mod command_project_native_surface;
+#[path = "command_project_route_proposal.rs"]
+mod command_project_route_proposal;
 #[path = "command_project_schematic_connectivity_mutations.rs"]
 mod command_project_schematic_connectivity_mutations;
 #[path = "command_project_schematic_connectivity_queries.rs"]
@@ -84,10 +86,10 @@ mod command_project_schematic_symbol_mutations;
 mod command_project_schematic_text_drawing_mutations;
 #[path = "command_project_summary.rs"]
 mod command_project_summary;
-#[path = "command_project_surface.rs"]
-mod command_project_surface;
 #[path = "command_project_support.rs"]
 mod command_project_support;
+#[path = "command_project_surface.rs"]
+mod command_project_surface;
 #[path = "command_project_views.rs"]
 mod command_project_views;
 

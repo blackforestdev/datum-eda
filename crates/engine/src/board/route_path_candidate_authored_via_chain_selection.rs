@@ -187,9 +187,12 @@ fn compare_via_uuid_sequence(left: &[Via], right: &[Via]) -> Ordering {
 pub(super) fn selected_matching_authored_via_chain(
     matches: &[RoutePathCandidateAuthoredViaChainMatch],
 ) -> Option<&RoutePathCandidateAuthoredViaChainMatch> {
-    matches
-        .iter()
-        .find(|entry| entry.segment_analyses.iter().all(|segment| segment.blockages.is_empty()))
+    matches.iter().find(|entry| {
+        entry
+            .segment_analyses
+            .iter()
+            .all(|segment| segment.blockages.is_empty())
+    })
 }
 
 pub(super) fn authored_via_chain_path_points(

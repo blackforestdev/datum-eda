@@ -72,8 +72,16 @@ pub(super) fn candidate_six_via_matches(
                                 continue;
                             }
                             if let Some(entry) = matching_six_via_sextuple(
-                                board, net_uuid, from_anchor, to_anchor, via_a, via_b, via_c,
-                                via_d, via_e, via_f,
+                                board,
+                                net_uuid,
+                                from_anchor,
+                                to_anchor,
+                                via_a,
+                                via_b,
+                                via_c,
+                                via_d,
+                                via_e,
+                                via_f,
                             ) {
                                 matching_sextuples.push(entry);
                             }

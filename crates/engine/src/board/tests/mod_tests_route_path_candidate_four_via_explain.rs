@@ -20,15 +20,60 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
             name: "path-candidate-four-via-explain".into(),
             stackup: Stackup {
                 layers: vec![
-                    StackupLayer { id: 1, name: "Top".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 2, name: "Core A".into(), layer_type: StackupLayerType::Dielectric, thickness_nm: 1_000_000 },
-                    StackupLayer { id: 3, name: "Inner 1".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 4, name: "Core B".into(), layer_type: StackupLayerType::Dielectric, thickness_nm: 1_000_000 },
-                    StackupLayer { id: 5, name: "Inner 2".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 6, name: "Core C".into(), layer_type: StackupLayerType::Dielectric, thickness_nm: 1_000_000 },
-                    StackupLayer { id: 7, name: "Inner 3".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 8, name: "Core D".into(), layer_type: StackupLayerType::Dielectric, thickness_nm: 1_000_000 },
-                    StackupLayer { id: 9, name: "Bottom".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
+                    StackupLayer {
+                        id: 1,
+                        name: "Top".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 2,
+                        name: "Core A".into(),
+                        layer_type: StackupLayerType::Dielectric,
+                        thickness_nm: 1_000_000,
+                    },
+                    StackupLayer {
+                        id: 3,
+                        name: "Inner 1".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 4,
+                        name: "Core B".into(),
+                        layer_type: StackupLayerType::Dielectric,
+                        thickness_nm: 1_000_000,
+                    },
+                    StackupLayer {
+                        id: 5,
+                        name: "Inner 2".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 6,
+                        name: "Core C".into(),
+                        layer_type: StackupLayerType::Dielectric,
+                        thickness_nm: 1_000_000,
+                    },
+                    StackupLayer {
+                        id: 7,
+                        name: "Inner 3".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 8,
+                        name: "Core D".into(),
+                        layer_type: StackupLayerType::Dielectric,
+                        thickness_nm: 1_000_000,
+                    },
+                    StackupLayer {
+                        id: 9,
+                        name: "Bottom".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
                 ],
             },
             outline: Polygon::new(vec![
@@ -125,11 +170,19 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
             nets: HashMap::from([
                 (
                     net_uuid,
-                    Net { uuid: net_uuid, name: "SIG".into(), class: class_uuid },
+                    Net {
+                        uuid: net_uuid,
+                        name: "SIG".into(),
+                        class: class_uuid,
+                    },
                 ),
                 (
                     other_net_uuid,
-                    Net { uuid: other_net_uuid, name: "OTHER".into(), class: class_uuid },
+                    Net {
+                        uuid: other_net_uuid,
+                        name: "OTHER".into(),
+                        class: class_uuid,
+                    },
                 ),
             ]),
             net_classes: HashMap::from([(
@@ -163,8 +216,17 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
 
 #[test]
 fn route_path_candidate_four_via_explain_reports_selected_quadruple_for_found_path() {
-    let (board, net_uuid, _, anchor_top_uuid, anchor_bottom_uuid, via_a_uuid, via_b_uuid, via_c_uuid, via_d_uuid) =
-        demo_board();
+    let (
+        board,
+        net_uuid,
+        _,
+        anchor_top_uuid,
+        anchor_bottom_uuid,
+        via_a_uuid,
+        via_b_uuid,
+        via_c_uuid,
+        via_d_uuid,
+    ) = demo_board();
 
     let report = board
         .route_path_candidate_four_via_explain(net_uuid, anchor_top_uuid, anchor_bottom_uuid)
@@ -174,22 +236,37 @@ fn route_path_candidate_four_via_explain_reports_selected_quadruple_for_found_pa
         report.explanation_kind,
         RoutePathCandidateFourViaExplainKind::DeterministicPathFound
     );
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.summary.matching_via_quadruple_count, 1);
     assert_eq!(
-        report.selected_quadruple.as_ref().map(|entry| entry.via_a_uuid),
+        report
+            .selected_quadruple
+            .as_ref()
+            .map(|entry| entry.via_a_uuid),
         Some(via_a_uuid)
     );
     assert_eq!(
-        report.selected_quadruple.as_ref().map(|entry| entry.via_b_uuid),
+        report
+            .selected_quadruple
+            .as_ref()
+            .map(|entry| entry.via_b_uuid),
         Some(via_b_uuid)
     );
     assert_eq!(
-        report.selected_quadruple.as_ref().map(|entry| entry.via_c_uuid),
+        report
+            .selected_quadruple
+            .as_ref()
+            .map(|entry| entry.via_c_uuid),
         Some(via_c_uuid)
     );
     assert_eq!(
-        report.selected_quadruple.as_ref().map(|entry| entry.via_d_uuid),
+        report
+            .selected_quadruple
+            .as_ref()
+            .map(|entry| entry.via_d_uuid),
         Some(via_d_uuid)
     );
     assert_eq!(
@@ -197,14 +274,26 @@ fn route_path_candidate_four_via_explain_reports_selected_quadruple_for_found_pa
             .selected_quadruple
             .as_ref()
             .map(|entry| entry.first_middle_segment.points.clone()),
-        Some(vec![Point::new(200_000, 200_000), Point::new(400_000, 400_000)])
+        Some(vec![
+            Point::new(200_000, 200_000),
+            Point::new(400_000, 400_000)
+        ])
     );
 }
 
 #[test]
 fn route_path_candidate_four_via_explain_reports_no_matching_authored_via_quadruple() {
-    let (mut board, net_uuid, _, anchor_top_uuid, anchor_bottom_uuid, via_a_uuid, via_b_uuid, via_c_uuid, via_d_uuid) =
-        demo_board();
+    let (
+        mut board,
+        net_uuid,
+        _,
+        anchor_top_uuid,
+        anchor_bottom_uuid,
+        via_a_uuid,
+        via_b_uuid,
+        via_c_uuid,
+        via_d_uuid,
+    ) = demo_board();
     board.vias.insert(
         via_a_uuid,
         Via {
@@ -292,7 +381,9 @@ fn route_path_candidate_four_via_explain_reports_blocked_matching_quadruples_and
     assert_eq!(report.summary.blocked_via_quadruple_count, 1);
     assert_eq!(report.blocked_matching_quadruples.len(), 1);
     assert!(report.selected_quadruple.is_none());
-    assert!(!report.blocked_matching_quadruples[0]
-        .third_middle_blockages
-        .is_empty());
+    assert!(
+        !report.blocked_matching_quadruples[0]
+            .third_middle_blockages
+            .is_empty()
+    );
 }

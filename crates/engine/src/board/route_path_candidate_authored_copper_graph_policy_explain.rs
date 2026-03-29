@@ -4,8 +4,7 @@ use uuid::Uuid;
 use crate::board::{
     Board, RoutePathCandidateAuthoredCopperGraphExplainReport,
     RoutePathCandidateAuthoredCopperGraphObstacleAwareExplainReport,
-    RoutePathCandidateAuthoredCopperGraphPolicy,
-    RoutePathCandidateAuthoredCopperGraphPolicyStep,
+    RoutePathCandidateAuthoredCopperGraphPolicy, RoutePathCandidateAuthoredCopperGraphPolicyStep,
     RoutePathCandidateAuthoredCopperGraphPolicyStepKindView,
     RoutePathCandidateAuthoredCopperGraphZoneAwareExplainReport,
     RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareExplainReport,
@@ -503,7 +502,11 @@ fn map_zone_like_explain_report(
         if let Some((selected_path, path_via_step_count, path_zone_step_count)) =
             selected_path_and_counts
         {
-            (Some(selected_path), path_via_step_count, path_zone_step_count)
+            (
+                Some(selected_path),
+                path_via_step_count,
+                path_zone_step_count,
+            )
         } else {
             (None, 0, 0)
         };

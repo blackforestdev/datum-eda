@@ -150,7 +150,10 @@ fn route_path_candidate_uses_explicit_first_unblocked_matching_span_rule() {
         .route_path_candidate(net_uuid, anchor_a_uuid, anchor_b_uuid)
         .expect("path candidate should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(
         report.selection_rule,
         "select the first unblocked matching corridor span in corridor report order (sorted by candidate copper layer order, then pair index)"
@@ -160,7 +163,10 @@ fn route_path_candidate_uses_explicit_first_unblocked_matching_span_rule() {
     assert_eq!(report.path.as_ref().map(|path| path.layer), Some(1));
     assert_eq!(
         report.path.as_ref().map(|path| path.points.clone()),
-        Some(vec![Point::new(100_000, 100_000), Point::new(500_000, 500_000)])
+        Some(vec![
+            Point::new(100_000, 100_000),
+            Point::new(500_000, 500_000)
+        ])
     );
 }
 
@@ -172,11 +178,17 @@ fn route_path_candidate_uses_selected_corridor_span_geometry_in_requested_anchor
         .route_path_candidate(net_uuid, anchor_b_uuid, anchor_a_uuid)
         .expect("path candidate should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.path.as_ref().map(|path| path.layer), Some(1));
     assert_eq!(
         report.path.as_ref().map(|path| path.points.clone()),
-        Some(vec![Point::new(500_000, 500_000), Point::new(100_000, 100_000)])
+        Some(vec![
+            Point::new(500_000, 500_000),
+            Point::new(100_000, 100_000)
+        ])
     );
 }
 
@@ -227,14 +239,20 @@ fn route_path_candidate_selects_next_matching_span_when_earlier_corridor_span_is
         .route_path_candidate(net_uuid, anchor_a_uuid, anchor_b_uuid)
         .expect("path candidate should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.summary.matching_span_count, 2);
     assert_eq!(report.summary.blocked_span_count, 1);
     assert_eq!(report.summary.available_span_count, 1);
     assert_eq!(report.path.as_ref().map(|path| path.layer), Some(3));
     assert_eq!(
         report.path.as_ref().map(|path| path.points.clone()),
-        Some(vec![Point::new(100_000, 100_000), Point::new(500_000, 500_000)])
+        Some(vec![
+            Point::new(100_000, 100_000),
+            Point::new(500_000, 500_000)
+        ])
     );
 }
 
@@ -303,14 +321,20 @@ fn route_path_candidate_stress_tests_explicit_tie_break_across_multiple_matching
         .route_path_candidate(net_uuid, anchor_a_uuid, anchor_b_uuid)
         .expect("path candidate should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.summary.matching_span_count, 4);
     assert_eq!(report.summary.blocked_span_count, 2);
     assert_eq!(report.summary.available_span_count, 2);
     assert_eq!(report.path.as_ref().map(|path| path.layer), Some(5));
     assert_eq!(
         report.path.as_ref().map(|path| path.points.clone()),
-        Some(vec![Point::new(100_000, 100_000), Point::new(500_000, 500_000)])
+        Some(vec![
+            Point::new(100_000, 100_000),
+            Point::new(500_000, 500_000)
+        ])
     );
 }
 

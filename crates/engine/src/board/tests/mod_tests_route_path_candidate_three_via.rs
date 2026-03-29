@@ -19,13 +19,48 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
             name: "path-candidate-three-via".into(),
             stackup: Stackup {
                 layers: vec![
-                    StackupLayer { id: 1, name: "Top".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 2, name: "Core A".into(), layer_type: StackupLayerType::Dielectric, thickness_nm: 1_000_000 },
-                    StackupLayer { id: 3, name: "Inner 1".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 4, name: "Core B".into(), layer_type: StackupLayerType::Dielectric, thickness_nm: 1_000_000 },
-                    StackupLayer { id: 5, name: "Inner 2".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
-                    StackupLayer { id: 6, name: "Core C".into(), layer_type: StackupLayerType::Dielectric, thickness_nm: 1_000_000 },
-                    StackupLayer { id: 7, name: "Bottom".into(), layer_type: StackupLayerType::Copper, thickness_nm: 35_000 },
+                    StackupLayer {
+                        id: 1,
+                        name: "Top".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 2,
+                        name: "Core A".into(),
+                        layer_type: StackupLayerType::Dielectric,
+                        thickness_nm: 1_000_000,
+                    },
+                    StackupLayer {
+                        id: 3,
+                        name: "Inner 1".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 4,
+                        name: "Core B".into(),
+                        layer_type: StackupLayerType::Dielectric,
+                        thickness_nm: 1_000_000,
+                    },
+                    StackupLayer {
+                        id: 5,
+                        name: "Inner 2".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
+                    StackupLayer {
+                        id: 6,
+                        name: "Core C".into(),
+                        layer_type: StackupLayerType::Dielectric,
+                        thickness_nm: 1_000_000,
+                    },
+                    StackupLayer {
+                        id: 7,
+                        name: "Bottom".into(),
+                        layer_type: StackupLayerType::Copper,
+                        thickness_nm: 35_000,
+                    },
                 ],
             },
             outline: Polygon::new(vec![
@@ -155,36 +190,73 @@ fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
 
 #[test]
 fn route_path_candidate_three_via_reports_deterministic_path_using_authored_via_triple() {
-    let (board, net_uuid, _, anchor_top_uuid, anchor_bottom_uuid, via_a_uuid, via_b_uuid, via_c_uuid) =
-        demo_board();
+    let (
+        board,
+        net_uuid,
+        _,
+        anchor_top_uuid,
+        anchor_bottom_uuid,
+        via_a_uuid,
+        via_b_uuid,
+        via_c_uuid,
+    ) = demo_board();
 
     let report = board
         .route_path_candidate_three_via(net_uuid, anchor_top_uuid, anchor_bottom_uuid)
         .expect("three-via path candidate should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.summary.candidate_via_count, 3);
     assert_eq!(report.summary.candidate_via_triple_count, 6);
     assert_eq!(report.summary.matching_via_triple_count, 1);
     assert_eq!(report.summary.available_via_triple_count, 1);
-    assert_eq!(report.path.as_ref().map(|path| path.via_a_uuid), Some(via_a_uuid));
-    assert_eq!(report.path.as_ref().map(|path| path.via_b_uuid), Some(via_b_uuid));
-    assert_eq!(report.path.as_ref().map(|path| path.via_c_uuid), Some(via_c_uuid));
     assert_eq!(
-        report.path.as_ref().map(|path| path.first_intermediate_layer),
+        report.path.as_ref().map(|path| path.via_a_uuid),
+        Some(via_a_uuid)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.via_b_uuid),
+        Some(via_b_uuid)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.via_c_uuid),
+        Some(via_c_uuid)
+    );
+    assert_eq!(
+        report
+            .path
+            .as_ref()
+            .map(|path| path.first_intermediate_layer),
         Some(3)
     );
     assert_eq!(
-        report.path.as_ref().map(|path| path.second_intermediate_layer),
+        report
+            .path
+            .as_ref()
+            .map(|path| path.second_intermediate_layer),
         Some(5)
     );
-    assert_eq!(report.path.as_ref().map(|path| path.segments.len()), Some(4));
+    assert_eq!(
+        report.path.as_ref().map(|path| path.segments.len()),
+        Some(4)
+    );
 }
 
 #[test]
 fn route_path_candidate_three_via_selects_next_matching_triple_when_earlier_triple_is_blocked() {
-    let (mut board, net_uuid, _, anchor_top_uuid, anchor_bottom_uuid, first_via_a_uuid, via_b_uuid, via_c_uuid) =
-        demo_board();
+    let (
+        mut board,
+        net_uuid,
+        _,
+        anchor_top_uuid,
+        anchor_bottom_uuid,
+        first_via_a_uuid,
+        via_b_uuid,
+        via_c_uuid,
+    ) = demo_board();
     let second_via_a_uuid = Uuid::from_u128(0xf18);
     board.vias.insert(
         second_via_a_uuid,
@@ -214,14 +286,29 @@ fn route_path_candidate_three_via_selects_next_matching_triple_when_earlier_trip
         .route_path_candidate_three_via(net_uuid, anchor_top_uuid, anchor_bottom_uuid)
         .expect("three-via path candidate should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.summary.matching_via_triple_count, 2);
     assert_eq!(report.summary.blocked_via_triple_count, 1);
     assert_eq!(report.summary.available_via_triple_count, 1);
-    assert_ne!(report.path.as_ref().map(|path| path.via_a_uuid), Some(first_via_a_uuid));
-    assert_eq!(report.path.as_ref().map(|path| path.via_a_uuid), Some(second_via_a_uuid));
-    assert_eq!(report.path.as_ref().map(|path| path.via_b_uuid), Some(via_b_uuid));
-    assert_eq!(report.path.as_ref().map(|path| path.via_c_uuid), Some(via_c_uuid));
+    assert_ne!(
+        report.path.as_ref().map(|path| path.via_a_uuid),
+        Some(first_via_a_uuid)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.via_a_uuid),
+        Some(second_via_a_uuid)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.via_b_uuid),
+        Some(via_b_uuid)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.via_c_uuid),
+        Some(via_c_uuid)
+    );
 }
 
 #[test]
@@ -255,7 +342,8 @@ fn route_path_candidate_three_via_reports_no_path_when_matching_triple_segments_
 
 #[test]
 fn route_path_candidate_three_via_reports_no_path_when_no_authored_triple_matches_layer_sequence() {
-    let (mut board, net_uuid, _, anchor_top_uuid, anchor_bottom_uuid, _, _, via_c_uuid) = demo_board();
+    let (mut board, net_uuid, _, anchor_top_uuid, anchor_bottom_uuid, _, _, via_c_uuid) =
+        demo_board();
     board.vias.insert(
         via_c_uuid,
         Via {

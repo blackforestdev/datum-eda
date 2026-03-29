@@ -30,8 +30,8 @@ fn route_path_candidate_authored_copper_graph_zone_obstacle_aware_explain_query_
 }
 
 #[test]
-fn project_query_route_path_candidate_authored_copper_graph_zone_obstacle_aware_explain_reports_blocked_path(
-) {
+fn project_query_route_path_candidate_authored_copper_graph_zone_obstacle_aware_explain_reports_blocked_path()
+ {
     let root = unique_project_root(
         "datum-eda-cli-project-route-path-candidate-authored-copper-graph-zone-obstacle-aware-explain",
     );
@@ -183,8 +183,14 @@ fn project_query_route_path_candidate_authored_copper_graph_zone_obstacle_aware_
         "m5_route_path_candidate_authored_copper_graph_zone_obstacle_aware_explain_v1"
     );
     assert_eq!(report["persisted_native_board_state_only"], true);
-    assert_eq!(report["status"], "no_path_under_current_authored_constraints");
-    assert_eq!(report["explanation_kind"], "no_existing_authored_copper_path");
+    assert_eq!(
+        report["status"],
+        "no_path_under_current_authored_constraints"
+    );
+    assert_eq!(
+        report["explanation_kind"],
+        "no_existing_authored_copper_path"
+    );
     assert_eq!(report["summary"]["candidate_track_count"], 0);
     assert_eq!(report["summary"]["candidate_via_count"], 0);
     assert_eq!(report["summary"]["candidate_zone_count"], 1);

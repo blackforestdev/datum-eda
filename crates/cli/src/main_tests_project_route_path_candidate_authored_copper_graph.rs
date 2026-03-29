@@ -33,7 +33,8 @@ fn route_path_candidate_authored_copper_graph_query_cli(
 }
 
 #[test]
-fn project_query_route_path_candidate_authored_copper_graph_reports_deterministic_existing_copper_path() {
+fn project_query_route_path_candidate_authored_copper_graph_reports_deterministic_existing_copper_path()
+ {
     let root =
         unique_project_root("datum-eda-cli-project-route-path-candidate-authored-copper-graph");
     create_native_project(
@@ -160,7 +161,10 @@ fn project_query_route_path_candidate_authored_copper_graph_reports_deterministi
     assert_eq!(report["summary"]["candidate_track_count"], 1);
     assert_eq!(report["summary"]["candidate_via_count"], 0);
     assert_eq!(report["path"]["steps"].as_array().unwrap().len(), 1);
-    assert_eq!(report["path"]["steps"][0]["object_uuid"], track_uuid.to_string());
+    assert_eq!(
+        report["path"]["steps"][0]["object_uuid"],
+        track_uuid.to_string()
+    );
 
     let repeated = execute(route_path_candidate_authored_copper_graph_query_cli(
         &root,
@@ -191,7 +195,9 @@ fn project_query_route_path_candidate_authored_copper_graph_reports_deterministi
         .expect("CLI should parse"),
     )
     .expect("text query should succeed");
-    assert!(text_output.contains("contract: m5_route_path_candidate_authored_copper_graph_policy_v1"));
+    assert!(
+        text_output.contains("contract: m5_route_path_candidate_authored_copper_graph_policy_v1")
+    );
     assert!(text_output.contains("policy: plain"));
     assert!(text_output.contains("status: deterministic_path_found"));
     assert!(text_output.contains("path_steps: 1"));
