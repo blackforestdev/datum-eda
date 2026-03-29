@@ -17,8 +17,12 @@ mod command_exec_inventory;
 mod command_exec_manufacturing;
 #[path = "command_exec_native_support.rs"]
 mod command_exec_native_support;
+#[path = "command_exec_plan.rs"]
+mod command_exec_plan;
 #[path = "command_exec_project_inspect.rs"]
 mod command_exec_project_inspect;
+#[path = "command_exec_project_query.rs"]
+mod command_exec_project_query;
 use self::command_exec_native_support::{
     parse_native_hidden_power_behavior, parse_native_symbol_display_mode,
 };
@@ -159,7 +163,12 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 Ok((render_output(&cli.format, &results), 0))
             }
         },
-        Commands::Project { action } => match *action {
+        Commands::Project { action } => {
+            let action = *action;
+            if command_exec_inventory::is_inventory_command(&action) {
+                return command_exec_inventory::execute_inventory_command(&cli.format, action);
+            }
+            match action {
             ProjectCommands::New { path, name } => {
                 let report = create_native_project(&path, name)?;
                 let output = match cli.format {
@@ -176,216 +185,12 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 };
                 Ok((output, 0))
             }
-            ProjectCommands::Query { path, what } => match what {
-                NativeProjectQueryCommands::Summary => {
-                    let report = query_native_project_summary(&path)?;
-                    let output = match cli.format {
-                        OutputFormat::Text => render_native_project_summary_text(&report),
-                        OutputFormat::Json => render_output(&cli.format, &report),
-                    };
-                    Ok((output, 0))
-                }
-                NativeProjectQueryCommands::DesignRules => {
-                    let report = query_native_project_rules(&path)?;
-                    let output = match cli.format {
-                        OutputFormat::Text => render_native_project_rules_text(&report),
-                        OutputFormat::Json => render_output(&cli.format, &report),
-                    };
-                    Ok((output, 0))
-                }
-                NativeProjectQueryCommands::ForwardAnnotationAudit => {
-                    let report = query_native_project_forward_annotation_audit(&path)?;
-                    let output = match cli.format {
-                        OutputFormat::Text => render_native_forward_annotation_audit_text(&report),
-                        OutputFormat::Json => render_output(&cli.format, &report),
-                    };
-                    Ok((output, 0))
-                }
-                NativeProjectQueryCommands::ForwardAnnotationProposal => {
-                    let report = query_native_project_forward_annotation_proposal(&path)?;
-                    let output = match cli.format {
-                        OutputFormat::Text => {
-                            render_native_forward_annotation_proposal_text(&report)
-                        }
-                        OutputFormat::Json => render_output(&cli.format, &report),
-                    };
-                    Ok((output, 0))
-                }
-                NativeProjectQueryCommands::ForwardAnnotationReview => {
-                    let report = query_native_project_forward_annotation_review(&path)?;
-                    let output = match cli.format {
-                        OutputFormat::Text => render_native_forward_annotation_review_text(&report),
-                        OutputFormat::Json => render_output(&cli.format, &report),
-                    };
-                    Ok((output, 0))
-                }
-                NativeProjectQueryCommands::Symbols => {
-                    let report = query_native_project_symbols(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::SymbolFields { symbol } => {
-                    let report = query_native_project_symbol_fields(&path, symbol)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::SymbolSemantics { symbol } => {
-                    let report = query_native_project_symbol_semantics(&path, symbol)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::SymbolPins { symbol } => {
-                    let report = query_native_project_symbol_pins(&path, symbol)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::Texts => {
-                    let report = query_native_project_texts(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::Drawings => {
-                    let report = query_native_project_drawings(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::Labels => {
-                    let report = query_native_project_labels(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::Wires => {
-                    let report = query_native_project_wires(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::Junctions => {
-                    let report = query_native_project_junctions(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::Ports => {
-                    let report = query_native_project_ports(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::Buses => {
-                    let report = query_native_project_buses(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::BusEntries => {
-                    let report = query_native_project_bus_entries(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::Noconnects => {
-                    let report = query_native_project_noconnects(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::Nets => {
-                    let report = query_native_project_nets(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::Diagnostics => {
-                    let report = query_native_project_diagnostics(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::Erc => {
-                    let report = query_native_project_erc(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::Check => {
-                    let report = query_native_project_check(&path)?;
-                    let output = match cli.format {
-                        OutputFormat::Text => render_check_report_text(&report),
-                        OutputFormat::Json => render_output(&cli.format, &report),
-                    };
-                    Ok((output, 0))
-                }
-                NativeProjectQueryCommands::BoardTexts => {
-                    let report = query_native_project_board_texts(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::BoardKeepouts => {
-                    let report = query_native_project_board_keepouts(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::BoardOutline => {
-                    let report = query_native_project_board_outline(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::BoardStackup => {
-                    let report = query_native_project_board_stackup(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::BoardComponents => {
-                    let report = query_native_project_board_component_views(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::BoardComponentModels3d(args) => {
-                    let report =
-                        query_native_project_board_component_models_3d(&path, args.component_uuid)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::BoardComponentPads(args) => {
-                    let report =
-                        query_native_project_board_component_pads(&path, args.component_uuid)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::BoardComponentSilkscreen(args) => {
-                    let report = query_native_project_board_component_silkscreen(
-                        &path,
-                        args.component_uuid,
-                    )?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::BoardComponentMechanical(args) => {
-                    let report = query_native_project_board_component_mechanical(
-                        &path,
-                        args.component_uuid,
-                    )?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::BoardTracks => {
-                    let report = query_native_project_board_tracks(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::BoardVias => {
-                    let report = query_native_project_board_vias(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::BoardZones => {
-                    let report = query_native_project_board_zones(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::BoardDiagnostics => {
-                    let report = query_native_project_board_diagnostics(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::BoardUnrouted => {
-                    let report = query_native_project_board_unrouted(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::BoardCheck => {
-                    let report = query_native_project_board_check(&path)?;
-                    let output = match cli.format {
-                        OutputFormat::Text => render_check_report_text(&report),
-                        OutputFormat::Json => render_output(&cli.format, &report),
-                    };
-                    Ok((output, 0))
-                }
-                NativeProjectQueryCommands::BoardPads => {
-                    let report = query_native_project_board_pads(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::BoardNets => {
-                    let report = query_native_project_board_nets(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::BoardNetClasses => {
-                    let report = query_native_project_board_net_classes(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-                NativeProjectQueryCommands::BoardDimensions => {
-                    let report = query_native_project_board_dimensions(&path)?;
-                    Ok((render_output(&cli.format, &report), 0))
-                }
-            },
-            command @ ProjectCommands::ExportBom { .. }
-            | command @ ProjectCommands::CompareBom { .. }
-            | command @ ProjectCommands::InspectBom { .. }
-            | command @ ProjectCommands::ExportPnp { .. }
-            | command @ ProjectCommands::ComparePnp { .. } => {
-                command_exec_inventory::execute_inventory_command(&cli.format, command)
+            ProjectCommands::Query { path, what } => {
+                command_exec_project_query::execute_native_project_query_command(
+                    &cli.format,
+                    path,
+                    what,
+                )
             }
             command @ ProjectCommands::ExportDrill(_)
             | command @ ProjectCommands::ValidateDrill(_)
@@ -636,19 +441,12 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             | command @ ProjectCommands::CompareGerberSet(_) => {
                 command_exec_gerber_plan::execute_gerber_workflow_command(&cli.format, command)
             }
-            command @ ProjectCommands::ReportManufacturing(_) => {
-                command_exec_manufacturing::execute_manufacturing_command(&cli.format, command)
-            }
-            command @ ProjectCommands::ExportManufacturingSet(_) => {
-                command_exec_manufacturing::execute_manufacturing_command(&cli.format, command)
-            }
-            command @ ProjectCommands::ValidateManufacturingSet(_) => {
-                command_exec_manufacturing::execute_manufacturing_command(&cli.format, command)
-            }
-            command @ ProjectCommands::CompareManufacturingSet(_) => {
-                command_exec_manufacturing::execute_manufacturing_command(&cli.format, command)
-            }
-            command @ ProjectCommands::ManifestManufacturingSet(_) => {
+            command @ ProjectCommands::ReportManufacturing(_)
+            | command @ ProjectCommands::ExportManufacturingSet(_)
+            | command @ ProjectCommands::ValidateManufacturingSet(_)
+            | command @ ProjectCommands::CompareManufacturingSet(_)
+            | command @ ProjectCommands::ManifestManufacturingSet(_)
+            | command @ ProjectCommands::InspectManufacturingSet(_) => {
                 command_exec_manufacturing::execute_manufacturing_command(&cli.format, command)
             }
             ProjectCommands::PlaceSymbol {
@@ -1779,6 +1577,7 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             | command @ ProjectCommands::ExportForwardAnnotationProposalSelection { .. }
             | command @ ProjectCommands::SelectForwardAnnotationProposalArtifact { .. }
             | command @ ProjectCommands::InspectForwardAnnotationProposalArtifact { .. }
+            | command @ ProjectCommands::ValidateForwardAnnotationProposalArtifact { .. }
             | command @ ProjectCommands::CompareForwardAnnotationProposalArtifact { .. }
             | command @ ProjectCommands::FilterForwardAnnotationProposalArtifact { .. }
             | command @ ProjectCommands::PlanForwardAnnotationProposalArtifactApply { .. }
@@ -2056,119 +1855,10 @@ pub(super) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 };
                 Ok((output, 0))
             }
-        },
-        Commands::Plan { action } => match action {
-            PlanCommands::ExportScopedReplacementManifest {
-                path,
-                out,
-                policy,
-                ref_prefix,
-                value,
-                package_uuid,
-                part_uuid,
-                exclude_component,
-                override_component,
-                libraries,
-            } => {
-                let policy = match policy {
-                    ReplacementPolicyArg::Package => {
-                        ComponentReplacementPolicy::BestCompatiblePackage
-                    }
-                    ReplacementPolicyArg::Part => ComponentReplacementPolicy::BestCompatiblePart,
-                };
-                let overrides = override_component
-                    .iter()
-                    .map(|value| parse_scoped_replacement_override_arg(value))
-                    .collect::<Result<Vec<_>>>()?;
-                let plan = query_scoped_component_replacement_plan(
-                    &path,
-                    ScopedComponentReplacementPolicyInput {
-                        scope: ComponentReplacementScope {
-                            reference_prefix: ref_prefix,
-                            value_equals: value,
-                            current_package_uuid: package_uuid,
-                            current_part_uuid: part_uuid,
-                        },
-                        policy,
-                    },
-                    ScopedComponentReplacementPlanEdit {
-                        exclude_component_uuids: exclude_component,
-                        overrides,
-                    },
-                    &libraries,
-                )?;
-                let manifest = scoped_replacement_manifest_from_parts(&path, &libraries, plan)?;
-                let payload = serde_json::to_string_pretty(&manifest)
-                    .expect("manifest serialization must succeed");
-                std::fs::write(&out, payload)
-                    .with_context(|| format!("failed to write manifest {}", out.display()))?;
-                let output = match cli.format {
-                    OutputFormat::Text => render_scoped_replacement_manifest_export_text(
-                        &out,
-                        &manifest.kind,
-                        manifest.version,
-                        manifest.plan.replacements.len(),
-                    ),
-                    OutputFormat::Json => render_output(
-                        &cli.format,
-                        &serde_json::json!({
-                            "path": out.display().to_string(),
-                            "kind": manifest.kind,
-                            "version": manifest.version,
-                            "replacements": manifest.plan.replacements.len(),
-                        }),
-                    ),
-                };
-                Ok((output, 0))
-            }
-            PlanCommands::InspectScopedReplacementManifest { path } => {
-                let inspection = inspect_scoped_replacement_manifest(&path)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_scoped_replacement_manifest_inspection_text(&inspection)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &inspection),
-                };
-                Ok((output, 0))
-            }
-            PlanCommands::ValidateScopedReplacementManifest { paths } => {
-                let summary = validate_scoped_replacement_manifest_inputs_batch(&paths)?;
-                let output = match cli.format {
-                    OutputFormat::Text => {
-                        render_scoped_replacement_manifest_validation_text(&summary)
-                    }
-                    OutputFormat::Json => render_output(&cli.format, &summary),
-                };
-                let exit_code = if summary.manifests_failing == 0 { 0 } else { 1 };
-                Ok((output, exit_code))
-            }
-            PlanCommands::UpgradeScopedReplacementManifest {
-                path,
-                out,
-                in_place,
-            } => {
-                let output_path = match (out, in_place) {
-                    (Some(out), false) => out,
-                    (None, true) => path.clone(),
-                    (Some(_), true) => {
-                        bail!(
-                            "plan upgrade-scoped-replacement-manifest accepts either --out or --in-place, not both"
-                        );
-                    }
-                    (None, false) => {
-                        bail!(
-                            "plan upgrade-scoped-replacement-manifest requires either --out <path> or --in-place"
-                        );
-                    }
-                };
-                let report = upgrade_scoped_replacement_manifest(&path, &output_path)?;
-                let output = match cli.format {
-                    OutputFormat::Text => render_scoped_replacement_manifest_upgrade_text(&report),
-                    OutputFormat::Json => render_output(&cli.format, &report),
-                };
-                Ok((output, 0))
-            }
-        },
+            _ => unreachable!("inventory command should dispatch before project match"),
+        }
+        }
+        Commands::Plan { action } => command_exec_plan::execute_plan_command(&cli.format, action),
         Commands::Modify {
             path,
             delete_track,

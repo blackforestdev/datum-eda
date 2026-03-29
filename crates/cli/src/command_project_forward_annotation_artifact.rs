@@ -1,4 +1,5 @@
 use super::*;
+use eda_engine::ir::serialization::to_json_deterministic;
 
 const FORWARD_ANNOTATION_ARTIFACT_KIND: &str = "native_forward_annotation_proposal_artifact";
 const FORWARD_ANNOTATION_ARTIFACT_VERSION: u32 = 1;
@@ -245,6 +246,43 @@ pub(crate) fn inspect_forward_annotation_proposal_artifact(
     artifact_path: &Path,
 ) -> Result<NativeProjectForwardAnnotationArtifactInspectionView> {
     let loaded = load_forward_annotation_proposal_artifact(artifact_path)?;
+    Ok(build_forward_annotation_artifact_inspection_view(&loaded))
+}
+
+pub(crate) fn validate_forward_annotation_proposal_artifact(
+    artifact_path: &Path,
+) -> Result<NativeProjectForwardAnnotationArtifactValidationView> {
+    let contents = std::fs::read_to_string(artifact_path).with_context(|| {
+        format!(
+            "failed to read forward-annotation artifact {}",
+            artifact_path.display()
+        )
+    })?;
+    let loaded = load_forward_annotation_proposal_artifact(artifact_path)?;
+    let expected = format!(
+        "{}\n",
+        to_json_deterministic(&loaded.artifact)
+            .context("failed to serialize canonical forward-annotation artifact JSON")?
+    );
+    let inspection = build_forward_annotation_artifact_inspection_view(&loaded);
+    let canonical_bytes_match = contents == expected;
+    Ok(NativeProjectForwardAnnotationArtifactValidationView {
+        action: "validate_forward_annotation_proposal_artifact".to_string(),
+        artifact_path: inspection.artifact_path,
+        kind: inspection.kind,
+        source_version: inspection.source_version,
+        version: inspection.version,
+        migration_applied: inspection.migration_applied,
+        actions: inspection.actions,
+        reviews: inspection.reviews,
+        matches_expected: canonical_bytes_match,
+        canonical_bytes_match,
+    })
+}
+
+fn build_forward_annotation_artifact_inspection_view(
+    loaded: &LoadedForwardAnnotationProposalArtifact,
+) -> NativeProjectForwardAnnotationArtifactInspectionView {
     let add_component_actions = loaded
         .artifact
         .actions
@@ -276,14 +314,14 @@ pub(crate) fn inspect_forward_annotation_proposal_artifact(
         .filter(|review| review.decision == "rejected")
         .count();
 
-    Ok(NativeProjectForwardAnnotationArtifactInspectionView {
+    NativeProjectForwardAnnotationArtifactInspectionView {
         artifact_path: loaded.artifact_path.display().to_string(),
-        kind: loaded.artifact.kind,
+        kind: loaded.artifact.kind.clone(),
         source_version: loaded.source_version,
         version: loaded.artifact.version,
         migration_applied: false,
         project_uuid: loaded.artifact.project_uuid.to_string(),
-        project_name: loaded.artifact.project_name,
+        project_name: loaded.artifact.project_name.clone(),
         actions: loaded.artifact.actions.len(),
         reviews: loaded.artifact.reviews.len(),
         add_component_actions,
@@ -291,7 +329,7 @@ pub(crate) fn inspect_forward_annotation_proposal_artifact(
         update_component_actions,
         deferred_reviews,
         rejected_reviews,
-    })
+    }
 }
 
 pub(crate) fn compare_forward_annotation_proposal_artifact(

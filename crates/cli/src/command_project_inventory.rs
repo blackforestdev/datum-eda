@@ -1,7 +1,11 @@
 use std::collections::BTreeMap;
 use std::path::Path;
 
-use crate::{NativeProjectBomInspectionRowView, NativeProjectBomInspectionView};
+use crate::{
+    NativeProjectBomInspectionRowView, NativeProjectBomInspectionView,
+    NativeProjectBomValidationView, NativeProjectPnpInspectionRowView,
+    NativeProjectPnpInspectionView, NativeProjectPnpValidationView,
+};
 use anyhow::{Context, Result, bail};
 use eda_engine::board::PlacedPackage;
 
@@ -103,25 +107,7 @@ pub(crate) fn export_native_project_bom(
 ) -> Result<NativeProjectBomExportView> {
     let project = load_native_project(root)?;
     let components = query_native_project_board_components(root)?;
-    let mut csv = String::from(
-        "reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked\n",
-    );
-    for component in &components {
-        let row = [
-            csv_escape(&component.reference),
-            csv_escape(&component.value),
-            csv_escape(&component.part.to_string()),
-            csv_escape(&component.package.to_string()),
-            component.layer.to_string(),
-            component.position.x.to_string(),
-            component.position.y.to_string(),
-            component.rotation.to_string(),
-            component.locked.to_string(),
-        ]
-        .join(",");
-        csv.push_str(&row);
-        csv.push('\n');
-    }
+    let csv = render_expected_native_project_bom_csv_rows(&components);
     std::fs::write(output_path, csv)
         .with_context(|| format!("failed to write {}", output_path.display()))?;
     Ok(NativeProjectBomExportView {
@@ -129,6 +115,26 @@ pub(crate) fn export_native_project_bom(
         project_root: project.root.display().to_string(),
         bom_path: output_path.display().to_string(),
         rows: components.len(),
+    })
+}
+
+pub(crate) fn validate_native_project_bom(
+    root: &Path,
+    bom_path: &Path,
+) -> Result<NativeProjectBomValidationView> {
+    let project = load_native_project(root)?;
+    let components = query_native_project_board_components(root)?;
+    let expected = render_expected_native_project_bom_csv_rows(&components);
+    let actual = std::fs::read_to_string(bom_path)
+        .with_context(|| format!("failed to read {}", bom_path.display()))?;
+    Ok(NativeProjectBomValidationView {
+        action: "validate_bom".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        bom_path: bom_path.display().to_string(),
+        expected_bytes: expected.len(),
+        actual_bytes: actual.len(),
+        matches_expected: actual == expected,
     })
 }
 
@@ -237,31 +243,7 @@ pub(crate) fn export_native_project_pnp(
 ) -> Result<NativeProjectPnpExportView> {
     let project = load_native_project(root)?;
     let components = query_native_project_board_components(root)?;
-    let mut csv = String::from(
-        "reference,x_nm,y_nm,rotation_deg,layer,side,package_uuid,part_uuid,value,locked\n",
-    );
-    for component in &components {
-        let side = if component.layer <= 16 {
-            "top"
-        } else {
-            "bottom"
-        };
-        let row = [
-            csv_escape(&component.reference),
-            component.position.x.to_string(),
-            component.position.y.to_string(),
-            component.rotation.to_string(),
-            component.layer.to_string(),
-            side.to_string(),
-            csv_escape(&component.package.to_string()),
-            csv_escape(&component.part.to_string()),
-            csv_escape(&component.value),
-            component.locked.to_string(),
-        ]
-        .join(",");
-        csv.push_str(&row);
-        csv.push('\n');
-    }
+    let csv = render_expected_native_project_pnp_csv_rows(&components);
     std::fs::write(output_path, csv)
         .with_context(|| format!("failed to write {}", output_path.display()))?;
     Ok(NativeProjectPnpExportView {
@@ -269,6 +251,26 @@ pub(crate) fn export_native_project_pnp(
         project_root: project.root.display().to_string(),
         pnp_path: output_path.display().to_string(),
         rows: components.len(),
+    })
+}
+
+pub(crate) fn validate_native_project_pnp(
+    root: &Path,
+    pnp_path: &Path,
+) -> Result<NativeProjectPnpValidationView> {
+    let project = load_native_project(root)?;
+    let components = query_native_project_board_components(root)?;
+    let expected = render_expected_native_project_pnp_csv_rows(&components);
+    let actual = std::fs::read_to_string(pnp_path)
+        .with_context(|| format!("failed to read {}", pnp_path.display()))?;
+    Ok(NativeProjectPnpValidationView {
+        action: "validate_pnp".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        pnp_path: pnp_path.display().to_string(),
+        expected_bytes: expected.len(),
+        actual_bytes: actual.len(),
+        matches_expected: actual == expected,
     })
 }
 
@@ -346,6 +348,30 @@ pub(crate) fn compare_native_project_pnp(
     })
 }
 
+pub(crate) fn inspect_native_project_pnp(pnp_path: &Path) -> Result<NativeProjectPnpInspectionView> {
+    let rows = parse_pnp_csv(pnp_path)?
+        .into_iter()
+        .map(|row| NativeProjectPnpInspectionRowView {
+            reference: row.reference,
+            x_nm: row.x_nm,
+            y_nm: row.y_nm,
+            rotation_deg: row.rotation_deg,
+            layer: row.layer,
+            side: row.side,
+            package_uuid: row.package_uuid,
+            part_uuid: row.part_uuid,
+            value: row.value,
+            locked: row.locked,
+        })
+        .collect::<Vec<_>>();
+    Ok(NativeProjectPnpInspectionView {
+        action: "inspect_pnp".to_string(),
+        pnp_path: pnp_path.display().to_string(),
+        row_count: rows.len(),
+        rows,
+    })
+}
+
 fn component_to_bom_row(component: PlacedPackage) -> NativeBomRow {
     NativeBomRow {
         reference: component.reference,
@@ -358,6 +384,28 @@ fn component_to_bom_row(component: PlacedPackage) -> NativeBomRow {
         rotation_deg: component.rotation,
         locked: component.locked,
     }
+}
+
+fn render_expected_native_project_bom_csv_rows(components: &[PlacedPackage]) -> String {
+    let mut csv =
+        String::from("reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked\n");
+    for component in components {
+        let row = [
+            csv_escape(&component.reference),
+            csv_escape(&component.value),
+            csv_escape(&component.part.to_string()),
+            csv_escape(&component.package.to_string()),
+            component.layer.to_string(),
+            component.position.x.to_string(),
+            component.position.y.to_string(),
+            component.rotation.to_string(),
+            component.locked.to_string(),
+        ]
+        .join(",");
+        csv.push_str(&row);
+        csv.push('\n');
+    }
+    csv
 }
 
 fn component_to_pnp_row(component: PlacedPackage) -> NativePnpRow {
@@ -377,6 +425,35 @@ fn component_to_pnp_row(component: PlacedPackage) -> NativePnpRow {
         value: component.value,
         locked: component.locked,
     }
+}
+
+fn render_expected_native_project_pnp_csv_rows(components: &[PlacedPackage]) -> String {
+    let mut csv = String::from(
+        "reference,x_nm,y_nm,rotation_deg,layer,side,package_uuid,part_uuid,value,locked\n",
+    );
+    for component in components {
+        let side = if component.layer <= 16 {
+            "top"
+        } else {
+            "bottom"
+        };
+        let row = [
+            csv_escape(&component.reference),
+            component.position.x.to_string(),
+            component.position.y.to_string(),
+            component.rotation.to_string(),
+            component.layer.to_string(),
+            side.to_string(),
+            csv_escape(&component.package.to_string()),
+            csv_escape(&component.part.to_string()),
+            csv_escape(&component.value),
+            component.locked.to_string(),
+        ]
+        .join(",");
+        csv.push_str(&row);
+        csv.push('\n');
+    }
+    csv
 }
 
 fn parse_bom_csv(path: &Path) -> Result<Vec<NativeBomRow>> {

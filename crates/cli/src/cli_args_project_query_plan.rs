@@ -1,9 +1,12 @@
 use super::*;
+use crate::cli_args::cli_args_board_component::BoardComponentArgs;
 
 #[derive(Subcommand)]
 pub(crate) enum NativeProjectQueryCommands {
     /// Aggregated native project summary
     Summary,
+    /// Current resolved native project pool refs
+    Pools,
     /// Current native design rules payload
     DesignRules,
     /// Current native schematic symbols
@@ -62,6 +65,9 @@ pub(crate) enum NativeProjectQueryCommands {
     BoardStackup,
     /// Current native board placed packages/components
     BoardComponents,
+    /// Current native board component for one component UUID
+    #[command(name = "board-component")]
+    BoardComponent(BoardComponentArgs),
     /// Current persisted 3D model refs for one native board component
     #[command(name = "board-component-models-3d")]
     BoardComponentModels3d(BoardComponentModels3dArgs),
@@ -96,8 +102,22 @@ pub(crate) enum NativeProjectQueryCommands {
     BoardPads,
     /// Current native board nets
     BoardNets,
+    /// Current native board net for one net UUID
+    #[command(name = "board-net")]
+    BoardNet {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+    },
     /// Current native board net classes
     BoardNetClasses,
+    /// Current native board net class for one net-class UUID
+    #[command(name = "board-net-class")]
+    BoardNetClass {
+        /// Net class UUID
+        #[arg(long = "net-class")]
+        net_class: Uuid,
+    },
     /// Current native board dimensions
     BoardDimensions,
 }
@@ -141,10 +161,28 @@ pub(crate) enum PlanCommands {
         /// Manifest path
         path: PathBuf,
     },
+    /// Inspect a scoped replacement manifest artifact without consulting live board/library inputs
+    InspectScopedReplacementManifestArtifact {
+        /// Manifest path
+        path: PathBuf,
+    },
     /// Validate a scoped replacement manifest for drift/missing inputs
     ValidateScopedReplacementManifest {
         /// Manifest path(s)
         paths: Vec<PathBuf>,
+    },
+    /// Validate a scoped replacement manifest artifact against the supported schema/version and current artifact encoding
+    ValidateScopedReplacementManifestArtifact {
+        /// Manifest path
+        path: PathBuf,
+    },
+    /// Compare one scoped replacement manifest artifact against another artifact semantically after normalization
+    CompareScopedReplacementManifestArtifact {
+        /// Reference manifest path
+        path: PathBuf,
+        /// Artifact path to compare
+        #[arg(long = "artifact")]
+        artifact: PathBuf,
     },
     /// Rewrite a scoped replacement manifest into the current schema version
     UpgradeScopedReplacementManifest {

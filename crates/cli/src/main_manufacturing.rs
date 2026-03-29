@@ -95,6 +95,29 @@ pub(crate) struct NativeProjectManufacturingManifestView {
     pub(crate) entries: Vec<NativeProjectManufacturingManifestEntryView>,
 }
 
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectManufacturingInspectionEntryView {
+    pub(crate) kind: String,
+    pub(crate) filename: String,
+    pub(crate) contract: String,
+    pub(crate) present: bool,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectManufacturingInspectionView {
+    pub(crate) action: String,
+    pub(crate) project_root: String,
+    pub(crate) board_path: String,
+    pub(crate) output_dir: String,
+    pub(crate) prefix: String,
+    pub(crate) expected_count: usize,
+    pub(crate) present_count: usize,
+    pub(crate) missing_count: usize,
+    pub(crate) extra_count: usize,
+    pub(crate) entries: Vec<NativeProjectManufacturingInspectionEntryView>,
+    pub(crate) extra: Vec<String>,
+}
+
 pub(crate) fn render_native_project_manufacturing_report_text(
     report: &NativeProjectManufacturingReportView,
 ) -> String {
@@ -257,6 +280,38 @@ pub(crate) fn render_native_project_manufacturing_manifest_text(
                 "  - {}:{}:{}",
                 entry.kind, entry.contract, entry.filename
             ));
+        }
+    }
+    lines.join("\n")
+}
+
+pub(crate) fn render_native_project_manufacturing_inspection_text(
+    report: &NativeProjectManufacturingInspectionView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("output_dir: {}", report.output_dir),
+        format!("prefix: {}", report.prefix),
+        format!("expected_count: {}", report.expected_count),
+        format!("present_count: {}", report.present_count),
+        format!("missing_count: {}", report.missing_count),
+        format!("extra_count: {}", report.extra_count),
+    ];
+    if !report.entries.is_empty() {
+        lines.push("entries:".to_string());
+        for entry in &report.entries {
+            lines.push(format!(
+                "  - {}:{}:{}:{}",
+                entry.kind, entry.contract, entry.filename, entry.present
+            ));
+        }
+    }
+    if !report.extra.is_empty() {
+        lines.push("extra:".to_string());
+        for entry in &report.extra {
+            lines.push(format!("  {entry}"));
         }
     }
     lines.join("\n")

@@ -25,6 +25,7 @@ pub(super) use super::super::{
     NativeProjectForwardAnnotationArtifactComparisonView,
     NativeProjectForwardAnnotationArtifactFilterView,
     NativeProjectForwardAnnotationArtifactInspectionView,
+    NativeProjectForwardAnnotationArtifactValidationView,
     NativeProjectForwardAnnotationArtifactReviewImportView,
     NativeProjectForwardAnnotationArtifactReviewReplaceView,
     NativeProjectForwardAnnotationAuditView, NativeProjectForwardAnnotationBatchApplyReportView,

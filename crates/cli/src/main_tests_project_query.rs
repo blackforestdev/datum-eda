@@ -202,6 +202,73 @@ fn project_query_summary_reports_native_scaffold_counts() {
 }
 
 #[test]
+fn project_query_pools_reports_resolved_pool_refs_directly() {
+    let root = unique_project_root("datum-eda-cli-project-query-pools");
+    create_native_project(&root, Some("Query Pools Demo".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let relative_pool = root.join("pool");
+    std::fs::create_dir_all(&relative_pool).expect("relative pool dir should exist");
+    let absolute_pool = unique_project_root("datum-eda-cli-project-query-pools-abs-pool");
+    std::fs::create_dir_all(&absolute_pool).expect("absolute pool dir should exist");
+
+    let project_json = root.join("project.json");
+    let mut manifest: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(&project_json).expect("project.json should read"),
+    )
+    .expect("project.json should parse");
+    manifest["pools"] = serde_json::json!([
+        { "path": "pool", "priority": 1 },
+        { "path": absolute_pool.to_str().unwrap(), "priority": 2 }
+    ]);
+    std::fs::write(
+        &project_json,
+        format!(
+            "{}\n",
+            to_json_deterministic(&manifest).expect("canonical serialization should succeed")
+        ),
+    )
+    .expect("project.json should write");
+
+    let text_output = execute(
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "pools"])
+            .expect("CLI should parse"),
+    )
+    .expect("project query pools should succeed");
+    assert!(text_output.contains("pool"));
+    assert!(text_output.contains(&relative_pool.display().to_string()));
+    assert!(text_output.contains(&absolute_pool.display().to_string()));
+
+    let json_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "pools",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("project query pools should succeed");
+    let report: serde_json::Value =
+        serde_json::from_str(&json_output).expect("project query pools JSON should parse");
+    assert_eq!(report.as_array().unwrap().len(), 2);
+    assert_eq!(report[0]["manifest_path"], "pool");
+    assert_eq!(report[0]["priority"], 1);
+    assert_eq!(report[0]["resolved_path"], relative_pool.display().to_string());
+    assert_eq!(report[0]["exists"], true);
+    assert_eq!(report[1]["manifest_path"], absolute_pool.display().to_string());
+    assert_eq!(report[1]["priority"], 2);
+    assert_eq!(report[1]["resolved_path"], absolute_pool.display().to_string());
+    assert_eq!(report[1]["exists"], true);
+
+    let _ = std::fs::remove_dir_all(&root);
+    let _ = std::fs::remove_dir_all(&absolute_pool);
+}
+
+#[test]
 fn project_query_design_rules_reports_native_rules_payload() {
     let root = unique_project_root("datum-eda-cli-project-query-rules");
     create_native_project(&root, Some("Rules Demo".to_string()))

@@ -57,3 +57,15 @@ pub(crate) struct ManifestManufacturingSetArgs {
     #[arg(long)]
     pub(crate) prefix: Option<String>,
 }
+
+#[derive(Args)]
+pub(crate) struct InspectManufacturingSetArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Directory containing the current supported manufacturing set
+    #[arg(long = "output-dir")]
+    pub(crate) output_dir: PathBuf,
+    /// Optional artifact filename prefix; defaults to the board name
+    #[arg(long)]
+    pub(crate) prefix: Option<String>,
+}

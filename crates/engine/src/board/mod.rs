@@ -10,11 +10,13 @@ mod net_graph;
 mod pad;
 mod polygon;
 mod rule_set;
+mod stackup;
 mod text;
 use net_graph::{BoardNetGraph, PadPoint, nearest_pin_pair, segment_length_nm};
 
 pub use pad::{PadAperture, PadShape, PlacedPad};
 pub use rule_set::RuleSet;
+pub use stackup::{Stackup, StackupInfo, StackupLayer, StackupLayerType};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Board {
@@ -101,29 +103,6 @@ pub struct NetClass {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct Stackup {
-    pub layers: Vec<StackupLayer>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct StackupLayer {
-    pub id: LayerId,
-    pub name: String,
-    pub layer_type: StackupLayerType,
-    pub thickness_nm: i64,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum StackupLayerType {
-    Copper,
-    Dielectric,
-    SolderMask,
-    Silkscreen,
-    Paste,
-    Mechanical,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Keepout {
     pub uuid: Uuid,
     pub polygon: Polygon,
@@ -200,11 +179,6 @@ pub struct BoardSummary {
     pub layer_count: usize,
     pub component_count: usize,
     pub net_count: usize,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct StackupInfo {
-    pub layers: Vec<StackupLayer>,
 }
 
 impl Board {

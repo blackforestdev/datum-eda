@@ -165,8 +165,9 @@ Current live slice:
 - Manufacturing outputs cover BOM/PnP, drill/Excellon, and the current Gerber
   outline/copper/soldermask/silkscreen/paste/mechanical subsets with
   export/inspect/validate/compare flows.
-- BOM currently supports export/inspect/compare under one deterministic CSV
-  contract from persisted board-component state.
+- Manufacturing-set workflow now also includes a directory inspection step
+  against the deterministic expected artifact list, separate from validate and
+  compare.
 - Package-linked persisted subset is currently limited to silkscreen non-text
   primitives, courtyard on fixed mechanical layer `41`, resolved package pads
   in `component_pads`, and `models_3d`. Package pads only carry circle/rect
@@ -178,44 +179,10 @@ Current live slice:
   standalone CSV drill export/inspect/validate/compare remains via-only. The
   current copper/soldermask/paste Gerber slices consume only the
   explicit-aperture subset of those persisted package pads; aperture-less
-  package pads remain out of manufacturing claims.
-  `eda project report-manufacturing <dir> [--prefix <text>]` summarizes that
-  currently supported persisted-state manufacturing surface without writing a
-  bundle artifact, including BOM/PnP counts, drill capability counts, and the
-  planned Gerber artifact filenames.
-  `eda project export-manufacturing-set <dir> --output-dir <path> [--prefix
-  <text>]` writes the same currently supported persisted-state manufacturing
-  subset into one directory by composing the existing BOM, PnP, drill, and
-  Gerber set exporters.
-  `eda project validate-manufacturing-set <dir> --output-dir <path> [--prefix
-  <text>]` validates that same directory-level subset with semantic BOM/PnP
-  checks, deterministic CSV drill comparison, strict Excellon validation, and
-  per-artifact Gerber validation.
-  `eda project compare-manufacturing-set <dir> --output-dir <path> [--prefix
-  <text>]` semantically compares that same directory-level subset with
-  semantic BOM/PnP, Excellon, and Gerber comparison plus deterministic CSV
-  drill comparison.
-  `eda project manifest-manufacturing-set <dir> --output-dir <path> [--prefix
-  <text>]` reports the deterministic expected directory-level artifact set for
-  that same persisted-state subset, including artifact kind, comparison
-  contract, and filename in stable order, without writing files.
-  `eda project query <dir> board-component-models-3d --component <uuid>`
-  exposes the persisted `component_models_3d` refs for one component
-  directly, rather than only aggregate or per-component counts.
-  `eda project query <dir> board-component-pads --component <uuid>` exposes
-  the persisted `component_pads` subset for one component directly,
-  including any optional source-backed drill/aperture fields already
-  materialized into native board state.
-  `eda project query <dir> board-component-silkscreen --component <uuid>`
-  exposes the persisted package-linked silkscreen subset for one component
-  directly, bucketed by texts, lines, arcs, circles, polygons, and
-  polylines.
-  `eda project query <dir> board-component-mechanical --component <uuid>`
-  exposes the persisted package-linked mechanical subset for one component
-  directly, bucketed by texts, lines, arcs, circles, polygons, and
-  polylines.
-  `component_silkscreen_texts` remains schema-only and empty by design in this
-  slice.
+  package pads remain out of manufacturing claims. Detailed current M4 command
+  coverage, including manufacturing-set workflow and direct per-component
+  package-linked query surfaces, is tracked in
+  `docs/workflows/m4_live_slice.md`.
 - Detailed current command ledger is maintained in
   `docs/workflows/m4_live_slice.md`.
 - Status authority for this slice remains `specs/progress/m4_details.md`.

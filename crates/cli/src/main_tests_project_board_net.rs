@@ -19,6 +19,21 @@ fn board_nets_query_cli(root: &Path) -> Cli {
     .expect("CLI should parse")
 }
 
+fn board_net_query_cli(root: &Path, net_uuid: Uuid) -> Cli {
+    Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "board-net",
+        "--net",
+        &net_uuid.to_string(),
+    ])
+    .expect("CLI should parse")
+}
+
 #[test]
 fn project_board_net_mutations_round_trip_through_native_query() {
     let root = unique_project_root("datum-eda-cli-project-board-net");
@@ -209,6 +224,67 @@ fn project_query_board_nets_reads_existing_native_board_file() {
     assert_eq!(nets[0].uuid, net_uuid);
     assert_eq!(nets[0].name, "GND");
     assert_eq!(nets[0].class, class_uuid);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_query_board_net_reads_one_existing_native_board_net() {
+    let root = unique_project_root("datum-eda-cli-project-board-net-single-query");
+    create_native_project(&root, Some("Board Net Single Query Demo".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let class_uuid = Uuid::new_v4();
+    let net_uuid = Uuid::new_v4();
+    let board_json = root.join("board/board.json");
+    std::fs::write(
+        &board_json,
+        format!(
+            "{}\n",
+            to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "uuid": Uuid::new_v4(),
+                "name": "Board Net Single Query Demo Board",
+                "stackup": { "layers": [] },
+                "outline": { "vertices": [], "closed": true },
+                "packages": {},
+                "tracks": {},
+                "vias": {},
+                "zones": {},
+                "nets": {
+                    net_uuid.to_string(): {
+                        "uuid": net_uuid,
+                        "name": "AGND",
+                        "class": class_uuid
+                    }
+                },
+                "net_classes": {
+                    class_uuid.to_string(): {
+                        "uuid": class_uuid,
+                        "name": "Default",
+                        "clearance": 150000,
+                        "track_width": 200000,
+                        "via_drill": 300000,
+                        "via_diameter": 600000,
+                        "diffpair_width": 0,
+                        "diffpair_gap": 0
+                    }
+                },
+                "keepouts": [],
+                "dimensions": [],
+                "texts": []
+            }))
+            .expect("canonical serialization should succeed")
+        ),
+    )
+    .expect("board file should write");
+
+    let output =
+        execute(board_net_query_cli(&root, net_uuid)).expect("board net query should succeed");
+    let net: Net = serde_json::from_str(&output).expect("query output should parse");
+    assert_eq!(net.uuid, net_uuid);
+    assert_eq!(net.name, "AGND");
+    assert_eq!(net.class, class_uuid);
 
     let _ = std::fs::remove_dir_all(&root);
 }

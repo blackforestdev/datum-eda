@@ -225,6 +225,24 @@ pub(super) fn render_native_forward_annotation_artifact_inspection_text(
     .join("\n")
 }
 
+pub(super) fn render_native_forward_annotation_artifact_validation_text(
+    report: &NativeProjectForwardAnnotationArtifactValidationView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("artifact_path: {}", report.artifact_path),
+        format!("kind: {}", report.kind),
+        format!("source_version: {}", report.source_version),
+        format!("version: {}", report.version),
+        format!("migration_applied: {}", report.migration_applied),
+        format!("actions: {}", report.actions),
+        format!("reviews: {}", report.reviews),
+        format!("matches_expected: {}", report.matches_expected),
+        format!("canonical_bytes_match: {}", report.canonical_bytes_match),
+    ]
+    .join("\n")
+}
+
 pub(super) fn render_native_forward_annotation_artifact_comparison_text(
     report: &NativeProjectForwardAnnotationArtifactComparisonView,
 ) -> String {

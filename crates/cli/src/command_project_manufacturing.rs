@@ -6,6 +6,7 @@ use std::collections::BTreeSet;
 use crate::{
     NativeProjectManufacturingArtifactView, NativeProjectManufacturingComparisonView,
     NativeProjectManufacturingExportView, NativeProjectManufacturingManifestEntryView,
+    NativeProjectManufacturingInspectionEntryView, NativeProjectManufacturingInspectionView,
     NativeProjectManufacturingManifestView, NativeProjectManufacturingReportView,
     NativeProjectManufacturingValidationView,
 };
@@ -117,6 +118,64 @@ pub(crate) fn manifest_native_project_manufacturing_set(
         prefix,
         expected_count: entries.len(),
         entries,
+    })
+}
+
+pub(crate) fn inspect_native_project_manufacturing_set(
+    root: &Path,
+    output_dir: &Path,
+    prefix_override: Option<&str>,
+) -> Result<NativeProjectManufacturingInspectionView> {
+    let project = load_native_project(root)?;
+    let (prefix, entries) = native_project_manufacturing_manifest_entries(root, prefix_override)?;
+    let expected = entries
+        .iter()
+        .map(|entry| entry.filename.clone())
+        .collect::<Vec<_>>();
+    let expected_set = expected.iter().cloned().collect::<BTreeSet<_>>();
+
+    let mut present = BTreeSet::new();
+    for entry in std::fs::read_dir(output_dir)
+        .with_context(|| format!("failed to read {}", output_dir.display()))?
+    {
+        let entry = entry.with_context(|| format!("failed to read {}", output_dir.display()))?;
+        if entry
+            .file_type()
+            .with_context(|| format!("failed to inspect {}", entry.path().display()))?
+            .is_file()
+        {
+            present.insert(entry.file_name().to_string_lossy().into_owned());
+        }
+    }
+
+    let inspection_entries = entries
+        .into_iter()
+        .map(|entry| NativeProjectManufacturingInspectionEntryView {
+            present: present.contains(&entry.filename),
+            kind: entry.kind,
+            filename: entry.filename,
+            contract: entry.contract,
+        })
+        .collect::<Vec<_>>();
+    let present_count = inspection_entries.iter().filter(|entry| entry.present).count();
+    let missing_count = inspection_entries.len() - present_count;
+    let extra = present
+        .into_iter()
+        .filter(|filename| !expected_set.contains(filename))
+        .collect::<Vec<_>>();
+
+    Ok(NativeProjectManufacturingInspectionView {
+        action: "inspect_manufacturing_set".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        output_dir: output_dir.display().to_string(),
+        prefix,
+        expected_count: inspection_entries.len(),
+        present_count,
+        missing_count,
+        extra_count: extra.len(),
+        entries: inspection_entries,
+        extra,
     })
 }
 

@@ -60,6 +60,18 @@ pub(crate) fn query_native_project_board_nets(root: &Path) -> Result<Vec<Net>> {
     Ok(nets)
 }
 
+pub(crate) fn query_native_project_board_net(root: &Path, net_uuid: Uuid) -> Result<Net> {
+    let project = load_native_project(root)?;
+    let key = net_uuid.to_string();
+    let entry = project
+        .board
+        .nets
+        .get(&key)
+        .cloned()
+        .with_context(|| format!("board net not found in native project: {net_uuid}"))?;
+    serde_json::from_value(entry).context("failed to parse board net")
+}
+
 pub(crate) fn place_native_project_board_net(
     root: &Path,
     name: String,

@@ -54,6 +54,17 @@ pub(crate) struct NativeProjectBomInspectionView {
 }
 
 #[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectBomValidationView {
+    pub(crate) action: String,
+    pub(crate) project_root: String,
+    pub(crate) board_path: String,
+    pub(crate) bom_path: String,
+    pub(crate) expected_bytes: usize,
+    pub(crate) actual_bytes: usize,
+    pub(crate) matches_expected: bool,
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectPnpExportView {
     pub(crate) action: String,
     pub(crate) project_root: String,
@@ -83,6 +94,39 @@ pub(crate) struct NativeProjectPnpComparisonView {
     pub(crate) missing: Vec<String>,
     pub(crate) extra: Vec<String>,
     pub(crate) drift: Vec<NativeProjectPnpDriftView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectPnpInspectionRowView {
+    pub(crate) reference: String,
+    pub(crate) x_nm: i64,
+    pub(crate) y_nm: i64,
+    pub(crate) rotation_deg: i32,
+    pub(crate) layer: i32,
+    pub(crate) side: String,
+    pub(crate) package_uuid: String,
+    pub(crate) part_uuid: String,
+    pub(crate) value: String,
+    pub(crate) locked: bool,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectPnpInspectionView {
+    pub(crate) action: String,
+    pub(crate) pnp_path: String,
+    pub(crate) row_count: usize,
+    pub(crate) rows: Vec<NativeProjectPnpInspectionRowView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectPnpValidationView {
+    pub(crate) action: String,
+    pub(crate) project_root: String,
+    pub(crate) board_path: String,
+    pub(crate) pnp_path: String,
+    pub(crate) expected_bytes: usize,
+    pub(crate) actual_bytes: usize,
+    pub(crate) matches_expected: bool,
 }
 
 pub(crate) fn render_native_project_bom_export_text(report: &NativeProjectBomExportView) -> String {
@@ -169,6 +213,21 @@ pub(crate) fn render_native_project_bom_inspection_text(
     lines.join("\n")
 }
 
+pub(crate) fn render_native_project_bom_validation_text(
+    report: &NativeProjectBomValidationView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("bom_path: {}", report.bom_path),
+        format!("expected_bytes: {}", report.expected_bytes),
+        format!("actual_bytes: {}", report.actual_bytes),
+        format!("matches_expected: {}", report.matches_expected),
+    ]
+    .join("\n")
+}
+
 pub(crate) fn render_native_project_pnp_export_text(report: &NativeProjectPnpExportView) -> String {
     [
         format!("action: {}", report.action),
@@ -223,4 +282,48 @@ pub(crate) fn render_native_project_pnp_comparison_text(
         }
     }
     lines.join("\n")
+}
+
+pub(crate) fn render_native_project_pnp_inspection_text(
+    report: &NativeProjectPnpInspectionView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("pnp_path: {}", report.pnp_path),
+        format!("row_count: {}", report.row_count),
+    ];
+    if !report.rows.is_empty() {
+        lines.push("rows:".to_string());
+        for row in &report.rows {
+            lines.push(format!(
+                "- reference={} x_nm={} y_nm={} rotation_deg={} layer={} side={} package_uuid={} part_uuid={} value={} locked={}",
+                row.reference,
+                row.x_nm,
+                row.y_nm,
+                row.rotation_deg,
+                row.layer,
+                row.side,
+                row.package_uuid,
+                row.part_uuid,
+                row.value,
+                row.locked
+            ));
+        }
+    }
+    lines.join("\n")
+}
+
+pub(crate) fn render_native_project_pnp_validation_text(
+    report: &NativeProjectPnpValidationView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("pnp_path: {}", report.pnp_path),
+        format!("expected_bytes: {}", report.expected_bytes),
+        format!("actual_bytes: {}", report.actual_bytes),
+        format!("matches_expected: {}", report.matches_expected),
+    ]
+    .join("\n")
 }

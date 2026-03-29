@@ -81,6 +81,19 @@ pub(super) fn execute_manufacturing_command(
             };
             Ok((output, 0))
         }
+        ProjectCommands::InspectManufacturingSet(InspectManufacturingSetArgs {
+            path,
+            output_dir,
+            prefix,
+        }) => {
+            let report =
+                inspect_native_project_manufacturing_set(&path, &output_dir, prefix.as_deref())?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_manufacturing_inspection_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
         _ => unreachable!("non-manufacturing command passed to manufacturing dispatcher"),
     }
 }

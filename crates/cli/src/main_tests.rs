@@ -23,6 +23,8 @@ mod main_tests_project_bom_compare;
 mod main_tests_project_bom_export;
 #[path = "main_tests_project_bom_inspect.rs"]
 mod main_tests_project_bom_inspect;
+#[path = "main_tests_project_bom_validate.rs"]
+mod main_tests_project_bom_validate;
 #[path = "main_tests_project_drill_compare.rs"]
 mod main_tests_project_drill_compare;
 #[path = "main_tests_project_drill_export.rs"]
@@ -109,6 +111,8 @@ mod main_tests_project_manufacturing;
 mod main_tests_project_manufacturing_compare;
 #[path = "main_tests_project_manufacturing_export.rs"]
 mod main_tests_project_manufacturing_export;
+#[path = "main_tests_project_manufacturing_inspect.rs"]
+mod main_tests_project_manufacturing_inspect;
 #[path = "main_tests_project_manufacturing_manifest.rs"]
 mod main_tests_project_manufacturing_manifest;
 #[path = "main_tests_project_manufacturing_validate.rs"]
@@ -117,6 +121,10 @@ mod main_tests_project_manufacturing_validate;
 mod main_tests_project_pnp_compare;
 #[path = "main_tests_project_pnp_export.rs"]
 mod main_tests_project_pnp_export;
+#[path = "main_tests_project_pnp_inspect.rs"]
+mod main_tests_project_pnp_inspect;
+#[path = "main_tests_project_pnp_validate.rs"]
+mod main_tests_project_pnp_validate;
 
 #[allow(clippy::too_many_arguments)]
 fn modify_board(
@@ -187,10 +195,18 @@ mod main_tests_plan_apply_legacy_manifest_text;
 mod main_tests_plan_apply_text;
 #[path = "main_tests_plan_apply_validate.rs"]
 mod main_tests_plan_apply_validate;
+#[path = "main_tests_plan_apply_validate_artifact.rs"]
+mod main_tests_plan_apply_validate_artifact;
+#[path = "main_tests_plan_apply_compare_artifact.rs"]
+mod main_tests_plan_apply_compare_artifact;
+#[path = "main_tests_plan_apply_inspect_artifact.rs"]
+mod main_tests_plan_apply_inspect_artifact;
 #[path = "main_tests_project_board_check.rs"]
 mod main_tests_project_board_check;
 #[path = "main_tests_project_board_component.rs"]
 mod main_tests_project_board_component;
+#[path = "main_tests_project_board_component_query_single.rs"]
+mod main_tests_project_board_component_query_single;
 #[path = "main_tests_project_board_component_mechanical.rs"]
 mod main_tests_project_board_component_mechanical;
 #[path = "main_tests_project_board_component_models_3d.rs"]
@@ -261,6 +277,8 @@ mod main_tests_project_forward_annotation_artifact_review_replace;
 mod main_tests_project_forward_annotation_batch_apply;
 #[path = "main_tests_project_forward_annotation_export_inspect.rs"]
 mod main_tests_project_forward_annotation_export_inspect;
+#[path = "main_tests_project_forward_annotation_artifact_validate.rs"]
+mod main_tests_project_forward_annotation_artifact_validate;
 #[path = "main_tests_project_forward_annotation_export_selection.rs"]
 mod main_tests_project_forward_annotation_export_selection;
 #[path = "main_tests_project_forward_annotation_proposal.rs"]

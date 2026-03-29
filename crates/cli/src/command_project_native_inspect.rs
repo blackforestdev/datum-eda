@@ -3,27 +3,14 @@ use std::path::Path;
 use anyhow::Result;
 
 use super::{
-    NativeProjectInspectPoolRefView, NativeProjectInspectReportView,
+    NativeProjectInspectReportView, collect_native_project_pool_ref_views,
     component_has_persisted_mechanical, component_has_persisted_silkscreen, component_model_count,
-    component_package_pad_count, load_native_project, resolve_native_project_pool_path,
+    component_package_pad_count, load_native_project,
 };
 
 pub(crate) fn inspect_native_project(root: &Path) -> Result<NativeProjectInspectReportView> {
     let project = load_native_project(root)?;
-    let pool_refs = project
-        .manifest
-        .pools
-        .iter()
-        .map(|pool_ref| {
-            let resolved_path = resolve_native_project_pool_path(&project.root, &pool_ref.path);
-            NativeProjectInspectPoolRefView {
-                manifest_path: pool_ref.path.clone(),
-                priority: pool_ref.priority,
-                resolved_path: resolved_path.display().to_string(),
-                exists: resolved_path.exists(),
-            }
-        })
-        .collect();
+    let pool_refs = collect_native_project_pool_ref_views(&project);
 
     Ok(NativeProjectInspectReportView {
         project_root: project.root.display().to_string(),

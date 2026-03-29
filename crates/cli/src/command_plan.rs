@@ -18,6 +18,46 @@ pub(super) struct LoadedScopedReplacementManifest {
     pub(super) source_version: u32,
 }
 
+#[derive(Debug, Clone, Serialize)]
+pub(super) struct ScopedReplacementPlanManifestArtifactValidationReport {
+    pub(super) manifest_path: PathBuf,
+    pub(super) kind: String,
+    pub(super) source_version: u32,
+    pub(super) version: u32,
+    pub(super) migration_applied: bool,
+    pub(super) replacements: usize,
+    pub(super) matches_expected: bool,
+    pub(super) canonical_bytes_match: bool,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(super) struct ScopedReplacementPlanManifestArtifactInspection {
+    pub(super) manifest_path: PathBuf,
+    pub(super) kind: String,
+    pub(super) source_version: u32,
+    pub(super) version: u32,
+    pub(super) migration_applied: bool,
+    pub(super) replacements: usize,
+    pub(super) board_path: PathBuf,
+    pub(super) libraries: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(super) struct ScopedReplacementPlanManifestArtifactComparisonReport {
+    pub(super) manifest_path: PathBuf,
+    pub(super) artifact_path: PathBuf,
+    pub(super) manifest_source_version: u32,
+    pub(super) artifact_source_version: u32,
+    pub(super) manifest_version: u32,
+    pub(super) artifact_version: u32,
+    pub(super) manifest_migration_applied: bool,
+    pub(super) artifact_migration_applied: bool,
+    pub(super) manifest_replacements: usize,
+    pub(super) artifact_replacements: usize,
+    pub(super) matches_artifact: bool,
+    pub(super) drift_fields: Vec<String>,
+}
+
 pub(super) fn parse_scoped_replacement_override_arg(
     value: &str,
 ) -> Result<ScopedComponentReplacementOverride> {
@@ -213,6 +253,148 @@ pub(super) fn render_scoped_replacement_manifest_upgrade_text(
         format!("version: {}", report.version),
         format!("migration_applied: {}", report.migration_applied),
         format!("replacements: {}", report.replacements),
+    ]
+    .join("\n")
+}
+
+pub(super) fn validate_scoped_replacement_manifest_artifact(
+    manifest_path: &Path,
+) -> Result<ScopedReplacementPlanManifestArtifactValidationReport> {
+    let contents = std::fs::read_to_string(manifest_path).with_context(|| {
+        format!(
+            "failed to read scoped replacement manifest {}",
+            manifest_path.display()
+        )
+    })?;
+    let loaded = load_scoped_replacement_manifest_with_metadata(manifest_path)?;
+    let expected = serde_json::to_string_pretty(&loaded.manifest)
+        .expect("manifest serialization must succeed");
+    let canonical_bytes_match = contents == expected;
+    Ok(ScopedReplacementPlanManifestArtifactValidationReport {
+        manifest_path: loaded.manifest_path,
+        kind: loaded.manifest.kind,
+        source_version: loaded.source_version,
+        version: loaded.manifest.version,
+        migration_applied: loaded.source_version != loaded.manifest.version,
+        replacements: loaded.manifest.plan.replacements.len(),
+        matches_expected: canonical_bytes_match,
+        canonical_bytes_match,
+    })
+}
+
+pub(super) fn inspect_scoped_replacement_manifest_artifact(
+    manifest_path: &Path,
+) -> Result<ScopedReplacementPlanManifestArtifactInspection> {
+    let loaded = load_scoped_replacement_manifest_with_metadata(manifest_path)?;
+    Ok(ScopedReplacementPlanManifestArtifactInspection {
+        manifest_path: loaded.manifest_path,
+        kind: loaded.manifest.kind,
+        source_version: loaded.source_version,
+        version: loaded.manifest.version,
+        migration_applied: loaded.source_version != loaded.manifest.version,
+        replacements: loaded.manifest.plan.replacements.len(),
+        board_path: loaded.manifest.board_path,
+        libraries: loaded.manifest.libraries.len(),
+    })
+}
+
+pub(super) fn render_scoped_replacement_manifest_artifact_inspection_text(
+    report: &ScopedReplacementPlanManifestArtifactInspection,
+) -> String {
+    [
+        format!("manifest: {}", report.manifest_path.display()),
+        format!("kind: {}", report.kind),
+        format!("source_version: {}", report.source_version),
+        format!("version: {}", report.version),
+        format!("migration_applied: {}", report.migration_applied),
+        format!("replacements: {}", report.replacements),
+        format!("board_path: {}", report.board_path.display()),
+        format!("libraries: {}", report.libraries),
+    ]
+    .join("\n")
+}
+
+pub(super) fn render_scoped_replacement_manifest_artifact_validation_text(
+    report: &ScopedReplacementPlanManifestArtifactValidationReport,
+) -> String {
+    [
+        format!("manifest: {}", report.manifest_path.display()),
+        format!("kind: {}", report.kind),
+        format!("source_version: {}", report.source_version),
+        format!("version: {}", report.version),
+        format!("migration_applied: {}", report.migration_applied),
+        format!("replacements: {}", report.replacements),
+        format!("matches_expected: {}", report.matches_expected),
+        format!("canonical_bytes_match: {}", report.canonical_bytes_match),
+    ]
+    .join("\n")
+}
+
+pub(super) fn compare_scoped_replacement_manifest_artifact(
+    manifest_path: &Path,
+    artifact_path: &Path,
+) -> Result<ScopedReplacementPlanManifestArtifactComparisonReport> {
+    let manifest_loaded = load_scoped_replacement_manifest_with_metadata(manifest_path)?;
+    let artifact_loaded = load_scoped_replacement_manifest_with_metadata(artifact_path)?;
+
+    let mut drift_fields = Vec::new();
+    if manifest_loaded.manifest.board_path != artifact_loaded.manifest.board_path {
+        drift_fields.push("board_path".to_string());
+    }
+    if manifest_loaded.manifest.board_source_hash != artifact_loaded.manifest.board_source_hash {
+        drift_fields.push("board_source_hash".to_string());
+    }
+    if manifest_loaded.manifest.libraries != artifact_loaded.manifest.libraries {
+        drift_fields.push("libraries".to_string());
+    }
+    if manifest_loaded.manifest.plan.scope != artifact_loaded.manifest.plan.scope {
+        drift_fields.push("scope".to_string());
+    }
+    if manifest_loaded.manifest.plan.policy != artifact_loaded.manifest.plan.policy {
+        drift_fields.push("policy".to_string());
+    }
+    if manifest_loaded.manifest.plan.replacements != artifact_loaded.manifest.plan.replacements {
+        drift_fields.push("replacements".to_string());
+    }
+
+    Ok(ScopedReplacementPlanManifestArtifactComparisonReport {
+        manifest_path: manifest_loaded.manifest_path,
+        artifact_path: artifact_loaded.manifest_path,
+        manifest_source_version: manifest_loaded.source_version,
+        artifact_source_version: artifact_loaded.source_version,
+        manifest_version: manifest_loaded.manifest.version,
+        artifact_version: artifact_loaded.manifest.version,
+        manifest_migration_applied: manifest_loaded.source_version != manifest_loaded.manifest.version,
+        artifact_migration_applied: artifact_loaded.source_version != artifact_loaded.manifest.version,
+        manifest_replacements: manifest_loaded.manifest.plan.replacements.len(),
+        artifact_replacements: artifact_loaded.manifest.plan.replacements.len(),
+        matches_artifact: drift_fields.is_empty(),
+        drift_fields,
+    })
+}
+
+pub(super) fn render_scoped_replacement_manifest_artifact_comparison_text(
+    report: &ScopedReplacementPlanManifestArtifactComparisonReport,
+) -> String {
+    [
+        format!("manifest: {}", report.manifest_path.display()),
+        format!("artifact: {}", report.artifact_path.display()),
+        format!("manifest_source_version: {}", report.manifest_source_version),
+        format!("artifact_source_version: {}", report.artifact_source_version),
+        format!("manifest_version: {}", report.manifest_version),
+        format!("artifact_version: {}", report.artifact_version),
+        format!(
+            "manifest_migration_applied: {}",
+            report.manifest_migration_applied
+        ),
+        format!(
+            "artifact_migration_applied: {}",
+            report.artifact_migration_applied
+        ),
+        format!("manifest_replacements: {}", report.manifest_replacements),
+        format!("artifact_replacements: {}", report.artifact_replacements),
+        format!("matches_artifact: {}", report.matches_artifact),
+        format!("drift_fields: {}", report.drift_fields.join(", ")),
     ]
     .join("\n")
 }

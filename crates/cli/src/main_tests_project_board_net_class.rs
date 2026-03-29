@@ -19,6 +19,21 @@ fn board_net_classes_query_cli(root: &Path) -> Cli {
     .expect("CLI should parse")
 }
 
+fn board_net_class_query_cli(root: &Path, net_class_uuid: Uuid) -> Cli {
+    Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "board-net-class",
+        "--net-class",
+        &net_class_uuid.to_string(),
+    ])
+    .expect("CLI should parse")
+}
+
 #[test]
 fn project_board_net_class_mutations_round_trip_through_native_query() {
     let root = unique_project_root("datum-eda-cli-project-board-net-class");
@@ -170,6 +185,62 @@ fn project_query_board_net_classes_reads_existing_native_board_file() {
     assert_eq!(classes[0].uuid, net_class_uuid);
     assert_eq!(classes[0].name, "Default");
     assert_eq!(classes[0].via_diameter, 600000);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_query_board_net_class_reads_one_existing_native_board_file() {
+    let root = unique_project_root("datum-eda-cli-project-board-net-class-single-query");
+    create_native_project(&root, Some("Board Net Class Single Query Demo".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let net_class_uuid = Uuid::new_v4();
+    let board_json = root.join("board/board.json");
+    std::fs::write(
+        &board_json,
+        format!(
+            "{}\n",
+            to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "uuid": Uuid::new_v4(),
+                "name": "Board Net Class Single Query Demo Board",
+                "stackup": { "layers": [] },
+                "outline": { "vertices": [], "closed": true },
+                "packages": {},
+                "tracks": {},
+                "vias": {},
+                "zones": {},
+                "nets": {},
+                "net_classes": {
+                    net_class_uuid.to_string(): {
+                        "uuid": net_class_uuid,
+                        "name": "DiffPair",
+                        "clearance": 150000,
+                        "track_width": 200000,
+                        "via_drill": 300000,
+                        "via_diameter": 600000,
+                        "diffpair_width": 180000,
+                        "diffpair_gap": 170000
+                    }
+                },
+                "keepouts": [],
+                "dimensions": [],
+                "texts": []
+            }))
+            .expect("canonical serialization should succeed")
+        ),
+    )
+    .expect("board file should write");
+
+    let output = execute(board_net_class_query_cli(&root, net_class_uuid))
+        .expect("board net class query should succeed");
+    let net_class: NetClass =
+        serde_json::from_str(&output).expect("query output should parse");
+    assert_eq!(net_class.uuid, net_class_uuid);
+    assert_eq!(net_class.name, "DiffPair");
+    assert_eq!(net_class.diffpair_width, 180000);
+    assert_eq!(net_class.diffpair_gap, 170000);
 
     let _ = std::fs::remove_dir_all(&root);
 }

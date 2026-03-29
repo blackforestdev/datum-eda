@@ -39,6 +39,13 @@ pub(crate) struct SetBoardComponentValueArgs {
 }
 
 #[derive(Args)]
+pub(crate) struct BoardComponentArgs {
+    /// Component UUID
+    #[arg(long = "component")]
+    pub(crate) component_uuid: Uuid,
+}
+
+#[derive(Args)]
 pub(crate) struct BoardComponentModels3dArgs {
     /// Component UUID
     #[arg(long = "component")]

@@ -50,6 +50,24 @@ pub(crate) fn query_native_project_board_components(root: &Path) -> Result<Vec<P
     Ok(components)
 }
 
+pub(crate) fn query_native_project_board_component_view(
+    root: &Path,
+    component_uuid: Uuid,
+) -> Result<NativeProjectBoardComponentQueryView> {
+    let project = load_native_project(root)?;
+    let key = component_uuid.to_string();
+    let component = project
+        .board
+        .packages
+        .get(&key)
+        .cloned()
+        .with_context(|| format!("board component not found: {key}"))
+        .and_then(|value| {
+            serde_json::from_value(value).context("failed to parse board component")
+        })?;
+    Ok(native_project_board_component_query_view(&project, component))
+}
+
 pub(crate) fn query_native_project_board_component_models_3d(
     root: &Path,
     component_uuid: Uuid,

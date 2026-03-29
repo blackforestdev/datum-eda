@@ -83,6 +83,17 @@ pub(super) fn execute_forward_annotation_command(
             };
             Ok((output, 0))
         }
+        ProjectCommands::ValidateForwardAnnotationProposalArtifact { path } => {
+            let report = validate_forward_annotation_proposal_artifact(&path)?;
+            let exit_code = if report.matches_expected { 0 } else { 1 };
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_forward_annotation_artifact_validation_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, exit_code))
+        }
         ProjectCommands::CompareForwardAnnotationProposalArtifact { path, artifact } => {
             let report = compare_forward_annotation_proposal_artifact(&path, &artifact)?;
             let output = match format {

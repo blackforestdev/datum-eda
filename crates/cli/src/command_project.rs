@@ -31,6 +31,8 @@ mod command_project_forward_annotation_apply_review;
 mod command_project_forward_annotation_artifact;
 #[path = "command_project_forward_annotation_artifact_review.rs"]
 mod command_project_forward_annotation_artifact_review;
+#[path = "command_project_forward_annotation_surface.rs"]
+mod command_project_forward_annotation_surface;
 #[path = "command_project_forward_annotation_proposal.rs"]
 mod command_project_forward_annotation_proposal;
 #[path = "command_project_gerber_inspect.rs"]
@@ -49,6 +51,8 @@ mod command_project_gerber_semantics_utils;
 mod command_project_gerber_silkscreen;
 #[path = "command_project_inventory.rs"]
 mod command_project_inventory;
+#[path = "command_project_inventory_surface.rs"]
+mod command_project_inventory_surface;
 #[path = "command_project_manufacturing.rs"]
 mod command_project_manufacturing;
 #[path = "command_project_native_inspect.rs"]
@@ -57,6 +61,8 @@ mod command_project_native_inspect;
 mod command_project_native_types;
 #[path = "command_project_pool_materialization.rs"]
 mod command_project_pool_materialization;
+#[path = "command_project_pool_query.rs"]
+mod command_project_pool_query;
 #[path = "command_project_project_core.rs"]
 mod command_project_project_core;
 #[path = "command_project_roots.rs"]
@@ -95,6 +101,7 @@ use self::command_project_board_component_query::{
 };
 pub(crate) use self::command_project_board_component_query::{
     query_native_project_board_component_mechanical,
+    query_native_project_board_component_view,
     query_native_project_board_component_models_3d, query_native_project_board_component_pads,
     query_native_project_board_component_silkscreen, query_native_project_board_component_views,
     query_native_project_board_components,
@@ -117,7 +124,8 @@ pub(crate) use self::command_project_board_netclass_dimension::{
     delete_native_project_board_dimension, delete_native_project_board_net_class,
     edit_native_project_board_dimension, edit_native_project_board_net_class,
     place_native_project_board_dimension, place_native_project_board_net_class,
-    query_native_project_board_dimensions, query_native_project_board_net_classes,
+    query_native_project_board_dimensions, query_native_project_board_net_class,
+    query_native_project_board_net_classes,
 };
 pub(crate) use self::command_project_board_pad::{
     delete_native_project_board_pad, edit_native_project_board_pad, place_native_project_board_pad,
@@ -129,7 +137,8 @@ pub(crate) use self::command_project_board_routing_net::{
     delete_native_project_board_via, delete_native_project_board_zone,
     edit_native_project_board_net, place_native_project_board_net,
     place_native_project_board_track, place_native_project_board_via,
-    place_native_project_board_zone, query_native_project_board_nets,
+    place_native_project_board_zone, query_native_project_board_net,
+    query_native_project_board_nets,
     query_native_project_board_tracks, query_native_project_board_vias,
     query_native_project_board_zones,
 };
@@ -142,27 +151,7 @@ pub(crate) use self::command_project_drill::{
     report_native_project_drill_hole_classes, validate_native_project_drill,
     validate_native_project_excellon_drill,
 };
-pub(crate) use self::command_project_forward_annotation_apply_review::{
-    apply_native_project_forward_annotation_action,
-    apply_native_project_forward_annotation_reviewed,
-    clear_native_project_forward_annotation_review,
-    execute_native_project_forward_annotation_action,
-    query_native_project_forward_annotation_review,
-    record_native_project_forward_annotation_review,
-};
-pub(crate) use self::command_project_forward_annotation_artifact::{
-    apply_forward_annotation_proposal_artifact, compare_forward_annotation_proposal_artifact,
-    export_native_project_forward_annotation_proposal,
-    export_native_project_forward_annotation_proposal_selection,
-    filter_forward_annotation_proposal_artifact, inspect_forward_annotation_proposal_artifact,
-    plan_forward_annotation_proposal_artifact_apply, select_forward_annotation_proposal_artifact,
-};
-pub(crate) use self::command_project_forward_annotation_artifact_review::{
-    import_forward_annotation_artifact_review, replace_forward_annotation_artifact_review,
-};
-pub(crate) use self::command_project_forward_annotation_proposal::{
-    query_native_project_forward_annotation_audit, query_native_project_forward_annotation_proposal,
-};
+pub(crate) use self::command_project_forward_annotation_surface::*;
 pub(crate) use self::command_project_gerber_inspect::inspect_gerber;
 pub(crate) use self::command_project_gerber_layers::{
     compare_native_project_gerber_copper_layer, compare_native_project_gerber_outline,
@@ -208,14 +197,11 @@ use self::command_project_gerber_silkscreen::{
     count_native_component_silkscreen_polylines, count_native_component_silkscreen_texts,
     resolve_native_project_silkscreen_context,
 };
-pub(crate) use self::command_project_inventory::{
-    compare_native_project_bom, compare_native_project_pnp, export_native_project_bom,
-    export_native_project_pnp, inspect_native_project_bom,
-};
+pub(crate) use self::command_project_inventory_surface::*;
 pub(crate) use self::command_project_manufacturing::{
     compare_native_project_manufacturing_set, export_native_project_manufacturing_set,
-    manifest_native_project_manufacturing_set, report_native_project_manufacturing,
-    validate_native_project_manufacturing_set,
+    inspect_native_project_manufacturing_set, manifest_native_project_manufacturing_set,
+    report_native_project_manufacturing, validate_native_project_manufacturing_set,
 };
 pub(crate) use self::command_project_native_inspect::inspect_native_project;
 pub(crate) use self::command_project_native_types::{
@@ -224,6 +210,8 @@ pub(crate) use self::command_project_native_types::{
 use self::command_project_pool_materialization::{
     materialize_supported_pool_package_graphics, resolve_native_project_pool_path,
 };
+use self::command_project_pool_query::collect_native_project_pool_ref_views;
+pub(crate) use self::command_project_pool_query::query_native_project_pools;
 use self::command_project_project_core::*;
 use self::command_project_roots::*;
 pub(crate) use self::command_project_roots::{create_native_project, query_native_project_rules};

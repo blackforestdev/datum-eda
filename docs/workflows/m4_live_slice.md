@@ -10,9 +10,14 @@ This file carries the detailed current M4 command ledger so
 ## Scope
 
 The current M4 live slice includes:
-- Native project scaffold, inspect, and query surfaces.
+- Native project scaffold, inspect, and query surfaces, including a dedicated
+  direct pool-ref query.
 - Native schematic and board authoring mutation families.
-- Forward-annotation audit/proposal/review/apply and artifact flows.
+- Forward-annotation audit/proposal/review/apply and artifact flows, including
+  standalone artifact inspection and canonical validation.
+- Scoped replacement manifest artifact export/artifact inspect/live-input
+  inspect/live-input validate / artifact validate / artifact compare / upgrade
+  flows.
 - Manufacturing export/inspect/validate/compare slices for BOM/PnP, drill,
   Excellon, and Gerber (outline/copper/soldermask/silkscreen/paste/mechanical
   subsets).

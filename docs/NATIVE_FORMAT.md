@@ -32,7 +32,9 @@ Current live slice:
   `eda project query <dir> forward-annotation-proposal` now classifies those
   findings into deterministic add/update/remove component ECO actions,
   `eda project query <dir> forward-annotation-review` now reports persisted
-  defer/reject decisions keyed by stable proposal `action_id`, and
+  defer/reject decisions keyed by stable proposal `action_id`,
+  `eda project query <dir> pools` now reads the resolved native pool refs
+  directly as a dedicated list surface, and
   `eda project query <dir> check` now returns the combined schematic
   `CheckReport` shape on top of that same bridge; `eda project query <dir>
   board-diagnostics`, `eda project query <dir> board-unrouted`, and
@@ -171,11 +173,20 @@ Current live slice:
   `eda project delete-board-net <dir> --net <uuid>` add the first native board
   net lifecycle on `board/board.json`, while `eda project query <dir>
   board-nets` reads back that persisted net slice.
+- `eda project query <dir> board-net --net <uuid>` now reads back one
+  persisted native board net directly, instead of requiring automation to
+  filter the full `board-nets` list.
+- `eda project query <dir> board-net-class --net-class <uuid>` now reads back
+  one persisted native board net class directly, instead of requiring
+  automation to filter the full `board-net-classes` list.
 - `eda project query <dir> board-components` reads back the persisted native
   placed-package inventory from `board/board.json`, including per-component
   presence flags plus the currently materialized silkscreen subset counts and
   persisted component-mechanical subset counts, establishing the read-side
   contract for future native package placement work.
+- `eda project query <dir> board-component --component <uuid>` now reads back
+  that same persisted native placed-package view for one component directly,
+  instead of requiring automation to filter the full board-components list.
 - `eda project query <dir> board-component-models-3d --component <uuid>` now
   reads back the persisted `component_models_3d` refs for one native board
   component directly from `board/board.json`, establishing the first direct
@@ -210,6 +221,9 @@ Current live slice:
   manufacturer metadata, or variant expansion.
 - `eda project inspect-bom <path>` now reads that deterministic BOM CSV
   contract directly and reports parsed rows in file order.
+- `eda project validate-bom <dir> --bom <path>` now validates that same BOM
+  CSV byte-for-byte against the current deterministic native inventory
+  renderer.
 - `eda project compare-bom <dir> --bom <path>` now compares that BOM CSV
   against the current native board-component inventory by reference, value,
   part/package identity, layer, position, rotation, and locked state, so BOM
@@ -219,6 +233,11 @@ Current live slice:
   board-component inventory, establishing the second native manufacturing-
   export slice without depending on feeder setup, origin calibration, or
   variant expansion.
+- `eda project inspect-pnp <path>` now reads that deterministic PnP CSV
+  contract directly and reports parsed rows in file order.
+- `eda project validate-pnp <dir> --pnp <path>` now validates that same PnP
+  CSV byte-for-byte against the current deterministic native inventory
+  renderer.
 - `eda project compare-pnp <dir> --pnp <path>` now compares that PnP CSV
   against the current native board-component inventory by reference, placement,
   rotation, side/layer, part/package identity, value, and locked state, so PnP
@@ -361,6 +380,10 @@ Current live slice:
   <text>]` now reports the deterministic expected directory-level artifact set
   for that same persisted-state manufacturing subset, including artifact kind,
   comparison contract, and filename in stable order, without writing files.
+- `eda project inspect-manufacturing-set <dir> --output-dir <path> [--prefix
+  <text>]` now reads one directory against that deterministic manufacturing-set
+  artifact list and reports expected entries with presence flags plus any
+  extra files, without validating file contents.
 - `eda project compare-gerber-export-plan <dir> --output-dir <path>
   [--prefix <text>]` compares that deterministic planned artifact set against a
   directory and reports matched, missing, and extra files, establishing the
@@ -481,6 +504,10 @@ Current live slice:
 - `eda project inspect-forward-annotation-proposal-artifact <path>` now loads
   that artifact and reports version, project identity, action counts, and
   review counts through a deterministic read-only inspection surface.
+- `eda project validate-forward-annotation-proposal-artifact <path>` now loads
+  that artifact through the same supported schema/kind/version gate and checks
+  that the file bytes match the canonical JSON encoding for the normalized
+  artifact payload, without consulting live project state.
 - `eda project compare-forward-annotation-proposal-artifact <dir> --artifact <path>`
   now compares the exported artifact against the current live project proposal
   and classifies each artifact action as `applicable`, `drifted`, or `stale`
@@ -510,6 +537,17 @@ Current live slice:
   subset, so review import can be either additive or authoritative depending on
   whether the caller wants to preserve or discard unrelated existing live
   review state.
+- `eda plan export-scoped-replacement-manifest <board> --out <path> ...`,
+  `eda plan inspect-scoped-replacement-manifest-artifact <path>`,
+  `eda plan inspect-scoped-replacement-manifest <path>`,
+  `eda plan validate-scoped-replacement-manifest <path>...`,
+  `eda plan validate-scoped-replacement-manifest-artifact <path>`,
+  `eda plan compare-scoped-replacement-manifest-artifact <path> --artifact <path>`, and
+  `eda plan upgrade-scoped-replacement-manifest <path> (--out <path> | --in-place)`
+  now define a versioned scoped-replacement manifest artifact lane:
+  artifact-local inspection, artifact-local semantic compare, and
+  schema/version plus current encoding validation stay separate from live-input
+  drift inspection/validation.
 - `eda project place-board-component <dir> --part <uuid> --package <uuid>
   --reference <text> --value <text> --x-nm <i64> --y-nm <i64> --layer <i32>`
   plus `eda project move-board-component <dir> --component <uuid> --x-nm <i64>

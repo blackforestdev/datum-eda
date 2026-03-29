@@ -36,6 +36,7 @@ mod command_query;
 mod main_board_component;
 mod main_drill;
 mod main_forward_annotation;
+mod main_forward_annotation_views;
 mod main_gerber_inspect;
 mod main_gerber_mechanical;
 mod main_gerber_set;
@@ -44,6 +45,7 @@ mod main_inspect;
 mod main_inventory;
 mod main_manufacturing;
 mod main_modify;
+mod main_project;
 mod main_summary;
 
 use cli_args::*;
@@ -53,6 +55,7 @@ use command_query::*;
 pub(crate) use main_board_component::*;
 pub(crate) use main_drill::*;
 pub(crate) use main_forward_annotation::*;
+pub(crate) use main_forward_annotation_views::*;
 pub(crate) use main_gerber_inspect::*;
 pub(crate) use main_gerber_mechanical::*;
 pub(crate) use main_gerber_set::*;
@@ -61,6 +64,7 @@ pub(crate) use main_inspect::*;
 pub(crate) use main_inventory::*;
 pub(crate) use main_manufacturing::*;
 pub(crate) use main_modify::*;
+pub(crate) use main_project::*;
 pub(crate) use main_summary::*;
 
 fn main() {
@@ -88,16 +92,6 @@ fn run() -> Result<i32> {
 
 fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
     command_exec::execute_with_exit_code(cli)
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectCreateReportView {
-    project_root: String,
-    project_name: String,
-    project_uuid: String,
-    schematic_uuid: String,
-    board_uuid: String,
-    files_written: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -462,133 +456,6 @@ struct NativeProjectForwardAnnotationBatchApplyReportView {
     skipped_requires_input_actions: usize,
     applied: Vec<NativeProjectForwardAnnotationApplyReportView>,
     skipped: Vec<NativeProjectForwardAnnotationBatchApplySkippedActionView>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationExportReportView {
-    action: String,
-    artifact_path: String,
-    kind: String,
-    version: u32,
-    project_uuid: String,
-    actions: usize,
-    reviews: usize,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationArtifactInspectionView {
-    artifact_path: String,
-    kind: String,
-    source_version: u32,
-    version: u32,
-    migration_applied: bool,
-    project_uuid: String,
-    project_name: String,
-    actions: usize,
-    reviews: usize,
-    add_component_actions: usize,
-    remove_component_actions: usize,
-    update_component_actions: usize,
-    deferred_reviews: usize,
-    rejected_reviews: usize,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationArtifactComparisonActionView {
-    action_id: String,
-    proposal_action: String,
-    reference: String,
-    reason: String,
-    status: String,
-    review_decision: Option<String>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationArtifactComparisonView {
-    artifact_path: String,
-    project_root: String,
-    kind: String,
-    artifact_version: u32,
-    current_project_uuid: String,
-    artifact_project_uuid: String,
-    artifact_actions: usize,
-    applicable_actions: usize,
-    drifted_actions: usize,
-    stale_actions: usize,
-    actions: Vec<NativeProjectForwardAnnotationArtifactComparisonActionView>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationArtifactFilterView {
-    action: String,
-    input_artifact_path: String,
-    output_artifact_path: String,
-    project_root: String,
-    kind: String,
-    version: u32,
-    artifact_actions: usize,
-    applicable_actions: usize,
-    filtered_reviews: usize,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationArtifactApplyPlanActionView {
-    action_id: String,
-    proposal_action: String,
-    reference: String,
-    reason: String,
-    applicability: String,
-    execution: String,
-    review_decision: Option<String>,
-    required_inputs: Vec<String>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationArtifactApplyPlanView {
-    action: String,
-    artifact_path: String,
-    project_root: String,
-    kind: String,
-    artifact_version: u32,
-    artifact_actions: usize,
-    self_sufficient_actions: usize,
-    requires_input_actions: usize,
-    not_applicable_actions: usize,
-    actions: Vec<NativeProjectForwardAnnotationArtifactApplyPlanActionView>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationArtifactApplyView {
-    action: String,
-    artifact_path: String,
-    project_root: String,
-    artifact_actions: usize,
-    applied_actions: usize,
-    skipped_deferred_actions: usize,
-    skipped_rejected_actions: usize,
-    applied: Vec<NativeProjectForwardAnnotationApplyReportView>,
-    skipped: Vec<NativeProjectForwardAnnotationBatchApplySkippedActionView>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationArtifactReviewImportView {
-    action: String,
-    artifact_path: String,
-    project_root: String,
-    imported_reviews: usize,
-    skipped_missing_live_actions: usize,
-    total_artifact_reviews: usize,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectForwardAnnotationArtifactReviewReplaceView {
-    action: String,
-    artifact_path: String,
-    project_root: String,
-    replaced_reviews: usize,
-    removed_existing_reviews: usize,
-    skipped_missing_live_actions: usize,
-    total_artifact_reviews: usize,
 }
 
 #[derive(Debug, Clone, Serialize)]

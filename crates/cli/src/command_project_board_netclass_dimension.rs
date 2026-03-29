@@ -12,6 +12,21 @@ pub(crate) fn query_native_project_board_net_classes(root: &Path) -> Result<Vec<
     Ok(net_classes)
 }
 
+pub(crate) fn query_native_project_board_net_class(
+    root: &Path,
+    net_class_uuid: Uuid,
+) -> Result<NetClass> {
+    let project = load_native_project(root)?;
+    let key = net_class_uuid.to_string();
+    let entry = project
+        .board
+        .net_classes
+        .get(&key)
+        .cloned()
+        .with_context(|| format!("board net class not found in native project: {net_class_uuid}"))?;
+    serde_json::from_value(entry).context("failed to parse board net class")
+}
+
 pub(crate) fn query_native_project_board_dimensions(root: &Path) -> Result<Vec<Dimension>> {
     let project = load_native_project(root)?;
     let mut dimensions = project

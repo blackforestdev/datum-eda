@@ -13,6 +13,8 @@ mod cli_args_board_dimension;
 mod cli_args_drill;
 #[path = "cli_args_gerber_plan.rs"]
 mod cli_args_gerber_plan;
+#[path = "cli_args_inventory.rs"]
+mod cli_args_inventory;
 #[path = "cli_args_manufacturing.rs"]
 mod cli_args_manufacturing;
 #[path = "cli_args_native_support.rs"]
@@ -37,9 +39,13 @@ pub(crate) use self::cli_args_gerber_plan::{
     CompareGerberExportPlanArgs, CompareGerberSetArgs, ExportGerberSetArgs, PlanGerberExportArgs,
     ValidateGerberSetArgs,
 };
+pub(crate) use self::cli_args_inventory::{
+    CompareBomArgs, ComparePnpArgs, ExportBomArgs, ExportPnpArgs, InspectBomArgs, InspectPnpArgs,
+    ValidateBomArgs, ValidatePnpArgs,
+};
 pub(crate) use self::cli_args_manufacturing::{
-    CompareManufacturingSetArgs, ExportManufacturingSetArgs, ManifestManufacturingSetArgs,
-    ReportManufacturingArgs, ValidateManufacturingSetArgs,
+    CompareManufacturingSetArgs, ExportManufacturingSetArgs, InspectManufacturingSetArgs,
+    ManifestManufacturingSetArgs, ReportManufacturingArgs, ValidateManufacturingSetArgs,
 };
 pub(crate) use self::cli_args_native_support::{
     NativeHiddenPowerBehaviorArg, NativePortDirectionArg, NativeSymbolDisplayModeArg,
@@ -304,42 +310,21 @@ pub(crate) enum ProjectCommands {
         what: NativeProjectQueryCommands,
     },
     /// Export a native project BOM as deterministic CSV from persisted board components
-    ExportBom {
-        /// Project root directory
-        path: PathBuf,
-        /// Output CSV path
-        #[arg(long = "out")]
-        out: PathBuf,
-    },
+    ExportBom(ExportBomArgs),
     /// Compare a BOM CSV against the current native board-component inventory
-    CompareBom {
-        /// Project root directory
-        path: PathBuf,
-        /// BOM CSV path to compare
-        #[arg(long = "bom")]
-        bom: PathBuf,
-    },
+    CompareBom(CompareBomArgs),
+    /// Validate a BOM CSV byte-for-byte against the current deterministic native inventory renderer
+    ValidateBom(ValidateBomArgs),
     /// Inspect a BOM CSV using the deterministic native inventory contract
-    InspectBom {
-        /// BOM CSV path to inspect
-        path: PathBuf,
-    },
+    InspectBom(InspectBomArgs),
     /// Export a native project pick-and-place file as deterministic CSV from persisted board components
-    ExportPnp {
-        /// Project root directory
-        path: PathBuf,
-        /// Output CSV path
-        #[arg(long = "out")]
-        out: PathBuf,
-    },
+    ExportPnp(ExportPnpArgs),
     /// Compare a PnP CSV against the current native board-component inventory
-    ComparePnp {
-        /// Project root directory
-        path: PathBuf,
-        /// PnP CSV path to compare
-        #[arg(long = "pnp")]
-        pnp: PathBuf,
-    },
+    ComparePnp(ComparePnpArgs),
+    /// Validate a PnP CSV byte-for-byte against the current deterministic native inventory renderer
+    ValidatePnp(ValidatePnpArgs),
+    /// Inspect a pick-and-place CSV using the deterministic native inventory contract
+    InspectPnp(InspectPnpArgs),
     /// Export a native project drill file as deterministic CSV from persisted vias
     ExportDrill(ExportDrillArgs),
     /// Validate a native project drill CSV against the current persisted via inventory
@@ -570,6 +555,8 @@ pub(crate) enum ProjectCommands {
     CompareManufacturingSet(CompareManufacturingSetArgs),
     /// Describe the deterministic current supported persisted-state manufacturing set for one output directory
     ManifestManufacturingSet(ManifestManufacturingSetArgs),
+    /// Inspect one directory against the deterministic current supported manufacturing-set artifact list
+    InspectManufacturingSet(InspectManufacturingSetArgs),
     /// Place one schematic symbol into an existing native sheet file
     PlaceSymbol {
         /// Project root directory
@@ -1649,6 +1636,11 @@ pub(crate) enum ProjectCommands {
     },
     /// Inspect a versioned forward-annotation proposal artifact
     InspectForwardAnnotationProposalArtifact {
+        /// Artifact path
+        path: PathBuf,
+    },
+    /// Validate a versioned forward-annotation proposal artifact against the supported canonical artifact encoding
+    ValidateForwardAnnotationProposalArtifact {
         /// Artifact path
         path: PathBuf,
     },

@@ -3,10 +3,11 @@ use std::path::Path;
 use anyhow::Result;
 
 use super::{
-    NativeProjectBoardSummaryView, NativeProjectInspectPoolRefView, NativeProjectRulesSummaryView,
-    NativeProjectSchematicSummaryView, NativeProjectSummaryView, collect_schematic_counts,
+    NativeProjectBoardSummaryView, NativeProjectRulesSummaryView,
+    NativeProjectSchematicSummaryView, NativeProjectSummaryView,
+    collect_native_project_pool_ref_views, collect_schematic_counts,
     component_has_persisted_mechanical, component_has_persisted_silkscreen, component_model_count,
-    component_package_pad_count, load_native_project, resolve_native_project_pool_path,
+    component_package_pad_count, load_native_project,
 };
 
 pub(crate) fn query_native_project_summary(root: &Path) -> Result<NativeProjectSummaryView> {
@@ -36,20 +37,7 @@ pub(crate) fn query_native_project_summary(root: &Path) -> Result<NativeProjectS
         .keys()
         .filter(|key| component_package_pad_count(&project, key) > 0)
         .count();
-    let pool_refs = project
-        .manifest
-        .pools
-        .iter()
-        .map(|pool_ref| {
-            let resolved_path = resolve_native_project_pool_path(&project.root, &pool_ref.path);
-            NativeProjectInspectPoolRefView {
-                manifest_path: pool_ref.path.clone(),
-                priority: pool_ref.priority,
-                resolved_path: resolved_path.display().to_string(),
-                exists: resolved_path.exists(),
-            }
-        })
-        .collect();
+    let pool_refs = collect_native_project_pool_ref_views(&project);
     Ok(NativeProjectSummaryView {
         domain: "native_project",
         project_name: project.manifest.name,
