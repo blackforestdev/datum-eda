@@ -44,6 +44,8 @@ mod route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_awar
 mod route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_selection;
 #[path = "route_path_candidate_authored_copper_plus_one_gap.rs"]
 mod route_path_candidate_authored_copper_plus_one_gap;
+#[path = "route_path_candidate_authored_copper_plus_one_gap_explain.rs"]
+mod route_path_candidate_authored_copper_plus_one_gap_explain;
 #[path = "route_path_candidate_authored_copper_plus_one_gap_selection.rs"]
 mod route_path_candidate_authored_copper_plus_one_gap_selection;
 #[path = "route_path_candidate_authored_via_chain.rs"]
@@ -159,6 +161,11 @@ pub use self::route_path_candidate_authored_copper_plus_one_gap::{
     RoutePathCandidateAuthoredCopperPlusOneGapStep,
     RoutePathCandidateAuthoredCopperPlusOneGapStepKindView,
     RoutePathCandidateAuthoredCopperPlusOneGapSummary,
+};
+pub use self::route_path_candidate_authored_copper_plus_one_gap_explain::{
+    RoutePathCandidateAuthoredCopperPlusOneGapExplainKind,
+    RoutePathCandidateAuthoredCopperPlusOneGapExplainReport,
+    RoutePathCandidateAuthoredCopperPlusOneGapExplainSelectedPath,
 };
 pub use self::route_path_candidate_authored_copper_graph_policy::{
     RoutePathCandidateAuthoredCopperGraphPolicy,

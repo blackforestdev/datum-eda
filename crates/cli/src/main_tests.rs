@@ -331,6 +331,8 @@ mod main_tests_project_route_path_candidate_authored_copper_graph_zone_obstacle_
 mod main_tests_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_explain;
 #[path = "main_tests_project_route_path_candidate_authored_copper_plus_one_gap.rs"]
 mod main_tests_project_route_path_candidate_authored_copper_plus_one_gap;
+#[path = "main_tests_project_route_path_candidate_authored_copper_plus_one_gap_explain.rs"]
+mod main_tests_project_route_path_candidate_authored_copper_plus_one_gap_explain;
 #[path = "main_tests_project_route_path_candidate_authored_via_chain.rs"]
 mod main_tests_project_route_path_candidate_authored_via_chain;
 #[path = "main_tests_project_route_path_candidate_authored_via_chain_explain.rs"]
@@ -365,6 +367,8 @@ mod main_tests_project_route_path_candidate_via_explain;
 mod main_tests_project_route_preflight;
 #[path = "main_tests_project_route_proposal_artifact.rs"]
 mod main_tests_project_route_proposal_artifact;
+#[path = "main_tests_project_route_apply.rs"]
+mod main_tests_project_route_apply;
 #[path = "main_tests_project_routing_substrate.rs"]
 mod main_tests_project_routing_substrate;
 #[path = "main_tests_project_symbol.rs"]

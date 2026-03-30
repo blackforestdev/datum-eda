@@ -55,6 +55,8 @@ mod route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_awar
 mod route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_explain;
 #[path = "tests/mod_tests_route_path_candidate_authored_copper_plus_one_gap.rs"]
 mod route_path_candidate_authored_copper_plus_one_gap;
+#[path = "tests/mod_tests_route_path_candidate_authored_copper_plus_one_gap_explain.rs"]
+mod route_path_candidate_authored_copper_plus_one_gap_explain;
 #[path = "tests/mod_tests_route_path_candidate_authored_via_chain.rs"]
 mod route_path_candidate_authored_via_chain;
 #[path = "tests/mod_tests_route_path_candidate_authored_via_chain_explain.rs"]

@@ -346,6 +346,17 @@ pub(super) fn execute_native_project_query_command(
             from_anchor,
             to_anchor,
         ),
+        NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperPlusOneGapExplain {
+            net,
+            from_anchor,
+            to_anchor,
+        } => execute_native_project_route_path_candidate_authored_copper_plus_one_gap_explain_query(
+            format,
+            &path,
+            net,
+            from_anchor,
+            to_anchor,
+        ),
         NativeProjectQueryCommands::RoutePathCandidateAuthoredCopperGraphExplain {
             net,
             from_anchor,

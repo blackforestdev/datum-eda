@@ -591,6 +591,28 @@ Follow-on explanation surface selected on 2026-03-29:
   - no blockage inference beyond the accepted zone-aware graph slice
   - no ranking output beyond the selected existing-copper path
 
+Adjacent write-capable route-application slice implemented on 2026-03-29:
+- deterministic route proposal artifact export for the accepted zone-aware
+  existing-authored-copper graph contract
+  - `project export-route-path-candidate-authored-copper-graph-zone-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - reuses the same `project inspect-route-proposal-artifact <path>` and
+    `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
+- input: persisted native board state only
+- output:
+  - one versioned route-proposal artifact containing the ordered
+    self-sufficient `reuse_existing_copper_step` action sequence for the
+    selected existing authored-copper path only
+  - every action records the reused object kind/UUID and layer span as
+    drift-check metadata
+  - apply performs live deterministic proposal matching and succeeds as a
+    no-op when the selected existing-copper path still matches exactly
+- guardrails:
+  - no new copper geometry or via creation
+  - no re-search beyond the accepted
+    `route-path-candidate-authored-copper-graph-zone-aware` query contract
+  - apply drift-check includes the selected reused object sequence as part of
+    the live deterministic proposal match
+
 Next explicit contract selected on 2026-03-29:
 - deterministic zone-obstacle-aware existing-authored-copper graph path candidate
   `project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
@@ -625,6 +647,29 @@ Follow-on explanation surface selected on 2026-03-29:
   - current selected zone-obstacle-aware existing-authored-copper path when found
   - or explicit `no_existing_authored_copper_path` when authored obstacle
 
+Adjacent write-capable route-application slice implemented on 2026-03-29:
+- deterministic route proposal artifact export for the accepted
+  zone-obstacle-aware existing-authored-copper graph contract
+  - `project export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - reuses the same `project inspect-route-proposal-artifact <path>` and
+    `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
+- input: persisted native board state only
+- output:
+  - one versioned route-proposal artifact containing the ordered
+    self-sufficient `reuse_existing_copper_step` action sequence for the
+    selected obstacle-checked existing authored-copper path only
+  - every action records the reused object kind/UUID and layer span as
+    drift-check metadata
+  - apply performs live deterministic proposal matching and succeeds as a
+    no-op when the selected existing-copper path still matches exactly
+- guardrails:
+  - no new copper geometry or via creation
+  - no re-search beyond the accepted
+    `route-path-candidate-authored-copper-graph-zone-obstacle-aware` query
+    contract
+  - apply drift-check includes the selected reused object sequence as part of
+    the live deterministic proposal match
+
 Next explicit contract selected on 2026-03-29:
 - deterministic topology-aware zone-obstacle-aware existing-authored-copper graph path candidate
   `project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
@@ -651,6 +696,35 @@ Next explicit contract selected on 2026-03-29:
 Follow-on explanation surface selected on 2026-03-29:
 - deterministic topology-aware zone-obstacle-aware existing-authored-copper graph path candidate explanation
   `project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- input: persisted native board state only
+- output:
+
+Adjacent write-capable route-application slice implemented on 2026-03-29:
+- deterministic route proposal artifact export for the accepted topology-aware
+  zone-obstacle-aware existing-authored-copper graph contract
+  - `project export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - reuses the same `project inspect-route-proposal-artifact <path>` and
+    `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
+- input: persisted native board state only
+- output:
+  - one versioned route-proposal artifact containing the ordered
+    self-sufficient `reuse_existing_copper_step` action sequence for the
+    selected whole-path-ordered existing authored-copper path only
+  - every action records the reused object kind/UUID and layer span as
+    drift-check metadata
+  - apply performs live deterministic proposal matching and succeeds as a
+    no-op when the selected existing-copper path still matches exactly
+- guardrails:
+  - no new copper geometry or via creation
+  - no re-search beyond the accepted
+    `route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware`
+    query contract
+  - apply drift-check includes the selected reused object sequence as part of
+    the live deterministic proposal match
+
+Next explicit contract selected on 2026-03-29:
+- deterministic layer-balance-aware topology-aware zone-obstacle-aware existing-authored-copper graph path candidate
+  `project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
 - input: persisted native board state only
 - output:
   - current selected topology-aware zone-obstacle-aware existing-authored-copper path when found

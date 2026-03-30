@@ -32,6 +32,8 @@ mod command_project_route_path_candidate_authored_copper_graph_zone_obstacle_awa
 mod command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_explain;
 #[path = "command_project_route_path_candidate_authored_copper_plus_one_gap.rs"]
 mod command_project_route_path_candidate_authored_copper_plus_one_gap;
+#[path = "command_project_route_path_candidate_authored_copper_plus_one_gap_explain.rs"]
+mod command_project_route_path_candidate_authored_copper_plus_one_gap_explain;
 #[path = "command_project_route_path_candidate_authored_via_chain.rs"]
 mod command_project_route_path_candidate_authored_via_chain;
 #[path = "command_project_route_path_candidate_authored_via_chain_explain.rs"]
@@ -113,6 +115,10 @@ pub(crate) use self::command_project_route_path_candidate_authored_copper_graph:
 pub(crate) use self::command_project_route_path_candidate_authored_copper_plus_one_gap::{
     query_native_project_route_path_candidate_authored_copper_plus_one_gap,
     render_native_project_route_path_candidate_authored_copper_plus_one_gap_text,
+};
+pub(crate) use self::command_project_route_path_candidate_authored_copper_plus_one_gap_explain::{
+    query_native_project_route_path_candidate_authored_copper_plus_one_gap_explain,
+    render_native_project_route_path_candidate_authored_copper_plus_one_gap_explain_text,
 };
 pub(crate) use self::command_project_route_path_candidate_authored_copper_graph_explain::{
     query_native_project_route_path_candidate_authored_copper_graph_explain,

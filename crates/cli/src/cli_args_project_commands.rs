@@ -127,10 +127,24 @@ pub(crate) enum ProjectCommands {
     ExportRoutePathCandidateAuthoredViaChainProposal(
         ProjectExportRoutePathCandidateAuthoredViaChainProposalArgs,
     ),
+    /// Export one deterministic route proposal artifact from the current zone-aware authored-copper-graph route-path-candidate result
+    ExportRoutePathCandidateAuthoredCopperGraphZoneAwareProposal(
+        ProjectExportRoutePathCandidateAuthoredCopperGraphZoneAwareProposalArgs,
+    ),
+    /// Export one deterministic route proposal artifact from the current zone-obstacle-aware authored-copper-graph route-path-candidate result
+    ExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareProposal(
+        ProjectExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareProposalArgs,
+    ),
+    /// Export one deterministic route proposal artifact from the current topology-aware zone-obstacle-aware authored-copper-graph route-path-candidate result
+    ExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareProposal(
+        ProjectExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareProposalArgs,
+    ),
     /// Inspect a versioned route proposal artifact
     InspectRouteProposalArtifact(ProjectInspectRouteProposalArtifactArgs),
     /// Apply a versioned route proposal artifact when it still matches the current live project state
     ApplyRouteProposalArtifact(ProjectApplyRouteProposalArtifactArgs),
+    /// Apply one deterministic current route candidate directly into native board copper
+    RouteApply(ProjectRouteApplyArgs),
     /// Export the current forward-annotation proposal and review state as a versioned artifact
     ExportForwardAnnotationProposal(ProjectExportForwardAnnotationProposalArgs),
     /// Export a selected subset of the current forward-annotation proposal and matching review state as a versioned artifact

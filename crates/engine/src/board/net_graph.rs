@@ -1,4 +1,5 @@
 use super::*;
+use crate::ir::geometry::LayerId;
 
 pub(super) fn segment_length_nm(from: Point, to: Point) -> i64 {
     let dx = (to.x - from.x) as f64;

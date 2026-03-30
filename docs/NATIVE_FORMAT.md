@@ -370,14 +370,24 @@ Current live slice:
   artifact contains the ordered self-sufficient `draw_track` action sequence
   for the selected path segments only, while the full reused authored via
   sequence is retained as drift-check metadata and is never recreated on apply.
+- `eda project
+  export-route-path-candidate-authored-copper-graph-zone-aware-proposal <dir>
+  --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  now extends that same versioned `native_route_proposal_artifact` lane to the
+  accepted deterministic zone-aware existing-copper graph contract. In the
+  current contract the artifact contains the ordered self-sufficient
+  `reuse_existing_copper_step` action sequence for the selected reused path
+  only, recording each reused track, via, or zone object as drift-check
+  metadata instead of creating new geometry.
 - `eda project inspect-route-proposal-artifact <path>` now loads that artifact
   and reports version, project identity, contract, and action counts without
   consulting live project state.
 - `eda project apply-route-proposal-artifact <dir> --artifact <path>` now
   applies that artifact only when the current live deterministic proposal still
   matches the exported action set exactly; apply writes the selected authored
-  target-net track segment or ordered segment sequence and rejects proposal
-  drift instead of re-resolving against changed state.
+  target-net track segment or ordered segment sequence for `draw_track`
+  artifacts, treats reuse-only actions as drift-checked no-op application, and
+  rejects proposal drift instead of re-resolving against changed state.
 - `eda project query <dir> route-path-candidate-authored-copper-graph-zone-aware
   --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a
   deterministic existing-copper path candidate that also reuses persisted
@@ -409,6 +419,16 @@ Current live slice:
   no connecting persisted target-net copper path, using only existing
   zone-obstacle-aware authored-copper graph/path facts without adding new
   routing semantics.
+- `eda project
+  export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-proposal
+  <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out
+  <path>` now extends the versioned `native_route_proposal_artifact` lane to
+  the accepted deterministic zone-obstacle-aware existing-copper graph
+  contract. In the current contract the artifact contains the ordered
+  self-sufficient `reuse_existing_copper_step` action sequence for the
+  selected obstacle-checked reused path only, recording each reused track,
+  via, or zone object as drift-check metadata instead of creating new
+  geometry.
 - `eda project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware
   --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` reports the
   current zone-obstacle-aware existing-copper path family under a stronger
@@ -417,6 +437,16 @@ Current live slice:
   zone_step_count, step_signature_sequence)` ascending after authored
   obstacle filtering, still without inventing any new copper or transition
   permissions.
+- `eda project
+  export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-proposal
+  <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out
+  <path>` now extends the versioned `native_route_proposal_artifact` lane to
+  the accepted deterministic topology-aware zone-obstacle-aware
+  existing-copper graph contract. In the current contract the artifact
+  contains the ordered self-sufficient `reuse_existing_copper_step` action
+  sequence for the selected whole-path-ordered reused path only, recording
+  each reused track, via, or zone object as drift-check metadata instead of
+  creating new geometry.
 - `eda project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-explain
   --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` reports the
   current topology-aware zone-obstacle-aware existing-copper path result as a

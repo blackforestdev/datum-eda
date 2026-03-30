@@ -1,5 +1,5 @@
 use super::*;
-use crate::cli_args::cli_args_board_component::BoardComponentArgs;
+use super::cli_args_board_component::BoardComponentArgs;
 use clap::ValueEnum;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, ValueEnum)]
@@ -244,6 +244,19 @@ pub(crate) enum NativeProjectQueryCommands {
     /// Deterministic path candidate using existing authored target-net copper plus exactly one eligible synthetic corridor-constrained gap
     #[command(name = "route-path-candidate-authored-copper-plus-one-gap")]
     RoutePathCandidateAuthoredCopperPlusOneGap {
+        /// Net UUID
+        #[arg(long = "net")]
+        net: Uuid,
+        /// Source anchor pad UUID
+        #[arg(long = "from-anchor")]
+        from_anchor: Uuid,
+        /// Target anchor pad UUID
+        #[arg(long = "to-anchor")]
+        to_anchor: Uuid,
+    },
+    /// Deterministic explanation for the current authored-copper plus-one-gap path candidate result
+    #[command(name = "route-path-candidate-authored-copper-plus-one-gap-explain")]
+    RoutePathCandidateAuthoredCopperPlusOneGapExplain {
         /// Net UUID
         #[arg(long = "net")]
         net: Uuid,

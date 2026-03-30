@@ -475,6 +475,23 @@ Status: [~] In progress
     via the matching `project
     export-route-path-candidate-<contract>-proposal <dir> --net <uuid>
     --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>` surfaces
+  - the same route-proposal artifact lane now also covers the accepted
+    deterministic zone-aware existing-copper graph contract via `project
+    export-route-path-candidate-authored-copper-graph-zone-aware-proposal
+    <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out
+    <path>`
+  - the same route-proposal artifact lane now also covers the accepted
+    deterministic zone-obstacle-aware existing-copper graph contract via
+    `project
+    export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-proposal
+    <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out
+    <path>`
+  - the same route-proposal artifact lane now also covers the accepted
+    deterministic topology-aware zone-obstacle-aware existing-copper graph
+    contract via `project
+    export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-proposal
+    <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out
+    <path>`
   - `specs/PROGRESS.md` tracks only the checkpoint/frontier; detailed per-slice
     history stays in `specs/progress/m5_opening.md`
 - Current M5 frontier:
@@ -485,7 +502,10 @@ Status: [~] In progress
     `route-path-candidate` contract, and the accepted bounded single-via
     `route-path-candidate-via` contract, and the accepted bounded two-via
     `route-path-candidate-two-via` contract, and the remaining bounded
-    `three`/`four`/`five`/`six`-via plus `authored-via-chain` contracts
+    `three`/`four`/`five`/`six`-via plus `authored-via-chain` contracts, and
+    the accepted zone-aware and zone-obstacle-aware existing-copper graph
+    reuse contracts, and the accepted topology-aware zone-obstacle-aware
+    existing-copper graph reuse contract
   - new slices must still avoid broad autorouting semantics, invented
     constraints, and untracked MCP drift
 - Acceptance checks for the opening slice:

@@ -116,18 +116,7 @@ pub(crate) use self::command_project_pool_materialization::{
 };
 pub(crate) use self::command_project_pool_query::query_native_project_pools;
 pub(crate) use self::command_project_project_core::*;
-pub(crate) use self::command_project_route_proposal::{
-    apply_route_proposal_artifact,
-    export_native_project_route_path_candidate_authored_via_chain_proposal,
-    export_native_project_route_path_candidate_five_via_proposal,
-    export_native_project_route_path_candidate_four_via_proposal,
-    export_native_project_route_path_candidate_proposal,
-    export_native_project_route_path_candidate_six_via_proposal,
-    export_native_project_route_path_candidate_three_via_proposal,
-    export_native_project_route_path_candidate_two_via_proposal,
-    export_native_project_route_path_candidate_via_proposal, export_native_project_route_proposal,
-    inspect_route_proposal_artifact,
-};
+pub(crate) use self::command_project_route_surface::*;
 pub(crate) use self::command_project_schematic_connectivity_mutations::{
     create_native_project_bus, delete_native_project_bus_entry, delete_native_project_junction,
     delete_native_project_label, delete_native_project_noconnect, delete_native_project_port,

@@ -1,7 +1,5 @@
-use super::*;
-use std::collections::{BTreeMap, BTreeSet, HashMap};
-use std::path::{Path, PathBuf};
-
+#[path = "command_project_prelude.rs"]
+mod command_project_prelude;
 #[path = "command_project_board_component_layer.rs"]
 mod command_project_board_component_layer;
 #[path = "command_project_board_component_mutations.rs"]
@@ -70,8 +68,8 @@ mod command_project_pool_query;
 mod command_project_project_core;
 #[path = "command_project_root_imports.rs"]
 mod command_project_root_imports;
-#[path = "command_project_route_proposal.rs"]
-mod command_project_route_proposal;
+#[path = "command_project_route_surface.rs"]
+mod command_project_route_surface;
 #[path = "command_project_schematic_connectivity_mutations.rs"]
 mod command_project_schematic_connectivity_mutations;
 #[path = "command_project_schematic_connectivity_queries.rs"]
@@ -93,5 +91,6 @@ mod command_project_surface;
 #[path = "command_project_views.rs"]
 mod command_project_views;
 
-use self::command_project_root_imports::*;
+pub(crate) use self::command_project_prelude::*;
+pub(crate) use self::command_project_route_surface::*;
 pub(crate) use self::command_project_surface::*;

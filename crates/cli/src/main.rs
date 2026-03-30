@@ -112,8 +112,6 @@ struct NativeProjectRulesView {
     rules: Vec<serde_json::Value>,
 }
 
-pub(crate) use main_forward_annotation_reports::*;
-
 #[derive(Debug, Clone, Serialize)]
 struct NativeProjectLabelMutationReportView {
     action: String,

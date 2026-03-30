@@ -562,11 +562,22 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 | command @ ProjectCommands::ExportRoutePathCandidateAuthoredViaChainProposal(
                     ProjectExportRoutePathCandidateAuthoredViaChainProposalArgs { .. },
                 )
+                | command @ ProjectCommands::ExportRoutePathCandidateAuthoredCopperGraphZoneAwareProposal(
+                    ProjectExportRoutePathCandidateAuthoredCopperGraphZoneAwareProposalArgs { .. },
+                )
+                | command @ ProjectCommands::ExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareProposal(
+                    ProjectExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareProposalArgs { .. },
+                )
+                | command @ ProjectCommands::ExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareProposal(
+                    ProjectExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareProposalArgs { .. },
+                )
                 | command @ ProjectCommands::InspectRouteProposalArtifact(
                     ProjectInspectRouteProposalArtifactArgs { .. },
                 )
                 | command @ ProjectCommands::ApplyRouteProposalArtifact(
                     ProjectApplyRouteProposalArtifactArgs { .. },
+                )
+                | command @ ProjectCommands::RouteApply(ProjectRouteApplyArgs { .. }
                 ) => command_exec_route_proposal::execute_route_proposal_command(
                     &cli.format,
                     command,

@@ -4,7 +4,7 @@ use crate::board::*;
 use crate::ir::geometry::{Point, Polygon};
 use uuid::Uuid;
 
-fn plus_one_gap_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid) {
+pub(crate) fn plus_one_gap_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid) {
     let net_uuid = Uuid::from_u128(0xa100);
     let class_uuid = Uuid::from_u128(0xa101);
     let from_pad_uuid = Uuid::from_u128(0xa102);

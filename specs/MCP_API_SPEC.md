@@ -188,6 +188,9 @@ Currently tracked native contracts that are not implemented in MCP:
 - `project export-route-path-candidate-five-via-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
 - `project export-route-path-candidate-six-via-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
 - `project export-route-path-candidate-authored-via-chain-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+- `project export-route-path-candidate-authored-copper-graph-zone-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+- `project export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+- `project export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
 - `project inspect-route-proposal-artifact <path>`
 - `project apply-route-proposal-artifact <dir> --artifact <path>`
 
