@@ -1,5 +1,5 @@
-use super::*;
 use super::cli_args_board_component::BoardComponentArgs;
+use super::*;
 use clap::ValueEnum;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, ValueEnum)]
@@ -104,8 +104,18 @@ pub(crate) enum NativeProjectQueryCommands {
         /// Target anchor pad UUID
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
+        /// Accepted deterministic candidate family
+        #[arg(long = "candidate", value_enum, default_value = "route-path-candidate")]
+        candidate: NativeProjectRouteApplyCandidateArg,
+        /// Accepted authored-copper-graph policy when required by the candidate family
+        #[arg(
+            long = "policy",
+            value_enum,
+            required_if_eq("candidate", "authored-copper-graph")
+        )]
+        policy: Option<NativeRoutePathCandidateAuthoredCopperGraphPolicy>,
     },
-    /// Deterministic single-via path candidate reusing one authored target-net via
+    /// Deprecated compatibility wrapper; use `route-path-candidate --candidate route-path-candidate-via`
     #[command(name = "route-path-candidate-via")]
     RoutePathCandidateVia {
         /// Net UUID
@@ -118,7 +128,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic two-via path candidate reusing exactly two authored target-net vias
+    /// Deprecated compatibility wrapper; use `route-path-candidate --candidate route-path-candidate-two-via`
     #[command(name = "route-path-candidate-two-via")]
     RoutePathCandidateTwoVia {
         /// Net UUID
@@ -131,7 +141,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic three-via path candidate reusing exactly three authored target-net vias
+    /// Deprecated compatibility wrapper; use `route-path-candidate --candidate route-path-candidate-three-via`
     #[command(name = "route-path-candidate-three-via")]
     RoutePathCandidateThreeVia {
         /// Net UUID
@@ -144,7 +154,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic four-via path candidate reusing exactly four authored target-net vias
+    /// Deprecated compatibility wrapper; use `route-path-candidate --candidate route-path-candidate-four-via`
     #[command(name = "route-path-candidate-four-via")]
     RoutePathCandidateFourVia {
         /// Net UUID
@@ -157,7 +167,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic five-via path candidate reusing exactly five authored target-net vias
+    /// Deprecated compatibility wrapper; use `route-path-candidate --candidate route-path-candidate-five-via`
     #[command(name = "route-path-candidate-five-via")]
     RoutePathCandidateFiveVia {
         /// Net UUID
@@ -170,7 +180,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic six-via path candidate reusing exactly six authored target-net vias
+    /// Deprecated compatibility wrapper; use `route-path-candidate --candidate route-path-candidate-six-via`
     #[command(name = "route-path-candidate-six-via")]
     RoutePathCandidateSixVia {
         /// Net UUID
@@ -183,7 +193,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic authored via-chain path candidate reusing persisted target-net vias only
+    /// Deprecated compatibility wrapper; use `route-path-candidate --candidate route-path-candidate-authored-via-chain`
     #[command(name = "route-path-candidate-authored-via-chain")]
     RoutePathCandidateAuthoredViaChain {
         /// Net UUID
@@ -196,7 +206,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic explanation for the current authored-via-chain path candidate result
+    /// Deprecated compatibility wrapper; use `route-path-candidate-explain --candidate route-path-candidate-authored-via-chain`
     #[command(name = "route-path-candidate-authored-via-chain-explain")]
     RoutePathCandidateAuthoredViaChainExplain {
         /// Net UUID
@@ -209,7 +219,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic existing-authored-copper path candidate over persisted target-net tracks and vias
+    /// Deprecated compatibility wrapper; use `route-path-candidate --candidate authored-copper-graph --policy <policy>`
     #[command(name = "route-path-candidate-authored-copper-graph")]
     RoutePathCandidateAuthoredCopperGraph {
         /// Net UUID
@@ -225,7 +235,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "policy", value_enum)]
         policy: NativeRoutePathCandidateAuthoredCopperGraphPolicy,
     },
-    /// Deterministic explanation for the current existing-authored-copper path candidate result
+    /// Deprecated compatibility wrapper; use `route-path-candidate-explain --candidate authored-copper-graph --policy <policy>`
     #[command(name = "route-path-candidate-authored-copper-graph-explain")]
     RoutePathCandidateAuthoredCopperGraphExplain {
         /// Net UUID
@@ -241,7 +251,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "policy", value_enum)]
         policy: NativeRoutePathCandidateAuthoredCopperGraphPolicy,
     },
-    /// Deterministic path candidate using existing authored target-net copper plus exactly one eligible synthetic corridor-constrained gap
+    /// Deprecated compatibility wrapper; use `route-path-candidate --candidate authored-copper-plus-one-gap`
     #[command(name = "route-path-candidate-authored-copper-plus-one-gap")]
     RoutePathCandidateAuthoredCopperPlusOneGap {
         /// Net UUID
@@ -254,7 +264,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic explanation for the current authored-copper plus-one-gap path candidate result
+    /// Deprecated compatibility wrapper; use `route-path-candidate-explain --candidate authored-copper-plus-one-gap`
     #[command(name = "route-path-candidate-authored-copper-plus-one-gap-explain")]
     RoutePathCandidateAuthoredCopperPlusOneGapExplain {
         /// Net UUID
@@ -267,7 +277,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic existing-authored-copper path candidate including authored target-net zone continuity
+    /// Deprecated compatibility wrapper; use `route-path-candidate --candidate authored-copper-graph --policy zone_aware`
     #[command(name = "route-path-candidate-authored-copper-graph-zone-aware")]
     RoutePathCandidateAuthoredCopperGraphZoneAware {
         /// Net UUID
@@ -280,7 +290,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic explanation for the current zone-aware existing-authored-copper path candidate result
+    /// Deprecated compatibility wrapper; use `route-path-candidate-explain --candidate authored-copper-graph --policy zone_aware`
     #[command(name = "route-path-candidate-authored-copper-graph-zone-aware-explain")]
     RoutePathCandidateAuthoredCopperGraphZoneAwareExplain {
         /// Net UUID
@@ -293,7 +303,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic existing-authored-copper path candidate reusing only zone/track/via graph edges unblocked by current authored obstacles
+    /// Deprecated compatibility wrapper; use `route-path-candidate --candidate authored-copper-graph --policy zone_obstacle_aware`
     #[command(name = "route-path-candidate-authored-copper-graph-zone-obstacle-aware")]
     RoutePathCandidateAuthoredCopperGraphZoneObstacleAware {
         /// Net UUID
@@ -306,7 +316,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic explanation for the current zone-obstacle-aware existing-authored-copper path candidate result
+    /// Deprecated compatibility wrapper; use `route-path-candidate-explain --candidate authored-copper-graph --policy zone_obstacle_aware`
     #[command(name = "route-path-candidate-authored-copper-graph-zone-obstacle-aware-explain")]
     RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareExplain {
         /// Net UUID
@@ -319,7 +329,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic existing-authored-copper path candidate reusing only zone/track/via graph edges unblocked by current authored obstacles and ordered by whole-path topology tie-breaks
+    /// Deprecated compatibility wrapper; use `route-path-candidate --candidate authored-copper-graph --policy zone_obstacle_topology_aware`
     #[command(
         name = "route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware"
     )]
@@ -334,7 +344,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic explanation for the current topology-aware zone-obstacle-aware existing-authored-copper path candidate result
+    /// Deprecated compatibility wrapper; use `route-path-candidate-explain --candidate authored-copper-graph --policy zone_obstacle_topology_aware`
     #[command(
         name = "route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-explain"
     )]
@@ -349,7 +359,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic existing-authored-copper path candidate under whole-path topology ordering with an explicit layer-balance tie-break
+    /// Deprecated compatibility wrapper; use `route-path-candidate --candidate authored-copper-graph --policy zone_obstacle_topology_layer_balance_aware`
     #[command(
         name = "route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware"
     )]
@@ -364,7 +374,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic explanation for the current topology-aware zone-obstacle-aware layer-balance-aware existing-authored-copper path candidate result
+    /// Deprecated compatibility wrapper; use `route-path-candidate-explain --candidate authored-copper-graph --policy zone_obstacle_topology_layer_balance_aware`
     #[command(
         name = "route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware-explain"
     )]
@@ -379,7 +389,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic existing-authored-copper path candidate reusing only unblocked authored track/via geometry
+    /// Deprecated compatibility wrapper; use `route-path-candidate --candidate authored-copper-graph --policy obstacle_aware`
     #[command(name = "route-path-candidate-authored-copper-graph-obstacle-aware")]
     RoutePathCandidateAuthoredCopperGraphObstacleAware {
         /// Net UUID
@@ -392,7 +402,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic explanation for the current obstacle-aware existing-authored-copper path candidate result
+    /// Deprecated compatibility wrapper; use `route-path-candidate-explain --candidate authored-copper-graph --policy obstacle_aware`
     #[command(name = "route-path-candidate-authored-copper-graph-obstacle-aware-explain")]
     RoutePathCandidateAuthoredCopperGraphObstacleAwareExplain {
         /// Net UUID
@@ -405,7 +415,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic explanation for the current six-via path candidate result
+    /// Deprecated compatibility wrapper; use `route-path-candidate-explain --candidate route-path-candidate-six-via`
     #[command(name = "route-path-candidate-six-via-explain")]
     RoutePathCandidateSixViaExplain {
         /// Net UUID
@@ -418,7 +428,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic explanation for the current five-via path candidate result
+    /// Deprecated compatibility wrapper; use `route-path-candidate-explain --candidate route-path-candidate-five-via`
     #[command(name = "route-path-candidate-five-via-explain")]
     RoutePathCandidateFiveViaExplain {
         /// Net UUID
@@ -431,7 +441,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic explanation for the current four-via path candidate result
+    /// Deprecated compatibility wrapper; use `route-path-candidate-explain --candidate route-path-candidate-four-via`
     #[command(name = "route-path-candidate-four-via-explain")]
     RoutePathCandidateFourViaExplain {
         /// Net UUID
@@ -444,7 +454,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic explanation for the current three-via path candidate result
+    /// Deprecated compatibility wrapper; use `route-path-candidate-explain --candidate route-path-candidate-three-via`
     #[command(name = "route-path-candidate-three-via-explain")]
     RoutePathCandidateThreeViaExplain {
         /// Net UUID
@@ -457,7 +467,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic explanation for the current two-via path candidate result
+    /// Deprecated compatibility wrapper; use `route-path-candidate-explain --candidate route-path-candidate-two-via`
     #[command(name = "route-path-candidate-two-via-explain")]
     RoutePathCandidateTwoViaExplain {
         /// Net UUID
@@ -470,7 +480,7 @@ pub(crate) enum NativeProjectQueryCommands {
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
     },
-    /// Deterministic explanation for the current single-via path candidate result
+    /// Deprecated compatibility wrapper; use `route-path-candidate-explain --candidate route-path-candidate-via`
     #[command(name = "route-path-candidate-via-explain")]
     RoutePathCandidateViaExplain {
         /// Net UUID
@@ -495,6 +505,16 @@ pub(crate) enum NativeProjectQueryCommands {
         /// Target anchor pad UUID
         #[arg(long = "to-anchor")]
         to_anchor: Uuid,
+        /// Accepted deterministic candidate family
+        #[arg(long = "candidate", value_enum, default_value = "route-path-candidate")]
+        candidate: NativeProjectRouteApplyCandidateArg,
+        /// Accepted authored-copper-graph policy when required by the candidate family
+        #[arg(
+            long = "policy",
+            value_enum,
+            required_if_eq("candidate", "authored-copper-graph")
+        )]
+        policy: Option<NativeRoutePathCandidateAuthoredCopperGraphPolicy>,
     },
     /// Current native board placed packages/components
     BoardComponents,

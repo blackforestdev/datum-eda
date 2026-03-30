@@ -18,13 +18,15 @@ fn route_path_candidate_via_explain_query_cli(
         "project",
         "query",
         root.to_str().unwrap(),
-        "route-path-candidate-via-explain",
+        "route-path-candidate-explain",
         "--net",
         &net_uuid.to_string(),
         "--from-anchor",
         &from_anchor.to_string(),
         "--to-anchor",
         &to_anchor.to_string(),
+        "--candidate",
+        "route-path-candidate-via",
     ])
     .expect("CLI should parse")
 }
@@ -174,13 +176,15 @@ fn project_query_route_path_candidate_via_explain_reports_selected_via_reasoning
             "project",
             "query",
             root.to_str().unwrap(),
-            "route-path-candidate-via-explain",
+            "route-path-candidate-explain",
             "--net",
             &target_net_uuid.to_string(),
             "--from-anchor",
             &anchor_a_uuid.to_string(),
             "--to-anchor",
             &anchor_b_uuid.to_string(),
+            "--candidate",
+            "route-path-candidate-via",
         ])
         .expect("CLI should parse"),
     )

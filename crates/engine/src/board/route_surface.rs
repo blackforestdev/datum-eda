@@ -54,6 +54,18 @@ mod route_path_candidate_authored_via_chain;
 mod route_path_candidate_authored_via_chain_explain;
 #[path = "route_path_candidate_authored_via_chain_selection.rs"]
 mod route_path_candidate_authored_via_chain_selection;
+#[path = "route_path_candidate_orthogonal_dogleg.rs"]
+mod route_path_candidate_orthogonal_dogleg;
+#[path = "route_path_candidate_orthogonal_dogleg_explain.rs"]
+mod route_path_candidate_orthogonal_dogleg_explain;
+#[path = "route_path_candidate_orthogonal_dogleg_selection.rs"]
+mod route_path_candidate_orthogonal_dogleg_selection;
+#[path = "route_path_candidate_orthogonal_two_bend.rs"]
+mod route_path_candidate_orthogonal_two_bend;
+#[path = "route_path_candidate_orthogonal_two_bend_explain.rs"]
+mod route_path_candidate_orthogonal_two_bend_explain;
+#[path = "route_path_candidate_orthogonal_two_bend_selection.rs"]
+mod route_path_candidate_orthogonal_two_bend_selection;
 #[path = "route_path_candidate_explain.rs"]
 mod route_path_candidate_explain;
 #[path = "route_path_candidate_five_via.rs"]
@@ -147,6 +159,30 @@ pub use self::route_path_candidate_authored_via_chain_explain::{
     RoutePathCandidateAuthoredViaChainExplainSelectedChain,
     RoutePathCandidateAuthoredViaChainExplainSummary,
     RoutePathCandidateAuthoredViaChainExplainVia,
+};
+pub use self::route_path_candidate_orthogonal_dogleg::{
+    RoutePathCandidateOrthogonalDoglegCornerOrderView,
+    RoutePathCandidateOrthogonalDoglegPath, RoutePathCandidateOrthogonalDoglegReport,
+    RoutePathCandidateOrthogonalDoglegSummary,
+};
+pub use self::route_path_candidate_orthogonal_dogleg_explain::{
+    RoutePathCandidateOrthogonalDoglegExplainBlockedDogleg,
+    RoutePathCandidateOrthogonalDoglegExplainKind,
+    RoutePathCandidateOrthogonalDoglegExplainReport,
+    RoutePathCandidateOrthogonalDoglegExplainSelectedDogleg,
+    RoutePathCandidateOrthogonalDoglegExplainSummary,
+};
+pub use self::route_path_candidate_orthogonal_two_bend::{
+    RoutePathCandidateOrthogonalTwoBendOrientationView,
+    RoutePathCandidateOrthogonalTwoBendPath, RoutePathCandidateOrthogonalTwoBendReport,
+    RoutePathCandidateOrthogonalTwoBendSummary,
+};
+pub use self::route_path_candidate_orthogonal_two_bend_explain::{
+    RoutePathCandidateOrthogonalTwoBendExplainBlockedPath,
+    RoutePathCandidateOrthogonalTwoBendExplainKind,
+    RoutePathCandidateOrthogonalTwoBendExplainReport,
+    RoutePathCandidateOrthogonalTwoBendExplainSelectedPath,
+    RoutePathCandidateOrthogonalTwoBendExplainSummary,
 };
 pub use self::route_path_candidate_authored_copper_graph::{
     RoutePathCandidateAuthoredCopperGraphPath,

@@ -70,7 +70,6 @@ class TestProtocolCatalog(unittest.TestCase):
             "run_drc",
             "explain_violation",
             "export_route_path_proposal",
-            "export_route_path_candidate_authored_copper_graph_proposal",
             "route_apply",
             "inspect_route_proposal_artifact",
             "apply_route_proposal_artifact",

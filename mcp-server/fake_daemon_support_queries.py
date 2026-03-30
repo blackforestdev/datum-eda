@@ -240,41 +240,6 @@ class FakeDaemonClientQueriesMixin:
             None,
         )
 
-    def export_route_path_candidate_authored_copper_graph_proposal(
-        self,
-        path: str,
-        net_uuid: str,
-        from_anchor_pad_uuid: str,
-        to_anchor_pad_uuid: str,
-        policy: str,
-        out: str,
-    ) -> JsonRpcResponse:
-        self.calls.append(
-            (
-                "export_route_path_candidate_authored_copper_graph_proposal",
-                {
-                    "path": path,
-                    "net_uuid": net_uuid,
-                    "from_anchor_pad_uuid": from_anchor_pad_uuid,
-                    "to_anchor_pad_uuid": to_anchor_pad_uuid,
-                    "policy": policy,
-                    "out": out,
-                },
-            )
-        )
-        return JsonRpcResponse(
-            "2.0",
-            113,
-            {
-                "action": "export_route_path_candidate_authored_copper_graph_proposal",
-                "contract": "m5_route_path_candidate_authored_copper_graph_policy_v1",
-                "path": out,
-                "policy": policy,
-                "artifact_kind": "native_route_proposal_artifact",
-            },
-            None,
-        )
-
     def export_route_path_proposal(
         self,
         path: str,

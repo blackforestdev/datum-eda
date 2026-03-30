@@ -301,6 +301,8 @@ mod main_tests_project_noconnect;
 mod main_tests_project_port;
 #[path = "main_tests_project_query.rs"]
 mod main_tests_project_query;
+#[path = "main_tests_project_route_apply.rs"]
+mod main_tests_project_route_apply;
 #[path = "main_tests_project_route_corridor.rs"]
 mod main_tests_project_route_corridor;
 #[path = "main_tests_project_route_path_candidate.rs"]
@@ -339,6 +341,8 @@ mod main_tests_project_route_path_candidate_authored_via_chain;
 mod main_tests_project_route_path_candidate_authored_via_chain_explain;
 #[path = "main_tests_project_route_path_candidate_explain.rs"]
 mod main_tests_project_route_path_candidate_explain;
+#[path = "main_tests_project_route_path_candidate_explain_generic.rs"]
+mod main_tests_project_route_path_candidate_explain_generic;
 #[path = "main_tests_project_route_path_candidate_five_via.rs"]
 mod main_tests_project_route_path_candidate_five_via;
 #[path = "main_tests_project_route_path_candidate_five_via_explain.rs"]
@@ -347,6 +351,8 @@ mod main_tests_project_route_path_candidate_five_via_explain;
 mod main_tests_project_route_path_candidate_four_via;
 #[path = "main_tests_project_route_path_candidate_four_via_explain.rs"]
 mod main_tests_project_route_path_candidate_four_via_explain;
+#[path = "main_tests_project_route_path_candidate_generic.rs"]
+mod main_tests_project_route_path_candidate_generic;
 #[path = "main_tests_project_route_path_candidate_six_via.rs"]
 mod main_tests_project_route_path_candidate_six_via;
 #[path = "main_tests_project_route_path_candidate_six_via_explain.rs"]
@@ -367,8 +373,6 @@ mod main_tests_project_route_path_candidate_via_explain;
 mod main_tests_project_route_preflight;
 #[path = "main_tests_project_route_proposal_artifact.rs"]
 mod main_tests_project_route_proposal_artifact;
-#[path = "main_tests_project_route_apply.rs"]
-mod main_tests_project_route_apply;
 #[path = "main_tests_project_routing_substrate.rs"]
 mod main_tests_project_routing_substrate;
 #[path = "main_tests_project_symbol.rs"]

@@ -432,36 +432,51 @@ Status: [~] In progress
   - `project query <dir> routing-substrate`
   - `project query <dir> route-preflight --net <uuid>`
   - `project query <dir> route-corridor --net <uuid>`
-  - `project query <dir> route-path-candidate --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-  - `project query <dir> route-path-candidate-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+  - canonical route query surface: `project query <dir> route-path-candidate --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate <accepted_candidate> [--policy <policy>]`
+  - canonical route explanation surface: `project query <dir> route-path-candidate-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate <accepted_candidate> [--policy <policy>]`
+  - contract-specific `route-path-candidate-*` and
+    `route-path-candidate-*-explain` commands are now compatibility wrappers
+    around those bounded generic surfaces
+  - the remaining legacy wrapper implementations now also dispatch through the
+    same shared generic candidate/policy executor path as the canonical
+    surfaces, reducing wrapper-only branching ahead of removal
 - Current M5 routing expansion (persisted-via reuse lane):
   - fixed-arity via reuse was proven through bounded ordinal slices and is no
     longer the preferred growth model
   - current generalized contract is `project query <dir>
-    route-path-candidate-authored-via-chain --net <uuid> --from-anchor
-    <pad_uuid> --to-anchor <pad_uuid>`
+    route-path-candidate --net <uuid> --from-anchor <pad_uuid> --to-anchor
+    <pad_uuid> --candidate route-path-candidate-authored-via-chain`
   - current adjacent observability surface is `project query <dir>
-    route-path-candidate-authored-via-chain-explain --net <uuid>
-    --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+    route-path-candidate-explain --net <uuid> --from-anchor <pad_uuid>
+    --to-anchor <pad_uuid> --candidate route-path-candidate-authored-via-chain`
+  - a same-layer synthesis slice now also exists via `project query <dir>
+    route-path-candidate --net <uuid> --from-anchor <pad_uuid> --to-anchor
+    <pad_uuid> --candidate route-path-candidate-orthogonal-dogleg`, with the
+    paired explanation surface under `route-path-candidate-explain`
+  - that same same-layer synthesis lane now also covers `project query <dir>
+    route-path-candidate --net <uuid> --from-anchor <pad_uuid> --to-anchor
+    <pad_uuid> --candidate route-path-candidate-orthogonal-two-bend`, with the
+    paired explanation surface under `route-path-candidate-explain`
 - Current M5 existing-copper readback lane:
   - deterministic authored-copper graph path queries now exist in
     increasingly filtered/readback-focused forms recorded in
     `specs/progress/m5_opening.md`
-  - the preferred generalized query surface is `project query <dir>
-    route-path-candidate-authored-copper-graph --net <uuid> --from-anchor
-    <pad_uuid> --to-anchor <pad_uuid> --policy <policy>`
-  - the preferred generalized explanation surface is `project query <dir>
-    route-path-candidate-authored-copper-graph-explain --net <uuid>
-    --from-anchor <pad_uuid> --to-anchor <pad_uuid> --policy <policy>`
+  - that same generalized query surface also covers the accepted
+    authored-copper-graph family when `--candidate authored-copper-graph
+    --policy <policy>` is selected
+  - that same generalized explanation surface also covers the accepted
+    authored-copper-graph family when `--candidate authored-copper-graph
+    --policy <policy>` is selected
   - accepted bounded policies are `plain`, `zone_aware`, `obstacle_aware`,
     `zone_obstacle_aware`, `zone_obstacle_topology_aware`, and
     `zone_obstacle_topology_layer_balance_aware`
-  - the next routing-facing bridge now exists as `project query <dir>
-    route-path-candidate-authored-copper-plus-one-gap --net <uuid>
-    --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+  - the plus-one-gap bridge is now reached canonically through `project query
+    <dir> route-path-candidate --net <uuid> --from-anchor <pad_uuid>
+    --to-anchor <pad_uuid> --candidate authored-copper-plus-one-gap`
   - a first write-capable bridge now exists for that accepted query contract:
-    `project export-route-proposal <dir> --net <uuid> --from-anchor <pad_uuid>
-    --to-anchor <pad_uuid> --out <path>`,
+    `project export-route-path-proposal <dir> --net <uuid> --from-anchor
+    <pad_uuid> --to-anchor <pad_uuid> --candidate
+    authored-copper-plus-one-gap --out <path>`,
     `project inspect-route-proposal-artifact <path>`, and
     `project apply-route-proposal-artifact <dir> --artifact <path>`
   - the same route-proposal artifact lane now also covers the accepted
@@ -494,13 +509,18 @@ Status: [~] In progress
     deterministic authored-via-chain contract via `project route-apply <dir>
     --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
     route-path-candidate-authored-via-chain`
+  - that same direct convenience apply lane now also covers the accepted
+    same-layer orthogonal dogleg contract via `project route-apply <dir> --net
+    <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+    route-path-candidate-orthogonal-dogleg`
+  - that same direct convenience apply lane now also covers the accepted
+    same-layer orthogonal two-bend contract via `project route-apply <dir> --net
+    <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+    route-path-candidate-orthogonal-two-bend`
   - a bounded convenience export surface now also exists for the completed
     write-capable route family via `project export-route-path-proposal <dir>
     --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
     <accepted_candidate> [--policy <policy>] --out <path>`
-  - the older `export-route-path-candidate-*` commands now advertise their
-    compatibility-wrapper status in CLI help and text-mode export output,
-    pointing users at `project export-route-path-proposal ... --candidate ...`
   - `project route-apply` now parses `--candidate` from a bounded accepted
     value set instead of a free-form string, and enforces `--policy` only for
     `--candidate authored-copper-graph`
@@ -508,8 +528,6 @@ Status: [~] In progress
     policy-selected family via `project route-apply <dir> --net <uuid>
     --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
     authored-copper-graph --policy <policy>`
-  - that same policy-selected export surface is now exposed through MCP as
-    `export_route_path_candidate_authored_copper_graph_proposal`
   - the bounded convenience export surface is now exposed through MCP as
     `export_route_path_proposal`
   - the bounded direct route-apply surface is now exposed through MCP as
@@ -528,6 +546,8 @@ Status: [~] In progress
     `route-path-candidate-via` contract, and the accepted bounded two-via
     `route-path-candidate-two-via` contract, and the remaining bounded
     `three`/`four`/`five`/`six`-via plus `authored-via-chain` contracts, and
+    the accepted same-layer orthogonal dogleg contract, and the accepted
+    same-layer orthogonal two-bend contract, and
     the accepted zone-aware and zone-obstacle-aware existing-copper graph
     reuse contracts, and the accepted topology-aware plus layer-balance-aware
     topology-aware zone-obstacle-aware existing-copper graph reuse contracts,

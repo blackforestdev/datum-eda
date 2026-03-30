@@ -169,53 +169,6 @@ class TestDispatchQueries(unittest.TestCase):
         payload = response["result"]["content"][0]["json"]
         self.assertEqual(payload["rule_detail"], "drc connectivity_unrouted_net")
 
-    def test_tools_call_dispatches_authored_copper_graph_policy_proposal_export(self) -> None:
-        daemon = FakeDaemonClient()
-        host = StdioToolHost(daemon)
-        response = host.handle_message(
-            {
-                "jsonrpc": "2.0",
-                "id": 79,
-                "method": "tools/call",
-                "params": {
-                    "name": "export_route_path_candidate_authored_copper_graph_proposal",
-                    "arguments": {
-                        "path": "/tmp/demo",
-                        "net_uuid": "11111111-1111-1111-1111-111111111111",
-                        "from_anchor_pad_uuid": "22222222-2222-2222-2222-222222222222",
-                        "to_anchor_pad_uuid": "33333333-3333-3333-3333-333333333333",
-                        "policy": "zone_obstacle_topology_layer_balance_aware",
-                        "out": "/tmp/demo.route-proposal.json",
-                    },
-                },
-            }
-        )
-        self.assertEqual(
-            daemon.calls,
-            [
-                (
-                    "export_route_path_candidate_authored_copper_graph_proposal",
-                    {
-                        "path": "/tmp/demo",
-                        "net_uuid": "11111111-1111-1111-1111-111111111111",
-                        "from_anchor_pad_uuid": "22222222-2222-2222-2222-222222222222",
-                        "to_anchor_pad_uuid": "33333333-3333-3333-3333-333333333333",
-                        "policy": "zone_obstacle_topology_layer_balance_aware",
-                        "out": "/tmp/demo.route-proposal.json",
-                    },
-                )
-            ],
-        )
-        payload = response["result"]["content"][0]["json"]
-        self.assertEqual(
-            payload["action"],
-            "export_route_path_candidate_authored_copper_graph_proposal",
-        )
-        self.assertEqual(
-            payload["contract"], "m5_route_path_candidate_authored_copper_graph_policy_v1"
-        )
-        self.assertEqual(payload["policy"], "zone_obstacle_topology_layer_balance_aware")
-
     def test_tools_call_dispatches_generic_route_path_proposal_export(self) -> None:
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)

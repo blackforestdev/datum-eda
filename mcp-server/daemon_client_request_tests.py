@@ -434,54 +434,6 @@ class TestDaemonClientRequests(unittest.TestCase):
         self.assertEqual(hierarchy.params, {})
 
     @patch("server_runtime.subprocess.run")
-    def test_exports_authored_copper_graph_policy_proposal_via_cli(self, run_mock) -> None:
-        run_mock.return_value = subprocess.CompletedProcess(
-            args=[],
-            returncode=0,
-            stdout=(
-                '{"action":"export_route_path_candidate_authored_copper_graph_proposal",'
-                '"contract":"m5_route_path_candidate_authored_copper_graph_policy_v1"}'
-            ),
-            stderr="",
-        )
-        client = EngineDaemonClient()
-        response = client.export_route_path_candidate_authored_copper_graph_proposal(
-            "/tmp/demo",
-            "11111111-1111-1111-1111-111111111111",
-            "22222222-2222-2222-2222-222222222222",
-            "33333333-3333-3333-3333-333333333333",
-            "zone_obstacle_topology_layer_balance_aware",
-            "/tmp/demo.route-proposal.json",
-        )
-        run_mock.assert_called_once_with(
-            [
-                "eda",
-                "--format",
-                "json",
-                "project",
-                "export-route-path-candidate-authored-copper-graph-proposal",
-                "/tmp/demo",
-                "--net",
-                "11111111-1111-1111-1111-111111111111",
-                "--from-anchor",
-                "22222222-2222-2222-2222-222222222222",
-                "--to-anchor",
-                "33333333-3333-3333-3333-333333333333",
-                "--policy",
-                "zone_obstacle_topology_layer_balance_aware",
-                "--out",
-                "/tmp/demo.route-proposal.json",
-            ],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        self.assertEqual(response.result["action"], "export_route_path_candidate_authored_copper_graph_proposal")
-        self.assertEqual(
-            response.result["contract"], "m5_route_path_candidate_authored_copper_graph_policy_v1"
-        )
-
-    @patch("server_runtime.subprocess.run")
     def test_exports_route_path_proposal_via_cli(self, run_mock) -> None:
         run_mock.return_value = subprocess.CompletedProcess(
             args=[],

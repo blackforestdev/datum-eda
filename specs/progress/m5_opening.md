@@ -113,8 +113,8 @@ Next slice selected on 2026-03-28:
   - no pool lookup or package re-resolution
 
 Current next slice selected on 2026-03-28:
-- deterministic single-layer path candidate via
-  `project query <dir> route-path-candidate --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- deterministic route candidate family via
+  `project query <dir> route-path-candidate --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate <accepted_candidate> [--policy <policy>]`
 - input: persisted native board state only
 - output:
   - target net identity
@@ -158,6 +158,15 @@ Current checkpoint state on 2026-03-28:
   - `route-corridor`
   - `route-path-candidate`
   - `route-path-candidate-explain`
+- the canonical route query/explanation entrypoints are now the bounded generic
+  `route-path-candidate` and `route-path-candidate-explain` surfaces with
+  `--candidate <accepted_candidate> [--policy <policy>]`
+- contract-specific `route-path-candidate-*` and
+  `route-path-candidate-*-explain` commands now remain only as deprecated
+  compatibility wrappers around those generic surfaces
+- those remaining compatibility wrappers now dispatch through the same shared
+  generic candidate/policy executor path as the canonical surfaces, keeping one
+  maintained route query/explanation decision path ahead of wrapper retirement
 - this is an intentional M5 checkpoint, not an implied launch point for the
   next contract
 - the next planning decision must be explicit and separate:
@@ -452,7 +461,7 @@ Next routing-facing bridge slice selected on 2026-03-29:
 Adjacent write-capable bridge implemented on 2026-03-29:
 - deterministic route proposal artifact/export/apply lane for the accepted
   plus-one-gap contract
-  - `project export-route-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - canonical surface: `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate authored-copper-plus-one-gap --out <path>`
   - `project inspect-route-proposal-artifact <path>`
   - `project apply-route-proposal-artifact <dir> --artifact <path>`
 - input: persisted native board state only
@@ -471,7 +480,7 @@ Adjacent write-capable bridge implemented on 2026-03-29:
 Adjacent write-capable route-application slice implemented on 2026-03-29:
 - deterministic route proposal artifact export for the accepted single-layer
   `route-path-candidate` contract
-  - `project export-route-path-candidate-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - canonical surface: `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate --out <path>`
   - reuses the same `project inspect-route-proposal-artifact <path>` and
     `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
 - input: persisted native board state only
@@ -491,7 +500,7 @@ Adjacent write-capable route-application slice implemented on 2026-03-29:
 Adjacent write-capable route-application slice implemented on 2026-03-29:
 - deterministic route proposal artifact export for the accepted bounded
   single-via `route-path-candidate-via` contract
-  - `project export-route-path-candidate-via-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - canonical surface: `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-via --out <path>`
   - reuses the same `project inspect-route-proposal-artifact <path>` and
     `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
 - input: persisted native board state only
@@ -511,7 +520,7 @@ Adjacent write-capable route-application slice implemented on 2026-03-29:
 Adjacent write-capable route-application slice implemented on 2026-03-29:
 - deterministic route proposal artifact export for the accepted bounded
   two-via `route-path-candidate-two-via` contract
-  - `project export-route-path-candidate-two-via-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - canonical surface: `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-two-via --out <path>`
   - reuses the same `project inspect-route-proposal-artifact <path>` and
     `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
 - input: persisted native board state only
@@ -532,11 +541,12 @@ Adjacent write-capable route-application slice implemented on 2026-03-29:
 Adjacent write-capable route-application slice implemented on 2026-03-29:
 - deterministic route proposal artifact export for the remaining bounded
   via-path contracts
-  - `project export-route-path-candidate-three-via-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-  - `project export-route-path-candidate-four-via-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-  - `project export-route-path-candidate-five-via-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-  - `project export-route-path-candidate-six-via-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-  - `project export-route-path-candidate-authored-via-chain-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - canonical surfaces:
+    `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-three-via --out <path>`,
+    `... --candidate route-path-candidate-four-via`,
+    `... --candidate route-path-candidate-five-via`,
+    `... --candidate route-path-candidate-six-via`, and
+    `... --candidate route-path-candidate-authored-via-chain`
   - reuses the same `project inspect-route-proposal-artifact <path>` and
     `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
 - input: persisted native board state only
@@ -594,7 +604,7 @@ Follow-on explanation surface selected on 2026-03-29:
 Adjacent write-capable route-application slice implemented on 2026-03-29:
 - deterministic route proposal artifact export for the accepted zone-aware
   existing-authored-copper graph contract
-  - `project export-route-path-candidate-authored-copper-graph-zone-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - canonical surface: `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate authored-copper-graph --policy zone_aware --out <path>`
   - reuses the same `project inspect-route-proposal-artifact <path>` and
     `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
 - input: persisted native board state only
@@ -650,7 +660,7 @@ Follow-on explanation surface selected on 2026-03-29:
 Adjacent write-capable route-application slice implemented on 2026-03-29:
 - deterministic route proposal artifact export for the accepted
   zone-obstacle-aware existing-authored-copper graph contract
-  - `project export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - canonical surface: `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate authored-copper-graph --policy zone_obstacle_aware --out <path>`
   - reuses the same `project inspect-route-proposal-artifact <path>` and
     `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
 - input: persisted native board state only
@@ -702,7 +712,7 @@ Follow-on explanation surface selected on 2026-03-29:
 Adjacent write-capable route-application slice implemented on 2026-03-29:
 - deterministic route proposal artifact export for the accepted topology-aware
   zone-obstacle-aware existing-authored-copper graph contract
-  - `project export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - canonical surface: `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate authored-copper-graph --policy zone_obstacle_topology_aware --out <path>`
   - reuses the same `project inspect-route-proposal-artifact <path>` and
     `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
 - input: persisted native board state only
@@ -761,7 +771,7 @@ Adjacent write-capable route-application slice implemented on 2026-03-29:
 - deterministic route proposal artifact export for the accepted
   layer-balance-aware topology-aware zone-obstacle-aware
   existing-authored-copper graph contract
-  - `project export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - canonical surface: `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate authored-copper-graph --policy zone_obstacle_topology_layer_balance_aware --out <path>`
   - reuses the same `project inspect-route-proposal-artifact <path>` and
     `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
 - input: persisted native board state only
@@ -822,7 +832,7 @@ Follow-on explanation surface selected on 2026-03-29:
 Adjacent write-capable route-application slice implemented on 2026-03-29:
 - deterministic route proposal artifact export for the accepted
   obstacle-aware existing-authored-copper graph contract
-  - `project export-route-path-candidate-authored-copper-graph-obstacle-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - canonical surface: `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate authored-copper-graph --policy obstacle_aware --out <path>`
   - reuses the same `project inspect-route-proposal-artifact <path>` and
     `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
 - input: persisted native board state only
@@ -845,7 +855,7 @@ Adjacent write-capable route-application slice implemented on 2026-03-29:
 Adjacent write-capable route-application slice implemented on 2026-03-29:
 - policy-selected deterministic route proposal artifact export for the
   completed authored-copper-graph family
-  - `project export-route-path-candidate-authored-copper-graph-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --policy <policy> --out <path>`
+  - canonical surface: `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate authored-copper-graph --policy <policy> --out <path>`
   - reuses the same `project inspect-route-proposal-artifact <path>` and
     `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
 - input: persisted native board state only
@@ -874,9 +884,8 @@ Adjacent write-capable route-application slice implemented on 2026-03-29:
     policy as part of the live deterministic proposal match
 
 Adjacent MCP parity slice implemented on 2026-03-29:
-- the policy-selected authored-copper-graph proposal export is now exposed
-  through MCP as
-  `export_route_path_candidate_authored_copper_graph_proposal`
+- the policy-selected authored-copper-graph export surface is exposed through
+  the generic MCP route export tool `export_route_path_proposal`
 - input:
   - native project directory path
   - `net_uuid`
@@ -1044,13 +1053,10 @@ Adjacent native convenience-export slice implemented on 2026-03-29:
     families
   - `--policy` is required for `--candidate authored-copper-graph` and
     rejected for the other generic export candidates
-  - the older `export-route-path-candidate-*` commands remain only as
-    compatibility wrappers and are no longer the canonical interface
 
 Adjacent native compatibility-warning slice implemented on 2026-03-30:
-- the older `export-route-path-candidate-*` commands now advertise their
-  deprecated compatibility-wrapper status in CLI help and text-mode export
-  output
+- the legacy `export-route-path-candidate-*` commands were briefly marked as
+  deprecated compatibility wrappers before later removal
 - input: legacy export command invocation only
 - output:
   - help text names the preferred replacement
@@ -1077,6 +1083,138 @@ Adjacent native convenience-apply slice implemented on 2026-03-29:
     apply remains a validated no-op apply surface
   - no generalized direct-apply surface for the broader M5 proposal family is
     introduced by this slice
+
+Next explicit contract selected on 2026-03-30:
+- deterministic same-layer orthogonal dogleg path candidate
+  `project query <dir> route-path-candidate --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-dogleg`
+- input: persisted native board state only
+- output:
+  - current single-net source/target anchor pair
+  - explicit status exactly one of:
+    - `deterministic_path_found`
+    - `no_path_under_current_authored_constraints`
+  - when found, exactly one deterministic same-layer path with exactly one
+    bend point chosen from the two canonical Manhattan corners between the
+    anchors
+- deterministic rule:
+  - restrict candidates to the requested anchor layer only
+  - evaluate the two canonical orthogonal corner orders
+    `horizontal_then_vertical` then `vertical_then_horizontal`
+  - accept a candidate only when both constituent segments are unblocked under
+    the existing authored obstacle checks
+  - select the first unblocked candidate in that explicit order
+- non-goals:
+  - no vias or layer transitions
+  - no arbitrary corner search or ranking beyond the explicit two-corner order
+  - no rip-up/reroute, negotiated routing, or push-shove
+  - no invented constraints beyond the existing persisted obstacle-truth checks
+
+Follow-on explanation surface selected on 2026-03-30:
+- deterministic same-layer orthogonal dogleg explanation
+  `project query <dir> route-path-candidate-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-dogleg`
+- input: persisted native board state only
+- output:
+  - current selected corner and corner order when found
+  - or whether failure came from no same-layer dogleg candidate versus all
+    dogleg candidates blocked
+- guardrails:
+  - no new routing semantics
+  - no new obstacle interpretation beyond the accepted existing segment checks
+
+Adjacent write-capable route-application slice implemented on 2026-03-30:
+- deterministic route proposal artifact export for the accepted same-layer
+  orthogonal dogleg contract
+  - canonical surface: `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-dogleg --out <path>`
+  - reuses the same `project inspect-route-proposal-artifact <path>` and
+    `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
+- input: persisted native board state only
+- output:
+  - one versioned route-proposal artifact containing the ordered
+    self-sufficient `draw_track` action sequence for the selected two-segment
+    dogleg only
+- guardrails:
+  - no re-search beyond the accepted orthogonal dogleg query contract
+  - no invented track width; width comes from persisted net-class facts only
+
+Adjacent native convenience-apply slice implemented on 2026-03-30:
+- the accepted deterministic same-layer orthogonal dogleg contract now also
+  has a direct apply surface:
+  - `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-dogleg`
+- input: persisted native board state only
+- output:
+  - one immediate `route_apply` report built from the current live
+    deterministic orthogonal dogleg proposal
+  - no intermediate artifact file is required
+- guardrails:
+  - no re-search beyond the accepted orthogonal dogleg query contract
+  - the direct apply writes only the ordered selected `draw_track` sequence
+
+Next explicit contract selected on 2026-03-30:
+- deterministic same-layer orthogonal two-bend path candidate
+  `project query <dir> route-path-candidate --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-two-bend`
+- input: persisted native board state only
+- output:
+  - current single-net source/target anchor pair
+  - explicit status exactly one of:
+    - `deterministic_path_found`
+    - `no_path_under_current_authored_constraints`
+  - when found, exactly one deterministic same-layer orthogonal path with
+    exactly two bends and three segments
+- deterministic rule:
+  - restrict candidates to the requested anchor layer only
+  - generate detour lines only from persisted board-outline and authored
+    obstacle coordinates already present on that layer
+  - order candidates by orientation family
+    `horizontal_detour` before `vertical_detour`, then detour coordinate
+    ascending
+  - accept a candidate only when all three constituent segments are unblocked
+    under the existing authored obstacle checks
+  - select the first unblocked candidate in that explicit order
+- non-goals:
+  - no vias or layer transitions
+  - no arbitrary grid search or invented coordinates
+  - no negotiated routing, rip-up/reroute, or push-shove
+  - no inferred constraints beyond the existing obstacle-truth checks
+
+Follow-on explanation surface selected on 2026-03-30:
+- deterministic same-layer orthogonal two-bend explanation
+  `project query <dir> route-path-candidate-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-two-bend`
+- input: persisted native board state only
+- output:
+  - current selected path points and detour coordinate when found
+  - or whether failure came from no same-layer two-bend candidate versus all
+    two-bend candidates blocked
+- guardrails:
+  - no new routing semantics
+  - no new obstacle interpretation beyond the accepted segment checks
+
+Adjacent write-capable route-application slice implemented on 2026-03-30:
+- deterministic route proposal artifact export for the accepted same-layer
+  orthogonal two-bend contract
+  - canonical surface: `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-two-bend --out <path>`
+  - reuses the same `project inspect-route-proposal-artifact <path>` and
+    `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
+- input: persisted native board state only
+- output:
+  - one versioned route-proposal artifact containing the ordered
+    self-sufficient `draw_track` action sequence for the selected three-segment
+    path only
+- guardrails:
+  - no re-search beyond the accepted orthogonal two-bend query contract
+  - no invented track width; width comes from persisted net-class facts only
+
+Adjacent native convenience-apply slice implemented on 2026-03-30:
+- the accepted deterministic same-layer orthogonal two-bend contract now also
+  has a direct apply surface:
+  - `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-two-bend`
+- input: persisted native board state only
+- output:
+  - one immediate `route_apply` report built from the current live
+    deterministic orthogonal two-bend proposal
+  - no intermediate artifact file is required
+- guardrails:
+  - no re-search beyond the accepted orthogonal two-bend query contract
+  - the direct apply writes only the ordered selected `draw_track` sequence
 
 Poor candidates for the first `M5` slice:
 - full autorouter

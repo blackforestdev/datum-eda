@@ -61,6 +61,14 @@ mod route_path_candidate_authored_copper_plus_one_gap_explain;
 mod route_path_candidate_authored_via_chain;
 #[path = "tests/mod_tests_route_path_candidate_authored_via_chain_explain.rs"]
 mod route_path_candidate_authored_via_chain_explain;
+#[path = "tests/mod_tests_route_path_candidate_orthogonal_dogleg.rs"]
+mod route_path_candidate_orthogonal_dogleg;
+#[path = "tests/mod_tests_route_path_candidate_orthogonal_dogleg_explain.rs"]
+mod route_path_candidate_orthogonal_dogleg_explain;
+#[path = "tests/mod_tests_route_path_candidate_orthogonal_two_bend.rs"]
+mod route_path_candidate_orthogonal_two_bend;
+#[path = "tests/mod_tests_route_path_candidate_orthogonal_two_bend_explain.rs"]
+mod route_path_candidate_orthogonal_two_bend_explain;
 #[path = "tests/mod_tests_route_path_candidate_five_via.rs"]
 mod route_path_candidate_five_via;
 #[path = "tests/mod_tests_route_path_candidate_five_via_explain.rs"]

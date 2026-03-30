@@ -209,114 +209,109 @@ Current live slice:
   ordered polyline, or explicit `no_path_under_current_authored_constraints`,
   without introducing layer transitions, ranking, or proposal behavior.
 - `eda project query <dir> route-path-candidate-explain --net <uuid>
-  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports the current
-  single-layer path-candidate result as a deterministic explanation surface:
-  selected span when found, or whether failure came from no matching corridor
-  span versus all matching spans blocked, using only existing corridor/path
-  facts without adding routing semantics.
-- `eda project query <dir> route-path-candidate-via --net <uuid>
-  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a deterministic
-  point-to-point path candidate that may reuse one already-authored persisted
-  via only. It does not create vias or infer transition permissions.
-- `eda project query <dir> route-path-candidate-two-via --net <uuid>
-  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a deterministic
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+  <accepted_candidate> [--policy <policy>]` now reports the current accepted
+  route-candidate result as a deterministic explanation surface: selected path
+  when found, or contract-specific failure reasoning, using only existing
+  corridor/path facts without adding routing semantics.
+- `eda project query <dir> route-path-candidate --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-via` now
+  reports a deterministic point-to-point path candidate that may reuse one
+  already-authored persisted via only. It does not create vias or infer
+  transition permissions.
+- `eda project query <dir> route-path-candidate --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-two-via`
+  now reports a deterministic
   point-to-point path candidate that may reuse exactly two already-authored
   persisted vias only, selected by explicit ascending `(via_a_uuid, via_b_uuid)`
   order when their layer sequence connects the requested anchor layers through
   one intermediate copper layer. It does not create vias or infer transition
   permissions.
-- `eda project query <dir> route-path-candidate-three-via --net <uuid>
-  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a deterministic
-  point-to-point path candidate that may reuse exactly three already-authored
-  persisted vias only, selected by explicit ascending
-  `(via_a_uuid, via_b_uuid, via_c_uuid)` order when their layer sequence
-  connects the requested anchor layers through two intermediate copper layers.
-  It does not create vias or infer transition permissions.
-- `eda project query <dir> route-path-candidate-three-via-explain --net <uuid>
-  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports the current
-  three-via path-candidate result as a deterministic explanation surface:
-  selected via triple when found, or whether failure came from no matching
-  authored via triple versus all matching via triples blocked, using only
-  existing three-via/path facts without adding new routing semantics.
-- `eda project query <dir> route-path-candidate-four-via --net <uuid>
-  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a deterministic
-  point-to-point path candidate that may reuse exactly four already-authored
-  persisted vias only, selected by explicit ascending
-  `(via_a_uuid, via_b_uuid, via_c_uuid, via_d_uuid)` order when their layer
-  sequence connects the requested anchor layers through three intermediate
-  copper layers. It does not create vias or infer transition permissions.
-- `eda project query <dir> route-path-candidate-four-via-explain --net <uuid>
-  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports the current
-  four-via path-candidate result as a deterministic explanation surface:
-  selected via quadruple when found, or whether failure came from no matching
-  authored via quadruple versus all matching via quadruples blocked, using only
-  existing four-via/path facts without adding new routing semantics.
-- `eda project query <dir> route-path-candidate-five-via --net <uuid>
-  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a deterministic
-  point-to-point path candidate that may reuse exactly five already-authored
-  persisted vias only, selected by explicit ascending
-  `(via_a_uuid, via_b_uuid, via_c_uuid, via_d_uuid, via_e_uuid)` order when
-  their layer sequence connects the requested anchor layers through four
-  intermediate copper layers. It does not create vias or infer transition
+- `eda project query <dir> route-path-candidate --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid> --candidate
+  route-path-candidate-three-via|route-path-candidate-four-via|route-path-candidate-five-via|route-path-candidate-six-via`
+  now reports deterministic point-to-point path candidates that may reuse
+  exactly three, four, five, or six already-authored persisted vias only,
+  selected by explicit ascending reused-via UUID tuple order for the accepted
+  bounded layer sequence. It does not create vias or infer transition
   permissions.
-- `eda project query <dir> route-path-candidate-six-via --net <uuid>
-  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a deterministic
-  point-to-point path candidate that may reuse exactly six already-authored
-  persisted vias only, selected by explicit ascending
-  `(via_a_uuid, via_b_uuid, via_c_uuid, via_d_uuid, via_e_uuid, via_f_uuid)`
-  order when their layer sequence connects the requested anchor layers through
-  five intermediate copper layers. It does not create vias or infer transition
-  permissions.
-- `eda project query <dir> route-path-candidate-six-via-explain --net <uuid>
-  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports the current
-  six-via path-candidate result as a deterministic explanation surface:
-  selected via sextuple when found, or whether failure came from no matching
-  authored via sextuple versus all matching via sextuples blocked, using only
-  existing six-via/path facts without adding new routing semantics.
-- `eda project query <dir> route-path-candidate-five-via-explain --net <uuid>
-  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports the current
-  five-via path-candidate result as a deterministic explanation surface:
-  selected via quintuple when found, or whether failure came from no matching
-  authored via quintuple versus all matching via quintuples blocked, using only
-  existing five-via/path facts without adding new routing semantics.
-- `eda project query <dir> route-path-candidate-two-via-explain --net <uuid>
-  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports the current
-  two-via path-candidate result as a deterministic explanation surface:
-  selected via pair when found, or whether failure came from no matching
-  authored via pair versus all matching via pairs blocked, using only existing
-  two-via/path facts without adding new routing semantics.
-- `eda project query <dir> route-path-candidate-via-explain --net <uuid>
-  --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports the current
-  single-via path-candidate result as a deterministic explanation surface:
-  selected via when found, or whether failure came from no matching authored
-  via versus all matching vias blocked, using only existing via/path facts
-  without adding new transition semantics.
-- `eda project query <dir> route-path-candidate-authored-via-chain --net
-  <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports a
+- `eda project query <dir> route-path-candidate-explain --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+  route-path-candidate-two-via|route-path-candidate-three-via|route-path-candidate-four-via|route-path-candidate-five-via|route-path-candidate-six-via`
+  now reports the current accepted bounded multi-via path-candidate result as a
+  deterministic explanation surface: selected reused-via tuple when found, or
+  whether failure came from no matching authored tuple versus all matching
+  tuples blocked, using only existing via/path facts without adding new
+  routing semantics.
+- `eda project query <dir> route-path-candidate-explain --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+  route-path-candidate-via` now reports the current single-via path-candidate
+  result as a deterministic explanation surface: selected via when found, or
+  whether failure came from no matching authored via versus all matching vias
+  blocked, using only existing via/path facts without adding new transition
+  semantics.
+- `eda project query <dir> route-path-candidate --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid> --candidate
+  route-path-candidate-authored-via-chain` now reports a
   deterministic point-to-point path candidate that may reuse an authored
   target-net via chain only. Candidate chains are ordered by
   `(via_count, via_uuid_sequence)` ascending, and the first unblocked matching
   chain is selected without creating vias or inferring transition permissions.
-- `eda project query <dir> route-path-candidate-authored-via-chain-explain
-  --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>` now reports
-  the current authored-via-chain path-candidate result as a deterministic
-  explanation surface: selected chain when found, or whether failure came from
-  no matching authored via chain versus all matching via chains blocked, using
-  only existing authored-via-chain/path facts without adding new routing
-  semantics.
-- `eda project query <dir> route-path-candidate-authored-copper-graph --net
-  <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --policy <policy>` is
-  now the preferred generalized surface for the existing authored-copper graph
-  family. The accepted policy set is bounded to `plain`, `zone_aware`,
+- `eda project query <dir> route-path-candidate-explain --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+  route-path-candidate-authored-via-chain` now reports the current
+  authored-via-chain path-candidate result as a deterministic explanation
+  surface: selected chain when found, or whether failure came from no matching
+  authored via chain versus all matching via chains blocked, using only
+  existing authored-via-chain/path facts without adding new routing semantics.
+- `eda project query <dir> route-path-candidate --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid> --candidate
+  route-path-candidate-orthogonal-dogleg` now reports a deterministic
+  same-layer path candidate with exactly one bend point chosen from the two
+  canonical Manhattan corners between the anchors. Candidates are ordered by
+  candidate copper layer order, then `horizontal_then_vertical` before
+  `vertical_then_horizontal`, and each constituent segment must pass the
+  existing authored obstacle checks.
+- `eda project query <dir> route-path-candidate-explain --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+  route-path-candidate-orthogonal-dogleg` now reports the current orthogonal
+  dogleg result as a deterministic explanation surface: selected corner when
+  found, or whether failure came from no same-layer dogleg candidate versus
+  all dogleg candidates blocked.
+- `eda project query <dir> route-path-candidate --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid> --candidate
+  route-path-candidate-orthogonal-two-bend` now reports a deterministic
+  same-layer orthogonal path candidate with exactly two bends and three
+  segments. Detour lines are chosen only from persisted board-outline and
+  authored-obstacle coordinates already present on the candidate layer, then
+  ordered by `horizontal_detour` before `vertical_detour` and detour
+  coordinate ascending.
+- `eda project query <dir> route-path-candidate-explain --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+  route-path-candidate-orthogonal-two-bend` now reports the current
+  orthogonal two-bend result as a deterministic explanation surface: selected
+  path points and detour coordinate when found, or whether failure came from
+  no same-layer two-bend candidate versus all two-bend candidates blocked.
+- The older contract-specific `route-path-candidate-*` and
+  `route-path-candidate-*-explain` query spellings remain only as deprecated
+  compatibility wrappers. The canonical route query and explanation entrypoints
+  are the bounded generic `route-path-candidate` and
+  `route-path-candidate-explain` surfaces with `--candidate <accepted_candidate>
+  [--policy <policy>]`.
+- `eda project query <dir> route-path-candidate --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid> --candidate authored-copper-graph
+  --policy <policy>` is now the preferred generalized surface for the existing
+  authored-copper graph family. The accepted policy set is bounded to `plain`, `zone_aware`,
   `obstacle_aware`, `zone_obstacle_aware`, `zone_obstacle_topology_aware`, and
   `zone_obstacle_topology_layer_balance_aware`; each policy preserves the
   already-proven deterministic persisted-state contract of its corresponding
   suffix surface.
-- `eda project query <dir> route-path-candidate-authored-copper-graph-explain
-  --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --policy
-  <policy>` is the preferred generalized explanation surface for the existing
-  authored-copper graph family. It preserves the accepted bounded policy set
-  and reports the selected existing-copper path when found, or explicit
+- `eda project query <dir> route-path-candidate-explain --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+  authored-copper-graph --policy <policy>` is the preferred generalized
+  explanation surface for the existing authored-copper graph family. It
+  preserves the accepted bounded policy set and reports the selected
+  existing-copper path when found, or explicit
   `no_existing_authored_copper_path` when the persisted target-net copper
   graph does not connect the requested anchors, using only existing
   authored-copper graph/path facts without adding new routing semantics.
@@ -335,8 +330,9 @@ Current live slice:
   plus exactly one eligible synthetic same-layer gap segment. The gap is
   allowed only when its straight segment is unblocked under the persisted
   authored obstacle checks and it does not replace an existing authored edge.
-- `eda project export-route-proposal <dir> --net <uuid> --from-anchor
-  <pad_uuid> --to-anchor <pad_uuid> --out <path>` now writes a versioned
+- `eda project export-route-path-proposal <dir> --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid> --candidate
+  authored-copper-plus-one-gap --out <path>` now writes a versioned
   `native_route_proposal_artifact` file for the accepted plus-one-gap bridge
   slice. In the current contract the artifact contains exactly one
   self-sufficient `draw_track` action that materializes the selected synthetic
@@ -403,6 +399,18 @@ Current live slice:
   deterministic path around the reused authored via chain and materializes
   only the ordered `draw_track` segment sequence, never recreating the reused
   vias.
+- `eda project route-apply <dir> --net <uuid> --from-anchor <pad_uuid>
+  --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-dogleg`
+  now provides a direct convenience apply surface for the accepted same-layer
+  orthogonal dogleg contract. It rebuilds the current live deterministic
+  two-segment dogleg path and materializes the ordered `draw_track` sequence
+  immediately without writing an intermediate artifact file.
+- `eda project route-apply <dir> --net <uuid> --from-anchor <pad_uuid>
+  --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-two-bend`
+  now provides a direct convenience apply surface for the accepted same-layer
+  orthogonal two-bend contract. It rebuilds the current live deterministic
+  three-segment path and materializes the ordered `draw_track` sequence
+  immediately without writing an intermediate artifact file.
 - `eda project route-apply` now takes a bounded `--candidate` value set rather
   than a free-form string, so only the accepted direct-apply families parse at
   the CLI boundary. `--policy` is required for `--candidate
@@ -446,11 +454,10 @@ Current live slice:
   no connecting persisted target-net copper path, using only existing
   zone-obstacle-aware authored-copper graph/path facts without adding new
   routing semantics.
-- `eda project
-  export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-proposal
-  <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out
-  <path>` now extends the versioned `native_route_proposal_artifact` lane to
-  the accepted deterministic zone-obstacle-aware existing-copper graph
+- `eda project export-route-path-proposal <dir> --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid> --candidate authored-copper-graph
+  --policy zone_obstacle_aware --out <path>` is the canonical export surface
+  for the accepted deterministic zone-obstacle-aware existing-copper graph
   contract. In the current contract the artifact contains the ordered
   self-sufficient `reuse_existing_copper_step` action sequence for the
   selected obstacle-checked reused path only, recording each reused track,
@@ -464,11 +471,10 @@ Current live slice:
   zone_step_count, step_signature_sequence)` ascending after authored
   obstacle filtering, still without inventing any new copper or transition
   permissions.
-- `eda project
-  export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-proposal
-  <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out
-  <path>` now extends the versioned `native_route_proposal_artifact` lane to
-  the accepted deterministic topology-aware zone-obstacle-aware
+- `eda project export-route-path-proposal <dir> --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid> --candidate authored-copper-graph
+  --policy zone_obstacle_topology_aware --out <path>` is the canonical export
+  surface for the accepted deterministic topology-aware zone-obstacle-aware
   existing-copper graph contract. In the current contract the artifact
   contains the ordered self-sufficient `reuse_existing_copper_step` action
   sequence for the selected whole-path-ordered reused path only, recording
@@ -492,13 +498,12 @@ Current live slice:
   selected path when found, or explicit `no_existing_authored_copper_path`
   when no persisted target-net authored-copper path survives the same
   whole-path ordering with the explicit layer-balance tie-break.
-- `eda project
-  export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware-proposal
-  <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out
-  <path>` now extends the versioned `native_route_proposal_artifact` lane to
-  the accepted deterministic layer-balance-aware topology-aware
-  zone-obstacle-aware existing-copper graph contract. In the current contract
-  the artifact contains the ordered self-sufficient
+- `eda project export-route-path-proposal <dir> --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid> --candidate authored-copper-graph
+  --policy zone_obstacle_topology_layer_balance_aware --out <path>` is the
+  canonical export surface for the accepted deterministic layer-balance-aware
+  topology-aware zone-obstacle-aware existing-copper graph contract. In the
+  current contract the artifact contains the ordered self-sufficient
   `reuse_existing_copper_step` action sequence for the selected
   layer-balance-ordered reused path only, recording each reused track, via,
   or zone object as drift-check metadata instead of creating new geometry.
@@ -517,10 +522,9 @@ Current live slice:
   no connecting persisted target-net copper path, using only existing
   obstacle-aware authored-copper graph/path facts without adding new routing
   semantics.
-- `eda project
-  export-route-path-candidate-authored-copper-graph-obstacle-aware-proposal
-  <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out
-  <path>` now extends the versioned `native_route_proposal_artifact` lane to
+- `eda project export-route-path-proposal <dir> --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid> --candidate authored-copper-graph
+  --policy obstacle_aware --out <path>` is the canonical export surface for
   the accepted deterministic obstacle-aware existing-copper graph contract. In
   the current contract the artifact contains the ordered self-sufficient
   `reuse_existing_copper_step` action sequence for the selected

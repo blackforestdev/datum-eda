@@ -535,53 +535,8 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     &cli.format,
                     command,
                 ),
-                command @ ProjectCommands::ExportRouteProposal(ProjectExportRouteProposalArgs {
-                    ..
-                })
-                | command @ ProjectCommands::ExportRoutePathProposal(
+                command @ ProjectCommands::ExportRoutePathProposal(
                     ProjectExportRoutePathProposalArgs { .. },
-                )
-                | command @ ProjectCommands::ExportRoutePathCandidateProposal(
-                    ProjectExportRoutePathCandidateProposalArgs { .. },
-                )
-                | command @ ProjectCommands::ExportRoutePathCandidateViaProposal(
-                    ProjectExportRoutePathCandidateViaProposalArgs { .. },
-                )
-                | command @ ProjectCommands::ExportRoutePathCandidateTwoViaProposal(
-                    ProjectExportRoutePathCandidateTwoViaProposalArgs { .. },
-                )
-                | command @ ProjectCommands::ExportRoutePathCandidateThreeViaProposal(
-                    ProjectExportRoutePathCandidateThreeViaProposalArgs { .. },
-                )
-                | command @ ProjectCommands::ExportRoutePathCandidateFourViaProposal(
-                    ProjectExportRoutePathCandidateFourViaProposalArgs { .. },
-                )
-                | command @ ProjectCommands::ExportRoutePathCandidateFiveViaProposal(
-                    ProjectExportRoutePathCandidateFiveViaProposalArgs { .. },
-                )
-                | command @ ProjectCommands::ExportRoutePathCandidateSixViaProposal(
-                    ProjectExportRoutePathCandidateSixViaProposalArgs { .. },
-                )
-                | command @ ProjectCommands::ExportRoutePathCandidateAuthoredViaChainProposal(
-                    ProjectExportRoutePathCandidateAuthoredViaChainProposalArgs { .. },
-                )
-                | command @ ProjectCommands::ExportRoutePathCandidateAuthoredCopperGraphZoneAwareProposal(
-                    ProjectExportRoutePathCandidateAuthoredCopperGraphZoneAwareProposalArgs { .. },
-                )
-                | command @ ProjectCommands::ExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareProposal(
-                    ProjectExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareProposalArgs { .. },
-                )
-                | command @ ProjectCommands::ExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareProposal(
-                    ProjectExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareProposalArgs { .. },
-                )
-                | command @ ProjectCommands::ExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareProposal(
-                    ProjectExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareProposalArgs { .. },
-                )
-                | command @ ProjectCommands::ExportRoutePathCandidateAuthoredCopperGraphObstacleAwareProposal(
-                    ProjectExportRoutePathCandidateAuthoredCopperGraphObstacleAwareProposalArgs { .. },
-                )
-                | command @ ProjectCommands::ExportRoutePathCandidateAuthoredCopperGraphProposal(
-                    ProjectExportRoutePathCandidateAuthoredCopperGraphProposalArgs { .. },
                 )
                 | command @ ProjectCommands::InspectRouteProposalArtifact(
                     ProjectInspectRouteProposalArtifactArgs { .. },
@@ -589,11 +544,12 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 | command @ ProjectCommands::ApplyRouteProposalArtifact(
                     ProjectApplyRouteProposalArtifactArgs { .. },
                 )
-                | command @ ProjectCommands::RouteApply(ProjectRouteApplyArgs { .. }
-                ) => command_exec_route_proposal::execute_route_proposal_command(
-                    &cli.format,
-                    command,
-                ),
+                | command @ ProjectCommands::RouteApply(ProjectRouteApplyArgs { .. }) => {
+                    command_exec_route_proposal::execute_route_proposal_command(
+                        &cli.format,
+                        command,
+                    )
+                }
                 command => {
                     command_exec_project_command::execute_project_command(&cli.format, command)
                 }

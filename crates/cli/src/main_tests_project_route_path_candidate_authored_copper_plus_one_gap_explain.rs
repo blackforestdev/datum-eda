@@ -147,12 +147,14 @@ fn project_query_route_path_candidate_authored_copper_plus_one_gap_explain_repor
     )
     .expect("board file should write");
 
-    let output = execute(route_path_candidate_authored_copper_plus_one_gap_explain_query_cli(
-        &root,
-        target_net_uuid,
-        anchor_a_uuid,
-        anchor_b_uuid,
-    ))
+    let output = execute(
+        route_path_candidate_authored_copper_plus_one_gap_explain_query_cli(
+            &root,
+            target_net_uuid,
+            anchor_a_uuid,
+            anchor_b_uuid,
+        ),
+    )
     .expect("query should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report should parse");
 
@@ -166,7 +168,13 @@ fn project_query_route_path_candidate_authored_copper_plus_one_gap_explain_repor
     assert_eq!(report["summary"]["candidate_track_count"], 2);
     assert_eq!(report["summary"]["candidate_gap_count"], 1);
     assert_eq!(report["summary"]["path_gap_step_count"], 1);
-    assert_eq!(report["selected_path"]["path"]["steps"].as_array().unwrap().len(), 3);
+    assert_eq!(
+        report["selected_path"]["path"]["steps"]
+            .as_array()
+            .unwrap()
+            .len(),
+        3
+    );
     assert_eq!(
         report["selected_path"]["path"]["steps"][0]["object_uuid"],
         track_a_uuid.to_string()
@@ -180,12 +188,14 @@ fn project_query_route_path_candidate_authored_copper_plus_one_gap_explain_repor
         track_b_uuid.to_string()
     );
 
-    let repeated = execute(route_path_candidate_authored_copper_plus_one_gap_explain_query_cli(
-        &root,
-        target_net_uuid,
-        anchor_a_uuid,
-        anchor_b_uuid,
-    ))
+    let repeated = execute(
+        route_path_candidate_authored_copper_plus_one_gap_explain_query_cli(
+            &root,
+            target_net_uuid,
+            anchor_a_uuid,
+            anchor_b_uuid,
+        ),
+    )
     .expect("repeat should succeed");
     assert_eq!(output, repeated);
 
@@ -207,9 +217,8 @@ fn project_query_route_path_candidate_authored_copper_plus_one_gap_explain_repor
     )
     .expect("text query should succeed");
     assert!(
-        text_output.contains(
-            "contract: m5_route_path_candidate_authored_copper_plus_one_gap_explain_v1"
-        )
+        text_output
+            .contains("contract: m5_route_path_candidate_authored_copper_plus_one_gap_explain_v1")
     );
     assert!(text_output.contains("status: deterministic_path_found"));
     assert!(text_output.contains("explanation_kind: deterministic_path_found"));

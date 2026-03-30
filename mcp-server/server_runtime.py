@@ -618,45 +618,6 @@ class EngineDaemonClient:
     def explain_violation(self, domain: str, index: int) -> JsonRpcResponse:
         return self.call(self.explain_violation_request(domain, index))
 
-    def export_route_path_candidate_authored_copper_graph_proposal(
-        self,
-        path: str,
-        net_uuid: str,
-        from_anchor_pad_uuid: str,
-        to_anchor_pad_uuid: str,
-        policy: str,
-        out: str,
-    ) -> JsonRpcResponse:
-        request = self.build_request(
-            "export_route_path_candidate_authored_copper_graph_proposal",
-            {
-                "path": path,
-                "net_uuid": net_uuid,
-                "from_anchor_pad_uuid": from_anchor_pad_uuid,
-                "to_anchor_pad_uuid": to_anchor_pad_uuid,
-                "policy": policy,
-                "out": out,
-            },
-        )
-        return self._run_cli_json(
-            request,
-            [
-                "project",
-                "export-route-path-candidate-authored-copper-graph-proposal",
-                path,
-                "--net",
-                net_uuid,
-                "--from-anchor",
-                from_anchor_pad_uuid,
-                "--to-anchor",
-                to_anchor_pad_uuid,
-                "--policy",
-                policy,
-                "--out",
-                out,
-            ],
-        )
-
     def export_route_path_proposal(
         self,
         path: str,

@@ -104,7 +104,6 @@ normalized MCP surface.
 `get_connectivity_diagnostics`, `get_design_rules`, `run_erc`, `run_drc`,
 `explain_violation`,
 `export_route_path_proposal`,
-`export_route_path_candidate_authored_copper_graph_proposal`,
 `route_apply`,
 `inspect_route_proposal_artifact`,
 `apply_route_proposal_artifact`.
@@ -133,9 +132,6 @@ Currently tracked native contracts that are not implemented in MCP:
 
 - `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate <accepted_candidate> [--policy <policy>] --out <path>`
   - exposed in MCP as `export_route_path_proposal`
-- `project export-route-path-candidate-authored-copper-graph-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --policy <policy> --out <path>`
-  - exposed in MCP as
-    `export_route_path_candidate_authored_copper_graph_proposal`
 - `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate <accepted_candidate> [--policy <policy>]`
   - exposed in MCP as `route_apply`
 - `project inspect-route-proposal-artifact <path>`
@@ -190,6 +186,10 @@ Currently tracked native contracts that are not implemented in MCP:
 - `project query <dir> route-path-candidate-six-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
 - `project query <dir> route-path-candidate-authored-via-chain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
 - `project query <dir> route-path-candidate-authored-via-chain-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-orthogonal-dogleg --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-orthogonal-dogleg-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-orthogonal-two-bend --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-orthogonal-two-bend-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
 - `project query <dir> route-path-candidate-authored-copper-graph --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --policy <policy>`
 - `project query <dir> route-path-candidate-authored-copper-graph-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --policy <policy>`
 - `project query <dir> route-path-candidate-authored-copper-graph-zone-aware --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
@@ -198,20 +198,7 @@ Currently tracked native contracts that are not implemented in MCP:
 - `project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
 - `project query <dir> route-path-candidate-authored-copper-graph-obstacle-aware --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
 - `project query <dir> route-path-candidate-authored-copper-graph-obstacle-aware-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project export-route-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-- `project export-route-path-candidate-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-- `project export-route-path-candidate-via-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-- `project export-route-path-candidate-two-via-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-- `project export-route-path-candidate-three-via-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-- `project export-route-path-candidate-four-via-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-- `project export-route-path-candidate-five-via-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-- `project export-route-path-candidate-six-via-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-- `project export-route-path-candidate-authored-via-chain-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-- `project export-route-path-candidate-authored-copper-graph-zone-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-- `project export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-- `project export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-- `project export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-- `project export-route-path-candidate-authored-copper-graph-obstacle-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+- `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate authored-copper-plus-one-gap --out <path>`
 
 ### Project
 

@@ -107,52 +107,8 @@ pub(crate) enum ProjectCommands {
     ApplyForwardAnnotationAction(ProjectApplyForwardAnnotationActionArgs),
     /// Apply all currently self-sufficient forward-annotation proposal actions while honoring persisted defer/reject review state
     ApplyForwardAnnotationReviewed(ProjectApplyForwardAnnotationReviewedArgs),
-    /// Export one deterministic route proposal artifact from the current plus-one-gap route candidate
-    ExportRouteProposal(ProjectExportRouteProposalArgs),
     /// Export one deterministic route proposal artifact from one accepted current route-path candidate family
     ExportRoutePathProposal(ProjectExportRoutePathProposalArgs),
-    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate route-path-candidate`
-    ExportRoutePathCandidateProposal(ProjectExportRoutePathCandidateProposalArgs),
-    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate route-path-candidate-via`
-    ExportRoutePathCandidateViaProposal(ProjectExportRoutePathCandidateViaProposalArgs),
-    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate route-path-candidate-two-via`
-    ExportRoutePathCandidateTwoViaProposal(ProjectExportRoutePathCandidateTwoViaProposalArgs),
-    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate route-path-candidate-three-via`
-    ExportRoutePathCandidateThreeViaProposal(ProjectExportRoutePathCandidateThreeViaProposalArgs),
-    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate route-path-candidate-four-via`
-    ExportRoutePathCandidateFourViaProposal(ProjectExportRoutePathCandidateFourViaProposalArgs),
-    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate route-path-candidate-five-via`
-    ExportRoutePathCandidateFiveViaProposal(ProjectExportRoutePathCandidateFiveViaProposalArgs),
-    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate route-path-candidate-six-via`
-    ExportRoutePathCandidateSixViaProposal(ProjectExportRoutePathCandidateSixViaProposalArgs),
-    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate route-path-candidate-authored-via-chain`
-    ExportRoutePathCandidateAuthoredViaChainProposal(
-        ProjectExportRoutePathCandidateAuthoredViaChainProposalArgs,
-    ),
-    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate authored-copper-graph --policy zone_aware`
-    ExportRoutePathCandidateAuthoredCopperGraphZoneAwareProposal(
-        ProjectExportRoutePathCandidateAuthoredCopperGraphZoneAwareProposalArgs,
-    ),
-    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate authored-copper-graph --policy zone_obstacle_aware`
-    ExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareProposal(
-        ProjectExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareProposalArgs,
-    ),
-    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate authored-copper-graph --policy zone_obstacle_topology_aware`
-    ExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareProposal(
-        ProjectExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareProposalArgs,
-    ),
-    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate authored-copper-graph --policy zone_obstacle_topology_layer_balance_aware`
-    ExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareProposal(
-        ProjectExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareProposalArgs,
-    ),
-    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate authored-copper-graph --policy obstacle_aware`
-    ExportRoutePathCandidateAuthoredCopperGraphObstacleAwareProposal(
-        ProjectExportRoutePathCandidateAuthoredCopperGraphObstacleAwareProposalArgs,
-    ),
-    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate authored-copper-graph --policy <policy>`
-    ExportRoutePathCandidateAuthoredCopperGraphProposal(
-        ProjectExportRoutePathCandidateAuthoredCopperGraphProposalArgs,
-    ),
     /// Inspect a versioned route proposal artifact
     InspectRouteProposalArtifact(ProjectInspectRouteProposalArtifactArgs),
     /// Apply a versioned route proposal artifact when it still matches the current live project state

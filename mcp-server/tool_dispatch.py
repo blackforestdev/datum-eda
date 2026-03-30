@@ -154,15 +154,6 @@ def dispatch_tool_call(daemon: Any, name: str, arguments: dict[str, Any]) -> Any
             arguments.get("policy"),
             arguments["out"],
         )
-    if name == "export_route_path_candidate_authored_copper_graph_proposal":
-        return daemon.export_route_path_candidate_authored_copper_graph_proposal(
-            arguments["path"],
-            arguments["net_uuid"],
-            arguments["from_anchor_pad_uuid"],
-            arguments["to_anchor_pad_uuid"],
-            arguments["policy"],
-            arguments["out"],
-        )
     if name == "route_apply":
         return daemon.route_apply(
             arguments["path"],

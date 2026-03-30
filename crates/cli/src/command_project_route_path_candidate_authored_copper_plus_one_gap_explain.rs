@@ -71,9 +71,7 @@ fn render_status(report: &RoutePathCandidateAuthoredCopperPlusOneGapExplainRepor
     }
 }
 
-fn render_kind(
-    report: &RoutePathCandidateAuthoredCopperPlusOneGapExplainReport,
-) -> &'static str {
+fn render_kind(report: &RoutePathCandidateAuthoredCopperPlusOneGapExplainReport) -> &'static str {
     match report.explanation_kind {
         RoutePathCandidateAuthoredCopperPlusOneGapExplainKind::DeterministicPathFound => {
             "deterministic_path_found"

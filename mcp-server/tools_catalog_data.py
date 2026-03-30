@@ -595,6 +595,8 @@ TOOLS: list[dict[str, Any]] = [
                         "route-path-candidate-five-via",
                         "route-path-candidate-six-via",
                         "route-path-candidate-authored-via-chain",
+                        "route-path-candidate-orthogonal-dogleg",
+                        "route-path-candidate-orthogonal-two-bend",
                         "authored-copper-plus-one-gap",
                         "authored-copper-graph",
                     ],
@@ -623,39 +625,6 @@ TOOLS: list[dict[str, Any]] = [
         },
     },
     {
-        "name": "export_route_path_candidate_authored_copper_graph_proposal",
-        "description": "Export one deterministic policy-selected authored-copper-graph route proposal artifact from native project state.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "path": {"type": "string"},
-                "net_uuid": {"type": "string"},
-                "from_anchor_pad_uuid": {"type": "string"},
-                "to_anchor_pad_uuid": {"type": "string"},
-                "policy": {
-                    "type": "string",
-                    "enum": [
-                        "plain",
-                        "zone_aware",
-                        "obstacle_aware",
-                        "zone_obstacle_aware",
-                        "zone_obstacle_topology_aware",
-                        "zone_obstacle_topology_layer_balance_aware",
-                    ],
-                },
-                "out": {"type": "string"},
-            },
-            "required": [
-                "path",
-                "net_uuid",
-                "from_anchor_pad_uuid",
-                "to_anchor_pad_uuid",
-                "policy",
-                "out",
-            ],
-        },
-    },
-    {
         "name": "route_apply",
         "description": "Apply one accepted current deterministic route candidate directly into native board copper.",
         "inputSchema": {
@@ -676,6 +645,8 @@ TOOLS: list[dict[str, Any]] = [
                         "route-path-candidate-five-via",
                         "route-path-candidate-six-via",
                         "route-path-candidate-authored-via-chain",
+                        "route-path-candidate-orthogonal-dogleg",
+                        "route-path-candidate-orthogonal-two-bend",
                         "authored-copper-plus-one-gap",
                         "authored-copper-graph",
                     ],
