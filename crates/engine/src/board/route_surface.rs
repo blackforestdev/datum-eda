@@ -66,6 +66,16 @@ mod route_path_candidate_orthogonal_two_bend;
 mod route_path_candidate_orthogonal_two_bend_explain;
 #[path = "route_path_candidate_orthogonal_two_bend_selection.rs"]
 mod route_path_candidate_orthogonal_two_bend_selection;
+#[path = "route_path_candidate_orthogonal_graph.rs"]
+mod route_path_candidate_orthogonal_graph;
+#[path = "route_path_candidate_orthogonal_graph_explain.rs"]
+mod route_path_candidate_orthogonal_graph_explain;
+#[path = "route_path_candidate_orthogonal_graph_selection.rs"]
+mod route_path_candidate_orthogonal_graph_selection;
+#[path = "route_path_candidate_orthogonal_graph_via.rs"]
+mod route_path_candidate_orthogonal_graph_via;
+#[path = "route_path_candidate_orthogonal_graph_via_explain.rs"]
+mod route_path_candidate_orthogonal_graph_via_explain;
 #[path = "route_path_candidate_explain.rs"]
 mod route_path_candidate_explain;
 #[path = "route_path_candidate_five_via.rs"]
@@ -183,6 +193,30 @@ pub use self::route_path_candidate_orthogonal_two_bend_explain::{
     RoutePathCandidateOrthogonalTwoBendExplainReport,
     RoutePathCandidateOrthogonalTwoBendExplainSelectedPath,
     RoutePathCandidateOrthogonalTwoBendExplainSummary,
+};
+pub use self::route_path_candidate_orthogonal_graph::{
+    RoutePathCandidateOrthogonalGraphPath, RoutePathCandidateOrthogonalGraphReport,
+    RoutePathCandidateOrthogonalGraphSummary,
+};
+pub use self::route_path_candidate_orthogonal_graph_explain::{
+    RoutePathCandidateOrthogonalGraphEdgeOrientationView,
+    RoutePathCandidateOrthogonalGraphExplainBlockedEdge,
+    RoutePathCandidateOrthogonalGraphExplainKind,
+    RoutePathCandidateOrthogonalGraphExplainReport,
+    RoutePathCandidateOrthogonalGraphExplainSelectedPath,
+    RoutePathCandidateOrthogonalGraphExplainSummary,
+};
+pub use self::route_path_candidate_orthogonal_graph_via::{
+    RoutePathCandidateOrthogonalGraphViaPath, RoutePathCandidateOrthogonalGraphViaReport,
+    RoutePathCandidateOrthogonalGraphViaSegment, RoutePathCandidateOrthogonalGraphViaSummary,
+};
+pub use self::route_path_candidate_orthogonal_graph_via_explain::{
+    RoutePathCandidateOrthogonalGraphViaExplainBlockedVia,
+    RoutePathCandidateOrthogonalGraphViaExplainKind,
+    RoutePathCandidateOrthogonalGraphViaExplainReport,
+    RoutePathCandidateOrthogonalGraphViaExplainSegment,
+    RoutePathCandidateOrthogonalGraphViaExplainSelectedVia,
+    RoutePathCandidateOrthogonalGraphViaExplainSummary,
 };
 pub use self::route_path_candidate_authored_copper_graph::{
     RoutePathCandidateAuthoredCopperGraphPath,

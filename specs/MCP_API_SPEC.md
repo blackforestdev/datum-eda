@@ -190,6 +190,10 @@ Currently tracked native contracts that are not implemented in MCP:
 - `project query <dir> route-path-candidate-orthogonal-dogleg-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
 - `project query <dir> route-path-candidate-orthogonal-two-bend --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
 - `project query <dir> route-path-candidate-orthogonal-two-bend-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-orthogonal-graph --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-orthogonal-graph-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-orthogonal-graph-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-orthogonal-graph-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
 - `project query <dir> route-path-candidate-authored-copper-graph --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --policy <policy>`
 - `project query <dir> route-path-candidate-authored-copper-graph-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --policy <policy>`
 - `project query <dir> route-path-candidate-authored-copper-graph-zone-aware --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`

@@ -501,6 +501,349 @@ pub(crate) fn seed_route_path_candidate_orthogonal_two_bend_project(
     (target_net_uuid, anchor_a_uuid, anchor_b_uuid)
 }
 
+pub(crate) fn seed_route_path_candidate_orthogonal_graph_project(
+    root: &Path,
+) -> (Uuid, Uuid, Uuid) {
+    create_native_project(
+        root,
+        Some("Route Path Candidate Orthogonal Graph Demo".to_string()),
+    )
+    .expect("initial scaffold should succeed");
+
+    let target_net_uuid = Uuid::from_u128(0xc500);
+    let other_net_uuid = Uuid::from_u128(0xc501);
+    let class_uuid = Uuid::from_u128(0xc502);
+    let package_a_uuid = Uuid::from_u128(0xc503);
+    let package_b_uuid = Uuid::from_u128(0xc504);
+    let anchor_a_uuid = Uuid::from_u128(0xc505);
+    let anchor_b_uuid = Uuid::from_u128(0xc506);
+    let wall_a_uuid = Uuid::from_u128(0xc507);
+    let wall_b_uuid = Uuid::from_u128(0xc508);
+    let wall_c_uuid = Uuid::from_u128(0xc509);
+    let guide_via_a_uuid = Uuid::from_u128(0xc50a);
+    let guide_via_b_uuid = Uuid::from_u128(0xc50b);
+    let guide_via_c_uuid = Uuid::from_u128(0xc50d);
+    let board_json = root.join("board/board.json");
+
+    std::fs::write(
+        &board_json,
+        format!(
+            "{}\n",
+            to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "uuid": Uuid::from_u128(0xc50c),
+                "name": "Route Path Candidate Orthogonal Graph Demo Board",
+                "stackup": {
+                    "layers": [
+                        { "id": 1, "name": "Top Copper", "layer_type": "Copper", "thickness_nm": 35000 },
+                        { "id": 2, "name": "Core", "layer_type": "Dielectric", "thickness_nm": 1600000 },
+                        { "id": 3, "name": "Bottom Copper", "layer_type": "Copper", "thickness_nm": 35000 }
+                    ]
+                },
+                "outline": {
+                    "vertices": [
+                        { "x": 0, "y": 0 },
+                        { "x": 1000000, "y": 0 },
+                        { "x": 1000000, "y": 1000000 },
+                        { "x": 0, "y": 1000000 }
+                    ],
+                    "closed": true
+                },
+                "packages": {},
+                "pads": {
+                    anchor_a_uuid.to_string(): {
+                        "uuid": anchor_a_uuid,
+                        "package": package_a_uuid,
+                        "name": "1",
+                        "net": target_net_uuid,
+                        "position": { "x": 100000, "y": 100000 },
+                        "layer": 1,
+                        "shape": "circle",
+                        "diameter": 300000,
+                        "width": 0,
+                        "height": 0
+                    },
+                    anchor_b_uuid.to_string(): {
+                        "uuid": anchor_b_uuid,
+                        "package": package_b_uuid,
+                        "name": "1",
+                        "net": target_net_uuid,
+                        "position": { "x": 900000, "y": 900000 },
+                        "layer": 1,
+                        "shape": "circle",
+                        "diameter": 300000,
+                        "width": 0,
+                        "height": 0
+                    }
+                },
+                "tracks": {
+                    wall_a_uuid.to_string(): {
+                        "uuid": wall_a_uuid,
+                        "net": other_net_uuid,
+                        "from": { "x": 0, "y": 300000 },
+                        "to": { "x": 900000, "y": 300000 },
+                        "width": 150000,
+                        "layer": 1
+                    },
+                    wall_b_uuid.to_string(): {
+                        "uuid": wall_b_uuid,
+                        "net": other_net_uuid,
+                        "from": { "x": 200000, "y": 500000 },
+                        "to": { "x": 1000000, "y": 500000 },
+                        "width": 150000,
+                        "layer": 1
+                    },
+                    wall_c_uuid.to_string(): {
+                        "uuid": wall_c_uuid,
+                        "net": other_net_uuid,
+                        "from": { "x": 0, "y": 700000 },
+                        "to": { "x": 800000, "y": 700000 },
+                        "width": 150000,
+                        "layer": 1
+                    }
+                },
+                "vias": {
+                    guide_via_a_uuid.to_string(): {
+                        "uuid": guide_via_a_uuid,
+                        "net": target_net_uuid,
+                        "position": { "x": 100000, "y": 400000 },
+                        "drill": 300000,
+                        "diameter": 600000,
+                        "from_layer": 1,
+                        "to_layer": 3
+                    },
+                    guide_via_b_uuid.to_string(): {
+                        "uuid": guide_via_b_uuid,
+                        "net": target_net_uuid,
+                        "position": { "x": 100000, "y": 600000 },
+                        "drill": 300000,
+                        "diameter": 600000,
+                        "from_layer": 1,
+                        "to_layer": 3
+                    },
+                    guide_via_c_uuid.to_string(): {
+                        "uuid": guide_via_c_uuid,
+                        "net": target_net_uuid,
+                        "position": { "x": 950000, "y": 400000 },
+                        "drill": 300000,
+                        "diameter": 600000,
+                        "from_layer": 1,
+                        "to_layer": 3
+                    }
+                },
+                "zones": {},
+                "nets": {
+                    target_net_uuid.to_string(): {
+                        "uuid": target_net_uuid,
+                        "name": "SIG",
+                        "class": class_uuid
+                    },
+                    other_net_uuid.to_string(): {
+                        "uuid": other_net_uuid,
+                        "name": "OTHER",
+                        "class": class_uuid
+                    }
+                },
+                "net_classes": {
+                    class_uuid.to_string(): {
+                        "uuid": class_uuid,
+                        "name": "Default",
+                        "clearance": 150000,
+                        "track_width": 200000,
+                        "via_drill": 300000,
+                        "via_diameter": 600000,
+                        "diffpair_width": 0,
+                        "diffpair_gap": 0
+                    }
+                },
+                "keepouts": [],
+                "dimensions": [],
+                "texts": []
+            }))
+            .expect("canonical serialization should succeed")
+        ),
+    )
+    .expect("board file should write");
+
+    (target_net_uuid, anchor_a_uuid, anchor_b_uuid)
+}
+
+pub(crate) fn seed_route_path_candidate_orthogonal_graph_via_project(
+    root: &Path,
+) -> (Uuid, Uuid, Uuid, Uuid) {
+    create_native_project(
+        root,
+        Some("Route Path Candidate Orthogonal Graph Via Demo".to_string()),
+    )
+    .expect("initial scaffold should succeed");
+
+    let target_net_uuid = Uuid::from_u128(0xc600);
+    let other_net_uuid = Uuid::from_u128(0xc601);
+    let class_uuid = Uuid::from_u128(0xc602);
+    let package_top_uuid = Uuid::from_u128(0xc603);
+    let package_bottom_uuid = Uuid::from_u128(0xc604);
+    let anchor_top_uuid = Uuid::from_u128(0xc605);
+    let anchor_bottom_uuid = Uuid::from_u128(0xc606);
+    let via_uuid = Uuid::from_u128(0xc607);
+    let top_wall_a_uuid = Uuid::from_u128(0xc608);
+    let top_wall_b_uuid = Uuid::from_u128(0xc609);
+    let bottom_wall_a_uuid = Uuid::from_u128(0xc60a);
+    let bottom_wall_b_uuid = Uuid::from_u128(0xc60b);
+    let guide_via_top_uuid = Uuid::from_u128(0xc60c);
+    let guide_via_bottom_uuid = Uuid::from_u128(0xc60d);
+    let board_json = root.join("board/board.json");
+
+    std::fs::write(
+        &board_json,
+        format!(
+            "{}\n",
+            to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "uuid": Uuid::from_u128(0xc60e),
+                "name": "Route Path Candidate Orthogonal Graph Via Demo Board",
+                "stackup": {
+                    "layers": [
+                        { "id": 1, "name": "Top Copper", "layer_type": "Copper", "thickness_nm": 35000 },
+                        { "id": 2, "name": "Core", "layer_type": "Dielectric", "thickness_nm": 1600000 },
+                        { "id": 3, "name": "Bottom Copper", "layer_type": "Copper", "thickness_nm": 35000 }
+                    ]
+                },
+                "outline": {
+                    "vertices": [
+                        { "x": 0, "y": 0 },
+                        { "x": 1000000, "y": 0 },
+                        { "x": 1000000, "y": 1000000 },
+                        { "x": 0, "y": 1000000 }
+                    ],
+                    "closed": true
+                },
+                "packages": {},
+                "pads": {
+                    anchor_top_uuid.to_string(): {
+                        "uuid": anchor_top_uuid,
+                        "package": package_top_uuid,
+                        "name": "1",
+                        "net": target_net_uuid,
+                        "position": { "x": 100000, "y": 100000 },
+                        "layer": 1,
+                        "shape": "circle",
+                        "diameter": 300000,
+                        "width": 0,
+                        "height": 0
+                    },
+                    anchor_bottom_uuid.to_string(): {
+                        "uuid": anchor_bottom_uuid,
+                        "package": package_bottom_uuid,
+                        "name": "1",
+                        "net": target_net_uuid,
+                        "position": { "x": 100000, "y": 900000 },
+                        "layer": 3,
+                        "shape": "circle",
+                        "diameter": 300000,
+                        "width": 0,
+                        "height": 0
+                    }
+                },
+                "tracks": {
+                    top_wall_a_uuid.to_string(): {
+                        "uuid": top_wall_a_uuid,
+                        "net": other_net_uuid,
+                        "from": { "x": 0, "y": 300000 },
+                        "to": { "x": 800000, "y": 300000 },
+                        "width": 150000,
+                        "layer": 1
+                    },
+                    top_wall_b_uuid.to_string(): {
+                        "uuid": top_wall_b_uuid,
+                        "net": other_net_uuid,
+                        "from": { "x": 200000, "y": 500000 },
+                        "to": { "x": 800000, "y": 500000 },
+                        "width": 150000,
+                        "layer": 1
+                    },
+                    bottom_wall_a_uuid.to_string(): {
+                        "uuid": bottom_wall_a_uuid,
+                        "net": other_net_uuid,
+                        "from": { "x": 0, "y": 500000 },
+                        "to": { "x": 800000, "y": 500000 },
+                        "width": 150000,
+                        "layer": 3
+                    },
+                    bottom_wall_b_uuid.to_string(): {
+                        "uuid": bottom_wall_b_uuid,
+                        "net": other_net_uuid,
+                        "from": { "x": 200000, "y": 700000 },
+                        "to": { "x": 1000000, "y": 700000 },
+                        "width": 150000,
+                        "layer": 3
+                    }
+                },
+                "vias": {
+                    via_uuid.to_string(): {
+                        "uuid": via_uuid,
+                        "net": target_net_uuid,
+                        "position": { "x": 900000, "y": 500000 },
+                        "drill": 300000,
+                        "diameter": 600000,
+                        "from_layer": 1,
+                        "to_layer": 3
+                    },
+                    guide_via_top_uuid.to_string(): {
+                        "uuid": guide_via_top_uuid,
+                        "net": target_net_uuid,
+                        "position": { "x": 950000, "y": 400000 },
+                        "drill": 300000,
+                        "diameter": 600000,
+                        "from_layer": 1,
+                        "to_layer": 2
+                    },
+                    guide_via_bottom_uuid.to_string(): {
+                        "uuid": guide_via_bottom_uuid,
+                        "net": target_net_uuid,
+                        "position": { "x": 50000, "y": 600000 },
+                        "drill": 300000,
+                        "diameter": 600000,
+                        "from_layer": 2,
+                        "to_layer": 3
+                    }
+                },
+                "zones": {},
+                "nets": {
+                    target_net_uuid.to_string(): {
+                        "uuid": target_net_uuid,
+                        "name": "SIG",
+                        "class": class_uuid
+                    },
+                    other_net_uuid.to_string(): {
+                        "uuid": other_net_uuid,
+                        "name": "OTHER",
+                        "class": class_uuid
+                    }
+                },
+                "net_classes": {
+                    class_uuid.to_string(): {
+                        "uuid": class_uuid,
+                        "name": "Default",
+                        "clearance": 150000,
+                        "track_width": 200000,
+                        "via_drill": 300000,
+                        "via_diameter": 600000,
+                        "diffpair_width": 0,
+                        "diffpair_gap": 0
+                    }
+                },
+                "keepouts": [],
+                "dimensions": [],
+                "texts": []
+            }))
+            .expect("canonical serialization should succeed")
+        ),
+    )
+    .expect("board file should write");
+
+    (target_net_uuid, anchor_top_uuid, anchor_bottom_uuid, via_uuid)
+}
+
 pub(crate) fn seed_route_path_candidate_via_project(root: &Path) -> (Uuid, Uuid, Uuid, Uuid) {
     create_native_project(
         root,
@@ -3707,6 +4050,148 @@ fn project_route_proposal_artifact_supports_orthogonal_two_bend_candidate() {
     let board_tracks: serde_json::Value =
         serde_json::from_str(&board_tracks_output).expect("board tracks should parse");
     assert_eq!(board_tracks.as_array().unwrap().len(), 5);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_route_proposal_artifact_supports_orthogonal_graph_candidate() {
+    let root =
+        unique_project_root("datum-eda-cli-project-route-path-candidate-orthogonal-graph-artifact");
+    let (target_net_uuid, anchor_a_uuid, anchor_b_uuid) =
+        seed_route_path_candidate_orthogonal_graph_project(&root);
+    let artifact = root.join("route-path-candidate-orthogonal-graph-proposal.json");
+
+    let export_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "export-route-path-proposal",
+            root.to_str().unwrap(),
+            "--net",
+            &target_net_uuid.to_string(),
+            "--from-anchor",
+            &anchor_a_uuid.to_string(),
+            "--to-anchor",
+            &anchor_b_uuid.to_string(),
+            "--candidate",
+            "route-path-candidate-orthogonal-graph",
+            "--out",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("export should succeed");
+    let export_report: serde_json::Value =
+        serde_json::from_str(&export_output).expect("export report should parse");
+    assert_eq!(export_report["action"], "export_route_path_proposal");
+    assert_eq!(export_report["actions"], 6);
+    assert_eq!(
+        export_report["contract"],
+        "m5_route_path_candidate_orthogonal_graph_v1"
+    );
+
+    let apply_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "apply-route-proposal-artifact",
+            root.to_str().unwrap(),
+            "--artifact",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("apply should succeed");
+    let apply_report: serde_json::Value =
+        serde_json::from_str(&apply_output).expect("apply report should parse");
+    assert_eq!(apply_report["artifact_actions"], 6);
+    assert_eq!(apply_report["applied_actions"], 6);
+
+    let board_tracks_output = execute(board_tracks_query_cli(&root)).expect("query should succeed");
+    let board_tracks: serde_json::Value =
+        serde_json::from_str(&board_tracks_output).expect("board tracks should parse");
+    assert_eq!(board_tracks.as_array().unwrap().len(), 9);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_route_proposal_artifact_supports_orthogonal_graph_via_candidate() {
+    let root = unique_project_root(
+        "datum-eda-cli-project-route-path-candidate-orthogonal-graph-via-artifact",
+    );
+    let (target_net_uuid, anchor_a_uuid, anchor_b_uuid, via_uuid) =
+        seed_route_path_candidate_orthogonal_graph_via_project(&root);
+    let artifact = root.join("route-path-candidate-orthogonal-graph-via-proposal.json");
+
+    let export_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "export-route-path-proposal",
+            root.to_str().unwrap(),
+            "--net",
+            &target_net_uuid.to_string(),
+            "--from-anchor",
+            &anchor_a_uuid.to_string(),
+            "--to-anchor",
+            &anchor_b_uuid.to_string(),
+            "--candidate",
+            "route-path-candidate-orthogonal-graph-via",
+            "--out",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("export should succeed");
+    let export_report: serde_json::Value =
+        serde_json::from_str(&export_output).expect("export report should parse");
+    assert_eq!(export_report["actions"], 5);
+    assert_eq!(
+        export_report["contract"],
+        "m5_route_path_candidate_orthogonal_graph_via_v1"
+    );
+
+    let artifact_value: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&artifact).expect("artifact should read"))
+            .expect("artifact should parse");
+    assert_eq!(artifact_value["actions"].as_array().unwrap().len(), 5);
+    assert_eq!(
+        artifact_value["actions"][0]["reason"],
+        "route_path_candidate_orthogonal_graph_via"
+    );
+    assert_eq!(artifact_value["actions"][0]["reused_via_uuid"], via_uuid.to_string());
+
+    let apply_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "apply-route-proposal-artifact",
+            root.to_str().unwrap(),
+            "--artifact",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("apply should succeed");
+    let apply_report: serde_json::Value =
+        serde_json::from_str(&apply_output).expect("apply report should parse");
+    assert_eq!(apply_report["artifact_actions"], 5);
+    assert_eq!(apply_report["applied_actions"], 5);
+
+    let board_tracks_output = execute(board_tracks_query_cli(&root)).expect("query should succeed");
+    let board_tracks: serde_json::Value =
+        serde_json::from_str(&board_tracks_output).expect("board tracks should parse");
+    assert_eq!(board_tracks.as_array().unwrap().len(), 9);
 
     let _ = std::fs::remove_dir_all(&root);
 }

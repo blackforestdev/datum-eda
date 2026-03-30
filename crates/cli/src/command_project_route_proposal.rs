@@ -29,6 +29,10 @@ const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_DOGLEG: &str =
     "route_path_candidate_orthogonal_dogleg";
 const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_TWO_BEND: &str =
     "route_path_candidate_orthogonal_two_bend";
+const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH: &str =
+    "route_path_candidate_orthogonal_graph";
+const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_VIA: &str =
+    "route_path_candidate_orthogonal_graph_via";
 const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_AWARE: &str =
     "route_path_candidate_authored_copper_graph_zone_aware";
 const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE: &str =
@@ -234,6 +238,22 @@ fn build_route_path_proposal_actions(
         }
         NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalTwoBend => {
             build_route_path_candidate_orthogonal_two_bend_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraph => {
+            build_route_path_candidate_orthogonal_graph_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphVia => {
+            build_route_path_candidate_orthogonal_graph_via_proposal_actions(
                 root,
                 net_uuid,
                 from_anchor_pad_uuid,
@@ -483,6 +503,24 @@ pub(crate) fn apply_route_proposal_artifact(
             "m5_route_path_candidate_orthogonal_two_bend_v1",
             ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_TWO_BEND,
         ) => build_route_path_candidate_orthogonal_two_bend_proposal_actions(
+            root,
+            first_action.net_uuid,
+            first_action.from_anchor_pad_uuid,
+            first_action.to_anchor_pad_uuid,
+        )?,
+        (
+            "m5_route_path_candidate_orthogonal_graph_v1",
+            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH,
+        ) => build_route_path_candidate_orthogonal_graph_proposal_actions(
+            root,
+            first_action.net_uuid,
+            first_action.from_anchor_pad_uuid,
+            first_action.to_anchor_pad_uuid,
+        )?,
+        (
+            "m5_route_path_candidate_orthogonal_graph_via_v1",
+            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_VIA,
+        ) => build_route_path_candidate_orthogonal_graph_via_proposal_actions(
             root,
             first_action.net_uuid,
             first_action.from_anchor_pad_uuid,
@@ -955,6 +993,208 @@ pub(super) fn build_route_path_candidate_orthogonal_two_bend_proposal_actions(
                 reused_object_from_layer: None,
                 reused_object_to_layer: None,
                 selected_path_point_count: path.points.len(),
+                selected_path_segment_index,
+                selected_path_segment_count,
+            }
+        })
+        .collect::<Vec<_>>();
+    Ok(actions)
+}
+
+pub(super) fn build_route_path_candidate_orthogonal_graph_proposal_actions(
+    root: &Path,
+    net_uuid: Uuid,
+    from_anchor_pad_uuid: Uuid,
+    to_anchor_pad_uuid: Uuid,
+) -> Result<Vec<NativeProjectRouteProposalActionView>> {
+    let report = query_native_project_route_path_candidate_orthogonal_graph(
+        root,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+    )?;
+    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
+        bail!(
+            "route proposal requires deterministic orthogonal graph path for net {} between {} and {}",
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid
+        );
+    }
+
+    let preflight = query_native_project_route_preflight(root, net_uuid)?;
+    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
+        anyhow::anyhow!(
+            "route proposal requires persisted net-class facts for net {}",
+            net_uuid
+        )
+    })?;
+
+    let path = report.path.ok_or_else(|| {
+        anyhow::anyhow!(
+            "route proposal requires selected orthogonal graph path data for net {} between {} and {}",
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid
+        )
+    })?;
+    if path.points.len() < 2 {
+        bail!(
+            "route proposal requires at least two path points for net {}",
+            net_uuid
+        );
+    }
+    let selected_path_segment_count = path.points.len() - 1;
+    let actions = path
+        .points
+        .windows(2)
+        .enumerate()
+        .map(|(selected_path_segment_index, segment)| {
+            let from = segment[0];
+            let to = segment[1];
+            let action_id = route_proposal_action_id(
+                &report.contract,
+                "draw_track",
+                ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+                path.layer,
+                from,
+                to,
+                net_class.track_width_nm,
+                None,
+                &[],
+                None,
+                None,
+                None,
+                None,
+            );
+            NativeProjectRouteProposalActionView {
+                action_id,
+                proposal_action: "draw_track".to_string(),
+                reason: ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH.to_string(),
+                contract: report.contract.clone(),
+                net_uuid: report.net_uuid,
+                net_name: report.net_name.clone(),
+                from_anchor_pad_uuid: report.from_anchor_pad_uuid,
+                to_anchor_pad_uuid: report.to_anchor_pad_uuid,
+                layer: path.layer,
+                width_nm: net_class.track_width_nm,
+                from,
+                to,
+                reused_via_uuid: None,
+                reused_via_uuids: Vec::new(),
+                reused_object_kind: None,
+                reused_object_uuid: None,
+                reused_object_from_layer: None,
+                reused_object_to_layer: None,
+                selected_path_point_count: path.points.len(),
+                selected_path_segment_index,
+                selected_path_segment_count,
+            }
+        })
+        .collect::<Vec<_>>();
+    Ok(actions)
+}
+
+pub(super) fn build_route_path_candidate_orthogonal_graph_via_proposal_actions(
+    root: &Path,
+    net_uuid: Uuid,
+    from_anchor_pad_uuid: Uuid,
+    to_anchor_pad_uuid: Uuid,
+) -> Result<Vec<NativeProjectRouteProposalActionView>> {
+    let report = query_native_project_route_path_candidate_orthogonal_graph_via(
+        root,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+    )?;
+    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
+        bail!(
+            "route proposal requires deterministic orthogonal graph via path for net {} between {} and {}",
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid
+        );
+    }
+
+    let preflight = query_native_project_route_preflight(root, net_uuid)?;
+    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
+        anyhow::anyhow!(
+            "route proposal requires persisted net-class facts for net {}",
+            net_uuid
+        )
+    })?;
+
+    let path = report.path.ok_or_else(|| {
+        anyhow::anyhow!(
+            "route proposal requires selected orthogonal graph via path data for net {} between {} and {}",
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid
+        )
+    })?;
+    let selected_path_segment_count = path
+        .segments
+        .iter()
+        .map(|segment| segment.points.len().saturating_sub(1))
+        .sum::<usize>();
+    let actions = path
+        .segments
+        .iter()
+        .flat_map(|segment| {
+            segment
+                .points
+                .windows(2)
+                .map(|window| (segment.layer, window[0], window[1]))
+                .collect::<Vec<_>>()
+        })
+        .enumerate()
+        .map(|(selected_path_segment_index, (layer, from, to))| {
+            let action_id = route_proposal_action_id(
+                &report.contract,
+                "draw_track",
+                ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_VIA,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+                layer,
+                from,
+                to,
+                net_class.track_width_nm,
+                Some(path.via_uuid),
+                &[path.via_uuid],
+                None,
+                None,
+                None,
+                None,
+            );
+            NativeProjectRouteProposalActionView {
+                action_id,
+                proposal_action: "draw_track".to_string(),
+                reason: ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_VIA
+                    .to_string(),
+                contract: report.contract.clone(),
+                net_uuid: report.net_uuid,
+                net_name: report.net_name.clone(),
+                from_anchor_pad_uuid: report.from_anchor_pad_uuid,
+                to_anchor_pad_uuid: report.to_anchor_pad_uuid,
+                layer,
+                width_nm: net_class.track_width_nm,
+                from,
+                to,
+                reused_via_uuid: Some(path.via_uuid),
+                reused_via_uuids: vec![path.via_uuid],
+                reused_object_kind: None,
+                reused_object_uuid: None,
+                reused_object_from_layer: None,
+                reused_object_to_layer: None,
+                selected_path_point_count: path
+                    .segments
+                    .iter()
+                    .map(|segment| segment.points.len())
+                    .sum(),
                 selected_path_segment_index,
                 selected_path_segment_count,
             }

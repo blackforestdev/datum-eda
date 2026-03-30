@@ -457,6 +457,15 @@ Status: [~] In progress
     route-path-candidate --net <uuid> --from-anchor <pad_uuid> --to-anchor
     <pad_uuid> --candidate route-path-candidate-orthogonal-two-bend`, with the
     paired explanation surface under `route-path-candidate-explain`
+  - that same same-layer synthesis lane now also covers `project query <dir>
+    route-path-candidate --net <uuid> --from-anchor <pad_uuid> --to-anchor
+    <pad_uuid> --candidate route-path-candidate-orthogonal-graph`, with the
+    paired explanation surface under `route-path-candidate-explain`
+  - a first bounded cross-layer graph-search lane now also exists via
+    `project query <dir> route-path-candidate --net <uuid> --from-anchor
+    <pad_uuid> --to-anchor <pad_uuid> --candidate
+    route-path-candidate-orthogonal-graph-via`, with the paired explanation
+    surface under `route-path-candidate-explain`
 - Current M5 existing-copper readback lane:
   - deterministic authored-copper graph path queries now exist in
     increasingly filtered/readback-focused forms recorded in
@@ -517,6 +526,14 @@ Status: [~] In progress
     same-layer orthogonal two-bend contract via `project route-apply <dir> --net
     <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
     route-path-candidate-orthogonal-two-bend`
+  - that same direct convenience apply lane now also covers the accepted
+    same-layer orthogonal graph contract via `project route-apply <dir> --net
+    <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+    route-path-candidate-orthogonal-graph`
+  - that same direct convenience apply lane now also covers the accepted
+    one-authored-via orthogonal graph contract via `project route-apply <dir>
+    --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+    route-path-candidate-orthogonal-graph-via`
   - a bounded convenience export surface now also exists for the completed
     write-capable route family via `project export-route-path-proposal <dir>
     --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate

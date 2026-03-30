@@ -46,6 +46,14 @@ mod command_project_route_path_candidate_orthogonal_dogleg_explain;
 mod command_project_route_path_candidate_orthogonal_two_bend;
 #[path = "command_project_route_path_candidate_orthogonal_two_bend_explain.rs"]
 mod command_project_route_path_candidate_orthogonal_two_bend_explain;
+#[path = "command_project_route_path_candidate_orthogonal_graph.rs"]
+mod command_project_route_path_candidate_orthogonal_graph;
+#[path = "command_project_route_path_candidate_orthogonal_graph_explain.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_explain;
+#[path = "command_project_route_path_candidate_orthogonal_graph_via.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_via;
+#[path = "command_project_route_path_candidate_orthogonal_graph_via_explain.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_via_explain;
 #[path = "command_project_route_path_candidate_explain.rs"]
 mod command_project_route_path_candidate_explain;
 #[path = "command_project_route_path_candidate_five_via.rs"]
@@ -131,6 +139,22 @@ pub(crate) use self::command_project_route_path_candidate_orthogonal_two_bend::{
 pub(crate) use self::command_project_route_path_candidate_orthogonal_two_bend_explain::{
     query_native_project_route_path_candidate_orthogonal_two_bend_explain,
     render_native_project_route_path_candidate_orthogonal_two_bend_explain_text,
+};
+pub(crate) use self::command_project_route_path_candidate_orthogonal_graph::{
+    query_native_project_route_path_candidate_orthogonal_graph,
+    render_native_project_route_path_candidate_orthogonal_graph_text,
+};
+pub(crate) use self::command_project_route_path_candidate_orthogonal_graph_explain::{
+    query_native_project_route_path_candidate_orthogonal_graph_explain,
+    render_native_project_route_path_candidate_orthogonal_graph_explain_text,
+};
+pub(crate) use self::command_project_route_path_candidate_orthogonal_graph_via::{
+    query_native_project_route_path_candidate_orthogonal_graph_via,
+    render_native_project_route_path_candidate_orthogonal_graph_via_text,
+};
+pub(crate) use self::command_project_route_path_candidate_orthogonal_graph_via_explain::{
+    query_native_project_route_path_candidate_orthogonal_graph_via_explain,
+    render_native_project_route_path_candidate_orthogonal_graph_via_explain_text,
 };
 pub(crate) use self::command_project_route_path_candidate_authored_copper_graph::{
     query_native_project_route_path_candidate_authored_copper_graph,

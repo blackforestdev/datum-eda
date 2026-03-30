@@ -292,6 +292,31 @@ Current live slice:
   orthogonal two-bend result as a deterministic explanation surface: selected
   path points and detour coordinate when found, or whether failure came from
   no same-layer two-bend candidate versus all two-bend candidates blocked.
+- `eda project query <dir> route-path-candidate --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid> --candidate
+  route-path-candidate-orthogonal-graph` now reports a deterministic
+  same-layer orthogonal graph path candidate built only from persisted
+  board-outline, anchor, and authored-object coordinate lines already present
+  on the candidate layer.
+- `eda project query <dir> route-path-candidate-explain --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+  route-path-candidate-orthogonal-graph` now reports the current orthogonal
+  graph result as a deterministic explanation surface: selected multi-segment
+  path when found, or whether the bounded persisted-coordinate graph had no
+  reachable same-layer path.
+- `eda project query <dir> route-path-candidate --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid> --candidate
+  route-path-candidate-orthogonal-graph-via` now reports a deterministic
+  cross-layer path candidate that reuses exactly one authored target-net via
+  and uses the accepted persisted-coordinate orthogonal graph search on each
+  side of that via.
+- `eda project query <dir> route-path-candidate-explain --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+  route-path-candidate-orthogonal-graph-via` now reports the current
+  orthogonal graph via result as a deterministic explanation surface:
+  selected authored via and its two layer-side graph paths when found, or
+  whether no matching authored via existed versus all matching vias being
+  blocked by side-search constraints.
 - The older contract-specific `route-path-candidate-*` and
   `route-path-candidate-*-explain` query spellings remain only as deprecated
   compatibility wrappers. The canonical route query and explanation entrypoints
@@ -411,6 +436,19 @@ Current live slice:
   orthogonal two-bend contract. It rebuilds the current live deterministic
   three-segment path and materializes the ordered `draw_track` sequence
   immediately without writing an intermediate artifact file.
+- `eda project route-apply <dir> --net <uuid> --from-anchor <pad_uuid>
+  --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-graph`
+  now provides a direct convenience apply surface for the accepted same-layer
+  orthogonal graph contract. It rebuilds the current live deterministic
+  multi-segment path and materializes the ordered `draw_track` sequence
+  immediately without writing an intermediate artifact file.
+- `eda project route-apply <dir> --net <uuid> --from-anchor <pad_uuid>
+  --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-graph-via`
+  now provides a direct convenience apply surface for the accepted
+  one-authored-via orthogonal graph contract. It rebuilds the current live
+  deterministic cross-layer path around the reused authored via and
+  materializes only the ordered `draw_track` sequence immediately without
+  writing an intermediate artifact file.
 - `eda project route-apply` now takes a bounded `--candidate` value set rather
   than a free-form string, so only the accepted direct-apply families parse at
   the CLI boundary. `--policy` is required for `--candidate

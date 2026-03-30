@@ -95,6 +95,22 @@ pub(crate) fn apply_native_project_route(
                 to_anchor_pad_uuid,
             )?
         }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraph => {
+            super::build_route_path_candidate_orthogonal_graph_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )?
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphVia => {
+            super::build_route_path_candidate_orthogonal_graph_via_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )?
+        }
         NativeProjectRouteApplyCandidateArg::AuthoredCopperPlusOneGap => {
             super::build_plus_one_gap_route_proposal_actions(
                 root,

@@ -376,6 +376,10 @@ pub(crate) enum NativeProjectRouteApplyCandidateArg {
     RoutePathCandidateOrthogonalDogleg,
     #[value(name = "route-path-candidate-orthogonal-two-bend")]
     RoutePathCandidateOrthogonalTwoBend,
+    #[value(name = "route-path-candidate-orthogonal-graph")]
+    RoutePathCandidateOrthogonalGraph,
+    #[value(name = "route-path-candidate-orthogonal-graph-via")]
+    RoutePathCandidateOrthogonalGraphVia,
     #[value(name = "authored-copper-plus-one-gap")]
     AuthoredCopperPlusOneGap,
     #[value(name = "authored-copper-graph")]

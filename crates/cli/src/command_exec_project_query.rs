@@ -966,6 +966,36 @@ fn execute_native_project_route_path_candidate_query(
             };
             Ok((output, 0))
         }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraph => {
+            let report = query_native_project_route_path_candidate_orthogonal_graph(
+                path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_orthogonal_graph_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphVia => {
+            let report = query_native_project_route_path_candidate_orthogonal_graph_via(
+                path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_orthogonal_graph_via_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
         NativeProjectRouteApplyCandidateArg::AuthoredCopperPlusOneGap => {
             execute_native_project_route_path_candidate_authored_copper_plus_one_gap_query(
                 format,
@@ -1152,6 +1182,40 @@ fn execute_native_project_route_path_candidate_explain_query(
             let output = match format {
                 OutputFormat::Text => {
                     render_native_project_route_path_candidate_orthogonal_two_bend_explain_text(
+                        &report,
+                    )
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraph => {
+            let report = query_native_project_route_path_candidate_orthogonal_graph_explain(
+                path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_orthogonal_graph_explain_text(
+                        &report,
+                    )
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphVia => {
+            let report = query_native_project_route_path_candidate_orthogonal_graph_via_explain(
+                path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_orthogonal_graph_via_explain_text(
                         &report,
                     )
                 }

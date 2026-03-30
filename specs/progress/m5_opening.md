@@ -1216,6 +1216,79 @@ Adjacent native convenience-apply slice implemented on 2026-03-30:
   - no re-search beyond the accepted orthogonal two-bend query contract
   - the direct apply writes only the ordered selected `draw_track` sequence
 
+Next explicit contract selected on 2026-03-30:
+- deterministic same-layer orthogonal graph path candidate
+  `project query <dir> route-path-candidate --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-graph`
+- input: persisted native board state only
+- output:
+  - current single-net source/target anchor pair
+  - explicit status exactly one of:
+    - `deterministic_path_found`
+    - `no_path_under_current_authored_constraints`
+  - when found, exactly one deterministic same-layer orthogonal multi-segment
+    path over persisted coordinate lines only
+- deterministic rule:
+  - restrict candidates to the requested anchor layer only
+  - build x/y coordinate lines only from persisted board-outline vertices,
+    requested anchor coordinates, and authored object coordinates already
+    present on that layer
+  - build a same-layer orthogonal graph from clear spans between those
+    persisted-coordinate intersections only
+  - breadth-first search in layer order with neighbor order `horizontal`
+    before `vertical`, then destination coordinate ascending
+- non-goals:
+  - no vias or layer transitions
+  - no invented routing grid or inferred coordinates
+  - no negotiated routing, rip-up/reroute, or push-shove
+  - no inferred constraints beyond the existing segment obstacle checks
+
+Follow-on explanation surface selected on 2026-03-30:
+- deterministic same-layer orthogonal graph explanation
+  `project query <dir> route-path-candidate-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-graph`
+
+Adjacent write-capable route-application slice implemented on 2026-03-30:
+- deterministic route proposal artifact export for the accepted same-layer
+  orthogonal graph contract
+  - canonical surface: `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-graph --out <path>`
+
+Adjacent native convenience-apply slice implemented on 2026-03-30:
+- the accepted deterministic same-layer orthogonal graph contract now also has
+  a direct apply surface:
+  - `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-graph`
+
+Next explicit contract selected on 2026-03-30:
+- deterministic one-authored-via orthogonal graph path candidate
+  `project query <dir> route-path-candidate --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-graph-via`
+- input: persisted native board state only
+- output:
+  - current single-net source/target anchor pair on different copper layers
+  - explicit status exactly one of:
+    - `deterministic_path_found`
+    - `no_path_under_current_authored_constraints`
+  - when found, exactly one deterministic cross-layer path that reuses one
+    authored target-net via and uses persisted-coordinate orthogonal graph
+    search on each side of that via
+- deterministic rule:
+  - candidate transition set is limited to authored target-net vias only
+  - matching vias are ordered by ascending via UUID and must exactly match the
+    requested anchor boundary layers
+  - each same-layer side reuses the accepted persisted-coordinate orthogonal
+    graph search rule without inventing coordinates or creating vias
+
+Follow-on explanation surface selected on 2026-03-30:
+- deterministic one-authored-via orthogonal graph explanation
+  `project query <dir> route-path-candidate-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-graph-via`
+
+Adjacent write-capable route-application slice implemented on 2026-03-30:
+- deterministic route proposal artifact export for the accepted
+  one-authored-via orthogonal graph contract
+  - canonical surface: `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-graph-via --out <path>`
+
+Adjacent native convenience-apply slice implemented on 2026-03-30:
+- the accepted deterministic one-authored-via orthogonal graph contract now
+  also has a direct apply surface:
+  - `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-graph-via`
+
 Poor candidates for the first `M5` slice:
 - full autorouter
 - broad placement engine
