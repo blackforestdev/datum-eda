@@ -109,35 +109,49 @@ pub(crate) enum ProjectCommands {
     ApplyForwardAnnotationReviewed(ProjectApplyForwardAnnotationReviewedArgs),
     /// Export one deterministic route proposal artifact from the current plus-one-gap route candidate
     ExportRouteProposal(ProjectExportRouteProposalArgs),
-    /// Export one deterministic route proposal artifact from the current single-layer route-path-candidate result
+    /// Export one deterministic route proposal artifact from one accepted current route-path candidate family
+    ExportRoutePathProposal(ProjectExportRoutePathProposalArgs),
+    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate route-path-candidate`
     ExportRoutePathCandidateProposal(ProjectExportRoutePathCandidateProposalArgs),
-    /// Export one deterministic route proposal artifact from the current single-via route-path-candidate result
+    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate route-path-candidate-via`
     ExportRoutePathCandidateViaProposal(ProjectExportRoutePathCandidateViaProposalArgs),
-    /// Export one deterministic route proposal artifact from the current two-via route-path-candidate result
+    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate route-path-candidate-two-via`
     ExportRoutePathCandidateTwoViaProposal(ProjectExportRoutePathCandidateTwoViaProposalArgs),
-    /// Export one deterministic route proposal artifact from the current three-via route-path-candidate result
+    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate route-path-candidate-three-via`
     ExportRoutePathCandidateThreeViaProposal(ProjectExportRoutePathCandidateThreeViaProposalArgs),
-    /// Export one deterministic route proposal artifact from the current four-via route-path-candidate result
+    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate route-path-candidate-four-via`
     ExportRoutePathCandidateFourViaProposal(ProjectExportRoutePathCandidateFourViaProposalArgs),
-    /// Export one deterministic route proposal artifact from the current five-via route-path-candidate result
+    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate route-path-candidate-five-via`
     ExportRoutePathCandidateFiveViaProposal(ProjectExportRoutePathCandidateFiveViaProposalArgs),
-    /// Export one deterministic route proposal artifact from the current six-via route-path-candidate result
+    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate route-path-candidate-six-via`
     ExportRoutePathCandidateSixViaProposal(ProjectExportRoutePathCandidateSixViaProposalArgs),
-    /// Export one deterministic route proposal artifact from the current authored-via-chain route-path-candidate result
+    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate route-path-candidate-authored-via-chain`
     ExportRoutePathCandidateAuthoredViaChainProposal(
         ProjectExportRoutePathCandidateAuthoredViaChainProposalArgs,
     ),
-    /// Export one deterministic route proposal artifact from the current zone-aware authored-copper-graph route-path-candidate result
+    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate authored-copper-graph --policy zone_aware`
     ExportRoutePathCandidateAuthoredCopperGraphZoneAwareProposal(
         ProjectExportRoutePathCandidateAuthoredCopperGraphZoneAwareProposalArgs,
     ),
-    /// Export one deterministic route proposal artifact from the current zone-obstacle-aware authored-copper-graph route-path-candidate result
+    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate authored-copper-graph --policy zone_obstacle_aware`
     ExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareProposal(
         ProjectExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareProposalArgs,
     ),
-    /// Export one deterministic route proposal artifact from the current topology-aware zone-obstacle-aware authored-copper-graph route-path-candidate result
+    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate authored-copper-graph --policy zone_obstacle_topology_aware`
     ExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareProposal(
         ProjectExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareProposalArgs,
+    ),
+    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate authored-copper-graph --policy zone_obstacle_topology_layer_balance_aware`
+    ExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareProposal(
+        ProjectExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareProposalArgs,
+    ),
+    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate authored-copper-graph --policy obstacle_aware`
+    ExportRoutePathCandidateAuthoredCopperGraphObstacleAwareProposal(
+        ProjectExportRoutePathCandidateAuthoredCopperGraphObstacleAwareProposalArgs,
+    ),
+    /// Deprecated compatibility wrapper; use `export-route-path-proposal --candidate authored-copper-graph --policy <policy>`
+    ExportRoutePathCandidateAuthoredCopperGraphProposal(
+        ProjectExportRoutePathCandidateAuthoredCopperGraphProposalArgs,
     ),
     /// Inspect a versioned route proposal artifact
     InspectRouteProposalArtifact(ProjectInspectRouteProposalArtifactArgs),

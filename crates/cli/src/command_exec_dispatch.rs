@@ -538,6 +538,9 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 command @ ProjectCommands::ExportRouteProposal(ProjectExportRouteProposalArgs {
                     ..
                 })
+                | command @ ProjectCommands::ExportRoutePathProposal(
+                    ProjectExportRoutePathProposalArgs { .. },
+                )
                 | command @ ProjectCommands::ExportRoutePathCandidateProposal(
                     ProjectExportRoutePathCandidateProposalArgs { .. },
                 )
@@ -570,6 +573,15 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 )
                 | command @ ProjectCommands::ExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareProposal(
                     ProjectExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareProposalArgs { .. },
+                )
+                | command @ ProjectCommands::ExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareProposal(
+                    ProjectExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareProposalArgs { .. },
+                )
+                | command @ ProjectCommands::ExportRoutePathCandidateAuthoredCopperGraphObstacleAwareProposal(
+                    ProjectExportRoutePathCandidateAuthoredCopperGraphObstacleAwareProposalArgs { .. },
+                )
+                | command @ ProjectCommands::ExportRoutePathCandidateAuthoredCopperGraphProposal(
+                    ProjectExportRoutePathCandidateAuthoredCopperGraphProposalArgs { .. },
                 )
                 | command @ ProjectCommands::InspectRouteProposalArtifact(
                     ProjectInspectRouteProposalArtifactArgs { .. },

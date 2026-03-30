@@ -757,6 +757,30 @@ Next explicit contract selected on 2026-03-29:
   - no new obstacle interpretation beyond the accepted zone-obstacle-aware graph slice
   - no ranking output beyond the selected existing-copper path
 
+Adjacent write-capable route-application slice implemented on 2026-03-29:
+- deterministic route proposal artifact export for the accepted
+  layer-balance-aware topology-aware zone-obstacle-aware
+  existing-authored-copper graph contract
+  - `project export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - reuses the same `project inspect-route-proposal-artifact <path>` and
+    `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
+- input: persisted native board state only
+- output:
+  - one versioned route-proposal artifact containing the ordered
+    self-sufficient `reuse_existing_copper_step` action sequence for the
+    selected layer-balance-ordered existing authored-copper path only
+  - every action records the reused object kind/UUID and layer span as
+    drift-check metadata
+  - apply performs live deterministic proposal matching and succeeds as a
+    no-op when the selected existing-copper path still matches exactly
+- guardrails:
+  - no new copper geometry or via creation
+  - no re-search beyond the accepted
+    `route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware`
+    query contract
+  - apply drift-check includes the selected reused object sequence as part of
+    the live deterministic proposal match
+
 Next explicit contract selected on 2026-03-29:
 - deterministic obstacle-aware existing-authored-copper graph path candidate
   `project query <dir> route-path-candidate-authored-copper-graph-obstacle-aware --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
@@ -794,6 +818,265 @@ Follow-on explanation surface selected on 2026-03-29:
   - no new routing semantics
   - no new obstacle interpretation beyond the accepted obstacle-aware graph slice
   - no ranking output beyond the selected existing-copper path
+
+Adjacent write-capable route-application slice implemented on 2026-03-29:
+- deterministic route proposal artifact export for the accepted
+  obstacle-aware existing-authored-copper graph contract
+  - `project export-route-path-candidate-authored-copper-graph-obstacle-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - reuses the same `project inspect-route-proposal-artifact <path>` and
+    `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
+- input: persisted native board state only
+- output:
+  - one versioned route-proposal artifact containing the ordered
+    self-sufficient `reuse_existing_copper_step` action sequence for the
+    selected obstacle-checked existing authored-copper path only
+  - every action records the reused object kind/UUID and layer span as
+    drift-check metadata
+  - apply performs live deterministic proposal matching and succeeds as a
+    no-op when the selected existing-copper path still matches exactly
+- guardrails:
+  - no new copper geometry or via creation
+  - no re-search beyond the accepted
+    `route-path-candidate-authored-copper-graph-obstacle-aware` query
+    contract
+  - apply drift-check includes the selected reused object sequence as part of
+    the live deterministic proposal match
+
+Adjacent write-capable route-application slice implemented on 2026-03-29:
+- policy-selected deterministic route proposal artifact export for the
+  completed authored-copper-graph family
+  - `project export-route-path-candidate-authored-copper-graph-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --policy <policy> --out <path>`
+  - reuses the same `project inspect-route-proposal-artifact <path>` and
+    `project apply-route-proposal-artifact <dir> --artifact <path>` surfaces
+- input: persisted native board state only
+- output:
+  - one versioned route-proposal artifact containing the ordered
+    self-sufficient `reuse_existing_copper_step` action sequence for the
+    selected existing authored-copper path under the requested accepted
+    policy
+  - the accepted bounded policy set is exactly `plain`, `zone_aware`,
+    `obstacle_aware`, `zone_obstacle_aware`,
+    `zone_obstacle_topology_aware`, and
+    `zone_obstacle_topology_layer_balance_aware`
+  - every action records the reused object kind/UUID and layer span as
+    drift-check metadata
+  - apply performs live deterministic proposal matching under the same policy
+    and succeeds as a no-op when the selected existing-copper path still
+    matches exactly
+- guardrails:
+  - no new copper geometry or via creation
+  - no new routing semantics beyond the already-accepted authored-copper-graph
+    policy query family
+  - no re-search beyond the selected
+    `route-path-candidate-authored-copper-graph --policy <policy>` query
+    contract
+  - apply drift-check includes the selected reused object sequence and chosen
+    policy as part of the live deterministic proposal match
+
+Adjacent MCP parity slice implemented on 2026-03-29:
+- the policy-selected authored-copper-graph proposal export is now exposed
+  through MCP as
+  `export_route_path_candidate_authored_copper_graph_proposal`
+- input:
+  - native project directory path
+  - `net_uuid`
+  - `from_anchor_pad_uuid`
+  - `to_anchor_pad_uuid`
+  - accepted bounded `policy`
+  - artifact `out` path
+- output:
+  - the same JSON export report produced by the native CLI
+- guardrails:
+  - MCP parity is reopened only for this explicit export surface
+  - transport remains a thin adapter; no generalized M5 query/apply MCP family
+    is introduced by this slice
+
+Adjacent MCP parity slice implemented on 2026-03-29:
+- the generic route-proposal artifact follow-up surfaces are now exposed
+  through MCP as:
+  - `inspect_route_proposal_artifact`
+  - `apply_route_proposal_artifact`
+- input:
+  - `inspect_route_proposal_artifact`: artifact path only
+  - `apply_route_proposal_artifact`: native project directory path plus
+    artifact path
+- output:
+  - the same JSON inspection/apply reports produced by the native CLI
+- guardrails:
+  - MCP parity remains scoped to the artifact lifecycle around the completed
+    policy-selected authored-copper-graph proposal surface
+  - transport remains a thin adapter; no generalized M5 query parity is
+    introduced by this slice
+
+Adjacent MCP parity slice implemented on 2026-03-29:
+- the consolidated route convenience surfaces are now exposed through MCP as:
+  - `export_route_path_proposal`
+  - `route_apply`
+- input:
+  - `export_route_path_proposal`: native project directory path, anchor/net
+    UUIDs, accepted bounded candidate, optional accepted policy when the
+    candidate is `authored-copper-graph`, and artifact `out` path
+  - `route_apply`: native project directory path, anchor/net UUIDs, accepted
+    bounded candidate, and optional accepted policy when the candidate is
+    `authored-copper-graph`
+- output:
+  - the same JSON export/apply reports produced by the native CLI
+- guardrails:
+  - MCP parity remains a thin adapter over the bounded consolidated native
+    route surfaces
+  - no generalized M5 query parity is introduced by this slice
+
+Adjacent native convenience-apply slice implemented on 2026-03-29:
+- the accepted single-layer deterministic path family now also has a direct
+  apply surface:
+  - `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate`
+- input: persisted native board state only
+- output:
+  - one immediate `route_apply` report built from the current live
+    deterministic single-layer full-path proposal
+  - no intermediate artifact file is required
+- guardrails:
+  - no re-search beyond the accepted `route-path-candidate` query contract
+  - the direct apply writes only the ordered selected `draw_track` sequence
+    from the current live deterministic proposal
+
+Adjacent native convenience-apply slice implemented on 2026-03-29:
+- the accepted bounded single-via deterministic path family now also has a
+  direct apply surface:
+  - `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-via`
+- input: persisted native board state only
+- output:
+  - one immediate `route_apply` report built from the current live
+    deterministic single-via full-path proposal
+  - no intermediate artifact file is required
+- guardrails:
+  - no re-search beyond the accepted `route-path-candidate-via` query contract
+  - the direct apply writes only the ordered selected `draw_track` sequence;
+    the reused via remains reused authored state and is never recreated
+
+Adjacent native convenience-apply slice implemented on 2026-03-29:
+- the accepted bounded two-via deterministic path family now also has a
+  direct apply surface:
+  - `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-two-via`
+- input: persisted native board state only
+- output:
+  - one immediate `route_apply` report built from the current live
+    deterministic two-via full-path proposal
+  - no intermediate artifact file is required
+- guardrails:
+  - no re-search beyond the accepted `route-path-candidate-two-via` query
+    contract
+  - the direct apply writes only the ordered selected `draw_track` sequence;
+    the reused via pair remains reused authored state and is never recreated
+
+Adjacent native convenience-apply slice implemented on 2026-03-29:
+- the accepted bounded three-via deterministic path family now also has a
+  direct apply surface:
+  - `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-three-via`
+- input: persisted native board state only
+- output:
+  - one immediate `route_apply` report built from the current live
+    deterministic three-via full-path proposal
+  - no intermediate artifact file is required
+- guardrails:
+  - no re-search beyond the accepted `route-path-candidate-three-via` query
+    contract
+  - the direct apply writes only the ordered selected `draw_track` sequence;
+    the reused via triple remains reused authored state and is never recreated
+
+Adjacent native convenience-apply slice implemented on 2026-03-29:
+- the remaining bounded ordinal via-path families now also have direct apply
+  surfaces:
+  - `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-four-via`
+  - `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-five-via`
+  - `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-six-via`
+- input: persisted native board state only
+- output:
+  - one immediate `route_apply` report built from the current live
+    deterministic ordinal-via full-path proposal for each accepted contract
+  - no intermediate artifact file is required
+- guardrails:
+  - no re-search beyond the accepted ordinal-via query contracts
+  - the direct apply writes only the ordered selected `draw_track` sequence;
+    the full reused authored via chain remains reused state and is never
+    recreated
+
+Adjacent native convenience-apply slice implemented on 2026-03-29:
+- the accepted deterministic authored-via-chain contract now also has a direct
+  apply surface:
+  - `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-authored-via-chain`
+- input: persisted native board state only
+- output:
+  - one immediate `route_apply` report built from the current live
+    deterministic authored-via-chain full-path proposal
+  - no intermediate artifact file is required
+- guardrails:
+  - no re-search beyond the accepted authored-via-chain query contract
+  - the direct apply writes only the ordered selected `draw_track` sequence;
+    the reused authored via chain remains reused state and is never recreated
+
+Adjacent native convenience-apply hardening slice implemented on 2026-03-29:
+- `project route-apply` now parses `--candidate` from a bounded accepted value
+  set instead of a free-form string
+- input: CLI request only
+- output:
+  - parse-time rejection for unsupported direct-apply candidate names
+  - explicit policy enforcement: `--policy` is required for `--candidate
+    authored-copper-graph` and rejected for the other direct-apply candidates
+- guardrails:
+  - no hidden fallback from unknown candidate strings into later runtime
+    dispatch
+  - no silent acceptance of `--policy` on non-policy candidate families
+
+Adjacent native convenience-export slice implemented on 2026-03-29:
+- `project export-route-path-proposal <dir> --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid> --candidate <accepted_candidate>
+  [--policy <policy>] --out <path>` now provides one bounded convenience
+  export surface for the completed write-capable route family
+- input: persisted native board state only
+- output:
+  - one versioned `native_route_proposal_artifact` built from the current live
+    deterministic proposal under the selected accepted candidate family
+  - no contract-specific export command is required for the common path-family
+    flow
+- guardrails:
+  - no new routing semantics beyond the already-accepted route-path candidate
+    families
+  - `--policy` is required for `--candidate authored-copper-graph` and
+    rejected for the other generic export candidates
+  - the older `export-route-path-candidate-*` commands remain only as
+    compatibility wrappers and are no longer the canonical interface
+
+Adjacent native compatibility-warning slice implemented on 2026-03-30:
+- the older `export-route-path-candidate-*` commands now advertise their
+  deprecated compatibility-wrapper status in CLI help and text-mode export
+  output
+- input: legacy export command invocation only
+- output:
+  - help text names the preferred replacement
+  - text-mode export output appends a deprecation note pointing users to
+    `project export-route-path-proposal ... --candidate ...`
+- guardrails:
+  - JSON output remains unchanged
+  - command behavior remains unchanged; only user guidance is added
+
+Adjacent native convenience-apply slice implemented on 2026-03-29:
+- the completed policy-selected authored-copper-graph family now also has a
+  direct apply surface:
+  - `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate authored-copper-graph --policy <policy>`
+- input: persisted native board state only
+- output:
+  - one immediate `route_apply` report built from the current live
+    deterministic authored-copper-graph proposal under the selected accepted
+    bounded policy
+  - no intermediate artifact file is required
+- guardrails:
+  - no new routing semantics beyond the already-accepted authored-copper-graph
+    policy query family
+  - because the current family reuses existing authored copper only, direct
+    apply remains a validated no-op apply surface
+  - no generalized direct-apply surface for the broader M5 proposal family is
+    introduced by this slice
 
 Poor candidates for the first `M5` slice:
 - full autorouter

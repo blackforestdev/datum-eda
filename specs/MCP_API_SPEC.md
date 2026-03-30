@@ -102,7 +102,12 @@ normalized MCP surface.
 `get_bus_entries`, `get_noconnects`, `get_hierarchy`, `get_net_info`,
 `get_unrouted`, `get_schematic_net_info`, `get_check_report`,
 `get_connectivity_diagnostics`, `get_design_rules`, `run_erc`, `run_drc`,
-`explain_violation`.
+`explain_violation`,
+`export_route_path_proposal`,
+`export_route_path_candidate_authored_copper_graph_proposal`,
+`route_apply`,
+`inspect_route_proposal_artifact`,
+`apply_route_proposal_artifact`.
 
 Methods in later `M4+` sections are target-state and are not part of the
 current enforced daemon/MCP contract.
@@ -123,6 +128,20 @@ Parity policy for current development:
   entries below are tracking records, not claims of implemented MCP support
 
 Currently tracked native contracts that are not implemented in MCP:
+
+#### Implemented M5 native parity exceptions
+
+- `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate <accepted_candidate> [--policy <policy>] --out <path>`
+  - exposed in MCP as `export_route_path_proposal`
+- `project export-route-path-candidate-authored-copper-graph-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --policy <policy> --out <path>`
+  - exposed in MCP as
+    `export_route_path_candidate_authored_copper_graph_proposal`
+- `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate <accepted_candidate> [--policy <policy>]`
+  - exposed in MCP as `route_apply`
+- `project inspect-route-proposal-artifact <path>`
+  - exposed in MCP as `inspect_route_proposal_artifact`
+- `project apply-route-proposal-artifact <dir> --artifact <path>`
+  - exposed in MCP as `apply_route_proposal_artifact`
 
 #### Deferred M4 native parity
 
@@ -191,8 +210,8 @@ Currently tracked native contracts that are not implemented in MCP:
 - `project export-route-path-candidate-authored-copper-graph-zone-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
 - `project export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
 - `project export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-- `project inspect-route-proposal-artifact <path>`
-- `project apply-route-proposal-artifact <dir> --artifact <path>`
+- `project export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+- `project export-route-path-candidate-authored-copper-graph-obstacle-aware-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
 
 ### Project
 

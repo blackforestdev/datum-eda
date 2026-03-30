@@ -169,3 +169,194 @@ class TestDispatchQueries(unittest.TestCase):
         payload = response["result"]["content"][0]["json"]
         self.assertEqual(payload["rule_detail"], "drc connectivity_unrouted_net")
 
+    def test_tools_call_dispatches_authored_copper_graph_policy_proposal_export(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 79,
+                "method": "tools/call",
+                "params": {
+                    "name": "export_route_path_candidate_authored_copper_graph_proposal",
+                    "arguments": {
+                        "path": "/tmp/demo",
+                        "net_uuid": "11111111-1111-1111-1111-111111111111",
+                        "from_anchor_pad_uuid": "22222222-2222-2222-2222-222222222222",
+                        "to_anchor_pad_uuid": "33333333-3333-3333-3333-333333333333",
+                        "policy": "zone_obstacle_topology_layer_balance_aware",
+                        "out": "/tmp/demo.route-proposal.json",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "export_route_path_candidate_authored_copper_graph_proposal",
+                    {
+                        "path": "/tmp/demo",
+                        "net_uuid": "11111111-1111-1111-1111-111111111111",
+                        "from_anchor_pad_uuid": "22222222-2222-2222-2222-222222222222",
+                        "to_anchor_pad_uuid": "33333333-3333-3333-3333-333333333333",
+                        "policy": "zone_obstacle_topology_layer_balance_aware",
+                        "out": "/tmp/demo.route-proposal.json",
+                    },
+                )
+            ],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(
+            payload["action"],
+            "export_route_path_candidate_authored_copper_graph_proposal",
+        )
+        self.assertEqual(
+            payload["contract"], "m5_route_path_candidate_authored_copper_graph_policy_v1"
+        )
+        self.assertEqual(payload["policy"], "zone_obstacle_topology_layer_balance_aware")
+
+    def test_tools_call_dispatches_generic_route_path_proposal_export(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 82,
+                "method": "tools/call",
+                "params": {
+                    "name": "export_route_path_proposal",
+                    "arguments": {
+                        "path": "/tmp/demo",
+                        "net_uuid": "11111111-1111-1111-1111-111111111111",
+                        "from_anchor_pad_uuid": "22222222-2222-2222-2222-222222222222",
+                        "to_anchor_pad_uuid": "33333333-3333-3333-3333-333333333333",
+                        "candidate": "route-path-candidate",
+                        "out": "/tmp/demo.route-proposal.json",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "export_route_path_proposal",
+                    {
+                        "path": "/tmp/demo",
+                        "net_uuid": "11111111-1111-1111-1111-111111111111",
+                        "from_anchor_pad_uuid": "22222222-2222-2222-2222-222222222222",
+                        "to_anchor_pad_uuid": "33333333-3333-3333-3333-333333333333",
+                        "candidate": "route-path-candidate",
+                        "policy": None,
+                        "out": "/tmp/demo.route-proposal.json",
+                    },
+                )
+            ],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["action"], "export_route_path_proposal")
+        self.assertEqual(payload["candidate"], "route-path-candidate")
+        self.assertEqual(payload["artifact_kind"], "native_route_proposal_artifact")
+
+    def test_tools_call_dispatches_route_apply(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 83,
+                "method": "tools/call",
+                "params": {
+                    "name": "route_apply",
+                    "arguments": {
+                        "path": "/tmp/demo",
+                        "net_uuid": "11111111-1111-1111-1111-111111111111",
+                        "from_anchor_pad_uuid": "22222222-2222-2222-2222-222222222222",
+                        "to_anchor_pad_uuid": "33333333-3333-3333-3333-333333333333",
+                        "candidate": "authored-copper-graph",
+                        "policy": "plain",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "route_apply",
+                    {
+                        "path": "/tmp/demo",
+                        "net_uuid": "11111111-1111-1111-1111-111111111111",
+                        "from_anchor_pad_uuid": "22222222-2222-2222-2222-222222222222",
+                        "to_anchor_pad_uuid": "33333333-3333-3333-3333-333333333333",
+                        "candidate": "authored-copper-graph",
+                        "policy": "plain",
+                    },
+                )
+            ],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["action"], "route_apply")
+        self.assertEqual(payload["candidate"], "authored-copper-graph")
+        self.assertEqual(
+            payload["contract"], "m5_route_path_candidate_authored_copper_graph_policy_v1"
+        )
+
+    def test_tools_call_dispatches_route_proposal_artifact_inspection(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 80,
+                "method": "tools/call",
+                "params": {
+                    "name": "inspect_route_proposal_artifact",
+                    "arguments": {
+                        "artifact": "/tmp/demo.route-proposal.json",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [("inspect_route_proposal_artifact", "/tmp/demo.route-proposal.json")],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["action"], "inspect_route_proposal_artifact")
+        self.assertEqual(payload["artifact_kind"], "native_route_proposal_artifact")
+
+    def test_tools_call_dispatches_route_proposal_artifact_apply(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 81,
+                "method": "tools/call",
+                "params": {
+                    "name": "apply_route_proposal_artifact",
+                    "arguments": {
+                        "path": "/tmp/demo",
+                        "artifact": "/tmp/demo.route-proposal.json",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "apply_route_proposal_artifact",
+                    {
+                        "path": "/tmp/demo",
+                        "artifact": "/tmp/demo.route-proposal.json",
+                    },
+                )
+            ],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["action"], "apply_route_proposal_artifact")
+        self.assertEqual(payload["artifact_actions"], 2)
+        self.assertEqual(payload["applied_actions"], 0)

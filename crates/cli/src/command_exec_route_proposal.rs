@@ -25,6 +25,30 @@ pub(super) fn execute_route_proposal_command(
             };
             Ok((output, 0))
         }
+        ProjectCommands::ExportRoutePathProposal(ProjectExportRoutePathProposalArgs {
+            path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            candidate,
+            policy,
+            out,
+        }) => {
+            let report = export_native_project_route_path_proposal(
+                &path,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+                candidate,
+                policy,
+                &out,
+            )?;
+            let output = match format {
+                OutputFormat::Text => render_native_route_proposal_export_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
         ProjectCommands::ExportRoutePathCandidateProposal(
             ProjectExportRoutePathCandidateProposalArgs {
                 path,
@@ -268,6 +292,75 @@ pub(super) fn execute_route_proposal_command(
             };
             Ok((output, 0))
         }
+        ProjectCommands::ExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareProposal(
+            ProjectExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareProposalArgs {
+                path,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+                out,
+            },
+        ) => {
+            let report = export_native_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_proposal(
+                &path,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+                &out,
+            )?;
+            let output = match format {
+                OutputFormat::Text => render_native_route_proposal_export_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::ExportRoutePathCandidateAuthoredCopperGraphObstacleAwareProposal(
+            ProjectExportRoutePathCandidateAuthoredCopperGraphObstacleAwareProposalArgs {
+                path,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+                out,
+            },
+        ) => {
+            let report =
+                export_native_project_route_path_candidate_authored_copper_graph_obstacle_aware_proposal(
+                    &path,
+                    net_uuid,
+                    from_anchor_pad_uuid,
+                    to_anchor_pad_uuid,
+                    &out,
+                )?;
+            let output = match format {
+                OutputFormat::Text => render_native_route_proposal_export_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::ExportRoutePathCandidateAuthoredCopperGraphProposal(
+            ProjectExportRoutePathCandidateAuthoredCopperGraphProposalArgs {
+                path,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+                policy,
+                out,
+            },
+        ) => {
+            let report = export_native_project_route_path_candidate_authored_copper_graph_proposal(
+                &path,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+                policy,
+                &out,
+            )?;
+            let output = match format {
+                OutputFormat::Text => render_native_route_proposal_export_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
         ProjectCommands::InspectRouteProposalArtifact(
             ProjectInspectRouteProposalArtifactArgs { path },
         ) => {
@@ -297,13 +390,15 @@ pub(super) fn execute_route_proposal_command(
             from_anchor_pad_uuid,
             to_anchor_pad_uuid,
             candidate,
+            policy,
         }) => {
             let report = apply_native_project_route(
                 &path,
                 net_uuid,
                 from_anchor_pad_uuid,
                 to_anchor_pad_uuid,
-                &candidate,
+                candidate,
+                policy,
             )?;
             let output = match format {
                 OutputFormat::Text => render_native_route_apply_text(&report),

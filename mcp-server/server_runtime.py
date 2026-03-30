@@ -11,7 +11,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 import json
 import os
+import shlex
 import socket
+import subprocess
 import sys
 from typing import Any
 
@@ -344,6 +346,36 @@ class EngineDaemonClient:
     def explain_violation_request(self, domain: str, index: int) -> JsonRpcRequest:
         return self.build_request("explain_violation", {"domain": domain, "index": index})
 
+    def _cli_prefix(self) -> list[str]:
+        configured = os.environ.get("EDA_CLI_BIN", "eda")
+        prefix = shlex.split(configured)
+        if not prefix:
+            raise RuntimeError("EDA_CLI_BIN resolved to an empty command")
+        return prefix
+
+    def _run_cli_json(
+        self,
+        request: JsonRpcRequest,
+        cli_args: list[str],
+    ) -> JsonRpcResponse:
+        completed = subprocess.run(
+            [*self._cli_prefix(), "--format", "json", *cli_args],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if completed.returncode != 0:
+            detail = completed.stderr.strip() or completed.stdout.strip() or "unknown CLI failure"
+            raise RuntimeError(detail)
+        stdout = completed.stdout.strip()
+        if not stdout:
+            raise RuntimeError("eda CLI returned no JSON payload")
+        try:
+            result = json.loads(stdout)
+        except json.JSONDecodeError as exc:
+            raise RuntimeError(f"failed to parse eda CLI JSON: {exc}") from exc
+        return JsonRpcResponse("2.0", request.id, result, None)
+
     def call(self, request: JsonRpcRequest) -> JsonRpcResponse:
         if not self._socket_path:
             raise RuntimeError("EDA_ENGINE_SOCKET is not configured")
@@ -585,6 +617,161 @@ class EngineDaemonClient:
 
     def explain_violation(self, domain: str, index: int) -> JsonRpcResponse:
         return self.call(self.explain_violation_request(domain, index))
+
+    def export_route_path_candidate_authored_copper_graph_proposal(
+        self,
+        path: str,
+        net_uuid: str,
+        from_anchor_pad_uuid: str,
+        to_anchor_pad_uuid: str,
+        policy: str,
+        out: str,
+    ) -> JsonRpcResponse:
+        request = self.build_request(
+            "export_route_path_candidate_authored_copper_graph_proposal",
+            {
+                "path": path,
+                "net_uuid": net_uuid,
+                "from_anchor_pad_uuid": from_anchor_pad_uuid,
+                "to_anchor_pad_uuid": to_anchor_pad_uuid,
+                "policy": policy,
+                "out": out,
+            },
+        )
+        return self._run_cli_json(
+            request,
+            [
+                "project",
+                "export-route-path-candidate-authored-copper-graph-proposal",
+                path,
+                "--net",
+                net_uuid,
+                "--from-anchor",
+                from_anchor_pad_uuid,
+                "--to-anchor",
+                to_anchor_pad_uuid,
+                "--policy",
+                policy,
+                "--out",
+                out,
+            ],
+        )
+
+    def export_route_path_proposal(
+        self,
+        path: str,
+        net_uuid: str,
+        from_anchor_pad_uuid: str,
+        to_anchor_pad_uuid: str,
+        candidate: str,
+        policy: str | None,
+        out: str,
+    ) -> JsonRpcResponse:
+        request = self.build_request(
+            "export_route_path_proposal",
+            {
+                "path": path,
+                "net_uuid": net_uuid,
+                "from_anchor_pad_uuid": from_anchor_pad_uuid,
+                "to_anchor_pad_uuid": to_anchor_pad_uuid,
+                "candidate": candidate,
+                "policy": policy,
+                "out": out,
+            },
+        )
+        args = [
+            "project",
+            "export-route-path-proposal",
+            path,
+            "--net",
+            net_uuid,
+            "--from-anchor",
+            from_anchor_pad_uuid,
+            "--to-anchor",
+            to_anchor_pad_uuid,
+            "--candidate",
+            candidate,
+        ]
+        if policy is not None:
+            args.extend(["--policy", policy])
+        args.extend(["--out", out])
+        return self._run_cli_json(request, args)
+
+    def route_apply(
+        self,
+        path: str,
+        net_uuid: str,
+        from_anchor_pad_uuid: str,
+        to_anchor_pad_uuid: str,
+        candidate: str,
+        policy: str | None,
+    ) -> JsonRpcResponse:
+        request = self.build_request(
+            "route_apply",
+            {
+                "path": path,
+                "net_uuid": net_uuid,
+                "from_anchor_pad_uuid": from_anchor_pad_uuid,
+                "to_anchor_pad_uuid": to_anchor_pad_uuid,
+                "candidate": candidate,
+                "policy": policy,
+            },
+        )
+        args = [
+            "project",
+            "route-apply",
+            path,
+            "--net",
+            net_uuid,
+            "--from-anchor",
+            from_anchor_pad_uuid,
+            "--to-anchor",
+            to_anchor_pad_uuid,
+            "--candidate",
+            candidate,
+        ]
+        if policy is not None:
+            args.extend(["--policy", policy])
+        return self._run_cli_json(request, args)
+
+    def inspect_route_proposal_artifact(self, artifact: str) -> JsonRpcResponse:
+        request = self.build_request(
+            "inspect_route_proposal_artifact",
+            {
+                "artifact": artifact,
+            },
+        )
+        return self._run_cli_json(
+            request,
+            [
+                "project",
+                "inspect-route-proposal-artifact",
+                artifact,
+            ],
+        )
+
+    def apply_route_proposal_artifact(
+        self,
+        path: str,
+        artifact: str,
+    ) -> JsonRpcResponse:
+        request = self.build_request(
+            "apply_route_proposal_artifact",
+            {
+                "path": path,
+                "artifact": artifact,
+            },
+        )
+        return self._run_cli_json(
+            request,
+            [
+                "project",
+                "apply-route-proposal-artifact",
+                path,
+                "--artifact",
+                artifact,
+            ],
+        )
 
 
 class StdioToolHost:

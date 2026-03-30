@@ -1,15 +1,85 @@
 use super::*;
+use crate::NativeProjectRouteApplyCandidateArg;
 use crate::NativeProjectRouteApplyView;
+use crate::cli_args::NativeRoutePathCandidateAuthoredCopperGraphPolicy;
 
 pub(crate) fn apply_native_project_route(
     root: &Path,
     net_uuid: Uuid,
     from_anchor_pad_uuid: Uuid,
     to_anchor_pad_uuid: Uuid,
-    candidate: &str,
+    candidate: NativeProjectRouteApplyCandidateArg,
+    policy: Option<NativeRoutePathCandidateAuthoredCopperGraphPolicy>,
 ) -> Result<NativeProjectRouteApplyView> {
+    if policy.is_some() && candidate != NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph {
+        bail!("route-apply --policy is supported only for candidate authored-copper-graph");
+    }
     let actions = match candidate {
-        "authored-copper-plus-one-gap" => {
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidate => {
+            super::build_route_path_candidate_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )?
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateVia => {
+            super::build_route_path_candidate_via_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )?
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateTwoVia => {
+            super::build_route_path_candidate_two_via_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )?
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateThreeVia => {
+            super::build_route_path_candidate_three_via_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )?
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateFourVia => {
+            super::build_route_path_candidate_four_via_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )?
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateFiveVia => {
+            super::build_route_path_candidate_five_via_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )?
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateSixVia => {
+            super::build_route_path_candidate_six_via_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )?
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateAuthoredViaChain => {
+            super::build_route_path_candidate_authored_via_chain_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )?
+        }
+        NativeProjectRouteApplyCandidateArg::AuthoredCopperPlusOneGap => {
             super::build_plus_one_gap_route_proposal_actions(
                 root,
                 net_uuid,
@@ -17,7 +87,18 @@ pub(crate) fn apply_native_project_route(
                 to_anchor_pad_uuid,
             )?
         }
-        _ => bail!("unsupported route-apply candidate {}", candidate),
+        NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph => {
+            let policy = policy.ok_or_else(|| {
+                anyhow::anyhow!("route-apply candidate authored-copper-graph requires --policy")
+            })?;
+            super::build_route_path_candidate_authored_copper_graph_policy_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+                policy,
+            )?
+        }
     };
     validate_route_proposal_actions(&actions)?;
     let contract = actions

@@ -48,7 +48,7 @@ pub(crate) struct NativeProjectRouteApplyView {
 pub(super) fn render_native_route_proposal_export_text(
     report: &NativeProjectRouteProposalExportReportView,
 ) -> String {
-    [
+    let mut lines = vec![
         format!("action: {}", report.action),
         format!("artifact_path: {}", report.artifact_path),
         format!("kind: {}", report.kind),
@@ -56,8 +56,18 @@ pub(super) fn render_native_route_proposal_export_text(
         format!("project_uuid: {}", report.project_uuid),
         format!("contract: {}", report.contract),
         format!("actions: {}", report.actions),
-    ]
-    .join("\n")
+    ];
+    if is_legacy_route_export_action(&report.action) {
+        lines.push(
+            "note: deprecated compatibility wrapper; prefer `project export-route-path-proposal --candidate ...`"
+                .to_string(),
+        );
+    }
+    lines.join("\n")
+}
+
+fn is_legacy_route_export_action(action: &str) -> bool {
+    action.starts_with("export_route_path_candidate_")
 }
 
 pub(super) fn render_native_route_proposal_artifact_inspection_text(

@@ -1,9 +1,14 @@
 use std::path::Path;
 
 use super::*;
+use crate::NativeProjectRouteApplyCandidateArg;
+use crate::cli_args::NativeRoutePathCandidateAuthoredCopperGraphPolicy;
 use eda_engine::board::{
+    RoutePathCandidateAuthoredCopperGraphObstacleAwareStepKindView,
+    RoutePathCandidateAuthoredCopperGraphPolicyStepKindView,
     RoutePathCandidateAuthoredCopperGraphZoneAwareStepKindView,
     RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareStepKindView,
+    RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareStepKindView,
     RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareStepKindView,
     RoutePathCandidateAuthoredCopperPlusOneGapStepKindView, RoutePathCandidateStatus,
 };
@@ -26,6 +31,22 @@ const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBST
     "route_path_candidate_authored_copper_graph_zone_obstacle_aware";
 const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE_TOPOLOGY_AWARE: &str =
     "route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware";
+const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE_TOPOLOGY_AWARE_LAYER_BALANCE_AWARE: &str =
+    "route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware";
+const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_OBSTACLE_AWARE: &str =
+    "route_path_candidate_authored_copper_graph_obstacle_aware";
+const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_PLAIN: &str =
+    "route_path_candidate_authored_copper_graph_policy_plain";
+const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_AWARE: &str =
+    "route_path_candidate_authored_copper_graph_policy_zone_aware";
+const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_OBSTACLE_AWARE: &str =
+    "route_path_candidate_authored_copper_graph_policy_obstacle_aware";
+const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_OBSTACLE_AWARE: &str =
+    "route_path_candidate_authored_copper_graph_policy_zone_obstacle_aware";
+const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_OBSTACLE_TOPOLOGY_AWARE: &str =
+    "route_path_candidate_authored_copper_graph_policy_zone_obstacle_topology_aware";
+const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_OBSTACLE_TOPOLOGY_LAYER_BALANCE_AWARE: &str =
+    "route_path_candidate_authored_copper_graph_policy_zone_obstacle_topology_layer_balance_aware";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub(crate) struct NativeProjectRouteProposalActionView {
@@ -107,6 +128,48 @@ pub(crate) fn export_native_project_route_proposal(
     })
 }
 
+pub(crate) fn export_native_project_route_path_proposal(
+    root: &Path,
+    net_uuid: Uuid,
+    from_anchor_pad_uuid: Uuid,
+    to_anchor_pad_uuid: Uuid,
+    candidate: NativeProjectRouteApplyCandidateArg,
+    policy: Option<NativeRoutePathCandidateAuthoredCopperGraphPolicy>,
+    output_path: &Path,
+) -> Result<NativeProjectRouteProposalExportReportView> {
+    export_route_path_proposal_artifact_for_candidate(
+        root,
+        output_path,
+        "export_route_path_proposal",
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        candidate,
+        policy,
+    )
+}
+
+fn export_route_path_proposal_artifact_for_candidate(
+    root: &Path,
+    output_path: &Path,
+    action: &str,
+    net_uuid: Uuid,
+    from_anchor_pad_uuid: Uuid,
+    to_anchor_pad_uuid: Uuid,
+    candidate: NativeProjectRouteApplyCandidateArg,
+    policy: Option<NativeRoutePathCandidateAuthoredCopperGraphPolicy>,
+) -> Result<NativeProjectRouteProposalExportReportView> {
+    let actions = build_route_path_proposal_actions(
+        root,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        candidate,
+        policy,
+    )?;
+    export_route_proposal_artifact(root, output_path, action, actions)
+}
+
 pub(crate) fn export_native_project_route_path_candidate_proposal(
     root: &Path,
     net_uuid: Uuid,
@@ -114,31 +177,16 @@ pub(crate) fn export_native_project_route_path_candidate_proposal(
     to_anchor_pad_uuid: Uuid,
     output_path: &Path,
 ) -> Result<NativeProjectRouteProposalExportReportView> {
-    let project = load_native_project(root)?;
-    let actions = build_route_path_candidate_proposal_actions(
+    export_route_path_proposal_artifact_for_candidate(
         root,
+        output_path,
+        "export_route_path_candidate_proposal",
         net_uuid,
         from_anchor_pad_uuid,
         to_anchor_pad_uuid,
-    )?;
-    let artifact = RouteProposalArtifact {
-        kind: ROUTE_PROPOSAL_ARTIFACT_KIND.to_string(),
-        version: ROUTE_PROPOSAL_ARTIFACT_VERSION,
-        project_uuid: project.manifest.uuid,
-        project_name: project.manifest.name.clone(),
-        contract: actions[0].contract.clone(),
-        actions,
-    };
-    write_canonical_json(output_path, &artifact)?;
-    Ok(NativeProjectRouteProposalExportReportView {
-        action: "export_route_path_candidate_proposal".to_string(),
-        artifact_path: output_path.display().to_string(),
-        kind: artifact.kind,
-        version: artifact.version,
-        project_uuid: artifact.project_uuid.to_string(),
-        contract: artifact.contract,
-        actions: artifact.actions.len(),
-    })
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidate,
+        None,
+    )
 }
 
 pub(crate) fn export_native_project_route_path_candidate_via_proposal(
@@ -148,31 +196,16 @@ pub(crate) fn export_native_project_route_path_candidate_via_proposal(
     to_anchor_pad_uuid: Uuid,
     output_path: &Path,
 ) -> Result<NativeProjectRouteProposalExportReportView> {
-    let project = load_native_project(root)?;
-    let actions = build_route_path_candidate_via_proposal_actions(
+    export_route_path_proposal_artifact_for_candidate(
         root,
+        output_path,
+        "export_route_path_candidate_via_proposal",
         net_uuid,
         from_anchor_pad_uuid,
         to_anchor_pad_uuid,
-    )?;
-    let artifact = RouteProposalArtifact {
-        kind: ROUTE_PROPOSAL_ARTIFACT_KIND.to_string(),
-        version: ROUTE_PROPOSAL_ARTIFACT_VERSION,
-        project_uuid: project.manifest.uuid,
-        project_name: project.manifest.name.clone(),
-        contract: actions[0].contract.clone(),
-        actions,
-    };
-    write_canonical_json(output_path, &artifact)?;
-    Ok(NativeProjectRouteProposalExportReportView {
-        action: "export_route_path_candidate_via_proposal".to_string(),
-        artifact_path: output_path.display().to_string(),
-        kind: artifact.kind,
-        version: artifact.version,
-        project_uuid: artifact.project_uuid.to_string(),
-        contract: artifact.contract,
-        actions: artifact.actions.len(),
-    })
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateVia,
+        None,
+    )
 }
 
 pub(crate) fn export_native_project_route_path_candidate_two_via_proposal(
@@ -182,31 +215,16 @@ pub(crate) fn export_native_project_route_path_candidate_two_via_proposal(
     to_anchor_pad_uuid: Uuid,
     output_path: &Path,
 ) -> Result<NativeProjectRouteProposalExportReportView> {
-    let project = load_native_project(root)?;
-    let actions = build_route_path_candidate_two_via_proposal_actions(
+    export_route_path_proposal_artifact_for_candidate(
         root,
+        output_path,
+        "export_route_path_candidate_two_via_proposal",
         net_uuid,
         from_anchor_pad_uuid,
         to_anchor_pad_uuid,
-    )?;
-    let artifact = RouteProposalArtifact {
-        kind: ROUTE_PROPOSAL_ARTIFACT_KIND.to_string(),
-        version: ROUTE_PROPOSAL_ARTIFACT_VERSION,
-        project_uuid: project.manifest.uuid,
-        project_name: project.manifest.name.clone(),
-        contract: actions[0].contract.clone(),
-        actions,
-    };
-    write_canonical_json(output_path, &artifact)?;
-    Ok(NativeProjectRouteProposalExportReportView {
-        action: "export_route_path_candidate_two_via_proposal".to_string(),
-        artifact_path: output_path.display().to_string(),
-        kind: artifact.kind,
-        version: artifact.version,
-        project_uuid: artifact.project_uuid.to_string(),
-        contract: artifact.contract,
-        actions: artifact.actions.len(),
-    })
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateTwoVia,
+        None,
+    )
 }
 
 pub(crate) fn export_native_project_route_path_candidate_three_via_proposal(
@@ -216,16 +234,15 @@ pub(crate) fn export_native_project_route_path_candidate_three_via_proposal(
     to_anchor_pad_uuid: Uuid,
     output_path: &Path,
 ) -> Result<NativeProjectRouteProposalExportReportView> {
-    export_route_proposal_artifact(
+    export_route_path_proposal_artifact_for_candidate(
         root,
         output_path,
         "export_route_path_candidate_three_via_proposal",
-        build_route_path_candidate_three_via_proposal_actions(
-            root,
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid,
-        )?,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateThreeVia,
+        None,
     )
 }
 
@@ -236,16 +253,15 @@ pub(crate) fn export_native_project_route_path_candidate_four_via_proposal(
     to_anchor_pad_uuid: Uuid,
     output_path: &Path,
 ) -> Result<NativeProjectRouteProposalExportReportView> {
-    export_route_proposal_artifact(
+    export_route_path_proposal_artifact_for_candidate(
         root,
         output_path,
         "export_route_path_candidate_four_via_proposal",
-        build_route_path_candidate_four_via_proposal_actions(
-            root,
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid,
-        )?,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateFourVia,
+        None,
     )
 }
 
@@ -256,16 +272,15 @@ pub(crate) fn export_native_project_route_path_candidate_five_via_proposal(
     to_anchor_pad_uuid: Uuid,
     output_path: &Path,
 ) -> Result<NativeProjectRouteProposalExportReportView> {
-    export_route_proposal_artifact(
+    export_route_path_proposal_artifact_for_candidate(
         root,
         output_path,
         "export_route_path_candidate_five_via_proposal",
-        build_route_path_candidate_five_via_proposal_actions(
-            root,
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid,
-        )?,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateFiveVia,
+        None,
     )
 }
 
@@ -276,16 +291,15 @@ pub(crate) fn export_native_project_route_path_candidate_six_via_proposal(
     to_anchor_pad_uuid: Uuid,
     output_path: &Path,
 ) -> Result<NativeProjectRouteProposalExportReportView> {
-    export_route_proposal_artifact(
+    export_route_path_proposal_artifact_for_candidate(
         root,
         output_path,
         "export_route_path_candidate_six_via_proposal",
-        build_route_path_candidate_six_via_proposal_actions(
-            root,
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid,
-        )?,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateSixVia,
+        None,
     )
 }
 
@@ -296,16 +310,15 @@ pub(crate) fn export_native_project_route_path_candidate_authored_via_chain_prop
     to_anchor_pad_uuid: Uuid,
     output_path: &Path,
 ) -> Result<NativeProjectRouteProposalExportReportView> {
-    export_route_proposal_artifact(
+    export_route_path_proposal_artifact_for_candidate(
         root,
         output_path,
         "export_route_path_candidate_authored_via_chain_proposal",
-        build_route_path_candidate_authored_via_chain_proposal_actions(
-            root,
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid,
-        )?,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateAuthoredViaChain,
+        None,
     )
 }
 
@@ -316,16 +329,15 @@ pub(crate) fn export_native_project_route_path_candidate_authored_copper_graph_z
     to_anchor_pad_uuid: Uuid,
     output_path: &Path,
 ) -> Result<NativeProjectRouteProposalExportReportView> {
-    export_route_proposal_artifact(
+    export_route_path_proposal_artifact_for_candidate(
         root,
         output_path,
         "export_route_path_candidate_authored_copper_graph_zone_aware_proposal",
-        build_route_path_candidate_authored_copper_graph_zone_aware_proposal_actions(
-            root,
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid,
-        )?,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph,
+        Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneAware),
     )
 }
 
@@ -336,16 +348,15 @@ pub(crate) fn export_native_project_route_path_candidate_authored_copper_graph_z
     to_anchor_pad_uuid: Uuid,
     output_path: &Path,
 ) -> Result<NativeProjectRouteProposalExportReportView> {
-    export_route_proposal_artifact(
+    export_route_path_proposal_artifact_for_candidate(
         root,
         output_path,
         "export_route_path_candidate_authored_copper_graph_zone_obstacle_aware_proposal",
-        build_route_path_candidate_authored_copper_graph_zone_obstacle_aware_proposal_actions(
-            root,
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid,
-        )?,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph,
+        Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleAware),
     )
 }
 
@@ -356,16 +367,75 @@ pub(crate) fn export_native_project_route_path_candidate_authored_copper_graph_z
     to_anchor_pad_uuid: Uuid,
     output_path: &Path,
 ) -> Result<NativeProjectRouteProposalExportReportView> {
-    export_route_proposal_artifact(
+    export_route_path_proposal_artifact_for_candidate(
         root,
         output_path,
         "export_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_proposal",
-        build_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_proposal_actions(
-            root,
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid,
-        )?,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph,
+        Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyAware),
+    )
+}
+
+pub(crate) fn export_native_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_proposal(
+    root: &Path,
+    net_uuid: Uuid,
+    from_anchor_pad_uuid: Uuid,
+    to_anchor_pad_uuid: Uuid,
+    output_path: &Path,
+) -> Result<NativeProjectRouteProposalExportReportView> {
+    export_route_path_proposal_artifact_for_candidate(
+        root,
+        output_path,
+        "export_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_proposal",
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph,
+        Some(
+            NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyLayerBalanceAware,
+        ),
+    )
+}
+
+pub(crate) fn export_native_project_route_path_candidate_authored_copper_graph_obstacle_aware_proposal(
+    root: &Path,
+    net_uuid: Uuid,
+    from_anchor_pad_uuid: Uuid,
+    to_anchor_pad_uuid: Uuid,
+    output_path: &Path,
+) -> Result<NativeProjectRouteProposalExportReportView> {
+    export_route_path_proposal_artifact_for_candidate(
+        root,
+        output_path,
+        "export_route_path_candidate_authored_copper_graph_obstacle_aware_proposal",
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph,
+        Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::ObstacleAware),
+    )
+}
+
+pub(crate) fn export_native_project_route_path_candidate_authored_copper_graph_proposal(
+    root: &Path,
+    net_uuid: Uuid,
+    from_anchor_pad_uuid: Uuid,
+    to_anchor_pad_uuid: Uuid,
+    policy: NativeRoutePathCandidateAuthoredCopperGraphPolicy,
+    output_path: &Path,
+) -> Result<NativeProjectRouteProposalExportReportView> {
+    export_route_path_proposal_artifact_for_candidate(
+        root,
+        output_path,
+        "export_route_path_candidate_authored_copper_graph_proposal",
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph,
+        Some(policy),
     )
 }
 
@@ -394,6 +464,110 @@ fn export_route_proposal_artifact(
         contract: artifact.contract,
         actions: artifact.actions.len(),
     })
+}
+
+fn build_route_path_proposal_actions(
+    root: &Path,
+    net_uuid: Uuid,
+    from_anchor_pad_uuid: Uuid,
+    to_anchor_pad_uuid: Uuid,
+    candidate: NativeProjectRouteApplyCandidateArg,
+    policy: Option<NativeRoutePathCandidateAuthoredCopperGraphPolicy>,
+) -> Result<Vec<NativeProjectRouteProposalActionView>> {
+    if policy.is_some() && candidate != NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph {
+        bail!(
+            "export-route-path-proposal --policy is supported only for candidate authored-copper-graph"
+        );
+    }
+
+    match candidate {
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidate => {
+            build_route_path_candidate_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateVia => {
+            build_route_path_candidate_via_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateTwoVia => {
+            build_route_path_candidate_two_via_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateThreeVia => {
+            build_route_path_candidate_three_via_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateFourVia => {
+            build_route_path_candidate_four_via_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateFiveVia => {
+            build_route_path_candidate_five_via_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateSixVia => {
+            build_route_path_candidate_six_via_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateAuthoredViaChain => {
+            build_route_path_candidate_authored_via_chain_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )
+        }
+        NativeProjectRouteApplyCandidateArg::AuthoredCopperPlusOneGap => {
+            build_plus_one_gap_route_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )
+        }
+        NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph => {
+            let policy = policy.ok_or_else(|| {
+                anyhow::anyhow!(
+                    "export-route-path-proposal candidate authored-copper-graph requires --policy"
+                )
+            })?;
+            build_route_path_candidate_authored_copper_graph_policy_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+                policy,
+            )
+        }
+    }
 }
 
 pub(crate) fn load_route_proposal_artifact(
@@ -507,10 +681,30 @@ pub(crate) fn apply_route_proposal_artifact(
             loaded.artifact_path.display()
         )
     })?;
-    let live_actions = match (
-        loaded.artifact.contract.as_str(),
-        first_action.reason.as_str(),
-    ) {
+    let live_actions = if loaded.artifact.contract
+        == "m5_route_path_candidate_authored_copper_graph_policy_v1"
+    {
+        let policy =
+            route_path_candidate_authored_copper_graph_policy_from_reason(&first_action.reason)
+                .ok_or_else(|| {
+                    anyhow::anyhow!(
+                        "route proposal artifact apply is not supported for contract={} reason={}",
+                        loaded.artifact.contract,
+                        first_action.reason
+                    )
+                })?;
+        build_route_path_candidate_authored_copper_graph_policy_proposal_actions(
+            root,
+            first_action.net_uuid,
+            first_action.from_anchor_pad_uuid,
+            first_action.to_anchor_pad_uuid,
+            policy,
+        )?
+    } else {
+        match (
+            loaded.artifact.contract.as_str(),
+            first_action.reason.as_str(),
+        ) {
         ("m5_route_path_candidate_v2", ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE) => {
             build_route_path_candidate_proposal_actions(
                 root,
@@ -609,6 +803,24 @@ pub(crate) fn apply_route_proposal_artifact(
             first_action.to_anchor_pad_uuid,
         )?,
         (
+            "m5_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_v1",
+            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE_TOPOLOGY_AWARE_LAYER_BALANCE_AWARE,
+        ) => build_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_proposal_actions(
+            root,
+            first_action.net_uuid,
+            first_action.from_anchor_pad_uuid,
+            first_action.to_anchor_pad_uuid,
+        )?,
+        (
+            "m5_route_path_candidate_authored_copper_graph_obstacle_aware_v1",
+            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_OBSTACLE_AWARE,
+        ) => build_route_path_candidate_authored_copper_graph_obstacle_aware_proposal_actions(
+            root,
+            first_action.net_uuid,
+            first_action.from_anchor_pad_uuid,
+            first_action.to_anchor_pad_uuid,
+        )?,
+        (
             "m5_route_path_candidate_authored_copper_plus_one_gap_v1",
             ROUTE_PROPOSAL_REASON_AUTHORED_COPPER_PLUS_ONE_GAP,
         ) => build_plus_one_gap_route_proposal_actions(
@@ -622,6 +834,7 @@ pub(crate) fn apply_route_proposal_artifact(
             loaded.artifact.contract,
             first_action.reason
         ),
+        }
     };
     if live_actions != loaded.artifact.actions {
         bail!(
@@ -745,7 +958,7 @@ pub(super) fn build_plus_one_gap_route_proposal_actions(
     }])
 }
 
-fn build_route_path_candidate_proposal_actions(
+pub(super) fn build_route_path_candidate_proposal_actions(
     root: &Path,
     net_uuid: Uuid,
     from_anchor_pad_uuid: Uuid,
@@ -842,7 +1055,7 @@ fn build_route_path_candidate_proposal_actions(
     Ok(actions)
 }
 
-fn build_route_path_candidate_via_proposal_actions(
+pub(super) fn build_route_path_candidate_via_proposal_actions(
     root: &Path,
     net_uuid: Uuid,
     from_anchor_pad_uuid: Uuid,
@@ -943,7 +1156,7 @@ fn build_route_path_candidate_via_proposal_actions(
     Ok(actions)
 }
 
-fn build_route_path_candidate_two_via_proposal_actions(
+pub(super) fn build_route_path_candidate_two_via_proposal_actions(
     root: &Path,
     net_uuid: Uuid,
     from_anchor_pad_uuid: Uuid,
@@ -997,7 +1210,7 @@ fn build_route_path_candidate_two_via_proposal_actions(
     ))
 }
 
-fn build_route_path_candidate_three_via_proposal_actions(
+pub(super) fn build_route_path_candidate_three_via_proposal_actions(
     root: &Path,
     net_uuid: Uuid,
     from_anchor_pad_uuid: Uuid,
@@ -1050,7 +1263,7 @@ fn build_route_path_candidate_three_via_proposal_actions(
     ))
 }
 
-fn build_route_path_candidate_four_via_proposal_actions(
+pub(super) fn build_route_path_candidate_four_via_proposal_actions(
     root: &Path,
     net_uuid: Uuid,
     from_anchor_pad_uuid: Uuid,
@@ -1108,7 +1321,7 @@ fn build_route_path_candidate_four_via_proposal_actions(
     ))
 }
 
-fn build_route_path_candidate_five_via_proposal_actions(
+pub(super) fn build_route_path_candidate_five_via_proposal_actions(
     root: &Path,
     net_uuid: Uuid,
     from_anchor_pad_uuid: Uuid,
@@ -1167,7 +1380,7 @@ fn build_route_path_candidate_five_via_proposal_actions(
     ))
 }
 
-fn build_route_path_candidate_six_via_proposal_actions(
+pub(super) fn build_route_path_candidate_six_via_proposal_actions(
     root: &Path,
     net_uuid: Uuid,
     from_anchor_pad_uuid: Uuid,
@@ -1227,7 +1440,7 @@ fn build_route_path_candidate_six_via_proposal_actions(
     ))
 }
 
-fn build_route_path_candidate_authored_via_chain_proposal_actions(
+pub(super) fn build_route_path_candidate_authored_via_chain_proposal_actions(
     root: &Path,
     net_uuid: Uuid,
     from_anchor_pad_uuid: Uuid,
@@ -1567,6 +1780,345 @@ fn build_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology
         })
         .collect::<Vec<_>>();
     Ok(actions)
+}
+
+fn build_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_proposal_actions(
+    root: &Path,
+    net_uuid: Uuid,
+    from_anchor_pad_uuid: Uuid,
+    to_anchor_pad_uuid: Uuid,
+) -> Result<Vec<NativeProjectRouteProposalActionView>> {
+    let report = query_native_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware(
+        root,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+    )?;
+    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
+        bail!(
+            "route proposal requires deterministic layer-balance-aware topology-aware zone-obstacle-aware authored-copper path for net {} between {} and {}",
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid
+        );
+    }
+
+    let preflight = query_native_project_route_preflight(root, net_uuid)?;
+    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
+        anyhow::anyhow!(
+            "route proposal requires persisted net-class facts for net {}",
+            net_uuid
+        )
+    })?;
+    let path = report.path.ok_or_else(|| {
+        anyhow::anyhow!(
+            "route proposal requires selected layer-balance-aware topology-aware zone-obstacle-aware authored-copper path data for net {} between {} and {}",
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid
+        )
+    })?;
+    let selected_path_segment_count = path.steps.len();
+    let actions = path
+        .steps
+        .iter()
+        .enumerate()
+        .map(|(selected_path_segment_index, step)| {
+            let reused_object_kind = match step.kind {
+                RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareStepKindView::Track => "track",
+                RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareStepKindView::Via => "via",
+                RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareStepKindView::Zone => "zone",
+            };
+            let action_id = route_proposal_action_id(
+                &report.contract,
+                "reuse_existing_copper_step",
+                ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE_TOPOLOGY_AWARE_LAYER_BALANCE_AWARE,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+                step.layer,
+                step.from,
+                step.to,
+                net_class.track_width_nm,
+                None,
+                &[],
+                Some(reused_object_kind),
+                Some(step.object_uuid),
+                step.from_layer,
+                step.to_layer,
+            );
+            NativeProjectRouteProposalActionView {
+                action_id,
+                proposal_action: "reuse_existing_copper_step".to_string(),
+                reason: ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE_TOPOLOGY_AWARE_LAYER_BALANCE_AWARE
+                    .to_string(),
+                contract: report.contract.clone(),
+                net_uuid: report.net_uuid,
+                net_name: report.net_name.clone(),
+                from_anchor_pad_uuid: report.from_anchor_pad_uuid,
+                to_anchor_pad_uuid: report.to_anchor_pad_uuid,
+                layer: step.layer,
+                width_nm: net_class.track_width_nm,
+                from: step.from,
+                to: step.to,
+                reused_via_uuid: None,
+                reused_via_uuids: Vec::new(),
+                reused_object_kind: Some(reused_object_kind.to_string()),
+                reused_object_uuid: Some(step.object_uuid),
+                reused_object_from_layer: step.from_layer,
+                reused_object_to_layer: step.to_layer,
+                selected_path_point_count: path.steps.len() + 1,
+                selected_path_segment_index,
+                selected_path_segment_count,
+            }
+        })
+        .collect::<Vec<_>>();
+    Ok(actions)
+}
+
+fn build_route_path_candidate_authored_copper_graph_obstacle_aware_proposal_actions(
+    root: &Path,
+    net_uuid: Uuid,
+    from_anchor_pad_uuid: Uuid,
+    to_anchor_pad_uuid: Uuid,
+) -> Result<Vec<NativeProjectRouteProposalActionView>> {
+    let report = query_native_project_route_path_candidate_authored_copper_graph_obstacle_aware(
+        root,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+    )?;
+    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
+        bail!(
+            "route proposal requires deterministic obstacle-aware authored-copper path for net {} between {} and {}",
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid
+        );
+    }
+
+    let preflight = query_native_project_route_preflight(root, net_uuid)?;
+    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
+        anyhow::anyhow!(
+            "route proposal requires persisted net-class facts for net {}",
+            net_uuid
+        )
+    })?;
+    let path = report.path.ok_or_else(|| {
+        anyhow::anyhow!(
+            "route proposal requires selected obstacle-aware authored-copper path data for net {} between {} and {}",
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid
+        )
+    })?;
+    let selected_path_segment_count = path.steps.len();
+    let actions = path
+        .steps
+        .iter()
+        .enumerate()
+        .map(|(selected_path_segment_index, step)| {
+            let reused_object_kind = match step.kind {
+                RoutePathCandidateAuthoredCopperGraphObstacleAwareStepKindView::Track => "track",
+                RoutePathCandidateAuthoredCopperGraphObstacleAwareStepKindView::Via => "via",
+            };
+            let action_id = route_proposal_action_id(
+                &report.contract,
+                "reuse_existing_copper_step",
+                ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_OBSTACLE_AWARE,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+                step.layer,
+                step.from,
+                step.to,
+                net_class.track_width_nm,
+                None,
+                &[],
+                Some(reused_object_kind),
+                Some(step.object_uuid),
+                step.from_layer,
+                step.to_layer,
+            );
+            NativeProjectRouteProposalActionView {
+                action_id,
+                proposal_action: "reuse_existing_copper_step".to_string(),
+                reason:
+                    ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_OBSTACLE_AWARE
+                        .to_string(),
+                contract: report.contract.clone(),
+                net_uuid: report.net_uuid,
+                net_name: report.net_name.clone(),
+                from_anchor_pad_uuid: report.from_anchor_pad_uuid,
+                to_anchor_pad_uuid: report.to_anchor_pad_uuid,
+                layer: step.layer,
+                width_nm: net_class.track_width_nm,
+                from: step.from,
+                to: step.to,
+                reused_via_uuid: None,
+                reused_via_uuids: Vec::new(),
+                reused_object_kind: Some(reused_object_kind.to_string()),
+                reused_object_uuid: Some(step.object_uuid),
+                reused_object_from_layer: step.from_layer,
+                reused_object_to_layer: step.to_layer,
+                selected_path_point_count: path.steps.len() + 1,
+                selected_path_segment_index,
+                selected_path_segment_count,
+            }
+        })
+        .collect::<Vec<_>>();
+    Ok(actions)
+}
+
+pub(super) fn build_route_path_candidate_authored_copper_graph_policy_proposal_actions(
+    root: &Path,
+    net_uuid: Uuid,
+    from_anchor_pad_uuid: Uuid,
+    to_anchor_pad_uuid: Uuid,
+    policy: NativeRoutePathCandidateAuthoredCopperGraphPolicy,
+) -> Result<Vec<NativeProjectRouteProposalActionView>> {
+    let report = query_native_project_route_path_candidate_authored_copper_graph(
+        root,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        policy,
+    )?;
+    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
+        bail!(
+            "route proposal requires deterministic authored-copper graph path for net {} between {} and {} under policy {:?}",
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            policy
+        );
+    }
+
+    let preflight = query_native_project_route_preflight(root, net_uuid)?;
+    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
+        anyhow::anyhow!(
+            "route proposal requires persisted net-class facts for net {}",
+            net_uuid
+        )
+    })?;
+    let path = report.path.ok_or_else(|| {
+        anyhow::anyhow!(
+            "route proposal requires selected authored-copper graph path data for net {} between {} and {} under policy {:?}",
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            policy
+        )
+    })?;
+    let reason = route_path_candidate_authored_copper_graph_policy_reason(policy);
+    let selected_path_segment_count = path.steps.len();
+    let actions = path
+        .steps
+        .iter()
+        .enumerate()
+        .map(|(selected_path_segment_index, step)| {
+            let reused_object_kind = match step.kind {
+                RoutePathCandidateAuthoredCopperGraphPolicyStepKindView::Track => "track",
+                RoutePathCandidateAuthoredCopperGraphPolicyStepKindView::Via => "via",
+                RoutePathCandidateAuthoredCopperGraphPolicyStepKindView::Zone => "zone",
+            };
+            let action_id = route_proposal_action_id(
+                &report.contract,
+                "reuse_existing_copper_step",
+                reason,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+                step.layer,
+                step.from,
+                step.to,
+                net_class.track_width_nm,
+                None,
+                &[],
+                Some(reused_object_kind),
+                Some(step.object_uuid),
+                step.from_layer,
+                step.to_layer,
+            );
+            NativeProjectRouteProposalActionView {
+                action_id,
+                proposal_action: "reuse_existing_copper_step".to_string(),
+                reason: reason.to_string(),
+                contract: report.contract.clone(),
+                net_uuid: report.net_uuid,
+                net_name: report.net_name.clone(),
+                from_anchor_pad_uuid: report.from_anchor_pad_uuid,
+                to_anchor_pad_uuid: report.to_anchor_pad_uuid,
+                layer: step.layer,
+                width_nm: net_class.track_width_nm,
+                from: step.from,
+                to: step.to,
+                reused_via_uuid: None,
+                reused_via_uuids: Vec::new(),
+                reused_object_kind: Some(reused_object_kind.to_string()),
+                reused_object_uuid: Some(step.object_uuid),
+                reused_object_from_layer: step.from_layer,
+                reused_object_to_layer: step.to_layer,
+                selected_path_point_count: path.steps.len() + 1,
+                selected_path_segment_index,
+                selected_path_segment_count,
+            }
+        })
+        .collect::<Vec<_>>();
+    Ok(actions)
+}
+
+fn route_path_candidate_authored_copper_graph_policy_reason(
+    policy: NativeRoutePathCandidateAuthoredCopperGraphPolicy,
+) -> &'static str {
+    match policy {
+        NativeRoutePathCandidateAuthoredCopperGraphPolicy::Plain => {
+            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_PLAIN
+        }
+        NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneAware => {
+            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_AWARE
+        }
+        NativeRoutePathCandidateAuthoredCopperGraphPolicy::ObstacleAware => {
+            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_OBSTACLE_AWARE
+        }
+        NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleAware => {
+            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_OBSTACLE_AWARE
+        }
+        NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyAware => {
+            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_OBSTACLE_TOPOLOGY_AWARE
+        }
+        NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyLayerBalanceAware => {
+            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_OBSTACLE_TOPOLOGY_LAYER_BALANCE_AWARE
+        }
+    }
+}
+
+fn route_path_candidate_authored_copper_graph_policy_from_reason(
+    reason: &str,
+) -> Option<NativeRoutePathCandidateAuthoredCopperGraphPolicy> {
+    match reason {
+        ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_PLAIN => {
+            Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::Plain)
+        }
+        ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_AWARE => {
+            Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneAware)
+        }
+        ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_OBSTACLE_AWARE => {
+            Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::ObstacleAware)
+        }
+        ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_OBSTACLE_AWARE => {
+            Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleAware)
+        }
+        ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_OBSTACLE_TOPOLOGY_AWARE => {
+            Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyAware)
+        }
+        ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_OBSTACLE_TOPOLOGY_LAYER_BALANCE_AWARE => {
+            Some(
+                NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyLayerBalanceAware,
+            )
+        }
+        _ => None,
+    }
 }
 
 fn build_segmented_route_proposal_actions(

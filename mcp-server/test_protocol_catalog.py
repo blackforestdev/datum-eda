@@ -69,6 +69,11 @@ class TestProtocolCatalog(unittest.TestCase):
             "run_erc",
             "run_drc",
             "explain_violation",
+            "export_route_path_proposal",
+            "export_route_path_candidate_authored_copper_graph_proposal",
+            "route_apply",
+            "inspect_route_proposal_artifact",
+            "apply_route_proposal_artifact",
         ])
 
     def test_initialize_returns_server_info_and_capabilities(self) -> None:

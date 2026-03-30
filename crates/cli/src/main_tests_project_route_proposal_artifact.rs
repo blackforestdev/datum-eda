@@ -1,9 +1,55 @@
 use super::*;
+use clap::CommandFactory;
 use eda_engine::board::Track;
 use eda_engine::ir::serialization::to_json_deterministic;
 
 pub(crate) fn unique_project_root(label: &str) -> PathBuf {
     std::env::temp_dir().join(format!("{}-{}", label, Uuid::new_v4()))
+}
+
+#[test]
+fn legacy_route_path_candidate_export_help_marks_command_deprecated() {
+    let mut project_command = Cli::command()
+        .find_subcommand_mut("project")
+        .expect("project command should exist")
+        .clone();
+    let mut legacy = project_command
+        .find_subcommand_mut("export-route-path-candidate-proposal")
+        .expect("legacy command should exist")
+        .clone();
+    let help = legacy.render_long_help().to_string();
+    assert!(help.contains("Deprecated compatibility wrapper"));
+    assert!(help.contains("export-route-path-proposal --candidate route-path-candidate"));
+}
+
+#[test]
+fn legacy_route_path_candidate_export_text_output_includes_deprecation_note() {
+    let root = unique_project_root("datum-eda-cli-project-route-path-candidate-proposal-text");
+    let (target_net_uuid, anchor_a_uuid, anchor_b_uuid) = seed_route_path_candidate_project(&root);
+    let artifact = root.join("route-path-candidate-proposal.txt.json");
+
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "project",
+            "export-route-path-candidate-proposal",
+            root.to_str().unwrap(),
+            "--net",
+            &target_net_uuid.to_string(),
+            "--from-anchor",
+            &anchor_a_uuid.to_string(),
+            "--to-anchor",
+            &anchor_b_uuid.to_string(),
+            "--out",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("export should succeed");
+    assert!(output.contains("note: deprecated compatibility wrapper"));
+    assert!(output.contains("export-route-path-proposal --candidate"));
+
+    let _ = std::fs::remove_dir_all(&root);
 }
 
 pub(crate) fn seed_plus_one_gap_project(root: &Path) -> (Uuid, Uuid, Uuid, PathBuf) {
@@ -152,7 +198,7 @@ fn plus_one_gap_query_cli(root: &Path, net_uuid: Uuid, from_anchor: Uuid, to_anc
     .expect("CLI should parse")
 }
 
-fn seed_route_path_candidate_project(root: &Path) -> (Uuid, Uuid, Uuid) {
+pub(crate) fn seed_route_path_candidate_project(root: &Path) -> (Uuid, Uuid, Uuid) {
     create_native_project(
         root,
         Some("Route Path Candidate Proposal Artifact Demo".to_string()),
@@ -258,7 +304,7 @@ fn seed_route_path_candidate_project(root: &Path) -> (Uuid, Uuid, Uuid) {
     (target_net_uuid, anchor_a_uuid, anchor_b_uuid)
 }
 
-fn seed_route_path_candidate_via_project(root: &Path) -> (Uuid, Uuid, Uuid, Uuid) {
+pub(crate) fn seed_route_path_candidate_via_project(root: &Path) -> (Uuid, Uuid, Uuid, Uuid) {
     create_native_project(
         root,
         Some("Route Path Candidate Via Proposal Artifact Demo".to_string()),
@@ -369,7 +415,9 @@ fn seed_route_path_candidate_via_project(root: &Path) -> (Uuid, Uuid, Uuid, Uuid
     (target_net_uuid, anchor_a_uuid, anchor_b_uuid, via_uuid)
 }
 
-fn seed_route_path_candidate_two_via_project(root: &Path) -> (Uuid, Uuid, Uuid, Uuid, Uuid) {
+pub(crate) fn seed_route_path_candidate_two_via_project(
+    root: &Path,
+) -> (Uuid, Uuid, Uuid, Uuid, Uuid) {
     create_native_project(
         root,
         Some("Route Path Candidate Two Via Proposal Artifact Demo".to_string()),
@@ -498,7 +546,7 @@ fn seed_route_path_candidate_two_via_project(root: &Path) -> (Uuid, Uuid, Uuid, 
     )
 }
 
-fn seed_route_path_candidate_three_via_project(
+pub(crate) fn seed_route_path_candidate_three_via_project(
     root: &Path,
 ) -> (Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
     create_native_project(
@@ -583,7 +631,7 @@ fn seed_route_path_candidate_three_via_project(
     )
 }
 
-fn seed_route_path_candidate_four_via_project(
+pub(crate) fn seed_route_path_candidate_four_via_project(
     root: &Path,
 ) -> (Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
     create_native_project(
@@ -673,7 +721,7 @@ fn seed_route_path_candidate_four_via_project(
     )
 }
 
-fn seed_route_path_candidate_five_via_project(
+pub(crate) fn seed_route_path_candidate_five_via_project(
     root: &Path,
 ) -> (Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
     create_native_project(
@@ -768,7 +816,7 @@ fn seed_route_path_candidate_five_via_project(
     )
 }
 
-fn seed_route_path_candidate_six_via_project(
+pub(crate) fn seed_route_path_candidate_six_via_project(
     root: &Path,
 ) -> (Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
     create_native_project(
@@ -868,7 +916,7 @@ fn seed_route_path_candidate_six_via_project(
     )
 }
 
-fn seed_route_path_candidate_authored_via_chain_project(
+pub(crate) fn seed_route_path_candidate_authored_via_chain_project(
     root: &Path,
 ) -> (Uuid, Uuid, Uuid, Uuid, Uuid) {
     create_native_project(
@@ -1323,6 +1371,268 @@ fn seed_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_
     )
 }
 
+fn seed_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_project(
+    root: &Path,
+) -> (Uuid, Uuid, Uuid, Uuid, Uuid) {
+    create_native_project(root, Some("Layer Balance Aware".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let net_uuid = Uuid::from_u128(0x3910);
+    let class_uuid = Uuid::from_u128(0x3911);
+    let from_anchor_uuid = Uuid::from_u128(0x3912);
+    let to_anchor_uuid = Uuid::from_u128(0x3913);
+    let selected_via_uuid = Uuid::from_u128(20);
+    let selected_track_uuid = Uuid::from_u128(21);
+    let board_json = root.join("board/board.json");
+
+    std::fs::write(
+        &board_json,
+        format!(
+            "{}\n",
+            to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "uuid": Uuid::from_u128(0x3914),
+                "name": "Layer Balance Aware Board",
+                "stackup": {
+                    "layers": [
+                        { "id": 1, "name": "Top", "layer_type": "Copper", "thickness_nm": 35000 },
+                        { "id": 2, "name": "Inner", "layer_type": "Copper", "thickness_nm": 35000 }
+                    ]
+                },
+                "outline": {
+                    "vertices": [
+                        { "x": 0, "y": 0 },
+                        { "x": 5000000, "y": 0 },
+                        { "x": 5000000, "y": 5000000 },
+                        { "x": 0, "y": 5000000 }
+                    ],
+                    "closed": true
+                },
+                "packages": {},
+                "pads": {
+                    from_anchor_uuid.to_string(): {
+                        "uuid": from_anchor_uuid,
+                        "package": Uuid::from_u128(0x3915),
+                        "name": "1",
+                        "net": net_uuid,
+                        "position": { "x": 500000, "y": 500000 },
+                        "layer": 1,
+                        "shape": "circle",
+                        "diameter": 300000,
+                        "width": 0,
+                        "height": 0
+                    },
+                    to_anchor_uuid.to_string(): {
+                        "uuid": to_anchor_uuid,
+                        "package": Uuid::from_u128(0x3916),
+                        "name": "2",
+                        "net": net_uuid,
+                        "position": { "x": 2000000, "y": 500000 },
+                        "layer": 2,
+                        "shape": "circle",
+                        "diameter": 300000,
+                        "width": 0,
+                        "height": 0
+                    }
+                },
+                "tracks": {
+                    Uuid::from_u128(10).to_string(): {
+                        "uuid": Uuid::from_u128(10),
+                        "net": net_uuid,
+                        "from": { "x": 500000, "y": 500000 },
+                        "to": { "x": 2000000, "y": 500000 },
+                        "width": 120000,
+                        "layer": 1
+                    },
+                    selected_track_uuid.to_string(): {
+                        "uuid": selected_track_uuid,
+                        "net": net_uuid,
+                        "from": { "x": 500000, "y": 500000 },
+                        "to": { "x": 2000000, "y": 500000 },
+                        "width": 120000,
+                        "layer": 2
+                    }
+                },
+                "vias": {
+                    Uuid::from_u128(11).to_string(): {
+                        "uuid": Uuid::from_u128(11),
+                        "net": net_uuid,
+                        "position": { "x": 2000000, "y": 500000 },
+                        "from_layer": 1,
+                        "to_layer": 2,
+                        "diameter": 300000,
+                        "drill": 150000
+                    },
+                    selected_via_uuid.to_string(): {
+                        "uuid": selected_via_uuid,
+                        "net": net_uuid,
+                        "position": { "x": 500000, "y": 500000 },
+                        "from_layer": 1,
+                        "to_layer": 2,
+                        "diameter": 300000,
+                        "drill": 150000
+                    },
+                    Uuid::from_u128(22).to_string(): {
+                        "uuid": Uuid::from_u128(22),
+                        "net": net_uuid,
+                        "position": { "x": 2000000, "y": 500000 },
+                        "from_layer": 2,
+                        "to_layer": 1,
+                        "diameter": 300000,
+                        "drill": 150000
+                    }
+                },
+                "zones": {},
+                "nets": {
+                    net_uuid.to_string(): {
+                        "uuid": net_uuid,
+                        "name": "SIG",
+                        "class": class_uuid
+                    }
+                },
+                "net_classes": {
+                    class_uuid.to_string(): {
+                        "uuid": class_uuid,
+                        "name": "Default",
+                        "clearance": 100000,
+                        "track_width": 120000,
+                        "via_drill": 150000,
+                        "via_diameter": 300000,
+                        "diffpair_width": 0,
+                        "diffpair_gap": 0
+                    }
+                },
+                "keepouts": [],
+                "dimensions": [],
+                "texts": []
+            }))
+            .expect("canonical serialization should succeed")
+        ),
+    )
+    .expect("board file should write");
+
+    (
+        net_uuid,
+        from_anchor_uuid,
+        to_anchor_uuid,
+        selected_via_uuid,
+        selected_track_uuid,
+    )
+}
+
+pub(crate) fn seed_route_path_candidate_authored_copper_graph_obstacle_aware_project(
+    root: &Path,
+) -> (Uuid, Uuid, Uuid, Uuid) {
+    create_native_project(
+        root,
+        Some(
+            "Route Path Candidate Authored Copper Graph Obstacle Aware Proposal Artifact Demo"
+                .to_string(),
+        ),
+    )
+    .expect("initial scaffold should succeed");
+
+    let target_net_uuid = Uuid::from_u128(0x3950);
+    let class_uuid = Uuid::from_u128(0x3951);
+    let package_a_uuid = Uuid::from_u128(0x3952);
+    let package_b_uuid = Uuid::from_u128(0x3953);
+    let anchor_a_uuid = Uuid::from_u128(0x3954);
+    let anchor_b_uuid = Uuid::from_u128(0x3955);
+    let track_uuid = Uuid::from_u128(0x3956);
+    let board_json = root.join("board/board.json");
+
+    std::fs::write(
+        &board_json,
+        format!(
+            "{}\n",
+            to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "uuid": Uuid::from_u128(0x3957),
+                "name": "Route Path Candidate Authored Copper Graph Obstacle Aware Proposal Artifact Demo Board",
+                "stackup": {
+                    "layers": [
+                        { "id": 1, "name": "Top Copper", "layer_type": "Copper", "thickness_nm": 35000 }
+                    ]
+                },
+                "outline": {
+                    "vertices": [
+                        { "x": 0, "y": 0 },
+                        { "x": 5000000, "y": 0 },
+                        { "x": 5000000, "y": 3000000 },
+                        { "x": 0, "y": 3000000 }
+                    ],
+                    "closed": true
+                },
+                "packages": {},
+                "pads": {
+                    anchor_a_uuid.to_string(): {
+                        "uuid": anchor_a_uuid,
+                        "package": package_a_uuid,
+                        "name": "1",
+                        "net": target_net_uuid,
+                        "position": { "x": 500000, "y": 600000 },
+                        "layer": 1,
+                        "shape": "circle",
+                        "diameter": 450000,
+                        "width": 0,
+                        "height": 0
+                    },
+                    anchor_b_uuid.to_string(): {
+                        "uuid": anchor_b_uuid,
+                        "package": package_b_uuid,
+                        "name": "1",
+                        "net": target_net_uuid,
+                        "position": { "x": 4500000, "y": 2400000 },
+                        "layer": 1,
+                        "shape": "circle",
+                        "diameter": 450000,
+                        "width": 0,
+                        "height": 0
+                    }
+                },
+                "tracks": {
+                    track_uuid.to_string(): {
+                        "uuid": track_uuid,
+                        "net": target_net_uuid,
+                        "from": { "x": 500000, "y": 600000 },
+                        "to": { "x": 4500000, "y": 2400000 },
+                        "width": 200000,
+                        "layer": 1
+                    }
+                },
+                "vias": {},
+                "zones": {},
+                "nets": {
+                    target_net_uuid.to_string(): {
+                        "uuid": target_net_uuid,
+                        "name": "SIG",
+                        "class": class_uuid
+                    }
+                },
+                "net_classes": {
+                    class_uuid.to_string(): {
+                        "uuid": class_uuid,
+                        "name": "Default",
+                        "clearance": 150000,
+                        "track_width": 200000,
+                        "via_drill": 300000,
+                        "via_diameter": 600000,
+                        "diffpair_width": 0,
+                        "diffpair_gap": 0
+                    }
+                },
+                "keepouts": [],
+                "dimensions": [],
+                "texts": []
+            }))
+            .expect("canonical serialization should succeed")
+        ),
+    )
+    .expect("board file should write");
+
+    (target_net_uuid, anchor_a_uuid, anchor_b_uuid, track_uuid)
+}
+
 #[test]
 fn project_route_proposal_artifact_exports_inspects_and_applies_plus_one_gap_route() {
     let root = unique_project_root("datum-eda-cli-project-route-proposal-artifact");
@@ -1443,7 +1753,7 @@ fn project_route_path_candidate_proposal_artifact_exports_inspects_and_applies_f
         "--format",
         "json",
         "project",
-        "export-route-path-candidate-proposal",
+        "export-route-path-proposal",
         root.to_str().unwrap(),
         "--net",
         &target_net_uuid.to_string(),
@@ -1451,6 +1761,8 @@ fn project_route_path_candidate_proposal_artifact_exports_inspects_and_applies_f
         &anchor_a_uuid.to_string(),
         "--to-anchor",
         &anchor_b_uuid.to_string(),
+        "--candidate",
+        "route-path-candidate",
         "--out",
         artifact.to_str().unwrap(),
     ])
@@ -1458,10 +1770,7 @@ fn project_route_path_candidate_proposal_artifact_exports_inspects_and_applies_f
     let export_output = execute(export_cli).expect("export should succeed");
     let export_report: serde_json::Value =
         serde_json::from_str(&export_output).expect("export report should parse");
-    assert_eq!(
-        export_report["action"],
-        "export_route_path_candidate_proposal"
-    );
+    assert_eq!(export_report["action"], "export_route_path_proposal");
     assert_eq!(export_report["actions"], 1);
     assert_eq!(export_report["contract"], "m5_route_path_candidate_v2");
 
@@ -1530,6 +1839,50 @@ fn project_route_path_candidate_proposal_artifact_exports_inspects_and_applies_f
 }
 
 #[test]
+fn project_route_path_proposal_artifact_exports_single_layer_candidate_via_generic_surface() {
+    let root = unique_project_root("datum-eda-cli-project-route-path-proposal-artifact-generic");
+    let (target_net_uuid, anchor_a_uuid, anchor_b_uuid) = seed_route_path_candidate_project(&root);
+    let artifact = root.join("route-path-proposal-generic.json");
+
+    let export_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "export-route-path-proposal",
+            root.to_str().unwrap(),
+            "--net",
+            &target_net_uuid.to_string(),
+            "--from-anchor",
+            &anchor_a_uuid.to_string(),
+            "--to-anchor",
+            &anchor_b_uuid.to_string(),
+            "--candidate",
+            "route-path-candidate",
+            "--out",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("export should succeed");
+    let export_report: serde_json::Value =
+        serde_json::from_str(&export_output).expect("export report should parse");
+    assert_eq!(export_report["action"], "export_route_path_proposal");
+    assert_eq!(export_report["actions"], 1);
+    assert_eq!(export_report["contract"], "m5_route_path_candidate_v2");
+
+    let artifact_value: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&artifact).expect("artifact should read"))
+            .expect("artifact should parse");
+    let action = &artifact_value["actions"][0];
+    assert_eq!(action["proposal_action"], "draw_track");
+    assert_eq!(action["reason"], "route_path_candidate");
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
 fn project_route_path_candidate_via_proposal_artifact_exports_inspects_and_applies_full_path() {
     let root =
         unique_project_root("datum-eda-cli-project-route-path-candidate-via-proposal-artifact");
@@ -1542,7 +1895,7 @@ fn project_route_path_candidate_via_proposal_artifact_exports_inspects_and_appli
         "--format",
         "json",
         "project",
-        "export-route-path-candidate-via-proposal",
+        "export-route-path-proposal",
         root.to_str().unwrap(),
         "--net",
         &target_net_uuid.to_string(),
@@ -1550,6 +1903,8 @@ fn project_route_path_candidate_via_proposal_artifact_exports_inspects_and_appli
         &anchor_a_uuid.to_string(),
         "--to-anchor",
         &anchor_b_uuid.to_string(),
+        "--candidate",
+        "route-path-candidate-via",
         "--out",
         artifact.to_str().unwrap(),
     ])
@@ -1557,10 +1912,7 @@ fn project_route_path_candidate_via_proposal_artifact_exports_inspects_and_appli
     let export_output = execute(export_cli).expect("export should succeed");
     let export_report: serde_json::Value =
         serde_json::from_str(&export_output).expect("export report should parse");
-    assert_eq!(
-        export_report["action"],
-        "export_route_path_candidate_via_proposal"
-    );
+    assert_eq!(export_report["action"], "export_route_path_proposal");
     assert_eq!(export_report["actions"], 2);
     assert_eq!(export_report["contract"], "m5_route_path_candidate_via_v1");
 
@@ -1638,7 +1990,7 @@ fn project_route_path_candidate_two_via_proposal_artifact_exports_inspects_and_a
         "--format",
         "json",
         "project",
-        "export-route-path-candidate-two-via-proposal",
+        "export-route-path-proposal",
         root.to_str().unwrap(),
         "--net",
         &target_net_uuid.to_string(),
@@ -1646,6 +1998,8 @@ fn project_route_path_candidate_two_via_proposal_artifact_exports_inspects_and_a
         &anchor_a_uuid.to_string(),
         "--to-anchor",
         &anchor_b_uuid.to_string(),
+        "--candidate",
+        "route-path-candidate-two-via",
         "--out",
         artifact.to_str().unwrap(),
     ])
@@ -1653,10 +2007,7 @@ fn project_route_path_candidate_two_via_proposal_artifact_exports_inspects_and_a
     let export_output = execute(export_cli).expect("export should succeed");
     let export_report: serde_json::Value =
         serde_json::from_str(&export_output).expect("export report should parse");
-    assert_eq!(
-        export_report["action"],
-        "export_route_path_candidate_two_via_proposal"
-    );
+    assert_eq!(export_report["action"], "export_route_path_proposal");
     assert_eq!(export_report["actions"], 3);
     assert_eq!(
         export_report["contract"],
@@ -1748,7 +2099,7 @@ fn project_route_path_candidate_three_via_proposal_artifact_exports_inspects_and
             "--format",
             "json",
             "project",
-            "export-route-path-candidate-three-via-proposal",
+            "export-route-path-proposal",
             root.to_str().unwrap(),
             "--net",
             &target_net_uuid.to_string(),
@@ -1756,6 +2107,8 @@ fn project_route_path_candidate_three_via_proposal_artifact_exports_inspects_and
             &anchor_a_uuid.to_string(),
             "--to-anchor",
             &anchor_b_uuid.to_string(),
+            "--candidate",
+            "route-path-candidate-three-via",
             "--out",
             artifact.to_str().unwrap(),
         ])
@@ -1764,10 +2117,7 @@ fn project_route_path_candidate_three_via_proposal_artifact_exports_inspects_and
     .expect("export should succeed");
     let export_report: serde_json::Value =
         serde_json::from_str(&export_output).expect("export report should parse");
-    assert_eq!(
-        export_report["action"],
-        "export_route_path_candidate_three_via_proposal"
-    );
+    assert_eq!(export_report["action"], "export_route_path_proposal");
     assert_eq!(export_report["actions"], 4);
     assert_eq!(
         export_report["contract"],
@@ -1865,7 +2215,7 @@ fn project_route_path_candidate_four_via_proposal_artifact_exports_inspects_and_
             "--format",
             "json",
             "project",
-            "export-route-path-candidate-four-via-proposal",
+            "export-route-path-proposal",
             root.to_str().unwrap(),
             "--net",
             &target_net_uuid.to_string(),
@@ -1873,6 +2223,8 @@ fn project_route_path_candidate_four_via_proposal_artifact_exports_inspects_and_
             &anchor_a_uuid.to_string(),
             "--to-anchor",
             &anchor_b_uuid.to_string(),
+            "--candidate",
+            "route-path-candidate-four-via",
             "--out",
             artifact.to_str().unwrap(),
         ])
@@ -1881,10 +2233,7 @@ fn project_route_path_candidate_four_via_proposal_artifact_exports_inspects_and_
     .expect("export should succeed");
     let export_report: serde_json::Value =
         serde_json::from_str(&export_output).expect("export report should parse");
-    assert_eq!(
-        export_report["action"],
-        "export_route_path_candidate_four_via_proposal"
-    );
+    assert_eq!(export_report["action"], "export_route_path_proposal");
     assert_eq!(export_report["actions"], 5);
 
     let artifact_value: serde_json::Value =
@@ -1954,7 +2303,7 @@ fn project_route_path_candidate_five_via_proposal_artifact_exports_inspects_and_
             "--format",
             "json",
             "project",
-            "export-route-path-candidate-five-via-proposal",
+            "export-route-path-proposal",
             root.to_str().unwrap(),
             "--net",
             &target_net_uuid.to_string(),
@@ -1962,6 +2311,8 @@ fn project_route_path_candidate_five_via_proposal_artifact_exports_inspects_and_
             &anchor_a_uuid.to_string(),
             "--to-anchor",
             &anchor_b_uuid.to_string(),
+            "--candidate",
+            "route-path-candidate-five-via",
             "--out",
             artifact.to_str().unwrap(),
         ])
@@ -1970,10 +2321,7 @@ fn project_route_path_candidate_five_via_proposal_artifact_exports_inspects_and_
     .expect("export should succeed");
     let export_report: serde_json::Value =
         serde_json::from_str(&export_output).expect("export report should parse");
-    assert_eq!(
-        export_report["action"],
-        "export_route_path_candidate_five_via_proposal"
-    );
+    assert_eq!(export_report["action"], "export_route_path_proposal");
     assert_eq!(export_report["actions"], 6);
 
     let artifact_value: serde_json::Value =
@@ -2043,7 +2391,7 @@ fn project_route_path_candidate_six_via_proposal_artifact_exports_inspects_and_a
             "--format",
             "json",
             "project",
-            "export-route-path-candidate-six-via-proposal",
+            "export-route-path-proposal",
             root.to_str().unwrap(),
             "--net",
             &target_net_uuid.to_string(),
@@ -2051,6 +2399,8 @@ fn project_route_path_candidate_six_via_proposal_artifact_exports_inspects_and_a
             &anchor_a_uuid.to_string(),
             "--to-anchor",
             &anchor_b_uuid.to_string(),
+            "--candidate",
+            "route-path-candidate-six-via",
             "--out",
             artifact.to_str().unwrap(),
         ])
@@ -2059,10 +2409,7 @@ fn project_route_path_candidate_six_via_proposal_artifact_exports_inspects_and_a
     .expect("export should succeed");
     let export_report: serde_json::Value =
         serde_json::from_str(&export_output).expect("export report should parse");
-    assert_eq!(
-        export_report["action"],
-        "export_route_path_candidate_six_via_proposal"
-    );
+    assert_eq!(export_report["action"], "export_route_path_proposal");
     assert_eq!(export_report["actions"], 7);
 
     let artifact_value: serde_json::Value =
@@ -2126,7 +2473,7 @@ fn project_route_path_candidate_authored_via_chain_proposal_artifact_exports_ins
             "--format",
             "json",
             "project",
-            "export-route-path-candidate-authored-via-chain-proposal",
+            "export-route-path-proposal",
             root.to_str().unwrap(),
             "--net",
             &target_net_uuid.to_string(),
@@ -2134,6 +2481,8 @@ fn project_route_path_candidate_authored_via_chain_proposal_artifact_exports_ins
             &anchor_a_uuid.to_string(),
             "--to-anchor",
             &anchor_b_uuid.to_string(),
+            "--candidate",
+            "route-path-candidate-authored-via-chain",
             "--out",
             artifact.to_str().unwrap(),
         ])
@@ -2142,10 +2491,7 @@ fn project_route_path_candidate_authored_via_chain_proposal_artifact_exports_ins
     .expect("export should succeed");
     let export_report: serde_json::Value =
         serde_json::from_str(&export_output).expect("export report should parse");
-    assert_eq!(
-        export_report["action"],
-        "export_route_path_candidate_authored_via_chain_proposal"
-    );
+    assert_eq!(export_report["action"], "export_route_path_proposal");
     assert_eq!(export_report["actions"], 3);
     assert_eq!(
         export_report["contract"],
@@ -2210,7 +2556,7 @@ fn project_route_path_candidate_authored_copper_graph_zone_aware_proposal_artifa
             "--format",
             "json",
             "project",
-            "export-route-path-candidate-authored-copper-graph-zone-aware-proposal",
+            "export-route-path-proposal",
             root.to_str().unwrap(),
             "--net",
             &target_net_uuid.to_string(),
@@ -2218,6 +2564,10 @@ fn project_route_path_candidate_authored_copper_graph_zone_aware_proposal_artifa
             &anchor_a_uuid.to_string(),
             "--to-anchor",
             &anchor_b_uuid.to_string(),
+            "--candidate",
+            "authored-copper-graph",
+            "--policy",
+            "zone_aware",
             "--out",
             artifact.to_str().unwrap(),
         ])
@@ -2226,14 +2576,11 @@ fn project_route_path_candidate_authored_copper_graph_zone_aware_proposal_artifa
     .expect("export should succeed");
     let export_report: serde_json::Value =
         serde_json::from_str(&export_output).expect("export report should parse");
-    assert_eq!(
-        export_report["action"],
-        "export_route_path_candidate_authored_copper_graph_zone_aware_proposal"
-    );
+    assert_eq!(export_report["action"], "export_route_path_proposal");
     assert_eq!(export_report["actions"], 1);
     assert_eq!(
         export_report["contract"],
-        "m5_route_path_candidate_authored_copper_graph_zone_aware_v1"
+        "m5_route_path_candidate_authored_copper_graph_policy_v1"
     );
 
     let artifact_value: serde_json::Value =
@@ -2243,7 +2590,7 @@ fn project_route_path_candidate_authored_copper_graph_zone_aware_proposal_artifa
     assert_eq!(action["proposal_action"], "reuse_existing_copper_step");
     assert_eq!(
         action["reason"],
-        "route_path_candidate_authored_copper_graph_zone_aware"
+        "route_path_candidate_authored_copper_graph_policy_zone_aware"
     );
     assert_eq!(action["reused_object_kind"], "zone");
     assert_eq!(action["reused_object_uuid"], zone_uuid.to_string());
@@ -2264,7 +2611,7 @@ fn project_route_path_candidate_authored_copper_graph_zone_aware_proposal_artifa
         serde_json::from_str(&inspect_output).expect("inspect report should parse");
     assert_eq!(
         inspect_report["contract"],
-        "m5_route_path_candidate_authored_copper_graph_zone_aware_v1"
+        "m5_route_path_candidate_authored_copper_graph_policy_v1"
     );
     assert_eq!(inspect_report["actions"], 1);
     assert_eq!(inspect_report["draw_track_actions"], 0);
@@ -2314,7 +2661,7 @@ fn project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_propos
             "--format",
             "json",
             "project",
-            "export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-proposal",
+            "export-route-path-proposal",
             root.to_str().unwrap(),
             "--net",
             &target_net_uuid.to_string(),
@@ -2322,6 +2669,10 @@ fn project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_propos
             &anchor_a_uuid.to_string(),
             "--to-anchor",
             &anchor_b_uuid.to_string(),
+            "--candidate",
+            "authored-copper-graph",
+            "--policy",
+            "zone_obstacle_aware",
             "--out",
             artifact.to_str().unwrap(),
         ])
@@ -2330,14 +2681,11 @@ fn project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_propos
     .expect("export should succeed");
     let export_report: serde_json::Value =
         serde_json::from_str(&export_output).expect("export report should parse");
-    assert_eq!(
-        export_report["action"],
-        "export_route_path_candidate_authored_copper_graph_zone_obstacle_aware_proposal"
-    );
+    assert_eq!(export_report["action"], "export_route_path_proposal");
     assert_eq!(export_report["actions"], 1);
     assert_eq!(
         export_report["contract"],
-        "m5_route_path_candidate_authored_copper_graph_zone_obstacle_aware_v1"
+        "m5_route_path_candidate_authored_copper_graph_policy_v1"
     );
 
     let artifact_value: serde_json::Value =
@@ -2347,7 +2695,7 @@ fn project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_propos
     assert_eq!(action["proposal_action"], "reuse_existing_copper_step");
     assert_eq!(
         action["reason"],
-        "route_path_candidate_authored_copper_graph_zone_obstacle_aware"
+        "route_path_candidate_authored_copper_graph_policy_zone_obstacle_aware"
     );
     assert_eq!(action["reused_object_kind"], "zone");
     assert_eq!(action["reused_object_uuid"], zone_uuid.to_string());
@@ -2368,7 +2716,7 @@ fn project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_propos
         serde_json::from_str(&inspect_output).expect("inspect report should parse");
     assert_eq!(
         inspect_report["contract"],
-        "m5_route_path_candidate_authored_copper_graph_zone_obstacle_aware_v1"
+        "m5_route_path_candidate_authored_copper_graph_policy_v1"
     );
     assert_eq!(inspect_report["actions"], 1);
     assert_eq!(inspect_report["draw_track_actions"], 0);
@@ -2427,7 +2775,7 @@ fn project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topolo
             "--format",
             "json",
             "project",
-            "export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-proposal",
+            "export-route-path-proposal",
             root.to_str().unwrap(),
             "--net",
             &target_net_uuid.to_string(),
@@ -2435,6 +2783,10 @@ fn project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topolo
             &anchor_a_uuid.to_string(),
             "--to-anchor",
             &anchor_b_uuid.to_string(),
+            "--candidate",
+            "authored-copper-graph",
+            "--policy",
+            "zone_obstacle_topology_aware",
             "--out",
             artifact.to_str().unwrap(),
         ])
@@ -2443,14 +2795,11 @@ fn project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topolo
     .expect("export should succeed");
     let export_report: serde_json::Value =
         serde_json::from_str(&export_output).expect("export report should parse");
-    assert_eq!(
-        export_report["action"],
-        "export_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_proposal"
-    );
+    assert_eq!(export_report["action"], "export_route_path_proposal");
     assert_eq!(export_report["actions"], 3);
     assert_eq!(
         export_report["contract"],
-        "m5_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_v1"
+        "m5_route_path_candidate_authored_copper_graph_policy_v1"
     );
 
     let artifact_value: serde_json::Value =
@@ -2462,7 +2811,7 @@ fn project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topolo
     assert_eq!(actions[0]["proposal_action"], "reuse_existing_copper_step");
     assert_eq!(
         actions[0]["reason"],
-        "route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware"
+        "route_path_candidate_authored_copper_graph_policy_zone_obstacle_topology_aware"
     );
     assert_eq!(actions[0]["reused_object_kind"], "via");
     assert_eq!(
@@ -2496,7 +2845,7 @@ fn project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topolo
         serde_json::from_str(&inspect_output).expect("inspect report should parse");
     assert_eq!(
         inspect_report["contract"],
-        "m5_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_v1"
+        "m5_route_path_candidate_authored_copper_graph_policy_v1"
     );
     assert_eq!(inspect_report["actions"], 3);
     assert_eq!(inspect_report["draw_track_actions"], 0);
@@ -2525,6 +2874,499 @@ fn project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topolo
     )
     .expect("track query output should parse");
     assert_eq!(tracks.len(), 4);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_proposal_artifact_exports_inspects_and_applies_noop()
+ {
+    let root = unique_project_root(
+        "datum-eda-cli-project-route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware-proposal-artifact",
+    );
+    let (
+        target_net_uuid,
+        anchor_a_uuid,
+        anchor_b_uuid,
+        selected_via_uuid,
+        selected_track_uuid,
+    ) = seed_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_project(
+        &root,
+    );
+    let artifact = root.join(
+        "route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-layer-balance-aware-proposal.json",
+    );
+
+    let export_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "export-route-path-proposal",
+            root.to_str().unwrap(),
+            "--net",
+            &target_net_uuid.to_string(),
+            "--from-anchor",
+            &anchor_a_uuid.to_string(),
+            "--to-anchor",
+            &anchor_b_uuid.to_string(),
+            "--candidate",
+            "authored-copper-graph",
+            "--policy",
+            "zone_obstacle_topology_layer_balance_aware",
+            "--out",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("export should succeed");
+    let export_report: serde_json::Value =
+        serde_json::from_str(&export_output).expect("export report should parse");
+    assert_eq!(export_report["action"], "export_route_path_proposal");
+    assert_eq!(export_report["actions"], 2);
+    assert_eq!(
+        export_report["contract"],
+        "m5_route_path_candidate_authored_copper_graph_policy_v1"
+    );
+
+    let artifact_value: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&artifact).expect("artifact should read"))
+            .expect("artifact should parse");
+    let actions = artifact_value["actions"]
+        .as_array()
+        .expect("actions should be an array");
+    assert_eq!(actions[0]["proposal_action"], "reuse_existing_copper_step");
+    assert_eq!(
+        actions[0]["reason"],
+        "route_path_candidate_authored_copper_graph_policy_zone_obstacle_topology_layer_balance_aware"
+    );
+    assert_eq!(actions[0]["reused_object_kind"], "via");
+    assert_eq!(
+        actions[0]["reused_object_uuid"],
+        selected_via_uuid.to_string()
+    );
+    assert_eq!(actions[1]["reused_object_kind"], "track");
+    assert_eq!(
+        actions[1]["reused_object_uuid"],
+        selected_track_uuid.to_string()
+    );
+
+    let inspect_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "inspect-route-proposal-artifact",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("inspect should succeed");
+    let inspect_report: serde_json::Value =
+        serde_json::from_str(&inspect_output).expect("inspect report should parse");
+    assert_eq!(
+        inspect_report["contract"],
+        "m5_route_path_candidate_authored_copper_graph_policy_v1"
+    );
+    assert_eq!(inspect_report["actions"], 2);
+    assert_eq!(inspect_report["draw_track_actions"], 0);
+
+    let apply_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "apply-route-proposal-artifact",
+            root.to_str().unwrap(),
+            "--artifact",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("apply should succeed");
+    let apply_report: serde_json::Value =
+        serde_json::from_str(&apply_output).expect("apply report should parse");
+    assert_eq!(apply_report["artifact_actions"], 2);
+    assert_eq!(apply_report["applied_actions"], 0);
+
+    let tracks: Vec<Track> = serde_json::from_str(
+        &execute(board_tracks_query_cli(&root)).expect("board tracks query should succeed"),
+    )
+    .expect("track query output should parse");
+    assert_eq!(tracks.len(), 2);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_route_path_candidate_authored_copper_graph_obstacle_aware_proposal_artifact_exports_inspects_and_applies_noop()
+ {
+    let root = unique_project_root(
+        "datum-eda-cli-project-route-path-candidate-authored-copper-graph-obstacle-aware-proposal-artifact",
+    );
+    let (target_net_uuid, anchor_a_uuid, anchor_b_uuid, track_uuid) =
+        seed_route_path_candidate_authored_copper_graph_obstacle_aware_project(&root);
+    let artifact =
+        root.join("route-path-candidate-authored-copper-graph-obstacle-aware-proposal.json");
+
+    let export_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "export-route-path-proposal",
+            root.to_str().unwrap(),
+            "--net",
+            &target_net_uuid.to_string(),
+            "--from-anchor",
+            &anchor_a_uuid.to_string(),
+            "--to-anchor",
+            &anchor_b_uuid.to_string(),
+            "--candidate",
+            "authored-copper-graph",
+            "--policy",
+            "obstacle_aware",
+            "--out",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("export should succeed");
+    let export_report: serde_json::Value =
+        serde_json::from_str(&export_output).expect("export report should parse");
+    assert_eq!(export_report["action"], "export_route_path_proposal");
+    assert_eq!(export_report["actions"], 1);
+    assert_eq!(
+        export_report["contract"],
+        "m5_route_path_candidate_authored_copper_graph_policy_v1"
+    );
+
+    let artifact_value: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&artifact).expect("artifact should read"))
+            .expect("artifact should parse");
+    let action = &artifact_value["actions"][0];
+    assert_eq!(action["proposal_action"], "reuse_existing_copper_step");
+    assert_eq!(
+        action["reason"],
+        "route_path_candidate_authored_copper_graph_policy_obstacle_aware"
+    );
+    assert_eq!(action["reused_object_kind"], "track");
+    assert_eq!(action["reused_object_uuid"], track_uuid.to_string());
+
+    let inspect_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "inspect-route-proposal-artifact",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("inspect should succeed");
+    let inspect_report: serde_json::Value =
+        serde_json::from_str(&inspect_output).expect("inspect report should parse");
+    assert_eq!(
+        inspect_report["contract"],
+        "m5_route_path_candidate_authored_copper_graph_policy_v1"
+    );
+    assert_eq!(inspect_report["actions"], 1);
+    assert_eq!(inspect_report["draw_track_actions"], 0);
+
+    let apply_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "apply-route-proposal-artifact",
+            root.to_str().unwrap(),
+            "--artifact",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("apply should succeed");
+    let apply_report: serde_json::Value =
+        serde_json::from_str(&apply_output).expect("apply report should parse");
+    assert_eq!(apply_report["artifact_actions"], 1);
+    assert_eq!(apply_report["applied_actions"], 0);
+
+    let tracks: Vec<Track> = serde_json::from_str(
+        &execute(board_tracks_query_cli(&root)).expect("board tracks query should succeed"),
+    )
+    .expect("track query output should parse");
+    assert_eq!(tracks.len(), 1);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_route_path_candidate_authored_copper_graph_policy_proposal_artifact_exports_plain_policy_noop()
+ {
+    let root = unique_project_root(
+        "datum-eda-cli-project-route-path-candidate-authored-copper-graph-policy-plain-proposal-artifact",
+    );
+    let (target_net_uuid, anchor_a_uuid, anchor_b_uuid, track_uuid) =
+        seed_route_path_candidate_authored_copper_graph_obstacle_aware_project(&root);
+    let artifact =
+        root.join("route-path-candidate-authored-copper-graph-policy-plain-proposal.json");
+
+    let export_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "export-route-path-proposal",
+            root.to_str().unwrap(),
+            "--net",
+            &target_net_uuid.to_string(),
+            "--from-anchor",
+            &anchor_a_uuid.to_string(),
+            "--to-anchor",
+            &anchor_b_uuid.to_string(),
+            "--candidate",
+            "authored-copper-graph",
+            "--policy",
+            "plain",
+            "--out",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("export should succeed");
+    let export_report: serde_json::Value =
+        serde_json::from_str(&export_output).expect("export report should parse");
+    assert_eq!(export_report["action"], "export_route_path_proposal");
+    assert_eq!(export_report["actions"], 1);
+    assert_eq!(
+        export_report["contract"],
+        "m5_route_path_candidate_authored_copper_graph_policy_v1"
+    );
+
+    let artifact_value: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&artifact).expect("artifact should read"))
+            .expect("artifact should parse");
+    let action = &artifact_value["actions"][0];
+    assert_eq!(action["proposal_action"], "reuse_existing_copper_step");
+    assert_eq!(
+        action["reason"],
+        "route_path_candidate_authored_copper_graph_policy_plain"
+    );
+    assert_eq!(action["reused_object_kind"], "track");
+    assert_eq!(action["reused_object_uuid"], track_uuid.to_string());
+
+    let apply_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "apply-route-proposal-artifact",
+            root.to_str().unwrap(),
+            "--artifact",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("apply should succeed");
+    let apply_report: serde_json::Value =
+        serde_json::from_str(&apply_output).expect("apply report should parse");
+    assert_eq!(apply_report["artifact_actions"], 1);
+    assert_eq!(apply_report["applied_actions"], 0);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_route_path_proposal_artifact_exports_policy_candidate_via_generic_surface() {
+    let root = unique_project_root(
+        "datum-eda-cli-project-route-path-proposal-artifact-generic-authored-copper-graph",
+    );
+    let (target_net_uuid, anchor_a_uuid, anchor_b_uuid, track_uuid) =
+        seed_route_path_candidate_authored_copper_graph_obstacle_aware_project(&root);
+    let artifact = root.join("route-path-proposal-generic-authored-copper-graph.json");
+
+    let export_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "export-route-path-proposal",
+            root.to_str().unwrap(),
+            "--net",
+            &target_net_uuid.to_string(),
+            "--from-anchor",
+            &anchor_a_uuid.to_string(),
+            "--to-anchor",
+            &anchor_b_uuid.to_string(),
+            "--candidate",
+            "authored-copper-graph",
+            "--policy",
+            "plain",
+            "--out",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("export should succeed");
+    let export_report: serde_json::Value =
+        serde_json::from_str(&export_output).expect("export report should parse");
+    assert_eq!(export_report["action"], "export_route_path_proposal");
+    assert_eq!(
+        export_report["contract"],
+        "m5_route_path_candidate_authored_copper_graph_policy_v1"
+    );
+
+    let artifact_value: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&artifact).expect("artifact should read"))
+            .expect("artifact should parse");
+    let action = &artifact_value["actions"][0];
+    assert_eq!(action["proposal_action"], "reuse_existing_copper_step");
+    assert_eq!(
+        action["reason"],
+        "route_path_candidate_authored_copper_graph_policy_plain"
+    );
+    assert_eq!(action["reused_object_uuid"], track_uuid.to_string());
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_route_path_proposal_rejects_policy_for_non_policy_candidate() {
+    let root = unique_project_root(
+        "datum-eda-cli-project-route-path-proposal-artifact-generic-policy-misuse",
+    );
+    let (target_net_uuid, anchor_a_uuid, anchor_b_uuid) = seed_route_path_candidate_project(&root);
+    let artifact = root.join("route-path-proposal-generic-policy-misuse.json");
+
+    let export_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "export-route-path-proposal",
+        root.to_str().unwrap(),
+        "--net",
+        &target_net_uuid.to_string(),
+        "--from-anchor",
+        &anchor_a_uuid.to_string(),
+        "--to-anchor",
+        &anchor_b_uuid.to_string(),
+        "--candidate",
+        "route-path-candidate",
+        "--policy",
+        "plain",
+        "--out",
+        artifact.to_str().unwrap(),
+    ])
+    .expect("CLI should parse");
+    let err = execute(export_cli).expect_err("non-policy candidate should reject --policy");
+    assert_eq!(
+        err.to_string(),
+        "export-route-path-proposal --policy is supported only for candidate authored-copper-graph"
+    );
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_route_path_candidate_authored_copper_graph_policy_proposal_artifact_exports_layer_balance_policy_noop()
+ {
+    let root = unique_project_root(
+        "datum-eda-cli-project-route-path-candidate-authored-copper-graph-policy-layer-balance-proposal-artifact",
+    );
+    let (
+        target_net_uuid,
+        anchor_a_uuid,
+        anchor_b_uuid,
+        selected_via_uuid,
+        selected_track_uuid,
+    ) = seed_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_project(
+        &root,
+    );
+    let artifact =
+        root.join("route-path-candidate-authored-copper-graph-policy-layer-balance-proposal.json");
+
+    let export_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "export-route-path-proposal",
+            root.to_str().unwrap(),
+            "--net",
+            &target_net_uuid.to_string(),
+            "--from-anchor",
+            &anchor_a_uuid.to_string(),
+            "--to-anchor",
+            &anchor_b_uuid.to_string(),
+            "--candidate",
+            "authored-copper-graph",
+            "--policy",
+            "zone_obstacle_topology_layer_balance_aware",
+            "--out",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("export should succeed");
+    let export_report: serde_json::Value =
+        serde_json::from_str(&export_output).expect("export report should parse");
+    assert_eq!(export_report["action"], "export_route_path_proposal");
+    assert_eq!(export_report["actions"], 2);
+    assert_eq!(
+        export_report["contract"],
+        "m5_route_path_candidate_authored_copper_graph_policy_v1"
+    );
+
+    let artifact_value: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&artifact).expect("artifact should read"))
+            .expect("artifact should parse");
+    let actions = artifact_value["actions"]
+        .as_array()
+        .expect("actions should be an array");
+    assert_eq!(
+        actions[0]["reason"],
+        "route_path_candidate_authored_copper_graph_policy_zone_obstacle_topology_layer_balance_aware"
+    );
+    assert_eq!(actions[0]["reused_object_kind"], "via");
+    assert_eq!(
+        actions[0]["reused_object_uuid"],
+        selected_via_uuid.to_string()
+    );
+    assert_eq!(actions[1]["reused_object_kind"], "track");
+    assert_eq!(
+        actions[1]["reused_object_uuid"],
+        selected_track_uuid.to_string()
+    );
+
+    let apply_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "apply-route-proposal-artifact",
+            root.to_str().unwrap(),
+            "--artifact",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("apply should succeed");
+    let apply_report: serde_json::Value =
+        serde_json::from_str(&apply_output).expect("apply report should parse");
+    assert_eq!(apply_report["artifact_actions"], 2);
+    assert_eq!(apply_report["applied_actions"], 0);
 
     let _ = std::fs::remove_dir_all(&root);
 }

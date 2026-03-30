@@ -305,6 +305,34 @@ pub(crate) struct ProjectExportRouteProposalArgs {
 }
 
 #[derive(clap::Args)]
+pub(crate) struct ProjectExportRoutePathProposalArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Net UUID
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Uuid,
+    /// Source anchor pad UUID
+    #[arg(long = "from-anchor")]
+    pub(crate) from_anchor_pad_uuid: Uuid,
+    /// Target anchor pad UUID
+    #[arg(long = "to-anchor")]
+    pub(crate) to_anchor_pad_uuid: Uuid,
+    /// Accepted deterministic candidate family
+    #[arg(long = "candidate", value_enum)]
+    pub(crate) candidate: NativeProjectRouteApplyCandidateArg,
+    /// Accepted authored-copper-graph policy when required by the candidate family
+    #[arg(
+        long = "policy",
+        value_enum,
+        required_if_eq("candidate", "authored-copper-graph")
+    )]
+    pub(crate) policy: Option<NativeRoutePathCandidateAuthoredCopperGraphPolicy>,
+    /// Output artifact path
+    #[arg(long = "out")]
+    pub(crate) out: PathBuf,
+}
+
+#[derive(clap::Args)]
 pub(crate) struct ProjectExportRoutePathCandidateProposalArgs {
     /// Project root directory
     pub(crate) path: PathBuf,
@@ -464,6 +492,48 @@ pub(crate) struct ProjectExportRoutePathCandidateAuthoredCopperGraphZoneObstacle
 }
 
 #[derive(clap::Args)]
+pub(crate) struct ProjectExportRoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareProposalArgs
+{
+    pub(crate) path: PathBuf,
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Uuid,
+    #[arg(long = "from-anchor")]
+    pub(crate) from_anchor_pad_uuid: Uuid,
+    #[arg(long = "to-anchor")]
+    pub(crate) to_anchor_pad_uuid: Uuid,
+    #[arg(long = "out")]
+    pub(crate) out: PathBuf,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectExportRoutePathCandidateAuthoredCopperGraphObstacleAwareProposalArgs {
+    pub(crate) path: PathBuf,
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Uuid,
+    #[arg(long = "from-anchor")]
+    pub(crate) from_anchor_pad_uuid: Uuid,
+    #[arg(long = "to-anchor")]
+    pub(crate) to_anchor_pad_uuid: Uuid,
+    #[arg(long = "out")]
+    pub(crate) out: PathBuf,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectExportRoutePathCandidateAuthoredCopperGraphProposalArgs {
+    pub(crate) path: PathBuf,
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Uuid,
+    #[arg(long = "from-anchor")]
+    pub(crate) from_anchor_pad_uuid: Uuid,
+    #[arg(long = "to-anchor")]
+    pub(crate) to_anchor_pad_uuid: Uuid,
+    #[arg(long = "policy", value_enum)]
+    pub(crate) policy: NativeRoutePathCandidateAuthoredCopperGraphPolicy,
+    #[arg(long = "out")]
+    pub(crate) out: PathBuf,
+}
+
+#[derive(clap::Args)]
 pub(crate) struct ProjectInspectRouteProposalArtifactArgs {
     /// Artifact path
     pub(crate) path: PathBuf,
@@ -492,8 +562,39 @@ pub(crate) struct ProjectRouteApplyArgs {
     #[arg(long = "to-anchor")]
     pub(crate) to_anchor_pad_uuid: Uuid,
     /// Accepted deterministic candidate family
-    #[arg(long = "candidate")]
-    pub(crate) candidate: String,
+    #[arg(long = "candidate", value_enum)]
+    pub(crate) candidate: NativeProjectRouteApplyCandidateArg,
+    /// Accepted authored-copper-graph policy when required by the candidate family
+    #[arg(
+        long = "policy",
+        value_enum,
+        required_if_eq("candidate", "authored-copper-graph")
+    )]
+    pub(crate) policy: Option<NativeRoutePathCandidateAuthoredCopperGraphPolicy>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, clap::ValueEnum)]
+pub(crate) enum NativeProjectRouteApplyCandidateArg {
+    #[value(name = "route-path-candidate")]
+    RoutePathCandidate,
+    #[value(name = "route-path-candidate-via")]
+    RoutePathCandidateVia,
+    #[value(name = "route-path-candidate-two-via")]
+    RoutePathCandidateTwoVia,
+    #[value(name = "route-path-candidate-three-via")]
+    RoutePathCandidateThreeVia,
+    #[value(name = "route-path-candidate-four-via")]
+    RoutePathCandidateFourVia,
+    #[value(name = "route-path-candidate-five-via")]
+    RoutePathCandidateFiveVia,
+    #[value(name = "route-path-candidate-six-via")]
+    RoutePathCandidateSixVia,
+    #[value(name = "route-path-candidate-authored-via-chain")]
+    RoutePathCandidateAuthoredViaChain,
+    #[value(name = "authored-copper-plus-one-gap")]
+    AuthoredCopperPlusOneGap,
+    #[value(name = "authored-copper-graph")]
+    AuthoredCopperGraph,
 }
 
 #[derive(clap::Args)]

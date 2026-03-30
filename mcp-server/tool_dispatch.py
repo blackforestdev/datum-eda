@@ -144,4 +144,39 @@ def dispatch_tool_call(daemon: Any, name: str, arguments: dict[str, Any]) -> Any
         return daemon.run_drc()
     if name == "explain_violation":
         return daemon.explain_violation(arguments["domain"], arguments["index"])
+    if name == "export_route_path_proposal":
+        return daemon.export_route_path_proposal(
+            arguments["path"],
+            arguments["net_uuid"],
+            arguments["from_anchor_pad_uuid"],
+            arguments["to_anchor_pad_uuid"],
+            arguments["candidate"],
+            arguments.get("policy"),
+            arguments["out"],
+        )
+    if name == "export_route_path_candidate_authored_copper_graph_proposal":
+        return daemon.export_route_path_candidate_authored_copper_graph_proposal(
+            arguments["path"],
+            arguments["net_uuid"],
+            arguments["from_anchor_pad_uuid"],
+            arguments["to_anchor_pad_uuid"],
+            arguments["policy"],
+            arguments["out"],
+        )
+    if name == "route_apply":
+        return daemon.route_apply(
+            arguments["path"],
+            arguments["net_uuid"],
+            arguments["from_anchor_pad_uuid"],
+            arguments["to_anchor_pad_uuid"],
+            arguments["candidate"],
+            arguments.get("policy"),
+        )
+    if name == "inspect_route_proposal_artifact":
+        return daemon.inspect_route_proposal_artifact(arguments["artifact"])
+    if name == "apply_route_proposal_artifact":
+        return daemon.apply_route_proposal_artifact(
+            arguments["path"],
+            arguments["artifact"],
+        )
     raise RuntimeError(f"unknown tool: {name}")

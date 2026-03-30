@@ -422,6 +422,12 @@ Status: [~] In progress
 - MCP implementation parity remains deferred unless explicitly reopened, but
   deferred parity tracking for newer native M4/M5 slices must stay current in
   `specs/MCP_API_SPEC.md`.
+- A narrow MCP parity exception is now live for the policy-selected
+  authored-copper-graph proposal export surface; broader M5 MCP query/apply
+  parity remains deferred.
+- That narrow exception now covers the full route-proposal artifact lifecycle
+  for the policy-selected authored-copper-graph family: export, inspect, and
+  apply.
 - Current M5 checkpoint chain (routing-kernel read/query lane):
   - `project query <dir> routing-substrate`
   - `project query <dir> route-preflight --net <uuid>`
@@ -459,39 +465,58 @@ Status: [~] In progress
     `project inspect-route-proposal-artifact <path>`, and
     `project apply-route-proposal-artifact <dir> --artifact <path>`
   - the same route-proposal artifact lane now also covers the accepted
-    baseline single-layer path contract via `project
-    export-route-path-candidate-proposal <dir> --net <uuid> --from-anchor
-    <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-  - the same route-proposal artifact lane now also covers the accepted bounded
-    single-via contract via `project
-    export-route-path-candidate-via-proposal <dir> --net <uuid> --from-anchor
-    <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-  - the same route-proposal artifact lane now also covers the accepted bounded
-    two-via contract via `project
-    export-route-path-candidate-two-via-proposal <dir> --net <uuid>
-    --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
-  - the same route-proposal artifact lane now also covers the accepted bounded
-    three-via, four-via, five-via, six-via, and authored-via-chain contracts
-    via the matching `project
-    export-route-path-candidate-<contract>-proposal <dir> --net <uuid>
-    --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>` surfaces
-  - the same route-proposal artifact lane now also covers the accepted
-    deterministic zone-aware existing-copper graph contract via `project
-    export-route-path-candidate-authored-copper-graph-zone-aware-proposal
-    <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out
-    <path>`
-  - the same route-proposal artifact lane now also covers the accepted
-    deterministic zone-obstacle-aware existing-copper graph contract via
-    `project
-    export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-proposal
-    <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out
-    <path>`
-  - the same route-proposal artifact lane now also covers the accepted
-    deterministic topology-aware zone-obstacle-aware existing-copper graph
-    contract via `project
-    export-route-path-candidate-authored-copper-graph-zone-obstacle-aware-topology-aware-proposal
-    <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out
-    <path>`
+    completed write-capable family, now canonically via `project
+    export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid>
+    --to-anchor <pad_uuid> --candidate <accepted_candidate> [--policy
+    <policy>] --out <path>`, spanning the accepted single-layer, via-path, and
+    authored-copper-graph policy-selected contracts
+  - a native direct convenience apply surface now also exists for that same
+    accepted single-layer path contract via `project route-apply <dir> --net
+    <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+    route-path-candidate`
+  - a native direct convenience apply surface now also exists for that same
+    accepted bounded single-via contract via `project route-apply <dir> --net
+    <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+    route-path-candidate-via`
+  - a native direct convenience apply surface now also exists for that same
+    accepted bounded two-via contract via `project route-apply <dir> --net
+    <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+    route-path-candidate-two-via`
+  - a native direct convenience apply surface now also exists for that same
+    accepted bounded three-via contract via `project route-apply <dir> --net
+    <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+    route-path-candidate-three-via`
+  - the same direct convenience apply lane now also covers the remaining
+    bounded ordinal via contracts via `project route-apply <dir> --net <uuid>
+    --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+    route-path-candidate-four-via|route-path-candidate-five-via|route-path-candidate-six-via`
+  - that same direct convenience apply lane now also covers the accepted
+    deterministic authored-via-chain contract via `project route-apply <dir>
+    --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+    route-path-candidate-authored-via-chain`
+  - a bounded convenience export surface now also exists for the completed
+    write-capable route family via `project export-route-path-proposal <dir>
+    --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+    <accepted_candidate> [--policy <policy>] --out <path>`
+  - the older `export-route-path-candidate-*` commands now advertise their
+    compatibility-wrapper status in CLI help and text-mode export output,
+    pointing users at `project export-route-path-proposal ... --candidate ...`
+  - `project route-apply` now parses `--candidate` from a bounded accepted
+    value set instead of a free-form string, and enforces `--policy` only for
+    `--candidate authored-copper-graph`
+  - a native direct convenience apply surface now also exists for that same
+    policy-selected family via `project route-apply <dir> --net <uuid>
+    --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+    authored-copper-graph --policy <policy>`
+  - that same policy-selected export surface is now exposed through MCP as
+    `export_route_path_candidate_authored_copper_graph_proposal`
+  - the bounded convenience export surface is now exposed through MCP as
+    `export_route_path_proposal`
+  - the bounded direct route-apply surface is now exposed through MCP as
+    `route_apply`
+  - the matching generic artifact follow-up surfaces are now exposed through
+    MCP as `inspect_route_proposal_artifact` and
+    `apply_route_proposal_artifact`
   - `specs/PROGRESS.md` tracks only the checkpoint/frontier; detailed per-slice
     history stays in `specs/progress/m5_opening.md`
 - Current M5 frontier:
@@ -504,8 +529,11 @@ Status: [~] In progress
     `route-path-candidate-two-via` contract, and the remaining bounded
     `three`/`four`/`five`/`six`-via plus `authored-via-chain` contracts, and
     the accepted zone-aware and zone-obstacle-aware existing-copper graph
-    reuse contracts, and the accepted topology-aware zone-obstacle-aware
-    existing-copper graph reuse contract
+    reuse contracts, and the accepted topology-aware plus layer-balance-aware
+    topology-aware zone-obstacle-aware existing-copper graph reuse contracts,
+    and the accepted obstacle-aware existing-copper graph reuse contract, and
+    the policy-selected authored-copper graph family over the accepted bounded
+    policy set
   - new slices must still avoid broad autorouting semantics, invented
     constraints, and untracked MCP drift
 - Acceptance checks for the opening slice:

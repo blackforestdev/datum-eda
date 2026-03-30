@@ -3,7 +3,9 @@
 
 from __future__ import annotations
 
+import subprocess
 import unittest
+from unittest.mock import patch
 
 from server_runtime import EngineDaemonClient
 
@@ -430,6 +432,204 @@ class TestDaemonClientRequests(unittest.TestCase):
         self.assertEqual(bus_entries.params, {})
         self.assertEqual(noconnects.params, {})
         self.assertEqual(hierarchy.params, {})
+
+    @patch("server_runtime.subprocess.run")
+    def test_exports_authored_copper_graph_policy_proposal_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=(
+                '{"action":"export_route_path_candidate_authored_copper_graph_proposal",'
+                '"contract":"m5_route_path_candidate_authored_copper_graph_policy_v1"}'
+            ),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.export_route_path_candidate_authored_copper_graph_proposal(
+            "/tmp/demo",
+            "11111111-1111-1111-1111-111111111111",
+            "22222222-2222-2222-2222-222222222222",
+            "33333333-3333-3333-3333-333333333333",
+            "zone_obstacle_topology_layer_balance_aware",
+            "/tmp/demo.route-proposal.json",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "export-route-path-candidate-authored-copper-graph-proposal",
+                "/tmp/demo",
+                "--net",
+                "11111111-1111-1111-1111-111111111111",
+                "--from-anchor",
+                "22222222-2222-2222-2222-222222222222",
+                "--to-anchor",
+                "33333333-3333-3333-3333-333333333333",
+                "--policy",
+                "zone_obstacle_topology_layer_balance_aware",
+                "--out",
+                "/tmp/demo.route-proposal.json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "export_route_path_candidate_authored_copper_graph_proposal")
+        self.assertEqual(
+            response.result["contract"], "m5_route_path_candidate_authored_copper_graph_policy_v1"
+        )
+
+    @patch("server_runtime.subprocess.run")
+    def test_exports_route_path_proposal_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=(
+                '{"action":"export_route_path_proposal",'
+                '"contract":"m5_route_path_candidate_v2"}'
+            ),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.export_route_path_proposal(
+            "/tmp/demo",
+            "11111111-1111-1111-1111-111111111111",
+            "22222222-2222-2222-2222-222222222222",
+            "33333333-3333-3333-3333-333333333333",
+            "route-path-candidate",
+            None,
+            "/tmp/demo.route-proposal.json",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "export-route-path-proposal",
+                "/tmp/demo",
+                "--net",
+                "11111111-1111-1111-1111-111111111111",
+                "--from-anchor",
+                "22222222-2222-2222-2222-222222222222",
+                "--to-anchor",
+                "33333333-3333-3333-3333-333333333333",
+                "--candidate",
+                "route-path-candidate",
+                "--out",
+                "/tmp/demo.route-proposal.json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "export_route_path_proposal")
+        self.assertEqual(response.result["contract"], "m5_route_path_candidate_v2")
+
+    @patch("server_runtime.subprocess.run")
+    def test_applies_route_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=('{"action":"route_apply","proposal_actions":1,"applied_actions":1}'),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.route_apply(
+            "/tmp/demo",
+            "11111111-1111-1111-1111-111111111111",
+            "22222222-2222-2222-2222-222222222222",
+            "33333333-3333-3333-3333-333333333333",
+            "route-path-candidate",
+            None,
+        )
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "route-apply",
+                "/tmp/demo",
+                "--net",
+                "11111111-1111-1111-1111-111111111111",
+                "--from-anchor",
+                "22222222-2222-2222-2222-222222222222",
+                "--to-anchor",
+                "33333333-3333-3333-3333-333333333333",
+                "--candidate",
+                "route-path-candidate",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "route_apply")
+        self.assertEqual(response.result["proposal_actions"], 1)
+        self.assertEqual(response.result["applied_actions"], 1)
+
+    @patch("server_runtime.subprocess.run")
+    def test_inspects_route_proposal_artifact_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout='{"action":"inspect_route_proposal_artifact","actions":2}',
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.inspect_route_proposal_artifact("/tmp/demo.route-proposal.json")
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "inspect-route-proposal-artifact",
+                "/tmp/demo.route-proposal.json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "inspect_route_proposal_artifact")
+        self.assertEqual(response.result["actions"], 2)
+
+    @patch("server_runtime.subprocess.run")
+    def test_applies_route_proposal_artifact_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=(
+                '{"action":"apply_route_proposal_artifact","artifact_actions":2,'
+                '"applied_actions":0}'
+            ),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.apply_route_proposal_artifact(
+            "/tmp/demo",
+            "/tmp/demo.route-proposal.json",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "apply-route-proposal-artifact",
+                "/tmp/demo",
+                "--artifact",
+                "/tmp/demo.route-proposal.json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "apply_route_proposal_artifact")
+        self.assertEqual(response.result["artifact_actions"], 2)
+        self.assertEqual(response.result["applied_actions"], 0)
 
     def test_builds_get_design_rules_request(self) -> None:
         client = EngineDaemonClient()

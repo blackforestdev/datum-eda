@@ -240,6 +240,162 @@ class FakeDaemonClientQueriesMixin:
             None,
         )
 
+    def export_route_path_candidate_authored_copper_graph_proposal(
+        self,
+        path: str,
+        net_uuid: str,
+        from_anchor_pad_uuid: str,
+        to_anchor_pad_uuid: str,
+        policy: str,
+        out: str,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "export_route_path_candidate_authored_copper_graph_proposal",
+                {
+                    "path": path,
+                    "net_uuid": net_uuid,
+                    "from_anchor_pad_uuid": from_anchor_pad_uuid,
+                    "to_anchor_pad_uuid": to_anchor_pad_uuid,
+                    "policy": policy,
+                    "out": out,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            113,
+            {
+                "action": "export_route_path_candidate_authored_copper_graph_proposal",
+                "contract": "m5_route_path_candidate_authored_copper_graph_policy_v1",
+                "path": out,
+                "policy": policy,
+                "artifact_kind": "native_route_proposal_artifact",
+            },
+            None,
+        )
+
+    def export_route_path_proposal(
+        self,
+        path: str,
+        net_uuid: str,
+        from_anchor_pad_uuid: str,
+        to_anchor_pad_uuid: str,
+        candidate: str,
+        policy: str | None,
+        out: str,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "export_route_path_proposal",
+                {
+                    "path": path,
+                    "net_uuid": net_uuid,
+                    "from_anchor_pad_uuid": from_anchor_pad_uuid,
+                    "to_anchor_pad_uuid": to_anchor_pad_uuid,
+                    "candidate": candidate,
+                    "policy": policy,
+                    "out": out,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            116,
+            {
+                "action": "export_route_path_proposal",
+                "contract": (
+                    "m5_route_path_candidate_authored_copper_graph_policy_v1"
+                    if candidate == "authored-copper-graph"
+                    else "m5_route_path_candidate_v2"
+                ),
+                "path": out,
+                "candidate": candidate,
+                "policy": policy,
+                "artifact_kind": "native_route_proposal_artifact",
+            },
+            None,
+        )
+
+    def route_apply(
+        self,
+        path: str,
+        net_uuid: str,
+        from_anchor_pad_uuid: str,
+        to_anchor_pad_uuid: str,
+        candidate: str,
+        policy: str | None,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "route_apply",
+                {
+                    "path": path,
+                    "net_uuid": net_uuid,
+                    "from_anchor_pad_uuid": from_anchor_pad_uuid,
+                    "to_anchor_pad_uuid": to_anchor_pad_uuid,
+                    "candidate": candidate,
+                    "policy": policy,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            117,
+            {
+                "action": "route_apply",
+                "contract": (
+                    "m5_route_path_candidate_authored_copper_graph_policy_v1"
+                    if candidate == "authored-copper-graph"
+                    else "m5_route_path_candidate_v2"
+                ),
+                "path": path,
+                "candidate": candidate,
+                "policy": policy,
+                "proposal_actions": 1,
+                "applied_actions": 0 if candidate == "authored-copper-graph" else 1,
+            },
+            None,
+        )
+
+    def inspect_route_proposal_artifact(self, artifact: str) -> JsonRpcResponse:
+        self.calls.append(("inspect_route_proposal_artifact", artifact))
+        return JsonRpcResponse(
+            "2.0",
+            114,
+            {
+                "action": "inspect_route_proposal_artifact",
+                "artifact_kind": "native_route_proposal_artifact",
+                "contract": "m5_route_path_candidate_authored_copper_graph_policy_v1",
+                "path": artifact,
+                "actions": 2,
+            },
+            None,
+        )
+
+    def apply_route_proposal_artifact(self, path: str, artifact: str) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "apply_route_proposal_artifact",
+                {
+                    "path": path,
+                    "artifact": artifact,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            115,
+            {
+                "action": "apply_route_proposal_artifact",
+                "path": path,
+                "artifact": artifact,
+                "artifact_actions": 2,
+                "applied_actions": 0,
+            },
+            None,
+        )
+
     def get_connectivity_diagnostics(self) -> JsonRpcResponse:
         self.calls.append(("get_connectivity_diagnostics", None))
         return JsonRpcResponse(
