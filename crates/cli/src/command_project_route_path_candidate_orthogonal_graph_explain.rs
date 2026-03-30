@@ -53,10 +53,14 @@ pub(crate) fn render_native_project_route_path_candidate_orthogonal_graph_explai
     if let Some(selected) = &report.selected_path {
         lines.push(format!("selected_path_layer: {}", selected.layer));
         lines.push(format!("selected_path_points: {}", selected.points.len()));
+        lines.push(format!("selected_path_bends: {}", selected.cost.bend_count));
+        lines.push(format!("selected_path_segments: {}", selected.cost.segment_count));
         lines.push(format!("selection_reason: {}", selected.selection_reason));
     } else {
         lines.push("selected_path_layer: none".to_string());
         lines.push("selected_path_points: 0".to_string());
+        lines.push("selected_path_bends: 0".to_string());
+        lines.push("selected_path_segments: 0".to_string());
     }
     lines.push(format!("blocked_edge_count: {}", report.blocked_edges.len()));
     lines.join("\n")

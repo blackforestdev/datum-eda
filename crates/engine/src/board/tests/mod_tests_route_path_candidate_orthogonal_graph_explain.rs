@@ -27,6 +27,13 @@ fn route_path_candidate_orthogonal_graph_explain_reports_selected_path_reasoning
             .map(|path| path.points.len()),
         Some(7)
     );
+    assert_eq!(
+        report
+            .selected_path
+            .as_ref()
+            .map(|path| path.cost.bend_count),
+        Some(5)
+    );
     assert!(report.blocked_edges.len() > 0);
 }
 

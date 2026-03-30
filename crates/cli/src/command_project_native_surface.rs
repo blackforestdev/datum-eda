@@ -54,6 +54,26 @@ mod command_project_route_path_candidate_orthogonal_graph_explain;
 mod command_project_route_path_candidate_orthogonal_graph_via;
 #[path = "command_project_route_path_candidate_orthogonal_graph_via_explain.rs"]
 mod command_project_route_path_candidate_orthogonal_graph_via_explain;
+#[path = "command_project_route_path_candidate_orthogonal_graph_two_via.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_two_via;
+#[path = "command_project_route_path_candidate_orthogonal_graph_two_via_explain.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_two_via_explain;
+#[path = "command_project_route_path_candidate_orthogonal_graph_three_via.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_three_via;
+#[path = "command_project_route_path_candidate_orthogonal_graph_three_via_explain.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_three_via_explain;
+#[path = "command_project_route_path_candidate_orthogonal_graph_four_via.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_four_via;
+#[path = "command_project_route_path_candidate_orthogonal_graph_four_via_explain.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_four_via_explain;
+#[path = "command_project_route_path_candidate_orthogonal_graph_five_via.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_five_via;
+#[path = "command_project_route_path_candidate_orthogonal_graph_five_via_explain.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_five_via_explain;
+#[path = "command_project_route_path_candidate_orthogonal_graph_six_via.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_six_via;
+#[path = "command_project_route_path_candidate_orthogonal_graph_six_via_explain.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_six_via_explain;
 #[path = "command_project_route_path_candidate_explain.rs"]
 mod command_project_route_path_candidate_explain;
 #[path = "command_project_route_path_candidate_five_via.rs"]
@@ -155,6 +175,46 @@ pub(crate) use self::command_project_route_path_candidate_orthogonal_graph_via::
 pub(crate) use self::command_project_route_path_candidate_orthogonal_graph_via_explain::{
     query_native_project_route_path_candidate_orthogonal_graph_via_explain,
     render_native_project_route_path_candidate_orthogonal_graph_via_explain_text,
+};
+pub(crate) use self::command_project_route_path_candidate_orthogonal_graph_two_via::{
+    query_native_project_route_path_candidate_orthogonal_graph_two_via,
+    render_native_project_route_path_candidate_orthogonal_graph_two_via_text,
+};
+pub(crate) use self::command_project_route_path_candidate_orthogonal_graph_two_via_explain::{
+    query_native_project_route_path_candidate_orthogonal_graph_two_via_explain,
+    render_native_project_route_path_candidate_orthogonal_graph_two_via_explain_text,
+};
+pub(crate) use self::command_project_route_path_candidate_orthogonal_graph_three_via::{
+    query_native_project_route_path_candidate_orthogonal_graph_three_via,
+    render_native_project_route_path_candidate_orthogonal_graph_three_via_text,
+};
+pub(crate) use self::command_project_route_path_candidate_orthogonal_graph_three_via_explain::{
+    query_native_project_route_path_candidate_orthogonal_graph_three_via_explain,
+    render_native_project_route_path_candidate_orthogonal_graph_three_via_explain_text,
+};
+pub(crate) use self::command_project_route_path_candidate_orthogonal_graph_four_via::{
+    query_native_project_route_path_candidate_orthogonal_graph_four_via,
+    render_native_project_route_path_candidate_orthogonal_graph_four_via_text,
+};
+pub(crate) use self::command_project_route_path_candidate_orthogonal_graph_four_via_explain::{
+    query_native_project_route_path_candidate_orthogonal_graph_four_via_explain,
+    render_native_project_route_path_candidate_orthogonal_graph_four_via_explain_text,
+};
+pub(crate) use self::command_project_route_path_candidate_orthogonal_graph_five_via::{
+    query_native_project_route_path_candidate_orthogonal_graph_five_via,
+    render_native_project_route_path_candidate_orthogonal_graph_five_via_text,
+};
+pub(crate) use self::command_project_route_path_candidate_orthogonal_graph_five_via_explain::{
+    query_native_project_route_path_candidate_orthogonal_graph_five_via_explain,
+    render_native_project_route_path_candidate_orthogonal_graph_five_via_explain_text,
+};
+pub(crate) use self::command_project_route_path_candidate_orthogonal_graph_six_via::{
+    query_native_project_route_path_candidate_orthogonal_graph_six_via,
+    render_native_project_route_path_candidate_orthogonal_graph_six_via_text,
+};
+pub(crate) use self::command_project_route_path_candidate_orthogonal_graph_six_via_explain::{
+    query_native_project_route_path_candidate_orthogonal_graph_six_via_explain,
+    render_native_project_route_path_candidate_orthogonal_graph_six_via_explain_text,
 };
 pub(crate) use self::command_project_route_path_candidate_authored_copper_graph::{
     query_native_project_route_path_candidate_authored_copper_graph,

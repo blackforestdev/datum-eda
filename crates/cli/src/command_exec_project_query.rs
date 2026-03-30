@@ -996,6 +996,75 @@ fn execute_native_project_route_path_candidate_query(
             };
             Ok((output, 0))
         }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphTwoVia => {
+            let report = query_native_project_route_path_candidate_orthogonal_graph_two_via(
+                path,
+                net,
+                from_anchor,
+                to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_route_path_candidate_orthogonal_graph_two_via_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphThreeVia => {
+            let report = query_native_project_route_path_candidate_orthogonal_graph_three_via(
+                path, net, from_anchor, to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_orthogonal_graph_three_via_text(
+                        &report,
+                    )
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphFourVia => {
+            let report = query_native_project_route_path_candidate_orthogonal_graph_four_via(
+                path, net, from_anchor, to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_orthogonal_graph_four_via_text(
+                        &report,
+                    )
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphFiveVia => {
+            let report = query_native_project_route_path_candidate_orthogonal_graph_five_via(
+                path, net, from_anchor, to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_orthogonal_graph_five_via_text(
+                        &report,
+                    )
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphSixVia => {
+            let report = query_native_project_route_path_candidate_orthogonal_graph_six_via(
+                path, net, from_anchor, to_anchor,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_project_route_path_candidate_orthogonal_graph_six_via_text(
+                        &report,
+                    )
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
         NativeProjectRouteApplyCandidateArg::AuthoredCopperPlusOneGap => {
             execute_native_project_route_path_candidate_authored_copper_plus_one_gap_query(
                 format,
@@ -1219,6 +1288,64 @@ fn execute_native_project_route_path_candidate_explain_query(
                         &report,
                     )
                 }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphTwoVia => {
+            let report =
+                query_native_project_route_path_candidate_orthogonal_graph_two_via_explain(
+                    path,
+                    net,
+                    from_anchor,
+                    to_anchor,
+                )?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_route_path_candidate_orthogonal_graph_two_via_explain_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphThreeVia => {
+            let report =
+                query_native_project_route_path_candidate_orthogonal_graph_three_via_explain(
+                    path, net, from_anchor, to_anchor,
+                )?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_route_path_candidate_orthogonal_graph_three_via_explain_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphFourVia => {
+            let report =
+                query_native_project_route_path_candidate_orthogonal_graph_four_via_explain(
+                    path, net, from_anchor, to_anchor,
+                )?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_route_path_candidate_orthogonal_graph_four_via_explain_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphFiveVia => {
+            let report =
+                query_native_project_route_path_candidate_orthogonal_graph_five_via_explain(
+                    path, net, from_anchor, to_anchor,
+                )?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_route_path_candidate_orthogonal_graph_five_via_explain_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphSixVia => {
+            let report =
+                query_native_project_route_path_candidate_orthogonal_graph_six_via_explain(
+                    path, net, from_anchor, to_anchor,
+                )?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_route_path_candidate_orthogonal_graph_six_via_explain_text(&report),
                 OutputFormat::Json => render_output(format, &report),
             };
             Ok((output, 0))

@@ -2,6 +2,11 @@ use super::main_tests_project_route_proposal_artifact::{
     seed_route_path_candidate_authored_copper_graph_obstacle_aware_project,
     seed_route_path_candidate_orthogonal_dogleg_project,
     seed_route_path_candidate_orthogonal_graph_project,
+    seed_route_path_candidate_four_via_project,
+    seed_route_path_candidate_five_via_project,
+    seed_route_path_candidate_six_via_project,
+    seed_route_path_candidate_three_via_project,
+    seed_route_path_candidate_orthogonal_graph_two_via_project,
     seed_route_path_candidate_orthogonal_graph_via_project,
     seed_route_path_candidate_orthogonal_two_bend_project, seed_route_path_candidate_project,
     seed_route_path_candidate_via_project, unique_project_root,
@@ -182,6 +187,7 @@ fn project_query_route_path_candidate_explain_generic_surface_supports_orthogona
     );
     assert_eq!(report["status"], "deterministic_path_found");
     assert_eq!(report["selected_path"]["points"].as_array().unwrap().len(), 7);
+    assert_eq!(report["selected_path"]["cost"]["bend_count"], 5);
 
     let _ = std::fs::remove_dir_all(&root);
 }
@@ -212,6 +218,196 @@ fn project_query_route_path_candidate_explain_generic_surface_supports_orthogona
     );
     assert_eq!(report["status"], "deterministic_path_found");
     assert_eq!(report["selected_via"]["source_segment"]["points"].as_array().unwrap().len(), 3);
+    assert!(report["selected_via"]["source_segment"]["cost"]["segment_count"].as_u64().unwrap() >= 1);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_query_route_path_candidate_explain_generic_surface_supports_orthogonal_graph_two_via_candidate()
+{
+    let root = unique_project_root(
+        "datum-eda-cli-project-route-path-candidate-explain-generic-graph-two-via",
+    );
+    let (target_net_uuid, anchor_a_uuid, anchor_b_uuid, via_a_uuid, via_b_uuid) =
+        seed_route_path_candidate_orthogonal_graph_two_via_project(&root);
+
+    let output = execute(route_path_candidate_explain_query_cli(
+        &root,
+        target_net_uuid,
+        anchor_a_uuid,
+        anchor_b_uuid,
+        Some("route-path-candidate-orthogonal-graph-two-via"),
+        None,
+    ))
+    .expect("query should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("report should parse");
+
+    assert_eq!(
+        report["contract"],
+        "m5_route_path_candidate_orthogonal_graph_two_via_explain_v1"
+    );
+    assert_eq!(report["status"], "deterministic_path_found");
+    assert_eq!(report["selected_pair"]["via_a_uuid"], via_a_uuid.to_string());
+    assert_eq!(report["selected_pair"]["via_b_uuid"], via_b_uuid.to_string());
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_query_route_path_candidate_explain_generic_surface_supports_orthogonal_graph_three_via_candidate()
+{
+    let root = unique_project_root(
+        "datum-eda-cli-project-route-path-candidate-explain-generic-graph-three-via",
+    );
+    let (target_net_uuid, anchor_a_uuid, anchor_b_uuid, via_a_uuid, via_b_uuid, via_c_uuid) =
+        seed_route_path_candidate_three_via_project(&root);
+
+    let output = execute(route_path_candidate_explain_query_cli(
+        &root,
+        target_net_uuid,
+        anchor_a_uuid,
+        anchor_b_uuid,
+        Some("route-path-candidate-orthogonal-graph-three-via"),
+        None,
+    ))
+    .expect("query should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("report should parse");
+
+    assert_eq!(
+        report["contract"],
+        "m5_route_path_candidate_orthogonal_graph_three_via_explain_v1"
+    );
+    assert_eq!(report["status"], "deterministic_path_found");
+    assert_eq!(report["selected_triple"]["via_a_uuid"], via_a_uuid.to_string());
+    assert_eq!(report["selected_triple"]["via_b_uuid"], via_b_uuid.to_string());
+    assert_eq!(report["selected_triple"]["via_c_uuid"], via_c_uuid.to_string());
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_query_route_path_candidate_explain_generic_surface_supports_orthogonal_graph_four_via_candidate()
+{
+    let root = unique_project_root(
+        "datum-eda-cli-project-route-path-candidate-explain-generic-graph-four-via",
+    );
+    let (
+        target_net_uuid,
+        anchor_a_uuid,
+        anchor_b_uuid,
+        via_a_uuid,
+        via_b_uuid,
+        via_c_uuid,
+        via_d_uuid,
+    ) = seed_route_path_candidate_four_via_project(&root);
+
+    let output = execute(route_path_candidate_explain_query_cli(
+        &root,
+        target_net_uuid,
+        anchor_a_uuid,
+        anchor_b_uuid,
+        Some("route-path-candidate-orthogonal-graph-four-via"),
+        None,
+    ))
+    .expect("query should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("report should parse");
+
+    assert_eq!(
+        report["contract"],
+        "m5_route_path_candidate_orthogonal_graph_four_via_explain_v1"
+    );
+    assert_eq!(report["status"], "deterministic_path_found");
+    assert_eq!(report["selected_quadruple"]["via_a_uuid"], via_a_uuid.to_string());
+    assert_eq!(report["selected_quadruple"]["via_b_uuid"], via_b_uuid.to_string());
+    assert_eq!(report["selected_quadruple"]["via_c_uuid"], via_c_uuid.to_string());
+    assert_eq!(report["selected_quadruple"]["via_d_uuid"], via_d_uuid.to_string());
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_query_route_path_candidate_explain_generic_surface_supports_orthogonal_graph_five_via_candidate()
+{
+    let root = unique_project_root(
+        "datum-eda-cli-project-route-path-candidate-explain-generic-graph-five-via",
+    );
+    let (
+        target_net_uuid,
+        anchor_a_uuid,
+        anchor_b_uuid,
+        via_a_uuid,
+        via_b_uuid,
+        via_c_uuid,
+        via_d_uuid,
+        via_e_uuid,
+    ) = seed_route_path_candidate_five_via_project(&root);
+
+    let output = execute(route_path_candidate_explain_query_cli(
+        &root,
+        target_net_uuid,
+        anchor_a_uuid,
+        anchor_b_uuid,
+        Some("route-path-candidate-orthogonal-graph-five-via"),
+        None,
+    ))
+    .expect("query should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("report should parse");
+
+    assert_eq!(
+        report["contract"],
+        "m5_route_path_candidate_orthogonal_graph_five_via_explain_v1"
+    );
+    assert_eq!(report["status"], "deterministic_path_found");
+    assert_eq!(report["selected_quintuple"]["via_a_uuid"], via_a_uuid.to_string());
+    assert_eq!(report["selected_quintuple"]["via_b_uuid"], via_b_uuid.to_string());
+    assert_eq!(report["selected_quintuple"]["via_c_uuid"], via_c_uuid.to_string());
+    assert_eq!(report["selected_quintuple"]["via_d_uuid"], via_d_uuid.to_string());
+    assert_eq!(report["selected_quintuple"]["via_e_uuid"], via_e_uuid.to_string());
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_query_route_path_candidate_explain_generic_surface_supports_orthogonal_graph_six_via_candidate()
+{
+    let root = unique_project_root(
+        "datum-eda-cli-project-route-path-candidate-explain-generic-graph-six-via",
+    );
+    let (
+        target_net_uuid,
+        anchor_a_uuid,
+        anchor_b_uuid,
+        via_a_uuid,
+        via_b_uuid,
+        via_c_uuid,
+        via_d_uuid,
+        via_e_uuid,
+        via_f_uuid,
+    ) = seed_route_path_candidate_six_via_project(&root);
+
+    let output = execute(route_path_candidate_explain_query_cli(
+        &root,
+        target_net_uuid,
+        anchor_a_uuid,
+        anchor_b_uuid,
+        Some("route-path-candidate-orthogonal-graph-six-via"),
+        None,
+    ))
+    .expect("query should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("report should parse");
+
+    assert_eq!(
+        report["contract"],
+        "m5_route_path_candidate_orthogonal_graph_six_via_explain_v1"
+    );
+    assert_eq!(report["status"], "deterministic_path_found");
+    assert_eq!(report["selected_sextuple"]["via_a_uuid"], via_a_uuid.to_string());
+    assert_eq!(report["selected_sextuple"]["via_b_uuid"], via_b_uuid.to_string());
+    assert_eq!(report["selected_sextuple"]["via_c_uuid"], via_c_uuid.to_string());
+    assert_eq!(report["selected_sextuple"]["via_d_uuid"], via_d_uuid.to_string());
+    assert_eq!(report["selected_sextuple"]["via_e_uuid"], via_e_uuid.to_string());
+    assert_eq!(report["selected_sextuple"]["via_f_uuid"], via_f_uuid.to_string());
 
     let _ = std::fs::remove_dir_all(&root);
 }

@@ -5,14 +5,16 @@ use crate::board::{Board, RoutePathCandidateError, RoutePathCandidateStatus, Sta
 use crate::ir::geometry::{LayerId, Point};
 
 use super::route_path_candidate_orthogonal_graph_selection::{
-    ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_SELECTION_RULE,
+    ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_SELECTION_RULE, RoutePathCandidateOrthogonalGraphPathCost,
     candidate_orthogonal_graph_layer_searches, selected_orthogonal_graph_path,
+    orthogonal_graph_path_cost,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RoutePathCandidateOrthogonalGraphPath {
     pub layer: LayerId,
     pub points: Vec<Point>,
+    pub cost: RoutePathCandidateOrthogonalGraphPathCost,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -93,6 +95,7 @@ impl Board {
             search.path.as_ref().map(|points| RoutePathCandidateOrthogonalGraphPath {
                 layer: search.layer,
                 points: points.clone(),
+                cost: orthogonal_graph_path_cost(points),
             })
         });
         let path_point_count = path.as_ref().map(|path| path.points.len()).unwrap_or(0);

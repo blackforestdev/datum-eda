@@ -76,6 +76,26 @@ mod route_path_candidate_orthogonal_graph_selection;
 mod route_path_candidate_orthogonal_graph_via;
 #[path = "route_path_candidate_orthogonal_graph_via_explain.rs"]
 mod route_path_candidate_orthogonal_graph_via_explain;
+#[path = "route_path_candidate_orthogonal_graph_two_via.rs"]
+mod route_path_candidate_orthogonal_graph_two_via;
+#[path = "route_path_candidate_orthogonal_graph_two_via_explain.rs"]
+mod route_path_candidate_orthogonal_graph_two_via_explain;
+#[path = "route_path_candidate_orthogonal_graph_three_via.rs"]
+mod route_path_candidate_orthogonal_graph_three_via;
+#[path = "route_path_candidate_orthogonal_graph_three_via_explain.rs"]
+mod route_path_candidate_orthogonal_graph_three_via_explain;
+#[path = "route_path_candidate_orthogonal_graph_four_via.rs"]
+mod route_path_candidate_orthogonal_graph_four_via;
+#[path = "route_path_candidate_orthogonal_graph_four_via_explain.rs"]
+mod route_path_candidate_orthogonal_graph_four_via_explain;
+#[path = "route_path_candidate_orthogonal_graph_five_via.rs"]
+mod route_path_candidate_orthogonal_graph_five_via;
+#[path = "route_path_candidate_orthogonal_graph_five_via_explain.rs"]
+mod route_path_candidate_orthogonal_graph_five_via_explain;
+#[path = "route_path_candidate_orthogonal_graph_six_via.rs"]
+mod route_path_candidate_orthogonal_graph_six_via;
+#[path = "route_path_candidate_orthogonal_graph_six_via_explain.rs"]
+mod route_path_candidate_orthogonal_graph_six_via_explain;
 #[path = "route_path_candidate_explain.rs"]
 mod route_path_candidate_explain;
 #[path = "route_path_candidate_five_via.rs"]
@@ -198,6 +218,7 @@ pub use self::route_path_candidate_orthogonal_graph::{
     RoutePathCandidateOrthogonalGraphPath, RoutePathCandidateOrthogonalGraphReport,
     RoutePathCandidateOrthogonalGraphSummary,
 };
+pub use self::route_path_candidate_orthogonal_graph_selection::RoutePathCandidateOrthogonalGraphPathCost;
 pub use self::route_path_candidate_orthogonal_graph_explain::{
     RoutePathCandidateOrthogonalGraphEdgeOrientationView,
     RoutePathCandidateOrthogonalGraphExplainBlockedEdge,
@@ -217,6 +238,75 @@ pub use self::route_path_candidate_orthogonal_graph_via_explain::{
     RoutePathCandidateOrthogonalGraphViaExplainSegment,
     RoutePathCandidateOrthogonalGraphViaExplainSelectedVia,
     RoutePathCandidateOrthogonalGraphViaExplainSummary,
+};
+pub use self::route_path_candidate_orthogonal_graph_two_via::{
+    RoutePathCandidateOrthogonalGraphTwoViaPath, RoutePathCandidateOrthogonalGraphTwoViaReport,
+    RoutePathCandidateOrthogonalGraphTwoViaSegment,
+    RoutePathCandidateOrthogonalGraphTwoViaSummary,
+};
+pub use self::route_path_candidate_orthogonal_graph_two_via_explain::{
+    RoutePathCandidateOrthogonalGraphTwoViaExplainBlockedPair,
+    RoutePathCandidateOrthogonalGraphTwoViaExplainKind,
+    RoutePathCandidateOrthogonalGraphTwoViaExplainReport,
+    RoutePathCandidateOrthogonalGraphTwoViaExplainSegment,
+    RoutePathCandidateOrthogonalGraphTwoViaExplainSelectedPair,
+    RoutePathCandidateOrthogonalGraphTwoViaExplainSummary,
+};
+pub use self::route_path_candidate_orthogonal_graph_three_via::{
+    RoutePathCandidateOrthogonalGraphThreeViaPath,
+    RoutePathCandidateOrthogonalGraphThreeViaReport,
+    RoutePathCandidateOrthogonalGraphThreeViaSegment,
+    RoutePathCandidateOrthogonalGraphThreeViaSummary,
+};
+pub use self::route_path_candidate_orthogonal_graph_three_via_explain::{
+    RoutePathCandidateOrthogonalGraphThreeViaExplainBlockedTriple,
+    RoutePathCandidateOrthogonalGraphThreeViaExplainKind,
+    RoutePathCandidateOrthogonalGraphThreeViaExplainReport,
+    RoutePathCandidateOrthogonalGraphThreeViaExplainSegment,
+    RoutePathCandidateOrthogonalGraphThreeViaExplainSelectedTriple,
+    RoutePathCandidateOrthogonalGraphThreeViaExplainSummary,
+};
+pub use self::route_path_candidate_orthogonal_graph_four_via::{
+    RoutePathCandidateOrthogonalGraphFourViaPath,
+    RoutePathCandidateOrthogonalGraphFourViaReport,
+    RoutePathCandidateOrthogonalGraphFourViaSegment,
+    RoutePathCandidateOrthogonalGraphFourViaSummary,
+};
+pub use self::route_path_candidate_orthogonal_graph_four_via_explain::{
+    RoutePathCandidateOrthogonalGraphFourViaExplainBlockedQuadruple,
+    RoutePathCandidateOrthogonalGraphFourViaExplainKind,
+    RoutePathCandidateOrthogonalGraphFourViaExplainReport,
+    RoutePathCandidateOrthogonalGraphFourViaExplainSegment,
+    RoutePathCandidateOrthogonalGraphFourViaExplainSelectedQuadruple,
+    RoutePathCandidateOrthogonalGraphFourViaExplainSummary,
+};
+pub use self::route_path_candidate_orthogonal_graph_five_via::{
+    RoutePathCandidateOrthogonalGraphFiveViaPath,
+    RoutePathCandidateOrthogonalGraphFiveViaReport,
+    RoutePathCandidateOrthogonalGraphFiveViaSegment,
+    RoutePathCandidateOrthogonalGraphFiveViaSummary,
+};
+pub use self::route_path_candidate_orthogonal_graph_five_via_explain::{
+    RoutePathCandidateOrthogonalGraphFiveViaExplainBlockedQuintuple,
+    RoutePathCandidateOrthogonalGraphFiveViaExplainKind,
+    RoutePathCandidateOrthogonalGraphFiveViaExplainReport,
+    RoutePathCandidateOrthogonalGraphFiveViaExplainSegment,
+    RoutePathCandidateOrthogonalGraphFiveViaExplainSelectedQuintuple,
+    RoutePathCandidateOrthogonalGraphFiveViaExplainSummary,
+};
+pub use self::route_path_candidate_orthogonal_graph_six_via::{
+    RoutePathCandidateOrthogonalGraphSixViaPath,
+    RoutePathCandidateOrthogonalGraphSixViaReport,
+    RoutePathCandidateOrthogonalGraphSixViaSegment,
+    RoutePathCandidateOrthogonalGraphSixViaSummary,
+};
+pub use self::route_path_candidate_orthogonal_graph_six_via_explain::{
+    RoutePathCandidateOrthogonalGraphSixViaExplainBlockedSextuple,
+    RoutePathCandidateOrthogonalGraphSixViaExplainKind,
+    RoutePathCandidateOrthogonalGraphSixViaExplainReport,
+    RoutePathCandidateOrthogonalGraphSixViaExplainSegment,
+    RoutePathCandidateOrthogonalGraphSixViaExplainSelectedSextuple,
+    RoutePathCandidateOrthogonalGraphSixViaExplainSummary,
 };
 pub use self::route_path_candidate_authored_copper_graph::{
     RoutePathCandidateAuthoredCopperGraphPath,

@@ -111,6 +111,46 @@ pub(crate) fn apply_native_project_route(
                 to_anchor_pad_uuid,
             )?
         }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphTwoVia => {
+            super::build_route_path_candidate_orthogonal_graph_two_via_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )?
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphThreeVia => {
+            super::build_route_path_candidate_orthogonal_graph_three_via_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )?
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphFourVia => {
+            super::build_route_path_candidate_orthogonal_graph_four_via_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )?
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphFiveVia => {
+            super::build_route_path_candidate_orthogonal_graph_five_via_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )?
+        }
+        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphSixVia => {
+            super::build_route_path_candidate_orthogonal_graph_six_via_proposal_actions(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )?
+        }
         NativeProjectRouteApplyCandidateArg::AuthoredCopperPlusOneGap => {
             super::build_plus_one_gap_route_proposal_actions(
                 root,

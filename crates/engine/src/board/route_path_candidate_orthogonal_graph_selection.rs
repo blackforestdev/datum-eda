@@ -1,5 +1,7 @@
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::cmp::Ordering;
+use std::collections::HashMap;
 
+use serde::{Deserialize, Serialize};
 use crate::board::{
     Board, RouteCorridorObstacleGeometry, RouteCorridorObstacleKind, RouteCorridorSpanBlockage,
     RoutePreflightAnchor, StackupLayer,
@@ -10,9 +12,16 @@ use uuid::Uuid;
 
 use super::route_segment_blockage::analyze_route_segment;
 
-pub(super) const ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_SELECTION_RULE: &str = "select the first unblocked same-layer orthogonal graph path after building a deterministic graph from intersections of persisted board-outline, anchor, and authored-object x/y coordinates on the candidate layer, connecting clear same-layer orthogonal spans only, then breadth-first searching layer order with neighbor order horizontal before vertical and destination coordinate ascending";
+pub(super) const ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_SELECTION_RULE: &str = "select the lowest-cost unblocked same-layer orthogonal graph path after building a deterministic graph from intersections of persisted board-outline, anchor, and authored-object x/y coordinates on the candidate layer, connecting clear same-layer orthogonal spans only, then ranking candidate graph paths by bend count ascending, segment count ascending, and point-sequence coordinate ascending";
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoutePathCandidateOrthogonalGraphPathCost {
+    pub bend_count: usize,
+    pub segment_count: usize,
+    pub point_count: usize,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(super) enum OrthogonalGraphEdgeOrientation {
     Horizontal,
     Vertical,
@@ -136,6 +145,18 @@ pub(super) fn search_orthogonal_graph_layer(
         edge_count,
         blocked_edges,
         path,
+    }
+}
+
+pub(super) fn orthogonal_graph_path_cost(points: &[Point]) -> RoutePathCandidateOrthogonalGraphPathCost {
+    let bend_count = points
+        .windows(3)
+        .filter(|window| orientation_between(window[0], window[1]) != orientation_between(window[1], window[2]))
+        .count();
+    RoutePathCandidateOrthogonalGraphPathCost {
+        bend_count,
+        segment_count: points.len().saturating_sub(1),
+        point_count: points.len(),
     }
 }
 
@@ -270,54 +291,166 @@ fn obstacle_coordinates(obstacle: &RouteCorridorObstacleGeometry, x_axis: bool) 
     coordinates
 }
 
-fn shortest_path(
-    adjacency: &HashMap<Point, Vec<GraphNeighbor>>,
-    from: Point,
-    to: Point,
-) -> Option<Vec<Point>> {
-    let mut queue = VecDeque::from([from]);
-    let mut visited = HashSet::from([from]);
-    let mut previous: HashMap<Point, Point> = HashMap::new();
+fn shortest_path(adjacency: &HashMap<Point, Vec<GraphNeighbor>>, from: Point, to: Point) -> Option<Vec<Point>> {
+    let mut frontier = vec![GraphSearchState {
+        point: from,
+        last_orientation: None,
+        bends: 0,
+        segments: 0,
+        points: vec![from],
+    }];
+    let mut best_state_costs: HashMap<(Point, Option<OrthogonalGraphEdgeOrientation>), GraphPathCost> =
+        HashMap::from([(
+            (from, None),
+            GraphPathCost {
+                bends: 0,
+                segments: 0,
+                points: vec![from],
+            },
+        )]);
+    let mut best_target: Option<GraphPathCost> = None;
 
-    while let Some(current) = queue.pop_front() {
-        if current == to {
-            break;
+    while !frontier.is_empty() {
+        frontier.sort_by(compare_graph_search_state);
+        let current = frontier.remove(0);
+        let current_cost = GraphPathCost {
+            bends: current.bends,
+            segments: current.segments,
+            points: current.points.clone(),
+        };
+        if best_state_costs
+            .get(&(current.point, current.last_orientation))
+            .is_some_and(|best| compare_graph_path_cost(best, &current_cost) != Ordering::Equal)
+        {
+            continue;
+        }
+        if best_target
+            .as_ref()
+            .is_some_and(|best| compare_graph_path_cost(&current_cost, best) == Ordering::Greater)
+        {
+            continue;
+        }
+        if current.point == to {
+            if best_target
+                .as_ref()
+                .is_none_or(|best| compare_graph_path_cost(&current_cost, best) == Ordering::Less)
+            {
+                best_target = Some(current_cost);
+            }
+            continue;
         }
         for neighbor in adjacency
-            .get(&current)
+            .get(&current.point)
             .into_iter()
             .flatten()
             .copied()
         {
-            if visited.insert(neighbor.to) {
-                previous.insert(neighbor.to, current);
-                queue.push_back(neighbor.to);
+            if current.points.contains(&neighbor.to) {
+                continue;
+            }
+            let next_state = GraphSearchState {
+                point: neighbor.to,
+                last_orientation: Some(neighbor.orientation),
+                bends: current.bends
+                    + usize::from(
+                        current
+                            .last_orientation
+                            .is_some_and(|orientation| orientation != neighbor.orientation),
+                    ),
+                segments: current.segments + 1,
+                points: current
+                    .points
+                    .iter()
+                    .copied()
+                    .chain(std::iter::once(neighbor.to))
+                    .collect(),
+            };
+            let next_cost = GraphPathCost {
+                bends: next_state.bends,
+                segments: next_state.segments,
+                points: next_state.points.clone(),
+            };
+            if best_target
+                .as_ref()
+                .is_some_and(|best| compare_graph_path_cost(&next_cost, best) == Ordering::Greater)
+            {
+                continue;
+            }
+            let entry = best_state_costs.entry((next_state.point, next_state.last_orientation));
+            let should_replace = match entry {
+                std::collections::hash_map::Entry::Occupied(ref occupied) => {
+                    compare_graph_path_cost(&next_cost, occupied.get()) == Ordering::Less
+                }
+                std::collections::hash_map::Entry::Vacant(_) => true,
+            };
+            if should_replace {
+                entry.and_modify(|best| *best = next_cost.clone())
+                    .or_insert(next_cost);
+                frontier.push(next_state);
             }
         }
     }
 
-    if !visited.contains(&to) {
-        return None;
-    }
-
-    let mut path = vec![to];
-    let mut cursor = to;
-    while cursor != from {
-        cursor = *previous.get(&cursor)?;
-        path.push(cursor);
-    }
-    path.reverse();
-    Some(path)
+    best_target.map(|cost| cost.points)
 }
 
-fn compare_neighbors(left: GraphNeighbor, right: GraphNeighbor) -> std::cmp::Ordering {
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct GraphSearchState {
+    point: Point,
+    last_orientation: Option<OrthogonalGraphEdgeOrientation>,
+    bends: usize,
+    segments: usize,
+    points: Vec<Point>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct GraphPathCost {
+    bends: usize,
+    segments: usize,
+    points: Vec<Point>,
+}
+
+fn compare_graph_search_state(left: &GraphSearchState, right: &GraphSearchState) -> Ordering {
+    compare_graph_path_cost(
+        &GraphPathCost {
+            bends: left.bends,
+            segments: left.segments,
+            points: left.points.clone(),
+        },
+        &GraphPathCost {
+            bends: right.bends,
+            segments: right.segments,
+            points: right.points.clone(),
+        },
+    )
+    .then_with(|| left.point.x.cmp(&right.point.x))
+    .then_with(|| left.point.y.cmp(&right.point.y))
+    .then_with(|| left.last_orientation.cmp(&right.last_orientation))
+}
+
+fn compare_graph_path_cost(left: &GraphPathCost, right: &GraphPathCost) -> Ordering {
+    left.bends
+        .cmp(&right.bends)
+        .then_with(|| left.segments.cmp(&right.segments))
+        .then_with(|| compare_points(&left.points, &right.points))
+}
+
+fn orientation_between(from: Point, to: Point) -> OrthogonalGraphEdgeOrientation {
+    if from.y == to.y {
+        OrthogonalGraphEdgeOrientation::Horizontal
+    } else {
+        OrthogonalGraphEdgeOrientation::Vertical
+    }
+}
+
+fn compare_neighbors(left: GraphNeighbor, right: GraphNeighbor) -> Ordering {
     left.orientation
         .cmp(&right.orientation)
         .then_with(|| left.to.x.cmp(&right.to.x))
         .then_with(|| left.to.y.cmp(&right.to.y))
 }
 
-fn compare_points(left: &[Point], right: &[Point]) -> std::cmp::Ordering {
+fn compare_points(left: &[Point], right: &[Point]) -> Ordering {
     for (left_point, right_point) in left.iter().zip(right.iter()) {
         let ordering = left_point
             .x

@@ -4,7 +4,7 @@ use crate::board::*;
 use crate::ir::geometry::Point;
 use uuid::Uuid;
 
-fn demo_board() -> (
+pub(super) fn demo_board() -> (
     Board,
     Uuid,
     Uuid,

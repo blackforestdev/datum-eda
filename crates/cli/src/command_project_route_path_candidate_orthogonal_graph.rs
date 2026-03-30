@@ -45,9 +45,13 @@ pub(crate) fn render_native_project_route_path_candidate_orthogonal_graph_text(
     if let Some(path) = &report.path {
         lines.push(format!("path_layer: {}", path.layer));
         lines.push(format!("path_points: {}", path.points.len()));
+        lines.push(format!("path_bends: {}", path.cost.bend_count));
+        lines.push(format!("path_segments: {}", path.cost.segment_count));
     } else {
         lines.push("path_layer: none".to_string());
         lines.push("path_points: 0".to_string());
+        lines.push("path_bends: 0".to_string());
+        lines.push("path_segments: 0".to_string());
     }
     lines.join("\n")
 }

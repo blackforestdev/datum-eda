@@ -3,11 +3,14 @@ use uuid::Uuid;
 
 use crate::board::{
     Board, RouteCorridorSpanBlockage, RoutePathCandidateError,
+    RoutePathCandidateOrthogonalGraphPathCost,
     RoutePathCandidateOrthogonalGraphViaReport, RoutePathCandidateStatus, StackupLayer,
 };
 use crate::ir::geometry::{LayerId, Point};
 
-use super::route_path_candidate_orthogonal_graph_selection::search_orthogonal_graph_layer;
+use super::route_path_candidate_orthogonal_graph_selection::{
+    orthogonal_graph_path_cost, search_orthogonal_graph_layer,
+};
 use super::route_path_candidate_via_selection::{
     candidate_vias_for_net, via_matches_anchor_layers,
 };
@@ -24,6 +27,7 @@ pub enum RoutePathCandidateOrthogonalGraphViaExplainKind {
 pub struct RoutePathCandidateOrthogonalGraphViaExplainSegment {
     pub layer: LayerId,
     pub points: Vec<Point>,
+    pub cost: RoutePathCandidateOrthogonalGraphPathCost,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -139,13 +143,15 @@ impl Board {
                 source_segment: RoutePathCandidateOrthogonalGraphViaExplainSegment {
                     layer: from_anchor.layer,
                     points: source_search.path.clone()?,
+                    cost: orthogonal_graph_path_cost(source_search.path.as_ref()?),
                 },
                 target_segment: RoutePathCandidateOrthogonalGraphViaExplainSegment {
                     layer: to_anchor.layer,
                     points: target_search.path.clone()?,
+                    cost: orthogonal_graph_path_cost(target_search.path.as_ref()?),
                 },
                 selection_reason: format!(
-                    "selected because it is the first matching authored via whose source-layer and target-layer orthogonal graph searches both yield deterministic paths between layers {} and {}",
+                    "selected because it is the first matching authored via whose source-layer and target-layer orthogonal graph searches both yield deterministic paths between layers {} and {}; each layer-side path is the lowest-cost graph path under the accepted ranking rule",
                     from_anchor.layer, to_anchor.layer
                 ),
             })
@@ -161,15 +167,19 @@ impl Board {
                     via_uuid: via.uuid,
                     via_position: via.position,
                     source_segment: source_search.path.clone().map(|points| {
+                        let cost = orthogonal_graph_path_cost(&points);
                         RoutePathCandidateOrthogonalGraphViaExplainSegment {
                             layer: from_anchor.layer,
                             points,
+                            cost,
                         }
                     }),
                     target_segment: target_search.path.clone().map(|points| {
+                        let cost = orthogonal_graph_path_cost(&points);
                         RoutePathCandidateOrthogonalGraphViaExplainSegment {
                             layer: to_anchor.layer,
                             points,
+                            cost,
                         }
                     }),
                     source_blockages: source_search

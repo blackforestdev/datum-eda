@@ -5,7 +5,7 @@
 >
 > Legend: `[x]` done, `[~]` partial, `[ ]` not started, `[—]` deferred/N/A
 
-Last updated: 2026-03-28
+Last updated: 2026-03-30
 
 ---
 
@@ -466,6 +466,23 @@ Status: [~] In progress
     <pad_uuid> --to-anchor <pad_uuid> --candidate
     route-path-candidate-orthogonal-graph-via`, with the paired explanation
     surface under `route-path-candidate-explain`
+  - that same bounded cross-layer graph-search lane now also covers `project
+    query <dir> route-path-candidate --net <uuid> --from-anchor <pad_uuid>
+    --to-anchor <pad_uuid> --candidate
+    route-path-candidate-orthogonal-graph-two-via`, with the paired
+    explanation surface under `route-path-candidate-explain`
+  - that same bounded cross-layer graph-search lane now also covers the
+    remaining authored-via graph sequence via `project query <dir>
+    route-path-candidate --net <uuid> --from-anchor <pad_uuid> --to-anchor
+    <pad_uuid> --candidate
+    route-path-candidate-orthogonal-graph-three-via|route-path-candidate-orthogonal-graph-four-via|route-path-candidate-orthogonal-graph-five-via|route-path-candidate-orthogonal-graph-six-via`,
+    with the paired explanation surface under `route-path-candidate-explain`
+  - the shared orthogonal graph selector now uses an explicit deterministic
+    cost rule across that whole family: bend count ascending, then segment
+    count ascending, then point-sequence coordinate ascending
+  - the same orthogonal graph query and explanation reports now expose that
+    selected path cost directly as bend/segment/point counts on the returned
+    path or per-segment path data
 - Current M5 existing-copper readback lane:
   - deterministic authored-copper graph path queries now exist in
     increasingly filtered/readback-focused forms recorded in
@@ -534,6 +551,14 @@ Status: [~] In progress
     one-authored-via orthogonal graph contract via `project route-apply <dir>
     --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
     route-path-candidate-orthogonal-graph-via`
+  - that same direct convenience apply lane now also covers the accepted
+    two-authored-via orthogonal graph contract via `project route-apply <dir>
+    --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+    route-path-candidate-orthogonal-graph-two-via`
+  - that same direct convenience apply lane now also covers the remaining
+    authored-via orthogonal graph sequence via `project route-apply <dir>
+    --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+    route-path-candidate-orthogonal-graph-three-via|route-path-candidate-orthogonal-graph-four-via|route-path-candidate-orthogonal-graph-five-via|route-path-candidate-orthogonal-graph-six-via`
   - a bounded convenience export surface now also exists for the completed
     write-capable route family via `project export-route-path-proposal <dir>
     --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate

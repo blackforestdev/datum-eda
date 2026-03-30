@@ -194,6 +194,16 @@ Currently tracked native contracts that are not implemented in MCP:
 - `project query <dir> route-path-candidate-orthogonal-graph-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
 - `project query <dir> route-path-candidate-orthogonal-graph-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
 - `project query <dir> route-path-candidate-orthogonal-graph-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-orthogonal-graph-two-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-orthogonal-graph-two-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-orthogonal-graph-three-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-orthogonal-graph-three-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-orthogonal-graph-four-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-orthogonal-graph-four-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-orthogonal-graph-five-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-orthogonal-graph-five-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-orthogonal-graph-six-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project query <dir> route-path-candidate-orthogonal-graph-six-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
 - `project query <dir> route-path-candidate-authored-copper-graph --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --policy <policy>`
 - `project query <dir> route-path-candidate-authored-copper-graph-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --policy <policy>`
 - `project query <dir> route-path-candidate-authored-copper-graph-zone-aware --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`

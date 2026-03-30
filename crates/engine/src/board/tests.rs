@@ -77,6 +77,26 @@ mod route_path_candidate_orthogonal_graph_explain;
 mod route_path_candidate_orthogonal_graph_via;
 #[path = "tests/mod_tests_route_path_candidate_orthogonal_graph_via_explain.rs"]
 mod route_path_candidate_orthogonal_graph_via_explain;
+#[path = "tests/mod_tests_route_path_candidate_orthogonal_graph_two_via.rs"]
+mod route_path_candidate_orthogonal_graph_two_via;
+#[path = "tests/mod_tests_route_path_candidate_orthogonal_graph_two_via_explain.rs"]
+mod route_path_candidate_orthogonal_graph_two_via_explain;
+#[path = "tests/mod_tests_route_path_candidate_orthogonal_graph_three_via.rs"]
+mod route_path_candidate_orthogonal_graph_three_via;
+#[path = "tests/mod_tests_route_path_candidate_orthogonal_graph_three_via_explain.rs"]
+mod route_path_candidate_orthogonal_graph_three_via_explain;
+#[path = "tests/mod_tests_route_path_candidate_orthogonal_graph_four_via.rs"]
+mod route_path_candidate_orthogonal_graph_four_via;
+#[path = "tests/mod_tests_route_path_candidate_orthogonal_graph_four_via_explain.rs"]
+mod route_path_candidate_orthogonal_graph_four_via_explain;
+#[path = "tests/mod_tests_route_path_candidate_orthogonal_graph_five_via.rs"]
+mod route_path_candidate_orthogonal_graph_five_via;
+#[path = "tests/mod_tests_route_path_candidate_orthogonal_graph_five_via_explain.rs"]
+mod route_path_candidate_orthogonal_graph_five_via_explain;
+#[path = "tests/mod_tests_route_path_candidate_orthogonal_graph_six_via.rs"]
+mod route_path_candidate_orthogonal_graph_six_via;
+#[path = "tests/mod_tests_route_path_candidate_orthogonal_graph_six_via_explain.rs"]
+mod route_path_candidate_orthogonal_graph_six_via_explain;
 #[path = "tests/mod_tests_route_path_candidate_five_via.rs"]
 mod route_path_candidate_five_via;
 #[path = "tests/mod_tests_route_path_candidate_five_via_explain.rs"]

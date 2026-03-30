@@ -4,7 +4,7 @@ use crate::board::*;
 use crate::ir::geometry::Point;
 use uuid::Uuid;
 
-fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
+pub(super) fn demo_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
     let net_uuid = Uuid::from_u128(0xf70);
     let other_net_uuid = Uuid::from_u128(0xf71);
     let class_uuid = Uuid::from_u128(0xf72);

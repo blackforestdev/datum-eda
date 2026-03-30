@@ -3,12 +3,14 @@ use uuid::Uuid;
 
 use crate::board::{
     Board, RouteCorridorSpanBlockage, RoutePathCandidateError,
-    RoutePathCandidateOrthogonalGraphReport, RoutePathCandidateStatus, StackupLayer,
+    RoutePathCandidateOrthogonalGraphPathCost, RoutePathCandidateOrthogonalGraphReport,
+    RoutePathCandidateStatus, StackupLayer,
 };
 use crate::ir::geometry::{LayerId, Point};
 
 use super::route_path_candidate_orthogonal_graph_selection::{
     OrthogonalGraphEdgeOrientation, candidate_orthogonal_graph_layer_searches,
+    orthogonal_graph_path_cost,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -30,6 +32,7 @@ pub enum RoutePathCandidateOrthogonalGraphEdgeOrientationView {
 pub struct RoutePathCandidateOrthogonalGraphExplainSelectedPath {
     pub layer: LayerId,
     pub points: Vec<Point>,
+    pub cost: RoutePathCandidateOrthogonalGraphPathCost,
     pub selection_reason: String,
 }
 
@@ -116,8 +119,9 @@ impl Board {
                 RoutePathCandidateOrthogonalGraphExplainSelectedPath {
                     layer: search.layer,
                     points: points.clone(),
+                    cost: orthogonal_graph_path_cost(points),
                     selection_reason: format!(
-                        "selected because it is the first reachable same-layer orthogonal graph path under the deterministic graph-search rule on layer {}",
+                        "selected because it is the lowest-cost reachable same-layer orthogonal graph path under the deterministic graph-search rule on layer {}",
                         search.layer
                     ),
                 }

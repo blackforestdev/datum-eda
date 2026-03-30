@@ -1234,8 +1234,8 @@ Next explicit contract selected on 2026-03-30:
     present on that layer
   - build a same-layer orthogonal graph from clear spans between those
     persisted-coordinate intersections only
-  - breadth-first search in layer order with neighbor order `horizontal`
-    before `vertical`, then destination coordinate ascending
+  - rank graph paths by bend count ascending, then segment count ascending,
+    then point-sequence coordinate ascending
 - non-goals:
   - no vias or layer transitions
   - no invented routing grid or inferred coordinates
@@ -1255,6 +1255,11 @@ Adjacent native convenience-apply slice implemented on 2026-03-30:
 - the accepted deterministic same-layer orthogonal graph contract now also has
   a direct apply surface:
   - `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-graph`
+- the orthogonal graph report and explanation surfaces now also expose the
+  selected path cost explicitly as:
+  - `bend_count`
+  - `segment_count`
+  - `point_count`
 
 Next explicit contract selected on 2026-03-30:
 - deterministic one-authored-via orthogonal graph path candidate
@@ -1288,6 +1293,64 @@ Adjacent native convenience-apply slice implemented on 2026-03-30:
 - the accepted deterministic one-authored-via orthogonal graph contract now
   also has a direct apply surface:
   - `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-graph-via`
+
+Next explicit contract selected on 2026-03-30:
+- deterministic two-authored-via orthogonal graph path candidate
+  `project query <dir> route-path-candidate --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-graph-two-via`
+- input: persisted native board state only
+- output:
+  - current single-net source/target anchor pair on different copper layers
+  - explicit status exactly one of:
+    - `deterministic_path_found`
+    - `no_path_under_current_authored_constraints`
+  - when found, exactly one deterministic cross-layer path that reuses exactly
+    two authored target-net vias and uses persisted-coordinate orthogonal graph
+    search on each of the three layer-side segments
+- deterministic rule:
+  - candidate transition set is limited to authored target-net via pairs only
+  - matching via pairs are ordered by ascending `(via_a_uuid, via_b_uuid)` and
+    must connect the requested anchor layers through one intermediate copper
+    layer
+  - each layer-side segment reuses the accepted persisted-coordinate
+    orthogonal graph search rule without inventing coordinates or creating vias
+
+Follow-on explanation surface selected on 2026-03-30:
+- deterministic two-authored-via orthogonal graph explanation
+  `project query <dir> route-path-candidate-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-graph-two-via`
+
+Adjacent write-capable route-application slice implemented on 2026-03-30:
+- deterministic route proposal artifact export for the accepted
+  two-authored-via orthogonal graph contract
+  - canonical surface: `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-graph-two-via --out <path>`
+
+Adjacent native convenience-apply slice implemented on 2026-03-30:
+- the accepted deterministic two-authored-via orthogonal graph contract now
+  also has a direct apply surface:
+  - `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate route-path-candidate-orthogonal-graph-two-via`
+
+Completed bounded authored-via orthogonal graph family on 2026-03-30:
+- the same deterministic persisted-coordinate orthogonal graph contract now
+  also spans the remaining bounded authored-via sequence:
+  - `route-path-candidate-orthogonal-graph-three-via`
+  - `route-path-candidate-orthogonal-graph-four-via`
+  - `route-path-candidate-orthogonal-graph-five-via`
+  - `route-path-candidate-orthogonal-graph-six-via`
+- each contract keeps the same boundary:
+  - persisted native board state only
+  - reuse exactly the stated authored via count
+  - deterministic tuple ordering inherited from the matching ordinal via
+    selector
+  - one orthogonal graph search per layer-side segment only, with each segment
+    using the accepted bend-count then segment-count ranking rule
+  - no via creation, no invented coordinate grid, no push-shove
+- each report/explanation segment now also records the selected graph-path
+  cost explicitly as `bend_count`, `segment_count`, and `point_count`
+- each of those contracts now also has:
+  - the paired generic explanation surface under
+    `route-path-candidate-explain`
+  - route proposal artifact export through
+    `project export-route-path-proposal`
+  - direct native apply through `project route-apply`
 
 Poor candidates for the first `M5` slice:
 - full autorouter

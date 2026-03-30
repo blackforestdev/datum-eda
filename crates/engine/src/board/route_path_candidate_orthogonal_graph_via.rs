@@ -4,7 +4,10 @@ use uuid::Uuid;
 use crate::board::{Board, RoutePathCandidateError, RoutePathCandidateStatus, StackupLayer};
 use crate::ir::geometry::{LayerId, Point};
 
-use super::route_path_candidate_orthogonal_graph_selection::search_orthogonal_graph_layer;
+use super::route_path_candidate_orthogonal_graph_selection::{
+    RoutePathCandidateOrthogonalGraphPathCost, orthogonal_graph_path_cost,
+    search_orthogonal_graph_layer,
+};
 use super::route_path_candidate_via_selection::{
     ROUTE_PATH_CANDIDATE_VIA_SELECTION_RULE, candidate_vias_for_net, via_matches_anchor_layers,
 };
@@ -15,6 +18,7 @@ const ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_VIA_SELECTION_RULE: &str = "select t
 pub struct RoutePathCandidateOrthogonalGraphViaSegment {
     pub layer: LayerId,
     pub points: Vec<Point>,
+    pub cost: RoutePathCandidateOrthogonalGraphPathCost,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -126,10 +130,12 @@ impl Board {
                     RoutePathCandidateOrthogonalGraphViaSegment {
                         layer: from_anchor.layer,
                         points: source_search.path.clone()?,
+                        cost: orthogonal_graph_path_cost(source_search.path.as_ref()?),
                     },
                     RoutePathCandidateOrthogonalGraphViaSegment {
                         layer: to_anchor.layer,
                         points: target_search.path.clone()?,
+                        cost: orthogonal_graph_path_cost(target_search.path.as_ref()?),
                     },
                 ],
             })

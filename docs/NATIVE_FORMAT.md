@@ -297,13 +297,16 @@ Current live slice:
   route-path-candidate-orthogonal-graph` now reports a deterministic
   same-layer orthogonal graph path candidate built only from persisted
   board-outline, anchor, and authored-object coordinate lines already present
-  on the candidate layer.
+  on the candidate layer, with explicit path ranking by bend count, then
+  segment count, then point-sequence coordinate order. The selected path now
+  also reports `bend_count`, `segment_count`, and `point_count`.
 - `eda project query <dir> route-path-candidate-explain --net <uuid>
   --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
   route-path-candidate-orthogonal-graph` now reports the current orthogonal
   graph result as a deterministic explanation surface: selected multi-segment
   path when found, or whether the bounded persisted-coordinate graph had no
-  reachable same-layer path.
+  reachable same-layer path. The selected path now also reports
+  `bend_count`, `segment_count`, and `point_count`.
 - `eda project query <dir> route-path-candidate --net <uuid> --from-anchor
   <pad_uuid> --to-anchor <pad_uuid> --candidate
   route-path-candidate-orthogonal-graph-via` now reports a deterministic
@@ -317,6 +320,29 @@ Current live slice:
   selected authored via and its two layer-side graph paths when found, or
   whether no matching authored via existed versus all matching vias being
   blocked by side-search constraints.
+- `eda project query <dir> route-path-candidate --net <uuid> --from-anchor
+  <pad_uuid> --to-anchor <pad_uuid> --candidate
+  route-path-candidate-orthogonal-graph-two-via` now reports a deterministic
+  cross-layer path candidate that reuses exactly two authored target-net vias
+  and uses the accepted persisted-coordinate orthogonal graph search on each
+  of the three layer-side segments.
+- `eda project query <dir> route-path-candidate-explain --net <uuid>
+  --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
+  route-path-candidate-orthogonal-graph-two-via` now reports the current
+  orthogonal graph two-via result as a deterministic explanation surface:
+  selected authored via pair and its three layer-side graph paths when found,
+  or whether no matching authored via pair existed versus all matching pairs
+  being blocked by side-search constraints.
+- that same bounded cross-layer orthogonal graph family now also covers
+  `route-path-candidate-orthogonal-graph-three-via`,
+  `route-path-candidate-orthogonal-graph-four-via`,
+  `route-path-candidate-orthogonal-graph-five-via`, and
+  `route-path-candidate-orthogonal-graph-six-via`, with matching
+  `route-path-candidate-explain` surfaces. Each contract reuses exactly the
+  stated authored via count and applies persisted-coordinate orthogonal graph
+  search on each layer-side segment only, using that same deterministic path
+  ranking rule. Each selected layer-side path now also reports `bend_count`,
+  `segment_count`, and `point_count`.
 - The older contract-specific `route-path-candidate-*` and
   `route-path-candidate-*-explain` query spellings remain only as deprecated
   compatibility wrappers. The canonical route query and explanation entrypoints
@@ -449,6 +475,21 @@ Current live slice:
   deterministic cross-layer path around the reused authored via and
   materializes only the ordered `draw_track` sequence immediately without
   writing an intermediate artifact file.
+- `eda project route-apply <dir> --net <uuid> --from-anchor <pad_uuid>
+  --to-anchor <pad_uuid> --candidate
+  route-path-candidate-orthogonal-graph-two-via` now provides a direct
+  convenience apply surface for the accepted two-authored-via orthogonal
+  graph contract. It rebuilds the current live deterministic cross-layer path
+  around the reused authored via pair and materializes only the ordered
+  `draw_track` sequence immediately without writing an intermediate artifact
+  file.
+- that same direct convenience apply family now also covers
+  `route-path-candidate-orthogonal-graph-three-via`,
+  `route-path-candidate-orthogonal-graph-four-via`,
+  `route-path-candidate-orthogonal-graph-five-via`, and
+  `route-path-candidate-orthogonal-graph-six-via`, preserving the same
+  bounded contract: reuse authored vias only, rebuild the current deterministic
+  graph path live, and materialize ordered `draw_track` actions only.
 - `eda project route-apply` now takes a bounded `--candidate` value set rather
   than a free-form string, so only the accepted direct-apply families parse at
   the CLI boundary. `--policy` is required for `--candidate
