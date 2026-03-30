@@ -323,6 +323,147 @@ class FakeDaemonClientQueriesMixin:
             None,
         )
 
+    def route_proposal(
+        self,
+        path: str,
+        net_uuid: str,
+        from_anchor_pad_uuid: str,
+        to_anchor_pad_uuid: str,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "route_proposal",
+                {
+                    "path": path,
+                    "net_uuid": net_uuid,
+                    "from_anchor_pad_uuid": from_anchor_pad_uuid,
+                    "to_anchor_pad_uuid": to_anchor_pad_uuid,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            118,
+            {
+                "action": "route_proposal",
+                "path": path,
+                "net_uuid": net_uuid,
+                "selected_candidate": "route-path-candidate",
+                "selected_contract": "m5_route_path_candidate_v2",
+                "selection_reason": "first_selectable_candidate",
+                "evaluated_candidates": 2,
+            },
+            None,
+        )
+
+    def route_proposal_explain(
+        self,
+        path: str,
+        net_uuid: str,
+        from_anchor_pad_uuid: str,
+        to_anchor_pad_uuid: str,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "route_proposal_explain",
+                {
+                    "path": path,
+                    "net_uuid": net_uuid,
+                    "from_anchor_pad_uuid": from_anchor_pad_uuid,
+                    "to_anchor_pad_uuid": to_anchor_pad_uuid,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            119,
+            {
+                "action": "route_proposal_explain",
+                "path": path,
+                "net_uuid": net_uuid,
+                "selected_candidate": "route-path-candidate",
+                "selected_family": "route-path-candidate",
+                "families": [
+                    {
+                        "family": "route-path-candidate",
+                        "status": "selected",
+                        "reason": "first_selectable_candidate",
+                    },
+                    {
+                        "family": "authored-copper-graph",
+                        "status": "rejected",
+                        "reason": "policy_unavailable",
+                    },
+                ],
+            },
+            None,
+        )
+
+    def export_route_proposal(
+        self,
+        path: str,
+        net_uuid: str,
+        from_anchor_pad_uuid: str,
+        to_anchor_pad_uuid: str,
+        out: str,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "export_route_proposal",
+                {
+                    "path": path,
+                    "net_uuid": net_uuid,
+                    "from_anchor_pad_uuid": from_anchor_pad_uuid,
+                    "to_anchor_pad_uuid": to_anchor_pad_uuid,
+                    "out": out,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            120,
+            {
+                "action": "export_route_proposal",
+                "path": out,
+                "selected_candidate": "route-path-candidate",
+                "selected_contract": "m5_route_path_candidate_v2",
+                "artifact_kind": "native_route_proposal_artifact",
+            },
+            None,
+        )
+
+    def route_apply_selected(
+        self,
+        path: str,
+        net_uuid: str,
+        from_anchor_pad_uuid: str,
+        to_anchor_pad_uuid: str,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "route_apply_selected",
+                {
+                    "path": path,
+                    "net_uuid": net_uuid,
+                    "from_anchor_pad_uuid": from_anchor_pad_uuid,
+                    "to_anchor_pad_uuid": to_anchor_pad_uuid,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            121,
+            {
+                "action": "route_apply_selected",
+                "path": path,
+                "selected_candidate": "route-path-candidate",
+                "selected_contract": "m5_route_path_candidate_v2",
+                "proposal_actions": 1,
+                "applied_actions": 1,
+            },
+            None,
+        )
+
     def inspect_route_proposal_artifact(self, artifact: str) -> JsonRpcResponse:
         self.calls.append(("inspect_route_proposal_artifact", artifact))
         return JsonRpcResponse(

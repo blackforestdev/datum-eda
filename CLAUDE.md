@@ -148,9 +148,28 @@ project/
 │   └── test-harness/       # Perf/quality harnesses and helpers
 ├── mcp-server/             # MCP server (Python, talks to engine via IPC)
 ├── specs/                  # Controlling formal specifications
+│   ├── PROGRESS.md         # Authoritative milestone status tracker
+│   ├── ENGINE_SPEC.md      # Engine technical specification
+│   ├── PROGRAM_SPEC.md     # Program-level specification
+│   ├── INTEGRATED_PROGRAM_SPEC.md # Integrated program specification
+│   ├── NATIVE_FORMAT_SPEC.md # Native file format spec
+│   ├── IMPORT_SPEC.md      # Import functionality specification
+│   ├── MCP_API_SPEC.md     # MCP API contract (current vs target)
+│   ├── SCHEMATIC_EDITOR_SPEC.md # Schematic editor interface spec
+│   ├── CHECKING_ARCHITECTURE_SPEC.md # ERC/DRC architecture spec
+│   ├── ERC_SPEC.md         # ERC technical specification
+│   ├── SCHEMATIC_CONNECTIVITY_SPEC.md # Connectivity specification
+│   └── progress/           # Per-milestone detail shards (m3, m4, m5)
+├── scripts/                # Validation and governance scripts
+│   ├── check_alignment.py  # Cross-module alignment verification
+│   ├── check_file_size_budgets.py # File size constraint monitoring
+│   ├── check_decomposition_coverage.py # Decomposition completeness
+│   ├── check_progress_coverage.py # Progress tracking against plan
+│   └── run_drift_gates.sh  # Drift gate runner
+├── .github/                # CI/CD (alignment.yml) and PR template
 ├── tests/                  # Integration tests + regression corpus
 │   └── corpus/             # Real designs for golden testing
-└── research/               # Analysis artifacts
+└── research/               # Analysis artifacts (symlinks to sandbox)
 ```
 
 ## Non-Goals for v1 (v1 = M2)

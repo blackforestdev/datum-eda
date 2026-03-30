@@ -23,6 +23,24 @@ pub(super) fn execute_route_proposal_command(
             };
             Ok((output, 0))
         }
+        ProjectCommands::RouteProposalExplain(ProjectRouteProposalExplainArgs {
+            path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+        }) => {
+            let report = explain_native_project_route_proposal(
+                &path,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )?;
+            let output = match format {
+                OutputFormat::Text => render_native_route_proposal_explain_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
         ProjectCommands::ExportRouteProposal(ProjectExportRouteProposalArgs {
             path,
             net_uuid,

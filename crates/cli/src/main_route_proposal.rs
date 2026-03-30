@@ -34,6 +34,22 @@ pub(crate) struct NativeProjectRouteProposalSelectionView {
 }
 
 #[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectRouteProposalExplainView {
+    pub(crate) action: String,
+    pub(crate) project_root: String,
+    pub(crate) net_uuid: String,
+    pub(crate) from_anchor_pad_uuid: String,
+    pub(crate) to_anchor_pad_uuid: String,
+    pub(crate) status: String,
+    pub(crate) selection_rule: String,
+    pub(crate) selected_candidate: Option<String>,
+    pub(crate) selected_policy: Option<String>,
+    pub(crate) selected_contract: Option<String>,
+    pub(crate) explanation: String,
+    pub(crate) candidates: Vec<NativeProjectRouteProposalSelectionCandidateView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectSelectedRouteProposalExportView {
     pub(crate) action: String,
     pub(crate) project_root: String,
@@ -333,6 +349,70 @@ pub(super) fn render_native_route_proposal_selection_text(
             candidate
                 .selected_path_segment_count
                 .map(|value| value.to_string())
+                .unwrap_or_else(|| "none".to_string())
+        ));
+        lines.push(format!(
+            "message: {}",
+            candidate
+                .message
+                .clone()
+                .unwrap_or_else(|| "none".to_string())
+        ));
+    }
+    lines.join("\n")
+}
+
+pub(super) fn render_native_route_proposal_explain_text(
+    report: &NativeProjectRouteProposalExplainView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("net_uuid: {}", report.net_uuid),
+        format!("from_anchor_pad_uuid: {}", report.from_anchor_pad_uuid),
+        format!("to_anchor_pad_uuid: {}", report.to_anchor_pad_uuid),
+        format!("status: {}", report.status),
+        format!("selection_rule: {}", report.selection_rule),
+        format!(
+            "selected_candidate: {}",
+            report
+                .selected_candidate
+                .clone()
+                .unwrap_or_else(|| "none".to_string())
+        ),
+        format!(
+            "selected_policy: {}",
+            report
+                .selected_policy
+                .clone()
+                .unwrap_or_else(|| "none".to_string())
+        ),
+        format!(
+            "selected_contract: {}",
+            report
+                .selected_contract
+                .clone()
+                .unwrap_or_else(|| "none".to_string())
+        ),
+        format!("explanation: {}", report.explanation),
+        format!("candidates: {}", report.candidates.len()),
+    ];
+    for candidate in &report.candidates {
+        lines.push(String::new());
+        lines.push(format!("candidate: {}", candidate.candidate));
+        lines.push(format!(
+            "policy: {}",
+            candidate
+                .policy
+                .clone()
+                .unwrap_or_else(|| "none".to_string())
+        ));
+        lines.push(format!("selected: {}", candidate.selected));
+        lines.push(format!(
+            "contract: {}",
+            candidate
+                .contract
+                .clone()
                 .unwrap_or_else(|| "none".to_string())
         ));
         lines.push(format!(

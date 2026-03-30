@@ -658,6 +658,103 @@ class EngineDaemonClient:
         args.extend(["--out", out])
         return self._run_cli_json(request, args)
 
+    def route_proposal(
+        self,
+        path: str,
+        net_uuid: str,
+        from_anchor_pad_uuid: str,
+        to_anchor_pad_uuid: str,
+    ) -> JsonRpcResponse:
+        request = self.build_request(
+            "route_proposal",
+            {
+                "path": path,
+                "net_uuid": net_uuid,
+                "from_anchor_pad_uuid": from_anchor_pad_uuid,
+                "to_anchor_pad_uuid": to_anchor_pad_uuid,
+            },
+        )
+        return self._run_cli_json(
+            request,
+            [
+                "project",
+                "route-proposal",
+                path,
+                "--net",
+                net_uuid,
+                "--from-anchor",
+                from_anchor_pad_uuid,
+                "--to-anchor",
+                to_anchor_pad_uuid,
+            ],
+        )
+
+    def route_proposal_explain(
+        self,
+        path: str,
+        net_uuid: str,
+        from_anchor_pad_uuid: str,
+        to_anchor_pad_uuid: str,
+    ) -> JsonRpcResponse:
+        request = self.build_request(
+            "route_proposal_explain",
+            {
+                "path": path,
+                "net_uuid": net_uuid,
+                "from_anchor_pad_uuid": from_anchor_pad_uuid,
+                "to_anchor_pad_uuid": to_anchor_pad_uuid,
+            },
+        )
+        return self._run_cli_json(
+            request,
+            [
+                "project",
+                "route-proposal-explain",
+                path,
+                "--net",
+                net_uuid,
+                "--from-anchor",
+                from_anchor_pad_uuid,
+                "--to-anchor",
+                to_anchor_pad_uuid,
+            ],
+        )
+
+    def export_route_proposal(
+        self,
+        path: str,
+        net_uuid: str,
+        from_anchor_pad_uuid: str,
+        to_anchor_pad_uuid: str,
+        out: str,
+    ) -> JsonRpcResponse:
+        request = self.build_request(
+            "export_route_proposal",
+            {
+                "path": path,
+                "net_uuid": net_uuid,
+                "from_anchor_pad_uuid": from_anchor_pad_uuid,
+                "to_anchor_pad_uuid": to_anchor_pad_uuid,
+                "out": out,
+            },
+        )
+        return self._run_cli_json(
+            request,
+            [
+                "project",
+                "export-route-proposal",
+                path,
+                "--net",
+                net_uuid,
+                "--from-anchor",
+                from_anchor_pad_uuid,
+                "--to-anchor",
+                to_anchor_pad_uuid,
+                "--out",
+                out,
+            ],
+        )
+
     def route_apply(
         self,
         path: str,
@@ -694,6 +791,37 @@ class EngineDaemonClient:
         if policy is not None:
             args.extend(["--policy", policy])
         return self._run_cli_json(request, args)
+
+    def route_apply_selected(
+        self,
+        path: str,
+        net_uuid: str,
+        from_anchor_pad_uuid: str,
+        to_anchor_pad_uuid: str,
+    ) -> JsonRpcResponse:
+        request = self.build_request(
+            "route_apply_selected",
+            {
+                "path": path,
+                "net_uuid": net_uuid,
+                "from_anchor_pad_uuid": from_anchor_pad_uuid,
+                "to_anchor_pad_uuid": to_anchor_pad_uuid,
+            },
+        )
+        return self._run_cli_json(
+            request,
+            [
+                "project",
+                "route-apply-selected",
+                path,
+                "--net",
+                net_uuid,
+                "--from-anchor",
+                from_anchor_pad_uuid,
+                "--to-anchor",
+                to_anchor_pad_uuid,
+            ],
+        )
 
     def inspect_route_proposal_artifact(self, artifact: str) -> JsonRpcResponse:
         request = self.build_request(

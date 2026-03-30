@@ -536,6 +536,9 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     command,
                 ),
                 command @ ProjectCommands::RouteProposal(ProjectRouteProposalArgs { .. })
+                | command @ ProjectCommands::RouteProposalExplain(
+                    ProjectRouteProposalExplainArgs { .. },
+                )
                 | command @ ProjectCommands::ExportRouteProposal(ProjectExportRouteProposalArgs {
                     ..
                 })

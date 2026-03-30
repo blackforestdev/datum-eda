@@ -632,6 +632,65 @@ TOOLS: list[dict[str, Any]] = [
         },
     },
     {
+        "name": "route_proposal",
+        "description": "Select the current deterministic route proposal for one net and anchor pair.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"},
+                "net_uuid": {"type": "string"},
+                "from_anchor_pad_uuid": {"type": "string"},
+                "to_anchor_pad_uuid": {"type": "string"},
+            },
+            "required": [
+                "path",
+                "net_uuid",
+                "from_anchor_pad_uuid",
+                "to_anchor_pad_uuid",
+            ],
+        },
+    },
+    {
+        "name": "route_proposal_explain",
+        "description": "Explain family-level selection and rejection for the current deterministic route proposal.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"},
+                "net_uuid": {"type": "string"},
+                "from_anchor_pad_uuid": {"type": "string"},
+                "to_anchor_pad_uuid": {"type": "string"},
+            },
+            "required": [
+                "path",
+                "net_uuid",
+                "from_anchor_pad_uuid",
+                "to_anchor_pad_uuid",
+            ],
+        },
+    },
+    {
+        "name": "export_route_proposal",
+        "description": "Export the currently selected deterministic route proposal as a native route proposal artifact.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"},
+                "net_uuid": {"type": "string"},
+                "from_anchor_pad_uuid": {"type": "string"},
+                "to_anchor_pad_uuid": {"type": "string"},
+                "out": {"type": "string"},
+            },
+            "required": [
+                "path",
+                "net_uuid",
+                "from_anchor_pad_uuid",
+                "to_anchor_pad_uuid",
+                "out",
+            ],
+        },
+    },
+    {
         "name": "route_apply",
         "description": "Apply one accepted current deterministic route candidate directly into native board copper.",
         "inputSchema": {
@@ -683,6 +742,25 @@ TOOLS: list[dict[str, Any]] = [
                 "from_anchor_pad_uuid",
                 "to_anchor_pad_uuid",
                 "candidate",
+            ],
+        },
+    },
+    {
+        "name": "route_apply_selected",
+        "description": "Apply the currently selected deterministic route proposal directly to the current native project.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"},
+                "net_uuid": {"type": "string"},
+                "from_anchor_pad_uuid": {"type": "string"},
+                "to_anchor_pad_uuid": {"type": "string"},
+            },
+            "required": [
+                "path",
+                "net_uuid",
+                "from_anchor_pad_uuid",
+                "to_anchor_pad_uuid",
             ],
         },
     },

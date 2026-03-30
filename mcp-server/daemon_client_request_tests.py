@@ -523,6 +523,169 @@ class TestDaemonClientRequests(unittest.TestCase):
         self.assertEqual(response.result["applied_actions"], 1)
 
     @patch("server_runtime.subprocess.run")
+    def test_selects_route_proposal_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=(
+                '{"action":"route_proposal","selected_candidate":"route-path-candidate",'
+                '"selected_contract":"m5_route_path_candidate_v2"}'
+            ),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.route_proposal(
+            "/tmp/demo",
+            "11111111-1111-1111-1111-111111111111",
+            "22222222-2222-2222-2222-222222222222",
+            "33333333-3333-3333-3333-333333333333",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "route-proposal",
+                "/tmp/demo",
+                "--net",
+                "11111111-1111-1111-1111-111111111111",
+                "--from-anchor",
+                "22222222-2222-2222-2222-222222222222",
+                "--to-anchor",
+                "33333333-3333-3333-3333-333333333333",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "route_proposal")
+        self.assertEqual(response.result["selected_candidate"], "route-path-candidate")
+
+    @patch("server_runtime.subprocess.run")
+    def test_explains_route_proposal_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=(
+                '{"action":"route_proposal_explain","selected_candidate":"route-path-candidate",'
+                '"families":[{"family":"route-path-candidate","status":"selected"}]}'
+            ),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.route_proposal_explain(
+            "/tmp/demo",
+            "11111111-1111-1111-1111-111111111111",
+            "22222222-2222-2222-2222-222222222222",
+            "33333333-3333-3333-3333-333333333333",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "route-proposal-explain",
+                "/tmp/demo",
+                "--net",
+                "11111111-1111-1111-1111-111111111111",
+                "--from-anchor",
+                "22222222-2222-2222-2222-222222222222",
+                "--to-anchor",
+                "33333333-3333-3333-3333-333333333333",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "route_proposal_explain")
+        self.assertEqual(response.result["families"][0]["status"], "selected")
+
+    @patch("server_runtime.subprocess.run")
+    def test_exports_selected_route_proposal_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=(
+                '{"action":"export_route_proposal","selected_candidate":"route-path-candidate",'
+                '"artifact_kind":"native_route_proposal_artifact"}'
+            ),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.export_route_proposal(
+            "/tmp/demo",
+            "11111111-1111-1111-1111-111111111111",
+            "22222222-2222-2222-2222-222222222222",
+            "33333333-3333-3333-3333-333333333333",
+            "/tmp/demo.route-proposal.json",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "export-route-proposal",
+                "/tmp/demo",
+                "--net",
+                "11111111-1111-1111-1111-111111111111",
+                "--from-anchor",
+                "22222222-2222-2222-2222-222222222222",
+                "--to-anchor",
+                "33333333-3333-3333-3333-333333333333",
+                "--out",
+                "/tmp/demo.route-proposal.json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "export_route_proposal")
+        self.assertEqual(response.result["artifact_kind"], "native_route_proposal_artifact")
+
+    @patch("server_runtime.subprocess.run")
+    def test_applies_selected_route_proposal_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=(
+                '{"action":"route_apply_selected","proposal_actions":1,'
+                '"applied_actions":1}'
+            ),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.route_apply_selected(
+            "/tmp/demo",
+            "11111111-1111-1111-1111-111111111111",
+            "22222222-2222-2222-2222-222222222222",
+            "33333333-3333-3333-3333-333333333333",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "route-apply-selected",
+                "/tmp/demo",
+                "--net",
+                "11111111-1111-1111-1111-111111111111",
+                "--from-anchor",
+                "22222222-2222-2222-2222-222222222222",
+                "--to-anchor",
+                "33333333-3333-3333-3333-333333333333",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "route_apply_selected")
+        self.assertEqual(response.result["applied_actions"], 1)
+
+    @patch("server_runtime.subprocess.run")
     def test_inspects_route_proposal_artifact_via_cli(self, run_mock) -> None:
         run_mock.return_value = subprocess.CompletedProcess(
             args=[],

@@ -610,6 +610,12 @@ Status: [~] In progress
     <pad_uuid> --to-anchor <pad_uuid> --out <path>` and
     `project route-apply-selected <dir> --net <uuid> --from-anchor
     <pad_uuid> --to-anchor <pad_uuid>`
+  - that same selector now also has a bounded explanation surface via
+    `project route-proposal-explain <dir> --net <uuid> --from-anchor
+    <pad_uuid> --to-anchor <pad_uuid>`
+  - a narrow MCP parity reopening now covers the selector lane via
+    `route_proposal`, `route_proposal_explain`, `export_route_proposal`, and
+    `route_apply_selected`
   - the first artifact/export/apply write lane now covers:
     the accepted plus-one-gap bridge, the accepted single-layer
     `route-path-candidate` contract, and the accepted bounded single-via

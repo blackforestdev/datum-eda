@@ -1433,7 +1433,42 @@ Adjacent selected-proposal write lane implemented on 2026-03-30:
 - non-goals:
   - no new ranking or selector heuristics
   - no bypass of artifact drift checks
-  - no MCP parity reopening
+  - no broad MCP parity reopening
+
+Adjacent selector-explanation slice implemented on 2026-03-30:
+- deterministic selector explanation surface
+  - canonical surface:
+    `project route-proposal-explain <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- input: persisted native board state only
+- output:
+  - current selector status
+  - selected candidate family when present
+  - explicit explanation of why the winner was accepted under the deterministic
+    order
+  - family-level rejection or skipped notes for the remaining bounded selector
+    lane
+- deterministic rule:
+  - reuse the exact accepted selector order from `project route-proposal`
+  - explain the first successful family as the winner
+  - otherwise explain that no family produced a valid proposal action set
+- non-goals:
+  - no new candidate search
+  - no reranking beyond the accepted selector order
+  - no broad MCP parity reopening
+
+Adjacent selector-lane MCP parity reopening implemented on 2026-03-30:
+- narrow MCP exposure for the bounded selector family
+  - `route_proposal`
+  - `route_proposal_explain`
+  - `export_route_proposal`
+  - `route_apply_selected`
+- scope:
+  - expose the existing selector-backed native CLI lane to agent callers
+  - keep using CLI-backed MCP wrappers instead of reopening the full daemon
+    routing/query surface
+- non-goals:
+  - no broad native/MCP parity for the remaining M5 route/query commands
+  - no new selector heuristics or ranking semantics
 
 Poor candidates for the first `M5` slice:
 - full autorouter

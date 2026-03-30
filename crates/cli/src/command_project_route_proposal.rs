@@ -6,6 +6,7 @@ use crate::NativeProjectRouteApplySelectedView;
 use crate::NativeProjectRouteProposalArtifactInspectionSegmentView;
 use crate::NativeProjectRouteProposalArtifactRevalidationSegmentView;
 use crate::NativeProjectRouteProposalArtifactRevalidationView;
+use crate::NativeProjectRouteProposalExplainView;
 use crate::NativeProjectRouteProposalSelectionCandidateView;
 use crate::NativeProjectRouteProposalSelectionView;
 use crate::NativeProjectSelectedRouteProposalExportView;
@@ -428,6 +429,43 @@ pub(crate) fn select_native_project_route_proposal(
         to_anchor_pad_uuid,
     )?
     .report)
+}
+
+pub(crate) fn explain_native_project_route_proposal(
+    root: &Path,
+    net_uuid: Uuid,
+    from_anchor_pad_uuid: Uuid,
+    to_anchor_pad_uuid: Uuid,
+) -> Result<NativeProjectRouteProposalExplainView> {
+    let selection = run_native_project_route_proposal_selection(
+        root,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+    )?;
+    let explanation = if let Some(selected_candidate) = &selection.report.selected_candidate {
+        format!(
+            "selected {} because it was the first candidate in deterministic order that produced a valid proposal action set",
+            selected_candidate
+        )
+    } else {
+        "no candidate produced a valid proposal action set under current authored constraints"
+            .to_string()
+    };
+    Ok(NativeProjectRouteProposalExplainView {
+        action: "route_proposal_explain".to_string(),
+        project_root: selection.report.project_root,
+        net_uuid: selection.report.net_uuid,
+        from_anchor_pad_uuid: selection.report.from_anchor_pad_uuid,
+        to_anchor_pad_uuid: selection.report.to_anchor_pad_uuid,
+        status: selection.report.status,
+        selection_rule: selection.report.selection_rule,
+        selected_candidate: selection.report.selected_candidate,
+        selected_policy: selection.report.selected_policy,
+        selected_contract: selection.report.selected_contract,
+        explanation,
+        candidates: selection.report.candidates,
+    })
 }
 
 pub(crate) fn export_selected_native_project_route_proposal(

@@ -70,7 +70,11 @@ class TestProtocolCatalog(unittest.TestCase):
             "run_drc",
             "explain_violation",
             "export_route_path_proposal",
+            "route_proposal",
+            "route_proposal_explain",
+            "export_route_proposal",
             "route_apply",
+            "route_apply_selected",
             "inspect_route_proposal_artifact",
             "apply_route_proposal_artifact",
         ])

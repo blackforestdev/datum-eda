@@ -154,6 +154,28 @@ def dispatch_tool_call(daemon: Any, name: str, arguments: dict[str, Any]) -> Any
             arguments.get("policy"),
             arguments["out"],
         )
+    if name == "route_proposal":
+        return daemon.route_proposal(
+            arguments["path"],
+            arguments["net_uuid"],
+            arguments["from_anchor_pad_uuid"],
+            arguments["to_anchor_pad_uuid"],
+        )
+    if name == "route_proposal_explain":
+        return daemon.route_proposal_explain(
+            arguments["path"],
+            arguments["net_uuid"],
+            arguments["from_anchor_pad_uuid"],
+            arguments["to_anchor_pad_uuid"],
+        )
+    if name == "export_route_proposal":
+        return daemon.export_route_proposal(
+            arguments["path"],
+            arguments["net_uuid"],
+            arguments["from_anchor_pad_uuid"],
+            arguments["to_anchor_pad_uuid"],
+            arguments["out"],
+        )
     if name == "route_apply":
         return daemon.route_apply(
             arguments["path"],
@@ -162,6 +184,13 @@ def dispatch_tool_call(daemon: Any, name: str, arguments: dict[str, Any]) -> Any
             arguments["to_anchor_pad_uuid"],
             arguments["candidate"],
             arguments.get("policy"),
+        )
+    if name == "route_apply_selected":
+        return daemon.route_apply_selected(
+            arguments["path"],
+            arguments["net_uuid"],
+            arguments["from_anchor_pad_uuid"],
+            arguments["to_anchor_pad_uuid"],
         )
     if name == "inspect_route_proposal_artifact":
         return daemon.inspect_route_proposal_artifact(arguments["artifact"])

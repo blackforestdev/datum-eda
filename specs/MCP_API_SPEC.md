@@ -104,7 +104,11 @@ normalized MCP surface.
 `get_connectivity_diagnostics`, `get_design_rules`, `run_erc`, `run_drc`,
 `explain_violation`,
 `export_route_path_proposal`,
+`route_proposal`,
+`route_proposal_explain`,
+`export_route_proposal`,
 `route_apply`,
+`route_apply_selected`,
 `inspect_route_proposal_artifact`,
 `apply_route_proposal_artifact`.
 
@@ -134,8 +138,16 @@ Currently tracked native contracts that are not implemented in MCP:
   - exposed in MCP as `export_route_path_proposal`
   - orthogonal-graph export responses include recorded segment-level
     ranked-path evidence
+- `project route-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+  - exposed in MCP as `route_proposal`
+- `project route-proposal-explain <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+  - exposed in MCP as `route_proposal_explain`
+- `project export-route-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - exposed in MCP as `export_route_proposal`
 - `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate <accepted_candidate> [--policy <policy>]`
   - exposed in MCP as `route_apply`
+- `project route-apply-selected <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+  - exposed in MCP as `route_apply_selected`
 - `project inspect-route-proposal-artifact <path>`
   - exposed in MCP as `inspect_route_proposal_artifact`
   - orthogonal-graph inspection responses include recorded segment-level

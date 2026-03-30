@@ -348,6 +348,21 @@ pub(crate) struct ProjectRouteProposalArgs {
 }
 
 #[derive(clap::Args)]
+pub(crate) struct ProjectRouteProposalExplainArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Net UUID
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Uuid,
+    /// Source anchor pad UUID
+    #[arg(long = "from-anchor")]
+    pub(crate) from_anchor_pad_uuid: Uuid,
+    /// Target anchor pad UUID
+    #[arg(long = "to-anchor")]
+    pub(crate) to_anchor_pad_uuid: Uuid,
+}
+
+#[derive(clap::Args)]
 pub(crate) struct ProjectRouteApplySelectedArgs {
     /// Project root directory
     pub(crate) path: PathBuf,

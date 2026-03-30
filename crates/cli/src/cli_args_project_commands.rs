@@ -109,6 +109,8 @@ pub(crate) enum ProjectCommands {
     ApplyForwardAnnotationReviewed(ProjectApplyForwardAnnotationReviewedArgs),
     /// Select one deterministic current route proposal from the accepted candidate family order
     RouteProposal(ProjectRouteProposalArgs),
+    /// Explain how the deterministic current route proposal selector chose or rejected candidate families
+    RouteProposalExplain(ProjectRouteProposalExplainArgs),
     /// Export one deterministic route proposal artifact from the currently selected candidate family
     ExportRouteProposal(ProjectExportRouteProposalArgs),
     /// Export one deterministic route proposal artifact from one accepted current route-path candidate family
