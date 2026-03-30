@@ -1,6 +1,4 @@
-use crate::board::{
-    RoutePathCandidateOrthogonalGraphExplainKind, RoutePathCandidateStatus,
-};
+use crate::board::{RoutePathCandidateOrthogonalGraphExplainKind, RoutePathCandidateStatus};
 
 use super::route_path_candidate_orthogonal_graph::orthogonal_graph_board;
 
@@ -21,10 +19,7 @@ fn route_path_candidate_orthogonal_graph_explain_reports_selected_path_reasoning
         RoutePathCandidateOrthogonalGraphExplainKind::DeterministicPathFound
     );
     assert_eq!(
-        report
-            .selected_path
-            .as_ref()
-            .map(|path| path.points.len()),
+        report.selected_path.as_ref().map(|path| path.points.len()),
         Some(7)
     );
     assert_eq!(
@@ -34,6 +29,12 @@ fn route_path_candidate_orthogonal_graph_explain_reports_selected_path_reasoning
             .map(|path| path.cost.bend_count),
         Some(5)
     );
+    assert_eq!(report.segment_evidence.len(), 1);
+    assert_eq!(report.segment_evidence[0].layer_segment_index, 0);
+    assert_eq!(report.segment_evidence[0].layer_segment_count, 1);
+    assert_eq!(report.segment_evidence[0].bend_count, 5);
+    assert_eq!(report.segment_evidence[0].point_count, 7);
+    assert_eq!(report.segment_evidence[0].track_action_count, 6);
     assert!(report.blocked_edges.len() > 0);
 }
 
@@ -65,5 +66,6 @@ fn route_path_candidate_orthogonal_graph_explain_reports_blocked_graph() {
         RoutePathCandidateOrthogonalGraphExplainKind::AllGraphPathsBlocked
     );
     assert!(report.selected_path.is_none());
+    assert!(report.segment_evidence.is_empty());
     assert!(report.blocked_edges.len() > 0);
 }

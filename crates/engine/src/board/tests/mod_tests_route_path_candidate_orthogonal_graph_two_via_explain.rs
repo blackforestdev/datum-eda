@@ -1,6 +1,4 @@
-use crate::board::{
-    RoutePathCandidateOrthogonalGraphTwoViaExplainKind, RoutePathCandidateStatus,
-};
+use crate::board::{RoutePathCandidateOrthogonalGraphTwoViaExplainKind, RoutePathCandidateStatus};
 use uuid::Uuid;
 
 use super::route_path_candidate_orthogonal_graph_two_via::orthogonal_graph_two_via_board;
@@ -18,7 +16,10 @@ fn route_path_candidate_orthogonal_graph_two_via_explain_reports_selected_pair_r
         )
         .expect("orthogonal graph two-via explain should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(
         report.explanation_kind,
         RoutePathCandidateOrthogonalGraphTwoViaExplainKind::DeterministicPathFound

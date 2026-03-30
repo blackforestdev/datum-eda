@@ -223,14 +223,26 @@ fn route_path_candidate_orthogonal_graph_via_reports_deterministic_path_using_au
         .route_path_candidate_orthogonal_graph_via(net_uuid, anchor_top_uuid, anchor_bottom_uuid)
         .expect("orthogonal graph via should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.summary.candidate_via_count, 3);
     assert_eq!(report.summary.matching_via_count, 1);
     assert_eq!(report.summary.available_via_count, 1);
-    assert_eq!(report.path.as_ref().map(|path| path.via_uuid), Some(via_uuid));
-    assert_eq!(report.path.as_ref().map(|path| path.segments.len()), Some(2));
     assert_eq!(
-        report.path.as_ref().map(|path| path.segments[0].points.clone()),
+        report.path.as_ref().map(|path| path.via_uuid),
+        Some(via_uuid)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.segments.len()),
+        Some(2)
+    );
+    assert_eq!(
+        report
+            .path
+            .as_ref()
+            .map(|path| path.segments[0].points.clone()),
         Some(vec![
             Point::new(100_000, 100_000),
             Point::new(900_000, 100_000),
@@ -238,7 +250,10 @@ fn route_path_candidate_orthogonal_graph_via_reports_deterministic_path_using_au
         ])
     );
     assert_eq!(
-        report.path.as_ref().map(|path| path.segments[1].points.clone()),
+        report
+            .path
+            .as_ref()
+            .map(|path| path.segments[1].points.clone()),
         Some(vec![
             Point::new(900_000, 500_000),
             Point::new(900_000, 600_000),

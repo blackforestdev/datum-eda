@@ -32,7 +32,10 @@ pub(crate) fn render_native_project_route_path_candidate_orthogonal_graph_three_
     let mut lines = vec![
         format!("contract: {}", report.contract),
         format!("status: {}", render_status(report.status.clone())),
-        format!("explanation_kind: {}", render_kind(&report.explanation_kind)),
+        format!(
+            "explanation_kind: {}",
+            render_kind(&report.explanation_kind)
+        ),
         format!(
             "matching_via_triples: {}",
             report.summary.matching_via_triple_count

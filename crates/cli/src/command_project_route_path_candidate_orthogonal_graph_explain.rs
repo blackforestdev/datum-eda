@@ -36,7 +36,10 @@ pub(crate) fn render_native_project_route_path_candidate_orthogonal_graph_explai
             report.persisted_native_board_state_only
         ),
         format!("status: {}", render_status(report.status.clone())),
-        format!("explanation_kind: {}", render_kind(&report.explanation_kind)),
+        format!(
+            "explanation_kind: {}",
+            render_kind(&report.explanation_kind)
+        ),
         format!("net_uuid: {}", report.net_uuid),
         format!("net_name: {}", report.net_name),
         format!("from_anchor_pad_uuid: {}", report.from_anchor_pad_uuid),
@@ -54,7 +57,10 @@ pub(crate) fn render_native_project_route_path_candidate_orthogonal_graph_explai
         lines.push(format!("selected_path_layer: {}", selected.layer));
         lines.push(format!("selected_path_points: {}", selected.points.len()));
         lines.push(format!("selected_path_bends: {}", selected.cost.bend_count));
-        lines.push(format!("selected_path_segments: {}", selected.cost.segment_count));
+        lines.push(format!(
+            "selected_path_segments: {}",
+            selected.cost.segment_count
+        ));
         lines.push(format!("selection_reason: {}", selected.selection_reason));
     } else {
         lines.push("selected_path_layer: none".to_string());
@@ -62,7 +68,32 @@ pub(crate) fn render_native_project_route_path_candidate_orthogonal_graph_explai
         lines.push("selected_path_bends: 0".to_string());
         lines.push("selected_path_segments: 0".to_string());
     }
-    lines.push(format!("blocked_edge_count: {}", report.blocked_edges.len()));
+    lines.push(format!(
+        "segment_evidence: {}",
+        report.segment_evidence.len()
+    ));
+    for segment in &report.segment_evidence {
+        lines.push(String::new());
+        lines.push(format!(
+            "layer_segment_index: {}",
+            segment.layer_segment_index
+        ));
+        lines.push(format!(
+            "layer_segment_count: {}",
+            segment.layer_segment_count
+        ));
+        lines.push(format!("layer: {}", segment.layer));
+        lines.push(format!("bend_count: {}", segment.bend_count));
+        lines.push(format!("point_count: {}", segment.point_count));
+        lines.push(format!(
+            "track_action_count: {}",
+            segment.track_action_count
+        ));
+    }
+    lines.push(format!(
+        "blocked_edge_count: {}",
+        report.blocked_edges.len()
+    ));
     lines.join("\n")
 }
 

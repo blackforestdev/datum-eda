@@ -373,8 +373,12 @@ mod main_tests_project_route_path_candidate_via_explain;
 mod main_tests_project_route_preflight;
 #[path = "main_tests_project_route_proposal_artifact.rs"]
 mod main_tests_project_route_proposal_artifact;
+#[path = "main_tests_project_route_proposal_selection.rs"]
+mod main_tests_project_route_proposal_selection;
 #[path = "main_tests_project_routing_substrate.rs"]
 mod main_tests_project_routing_substrate;
+#[path = "main_tests_project_selected_route_proposal.rs"]
+mod main_tests_project_selected_route_proposal;
 #[path = "main_tests_project_symbol.rs"]
 mod main_tests_project_symbol;
 #[path = "main_tests_project_symbol_resolution.rs"]

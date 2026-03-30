@@ -1,6 +1,6 @@
 use super::*;
-use std::collections::{BTreeMap, BTreeSet};
 use eda_engine::ir::serialization::to_json_deterministic;
+use std::collections::{BTreeMap, BTreeSet};
 
 const FORWARD_ANNOTATION_ARTIFACT_KIND: &str = "native_forward_annotation_proposal_artifact";
 const FORWARD_ANNOTATION_ARTIFACT_VERSION: u32 = 1;

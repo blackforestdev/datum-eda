@@ -25,7 +25,10 @@ fn route_path_candidate_authored_copper_plus_one_gap_explain_reports_selected_pa
         RoutePathCandidateAuthoredCopperPlusOneGapExplainKind::DeterministicPathFound
     ));
     let path = report.selected_path.expect("selected path should exist");
-    assert!(path.selection_reason.contains("first exact-one-gap path found"));
+    assert!(
+        path.selection_reason
+            .contains("first exact-one-gap path found")
+    );
     assert_eq!(path.path.steps.len(), 3);
     assert_eq!(
         path.path

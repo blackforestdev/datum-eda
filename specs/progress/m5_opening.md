@@ -1260,6 +1260,9 @@ Adjacent native convenience-apply slice implemented on 2026-03-30:
   - `bend_count`
   - `segment_count`
   - `point_count`
+- the orthogonal graph route proposal artifact/apply lane now also preserves
+  that selected path cost in exported action metadata and inspection/apply
+  summaries
 
 Next explicit contract selected on 2026-03-30:
 - deterministic one-authored-via orthogonal graph path candidate
@@ -1345,12 +1348,92 @@ Completed bounded authored-via orthogonal graph family on 2026-03-30:
   - no via creation, no invented coordinate grid, no push-shove
 - each report/explanation segment now also records the selected graph-path
   cost explicitly as `bend_count`, `segment_count`, and `point_count`
+- the same-layer orthogonal-graph direct query and explain surfaces now also
+  expose `segment_evidence`, aligning their reported layer-side path
+  structure with export/inspect/revalidate
+- the same cost now also survives route proposal export as
+  `selected_path_bend_count`, alongside the existing selected path point and
+  segment counts
+- `export-route-path-proposal` now also returns the recorded
+  orthogonal-graph segment breakdown directly in its report, so callers do
+  not need to reopen the artifact just to inspect the layer-side path shape
+- orthogonal-graph artifact apply now diagnoses ranked-path drift explicitly
+  as candidate availability changes, deterministic cost-winner changes, or
+  same-rank geometry changes before refusing stale apply
+- `inspect-route-proposal-artifact` now also exposes the recorded
+  orthogonal-graph segment breakdown, including each layer-side segment's
+  bend, point, and track-action counts
+- the same artifact lane now also has a non-mutating machine-readable
+  revalidation surface:
+  - `project revalidate-route-proposal-artifact <dir> --artifact <path>`
+  - orthogonal-graph revalidation now also includes segment-level ranked-path
+    evidence, so callers can compare each layer-side segment's recorded and
+    live bend/point/track-action facts
 - each of those contracts now also has:
   - the paired generic explanation surface under
     `route-path-candidate-explain`
   - route proposal artifact export through
     `project export-route-path-proposal`
   - direct native apply through `project route-apply`
+
+Adjacent route-selection slice implemented on 2026-03-30:
+- deterministic bounded route proposal selection
+  - canonical surface: `project route-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- input: persisted native board state only
+- output:
+  - explicit status exactly one of:
+    - `deterministic_route_proposal_selected`
+    - `no_route_proposal_under_current_authored_constraints`
+  - one selected accepted candidate family when available
+  - the deterministic candidate order used
+  - per-candidate availability or rejection notes for the bounded selector lane
+- deterministic rule:
+  - evaluate the bounded accepted candidate family order:
+    `route-path-candidate`
+    `route-path-candidate-orthogonal-dogleg`
+    `route-path-candidate-orthogonal-two-bend`
+    `route-path-candidate-orthogonal-graph`
+    `authored-copper-plus-one-gap`
+    `route-path-candidate-via`
+    `route-path-candidate-two-via`
+    `route-path-candidate-three-via`
+    `route-path-candidate-four-via`
+    `route-path-candidate-five-via`
+    `route-path-candidate-six-via`
+    `route-path-candidate-authored-via-chain`
+    `route-path-candidate-orthogonal-graph-via`
+    `route-path-candidate-orthogonal-graph-two-via`
+    `route-path-candidate-orthogonal-graph-three-via`
+    `route-path-candidate-orthogonal-graph-four-via`
+    `route-path-candidate-orthogonal-graph-five-via`
+    `route-path-candidate-orthogonal-graph-six-via`
+  - select the first successful family in that exact order
+- non-goals:
+  - no cross-family scoring beyond the explicit ordered selector
+  - no automatic export/apply side effects
+  - no MCP parity reopening
+  - no broad autorouting or ranking semantics
+
+Adjacent selected-proposal write lane implemented on 2026-03-30:
+- deterministic export/apply surfaces for the currently selected bounded route proposal
+  - canonical export surface:
+    `project export-route-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+  - canonical direct-apply surface:
+    `project route-apply-selected <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- input: persisted native board state only
+- output:
+  - reuse the exact accepted selector order from `project route-proposal`
+  - export emits one versioned route-proposal artifact for the selected family
+  - direct apply materializes the currently selected proposal without requiring
+    the caller to restate the chosen candidate family
+- deterministic rule:
+  - run the accepted `project route-proposal` selector first
+  - if a proposal is selected, export/apply that exact family only
+  - if no proposal is selected, fail without mutating state
+- non-goals:
+  - no new ranking or selector heuristics
+  - no bypass of artifact drift checks
+  - no MCP parity reopening
 
 Poor candidates for the first `M5` slice:
 - full autorouter

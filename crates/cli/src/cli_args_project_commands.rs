@@ -107,12 +107,20 @@ pub(crate) enum ProjectCommands {
     ApplyForwardAnnotationAction(ProjectApplyForwardAnnotationActionArgs),
     /// Apply all currently self-sufficient forward-annotation proposal actions while honoring persisted defer/reject review state
     ApplyForwardAnnotationReviewed(ProjectApplyForwardAnnotationReviewedArgs),
+    /// Select one deterministic current route proposal from the accepted candidate family order
+    RouteProposal(ProjectRouteProposalArgs),
+    /// Export one deterministic route proposal artifact from the currently selected candidate family
+    ExportRouteProposal(ProjectExportRouteProposalArgs),
     /// Export one deterministic route proposal artifact from one accepted current route-path candidate family
     ExportRoutePathProposal(ProjectExportRoutePathProposalArgs),
     /// Inspect a versioned route proposal artifact
     InspectRouteProposalArtifact(ProjectInspectRouteProposalArtifactArgs),
+    /// Revalidate a versioned route proposal artifact against the current live project state without applying it
+    RevalidateRouteProposalArtifact(ProjectRevalidateRouteProposalArtifactArgs),
     /// Apply a versioned route proposal artifact when it still matches the current live project state
     ApplyRouteProposalArtifact(ProjectApplyRouteProposalArtifactArgs),
+    /// Apply the currently selected deterministic route proposal directly into native board copper
+    RouteApplySelected(ProjectRouteApplySelectedArgs),
     /// Apply one deterministic current route candidate directly into native board copper
     RouteApply(ProjectRouteApplyArgs),
     /// Export the current forward-annotation proposal and review state as a versioned artifact

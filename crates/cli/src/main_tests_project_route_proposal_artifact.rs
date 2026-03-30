@@ -133,6 +133,22 @@ pub(crate) fn board_tracks_query_cli(root: &Path) -> Cli {
     .expect("CLI should parse")
 }
 
+pub(crate) fn rewrite_board_json(root: &Path, mutate: impl FnOnce(&mut serde_json::Value)) {
+    let board_json = root.join("board/board.json");
+    let mut board: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&board_json).expect("board should read"))
+            .expect("board should parse");
+    mutate(&mut board);
+    std::fs::write(
+        &board_json,
+        format!(
+            "{}\n",
+            to_json_deterministic(&board).expect("canonical serialization should succeed")
+        ),
+    )
+    .expect("board should write");
+}
+
 fn plus_one_gap_query_cli(root: &Path, net_uuid: Uuid, from_anchor: Uuid, to_anchor: Uuid) -> Cli {
     Cli::try_parse_from([
         "eda",
@@ -258,7 +274,9 @@ pub(crate) fn seed_route_path_candidate_project(root: &Path) -> (Uuid, Uuid, Uui
     (target_net_uuid, anchor_a_uuid, anchor_b_uuid)
 }
 
-pub(crate) fn seed_route_path_candidate_orthogonal_dogleg_project(root: &Path) -> (Uuid, Uuid, Uuid) {
+pub(crate) fn seed_route_path_candidate_orthogonal_dogleg_project(
+    root: &Path,
+) -> (Uuid, Uuid, Uuid) {
     create_native_project(
         root,
         Some("Route Path Candidate Orthogonal Dogleg Demo".to_string()),
@@ -841,7 +859,12 @@ pub(crate) fn seed_route_path_candidate_orthogonal_graph_via_project(
     )
     .expect("board file should write");
 
-    (target_net_uuid, anchor_top_uuid, anchor_bottom_uuid, via_uuid)
+    (
+        target_net_uuid,
+        anchor_top_uuid,
+        anchor_bottom_uuid,
+        via_uuid,
+    )
 }
 
 pub(crate) fn seed_route_path_candidate_via_project(root: &Path) -> (Uuid, Uuid, Uuid, Uuid) {
@@ -4110,8 +4133,9 @@ fn project_route_path_candidate_authored_copper_graph_policy_proposal_artifact_e
 
 #[test]
 fn project_route_proposal_artifact_supports_orthogonal_dogleg_candidate() {
-    let root =
-        unique_project_root("datum-eda-cli-project-route-path-candidate-orthogonal-dogleg-artifact");
+    let root = unique_project_root(
+        "datum-eda-cli-project-route-path-candidate-orthogonal-dogleg-artifact",
+    );
     let (target_net_uuid, anchor_a_uuid, anchor_b_uuid) =
         seed_route_path_candidate_orthogonal_dogleg_project(&root);
     let artifact = root.join("route-path-candidate-orthogonal-dogleg-proposal.json");
@@ -4185,8 +4209,9 @@ fn project_route_proposal_artifact_supports_orthogonal_dogleg_candidate() {
 
 #[test]
 fn project_route_proposal_artifact_supports_orthogonal_two_bend_candidate() {
-    let root =
-        unique_project_root("datum-eda-cli-project-route-path-candidate-orthogonal-two-bend-artifact");
+    let root = unique_project_root(
+        "datum-eda-cli-project-route-path-candidate-orthogonal-two-bend-artifact",
+    );
     let (target_net_uuid, anchor_a_uuid, anchor_b_uuid) =
         seed_route_path_candidate_orthogonal_two_bend_project(&root);
     let artifact = root.join("route-path-candidate-orthogonal-two-bend-proposal.json");
@@ -4287,6 +4312,56 @@ fn project_route_proposal_artifact_supports_orthogonal_graph_candidate() {
         export_report["contract"],
         "m5_route_path_candidate_orthogonal_graph_v1"
     );
+    assert_eq!(export_report["selected_path_bend_count"], 5);
+    assert_eq!(export_report["selected_path_point_count"], 7);
+    assert_eq!(export_report["selected_path_segment_count"], 6);
+    let export_segment_evidence = export_report["segment_evidence"]
+        .as_array()
+        .expect("export segment evidence should be an array");
+    assert_eq!(export_segment_evidence.len(), 1);
+    assert_eq!(export_segment_evidence[0]["layer_segment_index"], 0);
+    assert_eq!(export_segment_evidence[0]["layer_segment_count"], 1);
+    assert_eq!(export_segment_evidence[0]["layer"], 1);
+    assert_eq!(export_segment_evidence[0]["bend_count"], 5);
+    assert_eq!(export_segment_evidence[0]["point_count"], 7);
+    assert_eq!(export_segment_evidence[0]["track_action_count"], 6);
+    let artifact_value: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&artifact).expect("artifact should read"))
+            .expect("artifact should parse");
+    assert_eq!(artifact_value["actions"][0]["selected_path_bend_count"], 5);
+    assert_eq!(artifact_value["actions"][0]["selected_path_point_count"], 7);
+    assert_eq!(
+        artifact_value["actions"][0]["selected_path_segment_count"],
+        6
+    );
+
+    let inspect_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "inspect-route-proposal-artifact",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("inspect should succeed");
+    let inspect_report: serde_json::Value =
+        serde_json::from_str(&inspect_output).expect("inspect report should parse");
+    assert_eq!(inspect_report["selected_path_bend_count"], 5);
+    assert_eq!(inspect_report["selected_path_point_count"], 7);
+    assert_eq!(inspect_report["selected_path_segment_count"], 6);
+    let inspect_segment_evidence = inspect_report["segment_evidence"]
+        .as_array()
+        .expect("inspect segment evidence should be an array");
+    assert_eq!(inspect_segment_evidence.len(), 1);
+    assert_eq!(inspect_segment_evidence[0]["layer_segment_index"], 0);
+    assert_eq!(inspect_segment_evidence[0]["layer_segment_count"], 1);
+    assert_eq!(inspect_segment_evidence[0]["layer"], 1);
+    assert_eq!(inspect_segment_evidence[0]["bend_count"], 5);
+    assert_eq!(inspect_segment_evidence[0]["point_count"], 7);
+    assert_eq!(inspect_segment_evidence[0]["track_action_count"], 6);
 
     let apply_output = execute(
         Cli::try_parse_from([
@@ -4306,11 +4381,313 @@ fn project_route_proposal_artifact_supports_orthogonal_graph_candidate() {
         serde_json::from_str(&apply_output).expect("apply report should parse");
     assert_eq!(apply_report["artifact_actions"], 6);
     assert_eq!(apply_report["applied_actions"], 6);
+    assert_eq!(apply_report["selected_path_bend_count"], 5);
+    assert_eq!(apply_report["selected_path_point_count"], 7);
+    assert_eq!(apply_report["selected_path_segment_count"], 6);
 
     let board_tracks_output = execute(board_tracks_query_cli(&root)).expect("query should succeed");
     let board_tracks: serde_json::Value =
         serde_json::from_str(&board_tracks_output).expect("board tracks should parse");
     assert_eq!(board_tracks.as_array().unwrap().len(), 9);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_route_proposal_artifact_revalidation_reports_live_match() {
+    let root = unique_project_root(
+        "datum-eda-cli-project-route-path-candidate-orthogonal-graph-revalidate-match",
+    );
+    let (target_net_uuid, anchor_a_uuid, anchor_b_uuid) =
+        seed_route_path_candidate_orthogonal_graph_project(&root);
+    let artifact = root.join("route-path-candidate-orthogonal-graph-proposal.json");
+
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "export-route-path-proposal",
+            root.to_str().unwrap(),
+            "--net",
+            &target_net_uuid.to_string(),
+            "--from-anchor",
+            &anchor_a_uuid.to_string(),
+            "--to-anchor",
+            &anchor_b_uuid.to_string(),
+            "--candidate",
+            "route-path-candidate-orthogonal-graph",
+            "--out",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("export should succeed");
+
+    let revalidate_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "revalidate-route-proposal-artifact",
+            root.to_str().unwrap(),
+            "--artifact",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("revalidate should succeed");
+    let report: serde_json::Value =
+        serde_json::from_str(&revalidate_output).expect("revalidation report should parse");
+    assert_eq!(report["action"], "revalidate_route_proposal_artifact");
+    assert_eq!(report["matches_live"], true);
+    assert_eq!(report["drift_kind"], serde_json::Value::Null);
+    assert_eq!(report["drift_message"], serde_json::Value::Null);
+    assert_eq!(report["selected_path_bend_count"], 5);
+    assert_eq!(report["live_selected_path_bend_count"], 5);
+    assert_eq!(report["live_actions"], 6);
+    let segment_evidence = report["segment_evidence"]
+        .as_array()
+        .expect("segment evidence should be an array");
+    assert_eq!(segment_evidence.len(), 1);
+    assert_eq!(segment_evidence[0]["layer_segment_index"], 0);
+    assert_eq!(segment_evidence[0]["layer_segment_count"], 1);
+    assert_eq!(segment_evidence[0]["artifact_bend_count"], 5);
+    assert_eq!(segment_evidence[0]["artifact_point_count"], 7);
+    assert_eq!(segment_evidence[0]["artifact_track_action_count"], 6);
+    assert_eq!(segment_evidence[0]["live_bend_count"], 5);
+    assert_eq!(segment_evidence[0]["live_point_count"], 7);
+    assert_eq!(segment_evidence[0]["live_track_action_count"], 6);
+    assert_eq!(segment_evidence[0]["matches_live"], true);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_route_proposal_artifact_reports_orthogonal_graph_cost_winner_drift() {
+    let root = unique_project_root(
+        "datum-eda-cli-project-route-path-candidate-orthogonal-graph-cost-winner-drift",
+    );
+    let (target_net_uuid, anchor_a_uuid, anchor_b_uuid) =
+        seed_route_path_candidate_orthogonal_graph_project(&root);
+    let artifact = root.join("route-path-candidate-orthogonal-graph-proposal.json");
+
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "export-route-path-proposal",
+            root.to_str().unwrap(),
+            "--net",
+            &target_net_uuid.to_string(),
+            "--from-anchor",
+            &anchor_a_uuid.to_string(),
+            "--to-anchor",
+            &anchor_b_uuid.to_string(),
+            "--candidate",
+            "route-path-candidate-orthogonal-graph",
+            "--out",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("export should succeed");
+
+    rewrite_board_json(&root, |board| {
+        board["tracks"] = serde_json::json!({});
+    });
+
+    let revalidate_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "revalidate-route-proposal-artifact",
+            root.to_str().unwrap(),
+            "--artifact",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("revalidate should succeed");
+    let report: serde_json::Value =
+        serde_json::from_str(&revalidate_output).expect("revalidation report should parse");
+    assert_eq!(report["matches_live"], false);
+    assert_eq!(
+        report["drift_kind"],
+        serde_json::Value::String("deterministic_cost_winner_changed".to_string())
+    );
+    assert!(
+        report["drift_message"]
+            .as_str()
+            .unwrap()
+            .contains("deterministic cost winner changed")
+    );
+    assert_eq!(report["selected_path_bend_count"], 5);
+    assert_eq!(report["live_selected_path_bend_count"], 1);
+    assert_eq!(report["selected_path_segment_count"], 6);
+    assert_eq!(report["live_selected_path_segment_count"], 2);
+    let segment_evidence = report["segment_evidence"]
+        .as_array()
+        .expect("segment evidence should be an array");
+    assert_eq!(segment_evidence.len(), 1);
+    assert_eq!(segment_evidence[0]["artifact_bend_count"], 5);
+    assert_eq!(segment_evidence[0]["artifact_point_count"], 7);
+    assert_eq!(segment_evidence[0]["artifact_track_action_count"], 6);
+    assert_eq!(segment_evidence[0]["live_bend_count"], 1);
+    assert_eq!(segment_evidence[0]["live_point_count"], 3);
+    assert_eq!(segment_evidence[0]["live_track_action_count"], 2);
+    assert_eq!(segment_evidence[0]["matches_live"], false);
+
+    let err = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "apply-route-proposal-artifact",
+            root.to_str().unwrap(),
+            "--artifact",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect_err("apply should report drift");
+    let message = err.to_string();
+    assert!(message.contains("deterministic cost winner changed"));
+    assert!(message.contains("bends 5 -> 1"));
+    assert!(message.contains("segments 6 -> 2"));
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_route_proposal_artifact_reports_orthogonal_graph_candidate_availability_drift() {
+    let root = unique_project_root(
+        "datum-eda-cli-project-route-path-candidate-orthogonal-graph-availability-drift",
+    );
+    let (target_net_uuid, anchor_a_uuid, anchor_b_uuid) =
+        seed_route_path_candidate_orthogonal_graph_project(&root);
+    let artifact = root.join("route-path-candidate-orthogonal-graph-proposal.json");
+
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "export-route-path-proposal",
+            root.to_str().unwrap(),
+            "--net",
+            &target_net_uuid.to_string(),
+            "--from-anchor",
+            &anchor_a_uuid.to_string(),
+            "--to-anchor",
+            &anchor_b_uuid.to_string(),
+            "--candidate",
+            "route-path-candidate-orthogonal-graph",
+            "--out",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("export should succeed");
+
+    rewrite_board_json(&root, |board| {
+        let tracks = board["tracks"]
+            .as_object_mut()
+            .expect("tracks should be an object");
+        let wall_cut_uuid = Uuid::from_u128(0xc50e);
+        tracks.insert(
+            wall_cut_uuid.to_string(),
+            serde_json::json!({
+                "uuid": wall_cut_uuid,
+                "net": Uuid::from_u128(0xc501),
+                "from": { "x": 0, "y": 600000 },
+                "to": { "x": 1000000, "y": 600000 },
+                "width": 150000,
+                "layer": 1
+            }),
+        );
+    });
+
+    let revalidate_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "revalidate-route-proposal-artifact",
+            root.to_str().unwrap(),
+            "--artifact",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("revalidate should succeed");
+    let report: serde_json::Value =
+        serde_json::from_str(&revalidate_output).expect("revalidation report should parse");
+    assert_eq!(report["matches_live"], false);
+    assert_eq!(
+        report["drift_kind"],
+        serde_json::Value::String("candidate_availability_changed".to_string())
+    );
+    assert!(
+        report["drift_message"]
+            .as_str()
+            .unwrap()
+            .contains("candidate availability changed under current authored constraints")
+    );
+    assert!(
+        report["live_rebuild_error"]
+            .as_str()
+            .unwrap()
+            .contains("route proposal requires deterministic orthogonal graph path")
+    );
+    assert_eq!(report["live_actions"], serde_json::Value::Null);
+    let segment_evidence = report["segment_evidence"]
+        .as_array()
+        .expect("segment evidence should be an array");
+    assert_eq!(segment_evidence.len(), 1);
+    assert_eq!(segment_evidence[0]["artifact_bend_count"], 5);
+    assert_eq!(segment_evidence[0]["artifact_point_count"], 7);
+    assert_eq!(segment_evidence[0]["artifact_track_action_count"], 6);
+    assert_eq!(
+        segment_evidence[0]["live_bend_count"],
+        serde_json::Value::Null
+    );
+    assert_eq!(
+        segment_evidence[0]["live_point_count"],
+        serde_json::Value::Null
+    );
+    assert_eq!(
+        segment_evidence[0]["live_track_action_count"],
+        serde_json::Value::Null
+    );
+    assert_eq!(segment_evidence[0]["matches_live"], false);
+
+    let err = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "apply-route-proposal-artifact",
+            root.to_str().unwrap(),
+            "--artifact",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect_err("apply should report drift");
+    let message = err.to_string();
+    assert!(message.contains("candidate availability changed under current authored constraints"));
+    assert!(message.contains("route proposal requires deterministic orthogonal graph path"));
 
     let _ = std::fs::remove_dir_all(&root);
 }
@@ -4353,6 +4730,25 @@ fn project_route_proposal_artifact_supports_orthogonal_graph_via_candidate() {
         export_report["contract"],
         "m5_route_path_candidate_orthogonal_graph_via_v1"
     );
+    assert!(export_report["selected_path_bend_count"].as_u64().unwrap() >= 1);
+    let export_segment_evidence = export_report["segment_evidence"]
+        .as_array()
+        .expect("export segment evidence should be an array");
+    assert_eq!(export_segment_evidence.len(), 2);
+    assert_eq!(export_segment_evidence[0]["layer_segment_count"], 2);
+    assert_eq!(export_segment_evidence[1]["layer_segment_count"], 2);
+    assert!(
+        export_segment_evidence[0]["track_action_count"]
+            .as_u64()
+            .unwrap()
+            >= 1
+    );
+    assert!(
+        export_segment_evidence[1]["track_action_count"]
+            .as_u64()
+            .unwrap()
+            >= 1
+    );
 
     let artifact_value: serde_json::Value =
         serde_json::from_str(&std::fs::read_to_string(&artifact).expect("artifact should read"))
@@ -4362,7 +4758,49 @@ fn project_route_proposal_artifact_supports_orthogonal_graph_via_candidate() {
         artifact_value["actions"][0]["reason"],
         "route_path_candidate_orthogonal_graph_via"
     );
-    assert_eq!(artifact_value["actions"][0]["reused_via_uuid"], via_uuid.to_string());
+    assert_eq!(
+        artifact_value["actions"][0]["reused_via_uuid"],
+        via_uuid.to_string()
+    );
+    assert!(
+        artifact_value["actions"][0]["selected_path_bend_count"]
+            .as_u64()
+            .unwrap()
+            >= 1
+    );
+
+    let inspect_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "inspect-route-proposal-artifact",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("inspect should succeed");
+    let inspect_report: serde_json::Value =
+        serde_json::from_str(&inspect_output).expect("inspect report should parse");
+    let inspect_segment_evidence = inspect_report["segment_evidence"]
+        .as_array()
+        .expect("inspect segment evidence should be an array");
+    assert_eq!(inspect_segment_evidence.len(), 2);
+    assert_eq!(inspect_segment_evidence[0]["layer_segment_count"], 2);
+    assert_eq!(inspect_segment_evidence[1]["layer_segment_count"], 2);
+    assert!(
+        inspect_segment_evidence[0]["track_action_count"]
+            .as_u64()
+            .unwrap()
+            >= 1
+    );
+    assert!(
+        inspect_segment_evidence[1]["track_action_count"]
+            .as_u64()
+            .unwrap()
+            >= 1
+    );
 
     let apply_output = execute(
         Cli::try_parse_from([
@@ -4382,6 +4820,7 @@ fn project_route_proposal_artifact_supports_orthogonal_graph_via_candidate() {
         serde_json::from_str(&apply_output).expect("apply report should parse");
     assert_eq!(apply_report["artifact_actions"], 5);
     assert_eq!(apply_report["applied_actions"], 5);
+    assert!(apply_report["selected_path_bend_count"].as_u64().unwrap() >= 1);
 
     let board_tracks_output = execute(board_tracks_query_cli(&root)).expect("query should succeed");
     let board_tracks: serde_json::Value =
@@ -4429,6 +4868,14 @@ fn project_route_proposal_artifact_supports_orthogonal_graph_two_via_candidate()
         export_report["contract"],
         "m5_route_path_candidate_orthogonal_graph_two_via_v1"
     );
+    assert!(export_report["selected_path_bend_count"].as_u64().unwrap() >= 1);
+    let export_segment_evidence = export_report["segment_evidence"]
+        .as_array()
+        .expect("export segment evidence should be an array");
+    assert_eq!(export_segment_evidence.len(), 3);
+    assert_eq!(export_segment_evidence[0]["layer_segment_count"], 3);
+    assert_eq!(export_segment_evidence[1]["layer_segment_count"], 3);
+    assert_eq!(export_segment_evidence[2]["layer_segment_count"], 3);
 
     let artifact_value: serde_json::Value =
         serde_json::from_str(&std::fs::read_to_string(&artifact).expect("artifact should read"))
@@ -4443,12 +4890,42 @@ fn project_route_proposal_artifact_supports_orthogonal_graph_two_via_candidate()
         via_a_uuid.to_string()
     );
     assert_eq!(
-        artifact_value["actions"][0]["reused_via_uuids"].as_array().unwrap(),
+        artifact_value["actions"][0]["reused_via_uuids"]
+            .as_array()
+            .unwrap(),
         &vec![
             serde_json::Value::String(via_a_uuid.to_string()),
             serde_json::Value::String(via_b_uuid.to_string()),
         ]
     );
+    assert!(
+        artifact_value["actions"][0]["selected_path_bend_count"]
+            .as_u64()
+            .unwrap()
+            >= 1
+    );
+
+    let inspect_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "inspect-route-proposal-artifact",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("inspect should succeed");
+    let inspect_report: serde_json::Value =
+        serde_json::from_str(&inspect_output).expect("inspect report should parse");
+    let inspect_segment_evidence = inspect_report["segment_evidence"]
+        .as_array()
+        .expect("inspect segment evidence should be an array");
+    assert_eq!(inspect_segment_evidence.len(), 3);
+    assert_eq!(inspect_segment_evidence[0]["layer_segment_count"], 3);
+    assert_eq!(inspect_segment_evidence[1]["layer_segment_count"], 3);
+    assert_eq!(inspect_segment_evidence[2]["layer_segment_count"], 3);
 
     let apply_output = execute(
         Cli::try_parse_from([
@@ -4468,6 +4945,7 @@ fn project_route_proposal_artifact_supports_orthogonal_graph_two_via_candidate()
         serde_json::from_str(&apply_output).expect("apply report should parse");
     assert_eq!(apply_report["artifact_actions"], 7);
     assert_eq!(apply_report["applied_actions"], 7);
+    assert!(apply_report["selected_path_bend_count"].as_u64().unwrap() >= 1);
 
     let board_tracks_output = execute(board_tracks_query_cli(&root)).expect("query should succeed");
     let board_tracks: serde_json::Value =
@@ -4486,35 +4964,90 @@ fn project_route_proposal_artifact_supports_orthogonal_graph_three_via_candidate
         seed_route_path_candidate_three_via_project(&root);
     let artifact = root.join("route-path-candidate-orthogonal-graph-three-via-proposal.json");
 
-    let export_output = execute(Cli::try_parse_from([
-        "eda","--format","json","project","export-route-path-proposal",root.to_str().unwrap(),
-        "--net",&target_net_uuid.to_string(),"--from-anchor",&anchor_a_uuid.to_string(),
-        "--to-anchor",&anchor_b_uuid.to_string(),"--candidate","route-path-candidate-orthogonal-graph-three-via",
-        "--out",artifact.to_str().unwrap(),
-    ]).expect("CLI should parse")).expect("export should succeed");
-    let export_report: serde_json::Value = serde_json::from_str(&export_output).expect("export report should parse");
+    let export_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "export-route-path-proposal",
+            root.to_str().unwrap(),
+            "--net",
+            &target_net_uuid.to_string(),
+            "--from-anchor",
+            &anchor_a_uuid.to_string(),
+            "--to-anchor",
+            &anchor_b_uuid.to_string(),
+            "--candidate",
+            "route-path-candidate-orthogonal-graph-three-via",
+            "--out",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("export should succeed");
+    let export_report: serde_json::Value =
+        serde_json::from_str(&export_output).expect("export report should parse");
     let artifact_value: serde_json::Value =
-        serde_json::from_str(&std::fs::read_to_string(&artifact).expect("artifact should read")).expect("artifact should parse");
+        serde_json::from_str(&std::fs::read_to_string(&artifact).expect("artifact should read"))
+            .expect("artifact should parse");
     let actions = artifact_value["actions"].as_array().unwrap().len() as u64;
     assert_eq!(export_report["actions"].as_u64().unwrap(), actions);
-    assert_eq!(export_report["contract"], "m5_route_path_candidate_orthogonal_graph_three_via_v1");
-    assert_eq!(artifact_value["actions"][0]["reason"], "route_path_candidate_orthogonal_graph_three_via");
-    assert_eq!(artifact_value["actions"][0]["reused_via_uuid"], via_a_uuid.to_string());
-    assert_eq!(artifact_value["actions"][0]["reused_via_uuids"].as_array().unwrap().len(), 3);
-    assert_eq!(artifact_value["actions"][0]["reused_via_uuids"][0], via_a_uuid.to_string());
-    assert_eq!(artifact_value["actions"][0]["reused_via_uuids"][1], via_b_uuid.to_string());
-    assert_eq!(artifact_value["actions"][0]["reused_via_uuids"][2], via_c_uuid.to_string());
+    assert_eq!(
+        export_report["contract"],
+        "m5_route_path_candidate_orthogonal_graph_three_via_v1"
+    );
+    assert_eq!(
+        artifact_value["actions"][0]["reason"],
+        "route_path_candidate_orthogonal_graph_three_via"
+    );
+    assert_eq!(
+        artifact_value["actions"][0]["reused_via_uuid"],
+        via_a_uuid.to_string()
+    );
+    assert_eq!(
+        artifact_value["actions"][0]["reused_via_uuids"]
+            .as_array()
+            .unwrap()
+            .len(),
+        3
+    );
+    assert_eq!(
+        artifact_value["actions"][0]["reused_via_uuids"][0],
+        via_a_uuid.to_string()
+    );
+    assert_eq!(
+        artifact_value["actions"][0]["reused_via_uuids"][1],
+        via_b_uuid.to_string()
+    );
+    assert_eq!(
+        artifact_value["actions"][0]["reused_via_uuids"][2],
+        via_c_uuid.to_string()
+    );
 
-    let apply_output = execute(Cli::try_parse_from([
-        "eda","--format","json","project","apply-route-proposal-artifact",root.to_str().unwrap(),
-        "--artifact",artifact.to_str().unwrap(),
-    ]).expect("CLI should parse")).expect("apply should succeed");
-    let apply_report: serde_json::Value = serde_json::from_str(&apply_output).expect("apply report should parse");
+    let apply_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "apply-route-proposal-artifact",
+            root.to_str().unwrap(),
+            "--artifact",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("apply should succeed");
+    let apply_report: serde_json::Value =
+        serde_json::from_str(&apply_output).expect("apply report should parse");
     assert_eq!(apply_report["artifact_actions"].as_u64().unwrap(), actions);
     assert_eq!(apply_report["applied_actions"].as_u64().unwrap(), actions);
 
-    let board_tracks: serde_json::Value =
-        serde_json::from_str(&execute(board_tracks_query_cli(&root)).expect("query should succeed")).expect("board tracks should parse");
+    let board_tracks: serde_json::Value = serde_json::from_str(
+        &execute(board_tracks_query_cli(&root)).expect("query should succeed"),
+    )
+    .expect("board tracks should parse");
     assert_eq!(board_tracks.as_array().unwrap().len() as u64, actions);
     let _ = std::fs::remove_dir_all(&root);
 }
@@ -4525,36 +5058,97 @@ fn project_route_proposal_artifact_supports_orthogonal_graph_four_via_candidate(
         "datum-eda-cli-project-route-path-candidate-orthogonal-graph-four-via-artifact",
     );
     let (
-        target_net_uuid, anchor_a_uuid, anchor_b_uuid, via_a_uuid, via_b_uuid, via_c_uuid, via_d_uuid,
+        target_net_uuid,
+        anchor_a_uuid,
+        anchor_b_uuid,
+        via_a_uuid,
+        via_b_uuid,
+        via_c_uuid,
+        via_d_uuid,
     ) = seed_route_path_candidate_four_via_project(&root);
     let artifact = root.join("route-path-candidate-orthogonal-graph-four-via-proposal.json");
-    let export_output = execute(Cli::try_parse_from([
-        "eda","--format","json","project","export-route-path-proposal",root.to_str().unwrap(),
-        "--net",&target_net_uuid.to_string(),"--from-anchor",&anchor_a_uuid.to_string(),
-        "--to-anchor",&anchor_b_uuid.to_string(),"--candidate","route-path-candidate-orthogonal-graph-four-via",
-        "--out",artifact.to_str().unwrap(),
-    ]).expect("CLI should parse")).expect("export should succeed");
-    let export_report: serde_json::Value = serde_json::from_str(&export_output).expect("export report should parse");
+    let export_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "export-route-path-proposal",
+            root.to_str().unwrap(),
+            "--net",
+            &target_net_uuid.to_string(),
+            "--from-anchor",
+            &anchor_a_uuid.to_string(),
+            "--to-anchor",
+            &anchor_b_uuid.to_string(),
+            "--candidate",
+            "route-path-candidate-orthogonal-graph-four-via",
+            "--out",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("export should succeed");
+    let export_report: serde_json::Value =
+        serde_json::from_str(&export_output).expect("export report should parse");
     let artifact_value: serde_json::Value =
-        serde_json::from_str(&std::fs::read_to_string(&artifact).expect("artifact should read")).expect("artifact should parse");
+        serde_json::from_str(&std::fs::read_to_string(&artifact).expect("artifact should read"))
+            .expect("artifact should parse");
     let actions = artifact_value["actions"].as_array().unwrap().len() as u64;
     assert_eq!(export_report["actions"].as_u64().unwrap(), actions);
-    assert_eq!(export_report["contract"], "m5_route_path_candidate_orthogonal_graph_four_via_v1");
-    assert_eq!(artifact_value["actions"][0]["reason"], "route_path_candidate_orthogonal_graph_four_via");
-    assert_eq!(artifact_value["actions"][0]["reused_via_uuid"], via_a_uuid.to_string());
-    assert_eq!(artifact_value["actions"][0]["reused_via_uuids"].as_array().unwrap().len(), 4);
-    assert_eq!(artifact_value["actions"][0]["reused_via_uuids"][1], via_b_uuid.to_string());
-    assert_eq!(artifact_value["actions"][0]["reused_via_uuids"][2], via_c_uuid.to_string());
-    assert_eq!(artifact_value["actions"][0]["reused_via_uuids"][3], via_d_uuid.to_string());
-    let apply_output = execute(Cli::try_parse_from([
-        "eda","--format","json","project","apply-route-proposal-artifact",root.to_str().unwrap(),
-        "--artifact",artifact.to_str().unwrap(),
-    ]).expect("CLI should parse")).expect("apply should succeed");
-    let apply_report: serde_json::Value = serde_json::from_str(&apply_output).expect("apply report should parse");
+    assert_eq!(
+        export_report["contract"],
+        "m5_route_path_candidate_orthogonal_graph_four_via_v1"
+    );
+    assert_eq!(
+        artifact_value["actions"][0]["reason"],
+        "route_path_candidate_orthogonal_graph_four_via"
+    );
+    assert_eq!(
+        artifact_value["actions"][0]["reused_via_uuid"],
+        via_a_uuid.to_string()
+    );
+    assert_eq!(
+        artifact_value["actions"][0]["reused_via_uuids"]
+            .as_array()
+            .unwrap()
+            .len(),
+        4
+    );
+    assert_eq!(
+        artifact_value["actions"][0]["reused_via_uuids"][1],
+        via_b_uuid.to_string()
+    );
+    assert_eq!(
+        artifact_value["actions"][0]["reused_via_uuids"][2],
+        via_c_uuid.to_string()
+    );
+    assert_eq!(
+        artifact_value["actions"][0]["reused_via_uuids"][3],
+        via_d_uuid.to_string()
+    );
+    let apply_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "apply-route-proposal-artifact",
+            root.to_str().unwrap(),
+            "--artifact",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("apply should succeed");
+    let apply_report: serde_json::Value =
+        serde_json::from_str(&apply_output).expect("apply report should parse");
     assert_eq!(apply_report["artifact_actions"].as_u64().unwrap(), actions);
     assert_eq!(apply_report["applied_actions"].as_u64().unwrap(), actions);
-    let board_tracks: serde_json::Value =
-        serde_json::from_str(&execute(board_tracks_query_cli(&root)).expect("query should succeed")).expect("board tracks should parse");
+    let board_tracks: serde_json::Value = serde_json::from_str(
+        &execute(board_tracks_query_cli(&root)).expect("query should succeed"),
+    )
+    .expect("board tracks should parse");
     assert_eq!(board_tracks.as_array().unwrap().len() as u64, actions);
     let _ = std::fs::remove_dir_all(&root);
 }
@@ -4564,35 +5158,83 @@ fn project_route_proposal_artifact_supports_orthogonal_graph_five_via_candidate(
     let root = unique_project_root(
         "datum-eda-cli-project-route-path-candidate-orthogonal-graph-five-via-artifact",
     );
-    let (
-        target_net_uuid, anchor_a_uuid, anchor_b_uuid, via_a_uuid, _, _, _, via_e_uuid,
-    ) = seed_route_path_candidate_five_via_project(&root);
+    let (target_net_uuid, anchor_a_uuid, anchor_b_uuid, via_a_uuid, _, _, _, via_e_uuid) =
+        seed_route_path_candidate_five_via_project(&root);
     let artifact = root.join("route-path-candidate-orthogonal-graph-five-via-proposal.json");
-    let export_output = execute(Cli::try_parse_from([
-        "eda","--format","json","project","export-route-path-proposal",root.to_str().unwrap(),
-        "--net",&target_net_uuid.to_string(),"--from-anchor",&anchor_a_uuid.to_string(),
-        "--to-anchor",&anchor_b_uuid.to_string(),"--candidate","route-path-candidate-orthogonal-graph-five-via",
-        "--out",artifact.to_str().unwrap(),
-    ]).expect("CLI should parse")).expect("export should succeed");
-    let export_report: serde_json::Value = serde_json::from_str(&export_output).expect("export report should parse");
+    let export_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "export-route-path-proposal",
+            root.to_str().unwrap(),
+            "--net",
+            &target_net_uuid.to_string(),
+            "--from-anchor",
+            &anchor_a_uuid.to_string(),
+            "--to-anchor",
+            &anchor_b_uuid.to_string(),
+            "--candidate",
+            "route-path-candidate-orthogonal-graph-five-via",
+            "--out",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("export should succeed");
+    let export_report: serde_json::Value =
+        serde_json::from_str(&export_output).expect("export report should parse");
     let artifact_value: serde_json::Value =
-        serde_json::from_str(&std::fs::read_to_string(&artifact).expect("artifact should read")).expect("artifact should parse");
+        serde_json::from_str(&std::fs::read_to_string(&artifact).expect("artifact should read"))
+            .expect("artifact should parse");
     let actions = artifact_value["actions"].as_array().unwrap().len() as u64;
     assert_eq!(export_report["actions"].as_u64().unwrap(), actions);
-    assert_eq!(export_report["contract"], "m5_route_path_candidate_orthogonal_graph_five_via_v1");
-    assert_eq!(artifact_value["actions"][0]["reason"], "route_path_candidate_orthogonal_graph_five_via");
-    assert_eq!(artifact_value["actions"][0]["reused_via_uuid"], via_a_uuid.to_string());
-    assert_eq!(artifact_value["actions"][0]["reused_via_uuids"].as_array().unwrap().len(), 5);
-    assert_eq!(artifact_value["actions"][0]["reused_via_uuids"][4], via_e_uuid.to_string());
-    let apply_output = execute(Cli::try_parse_from([
-        "eda","--format","json","project","apply-route-proposal-artifact",root.to_str().unwrap(),
-        "--artifact",artifact.to_str().unwrap(),
-    ]).expect("CLI should parse")).expect("apply should succeed");
-    let apply_report: serde_json::Value = serde_json::from_str(&apply_output).expect("apply report should parse");
+    assert_eq!(
+        export_report["contract"],
+        "m5_route_path_candidate_orthogonal_graph_five_via_v1"
+    );
+    assert_eq!(
+        artifact_value["actions"][0]["reason"],
+        "route_path_candidate_orthogonal_graph_five_via"
+    );
+    assert_eq!(
+        artifact_value["actions"][0]["reused_via_uuid"],
+        via_a_uuid.to_string()
+    );
+    assert_eq!(
+        artifact_value["actions"][0]["reused_via_uuids"]
+            .as_array()
+            .unwrap()
+            .len(),
+        5
+    );
+    assert_eq!(
+        artifact_value["actions"][0]["reused_via_uuids"][4],
+        via_e_uuid.to_string()
+    );
+    let apply_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "apply-route-proposal-artifact",
+            root.to_str().unwrap(),
+            "--artifact",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("apply should succeed");
+    let apply_report: serde_json::Value =
+        serde_json::from_str(&apply_output).expect("apply report should parse");
     assert_eq!(apply_report["artifact_actions"].as_u64().unwrap(), actions);
     assert_eq!(apply_report["applied_actions"].as_u64().unwrap(), actions);
-    let board_tracks: serde_json::Value =
-        serde_json::from_str(&execute(board_tracks_query_cli(&root)).expect("query should succeed")).expect("board tracks should parse");
+    let board_tracks: serde_json::Value = serde_json::from_str(
+        &execute(board_tracks_query_cli(&root)).expect("query should succeed"),
+    )
+    .expect("board tracks should parse");
     assert_eq!(board_tracks.as_array().unwrap().len() as u64, actions);
     let _ = std::fs::remove_dir_all(&root);
 }
@@ -4602,35 +5244,83 @@ fn project_route_proposal_artifact_supports_orthogonal_graph_six_via_candidate()
     let root = unique_project_root(
         "datum-eda-cli-project-route-path-candidate-orthogonal-graph-six-via-artifact",
     );
-    let (
-        target_net_uuid, anchor_a_uuid, anchor_b_uuid, via_a_uuid, _, _, _, _, via_f_uuid,
-    ) = seed_route_path_candidate_six_via_project(&root);
+    let (target_net_uuid, anchor_a_uuid, anchor_b_uuid, via_a_uuid, _, _, _, _, via_f_uuid) =
+        seed_route_path_candidate_six_via_project(&root);
     let artifact = root.join("route-path-candidate-orthogonal-graph-six-via-proposal.json");
-    let export_output = execute(Cli::try_parse_from([
-        "eda","--format","json","project","export-route-path-proposal",root.to_str().unwrap(),
-        "--net",&target_net_uuid.to_string(),"--from-anchor",&anchor_a_uuid.to_string(),
-        "--to-anchor",&anchor_b_uuid.to_string(),"--candidate","route-path-candidate-orthogonal-graph-six-via",
-        "--out",artifact.to_str().unwrap(),
-    ]).expect("CLI should parse")).expect("export should succeed");
-    let export_report: serde_json::Value = serde_json::from_str(&export_output).expect("export report should parse");
+    let export_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "export-route-path-proposal",
+            root.to_str().unwrap(),
+            "--net",
+            &target_net_uuid.to_string(),
+            "--from-anchor",
+            &anchor_a_uuid.to_string(),
+            "--to-anchor",
+            &anchor_b_uuid.to_string(),
+            "--candidate",
+            "route-path-candidate-orthogonal-graph-six-via",
+            "--out",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("export should succeed");
+    let export_report: serde_json::Value =
+        serde_json::from_str(&export_output).expect("export report should parse");
     let artifact_value: serde_json::Value =
-        serde_json::from_str(&std::fs::read_to_string(&artifact).expect("artifact should read")).expect("artifact should parse");
+        serde_json::from_str(&std::fs::read_to_string(&artifact).expect("artifact should read"))
+            .expect("artifact should parse");
     let actions = artifact_value["actions"].as_array().unwrap().len() as u64;
     assert_eq!(export_report["actions"].as_u64().unwrap(), actions);
-    assert_eq!(export_report["contract"], "m5_route_path_candidate_orthogonal_graph_six_via_v1");
-    assert_eq!(artifact_value["actions"][0]["reason"], "route_path_candidate_orthogonal_graph_six_via");
-    assert_eq!(artifact_value["actions"][0]["reused_via_uuid"], via_a_uuid.to_string());
-    assert_eq!(artifact_value["actions"][0]["reused_via_uuids"].as_array().unwrap().len(), 6);
-    assert_eq!(artifact_value["actions"][0]["reused_via_uuids"][5], via_f_uuid.to_string());
-    let apply_output = execute(Cli::try_parse_from([
-        "eda","--format","json","project","apply-route-proposal-artifact",root.to_str().unwrap(),
-        "--artifact",artifact.to_str().unwrap(),
-    ]).expect("CLI should parse")).expect("apply should succeed");
-    let apply_report: serde_json::Value = serde_json::from_str(&apply_output).expect("apply report should parse");
+    assert_eq!(
+        export_report["contract"],
+        "m5_route_path_candidate_orthogonal_graph_six_via_v1"
+    );
+    assert_eq!(
+        artifact_value["actions"][0]["reason"],
+        "route_path_candidate_orthogonal_graph_six_via"
+    );
+    assert_eq!(
+        artifact_value["actions"][0]["reused_via_uuid"],
+        via_a_uuid.to_string()
+    );
+    assert_eq!(
+        artifact_value["actions"][0]["reused_via_uuids"]
+            .as_array()
+            .unwrap()
+            .len(),
+        6
+    );
+    assert_eq!(
+        artifact_value["actions"][0]["reused_via_uuids"][5],
+        via_f_uuid.to_string()
+    );
+    let apply_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "apply-route-proposal-artifact",
+            root.to_str().unwrap(),
+            "--artifact",
+            artifact.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("apply should succeed");
+    let apply_report: serde_json::Value =
+        serde_json::from_str(&apply_output).expect("apply report should parse");
     assert_eq!(apply_report["artifact_actions"].as_u64().unwrap(), actions);
     assert_eq!(apply_report["applied_actions"].as_u64().unwrap(), actions);
-    let board_tracks: serde_json::Value =
-        serde_json::from_str(&execute(board_tracks_query_cli(&root)).expect("query should succeed")).expect("board tracks should parse");
+    let board_tracks: serde_json::Value = serde_json::from_str(
+        &execute(board_tracks_query_cli(&root)).expect("query should succeed"),
+    )
+    .expect("board tracks should parse");
     assert_eq!(board_tracks.as_array().unwrap().len() as u64, actions);
     let _ = std::fs::remove_dir_all(&root);
 }

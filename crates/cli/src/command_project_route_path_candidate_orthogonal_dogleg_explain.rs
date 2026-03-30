@@ -2,8 +2,8 @@ use std::path::Path;
 
 use anyhow::{Result, anyhow};
 use eda_engine::board::{
-    RoutePathCandidateOrthogonalDoglegExplainKind,
-    RoutePathCandidateOrthogonalDoglegExplainReport, RoutePathCandidateStatus,
+    RoutePathCandidateOrthogonalDoglegExplainKind, RoutePathCandidateOrthogonalDoglegExplainReport,
+    RoutePathCandidateStatus,
 };
 use uuid::Uuid;
 
@@ -36,7 +36,10 @@ pub(crate) fn render_native_project_route_path_candidate_orthogonal_dogleg_expla
             report.persisted_native_board_state_only
         ),
         format!("status: {}", render_status(report.status.clone())),
-        format!("explanation_kind: {}", render_kind(&report.explanation_kind)),
+        format!(
+            "explanation_kind: {}",
+            render_kind(&report.explanation_kind)
+        ),
         format!("net_uuid: {}", report.net_uuid),
         format!("net_name: {}", report.net_name),
         format!("from_anchor_pad_uuid: {}", report.from_anchor_pad_uuid),
@@ -46,8 +49,14 @@ pub(crate) fn render_native_project_route_path_candidate_orthogonal_dogleg_expla
             "candidate_copper_layers: {}",
             report.summary.candidate_copper_layer_count
         ),
-        format!("candidate_corners: {}", report.summary.candidate_corner_count),
-        format!("available_corners: {}", report.summary.available_corner_count),
+        format!(
+            "candidate_corners: {}",
+            report.summary.candidate_corner_count
+        ),
+        format!(
+            "available_corners: {}",
+            report.summary.available_corner_count
+        ),
         format!("blocked_corners: {}", report.summary.blocked_corner_count),
     ];
     if let Some(selected) = &report.selected_dogleg {

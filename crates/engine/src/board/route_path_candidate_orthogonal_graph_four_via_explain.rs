@@ -97,7 +97,8 @@ pub struct RoutePathCandidateOrthogonalGraphFourViaExplainReport {
     pub component_selection_rules: Vec<String>,
     pub candidate_copper_layers: Vec<StackupLayer>,
     pub summary: RoutePathCandidateOrthogonalGraphFourViaExplainSummary,
-    pub selected_quadruple: Option<RoutePathCandidateOrthogonalGraphFourViaExplainSelectedQuadruple>,
+    pub selected_quadruple:
+        Option<RoutePathCandidateOrthogonalGraphFourViaExplainSelectedQuadruple>,
     pub blocked_matching_quadruples:
         Vec<RoutePathCandidateOrthogonalGraphFourViaExplainBlockedQuadruple>,
 }
@@ -108,7 +109,8 @@ impl Board {
         net_uuid: Uuid,
         from_anchor_pad_uuid: Uuid,
         to_anchor_pad_uuid: Uuid,
-    ) -> Result<RoutePathCandidateOrthogonalGraphFourViaExplainReport, RoutePathCandidateError> {
+    ) -> Result<RoutePathCandidateOrthogonalGraphFourViaExplainReport, RoutePathCandidateError>
+    {
         let path_candidate = self.route_path_candidate_orthogonal_graph_four_via(
             net_uuid,
             from_anchor_pad_uuid,
@@ -241,53 +243,111 @@ impl Board {
 
         let blocked_matching_quadruples = quadruple_searches
             .iter()
-            .filter(|(_, source_search, first_middle_search, second_middle_search, third_middle_search, target_search)| {
-                source_search.path.is_none()
-                    || first_middle_search.path.is_none()
-                    || second_middle_search.path.is_none()
-                    || third_middle_search.path.is_none()
-                    || target_search.path.is_none()
-            })
-            .map(|(entry, source_search, first_middle_search, second_middle_search, third_middle_search, target_search)| {
-                RoutePathCandidateOrthogonalGraphFourViaExplainBlockedQuadruple {
-                    via_a_uuid: entry.via_a.uuid,
-                    via_a_position: entry.via_a.position,
-                    via_b_uuid: entry.via_b.uuid,
-                    via_b_position: entry.via_b.position,
-                    via_c_uuid: entry.via_c.uuid,
-                    via_c_position: entry.via_c.position,
-                    via_d_uuid: entry.via_d.uuid,
-                    via_d_position: entry.via_d.position,
-                    first_intermediate_layer: entry.first_intermediate_layer,
-                    second_intermediate_layer: entry.second_intermediate_layer,
-                    third_intermediate_layer: entry.third_intermediate_layer,
-                    source_segment: source_search.path.clone().map(|points| {
-                        let cost = orthogonal_graph_path_cost(&points);
-                        RoutePathCandidateOrthogonalGraphFourViaExplainSegment { layer: from_anchor.layer, points, cost }
-                    }),
-                    first_middle_segment: first_middle_search.path.clone().map(|points| {
-                        let cost = orthogonal_graph_path_cost(&points);
-                        RoutePathCandidateOrthogonalGraphFourViaExplainSegment { layer: entry.first_intermediate_layer, points, cost }
-                    }),
-                    second_middle_segment: second_middle_search.path.clone().map(|points| {
-                        let cost = orthogonal_graph_path_cost(&points);
-                        RoutePathCandidateOrthogonalGraphFourViaExplainSegment { layer: entry.second_intermediate_layer, points, cost }
-                    }),
-                    third_middle_segment: third_middle_search.path.clone().map(|points| {
-                        let cost = orthogonal_graph_path_cost(&points);
-                        RoutePathCandidateOrthogonalGraphFourViaExplainSegment { layer: entry.third_intermediate_layer, points, cost }
-                    }),
-                    target_segment: target_search.path.clone().map(|points| {
-                        let cost = orthogonal_graph_path_cost(&points);
-                        RoutePathCandidateOrthogonalGraphFourViaExplainSegment { layer: to_anchor.layer, points, cost }
-                    }),
-                    source_blockages: source_search.blocked_edges.iter().flat_map(|edge| edge.blockages.clone()).collect(),
-                    first_middle_blockages: first_middle_search.blocked_edges.iter().flat_map(|edge| edge.blockages.clone()).collect(),
-                    second_middle_blockages: second_middle_search.blocked_edges.iter().flat_map(|edge| edge.blockages.clone()).collect(),
-                    third_middle_blockages: third_middle_search.blocked_edges.iter().flat_map(|edge| edge.blockages.clone()).collect(),
-                    target_blockages: target_search.blocked_edges.iter().flat_map(|edge| edge.blockages.clone()).collect(),
-                }
-            })
+            .filter(
+                |(
+                    _,
+                    source_search,
+                    first_middle_search,
+                    second_middle_search,
+                    third_middle_search,
+                    target_search,
+                )| {
+                    source_search.path.is_none()
+                        || first_middle_search.path.is_none()
+                        || second_middle_search.path.is_none()
+                        || third_middle_search.path.is_none()
+                        || target_search.path.is_none()
+                },
+            )
+            .map(
+                |(
+                    entry,
+                    source_search,
+                    first_middle_search,
+                    second_middle_search,
+                    third_middle_search,
+                    target_search,
+                )| {
+                    RoutePathCandidateOrthogonalGraphFourViaExplainBlockedQuadruple {
+                        via_a_uuid: entry.via_a.uuid,
+                        via_a_position: entry.via_a.position,
+                        via_b_uuid: entry.via_b.uuid,
+                        via_b_position: entry.via_b.position,
+                        via_c_uuid: entry.via_c.uuid,
+                        via_c_position: entry.via_c.position,
+                        via_d_uuid: entry.via_d.uuid,
+                        via_d_position: entry.via_d.position,
+                        first_intermediate_layer: entry.first_intermediate_layer,
+                        second_intermediate_layer: entry.second_intermediate_layer,
+                        third_intermediate_layer: entry.third_intermediate_layer,
+                        source_segment: source_search.path.clone().map(|points| {
+                            let cost = orthogonal_graph_path_cost(&points);
+                            RoutePathCandidateOrthogonalGraphFourViaExplainSegment {
+                                layer: from_anchor.layer,
+                                points,
+                                cost,
+                            }
+                        }),
+                        first_middle_segment: first_middle_search.path.clone().map(|points| {
+                            let cost = orthogonal_graph_path_cost(&points);
+                            RoutePathCandidateOrthogonalGraphFourViaExplainSegment {
+                                layer: entry.first_intermediate_layer,
+                                points,
+                                cost,
+                            }
+                        }),
+                        second_middle_segment: second_middle_search.path.clone().map(|points| {
+                            let cost = orthogonal_graph_path_cost(&points);
+                            RoutePathCandidateOrthogonalGraphFourViaExplainSegment {
+                                layer: entry.second_intermediate_layer,
+                                points,
+                                cost,
+                            }
+                        }),
+                        third_middle_segment: third_middle_search.path.clone().map(|points| {
+                            let cost = orthogonal_graph_path_cost(&points);
+                            RoutePathCandidateOrthogonalGraphFourViaExplainSegment {
+                                layer: entry.third_intermediate_layer,
+                                points,
+                                cost,
+                            }
+                        }),
+                        target_segment: target_search.path.clone().map(|points| {
+                            let cost = orthogonal_graph_path_cost(&points);
+                            RoutePathCandidateOrthogonalGraphFourViaExplainSegment {
+                                layer: to_anchor.layer,
+                                points,
+                                cost,
+                            }
+                        }),
+                        source_blockages: source_search
+                            .blocked_edges
+                            .iter()
+                            .flat_map(|edge| edge.blockages.clone())
+                            .collect(),
+                        first_middle_blockages: first_middle_search
+                            .blocked_edges
+                            .iter()
+                            .flat_map(|edge| edge.blockages.clone())
+                            .collect(),
+                        second_middle_blockages: second_middle_search
+                            .blocked_edges
+                            .iter()
+                            .flat_map(|edge| edge.blockages.clone())
+                            .collect(),
+                        third_middle_blockages: third_middle_search
+                            .blocked_edges
+                            .iter()
+                            .flat_map(|edge| edge.blockages.clone())
+                            .collect(),
+                        target_blockages: target_search
+                            .blocked_edges
+                            .iter()
+                            .flat_map(|edge| edge.blockages.clone())
+                            .collect(),
+                    }
+                },
+            )
             .collect::<Vec<_>>();
 
         Ok(RoutePathCandidateOrthogonalGraphFourViaExplainReport {

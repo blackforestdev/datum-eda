@@ -38,7 +38,9 @@ pub(super) fn candidate_orthogonal_two_bend_paths(
 
     let mut candidates = Vec::new();
     for layer in candidate_copper_layers {
-        for detour_y in candidate_detour_ys(board, layer.id, from_anchor.position, to_anchor.position) {
+        for detour_y in
+            candidate_detour_ys(board, layer.id, from_anchor.position, to_anchor.position)
+        {
             let points = vec![
                 from_anchor.position,
                 Point::new(from_anchor.position.x, detour_y),
@@ -65,7 +67,9 @@ pub(super) fn candidate_orthogonal_two_bend_paths(
                 blockages,
             });
         }
-        for detour_x in candidate_detour_xs(board, layer.id, from_anchor.position, to_anchor.position) {
+        for detour_x in
+            candidate_detour_xs(board, layer.id, from_anchor.position, to_anchor.position)
+        {
             let points = vec![
                 from_anchor.position,
                 Point::new(detour_x, from_anchor.position.y),
@@ -110,21 +114,11 @@ pub(super) fn selected_orthogonal_two_bend_path(
     candidates.iter().find(|candidate| !candidate.blocked)
 }
 
-fn candidate_detour_xs(
-    board: &Board,
-    layer: LayerId,
-    from: Point,
-    to: Point,
-) -> Vec<i64> {
+fn candidate_detour_xs(board: &Board, layer: LayerId, from: Point, to: Point) -> Vec<i64> {
     candidate_detour_coordinates(board, layer, from, to, true)
 }
 
-fn candidate_detour_ys(
-    board: &Board,
-    layer: LayerId,
-    from: Point,
-    to: Point,
-) -> Vec<i64> {
+fn candidate_detour_ys(board: &Board, layer: LayerId, from: Point, to: Point) -> Vec<i64> {
     candidate_detour_coordinates(board, layer, from, to, false)
 }
 

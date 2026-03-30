@@ -28,7 +28,8 @@ pub(super) fn candidate_orthogonal_doglegs(
     to_anchor: &RoutePreflightAnchor,
     candidate_copper_layers: &[StackupLayer],
 ) -> Vec<OrthogonalDoglegCandidate> {
-    if from_anchor.layer != to_anchor.layer || from_anchor.position.x == to_anchor.position.x
+    if from_anchor.layer != to_anchor.layer
+        || from_anchor.position.x == to_anchor.position.x
         || from_anchor.position.y == to_anchor.position.y
     {
         return Vec::new();

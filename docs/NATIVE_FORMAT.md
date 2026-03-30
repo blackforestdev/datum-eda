@@ -299,14 +299,34 @@ Current live slice:
   board-outline, anchor, and authored-object coordinate lines already present
   on the candidate layer, with explicit path ranking by bend count, then
   segment count, then point-sequence coordinate order. The selected path now
-  also reports `bend_count`, `segment_count`, and `point_count`.
+  also reports `bend_count`, `segment_count`, and `point_count`, plus
+  `segment_evidence` for the selected layer-side path breakdown.
 - `eda project query <dir> route-path-candidate-explain --net <uuid>
   --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate
   route-path-candidate-orthogonal-graph` now reports the current orthogonal
   graph result as a deterministic explanation surface: selected multi-segment
   path when found, or whether the bounded persisted-coordinate graph had no
   reachable same-layer path. The selected path now also reports
-  `bend_count`, `segment_count`, and `point_count`.
+  `bend_count`, `segment_count`, and `point_count`, and the report now also
+  exposes the same `segment_evidence` structure.
+- `eda project export-route-path-proposal <dir> ... --candidate
+  route-path-candidate-orthogonal-graph*` now also preserves the selected
+  bend count in artifact action metadata as `selected_path_bend_count`, and
+  its export report now includes the same path-level bend/point/segment
+  summary plus recorded segment evidence. `inspect-route-proposal-artifact` /
+  `revalidate-route-proposal-artifact` / `apply-route-proposal-artifact`
+  surface that path-level summary back out as well.
+- for the orthogonal-graph family, `inspect-route-proposal-artifact` also
+  exposes the recorded per-layer-side segment breakdown with bend, point,
+  and emitted track-action counts.
+- when those orthogonal-graph artifacts drift before apply, native apply now
+  distinguishes between candidate availability drift, deterministic
+  cost-winner drift, and same-rank geometry drift in the refusal message.
+- `eda project revalidate-route-proposal-artifact <dir> --artifact <path>`
+  now reports the same drift classification as machine-readable JSON without
+  attempting to mutate board copper. For the orthogonal-graph family it also
+  includes per-layer-side segment evidence with recorded/live bend, point,
+  and emitted track-action counts.
 - `eda project query <dir> route-path-candidate --net <uuid> --from-anchor
   <pad_uuid> --to-anchor <pad_uuid> --candidate
   route-path-candidate-orthogonal-graph-via` now reports a deterministic

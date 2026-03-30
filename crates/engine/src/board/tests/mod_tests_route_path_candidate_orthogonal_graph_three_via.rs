@@ -6,21 +6,48 @@ use super::route_path_candidate_three_via::demo_board;
 
 #[test]
 fn route_path_candidate_orthogonal_graph_three_via_reports_deterministic_path() {
-    let (board, net_uuid, _, anchor_top_uuid, anchor_bottom_uuid, via_a_uuid, via_b_uuid, via_c_uuid) =
-        demo_board();
+    let (
+        board,
+        net_uuid,
+        _,
+        anchor_top_uuid,
+        anchor_bottom_uuid,
+        via_a_uuid,
+        via_b_uuid,
+        via_c_uuid,
+    ) = demo_board();
 
     let report = board
-        .route_path_candidate_orthogonal_graph_three_via(net_uuid, anchor_top_uuid, anchor_bottom_uuid)
+        .route_path_candidate_orthogonal_graph_three_via(
+            net_uuid,
+            anchor_top_uuid,
+            anchor_bottom_uuid,
+        )
         .expect("orthogonal graph three-via path candidate should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.summary.candidate_via_count, 3);
     assert_eq!(report.summary.matching_via_triple_count, 1);
     assert_eq!(report.summary.available_via_triple_count, 1);
-    assert_eq!(report.path.as_ref().map(|path| path.via_a_uuid), Some(via_a_uuid));
-    assert_eq!(report.path.as_ref().map(|path| path.via_b_uuid), Some(via_b_uuid));
-    assert_eq!(report.path.as_ref().map(|path| path.via_c_uuid), Some(via_c_uuid));
-    assert_eq!(report.path.as_ref().map(|path| path.segments.len()), Some(4));
+    assert_eq!(
+        report.path.as_ref().map(|path| path.via_a_uuid),
+        Some(via_a_uuid)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.via_b_uuid),
+        Some(via_b_uuid)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.via_c_uuid),
+        Some(via_c_uuid)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.segments.len()),
+        Some(4)
+    );
 }
 
 #[test]
@@ -40,7 +67,11 @@ fn route_path_candidate_orthogonal_graph_three_via_reports_no_path_when_middle_l
     );
 
     let report = board
-        .route_path_candidate_orthogonal_graph_three_via(net_uuid, anchor_top_uuid, anchor_bottom_uuid)
+        .route_path_candidate_orthogonal_graph_three_via(
+            net_uuid,
+            anchor_top_uuid,
+            anchor_bottom_uuid,
+        )
         .expect("orthogonal graph three-via path candidate should succeed");
 
     assert_eq!(

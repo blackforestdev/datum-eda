@@ -122,24 +122,26 @@ impl Board {
             })
             .count();
         let available_via_count = via_searches.len().saturating_sub(blocked_via_count);
-        let path = via_searches.iter().find_map(|(via, source_search, target_search)| {
-            Some(RoutePathCandidateOrthogonalGraphViaPath {
-                via_uuid: via.uuid,
-                via_position: via.position,
-                segments: vec![
-                    RoutePathCandidateOrthogonalGraphViaSegment {
-                        layer: from_anchor.layer,
-                        points: source_search.path.clone()?,
-                        cost: orthogonal_graph_path_cost(source_search.path.as_ref()?),
-                    },
-                    RoutePathCandidateOrthogonalGraphViaSegment {
-                        layer: to_anchor.layer,
-                        points: target_search.path.clone()?,
-                        cost: orthogonal_graph_path_cost(target_search.path.as_ref()?),
-                    },
-                ],
-            })
-        });
+        let path = via_searches
+            .iter()
+            .find_map(|(via, source_search, target_search)| {
+                Some(RoutePathCandidateOrthogonalGraphViaPath {
+                    via_uuid: via.uuid,
+                    via_position: via.position,
+                    segments: vec![
+                        RoutePathCandidateOrthogonalGraphViaSegment {
+                            layer: from_anchor.layer,
+                            points: source_search.path.clone()?,
+                            cost: orthogonal_graph_path_cost(source_search.path.as_ref()?),
+                        },
+                        RoutePathCandidateOrthogonalGraphViaSegment {
+                            layer: to_anchor.layer,
+                            points: target_search.path.clone()?,
+                            cost: orthogonal_graph_path_cost(target_search.path.as_ref()?),
+                        },
+                    ],
+                })
+            });
         let status = if path.is_some() {
             RoutePathCandidateStatus::DeterministicPathFound
         } else {

@@ -175,7 +175,7 @@ fn route_path_candidate_orthogonal_two_bend_finds_first_unblocked_detour_path() 
 
 #[test]
 fn route_path_candidate_orthogonal_two_bend_prefers_horizontal_detour_with_smallest_coordinate_when_clear()
-{
+ {
     let (mut board, net_uuid, _, anchor_a_uuid, anchor_b_uuid) = orthogonal_two_bend_board();
     board.tracks.clear();
 

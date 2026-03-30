@@ -132,10 +132,18 @@ Currently tracked native contracts that are not implemented in MCP:
 
 - `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate <accepted_candidate> [--policy <policy>] --out <path>`
   - exposed in MCP as `export_route_path_proposal`
+  - orthogonal-graph export responses include recorded segment-level
+    ranked-path evidence
 - `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate <accepted_candidate> [--policy <policy>]`
   - exposed in MCP as `route_apply`
 - `project inspect-route-proposal-artifact <path>`
   - exposed in MCP as `inspect_route_proposal_artifact`
+  - orthogonal-graph inspection responses include recorded segment-level
+    ranked-path evidence
+- `project revalidate-route-proposal-artifact <dir> --artifact <path>`
+  - exposed in MCP as `revalidate_route_proposal_artifact`
+  - orthogonal-graph revalidation responses include segment-level ranked-path
+    evidence in addition to top-level drift classification
 - `project apply-route-proposal-artifact <dir> --artifact <path>`
   - exposed in MCP as `apply_route_proposal_artifact`
 
@@ -171,7 +179,11 @@ Currently tracked native contracts that are not implemented in MCP:
 - `project query <dir> route-preflight --net <uuid>`
 - `project query <dir> route-corridor --net <uuid>`
 - `project query <dir> route-path-candidate --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- same-layer `route-path-candidate-orthogonal-graph` responses now also
+  include `segment_evidence`
 - `project query <dir> route-path-candidate-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- same-layer `route-path-candidate-orthogonal-graph-explain` responses now
+  also include `segment_evidence`
 - `project query <dir> route-path-candidate-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
 - `project query <dir> route-path-candidate-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
 - `project query <dir> route-path-candidate-two-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`

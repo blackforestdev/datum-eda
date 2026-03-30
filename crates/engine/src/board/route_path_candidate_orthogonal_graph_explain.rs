@@ -8,6 +8,7 @@ use crate::board::{
 };
 use crate::ir::geometry::{LayerId, Point};
 
+use super::route_path_candidate_orthogonal_graph::RoutePathCandidateOrthogonalGraphSegmentEvidence;
 use super::route_path_candidate_orthogonal_graph_selection::{
     OrthogonalGraphEdgeOrientation, candidate_orthogonal_graph_layer_searches,
     orthogonal_graph_path_cost,
@@ -67,6 +68,7 @@ pub struct RoutePathCandidateOrthogonalGraphExplainReport {
     pub candidate_copper_layers: Vec<StackupLayer>,
     pub summary: RoutePathCandidateOrthogonalGraphExplainSummary,
     pub selected_path: Option<RoutePathCandidateOrthogonalGraphExplainSelectedPath>,
+    pub segment_evidence: Vec<RoutePathCandidateOrthogonalGraphSegmentEvidence>,
     pub blocked_edges: Vec<RoutePathCandidateOrthogonalGraphExplainBlockedEdge>,
 }
 
@@ -160,6 +162,7 @@ impl Board {
                 blocked_edge_count: path_candidate.summary.blocked_edge_count,
             },
             selected_path,
+            segment_evidence: path_candidate.segment_evidence,
             blocked_edges,
         })
     }

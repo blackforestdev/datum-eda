@@ -87,8 +87,8 @@ pub(super) fn execute_project_command(
         | command @ ProjectCommands::EditBoardPad(ProjectEditBoardPadArgs { .. })
         | command @ ProjectCommands::PlaceBoardPad(ProjectPlaceBoardPadArgs { .. })
         | command @ ProjectCommands::DeleteBoardPad(ProjectDeleteBoardPadArgs { .. })
-        | command @ ProjectCommands::PlaceBoardDimension(_) 
-        | command @ ProjectCommands::EditBoardDimension(_) 
+        | command @ ProjectCommands::PlaceBoardDimension(_)
+        | command @ ProjectCommands::EditBoardDimension(_)
         | command @ ProjectCommands::DeleteBoardDimension(ProjectDeleteBoardDimensionArgs { .. }) => {
             command_exec_project_board_surface::execute_project_board_surface_command(
                 format,

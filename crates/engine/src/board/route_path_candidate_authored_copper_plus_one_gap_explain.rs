@@ -43,7 +43,8 @@ impl Board {
         net_uuid: Uuid,
         from_anchor_pad_uuid: Uuid,
         to_anchor_pad_uuid: Uuid,
-    ) -> Result<RoutePathCandidateAuthoredCopperPlusOneGapExplainReport, RoutePathCandidateError> {
+    ) -> Result<RoutePathCandidateAuthoredCopperPlusOneGapExplainReport, RoutePathCandidateError>
+    {
         let report = self.route_path_candidate_authored_copper_plus_one_gap(
             net_uuid,
             from_anchor_pad_uuid,

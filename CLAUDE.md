@@ -2,26 +2,34 @@
 
 ## What This Is
 A headless-first PCB design engine for Linux with AI and CLI as primary
-interfaces. Import existing designs, inspect them, run ERC/DRC, script
-transformations, generate manufacturing output — with full AI agent access
-to every query and operation.
+interfaces. Import existing designs, inspect and transform them, run
+ERC/DRC, author native projects from scratch, generate manufacturing
+output, and route boards — with full AI agent access to every query and
+operation via MCP and CLI.
 
-## Product Wedge (v1 = PLAN.md milestone M2)
-**The best AI/CLI design analysis and automation environment for Linux
-PCB projects.**
+## Current Status
+M0–M4 are complete. M5 (deterministic layout kernel) is in active
+development. Status source of truth: `specs/PROGRESS.md` and
+`specs/progress/*.md`.
 
-Not a full CAD replacement on day one. v1 is useful because it can:
-- Import KiCad and Eagle designs with high fidelity
-- Query any aspect of a design programmatically
-- Run ERC/DRC and explain violations
-- Expose all of the above to AI agents via MCP and to scripts via CLI
+**Completed capabilities (M0–M4):**
+- Canonical IR, pool foundation, deterministic import (KiCad primary)
+- Full query engine over imported and native designs
+- ERC (7 rules) and DRC (7 rules) with 0% FP/FN quality gates
+- 26+ MCP tools, CLI with proper exit codes
+- 20+ write operations with full undo/redo
+- KiCad write-back with sidecar persistence and round-trip fidelity
+- Native schematic and board authoring from scratch
+- Forward annotation workflow
+- Manufacturing export: Gerber, Excellon drill, BOM, pick-and-place
 
-v1 does NOT include: manufacturing export (M4), native project creation
-(M4), routing (M5), or GUI (M7). Those are the platform trajectory.
+**In progress (M5):**
+- Deterministic routing kernel: 60+ path candidate strategies
+- Route proposal artifact export/apply/inspect/revalidate
+- Orthogonal graph synthesis with 1–6 via chains
+- Zone/obstacle/topology-aware authored-copper-graph policies
 
-Full native authoring and manufacturing output arrive at M4.
-Layout engine (placement + routing) arrives at M5.
-GUI arrives at M7.
+**Future:** M6 (AI strategy layer), M7 (GUI), M8 (professional features)
 
 ## Architecture: Engine-First
 
@@ -121,7 +129,17 @@ project/
 │   ├── MCP_DESIGN.md       # MCP tool specifications
 │   ├── EAGLE_BLUEPRINT.md  # Eagle 9.6.2 architecture study
 │   ├── HORIZON_ANALYSIS.md # Horizon EDA source study
-│   └── ALTIUM_LESSONS.md   # Altium UX study
+│   ├── ALTIUM_LESSONS.md   # Altium UX study
+│   ├── IMPLEMENTATION_PLAN.md # Overall implementation roadmap
+│   ├── IMPLEMENTATION_GUARDRAILS.md # Implementation constraints and safeguards
+│   ├── DECOMPOSITION_PLAN.md # Work decomposition strategy
+│   ├── DECOMPOSITION_BACKLOG.md # Backlog of decomposed tasks
+│   ├── STABILIZATION_PLAN.md # Structural debt retirement (parallel to milestones)
+│   ├── RESEARCH_TRACEABILITY.md # Research traceability documentation
+│   ├── M0_TASK_CHECKLIST.md # M0 task list
+│   ├── M1_TASK_CHECKLIST.md # M1 task list
+│   ├── R1_G0_FOUNDATION.md # Release 1, Gate 0 foundation
+│   └── workflows/          # Workflow documentation (e.g. m4_live_slice.md)
 │
 ├── crates/
 │   ├── engine/             # Core engine (Rust library crate)

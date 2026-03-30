@@ -129,13 +129,15 @@ impl Board {
         let blocked_paths = candidates
             .iter()
             .filter(|candidate| candidate.blocked)
-            .map(|candidate| RoutePathCandidateOrthogonalTwoBendExplainBlockedPath {
-                layer: candidate.layer,
-                orientation: render_orientation(candidate.orientation),
-                detour_coordinate: candidate.detour_coordinate,
-                points: candidate.points.clone(),
-                blockages: candidate.blockages.clone(),
-            })
+            .map(
+                |candidate| RoutePathCandidateOrthogonalTwoBendExplainBlockedPath {
+                    layer: candidate.layer,
+                    orientation: render_orientation(candidate.orientation),
+                    detour_coordinate: candidate.detour_coordinate,
+                    points: candidate.points.clone(),
+                    blockages: candidate.blockages.clone(),
+                },
+            )
             .collect::<Vec<_>>();
 
         Ok(RoutePathCandidateOrthogonalTwoBendExplainReport {

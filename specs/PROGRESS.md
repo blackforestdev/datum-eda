@@ -483,6 +483,25 @@ Status: [~] In progress
   - the same orthogonal graph query and explanation reports now expose that
     selected path cost directly as bend/segment/point counts on the returned
     path or per-segment path data
+  - the same orthogonal graph route proposal artifact lane now preserves the
+    selected bend count in exported actions and exposes it again through
+    artifact inspection/apply reporting
+  - `export-route-path-proposal` now also returns the recorded
+    orthogonal-graph layer-segment bend/point/track-action breakdown
+  - the same-layer orthogonal-graph `route-path-candidate` and
+    `route-path-candidate-explain` reports now also return `segment_evidence`
+    so direct query output matches the artifact lane vocabulary
+  - orthogonal-graph artifact apply now reports whether stale proposals
+    drifted because candidate availability changed, the deterministic ranked
+    winner changed, or same-rank geometry changed
+  - `inspect-route-proposal-artifact` now also returns the recorded
+    orthogonal-graph layer-segment bend/point/track-action breakdown
+  - the same lane now also has `project revalidate-route-proposal-artifact
+    <dir> --artifact <path>` so callers can read that drift classification
+    and live/recorded path summaries without applying
+  - that revalidation report now also carries segment-level orthogonal-graph
+    evidence so stale proposals can show which layer-side segment changed and
+    how its bend/point/track-action facts differ live
 - Current M5 existing-copper readback lane:
   - deterministic authored-copper graph path queries now exist in
     increasingly filtered/readback-focused forms recorded in
@@ -582,6 +601,15 @@ Status: [~] In progress
 - Current M5 frontier:
   - deterministic persisted-state layout-kernel/routing queries continue under
     explicit contract selection from `specs/progress/m5_opening.md`
+  - a bounded native route selector now exists via `project route-proposal
+    <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`,
+    selecting the first successful family from the explicit accepted candidate
+    order recorded in `specs/progress/m5_opening.md`
+  - that same selector now also feeds a selected-proposal write lane via
+    `project export-route-proposal <dir> --net <uuid> --from-anchor
+    <pad_uuid> --to-anchor <pad_uuid> --out <path>` and
+    `project route-apply-selected <dir> --net <uuid> --from-anchor
+    <pad_uuid> --to-anchor <pad_uuid>`
   - the first artifact/export/apply write lane now covers:
     the accepted plus-one-gap bridge, the accepted single-layer
     `route-path-candidate` contract, and the accepted bounded single-via

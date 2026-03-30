@@ -237,7 +237,7 @@ pub(super) fn orthogonal_graph_two_via_board() -> (Board, Uuid, Uuid, Uuid, Uuid
 
 #[test]
 fn route_path_candidate_orthogonal_graph_two_via_reports_deterministic_path_using_authored_via_pair()
-{
+ {
     let (board, net_uuid, _, anchor_top_uuid, anchor_bottom_uuid, via_a_uuid, via_b_uuid) =
         orthogonal_graph_two_via_board();
 
@@ -249,13 +249,25 @@ fn route_path_candidate_orthogonal_graph_two_via_reports_deterministic_path_usin
         )
         .expect("orthogonal graph two-via should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(report.summary.candidate_via_count, 5);
     assert_eq!(report.summary.matching_via_pair_count, 1);
     assert_eq!(report.summary.available_via_pair_count, 1);
-    assert_eq!(report.path.as_ref().map(|path| path.via_a_uuid), Some(via_a_uuid));
-    assert_eq!(report.path.as_ref().map(|path| path.via_b_uuid), Some(via_b_uuid));
-    assert_eq!(report.path.as_ref().map(|path| path.segments.len()), Some(3));
+    assert_eq!(
+        report.path.as_ref().map(|path| path.via_a_uuid),
+        Some(via_a_uuid)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.via_b_uuid),
+        Some(via_b_uuid)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.segments.len()),
+        Some(3)
+    );
 }
 
 #[test]

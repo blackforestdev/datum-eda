@@ -38,8 +38,14 @@ pub(crate) fn render_native_project_route_path_candidate_orthogonal_dogleg_text(
             "candidate_copper_layers: {}",
             report.summary.candidate_copper_layer_count
         ),
-        format!("candidate_corners: {}", report.summary.candidate_corner_count),
-        format!("available_corners: {}", report.summary.available_corner_count),
+        format!(
+            "candidate_corners: {}",
+            report.summary.candidate_corner_count
+        ),
+        format!(
+            "available_corners: {}",
+            report.summary.available_corner_count
+        ),
         format!("blocked_corners: {}", report.summary.blocked_corner_count),
     ];
     if let Some(path) = &report.path {

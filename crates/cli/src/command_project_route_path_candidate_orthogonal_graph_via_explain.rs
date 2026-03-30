@@ -36,7 +36,10 @@ pub(crate) fn render_native_project_route_path_candidate_orthogonal_graph_via_ex
             report.persisted_native_board_state_only
         ),
         format!("status: {}", render_status(report.status.clone())),
-        format!("explanation_kind: {}", render_kind(&report.explanation_kind)),
+        format!(
+            "explanation_kind: {}",
+            render_kind(&report.explanation_kind)
+        ),
         format!("net_uuid: {}", report.net_uuid),
         format!("net_name: {}", report.net_name),
         format!("from_anchor_pad_uuid: {}", report.from_anchor_pad_uuid),

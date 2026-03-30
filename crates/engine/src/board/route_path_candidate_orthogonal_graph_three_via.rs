@@ -148,8 +148,9 @@ impl Board {
                 },
             )
             .count();
-        let available_via_triple_count =
-            triple_searches.len().saturating_sub(blocked_via_triple_count);
+        let available_via_triple_count = triple_searches
+            .len()
+            .saturating_sub(blocked_via_triple_count);
         let path = triple_searches.iter().find_map(
             |(entry, source_search, first_middle_search, second_middle_search, target_search)| {
                 Some(RoutePathCandidateOrthogonalGraphThreeViaPath {
@@ -222,5 +223,7 @@ impl Board {
 }
 
 fn permutation_count(n: usize, pick: usize) -> usize {
-    (0..pick).fold(1usize, |acc, index| acc.saturating_mul(n.saturating_sub(index)))
+    (0..pick).fold(1usize, |acc, index| {
+        acc.saturating_mul(n.saturating_sub(index))
+    })
 }

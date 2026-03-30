@@ -5,9 +5,9 @@ use crate::board::{Board, RoutePathCandidateError, RoutePathCandidateStatus, Sta
 use crate::ir::geometry::{LayerId, Point};
 
 use super::route_path_candidate_orthogonal_graph_selection::{
-    ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_SELECTION_RULE, RoutePathCandidateOrthogonalGraphPathCost,
-    candidate_orthogonal_graph_layer_searches, selected_orthogonal_graph_path,
-    orthogonal_graph_path_cost,
+    ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_SELECTION_RULE,
+    RoutePathCandidateOrthogonalGraphPathCost, candidate_orthogonal_graph_layer_searches,
+    orthogonal_graph_path_cost, selected_orthogonal_graph_path,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -15,6 +15,16 @@ pub struct RoutePathCandidateOrthogonalGraphPath {
     pub layer: LayerId,
     pub points: Vec<Point>,
     pub cost: RoutePathCandidateOrthogonalGraphPathCost,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RoutePathCandidateOrthogonalGraphSegmentEvidence {
+    pub layer_segment_index: usize,
+    pub layer_segment_count: usize,
+    pub layer: LayerId,
+    pub bend_count: usize,
+    pub point_count: usize,
+    pub track_action_count: usize,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -39,6 +49,7 @@ pub struct RoutePathCandidateOrthogonalGraphReport {
     pub candidate_copper_layers: Vec<StackupLayer>,
     pub summary: RoutePathCandidateOrthogonalGraphSummary,
     pub path: Option<RoutePathCandidateOrthogonalGraphPath>,
+    pub segment_evidence: Vec<RoutePathCandidateOrthogonalGraphSegmentEvidence>,
 }
 
 impl Board {
@@ -89,16 +100,35 @@ impl Board {
         );
         let graph_node_count = searches.iter().map(|search| search.node_count).sum();
         let graph_edge_count = searches.iter().map(|search| search.edge_count).sum();
-        let blocked_edge_count = searches.iter().map(|search| search.blocked_edges.len()).sum();
+        let blocked_edge_count = searches
+            .iter()
+            .map(|search| search.blocked_edges.len())
+            .sum();
         let selected = selected_orthogonal_graph_path(&searches);
         let path = selected.and_then(|search| {
-            search.path.as_ref().map(|points| RoutePathCandidateOrthogonalGraphPath {
-                layer: search.layer,
-                points: points.clone(),
-                cost: orthogonal_graph_path_cost(points),
-            })
+            search
+                .path
+                .as_ref()
+                .map(|points| RoutePathCandidateOrthogonalGraphPath {
+                    layer: search.layer,
+                    points: points.clone(),
+                    cost: orthogonal_graph_path_cost(points),
+                })
         });
         let path_point_count = path.as_ref().map(|path| path.points.len()).unwrap_or(0);
+        let segment_evidence = path
+            .as_ref()
+            .map(|path| {
+                vec![RoutePathCandidateOrthogonalGraphSegmentEvidence {
+                    layer_segment_index: 0,
+                    layer_segment_count: 1,
+                    layer: path.layer,
+                    bend_count: path.cost.bend_count,
+                    point_count: path.points.len(),
+                    track_action_count: path.points.len().saturating_sub(1),
+                }]
+            })
+            .unwrap_or_default();
         let status = if path.is_some() {
             RoutePathCandidateStatus::DeterministicPathFound
         } else {
@@ -127,6 +157,7 @@ impl Board {
                 path_point_count,
             },
             path,
+            segment_evidence,
         })
     }
 }

@@ -53,6 +53,28 @@ pub(crate) fn render_native_project_route_path_candidate_orthogonal_graph_text(
         lines.push("path_bends: 0".to_string());
         lines.push("path_segments: 0".to_string());
     }
+    lines.push(format!(
+        "segment_evidence: {}",
+        report.segment_evidence.len()
+    ));
+    for segment in &report.segment_evidence {
+        lines.push(String::new());
+        lines.push(format!(
+            "layer_segment_index: {}",
+            segment.layer_segment_index
+        ));
+        lines.push(format!(
+            "layer_segment_count: {}",
+            segment.layer_segment_count
+        ));
+        lines.push(format!("layer: {}", segment.layer));
+        lines.push(format!("bend_count: {}", segment.bend_count));
+        lines.push(format!("point_count: {}", segment.point_count));
+        lines.push(format!(
+            "track_action_count: {}",
+            segment.track_action_count
+        ));
+    }
     lines.join("\n")
 }
 

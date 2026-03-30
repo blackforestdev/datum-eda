@@ -125,12 +125,14 @@ impl Board {
         let blocked_doglegs = candidates
             .iter()
             .filter(|candidate| candidate.blocked)
-            .map(|candidate| RoutePathCandidateOrthogonalDoglegExplainBlockedDogleg {
-                layer: candidate.layer,
-                corner: candidate.corner,
-                corner_order: render_corner_order(candidate.corner_order),
-                blockages: candidate.blockages.clone(),
-            })
+            .map(
+                |candidate| RoutePathCandidateOrthogonalDoglegExplainBlockedDogleg {
+                    layer: candidate.layer,
+                    corner: candidate.corner,
+                    corner_order: render_corner_order(candidate.corner_order),
+                    blockages: candidate.blockages.clone(),
+                },
+            )
             .collect::<Vec<_>>();
 
         Ok(RoutePathCandidateOrthogonalDoglegExplainReport {

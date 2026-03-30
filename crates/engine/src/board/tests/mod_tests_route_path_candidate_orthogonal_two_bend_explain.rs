@@ -1,6 +1,4 @@
-use crate::board::{
-    RoutePathCandidateOrthogonalTwoBendExplainKind, RoutePathCandidateStatus,
-};
+use crate::board::{RoutePathCandidateOrthogonalTwoBendExplainKind, RoutePathCandidateStatus};
 use crate::ir::geometry::Point;
 
 use super::route_path_candidate_orthogonal_two_bend::orthogonal_two_bend_board;
@@ -22,7 +20,10 @@ fn route_path_candidate_orthogonal_two_bend_explain_reports_selected_path_reason
         RoutePathCandidateOrthogonalTwoBendExplainKind::DeterministicPathFound
     );
     assert_eq!(
-        report.selected_path.as_ref().map(|entry| entry.points.clone()),
+        report
+            .selected_path
+            .as_ref()
+            .map(|entry| entry.points.clone()),
         Some(vec![
             Point::new(100_000, 100_000),
             Point::new(0, 100_000),
@@ -35,7 +36,11 @@ fn route_path_candidate_orthogonal_two_bend_explain_reports_selected_path_reason
 #[test]
 fn route_path_candidate_orthogonal_two_bend_explain_reports_no_same_layer_candidate() {
     let (mut board, net_uuid, _, anchor_a_uuid, anchor_b_uuid) = orthogonal_two_bend_board();
-    board.pads.get_mut(&anchor_b_uuid).expect("anchor exists").layer = 3;
+    board
+        .pads
+        .get_mut(&anchor_b_uuid)
+        .expect("anchor exists")
+        .layer = 3;
 
     let report = board
         .route_path_candidate_orthogonal_two_bend_explain(net_uuid, anchor_a_uuid, anchor_b_uuid)

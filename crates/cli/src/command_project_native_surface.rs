@@ -38,42 +38,6 @@ mod command_project_route_path_candidate_authored_copper_plus_one_gap_explain;
 mod command_project_route_path_candidate_authored_via_chain;
 #[path = "command_project_route_path_candidate_authored_via_chain_explain.rs"]
 mod command_project_route_path_candidate_authored_via_chain_explain;
-#[path = "command_project_route_path_candidate_orthogonal_dogleg.rs"]
-mod command_project_route_path_candidate_orthogonal_dogleg;
-#[path = "command_project_route_path_candidate_orthogonal_dogleg_explain.rs"]
-mod command_project_route_path_candidate_orthogonal_dogleg_explain;
-#[path = "command_project_route_path_candidate_orthogonal_two_bend.rs"]
-mod command_project_route_path_candidate_orthogonal_two_bend;
-#[path = "command_project_route_path_candidate_orthogonal_two_bend_explain.rs"]
-mod command_project_route_path_candidate_orthogonal_two_bend_explain;
-#[path = "command_project_route_path_candidate_orthogonal_graph.rs"]
-mod command_project_route_path_candidate_orthogonal_graph;
-#[path = "command_project_route_path_candidate_orthogonal_graph_explain.rs"]
-mod command_project_route_path_candidate_orthogonal_graph_explain;
-#[path = "command_project_route_path_candidate_orthogonal_graph_via.rs"]
-mod command_project_route_path_candidate_orthogonal_graph_via;
-#[path = "command_project_route_path_candidate_orthogonal_graph_via_explain.rs"]
-mod command_project_route_path_candidate_orthogonal_graph_via_explain;
-#[path = "command_project_route_path_candidate_orthogonal_graph_two_via.rs"]
-mod command_project_route_path_candidate_orthogonal_graph_two_via;
-#[path = "command_project_route_path_candidate_orthogonal_graph_two_via_explain.rs"]
-mod command_project_route_path_candidate_orthogonal_graph_two_via_explain;
-#[path = "command_project_route_path_candidate_orthogonal_graph_three_via.rs"]
-mod command_project_route_path_candidate_orthogonal_graph_three_via;
-#[path = "command_project_route_path_candidate_orthogonal_graph_three_via_explain.rs"]
-mod command_project_route_path_candidate_orthogonal_graph_three_via_explain;
-#[path = "command_project_route_path_candidate_orthogonal_graph_four_via.rs"]
-mod command_project_route_path_candidate_orthogonal_graph_four_via;
-#[path = "command_project_route_path_candidate_orthogonal_graph_four_via_explain.rs"]
-mod command_project_route_path_candidate_orthogonal_graph_four_via_explain;
-#[path = "command_project_route_path_candidate_orthogonal_graph_five_via.rs"]
-mod command_project_route_path_candidate_orthogonal_graph_five_via;
-#[path = "command_project_route_path_candidate_orthogonal_graph_five_via_explain.rs"]
-mod command_project_route_path_candidate_orthogonal_graph_five_via_explain;
-#[path = "command_project_route_path_candidate_orthogonal_graph_six_via.rs"]
-mod command_project_route_path_candidate_orthogonal_graph_six_via;
-#[path = "command_project_route_path_candidate_orthogonal_graph_six_via_explain.rs"]
-mod command_project_route_path_candidate_orthogonal_graph_six_via_explain;
 #[path = "command_project_route_path_candidate_explain.rs"]
 mod command_project_route_path_candidate_explain;
 #[path = "command_project_route_path_candidate_five_via.rs"]
@@ -84,6 +48,42 @@ mod command_project_route_path_candidate_five_via_explain;
 mod command_project_route_path_candidate_four_via;
 #[path = "command_project_route_path_candidate_four_via_explain.rs"]
 mod command_project_route_path_candidate_four_via_explain;
+#[path = "command_project_route_path_candidate_orthogonal_dogleg.rs"]
+mod command_project_route_path_candidate_orthogonal_dogleg;
+#[path = "command_project_route_path_candidate_orthogonal_dogleg_explain.rs"]
+mod command_project_route_path_candidate_orthogonal_dogleg_explain;
+#[path = "command_project_route_path_candidate_orthogonal_graph.rs"]
+mod command_project_route_path_candidate_orthogonal_graph;
+#[path = "command_project_route_path_candidate_orthogonal_graph_explain.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_explain;
+#[path = "command_project_route_path_candidate_orthogonal_graph_five_via.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_five_via;
+#[path = "command_project_route_path_candidate_orthogonal_graph_five_via_explain.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_five_via_explain;
+#[path = "command_project_route_path_candidate_orthogonal_graph_four_via.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_four_via;
+#[path = "command_project_route_path_candidate_orthogonal_graph_four_via_explain.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_four_via_explain;
+#[path = "command_project_route_path_candidate_orthogonal_graph_six_via.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_six_via;
+#[path = "command_project_route_path_candidate_orthogonal_graph_six_via_explain.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_six_via_explain;
+#[path = "command_project_route_path_candidate_orthogonal_graph_three_via.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_three_via;
+#[path = "command_project_route_path_candidate_orthogonal_graph_three_via_explain.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_three_via_explain;
+#[path = "command_project_route_path_candidate_orthogonal_graph_two_via.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_two_via;
+#[path = "command_project_route_path_candidate_orthogonal_graph_two_via_explain.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_two_via_explain;
+#[path = "command_project_route_path_candidate_orthogonal_graph_via.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_via;
+#[path = "command_project_route_path_candidate_orthogonal_graph_via_explain.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_via_explain;
+#[path = "command_project_route_path_candidate_orthogonal_two_bend.rs"]
+mod command_project_route_path_candidate_orthogonal_two_bend;
+#[path = "command_project_route_path_candidate_orthogonal_two_bend_explain.rs"]
+mod command_project_route_path_candidate_orthogonal_two_bend_explain;
 #[path = "command_project_route_path_candidate_six_via.rs"]
 mod command_project_route_path_candidate_six_via;
 #[path = "command_project_route_path_candidate_six_via_explain.rs"]

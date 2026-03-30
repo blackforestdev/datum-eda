@@ -293,71 +293,149 @@ impl Board {
 
         let blocked_matching_sextuples = sextuple_searches
             .iter()
-            .filter(|(_, source_search, first_middle_search, second_middle_search, third_middle_search, fourth_middle_search, fifth_middle_search, target_search)| {
-                source_search.path.is_none()
-                    || first_middle_search.path.is_none()
-                    || second_middle_search.path.is_none()
-                    || third_middle_search.path.is_none()
-                    || fourth_middle_search.path.is_none()
-                    || fifth_middle_search.path.is_none()
-                    || target_search.path.is_none()
-            })
-            .map(|(entry, source_search, first_middle_search, second_middle_search, third_middle_search, fourth_middle_search, fifth_middle_search, target_search)| {
-                RoutePathCandidateOrthogonalGraphSixViaExplainBlockedSextuple {
-                    via_a_uuid: entry.via_a.uuid,
-                    via_a_position: entry.via_a.position,
-                    via_b_uuid: entry.via_b.uuid,
-                    via_b_position: entry.via_b.position,
-                    via_c_uuid: entry.via_c.uuid,
-                    via_c_position: entry.via_c.position,
-                    via_d_uuid: entry.via_d.uuid,
-                    via_d_position: entry.via_d.position,
-                    via_e_uuid: entry.via_e.uuid,
-                    via_e_position: entry.via_e.position,
-                    via_f_uuid: entry.via_f.uuid,
-                    via_f_position: entry.via_f.position,
-                    first_intermediate_layer: entry.first_intermediate_layer,
-                    second_intermediate_layer: entry.second_intermediate_layer,
-                    third_intermediate_layer: entry.third_intermediate_layer,
-                    fourth_intermediate_layer: entry.fourth_intermediate_layer,
-                    fifth_intermediate_layer: entry.fifth_intermediate_layer,
-                    source_segment: source_search.path.clone().map(|points| {
-                        let cost = orthogonal_graph_path_cost(&points);
-                        RoutePathCandidateOrthogonalGraphSixViaExplainSegment { layer: from_anchor.layer, points, cost }
-                    }),
-                    first_middle_segment: first_middle_search.path.clone().map(|points| {
-                        let cost = orthogonal_graph_path_cost(&points);
-                        RoutePathCandidateOrthogonalGraphSixViaExplainSegment { layer: entry.first_intermediate_layer, points, cost }
-                    }),
-                    second_middle_segment: second_middle_search.path.clone().map(|points| {
-                        let cost = orthogonal_graph_path_cost(&points);
-                        RoutePathCandidateOrthogonalGraphSixViaExplainSegment { layer: entry.second_intermediate_layer, points, cost }
-                    }),
-                    third_middle_segment: third_middle_search.path.clone().map(|points| {
-                        let cost = orthogonal_graph_path_cost(&points);
-                        RoutePathCandidateOrthogonalGraphSixViaExplainSegment { layer: entry.third_intermediate_layer, points, cost }
-                    }),
-                    fourth_middle_segment: fourth_middle_search.path.clone().map(|points| {
-                        let cost = orthogonal_graph_path_cost(&points);
-                        RoutePathCandidateOrthogonalGraphSixViaExplainSegment { layer: entry.fourth_intermediate_layer, points, cost }
-                    }),
-                    fifth_middle_segment: fifth_middle_search.path.clone().map(|points| {
-                        let cost = orthogonal_graph_path_cost(&points);
-                        RoutePathCandidateOrthogonalGraphSixViaExplainSegment { layer: entry.fifth_intermediate_layer, points, cost }
-                    }),
-                    target_segment: target_search.path.clone().map(|points| {
-                        let cost = orthogonal_graph_path_cost(&points);
-                        RoutePathCandidateOrthogonalGraphSixViaExplainSegment { layer: to_anchor.layer, points, cost }
-                    }),
-                    source_blockages: source_search.blocked_edges.iter().flat_map(|edge| edge.blockages.clone()).collect(),
-                    first_middle_blockages: first_middle_search.blocked_edges.iter().flat_map(|edge| edge.blockages.clone()).collect(),
-                    second_middle_blockages: second_middle_search.blocked_edges.iter().flat_map(|edge| edge.blockages.clone()).collect(),
-                    third_middle_blockages: third_middle_search.blocked_edges.iter().flat_map(|edge| edge.blockages.clone()).collect(),
-                    fourth_middle_blockages: fourth_middle_search.blocked_edges.iter().flat_map(|edge| edge.blockages.clone()).collect(),
-                    fifth_middle_blockages: fifth_middle_search.blocked_edges.iter().flat_map(|edge| edge.blockages.clone()).collect(),
-                    target_blockages: target_search.blocked_edges.iter().flat_map(|edge| edge.blockages.clone()).collect(),
-                }
-            })
+            .filter(
+                |(
+                    _,
+                    source_search,
+                    first_middle_search,
+                    second_middle_search,
+                    third_middle_search,
+                    fourth_middle_search,
+                    fifth_middle_search,
+                    target_search,
+                )| {
+                    source_search.path.is_none()
+                        || first_middle_search.path.is_none()
+                        || second_middle_search.path.is_none()
+                        || third_middle_search.path.is_none()
+                        || fourth_middle_search.path.is_none()
+                        || fifth_middle_search.path.is_none()
+                        || target_search.path.is_none()
+                },
+            )
+            .map(
+                |(
+                    entry,
+                    source_search,
+                    first_middle_search,
+                    second_middle_search,
+                    third_middle_search,
+                    fourth_middle_search,
+                    fifth_middle_search,
+                    target_search,
+                )| {
+                    RoutePathCandidateOrthogonalGraphSixViaExplainBlockedSextuple {
+                        via_a_uuid: entry.via_a.uuid,
+                        via_a_position: entry.via_a.position,
+                        via_b_uuid: entry.via_b.uuid,
+                        via_b_position: entry.via_b.position,
+                        via_c_uuid: entry.via_c.uuid,
+                        via_c_position: entry.via_c.position,
+                        via_d_uuid: entry.via_d.uuid,
+                        via_d_position: entry.via_d.position,
+                        via_e_uuid: entry.via_e.uuid,
+                        via_e_position: entry.via_e.position,
+                        via_f_uuid: entry.via_f.uuid,
+                        via_f_position: entry.via_f.position,
+                        first_intermediate_layer: entry.first_intermediate_layer,
+                        second_intermediate_layer: entry.second_intermediate_layer,
+                        third_intermediate_layer: entry.third_intermediate_layer,
+                        fourth_intermediate_layer: entry.fourth_intermediate_layer,
+                        fifth_intermediate_layer: entry.fifth_intermediate_layer,
+                        source_segment: source_search.path.clone().map(|points| {
+                            let cost = orthogonal_graph_path_cost(&points);
+                            RoutePathCandidateOrthogonalGraphSixViaExplainSegment {
+                                layer: from_anchor.layer,
+                                points,
+                                cost,
+                            }
+                        }),
+                        first_middle_segment: first_middle_search.path.clone().map(|points| {
+                            let cost = orthogonal_graph_path_cost(&points);
+                            RoutePathCandidateOrthogonalGraphSixViaExplainSegment {
+                                layer: entry.first_intermediate_layer,
+                                points,
+                                cost,
+                            }
+                        }),
+                        second_middle_segment: second_middle_search.path.clone().map(|points| {
+                            let cost = orthogonal_graph_path_cost(&points);
+                            RoutePathCandidateOrthogonalGraphSixViaExplainSegment {
+                                layer: entry.second_intermediate_layer,
+                                points,
+                                cost,
+                            }
+                        }),
+                        third_middle_segment: third_middle_search.path.clone().map(|points| {
+                            let cost = orthogonal_graph_path_cost(&points);
+                            RoutePathCandidateOrthogonalGraphSixViaExplainSegment {
+                                layer: entry.third_intermediate_layer,
+                                points,
+                                cost,
+                            }
+                        }),
+                        fourth_middle_segment: fourth_middle_search.path.clone().map(|points| {
+                            let cost = orthogonal_graph_path_cost(&points);
+                            RoutePathCandidateOrthogonalGraphSixViaExplainSegment {
+                                layer: entry.fourth_intermediate_layer,
+                                points,
+                                cost,
+                            }
+                        }),
+                        fifth_middle_segment: fifth_middle_search.path.clone().map(|points| {
+                            let cost = orthogonal_graph_path_cost(&points);
+                            RoutePathCandidateOrthogonalGraphSixViaExplainSegment {
+                                layer: entry.fifth_intermediate_layer,
+                                points,
+                                cost,
+                            }
+                        }),
+                        target_segment: target_search.path.clone().map(|points| {
+                            let cost = orthogonal_graph_path_cost(&points);
+                            RoutePathCandidateOrthogonalGraphSixViaExplainSegment {
+                                layer: to_anchor.layer,
+                                points,
+                                cost,
+                            }
+                        }),
+                        source_blockages: source_search
+                            .blocked_edges
+                            .iter()
+                            .flat_map(|edge| edge.blockages.clone())
+                            .collect(),
+                        first_middle_blockages: first_middle_search
+                            .blocked_edges
+                            .iter()
+                            .flat_map(|edge| edge.blockages.clone())
+                            .collect(),
+                        second_middle_blockages: second_middle_search
+                            .blocked_edges
+                            .iter()
+                            .flat_map(|edge| edge.blockages.clone())
+                            .collect(),
+                        third_middle_blockages: third_middle_search
+                            .blocked_edges
+                            .iter()
+                            .flat_map(|edge| edge.blockages.clone())
+                            .collect(),
+                        fourth_middle_blockages: fourth_middle_search
+                            .blocked_edges
+                            .iter()
+                            .flat_map(|edge| edge.blockages.clone())
+                            .collect(),
+                        fifth_middle_blockages: fifth_middle_search
+                            .blocked_edges
+                            .iter()
+                            .flat_map(|edge| edge.blockages.clone())
+                            .collect(),
+                        target_blockages: target_search
+                            .blocked_edges
+                            .iter()
+                            .flat_map(|edge| edge.blockages.clone())
+                            .collect(),
+                    }
+                },
+            )
             .collect::<Vec<_>>();
 
         Ok(RoutePathCandidateOrthogonalGraphSixViaExplainReport {

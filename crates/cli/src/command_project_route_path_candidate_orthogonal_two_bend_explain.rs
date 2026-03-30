@@ -36,7 +36,10 @@ pub(crate) fn render_native_project_route_path_candidate_orthogonal_two_bend_exp
             report.persisted_native_board_state_only
         ),
         format!("status: {}", render_status(report.status.clone())),
-        format!("explanation_kind: {}", render_kind(&report.explanation_kind)),
+        format!(
+            "explanation_kind: {}",
+            render_kind(&report.explanation_kind)
+        ),
         format!("net_uuid: {}", report.net_uuid),
         format!("net_name: {}", report.net_name),
         format!("from_anchor_pad_uuid: {}", report.from_anchor_pad_uuid),
@@ -58,7 +61,10 @@ pub(crate) fn render_native_project_route_path_candidate_orthogonal_two_bend_exp
         lines.push("selected_path_layer: none".to_string());
         lines.push("detour_coordinate: none".to_string());
     }
-    lines.push(format!("blocked_path_count: {}", report.blocked_paths.len()));
+    lines.push(format!(
+        "blocked_path_count: {}",
+        report.blocked_paths.len()
+    ));
     lines.join("\n")
 }
 

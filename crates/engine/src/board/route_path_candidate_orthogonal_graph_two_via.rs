@@ -129,11 +129,9 @@ impl Board {
                     || target_search.path.is_none()
             })
             .count();
-        let available_via_pair_count =
-            pair_searches.len().saturating_sub(blocked_via_pair_count);
-        let path = pair_searches
-            .iter()
-            .find_map(|(entry, source_search, middle_search, target_search)| {
+        let available_via_pair_count = pair_searches.len().saturating_sub(blocked_via_pair_count);
+        let path = pair_searches.iter().find_map(
+            |(entry, source_search, middle_search, target_search)| {
                 Some(RoutePathCandidateOrthogonalGraphTwoViaPath {
                     via_a_uuid: entry.via_a.uuid,
                     via_a_position: entry.via_a.position,
@@ -158,7 +156,8 @@ impl Board {
                         },
                     ],
                 })
-            });
+            },
+        );
         let status = if path.is_some() {
             RoutePathCandidateStatus::DeterministicPathFound
         } else {

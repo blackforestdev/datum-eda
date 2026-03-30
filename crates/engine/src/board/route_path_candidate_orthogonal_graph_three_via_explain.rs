@@ -89,7 +89,8 @@ pub struct RoutePathCandidateOrthogonalGraphThreeViaExplainReport {
     pub candidate_copper_layers: Vec<StackupLayer>,
     pub summary: RoutePathCandidateOrthogonalGraphThreeViaExplainSummary,
     pub selected_triple: Option<RoutePathCandidateOrthogonalGraphThreeViaExplainSelectedTriple>,
-    pub blocked_matching_triples: Vec<RoutePathCandidateOrthogonalGraphThreeViaExplainBlockedTriple>,
+    pub blocked_matching_triples:
+        Vec<RoutePathCandidateOrthogonalGraphThreeViaExplainBlockedTriple>,
 }
 
 impl Board {
@@ -218,7 +219,13 @@ impl Board {
                 },
             )
             .map(
-                |(entry, source_search, first_middle_search, second_middle_search, target_search)| {
+                |(
+                    entry,
+                    source_search,
+                    first_middle_search,
+                    second_middle_search,
+                    target_search,
+                )| {
                     RoutePathCandidateOrthogonalGraphThreeViaExplainBlockedTriple {
                         via_a_uuid: entry.via_a.uuid,
                         via_a_position: entry.via_a.position,

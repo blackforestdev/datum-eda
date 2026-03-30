@@ -7,10 +7,10 @@ use super::main_tests_project_route_proposal_artifact::{
     seed_route_path_candidate_authored_via_chain_project,
     seed_route_path_candidate_five_via_project, seed_route_path_candidate_four_via_project,
     seed_route_path_candidate_orthogonal_graph_two_via_project,
-    seed_route_path_candidate_orthogonal_graph_via_project,
-    seed_route_path_candidate_project, seed_route_path_candidate_six_via_project,
-    seed_route_path_candidate_three_via_project, seed_route_path_candidate_two_via_project,
-    seed_route_path_candidate_via_project, unique_project_root,
+    seed_route_path_candidate_orthogonal_graph_via_project, seed_route_path_candidate_project,
+    seed_route_path_candidate_six_via_project, seed_route_path_candidate_three_via_project,
+    seed_route_path_candidate_two_via_project, seed_route_path_candidate_via_project,
+    unique_project_root,
 };
 
 #[test]
@@ -315,9 +315,8 @@ fn project_route_apply_applies_orthogonal_graph_via_candidate_directly() {
 
 #[test]
 fn project_route_apply_applies_orthogonal_graph_two_via_candidate_directly() {
-    let root = unique_project_root(
-        "datum-eda-cli-project-route-apply-route-path-candidate-graph-two-via",
-    );
+    let root =
+        unique_project_root("datum-eda-cli-project-route-apply-route-path-candidate-graph-two-via");
     let (target_net_uuid, anchor_a_uuid, anchor_b_uuid, via_a_uuid, via_b_uuid) =
         seed_route_path_candidate_orthogonal_graph_two_via_project(&root);
 
@@ -371,19 +370,45 @@ fn project_route_apply_applies_orthogonal_graph_three_via_candidate_directly() {
     let (target_net_uuid, anchor_a_uuid, anchor_b_uuid, _, _, _) =
         seed_route_path_candidate_three_via_project(&root);
 
-    let apply_output = execute(Cli::try_parse_from([
-        "eda", "--format", "json", "project", "route-apply", root.to_str().unwrap(), "--net",
-        &target_net_uuid.to_string(), "--from-anchor", &anchor_a_uuid.to_string(), "--to-anchor",
-        &anchor_b_uuid.to_string(), "--candidate", "route-path-candidate-orthogonal-graph-three-via",
-    ]).expect("CLI should parse")).expect("apply should succeed");
+    let apply_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "route-apply",
+            root.to_str().unwrap(),
+            "--net",
+            &target_net_uuid.to_string(),
+            "--from-anchor",
+            &anchor_a_uuid.to_string(),
+            "--to-anchor",
+            &anchor_b_uuid.to_string(),
+            "--candidate",
+            "route-path-candidate-orthogonal-graph-three-via",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("apply should succeed");
     let apply_report: serde_json::Value =
         serde_json::from_str(&apply_output).expect("apply report should parse");
-    assert_eq!(apply_report["contract"], "m5_route_path_candidate_orthogonal_graph_three_via_v1");
-    assert_eq!(apply_report["applied_actions"], apply_report["proposal_actions"]);
+    assert_eq!(
+        apply_report["contract"],
+        "m5_route_path_candidate_orthogonal_graph_three_via_v1"
+    );
+    assert_eq!(
+        apply_report["applied_actions"],
+        apply_report["proposal_actions"]
+    );
 
-    let tracks_output = execute(board_tracks_query_cli(&root)).expect("board tracks query should succeed");
-    let tracks: Vec<Track> = serde_json::from_str(&tracks_output).expect("track query output should parse");
-    assert_eq!(tracks.len() as u64, apply_report["applied_actions"].as_u64().unwrap());
+    let tracks_output =
+        execute(board_tracks_query_cli(&root)).expect("board tracks query should succeed");
+    let tracks: Vec<Track> =
+        serde_json::from_str(&tracks_output).expect("track query output should parse");
+    assert_eq!(
+        tracks.len() as u64,
+        apply_report["applied_actions"].as_u64().unwrap()
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }
@@ -396,19 +421,45 @@ fn project_route_apply_applies_orthogonal_graph_four_via_candidate_directly() {
     let (target_net_uuid, anchor_a_uuid, anchor_b_uuid, _, _, _, _) =
         seed_route_path_candidate_four_via_project(&root);
 
-    let apply_output = execute(Cli::try_parse_from([
-        "eda", "--format", "json", "project", "route-apply", root.to_str().unwrap(), "--net",
-        &target_net_uuid.to_string(), "--from-anchor", &anchor_a_uuid.to_string(), "--to-anchor",
-        &anchor_b_uuid.to_string(), "--candidate", "route-path-candidate-orthogonal-graph-four-via",
-    ]).expect("CLI should parse")).expect("apply should succeed");
+    let apply_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "route-apply",
+            root.to_str().unwrap(),
+            "--net",
+            &target_net_uuid.to_string(),
+            "--from-anchor",
+            &anchor_a_uuid.to_string(),
+            "--to-anchor",
+            &anchor_b_uuid.to_string(),
+            "--candidate",
+            "route-path-candidate-orthogonal-graph-four-via",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("apply should succeed");
     let apply_report: serde_json::Value =
         serde_json::from_str(&apply_output).expect("apply report should parse");
-    assert_eq!(apply_report["contract"], "m5_route_path_candidate_orthogonal_graph_four_via_v1");
-    assert_eq!(apply_report["applied_actions"], apply_report["proposal_actions"]);
+    assert_eq!(
+        apply_report["contract"],
+        "m5_route_path_candidate_orthogonal_graph_four_via_v1"
+    );
+    assert_eq!(
+        apply_report["applied_actions"],
+        apply_report["proposal_actions"]
+    );
 
-    let tracks_output = execute(board_tracks_query_cli(&root)).expect("board tracks query should succeed");
-    let tracks: Vec<Track> = serde_json::from_str(&tracks_output).expect("track query output should parse");
-    assert_eq!(tracks.len() as u64, apply_report["applied_actions"].as_u64().unwrap());
+    let tracks_output =
+        execute(board_tracks_query_cli(&root)).expect("board tracks query should succeed");
+    let tracks: Vec<Track> =
+        serde_json::from_str(&tracks_output).expect("track query output should parse");
+    assert_eq!(
+        tracks.len() as u64,
+        apply_report["applied_actions"].as_u64().unwrap()
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }
@@ -421,44 +472,95 @@ fn project_route_apply_applies_orthogonal_graph_five_via_candidate_directly() {
     let (target_net_uuid, anchor_a_uuid, anchor_b_uuid, _, _, _, _, _) =
         seed_route_path_candidate_five_via_project(&root);
 
-    let apply_output = execute(Cli::try_parse_from([
-        "eda", "--format", "json", "project", "route-apply", root.to_str().unwrap(), "--net",
-        &target_net_uuid.to_string(), "--from-anchor", &anchor_a_uuid.to_string(), "--to-anchor",
-        &anchor_b_uuid.to_string(), "--candidate", "route-path-candidate-orthogonal-graph-five-via",
-    ]).expect("CLI should parse")).expect("apply should succeed");
+    let apply_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "route-apply",
+            root.to_str().unwrap(),
+            "--net",
+            &target_net_uuid.to_string(),
+            "--from-anchor",
+            &anchor_a_uuid.to_string(),
+            "--to-anchor",
+            &anchor_b_uuid.to_string(),
+            "--candidate",
+            "route-path-candidate-orthogonal-graph-five-via",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("apply should succeed");
     let apply_report: serde_json::Value =
         serde_json::from_str(&apply_output).expect("apply report should parse");
-    assert_eq!(apply_report["contract"], "m5_route_path_candidate_orthogonal_graph_five_via_v1");
-    assert_eq!(apply_report["applied_actions"], apply_report["proposal_actions"]);
+    assert_eq!(
+        apply_report["contract"],
+        "m5_route_path_candidate_orthogonal_graph_five_via_v1"
+    );
+    assert_eq!(
+        apply_report["applied_actions"],
+        apply_report["proposal_actions"]
+    );
 
-    let tracks_output = execute(board_tracks_query_cli(&root)).expect("board tracks query should succeed");
-    let tracks: Vec<Track> = serde_json::from_str(&tracks_output).expect("track query output should parse");
-    assert_eq!(tracks.len() as u64, apply_report["applied_actions"].as_u64().unwrap());
+    let tracks_output =
+        execute(board_tracks_query_cli(&root)).expect("board tracks query should succeed");
+    let tracks: Vec<Track> =
+        serde_json::from_str(&tracks_output).expect("track query output should parse");
+    assert_eq!(
+        tracks.len() as u64,
+        apply_report["applied_actions"].as_u64().unwrap()
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }
 
 #[test]
 fn project_route_apply_applies_orthogonal_graph_six_via_candidate_directly() {
-    let root = unique_project_root(
-        "datum-eda-cli-project-route-apply-route-path-candidate-graph-six-via",
-    );
+    let root =
+        unique_project_root("datum-eda-cli-project-route-apply-route-path-candidate-graph-six-via");
     let (target_net_uuid, anchor_a_uuid, anchor_b_uuid, _, _, _, _, _, _) =
         seed_route_path_candidate_six_via_project(&root);
 
-    let apply_output = execute(Cli::try_parse_from([
-        "eda", "--format", "json", "project", "route-apply", root.to_str().unwrap(), "--net",
-        &target_net_uuid.to_string(), "--from-anchor", &anchor_a_uuid.to_string(), "--to-anchor",
-        &anchor_b_uuid.to_string(), "--candidate", "route-path-candidate-orthogonal-graph-six-via",
-    ]).expect("CLI should parse")).expect("apply should succeed");
+    let apply_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "route-apply",
+            root.to_str().unwrap(),
+            "--net",
+            &target_net_uuid.to_string(),
+            "--from-anchor",
+            &anchor_a_uuid.to_string(),
+            "--to-anchor",
+            &anchor_b_uuid.to_string(),
+            "--candidate",
+            "route-path-candidate-orthogonal-graph-six-via",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("apply should succeed");
     let apply_report: serde_json::Value =
         serde_json::from_str(&apply_output).expect("apply report should parse");
-    assert_eq!(apply_report["contract"], "m5_route_path_candidate_orthogonal_graph_six_via_v1");
-    assert_eq!(apply_report["applied_actions"], apply_report["proposal_actions"]);
+    assert_eq!(
+        apply_report["contract"],
+        "m5_route_path_candidate_orthogonal_graph_six_via_v1"
+    );
+    assert_eq!(
+        apply_report["applied_actions"],
+        apply_report["proposal_actions"]
+    );
 
-    let tracks_output = execute(board_tracks_query_cli(&root)).expect("board tracks query should succeed");
-    let tracks: Vec<Track> = serde_json::from_str(&tracks_output).expect("track query output should parse");
-    assert_eq!(tracks.len() as u64, apply_report["applied_actions"].as_u64().unwrap());
+    let tracks_output =
+        execute(board_tracks_query_cli(&root)).expect("board tracks query should succeed");
+    let tracks: Vec<Track> =
+        serde_json::from_str(&tracks_output).expect("track query output should parse");
+    assert_eq!(
+        tracks.len() as u64,
+        apply_report["applied_actions"].as_u64().unwrap()
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }

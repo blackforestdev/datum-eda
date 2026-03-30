@@ -94,7 +94,10 @@ impl Board {
             to_anchor,
             &candidate_copper_layers,
         );
-        let blocked_corner_count = candidate_doglegs.iter().filter(|dogleg| dogleg.blocked).count();
+        let blocked_corner_count = candidate_doglegs
+            .iter()
+            .filter(|dogleg| dogleg.blocked)
+            .count();
         let available_corner_count = candidate_doglegs.len().saturating_sub(blocked_corner_count);
         let selected = selected_orthogonal_dogleg(&candidate_doglegs);
         let path = selected.map(|dogleg| RoutePathCandidateOrthogonalDoglegPath {

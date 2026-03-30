@@ -1,6 +1,4 @@
-use crate::board::{
-    RoutePathCandidateOrthogonalDoglegExplainKind, RoutePathCandidateStatus,
-};
+use crate::board::{RoutePathCandidateOrthogonalDoglegExplainKind, RoutePathCandidateStatus};
 use crate::ir::geometry::Point;
 
 use super::route_path_candidate_orthogonal_dogleg::orthogonal_dogleg_board;
@@ -31,7 +29,11 @@ fn route_path_candidate_orthogonal_dogleg_explain_reports_selected_corner_reason
 #[test]
 fn route_path_candidate_orthogonal_dogleg_explain_reports_no_same_layer_candidate() {
     let (mut board, net_uuid, _, anchor_a_uuid, anchor_b_uuid) = orthogonal_dogleg_board();
-    board.pads.get_mut(&anchor_b_uuid).expect("anchor exists").layer = 3;
+    board
+        .pads
+        .get_mut(&anchor_b_uuid)
+        .expect("anchor exists")
+        .layer = 3;
 
     let report = board
         .route_path_candidate_orthogonal_dogleg_explain(net_uuid, anchor_a_uuid, anchor_b_uuid)

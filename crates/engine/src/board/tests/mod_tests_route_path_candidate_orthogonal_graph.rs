@@ -346,8 +346,20 @@ fn route_path_candidate_orthogonal_graph_finds_multi_segment_same_layer_path() {
             Point::new(900_000, 900_000),
         ])
     );
-    assert_eq!(report.path.as_ref().map(|path| path.cost.bend_count), Some(5));
-    assert_eq!(report.path.as_ref().map(|path| path.cost.segment_count), Some(6));
+    assert_eq!(
+        report.path.as_ref().map(|path| path.cost.bend_count),
+        Some(5)
+    );
+    assert_eq!(
+        report.path.as_ref().map(|path| path.cost.segment_count),
+        Some(6)
+    );
+    assert_eq!(report.segment_evidence.len(), 1);
+    assert_eq!(report.segment_evidence[0].layer_segment_index, 0);
+    assert_eq!(report.segment_evidence[0].layer_segment_count, 1);
+    assert_eq!(report.segment_evidence[0].bend_count, 5);
+    assert_eq!(report.segment_evidence[0].point_count, 7);
+    assert_eq!(report.segment_evidence[0].track_action_count, 6);
 }
 
 #[test]
@@ -359,10 +371,7 @@ fn route_path_candidate_orthogonal_graph_prefers_fewer_segments_when_direct_span
         .route_path_candidate_orthogonal_graph(net_uuid, anchor_a_uuid, anchor_b_uuid)
         .expect("orthogonal graph should succeed");
 
-    assert_eq!(
-        report.path.as_ref().map(|path| path.points.len()),
-        Some(3)
-    );
+    assert_eq!(report.path.as_ref().map(|path| path.points.len()), Some(3));
     assert_eq!(
         report.path.as_ref().map(|path| path.points.clone()),
         Some(vec![
@@ -417,4 +426,5 @@ fn route_path_candidate_orthogonal_graph_reports_no_path_when_graph_is_cut() {
     assert!(report.summary.graph_node_count > 0);
     assert!(report.summary.blocked_edge_count > 0);
     assert!(report.path.is_none());
+    assert!(report.segment_evidence.is_empty());
 }

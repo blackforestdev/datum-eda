@@ -21,18 +21,49 @@ fn route_path_candidate_orthogonal_graph_four_via_explain_reports_selected_quadr
     ) = demo_board();
 
     let report = board
-        .route_path_candidate_orthogonal_graph_four_via_explain(net_uuid, anchor_top_uuid, anchor_bottom_uuid)
+        .route_path_candidate_orthogonal_graph_four_via_explain(
+            net_uuid,
+            anchor_top_uuid,
+            anchor_bottom_uuid,
+        )
         .expect("orthogonal graph four-via explain should succeed");
 
-    assert_eq!(report.status, RoutePathCandidateStatus::DeterministicPathFound);
+    assert_eq!(
+        report.status,
+        RoutePathCandidateStatus::DeterministicPathFound
+    );
     assert_eq!(
         report.explanation_kind,
         RoutePathCandidateOrthogonalGraphFourViaExplainKind::DeterministicPathFound
     );
-    assert_eq!(report.selected_quadruple.as_ref().map(|path| path.via_a_uuid), Some(via_a_uuid));
-    assert_eq!(report.selected_quadruple.as_ref().map(|path| path.via_b_uuid), Some(via_b_uuid));
-    assert_eq!(report.selected_quadruple.as_ref().map(|path| path.via_c_uuid), Some(via_c_uuid));
-    assert_eq!(report.selected_quadruple.as_ref().map(|path| path.via_d_uuid), Some(via_d_uuid));
+    assert_eq!(
+        report
+            .selected_quadruple
+            .as_ref()
+            .map(|path| path.via_a_uuid),
+        Some(via_a_uuid)
+    );
+    assert_eq!(
+        report
+            .selected_quadruple
+            .as_ref()
+            .map(|path| path.via_b_uuid),
+        Some(via_b_uuid)
+    );
+    assert_eq!(
+        report
+            .selected_quadruple
+            .as_ref()
+            .map(|path| path.via_c_uuid),
+        Some(via_c_uuid)
+    );
+    assert_eq!(
+        report
+            .selected_quadruple
+            .as_ref()
+            .map(|path| path.via_d_uuid),
+        Some(via_d_uuid)
+    );
 }
 
 #[test]
@@ -52,7 +83,11 @@ fn route_path_candidate_orthogonal_graph_four_via_explain_reports_blocked_quadru
     );
 
     let report = board
-        .route_path_candidate_orthogonal_graph_four_via_explain(net_uuid, anchor_top_uuid, anchor_bottom_uuid)
+        .route_path_candidate_orthogonal_graph_four_via_explain(
+            net_uuid,
+            anchor_top_uuid,
+            anchor_bottom_uuid,
+        )
         .expect("orthogonal graph four-via explain should succeed");
 
     assert_eq!(

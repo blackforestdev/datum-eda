@@ -1,5 +1,3 @@
-#[path = "command_project_prelude.rs"]
-mod command_project_prelude;
 #[path = "command_project_board_component_layer.rs"]
 mod command_project_board_component_layer;
 #[path = "command_project_board_component_mutations.rs"]
@@ -64,6 +62,8 @@ mod command_project_native_types;
 mod command_project_pool_materialization;
 #[path = "command_project_pool_query.rs"]
 mod command_project_pool_query;
+#[path = "command_project_prelude.rs"]
+mod command_project_prelude;
 #[path = "command_project_project_core.rs"]
 mod command_project_project_core;
 #[path = "command_project_root_imports.rs"]

@@ -54,48 +54,6 @@ mod route_path_candidate_authored_via_chain;
 mod route_path_candidate_authored_via_chain_explain;
 #[path = "route_path_candidate_authored_via_chain_selection.rs"]
 mod route_path_candidate_authored_via_chain_selection;
-#[path = "route_path_candidate_orthogonal_dogleg.rs"]
-mod route_path_candidate_orthogonal_dogleg;
-#[path = "route_path_candidate_orthogonal_dogleg_explain.rs"]
-mod route_path_candidate_orthogonal_dogleg_explain;
-#[path = "route_path_candidate_orthogonal_dogleg_selection.rs"]
-mod route_path_candidate_orthogonal_dogleg_selection;
-#[path = "route_path_candidate_orthogonal_two_bend.rs"]
-mod route_path_candidate_orthogonal_two_bend;
-#[path = "route_path_candidate_orthogonal_two_bend_explain.rs"]
-mod route_path_candidate_orthogonal_two_bend_explain;
-#[path = "route_path_candidate_orthogonal_two_bend_selection.rs"]
-mod route_path_candidate_orthogonal_two_bend_selection;
-#[path = "route_path_candidate_orthogonal_graph.rs"]
-mod route_path_candidate_orthogonal_graph;
-#[path = "route_path_candidate_orthogonal_graph_explain.rs"]
-mod route_path_candidate_orthogonal_graph_explain;
-#[path = "route_path_candidate_orthogonal_graph_selection.rs"]
-mod route_path_candidate_orthogonal_graph_selection;
-#[path = "route_path_candidate_orthogonal_graph_via.rs"]
-mod route_path_candidate_orthogonal_graph_via;
-#[path = "route_path_candidate_orthogonal_graph_via_explain.rs"]
-mod route_path_candidate_orthogonal_graph_via_explain;
-#[path = "route_path_candidate_orthogonal_graph_two_via.rs"]
-mod route_path_candidate_orthogonal_graph_two_via;
-#[path = "route_path_candidate_orthogonal_graph_two_via_explain.rs"]
-mod route_path_candidate_orthogonal_graph_two_via_explain;
-#[path = "route_path_candidate_orthogonal_graph_three_via.rs"]
-mod route_path_candidate_orthogonal_graph_three_via;
-#[path = "route_path_candidate_orthogonal_graph_three_via_explain.rs"]
-mod route_path_candidate_orthogonal_graph_three_via_explain;
-#[path = "route_path_candidate_orthogonal_graph_four_via.rs"]
-mod route_path_candidate_orthogonal_graph_four_via;
-#[path = "route_path_candidate_orthogonal_graph_four_via_explain.rs"]
-mod route_path_candidate_orthogonal_graph_four_via_explain;
-#[path = "route_path_candidate_orthogonal_graph_five_via.rs"]
-mod route_path_candidate_orthogonal_graph_five_via;
-#[path = "route_path_candidate_orthogonal_graph_five_via_explain.rs"]
-mod route_path_candidate_orthogonal_graph_five_via_explain;
-#[path = "route_path_candidate_orthogonal_graph_six_via.rs"]
-mod route_path_candidate_orthogonal_graph_six_via;
-#[path = "route_path_candidate_orthogonal_graph_six_via_explain.rs"]
-mod route_path_candidate_orthogonal_graph_six_via_explain;
 #[path = "route_path_candidate_explain.rs"]
 mod route_path_candidate_explain;
 #[path = "route_path_candidate_five_via.rs"]
@@ -110,6 +68,48 @@ mod route_path_candidate_four_via;
 mod route_path_candidate_four_via_explain;
 #[path = "route_path_candidate_four_via_selection.rs"]
 mod route_path_candidate_four_via_selection;
+#[path = "route_path_candidate_orthogonal_dogleg.rs"]
+mod route_path_candidate_orthogonal_dogleg;
+#[path = "route_path_candidate_orthogonal_dogleg_explain.rs"]
+mod route_path_candidate_orthogonal_dogleg_explain;
+#[path = "route_path_candidate_orthogonal_dogleg_selection.rs"]
+mod route_path_candidate_orthogonal_dogleg_selection;
+#[path = "route_path_candidate_orthogonal_graph.rs"]
+mod route_path_candidate_orthogonal_graph;
+#[path = "route_path_candidate_orthogonal_graph_explain.rs"]
+mod route_path_candidate_orthogonal_graph_explain;
+#[path = "route_path_candidate_orthogonal_graph_five_via.rs"]
+mod route_path_candidate_orthogonal_graph_five_via;
+#[path = "route_path_candidate_orthogonal_graph_five_via_explain.rs"]
+mod route_path_candidate_orthogonal_graph_five_via_explain;
+#[path = "route_path_candidate_orthogonal_graph_four_via.rs"]
+mod route_path_candidate_orthogonal_graph_four_via;
+#[path = "route_path_candidate_orthogonal_graph_four_via_explain.rs"]
+mod route_path_candidate_orthogonal_graph_four_via_explain;
+#[path = "route_path_candidate_orthogonal_graph_selection.rs"]
+mod route_path_candidate_orthogonal_graph_selection;
+#[path = "route_path_candidate_orthogonal_graph_six_via.rs"]
+mod route_path_candidate_orthogonal_graph_six_via;
+#[path = "route_path_candidate_orthogonal_graph_six_via_explain.rs"]
+mod route_path_candidate_orthogonal_graph_six_via_explain;
+#[path = "route_path_candidate_orthogonal_graph_three_via.rs"]
+mod route_path_candidate_orthogonal_graph_three_via;
+#[path = "route_path_candidate_orthogonal_graph_three_via_explain.rs"]
+mod route_path_candidate_orthogonal_graph_three_via_explain;
+#[path = "route_path_candidate_orthogonal_graph_two_via.rs"]
+mod route_path_candidate_orthogonal_graph_two_via;
+#[path = "route_path_candidate_orthogonal_graph_two_via_explain.rs"]
+mod route_path_candidate_orthogonal_graph_two_via_explain;
+#[path = "route_path_candidate_orthogonal_graph_via.rs"]
+mod route_path_candidate_orthogonal_graph_via;
+#[path = "route_path_candidate_orthogonal_graph_via_explain.rs"]
+mod route_path_candidate_orthogonal_graph_via_explain;
+#[path = "route_path_candidate_orthogonal_two_bend.rs"]
+mod route_path_candidate_orthogonal_two_bend;
+#[path = "route_path_candidate_orthogonal_two_bend_explain.rs"]
+mod route_path_candidate_orthogonal_two_bend_explain;
+#[path = "route_path_candidate_orthogonal_two_bend_selection.rs"]
+mod route_path_candidate_orthogonal_two_bend_selection;
 #[path = "route_path_candidate_selection.rs"]
 mod route_path_candidate_selection;
 #[path = "route_path_candidate_six_via.rs"]

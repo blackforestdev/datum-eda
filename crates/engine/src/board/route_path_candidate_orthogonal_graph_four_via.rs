@@ -150,16 +150,26 @@ impl Board {
 
         let blocked_via_quadruple_count = quadruple_searches
             .iter()
-            .filter(|(_, source_search, first_middle_search, second_middle_search, third_middle_search, target_search)| {
-                source_search.path.is_none()
-                    || first_middle_search.path.is_none()
-                    || second_middle_search.path.is_none()
-                    || third_middle_search.path.is_none()
-                    || target_search.path.is_none()
-            })
+            .filter(
+                |(
+                    _,
+                    source_search,
+                    first_middle_search,
+                    second_middle_search,
+                    third_middle_search,
+                    target_search,
+                )| {
+                    source_search.path.is_none()
+                        || first_middle_search.path.is_none()
+                        || second_middle_search.path.is_none()
+                        || third_middle_search.path.is_none()
+                        || target_search.path.is_none()
+                },
+            )
             .count();
-        let available_via_quadruple_count =
-            quadruple_searches.len().saturating_sub(blocked_via_quadruple_count);
+        let available_via_quadruple_count = quadruple_searches
+            .len()
+            .saturating_sub(blocked_via_quadruple_count);
         let path = quadruple_searches.iter().find_map(
             |(
                 entry,
@@ -247,5 +257,7 @@ impl Board {
 }
 
 fn permutation_count(n: usize, pick: usize) -> usize {
-    (0..pick).fold(1usize, |acc, index| acc.saturating_mul(n.saturating_sub(index)))
+    (0..pick).fold(1usize, |acc, index| {
+        acc.saturating_mul(n.saturating_sub(index))
+    })
 }

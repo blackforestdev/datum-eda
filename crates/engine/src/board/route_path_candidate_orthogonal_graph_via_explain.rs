@@ -3,8 +3,8 @@ use uuid::Uuid;
 
 use crate::board::{
     Board, RouteCorridorSpanBlockage, RoutePathCandidateError,
-    RoutePathCandidateOrthogonalGraphPathCost,
-    RoutePathCandidateOrthogonalGraphViaReport, RoutePathCandidateStatus, StackupLayer,
+    RoutePathCandidateOrthogonalGraphPathCost, RoutePathCandidateOrthogonalGraphViaReport,
+    RoutePathCandidateStatus, StackupLayer,
 };
 use crate::ir::geometry::{LayerId, Point};
 

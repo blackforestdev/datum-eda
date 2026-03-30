@@ -535,15 +535,25 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     &cli.format,
                     command,
                 ),
-                command @ ProjectCommands::ExportRoutePathProposal(
+                command @ ProjectCommands::RouteProposal(ProjectRouteProposalArgs { .. })
+                | command @ ProjectCommands::ExportRouteProposal(ProjectExportRouteProposalArgs {
+                    ..
+                })
+                | command @ ProjectCommands::ExportRoutePathProposal(
                     ProjectExportRoutePathProposalArgs { .. },
                 )
                 | command @ ProjectCommands::InspectRouteProposalArtifact(
                     ProjectInspectRouteProposalArtifactArgs { .. },
                 )
+                | command @ ProjectCommands::RevalidateRouteProposalArtifact(
+                    ProjectRevalidateRouteProposalArtifactArgs { .. },
+                )
                 | command @ ProjectCommands::ApplyRouteProposalArtifact(
                     ProjectApplyRouteProposalArtifactArgs { .. },
                 )
+                | command @ ProjectCommands::RouteApplySelected(ProjectRouteApplySelectedArgs {
+                    ..
+                })
                 | command @ ProjectCommands::RouteApply(ProjectRouteApplyArgs { .. }) => {
                     command_exec_route_proposal::execute_route_proposal_command(
                         &cli.format,

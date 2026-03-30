@@ -29,8 +29,14 @@ pub(crate) fn render_native_project_route_path_candidate_orthogonal_graph_two_vi
     let mut lines = vec![
         format!("contract: {}", report.contract),
         format!("status: {}", render_status(report.status.clone())),
-        format!("matching_via_pairs: {}", report.summary.matching_via_pair_count),
-        format!("available_via_pairs: {}", report.summary.available_via_pair_count),
+        format!(
+            "matching_via_pairs: {}",
+            report.summary.matching_via_pair_count
+        ),
+        format!(
+            "available_via_pairs: {}",
+            report.summary.available_via_pair_count
+        ),
     ];
     if let Some(path) = &report.path {
         lines.push(format!("via_a_uuid: {}", path.via_a_uuid));

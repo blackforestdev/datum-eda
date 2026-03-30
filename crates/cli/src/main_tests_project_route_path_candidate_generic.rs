@@ -1,14 +1,12 @@
 use super::main_tests_project_route_proposal_artifact::{
     seed_route_path_candidate_authored_copper_graph_obstacle_aware_project,
+    seed_route_path_candidate_five_via_project, seed_route_path_candidate_four_via_project,
     seed_route_path_candidate_orthogonal_dogleg_project,
     seed_route_path_candidate_orthogonal_graph_project,
-    seed_route_path_candidate_four_via_project,
-    seed_route_path_candidate_five_via_project,
-    seed_route_path_candidate_six_via_project,
-    seed_route_path_candidate_three_via_project,
     seed_route_path_candidate_orthogonal_graph_two_via_project,
     seed_route_path_candidate_orthogonal_graph_via_project,
     seed_route_path_candidate_orthogonal_two_bend_project, seed_route_path_candidate_project,
+    seed_route_path_candidate_six_via_project, seed_route_path_candidate_three_via_project,
     seed_route_path_candidate_via_project, unique_project_root,
 };
 use super::*;
@@ -118,7 +116,10 @@ fn project_query_route_path_candidate_generic_surface_supports_orthogonal_dogleg
     .expect("query should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report should parse");
 
-    assert_eq!(report["contract"], "m5_route_path_candidate_orthogonal_dogleg_v1");
+    assert_eq!(
+        report["contract"],
+        "m5_route_path_candidate_orthogonal_dogleg_v1"
+    );
     assert_eq!(report["status"], "deterministic_path_found");
     assert_eq!(report["path"]["points"].as_array().unwrap().len(), 3);
     assert_eq!(report["path"]["corner"]["x"], 100000);
@@ -129,8 +130,7 @@ fn project_query_route_path_candidate_generic_surface_supports_orthogonal_dogleg
 
 #[test]
 fn project_query_route_path_candidate_generic_surface_supports_orthogonal_two_bend_candidate() {
-    let root =
-        unique_project_root("datum-eda-cli-project-route-path-candidate-generic-two-bend");
+    let root = unique_project_root("datum-eda-cli-project-route-path-candidate-generic-two-bend");
     let (target_net_uuid, anchor_a_uuid, anchor_b_uuid) =
         seed_route_path_candidate_orthogonal_two_bend_project(&root);
 
@@ -158,8 +158,7 @@ fn project_query_route_path_candidate_generic_surface_supports_orthogonal_two_be
 
 #[test]
 fn project_query_route_path_candidate_generic_surface_supports_orthogonal_graph_candidate() {
-    let root =
-        unique_project_root("datum-eda-cli-project-route-path-candidate-generic-graph");
+    let root = unique_project_root("datum-eda-cli-project-route-path-candidate-generic-graph");
     let (target_net_uuid, anchor_a_uuid, anchor_b_uuid) =
         seed_route_path_candidate_orthogonal_graph_project(&root);
 
@@ -174,19 +173,27 @@ fn project_query_route_path_candidate_generic_surface_supports_orthogonal_graph_
     .expect("query should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report should parse");
 
-    assert_eq!(report["contract"], "m5_route_path_candidate_orthogonal_graph_v1");
+    assert_eq!(
+        report["contract"],
+        "m5_route_path_candidate_orthogonal_graph_v1"
+    );
     assert_eq!(report["status"], "deterministic_path_found");
     assert_eq!(report["path"]["points"].as_array().unwrap().len(), 7);
     assert_eq!(report["path"]["cost"]["bend_count"], 5);
     assert_eq!(report["path"]["cost"]["segment_count"], 6);
+    assert_eq!(report["segment_evidence"].as_array().unwrap().len(), 1);
+    assert_eq!(report["segment_evidence"][0]["layer_segment_index"], 0);
+    assert_eq!(report["segment_evidence"][0]["layer_segment_count"], 1);
+    assert_eq!(report["segment_evidence"][0]["bend_count"], 5);
+    assert_eq!(report["segment_evidence"][0]["point_count"], 7);
+    assert_eq!(report["segment_evidence"][0]["track_action_count"], 6);
 
     let _ = std::fs::remove_dir_all(&root);
 }
 
 #[test]
 fn project_query_route_path_candidate_generic_surface_supports_orthogonal_graph_via_candidate() {
-    let root =
-        unique_project_root("datum-eda-cli-project-route-path-candidate-generic-graph-via");
+    let root = unique_project_root("datum-eda-cli-project-route-path-candidate-generic-graph-via");
     let (target_net_uuid, anchor_a_uuid, anchor_b_uuid, _) =
         seed_route_path_candidate_orthogonal_graph_via_project(&root);
 
@@ -207,14 +214,19 @@ fn project_query_route_path_candidate_generic_surface_supports_orthogonal_graph_
     );
     assert_eq!(report["status"], "deterministic_path_found");
     assert_eq!(report["path"]["segments"].as_array().unwrap().len(), 2);
-    assert!(report["path"]["segments"][0]["cost"]["segment_count"].as_u64().unwrap() >= 1);
+    assert!(
+        report["path"]["segments"][0]["cost"]["segment_count"]
+            .as_u64()
+            .unwrap()
+            >= 1
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }
 
 #[test]
-fn project_query_route_path_candidate_generic_surface_supports_orthogonal_graph_two_via_candidate(
-) {
+fn project_query_route_path_candidate_generic_surface_supports_orthogonal_graph_two_via_candidate()
+{
     let root =
         unique_project_root("datum-eda-cli-project-route-path-candidate-generic-graph-two-via");
     let (target_net_uuid, anchor_a_uuid, anchor_b_uuid, _, _) =
@@ -242,11 +254,10 @@ fn project_query_route_path_candidate_generic_surface_supports_orthogonal_graph_
 }
 
 #[test]
-fn project_query_route_path_candidate_generic_surface_supports_orthogonal_graph_three_via_candidate(
-) {
-    let root = unique_project_root(
-        "datum-eda-cli-project-route-path-candidate-generic-graph-three-via",
-    );
+fn project_query_route_path_candidate_generic_surface_supports_orthogonal_graph_three_via_candidate()
+ {
+    let root =
+        unique_project_root("datum-eda-cli-project-route-path-candidate-generic-graph-three-via");
     let (target_net_uuid, anchor_a_uuid, anchor_b_uuid, _, _, _) =
         seed_route_path_candidate_three_via_project(&root);
 
@@ -272,8 +283,8 @@ fn project_query_route_path_candidate_generic_surface_supports_orthogonal_graph_
 }
 
 #[test]
-fn project_query_route_path_candidate_generic_surface_supports_orthogonal_graph_four_via_candidate(
-) {
+fn project_query_route_path_candidate_generic_surface_supports_orthogonal_graph_four_via_candidate()
+{
     let root =
         unique_project_root("datum-eda-cli-project-route-path-candidate-generic-graph-four-via");
     let (target_net_uuid, anchor_a_uuid, anchor_b_uuid, _, _, _, _) =
@@ -301,8 +312,8 @@ fn project_query_route_path_candidate_generic_surface_supports_orthogonal_graph_
 }
 
 #[test]
-fn project_query_route_path_candidate_generic_surface_supports_orthogonal_graph_five_via_candidate(
-) {
+fn project_query_route_path_candidate_generic_surface_supports_orthogonal_graph_five_via_candidate()
+{
     let root =
         unique_project_root("datum-eda-cli-project-route-path-candidate-generic-graph-five-via");
     let (target_net_uuid, anchor_a_uuid, anchor_b_uuid, _, _, _, _, _) =
@@ -330,8 +341,8 @@ fn project_query_route_path_candidate_generic_surface_supports_orthogonal_graph_
 }
 
 #[test]
-fn project_query_route_path_candidate_generic_surface_supports_orthogonal_graph_six_via_candidate(
-) {
+fn project_query_route_path_candidate_generic_surface_supports_orthogonal_graph_six_via_candidate()
+{
     let root =
         unique_project_root("datum-eda-cli-project-route-path-candidate-generic-graph-six-via");
     let (target_net_uuid, anchor_a_uuid, anchor_b_uuid, _, _, _, _, _, _) =

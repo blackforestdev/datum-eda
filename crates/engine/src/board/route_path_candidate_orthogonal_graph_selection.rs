@@ -1,13 +1,12 @@
 use std::cmp::Ordering;
 use std::collections::HashMap;
 
-use serde::{Deserialize, Serialize};
 use crate::board::{
     Board, RouteCorridorObstacleGeometry, RouteCorridorObstacleKind, RouteCorridorSpanBlockage,
-    RoutePreflightAnchor, StackupLayer,
-    polygon::point_in_polygon,
+    RoutePreflightAnchor, StackupLayer, polygon::point_in_polygon,
 };
 use crate::ir::geometry::{LayerId, Point};
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use super::route_segment_blockage::analyze_route_segment;
@@ -148,10 +147,14 @@ pub(super) fn search_orthogonal_graph_layer(
     }
 }
 
-pub(super) fn orthogonal_graph_path_cost(points: &[Point]) -> RoutePathCandidateOrthogonalGraphPathCost {
+pub(super) fn orthogonal_graph_path_cost(
+    points: &[Point],
+) -> RoutePathCandidateOrthogonalGraphPathCost {
     let bend_count = points
         .windows(3)
-        .filter(|window| orientation_between(window[0], window[1]) != orientation_between(window[1], window[2]))
+        .filter(|window| {
+            orientation_between(window[0], window[1]) != orientation_between(window[1], window[2])
+        })
         .count();
     RoutePathCandidateOrthogonalGraphPathCost {
         bend_count,
@@ -291,7 +294,11 @@ fn obstacle_coordinates(obstacle: &RouteCorridorObstacleGeometry, x_axis: bool) 
     coordinates
 }
 
-fn shortest_path(adjacency: &HashMap<Point, Vec<GraphNeighbor>>, from: Point, to: Point) -> Option<Vec<Point>> {
+fn shortest_path(
+    adjacency: &HashMap<Point, Vec<GraphNeighbor>>,
+    from: Point,
+    to: Point,
+) -> Option<Vec<Point>> {
     let mut frontier = vec![GraphSearchState {
         point: from,
         last_orientation: None,
@@ -299,15 +306,17 @@ fn shortest_path(adjacency: &HashMap<Point, Vec<GraphNeighbor>>, from: Point, to
         segments: 0,
         points: vec![from],
     }];
-    let mut best_state_costs: HashMap<(Point, Option<OrthogonalGraphEdgeOrientation>), GraphPathCost> =
-        HashMap::from([(
-            (from, None),
-            GraphPathCost {
-                bends: 0,
-                segments: 0,
-                points: vec![from],
-            },
-        )]);
+    let mut best_state_costs: HashMap<
+        (Point, Option<OrthogonalGraphEdgeOrientation>),
+        GraphPathCost,
+    > = HashMap::from([(
+        (from, None),
+        GraphPathCost {
+            bends: 0,
+            segments: 0,
+            points: vec![from],
+        },
+    )]);
     let mut best_target: Option<GraphPathCost> = None;
 
     while !frontier.is_empty() {
@@ -339,12 +348,7 @@ fn shortest_path(adjacency: &HashMap<Point, Vec<GraphNeighbor>>, from: Point, to
             }
             continue;
         }
-        for neighbor in adjacency
-            .get(&current.point)
-            .into_iter()
-            .flatten()
-            .copied()
-        {
+        for neighbor in adjacency.get(&current.point).into_iter().flatten().copied() {
             if current.points.contains(&neighbor.to) {
                 continue;
             }
@@ -384,7 +388,8 @@ fn shortest_path(adjacency: &HashMap<Point, Vec<GraphNeighbor>>, from: Point, to
                 std::collections::hash_map::Entry::Vacant(_) => true,
             };
             if should_replace {
-                entry.and_modify(|best| *best = next_cost.clone())
+                entry
+                    .and_modify(|best| *best = next_cost.clone())
                     .or_insert(next_cost);
                 frontier.push(next_state);
             }
