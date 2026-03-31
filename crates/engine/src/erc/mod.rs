@@ -303,6 +303,10 @@ fn hierarchical_mismatch_findings(schematic: &Schematic, config: &ErcConfig) -> 
                 .push(port.uuid);
         }
 
+        if port_names.is_empty() {
+            continue;
+        }
+
         let missing_ports: Vec<_> = label_names
             .keys()
             .filter(|name| !port_names.contains_key(*name))

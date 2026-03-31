@@ -127,7 +127,8 @@ fn save_persists_set_design_rule_sidecar_for_current_m3_slice() {
 
     engine.save(&target).expect("save should succeed");
 
-    let sidecar = crate::import::rules_sidecar::sidecar_path_for_source(&target);
+    let sidecar = crate::import::rules_sidecar::sidecar_path_for_source(&target)
+        .expect("saved board path should have a filename");
     assert!(sidecar.exists());
 
     let mut reloaded = Engine::new().expect("engine should initialize");

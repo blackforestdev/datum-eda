@@ -3,11 +3,13 @@ use std::path::Path;
 use anyhow::{Result, anyhow};
 use eda_engine::board::{
     RoutePathCandidateOrthogonalGraphViaExplainKind,
-    RoutePathCandidateOrthogonalGraphViaExplainReport, RoutePathCandidateStatus,
+    RoutePathCandidateOrthogonalGraphViaExplainReport,
 };
 use uuid::Uuid;
 
-use super::super::{build_native_project_board, load_native_project};
+use super::command_project_route_path_candidate_orthogonal_graph_spine::{
+    render_route_path_candidate_status, with_native_project_board,
+};
 
 pub(crate) fn query_native_project_route_path_candidate_orthogonal_graph_via_explain(
     root: &Path,
@@ -15,15 +17,15 @@ pub(crate) fn query_native_project_route_path_candidate_orthogonal_graph_via_exp
     from_anchor_pad_uuid: Uuid,
     to_anchor_pad_uuid: Uuid,
 ) -> Result<RoutePathCandidateOrthogonalGraphViaExplainReport> {
-    let project = load_native_project(root)?;
-    let board = build_native_project_board(&project)?;
-    board
-        .route_path_candidate_orthogonal_graph_via_explain(
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid,
-        )
-        .map_err(|err| anyhow!(err))
+    with_native_project_board(root, |board| {
+        board
+            .route_path_candidate_orthogonal_graph_via_explain(
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )
+            .map_err(|err| anyhow!(err))
+    })
 }
 
 pub(crate) fn render_native_project_route_path_candidate_orthogonal_graph_via_explain_text(
@@ -35,7 +37,10 @@ pub(crate) fn render_native_project_route_path_candidate_orthogonal_graph_via_ex
             "persisted_native_board_state_only: {}",
             report.persisted_native_board_state_only
         ),
-        format!("status: {}", render_status(report.status.clone())),
+        format!(
+            "status: {}",
+            render_route_path_candidate_status(report.status.clone())
+        ),
         format!(
             "explanation_kind: {}",
             render_kind(&report.explanation_kind)
@@ -65,15 +70,6 @@ pub(crate) fn render_native_project_route_path_candidate_orthogonal_graph_via_ex
         report.blocked_matching_vias.len()
     ));
     lines.join("\n")
-}
-
-fn render_status(status: RoutePathCandidateStatus) -> &'static str {
-    match status {
-        RoutePathCandidateStatus::DeterministicPathFound => "deterministic_path_found",
-        RoutePathCandidateStatus::NoPathUnderCurrentAuthoredConstraints => {
-            "no_path_under_current_authored_constraints"
-        }
-    }
 }
 
 fn render_kind(kind: &RoutePathCandidateOrthogonalGraphViaExplainKind) -> &'static str {

@@ -92,6 +92,8 @@ mod route_path_candidate_orthogonal_graph_selection;
 mod route_path_candidate_orthogonal_graph_six_via;
 #[path = "route_path_candidate_orthogonal_graph_six_via_explain.rs"]
 mod route_path_candidate_orthogonal_graph_six_via_explain;
+#[path = "route_path_candidate_orthogonal_graph_spine.rs"]
+mod route_path_candidate_orthogonal_graph_spine;
 #[path = "route_path_candidate_orthogonal_graph_three_via.rs"]
 mod route_path_candidate_orthogonal_graph_three_via;
 #[path = "route_path_candidate_orthogonal_graph_three_via_explain.rs"]
@@ -100,10 +102,14 @@ mod route_path_candidate_orthogonal_graph_three_via_explain;
 mod route_path_candidate_orthogonal_graph_two_via;
 #[path = "route_path_candidate_orthogonal_graph_two_via_explain.rs"]
 mod route_path_candidate_orthogonal_graph_two_via_explain;
+#[path = "route_path_candidate_orthogonal_graph_two_via_spine.rs"]
+mod route_path_candidate_orthogonal_graph_two_via_spine;
 #[path = "route_path_candidate_orthogonal_graph_via.rs"]
 mod route_path_candidate_orthogonal_graph_via;
 #[path = "route_path_candidate_orthogonal_graph_via_explain.rs"]
 mod route_path_candidate_orthogonal_graph_via_explain;
+#[path = "route_path_candidate_orthogonal_graph_via_spine.rs"]
+mod route_path_candidate_orthogonal_graph_via_spine;
 #[path = "route_path_candidate_orthogonal_two_bend.rs"]
 mod route_path_candidate_orthogonal_two_bend;
 #[path = "route_path_candidate_orthogonal_two_bend_explain.rs"]

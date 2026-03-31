@@ -66,7 +66,7 @@ Corrections landed:
 | KiCad .kicad_pcb import: DOA2526 + 4 designs, 0 errors | [~] | Skeleton parser exists; warns "full geometry not implemented" |
 | KiCad .kicad_sch import: DOA2526 + 2 schematics, 0 errors | [~] | Skeleton parser exists; warns "full symbol connectivity not implemented" |
 | Eagle .brd/.sch import: 3 designs, 0 errors | [ ] | Returns "not implemented" error |
-| Schematic connectivity: hierarchy, labels, power symbols | [~] | Union-find solver in `connectivity/mod.rs`; hierarchy links partial |
+| Schematic connectivity: hierarchy, labels, power symbols | [~] | Union-find solver in `connectivity/mod.rs`; imported KiCad child-sheet hierarchical linking and basic bus/member expansion now feed existing net/query/check surfaces for the current supported subset, while wider import fidelity and advanced bus syntax remain open |
 | Board connectivity: net-to-pin resolution | [x] | `board/mod.rs` net_pins(), net_pad_points() |
 | Airwire computation: matches KiCad on DOA2526 | [~] | Algorithm implemented; DOA2526 validation not confirmed |
 | Board diagnostics: net_without_copper, via_only, partially_routed | [x] | `board/mod.rs` diagnostics() |
@@ -101,8 +101,9 @@ Corrections landed:
 
 M1 imported-query reliability note (2026-03-30):
 - Checked-in CLI query goldens now cover the current imported-design read
-  surfaces for `simple-demo.kicad_sch`, `simple-demo.kicad_pcb`, and
-  `airwire-demo.kicad_pcb`:
+  surfaces for `simple-demo.kicad_sch`, `bus-demo.kicad_sch`,
+  `hierarchy-mismatch-demo.kicad_sch`, `erc-coverage-demo.kicad_sch`,
+  `simple-demo.kicad_pcb`, and `airwire-demo.kicad_pcb`:
   - `summary`
   - `netlist`
   - `nets`
@@ -120,6 +121,36 @@ M1 imported-query reliability note (2026-03-30):
 - Those fixtures live under `crates/cli/testdata/golden/query` and are enforced
   by `main_tests_query_goldens`, with `UPDATE_GOLDENS=1` as the explicit
   regeneration path.
+- Checked-in CLI check goldens now cover the imported schematic fixtures already
+  used by the current M1/M2 corpus:
+  - `simple-demo.kicad_sch`
+  - `bus-demo.kicad_sch`
+  - `analog-input-demo.kicad_sch`
+  - `analog-input-bias-demo.kicad_sch`
+  - `erc-coverage-demo.kicad_sch`
+  - `hierarchy-mismatch-demo.kicad_sch`
+- Those fixtures live under `crates/cli/testdata/golden/check` and are enforced
+  by `main_tests_check_goldens`, again with `UPDATE_GOLDENS=1` for intentional
+  regeneration.
+- Imported KiCad schematic hierarchy now follows the current supported child-sheet
+  subset:
+  - `simple-demo.kicad_sch` now resolves its checked-in `sub.kicad_sch`
+    child file during import
+  - hierarchical net propagation now merges the parent sheet pin and
+    hierarchical label with the child-sheet hierarchical label target
+  - existing query/check surfaces now expose the resulting extra child sheet,
+    hierarchy link, and propagated `SUB_IN` pin attachment without adding new
+    endpoints
+  - resolver diagnostics now report missing or multiply-mapped hierarchical
+    child targets deterministically when the imported subset cannot link them
+- Imported KiCad bus/member expansion now covers the current supported subset:
+  - scalar member labels like `DATA[0]` resolve to deterministic scalar net
+    names like `DATA0` on existing net/query/check surfaces
+  - simple bus-range labels like `DATA[0..1]` populate imported bus members
+  - imported `bus_entry` forms now associate to one bus and one wire when the
+    current geometric subset is unambiguous
+  - the checked-in `bus-demo.kicad_sch` fixture plus CLI goldens now exercise
+    `schematic-nets`, `buses`, `bus-entries`, and `diagnostics` for this path
 
 ---
 
@@ -356,6 +387,9 @@ Checking follow-up note (2026-03-30):
 - The same native-project validation contract is now available through MCP as
   `validate_project`, preserving the CLI report shape and valid/invalid result
   semantics.
+- MCP tool registration now also uses one shared spec table for `tools/list`
+  export and `tools/call` dispatch, with parity tests checking runtime and
+  fake-daemon coverage for each registered tool.
 - Checked-in native fixture projects are now exercised continuously through
   `scripts/check_native_project_fixtures.py`, driven by
   `crates/test-harness/testdata/quality/native_project_validation_manifest_v1.json`
@@ -547,6 +581,17 @@ Status: [~] Routing-kernel scope complete; closure review pending
   - the same-layer orthogonal-graph `route-path-candidate` and
     `route-path-candidate-explain` reports now also return `segment_evidence`
     so direct query output matches the artifact lane vocabulary
+  - the same-layer orthogonal-graph candidate and explain surfaces now also
+    share one internal graph-search spine, keeping the public reports
+    unchanged while consolidating the preflight/search/segment-evidence path
+  - the one-authored-via orthogonal-graph candidate and explain surfaces now
+    also share one internal via-selection spine that reuses the same
+    orthogonal-graph layer-search structure without changing the public
+    reports
+  - the two-authored-via orthogonal-graph candidate and explain surfaces now
+    also share one internal pair-selection spine that reuses the same
+    orthogonal-graph layer-search structure without changing the public
+    reports
   - orthogonal-graph artifact apply now reports whether stale proposals
     drifted because candidate availability changed, the deterministic ranked
     winner changed, or same-rank geometry changed
@@ -1010,7 +1055,7 @@ Status: [~] In progress
 | Global labels | [x] | |
 | Hierarchical labels/ports | [~] | Basic support; full hierarchy links partial |
 | Power symbols | [x] | |
-| Bus/member expansion | [~] | Bus structures exist; expansion logic partial |
+| Bus/member expansion | [x] | Basic imported KiCad subset now supports deterministic `NAME[n]` scalar member normalization, `NAME[a..b]` bus-range expansion, and geometric bus-entry association; advanced syntax edge cases remain deferred |
 | Net naming and identity | [x] | |
 | Connectivity diagnostics | [x] | |
 | Deterministic graph output | [x] | Sorted by UUID |

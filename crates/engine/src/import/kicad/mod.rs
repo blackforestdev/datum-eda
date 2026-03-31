@@ -83,7 +83,16 @@ pub fn import_schematic_document(
     path: &Path,
 ) -> Result<(crate::schematic::Schematic, ImportReport), EngineError> {
     let contents = std::fs::read_to_string(path)?;
-    let schematic = parse_schematic_skeleton(&contents)?;
+    let schematic_uuid = find_top_level_uuid(&contents).unwrap_or_else(uuid::Uuid::new_v4);
+    let mut schematic = crate::schematic::Schematic {
+        uuid: schematic_uuid,
+        sheets: std::collections::HashMap::new(),
+        sheet_definitions: std::collections::HashMap::new(),
+        sheet_instances: std::collections::HashMap::new(),
+        variants: std::collections::HashMap::new(),
+        waivers: Vec::new(),
+    };
+    import_schematic_sheet_recursive(path, "Root", &mut schematic)?;
     let mut report = ImportReport::new(
         ImportKind::KiCadSchematic,
         path,
@@ -136,6 +145,62 @@ pub fn import_schematic_document(
         );
 
     Ok((schematic, report))
+}
+
+fn import_schematic_sheet_recursive(
+    path: &Path,
+    sheet_name: &str,
+    schematic: &mut crate::schematic::Schematic,
+) -> Result<uuid::Uuid, EngineError> {
+    let contents = std::fs::read_to_string(path)?;
+    let parsed = parse_schematic_skeleton(&contents, sheet_name)?;
+    let sheet_uuid = parsed.root_sheet.uuid;
+    schematic.sheets.insert(sheet_uuid, parsed.root_sheet);
+
+    for child in parsed.child_sheets {
+        let child_sheet_uuid = child
+            .sheetfile
+            .as_ref()
+            .map(|sheetfile| {
+                path.parent()
+                    .unwrap_or_else(|| Path::new(""))
+                    .join(sheetfile)
+            })
+            .filter(|candidate| candidate.exists())
+            .map(|child_path| import_schematic_sheet_recursive(&child_path, &child.name, schematic))
+            .transpose()?
+            .unwrap_or(uuid::Uuid::nil());
+        let definition_uuid = crate::ir::ids::import_uuid(
+            &crate::ir::ids::namespace_kicad(),
+            &format!(
+                "schematic-sheet-definition/{}/{}/{}",
+                path.display(),
+                child.instance_uuid,
+                child.name
+            ),
+        );
+        schematic.sheet_definitions.insert(
+            definition_uuid,
+            crate::schematic::SheetDefinition {
+                uuid: definition_uuid,
+                root_sheet: child_sheet_uuid,
+                name: child.name.clone(),
+            },
+        );
+        schematic.sheet_instances.insert(
+            child.instance_uuid,
+            crate::schematic::SheetInstance {
+                uuid: child.instance_uuid,
+                definition: definition_uuid,
+                parent_sheet: Some(sheet_uuid),
+                position: child.position,
+                name: child.name,
+                ports: child.ports,
+            },
+        );
+    }
+
+    Ok(sheet_uuid)
 }
 
 pub fn import_project_file(path: &Path) -> Result<ImportReport, EngineError> {

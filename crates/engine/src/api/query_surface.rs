@@ -89,7 +89,9 @@ impl Engine {
     }
 
     pub fn get_hierarchy(&self) -> Result<HierarchyInfo, EngineError> {
-        Ok(self.require_schematic()?.hierarchy())
+        Ok(connectivity::schematic_hierarchy_info(
+            self.require_schematic()?,
+        ))
     }
 
     pub fn get_schematic_net_info(&self) -> Result<Vec<SchematicNetInfo>, EngineError> {

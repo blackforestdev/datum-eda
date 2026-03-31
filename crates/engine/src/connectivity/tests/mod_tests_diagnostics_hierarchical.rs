@@ -274,6 +274,8 @@ fn disconnected_anonymous_nets_get_distinct_names_and_ids() {
 fn merges_hierarchical_label_with_matching_port_name() {
     let root_sheet = Uuid::new_v4();
     let child_sheet = Uuid::new_v4();
+    let definition_uuid = Uuid::new_v4();
+    let instance_uuid = Uuid::new_v4();
     let port_uuid = Uuid::new_v4();
     let label_uuid = Uuid::new_v4();
     let schematic = Schematic {
@@ -332,8 +334,25 @@ fn merges_hierarchical_label_with_matching_port_name() {
                 },
             ),
         ]),
-        sheet_definitions: HashMap::new(),
-        sheet_instances: HashMap::new(),
+        sheet_definitions: HashMap::from([(
+            definition_uuid,
+            crate::schematic::SheetDefinition {
+                uuid: definition_uuid,
+                root_sheet: child_sheet,
+                name: "Child".into(),
+            },
+        )]),
+        sheet_instances: HashMap::from([(
+            instance_uuid,
+            crate::schematic::SheetInstance {
+                uuid: instance_uuid,
+                definition: definition_uuid,
+                parent_sheet: Some(root_sheet),
+                position: Point::new(60, 10),
+                name: "Child".into(),
+                ports: vec![port_uuid],
+            },
+        )]),
         variants: HashMap::new(),
         waivers: Vec::new(),
     };
@@ -347,4 +366,197 @@ fn merges_hierarchical_label_with_matching_port_name() {
         nets[0].sheets,
         vec!["Child".to_string(), "Root".to_string()]
     );
+}
+
+#[test]
+fn reports_missing_hierarchical_port_target_for_unresolved_child_interface() {
+    let root_sheet = Uuid::new_v4();
+    let child_sheet = Uuid::new_v4();
+    let definition_uuid = Uuid::new_v4();
+    let instance_uuid = Uuid::new_v4();
+    let port_uuid = Uuid::new_v4();
+    let schematic = Schematic {
+        uuid: Uuid::new_v4(),
+        sheets: HashMap::from([
+            (
+                root_sheet,
+                Sheet {
+                    uuid: root_sheet,
+                    name: "Root".into(),
+                    frame: None,
+                    symbols: HashMap::new(),
+                    wires: HashMap::new(),
+                    junctions: HashMap::new(),
+                    labels: HashMap::new(),
+                    buses: HashMap::new(),
+                    bus_entries: HashMap::new(),
+                    ports: HashMap::from([(
+                        port_uuid,
+                        HierarchicalPort {
+                            uuid: port_uuid,
+                            name: "SUB_IN".into(),
+                            direction: PortDirection::Input,
+                            position: Point::new(60, 15),
+                        },
+                    )]),
+                    noconnects: HashMap::new(),
+                    texts: HashMap::new(),
+                    drawings: HashMap::new(),
+                },
+            ),
+            (
+                child_sheet,
+                Sheet {
+                    uuid: child_sheet,
+                    name: "Child".into(),
+                    frame: None,
+                    symbols: HashMap::new(),
+                    wires: HashMap::new(),
+                    junctions: HashMap::new(),
+                    labels: HashMap::new(),
+                    buses: HashMap::new(),
+                    bus_entries: HashMap::new(),
+                    ports: HashMap::new(),
+                    noconnects: HashMap::new(),
+                    texts: HashMap::new(),
+                    drawings: HashMap::new(),
+                },
+            ),
+        ]),
+        sheet_definitions: HashMap::from([(
+            definition_uuid,
+            crate::schematic::SheetDefinition {
+                uuid: definition_uuid,
+                root_sheet: child_sheet,
+                name: "Child".into(),
+            },
+        )]),
+        sheet_instances: HashMap::from([(
+            instance_uuid,
+            crate::schematic::SheetInstance {
+                uuid: instance_uuid,
+                definition: definition_uuid,
+                parent_sheet: Some(root_sheet),
+                position: Point::new(60, 10),
+                name: "Child".into(),
+                ports: vec![port_uuid],
+            },
+        )]),
+        variants: HashMap::new(),
+        waivers: Vec::new(),
+    };
+
+    let diagnostics = schematic_diagnostics(&schematic);
+    assert!(diagnostics.iter().any(|diagnostic| {
+        diagnostic.kind == "missing_hierarchical_port_target"
+            && diagnostic.objects == vec![port_uuid]
+    }));
+}
+
+#[test]
+fn reports_multiply_mapped_hierarchical_port_for_duplicate_child_targets() {
+    let root_sheet = Uuid::new_v4();
+    let child_sheet = Uuid::new_v4();
+    let definition_uuid = Uuid::new_v4();
+    let instance_uuid = Uuid::new_v4();
+    let port_uuid = Uuid::new_v4();
+    let label_a = Uuid::new_v4();
+    let label_b = Uuid::new_v4();
+    let schematic = Schematic {
+        uuid: Uuid::new_v4(),
+        sheets: HashMap::from([
+            (
+                root_sheet,
+                Sheet {
+                    uuid: root_sheet,
+                    name: "Root".into(),
+                    frame: None,
+                    symbols: HashMap::new(),
+                    wires: HashMap::new(),
+                    junctions: HashMap::new(),
+                    labels: HashMap::new(),
+                    buses: HashMap::new(),
+                    bus_entries: HashMap::new(),
+                    ports: HashMap::from([(
+                        port_uuid,
+                        HierarchicalPort {
+                            uuid: port_uuid,
+                            name: "SUB_IN".into(),
+                            direction: PortDirection::Input,
+                            position: Point::new(60, 15),
+                        },
+                    )]),
+                    noconnects: HashMap::new(),
+                    texts: HashMap::new(),
+                    drawings: HashMap::new(),
+                },
+            ),
+            (
+                child_sheet,
+                Sheet {
+                    uuid: child_sheet,
+                    name: "Child".into(),
+                    frame: None,
+                    symbols: HashMap::new(),
+                    wires: HashMap::new(),
+                    junctions: HashMap::new(),
+                    labels: HashMap::from([
+                        (
+                            label_a,
+                            NetLabel {
+                                uuid: label_a,
+                                kind: LabelKind::Hierarchical,
+                                name: "SUB_IN".into(),
+                                position: Point::new(10, 10),
+                            },
+                        ),
+                        (
+                            label_b,
+                            NetLabel {
+                                uuid: label_b,
+                                kind: LabelKind::Hierarchical,
+                                name: "SUB_IN".into(),
+                                position: Point::new(20, 10),
+                            },
+                        ),
+                    ]),
+                    buses: HashMap::new(),
+                    bus_entries: HashMap::new(),
+                    ports: HashMap::new(),
+                    noconnects: HashMap::new(),
+                    texts: HashMap::new(),
+                    drawings: HashMap::new(),
+                },
+            ),
+        ]),
+        sheet_definitions: HashMap::from([(
+            definition_uuid,
+            crate::schematic::SheetDefinition {
+                uuid: definition_uuid,
+                root_sheet: child_sheet,
+                name: "Child".into(),
+            },
+        )]),
+        sheet_instances: HashMap::from([(
+            instance_uuid,
+            crate::schematic::SheetInstance {
+                uuid: instance_uuid,
+                definition: definition_uuid,
+                parent_sheet: Some(root_sheet),
+                position: Point::new(60, 10),
+                name: "Child".into(),
+                ports: vec![port_uuid],
+            },
+        )]),
+        variants: HashMap::new(),
+        waivers: Vec::new(),
+    };
+
+    let diagnostics = schematic_diagnostics(&schematic);
+    assert!(diagnostics.iter().any(|diagnostic| {
+        diagnostic.kind == "multiply_mapped_hierarchical_port"
+            && diagnostic.objects.contains(&port_uuid)
+            && diagnostic.objects.contains(&label_a)
+            && diagnostic.objects.contains(&label_b)
+    }));
 }

@@ -3,16 +3,14 @@ use uuid::Uuid;
 
 use crate::board::{
     Board, RouteCorridorSpanBlockage, RoutePathCandidateError,
-    RoutePathCandidateOrthogonalGraphPathCost, RoutePathCandidateOrthogonalGraphReport,
-    RoutePathCandidateStatus, StackupLayer,
+    RoutePathCandidateOrthogonalGraphPathCost, RoutePathCandidateStatus, StackupLayer,
 };
 use crate::ir::geometry::{LayerId, Point};
 
 use super::route_path_candidate_orthogonal_graph::RoutePathCandidateOrthogonalGraphSegmentEvidence;
-use super::route_path_candidate_orthogonal_graph_selection::{
-    OrthogonalGraphEdgeOrientation, candidate_orthogonal_graph_layer_searches,
-    orthogonal_graph_path_cost,
-};
+use super::route_path_candidate_orthogonal_graph::RoutePathCandidateOrthogonalGraphSummary;
+use super::route_path_candidate_orthogonal_graph_selection::OrthogonalGraphEdgeOrientation;
+use super::route_path_candidate_orthogonal_graph_spine::build_orthogonal_graph_candidate_spine;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -79,49 +77,22 @@ impl Board {
         from_anchor_pad_uuid: Uuid,
         to_anchor_pad_uuid: Uuid,
     ) -> Result<RoutePathCandidateOrthogonalGraphExplainReport, RoutePathCandidateError> {
-        let path_candidate = self.route_path_candidate_orthogonal_graph(
+        let spine = build_orthogonal_graph_candidate_spine(
+            self,
             net_uuid,
             from_anchor_pad_uuid,
             to_anchor_pad_uuid,
         )?;
-        let preflight = self
-            .route_preflight(net_uuid)
-            .ok_or(RoutePathCandidateError::NetNotFound { net_uuid })?;
-        let from_anchor = preflight
-            .anchors
-            .iter()
-            .find(|anchor| anchor.pad_uuid == from_anchor_pad_uuid)
-            .ok_or(RoutePathCandidateError::AnchorNotOnNet {
-                pad_uuid: from_anchor_pad_uuid,
-                net_uuid,
-            })?;
-        let to_anchor = preflight
-            .anchors
-            .iter()
-            .find(|anchor| anchor.pad_uuid == to_anchor_pad_uuid)
-            .ok_or(RoutePathCandidateError::AnchorNotOnNet {
-                pad_uuid: to_anchor_pad_uuid,
-                net_uuid,
-            })?;
-        let candidate_copper_layers = preflight
-            .candidate_copper_layers
-            .iter()
-            .filter(|layer| layer.id == from_anchor.layer && layer.id == to_anchor.layer)
-            .cloned()
-            .collect::<Vec<_>>();
-        let searches = candidate_orthogonal_graph_layer_searches(
-            self,
-            net_uuid,
-            from_anchor,
-            to_anchor,
-            &candidate_copper_layers,
-        );
-        let selected_path = searches.iter().find_map(|search| {
+        let selected_path = spine.searches.iter().find_map(|search| {
             search.path.as_ref().map(|points| {
                 RoutePathCandidateOrthogonalGraphExplainSelectedPath {
                     layer: search.layer,
                     points: points.clone(),
-                    cost: orthogonal_graph_path_cost(points),
+                    cost: RoutePathCandidateOrthogonalGraphPathCost {
+                        bend_count: points.len().saturating_sub(2),
+                        segment_count: points.len().saturating_sub(1),
+                        point_count: points.len(),
+                    },
                     selection_reason: format!(
                         "selected because it is the lowest-cost reachable same-layer orthogonal graph path under the deterministic graph-search rule on layer {}",
                         search.layer
@@ -129,7 +100,8 @@ impl Board {
                 }
             })
         });
-        let blocked_edges = searches
+        let blocked_edges = spine
+            .searches
             .iter()
             .flat_map(|search| {
                 search.blocked_edges.iter().cloned().map(|edge| {
@@ -147,36 +119,37 @@ impl Board {
         Ok(RoutePathCandidateOrthogonalGraphExplainReport {
             contract: "m5_route_path_candidate_orthogonal_graph_explain_v1".to_string(),
             persisted_native_board_state_only: true,
-            status: path_candidate.status.clone(),
-            explanation_kind: explanation_kind(&path_candidate),
-            net_uuid: path_candidate.net_uuid,
-            net_name: path_candidate.net_name,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid,
-            selection_rule: path_candidate.selection_rule,
-            candidate_copper_layers: path_candidate.candidate_copper_layers,
+            status: spine.status.clone(),
+            explanation_kind: explanation_kind(spine.status.clone(), &spine.summary),
+            net_uuid: spine.net_uuid,
+            net_name: spine.net_name,
+            from_anchor_pad_uuid: spine.from_anchor_pad_uuid,
+            to_anchor_pad_uuid: spine.to_anchor_pad_uuid,
+            selection_rule: spine.selection_rule,
+            candidate_copper_layers: spine.candidate_copper_layers,
             summary: RoutePathCandidateOrthogonalGraphExplainSummary {
-                candidate_copper_layer_count: path_candidate.summary.candidate_copper_layer_count,
-                graph_node_count: path_candidate.summary.graph_node_count,
-                graph_edge_count: path_candidate.summary.graph_edge_count,
-                blocked_edge_count: path_candidate.summary.blocked_edge_count,
+                candidate_copper_layer_count: spine.summary.candidate_copper_layer_count,
+                graph_node_count: spine.summary.graph_node_count,
+                graph_edge_count: spine.summary.graph_edge_count,
+                blocked_edge_count: spine.summary.blocked_edge_count,
             },
             selected_path,
-            segment_evidence: path_candidate.segment_evidence,
+            segment_evidence: spine.segment_evidence,
             blocked_edges,
         })
     }
 }
 
 fn explanation_kind(
-    report: &RoutePathCandidateOrthogonalGraphReport,
+    status: RoutePathCandidateStatus,
+    summary: &RoutePathCandidateOrthogonalGraphSummary,
 ) -> RoutePathCandidateOrthogonalGraphExplainKind {
-    match report.status {
+    match status {
         RoutePathCandidateStatus::DeterministicPathFound => {
             RoutePathCandidateOrthogonalGraphExplainKind::DeterministicPathFound
         }
         RoutePathCandidateStatus::NoPathUnderCurrentAuthoredConstraints
-            if report.summary.graph_node_count == 0 || report.summary.graph_edge_count == 0 =>
+            if summary.graph_node_count == 0 || summary.graph_edge_count == 0 =>
         {
             RoutePathCandidateOrthogonalGraphExplainKind::NoSameLayerGraphCandidate
         }

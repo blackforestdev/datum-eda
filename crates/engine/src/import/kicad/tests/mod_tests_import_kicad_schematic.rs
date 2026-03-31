@@ -64,9 +64,13 @@ fn imports_kicad_schematic_into_canonical_objects() {
         .expect("fixture should parse");
 
     assert_eq!(report.kind, ImportKind::KiCadSchematic);
-    assert_eq!(schematic.sheets.len(), 1);
+    assert_eq!(schematic.sheets.len(), 2);
 
-    let root = schematic.sheets.values().next().unwrap();
+    let root = schematic
+        .sheets
+        .values()
+        .find(|sheet| sheet.name == "Root")
+        .expect("root sheet should exist");
     assert_eq!(root.symbols.len(), 1);
     assert_eq!(root.wires.len(), 1);
     assert_eq!(root.junctions.len(), 1);
@@ -75,6 +79,14 @@ fn imports_kicad_schematic_into_canonical_objects() {
     assert_eq!(root.ports.len(), 1);
     assert_eq!(root.noconnects.len(), 1);
     assert_eq!(schematic.sheet_instances.len(), 1);
+    let child = schematic
+        .sheets
+        .values()
+        .find(|sheet| sheet.name == "Sub")
+        .expect("child sheet should exist");
+    assert_eq!(child.symbols.len(), 1);
+    assert_eq!(child.labels.len(), 1);
+    assert!(child.ports.is_empty());
 
     let symbol = root
         .symbols
@@ -133,4 +145,27 @@ fn imports_kicad_noconnect_with_pin_binding_when_marker_overlaps_pin() {
         .expect("fixture should include one no_connect marker");
     assert_ne!(marker.symbol, Uuid::nil());
     assert_ne!(marker.pin, Uuid::nil());
+}
+
+#[test]
+fn imports_kicad_bus_members_and_entries_for_supported_subset() {
+    let (schematic, _report) = import_schematic_document(&fixture_path("bus-demo.kicad_sch"))
+        .expect("fixture should parse");
+    let root = schematic
+        .sheets
+        .values()
+        .find(|sheet| sheet.name == "Root")
+        .expect("root sheet should exist");
+
+    assert_eq!(root.buses.len(), 1);
+    let bus = root.buses.values().next().expect("bus should exist");
+    assert_eq!(bus.name, "DATA");
+    assert_eq!(bus.members, vec!["DATA0".to_string(), "DATA1".to_string()]);
+
+    assert_eq!(root.bus_entries.len(), 2);
+    assert!(
+        root.bus_entries
+            .values()
+            .all(|entry| entry.bus == bus.uuid && entry.wire.is_some())
+    );
 }

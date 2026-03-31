@@ -64,13 +64,18 @@ pub fn compute_source_hash_file(path: impl AsRef<Path>) -> Result<String, Engine
     Ok(compute_source_hash_bytes(&bytes))
 }
 
-pub fn sidecar_path_for_source(source_file: impl AsRef<Path>) -> PathBuf {
+pub fn sidecar_path_for_source(source_file: impl AsRef<Path>) -> Result<PathBuf, EngineError> {
     let path = source_file.as_ref();
     let filename = path
         .file_name()
-        .expect("source file must have filename")
+        .ok_or_else(|| {
+            EngineError::Validation(format!(
+                "cannot build ID sidecar path without a source filename: {}",
+                path.display()
+            ))
+        })?
         .to_string_lossy();
-    path.with_file_name(format!("{filename}.ids.json"))
+    Ok(path.with_file_name(format!("{filename}.ids.json")))
 }
 
 pub fn write_sidecar(path: impl AsRef<Path>, sidecar: &IdSidecar) -> Result<(), EngineError> {

@@ -1,11 +1,11 @@
-"""Static MCP tool catalog data."""
+"""Shared MCP tool registration data."""
 
 from __future__ import annotations
 
 from typing import Any
 
 
-TOOLS: list[dict[str, Any]] = [
+TOOL_SPECS: list[dict[str, Any]] = [
     {
         "name": "open_project",
         "description": "Import a KiCad or Eagle design into the engine session.",
@@ -298,6 +298,10 @@ TOOLS: list[dict[str, Any]] = [
     {
         "name": "set_net_class",
         "description": "Assign one board net to a concrete net class in the current M3 slice.",
+        "x_dispatch_defaults": {
+            "diffpair_width": 0,
+            "diffpair_gap": 0,
+        },
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -434,6 +438,10 @@ TOOLS: list[dict[str, Any]] = [
     {
         "name": "edit_scoped_component_replacement_plan",
         "description": "Exclude or override items in a scoped replacement preview without hand-editing raw JSON.",
+        "x_dispatch_defaults": {
+            "exclude_component_uuids": [],
+            "overrides": [],
+        },
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -863,6 +871,14 @@ TOOLS: list[dict[str, Any]] = [
     {
         "name": "export_route_proposal",
         "description": "Export the currently selected deterministic route proposal as a native route proposal artifact.",
+        "x_dispatch_args": [
+            "path",
+            "net_uuid",
+            "from_anchor_pad_uuid",
+            "to_anchor_pad_uuid",
+            "out",
+            "profile",
+        ],
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -999,3 +1015,11 @@ TOOLS: list[dict[str, Any]] = [
         },
     },
 ]
+
+
+def _catalog_tool(spec: dict[str, Any]) -> dict[str, Any]:
+    return {key: value for key, value in spec.items() if not key.startswith("x_")}
+
+
+TOOLS: list[dict[str, Any]] = [_catalog_tool(spec) for spec in TOOL_SPECS]
+TOOL_BY_NAME: dict[str, dict[str, Any]] = {spec["name"]: spec for spec in TOOL_SPECS}

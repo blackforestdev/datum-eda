@@ -150,6 +150,27 @@ class FakeDaemonClientMutationsMixin:
             None,
         )
 
+    def apply_component_replacement_policy(
+        self, replacements: list[dict[str, str]]
+    ) -> JsonRpcResponse:
+        self.calls.append(("apply_component_replacement_policy", replacements))
+        return JsonRpcResponse(
+            "2.0",
+            1215,
+            {
+                "diff": {
+                    "created": [],
+                    "modified": [
+                        {"object_type": "component", "uuid": item["uuid"]}
+                        for item in replacements
+                    ],
+                    "deleted": [],
+                },
+                "description": f"replace_components {len(replacements)}",
+            },
+            None,
+        )
+
     def apply_scoped_component_replacement_policy(
         self, scope: dict[str, str | None], policy: str
     ) -> JsonRpcResponse:

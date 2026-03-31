@@ -7,17 +7,45 @@ use crate::board::{Board, Net, NetClass, PlacedPackage, PlacedPad, Track, Via, Z
 use crate::error::EngineError;
 use crate::ir::geometry::Point;
 use crate::schematic::{
-    Bus, CheckWaiver, HiddenPowerBehavior, Junction, LabelKind, NetLabel, NoConnectMarker,
-    PlacedSymbol, Schematic, SchematicWire, Sheet, SheetDefinition, SheetInstance,
-    SymbolDisplayMode, SymbolPin, Variant,
+    Bus, HiddenPowerBehavior, Junction, LabelKind, NetLabel, NoConnectMarker, PlacedSymbol,
+    SchematicWire, Sheet, SymbolDisplayMode, SymbolPin,
 };
 
 use super::parser_helpers::*;
 use super::symbol_helpers::*;
 
-pub(super) fn parse_schematic_skeleton(contents: &str) -> Result<Schematic, EngineError> {
+#[derive(Clone)]
+struct ParsedBusSegment {
+    uuid: Uuid,
+    points: Vec<Point>,
+}
+
+#[derive(Clone)]
+struct ParsedBusEntrySkeleton {
+    uuid: Uuid,
+    position: Point,
+    size: Point,
+}
+
+pub(super) struct ChildSheetRef {
+    pub(super) instance_uuid: Uuid,
+    pub(super) name: String,
+    pub(super) position: Point,
+    pub(super) sheetfile: Option<String>,
+    pub(super) ports: Vec<Uuid>,
+}
+
+pub(super) struct ParsedSchematicSkeleton {
+    pub(super) root_sheet: Sheet,
+    pub(super) child_sheets: Vec<ChildSheetRef>,
+}
+
+pub(super) fn parse_schematic_skeleton(
+    contents: &str,
+    root_sheet_name: &str,
+) -> Result<ParsedSchematicSkeleton, EngineError> {
     let root_uuid = find_top_level_uuid(contents).unwrap_or_else(Uuid::new_v4);
-    let root_sheet_uuid = Uuid::new_v4();
+    let root_sheet_uuid = root_uuid;
     let library_pins = parse_library_symbol_pins(contents);
 
     let mut symbols = HashMap::new();
@@ -122,15 +150,59 @@ pub(super) fn parse_schematic_skeleton(contents: &str) -> Result<Schematic, Engi
         }
     }
 
-    let mut buses = HashMap::new();
+    let mut parsed_buses = Vec::new();
     for block in top_level_blocks(contents, "bus") {
         let uuid = block_uuid(&block).unwrap_or_else(Uuid::new_v4);
+        let points = block_xy_points(&block);
+        if points.len() >= 2 {
+            parsed_buses.push(ParsedBusSegment { uuid, points });
+        }
+    }
+    parsed_buses.sort_by_key(|bus| bus.uuid);
+
+    let mut buses = HashMap::new();
+    for bus in &parsed_buses {
+        let specs = attached_bus_specs(bus, labels.values());
+        let (name, members) = if let Some((name, members)) = specs.first() {
+            (name.clone(), members.clone())
+        } else {
+            (format!("BUS_{}", bus.uuid), Vec::new())
+        };
         buses.insert(
-            uuid,
+            bus.uuid,
             Bus {
-                uuid,
-                name: format!("BUS_{uuid}"),
-                members: Vec::new(),
+                uuid: bus.uuid,
+                name,
+                members,
+            },
+        );
+    }
+
+    let mut bus_entries = HashMap::new();
+    let mut parsed_entries = Vec::new();
+    for block in top_level_blocks(contents, "bus_entry") {
+        let Some(position) = block_at_point(&block) else {
+            continue;
+        };
+        parsed_entries.push(ParsedBusEntrySkeleton {
+            uuid: block_uuid(&block).unwrap_or_else(Uuid::new_v4),
+            position,
+            size: block_size_point(&block).unwrap_or_else(Point::zero),
+        });
+    }
+    parsed_entries.sort_by_key(|entry| entry.uuid);
+    for entry in parsed_entries {
+        let (bus, wire) = resolve_bus_entry_attachment(&entry, &parsed_buses, &wires);
+        let Some(bus) = bus else {
+            continue;
+        };
+        bus_entries.insert(
+            entry.uuid,
+            crate::schematic::BusEntry {
+                uuid: entry.uuid,
+                bus,
+                wire,
+                position: entry.position,
             },
         );
     }
@@ -152,61 +224,184 @@ pub(super) fn parse_schematic_skeleton(contents: &str) -> Result<Schematic, Engi
         }
     }
 
-    let mut sheet_definitions = HashMap::new();
-    let mut sheet_instances = HashMap::new();
+    let mut child_sheets = Vec::new();
     let mut ports = HashMap::new();
     for block in top_level_blocks(contents, "sheet") {
-        let uuid = block_uuid(&block).unwrap_or_else(Uuid::new_v4);
+        let instance_uuid = block_uuid(&block).unwrap_or_else(Uuid::new_v4);
         let name = extract_sheet_property(&block, "Sheetname").unwrap_or_else(|| "Sheet".into());
-        let definition_uuid = Uuid::new_v4();
-        sheet_definitions.insert(
-            definition_uuid,
-            SheetDefinition {
-                uuid: definition_uuid,
-                root_sheet: uuid,
-                name: name.clone(),
-            },
-        );
-        sheet_instances.insert(
-            uuid,
-            SheetInstance {
-                uuid,
-                definition: definition_uuid,
-                parent_sheet: Some(root_sheet_uuid),
-                position: block_at_point(&block).unwrap_or_else(Point::zero),
-                name,
-            },
-        );
-
+        let mut port_uuids = Vec::new();
         for port in extract_sheet_pins(&block) {
+            port_uuids.push(port.uuid);
             ports.insert(port.uuid, port);
         }
+        port_uuids.sort();
+        child_sheets.push(ChildSheetRef {
+            instance_uuid,
+            name,
+            position: block_at_point(&block).unwrap_or_else(Point::zero),
+            sheetfile: extract_sheet_property(&block, "Sheetfile"),
+            ports: port_uuids,
+        });
     }
+    child_sheets.sort_by(|a, b| {
+        a.name
+            .cmp(&b.name)
+            .then_with(|| a.instance_uuid.cmp(&b.instance_uuid))
+    });
 
     let root_sheet = Sheet {
         uuid: root_sheet_uuid,
-        name: "Root".into(),
+        name: root_sheet_name.into(),
         frame: None,
         symbols,
         wires,
         junctions,
         labels,
         buses,
-        bus_entries: HashMap::new(),
+        bus_entries,
         ports,
         noconnects,
         texts: HashMap::new(),
         drawings: HashMap::new(),
     };
 
-    Ok(Schematic {
-        uuid: root_uuid,
-        sheets: HashMap::from([(root_sheet_uuid, root_sheet)]),
-        sheet_definitions,
-        sheet_instances,
-        variants: HashMap::<Uuid, Variant>::new(),
-        waivers: Vec::<CheckWaiver>::new(),
+    Ok(ParsedSchematicSkeleton {
+        root_sheet,
+        child_sheets,
     })
+}
+
+fn attached_bus_specs<'a>(
+    bus: &ParsedBusSegment,
+    labels: impl Iterator<Item = &'a NetLabel>,
+) -> Vec<(String, Vec<String>)> {
+    let mut specs = Vec::new();
+    for label in labels {
+        if !label_touches_bus(label, bus) {
+            continue;
+        }
+        if let Some(spec) = parse_bus_label_spec(&label.name) {
+            if !specs.iter().any(|existing| existing == &spec) {
+                specs.push(spec);
+            }
+        }
+    }
+    specs.sort_by(|a, b| a.0.cmp(&b.0).then_with(|| a.1.cmp(&b.1)));
+    specs
+}
+
+fn label_touches_bus(label: &NetLabel, bus: &ParsedBusSegment) -> bool {
+    bus.points
+        .windows(2)
+        .any(|segment| point_on_segment(label.position, segment[0], segment[1]))
+}
+
+fn resolve_bus_entry_attachment(
+    entry: &ParsedBusEntrySkeleton,
+    buses: &[ParsedBusSegment],
+    wires: &HashMap<Uuid, SchematicWire>,
+) -> (Option<Uuid>, Option<Uuid>) {
+    let endpoints = [
+        entry.position,
+        Point::new(
+            entry.position.x + entry.size.x,
+            entry.position.y + entry.size.y,
+        ),
+    ];
+
+    for (wire_point, bus_point) in [(endpoints[0], endpoints[1]), (endpoints[1], endpoints[0])] {
+        let bus = unique_bus_at_point(buses, bus_point);
+        let wire = unique_wire_at_point(wires, wire_point);
+        if bus.is_some() && wire.is_some() {
+            return (bus, wire);
+        }
+    }
+
+    let bus = endpoints
+        .iter()
+        .find_map(|point| unique_bus_at_point(buses, *point));
+    let wire = endpoints
+        .iter()
+        .find_map(|point| unique_wire_at_point(wires, *point));
+    (bus, wire)
+}
+
+fn unique_bus_at_point(buses: &[ParsedBusSegment], point: Point) -> Option<Uuid> {
+    let mut matches: Vec<_> = buses
+        .iter()
+        .filter(|bus| {
+            bus.points
+                .windows(2)
+                .any(|segment| point_on_segment(point, segment[0], segment[1]))
+        })
+        .map(|bus| bus.uuid)
+        .collect();
+    matches.sort();
+    matches.dedup();
+    if matches.len() == 1 {
+        matches.first().copied()
+    } else {
+        None
+    }
+}
+
+fn unique_wire_at_point(wires: &HashMap<Uuid, SchematicWire>, point: Point) -> Option<Uuid> {
+    let mut matches: Vec<_> = wires
+        .values()
+        .filter(|wire| point_on_segment(point, wire.from, wire.to))
+        .map(|wire| wire.uuid)
+        .collect();
+    matches.sort();
+    matches.dedup();
+    if matches.len() == 1 {
+        matches.first().copied()
+    } else {
+        None
+    }
+}
+
+fn parse_bus_label_spec(name: &str) -> Option<(String, Vec<String>)> {
+    let open = name.rfind('[')?;
+    let close = name.rfind(']')?;
+    if close <= open + 1 || close != name.len() - 1 {
+        return None;
+    }
+    let base = name[..open].trim();
+    if base.is_empty() {
+        return None;
+    }
+    let body = &name[open + 1..close];
+    let (start_text, end_text) = body.split_once("..")?;
+    let start = start_text.trim().parse::<i32>().ok()?;
+    let end = end_text.trim().parse::<i32>().ok()?;
+    let step = if start <= end { 1 } else { -1 };
+    let mut members = Vec::new();
+    let mut index = start;
+    loop {
+        members.push(format!("{base}{index}"));
+        if index == end {
+            break;
+        }
+        index += step;
+    }
+    Some((base.to_string(), members))
+}
+
+fn point_on_segment(point: Point, a: Point, b: Point) -> bool {
+    if a == b {
+        return point == a;
+    }
+
+    let cross = (point.y - a.y) * (b.x - a.x) - (point.x - a.x) * (b.y - a.y);
+    if cross != 0 {
+        return false;
+    }
+
+    let min_x = a.x.min(b.x);
+    let max_x = a.x.max(b.x);
+    let min_y = a.y.min(b.y);
+    let max_y = a.y.max(b.y);
+    point.x >= min_x && point.x <= max_x && point.y >= min_y && point.y <= max_y
 }
 
 pub(super) fn parse_board_skeleton(path: &Path, contents: &str) -> Result<Board, EngineError> {

@@ -218,6 +218,38 @@ fn execute_query_bus_entries_command_returns_schematic_output() {
 }
 
 #[test]
+fn execute_query_bus_subset_fixture_surfaces_expanded_members() {
+    let cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "query",
+        kicad_fixture_path("bus-demo.kicad_sch").to_str().unwrap(),
+        "schematic-nets",
+    ])
+    .expect("CLI should parse");
+
+    let output = execute(cli).expect("schematic-nets query should succeed");
+    assert!(output.contains("\"domain\": \"schematic\""));
+    assert!(output.contains("\"name\": \"DATA0\""));
+    assert!(output.contains("\"name\": \"DATA1\""));
+
+    let bus_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "query",
+        kicad_fixture_path("bus-demo.kicad_sch").to_str().unwrap(),
+        "buses",
+    ])
+    .expect("CLI should parse");
+    let bus_output = execute(bus_cli).expect("buses query should succeed");
+    assert!(bus_output.contains("\"name\": \"DATA\""));
+    assert!(bus_output.contains("\"DATA0\""));
+    assert!(bus_output.contains("\"DATA1\""));
+}
+
+#[test]
 fn execute_query_noconnects_command_returns_schematic_output() {
     let cli = Cli::try_parse_from([
         "eda",

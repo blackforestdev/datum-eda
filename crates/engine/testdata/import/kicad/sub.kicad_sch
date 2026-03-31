@@ -1,0 +1,35 @@
+(kicad_sch
+  (version 20230121)
+  (generator "datum-eda-test")
+  (uuid 12121212-3434-5656-7878-909090909090)
+  (paper "A4")
+  (lib_symbols
+    (symbol "Test:Port"
+      (pin passive line
+        (at -5 0 0)
+        (length 2.54)
+        (name "~" (effects (font (size 1.27 1.27))))
+        (number "1" (effects (font (size 1.27 1.27)))))))
+  (symbol
+    (lib_id "Test:Port")
+    (at 25 20 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (uuid 23232323-4545-6767-8989-a0a0a0a0a0a0)
+    (property "Reference" "TP1" (at 25 18 0))
+    (property "Value" "PORT" (at 25 22 0)))
+  (wire
+    (pts
+      (xy 20 20)
+      (xy 30 20))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 34343434-5656-7878-9090-b1b1b1b1b1b1))
+  (hierarchical_label "SUB_IN"
+    (shape input)
+    (at 20 20 0)
+    (effects
+      (font (size 1.27 1.27)))
+    (uuid 45454545-6767-8989-a0a0-c2c2c2c2c2c2)))

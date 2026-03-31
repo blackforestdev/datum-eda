@@ -290,6 +290,12 @@ pub(super) fn block_size_mm(block: &str) -> Option<f64> {
         .find_map(|line| parse_scalar_mm(line.trim_start(), "size"))
 }
 
+pub(super) fn block_size_point(block: &str) -> Option<Point> {
+    block
+        .lines()
+        .find_map(|line| parse_xy_like(line.trim_start(), "size"))
+}
+
 pub(super) fn block_drill_mm(block: &str) -> Option<f64> {
     block
         .lines()

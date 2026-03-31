@@ -159,23 +159,27 @@ fn import_dispatch_recognizes_kicad_and_eagle_paths() {
     let schematic_summary = engine
         .get_schematic_summary()
         .expect("imported schematic should populate in-memory design");
-    assert_eq!(schematic_summary.sheet_count, 1);
-    assert_eq!(schematic_summary.net_label_count, 3);
+    assert_eq!(schematic_summary.sheet_count, 2);
+    assert_eq!(schematic_summary.net_label_count, 4);
     let sheets = engine.get_sheets().expect("sheet query should succeed");
-    assert_eq!(sheets.len(), 1);
-    assert_eq!(sheets[0].labels, 3);
-    assert_eq!(sheets[0].symbols, 1);
-    assert_eq!(sheets[0].ports, 1);
+    assert_eq!(sheets.len(), 2);
+    assert!(sheets.iter().any(|sheet| {
+        sheet.name == "Root" && sheet.labels == 3 && sheet.symbols == 1 && sheet.ports == 1
+    }));
+    assert!(sheets.iter().any(|sheet| {
+        sheet.name == "Sub" && sheet.labels == 1 && sheet.symbols == 1 && sheet.ports == 0
+    }));
     let symbols = engine
         .get_symbols(None)
         .expect("symbol query should succeed");
-    assert_eq!(symbols.len(), 1);
-    assert_eq!(symbols[0].reference, "R1");
+    assert_eq!(symbols.len(), 2);
+    assert!(symbols.iter().any(|symbol| symbol.reference == "R1"));
+    assert!(symbols.iter().any(|symbol| symbol.reference == "TP1"));
     let ports = engine.get_ports(None).expect("port query should succeed");
     assert_eq!(ports.len(), 1);
     assert_eq!(ports[0].name, "SUB_IN");
     let labels = engine.get_labels(None).expect("label query should succeed");
-    assert_eq!(labels.len(), 3);
+    assert_eq!(labels.len(), 4);
     let buses = engine.get_buses(None).expect("bus query should succeed");
     assert_eq!(buses.len(), 1);
     let noconnects = engine
@@ -186,7 +190,7 @@ fn import_dispatch_recognizes_kicad_and_eagle_paths() {
         .get_hierarchy()
         .expect("hierarchy query should succeed");
     assert_eq!(hierarchy.instances.len(), 1);
-    assert!(hierarchy.links.is_empty());
+    assert_eq!(hierarchy.links.len(), 1);
     assert_eq!(hierarchy.instances[0].name, "Sub");
     let nets = engine
         .get_schematic_net_info()
@@ -212,7 +216,11 @@ fn import_dispatch_recognizes_kicad_and_eagle_paths() {
         .find(|net| net.name == "SUB_IN")
         .expect("SUB_IN net should exist");
     assert_eq!(sub_in.ports, 1);
-    assert_eq!(sub_in.labels, 1);
+    assert_eq!(sub_in.labels, 2);
+    assert_eq!(sub_in.pins.len(), 1);
+    assert_eq!(sub_in.pins[0].component, "TP1");
+    assert_eq!(sub_in.pins[0].pin, "1");
+    assert_eq!(sub_in.sheets, vec!["Root".to_string(), "Sub".to_string()]);
     let diagnostics = engine
         .get_connectivity_diagnostics()
         .expect("diagnostics query should succeed");
@@ -411,4 +419,69 @@ fn close_project_clears_open_design() {
         engine.get_board_summary(),
         Err(EngineError::NoProjectOpen)
     ));
+}
+
+#[test]
+fn import_dispatch_expands_supported_kicad_bus_members_into_existing_surfaces() {
+    let mut engine = Engine::new().expect("engine should initialize");
+
+    let report = engine
+        .import(&fixture_path("bus-demo.kicad_sch"))
+        .expect("KiCad bus subset fixture should import");
+    assert!(matches!(report.kind, ImportKind::KiCadSchematic));
+
+    let buses = engine.get_buses(None).expect("bus query should succeed");
+    assert_eq!(buses.len(), 1);
+    assert_eq!(buses[0].name, "DATA");
+    assert_eq!(
+        buses[0].members,
+        vec!["DATA0".to_string(), "DATA1".to_string()]
+    );
+
+    let bus_entries = engine
+        .get_bus_entries(None)
+        .expect("bus-entry query should succeed");
+    assert_eq!(bus_entries.len(), 2);
+    assert!(bus_entries.iter().all(|entry| entry.bus == buses[0].uuid));
+    assert!(bus_entries.iter().all(|entry| entry.wire.is_some()));
+
+    let labels = engine.get_labels(None).expect("label query should succeed");
+    assert!(labels.iter().any(|label| label.name == "DATA[0..1]"));
+
+    let nets = engine
+        .get_schematic_net_info()
+        .expect("schematic net query should succeed");
+    assert_eq!(nets.len(), 2);
+    assert!(nets.iter().any(|net| {
+        net.name == "DATA0" && net.pins.len() == 1 && net.pins[0].component == "TP1"
+    }));
+    assert!(nets.iter().any(|net| {
+        net.name == "DATA1" && net.pins.len() == 1 && net.pins[0].component == "TP2"
+    }));
+
+    let diagnostics = engine
+        .get_connectivity_diagnostics()
+        .expect("diagnostics query should succeed");
+    assert!(diagnostics.is_empty(), "{diagnostics:#?}");
+
+    let report = engine
+        .get_check_report()
+        .expect("schematic check report should succeed");
+    match report {
+        CheckReport::Schematic {
+            summary,
+            diagnostics,
+            erc,
+            drc,
+        } => {
+            assert_eq!(summary.status, CheckStatus::Ok);
+            assert_eq!(summary.errors, 0);
+            assert_eq!(summary.warnings, 0);
+            assert_eq!(summary.infos, 0);
+            assert!(diagnostics.is_empty());
+            assert!(erc.is_empty());
+            assert!(drc.is_empty());
+        }
+        other => panic!("expected schematic report, got {other:?}"),
+    }
 }

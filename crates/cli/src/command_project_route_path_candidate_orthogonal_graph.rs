@@ -1,10 +1,13 @@
 use std::path::Path;
 
 use anyhow::{Result, anyhow};
-use eda_engine::board::{RoutePathCandidateOrthogonalGraphReport, RoutePathCandidateStatus};
+use eda_engine::board::RoutePathCandidateOrthogonalGraphReport;
 use uuid::Uuid;
 
-use super::super::{build_native_project_board, load_native_project};
+use super::command_project_route_path_candidate_orthogonal_graph_spine::{
+    push_orthogonal_graph_segment_evidence_lines, render_route_path_candidate_status,
+    with_native_project_board,
+};
 
 pub(crate) fn query_native_project_route_path_candidate_orthogonal_graph(
     root: &Path,
@@ -12,11 +15,15 @@ pub(crate) fn query_native_project_route_path_candidate_orthogonal_graph(
     from_anchor_pad_uuid: Uuid,
     to_anchor_pad_uuid: Uuid,
 ) -> Result<RoutePathCandidateOrthogonalGraphReport> {
-    let project = load_native_project(root)?;
-    let board = build_native_project_board(&project)?;
-    board
-        .route_path_candidate_orthogonal_graph(net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid)
-        .map_err(|err| anyhow!(err))
+    with_native_project_board(root, |board| {
+        board
+            .route_path_candidate_orthogonal_graph(
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )
+            .map_err(|err| anyhow!(err))
+    })
 }
 
 pub(crate) fn render_native_project_route_path_candidate_orthogonal_graph_text(
@@ -29,7 +36,10 @@ pub(crate) fn render_native_project_route_path_candidate_orthogonal_graph_text(
             report.persisted_native_board_state_only
         ),
         format!("selection_rule: {}", report.selection_rule),
-        format!("status: {}", render_status(report.status.clone())),
+        format!(
+            "status: {}",
+            render_route_path_candidate_status(report.status.clone())
+        ),
         format!("net_uuid: {}", report.net_uuid),
         format!("net_name: {}", report.net_name),
         format!("from_anchor_pad_uuid: {}", report.from_anchor_pad_uuid),
@@ -53,36 +63,18 @@ pub(crate) fn render_native_project_route_path_candidate_orthogonal_graph_text(
         lines.push("path_bends: 0".to_string());
         lines.push("path_segments: 0".to_string());
     }
-    lines.push(format!(
-        "segment_evidence: {}",
-        report.segment_evidence.len()
-    ));
-    for segment in &report.segment_evidence {
-        lines.push(String::new());
-        lines.push(format!(
-            "layer_segment_index: {}",
-            segment.layer_segment_index
-        ));
-        lines.push(format!(
-            "layer_segment_count: {}",
-            segment.layer_segment_count
-        ));
-        lines.push(format!("layer: {}", segment.layer));
-        lines.push(format!("bend_count: {}", segment.bend_count));
-        lines.push(format!("point_count: {}", segment.point_count));
-        lines.push(format!(
-            "track_action_count: {}",
-            segment.track_action_count
-        ));
-    }
+    push_orthogonal_graph_segment_evidence_lines(
+        &mut lines,
+        report.segment_evidence.iter().map(|segment| {
+            (
+                segment.layer_segment_index,
+                segment.layer_segment_count,
+                segment.layer.to_string(),
+                segment.bend_count,
+                segment.point_count,
+                segment.track_action_count,
+            )
+        }),
+    );
     lines.join("\n")
-}
-
-fn render_status(status: RoutePathCandidateStatus) -> &'static str {
-    match status {
-        RoutePathCandidateStatus::DeterministicPathFound => "deterministic_path_found",
-        RoutePathCandidateStatus::NoPathUnderCurrentAuthoredConstraints => {
-            "no_path_under_current_authored_constraints"
-        }
-    }
 }

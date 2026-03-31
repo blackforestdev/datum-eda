@@ -8,9 +8,17 @@ import unittest
 from unittest.mock import patch
 
 from server_runtime import EngineDaemonClient
+from test_support import FakeDaemonClient
+from tools_catalog_data import TOOLS
 
 
 class TestDaemonClientRequests(unittest.TestCase):
+    def test_registered_tools_have_runtime_and_fake_daemon_methods(self) -> None:
+        for tool in TOOLS:
+            name = tool["name"]
+            self.assertTrue(callable(getattr(EngineDaemonClient, name, None)), name)
+            self.assertTrue(callable(getattr(FakeDaemonClient, name, None)), name)
+
     def test_builds_get_check_report_request(self) -> None:
         client = EngineDaemonClient()
         request = client.get_check_report_request()

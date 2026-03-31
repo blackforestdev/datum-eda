@@ -96,9 +96,9 @@ fn get_schematic_summary_dispatch_returns_schematic_summary() {
     let response = dispatch_request(&mut engine, request);
     assert!(response.error.is_none(), "{response:?}");
     let result = response.result.expect("result should exist");
-    assert_eq!(result["sheet_count"], 1);
-    assert_eq!(result["symbol_count"], 1);
-    assert_eq!(result["net_label_count"], 3);
+    assert_eq!(result["sheet_count"], 2);
+    assert_eq!(result["symbol_count"], 2);
+    assert_eq!(result["net_label_count"], 4);
 }
 
 #[test]
@@ -126,8 +126,9 @@ fn get_sheets_dispatch_returns_schematic_sheets() {
     assert!(response.error.is_none(), "{response:?}");
     let result = response.result.expect("result should exist");
     let sheets = result.as_array().expect("sheets result should be an array");
-    assert_eq!(sheets.len(), 1);
-    assert_eq!(sheets[0]["name"], "Root");
+    assert_eq!(sheets.len(), 2);
+    assert!(sheets.iter().any(|sheet| sheet["name"] == "Root"));
+    assert!(sheets.iter().any(|sheet| sheet["name"] == "Sub"));
 }
 
 #[test]
@@ -155,7 +156,7 @@ fn get_labels_dispatch_returns_schematic_labels() {
     assert!(response.error.is_none(), "{response:?}");
     let result = response.result.expect("result should exist");
     let labels = result.as_array().expect("labels result should be an array");
-    assert_eq!(labels.len(), 3);
+    assert_eq!(labels.len(), 4);
     assert!(labels.iter().any(|label| label["name"] == "SCL"));
     assert!(labels.iter().any(|label| label["name"] == "VCC"));
     assert!(labels.iter().any(|label| label["name"] == "SUB_IN"));
@@ -217,9 +218,17 @@ fn get_symbols_dispatch_returns_schematic_symbols() {
     let symbols = result
         .as_array()
         .expect("symbols result should be an array");
-    assert_eq!(symbols.len(), 1);
-    assert_eq!(symbols[0]["reference"], "R1");
-    assert_eq!(symbols[0]["value"], "10k");
+    assert_eq!(symbols.len(), 2);
+    assert!(
+        symbols
+            .iter()
+            .any(|symbol| { symbol["reference"] == "R1" && symbol["value"] == "10k" })
+    );
+    assert!(
+        symbols
+            .iter()
+            .any(|symbol| { symbol["reference"] == "TP1" && symbol["value"] == "PORT" })
+    );
 }
 
 #[test]
@@ -376,7 +385,7 @@ fn get_hierarchy_dispatch_returns_schematic_hierarchy() {
     assert!(response.error.is_none(), "{response:?}");
     let result = response.result.expect("result should exist");
     assert_eq!(result["instances"].as_array().unwrap().len(), 1);
-    assert_eq!(result["links"].as_array().unwrap().len(), 0);
+    assert_eq!(result["links"].as_array().unwrap().len(), 1);
     assert_eq!(result["instances"][0]["name"], "Sub");
 }
 

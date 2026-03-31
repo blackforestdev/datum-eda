@@ -4,7 +4,8 @@ use uuid::Uuid;
 
 use crate::ir::geometry::Point;
 use crate::schematic::{
-    ConnectivityDiagnosticInfo, LabelKind, NetPinRef, Schematic, SchematicNetInfo,
+    ConnectivityDiagnosticInfo, HierarchicalLinkInfo, LabelKind, NetLabel, NetPinRef, Schematic,
+    SchematicNetInfo,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -55,6 +56,20 @@ struct PortRef {
     name: String,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct ResolvedHierarchicalLink {
+    parent_sheet: Uuid,
+    child_sheet: Uuid,
+    parent_port: Uuid,
+    child_port: Uuid,
+}
+
+#[derive(Debug, Default)]
+struct HierarchyResolution {
+    links: Vec<ResolvedHierarchicalLink>,
+    diagnostics: Vec<ConnectivityDiagnosticInfo>,
+}
+
 #[derive(Debug, Default, Clone)]
 struct NetAggregate {
     labels: Vec<LabelRef>,
@@ -72,6 +87,9 @@ pub fn schematic_net_info(schematic: &Schematic) -> Vec<SchematicNetInfo> {
             attachment_points.insert(junction.position);
         }
         for label in sheet.labels.values() {
+            if is_bus_container_label(label) {
+                continue;
+            }
             attachment_points.insert(label.position);
         }
         for port in sheet.ports.values() {
@@ -114,6 +132,9 @@ pub fn schematic_net_info(schematic: &Schematic) -> Vec<SchematicNetInfo> {
             });
         }
         for label in sheet.labels.values() {
+            if is_bus_container_label(label) {
+                continue;
+            }
             uf.add(NodeKey {
                 sheet: sheet.uuid,
                 point: label.position,
@@ -135,19 +156,23 @@ pub fn schematic_net_info(schematic: &Schematic) -> Vec<SchematicNetInfo> {
         }
     }
 
+    let _ = apply_hierarchy_resolution(schematic, &mut uf);
+
     let mut point_groups: HashMap<NodeKey, NetAggregate> = HashMap::new();
     let mut global_label_groups_by_name: BTreeMap<String, Vec<NodeKey>> = BTreeMap::new();
-    let mut interface_groups_by_name: BTreeMap<String, Vec<NodeKey>> = BTreeMap::new();
 
     for sheet in schematic.sheets.values() {
         for label in sheet.labels.values() {
+            if is_bus_container_label(label) {
+                continue;
+            }
             let node = NodeKey {
                 sheet: sheet.uuid,
                 point: label.position,
             };
             let root = uf.find(node);
             point_groups.entry(root).or_default().labels.push(LabelRef {
-                name: label.name.clone(),
+                name: canonical_label_name(&label.name),
                 kind: label.kind.clone(),
             });
             point_groups
@@ -158,12 +183,7 @@ pub fn schematic_net_info(schematic: &Schematic) -> Vec<SchematicNetInfo> {
 
             if matches!(label.kind, LabelKind::Global) {
                 global_label_groups_by_name
-                    .entry(label.name.clone())
-                    .or_default()
-                    .push(root);
-            } else if matches!(label.kind, LabelKind::Hierarchical) {
-                interface_groups_by_name
-                    .entry(label.name.clone())
+                    .entry(canonical_label_name(&label.name))
                     .or_default()
                     .push(root);
             }
@@ -184,10 +204,6 @@ pub fn schematic_net_info(schematic: &Schematic) -> Vec<SchematicNetInfo> {
                 .or_default()
                 .sheets
                 .insert(sheet.name.clone());
-            interface_groups_by_name
-                .entry(port.name.clone())
-                .or_default()
-                .push(root);
         }
 
         for symbol in sheet.symbols.values() {
@@ -276,31 +292,10 @@ pub fn schematic_net_info(schematic: &Schematic) -> Vec<SchematicNetInfo> {
         }
     }
 
-    // Full instance-aware hierarchical resolution is deferred. For M1, merge
-    // hierarchical labels and sheet ports by matching interface name.
-    for (name, roots) in &interface_groups_by_name {
-        let merge_key = format!("interface:{name}");
-        let entry = merged.entry(merge_key).or_default();
-        for root in roots {
-            if let Some(group) = point_groups.get(root) {
-                entry.labels.extend(group.labels.clone());
-                entry.ports.extend(group.ports.clone());
-                entry.pins.extend(group.pins.clone());
-                entry.sheets.extend(group.sheets.iter().cloned());
-            }
-        }
-    }
-
     let mut consumed_global_roots = HashSet::new();
     for roots in global_label_groups_by_name.values() {
         for root in roots {
             consumed_global_roots.insert(*root);
-        }
-    }
-    let mut consumed_interface_roots = HashSet::new();
-    for roots in interface_groups_by_name.values() {
-        for root in roots {
-            consumed_interface_roots.insert(*root);
         }
     }
 
@@ -310,15 +305,6 @@ pub fn schematic_net_info(schematic: &Schematic) -> Vec<SchematicNetInfo> {
                 .labels
                 .iter()
                 .any(|label| matches!(label.kind, LabelKind::Global))
-        {
-            continue;
-        }
-        if consumed_interface_roots.contains(&root)
-            && (group
-                .labels
-                .iter()
-                .any(|label| matches!(label.kind, LabelKind::Hierarchical))
-                || !group.ports.is_empty())
         {
             continue;
         }
@@ -376,6 +362,51 @@ pub fn schematic_net_info(schematic: &Schematic) -> Vec<SchematicNetInfo> {
     nets
 }
 
+pub fn schematic_hierarchy_info(schematic: &Schematic) -> crate::schematic::HierarchyInfo {
+    let mut base = schematic.hierarchy();
+    let resolution = hierarchy_resolution_without_unions(schematic);
+    let port_to_net: HashMap<Uuid, Uuid> = schematic_net_info(schematic)
+        .into_iter()
+        .flat_map(|net| {
+            net.port_uuids
+                .into_iter()
+                .map(move |port_uuid| (port_uuid, net.uuid))
+        })
+        .collect();
+    let mut child_to_net: HashMap<Uuid, Uuid> = HashMap::new();
+    for link in &resolution.links {
+        if let Some(net_uuid) = port_to_net.get(&link.parent_port) {
+            child_to_net.insert(link.child_port, *net_uuid);
+        }
+    }
+    let mut links: Vec<_> = resolution
+        .links
+        .into_iter()
+        .filter_map(|link| {
+            port_to_net
+                .get(&link.parent_port)
+                .or_else(|| child_to_net.get(&link.child_port))
+                .copied()
+                .map(|net| HierarchicalLinkInfo {
+                    parent_sheet: link.parent_sheet,
+                    child_sheet: link.child_sheet,
+                    parent_port: link.parent_port,
+                    child_port: link.child_port,
+                    net,
+                })
+        })
+        .collect();
+    links.sort_by(|a, b| {
+        a.parent_sheet
+            .cmp(&b.parent_sheet)
+            .then_with(|| a.child_sheet.cmp(&b.child_sheet))
+            .then_with(|| a.parent_port.cmp(&b.parent_port))
+            .then_with(|| a.child_port.cmp(&b.child_port))
+    });
+    base.links = links;
+    base
+}
+
 fn infer_semantic_class(name: &str) -> Option<String> {
     if name.eq_ignore_ascii_case("gnd") {
         return Some("ground".to_string());
@@ -395,7 +426,26 @@ fn infer_semantic_class(name: &str) -> Option<String> {
 }
 
 pub fn schematic_diagnostics(schematic: &Schematic) -> Vec<ConnectivityDiagnosticInfo> {
-    let mut diagnostics = Vec::new();
+    let mut diagnostics = hierarchy_resolution_without_unions(schematic).diagnostics;
+
+    for sheet in schematic.sheets.values() {
+        for label in sheet.labels.values() {
+            if has_bus_syntax(&label.name)
+                && !is_bus_container_label(label)
+                && parse_scalar_bus_member_name(&label.name).is_none()
+            {
+                diagnostics.push(ConnectivityDiagnosticInfo {
+                    kind: "unsupported_bus_member_syntax".into(),
+                    severity: "warning".into(),
+                    message: format!(
+                        "label {} uses unsupported bus/member syntax in the current KiCad subset",
+                        label.name
+                    ),
+                    objects: vec![label.uuid],
+                });
+            }
+        }
+    }
 
     for net in schematic_net_info(schematic) {
         if net.pins.len() == 1 && net.labels == 0 && net.ports == 0 {
@@ -443,6 +493,205 @@ pub fn schematic_diagnostics(schematic: &Schematic) -> Vec<ConnectivityDiagnosti
     diagnostics
 }
 
+fn hierarchy_resolution_without_unions(schematic: &Schematic) -> HierarchyResolution {
+    let mut uf = UnionFind::default();
+    for sheet in schematic.sheets.values() {
+        for label in sheet.labels.values() {
+            if is_bus_container_label(label) {
+                continue;
+            }
+            uf.add(NodeKey {
+                sheet: sheet.uuid,
+                point: label.position,
+            });
+        }
+        for port in sheet.ports.values() {
+            uf.add(NodeKey {
+                sheet: sheet.uuid,
+                point: port.position,
+            });
+        }
+    }
+    apply_hierarchy_resolution(schematic, &mut uf)
+}
+
+fn apply_hierarchy_resolution(schematic: &Schematic, uf: &mut UnionFind) -> HierarchyResolution {
+    let mut resolution = HierarchyResolution::default();
+
+    for sheet in schematic.sheets.values() {
+        let mut interface_nodes: BTreeMap<String, Vec<NodeKey>> = BTreeMap::new();
+        for label in sheet.labels.values() {
+            if matches!(label.kind, LabelKind::Hierarchical) && !is_bus_container_label(label) {
+                interface_nodes
+                    .entry(label.name.clone())
+                    .or_default()
+                    .push(NodeKey {
+                        sheet: sheet.uuid,
+                        point: label.position,
+                    });
+            }
+        }
+        for port in sheet.ports.values() {
+            interface_nodes
+                .entry(port.name.clone())
+                .or_default()
+                .push(NodeKey {
+                    sheet: sheet.uuid,
+                    point: port.position,
+                });
+        }
+        for nodes in interface_nodes.values() {
+            if let Some(first) = nodes.first().copied() {
+                for node in nodes.iter().copied().skip(1) {
+                    uf.union(first, node);
+                }
+            }
+        }
+    }
+
+    let mut instances: Vec<_> = schematic.sheet_instances.values().collect();
+    instances.sort_by(|a, b| a.name.cmp(&b.name).then_with(|| a.uuid.cmp(&b.uuid)));
+    for instance in instances {
+        let Some(parent_sheet_uuid) = instance.parent_sheet else {
+            continue;
+        };
+        let Some(parent_sheet) = schematic.sheets.get(&parent_sheet_uuid) else {
+            continue;
+        };
+        let Some(definition) = schematic.sheet_definitions.get(&instance.definition) else {
+            continue;
+        };
+
+        let parent_ports = parent_ports_for_instance(parent_sheet, instance);
+        let child_labels = if definition.root_sheet.is_nil() {
+            BTreeMap::new()
+        } else {
+            schematic
+                .sheets
+                .get(&definition.root_sheet)
+                .map(child_hierarchical_labels_by_name)
+                .unwrap_or_default()
+        };
+
+        for (name, parent_candidates) in &parent_ports {
+            match child_labels.get(name).map(Vec::len).unwrap_or(0) {
+                1 if parent_candidates.len() == 1 => {
+                    let parent = parent_candidates[0];
+                    let child = child_labels.get(name).unwrap()[0];
+                    uf.union(
+                        NodeKey {
+                            sheet: parent_sheet_uuid,
+                            point: parent.position,
+                        },
+                        NodeKey {
+                            sheet: definition.root_sheet,
+                            point: child.position,
+                        },
+                    );
+                    resolution.links.push(ResolvedHierarchicalLink {
+                        parent_sheet: parent_sheet_uuid,
+                        child_sheet: definition.root_sheet,
+                        parent_port: parent.uuid,
+                        child_port: child.uuid,
+                    });
+                }
+                0 => resolution.diagnostics.push(ConnectivityDiagnosticInfo {
+                    kind: "missing_hierarchical_port_target".into(),
+                    severity: "warning".into(),
+                    message: format!(
+                        "sheet instance {} has no matching child hierarchical target for {}",
+                        instance.name, name
+                    ),
+                    objects: parent_candidates.iter().map(|port| port.uuid).collect(),
+                }),
+                _ => {
+                    let mut objects: Vec<_> =
+                        parent_candidates.iter().map(|port| port.uuid).collect();
+                    if let Some(children) = child_labels.get(name) {
+                        objects.extend(children.iter().map(|label| label.uuid));
+                    }
+                    objects.sort();
+                    objects.dedup();
+                    resolution.diagnostics.push(ConnectivityDiagnosticInfo {
+                        kind: "multiply_mapped_hierarchical_port".into(),
+                        severity: "warning".into(),
+                        message: format!(
+                            "sheet instance {} has multiple hierarchical targets for {}",
+                            instance.name, name
+                        ),
+                        objects,
+                    });
+                }
+            }
+        }
+
+        for (name, child_candidates) in child_labels {
+            if parent_ports.contains_key(&name) {
+                continue;
+            }
+            let mut objects: Vec<_> = child_candidates.iter().map(|label| label.uuid).collect();
+            objects.sort();
+            resolution.diagnostics.push(ConnectivityDiagnosticInfo {
+                kind: "missing_hierarchical_port_target".into(),
+                severity: "warning".into(),
+                message: format!(
+                    "sheet instance {} does not expose child hierarchical target {} on the parent sheet",
+                    instance.name, name
+                ),
+                objects,
+            });
+        }
+    }
+
+    resolution.links.sort_by(|a, b| {
+        a.parent_sheet
+            .cmp(&b.parent_sheet)
+            .then_with(|| a.child_sheet.cmp(&b.child_sheet))
+            .then_with(|| a.parent_port.cmp(&b.parent_port))
+            .then_with(|| a.child_port.cmp(&b.child_port))
+    });
+    resolution.diagnostics.sort_by(|a, b| {
+        a.kind
+            .cmp(&b.kind)
+            .then_with(|| a.message.cmp(&b.message))
+            .then_with(|| a.objects.cmp(&b.objects))
+    });
+    resolution.diagnostics.dedup();
+    resolution
+}
+
+fn parent_ports_for_instance<'a>(
+    parent_sheet: &'a crate::schematic::Sheet,
+    instance: &crate::schematic::SheetInstance,
+) -> BTreeMap<String, Vec<&'a crate::schematic::HierarchicalPort>> {
+    let mut grouped: BTreeMap<String, Vec<&crate::schematic::HierarchicalPort>> = BTreeMap::new();
+    let mut port_ids = instance.ports.clone();
+    port_ids.sort();
+    for port_uuid in port_ids {
+        if let Some(port) = parent_sheet.ports.get(&port_uuid) {
+            grouped.entry(port.name.clone()).or_default().push(port);
+        }
+    }
+    grouped
+}
+
+fn child_hierarchical_labels_by_name(
+    child_sheet: &crate::schematic::Sheet,
+) -> BTreeMap<String, Vec<&NetLabel>> {
+    let mut grouped: BTreeMap<String, Vec<&NetLabel>> = BTreeMap::new();
+    let mut labels: Vec<_> = child_sheet
+        .labels
+        .values()
+        .filter(|label| matches!(label.kind, LabelKind::Hierarchical))
+        .filter(|label| !is_bus_container_label(label))
+        .collect();
+    labels.sort_by(|a, b| a.name.cmp(&b.name).then_with(|| a.uuid.cmp(&b.uuid)));
+    for label in labels {
+        grouped.entry(label.name.clone()).or_default().push(label);
+    }
+    grouped
+}
+
 fn point_on_wire_segment(point: Point, a: Point, b: Point) -> bool {
     if a == b {
         return point == a;
@@ -477,6 +726,63 @@ fn preferred_name(labels: &[LabelRef], ports: &[PortRef]) -> Option<String> {
         })
         .map(|label| label.name.clone())
         .or_else(|| ports.first().map(|port| port.name.clone()))
+}
+
+fn canonical_label_name(name: &str) -> String {
+    parse_scalar_bus_member_name(name).unwrap_or_else(|| name.to_string())
+}
+
+fn is_bus_container_label(label: &NetLabel) -> bool {
+    parse_bus_range_members(&label.name).is_some()
+}
+
+fn has_bus_syntax(name: &str) -> bool {
+    name.contains('[') || name.contains(']')
+}
+
+fn parse_scalar_bus_member_name(name: &str) -> Option<String> {
+    let open = name.rfind('[')?;
+    let close = name.rfind(']')?;
+    if close <= open + 1 || close != name.len() - 1 {
+        return None;
+    }
+    let base = name[..open].trim();
+    if base.is_empty() {
+        return None;
+    }
+    let body = &name[open + 1..close];
+    if body.contains("..") || body.contains(',') {
+        return None;
+    }
+    let index = body.trim().parse::<i32>().ok()?;
+    Some(format!("{base}{index}"))
+}
+
+fn parse_bus_range_members(name: &str) -> Option<Vec<String>> {
+    let open = name.rfind('[')?;
+    let close = name.rfind(']')?;
+    if close <= open + 1 || close != name.len() - 1 {
+        return None;
+    }
+    let base = name[..open].trim();
+    if base.is_empty() {
+        return None;
+    }
+    let body = &name[open + 1..close];
+    let (start_text, end_text) = body.split_once("..")?;
+    let start = start_text.trim().parse::<i32>().ok()?;
+    let end = end_text.trim().parse::<i32>().ok()?;
+    let step = if start <= end { 1 } else { -1 };
+    let mut members = Vec::new();
+    let mut index = start;
+    loop {
+        members.push(format!("{base}{index}"));
+        if index == end {
+            break;
+        }
+        index += step;
+    }
+    Some(members)
 }
 
 #[cfg(test)]

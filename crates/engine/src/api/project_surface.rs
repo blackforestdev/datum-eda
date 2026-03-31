@@ -16,7 +16,7 @@ impl Engine {
                 let original_contents = std::fs::read_to_string(path)?;
                 let source_hash =
                     ids_sidecar::compute_source_hash_bytes(original_contents.as_bytes());
-                let rule_sidecar_path = rules_sidecar::sidecar_path_for_source(path);
+                let rule_sidecar_path = rules_sidecar::sidecar_path_for_source(path)?;
                 let loaded_rule_sidecar = if rule_sidecar_path.exists() {
                     match rules_sidecar::read_sidecar(&rule_sidecar_path) {
                         Ok(sidecar) if sidecar.source_hash == source_hash => {

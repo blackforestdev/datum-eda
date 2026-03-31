@@ -179,6 +179,8 @@ fn modify_board(
 
 #[path = "main_tests_check.rs"]
 mod main_tests_check;
+#[path = "main_tests_check_goldens.rs"]
+mod main_tests_check_goldens;
 #[path = "main_tests_import_plan.rs"]
 mod main_tests_import_plan;
 #[path = "main_tests_modify_advanced.rs"]

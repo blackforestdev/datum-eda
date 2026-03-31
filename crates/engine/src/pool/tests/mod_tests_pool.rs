@@ -198,3 +198,31 @@ fn pool_index_parametric_search() {
     assert_eq!(results.len(), 1);
     assert_eq!(results[0].mpn, "TL072CDR");
 }
+
+#[test]
+fn pool_index_keyword_search_returns_error_for_malformed_stored_uuid() {
+    let index = PoolIndex::open_in_memory().unwrap();
+    index
+        .conn
+        .execute(
+            "INSERT INTO parts (uuid, mpn, manufacturer, value, description, package_uuid, package_name) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
+            rusqlite::params![
+                "not-a-uuid",
+                "TL072CDR",
+                "TI",
+                "TL072",
+                "Dual JFET op amp",
+                Uuid::from_u128(2).to_string(),
+                "SOIC-8"
+            ],
+        )
+        .unwrap();
+
+    let err = index
+        .search_keyword("TL072")
+        .expect_err("malformed stored UUID should return an error");
+    assert!(matches!(
+        err,
+        rusqlite::Error::FromSqlConversionFailure(0, rusqlite::types::Type::Text, _)
+    ));
+}

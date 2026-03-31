@@ -4,8 +4,8 @@ This directory is intentionally split to keep runtime logic and tests isolated.
 
 - `server.py`: thin entrypoint. Runs stdio server by default and `--self-test`.
 - `server_runtime.py`: runtime transport + JSON-RPC/MCP host wiring.
-- `tools_catalog.py`: static `tools/list` catalog payload.
-- `tool_dispatch.py`: `tools/call` name-to-daemon dispatch.
+- `tools_catalog.py`: exported `tools/list` catalog payload from shared tool specs.
+- `tool_dispatch.py`: generic `tools/call` dispatch derived from shared tool specs.
 - `test_daemon_client.py`: JSON-RPC request/response and socket transport tests.
 - `test_protocol_catalog.py`: `initialize`/`ping`/notifications + `tools/list` tests.
 - `test_dispatch_core.py`: core `tools/call` dispatch tests.
@@ -20,8 +20,8 @@ This directory is intentionally split to keep runtime logic and tests isolated.
 ## Development Rules
 
 - Keep `server.py` as composition only; no runtime business logic.
-- Add new MCP tool metadata in `tools_catalog.py`.
-- Add new MCP tool dispatch in `tool_dispatch.py`.
+- Add new MCP tool metadata once in `tools_catalog_data.py`.
+- Add any required dispatch-order/default overrides in that same shared spec entry.
 - Add/adjust tests in the relevant `test_*.py` module for each behavior change.
 
 ## Local Validation

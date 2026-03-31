@@ -18,8 +18,14 @@ fn sample_sidecar() -> IdSidecar {
 
 #[test]
 fn sidecar_path_appends_ids_json() {
-    let path = sidecar_path_for_source("/tmp/example/board.kicad_pcb");
+    let path = sidecar_path_for_source("/tmp/example/board.kicad_pcb").unwrap();
     assert!(path.ends_with("board.kicad_pcb.ids.json"));
+}
+
+#[test]
+fn sidecar_path_without_filename_returns_validation_error() {
+    let err = sidecar_path_for_source("/").expect_err("root path should fail");
+    assert!(matches!(err, EngineError::Validation(_)));
 }
 
 #[test]

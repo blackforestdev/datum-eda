@@ -207,6 +207,27 @@ fn execute_check_command_returns_board_report_output() {
 }
 
 #[test]
+fn run_check_supports_imported_kicad_bus_subset_without_new_findings() {
+    let schematic = run_check(&kicad_fixture_path("bus-demo.kicad_sch"))
+        .expect("bus subset schematic check should succeed");
+    match schematic {
+        CheckReport::Schematic {
+            summary,
+            diagnostics,
+            erc,
+            drc,
+        } => {
+            assert_eq!(summary.status, eda_engine::api::CheckStatus::Ok);
+            assert_eq!(summary.by_code.len(), 0);
+            assert!(diagnostics.is_empty());
+            assert!(erc.is_empty());
+            assert!(drc.is_empty());
+        }
+        other => panic!("expected schematic report, got {other:?}"),
+    }
+}
+
+#[test]
 fn execute_check_command_returns_partial_route_board_report_output() {
     let cli = Cli::try_parse_from([
         "eda",

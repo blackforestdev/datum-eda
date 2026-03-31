@@ -68,6 +68,8 @@ mod command_project_route_path_candidate_orthogonal_graph_four_via_explain;
 mod command_project_route_path_candidate_orthogonal_graph_six_via;
 #[path = "command_project_route_path_candidate_orthogonal_graph_six_via_explain.rs"]
 mod command_project_route_path_candidate_orthogonal_graph_six_via_explain;
+#[path = "command_project_route_path_candidate_orthogonal_graph_spine.rs"]
+mod command_project_route_path_candidate_orthogonal_graph_spine;
 #[path = "command_project_route_path_candidate_orthogonal_graph_three_via.rs"]
 mod command_project_route_path_candidate_orthogonal_graph_three_via;
 #[path = "command_project_route_path_candidate_orthogonal_graph_three_via_explain.rs"]

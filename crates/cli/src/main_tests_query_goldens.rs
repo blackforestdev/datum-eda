@@ -73,6 +73,87 @@ fn imported_query_golden_airwire_demo_unrouted_matches_checked_in_fixture() {
     assert_cli_query_matches_golden("airwire-demo.kicad_pcb", "unrouted");
 }
 
+#[test]
+fn imported_query_golden_bus_demo_schematic_nets_matches_checked_in_fixture() {
+    assert_cli_query_matches_golden("bus-demo.kicad_sch", "schematic-nets");
+}
+
+#[test]
+fn imported_query_golden_bus_demo_buses_matches_checked_in_fixture() {
+    assert_cli_query_matches_golden("bus-demo.kicad_sch", "buses");
+}
+
+#[test]
+fn imported_query_golden_bus_demo_bus_entries_matches_checked_in_fixture() {
+    assert_cli_query_matches_golden("bus-demo.kicad_sch", "bus-entries");
+}
+
+#[test]
+fn imported_query_golden_bus_demo_diagnostics_matches_checked_in_fixture() {
+    assert_cli_query_matches_golden("bus-demo.kicad_sch", "diagnostics");
+}
+
+#[test]
+fn imported_query_golden_hierarchy_mismatch_demo_schematic_net_inventory_matches_checked_in_fixture()
+ {
+    assert_cli_query_matches_golden("hierarchy-mismatch-demo.kicad_sch", "schematic-nets");
+}
+
+#[test]
+fn imported_query_golden_hierarchy_mismatch_demo_sheets_matches_checked_in_fixture() {
+    assert_cli_query_matches_golden("hierarchy-mismatch-demo.kicad_sch", "sheets");
+}
+
+#[test]
+fn imported_query_golden_hierarchy_mismatch_demo_symbols_matches_checked_in_fixture() {
+    assert_cli_query_matches_golden("hierarchy-mismatch-demo.kicad_sch", "symbols");
+}
+
+#[test]
+fn imported_query_golden_hierarchy_mismatch_demo_labels_matches_checked_in_fixture() {
+    assert_cli_query_matches_golden("hierarchy-mismatch-demo.kicad_sch", "labels");
+}
+
+#[test]
+fn imported_query_golden_hierarchy_mismatch_demo_ports_matches_checked_in_fixture() {
+    assert_cli_query_matches_golden("hierarchy-mismatch-demo.kicad_sch", "ports");
+}
+
+#[test]
+fn imported_query_golden_hierarchy_mismatch_demo_hierarchy_matches_checked_in_fixture() {
+    assert_cli_query_matches_golden("hierarchy-mismatch-demo.kicad_sch", "hierarchy");
+}
+
+#[test]
+fn imported_query_golden_hierarchy_mismatch_demo_diagnostics_matches_checked_in_fixture() {
+    assert_cli_query_matches_golden("hierarchy-mismatch-demo.kicad_sch", "diagnostics");
+}
+
+#[test]
+fn imported_query_golden_erc_coverage_demo_schematic_net_inventory_matches_checked_in_fixture() {
+    assert_cli_query_matches_golden("erc-coverage-demo.kicad_sch", "schematic-nets");
+}
+
+#[test]
+fn imported_query_golden_erc_coverage_demo_symbols_matches_checked_in_fixture() {
+    assert_cli_query_matches_golden("erc-coverage-demo.kicad_sch", "symbols");
+}
+
+#[test]
+fn imported_query_golden_erc_coverage_demo_labels_matches_checked_in_fixture() {
+    assert_cli_query_matches_golden("erc-coverage-demo.kicad_sch", "labels");
+}
+
+#[test]
+fn imported_query_golden_erc_coverage_demo_noconnects_matches_checked_in_fixture() {
+    assert_cli_query_matches_golden("erc-coverage-demo.kicad_sch", "noconnects");
+}
+
+#[test]
+fn imported_query_golden_erc_coverage_demo_diagnostics_matches_checked_in_fixture() {
+    assert_cli_query_matches_golden("erc-coverage-demo.kicad_sch", "diagnostics");
+}
+
 fn assert_cli_query_matches_golden(fixture: &str, subcommand: &str) {
     let cli = Cli::try_parse_from([
         "eda",
@@ -148,9 +229,13 @@ fn normalize_query_json_value(value: &mut serde_json::Value, key: Option<&str>) 
                     key,
                     Some("uuid")
                         | Some("sheet")
+                        | Some("child_sheet")
                         | Some("parent_sheet")
                         | Some("definition")
                         | Some("symbol")
+                        | Some("net")
+                        | Some("parent_port")
+                        | Some("child_port")
                         | Some("pin")
                         | Some("bus")
                         | Some("objects")

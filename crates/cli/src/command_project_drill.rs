@@ -475,10 +475,10 @@ fn native_project_outer_copper_pair(root: &Path) -> Result<Option<(i32, i32)>> {
         return Ok(None);
     }
     copper_layers.sort_unstable();
-    Ok(Some((
-        *copper_layers.first().expect("not empty"),
-        *copper_layers.last().expect("not empty"),
-    )))
+    Ok(copper_layers
+        .first()
+        .copied()
+        .zip(copper_layers.last().copied()))
 }
 
 pub(crate) fn render_expected_native_project_drill_csv(root: &Path) -> Result<String> {

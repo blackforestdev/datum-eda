@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-use rusqlite::{Connection, params};
+use rusqlite::{Connection, params, types::Type};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -332,12 +332,11 @@ impl PoolIndex {
 
         let rows = stmt.query_map(params![pattern], |row| {
             Ok(PartSummary {
-                uuid: Uuid::parse_str(&row.get::<_, String>(0)?).expect("stored UUID must parse"),
+                uuid: parse_stored_uuid(row.get::<_, String>(0)?, 0)?,
                 mpn: row.get(1)?,
                 manufacturer: row.get(2)?,
                 value: row.get(3)?,
-                package_uuid: Uuid::parse_str(&row.get::<_, String>(4)?)
-                    .expect("stored package UUID must parse"),
+                package_uuid: parse_stored_uuid(row.get::<_, String>(4)?, 4)?,
                 package: row.get(5)?,
             })
         })?;
@@ -362,18 +361,23 @@ impl PoolIndex {
 
         let rows = stmt.query_map(params![key, value], |row| {
             Ok(PartSummary {
-                uuid: Uuid::parse_str(&row.get::<_, String>(0)?).expect("stored UUID must parse"),
+                uuid: parse_stored_uuid(row.get::<_, String>(0)?, 0)?,
                 mpn: row.get(1)?,
                 manufacturer: row.get(2)?,
                 value: row.get(3)?,
-                package_uuid: Uuid::parse_str(&row.get::<_, String>(4)?)
-                    .expect("stored package UUID must parse"),
+                package_uuid: parse_stored_uuid(row.get::<_, String>(4)?, 4)?,
                 package: row.get(5)?,
             })
         })?;
 
         rows.collect()
     }
+}
+
+fn parse_stored_uuid(value: String, column_index: usize) -> Result<Uuid, rusqlite::Error> {
+    Uuid::parse_str(&value).map_err(|err| {
+        rusqlite::Error::FromSqlConversionFailure(column_index, Type::Text, Box::new(err))
+    })
 }
 
 #[cfg(test)]

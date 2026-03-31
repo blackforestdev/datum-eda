@@ -107,6 +107,11 @@ resolved graph must be byte-stable when serialized.
   format-preserving naming)
 - Ambiguous bus syntax is a connectivity diagnostic, not silent coercion
 
+Current imported KiCad subset:
+- scalar member labels of the form `NAME[n]`
+- simple contiguous bus-range labels of the form `NAME[a..b]`
+- unambiguous geometric `bus_entry` association between one bus and one wire
+
 ### 4.6 No-Connect
 - A no-connect marker suppresses “unconnected pin” ERC for that exact pin
 - A no-connect marker on a pin that is actually connected is an ERC error
@@ -149,4 +154,3 @@ M1 must support:
 M1 may defer:
 - advanced bus syntax edge cases
 - source-specific graphical quirks that do not affect electrical meaning
-

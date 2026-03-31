@@ -13,7 +13,7 @@ pub(super) fn persist_rule_sidecar(
     rules: Vec<Rule>,
     loaded_rule_sidecar: bool,
 ) -> Result<(), EngineError> {
-    let sidecar_path = rules_sidecar::sidecar_path_for_source(board_path);
+    let sidecar_path = rules_sidecar::sidecar_path_for_source(board_path)?;
     if rules.is_empty() {
         if loaded_rule_sidecar && sidecar_path.exists() {
             std::fs::remove_file(&sidecar_path)?;

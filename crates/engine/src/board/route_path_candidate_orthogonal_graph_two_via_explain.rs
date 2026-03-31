@@ -3,15 +3,12 @@ use uuid::Uuid;
 
 use crate::board::{
     Board, RouteCorridorSpanBlockage, RoutePathCandidateError,
-    RoutePathCandidateOrthogonalGraphPathCost, RoutePathCandidateOrthogonalGraphTwoViaReport,
-    RoutePathCandidateStatus, StackupLayer,
+    RoutePathCandidateOrthogonalGraphPathCost, RoutePathCandidateStatus, StackupLayer,
 };
 use crate::ir::geometry::{LayerId, Point};
 
-use super::route_path_candidate_orthogonal_graph_selection::{
-    orthogonal_graph_path_cost, search_orthogonal_graph_layer,
-};
-use super::route_path_candidate_two_via_selection::candidate_two_via_matches;
+use super::route_path_candidate_orthogonal_graph_two_via::RoutePathCandidateOrthogonalGraphTwoViaSummary;
+use super::route_path_candidate_orthogonal_graph_two_via_spine::build_orthogonal_graph_two_via_candidate_spine;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -90,167 +87,123 @@ impl Board {
         from_anchor_pad_uuid: Uuid,
         to_anchor_pad_uuid: Uuid,
     ) -> Result<RoutePathCandidateOrthogonalGraphTwoViaExplainReport, RoutePathCandidateError> {
-        let path_candidate = self.route_path_candidate_orthogonal_graph_two_via(
+        let spine = build_orthogonal_graph_two_via_candidate_spine(
+            self,
             net_uuid,
             from_anchor_pad_uuid,
             to_anchor_pad_uuid,
         )?;
-        let preflight = self
-            .route_preflight(net_uuid)
-            .ok_or(RoutePathCandidateError::NetNotFound { net_uuid })?;
-        let from_anchor = preflight
-            .anchors
+        let selected_pair = spine
+            .pair_searches
             .iter()
-            .find(|anchor| anchor.pad_uuid == from_anchor_pad_uuid)
-            .ok_or(RoutePathCandidateError::AnchorNotOnNet {
-                pad_uuid: from_anchor_pad_uuid,
-                net_uuid,
-            })?;
-        let to_anchor = preflight
-            .anchors
-            .iter()
-            .find(|anchor| anchor.pad_uuid == to_anchor_pad_uuid)
-            .ok_or(RoutePathCandidateError::AnchorNotOnNet {
-                pad_uuid: to_anchor_pad_uuid,
-                net_uuid,
-            })?;
-
-        let (_candidate_vias, matching_pairs) =
-            candidate_two_via_matches(self, net_uuid, from_anchor, to_anchor);
-        let pair_searches = matching_pairs
-            .iter()
-            .map(|entry| {
-                let source_search = search_orthogonal_graph_layer(
-                    self,
-                    net_uuid,
-                    from_anchor.layer,
-                    from_anchor.position,
-                    entry.via_a.position,
-                );
-                let middle_search = search_orthogonal_graph_layer(
-                    self,
-                    net_uuid,
-                    entry.intermediate_layer,
-                    entry.via_a.position,
-                    entry.via_b.position,
-                );
-                let target_search = search_orthogonal_graph_layer(
-                    self,
-                    net_uuid,
-                    to_anchor.layer,
-                    entry.via_b.position,
-                    to_anchor.position,
-                );
-                (entry, source_search, middle_search, target_search)
-            })
-            .collect::<Vec<_>>();
-
-        let selected_pair = pair_searches
-            .iter()
-            .find_map(|(entry, source_search, middle_search, target_search)| {
+            .find_map(|search| {
                 Some(RoutePathCandidateOrthogonalGraphTwoViaExplainSelectedPair {
-                    via_a_uuid: entry.via_a.uuid,
-                    via_a_position: entry.via_a.position,
-                    via_b_uuid: entry.via_b.uuid,
-                    via_b_position: entry.via_b.position,
-                    intermediate_layer: entry.intermediate_layer,
+                    via_a_uuid: search.entry.via_a.uuid,
+                    via_a_position: search.entry.via_a.position,
+                    via_b_uuid: search.entry.via_b.uuid,
+                    via_b_position: search.entry.via_b.position,
+                    intermediate_layer: search.entry.intermediate_layer,
                     source_segment: RoutePathCandidateOrthogonalGraphTwoViaExplainSegment {
-                        layer: from_anchor.layer,
-                        points: source_search.path.clone()?,
-                        cost: orthogonal_graph_path_cost(source_search.path.as_ref()?),
+                        layer: search.source.search.layer,
+                        points: search.source.path.as_ref()?.points.clone(),
+                        cost: search.source.path.as_ref()?.cost.clone(),
                     },
                     middle_segment: RoutePathCandidateOrthogonalGraphTwoViaExplainSegment {
-                        layer: entry.intermediate_layer,
-                        points: middle_search.path.clone()?,
-                        cost: orthogonal_graph_path_cost(middle_search.path.as_ref()?),
+                        layer: search.middle.search.layer,
+                        points: search.middle.path.as_ref()?.points.clone(),
+                        cost: search.middle.path.as_ref()?.cost.clone(),
                     },
                     target_segment: RoutePathCandidateOrthogonalGraphTwoViaExplainSegment {
-                        layer: to_anchor.layer,
-                        points: target_search.path.clone()?,
-                        cost: orthogonal_graph_path_cost(target_search.path.as_ref()?),
+                        layer: search.target.search.layer,
+                        points: search.target.path.as_ref()?.points.clone(),
+                        cost: search.target.path.as_ref()?.cost.clone(),
                     },
                     selection_reason: format!(
                         "selected because it is the first matching authored via pair whose source-layer, intermediate-layer, and target-layer orthogonal graph searches all yield deterministic paths between layers {} and {}; each layer-side path is the lowest-cost graph path under the accepted ranking rule",
-                        from_anchor.layer, to_anchor.layer
+                        search.source.search.layer, search.target.search.layer
                     ),
                 })
             });
 
-        let blocked_matching_pairs = pair_searches
+        let blocked_matching_pairs = spine
+            .pair_searches
             .iter()
-            .filter(|(_, source_search, middle_search, target_search)| {
-                source_search.path.is_none()
-                    || middle_search.path.is_none()
-                    || target_search.path.is_none()
+            .filter(|search| {
+                search.source.path.is_none()
+                    || search.middle.path.is_none()
+                    || search.target.path.is_none()
             })
-            .map(|(entry, source_search, middle_search, target_search)| {
-                RoutePathCandidateOrthogonalGraphTwoViaExplainBlockedPair {
-                    via_a_uuid: entry.via_a.uuid,
-                    via_a_position: entry.via_a.position,
-                    via_b_uuid: entry.via_b.uuid,
-                    via_b_position: entry.via_b.position,
-                    intermediate_layer: entry.intermediate_layer,
-                    source_segment: source_search.path.clone().map(|points| {
-                        let cost = orthogonal_graph_path_cost(&points);
+            .map(
+                |search| RoutePathCandidateOrthogonalGraphTwoViaExplainBlockedPair {
+                    via_a_uuid: search.entry.via_a.uuid,
+                    via_a_position: search.entry.via_a.position,
+                    via_b_uuid: search.entry.via_b.uuid,
+                    via_b_position: search.entry.via_b.position,
+                    intermediate_layer: search.entry.intermediate_layer,
+                    source_segment: search.source.path.as_ref().map(|path| {
                         RoutePathCandidateOrthogonalGraphTwoViaExplainSegment {
-                            layer: from_anchor.layer,
-                            points,
-                            cost,
+                            layer: path.layer,
+                            points: path.points.clone(),
+                            cost: path.cost.clone(),
                         }
                     }),
-                    middle_segment: middle_search.path.clone().map(|points| {
-                        let cost = orthogonal_graph_path_cost(&points);
+                    middle_segment: search.middle.path.as_ref().map(|path| {
                         RoutePathCandidateOrthogonalGraphTwoViaExplainSegment {
-                            layer: entry.intermediate_layer,
-                            points,
-                            cost,
+                            layer: path.layer,
+                            points: path.points.clone(),
+                            cost: path.cost.clone(),
                         }
                     }),
-                    target_segment: target_search.path.clone().map(|points| {
-                        let cost = orthogonal_graph_path_cost(&points);
+                    target_segment: search.target.path.as_ref().map(|path| {
                         RoutePathCandidateOrthogonalGraphTwoViaExplainSegment {
-                            layer: to_anchor.layer,
-                            points,
-                            cost,
+                            layer: path.layer,
+                            points: path.points.clone(),
+                            cost: path.cost.clone(),
                         }
                     }),
-                    source_blockages: source_search
+                    source_blockages: search
+                        .source
+                        .search
                         .blocked_edges
                         .iter()
                         .flat_map(|edge| edge.blockages.clone())
                         .collect(),
-                    middle_blockages: middle_search
+                    middle_blockages: search
+                        .middle
+                        .search
                         .blocked_edges
                         .iter()
                         .flat_map(|edge| edge.blockages.clone())
                         .collect(),
-                    target_blockages: target_search
+                    target_blockages: search
+                        .target
+                        .search
                         .blocked_edges
                         .iter()
                         .flat_map(|edge| edge.blockages.clone())
                         .collect(),
-                }
-            })
+                },
+            )
             .collect::<Vec<_>>();
 
         Ok(RoutePathCandidateOrthogonalGraphTwoViaExplainReport {
             contract: "m5_route_path_candidate_orthogonal_graph_two_via_explain_v1".to_string(),
             persisted_native_board_state_only: true,
-            status: path_candidate.status.clone(),
-            explanation_kind: explanation_kind(&path_candidate),
-            net_uuid: path_candidate.net_uuid,
-            net_name: path_candidate.net_name,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid,
-            selection_rule: path_candidate.selection_rule,
-            component_selection_rules: path_candidate.component_selection_rules,
-            candidate_copper_layers: path_candidate.candidate_copper_layers,
+            status: spine.status.clone(),
+            explanation_kind: explanation_kind(spine.status.clone(), &spine.summary),
+            net_uuid: spine.net_uuid,
+            net_name: spine.net_name,
+            from_anchor_pad_uuid: spine.from_anchor_pad_uuid,
+            to_anchor_pad_uuid: spine.to_anchor_pad_uuid,
+            selection_rule: spine.selection_rule,
+            component_selection_rules: spine.component_selection_rules,
+            candidate_copper_layers: spine.candidate_copper_layers,
             summary: RoutePathCandidateOrthogonalGraphTwoViaExplainSummary {
-                candidate_copper_layer_count: path_candidate.summary.candidate_copper_layer_count,
-                candidate_via_count: path_candidate.summary.candidate_via_count,
-                matching_via_pair_count: path_candidate.summary.matching_via_pair_count,
-                blocked_via_pair_count: path_candidate.summary.blocked_via_pair_count,
-                available_via_pair_count: path_candidate.summary.available_via_pair_count,
+                candidate_copper_layer_count: spine.summary.candidate_copper_layer_count,
+                candidate_via_count: spine.summary.candidate_via_count,
+                matching_via_pair_count: spine.summary.matching_via_pair_count,
+                blocked_via_pair_count: spine.summary.blocked_via_pair_count,
+                available_via_pair_count: spine.summary.available_via_pair_count,
             },
             selected_pair,
             blocked_matching_pairs,
@@ -259,14 +212,15 @@ impl Board {
 }
 
 fn explanation_kind(
-    report: &RoutePathCandidateOrthogonalGraphTwoViaReport,
+    status: RoutePathCandidateStatus,
+    summary: &RoutePathCandidateOrthogonalGraphTwoViaSummary,
 ) -> RoutePathCandidateOrthogonalGraphTwoViaExplainKind {
-    match report.status {
+    match status {
         RoutePathCandidateStatus::DeterministicPathFound => {
             RoutePathCandidateOrthogonalGraphTwoViaExplainKind::DeterministicPathFound
         }
         RoutePathCandidateStatus::NoPathUnderCurrentAuthoredConstraints
-            if report.summary.matching_via_pair_count == 0 =>
+            if summary.matching_via_pair_count == 0 =>
         {
             RoutePathCandidateOrthogonalGraphTwoViaExplainKind::NoMatchingAuthoredViaPair
         }

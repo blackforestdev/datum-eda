@@ -48,6 +48,8 @@ pub struct SheetInstance {
     pub parent_sheet: Option<Uuid>,
     pub position: Point,
     pub name: String,
+    #[serde(default)]
+    pub ports: Vec<Uuid>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

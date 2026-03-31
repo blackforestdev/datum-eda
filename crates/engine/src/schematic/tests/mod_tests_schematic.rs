@@ -187,6 +187,7 @@ fn hierarchy_reports_sorted_instances() {
                     parent_sheet: Some(top_sheet),
                     position: Point::new(20, 30),
                     name: "Bias".into(),
+                    ports: Vec::new(),
                 },
             ),
             (
@@ -197,6 +198,7 @@ fn hierarchy_reports_sorted_instances() {
                     parent_sheet: Some(top_sheet),
                     position: Point::new(10, 15),
                     name: "Amplifier".into(),
+                    ports: Vec::new(),
                 },
             ),
         ]),

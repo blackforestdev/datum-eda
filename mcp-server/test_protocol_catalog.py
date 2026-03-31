@@ -7,6 +7,8 @@ import unittest
 
 from server_runtime import StdioToolHost
 from test_support import FakeDaemonClient
+from tool_dispatch import registered_tool_names
+from tools_catalog_data import TOOLS
 
 
 class TestProtocolCatalog(unittest.TestCase):
@@ -15,82 +17,10 @@ class TestProtocolCatalog(unittest.TestCase):
         response = host.handle_message({"jsonrpc": "2.0", "id": 1, "method": "tools/list"})
         self.assertIn("result", response)
         tools = response["result"]["tools"]
-        self.assertEqual([tool["name"] for tool in tools], [
-            "open_project",
-            "close_project",
-            "save",
-            "validate_project",
-            "delete_track",
-            "delete_component",
-            "move_component",
-            "rotate_component",
-            "set_value",
-            "assign_part",
-            "set_package",
-            "set_package_with_part",
-            "replace_component",
-            "replace_components",
-            "apply_component_replacement_plan",
-            "apply_component_replacement_policy",
-            "apply_scoped_component_replacement_policy",
-            "apply_scoped_component_replacement_plan",
-            "set_reference",
-            "set_net_class",
-            "delete_via",
-            "set_design_rule",
-            "undo",
-            "redo",
-            "search_pool",
-            "get_part",
-            "get_package",
-            "get_package_change_candidates",
-            "get_part_change_candidates",
-            "get_component_replacement_plan",
-            "get_scoped_component_replacement_plan",
-            "edit_scoped_component_replacement_plan",
-            "get_components",
-            "get_netlist",
-            "get_check_report",
-            "get_net_info",
-            "get_unrouted",
-            "get_schematic_net_info",
-            "get_board_summary",
-            "get_schematic_summary",
-            "get_sheets",
-            "get_labels",
-            "get_symbols",
-            "get_symbol_fields",
-            "get_ports",
-            "get_buses",
-            "get_bus_entries",
-            "get_hierarchy",
-            "get_noconnects",
-            "get_connectivity_diagnostics",
-            "get_design_rules",
-            "run_erc",
-            "run_drc",
-            "explain_violation",
-            "export_route_path_proposal",
-            "route_proposal",
-            "route_strategy_report",
-            "route_strategy_compare",
-            "route_strategy_delta",
-            "write_route_strategy_curated_fixture_suite",
-            "capture_route_strategy_curated_baseline",
-            "route_strategy_batch_evaluate",
-            "inspect_route_strategy_batch_result",
-            "validate_route_strategy_batch_result",
-            "compare_route_strategy_batch_result",
-            "gate_route_strategy_batch_result",
-            "summarize_route_strategy_batch_results",
-            "route_proposal_explain",
-            "export_route_proposal",
-            "route_apply",
-            "route_apply_selected",
-            "inspect_route_proposal_artifact",
-            "revalidate_route_proposal_artifact",
-            "apply_route_proposal_artifact",
-        ])
+        self.assertEqual([tool["name"] for tool in tools], [tool["name"] for tool in TOOLS])
+
+    def test_catalog_and_dispatch_share_the_same_registered_names(self) -> None:
+        self.assertEqual(registered_tool_names(), [tool["name"] for tool in TOOLS])
 
     def test_initialize_returns_server_info_and_capabilities(self) -> None:
         host = StdioToolHost(FakeDaemonClient())

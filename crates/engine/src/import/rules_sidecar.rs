@@ -36,13 +36,18 @@ impl RuleSidecar {
     }
 }
 
-pub fn sidecar_path_for_source(source_file: impl AsRef<Path>) -> PathBuf {
+pub fn sidecar_path_for_source(source_file: impl AsRef<Path>) -> Result<PathBuf, EngineError> {
     let path = source_file.as_ref();
     let filename = path
         .file_name()
-        .expect("source file must have filename")
+        .ok_or_else(|| {
+            EngineError::Validation(format!(
+                "cannot build rule sidecar path without a source filename: {}",
+                path.display()
+            ))
+        })?
         .to_string_lossy();
-    path.with_file_name(format!("{filename}.rules.json"))
+    Ok(path.with_file_name(format!("{filename}.rules.json")))
 }
 
 pub fn write_sidecar(path: impl AsRef<Path>, sidecar: &RuleSidecar) -> Result<(), EngineError> {
@@ -72,8 +77,14 @@ mod tests {
 
     #[test]
     fn sidecar_path_appends_rules_json() {
-        let path = sidecar_path_for_source("/tmp/example/board.kicad_pcb");
+        let path = sidecar_path_for_source("/tmp/example/board.kicad_pcb").unwrap();
         assert!(path.ends_with("board.kicad_pcb.rules.json"));
+    }
+
+    #[test]
+    fn sidecar_path_without_filename_returns_validation_error() {
+        let err = sidecar_path_for_source("/").expect_err("root path should fail");
+        assert!(matches!(err, EngineError::Validation(_)));
     }
 
     #[test]
