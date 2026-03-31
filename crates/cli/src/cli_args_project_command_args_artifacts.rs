@@ -16,6 +16,12 @@ pub(crate) struct ProjectInspectArgs {
 }
 
 #[derive(clap::Args)]
+pub(crate) struct ProjectValidateArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+}
+
+#[derive(clap::Args)]
 pub(crate) struct ProjectQueryArgs {
     /// Project root directory
     pub(crate) path: PathBuf,
@@ -427,6 +433,29 @@ pub(crate) struct ProjectRouteStrategyBatchEvaluateArgs {
 }
 
 #[derive(clap::Args)]
+pub(crate) struct ProjectWriteRouteStrategyCuratedFixtureSuiteArgs {
+    /// Output directory for the curated fixture projects
+    #[arg(long = "out-dir")]
+    pub(crate) out_dir: PathBuf,
+    /// Optional path for the generated batch request manifest
+    #[arg(long = "manifest")]
+    pub(crate) manifest: Option<PathBuf>,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectCaptureRouteStrategyCuratedBaselineArgs {
+    /// Output directory for the curated fixture projects and saved baseline artifact
+    #[arg(long = "out-dir")]
+    pub(crate) out_dir: PathBuf,
+    /// Optional path for the generated batch request manifest
+    #[arg(long = "manifest")]
+    pub(crate) manifest: Option<PathBuf>,
+    /// Optional path for the saved batch-result baseline artifact
+    #[arg(long = "result")]
+    pub(crate) result: Option<PathBuf>,
+}
+
+#[derive(clap::Args)]
 pub(crate) struct ProjectInspectRouteStrategyBatchResultArgs {
     /// Saved batch result artifact path
     pub(crate) path: PathBuf,
@@ -436,6 +465,51 @@ pub(crate) struct ProjectInspectRouteStrategyBatchResultArgs {
 pub(crate) struct ProjectValidateRouteStrategyBatchResultArgs {
     /// Saved batch result artifact path
     pub(crate) path: PathBuf,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectCompareRouteStrategyBatchResultArgs {
+    /// Earlier saved batch result artifact path
+    pub(crate) before: PathBuf,
+    /// Later saved batch result artifact path
+    pub(crate) after: PathBuf,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, clap::ValueEnum, Serialize, Deserialize)]
+pub(crate) enum NativeProjectRouteStrategyBatchGatePolicyArg {
+    #[value(name = "strict_identical")]
+    StrictIdentical,
+    #[value(name = "allow_aggregate_only")]
+    AllowAggregateOnly,
+    #[value(name = "fail_on_recommendation_change")]
+    FailOnRecommendationChange,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectGateRouteStrategyBatchResultArgs {
+    /// Earlier saved batch result artifact path
+    pub(crate) before: PathBuf,
+    /// Later saved batch result artifact path
+    pub(crate) after: PathBuf,
+    /// Deterministic gate policy
+    #[arg(long = "policy", value_enum, default_value_t = NativeProjectRouteStrategyBatchGatePolicyArg::StrictIdentical)]
+    pub(crate) policy: NativeProjectRouteStrategyBatchGatePolicyArg,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectSummarizeRouteStrategyBatchResultsArgs {
+    /// Directory containing saved batch result artifacts
+    #[arg(long = "dir", conflicts_with = "artifacts")]
+    pub(crate) dir: Option<PathBuf>,
+    /// Explicit saved batch result artifact paths
+    #[arg(long = "artifact", conflicts_with = "dir")]
+    pub(crate) artifacts: Vec<PathBuf>,
+    /// Optional baseline artifact to gate all other compatible artifacts against
+    #[arg(long = "baseline")]
+    pub(crate) baseline: Option<PathBuf>,
+    /// Deterministic gate policy to use when --baseline is provided
+    #[arg(long = "policy", value_enum, default_value_t = NativeProjectRouteStrategyBatchGatePolicyArg::StrictIdentical)]
+    pub(crate) policy: NativeProjectRouteStrategyBatchGatePolicyArg,
 }
 
 #[derive(clap::Args)]

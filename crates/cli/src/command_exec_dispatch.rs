@@ -161,6 +161,14 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     };
                     Ok((output, 0))
                 }
+                ProjectCommands::Validate(ProjectValidateArgs { path }) => {
+                    let report = validate_native_project(&path)?;
+                    let output = match cli.format {
+                        OutputFormat::Text => render_native_project_validation_text(&report),
+                        OutputFormat::Json => render_output(&cli.format, &report),
+                    };
+                    Ok((output, if report.valid { 0 } else { 1 }))
+                }
                 ProjectCommands::Query(ProjectQueryArgs { path, what }) => {
                     command_exec_project_query::execute_native_project_query_command(
                         &cli.format,
@@ -545,6 +553,12 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 | command @ ProjectCommands::RouteStrategyDelta(ProjectRouteStrategyDeltaArgs {
                     ..
                 })
+                | command @ ProjectCommands::WriteRouteStrategyCuratedFixtureSuite(
+                    ProjectWriteRouteStrategyCuratedFixtureSuiteArgs { .. },
+                )
+                | command @ ProjectCommands::CaptureRouteStrategyCuratedBaseline(
+                    ProjectCaptureRouteStrategyCuratedBaselineArgs { .. },
+                )
                 | command @ ProjectCommands::RouteStrategyBatchEvaluate(
                     ProjectRouteStrategyBatchEvaluateArgs { .. },
                 )
@@ -553,6 +567,15 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 )
                 | command @ ProjectCommands::ValidateRouteStrategyBatchResult(
                     ProjectValidateRouteStrategyBatchResultArgs { .. },
+                )
+                | command @ ProjectCommands::CompareRouteStrategyBatchResult(
+                    ProjectCompareRouteStrategyBatchResultArgs { .. },
+                )
+                | command @ ProjectCommands::GateRouteStrategyBatchResult(
+                    ProjectGateRouteStrategyBatchResultArgs { .. },
+                )
+                | command @ ProjectCommands::SummarizeRouteStrategyBatchResults(
+                    ProjectSummarizeRouteStrategyBatchResultsArgs { .. },
                 )
                 | command @ ProjectCommands::RouteProposalExplain(
                     ProjectRouteProposalExplainArgs { .. },

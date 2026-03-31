@@ -89,6 +89,9 @@ class EngineDaemonClient:
     def save_request(self, path: str | None = None) -> JsonRpcRequest:
         return self.build_request("save", {"path": path})
 
+    def validate_project_request(self, path: str) -> JsonRpcRequest:
+        return self.build_request("validate_project", {"path": path})
+
     def delete_track_request(self, uuid: str) -> JsonRpcRequest:
         return self.build_request("delete_track", {"uuid": uuid})
 
@@ -358,13 +361,21 @@ class EngineDaemonClient:
         request: JsonRpcRequest,
         cli_args: list[str],
     ) -> JsonRpcResponse:
+        return self._run_cli_json_allowing_statuses(request, cli_args, {0})
+
+    def _run_cli_json_allowing_statuses(
+        self,
+        request: JsonRpcRequest,
+        cli_args: list[str],
+        allowed_statuses: set[int],
+    ) -> JsonRpcResponse:
         completed = subprocess.run(
             [*self._cli_prefix(), "--format", "json", *cli_args],
             capture_output=True,
             text=True,
             check=False,
         )
-        if completed.returncode != 0:
+        if completed.returncode not in allowed_statuses:
             detail = completed.stderr.strip() or completed.stdout.strip() or "unknown CLI failure"
             raise RuntimeError(detail)
         stdout = completed.stdout.strip()
@@ -782,6 +793,49 @@ class EngineDaemonClient:
         ]
         return self._run_cli_json(request, args)
 
+    def write_route_strategy_curated_fixture_suite(
+        self, out_dir: str, manifest: str | None = None
+    ) -> JsonRpcResponse:
+        request = self.build_request(
+            "write_route_strategy_curated_fixture_suite",
+            {
+                "out_dir": out_dir,
+                "manifest": manifest,
+            },
+        )
+        args = [
+            "project",
+            "write-route-strategy-curated-fixture-suite",
+            "--out-dir",
+            out_dir,
+        ]
+        if manifest is not None:
+            args.extend(["--manifest", manifest])
+        return self._run_cli_json(request, args)
+
+    def capture_route_strategy_curated_baseline(
+        self, out_dir: str, manifest: str | None = None, result: str | None = None
+    ) -> JsonRpcResponse:
+        request = self.build_request(
+            "capture_route_strategy_curated_baseline",
+            {
+                "out_dir": out_dir,
+                "manifest": manifest,
+                "result": result,
+            },
+        )
+        args = [
+            "project",
+            "capture-route-strategy-curated-baseline",
+            "--out-dir",
+            out_dir,
+        ]
+        if manifest is not None:
+            args.extend(["--manifest", manifest])
+        if result is not None:
+            args.extend(["--result", result])
+        return self._run_cli_json(request, args)
+
     def route_strategy_batch_evaluate(self, requests: str) -> JsonRpcResponse:
         request = self.build_request(
             "route_strategy_batch_evaluate",
@@ -796,6 +850,20 @@ class EngineDaemonClient:
             requests,
         ]
         return self._run_cli_json(request, args)
+
+    def validate_project(self, path: str) -> JsonRpcResponse:
+        request = self.build_request(
+            "validate_project",
+            {
+                "path": path,
+            },
+        )
+        args = [
+            "project",
+            "validate",
+            path,
+        ]
+        return self._run_cli_json_allowing_statuses(request, args, {0, 1})
 
     def inspect_route_strategy_batch_result(self, artifact: str) -> JsonRpcResponse:
         request = self.build_request(
@@ -823,6 +891,72 @@ class EngineDaemonClient:
             "validate-route-strategy-batch-result",
             artifact,
         ]
+        return self._run_cli_json(request, args)
+
+    def compare_route_strategy_batch_result(
+        self, before: str, after: str
+    ) -> JsonRpcResponse:
+        request = self.build_request(
+            "compare_route_strategy_batch_result",
+            {
+                "before": before,
+                "after": after,
+            },
+        )
+        args = [
+            "project",
+            "compare-route-strategy-batch-result",
+            before,
+            after,
+        ]
+        return self._run_cli_json(request, args)
+
+    def gate_route_strategy_batch_result(
+        self, before: str, after: str, policy: str | None = None
+    ) -> JsonRpcResponse:
+        request = self.build_request(
+            "gate_route_strategy_batch_result",
+            {
+                "before": before,
+                "after": after,
+                "policy": policy,
+            },
+        )
+        args = [
+            "project",
+            "gate-route-strategy-batch-result",
+            before,
+            after,
+        ]
+        if policy is not None:
+            args.extend(["--policy", policy])
+        return self._run_cli_json_allowing_statuses(request, args, {0, 2})
+
+    def summarize_route_strategy_batch_results(
+        self,
+        dir: str | None = None,
+        artifacts: list[str] | None = None,
+        baseline: str | None = None,
+        policy: str | None = None,
+    ) -> JsonRpcResponse:
+        request = self.build_request(
+            "summarize_route_strategy_batch_results",
+            {
+                "dir": dir,
+                "artifacts": artifacts,
+                "baseline": baseline,
+                "policy": policy,
+            },
+        )
+        args = ["project", "summarize-route-strategy-batch-results"]
+        if dir is not None:
+            args.extend(["--dir", dir])
+        for artifact in artifacts or []:
+            args.extend(["--artifact", artifact])
+        if baseline is not None:
+            args.extend(["--baseline", baseline])
+        if policy is not None:
+            args.extend(["--policy", policy])
         return self._run_cli_json(request, args)
 
     def route_proposal_explain(

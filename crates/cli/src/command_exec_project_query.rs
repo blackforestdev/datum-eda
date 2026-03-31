@@ -116,6 +116,14 @@ pub(super) fn execute_native_project_query_command(
             let report = query_native_project_erc(&path)?;
             Ok((render_output(format, &report), 0))
         }
+        NativeProjectQueryCommands::Drc => {
+            let report = query_native_project_drc(&path)?;
+            let output = match format {
+                OutputFormat::Text => render_drc_report_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
         NativeProjectQueryCommands::Check => {
             let report = query_native_project_check(&path)?;
             let output = match format {

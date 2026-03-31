@@ -192,6 +192,7 @@ impl Engine {
             summary: summarize_schematic_checks(&diagnostics, &erc),
             diagnostics,
             erc,
+            drc: Vec::new(),
         })
     }
 
@@ -226,7 +227,17 @@ impl Engine {
     }
 
     pub fn run_drc(&self, rule_types: &[RuleType]) -> Result<DrcReport, EngineError> {
-        Ok(drc::run(self.require_board()?, rule_types))
+        let waivers = self
+            .design
+            .as_ref()
+            .and_then(|design| design.schematic.as_ref())
+            .map(|schematic| schematic.waivers.as_slice())
+            .unwrap_or(&[]);
+        Ok(drc::run_with_waivers(
+            self.require_board()?,
+            rule_types,
+            waivers,
+        ))
     }
 
     pub fn get_design_rules(&self) -> Result<Vec<Rule>, EngineError> {

@@ -172,6 +172,49 @@ pub(crate) struct NativeProjectRouteStrategyBatchEvaluateView {
 }
 
 #[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectRouteStrategyCuratedFixtureSuiteEntryView {
+    pub(crate) request_id: String,
+    pub(crate) fixture_id: String,
+    pub(crate) project_root: String,
+    pub(crate) net_uuid: String,
+    pub(crate) from_anchor_pad_uuid: String,
+    pub(crate) to_anchor_pad_uuid: String,
+    pub(crate) coverage_labels: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectRouteStrategyCuratedFixtureSuiteView {
+    pub(crate) action: String,
+    pub(crate) suite_id: String,
+    pub(crate) out_dir: String,
+    pub(crate) requests_manifest_path: String,
+    pub(crate) requests_manifest_kind: String,
+    pub(crate) requests_manifest_version: u32,
+    pub(crate) total_fixtures: usize,
+    pub(crate) total_requests: usize,
+    pub(crate) fixtures: Vec<NativeProjectRouteStrategyCuratedFixtureSuiteEntryView>,
+    pub(crate) next_step_command: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectRouteStrategyCuratedBaselineCaptureView {
+    pub(crate) action: String,
+    pub(crate) suite_id: String,
+    pub(crate) out_dir: String,
+    pub(crate) requests_manifest_path: String,
+    pub(crate) result_artifact_path: String,
+    pub(crate) requests_manifest_kind: String,
+    pub(crate) requests_manifest_version: u32,
+    pub(crate) result_kind: String,
+    pub(crate) result_version: u32,
+    pub(crate) total_fixtures: usize,
+    pub(crate) total_requests: usize,
+    pub(crate) summary: NativeProjectRouteStrategyBatchSummaryView,
+    pub(crate) next_inspect_command: String,
+    pub(crate) next_gate_example_command: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectRouteStrategyBatchResultMalformedEntryView {
     pub(crate) result_index: usize,
     pub(crate) request_id: Option<String>,
@@ -208,6 +251,126 @@ pub(crate) struct NativeProjectRouteStrategyBatchResultValidationView {
     pub(crate) outcome_counts_match_summary: bool,
     pub(crate) proposal_counts_match_summary: bool,
     pub(crate) malformed_entries: Vec<NativeProjectRouteStrategyBatchResultMalformedEntryView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectRouteStrategyBatchResultComparisonCountDeltaView {
+    pub(crate) before: usize,
+    pub(crate) after: usize,
+    pub(crate) change: isize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectRouteStrategyBatchResultComparisonArtifactView {
+    pub(crate) artifact_path: String,
+    pub(crate) kind: Option<String>,
+    pub(crate) version: Option<u32>,
+    pub(crate) requests_manifest_kind: Option<String>,
+    pub(crate) requests_manifest_version: Option<u32>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectRouteStrategyBatchResultComparisonRequestChangeView {
+    pub(crate) request_id: String,
+    pub(crate) recommendation_changed: bool,
+    pub(crate) delta_classification_changed: bool,
+    pub(crate) selected_live_outcome_changed: bool,
+    pub(crate) before_recommended_profile: String,
+    pub(crate) after_recommended_profile: String,
+    pub(crate) before_delta_classification: String,
+    pub(crate) after_delta_classification: String,
+    pub(crate) before_selected_candidate: Option<String>,
+    pub(crate) after_selected_candidate: Option<String>,
+    pub(crate) before_selected_policy: Option<String>,
+    pub(crate) after_selected_policy: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectRouteStrategyBatchResultComparisonView {
+    pub(crate) action: String,
+    pub(crate) comparison_classification: String,
+    pub(crate) compatibility_rule: String,
+    pub(crate) compatible_artifacts: bool,
+    pub(crate) before_artifact: NativeProjectRouteStrategyBatchResultComparisonArtifactView,
+    pub(crate) after_artifact: NativeProjectRouteStrategyBatchResultComparisonArtifactView,
+    pub(crate) total_request_count_change:
+        NativeProjectRouteStrategyBatchResultComparisonCountDeltaView,
+    pub(crate) recommendation_distribution_changes:
+        BTreeMap<String, NativeProjectRouteStrategyBatchResultComparisonCountDeltaView>,
+    pub(crate) delta_classification_distribution_changes:
+        BTreeMap<String, NativeProjectRouteStrategyBatchResultComparisonCountDeltaView>,
+    pub(crate) same_outcome_count_change:
+        NativeProjectRouteStrategyBatchResultComparisonCountDeltaView,
+    pub(crate) different_outcome_count_change:
+        NativeProjectRouteStrategyBatchResultComparisonCountDeltaView,
+    pub(crate) proposal_available_count_change:
+        NativeProjectRouteStrategyBatchResultComparisonCountDeltaView,
+    pub(crate) no_proposal_count_change:
+        NativeProjectRouteStrategyBatchResultComparisonCountDeltaView,
+    pub(crate) added_request_ids: Vec<String>,
+    pub(crate) removed_request_ids: Vec<String>,
+    pub(crate) common_request_ids: Vec<String>,
+    pub(crate) changed_common_requests:
+        Vec<NativeProjectRouteStrategyBatchResultComparisonRequestChangeView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectRouteStrategyBatchResultGateView {
+    pub(crate) action: String,
+    pub(crate) selected_gate_policy: String,
+    pub(crate) passed: bool,
+    pub(crate) comparison_classification: String,
+    pub(crate) pass_fail_reasons: Vec<String>,
+    pub(crate) threshold_facts: BTreeMap<String, usize>,
+    pub(crate) changed_recommendations: usize,
+    pub(crate) changed_delta_classifications: usize,
+    pub(crate) changed_per_request_outcomes: usize,
+    pub(crate) comparison: NativeProjectRouteStrategyBatchResultComparisonView,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectRouteStrategyBatchResultsIndexGateSummaryView {
+    pub(crate) selected_gate_policy: String,
+    pub(crate) passed: bool,
+    pub(crate) comparison_classification: String,
+    pub(crate) pass_fail_reasons: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectRouteStrategyBatchResultsIndexEntryView {
+    pub(crate) artifact_path: String,
+    pub(crate) kind: Option<String>,
+    pub(crate) version: Option<u32>,
+    pub(crate) requests_manifest_kind: Option<String>,
+    pub(crate) requests_manifest_version: Option<u32>,
+    pub(crate) file_modified_unix_seconds: Option<i64>,
+    pub(crate) run_order: usize,
+    pub(crate) structurally_valid: bool,
+    pub(crate) request_count: Option<usize>,
+    pub(crate) recommendation_distribution: Option<BTreeMap<String, usize>>,
+    pub(crate) delta_classification_distribution: Option<BTreeMap<String, usize>>,
+    pub(crate) validation_error: Option<String>,
+    pub(crate) is_baseline: bool,
+    pub(crate) baseline_gate: Option<NativeProjectRouteStrategyBatchResultsIndexGateSummaryView>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectRouteStrategyBatchResultsIndexSummaryView {
+    pub(crate) total_artifacts: usize,
+    pub(crate) structurally_valid_artifacts: usize,
+    pub(crate) structurally_invalid_artifacts: usize,
+    pub(crate) gate_passed_artifacts: usize,
+    pub(crate) gate_failed_artifacts: usize,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectRouteStrategyBatchResultsIndexView {
+    pub(crate) action: String,
+    pub(crate) ordering_basis: String,
+    pub(crate) baseline_artifact: Option<String>,
+    pub(crate) selected_gate_policy: Option<String>,
+    pub(crate) summary: NativeProjectRouteStrategyBatchResultsIndexSummaryView,
+    pub(crate) artifacts: Vec<NativeProjectRouteStrategyBatchResultsIndexEntryView>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -807,6 +970,82 @@ pub(super) fn render_native_route_strategy_batch_evaluate_text(
     lines.join("\n")
 }
 
+pub(super) fn render_native_route_strategy_curated_fixture_suite_text(
+    report: &NativeProjectRouteStrategyCuratedFixtureSuiteView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("suite_id: {}", report.suite_id),
+        format!("out_dir: {}", report.out_dir),
+        format!("requests_manifest_path: {}", report.requests_manifest_path),
+        format!("requests_manifest_kind: {}", report.requests_manifest_kind),
+        format!(
+            "requests_manifest_version: {}",
+            report.requests_manifest_version
+        ),
+        format!("total_fixtures: {}", report.total_fixtures),
+        format!("total_requests: {}", report.total_requests),
+        format!("next_step_command: {}", report.next_step_command),
+    ];
+    for fixture in &report.fixtures {
+        lines.push(String::new());
+        lines.push(format!("fixture_id: {}", fixture.fixture_id));
+        lines.push(format!("request_id: {}", fixture.request_id));
+        lines.push(format!("project_root: {}", fixture.project_root));
+        lines.push(format!("net_uuid: {}", fixture.net_uuid));
+        lines.push(format!(
+            "from_anchor_pad_uuid: {}",
+            fixture.from_anchor_pad_uuid
+        ));
+        lines.push(format!(
+            "to_anchor_pad_uuid: {}",
+            fixture.to_anchor_pad_uuid
+        ));
+        lines.push(format!(
+            "coverage_labels: {}",
+            fixture.coverage_labels.join(",")
+        ));
+    }
+    lines.join("\n")
+}
+
+pub(super) fn render_native_route_strategy_curated_baseline_capture_text(
+    report: &NativeProjectRouteStrategyCuratedBaselineCaptureView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("suite_id: {}", report.suite_id),
+        format!("out_dir: {}", report.out_dir),
+        format!("requests_manifest_path: {}", report.requests_manifest_path),
+        format!("result_artifact_path: {}", report.result_artifact_path),
+        format!("requests_manifest_kind: {}", report.requests_manifest_kind),
+        format!(
+            "requests_manifest_version: {}",
+            report.requests_manifest_version
+        ),
+        format!("result_kind: {}", report.result_kind),
+        format!("result_version: {}", report.result_version),
+        format!("total_fixtures: {}", report.total_fixtures),
+        format!("total_requests: {}", report.total_requests),
+        format!("same_outcome_count: {}", report.summary.same_outcome_count),
+        format!(
+            "different_outcome_count: {}",
+            report.summary.different_outcome_count
+        ),
+        format!(
+            "proposal_available_count: {}",
+            report.summary.proposal_available_count
+        ),
+        format!("no_proposal_count: {}", report.summary.no_proposal_count),
+        format!("next_inspect_command: {}", report.next_inspect_command),
+        format!(
+            "next_gate_example_command: {}",
+            report.next_gate_example_command
+        ),
+    ]
+    .join("\n")
+}
+
 pub(super) fn render_native_route_strategy_batch_result_inspection_text(
     report: &NativeProjectRouteStrategyBatchResultInspectionView,
 ) -> String {
@@ -960,6 +1199,225 @@ pub(super) fn render_native_route_strategy_batch_result_validation_text(
         ));
         for issue in &malformed.issues {
             lines.push(format!("malformed_issue: {issue}"));
+        }
+    }
+    lines.join("\n")
+}
+
+pub(super) fn render_native_route_strategy_batch_result_comparison_text(
+    report: &NativeProjectRouteStrategyBatchResultComparisonView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!(
+            "comparison_classification: {}",
+            report.comparison_classification
+        ),
+        format!("compatibility_rule: {}", report.compatibility_rule),
+        format!("compatible_artifacts: {}", report.compatible_artifacts),
+        format!(
+            "before_artifact_path: {}",
+            report.before_artifact.artifact_path
+        ),
+        format!(
+            "after_artifact_path: {}",
+            report.after_artifact.artifact_path
+        ),
+        format!(
+            "before_kind: {}",
+            report
+                .before_artifact
+                .kind
+                .clone()
+                .unwrap_or_else(|| "none".to_string())
+        ),
+        format!(
+            "after_kind: {}",
+            report
+                .after_artifact
+                .kind
+                .clone()
+                .unwrap_or_else(|| "none".to_string())
+        ),
+        format!(
+            "total_request_count_change: {}",
+            report.total_request_count_change.change
+        ),
+        format!(
+            "same_outcome_count_change: {}",
+            report.same_outcome_count_change.change
+        ),
+        format!(
+            "different_outcome_count_change: {}",
+            report.different_outcome_count_change.change
+        ),
+        format!(
+            "proposal_available_count_change: {}",
+            report.proposal_available_count_change.change
+        ),
+        format!(
+            "no_proposal_count_change: {}",
+            report.no_proposal_count_change.change
+        ),
+        format!("added_request_ids: {}", report.added_request_ids.len()),
+        format!("removed_request_ids: {}", report.removed_request_ids.len()),
+        format!("common_request_ids: {}", report.common_request_ids.len()),
+        format!(
+            "changed_common_requests: {}",
+            report.changed_common_requests.len()
+        ),
+    ];
+    for (profile, change) in &report.recommendation_distribution_changes {
+        lines.push(format!(
+            "recommendation_distribution_change[{profile}]: {}",
+            change.change
+        ));
+    }
+    for (classification, change) in &report.delta_classification_distribution_changes {
+        lines.push(format!(
+            "delta_distribution_change[{classification}]: {}",
+            change.change
+        ));
+    }
+    for request_id in &report.added_request_ids {
+        lines.push(format!("added_request_id: {request_id}"));
+    }
+    for request_id in &report.removed_request_ids {
+        lines.push(format!("removed_request_id: {request_id}"));
+    }
+    for request in &report.changed_common_requests {
+        lines.push(String::new());
+        lines.push(format!("changed_request_id: {}", request.request_id));
+        lines.push(format!(
+            "recommendation_changed: {}",
+            request.recommendation_changed
+        ));
+        lines.push(format!(
+            "delta_classification_changed: {}",
+            request.delta_classification_changed
+        ));
+        lines.push(format!(
+            "selected_live_outcome_changed: {}",
+            request.selected_live_outcome_changed
+        ));
+    }
+    lines.join("\n")
+}
+
+pub(super) fn render_native_route_strategy_batch_result_gate_text(
+    report: &NativeProjectRouteStrategyBatchResultGateView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("selected_gate_policy: {}", report.selected_gate_policy),
+        format!("passed: {}", report.passed),
+        format!(
+            "comparison_classification: {}",
+            report.comparison_classification
+        ),
+        format!(
+            "changed_recommendations: {}",
+            report.changed_recommendations
+        ),
+        format!(
+            "changed_delta_classifications: {}",
+            report.changed_delta_classifications
+        ),
+        format!(
+            "changed_per_request_outcomes: {}",
+            report.changed_per_request_outcomes
+        ),
+    ];
+    for (fact, value) in &report.threshold_facts {
+        lines.push(format!("threshold_fact[{fact}]: {value}"));
+    }
+    for reason in &report.pass_fail_reasons {
+        lines.push(format!("reason: {reason}"));
+    }
+    lines.join("\n")
+}
+
+pub(super) fn render_native_route_strategy_batch_results_index_text(
+    report: &NativeProjectRouteStrategyBatchResultsIndexView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("ordering_basis: {}", report.ordering_basis),
+        format!(
+            "baseline_artifact: {}",
+            report
+                .baseline_artifact
+                .clone()
+                .unwrap_or_else(|| "none".to_string())
+        ),
+        format!(
+            "selected_gate_policy: {}",
+            report
+                .selected_gate_policy
+                .clone()
+                .unwrap_or_else(|| "none".to_string())
+        ),
+        format!("total_artifacts: {}", report.summary.total_artifacts),
+        format!(
+            "structurally_valid_artifacts: {}",
+            report.summary.structurally_valid_artifacts
+        ),
+        format!(
+            "structurally_invalid_artifacts: {}",
+            report.summary.structurally_invalid_artifacts
+        ),
+        format!(
+            "gate_passed_artifacts: {}",
+            report.summary.gate_passed_artifacts
+        ),
+        format!(
+            "gate_failed_artifacts: {}",
+            report.summary.gate_failed_artifacts
+        ),
+    ];
+    for artifact in &report.artifacts {
+        lines.push(String::new());
+        lines.push(format!("artifact_path: {}", artifact.artifact_path));
+        lines.push(format!(
+            "kind: {}",
+            artifact.kind.clone().unwrap_or_else(|| "none".to_string())
+        ));
+        lines.push(format!(
+            "version: {}",
+            artifact
+                .version
+                .map(|v| v.to_string())
+                .unwrap_or_else(|| "none".to_string())
+        ));
+        lines.push(format!("run_order: {}", artifact.run_order));
+        lines.push(format!(
+            "file_modified_unix_seconds: {}",
+            artifact
+                .file_modified_unix_seconds
+                .map(|v| v.to_string())
+                .unwrap_or_else(|| "none".to_string())
+        ));
+        lines.push(format!(
+            "structurally_valid: {}",
+            artifact.structurally_valid
+        ));
+        lines.push(format!(
+            "request_count: {}",
+            artifact
+                .request_count
+                .map(|v| v.to_string())
+                .unwrap_or_else(|| "none".to_string())
+        ));
+        lines.push(format!("is_baseline: {}", artifact.is_baseline));
+        if let Some(gate) = &artifact.baseline_gate {
+            lines.push(format!("baseline_gate_passed: {}", gate.passed));
+            lines.push(format!(
+                "baseline_gate_classification: {}",
+                gate.comparison_classification
+            ));
+        }
+        if let Some(error) = &artifact.validation_error {
+            lines.push(format!("validation_error: {error}"));
         }
     }
     lines.join("\n")

@@ -219,6 +219,25 @@ manifest. It reuses the existing `route-strategy-report`,
 and aggregates recommendation counts, delta classifications, same-vs-different
 outcome counts, and proposal-availability counts without changing strategy
 semantics.
+That same evidence layer now also includes
+`write-route-strategy-curated-fixture-suite`, a deterministic workflow surface
+that materializes a bounded native-project fixture set plus a compatible batch
+request manifest for repeated evidence runs. The initial curated suite is
+deliberately small and currently covers same-outcome baseline selection,
+profile divergence between `default` and `authored-copper-priority`,
+no-proposal-under-any-profile, and one cross-layer routable same-outcome
+case.
+That same workflow layer now also includes
+`capture-route-strategy-curated-baseline`, a product-facing baseline capture
+surface. It materializes that curated suite, runs the existing batch
+evaluation logic, and saves a reusable versioned batch-result artifact under
+deterministic default filenames so review and CI jobs can reuse one stable
+baseline without shell redirection or ad hoc artifact assembly.
+That workflow is now operationalized in-repo as well: the checked-in baseline
+asset set lives under
+`crates/test-harness/testdata/quality/route_strategy_curated_baseline_v1`,
+and normal alignment CI regenerates a fresh run and gates it against that
+baseline via `python3 scripts/check_route_strategy_evidence.py`.
 That same non-semantic evidence layer now also treats the batch-evaluate JSON
 payload as a versioned saved result artifact and includes
 `inspect-route-strategy-batch-result` plus
@@ -227,6 +246,25 @@ surfaces make saved evidence practical in review and automation by reporting
 artifact identity/version, distributions, per-request outcomes, malformed
 entries, and deterministic summary/result integrity checks without adding new
 strategy behavior.
+That same workflow layer now also includes
+`compare-route-strategy-batch-result`, a read-only saved-artifact diff surface
+for review and CI. It compares aggregate distributions plus `request_id`-keyed
+common-request changes between two saved artifacts and emits one bounded
+summary classification without rerunning routing logic or changing strategy
+semantics.
+That same workflow layer now also includes
+`gate-route-strategy-batch-result`, a read-only CI/review gate over that saved
+comparison output. It evaluates one explicit bounded policy set only and turns
+the saved evidence diff into a stable pass/fail report, with CLI exit status
+`0` on pass and `2` on fail, without introducing any new routing or strategy
+semantics.
+That same workflow layer now also includes
+`summarize-route-strategy-batch-results`, a read-only artifact index over many
+saved evidence runs. It summarizes saved artifact identity/version, validation
+state, distributions, and filesystem-derived run ordering, and it can attach
+optional baseline gate summaries using the existing gate policies. This keeps
+multi-run review and CI workflows inside the product surface rather than
+requiring ad hoc shell scripts.
 
 ---
 

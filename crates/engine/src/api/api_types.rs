@@ -2,6 +2,7 @@ use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
 
+use crate::drc::DrcViolation;
 use crate::erc::ErcFinding;
 use crate::rules::ast::RuleType;
 use crate::schematic::ConnectivityDiagnosticInfo;
@@ -138,10 +139,17 @@ pub enum CheckReport {
         summary: CheckSummary,
         diagnostics: Vec<ConnectivityDiagnosticInfo>,
     },
+    Combined {
+        summary: CheckSummary,
+        diagnostics: Vec<ConnectivityDiagnosticInfo>,
+        erc: Vec<ErcFinding>,
+        drc: Vec<DrcViolation>,
+    },
     Schematic {
         summary: CheckSummary,
         diagnostics: Vec<ConnectivityDiagnosticInfo>,
         erc: Vec<ErcFinding>,
+        drc: Vec<DrcViolation>,
     },
 }
 

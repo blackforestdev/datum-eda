@@ -25,6 +25,8 @@ mod main_tests_project_bom_export;
 mod main_tests_project_bom_inspect;
 #[path = "main_tests_project_bom_validate.rs"]
 mod main_tests_project_bom_validate;
+#[path = "main_tests_project_drc.rs"]
+mod main_tests_project_drc;
 #[path = "main_tests_project_drill_compare.rs"]
 mod main_tests_project_drill_compare;
 #[path = "main_tests_project_drill_export.rs"]
@@ -301,6 +303,8 @@ mod main_tests_project_noconnect;
 mod main_tests_project_port;
 #[path = "main_tests_project_query.rs"]
 mod main_tests_project_query;
+#[path = "main_tests_project_repo_validation.rs"]
+mod main_tests_project_repo_validation;
 #[path = "main_tests_project_route_apply.rs"]
 mod main_tests_project_route_apply;
 #[path = "main_tests_project_route_corridor.rs"]
@@ -385,6 +389,10 @@ mod main_tests_project_route_strategy_batch_result;
 mod main_tests_project_route_strategy_compare;
 #[path = "main_tests_project_route_strategy_delta.rs"]
 mod main_tests_project_route_strategy_delta;
+#[path = "main_tests_project_route_strategy_fixture_suite.rs"]
+mod main_tests_project_route_strategy_fixture_suite;
+#[path = "main_tests_project_route_strategy_repo_baseline.rs"]
+mod main_tests_project_route_strategy_repo_baseline;
 #[path = "main_tests_project_route_strategy_report.rs"]
 mod main_tests_project_route_strategy_report;
 #[path = "main_tests_project_routing_substrate.rs"]
@@ -399,6 +407,8 @@ mod main_tests_project_symbol_resolution;
 mod main_tests_project_symbol_semantics;
 #[path = "main_tests_project_text.rs"]
 mod main_tests_project_text;
+#[path = "main_tests_project_validate.rs"]
+mod main_tests_project_validate;
 #[path = "main_tests_project_wire.rs"]
 mod main_tests_project_wire;
 #[path = "main_tests_query_surface.rs"]

@@ -151,12 +151,15 @@ safe to discard.
 - Human-readable names are attributes, not reference keys.
 - A file may reference objects stored in other files only by UUID.
 - A dangling cross-file reference is a validation error.
+- The product-facing native-project validation surface for these errors is
+  `project validate <dir>`.
 
 ---
 
 ## 6. Schemas
 
 Every native file must contain `"schema_version": <int>` at the document root.
+Schema-version compatibility is reported by `project validate <dir>`.
 
 ### 6.1 `project.json`
 

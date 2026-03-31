@@ -12,6 +12,8 @@ def dispatch_tool_call(daemon: Any, name: str, arguments: dict[str, Any]) -> Any
         return daemon.close_project()
     if name == "save":
         return daemon.save(arguments.get("path"))
+    if name == "validate_project":
+        return daemon.validate_project(arguments["path"])
     if name == "delete_track":
         return daemon.delete_track(arguments["uuid"])
     if name == "delete_component":
@@ -184,12 +186,38 @@ def dispatch_tool_call(daemon: Any, name: str, arguments: dict[str, Any]) -> Any
             arguments["from_anchor_pad_uuid"],
             arguments["to_anchor_pad_uuid"],
         )
+    if name == "write_route_strategy_curated_fixture_suite":
+        return daemon.write_route_strategy_curated_fixture_suite(
+            arguments["out_dir"],
+            arguments.get("manifest"),
+        )
+    if name == "capture_route_strategy_curated_baseline":
+        return daemon.capture_route_strategy_curated_baseline(
+            arguments["out_dir"],
+            arguments.get("manifest"),
+            arguments.get("result"),
+        )
     if name == "route_strategy_batch_evaluate":
         return daemon.route_strategy_batch_evaluate(arguments["requests"])
     if name == "inspect_route_strategy_batch_result":
         return daemon.inspect_route_strategy_batch_result(arguments["artifact"])
     if name == "validate_route_strategy_batch_result":
         return daemon.validate_route_strategy_batch_result(arguments["artifact"])
+    if name == "compare_route_strategy_batch_result":
+        return daemon.compare_route_strategy_batch_result(
+            arguments["before"], arguments["after"]
+        )
+    if name == "gate_route_strategy_batch_result":
+        return daemon.gate_route_strategy_batch_result(
+            arguments["before"], arguments["after"], arguments.get("policy")
+        )
+    if name == "summarize_route_strategy_batch_results":
+        return daemon.summarize_route_strategy_batch_results(
+            arguments.get("dir"),
+            arguments.get("artifacts"),
+            arguments.get("baseline"),
+            arguments.get("policy"),
+        )
     if name == "route_proposal_explain":
         return daemon.route_proposal_explain(
             arguments["path"],

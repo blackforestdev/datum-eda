@@ -8,11 +8,11 @@ output, and route boards — with full AI agent access to every query and
 operation via MCP and CLI.
 
 ## Current Status
-M0–M4 are complete. M5 (deterministic layout kernel) is in active
+M0–M5 are complete. M6 (layout strategy + AI layer) is in active
 development. Status source of truth: `specs/PROGRESS.md` and
 `specs/progress/*.md`.
 
-**Completed capabilities (M0–M4):**
+**Completed capabilities (M0–M5):**
 - Canonical IR, pool foundation, deterministic import (KiCad primary)
 - Full query engine over imported and native designs
 - ERC (7 rules) and DRC (7 rules) with 0% FP/FN quality gates
@@ -22,14 +22,21 @@ development. Status source of truth: `specs/PROGRESS.md` and
 - Native schematic and board authoring from scratch
 - Forward annotation workflow
 - Manufacturing export: Gerber, Excellon drill, BOM, pick-and-place
-
-**In progress (M5):**
 - Deterministic routing kernel: 60+ path candidate strategies
 - Route proposal artifact export/apply/inspect/revalidate
 - Orthogonal graph synthesis with 1–6 via chains
 - Zone/obstacle/topology-aware authored-copper-graph policies
 
-**Future:** M6 (AI strategy layer), M7 (GUI), M8 (professional features)
+**In progress (M6):**
+- Read-only deterministic strategy reporting on top of M5 routing substrate
+- Objective-to-profile mapping with explanation (`route-strategy-report`)
+- Multi-profile comparison and decision-delta surfaces
+- Batch evaluation over versioned request manifests
+- Batch result artifacts: inspect, validate, compare, gate (CI exit codes)
+- Batch result artifact directory/list summarization
+- MCP parity for strategy surfaces
+
+**Future:** M7 (GUI), M8 (professional features)
 
 ## Architecture: Engine-First
 
@@ -172,10 +179,7 @@ project/
 └── research/               # Analysis artifacts (symlinks to sandbox)
 ```
 
-## Non-Goals for v1 (v1 = M2)
-- Manufacturing export (Gerber, drill, BOM — M4)
-- Native project creation or editing (M4)
-- Placement or routing engine (M5)
+## Not Yet Implemented
 - GUI editor (M7)
 - 3D viewer or STEP export (M8)
 - Panelization, supply chain, impedance solver (M8)

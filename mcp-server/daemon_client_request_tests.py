@@ -33,6 +33,12 @@ class TestDaemonClientRequests(unittest.TestCase):
         self.assertEqual(request.method, "open_project")
         self.assertEqual(request.params, {"path": "/tmp/demo.kicad_pcb"})
 
+    def test_builds_validate_project_request(self) -> None:
+        client = EngineDaemonClient()
+        request = client.validate_project_request("/tmp/native-project")
+        self.assertEqual(request.method, "validate_project")
+        self.assertEqual(request.params, {"path": "/tmp/native-project"})
+
     def test_builds_close_project_request(self) -> None:
         client = EngineDaemonClient()
         request = client.close_project_request()
@@ -726,6 +732,93 @@ class TestDaemonClientRequests(unittest.TestCase):
         self.assertEqual(response.result["summary"]["total_evaluated_requests"], 2)
 
     @patch("server_runtime.subprocess.run")
+    def test_writes_route_strategy_curated_fixture_suite_via_cli(
+        self, run_mock
+    ) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=(
+                '{"action":"write_route_strategy_curated_fixture_suite","suite_id":"m6_route_strategy_curated_fixture_suite_v1",'
+                '"requests_manifest_kind":"native_route_strategy_batch_requests","total_requests":4}'
+            ),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.write_route_strategy_curated_fixture_suite(
+            "/tmp/route-strategy-fixtures",
+            "/tmp/route-strategy-fixtures/requests.json",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "write-route-strategy-curated-fixture-suite",
+                "--out-dir",
+                "/tmp/route-strategy-fixtures",
+                "--manifest",
+                "/tmp/route-strategy-fixtures/requests.json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(
+            response.result["action"], "write_route_strategy_curated_fixture_suite"
+        )
+        self.assertEqual(
+            response.result["suite_id"], "m6_route_strategy_curated_fixture_suite_v1"
+        )
+        self.assertEqual(response.result["total_requests"], 4)
+
+    @patch("server_runtime.subprocess.run")
+    def test_captures_route_strategy_curated_baseline_via_cli(
+        self, run_mock
+    ) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=(
+                '{"action":"capture_route_strategy_curated_baseline","result_kind":"native_route_strategy_batch_result_artifact",'
+                '"result_version":1,"total_requests":4}'
+            ),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.capture_route_strategy_curated_baseline(
+            "/tmp/route-strategy-fixtures",
+            "/tmp/route-strategy-fixtures/requests.json",
+            "/tmp/route-strategy-fixtures/result.json",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "capture-route-strategy-curated-baseline",
+                "--out-dir",
+                "/tmp/route-strategy-fixtures",
+                "--manifest",
+                "/tmp/route-strategy-fixtures/requests.json",
+                "--result",
+                "/tmp/route-strategy-fixtures/result.json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(
+            response.result["action"], "capture_route_strategy_curated_baseline"
+        )
+        self.assertEqual(
+            response.result["result_kind"], "native_route_strategy_batch_result_artifact"
+        )
+        self.assertEqual(response.result["total_requests"], 4)
+
+    @patch("server_runtime.subprocess.run")
     def test_inspects_route_strategy_batch_result_via_cli(self, run_mock) -> None:
         run_mock.return_value = subprocess.CompletedProcess(
             args=[],
@@ -759,6 +852,36 @@ class TestDaemonClientRequests(unittest.TestCase):
         )
 
     @patch("server_runtime.subprocess.run")
+    def test_validates_native_project_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=1,
+            stdout=(
+                '{"action":"validate_project","project_root":"/tmp/native-project",'
+                '"valid":false,"issue_count":1}'
+            ),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.validate_project("/tmp/native-project")
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "validate",
+                "/tmp/native-project",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "validate_project")
+        self.assertEqual(response.result["project_root"], "/tmp/native-project")
+        self.assertEqual(response.result["valid"], False)
+
+    @patch("server_runtime.subprocess.run")
     def test_validates_route_strategy_batch_result_via_cli(self, run_mock) -> None:
         run_mock.return_value = subprocess.CompletedProcess(
             args=[],
@@ -788,6 +911,114 @@ class TestDaemonClientRequests(unittest.TestCase):
         )
         self.assertEqual(response.result["action"], "validate_route_strategy_batch_result")
         self.assertEqual(response.result["structurally_valid"], True)
+
+    @patch("server_runtime.subprocess.run")
+    def test_compares_route_strategy_batch_result_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=(
+                '{"action":"compare_route_strategy_batch_result","comparison_classification":"identical",'
+                '"compatible_artifacts":true}'
+            ),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.compare_route_strategy_batch_result(
+            "/tmp/before.route-strategy-batch.json",
+            "/tmp/after.route-strategy-batch.json",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "compare-route-strategy-batch-result",
+                "/tmp/before.route-strategy-batch.json",
+                "/tmp/after.route-strategy-batch.json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "compare_route_strategy_batch_result")
+        self.assertEqual(response.result["compatible_artifacts"], True)
+
+    @patch("server_runtime.subprocess.run")
+    def test_gates_route_strategy_batch_result_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=2,
+            stdout=(
+                '{"action":"gate_route_strategy_batch_result","selected_gate_policy":"strict_identical",'
+                '"passed":false}'
+            ),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.gate_route_strategy_batch_result(
+            "/tmp/before.route-strategy-batch.json",
+            "/tmp/after.route-strategy-batch.json",
+            "strict_identical",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "gate-route-strategy-batch-result",
+                "/tmp/before.route-strategy-batch.json",
+                "/tmp/after.route-strategy-batch.json",
+                "--policy",
+                "strict_identical",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "gate_route_strategy_batch_result")
+        self.assertEqual(response.result["passed"], False)
+
+    @patch("server_runtime.subprocess.run")
+    def test_summarizes_route_strategy_batch_results_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=(
+                '{"action":"summarize_route_strategy_batch_results","summary":{"total_artifacts":2}}'
+            ),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.summarize_route_strategy_batch_results(
+            artifacts=["/tmp/run-a.json", "/tmp/run-b.json"],
+            baseline="/tmp/run-a.json",
+            policy="strict_identical",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "summarize-route-strategy-batch-results",
+                "--artifact",
+                "/tmp/run-a.json",
+                "--artifact",
+                "/tmp/run-b.json",
+                "--baseline",
+                "/tmp/run-a.json",
+                "--policy",
+                "strict_identical",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "summarize_route_strategy_batch_results")
+        self.assertEqual(response.result["summary"]["total_artifacts"], 2)
 
     @patch("server_runtime.subprocess.run")
     def test_explains_route_proposal_via_cli(self, run_mock) -> None:

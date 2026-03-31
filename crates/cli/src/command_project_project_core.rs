@@ -1,4 +1,5 @@
 use super::*;
+use eda_engine::schematic::WaiverTarget;
 
 pub(super) fn ensure_project_root(root: &Path) -> Result<()> {
     if root.exists() {
@@ -177,14 +178,31 @@ pub(super) fn build_native_project_schematic(project: &LoadedNativeProject) -> R
         sheets.insert(expected_uuid, native_sheet_into_engine_sheet(native_sheet));
     }
 
+    let waivers = project
+        .schematic
+        .waivers
+        .iter()
+        .cloned()
+        .map(parse_native_check_waiver)
+        .collect::<Result<Vec<CheckWaiver>>>()?;
+
     Ok(Schematic {
         uuid: project.schematic.uuid,
         sheets,
         sheet_definitions: HashMap::new(),
         sheet_instances: HashMap::new(),
         variants: HashMap::new(),
-        waivers: Vec::<CheckWaiver>::new(),
+        waivers,
     })
+}
+
+fn parse_native_check_waiver(value: serde_json::Value) -> Result<CheckWaiver> {
+    let mut waiver: CheckWaiver =
+        serde_json::from_value(value).context("failed to parse schematic waiver")?;
+    if let WaiverTarget::RuleObjects { objects, .. } = &mut waiver.target {
+        objects.sort();
+    }
+    Ok(waiver)
 }
 
 pub(super) fn build_native_project_board(project: &LoadedNativeProject) -> Result<Board> {

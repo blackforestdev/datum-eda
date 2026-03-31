@@ -450,6 +450,78 @@ class TestDispatchQueries(unittest.TestCase):
         self.assertEqual(payload["delta_classification"], "different_candidate_family")
         self.assertEqual(len(payload["profiles"]), 2)
 
+    def test_tools_call_dispatches_write_route_strategy_curated_fixture_suite(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 88,
+                "method": "tools/call",
+                "params": {
+                    "name": "write_route_strategy_curated_fixture_suite",
+                    "arguments": {
+                        "out_dir": "/tmp/route-strategy-fixtures",
+                        "manifest": "/tmp/route-strategy-fixtures/requests.json",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "write_route_strategy_curated_fixture_suite",
+                    {
+                        "out_dir": "/tmp/route-strategy-fixtures",
+                        "manifest": "/tmp/route-strategy-fixtures/requests.json",
+                    },
+                )
+            ],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["action"], "write_route_strategy_curated_fixture_suite")
+        self.assertEqual(payload["suite_id"], "m6_route_strategy_curated_fixture_suite_v1")
+        self.assertEqual(payload["requests_manifest_kind"], "native_route_strategy_batch_requests")
+
+    def test_tools_call_dispatches_capture_route_strategy_curated_baseline(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 881,
+                "method": "tools/call",
+                "params": {
+                    "name": "capture_route_strategy_curated_baseline",
+                    "arguments": {
+                        "out_dir": "/tmp/route-strategy-fixtures",
+                        "manifest": "/tmp/route-strategy-fixtures/requests.json",
+                        "result": "/tmp/route-strategy-fixtures/result.json",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "capture_route_strategy_curated_baseline",
+                    {
+                        "out_dir": "/tmp/route-strategy-fixtures",
+                        "manifest": "/tmp/route-strategy-fixtures/requests.json",
+                        "result": "/tmp/route-strategy-fixtures/result.json",
+                    },
+                )
+            ],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["action"], "capture_route_strategy_curated_baseline")
+        self.assertEqual(
+            payload["result_kind"], "native_route_strategy_batch_result_artifact"
+        )
+        self.assertEqual(payload["total_requests"], 4)
+
     def test_tools_call_dispatches_route_strategy_batch_evaluate(self) -> None:
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)
@@ -508,6 +580,28 @@ class TestDispatchQueries(unittest.TestCase):
         self.assertEqual(payload["kind"], "native_route_strategy_batch_result_artifact")
         self.assertEqual(payload["summary"]["total_evaluated_requests"], 2)
 
+    def test_tools_call_dispatches_native_project_validation(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 97,
+                "method": "tools/call",
+                "params": {
+                    "name": "validate_project",
+                    "arguments": {
+                        "path": "/tmp/native-project",
+                    },
+                },
+            }
+        )
+        self.assertEqual(daemon.calls, [("validate_project", "/tmp/native-project")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["action"], "validate_project")
+        self.assertEqual(payload["project_root"], "/tmp/native-project")
+        self.assertEqual(payload["valid"], True)
+
     def test_tools_call_dispatches_route_strategy_batch_result_validation(self) -> None:
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)
@@ -531,6 +625,113 @@ class TestDispatchQueries(unittest.TestCase):
         payload = response["result"]["content"][0]["json"]
         self.assertEqual(payload["action"], "validate_route_strategy_batch_result")
         self.assertEqual(payload["structurally_valid"], True)
+
+    def test_tools_call_dispatches_route_strategy_batch_result_comparison(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 99,
+                "method": "tools/call",
+                "params": {
+                    "name": "compare_route_strategy_batch_result",
+                    "arguments": {
+                        "before": "/tmp/before.route-strategy-batch.json",
+                        "after": "/tmp/after.route-strategy-batch.json",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "compare_route_strategy_batch_result",
+                    {
+                        "before": "/tmp/before.route-strategy-batch.json",
+                        "after": "/tmp/after.route-strategy-batch.json",
+                    },
+                )
+            ],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["action"], "compare_route_strategy_batch_result")
+        self.assertEqual(
+            payload["comparison_classification"], "per_request_outcomes_changed"
+        )
+
+    def test_tools_call_dispatches_route_strategy_batch_result_gate(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 100,
+                "method": "tools/call",
+                "params": {
+                    "name": "gate_route_strategy_batch_result",
+                    "arguments": {
+                        "before": "/tmp/before.route-strategy-batch.json",
+                        "after": "/tmp/after.route-strategy-batch.json",
+                        "policy": "strict_identical",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "gate_route_strategy_batch_result",
+                    {
+                        "before": "/tmp/before.route-strategy-batch.json",
+                        "after": "/tmp/after.route-strategy-batch.json",
+                        "policy": "strict_identical",
+                    },
+                )
+            ],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["action"], "gate_route_strategy_batch_result")
+        self.assertEqual(payload["selected_gate_policy"], "strict_identical")
+        self.assertEqual(payload["passed"], False)
+
+    def test_tools_call_dispatches_route_strategy_batch_results_summary(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 101,
+                "method": "tools/call",
+                "params": {
+                    "name": "summarize_route_strategy_batch_results",
+                    "arguments": {
+                        "artifacts": ["/tmp/run-a.json", "/tmp/run-b.json"],
+                        "baseline": "/tmp/run-a.json",
+                        "policy": "strict_identical",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "summarize_route_strategy_batch_results",
+                    {
+                        "dir": None,
+                        "artifacts": ["/tmp/run-a.json", "/tmp/run-b.json"],
+                        "baseline": "/tmp/run-a.json",
+                        "policy": "strict_identical",
+                    },
+                )
+            ],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["action"], "summarize_route_strategy_batch_results")
+        self.assertEqual(payload["summary"]["total_artifacts"], 2)
 
     def test_tools_call_dispatches_export_route_proposal(self) -> None:
         daemon = FakeDaemonClient()

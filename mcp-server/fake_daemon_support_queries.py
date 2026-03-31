@@ -7,6 +7,26 @@ from server_runtime import JsonRpcResponse
 
 
 class FakeDaemonClientQueriesMixin:
+    def validate_project(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("validate_project", path))
+        return JsonRpcResponse(
+            "2.0",
+            1,
+            {
+                "action": "validate_project",
+                "project_root": path,
+                "valid": True,
+                "schema_compatible": True,
+                "required_files_expected": 4,
+                "required_files_validated": 4,
+                "checked_sheet_files": 0,
+                "checked_definition_files": 0,
+                "issue_count": 0,
+                "issues": [],
+            },
+            None,
+        )
+
     def get_check_report(self) -> JsonRpcResponse:
         self.calls.append(("get_check_report", None))
         return JsonRpcResponse(
@@ -589,6 +609,111 @@ class FakeDaemonClientQueriesMixin:
             None,
         )
 
+    def write_route_strategy_curated_fixture_suite(
+        self, out_dir: str, manifest: str | None = None
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "write_route_strategy_curated_fixture_suite",
+                {
+                    "out_dir": out_dir,
+                    "manifest": manifest,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            121,
+            {
+                "action": "write_route_strategy_curated_fixture_suite",
+                "suite_id": "m6_route_strategy_curated_fixture_suite_v1",
+                "out_dir": out_dir,
+                "requests_manifest_path": manifest
+                or f"{out_dir}/route-strategy-batch-requests.json",
+                "requests_manifest_kind": "native_route_strategy_batch_requests",
+                "requests_manifest_version": 1,
+                "total_fixtures": 4,
+                "total_requests": 4,
+                "fixtures": [
+                    {
+                        "request_id": "same-outcome-default",
+                        "fixture_id": "same-outcome-default",
+                        "project_root": f"{out_dir}/same-outcome-default",
+                        "net_uuid": "00000000-0000-0000-0000-00000000c200",
+                        "from_anchor_pad_uuid": "00000000-0000-0000-0000-00000000c205",
+                        "to_anchor_pad_uuid": "00000000-0000-0000-0000-00000000c206",
+                        "coverage_labels": [
+                            "same_outcome",
+                            "baseline_route_path_candidate",
+                        ],
+                    }
+                ],
+                "next_step_command": (
+                    "project route-strategy-batch-evaluate --requests "
+                    f"{manifest or f'{out_dir}/route-strategy-batch-requests.json'}"
+                ),
+            },
+            None,
+        )
+
+    def capture_route_strategy_curated_baseline(
+        self,
+        out_dir: str,
+        manifest: str | None = None,
+        result: str | None = None,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "capture_route_strategy_curated_baseline",
+                {
+                    "out_dir": out_dir,
+                    "manifest": manifest,
+                    "result": result,
+                },
+            )
+        )
+        result_path = result or f"{out_dir}/route-strategy-batch-result.json"
+        return JsonRpcResponse(
+            "2.0",
+            122,
+            {
+                "action": "capture_route_strategy_curated_baseline",
+                "suite_id": "m6_route_strategy_curated_fixture_suite_v1",
+                "out_dir": out_dir,
+                "requests_manifest_path": manifest
+                or f"{out_dir}/route-strategy-batch-requests.json",
+                "result_artifact_path": result_path,
+                "requests_manifest_kind": "native_route_strategy_batch_requests",
+                "requests_manifest_version": 1,
+                "result_kind": "native_route_strategy_batch_result_artifact",
+                "result_version": 1,
+                "total_fixtures": 4,
+                "total_requests": 4,
+                "summary": {
+                    "total_evaluated_requests": 4,
+                    "recommendation_counts_by_profile": {"default": 4},
+                    "delta_classification_counts": {
+                        "same_outcome": 2,
+                        "different_candidate_family": 1,
+                        "no_proposal_under_any_profile": 1,
+                    },
+                    "same_outcome_count": 3,
+                    "different_outcome_count": 1,
+                    "proposal_available_count": 3,
+                    "no_proposal_count": 1,
+                },
+                "next_inspect_command": (
+                    "project inspect-route-strategy-batch-result "
+                    f"{result_path}"
+                ),
+                "next_gate_example_command": (
+                    "project gate-route-strategy-batch-result "
+                    f"{result_path} {result_path} --policy strict_identical"
+                ),
+            },
+            None,
+        )
+
     def route_strategy_batch_evaluate(self, requests: str) -> JsonRpcResponse:
         self.calls.append(
             (
@@ -717,6 +842,204 @@ class FakeDaemonClientQueriesMixin:
                 "outcome_counts_match_summary": True,
                 "proposal_counts_match_summary": True,
                 "malformed_entries": [],
+            },
+            None,
+        )
+
+    def compare_route_strategy_batch_result(
+        self, before: str, after: str
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "compare_route_strategy_batch_result",
+                {"before": before, "after": after},
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            125,
+            {
+                "action": "compare_route_strategy_batch_result",
+                "comparison_classification": "per_request_outcomes_changed",
+                "compatibility_rule": "artifacts are compatible only when both use kind native_route_strategy_batch_result_artifact, version 1, and the same requests manifest kind/version",
+                "compatible_artifacts": True,
+                "before_artifact": {
+                    "artifact_path": before,
+                    "kind": "native_route_strategy_batch_result_artifact",
+                    "version": 1,
+                    "requests_manifest_kind": "native_route_strategy_batch_requests",
+                    "requests_manifest_version": 1,
+                },
+                "after_artifact": {
+                    "artifact_path": after,
+                    "kind": "native_route_strategy_batch_result_artifact",
+                    "version": 1,
+                    "requests_manifest_kind": "native_route_strategy_batch_requests",
+                    "requests_manifest_version": 1,
+                },
+                "total_request_count_change": {"before": 2, "after": 2, "change": 0},
+                "recommendation_distribution_changes": {
+                    "default": {"before": 2, "after": 1, "change": -1},
+                    "authored-copper-priority": {
+                        "before": 0,
+                        "after": 1,
+                        "change": 1,
+                    },
+                },
+                "delta_classification_distribution_changes": {
+                    "different_candidate_family": {
+                        "before": 1,
+                        "after": 0,
+                        "change": -1,
+                    },
+                    "same_outcome": {"before": 1, "after": 2, "change": 1},
+                },
+                "same_outcome_count_change": {"before": 1, "after": 2, "change": 1},
+                "different_outcome_count_change": {
+                    "before": 1,
+                    "after": 0,
+                    "change": -1,
+                },
+                "proposal_available_count_change": {
+                    "before": 2,
+                    "after": 2,
+                    "change": 0,
+                },
+                "no_proposal_count_change": {"before": 0, "after": 0, "change": 0},
+                "added_request_ids": [],
+                "removed_request_ids": [],
+                "common_request_ids": ["request-a", "request-b"],
+                "changed_common_requests": [
+                    {
+                        "request_id": "request-a",
+                        "recommendation_changed": True,
+                        "delta_classification_changed": True,
+                        "selected_live_outcome_changed": True,
+                        "before_recommended_profile": "default",
+                        "after_recommended_profile": "authored-copper-priority",
+                        "before_delta_classification": "different_candidate_family",
+                        "after_delta_classification": "same_outcome",
+                        "before_selected_candidate": "route-path-candidate",
+                        "after_selected_candidate": "authored-copper-graph",
+                        "before_selected_policy": None,
+                        "after_selected_policy": "plain",
+                    }
+                ],
+            },
+            None,
+        )
+
+    def gate_route_strategy_batch_result(
+        self, before: str, after: str, policy: str | None = None
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "gate_route_strategy_batch_result",
+                {"before": before, "after": after, "policy": policy},
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            126,
+            {
+                "action": "gate_route_strategy_batch_result",
+                "selected_gate_policy": policy or "strict_identical",
+                "passed": False,
+                "comparison_classification": "per_request_outcomes_changed",
+                "pass_fail_reasons": [
+                    "failed because strict_identical requires comparison_classification = identical"
+                ],
+                "threshold_facts": {
+                    "changed_recommendations": 1,
+                    "changed_delta_classifications": 1,
+                    "changed_per_request_outcomes": 1,
+                    "added_request_ids": 0,
+                    "removed_request_ids": 0,
+                },
+                "changed_recommendations": 1,
+                "changed_delta_classifications": 1,
+                "changed_per_request_outcomes": 1,
+                "comparison": {
+                    "action": "compare_route_strategy_batch_result",
+                    "comparison_classification": "per_request_outcomes_changed",
+                    "compatible_artifacts": True,
+                },
+            },
+            None,
+        )
+
+    def summarize_route_strategy_batch_results(
+        self,
+        dir: str | None = None,
+        artifacts: list[str] | None = None,
+        baseline: str | None = None,
+        policy: str | None = None,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "summarize_route_strategy_batch_results",
+                {
+                    "dir": dir,
+                    "artifacts": artifacts,
+                    "baseline": baseline,
+                    "policy": policy,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            127,
+            {
+                "action": "summarize_route_strategy_batch_results",
+                "ordering_basis": "filesystem_modified_time_then_path",
+                "baseline_artifact": baseline,
+                "selected_gate_policy": policy,
+                "summary": {
+                    "total_artifacts": 2,
+                    "structurally_valid_artifacts": 2,
+                    "structurally_invalid_artifacts": 0,
+                    "gate_passed_artifacts": 1,
+                    "gate_failed_artifacts": 0,
+                },
+                "artifacts": [
+                    {
+                        "artifact_path": "/tmp/run-a.json",
+                        "kind": "native_route_strategy_batch_result_artifact",
+                        "version": 1,
+                        "requests_manifest_kind": "native_route_strategy_batch_requests",
+                        "requests_manifest_version": 1,
+                        "file_modified_unix_seconds": 1710000000,
+                        "run_order": 1,
+                        "structurally_valid": True,
+                        "request_count": 2,
+                        "recommendation_distribution": {"default": 2},
+                        "delta_classification_distribution": {"same_outcome": 2},
+                        "validation_error": None,
+                        "is_baseline": True,
+                        "baseline_gate": None,
+                    },
+                    {
+                        "artifact_path": "/tmp/run-b.json",
+                        "kind": "native_route_strategy_batch_result_artifact",
+                        "version": 1,
+                        "requests_manifest_kind": "native_route_strategy_batch_requests",
+                        "requests_manifest_version": 1,
+                        "file_modified_unix_seconds": 1710000100,
+                        "run_order": 2,
+                        "structurally_valid": True,
+                        "request_count": 2,
+                        "recommendation_distribution": {"default": 2},
+                        "delta_classification_distribution": {"same_outcome": 2},
+                        "validation_error": None,
+                        "is_baseline": False,
+                        "baseline_gate": {
+                            "selected_gate_policy": policy or "strict_identical",
+                            "passed": True,
+                            "comparison_classification": "identical",
+                            "pass_fail_reasons": ["passed because the saved artifacts are identical"],
+                        },
+                    },
+                ],
             },
             None,
         )

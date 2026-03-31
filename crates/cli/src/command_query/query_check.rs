@@ -54,6 +54,7 @@ pub(crate) fn run_check(path: &Path) -> Result<CheckReport> {
 pub(crate) fn check_exit_code(report: &CheckReport, fail_on: Option<FailOn>) -> i32 {
     let status = match report {
         CheckReport::Board { summary, .. } => summary.status,
+        CheckReport::Combined { summary, .. } => summary.status,
         CheckReport::Schematic { summary, .. } => summary.status,
     };
 
@@ -113,10 +114,74 @@ pub(crate) fn render_check_report_text(report: &CheckReport) -> String {
             }
             lines.join("\n")
         }
+        CheckReport::Combined {
+            summary,
+            diagnostics,
+            erc,
+            drc,
+        } => {
+            let mut lines = vec![format!(
+                "combined check: status={} errors={} warnings={} infos={} waived={}",
+                render_status(summary.status),
+                summary.errors,
+                summary.warnings,
+                summary.infos,
+                summary.waived
+            )];
+            if !summary.by_code.is_empty() {
+                lines.push("counts:".into());
+                for entry in &summary.by_code {
+                    lines.push(format!("  {} x{}", entry.code, entry.count));
+                }
+            }
+            if !diagnostics.is_empty() {
+                lines.push("diagnostics:".into());
+                for diagnostic in diagnostics {
+                    lines.push(format!(
+                        "  [{}] {}",
+                        diagnostic.severity, diagnostic.message
+                    ));
+                }
+            }
+            if !erc.is_empty() {
+                lines.push("erc:".into());
+                for finding in erc {
+                    let waived = if finding.waived { " (waived)" } else { "" };
+                    lines.push(format!(
+                        "  [{}] {}: {}{}",
+                        render_erc_severity(&finding.severity),
+                        finding.code,
+                        finding.message,
+                        waived
+                    ));
+                }
+            }
+            if !drc.is_empty() {
+                lines.push("drc:".into());
+                for violation in drc {
+                    let location = violation
+                        .location
+                        .as_ref()
+                        .map(|loc| format!(" @({}, {}) L{:?}", loc.x_nm, loc.y_nm, loc.layer))
+                        .unwrap_or_default();
+                    let waived = if violation.waived { " (waived)" } else { "" };
+                    lines.push(format!(
+                        "  [{}] {}: {}{}{}",
+                        render_drc_severity(violation.severity),
+                        violation.code,
+                        violation.message,
+                        location,
+                        waived
+                    ));
+                }
+            }
+            lines.join("\n")
+        }
         CheckReport::Schematic {
             summary,
             diagnostics,
             erc,
+            drc,
         } => {
             let mut lines = vec![format!(
                 "schematic check: status={} errors={} warnings={} infos={} waived={}",
@@ -154,6 +219,25 @@ pub(crate) fn render_check_report_text(report: &CheckReport) -> String {
                     ));
                 }
             }
+            if !drc.is_empty() {
+                lines.push("drc:".into());
+                for violation in drc {
+                    let location = violation
+                        .location
+                        .as_ref()
+                        .map(|loc| format!(" @({}, {}) L{:?}", loc.x_nm, loc.y_nm, loc.layer))
+                        .unwrap_or_default();
+                    let waived = if violation.waived { " (waived)" } else { "" };
+                    lines.push(format!(
+                        "  [{}] {}: {}{}{}",
+                        render_drc_severity(violation.severity),
+                        violation.code,
+                        violation.message,
+                        location,
+                        waived
+                    ));
+                }
+            }
             lines.join("\n")
         }
     }
@@ -178,8 +262,8 @@ fn render_erc_severity(severity: &eda_engine::erc::ErcSeverity) -> &'static str 
 
 pub(crate) fn render_drc_report_text(report: &DrcReport) -> String {
     let mut lines = vec![format!(
-        "drc: passed={} errors={} warnings={}",
-        report.passed, report.summary.errors, report.summary.warnings
+        "drc: passed={} errors={} warnings={} waived={}",
+        report.passed, report.summary.errors, report.summary.warnings, report.summary.waived
     )];
     if !report.violations.is_empty() {
         lines.push("violations:".into());
@@ -189,12 +273,14 @@ pub(crate) fn render_drc_report_text(report: &DrcReport) -> String {
                 .as_ref()
                 .map(|loc| format!(" @({}, {}) L{:?}", loc.x_nm, loc.y_nm, loc.layer))
                 .unwrap_or_default();
+            let waived = if violation.waived { " (waived)" } else { "" };
             lines.push(format!(
-                "  [{}] {}: {}{}",
+                "  [{}] {}: {}{}{}",
                 render_drc_severity(violation.severity),
                 violation.code,
                 violation.message,
-                location
+                location,
+                waived
             ));
         }
     }

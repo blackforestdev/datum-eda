@@ -61,6 +61,38 @@ pub(super) fn execute_route_proposal_command(
             };
             Ok((output, 0))
         }
+        ProjectCommands::WriteRouteStrategyCuratedFixtureSuite(
+            ProjectWriteRouteStrategyCuratedFixtureSuiteArgs { out_dir, manifest },
+        ) => {
+            let report = write_route_strategy_curated_fixture_suite(&out_dir, manifest.as_deref())?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_route_strategy_curated_fixture_suite_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::CaptureRouteStrategyCuratedBaseline(
+            ProjectCaptureRouteStrategyCuratedBaselineArgs {
+                out_dir,
+                manifest,
+                result,
+            },
+        ) => {
+            let report = capture_route_strategy_curated_baseline(
+                &out_dir,
+                manifest.as_deref(),
+                result.as_deref(),
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_route_strategy_curated_baseline_capture_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
         ProjectCommands::RouteStrategyBatchEvaluate(ProjectRouteStrategyBatchEvaluateArgs {
             requests,
         }) => {
@@ -90,6 +122,55 @@ pub(super) fn execute_route_proposal_command(
             let output = match format {
                 OutputFormat::Text => {
                     render_native_route_strategy_batch_result_validation_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::CompareRouteStrategyBatchResult(
+            ProjectCompareRouteStrategyBatchResultArgs { before, after },
+        ) => {
+            let report = compare_route_strategy_batch_result(&before, &after)?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_route_strategy_batch_result_comparison_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::GateRouteStrategyBatchResult(
+            ProjectGateRouteStrategyBatchResultArgs {
+                before,
+                after,
+                policy,
+            },
+        ) => {
+            let report = gate_route_strategy_batch_result(&before, &after, policy)?;
+            let output = match format {
+                OutputFormat::Text => render_native_route_strategy_batch_result_gate_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            let exit_code = if report.passed { 0 } else { 2 };
+            Ok((output, exit_code))
+        }
+        ProjectCommands::SummarizeRouteStrategyBatchResults(
+            ProjectSummarizeRouteStrategyBatchResultsArgs {
+                dir,
+                artifacts,
+                baseline,
+                policy,
+            },
+        ) => {
+            let report = summarize_route_strategy_batch_results(
+                dir.as_deref(),
+                &artifacts,
+                baseline.as_deref(),
+                policy,
+            )?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_route_strategy_batch_results_index_text(&report)
                 }
                 OutputFormat::Json => render_output(format, &report),
             };

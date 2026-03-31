@@ -4,6 +4,7 @@ use uuid::Uuid;
 use crate::board::Board;
 use crate::ir::geometry::LayerId;
 use crate::rules::ast::RuleType;
+use crate::schematic::{CheckDomain, CheckWaiver, WaiverTarget};
 
 mod checks;
 
@@ -30,12 +31,16 @@ pub struct DrcViolation {
     pub message: String,
     pub location: Option<DrcLocation>,
     pub objects: Vec<Uuid>,
+    #[serde(default)]
+    pub waived: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct DrcSummary {
     pub errors: usize,
     pub warnings: usize,
+    #[serde(default)]
+    pub waived: usize,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -46,6 +51,14 @@ pub struct DrcReport {
 }
 
 pub fn run(board: &Board, selected_rules: &[RuleType]) -> DrcReport {
+    run_with_waivers(board, selected_rules, &[])
+}
+
+pub fn run_with_waivers(
+    board: &Board,
+    selected_rules: &[RuleType],
+    waivers: &[CheckWaiver],
+) -> DrcReport {
     let run_all = selected_rules.is_empty();
     let mut violations = Vec::new();
 
@@ -79,8 +92,14 @@ pub fn run(board: &Board, selected_rules: &[RuleType]) -> DrcReport {
     let mut summary = DrcSummary {
         errors: 0,
         warnings: 0,
+        waived: 0,
     };
+    apply_waivers(&mut violations, waivers);
     for violation in &violations {
+        if violation.waived {
+            summary.waived += 1;
+            continue;
+        }
         match violation.severity {
             DrcSeverity::Error => summary.errors += 1,
             DrcSeverity::Warning => summary.warnings += 1,
@@ -91,6 +110,37 @@ pub fn run(board: &Board, selected_rules: &[RuleType]) -> DrcReport {
         passed: summary.errors == 0,
         violations,
         summary,
+    }
+}
+
+fn apply_waivers(violations: &mut [DrcViolation], waivers: &[CheckWaiver]) {
+    for violation in violations {
+        violation.waived = waivers
+            .iter()
+            .any(|waiver| waiver_matches(waiver, violation));
+    }
+}
+
+fn waiver_matches(waiver: &CheckWaiver, violation: &DrcViolation) -> bool {
+    if !matches!(waiver.domain, CheckDomain::DRC) {
+        return false;
+    }
+
+    match &waiver.target {
+        WaiverTarget::Object(uuid) => violation.objects.contains(uuid),
+        WaiverTarget::RuleObject { rule, object } => {
+            *rule == violation.code && violation.objects.contains(object)
+        }
+        WaiverTarget::RuleObjects { rule, objects } => {
+            if *rule != violation.code {
+                return false;
+            }
+            let mut actual = violation.objects.clone();
+            actual.sort();
+            let mut expected = objects.clone();
+            expected.sort();
+            actual == expected
+        }
     }
 }
 
@@ -141,4 +191,7 @@ mod tests {
 
     #[path = "mod_tests_dimensions_and_silk.rs"]
     mod dimensions_and_silk;
+
+    #[path = "mod_tests_waivers.rs"]
+    mod waivers;
 }

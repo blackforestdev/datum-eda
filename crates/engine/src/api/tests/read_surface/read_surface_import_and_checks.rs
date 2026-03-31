@@ -1,5 +1,5 @@
 use super::super::*;
-use crate::schematic::{CheckDomain, WaiverTarget};
+use crate::schematic::{CheckDomain, CheckWaiver, Schematic, WaiverTarget};
 use std::path::Path;
 
 #[test]
@@ -230,6 +230,7 @@ fn import_dispatch_recognizes_kicad_and_eagle_paths() {
             summary,
             diagnostics,
             erc,
+            drc,
         } => {
             assert_eq!(summary.status, CheckStatus::Warning);
             assert_eq!(summary.errors, 0);
@@ -237,6 +238,7 @@ fn import_dispatch_recognizes_kicad_and_eagle_paths() {
             assert_eq!(summary.infos, 0);
             assert_eq!(summary.waived, 0);
             assert_eq!(summary.by_code.len(), 3);
+            assert!(drc.is_empty());
             assert!(
                 summary
                     .by_code
@@ -344,6 +346,56 @@ fn import_dispatch_rejects_unknown_extensions() {
         .import(Path::new("unknown.txt"))
         .expect_err("unknown extension must fail");
     assert!(err.to_string().contains("unsupported import path"), "{err}");
+}
+
+#[test]
+fn run_drc_honors_authored_drc_waivers_from_loaded_schematic() {
+    let mut engine = Engine::new().expect("engine should initialize");
+    engine
+        .import(&fixture_path("partial-route-demo.kicad_pcb"))
+        .expect("partial-route board import should succeed");
+
+    let initial = engine
+        .run_drc(&[RuleType::Connectivity])
+        .expect("initial DRC should succeed");
+    assert!(!initial.passed);
+    let violation = initial
+        .violations
+        .iter()
+        .find(|entry| entry.code == "connectivity_unrouted_net")
+        .expect("fixture should produce an unrouted-net violation");
+
+    engine
+        .design
+        .as_mut()
+        .expect("design should be present")
+        .schematic = Some(Schematic {
+        uuid: uuid::Uuid::new_v4(),
+        sheets: Default::default(),
+        sheet_definitions: Default::default(),
+        sheet_instances: Default::default(),
+        variants: Default::default(),
+        waivers: vec![CheckWaiver {
+            uuid: uuid::Uuid::new_v4(),
+            domain: CheckDomain::DRC,
+            target: WaiverTarget::Object(violation.objects[0]),
+            rationale: "Intentional partial-route fixture waiver".into(),
+            created_by: Some("api-test".into()),
+        }],
+    });
+
+    let waived = engine
+        .run_drc(&[RuleType::Connectivity])
+        .expect("waived DRC should succeed");
+    let waived_violation = waived
+        .violations
+        .iter()
+        .find(|entry| entry.code == "connectivity_unrouted_net")
+        .expect("fixture should still report the waived violation");
+    assert!(waived.passed);
+    assert_eq!(waived.summary.errors, 0);
+    assert_eq!(waived.summary.waived, 1);
+    assert!(waived_violation.waived);
 }
 
 #[test]

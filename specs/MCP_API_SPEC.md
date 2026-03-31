@@ -103,15 +103,21 @@ normalized MCP surface.
 `get_unrouted`, `get_schematic_net_info`, `get_check_report`,
 `get_connectivity_diagnostics`, `get_design_rules`, `run_erc`, `run_drc`,
 `explain_violation`,
+`validate_project`,
 `export_route_path_proposal`,
 `route_proposal`,
 `route_proposal_explain`,
 `route_strategy_report`,
 `route_strategy_compare`,
 `route_strategy_delta`,
+`write_route_strategy_curated_fixture_suite`,
+`capture_route_strategy_curated_baseline`,
 `route_strategy_batch_evaluate`,
 `inspect_route_strategy_batch_result`,
 `validate_route_strategy_batch_result`,
+`compare_route_strategy_batch_result`,
+`gate_route_strategy_batch_result`,
+`summarize_route_strategy_batch_results`,
 `export_route_proposal`,
 `route_apply`,
 `route_apply_selected`,
@@ -133,6 +139,14 @@ Parity policy for current development:
 - new native contracts must be tracked here as one of:
   - `deferred_mcp_parity`
   - `implemented_in_mcp`
+
+Native validation parity note (2026-03-30):
+- `project validate <dir>` is now exposed through MCP as `validate_project`.
+- MCP preserves the CLI validation contract exactly:
+  - same JSON report shape
+  - same valid/invalid semantics
+  - invalid native projects may return CLI exit status `1`, but MCP still
+    returns the structured validation payload
   - `not_planned_for_mcp`
 - MCP implementation authority remains the current method list above; the
   entries below are tracking records, not claims of implemented MCP support
@@ -165,6 +179,29 @@ Currently tracked native contracts that are not implemented in MCP:
     - `different_policy_same_family`
     - `proposal_available_only_under_authored_copper_priority`
     - `no_proposal_under_any_profile`
+- `project write-route-strategy-curated-fixture-suite --out-dir <path> [--manifest <path>]`
+  - exposed in MCP as `write_route_strategy_curated_fixture_suite`
+  - writes one deterministic curated native-project fixture suite plus a
+    compatible `native_route_strategy_batch_requests` manifest for repeated
+    evidence gathering
+  - the current curated suite covers:
+    - same-outcome baseline route selection
+    - profile divergence between `default` and
+      `authored-copper-priority`
+    - no-proposal-under-any-profile
+    - one cross-layer routable same-outcome case
+- `project capture-route-strategy-curated-baseline --out-dir <path> [--manifest <path>] [--result <path>]`
+  - exposed in MCP as `capture_route_strategy_curated_baseline`
+  - materializes the curated fixture suite, runs the existing batch evaluator,
+    and saves one reusable `native_route_strategy_batch_result_artifact`
+    baseline file
+  - default saved paths are inside `--out-dir`:
+    - `route-strategy-batch-requests.json`
+    - `route-strategy-batch-result.json`
+  - the repo currently checks in one baseline capture under:
+    - `crates/test-harness/testdata/quality/route_strategy_curated_baseline_v1`
+  - the normal verification harness is:
+    - `python3 scripts/check_route_strategy_evidence.py`
 - `project route-strategy-batch-evaluate --requests <path>`
   - exposed in MCP as `route_strategy_batch_evaluate`
   - `--requests` points to one versioned JSON manifest of explicit route
@@ -189,6 +226,42 @@ Currently tracked native contracts that are not implemented in MCP:
   - exposed in MCP as `validate_route_strategy_batch_result`
   - reports structural validity, version compatibility, missing required
     fields, summary/result count consistency, and malformed entries
+- `project compare-route-strategy-batch-result <before> <after>`
+  - exposed in MCP as `compare_route_strategy_batch_result`
+  - compares saved artifacts only and treats them as compatible only when both
+    use `kind = native_route_strategy_batch_result_artifact`, `version = 1`,
+    and the same request-manifest kind/version
+  - reports aggregate count deltas, added/removed/common request ids, and
+    request-id keyed changes in recommended profile, delta classification, and
+    selected live outcome with one bounded summary classification:
+    - `identical`
+    - `aggregate_only_changed`
+    - `per_request_outcomes_changed`
+    - `incompatible_artifacts`
+- `project gate-route-strategy-batch-result <before> <after> [--policy <policy>]`
+  - exposed in MCP as `gate_route_strategy_batch_result`
+  - evaluates the saved-artifact comparison result only; it does not rerun any
+    live strategy logic
+  - accepted explicit gate policy set:
+    - `strict_identical`
+    - `allow_aggregate_only`
+    - `fail_on_recommendation_change`
+  - reports selected policy, pass/fail result, comparison classification,
+    specific reasons, threshold/count facts, and summary counts of changed
+    recommendations, changed delta classifications, and changed per-request
+    outcomes
+  - native CLI exit-code contract:
+    - `0` when the selected gate policy passes
+    - `2` when the selected gate policy fails
+- `project summarize-route-strategy-batch-results [--dir <path> | --artifact <path> ...] [--baseline <path> --policy <policy>]`
+  - exposed in MCP as `summarize_route_strategy_batch_results`
+  - summarizes saved artifacts only; it does not rerun live route evaluation
+  - accepts either one directory scan or an explicit artifact list
+  - reports per-artifact identity/version, filesystem-derived run ordering
+    when available, request counts, recommendation/delta distributions, and
+    structural validation state
+  - when `--baseline` is provided, attaches one optional baseline gate summary
+    for each non-baseline artifact using the existing accepted gate policies
 - `project route-proposal-explain <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> [--profile <profile>]`
   - exposed in MCP as `route_proposal_explain`
 - `project export-route-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path> [--profile <profile>]`
@@ -873,9 +946,10 @@ Output: { "passed": bool,
               "severity": "error" | "warning",
               "message": string,
               "location": { "x_nm": int, "y_nm": int, "layer": int | null } | null,
-              "objects": [uuid] }
+              "objects": [uuid],
+              "waived": bool }
           ],
-          "summary": { "errors": int, "warnings": int } }
+          "summary": { "errors": int, "warnings": int, "waived": int } }
 ```
 Current implementation note: implemented in the current daemon/stdio host.
 Target M2 note: optional rule filtering and normalized unit views may be added

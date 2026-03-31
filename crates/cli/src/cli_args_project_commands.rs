@@ -6,6 +6,8 @@ pub(crate) enum ProjectCommands {
     New(ProjectNewArgs),
     /// Inspect a native project scaffold and report resolved file layout
     Inspect(ProjectInspectArgs),
+    /// Validate persisted native-project structure, UUID consistency, and non-dangling references
+    Validate(ProjectValidateArgs),
     /// Query native project data from the on-disk scaffold
     Query(ProjectQueryArgs),
     /// Export a native project BOM as deterministic CSV from persisted board components
@@ -115,12 +117,22 @@ pub(crate) enum ProjectCommands {
     RouteStrategyCompare(ProjectRouteStrategyCompareArgs),
     /// Report the bounded decision delta between the currently accepted routing objectives/profiles
     RouteStrategyDelta(ProjectRouteStrategyDeltaArgs),
+    /// Write one deterministic curated fixture suite plus batch request manifest for repeated route-strategy evidence runs
+    WriteRouteStrategyCuratedFixtureSuite(ProjectWriteRouteStrategyCuratedFixtureSuiteArgs),
+    /// Materialize the curated fixture suite, evaluate it, and save one reusable batch-result baseline artifact
+    CaptureRouteStrategyCuratedBaseline(ProjectCaptureRouteStrategyCuratedBaselineArgs),
     /// Evaluate the current accepted M6 strategy surfaces across a versioned batch request manifest
     RouteStrategyBatchEvaluate(ProjectRouteStrategyBatchEvaluateArgs),
     /// Inspect one saved versioned route-strategy batch result artifact
     InspectRouteStrategyBatchResult(ProjectInspectRouteStrategyBatchResultArgs),
     /// Validate one saved versioned route-strategy batch result artifact for structural and count integrity
     ValidateRouteStrategyBatchResult(ProjectValidateRouteStrategyBatchResultArgs),
+    /// Compare two saved versioned route-strategy batch result artifacts by request_id and aggregate summary
+    CompareRouteStrategyBatchResult(ProjectCompareRouteStrategyBatchResultArgs),
+    /// Evaluate two saved versioned route-strategy batch result artifacts against one deterministic CI gate policy
+    GateRouteStrategyBatchResult(ProjectGateRouteStrategyBatchResultArgs),
+    /// Summarize many saved versioned route-strategy batch result artifacts from one directory or explicit list
+    SummarizeRouteStrategyBatchResults(ProjectSummarizeRouteStrategyBatchResultsArgs),
     /// Explain how the deterministic current route proposal selector chose or rejected candidate families
     RouteProposalExplain(ProjectRouteProposalExplainArgs),
     /// Export one deterministic route proposal artifact from the currently selected candidate family

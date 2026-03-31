@@ -1,4 +1,5 @@
 use super::*;
+use eda_engine::drc::{DrcSeverity, DrcViolation};
 
 pub(crate) fn query_native_project_symbols(root: &Path) -> Result<Vec<SymbolInfo>> {
     let project = load_native_project(root)?;
@@ -208,9 +209,53 @@ pub(crate) fn query_native_project_check(root: &Path) -> Result<CheckReport> {
     let schematic = build_native_project_schematic(&project)?;
     let diagnostics = schematic_diagnostics(&schematic);
     let erc = run_prechecks(&schematic);
-    Ok(CheckReport::Schematic {
-        summary: summarize_native_schematic_checks(&diagnostics, &erc),
+    let drc = query_native_project_drc(root)?.violations;
+    Ok(CheckReport::Combined {
+        summary: summarize_native_combined_checks(&diagnostics, &erc, &drc),
         diagnostics,
         erc,
+        drc,
     })
+}
+
+fn summarize_native_combined_checks(
+    diagnostics: &[ConnectivityDiagnosticInfo],
+    erc: &[ErcFinding],
+    drc: &[DrcViolation],
+) -> CheckSummary {
+    let mut summary = summarize_native_schematic_checks(diagnostics, erc);
+
+    for violation in drc {
+        if violation.waived {
+            summary.waived += 1;
+            continue;
+        }
+        match violation.severity {
+            DrcSeverity::Error => summary.errors += 1,
+            DrcSeverity::Warning => summary.warnings += 1,
+        }
+    }
+
+    let mut drc_counts: BTreeMap<String, usize> = BTreeMap::new();
+    for violation in drc {
+        *drc_counts.entry(violation.code.clone()).or_default() += 1;
+    }
+    for (code, count) in drc_counts {
+        if let Some(existing) = summary.by_code.iter_mut().find(|entry| entry.code == code) {
+            existing.count += count;
+        } else {
+            summary.by_code.push(CheckCodeCount { code, count });
+        }
+    }
+    summary.by_code.sort_by(|a, b| a.code.cmp(&b.code));
+    summary.status = if summary.errors > 0 {
+        CheckStatus::Error
+    } else if summary.warnings > 0 {
+        CheckStatus::Warning
+    } else if summary.infos > 0 {
+        CheckStatus::Info
+    } else {
+        CheckStatus::Ok
+    };
+    summary
 }

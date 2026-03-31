@@ -29,6 +29,15 @@ TOOLS: list[dict[str, Any]] = [
         },
     },
     {
+        "name": "validate_project",
+        "description": "Validate one native project directory for required files, supported schema versions, duplicate UUID consistency, and non-dangling persisted references.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"path": {"type": "string"}},
+            "required": ["path"],
+        },
+    },
+    {
         "name": "delete_track",
         "description": "Delete one board track by UUID in the current M3 slice.",
         "inputSchema": {
@@ -716,6 +725,31 @@ TOOLS: list[dict[str, Any]] = [
         },
     },
     {
+        "name": "write_route_strategy_curated_fixture_suite",
+        "description": "Write one deterministic curated native-project fixture suite plus a versioned batch request manifest for repeated route-strategy batch evidence runs.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "out_dir": {"type": "string"},
+                "manifest": {"type": ["string", "null"]},
+            },
+            "required": ["out_dir"],
+        },
+    },
+    {
+        "name": "capture_route_strategy_curated_baseline",
+        "description": "Materialize the curated route-strategy fixture suite, evaluate it, and save one reusable versioned batch-result baseline artifact.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "out_dir": {"type": "string"},
+                "manifest": {"type": ["string", "null"]},
+                "result": {"type": ["string", "null"]},
+            },
+            "required": ["out_dir"],
+        },
+    },
+    {
         "name": "route_strategy_batch_evaluate",
         "description": "Evaluate the current accepted M6 strategy surfaces across a versioned batch request manifest and return per-request evidence plus aggregate summary counts.",
         "inputSchema": {
@@ -746,6 +780,61 @@ TOOLS: list[dict[str, Any]] = [
                 "artifact": {"type": "string"},
             },
             "required": ["artifact"],
+        },
+    },
+    {
+        "name": "compare_route_strategy_batch_result",
+        "description": "Compare two saved versioned route-strategy batch result artifacts by request_id and aggregate summary counts without live re-evaluation.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "before": {"type": "string"},
+                "after": {"type": "string"},
+            },
+            "required": ["before", "after"],
+        },
+    },
+    {
+        "name": "gate_route_strategy_batch_result",
+        "description": "Evaluate two saved versioned route-strategy batch result artifacts against one explicit deterministic CI gate policy.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "before": {"type": "string"},
+                "after": {"type": "string"},
+                "policy": {
+                    "type": "string",
+                    "enum": [
+                        "strict_identical",
+                        "allow_aggregate_only",
+                        "fail_on_recommendation_change",
+                    ],
+                },
+            },
+            "required": ["before", "after"],
+        },
+    },
+    {
+        "name": "summarize_route_strategy_batch_results",
+        "description": "Summarize saved route-strategy batch result artifacts from one directory or explicit list, with optional baseline gate summary.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "dir": {"type": "string"},
+                "artifacts": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                },
+                "baseline": {"type": "string"},
+                "policy": {
+                    "type": "string",
+                    "enum": [
+                        "strict_identical",
+                        "allow_aggregate_only",
+                        "fail_on_recommendation_change",
+                    ],
+                },
+            },
         },
     },
     {

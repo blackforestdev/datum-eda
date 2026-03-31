@@ -55,6 +55,12 @@ jobs:
       - name: M3 preflight audit
         run: python3 scripts/check_alignment.py --run-m3-preflight
 
+      - name: Route strategy evidence baseline gate
+        run: python3 scripts/check_route_strategy_evidence.py
+
+      - name: Native fixture validation gate
+        run: python3 scripts/check_native_project_fixtures.py
+
   transport-smoke:
     runs-on: ubuntu-latest
 

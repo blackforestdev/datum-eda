@@ -98,10 +98,12 @@ fn run_check_supports_board_and_schematic_inputs() {
             summary,
             diagnostics,
             erc,
+            drc,
         } => {
             assert_eq!(summary.status, eda_engine::api::CheckStatus::Warning);
             assert_eq!(summary.warnings, 3);
             assert_eq!(summary.by_code.len(), 3);
+            assert!(drc.is_empty());
             assert!(
                 summary
                     .by_code
@@ -309,6 +311,7 @@ fn render_check_report_text_includes_input_without_explicit_driver() {
             object_uuids: vec![test_uuid],
             waived: false,
         }],
+        drc: Vec::new(),
     };
 
     let output = render_check_report_text(&report);

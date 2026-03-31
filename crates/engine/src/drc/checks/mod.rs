@@ -29,6 +29,7 @@ pub(super) fn run_connectivity_checks(board: &Board) -> Vec<DrcViolation> {
                 ),
                 location: None,
                 objects: vec![net.uuid],
+                waived: false,
             });
         }
     }
@@ -50,6 +51,7 @@ pub(super) fn run_connectivity_checks(board: &Board) -> Vec<DrcViolation> {
             message: format!("net {net_name} has {count} unrouted connection(s)"),
             location: None,
             objects: vec![net_uuid],
+            waived: false,
         });
     }
 
@@ -67,6 +69,7 @@ pub(super) fn run_connectivity_checks(board: &Board) -> Vec<DrcViolation> {
                 ),
                 location: None,
                 objects: vec![net.uuid],
+                waived: false,
             });
         }
     }
@@ -110,6 +113,7 @@ pub(super) fn run_clearance_checks(board: &Board) -> Vec<DrcViolation> {
                         layer: Some(a.layer),
                     }),
                     objects,
+                    waived: false,
                 });
             }
         }
@@ -142,6 +146,7 @@ pub(super) fn run_track_width_checks(board: &Board) -> Vec<DrcViolation> {
                     layer: Some(track.layer),
                 }),
                 objects: vec![track.uuid],
+                waived: false,
             });
         }
     }
@@ -172,6 +177,7 @@ pub(super) fn run_via_hole_checks(board: &Board) -> Vec<DrcViolation> {
                     layer: None,
                 }),
                 objects: vec![via.uuid],
+                waived: false,
             });
         }
     }
@@ -203,6 +209,7 @@ pub(super) fn run_via_annular_checks(board: &Board) -> Vec<DrcViolation> {
                     layer: None,
                 }),
                 objects: vec![via.uuid],
+                waived: false,
             });
         }
     }
@@ -252,6 +259,7 @@ pub(super) fn run_silk_clearance_checks(board: &Board) -> Vec<DrcViolation> {
                         layer: Some(text.layer),
                     }),
                     objects,
+                    waived: false,
                 });
             }
         }
@@ -278,6 +286,7 @@ pub(super) fn run_silk_clearance_checks(board: &Board) -> Vec<DrcViolation> {
                         layer: Some(text.layer),
                     }),
                     objects,
+                    waived: false,
                 });
             }
         }

@@ -65,6 +65,8 @@ pub(crate) enum NativeProjectQueryCommands {
     Diagnostics,
     /// Current native schematic ERC findings
     Erc,
+    /// Current native board DRC report
+    Drc,
     /// Current native combined schematic check report
     Check,
     /// Current native board text objects

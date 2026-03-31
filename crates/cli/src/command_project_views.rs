@@ -58,5 +58,6 @@ pub(super) use super::super::{
     NativeProjectSelectedRouteProposalExportView, NativeProjectSummaryView,
     NativeProjectSymbolFieldMutationReportView, NativeProjectSymbolMutationReportView,
     NativeProjectSymbolPinInfoView, NativeProjectSymbolSemanticsView,
-    NativeProjectTextMutationReportView, NativeProjectWireMutationReportView, UnroutedView,
+    NativeProjectTextMutationReportView, NativeProjectValidationIssueView,
+    NativeProjectValidationView, NativeProjectWireMutationReportView, UnroutedView,
 };

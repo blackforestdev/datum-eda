@@ -88,6 +88,8 @@ mod command_project_summary;
 mod command_project_support;
 #[path = "command_project_surface.rs"]
 mod command_project_surface;
+#[path = "command_project_validate.rs"]
+mod command_project_validate;
 #[path = "command_project_views.rs"]
 mod command_project_views;
 

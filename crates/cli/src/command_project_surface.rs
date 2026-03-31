@@ -17,7 +17,7 @@ pub(crate) use self::command_project_board_component_reference::set_native_proje
 pub(crate) use self::command_project_board_component_value::set_native_project_board_component_value;
 pub(crate) use self::command_project_board_diagnostics::{
     query_native_project_board_check, query_native_project_board_diagnostics,
-    query_native_project_board_unrouted,
+    query_native_project_board_unrouted, query_native_project_drc,
 };
 pub(crate) use self::command_project_board_layout::{
     delete_native_project_board_keepout, delete_native_project_board_text,
@@ -163,6 +163,7 @@ pub(crate) use self::command_project_support::*;
 pub(crate) use self::command_project_support::{
     parse_native_field_position, parse_native_polygon_vertices, parse_native_stackup_layers,
 };
+pub(crate) use self::command_project_validate::validate_native_project;
 pub(crate) use self::command_project_views::*;
 pub(crate) use anyhow::{Context, Result, bail};
 pub(crate) use eda_engine::api::{CheckCodeCount, CheckReport, CheckStatus, CheckSummary};

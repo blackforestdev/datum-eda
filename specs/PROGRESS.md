@@ -317,6 +317,31 @@ Item 8 reconciliation notes (2026-03-25):
 - Stale wording corrected:
   - `Waiver matching in DRC` now states DRC exists and waiver matching is the remaining gap.
 
+Checking follow-up note (2026-03-30):
+- Native-project authored waivers are now honored by the existing `project query erc`
+  and `project query check` load path.
+- DRC-domain waiver matching is now honored inside `run_drc`; waived DRC
+  violations remain visible and waived-only DRC runs do not fail.
+- Native authored board state now exposes the same waiver-aware DRC report through
+  `project query <dir> drc`.
+- Native `project query <dir> check` now returns a combined report with distinct
+  `erc` and `drc` sections while leaving `project query <dir> board-check`
+  unchanged.
+- Native-project structural validation is now exposed through
+  `project validate <dir>`, covering required native files, schema-version
+  compatibility, duplicate UUID consistency within authored object types, and
+  non-dangling persisted schematic/board references.
+- The same native-project validation contract is now available through MCP as
+  `validate_project`, preserving the CLI report shape and valid/invalid result
+  semantics.
+- Checked-in native fixture projects are now exercised continuously through
+  `scripts/check_native_project_fixtures.py`, driven by
+  `crates/test-harness/testdata/quality/native_project_validation_manifest_v1.json`
+  and the existing `project validate` contract in CI.
+- That manifest now covers both real route-strategy native fixtures and a
+  dedicated checked-in invalid-case suite for duplicate UUID, missing sheet,
+  and unsupported schema-version failures.
+
 ### 2026-03-25 Contract Alignment Pass
 
 | Item | Status | Notes |
@@ -663,9 +688,14 @@ Status: [~] In progress
   - `project route-strategy-report <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> [--objective <objective>]`
   - `project route-strategy-compare <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
   - `project route-strategy-delta <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+  - `project write-route-strategy-curated-fixture-suite --out-dir <path> [--manifest <path>]`
+  - `project capture-route-strategy-curated-baseline --out-dir <path> [--manifest <path>] [--result <path>]`
   - `project route-strategy-batch-evaluate --requests <path>`
   - `project inspect-route-strategy-batch-result <path>`
   - `project validate-route-strategy-batch-result <path>`
+  - `project compare-route-strategy-batch-result <before> <after>`
+  - `project gate-route-strategy-batch-result <before> <after> [--policy <policy>]`
+  - `project summarize-route-strategy-batch-results [--dir <path> | --artifact <path> ...] [--baseline <path> --policy <policy>]`
   - accepted objective set currently reuses the selector profile vocabulary:
     - `default`
     - `authored-copper-priority`
@@ -681,6 +711,22 @@ Status: [~] In progress
   - the batch evaluation surface runs the existing report/compare/delta
     surfaces over a versioned explicit request manifest and returns both
     per-request evidence and aggregate summary counts
+  - one curated fixture-suite writer now materializes a deterministic native
+    fixture set plus a compatible batch-request manifest for repeated evidence
+    runs over real persisted projects
+  - one curated baseline-capture surface now materializes that fixture suite,
+    runs the existing batch evaluator, and saves one reusable versioned
+    batch-result artifact with deterministic default paths
+  - one checked-in repo baseline asset set now lives under
+    `crates/test-harness/testdata/quality/route_strategy_curated_baseline_v1`
+    and the alignment CI lane regenerates and strict-gates a fresh run against
+    that baseline through `scripts/check_route_strategy_evidence.py`
+  - the current curated suite covers:
+    - same-outcome baseline route selection
+    - profile divergence between `default` and
+      `authored-copper-priority`
+    - no-proposal-under-any-profile
+    - one cross-layer routable same-outcome case
   - the batch-evaluate JSON output is now also the explicit saved result
     artifact format with `kind = native_route_strategy_batch_result_artifact`
     and `version = 1`
@@ -688,11 +734,30 @@ Status: [~] In progress
     validated through read-only surfaces that report summary/distribution
     details, per-request outcomes, malformed entries, version compatibility,
     required-field coverage, and deterministic summary/result integrity checks
+  - saved batch result artifacts can now also be compared without live
+    re-evaluation by `request_id`, reporting aggregate count deltas,
+    added/removed/common request ids, common-request recommendation/delta/live
+    outcome changes, and one bounded summary classification
+  - saved batch result artifact comparisons can now also be evaluated as a
+    read-only CI/review gate under the explicit accepted policy set
+    `strict_identical|allow_aggregate_only|fail_on_recommendation_change`,
+    reporting pass/fail reasons and count facts while returning CLI exit code
+    `0` on pass and `2` on fail
+  - saved batch result artifacts can now also be indexed from a directory or
+    explicit list, reporting per-artifact identity/version, filesystem-derived
+    run ordering, request counts, recommendation and delta distributions,
+    structural validation state, and optional baseline gate summaries without
+    rerunning live strategy evaluation
   - the same read-only strategy surface is exposed through MCP as
     `route_strategy_report`, `route_strategy_compare`, and
     `route_strategy_delta`, `route_strategy_batch_evaluate`,
+    `write_route_strategy_curated_fixture_suite`,
+    `capture_route_strategy_curated_baseline`,
     `inspect_route_strategy_batch_result`, and
-    `validate_route_strategy_batch_result`
+    `validate_route_strategy_batch_result`,
+    `compare_route_strategy_batch_result`, and
+    `gate_route_strategy_batch_result`, plus
+    `summarize_route_strategy_batch_results`
 
 - Acceptance checks for the opening slice:
   - deterministic repeated output on unchanged persisted state
@@ -786,8 +851,8 @@ Status: [~] In progress
 | Invariant | Status | Notes |
 |-----------|--------|-------|
 | All authored objects have non-nil UUID | [x] | Enforced by constructors |
-| No duplicate UUIDs within type | [~] | Not explicitly validated |
-| Non-dangling references | [~] | DanglingReference error exists; validation not run on import |
+| No duplicate UUIDs within type | [x] | `project validate` checks persisted UUID-key consistency and duplicate authored UUIDs across native project object types |
+| Non-dangling references | [x] | `project validate` checks required native files plus persisted schematic/board cross-file references and board-side object references |
 | Integer coordinates (no float) | [x] | i64 throughout |
 | Connectivity recomputed from authored data | [x] | |
 
@@ -865,9 +930,9 @@ Status: [~] In progress
 | CheckSeverity (Error, Warning, Info) | [x] | ErcSeverity in erc/mod.rs |
 | CheckSummary | [x] | In api/mod.rs |
 | CheckWaiver (domain, target, rationale) | [x] | In schematic/mod.rs |
-| WaiverTarget variants | [~] | Basic UUID matching; RuleObjects not fully exercised |
-| Waiver matching in ERC | [x] | |
-| Waiver matching in DRC | [ ] | DRC checks exist; waiver matching for DRC violations not implemented yet |
+| WaiverTarget variants | [x] | Object, RuleObject, and RuleObjects matching exercised across ERC/DRC tests |
+| Waiver matching in ERC | [x] | Includes authored native-project waivers in existing project ERC/check flows |
+| Waiver matching in DRC | [x] | `run_drc` now applies authored DRC waivers and keeps waived findings visible |
 | Cross-domain checks excluded from M2 | [x] | Not implemented (correct) |
 
 ---

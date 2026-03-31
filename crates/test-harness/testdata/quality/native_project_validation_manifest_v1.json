@@ -1,0 +1,45 @@
+{
+  "fixtures": [
+    {
+      "expected_valid": true,
+      "fixture_id": "same-outcome-default",
+      "project_root": "crates/test-harness/testdata/quality/route_strategy_curated_baseline_v1/same-outcome-default"
+    },
+    {
+      "expected_valid": true,
+      "fixture_id": "profile-divergence-authored-copper",
+      "project_root": "crates/test-harness/testdata/quality/route_strategy_curated_baseline_v1/profile-divergence-authored-copper"
+    },
+    {
+      "expected_valid": false,
+      "fixture_id": "no-proposal-null-net-class",
+      "project_root": "crates/test-harness/testdata/quality/route_strategy_curated_baseline_v1/no-proposal-null-net-class",
+      "reason": "intentional invalid net.class=null fixture for no-proposal route-strategy evidence"
+    },
+    {
+      "expected_valid": true,
+      "fixture_id": "via-available",
+      "project_root": "crates/test-harness/testdata/quality/route_strategy_curated_baseline_v1/via-available"
+    },
+    {
+      "expected_valid": false,
+      "fixture_id": "duplicate-pad-uuid-invalid",
+      "project_root": "crates/test-harness/testdata/quality/native_validation_cases_v1/duplicate-pad-uuid-invalid",
+      "reason": "intentional duplicate authored board pad UUID"
+    },
+    {
+      "expected_valid": false,
+      "fixture_id": "missing-sheet-file-invalid",
+      "project_root": "crates/test-harness/testdata/quality/native_validation_cases_v1/missing-sheet-file-invalid",
+      "reason": "intentional schematic root reference to a missing sheet file"
+    },
+    {
+      "expected_valid": false,
+      "fixture_id": "unsupported-schema-version-invalid",
+      "project_root": "crates/test-harness/testdata/quality/native_validation_cases_v1/unsupported-schema-version-invalid",
+      "reason": "intentional unsupported board schema_version"
+    }
+  ],
+  "kind": "native_project_validation_manifest",
+  "version": 1
+}

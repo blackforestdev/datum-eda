@@ -60,12 +60,22 @@ Initial contract selected on 2026-03-30:
   `project route-strategy-compare <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
 - decision-delta surface:
   `project route-strategy-delta <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- curated fixture-suite writer:
+  `project write-route-strategy-curated-fixture-suite --out-dir <path> [--manifest <path>]`
+- curated baseline-capture surface:
+  `project capture-route-strategy-curated-baseline --out-dir <path> [--manifest <path>] [--result <path>]`
 - batch evaluation surface:
   `project route-strategy-batch-evaluate --requests <path>`
 - saved batch result inspection surface:
   `project inspect-route-strategy-batch-result <path>`
 - saved batch result validation surface:
   `project validate-route-strategy-batch-result <path>`
+- saved batch result comparison surface:
+  `project compare-route-strategy-batch-result <before> <after>`
+- saved batch result gate surface:
+  `project gate-route-strategy-batch-result <before> <after> [--policy <policy>]`
+- saved batch result index surface:
+  `project summarize-route-strategy-batch-results [--dir <path> | --artifact <path> ...] [--baseline <path> --policy <policy>]`
 - accepted objective set:
   - `default`
   - `authored-copper-priority`
@@ -85,6 +95,25 @@ Initial contract selected on 2026-03-30:
   - one versioned batch request manifest format that evaluates explicit route
     requests across one or more fixtures/projects by reusing the existing
     report/compare/delta surfaces
+  - one deterministic curated fixture-suite writer that materializes a
+    bounded native project set plus a compatible batch-request manifest for
+    repeated evidence gathering
+  - one deterministic curated baseline-capture surface that materializes that
+    fixture suite, runs the existing batch evaluator, and saves one reusable
+    versioned batch-result artifact for later inspect/compare/gate/summarize
+    workflows
+  - one checked-in repo baseline asset set plus one CI verification script now
+    operationalize that workflow for normal development:
+    - baseline assets:
+      `crates/test-harness/testdata/quality/route_strategy_curated_baseline_v1`
+    - CI/local verification:
+      `python3 scripts/check_route_strategy_evidence.py`
+  - the initial curated fixture suite covers:
+    - same-outcome baseline route selection
+    - profile divergence between `default` and
+      `authored-copper-priority`
+    - no-proposal-under-any-profile
+    - one cross-layer routable same-outcome case
   - one aggregate batch summary with total evaluated requests, recommendation
     counts by profile, delta classification counts, same-vs-different outcome
     counts, and proposal-available vs no-proposal counts
@@ -96,10 +125,45 @@ Initial contract selected on 2026-03-30:
     artifacts that reports artifact identity/version, distributions, per-request
     outcomes, malformed entries, version compatibility, required-field
     coverage, and summary/result count integrity
+  - one read-only saved-artifact comparison workflow keyed by `request_id`
+    that reports compatibility, aggregate count deltas, added/removed/common
+    request ids, and common-request recommendation/delta/outcome changes with
+    one bounded summary classification:
+    - `identical`
+    - `aggregate_only_changed`
+    - `per_request_outcomes_changed`
+    - `incompatible_artifacts`
+  - one read-only CI/review gate workflow built on that comparison output with
+    the accepted explicit policy set:
+    - `strict_identical`
+    - `allow_aggregate_only`
+    - `fail_on_recommendation_change`
+  - the gate reports selected policy, pass/fail result, comparison
+    classification, specific pass/fail reasons, threshold/count facts, and
+    summary counts of changed recommendations, changed delta classifications,
+    and changed per-request outcomes
+  - CLI gate exit codes:
+    - `0` when the selected policy passes
+    - `2` when the selected policy fails
+  - one read-only artifact index workflow that scans a directory or explicit
+    list of saved batch result artifacts and reports:
+    - artifact identity/version
+    - filesystem-derived run ordering when available
+    - request counts
+    - recommendation distribution
+    - delta classification distribution
+    - structural validation state
+  - that same index workflow may attach one optional baseline gate summary for
+    each non-baseline artifact using the existing accepted gate policies
 - paired MCP surface:
   - `route_strategy_report`
   - `route_strategy_compare`
   - `route_strategy_delta`
+  - `write_route_strategy_curated_fixture_suite`
+  - `capture_route_strategy_curated_baseline`
   - `route_strategy_batch_evaluate`
   - `inspect_route_strategy_batch_result`
   - `validate_route_strategy_batch_result`
+  - `compare_route_strategy_batch_result`
+  - `gate_route_strategy_batch_result`
+  - `summarize_route_strategy_batch_results`
