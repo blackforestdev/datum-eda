@@ -35,4 +35,7 @@ That workflow runs `project validate` over the checked-in fixture roots listed
 in `crates/test-harness/testdata/quality/native_project_validation_manifest_v1.json`.
 Three fixtures are expected-valid native projects; `no-proposal-null-net-class`
 is intentionally expected-invalid to preserve the route-strategy no-proposal
-evidence case driven by `net.class = null`.
+evidence case driven by `net.class = null`. Together with
+`native_validation_cases_v1`, this directory is part of a manifest that
+currently covers every checked-in native project root under
+`crates/test-harness/testdata/quality`.

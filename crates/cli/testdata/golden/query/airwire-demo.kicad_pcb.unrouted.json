@@ -1,0 +1,1 @@
+{"airwires":[{"distance_nm":22000000,"from":{"component":"R1","pin":"1"},"net":"33d254fb-2d26-5809-b421-f4dd0eb41580","net_name":"SIG","to":{"component":"R2","pin":"1"}}],"domain":"board"}

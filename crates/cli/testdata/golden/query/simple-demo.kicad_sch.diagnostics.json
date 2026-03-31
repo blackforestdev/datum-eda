@@ -1,0 +1,1 @@
+{"diagnostics":[{"kind":"dangling_component_pin","message":"component pin R1.2 is on an isolated anonymous net","objects":["<uuid>"],"severity":"warning"}],"domain":"schematic"}

@@ -16,3 +16,6 @@ python3 scripts/check_native_project_fixtures.py
 
 The checked-in expectations live in
 `crates/test-harness/testdata/quality/native_project_validation_manifest_v1.json`.
+Together with `route_strategy_curated_baseline_v1`, that manifest currently
+covers every checked-in native project root under
+`crates/test-harness/testdata/quality`.

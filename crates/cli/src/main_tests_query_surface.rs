@@ -42,6 +42,26 @@ fn execute_query_summary_command_returns_board_output() {
 }
 
 #[test]
+fn execute_query_netlist_command_returns_board_output() {
+    let cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "query",
+        kicad_fixture_path("simple-demo.kicad_pcb")
+            .to_str()
+            .unwrap(),
+        "netlist",
+    ])
+    .expect("CLI should parse");
+
+    let output = execute(cli).expect("board netlist query should succeed");
+    assert!(output.contains("\"domain\": \"board\""));
+    assert!(output.contains("\"name\": \"GND\""));
+    assert!(output.contains("\"routed_pct\""));
+}
+
+#[test]
 fn execute_query_nets_command_returns_schematic_output() {
     let cli = Cli::try_parse_from([
         "eda",
@@ -62,6 +82,26 @@ fn execute_query_nets_command_returns_schematic_output() {
 }
 
 #[test]
+fn execute_query_schematic_nets_command_returns_schematic_output() {
+    let cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "query",
+        kicad_fixture_path("simple-demo.kicad_sch")
+            .to_str()
+            .unwrap(),
+        "schematic-nets",
+    ])
+    .expect("CLI should parse");
+
+    let output = execute(cli).expect("schematic-nets query should succeed");
+    assert!(output.contains("\"domain\": \"schematic\""));
+    assert!(output.contains("\"name\": \"SCL\""));
+    assert!(output.contains("\"semantic_class\": \"power\""));
+}
+
+#[test]
 fn execute_query_components_command_rejects_schematic_inputs() {
     let cli = Cli::try_parse_from([
         "eda",
@@ -76,6 +116,45 @@ fn execute_query_components_command_rejects_schematic_inputs() {
     let err = execute(cli).expect_err("schematic components query must fail");
     let msg = format!("{err:#}");
     assert!(msg.contains("only implemented for boards in M1"), "{msg}");
+}
+
+#[test]
+fn execute_query_sheets_command_returns_schematic_output() {
+    let cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "query",
+        kicad_fixture_path("simple-demo.kicad_sch")
+            .to_str()
+            .unwrap(),
+        "sheets",
+    ])
+    .expect("CLI should parse");
+
+    let output = execute(cli).expect("schematic sheets query should succeed");
+    assert!(output.contains("\"domain\": \"schematic\""));
+    assert!(output.contains("\"name\": \"Root\""));
+    assert!(output.contains("\"symbols\": 1"));
+}
+
+#[test]
+fn execute_query_symbols_command_returns_schematic_output() {
+    let cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "query",
+        kicad_fixture_path("simple-demo.kicad_sch")
+            .to_str()
+            .unwrap(),
+        "symbols",
+    ])
+    .expect("CLI should parse");
+
+    let output = execute(cli).expect("schematic symbols query should succeed");
+    assert!(output.contains("\"domain\": \"schematic\""));
+    assert!(output.contains("\"reference\": \"R1\""));
 }
 
 #[test]
@@ -97,6 +176,65 @@ fn execute_query_labels_command_returns_schematic_output() {
     assert!(output.contains("\"name\": \"SCL\""));
     assert!(output.contains("\"name\": \"VCC\""));
     assert!(output.contains("\"name\": \"SUB_IN\""));
+}
+
+#[test]
+fn execute_query_buses_command_returns_schematic_output() {
+    let cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "query",
+        kicad_fixture_path("simple-demo.kicad_sch")
+            .to_str()
+            .unwrap(),
+        "buses",
+    ])
+    .expect("CLI should parse");
+
+    let output = execute(cli).expect("schematic buses query should succeed");
+    assert!(output.contains("\"domain\": \"schematic\""));
+    assert!(output.contains("\"buses\""));
+    assert!(output.contains("\"members\""));
+}
+
+#[test]
+fn execute_query_bus_entries_command_returns_schematic_output() {
+    let cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "query",
+        kicad_fixture_path("simple-demo.kicad_sch")
+            .to_str()
+            .unwrap(),
+        "bus-entries",
+    ])
+    .expect("CLI should parse");
+
+    let output = execute(cli).expect("schematic bus-entries query should succeed");
+    assert!(output.contains("\"domain\": \"schematic\""));
+    assert!(output.contains("\"bus_entries\""));
+}
+
+#[test]
+fn execute_query_noconnects_command_returns_schematic_output() {
+    let cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "query",
+        kicad_fixture_path("simple-demo.kicad_sch")
+            .to_str()
+            .unwrap(),
+        "noconnects",
+    ])
+    .expect("CLI should parse");
+
+    let output = execute(cli).expect("schematic noconnects query should succeed");
+    assert!(output.contains("\"domain\": \"schematic\""));
+    assert!(output.contains("\"noconnects\""));
+    assert!(output.contains("\"pin\""));
 }
 
 #[test]

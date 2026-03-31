@@ -411,5 +411,7 @@ mod main_tests_project_text;
 mod main_tests_project_validate;
 #[path = "main_tests_project_wire.rs"]
 mod main_tests_project_wire;
+#[path = "main_tests_query_goldens.rs"]
+mod main_tests_query_goldens;
 #[path = "main_tests_query_surface.rs"]
 mod main_tests_query_surface;

@@ -42,6 +42,25 @@ pub(crate) fn query_summary(path: &Path) -> Result<SummaryView> {
     }
 }
 
+pub(crate) fn query_netlist(path: &Path) -> Result<NetlistView> {
+    let engine = import_design_for_query(path)?;
+    match engine.get_board_summary() {
+        Ok(_) => Ok(NetlistView::Board {
+            netlist: engine.get_netlist()?,
+        }),
+        Err(EngineError::NotFound {
+            object_type: "board",
+            ..
+        }) => {
+            require_schematic(&engine, path)?;
+            Ok(NetlistView::Schematic {
+                netlist: engine.get_netlist()?,
+            })
+        }
+        Err(err) => Err(err.into()),
+    }
+}
+
 pub(crate) fn query_nets(path: &Path) -> Result<NetListView> {
     let engine = import_design_for_query(path)?;
     match engine.get_net_info() {
@@ -54,6 +73,14 @@ pub(crate) fn query_nets(path: &Path) -> Result<NetListView> {
         }),
         Err(err) => Err(err.into()),
     }
+}
+
+pub(crate) fn query_schematic_nets(path: &Path) -> Result<NetListView> {
+    let engine = import_design_for_query(path)?;
+    require_schematic(&engine, path)?;
+    Ok(NetListView::Schematic {
+        nets: engine.get_schematic_net_info()?,
+    })
 }
 
 pub(crate) fn query_components(path: &Path) -> Result<ComponentListView> {
@@ -85,6 +112,22 @@ fn require_schematic(engine: &Engine, path: &Path) -> Result<()> {
     }
 }
 
+pub(crate) fn query_sheets(path: &Path) -> Result<SheetListView> {
+    let engine = import_design_for_query(path)?;
+    require_schematic(&engine, path)?;
+    Ok(SheetListView::Schematic {
+        sheets: engine.get_sheets()?,
+    })
+}
+
+pub(crate) fn query_symbols(path: &Path) -> Result<SymbolListView> {
+    let engine = import_design_for_query(path)?;
+    require_schematic(&engine, path)?;
+    Ok(SymbolListView::Schematic {
+        symbols: engine.get_symbols(None)?,
+    })
+}
+
 pub(crate) fn query_labels(path: &Path) -> Result<LabelListView> {
     let engine = import_design_for_query(path)?;
     require_schematic(&engine, path)?;
@@ -98,6 +141,30 @@ pub(crate) fn query_ports(path: &Path) -> Result<PortListView> {
     require_schematic(&engine, path)?;
     Ok(PortListView::Schematic {
         ports: engine.get_ports(None)?,
+    })
+}
+
+pub(crate) fn query_buses(path: &Path) -> Result<BusListView> {
+    let engine = import_design_for_query(path)?;
+    require_schematic(&engine, path)?;
+    Ok(BusListView::Schematic {
+        buses: engine.get_buses(None)?,
+    })
+}
+
+pub(crate) fn query_bus_entries(path: &Path) -> Result<BusEntryListView> {
+    let engine = import_design_for_query(path)?;
+    require_schematic(&engine, path)?;
+    Ok(BusEntryListView::Schematic {
+        bus_entries: engine.get_bus_entries(None)?,
+    })
+}
+
+pub(crate) fn query_noconnects(path: &Path) -> Result<NoConnectListView> {
+    let engine = import_design_for_query(path)?;
+    require_schematic(&engine, path)?;
+    Ok(NoConnectListView::Schematic {
+        noconnects: engine.get_noconnects(None)?,
     })
 }
 

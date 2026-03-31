@@ -164,14 +164,28 @@ pub(crate) enum Commands {
 pub(crate) enum QueryCommands {
     /// Board summary (dimensions, counts)
     Summary,
+    /// List the canonical netlist view
+    Netlist,
     /// List all nets
     Nets,
+    /// List schematic net inventory only
+    SchematicNets,
     /// List all components
     Components,
+    /// List schematic sheets
+    Sheets,
+    /// List schematic symbols
+    Symbols,
     /// List schematic labels
     Labels,
     /// List schematic ports
     Ports,
+    /// List schematic buses
+    Buses,
+    /// List schematic bus entries
+    BusEntries,
+    /// List schematic no-connect markers
+    Noconnects,
     /// Show schematic hierarchy
     Hierarchy,
     /// Show schematic connectivity diagnostics

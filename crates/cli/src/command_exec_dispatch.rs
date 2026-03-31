@@ -23,13 +23,29 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 let summary = query_summary(&path)?;
                 Ok((render_output(&cli.format, &summary), 0))
             }
+            QueryCommands::Netlist => {
+                let netlist = query_netlist(&path)?;
+                Ok((render_output(&cli.format, &netlist), 0))
+            }
             QueryCommands::Nets => {
                 let nets = query_nets(&path)?;
+                Ok((render_output(&cli.format, &nets), 0))
+            }
+            QueryCommands::SchematicNets => {
+                let nets = query_schematic_nets(&path)?;
                 Ok((render_output(&cli.format, &nets), 0))
             }
             QueryCommands::Components => {
                 let components = query_components(&path)?;
                 Ok((render_output(&cli.format, &components), 0))
+            }
+            QueryCommands::Sheets => {
+                let sheets = query_sheets(&path)?;
+                Ok((render_output(&cli.format, &sheets), 0))
+            }
+            QueryCommands::Symbols => {
+                let symbols = query_symbols(&path)?;
+                Ok((render_output(&cli.format, &symbols), 0))
             }
             QueryCommands::Labels => {
                 let labels = query_labels(&path)?;
@@ -38,6 +54,18 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             QueryCommands::Ports => {
                 let ports = query_ports(&path)?;
                 Ok((render_output(&cli.format, &ports), 0))
+            }
+            QueryCommands::Buses => {
+                let buses = query_buses(&path)?;
+                Ok((render_output(&cli.format, &buses), 0))
+            }
+            QueryCommands::BusEntries => {
+                let entries = query_bus_entries(&path)?;
+                Ok((render_output(&cli.format, &entries), 0))
+            }
+            QueryCommands::Noconnects => {
+                let noconnects = query_noconnects(&path)?;
+                Ok((render_output(&cli.format, &noconnects), 0))
             }
             QueryCommands::Hierarchy => {
                 let hierarchy = query_hierarchy(&path)?;

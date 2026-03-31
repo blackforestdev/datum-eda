@@ -79,25 +79,47 @@ Corrections landed:
 
 | Method | Engine | Daemon | MCP | CLI |
 |--------|--------|--------|-----|-----|
-| get_netlist | [x] | [x] | [x] | [ ] |
+| get_netlist | [x] | [x] | [x] | [x] |
 | get_components | [x] | [x] | [x] | [x] |
 | get_nets / get_net_info | [x] | [x] | [x] | [x] |
-| get_schematic_net_info | [x] | [x] | [x] | [ ] |
+| get_schematic_net_info | [x] | [x] | [x] | [x] |
 | get_board_summary | [x] | [x] | [x] | [x] |
 | get_schematic_summary | [x] | [x] | [x] | [x] |
-| get_sheets | [x] | [x] | [x] | [ ] |
-| get_symbols | [x] | [x] | [x] | [ ] |
+| get_sheets | [x] | [x] | [x] | [x] |
+| get_symbols | [x] | [x] | [x] | [x] |
 | get_ports | [x] | [x] | [x] | [x] |
 | get_labels | [x] | [x] | [x] | [x] |
-| get_buses | [x] | [x] | [x] | [ ] |
-| get_bus_entries | [x] | [x] | [x] | [ ] |
-| get_noconnects | [x] | [x] | [x] | [ ] |
+| get_buses | [x] | [x] | [x] | [x] |
+| get_bus_entries | [x] | [x] | [x] | [x] |
+| get_noconnects | [x] | [x] | [x] | [x] |
 | get_hierarchy | [x] | [x] | [x] | [x] |
 | get_connectivity_diagnostics | [x] | [x] | [x] | [x] |
 | get_unrouted | [x] | [x] | [x] | [x] |
 | search_pool | [x] | [x] | [x] | [x] |
 
-**M1 overall**: [~] ~50% — data models and query surface implemented; import fidelity, corpus, and golden tests not done
+**M1 overall**: [~] Query-surface parity is now complete across engine/daemon/MCP/CLI for the current imported-design read slice; import fidelity, corpus, and broader golden coverage are still open
+
+M1 imported-query reliability note (2026-03-30):
+- Checked-in CLI query goldens now cover the current imported-design read
+  surfaces for `simple-demo.kicad_sch`, `simple-demo.kicad_pcb`, and
+  `airwire-demo.kicad_pcb`:
+  - `summary`
+  - `netlist`
+  - `nets`
+  - `schematic-nets`
+  - `sheets`
+  - `symbols`
+  - `buses`
+  - `bus-entries`
+  - `noconnects`
+  - `labels`
+  - `ports`
+  - `hierarchy`
+  - `diagnostics`
+  - `unrouted`
+- Those fixtures live under `crates/cli/testdata/golden/query` and are enforced
+  by `main_tests_query_goldens`, with `UPDATE_GOLDENS=1` as the explicit
+  regeneration path.
 
 ---
 
@@ -340,7 +362,8 @@ Checking follow-up note (2026-03-30):
   and the existing `project validate` contract in CI.
 - That manifest now covers both real route-strategy native fixtures and a
   dedicated checked-in invalid-case suite for duplicate UUID, missing sheet,
-  and unsupported schema-version failures.
+  and unsupported schema-version failures, and it currently exhausts all
+  checked-in native project roots under `crates/test-harness/testdata/quality`.
 
 ### 2026-03-25 Contract Alignment Pass
 

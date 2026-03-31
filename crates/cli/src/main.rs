@@ -8,7 +8,7 @@ use anyhow::{Context, Result, bail};
 use clap::Parser;
 use eda_engine::api::{
     AssignPartInput, CheckReport, CheckStatus, ComponentReplacementPlan,
-    ComponentReplacementPolicy, ComponentReplacementScope, Engine, MoveComponentInput,
+    ComponentReplacementPolicy, ComponentReplacementScope, Engine, MoveComponentInput, NetlistNet,
     PackageChangeCompatibilityReport, PartChangeCompatibilityReport,
     PlannedComponentReplacementInput, PolicyDrivenComponentReplacementInput, ReplaceComponentInput,
     RotateComponentInput, ScopedComponentReplacementOverride, ScopedComponentReplacementPlan,
@@ -22,7 +22,8 @@ use eda_engine::import::ImportReport;
 use eda_engine::pool::PartSummary;
 use eda_engine::rules::ast::{Rule, RuleParams, RuleScope, RuleType};
 use eda_engine::schematic::{
-    ConnectivityDiagnosticInfo, HierarchyInfo, LabelInfo, PortInfo, SchematicNetInfo,
+    BusEntryInfo, BusInfo, ConnectivityDiagnosticInfo, HierarchyInfo, LabelInfo, NoConnectInfo,
+    PortInfo, SchematicNetInfo, SheetSummary, SymbolInfo,
 };
 use eda_engine::{board::Airwire, board::BoardNetInfo, board::ComponentInfo};
 use serde::{Deserialize, Serialize};

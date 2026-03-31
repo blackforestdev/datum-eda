@@ -26,8 +26,27 @@ pub(crate) enum NetListView {
 
 #[derive(Debug, Serialize)]
 #[serde(tag = "domain", rename_all = "snake_case")]
+pub(crate) enum NetlistView {
+    Board { netlist: Vec<NetlistNet> },
+    Schematic { netlist: Vec<NetlistNet> },
+}
+
+#[derive(Debug, Serialize)]
+#[serde(tag = "domain", rename_all = "snake_case")]
 pub(crate) enum ComponentListView {
     Board { components: Vec<ComponentInfo> },
+}
+
+#[derive(Debug, Serialize)]
+#[serde(tag = "domain", rename_all = "snake_case")]
+pub(crate) enum SheetListView {
+    Schematic { sheets: Vec<SheetSummary> },
+}
+
+#[derive(Debug, Serialize)]
+#[serde(tag = "domain", rename_all = "snake_case")]
+pub(crate) enum SymbolListView {
+    Schematic { symbols: Vec<SymbolInfo> },
 }
 
 #[derive(Debug, Serialize)]
@@ -40,6 +59,24 @@ pub(crate) enum LabelListView {
 #[serde(tag = "domain", rename_all = "snake_case")]
 pub(crate) enum PortListView {
     Schematic { ports: Vec<PortInfo> },
+}
+
+#[derive(Debug, Serialize)]
+#[serde(tag = "domain", rename_all = "snake_case")]
+pub(crate) enum BusListView {
+    Schematic { buses: Vec<BusInfo> },
+}
+
+#[derive(Debug, Serialize)]
+#[serde(tag = "domain", rename_all = "snake_case")]
+pub(crate) enum BusEntryListView {
+    Schematic { bus_entries: Vec<BusEntryInfo> },
+}
+
+#[derive(Debug, Serialize)]
+#[serde(tag = "domain", rename_all = "snake_case")]
+pub(crate) enum NoConnectListView {
+    Schematic { noconnects: Vec<NoConnectInfo> },
 }
 
 #[derive(Debug, Serialize)]
