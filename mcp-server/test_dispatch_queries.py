@@ -835,6 +835,82 @@ class TestDispatchQueries(unittest.TestCase):
         self.assertEqual(payload["action"], "inspect_route_proposal_artifact")
         self.assertEqual(payload["artifact_kind"], "native_route_proposal_artifact")
 
+    def test_tools_call_dispatches_live_route_proposal_review(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 124,
+                "method": "tools/call",
+                "params": {
+                    "name": "review_route_proposal",
+                    "arguments": {
+                        "path": "/tmp/demo",
+                        "net_uuid": "00000000-0000-0000-0000-000000000101",
+                        "from_anchor_pad_uuid": "00000000-0000-0000-0000-000000000102",
+                        "to_anchor_pad_uuid": "00000000-0000-0000-0000-000000000103",
+                        "profile": "default",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "review_route_proposal",
+                    {
+                        "path": "/tmp/demo",
+                        "net_uuid": "00000000-0000-0000-0000-000000000101",
+                        "from_anchor_pad_uuid": "00000000-0000-0000-0000-000000000102",
+                        "to_anchor_pad_uuid": "00000000-0000-0000-0000-000000000103",
+                        "profile": "default",
+                        "artifact": None,
+                    },
+                )
+            ],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["action"], "review_route_proposal")
+        self.assertEqual(payload["review_source"], "selected_route_proposal")
+
+    def test_tools_call_dispatches_artifact_route_proposal_review(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 125,
+                "method": "tools/call",
+                "params": {
+                    "name": "review_route_proposal",
+                    "arguments": {
+                        "artifact": "/tmp/demo.route-proposal.json",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "review_route_proposal",
+                    {
+                        "path": None,
+                        "net_uuid": None,
+                        "from_anchor_pad_uuid": None,
+                        "to_anchor_pad_uuid": None,
+                        "profile": None,
+                        "artifact": "/tmp/demo.route-proposal.json",
+                    },
+                )
+            ],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["action"], "review_route_proposal")
+        self.assertEqual(payload["review_source"], "route_proposal_artifact")
+
     def test_tools_call_dispatches_route_proposal_artifact_revalidation(self) -> None:
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)

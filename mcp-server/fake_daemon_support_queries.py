@@ -1130,6 +1130,45 @@ class FakeDaemonClientQueriesMixin:
             None,
         )
 
+    def review_route_proposal(
+        self,
+        path: str | None = None,
+        net_uuid: str | None = None,
+        from_anchor_pad_uuid: str | None = None,
+        to_anchor_pad_uuid: str | None = None,
+        profile: str | None = None,
+        artifact: str | None = None,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "review_route_proposal",
+                {
+                    "path": path,
+                    "net_uuid": net_uuid,
+                    "from_anchor_pad_uuid": from_anchor_pad_uuid,
+                    "to_anchor_pad_uuid": to_anchor_pad_uuid,
+                    "profile": profile,
+                    "artifact": artifact,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            123,
+            {
+                "action": "review_route_proposal",
+                "review_source": (
+                    "route_proposal_artifact"
+                    if artifact is not None
+                    else "selected_route_proposal"
+                ),
+                "contract": "m5_route_path_candidate_v2",
+                "actions": 1,
+                "draw_track_actions": 1,
+            },
+            None,
+        )
+ 
     def revalidate_route_proposal_artifact(
         self,
         path: str,

@@ -8,6 +8,7 @@ use crate::NativeProjectRouteProposalArtifactRevalidationSegmentView;
 use crate::NativeProjectRouteProposalArtifactRevalidationView;
 use crate::NativeProjectRouteProposalExplainView;
 use crate::NativeProjectRouteProposalProfileArg;
+use crate::NativeProjectRouteProposalReviewView;
 use crate::NativeProjectRouteProposalSelectionCandidateView;
 use crate::NativeProjectRouteProposalSelectionView;
 use crate::NativeProjectRouteStrategyBatchEntryView;
@@ -534,6 +535,42 @@ pub(crate) fn explain_native_project_route_proposal(
     })
 }
 
+pub(crate) fn review_native_project_route_proposal(
+    root: Option<&Path>,
+    net_uuid: Option<Uuid>,
+    from_anchor_pad_uuid: Option<Uuid>,
+    to_anchor_pad_uuid: Option<Uuid>,
+    profile: NativeProjectRouteProposalProfileArg,
+    artifact_path: Option<&Path>,
+) -> Result<NativeProjectRouteProposalReviewView> {
+    if let Some(artifact_path) = artifact_path {
+        return review_route_proposal_artifact(artifact_path);
+    }
+    let root = root.ok_or_else(|| {
+        anyhow::anyhow!("review-route-proposal requires <dir> when --artifact is not provided")
+    })?;
+    let net_uuid = net_uuid.ok_or_else(|| {
+        anyhow::anyhow!("review-route-proposal requires --net when --artifact is not provided")
+    })?;
+    let from_anchor_pad_uuid = from_anchor_pad_uuid.ok_or_else(|| {
+        anyhow::anyhow!(
+            "review-route-proposal requires --from-anchor when --artifact is not provided"
+        )
+    })?;
+    let to_anchor_pad_uuid = to_anchor_pad_uuid.ok_or_else(|| {
+        anyhow::anyhow!(
+            "review-route-proposal requires --to-anchor when --artifact is not provided"
+        )
+    })?;
+    review_selected_native_project_route_proposal(
+        root,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        profile,
+    )
+}
+
 pub(crate) fn report_native_project_route_strategy(
     root: &Path,
     net_uuid: Uuid,
@@ -597,6 +634,80 @@ pub(crate) fn report_native_project_route_strategy(
         selected_contract: selection.report.selected_contract,
         selected_actions: selection.report.selected_actions,
         next_step_command,
+    })
+}
+
+fn review_selected_native_project_route_proposal(
+    root: &Path,
+    net_uuid: Uuid,
+    from_anchor_pad_uuid: Uuid,
+    to_anchor_pad_uuid: Uuid,
+    profile: NativeProjectRouteProposalProfileArg,
+) -> Result<NativeProjectRouteProposalReviewView> {
+    let selection = run_native_project_route_proposal_selection(
+        root,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        profile,
+    )?;
+    let selected_spec = selection.selected_spec.ok_or_else(|| {
+        anyhow::anyhow!(
+            "route-proposal found no selectable route under current authored constraints"
+        )
+    })?;
+    let actions = build_route_path_proposal_actions(
+        root,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        selected_spec.candidate,
+        selected_spec.policy,
+    )?;
+    super::command_project_route_apply::validate_route_proposal_actions(&actions)?;
+    let first_action = actions.first().ok_or_else(|| {
+        anyhow::anyhow!(
+            "route proposal review candidate {} produced no actions",
+            route_proposal_selection_spec_name(&selected_spec)
+        )
+    })?;
+    let segment_evidence =
+        orthogonal_graph_route_proposal_artifact_inspection_segment_evidence(&actions);
+    Ok(NativeProjectRouteProposalReviewView {
+        action: "review_route_proposal".to_string(),
+        review_source: "selected_route_proposal".to_string(),
+        status: "deterministic_route_proposal_ready".to_string(),
+        explanation: format!(
+            "reviewing the currently selected deterministic route proposal chosen by profile {}",
+            route_proposal_profile_name(profile)
+        ),
+        project_root: Some(root.display().to_string()),
+        artifact_path: None,
+        kind: None,
+        source_version: None,
+        version: None,
+        project_uuid: None,
+        project_name: None,
+        net_uuid: Some(net_uuid.to_string()),
+        from_anchor_pad_uuid: Some(from_anchor_pad_uuid.to_string()),
+        to_anchor_pad_uuid: Some(to_anchor_pad_uuid.to_string()),
+        selection_profile: Some(route_proposal_profile_name(profile).to_string()),
+        selection_rule: Some(selection.report.selection_rule),
+        selected_candidate: Some(route_apply_candidate_name(selected_spec.candidate).to_string()),
+        selected_policy: selected_spec
+            .policy
+            .map(route_authored_copper_graph_policy_name),
+        contract: first_action.contract.clone(),
+        actions: actions.len(),
+        draw_track_actions: actions
+            .iter()
+            .filter(|action| action.proposal_action == "draw_track")
+            .count(),
+        selected_path_bend_count: first_action.selected_path_bend_count,
+        selected_path_point_count: first_action.selected_path_point_count,
+        selected_path_segment_count: first_action.selected_path_segment_count,
+        segment_evidence,
+        proposal_actions: actions,
     })
 }
 
@@ -2856,6 +2967,77 @@ pub(crate) fn inspect_route_proposal_artifact(
             .map(|action| action.selected_path_segment_count)
             .unwrap_or(0),
         segment_evidence,
+    })
+}
+
+fn review_route_proposal_artifact(
+    artifact_path: &Path,
+) -> Result<NativeProjectRouteProposalReviewView> {
+    let loaded = load_route_proposal_artifact(artifact_path)?;
+    let segment_evidence = orthogonal_graph_route_proposal_artifact_inspection_segment_evidence(
+        &loaded.artifact.actions,
+    );
+    Ok(NativeProjectRouteProposalReviewView {
+        action: "review_route_proposal".to_string(),
+        review_source: "route_proposal_artifact".to_string(),
+        status: "saved_route_proposal_artifact_ready".to_string(),
+        explanation:
+            "reviewing one saved route proposal artifact without consulting live project state"
+                .to_string(),
+        project_root: None,
+        artifact_path: Some(loaded.artifact_path.display().to_string()),
+        kind: Some(loaded.artifact.kind.clone()),
+        source_version: Some(loaded.source_version),
+        version: Some(loaded.artifact.version),
+        project_uuid: Some(loaded.artifact.project_uuid.to_string()),
+        project_name: Some(loaded.artifact.project_name.clone()),
+        net_uuid: loaded
+            .artifact
+            .actions
+            .first()
+            .map(|action| action.net_uuid.to_string()),
+        from_anchor_pad_uuid: loaded
+            .artifact
+            .actions
+            .first()
+            .map(|action| action.from_anchor_pad_uuid.to_string()),
+        to_anchor_pad_uuid: loaded
+            .artifact
+            .actions
+            .first()
+            .map(|action| action.to_anchor_pad_uuid.to_string()),
+        selection_profile: None,
+        selection_rule: None,
+        selected_candidate: None,
+        selected_policy: None,
+        contract: loaded.artifact.contract.clone(),
+        actions: loaded.artifact.actions.len(),
+        draw_track_actions: loaded
+            .artifact
+            .actions
+            .iter()
+            .filter(|action| action.proposal_action == "draw_track")
+            .count(),
+        selected_path_bend_count: loaded
+            .artifact
+            .actions
+            .first()
+            .map(|action| action.selected_path_bend_count)
+            .unwrap_or(0),
+        selected_path_point_count: loaded
+            .artifact
+            .actions
+            .first()
+            .map(|action| action.selected_path_point_count)
+            .unwrap_or(0),
+        selected_path_segment_count: loaded
+            .artifact
+            .actions
+            .first()
+            .map(|action| action.selected_path_segment_count)
+            .unwrap_or(0),
+        segment_evidence,
+        proposal_actions: loaded.artifact.actions,
     })
 }
 

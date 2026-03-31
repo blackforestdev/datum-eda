@@ -1022,12 +1022,17 @@ Co-optimization:
 - Proposal ranking: score candidates, present best with rationale
 
 ### M7: Review UI (interaction milestone)
-- Placement proposal review (accept/reject/adjust per component)
-- Route proposal review (accept/reject/adjust per net)
-- Net length gauge, route state visualization, clearance display
-- Component group visualization (highlight groups, show constraints)
-- Command line placement + routing commands
-- Keyboard-centric parameter cycling during manual operations
+- Opening boundary: one read-only route-proposal review workspace consuming
+  the completed `M5` proposal/artifact substrate without changing routing
+  semantics
+- Opening workspace: one viewport-centered three-column shell, one board
+  review scene, one proposal overlay/evidence view, one fixed panel set, plus
+  integrated bottom-docked terminal and AI supporting lanes
+- Opening interaction: inspect, highlight, review, and explain only; no apply,
+  no route editing, no manual routing behavior
+- Future `M7+` directions remain broader: route proposal review, placement
+  proposal review, route state visualization, clearance display, component
+  group visualization, and later keyboard-centric manual operations
 
 ---
 

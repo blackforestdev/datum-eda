@@ -378,6 +378,28 @@ pub(crate) struct ProjectRouteProposalExplainArgs {
 }
 
 #[derive(clap::Args)]
+pub(crate) struct ProjectReviewRouteProposalArgs {
+    /// Project root directory when reviewing the current selected proposal
+    #[arg(required_unless_present = "artifact", conflicts_with = "artifact")]
+    pub(crate) path: Option<PathBuf>,
+    /// Net UUID when reviewing the current selected proposal
+    #[arg(long = "net", required_unless_present = "artifact")]
+    pub(crate) net_uuid: Option<Uuid>,
+    /// Source anchor pad UUID when reviewing the current selected proposal
+    #[arg(long = "from-anchor", required_unless_present = "artifact")]
+    pub(crate) from_anchor_pad_uuid: Option<Uuid>,
+    /// Target anchor pad UUID when reviewing the current selected proposal
+    #[arg(long = "to-anchor", required_unless_present = "artifact")]
+    pub(crate) to_anchor_pad_uuid: Option<Uuid>,
+    /// Deterministic selector profile when reviewing the current selected proposal
+    #[arg(long = "profile", value_enum, default_value_t = NativeProjectRouteProposalProfileArg::Default)]
+    pub(crate) profile: NativeProjectRouteProposalProfileArg,
+    /// Saved route proposal artifact path to review instead of live project selection
+    #[arg(long = "artifact", conflicts_with_all = ["path", "net_uuid", "from_anchor_pad_uuid", "to_anchor_pad_uuid"])]
+    pub(crate) artifact: Option<PathBuf>,
+}
+
+#[derive(clap::Args)]
 pub(crate) struct ProjectRouteStrategyReportArgs {
     /// Project root directory
     pub(crate) path: PathBuf,

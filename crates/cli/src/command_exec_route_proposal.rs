@@ -5,6 +5,28 @@ pub(super) fn execute_route_proposal_command(
     command: ProjectCommands,
 ) -> Result<(String, i32)> {
     match command {
+        ProjectCommands::ReviewRouteProposal(ProjectReviewRouteProposalArgs {
+            path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            profile,
+            artifact,
+        }) => {
+            let report = review_native_project_route_proposal(
+                path.as_deref(),
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+                profile,
+                artifact.as_deref(),
+            )?;
+            let output = match format {
+                OutputFormat::Text => render_native_route_proposal_review_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
         ProjectCommands::RouteStrategyReport(ProjectRouteStrategyReportArgs {
             path,
             net_uuid,

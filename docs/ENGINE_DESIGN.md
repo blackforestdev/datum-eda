@@ -16,6 +16,15 @@ CLI and MCP server do. Every committed design change flows through the
 operation model. Interactive behaviors (drag, hover, route-in-progress)
 are consumer-specific — they produce operations, they are not operations.
 
+For the opening `M7` slice, the GUI should consume versioned deterministic
+review-scene and review-payload contracts rather than reading ad hoc engine
+state directly. The frontend may own workspace, viewport, hover/focus,
+selection, terminal-lane, and AI-lane presentation state, but it must not own
+parallel design truth or unofficial write semantics.
+The locked `M7` shell and lane decisions do not change that authority
+boundary; they only constrain how the frontend presents deterministic review
+state.
+
 ```
 engine (lib crate)
 ├── No GUI dependencies

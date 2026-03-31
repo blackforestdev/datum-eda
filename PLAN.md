@@ -48,10 +48,10 @@ guardrails, not feature expansion.
 
 ## Active Execution Window
 
-Current planning focus: pre-`M7` readiness work on top of the closed `M5`
-routing-kernel substrate and the frozen `M6` strategy-evidence slice,
-following the active frontier recorded in `specs/PROGRESS.md` and the current
-milestone shard in `specs/progress/`.
+Current planning focus: the opening `M7` read-only route-review slice on top
+of the closed `M5` routing-kernel substrate and the frozen `M6`
+strategy-evidence slice, following the active frontier recorded in
+`specs/PROGRESS.md` and the current milestone shard in `specs/progress/`.
 
 Near-term execution order:
 1. Keep `M5` closed except for regression fixes; do not reopen routing-kernel
@@ -59,9 +59,11 @@ Near-term execution order:
 2. Keep `M6` frozen pending accumulated evidence from the current strategy
    baseline gates; do not add objectives, profiles, or broader intent
    semantics by default.
-3. Prioritize correctness, reliability, and runtime-safety closure work in
-   existing imported-design, checking, daemon, and MCP contracts before
-   opening `M7`.
+3. Keep the opening `M7` scope narrow: one read-only route-proposal review
+   workspace consuming existing machine-native route proposal and artifact data
+   plus one bounded frontend board-review scene contract, a locked
+   viewport-centered three-column shell, and read-only supporting terminal/AI
+   lanes.
 4. Use `specs/PROGRESS.md` plus the active milestone shard in
    `specs/progress/` as the source for the next bounded slice; do not let
    local worktree momentum redefine roadmap priority.

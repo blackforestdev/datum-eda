@@ -824,13 +824,15 @@ Status: [~] Frozen pending evidence
 
 ## M7 Opening Charter
 
-Status: [ ] Not opened
-- Authority for the proposed opening charter and entry criteria:
+Status: [~] Opened narrowly as a read-only route-proposal review layer
+- Authority for the opening charter and entry criteria:
   `specs/progress/m7_opening.md`
-- Recommended M7 focus: one narrow visual review layer on top of the closed M5
+- Concrete workspace/contract/spike definition:
+  `specs/M7_FRONTEND_SPEC.md`
+- Active M7 focus: one narrow visual review layer on top of the closed M5
   routing-kernel substrate and the frozen M6 strategy-reporting/evidence
   stack.
-- Current pre-M7 readiness note:
+- Entry conditions satisfied before opening:
   - daemon result serialization no longer unwrap-panic on response encoding in
     `crates/engine-daemon/src/dispatch.rs`; serialization failures now return
     structured internal JSON-RPC errors instead of crashing the daemon
@@ -845,30 +847,52 @@ Status: [ ] Not opened
     generated daemon client wrappers are installed and preserve required fixed
     parameter shapes such as `rotate_component`
   - governance/docs no longer treat `M5` as the active execution window; M5 is
-    closed, M6 is frozen pending evidence, and the next explicit milestone
-    decision point is `M7`
-    `0` on pass and `2` on fail
-  - saved batch result artifacts can now also be indexed from a directory or
-    explicit list, reporting per-artifact identity/version, filesystem-derived
-    run ordering, request counts, recommendation and delta distributions,
-    structural validation state, and optional baseline gate summaries without
-    rerunning live strategy evaluation
-  - the same read-only strategy surface is exposed through MCP as
-    `route_strategy_report`, `route_strategy_compare`, and
-    `route_strategy_delta`, `route_strategy_batch_evaluate`,
-    `write_route_strategy_curated_fixture_suite`,
-    `capture_route_strategy_curated_baseline`,
-    `inspect_route_strategy_batch_result`, and
-    `validate_route_strategy_batch_result`,
-    `compare_route_strategy_batch_result`, and
-    `gate_route_strategy_batch_result`, plus
-    `summarize_route_strategy_batch_results`
+    closed and M6 is frozen pending evidence
+- Implemented opening slice:
+  - new native CLI review surface:
+    `project review-route-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> [--profile <profile>]`
+  - the same command also supports saved-artifact review with:
+    `project review-route-proposal --artifact <path>`
+  - the review payload reuses the existing selected route-proposal and route
+    proposal artifact data structures, exposing deterministic proposal actions,
+    segment evidence, selected contract metadata, and source identity for one
+    frontend-consumable review object
+  - the same review surface is exposed through MCP as
+    `review_route_proposal`
+  - apply/export remain in the existing machine-native CLI/MCP surfaces; M7 is
+    review-only in this opening slice
 
-- Acceptance checks for the opening slice:
+- Next accepted frontend slice for `M7`:
+  - one fixed route-proposal review workspace defined in
+    `specs/M7_FRONTEND_SPEC.md`
+  - one deterministic `board_review_scene_v1` contract for the opening board
+    review context
+  - one locked viewport-centered three-column shell with bottom dock strip
+  - one fixed panel taxonomy: `Project`, `Filters`, `Inspector`, `Review`
+  - one single-selection read-only interaction model with a separate active
+    review target
+  - one fixed panel set plus integrated terminal and AI supporting lanes, all
+    remaining subordinate to engine authority
+  - one explicit authored/proposed/diagnostic visual-state model
+
+- Acceptance checks met for the opening slice:
   - deterministic repeated output on unchanged persisted state
   - no pool re-resolution or live import-session dependence
   - no invented routing geometry or inferred constraints beyond persisted facts
   - engine + CLI test coverage for sorted/deterministic extraction
+
+- Acceptance checks required for the next frontend slice:
+  - deterministic repeated `board_review_scene_v1` output on unchanged
+    persisted state
+  - stable authored and review companion identities on unchanged state
+  - no frontend-owned semantic geometry or review inference beyond explicit
+    machine contracts
+  - explicit authored vs proposed vs diagnostic visual separation in the
+    opening workspace
+  - terminal and AI supporting lanes consume explicit selection/review context
+    without becoming parallel design truth
+  - the opening route review starts from the first proposal action in
+    deterministic review order
 
 ---
 

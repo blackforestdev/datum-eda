@@ -5,6 +5,9 @@ members = [
     "crates/engine-daemon",
     "crates/cli",
     "crates/test-harness",
+    "crates/gui-protocol",
+    "crates/gui-render",
+    "crates/gui-app",
 ]
 
 [workspace.package]
@@ -34,3 +37,9 @@ clap = { version = "4", features = ["derive"] }
 
 # Testing
 proptest = "1"
+
+# GUI spike
+winit = "0.30"
+wgpu = "28"
+pollster = "0.4"
+bytemuck = { version = "1", features = ["derive"] }

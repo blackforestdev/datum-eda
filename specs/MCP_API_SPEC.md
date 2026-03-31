@@ -106,6 +106,7 @@ normalized MCP surface.
 `validate_project`,
 `export_route_path_proposal`,
 `route_proposal`,
+`review_route_proposal`,
 `route_proposal_explain`,
 `route_strategy_report`,
 `route_strategy_compare`,
@@ -264,6 +265,14 @@ Currently tracked native contracts that are not implemented in MCP:
     for each non-baseline artifact using the existing accepted gate policies
 - `project route-proposal-explain <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> [--profile <profile>]`
   - exposed in MCP as `route_proposal_explain`
+- `project review-route-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> [--profile <profile>]`
+  - also supports `project review-route-proposal --artifact <path>`
+  - exposed in MCP as `review_route_proposal`
+  - returns one read-only deterministic review payload for either a live
+    selected route proposal or a saved route-proposal artifact
+  - reuses the existing proposal action geometry and segment-evidence
+    structures so a frontend can render one proposal without inventing a
+    parallel review model
 - `project export-route-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path> [--profile <profile>]`
   - exposed in MCP as `export_route_proposal`
 - accepted selector profile set for those selector-backed surfaces:

@@ -1197,6 +1197,73 @@ class TestDaemonClientRequests(unittest.TestCase):
         self.assertEqual(response.result["actions"], 2)
 
     @patch("server_runtime.subprocess.run")
+    def test_reviews_live_route_proposal_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout='{"action":"review_route_proposal","review_source":"selected_route_proposal","actions":1}',
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.review_route_proposal(
+            "/tmp/demo",
+            "00000000-0000-0000-0000-000000000101",
+            "00000000-0000-0000-0000-000000000102",
+            "00000000-0000-0000-0000-000000000103",
+            "default",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "review-route-proposal",
+                "/tmp/demo",
+                "--net",
+                "00000000-0000-0000-0000-000000000101",
+                "--from-anchor",
+                "00000000-0000-0000-0000-000000000102",
+                "--to-anchor",
+                "00000000-0000-0000-0000-000000000103",
+                "--profile",
+                "default",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "review_route_proposal")
+        self.assertEqual(response.result["review_source"], "selected_route_proposal")
+
+    @patch("server_runtime.subprocess.run")
+    def test_reviews_route_proposal_artifact_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout='{"action":"review_route_proposal","review_source":"route_proposal_artifact","actions":1}',
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.review_route_proposal(artifact="/tmp/demo.route-proposal.json")
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "review-route-proposal",
+                "--artifact",
+                "/tmp/demo.route-proposal.json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "review_route_proposal")
+        self.assertEqual(response.result["review_source"], "route_proposal_artifact")
+
+    @patch("server_runtime.subprocess.run")
     def test_revalidates_route_proposal_artifact_via_cli(self, run_mock) -> None:
         run_mock.return_value = subprocess.CompletedProcess(
             args=[],

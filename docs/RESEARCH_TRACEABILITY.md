@@ -17,6 +17,15 @@ Prevent strategy drift by making one thing explicit:
 
 Primary research source for this mapping:
 - `/home/bfadmin/sandbox/eagle-analysis/ARCHITECTURE.md`
+- `docs/gui/REFERENCE_STUDY.md`
+- `docs/gui/FRONTEND_DECISION_CRITERIA.md`
+- `docs/gui/FOUNDATION.md`
+- `docs/gui/WORKSPACE_MODEL.md`
+- `docs/gui/INTERACTION_MODEL.md`
+- `docs/gui/CANVAS_REVIEW_MODEL.md`
+- `docs/gui/VISUAL_LANGUAGE.md`
+- `docs/gui/TECHNICAL_PRINCIPLES.md`
+- `docs/gui/M7_DECISION_PROPOSALS.md`
 
 Primary roadmap/spec anchors:
 - `PLAN.md`
@@ -37,6 +46,10 @@ Primary roadmap/spec anchors:
 | Advanced routing kernel (push-shove sophistication, geometry-heavy layout). | `M5` deterministic layout kernel | Deferred | Requires mature operations, constraints, and recomputation infrastructure first. |
 | AI-assisted placement/routing strategy layer. | `M6` layout strategy + AI layer | Deferred | Depends on stable baseline layout kernel from `M5`. |
 | GUI as a consumer, not architecture driver. | `M7` GUI + review interface; engine-first guardrails in implementation docs | Planned and consistent | GUI sequencing protects core determinism and API-first design. |
+| Frontend architecture should be chosen against product-level criteria, not convenience-tooling defaults. | `docs/gui/FRONTEND_DECISION_CRITERIA.md`; later frontend foundation and `M7` planning docs | Active research guidance | Prevents a narrow first viewer from locking in the wrong long-term frontend shape. |
+| Professional GUI direction should be grounded in Altium plus OrCAD-family and PADS/Xpedition workflow lessons where relevant, use Blender as a custom-application architecture/interaction reference rather than an EDA UX template, and treat KiCad as contrast and ecosystem context rather than the product ceiling. | `docs/gui/REFERENCE_STUDY.md`, `docs/gui/FOUNDATION.md`, `docs/gui/WORKSPACE_MODEL.md`, `docs/gui/INTERACTION_MODEL.md`, `docs/gui/CANVAS_REVIEW_MODEL.md`, `docs/gui/VISUAL_LANGUAGE.md`, `docs/gui/TECHNICAL_PRINCIPLES.md`, `docs/gui/M7_DECISION_PROPOSALS.md`, `specs/M7_FRONTEND_SPEC.md` | Active frontend foundation and planning guidance | The frontend direction is now concretized in repo docs and the opening `M7` spec, reducing the risk of generic or ad hoc GUI decisions. |
+| Frontend must reserve first-class space for graphical, terminal, and AI lanes without creating parallel design truth. | `docs/gui/FOUNDATION.md`, `docs/gui/WORKSPACE_MODEL.md`, `docs/gui/INTERACTION_MODEL.md`, `docs/gui/TECHNICAL_PRINCIPLES.md` | Active foundation guidance | The shell should support command and AI workflows natively while preserving engine authority and deterministic action boundaries. |
+| The opening `M7` slice should make explicit human-review UI decisions before coding, grounded in professional tool patterns rather than generic app defaults. | `docs/gui/M7_DECISION_PROPOSALS.md`; `specs/M7_FRONTEND_SPEC.md` | Active planning guidance | Prevents the architecture spike from drifting into ad hoc layout, panel, and visual-state decisions. |
 | Python/scriptability in the ecosystem. | Current Python MCP host (`mcp-server/`), deeper scripting pathways later | Partially active | Rich scripting API surface expands with editor/layout maturity. |
 
 ## Sequencing Integrity Notes
@@ -57,4 +70,3 @@ When adding or changing milestones, update this document if:
 If a roadmap/spec statement appears to conflict with this matrix:
 - specs remain authoritative for implementation contracts
 - raise a scope-integrity correction in the relevant spec/plan doc
-

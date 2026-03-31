@@ -501,6 +501,49 @@ class EngineDaemonClient:
             args.extend(["--profile", profile])
         return self._run_cli_json(request, args)
 
+    def review_route_proposal(
+        self,
+        path: str | None = None,
+        net_uuid: str | None = None,
+        from_anchor_pad_uuid: str | None = None,
+        to_anchor_pad_uuid: str | None = None,
+        profile: str | None = None,
+        artifact: str | None = None,
+    ) -> JsonRpcResponse:
+        request = self.build_request(
+            "review_route_proposal",
+            {
+                "path": path,
+                "net_uuid": net_uuid,
+                "from_anchor_pad_uuid": from_anchor_pad_uuid,
+                "to_anchor_pad_uuid": to_anchor_pad_uuid,
+                "profile": profile,
+                "artifact": artifact,
+            },
+        )
+        args = ["project", "review-route-proposal"]
+        if artifact is not None:
+            args.extend(["--artifact", artifact])
+            return self._run_cli_json(request, args)
+        if path is None or net_uuid is None or from_anchor_pad_uuid is None or to_anchor_pad_uuid is None:
+            raise RuntimeError(
+                "review_route_proposal requires either artifact or path/net_uuid/from_anchor_pad_uuid/to_anchor_pad_uuid"
+            )
+        args.extend(
+            [
+                path,
+                "--net",
+                net_uuid,
+                "--from-anchor",
+                from_anchor_pad_uuid,
+                "--to-anchor",
+                to_anchor_pad_uuid,
+            ]
+        )
+        if profile is not None:
+            args.extend(["--profile", profile])
+        return self._run_cli_json(request, args)
+
     def export_route_proposal(
         self,
         path: str,

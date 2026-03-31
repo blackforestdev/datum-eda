@@ -51,6 +51,37 @@ pub(crate) struct NativeProjectRouteProposalExplainView {
     pub(crate) candidates: Vec<NativeProjectRouteProposalSelectionCandidateView>,
 }
 
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectRouteProposalReviewView {
+    pub(crate) action: String,
+    pub(crate) review_source: String,
+    pub(crate) status: String,
+    pub(crate) explanation: String,
+    pub(crate) project_root: Option<String>,
+    pub(crate) artifact_path: Option<String>,
+    pub(crate) kind: Option<String>,
+    pub(crate) source_version: Option<u32>,
+    pub(crate) version: Option<u32>,
+    pub(crate) project_uuid: Option<String>,
+    pub(crate) project_name: Option<String>,
+    pub(crate) net_uuid: Option<String>,
+    pub(crate) from_anchor_pad_uuid: Option<String>,
+    pub(crate) to_anchor_pad_uuid: Option<String>,
+    pub(crate) selection_profile: Option<String>,
+    pub(crate) selection_rule: Option<String>,
+    pub(crate) selected_candidate: Option<String>,
+    pub(crate) selected_policy: Option<String>,
+    pub(crate) contract: String,
+    pub(crate) actions: usize,
+    pub(crate) draw_track_actions: usize,
+    pub(crate) selected_path_bend_count: usize,
+    pub(crate) selected_path_point_count: usize,
+    pub(crate) selected_path_segment_count: usize,
+    pub(crate) segment_evidence:
+        Option<Vec<NativeProjectRouteProposalArtifactInspectionSegmentView>>,
+    pub(crate) proposal_actions: Vec<NativeProjectRouteProposalActionView>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub(crate) struct NativeProjectRouteStrategyReportView {
     pub(crate) action: String,
@@ -749,6 +780,95 @@ pub(super) fn render_native_route_proposal_explain_text(
                 .message
                 .clone()
                 .unwrap_or_else(|| "none".to_string())
+        ));
+    }
+    lines.join("\n")
+}
+
+pub(super) fn render_native_route_proposal_review_text(
+    report: &NativeProjectRouteProposalReviewView,
+) -> String {
+    let mut lines = vec![
+        format!("action: {}", report.action),
+        format!("review_source: {}", report.review_source),
+        format!("status: {}", report.status),
+        format!("explanation: {}", report.explanation),
+        format!(
+            "project_root: {}",
+            report
+                .project_root
+                .clone()
+                .unwrap_or_else(|| "none".to_string())
+        ),
+        format!(
+            "artifact_path: {}",
+            report
+                .artifact_path
+                .clone()
+                .unwrap_or_else(|| "none".to_string())
+        ),
+        format!(
+            "selection_profile: {}",
+            report
+                .selection_profile
+                .clone()
+                .unwrap_or_else(|| "none".to_string())
+        ),
+        format!(
+            "selected_candidate: {}",
+            report
+                .selected_candidate
+                .clone()
+                .unwrap_or_else(|| "none".to_string())
+        ),
+        format!(
+            "selected_policy: {}",
+            report
+                .selected_policy
+                .clone()
+                .unwrap_or_else(|| "none".to_string())
+        ),
+        format!("contract: {}", report.contract),
+        format!("actions: {}", report.actions),
+        format!("draw_track_actions: {}", report.draw_track_actions),
+        format!(
+            "selected_path_bend_count: {}",
+            report.selected_path_bend_count
+        ),
+        format!(
+            "selected_path_point_count: {}",
+            report.selected_path_point_count
+        ),
+        format!(
+            "selected_path_segment_count: {}",
+            report.selected_path_segment_count
+        ),
+        format!(
+            "segment_evidence: {}",
+            report
+                .segment_evidence
+                .as_ref()
+                .map(|value| value.len().to_string())
+                .unwrap_or_else(|| "none".to_string())
+        ),
+    ];
+    for action in &report.proposal_actions {
+        lines.push(String::new());
+        lines.push(format!("action_id: {}", action.action_id));
+        lines.push(format!("proposal_action: {}", action.proposal_action));
+        lines.push(format!("reason: {}", action.reason));
+        lines.push(format!("layer: {}", action.layer));
+        lines.push(format!("from_x_nm: {}", action.from.x));
+        lines.push(format!("from_y_nm: {}", action.from.y));
+        lines.push(format!("to_x_nm: {}", action.to.x));
+        lines.push(format!("to_y_nm: {}", action.to.y));
+        lines.push(format!(
+            "selected_path_segment_index: {}",
+            action.selected_path_segment_index
+        ));
+        lines.push(format!(
+            "selected_path_segment_count: {}",
+            action.selected_path_segment_count
         ));
     }
     lines.join("\n")

@@ -133,6 +133,8 @@ pub(crate) enum ProjectCommands {
     GateRouteStrategyBatchResult(ProjectGateRouteStrategyBatchResultArgs),
     /// Summarize many saved versioned route-strategy batch result artifacts from one directory or explicit list
     SummarizeRouteStrategyBatchResults(ProjectSummarizeRouteStrategyBatchResultsArgs),
+    /// Review one selected deterministic route proposal or one saved route proposal artifact without mutating project state
+    ReviewRouteProposal(ProjectReviewRouteProposalArgs),
     /// Explain how the deterministic current route proposal selector chose or rejected candidate families
     RouteProposalExplain(ProjectRouteProposalExplainArgs),
     /// Export one deterministic route proposal artifact from the currently selected candidate family

@@ -672,6 +672,43 @@ TOOL_SPECS: list[dict[str, Any]] = [
         },
     },
     {
+        "name": "review_route_proposal",
+        "description": "Review one selected deterministic route proposal or one saved route proposal artifact without mutating project state.",
+        "x_dispatch_args": [
+            "path",
+            "net_uuid",
+            "from_anchor_pad_uuid",
+            "to_anchor_pad_uuid",
+            "profile",
+            "artifact",
+        ],
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"},
+                "net_uuid": {"type": "string"},
+                "from_anchor_pad_uuid": {"type": "string"},
+                "to_anchor_pad_uuid": {"type": "string"},
+                "profile": {
+                    "type": "string",
+                    "enum": ["default", "authored-copper-priority"],
+                },
+                "artifact": {"type": "string"},
+            },
+            "oneOf": [
+                {
+                    "required": [
+                        "path",
+                        "net_uuid",
+                        "from_anchor_pad_uuid",
+                        "to_anchor_pad_uuid",
+                    ]
+                },
+                {"required": ["artifact"]},
+            ],
+        },
+    },
+    {
         "name": "route_strategy_report",
         "description": "Report which accepted selector profile should be used for one deterministic routing objective and show the current live selector outcome under that profile.",
         "inputSchema": {

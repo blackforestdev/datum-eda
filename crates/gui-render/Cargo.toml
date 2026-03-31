@@ -1,0 +1,11 @@
+[package]
+name = "datum-gui-render"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+datum-gui-protocol = { path = "../gui-protocol" }
+bytemuck.workspace = true
+wgpu.workspace = true
+glyphon = "0.10.0"
+anyhow.workspace = true

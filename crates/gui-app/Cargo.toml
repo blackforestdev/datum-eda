@@ -1,0 +1,17 @@
+[package]
+name = "datum-gui-app"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "datum-gui"
+path = "src/main.rs"
+
+[dependencies]
+datum-gui-protocol = { path = "../gui-protocol" }
+datum-gui-render = { path = "../gui-render" }
+anyhow.workspace = true
+clap.workspace = true
+pollster.workspace = true
+winit.workspace = true
+wgpu.workspace = true

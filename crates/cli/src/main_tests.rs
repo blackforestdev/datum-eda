@@ -381,6 +381,8 @@ mod main_tests_project_route_preflight;
 mod main_tests_project_route_proposal_artifact;
 #[path = "main_tests_project_route_proposal_explain.rs"]
 mod main_tests_project_route_proposal_explain;
+#[path = "main_tests_project_route_proposal_review.rs"]
+mod main_tests_project_route_proposal_review;
 #[path = "main_tests_project_route_proposal_selection.rs"]
 mod main_tests_project_route_proposal_selection;
 #[path = "main_tests_project_route_strategy_batch_evaluate.rs"]
