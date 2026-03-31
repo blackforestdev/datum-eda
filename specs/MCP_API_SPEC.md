@@ -106,10 +106,17 @@ normalized MCP surface.
 `export_route_path_proposal`,
 `route_proposal`,
 `route_proposal_explain`,
+`route_strategy_report`,
+`route_strategy_compare`,
+`route_strategy_delta`,
+`route_strategy_batch_evaluate`,
+`inspect_route_strategy_batch_result`,
+`validate_route_strategy_batch_result`,
 `export_route_proposal`,
 `route_apply`,
 `route_apply_selected`,
 `inspect_route_proposal_artifact`,
+`revalidate_route_proposal_artifact`,
 `apply_route_proposal_artifact`.
 
 Methods in later `M4+` sections are target-state and are not part of the
@@ -132,21 +139,66 @@ Parity policy for current development:
 
 Currently tracked native contracts that are not implemented in MCP:
 
-#### Implemented M5 native parity exceptions
+#### Implemented M5/M6 native parity exceptions
 
 - `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate <accepted_candidate> [--policy <policy>] --out <path>`
   - exposed in MCP as `export_route_path_proposal`
   - orthogonal-graph export responses include recorded segment-level
     ranked-path evidence
-- `project route-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project route-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> [--profile <profile>]`
   - exposed in MCP as `route_proposal`
-- `project route-proposal-explain <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project route-strategy-report <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> [--objective <objective>]`
+  - exposed in MCP as `route_strategy_report`
+  - accepted objective set currently reuses the selector profile vocabulary:
+    - `default`
+    - `authored-copper-priority`
+- `project route-strategy-compare <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+  - exposed in MCP as `route_strategy_compare`
+  - compares only the accepted objective/profile set above and recommends one
+    profile under a deterministic baseline-preserving rule
+- `project route-strategy-delta <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+  - exposed in MCP as `route_strategy_delta`
+  - compares only the same accepted objective/profile set above and emits one
+    bounded explicit delta classification:
+    - `same_outcome`
+    - `different_candidate_family`
+    - `different_policy_same_family`
+    - `proposal_available_only_under_authored_copper_priority`
+    - `no_proposal_under_any_profile`
+- `project route-strategy-batch-evaluate --requests <path>`
+  - exposed in MCP as `route_strategy_batch_evaluate`
+  - `--requests` points to one versioned JSON manifest of explicit route
+    requests with:
+    - `request_id`
+    - `fixture_id`
+    - `project_root`
+    - `net_uuid`
+    - `from_anchor_pad_uuid`
+    - `to_anchor_pad_uuid`
+  - the batch report reuses the existing `route_strategy_report`,
+    `route_strategy_compare`, and `route_strategy_delta` logic per request and
+    returns both per-request evidence and aggregate summary counts
+  - the batch-evaluate JSON output is the saved artifact format with:
+    - `kind = native_route_strategy_batch_result_artifact`
+    - `version = 1`
+- `project inspect-route-strategy-batch-result <path>`
+  - exposed in MCP as `inspect_route_strategy_batch_result`
+  - reports artifact identity/version, aggregate summary, recommendation and
+    delta distributions, per-request outcomes, and malformed entries
+- `project validate-route-strategy-batch-result <path>`
+  - exposed in MCP as `validate_route_strategy_batch_result`
+  - reports structural validity, version compatibility, missing required
+    fields, summary/result count consistency, and malformed entries
+- `project route-proposal-explain <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> [--profile <profile>]`
   - exposed in MCP as `route_proposal_explain`
-- `project export-route-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path>`
+- `project export-route-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path> [--profile <profile>]`
   - exposed in MCP as `export_route_proposal`
+- accepted selector profile set for those selector-backed surfaces:
+  - `default`
+  - `authored-copper-priority`
 - `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate <accepted_candidate> [--policy <policy>]`
   - exposed in MCP as `route_apply`
-- `project route-apply-selected <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+- `project route-apply-selected <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> [--profile <profile>]`
   - exposed in MCP as `route_apply_selected`
 - `project inspect-route-proposal-artifact <path>`
   - exposed in MCP as `inspect_route_proposal_artifact`

@@ -185,6 +185,48 @@ reporting the selected path when found or explicit
 `no_existing_authored_copper_path` when authored obstacle filtering leaves no
 connecting persisted target-net copper path, using only existing graph/path
 facts without adding new routing semantics.
+The bounded `route-proposal` selector now also accepts a minimal deterministic
+profile set. `default` preserves the existing accepted family order exactly.
+`authored-copper-priority` prepends the accepted authored-copper-graph policy
+family in explicit policy order ahead of that unchanged default family order.
+These profiles are family-order policies only; they do not add scoring,
+ranking heuristics, or new routing semantics.
+For milestone governance, this narrower persisted-state routing-kernel boundary
+is now the intended `M5` closure scope. Placement-kernel and
+placement/routing co-optimization work remain part of the long-term layout
+engine thesis, but are deferred to a later reopened milestone/slice rather
+than blocking `M5` closure or `M6` opening.
+The first accepted `M6` slice is narrower than the full strategy-layer thesis
+as well: `route-strategy-report` is a read-only deterministic intent/reporting
+surface that maps an accepted routing objective directly onto the existing
+selector profile vocabulary and shows the current live selector outcome under
+that profile. It does not add new pathfinding, selector scoring, or placement
+behavior.
+That same bounded opening now also includes `route-strategy-compare`, a
+read-only deterministic comparison surface over the same accepted objective/
+profile set. It reports the current live selector outcome for each accepted
+entry and recommends one profile under a fixed baseline-preserving rule; it
+does not introduce new objectives, profiles, or routing behavior.
+That same opening now also includes `route-strategy-delta`, a read-only
+deterministic reduction over the same accepted objective/profile set. It emits
+one bounded explicit delta classification plus one short material-difference
+summary using the current live selector outcomes only; it does not introduce
+new objectives, profiles, scoring, or routing behavior.
+That same opening now also includes `route-strategy-batch-evaluate`, a
+read-only deterministic evidence surface over a versioned explicit request
+manifest. It reuses the existing `route-strategy-report`,
+`route-strategy-compare`, and `route-strategy-delta` logic for each request
+and aggregates recommendation counts, delta classifications, same-vs-different
+outcome counts, and proposal-availability counts without changing strategy
+semantics.
+That same non-semantic evidence layer now also treats the batch-evaluate JSON
+payload as a versioned saved result artifact and includes
+`inspect-route-strategy-batch-result` plus
+`validate-route-strategy-batch-result` as read-only workflow surfaces. Those
+surfaces make saved evidence practical in review and automation by reporting
+artifact identity/version, distributions, per-request outcomes, malformed
+entries, and deterministic summary/result integrity checks without adding new
+strategy behavior.
 
 ---
 

@@ -327,6 +327,9 @@ pub(crate) struct ProjectExportRouteProposalArgs {
     /// Target anchor pad UUID
     #[arg(long = "to-anchor")]
     pub(crate) to_anchor_pad_uuid: Uuid,
+    /// Deterministic selector profile
+    #[arg(long = "profile", value_enum, default_value_t = NativeProjectRouteProposalProfileArg::Default)]
+    pub(crate) profile: NativeProjectRouteProposalProfileArg,
     /// Output artifact path
     #[arg(long = "out")]
     pub(crate) out: PathBuf,
@@ -345,6 +348,9 @@ pub(crate) struct ProjectRouteProposalArgs {
     /// Target anchor pad UUID
     #[arg(long = "to-anchor")]
     pub(crate) to_anchor_pad_uuid: Uuid,
+    /// Deterministic selector profile
+    #[arg(long = "profile", value_enum, default_value_t = NativeProjectRouteProposalProfileArg::Default)]
+    pub(crate) profile: NativeProjectRouteProposalProfileArg,
 }
 
 #[derive(clap::Args)]
@@ -360,6 +366,76 @@ pub(crate) struct ProjectRouteProposalExplainArgs {
     /// Target anchor pad UUID
     #[arg(long = "to-anchor")]
     pub(crate) to_anchor_pad_uuid: Uuid,
+    /// Deterministic selector profile
+    #[arg(long = "profile", value_enum, default_value_t = NativeProjectRouteProposalProfileArg::Default)]
+    pub(crate) profile: NativeProjectRouteProposalProfileArg,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectRouteStrategyReportArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Net UUID
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Uuid,
+    /// Source anchor pad UUID
+    #[arg(long = "from-anchor")]
+    pub(crate) from_anchor_pad_uuid: Uuid,
+    /// Target anchor pad UUID
+    #[arg(long = "to-anchor")]
+    pub(crate) to_anchor_pad_uuid: Uuid,
+    /// Accepted deterministic routing objective from the selector profile vocabulary
+    #[arg(long = "objective", value_enum, default_value_t = NativeProjectRouteProposalProfileArg::Default)]
+    pub(crate) objective: NativeProjectRouteProposalProfileArg,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectRouteStrategyCompareArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Net UUID
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Uuid,
+    /// Source anchor pad UUID
+    #[arg(long = "from-anchor")]
+    pub(crate) from_anchor_pad_uuid: Uuid,
+    /// Target anchor pad UUID
+    #[arg(long = "to-anchor")]
+    pub(crate) to_anchor_pad_uuid: Uuid,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectRouteStrategyDeltaArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Net UUID
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Uuid,
+    /// Source anchor pad UUID
+    #[arg(long = "from-anchor")]
+    pub(crate) from_anchor_pad_uuid: Uuid,
+    /// Target anchor pad UUID
+    #[arg(long = "to-anchor")]
+    pub(crate) to_anchor_pad_uuid: Uuid,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectRouteStrategyBatchEvaluateArgs {
+    /// Versioned batch request manifest path
+    #[arg(long = "requests")]
+    pub(crate) requests: PathBuf,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectInspectRouteStrategyBatchResultArgs {
+    /// Saved batch result artifact path
+    pub(crate) path: PathBuf,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectValidateRouteStrategyBatchResultArgs {
+    /// Saved batch result artifact path
+    pub(crate) path: PathBuf,
 }
 
 #[derive(clap::Args)]
@@ -375,6 +451,9 @@ pub(crate) struct ProjectRouteApplySelectedArgs {
     /// Target anchor pad UUID
     #[arg(long = "to-anchor")]
     pub(crate) to_anchor_pad_uuid: Uuid,
+    /// Deterministic selector profile
+    #[arg(long = "profile", value_enum, default_value_t = NativeProjectRouteProposalProfileArg::Default)]
+    pub(crate) profile: NativeProjectRouteProposalProfileArg,
 }
 
 #[derive(clap::Args)]
@@ -466,6 +545,14 @@ pub(crate) enum NativeProjectRouteApplyCandidateArg {
     AuthoredCopperPlusOneGap,
     #[value(name = "authored-copper-graph")]
     AuthoredCopperGraph,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, clap::ValueEnum)]
+pub(crate) enum NativeProjectRouteProposalProfileArg {
+    #[value(name = "default")]
+    Default,
+    #[value(name = "authored-copper-priority")]
+    AuthoredCopperPriority,
 }
 
 #[derive(clap::Args)]

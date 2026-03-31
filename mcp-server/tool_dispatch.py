@@ -160,13 +160,43 @@ def dispatch_tool_call(daemon: Any, name: str, arguments: dict[str, Any]) -> Any
             arguments["net_uuid"],
             arguments["from_anchor_pad_uuid"],
             arguments["to_anchor_pad_uuid"],
+            arguments.get("profile"),
         )
+    if name == "route_strategy_report":
+        return daemon.route_strategy_report(
+            arguments["path"],
+            arguments["net_uuid"],
+            arguments["from_anchor_pad_uuid"],
+            arguments["to_anchor_pad_uuid"],
+            arguments.get("objective"),
+        )
+    if name == "route_strategy_compare":
+        return daemon.route_strategy_compare(
+            arguments["path"],
+            arguments["net_uuid"],
+            arguments["from_anchor_pad_uuid"],
+            arguments["to_anchor_pad_uuid"],
+        )
+    if name == "route_strategy_delta":
+        return daemon.route_strategy_delta(
+            arguments["path"],
+            arguments["net_uuid"],
+            arguments["from_anchor_pad_uuid"],
+            arguments["to_anchor_pad_uuid"],
+        )
+    if name == "route_strategy_batch_evaluate":
+        return daemon.route_strategy_batch_evaluate(arguments["requests"])
+    if name == "inspect_route_strategy_batch_result":
+        return daemon.inspect_route_strategy_batch_result(arguments["artifact"])
+    if name == "validate_route_strategy_batch_result":
+        return daemon.validate_route_strategy_batch_result(arguments["artifact"])
     if name == "route_proposal_explain":
         return daemon.route_proposal_explain(
             arguments["path"],
             arguments["net_uuid"],
             arguments["from_anchor_pad_uuid"],
             arguments["to_anchor_pad_uuid"],
+            arguments.get("profile"),
         )
     if name == "export_route_proposal":
         return daemon.export_route_proposal(
@@ -175,6 +205,7 @@ def dispatch_tool_call(daemon: Any, name: str, arguments: dict[str, Any]) -> Any
             arguments["from_anchor_pad_uuid"],
             arguments["to_anchor_pad_uuid"],
             arguments["out"],
+            arguments.get("profile"),
         )
     if name == "route_apply":
         return daemon.route_apply(
@@ -191,9 +222,15 @@ def dispatch_tool_call(daemon: Any, name: str, arguments: dict[str, Any]) -> Any
             arguments["net_uuid"],
             arguments["from_anchor_pad_uuid"],
             arguments["to_anchor_pad_uuid"],
+            arguments.get("profile"),
         )
     if name == "inspect_route_proposal_artifact":
         return daemon.inspect_route_proposal_artifact(arguments["artifact"])
+    if name == "revalidate_route_proposal_artifact":
+        return daemon.revalidate_route_proposal_artifact(
+            arguments["path"],
+            arguments["artifact"],
+        )
     if name == "apply_route_proposal_artifact":
         return daemon.apply_route_proposal_artifact(
             arguments["path"],

@@ -539,6 +539,7 @@ class TestDaemonClientRequests(unittest.TestCase):
             "11111111-1111-1111-1111-111111111111",
             "22222222-2222-2222-2222-222222222222",
             "33333333-3333-3333-3333-333333333333",
+            "authored-copper-priority",
         )
         run_mock.assert_called_once_with(
             [
@@ -554,6 +555,8 @@ class TestDaemonClientRequests(unittest.TestCase):
                 "22222222-2222-2222-2222-222222222222",
                 "--to-anchor",
                 "33333333-3333-3333-3333-333333333333",
+                "--profile",
+                "authored-copper-priority",
             ],
             capture_output=True,
             text=True,
@@ -561,6 +564,230 @@ class TestDaemonClientRequests(unittest.TestCase):
         )
         self.assertEqual(response.result["action"], "route_proposal")
         self.assertEqual(response.result["selected_candidate"], "route-path-candidate")
+
+    @patch("server_runtime.subprocess.run")
+    def test_reports_route_strategy_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=(
+                '{"action":"route_strategy_report","recommended_profile":"authored-copper-priority",'
+                '"selected_candidate":"authored-copper-graph"}'
+            ),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.route_strategy_report(
+            "/tmp/demo",
+            "11111111-1111-1111-1111-111111111111",
+            "22222222-2222-2222-2222-222222222222",
+            "33333333-3333-3333-3333-333333333333",
+            "authored-copper-priority",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "route-strategy-report",
+                "/tmp/demo",
+                "--net",
+                "11111111-1111-1111-1111-111111111111",
+                "--from-anchor",
+                "22222222-2222-2222-2222-222222222222",
+                "--to-anchor",
+                "33333333-3333-3333-3333-333333333333",
+                "--objective",
+                "authored-copper-priority",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "route_strategy_report")
+        self.assertEqual(
+            response.result["recommended_profile"], "authored-copper-priority"
+        )
+
+    @patch("server_runtime.subprocess.run")
+    def test_compares_route_strategy_profiles_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=(
+                '{"action":"route_strategy_compare","recommended_profile":"default",'
+                '"entries":[{"profile":"default"},{"profile":"authored-copper-priority"}]}'
+            ),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.route_strategy_compare(
+            "/tmp/demo",
+            "11111111-1111-1111-1111-111111111111",
+            "22222222-2222-2222-2222-222222222222",
+            "33333333-3333-3333-3333-333333333333",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "route-strategy-compare",
+                "/tmp/demo",
+                "--net",
+                "11111111-1111-1111-1111-111111111111",
+                "--from-anchor",
+                "22222222-2222-2222-2222-222222222222",
+                "--to-anchor",
+                "33333333-3333-3333-3333-333333333333",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "route_strategy_compare")
+        self.assertEqual(response.result["recommended_profile"], "default")
+
+    @patch("server_runtime.subprocess.run")
+    def test_reports_route_strategy_delta_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=(
+                '{"action":"route_strategy_delta","delta_classification":"different_candidate_family",'
+                '"recommended_profile":"default"}'
+            ),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.route_strategy_delta(
+            "/tmp/demo",
+            "11111111-1111-1111-1111-111111111111",
+            "22222222-2222-2222-2222-222222222222",
+            "33333333-3333-3333-3333-333333333333",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "route-strategy-delta",
+                "/tmp/demo",
+                "--net",
+                "11111111-1111-1111-1111-111111111111",
+                "--from-anchor",
+                "22222222-2222-2222-2222-222222222222",
+                "--to-anchor",
+                "33333333-3333-3333-3333-333333333333",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "route_strategy_delta")
+        self.assertEqual(
+            response.result["delta_classification"], "different_candidate_family"
+        )
+
+    @patch("server_runtime.subprocess.run")
+    def test_evaluates_route_strategy_batch_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=(
+                '{"action":"route_strategy_batch_evaluate","kind":"native_route_strategy_batch_result_artifact",'
+                '"version":1,"summary":{"total_evaluated_requests":2}}'
+            ),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.route_strategy_batch_evaluate("/tmp/route-strategy-batch.json")
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "route-strategy-batch-evaluate",
+                "--requests",
+                "/tmp/route-strategy-batch.json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "route_strategy_batch_evaluate")
+        self.assertEqual(
+            response.result["kind"], "native_route_strategy_batch_result_artifact"
+        )
+        self.assertEqual(response.result["summary"]["total_evaluated_requests"], 2)
+
+    @patch("server_runtime.subprocess.run")
+    def test_inspects_route_strategy_batch_result_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=(
+                '{"action":"inspect_route_strategy_batch_result","kind":"native_route_strategy_batch_result_artifact",'
+                '"summary":{"total_evaluated_requests":2}}'
+            ),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.inspect_route_strategy_batch_result(
+            "/tmp/route-strategy-batch-result.json"
+        )
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "inspect-route-strategy-batch-result",
+                "/tmp/route-strategy-batch-result.json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "inspect_route_strategy_batch_result")
+        self.assertEqual(
+            response.result["kind"], "native_route_strategy_batch_result_artifact"
+        )
+
+    @patch("server_runtime.subprocess.run")
+    def test_validates_route_strategy_batch_result_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=(
+                '{"action":"validate_route_strategy_batch_result","structurally_valid":true,'
+                '"version_compatible":true}'
+            ),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.validate_route_strategy_batch_result(
+            "/tmp/route-strategy-batch-result.json"
+        )
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "validate-route-strategy-batch-result",
+                "/tmp/route-strategy-batch-result.json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "validate_route_strategy_batch_result")
+        self.assertEqual(response.result["structurally_valid"], True)
 
     @patch("server_runtime.subprocess.run")
     def test_explains_route_proposal_via_cli(self, run_mock) -> None:
@@ -620,6 +847,7 @@ class TestDaemonClientRequests(unittest.TestCase):
             "22222222-2222-2222-2222-222222222222",
             "33333333-3333-3333-3333-333333333333",
             "/tmp/demo.route-proposal.json",
+            None,
         )
         run_mock.assert_called_once_with(
             [
@@ -710,6 +938,41 @@ class TestDaemonClientRequests(unittest.TestCase):
         )
         self.assertEqual(response.result["action"], "inspect_route_proposal_artifact")
         self.assertEqual(response.result["actions"], 2)
+
+    @patch("server_runtime.subprocess.run")
+    def test_revalidates_route_proposal_artifact_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout=(
+                '{"action":"revalidate_route_proposal_artifact","artifact_actions":2,'
+                '"live_actions":2,"matches_live":true}'
+            ),
+            stderr="",
+        )
+        client = EngineDaemonClient()
+        response = client.revalidate_route_proposal_artifact(
+            "/tmp/demo",
+            "/tmp/demo.route-proposal.json",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "revalidate-route-proposal-artifact",
+                "/tmp/demo",
+                "--artifact",
+                "/tmp/demo.route-proposal.json",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "revalidate_route_proposal_artifact")
+        self.assertEqual(response.result["artifact_actions"], 2)
+        self.assertEqual(response.result["matches_live"], True)
 
     @patch("server_runtime.subprocess.run")
     def test_applies_route_proposal_artifact_via_cli(self, run_mock) -> None:

@@ -90,12 +90,16 @@ Goal: create designs natively, not only modify imports.
 Deliverable: native authoring path from schematic to manufacturing outputs.
 
 ### M5: Deterministic Layout Kernel
-Goal: unified placement + routing kernel with constraint awareness.
-Deliverable: proposal-grade deterministic layout kernel benchmarked on fixtures.
+Goal: deterministic persisted-state routing-kernel substrate with bounded
+proposal/review/apply contracts.
+Deliverable: proposal-grade deterministic routing-kernel benchmarked on
+fixtures, including bounded candidate selection, artifact review/apply, and
+machine-native interfaces.
 
 ### M6: Layout Strategy + AI Layer
 Goal: intent-driven strategy and AI-assisted layout proposal ranking.
-Deliverable: explainable placement/routing strategies from user intent.
+Deliverable: explainable routing/placement strategies from user intent built on
+top of the completed M5 routing-kernel substrate.
 
 ### M7: GUI + Review Interface
 Goal: visual review/editing layer on top of machine-native core.
@@ -121,8 +125,15 @@ Milestone intent:
 - M2 is the first useful milestone.
 - M3 is the first AI-write milestone.
 - M4 is the first no-secondary-tool authoring milestone.
-- M5 introduces deterministic placement+routing kernel.
-- M6 adds intelligence on top of the proven kernel.
+- M5 introduces the deterministic routing-kernel substrate.
+- Placement-kernel work is explicitly deferred until a later reopened
+  milestone/slice rather than blocking M6.
+- M6 opens on top of the proven routing-kernel substrate first with read-only,
+  deterministic strategy reporting that maps accepted routing objectives to the
+  existing selector/profile vocabulary, then compares only that accepted set
+  under a fixed baseline-preserving rule, then reduces that same accepted set
+  to one bounded decision-delta report before any broader AI or placement
+  work.
 - M7 is the first visual tool milestone.
 
 ## Decision Log

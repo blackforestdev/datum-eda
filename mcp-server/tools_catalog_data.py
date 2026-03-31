@@ -641,6 +641,10 @@ TOOLS: list[dict[str, Any]] = [
                 "net_uuid": {"type": "string"},
                 "from_anchor_pad_uuid": {"type": "string"},
                 "to_anchor_pad_uuid": {"type": "string"},
+                "profile": {
+                    "type": "string",
+                    "enum": ["default", "authored-copper-priority"],
+                },
             },
             "required": [
                 "path",
@@ -648,6 +652,100 @@ TOOLS: list[dict[str, Any]] = [
                 "from_anchor_pad_uuid",
                 "to_anchor_pad_uuid",
             ],
+        },
+    },
+    {
+        "name": "route_strategy_report",
+        "description": "Report which accepted selector profile should be used for one deterministic routing objective and show the current live selector outcome under that profile.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"},
+                "net_uuid": {"type": "string"},
+                "from_anchor_pad_uuid": {"type": "string"},
+                "to_anchor_pad_uuid": {"type": "string"},
+                "objective": {
+                    "type": "string",
+                    "enum": ["default", "authored-copper-priority"],
+                },
+            },
+            "required": [
+                "path",
+                "net_uuid",
+                "from_anchor_pad_uuid",
+                "to_anchor_pad_uuid",
+            ],
+        },
+    },
+    {
+        "name": "route_strategy_compare",
+        "description": "Compare the accepted deterministic routing objectives/profiles, report the current live selector outcome for each, and recommend one profile under the approved comparison rule.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"},
+                "net_uuid": {"type": "string"},
+                "from_anchor_pad_uuid": {"type": "string"},
+                "to_anchor_pad_uuid": {"type": "string"},
+            },
+            "required": [
+                "path",
+                "net_uuid",
+                "from_anchor_pad_uuid",
+                "to_anchor_pad_uuid",
+            ],
+        },
+    },
+    {
+        "name": "route_strategy_delta",
+        "description": "Report the bounded decision delta between the accepted deterministic routing objectives/profiles using the current live selector outcomes and one explicit delta classification.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"},
+                "net_uuid": {"type": "string"},
+                "from_anchor_pad_uuid": {"type": "string"},
+                "to_anchor_pad_uuid": {"type": "string"},
+            },
+            "required": [
+                "path",
+                "net_uuid",
+                "from_anchor_pad_uuid",
+                "to_anchor_pad_uuid",
+            ],
+        },
+    },
+    {
+        "name": "route_strategy_batch_evaluate",
+        "description": "Evaluate the current accepted M6 strategy surfaces across a versioned batch request manifest and return per-request evidence plus aggregate summary counts.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "requests": {"type": "string"},
+            },
+            "required": ["requests"],
+        },
+    },
+    {
+        "name": "inspect_route_strategy_batch_result",
+        "description": "Inspect one saved versioned route-strategy batch result artifact and report summary counts, per-request outcomes, and malformed entries.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "artifact": {"type": "string"},
+            },
+            "required": ["artifact"],
+        },
+    },
+    {
+        "name": "validate_route_strategy_batch_result",
+        "description": "Validate one saved versioned route-strategy batch result artifact for supported version, required fields, and summary/result count integrity.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "artifact": {"type": "string"},
+            },
+            "required": ["artifact"],
         },
     },
     {
@@ -660,6 +758,10 @@ TOOLS: list[dict[str, Any]] = [
                 "net_uuid": {"type": "string"},
                 "from_anchor_pad_uuid": {"type": "string"},
                 "to_anchor_pad_uuid": {"type": "string"},
+                "profile": {
+                    "type": "string",
+                    "enum": ["default", "authored-copper-priority"],
+                },
             },
             "required": [
                 "path",
@@ -679,6 +781,10 @@ TOOLS: list[dict[str, Any]] = [
                 "net_uuid": {"type": "string"},
                 "from_anchor_pad_uuid": {"type": "string"},
                 "to_anchor_pad_uuid": {"type": "string"},
+                "profile": {
+                    "type": "string",
+                    "enum": ["default", "authored-copper-priority"],
+                },
                 "out": {"type": "string"},
             },
             "required": [
@@ -755,6 +861,10 @@ TOOLS: list[dict[str, Any]] = [
                 "net_uuid": {"type": "string"},
                 "from_anchor_pad_uuid": {"type": "string"},
                 "to_anchor_pad_uuid": {"type": "string"},
+                "profile": {
+                    "type": "string",
+                    "enum": ["default", "authored-copper-priority"],
+                },
             },
             "required": [
                 "path",
@@ -773,6 +883,18 @@ TOOLS: list[dict[str, Any]] = [
                 "artifact": {"type": "string"},
             },
             "required": ["artifact"],
+        },
+    },
+    {
+        "name": "revalidate_route_proposal_artifact",
+        "description": "Revalidate one native route proposal artifact against the current live project state without applying it.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"},
+                "artifact": {"type": "string"},
+            },
+            "required": ["path", "artifact"],
         },
     },
     {

@@ -5,17 +5,109 @@ pub(super) fn execute_route_proposal_command(
     command: ProjectCommands,
 ) -> Result<(String, i32)> {
     match command {
+        ProjectCommands::RouteStrategyReport(ProjectRouteStrategyReportArgs {
+            path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            objective,
+        }) => {
+            let report = report_native_project_route_strategy(
+                &path,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+                objective,
+            )?;
+            let output = match format {
+                OutputFormat::Text => render_native_route_strategy_report_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::RouteStrategyCompare(ProjectRouteStrategyCompareArgs {
+            path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+        }) => {
+            let report = compare_native_project_route_strategy(
+                &path,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )?;
+            let output = match format {
+                OutputFormat::Text => render_native_route_strategy_compare_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::RouteStrategyDelta(ProjectRouteStrategyDeltaArgs {
+            path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+        }) => {
+            let report = report_native_project_route_strategy_delta(
+                &path,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+            )?;
+            let output = match format {
+                OutputFormat::Text => render_native_route_strategy_delta_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::RouteStrategyBatchEvaluate(ProjectRouteStrategyBatchEvaluateArgs {
+            requests,
+        }) => {
+            let report = evaluate_native_project_route_strategy_batch(&requests)?;
+            let output = match format {
+                OutputFormat::Text => render_native_route_strategy_batch_evaluate_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::InspectRouteStrategyBatchResult(
+            ProjectInspectRouteStrategyBatchResultArgs { path },
+        ) => {
+            let report = inspect_route_strategy_batch_result(&path)?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_route_strategy_batch_result_inspection_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::ValidateRouteStrategyBatchResult(
+            ProjectValidateRouteStrategyBatchResultArgs { path },
+        ) => {
+            let report = validate_route_strategy_batch_result(&path)?;
+            let output = match format {
+                OutputFormat::Text => {
+                    render_native_route_strategy_batch_result_validation_text(&report)
+                }
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
         ProjectCommands::RouteProposal(ProjectRouteProposalArgs {
             path,
             net_uuid,
             from_anchor_pad_uuid,
             to_anchor_pad_uuid,
+            profile,
         }) => {
             let report = select_native_project_route_proposal(
                 &path,
                 net_uuid,
                 from_anchor_pad_uuid,
                 to_anchor_pad_uuid,
+                profile,
             )?;
             let output = match format {
                 OutputFormat::Text => render_native_route_proposal_selection_text(&report),
@@ -28,12 +120,14 @@ pub(super) fn execute_route_proposal_command(
             net_uuid,
             from_anchor_pad_uuid,
             to_anchor_pad_uuid,
+            profile,
         }) => {
             let report = explain_native_project_route_proposal(
                 &path,
                 net_uuid,
                 from_anchor_pad_uuid,
                 to_anchor_pad_uuid,
+                profile,
             )?;
             let output = match format {
                 OutputFormat::Text => render_native_route_proposal_explain_text(&report),
@@ -46,6 +140,7 @@ pub(super) fn execute_route_proposal_command(
             net_uuid,
             from_anchor_pad_uuid,
             to_anchor_pad_uuid,
+            profile,
             out,
         }) => {
             let report = export_selected_native_project_route_proposal(
@@ -53,6 +148,7 @@ pub(super) fn execute_route_proposal_command(
                 net_uuid,
                 from_anchor_pad_uuid,
                 to_anchor_pad_uuid,
+                profile,
                 &out,
             )?;
             let output = match format {
@@ -125,12 +221,14 @@ pub(super) fn execute_route_proposal_command(
             net_uuid,
             from_anchor_pad_uuid,
             to_anchor_pad_uuid,
+            profile,
         }) => {
             let report = apply_selected_native_project_route(
                 &path,
                 net_uuid,
                 from_anchor_pad_uuid,
                 to_anchor_pad_uuid,
+                profile,
             )?;
             let output = match format {
                 OutputFormat::Text => render_native_route_apply_selected_text(&report),

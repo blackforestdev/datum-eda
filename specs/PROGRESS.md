@@ -411,12 +411,20 @@ Item 8 reconciliation notes (2026-03-25):
 
 ## M5 Opening Charter
 
-Status: [~] In progress
+Status: [~] Routing-kernel scope complete; closure review pending
 - Authority for the proposed opening charter and entry criteria:
   `specs/progress/m5_opening.md`
 - Recommended M5 focus: deterministic layout-kernel groundwork from persisted
   native board state, opening with one narrow routing/constraint slice rather
   than broad placement/routing ambition.
+- Governance narrowing (2026-03-30):
+  - for milestone closure, `M5` is now interpreted as the deterministic
+    persisted-state routing-kernel milestone recorded in the opening charter
+    and current frontier below
+  - placement-kernel and placement/routing co-optimization work are deferred
+    to a later reopened milestone/slice and are not required for `M5` closure
+  - `M6` may open from the completed routing-kernel substrate once closure
+    review accepts this narrowed milestone scope
 - M5 must not inherit M4 parity work by default; new slices require an
   explicit layout-kernel contract and acceptance criteria.
 - MCP implementation parity remains deferred unless explicitly reopened, but
@@ -594,7 +602,8 @@ Status: [~] In progress
   - the bounded direct route-apply surface is now exposed through MCP as
     `route_apply`
   - the matching generic artifact follow-up surfaces are now exposed through
-    MCP as `inspect_route_proposal_artifact` and
+    MCP as `inspect_route_proposal_artifact`,
+    `revalidate_route_proposal_artifact`, and
     `apply_route_proposal_artifact`
   - `specs/PROGRESS.md` tracks only the checkpoint/frontier; detailed per-slice
     history stays in `specs/progress/m5_opening.md`
@@ -613,6 +622,11 @@ Status: [~] In progress
   - that same selector now also has a bounded explanation surface via
     `project route-proposal-explain <dir> --net <uuid> --from-anchor
     <pad_uuid> --to-anchor <pad_uuid>`
+  - that same selector now also accepts a bounded deterministic profile set
+    via `--profile default|authored-copper-priority`; the default order is
+    unchanged, while `authored-copper-priority` prepends the accepted
+    authored-copper-graph policy family ahead of the existing default family
+    order without introducing scoring
   - a narrow MCP parity reopening now covers the selector lane via
     `route_proposal`, `route_proposal_explain`, `export_route_proposal`, and
     `route_apply_selected`
@@ -632,6 +646,54 @@ Status: [~] In progress
     policy set
   - new slices must still avoid broad autorouting semantics, invented
     constraints, and untracked MCP drift
+  - closure interpretation:
+    - this frontier is the intended `M5` closure target under the narrowed
+      routing-kernel milestone definition above
+    - remaining placement-kernel work is explicitly out of scope for `M5`
+      closure
+
+## M6 Opening Charter
+
+Status: [~] In progress
+- Authority for the proposed opening charter and entry criteria:
+  `specs/progress/m6_opening.md`
+- Recommended M6 focus: read-only deterministic strategy reporting layered on
+  top of the completed M5 routing-kernel substrate.
+- Current M6 checkpoint chain:
+  - `project route-strategy-report <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> [--objective <objective>]`
+  - `project route-strategy-compare <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+  - `project route-strategy-delta <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
+  - `project route-strategy-batch-evaluate --requests <path>`
+  - `project inspect-route-strategy-batch-result <path>`
+  - `project validate-route-strategy-batch-result <path>`
+  - accepted objective set currently reuses the selector profile vocabulary:
+    - `default`
+    - `authored-copper-priority`
+  - the report maps the requested objective to one existing selector profile,
+    explains that mapping, and includes the current live selector outcome under
+    that profile without reopening M5 routing semantics
+  - the comparison report evaluates that same accepted objective/profile set,
+    reports the current live selector outcome for each entry, and recommends
+    one profile under a deterministic baseline-preserving comparison rule
+  - the decision-delta report reduces that same accepted objective/profile set
+    to one bounded explicit delta classification plus one short material
+    difference summary for the user
+  - the batch evaluation surface runs the existing report/compare/delta
+    surfaces over a versioned explicit request manifest and returns both
+    per-request evidence and aggregate summary counts
+  - the batch-evaluate JSON output is now also the explicit saved result
+    artifact format with `kind = native_route_strategy_batch_result_artifact`
+    and `version = 1`
+  - saved batch result artifacts can now be inspected and structurally
+    validated through read-only surfaces that report summary/distribution
+    details, per-request outcomes, malformed entries, version compatibility,
+    required-field coverage, and deterministic summary/result integrity checks
+  - the same read-only strategy surface is exposed through MCP as
+    `route_strategy_report`, `route_strategy_compare`, and
+    `route_strategy_delta`, `route_strategy_batch_evaluate`,
+    `inspect_route_strategy_batch_result`, and
+    `validate_route_strategy_batch_result`
+
 - Acceptance checks for the opening slice:
   - deterministic repeated output on unchanged persisted state
   - no pool re-resolution or live import-session dependence

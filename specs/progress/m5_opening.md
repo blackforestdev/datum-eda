@@ -10,6 +10,18 @@ narrow slice that consumes persisted native board state only and proves a
 layout-kernel substrate without jumping directly to broad autorouting or AI
 behavior.
 
+Governance narrowing for closure on 2026-03-30:
+- the opening charter is now also the intended `M5` closure boundary
+- `M5` closes on the completed persisted-state routing-kernel substrate and
+  its bounded proposal/review/apply workflow
+- placement-kernel and placement/routing co-optimization work are explicitly
+  deferred to a later reopened milestone/slice
+- `M6` may begin from this completed routing-kernel substrate without waiting
+  for placement-kernel implementation
+- the first accepted `M6` reopening is a read-only strategy report layered on
+  top of the completed selector/profile lane; it does not reopen `M5` routing
+  semantics
+
 ## Recommended First Slice
 
 Recommended first `M5` slice:
@@ -904,9 +916,12 @@ Adjacent MCP parity slice implemented on 2026-03-29:
 - the generic route-proposal artifact follow-up surfaces are now exposed
   through MCP as:
   - `inspect_route_proposal_artifact`
+  - `revalidate_route_proposal_artifact`
   - `apply_route_proposal_artifact`
 - input:
   - `inspect_route_proposal_artifact`: artifact path only
+  - `revalidate_route_proposal_artifact`: native project directory path plus
+    artifact path
   - `apply_route_proposal_artifact`: native project directory path plus
     artifact path
 - output:
@@ -1469,6 +1484,32 @@ Adjacent selector-lane MCP parity reopening implemented on 2026-03-30:
 - non-goals:
   - no broad native/MCP parity for the remaining M5 route/query commands
   - no new selector heuristics or ranking semantics
+
+Adjacent selector-profile slice implemented on 2026-03-30:
+- bounded deterministic selector profiles for the existing route-proposal lane
+  - accepted profile set:
+    - `default`
+    - `authored-copper-priority`
+  - canonical surfaces:
+    - `project route-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> [--profile <profile>]`
+    - `project route-proposal-explain <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> [--profile <profile>]`
+    - `project export-route-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path> [--profile <profile>]`
+    - `project route-apply-selected <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> [--profile <profile>]`
+- deterministic rule:
+  - `default` preserves the existing accepted selector order exactly
+  - `authored-copper-priority` prepends the accepted authored-copper-graph
+    policy family in explicit policy order:
+    `plain > zone_aware > obstacle_aware > zone_obstacle_aware > zone_obstacle_topology_aware > zone_obstacle_topology_layer_balance_aware`
+  - after that prepend, the selector falls back to the unchanged `default`
+    family order
+- MCP parity:
+  - the same accepted `profile` parameter is exposed on
+    `route_proposal`, `route_proposal_explain`, `export_route_proposal`, and
+    `route_apply_selected`
+- non-goals:
+  - no heuristic scoring or cross-family cost ranking
+  - no change to the default selector order
+  - no new route candidate families beyond the already accepted M5 set
 
 Poor candidates for the first `M5` slice:
 - full autorouter

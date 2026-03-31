@@ -274,6 +274,114 @@ pub(crate) fn seed_route_path_candidate_project(root: &Path) -> (Uuid, Uuid, Uui
     (target_net_uuid, anchor_a_uuid, anchor_b_uuid)
 }
 
+pub(crate) fn seed_route_proposal_profile_project(root: &Path) -> (Uuid, Uuid, Uuid) {
+    create_native_project(
+        root,
+        Some("Route Proposal Selector Profile Demo".to_string()),
+    )
+    .expect("initial scaffold should succeed");
+
+    let target_net_uuid = Uuid::from_u128(0xc280);
+    let class_uuid = Uuid::from_u128(0xc281);
+    let package_a_uuid = Uuid::from_u128(0xc282);
+    let package_b_uuid = Uuid::from_u128(0xc283);
+    let anchor_a_uuid = Uuid::from_u128(0xc284);
+    let anchor_b_uuid = Uuid::from_u128(0xc285);
+    let authored_track_uuid = Uuid::from_u128(0xc286);
+    let board_json = root.join("board/board.json");
+
+    std::fs::write(
+        &board_json,
+        format!(
+            "{}\n",
+            to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "uuid": Uuid::from_u128(0xc287),
+                "name": "Route Proposal Selector Profile Demo Board",
+                "stackup": {
+                    "layers": [
+                        { "id": 1, "name": "Top Copper", "layer_type": "Copper", "thickness_nm": 35000 }
+                    ]
+                },
+                "outline": {
+                    "vertices": [
+                        { "x": 0, "y": 0 },
+                        { "x": 4000000, "y": 0 },
+                        { "x": 4000000, "y": 1000000 },
+                        { "x": 0, "y": 1000000 }
+                    ],
+                    "closed": true
+                },
+                "packages": {},
+                "pads": {
+                    anchor_a_uuid.to_string(): {
+                        "uuid": anchor_a_uuid,
+                        "package": package_a_uuid,
+                        "name": "1",
+                        "net": target_net_uuid,
+                        "position": { "x": 500000, "y": 500000 },
+                        "layer": 1,
+                        "shape": "circle",
+                        "diameter": 400000,
+                        "width": 0,
+                        "height": 0
+                    },
+                    anchor_b_uuid.to_string(): {
+                        "uuid": anchor_b_uuid,
+                        "package": package_b_uuid,
+                        "name": "1",
+                        "net": target_net_uuid,
+                        "position": { "x": 3500000, "y": 500000 },
+                        "layer": 1,
+                        "shape": "circle",
+                        "diameter": 400000,
+                        "width": 0,
+                        "height": 0
+                    }
+                },
+                "tracks": {
+                    authored_track_uuid.to_string(): {
+                        "uuid": authored_track_uuid,
+                        "net": target_net_uuid,
+                        "from": { "x": 500000, "y": 500000 },
+                        "to": { "x": 3500000, "y": 500000 },
+                        "width": 200000,
+                        "layer": 1
+                    }
+                },
+                "vias": {},
+                "zones": {},
+                "nets": {
+                    target_net_uuid.to_string(): {
+                        "uuid": target_net_uuid,
+                        "name": "SIG",
+                        "class": class_uuid
+                    }
+                },
+                "net_classes": {
+                    class_uuid.to_string(): {
+                        "uuid": class_uuid,
+                        "name": "Default",
+                        "clearance": 150000,
+                        "track_width": 200000,
+                        "via_drill": 300000,
+                        "via_diameter": 600000,
+                        "diffpair_width": 0,
+                        "diffpair_gap": 0
+                    }
+                },
+                "keepouts": [],
+                "dimensions": [],
+                "texts": []
+            }))
+            .expect("canonical serialization should succeed")
+        ),
+    )
+    .expect("board file should write");
+
+    (target_net_uuid, anchor_a_uuid, anchor_b_uuid)
+}
+
 pub(crate) fn seed_route_path_candidate_orthogonal_dogleg_project(
     root: &Path,
 ) -> (Uuid, Uuid, Uuid) {

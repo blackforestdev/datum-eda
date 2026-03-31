@@ -7,8 +7,21 @@ use crate::NativeProjectRouteProposalArtifactInspectionSegmentView;
 use crate::NativeProjectRouteProposalArtifactRevalidationSegmentView;
 use crate::NativeProjectRouteProposalArtifactRevalidationView;
 use crate::NativeProjectRouteProposalExplainView;
+use crate::NativeProjectRouteProposalProfileArg;
 use crate::NativeProjectRouteProposalSelectionCandidateView;
 use crate::NativeProjectRouteProposalSelectionView;
+use crate::NativeProjectRouteStrategyBatchEntryView;
+use crate::NativeProjectRouteStrategyBatchEvaluateView;
+use crate::NativeProjectRouteStrategyBatchRequestIdentityView;
+use crate::NativeProjectRouteStrategyBatchResultInspectionView;
+use crate::NativeProjectRouteStrategyBatchResultMalformedEntryView;
+use crate::NativeProjectRouteStrategyBatchResultValidationView;
+use crate::NativeProjectRouteStrategyBatchSummaryView;
+use crate::NativeProjectRouteStrategyCompareView;
+use crate::NativeProjectRouteStrategyComparisonEntryView;
+use crate::NativeProjectRouteStrategyDeltaProfileView;
+use crate::NativeProjectRouteStrategyDeltaView;
+use crate::NativeProjectRouteStrategyReportView;
 use crate::NativeProjectSelectedRouteProposalExportView;
 use crate::cli_args::NativeRoutePathCandidateAuthoredCopperGraphPolicy;
 use eda_engine::board::{
@@ -20,9 +33,14 @@ use eda_engine::board::{
     RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareStepKindView,
     RoutePathCandidateAuthoredCopperPlusOneGapStepKindView, RoutePathCandidateStatus,
 };
+use serde_json::Value;
 
 const ROUTE_PROPOSAL_ARTIFACT_KIND: &str = "native_route_proposal_artifact";
 const ROUTE_PROPOSAL_ARTIFACT_VERSION: u32 = 1;
+const ROUTE_STRATEGY_BATCH_REQUESTS_KIND: &str = "native_route_strategy_batch_requests";
+const ROUTE_STRATEGY_BATCH_REQUESTS_VERSION: u32 = 1;
+const ROUTE_STRATEGY_BATCH_RESULT_KIND: &str = "native_route_strategy_batch_result_artifact";
+const ROUTE_STRATEGY_BATCH_RESULT_VERSION: u32 = 1;
 const ROUTE_PROPOSAL_REASON_AUTHORED_COPPER_PLUS_ONE_GAP: &str = "authored_copper_plus_one_gap";
 const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE: &str = "route_path_candidate";
 const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_VIA: &str = "route_path_candidate_via";
@@ -128,6 +146,29 @@ pub(crate) struct LoadedRouteProposalArtifact {
     pub(crate) artifact_path: PathBuf,
     pub(crate) source_version: u32,
     pub(crate) artifact: RouteProposalArtifact,
+}
+
+struct LoadedRouteStrategyBatchResultArtifact {
+    artifact_path: PathBuf,
+    source_version: u32,
+    artifact: NativeProjectRouteStrategyBatchEvaluateView,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct RouteStrategyBatchRequestsManifest {
+    kind: String,
+    version: u32,
+    requests: Vec<RouteStrategyBatchRequestInput>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct RouteStrategyBatchRequestInput {
+    request_id: String,
+    fixture_id: String,
+    project_root: PathBuf,
+    net_uuid: Uuid,
+    from_anchor_pad_uuid: Uuid,
+    to_anchor_pad_uuid: Uuid,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -421,12 +462,14 @@ pub(crate) fn select_native_project_route_proposal(
     net_uuid: Uuid,
     from_anchor_pad_uuid: Uuid,
     to_anchor_pad_uuid: Uuid,
+    profile: NativeProjectRouteProposalProfileArg,
 ) -> Result<NativeProjectRouteProposalSelectionView> {
     Ok(run_native_project_route_proposal_selection(
         root,
         net_uuid,
         from_anchor_pad_uuid,
         to_anchor_pad_uuid,
+        profile,
     )?
     .report)
 }
@@ -436,12 +479,14 @@ pub(crate) fn explain_native_project_route_proposal(
     net_uuid: Uuid,
     from_anchor_pad_uuid: Uuid,
     to_anchor_pad_uuid: Uuid,
+    profile: NativeProjectRouteProposalProfileArg,
 ) -> Result<NativeProjectRouteProposalExplainView> {
     let selection = run_native_project_route_proposal_selection(
         root,
         net_uuid,
         from_anchor_pad_uuid,
         to_anchor_pad_uuid,
+        profile,
     )?;
     let explanation = if let Some(selected_candidate) = &selection.report.selected_candidate {
         format!(
@@ -458,6 +503,7 @@ pub(crate) fn explain_native_project_route_proposal(
         net_uuid: selection.report.net_uuid,
         from_anchor_pad_uuid: selection.report.from_anchor_pad_uuid,
         to_anchor_pad_uuid: selection.report.to_anchor_pad_uuid,
+        selection_profile: selection.report.selection_profile,
         status: selection.report.status,
         selection_rule: selection.report.selection_rule,
         selected_candidate: selection.report.selected_candidate,
@@ -468,11 +514,665 @@ pub(crate) fn explain_native_project_route_proposal(
     })
 }
 
+pub(crate) fn report_native_project_route_strategy(
+    root: &Path,
+    net_uuid: Uuid,
+    from_anchor_pad_uuid: Uuid,
+    to_anchor_pad_uuid: Uuid,
+    objective: NativeProjectRouteProposalProfileArg,
+) -> Result<NativeProjectRouteStrategyReportView> {
+    let selection = run_native_project_route_proposal_selection(
+        root,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        objective,
+    )?;
+    let objective_name = route_proposal_profile_name(objective).to_string();
+    let recommendation_rule = format!(
+        "objective {} maps directly to selector profile {} using the accepted deterministic M6 objective/profile table",
+        objective_name, objective_name
+    );
+    let objective_explanation = match objective {
+        NativeProjectRouteProposalProfileArg::Default => {
+            "objective default preserves the accepted selector family order and recommends selector profile default without reprioritizing candidate families".to_string()
+        }
+        NativeProjectRouteProposalProfileArg::AuthoredCopperPriority => {
+            "objective authored-copper-priority recommends the existing authored-copper-priority selector profile, which prepends the accepted authored-copper-graph policy family ahead of the unchanged default family order".to_string()
+        }
+    };
+    let explanation = if let Some(selected_candidate) = &selection.report.selected_candidate {
+        format!(
+            "{} Current selector result under that profile chooses {}.",
+            objective_explanation, selected_candidate
+        )
+    } else {
+        format!(
+            "{} Current selector result under that profile finds no selectable route proposal.",
+            objective_explanation
+        )
+    };
+    let next_step_command = format!(
+        "project route-proposal {} --net {} --from-anchor {} --to-anchor {} --profile {}",
+        root.display(),
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        objective_name
+    );
+    Ok(NativeProjectRouteStrategyReportView {
+        action: "route_strategy_report".to_string(),
+        project_root: root.display().to_string(),
+        net_uuid: net_uuid.to_string(),
+        from_anchor_pad_uuid: from_anchor_pad_uuid.to_string(),
+        to_anchor_pad_uuid: to_anchor_pad_uuid.to_string(),
+        objective: objective_name.clone(),
+        recommended_profile: objective_name,
+        recommendation_rule,
+        explanation,
+        selector_status: selection.report.status,
+        selector_rule: selection.report.selection_rule,
+        selected_candidate: selection.report.selected_candidate,
+        selected_policy: selection.report.selected_policy,
+        selected_contract: selection.report.selected_contract,
+        selected_actions: selection.report.selected_actions,
+        next_step_command,
+    })
+}
+
+pub(crate) fn compare_native_project_route_strategy(
+    root: &Path,
+    net_uuid: Uuid,
+    from_anchor_pad_uuid: Uuid,
+    to_anchor_pad_uuid: Uuid,
+) -> Result<NativeProjectRouteStrategyCompareView> {
+    let profiles = accepted_route_strategy_profiles();
+    let comparison_rule = format!(
+        "compare accepted objectives/profiles in deterministic order {} and recommend the first profile in that same order that yields a selectable proposal; if multiple profiles yield proposals, keep the earlier baseline-preserving profile",
+        profiles
+            .iter()
+            .map(|profile| route_proposal_profile_name(*profile))
+            .collect::<Vec<_>>()
+            .join(" > ")
+    );
+    let mut entries = Vec::with_capacity(profiles.len());
+    for profile in profiles {
+        let report = report_native_project_route_strategy(
+            root,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            profile,
+        )?;
+        entries.push(NativeProjectRouteStrategyComparisonEntryView {
+            objective: report.objective,
+            profile: report.recommended_profile,
+            proposal_available: report.selected_candidate.is_some(),
+            selector_status: report.selector_status,
+            selected_candidate: report.selected_candidate,
+            selected_policy: report.selected_policy,
+            selected_contract: report.selected_contract,
+            selected_actions: report.selected_actions,
+            distinction: route_strategy_profile_distinction(profile).to_string(),
+        });
+    }
+    let recommended_entry = entries
+        .iter()
+        .find(|entry| entry.proposal_available)
+        .unwrap_or_else(|| &entries[0]);
+    let recommendation_reason = if recommended_entry.proposal_available {
+        if recommended_entry.profile == "default" {
+            "recommended default because it yields a proposal while preserving the baseline accepted selector order".to_string()
+        } else {
+            format!(
+                "recommended {} because earlier accepted profiles yielded no proposal and this profile yields the first selectable proposal in deterministic comparison order",
+                recommended_entry.profile
+            )
+        }
+    } else {
+        "no accepted profile yields a proposal; recommend default as the baseline inspection profile because it preserves the accepted selector order".to_string()
+    };
+    let next_step_command = format!(
+        "project route-proposal {} --net {} --from-anchor {} --to-anchor {} --profile {}",
+        root.display(),
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        recommended_entry.profile
+    );
+    let recommended_objective = recommended_entry.objective.clone();
+    let recommended_profile = recommended_entry.profile.clone();
+    Ok(NativeProjectRouteStrategyCompareView {
+        action: "route_strategy_compare".to_string(),
+        project_root: root.display().to_string(),
+        net_uuid: net_uuid.to_string(),
+        from_anchor_pad_uuid: from_anchor_pad_uuid.to_string(),
+        to_anchor_pad_uuid: to_anchor_pad_uuid.to_string(),
+        comparison_rule,
+        recommended_objective,
+        recommended_profile,
+        recommendation_reason,
+        next_step_command,
+        entries,
+    })
+}
+
+pub(crate) fn report_native_project_route_strategy_delta(
+    root: &Path,
+    net_uuid: Uuid,
+    from_anchor_pad_uuid: Uuid,
+    to_anchor_pad_uuid: Uuid,
+) -> Result<NativeProjectRouteStrategyDeltaView> {
+    let comparison = compare_native_project_route_strategy(
+        root,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+    )?;
+    let default_entry = comparison
+        .entries
+        .iter()
+        .find(|entry| entry.profile == "default")
+        .ok_or_else(|| anyhow::anyhow!("route strategy comparison missing default profile"))?;
+    let authored_entry = comparison
+        .entries
+        .iter()
+        .find(|entry| entry.profile == "authored-copper-priority")
+        .ok_or_else(|| {
+            anyhow::anyhow!("route strategy comparison missing authored-copper-priority profile")
+        })?;
+    let outcomes_match = default_entry.proposal_available == authored_entry.proposal_available
+        && default_entry.selected_candidate == authored_entry.selected_candidate
+        && default_entry.selected_policy == authored_entry.selected_policy;
+    let delta_classification =
+        if !default_entry.proposal_available && !authored_entry.proposal_available {
+            "no_proposal_under_any_profile"
+        } else if !default_entry.proposal_available && authored_entry.proposal_available {
+            "proposal_available_only_under_authored_copper_priority"
+        } else if outcomes_match {
+            "same_outcome"
+        } else if default_entry.selected_candidate == authored_entry.selected_candidate {
+            "different_policy_same_family"
+        } else {
+            "different_candidate_family"
+        };
+    let outcome_relation = if outcomes_match {
+        "identical".to_string()
+    } else {
+        "different".to_string()
+    };
+    let material_difference = match delta_classification {
+        "no_proposal_under_any_profile" => {
+            "neither accepted profile currently yields a selectable route proposal".to_string()
+        }
+        "proposal_available_only_under_authored_copper_priority" => {
+            "only authored-copper-priority currently yields a selectable proposal because the baseline default profile does not find one".to_string()
+        }
+        "same_outcome" => {
+            "both accepted profiles currently resolve to the same live selector outcome, so changing profiles would not change the proposed route".to_string()
+        }
+        "different_policy_same_family" => {
+            "both accepted profiles currently select the same candidate family but with different bounded policy details".to_string()
+        }
+        "different_candidate_family" => {
+            "the accepted profiles currently resolve to different candidate families, so the choice changes whether the engine prefers baseline synthesis or authored-copper reuse first".to_string()
+        }
+        _ => unreachable!("unhandled delta classification"),
+    };
+    let profiles = comparison
+        .entries
+        .iter()
+        .map(|entry| NativeProjectRouteStrategyDeltaProfileView {
+            objective: entry.objective.clone(),
+            profile: entry.profile.clone(),
+            proposal_available: entry.proposal_available,
+            selected_candidate: entry.selected_candidate.clone(),
+            selected_policy: entry.selected_policy.clone(),
+        })
+        .collect();
+    Ok(NativeProjectRouteStrategyDeltaView {
+        action: "route_strategy_delta".to_string(),
+        project_root: comparison.project_root,
+        net_uuid: comparison.net_uuid,
+        from_anchor_pad_uuid: comparison.from_anchor_pad_uuid,
+        to_anchor_pad_uuid: comparison.to_anchor_pad_uuid,
+        compared_objectives: comparison
+            .entries
+            .iter()
+            .map(|entry| entry.objective.clone())
+            .collect(),
+        compared_profiles: comparison
+            .entries
+            .iter()
+            .map(|entry| entry.profile.clone())
+            .collect(),
+        outcomes_match,
+        outcome_relation,
+        delta_classification: delta_classification.to_string(),
+        recommendation_summary: comparison.recommendation_reason,
+        material_difference,
+        recommended_objective: comparison.recommended_objective,
+        recommended_profile: comparison.recommended_profile,
+        profiles,
+    })
+}
+
+pub(crate) fn evaluate_native_project_route_strategy_batch(
+    requests_manifest_path: &Path,
+) -> Result<NativeProjectRouteStrategyBatchEvaluateView> {
+    let manifest = load_route_strategy_batch_requests_manifest(requests_manifest_path)?;
+    let mut results = Vec::with_capacity(manifest.requests.len());
+    let mut recommendation_counts_by_profile = BTreeMap::new();
+    let mut delta_classification_counts = BTreeMap::new();
+    let mut same_outcome_count = 0usize;
+    let mut different_outcome_count = 0usize;
+    let mut proposal_available_count = 0usize;
+    let mut no_proposal_count = 0usize;
+
+    for request in manifest.requests {
+        let strategy_compare = compare_native_project_route_strategy(
+            &request.project_root,
+            request.net_uuid,
+            request.from_anchor_pad_uuid,
+            request.to_anchor_pad_uuid,
+        )?;
+        let recommended_profile_arg =
+            route_proposal_profile_from_name(&strategy_compare.recommended_profile)?;
+        let strategy_report = report_native_project_route_strategy(
+            &request.project_root,
+            request.net_uuid,
+            request.from_anchor_pad_uuid,
+            request.to_anchor_pad_uuid,
+            recommended_profile_arg,
+        )?;
+        let strategy_delta = report_native_project_route_strategy_delta(
+            &request.project_root,
+            request.net_uuid,
+            request.from_anchor_pad_uuid,
+            request.to_anchor_pad_uuid,
+        )?;
+
+        let recommended_profile = strategy_compare.recommended_profile.clone();
+        *recommendation_counts_by_profile
+            .entry(recommended_profile.clone())
+            .or_insert(0) += 1;
+        *delta_classification_counts
+            .entry(strategy_delta.delta_classification.clone())
+            .or_insert(0) += 1;
+        if strategy_delta.outcomes_match {
+            same_outcome_count += 1;
+        } else {
+            different_outcome_count += 1;
+        }
+        if strategy_compare
+            .entries
+            .iter()
+            .any(|entry| entry.proposal_available)
+        {
+            proposal_available_count += 1;
+        } else {
+            no_proposal_count += 1;
+        }
+
+        results.push(NativeProjectRouteStrategyBatchEntryView {
+            identity: NativeProjectRouteStrategyBatchRequestIdentityView {
+                request_id: request.request_id,
+                fixture_id: request.fixture_id,
+                project_root: request.project_root.display().to_string(),
+                net_uuid: request.net_uuid.to_string(),
+                from_anchor_pad_uuid: request.from_anchor_pad_uuid.to_string(),
+                to_anchor_pad_uuid: request.to_anchor_pad_uuid.to_string(),
+            },
+            route_strategy_report: strategy_report,
+            route_strategy_compare: strategy_compare,
+            route_strategy_delta: strategy_delta.clone(),
+            recommended_profile,
+            delta_classification: strategy_delta.delta_classification,
+            outcomes_match: strategy_delta.outcomes_match,
+        });
+    }
+
+    Ok(NativeProjectRouteStrategyBatchEvaluateView {
+        action: "route_strategy_batch_evaluate".to_string(),
+        kind: ROUTE_STRATEGY_BATCH_RESULT_KIND.to_string(),
+        version: ROUTE_STRATEGY_BATCH_RESULT_VERSION,
+        requests_manifest_path: requests_manifest_path.display().to_string(),
+        requests_manifest_kind: ROUTE_STRATEGY_BATCH_REQUESTS_KIND.to_string(),
+        requests_manifest_version: ROUTE_STRATEGY_BATCH_REQUESTS_VERSION,
+        summary: NativeProjectRouteStrategyBatchSummaryView {
+            total_evaluated_requests: results.len(),
+            recommendation_counts_by_profile,
+            delta_classification_counts,
+            same_outcome_count,
+            different_outcome_count,
+            proposal_available_count,
+            no_proposal_count,
+        },
+        results,
+    })
+}
+
+fn load_route_strategy_batch_requests_manifest(
+    requests_manifest_path: &Path,
+) -> Result<RouteStrategyBatchRequestsManifest> {
+    let raw = std::fs::read_to_string(requests_manifest_path).with_context(|| {
+        format!(
+            "failed to read route strategy batch requests manifest {}",
+            requests_manifest_path.display()
+        )
+    })?;
+    let manifest: RouteStrategyBatchRequestsManifest =
+        serde_json::from_str(&raw).with_context(|| {
+            format!(
+                "failed to parse route strategy batch requests manifest {}",
+                requests_manifest_path.display()
+            )
+        })?;
+    if manifest.kind != ROUTE_STRATEGY_BATCH_REQUESTS_KIND {
+        anyhow::bail!(
+            "route strategy batch requests manifest {} has unsupported kind {}; expected {}",
+            requests_manifest_path.display(),
+            manifest.kind,
+            ROUTE_STRATEGY_BATCH_REQUESTS_KIND
+        );
+    }
+    if manifest.version != ROUTE_STRATEGY_BATCH_REQUESTS_VERSION {
+        anyhow::bail!(
+            "route strategy batch requests manifest {} has unsupported version {}; expected {}",
+            requests_manifest_path.display(),
+            manifest.version,
+            ROUTE_STRATEGY_BATCH_REQUESTS_VERSION
+        );
+    }
+    if manifest.requests.is_empty() {
+        anyhow::bail!(
+            "route strategy batch requests manifest {} must contain at least one request",
+            requests_manifest_path.display()
+        );
+    }
+    Ok(manifest)
+}
+
+fn load_route_strategy_batch_result_artifact(
+    artifact_path: &Path,
+) -> Result<LoadedRouteStrategyBatchResultArtifact> {
+    let raw = std::fs::read_to_string(artifact_path).with_context(|| {
+        format!(
+            "failed to read route strategy batch result artifact {}",
+            artifact_path.display()
+        )
+    })?;
+    let value: Value = serde_json::from_str(&raw).with_context(|| {
+        format!(
+            "failed to parse route strategy batch result artifact {}",
+            artifact_path.display()
+        )
+    })?;
+    let version = value
+        .get("version")
+        .and_then(Value::as_u64)
+        .ok_or_else(|| {
+            anyhow::anyhow!(
+                "route strategy batch result artifact {} is missing required numeric version",
+                artifact_path.display()
+            )
+        })? as u32;
+    match version {
+        ROUTE_STRATEGY_BATCH_RESULT_VERSION => {
+            let artifact =
+                serde_json::from_value::<NativeProjectRouteStrategyBatchEvaluateView>(value)
+                    .with_context(|| {
+                        format!(
+                            "failed to parse route strategy batch result artifact {}",
+                            artifact_path.display()
+                        )
+                    })?;
+            if artifact.kind != ROUTE_STRATEGY_BATCH_RESULT_KIND {
+                bail!(
+                    "unsupported route strategy batch result artifact kind '{}' in {}",
+                    artifact.kind,
+                    artifact_path.display()
+                );
+            }
+            Ok(LoadedRouteStrategyBatchResultArtifact {
+                artifact_path: artifact_path.to_path_buf(),
+                source_version: ROUTE_STRATEGY_BATCH_RESULT_VERSION,
+                artifact,
+            })
+        }
+        _ => bail!(
+            "unsupported route strategy batch result artifact version {} in {}",
+            version,
+            artifact_path.display()
+        ),
+    }
+}
+
+fn batch_result_required_fields_missing(value: &Value) -> Vec<String> {
+    let mut missing = Vec::new();
+    for field in [
+        "action",
+        "kind",
+        "version",
+        "requests_manifest_path",
+        "requests_manifest_kind",
+        "requests_manifest_version",
+        "summary",
+        "results",
+    ] {
+        if value.get(field).is_none() {
+            missing.push(field.to_string());
+        }
+    }
+    missing
+}
+
+fn validate_route_strategy_batch_result_entry(
+    index: usize,
+    value: &Value,
+) -> Option<NativeProjectRouteStrategyBatchResultMalformedEntryView> {
+    let mut issues = Vec::new();
+    let request_id = value
+        .get("identity")
+        .and_then(|identity| identity.get("request_id"))
+        .and_then(Value::as_str)
+        .map(ToString::to_string);
+    if value.get("identity").is_none() {
+        issues.push("missing identity".to_string());
+    } else {
+        for field in [
+            "request_id",
+            "fixture_id",
+            "project_root",
+            "net_uuid",
+            "from_anchor_pad_uuid",
+            "to_anchor_pad_uuid",
+        ] {
+            if value
+                .get("identity")
+                .and_then(|identity| identity.get(field))
+                .is_none()
+            {
+                issues.push(format!("missing identity.{field}"));
+            }
+        }
+    }
+    for field in [
+        "route_strategy_report",
+        "route_strategy_compare",
+        "route_strategy_delta",
+        "recommended_profile",
+        "delta_classification",
+        "outcomes_match",
+    ] {
+        if value.get(field).is_none() {
+            issues.push(format!("missing {field}"));
+        }
+    }
+    if issues.is_empty() {
+        None
+    } else {
+        Some(NativeProjectRouteStrategyBatchResultMalformedEntryView {
+            result_index: index,
+            request_id,
+            issues,
+        })
+    }
+}
+
+fn inspect_route_strategy_batch_result_value(
+    artifact_path: &Path,
+    value: &Value,
+) -> Result<NativeProjectRouteStrategyBatchResultInspectionView> {
+    let loaded = load_route_strategy_batch_result_artifact(artifact_path)?;
+    let malformed_entries = value
+        .get("results")
+        .and_then(Value::as_array)
+        .map(|entries| {
+            entries
+                .iter()
+                .enumerate()
+                .filter_map(|(index, entry)| {
+                    validate_route_strategy_batch_result_entry(index, entry)
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+    Ok(NativeProjectRouteStrategyBatchResultInspectionView {
+        action: "inspect_route_strategy_batch_result".to_string(),
+        artifact_path: loaded.artifact_path.display().to_string(),
+        kind: loaded.artifact.kind,
+        source_version: loaded.source_version,
+        version: loaded.artifact.version,
+        requests_manifest_kind: loaded.artifact.requests_manifest_kind,
+        requests_manifest_version: loaded.artifact.requests_manifest_version,
+        summary: loaded.artifact.summary,
+        results: loaded.artifact.results,
+        malformed_entries,
+    })
+}
+
+pub(crate) fn inspect_route_strategy_batch_result(
+    artifact_path: &Path,
+) -> Result<NativeProjectRouteStrategyBatchResultInspectionView> {
+    let raw = std::fs::read_to_string(artifact_path).with_context(|| {
+        format!(
+            "failed to read route strategy batch result artifact {}",
+            artifact_path.display()
+        )
+    })?;
+    let value: Value = serde_json::from_str(&raw).with_context(|| {
+        format!(
+            "failed to parse route strategy batch result artifact {}",
+            artifact_path.display()
+        )
+    })?;
+    inspect_route_strategy_batch_result_value(artifact_path, &value)
+}
+
+pub(crate) fn validate_route_strategy_batch_result(
+    artifact_path: &Path,
+) -> Result<NativeProjectRouteStrategyBatchResultValidationView> {
+    let raw = std::fs::read_to_string(artifact_path).with_context(|| {
+        format!(
+            "failed to read route strategy batch result artifact {}",
+            artifact_path.display()
+        )
+    })?;
+    let value: Value = serde_json::from_str(&raw).with_context(|| {
+        format!(
+            "failed to parse route strategy batch result artifact {}",
+            artifact_path.display()
+        )
+    })?;
+    let missing_required_fields = batch_result_required_fields_missing(&value);
+    let kind = value
+        .get("kind")
+        .and_then(Value::as_str)
+        .map(ToString::to_string);
+    let version = value
+        .get("version")
+        .and_then(Value::as_u64)
+        .map(|v| v as u32);
+    let version_compatible = kind.as_deref() == Some(ROUTE_STRATEGY_BATCH_RESULT_KIND)
+        && version == Some(ROUTE_STRATEGY_BATCH_RESULT_VERSION);
+    let malformed_entries = value
+        .get("results")
+        .and_then(Value::as_array)
+        .map(|entries| {
+            entries
+                .iter()
+                .enumerate()
+                .filter_map(|(index, entry)| {
+                    validate_route_strategy_batch_result_entry(index, entry)
+                })
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or_default();
+
+    let parsed_artifact = if version_compatible && missing_required_fields.is_empty() {
+        serde_json::from_value::<NativeProjectRouteStrategyBatchEvaluateView>(value.clone()).ok()
+    } else {
+        None
+    };
+
+    let (
+        request_result_count_matches_summary,
+        recommendation_counts_match_summary,
+        delta_classification_counts_match_summary,
+        outcome_counts_match_summary,
+        proposal_counts_match_summary,
+    ) = if let Some(report) = parsed_artifact.as_ref() {
+        let total = report.results.len();
+        let recommendation_total: usize = report
+            .summary
+            .recommendation_counts_by_profile
+            .values()
+            .sum();
+        let delta_total: usize = report.summary.delta_classification_counts.values().sum();
+        (
+            report.summary.total_evaluated_requests == total,
+            recommendation_total == total,
+            delta_total == total,
+            report.summary.same_outcome_count + report.summary.different_outcome_count == total,
+            report.summary.proposal_available_count + report.summary.no_proposal_count == total,
+        )
+    } else {
+        (false, false, false, false, false)
+    };
+    let structurally_valid = version_compatible
+        && missing_required_fields.is_empty()
+        && malformed_entries.is_empty()
+        && request_result_count_matches_summary
+        && recommendation_counts_match_summary
+        && delta_classification_counts_match_summary
+        && outcome_counts_match_summary
+        && proposal_counts_match_summary;
+
+    Ok(NativeProjectRouteStrategyBatchResultValidationView {
+        action: "validate_route_strategy_batch_result".to_string(),
+        artifact_path: artifact_path.display().to_string(),
+        kind,
+        source_version: version.filter(|value| *value == ROUTE_STRATEGY_BATCH_RESULT_VERSION),
+        version,
+        structurally_valid,
+        version_compatible,
+        missing_required_fields,
+        request_result_count_matches_summary,
+        recommendation_counts_match_summary,
+        delta_classification_counts_match_summary,
+        outcome_counts_match_summary,
+        proposal_counts_match_summary,
+        malformed_entries,
+    })
+}
+
 pub(crate) fn export_selected_native_project_route_proposal(
     root: &Path,
     net_uuid: Uuid,
     from_anchor_pad_uuid: Uuid,
     to_anchor_pad_uuid: Uuid,
+    profile: NativeProjectRouteProposalProfileArg,
     output_path: &Path,
 ) -> Result<NativeProjectSelectedRouteProposalExportView> {
     let selection = run_native_project_route_proposal_selection(
@@ -480,6 +1180,7 @@ pub(crate) fn export_selected_native_project_route_proposal(
         net_uuid,
         from_anchor_pad_uuid,
         to_anchor_pad_uuid,
+        profile,
     )?;
     let selected_spec = selection.selected_spec.ok_or_else(|| {
         anyhow::anyhow!(
@@ -498,6 +1199,7 @@ pub(crate) fn export_selected_native_project_route_proposal(
     Ok(NativeProjectSelectedRouteProposalExportView {
         action: "export_route_proposal".to_string(),
         project_root: root.display().to_string(),
+        selection_profile: route_proposal_profile_name(profile).to_string(),
         selection_rule: selection.report.selection_rule,
         selected_candidate: route_apply_candidate_name(selected_spec.candidate).to_string(),
         selected_policy: selected_spec
@@ -521,12 +1223,14 @@ pub(crate) fn apply_selected_native_project_route(
     net_uuid: Uuid,
     from_anchor_pad_uuid: Uuid,
     to_anchor_pad_uuid: Uuid,
+    profile: NativeProjectRouteProposalProfileArg,
 ) -> Result<NativeProjectRouteApplySelectedView> {
     let selection = run_native_project_route_proposal_selection(
         root,
         net_uuid,
         from_anchor_pad_uuid,
         to_anchor_pad_uuid,
+        profile,
     )?;
     let selected_spec = selection.selected_spec.ok_or_else(|| {
         anyhow::anyhow!(
@@ -544,6 +1248,7 @@ pub(crate) fn apply_selected_native_project_route(
     Ok(NativeProjectRouteApplySelectedView {
         action: "route_apply_selected".to_string(),
         project_root: root.display().to_string(),
+        selection_profile: route_proposal_profile_name(profile).to_string(),
         selection_rule: selection.report.selection_rule,
         selected_candidate: route_apply_candidate_name(selected_spec.candidate).to_string(),
         selected_policy: selected_spec
@@ -561,10 +1266,12 @@ fn run_native_project_route_proposal_selection(
     net_uuid: Uuid,
     from_anchor_pad_uuid: Uuid,
     to_anchor_pad_uuid: Uuid,
+    profile: NativeProjectRouteProposalProfileArg,
 ) -> Result<RouteProposalSelectionOutcome> {
-    let specs = route_proposal_selection_specs();
+    let specs = route_proposal_selection_specs(profile);
     let selection_rule = format!(
-        "select the first successful candidate in this deterministic order: {}",
+        "profile {} selects the first successful candidate in this deterministic order: {}",
+        route_proposal_profile_name(profile),
         specs
             .iter()
             .map(route_proposal_selection_spec_name)
@@ -644,6 +1351,7 @@ fn run_native_project_route_proposal_selection(
             net_uuid: net_uuid.to_string(),
             from_anchor_pad_uuid: from_anchor_pad_uuid.to_string(),
             to_anchor_pad_uuid: to_anchor_pad_uuid.to_string(),
+            selection_profile: route_proposal_profile_name(profile).to_string(),
             status: if selected_view.is_some() {
                 "deterministic_route_proposal_selected".to_string()
             } else {
@@ -678,7 +1386,25 @@ fn run_native_project_route_proposal_selection(
     })
 }
 
-fn route_proposal_selection_specs() -> Vec<RouteProposalSelectionCandidateSpec> {
+fn route_proposal_selection_specs(
+    profile: NativeProjectRouteProposalProfileArg,
+) -> Vec<RouteProposalSelectionCandidateSpec> {
+    match profile {
+        NativeProjectRouteProposalProfileArg::Default => default_route_proposal_selection_specs(),
+        NativeProjectRouteProposalProfileArg::AuthoredCopperPriority => {
+            authored_copper_priority_route_proposal_selection_specs()
+        }
+    }
+}
+
+fn accepted_route_strategy_profiles() -> [NativeProjectRouteProposalProfileArg; 2] {
+    [
+        NativeProjectRouteProposalProfileArg::Default,
+        NativeProjectRouteProposalProfileArg::AuthoredCopperPriority,
+    ]
+}
+
+fn default_route_proposal_selection_specs() -> Vec<RouteProposalSelectionCandidateSpec> {
     vec![
         RouteProposalSelectionCandidateSpec {
             candidate: NativeProjectRouteApplyCandidateArg::RoutePathCandidate,
@@ -756,6 +1482,72 @@ fn route_proposal_selection_specs() -> Vec<RouteProposalSelectionCandidateSpec> 
             policy: None,
         },
     ]
+}
+
+fn authored_copper_priority_route_proposal_selection_specs()
+-> Vec<RouteProposalSelectionCandidateSpec> {
+    let mut specs = vec![
+        RouteProposalSelectionCandidateSpec {
+            candidate: NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph,
+            policy: Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::Plain),
+        },
+        RouteProposalSelectionCandidateSpec {
+            candidate: NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph,
+            policy: Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneAware),
+        },
+        RouteProposalSelectionCandidateSpec {
+            candidate: NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph,
+            policy: Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::ObstacleAware),
+        },
+        RouteProposalSelectionCandidateSpec {
+            candidate: NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph,
+            policy: Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleAware),
+        },
+        RouteProposalSelectionCandidateSpec {
+            candidate: NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph,
+            policy: Some(
+                NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyAware,
+            ),
+        },
+        RouteProposalSelectionCandidateSpec {
+            candidate: NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph,
+            policy: Some(
+                NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyLayerBalanceAware,
+            ),
+        },
+    ];
+    specs.extend(default_route_proposal_selection_specs());
+    specs
+}
+
+fn route_proposal_profile_name(profile: NativeProjectRouteProposalProfileArg) -> &'static str {
+    match profile {
+        NativeProjectRouteProposalProfileArg::Default => "default",
+        NativeProjectRouteProposalProfileArg::AuthoredCopperPriority => "authored-copper-priority",
+    }
+}
+
+fn route_proposal_profile_from_name(name: &str) -> Result<NativeProjectRouteProposalProfileArg> {
+    match name {
+        "default" => Ok(NativeProjectRouteProposalProfileArg::Default),
+        "authored-copper-priority" => {
+            Ok(NativeProjectRouteProposalProfileArg::AuthoredCopperPriority)
+        }
+        _ => anyhow::bail!("unsupported route proposal profile name {name}"),
+    }
+}
+
+fn route_strategy_profile_distinction(
+    profile: NativeProjectRouteProposalProfileArg,
+) -> &'static str {
+    match profile {
+        NativeProjectRouteProposalProfileArg::Default => {
+            "baseline profile: preserves the accepted selector family order exactly"
+        }
+        NativeProjectRouteProposalProfileArg::AuthoredCopperPriority => {
+            "reuse-priority profile: prepends the accepted authored-copper-graph policy family ahead of the unchanged default order"
+        }
+    }
 }
 
 fn route_proposal_selection_spec_name(spec: &RouteProposalSelectionCandidateSpec) -> String {

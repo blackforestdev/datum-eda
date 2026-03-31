@@ -71,11 +71,18 @@ class TestProtocolCatalog(unittest.TestCase):
             "explain_violation",
             "export_route_path_proposal",
             "route_proposal",
+            "route_strategy_report",
+            "route_strategy_compare",
+            "route_strategy_delta",
+            "route_strategy_batch_evaluate",
+            "inspect_route_strategy_batch_result",
+            "validate_route_strategy_batch_result",
             "route_proposal_explain",
             "export_route_proposal",
             "route_apply",
             "route_apply_selected",
             "inspect_route_proposal_artifact",
+            "revalidate_route_proposal_artifact",
             "apply_route_proposal_artifact",
         ])
 

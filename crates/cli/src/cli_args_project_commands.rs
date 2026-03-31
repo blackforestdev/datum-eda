@@ -109,6 +109,18 @@ pub(crate) enum ProjectCommands {
     ApplyForwardAnnotationReviewed(ProjectApplyForwardAnnotationReviewedArgs),
     /// Select one deterministic current route proposal from the accepted candidate family order
     RouteProposal(ProjectRouteProposalArgs),
+    /// Report which accepted selector profile should be used for one deterministic routing objective
+    RouteStrategyReport(ProjectRouteStrategyReportArgs),
+    /// Compare the currently accepted deterministic routing objectives/profiles and recommend one choice
+    RouteStrategyCompare(ProjectRouteStrategyCompareArgs),
+    /// Report the bounded decision delta between the currently accepted routing objectives/profiles
+    RouteStrategyDelta(ProjectRouteStrategyDeltaArgs),
+    /// Evaluate the current accepted M6 strategy surfaces across a versioned batch request manifest
+    RouteStrategyBatchEvaluate(ProjectRouteStrategyBatchEvaluateArgs),
+    /// Inspect one saved versioned route-strategy batch result artifact
+    InspectRouteStrategyBatchResult(ProjectInspectRouteStrategyBatchResultArgs),
+    /// Validate one saved versioned route-strategy batch result artifact for structural and count integrity
+    ValidateRouteStrategyBatchResult(ProjectValidateRouteStrategyBatchResultArgs),
     /// Explain how the deterministic current route proposal selector chose or rejected candidate families
     RouteProposalExplain(ProjectRouteProposalExplainArgs),
     /// Export one deterministic route proposal artifact from the currently selected candidate family

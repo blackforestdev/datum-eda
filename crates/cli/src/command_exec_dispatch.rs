@@ -536,6 +536,24 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                     command,
                 ),
                 command @ ProjectCommands::RouteProposal(ProjectRouteProposalArgs { .. })
+                | command @ ProjectCommands::RouteStrategyReport(ProjectRouteStrategyReportArgs {
+                    ..
+                })
+                | command @ ProjectCommands::RouteStrategyCompare(
+                    ProjectRouteStrategyCompareArgs { .. },
+                )
+                | command @ ProjectCommands::RouteStrategyDelta(ProjectRouteStrategyDeltaArgs {
+                    ..
+                })
+                | command @ ProjectCommands::RouteStrategyBatchEvaluate(
+                    ProjectRouteStrategyBatchEvaluateArgs { .. },
+                )
+                | command @ ProjectCommands::InspectRouteStrategyBatchResult(
+                    ProjectInspectRouteStrategyBatchResultArgs { .. },
+                )
+                | command @ ProjectCommands::ValidateRouteStrategyBatchResult(
+                    ProjectValidateRouteStrategyBatchResultArgs { .. },
+                )
                 | command @ ProjectCommands::RouteProposalExplain(
                     ProjectRouteProposalExplainArgs { .. },
                 )

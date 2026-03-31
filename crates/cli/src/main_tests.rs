@@ -377,6 +377,16 @@ mod main_tests_project_route_proposal_artifact;
 mod main_tests_project_route_proposal_explain;
 #[path = "main_tests_project_route_proposal_selection.rs"]
 mod main_tests_project_route_proposal_selection;
+#[path = "main_tests_project_route_strategy_batch_evaluate.rs"]
+mod main_tests_project_route_strategy_batch_evaluate;
+#[path = "main_tests_project_route_strategy_batch_result.rs"]
+mod main_tests_project_route_strategy_batch_result;
+#[path = "main_tests_project_route_strategy_compare.rs"]
+mod main_tests_project_route_strategy_compare;
+#[path = "main_tests_project_route_strategy_delta.rs"]
+mod main_tests_project_route_strategy_delta;
+#[path = "main_tests_project_route_strategy_report.rs"]
+mod main_tests_project_route_strategy_report;
 #[path = "main_tests_project_routing_substrate.rs"]
 mod main_tests_project_routing_substrate;
 #[path = "main_tests_project_selected_route_proposal.rs"]

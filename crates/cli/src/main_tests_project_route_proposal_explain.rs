@@ -1,5 +1,6 @@
 use super::main_tests_project_route_proposal_artifact::{
-    rewrite_board_json, seed_route_path_candidate_project, unique_project_root,
+    rewrite_board_json, seed_route_path_candidate_project, seed_route_proposal_profile_project,
+    unique_project_root,
 };
 use super::*;
 
@@ -33,6 +34,7 @@ fn project_route_proposal_explain_reports_selected_candidate_reason() {
         .as_str()
         .expect("explanation should be a string");
     assert!(explanation.contains("first candidate in deterministic order"));
+    assert_eq!(report["selection_profile"], "default");
 }
 
 #[test]
@@ -72,4 +74,35 @@ fn project_route_proposal_explain_reports_no_candidate_when_all_fail() {
         report["explanation"],
         "no candidate produced a valid proposal action set under current authored constraints"
     );
+}
+
+#[test]
+fn project_route_proposal_explain_authored_copper_priority_profile_reports_profile_winner() {
+    let root = unique_project_root("datum-eda-cli-project-route-proposal-explain-profile");
+    let (net_uuid, from_anchor_uuid, to_anchor_uuid) = seed_route_proposal_profile_project(&root);
+
+    let cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "route-proposal-explain",
+        root.to_str().unwrap(),
+        "--net",
+        &net_uuid.to_string(),
+        "--from-anchor",
+        &from_anchor_uuid.to_string(),
+        "--to-anchor",
+        &to_anchor_uuid.to_string(),
+        "--profile",
+        "authored-copper-priority",
+    ])
+    .expect("CLI should parse");
+
+    let output = execute(cli).expect("route proposal explain should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("output should parse");
+
+    assert_eq!(report["selection_profile"], "authored-copper-priority");
+    assert_eq!(report["selected_candidate"], "authored-copper-graph");
+    assert_eq!(report["selected_policy"], "plain");
 }

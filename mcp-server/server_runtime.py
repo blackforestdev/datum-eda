@@ -664,6 +664,7 @@ class EngineDaemonClient:
         net_uuid: str,
         from_anchor_pad_uuid: str,
         to_anchor_pad_uuid: str,
+        profile: str | None = None,
     ) -> JsonRpcResponse:
         request = self.build_request(
             "route_proposal",
@@ -672,22 +673,157 @@ class EngineDaemonClient:
                 "net_uuid": net_uuid,
                 "from_anchor_pad_uuid": from_anchor_pad_uuid,
                 "to_anchor_pad_uuid": to_anchor_pad_uuid,
+                "profile": profile,
             },
         )
-        return self._run_cli_json(
-            request,
-            [
-                "project",
-                "route-proposal",
-                path,
-                "--net",
-                net_uuid,
-                "--from-anchor",
-                from_anchor_pad_uuid,
-                "--to-anchor",
-                to_anchor_pad_uuid,
-            ],
+        args = [
+            "project",
+            "route-proposal",
+            path,
+            "--net",
+            net_uuid,
+            "--from-anchor",
+            from_anchor_pad_uuid,
+            "--to-anchor",
+            to_anchor_pad_uuid,
+        ]
+        if profile is not None:
+            args.extend(["--profile", profile])
+        return self._run_cli_json(request, args)
+
+    def route_strategy_report(
+        self,
+        path: str,
+        net_uuid: str,
+        from_anchor_pad_uuid: str,
+        to_anchor_pad_uuid: str,
+        objective: str | None = None,
+    ) -> JsonRpcResponse:
+        request = self.build_request(
+            "route_strategy_report",
+            {
+                "path": path,
+                "net_uuid": net_uuid,
+                "from_anchor_pad_uuid": from_anchor_pad_uuid,
+                "to_anchor_pad_uuid": to_anchor_pad_uuid,
+                "objective": objective,
+            },
         )
+        args = [
+            "project",
+            "route-strategy-report",
+            path,
+            "--net",
+            net_uuid,
+            "--from-anchor",
+            from_anchor_pad_uuid,
+            "--to-anchor",
+            to_anchor_pad_uuid,
+        ]
+        if objective is not None:
+            args.extend(["--objective", objective])
+        return self._run_cli_json(request, args)
+
+    def route_strategy_compare(
+        self,
+        path: str,
+        net_uuid: str,
+        from_anchor_pad_uuid: str,
+        to_anchor_pad_uuid: str,
+    ) -> JsonRpcResponse:
+        request = self.build_request(
+            "route_strategy_compare",
+            {
+                "path": path,
+                "net_uuid": net_uuid,
+                "from_anchor_pad_uuid": from_anchor_pad_uuid,
+                "to_anchor_pad_uuid": to_anchor_pad_uuid,
+            },
+        )
+        args = [
+            "project",
+            "route-strategy-compare",
+            path,
+            "--net",
+            net_uuid,
+            "--from-anchor",
+            from_anchor_pad_uuid,
+            "--to-anchor",
+            to_anchor_pad_uuid,
+        ]
+        return self._run_cli_json(request, args)
+
+    def route_strategy_delta(
+        self,
+        path: str,
+        net_uuid: str,
+        from_anchor_pad_uuid: str,
+        to_anchor_pad_uuid: str,
+    ) -> JsonRpcResponse:
+        request = self.build_request(
+            "route_strategy_delta",
+            {
+                "path": path,
+                "net_uuid": net_uuid,
+                "from_anchor_pad_uuid": from_anchor_pad_uuid,
+                "to_anchor_pad_uuid": to_anchor_pad_uuid,
+            },
+        )
+        args = [
+            "project",
+            "route-strategy-delta",
+            path,
+            "--net",
+            net_uuid,
+            "--from-anchor",
+            from_anchor_pad_uuid,
+            "--to-anchor",
+            to_anchor_pad_uuid,
+        ]
+        return self._run_cli_json(request, args)
+
+    def route_strategy_batch_evaluate(self, requests: str) -> JsonRpcResponse:
+        request = self.build_request(
+            "route_strategy_batch_evaluate",
+            {
+                "requests": requests,
+            },
+        )
+        args = [
+            "project",
+            "route-strategy-batch-evaluate",
+            "--requests",
+            requests,
+        ]
+        return self._run_cli_json(request, args)
+
+    def inspect_route_strategy_batch_result(self, artifact: str) -> JsonRpcResponse:
+        request = self.build_request(
+            "inspect_route_strategy_batch_result",
+            {
+                "artifact": artifact,
+            },
+        )
+        args = [
+            "project",
+            "inspect-route-strategy-batch-result",
+            artifact,
+        ]
+        return self._run_cli_json(request, args)
+
+    def validate_route_strategy_batch_result(self, artifact: str) -> JsonRpcResponse:
+        request = self.build_request(
+            "validate_route_strategy_batch_result",
+            {
+                "artifact": artifact,
+            },
+        )
+        args = [
+            "project",
+            "validate-route-strategy-batch-result",
+            artifact,
+        ]
+        return self._run_cli_json(request, args)
 
     def route_proposal_explain(
         self,
@@ -695,6 +831,7 @@ class EngineDaemonClient:
         net_uuid: str,
         from_anchor_pad_uuid: str,
         to_anchor_pad_uuid: str,
+        profile: str | None = None,
     ) -> JsonRpcResponse:
         request = self.build_request(
             "route_proposal_explain",
@@ -703,22 +840,23 @@ class EngineDaemonClient:
                 "net_uuid": net_uuid,
                 "from_anchor_pad_uuid": from_anchor_pad_uuid,
                 "to_anchor_pad_uuid": to_anchor_pad_uuid,
+                "profile": profile,
             },
         )
-        return self._run_cli_json(
-            request,
-            [
-                "project",
-                "route-proposal-explain",
-                path,
-                "--net",
-                net_uuid,
-                "--from-anchor",
-                from_anchor_pad_uuid,
-                "--to-anchor",
-                to_anchor_pad_uuid,
-            ],
-        )
+        args = [
+            "project",
+            "route-proposal-explain",
+            path,
+            "--net",
+            net_uuid,
+            "--from-anchor",
+            from_anchor_pad_uuid,
+            "--to-anchor",
+            to_anchor_pad_uuid,
+        ]
+        if profile is not None:
+            args.extend(["--profile", profile])
+        return self._run_cli_json(request, args)
 
     def export_route_proposal(
         self,
@@ -727,6 +865,7 @@ class EngineDaemonClient:
         from_anchor_pad_uuid: str,
         to_anchor_pad_uuid: str,
         out: str,
+        profile: str | None = None,
     ) -> JsonRpcResponse:
         request = self.build_request(
             "export_route_proposal",
@@ -735,25 +874,25 @@ class EngineDaemonClient:
                 "net_uuid": net_uuid,
                 "from_anchor_pad_uuid": from_anchor_pad_uuid,
                 "to_anchor_pad_uuid": to_anchor_pad_uuid,
+                "profile": profile,
                 "out": out,
             },
         )
-        return self._run_cli_json(
-            request,
-            [
-                "project",
-                "export-route-proposal",
-                path,
-                "--net",
-                net_uuid,
-                "--from-anchor",
-                from_anchor_pad_uuid,
-                "--to-anchor",
-                to_anchor_pad_uuid,
-                "--out",
-                out,
-            ],
-        )
+        args = [
+            "project",
+            "export-route-proposal",
+            path,
+            "--net",
+            net_uuid,
+            "--from-anchor",
+            from_anchor_pad_uuid,
+            "--to-anchor",
+            to_anchor_pad_uuid,
+        ]
+        if profile is not None:
+            args.extend(["--profile", profile])
+        args.extend(["--out", out])
+        return self._run_cli_json(request, args)
 
     def route_apply(
         self,
@@ -798,6 +937,7 @@ class EngineDaemonClient:
         net_uuid: str,
         from_anchor_pad_uuid: str,
         to_anchor_pad_uuid: str,
+        profile: str | None = None,
     ) -> JsonRpcResponse:
         request = self.build_request(
             "route_apply_selected",
@@ -806,22 +946,23 @@ class EngineDaemonClient:
                 "net_uuid": net_uuid,
                 "from_anchor_pad_uuid": from_anchor_pad_uuid,
                 "to_anchor_pad_uuid": to_anchor_pad_uuid,
+                "profile": profile,
             },
         )
-        return self._run_cli_json(
-            request,
-            [
-                "project",
-                "route-apply-selected",
-                path,
-                "--net",
-                net_uuid,
-                "--from-anchor",
-                from_anchor_pad_uuid,
-                "--to-anchor",
-                to_anchor_pad_uuid,
-            ],
-        )
+        args = [
+            "project",
+            "route-apply-selected",
+            path,
+            "--net",
+            net_uuid,
+            "--from-anchor",
+            from_anchor_pad_uuid,
+            "--to-anchor",
+            to_anchor_pad_uuid,
+        ]
+        if profile is not None:
+            args.extend(["--profile", profile])
+        return self._run_cli_json(request, args)
 
     def inspect_route_proposal_artifact(self, artifact: str) -> JsonRpcResponse:
         request = self.build_request(
@@ -835,6 +976,29 @@ class EngineDaemonClient:
             [
                 "project",
                 "inspect-route-proposal-artifact",
+                artifact,
+            ],
+        )
+
+    def revalidate_route_proposal_artifact(
+        self,
+        path: str,
+        artifact: str,
+    ) -> JsonRpcResponse:
+        request = self.build_request(
+            "revalidate_route_proposal_artifact",
+            {
+                "path": path,
+                "artifact": artifact,
+            },
+        )
+        return self._run_cli_json(
+            request,
+            [
+                "project",
+                "revalidate-route-proposal-artifact",
+                path,
+                "--artifact",
                 artifact,
             ],
         )

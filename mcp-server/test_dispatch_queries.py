@@ -271,6 +271,7 @@ class TestDispatchQueries(unittest.TestCase):
                         "net_uuid": "11111111-1111-1111-1111-111111111111",
                         "from_anchor_pad_uuid": "22222222-2222-2222-2222-222222222222",
                         "to_anchor_pad_uuid": "33333333-3333-3333-3333-333333333333",
+                        "profile": "authored-copper-priority",
                     },
                 },
             }
@@ -285,12 +286,14 @@ class TestDispatchQueries(unittest.TestCase):
                         "net_uuid": "11111111-1111-1111-1111-111111111111",
                         "from_anchor_pad_uuid": "22222222-2222-2222-2222-222222222222",
                         "to_anchor_pad_uuid": "33333333-3333-3333-3333-333333333333",
+                        "profile": "authored-copper-priority",
                     },
                 )
             ],
         )
         payload = response["result"]["content"][0]["json"]
         self.assertEqual(payload["action"], "route_proposal")
+        self.assertEqual(payload["selection_profile"], "authored-copper-priority")
         self.assertEqual(payload["selected_candidate"], "route-path-candidate")
 
     def test_tools_call_dispatches_route_proposal_explain(self) -> None:
@@ -322,6 +325,7 @@ class TestDispatchQueries(unittest.TestCase):
                         "net_uuid": "11111111-1111-1111-1111-111111111111",
                         "from_anchor_pad_uuid": "22222222-2222-2222-2222-222222222222",
                         "to_anchor_pad_uuid": "33333333-3333-3333-3333-333333333333",
+                        "profile": None,
                     },
                 )
             ],
@@ -330,13 +334,211 @@ class TestDispatchQueries(unittest.TestCase):
         self.assertEqual(payload["action"], "route_proposal_explain")
         self.assertEqual(payload["families"][0]["status"], "selected")
 
-    def test_tools_call_dispatches_export_route_proposal(self) -> None:
+    def test_tools_call_dispatches_route_strategy_report(self) -> None:
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)
         response = host.handle_message(
             {
                 "jsonrpc": "2.0",
                 "id": 86,
+                "method": "tools/call",
+                "params": {
+                    "name": "route_strategy_report",
+                    "arguments": {
+                        "path": "/tmp/demo",
+                        "net_uuid": "11111111-1111-1111-1111-111111111111",
+                        "from_anchor_pad_uuid": "22222222-2222-2222-2222-222222222222",
+                        "to_anchor_pad_uuid": "33333333-3333-3333-3333-333333333333",
+                        "objective": "authored-copper-priority",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "route_strategy_report",
+                    {
+                        "path": "/tmp/demo",
+                        "net_uuid": "11111111-1111-1111-1111-111111111111",
+                        "from_anchor_pad_uuid": "22222222-2222-2222-2222-222222222222",
+                        "to_anchor_pad_uuid": "33333333-3333-3333-3333-333333333333",
+                        "objective": "authored-copper-priority",
+                    },
+                )
+            ],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["action"], "route_strategy_report")
+        self.assertEqual(payload["recommended_profile"], "authored-copper-priority")
+        self.assertEqual(payload["selected_candidate"], "authored-copper-graph")
+
+    def test_tools_call_dispatches_route_strategy_compare(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 87,
+                "method": "tools/call",
+                "params": {
+                    "name": "route_strategy_compare",
+                    "arguments": {
+                        "path": "/tmp/demo",
+                        "net_uuid": "11111111-1111-1111-1111-111111111111",
+                        "from_anchor_pad_uuid": "22222222-2222-2222-2222-222222222222",
+                        "to_anchor_pad_uuid": "33333333-3333-3333-3333-333333333333",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "route_strategy_compare",
+                    {
+                        "path": "/tmp/demo",
+                        "net_uuid": "11111111-1111-1111-1111-111111111111",
+                        "from_anchor_pad_uuid": "22222222-2222-2222-2222-222222222222",
+                        "to_anchor_pad_uuid": "33333333-3333-3333-3333-333333333333",
+                    },
+                )
+            ],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["action"], "route_strategy_compare")
+        self.assertEqual(payload["recommended_profile"], "default")
+        self.assertEqual(len(payload["entries"]), 2)
+
+    def test_tools_call_dispatches_route_strategy_delta(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 88,
+                "method": "tools/call",
+                "params": {
+                    "name": "route_strategy_delta",
+                    "arguments": {
+                        "path": "/tmp/demo",
+                        "net_uuid": "11111111-1111-1111-1111-111111111111",
+                        "from_anchor_pad_uuid": "22222222-2222-2222-2222-222222222222",
+                        "to_anchor_pad_uuid": "33333333-3333-3333-3333-333333333333",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "route_strategy_delta",
+                    {
+                        "path": "/tmp/demo",
+                        "net_uuid": "11111111-1111-1111-1111-111111111111",
+                        "from_anchor_pad_uuid": "22222222-2222-2222-2222-222222222222",
+                        "to_anchor_pad_uuid": "33333333-3333-3333-3333-333333333333",
+                    },
+                )
+            ],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["action"], "route_strategy_delta")
+        self.assertEqual(payload["delta_classification"], "different_candidate_family")
+        self.assertEqual(len(payload["profiles"]), 2)
+
+    def test_tools_call_dispatches_route_strategy_batch_evaluate(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 89,
+                "method": "tools/call",
+                "params": {
+                    "name": "route_strategy_batch_evaluate",
+                    "arguments": {
+                        "requests": "/tmp/route-strategy-batch.json",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "route_strategy_batch_evaluate",
+                    {
+                        "requests": "/tmp/route-strategy-batch.json",
+                    },
+                )
+            ],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["action"], "route_strategy_batch_evaluate")
+        self.assertEqual(payload["kind"], "native_route_strategy_batch_result_artifact")
+        self.assertEqual(payload["summary"]["total_evaluated_requests"], 2)
+        self.assertEqual(len(payload["results"]), 2)
+
+    def test_tools_call_dispatches_route_strategy_batch_result_inspection(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 97,
+                "method": "tools/call",
+                "params": {
+                    "name": "inspect_route_strategy_batch_result",
+                    "arguments": {
+                        "artifact": "/tmp/route-strategy-batch-result.json",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [("inspect_route_strategy_batch_result", "/tmp/route-strategy-batch-result.json")],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["action"], "inspect_route_strategy_batch_result")
+        self.assertEqual(payload["kind"], "native_route_strategy_batch_result_artifact")
+        self.assertEqual(payload["summary"]["total_evaluated_requests"], 2)
+
+    def test_tools_call_dispatches_route_strategy_batch_result_validation(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 98,
+                "method": "tools/call",
+                "params": {
+                    "name": "validate_route_strategy_batch_result",
+                    "arguments": {
+                        "artifact": "/tmp/route-strategy-batch-result.json",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [("validate_route_strategy_batch_result", "/tmp/route-strategy-batch-result.json")],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["action"], "validate_route_strategy_batch_result")
+        self.assertEqual(payload["structurally_valid"], True)
+
+    def test_tools_call_dispatches_export_route_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 90,
                 "method": "tools/call",
                 "params": {
                     "name": "export_route_proposal",
@@ -360,6 +562,7 @@ class TestDispatchQueries(unittest.TestCase):
                         "net_uuid": "11111111-1111-1111-1111-111111111111",
                         "from_anchor_pad_uuid": "22222222-2222-2222-2222-222222222222",
                         "to_anchor_pad_uuid": "33333333-3333-3333-3333-333333333333",
+                        "profile": None,
                         "out": "/tmp/demo.route-proposal.json",
                     },
                 )
@@ -398,6 +601,7 @@ class TestDispatchQueries(unittest.TestCase):
                         "net_uuid": "11111111-1111-1111-1111-111111111111",
                         "from_anchor_pad_uuid": "22222222-2222-2222-2222-222222222222",
                         "to_anchor_pad_uuid": "33333333-3333-3333-3333-333333333333",
+                        "profile": None,
                     },
                 )
             ],
@@ -429,6 +633,39 @@ class TestDispatchQueries(unittest.TestCase):
         payload = response["result"]["content"][0]["json"]
         self.assertEqual(payload["action"], "inspect_route_proposal_artifact")
         self.assertEqual(payload["artifact_kind"], "native_route_proposal_artifact")
+
+    def test_tools_call_dispatches_route_proposal_artifact_revalidation(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 88,
+                "method": "tools/call",
+                "params": {
+                    "name": "revalidate_route_proposal_artifact",
+                    "arguments": {
+                        "path": "/tmp/demo",
+                        "artifact": "/tmp/demo.route-proposal.json",
+                    },
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [
+                (
+                    "revalidate_route_proposal_artifact",
+                    {
+                        "path": "/tmp/demo",
+                        "artifact": "/tmp/demo.route-proposal.json",
+                    },
+                )
+            ],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["action"], "revalidate_route_proposal_artifact")
+        self.assertEqual(payload["matches_live"], True)
 
     def test_tools_call_dispatches_route_proposal_artifact_apply(self) -> None:
         daemon = FakeDaemonClient()
