@@ -80,275 +80,8 @@ class EngineDaemonClient:
         self._next_id += 1
         return request
 
-    def open_project_request(self, path: str) -> JsonRpcRequest:
-        return self.build_request("open_project", {"path": path})
-
-    def close_project_request(self) -> JsonRpcRequest:
-        return self.build_request("close_project", {})
-
-    def save_request(self, path: str | None = None) -> JsonRpcRequest:
-        return self.build_request("save", {"path": path})
-
     def validate_project_request(self, path: str) -> JsonRpcRequest:
         return self.build_request("validate_project", {"path": path})
-
-    def delete_track_request(self, uuid: str) -> JsonRpcRequest:
-        return self.build_request("delete_track", {"uuid": uuid})
-
-    def delete_via_request(self, uuid: str) -> JsonRpcRequest:
-        return self.build_request("delete_via", {"uuid": uuid})
-
-    def delete_component_request(self, uuid: str) -> JsonRpcRequest:
-        return self.build_request("delete_component", {"uuid": uuid})
-
-    def set_value_request(self, uuid: str, value: str) -> JsonRpcRequest:
-        return self.build_request("set_value", {"uuid": uuid, "value": value})
-
-    def assign_part_request(self, uuid: str, part_uuid: str) -> JsonRpcRequest:
-        return self.build_request("assign_part", {"uuid": uuid, "part_uuid": part_uuid})
-
-    def set_package_request(self, uuid: str, package_uuid: str) -> JsonRpcRequest:
-        return self.build_request("set_package", {"uuid": uuid, "package_uuid": package_uuid})
-
-    def set_package_with_part_request(
-        self, uuid: str, package_uuid: str, part_uuid: str
-    ) -> JsonRpcRequest:
-        return self.build_request(
-            "set_package_with_part",
-            {"uuid": uuid, "package_uuid": package_uuid, "part_uuid": part_uuid},
-        )
-
-    def replace_component_request(
-        self, uuid: str, package_uuid: str, part_uuid: str
-    ) -> JsonRpcRequest:
-        return self.build_request(
-            "replace_component",
-            {"uuid": uuid, "package_uuid": package_uuid, "part_uuid": part_uuid},
-        )
-
-    def replace_components_request(
-        self, replacements: list[dict[str, str]]
-    ) -> JsonRpcRequest:
-        return self.build_request("replace_components", {"replacements": replacements})
-
-    def apply_component_replacement_plan_request(
-        self, replacements: list[dict[str, str | None]]
-    ) -> JsonRpcRequest:
-        return self.build_request(
-            "apply_component_replacement_plan", {"replacements": replacements}
-        )
-
-    def apply_component_replacement_policy_request(
-        self, replacements: list[dict[str, str]]
-    ) -> JsonRpcRequest:
-        return self.build_request(
-            "apply_component_replacement_policy", {"replacements": replacements}
-        )
-
-    def apply_scoped_component_replacement_policy_request(
-        self, scope: dict[str, str | None], policy: str
-    ) -> JsonRpcRequest:
-        return self.build_request(
-            "apply_scoped_component_replacement_policy",
-            {"scope": scope, "policy": policy},
-        )
-
-    def apply_scoped_component_replacement_plan_request(
-        self, plan: dict[str, object]
-    ) -> JsonRpcRequest:
-        return self.build_request(
-            "apply_scoped_component_replacement_plan",
-            {"plan": plan},
-        )
-
-    def set_net_class_request(
-        self,
-        net_uuid: str,
-        class_name: str,
-        clearance: int,
-        track_width: int,
-        via_drill: int,
-        via_diameter: int,
-        diffpair_width: int = 0,
-        diffpair_gap: int = 0,
-    ) -> JsonRpcRequest:
-        return self.build_request(
-            "set_net_class",
-            {
-                "net_uuid": net_uuid,
-                "class_name": class_name,
-                "clearance": clearance,
-                "track_width": track_width,
-                "via_drill": via_drill,
-                "via_diameter": via_diameter,
-                "diffpair_width": diffpair_width,
-                "diffpair_gap": diffpair_gap,
-            },
-        )
-
-    def set_reference_request(self, uuid: str, reference: str) -> JsonRpcRequest:
-        return self.build_request("set_reference", {"uuid": uuid, "reference": reference})
-
-    def set_design_rule_request(
-        self,
-        rule_type: str,
-        scope: dict[str, Any] | str,
-        parameters: dict[str, Any],
-        priority: int,
-        name: str | None = None,
-    ) -> JsonRpcRequest:
-        return self.build_request(
-            "set_design_rule",
-            {
-                "rule_type": rule_type,
-                "scope": scope,
-                "parameters": parameters,
-                "priority": priority,
-                "name": name,
-            },
-        )
-
-    def move_component_request(
-        self,
-        uuid: str,
-        x_mm: float,
-        y_mm: float,
-        rotation_deg: float | None = None,
-    ) -> JsonRpcRequest:
-        return self.build_request(
-            "move_component",
-            {
-                "uuid": uuid,
-                "x_mm": x_mm,
-                "y_mm": y_mm,
-                "rotation_deg": rotation_deg,
-            },
-        )
-
-    def rotate_component_request(self, uuid: str, rotation_deg: float) -> JsonRpcRequest:
-        return self.build_request(
-            "rotate_component",
-            {
-                "uuid": uuid,
-                "x_mm": 0.0,
-                "y_mm": 0.0,
-                "rotation_deg": rotation_deg,
-            },
-        )
-
-    def undo_request(self) -> JsonRpcRequest:
-        return self.build_request("undo", {})
-
-    def redo_request(self) -> JsonRpcRequest:
-        return self.build_request("redo", {})
-
-    def search_pool_request(self, query: str) -> JsonRpcRequest:
-        return self.build_request("search_pool", {"query": query})
-
-    def get_part_request(self, uuid: str) -> JsonRpcRequest:
-        return self.build_request("get_part", {"uuid": uuid})
-
-    def get_package_request(self, uuid: str) -> JsonRpcRequest:
-        return self.build_request("get_package", {"uuid": uuid})
-
-    def get_package_change_candidates_request(self, uuid: str) -> JsonRpcRequest:
-        return self.build_request("get_package_change_candidates", {"uuid": uuid})
-
-    def get_part_change_candidates_request(self, uuid: str) -> JsonRpcRequest:
-        return self.build_request("get_part_change_candidates", {"uuid": uuid})
-
-    def get_component_replacement_plan_request(self, uuid: str) -> JsonRpcRequest:
-        return self.build_request("get_component_replacement_plan", {"uuid": uuid})
-
-    def get_scoped_component_replacement_plan_request(
-        self, scope: dict[str, str | None], policy: str
-    ) -> JsonRpcRequest:
-        return self.build_request(
-            "get_scoped_component_replacement_plan",
-            {"scope": scope, "policy": policy},
-        )
-
-    def edit_scoped_component_replacement_plan_request(
-        self,
-        plan: dict[str, object],
-        exclude_component_uuids: list[str],
-        overrides: list[dict[str, str]],
-    ) -> JsonRpcRequest:
-        return self.build_request(
-            "edit_scoped_component_replacement_plan",
-            {
-                "plan": plan,
-                "exclude_component_uuids": exclude_component_uuids,
-                "overrides": overrides,
-            },
-        )
-
-    def get_board_summary_request(self) -> JsonRpcRequest:
-        return self.build_request("get_board_summary", {})
-
-    def get_components_request(self) -> JsonRpcRequest:
-        return self.build_request("get_components", {})
-
-    def get_netlist_request(self) -> JsonRpcRequest:
-        return self.build_request("get_netlist", {})
-
-    def get_schematic_summary_request(self) -> JsonRpcRequest:
-        return self.build_request("get_schematic_summary", {})
-
-    def get_sheets_request(self) -> JsonRpcRequest:
-        return self.build_request("get_sheets", {})
-
-    def get_labels_request(self) -> JsonRpcRequest:
-        return self.build_request("get_labels", {})
-
-    def get_symbols_request(self) -> JsonRpcRequest:
-        return self.build_request("get_symbols", {})
-
-    def get_symbol_fields_request(self, symbol_uuid: str) -> JsonRpcRequest:
-        return self.build_request("get_symbol_fields", {"symbol_uuid": symbol_uuid})
-
-    def get_ports_request(self) -> JsonRpcRequest:
-        return self.build_request("get_ports", {})
-
-    def get_buses_request(self) -> JsonRpcRequest:
-        return self.build_request("get_buses", {})
-
-    def get_bus_entries_request(self) -> JsonRpcRequest:
-        return self.build_request("get_bus_entries", {})
-
-    def get_noconnects_request(self) -> JsonRpcRequest:
-        return self.build_request("get_noconnects", {})
-
-    def get_hierarchy_request(self) -> JsonRpcRequest:
-        return self.build_request("get_hierarchy", {})
-
-    def get_net_info_request(self) -> JsonRpcRequest:
-        return self.build_request("get_net_info", {})
-
-    def get_unrouted_request(self) -> JsonRpcRequest:
-        return self.build_request("get_unrouted", {})
-
-    def get_schematic_net_info_request(self) -> JsonRpcRequest:
-        return self.build_request("get_schematic_net_info", {})
-
-    def get_check_report_request(self) -> JsonRpcRequest:
-        return self.build_request("get_check_report", {})
-
-    def get_connectivity_diagnostics_request(self) -> JsonRpcRequest:
-        return self.build_request("get_connectivity_diagnostics", {})
-
-    def get_design_rules_request(self) -> JsonRpcRequest:
-        return self.build_request("get_design_rules", {})
-
-    def run_erc_request(self) -> JsonRpcRequest:
-        return self.build_request("run_erc", {})
-
-    def run_drc_request(self) -> JsonRpcRequest:
-        return self.build_request("run_drc", {})
-
-    def explain_violation_request(self, domain: str, index: int) -> JsonRpcRequest:
-        return self.build_request("explain_violation", {"domain": domain, "index": index})
-
     def _cli_prefix(self) -> list[str]:
         configured = os.environ.get("EDA_CLI_BIN", "eda")
         prefix = shlex.split(configured)
@@ -404,230 +137,6 @@ class EngineDaemonClient:
         if not data:
             raise RuntimeError("no response from engine daemon")
         return JsonRpcResponse.from_json(data.decode("utf-8").strip())
-
-    def get_check_report(self) -> JsonRpcResponse:
-        return self.call(self.get_check_report_request())
-
-    def open_project(self, path: str) -> JsonRpcResponse:
-        return self.call(self.open_project_request(path))
-
-    def close_project(self) -> JsonRpcResponse:
-        return self.call(self.close_project_request())
-
-    def save(self, path: str | None = None) -> JsonRpcResponse:
-        return self.call(self.save_request(path))
-
-    def delete_track(self, uuid: str) -> JsonRpcResponse:
-        return self.call(self.delete_track_request(uuid))
-
-    def delete_via(self, uuid: str) -> JsonRpcResponse:
-        return self.call(self.delete_via_request(uuid))
-
-    def delete_component(self, uuid: str) -> JsonRpcResponse:
-        return self.call(self.delete_component_request(uuid))
-
-    def set_value(self, uuid: str, value: str) -> JsonRpcResponse:
-        return self.call(self.set_value_request(uuid, value))
-
-    def assign_part(self, uuid: str, part_uuid: str) -> JsonRpcResponse:
-        return self.call(self.assign_part_request(uuid, part_uuid))
-
-    def set_package(self, uuid: str, package_uuid: str) -> JsonRpcResponse:
-        return self.call(self.set_package_request(uuid, package_uuid))
-
-    def set_package_with_part(
-        self, uuid: str, package_uuid: str, part_uuid: str
-    ) -> JsonRpcResponse:
-        return self.call(self.set_package_with_part_request(uuid, package_uuid, part_uuid))
-
-    def replace_component(
-        self, uuid: str, package_uuid: str, part_uuid: str
-    ) -> JsonRpcResponse:
-        return self.call(self.replace_component_request(uuid, package_uuid, part_uuid))
-
-    def replace_components(
-        self, replacements: list[dict[str, str]]
-    ) -> JsonRpcResponse:
-        return self.call(self.replace_components_request(replacements))
-
-    def apply_component_replacement_plan(
-        self, replacements: list[dict[str, str | None]]
-    ) -> JsonRpcResponse:
-        return self.call(self.apply_component_replacement_plan_request(replacements))
-
-    def apply_component_replacement_policy(
-        self, replacements: list[dict[str, str]]
-    ) -> JsonRpcResponse:
-        return self.call(self.apply_component_replacement_policy_request(replacements))
-
-    def apply_scoped_component_replacement_policy(
-        self, scope: dict[str, str | None], policy: str
-    ) -> JsonRpcResponse:
-        return self.call(
-            self.apply_scoped_component_replacement_policy_request(scope, policy)
-        )
-
-    def apply_scoped_component_replacement_plan(
-        self, plan: dict[str, object]
-    ) -> JsonRpcResponse:
-        return self.call(self.apply_scoped_component_replacement_plan_request(plan))
-
-    def set_net_class(
-        self,
-        net_uuid: str,
-        class_name: str,
-        clearance: int,
-        track_width: int,
-        via_drill: int,
-        via_diameter: int,
-        diffpair_width: int = 0,
-        diffpair_gap: int = 0,
-    ) -> JsonRpcResponse:
-        return self.call(
-            self.set_net_class_request(
-                net_uuid,
-                class_name,
-                clearance,
-                track_width,
-                via_drill,
-                via_diameter,
-                diffpair_width,
-                diffpair_gap,
-            )
-        )
-
-    def set_reference(self, uuid: str, reference: str) -> JsonRpcResponse:
-        return self.call(self.set_reference_request(uuid, reference))
-
-    def set_design_rule(
-        self,
-        rule_type: str,
-        scope: dict[str, Any] | str,
-        parameters: dict[str, Any],
-        priority: int,
-        name: str | None = None,
-    ) -> JsonRpcResponse:
-        return self.call(
-            self.set_design_rule_request(rule_type, scope, parameters, priority, name)
-        )
-
-    def move_component(
-        self,
-        uuid: str,
-        x_mm: float,
-        y_mm: float,
-        rotation_deg: float | None = None,
-    ) -> JsonRpcResponse:
-        return self.call(self.move_component_request(uuid, x_mm, y_mm, rotation_deg))
-
-    def rotate_component(self, uuid: str, rotation_deg: float) -> JsonRpcResponse:
-        return self.call(self.rotate_component_request(uuid, rotation_deg))
-
-    def undo(self) -> JsonRpcResponse:
-        return self.call(self.undo_request())
-
-    def redo(self) -> JsonRpcResponse:
-        return self.call(self.redo_request())
-
-    def search_pool(self, query: str) -> JsonRpcResponse:
-        return self.call(self.search_pool_request(query))
-
-    def get_part(self, uuid: str) -> JsonRpcResponse:
-        return self.call(self.get_part_request(uuid))
-
-    def get_package(self, uuid: str) -> JsonRpcResponse:
-        return self.call(self.get_package_request(uuid))
-
-    def get_package_change_candidates(self, uuid: str) -> JsonRpcResponse:
-        return self.call(self.get_package_change_candidates_request(uuid))
-
-    def get_part_change_candidates(self, uuid: str) -> JsonRpcResponse:
-        return self.call(self.get_part_change_candidates_request(uuid))
-
-    def get_component_replacement_plan(self, uuid: str) -> JsonRpcResponse:
-        return self.call(self.get_component_replacement_plan_request(uuid))
-
-    def get_scoped_component_replacement_plan(
-        self, scope: dict[str, str | None], policy: str
-    ) -> JsonRpcResponse:
-        return self.call(
-            self.get_scoped_component_replacement_plan_request(scope, policy)
-        )
-
-    def edit_scoped_component_replacement_plan(
-        self,
-        plan: dict[str, object],
-        exclude_component_uuids: list[str],
-        overrides: list[dict[str, str]],
-    ) -> JsonRpcResponse:
-        return self.call(
-            self.edit_scoped_component_replacement_plan_request(
-                plan, exclude_component_uuids, overrides
-            )
-        )
-
-    def get_board_summary(self) -> JsonRpcResponse:
-        return self.call(self.get_board_summary_request())
-
-    def get_schematic_summary(self) -> JsonRpcResponse:
-        return self.call(self.get_schematic_summary_request())
-
-    def get_sheets(self) -> JsonRpcResponse:
-        return self.call(self.get_sheets_request())
-
-    def get_components(self) -> JsonRpcResponse:
-        return self.call(self.get_components_request())
-
-    def get_netlist(self) -> JsonRpcResponse:
-        return self.call(self.get_netlist_request())
-
-    def get_labels(self) -> JsonRpcResponse:
-        return self.call(self.get_labels_request())
-
-    def get_symbols(self) -> JsonRpcResponse:
-        return self.call(self.get_symbols_request())
-
-    def get_symbol_fields(self, symbol_uuid: str) -> JsonRpcResponse:
-        return self.call(self.get_symbol_fields_request(symbol_uuid))
-
-    def get_ports(self) -> JsonRpcResponse:
-        return self.call(self.get_ports_request())
-
-    def get_buses(self) -> JsonRpcResponse:
-        return self.call(self.get_buses_request())
-
-    def get_bus_entries(self) -> JsonRpcResponse:
-        return self.call(self.get_bus_entries_request())
-
-    def get_noconnects(self) -> JsonRpcResponse:
-        return self.call(self.get_noconnects_request())
-
-    def get_hierarchy(self) -> JsonRpcResponse:
-        return self.call(self.get_hierarchy_request())
-
-    def get_net_info(self) -> JsonRpcResponse:
-        return self.call(self.get_net_info_request())
-
-    def get_unrouted(self) -> JsonRpcResponse:
-        return self.call(self.get_unrouted_request())
-
-    def get_schematic_net_info(self) -> JsonRpcResponse:
-        return self.call(self.get_schematic_net_info_request())
-
-    def get_connectivity_diagnostics(self) -> JsonRpcResponse:
-        return self.call(self.get_connectivity_diagnostics_request())
-
-    def get_design_rules(self) -> JsonRpcResponse:
-        return self.call(self.get_design_rules_request())
-
-    def run_erc(self) -> JsonRpcResponse:
-        return self.call(self.run_erc_request())
-
-    def run_drc(self) -> JsonRpcResponse:
-        return self.call(self.run_drc_request())
-
-    def explain_violation(self, domain: str, index: int) -> JsonRpcResponse:
-        return self.call(self.explain_violation_request(domain, index))
 
     def export_route_path_proposal(
         self,
@@ -1159,6 +668,204 @@ class EngineDaemonClient:
                 artifact,
             ],
         )
+
+
+_REQUIRED = object()
+
+DAEMON_CLIENT_METHOD_SPECS: list[dict[str, Any]] = [
+    {"name": "open_project", "params": [("path", _REQUIRED)]},
+    {"name": "close_project", "params": []},
+    {"name": "save", "params": [("path", None)]},
+    {"name": "delete_track", "params": [("uuid", _REQUIRED)]},
+    {"name": "delete_via", "params": [("uuid", _REQUIRED)]},
+    {"name": "delete_component", "params": [("uuid", _REQUIRED)]},
+    {
+        "name": "move_component",
+        "params": [
+            ("uuid", _REQUIRED),
+            ("x_mm", _REQUIRED),
+            ("y_mm", _REQUIRED),
+            ("rotation_deg", None),
+        ],
+    },
+    {
+        "name": "rotate_component",
+        "params": [("uuid", _REQUIRED), ("rotation_deg", _REQUIRED)],
+        "fixed": {"x_mm": 0.0, "y_mm": 0.0},
+    },
+    {"name": "set_value", "params": [("uuid", _REQUIRED), ("value", _REQUIRED)]},
+    {"name": "assign_part", "params": [("uuid", _REQUIRED), ("part_uuid", _REQUIRED)]},
+    {
+        "name": "set_package",
+        "params": [("uuid", _REQUIRED), ("package_uuid", _REQUIRED)],
+    },
+    {
+        "name": "set_package_with_part",
+        "params": [
+            ("uuid", _REQUIRED),
+            ("package_uuid", _REQUIRED),
+            ("part_uuid", _REQUIRED),
+        ],
+    },
+    {
+        "name": "replace_component",
+        "params": [
+            ("uuid", _REQUIRED),
+            ("package_uuid", _REQUIRED),
+            ("part_uuid", _REQUIRED),
+        ],
+    },
+    {"name": "replace_components", "params": [("replacements", _REQUIRED)]},
+    {
+        "name": "apply_component_replacement_plan",
+        "params": [("replacements", _REQUIRED)],
+    },
+    {
+        "name": "apply_component_replacement_policy",
+        "params": [("replacements", _REQUIRED)],
+    },
+    {
+        "name": "apply_scoped_component_replacement_policy",
+        "params": [("scope", _REQUIRED), ("policy", _REQUIRED)],
+    },
+    {
+        "name": "apply_scoped_component_replacement_plan",
+        "params": [("plan", _REQUIRED)],
+    },
+    {
+        "name": "set_net_class",
+        "params": [
+            ("net_uuid", _REQUIRED),
+            ("class_name", _REQUIRED),
+            ("clearance", _REQUIRED),
+            ("track_width", _REQUIRED),
+            ("via_drill", _REQUIRED),
+            ("via_diameter", _REQUIRED),
+            ("diffpair_width", 0),
+            ("diffpair_gap", 0),
+        ],
+    },
+    {
+        "name": "set_reference",
+        "params": [("uuid", _REQUIRED), ("reference", _REQUIRED)],
+    },
+    {
+        "name": "set_design_rule",
+        "params": [
+            ("rule_type", _REQUIRED),
+            ("scope", _REQUIRED),
+            ("parameters", _REQUIRED),
+            ("priority", _REQUIRED),
+            ("name", None),
+        ],
+    },
+    {"name": "undo", "params": []},
+    {"name": "redo", "params": []},
+    {"name": "search_pool", "params": [("query", _REQUIRED)]},
+    {"name": "get_part", "params": [("uuid", _REQUIRED)]},
+    {"name": "get_package", "params": [("uuid", _REQUIRED)]},
+    {"name": "get_package_change_candidates", "params": [("uuid", _REQUIRED)]},
+    {"name": "get_part_change_candidates", "params": [("uuid", _REQUIRED)]},
+    {"name": "get_component_replacement_plan", "params": [("uuid", _REQUIRED)]},
+    {
+        "name": "get_scoped_component_replacement_plan",
+        "params": [("scope", _REQUIRED), ("policy", _REQUIRED)],
+    },
+    {
+        "name": "edit_scoped_component_replacement_plan",
+        "params": [
+            ("plan", _REQUIRED),
+            ("exclude_component_uuids", _REQUIRED),
+            ("overrides", _REQUIRED),
+        ],
+    },
+    {"name": "get_board_summary", "params": []},
+    {"name": "get_components", "params": []},
+    {"name": "get_netlist", "params": []},
+    {"name": "get_schematic_summary", "params": []},
+    {"name": "get_sheets", "params": []},
+    {"name": "get_labels", "params": []},
+    {"name": "get_symbols", "params": []},
+    {"name": "get_symbol_fields", "params": [("symbol_uuid", _REQUIRED)]},
+    {"name": "get_ports", "params": []},
+    {"name": "get_buses", "params": []},
+    {"name": "get_bus_entries", "params": []},
+    {"name": "get_noconnects", "params": []},
+    {"name": "get_hierarchy", "params": []},
+    {"name": "get_net_info", "params": []},
+    {"name": "get_unrouted", "params": []},
+    {"name": "get_schematic_net_info", "params": []},
+    {"name": "get_check_report", "params": []},
+    {"name": "get_connectivity_diagnostics", "params": []},
+    {"name": "get_design_rules", "params": []},
+    {"name": "run_erc", "params": []},
+    {"name": "run_drc", "params": []},
+    {
+        "name": "explain_violation",
+        "params": [("domain", _REQUIRED), ("index", _REQUIRED)],
+    },
+]
+
+
+def _build_client_params(
+    method_name: str,
+    param_specs: list[tuple[str, Any]],
+    args: tuple[Any, ...],
+    kwargs: dict[str, Any],
+) -> dict[str, Any]:
+    if len(args) > len(param_specs):
+        raise TypeError(
+            f"{method_name} expected at most {len(param_specs)} arguments, got {len(args)}"
+        )
+    remaining_kwargs = dict(kwargs)
+    params: dict[str, Any] = {}
+    for index, (param_name, default) in enumerate(param_specs):
+        if index < len(args):
+            value = args[index]
+        elif param_name in remaining_kwargs:
+            value = remaining_kwargs.pop(param_name)
+        elif default is not _REQUIRED:
+            value = default
+        else:
+            raise TypeError(f"{method_name} missing required argument: {param_name}")
+        params[param_name] = value
+    if remaining_kwargs:
+        unknown = ", ".join(sorted(remaining_kwargs))
+        raise TypeError(f"{method_name} got unexpected keyword arguments: {unknown}")
+    return params
+
+
+def _install_daemon_client_methods() -> None:
+    for spec in DAEMON_CLIENT_METHOD_SPECS:
+        name = spec["name"]
+        param_specs = spec["params"]
+        fixed = dict(spec.get("fixed", {}))
+
+        def request_method(
+            self: EngineDaemonClient,
+            *args: Any,
+            _name: str = name,
+            _param_specs: list[tuple[str, Any]] = param_specs,
+            _fixed: dict[str, Any] = fixed,
+            **kwargs: Any,
+        ) -> JsonRpcRequest:
+            params = _build_client_params(_name, _param_specs, args, kwargs)
+            return self.build_request(_name, {**_fixed, **params})
+
+        def call_method(
+            self: EngineDaemonClient,
+            *args: Any,
+            _name: str = name,
+            **kwargs: Any,
+        ) -> JsonRpcResponse:
+            request = getattr(self, f"{_name}_request")(*args, **kwargs)
+            return self.call(request)
+
+        setattr(EngineDaemonClient, f"{name}_request", request_method)
+        setattr(EngineDaemonClient, name, call_method)
+
+
+_install_daemon_client_methods()
 
 
 class StdioToolHost:

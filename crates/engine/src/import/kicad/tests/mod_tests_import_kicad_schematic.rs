@@ -169,3 +169,77 @@ fn imports_kicad_bus_members_and_entries_for_supported_subset() {
             .all(|entry| entry.bus == bus.uuid && entry.wire.is_some())
     );
 }
+
+#[test]
+fn imported_symbol_pin_uuids_are_deterministic_across_repeated_runs() {
+    let (first, _report) = import_schematic_document(&fixture_path("simple-demo.kicad_sch"))
+        .expect("fixture should parse");
+    let (second, _report) = import_schematic_document(&fixture_path("simple-demo.kicad_sch"))
+        .expect("fixture should parse");
+
+    let first_root = first
+        .sheets
+        .values()
+        .find(|sheet| sheet.name == "Root")
+        .expect("root sheet should exist");
+    let second_root = second
+        .sheets
+        .values()
+        .find(|sheet| sheet.name == "Root")
+        .expect("root sheet should exist");
+    let first_symbol = first_root
+        .symbols
+        .values()
+        .find(|symbol| symbol.reference == "R1")
+        .expect("R1 symbol should exist");
+    let second_symbol = second_root
+        .symbols
+        .values()
+        .find(|symbol| symbol.reference == "R1")
+        .expect("R1 symbol should exist");
+
+    let first_pins: std::collections::BTreeMap<_, _> = first_symbol
+        .pins
+        .iter()
+        .map(|pin| (pin.number.clone(), pin.uuid))
+        .collect();
+    let second_pins: std::collections::BTreeMap<_, _> = second_symbol
+        .pins
+        .iter()
+        .map(|pin| (pin.number.clone(), pin.uuid))
+        .collect();
+    assert_eq!(first_pins, second_pins);
+}
+
+#[test]
+fn imported_sheet_port_uuids_are_deterministic_across_repeated_runs() {
+    let (first, _report) =
+        import_schematic_document(&fixture_path("hierarchy-mismatch-demo.kicad_sch"))
+            .expect("fixture should parse");
+    let (second, _report) =
+        import_schematic_document(&fixture_path("hierarchy-mismatch-demo.kicad_sch"))
+            .expect("fixture should parse");
+
+    let first_root = first
+        .sheets
+        .values()
+        .find(|sheet| sheet.name == "Root")
+        .expect("root sheet should exist");
+    let second_root = second
+        .sheets
+        .values()
+        .find(|sheet| sheet.name == "Root")
+        .expect("root sheet should exist");
+
+    let first_ports: std::collections::BTreeMap<_, _> = first_root
+        .ports
+        .values()
+        .map(|port| (port.name.clone(), port.uuid))
+        .collect();
+    let second_ports: std::collections::BTreeMap<_, _> = second_root
+        .ports
+        .values()
+        .map(|port| (port.name.clone(), port.uuid))
+        .collect();
+    assert_eq!(first_ports, second_ports);
+}

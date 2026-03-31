@@ -262,6 +262,13 @@ fn error_response(id: Value, code: i32, message: &str) -> JsonRpcResponse {
     }
 }
 
+fn serialized_success_response<T: Serialize>(id: Value, payload: T) -> JsonRpcResponse {
+    match serde_json::to_value(payload) {
+        Ok(result) => success_response(id, result),
+        Err(err) => error_response(id, -32603, &format!("failed to serialize result: {err}")),
+    }
+}
+
 fn main() {
     match parse_socket_arg() {
         Some(path) => {

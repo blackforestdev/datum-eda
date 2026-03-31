@@ -71,7 +71,7 @@ Corrections landed:
 | Airwire computation: matches KiCad on DOA2526 | [~] | Algorithm implemented; DOA2526 validation not confirmed |
 | Board diagnostics: net_without_copper, via_only, partially_routed | [x] | `board/mod.rs` diagnostics() |
 | Golden tests: 8+ designs with checked-in golden files | [ ] | `tests/corpus/` is empty |
-| Deterministic import: byte-identical on 3 runs | [~] | Serialization is deterministic; no corpus to verify against |
+| Deterministic import: byte-identical on 3 runs | [~] | Current KiCad import/query corpus is now gated by `scripts/check_import_query_determinism.py` over checked-in query/check fixtures and passes 3-run stability for the current supported subset; broader import fidelity and non-query/save-backed import determinism remain open |
 | Import fidelity KiCad ≥ 90% | [ ] | No fidelity matrix exists |
 | Import fidelity Eagle ≥ 85% | [ ] | Eagle design import not implemented |
 
@@ -151,6 +151,14 @@ M1 imported-query reliability note (2026-03-30):
     current geometric subset is unambiguous
   - the checked-in `bus-demo.kicad_sch` fixture plus CLI goldens now exercise
     `schematic-nets`, `buses`, `bus-entries`, and `diagnostics` for this path
+- The current KiCad import/query corpus now has a repo-native determinism gate:
+  - manifest: `crates/test-harness/testdata/quality/import_query_determinism_manifest_v1.json`
+  - gate: `python3 scripts/check_import_query_determinism.py`
+  - CI: `.github/workflows/alignment.yml`
+  - scope: repeated `query` and `check` runs across the checked-in KiCad board
+    and schematic fixture corpus used by the current M1 goldens
+  - current result: 36/36 cases stable across 3 repeated runs for the current
+    supported subset
 
 ---
 
@@ -747,7 +755,7 @@ Status: [~] Routing-kernel scope complete; closure review pending
 
 ## M6 Opening Charter
 
-Status: [~] In progress
+Status: [~] Frozen pending evidence
 - Authority for the proposed opening charter and entry criteria:
   `specs/progress/m6_opening.md`
 - Recommended M6 focus: read-only deterministic strategy reporting layered on
@@ -810,6 +818,35 @@ Status: [~] In progress
     read-only CI/review gate under the explicit accepted policy set
     `strict_identical|allow_aggregate_only|fail_on_recommendation_change`,
     reporting pass/fail reasons and count facts while returning CLI exit code
+  - the current M6 implementation frontier is intentionally frozen pending
+    repeated evidence from the checked-in baseline gate and curated fixture
+    suite; new semantics are not the default next step
+
+## M7 Opening Charter
+
+Status: [ ] Not opened
+- Authority for the proposed opening charter and entry criteria:
+  `specs/progress/m7_opening.md`
+- Recommended M7 focus: one narrow visual review layer on top of the closed M5
+  routing-kernel substrate and the frozen M6 strategy-reporting/evidence
+  stack.
+- Current pre-M7 readiness note:
+  - daemon result serialization no longer unwrap-panic on response encoding in
+    `crates/engine-daemon/src/dispatch.rs`; serialization failures now return
+    structured internal JSON-RPC errors instead of crashing the daemon
+  - one remaining imported-connectivity runtime unwrap in
+    `crates/engine/src/connectivity/mod.rs` was removed from the hierarchical
+    link resolver path
+  - `mcp-server/server_runtime.py` now generates the plain daemon-backed MCP
+    request/call wrappers from one shared `DAEMON_CLIENT_METHOD_SPECS` table
+    instead of duplicating those wrappers by hand across request builders and
+    call helpers
+  - `mcp-server/daemon_client_request_tests.py` now sanity-checks that the
+    generated daemon client wrappers are installed and preserve required fixed
+    parameter shapes such as `rotate_component`
+  - governance/docs no longer treat `M5` as the active execution window; M5 is
+    closed, M6 is frozen pending evidence, and the next explicit milestone
+    decision point is `M7`
     `0` on pass and `2` on fail
   - saved batch result artifacts can now also be indexed from a directory or
     explicit list, reporting per-artifact identity/version, filesystem-derived

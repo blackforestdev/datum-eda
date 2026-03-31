@@ -577,7 +577,10 @@ fn apply_hierarchy_resolution(schematic: &Schematic, uf: &mut UnionFind) -> Hier
             match child_labels.get(name).map(Vec::len).unwrap_or(0) {
                 1 if parent_candidates.len() == 1 => {
                     let parent = parent_candidates[0];
-                    let child = child_labels.get(name).unwrap()[0];
+                    let Some(children) = child_labels.get(name) else {
+                        continue;
+                    };
+                    let child = children[0];
                     uf.union(
                         NodeKey {
                             sheet: parent_sheet_uuid,

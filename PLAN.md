@@ -48,20 +48,23 @@ guardrails, not feature expansion.
 
 ## Active Execution Window
 
-Current planning focus: `M5` deterministic layout-kernel development from
-persisted native board state, following the current frontier recorded in
-`specs/PROGRESS.md` and `specs/progress/m5_opening.md`.
+Current planning focus: pre-`M7` readiness work on top of the closed `M5`
+routing-kernel substrate and the frozen `M6` strategy-evidence slice,
+following the active frontier recorded in `specs/PROGRESS.md` and the current
+milestone shard in `specs/progress/`.
 
 Near-term execution order:
-1. Keep `M3` closed except for regression fixes; do not widen imported-design
-   scope without an explicit new milestone need.
-2. Keep `M4` closed for scope except for regression fixes or explicit
-   documentation/governance maintenance.
-3. Use `specs/PROGRESS.md` plus the active milestone shard in
-   `specs/progress/` as the source for the next `M5` slice; do not let local
-   worktree momentum redefine roadmap priority.
-4. Prioritize real capability contracts over adjacent review/checkpoint/query
-   expansion once the routing-kernel read surfaces are proven.
+1. Keep `M5` closed except for regression fixes; do not reopen routing-kernel
+   semantics without an explicit milestone decision.
+2. Keep `M6` frozen pending accumulated evidence from the current strategy
+   baseline gates; do not add objectives, profiles, or broader intent
+   semantics by default.
+3. Prioritize correctness, reliability, and runtime-safety closure work in
+   existing imported-design, checking, daemon, and MCP contracts before
+   opening `M7`.
+4. Use `specs/PROGRESS.md` plus the active milestone shard in
+   `specs/progress/` as the source for the next bounded slice; do not let
+   local worktree momentum redefine roadmap priority.
 
 ## Milestones
 

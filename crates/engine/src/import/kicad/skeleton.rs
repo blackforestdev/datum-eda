@@ -6,6 +6,7 @@ use uuid::Uuid;
 use crate::board::{Board, Net, NetClass, PlacedPackage, PlacedPad, Track, Via, Zone};
 use crate::error::EngineError;
 use crate::ir::geometry::Point;
+use crate::ir::ids::{import_uuid, namespace_kicad};
 use crate::schematic::{
     Bus, HiddenPowerBehavior, Junction, LabelKind, NetLabel, NoConnectMarker, PlacedSymbol,
     SchematicWire, Sheet, SymbolDisplayMode, SymbolPin,
@@ -57,15 +58,19 @@ pub(super) fn parse_schematic_skeleton(
         let lib_id = extract_symbol_lib_id(&block);
         let reference = extract_symbol_property(&block, "Reference").unwrap_or_else(|| "?".into());
         let value = extract_symbol_property(&block, "Value").unwrap_or_default();
-        let fields = symbol_fields(&block);
+        let fields = symbol_fields(uuid, &block);
         let pins = lib_id
             .as_ref()
             .and_then(|lib_id| library_pins.get(lib_id))
             .map(|templates| {
                 templates
                     .iter()
-                    .map(|template| SymbolPin {
-                        uuid: Uuid::new_v4(),
+                    .enumerate()
+                    .map(|(index, template)| SymbolPin {
+                        uuid: import_uuid(
+                            &namespace_kicad(),
+                            &format!("schematic-symbol-pin/{uuid}/{index}/{}", template.number),
+                        ),
                         number: template.number.clone(),
                         name: template.name.clone(),
                         electrical_type: template.electrical_type.clone(),
@@ -230,7 +235,7 @@ pub(super) fn parse_schematic_skeleton(
         let instance_uuid = block_uuid(&block).unwrap_or_else(Uuid::new_v4);
         let name = extract_sheet_property(&block, "Sheetname").unwrap_or_else(|| "Sheet".into());
         let mut port_uuids = Vec::new();
-        for port in extract_sheet_pins(&block) {
+        for port in extract_sheet_pins(instance_uuid, &block) {
             port_uuids.push(port.uuid);
             ports.insert(port.uuid, port);
         }

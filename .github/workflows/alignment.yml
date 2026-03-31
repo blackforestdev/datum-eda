@@ -61,6 +61,9 @@ jobs:
       - name: Native fixture validation gate
         run: python3 scripts/check_native_project_fixtures.py
 
+      - name: Imported query determinism gate
+        run: python3 scripts/check_import_query_determinism.py
+
   transport-smoke:
     runs-on: ubuntu-latest
 

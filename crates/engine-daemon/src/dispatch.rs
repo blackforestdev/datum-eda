@@ -8,7 +8,7 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
     match request.method.as_str() {
         "open_project" => match serde_json::from_value::<OpenProjectParams>(request.params) {
             Ok(params) => match open_project(engine, &params.path) {
-                Ok(report) => success_response(request.id, serde_json::to_value(report).unwrap()),
+                Ok(report) => serialized_success_response(request.id, report),
                 Err(err) => error_response(request.id, -32000, &err.to_string()),
             },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -34,21 +34,21 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
         },
         "delete_track" => match serde_json::from_value::<UuidParams>(request.params) {
             Ok(params) => match engine.delete_track(&params.uuid) {
-                Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
+                Ok(result) => serialized_success_response(request.id, result),
                 Err(err) => error_response(request.id, -32028, &err.to_string()),
             },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
         "delete_via" => match serde_json::from_value::<UuidParams>(request.params) {
             Ok(params) => match engine.delete_via(&params.uuid) {
-                Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
+                Ok(result) => serialized_success_response(request.id, result),
                 Err(err) => error_response(request.id, -32031, &err.to_string()),
             },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
         "delete_component" => match serde_json::from_value::<UuidParams>(request.params) {
             Ok(params) => match engine.delete_component(&params.uuid) {
-                Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
+                Ok(result) => serialized_success_response(request.id, result),
                 Err(err) => error_response(request.id, -32036, &err.to_string()),
             },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -59,7 +59,7 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                 position: Point::new(mm_to_nm(params.x_mm), mm_to_nm(params.y_mm)),
                 rotation: params.rotation_deg.map(|deg| deg.round() as i32),
             }) {
-                Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
+                Ok(result) => serialized_success_response(request.id, result),
                 Err(err) => error_response(request.id, -32033, &err.to_string()),
             },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -80,9 +80,7 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                     uuid: params.uuid,
                     rotation,
                 }) {
-                    Ok(result) => {
-                        success_response(request.id, serde_json::to_value(result).unwrap())
-                    }
+                    Ok(result) => serialized_success_response(request.id, result),
                     Err(err) => error_response(request.id, -32037, &err.to_string()),
                 }
             }
@@ -93,7 +91,7 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                 uuid: params.uuid,
                 value: params.value,
             }) {
-                Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
+                Ok(result) => serialized_success_response(request.id, result),
                 Err(err) => error_response(request.id, -32034, &err.to_string()),
             },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -103,7 +101,7 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                 uuid: params.uuid,
                 reference: params.reference,
             }) {
-                Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
+                Ok(result) => serialized_success_response(request.id, result),
                 Err(err) => error_response(request.id, -32035, &err.to_string()),
             },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -113,7 +111,7 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                 uuid: params.uuid,
                 part_uuid: params.part_uuid,
             }) {
-                Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
+                Ok(result) => serialized_success_response(request.id, result),
                 Err(err) => error_response(request.id, -32038, &err.to_string()),
             },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -123,7 +121,7 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                 uuid: params.uuid,
                 package_uuid: params.package_uuid,
             }) {
-                Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
+                Ok(result) => serialized_success_response(request.id, result),
                 Err(err) => error_response(request.id, -32040, &err.to_string()),
             },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -135,9 +133,7 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                     package_uuid: params.package_uuid,
                     part_uuid: params.part_uuid,
                 }) {
-                    Ok(result) => {
-                        success_response(request.id, serde_json::to_value(result).unwrap())
-                    }
+                    Ok(result) => serialized_success_response(request.id, result),
                     Err(err) => error_response(request.id, -32041, &err.to_string()),
                 },
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -150,9 +146,7 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                     package_uuid: params.package_uuid,
                     part_uuid: params.part_uuid,
                 }) {
-                    Ok(result) => {
-                        success_response(request.id, serde_json::to_value(result).unwrap())
-                    }
+                    Ok(result) => serialized_success_response(request.id, result),
                     Err(err) => error_response(request.id, -32044, &err.to_string()),
                 },
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -171,9 +165,7 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                         })
                         .collect(),
                 ) {
-                    Ok(result) => {
-                        success_response(request.id, serde_json::to_value(result).unwrap())
-                    }
+                    Ok(result) => serialized_success_response(request.id, result),
                     Err(err) => error_response(request.id, -32045, &err.to_string()),
                 },
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -192,9 +184,7 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                         })
                         .collect(),
                 ) {
-                    Ok(result) => {
-                        success_response(request.id, serde_json::to_value(result).unwrap())
-                    }
+                    Ok(result) => serialized_success_response(request.id, result),
                     Err(err) => error_response(request.id, -32046, &err.to_string()),
                 },
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -212,9 +202,7 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                         })
                         .collect(),
                 ) {
-                    Ok(result) => {
-                        success_response(request.id, serde_json::to_value(result).unwrap())
-                    }
+                    Ok(result) => serialized_success_response(request.id, result),
                     Err(err) => error_response(request.id, -32047, &err.to_string()),
                 },
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -235,9 +223,7 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                         policy: params.policy,
                     },
                 ) {
-                    Ok(result) => {
-                        success_response(request.id, serde_json::to_value(result).unwrap())
-                    }
+                    Ok(result) => serialized_success_response(request.id, result),
                     Err(err) => error_response(request.id, -32048, &err.to_string()),
                 },
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -248,9 +234,7 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                 request.params,
             ) {
                 Ok(params) => match engine.apply_scoped_component_replacement_plan(params.plan) {
-                    Ok(result) => {
-                        success_response(request.id, serde_json::to_value(result).unwrap())
-                    }
+                    Ok(result) => serialized_success_response(request.id, result),
                     Err(err) => error_response(request.id, -32050, &err.to_string()),
                 },
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -267,7 +251,7 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                 diffpair_width: params.diffpair_width,
                 diffpair_gap: params.diffpair_gap,
             }) {
-                Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
+                Ok(result) => serialized_success_response(request.id, result),
                 Err(err) => error_response(request.id, -32039, &err.to_string()),
             },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -280,36 +264,36 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                 priority: params.priority,
                 name: params.name,
             }) {
-                Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
+                Ok(result) => serialized_success_response(request.id, result),
                 Err(err) => error_response(request.id, -32032, &err.to_string()),
             },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
         "undo" => match engine.undo() {
-            Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
+            Ok(result) => serialized_success_response(request.id, result),
             Err(err) => error_response(request.id, -32029, &err.to_string()),
         },
         "redo" => match engine.redo() {
-            Ok(result) => success_response(request.id, serde_json::to_value(result).unwrap()),
+            Ok(result) => serialized_success_response(request.id, result),
             Err(err) => error_response(request.id, -32030, &err.to_string()),
         },
         "search_pool" => match serde_json::from_value::<SearchPoolParams>(request.params) {
             Ok(params) => match engine.search_pool(&params.query) {
-                Ok(parts) => success_response(request.id, serde_json::to_value(parts).unwrap()),
+                Ok(parts) => serialized_success_response(request.id, parts),
                 Err(err) => error_response(request.id, -32019, &err.to_string()),
             },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
         "get_part" => match serde_json::from_value::<UuidParams>(request.params) {
             Ok(params) => match engine.get_part(&params.uuid) {
-                Ok(part) => success_response(request.id, serde_json::to_value(part).unwrap()),
+                Ok(part) => serialized_success_response(request.id, part),
                 Err(err) => error_response(request.id, -32024, &err.to_string()),
             },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
         "get_package" => match serde_json::from_value::<UuidParams>(request.params) {
             Ok(params) => match engine.get_package(&params.uuid) {
-                Ok(package) => success_response(request.id, serde_json::to_value(package).unwrap()),
+                Ok(package) => serialized_success_response(request.id, package),
                 Err(err) => error_response(request.id, -32025, &err.to_string()),
             },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -317,9 +301,7 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
         "get_package_change_candidates" => {
             match serde_json::from_value::<UuidParams>(request.params) {
                 Ok(params) => match engine.get_package_change_candidates(&params.uuid) {
-                    Ok(report) => {
-                        success_response(request.id, serde_json::to_value(report).unwrap())
-                    }
+                    Ok(report) => serialized_success_response(request.id, report),
                     Err(err) => error_response(request.id, -32031, &err.to_string()),
                 },
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -328,9 +310,7 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
         "get_part_change_candidates" => {
             match serde_json::from_value::<UuidParams>(request.params) {
                 Ok(params) => match engine.get_part_change_candidates(&params.uuid) {
-                    Ok(report) => {
-                        success_response(request.id, serde_json::to_value(report).unwrap())
-                    }
+                    Ok(report) => serialized_success_response(request.id, report),
                     Err(err) => error_response(request.id, -32042, &err.to_string()),
                 },
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -339,9 +319,7 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
         "get_component_replacement_plan" => {
             match serde_json::from_value::<UuidParams>(request.params) {
                 Ok(params) => match engine.get_component_replacement_plan(&params.uuid) {
-                    Ok(report) => {
-                        success_response(request.id, serde_json::to_value(report).unwrap())
-                    }
+                    Ok(report) => serialized_success_response(request.id, report),
                     Err(err) => error_response(request.id, -32043, &err.to_string()),
                 },
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -361,9 +339,7 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                         policy: params.policy,
                     },
                 ) {
-                    Ok(report) => {
-                        success_response(request.id, serde_json::to_value(report).unwrap())
-                    }
+                    Ok(report) => serialized_success_response(request.id, report),
                     Err(err) => error_response(request.id, -32049, &err.to_string()),
                 },
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
@@ -387,101 +363,93 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                             .collect(),
                     },
                 ) {
-                    Ok(report) => {
-                        success_response(request.id, serde_json::to_value(report).unwrap())
-                    }
+                    Ok(report) => serialized_success_response(request.id, report),
                     Err(err) => error_response(request.id, -32051, &err.to_string()),
                 },
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
             }
         }
         "get_board_summary" => match engine.get_board_summary() {
-            Ok(summary) => success_response(request.id, serde_json::to_value(summary).unwrap()),
+            Ok(summary) => serialized_success_response(request.id, summary),
             Err(err) => error_response(request.id, -32004, &err.to_string()),
         },
         "get_components" => match engine.get_components() {
-            Ok(components) => {
-                success_response(request.id, serde_json::to_value(components).unwrap())
-            }
+            Ok(components) => serialized_success_response(request.id, components),
             Err(err) => error_response(request.id, -32008, &err.to_string()),
         },
         "get_netlist" => match engine.get_netlist() {
-            Ok(nets) => success_response(request.id, serde_json::to_value(nets).unwrap()),
+            Ok(nets) => serialized_success_response(request.id, nets),
             Err(err) => error_response(request.id, -32021, &err.to_string()),
         },
         "get_schematic_summary" => match engine.get_schematic_summary() {
-            Ok(summary) => success_response(request.id, serde_json::to_value(summary).unwrap()),
+            Ok(summary) => serialized_success_response(request.id, summary),
             Err(err) => error_response(request.id, -32005, &err.to_string()),
         },
         "get_sheets" => match engine.get_sheets() {
-            Ok(sheets) => success_response(request.id, serde_json::to_value(sheets).unwrap()),
+            Ok(sheets) => serialized_success_response(request.id, sheets),
             Err(err) => error_response(request.id, -32018, &err.to_string()),
         },
         "get_labels" => match engine.get_labels(None) {
-            Ok(labels) => success_response(request.id, serde_json::to_value(labels).unwrap()),
+            Ok(labels) => serialized_success_response(request.id, labels),
             Err(err) => error_response(request.id, -32009, &err.to_string()),
         },
         "get_symbols" => match engine.get_symbols(None) {
-            Ok(symbols) => success_response(request.id, serde_json::to_value(symbols).unwrap()),
+            Ok(symbols) => serialized_success_response(request.id, symbols),
             Err(err) => error_response(request.id, -32014, &err.to_string()),
         },
         "get_symbol_fields" => match serde_json::from_value::<SymbolFieldsParams>(request.params) {
             Ok(params) => match engine.get_symbol_fields(&params.symbol_uuid) {
-                Ok(fields) => success_response(request.id, serde_json::to_value(fields).unwrap()),
+                Ok(fields) => serialized_success_response(request.id, fields),
                 Err(err) => error_response(request.id, -32022, &err.to_string()),
             },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
         "get_ports" => match engine.get_ports(None) {
-            Ok(ports) => success_response(request.id, serde_json::to_value(ports).unwrap()),
+            Ok(ports) => serialized_success_response(request.id, ports),
             Err(err) => error_response(request.id, -32010, &err.to_string()),
         },
         "get_buses" => match engine.get_buses(None) {
-            Ok(buses) => success_response(request.id, serde_json::to_value(buses).unwrap()),
+            Ok(buses) => serialized_success_response(request.id, buses),
             Err(err) => error_response(request.id, -32012, &err.to_string()),
         },
         "get_bus_entries" => match engine.get_bus_entries(None) {
-            Ok(entries) => success_response(request.id, serde_json::to_value(entries).unwrap()),
+            Ok(entries) => serialized_success_response(request.id, entries),
             Err(err) => error_response(request.id, -32023, &err.to_string()),
         },
         "get_noconnects" => match engine.get_noconnects(None) {
-            Ok(noconnects) => {
-                success_response(request.id, serde_json::to_value(noconnects).unwrap())
-            }
+            Ok(noconnects) => serialized_success_response(request.id, noconnects),
             Err(err) => error_response(request.id, -32015, &err.to_string()),
         },
         "get_hierarchy" => match engine.get_hierarchy() {
-            Ok(hierarchy) => success_response(request.id, serde_json::to_value(hierarchy).unwrap()),
+            Ok(hierarchy) => serialized_success_response(request.id, hierarchy),
             Err(err) => error_response(request.id, -32013, &err.to_string()),
         },
         "get_net_info" => match engine.get_net_info() {
-            Ok(nets) => success_response(request.id, serde_json::to_value(nets).unwrap()),
+            Ok(nets) => serialized_success_response(request.id, nets),
             Err(err) => error_response(request.id, -32006, &err.to_string()),
         },
         "get_unrouted" => match engine.get_unrouted() {
-            Ok(airwires) => success_response(request.id, serde_json::to_value(airwires).unwrap()),
+            Ok(airwires) => serialized_success_response(request.id, airwires),
             Err(err) => error_response(request.id, -32016, &err.to_string()),
         },
         "get_schematic_net_info" => match engine.get_schematic_net_info() {
-            Ok(nets) => success_response(request.id, serde_json::to_value(nets).unwrap()),
+            Ok(nets) => serialized_success_response(request.id, nets),
             Err(err) => error_response(request.id, -32011, &err.to_string()),
         },
         "get_check_report" => match engine.get_check_report() {
-            Ok(report) => success_response(request.id, serde_json::to_value(report).unwrap()),
+            Ok(report) => serialized_success_response(request.id, report),
             Err(err) => error_response(request.id, -32001, &err.to_string()),
         },
         "get_connectivity_diagnostics" => match engine.get_connectivity_diagnostics() {
-            Ok(diagnostics) => {
-                success_response(request.id, serde_json::to_value(diagnostics).unwrap())
-            }
+            Ok(diagnostics) => serialized_success_response(request.id, diagnostics),
             Err(err) => error_response(request.id, -32003, &err.to_string()),
         },
         "get_design_rules" => match engine.get_design_rules() {
-            Ok(rules) => success_response(request.id, serde_json::to_value(rules).unwrap()),
+            Ok(rules) => serialized_success_response(request.id, rules),
             Err(err) => error_response(request.id, -32020, &err.to_string()),
         },
         "run_erc" => match engine.run_erc_prechecks() {
-            Ok(findings) => success_response(request.id, serde_json::to_value(findings).unwrap()),
+            Ok(findings) => serialized_success_response(request.id, findings),
             Err(err) => error_response(request.id, -32002, &err.to_string()),
         },
         "run_drc" => match engine.run_drc(&[
@@ -492,15 +460,13 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
             RuleType::ViaAnnularRing,
             RuleType::SilkClearance,
         ]) {
-            Ok(report) => success_response(request.id, serde_json::to_value(report).unwrap()),
+            Ok(report) => serialized_success_response(request.id, report),
             Err(err) => error_response(request.id, -32017, &err.to_string()),
         },
         "explain_violation" => {
             match serde_json::from_value::<ExplainViolationParams>(request.params) {
                 Ok(params) => match engine.explain_violation(params.domain, params.index) {
-                    Ok(explanation) => {
-                        success_response(request.id, serde_json::to_value(explanation).unwrap())
-                    }
+                    Ok(explanation) => serialized_success_response(request.id, explanation),
                     Err(err) => error_response(request.id, -32026, &err.to_string()),
                 },
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),

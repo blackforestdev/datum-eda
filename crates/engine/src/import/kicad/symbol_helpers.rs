@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use uuid::Uuid;
 
 use crate::ir::geometry::Point;
+use crate::ir::ids::{import_uuid, namespace_kicad};
 use crate::schematic::{
     HierarchicalPort, PinElectricalType, PlacedSymbol, PortDirection, SymbolField,
 };
@@ -93,9 +94,9 @@ pub(super) fn extract_symbol_unit(block: &str) -> Option<String> {
     })
 }
 
-pub(super) fn symbol_fields(block: &str) -> Vec<SymbolField> {
+pub(super) fn symbol_fields(symbol_uuid: Uuid, block: &str) -> Vec<SymbolField> {
     let mut fields = Vec::new();
-    for line in block.lines() {
+    for (index, line) in block.lines().enumerate() {
         let trimmed = line.trim_start();
         if !trimmed.starts_with("(property ") {
             continue;
@@ -105,7 +106,10 @@ pub(super) fn symbol_fields(block: &str) -> Vec<SymbolField> {
             continue;
         }
         fields.push(SymbolField {
-            uuid: Uuid::new_v4(),
+            uuid: import_uuid(
+                &namespace_kicad(),
+                &format!("schematic-symbol-field/{symbol_uuid}/{index}/{}", tokens[0]),
+            ),
             key: tokens[0].clone(),
             value: tokens[1].clone(),
             position: parse_at_point(trimmed),
@@ -182,9 +186,9 @@ pub(super) fn parse_kicad_pin_electrical_type(pin_block: &str) -> PinElectricalT
     }
 }
 
-pub(super) fn extract_sheet_pins(block: &str) -> Vec<HierarchicalPort> {
+pub(super) fn extract_sheet_pins(sheet_instance_uuid: Uuid, block: &str) -> Vec<HierarchicalPort> {
     let mut ports = Vec::new();
-    for pin_block in nested_blocks(block, "pin") {
+    for (index, pin_block) in nested_blocks(block, "pin").into_iter().enumerate() {
         let Some(first_line) = pin_block.lines().next() else {
             continue;
         };
@@ -204,7 +208,10 @@ pub(super) fn extract_sheet_pins(block: &str) -> Vec<HierarchicalPort> {
         };
         let position = block_at_point(&pin_block).unwrap_or_else(Point::zero);
         ports.push(HierarchicalPort {
-            uuid: Uuid::new_v4(),
+            uuid: import_uuid(
+                &namespace_kicad(),
+                &format!("schematic-sheet-port/{sheet_instance_uuid}/{index}/{name}"),
+            ),
             name,
             direction,
             position,

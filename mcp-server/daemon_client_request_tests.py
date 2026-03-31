@@ -7,7 +7,7 @@ import subprocess
 import unittest
 from unittest.mock import patch
 
-from server_runtime import EngineDaemonClient
+from server_runtime import DAEMON_CLIENT_METHOD_SPECS, EngineDaemonClient
 from test_support import FakeDaemonClient
 from tools_catalog_data import TOOLS
 
@@ -18,6 +18,15 @@ class TestDaemonClientRequests(unittest.TestCase):
             name = tool["name"]
             self.assertTrue(callable(getattr(EngineDaemonClient, name, None)), name)
             self.assertTrue(callable(getattr(FakeDaemonClient, name, None)), name)
+
+    def test_daemon_client_method_specs_install_request_and_call_wrappers(self) -> None:
+        client = EngineDaemonClient()
+        for spec in DAEMON_CLIENT_METHOD_SPECS:
+            name = spec["name"]
+            request_method = getattr(client, f"{name}_request", None)
+            call_method = getattr(client, name, None)
+            self.assertTrue(callable(request_method), name)
+            self.assertTrue(callable(call_method), name)
 
     def test_builds_get_check_report_request(self) -> None:
         client = EngineDaemonClient()
@@ -40,6 +49,15 @@ class TestDaemonClientRequests(unittest.TestCase):
         request = client.open_project_request("/tmp/demo.kicad_pcb")
         self.assertEqual(request.method, "open_project")
         self.assertEqual(request.params, {"path": "/tmp/demo.kicad_pcb"})
+
+    def test_generated_rotate_component_request_keeps_fixed_mm_fields(self) -> None:
+        client = EngineDaemonClient()
+        request = client.rotate_component_request("comp-uuid", 180.0)
+        self.assertEqual(request.method, "rotate_component")
+        self.assertEqual(
+            request.params,
+            {"uuid": "comp-uuid", "x_mm": 0.0, "y_mm": 0.0, "rotation_deg": 180.0},
+        )
 
     def test_builds_validate_project_request(self) -> None:
         client = EngineDaemonClient()
