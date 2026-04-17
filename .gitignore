@@ -18,6 +18,9 @@ CLAUDE.md
 # Research symlinks (local sandbox only)
 /research
 
+# Codex
+.codex
+
 # Editor artifacts
 /.idea
 /.vscode
@@ -29,3 +32,4 @@ CLAUDE.md
 # Environment
 .env
 .env.*
+.datum/

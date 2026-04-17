@@ -84,6 +84,11 @@ fn native_component_pad_to_placed_pad(
         diameter: pad.diameter_nm,
         width: pad.width_nm,
         height: pad.height_nm,
+        drill: pad.drill_nm.unwrap_or(0),
+        rotation: 0,
+        mask_layers: Vec::new(),
+        paste_layers: Vec::new(),
+        roundrect_rratio_ppm: 250_000,
     })
 }
 
@@ -132,6 +137,8 @@ fn parse_native_board_pad_shape(shape: &str) -> Result<PadShape> {
     match shape {
         "circle" => Ok(PadShape::Circle),
         "rect" => Ok(PadShape::Rect),
+        "oval" => Ok(PadShape::Oval),
+        "roundrect" => Ok(PadShape::RoundRect),
         _ => bail!("unsupported board pad shape: {shape}"),
     }
 }
@@ -186,6 +193,11 @@ pub(crate) fn place_native_project_board_pad(
         diameter: diameter_nm.unwrap_or(0),
         width: width_nm.unwrap_or(0),
         height: height_nm.unwrap_or(0),
+        drill: 0,
+        rotation: 0,
+        mask_layers: Vec::new(),
+        paste_layers: Vec::new(),
+        roundrect_rratio_ppm: 250_000,
     };
     validate_native_board_pad_geometry(&pad)?;
     project.board.pads.insert(

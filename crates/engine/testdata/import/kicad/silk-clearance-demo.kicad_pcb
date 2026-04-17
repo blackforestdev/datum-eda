@@ -22,4 +22,28 @@
   (gr_text "R1"
     (at 15 10 0)
     (layer "F.SilkS")
-    (uuid 22222222-aaaa-bbbb-cccc-000000000002)))
+    (uuid 22222222-aaaa-bbbb-cccc-000000000002))
+  (gr_line
+    (start 0 0)
+    (end 50 0)
+    (stroke (width 0.05) (type solid))
+    (layer "Edge.Cuts")
+    (uuid 44444444-aaaa-bbbb-cccc-000000000001))
+  (gr_line
+    (start 50 0)
+    (end 50 50)
+    (stroke (width 0.05) (type solid))
+    (layer "Edge.Cuts")
+    (uuid 44444444-aaaa-bbbb-cccc-000000000002))
+  (gr_line
+    (start 50 50)
+    (end 0 50)
+    (stroke (width 0.05) (type solid))
+    (layer "Edge.Cuts")
+    (uuid 44444444-aaaa-bbbb-cccc-000000000003))
+  (gr_line
+    (start 0 50)
+    (end 0 0)
+    (stroke (width 0.05) (type solid))
+    (layer "Edge.Cuts")
+    (uuid 44444444-aaaa-bbbb-cccc-000000000004)))

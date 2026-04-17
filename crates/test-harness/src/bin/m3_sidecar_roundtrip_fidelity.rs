@@ -260,7 +260,7 @@ fn set_design_rule_fidelity_evidence(cli: &Cli) -> Result<String> {
         );
     }
 
-    let first_rules_sidecar = rules_sidecar::sidecar_path_for_source(&first_board);
+    let first_rules_sidecar = rules_sidecar::sidecar_path_for_source(&first_board)?;
     let first_rules = rules_sidecar::read_sidecar(&first_rules_sidecar)
         .context("failed to decode first rule sidecar")?;
 
@@ -272,7 +272,7 @@ fn set_design_rule_fidelity_evidence(cli: &Cli) -> Result<String> {
     reloaded.save(&second_board)?;
 
     let second_board_bytes = fs::read(&second_board)?;
-    let second_rules_sidecar = rules_sidecar::sidecar_path_for_source(&second_board);
+    let second_rules_sidecar = rules_sidecar::sidecar_path_for_source(&second_board)?;
     let second_rules = rules_sidecar::read_sidecar(&second_rules_sidecar)
         .context("failed to decode second rule sidecar")?;
     if first_board_bytes != second_board_bytes {

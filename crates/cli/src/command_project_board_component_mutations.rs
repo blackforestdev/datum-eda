@@ -63,12 +63,31 @@ pub(crate) fn move_native_project_board_component(
             project.board_path.display()
         )
     })?;
+    let delta = Point {
+        x: position.x - component.position.x,
+        y: position.y - component.position.y,
+    };
     component.position = position;
     project.board.packages.insert(
         key.clone(),
         serde_json::to_value(&component)
             .expect("native board component serialization must succeed"),
     );
+    for value in project.board.pads.values_mut() {
+        let mut pad: eda_engine::board::PlacedPad =
+            serde_json::from_value(value.clone()).with_context(|| {
+                format!(
+                    "failed to parse board pad in {}",
+                    project.board_path.display()
+                )
+            })?;
+        if pad.package == component_uuid {
+            pad.position.x += delta.x;
+            pad.position.y += delta.y;
+            *value =
+                serde_json::to_value(&pad).expect("native board pad serialization must succeed");
+        }
+    }
     write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
         "move_board_component",

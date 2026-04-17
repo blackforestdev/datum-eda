@@ -118,10 +118,19 @@ pub(super) fn replace_component_pads_from_pool_package(
                 package_pad.position,
             ),
             layer: package_pad.layer,
+            copper_layers: Vec::new(),
             shape: crate::board::PadShape::Circle,
             diameter: 0,
             width: 0,
             height: 0,
+            drill: 0,
+            rotation: component.rotation,
+            mask_layers: Vec::new(),
+            paste_layers: Vec::new(),
+            solder_mask_margin_nm: 0,
+            solder_paste_margin_nm: 0,
+            solder_paste_margin_ratio_ppm: 0,
+            roundrect_rratio_ppm: 250_000,
         });
     }
     regenerated.sort_by_key(|pad| pad.uuid);
@@ -189,10 +198,19 @@ pub(super) fn replace_component_pads_for_assign_part(
                 package_pad.position,
             ),
             layer: package_pad.layer,
+            copper_layers: Vec::new(),
             shape: crate::board::PadShape::Circle,
             diameter: 0,
             width: 0,
             height: 0,
+            drill: 0,
+            rotation: next_component.rotation,
+            mask_layers: Vec::new(),
+            paste_layers: Vec::new(),
+            solder_mask_margin_nm: 0,
+            solder_paste_margin_nm: 0,
+            solder_paste_margin_ratio_ppm: 0,
+            roundrect_rratio_ppm: 250_000,
         });
     }
     regenerated.sort_by_key(|pad| pad.uuid);

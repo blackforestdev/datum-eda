@@ -33,6 +33,7 @@ When documents conflict, precedence is:
    - `specs/ENGINE_SPEC.md`
    - `specs/MCP_API_SPEC.md`
    - `specs/IMPORT_SPEC.md`
+   - `specs/STANDARDS_COMPLIANCE_SPEC.md`
    - `specs/ERC_SPEC.md`
    - `specs/CHECKING_ARCHITECTURE_SPEC.md`
    - `specs/SCHEMATIC_CONNECTIVITY_SPEC.md`
@@ -88,6 +89,33 @@ Contract:
 Contract:
 - Violation identity, severity, waiver targeting, and report shape remain
   coherent across engine, CLI, MCP, and progress gates.
+
+### 5.3a Standards-Compliance Contracts
+
+- Standards coverage registry and disposition rules:
+  `specs/STANDARDS_COMPLIANCE_SPEC.md`
+- Guidance-layer bridge:
+  `docs/STANDARDS_COMPLIANCE_INTEGRATION_GUIDANCE.md`
+- Existing IPC footprint guidance:
+  `docs/IPC_FOOTPRINT_SYSTEM.md`
+- Research inputs:
+  `research/standards-audit/STANDARDS_AUDIT.md`,
+  `research/ipc-compliance/IPC_COMPLIANCE_RESEARCH.md`
+
+Contract:
+- Research findings about standards or compliance must not stay implicit once
+  triaged.
+- Each researched standard family that materially affects Datum must have an
+  explicit controlling disposition in `specs/STANDARDS_COMPLIANCE_SPEC.md`.
+- When a standards-facing change affects engine types, native persistence,
+  import/export, checking, or MCP/CLI exposure, the affected domain specs must
+  be updated in the same change; the standards-compliance spec is not allowed
+  to drift into an orphan registry.
+- Datum may distinguish `implemented`, `planned`, `reference-only`,
+  `deferred with prerequisite`, and `out of scope`, but it may not imply a
+  stronger claim than the recorded disposition supports.
+- Footprint/library standards and schematic-authoring standards must be treated
+  as first-class contracts, not as UI-only or research-only guidance.
 
 ### 5.4 Schematic/Board Parity Contracts
 
@@ -198,6 +226,7 @@ This matrix is the minimum verification layer for integrated-spec freeze.
 | M2 performance baseline | Automated harness | `cargo run -p eda-test-harness --bin m2_perf -- --iterations 3 --compare-baseline crates/test-harness/testdata/perf/m2_doa2526_baseline.json` | checking owner | pre-freeze |
 | MCP server registration health | Config + self-test | `python3 mcp-server/server.py --self-test` and active MCP host config contains `mcpServers["datum-eda"]` | tooling owner | after MCP changes |
 | Engine/API/MCP surface parity | Manual cross-check + tests | `specs/PROGRAM_SPEC.md`, `specs/ENGINE_SPEC.md`, `specs/MCP_API_SPEC.md` reviewed together; parity tests in engine-daemon + mcp-server pass | platform owner | per milestone gate |
+| Standards coverage disposition | Manual audit | `specs/STANDARDS_COMPLIANCE_SPEC.md`, `docs/STANDARDS_COMPLIANCE_INTEGRATION_GUIDANCE.md`, and affected domain specs reviewed together; no researched standard touched by the change remains implicit | architecture owner | per standards-facing change and pre-freeze |
 | Daemon/MCP transport smoke | Automated transport smoke in unrestricted environment | `cargo test -q -p eda-engine-daemon handle_client_round_trips_open_project_and_get_check_report -- --ignored` | platform owner | unrestricted CI and release candidates |
 | Checking report/waiver consistency | Manual contract audit + targeted tests | `specs/ERC_SPEC.md` + `specs/CHECKING_ARCHITECTURE_SPEC.md` + `specs/MCP_API_SPEC.md` reviewed; ERC/DRC explanation/report tests pass | checking owner | per milestone gate |
 | Schematic/board parity | Manual contract audit | parity section in `specs/PROGRAM_SPEC.md` and `specs/INTEGRATED_PROGRAM_SPEC.md` updated in same change as any scope shift | architecture owner | per milestone planning pass |

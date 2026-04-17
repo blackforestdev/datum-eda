@@ -36,13 +36,16 @@ pub(super) fn transform_symbol_pin(
 }
 
 pub(super) fn transform_board_local_point(origin: Point, rotation_deg: i32, local: Point) -> Point {
-    let rotated = match rotation_deg.rem_euclid(360) {
-        90 => Point::new(-local.y, local.x),
-        180 => Point::new(-local.x, -local.y),
-        270 => Point::new(local.y, -local.x),
-        _ => local,
-    };
-    Point::new(origin.x + rotated.x, origin.y + rotated.y)
+    if rotation_deg == 0 {
+        return Point::new(origin.x + local.x, origin.y + local.y);
+    }
+    // KiCad: negative angle = clockwise. Negate to get standard CCW.
+    let rad = -(rotation_deg as f64).to_radians();
+    let cos = rad.cos();
+    let sin = rad.sin();
+    let rx = (local.x as f64 * cos - local.y as f64 * sin).round() as i64;
+    let ry = (local.x as f64 * sin + local.y as f64 * cos).round() as i64;
+    Point::new(origin.x + rx, origin.y + ry)
 }
 
 pub(super) fn extract_sheet_property(block: &str, key: &str) -> Option<String> {

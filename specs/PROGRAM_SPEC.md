@@ -15,6 +15,9 @@ The subordinate formal specifications own their respective contracts:
   and engine API
 - `specs/IMPORT_SPEC.md`: source-format mapping, import identity, `.ids.json`,
   and fidelity/lossiness rules
+- `specs/STANDARDS_COMPLIANCE_SPEC.md`: standards coverage registry, footprint
+  and schematic convention policy, compliance metadata requirements, and
+  standards-traceability rules
 - `specs/SCHEMATIC_CONNECTIVITY_SPEC.md`: schematic net resolution, hierarchy,
   buses, diagnostics, and deterministic connectivity recomputation
 - `specs/ERC_SPEC.md`: electrical semantics, ERC rule set, and ERC result model
@@ -77,6 +80,34 @@ files, or provide a GUI.
 
 Note: KiCad/Eagle-first support in v1 is an execution strategy for rapid,
 verifiable delivery. It is not the long-term product boundary.
+
+## Standards And Compliance Governance
+
+Datum's research corpus includes standards findings that must not remain
+implicit. A researched standard is considered integrated only when a
+controlling spec assigns it one of the following dispositions:
+
+- implemented
+- planned
+- reference-only
+- deferred with explicit prerequisite
+- out of scope
+
+Silence is not an acceptable disposition.
+
+The controlling source for this policy is
+`specs/STANDARDS_COMPLIANCE_SPEC.md`. Research and guidance inputs feeding that
+spec currently include:
+
+- `research/standards-audit/STANDARDS_AUDIT.md`
+- `research/ipc-compliance/IPC_COMPLIANCE_RESEARCH.md`
+- `docs/STANDARDS_COMPLIANCE_INTEGRATION_GUIDANCE.md`
+- `docs/IPC_FOOTPRINT_SYSTEM.md`
+
+Minimum program-level requirement:
+- milestone planning and milestone closure must not introduce or preserve a
+  standards blind spot already identified in repository research without an
+  explicit disposition recorded in the controlling standards-compliance spec.
 
 ---
 
@@ -238,6 +269,21 @@ Variants are deferred beyond `M4` except for canonical data-model ownership.
 The foundation freezes variants as project-level logical-component fit choices;
 editing, UI, and export behavior for variants are specified in a later
 milestone.
+
+### Standards Integration Gate (Cross-Milestone)
+
+This is a permanent governance gate, not a standalone delivery milestone.
+
+Required for any milestone that adds new library, schematic-authoring,
+manufacturing-export, compliance-metadata, or standards-facing capability:
+
+| Criterion | Threshold |
+|-----------|-----------|
+| Research disposition completeness | Every relevant researched standard family referenced by the change is classified in `specs/STANDARDS_COMPLIANCE_SPEC.md` as implemented, planned, reference-only, deferred with prerequisite, or out of scope |
+| Guidance intermediary | New standards research is lifted through a guidance doc in `docs/` before or with the controlling spec edit |
+| Cross-spec parity | If the change affects engine data, project persistence, import/export, checking, or MCP/CLI exposure, the relevant domain specs are updated in the same change |
+| No silent compliance claims | User-visible wording and milestone text must not imply support for a standard that is only vocabulary-level or partially scaffolded |
+| Deferment boundedness | Any deferred standard-facing capability must record the prerequisite that gates it |
 
 ---
 

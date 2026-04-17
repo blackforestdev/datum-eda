@@ -16,6 +16,7 @@ pub mod rules_sidecar;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ImportKind {
     EagleLibrary,
+    KiCadFootprint,
     KiCadBoard,
     KiCadSchematic,
     KiCadProject,
@@ -27,6 +28,7 @@ impl ImportKind {
     pub fn as_str(self) -> &'static str {
         match self {
             Self::EagleLibrary => "eagle_library",
+            Self::KiCadFootprint => "kicad_footprint",
             Self::KiCadBoard => "kicad_board",
             Self::KiCadSchematic => "kicad_schematic",
             Self::KiCadProject => "kicad_project",
@@ -39,6 +41,7 @@ impl ImportKind {
 pub fn detect_import_kind(path: &Path) -> Option<ImportKind> {
     match path.extension().and_then(|ext| ext.to_str()) {
         Some("lbr") => Some(ImportKind::EagleLibrary),
+        Some("kicad_mod") => Some(ImportKind::KiCadFootprint),
         Some("kicad_pcb") => Some(ImportKind::KiCadBoard),
         Some("kicad_sch") => Some(ImportKind::KiCadSchematic),
         Some("kicad_pro") => Some(ImportKind::KiCadProject),

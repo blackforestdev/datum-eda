@@ -25,6 +25,8 @@ pub struct Board {
     pub uuid: Uuid,
     pub name: String,
     pub stackup: Stackup,
+    #[serde(default)]
+    pub pad_expansion_setup: PadExpansionSetup,
     pub outline: Polygon,
     pub packages: HashMap<Uuid, PlacedPackage>,
     pub pads: HashMap<Uuid, PlacedPad>,
@@ -124,8 +126,19 @@ impl Board {
                 Some(PadPoint {
                     component: package.reference.clone(),
                     pin: pad.name.clone(),
+                    uuid: pad.uuid,
                     position: pad.position,
-                    layer: pad.layer,
+                    layers: if pad.copper_layers.is_empty() {
+                        vec![pad.layer]
+                    } else {
+                        pad.copper_layers.clone()
+                    },
+                    shape: pad.shape,
+                    diameter: pad.diameter,
+                    width: pad.width,
+                    height: pad.height,
+                    rotation: pad.rotation,
+                    roundrect_rratio_ppm: pad.roundrect_rratio_ppm,
                 })
             })
             .collect();

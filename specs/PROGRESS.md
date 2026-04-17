@@ -5,7 +5,7 @@
 >
 > Legend: `[x]` done, `[~]` partial, `[ ]` not started, `[—]` deferred/N/A
 
-Last updated: 2026-03-30
+Last updated: 2026-04-16
 
 ---
 
@@ -18,6 +18,17 @@ Current repo health status (2026-03-25 audit):
 - Milestone completion status and workspace health are currently reconciled.
 - API/daemon/MCP test-support monolith risk has been reduced via module splits,
   and file-size budgets are now enforced in CI.
+
+Current M7 delivery rule (2026-04-16):
+- opening `M7` work may not advance on a "low resolution but technically
+  implemented" basis
+- user-facing slices must be intentionally triggerable, externally observable,
+  and supported by the minimum interaction/render substrate they depend on
+- missing prerequisite work in selection, hit-testing, focus/relatedness,
+  visibility, or render-state consistency is not "scope creep"; it is
+  prerequisite completion for the slice already being claimed
+- working note:
+  `docs/gui/M7_DELIVERY_GATES.md`
 
 ### Drift RCA + Prevention (2026-03-25)
 
@@ -829,6 +840,10 @@ Status: [~] Opened narrowly as a read-only route-proposal review layer
   `specs/progress/m7_opening.md`
 - Concrete workspace/contract/spike definition:
   `specs/M7_FRONTEND_SPEC.md`
+- Active imported-board fidelity execution plan:
+  `docs/gui/M7_IMPORTED_BOARD_FIDELITY_PLAN.md`
+- Active board-review fidelity diagnosis:
+  `docs/gui/M7_BOARD_REVIEW_FIDELITY_GAP.md`
 - Active M7 focus: one narrow visual review layer on top of the closed M5
   routing-kernel substrate and the frozen M6 strategy-reporting/evidence
   stack.
@@ -875,6 +890,34 @@ Status: [~] Opened narrowly as a read-only route-proposal review layer
     remaining subordinate to engine authority
   - one explicit authored/proposed/diagnostic visual-state model
 
+- Accepted post-spike correction track inside opening `M7`:
+  - one bounded imported-board fidelity program defined in
+    `docs/gui/M7_IMPORTED_BOARD_FIDELITY_PLAN.md`
+  - scope split:
+    - import fidelity for KiCad PCB truth preservation
+    - scene-contract fidelity for explicit authored / unrouted / proposed /
+      diagnostic lanes
+    - renderer fidelity for PCB-native semantic readability
+  - sequencing rule:
+    - execute after the architecture spike proves the
+      `gui-app` / `gui-protocol` / `gui-render` boundary
+    - execute before broadening imported-board review claims or generalizing
+      the opening `M7` workflow beyond the current bounded review surface
+  - current correction-track read:
+    - Stage 3 unrouted-lane work is functionally landed on the canonical
+      half-routed fixture
+    - active next slice is Stage 4 semantic-render locking, specifically
+      `M7-REN-002` on unrouted visual grammar
+    - the renderer semantic contract note now lives in
+      `docs/gui/M7_RENDER_SEMANTIC_CONTRACT.md`
+  - standards amendment for the opening slice:
+    - opening `M7` remains review-focused and does not expand into a full IPC
+      authoring/validation milestone
+    - standards-relevant imported observables already exposed in the review
+      surface must preserve source truth
+    - bounded import-audit diagnostics are in-scope where they report delta
+      without mutating imported geometry
+
 - Acceptance checks met for the opening slice:
   - deterministic repeated output on unchanged persisted state
   - no pool re-resolution or live import-session dependence
@@ -893,6 +936,19 @@ Status: [~] Opened narrowly as a read-only route-proposal review layer
     without becoming parallel design truth
   - the opening route review starts from the first proposal action in
     deterministic review order
+
+- Acceptance checks required for the imported-board fidelity track:
+  - supported KiCad PCB layer identities do not silently collapse to fallback
+    copper layers
+  - supported imported pads preserve the physical dimensions and shape
+    semantics required for board review
+  - unsupported imported-board cases fail explicitly or remain clearly bounded
+    instead of silently producing materially wrong board meaning
+  - the accepted fixture set can visually distinguish authored copper,
+    unrouted connectivity, proposed overlay geometry, and board-context
+    primitives reliably enough for a PCB user to trust the review
+  - fixture-backed tests plus screenshot or image-based review cover the
+    canonical half-routed board and the supporting imported-board edge cases
 
 ---
 

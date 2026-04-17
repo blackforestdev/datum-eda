@@ -66,6 +66,7 @@ fn summaries_read_from_in_memory_design() {
                     thickness_nm: 35_000,
                 }],
             },
+            pad_expansion_setup: crate::board::PadExpansionSetup::default(),
             outline: Polygon::new(vec![
                 Point::new(0, 0),
                 Point::new(10, 0),

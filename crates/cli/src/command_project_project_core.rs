@@ -323,6 +323,7 @@ pub(super) fn build_native_project_board(project: &LoadedNativeProject) -> Resul
         stackup: Stackup {
             layers: stackup_layers,
         },
+        pad_expansion_setup: crate::board::PadExpansionSetup::default(),
         outline: Polygon {
             vertices: project
                 .board

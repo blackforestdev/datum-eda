@@ -17,6 +17,19 @@ fn board_components_query_cli(root: &Path) -> Cli {
     .expect("CLI should parse")
 }
 
+fn board_pads_query_cli(root: &Path) -> Cli {
+    Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "board-pads",
+    ])
+    .expect("CLI should parse")
+}
+
 #[test]
 fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_through_native_query() {
     let root = unique_project_root("datum-eda-cli-project-board-component");
@@ -160,6 +173,15 @@ fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_throug
     assert_eq!(components[0]["rotation"], 0);
     assert_eq!(components[0]["layer"], 1);
     assert_eq!(components[0]["locked"], false);
+
+    let board_pads_output =
+        execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
+    let board_pads: Vec<serde_json::Value> =
+        serde_json::from_str(&board_pads_output).expect("pad query output should parse");
+    assert!(
+        board_pads.is_empty(),
+        "minimal component fixture should not materialize absolute board pads"
+    );
 
     let replacement_part_uuid = Uuid::new_v4();
     let set_part_cli = Cli::try_parse_from([
@@ -491,4 +513,170 @@ fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_throug
     assert!(summary_output.contains("board_components: 0"));
 
     let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_move_board_component_translates_package_owned_board_pads() {
+    let root = unique_project_root("datum-eda-cli-project-board-component-move-pads");
+    create_native_project(&root, Some("Board Component Move Pads".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let component_uuid = Uuid::from_u128(0xd200);
+    let part_uuid = Uuid::from_u128(0xd201);
+    let package_uuid = Uuid::from_u128(0xd202);
+    let net_uuid = Uuid::from_u128(0xd203);
+    let class_uuid = Uuid::from_u128(0xd204);
+    let pad_uuid = Uuid::from_u128(0xd205);
+    let board_json = root.join("board/board.json");
+
+    std::fs::write(
+        &board_json,
+        format!(
+            "{}\n",
+            eda_engine::ir::serialization::to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "uuid": Uuid::from_u128(0xd206),
+                "name": "Board Component Move Pads Demo",
+                "stackup": {
+                    "layers": [
+                        { "id": 1, "name": "Top Copper", "layer_type": "Copper", "thickness_nm": 35000 }
+                    ]
+                },
+                "outline": {
+                    "vertices": [
+                        { "x": 0, "y": 0 },
+                        { "x": 2000000, "y": 0 },
+                        { "x": 2000000, "y": 2000000 },
+                        { "x": 0, "y": 2000000 }
+                    ],
+                    "closed": true
+                },
+                "packages": {
+                    component_uuid.to_string(): {
+                        "uuid": component_uuid,
+                        "package": package_uuid,
+                        "part": part_uuid,
+                        "reference": "U1",
+                        "value": "MCU",
+                        "position": { "x": 1000000, "y": 1000000 },
+                        "rotation": 0,
+                        "layer": 1,
+                        "locked": false
+                    }
+                },
+                "pads": {
+                    pad_uuid.to_string(): {
+                        "uuid": pad_uuid,
+                        "package": component_uuid,
+                        "name": "1",
+                        "net": net_uuid,
+                        "position": { "x": 900000, "y": 1000000 },
+                        "layer": 1,
+                        "shape": "circle",
+                        "diameter": 300000,
+                        "width": 0,
+                        "height": 0
+                    }
+                },
+                "tracks": {},
+                "vias": {},
+                "zones": {},
+                "nets": {
+                    net_uuid.to_string(): {
+                        "uuid": net_uuid,
+                        "name": "SIG",
+                        "class": class_uuid
+                    }
+                },
+                "net_classes": {
+                    class_uuid.to_string(): {
+                        "uuid": class_uuid,
+                        "name": "Default",
+                        "clearance": 150000,
+                        "track_width": 150000,
+                        "via_drill": 300000,
+                        "via_diameter": 600000,
+                        "diffpair_width": 0,
+                        "diffpair_gap": 0
+                    }
+                },
+                "keepouts": [],
+                "dimensions": [],
+                "texts": []
+            }))
+            .expect("canonical serialization should succeed")
+        ),
+    )
+    .expect("board file should write");
+
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
+    let components: Vec<serde_json::Value> =
+        serde_json::from_str(&components_output).expect("query output should parse");
+    let component = components
+        .iter()
+        .find(|entry| entry["reference"] == "U1")
+        .expect("U1 should exist");
+    let component_uuid = component["uuid"]
+        .as_str()
+        .expect("component uuid should be a string");
+
+    let board_pads_before =
+        execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
+    let board_pads_before: Vec<serde_json::Value> =
+        serde_json::from_str(&board_pads_before).expect("pad query should parse");
+    let first_pad_before = board_pads_before
+        .iter()
+        .find(|pad| pad["package"] == component_uuid)
+        .expect("U1 should own at least one absolute board pad");
+    let first_pad_uuid = first_pad_before["uuid"]
+        .as_str()
+        .expect("pad uuid should be a string")
+        .to_string();
+    let before_x = first_pad_before["position"]["x"]
+        .as_i64()
+        .expect("pad x should be an integer");
+    let before_y = first_pad_before["position"]["y"]
+        .as_i64()
+        .expect("pad y should be an integer");
+
+    let move_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "move-board-component",
+            root.to_str().unwrap(),
+            "--component",
+            component_uuid.to_string().as_str(),
+            "--x-nm",
+            "2000000",
+            "--y-nm",
+            "2000000",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("move board component should succeed");
+    let move_report: serde_json::Value =
+        serde_json::from_str(&move_output).expect("move output should parse");
+    assert_eq!(move_report["x_nm"], 2000000);
+    assert_eq!(move_report["y_nm"], 2000000);
+
+    let board_pads_after =
+        execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
+    let board_pads_after: Vec<serde_json::Value> =
+        serde_json::from_str(&board_pads_after).expect("pad query should parse");
+    let first_pad_after = board_pads_after
+        .iter()
+        .find(|pad| pad["uuid"] == first_pad_uuid)
+        .expect("moved pad should still exist");
+    assert_eq!(
+        first_pad_after["position"]["x"].as_i64().unwrap() - before_x,
+        1_000_000
+    );
+    assert_eq!(
+        first_pad_after["position"]["y"].as_i64().unwrap() - before_y,
+        1_000_000
+    );
 }

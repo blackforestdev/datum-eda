@@ -52,6 +52,9 @@ Current planning focus: the opening `M7` read-only route-review slice on top
 of the closed `M5` routing-kernel substrate and the frozen `M6`
 strategy-evidence slice, following the active frontier recorded in
 `specs/PROGRESS.md` and the current milestone shard in `specs/progress/`.
+Imported KiCad PCB board-review fidelity is now treated as the required
+post-spike correction track inside the opening `M7` milestone rather than as
+optional renderer polish; see `docs/gui/M7_IMPORTED_BOARD_FIDELITY_PLAN.md`.
 
 Near-term execution order:
 1. Keep `M5` closed except for regression fixes; do not reopen routing-kernel
@@ -64,7 +67,12 @@ Near-term execution order:
    plus one bounded frontend board-review scene contract, a locked
    viewport-centered three-column shell, and read-only supporting terminal/AI
    lanes.
-4. Use `specs/PROGRESS.md` plus the active milestone shard in
+4. After the opening `M7` architecture spike proves the crate boundary and
+   review-workspace viability, execute the bounded imported-board fidelity
+   track before broadening imported-board review claims; keep that track split
+   into import, scene-contract, and renderer passes rather than reopening GUI
+   scope.
+5. Use `specs/PROGRESS.md` plus the active milestone shard in
    `specs/progress/` as the source for the next bounded slice; do not let
    local worktree momentum redefine roadmap priority.
 

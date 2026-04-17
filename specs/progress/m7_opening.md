@@ -6,6 +6,10 @@ first accepted slice.
 
 Concrete opening workspace, first frontend-consumed scene contract, and the
 opening architecture spike plan now live in `specs/M7_FRONTEND_SPEC.md`.
+Imported-board correction planning for the post-spike fidelity track now lives
+in `docs/gui/M7_IMPORTED_BOARD_FIDELITY_PLAN.md`.
+Delivery/testability gating for the opening slice now lives in
+`docs/gui/M7_DELIVERY_GATES.md`.
 
 ## Recommended Opening
 
@@ -47,6 +51,19 @@ Specified next accepted frontend slice:
 - one single-selection model with a separate active review target
 - explicit authored/proposed/diagnostic visual-state separation
 
+Specified post-spike correction track inside opening `M7`:
+- one bounded imported-board fidelity program defined in
+  `docs/gui/M7_IMPORTED_BOARD_FIDELITY_PLAN.md`
+- keep imported KiCad PCB review inside the opening `M7` milestone, but treat
+  credibility of imported board review as a separate acceptance gate from
+  crate-boundary / shell / interaction proof
+- execute this work after the opening architecture spike proves the
+  `gui-app` / `gui-protocol` / `gui-render` boundary, and before broadening
+  imported-board review claims or adding broader GUI workflows
+- split the correction work into import-fidelity, scene-contract, and
+  renderer-semantics passes rather than letting ad hoc renderer polish hide
+  engine/import truth problems
+
 The opening `M7` slice should explicitly avoid:
 - new routing candidate families or selector semantics
 - new M6 objectives, profiles, or intent interpretation
@@ -56,6 +73,28 @@ The opening `M7` slice should explicitly avoid:
   proven
 - terminal or AI lanes that invent parallel design truth or bypass engine
   authority
+
+## Delivery Rule
+
+Opening `M7` work may not advance on a "low resolution but technically
+implemented" basis.
+
+For this milestone, a user-facing slice is only allowed to count as complete
+enough to move on when:
+- the tester can intentionally trigger it in the current shell
+- the tester can observe and understand the resulting state
+- the minimum substrate needed for the claimed behavior is already in place
+
+For opening `M7`, that substrate explicitly includes:
+- selection ownership
+- hit-testing ownership
+- focus / relatedness behavior
+- layer / visibility semantics
+- render-state consistency
+
+If one of those pillars is missing, the required repair work is not scope
+creep.
+It is prerequisite completion for the slice already being claimed.
 
 ## Entry Conditions
 
@@ -80,3 +119,40 @@ The first `M7` slice should satisfy all of:
   review context without creating competing truth models
 - focused proof that the locked shell, panel, selection, and visual-state
   decisions are viable for the opening slice
+
+## Standards Amendment
+
+Opening `M7` is now also constrained by the standards/compliance posture in
+`specs/STANDARDS_COMPLIANCE_SPEC.md`.
+
+This does **not** promote opening `M7` into a full IPC footprint-authoring or
+general standards-validation milestone.
+
+It does mean:
+- `M7` may not silently replace imported manufacturability-relevant geometry
+  with a host-EDA default or an inferred standards result
+- `M7` must preserve standards-relevant imported observables faithfully where
+  the review surface already exposes them
+- `M7` may add bounded import-audit diagnostics for recognized standards-aware
+  observables when the rule basis is explicit enough to support review findings
+
+For opening `M7`, the immediate standards-facing observables are:
+- copper pad geometry
+- drill and annular ring
+- solder-mask aperture policy
+- paste-aperture policy
+- thermal-pad / thermal-via review truth where present
+- courtyard and clearance semantics only when and where the review surface
+  already exposes them explicitly
+
+What remains out of scope for opening `M7`:
+- full IPC footprint wizard / generator
+- full-library standards enforcement
+- broad compliance claims
+- automatic geometry healing toward an inferred IPC result
+
+The standards-aware addition to opening `M7` should therefore stay bounded to:
+- import truth preservation
+- review-surface fidelity for standards-relevant observables
+- structured import-audit diagnostics, where implemented, that report delta
+  without mutating imported source geometry

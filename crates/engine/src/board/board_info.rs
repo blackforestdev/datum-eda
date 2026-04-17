@@ -40,7 +40,9 @@ pub struct Airwire {
     pub net: Uuid,
     pub net_name: String,
     pub from: NetPinRef,
+    pub from_position: Point,
     pub to: NetPinRef,
+    pub to_position: Point,
     pub distance_nm: i64,
 }
 
@@ -179,10 +181,12 @@ impl Board {
                         component: components[i][from_idx].component.clone(),
                         pin: components[i][from_idx].pin.clone(),
                     },
+                    from_position: components[i][from_idx].position,
                     to: NetPinRef {
                         component: components[j][to_idx].component.clone(),
                         pin: components[j][to_idx].pin.clone(),
                     },
+                    to_position: components[j][to_idx].position,
                     distance_nm,
                 });
             }

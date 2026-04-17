@@ -55,6 +55,11 @@ Rendering is product infrastructure, not a disposable shell detail.
 
 Principles:
 - render layers should map to semantic layers
+- authored geometry should inherit visibility, ordering, and base appearance
+  from the scene's layer/material model rather than bespoke per-import-item
+  styling
+- any special-case render pass that bypasses the normal layer/material path
+  must be explicit, product-justified, and tracked as a bounded exception
 - picking should use stable identities
 - authored, proposed, and diagnostic states must remain visually separable
 - scene derivation should be explicit and testable

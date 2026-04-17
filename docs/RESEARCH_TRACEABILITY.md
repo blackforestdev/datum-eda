@@ -17,6 +17,8 @@ Prevent strategy drift by making one thing explicit:
 
 Primary research source for this mapping:
 - `/home/bfadmin/sandbox/eagle-analysis/ARCHITECTURE.md`
+- `research/standards-audit/STANDARDS_AUDIT.md`
+- `research/ipc-compliance/IPC_COMPLIANCE_RESEARCH.md`
 - `docs/gui/REFERENCE_STUDY.md`
 - `docs/gui/FRONTEND_DECISION_CRITERIA.md`
 - `docs/gui/FOUNDATION.md`
@@ -30,6 +32,7 @@ Primary research source for this mapping:
 Primary roadmap/spec anchors:
 - `PLAN.md`
 - `specs/PROGRAM_SPEC.md`
+- `specs/STANDARDS_COMPLIANCE_SPEC.md`
 
 ## Traceability Matrix
 
@@ -51,6 +54,9 @@ Primary roadmap/spec anchors:
 | Frontend must reserve first-class space for graphical, terminal, and AI lanes without creating parallel design truth. | `docs/gui/FOUNDATION.md`, `docs/gui/WORKSPACE_MODEL.md`, `docs/gui/INTERACTION_MODEL.md`, `docs/gui/TECHNICAL_PRINCIPLES.md` | Active foundation guidance | The shell should support command and AI workflows natively while preserving engine authority and deterministic action boundaries. |
 | The opening `M7` slice should make explicit human-review UI decisions before coding, grounded in professional tool patterns rather than generic app defaults. | `docs/gui/M7_DECISION_PROPOSALS.md`; `specs/M7_FRONTEND_SPEC.md` | Active planning guidance | Prevents the architecture spike from drifting into ad hoc layout, panel, and visual-state decisions. |
 | Python/scriptability in the ecosystem. | Current Python MCP host (`mcp-server/`), deeper scripting pathways later | Partially active | Rich scripting API surface expands with editor/layout maturity. |
+| Research findings about standards and compliance must not remain implicit; each researched standard family needs a controlling disposition. | `docs/STANDARDS_COMPLIANCE_INTEGRATION_GUIDANCE.md`; `specs/STANDARDS_COMPLIANCE_SPEC.md`; `specs/PROGRAM_SPEC.md` `Standards And Compliance Governance` | Active governance contract | Prevents future spec drift where research exists but no controlling spec states whether Datum implements, defers, references, or excludes the standard. |
+| Datum needs first-class IPC footprint-basis ownership rather than loose "IPC-aware" claims. | `docs/IPC_FOOTPRINT_SYSTEM.md`; `specs/STANDARDS_COMPLIANCE_SPEC.md` `Footprint And Library Contracts` | Planned in controlling spec | The library and footprint subsystem must preserve source assumptions, deviation tracking, and import-audit behavior before stronger IPC claims are credible. |
+| Native schematic authoring needs an explicit standards policy for symbol style, designators, and title-block metadata. | `research/standards-audit/STANDARDS_AUDIT.md` Domain 3; `docs/STANDARDS_COMPLIANCE_INTEGRATION_GUIDANCE.md`; `specs/STANDARDS_COMPLIANCE_SPEC.md` `Schematic And Capture Contracts` | Planned in controlling spec | This closes the blind spot where imported symbols inherit style but native symbols have no stated compliance posture. |
 
 ## Sequencing Integrity Notes
 
@@ -59,6 +65,8 @@ Primary roadmap/spec anchors:
 - This is a sequencing choice, not a product-identity claim.
 - Product identity remains AI-native platform architecture, with interop as an
   adoption and validation path.
+- Standards and compliance work follows the same rule: explicit deferment is
+  acceptable, implicit absence is not.
 
 ## Change Control
 

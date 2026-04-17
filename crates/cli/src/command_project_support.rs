@@ -246,6 +246,8 @@ pub(super) fn native_project_board_pad_report(
         shape: match pad.shape {
             PadShape::Circle => "circle".to_string(),
             PadShape::Rect => "rect".to_string(),
+            PadShape::Oval => "oval".to_string(),
+            PadShape::RoundRect => "roundrect".to_string(),
         },
         diameter_nm: pad.diameter,
         width_nm: pad.width,

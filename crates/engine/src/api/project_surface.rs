@@ -11,6 +11,7 @@ impl Engine {
     pub fn import(&mut self, path: &Path) -> Result<ImportReport, EngineError> {
         match detect_import_kind(path) {
             Some(ImportKind::EagleLibrary) => self.import_eagle_library(path),
+            Some(ImportKind::KiCadFootprint) => self.import_kicad_footprint(path),
             Some(ImportKind::KiCadBoard) => {
                 let (mut board, report) = kicad::import_board_document(path)?;
                 let original_contents = std::fs::read_to_string(path)?;
@@ -150,6 +151,18 @@ impl Engine {
     pub fn import_eagle_library(&mut self, path: &Path) -> Result<ImportReport, EngineError> {
         let (imported, report) = eagle::import_library_file(path)?;
         self.merge_pool(imported);
+        self.pool_index.rebuild_from_pool(&self.pool)?;
+        Ok(report)
+    }
+
+    pub fn import_kicad_footprint(&mut self, path: &Path) -> Result<ImportReport, EngineError> {
+        let (imported, report) = kicad::import_footprint_document(path)?;
+        for padstack in imported.padstacks {
+            self.pool.padstacks.insert(padstack.uuid, padstack);
+        }
+        self.pool
+            .packages
+            .insert(imported.package.uuid, imported.package);
         self.pool_index.rebuild_from_pool(&self.pool)?;
         Ok(report)
     }

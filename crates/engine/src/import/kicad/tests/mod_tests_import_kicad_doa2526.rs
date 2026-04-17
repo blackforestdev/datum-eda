@@ -40,6 +40,139 @@ fn imports_real_doa2526_board_with_copper_geometry() {
 }
 
 #[test]
+fn debug_real_doa2526_remaining_airwires() {
+    let Some(path) = optional_doa2526_board_path() else {
+        return;
+    };
+
+    let (board, _report) = import_board_document(&path).expect("DOA2526 board should parse");
+    let airwires = board.unrouted();
+    eprintln!("remaining airwires: {}", airwires.len());
+    for airwire in &airwires {
+        eprintln!(
+            "net={} from={}:{} ({}, {}) to={}:{} ({}, {}) distance={}",
+            airwire.net_name,
+            airwire.from.component,
+            airwire.from.pin,
+            airwire.from_position.x,
+            airwire.from_position.y,
+            airwire.to.component,
+            airwire.to.pin,
+            airwire.to_position.x,
+            airwire.to_position.y,
+            airwire.distance_nm
+        );
+    }
+}
+
+#[test]
+fn debug_real_doa2526_remaining_airwire_pad_zone_state() {
+    let Some(path) = optional_doa2526_board_path() else {
+        return;
+    };
+
+    let (board, _report) = import_board_document(&path).expect("DOA2526 board should parse");
+    for (reference, pin, net_name) in [
+        ("R6", "1", "/VCC"),
+        ("R8", "1", "/VCC"),
+        ("R15", "2", "/VEE"),
+        ("R1", "2", "/VEE"),
+    ] {
+        let (package_uuid, package) = board
+            .packages
+            .iter()
+            .find(|(_, pkg)| pkg.reference == reference)
+            .expect("package should exist");
+        let pad = board
+            .pads
+            .values()
+            .find(|pad| pad.package == *package_uuid && pad.name == pin)
+            .expect("pad should exist");
+        let net_uuid = board
+            .nets
+            .values()
+            .find(|net| net.name == net_name)
+            .expect("net should exist")
+            .uuid;
+        eprintln!(
+            "{reference}:{pin} pos=({}, {}) layer={} copper_layers={:?} rot={} size={}x{} dia={} net={}",
+            pad.position.x,
+            pad.position.y,
+            pad.layer,
+            pad.copper_layers,
+            pad.rotation,
+            pad.width,
+            pad.height,
+            pad.diameter,
+            net_name
+        );
+        for zone in board.zones.values().filter(|zone| zone.net == net_uuid) {
+            let center_in = debug_point_in_polygon(pad.position, &zone.polygon);
+            eprintln!(
+                "  zone layer={} center_in={} thermal={} gap={} spoke={}",
+                zone.layer, center_in, zone.thermal_relief, zone.thermal_gap, zone.thermal_spoke_width
+            );
+        }
+        let connected_tracks: Vec<_> = board
+            .tracks
+            .values()
+            .filter(|track| track.net == net_uuid)
+            .filter(|track| {
+                track.from.distance_sq(&pad.position) < 10_000_000_000
+                    || track.to.distance_sq(&pad.position) < 10_000_000_000
+            })
+            .collect();
+        eprintln!("  nearby_tracks={}", connected_tracks.len());
+        for track in connected_tracks {
+            eprintln!(
+                "    track layer={} from=({}, {}) to=({}, {})",
+                track.layer, track.from.x, track.from.y, track.to.x, track.to.y
+            );
+        }
+        let nearby_vias: Vec<_> = board
+            .vias
+            .values()
+            .filter(|via| via.net == net_uuid)
+            .filter(|via| via.position.distance_sq(&pad.position) < 10_000_000_000)
+            .collect();
+        eprintln!("  nearby_vias={}", nearby_vias.len());
+        for via in nearby_vias {
+            eprintln!(
+                "    via at=({}, {}) {}->{}",
+                via.position.x, via.position.y, via.from_layer, via.to_layer
+            );
+        }
+        let _ = package;
+    }
+}
+
+fn debug_point_in_polygon(point: crate::ir::geometry::Point, polygon: &crate::ir::geometry::Polygon) -> bool {
+    let Some(bounds) = polygon.bounding_box() else {
+        return false;
+    };
+    if !bounds.contains(&point) || polygon.vertices.len() < 3 {
+        return false;
+    }
+    let mut inside = false;
+    let mut j = polygon.vertices.len() - 1;
+    for i in 0..polygon.vertices.len() {
+        let xi = polygon.vertices[i].x as f64;
+        let yi = polygon.vertices[i].y as f64;
+        let xj = polygon.vertices[j].x as f64;
+        let yj = polygon.vertices[j].y as f64;
+        let px = point.x as f64;
+        let py = point.y as f64;
+        let intersects =
+            ((yi > py) != (yj > py)) && (px < (xj - xi) * (py - yi) / ((yj - yi).max(1.0)) + xi);
+        if intersects {
+            inside = !inside;
+        }
+        j = i;
+    }
+    inside
+}
+
+#[test]
 fn imports_real_doa2526_schematic_without_collapsing_anonymous_nets() {
     let Some(path) = optional_doa2526_schematic_path() else {
         return;
@@ -97,6 +230,28 @@ fn imports_real_doa2526_plusin_pin_at_expected_position() {
 
     assert_eq!(pin.position.x, 39_370_000);
     assert_eq!(pin.position.y, 105_410_000);
+}
+
+#[test]
+fn imports_real_doa2526_pad_level_mask_and_paste_margins() {
+    let Some(path) = optional_doa2526_board_path() else {
+        return;
+    };
+
+    let (board, _report) = import_board_document(&path).expect("DOA2526 board should parse");
+    let q9_uuid = board
+        .packages
+        .iter()
+        .find(|(_, pkg)| pkg.reference == "Q9")
+        .map(|(uuid, _)| *uuid)
+        .expect("Q9 should exist");
+    let pad = board
+        .pads
+        .values()
+        .find(|pad| pad.package == q9_uuid && pad.name == "1")
+        .expect("Q9 pad 1 should exist");
+    assert_eq!(pad.solder_mask_margin_nm, 50_000);
+    assert_eq!(pad.solder_paste_margin_nm, -50_000);
 }
 
 #[test]

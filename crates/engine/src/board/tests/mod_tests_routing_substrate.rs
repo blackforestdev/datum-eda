@@ -44,6 +44,7 @@ fn routing_substrate_reports_deterministic_sorted_persisted_facts() {
                 },
             ],
         },
+        pad_expansion_setup: crate::board::PadExpansionSetup::default(),
         outline: Polygon {
             vertices: vec![
                 Point { x: 0, y: 0 },
@@ -94,10 +95,19 @@ fn routing_substrate_reports_deterministic_sorted_persisted_facts() {
                 net: Some(net_uuid_b),
                 position: Point { x: 20, y: 20 },
                 layer: 1,
+                copper_layers: Vec::new(),
                 shape: super::super::PadShape::Circle,
                 diameter: 250_000,
                 width: 0,
                 height: 0,
+                drill: 0,
+            rotation: 0,
+            mask_layers: Vec::new(),
+            paste_layers: Vec::new(),
+            solder_mask_margin_nm: 0,
+            solder_paste_margin_nm: 0,
+            solder_paste_margin_ratio_ppm: 0,
+            roundrect_rratio_ppm: 250_000,
             },
         )]),
         tracks: HashMap::from([

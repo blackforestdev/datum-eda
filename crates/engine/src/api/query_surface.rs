@@ -1,6 +1,10 @@
 use super::*;
 
 impl Engine {
+    pub fn board(&self) -> Result<&Board, EngineError> {
+        self.require_board()
+    }
+
     pub fn get_board_summary(&self) -> Result<BoardSummary, EngineError> {
         Ok(self.require_board()?.summary())
     }
