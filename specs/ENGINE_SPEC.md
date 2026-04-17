@@ -71,9 +71,102 @@ pub enum PortDirection {
     Passive,
 }
 
+pub struct Point3D {
+    pub x: i64,
+    pub y: i64,
+    pub z: i64,
+}
+
+pub struct Euler3D {
+    pub roll_tenths_deg: i32,
+    pub pitch_tenths_deg: i32,
+    pub yaw_tenths_deg: i32,
+}
+
+pub struct Transform3D {
+    pub translation_nm: Point3D,
+    pub rotation_tenths_deg: Euler3D,
+    pub scale: f32,                       // 1.0 default
+}
+
+pub enum ModelFormat {
+    Step,                                 // .step / .stp
+    Wrl,                                  // VRML — KiCad legacy
+    Iges,                                 // .igs / .iges — legacy
+    Obj,                                  // Wavefront — hobbyist
+    Gltf,                                 // glTF 2.0 — web / M7 GUI
+}
+
+/// Provenance of any attached external file (3D model OR behavioural model).
+/// Single canonical shape so 3D-geometry and behavioural-model attachments
+/// share one provenance contract.
+pub struct ModelProvenance {
+    pub source: String,                   // URL or local path of origin
+    pub vendor: Option<String>,           // canonical vendor (JEP106-normalised)
+    pub fetched_at: Option<DateTime<Utc>>,
+    pub sha256: String,                   // identity-stable hash
+}
+
 pub struct ModelRef {
     pub path: String,
-    pub transform: Option<serde_json::Value>,  // exact 3D transform deferred
+    pub format: ModelFormat,
+    pub transform: Transform3D,
+    pub provenance: Option<ModelProvenance>,
+}
+
+/// Behavioural-model attachment: IBIS / SPICE / Touchstone / IBIS-AMI /
+/// Verilog-A / VHDL-AMS / Compact Thermal. Distinct from `ModelRef`,
+/// which is for 3D geometry only.
+pub enum ModelRole {
+    Spice,                                // SPICE netlist (.cir / .lib / .sub / .inc)
+    Ibis,                                 // IBIS .ibs file
+    IbisIss,                              // IBIS-ISS subcircuit
+    IbisAmi,                              // IBIS-AMI bundle (.ami + binaries)
+    Touchstone,                           // S-parameter file (.s1p .. .sNp)
+    VerilogA,                             // Verilog-A source
+    VerilogAms,                           // Verilog-AMS source
+    VhdlAms,                              // VHDL-AMS source
+    CompactThermal,                       // CTM / ECXML / JESD15-4
+}
+
+pub enum SpiceDialect {
+    Berkeley3,
+    Ngspice,
+    LTspice,
+    PSpice,
+    HSpice,
+    Xyce,
+    Spectre,
+    Unknown,
+}
+
+pub enum EncryptionScheme {
+    IbisBird176,                          // IBIS BIRD-176 (AES-128, vendor key)
+    PSpiceEncryptIt,
+    HSpiceAvantHash,
+    LTspiceObfuscation,
+    SpectreEncrypt,
+    Other(String),
+}
+
+pub enum ModelFormatMetadata {
+    Spice { ngspice_validates: Option<bool> },
+    Ibis { ibis_version: String, has_ami: bool },
+    IbisAmi { ami_version: String, platform_binaries: HashMap<String, String> },
+    Touchstone { ports: u32, frequency_range_hz: (f64, f64) },
+    None,
+}
+
+pub struct ModelAttachment {
+    pub uuid: Uuid,                       // pool-resolved UUID
+    pub model_uuid: Uuid,                 // → pool model entity (pool/models/<role>/<sha256>)
+    pub role: ModelRole,
+    pub dialect: Option<SpiceDialect>,    // for SPICE only
+    pub model_names: Vec<String>,         // [Model] names (IBIS), .MODEL/.SUBCKT names (SPICE)
+    pub encrypted: bool,
+    pub encryption_scheme: Option<EncryptionScheme>,
+    pub provenance: Option<ModelProvenance>,
+    pub format_metadata: ModelFormatMetadata,
 }
 
 pub enum Primitive {
@@ -136,6 +229,8 @@ pub struct Package {
     pub courtyard: Polygon,
     pub silkscreen: Vec<Primitive>,
     pub models_3d: Vec<ModelRef>,
+    pub body_height_nm: Option<i64>,           // tallest authored body height — required for IDF 3.0 export
+    pub body_height_mounted_nm: Option<i64>,   // tall-component / standoff-aware mounted height
     pub tags: HashSet<String>,
 }
 
@@ -146,19 +241,61 @@ pub struct PadMapEntry {
 
 pub struct Part {
     pub uuid: Uuid,
-    pub entity: Uuid,     // → Entity
-    pub package: Uuid,    // → Package
-    pub pad_map: HashMap<Uuid, PadMapEntry>,  // Pad UUID → (Gate, Pin)
+    pub entity: Uuid,                                // → Entity
+    pub package: Uuid,                               // → Package
+    pub pad_map: HashMap<Uuid, PadMapEntry>,         // Pad UUID → (Gate, Pin)
     pub mpn: String,
     pub manufacturer: String,
+    pub manufacturer_jep106: Option<u16>,            // JEDEC JEP106 manufacturer ID (canonicalised vendor identity)
     pub value: String,
     pub description: String,
     pub datasheet: String,
     pub parametric: HashMap<String, String>,
     pub orderable_mpns: Vec<String>,
+    pub packaging_options: Vec<PackagingOption>,     // EIA-481 reel / tape / tray / tube / cut variants
     pub tags: HashSet<String>,
-    pub lifecycle: Lifecycle,  // Active, NRND, EOL, Obsolete, Unknown
-    pub base: Option<Uuid>,   // → Part (inheritance)
+    pub lifecycle: Lifecycle,                        // Active, NRND, EOL, Obsolete, Unknown
+    pub base: Option<Uuid>,                          // → Part (inheritance)
+    pub behavioural_models: Vec<ModelAttachment>,    // IBIS / SPICE / Touchstone / IBIS-AMI / Compact-Thermal
+    pub thermal: Option<ThermalSpec>,                // JESD15-3 two-resistor + max junction
+    pub supply_chain_offers: Option<Vec<SupplyOffer>>,    // Octopart / distributor cache (derived)
+    pub last_supply_chain_check: Option<DateTime<Utc>>,   // when the cache was last refreshed
+}
+
+/// Two-resistor thermal model per JEDEC JESD15-3 plus DELPHI/JESD15-4
+/// boundary parameters. Compact-thermal multi-node models attach via
+/// `Part.behavioural_models` with `ModelRole::CompactThermal`.
+pub struct ThermalSpec {
+    pub theta_ja_c_per_w: Option<f32>,
+    pub theta_jc_top_c_per_w: Option<f32>,
+    pub theta_jc_bot_c_per_w: Option<f32>,
+    pub theta_jb_c_per_w: Option<f32>,
+    pub max_junction_c: Option<f32>,
+    pub thermal_reference: Option<String>,           // "JESD51-2 still-air, 1S board"
+}
+
+/// EIA-481 packaging options keyed off the canonical part MPN.
+pub enum PackagingKind {
+    Reel { tape_width_mm: u16, reel_diameter_inch: u8, qty_per_reel: u32 },
+    Tray { qty_per_tray: u32 },
+    Tube { qty_per_tube: u32 },
+    Bag { qty_per_bag: u32 },
+    Cut { qty: u32 },                                // cut tape strip
+}
+
+pub struct PackagingOption {
+    pub kind: PackagingKind,
+    pub mpn_suffix: Option<String>,                  // e.g. TI's 'R' or 'T' suffix
+}
+
+/// Distributor offer cache. Derived data — refreshed on demand via the
+/// `refresh_supply_chain` MCP tool. Not authored.
+pub struct SupplyOffer {
+    pub distributor: String,
+    pub price_breaks: Vec<(u32, f64, String)>,       // (qty, price, currency)
+    pub stock: Option<u32>,
+    pub lead_time_weeks: Option<u32>,
+    pub link: String,
 }
 ```
 
@@ -229,7 +366,17 @@ pub struct Zone {
 pub struct Net {
     pub uuid: Uuid,
     pub name: String,
-    pub class: Uuid,          // → NetClass
+    pub class: Uuid,                          // → NetClass
+    pub controlled_impedance: Option<ImpedanceSpec>,  // per-net impedance target — IPC-2581 Rev C / ODB++ aware
+}
+
+/// Per-net controlled-impedance specification. Consumed by the deferred
+/// M5+ `Impedance` rule type and by IPC-2581 Rev C `<ImpedancesProperties>`
+/// / ODB++ impedance-control attribute export.
+pub struct ImpedanceSpec {
+    pub target_ohms: f32,                     // 50 (single-ended), 90 (USB), 100 (LVDS), etc.
+    pub tolerance_pct: f32,                   // ±10 typical
+    pub controlled_dielectric: Option<Uuid>,  // → StackupLayer the impedance is controlled against
 }
 
 pub struct NetClass {
@@ -250,9 +397,17 @@ pub struct Stackup {
 pub struct StackupLayer {
     pub id: LayerId,
     pub name: String,
-    pub layer_type: StackupLayerType,  // Copper, Dielectric
+    pub layer_type: StackupLayerType,         // Copper, Dielectric, SolderMask, Silkscreen, Paste, Mechanical
     pub thickness_nm: i64,
-    // M8+: dk, df, copper_weight, roughness
+    // Material properties: required by ODB++, IPC-2581 Rev C, and any
+    // controlled-impedance work. All `Option<>`-wrapped so existing
+    // imports (KiCad ≤7) deserialize without populating them; KiCad 8+
+    // populates from the `stackup-material` block in `.kicad_pro`.
+    pub dielectric_constant: Option<f32>,     // Dk, dimensionless
+    pub loss_tangent: Option<f32>,            // Df, dimensionless
+    pub copper_weight_oz: Option<f32>,        // 0.5, 1.0, 2.0 typical
+    pub roughness_um: Option<f32>,            // Rrms surface roughness (microns)
+    pub material_name: Option<String>,        // FR-4, Rogers 4350B, etc.
 }
 
 pub struct Keepout {
@@ -713,6 +868,44 @@ pub struct Transaction {
     pub description: String,
 }
 ```
+
+### Library Model Attachment Operations
+
+Attaching or detaching a behavioural model on a `Part` is an authored
+operation: it must flow through the transaction model so the audit
+trail and undo/redo stack remain correct.
+
+```rust
+/// Attach a behavioural-model file (IBIS / SPICE / Touchstone /
+/// IBIS-AMI / Verilog-A / VHDL-AMS / Compact Thermal) to a Part.
+/// Reads the file at attach time to populate `ModelAttachment`
+/// metadata (model names, encryption status, format metadata).
+pub struct AttachModel {
+    pub part_uuid: Uuid,
+    pub model_path: PathBuf,                  // file to attach
+    pub role: ModelRole,
+}
+
+/// Detach a previously-attached model from a Part. Reversible —
+/// the OpDiff carries the full `ModelAttachment` so `inverse()`
+/// can recreate it.
+pub struct DetachModel {
+    pub part_uuid: Uuid,
+    pub model_attachment_uuid: Uuid,
+}
+```
+
+Both operations are **fully reversible**:
+
+- `AttachModel.inverse()` returns a `DetachModel` for the same
+  attachment UUID.
+- `DetachModel.inverse()` returns an `AttachModel` re-creating the
+  original attachment from the OpDiff payload (including the source
+  path snapshot).
+
+The pool-side model file lives in
+`pool/models/<role>/<sha256>.<ext>`; attach/detach manipulates the
+`Part.behavioural_models` reference list, never the pool file itself.
 
 ### Undo semantics
 - Undo reverts the most recent transaction (all operations in reverse order).

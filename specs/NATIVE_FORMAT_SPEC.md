@@ -84,6 +84,12 @@ myproject/
 │   ├── packages/
 │   ├── padstacks/
 │   ├── parts/
+│   ├── models/               # behavioural-model files (IBIS / SPICE / Touchstone / IBIS-AMI / thermal)
+│   │   ├── ibis/
+│   │   ├── spice/
+│   │   ├── touchstone/
+│   │   ├── ami/
+│   │   └── thermal/
 │   └── pool.sqlite
 ├── rules/
 │   └── rules.json
@@ -396,6 +402,40 @@ Rules:
 - format must align with `IMPORT_SPEC.md`
 - this directory is optional for purely native projects
 - if present after conversion, it preserves source-origin identity metadata
+
+### 6.10 `pool/models/` (Pool Model Files)
+
+Purpose:
+- persist behavioural-model files referenced from
+  `Part.behavioural_models` (per `ENGINE_SPEC.md` § 1.1a `ModelAttachment`
+  and § 1.2 `Part`)
+
+Layout:
+- one file per model, content-addressed by SHA-256 of the file bytes
+- subdirectories partition by `ModelRole` (`ibis/`, `spice/`,
+  `touchstone/`, `ami/`, `thermal/`, `verilog_a/`, `vhdl_ams/`)
+- IBIS-AMI model bundles are stored as a directory
+  (`ami/<sha256>/`) containing the `.ami` file plus per-platform
+  binary cosimulation libraries; the directory's content sha256 is
+  the bundle's identifier
+
+File contents:
+- raw vendor file bytes; Datum never rewrites or normalises model
+  payloads
+- encrypted vendor blocks pass through verbatim — Datum does not
+  decrypt and does not re-encrypt
+
+Rules:
+- the model UUID is the deterministic UUID v5 over the SHA-256 hex
+  string under a fixed namespace; same file at any pool path resolves
+  to the same UUID
+- the `models` and `part_model_attachments` index tables (per
+  `docs/POOL_ARCHITECTURE.md` § 2) are derived from the file tree and
+  are always rebuildable
+- this directory is optional for projects that do not use behavioural
+  attachments
+- the schema is purely additive to the existing native format;
+  existing projects without `pool/models/` continue to deserialize
 
 ---
 

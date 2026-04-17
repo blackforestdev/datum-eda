@@ -144,12 +144,34 @@ pool/
 ├── padstacks/
 │   ├── smd-rect.json
 │   └── th-round.json
-└── parts/
-    ├── generic/
-    │   └── resistor-0402-10k.json
-    └── murata/
-        └── grm155r71c104ka88j.json
+├── parts/
+│   ├── generic/
+│   │   └── resistor-0402-10k.json
+│   └── murata/
+│       └── grm155r71c104ka88j.json
+└── models/
+    ├── ibis/
+    │   └── <sha256>.ibs
+    ├── spice/
+    │   ├── <sha256>.cir
+    │   └── <sha256>.lib
+    ├── touchstone/
+    │   └── <sha256>.s4p
+    ├── ami/
+    │   └── <sha256>/                # bundle: .ami + platform binaries
+    └── thermal/
+        └── <sha256>.xml             # ECXML compact thermal (JESD15-4)
 ```
+
+**Behavioural-model files (`pool/models/`):** Behavioural attachments
+referenced from `Part.behavioural_models` (per `ENGINE_SPEC.md` § 1.1a
+`ModelAttachment` and § 1.2 `Part`) are stored verbatim under
+`pool/models/<role>/<sha256>.<ext>`. The sha256 hash provides
+deterministic content-addressed identity, so two pools sharing the
+same vendor IBIS file resolve to the same model UUID without
+coordination. Datum never decrypts encrypted vendor models — they
+live in the pool as opaque blobs and pass through to export
+operations untouched.
 
 **Why individual files:**
 - Git-friendly: each part is a separate diff
@@ -230,6 +252,28 @@ CREATE TABLE parts (
 CREATE TABLE orderable_mpns (
     part_uuid TEXT NOT NULL REFERENCES parts(uuid),
     mpn TEXT NOT NULL
+);
+
+-- Behavioural-model attachments (IBIS / SPICE / Touchstone / IBIS-AMI /
+-- Verilog-A / VHDL-AMS / CompactThermal). Files are content-addressed
+-- under pool/models/<role>/<sha256>.<ext>; this table indexes them.
+CREATE TABLE models (
+    uuid TEXT PRIMARY KEY,
+    sha256 TEXT NOT NULL UNIQUE,
+    role TEXT NOT NULL,                -- 'ibis', 'spice', 'touchstone', 'ami', 'verilog_a', 'vhdl_ams', 'thermal'
+    file_path TEXT NOT NULL,           -- relative to pool root
+    file_size_bytes INTEGER,
+    encrypted INTEGER DEFAULT 0,       -- 1 if any encryption scheme detected at attach time
+    metadata_json TEXT                 -- format-specific metadata (port count, IBIS version, etc.)
+);
+
+-- Many-to-many: parts may carry multiple models; the same model file
+-- may be attached to multiple parts (vendor-shared IBIS).
+CREATE TABLE part_model_attachments (
+    part_uuid TEXT NOT NULL REFERENCES parts(uuid),
+    model_uuid TEXT NOT NULL REFERENCES models(uuid),
+    role TEXT NOT NULL,
+    PRIMARY KEY (part_uuid, model_uuid)
 );
 
 -- Tagging (FTS for fast search)
