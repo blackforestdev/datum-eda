@@ -116,12 +116,16 @@ Exit for Stage 0:
 
 ### Outline Ownership
 
-- [ ] `M7-IMP-003` Document and enforce supported KiCad board-outline ownership
+- [x] `M7-IMP-003` Document and enforce supported KiCad board-outline ownership
   rules for imported board review.
   Owner: `crates/engine/src/import/kicad`
   Minimum proof:
   - top-level `Edge.Cuts` support is explicit
   - unsupported footprint-embedded outline tricks do not silently claim success
+  Acceptance note:
+  - completed with bounded Option A support for footprint-embedded
+    `fp_line` / `fp_arc` on `Edge.Cuts`, explicit outline warning propagation,
+    and removal of the old silent placeholder-success path
 
 - [ ] `M7-IMP-004` Add fixture-backed outline tests for supported imported
   boards.
@@ -142,36 +146,51 @@ Exit for Stage 1:
   Current read:
   - partially satisfied
   - `M7-IMP-001` complete
-  - Stage 1 still blocked on `M7-IMP-003`
+  - `M7-IMP-003` complete
+  - remaining work is validation hardening (`M7-IMP-002`, `M7-IMP-004`) plus
+    broader fallback audit (`M7-IMP-005`)
 
 ## Stage 2: Raise Pad And Footprint Fidelity
 
 ### Pad Semantics
 
-- [ ] `M7-IMP-006` Preserve supported pad shape semantics for `circle`, `rect`,
+- [x] `M7-IMP-006` Preserve supported pad shape semantics for `circle`, `rect`,
   `oval`, and `roundrect`.
   Owner: `crates/engine/src/import/kicad`
   Minimum proof:
   - imported board state retains shape kind correctly for canonical fixtures
+  Acceptance note:
+  - completed for the current audited subset, including explicit `roundrect`
+    shape retention and fixture-backed import checks
 
-- [ ] `M7-IMP-007` Preserve supported pad width/height/drill semantics without
+- [x] `M7-IMP-007` Preserve supported pad width/height/drill semantics without
   collapsing to coarse approximations.
   Owner: `crates/engine/src/import/kicad`
   Minimum proof:
   - fixture-backed checks for exact imported dimensions on supported pads
+  Acceptance note:
+  - completed for the current audited subset with focused size/drill
+    preservation checks on inline fixture coverage
 
-- [ ] `M7-IMP-008` Preserve or explicitly bound supported pad rotation
+- [x] `M7-IMP-008` Preserve or explicitly bound supported pad rotation
   semantics.
   Owner: `crates/engine/src/import/kicad`
   Minimum proof:
   - rotated non-circular pad fixtures no longer silently distort geometry
+  Acceptance note:
+  - completed with `PlacedPad.rotation`, KiCad import preservation of authored
+    pad angle, and focused tests covering rotated-pad behavior on `datum-test`
+    and DOA2526
 
-- [ ] `M7-IMP-009` Define the supported roundrect / radiused-corner contract
+- [x] `M7-IMP-009` Define the supported roundrect / radiused-corner contract
   for imported board review.
   Owner: `crates/engine/src/import/kicad` + `gui-protocol`
   Minimum proof:
   - the frontend receives enough data to distinguish roundrect pads from plain
     rectangles on supported boards
+  Acceptance note:
+  - completed with `roundrect_rratio_ppm` flowing from KiCad import through
+    board state into `board_review_scene_v1` and the renderer
 
 ### Footprint Display Companions
 
@@ -192,6 +211,10 @@ Exit for Stage 1:
 Exit for Stage 2:
 - supported imported pads and footprint companions are credible enough for
   review
+  Current read:
+  - pad-semantics work is materially landed for the audited subset
+  - remaining Stage 2 work is the footprint companion / display context track
+    (`M7-SCN-001`, `M7-SCN-002`)
 
 ## Stage 3: Add Unrouted Connectivity As A First-Class Scene Lane
 
@@ -292,6 +315,10 @@ Exit for Stage 3:
 
 Exit for Stage 4:
 - the viewport is semantically readable without side-by-side explanation
+  Current read:
+  - the active next implementation frontier is interaction stability
+    (`M7-INT-001`) plus the broader renderer-discipline and readability tickets
+    (`M7-REN-006`, `M7-REN-003`, `M7-REN-004`)
 
 ## Stage 5: Regression Coverage
 

@@ -5,7 +5,7 @@
 >
 > Legend: `[x]` done, `[~]` partial, `[ ]` not started, `[—]` deferred/N/A
 
-Last updated: 2026-04-16
+Last updated: 2026-04-17
 
 ---
 
@@ -906,8 +906,13 @@ Status: [~] Opened narrowly as a read-only route-proposal review layer
   - current correction-track read:
     - Stage 3 unrouted-lane work is functionally landed on the canonical
       half-routed fixture
-    - active next slice is Stage 4 semantic-render locking, specifically
-      `M7-REN-002` on unrouted visual grammar
+    - previously recorded Stage 1 / Stage 2 blockers around outline ownership,
+      pad rotation, roundrect semantics, outline layer-id carriage, and outline
+      visibility gating have materially landed in code; the fidelity docs are
+      now being reconciled to that newer repo state
+    - active next implementation frontier is interaction stability
+      (`M7-INT-001`) plus Stage 4 semantic-render readability and discipline
+      work (`M7-REN-006`, `M7-REN-003`, `M7-REN-004`)
     - the renderer semantic contract note now lives in
       `docs/gui/M7_RENDER_SEMANTIC_CONTRACT.md`
   - standards amendment for the opening slice:
