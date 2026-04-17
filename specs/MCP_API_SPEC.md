@@ -1386,3 +1386,309 @@ Output: { "score": float,
           "issues": [{ "severity": string, "message": string,
                        "location": json, "suggestion": string }] }
 ```
+
+---
+
+## M7+ Export Tools (Standards Audit Batch 1)
+
+> Status: section stubs. Per-tool implementation pending; the contract
+> framing here is the AI-surface intent for the post-M7 export work
+> identified in the Domain 1 deep-dive
+> (`research/data-exchange-interop/DATA_EXCHANGE_INTEROP_RESEARCH.md`).
+> Tracking disposition: `STANDARDS_COMPLIANCE_SPEC.md` § 4.1.
+
+#### `export_step`
+Export board + components to a STEP file for MCAD round-trip.
+```
+Method: export_step
+Input:  { "board_uuid": uuid, "output_path": string,
+          "format": "AP203" | "AP214" | "AP242",
+          "include_components": bool,
+          "coordinate_origin": "board_corner" | "board_center" }
+Output: { "export_status": "success" | "partial" | "failed",
+          "warnings": [string] }
+Error:  export_error
+```
+
+#### `export_idf`
+Export board to IDF 3.0 (board outline + component bodies/keepouts).
+```
+Method: export_idf
+Input:  { "board_uuid": uuid, "output_dir": string,
+          "version": "3.0" }
+Output: { "files": [string] }   // board.emn + board.emp
+Error:  export_error
+```
+
+#### `export_odbpp`
+Export board to ODB++ v8.1 archive (Tier-1 fab preferred format).
+```
+Method: export_odbpp
+Input:  { "board_uuid": uuid, "output_path": string,
+          "version": "8.1", "include_assembly": bool }
+Output: { "path": string }
+Error:  export_error
+```
+
+#### `export_ipc2581`
+Export board to IPC-2581 archive (single XML file). Datum recommends
+Rev C; Rev B available for downstream compatibility.
+```
+Method: export_ipc2581
+Input:  { "board_uuid": uuid, "output_path": string,
+          "revision": "B" | "C", "include_impedance": bool }
+Output: { "path": string }
+Error:  export_error
+```
+
+#### `import_dxf_outline`
+Import a board outline polygon from DXF (mechanical-team handoff).
+```
+Method: import_dxf_outline
+Input:  { "path": string, "unit": "mm" | "inch", "flip_y": bool }
+Output: { "outline": json }     // Polygon in canonical nm
+Error:  import_error
+```
+
+---
+
+## Component Modelling Tools (Standards Audit Batch 1)
+
+> Status: section stubs. Per-tool implementation pending; the contract
+> framing here is the AI-surface intent for the behavioural-model
+> attachment work identified in the Domain 2 deep-dive
+> (`research/component-modeling/COMPONENT_MODELING_RESEARCH.md`).
+> Tracking disposition: `STANDARDS_COMPLIANCE_SPEC.md` § 4.2.
+>
+> All `extract_*` tools are subject to the Encrypted Content Handling
+> Policy below.
+
+### IBIS
+
+#### `attach_ibis`
+```
+Method: attach_ibis
+Input:  { "part_uuid": uuid, "ibs_path": string }
+Output: { "attachment_uuid": uuid, "ibis_version": string,
+          "model_names": [string], "encrypted": bool,
+          "encryption_scheme": string | null }
+Error:  attach_error | parse_error
+```
+
+#### `validate_ibis`
+```
+Method: validate_ibis
+Input:  { "ibs_path": string }
+Output: { "valid": bool,
+          "errors": [{ "line": int, "severity": string, "message": string }],
+          "warnings": [{ "line": int, "message": string }],
+          "summary": { "models": int, "components": int, "has_ami": bool } }
+```
+
+#### `list_ibis_models`
+```
+Method: list_ibis_models
+Input:  { "part_uuid": uuid, "attachment_uuid": uuid }
+Output: { "models": [{ "name": string, "type": string, "signal_pin_count": int }] }
+```
+
+#### `extract_ibis_pin_table`
+```
+Method: extract_ibis_pin_table
+Input:  { "part_uuid": uuid, "attachment_uuid": uuid, "model_name": string,
+          "encrypted_handling": "Reject" | "OpaqueHandle" }
+Output: { "pins": [{ "pin_name": string, "model": string, "buffer_type": string }] }
+Error:  encrypted_block_requested
+```
+
+### Touchstone
+
+#### `attach_touchstone`
+```
+Method: attach_touchstone
+Input:  { "part_uuid": uuid, "snp_path": string,
+          "port_mapping_hint": [{ "port": int, "pin_name": string }] | null }
+Output: { "attachment_uuid": uuid, "ports": int,
+          "frequency_range_hz": [float, float],
+          "format": "Touchstone1" | "Touchstone2" }
+```
+
+#### `validate_touchstone`
+```
+Method: validate_touchstone
+Input:  { "snp_path": string }
+Output: { "valid": bool, "errors": [json], "warnings": [json],
+          "summary": { "ports": int, "freq_range_hz": [float, float],
+                       "format": string, "mixed_mode": bool } }
+```
+
+#### `extract_touchstone_summary`
+```
+Method: extract_touchstone_summary
+Input:  { "part_uuid": uuid, "attachment_uuid": uuid, "summary_freq_hz": float }
+Output: { "insertion_loss_db": float, "return_loss_db": float,
+          "per_port": [{ "port": int, "s_self_db": float }] }
+```
+
+### SPICE (subprocess only — Datum never embeds GPL-class simulators)
+
+#### `attach_spice`
+```
+Method: attach_spice
+Input:  { "part_uuid": uuid, "file_path": string,
+          "dialect": "Auto" | "Berkeley3" | "Ngspice" | "LTspice" |
+                     "PSpice" | "HSpice" | "Xyce" | "Spectre" }
+Output: { "attachment_uuid": uuid, "detected_dialect": string,
+          "model_names": [string], "subckt_names": [string], "encrypted": bool }
+```
+
+#### `validate_spice`
+```
+Method: validate_spice
+Input:  { "file_path": string, "dialect": string }
+Output: { "valid": bool, "errors": [json], "warnings": [json] }
+```
+Implementation note: invokes ngspice as a subprocess in syntax-only
+mode. Datum does not link ngspice — see "Encrypted Content Handling
+Policy" and the project licensing constraint.
+
+#### `extract_spice_subckt_pin_list`
+```
+Method: extract_spice_subckt_pin_list
+Input:  { "part_uuid": uuid, "attachment_uuid": uuid, "subckt_name": string,
+          "encrypted_handling": "Reject" | "OpaqueHandle" }
+Output: { "ports": [string],            // ordered as in .SUBCKT line
+          "has_default_param_block": bool }
+Error:  encrypted_block_requested
+```
+
+#### `export_spice_netlist`
+```
+Method: export_spice_netlist
+Input:  { "schematic_uuid": uuid, "output_path": string,
+          "dialect": "Ngspice" | "PSpice" | "LTspice" | "HSpice" | "Xyce",
+          "include_attached_models": bool }
+Output: { "export_status": "success" | "partial" | "failed",
+          "warnings": [string] }
+```
+
+#### `export_ibis_stimulus`
+Generate IBIS-derived ngspice PWL stimulus for a net.
+```
+Method: export_ibis_stimulus
+Input:  { "net_uuid": uuid, "driving_pin_uuid": uuid,
+          "model_attachment_uuid": uuid, "output_path": string }
+Output: { "export_status": string }
+```
+
+### Supply Chain
+
+#### `lookup_part_octopart`
+```
+Method: lookup_part_octopart
+Input:  { "mpn": string, "manufacturer": string | null }
+Output: { "part_record": { "canonical_mpn": string, "manufacturer": string,
+                           "lifecycle": string, "datasheet_url": string,
+                           "parametrics": json, "distributor_offers": [json] } }
+```
+
+#### `lookup_part_digikey`
+```
+Method: lookup_part_digikey
+Input:  { "mpn": string, "manufacturer": string | null }
+Output: { "part_record": json }   // same shape as lookup_part_octopart
+```
+
+#### `lookup_part_mouser`
+```
+Method: lookup_part_mouser
+Input:  { "mpn": string, "manufacturer": string | null }
+Output: { "part_record": json }
+```
+
+#### `refresh_supply_chain`
+```
+Method: refresh_supply_chain
+Input:  { "part_uuid": uuid }
+Output: { "offers_count": int, "last_check": string }
+```
+
+#### `find_alternate_parts`
+```
+Method: find_alternate_parts
+Input:  { "part_uuid": uuid }
+Output: { "alternates": [{ "mpn": string, "manufacturer": string,
+                           "match_type": string, "lifecycle": string }] }
+```
+
+#### `query_packaging_options`
+```
+Method: query_packaging_options
+Input:  { "mpn": string }
+Output: { "options": [{ "kind": string, "qty": int, "mpn_suffix": string | null }] }
+```
+
+#### `normalize_manufacturer`
+Map free-text manufacturer name to JEP106 + canonical name.
+```
+Method: normalize_manufacturer
+Input:  { "name": string }
+Output: { "jep106_code": int, "canonical_name": string, "aliases": [string] }
+```
+
+### Heuristics
+
+#### `infer_diffpair_from_pinnames`
+Suggest differential-pair pin pairings from name suffixes (`_P`/`_N`,
+`_+`/`_-`, etc.).
+```
+Method: infer_diffpair_from_pinnames
+Input:  { "component_uuid": uuid }
+Output: { "pairs": [{ "pin_p_uuid": uuid, "pin_n_uuid": uuid,
+                      "base_name": string, "confidence": float }] }
+```
+
+---
+
+## Encrypted Content Handling Policy
+
+> Status: policy defined. Per-tool gating implementation pending;
+> tools that read model contents (`extract_ibis_pin_table`,
+> `extract_spice_subckt_pin_list`, `extract_touchstone_summary`,
+> future `extract_*` tools) MUST honour this contract before merge.
+> Tracking disposition: `STANDARDS_COMPLIANCE_SPEC.md` § 4.2.
+
+The MCP API includes tools that read content from attached behavioural
+models. Vendor IBIS / SPICE / Touchstone files may carry encrypted
+blocks under IBIS BIRD-176, PSpice Encrypt-It, HSPICE AvantHash,
+LTspice obfuscation, Spectre encryption, or other vendor schemes.
+
+The MCP layer enforces the following rules:
+
+1. **Detection at attach time.** When a model is attached, the parser
+   detects encryption and sets `ModelAttachment.encrypted: bool` plus
+   `encryption_scheme`. This metadata is always available and is
+   never gated.
+2. **Metadata is always allowed.** Tools that return only model
+   metadata (filename, format, model count, encryption flag, port
+   count, frequency range) work on encrypted models without
+   restriction.
+3. **Content extraction is gated.** Tools that return model contents
+   (.ibs text bodies, .cir text bodies, S-parameter values) check
+   `encrypted` first. If true, the tool returns
+   `error: encrypted_block_requested` unless the caller passes
+   `encrypted_handling: "OpaqueHandle"`, in which case the tool
+   returns an opaque content handle (sha256 of the requested block)
+   instead of plaintext.
+4. **Pass-through preserved.** Export operations
+   (`export_kicad`, `export_ipc2581`, `export_odbpp`, etc.) bundle
+   encrypted files verbatim. **Datum never decrypts.** Datum never
+   re-encrypts. Datum never derives plaintext from encrypted bytes.
+5. **Audit trail.** Every model attach / detach / extract operation
+   is transaction-logged. The audit log records the encryption
+   status of any extraction attempt and the
+   `encrypted_handling` mode used. This is load-bearing for
+   downstream Domain 8 (process & quality) audit-log obligations.
+
+This policy applies to all current and future MCP tools. New tools
+that read model content must implement the gate before merge.

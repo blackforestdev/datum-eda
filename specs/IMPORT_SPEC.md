@@ -160,6 +160,9 @@ Target: KiCad 7, 8, 9 (.kicad_pcb v20221018+, .kicad_sch v20230121+)
 | Footprints (pads, silk, courtyard) | Required | |
 | 3D model references | Deferred | |
 | Symbol alternates | Best-effort | |
+| SPICE models | Best-effort (M7+) | Imported from `.kicad_sym` simulation-model URI; attached as `Part.behavioural_models` per `ENGINE_SPEC.md` § 1.2 |
+| IBIS models | Best-effort (M7+) | Imported from `.kicad_sym` IBIS-model URI when present; attached as `Part.behavioural_models` |
+| Touchstone files | Best-effort (M7+) | Imported from `.kicad_sym` Touchstone-model URI when present; attached as `Part.behavioural_models` |
 
 ---
 
@@ -207,11 +210,63 @@ Target: Eagle 6.x through 9.6.2 (XML, DTD-defined)
 | Devicesets → Entity mapping | Required | gates, connect pin→pad |
 | Technology variants | Best-effort | |
 | 3D packages | Deferred | |
-| Spice models | Deferred | |
+| Spice models | Best-effort (M7+) | Eagle stores SPICE in `<spice><pinmapping/><model/></spice>` blocks; imported as `Part.behavioural_models` attachments per `ENGINE_SPEC.md` § 1.2 |
+| Ibis models | Best-effort (M7+) | Eagle deviceset attachment fields, when present; imported as `Part.behavioural_models` attachments |
 
 ---
 
-## 5. Round-Trip Guarantees
+## 5. IPC-2581 Import (Future — Post-M7)
+
+Target: IPC-2581 Rev B and Rev C archives (single-XML DPMX format).
+
+### Why imported as a first-class format
+
+IPC-2581 import is the **practical Altium / OrCAD / PADS migration
+path** that does not require reverse-engineering commercial native
+binary formats. Every Tier-1 commercial EDA tool can export
+IPC-2581 Rev C. Datum's IPC-2581 importer is the receiving end of
+that migration without taking on binary-format reverse-engineering
+risk.
+
+This is also the operational reason the commercial native binary
+formats (Altium `.PcbDoc`, OrCAD/Allegro binaries, PADS binaries)
+remain `Out of scope` per `STANDARDS_COMPLIANCE_SPEC.md` § 4.1: the
+intermediate-format path covers most user-migration scenarios at a
+fraction of the engineering and licensing risk.
+
+### Feature Matrix (target)
+
+| Feature | Required | Notes |
+|---|---|---|
+| Board outline | Required | |
+| Stackup (with materials) | Required | Maps to extended `StackupLayer` material fields per `ENGINE_SPEC.md` § 1.3 |
+| Components | Required | Placement, rotation, layer |
+| Tracks (per-layer) | Required | |
+| Vias | Required | Including blind/buried |
+| Zones (filled polygons) | Required | |
+| Net list | Required | With component-pin connectivity |
+| Net classes | Required | |
+| Controlled impedance | Required | Maps to `Net.controlled_impedance` per `ENGINE_SPEC.md` § 1.3 |
+| Diff pairs | Required | Maps to NetClass `diffpair_width` / `diffpair_gap` |
+| BOM | Best-effort | Imported as Part metadata enrichment |
+| Pad-stack data | Required | Maps to Datum's Padstack pool entries |
+| Drill data | Required | |
+| Fabrication / assembly notes | Best-effort | Stored as project-level metadata |
+| Embedded components | Deferred | M8+ |
+| Cavities | Deferred | M8+ |
+| DFM annotations | Deferred | One-way fab → designer |
+
+### Round-Trip Note
+
+IPC-2581 is intended for design exchange, not for full design-tool
+round-trip. Imported IPC-2581 projects become native Datum projects
+on import; the path back to the originating commercial tool is
+through the originating tool's own IPC-2581 import (when supported)
+rather than through a Datum-side write-back guarantee.
+
+---
+
+## 6. Round-Trip Guarantees
 
 ### KiCad write-back (M3)
 
