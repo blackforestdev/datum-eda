@@ -74,8 +74,8 @@ pub(crate) fn move_native_project_board_component(
             .expect("native board component serialization must succeed"),
     );
     for value in project.board.pads.values_mut() {
-        let mut pad: eda_engine::board::PlacedPad =
-            serde_json::from_value(value.clone()).with_context(|| {
+        let mut pad: eda_engine::board::PlacedPad = serde_json::from_value(value.clone())
+            .with_context(|| {
                 format!(
                     "failed to parse board pad in {}",
                     project.board_path.display()

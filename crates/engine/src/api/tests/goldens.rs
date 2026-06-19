@@ -198,6 +198,7 @@ fn assert_drc_matches_golden(fixture: &str) {
             RuleType::ViaHole,
             RuleType::ViaAnnularRing,
             RuleType::SilkClearance,
+            RuleType::ProcessAperture,
         ])
         .unwrap_or_else(|err| panic!("DRC should run: {err}"));
     let normalized = normalize_drc_report(&report);

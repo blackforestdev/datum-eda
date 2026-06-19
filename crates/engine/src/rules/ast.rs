@@ -40,6 +40,7 @@ pub enum RuleType {
     ViaAnnularRing,
     HoleSize,
     SilkClearance,
+    ProcessAperture,
     Connectivity,
     // M5+: Impedance, LengthMatch, DiffpairGap, DiffpairSkew
 }
@@ -47,12 +48,32 @@ pub enum RuleType {
 /// Rule parameters — type-specific values.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum RuleParams {
-    Clearance { min: i64 },
-    TrackWidth { min: i64, preferred: i64, max: i64 },
-    ViaHole { min: i64, max: i64 },
-    ViaAnnularRing { min: i64 },
-    HoleSize { min: i64, max: i64 },
-    SilkClearance { min: i64 },
+    Clearance {
+        min: i64,
+    },
+    TrackWidth {
+        min: i64,
+        preferred: i64,
+        max: i64,
+    },
+    ViaHole {
+        min: i64,
+        max: i64,
+    },
+    ViaAnnularRing {
+        min: i64,
+    },
+    HoleSize {
+        min: i64,
+        max: i64,
+    },
+    SilkClearance {
+        min: i64,
+    },
+    ProcessAperture {
+        min_mask_expansion: i64,
+        min_paste_reduction: i64,
+    },
     Connectivity,
 }
 

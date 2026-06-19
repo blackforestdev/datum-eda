@@ -37,6 +37,7 @@ pub(crate) fn run_drc(path: &Path) -> Result<DrcReport> {
             RuleType::ViaHole,
             RuleType::ViaAnnularRing,
             RuleType::SilkClearance,
+            RuleType::ProcessAperture,
         ])
         .with_context(|| format!("failed to run DRC on {}", path.display()))
 }

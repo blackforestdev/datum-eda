@@ -25,7 +25,7 @@ def run_eda(*args: str) -> dict:
             "run",
             "-q",
             "-p",
-            "eda-cli",
+            "datum-eda-cli",
             "--",
             "--format",
             "json",

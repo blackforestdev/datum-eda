@@ -85,10 +85,10 @@ fn project_mechanical_layer_component_text_export_validate_and_compare() {
     assert_eq!(export_report["component_text_count"], 1);
 
     let gerber = std::fs::read_to_string(&gerber_path).expect("gerber should read");
-    assert!(gerber.contains("X1200000Y3200000D02*"));
-    assert!(gerber.contains("X1200000Y2400000D01*"));
+    assert!(gerber.contains("X1200000Y1672461D02*"));
+    assert!(gerber.contains("X1292773Y1672461D01*"));
     assert!(gerber.contains("X1200000Y2400000D02*"));
-    assert!(gerber.contains("X1600000Y2400000D01*"));
+    assert!(gerber.contains("X1629687Y2400000D01*"));
 
     let validate_cli = Cli::try_parse_from([
         "eda",
@@ -126,7 +126,7 @@ fn project_mechanical_layer_component_text_export_validate_and_compare() {
     let compare_report: serde_json::Value =
         serde_json::from_str(&compare_output).expect("report JSON");
     assert_eq!(compare_report["expected_component_text_count"], 1);
-    assert_eq!(compare_report["matched_count"], 2);
+    assert_eq!(compare_report["matched_count"], 8);
     assert_eq!(compare_report["missing_count"], 0);
     assert_eq!(compare_report["extra_count"], 0);
 

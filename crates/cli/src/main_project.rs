@@ -62,3 +62,62 @@ pub(crate) fn render_native_project_validation_text(
     }
     lines.join("\n")
 }
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectBoardTextMutationReportView {
+    pub(crate) action: String,
+    pub(crate) project_root: String,
+    pub(crate) board_path: String,
+    pub(crate) text_uuid: String,
+    pub(crate) text: String,
+    pub(crate) x_nm: i64,
+    pub(crate) y_nm: i64,
+    pub(crate) rotation_deg: i32,
+    pub(crate) height_nm: i64,
+    pub(crate) stroke_width_nm: i64,
+    pub(crate) render_intent: String,
+    pub(crate) family: String,
+    pub(crate) style: String,
+    pub(crate) style_class: Option<String>,
+    pub(crate) h_align: String,
+    pub(crate) v_align: String,
+    pub(crate) mirrored: bool,
+    pub(crate) keep_upright: bool,
+    pub(crate) line_spacing_ratio_ppm: i32,
+    pub(crate) bold: bool,
+    pub(crate) italic: bool,
+    pub(crate) layer: i32,
+}
+
+pub(crate) fn render_native_project_board_text_mutation_text(
+    report: &NativeProjectBoardTextMutationReportView,
+) -> String {
+    [
+        format!("action: {}", report.action),
+        format!("project_root: {}", report.project_root),
+        format!("board_path: {}", report.board_path),
+        format!("text_uuid: {}", report.text_uuid),
+        format!("text: {}", report.text),
+        format!("x_nm: {}", report.x_nm),
+        format!("y_nm: {}", report.y_nm),
+        format!("rotation_deg: {}", report.rotation_deg),
+        format!("height_nm: {}", report.height_nm),
+        format!("stroke_width_nm: {}", report.stroke_width_nm),
+        format!("render_intent: {}", report.render_intent),
+        format!("family: {}", report.family),
+        format!("style: {}", report.style),
+        format!(
+            "style_class: {}",
+            report.style_class.as_deref().unwrap_or("")
+        ),
+        format!("h_align: {}", report.h_align),
+        format!("v_align: {}", report.v_align),
+        format!("mirrored: {}", report.mirrored),
+        format!("keep_upright: {}", report.keep_upright),
+        format!("line_spacing_ratio_ppm: {}", report.line_spacing_ratio_ppm),
+        format!("bold: {}", report.bold),
+        format!("italic: {}", report.italic),
+        format!("layer: {}", report.layer),
+    ]
+    .join("\n")
+}

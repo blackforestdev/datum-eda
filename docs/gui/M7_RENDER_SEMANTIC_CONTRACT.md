@@ -30,6 +30,21 @@ That means:
 - diagnostic emphasis must modify the active lane without replacing its basic
   meaning
 
+Imported-board semantic invariance rule:
+- optional source representations such as KiCad `render_cache` may exist, but
+  they may not define final imported-board truth
+- position, orientation, layer ownership, visibility behavior, and review-state
+  meaning must remain equivalent whether imported text/graphics arrive from
+  cached KiCad polygons or Datum fallback synthesis
+- imported-board architecture should converge toward Datum-owned geometry
+  generation from text/graphic semantics
+- for imported board text specifically, follow
+  `research/pcb-text-rendering/PCB_TEXT_RENDERING_RESEARCH.md`: Phase 1 uses a
+  Datum-owned Newstroke-equivalent generator, treats strokes as canonical, and
+  does not use `render_cache` as the general parity oracle
+- any board-to-board difference caused only by representation presence or
+  absence is a regression, not an acceptable fixture quirk
+
 ## Lane Vocabulary
 
 ### Authored
@@ -140,6 +155,8 @@ questions:
    lane?
 4. Does turning a layer off actually remove geometry owned by that layer?
 5. Does the view still read correctly without side-by-side explanation?
+6. Would the same authored intent still read the same way if the KiCad source
+   omitted `render_cache` and forced Datum to synthesize the geometry?
 
 If a change cannot be justified in those terms, it is outside the semantic
 contract and should be treated as design polish or scope creep.

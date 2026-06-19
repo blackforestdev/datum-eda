@@ -89,6 +89,16 @@ fn validate_rule_params(rule: &Rule) -> Result<(), EngineError> {
         | (RuleType::SilkClearance, RuleParams::SilkClearance { min }) => {
             require_positive("minimum value", *min)
         }
+        (
+            RuleType::ProcessAperture,
+            RuleParams::ProcessAperture {
+                min_mask_expansion,
+                min_paste_reduction,
+            },
+        ) => {
+            require_non_negative("minimum mask expansion", *min_mask_expansion)?;
+            require_non_negative("minimum paste reduction", *min_paste_reduction)
+        }
         (RuleType::Connectivity, RuleParams::Connectivity) => Ok(()),
         _ => Err(EngineError::Validation(
             "rule_type and parameters variant do not match".into(),
@@ -99,6 +109,13 @@ fn validate_rule_params(rule: &Rule) -> Result<(), EngineError> {
 fn require_positive(name: &str, value: i64) -> Result<(), EngineError> {
     if value <= 0 {
         return Err(EngineError::Validation(format!("{name} must be > 0")));
+    }
+    Ok(())
+}
+
+fn require_non_negative(name: &str, value: i64) -> Result<(), EngineError> {
+    if value < 0 {
+        return Err(EngineError::Validation(format!("{name} must be >= 0")));
     }
     Ok(())
 }

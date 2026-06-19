@@ -171,3 +171,33 @@ It does require:
 
 The right near-term outcome is a stricter hybrid renderer with fewer
 exceptions, not a rushed abstraction rewrite.
+
+## 2026-06-09 Enforcement Slice (M7-REN-006 closure)
+
+The discipline this memo demanded is now enforced in code:
+
+- **One ordering encoding.** `RenderStage` declaration order is the draw
+  order; `render_stage_priority` is the discriminant. The previously
+  divergent derived `Ord` (which encoded paste-before-mask, contradicting
+  the 2026-04-16 rule) was corrected, and the three duplicated hand-authored
+  `post_copper_stages` arrays were consolidated into one shared
+  `POST_COPPER_STAGES` walk.
+- **Material-first construction.** Known copper families build
+  `LayerAppearance` through `from_copper_material`, making the rule that
+  tracks, pads, and zones inherit one base material color structural rather
+  than coincidental. The unknown-layer fallback keeps deliberately divergent
+  colors as a bounded exception so unresolved layer identity stays visible.
+- **Bounded exception set documented in code.** The
+  `push_retained_scene_geometry` contract header enumerates the explicit
+  exceptions: through-hole pad pass, via geometry family, board
+  outline/Edge overlay, selection/hover emphasis, unknown-layer fallback.
+  Growing that list requires a memo note.
+- **Contract regression tests.** `render_stack_policy_follows_declared_contract`,
+  `render_stage_declaration_order_is_the_only_priority_encoding`, and
+  `copper_layer_appearance_is_material_first` lock the stage ladder, the
+  single-encoding rule, and material inheritance.
+
+What this slice deliberately did **not** do, per this memo's own boundary:
+unify vias and through-hole pads into a generalized copper pipeline. Those
+remain explicit, documented exceptions; revisit only with a product-justified
+follow-on ticket.

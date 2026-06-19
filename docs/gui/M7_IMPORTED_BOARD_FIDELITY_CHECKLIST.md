@@ -29,6 +29,14 @@ This checklist does **not** broaden `M7` into:
 - Close Stage 0 before treating later visual feedback as authoritative.
 - Close Stage 1 before claiming imported KiCad board review is trustworthy.
 - Do not use renderer polish to mask missing import or scene truth.
+- Do not permit representation-dependent imported-board behavior. If two KiCad
+  source encodings express the same authored intent, Datum must produce the
+  same effective scene semantics regardless of whether the board provides
+  cached render polygons or requires Datum fallback synthesis.
+- For imported board text, follow
+  `research/pcb-text-rendering/PCB_TEXT_RENDERING_RESEARCH.md`: Phase 1 uses a
+  Datum-owned Newstroke-equivalent generator, treats strokes as canonical, and
+  does not treat KiCad `render_cache` as the general parity oracle.
 - Apply the delivery/testability gate in
   `docs/gui/M7_DELIVERY_GATES.md` before treating any user-facing slice as
   "done enough" to move on.
@@ -140,6 +148,26 @@ Exit for Stage 0:
   Owner: `crates/engine/src/import/kicad`
   Minimum proof:
   - unsupported cases do not silently produce materially wrong board meaning
+  - alternate KiCad source representations (for example `render_cache` present
+    vs absent) do not change effective text/geometry semantics on supported
+    imported boards
+
+- [ ] `M7-IMP-014` Normalize imported KiCad text into Datum-owned geometry and
+  stop using KiCad `render_cache` as final render truth.
+  Owner: `crates/gui-protocol` + `crates/engine`
+  Minimum proof:
+  - cache-present and cache-absent imported boards land on the same
+    Datum-owned Newstroke-equivalent text generation path
+  - no KiCad runtime dependency is introduced
+  - `datum-test` and `DOA2526` no longer differ materially in visible imported
+    text quality only because one fixture had `render_cache` and the other did
+    not
+  - any expected visual change for imported TrueType-authored text is
+    documented explicitly in the closeout
+  Working doc:
+  - `docs/gui/M7_IMP_014_IMPORTED_TEXT_NORMALIZATION_BRIEF.md`
+  Required research input:
+  - `research/pcb-text-rendering/PCB_TEXT_RENDERING_RESEARCH.md`
 
 Exit for Stage 1:
 - imported supported cases stop silently producing wrong board truth
@@ -148,7 +176,8 @@ Exit for Stage 1:
   - `M7-IMP-001` complete
   - `M7-IMP-003` complete
   - remaining work is validation hardening (`M7-IMP-002`, `M7-IMP-004`) plus
-    broader fallback audit (`M7-IMP-005`)
+    broader fallback audit (`M7-IMP-005`) and imported-text normalization
+    (`M7-IMP-014`)
 
 ## Stage 2: Raise Pad And Footprint Fidelity
 
@@ -274,7 +303,7 @@ Exit for Stage 3:
     authored vs unrouted vs proposed vs diagnostic reading for the opening `M7`
     viewport
 
-- [ ] `M7-REN-006` Define and enforce layer/material render discipline for
+- [x] `M7-REN-006` Define and enforce layer/material render discipline for
   authored board geometry.
   Owner: `crates/gui-render`
   Minimum proof:
@@ -286,6 +315,23 @@ Exit for Stage 3:
     front/back side, then stable tie-breakers
   Working note:
   - `docs/gui/M7_RENDER_LAYER_DISCIPLINE_MEMO.md`
+  Acceptance note (2026-06-09 enforcement slice):
+  - the render-stack policy now has exactly one encoding: `RenderStage`
+    declaration order is the draw order, `render_stage_priority` is its
+    discriminant, the previously divergent derived `Ord` (paste-before-mask)
+    was corrected, and the three duplicated hand-authored `post_copper_stages`
+    arrays were replaced by one shared `POST_COPPER_STAGES` walk
+  - known copper families construct `LayerAppearance` through a material-first
+    constructor (`from_copper_material`), making track/pad/zone inheritance of
+    one base material structural rather than coincidental
+  - the bounded exception set (through-hole pad pass, via family, board
+    outline/Edge overlay, selection/hover emphasis, unknown-layer fallback) is
+    documented at the `push_retained_scene_geometry` contract header
+  - contract regression tests lock the declared stage ladder, the
+    single-ordering-encoding rule, and copper material-first inheritance
+  - the renderer remains a deliberate stricter hybrid per the memo ("not a
+    rushed abstraction rewrite"); deeper unification of vias/through-hole
+    pads into a generalized copper pipeline is future work beyond this ticket
 
 - [x] `M7-REN-002` Render unrouted connectivity with a visual grammar that does
   not read like copper.
@@ -299,25 +345,70 @@ Exit for Stage 3:
     on the canonical half-routed fixture; the lane no longer reads as copper
     or as fake via/drill markers
 
-- [ ] `M7-REN-003` Keep proposed overlays copper-like in both selected and
+- [x] `M7-REN-003` Keep proposed overlays copper-like in both selected and
   non-selected states without drifting back toward airwire-like linework.
   Owner: `crates/gui-render`
   Minimum proof:
   - selected-state review still reads as proposed copper plus emphasis, not
     generic path nodes
+  Acceptance note (2026-06-12):
+  - audited against `M7_RENDER_SEMANTIC_CONTRACT.md` on the checked-in review
+    fixture via CPU rasterization of the prepared overlay pass: proposed
+    routes render as solid copper-gold bands at world-true width
+    (`overlay_route_width_px` uses `world_length_to_px` with only a 2px
+    legibility floor and a generous cap) in both states; selection adds
+    halo/endcap emphasis without changing lane identity
+  - one violation found and fixed: the diagnostic evidence pass stamped a
+    marker dot on EVERY path vertex over the proposed band — the literal
+    "generic path nodes" reading. Diagnostic emphasis now marks only the
+    evidence span's two endpoints; regression-locked by
+    `diagnostic_evidence_marks_endpoints_only_over_proposed_copper`
+    (negative-tested: fails against the per-vertex behavior)
+  - anchor bullseye markers remain as bounded route-anchor vocabulary; final
+    on-canvas read remains owner-confirmable on the live canonical fixture
 
-- [ ] `M7-REN-004` Ensure footprint and board context remain readable under dim
+- [x] `M7-REN-004` Ensure footprint and board context remain readable under dim
   unrelated and review focus.
   Owner: `crates/gui-render`
   Minimum proof:
   - canonical fixture remains understandable to a PCB reviewer under active
     review focus
+  Acceptance note (2026-06-12):
+  - filled-zone copper is now a declared derived shade of its layer's base
+    material (`ZONE_FILL_FIELD_MIX`, `from_copper_material` in
+    `dim_policy.rs`), so pad/track copper reads distinctly against pours and
+    teardrop fills; on the DOA2526 `+In1` junction the shade transition
+    occurs exactly at the pad circle, making the teardrop flanks read tangent
+    per the owner criterion (verified by CPU-raster pixel sampling:
+    pad annulus base copper vs teardrop wings derived shade)
+  - dim-unrelated verified on canonical `datum-test` with Q2 selected:
+    selection unmistakable, unrelated copper/silk/airwires/outline all
+    legible; no dim-factor tuning needed
+  - regression locks: `copper_layer_appearance_is_material_first` asserts
+    the exact derived-shade relation; `dimmed_copper_stays_legible_against_
+    board_field` asserts a floor distance between dimmed copper and the
+    board field (all render-contract tests now live in
+    `render_contract_tests.rs`)
+  - the checked-in image-regression golden of the teardrop junction is
+    deferred to `M7-REG-003`, which immediately follows in the owner-ordered
+    queue; final on-canvas read remains owner-confirmable
+  - teardrop/pad junctions read tangent (owner-stated criterion, 2026-06-11):
+    on DOA2526 the teardrop flank geometry is mathematically tangent to the
+    pad circle at import, scene, and vertex level (verified by line-distance
+    0.910/0.903mm vs pad r=0.915mm), but the flat single-tone copper
+    vocabulary makes the pour-clearance silhouette masquerade as the teardrop
+    edge, which visually breaks tangency. The fix is presentation (tone or
+    boundary separation between pad/teardrop copper and pour copper, or
+    substrate-colored clearance), proven by an image-regression fixture of a
+    through-hole teardrop junction (e.g. the DOA2526 `+In1`/`-In1` pads)
 
 Exit for Stage 4:
 - the viewport is semantically readable without side-by-side explanation
   Current read:
-  - the active next implementation frontier is interaction stability
-    (`M7-INT-001`) plus the broader renderer-discipline and readability tickets
+  - `M7-INT-001` selection-ownership stability closed its first slice
+    (2026-06-09, regression-locked in
+    `crates/gui-render/tests/selection_ownership.rs`); the active frontier is
+    the renderer-discipline and readability tickets
     (`M7-REN-006`, `M7-REN-003`, `M7-REN-004`)
 
 ## Stage 5: Regression Coverage

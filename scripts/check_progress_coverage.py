@@ -38,6 +38,12 @@ def parse_tool_catalog_methods() -> set[str]:
     return set(re.findall(r'"name":\s*"([a-z_]+)"', text))
 
 
+def parse_cli_bridge_methods(tool_methods: set[str]) -> set[str]:
+    text = read_text("mcp-server/server_runtime.py")
+    public_methods = set(re.findall(r"^\s{4}def ([a-z_]+)\(", text, flags=re.M))
+    return public_methods & tool_methods
+
+
 def parse_current_mcp_method_block(spec_text: str) -> set[str]:
     match = re.search(
         r"### Current Implemented Methods \([^\n]+\)\n\n(.*?)(?:\n\n### |\Z)",
@@ -465,24 +471,26 @@ def check_milestone_progress_compaction(progress_text: str, failures: list[str])
 def check_mcp_contract_parity(mcp_text: str, failures: list[str]) -> None:
     daemon_methods = parse_daemon_methods()
     tool_methods = parse_tool_catalog_methods()
+    cli_bridge_methods = parse_cli_bridge_methods(tool_methods)
+    runtime_methods = daemon_methods | cli_bridge_methods
     listed_methods = parse_current_mcp_method_block(mcp_text)
     heading_methods = parse_mcp_headings(mcp_text)
 
-    if daemon_methods != tool_methods:
+    if runtime_methods != tool_methods:
         failures.append(
-            "MCP parity mismatch: daemon dispatch methods and MCP tool catalog differ "
-            f"(daemon_only={sorted(daemon_methods - tool_methods)}, "
-            f"tool_only={sorted(tool_methods - daemon_methods)})"
+            "MCP parity mismatch: runtime dispatch surface and MCP tool catalog differ "
+            f"(runtime_only={sorted(runtime_methods - tool_methods)}, "
+            f"tool_only={sorted(tool_methods - runtime_methods)})"
         )
 
-    if listed_methods != daemon_methods:
+    if listed_methods != runtime_methods:
         failures.append(
-            "specs/MCP_API_SPEC.md current method list mismatch with daemon methods "
-            f"(missing={sorted(daemon_methods - listed_methods)}, "
-            f"extra={sorted(listed_methods - daemon_methods)})"
+            "specs/MCP_API_SPEC.md current method list mismatch with MCP runtime methods "
+            f"(missing={sorted(runtime_methods - listed_methods)}, "
+            f"extra={sorted(listed_methods - runtime_methods)})"
         )
 
-    undocumented = sorted(daemon_methods - heading_methods)
+    undocumented = sorted(runtime_methods - heading_methods)
     if undocumented:
         failures.append(
             "specs/MCP_API_SPEC.md missing method sections for current methods: "

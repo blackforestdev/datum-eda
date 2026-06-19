@@ -209,7 +209,9 @@ Import audit should:
 - preserve source geometry exactly
 - compare source geometry to IPC expectations where a supported family/basis can
   be identified
-- emit diagnostics without mutating the imported data
+- emit DRC/check diagnostics without mutating the imported data
+- offer explicit correction proposals when the delta is mechanically
+  actionable and the governing basis is known or user-selected
 
 This matters because real imported boards often contain:
 - vendor defaults
@@ -217,12 +219,42 @@ This matters because real imported boards often contain:
 - tool-derived paste/mask assumptions
 - assembly-line-specific edits
 
-Datum should show the difference, not overwrite it silently.
+Datum should show the difference and provide a controlled fix path, not
+overwrite it silently.
+
+Example:
+- a pad's solder-mask aperture is inherited from copper instead of carrying
+  the required positive mask expansion
+- a pad's paste aperture is inherited from copper instead of carrying the
+  required stencil reduction
+- neighboring footprints of the same class use the expected mask/paste offsets,
+  but one footprint or package instance does not
+
+In that case Datum's DRC/checking surface should preserve the imported KiCad
+geometry, report the mask/paste observable delta, and offer a proposal such as:
+
+```text
+propose_process_aperture_correction
+  target: footprint/package/pad set
+  basis: declared IPC/stencil rule or user-selected project rule
+  mask_delta: +5 mil
+  paste_delta: -5 mil
+  affected_pads: [...]
+  findings_resolved: [...]
+```
+
+The DRC finding is the required detection mechanism. The proposal is the
+follow-on repair path. The proposal must be reviewable and explicitly accepted
+before Datum mutates the design. The accepted change should record provenance
+that it corrected an imported host-tool default rather than original native
+Datum-authored geometry.
 
 ## Diagnostics And UX
 
-IPC findings should be visible through the same general diagnostic surfaces as
-DRC/ERC, but with their own category.
+IPC/process-geometry findings should be visible through Datum's DRC/checking
+surface, with their own category where useful. A board with pad/mask/paste
+geometry that violates the declared or selected process basis should not pass
+DRC cleanly merely because the source file was accepted by the host EDA tool.
 
 Suggested diagnostic classes:
 - `IPC_COPPER_GEOMETRY`
@@ -238,10 +270,20 @@ Suggested severity policy:
 - `warning`: likely manufacturability issue or undeclared drift
 - `info`: non-blocking deviation or unvalidated imported geometry
 
+Suggested DRC finding codes:
+- `pad_mask_expansion_missing`
+- `pad_mask_expansion_below_rule`
+- `pad_paste_reduction_missing`
+- `pad_paste_reduction_below_rule`
+- `pad_process_aperture_inherited_from_copper`
+- `pad_process_aperture_inconsistent_with_peer_footprint`
+
 Examples:
 - imported pad paste aperture equals copper pad, but IPC-7525 / declared stencil
   rule expects reduction
 - imported solder mask aperture is smaller than required expansion
+- imported pad mask/paste apertures are implicitly inherited from copper while
+  comparable pads in the same design carry explicit process offsets
 - footprint name implies nominal density, but geometry matches neither nominal
   nor least
 
@@ -272,7 +314,9 @@ For `M7`, the immediate requirement is not a full wizard UI.
 The immediate requirement is:
 1. import and render standards-bound observables correctly
 2. stop silently inheriting host-tool defaults
-3. make standards audit possible as part of review
+3. make standards audit visible through DRC/check findings
+4. prepare explicit correction proposals for actionable mask/paste/default
+   inheritance findings, without silently applying them
 
 The recent mask/paste work is the first concrete example:
 - Datum must honor imported pad-level process margins
@@ -291,8 +335,9 @@ The recent mask/paste work is the first concrete example:
 
 - footprint/package family recognition
 - expected-vs-actual comparison
-- structured findings
+- structured DRC/check findings
 - imported-board audit path
+- proposed process-aperture corrections for recognized pad/mask/paste deltas
 
 ### Phase 3: Native authoring support
 
@@ -300,6 +345,8 @@ The recent mask/paste work is the first concrete example:
 - generated footprints
 - deviation tagging
 - naming assistance
+- correction-acceptance flow that records whether a mask/paste/stencil change
+  is library-wide, package-specific, or project-local
 
 ### Phase 4: Wizard UX
 

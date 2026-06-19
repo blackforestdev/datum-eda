@@ -459,6 +459,7 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
             RuleType::ViaHole,
             RuleType::ViaAnnularRing,
             RuleType::SilkClearance,
+            RuleType::ProcessAperture,
         ]) {
             Ok(report) => serialized_success_response(request.id, report),
             Err(err) => error_response(request.id, -32017, &err.to_string()),

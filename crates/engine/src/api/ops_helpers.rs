@@ -302,6 +302,7 @@ pub(super) fn default_rule_name(rule_type: &RuleType) -> String {
         RuleType::ViaAnnularRing => "via_annular_ring".to_string(),
         RuleType::HoleSize => "hole_size".to_string(),
         RuleType::SilkClearance => "silk_clearance".to_string(),
+        RuleType::ProcessAperture => "process_aperture".to_string(),
         RuleType::Connectivity => "connectivity".to_string(),
     }
 }

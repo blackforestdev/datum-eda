@@ -20,6 +20,8 @@ pub enum ExportError {
     InvalidTextHeight,
     #[error("silkscreen export requires positive text stroke widths")]
     InvalidTextStrokeWidth,
+    #[error("text mesh tessellation failed")]
+    TextMeshTessellationFailed,
     #[error("silkscreen export encountered unsupported text character: {0}")]
     UnsupportedSilkscreenTextCharacter(char),
     #[error("drill export requires positive via drill diameters")]

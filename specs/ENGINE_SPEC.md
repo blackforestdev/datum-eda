@@ -1,6 +1,430 @@
 # Engine Specification
 
+## 0. Product-Mechanics Integration And Migration Target
+
+Status: **Target**, unless explicitly labeled **Current implementation** or
+**Compatibility**.
+
+This section is the front-loaded target substrate for implementing the new
+Datum product-mechanics scope. It integrates the readiness conclusions from
+`docs/audits/scope-integration/DATUM_SCOPE_INTEGRATION_READINESS_AUDIT.md` and the shared tool contract
+from `docs/contracts/AI_CLI_MCP_TOOL_SURFACE.md`.
+
+The existing `Board`, `Schematic`, KiCad import/write-back, and per-method
+engine APIs later in this spec remain truthful descriptions of the current
+implementation and compatibility surface. They are not the target authority
+model. New implementation work must route toward the substrate below.
+
+### 0.1 Status Labels
+
+- **Target**: desired product-mechanics contract and implementation direction.
+- **Current implementation**: what the code implements today and tests may
+  depend on.
+- **Compatibility**: legacy/import/export/API behavior retained while the
+  target substrate lands.
+
+### 0.2 Target Authority Model
+
+Datum has one canonical resolved `DesignModel`. Schematic, PCB, library,
+rules, checks, proposals, transactions, manufacturing, artifacts, and
+provenance are projections or partitions of that model, not independent
+authorities.
+
+```rust
+pub struct DesignModel {
+    pub project_id: Uuid,
+    pub model_revision: ModelRevision,
+    pub objects: HashMap<ObjectId, DomainObject>,
+    pub component_instances: HashMap<ObjectId, ComponentInstance>,
+    pub net_anchors: HashMap<NetId, NetAnchor>,
+    pub relationships: HashMap<ObjectId, Relationship>,
+    pub variants: HashMap<ObjectId, VariantOverlay>,
+    pub output_jobs: HashMap<ObjectId, OutputJob>,
+}
+
+pub struct ProjectResolver {
+    pub project_root: PathBuf,
+    pub manifest: ProjectManifest,
+    pub shard_index: Vec<SourceShardRef>,
+}
+```
+
+The `ProjectResolver` is engine-owned. It assembles one in-memory
+`DesignModel` from deterministic source shards, validates references, computes
+derived caches, and marks stale projections. Shards are persistence
+partitions, never authority boundaries. A schematic sheet shard, board shard,
+relationship shard, variant shard, manufacturing-plan shard, transaction
+journal shard, artifact metadata shard, or import-map shard can own source
+bytes, but none can make facts authoritative without resolution into the
+`DesignModel`.
+
+### 0.3 Source Shards As Persistence Partitions
+
+Target shard classes:
+
+- Project manifest: project identity, schema/storage versions, shard index,
+  accepted transaction tip, active variants/output contexts.
+- Electrical sheets: authored schematic presentation and electrical intent.
+- Physical boards: authored board implementation, not full project truth.
+- Library bindings: project-local part/package/symbol/footprint/pad-map
+  bindings and pinned reusable library revisions.
+- Relationships: authored cross-domain relationship records and accepted
+  deviations, partitioned by stable owner identity.
+- Rules/check basis: rules, constraints, standards/process basis, waivers, and
+  deviation records.
+- Variants: sparse authored overlays over stable object identity.
+- Manufacturing plans and output jobs: authored production and artifact
+  generation recipes.
+- Import Map: imported-source provenance keyed by `import_key`.
+- Transactions: append-only journal and durable undo/redo cursors.
+- Artifact metadata: generated-output manifests keyed to revisions.
+- Derived caches: resolved connectivity, relationship status, zone fills,
+  check runs, and manufacturing projections. These are cache/report state, not
+  source authority.
+
+### 0.4 Identity And Revision Substrate
+
+All authored source-domain objects have a persisted stable `ObjectId`.
+For the first target slice, `ObjectId = Uuid` on the wire. Identity is never
+derived from file path, reference designator, display name, net label, array
+order, sheet id, board id, or canvas position.
+
+```rust
+pub type ObjectId = Uuid;
+pub type NetId = Uuid;
+
+pub struct ObjectRevision(pub u64);
+pub struct ModelRevision(pub String); // deterministic sha256 over object revisions + accepted transaction tip
+
+pub struct RevisionedRef {
+    pub object_id: ObjectId,
+    pub object_revision: ObjectRevision,
+}
+```
+
+Transactions are the sole producer of `ObjectRevision` and `ModelRevision`.
+An object revision is a monotonic per-object `u64` bumped by the transaction
+that changes that object. The model revision identifies the resolved project
+state after applying accepted transactions and resolving all source shards.
+Derived caches, proposals, check runs, artifacts, and query envelopes must
+record the `model_revision` and relevant input object revisions they used.
+
+### 0.5 Component, Net, And Relationship Identity
+
+`ComponentInstance` is the canonical electrical-to-physical join. It replaces
+reference-designator or name matching for cross-domain identity.
+
+```rust
+pub struct ComponentInstance {
+    pub id: ObjectId,
+    pub part_ref: Option<ObjectId>,
+    pub placed_symbol_refs: Vec<ObjectId>,
+    pub placed_package_refs: Vec<ObjectId>,
+    pub object_revision: ObjectRevision,
+}
+
+pub enum NetAnchorKind {
+    Label(ObjectId),
+    WireEndpoint { wire: ObjectId, endpoint_index: u8 },
+    Pin(ObjectId),
+    Explicit(ObjectId),
+}
+
+pub struct NetAnchor {
+    pub net_id: NetId,
+    pub anchor: NetAnchorKind,
+    pub derived_from_model_revision: ModelRevision,
+}
+```
+
+A `NetId` is stable across rename and deterministic across split/merge through
+`NetAnchor`. The resolver binds each resolved connectivity group to a `NetId`
+through surviving or re-derived anchors. Display net names are properties, not
+identity.
+
+Relationships are split into authored records and derived resolver status.
+
+```rust
+pub struct Relationship {
+    pub id: ObjectId,
+    pub kind: RelationshipKind,
+    pub from: Vec<RevisionedRef>,
+    pub to: Vec<RevisionedRef>,
+    pub authored_intent: Vec<AuthoredIntentRecord>,
+    pub object_revision: ObjectRevision,
+}
+
+pub enum RelationshipKind {
+    ImplementedBy,
+    BoardOnly,
+    SchematicOnly,
+    ReverseEngineered,
+    Pending,
+    Mismatch,
+}
+
+pub enum DerivedRelationshipStatus {
+    Implemented,
+    PendingImplementation,
+    UnresolvedMismatch,
+}
+
+pub enum AuthoredIntentRecord {
+    LayoutDeviation { rationale: String, accepted_by: String },
+    AcceptedDeviation { rationale: String, accepted_by: String },
+    Waiver { waiver_id: ObjectId },
+}
+
+pub enum DerivedVariantPopulation {
+    Applicable,
+    NotApplicableForVariant,
+}
+```
+
+`RelationshipKind` is authored source state. `DerivedRelationshipStatus` and
+`DerivedVariantPopulation` are resolver outputs; they may be cached or stamped
+into reports/artifacts, but no operation may persist them as relationship
+authority. `ReverseEngineered` is a `RelationshipKind`, not a second deviation
+axis. Import confidence, source basis, and repair history live in Import Map
+and provenance metadata.
+
+### 0.6 Sparse Variant Overlays
+
+Variants are sparse overlays keyed by stable object identity. Switching
+variants composes the overlay over the base `DesignModel`; it must not write
+base objects or persist derived applicability values.
+
+```rust
+pub struct VariantOverlay {
+    pub id: ObjectId,
+    pub name: String,
+    pub base_model_revision: ModelRevision,
+    pub variant_revision: ObjectRevision,
+    pub fitted: HashMap<ObjectId, FittedState>,
+    pub relationship_overrides: HashMap<ObjectId, RelationshipOverride>,
+    pub property_overrides: HashMap<ObjectId, serde_json::Value>,
+}
+
+pub enum FittedState {
+    Fitted,
+    Unfitted,
+}
+```
+
+Variant overlays are invalidated by `model_revision` and
+`variant_revision`. `NotApplicableForVariant` is derived from overlay,
+option-link, and scope resolution and must never be stored as source
+relationship status.
+
+### 0.7 Import Map And Provenance
+
+Imported identity resolves through an Import Map shard keyed by `import_key`,
+not by `source_hash`.
+
+```rust
+pub struct ImportMapEntry {
+    pub import_key: String,
+    pub object_id: ObjectId,
+    pub source_tool: String,
+    pub source_path: Option<PathBuf>,
+    pub source_object_ref: Option<String>,
+    pub source_hash: Option<String>, // evidence only, never identity
+    pub provenance: ImportProvenance,
+}
+```
+
+Deterministic source UUIDs from KiCad/Eagle/importers are seeds and evidence.
+They are not Datum identity once imported. Re-import and repair workflows must
+reuse Datum `ObjectId`s by `import_key` and record unknown-basis markers when
+source evidence is incomplete.
+
+### 0.8 Operations, Proposals, Transactions, And Commit
+
+All mutation surfaces emit typed operations over `ObjectId`s and revisions.
+
+```rust
+pub enum Operation {
+    CreateObject { object: DomainObject },
+    UpdateObject { id: ObjectId, expected_revision: ObjectRevision, patch: serde_json::Value },
+    DeleteObjects { ids: Vec<ObjectId> },
+    BindComponentInstance { component_instance_id: ObjectId, refs: Vec<ObjectId> },
+    UpdateRelationship { relationship_id: ObjectId, patch: serde_json::Value },
+    UpdateVariantOverlay { variant_id: ObjectId, patch: serde_json::Value },
+    UpdateOutputJob { output_job_id: ObjectId, patch: serde_json::Value },
+}
+
+pub struct OperationBatch {
+    pub id: Uuid,
+    pub operations: Vec<Operation>,
+    pub prepared_against: ModelRevision,
+    pub provenance: OperationProvenance,
+}
+
+pub struct Proposal {
+    pub id: Uuid,
+    pub batch: OperationBatch,
+    pub rationale: String,
+    pub affected_objects: Vec<ObjectId>,
+    pub checks_run: Vec<Uuid>,
+    pub status: ProposalStatus,
+}
+
+pub struct Transaction {
+    pub id: Uuid,
+    pub parent_transaction_ids: Vec<Uuid>,
+    pub batch: OperationBatch,
+    pub affected_objects: Vec<RevisionedRef>,
+    pub resulting_model_revision: ModelRevision,
+    pub inverse_batch: Option<OperationBatch>,
+}
+```
+
+There is exactly one mutation gateway:
+
+```rust
+pub fn commit(batch: OperationBatch) -> Result<Transaction>;
+```
+
+`commit()` validates expected object revisions and prepared-against model
+revision, applies the batch to the resolved model in memory, stages touched
+source-shard bytes, fsyncs the staged bytes, appends one `TransactionRecord`
+to the journal and fsyncs it as the commit point, atomically renames staged
+shards into place, then fsyncs containing directories. On project open,
+recovery replays or rolls back the journal tail so the resolver only opens a
+state produced by a committed transaction; otherwise it enters recovery mode.
+
+Manual local visible edits may direct-commit by policy. AI/assistant,
+import-repair, checker, high-risk, destructive, batch, and cross-domain edits
+must produce a `Proposal` first and apply only after acceptance. Undo and redo
+are compensating `OperationBatch` transactions through the same `commit()`;
+there are no per-domain private undo/redo paths.
+
+### 0.9 Zone And ZoneFill Honesty
+
+`Zone` is authored boundary state. `ZoneFill` is derived projection state.
+Copper checks and manufacturing exports may treat zone copper as real only
+when a current `ZoneFill{Filled}` exists for the relevant model/projection
+revision.
+
+```rust
+pub enum ZoneFillState {
+    Filled,
+    Unfilled,
+    Stale,
+    Unsupported,
+}
+
+pub struct ZoneFill {
+    pub zone_id: ObjectId,
+    pub state: ZoneFillState,
+    pub source_zone_revision: ObjectRevision,
+    pub model_revision: ModelRevision,
+    pub islands: Vec<Polygon>,
+    pub provenance: Option<ImportProvenance>,
+}
+```
+
+Native unfilled/stale/unsupported zones emit no copper plus a hard
+`CheckFinding` for fabrication/manufacturing contexts. Imported filled zones
+may preserve source-tool islands as `Filled` derived geometry with provenance;
+they remain derived-with-provenance, not authored board truth. Exporting a
+zone boundary polygon directly as copper is a **Current implementation defect**
+and is not target behavior.
+
+### 0.10 Artifacts, Output Jobs, Checks, And Findings
+
+`OutputJob` is authored source state. Generated files are artifacts: derived
+snapshots with metadata, never design authority.
+
+```rust
+pub struct OutputJob {
+    pub id: ObjectId,
+    pub name: String,
+    pub include: Vec<ArtifactKind>,
+    pub board_or_panel: ObjectId,
+    pub variant: Option<ObjectId>,
+    pub manufacturing_plan: Option<ObjectId>,
+    pub object_revision: ObjectRevision,
+}
+
+pub struct ArtifactMetadata {
+    pub artifact_id: Uuid,
+    pub kind: ArtifactKind,
+    pub project_id: Uuid,
+    pub model_revision: ModelRevision,
+    pub output_job: Option<ObjectId>,
+    pub variant: Option<ObjectId>,
+    pub generator_version: String,
+    pub files: Vec<ArtifactFile>,
+    pub validation_state: ArtifactValidationState,
+}
+
+pub struct ArtifactFile {
+    pub path: PathBuf,
+    pub sha256: String,
+}
+```
+
+Artifact generation uses one projection/oracle per run: generate, manifest,
+validate, compare, and inspect must answer from the same model revision,
+output job, variant, and generator version. BOM/PnP rows are keyed by
+`ComponentInstance`, never reference string.
+
+Checks are read-only derived work over revisions. Persisted check results are
+evidence, not source authority.
+
+```rust
+pub struct CheckRun {
+    pub id: Uuid,
+    pub model_revision: ModelRevision,
+    pub projection_revision: Option<ModelRevision>,
+    pub checker_version: String,
+    pub profile: String,
+    pub status: CheckRunStatus,
+    pub findings: Vec<CheckFinding>,
+}
+
+pub struct CheckFinding {
+    pub id: Uuid,
+    pub fingerprint: String,
+    pub affected_objects: Vec<RevisionedRef>,
+    pub rule_basis: String,
+    pub severity: String,
+    pub explanation: String,
+    pub suggested_next_action: Option<String>,
+}
+```
+
+Finding fingerprints must be deterministic for identical `model_revision`,
+variant, and rule/checker versions. Waivers, proposals, and repairs target
+stable finding fingerprints and affected `ObjectId`s, not `(domain, index)`.
+
+### 0.11 Implementation Slices
+
+Foundational slices, in dependency order:
+
+1. Add `ObjectId`, `ObjectRevision`, `ModelRevision`, `ComponentInstance`,
+   `NetId`, `NetAnchor`, and Import Map `import_key`.
+2. Add `ProjectResolver` over source shards and preserve old project readers as
+   compatibility loaders feeding the resolver.
+3. Introduce typed `Operation` / `OperationBatch`, `Proposal`, and the single
+   fsync-journaled `commit()` path.
+4. Migrate current imported-board transactions and native JSON writers behind
+   `commit()`; forbid private source-shard writes.
+5. Add relationship records, derived relationship status, sparse variants, and
+   revision-keyed invalidation.
+6. Add honest `ZoneFill` derived state before treating zone copper as
+   fabrication-valid.
+7. Add `OutputJob`, artifact metadata, `CheckRun`, and `CheckFinding`
+   revision/fingerprint addressing.
+
 ## 1. Core Types
+
+Status: **Current implementation / Compatibility**, except where a type is
+referenced by Section 0 as target substrate. The type catalog below documents
+the current IR shape used by engine code and import/export paths. It should be
+migrated behind `DesignModel` / `ProjectResolver`, not treated as a competing
+authority model.
 
 All coordinates are `i64` nanometers. All angles are `i32` tenths of degree.
 All identifiers are `Uuid`. See docs/CANONICAL_IR.md for rationale.
@@ -301,6 +725,12 @@ pub struct SupplyOffer {
 
 ### 1.3 Board Types
 
+Status: **Current implementation / Compatibility**. `Board` currently groups
+physical implementation state for imports, queries, DRC, and export. Target
+implementation keeps board data as physical source shards resolved into
+`DesignModel`; cross-domain joins must use `ComponentInstance`, `NetId`, and
+`Relationship`, not reference strings or board-local assumptions.
+
 ```rust
 pub struct Board {
     pub uuid: Uuid,
@@ -434,6 +864,13 @@ pub struct BoardText {
 ```
 
 ### 1.4 Schematic Types
+
+Status: **Current implementation / Compatibility**. `Schematic` currently
+groups electrical authoring/query state. Target implementation keeps schematic
+sheets as electrical source shards resolved into `DesignModel`; variant
+handling migrates from dense fitted-component maps to sparse
+`VariantOverlay`, and schematic/PCB joins migrate to `ComponentInstance` and
+`Relationship`.
 
 ```rust
 pub struct Schematic {
@@ -744,6 +1181,7 @@ pub enum RuleType {
     ViaAnnularRing,
     HoleSize,
     SilkClearance,
+    ProcessAperture,
     Connectivity,
     // M5+: Impedance, LengthMatch, DiffpairGap, DiffpairSkew
 }
@@ -755,6 +1193,7 @@ pub enum RuleParams {
     ViaAnnularRing { min: i64 },
     HoleSize { min: i64, max: i64 },
     SilkClearance { min: i64 },
+    ProcessAperture { min_mask_expansion: i64, min_paste_reduction: i64 },
     Connectivity {},  // hard pass/fail, no parameters
 }
 ```
@@ -837,6 +1276,11 @@ These must hold at all times in a valid design state.
 ---
 
 ## 3. Operations
+
+Status: **Current implementation / Compatibility**. The trait and `Transaction`
+shape below describe the existing operation model. Target implementation is the
+Section 0 `Operation` / `OperationBatch` / `Proposal` / single `commit()` model
+with durable fsync journal and revision production.
 
 ### Operation Trait
 See docs/CANONICAL_IR.md §4 for the canonical definition.
@@ -947,131 +1391,180 @@ This is a hard requirement verified by golden tests.
 
 ### API Contract Mode
 
-This section tracks two layers:
+This section tracks contract layers:
+- **Target product-mechanics substrate (authoritative for new work)**:
+  Section 0 `DesignModel`, `ProjectResolver`, source shards, stable identity,
+  `OperationBatch`, `Proposal`, single `commit()`, journal/recovery,
+  `CheckRun`, `ArtifactMetadata`, and `OutputJob`.
 - **Current implementation contract (authoritative for code today)**:
   methods implemented in `crates/engine/src/api/mod.rs`.
-- **Target M2+ contract**: fuller method surface required by later
-  milestone exit gates.
+- **Compatibility contract**: old Board/Schematic/KiCad/import APIs retained
+  while migrated behind the target substrate.
+- **Legacy Target M2+ contract**: fuller pre-product-mechanics method surface
+  required by earlier milestone exit gates. It is superseded for new design by
+  Section 0 but remains useful for compatibility planning.
 
 Unless explicitly marked as `Target M2+`, method signatures in this section
 refer to the current implementation contract.
 
-### 5.1 Current Implemented Engine API (2026-03-25)
+### 5.1 Current Implemented Engine API
 
-```rust
-pub struct Engine {
-    pool: Pool,
-    design: Option<Design>,
-    undo_stack: Vec<Transaction>,
-    redo_stack: Vec<Transaction>,
-}
+The total `pub fn` surface across `crates/engine/src/api/` (excluding
+tests) is **locked via** `specs/SPEC_PARITY.md` → `engine_api_pub_fns`.
+At the time of last refresh the inventory contains 64 methods. Any
+add/rename/remove must refresh that inventory in the same change
+(`python3 scripts/check_spec_parity.py --update`).
 
-impl Engine {
-    // Lifecycle
-    pub fn new() -> Result<Self>;
-    pub fn has_open_project(&self) -> bool;
-    pub fn import(&mut self, path: &Path) -> Result<ImportReport>;
-    pub fn close_project(&mut self);
-    pub fn save(&self, path: &Path) -> Result<()>;
+Methods are grouped below by defining file. The Engine struct itself is
+defined in `crates/engine/src/api/mod.rs`.
 
-    // Pool
-    pub fn search_pool(&self, query: &str) -> Result<Vec<PartSummary>>;
-    pub fn get_part(&self, uuid: &Uuid) -> Result<PartDetail>;
-    pub fn get_package(&self, uuid: &Uuid) -> Result<PackageDetail>;
-    pub fn get_package_change_candidates(&self, component_uuid: &Uuid)
-        -> Result<PackageChangeCompatibilityReport>;
-    pub fn get_part_change_candidates(&self, component_uuid: &Uuid)
-        -> Result<PartChangeCompatibilityReport>;
-    pub fn get_component_replacement_plan(&self, component_uuid: &Uuid)
-        -> Result<ComponentReplacementPlan>;
-    pub fn get_scoped_component_replacement_plan(
-        &self,
-        input: ScopedComponentReplacementPolicyInput,
-    ) -> Result<ScopedComponentReplacementPlan>;
-    pub fn edit_scoped_component_replacement_plan(
-        &self,
-        plan: ScopedComponentReplacementPlan,
-        edit: ScopedComponentReplacementPlanEdit,
-    ) -> Result<ScopedComponentReplacementPlan>;
-    pub fn import_eagle_library(&mut self, path: &Path) -> Result<ImportReport>;
+#### `api/mod.rs` — Engine lifecycle and undo/redo flags
 
-    // Queries (read-only)
-    pub fn get_board_summary(&self) -> Result<BoardSummary>;
-    pub fn get_components(&self) -> Result<Vec<ComponentInfo>>;
-    pub fn get_net_info(&self) -> Result<Vec<BoardNetInfo>>;
-    pub fn get_stackup(&self) -> Result<StackupInfo>;
-    pub fn get_unrouted(&self) -> Result<Vec<Airwire>>;
-    pub fn get_schematic_summary(&self) -> Result<SchematicSummary>;
-    pub fn get_sheets(&self) -> Result<Vec<SheetSummary>>;
-    pub fn get_symbols(&self, sheet: Option<&Uuid>) -> Result<Vec<SymbolInfo>>;
-    pub fn get_symbol_fields(&self, symbol_uuid: &Uuid) -> Result<Vec<SymbolFieldInfo>>;
-    pub fn get_ports(&self, sheet: Option<&Uuid>) -> Result<Vec<PortInfo>>;
-    pub fn get_labels(&self, sheet: Option<&Uuid>) -> Result<Vec<LabelInfo>>;
-    pub fn get_buses(&self, sheet: Option<&Uuid>) -> Result<Vec<BusInfo>>;
-    pub fn get_bus_entries(&self, sheet: Option<&Uuid>) -> Result<Vec<BusEntryInfo>>;
-    pub fn get_noconnects(&self, sheet: Option<&Uuid>) -> Result<Vec<NoConnectInfo>>;
-    pub fn get_hierarchy(&self) -> Result<HierarchyInfo>;
-    pub fn get_schematic_net_info(&self) -> Result<Vec<SchematicNetInfo>>;
-    pub fn get_netlist(&self) -> Result<Vec<NetlistNet>>;
-    pub fn get_connectivity_diagnostics(&self) -> Result<Vec<ConnectivityDiagnosticInfo>>;
-    pub fn get_design_rules(&self) -> Result<Vec<Rule>>;
-    pub fn get_check_report(&self) -> Result<CheckReport>;
+| Method | Notes |
+|--------|-------|
+| `new` | Construct an `Engine` with an in-memory pool |
+| `has_open_project` | True once a design has been imported or natively opened |
+| `can_undo` | True if the undo stack is non-empty |
+| `can_redo` | True if the redo stack is non-empty |
 
-    // Writes (current M3 slice)
-    pub fn replace_components(&mut self, inputs: Vec<ReplaceComponentInput>)
-        -> Result<OperationResult>;
-    pub fn apply_component_replacement_plan(
-        &mut self,
-        inputs: Vec<PlannedComponentReplacementInput>,
-    ) -> Result<OperationResult>;
-    pub fn apply_component_replacement_policy(
-        &mut self,
-        inputs: Vec<PolicyDrivenComponentReplacementInput>,
-    ) -> Result<OperationResult>;
-    pub fn apply_scoped_component_replacement_policy(
-        &mut self,
-        input: ScopedComponentReplacementPolicyInput,
-    ) -> Result<OperationResult>;
-    pub fn apply_scoped_component_replacement_plan(
-        &mut self,
-        plan: ScopedComponentReplacementPlan,
-    ) -> Result<OperationResult>;
+#### `api/project_surface.rs` — Project lifecycle, pool access, explanations
 
-    // Checking
-    pub fn run_erc_prechecks(&self) -> Result<Vec<ErcFinding>>;
-    pub fn run_erc_prechecks_with_config(&self, config: &ErcConfig) -> Result<Vec<ErcFinding>>;
-    pub fn run_erc_prechecks_with_config_and_waivers(
-        &self,
-        config: &ErcConfig,
-        waivers: &[CheckWaiver],
-    ) -> Result<Vec<ErcFinding>>;
-    pub fn run_drc(&self, rule_types: &[RuleType]) -> Result<DrcReport>;
-    pub fn explain_violation(
-        &self,
-        domain: ViolationDomain,
-        index: usize,
-    ) -> Result<ViolationExplanation>;
+Status: **Current implementation / Compatibility**. `import` and library import
+APIs remain supported inputs, but target imported identity is the Import Map
+`import_key` flow in Section 0.7. `explain_violation` is compatibility; target
+explanations live on `CheckFinding`.
 
-    // Undo/redo capability flags (write ops deferred)
-    pub fn can_undo(&self) -> bool;
-    pub fn can_redo(&self) -> bool;
-}
-```
+| Method | Notes |
+|--------|-------|
+| `import` | Import a KiCad or Eagle design |
+| `close_project` | Drop the open design and reset undo/redo stacks |
+| `import_eagle_library` | Import an Eagle `.lbr` library into the pool |
+| `import_kicad_footprint` | Import a KiCad footprint into the pool |
+| `search_pool` | Search pool by keyword/criteria |
+| `get_part` | Resolve part detail by UUID |
+| `get_package` | Resolve package detail by UUID |
+| `explain_violation` | Produce a `ViolationExplanation` for an ERC/DRC finding |
 
-Notes:
-- Current `get_net_info` and `get_schematic_net_info` return full inventories
+#### `api/project_surface/project_surface_replacements.rs` — Replacement planning surfaces
+
+| Method | Notes |
+|--------|-------|
+| `get_package_change_candidates` | Component-scoped package compatibility report |
+| `get_part_change_candidates` | Component-scoped part compatibility report |
+| `get_component_replacement_plan` | Unified replacement planning report |
+| `get_scoped_component_replacement_plan` | Scoped preview using policy + filter |
+| `edit_scoped_component_replacement_plan` | Apply exclusions / overrides to a preview |
+
+#### `api/query_surface.rs` — Read-only queries and checks
+
+| Method | Notes |
+|--------|-------|
+| `board` | Borrow the open board |
+| `get_board_summary` | Board dimensions and counts |
+| `get_components` | All components in the open design |
+| `get_net_info` | Full board-net inventory (not a single-net selector) |
+| `get_stackup` | Stackup definition |
+| `get_unrouted` | Airwires |
+| `get_schematic_summary` | Schematic counts and structure |
+| `get_sheets` | Schematic sheet list |
+| `get_symbols` | Symbol inventory (all-sheets in current slice) |
+| `get_symbol_fields` | Fields for one symbol UUID |
+| `get_ports` | Hierarchical ports |
+| `get_labels` | Net labels |
+| `get_buses` | Bus declarations |
+| `get_bus_entries` | Bus entry wires (all-sheets form used by daemon/MCP) |
+| `get_noconnects` | No-connect markers |
+| `get_hierarchy` | Sheet hierarchy |
+| `get_schematic_net_info` | Full schematic-net inventory |
+| `get_netlist` | Deterministic board/schematic netlist inventory |
+| `get_connectivity_diagnostics` | Connectivity diagnostics |
+| `get_design_rules` | Resolved rule set |
+| `get_check_report` | Unified ERC + DRC report |
+| `run_erc_prechecks` | ERC with default config |
+| `run_erc_prechecks_with_config` | ERC with explicit `ErcConfig` |
+| `run_erc_prechecks_with_config_and_waivers` | ERC with config + waivers |
+| `run_drc` | DRC over the requested rule types (connectivity, clearance, track width, via-hole, via-annular, silk-clearance, process-aperture currently) |
+
+#### `api/save_kicad.rs` (and `api/save_kicad/`) — KiCad write-back
+
+Status: **Compatibility**. KiCad save/write-back is an interchange path, not
+target authority. Target source writes go through `OperationBatch -> commit()`
+and source shards; KiCad emitters become projections/exporters or compatibility
+writers.
+
+| Method | Notes |
+|--------|-------|
+| `save` | Save modifications to a new path |
+| `save_to_original` | Save back to the original imported file path |
+
+#### `api/write_ops/basic_mutations.rs` — Basic board mutations
+
+Status: **Current implementation / Migration input**. These methods are useful
+operation seeds, but target mutations are typed `Operation` variants committed
+through the single journaled `commit()` path.
+
+| Method | Notes |
+|--------|-------|
+| `delete_component` | Delete one component as one transaction |
+| `delete_track` | Delete one track as one transaction |
+| `delete_via` | Delete one via as one transaction |
+| `move_component` | Move one component (optionally with rotation) |
+| `rotate_component` | Rotate one component |
+| `set_value` | Set one component value |
+| `set_reference` | Set one component reference |
+
+#### `api/write_ops/assign_package_rule.rs` — Assignment / rule mutations
+
+| Method | Notes |
+|--------|-------|
+| `assign_part` | Assign one part to one component |
+| `set_package` | Assign one package to one component |
+| `set_net_class` | Set one net class |
+| `set_design_rule` | Set one design rule |
+
+#### `api/write_ops/component_replacements.rs` — Component replacement applies
+
+| Method | Notes |
+|--------|-------|
+| `set_package_with_part` | Replace package and explicit compatible part |
+| `replace_component` | Replace one component with explicit package + part |
+| `replace_components` | Batched explicit replacements as one transaction |
+| `apply_component_replacement_plan` | Apply a unified replacement plan |
+| `apply_component_replacement_policy` | Apply a best-candidate policy |
+| `apply_scoped_component_replacement_policy` | Apply a scoped policy across matching components |
+| `apply_scoped_component_replacement_plan` | Apply a previewed scoped plan |
+
+#### `api/write_ops/undo_redo/` — Transaction reversal
+
+| Method | Notes |
+|--------|-------|
+| `undo` | Reverse the most recent transaction |
+| `redo` | Re-apply the most recent undone transaction |
+
+#### Cross-cutting notes
+
+- `get_net_info` and `get_schematic_net_info` return full inventories
   for the open design, not single-net selectors.
-- Current `get_symbol_fields` is UUID-targeted.
-- Current `get_bus_entries` exposes the all-sheets form used by daemon/MCP.
-- Current `get_netlist` returns deterministic board/schematic inventories
-  rather than a richer graph object.
-- Current checking surface exposes ERC precheck findings and unified
-  `CheckReport`; DRC currently covers connectivity, clearance, track width,
-  via-hole, via-annular, and silk-clearance checks.
-- Current close-project lifecycle control and violation explanation are part of
-  the implemented API.
+- `get_symbol_fields` is UUID-targeted.
+- `get_netlist` returns deterministic board/schematic inventories rather
+  than a richer graph object.
+- DRC currently covers connectivity, clearance, track width, via-hole,
+  via-annular, silk-clearance, and process-aperture checks.
+- Native-authoring surfaces (place/edit/delete schematic and board objects,
+  forward-annotation lifecycle, routing kernel queries, gerber/drill/BOM/PnP
+  exports, route-strategy reporting, GUI review) are exposed through the
+  CLI/MCP layers and consume the engine through its `Project` types and
+  on-disk native scaffold rather than as additional `Engine::*` methods.
+  Surface counts for those layers are tracked separately via
+  `cli_project_commands` (182) and `mcp_runtime_methods` (75) in
+  `specs/SPEC_PARITY.md`.
 
 ### 5.2 Target M2+ Engine API
+
+Status: **Legacy target / Compatibility planning**. This was the pre-product-
+mechanics target method surface. New implementation must not add parallel
+per-domain commit/save/query authorities here; it should implement Section 0
+and expose compatible wrappers where needed.
 
 ```rust
 pub struct Engine {

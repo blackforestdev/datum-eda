@@ -70,10 +70,10 @@ fn project_mechanical_gerber_supports_board_text_strokes() {
     assert_eq!(report["board_text_count"], 1);
 
     let gerber = std::fs::read_to_string(&gerber_path).expect("gerber should read");
-    assert!(gerber.contains("X200000Y1200000D02*"));
-    assert!(gerber.contains("X200000Y400000D01*"));
+    assert!(gerber.contains("X200000Y-327539D02*"));
+    assert!(gerber.contains("X292773Y-327539D01*"));
     assert!(gerber.contains("X200000Y400000D02*"));
-    assert!(gerber.contains("X600000Y400000D01*"));
+    assert!(gerber.contains("X629687Y400000D01*"));
 
     let validate_cli = Cli::try_parse_from([
         "eda",
@@ -103,10 +103,30 @@ fn project_mechanical_gerber_supports_board_text_strokes() {
             "%LPD*%\n",
             "%ADD10C,0.100000*%\n",
             "D10*\n",
-            "X200000Y1200000D02*\n",
-            "X200000Y400000D01*\n",
+            "D10*\n",
+            "X200000Y-327539D02*\n",
+            "X292773Y-327539D01*\n",
+            "D10*\n",
+            "X200000Y317969D02*\n",
+            "X200000Y-327539D01*\n",
+            "D10*\n",
+            "X200000Y317969D02*\n",
+            "X629687Y317969D01*\n",
+            "D10*\n",
             "X200000Y400000D02*\n",
-            "X600000Y400000D01*\n",
+            "X200000Y317969D01*\n",
+            "D10*\n",
+            "X292773Y-327539D02*\n",
+            "X292773Y317969D01*\n",
+            "D10*\n",
+            "X292773Y317969D02*\n",
+            "X200000Y317969D01*\n",
+            "D10*\n",
+            "X629687Y317969D02*\n",
+            "X629687Y400000D01*\n",
+            "D10*\n",
+            "X629687Y400000D02*\n",
+            "X200000Y400000D01*\n",
             "M02*\n"
         ),
     )
@@ -128,7 +148,7 @@ fn project_mechanical_gerber_supports_board_text_strokes() {
     let output = execute(compare_cli).expect("compare should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
     assert_eq!(report["expected_board_text_count"], 1);
-    assert_eq!(report["matched_count"], 2);
+    assert_eq!(report["matched_count"], 8);
     assert_eq!(report["missing_count"], 0);
     assert_eq!(report["extra_count"], 0);
 

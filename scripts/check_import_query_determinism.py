@@ -15,7 +15,7 @@ MANIFEST_PATH = (
     ROOT
     / "crates/test-harness/testdata/quality/import_query_determinism_manifest_v1.json"
 )
-CLI_BIN = ROOT / "target/debug/eda"
+CLI_BIN = ROOT / "target/debug/datum-eda"
 
 
 def canonicalize_json(payload: str) -> str:
@@ -24,7 +24,7 @@ def canonicalize_json(payload: str) -> str:
 
 def build_cli() -> None:
     completed = subprocess.run(
-        ["cargo", "build", "-q", "-p", "eda-cli"],
+        ["cargo", "build", "-q", "-p", "datum-eda-cli"],
         cwd=ROOT,
         capture_output=True,
         text=True,

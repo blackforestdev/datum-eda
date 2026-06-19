@@ -3,6 +3,7 @@ use std::path::Path;
 use anyhow::{Context, Result, bail};
 use eda_engine::board::{BoardText, Keepout, StackupLayer};
 use eda_engine::ir::geometry::{Point, Polygon};
+use eda_engine::text::{TextFamilyId, TextHAlign, TextRenderIntent, TextStyleId, TextVAlign};
 use uuid::Uuid;
 
 use super::{
@@ -71,6 +72,17 @@ pub(crate) fn place_native_project_board_text(
     rotation_deg: i32,
     height_nm: i64,
     stroke_width_nm: i64,
+    render_intent: Option<String>,
+    family: Option<String>,
+    style: Option<String>,
+    style_class: Option<String>,
+    h_align: Option<String>,
+    v_align: Option<String>,
+    mirrored: bool,
+    keep_upright: bool,
+    line_spacing_ratio_ppm: i32,
+    bold: bool,
+    italic: bool,
     layer: i32,
 ) -> Result<NativeProjectBoardTextMutationReportView> {
     let mut project = load_native_project(root)?;
@@ -81,11 +93,34 @@ pub(crate) fn place_native_project_board_text(
     if stroke_width_nm <= 0 {
         bail!("board text stroke width must be positive");
     }
+    let render_intent = parse_text_render_intent(render_intent.as_deref())?;
+    let h_align = parse_text_h_align(h_align.as_deref())?;
+    let v_align = parse_text_v_align(v_align.as_deref())?;
+    validate_line_spacing_ratio(line_spacing_ratio_ppm)?;
+    let family_source = if family.is_some() {
+        eda_engine::text::TextFamilySource::Explicit
+    } else {
+        eda_engine::text::TextFamilySource::ImplicitDefault
+    };
     let board_text = BoardText {
         uuid: text_uuid,
         text: text.clone(),
         position,
         rotation: rotation_deg,
+        render_intent,
+        family: family
+            .map(TextFamilyId)
+            .unwrap_or_else(TextFamilyId::default),
+        family_source,
+        style: style.map(TextStyleId).unwrap_or_else(TextStyleId::default),
+        h_align,
+        v_align,
+        mirrored,
+        keep_upright,
+        line_spacing_ratio_ppm,
+        italic,
+        bold,
+        style_class,
         height_nm,
         stroke_width_nm,
         layer,
@@ -105,6 +140,17 @@ pub(crate) fn place_native_project_board_text(
         rotation_deg,
         height_nm,
         stroke_width_nm,
+        render_intent: render_intent_to_string(board_text.render_intent),
+        family: board_text.family.0.clone(),
+        style: board_text.style.0.clone(),
+        style_class: board_text.style_class.clone(),
+        h_align: text_h_align_to_string(board_text.h_align),
+        v_align: text_v_align_to_string(board_text.v_align),
+        mirrored: board_text.mirrored,
+        keep_upright: board_text.keep_upright,
+        line_spacing_ratio_ppm: board_text.line_spacing_ratio_ppm,
+        bold: board_text.bold,
+        italic: board_text.italic,
         layer,
     })
 }
@@ -118,6 +164,17 @@ pub(crate) fn edit_native_project_board_text(
     rotation_deg: Option<i32>,
     height_nm: Option<i64>,
     stroke_width_nm: Option<i64>,
+    render_intent: Option<String>,
+    family: Option<String>,
+    style: Option<String>,
+    style_class: Option<String>,
+    h_align: Option<String>,
+    v_align: Option<String>,
+    mirrored: Option<bool>,
+    keep_upright: Option<bool>,
+    line_spacing_ratio_ppm: Option<i32>,
+    bold: Option<bool>,
+    italic: Option<bool>,
     layer: Option<i32>,
 ) -> Result<NativeProjectBoardTextMutationReportView> {
     let mut project = load_native_project(root)?;
@@ -155,6 +212,41 @@ pub(crate) fn edit_native_project_board_text(
     if let Some(stroke_width_nm) = stroke_width_nm {
         board_text.stroke_width_nm = stroke_width_nm;
     }
+    if let Some(render_intent) = render_intent {
+        board_text.render_intent = parse_text_render_intent(Some(&render_intent))?;
+    }
+    if let Some(family) = family {
+        board_text.family = TextFamilyId(family);
+        board_text.family_source = eda_engine::text::TextFamilySource::Explicit;
+    }
+    if let Some(style) = style {
+        board_text.style = TextStyleId(style);
+    }
+    if let Some(style_class) = style_class {
+        board_text.style_class = Some(style_class);
+    }
+    if let Some(h_align) = h_align {
+        board_text.h_align = parse_text_h_align(Some(&h_align))?;
+    }
+    if let Some(v_align) = v_align {
+        board_text.v_align = parse_text_v_align(Some(&v_align))?;
+    }
+    if let Some(mirrored) = mirrored {
+        board_text.mirrored = mirrored;
+    }
+    if let Some(keep_upright) = keep_upright {
+        board_text.keep_upright = keep_upright;
+    }
+    if let Some(line_spacing_ratio_ppm) = line_spacing_ratio_ppm {
+        validate_line_spacing_ratio(line_spacing_ratio_ppm)?;
+        board_text.line_spacing_ratio_ppm = line_spacing_ratio_ppm;
+    }
+    if let Some(bold) = bold {
+        board_text.bold = bold;
+    }
+    if let Some(italic) = italic {
+        board_text.italic = italic;
+    }
     if let Some(layer) = layer {
         board_text.layer = layer;
     }
@@ -164,6 +256,7 @@ pub(crate) fn edit_native_project_board_text(
     if board_text.stroke_width_nm <= 0 {
         bail!("board text stroke width must be positive");
     }
+    validate_line_spacing_ratio(board_text.line_spacing_ratio_ppm)?;
     project.board.texts[index] =
         serde_json::to_value(&board_text).expect("native board text serialization must succeed");
     write_canonical_json(&project.board_path, &project.board)?;
@@ -178,6 +271,17 @@ pub(crate) fn edit_native_project_board_text(
         rotation_deg: board_text.rotation,
         height_nm: board_text.height_nm,
         stroke_width_nm: board_text.stroke_width_nm,
+        render_intent: render_intent_to_string(board_text.render_intent),
+        family: board_text.family.0.clone(),
+        style: board_text.style.0.clone(),
+        style_class: board_text.style_class.clone(),
+        h_align: text_h_align_to_string(board_text.h_align),
+        v_align: text_v_align_to_string(board_text.v_align),
+        mirrored: board_text.mirrored,
+        keep_upright: board_text.keep_upright,
+        line_spacing_ratio_ppm: board_text.line_spacing_ratio_ppm,
+        bold: board_text.bold,
+        italic: board_text.italic,
         layer: board_text.layer,
     })
 }
@@ -216,8 +320,93 @@ pub(crate) fn delete_native_project_board_text(
         rotation_deg: board_text.rotation,
         height_nm: board_text.height_nm,
         stroke_width_nm: board_text.stroke_width_nm,
+        render_intent: render_intent_to_string(board_text.render_intent),
+        family: board_text.family.0.clone(),
+        style: board_text.style.0.clone(),
+        style_class: board_text.style_class.clone(),
+        h_align: text_h_align_to_string(board_text.h_align),
+        v_align: text_v_align_to_string(board_text.v_align),
+        mirrored: board_text.mirrored,
+        keep_upright: board_text.keep_upright,
+        line_spacing_ratio_ppm: board_text.line_spacing_ratio_ppm,
+        bold: board_text.bold,
+        italic: board_text.italic,
         layer: board_text.layer,
     })
+}
+
+fn parse_text_render_intent(value: Option<&str>) -> Result<TextRenderIntent> {
+    match value.unwrap_or("manufacturing") {
+        "manufacturing" => Ok(TextRenderIntent::Manufacturing),
+        "annotation" => Ok(TextRenderIntent::Annotation),
+        "branding" => Ok(TextRenderIntent::Branding),
+        "documentation" => Ok(TextRenderIntent::Documentation),
+        "ui_preview" => Ok(TextRenderIntent::UiPreview),
+        other => bail!(
+            "unsupported board text render intent '{}'; expected one of: manufacturing, annotation, branding, documentation, ui_preview",
+            other
+        ),
+    }
+}
+
+fn render_intent_to_string(intent: TextRenderIntent) -> String {
+    match intent {
+        TextRenderIntent::Manufacturing => "manufacturing",
+        TextRenderIntent::Annotation => "annotation",
+        TextRenderIntent::Branding => "branding",
+        TextRenderIntent::Documentation => "documentation",
+        TextRenderIntent::UiPreview => "ui_preview",
+    }
+    .to_string()
+}
+
+fn parse_text_h_align(value: Option<&str>) -> Result<TextHAlign> {
+    match value.unwrap_or("left") {
+        "left" => Ok(TextHAlign::Left),
+        "center" => Ok(TextHAlign::Center),
+        "right" => Ok(TextHAlign::Right),
+        other => bail!(
+            "unsupported board text horizontal alignment '{}'; expected one of: left, center, right",
+            other
+        ),
+    }
+}
+
+fn parse_text_v_align(value: Option<&str>) -> Result<TextVAlign> {
+    match value.unwrap_or("bottom") {
+        "top" => Ok(TextVAlign::Top),
+        "center" => Ok(TextVAlign::Center),
+        "bottom" => Ok(TextVAlign::Bottom),
+        other => bail!(
+            "unsupported board text vertical alignment '{}'; expected one of: top, center, bottom",
+            other
+        ),
+    }
+}
+
+fn validate_line_spacing_ratio(line_spacing_ratio_ppm: i32) -> Result<()> {
+    if line_spacing_ratio_ppm <= 0 {
+        bail!("board text line spacing ratio must be positive");
+    }
+    Ok(())
+}
+
+fn text_h_align_to_string(align: TextHAlign) -> String {
+    match align {
+        TextHAlign::Left => "left",
+        TextHAlign::Center => "center",
+        TextHAlign::Right => "right",
+    }
+    .to_string()
+}
+
+fn text_v_align_to_string(align: TextVAlign) -> String {
+    match align {
+        TextVAlign::Top => "top",
+        TextVAlign::Center => "center",
+        TextVAlign::Bottom => "bottom",
+    }
+    .to_string()
 }
 
 pub(crate) fn place_native_project_board_keepout(

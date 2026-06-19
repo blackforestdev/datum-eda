@@ -23,8 +23,48 @@ pub(super) fn count_top_level_form_lines(contents: &str, form: &str) -> usize {
         .count()
 }
 
+pub(super) fn count_top_level_form_lines_by_form(
+    contents: &str,
+    forms: &[&str],
+) -> std::collections::HashMap<String, usize> {
+    let prefixes = forms
+        .iter()
+        .map(|form| ((*form).to_string(), format!("({form}")))
+        .collect::<Vec<_>>();
+    let mut counts = forms
+        .iter()
+        .map(|form| ((*form).to_string(), 0_usize))
+        .collect::<std::collections::HashMap<_, _>>();
+
+    for line in contents.lines() {
+        let indent = line.len() - line.trim_start().len();
+        if indent > 2 {
+            continue;
+        }
+        let trimmed = line.trim_start();
+        if let Some((form, _)) = prefixes.iter().find(|(_, prefix)| {
+            trimmed.starts_with(prefix)
+                && matches!(
+                    trimmed.as_bytes().get(prefix.len()),
+                    Some(b' ') | Some(b'\t') | Some(b')') | None
+                )
+        }) {
+            *counts.entry(form.clone()).or_default() += 1;
+        }
+    }
+
+    counts
+}
+
 pub(super) fn top_level_blocks(contents: &str, form: &str) -> Vec<String> {
     nested_blocks_with_max_indent(contents, form, 2)
+}
+
+pub(super) fn top_level_blocks_by_form(
+    contents: &str,
+    forms: &[&str],
+) -> std::collections::HashMap<String, Vec<String>> {
+    nested_blocks_by_form_with_max_indent(contents, forms, 2)
 }
 
 pub(super) fn nested_blocks(contents: &str, form: &str) -> Vec<String> {
@@ -69,6 +109,59 @@ pub(super) fn nested_blocks_with_max_indent(
             }
         }
     }
+    blocks
+}
+
+fn nested_blocks_by_form_with_max_indent(
+    contents: &str,
+    forms: &[&str],
+    max_indent: usize,
+) -> std::collections::HashMap<String, Vec<String>> {
+    let mut blocks = forms
+        .iter()
+        .map(|form| ((*form).to_string(), Vec::new()))
+        .collect::<std::collections::HashMap<_, _>>();
+    let prefixes = forms
+        .iter()
+        .map(|form| ((*form).to_string(), format!("({form}")))
+        .collect::<Vec<_>>();
+    let mut current = Vec::new();
+    let mut capturing_form: Option<String> = None;
+    let mut depth: i32 = 0;
+
+    for line in contents.lines() {
+        let indent = line.len() - line.trim_start().len();
+        let trimmed = line.trim_start();
+
+        if capturing_form.is_none() {
+            if let Some((form, _)) = prefixes.iter().find(|(_, prefix)| {
+                indent <= max_indent
+                    && trimmed.starts_with(prefix)
+                    && matches!(
+                        trimmed.as_bytes().get(prefix.len()),
+                        Some(b' ') | Some(b'\t') | Some(b')') | None
+                    )
+            }) {
+                capturing_form = Some(form.clone());
+                current.clear();
+                depth = 0;
+            }
+        }
+
+        if let Some(form) = capturing_form.as_ref() {
+            current.push(line.to_string());
+            depth += paren_delta(line);
+            if depth <= 0 {
+                blocks
+                    .entry(form.clone())
+                    .or_default()
+                    .push(current.join("\n"));
+                current.clear();
+                capturing_form = None;
+            }
+        }
+    }
+
     blocks
 }
 
@@ -278,22 +371,6 @@ pub(super) fn block_layers_pair(block: &str) -> Option<(String, String)> {
         } else {
             None
         }
-    })
-}
-
-pub(super) fn block_net_code(block: &str) -> Option<i32> {
-    block.lines().find_map(|line| {
-        let trimmed = line.trim_start();
-        if !trimmed.starts_with("(net ") {
-            return None;
-        }
-        trimmed
-            .trim_start_matches("(net ")
-            .trim_end_matches(')')
-            .split_whitespace()
-            .next()?
-            .parse::<i32>()
-            .ok()
     })
 }
 
@@ -789,12 +866,38 @@ pub(super) fn deterministic_kicad_board_uuid(kind: &str, key: &str) -> Uuid {
     )
 }
 
+pub(super) fn canonicalize_kicad_layer_name(name: &str) -> String {
+    match name.to_ascii_lowercase().as_str() {
+        "f.cu" => "F.Cu".to_string(),
+        "b.cu" => "B.Cu".to_string(),
+        "b.adhes" => "B.Adhes".to_string(),
+        "f.adhes" => "F.Adhes".to_string(),
+        "b.paste" => "B.Paste".to_string(),
+        "f.paste" => "F.Paste".to_string(),
+        "b.silks" => "B.SilkS".to_string(),
+        "f.silks" => "F.SilkS".to_string(),
+        "b.mask" => "B.Mask".to_string(),
+        "f.mask" => "F.Mask".to_string(),
+        "dwgs.user" => "Dwgs.User".to_string(),
+        "cmts.user" => "Cmts.User".to_string(),
+        "eco1.user" => "Eco1.User".to_string(),
+        "eco2.user" => "Eco2.User".to_string(),
+        "edge.cuts" => "Edge.Cuts".to_string(),
+        "margin" => "Margin".to_string(),
+        "b.crtyd" => "B.CrtYd".to_string(),
+        "f.crtyd" => "F.CrtYd".to_string(),
+        "b.fab" => "B.Fab".to_string(),
+        "f.fab" => "F.Fab".to_string(),
+        _ => name.to_string(),
+    }
+}
+
 /// Hardcoded fallback for layer names on boards where the PCB's own
 /// `(layers ...)` table is absent or unparsed. Only a narrow set of layer
 /// names is recognized here; unknown names must be handled by the caller,
 /// not silently collapsed onto F.Cu.
 pub(super) fn kicad_layer_name_to_id(name: &str) -> Option<i32> {
-    match name {
+    match canonicalize_kicad_layer_name(name).as_str() {
         "F.Cu" => Some(0),
         "B.Cu" => Some(31),
         "B.Adhes" => Some(32),
@@ -836,7 +939,7 @@ pub(super) fn parse_kicad_layer_table(contents: &str) -> std::collections::HashM
                     if let Some(id_str) = parts.next() {
                         if let Ok(id) = id_str.parse::<i32>() {
                             if let Some(name) = parts.next() {
-                                let name = name.trim_matches('"');
+                                let name = canonicalize_kicad_layer_name(name.trim_matches('"'));
                                 map.insert(name.to_string(), id);
                             }
                         }
@@ -856,10 +959,11 @@ pub(super) fn resolve_layer_id(
     name: &str,
     table: &std::collections::HashMap<String, i32>,
 ) -> Result<i32, EngineError> {
-    if let Some(&id) = table.get(name) {
+    let canonical_name = canonicalize_kicad_layer_name(name);
+    if let Some(&id) = table.get(&canonical_name) {
         return Ok(id);
     }
-    kicad_layer_name_to_id(name).ok_or_else(|| {
+    kicad_layer_name_to_id(&canonical_name).ok_or_else(|| {
         EngineError::Import(format!(
             "unknown KiCad layer name: {name:?} (not present in PCB layer table and not in fallback set)"
         ))

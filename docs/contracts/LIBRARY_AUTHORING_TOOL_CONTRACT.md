@@ -1,0 +1,532 @@
+# Library Authoring Tool Contract
+
+Status: draft implementation-spec 2026-06-19; derived from ratified
+PRODUCT_MECHANICS 000-012.
+
+## Driven by
+
+- `docs/decisions/PRODUCT_MECHANICS_008_LIBRARY_COMPONENT_SYSTEM.md`
+  (the library/component primitive set, identity, provenance, binding,
+  and proposal-first update propagation)
+- `docs/audits/scope-integration/DATUM_PRODUCT_MECHANICS_IMPLEMENTATION_READINESS_AUDIT.md`
+  (ratified mechanism vocabulary: `DesignModel`, `ProjectResolver`,
+  `ObjectId`/`object_revision`, `ComponentInstance`, single `commit()`
+  + journal, Import Map `import_key`, derived-state honesty)
+- Decisions `000`/`001` for the operation/commit/journal substrate that
+  every tool below depends on.
+
+This contract is an IMPLEMENTATION-SPEC tool layer, not product
+philosophy. It enumerates the concrete library-domain authoring tools,
+the typed Operations they emit, and the leanest set that satisfies
+Decision 008. It references the seven shared operations by name and does
+not restate them (see Shared Surface).
+
+## Purpose & Scope
+
+Scope: native authoring and editing of every library `DomainObject` in
+the Decision 008 set — `Symbol`, `Footprint`, `Package`, `Padstack`,
+`Part`, `PinPadMap`, `ModelAttachment` — plus library provenance/approval
+state, the `ComponentInstance` library binding, proposal-first library
+update (ECO) propagation, and standards-driven footprint synthesis.
+
+Out of scope (owned by other domains, consumed here only as inputs or
+provenance): import sessions and Import Map construction (import domain,
+Decision 011); schematic/PCB placement geometry (schematic/PCB domains,
+Decision 002/003); manufacturing projection/artifacts (Decision 000B);
+rule/check authoring (Decision 009). Read access to the pool and the
+session/query/check/proposal/commit/artifact/journal machinery are the
+shared surface and are referenced, not redefined.
+
+The current engine exposes the pool as READ + board-consume ONLY.
+Verified pointers:
+- Pool types: `crates/engine/src/pool/mod.rs` (`Pin`, `Unit`, `Symbol`,
+  `Gate`, `Entity`, `Padstack` + `PadstackAperture` Circle/Rect only,
+  `Pad`, `Package` with courtyard/silkscreen/models_3d, `PadMapEntry`,
+  `Part` with mpn/manufacturer/value/parametric/orderable_mpns/lifecycle/
+  base, `Lifecycle{Active,Nrnd,Eol,Obsolete,Unknown}`, `ModelRef{path,
+  transform}`, `Primitive`, `Pool`, `PartSummary`).
+- Pool is populated ONLY by Eagle import
+  (`crates/engine/src/import/eagle/pool_builder.rs`) and merged via
+  `crates/engine/src/api/mod.rs` `merge_pool`.
+- Read API: `crates/engine/src/api/project_surface.rs` `search_pool`
+  (l.200), `get_part`->`PartDetail` (l.204), `get_package`->
+  `PackageDetail` (l.282).
+- Board-consume writes: `crates/engine/src/api/write_ops/
+  assign_package_rule.rs` (`assign_part` l.4, `set_package` l.83);
+  `component_replacements.rs` (`set_package_with_part` l.125,
+  `replace_component(s)` l.137/149, `apply_component_replacement_plan`
+  l.271, policies l.322/411).
+- Daemon bridge `crates/engine-daemon/src/dispatch.rs`: `search_pool`
+  l.280, `get_part` l.287, `get_package` l.294, `get_symbols` l.396,
+  `assign_part` l.109, `set_package` l.119, `set_package_with_part`
+  l.129.
+
+Verified GAPS (grep returned 0 hits across `crates/engine/src/` for
+`OperationBatch`, `ComponentInstance`, `import_key`): NO library
+authoring operation of any kind; NO general `Operation`/`OperationBatch`
+enum and NO single `commit()`/journal; NO `ObjectId`/`object_revision`/
+provenance/approval on pool objects (only the `Lifecycle` enum); NO
+Import Map `import_key`; NO `ComponentInstance`; NO project-local vs
+reusable pool layering; `Padstack` has NO mask/paste/annular/per-layer
+policy; `ModelRef` is a bare path string, not a hashed
+`ModelAttachment`; and the pool FUSES the land pattern into `Package`,
+whereas Decision 008 mandates a SEPARATE `Footprint` object. Every tool
+below therefore depends on a substrate slice that does not exist yet
+(see Not-Yet-Supported and Open Owner Questions).
+
+## Reference-Tool Survey (with the lean rationale)
+
+The survey establishes what is load-bearing in professional library
+tooling versus ceremony, and confirms the leanest write primitive.
+
+- Altium Designer (primary reference). A unified `Component`
+  (DbLib/SVNDb/Vault) links one `Symbol` + one-or-more `Footprint`s +
+  `Parameters` + `Models` through the Models tab. A separate Footprint
+  editor carries the IPC Compliant Footprint Wizard (IPC-7351); a Pad
+  Stack editor carries per-layer copper/mask/paste and plated/non-plated
+  state; symbols can be multi-part; managed content runs a lifecycle
+  (New -> In Production -> Deprecated -> Obsolete) with release and
+  where-used impact. Load-bearing: explicit symbol/footprint/pad-map
+  separation, an IPC generator, a per-layer padstack, model attach,
+  revision + lifecycle, and where-used impact. Ceremony: the SVN/vault
+  server and the separate DbLib/IntLib/SchLib/PcbLib file zoo.
+  Critically, Altium exposes ONE "Add Model" affordance on the Models
+  tab (one verb, many model roles) — direct evidence that attach-model
+  is NOT a top-level tool.
+- KiCad. Symbol Editor (`.kicad_sym`, multi-unit, pin electrical type),
+  Footprint Editor (`.kicad_mod`, F.Cu/F.Mask/F.Paste, pad shapes, 3D
+  attach), Python Footprint Wizards (IPC-ish generators), symbol ->
+  footprint via the `Footprint` field + association tables, and the
+  Database Library (`.kicad_dbl`). Load-bearing: the same symbol/
+  footprint/pin-map separation, layer-per-aperture pads, and scripted
+  generators. Gap vs Decision 008: no first-class part revision,
+  lifecycle, provenance, or approval.
+- OrCAD / Cadence (Allegro). Part Developer with a cell + symbol +
+  package split; a padstack editor with explicit regular/thermal/
+  anti-pad plus drill; a package symbol with pin-to-pad map.
+  Load-bearing: rigorous padstack semantics (anti-pad/thermal) and an
+  explicit package-vs-symbol-vs-part split. Ceremony: heavyweight
+  separate editors, license-gated.
+- Horizon EDA. Pool `Unit` -> `Symbol` -> `Entity(Gate)` ->
+  `Package(Padstack)` -> `Part` with UUID identity, reusable padstacks,
+  and part inheritance via a base — the exact lineage of
+  `crates/engine/src/pool/mod.rs`. Note: Horizon FUSES the land pattern
+  into `Package`; Decision 008 instead SPLITS `Footprint` from
+  `Package` (the Altium/KiCad/OrCAD posture).
+
+Lean rationale extracted from the survey: every tool above ships
+separate EDITORS (UI surfaces) per object kind, but the underlying write
+primitive is uniform — create or edit a typed library object. Altium's
+single "Add Model" verb and the universal symbol/footprint/pad-map split
+confirm that per-kind and per-field tools are UI ceremony, not distinct
+write capabilities. Datum therefore collapses authoring to ONE
+parameterized create/edit verb, keeps the genuinely distinct surfaces
+(approval guardrail, ComponentInstance binding, standards synthesis) as
+their own verbs, and omits the rest.
+
+## Tool Inventory
+
+The shared verbs (session/context, query, run-check, propose, commit,
+artifact, journal/undo-redo) are NOT restated here. Each tool below
+lists ONLY its domain-specific typed Operation variants and the
+domain-specific AI query context. The eight questions are labeled
+fields.
+
+### Tool 1 — `library.author` (create/edit ALL library DomainObjects)
+
+Covers `Symbol`, `Footprint`, `Package`, `Padstack`, `Part`,
+`PinPadMap`, `ModelAttachment` — the seven equal Decision 008
+DomainObjects, each with `ObjectId`/`object_revision`.
+
+1. Manual UI action: a library projection with one create-or-edit
+   surface per object kind. Symbol editor (pins/units/graphics/fields/
+   style-profile assertions); Footprint editor (pads referencing
+   padstacks; copper/mask/paste/courtyard/fab/silk/mech geometry; origin;
+   process-aperture policy); Package form (family/dims/tolerances/body
+   height/mounting/model refs); Padstack editor (per-layer copper plus
+   mask/paste/drill/annular policy); Part form (MPN/lifecycle/parametrics/
+   default symbol + footprint + pinmap); a Pin/Pad map table
+   (`logical_pin_id` -> `footprint_pad_id` [+ `package_terminal_id`/
+   `electrical_role`/`variant_condition`]); and a Models-tab row
+   (role/format/content + hash/transform). Each field edit is a local,
+   visible, undoable edit. Editing an UNPLACED object commits directly;
+   editing an object that has any `LibraryBinding` to a placed
+   `ComponentInstance` is forced proposal-first (Decision 008
+   lines 99-100, 431-434).
+2. Operation it emits: typed variants in a NEW
+   `crates/engine/src/api/write_ops/library_author.rs` —
+   `CreateLibraryObject{kind: Symbol|Footprint|Package|Padstack|Part|
+   PinPadMap|ModelAttachment, fields}` and
+   `EditLibraryObjectField{object_id, patch}`. Both route through the
+   single `commit()` primitive (shared surface; does not exist yet),
+   mint or bump `ObjectId` + `object_revision`, and append a journal
+   `TransactionRecord`. PinPadMap reference resolution, process-aperture
+   (mask/paste) policy, and model hash-on-create are kind-specific
+   validation INSIDE these two ops — not separate verbs. Unplaced edit
+   = direct commit; placed-binding edit = proposal-first via the shared
+   Propose verb.
+3. CLI command: `datum-eda library create
+   <symbol|footprint|package|padstack|part|pinpadmap|model>
+   --pool <ref> [--from-json <file>] [--from <object_id>]`;
+   `datum-eda library edit <object_id> --set <field>=<value> |
+   --patch <file>`.
+4. MCP/AI tool: `library_create_object{kind, pool_ref, fields, from?}`;
+   `library_edit_object{object_id, patch}`. MCP write tools land ONLY
+   behind `commit()` so AI authoring is never an unjournaled surface.
+5. AI query/context needed: target pool ref (reusable vs project-local),
+   the schema for the kind, current `model_revision`, and the resolved
+   `object_id`s referenced — a Footprint needs valid `padstack_ref`s + a
+   `Package` ref; a Part needs `default_symbol`/`footprint`/`pinmap`; a
+   PinPadMap needs symbol pin ids + names, footprint pad ids + names, and
+   package terminal ids; a ModelAttachment needs `target_object_id` plus
+   declared format/role and a data-egress/encrypted-content policy.
+   Sourced via the existing read tools (`search_pool`/`get_part`/
+   `get_package`/`get_symbols`) folded under `datum.query.library`.
+   AI-authored content (especially name-matched PinPadMap rows or
+   datasheet-extracted models) is marked `provenance=AI`,
+   `review_state=NeedsReview`, and accepted only via a proposal.
+6. Validating checks: per-kind schema/required-field validation;
+   referential integrity (Footprint pads resolve to existing Padstacks
+   + a Package; Part default refs resolve; every PinPadMap
+   `logical_pin_id` resolves in `symbol_ref` and every `footprint_pad_id`
+   in `footprint_ref`, unmapped pins warned, duplicate pad targets error,
+   `variant_condition` references only authored `Fitted`/`Unfitted`
+   overlay and never derived `NotApplicableForVariant`; ModelAttachment
+   `content_hash` computed + stored, format/role enum validated,
+   encrypted content flagged `ImportPreserved` and never decrypted);
+   `ObjectId` uniqueness; `object_revision` monotonicity; geometry
+   sanity (closed courtyard polygon, finite pad positions; mask/paste
+   policy explicit per Decision 008 lines 300-306). The `ProjectResolver`
+   re-validates references and placed-binding impact at `commit()`. Runs
+   through the shared run-check verb.
+7. Proof slice: First Proof Slice steps 1-2 — create one Part + Symbol +
+   Package + Footprint + one Padstack family + one PinPadMap + (optional)
+   one ModelAttachment; store IPC/process basis + provenance on the
+   footprint/padstack; edit a field; confirm the journal records each
+   transaction, `object_revision` bumps, and undo restores the prior
+   revision.
+8. Explicitly not-supported-yet: IPC density-level auto-generation (that
+   is Tool 4); model execution/decryption; multi-format symbol style
+   rendering (IEEE 315 / IEC 60617 — `style_profile_assertions` are
+   stored, not rendered); automatic differential-pair/bus pin-group
+   inference and pin-swap-group-driven PinPadMap remap.
+
+### Tool 2 — `library.set_provenance_state` (approval / review / lifecycle / unknown-basis marking)
+
+Survives as a distinct verb ONLY because it carries a hard approval
+guardrail that a routine field edit lacks.
+
+1. Manual UI action: a status control on any library object — set
+   `approval_state` (`Approved|Deprecated|Imported|UnknownBasis|
+   NeedsReview`), `lifecycle`, and unknown-basis flags. Shown as a badge
+   in part-assignment pickers so designers see approved vs imported vs
+   unknown before placing.
+2. Operation it emits: `SetLibraryReviewState{object_id, approval_state,
+   review_state, lifecycle?, unknown_basis_flags[]}` typed Operation via
+   `commit()`; bumps `object_revision`, journaled, records the approval
+   actor in provenance. Kept distinct from `EditLibraryObjectField`
+   because it carries the hard approval guardrail (AI may NEVER
+   auto-approve; state-transition legality) absent from a routine field
+   edit.
+3. CLI command: `datum-eda library set-state <object_id>
+   --approval <approved|deprecated|imported|unknown|needs-review>
+   [--lifecycle <...>]`.
+4. MCP/AI tool: `library_set_review_state{object_id, approval_state,
+   review_state?, lifecycle?}` — `Approved` requires explicit human
+   acceptance; AI auto-approve is hard-blocked.
+5. AI query/context needed: `object_id`, current provenance/
+   `review_state`, and whether the actor may approve. AI surfaces a
+   proposal via the shared Propose verb; human acceptance is the
+   transaction.
+6. Validating checks: state-transition legality (cannot `Approve` an
+   object with unresolved `UnknownBasis` flags without an accepted
+   deviation); a placement gate (configurable check warns/blocks placing
+   non-`Approved` parts — strictness is an Open Owner Question);
+   approval actor recorded in provenance; AI auto-approve hard-blocked.
+7. Proof slice: First Proof Slice step 4 — a seeded imported object
+   retains `Imported`/`UnknownBasis` markers; an approval proposal flips
+   it only on human acceptance.
+8. Explicitly not-supported-yet: org-level approval workflow / sign-off
+   chains; where-used release gating across multiple projects.
+
+### Tool 3 — `library.bind` / `library.update_binding` (ComponentInstance join + ECO propagation)
+
+The `ComponentInstance` electrical-to-physical join and proposal-first
+library update.
+
+1. Manual UI action: placing a part creates a `ComponentInstance` and a
+   `LibraryBinding` pinning the resolved `object_revision`; both
+   `PlacedSymbol` and `PlacedPackage` reference that `ComponentInstance`.
+   "Update from library" shows a reviewable before/after-revision diff —
+   never silent latest-wins.
+2. Operation it emits:
+   `BindComponentInstance{component_instance_id, part_ref, symbol_ref,
+   footprint_ref, pinpadmap_ref, pinned_object_revision}` commits
+   directly for a fresh placement (local, undoable).
+   `UpdateLibraryBinding{binding_id, from_revision, to_revision}` is
+   PROPOSAL-FIRST (cross-domain: touches placed boards/checks/artifacts),
+   applied via `commit()` only on acceptance. Both depend on the
+   `ComponentInstance` + `commit()`/journal substrate (does not exist
+   yet).
+3. CLI command: `datum-eda library bind <component_instance_id>
+   --part <id> [--symbol <id> --footprint <id> --pinmap <id>]`;
+   `datum-eda library update-binding <binding_id> --to-revision <rev>`
+   (emits a proposal).
+4. MCP/AI tool: `library_bind_instance{component_instance_id, part_ref,
+   ...}`; `library_propose_binding_update{binding_id, to_revision}`.
+5. AI query/context needed: the `ComponentInstance` id (the canonical
+   electrical-to-physical join — never refdes/name/path), the current
+   pinned revision, the target object + latest revision, and the
+   where-used set so the proposal shows impact across boards/panels/
+   checks/artifacts. Sourced via `datum.query.relationships` /
+   `provenance.query`.
+6. Validating checks: the `ComponentInstance` is referenced by both
+   `PlacedSymbol` and `PlacedPackage`; `pinned_object_revision` exists;
+   the binding-update proposal runs affected-object checks (ERC/DRC/
+   footprint-fit) via the shared run-check verb before acceptance; no
+   silent global mutation — propagation is journaled per accepted
+   proposal.
+7. Proof slice: First Proof Slice steps 3 + 6 — place the Part as a
+   `ComponentInstance` binding schematic + PCB to one identity; show a
+   reviewable proposal for a library correction that mutates placed
+   objects only on acceptance.
+8. Explicitly not-supported-yet: cross-project ECO fan-out; automatic
+   bulk re-bind without per-board review (withheld by the proposal-first
+   invariant).
+
+### Tool 4 — `library.generate_ipc_footprint` (standards-driven synthesis)
+
+Genuine geometry synthesis from dimensions + density level, not a field
+edit.
+
+1. Manual UI action: an IPC footprint wizard — choose a package family +
+   density level (A/B/C), enter source body dimensions/tolerances/lead
+   geometry, generate a Footprint + Padstack family with recorded
+   `standards_basis`, courtyard/mask/paste policy, and J-values.
+   Generated content is `review_state=Generated`.
+2. Operation it emits: `GenerateIpcFootprint{package_ref, density_level,
+   source_dimensions}` emits an `OperationBatch` (Footprint + Padstacks +
+   provenance) as a PROPOSAL (batch + standards-bearing); on acceptance
+   it commits through `commit()`/journal. This is synthesis of new
+   geometry, not a field edit, so it stays distinct. Process-aperture
+   CORRECTIONS (mask/paste policy on an EXISTING footprint/padstack) are
+   NOT here — they are `EditLibraryObjectField` on Tool 1 (proposal-first
+   when placed).
+3. CLI command: `datum-eda library gen-ipc-footprint --package <id>
+   --density <A|B|C> --dims <file.json>` (emits a proposal).
+4. MCP/AI tool: `library_propose_ipc_footprint{package_ref,
+   density_level, source_dimensions}`.
+5. AI query/context needed: package family + body dimensions/tolerances/
+   lead geometry, the target IPC basis (7351B vs 7352 is an Open Owner
+   Question), and the density level.
+6. Validating checks: generated geometry validated against the declared
+   basis; compliance state recorded (`Compliant |
+   CompliantWithDeviation | NonCompliant | UnknownBasis`); a generated
+   pad with copper but no mask/paste basis is flagged unknown-basis;
+   `deviation_refs` recorded when intentionally off-basis. Runs through
+   the shared run-check verb.
+7. Proof slice: First Proof Slice steps 2 + 5 — store IPC/process basis
+   on the generated footprint/padstack; the check reports one pad/mask/
+   paste policy mismatch.
+8. Explicitly not-supported-yet: full IPC-7351 package-family coverage
+   (start one family per Open Owner Question); IPC-7352 alternative
+   naming; thermal-relief/anti-pad solver-driven optimization.
+
+## Minimal-Set Recommendation
+
+FOUR load-bearing tools cover the entire Decision 008 surface — down
+from a naive six-or-more catalog:
+
+1. `library.author` — ONE create/edit verb parameterized by object kind.
+   Decision 008 (lines 157-374) makes `Symbol`, `Footprint`, `Package`,
+   `Padstack`, `Part`, `PinPadMap`, AND `ModelAttachment` equal
+   DomainObjects with `ObjectId`/`object_revision`; they share one
+   operation shape (`CreateLibraryObject{kind,fields}` /
+   `EditLibraryObjectField`), so they share one tool. Per-kind validation
+   (PinPadMap ref-resolution, ModelAttachment hashing, Footprint
+   `padstack_ref`s) is create/edit logic, not a reason for a separate
+   verb. Process-aperture corrections are mask/paste-policy field edits =
+   `EditLibraryObjectField`, proposal-first when placed.
+2. `library.set_provenance_state` — survives ONLY because it carries the
+   hard approval guardrail (AI-never-auto-approves; state-transition
+   legality) that a plain field edit does not.
+3. `library.bind` / `library.update_binding` — the `ComponentInstance`
+   electrical-to-physical join plus proposal-first ECO propagation.
+4. `library.generate_ipc_footprint` — genuine standards SYNTHESIS (new
+   geometry from dimensions + density, a batch proposal), not a field
+   edit.
+
+Everything reduces to typed Operations on the single `commit()`/journal
+path; batch/cross-domain/standards/approval actions are proposals; local
+unplaced field edits commit directly. This is the minimum that answers
+every professional library question in Decision 008 without a per-field
+or per-kind tool catalog. Decision 008 (lines 50, 67-74, 246-277)
+explicitly SPLITS `Footprint` from `Package`, so `library.author` has
+SEVEN kinds (not five or six) and the pool schema must add a `Footprint`
+object.
+
+## Omitted / Redundant Tools
+
+Each omission is a deliberate defect-avoidance cut, justified against
+real-world practice.
+
+- `library.pin_pad_map` as its own tool. PinPadMap is one of the seven
+  equal DomainObjects (Decision 008 lines 308-343) with the same
+  `ObjectId`/`object_revision` as every other kind. Its "distinct
+  validation" (ref-resolution, `variant_condition`) is per-kind
+  create/edit logic — every kind has distinct validation. Folded into
+  `library.author` as `kind=PinPadMap`.
+- `library.attach_model` as its own tool. `ModelAttachment` is a
+  first-class DomainObject (Decision 008 lines 345-374) whose
+  `target_object_id` points at a Part/Package/Footprint. Attaching =
+  `CreateLibraryObject{kind:ModelAttachment, fields}`; `content_hash`
+  computation is kind-specific create logic. Altium itself exposes ONE
+  "Add Model" affordance for all model roles. Folded into
+  `library.author`.
+- Process-aperture correction (`SetPadProcessAperture` /
+  `ApplyFootprintProcessPolicy`) bundled into the IPC generator.
+  Mask/paste policy is a field on Padstack/Footprint (Decision 008
+  lines 290-306, 458-462). Correcting it is `EditLibraryObjectField`
+  (proposal-first when placed), not synthesis, and does not belong with
+  the geometry generator. Folded into `library.author` edit; the
+  generator keeps only true synthesis.
+- Separate `create_symbol` / `create_footprint` / `create_package` /
+  `create_padstack` / `create_part` tools. Collapsed into
+  `library.author` with a `kind` parameter — identical operation shape.
+  Altium/KiCad/OrCAD have separate EDITORS (UI), but the write primitive
+  is one.
+- `duplicate_library_object` / clone. Duplicate = `library.author`
+  create seeded from an existing object via `--from <object_id>` (read
+  via `get_part`/`get_package`, mint a new `ObjectId`). Identity is never
+  the name (Decision 008 lines 62-65).
+- `rename` / move-between-pools. Pool path and name are searchable
+  labels, not identity (Decision 008 lines 62-65). Rename =
+  `EditLibraryObjectField` on `display_name`; pool change = a
+  `LibraryBinding` `pool_ref` edit. `ObjectId` preserves identity, so no
+  dedicated tool.
+- `delete_library_object`. Soft-delete = set `approval_state=Deprecated`
+  via `library.set_provenance_state`; hard delete is the generic
+  engine-wide `DeleteObjects{ids}` op (shared surface) gated by
+  referential-integrity checks. Where-used is a query, not a write tool.
+  A library-specific delete adds nothing.
+- `set_lifecycle` as its own tool. Folded into
+  `library.set_provenance_state`; lifecycle and approval/review are the
+  same guardrailed status surface on one object.
+- `import_library` as a library-domain tool. Imported-library handling
+  is the IMPORT domain's session / Import-Map (`import_key`) mechanism
+  (Decision 008 lines 40-45, 403-409; Decision 011), surfaced to library
+  only as provenance + proposals. Library needs only
+  `set_provenance_state` + `bind` to consume import results.
+- `search_pool` / `get_part` / `get_package` / `get_symbols` as NEW
+  tools. Already implemented (`project_surface.rs`; `dispatch.rs`). They
+  are the AI query-context source for the authoring tools and fold under
+  the shared query namespace — not new tools.
+
+## Shared Surface
+
+This contract uses the seven shared operations defined ONCE in
+`docs/contracts/AI_CLI_MCP_TOOL_SURFACE.md` and does not restate them.
+Library-specific use:
+
+- Session/Context (`datum-eda context get|refresh`): every library
+  invocation runs inside a `DatumToolSession` carrying the
+  `model_revision` snapshot; `library.author`/`bind`/`update_binding`
+  refresh before propose/apply when stale.
+- Query (`datum-eda query --family library` / `datum.query.library`,
+  `relationships`, `provenance`): the AI query-context source for all
+  four tools; folds the existing `search_pool`/`get_part`/`get_package`/
+  `get_symbols` reads. Cross-domain joins key on `ComponentInstance`;
+  imported identity resolves via `import_key`.
+- Run-check (`datum-eda check run`): per-kind library validation, binding
+  affected-object checks, and IPC compliance checks run here, not as
+  library-private verbs.
+- Propose (`datum-eda proposal create|show|validate|apply`): the apply path
+  for placed-binding edits, `UpdateLibraryBinding`, `GenerateIpcFootprint`
+  batches, and all AI-originated library mutations. The four tools above
+  are proposal PRODUCERS, not new mutation primitives.
+- Commit (`commit()` — the only mutation gateway): every library
+  Operation/OperationBatch flows through it; there is no library-private
+  save/write path.
+- Artifact: library objects are not artifacts; they are source. Where-used
+  and BOM consumption of library identity are artifact/query reads
+  keyed by `ComponentInstance`.
+- Journal + Undo/Redo (`datum-eda journal`): library transactions appear in
+  the global journal; removal of a created object is undo of the
+  `CreateLibraryObject` transaction, not a per-domain delete/reversal
+  verb.
+
+## Proof Slice & Fixture
+
+Two fixtures.
+
+1. Existing read / board-consume path (current capability, verified):
+   an Eagle `.lbr` imported into the in-memory pool exercises
+   `search_pool`/`get_part`/`assign_part`
+   (`crates/engine/src/import/eagle/pool_builder.rs` +
+   `crates/engine-daemon/src/dispatch.rs`). This proves what works today.
+2. Decision 008 First Proof Slice (native authoring + ComponentInstance
+   bind + import re-association): use the canonical `datum-test` fixture
+   at `~/Documents/kicad_projects/Datum-eda/datum-test/` (`datum-test.
+   kicad_pcb` + `.kicad_sch` + `.kicad_pro`). Author one native Part +
+   Symbol + Package + Footprint + Padstack + PinPadMap (+ optional
+   ModelAttachment), place it as a `ComponentInstance` into `datum-test`,
+   then re-import the KiCad source and confirm re-association via Import
+   Map `import_key` (NOT `source_hash`) with preserved provenance /
+   unknown-basis markers.
+
+NOTE: no native library-authoring operation, `ComponentInstance`,
+`import_key`, or `commit()`/journal exists yet (grep returned 0 hits), so
+fixture 2 currently proves the GAP, not behavior. It becomes executable
+only after the substrate slice lands.
+
+## Not-Yet-Supported
+
+- The entire authoring substrate. No `Operation`/`OperationBatch` enum,
+  no single `commit()`/journal-with-fsync, no `ObjectId`/
+  `object_revision`/provenance, no `ComponentInstance`, no Import Map
+  `import_key`, and no project-local-vs-reusable pool layering exist in
+  the current engine. All four tools depend on this foundational slice.
+- The `Footprint` DomainObject. The pool fuses the land pattern into
+  `Package` (`crates/engine/src/pool/mod.rs`); Decision 008 mandates a
+  separate `Footprint`. The schema must be EXTENDED, not just populated.
+- Padstack per-layer policy. `PadstackAperture` is Circle/Rect copper
+  only; mask/paste/annular/per-layer plated/non-plated policy
+  (Decision 008 lines 290-306) is unmodeled.
+- `ModelAttachment`. `ModelRef` is a bare path string; the hashed,
+  role-tagged, validation-stateful `ModelAttachment` is unmodeled. Model
+  execution/decryption is out of scope entirely.
+- IPC-7351 full coverage, IPC-7352 naming, thermal/anti-pad solver
+  optimization, multi-format symbol style rendering (IEEE 315 /
+  IEC 60617), automatic diff-pair/bus pin-group inference, and
+  cross-project ECO fan-out.
+
+## Open Owner Questions
+
+1. CONFIRM (resolved by Decision 008, confirm engine intent): Decision
+   008 (lines 50-51, 67-74, 246-277) splits `Footprint` from `Package`;
+   Horizon's fused `Package` is NOT followed. `library.author` therefore
+   has seven kinds and the pool schema must add a `Footprint` object.
+   Confirm the engine team will extend `pool/mod.rs` rather than keep the
+   fused `Package`.
+2. Which library pool types ship first: bundled-Datum, user-local,
+   organization, project-local, imported, vendor-derived? This sets the
+   `pool_ref` enum and `LibraryBinding` layering.
+3. Which `approval_state` values gate placement, and is the placement
+   gate a hard block or a warning by default?
+4. IPC-7351B vs IPC-7352 as the default generated-footprint naming/basis,
+   and which first package family the generator supports?
+5. How strict should default checks be for imported `UnknownBasis`
+   library data (warn vs fail)?
+6. SUBSTRATE SEQUENCING (hard prerequisite): there is no
+   `Operation`/`OperationBatch`, single `commit()`/journal, `ObjectId`/
+   `object_revision`, provenance, Import Map `import_key`, or
+   `ComponentInstance` in the current engine (Decisions 000/001/003
+   substrate). ALL four library tools depend on this substrate — library
+   authoring cannot land before it exists.
+7. Boundary for `EditLibraryObjectField`: the decision says library
+   changes touching placed objects are proposal-first (lines 99-100,
+   431-434). Confirm the rule: editing an UNPLACED library object commits
+   directly (local); editing an object that has any `LibraryBinding` to a
+   placed `ComponentInstance` is forced proposal-first. Is "has a placed
+   binding" the right trigger, or should it be "the edit changes a field
+   the binding depends on"?

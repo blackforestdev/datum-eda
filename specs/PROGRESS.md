@@ -5,7 +5,64 @@
 >
 > Legend: `[x]` done, `[~]` partial, `[ ]` not started, `[—]` deferred/N/A
 
-Last updated: 2026-04-17
+Last updated: 2026-06-19
+
+**Current-vs-target framing**:
+- **Current implementation evidence**: the historical milestone tables below
+  remain truthful records of the implementation slices that have landed.
+- **Active target**: product-mechanics substrate readiness before further
+  imported-board fidelity expansion.
+- **Not the North Star**: legacy M0-M7 milestone completion rows are retained as
+  evidence, but they no longer define the next implementation priority.
+
+**Active milestone**: substrate readiness for product mechanics. Imported-board
+fidelity work is paused unless it directly proves or unblocks the substrate
+contracts below.
+**Frozen**: M6 (strategy reporting layer landed; pending repeated evidence
+runs from the checked-in baseline gate).
+**Closed for scope**: M0–M5.
+**Spec stubs awaiting implementation**: Standards Audit Batch 1 — see
+section "Standards Audit Batch 1 — Spec Stubs Awaiting Implementation"
+below.
+
+Machine-checked inventory shapes live in `specs/SPEC_PARITY.md` (gated by
+`scripts/check_spec_parity.py`, wired into `scripts/run_drift_gates.sh`).
+Surfaces currently locked: `mcp_runtime_methods`, `cli_project_commands`,
+`engine_text_modules`, `m7_text_visual_fixtures`, `workspace_crates`.
+
+---
+
+## Scope Integration / Substrate Readiness
+
+This is the active tracking surface for the new scope. Items here should move
+from target to current evidence only when there is an implementation anchor,
+test/gate, and CLI/MCP/API surface where applicable. Imported-board fidelity can
+continue only after the relevant substrate contracts are implemented or after an
+explicit governance decision records why a fidelity slice is exempt.
+
+| Substrate Area | Status | Current Evidence | Target / Readiness Definition |
+|----------------|--------|------------------|-------------------------------|
+| ProjectResolver | [ ] | Existing import/query paths resolve files enough for current fixtures, but no product-level resolver contract is tracked here yet. | One resolver owns project roots, source discovery, dependency resolution, identity lookup, and deterministic diagnostics across native, imported, CLI, MCP, and GUI paths. |
+| Source shards | [ ] | Native fixture validation exists for current project files; imported KiCad/Eagle paths remain format-centric. | Project state is decomposed into source shards with explicit ownership, load order, dirty-state tracking, and recovery semantics. |
+| ObjectId / ObjectRevision / ModelRevision | [ ] | Current code uses stable IDs in several implementation slices, with import identity evidence in older milestones. | Every mutable product object has stable identity, per-object revision, and model revision semantics suitable for diff, undo/redo, proposal/apply, collaboration, and artifact provenance. |
+| ComponentInstance | [ ] | Component mutation and replacement evidence exists for the imported-board write slice. | Component instances are first-class product objects spanning schematic, board, parts, packages, fields, placement, connectivity attachments, and import provenance. |
+| Import Map `import_key` | [ ] | UUID v5 import identity and sidecar evidence exists for earlier import slices. | Imported objects carry durable `import_key` mappings that preserve source fidelity without making source-format identity the internal product identity. |
+| OperationBatch | [ ] | Historical M3 mutation operations have determinism and undo/redo evidence. | Product edits are grouped as atomic, typed batches with validation, deterministic ordering, journal entries, revision updates, and surfaced results. |
+| `commit()` / journal / recovery | [ ] | Save-backed mutation slices and round-trip evidence exist, but no active recovery contract is tracked here yet. | Commits persist operation batches through a journal with crash recovery, idempotency, replay, and clear failure boundaries. |
+| proposal / apply | [ ] | Replacement plans and policies exist for current package/component operations. | All AI/tool-suggested changes can be proposed, inspected, checked, and applied through one substrate path with stable IDs and revision guards. |
+| CheckRun / CheckFinding | [ ] | ERC/DRC/check reports exist across older engine, CLI, and MCP slices. | Checks produce first-class runs and findings with provenance, affected objects, waivers, revisions, severity policy, and artifact linkage. |
+| ZoneFill | [ ] | Board import and DRC evidence exists for current board geometry subsets. | Zone fill is represented as a product operation/result with deterministic generated geometry, invalidation, check integration, and artifact provenance. |
+| OutputJob / artifacts | [ ] | Some export/golden/test artifacts exist as evidence for historical gates. | Outputs are modeled as jobs with inputs, revisions, produced artifacts, logs, status, reproducibility metadata, and CLI/MCP/GUI visibility. |
+| PTY terminal | [ ] | No active product terminal substrate is tracked in this file. | A PTY-backed terminal can run project-scoped jobs/commands with streamed output, cancellation, exit status, and artifact/job linkage. |
+| CLI/MCP taxonomy `datum-eda` | [ ] | Current CLI/MCP surfaces are inventoried in `specs/SPEC_PARITY.md`; runtime MCP catalog and CLI command counts are locked by parity gates. | CLI and MCP expose one coherent `datum-eda` product taxonomy aligned to substrate nouns, not milestone-era command accumulation. |
+| Spec parity / governance | [~] | `specs/SPEC_PARITY.md` and drift gates lock selected current inventories. | Governance defines which specs are source of truth, how target/current claims are separated, and which gates prevent stale milestone evidence from driving active scope. |
+
+Open tracking rule:
+- Add implementation evidence here before marking a substrate row complete.
+- If a row is intentionally deferred, record the governance reason and the
+  downstream fidelity work allowed despite the deferral.
+- Do not promote legacy milestone completion to substrate readiness without a
+  direct product-mechanics contract.
 
 ---
 
@@ -47,6 +104,15 @@ Corrections landed:
     `specs/MCP_API_SPEC.md` list/headings)
   - stale deferral text rejection for write/save support
 - Wired `check_progress_coverage.py` into CI (`.github/workflows/alignment.yml`).
+
+---
+
+## Legacy Implementation Evidence
+
+The following milestone tables preserve historical/current implementation
+evidence. They are not the active North Star for the new scope. Use them to
+ground factual current-state claims, then promote only substrate-relevant facts
+into "Scope Integration / Substrate Readiness" above.
 
 ---
 
@@ -236,9 +302,19 @@ DRC correctness: [x] `m2_quality` harness reports 0.0% FP / 0.0% FN on current D
 | run_drc | [x] | Current implementation contract |
 | explain_violation | [x] | Current implementation contract |
 
-MCP tools: 26/26 implemented
+MCP tools: M2 slice 26/26 implemented. Current MCP runtime catalog: 75
+methods (daemon-dispatched + CLI-bridged via `mcp-server/server_runtime.py`),
+locked via `specs/SPEC_PARITY.md` → `mcp_runtime_methods`.
 
 ### CLI Commands (specs/PROGRAM_SPEC.md — M2)
+
+> **Scope note.** The table below is the *M2 historical slice* — the eight
+> commands M2 froze. It is **not** the current CLI surface. The present
+> `tool project` surface is **182 commands**, locked via
+> `specs/SPEC_PARITY.md` → `cli_project_commands`. For the authoritative,
+> code-derived enumeration run
+> `python3 scripts/check_spec_parity.py --print` and read the
+> `[cli_project_commands]` block. Do not read this M2 table as today's reach.
 
 | Command | Status | Notes |
 |---------|--------|-------|
@@ -910,9 +986,27 @@ Status: [~] Opened narrowly as a read-only route-proposal review layer
       pad rotation, roundrect semantics, outline layer-id carriage, and outline
       visibility gating have materially landed in code; the fidelity docs are
       now being reconciled to that newer repo state
-    - active next implementation frontier is interaction stability
-      (`M7-INT-001`) plus Stage 4 semantic-render readability and discipline
-      work (`M7-REN-006`, `M7-REN-003`, `M7-REN-004`)
+    - `M7-INT-001` closed its first slice (2026-06-09): authored-object
+      selection ownership, switch-clears-prior, and hover-preview-only
+      behavior are regression-locked in
+      `crates/gui-render/tests/selection_ownership.rs`
+    - `M7-REN-006` closed (2026-06-09): the render-stack policy now has a
+      single code encoding (`RenderStage` declaration order, shared
+      `POST_COPPER_STAGES` walk), copper-layer appearance is constructed
+      material-first, the bounded exception set is documented at the
+      retained-geometry pass header, and contract regression tests lock the
+      declared stage ladder
+    - `M7-REN-003` closed (2026-06-12): proposed overlays verified
+      copper-like at world-true width in selected and non-selected states;
+      the diagnostic per-vertex marker violation ("generic path nodes" over
+      proposed copper) was removed and regression-locked
+    - `M7-REN-004` closed (2026-06-12): filled-zone copper is a declared
+      derived shade of the layer material so pad/teardrop/pour boundaries
+      read correctly (teardrop tangency criterion verified on DOA2526), and
+      dim-unrelated readability is verified on the canonical fixture with
+      regression locks in `render_contract_tests.rs`
+    - active next implementation frontier is `M7-REG-001..003` fixture-backed
+      import/scene/visual regression coverage (owner-ordered 2026-06-11)
     - the renderer semantic contract note now lives in
       `docs/gui/M7_RENDER_SEMANTIC_CONTRACT.md`
   - standards amendment for the opening slice:
@@ -954,6 +1048,80 @@ Status: [~] Opened narrowly as a read-only route-proposal review layer
     primitives reliably enough for a PCB user to trust the review
   - fixture-backed tests plus screenshot or image-based review cover the
     canonical half-routed board and the supporting imported-board edge cases
+
+---
+
+## Standards Audit Batch 1 — Spec Stubs Awaiting Implementation
+
+Spec edits landed in commit `db98eff` (2026-04-17) per the apply order in
+`docs/STANDARDS_AUDIT_BATCH_1_GUIDANCE.md`. This section tracks each stub
+against its implementation status. Status semantics:
+- `[x]` spec/doc text landed in the named anchor
+- `[ ]` implementation work not started (no Rust type, no engine op, no
+  pool storage, no MCP runtime entry, no importer/exporter, etc.)
+- A row may carry both: `[x]` spec landed + `[ ]` implementation pending —
+  shown as two columns
+
+### Pass 0 — Standards Compliance Disposition Refresh
+
+| Stub | Spec anchor | Spec | Impl |
+|------|-------------|:----:|:----:|
+| Domain 1 disposition refresh (STEP/IDF/IDX/EDMD/DXF prerequisites; Gerber X3 / IPC-2581C / IPC-D-356 / ODB++ contracts) | `specs/STANDARDS_COMPLIANCE_SPEC.md` §4.1 | [x] | [—] N/A (disposition text only) |
+| Domain 2 disposition refresh (IBIS/Touchstone/SPICE attachment; encrypted-content policy) | `specs/STANDARDS_COMPLIANCE_SPEC.md` §4.2 | [x] | [—] N/A (disposition text only) |
+
+### Pass 1 — Engine Schema Bedrock
+
+| Stub | Spec anchor | Spec | Impl |
+|------|-------------|:----:|:----:|
+| `ModelRole`, `SpiceDialect`, `EncryptionScheme`, `ModelAttachment`, `ModelProvenance`, `ModelFormatMetadata` (D2-1) | `specs/ENGINE_SPEC.md` §1.1a | [x] | [ ] |
+| `ModelFormat` enum, typed `Transform3D`, expanded `ModelRef`, `Package.body_height_nm` / `body_height_mounted_nm` (D1-2) | `specs/ENGINE_SPEC.md` §1.1a + §1.2 | [x] | [ ] |
+| `StackupLayer` material fields (`dielectric_constant`, `loss_tangent`, `copper_weight_oz`, `roughness_um`, `material_name`) (D1-3) | `specs/ENGINE_SPEC.md` §1.3 | [x] | [ ] |
+| `Net.controlled_impedance: Option<ImpedanceSpec>` and `ImpedanceSpec` (D1-4) | `specs/ENGINE_SPEC.md` §1.3 | [x] | [ ] (solver deferred) |
+| `Part` extensions (`manufacturer_jep106`, `packaging_options`, `behavioural_models`, `thermal`, `supply_chain_offers`, `last_supply_chain_check`) plus `ThermalSpec`, `PackagingKind`, `PackagingOption`, `SupplyOffer` (D2-2) | `specs/ENGINE_SPEC.md` §1.2 | [x] | [ ] |
+| `AttachModel` / `DetachModel` operations with `inverse()` reversibility (D2-4) | `specs/ENGINE_SPEC.md` §3 | [x] | [ ] (no op impl, no undo/redo wiring) |
+
+### Pass 2 — Pool and Native Persistence
+
+| Stub | Spec anchor | Spec | Impl |
+|------|-------------|:----:|:----:|
+| `pool/models/{ibis,spice,touchstone,ami,thermal}/` directory; `models` and `part_model_attachments` SQL index tables (D2-3) | `docs/POOL_ARCHITECTURE.md` §2 | [x] | [ ] (no pool storage, no SQL tables) |
+| `pool/models/` in native project layout; new "Pool Model Files" schema (D2-9) | `specs/NATIVE_FORMAT_SPEC.md` §4 + §6.x | [x] | [ ] |
+
+### Pass 3 — MCP API Stubs
+
+| Stub | Spec anchor | Spec | Impl |
+|------|-------------|:----:|:----:|
+| M7+ Export Tools: `export_step`, `export_idf`, `export_odbpp`, `export_ipc2581`, `import_dxf_outline` (D1-5) | `specs/MCP_API_SPEC.md` "M7+ Export Tools" | [x] | [ ] (not in `tools_catalog_data.py`; would need exporter implementations) |
+| Component Modelling Tools: `attach_ibis`, `attach_touchstone`, `attach_spice`, `validate_*`, `extract_*`, `export_spice_netlist`, `lookup_part_*`, `refresh_supply_chain`, `find_alternate_parts`, `query_packaging_options`, `normalize_manufacturer`, `infer_diffpair_from_pinnames` (D2-5) | `specs/MCP_API_SPEC.md` "Component Modelling Tools (M7+)" | [x] | [ ] (not in `tools_catalog_data.py`) |
+| Encrypted Content Handling Policy (D2-6) | `specs/MCP_API_SPEC.md` top-level | [x] | [—] N/A (policy framing) |
+
+### Pass 4 — Import Spec
+
+| Stub | Spec anchor | Spec | Impl |
+|------|-------------|:----:|:----:|
+| IPC-2581 Import (Future — Post-M7) rationale + feature matrix (D1-7) | `specs/IMPORT_SPEC.md` §5 | [x] | [ ] (importer deferred) |
+| KiCad and Eagle import matrices: SPICE/IBIS/Touchstone rows promoted Deferred → Best-effort (M7+) with `Part.behavioural_models` mapping note (D2-8) | `specs/IMPORT_SPEC.md` §3 + §4 | [x] | [ ] (importer deferred) |
+
+### Pass 5 — Architecture and Scope Docs
+
+| Stub | Spec anchor | Spec | Impl |
+|------|-------------|:----:|:----:|
+| Behavioural model attachment subsection (D2-7) | `docs/LIBRARY_ARCHITECTURE.md` | [x] | [—] N/A (architecture text) |
+| Interop scope re-organisation — Hard/Should/On-demand/Out-of-scope per Domain 1 (D1-1) | `docs/INTEROP_SCOPE.md` §Future (M5+) | [x] | [—] N/A (scope text) |
+| Behavioural model attachment & export scope buckets (D2-10) | `docs/INTEROP_SCOPE.md` new section | [x] | [—] N/A (scope text) |
+
+### Deferred — Held For A Later Batch
+
+| # | Spec target | Why deferred |
+|---|-------------|--------------|
+| D1-6 | `specs/NATIVE_FORMAT_SPEC.md` §12 or `docs/POOL_ARCHITECTURE.md` | `.gitignore` / `.gitattributes` conventions — descriptive, no contract impact |
+| D1-8 | `docs/COMMERCIAL_INTEROP_STRATEGY.md` §10 | "Datum's Open-Stack Position" appendix — marketing position |
+| D2-11 | `docs/COMMERCIAL_INTEROP_STRATEGY.md` | "Behavioural Model Stack — Open-Stack Position" appendix — marketing position |
+
+**Standards Audit Batch 1 overall**: [x] spec/doc/policy stubs landed; [ ]
+implementation work not started for any of the bedrock types, operations,
+pool persistence, native-format support, MCP runtime entries, or importer/
+exporter handlers.
 
 ---
 
@@ -1219,7 +1387,7 @@ Status: [x] Closed for scoped M4 slice
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Rust workspace (4 crates) | [x] | engine, cli, engine-daemon, test-harness |
+| Rust workspace (7 crates) | [x] | engine, cli, engine-daemon, test-harness, gui-protocol, gui-render, gui-app (locked via `specs/SPEC_PARITY.md` → `workspace_crates`) |
 | Engine compiles without GUI deps | [x] | |
 | Test harness (golden file utilities) | [x] | test-harness crate |
 | Test corpus (real designs) | [ ] | tests/corpus/ empty |

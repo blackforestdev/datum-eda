@@ -6,6 +6,8 @@ use crate::ir::geometry::{Point, Polygon};
 use crate::pool::{Package, Pad, Padstack, PadstackAperture, Primitive};
 use crate::schematic::PinElectricalType;
 
+mod board_objects;
+mod net_refs;
 mod parser_helpers;
 mod skeleton;
 mod symbol_helpers;
@@ -87,8 +89,26 @@ pub fn import_footprint_document(
 pub fn import_board_document(
     path: &Path,
 ) -> Result<(crate::board::Board, ImportReport), EngineError> {
+    let import_started = std::time::Instant::now();
+    let read_started = std::time::Instant::now();
     let contents = std::fs::read_to_string(path)?;
+    trace_kicad_import_timing(format!(
+        "board document read {}ms bytes={}",
+        read_started.elapsed().as_millis(),
+        contents.len()
+    ));
+    let parse_started = std::time::Instant::now();
     let (board, board_warnings) = parse_board_skeleton(path, &contents)?;
+    trace_kicad_import_timing(format!(
+        "board skeleton parse {}ms packages={} pads={} tracks={} vias={} zones={} nets={}",
+        parse_started.elapsed().as_millis(),
+        board.packages.len(),
+        board.pads.len(),
+        board.tracks.len(),
+        board.vias.len(),
+        board.zones.len(),
+        board.nets.len()
+    ));
     let mut report =
         ImportReport::new(ImportKind::KiCadBoard, path, ImportObjectCounts::default()).with_warning(
             "parsed KiCad board skeleton into canonical nets, packages, tracks, vias, zones, and stackup; full geometry and rule import is not implemented yet",
@@ -101,45 +121,98 @@ pub fn import_board_document(
         report = report.with_metadata("kicad_version", version);
     }
 
+    let metadata_started = std::time::Instant::now();
+    let counts = count_top_level_form_lines_by_form(
+        &contents,
+        &[
+            "footprint",
+            "segment",
+            "via",
+            "zone",
+            "net",
+            "gr_line",
+            "gr_arc",
+            "dimension",
+            "gr_text",
+        ],
+    );
     report = report
         .with_metadata(
             "footprint_count",
-            count_top_level_form_lines(&contents, "footprint").to_string(),
+            counts
+                .get("footprint")
+                .copied()
+                .unwrap_or_default()
+                .to_string(),
         )
         .with_metadata(
             "segment_count",
-            count_top_level_form_lines(&contents, "segment").to_string(),
+            counts
+                .get("segment")
+                .copied()
+                .unwrap_or_default()
+                .to_string(),
         )
         .with_metadata(
             "via_count",
-            count_top_level_form_lines(&contents, "via").to_string(),
+            counts.get("via").copied().unwrap_or_default().to_string(),
         )
         .with_metadata(
             "zone_count",
-            count_top_level_form_lines(&contents, "zone").to_string(),
+            counts.get("zone").copied().unwrap_or_default().to_string(),
         )
         .with_metadata(
             "net_count",
-            count_top_level_form_lines(&contents, "net").to_string(),
+            counts.get("net").copied().unwrap_or_default().to_string(),
         )
         .with_metadata(
             "gr_line_count",
-            count_top_level_form_lines(&contents, "gr_line").to_string(),
+            counts
+                .get("gr_line")
+                .copied()
+                .unwrap_or_default()
+                .to_string(),
         )
         .with_metadata(
             "gr_arc_count",
-            count_top_level_form_lines(&contents, "gr_arc").to_string(),
+            counts
+                .get("gr_arc")
+                .copied()
+                .unwrap_or_default()
+                .to_string(),
         )
         .with_metadata(
             "dimension_count",
-            count_top_level_form_lines(&contents, "dimension").to_string(),
+            counts
+                .get("dimension")
+                .copied()
+                .unwrap_or_default()
+                .to_string(),
         )
         .with_metadata(
             "gr_text_count",
-            count_top_level_form_lines(&contents, "gr_text").to_string(),
+            counts
+                .get("gr_text")
+                .copied()
+                .unwrap_or_default()
+                .to_string(),
         );
+    trace_kicad_import_timing(format!(
+        "board report metadata {}ms",
+        metadata_started.elapsed().as_millis()
+    ));
+    trace_kicad_import_timing(format!(
+        "board document total {}ms",
+        import_started.elapsed().as_millis()
+    ));
 
     Ok((board, report))
+}
+
+fn trace_kicad_import_timing(message: String) {
+    if std::env::var_os("DATUM_TRACE_TIMING").is_some() {
+        eprintln!("[datum-engine-import] {message}");
+    }
 }
 
 pub fn import_schematic_file(path: &Path) -> Result<ImportReport, EngineError> {
@@ -675,7 +748,7 @@ fn block_layer_name_anywhere(block: &str) -> Option<String> {
     block.lines().find_map(|line| {
         let trimmed = line.trim_start();
         let start = trimmed.find("(layer ")? + "(layer ".len();
-        parse_quoted_token(&trimmed[start..])
+        parse_quoted_token(&trimmed[start..]).map(|name| canonicalize_kicad_layer_name(&name))
     })
 }
 
@@ -740,6 +813,9 @@ mod tests {
     }
 
     fn optional_doa2526_board_path() -> Option<std::path::PathBuf> {
+        if std::env::var_os("DATUM_RUN_EXTERNAL_DOA2526_TESTS").is_none() {
+            return None;
+        }
         let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("../../..")
             .join("kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_pcb");
@@ -747,6 +823,9 @@ mod tests {
     }
 
     fn optional_doa2526_schematic_path() -> Option<std::path::PathBuf> {
+        if std::env::var_os("DATUM_RUN_EXTERNAL_DOA2526_TESTS").is_none() {
+            return None;
+        }
         let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("../../..")
             .join("kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_sch");

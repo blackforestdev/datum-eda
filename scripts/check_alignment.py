@@ -85,15 +85,13 @@ TEXT_CHECKS = (
     ),
     TextCheck(
         path="specs/ENGINE_SPEC.md",
+        # Per-method signature presence was previously asserted here. The
+        # engine_api_pub_fns inventory in specs/SPEC_PARITY.md now enforces
+        # the full pub-fn surface structurally, so the per-method assertions
+        # were removed to avoid duplicate-source drift when §5.1 reformats.
         must_contain=(
-            "pub fn close_project(&mut self);",
-            "pub fn get_part(&self, uuid: &Uuid) -> Result<PartDetail>;",
-            "pub fn get_package(&self, uuid: &Uuid) -> Result<PackageDetail>;",
-            "pub fn get_symbol_fields(&self, symbol_uuid: &Uuid) -> Result<Vec<SymbolFieldInfo>>;",
-            "pub fn get_bus_entries(&self, sheet: Option<&Uuid>) -> Result<Vec<BusEntryInfo>>;",
-            "pub fn get_netlist(&self) -> Result<Vec<NetlistNet>>;",
-            "pub fn get_design_rules(&self) -> Result<Vec<Rule>>;",
-            "pub fn explain_violation(",
+            "### 5.1 Current Implemented Engine API",
+            "engine_api_pub_fns",
         ),
         must_not_contain=(
             "Target parity note: full CLI/MCP method parity is required for the target M2+\nsurface at milestone closure. The current implementation exposes a strict\nsubset;",
@@ -152,7 +150,8 @@ TEXT_CHECKS = (
             "├── crates/",
             "│   ├── engine/",
             "│   ├── cli/",
-            "│   └── test-harness/",
+            "│   ├── test-harness/",
+            "│   └── gui-app/",
             "specs/",
         ),
         must_not_contain=(

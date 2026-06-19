@@ -1,0 +1,151 @@
+{
+  "component_mechanical_arcs": {},
+  "component_mechanical_circles": {},
+  "component_mechanical_lines": {},
+  "component_mechanical_polygons": {},
+  "component_mechanical_polylines": {},
+  "component_mechanical_texts": {},
+  "component_models_3d": {},
+  "component_pads": {},
+  "component_silkscreen": {},
+  "component_silkscreen_arcs": {},
+  "component_silkscreen_circles": {},
+  "component_silkscreen_polygons": {},
+  "component_silkscreen_polylines": {},
+  "component_silkscreen_texts": {},
+  "dimensions": [],
+  "keepouts": [],
+  "name": "Text Intent Repro Board",
+  "net_classes": {},
+  "nets": {},
+  "outline": {
+    "closed": true,
+    "vertices": [
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 160000000,
+        "y": 0
+      },
+      {
+        "x": 160000000,
+        "y": 90000000
+      },
+      {
+        "x": 0,
+        "y": 90000000
+      }
+    ]
+  },
+  "packages": {},
+  "pads": {},
+  "schema_version": 1,
+  "stackup": {
+    "layers": [
+      {
+        "id": 1,
+        "layer_type": "Copper",
+        "name": "Top Copper",
+        "thickness_nm": 35000
+      },
+      {
+        "id": 2,
+        "layer_type": "SolderMask",
+        "name": "Top Mask",
+        "thickness_nm": 10000
+      },
+      {
+        "id": 3,
+        "layer_type": "Silkscreen",
+        "name": "Top Silk",
+        "thickness_nm": 10000
+      },
+      {
+        "id": 4,
+        "layer_type": "Paste",
+        "name": "Top Paste",
+        "thickness_nm": 10000
+      },
+      {
+        "id": 41,
+        "layer_type": "Mechanical",
+        "name": "Mechanical 41",
+        "thickness_nm": 0
+      }
+    ]
+  },
+  "texts": [
+    {
+      "height_nm": 6000000,
+      "layer": 37,
+      "position": {
+        "x": 12000000,
+        "y": 18000000
+      },
+      "render_intent": "manufacturing",
+      "rotation": 0,
+      "stroke_width_nm": 912000,
+      "text": "MFG DEFAULT",
+      "uuid": "91000000-0000-0000-0000-000000000101"
+    },
+    {
+      "height_nm": 6000000,
+      "layer": 37,
+      "position": {
+        "x": 12000000,
+        "y": 34000000
+      },
+      "render_intent": "annotation",
+      "rotation": 0,
+      "stroke_width_nm": 912000,
+      "text": "ANNOTATION DEFAULT",
+      "uuid": "91000000-0000-0000-0000-000000000102"
+    },
+    {
+      "height_nm": 8000000,
+      "layer": 37,
+      "position": {
+        "x": 12000000,
+        "y": 52000000
+      },
+      "render_intent": "branding",
+      "rotation": 0,
+      "stroke_width_nm": 1216000,
+      "text": "BRANDING DEFAULT",
+      "uuid": "91000000-0000-0000-0000-000000000103"
+    },
+    {
+      "height_nm": 5000000,
+      "layer": 37,
+      "position": {
+        "x": 12000000,
+        "y": 67000000
+      },
+      "render_intent": "documentation",
+      "rotation": 0,
+      "stroke_width_nm": 760000,
+      "text": "DOCUMENTATION DEFAULT",
+      "uuid": "91000000-0000-0000-0000-000000000104"
+    },
+    {
+      "family": "jetbrains_mono",
+      "height_nm": 5000000,
+      "layer": 37,
+      "position": {
+        "x": 12000000,
+        "y": 81000000
+      },
+      "render_intent": "annotation",
+      "rotation": 0,
+      "stroke_width_nm": 760000,
+      "text": "MONO OVERRIDE v1.2.3",
+      "uuid": "91000000-0000-0000-0000-000000000105"
+    }
+  ],
+  "tracks": {},
+  "uuid": "91000000-0000-0000-0000-000000000003",
+  "vias": {},
+  "zones": {}
+}

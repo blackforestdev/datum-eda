@@ -80,6 +80,7 @@ fn native_component_pad_to_placed_pad(
             y: pad.position.y,
         },
         layer: pad.layer,
+        copper_layers: vec![pad.layer],
         shape,
         diameter: pad.diameter_nm,
         width: pad.width_nm,
@@ -88,6 +89,9 @@ fn native_component_pad_to_placed_pad(
         rotation: 0,
         mask_layers: Vec::new(),
         paste_layers: Vec::new(),
+        solder_mask_margin_nm: 0,
+        solder_paste_margin_nm: 0,
+        solder_paste_margin_ratio_ppm: 0,
         roundrect_rratio_ppm: 250_000,
     })
 }
@@ -189,6 +193,7 @@ pub(crate) fn place_native_project_board_pad(
         net: net_uuid,
         position,
         layer,
+        copper_layers: vec![layer],
         shape,
         diameter: diameter_nm.unwrap_or(0),
         width: width_nm.unwrap_or(0),
@@ -197,6 +202,9 @@ pub(crate) fn place_native_project_board_pad(
         rotation: 0,
         mask_layers: Vec::new(),
         paste_layers: Vec::new(),
+        solder_mask_margin_nm: 0,
+        solder_paste_margin_nm: 0,
+        solder_paste_margin_ratio_ppm: 0,
         roundrect_rratio_ppm: 250_000,
     };
     validate_native_board_pad_geometry(&pad)?;

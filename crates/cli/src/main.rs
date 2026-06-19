@@ -298,21 +298,6 @@ struct NativeProjectDrawingMutationReportView {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct NativeProjectBoardTextMutationReportView {
-    action: String,
-    project_root: String,
-    board_path: String,
-    text_uuid: String,
-    text: String,
-    x_nm: i64,
-    y_nm: i64,
-    rotation_deg: i32,
-    height_nm: i64,
-    stroke_width_nm: i64,
-    layer: i32,
-}
-
-#[derive(Debug, Clone, Serialize)]
 struct NativeProjectBoardKeepoutMutationReportView {
     action: String,
     project_root: String,
@@ -1011,25 +996,6 @@ fn render_native_project_drawing_mutation_text(
         format!("from_y_nm: {}", report.from_y_nm),
         format!("to_x_nm: {}", report.to_x_nm),
         format!("to_y_nm: {}", report.to_y_nm),
-    ]
-    .join("\n")
-}
-
-fn render_native_project_board_text_mutation_text(
-    report: &NativeProjectBoardTextMutationReportView,
-) -> String {
-    [
-        format!("action: {}", report.action),
-        format!("project_root: {}", report.project_root),
-        format!("board_path: {}", report.board_path),
-        format!("text_uuid: {}", report.text_uuid),
-        format!("text: {}", report.text),
-        format!("x_nm: {}", report.x_nm),
-        format!("y_nm: {}", report.y_nm),
-        format!("rotation_deg: {}", report.rotation_deg),
-        format!("height_nm: {}", report.height_nm),
-        format!("stroke_width_nm: {}", report.stroke_width_nm),
-        format!("layer: {}", report.layer),
     ]
     .join("\n")
 }

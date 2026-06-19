@@ -3,7 +3,7 @@ use std::path::Path;
 
 use uuid::Uuid;
 
-use crate::board::{Board, Net, NetClass, PadExpansionSetup, PlacedPackage, PlacedPad, Track, Via, Zone};
+use crate::board::{Board, Net, NetClass, PadExpansionSetup, PlacedPackage, PlacedPad};
 use crate::error::EngineError;
 use crate::ir::geometry::Point;
 use crate::ir::ids::{import_uuid, namespace_kicad};
@@ -12,6 +12,8 @@ use crate::schematic::{
     SchematicWire, Sheet, SymbolDisplayMode, SymbolPin,
 };
 
+use super::board_objects::*;
+use super::net_refs::*;
 use super::parser_helpers::*;
 use super::symbol_helpers::*;
 
@@ -438,10 +440,15 @@ pub(super) fn parse_board_skeleton(
             diffpair_gap: 0,
         },
     )]);
+    let top_blocks = top_level_blocks_by_form(
+        contents,
+        &["net", "footprint", "segment", "via", "zone", "gr_text"],
+    );
 
+    let mut warnings = Vec::new();
     let mut nets = HashMap::new();
     let mut net_lookup = HashMap::new();
-    for block in top_level_blocks(contents, "net") {
+    for block in top_blocks.get("net").into_iter().flatten() {
         if let Some((net_code, net_name)) = parse_net_block(&block) {
             let uuid = deterministic_kicad_board_uuid("net", &net_code.to_string());
             net_lookup.insert(net_code, uuid);
@@ -453,12 +460,18 @@ pub(super) fn parse_board_skeleton(
                     class: Uuid::nil(),
                 },
             );
+        } else {
+            warnings.push(dropped_object_warning(
+                "net",
+                block_uuid(&block),
+                &[("code/name", true)],
+            ));
         }
     }
 
     let mut packages = HashMap::new();
     let mut pads = HashMap::new();
-    for block in top_level_blocks(contents, "footprint") {
+    for block in top_blocks.get("footprint").into_iter().flatten() {
         let uuid = block_uuid(&block).unwrap_or_else(Uuid::new_v4);
         let reference =
             extract_footprint_property(&block, "Reference").unwrap_or_else(|| "?".into());
@@ -494,6 +507,7 @@ pub(super) fn parse_board_skeleton(
             rotation,
             layer,
             &net_lookup,
+            &mut nets,
             &layer_table,
             &pad_expansion_setup,
         )? {
@@ -501,122 +515,54 @@ pub(super) fn parse_board_skeleton(
         }
     }
 
-    let mut tracks = HashMap::new();
-    for block in top_level_blocks(contents, "segment") {
-        if let (Some(uuid), Some((from, to)), Some(width), Some(layer_name), Some(net_code)) = (
-            block_uuid(&block),
-            block_start_end_points(&block),
-            block_width_mm(&block),
-            block_layer_name(&block),
-            block_net_code(&block),
-        ) {
-            let net = net_lookup
-                .get(&net_code)
-                .copied()
-                .unwrap_or_else(|| deterministic_kicad_board_uuid("net", &net_code.to_string()));
-            tracks.insert(
-                uuid,
-                Track {
-                    uuid,
-                    net,
-                    from,
-                    to,
-                    width: mm_to_nm(width),
-                    layer: resolve_layer(&layer_name)?,
-                },
-            );
-        }
-    }
+    let no_blocks: Vec<String> = Vec::new();
+    let blocks_for = |form: &str| top_blocks.get(form).unwrap_or(&no_blocks);
 
-    let mut vias = HashMap::new();
-    for block in top_level_blocks(contents, "via") {
-        if let (
-            Some(uuid),
-            Some(position),
-            Some(diameter),
-            Some(drill),
-            Some((from_layer, to_layer)),
-            Some(net_code),
-        ) = (
-            block_uuid(&block),
-            block_at_point(&block),
-            block_size_mm(&block),
-            block_drill_mm(&block),
-            block_layers_pair(&block),
-            block_net_code(&block),
-        ) {
-            let net = net_lookup
-                .get(&net_code)
-                .copied()
-                .unwrap_or_else(|| deterministic_kicad_board_uuid("net", &net_code.to_string()));
-            vias.insert(
-                uuid,
-                Via {
-                    uuid,
-                    net,
-                    position,
-                    drill: mm_to_nm(drill),
-                    diameter: mm_to_nm(diameter),
-                    from_layer: resolve_layer(&from_layer)?,
-                    to_layer: resolve_layer(&to_layer)?,
-                },
-            );
-        }
-    }
+    let tracks = parse_tracks(
+        blocks_for("segment"),
+        &net_lookup,
+        &mut nets,
+        &layer_table,
+        &mut warnings,
+    )?;
 
-    let mut zones = HashMap::new();
-    for block in top_level_blocks(contents, "zone") {
-        let Some(uuid) = block_uuid(&block) else {
-            continue;
-        };
-        let Some(net_code) = block_net_code(&block) else {
-            continue;
-        };
-        let net = net_lookup
-            .get(&net_code)
-            .copied()
-            .unwrap_or_else(|| deterministic_kicad_board_uuid("net", &net_code.to_string()));
-        let zone_layers = block_layer_names(&block);
-        let zone_layer_names: Vec<String> = if zone_layers.is_empty() {
-            block_layer_name(&block).into_iter().collect()
-        } else {
-            zone_layers
-        };
-        for (i, layer_name) in zone_layer_names.iter().enumerate() {
-            let layer = resolve_layer(layer_name)?;
-            // Try to extract the filled_polygon for this specific layer
-            let polygon = extract_filled_polygon_for_layer(&block, layer_name)
-                .or_else(|| block_polygon(&block));
-            let Some(polygon) = polygon else { continue };
-            let zone_uuid = if i == 0 {
-                uuid
-            } else {
-                deterministic_kicad_board_uuid("zone", &format!("{uuid}/{layer}"))
-            };
-            zones.insert(
-                zone_uuid,
-                Zone {
-                    uuid: zone_uuid,
-                    net,
-                    polygon,
-                    layer,
-                    priority: 0,
-                    thermal_relief: true,
-                    thermal_gap: 0,
-                    thermal_spoke_width: 0,
-                },
-            );
-        }
-    }
+    let vias = parse_vias(
+        blocks_for("via"),
+        &net_lookup,
+        &mut nets,
+        &layer_table,
+        &mut warnings,
+    )?;
+
+    let zones = parse_zones(
+        blocks_for("zone"),
+        &net_lookup,
+        &mut nets,
+        &layer_table,
+        &mut warnings,
+    )?;
 
     let mut texts = Vec::new();
-    for block in top_level_blocks(contents, "gr_text") {
+    let mut dropped_texts = 0usize;
+    for block in top_blocks.get("gr_text").into_iter().flatten() {
         let Some(position) = block_at_point(&block) else {
+            dropped_texts += 1;
+            warnings.push(dropped_object_warning(
+                "gr_text",
+                block_uuid(&block),
+                &[("at", true)],
+            ));
             continue;
         };
         let Some(layer_name) = block_layer_name(&block) else {
-            // gr_text without a layer has no well-defined placement; skip rather
-            // than silently collapse onto F.Cu.
+            // gr_text without a layer has no well-defined placement; drop with
+            // accounting rather than silently collapse onto F.Cu.
+            dropped_texts += 1;
+            warnings.push(dropped_object_warning(
+                "gr_text",
+                block_uuid(&block),
+                &[("layer", true)],
+            ));
             continue;
         };
         let layer = resolve_layer(&layer_name)?;
@@ -632,15 +578,33 @@ pub(super) fn parse_board_skeleton(
             text,
             position,
             rotation: block_rotation(&block).unwrap_or(0),
+            render_intent: crate::text::TextRenderIntent::Manufacturing,
+            family: crate::text::TextFamilyId::default(),
+            family_source: crate::text::TextFamilySource::ImplicitDefault,
+            style: crate::text::TextStyleId::default(),
             height_nm: 1_000_000,
-            stroke_width_nm: 100_000,
+            stroke_width_nm: crate::text::default_stroke_width_nm(1_000_000),
             layer,
+            h_align: crate::text::TextHAlign::Left,
+            v_align: crate::text::TextVAlign::Bottom,
+            mirrored: false,
+            keep_upright: false,
+            line_spacing_ratio_ppm: 1_000_000,
+            italic: false,
+            bold: false,
+            style_class: None,
         });
     }
     texts.sort_by_key(|text| text.uuid);
+    check_form_accounting(
+        "gr_text",
+        top_blocks.get("gr_text").map(Vec::len).unwrap_or(0),
+        texts.len(),
+        dropped_texts,
+        &mut warnings,
+    );
 
     let (outline, outline_warning) = outline_from_edge_cuts(contents);
-    let mut warnings = Vec::new();
     if let Some(msg) = outline_warning {
         warnings.push(msg);
     }
@@ -675,12 +639,14 @@ fn footprint_pads(
     package_rotation_deg: i32,
     package_layer: i32,
     net_lookup: &HashMap<i32, Uuid>,
+    nets: &mut HashMap<Uuid, Net>,
     layer_table: &HashMap<String, i32>,
     pad_expansion_setup: &PadExpansionSetup,
 ) -> Result<Vec<PlacedPad>, EngineError> {
     let mut out = Vec::new();
     let package_flipped = is_back_copper_layer(package_layer, layer_table);
-    let footprint_mask_margin_nm = parse_footprint_mm_value_before_pads(block, "solder_mask_margin");
+    let footprint_mask_margin_nm =
+        parse_footprint_mm_value_before_pads(block, "solder_mask_margin");
     let footprint_paste_margin_nm =
         parse_footprint_mm_value_before_pads(block, "solder_paste_margin");
     let footprint_paste_margin_ratio_ppm =
@@ -699,12 +665,8 @@ fn footprint_pads(
         let uuid = block_uuid(&pad_block).unwrap_or_else(|| {
             deterministic_kicad_board_uuid("pad", &format!("{package_uuid}/{name}"))
         });
-        let net = block_net_code(&pad_block).map(|code| {
-            net_lookup
-                .get(&code)
-                .copied()
-                .unwrap_or_else(|| deterministic_kicad_board_uuid("net", &code.to_string()))
-        });
+        let net = block_net_ref(&pad_block)
+            .map(|net_ref| resolve_board_net_ref(net_ref, net_lookup, nets));
         let shape = parse_pad_shape_anywhere(&pad_block).ok_or_else(|| {
             EngineError::Import(format!(
                 "imported pad {package_uuid}/{name} has unsupported or missing shape in the pad head"
@@ -962,7 +924,11 @@ fn parse_pad_roundrect_rratio_ppm_anywhere(block: &str) -> u32 {
         };
         let rest = &trimmed[start + "(roundrect_rratio ".len()..];
         let rest = rest.split(')').next().unwrap_or(rest);
-        if let Some(value) = rest.split_whitespace().next().and_then(|s| s.parse::<f64>().ok()) {
+        if let Some(value) = rest
+            .split_whitespace()
+            .next()
+            .and_then(|s| s.parse::<f64>().ok())
+        {
             return (value.clamp(0.0, 0.5) * 1_000_000.0).round() as u32;
         }
     }
@@ -1171,33 +1137,6 @@ fn parse_setup_ratio_ppm(contents: &str, key: &str) -> Option<i32> {
     })
 }
 
-fn extract_filled_polygon_for_layer(
-    zone_block: &str,
-    layer_name: &str,
-) -> Option<crate::ir::geometry::Polygon> {
-    use crate::ir::geometry::Polygon;
-    let marker = "(filled_polygon";
-    let mut search_from = 0;
-    while let Some(start) = zone_block[search_from..].find(marker) {
-        let abs_start = search_from + start;
-        let rest = &zone_block[abs_start..];
-        let Some(end) = find_matching_paren(rest) else {
-            search_from = abs_start + marker.len();
-            continue;
-        };
-        let section = &rest[..end];
-        let layer_marker = format!("(layer \"{}\")", layer_name);
-        if section.contains(&layer_marker) {
-            let points = block_xy_points(section);
-            if points.len() >= 3 {
-                return Some(Polygon::new(points));
-            }
-        }
-        search_from = abs_start + end;
-    }
-    None
-}
-
 pub(super) fn parse_pad_drill_anywhere(block: &str, pad_kind: KiCadPadKind) -> Option<i64> {
     match pad_kind {
         KiCadPadKind::Smd | KiCadPadKind::Connect => return Some(0),
@@ -1225,14 +1164,11 @@ fn all_copper_layers(layer_table: &HashMap<String, i32>) -> Vec<i32> {
         .filter_map(|(name, id)| name.ends_with(".Cu").then_some(*id))
         .collect();
     if layers.is_empty() {
+        // No parsed layer table: bounded fallback to the classic KiCad
+        // F.Cu/B.Cu ids. Do NOT inject these ids when a table exists --
+        // KiCad 20260206+ renumbers layers (e.g. B.Cu=2, F.CrtYd=31), so
+        // hardcoded ids would put non-copper layers into copper sets.
         layers.extend([0, 31]);
-    } else {
-        if !layers.contains(&0) {
-            layers.push(0);
-        }
-        if !layers.contains(&31) {
-            layers.push(31);
-        }
     }
     layers.sort_unstable();
     layers.dedup();
@@ -1291,11 +1227,9 @@ pub(super) fn resolve_pad_copper_layers(
 }
 
 pub(super) fn resolve_pad_primary_copper_layer(copper_layers: &[i32]) -> Result<i32, EngineError> {
-    copper_layers
-        .iter()
-        .copied()
-        .min()
-        .ok_or_else(|| EngineError::Import("imported pad resolved no primary copper layer".to_string()))
+    copper_layers.iter().copied().min().ok_or_else(|| {
+        EngineError::Import("imported pad resolved no primary copper layer".to_string())
+    })
 }
 
 fn parse_pad_copper_layers_anywhere(

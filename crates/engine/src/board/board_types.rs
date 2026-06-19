@@ -1,4 +1,7 @@
 use crate::ir::geometry::{LayerId, Point, Polygon};
+use crate::text::{
+    TextFamilyId, TextFamilySource, TextHAlign, TextRenderIntent, TextStyleId, TextVAlign,
+};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -92,8 +95,44 @@ pub struct BoardText {
     pub position: Point,
     pub rotation: i32,
     pub layer: LayerId,
+    #[serde(default)]
+    pub render_intent: TextRenderIntent,
+    #[serde(default)]
+    pub family: TextFamilyId,
+    #[serde(default)]
+    pub family_source: TextFamilySource,
+    #[serde(default)]
+    pub style: TextStyleId,
     #[serde(default = "super::text::default_board_text_height_nm")]
     pub height_nm: i64,
     #[serde(default = "super::text::default_board_text_stroke_width_nm")]
     pub stroke_width_nm: i64,
+    #[serde(default = "default_board_text_h_align")]
+    pub h_align: TextHAlign,
+    #[serde(default = "default_board_text_v_align")]
+    pub v_align: TextVAlign,
+    #[serde(default)]
+    pub mirrored: bool,
+    #[serde(default)]
+    pub keep_upright: bool,
+    #[serde(default = "default_board_text_line_spacing_ratio_ppm")]
+    pub line_spacing_ratio_ppm: i32,
+    #[serde(default)]
+    pub italic: bool,
+    #[serde(default)]
+    pub bold: bool,
+    #[serde(default)]
+    pub style_class: Option<String>,
+}
+
+fn default_board_text_h_align() -> TextHAlign {
+    TextHAlign::Left
+}
+
+fn default_board_text_v_align() -> TextVAlign {
+    TextVAlign::Bottom
+}
+
+fn default_board_text_line_spacing_ratio_ppm() -> i32 {
+    1_000_000
 }

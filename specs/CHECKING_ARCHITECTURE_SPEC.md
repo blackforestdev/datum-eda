@@ -2,26 +2,185 @@
 
 ## 1. Purpose
 
-Defines the shared contract between ERC and DRC while preserving them as
-separate checking engines with different inputs and invariants.
+Defines Datum's shared checking substrate for electrical, physical,
+standards-aware, and manufacturing checks.
+
+ERC and DRC remain useful user-facing concepts, but they are no longer separate
+result contracts. All checking entry points produce a `CheckRun` containing
+revision-keyed `CheckFinding` records.
 
 ---
 
-## 2. Domains
+## 2. Canonical Product Surface
+
+The canonical CLI/MCP surface is:
+
+- `datum-eda check run`
+- `datum-eda check show`
+
+MCP tools should expose equivalent verbs using the same input and output
+contracts. Legacy `run_erc` and `run_drc` remain compatibility aliases under
+`datum-eda check run`; they select an ERC-only or DRC-only `CheckProfile` and
+must return payloads that can be losslessly mapped into `CheckRun`.
+
+`datum-eda check show <check_run_id>` returns the persisted `CheckRun`, its
+`CheckFinding` records, explanations, evidence, waiver/deviation state, and
+proposal references. Repair generation is proposal-owned: a check may attach a
+candidate repair reference, but creation, validation, and application of the
+repair use `datum-eda proposal ...`.
+
+`get_violations` is a compatibility view over `CheckFinding` records.
+`explain_violation` is a compatibility alias for `datum-eda check show` scoped
+to one finding and must accept or infer the checking domain so results are
+interpreted against the correct graph, geometry, revision, and location type.
+
+---
+
+## 3. Inputs And Resolution
+
+Every check run must resolve project state through `ProjectResolver` rather
+than ad hoc file reads.
+
+Minimum run inputs:
 
 ```rust
-pub enum CheckDomain {
-    ERC,
-    DRC,
+pub struct CheckRunRequest {
+    pub project_ref: ProjectRef,
+    pub model_revision: ModelRevision,
+    pub profile: CheckProfileRef,
+    pub domains: Vec<CheckDomain>,
+    pub rule_filter: Option<RuleFilter>,
+    pub include_waived: bool,
+    pub include_proposals: bool,
 }
 ```
 
-- ERC consumes schematic connectivity and electrical semantics
-- DRC consumes board geometry, board connectivity, and physical rules
+- `project_ref` is resolved by `ProjectResolver`
+- `model_revision` pins the schematic, board, library, rule, and imported
+  artifact state being checked
+- runs against moving project state must first resolve an explicit
+  `model_revision`
+- findings, fingerprints, waivers, deviations, and repair proposals are keyed
+  to that revision
+- imported objects must carry import metadata, including `import_key` when an
+  Import Map was used
 
 ---
 
-## 3. Shared Result Surface
+## 4. Domains
+
+```rust
+pub enum CheckDomain {
+    Erc,
+    Drc,
+    Standards,
+    Manufacturing,
+    Relationships,
+}
+```
+
+- `Erc` consumes schematic connectivity and electrical semantics
+- `Drc` consumes board geometry, board connectivity, and physical design rules
+- `Standards` consumes declared standards bases, revision metadata, library
+  assertions, and standards-owned observables
+- `Manufacturing` consumes board geometry, stackup, process geometry, fab rules,
+  assembly rules, and manufacturing artifact metadata
+- `Relationships` consumes cross-model provenance and intent links between
+  schematic, board, library, imports, generated artifacts, and external models
+
+Relationship checks are first-class check-domain members, not hidden ERC/DRC
+side effects. Examples include:
+
+- schematic intent not realized on board
+- board object exists with no schematic origin
+- constraint propagation mismatch
+- footprint/package/library assertion drift
+- imported object identity mapped through an Import Map `import_key`
+
+Profiles decide whether relationship findings participate in pass/fail for a
+given workflow.
+
+---
+
+## 5. Check Profiles
+
+```rust
+pub struct CheckProfile {
+    pub id: String,
+    pub label: String,
+    pub domains: Vec<CheckDomain>,
+    pub rules: Vec<CheckRuleSelector>,
+    pub severity_overrides: Vec<SeverityOverride>,
+    pub pass_fail_policy: PassFailPolicy,
+    pub proposal_policy: ProposalPolicy,
+}
+```
+
+Required built-in profiles:
+
+- `erc`: electrical schematic checks only
+- `drc`: board physical checks only
+- `standards`: standards-aware metadata and observable checks
+- `manufacturing`: fabrication and assembly readiness checks
+- `release`: ERC, DRC, standards, manufacturing, and relationship checks using
+  release pass/fail policy
+
+Profiles are authored configuration. They must serialize deterministically and
+must not silently change historical run interpretation.
+
+---
+
+## 6. CheckRun And CheckFinding
+
+```rust
+pub struct CheckRun {
+    pub uuid: Uuid,
+    pub project_ref: ProjectRef,
+    pub model_revision: ModelRevision,
+    pub profile_id: String,
+    pub started_at: Timestamp,
+    pub completed_at: Option<Timestamp>,
+    pub status: CheckRunStatus,
+    pub summary: CheckSummary,
+    pub findings: Vec<CheckFinding>,
+    pub artifact_metadata: Vec<CheckArtifactMetadata>,
+}
+
+pub struct CheckFinding {
+    pub uuid: Uuid,
+    pub fingerprint: CheckFingerprint,
+    pub domain: CheckDomain,
+    pub rule_id: String,
+    pub severity: CheckSeverity,
+    pub status: CheckFindingStatus,
+    pub primary_target: CheckTarget,
+    pub related_targets: Vec<CheckTarget>,
+    pub message: String,
+    pub evidence: Vec<CheckEvidence>,
+    pub proposal_refs: Vec<ProposalRef>,
+    pub waiver_refs: Vec<Uuid>,
+    pub deviation_refs: Vec<Uuid>,
+}
+```
+
+Finding order must be stable and deterministic.
+
+`CheckFingerprint` must be derived from:
+
+- `model_revision`
+- domain
+- rule id and rule revision
+- normalized target identity
+- normalized relevant observed values
+- Import Map `import_key` where imported identity participates
+
+Fingerprints are used for stable comparison across runs. They are not object
+UUIDs and must not be treated as permanent identity when the underlying model
+revision or rule revision changes.
+
+---
+
+## 7. Severity, Status, And Summary
 
 ```rust
 pub enum CheckSeverity {
@@ -30,31 +189,61 @@ pub enum CheckSeverity {
     Info,
 }
 
+pub enum CheckFindingStatus {
+    Active,
+    Waived,
+    AcceptedDeviation,
+    Resolved,
+    Stale,
+}
+
 pub struct CheckSummary {
     pub errors: u32,
     pub warnings: u32,
     pub infos: u32,
     pub waived: u32,
+    pub accepted_deviations: u32,
+    pub proposals: u32,
 }
 ```
 
-Both ERC and DRC reports must expose:
+Reports must expose:
+
 - `passed`
-- `violations`
 - `summary`
-- stable violation ordering for deterministic output
+- `findings`
+- stable finding ordering for deterministic output
+- waiver and deviation application state
+- proposal references when repair is available
+
+Waived and accepted-deviation findings remain visible. They suppress failure
+state only according to the active profile's pass/fail policy.
 
 ---
 
-## 4. Shared Waiver Model
+## 8. Waivers And Deviations
 
 ```rust
 pub struct CheckWaiver {
     pub uuid: Uuid,
-    pub domain: CheckDomain,   // ERC | DRC
+    pub domain: CheckDomain,
     pub target: WaiverTarget,
     pub rationale: String,
     pub created_by: Option<String>,
+    pub model_revision_scope: RevisionScope,
+}
+
+pub struct CheckDeviation {
+    pub uuid: Uuid,
+    pub domain: CheckDomain,
+    pub rule_id: String,
+    pub target: CheckTarget,
+    pub expected: CheckObservedValue,
+    pub actual: CheckObservedValue,
+    pub rationale: String,
+    pub approval_status: DeviationApprovalStatus,
+    pub scope: DeviationScope,
+    pub model_revision_scope: RevisionScope,
 }
 
 pub enum WaiverTarget {
@@ -65,48 +254,80 @@ pub enum WaiverTarget {
     },
     RuleObjects {
         rule: String,
-        objects: Vec<Uuid>,   // sorted by UUID for deterministic matching
+        objects: Vec<Uuid>,
     },
+    Fingerprint(CheckFingerprint),
 }
 ```
 
-- Waivers are authored data
-- Waivers target a specific checking domain
-- Waivers never delete findings; they suppress failure state only
-- Waiver application must be explicit in reports
+- Waivers and deviations are authored data
+- Waivers suppress failure state; deviations record an accepted standards,
+  manufacturing, or design-rule delta
+- Neither waivers nor deviations delete findings
+- Application must be explicit in reports
 - `RuleObjects.objects` must be stored in deterministic UUID order
-- Waiver matching is identity-based, not name-based
-- Imported object renames do not invalidate waivers if UUID identity is stable
+- matching is identity-based, not name-based
+- imported object renames do not invalidate matching if UUID or Import Map
+  `import_key` identity is stable
+- revision scope must be explicit so stale waivers/deviations can be reported
 
 M2 minimum:
-- waivers may target exact object UUIDs or exact rule/object tuples
+
+- waivers may target exact object UUIDs, exact rule/object tuples, or exact
+  fingerprints
 - waived findings remain visible but do not fail the check
 - waivers must serialize deterministically
 
 ---
 
-## 5. Cross-Domain Checks
+## 9. Proposal-First Repairs
 
-Cross-domain checks are not part of ERC or DRC by default.
-They belong to synchronization/comparison subsystems unless explicitly
-promoted into a dedicated third checking domain later.
+Check execution is diagnostic. It must not mutate design, library, import, or
+artifact state.
 
-Examples:
-- schematic intent not realized on board
-- board object exists with no schematic origin
-- constraint propagation mismatch
+When a finding is mechanically actionable, the check system may attach a repair
+proposal. Applying the proposal is a separate user-authorized transaction that
+records provenance, source finding, model revision, and resulting model
+revision.
 
-M2 excludes these checks from pass/fail.
+This rule applies to all domains, including standards-aware footprint repair,
+manufacturing apertures, ERC no-connect insertion, relationship repair, and
+artifact regeneration.
 
 ---
 
-## 6. CLI/MCP Exposure
+## 10. ZoneFill Honesty
 
-M2 required commands/tools:
-- `run_erc`
-- `run_drc`
-- `get_violations`
-- `explain_violation`
+Zone-fill and derived-copper state must be reported honestly.
 
-`explain_violation` must accept or infer the checking domain so results are
-interpreted against the correct graph and location type.
+- Checks that require filled geometry must declare that dependency
+- A run against stale, missing, or approximate zone fills must produce an
+  explicit finding or run status rather than silently treating approximated
+  geometry as authoritative
+- Repair proposals may request zone refill/regeneration, but check execution
+  must not perform hidden fills
+- Findings affected by zone-fill state must include evidence showing whether
+  filled, stale, or approximated geometry was used
+
+---
+
+## 11. Standards And Manufacturing Observables
+
+DRC, standards, and manufacturing profiles must include standards/process
+geometry findings when a board declares a process basis. Pad copper,
+solder-mask, and paste/stencil apertures are separate manufacturing
+observables; a pad must not pass cleanly merely because mask or paste inherited
+copper geometry from an imported source.
+
+Minimum pad process-aperture finding codes:
+
+- `pad_mask_expansion_missing`
+- `pad_mask_expansion_below_rule`
+- `pad_paste_reduction_missing`
+- `pad_paste_reduction_below_rule`
+- `pad_process_aperture_inherited_from_copper`
+- `pad_process_aperture_inconsistent_with_peer_footprint`
+
+The finding is detection only. Any geometry repair must be represented as an
+explicit proposal or transaction accepted by the user; import and checking must
+not silently mutate source geometry toward an inferred IPC result.

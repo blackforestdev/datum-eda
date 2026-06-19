@@ -3,6 +3,9 @@ name = "datum-gui-app"
 version.workspace = true
 edition.workspace = true
 
+[features]
+visual = ["dep:image"]
+
 [[bin]]
 name = "datum-gui"
 path = "src/main.rs"
@@ -13,6 +16,7 @@ datum-gui-render = { path = "../gui-render" }
 anyhow.workspace = true
 arboard.workspace = true
 clap.workspace = true
+image = { version = "0.25.10", optional = true }
 pollster.workspace = true
 serde.workspace = true
 serde_json.workspace = true

@@ -1,0 +1,10 @@
+{
+  "board": "board/board.json",
+  "forward_annotation_review": {},
+  "name": "Text Fidelity Repro",
+  "pools": [],
+  "rules": "rules/rules.json",
+  "schema_version": 1,
+  "schematic": "schematic/schematic.json",
+  "uuid": "92000000-0000-0000-0000-000000000001"
+}

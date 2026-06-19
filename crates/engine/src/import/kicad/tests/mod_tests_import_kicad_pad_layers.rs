@@ -5,9 +5,7 @@
 //! parsed layer table. They do NOT fabricate any KiCad s-expression content.
 
 use crate::error::EngineError;
-use crate::import::kicad::skeleton::{
-    resolve_pad_copper_layers, resolve_pad_primary_copper_layer,
-};
+use crate::import::kicad::skeleton::{resolve_pad_copper_layers, resolve_pad_primary_copper_layer};
 
 fn tokens(items: &[&str]) -> Vec<String> {
     items.iter().map(|s| s.to_string()).collect()
@@ -76,7 +74,10 @@ fn non_copper_only_list_is_rejected() {
         .expect_err("non-copper (layers ...) must fail, not silently fall back");
     match err {
         EngineError::Import(msg) => {
-            assert!(msg.contains("unsupported"), "message should flag unsupported encoding; got {msg}");
+            assert!(
+                msg.contains("unsupported"),
+                "message should flag unsupported encoding; got {msg}"
+            );
         }
         other => panic!("expected EngineError::Import, got {other:?}"),
     }
@@ -97,4 +98,3 @@ fn empty_token_list_is_rejected() {
         .expect_err("empty (layers ...) must not silently succeed");
     assert!(matches!(err, EngineError::Import(_)));
 }
-

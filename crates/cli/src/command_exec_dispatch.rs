@@ -1,6 +1,3 @@
-use super::command_exec_native_support::{
-    parse_native_hidden_power_behavior, parse_native_symbol_display_mode,
-};
 use super::*;
 use crate::command_modify::{
     parse_apply_replacement_plan_arg, parse_apply_replacement_policy_arg,
@@ -9,7 +6,6 @@ use crate::command_modify::{
     parse_set_package_arg, parse_set_package_with_part_arg, parse_set_reference_arg,
     parse_set_value_arg,
 };
-use eda_engine::schematic::{LabelKind, PortDirection};
 
 pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
     match cli.command {

@@ -8,15 +8,16 @@ output, and route boards — with full AI agent access to every query and
 operation via MCP and CLI.
 
 ## Current Status
-M0–M5 are complete. M6 (layout strategy + AI layer) is in active
-development. Status source of truth: `specs/PROGRESS.md` and
-`specs/progress/*.md`.
+M0–M5 are complete. M6 (strategy reporting) is frozen pending evidence.
+M7 (GUI substrate + imported-board fidelity) is the active milestone.
+Status source of truth: `specs/PROGRESS.md`, `specs/progress/*.md`, and
+`specs/SPEC_PARITY.md` (machine-checked inventory shapes).
 
 **Completed capabilities (M0–M5):**
 - Canonical IR, pool foundation, deterministic import (KiCad primary)
 - Full query engine over imported and native designs
 - ERC (7 rules) and DRC (7 rules) with 0% FP/FN quality gates
-- 26+ MCP tools, CLI with proper exit codes
+- 75 MCP runtime tools (daemon-dispatched + CLI-bridged, locked via `specs/SPEC_PARITY.md`), CLI with proper exit codes
 - 20+ write operations with full undo/redo
 - KiCad write-back with sidecar persistence and round-trip fidelity
 - Native schematic and board authoring from scratch
@@ -27,16 +28,31 @@ development. Status source of truth: `specs/PROGRESS.md` and
 - Orthogonal graph synthesis with 1–6 via chains
 - Zone/obstacle/topology-aware authored-copper-graph policies
 
-**In progress (M6):**
-- Read-only deterministic strategy reporting on top of M5 routing substrate
-- Objective-to-profile mapping with explanation (`route-strategy-report`)
-- Multi-profile comparison and decision-delta surfaces
-- Batch evaluation over versioned request manifests
-- Batch result artifacts: inspect, validate, compare, gate (CI exit codes)
-- Batch result artifact directory/list summarization
-- MCP parity for strategy surfaces
+**Frozen (M6):**
+- Strategy reporting layer landed: objective-to-profile mapping, multi-profile
+  comparison, decision-delta, batch evaluation, batch-result inspect/validate/
+  compare/gate, directory summarization, full MCP parity. Frozen pending
+  repeated evidence runs from the checked-in baseline gate.
 
-**Future:** M7 (GUI), M8 (professional features)
+**In progress (M7):**
+- GUI substrate: `gui-protocol` (scene contract), `gui-render` (wgpu renderer
+  + visual regression harness), `gui-app` (winit shell)
+- `BoardReviewSceneV1` scene contract; read-only `review-route-proposal`
+  opened the milestone, imported-board fidelity track is the active body
+  of work (see `docs/gui/M7_IMPORTED_BOARD_FIDELITY_*`)
+- Active frontier: `M7-REG-001..003` regression coverage; Stage 4 closed
+  (`M7-INT-001` first slice, `M7-REN-006`, `M7-REN-003`, `M7-REN-004`
+  closed 2026-06-09..12)
+- Standards compliance posture amended into M7
+  (`specs/STANDARDS_COMPLIANCE_SPEC.md`)
+
+**Spec stubs landed, implementation deferred:**
+- Standards Audit Batch 1 (commit `db98eff`, 2026-04-17) added spec/MCP
+  stubs for behavioral models (IBIS/SPICE/Touchstone), STEP/IDF/ODB++/IPC-2581
+  export, supply-chain lookups, and controlled-impedance. No implementation
+  tracker exists yet.
+
+**Future:** M8 (professional features beyond the GUI substrate)
 
 ## Architecture: Engine-First
 
@@ -47,7 +63,7 @@ development. Status source of truth: `specs/PROGRESS.md` and
                            │ JSON-RPC / Unix socket
     ┌──────────┐    ┌──────┴──────┐    ┌──────────┐
     │   GUI    │    │   Engine    │    │   CLI    │
-    │ (future) │───→│   (Rust)    │←───│  (Rust)  │
+    │   (M7)   │───→│   (Rust)    │←───│  (Rust)  │
     └──────────┘    └─────────────┘    └──────────┘
                            │
                     ┌──────┴──────┐
@@ -55,8 +71,9 @@ development. Status source of truth: `specs/PROGRESS.md` and
                     └─────────────┘
 ```
 
-The engine is a Rust library with no GUI or rendering dependencies.
-GUI is a future consumer, not a prerequisite.
+The engine is a Rust library with no GUI or rendering dependencies. The
+GUI consumes the engine through the `gui-protocol` scene contract; it is
+a consumer, not a prerequisite, and was not a v1 blocker.
 
 ## Architectural Lineage
 Informed by study of three existing tools (not forked from any):
@@ -106,7 +123,7 @@ ethics and is explicitly forbidden on this project.
 | CLI | Rust (same engine crate) | Batch ops, CI/CD, scripting |
 | Scripting | Python via PyO3 | Universal, AI ecosystem |
 | Layout engine | Custom: constraint-formalized placement + routing with AI policy layer | No PNS dependency. Classical algorithms subsumed into formal constraint pipeline. See docs/LAYOUT_ENGINE.md |
-| GUI | Future: wgpu + custom | Not in v1 scope |
+| GUI | wgpu + winit + custom (`gui-protocol`/`gui-render`/`gui-app`) | M7 active substrate; not a v1 blocker |
 
 ## Repository Layout
 ```
@@ -152,7 +169,10 @@ project/
 │   ├── engine/             # Core engine (Rust library crate)
 │   ├── cli/                # CLI binary (Rust, depends on engine)
 │   ├── engine-daemon/      # JSON-RPC daemon over Unix socket
-│   └── test-harness/       # Perf/quality harnesses and helpers
+│   ├── test-harness/       # Perf/quality harnesses and helpers
+│   ├── gui-protocol/       # Scene contract + primitive types (no GUI deps)
+│   ├── gui-render/         # wgpu renderer + visual regression harness
+│   └── gui-app/            # winit shell for the GUI
 ├── mcp-server/             # MCP server (Python, talks to engine via IPC)
 ├── specs/                  # Controlling formal specifications
 │   ├── PROGRESS.md         # Authoritative milestone status tracker
@@ -166,12 +186,15 @@ project/
 │   ├── CHECKING_ARCHITECTURE_SPEC.md # ERC/DRC architecture spec
 │   ├── ERC_SPEC.md         # ERC technical specification
 │   ├── SCHEMATIC_CONNECTIVITY_SPEC.md # Connectivity specification
-│   └── progress/           # Per-milestone detail shards (m3, m4, m5)
+│   ├── SPEC_PARITY.md      # Code-derived inventory digests (gated by check_spec_parity.py)
+│   ├── spec_parity_manifest.json # Inventory definitions for the parity gate
+│   └── progress/           # Per-milestone shards (m3, m4, m5, m6_opening, m7_opening)
 ├── scripts/                # Validation and governance scripts
 │   ├── check_alignment.py  # Cross-module alignment verification
 │   ├── check_file_size_budgets.py # File size constraint monitoring
 │   ├── check_decomposition_coverage.py # Decomposition completeness
 │   ├── check_progress_coverage.py # Progress tracking against plan
+│   ├── check_spec_parity.py # Spec/code inventory digest gate (SPEC_PARITY.md)
 │   └── run_drift_gates.sh  # Drift gate runner
 ├── .github/                # CI/CD (alignment.yml) and PR template
 ├── tests/                  # Integration tests + regression corpus
@@ -180,6 +203,14 @@ project/
 ```
 
 ## Not Yet Implemented
-- GUI editor (M7)
-- 3D viewer or STEP export (M8)
-- Panelization, supply chain, impedance solver (M8)
+- Full GUI editor (M7 substrate and review surfaces in flight; editing
+  primitives present in `gui-protocol` but interactive editing not exposed
+  end-to-end)
+- 3D viewer (M8); STEP/IDF/ODB++/IPC-2581 export — spec stubs landed in
+  Standards Audit Batch 1, implementation deferred
+- Panelization (M8)
+- Supply-chain lookups (Octopart/Digi-Key/Mouser) and behavioral-model
+  attach (IBIS/SPICE/Touchstone) — spec stubs landed in Standards Audit
+  Batch 1, implementation deferred
+- Controlled-impedance solver — `ImpedanceSpec` stub landed in Standards
+  Audit Batch 1, solver deferred

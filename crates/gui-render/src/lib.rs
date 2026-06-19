@@ -1,8 +1,8 @@
 use datum_gui_protocol::{
-    BoardGraphicPrimitive, BoardReviewSceneV1, ComponentGraphicPrimitive, ComponentTextPrimitive,
-    DockTab, PointNm,
-    ProposalOverlayPrimitive, ReviewActionRow, ReviewWorkspaceState, SelectionTarget,
-    UnroutedPrimitive, WorkspaceTool,
+    Affine2DFixedPrimitive, BoardGraphicPrimitive, BoardReviewSceneV1, BoardTextGeometryPrimitive,
+    BoardTextPrimitive, ComponentGraphicPrimitive, ComponentTextPrimitive, DockTab,
+    GlyphMeshAssetPrimitive, GlyphMeshHandlePrimitive, PointNm, ProposalOverlayPrimitive,
+    ReviewActionRow, ReviewWorkspaceState, SelectionTarget, UnroutedPrimitive, WorkspaceTool,
 };
 use eda_engine::board::BoardText;
 use eda_engine::export::render_silkscreen_text_strokes;
@@ -11,8 +11,19 @@ use glyphon::{
     Attrs, Buffer, Cache, Color, Family, FontSystem, Metrics, Resolution, Shaping, SwashCache,
     TextArea, TextAtlas, TextBounds, TextRenderer, Viewport,
 };
+use std::collections::BTreeMap;
+use std::ops::Range;
 use uuid::Uuid;
 use wgpu::util::DeviceExt;
+
+#[cfg(feature = "visual")]
+pub mod visual_capture;
+#[cfg(feature = "visual")]
+pub mod visual_diff;
+#[cfg(feature = "visual")]
+pub mod visual_manifest;
+#[cfg(feature = "visual")]
+pub mod visual_runner;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct RectPx {
@@ -136,6 +147,26 @@ pub enum HitTarget {
     ToggleShowUnrouted,
     ToggleDimUnrelated,
     ToggleLayer(String),
+    ToggleSelectedBoardTextMirrored,
+    ToggleSelectedBoardTextKeepUpright,
+    ToggleSelectedBoardTextBold,
+    CycleSelectedBoardTextRenderIntent,
+    CycleSelectedBoardTextFamily,
+    CycleSelectedBoardTextHAlign,
+    CycleSelectedBoardTextVAlign,
+    EditSelectedBoardTextRenderIntent,
+    EditSelectedBoardTextFamily,
+    EditSelectedBoardTextAlignment,
+    DecreaseSelectedBoardTextHeight,
+    IncreaseSelectedBoardTextHeight,
+    RotateSelectedBoardTextCounterClockwise90,
+    RotateSelectedBoardTextClockwise90,
+    DecreaseSelectedBoardTextLineSpacing,
+    IncreaseSelectedBoardTextLineSpacing,
+    EditSelectedBoardTextContent,
+    EditSelectedBoardTextHeight,
+    EditSelectedBoardTextRotation,
+    EditSelectedBoardTextLineSpacing,
     TerminalTab,
     AssistantTab,
     DockResizeHandle,
@@ -157,18 +188,28 @@ pub struct PreparedScene {
     panel_vertices: Vec<Vertex>,
     viewport_underlay_vertices: Vec<Vertex>,
     viewport_overlay_vertices: Vec<Vertex>,
+    visible_world_ranges: Vec<Range<u32>>,
     text_runs: Vec<TextRun>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct RetainedScene {
     world_vertices: Vec<Vertex>,
+    world_batches: Vec<RetainedWorldBatch>,
     world_hit_regions: Vec<WorldHitRegion>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct RetainedWorldBatch {
+    layer_id: Option<String>,
+    start: u32,
+    len: u32,
 }
 
 #[derive(Debug, Clone, PartialEq)]
 struct WorldHitRegion {
     target: HitTarget,
+    layer_id: Option<String>,
     shape: WorldHitShape,
 }
 
@@ -308,6 +349,12 @@ struct CachedTextBuffer {
     buffer: Buffer,
 }
 
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+struct TextBufferCacheStats {
+    hits: usize,
+    misses: usize,
+}
+
 const APP_BG: [f32; 3] = [0.07, 0.08, 0.09];
 const PANEL_BG: [f32; 3] = [0.11, 0.12, 0.14];
 const PANEL_CARD_BG: [f32; 3] = [0.14, 0.15, 0.18];
@@ -371,21 +418,39 @@ enum LayerFamily {
     Unknown,
 }
 
+/// Declared render-stack policy (`docs/gui/M7_RENDER_LAYER_DISCIPLINE_MEMO.md`,
+/// 2026-04-16 rule): layer type group first, then back-to-front side, with
+/// scene `render_order` only as a stable in-stage tie-breaker. Declaration
+/// order IS the draw order; `render_stage_priority` derives from it. Do not
+/// reintroduce a second ordering encoding.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 enum RenderStage {
     BottomCopper,
     InnerCopper,
     TopCopper,
-    BottomPaste,
-    TopPaste,
     BottomMask,
     TopMask,
+    BottomPaste,
+    TopPaste,
     BottomSilk,
     TopSilk,
     Mechanical,
     Edge,
     Other,
 }
+
+/// The shared post-copper stage walk, in declared draw order. Both retained
+/// scene assembly and board-graphics emission iterate this one list.
+const POST_COPPER_STAGES: [RenderStage; 8] = [
+    RenderStage::BottomMask,
+    RenderStage::TopMask,
+    RenderStage::BottomPaste,
+    RenderStage::TopPaste,
+    RenderStage::BottomSilk,
+    RenderStage::TopSilk,
+    RenderStage::Mechanical,
+    RenderStage::Edge,
+];
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 struct LayerAppearance {
@@ -420,7 +485,7 @@ impl PreparedScene {
         width: u32,
         height: u32,
         camera: CameraState,
-        _retained_scene: &RetainedScene,
+        retained_scene: &RetainedScene,
     ) -> Self {
         let layout = ShellLayout::for_window(width, height, dock_height_for_state(state));
         let mut panel_quads = Vec::new();
@@ -462,6 +527,7 @@ impl PreparedScene {
         let panel_vertices = quads_to_vertices(&panel_quads);
         let viewport_underlay_vertices = quads_to_vertices(&viewport_underlay_quads);
         let viewport_overlay_vertices = quads_to_vertices(&viewport_overlay_quads);
+        let visible_world_ranges = retained_scene.visible_world_ranges(state);
 
         Self {
             layout,
@@ -472,6 +538,7 @@ impl PreparedScene {
             panel_vertices,
             viewport_underlay_vertices,
             viewport_overlay_vertices,
+            visible_world_ranges,
             text_runs,
         }
     }
@@ -504,10 +571,15 @@ impl PreparedScene {
     fn viewport_overlay_vertices(&self) -> &[Vertex] {
         &self.viewport_overlay_vertices
     }
+
+    fn visible_world_ranges(&self) -> &[Range<u32>] {
+        &self.visible_world_ranges
+    }
 }
 
 impl RetainedScene {
     pub fn from_workspace(state: &ReviewWorkspaceState, width: u32, height: u32) -> Self {
+        let started = std::time::Instant::now();
         let layout = ShellLayout::for_window(width, height, dock_height_for_state(state));
         let scene_viewport = layout.scene_viewport();
         let board_field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
@@ -517,24 +589,100 @@ impl RetainedScene {
             CameraState::fit_to_bounds(&state.scene.bounds),
         );
         let mut world_quads = Vec::new();
+        let mut world_batches = Vec::new();
         let mut world_hit_regions = Vec::new();
+        let geometry_started = std::time::Instant::now();
         push_retained_scene_geometry(&mut world_quads, &state.scene, &reference_projection, state);
+        if !world_quads.is_empty() {
+            world_batches.push(RetainedWorldBatch {
+                layer_id: None,
+                start: 0,
+                len: (world_quads.len() * 6) as u32,
+            });
+        }
+        let board_graphics_started = std::time::Instant::now();
+        let board_graphics_before = world_quads.len();
+        push_retained_board_text_geometry_batches(
+            &mut world_quads,
+            &mut world_batches,
+            &state.scene,
+            &reference_projection,
+            state,
+        );
+        push_retained_board_graphic_batches(
+            &mut world_quads,
+            &mut world_batches,
+            &state.scene,
+            &reference_projection,
+            state,
+        );
+        trace_render_timing(format!(
+            "retained text+board_graphics batches={}ms/{}q",
+            board_graphics_started.elapsed().as_millis(),
+            world_quads.len().saturating_sub(board_graphics_before)
+        ));
+        let geometry_elapsed = geometry_started.elapsed();
+        let hits_started = std::time::Instant::now();
         push_retained_world_hit_regions(&mut world_hit_regions, &state.scene, state);
+        let hits_elapsed = hits_started.elapsed();
+        let vertex_started = std::time::Instant::now();
+        let world_vertices = quads_to_vertices(&world_quads);
+        let vertex_elapsed = vertex_started.elapsed();
+        trace_render_timing(format!(
+            "retained total={}ms geometry={}ms hits={}ms vertices={}ms quads={} vertices={} hit_regions={}",
+            started.elapsed().as_millis(),
+            geometry_elapsed.as_millis(),
+            hits_elapsed.as_millis(),
+            vertex_elapsed.as_millis(),
+            world_quads.len(),
+            world_vertices.len(),
+            world_hit_regions.len()
+        ));
         Self {
-            world_vertices: quads_to_vertices(&world_quads),
+            world_vertices,
+            world_batches,
             world_hit_regions,
         }
     }
 
-    fn world_vertices(&self) -> &[Vertex] {
+    pub fn world_vertices(&self) -> &[Vertex] {
         &self.world_vertices
     }
 
-    pub fn hit_test_authored_world(&self, point: PointNm) -> Option<&HitTarget> {
+    fn visible_world_ranges(&self, state: &ReviewWorkspaceState) -> Vec<Range<u32>> {
+        if !authored_visible(state) {
+            return Vec::new();
+        }
+        self.world_batches
+            .iter()
+            .filter(|batch| {
+                batch
+                    .layer_id
+                    .as_deref()
+                    .is_none_or(|layer_id| layer_visible(state, layer_id))
+            })
+            .map(|batch| batch.start..batch.start + batch.len)
+            .collect()
+    }
+
+    pub fn hit_test_authored_world(
+        &self,
+        point: PointNm,
+        state: &ReviewWorkspaceState,
+    ) -> Option<&HitTarget> {
+        if !authored_visible(state) {
+            return None;
+        }
         self.world_hit_regions
             .iter()
             .rev()
-            .find(|region| region.shape.contains(point))
+            .find(|region| {
+                region
+                    .layer_id
+                    .as_deref()
+                    .is_none_or(|layer_id| layer_visible(state, layer_id))
+                    && region.shape.contains(point)
+            })
             .map(|region| &region.target)
     }
 }
@@ -578,17 +726,24 @@ fn render_side_panels(
         width: left.width - 28.0,
         height: (left.height - 164.0).max(100.0),
     };
+    let board_text_selected = matches!(
+        &state.selection,
+        SelectionTarget::AuthoredObject(object_id)
+            if state.scene.board_texts.iter().any(|text| &text.object_id == object_id)
+    );
+    let inspector_height = if board_text_selected { 330.0 } else { 150.0 };
     let inspector_rect = RectPx {
         x: right.x + 14.0,
         y: right.y + 14.0,
         width: right.width - 28.0,
-        height: 150.0,
+        height: inspector_height,
     };
+    let review_y = inspector_rect.y + inspector_rect.height + 12.0;
     let review_rect = RectPx {
         x: right.x + 14.0,
-        y: right.y + 176.0,
+        y: review_y,
         width: right.width - 28.0,
-        height: right.height - 190.0,
+        height: (right.y + right.height - review_y - 14.0).max(100.0),
     };
 
     for (rect, title) in [
@@ -708,10 +863,10 @@ fn render_side_panels(
     hit_regions.push(HitRegion {
         target: HitTarget::ToggleShowAuthored,
         rect: RectPx {
-            x: filters_rect.x + 8.0,
-            y: filters_rect.y + 30.0,
-            width: filters_rect.width - 16.0,
-            height: 18.0,
+            x: filters_rect.x + 4.0,
+            y: filters_rect.y + 28.0,
+            width: filters_rect.width - 8.0,
+            height: 22.0,
         },
     });
     push_boolean_row(
@@ -724,10 +879,10 @@ fn render_side_panels(
     hit_regions.push(HitRegion {
         target: HitTarget::ToggleShowProposed,
         rect: RectPx {
-            x: filters_rect.x + 8.0,
-            y: filters_rect.y + 50.0,
-            width: filters_rect.width - 16.0,
-            height: 18.0,
+            x: filters_rect.x + 4.0,
+            y: filters_rect.y + 48.0,
+            width: filters_rect.width - 8.0,
+            height: 22.0,
         },
     });
     push_boolean_row(
@@ -740,10 +895,10 @@ fn render_side_panels(
     hit_regions.push(HitRegion {
         target: HitTarget::ToggleShowUnrouted,
         rect: RectPx {
-            x: filters_rect.x + 8.0,
-            y: filters_rect.y + 70.0,
-            width: filters_rect.width - 16.0,
-            height: 18.0,
+            x: filters_rect.x + 4.0,
+            y: filters_rect.y + 68.0,
+            width: filters_rect.width - 8.0,
+            height: 22.0,
         },
     });
     push_boolean_row(
@@ -756,10 +911,10 @@ fn render_side_panels(
     hit_regions.push(HitRegion {
         target: HitTarget::ToggleDimUnrelated,
         rect: RectPx {
-            x: filters_rect.x + 8.0,
-            y: filters_rect.y + 90.0,
-            width: filters_rect.width - 16.0,
-            height: 18.0,
+            x: filters_rect.x + 4.0,
+            y: filters_rect.y + 88.0,
+            width: filters_rect.width - 8.0,
+            height: 22.0,
         },
     });
     let mut layer_y = filters_rect.y + 120.0;
@@ -791,10 +946,10 @@ fn render_side_panels(
         hit_regions.push(HitRegion {
             target: HitTarget::ToggleLayer(layer.layer_id.clone()),
             rect: RectPx {
-                x: filters_rect.x + 8.0,
-                y: layer_y - 6.0,
-                width: filters_rect.width - 16.0,
-                height: 18.0,
+                x: filters_rect.x + 4.0,
+                y: layer_y - 8.0,
+                width: filters_rect.width - 8.0,
+                height: 22.0,
             },
         });
         layer_y += 20.0;
@@ -823,7 +978,10 @@ fn render_side_panels(
         text_runs,
     );
     draw_text(
-        &format!("FOCUS {}", if has_review_focus(state) { "ON" } else { "OFF" }),
+        &format!(
+            "FOCUS {}",
+            if has_review_focus(state) { "ON" } else { "OFF" }
+        ),
         filters_rect.x + 12.0,
         filters_rect.y + 198.0,
         11.0,
@@ -858,7 +1016,12 @@ fn render_side_panels(
         }
         SelectionTarget::AuthoredObject(object_id) => {
             let mut y = inspector_rect.y + 54.0;
-            if let Some(comp) = state.scene.components.iter().find(|c| &c.object_id == object_id) {
+            if let Some(comp) = state
+                .scene
+                .components
+                .iter()
+                .find(|c| &c.object_id == object_id)
+            {
                 draw_text(
                     &comp.reference.to_uppercase(),
                     inspector_rect.x + 12.0,
@@ -870,13 +1033,38 @@ fn render_side_panels(
                 );
                 y += 20.0;
                 if let Some(value) = &comp.value {
-                    push_key_value(inspector_rect.x + 12.0, y, "VALUE", &value.to_uppercase(), text_runs, TextFace::Ui);
+                    push_key_value(
+                        inspector_rect.x + 12.0,
+                        y,
+                        "VALUE",
+                        &value.to_uppercase(),
+                        text_runs,
+                        TextFace::Ui,
+                    );
                     y += 18.0;
                 }
-                push_key_value(inspector_rect.x + 12.0, y, "LAYER", &comp.placement_layer.to_uppercase(), text_runs, TextFace::Mono);
+                push_key_value(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "LAYER",
+                    &comp.placement_layer.to_uppercase(),
+                    text_runs,
+                    TextFace::Mono,
+                );
                 y += 18.0;
-                let pos = format!("{:.2}, {:.2} mm", comp.position.x as f64 / 1_000_000.0, comp.position.y as f64 / 1_000_000.0);
-                push_key_value(inspector_rect.x + 12.0, y, "POS", &pos, text_runs, TextFace::Mono);
+                let pos = format!(
+                    "{:.2}, {:.2} mm",
+                    comp.position.x as f64 / 1_000_000.0,
+                    comp.position.y as f64 / 1_000_000.0
+                );
+                push_key_value(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "POS",
+                    &pos,
+                    text_runs,
+                    TextFace::Mono,
+                );
             } else if let Some(pad) = state.scene.pads.iter().find(|p| &p.object_id == object_id) {
                 draw_text(
                     &format!("PAD {}", pad.shape_kind.to_uppercase()),
@@ -888,16 +1076,42 @@ fn render_side_panels(
                     text_runs,
                 );
                 y += 20.0;
-                push_key_value(inspector_rect.x + 12.0, y, "LAYER", &pad.layer_id.to_uppercase(), text_runs, TextFace::Mono);
+                push_key_value(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "LAYER",
+                    &pad.layer_id.to_uppercase(),
+                    text_runs,
+                    TextFace::Mono,
+                );
                 y += 18.0;
                 let w = (pad.bounds.max_x - pad.bounds.min_x) as f64 / 1_000_000.0;
                 let h = (pad.bounds.max_y - pad.bounds.min_y) as f64 / 1_000_000.0;
-                push_key_value(inspector_rect.x + 12.0, y, "SIZE", &format!("{w:.2} x {h:.2} mm"), text_runs, TextFace::Mono);
+                push_key_value(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "SIZE",
+                    &format!("{w:.2} x {h:.2} mm"),
+                    text_runs,
+                    TextFace::Mono,
+                );
                 y += 18.0;
                 if let Some(drill) = pad.drill_nm {
-                    push_key_value(inspector_rect.x + 12.0, y, "DRILL", &format!("{:.2} mm", drill as f64 / 1_000_000.0), text_runs, TextFace::Mono);
+                    push_key_value(
+                        inspector_rect.x + 12.0,
+                        y,
+                        "DRILL",
+                        &format!("{:.2} mm", drill as f64 / 1_000_000.0),
+                        text_runs,
+                        TextFace::Mono,
+                    );
                 }
-            } else if let Some(track) = state.scene.tracks.iter().find(|t| &t.object_id == object_id) {
+            } else if let Some(track) = state
+                .scene
+                .tracks
+                .iter()
+                .find(|t| &t.object_id == object_id)
+            {
                 draw_text(
                     "TRACK",
                     inspector_rect.x + 12.0,
@@ -908,9 +1122,23 @@ fn render_side_panels(
                     text_runs,
                 );
                 y += 20.0;
-                push_key_value(inspector_rect.x + 12.0, y, "LAYER", &track.layer_id.to_uppercase(), text_runs, TextFace::Mono);
+                push_key_value(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "LAYER",
+                    &track.layer_id.to_uppercase(),
+                    text_runs,
+                    TextFace::Mono,
+                );
                 y += 18.0;
-                push_key_value(inspector_rect.x + 12.0, y, "WIDTH", &format!("{:.2} mm", track.width_nm as f64 / 1_000_000.0), text_runs, TextFace::Mono);
+                push_key_value(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "WIDTH",
+                    &format!("{:.2} mm", track.width_nm as f64 / 1_000_000.0),
+                    text_runs,
+                    TextFace::Mono,
+                );
             } else if let Some(via) = state.scene.vias.iter().find(|v| &v.object_id == object_id) {
                 draw_text(
                     "VIA",
@@ -922,14 +1150,378 @@ fn render_side_panels(
                     text_runs,
                 );
                 y += 20.0;
-                push_key_value(inspector_rect.x + 12.0, y, "DIA", &format!("{:.2} mm", via.diameter_nm as f64 / 1_000_000.0), text_runs, TextFace::Mono);
+                push_key_value(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "DIA",
+                    &format!("{:.2} mm", via.diameter_nm as f64 / 1_000_000.0),
+                    text_runs,
+                    TextFace::Mono,
+                );
                 y += 18.0;
-                push_key_value(inspector_rect.x + 12.0, y, "DRILL", &format!("{:.2} mm", via.drill_nm as f64 / 1_000_000.0), text_runs, TextFace::Mono);
+                push_key_value(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "DRILL",
+                    &format!("{:.2} mm", via.drill_nm as f64 / 1_000_000.0),
+                    text_runs,
+                    TextFace::Mono,
+                );
                 y += 18.0;
-                push_key_value(inspector_rect.x + 12.0, y, "LAYERS", &format!("{} → {}", via.start_layer_id.to_uppercase(), via.end_layer_id.to_uppercase()), text_runs, TextFace::Mono);
+                push_key_value(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "LAYERS",
+                    &format!(
+                        "{} → {}",
+                        via.start_layer_id.to_uppercase(),
+                        via.end_layer_id.to_uppercase()
+                    ),
+                    text_runs,
+                    TextFace::Mono,
+                );
+            } else if let Some(text) = state
+                .scene
+                .board_texts
+                .iter()
+                .find(|t| &t.object_id == object_id)
+            {
+                draw_text(
+                    "BOARD TEXT",
+                    inspector_rect.x + 12.0,
+                    y,
+                    15.0,
+                    TEXT_PRIMARY,
+                    TextFace::Mono,
+                    text_runs,
+                );
+                y += 20.0;
+                push_board_text_property_row(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "TEXT",
+                    &truncate_text(&text.text.to_uppercase(), 18),
+                    text_runs,
+                );
+                hit_regions.push(HitRegion {
+                    target: HitTarget::EditSelectedBoardTextContent,
+                    rect: RectPx {
+                        x: inspector_rect.x + 8.0,
+                        y: y - 6.0,
+                        width: inspector_rect.width - 16.0,
+                        height: 18.0,
+                    },
+                });
+                y += 18.0;
+                push_board_text_property_row(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "EDIT",
+                    "CONTENT",
+                    text_runs,
+                );
+                hit_regions.push(HitRegion {
+                    target: HitTarget::EditSelectedBoardTextContent,
+                    rect: RectPx {
+                        x: inspector_rect.x + 8.0,
+                        y: y - 6.0,
+                        width: inspector_rect.width - 16.0,
+                        height: 18.0,
+                    },
+                });
+                y += 18.0;
+                push_board_text_property_row(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "INTENT",
+                    &text.render_intent.to_uppercase(),
+                    text_runs,
+                );
+                let row_x = inspector_rect.x + 8.0;
+                let row_w = inspector_rect.width - 16.0;
+                hit_regions.push(HitRegion {
+                    target: HitTarget::CycleSelectedBoardTextRenderIntent,
+                    rect: RectPx {
+                        x: row_x,
+                        y: y - 6.0,
+                        width: row_w * 0.25,
+                        height: 18.0,
+                    },
+                });
+                hit_regions.push(HitRegion {
+                    target: HitTarget::EditSelectedBoardTextRenderIntent,
+                    rect: RectPx {
+                        x: row_x + row_w * 0.25,
+                        y: y - 6.0,
+                        width: row_w * 0.5,
+                        height: 18.0,
+                    },
+                });
+                hit_regions.push(HitRegion {
+                    target: HitTarget::CycleSelectedBoardTextRenderIntent,
+                    rect: RectPx {
+                        x: row_x + row_w * 0.75,
+                        y: y - 6.0,
+                        width: row_w * 0.25,
+                        height: 18.0,
+                    },
+                });
+                y += 18.0;
+                push_board_text_property_row(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "FONT",
+                    &truncate_text(&text.family.to_uppercase(), 16),
+                    text_runs,
+                );
+                let row_x = inspector_rect.x + 8.0;
+                let row_w = inspector_rect.width - 16.0;
+                hit_regions.push(HitRegion {
+                    target: HitTarget::CycleSelectedBoardTextFamily,
+                    rect: RectPx {
+                        x: row_x,
+                        y: y - 6.0,
+                        width: row_w * 0.25,
+                        height: 18.0,
+                    },
+                });
+                hit_regions.push(HitRegion {
+                    target: HitTarget::EditSelectedBoardTextFamily,
+                    rect: RectPx {
+                        x: row_x + row_w * 0.25,
+                        y: y - 6.0,
+                        width: row_w * 0.5,
+                        height: 18.0,
+                    },
+                });
+                hit_regions.push(HitRegion {
+                    target: HitTarget::CycleSelectedBoardTextFamily,
+                    rect: RectPx {
+                        x: row_x + row_w * 0.75,
+                        y: y - 6.0,
+                        width: row_w * 0.25,
+                        height: 18.0,
+                    },
+                });
+                y += 18.0;
+                push_board_text_property_row(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "HEIGHT",
+                    &format!("{:.2} mm", text.height_nm as f64 / 1_000_000.0),
+                    text_runs,
+                );
+                let row_x = inspector_rect.x + 8.0;
+                let row_w = inspector_rect.width - 16.0;
+                hit_regions.push(HitRegion {
+                    target: HitTarget::DecreaseSelectedBoardTextHeight,
+                    rect: RectPx {
+                        x: row_x,
+                        y: y - 6.0,
+                        width: row_w * 0.25,
+                        height: 18.0,
+                    },
+                });
+                hit_regions.push(HitRegion {
+                    target: HitTarget::EditSelectedBoardTextHeight,
+                    rect: RectPx {
+                        x: row_x + row_w * 0.25,
+                        y: y - 6.0,
+                        width: row_w * 0.5,
+                        height: 18.0,
+                    },
+                });
+                hit_regions.push(HitRegion {
+                    target: HitTarget::IncreaseSelectedBoardTextHeight,
+                    rect: RectPx {
+                        x: row_x + row_w * 0.75,
+                        y: y - 6.0,
+                        width: row_w * 0.25,
+                        height: 18.0,
+                    },
+                });
+                y += 18.0;
+                push_board_text_property_row(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "ROT",
+                    &format!("{}°", text.rotation_degrees.rem_euclid(360)),
+                    text_runs,
+                );
+                let row_x = inspector_rect.x + 8.0;
+                let row_w = inspector_rect.width - 16.0;
+                hit_regions.push(HitRegion {
+                    target: HitTarget::RotateSelectedBoardTextCounterClockwise90,
+                    rect: RectPx {
+                        x: row_x,
+                        y: y - 6.0,
+                        width: row_w * 0.25,
+                        height: 18.0,
+                    },
+                });
+                hit_regions.push(HitRegion {
+                    target: HitTarget::EditSelectedBoardTextRotation,
+                    rect: RectPx {
+                        x: row_x + row_w * 0.25,
+                        y: y - 6.0,
+                        width: row_w * 0.5,
+                        height: 18.0,
+                    },
+                });
+                hit_regions.push(HitRegion {
+                    target: HitTarget::RotateSelectedBoardTextClockwise90,
+                    rect: RectPx {
+                        x: row_x + row_w * 0.75,
+                        y: y - 6.0,
+                        width: row_w * 0.25,
+                        height: 18.0,
+                    },
+                });
+                y += 18.0;
+                push_board_text_property_row(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "ALIGN",
+                    &format!(
+                        "{} / {}",
+                        text.h_align.to_uppercase(),
+                        text.v_align.to_uppercase()
+                    ),
+                    text_runs,
+                );
+                let row_x = inspector_rect.x + 8.0;
+                let row_w = inspector_rect.width - 16.0;
+                hit_regions.push(HitRegion {
+                    target: HitTarget::CycleSelectedBoardTextHAlign,
+                    rect: RectPx {
+                        x: row_x,
+                        y: y - 6.0,
+                        width: row_w * 0.25,
+                        height: 18.0,
+                    },
+                });
+                hit_regions.push(HitRegion {
+                    target: HitTarget::EditSelectedBoardTextAlignment,
+                    rect: RectPx {
+                        x: row_x + row_w * 0.25,
+                        y: y - 6.0,
+                        width: row_w * 0.5,
+                        height: 18.0,
+                    },
+                });
+                hit_regions.push(HitRegion {
+                    target: HitTarget::CycleSelectedBoardTextVAlign,
+                    rect: RectPx {
+                        x: row_x + row_w * 0.75,
+                        y: y - 6.0,
+                        width: row_w * 0.25,
+                        height: 18.0,
+                    },
+                });
+                y += 18.0;
+                push_board_text_property_row(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "LINE",
+                    &format!("{}%", text.line_spacing_ratio_ppm / 10_000),
+                    text_runs,
+                );
+                let row_x = inspector_rect.x + 8.0;
+                let row_w = inspector_rect.width - 16.0;
+                hit_regions.push(HitRegion {
+                    target: HitTarget::DecreaseSelectedBoardTextLineSpacing,
+                    rect: RectPx {
+                        x: row_x,
+                        y: y - 6.0,
+                        width: row_w * 0.25,
+                        height: 18.0,
+                    },
+                });
+                hit_regions.push(HitRegion {
+                    target: HitTarget::EditSelectedBoardTextLineSpacing,
+                    rect: RectPx {
+                        x: row_x + row_w * 0.25,
+                        y: y - 6.0,
+                        width: row_w * 0.5,
+                        height: 18.0,
+                    },
+                });
+                hit_regions.push(HitRegion {
+                    target: HitTarget::IncreaseSelectedBoardTextLineSpacing,
+                    rect: RectPx {
+                        x: row_x + row_w * 0.75,
+                        y: y - 6.0,
+                        width: row_w * 0.25,
+                        height: 18.0,
+                    },
+                });
+                y += 18.0;
+                push_board_text_property_row(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "BOLD",
+                    if text.bold { "ON" } else { "OFF" },
+                    text_runs,
+                );
+                hit_regions.push(HitRegion {
+                    target: HitTarget::ToggleSelectedBoardTextBold,
+                    rect: RectPx {
+                        x: inspector_rect.x + 8.0,
+                        y: y - 6.0,
+                        width: inspector_rect.width - 16.0,
+                        height: 18.0,
+                    },
+                });
+                y += 18.0;
+                push_board_text_property_row(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "MIRROR",
+                    if text.mirrored { "ON" } else { "OFF" },
+                    text_runs,
+                );
+                hit_regions.push(HitRegion {
+                    target: HitTarget::ToggleSelectedBoardTextMirrored,
+                    rect: RectPx {
+                        x: inspector_rect.x + 8.0,
+                        y: y - 6.0,
+                        width: inspector_rect.width - 16.0,
+                        height: 18.0,
+                    },
+                });
+                y += 18.0;
+                push_board_text_property_row(
+                    inspector_rect.x + 12.0,
+                    y,
+                    "UPRIGHT",
+                    if text.keep_upright { "ON" } else { "OFF" },
+                    text_runs,
+                );
+                hit_regions.push(HitRegion {
+                    target: HitTarget::ToggleSelectedBoardTextKeepUpright,
+                    rect: RectPx {
+                        x: inspector_rect.x + 8.0,
+                        y: y - 6.0,
+                        width: inspector_rect.width - 16.0,
+                        height: 18.0,
+                    },
+                });
+                y += 20.0;
+                draw_text(
+                    "EDGE +/-   CENTER EDIT",
+                    inspector_rect.x + 12.0,
+                    y,
+                    10.5,
+                    TEXT_MUTED,
+                    TextFace::Mono,
+                    text_runs,
+                );
             } else {
                 draw_text(
-                    &format!("OBJECT {}", truncate_text(&suffix_id(object_id).to_uppercase(), 14)),
+                    &format!(
+                        "OBJECT {}",
+                        truncate_text(&suffix_id(object_id).to_uppercase(), 14)
+                    ),
                     inspector_rect.x + 12.0,
                     y,
                     15.0,
@@ -1280,10 +1872,21 @@ fn render_terminal_lane(state: &ReviewWorkspaceState, rect: RectPx, text_runs: &
     );
     let max_lines = ((rect.height - 56.0) / 16.0).floor().max(1.0) as usize;
     let total = state.ui.terminal.lines.len();
-    let scroll = state.ui.terminal.scroll_offset.min(total.saturating_sub(max_lines));
+    let scroll = state
+        .ui
+        .terminal
+        .scroll_offset
+        .min(total.saturating_sub(max_lines));
     let tail_start = total.saturating_sub(max_lines + scroll);
     let mut y = rect.y + 46.0;
-    for line in state.ui.terminal.lines.iter().skip(tail_start).take(max_lines) {
+    for line in state
+        .ui
+        .terminal
+        .lines
+        .iter()
+        .skip(tail_start)
+        .take(max_lines)
+    {
         draw_text(
             &truncate_text(line, 180),
             rect.x + 12.0,
@@ -1322,10 +1925,21 @@ fn render_assistant_lane(state: &ReviewWorkspaceState, rect: RectPx, text_runs: 
     );
     let max_lines = ((rect.height - 58.0) / 18.0).floor().max(1.0) as usize;
     let total = state.ui.assistant.transcript.len();
-    let scroll = state.ui.assistant.scroll_offset.min(total.saturating_sub(max_lines));
+    let scroll = state
+        .ui
+        .assistant
+        .scroll_offset
+        .min(total.saturating_sub(max_lines));
     let tail_start = total.saturating_sub(max_lines + scroll);
     let mut y = rect.y + 48.0;
-    for msg in state.ui.assistant.transcript.iter().skip(tail_start).take(max_lines) {
+    for msg in state
+        .ui
+        .assistant
+        .transcript
+        .iter()
+        .skip(tail_start)
+        .take(max_lines)
+    {
         draw_text(
             &truncate_text(
                 &format!("{}: {}", msg.role.to_uppercase(), msg.content),
@@ -1355,10 +1969,7 @@ fn render_assistant_lane(state: &ReviewWorkspaceState, rect: RectPx, text_runs: 
             "[hidden]".to_string()
         }
     } else {
-        let (before, after) = split_at_cursor(
-            &state.ui.assistant.input,
-            state.ui.assistant.cursor,
-        );
+        let (before, after) = split_at_cursor(&state.ui.assistant.input, state.ui.assistant.cursor);
         format!("{before}|{after}")
     };
     draw_text(
@@ -1614,7 +2225,8 @@ fn unrouted_matches_active_action(
 }
 
 fn unrouted_base_color(scene: &BoardReviewSceneV1, unrouted: &UnroutedPrimitive) -> [f32; 3] {
-    scene.net_display
+    scene
+        .net_display
         .iter()
         .find(|entry| entry.net_uuid == unrouted.net_uuid)
         .map(|entry| entry.airwire_color_rgb)
@@ -1660,7 +2272,25 @@ fn component_object_id_for_uuid<'a>(
     })
 }
 
-
+/// Retained authored-board geometry pass.
+///
+/// Contract (`M7-REN-006`, `docs/gui/M7_RENDER_LAYER_DISCIPLINE_MEMO.md`):
+/// layer/material semantics are primary — layer ownership decides visibility,
+/// the layer's material decides base appearance, and stage order follows the
+/// declared `RenderStage` policy. Primitive class only refines stroke/fill.
+///
+/// Bounded exceptions (explicit, product-justified; do not grow this list
+/// without a memo note):
+/// - through-hole pads: drawn in a dedicated post-layer pass because their
+///   copper spans multiple layers and must follow the visible-copper rule;
+/// - vias: a distinct geometry family (annulus + hole), though their color
+///   inherits the visible copper layer's material;
+/// - board outline / `board_graphics` Edge overlay: the board-boundary view
+///   is a product-level overlay on top of the authored stage walk;
+/// - selection/hover/review emphasis: interaction-state styling deliberately
+///   overrides material color for the owned object only;
+/// - unknown-layer fallback appearance: deliberately divergent so unresolved
+///   layer identity stays visible (see `resolve_layer_appearance_with_scene`).
 fn push_retained_scene_geometry(
     out: &mut Vec<Quad>,
     scene: &BoardReviewSceneV1,
@@ -1672,6 +2302,8 @@ fn push_retained_scene_geometry(
     let layer_app = |id: &str| resolve_layer_appearance_with_scene(Some(id), sl);
     // Render copper in physical stack order first; later stages (paste/mask/silk/mechanical/edge)
     // are handled by explicit render-stage grouping below.
+    let copper_started = std::time::Instant::now();
+    let copper_before = out.len();
     for pass_priority in [0u32, 1, 2] {
         for zone in &scene.zones {
             if copper_pass_priority_for_layer(&zone.layer_id, sl) != Some(pass_priority) {
@@ -1713,9 +2345,10 @@ fn push_retained_scene_geometry(
                     dim_unrelated_active(state) && !selected && !related,
                 )
             };
-            let track_width_nm = (track.width_nm as f32).max(
-                world_stroke_nm(if selected { 3.0 } else { 2.0 }, reference_projection),
-            );
+            let track_width_nm = (track.width_nm as f32).max(world_stroke_nm(
+                if selected { 3.0 } else { 2.0 },
+                reference_projection,
+            ));
             push_world_polyline_segments(out, &track.path, track_width_nm, color);
             let half = (track_width_nm * 0.5).round() as i64;
             for point in &track.path {
@@ -1803,10 +2436,15 @@ fn push_retained_scene_geometry(
             );
         }
     }
-    let mechanical_graphics: Vec<_> = scene.component_graphics.iter().filter(|graphic| {
-        graphic.render_role == "component_mechanical"
-            && active_move_component_uuid.as_deref() != Some(graphic.component_uuid.as_str())
-    }).collect();
+    trace_retained_stage("copper", copper_started, copper_before, out.len());
+    let mechanical_graphics: Vec<_> = scene
+        .component_graphics
+        .iter()
+        .filter(|graphic| {
+            graphic.render_role == "component_mechanical"
+                && active_move_component_uuid.as_deref() != Some(graphic.component_uuid.as_str())
+        })
+        .collect();
     let mut process_layers: Vec<_> = scene
         .layers
         .iter()
@@ -1821,21 +2459,27 @@ fn push_retained_scene_geometry(
         })
         .collect();
     process_layers.sort_by_key(|(layer_id, _)| scene_layer_stack_priority(layer_id, sl));
-    let silkscreen_graphics: Vec<_> = scene.component_graphics.iter().filter(|graphic| {
-        graphic.render_role == "component_silkscreen"
-            && active_move_component_uuid.as_deref() != Some(graphic.component_uuid.as_str())
-    }).collect();
-    let post_copper_stages = [
-        RenderStage::BottomMask,
-        RenderStage::TopMask,
-        RenderStage::BottomPaste,
-        RenderStage::TopPaste,
-        RenderStage::BottomSilk,
-        RenderStage::TopSilk,
-        RenderStage::Mechanical,
-        RenderStage::Edge,
-    ];
-    for stage in post_copper_stages {
+    let silkscreen_graphics: Vec<_> = scene
+        .component_graphics
+        .iter()
+        .filter(|graphic| {
+            graphic.render_role == "component_silkscreen"
+                && active_move_component_uuid.as_deref() != Some(graphic.component_uuid.as_str())
+        })
+        .collect();
+    let post_started = std::time::Instant::now();
+    let post_before = out.len();
+    let mut process_pad_elapsed = std::time::Duration::ZERO;
+    let mut mechanical_elapsed = std::time::Duration::ZERO;
+    let mut silkscreen_elapsed = std::time::Duration::ZERO;
+    let board_graphics_elapsed = std::time::Duration::ZERO;
+    let mut process_pad_quads = 0usize;
+    let mut mechanical_quads = 0usize;
+    let mut silkscreen_quads = 0usize;
+    let board_graphics_quads = 0usize;
+    for stage in POST_COPPER_STAGES {
+        let process_before = out.len();
+        let process_started = std::time::Instant::now();
         for (layer_id, kind) in process_layers
             .iter()
             .filter(|(layer_id, _)| render_stage_for_layer(layer_id, sl) == stage)
@@ -1856,8 +2500,7 @@ fn push_retained_scene_geometry(
                 if !membership.iter().any(|member| member == layer_id) {
                     continue;
                 }
-                let derived =
-                    derived_process_pad(pad, layer_id, *kind, &scene.pad_expansion_setup);
+                let derived = derived_process_pad(pad, layer_id, *kind, &scene.pad_expansion_setup);
                 push_pad_primitive_world(
                     out,
                     &derived,
@@ -1873,13 +2516,19 @@ fn push_retained_scene_geometry(
                 );
             }
         }
+        process_pad_elapsed += process_started.elapsed();
+        process_pad_quads += out.len().saturating_sub(process_before);
+        let mechanical_before = out.len();
+        let mechanical_started = std::time::Instant::now();
         for graphic in mechanical_graphics.iter().filter(|graphic| {
             graphic_render_stage(graphic.layer_id.as_deref(), sl, RenderStage::Mechanical) == stage
         }) {
             if !authored_visible(state) {
                 continue;
             }
-            if let Some(lid) = graphic.layer_id.as_deref() && !layer_visible(state, lid) {
+            if let Some(lid) = graphic.layer_id.as_deref()
+                && !layer_visible(state, lid)
+            {
                 continue;
             }
             let selected_body_graphic_id =
@@ -1889,11 +2538,12 @@ fn push_retained_scene_geometry(
             }
             let related = component_graphic_matches_active_action(graphic, scene, state)
                 || component_is_selection_related(&graphic.component_uuid, scene, state);
-            let selected_component = matches!(
-                state.selection,
-                SelectionTarget::AuthoredObject(ref id)
-                    if id == &format!("component:{}", graphic.component_uuid)
-            ) || component_is_selection_active(&graphic.component_uuid, scene, state);
+            let selected_component =
+                matches!(
+                    state.selection,
+                    SelectionTarget::AuthoredObject(ref id)
+                        if id == &format!("component:{}", graphic.component_uuid)
+                ) || component_is_selection_active(&graphic.component_uuid, scene, state);
             let selected = false;
             push_component_graphic_primitive_world(
                 out,
@@ -1905,22 +2555,29 @@ fn push_retained_scene_geometry(
                 reference_projection,
             );
         }
+        mechanical_elapsed += mechanical_started.elapsed();
+        mechanical_quads += out.len().saturating_sub(mechanical_before);
+        let silkscreen_before = out.len();
+        let silkscreen_started = std::time::Instant::now();
         for graphic in silkscreen_graphics.iter().filter(|graphic| {
             graphic_render_stage(graphic.layer_id.as_deref(), sl, RenderStage::TopSilk) == stage
         }) {
             if !authored_visible(state) {
                 continue;
             }
-            if let Some(lid) = graphic.layer_id.as_deref() && !layer_visible(state, lid) {
+            if let Some(lid) = graphic.layer_id.as_deref()
+                && !layer_visible(state, lid)
+            {
                 continue;
             }
             let related = component_graphic_matches_active_action(graphic, scene, state)
                 || component_is_selection_related(&graphic.component_uuid, scene, state);
-            let selected = matches!(
-                state.selection,
-                SelectionTarget::AuthoredObject(ref id)
-                    if id == &format!("component:{}", graphic.component_uuid)
-            ) || component_is_selection_active(&graphic.component_uuid, scene, state);
+            let selected =
+                matches!(
+                    state.selection,
+                    SelectionTarget::AuthoredObject(ref id)
+                        if id == &format!("component:{}", graphic.component_uuid)
+                ) || component_is_selection_active(&graphic.component_uuid, scene, state);
             push_component_graphic_primitive_world(
                 out,
                 graphic,
@@ -1931,24 +2588,23 @@ fn push_retained_scene_geometry(
                 reference_projection,
             );
         }
-        if authored_visible(state) {
-            for gfx in &scene.board_graphics {
-                if render_stage_for_layer(&gfx.layer_id, sl) != stage {
-                    continue;
-                }
-                if !layer_visible(state, &gfx.layer_id) {
-                    continue;
-                }
-                push_board_graphic_primitive_world(
-                    out,
-                    gfx,
-                    sl,
-                    dim_unrelated_active(state),
-                    reference_projection,
-                );
-            }
-        }
+        silkscreen_elapsed += silkscreen_started.elapsed();
+        silkscreen_quads += out.len().saturating_sub(silkscreen_before);
     }
+    trace_retained_stage("post-copper", post_started, post_before, out.len());
+    trace_render_timing(format!(
+        "retained detail process_pads={}ms/{}q mechanical={}ms/{}q component_silk={}ms/{}q board_graphics={}ms/{}q",
+        process_pad_elapsed.as_millis(),
+        process_pad_quads,
+        mechanical_elapsed.as_millis(),
+        mechanical_quads,
+        silkscreen_elapsed.as_millis(),
+        silkscreen_quads,
+        board_graphics_elapsed.as_millis(),
+        board_graphics_quads
+    ));
+    let active_started = std::time::Instant::now();
+    let active_before = out.len();
     if let Some(active_component_uuid) = active_move_component_uuid.as_deref()
         && let Some(component) = scene
             .components
@@ -2017,16 +2673,12 @@ fn push_retained_scene_geometry(
             );
         }
     }
+    trace_retained_stage("active-component", active_started, active_before, out.len());
+    let unrouted_started = std::time::Instant::now();
+    let unrouted_before = out.len();
     if unrouted_visible(state) {
-        let mut unrouted_batches: Vec<(
-            Vec<PointNm>,
-            [f32; 3],
-            [f32; 3],
-            f32,
-            f32,
-            f32,
-            f32,
-        )> = Vec::new();
+        let mut unrouted_batches: Vec<(Vec<PointNm>, [f32; 3], [f32; 3], f32, f32, f32, f32)> =
+            Vec::new();
         for unrouted in &scene.unrouted_primitives {
             let related = unrouted_matches_active_action(unrouted, state);
             let dimmed = dim_unrelated_active(state) && !related;
@@ -2037,16 +2689,20 @@ fn push_retained_scene_geometry(
                 dim_context_color(net_color, dimmed)
             };
             let color = mix_color(base_color, BOARD_INNER_FIELD, 0.18);
-            let under_color = mix_color(BOARD_OUTER_FIELD, color, if related { 0.28 } else { 0.22 });
+            let under_color =
+                mix_color(BOARD_OUTER_FIELD, color, if related { 0.28 } else { 0.22 });
             let width_px = if related { 1.55 } else { 1.2 };
             let width_nm = world_stroke_nm(width_px, reference_projection).max(1.0);
-            let under_width_nm =
-                world_stroke_nm(width_px + if related { 0.9 } else { 0.7 }, reference_projection)
-                    .max(width_nm + 1.0);
+            let under_width_nm = world_stroke_nm(
+                width_px + if related { 0.9 } else { 0.7 },
+                reference_projection,
+            )
+            .max(width_nm + 1.0);
             let endpoint_radius_nm =
                 world_stroke_nm(if related { 1.15 } else { 0.95 }, reference_projection).max(1.0);
-            let endpoint_under_radius_nm =
-                (endpoint_radius_nm + ((under_width_nm - width_nm) * 0.5)).max(endpoint_radius_nm + 0.5);
+            let endpoint_under_radius_nm = (endpoint_radius_nm
+                + ((under_width_nm - width_nm) * 0.5))
+                .max(endpoint_radius_nm + 0.5);
             unrouted_batches.push((
                 unrouted.path.clone(),
                 color,
@@ -2057,13 +2713,27 @@ fn push_retained_scene_geometry(
                 endpoint_under_radius_nm,
             ));
         }
-        for (path, _color, under_color, _width_nm, under_width_nm, _endpoint_radius_nm, _endpoint_under_radius_nm) in
-            &unrouted_batches
+        for (
+            path,
+            _color,
+            under_color,
+            _width_nm,
+            under_width_nm,
+            _endpoint_radius_nm,
+            _endpoint_under_radius_nm,
+        ) in &unrouted_batches
         {
             push_world_polyline_segments_capped(out, path, *under_width_nm, *under_color);
         }
-        for (path, _color, under_color, _width_nm, _under_width_nm, _endpoint_radius_nm, endpoint_under_radius_nm) in
-            &unrouted_batches
+        for (
+            path,
+            _color,
+            under_color,
+            _width_nm,
+            _under_width_nm,
+            _endpoint_radius_nm,
+            endpoint_under_radius_nm,
+        ) in &unrouted_batches
         {
             for point in path.first().into_iter().chain(path.last()) {
                 let under_r = endpoint_under_radius_nm.round() as i64;
@@ -2080,13 +2750,27 @@ fn push_retained_scene_geometry(
                 );
             }
         }
-        for (path, color, _under_color, width_nm, _under_width_nm, _endpoint_radius_nm, _endpoint_under_radius_nm) in
-            &unrouted_batches
+        for (
+            path,
+            color,
+            _under_color,
+            width_nm,
+            _under_width_nm,
+            _endpoint_radius_nm,
+            _endpoint_under_radius_nm,
+        ) in &unrouted_batches
         {
             push_world_polyline_segments_capped(out, path, *width_nm, *color);
         }
-        for (path, color, _under_color, _width_nm, _under_width_nm, endpoint_radius_nm, _endpoint_under_radius_nm) in
-            &unrouted_batches
+        for (
+            path,
+            color,
+            _under_color,
+            _width_nm,
+            _under_width_nm,
+            endpoint_radius_nm,
+            _endpoint_under_radius_nm,
+        ) in &unrouted_batches
         {
             for point in path.first().into_iter().chain(path.last()) {
                 let r = endpoint_radius_nm.round() as i64;
@@ -2104,16 +2788,72 @@ fn push_retained_scene_geometry(
             }
         }
     }
-    // Re-render board outline on top of all geometry so it's not covered by
-    // zones. Outline participates in the authored/layer visibility model: it
-    // must respect the AUTHORED toggle and the Edge.Cuts (or carrying) layer
-    // toggle so users can hide it intentionally during review. This is the
-    // board-boundary view; per-contributor Edge.Cuts graphics are drawn above
-    // via scene.board_graphics.
-    if authored_visible(state) {
-        for outline in &scene.outline {
-            if !layer_visible(state, &outline.layer_id) {
-                continue;
+    trace_retained_stage("unrouted", unrouted_started, unrouted_before, out.len());
+    let outline_started = std::time::Instant::now();
+    let outline_before = out.len();
+    trace_retained_stage("outline", outline_started, outline_before, out.len());
+}
+
+fn push_retained_board_graphic_batches(
+    out: &mut Vec<Quad>,
+    batches: &mut Vec<RetainedWorldBatch>,
+    scene: &BoardReviewSceneV1,
+    reference_projection: &Projection,
+    state: &ReviewWorkspaceState,
+) {
+    if !authored_visible(state) {
+        return;
+    }
+    let sl = &scene.layers;
+    out.reserve(
+        scene
+            .board_graphics
+            .len()
+            .saturating_add(scene.outline.len() * 32),
+    );
+    let trace_graphics = std::env::var_os("DATUM_TRACE_GRAPHICS").is_some();
+
+    for stage in POST_COPPER_STAGES {
+        let mut active_layer: Option<String> = None;
+        let mut active_color = [0.0, 0.0, 0.0];
+        let mut active_start = out.len();
+        for gfx in scene
+            .board_graphics
+            .iter()
+            .filter(|gfx| render_stage_for_layer(&gfx.layer_id, sl) == stage)
+        {
+            if active_layer.as_deref() != Some(gfx.layer_id.as_str()) {
+                finish_retained_quad_batch(batches, active_layer.take(), active_start, out.len());
+                active_layer = Some(gfx.layer_id.clone());
+                active_color =
+                    board_graphic_world_color(&gfx.layer_id, sl, dim_unrelated_active(state));
+                active_start = out.len();
+            }
+            if trace_graphics {
+                let graphic_started = std::time::Instant::now();
+                let graphic_before = out.len();
+                push_board_graphic_primitive_world(out, gfx, active_color, reference_projection);
+                trace_graphic_timing(
+                    gfx,
+                    graphic_started,
+                    out.len().saturating_sub(graphic_before),
+                );
+            } else {
+                push_board_graphic_primitive_world(out, gfx, active_color, reference_projection);
+            }
+        }
+        finish_retained_quad_batch(batches, active_layer.take(), active_start, out.len());
+        let mut outline_layer: Option<String> = None;
+        let mut outline_start = out.len();
+        for outline in scene
+            .outline
+            .iter()
+            .filter(|outline| render_stage_for_layer(&outline.layer_id, sl) == stage)
+        {
+            if outline_layer.as_deref() != Some(outline.layer_id.as_str()) {
+                finish_retained_quad_batch(batches, outline_layer.take(), outline_start, out.len());
+                outline_layer = Some(outline.layer_id.clone());
+                outline_start = out.len();
             }
             push_world_polyline_segments_capped(
                 out,
@@ -2122,7 +2862,88 @@ fn push_retained_scene_geometry(
                 board_surface_color(BoardSurfaceRole::Edge),
             );
         }
+        finish_retained_quad_batch(batches, outline_layer.take(), outline_start, out.len());
     }
+}
+
+fn push_retained_board_text_geometry_batches(
+    out: &mut Vec<Quad>,
+    batches: &mut Vec<RetainedWorldBatch>,
+    scene: &BoardReviewSceneV1,
+    reference_projection: &Projection,
+    state: &ReviewWorkspaceState,
+) {
+    if !authored_visible(state) {
+        return;
+    }
+    let sl = &scene.layers;
+    let dimmed = dim_unrelated_active(state);
+    let glyph_mesh_assets: BTreeMap<GlyphMeshHandlePrimitive, &GlyphMeshAssetPrimitive> = scene
+        .glyph_mesh_assets
+        .iter()
+        .map(|asset| (asset.handle, asset))
+        .collect();
+    for stage in POST_COPPER_STAGES {
+        let mut active_layer: Option<String> = None;
+        let mut active_start = out.len();
+        let mut active_color = [0.0, 0.0, 0.0];
+        for text_geometry in scene
+            .board_text_geometries
+            .iter()
+            .filter(|text| render_stage_for_layer(&text.layer_id, sl) == stage)
+        {
+            if !layer_visible(state, &text_geometry.layer_id) {
+                continue;
+            }
+            let text_color = board_graphic_world_color(&text_geometry.layer_id, sl, dimmed);
+            if active_layer.as_deref() != Some(text_geometry.layer_id.as_str())
+                || active_color != text_color
+            {
+                finish_retained_quad_batch(batches, active_layer.take(), active_start, out.len());
+                active_layer = Some(text_geometry.layer_id.clone());
+                active_color = text_color;
+                active_start = out.len();
+            }
+            push_board_text_geometry_world(
+                out,
+                text_geometry,
+                &glyph_mesh_assets,
+                active_color,
+                reference_projection,
+            );
+        }
+        finish_retained_quad_batch(batches, active_layer.take(), active_start, out.len());
+    }
+}
+
+fn finish_retained_quad_batch(
+    batches: &mut Vec<RetainedWorldBatch>,
+    layer_id: Option<String>,
+    start_quads: usize,
+    end_quads: usize,
+) {
+    if end_quads <= start_quads {
+        return;
+    }
+    batches.push(RetainedWorldBatch {
+        layer_id,
+        start: (start_quads * 6) as u32,
+        len: ((end_quads - start_quads) * 6) as u32,
+    });
+}
+
+fn trace_retained_stage(
+    name: &str,
+    started: std::time::Instant,
+    before_quads: usize,
+    after_quads: usize,
+) {
+    trace_render_timing(format!(
+        "retained stage {name} {}ms +{}q total={}q",
+        started.elapsed().as_millis(),
+        after_quads.saturating_sub(before_quads),
+        after_quads
+    ));
 }
 
 fn push_retained_world_hit_regions(
@@ -2139,6 +2960,7 @@ fn push_retained_world_hit_regions(
         }
         out.push(WorldHitRegion {
             target: HitTarget::AuthoredObject(track.object_id.clone()),
+            layer_id: Some(track.layer_id.clone()),
             shape: WorldHitShape::Polyline {
                 path: track.path.clone(),
                 half_width_nm: (track.width_nm as f32 * 0.5).max(150_000.0),
@@ -2151,6 +2973,7 @@ fn push_retained_world_hit_regions(
         }
         out.push(WorldHitRegion {
             target: HitTarget::AuthoredObject(via.object_id.clone()),
+            layer_id: None,
             shape: WorldHitShape::Circle {
                 center: via.position,
                 radius_nm: (via.diameter_nm as f32 * 0.5).max(250_000.0),
@@ -2186,6 +3009,7 @@ fn push_retained_world_hit_regions(
         {
             out.push(WorldHitRegion {
                 target: HitTarget::AuthoredObject(component.object_id.clone()),
+                layer_id: Some(component.placement_layer.clone()),
                 shape: WorldHitShape::Rect(hit_rect),
             });
             continue;
@@ -2196,6 +3020,7 @@ fn push_retained_world_hit_regions(
         let hit_rect = inferred_component_body_bounds(&component_pads).unwrap_or(component.bounds);
         out.push(WorldHitRegion {
             target: HitTarget::AuthoredObject(component.object_id.clone()),
+            layer_id: Some(component.placement_layer.clone()),
             shape: WorldHitShape::Rect(hit_rect),
         });
     }
@@ -2208,6 +3033,7 @@ fn push_retained_world_hit_regions(
             .unwrap_or(pad.object_id.as_str());
         out.push(WorldHitRegion {
             target: HitTarget::AuthoredObject(target_id.to_string()),
+            layer_id: None,
             shape: WorldHitShape::Rect(pad.bounds),
         });
     }
@@ -2215,20 +3041,18 @@ fn push_retained_world_hit_regions(
         let Some(target_id) = component_object_id_for_uuid(scene, &graphic.component_uuid) else {
             continue;
         };
-        if let Some(layer_id) = graphic.layer_id.as_deref() && !layer_visible(state, layer_id) {
+        if let Some(layer_id) = graphic.layer_id.as_deref()
+            && !layer_visible(state, layer_id)
+        {
             continue;
         }
-        if graphic
-            .layer_id
-            .as_deref()
-            .is_some_and(|layer_id| {
-                scene
-                    .layers
-                    .iter()
-                    .find(|layer| layer.layer_id == layer_id)
-                    .is_some_and(|layer| layer.name == "Edge.Cuts")
-            })
-        {
+        if graphic.layer_id.as_deref().is_some_and(|layer_id| {
+            scene
+                .layers
+                .iter()
+                .find(|layer| layer.layer_id == layer_id)
+                .is_some_and(|layer| layer.name == "Edge.Cuts")
+        }) {
             continue;
         }
         let width = graphic.width_nm.unwrap_or(100_000);
@@ -2248,6 +3072,7 @@ fn push_retained_world_hit_regions(
                 if min_x <= max_x && min_y <= max_y {
                     out.push(WorldHitRegion {
                         target: HitTarget::AuthoredObject(target_id.to_string()),
+                        layer_id: graphic.layer_id.clone(),
                         shape: WorldHitShape::Rect(datum_gui_protocol::RectNm {
                             min_x,
                             min_y,
@@ -2260,6 +3085,7 @@ fn push_retained_world_hit_regions(
             _ => {
                 out.push(WorldHitRegion {
                     target: HitTarget::AuthoredObject(target_id.to_string()),
+                    layer_id: graphic.layer_id.clone(),
                     shape: WorldHitShape::Polyline {
                         path: graphic.path.clone(),
                         half_width_nm: (width as f32 * 0.5).max(180_000.0),
@@ -2268,20 +3094,43 @@ fn push_retained_world_hit_regions(
             }
         }
     }
-    // M7-SCN-007: per-contributor Edge.Cuts authored graphics are the
-    // primary pick target for imported Edge.Cuts geometry. The assembled
-    // board-boundary (scene.outline) is intentionally NOT registered as a
-    // hit target under this ticket.
+    for text in &scene.board_texts {
+        if !layer_visible(state, &text.layer_id) {
+            continue;
+        }
+        out.push(WorldHitRegion {
+            target: HitTarget::AuthoredObject(text.object_id.clone()),
+            layer_id: Some(text.layer_id.clone()),
+            shape: WorldHitShape::Rect(board_text_hit_rect(text)),
+        });
+    }
     for gfx in &scene.board_graphics {
+        if gfx.object_id.starts_with("board-text:") {
+            continue;
+        }
         if !layer_visible(state, &gfx.layer_id) {
             continue;
         }
         let width = gfx.width_nm.unwrap_or(100_000);
         out.push(WorldHitRegion {
             target: HitTarget::AuthoredObject(gfx.object_id.clone()),
+            layer_id: Some(gfx.layer_id.clone()),
             shape: WorldHitShape::Polyline {
                 path: gfx.path.clone(),
                 half_width_nm: (width as f32 * 0.5).max(150_000.0),
+            },
+        });
+    }
+    for outline in &scene.outline {
+        if !layer_visible(state, &outline.layer_id) {
+            continue;
+        }
+        out.push(WorldHitRegion {
+            target: HitTarget::AuthoredObject(outline.object_id.clone()),
+            layer_id: Some(outline.layer_id.clone()),
+            shape: WorldHitShape::Polyline {
+                path: outline.path.clone(),
+                half_width_nm: 300_000.0,
             },
         });
     }
@@ -2299,6 +3148,7 @@ fn push_scene_overlay_and_hits(
     let board_field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
     let projection = Projection::new(board_field, &scene.bounds, camera);
     let active_move_component_uuid: Option<String> = None;
+    push_lightweight_selection_overlay(out, scene, state, &projection);
     for component in &scene.components {
         if !authored_visible(state) || !layer_visible(state, &component.placement_layer) {
             continue;
@@ -2327,7 +3177,8 @@ fn push_scene_overlay_and_hits(
             dim_context_color(COMPONENT_SILK, dimmed)
         };
         // Center label inside component body
-        let label_x = label_rect.x + (label_rect.width * 0.5) - (label_text.len() as f32 * label_size * 0.32);
+        let label_x =
+            label_rect.x + (label_rect.width * 0.5) - (label_text.len() as f32 * label_size * 0.32);
         let label_y = label_rect.y + (label_rect.height * 0.5) - (label_size * 0.5);
         draw_text_clipped(
             &label_text,
@@ -2425,7 +3276,8 @@ fn push_scene_overlay_and_hits(
     }
     // Show net name for selected or hovered pads
     for pad in &scene.pads {
-        let selected_pad = matches!(&state.selection, SelectionTarget::AuthoredObject(id) if id == &pad.object_id);
+        let selected_pad =
+            matches!(&state.selection, SelectionTarget::AuthoredObject(id) if id == &pad.object_id);
         let hovered_pad = is_hovered(state, &pad.object_id);
         if (selected_pad || hovered_pad) && pad.net_uuid.is_some() {
             let net_label = state
@@ -2509,29 +3361,22 @@ fn push_scene_overlay_and_hits(
             {
                 continue;
             }
-        let selected = overlay.proposal_action_id == state.active_review_target_id;
-        let color = match overlay.render_role.as_str() {
-            "proposed_focus" if selected => PROPOSAL_FOCUS,
-            "proposed_overlay" if selected => PROPOSAL_FOCUS,
-            "proposed_overlay" => PROPOSAL_BASE,
-            "authored_related" => AUTHOR_RELATED,
-            _ => PROPOSAL_BASE,
-        };
-        let rects = push_overlay(
-            out,
-            overlay,
-            &projection,
-            color,
-            selected,
-            false,
-        );
-        for rect in rects {
-            hit_regions.push(HitRegion {
-                target: HitTarget::ReviewAction(overlay.proposal_action_id.clone()),
-                rect,
-            });
+            let selected = overlay.proposal_action_id == state.active_review_target_id;
+            let color = match overlay.render_role.as_str() {
+                "proposed_focus" if selected => PROPOSAL_FOCUS,
+                "proposed_overlay" if selected => PROPOSAL_FOCUS,
+                "proposed_overlay" => PROPOSAL_BASE,
+                "authored_related" => AUTHOR_RELATED,
+                _ => PROPOSAL_BASE,
+            };
+            let rects = push_overlay(out, overlay, &projection, color, selected, false);
+            for rect in rects {
+                hit_regions.push(HitRegion {
+                    target: HitTarget::ReviewAction(overlay.proposal_action_id.clone()),
+                    rect,
+                });
+            }
         }
-    }
     }
     let active_evidence_key = state
         .selected_review_action()
@@ -2560,16 +3405,87 @@ fn push_scene_overlay_and_hits(
             10.0,
             6.0,
         );
-        push_points(
+        // Diagnostic emphasis marks where the evidence span starts and ends.
+        // Interior vertices stay unmarked: per-vertex dots read as generic
+        // path-editing handles, which M7-REN-003 forbids over proposed copper.
+        if let (Some(first), Some(last)) = (review.path.first(), review.path.last()) {
+            push_points(
+                out,
+                &[*first, *last],
+                &projection,
+                if active {
+                    DIAGNOSTIC_FOCUS
+                } else {
+                    DIAGNOSTIC_BASE
+                },
+                if active { 4.0 } else { 3.0 },
+            );
+        }
+    }
+}
+
+fn push_lightweight_selection_overlay(
+    out: &mut Vec<Quad>,
+    scene: &BoardReviewSceneV1,
+    state: &ReviewWorkspaceState,
+    projection: &Projection,
+) {
+    let SelectionTarget::AuthoredObject(object_id) = &state.selection else {
+        return;
+    };
+    if let Some(text) = scene
+        .board_texts
+        .iter()
+        .find(|text| &text.object_id == object_id)
+    {
+        if !authored_visible(state) || !layer_visible(state, &text.layer_id) {
+            return;
+        }
+        let rect = project_rect(board_text_hit_rect(text), projection);
+        let halo = RectPx {
+            x: rect.x - 4.0,
+            y: rect.y - 4.0,
+            width: rect.width + 8.0,
+            height: rect.height + 8.0,
+        };
+        push_rect_border(out, halo, selected_silk_color(COMPONENT_SILK), 2.0);
+        return;
+    }
+    if let Some(outline) = scene
+        .outline
+        .iter()
+        .find(|outline| &outline.object_id == object_id)
+    {
+        if !authored_visible(state) || !layer_visible(state, &outline.layer_id) {
+            return;
+        }
+        push_polyline_segments(
             out,
-            &review.path,
-            &projection,
-            if active {
-                DIAGNOSTIC_FOCUS
-            } else {
-                DIAGNOSTIC_BASE
-            },
-            if active { 4.0 } else { 3.0 },
+            &outline.path,
+            projection,
+            selected_mechanical_color(board_surface_color(BoardSurfaceRole::Edge)),
+            3.0,
+        );
+        return;
+    }
+    if let Some(graphic) = scene
+        .board_graphics
+        .iter()
+        .find(|graphic| &graphic.object_id == object_id)
+    {
+        if !authored_visible(state) || !layer_visible(state, &graphic.layer_id) {
+            return;
+        }
+        push_polyline_segments(
+            out,
+            &graphic.path,
+            projection,
+            selected_mechanical_color(board_graphic_world_color(
+                &graphic.layer_id,
+                &scene.layers,
+                false,
+            )),
+            3.0,
         );
     }
 }
@@ -2641,6 +3557,54 @@ fn point_in_rect(point: PointNm, rect: datum_gui_protocol::RectNm) -> bool {
     point.x >= rect.min_x && point.x <= rect.max_x && point.y >= rect.min_y && point.y <= rect.max_y
 }
 
+fn board_text_hit_rect(text: &BoardTextPrimitive) -> datum_gui_protocol::RectNm {
+    let lines: Vec<&str> = text.text.lines().collect();
+    let line_count = lines.len().max(1) as f64;
+    let max_chars = lines
+        .iter()
+        .map(|line| line.chars().count())
+        .max()
+        .unwrap_or_else(|| text.text.chars().count())
+        .max(1) as f64;
+    let height = text.height_nm.max(1) as f64;
+    let line_spacing = (text.line_spacing_ratio_ppm.max(1) as f64) / 1_000_000.0;
+    let width_nm = (max_chars * height * 0.72).max(height * 0.5);
+    let height_nm = (height + (line_count - 1.0) * height * line_spacing).max(height);
+    let x0 = match text.h_align.as_str() {
+        "center" => -width_nm * 0.5,
+        "right" => -width_nm,
+        _ => 0.0,
+    };
+    let y0 = match text.v_align.as_str() {
+        "center" => -height_nm * 0.5,
+        "top" => 0.0,
+        _ => -height_nm,
+    };
+    let x1 = x0 + width_nm;
+    let y1 = y0 + height_nm;
+    let theta = (text.rotation_degrees as f64).to_radians();
+    let (sin_t, cos_t) = theta.sin_cos();
+    let mut min_x = f64::INFINITY;
+    let mut min_y = f64::INFINITY;
+    let mut max_x = f64::NEG_INFINITY;
+    let mut max_y = f64::NEG_INFINITY;
+    for (x, y) in [(x0, y0), (x1, y0), (x1, y1), (x0, y1)] {
+        let rx = text.position.x as f64 + x * cos_t - y * sin_t;
+        let ry = text.position.y as f64 + x * sin_t + y * cos_t;
+        min_x = min_x.min(rx);
+        min_y = min_y.min(ry);
+        max_x = max_x.max(rx);
+        max_y = max_y.max(ry);
+    }
+    let padding = (height * 0.25).max(250_000.0);
+    datum_gui_protocol::RectNm {
+        min_x: (min_x - padding).floor() as i64,
+        min_y: (min_y - padding).floor() as i64,
+        max_x: (max_x + padding).ceil() as i64,
+        max_y: (max_y + padding).ceil() as i64,
+    }
+}
+
 fn polyline_contains_world_point(path: &[PointNm], point: PointNm, half_width_nm: f32) -> bool {
     let px = point.x as f32;
     let py = point.y as f32;
@@ -2678,52 +3642,8 @@ fn component_graphic_matches_active_action(
     })
 }
 
-fn dim_with_policy(
-    color: [f32; 3],
-    dimmed: bool,
-    factor: f32,
-    floor: f32,
-    board_mix: f32,
-) -> [f32; 3] {
-    if !dimmed {
-        return color;
-    }
-    let dimmed = [
-        (color[0] * factor).max(floor),
-        (color[1] * factor).max(floor),
-        (color[2] * factor).max(floor),
-    ];
-    mix_color(dimmed, BOARD_INNER_FIELD, board_mix)
-}
-
-fn dim_authored_color(color: [f32; 3], dimmed: bool) -> [f32; 3] {
-    dim_with_policy(color, dimmed, AUTHORED_DIM_FACTOR, 0.14, 0.08)
-}
-
-fn dim_process_color(color: [f32; 3], dimmed: bool) -> [f32; 3] {
-    dim_with_policy(color, dimmed, PROCESS_DIM_FACTOR, 0.18, 0.05)
-}
-
-fn dim_structural_color(color: [f32; 3], dimmed: bool) -> [f32; 3] {
-    dim_with_policy(color, dimmed, STRUCTURAL_DIM_FACTOR, 0.12, 0.10)
-}
-
-fn dim_context_color(color: [f32; 3], dimmed: bool) -> [f32; 3] {
-    dim_with_policy(color, dimmed, CONTEXT_DIM_FACTOR, 0.20, 0.04)
-}
-
-fn selected_copper_color(base: [f32; 3]) -> [f32; 3] {
-    let tinted = mix_color(base, [0.95, 0.50, 0.92], 0.52);
-    mix_color(tinted, [0.98, 0.94, 1.0], 0.12)
-}
-
-fn selected_silk_color(base: [f32; 3]) -> [f32; 3] {
-    mix_color(base, [0.98, 0.98, 0.99], 0.72)
-}
-
-fn selected_mechanical_color(base: [f32; 3]) -> [f32; 3] {
-    mix_color(base, [0.90, 0.94, 0.98], 0.45)
-}
+mod dim_policy;
+pub(crate) use dim_policy::*;
 
 fn width_to_px(width_nm: i64) -> f32 {
     ((width_nm as f32) / 120_000.0).clamp(0.9, 3.6)
@@ -3097,7 +4017,10 @@ fn push_component_primitive(
         width: (body.width - 2.0).max(1.0),
         height: (header_h - 1.0).max(1.0),
     };
-    out.push(Quad::from_rect(header, dim_structural_color(COMPONENT_HEADER, dimmed)));
+    out.push(Quad::from_rect(
+        header,
+        dim_structural_color(COMPONENT_HEADER, dimmed),
+    ));
     let inner = inset_rect(body, 2.0, header_h + 1.0, 2.0, 2.0);
     if inner.width > 2.0 && inner.height > 2.0 {
         out.push(Quad::from_rect(
@@ -3309,7 +4232,7 @@ fn push_component_graphic_primitive_world(
             _ if graphic.width_nm.is_none() => color,
             _ => mix_color(color, BOARD_INNER_FIELD, 0.20),
         };
-        push_world_polygon_fill(out, &graphic.path, fill_color);
+        push_world_polygon_fill_contours(out, &graphic.path, &graphic.holes, fill_color);
         if graphic.width_nm.is_none() && graphic.render_role != "component_mechanical" {
             return;
         }
@@ -3358,24 +4281,11 @@ fn push_component_graphic_primitive_world(
 fn push_board_graphic_primitive_world(
     out: &mut Vec<Quad>,
     graphic: &BoardGraphicPrimitive,
-    scene_layers: &[datum_gui_protocol::SceneLayer],
-    dimmed: bool,
+    color: [f32; 3],
     reference_projection: &Projection,
 ) {
-    let app = resolve_layer_appearance_with_scene(Some(&graphic.layer_id), scene_layers);
-    let layer_name = scene_layers
-        .iter()
-        .find(|layer| layer.layer_id == graphic.layer_id)
-        .map(|layer| layer.name.as_str())
-        .unwrap_or("");
-    let base_color = if layer_name.ends_with(".SilkS") {
-        app.silkscreen
-    } else {
-        app.authored_track
-    };
-    let color = dim_context_color(base_color, dimmed);
     if graphic.primitive_kind == "polygon" && graphic.path.len() >= 3 {
-        push_world_polygon_fill(out, &graphic.path, color);
+        push_world_polygon_fill_contours(out, &graphic.path, &graphic.holes, color);
         if graphic.width_nm.is_none() {
             return;
         }
@@ -3407,6 +4317,135 @@ fn push_board_graphic_primitive_world(
     }
 }
 
+fn push_board_text_geometry_world(
+    out: &mut Vec<Quad>,
+    text_geometry: &BoardTextGeometryPrimitive,
+    glyph_mesh_assets: &BTreeMap<GlyphMeshHandlePrimitive, &GlyphMeshAssetPrimitive>,
+    color: [f32; 3],
+    reference_projection: &Projection,
+) {
+    if let Some(transform) = text_geometry.world_transform_nm {
+        if !text_geometry.glyphs.is_empty() {
+            push_board_text_mesh_world(out, text_geometry, glyph_mesh_assets, transform, color);
+            return;
+        }
+    }
+    for fill in &text_geometry.fills {
+        push_world_polygon_fill_contours(out, &fill.outer, &fill.holes, color);
+    }
+    for stroke in &text_geometry.strokes {
+        push_world_polyline_segments(
+            out,
+            &[stroke.from, stroke.to],
+            (stroke.width_nm as f32).max(world_stroke_nm(1.0, reference_projection)),
+            color,
+        );
+    }
+}
+
+fn push_board_text_mesh_world(
+    out: &mut Vec<Quad>,
+    text_geometry: &BoardTextGeometryPrimitive,
+    glyph_mesh_assets: &BTreeMap<GlyphMeshHandlePrimitive, &GlyphMeshAssetPrimitive>,
+    transform: Affine2DFixedPrimitive,
+    color: [f32; 3],
+) {
+    for glyph in &text_geometry.glyphs {
+        let Some(asset) = glyph_mesh_assets.get(&glyph.glyph_handle) else {
+            trace_text_mesh_skip(format!(
+                "{} missing glyph mesh asset font={} glyph={} tolerance={} epoch={}",
+                text_geometry.object_id,
+                glyph.glyph_handle.font_id,
+                glyph.glyph_handle.glyph_id,
+                glyph.glyph_handle.tolerance_class,
+                glyph.glyph_handle.epoch,
+            ));
+            continue;
+        };
+        for triangle in asset.indices.chunks_exact(3) {
+            let Some(a) = asset.vertices.get(triangle[0] as usize) else {
+                trace_text_mesh_skip(format!(
+                    "{} glyph={} triangle references missing vertex {}",
+                    text_geometry.object_id, glyph.glyph_handle.glyph_id, triangle[0],
+                ));
+                continue;
+            };
+            let Some(b) = asset.vertices.get(triangle[1] as usize) else {
+                trace_text_mesh_skip(format!(
+                    "{} glyph={} triangle references missing vertex {}",
+                    text_geometry.object_id, glyph.glyph_handle.glyph_id, triangle[1],
+                ));
+                continue;
+            };
+            let Some(c) = asset.vertices.get(triangle[2] as usize) else {
+                trace_text_mesh_skip(format!(
+                    "{} glyph={} triangle references missing vertex {}",
+                    text_geometry.object_id, glyph.glyph_handle.glyph_id, triangle[2],
+                ));
+                continue;
+            };
+            let a = transform_text_mesh_point(
+                transform,
+                glyph.origin_em_nm_x + a.x_em_nm,
+                glyph.origin_em_nm_y + a.y_em_nm,
+            );
+            let b = transform_text_mesh_point(
+                transform,
+                glyph.origin_em_nm_x + b.x_em_nm,
+                glyph.origin_em_nm_y + b.y_em_nm,
+            );
+            let c = transform_text_mesh_point(
+                transform,
+                glyph.origin_em_nm_x + c.x_em_nm,
+                glyph.origin_em_nm_y + c.y_em_nm,
+            );
+            push_world_triangle(out, a, b, c, color);
+        }
+    }
+}
+
+fn trace_text_mesh_skip(message: String) {
+    if std::env::var_os("DATUM_TRACE_GRAPHICS").is_some() {
+        eprintln!("[datum-text-mesh] {message}");
+    }
+}
+
+fn transform_text_mesh_point(
+    transform: Affine2DFixedPrimitive,
+    x_em_nm: i64,
+    y_em_nm: i64,
+) -> (f32, f32) {
+    const EM_NM: i128 = 1_000_000;
+    let x = (i128::from(transform.m11_ppm) * i128::from(x_em_nm)
+        + i128::from(transform.m12_ppm) * i128::from(y_em_nm))
+        / EM_NM
+        + i128::from(transform.tx_nm);
+    let y = (i128::from(transform.m21_ppm) * i128::from(x_em_nm)
+        + i128::from(transform.m22_ppm) * i128::from(y_em_nm))
+        / EM_NM
+        + i128::from(transform.ty_nm);
+    (x as f32, y as f32)
+}
+
+fn board_graphic_world_color(
+    layer_id: &str,
+    scene_layers: &[datum_gui_protocol::SceneLayer],
+    dimmed: bool,
+) -> [f32; 3] {
+    let app = resolve_layer_appearance_with_scene(Some(layer_id), scene_layers);
+    let layer_name = scene_layers
+        .iter()
+        .find(|layer| layer.layer_id == layer_id)
+        .map(|layer| layer.name.as_str())
+        .unwrap_or("");
+    let base_color = if layer_name.ends_with(".SilkS") {
+        app.silkscreen
+    } else {
+        app.authored_track
+    };
+    dim_context_color(base_color, dimmed)
+}
+
 #[allow(dead_code)]
 fn push_pad_primitive(
     out: &mut Vec<Quad>,
@@ -3431,7 +4470,12 @@ fn push_pad_primitive(
             px.height * 0.22,
         );
         if inner.width > 1.0 && inner.height > 1.0 {
-            push_projected_ellipse(out, inner, dim_authored_color([0.79, 0.49, 0.26], dimmed), 24);
+            push_projected_ellipse(
+                out,
+                inner,
+                dim_authored_color([0.79, 0.49, 0.26], dimmed),
+                24,
+            );
         }
     }
     if let Some(drill_nm) = drill_nm.filter(|value| *value > 0) {
@@ -3443,13 +4487,28 @@ fn push_pad_primitive(
             width: drill_px,
             height: drill_px,
         };
-        push_projected_ellipse(out, hole, dim_structural_color([0.10, 0.11, 0.12], dimmed), 22);
+        push_projected_ellipse(
+            out,
+            hole,
+            dim_structural_color([0.10, 0.11, 0.12], dimmed),
+            22,
+        );
         let hole_border = inset_rect(hole, 0.8, 0.8, 0.8, 0.8);
         if hole_border.width > 1.0 && hole_border.height > 1.0 {
-            push_projected_ellipse(out, hole_border, dim_structural_color([0.62, 0.66, 0.70], dimmed), 22);
+            push_projected_ellipse(
+                out,
+                hole_border,
+                dim_structural_color([0.62, 0.66, 0.70], dimmed),
+                22,
+            );
             let hole_inner = inset_rect(hole_border, 1.0, 1.0, 1.0, 1.0);
             if hole_inner.width > 1.0 && hole_inner.height > 1.0 {
-                push_projected_ellipse(out, hole_inner, dim_structural_color([0.10, 0.11, 0.12], dimmed), 22);
+                push_projected_ellipse(
+                    out,
+                    hole_inner,
+                    dim_structural_color([0.10, 0.11, 0.12], dimmed),
+                    22,
+                );
             }
         }
     }
@@ -3479,7 +4538,12 @@ fn push_pad_primitive_world(
             max_x: (center_x + half).round() as i64,
             max_y: (center_y + half).round() as i64,
         };
-        push_world_ellipse_nm(out, hole, dim_structural_color([0.10, 0.11, 0.12], dimmed), 128);
+        push_world_ellipse_nm(
+            out,
+            hole,
+            dim_structural_color([0.10, 0.11, 0.12], dimmed),
+            128,
+        );
     }
 }
 
@@ -3597,14 +4661,18 @@ fn rounded_rect_points(
     let segments_per_corner = 8usize;
     let arc_step = std::f32::consts::FRAC_PI_2 / segments_per_corner as f32;
     let corner_centers = [
-        (half_w - radius, -half_h + radius, -std::f32::consts::FRAC_PI_2),
+        (
+            half_w - radius,
+            -half_h + radius,
+            -std::f32::consts::FRAC_PI_2,
+        ),
         (half_w - radius, half_h - radius, 0.0),
-        (-(half_w - radius), half_h - radius, std::f32::consts::FRAC_PI_2),
         (
             -(half_w - radius),
-            -(half_h - radius),
-            std::f32::consts::PI,
+            half_h - radius,
+            std::f32::consts::FRAC_PI_2,
         ),
+        (-(half_w - radius), -(half_h - radius), std::f32::consts::PI),
     ];
     let mut points = Vec::with_capacity(corner_centers.len() * (segments_per_corner + 1));
     for (cx, cy, start) in corner_centers {
@@ -3654,12 +4722,12 @@ fn world_pad_outline(
         }
     };
     points
-    .into_iter()
-    .map(|(x, y)| PointNm {
-        x: x.round() as i64,
-        y: y.round() as i64,
-    })
-    .collect()
+        .into_iter()
+        .map(|(x, y)| PointNm {
+            x: x.round() as i64,
+            y: y.round() as i64,
+        })
+        .collect()
 }
 
 fn projected_pad_outline(
@@ -3669,7 +4737,8 @@ fn projected_pad_outline(
 ) -> Vec<(f32, f32)> {
     let (width_nm, height_nm) = pad_dimensions_nm(pad);
     let center = projection.project_point(pad.center);
-    let width_px = (projection.world_length_to_px(width_nm.round() as i64) - inset_px * 2.0).max(1.0);
+    let width_px =
+        (projection.world_length_to_px(width_nm.round() as i64) - inset_px * 2.0).max(1.0);
     let height_px =
         (projection.world_length_to_px(height_nm.round() as i64) - inset_px * 2.0).max(1.0);
     match pad.shape_kind.as_str() {
@@ -3877,19 +4946,14 @@ fn push_inferred_package_body_from_pads_world(
     else {
         return;
     };
-    let body_polygon: Vec<PointNm> = rounded_rect_points(
-        center,
-        width,
-        height,
-        rotation_degrees,
-        0.0,
-    )
-    .into_iter()
-    .map(|(x, y)| PointNm {
-        x: x.round() as i64,
-        y: y.round() as i64,
-    })
-    .collect();
+    let body_polygon: Vec<PointNm> =
+        rounded_rect_points(center, width, height, rotation_degrees, 0.0)
+            .into_iter()
+            .map(|(x, y)| PointNm {
+                x: x.round() as i64,
+                y: y.round() as i64,
+            })
+            .collect();
     let fill = dim_structural_color(
         if selected {
             [0.30, 0.32, 0.34]
@@ -3917,19 +4981,14 @@ fn push_inferred_package_body_from_pads_world(
     let inner_width = (width - inset * 2.0).max(1.0);
     let inner_height = (height - inset * 2.0).max(1.0);
     if inner_width > 1.0 && inner_height > 1.0 {
-        let inner_polygon: Vec<PointNm> = rounded_rect_points(
-            center,
-            inner_width,
-            inner_height,
-            rotation_degrees,
-            0.0,
-        )
-        .into_iter()
-        .map(|(x, y)| PointNm {
-            x: x.round() as i64,
-            y: y.round() as i64,
-        })
-        .collect();
+        let inner_polygon: Vec<PointNm> =
+            rounded_rect_points(center, inner_width, inner_height, rotation_degrees, 0.0)
+                .into_iter()
+                .map(|(x, y)| PointNm {
+                    x: x.round() as i64,
+                    y: y.round() as i64,
+                })
+                .collect();
         push_world_polyline_segments(
             out,
             &close_path(&inner_polygon),
@@ -4139,10 +5198,27 @@ fn component_has_detail_text(scene: &BoardReviewSceneV1, component_uuid: &str) -
         .component_texts
         .iter()
         .any(|text| text.component_uuid == component_uuid)
+        || scene.board_texts.iter().any(|text| {
+            text.style_class.as_deref().is_some_and(|style_class| {
+                imported_board_text_belongs_to_component(style_class, component_uuid)
+            })
+        })
         || scene.component_graphics.iter().any(|graphic| {
             graphic.component_uuid == component_uuid
-                && graphic.primitive_kind == "polygon"
-                && graphic.width_nm.is_none()
+                && (graphic.graphic_id.contains(":kicad-text-cache:")
+                    || graphic.graphic_id.contains(":prop-cache:")
+                    || graphic.graphic_id.contains(":kicad-text-stroke:")
+                    || graphic.graphic_id.contains(":prop-stroke:"))
+        })
+}
+
+fn imported_board_text_belongs_to_component(style_class: &str, component_uuid: &str) -> bool {
+    ["imported_kicad_property_text:", "imported_kicad_fp_text:"]
+        .iter()
+        .any(|prefix| {
+            style_class
+                .strip_prefix(prefix)
+                .is_some_and(|rest| rest.starts_with(component_uuid))
         })
 }
 
@@ -4157,6 +5233,35 @@ fn push_component_text_world(
     related: bool,
     dimmed: bool,
 ) {
+    let color = component_text_color(text, scene_layers, selected, related, dimmed);
+    if !text.cached_polygons.is_empty() {
+        for polygon in &text.cached_polygons {
+            if polygon.len() >= 3 {
+                let projected: Vec<(f32, f32)> = polygon
+                    .iter()
+                    .map(|point| project_point(*point, projection))
+                    .collect();
+                push_projected_polygon_fill(out, &projected, color);
+            }
+        }
+        return;
+    }
+
+    let rotation = text.rotation_degrees.round() as i32;
+    if rotation.rem_euclid(180) == 0 {
+        push_component_text_primitive(
+            text_runs,
+            text,
+            scene_layers,
+            projection,
+            clip_bounds,
+            selected,
+            related,
+            dimmed,
+        );
+        return;
+    }
+
     let normalized = text.text.to_uppercase();
     let board_text = BoardText {
         uuid: Uuid::nil(),
@@ -4165,12 +5270,25 @@ fn push_component_text_world(
             x: text.position.x,
             y: text.position.y,
         },
-        rotation: text.rotation_degrees.round() as i32,
+        rotation,
         layer: 0 as LayerId,
+        render_intent: eda_engine::text::TextRenderIntent::Manufacturing,
+        family: eda_engine::text::TextFamilyId::default(),
+        family_source: eda_engine::text::TextFamilySource::ImplicitDefault,
+        style: eda_engine::text::TextStyleId::default(),
         height_nm: text.height_nm,
-        stroke_width_nm: (text.height_nm / 10).clamp(80_000, 250_000),
+        stroke_width_nm: text
+            .stroke_width_nm
+            .unwrap_or((text.height_nm / 10).clamp(80_000, 250_000)),
+        h_align: eda_engine::text::TextHAlign::Left,
+        v_align: eda_engine::text::TextVAlign::Bottom,
+        mirrored: false,
+        keep_upright: false,
+        line_spacing_ratio_ppm: 1_000_000,
+        italic: false,
+        bold: false,
+        style_class: None,
     };
-    let color = component_text_color(text, scene_layers, selected, related, dimmed);
     match render_silkscreen_text_strokes(&board_text) {
         Ok(strokes) if !strokes.is_empty() => {
             for stroke in strokes {
@@ -4178,7 +5296,9 @@ fn push_component_text_world(
                     stroke_text_point_to_board_space(text.position, stroke.from),
                     stroke_text_point_to_board_space(text.position, stroke.to),
                 ];
-                let thickness_px = projection.world_length_to_px(stroke.width_nm).clamp(1.0, 6.0);
+                let thickness_px = projection
+                    .world_length_to_px(stroke.width_nm)
+                    .clamp(1.0, 6.0);
                 push_polyline_segments(out, &path, projection, color, thickness_px);
             }
         }
@@ -4257,7 +5377,12 @@ fn push_via_primitive(
         width: drill_px,
         height: drill_px,
     };
-    push_projected_ellipse(out, drill, dim_structural_color([0.13, 0.14, 0.16], dimmed), 18);
+    push_projected_ellipse(
+        out,
+        drill,
+        dim_structural_color([0.13, 0.14, 0.16], dimmed),
+        18,
+    );
     rect
 }
 
@@ -4367,42 +5492,28 @@ fn resolve_layer_appearance_with_scene(
     scene_layers: &[datum_gui_protocol::SceneLayer],
 ) -> LayerAppearance {
     match resolve_layer_family_with_scene(layer_id, scene_layers) {
-        LayerFamily::TopCopper => {
-            let copper = [0.86, 0.55, 0.24];
-            LayerAppearance {
-                authored_track: copper,
-                pad_copper: copper,
-                pad_related: [1.00, 0.84, 0.56],
-                zone_fill: copper,
-                zone_outline: copper,
-                proposal: [0.98, 0.71, 0.30],
-                silkscreen: [0.93, 0.92, 0.82],
-            }
-        }
-        LayerFamily::InnerCopper => {
-            let copper = [0.67, 0.68, 0.30];
-            LayerAppearance {
-                authored_track: copper,
-                pad_copper: copper,
-                pad_related: [0.92, 0.86, 0.54],
-                zone_fill: copper,
-                zone_outline: copper,
-                proposal: [0.84, 0.80, 0.40],
-                silkscreen: [0.86, 0.89, 0.82],
-            }
-        }
-        LayerFamily::BottomCopper => {
-            let copper = [0.30, 0.76, 0.88];
-            LayerAppearance {
-                authored_track: copper,
-                pad_copper: copper,
-                pad_related: [0.71, 0.95, 1.00],
-                zone_fill: copper,
-                zone_outline: copper,
-                proposal: [0.46, 0.88, 0.96],
-                silkscreen: [0.78, 0.92, 0.98],
-            }
-        }
+        LayerFamily::TopCopper => LayerAppearance::from_copper_material(
+            [0.86, 0.55, 0.24],
+            [1.00, 0.84, 0.56],
+            [0.98, 0.71, 0.30],
+            [0.93, 0.92, 0.82],
+        ),
+        LayerFamily::InnerCopper => LayerAppearance::from_copper_material(
+            [0.67, 0.68, 0.30],
+            [0.92, 0.86, 0.54],
+            [0.84, 0.80, 0.40],
+            [0.86, 0.89, 0.82],
+        ),
+        LayerFamily::BottomCopper => LayerAppearance::from_copper_material(
+            [0.30, 0.76, 0.88],
+            [0.71, 0.95, 1.00],
+            [0.46, 0.88, 0.96],
+            [0.78, 0.92, 0.98],
+        ),
+        // Bounded exception: geometry whose layer cannot be resolved to a
+        // known copper family keeps deliberately divergent fallback colors so
+        // unresolved-layer drift stays visible instead of masquerading as a
+        // real material lane.
         LayerFamily::Unknown => LayerAppearance {
             authored_track: AUTHOR_BASE,
             pad_copper: PAD_COPPER,
@@ -4419,7 +5530,6 @@ fn proposal_layer_color(layer_id: Option<&str>) -> [f32; 3] {
     resolve_layer_appearance(layer_id).proposal
 }
 
-
 fn resolve_layer_appearance(layer_id: Option<&str>) -> LayerAppearance {
     resolve_layer_appearance_with_scene(layer_id, &[])
 }
@@ -4434,7 +5544,10 @@ fn scene_layer_name<'a>(
         .map(|layer| layer.name.as_str())
 }
 
-fn render_stage_for_layer(layer_id: &str, scene_layers: &[datum_gui_protocol::SceneLayer]) -> RenderStage {
+fn render_stage_for_layer(
+    layer_id: &str,
+    scene_layers: &[datum_gui_protocol::SceneLayer],
+) -> RenderStage {
     match scene_layer_name(layer_id, scene_layers).unwrap_or(layer_id) {
         "B.Cu" => RenderStage::BottomCopper,
         name if name.ends_with(".Cu") && name != "F.Cu" => RenderStage::InnerCopper,
@@ -4452,23 +5565,15 @@ fn render_stage_for_layer(layer_id: &str, scene_layers: &[datum_gui_protocol::Sc
 }
 
 fn render_stage_priority(stage: RenderStage) -> u32 {
-    match stage {
-        RenderStage::BottomCopper => 0,
-        RenderStage::InnerCopper => 1,
-        RenderStage::TopCopper => 2,
-        RenderStage::BottomMask => 3,
-        RenderStage::TopMask => 4,
-        RenderStage::BottomPaste => 5,
-        RenderStage::TopPaste => 6,
-        RenderStage::BottomSilk => 7,
-        RenderStage::TopSilk => 8,
-        RenderStage::Mechanical => 9,
-        RenderStage::Edge => 10,
-        RenderStage::Other => 11,
-    }
+    // The enum declaration order is the single encoding of the declared
+    // render-stack policy; priority is its discriminant.
+    stage as u32
 }
 
-fn scene_layer_stack_priority(layer_id: &str, scene_layers: &[datum_gui_protocol::SceneLayer]) -> u32 {
+fn scene_layer_stack_priority(
+    layer_id: &str,
+    scene_layers: &[datum_gui_protocol::SceneLayer],
+) -> u32 {
     render_stage_priority(render_stage_for_layer(layer_id, scene_layers))
 }
 
@@ -5160,12 +6265,122 @@ fn push_world_points(out: &mut Vec<Quad>, points: &[PointNm], size_nm: f32, colo
 }
 
 fn push_world_polygon_fill(out: &mut Vec<Quad>, polygon: &[PointNm], color: [f32; 3]) {
-    if polygon.len() < 3 {
+    push_world_polygon_fill_contours(out, polygon, &[], color);
+}
+
+fn push_world_polygon_fill_contours(
+    out: &mut Vec<Quad>,
+    outer: &[PointNm],
+    holes: &[Vec<PointNm>],
+    color: [f32; 3],
+) {
+    if holes.is_empty() {
+        if outer.len() == 3 && is_convex_polygon_nm(outer) {
+            push_world_triangle(
+                out,
+                (outer[0].x as f32, outer[0].y as f32),
+                (outer[1].x as f32, outer[1].y as f32),
+                (outer[2].x as f32, outer[2].y as f32),
+                color,
+            );
+            return;
+        }
+        if outer.len() == 4 && is_convex_polygon_nm(outer) {
+            push_world_quad(
+                out,
+                &[
+                    (outer[0].x as f32, outer[0].y as f32),
+                    (outer[1].x as f32, outer[1].y as f32),
+                    (outer[2].x as f32, outer[2].y as f32),
+                    (outer[3].x as f32, outer[3].y as f32),
+                ],
+                color,
+            );
+            return;
+        }
+        match clean_polygon_ring_nm(outer) {
+            Some(cleaned) if cleaned.len() == 3 && is_convex_polygon_nm(&cleaned) => {
+                push_world_triangle(
+                    out,
+                    (cleaned[0].x as f32, cleaned[0].y as f32),
+                    (cleaned[1].x as f32, cleaned[1].y as f32),
+                    (cleaned[2].x as f32, cleaned[2].y as f32),
+                    color,
+                );
+                return;
+            }
+            Some(cleaned) if cleaned.len() == 4 && is_convex_polygon_nm(&cleaned) => {
+                push_world_quad(
+                    out,
+                    &[
+                        (cleaned[0].x as f32, cleaned[0].y as f32),
+                        (cleaned[1].x as f32, cleaned[1].y as f32),
+                        (cleaned[2].x as f32, cleaned[2].y as f32),
+                        (cleaned[3].x as f32, cleaned[3].y as f32),
+                    ],
+                    color,
+                );
+                return;
+            }
+            Some(cleaned) => {
+                push_world_polygon_fill_scanline_contours(out, &[cleaned], color);
+                return;
+            }
+            None => return,
+        }
+    }
+
+    let mut contours = Vec::with_capacity(1 + holes.len());
+    if let Some(cleaned_outer) = clean_polygon_ring_nm(outer) {
+        contours.push(cleaned_outer);
+    }
+    for hole in holes {
+        if let Some(cleaned_hole) = clean_polygon_ring_nm(hole) {
+            contours.push(cleaned_hole);
+        }
+    }
+    if contours.is_empty() {
         return;
+    }
+    push_world_polygon_fill_scanline_contours(out, &contours, color);
+}
+
+fn is_convex_polygon_nm(polygon: &[PointNm]) -> bool {
+    if polygon.len() < 3 {
+        return false;
+    }
+    let mut sign = 0_i128;
+    for index in 0..polygon.len() {
+        let a = polygon[index];
+        let b = polygon[(index + 1) % polygon.len()];
+        let c = polygon[(index + 2) % polygon.len()];
+        let abx = (b.x - a.x) as i128;
+        let aby = (b.y - a.y) as i128;
+        let bcx = (c.x - b.x) as i128;
+        let bcy = (c.y - b.y) as i128;
+        let cross = abx * bcy - aby * bcx;
+        if cross == 0 {
+            continue;
+        }
+        if sign == 0 {
+            sign = cross.signum();
+        } else if cross.signum() != sign {
+            return false;
+        }
+    }
+    sign != 0
+}
+
+fn clean_polygon_ring_nm(polygon: &[PointNm]) -> Option<Vec<PointNm>> {
+    if polygon.len() < 3 {
+        return None;
     }
     let mut cleaned: Vec<PointNm> = Vec::with_capacity(polygon.len());
     for &point in polygon {
-        if cleaned.last().is_some_and(|last| last.x == point.x && last.y == point.y) {
+        if cleaned
+            .last()
+            .is_some_and(|last| last.x == point.x && last.y == point.y)
+        {
             continue;
         }
         cleaned.push(point);
@@ -5180,9 +6395,9 @@ fn push_world_polygon_fill(out: &mut Vec<Quad>, polygon: &[PointNm], color: [f32
         cleaned.pop();
     }
     if cleaned.len() < 3 {
-        return;
+        return None;
     }
-    push_world_polygon_fill_scanline(out, &cleaned, color);
+    Some(cleaned)
 }
 
 fn push_projected_quad(out: &mut Vec<Quad>, quad: &[(f32, f32); 4], color: [f32; 3]) {
@@ -5207,8 +6422,33 @@ fn push_projected_triangle(
 }
 
 fn push_projected_polygon_fill(out: &mut Vec<Quad>, polygon: &[(f32, f32)], color: [f32; 3]) {
-    if polygon.len() < 3 {
+    push_projected_polygon_fill_contours(out, polygon, &[], color);
+}
+
+fn push_projected_polygon_fill_contours(
+    out: &mut Vec<Quad>,
+    outer: &[(f32, f32)],
+    holes: &[Vec<(f32, f32)>],
+    color: [f32; 3],
+) {
+    let mut contours = Vec::with_capacity(1 + holes.len());
+    if let Some(cleaned_outer) = clean_polygon_ring_projected(outer) {
+        contours.push(cleaned_outer);
+    }
+    for hole in holes {
+        if let Some(cleaned_hole) = clean_polygon_ring_projected(hole) {
+            contours.push(cleaned_hole);
+        }
+    }
+    if contours.is_empty() {
         return;
+    }
+    push_projected_polygon_fill_scanline_contours(out, &contours, color);
+}
+
+fn clean_polygon_ring_projected(polygon: &[(f32, f32)]) -> Option<Vec<(f32, f32)>> {
+    if polygon.len() < 3 {
+        return None;
     }
     let mut cleaned: Vec<(f32, f32)> = Vec::with_capacity(polygon.len());
     for &point in polygon {
@@ -5229,28 +6469,46 @@ fn push_projected_polygon_fill(out: &mut Vec<Quad>, polygon: &[(f32, f32)], colo
         cleaned.pop();
     }
     if cleaned.len() < 3 {
-        return;
+        return None;
     }
-    push_projected_polygon_fill_scanline(out, &cleaned, color);
+    Some(cleaned)
 }
 
-fn push_world_polygon_fill_scanline(out: &mut Vec<Quad>, polygon: &[PointNm], color: [f32; 3]) {
+fn push_world_polygon_fill_scanline_contours(
+    out: &mut Vec<Quad>,
+    contours: &[Vec<PointNm>],
+    color: [f32; 3],
+) {
     const EPS: f64 = 1e-6;
-    let mut ys: Vec<f64> = polygon.iter().map(|p| p.y as f64).collect();
+    #[derive(Clone, Copy)]
+    struct ScanlineEdge {
+        min_y: f64,
+        max_y: f64,
+        ax: f64,
+        ay: f64,
+        bx: f64,
+        by: f64,
+    }
+
+    impl ScanlineEdge {
+        fn x_at(self, y: f64) -> f64 {
+            let t = (y - self.ay) / (self.by - self.ay);
+            self.ax + (self.bx - self.ax) * t
+        }
+    }
+
+    let mut ys: Vec<f64> = contours
+        .iter()
+        .flat_map(|polygon| polygon.iter().map(|p| p.y as f64))
+        .collect();
     ys.sort_by(|a, b| a.total_cmp(b));
     ys.dedup_by(|a, b| (*a - *b).abs() <= EPS);
     if ys.len() < 2 {
         return;
     }
 
-    for band in ys.windows(2) {
-        let y0 = band[0];
-        let y1 = band[1];
-        if y1 - y0 <= EPS {
-            continue;
-        }
-        let y_mid = (y0 + y1) * 0.5;
-        let mut spans: Vec<(f64, f64, f64)> = Vec::new();
+    let mut edges: Vec<ScanlineEdge> = Vec::new();
+    for polygon in contours {
         for i in 0..polygon.len() {
             let a = polygon[i];
             let b = polygon[(i + 1) % polygon.len()];
@@ -5259,21 +6517,54 @@ fn push_world_polygon_fill_scanline(out: &mut Vec<Quad>, polygon: &[PointNm], co
             if (ay - by).abs() <= EPS {
                 continue;
             }
-            let min_y = ay.min(by);
-            let max_y = ay.max(by);
-            if y_mid < min_y || y_mid >= max_y {
+            edges.push(ScanlineEdge {
+                min_y: ay.min(by),
+                max_y: ay.max(by),
+                ax: a.x as f64,
+                ay,
+                bx: b.x as f64,
+                by,
+            });
+        }
+    }
+    edges.sort_by(|a, b| {
+        a.min_y
+            .total_cmp(&b.min_y)
+            .then_with(|| a.max_y.total_cmp(&b.max_y))
+            .then_with(|| a.ax.total_cmp(&b.ax))
+            .then_with(|| a.bx.total_cmp(&b.bx))
+    });
+
+    let mut next_edge = 0;
+    let mut active_edges: Vec<ScanlineEdge> = Vec::new();
+    for band in ys.windows(2) {
+        let y0 = band[0];
+        let y1 = band[1];
+        if y1 - y0 <= EPS {
+            continue;
+        }
+        let y_mid = (y0 + y1) * 0.5;
+
+        while next_edge < edges.len() && edges[next_edge].min_y <= y_mid {
+            active_edges.push(edges[next_edge]);
+            next_edge += 1;
+        }
+        active_edges.retain(|edge| y_mid < edge.max_y);
+
+        let mut spans: Vec<(f64, f64, f64)> = Vec::with_capacity(active_edges.len());
+        for edge in &active_edges {
+            if y_mid < edge.min_y || y_mid >= edge.max_y {
                 continue;
             }
-            let x_at = |y: f64| {
-                let t = (y - ay) / (by - ay);
-                a.x as f64 + (b.x as f64 - a.x as f64) * t
-            };
-            spans.push((x_at(y_mid), x_at(y0), x_at(y1)));
+            spans.push((edge.x_at(y_mid), edge.x_at(y0), edge.x_at(y1)));
         }
         spans.sort_by(|a, b| a.0.total_cmp(&b.0));
         for pair in spans.chunks_exact(2) {
             let left = pair[0];
             let right = pair[1];
+            if right.0 - left.0 <= EPS {
+                continue;
+            }
             push_world_quad(
                 out,
                 &[
@@ -5288,13 +6579,16 @@ fn push_world_polygon_fill_scanline(out: &mut Vec<Quad>, polygon: &[PointNm], co
     }
 }
 
-fn push_projected_polygon_fill_scanline(
+fn push_projected_polygon_fill_scanline_contours(
     out: &mut Vec<Quad>,
-    polygon: &[(f32, f32)],
+    contours: &[Vec<(f32, f32)>],
     color: [f32; 3],
 ) {
     const EPS: f32 = 1e-4;
-    let mut ys: Vec<f32> = polygon.iter().map(|p| p.1).collect();
+    let mut ys: Vec<f32> = contours
+        .iter()
+        .flat_map(|polygon| polygon.iter().map(|p| p.1))
+        .collect();
     ys.sort_by(|a, b| a.total_cmp(b));
     ys.dedup_by(|a, b| (*a - *b).abs() <= EPS);
     if ys.len() < 2 {
@@ -5309,35 +6603,35 @@ fn push_projected_polygon_fill_scanline(
         }
         let y_mid = (y0 + y1) * 0.5;
         let mut spans: Vec<(f32, f32, f32)> = Vec::new();
-        for i in 0..polygon.len() {
-            let a = polygon[i];
-            let b = polygon[(i + 1) % polygon.len()];
-            if (a.1 - b.1).abs() <= EPS {
-                continue;
+        for polygon in contours {
+            for i in 0..polygon.len() {
+                let a = polygon[i];
+                let b = polygon[(i + 1) % polygon.len()];
+                if (a.1 - b.1).abs() <= EPS {
+                    continue;
+                }
+                let min_y = a.1.min(b.1);
+                let max_y = a.1.max(b.1);
+                if y_mid < min_y || y_mid >= max_y {
+                    continue;
+                }
+                let x_at = |y: f32| {
+                    let t = (y - a.1) / (b.1 - a.1);
+                    a.0 + (b.0 - a.0) * t
+                };
+                spans.push((x_at(y_mid), x_at(y0), x_at(y1)));
             }
-            let min_y = a.1.min(b.1);
-            let max_y = a.1.max(b.1);
-            if y_mid < min_y || y_mid >= max_y {
-                continue;
-            }
-            let x_at = |y: f32| {
-                let t = (y - a.1) / (b.1 - a.1);
-                a.0 + (b.0 - a.0) * t
-            };
-            spans.push((x_at(y_mid), x_at(y0), x_at(y1)));
         }
         spans.sort_by(|a, b| a.0.total_cmp(&b.0));
         for pair in spans.chunks_exact(2) {
             let left = pair[0];
             let right = pair[1];
+            if right.0 - left.0 <= EPS {
+                continue;
+            }
             push_projected_quad(
                 out,
-                &[
-                    (left.1, y0),
-                    (right.1, y0),
-                    (right.2, y1),
-                    (left.2, y1),
-                ],
+                &[(left.1, y0), (right.1, y0), (right.2, y1), (left.2, y1)],
                 color,
             );
         }
@@ -5475,6 +6769,24 @@ fn push_key_value(
     );
 }
 
+fn push_board_text_property_row(
+    x: f32,
+    y: f32,
+    key: &str,
+    value: &str,
+    text_runs: &mut Vec<TextRun>,
+) {
+    draw_text(
+        &format!("{key:<8} {value}"),
+        x,
+        y,
+        12.5,
+        TEXT_PANEL_VALUE,
+        TextFace::Mono,
+        text_runs,
+    );
+}
+
 fn workspace_tool_label(tool: WorkspaceTool) -> &'static str {
     match tool {
         WorkspaceTool::Select => "SELECT",
@@ -5504,13 +6816,40 @@ fn truncate_text(text: &str, max_chars: usize) -> String {
 }
 
 fn text_buffer_key(run: &TextRun, width: u32, height: u32) -> TextBufferKey {
+    let (width_px, height_px) = text_buffer_extent(run, width, height);
     TextBufferKey {
         text: run.text.clone(),
         size_bits: run.size.to_bits(),
         face: run.face,
-        width_px: width,
-        height_px: height,
+        width_px,
+        height_px,
     }
+}
+
+fn text_buffer_extent(run: &TextRun, surface_width: u32, surface_height: u32) -> (u32, u32) {
+    let max_width = surface_width.max(1);
+    let max_height = surface_height.max(1);
+    let width = run.clip_bounds.map_or_else(
+        || estimated_text_run_width_px(&run.text, run.size, run.face),
+        |bounds| bounds.width.ceil().max(1.0),
+    );
+    let height = run.clip_bounds.map_or_else(
+        || run.size * 1.55 + 6.0,
+        |bounds| bounds.height.ceil().max(1.0),
+    );
+    (
+        (width.ceil() as u32).clamp(1, max_width),
+        (height.ceil() as u32).clamp(1, max_height),
+    )
+}
+
+fn estimated_text_run_width_px(text: &str, size: f32, face: TextFace) -> f32 {
+    let advance_factor = match face {
+        TextFace::Ui => 0.78,
+        TextFace::Mono => 0.72,
+    };
+    let glyphs = text.chars().count().max(1) as f32;
+    glyphs * size * advance_factor + 16.0
 }
 
 fn text_attrs(face: TextFace) -> Attrs<'static> {
@@ -5528,11 +6867,38 @@ fn text_color(color: [f32; 3]) -> Color {
     )
 }
 
+fn build_text_areas<'a>(
+    cache: &'a [CachedTextBuffer],
+    indices: &[usize],
+    runs: &[TextRun],
+) -> Vec<TextArea<'a>> {
+    indices
+        .iter()
+        .zip(runs.iter())
+        .map(|(index, run)| TextArea {
+            buffer: &cache[*index].buffer,
+            left: run.x,
+            top: run.y,
+            scale: 1.0,
+            bounds: run
+                .clip_bounds
+                .map_or_else(TextBounds::default, |rect| TextBounds {
+                    left: rect.x.floor() as i32,
+                    top: rect.y.floor() as i32,
+                    right: (rect.x + rect.width).ceil() as i32,
+                    bottom: (rect.y + rect.height).ceil() as i32,
+                }),
+            default_color: text_color(run.color),
+            custom_glyphs: &[],
+        })
+        .collect()
+}
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, bytemuck::Pod, bytemuck::Zeroable)]
-struct Vertex {
-    pos: [f32; 2],
-    color: [f32; 3],
+pub struct Vertex {
+    pub pos: [f32; 2],
+    pub color: [f32; 3],
 }
 
 #[repr(C)]
@@ -5671,6 +7037,14 @@ impl Renderer {
         queue: &wgpu::Queue,
         vertices: &[Vertex],
     ) {
+        let source_ptr = vertices.as_ptr() as usize;
+        let source_len = vertices.len();
+        if self.world_vertex_buffer.is_some()
+            && self.world_vertex_source_ptr == source_ptr
+            && self.world_vertex_source_len == source_len
+        {
+            return;
+        }
         Self::upload_vertices(
             device,
             queue,
@@ -5679,8 +7053,8 @@ impl Renderer {
             "datum-gui-render-world-vertex-buffer",
             vertices,
         );
-        self.world_vertex_source_ptr = vertices.as_ptr() as usize;
-        self.world_vertex_source_len = vertices.len();
+        self.world_vertex_source_ptr = source_ptr;
+        self.world_vertex_source_len = source_len;
     }
 
     fn cached_text_buffer_indices(
@@ -5688,41 +7062,52 @@ impl Renderer {
         text_runs: &[TextRun],
         width: u32,
         height: u32,
-    ) -> Vec<usize> {
+    ) -> (Vec<usize>, TextBufferCacheStats) {
         let mut indices = Vec::with_capacity(text_runs.len());
+        let mut stats = TextBufferCacheStats::default();
         for run in text_runs {
-            let key = text_buffer_key(run, width, height);
-            if let Some(index) = self
-                .text_buffer_cache
-                .iter()
-                .position(|entry| entry.key == key)
-            {
-                indices.push(index);
-                continue;
+            let (index, missed) = self.ensure_text_buffer(run, width, height);
+            if missed {
+                stats.misses += 1;
+            } else {
+                stats.hits += 1;
             }
-            let mut buffer = Buffer::new(
-                &mut self.font_system,
-                Metrics::new(run.size, run.size * 1.22),
-            );
-            buffer.set_size(
-                &mut self.font_system,
-                Some(width as f32),
-                Some(height as f32),
-            );
-            let attrs = text_attrs(run.face);
-            buffer.set_text(
-                &mut self.font_system,
-                &run.text,
-                &attrs,
-                Shaping::Advanced,
-                None,
-            );
-            buffer.shape_until_scroll(&mut self.font_system, false);
-            self.text_buffer_cache
-                .push(CachedTextBuffer { key, buffer });
-            indices.push(self.text_buffer_cache.len() - 1);
+            indices.push(index);
         }
-        indices
+        (indices, stats)
+    }
+
+    fn ensure_text_buffer(&mut self, run: &TextRun, width: u32, height: u32) -> (usize, bool) {
+        let key = text_buffer_key(run, width, height);
+        if let Some(index) = self
+            .text_buffer_cache
+            .iter()
+            .position(|entry| entry.key == key)
+        {
+            return (index, false);
+        }
+        let mut buffer = Buffer::new(
+            &mut self.font_system,
+            Metrics::new(run.size, run.size * 1.22),
+        );
+        let (buffer_width, buffer_height) = text_buffer_extent(run, width, height);
+        buffer.set_size(
+            &mut self.font_system,
+            Some(buffer_width as f32),
+            Some(buffer_height as f32),
+        );
+        let attrs = text_attrs(run.face);
+        buffer.set_text(
+            &mut self.font_system,
+            &run.text,
+            &attrs,
+            Shaping::Basic,
+            None,
+        );
+        buffer.shape_until_scroll(&mut self.font_system, false);
+        self.text_buffer_cache
+            .push(CachedTextBuffer { key, buffer });
+        (self.text_buffer_cache.len() - 1, true)
     }
 
     pub fn new(
@@ -5957,17 +7342,16 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         let cache = Cache::new(device);
         let viewport = Viewport::new(device, &cache);
         let mut atlas = TextAtlas::new(device, queue, &cache, format);
-        let text_renderer =
-            TextRenderer::new(
-                &mut atlas,
-                device,
-                wgpu::MultisampleState {
-                    count: msaa_samples,
-                    mask: !0,
-                    alpha_to_coverage_enabled: false,
-                },
-                None,
-            );
+        let text_renderer = TextRenderer::new(
+            &mut atlas,
+            device,
+            wgpu::MultisampleState {
+                count: msaa_samples,
+                mask: !0,
+                alpha_to_coverage_enabled: false,
+            },
+            None,
+        );
         Self {
             pipeline,
             world_pipeline,
@@ -5998,7 +7382,12 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         }
     }
 
-    fn ensure_msaa(&mut self, device: &wgpu::Device, width: u32, height: u32) -> &wgpu::TextureView {
+    fn ensure_msaa(
+        &mut self,
+        device: &wgpu::Device,
+        width: u32,
+        height: u32,
+    ) -> &wgpu::TextureView {
         if self.msaa_size != (width, height) || self.msaa_view.is_none() {
             let texture = device.create_texture(&wgpu::TextureDescriptor {
                 label: Some("datum-gui-render-msaa"),
@@ -6030,10 +7419,12 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         width: u32,
         height: u32,
     ) -> anyhow::Result<()> {
+        let render_started = std::time::Instant::now();
         let panel_vertices = prepared.panel_vertices();
         let viewport_underlay_vertices = prepared.viewport_underlay_vertices();
         let viewport_overlay_vertices = prepared.viewport_overlay_vertices();
         let world_vertices = retained.world_vertices();
+        let visible_world_ranges = prepared.visible_world_ranges();
         let board_field = inset_rect(prepared.scene_viewport, 10.0, 10.0, 10.0, 10.0);
         let projection = Projection::new(board_field, &prepared.scene_bounds, prepared.camera);
         queue.write_buffer(
@@ -6059,6 +7450,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 ],
             }),
         );
+        let upload_started = std::time::Instant::now();
         Self::upload_vertices(
             device,
             queue,
@@ -6084,6 +7476,8 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             viewport_overlay_vertices,
         );
         self.sync_world_vertices(device, queue, world_vertices);
+        let upload_elapsed = upload_started.elapsed();
+        let encode_started = std::time::Instant::now();
         let msaa_view = self.ensure_msaa(device, width, height).clone();
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("datum-gui-render-encoder"),
@@ -6138,7 +7532,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 );
                 pass.draw(0..viewport_underlay_vertices.len() as u32, 0..1);
             }
-            if !world_vertices.is_empty() {
+            if !world_vertices.is_empty() && !visible_world_ranges.is_empty() {
                 pass.set_pipeline(&self.world_pipeline);
                 pass.set_bind_group(0, &self.scene_bind_group, &[]);
                 pass.set_scissor_rect(
@@ -6154,7 +7548,9 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                         .expect("world vertex buffer should exist")
                         .slice(..),
                 );
-                pass.draw(0..world_vertices.len() as u32, 0..1);
+                for range in visible_world_ranges {
+                    pass.draw(range.clone(), 0..1);
+                }
                 pass.set_pipeline(&self.pipeline);
                 pass.set_bind_group(0, &self.uniform_bind_group, &[]);
             }
@@ -6175,45 +7571,52 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 pass.draw(0..viewport_overlay_vertices.len() as u32, 0..1);
             }
         }
+        let encode_elapsed = encode_started.elapsed();
         self.viewport.update(queue, Resolution { width, height });
-        let text_buffer_indices =
+        let text_prepare_started = std::time::Instant::now();
+        let (text_buffer_indices, text_cache_stats) =
             self.cached_text_buffer_indices(&prepared.text_runs, width, height);
-        let text_areas: Vec<TextArea<'_>> = text_buffer_indices
-            .iter()
-            .zip(prepared.text_runs.iter())
-            .map(|(index, run)| TextArea {
-                buffer: &self.text_buffer_cache[*index].buffer,
-                left: run.x,
-                top: run.y,
-                scale: 1.0,
-                bounds: run
-                    .clip_bounds
-                    .map_or_else(TextBounds::default, |rect| TextBounds {
-                        left: rect.x.floor() as i32,
-                        top: rect.y.floor() as i32,
-                        right: (rect.x + rect.width).ceil() as i32,
-                        bottom: (rect.y + rect.height).ceil() as i32,
-                    }),
-                default_color: text_color(run.color),
-                custom_glyphs: &[],
-            })
-            .collect();
-        // Evict glyphs not used last frame before preparing this frame so the
-        // atlas doesn't grow unbounded. Without this, a board with many text
-        // elements (refdes labels, silkscreen, UI panels) eventually panics
-        // with "glyph texture atlas is full" — observed on DOA2526.
-        self.atlas.trim();
-        self.text_renderer
-            .prepare(
-                device,
-                queue,
-                &mut self.font_system,
-                &mut self.atlas,
-                &self.viewport,
-                text_areas,
-                &mut self.swash_cache,
-            )
-            .map_err(|error| anyhow::anyhow!("prepare GUI text: {error}"))?;
+        let prepare_result = self.text_renderer.prepare(
+            device,
+            queue,
+            &mut self.font_system,
+            &mut self.atlas,
+            &self.viewport,
+            build_text_areas(
+                &self.text_buffer_cache,
+                &text_buffer_indices,
+                &prepared.text_runs,
+            ),
+            &mut self.swash_cache,
+        );
+        if let Err(initial_error) = prepare_result {
+            // Keep the glyph atlas warm during normal interaction. Trim only
+            // when prepare reports pressure, then retry with the same semantic
+            // text areas. This preserves the DOA2526 atlas-safety behavior
+            // without forcing avoidable re-rasterization on every selection.
+            self.atlas.trim();
+            self.text_renderer
+                .prepare(
+                    device,
+                    queue,
+                    &mut self.font_system,
+                    &mut self.atlas,
+                    &self.viewport,
+                    build_text_areas(
+                        &self.text_buffer_cache,
+                        &text_buffer_indices,
+                        &prepared.text_runs,
+                    ),
+                    &mut self.swash_cache,
+                )
+                .map_err(|retry_error| {
+                    anyhow::anyhow!(
+                        "prepare GUI text after atlas trim: {retry_error}; initial: {initial_error}"
+                    )
+                })?;
+        }
+        let text_prepare_elapsed = text_prepare_started.elapsed();
+        let text_encode_started = std::time::Instant::now();
         {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("datum-gui-text-pass"),
@@ -6235,8 +7638,54 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 .render(&self.atlas, &self.viewport, &mut pass)
                 .map_err(|error| anyhow::anyhow!("render GUI text: {error}"))?;
         }
+        let text_encode_elapsed = text_encode_started.elapsed();
+        let submit_started = std::time::Instant::now();
         queue.submit([encoder.finish()]);
+        let submit_elapsed = submit_started.elapsed();
+        trace_render_timing(format!(
+            "renderer total={}ms upload={}ms encode={}ms text_prepare={}ms text_encode={}ms submit={}ms vertices panel={} underlay={} world={} overlay={} text_runs={} text_cache={}/{}",
+            render_started.elapsed().as_millis(),
+            upload_elapsed.as_millis(),
+            encode_elapsed.as_millis(),
+            text_prepare_elapsed.as_millis(),
+            text_encode_elapsed.as_millis(),
+            submit_elapsed.as_millis(),
+            panel_vertices.len(),
+            viewport_underlay_vertices.len(),
+            world_vertices.len(),
+            viewport_overlay_vertices.len(),
+            prepared.text_runs.len(),
+            text_cache_stats.hits,
+            text_cache_stats.misses,
+        ));
         Ok(())
+    }
+}
+
+fn trace_render_timing(message: String) {
+    if std::env::var_os("DATUM_TRACE_TIMING").is_some() {
+        eprintln!("[datum-render] {message}");
+    }
+}
+
+fn trace_graphic_timing(
+    graphic: &BoardGraphicPrimitive,
+    started: std::time::Instant,
+    quad_count: usize,
+) {
+    let elapsed_ms = started.elapsed().as_millis();
+    if std::env::var_os("DATUM_TRACE_GRAPHICS").is_some() && (elapsed_ms >= 5 || quad_count >= 1024)
+    {
+        eprintln!(
+            "[datum-graphic] {} kind={} layer={} points={} holes={} quads={} {}ms",
+            graphic.object_id,
+            graphic.primitive_kind,
+            graphic.layer_id,
+            graphic.path.len(),
+            graphic.holes.len(),
+            quad_count,
+            elapsed_ms
+        );
     }
 }
 
@@ -6315,6 +7764,298 @@ mod tests {
     }
 
     #[test]
+    fn imported_board_text_counts_as_component_detail_text() {
+        let component_uuid = "f7794004-b142-4fe8-aea4-5f3796f333a5";
+
+        assert!(imported_board_text_belongs_to_component(
+            &format!(
+                "imported_kicad_property_text:{component_uuid}:reference:component_silkscreen"
+            ),
+            component_uuid,
+        ));
+        assert!(imported_board_text_belongs_to_component(
+            &format!("imported_kicad_fp_text:{component_uuid}:component_silkscreen"),
+            component_uuid,
+        ));
+        assert!(!imported_board_text_belongs_to_component(
+            "imported_kicad_property_text:other-component:reference:component_silkscreen",
+            component_uuid,
+        ));
+        assert!(!imported_board_text_belongs_to_component(
+            "manual_board_text",
+            component_uuid,
+        ));
+    }
+
+    #[test]
+    fn board_text_mesh_path_bypasses_legacy_fill_fragments() {
+        let handle = GlyphMeshHandlePrimitive {
+            font_id: 1,
+            glyph_id: 42,
+            tolerance_class: 1,
+            epoch: 0,
+        };
+        let asset = GlyphMeshAssetPrimitive {
+            handle,
+            vertices: vec![
+                datum_gui_protocol::MeshVertexEmPrimitive {
+                    x_em_nm: 0,
+                    y_em_nm: 0,
+                },
+                datum_gui_protocol::MeshVertexEmPrimitive {
+                    x_em_nm: 1_000_000,
+                    y_em_nm: 0,
+                },
+                datum_gui_protocol::MeshVertexEmPrimitive {
+                    x_em_nm: 0,
+                    y_em_nm: 1_000_000,
+                },
+            ],
+            indices: vec![0, 1, 2],
+            bbox_em_nm: datum_gui_protocol::MeshRectEmPrimitive {
+                min_x_em_nm: 0,
+                min_y_em_nm: 0,
+                max_x_em_nm: 1_000_000,
+                max_y_em_nm: 1_000_000,
+            },
+        };
+        let text_geometry = BoardTextGeometryPrimitive {
+            object_id: "board-text:test".to_string(),
+            object_kind: "board_text".to_string(),
+            text_uuid: "test".to_string(),
+            layer_id: "L37".to_string(),
+            world_transform_nm: Some(Affine2DFixedPrimitive {
+                m11_ppm: 1_000_000,
+                m12_ppm: 0,
+                m21_ppm: 0,
+                m22_ppm: 1_000_000,
+                tx_nm: 10,
+                ty_nm: 20,
+            }),
+            block_bbox_em_nm: None,
+            glyphs: vec![datum_gui_protocol::TextGlyphInstancePrimitive {
+                glyph_handle: handle,
+                origin_em_nm_x: 0,
+                origin_em_nm_y: 0,
+            }],
+            fills: vec![datum_gui_protocol::BoardTextFillPrimitive {
+                outer: vec![
+                    PointNm { x: 0, y: 0 },
+                    PointNm { x: 10, y: 0 },
+                    PointNm { x: 10, y: 10 },
+                    PointNm { x: 0, y: 10 },
+                ],
+                holes: Vec::new(),
+            }],
+            strokes: Vec::new(),
+        };
+        let assets = BTreeMap::from([(handle, &asset)]);
+        let projection = Projection::new(
+            RectPx {
+                x: 0.0,
+                y: 0.0,
+                width: 100.0,
+                height: 100.0,
+            },
+            &datum_gui_protocol::SceneBounds {
+                min_x: 0,
+                min_y: 0,
+                max_x: 100,
+                max_y: 100,
+            },
+            CameraState {
+                center_x_nm: 50.0,
+                center_y_nm: 50.0,
+                zoom: 1.0,
+            },
+        );
+        let mut out = Vec::new();
+
+        push_board_text_geometry_world(
+            &mut out,
+            &text_geometry,
+            &assets,
+            [1.0, 1.0, 1.0],
+            &projection,
+        );
+
+        assert_eq!(
+            out.len(),
+            1,
+            "mesh-backed text must render from glyph mesh triangles, not legacy fill fragments"
+        );
+        assert_eq!(
+            out[0].points,
+            [
+                (10.0, 20.0),
+                (1_000_010.0, 20.0),
+                (10.0, 1_000_020.0),
+                (10.0, 1_000_020.0),
+            ]
+        );
+    }
+
+    #[test]
+    fn board_text_mesh_missing_asset_does_not_fall_back_to_legacy_fragments() {
+        let handle = GlyphMeshHandlePrimitive {
+            font_id: 1,
+            glyph_id: 42,
+            tolerance_class: 1,
+            epoch: 0,
+        };
+        let text_geometry = BoardTextGeometryPrimitive {
+            object_id: "board-text:test".to_string(),
+            object_kind: "board_text".to_string(),
+            text_uuid: "test".to_string(),
+            layer_id: "L37".to_string(),
+            world_transform_nm: Some(Affine2DFixedPrimitive {
+                m11_ppm: 1_000_000,
+                m12_ppm: 0,
+                m21_ppm: 0,
+                m22_ppm: 1_000_000,
+                tx_nm: 10,
+                ty_nm: 20,
+            }),
+            block_bbox_em_nm: None,
+            glyphs: vec![datum_gui_protocol::TextGlyphInstancePrimitive {
+                glyph_handle: handle,
+                origin_em_nm_x: 0,
+                origin_em_nm_y: 0,
+            }],
+            fills: vec![datum_gui_protocol::BoardTextFillPrimitive {
+                outer: vec![
+                    PointNm { x: 0, y: 0 },
+                    PointNm { x: 10, y: 0 },
+                    PointNm { x: 10, y: 10 },
+                    PointNm { x: 0, y: 10 },
+                ],
+                holes: Vec::new(),
+            }],
+            strokes: Vec::new(),
+        };
+        let projection = Projection::new(
+            RectPx {
+                x: 0.0,
+                y: 0.0,
+                width: 100.0,
+                height: 100.0,
+            },
+            &datum_gui_protocol::SceneBounds {
+                min_x: 0,
+                min_y: 0,
+                max_x: 100,
+                max_y: 100,
+            },
+            CameraState {
+                center_x_nm: 50.0,
+                center_y_nm: 50.0,
+                zoom: 1.0,
+            },
+        );
+        let mut out = Vec::new();
+        let assets = BTreeMap::new();
+
+        push_board_text_geometry_world(
+            &mut out,
+            &text_geometry,
+            &assets,
+            [1.0, 1.0, 1.0],
+            &projection,
+        );
+
+        assert!(
+            out.is_empty(),
+            "malformed mesh-backed text should skip the bad glyph, not render stale legacy fragments"
+        );
+    }
+
+    #[test]
+    fn board_text_mesh_bad_indices_skip_bad_triangles_without_panic() {
+        let handle = GlyphMeshHandlePrimitive {
+            font_id: 1,
+            glyph_id: 42,
+            tolerance_class: 1,
+            epoch: 0,
+        };
+        let asset = GlyphMeshAssetPrimitive {
+            handle,
+            vertices: vec![
+                datum_gui_protocol::MeshVertexEmPrimitive {
+                    x_em_nm: 0,
+                    y_em_nm: 0,
+                },
+                datum_gui_protocol::MeshVertexEmPrimitive {
+                    x_em_nm: 1_000_000,
+                    y_em_nm: 0,
+                },
+            ],
+            indices: vec![0, 1, 2],
+            bbox_em_nm: datum_gui_protocol::MeshRectEmPrimitive {
+                min_x_em_nm: 0,
+                min_y_em_nm: 0,
+                max_x_em_nm: 1_000_000,
+                max_y_em_nm: 0,
+            },
+        };
+        let text_geometry = BoardTextGeometryPrimitive {
+            object_id: "board-text:test".to_string(),
+            object_kind: "board_text".to_string(),
+            text_uuid: "test".to_string(),
+            layer_id: "L37".to_string(),
+            world_transform_nm: Some(Affine2DFixedPrimitive {
+                m11_ppm: 1_000_000,
+                m12_ppm: 0,
+                m21_ppm: 0,
+                m22_ppm: 1_000_000,
+                tx_nm: 10,
+                ty_nm: 20,
+            }),
+            block_bbox_em_nm: None,
+            glyphs: vec![datum_gui_protocol::TextGlyphInstancePrimitive {
+                glyph_handle: handle,
+                origin_em_nm_x: 0,
+                origin_em_nm_y: 0,
+            }],
+            fills: Vec::new(),
+            strokes: Vec::new(),
+        };
+        let assets = BTreeMap::from([(handle, &asset)]);
+        let projection = Projection::new(
+            RectPx {
+                x: 0.0,
+                y: 0.0,
+                width: 100.0,
+                height: 100.0,
+            },
+            &datum_gui_protocol::SceneBounds {
+                min_x: 0,
+                min_y: 0,
+                max_x: 100,
+                max_y: 100,
+            },
+            CameraState {
+                center_x_nm: 50.0,
+                center_y_nm: 50.0,
+                zoom: 1.0,
+            },
+        );
+        let mut out = Vec::new();
+
+        push_board_text_geometry_world(
+            &mut out,
+            &text_geometry,
+            &assets,
+            [1.0, 1.0, 1.0],
+            &projection,
+        );
+
+        assert!(
+            out.is_empty(),
+            "bad mesh indices should skip only the invalid triangle"
+        );
+    }
+
+    #[test]
     fn hit_regions_include_review_rows_and_overlay_targets() {
         let state = datum_gui_protocol::load_fixture_workspace_state();
         let retained = RetainedScene::from_workspace(&state, 1280, 800);
@@ -6357,6 +8098,160 @@ mod tests {
             )
             .expect("topmost hit should exist");
         assert_eq!(hit, &HitTarget::ReviewAction("action-1".to_string()));
+    }
+
+    #[test]
+    fn board_outline_hit_region_selects_assembled_outline() {
+        let state = datum_gui_protocol::load_fixture_workspace_state();
+        let retained = RetainedScene::from_workspace(&state, 1280, 800);
+        let outline = state
+            .scene
+            .outline
+            .first()
+            .expect("fixture should include a board outline");
+        assert!(
+            outline.path.len() >= 2,
+            "fixture outline should include at least one segment"
+        );
+        let a = outline.path[0];
+        let b = outline.path[1];
+        let hit_point = PointNm {
+            x: (a.x + b.x) / 2,
+            y: (a.y + b.y) / 2,
+        };
+
+        let hit = retained
+            .hit_test_authored_world(hit_point, &state)
+            .expect("board outline segment should be selectable");
+        assert_eq!(hit, &HitTarget::AuthoredObject(outline.object_id.clone()));
+    }
+
+    #[test]
+    fn selected_board_text_numeric_rows_have_step_and_center_edit_zones() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        let object_id = "board-text:test-hit-zones".to_string();
+        state
+            .scene
+            .board_texts
+            .push(datum_gui_protocol::BoardTextPrimitive {
+                object_id: object_id.clone(),
+                object_kind: "board_text".to_string(),
+                text_uuid: "test-hit-zones".to_string(),
+                text: "TEST".to_string(),
+                layer_id: "F.Silks".to_string(),
+                position: PointNm { x: 0, y: 0 },
+                rotation_degrees: 0,
+                height_nm: 1_000_000,
+                stroke_width_nm: 100_000,
+                render_intent: "annotation".to_string(),
+                family: "inter".to_string(),
+                style: "regular".to_string(),
+                style_class: None,
+                h_align: "center".to_string(),
+                v_align: "center".to_string(),
+                mirrored: false,
+                keep_upright: true,
+                line_spacing_ratio_ppm: 1_000_000,
+                bold: false,
+                italic: false,
+            });
+        state.selection = SelectionTarget::AuthoredObject(object_id);
+
+        let retained = RetainedScene::from_workspace(&state, 1280, 800);
+        let prepared = PreparedScene::from_workspace(
+            &state,
+            1280,
+            800,
+            CameraState::fit_to_bounds(&state.scene.bounds),
+            &retained,
+        );
+
+        assert_three_zone_row(
+            &prepared,
+            HitTarget::DecreaseSelectedBoardTextHeight,
+            HitTarget::EditSelectedBoardTextHeight,
+            HitTarget::IncreaseSelectedBoardTextHeight,
+        );
+        assert_three_zone_row(
+            &prepared,
+            HitTarget::RotateSelectedBoardTextCounterClockwise90,
+            HitTarget::EditSelectedBoardTextRotation,
+            HitTarget::RotateSelectedBoardTextClockwise90,
+        );
+        assert_three_zone_row(
+            &prepared,
+            HitTarget::DecreaseSelectedBoardTextLineSpacing,
+            HitTarget::EditSelectedBoardTextLineSpacing,
+            HitTarget::IncreaseSelectedBoardTextLineSpacing,
+        );
+        assert_three_zone_row(
+            &prepared,
+            HitTarget::CycleSelectedBoardTextRenderIntent,
+            HitTarget::EditSelectedBoardTextRenderIntent,
+            HitTarget::CycleSelectedBoardTextRenderIntent,
+        );
+        assert_three_zone_row(
+            &prepared,
+            HitTarget::CycleSelectedBoardTextFamily,
+            HitTarget::EditSelectedBoardTextFamily,
+            HitTarget::CycleSelectedBoardTextFamily,
+        );
+        assert_three_zone_row(
+            &prepared,
+            HitTarget::CycleSelectedBoardTextHAlign,
+            HitTarget::EditSelectedBoardTextAlignment,
+            HitTarget::CycleSelectedBoardTextVAlign,
+        );
+    }
+
+    fn assert_three_zone_row(
+        prepared: &PreparedScene,
+        left: HitTarget,
+        center: HitTarget,
+        right: HitTarget,
+    ) {
+        let left_rect = hit_rect(prepared, &left);
+        let center_rect = hit_rect(prepared, &center);
+        let right_rect = hit_rect_from_end(prepared, &right);
+        assert!(
+            (left_rect.y - center_rect.y).abs() < f32::EPSILON
+                && (center_rect.y - right_rect.y).abs() < f32::EPSILON,
+            "three-zone hit regions must share one row"
+        );
+        assert!(left_rect.x < center_rect.x);
+        assert!(center_rect.x < right_rect.x);
+        assert!(center_rect.width > left_rect.width);
+        assert!(center_rect.width > right_rect.width);
+
+        assert_eq!(hit_center(prepared, left_rect), left);
+        assert_eq!(hit_center(prepared, center_rect), center);
+        assert_eq!(hit_center(prepared, right_rect), right);
+    }
+
+    fn hit_rect(prepared: &PreparedScene, target: &HitTarget) -> RectPx {
+        prepared
+            .hit_regions
+            .iter()
+            .find(|region| &region.target == target)
+            .map(|region| region.rect)
+            .unwrap_or_else(|| panic!("expected hit region for {target:?}"))
+    }
+
+    fn hit_rect_from_end(prepared: &PreparedScene, target: &HitTarget) -> RectPx {
+        prepared
+            .hit_regions
+            .iter()
+            .rev()
+            .find(|region| &region.target == target)
+            .map(|region| region.rect)
+            .unwrap_or_else(|| panic!("expected hit region for {target:?}"))
+    }
+
+    fn hit_center(prepared: &PreparedScene, rect: RectPx) -> HitTarget {
+        prepared
+            .hit_test(rect.x + rect.width * 0.5, rect.y + rect.height * 0.5)
+            .cloned()
+            .expect("hit target should exist at rect center")
     }
 
     #[test]
@@ -6707,10 +8602,18 @@ mod tests {
                 visible_by_default: false,
             },
         ];
-        assert!(scene_layer_stack_priority("L39", &layers) > scene_layer_stack_priority("L0", &layers));
-        assert!(scene_layer_stack_priority("L35", &layers) > scene_layer_stack_priority("L39", &layers));
-        assert!(scene_layer_stack_priority("L39", &layers) > scene_layer_stack_priority("L38", &layers));
-        assert!(scene_layer_stack_priority("L35", &layers) > scene_layer_stack_priority("L34", &layers));
+        assert!(
+            scene_layer_stack_priority("L39", &layers) > scene_layer_stack_priority("L0", &layers)
+        );
+        assert!(
+            scene_layer_stack_priority("L35", &layers) > scene_layer_stack_priority("L39", &layers)
+        );
+        assert!(
+            scene_layer_stack_priority("L39", &layers) > scene_layer_stack_priority("L38", &layers)
+        );
+        assert!(
+            scene_layer_stack_priority("L35", &layers) > scene_layer_stack_priority("L34", &layers)
+        );
     }
 
     #[test]
@@ -6754,6 +8657,7 @@ mod tests {
                     y: 1_300_000,
                 },
             ],
+            holes: Vec::new(),
         };
         let mut out = Vec::new();
 
@@ -6809,342 +8713,11 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "selection highlight is now lane-aware instead of one exact selected-pad color"]
-    fn datum_test_q2_selection_emits_selected_pad_geometry() {
-        let request = datum_gui_protocol::LiveReviewRequest {
-            project_root: PathBuf::from("/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test"),
-            board_file: Some(PathBuf::from(
-                "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb",
-            )),
-            artifact_path: None,
-            net_uuid: None,
-            from_anchor_pad_uuid: None,
-            to_anchor_pad_uuid: None,
-            profile: None,
-        };
-        let mut state = datum_gui_protocol::load_board_editor_workspace_state(&request)
-            .expect("datum-test workspace should load");
-        let (q2_object_id, q2_component_uuid) = state
-            .scene
-            .components
-            .iter()
-            .find(|component| component.reference == "Q2")
-            .map(|component| (component.object_id.clone(), component.component_uuid.clone()))
-            .expect("Q2 should exist");
-        state.select_authored_object(&q2_object_id);
-        let retained = RetainedScene::from_workspace(&state, 1280, 800);
-        let q2_pads: Vec<_> = state
-            .scene
-            .pads
-            .iter()
-            .filter(|pad| pad.component_uuid == q2_component_uuid)
-            .collect();
-        assert!(!q2_pads.is_empty(), "Q2 should own pads");
-        let selected_pad_color = selected_copper_color(
-            resolve_layer_appearance_with_scene(
-                Some(&q2_pads[0].copper_layer_ids[0]),
-                &state.scene.layers,
-            )
-            .pad_copper,
-        );
-        let selected_vertices = retained
-            .world_vertices()
-            .iter()
-            .filter(|vertex| vertex.color == selected_pad_color)
-            .filter(|vertex| {
-                q2_pads.iter().any(|pad| {
-                    vertex.pos[0] >= pad.bounds.min_x as f32
-                        && vertex.pos[0] <= pad.bounds.max_x as f32
-                        && vertex.pos[1] >= pad.bounds.min_y as f32
-                        && vertex.pos[1] <= pad.bounds.max_y as f32
-                })
-            })
-            .count();
-        assert!(
-            selected_vertices > 0,
-            "selecting Q2 should emit selected pad geometry inside Q2 pad bounds"
-        );
-    }
-
-    #[test]
-    #[ignore = "selection highlight is now lane-aware instead of one exact selected-pad color"]
-    fn datum_test_q3_selection_does_not_select_c1_pads() {
-        let request = datum_gui_protocol::LiveReviewRequest {
-            project_root: PathBuf::from("/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test"),
-            board_file: Some(PathBuf::from(
-                "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb",
-            )),
-            artifact_path: None,
-            net_uuid: None,
-            from_anchor_pad_uuid: None,
-            to_anchor_pad_uuid: None,
-            profile: None,
-        };
-        let mut state = datum_gui_protocol::load_board_editor_workspace_state(&request)
-            .expect("datum-test workspace should load");
-        let (q3_object_id, q3_component_uuid) = state
-            .scene
-            .components
-            .iter()
-            .find(|component| component.reference == "Q3")
-            .map(|component| (component.object_id.clone(), component.component_uuid.clone()))
-            .expect("Q3 should exist");
-        let c1_component_uuid = state
-            .scene
-            .components
-            .iter()
-            .find(|component| component.reference == "C1")
-            .map(|component| component.component_uuid.clone())
-            .expect("C1 should exist");
-        state.select_authored_object(&q3_object_id);
-        let retained = RetainedScene::from_workspace(&state, 1280, 800);
-        let q3_pads: Vec<_> = state
-            .scene
-            .pads
-            .iter()
-            .filter(|pad| pad.component_uuid == q3_component_uuid)
-            .collect();
-        let c1_pads: Vec<_> = state
-            .scene
-            .pads
-            .iter()
-            .filter(|pad| pad.component_uuid == c1_component_uuid)
-            .collect();
-        let selected_pad_color = selected_copper_color(
-            resolve_layer_appearance_with_scene(
-                Some(&q3_pads[0].copper_layer_ids[0]),
-                &state.scene.layers,
-            )
-            .pad_copper,
-        );
-        let selected_in_q3 = retained
-            .world_vertices()
-            .iter()
-            .filter(|vertex| vertex.color == selected_pad_color)
-            .filter(|vertex| {
-                q3_pads.iter().any(|pad| {
-                    vertex.pos[0] >= pad.bounds.min_x as f32
-                        && vertex.pos[0] <= pad.bounds.max_x as f32
-                        && vertex.pos[1] >= pad.bounds.min_y as f32
-                        && vertex.pos[1] <= pad.bounds.max_y as f32
-                })
-            })
-            .count();
-        let selected_in_c1 = retained
-            .world_vertices()
-            .iter()
-            .filter(|vertex| vertex.color == selected_pad_color)
-            .filter(|vertex| {
-                c1_pads.iter().any(|pad| {
-                    vertex.pos[0] >= pad.bounds.min_x as f32
-                        && vertex.pos[0] <= pad.bounds.max_x as f32
-                        && vertex.pos[1] >= pad.bounds.min_y as f32
-                        && vertex.pos[1] <= pad.bounds.max_y as f32
-                })
-            })
-            .count();
-        assert!(
-            selected_in_q3 > 0,
-            "selecting Q3 should emit selected pad geometry inside Q3 pad bounds"
-        );
-        assert_eq!(
-            selected_in_c1, 0,
-            "selecting Q3 must not emit selected pad geometry inside C1 pad bounds"
-        );
-    }
-
-    #[test]
-    #[ignore = "selection highlight is now lane-aware instead of one exact selected-pad color"]
-    fn datum_test_q2_selection_does_not_select_q1_pads() {
-        let request = datum_gui_protocol::LiveReviewRequest {
-            project_root: PathBuf::from("/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test"),
-            board_file: Some(PathBuf::from(
-                "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb",
-            )),
-            artifact_path: None,
-            net_uuid: None,
-            from_anchor_pad_uuid: None,
-            to_anchor_pad_uuid: None,
-            profile: None,
-        };
-        let mut state = datum_gui_protocol::load_board_editor_workspace_state(&request)
-            .expect("datum-test workspace should load");
-        let (q2_object_id, q2_component_uuid) = state
-            .scene
-            .components
-            .iter()
-            .find(|component| component.reference == "Q2")
-            .map(|component| (component.object_id.clone(), component.component_uuid.clone()))
-            .expect("Q2 should exist");
-        let q1_component_uuid = state
-            .scene
-            .components
-            .iter()
-            .find(|component| component.reference == "Q1")
-            .map(|component| component.component_uuid.clone())
-            .expect("Q1 should exist");
-        state.select_authored_object(&q2_object_id);
-        let retained = RetainedScene::from_workspace(&state, 1280, 800);
-        let q2_pads: Vec<_> = state
-            .scene
-            .pads
-            .iter()
-            .filter(|pad| pad.component_uuid == q2_component_uuid)
-            .collect();
-        let q1_pads: Vec<_> = state
-            .scene
-            .pads
-            .iter()
-            .filter(|pad| pad.component_uuid == q1_component_uuid)
-            .collect();
-        let selected_pad_color = selected_copper_color(
-            resolve_layer_appearance_with_scene(
-                Some(&q2_pads[0].copper_layer_ids[0]),
-                &state.scene.layers,
-            )
-            .pad_copper,
-        );
-        let selected_in_q2 = retained
-            .world_vertices()
-            .iter()
-            .filter(|vertex| vertex.color == selected_pad_color)
-            .filter(|vertex| {
-                q2_pads.iter().any(|pad| {
-                    vertex.pos[0] >= pad.bounds.min_x as f32
-                        && vertex.pos[0] <= pad.bounds.max_x as f32
-                        && vertex.pos[1] >= pad.bounds.min_y as f32
-                        && vertex.pos[1] <= pad.bounds.max_y as f32
-                })
-            })
-            .count();
-        let selected_in_q1 = retained
-            .world_vertices()
-            .iter()
-            .filter(|vertex| vertex.color == selected_pad_color)
-            .filter(|vertex| {
-                q1_pads.iter().any(|pad| {
-                    vertex.pos[0] >= pad.bounds.min_x as f32
-                        && vertex.pos[0] <= pad.bounds.max_x as f32
-                        && vertex.pos[1] >= pad.bounds.min_y as f32
-                        && vertex.pos[1] <= pad.bounds.max_y as f32
-                })
-            })
-            .count();
-        assert!(
-            selected_in_q2 > 0,
-            "selecting Q2 should emit selected pad geometry inside Q2 pad bounds"
-        );
-        assert_eq!(
-            selected_in_q1, 0,
-            "selecting Q2 must not emit selected pad geometry inside Q1 pad bounds"
-        );
-    }
-
-    #[test]
-    #[ignore = "selection highlight is now lane-aware instead of one exact selected-pad color"]
-    fn datum_test_switching_q1_to_q2_rebuilds_selected_geometry() {
-        let request = datum_gui_protocol::LiveReviewRequest {
-            project_root: PathBuf::from("/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test"),
-            board_file: Some(PathBuf::from(
-                "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb",
-            )),
-            artifact_path: None,
-            net_uuid: None,
-            from_anchor_pad_uuid: None,
-            to_anchor_pad_uuid: None,
-            profile: None,
-        };
-        let mut state = datum_gui_protocol::load_board_editor_workspace_state(&request)
-            .expect("datum-test workspace should load");
-        let (q1_object_id, q1_component_uuid) = state
-            .scene
-            .components
-            .iter()
-            .find(|component| component.reference == "Q1")
-            .map(|component| (component.object_id.clone(), component.component_uuid.clone()))
-            .expect("Q1 should exist");
-        let (q2_object_id, q2_component_uuid) = state
-            .scene
-            .components
-            .iter()
-            .find(|component| component.reference == "Q2")
-            .map(|component| (component.object_id.clone(), component.component_uuid.clone()))
-            .expect("Q2 should exist");
-        let q1_pad_bounds: Vec<_> = state
-            .scene
-            .pads
-            .iter()
-            .filter(|pad| pad.component_uuid == q1_component_uuid)
-            .map(|pad| pad.bounds)
-            .collect();
-        let q2_pad_bounds: Vec<_> = state
-            .scene
-            .pads
-            .iter()
-            .filter(|pad| pad.component_uuid == q2_component_uuid)
-            .map(|pad| pad.bounds)
-            .collect();
-
-        state.select_authored_object(&q1_object_id);
-        let _first = RetainedScene::from_workspace(&state, 1280, 800);
-
-        state.select_authored_object(&q2_object_id);
-        let second = RetainedScene::from_workspace(&state, 1280, 800);
-        let selected_pad_color = selected_copper_color(
-            resolve_layer_appearance_with_scene(
-                Some(&state
-                    .scene
-                    .pads
-                    .iter()
-                    .find(|pad| pad.component_uuid == q2_component_uuid)
-                    .expect("Q2 pad should exist")
-                    .copper_layer_ids[0]),
-                &state.scene.layers,
-            )
-            .pad_copper,
-        );
-
-        let selected_in_q1 = second
-            .world_vertices()
-            .iter()
-            .filter(|vertex| vertex.color == selected_pad_color)
-            .filter(|vertex| {
-                q1_pad_bounds.iter().any(|pad| {
-                    vertex.pos[0] >= pad.min_x as f32
-                        && vertex.pos[0] <= pad.max_x as f32
-                        && vertex.pos[1] >= pad.min_y as f32
-                        && vertex.pos[1] <= pad.max_y as f32
-                })
-            })
-            .count();
-        let selected_in_q2 = second
-            .world_vertices()
-            .iter()
-            .filter(|vertex| vertex.color == selected_pad_color)
-            .filter(|vertex| {
-                q2_pad_bounds.iter().any(|pad| {
-                    vertex.pos[0] >= pad.min_x as f32
-                        && vertex.pos[0] <= pad.max_x as f32
-                        && vertex.pos[1] >= pad.min_y as f32
-                        && vertex.pos[1] <= pad.max_y as f32
-                })
-            })
-            .count();
-
-        assert_eq!(
-            selected_in_q1, 0,
-            "after switching from Q1 to Q2, selected geometry must not remain in Q1 pad bounds"
-        );
-        assert!(
-            selected_in_q2 > 0,
-            "after switching from Q1 to Q2, selected geometry must appear in Q2 pad bounds"
-        );
-    }
-
-    #[test]
     fn debug_datum_test_q1_q2_component_geometry() {
         let request = datum_gui_protocol::LiveReviewRequest {
-            project_root: PathBuf::from("/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test"),
+            project_root: PathBuf::from(
+                "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test",
+            ),
             board_file: Some(PathBuf::from(
                 "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb",
             )),
@@ -7286,3 +8859,6 @@ mod tests {
         );
     }
 }
+
+#[cfg(test)]
+mod render_contract_tests;

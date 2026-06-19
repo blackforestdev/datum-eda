@@ -1,10 +1,10 @@
 [package]
-name = "eda-cli"
+name = "datum-eda-cli"
 version.workspace = true
 edition.workspace = true
 
 [[bin]]
-name = "eda"
+name = "datum-eda"
 path = "src/main.rs"
 
 [dependencies]

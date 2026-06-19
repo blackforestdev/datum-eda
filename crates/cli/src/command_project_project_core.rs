@@ -45,7 +45,7 @@ pub(super) fn load_existing_ids(root: &Path) -> Result<Option<ExistingProjectIds
     }))
 }
 
-pub(super) struct LoadedNativeProject {
+pub(crate) struct LoadedNativeProject {
     pub(super) root: std::path::PathBuf,
     pub(super) manifest: NativeProjectManifest,
     pub(super) schematic: NativeSchematicRoot,
@@ -323,7 +323,7 @@ pub(super) fn build_native_project_board(project: &LoadedNativeProject) -> Resul
         stackup: Stackup {
             layers: stackup_layers,
         },
-        pad_expansion_setup: crate::board::PadExpansionSetup::default(),
+        pad_expansion_setup: eda_engine::board::PadExpansionSetup::default(),
         outline: Polygon {
             vertices: project
                 .board

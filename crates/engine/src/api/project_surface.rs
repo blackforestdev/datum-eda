@@ -13,10 +13,23 @@ impl Engine {
             Some(ImportKind::EagleLibrary) => self.import_eagle_library(path),
             Some(ImportKind::KiCadFootprint) => self.import_kicad_footprint(path),
             Some(ImportKind::KiCadBoard) => {
+                let import_started = std::time::Instant::now();
+                let document_started = std::time::Instant::now();
                 let (mut board, report) = kicad::import_board_document(path)?;
+                trace_engine_import_timing(format!(
+                    "kicad board document {}ms",
+                    document_started.elapsed().as_millis()
+                ));
+                let source_started = std::time::Instant::now();
                 let original_contents = std::fs::read_to_string(path)?;
                 let source_hash =
                     ids_sidecar::compute_source_hash_bytes(original_contents.as_bytes());
+                trace_engine_import_timing(format!(
+                    "kicad source reread+hash {}ms bytes={}",
+                    source_started.elapsed().as_millis(),
+                    original_contents.len()
+                ));
+                let sidecars_started = std::time::Instant::now();
                 let rule_sidecar_path = rules_sidecar::sidecar_path_for_source(path)?;
                 let loaded_rule_sidecar = if rule_sidecar_path.exists() {
                     match rules_sidecar::read_sidecar(&rule_sidecar_path) {
@@ -100,6 +113,15 @@ impl Engine {
                         Err(_) => {}
                     }
                 }
+                trace_engine_import_timing(format!(
+                    "kicad sidecars {}ms rules={} packages={} parts={} net_classes={}",
+                    sidecars_started.elapsed().as_millis(),
+                    loaded_rule_sidecar,
+                    loaded_package_assignment_sidecar,
+                    loaded_part_assignment_sidecar,
+                    loaded_net_class_sidecar
+                ));
+                let attach_started = std::time::Instant::now();
                 self.imported_source = Some(ImportedDesignSource {
                     kind: ImportKind::KiCadBoard,
                     source_path: path.to_path_buf(),
@@ -113,6 +135,14 @@ impl Engine {
                 self.redo_stack.clear();
                 self.undo_depth = 0;
                 self.redo_depth = 0;
+                trace_engine_import_timing(format!(
+                    "kicad engine attach {}ms",
+                    attach_started.elapsed().as_millis()
+                ));
+                trace_engine_import_timing(format!(
+                    "kicad engine import total {}ms",
+                    import_started.elapsed().as_millis()
+                ));
                 Ok(report)
             }
             Some(ImportKind::KiCadSchematic) => {
@@ -339,6 +369,7 @@ impl Engine {
                     RuleType::ViaHole,
                     RuleType::ViaAnnularRing,
                     RuleType::SilkClearance,
+                    RuleType::ProcessAperture,
                 ])?;
                 let violation = report.violations.get(index).ok_or_else(|| {
                     EngineError::Validation(format!(
@@ -366,5 +397,11 @@ impl Engine {
                 })
             }
         }
+    }
+}
+
+fn trace_engine_import_timing(message: String) {
+    if std::env::var_os("DATUM_TRACE_TIMING").is_some() {
+        eprintln!("[datum-engine-import] {message}");
     }
 }

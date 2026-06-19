@@ -102,7 +102,13 @@ impl BoardNetGraph {
             .zones
             .values()
             .filter(|zone| zone.net == net)
-            .filter_map(|zone| zone.polygon.vertices.first().copied().map(|point| (zone, point)))
+            .filter_map(|zone| {
+                zone.polygon
+                    .vertices
+                    .first()
+                    .copied()
+                    .map(|point| (zone, point))
+            })
             .collect();
         let zone_anchor_start = anchors.len();
         for (zone, point) in &zone_source {
@@ -182,7 +188,8 @@ impl BoardNetGraph {
                 }
             }
             for (anchor_idx, anchor) in anchors.iter().enumerate().take(zone_anchor_start) {
-                if anchor.layer == zone.layer && polygon::point_in_polygon(anchor.point, &zone.polygon)
+                if anchor.layer == zone.layer
+                    && polygon::point_in_polygon(anchor.point, &zone.polygon)
                 {
                     uf.union(zone_anchor_idx, anchor_idx);
                 }

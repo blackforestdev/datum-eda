@@ -47,6 +47,7 @@ pub(crate) fn query_native_project_drc(root: &Path) -> Result<DrcReport> {
             RuleType::ViaHole,
             RuleType::ViaAnnularRing,
             RuleType::SilkClearance,
+            RuleType::ProcessAperture,
         ],
         &schematic.waivers,
     ))

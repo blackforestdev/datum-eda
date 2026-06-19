@@ -3,5 +3,5 @@ pub(super) fn default_board_text_height_nm() -> i64 {
 }
 
 pub(super) fn default_board_text_stroke_width_nm() -> i64 {
-    100_000
+    super::super::text::default_stroke_width_nm(default_board_text_height_nm())
 }

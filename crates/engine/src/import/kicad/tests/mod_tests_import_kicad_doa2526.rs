@@ -110,7 +110,11 @@ fn debug_real_doa2526_remaining_airwire_pad_zone_state() {
             let center_in = debug_point_in_polygon(pad.position, &zone.polygon);
             eprintln!(
                 "  zone layer={} center_in={} thermal={} gap={} spoke={}",
-                zone.layer, center_in, zone.thermal_relief, zone.thermal_gap, zone.thermal_spoke_width
+                zone.layer,
+                center_in,
+                zone.thermal_relief,
+                zone.thermal_gap,
+                zone.thermal_spoke_width
             );
         }
         let connected_tracks: Vec<_> = board
@@ -146,7 +150,10 @@ fn debug_real_doa2526_remaining_airwire_pad_zone_state() {
     }
 }
 
-fn debug_point_in_polygon(point: crate::ir::geometry::Point, polygon: &crate::ir::geometry::Polygon) -> bool {
+fn debug_point_in_polygon(
+    point: crate::ir::geometry::Point,
+    polygon: &crate::ir::geometry::Polygon,
+) -> bool {
     let Some(bounds) = polygon.bounding_box() else {
         return false;
     };
@@ -252,6 +259,85 @@ fn imports_real_doa2526_pad_level_mask_and_paste_margins() {
         .expect("Q9 pad 1 should exist");
     assert_eq!(pad.solder_mask_margin_nm, 50_000);
     assert_eq!(pad.solder_paste_margin_nm, -50_000);
+}
+
+#[test]
+fn datum_test_board_import_accounts_for_every_source_object() {
+    // Parse-or-account discipline (M7-IMP-005): on the canonical clean
+    // fixture, nothing may be dropped and the conservation backstop must be
+    // silent.
+    let Some(path) = optional_datum_test_board_path() else {
+        return;
+    };
+
+    let (board, report) = import_board_document(&path).expect("datum-test board should parse");
+    let fidelity_warnings: Vec<&String> = report
+        .warnings
+        .iter()
+        .filter(|w| w.contains("import dropped") || w.contains("accounting mismatch"))
+        .collect();
+    assert!(
+        fidelity_warnings.is_empty(),
+        "clean canonical board must import with zero dropped-object warnings: {fidelity_warnings:?}"
+    );
+    assert!(!board.tracks.is_empty());
+}
+
+#[test]
+fn real_doa2526_import_has_no_silent_drops_or_accounting_mismatch() {
+    // Every non-imported source object must be individually accounted for by
+    // an explicit warning; the conservation check must never trip.
+    let Some(path) = optional_doa2526_board_path() else {
+        return;
+    };
+
+    let (_board, report) = import_board_document(&path).expect("DOA2526 board should parse");
+    let mismatches: Vec<&String> = report
+        .warnings
+        .iter()
+        .filter(|w| w.contains("accounting mismatch"))
+        .collect();
+    assert!(
+        mismatches.is_empty(),
+        "import accounting must balance on DOA2526: {mismatches:?}"
+    );
+    assert!(
+        !report
+            .warnings
+            .iter()
+            .any(|w| w.contains("import dropped segment") || w.contains("import dropped via")),
+        "routed copper must import without drops on DOA2526"
+    );
+}
+
+#[test]
+fn real_doa2526_name_referenced_nets_resolve_for_routed_copper() {
+    // KiCad format 20260206+ references nets by quoted name (e.g.
+    // `(net "/IN_P")`) with no top-level integer net table. Before the
+    // name-form support landed, every segment/via/zone on this board was
+    // silently dropped (tracks=0, vias=0, zones=0, nets=0).
+    let Some(path) = optional_doa2526_board_path() else {
+        return;
+    };
+
+    let (board, _report) = import_board_document(&path).expect("DOA2526 board should parse");
+
+    assert!(
+        board.nets.values().any(|net| net.name == "/IN_P"),
+        "name-referenced nets should be registered in board.nets"
+    );
+    for track in board.tracks.values() {
+        assert!(
+            board.nets.contains_key(&track.net),
+            "every imported track must reference a registered net"
+        );
+    }
+    for via in board.vias.values() {
+        assert!(
+            board.nets.contains_key(&via.net),
+            "every imported via must reference a registered net"
+        );
+    }
 }
 
 #[test]

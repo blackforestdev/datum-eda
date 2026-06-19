@@ -16,7 +16,7 @@ pub(crate) fn cli_set_package_surface_result(cli: &Cli) -> Result<String> {
     let target = unique_temp_path("cli-surface-set-package-save", "kicad_pcb");
     let output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "eda-cli", "--", "--format", "json", "modify",
+            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "modify",
         ])
         .arg(&cli.roundtrip_board_fixture_path)
         .arg("--library")
@@ -51,7 +51,7 @@ pub(crate) fn cli_set_package_surface_result(cli: &Cli) -> Result<String> {
     }
     let query_output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "eda-cli", "--", "--format", "json", "query",
+            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "query",
         ])
         .arg(saved_path)
         .arg("components")
@@ -81,7 +81,7 @@ pub(crate) fn cli_set_package_surface_result(cli: &Cli) -> Result<String> {
     }
     let net_query_output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "eda-cli", "--", "--format", "json", "query",
+            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "query",
         ])
         .arg(saved_path)
         .arg("nets")
@@ -137,7 +137,7 @@ pub(crate) fn cli_set_package_remap_surface_result(cli: &Cli) -> Result<String> 
     let target = unique_temp_path("cli-surface-set-package-remap-save", "kicad_pcb");
     let output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "eda-cli", "--", "--format", "json", "modify",
+            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "modify",
         ])
         .arg(&cli.roundtrip_board_fixture_path)
         .arg("--library")
@@ -172,7 +172,7 @@ pub(crate) fn cli_set_package_remap_surface_result(cli: &Cli) -> Result<String> 
         .ok_or_else(|| anyhow::anyhow!("CLI set-package remap save report missing saved_path"))?;
     let net_query_output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "eda-cli", "--", "--format", "json", "query",
+            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "query",
         ])
         .arg(saved_path)
         .arg("nets")
@@ -225,7 +225,7 @@ pub(crate) fn cli_set_package_with_part_surface_result(cli: &Cli) -> Result<Stri
     let target = unique_temp_path("cli-surface-set-package-with-part-save", "kicad_pcb");
     let output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "eda-cli", "--", "--format", "json", "modify",
+            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "modify",
         ])
         .arg(&cli.roundtrip_board_fixture_path)
         .arg("--library")
@@ -259,7 +259,7 @@ pub(crate) fn cli_set_package_with_part_surface_result(cli: &Cli) -> Result<Stri
     })?;
     let query_output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "eda-cli", "--", "--format", "json", "query",
+            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "query",
         ])
         .arg(saved_path)
         .arg("components")
@@ -292,7 +292,7 @@ pub(crate) fn cli_set_package_with_part_surface_result(cli: &Cli) -> Result<Stri
     }
     let net_query_output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "eda-cli", "--", "--format", "json", "query",
+            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "query",
         ])
         .arg(saved_path)
         .arg("nets")

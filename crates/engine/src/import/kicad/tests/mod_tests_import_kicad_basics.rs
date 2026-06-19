@@ -66,7 +66,17 @@ fn imports_kicad_board_header_and_skeleton_counts() {
         report.metadata.get("gr_text_count").map(String::as_str),
         Some("1")
     );
-    assert_eq!(report.warnings.len(), 1);
+    // Baseline skeleton notice plus the explicit boundary-template notice for
+    // the fixture's unfilled zone (parse-or-account: no silent fallback).
+    assert_eq!(report.warnings.len(), 2);
+    assert!(
+        report
+            .warnings
+            .iter()
+            .any(|w| w.contains("no filled polygon") && w.contains("boundary template")),
+        "unfilled fixture zone must be accounted for explicitly: {:?}",
+        report.warnings
+    );
     assert_eq!(board.name, "simple-demo");
     assert_eq!(board.packages.len(), 1);
     assert_eq!(board.tracks.len(), 1);

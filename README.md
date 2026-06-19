@@ -83,27 +83,27 @@ cargo run -p eda-engine-daemon -- --socket /tmp/datum-eda-engine.sock
 
 ```bash
 # Import Eagle libraries into the pool
-cargo run -p eda-cli -- import library.lbr
+cargo run -p datum-eda-cli -- import library.lbr
 
 # Check a KiCad design
-cargo run -p eda-cli -- erc design.kicad_sch
-cargo run -p eda-cli -- drc design.kicad_pcb
+cargo run -p datum-eda-cli -- erc design.kicad_sch
+cargo run -p datum-eda-cli -- drc design.kicad_pcb
 
 # Query a design
-cargo run -p eda-cli -- query design.kicad_pcb summary
-cargo run -p eda-cli -- query design.kicad_pcb nets
-cargo run -p eda-cli -- query design.kicad_pcb components
+cargo run -p datum-eda-cli -- query design.kicad_pcb summary
+cargo run -p datum-eda-cli -- query design.kicad_pcb nets
+cargo run -p datum-eda-cli -- query design.kicad_pcb components
 
 # Search the component pool
-cargo run -p eda-cli -- pool search "100nF 0402" --library library.lbr
+cargo run -p datum-eda-cli -- pool search "100nF 0402" --library library.lbr
 
 # Imported-board modify slice
-cargo run -p eda-cli -- modify design.kicad_pcb --move-component "<uuid>:25:15:90" --save out.kicad_pcb
+cargo run -p datum-eda-cli -- modify design.kicad_pcb --move-component "<uuid>:25:15:90" --save out.kicad_pcb
 
 # Native project slice (M4 closed for scope; M5 in progress)
-cargo run -p eda-cli -- project new ./demo --name "Demo"
-cargo run -p eda-cli -- project query ./demo summary
-cargo run -p eda-cli -- project query ./demo routing-substrate
+cargo run -p datum-eda-cli -- project new ./demo --name "Demo"
+cargo run -p datum-eda-cli -- project query ./demo summary
+cargo run -p datum-eda-cli -- project query ./demo routing-substrate
 ```
 
 Exit codes: `0` = pass, `1` = violations found, `2` = execution error.

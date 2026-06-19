@@ -31,6 +31,9 @@ thiserror = "2"
 anyhow = "1"
 sha2 = "0.10"
 quick-xml = "0.38"
+ttf-parser = { version = "0.25", features = ["std"] }
+lyon_path = "1"
+lyon_tessellation = "1"
 
 # CLI
 clap = { version = "4", features = ["derive"] }

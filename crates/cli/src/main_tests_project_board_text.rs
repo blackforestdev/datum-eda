@@ -40,6 +40,22 @@ fn project_board_text_mutations_round_trip_through_native_query() {
         "2000",
         "--rotation-deg",
         "90",
+        "--render-intent",
+        "annotation",
+        "--style",
+        "regular",
+        "--style-class",
+        "fab-note",
+        "--h-align",
+        "center",
+        "--v-align",
+        "top",
+        "--mirrored",
+        "--keep-upright",
+        "--line-spacing-ratio-ppm",
+        "1350000",
+        "--bold",
+        "--italic",
         "--layer",
         "1",
     ])
@@ -62,6 +78,23 @@ fn project_board_text_mutations_round_trip_through_native_query() {
     assert_eq!(texts[0].rotation, 90);
     assert_eq!(texts[0].height_nm, 1_000_000);
     assert_eq!(texts[0].stroke_width_nm, 100_000);
+    assert_eq!(
+        texts[0].render_intent,
+        eda_engine::text::TextRenderIntent::Annotation
+    );
+    assert_eq!(
+        texts[0].family_source,
+        eda_engine::text::TextFamilySource::ImplicitDefault
+    );
+    assert_eq!(texts[0].style.0, "regular");
+    assert_eq!(texts[0].style_class.as_deref(), Some("fab-note"));
+    assert_eq!(texts[0].h_align, eda_engine::text::TextHAlign::Center);
+    assert_eq!(texts[0].v_align, eda_engine::text::TextVAlign::Top);
+    assert!(texts[0].mirrored);
+    assert!(texts[0].keep_upright);
+    assert_eq!(texts[0].line_spacing_ratio_ppm, 1_350_000);
+    assert!(texts[0].bold);
+    assert!(texts[0].italic);
     assert_eq!(texts[0].layer, 1);
 
     let edit_cli = Cli::try_parse_from([
@@ -85,6 +118,26 @@ fn project_board_text_mutations_round_trip_through_native_query() {
         "1200000",
         "--stroke-width-nm",
         "150000",
+        "--family",
+        "jetbrains_mono",
+        "--style",
+        "regular",
+        "--style-class",
+        "reference-label",
+        "--h-align",
+        "right",
+        "--v-align",
+        "bottom",
+        "--mirrored",
+        "false",
+        "--keep-upright",
+        "false",
+        "--line-spacing-ratio-ppm",
+        "900000",
+        "--bold",
+        "false",
+        "--italic",
+        "false",
         "--layer",
         "2",
     ])
@@ -102,6 +155,24 @@ fn project_board_text_mutations_round_trip_through_native_query() {
     assert_eq!(texts[0].rotation, 180);
     assert_eq!(texts[0].height_nm, 1_200_000);
     assert_eq!(texts[0].stroke_width_nm, 150_000);
+    assert_eq!(
+        texts[0].render_intent,
+        eda_engine::text::TextRenderIntent::Annotation
+    );
+    assert_eq!(texts[0].family.0, "jetbrains_mono");
+    assert_eq!(
+        texts[0].family_source,
+        eda_engine::text::TextFamilySource::Explicit
+    );
+    assert_eq!(texts[0].style.0, "regular");
+    assert_eq!(texts[0].style_class.as_deref(), Some("reference-label"));
+    assert_eq!(texts[0].h_align, eda_engine::text::TextHAlign::Right);
+    assert_eq!(texts[0].v_align, eda_engine::text::TextVAlign::Bottom);
+    assert!(!texts[0].mirrored);
+    assert!(!texts[0].keep_upright);
+    assert_eq!(texts[0].line_spacing_ratio_ppm, 900_000);
+    assert!(!texts[0].bold);
+    assert!(!texts[0].italic);
     assert_eq!(texts[0].layer, 2);
 
     let delete_cli = Cli::try_parse_from([
@@ -177,7 +248,69 @@ fn project_query_board_texts_reads_existing_native_board_file() {
     assert_eq!(texts[0].text, "FAB");
     assert_eq!(texts[0].height_nm, 900_000);
     assert_eq!(texts[0].stroke_width_nm, 120_000);
+    assert_eq!(
+        texts[0].family_source,
+        eda_engine::text::TextFamilySource::ImplicitDefault
+    );
+    assert_eq!(texts[0].h_align, eda_engine::text::TextHAlign::Left);
+    assert_eq!(texts[0].v_align, eda_engine::text::TextVAlign::Bottom);
+    assert!(!texts[0].mirrored);
+    assert!(!texts[0].keep_upright);
+    assert_eq!(texts[0].line_spacing_ratio_ppm, 1_000_000);
     assert_eq!(texts[0].layer, 21);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_board_text_rejects_invalid_semantic_controls() {
+    let root = unique_project_root("datum-eda-cli-project-board-text-invalid");
+    create_native_project(&root, Some("Board Text Invalid Demo".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let invalid_align_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "place-board-text",
+        root.to_str().unwrap(),
+        "--text",
+        "BAD ALIGN",
+        "--x-nm",
+        "1000",
+        "--y-nm",
+        "2000",
+        "--h-align",
+        "middle",
+        "--layer",
+        "1",
+    ])
+    .expect("CLI should parse");
+    let err = execute(invalid_align_cli).expect_err("invalid alignment should fail");
+    assert!(err.to_string().contains("horizontal alignment"));
+
+    let invalid_spacing_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "place-board-text",
+        root.to_str().unwrap(),
+        "--text",
+        "BAD SPACING",
+        "--x-nm",
+        "1000",
+        "--y-nm",
+        "2000",
+        "--line-spacing-ratio-ppm",
+        "0",
+        "--layer",
+        "1",
+    ])
+    .expect("CLI should parse");
+    let err = execute(invalid_spacing_cli).expect_err("invalid line spacing should fail");
+    assert!(err.to_string().contains("line spacing ratio"));
 
     let _ = std::fs::remove_dir_all(&root);
 }

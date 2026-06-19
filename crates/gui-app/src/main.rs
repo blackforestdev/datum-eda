@@ -2,20 +2,28 @@ use anyhow::{Context, Result};
 use arboard::{Clipboard, GetExtLinux, LinuxClipboardKind, SetExtLinux};
 use clap::Parser;
 use datum_gui_protocol::{
-    DockTab, LiveDesignSession, LiveReviewRequest, PointNm, SceneBounds,
-    SessionCommand, SessionEvent, WorkspaceTool, ensure_known_good_demo_request,
-    load_live_workspace_state,
+    BoardTextAlignmentField, BoardTextBooleanField, BoardTextCycleField, BoardTextHeightStep,
+    BoardTextLineSpacingStep, BoardTextPrimitive, BoardTextRotationStep, DockTab,
+    LiveDesignSession, LiveReviewRequest, PointNm, SceneBounds, SessionCommand, SessionEvent,
+    WorkspaceBacking, WorkspaceTool, WorkspaceUiState, cycle_board_text_alignment_field,
+    cycle_board_text_field, ensure_known_good_demo_request, load_board_editor_workspace_state,
+    load_live_workspace_state, set_board_text_alignment, set_board_text_content,
+    set_board_text_font_family, set_board_text_h_align, set_board_text_height,
+    set_board_text_line_spacing_ratio, set_board_text_render_intent, set_board_text_rotation,
+    set_board_text_v_align, step_board_text_height, step_board_text_line_spacing_ratio,
+    step_board_text_rotation, toggle_board_text_boolean_field,
 };
 use datum_gui_render::{
     CameraState, HitTarget, PreparedScene, Renderer, RetainedScene, ShellLayout,
 };
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
 use std::fs;
 use std::io::{BufRead, BufReader, Write};
 use std::path::Path;
 use std::path::PathBuf;
 use std::process::{Child, ChildStdin, Command, Stdio};
-use std::sync::mpsc::{self, Receiver, TryRecvError};
+use std::sync::mpsc::{self, Receiver, Sender, TryRecvError};
 use std::sync::{Arc, Mutex};
 use std::thread;
 use winit::{
@@ -26,6 +34,39 @@ use winit::{
     keyboard::{Key, KeyCode, ModifiersState, NamedKey, PhysicalKey},
     window::{Window, WindowAttributes, WindowId},
 };
+
+#[cfg(feature = "visual")]
+const COPY_BYTES_PER_PIXEL: u32 = 4;
+#[cfg(feature = "visual")]
+const WGPU_COPY_BYTES_PER_ROW_ALIGNMENT: u32 = 256;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum BoardTextEditPrefillField {
+    Content,
+    Height,
+    Rotation,
+    LineSpacing,
+    RenderIntent,
+    Family,
+    Alignment,
+}
+
+const RETAINED_SCENE_CACHE_LIMIT: usize = 6;
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct RetainedSceneCacheKey {
+    scene_id: String,
+    source_revision: String,
+    width: u32,
+    height: u32,
+    dock_height_px: u32,
+    show_authored: bool,
+    show_proposed: bool,
+    show_unrouted: bool,
+    dim_unrelated: bool,
+    layer_visibility: BTreeMap<String, bool>,
+    selection: String,
+}
 
 fn main() -> Result<()> {
     let args = GuiArgs::parse();
@@ -38,6 +79,89 @@ fn fatal_gui_error(event_loop: &ActiveEventLoop, context: &str, err: impl std::f
     eprintln!("datum-gui error: {context}: {err}");
     event_loop.exit();
     std::process::exit(1);
+}
+
+fn trace_startup_timing(message: String) {
+    if std::env::var_os("DATUM_TRACE_TIMING").is_some() {
+        eprintln!("[datum-startup] {message}");
+    }
+}
+
+fn parse_window_size(value: &str) -> Result<(u32, u32)> {
+    let (width, height) = value
+        .split_once('x')
+        .ok_or_else(|| anyhow::anyhow!("window size must use <width>x<height>"))?;
+    let width = width
+        .parse::<u32>()
+        .with_context(|| format!("parse window width from {value:?}"))?;
+    let height = height
+        .parse::<u32>()
+        .with_context(|| format!("parse window height from {value:?}"))?;
+    if width == 0 || height == 0 {
+        anyhow::bail!("window size dimensions must be non-zero");
+    }
+    Ok((width, height))
+}
+
+fn selection_cache_key(workspace: &datum_gui_protocol::ReviewWorkspaceState) -> String {
+    match &workspace.selection {
+        datum_gui_protocol::SelectionTarget::None => "none".to_string(),
+        datum_gui_protocol::SelectionTarget::ReviewAction(id) => format!("review:{id}"),
+        datum_gui_protocol::SelectionTarget::AuthoredObject(id) => format!("object:{id}"),
+    }
+}
+
+fn retained_selection_cache_key(
+    workspace: &datum_gui_protocol::ReviewWorkspaceState,
+    selection: &datum_gui_protocol::SelectionTarget,
+) -> String {
+    match selection {
+        datum_gui_protocol::SelectionTarget::None => "none".to_string(),
+        datum_gui_protocol::SelectionTarget::ReviewAction(id) => format!("review:{id}"),
+        datum_gui_protocol::SelectionTarget::AuthoredObject(id) => {
+            let lightweight = workspace
+                .scene
+                .board_texts
+                .iter()
+                .any(|text| &text.object_id == id)
+                || workspace
+                    .scene
+                    .outline
+                    .iter()
+                    .any(|outline| &outline.object_id == id)
+                || workspace
+                    .scene
+                    .board_graphics
+                    .iter()
+                    .any(|graphic| &graphic.object_id == id);
+            if lightweight && !workspace.ui.filters.dim_unrelated {
+                "none".to_string()
+            } else if lightweight {
+                "lightweight-authored".to_string()
+            } else {
+                format!("object:{id}")
+            }
+        }
+    }
+}
+
+#[cfg(feature = "visual")]
+fn align_to(value: u32, alignment: u32) -> u32 {
+    value.div_ceil(alignment) * alignment
+}
+
+#[cfg(feature = "visual")]
+fn convert_texture_pixels_to_rgba(pixels: &mut [u8], format: wgpu::TextureFormat) -> Result<()> {
+    match format {
+        wgpu::TextureFormat::Rgba8Unorm | wgpu::TextureFormat::Rgba8UnormSrgb => Ok(()),
+        wgpu::TextureFormat::Bgra8Unorm | wgpu::TextureFormat::Bgra8UnormSrgb => {
+            for pixel in pixels.chunks_exact_mut(4) {
+                pixel.swap(0, 2);
+            }
+            Ok(())
+        }
+        other => anyhow::bail!("unsupported visual screenshot surface format: {other:?}"),
+    }
 }
 
 #[derive(Debug, Clone, Parser)]
@@ -59,6 +183,14 @@ struct GuiArgs {
     to_anchor_pad_uuid: Option<String>,
     #[arg(long = "profile")]
     profile: Option<String>,
+    #[arg(long = "visual-test", default_value_t = false)]
+    visual_test: bool,
+    #[arg(long = "window-size", default_value = "1280x768")]
+    window_size: String,
+    #[arg(long = "screenshot-out")]
+    screenshot_out: Option<PathBuf>,
+    #[arg(long = "exit-after-screenshot", default_value_t = false)]
+    exit_after_screenshot: bool,
 }
 
 struct App {
@@ -68,6 +200,7 @@ struct App {
 }
 
 struct TerminalSession {
+    _tx: Sender<String>,
     rx: Receiver<String>,
 }
 
@@ -196,6 +329,30 @@ impl App {
 }
 
 impl GuiArgs {
+    fn visual_window_size(&self) -> Result<(u32, u32)> {
+        parse_window_size(&self.window_size)
+    }
+
+    fn validate_visual_args(&self) -> Result<()> {
+        if !self.visual_test {
+            return Ok(());
+        }
+        if self.screenshot_out.is_none() {
+            anyhow::bail!("--visual-test requires --screenshot-out");
+        }
+        self.visual_window_size()?;
+        Ok(())
+    }
+
+    fn wants_plain_project_board_view(&self) -> bool {
+        self.project_root.is_some()
+            && self.board_file.is_none()
+            && self.artifact_path.is_none()
+            && self.net_uuid.is_none()
+            && self.from_anchor_pad_uuid.is_none()
+            && self.to_anchor_pad_uuid.is_none()
+    }
+
     fn resolve_request(&self) -> Result<LiveReviewRequest> {
         if self.demo_known_good {
             return ensure_known_good_demo_request();
@@ -261,11 +418,18 @@ impl ApplicationHandler for App {
         // Wait is correct. Redraws are explicitly requested via
         // `request_redraw_if_needed()` when state changes.
         event_loop.set_control_flow(ControlFlow::Wait);
+        self.args
+            .validate_visual_args()
+            .unwrap_or_else(|err| fatal_gui_error(event_loop, "visual launch args invalid", err));
+        let (window_width, window_height) = self
+            .args
+            .visual_window_size()
+            .unwrap_or_else(|err| fatal_gui_error(event_loop, "window size invalid", err));
         let window = event_loop
             .create_window(
                 WindowAttributes::default()
                     .with_title("Datum M7 Spike")
-                    .with_inner_size(LogicalSize::new(1280.0, 800.0)),
+                    .with_inner_size(LogicalSize::new(window_width as f64, window_height as f64)),
             )
             .unwrap_or_else(|err| fatal_gui_error(event_loop, "window creation failed", err));
         window.set_ime_allowed(true);
@@ -413,7 +577,6 @@ impl ApplicationHandler for App {
                     runtime.dock_drag_active = false;
                     let handled = runtime.handle_primary_click();
                     if handled {
-                        runtime.invalidate_scene();
                         self.request_redraw_if_needed();
                     }
                 }
@@ -463,7 +626,7 @@ impl ApplicationHandler for App {
                 event:
                     KeyEvent {
                         logical_key: Key::Character(ref text),
-                        state: ElementState::Released,
+                        state: ElementState::Pressed,
                         ..
                     },
                 ..
@@ -481,7 +644,7 @@ impl ApplicationHandler for App {
                 event:
                     KeyEvent {
                         logical_key: Key::Named(NamedKey::Space),
-                        state: ElementState::Released,
+                        state: ElementState::Pressed,
                         ..
                     },
                 ..
@@ -549,9 +712,8 @@ impl ApplicationHandler for App {
             {
                 if let Some(runtime) = &mut self.runtime {
                     // Clear input first; only close dock if input is already empty.
-                    let input_was_empty = runtime
-                        .current_dock_input()
-                        .map_or(true, |s| s.is_empty());
+                    let input_was_empty =
+                        runtime.current_dock_input().map_or(true, |s| s.is_empty());
                     if input_was_empty {
                         if runtime.close_active_dock() {
                             self.request_redraw_if_needed();
@@ -751,8 +913,29 @@ impl ApplicationHandler for App {
             WindowEvent::RedrawRequested => {
                 if let Some(runtime) = &mut self.runtime {
                     runtime.redraw_pending = false;
+                    let render_started = std::time::Instant::now();
                     if let Err(err) = runtime.render() {
                         fatal_gui_error(event_loop, "render failed", err);
+                    }
+                    runtime.trace_timing(format!(
+                        "redraw render {}ms",
+                        render_started.elapsed().as_millis()
+                    ));
+                    if self.args.visual_test {
+                        let screenshot_out =
+                            self.args.screenshot_out.as_ref().unwrap_or_else(|| {
+                                fatal_gui_error(
+                                    event_loop,
+                                    "visual screenshot failed",
+                                    "--screenshot-out is required",
+                                )
+                            });
+                        if let Err(err) = runtime.write_visual_screenshot(screenshot_out) {
+                            fatal_gui_error(event_loop, "visual screenshot failed", err);
+                        }
+                        if self.args.exit_after_screenshot {
+                            event_loop.exit();
+                        }
                     }
                 }
             }
@@ -776,10 +959,13 @@ struct Runtime {
     modifiers: ModifiersState,
     redraw_pending: bool,
     retained_scene: Option<RetainedScene>,
+    retained_scene_cache: Vec<(RetainedSceneCacheKey, RetainedScene)>,
     prepared_scene: Option<PreparedScene>,
     scene_dirty: bool,
     terminal: TerminalSession,
     assistant: AssistantSession,
+    terminal_disconnected_reported: bool,
+    assistant_disconnected_reported: bool,
     assistant_config_path: PathBuf,
     assistant_config: AssistantBridgeConfig,
     clipboard: Option<Clipboard>,
@@ -791,6 +977,8 @@ impl Runtime {
     }
 
     async fn new(window: &'static Window, args: &GuiArgs) -> Result<Self> {
+        let runtime_started = std::time::Instant::now();
+        let wgpu_started = std::time::Instant::now();
         let instance = wgpu::Instance::default();
         let surface = instance.create_surface(window).context("create surface")?;
         let adapter = instance
@@ -814,11 +1002,16 @@ impl Runtime {
             })
             .await
             .context("request device")?;
-        let msaa_samples = if want_msaa8.contains(wgpu::Features::TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES) {
-            8
-        } else {
-            4
-        };
+        trace_startup_timing(format!(
+            "wgpu init {}ms",
+            wgpu_started.elapsed().as_millis()
+        ));
+        let msaa_samples =
+            if want_msaa8.contains(wgpu::Features::TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES) {
+                8
+            } else {
+                4
+            };
         let size = window.inner_size();
         let caps = surface.get_capabilities(&adapter);
         let format = caps.formats[0];
@@ -833,21 +1026,60 @@ impl Runtime {
             desired_maximum_frame_latency: 2,
         };
         surface.configure(&device, &config);
+        let renderer_started = std::time::Instant::now();
         let renderer = Renderer::new(&device, &queue, config.format, msaa_samples);
+        trace_startup_timing(format!(
+            "renderer init {}ms",
+            renderer_started.elapsed().as_millis()
+        ));
+        let request_started = std::time::Instant::now();
         let request = args
             .resolve_request()
             .context("resolve GUI launch review context")?;
+        trace_startup_timing(format!(
+            "request resolve {}ms",
+            request_started.elapsed().as_millis()
+        ));
+        let config_started = std::time::Instant::now();
         let assistant_config_path = assistant_config_path(&request);
         let assistant_config =
             load_assistant_config(&assistant_config_path).with_context(|| {
                 format!("load assistant config {}", assistant_config_path.display())
             })?;
-        let state =
-            load_live_workspace_state(&request).context("load live M7 review workspace state")?;
+        trace_startup_timing(format!(
+            "assistant config load {}ms",
+            config_started.elapsed().as_millis()
+        ));
+        let workspace_started = std::time::Instant::now();
+        let state = if args.wants_plain_project_board_view() {
+            load_board_editor_workspace_state(&request)
+                .context("load board editor workspace state")?
+        } else {
+            load_live_workspace_state(&request).context("load live M7 review workspace state")?
+        };
+        trace_startup_timing(format!(
+            "workspace load {}ms",
+            workspace_started.elapsed().as_millis()
+        ));
+        let camera_started = std::time::Instant::now();
         let camera = CameraState::fit_to_bounds(&state.scene.bounds);
+        trace_startup_timing(format!(
+            "camera fit {}ms",
+            camera_started.elapsed().as_millis()
+        ));
+        let terminal_started = std::time::Instant::now();
         let terminal = spawn_terminal_session().context("spawn integrated terminal lane")?;
+        trace_startup_timing(format!(
+            "terminal spawn {}ms",
+            terminal_started.elapsed().as_millis()
+        ));
+        let assistant_started = std::time::Instant::now();
         let assistant = spawn_assistant_session(&assistant_config)
             .context("spawn integrated assistant lane")?;
+        trace_startup_timing(format!(
+            "assistant spawn {}ms",
+            assistant_started.elapsed().as_millis()
+        ));
         let mut runtime = Self {
             surface,
             device,
@@ -863,15 +1095,27 @@ impl Runtime {
             modifiers: ModifiersState::empty(),
             redraw_pending: false,
             retained_scene: None,
+            retained_scene_cache: Vec::new(),
             prepared_scene: None,
             scene_dirty: true,
             terminal,
             assistant,
+            terminal_disconnected_reported: false,
+            assistant_disconnected_reported: false,
             assistant_config_path,
             assistant_config,
             clipboard: Clipboard::new().ok(),
         };
+        let assistant_context_started = std::time::Instant::now();
         runtime.sync_assistant_context();
+        trace_startup_timing(format!(
+            "assistant context sync {}ms",
+            assistant_context_started.elapsed().as_millis()
+        ));
+        trace_startup_timing(format!(
+            "runtime total {}ms",
+            runtime_started.elapsed().as_millis()
+        ));
         Ok(runtime)
     }
 
@@ -888,13 +1132,118 @@ impl Runtime {
     }
 
     fn render(&mut self) -> Result<()> {
+        let render_started = std::time::Instant::now();
+        let acquire_started = std::time::Instant::now();
         let frame = self
             .surface
             .get_current_texture()
             .context("acquire next surface texture")?;
+        let acquire_elapsed = acquire_started.elapsed();
         let view = frame
             .texture
             .create_view(&wgpu::TextureViewDescriptor::default());
+        let scene_started = std::time::Instant::now();
+        let retained_was_cached = self.retained_scene.is_some();
+        let prepared_was_cached = self.prepared_scene.is_some();
+        let mut retained_build_ms = 0;
+        let mut prepared_build_ms = 0;
+        if self.prepared_scene.is_none() {
+            self.scene_dirty = false;
+            if self.retained_scene.is_none() {
+                let retained_started = std::time::Instant::now();
+                self.retained_scene = Some(RetainedScene::from_workspace(
+                    self.session.workspace(),
+                    self.config.width,
+                    self.config.height,
+                ));
+                retained_build_ms = retained_started.elapsed().as_millis();
+            }
+            let retained = self
+                .retained_scene
+                .as_ref()
+                .context("retained scene should exist before prepared scene rebuild")?;
+            let prepared_started = std::time::Instant::now();
+            self.prepared_scene = Some(PreparedScene::from_workspace(
+                self.session.workspace(),
+                self.config.width,
+                self.config.height,
+                self.camera,
+                retained,
+            ));
+            prepared_build_ms = prepared_started.elapsed().as_millis();
+        }
+        let scene_elapsed = scene_started.elapsed();
+        let retained = self
+            .retained_scene
+            .as_ref()
+            .context("retained scene should exist before render")?;
+        let prepared = self
+            .prepared_scene
+            .as_ref()
+            .context("prepared scene should exist before render")?;
+        let renderer_started = std::time::Instant::now();
+        self.renderer.render(
+            &self.device,
+            &self.queue,
+            &view,
+            &prepared,
+            retained,
+            self.config.width,
+            self.config.height,
+        )?;
+        let renderer_elapsed = renderer_started.elapsed();
+        let present_started = std::time::Instant::now();
+        frame.present();
+        let present_elapsed = present_started.elapsed();
+        self.trace_timing(format!(
+            "runtime render total={}ms acquire={}ms scene={}ms retained_build={}ms prepared_build={}ms renderer={}ms present={}ms retained_was_cached={} prepared_was_cached={}",
+            render_started.elapsed().as_millis(),
+            acquire_elapsed.as_millis(),
+            scene_elapsed.as_millis(),
+            retained_build_ms,
+            prepared_build_ms,
+            renderer_elapsed.as_millis(),
+            present_elapsed.as_millis(),
+            retained_was_cached,
+            prepared_was_cached
+        ));
+        Ok(())
+    }
+
+    #[cfg(feature = "visual")]
+    fn write_visual_screenshot(&mut self, path: &Path) -> Result<()> {
+        let image = self.capture_visual_screenshot()?;
+        if let Some(parent) = path.parent() {
+            fs::create_dir_all(parent)
+                .with_context(|| format!("create screenshot directory {}", parent.display()))?;
+        }
+        image
+            .save(path)
+            .with_context(|| format!("write visual shell screenshot {}", path.display()))
+    }
+
+    #[cfg(not(feature = "visual"))]
+    fn write_visual_screenshot(&mut self, _path: &Path) -> Result<()> {
+        anyhow::bail!("datum-gui visual screenshots require the datum-gui-app visual feature")
+    }
+
+    #[cfg(feature = "visual")]
+    fn capture_visual_screenshot(&mut self) -> Result<image::RgbaImage> {
+        let target = self.device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("datum-gui-layer-b-visual-capture-target"),
+            size: wgpu::Extent3d {
+                width: self.config.width,
+                height: self.config.height,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: self.config.format,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
+            view_formats: &[],
+        });
+        let target_view = target.create_view(&wgpu::TextureViewDescriptor::default());
         if self.prepared_scene.is_none() {
             self.scene_dirty = false;
             let retained = self.retained_scene.get_or_insert_with(|| {
@@ -915,22 +1264,93 @@ impl Runtime {
         let retained = self
             .retained_scene
             .as_ref()
-            .context("retained scene should exist before render")?;
+            .context("retained scene should exist before visual screenshot")?;
         let prepared = self
             .prepared_scene
             .as_ref()
-            .context("prepared scene should exist before render")?;
+            .context("prepared scene should exist before visual screenshot")?;
         self.renderer.render(
             &self.device,
             &self.queue,
-            &view,
-            &prepared,
+            &target_view,
+            prepared,
             retained,
             self.config.width,
             self.config.height,
         )?;
-        frame.present();
-        Ok(())
+        self.read_visual_texture(&target)
+    }
+
+    #[cfg(feature = "visual")]
+    fn read_visual_texture(&self, texture: &wgpu::Texture) -> Result<image::RgbaImage> {
+        let width = self.config.width;
+        let height = self.config.height;
+        let unpadded_bytes_per_row = width * COPY_BYTES_PER_PIXEL;
+        let padded_bytes_per_row =
+            align_to(unpadded_bytes_per_row, WGPU_COPY_BYTES_PER_ROW_ALIGNMENT);
+        let buffer_size = padded_bytes_per_row as u64 * height as u64;
+        let output_buffer = self.device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("datum-gui-layer-b-visual-readback-buffer"),
+            size: buffer_size,
+            usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+            mapped_at_creation: false,
+        });
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("datum-gui-layer-b-visual-readback-encoder"),
+            });
+        encoder.copy_texture_to_buffer(
+            wgpu::TexelCopyTextureInfo {
+                texture,
+                mip_level: 0,
+                origin: wgpu::Origin3d::ZERO,
+                aspect: wgpu::TextureAspect::All,
+            },
+            wgpu::TexelCopyBufferInfo {
+                buffer: &output_buffer,
+                layout: wgpu::TexelCopyBufferLayout {
+                    offset: 0,
+                    bytes_per_row: Some(padded_bytes_per_row),
+                    rows_per_image: Some(height),
+                },
+            },
+            wgpu::Extent3d {
+                width,
+                height,
+                depth_or_array_layers: 1,
+            },
+        );
+        self.queue.submit([encoder.finish()]);
+
+        let buffer_slice = output_buffer.slice(..);
+        let (sender, receiver) = mpsc::channel();
+        buffer_slice.map_async(wgpu::MapMode::Read, move |result| {
+            let _ = sender.send(result);
+        });
+        self.device
+            .poll(wgpu::PollType::wait_indefinitely())
+            .context("poll device for visual shell readback")?;
+        receiver
+            .recv()
+            .context("wait for visual shell readback mapping")?
+            .context("map visual shell readback buffer")?;
+
+        let mapped = buffer_slice.get_mapped_range();
+        let mut pixels = vec![0_u8; (width * height * COPY_BYTES_PER_PIXEL) as usize];
+        for row in 0..height as usize {
+            let source_start = row * padded_bytes_per_row as usize;
+            let source_end = source_start + unpadded_bytes_per_row as usize;
+            let dest_start = row * unpadded_bytes_per_row as usize;
+            let dest_end = dest_start + unpadded_bytes_per_row as usize;
+            pixels[dest_start..dest_end].copy_from_slice(&mapped[source_start..source_end]);
+        }
+        drop(mapped);
+        output_buffer.unmap();
+
+        convert_texture_pixels_to_rgba(&mut pixels, self.config.format)?;
+        image::RgbaImage::from_raw(width, height, pixels)
+            .context("construct visual shell image from readback pixels")
     }
 
     fn prepared_scene(&mut self) -> &PreparedScene {
@@ -953,8 +1373,63 @@ impl Runtime {
         })
     }
 
+    fn retained_scene_cache_key(&self) -> RetainedSceneCacheKey {
+        let workspace = self.workspace();
+        RetainedSceneCacheKey {
+            scene_id: workspace.scene.scene_id.clone(),
+            source_revision: workspace.scene.source_revision.clone(),
+            width: self.config.width,
+            height: self.config.height,
+            dock_height_px: workspace.ui.dock_height_px,
+            show_authored: workspace.ui.filters.show_authored,
+            show_proposed: workspace.ui.filters.show_proposed,
+            show_unrouted: workspace.ui.filters.show_unrouted,
+            dim_unrelated: workspace.ui.filters.dim_unrelated,
+            layer_visibility: workspace.ui.filters.layer_visibility.clone(),
+            selection: retained_selection_cache_key(workspace, &workspace.selection),
+        }
+    }
+
+    fn cache_retained_scene(&mut self, key: RetainedSceneCacheKey, retained: RetainedScene) {
+        if let Some(index) = self
+            .retained_scene_cache
+            .iter()
+            .position(|(cached_key, _)| cached_key == &key)
+        {
+            self.retained_scene_cache.remove(index);
+        }
+        self.retained_scene_cache.push((key, retained));
+        if self.retained_scene_cache.len() > RETAINED_SCENE_CACHE_LIMIT {
+            self.retained_scene_cache.remove(0);
+        }
+    }
+
+    fn restore_cached_retained_scene(&mut self) -> bool {
+        let key = self.retained_scene_cache_key();
+        if let Some(index) = self
+            .retained_scene_cache
+            .iter()
+            .position(|(cached_key, _)| cached_key == &key)
+        {
+            let (_, retained) = self.retained_scene_cache.remove(index);
+            self.retained_scene = Some(retained);
+            return true;
+        }
+        false
+    }
+
+    fn invalidate_scene_for_session_change(&mut self, previous_key: RetainedSceneCacheKey) {
+        if let Some(retained) = self.retained_scene.take() {
+            self.cache_retained_scene(previous_key, retained);
+        }
+        self.prepared_scene = None;
+        self.scene_dirty = true;
+        self.restore_cached_retained_scene();
+    }
+
     fn invalidate_scene(&mut self) {
         self.retained_scene = None;
+        self.retained_scene_cache.clear();
         self.prepared_scene = None;
         self.scene_dirty = true;
     }
@@ -974,6 +1449,10 @@ impl Runtime {
                 }
                 Err(TryRecvError::Empty) => return changed,
                 Err(TryRecvError::Disconnected) => {
+                    if self.terminal_disconnected_reported {
+                        return false;
+                    }
+                    self.terminal_disconnected_reported = true;
                     self.push_terminal_line("terminal session ended".to_string());
                     return true;
                 }
@@ -1010,6 +1489,10 @@ impl Runtime {
                 }
                 Err(TryRecvError::Empty) => return changed,
                 Err(TryRecvError::Disconnected) => {
+                    if self.assistant_disconnected_reported {
+                        return false;
+                    }
+                    self.assistant_disconnected_reported = true;
                     self.push_assistant_message("system", "assistant session ended".to_string());
                     return true;
                 }
@@ -1030,10 +1513,12 @@ impl Runtime {
 
     fn push_assistant_message(&mut self, role: &str, content: String) {
         let ui = &mut self.session.workspace_mut().ui;
-        ui.assistant.transcript.push(datum_gui_protocol::AssistantMessage {
-            role: role.to_string(),
-            content,
-        });
+        ui.assistant
+            .transcript
+            .push(datum_gui_protocol::AssistantMessage {
+                role: role.to_string(),
+                content,
+            });
         if ui.assistant.transcript.len() > 80 {
             let overflow = ui.assistant.transcript.len() - 80;
             ui.assistant.transcript.drain(0..overflow);
@@ -1315,9 +1800,27 @@ impl Runtime {
             "/config model ",
             "/config clear-model",
             "/config cancel",
+            "/text height ",
+            "/text rot ",
+            "/text line ",
+            "/text content ",
+            "/text align ",
+            "/text halign ",
+            "/text valign ",
+            "/text intent ",
+            "/text font ",
         ];
         let trimmed_start = input.trim_start();
         if !trimmed_start.starts_with('/') {
+            return input.to_string();
+        }
+        if trimmed_start.starts_with("/text") {
+            if let Some(completed) = best_completion(trimmed_start, CONFIG_COMMANDS) {
+                let replaced = replace_tail(input, trimmed_start, &completed);
+                if replaced != input {
+                    return replaced;
+                }
+            }
             return input.to_string();
         }
         if !trimmed_start.starts_with("/config") {
@@ -1422,6 +1925,9 @@ impl Runtime {
 
     fn handle_assistant_meta_command(&mut self, input: &str) -> bool {
         let trimmed = input.trim();
+        if trimmed.starts_with("/text") {
+            return self.handle_text_meta_command(trimmed);
+        }
         if !trimmed.starts_with("/config") {
             return false;
         }
@@ -1521,6 +2027,108 @@ impl Runtime {
         true
     }
 
+    fn handle_text_meta_command(&mut self, input: &str) -> bool {
+        self.push_assistant_message("user", input.to_string());
+        match self.apply_text_meta_command(input) {
+            Ok(message) => self.push_assistant_message("assistant", message),
+            Err(error) => {
+                self.push_assistant_message("assistant", format!("text edit failed: {error}"))
+            }
+        }
+        true
+    }
+
+    fn apply_text_meta_command(&mut self, input: &str) -> Result<String> {
+        let rest = input
+            .strip_prefix("/text")
+            .ok_or_else(|| {
+                anyhow::anyhow!(
+                    "usage: /text <height|rot|line|content|align|halign|valign|intent|font> <value>"
+                )
+            })?
+            .trim_start();
+        let (command, value) = rest.split_once(char::is_whitespace).unwrap_or((rest, ""));
+        let value = value.trim_start();
+        if command.is_empty() {
+            anyhow::bail!(
+                "usage: /text <height|rot|line|content|align|halign|valign|intent|font> <value>"
+            );
+        }
+        if value.is_empty() {
+            anyhow::bail!("usage: /text {command} <value>");
+        }
+        let (selected_object_id, backing) = self
+            .selected_board_text_edit_context()
+            .ok_or_else(|| anyhow::anyhow!("select a board text object first"))?;
+        let message = match command {
+            "height" => {
+                let height_nm = parse_text_length_nm(value)?;
+                let next = set_board_text_height(&backing, &selected_object_id, height_nm)?;
+                self.reload_workspace_after_board_edit(selected_object_id)?;
+                format!(
+                    "board text height set to {:.3} mm",
+                    next as f64 / 1_000_000.0
+                )
+            }
+            "rot" | "rotation" => {
+                let rotation = value
+                    .trim_end_matches('°')
+                    .parse::<i32>()
+                    .with_context(|| format!("parse rotation degrees from {value:?}"))?;
+                let next = set_board_text_rotation(&backing, &selected_object_id, rotation)?;
+                self.reload_workspace_after_board_edit(selected_object_id)?;
+                format!("board text rotation set to {next}°")
+            }
+            "line" | "line-spacing" => {
+                let ratio_ppm = parse_text_line_spacing_ppm(value)?;
+                let next =
+                    set_board_text_line_spacing_ratio(&backing, &selected_object_id, ratio_ppm)?;
+                self.reload_workspace_after_board_edit(selected_object_id)?;
+                format!("board text line spacing set to {}%", next / 10_000)
+            }
+            "content" | "text" => {
+                let next = set_board_text_content(&backing, &selected_object_id, value)?;
+                self.reload_workspace_after_board_edit(selected_object_id)?;
+                format!("board text content set to {next:?}")
+            }
+            "align" => {
+                let (h_align, v_align) = parse_text_alignment_pair(value)?;
+                let next =
+                    set_board_text_alignment(&backing, &selected_object_id, h_align, v_align)?;
+                self.reload_workspace_after_board_edit(selected_object_id)?;
+                format!("board text alignment set to {} / {}", next.0, next.1)
+            }
+            "halign" | "h-align" => {
+                let h_align = parse_text_h_align(value)?;
+                let next = set_board_text_h_align(&backing, &selected_object_id, h_align)?;
+                self.reload_workspace_after_board_edit(selected_object_id)?;
+                format!("board text horizontal alignment set to {next}")
+            }
+            "valign" | "v-align" => {
+                let v_align = parse_text_v_align(value)?;
+                let next = set_board_text_v_align(&backing, &selected_object_id, v_align)?;
+                self.reload_workspace_after_board_edit(selected_object_id)?;
+                format!("board text vertical alignment set to {next}")
+            }
+            "intent" | "render-intent" => {
+                let intent = parse_text_render_intent(value)?;
+                let next = set_board_text_render_intent(&backing, &selected_object_id, intent)?;
+                self.reload_workspace_after_board_edit(selected_object_id)?;
+                format!("board text render intent set to {next}")
+            }
+            "font" | "family" => {
+                let family = parse_text_font_family(value)?;
+                let next = set_board_text_font_family(&backing, &selected_object_id, family)?;
+                self.reload_workspace_after_board_edit(selected_object_id)?;
+                format!("board text font family set to {next}")
+            }
+            other => anyhow::bail!(
+                "unknown text command `{other}`. Use /text height <mm|nm>, /text rot <degrees>, /text line <percent|ppm>, /text content <value>, /text align <h> <v>, /text halign <left|center|right>, /text valign <top|center|bottom>, /text intent <intent>, or /text font <family>"
+            ),
+        };
+        Ok(message)
+    }
+
     fn assistant_status_summary(&self) -> String {
         let api_key = if self.assistant_config.api_key.is_some() {
             "configured"
@@ -1603,11 +2211,7 @@ impl Runtime {
             tool: match workspace.tool {
                 WorkspaceTool::Select => "select",
             },
-            selection: match &workspace.selection {
-                datum_gui_protocol::SelectionTarget::None => "none".to_string(),
-                datum_gui_protocol::SelectionTarget::ReviewAction(id) => format!("review:{id}"),
-                datum_gui_protocol::SelectionTarget::AuthoredObject(id) => format!("object:{id}"),
-            },
+            selection: selection_cache_key(workspace),
             active_review_target_id: workspace.active_review_target_id.clone(),
             project_root,
             selected_component,
@@ -1696,7 +2300,9 @@ impl Runtime {
                         "assistant omitted review action id".to_string()
                     }
                 }
-                "move_selected_by" | "begin_route_selected_proposal" | "apply_selected_route"
+                "move_selected_by"
+                | "begin_route_selected_proposal"
+                | "apply_selected_route"
                 | "cancel_active_edit" => {
                     "mutating assistant actions are disabled in read-only M7 review".to_string()
                 }
@@ -1719,14 +2325,40 @@ impl Runtime {
         self.push_terminal_line(message.into());
     }
 
-    fn apply_session_result(&mut self, result: datum_gui_protocol::SessionCommandResult) -> bool {
+    fn apply_session_result(
+        &mut self,
+        result: datum_gui_protocol::SessionCommandResult,
+        previous_retained_key: Option<RetainedSceneCacheKey>,
+    ) -> bool {
         if !result.handled {
             return false;
         }
         for event in result.events {
             match event {
-                SessionEvent::SceneChanged => self.invalidate_scene(),
-                SessionEvent::SelectionChanged(_) => self.invalidate_scene(),
+                SessionEvent::SceneChanged => {
+                    if let Some(key) = previous_retained_key.clone() {
+                        self.invalidate_scene_for_session_change(key);
+                    } else {
+                        self.invalidate_scene();
+                    }
+                }
+                // Text and outline selection feedback is drawn as a lightweight
+                // screen overlay. Do not rebuild retained board geometry when
+                // only that overlay target changes.
+                SessionEvent::SelectionChanged(selection) => {
+                    let next_selection_key =
+                        retained_selection_cache_key(self.workspace(), &selection);
+                    if previous_retained_key
+                        .as_ref()
+                        .is_some_and(|key| key.selection == next_selection_key)
+                    {
+                        self.invalidate_frame();
+                    } else if let Some(key) = previous_retained_key.clone() {
+                        self.invalidate_scene_for_session_change(key);
+                    } else {
+                        self.invalidate_scene();
+                    }
+                }
                 SessionEvent::FrameChanged => self.invalidate_frame(),
             }
         }
@@ -1735,8 +2367,9 @@ impl Runtime {
     }
 
     fn dispatch_session_command(&mut self, command: SessionCommand) -> bool {
+        let previous_retained_key = self.retained_scene_cache_key();
         let result = self.session.apply(command);
-        self.apply_session_result(result)
+        self.apply_session_result(result, Some(previous_retained_key))
     }
 
     fn needs_redraw(&self) -> bool {
@@ -1745,40 +2378,101 @@ impl Runtime {
 
     fn handle_primary_click(&mut self) -> bool {
         let Some((x, y)) = self.last_cursor_pos else {
+            self.trace_click("primary click ignored: no cursor position".to_string());
             return false;
         };
-        let prepared = self.prepared_scene();
-        if let Some(target) = prepared.hit_test(x, y).cloned() {
+        let prepared_started = std::time::Instant::now();
+        let (prepared_target, world_point) = {
+            let prepared = self.prepared_scene();
+            (
+                prepared.hit_test(x, y).cloned(),
+                prepared.world_point_at_screen(x, y),
+            )
+        };
+        let prepared_elapsed = prepared_started.elapsed();
+        if let Some(target) = prepared_target {
+            self.trace_click(format!(
+                "primary click ({x:.1}, {y:.1}) prepared target {target:?}; prepare {}ms; dock {:?}",
+                prepared_elapsed.as_millis(),
+                self.workspace().ui.active_dock_tab
+            ));
             return self.select_hit_target(&target);
         }
-        if let Some(world_point) = prepared.world_point_at_screen(x, y) {
-            let retained = self.retained_scene.get_or_insert_with(|| {
-                RetainedScene::from_workspace(
-                    self.session.workspace(),
-                    self.config.width,
-                    self.config.height,
-                )
-            });
-            if let Some(target) = retained.hit_test_authored_world(world_point).cloned() {
+        if let Some(world_point) = world_point {
+            let retained_started = std::time::Instant::now();
+            let retained_target = {
+                let retained = self.retained_scene.get_or_insert_with(|| {
+                    RetainedScene::from_workspace(
+                        self.session.workspace(),
+                        self.config.width,
+                        self.config.height,
+                    )
+                });
+                retained
+                    .hit_test_authored_world(world_point, self.session.workspace())
+                    .cloned()
+            };
+            let retained_elapsed = retained_started.elapsed();
+            if let Some(target) = retained_target {
+                self.trace_click(format!(
+                    "primary click ({x:.1}, {y:.1}) world ({}, {}) retained target {target:?}; prepare {}ms; retained {}ms; dock {:?}",
+                    world_point.x,
+                    world_point.y,
+                    prepared_elapsed.as_millis(),
+                    retained_elapsed.as_millis(),
+                    self.workspace().ui.active_dock_tab
+                ));
                 return self.select_hit_target(&target);
             }
+            self.trace_click(format!(
+                "primary click ({x:.1}, {y:.1}) world ({}, {}) no retained target; prepare {}ms; retained {}ms; dock {:?}",
+                world_point.x,
+                world_point.y,
+                prepared_elapsed.as_millis(),
+                retained_elapsed.as_millis(),
+                self.workspace().ui.active_dock_tab
+            ));
+            return false;
         }
+        self.trace_click(format!(
+            "primary click ({x:.1}, {y:.1}) no prepared or viewport target; prepare {}ms; dock {:?}",
+            prepared_elapsed.as_millis(),
+            self.workspace().ui.active_dock_tab
+        ));
         false
     }
 
+    fn trace_click(&self, message: String) {
+        if std::env::var_os("DATUM_TRACE_CLICKS").is_some() {
+            eprintln!("[datum-click] {message}");
+        }
+    }
+
     fn select_hit_target(&mut self, target: &HitTarget) -> bool {
+        let started = std::time::Instant::now();
+        let handled = self.select_hit_target_inner(target);
+        self.trace_timing(format!(
+            "select target {target:?} handled={handled} {}ms",
+            started.elapsed().as_millis()
+        ));
+        handled
+    }
+
+    fn select_hit_target_inner(&mut self, target: &HitTarget) -> bool {
         match target {
             HitTarget::ReviewAction(action_id) => {
-                let handled =
-                    self.dispatch_session_command(SessionCommand::SelectReviewAction(action_id.clone()));
+                let handled = self.dispatch_session_command(SessionCommand::SelectReviewAction(
+                    action_id.clone(),
+                ));
                 if handled {
                     self.log_review_event(format!("selected review action {action_id}"));
                 }
                 handled
             }
             HitTarget::AuthoredObject(object_id) => {
-                let handled = self
-                    .dispatch_session_command(SessionCommand::SelectAuthoredObject(object_id.clone()));
+                let handled = self.dispatch_session_command(SessionCommand::SelectAuthoredObject(
+                    object_id.clone(),
+                ));
                 if handled {
                     self.session.workspace_mut().ui.hovered_object_id = None;
                     self.log_review_event(format!("selected authored object {object_id}"));
@@ -1861,8 +2555,9 @@ impl Runtime {
                 handled
             }
             HitTarget::ToggleLayer(layer_id) => {
-                let handled = self
-                    .dispatch_session_command(SessionCommand::ToggleLayerVisibility(layer_id.clone()));
+                let handled = self.dispatch_session_command(SessionCommand::ToggleLayerVisibility(
+                    layer_id.clone(),
+                ));
                 if handled {
                     let visible = self
                         .workspace()
@@ -1877,10 +2572,402 @@ impl Runtime {
                 }
                 handled
             }
+            HitTarget::ToggleSelectedBoardTextMirrored => {
+                self.toggle_selected_board_text_boolean(BoardTextBooleanField::Mirrored)
+            }
+            HitTarget::ToggleSelectedBoardTextKeepUpright => {
+                self.toggle_selected_board_text_boolean(BoardTextBooleanField::KeepUpright)
+            }
+            HitTarget::ToggleSelectedBoardTextBold => {
+                self.toggle_selected_board_text_boolean(BoardTextBooleanField::Bold)
+            }
+            HitTarget::CycleSelectedBoardTextRenderIntent => {
+                self.cycle_selected_board_text_field(BoardTextCycleField::RenderIntent)
+            }
+            HitTarget::CycleSelectedBoardTextFamily => {
+                self.cycle_selected_board_text_field(BoardTextCycleField::Family)
+            }
+            HitTarget::CycleSelectedBoardTextHAlign => {
+                self.cycle_selected_board_text_alignment(BoardTextAlignmentField::Horizontal)
+            }
+            HitTarget::CycleSelectedBoardTextVAlign => {
+                self.cycle_selected_board_text_alignment(BoardTextAlignmentField::Vertical)
+            }
+            HitTarget::DecreaseSelectedBoardTextHeight => {
+                self.step_selected_board_text_height(BoardTextHeightStep::Decrease)
+            }
+            HitTarget::IncreaseSelectedBoardTextHeight => {
+                self.step_selected_board_text_height(BoardTextHeightStep::Increase)
+            }
+            HitTarget::RotateSelectedBoardTextCounterClockwise90 => {
+                self.step_selected_board_text_rotation(BoardTextRotationStep::CounterClockwise90)
+            }
+            HitTarget::RotateSelectedBoardTextClockwise90 => {
+                self.step_selected_board_text_rotation(BoardTextRotationStep::Clockwise90)
+            }
+            HitTarget::DecreaseSelectedBoardTextLineSpacing => {
+                self.step_selected_board_text_line_spacing(BoardTextLineSpacingStep::Decrease)
+            }
+            HitTarget::IncreaseSelectedBoardTextLineSpacing => {
+                self.step_selected_board_text_line_spacing(BoardTextLineSpacingStep::Increase)
+            }
+            HitTarget::EditSelectedBoardTextContent => {
+                self.begin_selected_board_text_content_edit()
+            }
+            HitTarget::EditSelectedBoardTextHeight => self.begin_selected_board_text_height_edit(),
+            HitTarget::EditSelectedBoardTextRotation => {
+                self.begin_selected_board_text_rotation_edit()
+            }
+            HitTarget::EditSelectedBoardTextLineSpacing => {
+                self.begin_selected_board_text_line_spacing_edit()
+            }
+            HitTarget::EditSelectedBoardTextRenderIntent => {
+                self.begin_selected_board_text_render_intent_edit()
+            }
+            HitTarget::EditSelectedBoardTextFamily => self.begin_selected_board_text_family_edit(),
+            HitTarget::EditSelectedBoardTextAlignment => {
+                self.begin_selected_board_text_alignment_edit()
+            }
             HitTarget::TerminalTab => self.set_active_dock(DockTab::Terminal),
             HitTarget::AssistantTab => self.set_active_dock(DockTab::Assistant),
             HitTarget::DockResizeHandle => false, // handled in mouse press
         }
+    }
+
+    fn trace_timing(&self, message: String) {
+        if std::env::var_os("DATUM_TRACE_TIMING").is_some() {
+            eprintln!("[datum-timing] {message}");
+        }
+    }
+
+    fn selected_board_text(&self) -> Option<&datum_gui_protocol::BoardTextPrimitive> {
+        let datum_gui_protocol::SelectionTarget::AuthoredObject(object_id) =
+            &self.workspace().selection
+        else {
+            return None;
+        };
+        self.workspace()
+            .scene
+            .board_texts
+            .iter()
+            .find(|text| &text.object_id == object_id)
+    }
+
+    fn selected_board_text_edit_context(&mut self) -> Option<(String, WorkspaceBacking)> {
+        let selected_object_id = match &self.workspace().selection {
+            datum_gui_protocol::SelectionTarget::AuthoredObject(object_id)
+                if object_id.starts_with("board-text:") =>
+            {
+                object_id.clone()
+            }
+            _ => {
+                self.log_review_event("no board text selected".to_string());
+                return None;
+            }
+        };
+        let Some(backing) = self.workspace().backing.clone() else {
+            self.log_review_event(
+                "board text edit unavailable without workspace backing".to_string(),
+            );
+            return None;
+        };
+        Some((selected_object_id, backing))
+    }
+
+    fn begin_selected_board_text_content_edit(&mut self) -> bool {
+        let Some(command) = self
+            .selected_board_text()
+            .map(|text| board_text_edit_prefill_command(text, BoardTextEditPrefillField::Content))
+        else {
+            self.log_review_event("no board text selected".to_string());
+            return false;
+        };
+        self.begin_selected_board_text_command_edit(command, "editing selected board text content")
+    }
+
+    fn begin_selected_board_text_height_edit(&mut self) -> bool {
+        let Some(command) = self
+            .selected_board_text()
+            .map(|text| board_text_edit_prefill_command(text, BoardTextEditPrefillField::Height))
+        else {
+            self.log_review_event("no board text selected".to_string());
+            return false;
+        };
+        self.begin_selected_board_text_command_edit(command, "editing selected board text height")
+    }
+
+    fn begin_selected_board_text_rotation_edit(&mut self) -> bool {
+        let Some(command) = self
+            .selected_board_text()
+            .map(|text| board_text_edit_prefill_command(text, BoardTextEditPrefillField::Rotation))
+        else {
+            self.log_review_event("no board text selected".to_string());
+            return false;
+        };
+        self.begin_selected_board_text_command_edit(command, "editing selected board text rotation")
+    }
+
+    fn begin_selected_board_text_line_spacing_edit(&mut self) -> bool {
+        let Some(command) = self.selected_board_text().map(|text| {
+            board_text_edit_prefill_command(text, BoardTextEditPrefillField::LineSpacing)
+        }) else {
+            self.log_review_event("no board text selected".to_string());
+            return false;
+        };
+        self.begin_selected_board_text_command_edit(
+            command,
+            "editing selected board text line spacing",
+        )
+    }
+
+    fn begin_selected_board_text_render_intent_edit(&mut self) -> bool {
+        let Some(command) = self.selected_board_text().map(|text| {
+            board_text_edit_prefill_command(text, BoardTextEditPrefillField::RenderIntent)
+        }) else {
+            self.log_review_event("no board text selected".to_string());
+            return false;
+        };
+        self.begin_selected_board_text_command_edit(
+            command,
+            "editing selected board text render intent",
+        )
+    }
+
+    fn begin_selected_board_text_family_edit(&mut self) -> bool {
+        let Some(command) = self
+            .selected_board_text()
+            .map(|text| board_text_edit_prefill_command(text, BoardTextEditPrefillField::Family))
+        else {
+            self.log_review_event("no board text selected".to_string());
+            return false;
+        };
+        self.begin_selected_board_text_command_edit(command, "editing selected board text font")
+    }
+
+    fn begin_selected_board_text_alignment_edit(&mut self) -> bool {
+        let Some(command) = self.selected_board_text().map(|text| {
+            board_text_edit_prefill_command(text, BoardTextEditPrefillField::Alignment)
+        }) else {
+            self.log_review_event("no board text selected".to_string());
+            return false;
+        };
+        self.begin_selected_board_text_command_edit(
+            command,
+            "editing selected board text alignment",
+        )
+    }
+
+    fn begin_selected_board_text_command_edit(
+        &mut self,
+        command: String,
+        event: &'static str,
+    ) -> bool {
+        let ui = &mut self.session.workspace_mut().ui;
+        prefill_assistant_command(ui, command);
+        self.invalidate_scene();
+        self.log_review_event(event.to_string());
+        true
+    }
+
+    fn toggle_selected_board_text_boolean(&mut self, field: BoardTextBooleanField) -> bool {
+        let Some((selected_object_id, backing)) = self.selected_board_text_edit_context() else {
+            return false;
+        };
+        let field_label = match field {
+            BoardTextBooleanField::Mirrored => "mirrored",
+            BoardTextBooleanField::KeepUpright => "keep-upright",
+            BoardTextBooleanField::Bold => "bold",
+        };
+        match toggle_board_text_boolean_field(&backing, &selected_object_id, field).and_then(
+            |next| {
+                self.reload_workspace_after_board_edit(selected_object_id.clone())?;
+                Ok(next)
+            },
+        ) {
+            Ok(next) => {
+                let state = if next { "on" } else { "off" };
+                self.log_review_event(format!("board text {field_label} {state}"));
+                true
+            }
+            Err(error) => {
+                self.session.workspace_mut().last_command_status =
+                    Some(datum_gui_protocol::EditorCommandStatus {
+                        action: "edit_board_text".to_string(),
+                        detail: format!("{field_label} failed: {error}"),
+                    });
+                self.invalidate_frame();
+                self.log_review_event(format!("board text {field_label} failed: {error}"));
+                true
+            }
+        }
+    }
+
+    fn cycle_selected_board_text_field(&mut self, field: BoardTextCycleField) -> bool {
+        let Some((selected_object_id, backing)) = self.selected_board_text_edit_context() else {
+            return false;
+        };
+        let field_label = match field {
+            BoardTextCycleField::RenderIntent => "render intent",
+            BoardTextCycleField::Family => "font family",
+        };
+        match cycle_board_text_field(&backing, &selected_object_id, field).and_then(|next| {
+            self.reload_workspace_after_board_edit(selected_object_id.clone())?;
+            Ok(next)
+        }) {
+            Ok(next) => {
+                self.log_review_event(format!("board text {field_label} {next}"));
+                true
+            }
+            Err(error) => {
+                self.session.workspace_mut().last_command_status =
+                    Some(datum_gui_protocol::EditorCommandStatus {
+                        action: "edit_board_text".to_string(),
+                        detail: format!("{field_label} failed: {error}"),
+                    });
+                self.invalidate_frame();
+                self.log_review_event(format!("board text {field_label} failed: {error}"));
+                true
+            }
+        }
+    }
+
+    fn cycle_selected_board_text_alignment(&mut self, field: BoardTextAlignmentField) -> bool {
+        let Some((selected_object_id, backing)) = self.selected_board_text_edit_context() else {
+            return false;
+        };
+        let field_label = match field {
+            BoardTextAlignmentField::Horizontal => "horizontal align",
+            BoardTextAlignmentField::Vertical => "vertical align",
+        };
+        match cycle_board_text_alignment_field(&backing, &selected_object_id, field).and_then(
+            |next| {
+                self.reload_workspace_after_board_edit(selected_object_id.clone())?;
+                Ok(next)
+            },
+        ) {
+            Ok(next) => {
+                self.log_review_event(format!("board text {field_label} {next}"));
+                true
+            }
+            Err(error) => {
+                self.session.workspace_mut().last_command_status =
+                    Some(datum_gui_protocol::EditorCommandStatus {
+                        action: "edit_board_text".to_string(),
+                        detail: format!("{field_label} failed: {error}"),
+                    });
+                self.invalidate_frame();
+                self.log_review_event(format!("board text {field_label} failed: {error}"));
+                true
+            }
+        }
+    }
+
+    fn step_selected_board_text_line_spacing(&mut self, step: BoardTextLineSpacingStep) -> bool {
+        let Some((selected_object_id, backing)) = self.selected_board_text_edit_context() else {
+            return false;
+        };
+        match step_board_text_line_spacing_ratio(&backing, &selected_object_id, step).and_then(
+            |next| {
+                self.reload_workspace_after_board_edit(selected_object_id.clone())?;
+                Ok(next)
+            },
+        ) {
+            Ok(next) => {
+                self.log_review_event(format!("board text line spacing {}%", next / 10_000));
+                true
+            }
+            Err(error) => {
+                self.session.workspace_mut().last_command_status =
+                    Some(datum_gui_protocol::EditorCommandStatus {
+                        action: "edit_board_text".to_string(),
+                        detail: format!("line spacing failed: {error}"),
+                    });
+                self.invalidate_frame();
+                self.log_review_event(format!("board text line spacing failed: {error}"));
+                true
+            }
+        }
+    }
+
+    fn step_selected_board_text_height(&mut self, step: BoardTextHeightStep) -> bool {
+        let Some((selected_object_id, backing)) = self.selected_board_text_edit_context() else {
+            return false;
+        };
+        match step_board_text_height(&backing, &selected_object_id, step).and_then(|next| {
+            self.reload_workspace_after_board_edit(selected_object_id.clone())?;
+            Ok(next)
+        }) {
+            Ok(next) => {
+                self.log_review_event(format!(
+                    "board text height {:.2} mm",
+                    next as f64 / 1_000_000.0
+                ));
+                true
+            }
+            Err(error) => {
+                self.session.workspace_mut().last_command_status =
+                    Some(datum_gui_protocol::EditorCommandStatus {
+                        action: "edit_board_text".to_string(),
+                        detail: format!("height failed: {error}"),
+                    });
+                self.invalidate_frame();
+                self.log_review_event(format!("board text height failed: {error}"));
+                true
+            }
+        }
+    }
+
+    fn step_selected_board_text_rotation(&mut self, step: BoardTextRotationStep) -> bool {
+        let Some((selected_object_id, backing)) = self.selected_board_text_edit_context() else {
+            return false;
+        };
+        match step_board_text_rotation(&backing, &selected_object_id, step).and_then(|next| {
+            self.reload_workspace_after_board_edit(selected_object_id.clone())?;
+            Ok(next)
+        }) {
+            Ok(next) => {
+                self.log_review_event(format!("board text rotation {next}°"));
+                true
+            }
+            Err(error) => {
+                self.session.workspace_mut().last_command_status =
+                    Some(datum_gui_protocol::EditorCommandStatus {
+                        action: "edit_board_text".to_string(),
+                        detail: format!("rotation failed: {error}"),
+                    });
+                self.invalidate_frame();
+                self.log_review_event(format!("board text rotation failed: {error}"));
+                true
+            }
+        }
+    }
+
+    fn reload_workspace_after_board_edit(&mut self, selection_object_id: String) -> Result<()> {
+        let Some(backing) = self.workspace().backing.clone() else {
+            anyhow::bail!("workspace has no backing");
+        };
+        let previous_filters = self.workspace().ui.filters.clone();
+        let previous_dock = self.workspace().ui.active_dock_tab;
+        let previous_dock_height = self.workspace().ui.dock_height_px;
+        let include_review = !self.workspace().review.proposal_actions.is_empty();
+        let mut next_workspace = if include_review {
+            load_live_workspace_state(&backing.request)?
+        } else {
+            load_board_editor_workspace_state(&backing.request)?
+        };
+        next_workspace.ui.filters = previous_filters;
+        next_workspace.ui.active_dock_tab = previous_dock;
+        next_workspace.ui.dock_height_px = previous_dock_height;
+        next_workspace.selection =
+            datum_gui_protocol::SelectionTarget::AuthoredObject(selection_object_id);
+        next_workspace.last_command_status = Some(datum_gui_protocol::EditorCommandStatus {
+            action: "edit_board_text".to_string(),
+            detail: "updated selected board text".to_string(),
+        });
+        self.session = LiveDesignSession::new(next_workspace);
+        self.invalidate_scene();
+        self.sync_assistant_context();
+        Ok(())
     }
 
     fn fit_camera(&mut self) {
@@ -2070,8 +3157,8 @@ impl Runtime {
 }
 
 fn spawn_terminal_session() -> Result<TerminalSession> {
-    let (_tx, rx) = mpsc::channel();
-    Ok(TerminalSession { rx })
+    let (tx, rx) = mpsc::channel();
+    Ok(TerminalSession { _tx: tx, rx })
 }
 
 fn spawn_assistant_session(config: &AssistantBridgeConfig) -> Result<AssistantSession> {
@@ -2140,6 +3227,136 @@ fn spawn_assistant_session(config: &AssistantBridgeConfig) -> Result<AssistantSe
     })
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parses_visual_window_size() {
+        assert_eq!(parse_window_size("1280x768").unwrap(), (1280, 768));
+    }
+
+    #[test]
+    fn rejects_invalid_visual_window_size() {
+        assert!(parse_window_size("1280").is_err());
+        assert!(parse_window_size("0x768").is_err());
+        assert!(parse_window_size("1280x0").is_err());
+    }
+
+    #[test]
+    fn parses_explicit_text_edit_values() {
+        assert_eq!(parse_text_length_nm("1.25mm").unwrap(), 1_250_000);
+        assert_eq!(parse_text_length_nm("250000nm").unwrap(), 250_000);
+        assert_eq!(parse_text_length_nm("2").unwrap(), 2_000_000);
+        assert_eq!(parse_text_line_spacing_ppm("125%").unwrap(), 1_250_000);
+        assert_eq!(
+            parse_text_line_spacing_ppm("1250000ppm").unwrap(),
+            1_250_000
+        );
+    }
+
+    #[test]
+    fn parses_explicit_text_semantic_values() {
+        assert_eq!(
+            parse_text_alignment_pair("right top").unwrap(),
+            ("right", "top")
+        );
+        assert_eq!(parse_text_h_align("center").unwrap(), "center");
+        assert_eq!(parse_text_v_align("bottom").unwrap(), "bottom");
+        assert_eq!(parse_text_render_intent("branding").unwrap(), "branding");
+        assert_eq!(
+            parse_text_font_family("ibm_plex_sans_condensed").unwrap(),
+            "ibm_plex_sans_condensed"
+        );
+
+        assert!(parse_text_alignment_pair("left").is_err());
+        assert!(parse_text_alignment_pair("left top extra").is_err());
+        assert!(parse_text_h_align("middle").is_err());
+        assert!(parse_text_v_align("left").is_err());
+        assert!(parse_text_render_intent("marketing").is_err());
+        assert!(parse_text_font_family("papyrus").is_err());
+    }
+
+    #[test]
+    fn builds_board_text_edit_prefill_commands() {
+        let text = BoardTextPrimitive {
+            object_id: "board_text:gain".to_string(),
+            object_kind: "board_text".to_string(),
+            text_uuid: "text-gain".to_string(),
+            text: "GAIN STAGE A1".to_string(),
+            layer_id: "F.SILKS".to_string(),
+            position: PointNm {
+                x: 1_000_000,
+                y: 2_000_000,
+            },
+            rotation_degrees: -90,
+            height_nm: 1_250_000,
+            stroke_width_nm: 150_000,
+            render_intent: "annotation".to_string(),
+            family: "technical_sans".to_string(),
+            style: "regular".to_string(),
+            style_class: None,
+            h_align: "center".to_string(),
+            v_align: "center".to_string(),
+            mirrored: false,
+            keep_upright: true,
+            line_spacing_ratio_ppm: 1_250_000,
+            bold: false,
+            italic: false,
+        };
+
+        assert_eq!(
+            board_text_edit_prefill_command(&text, BoardTextEditPrefillField::Content),
+            "/text content GAIN STAGE A1"
+        );
+        assert_eq!(
+            board_text_edit_prefill_command(&text, BoardTextEditPrefillField::Height),
+            "/text height 1.250mm"
+        );
+        assert_eq!(
+            board_text_edit_prefill_command(&text, BoardTextEditPrefillField::Rotation),
+            "/text rot 270"
+        );
+        assert_eq!(
+            board_text_edit_prefill_command(&text, BoardTextEditPrefillField::LineSpacing),
+            "/text line 125%"
+        );
+        assert_eq!(
+            board_text_edit_prefill_command(&text, BoardTextEditPrefillField::RenderIntent),
+            "/text intent annotation"
+        );
+        assert_eq!(
+            board_text_edit_prefill_command(&text, BoardTextEditPrefillField::Family),
+            "/text font technical_sans"
+        );
+        assert_eq!(
+            board_text_edit_prefill_command(&text, BoardTextEditPrefillField::Alignment),
+            "/text align center center"
+        );
+    }
+
+    #[test]
+    fn board_text_edit_prefill_opens_assistant_with_cursor_at_end() {
+        let mut workspace = datum_gui_protocol::load_fixture_workspace_state();
+        prefill_assistant_command(&mut workspace.ui, "/text height 1.250mm".to_string());
+
+        assert_eq!(workspace.ui.active_dock_tab, Some(DockTab::Assistant));
+        assert_eq!(workspace.ui.assistant.input, "/text height 1.250mm");
+        assert_eq!(
+            workspace.ui.assistant.cursor,
+            "/text height 1.250mm".chars().count()
+        );
+    }
+
+    #[cfg(feature = "visual")]
+    #[test]
+    fn converts_bgra_readback_to_rgba() {
+        let mut pixels = vec![1, 2, 3, 255, 10, 20, 30, 255];
+        convert_texture_pixels_to_rgba(&mut pixels, wgpu::TextureFormat::Bgra8UnormSrgb).unwrap();
+        assert_eq!(pixels, vec![3, 2, 1, 255, 30, 20, 10, 255]);
+    }
+}
+
 fn assistant_config_path(request: &LiveReviewRequest) -> PathBuf {
     request.project_root.join(".datum").join("assistant.json")
 }
@@ -2180,6 +3397,140 @@ fn redact_secret(secret: &str) -> String {
     let tail_len = secret.len().min(4);
     let tail = &secret[secret.len() - tail_len..];
     format!("***{tail}")
+}
+
+fn board_text_edit_prefill_command(
+    text: &BoardTextPrimitive,
+    field: BoardTextEditPrefillField,
+) -> String {
+    match field {
+        BoardTextEditPrefillField::Content => format!("/text content {}", text.text),
+        BoardTextEditPrefillField::Height => {
+            format!("/text height {:.3}mm", text.height_nm as f64 / 1_000_000.0)
+        }
+        BoardTextEditPrefillField::Rotation => {
+            format!("/text rot {}", text.rotation_degrees.rem_euclid(360))
+        }
+        BoardTextEditPrefillField::LineSpacing => {
+            format!("/text line {}%", text.line_spacing_ratio_ppm / 10_000)
+        }
+        BoardTextEditPrefillField::RenderIntent => {
+            format!("/text intent {}", text.render_intent)
+        }
+        BoardTextEditPrefillField::Family => format!("/text font {}", text.family),
+        BoardTextEditPrefillField::Alignment => {
+            format!("/text align {} {}", text.h_align, text.v_align)
+        }
+    }
+}
+
+fn prefill_assistant_command(ui: &mut WorkspaceUiState, command: String) {
+    let cursor = command.chars().count();
+    ui.active_dock_tab = Some(DockTab::Assistant);
+    ui.assistant.input = command;
+    ui.assistant.cursor = cursor;
+}
+
+fn parse_text_length_nm(value: &str) -> Result<i64> {
+    let trimmed = value.trim();
+    if trimmed.is_empty() {
+        anyhow::bail!("text length is empty");
+    }
+    if let Some(number) = trimmed.strip_suffix("nm") {
+        return number
+            .trim()
+            .parse::<i64>()
+            .with_context(|| format!("parse nanometer text length from {value:?}"));
+    }
+    let number = trimmed
+        .strip_suffix("mm")
+        .unwrap_or(trimmed)
+        .trim()
+        .parse::<f64>()
+        .with_context(|| format!("parse millimeter text length from {value:?}"))?;
+    if !number.is_finite() || number <= 0.0 {
+        anyhow::bail!("text length must be a positive finite value");
+    }
+    Ok((number * 1_000_000.0).round() as i64)
+}
+
+fn parse_text_line_spacing_ppm(value: &str) -> Result<i32> {
+    let trimmed = value.trim();
+    if trimmed.is_empty() {
+        anyhow::bail!("line spacing value is empty");
+    }
+    if let Some(number) = trimmed.strip_suffix("ppm") {
+        return number
+            .trim()
+            .parse::<i32>()
+            .with_context(|| format!("parse ppm line spacing from {value:?}"));
+    }
+    let number = trimmed
+        .strip_suffix('%')
+        .unwrap_or(trimmed)
+        .trim()
+        .parse::<f64>()
+        .with_context(|| format!("parse percent line spacing from {value:?}"))?;
+    if !number.is_finite() || number <= 0.0 {
+        anyhow::bail!("line spacing must be a positive finite value");
+    }
+    Ok((number * 10_000.0).round() as i32)
+}
+
+fn parse_text_alignment_pair(value: &str) -> Result<(&str, &str)> {
+    let mut parts = value.split_whitespace();
+    let h_align = parts
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("alignment requires horizontal and vertical values"))?;
+    let v_align = parts
+        .next()
+        .ok_or_else(|| anyhow::anyhow!("alignment requires horizontal and vertical values"))?;
+    if parts.next().is_some() {
+        anyhow::bail!(
+            "alignment expects exactly two values: <left|center|right> <top|center|bottom>"
+        );
+    }
+    Ok((parse_text_h_align(h_align)?, parse_text_v_align(v_align)?))
+}
+
+fn parse_text_h_align(value: &str) -> Result<&str> {
+    match value.trim() {
+        "left" | "center" | "right" => Ok(value.trim()),
+        other => anyhow::bail!(
+            "unsupported horizontal alignment `{other}`; expected left, center, or right"
+        ),
+    }
+}
+
+fn parse_text_v_align(value: &str) -> Result<&str> {
+    match value.trim() {
+        "top" | "center" | "bottom" => Ok(value.trim()),
+        other => anyhow::bail!(
+            "unsupported vertical alignment `{other}`; expected top, center, or bottom"
+        ),
+    }
+}
+
+fn parse_text_render_intent(value: &str) -> Result<&str> {
+    match value.trim() {
+        "manufacturing" | "annotation" | "branding" | "documentation" | "ui_preview" => {
+            Ok(value.trim())
+        }
+        other => anyhow::bail!(
+            "unsupported render intent `{other}`; expected manufacturing, annotation, branding, documentation, or ui_preview"
+        ),
+    }
+}
+
+fn parse_text_font_family(value: &str) -> Result<&str> {
+    match value.trim() {
+        "newstroke" | "inter" | "inter_display" | "ibm_plex_sans_condensed" | "jetbrains_mono" => {
+            Ok(value.trim())
+        }
+        other => anyhow::bail!(
+            "unsupported font family `{other}`; expected newstroke, inter, inter_display, ibm_plex_sans_condensed, or jetbrains_mono"
+        ),
+    }
 }
 
 fn best_completion(prefix: &str, candidates: &[&str]) -> Option<String> {

@@ -22,7 +22,7 @@ def run_eda_validate(project_root: Path) -> tuple[dict, int]:
             "run",
             "-q",
             "-p",
-            "eda-cli",
+            "datum-eda-cli",
             "--",
             "--format",
             "json",

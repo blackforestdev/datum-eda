@@ -80,6 +80,9 @@ pub fn run_with_waivers(
     if run_all || selected_rules.contains(&RuleType::SilkClearance) {
         violations.extend(checks::run_silk_clearance_checks(board));
     }
+    if run_all || selected_rules.contains(&RuleType::ProcessAperture) {
+        violations.extend(checks::run_process_aperture_checks(board));
+    }
 
     violations.sort_by(|a, b| {
         a.code

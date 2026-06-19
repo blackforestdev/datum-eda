@@ -1,88 +1,364 @@
 # MCP API Specification
 
+Status: target implementation spec with current compatibility contract.
+
+This document defines the target Datum MCP surface under the product-mechanics
+scope and records the current implemented daemon/MCP method list for
+compatibility. It intentionally separates:
+
+- **Target Surface**: the implementation direction for MCP and CLI.
+- **Current Compatibility**: methods that exist today and must keep working
+  until compatibility aliases are retired.
+
+The target surface is derived from
+`docs/contracts/AI_CLI_MCP_TOOL_SURFACE.md`. That contract is the shared
+authority for the seven tool classes and the product vocabulary used here.
+
 ## Transport
 
-```
-MCP Client ←→ MCP Server (Python, stdio) ←→ Engine (Rust, JSON-RPC over Unix socket)
-```
-
-The MCP server is a thin translation layer. It holds a reference to one
-open engine session. It does not cache state — all queries go to the engine.
-
-## Contract Mode
-
-This document tracks two layers:
-- **Current implementation contract (authoritative for code today)**:
-  daemon JSON-RPC methods that are implemented and exercised by MCP tests.
-- **Target M2 contract (planned hardening)**:
-  richer normalized envelopes and full tool catalog parity.
-
-Unless explicitly marked as `Target M2`, method definitions in this document
-describe the **current implementation contract**.
-
-## Session Model
-
-The MCP server is **stateful**: it holds one open project at a time.
-
-```
-Session lifecycle:
-  1. open_project → engine loads design into memory
-  2. [queries, checks — any number, any order]
-  3. save → engine writes to disk (optional)
-  4. close_project → engine releases memory
-
-Current implementation includes read/check and current M3 write operations
-with explicit close-project lifecycle control.
+```text
+MCP Client <-> MCP Server (Python, stdio) <-> Engine (Rust, JSON-RPC over Unix socket)
 ```
 
-Operations are **not idempotent**. `move_component` applied twice moves
-the component twice. The MCP server does not deduplicate.
+The MCP server remains a thin translation layer. Target MCP tools translate
+stable `datum.*` requests into engine operations, queries, checks, proposal
+workflows, artifact generation, or journal reads. The MCP server must not
+become an alternate state store and must not write project files directly.
 
-Undo/redo operates on the engine's transaction stack.
+## Target Surface
 
----
+CLI and MCP are isomorphic:
 
-## Error Schema
+- CLI: `datum-eda <group> <verb> ...`
+- MCP: `datum.<group>.<verb>`
 
-All errors use this structure:
+Every CLI command with `--json` returns the same schema as the matching MCP
+tool. Human-readable CLI output is presentation only.
+
+The target public surface has exactly seven shared tool classes:
+
+| Class | CLI shape | MCP shape | Mutates source? |
+|-------|-----------|-----------|-----------------|
+| Context / session | `datum-eda context get|refresh` | `datum.context.get`, `datum.context.refresh` | No |
+| Query | `datum-eda query <family>` | `datum.query.*` | No |
+| Check | `datum-eda check run|show` | `datum.check.*` | No source mutation |
+| Proposal | `datum-eda proposal create|show|validate|reject|defer|apply` | `datum.proposal.*` | Apply only |
+| Commit / apply gateway | internal `commit()` | reached through `datum.proposal.apply` or policy-gated direct commit | Yes |
+| Artifact | `datum-eda artifact generate|show|compare|validate` | `datum.artifact.*` | No |
+| Journal | `datum-eda journal list|show|undo|redo` | `datum.journal.*` | Undo/redo only |
+
+Per-domain docs may add typed `Operation` variants, query families, check
+profiles, artifact include values, and proposal producers. They must not add
+peer MCP tool classes or private write paths.
+
+## Target JSON Envelope
+
+All target MCP responses use a normalized envelope:
+
 ```json
 {
+  "ok": true,
+  "schema": {
+    "name": "datum.<group>.<verb>",
+    "version": 1
+  },
+  "context": {
+    "project_id": "uuid",
+    "model_revision": "rev",
+    "variant": "default",
+    "output_context": null
+  },
+  "result": {}
+}
+```
+
+Errors use the same envelope shape with `ok: false`:
+
+```json
+{
+  "ok": false,
+  "schema": {
+    "name": "datum.<group>.<verb>",
+    "version": 1
+  },
+  "context": {
+    "project_id": "uuid",
+    "model_revision": "rev",
+    "variant": "default",
+    "output_context": null
+  },
   "error": {
-    "code": "net_not_found",
-    "message": "Net 'VCC_5V' does not exist in the design",
-    "context": {
-      "available_nets": ["VCC_3V3", "GND", "VBUS"]
+    "code": "stale_model_revision",
+    "message": "Request was prepared against an older model revision",
+    "details": {
+      "prepared_against": "rev-41",
+      "current": "rev-42"
     }
   }
 }
 ```
 
-Implementation note: the current daemon transport returns JSON-RPC numeric
-codes plus message text. Symbolic string codes in this section are the target
-normalized MCP surface.
+Envelope principles:
 
-### Error Codes
+- `schema.name` is the MCP method name; `schema.version` is incremented only
+  for incompatible payload changes.
+- `context.project_id`, `context.model_revision`, `context.variant`, and
+  `context.output_context` are present whenever the request is project-backed.
+- `result` is tool-specific and never changes the meaning of the envelope.
+- `error.code` is symbolic and stable. JSON-RPC numeric transport codes are
+  transport details, not the public Datum error contract.
+- Compatibility aliases may return legacy payloads during migration, but new
+  `datum.*` tools must return the target envelope.
 
-| Code | Meaning |
-|------|---------|
-| `no_project_open` | Operation requires an open project |
-| `project_already_open` | Must close current project first |
-| `import_error` | File could not be parsed |
-| `not_found` | Referenced object does not exist |
-| `net_not_found` | Net name or UUID not found |
-| `component_not_found` | Component reference or UUID not found |
-| `part_not_found` | Part UUID not in pool |
-| `invalid_operation` | Operation failed validation |
-| `unsupported_scope` | Rule uses expression node not yet implemented |
-| `connectivity_error` | Connectivity graph could not be resolved safely |
-| `erc_error` | ERC engine error (not a violation — an execution failure) |
-| `drc_error` | DRC engine error (not a violation — an execution failure) |
-| `export_error` | Export failed |
-| `engine_error` | Internal engine error |
+## Model Context Resolution
 
----
+Target tools resolve project-backed context through `ProjectResolver`, not
+through ad-hoc paths or one mutable MCP-global project slot.
 
-## M2 Tools (v1)
+Each project-backed request accepts enough context to resolve:
+
+- `project_id` or `project_root`
+- `model_revision` or explicit `latest` read intent
+- `variant`
+- `output_context` for projection/artifact/manufacturing scopes
+
+`ProjectResolver` is responsible for locating the model store, validating the
+requested revision, resolving variant and output context, and returning the
+canonical `DatumContextEnvelope`. Tools must use that envelope for all reads,
+checks, proposals, artifact generation, and journal operations.
+
+Target rules:
+
+- Queries may read `latest` or a pinned `model_revision`; responses report the
+  actual revision used.
+- Proposals must be prepared against an explicit `model_revision`.
+- Applies must reject stale proposals unless the proposal is explicitly
+  rebased and revalidated.
+- Artifacts must record the exact `project_id`, `model_revision`, `variant`,
+  `output_context`, generator version, and content hashes.
+- Check runs must record the exact `project_id`, `model_revision`, `variant`,
+  check profile, checker version, and finding fingerprints.
+
+## Target Tools
+
+### 1. Context / Session
+
+MCP:
+
+- `datum.context.get`
+- `datum.context.refresh`
+
+CLI:
+
+- `datum-eda context get`
+- `datum-eda context refresh`
+
+Returns the `DatumContextEnvelope`: session id, actor, capabilities, project
+identity, model revision, variant, output context, projection/selection/cursor
+context, visible findings/artifacts, provenance seed, and expiry/refresh
+metadata.
+
+Context/session is capability state. It is not an `Operation`, is not
+journaled, and must not grant direct filesystem write access.
+
+### 2. Query
+
+MCP:
+
+- `datum.query.*`
+
+CLI:
+
+- `datum-eda query <family> [--domain ...] [--at <model_revision>]`
+
+Queries are read-only. Existing `get_*`, `search_*`, report, relationship,
+pool, schematic, PCB, rules, manufacturing, artifact, transaction, and
+provenance reads fold into query families rather than new peer methods.
+
+Target query responses must be revision-pinned and must prefer stable IDs over
+names. Cross-domain joins use product-mechanics identity such as
+`ComponentInstance`; agents must not reconstruct joins by refdes/name/path
+string matching.
+
+### 3. Check
+
+MCP:
+
+- `datum.check.run`
+- `datum.check.show`
+
+CLI:
+
+- `datum-eda check run --domain <erc|drc|standards|process|manufacturing|all> --profile <id>`
+- `datum-eda check show <check_run_id>`
+
+Checks do not mutate source design state. Persisted `CheckRun` records are
+derived evidence with revision, variant, checker version, profile, status, and
+stable finding fingerprints. Finding explanations and suggested next actions
+belong on `CheckFinding`; standalone index-addressed explain methods are
+compatibility only.
+
+### 4. Proposal
+
+MCP:
+
+- `datum.proposal.create`
+- `datum.proposal.show`
+- `datum.proposal.validate`
+- `datum.proposal.reject`
+- `datum.proposal.defer`
+- `datum.proposal.apply`
+
+CLI:
+
+- `datum-eda proposal create|show|validate|reject|defer|apply`
+
+Proposals own a typed `OperationBatch`, rationale, affected object IDs,
+expected result, prepared-against `model_revision`, assumptions, risks, checks,
+and session provenance. Proposal creation never mutates source design state.
+
+High-risk, cross-domain, batch, destructive, generated, checker-authored, or
+assistant-authored changes must go through proposal review unless an explicit
+direct-commit policy grants otherwise.
+
+### 5. Commit / Apply Gateway
+
+There is exactly one mutation gateway: `commit(OperationBatch)`.
+
+`commit()` is an internal engine contract, not a standalone general user verb.
+It is reached by accepted proposal apply and by narrowly policy-gated direct
+authoring edits.
+
+Target commit rules:
+
+- Every source mutation is a typed `OperationBatch`.
+- Every committed batch produces object revisions, a new `model_revision`, and
+  one journal transaction.
+- Applies reject stale base revisions unless explicitly rebased and revalidated.
+- Applies validate object revisions, affected IDs, capability, provenance, and
+  acceptance policy.
+- AI/assistant/checker/import-repair paths may propose but must not silently
+  bypass proposal policy.
+
+No private mutation paths are allowed. Per-method writes, direct shard writes,
+derived-cache writes as source, direct `write_canonical_json`, per-domain
+save/write methods, or MCP handlers that mutate outside `commit()` are target
+contract violations.
+
+### 6. Artifact
+
+MCP:
+
+- `datum.artifact.generate`
+- `datum.artifact.show`
+- `datum.artifact.compare`
+- `datum.artifact.validate`
+
+CLI:
+
+- `datum-eda artifact generate --include <scope>[,<scope>...]`
+- `datum-eda artifact show <artifact_id>`
+- `datum-eda artifact compare <before> <after>`
+- `datum-eda artifact validate <artifact_id>`
+
+Artifacts are derived projections, never source authority and never committed
+through `commit()`. Format and scope are parameters (`--include`), not separate
+peer tool families. Panel/manufacturing/output-job context is represented in
+`output_context`.
+
+Every artifact records project id, model revision, variant, output context,
+generator version, projection revision, validation/equivalence state, and
+per-file content hashes.
+
+### 7. Journal
+
+MCP:
+
+- `datum.journal.list`
+- `datum.journal.show`
+- `datum.journal.undo`
+- `datum.journal.redo`
+
+CLI:
+
+- `datum-eda journal list|show|undo|redo`
+
+Journal is global and project-wide. `list` and `show` are read-only. `undo` and
+`redo` are compensating `OperationBatch` commits through the same `commit()`
+gateway, not private reversal paths.
+
+## OperationBatch / Proposal / Apply Rules
+
+`OperationBatch` is the only source mutation payload. It contains:
+
+- batch id
+- prepared-against `project_id`, `model_revision`, and `variant`
+- typed operations
+- affected object IDs and expected object revisions
+- actor/session/provenance
+- validation requirements
+- optional proposal id and acceptance record
+
+Proposal lifecycle:
+
+1. `datum.proposal.create` produces a proposal with an `OperationBatch` and a
+   machine-readable preview/diff.
+2. `datum.proposal.validate` checks base revision, object revisions,
+   capabilities, checks, and policy.
+3. `datum.proposal.apply` revalidates the proposal and then calls `commit()`.
+4. `datum.journal.list|show` expose the resulting transaction and proposal
+   lineage.
+
+Apply rejection reasons include stale model revision, missing acceptance,
+capability denial, invalid operation, object revision mismatch, failed required
+check, proposal conflict, and unsupported operation.
+
+## Compatibility Alias Policy
+
+Compatibility aliases exist to keep current clients working while the target
+surface is implemented. Aliases must be thin adapters over target tools once
+the target tool exists.
+
+Required aliases:
+
+- `open_project` -> `datum.context.get` / `datum.context.refresh` through
+  `ProjectResolver`
+- `close_project` -> session/context release or no-op once context is
+  resolver-backed rather than one global open project
+- `save` -> compatibility wrapper only; target writes are committed at apply
+  time and do not require a public save mutation
+- `run_erc` -> `datum.check.run` with `domain = "erc"`
+- `run_drc` -> `datum.check.run` with `domain = "drc"`
+
+Per-method write compatibility:
+
+- Existing mutation methods such as move, rotate, set field/value/reference,
+  delete, assign part/package, replacement, rule edits, routing apply, undo,
+  and redo may remain as compatibility methods during migration.
+- Once `OperationBatch` and `commit()` exist, each compatibility write method
+  must translate into a typed operation or accepted proposal and must enter
+  through `commit()`.
+- No compatibility method may retain a private mutation path after the target
+  commit gateway is available for its operation type.
+- New write capabilities must not be introduced as flat compatibility methods;
+  they must be implemented as typed operations under proposal/apply or
+  policy-gated direct commit.
+
+Alias retirement policy:
+
+- Compatibility aliases are documented in this section only.
+- Target docs and examples use `datum-eda` CLI and `datum.*` MCP names.
+- Aliases must preserve current behavior until a migration plan declares them
+  deprecated and then removed.
+- Alias payloads may remain legacy during transition, but target `datum.*`
+  payloads must use the target JSON envelope.
+
+## Current Compatibility
+
+This section is authoritative for the current implemented daemon/MCP method
+names. It preserves implementation truth; it is not the target surface.
+
+Current implementation note: implemented in the current daemon/stdio host.
 
 ### Current Implemented Methods (2026-03-25)
 
@@ -126,1569 +402,384 @@ normalized MCP surface.
 `revalidate_route_proposal_artifact`,
 `apply_route_proposal_artifact`.
 
-Methods in later `M4+` sections are target-state and are not part of the
-current enforced daemon/MCP contract.
+### Current Method Sections
 
-### Native CLI Parity Tracking (2026-03-29)
-
-The native CLI/engine surface has advanced beyond the currently implemented
-daemon/MCP contract. That is intentional for now: MCP parity is tracked here,
-but deferred unless a milestone explicitly reopens MCP implementation work.
-
-Parity policy for current development:
-- native slices may land without same-slice MCP implementation
-- new native contracts must be tracked here as one of:
-  - `deferred_mcp_parity`
-  - `implemented_in_mcp`
-
-Native validation parity note (2026-03-30):
-- `project validate <dir>` is now exposed through MCP as `validate_project`.
-- MCP preserves the CLI validation contract exactly:
-  - same JSON report shape
-  - same valid/invalid semantics
-  - invalid native projects may return CLI exit status `1`, but MCP still
-    returns the structured validation payload
-  - `not_planned_for_mcp`
-- MCP implementation authority remains the current method list above; the
-  entries below are tracking records, not claims of implemented MCP support
-
-Currently tracked native contracts that are not implemented in MCP:
-
-#### Implemented M5/M6 native parity exceptions
-
-- `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate <accepted_candidate> [--policy <policy>] --out <path>`
-  - exposed in MCP as `export_route_path_proposal`
-  - orthogonal-graph export responses include recorded segment-level
-    ranked-path evidence
-- `project route-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> [--profile <profile>]`
-  - exposed in MCP as `route_proposal`
-- `project route-strategy-report <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> [--objective <objective>]`
-  - exposed in MCP as `route_strategy_report`
-  - accepted objective set currently reuses the selector profile vocabulary:
-    - `default`
-    - `authored-copper-priority`
-- `project route-strategy-compare <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-  - exposed in MCP as `route_strategy_compare`
-  - compares only the accepted objective/profile set above and recommends one
-    profile under a deterministic baseline-preserving rule
-- `project route-strategy-delta <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-  - exposed in MCP as `route_strategy_delta`
-  - compares only the same accepted objective/profile set above and emits one
-    bounded explicit delta classification:
-    - `same_outcome`
-    - `different_candidate_family`
-    - `different_policy_same_family`
-    - `proposal_available_only_under_authored_copper_priority`
-    - `no_proposal_under_any_profile`
-- `project write-route-strategy-curated-fixture-suite --out-dir <path> [--manifest <path>]`
-  - exposed in MCP as `write_route_strategy_curated_fixture_suite`
-  - writes one deterministic curated native-project fixture suite plus a
-    compatible `native_route_strategy_batch_requests` manifest for repeated
-    evidence gathering
-  - the current curated suite covers:
-    - same-outcome baseline route selection
-    - profile divergence between `default` and
-      `authored-copper-priority`
-    - no-proposal-under-any-profile
-    - one cross-layer routable same-outcome case
-- `project capture-route-strategy-curated-baseline --out-dir <path> [--manifest <path>] [--result <path>]`
-  - exposed in MCP as `capture_route_strategy_curated_baseline`
-  - materializes the curated fixture suite, runs the existing batch evaluator,
-    and saves one reusable `native_route_strategy_batch_result_artifact`
-    baseline file
-  - default saved paths are inside `--out-dir`:
-    - `route-strategy-batch-requests.json`
-    - `route-strategy-batch-result.json`
-  - the repo currently checks in one baseline capture under:
-    - `crates/test-harness/testdata/quality/route_strategy_curated_baseline_v1`
-  - the normal verification harness is:
-    - `python3 scripts/check_route_strategy_evidence.py`
-- `project route-strategy-batch-evaluate --requests <path>`
-  - exposed in MCP as `route_strategy_batch_evaluate`
-  - `--requests` points to one versioned JSON manifest of explicit route
-    requests with:
-    - `request_id`
-    - `fixture_id`
-    - `project_root`
-    - `net_uuid`
-    - `from_anchor_pad_uuid`
-    - `to_anchor_pad_uuid`
-  - the batch report reuses the existing `route_strategy_report`,
-    `route_strategy_compare`, and `route_strategy_delta` logic per request and
-    returns both per-request evidence and aggregate summary counts
-  - the batch-evaluate JSON output is the saved artifact format with:
-    - `kind = native_route_strategy_batch_result_artifact`
-    - `version = 1`
-- `project inspect-route-strategy-batch-result <path>`
-  - exposed in MCP as `inspect_route_strategy_batch_result`
-  - reports artifact identity/version, aggregate summary, recommendation and
-    delta distributions, per-request outcomes, and malformed entries
-- `project validate-route-strategy-batch-result <path>`
-  - exposed in MCP as `validate_route_strategy_batch_result`
-  - reports structural validity, version compatibility, missing required
-    fields, summary/result count consistency, and malformed entries
-- `project compare-route-strategy-batch-result <before> <after>`
-  - exposed in MCP as `compare_route_strategy_batch_result`
-  - compares saved artifacts only and treats them as compatible only when both
-    use `kind = native_route_strategy_batch_result_artifact`, `version = 1`,
-    and the same request-manifest kind/version
-  - reports aggregate count deltas, added/removed/common request ids, and
-    request-id keyed changes in recommended profile, delta classification, and
-    selected live outcome with one bounded summary classification:
-    - `identical`
-    - `aggregate_only_changed`
-    - `per_request_outcomes_changed`
-    - `incompatible_artifacts`
-- `project gate-route-strategy-batch-result <before> <after> [--policy <policy>]`
-  - exposed in MCP as `gate_route_strategy_batch_result`
-  - evaluates the saved-artifact comparison result only; it does not rerun any
-    live strategy logic
-  - accepted explicit gate policy set:
-    - `strict_identical`
-    - `allow_aggregate_only`
-    - `fail_on_recommendation_change`
-  - reports selected policy, pass/fail result, comparison classification,
-    specific reasons, threshold/count facts, and summary counts of changed
-    recommendations, changed delta classifications, and changed per-request
-    outcomes
-  - native CLI exit-code contract:
-    - `0` when the selected gate policy passes
-    - `2` when the selected gate policy fails
-- `project summarize-route-strategy-batch-results [--dir <path> | --artifact <path> ...] [--baseline <path> --policy <policy>]`
-  - exposed in MCP as `summarize_route_strategy_batch_results`
-  - summarizes saved artifacts only; it does not rerun live route evaluation
-  - accepts either one directory scan or an explicit artifact list
-  - reports per-artifact identity/version, filesystem-derived run ordering
-    when available, request counts, recommendation/delta distributions, and
-    structural validation state
-  - when `--baseline` is provided, attaches one optional baseline gate summary
-    for each non-baseline artifact using the existing accepted gate policies
-- `project route-proposal-explain <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> [--profile <profile>]`
-  - exposed in MCP as `route_proposal_explain`
-- `project review-route-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> [--profile <profile>]`
-  - also supports `project review-route-proposal --artifact <path>`
-  - exposed in MCP as `review_route_proposal`
-  - returns one read-only deterministic review payload for either a live
-    selected route proposal or a saved route-proposal artifact
-  - reuses the existing proposal action geometry and segment-evidence
-    structures so a frontend can render one proposal without inventing a
-    parallel review model
-- `project export-route-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --out <path> [--profile <profile>]`
-  - exposed in MCP as `export_route_proposal`
-- accepted selector profile set for those selector-backed surfaces:
-  - `default`
-  - `authored-copper-priority`
-- `project route-apply <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate <accepted_candidate> [--policy <policy>]`
-  - exposed in MCP as `route_apply`
-- `project route-apply-selected <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> [--profile <profile>]`
-  - exposed in MCP as `route_apply_selected`
-- `project inspect-route-proposal-artifact <path>`
-  - exposed in MCP as `inspect_route_proposal_artifact`
-  - orthogonal-graph inspection responses include recorded segment-level
-    ranked-path evidence
-- `project revalidate-route-proposal-artifact <dir> --artifact <path>`
-  - exposed in MCP as `revalidate_route_proposal_artifact`
-  - orthogonal-graph revalidation responses include segment-level ranked-path
-    evidence in addition to top-level drift classification
-- `project apply-route-proposal-artifact <dir> --artifact <path>`
-  - exposed in MCP as `apply_route_proposal_artifact`
-
-#### Deferred M4 native parity
-
-- `project query <dir> pools`
-- `project query <dir> board-net --net <uuid>`
-- `project query <dir> board-net-class --net-class <uuid>`
-- `project query <dir> board-component-models-3d --component <uuid>`
-- `project query <dir> board-component-pads --component <uuid>`
-- `project query <dir> board-component-silkscreen --component <uuid>`
-- `project query <dir> board-component-mechanical --component <uuid>`
-- `project report-manufacturing <dir> [--prefix <text>]`
-- `project export-manufacturing-set <dir> --output-dir <path> [--prefix <text>]`
-- `project inspect-manufacturing-set <dir> --output-dir <path> [--prefix <text>]`
-- `project validate-manufacturing-set <dir> --output-dir <path> [--prefix <text>]`
-- `project compare-manufacturing-set <dir> --output-dir <path> [--prefix <text>]`
-- `project manifest-manufacturing-set <dir> --output-dir <path> [--prefix <text>]`
-- `project inspect-bom <path>`
-- `project validate-bom <dir> --bom <path>`
-- `project inspect-pnp <path>`
-- `project validate-pnp <dir> --pnp <path>`
-- `project inspect-drill <path>`
-- `project validate-drill <dir> --drill <path>`
-- `project compare-drill <dir> --drill <path>`
-- `project export-gerber-set <dir> --output-dir <path> [--prefix <text>]`
-- `project validate-gerber-set <dir> --output-dir <path> [--prefix <text>]`
-- `project compare-gerber-set <dir> --output-dir <path> [--prefix <text>]`
-
-#### Deferred M5 native parity
-
-- `project query <dir> routing-substrate`
-- `project query <dir> route-preflight --net <uuid>`
-- `project query <dir> route-corridor --net <uuid>`
-- `project query <dir> route-path-candidate --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- same-layer `route-path-candidate-orthogonal-graph` responses now also
-  include `segment_evidence`
-- `project query <dir> route-path-candidate-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- same-layer `route-path-candidate-orthogonal-graph-explain` responses now
-  also include `segment_evidence`
-- `project query <dir> route-path-candidate-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-two-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-two-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-three-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-three-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-four-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-four-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-five-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-five-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-six-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-six-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-authored-via-chain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-authored-via-chain-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-orthogonal-dogleg --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-orthogonal-dogleg-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-orthogonal-two-bend --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-orthogonal-two-bend-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-orthogonal-graph --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-orthogonal-graph-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-orthogonal-graph-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-orthogonal-graph-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-orthogonal-graph-two-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-orthogonal-graph-two-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-orthogonal-graph-three-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-orthogonal-graph-three-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-orthogonal-graph-four-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-orthogonal-graph-four-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-orthogonal-graph-five-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-orthogonal-graph-five-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-orthogonal-graph-six-via --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-orthogonal-graph-six-via-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-authored-copper-graph --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --policy <policy>`
-- `project query <dir> route-path-candidate-authored-copper-graph-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --policy <policy>`
-- `project query <dir> route-path-candidate-authored-copper-graph-zone-aware --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-authored-copper-graph-zone-aware-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-authored-copper-graph-zone-obstacle-aware-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-authored-copper-graph-obstacle-aware --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project query <dir> route-path-candidate-authored-copper-graph-obstacle-aware-explain --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid>`
-- `project export-route-path-proposal <dir> --net <uuid> --from-anchor <pad_uuid> --to-anchor <pad_uuid> --candidate authored-copper-plus-one-gap --out <path>`
-
-### Project
+These sections preserve per-method compatibility anchors required by drift
+gates. They are not target tool-class definitions.
 
 #### `open_project`
-```
-Method: open_project
-Input:  { "path": string }          // .kicad_pcb, .kicad_sch, .brd, .sch
-Output: { "kind": string,
-          "source": string,
-          "counts": {
-            "units": int,
-            "symbols": int,
-            "entities": int,
-            "padstacks": int,
-            "packages": int,
-            "parts": int
-          },
-          "warnings": [string],
-          "metadata": { key: string } }
-Error:  import_error
-```
-Target M2 note: this may be normalized later into a richer project/session
-envelope (project id, format split, board/schematic summary subobjects).
+
+Context/session compatibility.
 
 #### `close_project`
-```
-Method: close_project
-Input:  {}
-Output: { "ok": true }
-Error:  no_project_open
-```
-Current implementation note: implemented in the current daemon/stdio host.
 
-### Pool
-
-#### `search_pool`
-```
-Method: search_pool
-Input:  { "query": string,
-          "type": "part" | "package" | "entity" | null,
-          "limit": int (default 20) }
-Output: { "results": [
-            { "uuid": uuid, "type": "part",
-              "mpn": string, "manufacturer": string,
-              "description": string, "package": string }
-          ] }
-```
-Current implementation note: implemented in the current daemon/stdio host
-with keyword query-only parameters.
-
-#### `get_part`
-```
-Method: get_part
-Input:  { "uuid": uuid }
-Output: { "uuid": uuid, "mpn": string, "manufacturer": string,
-          "value": string, "description": string, "datasheet": string,
-          "entity": { "name": string, "prefix": string,
-                      "gates": [{ "name": string, "pins": [string] }] },
-          "package": { "name": string, "pads": int },
-          "parametric": { key: value, ... },
-          "lifecycle": "active" | "nrnd" | "eol" | "obsolete" | "unknown" }
-Error:  part_not_found
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `get_package`
-```
-Method: get_package
-Input:  { "uuid": uuid }
-Output: { "uuid": uuid, "name": string,
-          "pads": [{ "name": string, "x_mm": float, "y_mm": float,
-                     "layer": string }],
-          "courtyard_mm": { "width": float, "height": float } }
-Error:  not_found
-```
-
-#### `get_package_change_candidates`
-```
-Method: get_package_change_candidates
-Input:  { "uuid": string }   // component UUID
-Output: { "component_uuid": string,
-          "current_part_uuid": string|null,
-          "current_package_uuid": string,
-          "current_package_name": string,
-          "current_value": string,
-          "status": "no_known_part"|"no_compatible_packages"|"candidates_available",
-          "ambiguous_package_count": int,
-          "candidates": [
-            { "package_uuid": string,
-              "package_name": string,
-              "compatible_part_uuid": string,
-              "compatible_part_value": string,
-              "pin_names": [string] }
-          ] }
-Error:  component_not_found
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `get_part_change_candidates`
-```
-Method: get_part_change_candidates
-Input:  { "uuid": string }   // component UUID
-Output: { "component_uuid": string,
-          "current_part_uuid": string|null,
-          "current_package_uuid": string,
-          "current_package_name": string,
-          "current_value": string,
-          "status": "no_known_part"|"no_compatible_parts"|"candidates_available",
-          "candidates": [
-            { "part_uuid": string,
-              "package_uuid": string,
-              "package_name": string,
-              "value": string,
-              "mpn": string,
-              "manufacturer": string,
-              "pin_names": [string] }
-          ] }
-Error:  component_not_found
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `get_component_replacement_plan`
-```
-Method: get_component_replacement_plan
-Input:  { "uuid": string }   // component UUID
-Output: { "component_uuid": string,
-          "current_reference": string,
-          "current_value": string,
-          "current_part_uuid": string|null,
-          "current_package_uuid": string,
-          "current_package_name": string,
-          "package_change": json,
-          "part_change": json }
-Error:  component_not_found
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `get_scoped_component_replacement_plan`
-```
-Method: get_scoped_component_replacement_plan
-Input:  { "scope": {
-            "reference_prefix": string|null,
-            "value_equals": string|null,
-            "current_package_uuid": string|null,
-            "current_part_uuid": string|null
-          },
-          "policy": "best_compatible_package" | "best_compatible_part" }
-Output: { "scope": json,
-          "policy": string,
-          "replacements": [
-            { "component_uuid": string,
-              "current_reference": string,
-              "current_value": string,
-              "current_part_uuid": string|null,
-              "current_package_uuid": string,
-              "target_part_uuid": string,
-              "target_package_uuid": string,
-              "target_value": string,
-              "target_package_name": string }
-          ] }
-Error:  invalid_params | component_not_found | part_not_found | package_not_found
-```
-Current implementation note: implemented in the current daemon/stdio host as a read-only preview of the exact replacements a scoped policy would apply.
-
-#### `edit_scoped_component_replacement_plan`
-```
-Method: edit_scoped_component_replacement_plan
-Input:  { "plan": json,
-          "exclude_component_uuids": [string],
-          "overrides": [
-            { "component_uuid": string,
-              "target_package_uuid": string,
-              "target_part_uuid": string }
-          ] }
-Output: { "scope": json,
-          "policy": string,
-          "replacements": [json] }
-Error:  invalid_params
-```
-Current implementation note: implemented in the current daemon/stdio host for
-plan post-processing (exclude/override) before apply.
-
-#### `replace_components`
-```
-Method: replace_components
-Input:  { "replacements": [
-            { "uuid": string, "package_uuid": string, "part_uuid": string }
-          ] }
-Output: { "diff": { "created": [], "modified": [{ "object_type": "component", "uuid": string }], "deleted": [] },
-          "description": string }
-Error:  invalid_params | component_not_found | part_not_found | package_not_found
-```
-Current implementation note: implemented in the current daemon/stdio host as a single transaction / single undo step for batch component replacement.
-
-#### `apply_component_replacement_plan`
-```
-Method: apply_component_replacement_plan
-Input:  { "replacements": [
-            { "uuid": string,
-              "package_uuid": string|null,
-              "part_uuid": string|null }
-          ] }
-Output: { "diff": { "created": [], "modified": [{ "object_type": "component", "uuid": string }], "deleted": [] },
-          "description": string }
-Error:  invalid_params | component_not_found | part_not_found | package_not_found
-```
-Current implementation note: implemented in the current daemon/stdio host for plan-driven replacement selection; callers may provide a package selector, a part selector, or both for each component.
-
-#### `apply_component_replacement_policy`
-```
-Method: apply_component_replacement_policy
-Input:  { "replacements": [
-            { "uuid": string,
-              "policy": "best_compatible_package" | "best_compatible_part" }
-          ] }
-Output: { "diff": { "created": [], "modified": [{ "object_type": "component", "uuid": string }], "deleted": [] },
-          "description": string }
-Error:  invalid_params | component_not_found | part_not_found | package_not_found
-```
-Current implementation note: implemented in the current daemon/stdio host for deterministic best-candidate replacement selection from the current replacement plan.
-
-#### `apply_scoped_component_replacement_policy`
-```
-Method: apply_scoped_component_replacement_policy
-Input:  { "scope": {
-            "reference_prefix": string|null,
-            "value_equals": string|null,
-            "current_package_uuid": string|null,
-            "current_part_uuid": string|null
-          },
-          "policy": "best_compatible_package" | "best_compatible_part" }
-Output: { "diff": { "created": [], "modified": [{ "object_type": "component", "uuid": string }], "deleted": [] },
-          "description": string }
-Error:  invalid_params | component_not_found | part_not_found | package_not_found
-```
-Current implementation note: implemented in the current daemon/stdio host for deterministic best-candidate replacement selection over a scoped component filter.
-
-#### `apply_scoped_component_replacement_plan`
-```
-Method: apply_scoped_component_replacement_plan
-Input:  { "plan": {
-            "scope": json,
-            "policy": "best_compatible_package" | "best_compatible_part",
-            "replacements": [
-              { "component_uuid": string,
-                "current_reference": string,
-                "current_value": string,
-                "current_part_uuid": string|null,
-                "current_package_uuid": string,
-                "target_part_uuid": string,
-                "target_package_uuid": string,
-                "target_value": string,
-                "target_package_name": string }
-            ]
-          } }
-Output: { "diff": { "created": [], "modified": [{ "object_type": "component", "uuid": string }], "deleted": [] },
-          "description": string }
-Error:  invalid_params | component_not_found | part_not_found | package_not_found
-```
-Current implementation note: implemented in the current daemon/stdio host to apply a previously previewed scoped replacement plan without re-resolving policy; the current CLI slice consumes this via `--apply-scoped-replacement-plan-file` and still requires matching pool libraries to be loaded.
-
-### Design Queries
-
-#### `get_schematic_summary`
-```
-Method: get_schematic_summary
-Input:  {}
-Output: { "sheets": int, "symbols": int, "nets": int,
-          "labels": int, "ports": int, "buses": int }
-Error:  no_project_open
-```
-
-#### `get_sheets`
-```
-Method: get_sheets
-Input:  {}
-Output: { "sheets": [
-            { "uuid": uuid, "name": string, "symbols": int,
-              "ports": int, "labels": int, "buses": int }
-          ] }
-Error:  no_project_open
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `get_symbols`
-```
-Method: get_symbols
-Input:  { "sheet": uuid | null }
-Output: { "symbols": [
-            { "uuid": uuid, "reference": string, "value": string,
-              "x_mm": float, "y_mm": float, "rotation_deg": float,
-              "mirrored": bool, "part_uuid": uuid | null,
-              "entity_uuid": uuid | null, "gate_uuid": uuid | null }
-          ] }
-Error:  no_project_open
-```
-Current implementation note: the current daemon/stdio host exposes the
-all-sheets form only and passes `sheet = null` to the engine.
-
-#### `get_ports`
-```
-Method: get_ports
-Input:  { "sheet": uuid | null }
-Output: { "ports": [
-            { "uuid": uuid, "name": string, "direction": string,
-              "x_mm": float, "y_mm": float }
-          ] }
-Error:  no_project_open
-```
-Current implementation note: the current daemon/stdio host exposes the
-all-sheets form only and passes `sheet = null` to the engine.
-
-#### `get_labels`
-```
-Method: get_labels
-Input:  { "sheet": uuid | null }
-Output: { "labels": [
-            { "uuid": uuid, "sheet": uuid,
-              "kind": "local" | "global" | "hierarchical" | "power",
-              "name": string, "x_mm": float, "y_mm": float }
-          ] }
-Error:  no_project_open
-```
-Current implementation note: the current daemon/stdio host exposes the
-all-sheets form only and passes `sheet = null` to the engine.
-
-#### `get_buses`
-```
-Method: get_buses
-Input:  { "sheet": uuid | null }
-Output: { "buses": [
-            { "uuid": uuid, "sheet": uuid, "name": string,
-              "members": [string] }
-          ] }
-Error:  no_project_open
-```
-Current implementation note: the current daemon/stdio host exposes the
-all-sheets form only and passes `sheet = null` to the engine.
-
-#### `get_bus_entries`
-```
-Method: get_bus_entries
-Input:  { "sheet": uuid | null }
-Output: { "bus_entries": [
-            { "uuid": uuid, "sheet": uuid, "bus_uuid": uuid,
-              "wire_uuid": uuid | null, "x_mm": float, "y_mm": float }
-          ] }
-Error:  no_project_open
-```
-Current implementation note: the current daemon/stdio host exposes the
-all-sheets form only and passes `sheet = null` to the engine.
-
-#### `get_noconnects`
-```
-Method: get_noconnects
-Input:  { "sheet": uuid | null }
-Output: { "markers": [
-            { "uuid": uuid, "sheet": uuid, "symbol_uuid": uuid,
-              "pin_uuid": uuid, "x_mm": float, "y_mm": float }
-          ] }
-Error:  no_project_open
-```
-Current implementation note: the current daemon/stdio host exposes the
-all-sheets form only and passes `sheet = null` to the engine.
-
-#### `get_symbol_fields`
-```
-Method: get_symbol_fields
-Input:  { "symbol_uuid": uuid }
-Output: { "fields": [
-            { "uuid": uuid, "key": string, "value": string,
-              "visible": bool, "x_mm": float | null, "y_mm": float | null }
-          ] }
-Error:  no_project_open, not_found
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `get_hierarchy`
-```
-Method: get_hierarchy
-Input:  {}
-Output: { "instances": [
-            { "uuid": uuid, "definition_uuid": uuid, "parent_sheet_uuid": uuid | null,
-              "name": string, "x_mm": float, "y_mm": float }
-          ],
-          "links": [
-            { "parent_sheet_uuid": uuid, "child_sheet_uuid": uuid,
-              "parent_port_uuid": uuid, "child_port_uuid": uuid, "net_uuid": uuid }
-          ] }
-Error:  no_project_open
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `get_board_summary`
-```
-Method: get_board_summary
-Input:  {}
-Output: { "width_mm": float, "height_mm": float,
-          "layers": int, "components": int, "nets": int,
-          "tracks": int, "vias": int, "zones": int,
-          "routed_pct": float, "unrouted_count": int }
-Error:  no_project_open
-```
-
-#### `get_netlist`
-```
-Method: get_netlist
-Input:  {}
-Output: { "nets": [
-            { "uuid": uuid, "name": string, "class": string | null,
-              "pins": [{ "component": string, "pin": string }],
-              "routed_pct": float | null,
-              "labels": int | null, "ports": int | null,
-              "sheets": [string] | null, "semantic_class": string | null }
-          ] }
-```
-Current implementation note: implemented in the current daemon/stdio host.
-Current payload is a canonical net inventory view:
-- board projects: includes routing metrics (`routed_pct`) from board nets.
-- schematic projects: includes schematic connectivity counts (`labels`, `ports`,
-  `sheets`, `semantic_class`) with `routed_pct = null`.
-
-#### `get_components`
-```
-Method: get_components
-Input:  {}
-Output: { "components": [
-            { "uuid": uuid, "reference": string, "value": string,
-              "part_mpn": string | null,
-              "x_mm": float, "y_mm": float, "rotation_deg": float,
-              "layer": "top" | "bottom", "locked": bool }
-          ] }
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `get_net_info`
-```
-Method: get_net_info
-Input:  { "net": string }           // name or UUID
-Output: { "uuid": uuid, "name": string, "class": string,
-          "pins": [{ "component": string, "pin": string }],
-          "tracks": int, "vias": int,
-          "routed_length_mm": float, "routed_pct": float }
-Error:  net_not_found
-```
-
-This is the board-domain net query.
-Current implementation note: the current daemon/stdio host exposes the full
-board net inventory for the open design rather than a single-net selector.
-
-#### `get_schematic_net_info`
-```
-Method: get_schematic_net_info
-Input:  { "net": string }           // name or UUID
-Output: { "uuid": uuid, "name": string, "class": string | null,
-          "pins": [{ "component": string, "pin": string }],
-          "labels": int, "ports": int, "sheets": [string],
-          "semantic_class": string | null }
-Error:  net_not_found
-```
-
-This is the schematic-domain net query. It is intentionally distinct from
-`get_net_info` and must not expose board-routing metrics.
-Current implementation note: the current daemon/stdio host exposes the full
-schematic net inventory for the open design rather than a single-net selector.
-
-#### `get_design_rules`
-```
-Method: get_design_rules
-Input:  {}
-Output: { "rules": [
-            { "uuid": uuid, "name": string, "type": string,
-              "scope": json, "priority": int, "enabled": bool,
-              "parameters": json }
-          ] }
-```
-Current implementation note: implemented in the current daemon/stdio host
-using the current rule-evaluator subset payload. Later milestones may expand
-projection richness, but the current method is part of the active M2 slice.
-
-#### `get_unrouted`
-```
-Method: get_unrouted
-Input:  {}
-Output: { "airwires": [
-            { "net_name": string,
-              "from": { "component_ref": string, "pin_name": string },
-              "to": { "component_ref": string, "pin_name": string },
-              "distance_nm": int }
-          ] }
-```
-Current implementation note: implemented in the current daemon/stdio host for
-board projects. Target M2 may add a normalized `distance_mm` view while
-retaining deterministic nm precision in engine-domain payloads.
-
-#### `get_connectivity_diagnostics`
-```
-Method: get_connectivity_diagnostics
-Input:  {}
-Output: { "diagnostics": [
-            { "kind": string, "severity": "error" | "warning" | "info",
-              "message": string, "objects": [uuid] }
-          ] }
-Error:  no_project_open, connectivity_error
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `get_check_report`
-```
-Method: get_check_report
-Input:  {}
-Output:
-  Board:
-    { "domain": "board",
-      "summary": { "status": "ok" | "info" | "warning" | "error",
-                   "errors": int, "warnings": int, "infos": int, "waived": int,
-                   "by_code": [{ "code": string, "count": int }] },
-      "diagnostics": [
-        { "kind": string, "severity": "error" | "warning" | "info",
-          "message": string, "objects": [uuid] }
-      ] }
-
-  Schematic:
-    { "domain": "schematic",
-      "summary": { "status": "ok" | "info" | "warning" | "error",
-                   "errors": int, "warnings": int, "infos": int, "waived": int,
-                   "by_code": [{ "code": string, "count": int }] },
-      "diagnostics": [
-        { "kind": string, "severity": "error" | "warning" | "info",
-          "message": string, "objects": [uuid] }
-      ],
-      "erc": [
-        { "id": uuid,
-          "code": string,
-          "severity": "error" | "warning" | "info",
-          "message": string,
-          "net_name": string | null,
-          "component": string | null,
-          "pin": string | null,
-          "objects": [{ "kind": string, "key": string }],
-          "object_uuids": [uuid],
-          "waived": bool }
-      ] }
-Error:  no_project_open, connectivity_error, erc_error
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-### DRC
-
-### ERC
-
-#### `run_erc`
-```
-Method: run_erc
-Input:  {}
-Output: [
-  { "id": uuid,
-    "code": string,
-    "severity": "error" | "warning" | "info",
-    "message": string,
-    "net_name": string | null,
-    "component": string | null,
-    "pin": string | null,
-    "objects": [{ "kind": string, "key": string }],
-    "object_uuids": [uuid],
-    "waived": bool }
-]
-Error:  erc_error
-```
-Target M2 note: a wrapped summary envelope (`passed`, grouped counts) may be
-added later, but current daemon/MCP contract is the raw ERC finding list.
-
-#### `run_drc`
-```
-Method: run_drc
-Input:  {}
-Output: { "passed": bool,
-          "violations": [
-            { "id": uuid,
-              "code": string,
-              "rule_type": string,
-              "severity": "error" | "warning",
-              "message": string,
-              "location": { "x_nm": int, "y_nm": int, "layer": int | null } | null,
-              "objects": [uuid],
-              "waived": bool }
-          ],
-          "summary": { "errors": int, "warnings": int, "waived": int } }
-```
-Current implementation note: implemented in the current daemon/stdio host.
-Target M2 note: optional rule filtering and normalized unit views may be added
-as the DRC catalog expands.
-
-#### `explain_violation`
-```
-Method: explain_violation
-Input:  { "domain": "erc" | "drc", "index": int }
-Output: { "explanation": string,
-          "rule_detail": string,
-          "objects_involved": [{ "type": string, "uuid": uuid, "description": string }],
-          "suggestion": string }
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
----
-
-## M3 Tools (Write Operations)
-
-#### `move_component`
-```
-Method: move_component
-Input:  { "uuid": uuid, "x_mm": float, "y_mm": float,
-          "rotation_deg": float | null }
-Output: { "diff": json }
-Error:  component_not_found, invalid_operation
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `rotate_component`
-```
-Method: rotate_component
-Input:  { "uuid": uuid, "rotation_deg": float }
-Output: { "diff": json }
-Error:  component_not_found, invalid_operation
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `set_value`
-```
-Method: set_value
-Input:  { "uuid": uuid, "value": string }
-Output: { "diff": json }
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `set_reference`
-```
-Method: set_reference
-Input:  { "uuid": uuid, "reference": string }
-Output: { "diff": json }
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `assign_part`
-```
-Method: assign_part
-Input:  { "uuid": uuid, "part_uuid": uuid }
-Output: { "diff": json }
-Error:  component_not_found, part_not_found
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `set_package`
-```
-Method: set_package
-Input:  { "uuid": uuid, "package_uuid": uuid }
-Output: { "diff": json }
-Error:  component_not_found, package_not_found, invalid_operation
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `set_package_with_part`
-```
-Method: set_package_with_part
-Input:  { "uuid": uuid, "package_uuid": uuid, "part_uuid": uuid }
-Output: { "diff": json }
-Error:  component_not_found, package_not_found, part_not_found, invalid_operation
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `replace_component`
-```
-Method: replace_component
-Input:  { "uuid": uuid, "package_uuid": uuid, "part_uuid": uuid }
-Output: { "diff": json, "description": string }
-Error:  component_not_found, part_not_found, package_not_found, invalid_operation
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `replace_components`
-```
-Method: replace_components
-Input:  { "replacements": [
-            { "uuid": uuid, "package_uuid": uuid, "part_uuid": uuid }
-          ] }
-Output: { "diff": json, "description": string }
-Error:  component_not_found, part_not_found, package_not_found, invalid_operation
-```
-Current implementation note: implemented in the current daemon/stdio host as a
-single transaction / single undo step.
-
-#### `apply_component_replacement_plan`
-```
-Method: apply_component_replacement_plan
-Input:  { "replacements": [
-            { "uuid": uuid,
-              "package_uuid": uuid | null,
-              "part_uuid": uuid | null }
-          ] }
-Output: { "diff": json, "description": string }
-Error:  component_not_found, part_not_found, package_not_found, invalid_operation
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `apply_scoped_component_replacement_policy`
-```
-Method: apply_scoped_component_replacement_policy
-Input:  { "scope": {
-            "reference_prefix": string | null,
-            "value_equals": string | null,
-            "current_package_uuid": uuid | null,
-            "current_part_uuid": uuid | null
-          },
-          "policy": "best_compatible_package" | "best_compatible_part" }
-Output: { "diff": json, "description": string }
-Error:  component_not_found, part_not_found, package_not_found, invalid_operation
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `set_net_class`
-```
-Method: set_net_class
-Input:  { "net_uuid": uuid,
-          "class_name": string,
-          "clearance": int,
-          "track_width": int,
-          "via_drill": int,
-          "via_diameter": int,
-          "diffpair_width": int | null,
-          "diffpair_gap": int | null }
-Output: { "diff": json }
-Error:  net_not_found, invalid_operation
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `set_design_rule`
-```
-Method: set_design_rule
-Input:  { "rule_type": string, "scope": json, "parameters": json,
-          "priority": int, "name": string | null }
-Output: { "rule_uuid": uuid, "diff": json }
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `delete_component`
-```
-Method: delete_component
-Input:  { "uuid": uuid }
-Output: { "diff": json }
-Error:  not_found
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `delete_track`
-```
-Method: delete_track
-Input:  { "uuid": uuid }
-Output: { "diff": json }
-Error:  not_found
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `delete_via`
-```
-Method: delete_via
-Input:  { "uuid": uuid }
-Output: { "diff": json }
-Error:  not_found
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `undo`
-```
-Method: undo
-Input:  {}
-Output: { "diff": json, "description": string }
-Error:  { "code": "nothing_to_undo" }
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
-#### `redo`
-```
-Method: redo
-Input:  {}
-Output: { "diff": json, "description": string }
-Error:  { "code": "nothing_to_redo" }
-```
-Current implementation note: implemented in the current daemon/stdio host.
+Context/session compatibility.
 
 #### `save`
-```
-Method: save
-Input:  { "path": string | null }    // null = save to original location
-Output: { "path": string }
-```
-Current implementation note: implemented in the current daemon/stdio host.
-
----
-
-## M4 Tools (Native Authoring + Export)
-
-#### `place_symbol`
-```
-Method: place_symbol
-Input:  { "sheet": uuid, "entity_uuid": uuid | null, "part_uuid": uuid | null,
-          "reference": string, "x_mm": float, "y_mm": float,
-          "rotation_deg": float, "mirrored": bool }
-Output: { "symbol_uuid": uuid, "diff": json }
-```
-
-#### `move_symbol`
-```
-Method: move_symbol
-Input:  { "uuid": uuid, "x_mm": float, "y_mm": float, "rotation_deg": float | null }
-Output: { "diff": json }
-```
-
-#### `draw_wire`
-```
-Method: draw_wire
-Input:  { "sheet": uuid, "from": { "x_mm": float, "y_mm": float },
-          "to": { "x_mm": float, "y_mm": float } }
-Output: { "wire_uuid": uuid, "diff": json }
-```
-
-#### `place_junction`
-```
-Method: place_junction
-Input:  { "sheet": uuid, "x_mm": float, "y_mm": float }
-Output: { "junction_uuid": uuid, "diff": json }
-```
-
-#### `place_label`
-```
-Method: place_label
-Input:  { "sheet": uuid, "kind": "local" | "global" | "hierarchical" | "power",
-          "name": string, "x_mm": float, "y_mm": float }
-Output: { "label_uuid": uuid, "diff": json }
-```
-
-#### `create_sheet_instance`
-```
-Method: create_sheet_instance
-Input:  { "parent_sheet": uuid | null, "name": string,
-          "x_mm": float, "y_mm": float }
-Output: { "sheet_instance_uuid": uuid, "sheet_uuid": uuid, "diff": json }
-```
-
-#### `place_hierarchical_port`
-```
-Method: place_hierarchical_port
-Input:  { "sheet": uuid, "name": string, "direction": string,
-          "x_mm": float, "y_mm": float }
-Output: { "port_uuid": uuid, "diff": json }
-```
-
-#### `create_bus`
-```
-Method: create_bus
-Input:  { "sheet": uuid, "name": string, "members": [string] }
-Output: { "bus_uuid": uuid, "diff": json }
-```
-
-#### `place_noconnect`
-```
-Method: place_noconnect
-Input:  { "sheet": uuid, "symbol_uuid": uuid, "pin_uuid": uuid,
-          "x_mm": float, "y_mm": float }
-Output: { "marker_uuid": uuid, "diff": json }
-```
-
-#### `set_field_value`
-```
-Method: set_field_value
-Input:  { "symbol_uuid": uuid, "field": string, "value": string }
-Output: { "diff": json }
-```
-
-#### `annotate`
-```
-Method: annotate
-Input:  { "scope": "project" | "sheet", "sheet": uuid | null }
-Output: { "diff": json, "renamed": [{ "old": string, "new": string }] }
-```
-
-#### `assign_gate`
-```
-Method: assign_gate
-Input:  { "symbol_uuid": uuid, "gate_uuid": uuid }
-Output: { "diff": json }
-```
-
-#### `rename_label`
-```
-Method: rename_label
-Input:  { "uuid": uuid, "name": string }
-Output: { "diff": json }
-```
-
-#### `edit_bus_members`
-```
-Method: edit_bus_members
-Input:  { "uuid": uuid, "members": [string] }
-Output: { "diff": json }
-```
-
-#### `place_bus_entry`
-```
-Method: place_bus_entry
-Input:  { "sheet": uuid, "bus_uuid": uuid, "wire_uuid": uuid | null,
-          "x_mm": float, "y_mm": float }
-Output: { "bus_entry_uuid": uuid, "diff": json }
-```
-
-#### `move_field`
-```
-Method: move_field
-Input:  { "field_uuid": uuid, "x_mm": float | null, "y_mm": float | null }
-Output: { "diff": json }
-```
-
-#### `set_field_visibility`
-```
-Method: set_field_visibility
-Input:  { "field_uuid": uuid, "visible": bool }
-Output: { "diff": json }
-```
-
-#### `sync_schematic_to_board`
-```
-Method: sync_schematic_to_board
-Input:  {}
-Output: { "eco_id": uuid, "changes": [json] }
-```
-
-#### `export_gerber`
-```
-Method: export_gerber
-Input:  { "output_dir": string, "layers": [string] }
-Output: { "files": [string] }
-Error:  export_error
-```
-
-#### `export_bom`
-```
-Method: export_bom
-Input:  { "format": "csv" | "json", "output": string }
-Output: { "path": string }
-Error:  export_error
-```
-
-#### `export_drill`
-```
-Method: export_drill
-Input:  { "output_dir": string }
-Output: { "files": [string] }
-Error:  export_error
-```
-
-#### `export_pnp`
-```
-Method: export_pnp
-Input:  { "format": "csv", "output": string }
-Output: { "path": string }
-Error:  export_error
-```
-
----
-
-## M5-M6 Tools (Layout Engine)
-
-#### `suggest_placement`
-```
-Method: suggest_placement
-Input:  { "components": [string] | null,  // null = all unplaced
-          "strategy": "minimize_wire_length" | "group_by_function" | null }
-Output: { "proposal_id": uuid,
-          "placements": [{ "reference": string, "x_mm": float, "y_mm": float,
-                           "rotation_deg": float, "layer": string }],
-          "score": float,
-          "constraint_report": json,
-          "warnings": [string] }
-```
-
-#### `route_net`
-```
-Method: route_net
-Input:  { "net": string }
-Output: { "proposal_id": uuid,
-          "tracks": [json], "vias": [json],
-          "length_mm": float, "constraint_report": json }
-```
-
-#### `accept_proposal`
-```
-Method: accept_proposal
-Input:  { "proposal_id": uuid, "items": [uuid] | null }  // null = accept all
-Output: { "diff": json }
-```
-
-#### `reject_proposal`
-```
-Method: reject_proposal
-Input:  { "proposal_id": uuid }
-Output: { "ok": true }
-```
-
-#### `analyze_layout`
-```
-Method: analyze_layout
-Input:  {}
-Output: { "score": float,
-          "issues": [{ "severity": string, "message": string,
-                       "location": json, "suggestion": string }] }
-```
-
----
-
-## M7+ Export Tools (Standards Audit Batch 1)
-
-> Status: section stubs. Per-tool implementation pending; the contract
-> framing here is the AI-surface intent for the post-M7 export work
-> identified in the Domain 1 deep-dive
-> (`research/data-exchange-interop/DATA_EXCHANGE_INTEROP_RESEARCH.md`).
-> Tracking disposition: `STANDARDS_COMPLIANCE_SPEC.md` § 4.1.
-
-#### `export_step`
-Export board + components to a STEP file for MCAD round-trip.
-```
-Method: export_step
-Input:  { "board_uuid": uuid, "output_path": string,
-          "format": "AP203" | "AP214" | "AP242",
-          "include_components": bool,
-          "coordinate_origin": "board_corner" | "board_center" }
-Output: { "export_status": "success" | "partial" | "failed",
-          "warnings": [string] }
-Error:  export_error
-```
-
-#### `export_idf`
-Export board to IDF 3.0 (board outline + component bodies/keepouts).
-```
-Method: export_idf
-Input:  { "board_uuid": uuid, "output_dir": string,
-          "version": "3.0" }
-Output: { "files": [string] }   // board.emn + board.emp
-Error:  export_error
-```
-
-#### `export_odbpp`
-Export board to ODB++ v8.1 archive (Tier-1 fab preferred format).
-```
-Method: export_odbpp
-Input:  { "board_uuid": uuid, "output_path": string,
-          "version": "8.1", "include_assembly": bool }
-Output: { "path": string }
-Error:  export_error
-```
-
-#### `export_ipc2581`
-Export board to IPC-2581 archive (single XML file). Datum recommends
-Rev C; Rev B available for downstream compatibility.
-```
-Method: export_ipc2581
-Input:  { "board_uuid": uuid, "output_path": string,
-          "revision": "B" | "C", "include_impedance": bool }
-Output: { "path": string }
-Error:  export_error
-```
-
-#### `import_dxf_outline`
-Import a board outline polygon from DXF (mechanical-team handoff).
-```
-Method: import_dxf_outline
-Input:  { "path": string, "unit": "mm" | "inch", "flip_y": bool }
-Output: { "outline": json }     // Polygon in canonical nm
-Error:  import_error
-```
-
----
-
-## Component Modelling Tools (Standards Audit Batch 1)
-
-> Status: section stubs. Per-tool implementation pending; the contract
-> framing here is the AI-surface intent for the behavioural-model
-> attachment work identified in the Domain 2 deep-dive
-> (`research/component-modeling/COMPONENT_MODELING_RESEARCH.md`).
-> Tracking disposition: `STANDARDS_COMPLIANCE_SPEC.md` § 4.2.
->
-> All `extract_*` tools are subject to the Encrypted Content Handling
-> Policy below.
-
-### IBIS
-
-#### `attach_ibis`
-```
-Method: attach_ibis
-Input:  { "part_uuid": uuid, "ibs_path": string }
-Output: { "attachment_uuid": uuid, "ibis_version": string,
-          "model_names": [string], "encrypted": bool,
-          "encryption_scheme": string | null }
-Error:  attach_error | parse_error
-```
-
-#### `validate_ibis`
-```
-Method: validate_ibis
-Input:  { "ibs_path": string }
-Output: { "valid": bool,
-          "errors": [{ "line": int, "severity": string, "message": string }],
-          "warnings": [{ "line": int, "message": string }],
-          "summary": { "models": int, "components": int, "has_ami": bool } }
-```
-
-#### `list_ibis_models`
-```
-Method: list_ibis_models
-Input:  { "part_uuid": uuid, "attachment_uuid": uuid }
-Output: { "models": [{ "name": string, "type": string, "signal_pin_count": int }] }
-```
-
-#### `extract_ibis_pin_table`
-```
-Method: extract_ibis_pin_table
-Input:  { "part_uuid": uuid, "attachment_uuid": uuid, "model_name": string,
-          "encrypted_handling": "Reject" | "OpaqueHandle" }
-Output: { "pins": [{ "pin_name": string, "model": string, "buffer_type": string }] }
-Error:  encrypted_block_requested
-```
-
-### Touchstone
-
-#### `attach_touchstone`
-```
-Method: attach_touchstone
-Input:  { "part_uuid": uuid, "snp_path": string,
-          "port_mapping_hint": [{ "port": int, "pin_name": string }] | null }
-Output: { "attachment_uuid": uuid, "ports": int,
-          "frequency_range_hz": [float, float],
-          "format": "Touchstone1" | "Touchstone2" }
-```
-
-#### `validate_touchstone`
-```
-Method: validate_touchstone
-Input:  { "snp_path": string }
-Output: { "valid": bool, "errors": [json], "warnings": [json],
-          "summary": { "ports": int, "freq_range_hz": [float, float],
-                       "format": string, "mixed_mode": bool } }
-```
-
-#### `extract_touchstone_summary`
-```
-Method: extract_touchstone_summary
-Input:  { "part_uuid": uuid, "attachment_uuid": uuid, "summary_freq_hz": float }
-Output: { "insertion_loss_db": float, "return_loss_db": float,
-          "per_port": [{ "port": int, "s_self_db": float }] }
-```
-
-### SPICE (subprocess only — Datum never embeds GPL-class simulators)
-
-#### `attach_spice`
-```
-Method: attach_spice
-Input:  { "part_uuid": uuid, "file_path": string,
-          "dialect": "Auto" | "Berkeley3" | "Ngspice" | "LTspice" |
-                     "PSpice" | "HSpice" | "Xyce" | "Spectre" }
-Output: { "attachment_uuid": uuid, "detected_dialect": string,
-          "model_names": [string], "subckt_names": [string], "encrypted": bool }
-```
-
-#### `validate_spice`
-```
-Method: validate_spice
-Input:  { "file_path": string, "dialect": string }
-Output: { "valid": bool, "errors": [json], "warnings": [json] }
-```
-Implementation note: invokes ngspice as a subprocess in syntax-only
-mode. Datum does not link ngspice — see "Encrypted Content Handling
-Policy" and the project licensing constraint.
-
-#### `extract_spice_subckt_pin_list`
-```
-Method: extract_spice_subckt_pin_list
-Input:  { "part_uuid": uuid, "attachment_uuid": uuid, "subckt_name": string,
-          "encrypted_handling": "Reject" | "OpaqueHandle" }
-Output: { "ports": [string],            // ordered as in .SUBCKT line
-          "has_default_param_block": bool }
-Error:  encrypted_block_requested
-```
-
-#### `export_spice_netlist`
-```
-Method: export_spice_netlist
-Input:  { "schematic_uuid": uuid, "output_path": string,
-          "dialect": "Ngspice" | "PSpice" | "LTspice" | "HSpice" | "Xyce",
-          "include_attached_models": bool }
-Output: { "export_status": "success" | "partial" | "failed",
-          "warnings": [string] }
-```
-
-#### `export_ibis_stimulus`
-Generate IBIS-derived ngspice PWL stimulus for a net.
-```
-Method: export_ibis_stimulus
-Input:  { "net_uuid": uuid, "driving_pin_uuid": uuid,
-          "model_attachment_uuid": uuid, "output_path": string }
-Output: { "export_status": string }
-```
-
-### Supply Chain
-
-#### `lookup_part_octopart`
-```
-Method: lookup_part_octopart
-Input:  { "mpn": string, "manufacturer": string | null }
-Output: { "part_record": { "canonical_mpn": string, "manufacturer": string,
-                           "lifecycle": string, "datasheet_url": string,
-                           "parametrics": json, "distributor_offers": [json] } }
-```
-
-#### `lookup_part_digikey`
-```
-Method: lookup_part_digikey
-Input:  { "mpn": string, "manufacturer": string | null }
-Output: { "part_record": json }   // same shape as lookup_part_octopart
-```
-
-#### `lookup_part_mouser`
-```
-Method: lookup_part_mouser
-Input:  { "mpn": string, "manufacturer": string | null }
-Output: { "part_record": json }
-```
-
-#### `refresh_supply_chain`
-```
-Method: refresh_supply_chain
-Input:  { "part_uuid": uuid }
-Output: { "offers_count": int, "last_check": string }
-```
-
-#### `find_alternate_parts`
-```
-Method: find_alternate_parts
-Input:  { "part_uuid": uuid }
-Output: { "alternates": [{ "mpn": string, "manufacturer": string,
-                           "match_type": string, "lifecycle": string }] }
-```
-
-#### `query_packaging_options`
-```
-Method: query_packaging_options
-Input:  { "mpn": string }
-Output: { "options": [{ "kind": string, "qty": int, "mpn_suffix": string | null }] }
-```
-
-#### `normalize_manufacturer`
-Map free-text manufacturer name to JEP106 + canonical name.
-```
-Method: normalize_manufacturer
-Input:  { "name": string }
-Output: { "jep106_code": int, "canonical_name": string, "aliases": [string] }
-```
-
-### Heuristics
-
-#### `infer_diffpair_from_pinnames`
-Suggest differential-pair pin pairings from name suffixes (`_P`/`_N`,
-`_+`/`_-`, etc.).
-```
-Method: infer_diffpair_from_pinnames
-Input:  { "component_uuid": uuid }
-Output: { "pairs": [{ "pin_p_uuid": uuid, "pin_n_uuid": uuid,
-                      "base_name": string, "confidence": float }] }
-```
-
----
-
-## Encrypted Content Handling Policy
-
-> Status: policy defined. Per-tool gating implementation pending;
-> tools that read model contents (`extract_ibis_pin_table`,
-> `extract_spice_subckt_pin_list`, `extract_touchstone_summary`,
-> future `extract_*` tools) MUST honour this contract before merge.
-> Tracking disposition: `STANDARDS_COMPLIANCE_SPEC.md` § 4.2.
-
-The MCP API includes tools that read content from attached behavioural
-models. Vendor IBIS / SPICE / Touchstone files may carry encrypted
-blocks under IBIS BIRD-176, PSpice Encrypt-It, HSPICE AvantHash,
-LTspice obfuscation, Spectre encryption, or other vendor schemes.
-
-The MCP layer enforces the following rules:
-
-1. **Detection at attach time.** When a model is attached, the parser
-   detects encryption and sets `ModelAttachment.encrypted: bool` plus
-   `encryption_scheme`. This metadata is always available and is
-   never gated.
-2. **Metadata is always allowed.** Tools that return only model
-   metadata (filename, format, model count, encryption flag, port
-   count, frequency range) work on encrypted models without
-   restriction.
-3. **Content extraction is gated.** Tools that return model contents
-   (.ibs text bodies, .cir text bodies, S-parameter values) check
-   `encrypted` first. If true, the tool returns
-   `error: encrypted_block_requested` unless the caller passes
-   `encrypted_handling: "OpaqueHandle"`, in which case the tool
-   returns an opaque content handle (sha256 of the requested block)
-   instead of plaintext.
-4. **Pass-through preserved.** Export operations
-   (`export_kicad`, `export_ipc2581`, `export_odbpp`, etc.) bundle
-   encrypted files verbatim. **Datum never decrypts.** Datum never
-   re-encrypts. Datum never derives plaintext from encrypted bytes.
-5. **Audit trail.** Every model attach / detach / extract operation
-   is transaction-logged. The audit log records the encryption
-   status of any extraction attempt and the
-   `encrypted_handling` mode used. This is load-bearing for
-   downstream Domain 8 (process & quality) audit-log obligations.
-
-This policy applies to all current and future MCP tools. New tools
-that read model content must implement the gate before merge.
+
+Legacy save compatibility; target commits at apply time.
+
+#### `delete_track`
+
+Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+
+#### `delete_via`
+
+Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+
+#### `delete_component`
+
+Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+
+#### `move_component`
+
+Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+
+#### `rotate_component`
+
+Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+
+#### `set_value`
+
+Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+
+#### `set_reference`
+
+Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+
+#### `assign_part`
+
+Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+
+#### `set_package`
+
+Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+
+#### `set_package_with_part`
+
+Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+
+#### `replace_component`
+
+Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+
+#### `replace_components`
+
+Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+
+#### `apply_component_replacement_plan`
+
+Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+
+#### `apply_component_replacement_policy`
+
+Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+
+#### `apply_scoped_component_replacement_policy`
+
+Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+
+#### `apply_scoped_component_replacement_plan`
+
+Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+
+#### `edit_scoped_component_replacement_plan`
+
+Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+
+#### `set_net_class`
+
+Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+
+#### `set_design_rule`
+
+Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+
+#### `undo`
+
+Journal compatibility.
+
+#### `redo`
+
+Journal compatibility.
+
+#### `search_pool`
+
+Query compatibility.
+
+#### `get_part`
+
+Query compatibility.
+
+#### `get_package`
+
+Query compatibility.
+
+#### `get_package_change_candidates`
+
+Query compatibility.
+
+#### `get_part_change_candidates`
+
+Query compatibility.
+
+#### `get_component_replacement_plan`
+
+Query compatibility.
+
+#### `get_scoped_component_replacement_plan`
+
+Query compatibility.
+
+#### `get_board_summary`
+
+Query compatibility.
+
+#### `get_components`
+
+Query compatibility.
+
+#### `get_netlist`
+
+Query compatibility.
+
+#### `get_schematic_summary`
+
+Query compatibility.
+
+#### `get_sheets`
+
+Query compatibility.
+
+#### `get_labels`
+
+Query compatibility.
+
+#### `get_symbols`
+
+Query compatibility.
+
+#### `get_symbol_fields`
+
+Query compatibility.
+
+#### `get_ports`
+
+Query compatibility.
+
+#### `get_buses`
+
+Query compatibility.
+
+#### `get_bus_entries`
+
+Query compatibility.
+
+#### `get_noconnects`
+
+Query compatibility.
+
+#### `get_hierarchy`
+
+Query compatibility.
+
+#### `get_net_info`
+
+Query compatibility.
+
+#### `get_unrouted`
+
+Query compatibility.
+
+#### `get_schematic_net_info`
+
+Query compatibility.
+
+#### `get_check_report`
+
+Check compatibility.
+
+#### `get_connectivity_diagnostics`
+
+Query compatibility.
+
+#### `get_design_rules`
+
+Query compatibility.
+
+#### `run_erc`
+
+Check compatibility.
+
+#### `run_drc`
+
+Check compatibility.
+
+#### `explain_violation`
+
+Check compatibility.
+
+#### `validate_project`
+
+Query/check compatibility until resolver-backed validation lands.
+
+#### `export_route_path_proposal`
+
+Artifact/query compatibility.
+
+#### `route_proposal`
+
+Proposal/query compatibility.
+
+#### `review_route_proposal`
+
+Proposal/query compatibility.
+
+#### `route_proposal_explain`
+
+Proposal/query compatibility.
+
+#### `route_strategy_report`
+
+Proposal/query compatibility.
+
+#### `route_strategy_compare`
+
+Proposal/query compatibility.
+
+#### `route_strategy_delta`
+
+Proposal/query compatibility.
+
+#### `write_route_strategy_curated_fixture_suite`
+
+Artifact/query compatibility.
+
+#### `capture_route_strategy_curated_baseline`
+
+Artifact/query compatibility.
+
+#### `route_strategy_batch_evaluate`
+
+Proposal/query compatibility.
+
+#### `inspect_route_strategy_batch_result`
+
+Artifact/query compatibility.
+
+#### `validate_route_strategy_batch_result`
+
+Artifact/query compatibility.
+
+#### `compare_route_strategy_batch_result`
+
+Artifact/query compatibility.
+
+#### `gate_route_strategy_batch_result`
+
+Artifact/query compatibility.
+
+#### `summarize_route_strategy_batch_results`
+
+Artifact/query compatibility.
+
+#### `export_route_proposal`
+
+Artifact/query compatibility.
+
+#### `route_apply`
+
+Apply compatibility; target routes through `OperationBatch` and `commit()`.
+
+#### `route_apply_selected`
+
+Apply compatibility; target routes through `OperationBatch` and `commit()`.
+
+#### `inspect_route_proposal_artifact`
+
+Artifact/query compatibility.
+
+#### `revalidate_route_proposal_artifact`
+
+Artifact/query compatibility.
+
+#### `apply_route_proposal_artifact`
+
+Apply compatibility; target routes through `OperationBatch` and `commit()`.
+
+### Current Method Classification
+
+| Current method family | Target class |
+|-----------------------|--------------|
+| `open_project`, `close_project` | Context/session compatibility |
+| `save` | Legacy compatibility; no target public save |
+| `search_pool`, `get_part`, `get_package`, `get_*summary`, `get_*info`, `get_*candidates`, schematic and board reads | Query |
+| `get_check_report`, `run_erc`, `run_drc`, `explain_violation` | Check compatibility |
+| Replacement plan reads and edits | Query/proposal compatibility depending on mutation |
+| `export_route_path_proposal`, `route_proposal`, `review_route_proposal`, `route_proposal_explain`, `route_strategy_*` | Proposal/query compatibility |
+| Batch route strategy artifact methods | Artifact/query/check compatibility, depending on operation |
+| `export_route_proposal`, `inspect_route_proposal_artifact`, `revalidate_route_proposal_artifact` | Artifact/proposal compatibility |
+| `route_apply`, `route_apply_selected`, `apply_route_proposal_artifact` | Apply compatibility; target must route through `commit()` |
+| `delete_*`, `move_component`, `rotate_component`, `set_*`, `assign_part`, package/replacement/rule writes | Per-method write compatibility; target must route through `OperationBatch` + `commit()` |
+| `undo`, `redo` | Journal compatibility; target must route through compensating `OperationBatch` + `commit()` |
+| `validate_project` | Query/check compatibility until resolver-backed validation lands |
+
+### Current Transport Notes
+
+The current daemon transport may return JSON-RPC numeric error codes plus
+message text instead of the target envelope. Current methods may depend on one
+MCP-server-held open project. Those behaviors are compatibility behavior only.
+
+## Error Codes
+
+Target symbolic error codes include:
+
+| Code | Meaning |
+|------|---------|
+| `no_project_context` | Project-backed operation could not resolve context |
+| `project_not_found` | Project id or root cannot be resolved |
+| `invalid_model_revision` | Requested model revision does not exist |
+| `stale_model_revision` | Request/proposal was prepared against an old revision |
+| `variant_not_found` | Requested variant cannot be resolved |
+| `output_context_not_found` | Requested output/manufacturing context cannot be resolved |
+| `not_found` | Referenced object does not exist |
+| `invalid_operation` | Operation failed validation |
+| `capability_denied` | Session lacks the required capability |
+| `proposal_required` | Mutation must go through proposal review |
+| `proposal_not_found` | Proposal id cannot be resolved |
+| `proposal_conflict` | Proposal conflicts with current model state |
+| `missing_acceptance` | Apply requires acceptance not present in request/proposal |
+| `check_failed` | Required pre-apply check failed |
+| `artifact_error` | Artifact generation, validation, or comparison failed |
+| `journal_error` | Journal read/write/undo/redo failed |
+| `engine_error` | Internal engine error |
+
+Legacy codes such as `no_project_open`, `project_already_open`,
+`import_error`, `net_not_found`, `component_not_found`, `part_not_found`,
+`unsupported_scope`, `connectivity_error`, `erc_error`, `drc_error`, and
+`export_error` may appear from current compatibility methods until aliases are
+rewired to target envelopes.
+
+## Implementation Invariants
+
+- `datum-eda` is the canonical CLI executable name. Bare `eda` and bare
+  `datum` CLI names are legacy/noncanonical.
+- `datum.*` is the canonical MCP namespace.
+- There is one operation vocabulary, one proposal lifecycle, one commit/apply
+  gateway, one artifact projection contract, and one project-wide journal.
+- The MCP server must not mutate files, shards, caches, or journals directly.
+- Derived outputs and check findings are never source authority.
+- Selection/cursor/editor state is context/query data, not an operation.
+- Compatibility methods must not expand the public surface; they are migration
+  shims for existing clients.
+
+## Open Implementation Questions
+
+- Exact `ProjectResolver` request fields and lookup precedence for
+  `project_id` vs `project_root` need an implementation-level schema.
+- Direct-commit-by-policy capability boundaries need owner approval before any
+  assistant/script path can bypass proposal review.
+- Alias deprecation timing is not defined here; it needs a migration plan after
+  target `datum.*` methods exist.
+- Target `OperationBatch` variant inventory belongs in the domain contracts and
+  still needs to be reconciled with current per-method writes.

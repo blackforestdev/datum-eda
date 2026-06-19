@@ -9,6 +9,8 @@ fn hardcoded_layer_fallback_is_bounded_to_recognized_names() {
     assert_eq!(kicad_layer_name_to_id("B.Paste"), Some(34));
     assert_eq!(kicad_layer_name_to_id("F.SilkS"), Some(37));
     assert_eq!(kicad_layer_name_to_id("B.SilkS"), Some(36));
+    assert_eq!(kicad_layer_name_to_id("F.SILKS"), Some(37));
+    assert_eq!(kicad_layer_name_to_id("b.silks"), Some(36));
     assert_eq!(kicad_layer_name_to_id("F.Mask"), Some(39));
     assert_eq!(kicad_layer_name_to_id("B.Mask"), Some(38));
     assert_eq!(kicad_layer_name_to_id("Edge.Cuts"), Some(44));
@@ -33,6 +35,7 @@ fn resolve_layer_falls_back_to_hardcoded_when_table_missing_entry() {
     let table = std::collections::HashMap::new();
     assert_eq!(resolve_layer_id("F.Cu", &table).unwrap(), 0);
     assert_eq!(resolve_layer_id("Edge.Cuts", &table).unwrap(), 44);
+    assert_eq!(resolve_layer_id("F.SILKS", &table).unwrap(), 37);
 }
 
 #[test]

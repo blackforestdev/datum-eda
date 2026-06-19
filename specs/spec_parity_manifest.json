@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "inventories": [
+    {
+      "id": "mcp_runtime_methods",
+      "kind": "mcp_runtime_methods",
+      "source": "crates/engine-daemon/src/dispatch.rs + mcp-server/server_runtime.py + mcp-server/tools_catalog_data.py",
+      "owner_spec": "specs/MCP_API_SPEC.md"
+    },
+    {
+      "id": "cli_project_commands",
+      "kind": "rust_enum_variants",
+      "path": "crates/cli/src/cli_args_project_commands.rs",
+      "enum": "ProjectCommands",
+      "owner_spec": "specs/PROGRAM_SPEC.md"
+    },
+    {
+      "id": "engine_text_modules",
+      "kind": "file_glob",
+      "glob": "crates/engine/src/text/*.rs",
+      "owner_spec": "docs/gui/DATUM_TEXT_ENGINE_PHASE_2_IMPLEMENTATION_PLAN.md"
+    },
+    {
+      "id": "m7_text_visual_fixtures",
+      "kind": "file_glob",
+      "glob": "crates/gui-render/testdata/golden/board/*.fixture.toml",
+      "owner_spec": "docs/gui/DATUM_TEXT_ENGINE_FIDELITY_FIXTURES.md"
+    },
+    {
+      "id": "workspace_crates",
+      "kind": "cargo_workspace_members",
+      "path": "Cargo.toml",
+      "owner_spec": "specs/PROGRESS.md"
+    },
+    {
+      "id": "daemon_dispatch_methods",
+      "kind": "daemon_dispatch_methods",
+      "source": "crates/engine-daemon/src/dispatch.rs",
+      "owner_spec": "specs/PROGRESS.md"
+    },
+    {
+      "id": "engine_api_pub_fns",
+      "kind": "engine_api_pub_fns",
+      "source": "crates/engine/src/api/**/*.rs (excluding tests)",
+      "owner_spec": "specs/ENGINE_SPEC.md"
+    }
+  ]
+}

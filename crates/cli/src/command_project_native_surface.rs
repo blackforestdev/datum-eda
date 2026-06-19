@@ -1,5 +1,3 @@
-use super::*;
-
 #[path = "command_project_roots.rs"]
 mod command_project_roots;
 #[path = "command_project_route_corridor.rs"]
@@ -12,24 +10,14 @@ mod command_project_route_path_candidate_authored_copper_graph;
 mod command_project_route_path_candidate_authored_copper_graph_explain;
 #[path = "command_project_route_path_candidate_authored_copper_graph_obstacle_aware.rs"]
 mod command_project_route_path_candidate_authored_copper_graph_obstacle_aware;
-#[path = "command_project_route_path_candidate_authored_copper_graph_obstacle_aware_explain.rs"]
-mod command_project_route_path_candidate_authored_copper_graph_obstacle_aware_explain;
 #[path = "command_project_route_path_candidate_authored_copper_graph_zone_aware.rs"]
 mod command_project_route_path_candidate_authored_copper_graph_zone_aware;
-#[path = "command_project_route_path_candidate_authored_copper_graph_zone_aware_explain.rs"]
-mod command_project_route_path_candidate_authored_copper_graph_zone_aware_explain;
 #[path = "command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware.rs"]
 mod command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware;
-#[path = "command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_explain.rs"]
-mod command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_explain;
 #[path = "command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware.rs"]
 mod command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware;
-#[path = "command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_explain.rs"]
-mod command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_explain;
 #[path = "command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware.rs"]
 mod command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware;
-#[path = "command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_explain.rs"]
-mod command_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_explain;
 #[path = "command_project_route_path_candidate_authored_copper_plus_one_gap.rs"]
 mod command_project_route_path_candidate_authored_copper_plus_one_gap;
 #[path = "command_project_route_path_candidate_authored_copper_plus_one_gap_explain.rs"]
@@ -283,4 +271,3 @@ pub(crate) use self::command_project_route_preflight::{
 pub(crate) use self::command_project_routing_substrate::{
     query_native_project_routing_substrate, render_native_project_routing_substrate_text,
 };
-pub(crate) use super::*;

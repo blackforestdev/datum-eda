@@ -115,7 +115,7 @@ pub(crate) use self::command_project_pool_materialization::{
     materialize_supported_pool_package_graphics, resolve_native_project_pool_path,
 };
 pub(crate) use self::command_project_pool_query::query_native_project_pools;
-pub(crate) use self::command_project_project_core::*;
+pub(super) use self::command_project_project_core::*;
 pub(crate) use self::command_project_route_surface::*;
 pub(crate) use self::command_project_schematic_connectivity_mutations::{
     create_native_project_bus, delete_native_project_bus_entry, delete_native_project_junction,
@@ -130,7 +130,7 @@ pub(crate) use self::command_project_schematic_connectivity_queries::{
     query_native_project_labels, query_native_project_noconnects, query_native_project_ports,
     query_native_project_wires,
 };
-pub(crate) use self::command_project_schematic_helpers::*;
+pub(super) use self::command_project_schematic_helpers::*;
 pub(crate) use self::command_project_schematic_queries::{
     query_native_project_check, query_native_project_diagnostics, query_native_project_drawings,
     query_native_project_erc, query_native_project_nets, query_native_project_symbol_fields,
@@ -164,7 +164,7 @@ pub(crate) use self::command_project_support::{
     parse_native_field_position, parse_native_polygon_vertices, parse_native_stackup_layers,
 };
 pub(crate) use self::command_project_validate::validate_native_project;
-pub(crate) use self::command_project_views::*;
+pub(super) use self::command_project_views::*;
 pub(crate) use anyhow::{Context, Result, bail};
 pub(crate) use eda_engine::api::{CheckCodeCount, CheckReport, CheckStatus, CheckSummary};
 pub(crate) use eda_engine::board::{

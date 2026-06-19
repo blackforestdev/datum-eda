@@ -51,3 +51,30 @@ fn imports_kicad_footprint_drilled_padstack() {
     assert_eq!(imported.padstacks.len(), 1);
     assert_eq!(imported.padstacks[0].drill_nm, Some(1_000_000));
 }
+
+#[test]
+fn imports_kicad_footprint_texts_on_uppercase_silkscreen_layers() {
+    let path = write_temp_footprint(
+        "uppercase-silk.kicad_mod",
+        r#"(footprint "UppercaseSilk"
+  (layer "F.Cu")
+  (property "Reference" "U?" (at 0 -1.65 0) (layer "F.SILKS"))
+  (property "Value" "UppercaseSilk" (at 0 1.65 0) (layer "F.SILKS"))
+  (fp_line (start -1 -0.8) (end 1 -0.8) (layer "F.SILKS") (width 0.12))
+  (pad "1" smd rect (at 0 0) (size 1 1) (layers "F.Cu" "F.Paste" "F.Mask"))
+)"#,
+    );
+
+    let (imported, _report) = import_footprint_document(&path).expect("footprint should import");
+    let silk_texts = imported
+        .package
+        .silkscreen
+        .iter()
+        .filter_map(|primitive| match primitive {
+            Primitive::Text { text, .. } => Some(text.as_str()),
+            _ => None,
+        })
+        .collect::<Vec<_>>();
+    assert!(silk_texts.contains(&"U?"));
+    assert!(silk_texts.contains(&"UppercaseSilk"));
+}

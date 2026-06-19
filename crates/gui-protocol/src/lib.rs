@@ -4,6 +4,13 @@ use std::process::Command;
 use std::sync::{Mutex, OnceLock};
 
 use anyhow::{Context, Result, bail};
+use eda_engine::board::BoardText;
+use eda_engine::text::{
+    FAMILY_IBM_PLEX_SANS_CONDENSED, FAMILY_INTER, FAMILY_INTER_DISPLAY, FAMILY_JETBRAINS_MONO,
+    FAMILY_NEWSTROKE, TextAttributes, TextFamilyId, TextFamilySource, TextGeometryPrimitive,
+    TextHAlign, TextRenderIntent, TextStyleId, TextVAlign, default_stroke_width_nm,
+    default_style_for_family, layout_text_geometry, layout_text_mesh_from_board_text,
+};
 use serde::de::{DeserializeOwned, Deserializer};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
@@ -41,6 +48,12 @@ pub struct BoardReviewSceneV1 {
     #[serde(default)]
     pub board_graphics: Vec<BoardGraphicPrimitive>,
     #[serde(default)]
+    pub board_texts: Vec<BoardTextPrimitive>,
+    #[serde(default)]
+    pub board_text_geometries: Vec<BoardTextGeometryPrimitive>,
+    #[serde(default)]
+    pub glyph_mesh_assets: Vec<GlyphMeshAssetPrimitive>,
+    #[serde(default)]
     pub unrouted_primitives: Vec<UnroutedPrimitive>,
     #[serde(default)]
     pub net_display: Vec<NetDisplayEntry>,
@@ -71,7 +84,113 @@ pub struct BoardGraphicPrimitive {
     pub layer_id: String,
     pub path: Vec<PointNm>,
     #[serde(default)]
+    pub holes: Vec<Vec<PointNm>>,
+    #[serde(default)]
     pub width_nm: Option<i64>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct BoardTextPrimitive {
+    pub object_id: String,
+    pub object_kind: String,
+    pub text_uuid: String,
+    pub text: String,
+    pub layer_id: String,
+    pub position: PointNm,
+    pub rotation_degrees: i32,
+    pub height_nm: i64,
+    pub stroke_width_nm: i64,
+    pub render_intent: String,
+    pub family: String,
+    pub style: String,
+    #[serde(default)]
+    pub style_class: Option<String>,
+    pub h_align: String,
+    pub v_align: String,
+    pub mirrored: bool,
+    pub keep_upright: bool,
+    pub line_spacing_ratio_ppm: i32,
+    pub bold: bool,
+    pub italic: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct BoardTextGeometryPrimitive {
+    pub object_id: String,
+    pub object_kind: String,
+    pub text_uuid: String,
+    pub layer_id: String,
+    #[serde(default)]
+    pub world_transform_nm: Option<Affine2DFixedPrimitive>,
+    #[serde(default)]
+    pub block_bbox_em_nm: Option<MeshRectEmPrimitive>,
+    #[serde(default)]
+    pub glyphs: Vec<TextGlyphInstancePrimitive>,
+    #[serde(default)]
+    pub fills: Vec<BoardTextFillPrimitive>,
+    #[serde(default)]
+    pub strokes: Vec<BoardTextStrokePrimitive>,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct GlyphMeshHandlePrimitive {
+    pub font_id: u32,
+    pub glyph_id: u32,
+    pub tolerance_class: u8,
+    pub epoch: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct GlyphMeshAssetPrimitive {
+    pub handle: GlyphMeshHandlePrimitive,
+    pub vertices: Vec<MeshVertexEmPrimitive>,
+    pub indices: Vec<u32>,
+    pub bbox_em_nm: MeshRectEmPrimitive,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+pub struct TextGlyphInstancePrimitive {
+    pub glyph_handle: GlyphMeshHandlePrimitive,
+    pub origin_em_nm_x: i64,
+    pub origin_em_nm_y: i64,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MeshVertexEmPrimitive {
+    pub x_em_nm: i64,
+    pub y_em_nm: i64,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+pub struct MeshRectEmPrimitive {
+    pub min_x_em_nm: i64,
+    pub min_y_em_nm: i64,
+    pub max_x_em_nm: i64,
+    pub max_y_em_nm: i64,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+pub struct Affine2DFixedPrimitive {
+    pub m11_ppm: i64,
+    pub m12_ppm: i64,
+    pub m21_ppm: i64,
+    pub m22_ppm: i64,
+    pub tx_nm: i64,
+    pub ty_nm: i64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct BoardTextFillPrimitive {
+    pub outer: Vec<PointNm>,
+    #[serde(default)]
+    pub holes: Vec<Vec<PointNm>>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct BoardTextStrokePrimitive {
+    pub from: PointNm,
+    pub to: PointNm,
+    pub width_nm: i64,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -104,6 +223,8 @@ pub struct ComponentGraphicPrimitive {
     pub width_nm: Option<i64>,
     pub closed: bool,
     pub path: Vec<PointNm>,
+    #[serde(default)]
+    pub holes: Vec<Vec<PointNm>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -116,6 +237,12 @@ pub struct ComponentTextPrimitive {
     pub position: PointNm,
     pub rotation_degrees: f32,
     pub height_nm: i64,
+    #[serde(default)]
+    pub face_name: Option<String>,
+    #[serde(default)]
+    pub stroke_width_nm: Option<i64>,
+    #[serde(default)]
+    pub cached_polygons: Vec<Vec<PointNm>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -368,6 +495,50 @@ pub struct WorkspaceBacking {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BoardTextBooleanField {
+    Mirrored,
+    KeepUpright,
+    Bold,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BoardTextAlignmentField {
+    Horizontal,
+    Vertical,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BoardTextLineSpacingStep {
+    Decrease,
+    Increase,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BoardTextHeightStep {
+    Decrease,
+    Increase,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BoardTextRotationStep {
+    CounterClockwise90,
+    Clockwise90,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BoardTextCycleField {
+    RenderIntent,
+    Family,
+}
+
+pub const BOARD_TEXT_LINE_SPACING_MIN_PPM: i32 = 500_000;
+pub const BOARD_TEXT_LINE_SPACING_MAX_PPM: i32 = 2_000_000;
+pub const BOARD_TEXT_LINE_SPACING_STEP_PPM: i32 = 100_000;
+pub const BOARD_TEXT_HEIGHT_MIN_NM: i64 = 50_000;
+pub const BOARD_TEXT_HEIGHT_MAX_NM: i64 = 100_000_000;
+pub const BOARD_TEXT_HEIGHT_STEP_PPM: i64 = 100_000;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum WorkspaceTool {
     Select,
 }
@@ -451,6 +622,30 @@ pub enum SessionEvent {
 pub struct SessionCommandResult {
     pub handled: bool,
     pub events: Vec<SessionEvent>,
+}
+
+fn layer_visibility_change_is_frame_only(scene: &BoardReviewSceneV1, layer_id: &str) -> bool {
+    let retained_base_uses_layer = scene
+        .components
+        .iter()
+        .any(|component| component.placement_layer == layer_id)
+        || scene
+            .component_graphics
+            .iter()
+            .any(|graphic| graphic.layer_id.as_deref() == Some(layer_id))
+        || scene.pads.iter().any(|pad| {
+            pad.layer_id == layer_id
+                || pad.copper_layer_ids.iter().any(|id| id == layer_id)
+                || pad.mask_layer_ids.iter().any(|id| id == layer_id)
+                || pad.paste_layer_ids.iter().any(|id| id == layer_id)
+        })
+        || scene.tracks.iter().any(|track| track.layer_id == layer_id)
+        || scene
+            .vias
+            .iter()
+            .any(|via| via.start_layer_id == layer_id || via.end_layer_id == layer_id)
+        || scene.zones.iter().any(|zone| zone.layer_id == layer_id);
+    !retained_base_uses_layer
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -563,7 +758,7 @@ impl LiveDesignSession {
                 if self.workspace.toggle_show_authored() {
                     SessionCommandResult {
                         handled: true,
-                        events: vec![SessionEvent::SceneChanged],
+                        events: vec![SessionEvent::FrameChanged],
                     }
                 } else {
                     SessionCommandResult {
@@ -576,7 +771,7 @@ impl LiveDesignSession {
                 if self.workspace.toggle_show_proposed() {
                     SessionCommandResult {
                         handled: true,
-                        events: vec![SessionEvent::SceneChanged],
+                        events: vec![SessionEvent::FrameChanged],
                     }
                 } else {
                     SessionCommandResult {
@@ -587,9 +782,14 @@ impl LiveDesignSession {
             }
             SessionCommand::ToggleShowUnrouted => {
                 if self.workspace.toggle_show_unrouted() {
+                    let event = if self.workspace.scene.unrouted_primitives.is_empty() {
+                        SessionEvent::FrameChanged
+                    } else {
+                        SessionEvent::SceneChanged
+                    };
                     SessionCommandResult {
                         handled: true,
-                        events: vec![SessionEvent::SceneChanged],
+                        events: vec![event],
                     }
                 } else {
                     SessionCommandResult {
@@ -600,9 +800,16 @@ impl LiveDesignSession {
             }
             SessionCommand::ToggleDimUnrelated => {
                 if self.workspace.toggle_dim_unrelated() {
+                    let event = if self.workspace.selected_review_action().is_none()
+                        && matches!(self.workspace.selection, SelectionTarget::None)
+                    {
+                        SessionEvent::FrameChanged
+                    } else {
+                        SessionEvent::SceneChanged
+                    };
                     SessionCommandResult {
                         handled: true,
-                        events: vec![SessionEvent::SceneChanged],
+                        events: vec![event],
                     }
                 } else {
                     SessionCommandResult {
@@ -613,9 +820,17 @@ impl LiveDesignSession {
             }
             SessionCommand::ToggleLayerVisibility(layer_id) => {
                 if self.workspace.toggle_layer_visibility(&layer_id) {
+                    let event = if layer_visibility_change_is_frame_only(
+                        &self.workspace.scene,
+                        &layer_id,
+                    ) {
+                        SessionEvent::FrameChanged
+                    } else {
+                        SessionEvent::SceneChanged
+                    };
                     SessionCommandResult {
                         handled: true,
-                        events: vec![SessionEvent::SceneChanged],
+                        events: vec![event],
                     }
                 } else {
                     SessionCommandResult {
@@ -2039,7 +2254,22 @@ impl ReviewWorkspaceState {
                 .scene
                 .zones
                 .iter()
-                .any(|z| z.object_id == normalized_object_id);
+                .any(|z| z.object_id == normalized_object_id)
+            || self
+                .scene
+                .board_graphics
+                .iter()
+                .any(|g| g.object_id == normalized_object_id)
+            || self
+                .scene
+                .outline
+                .iter()
+                .any(|outline| outline.object_id == normalized_object_id)
+            || self
+                .scene
+                .board_texts
+                .iter()
+                .any(|t| t.object_id == normalized_object_id);
         if exists {
             self.selection = SelectionTarget::AuthoredObject(normalized_object_id.to_string());
             true
@@ -2081,46 +2311,98 @@ pub fn load_board_editor_workspace_state(
     load_workspace_state_impl(request, false)
 }
 
+mod board_text_mutations;
+pub use board_text_mutations::*;
+mod board_text_field_values;
+pub(crate) use board_text_field_values::*;
+
 fn load_workspace_state_impl(
     request: &LiveReviewRequest,
     include_review: bool,
 ) -> Result<ReviewWorkspaceState> {
+    let workspace_started = std::time::Instant::now();
     let cli = cli_prefix();
+    let review_started = std::time::Instant::now();
     let review = if include_review && request.board_file.is_none() {
         load_live_route_review(&cli, request)?
     } else {
         empty_route_review_payload(request)
     };
+    trace_protocol_timing(format!(
+        "workspace review load {}ms",
+        review_started.elapsed().as_millis()
+    ));
+    let selected_path_started = std::time::Instant::now();
     let selected_path_points = if include_review && request.board_file.is_none() {
         load_selected_candidate_path(&cli, request, review.selected_candidate.as_deref())?
     } else {
         None
     };
+    trace_protocol_timing(format!(
+        "workspace selected path load {}ms",
+        selected_path_started.elapsed().as_millis()
+    ));
+    let scene_started = std::time::Instant::now();
     let (scene, board_path) = if let Some(board_file) = &request.board_file {
         load_scene_from_kicad_import(board_file)?
     } else {
         load_scene_from_engine(request)?
     };
+    trace_protocol_timing(format!(
+        "workspace scene load {}ms",
+        scene_started.elapsed().as_millis()
+    ));
     let mut scene = scene;
+    let review_attach_started = std::time::Instant::now();
     attach_review_primitives(&mut scene, &review, selected_path_points.as_deref());
+    trace_protocol_timing(format!(
+        "workspace review attach {}ms",
+        review_attach_started.elapsed().as_millis()
+    ));
     let mut state = ReviewWorkspaceState::new(scene, review);
     state.backing = Some(WorkspaceBacking {
         request: request.clone(),
         board_path,
     });
+    trace_protocol_timing(format!(
+        "workspace total {}ms",
+        workspace_started.elapsed().as_millis()
+    ));
     Ok(state)
 }
 
 /// Load a KiCad .kicad_pcb board via the engine import path.
 fn load_scene_from_kicad_import(board_file: &Path) -> Result<(BoardReviewSceneV1, PathBuf)> {
+    let import_started = std::time::Instant::now();
+    let engine_started = std::time::Instant::now();
     let mut engine =
         eda_engine::api::Engine::new().map_err(|e| anyhow::anyhow!("engine init: {e}"))?;
-    engine
+    trace_protocol_timing(format!(
+        "kicad engine init {}ms",
+        engine_started.elapsed().as_millis()
+    ));
+    let engine_import_started = std::time::Instant::now();
+    let import_report = engine
         .import(board_file)
         .map_err(|e| anyhow::anyhow!("import {}: {e}", board_file.display()))?;
+    // Import warnings are fidelity signals (dropped objects, accounting
+    // mismatches). They must surface, not vanish with the report.
+    for warning in &import_report.warnings {
+        eprintln!("datum-import warning [{}]: {warning}", board_file.display());
+    }
+    trace_protocol_timing(format!(
+        "kicad engine import {}ms warnings={}",
+        engine_import_started.elapsed().as_millis(),
+        import_report.warnings.len()
+    ));
+    let board_borrow_started = std::time::Instant::now();
     let board = engine
         .board()
         .map_err(|e| anyhow::anyhow!("no board after import: {e}"))?;
+    trace_protocol_timing(format!(
+        "kicad board borrow {}ms",
+        board_borrow_started.elapsed().as_millis()
+    ));
 
     let board_uuid = board.uuid.to_string();
     let project_name = board_file
@@ -2128,9 +2410,14 @@ fn load_scene_from_kicad_import(board_file: &Path) -> Result<(BoardReviewSceneV1
         .map(|s| s.to_string_lossy().into_owned())
         .unwrap_or_else(|| "imported".to_string());
 
+    let stackup_started = std::time::Instant::now();
     let stackup = engine
         .get_stackup()
         .map_err(|e| anyhow::anyhow!("stackup: {e}"))?;
+    trace_protocol_timing(format!(
+        "kicad stackup {}ms",
+        stackup_started.elapsed().as_millis()
+    ));
     let layer_name_map: std::collections::HashMap<i32, String> = stackup
         .layers
         .iter()
@@ -2142,13 +2429,25 @@ fn load_scene_from_kicad_import(board_file: &Path) -> Result<(BoardReviewSceneV1
             .cloned()
             .unwrap_or_else(|| format!("L{}", id))
     };
+    let components_started = std::time::Instant::now();
     let components = engine
         .get_components()
         .map_err(|e| anyhow::anyhow!("components: {e}"))?;
+    trace_protocol_timing(format!(
+        "kicad components {}ms count={}",
+        components_started.elapsed().as_millis(),
+        components.len()
+    ));
 
     // Re-borrow board after the method calls above (they borrow &self temporarily).
+    let board_reborrow_started = std::time::Instant::now();
     let board = engine.board().map_err(|e| anyhow::anyhow!("board: {e}"))?;
+    trace_protocol_timing(format!(
+        "kicad board reborrow {}ms",
+        board_reborrow_started.elapsed().as_millis()
+    ));
 
+    let payload_started = std::time::Instant::now();
     let outline_vertices: Vec<PointNm> = board
         .outline
         .vertices
@@ -2276,6 +2575,15 @@ fn load_scene_from_kicad_import(board_file: &Path) -> Result<(BoardReviewSceneV1
         .collect();
     let unrouted_primitives = unrouted_primitives_from_airwires(&board.unrouted());
     let net_display = net_display_from_imported_board(board);
+    trace_protocol_timing(format!(
+        "kicad payload build {}ms components={} pads={} tracks={} vias={} zones={}",
+        payload_started.elapsed().as_millis(),
+        component_payloads.len(),
+        pad_payloads.len(),
+        track_payloads.len(),
+        via_payloads.len(),
+        zone_payloads.len()
+    ));
 
     let inspect = ProjectInspectPayload {
         project_root: board_file
@@ -2295,18 +2603,100 @@ fn load_scene_from_kicad_import(board_file: &Path) -> Result<(BoardReviewSceneV1
     // `L{n}` key matches the visibility map for both the outline primitive
     // and the authored board_graphics primitives. KiCad 7 canonically uses
     // id 44; KiCad 9 may renumber — DOA2526 uses id 25 for Edge.Cuts.
-    let (kicad_graphics, kicad_texts, board_graphics, edge_cuts_layer_key) = {
-        let contents = std::fs::read_to_string(board_file).unwrap_or_default();
+    let (
+        kicad_graphics,
+        kicad_texts,
+        mut imported_board_texts,
+        mut imported_board_text_geometries,
+        mut imported_glyph_mesh_assets,
+        board_graphics,
+        mut imported_gr_texts,
+        mut imported_gr_text_geometries,
+        imported_gr_glyph_mesh_assets,
+        edge_cuts_layer_key,
+    ) = {
+        let direct_parse_started = std::time::Instant::now();
+        let read_started = std::time::Instant::now();
+        let contents = std::fs::read_to_string(board_file)
+            .with_context(|| format!("failed to read {}", board_file.display()))?;
+        trace_protocol_timing(format!(
+            "kicad direct read {}ms bytes={}",
+            read_started.elapsed().as_millis(),
+            contents.len()
+        ));
+        let layer_table_started = std::time::Instant::now();
         let layer_table = kicad_parse_layer_table(&contents);
+        trace_protocol_timing(format!(
+            "kicad layer table parse {}ms layers={}",
+            layer_table_started.elapsed().as_millis(),
+            layer_table.len()
+        ));
         let edge_cuts_key = layer_table
             .get("Edge.Cuts")
             .copied()
             .map(layer_id)
             .unwrap_or_else(|| layer_id(44));
-        let (g, t) = extract_kicad_footprint_graphics(&contents, &component_payloads, &layer_table);
+        let footprint_parse_started = std::time::Instant::now();
+        let (g, t, bt, btg, gma) =
+            extract_kicad_footprint_graphics(&contents, &component_payloads, &layer_table);
+        trace_protocol_timing(format!(
+            "kicad footprint graphics/text parse {}ms graphics={} texts={} board_texts={} geometries={} glyph_assets={}",
+            footprint_parse_started.elapsed().as_millis(),
+            g.len(),
+            t.len(),
+            bt.len(),
+            btg.len(),
+            gma.len()
+        ));
+        let board_graphics_started = std::time::Instant::now();
         let bg = extract_kicad_board_graphics(&contents, &inspect.board_uuid, &layer_table);
-        (g, t, bg, edge_cuts_key)
+        trace_protocol_timing(format!(
+            "kicad board graphics parse {}ms graphics={}",
+            board_graphics_started.elapsed().as_millis(),
+            bg.len()
+        ));
+        let board_text_started = std::time::Instant::now();
+        let (gr_texts, gr_geometries, gr_assets) =
+            extract_kicad_board_texts(&contents, &layer_table);
+        trace_protocol_timing(format!(
+            "kicad board text parse {}ms texts={} geometries={} glyph_assets={}",
+            board_text_started.elapsed().as_millis(),
+            gr_texts.len(),
+            gr_geometries.len(),
+            gr_assets.len()
+        ));
+        trace_protocol_timing(format!(
+            "kicad direct parse total {}ms",
+            direct_parse_started.elapsed().as_millis()
+        ));
+        (
+            g,
+            t,
+            bt,
+            btg,
+            gma,
+            bg,
+            gr_texts,
+            gr_geometries,
+            gr_assets,
+            edge_cuts_key,
+        )
     };
+    let merge_started = std::time::Instant::now();
+    imported_board_texts.append(&mut imported_gr_texts);
+    imported_board_text_geometries.append(&mut imported_gr_text_geometries);
+    merge_glyph_mesh_assets(
+        &mut imported_glyph_mesh_assets,
+        imported_gr_glyph_mesh_assets,
+    );
+    trace_protocol_timing(format!(
+        "kicad text merge {}ms board_texts={} geometries={} glyph_assets={}",
+        merge_started.elapsed().as_millis(),
+        imported_board_texts.len(),
+        imported_board_text_geometries.len(),
+        imported_glyph_mesh_assets.len()
+    ));
+    let scene_build_started = std::time::Instant::now();
     let mut scene = build_board_review_scene(
         &inspect,
         outline_payload,
@@ -2319,11 +2709,19 @@ fn load_scene_from_kicad_import(board_file: &Path) -> Result<(BoardReviewSceneV1
         via_payloads,
         zone_payloads,
         board_graphics,
+        imported_board_texts,
+        imported_board_text_geometries,
+        imported_glyph_mesh_assets,
         unrouted_primitives,
         net_display,
         edge_cuts_layer_key,
     );
+    trace_protocol_timing(format!(
+        "kicad scene build {}ms",
+        scene_build_started.elapsed().as_millis()
+    ));
     // Replace auto-generated L0/L31 layers with real stackup names
+    let layer_replace_started = std::time::Instant::now();
     scene.layers = stackup
         .layers
         .iter()
@@ -2349,6 +2747,15 @@ fn load_scene_from_kicad_import(board_file: &Path) -> Result<(BoardReviewSceneV1
                 || l.name == "F.SilkS",
         })
         .collect();
+    trace_protocol_timing(format!(
+        "kicad layer replace {}ms scene_layers={}",
+        layer_replace_started.elapsed().as_millis(),
+        scene.layers.len()
+    ));
+    trace_protocol_timing(format!(
+        "kicad scene import total {}ms",
+        import_started.elapsed().as_millis()
+    ));
     Ok((scene, board_file.to_path_buf()))
 }
 
@@ -2390,7 +2797,7 @@ fn kicad_parse_layer_table(contents: &str) -> std::collections::HashMap<String, 
             if let Some(id_str) = parts.next() {
                 if let Ok(id) = id_str.parse::<i32>() {
                     if let Some(name) = parts.next() {
-                        let name = name.trim_matches('"');
+                        let name = canonicalize_kicad_layer_name(name.trim_matches('"'));
                         map.insert(name.to_string(), id);
                     }
                 }
@@ -2400,12 +2807,39 @@ fn kicad_parse_layer_table(contents: &str) -> std::collections::HashMap<String, 
     map
 }
 
+fn canonicalize_kicad_layer_name(name: &str) -> String {
+    match name.to_ascii_lowercase().as_str() {
+        "f.cu" => "F.Cu".to_string(),
+        "b.cu" => "B.Cu".to_string(),
+        "b.adhes" => "B.Adhes".to_string(),
+        "f.adhes" => "F.Adhes".to_string(),
+        "b.paste" => "B.Paste".to_string(),
+        "f.paste" => "F.Paste".to_string(),
+        "b.silks" => "B.SilkS".to_string(),
+        "f.silks" => "F.SilkS".to_string(),
+        "b.mask" => "B.Mask".to_string(),
+        "f.mask" => "F.Mask".to_string(),
+        "dwgs.user" => "Dwgs.User".to_string(),
+        "cmts.user" => "Cmts.User".to_string(),
+        "eco1.user" => "Eco1.User".to_string(),
+        "eco2.user" => "Eco2.User".to_string(),
+        "edge.cuts" => "Edge.Cuts".to_string(),
+        "margin" => "Margin".to_string(),
+        "b.crtyd" => "B.CrtYd".to_string(),
+        "f.crtyd" => "F.CrtYd".to_string(),
+        "b.fab" => "B.Fab".to_string(),
+        "f.fab" => "F.Fab".to_string(),
+        _ => name.to_string(),
+    }
+}
+
 fn kicad_resolve_layer_id(name: &str, table: &std::collections::HashMap<String, i32>) -> i32 {
-    if let Some(&id) = table.get(name) {
+    let canonical_name = canonicalize_kicad_layer_name(name);
+    if let Some(&id) = table.get(&canonical_name) {
         return id;
     }
     // Hardcoded fallbacks for common layers.
-    match name {
+    match canonical_name.as_str() {
         "F.Cu" => 0,
         "B.Cu" => 31,
         "B.SilkS" => 36,
@@ -2420,11 +2854,96 @@ fn kicad_resolve_layer_id(name: &str, table: &std::collections::HashMap<String, 
 }
 
 fn kicad_render_role(layer_name: &str) -> Option<&'static str> {
-    match layer_name {
+    match canonicalize_kicad_layer_name(layer_name).as_str() {
         "F.SilkS" | "B.SilkS" => Some("component_silkscreen"),
         "F.CrtYd" | "B.CrtYd" | "F.Fab" | "B.Fab" => Some("component_mechanical"),
         _ => None,
     }
+}
+
+#[derive(Default)]
+struct KicadImportTextTrace {
+    fp_text_total: usize,
+    fp_text_template_skipped: usize,
+    fp_text_hidden_skipped: usize,
+    fp_text_imported: usize,
+    property_total: usize,
+    property_metadata_skipped: usize,
+    property_empty_skipped: usize,
+    property_hidden_skipped: usize,
+    property_reference_imported: usize,
+    property_value_imported: usize,
+    gr_text_total: usize,
+    gr_text_hidden_skipped: usize,
+    gr_text_imported: usize,
+    by_kind: BTreeMap<String, usize>,
+    by_layer: BTreeMap<String, usize>,
+    samples: Vec<String>,
+}
+
+impl KicadImportTextTrace {
+    fn record_import(&mut self, kind: &str, layer_name: &str, layer: i32, text: &str) {
+        *self.by_kind.entry(kind.to_string()).or_insert(0) += 1;
+        *self
+            .by_layer
+            .entry(format!(
+                "{}:{}",
+                canonicalize_kicad_layer_name(layer_name),
+                layer_id(layer)
+            ))
+            .or_insert(0) += 1;
+        if self.samples.len() < 16 {
+            self.samples.push(format!(
+                "{}:{}:{}",
+                kind,
+                canonicalize_kicad_layer_name(layer_name),
+                text
+            ));
+        }
+    }
+
+    fn emit(&self, scope: &str, board_texts: usize, geometries: usize, glyph_assets: usize) {
+        if !kicad_import_text_trace_enabled() {
+            return;
+        }
+        eprintln!(
+            "[datum-import-text] {scope} fp_text total={} imported={} skipped_template={} skipped_hidden={} property total={} ref={} value={} skipped_metadata={} skipped_empty={} skipped_hidden={} gr_text total={} imported={} skipped_hidden={} board_texts={} geometries={} glyph_assets={} by_kind={:?} by_layer={:?} samples={:?}",
+            self.fp_text_total,
+            self.fp_text_imported,
+            self.fp_text_template_skipped,
+            self.fp_text_hidden_skipped,
+            self.property_total,
+            self.property_reference_imported,
+            self.property_value_imported,
+            self.property_metadata_skipped,
+            self.property_empty_skipped,
+            self.property_hidden_skipped,
+            self.gr_text_total,
+            self.gr_text_imported,
+            self.gr_text_hidden_skipped,
+            board_texts,
+            geometries,
+            glyph_assets,
+            self.by_kind,
+            self.by_layer,
+            self.samples,
+        );
+    }
+}
+
+fn kicad_import_text_trace_enabled() -> bool {
+    std::env::var_os("DATUM_TRACE_IMPORT_TEXT").is_some()
+        || std::env::var_os("DATUM_TRACE_TIMING").is_some()
+}
+
+fn trace_protocol_timing(message: String) {
+    if std::env::var_os("DATUM_TRACE_TIMING").is_some() {
+        eprintln!("[datum-protocol] {message}");
+    }
+}
+
+fn kicad_block_hidden(block: &str) -> bool {
+    block.contains("(hide yes)")
 }
 
 /// Convert mm to nm.
@@ -2487,10 +3006,10 @@ fn kicad_parse_layer_anywhere(block: &str) -> Option<String> {
         if rest.starts_with('"') {
             let inner = &rest[1..];
             let end = inner.find('"')?;
-            Some(inner[..end].to_string())
+            Some(canonicalize_kicad_layer_name(&inner[..end]))
         } else {
             let end = rest.find(')')?;
-            Some(rest[..end].trim().to_string())
+            Some(canonicalize_kicad_layer_name(rest[..end].trim()))
         }
     })
 }
@@ -2597,6 +3116,56 @@ fn kicad_nested_blocks(contents: &str, form: &str) -> Vec<String> {
     blocks
 }
 
+/// Extract nested s-expression blocks for several forms with one parent scan.
+fn kicad_nested_blocks_by_form(contents: &str, forms: &[&str]) -> BTreeMap<String, Vec<String>> {
+    let mut blocks = forms
+        .iter()
+        .map(|form| ((*form).to_string(), Vec::new()))
+        .collect::<BTreeMap<_, _>>();
+    let prefixes = forms
+        .iter()
+        .map(|form| ((*form).to_string(), format!("({form}")))
+        .collect::<Vec<_>>();
+    let mut current = Vec::new();
+    let mut capturing_form: Option<String> = None;
+    let mut depth: i32 = 0;
+
+    for line in contents.lines() {
+        let trimmed = line.trim_start();
+
+        if capturing_form.is_none() {
+            if let Some((form, _)) = prefixes.iter().find(|(_, prefix)| {
+                trimmed.starts_with(prefix)
+                    && matches!(
+                        trimmed.as_bytes().get(prefix.len()),
+                        Some(b' ') | Some(b'\t') | Some(b')') | None
+                    )
+            }) {
+                capturing_form = Some(form.clone());
+                current.clear();
+                depth = 0;
+            }
+        }
+
+        if let Some(form) = capturing_form.as_ref() {
+            current.push(line.to_string());
+            let opens = line.chars().filter(|c| *c == '(').count() as i32;
+            let closes = line.chars().filter(|c| *c == ')').count() as i32;
+            depth += opens - closes;
+            if depth <= 0 {
+                blocks
+                    .entry(form.clone())
+                    .or_default()
+                    .push(current.join("\n"));
+                current.clear();
+                capturing_form = None;
+            }
+        }
+    }
+
+    blocks
+}
+
 /// Compute arc center, radius, start_angle_tenths, end_angle_tenths from three
 /// points (start, mid, end), all in nm. Returns None for collinear points.
 fn kicad_arc_from_three_points(
@@ -2647,14 +3216,450 @@ fn kicad_parse_font_height_nm(block: &str) -> i64 {
     1_000_000 // default 1mm
 }
 
+fn kicad_parse_font_thickness_nm(block: &str) -> Option<i64> {
+    for line in block.lines() {
+        let trimmed = line.trim();
+        if !trimmed.starts_with("(thickness ") {
+            continue;
+        }
+        let inner = trimmed
+            .trim_start_matches("(thickness ")
+            .trim_end_matches(')');
+        if let Ok(mm) = inner.trim().parse::<f64>() {
+            return Some(kicad_mm_to_nm(mm));
+        }
+    }
+    None
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum KicadTextHJustify {
+    Left,
+    Center,
+    Right,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum KicadTextVJustify {
+    Top,
+    Center,
+    Bottom,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct KicadTextJustify {
+    h: KicadTextHJustify,
+    v: KicadTextVJustify,
+    mirrored: bool,
+    keep_upright: bool,
+}
+
+impl Default for KicadTextJustify {
+    fn default() -> Self {
+        Self {
+            h: KicadTextHJustify::Center,
+            v: KicadTextVJustify::Center,
+            mirrored: false,
+            keep_upright: false,
+        }
+    }
+}
+
+fn kicad_parse_text_justify(block: &str) -> KicadTextJustify {
+    let mut justify = KicadTextJustify::default();
+    for line in block.lines() {
+        let trimmed = line.trim();
+        if !trimmed.starts_with("(justify ") {
+            continue;
+        }
+        if trimmed.contains(" left") {
+            justify.h = KicadTextHJustify::Left;
+        } else if trimmed.contains(" right") {
+            justify.h = KicadTextHJustify::Right;
+        }
+        if trimmed.contains(" top") {
+            justify.v = KicadTextVJustify::Top;
+        } else if trimmed.contains(" bottom") {
+            justify.v = KicadTextVJustify::Bottom;
+        }
+        if trimmed.contains(" mirror") {
+            justify.mirrored = true;
+        }
+    }
+    justify
+}
+
+fn kicad_text_attributes(
+    anchor_position: PointNm,
+    rotation_degrees: i32,
+    height_nm: i64,
+    stroke_width_nm: Option<i64>,
+    justify: KicadTextJustify,
+) -> TextAttributes {
+    TextAttributes {
+        position: eda_engine::ir::geometry::Point {
+            x: anchor_position.x,
+            y: anchor_position.y,
+        },
+        rotation_degrees,
+        height_nm,
+        stroke_width_nm: stroke_width_nm.unwrap_or(default_stroke_width_nm(height_nm)),
+        h_align: match justify.h {
+            KicadTextHJustify::Left => TextHAlign::Left,
+            KicadTextHJustify::Center => TextHAlign::Center,
+            KicadTextHJustify::Right => TextHAlign::Right,
+        },
+        v_align: match justify.v {
+            KicadTextVJustify::Top => TextVAlign::Top,
+            KicadTextVJustify::Center => TextVAlign::Center,
+            KicadTextVJustify::Bottom => TextVAlign::Bottom,
+        },
+        mirrored: justify.mirrored,
+        keep_upright: justify.keep_upright,
+        line_spacing_ratio_ppm: 1_350_000,
+        render_intent: TextRenderIntent::Manufacturing,
+        family: TextFamilyId::default(),
+        family_source: eda_engine::text::TextFamilySource::ImplicitDefault,
+        style: TextStyleId::default(),
+        italic: false,
+        bold: false,
+        style_class: None,
+    }
+}
+
+fn kicad_text_rotation_degrees(rotation_degrees: i32) -> i32 {
+    -rotation_degrees
+}
+
+fn board_text_primitive(text: &BoardText) -> BoardTextPrimitive {
+    BoardTextPrimitive {
+        object_id: format!("board-text:{}", text.uuid),
+        object_kind: "board_text".to_string(),
+        text_uuid: text.uuid.to_string(),
+        text: text.text.clone(),
+        layer_id: layer_id(text.layer),
+        position: PointNm {
+            x: text.position.x,
+            y: text.position.y,
+        },
+        rotation_degrees: text.rotation,
+        height_nm: text.height_nm,
+        stroke_width_nm: text.stroke_width_nm,
+        render_intent: render_intent_to_string(text.render_intent).to_string(),
+        family: text.family.0.clone(),
+        style: text.style.0.clone(),
+        style_class: text.style_class.clone(),
+        h_align: h_align_to_string(text.h_align).to_string(),
+        v_align: v_align_to_string(text.v_align).to_string(),
+        mirrored: text.mirrored,
+        keep_upright: text.keep_upright,
+        line_spacing_ratio_ppm: text.line_spacing_ratio_ppm,
+        bold: text.bold,
+        italic: text.italic,
+    }
+}
+
+fn render_intent_to_string(intent: TextRenderIntent) -> &'static str {
+    match intent {
+        TextRenderIntent::Manufacturing => "manufacturing",
+        TextRenderIntent::Annotation => "annotation",
+        TextRenderIntent::Branding => "branding",
+        TextRenderIntent::Documentation => "documentation",
+        TextRenderIntent::UiPreview => "ui_preview",
+    }
+}
+
+fn h_align_to_string(align: TextHAlign) -> &'static str {
+    match align {
+        TextHAlign::Left => "left",
+        TextHAlign::Center => "center",
+        TextHAlign::Right => "right",
+    }
+}
+
+fn v_align_to_string(align: TextVAlign) -> &'static str {
+    match align {
+        TextVAlign::Top => "top",
+        TextVAlign::Center => "center",
+        TextVAlign::Bottom => "bottom",
+    }
+}
+
+fn board_text_geometry(
+    text: &BoardText,
+) -> (BoardTextGeometryPrimitive, Vec<GlyphMeshAssetPrimitive>) {
+    let mesh_scene = match layout_text_mesh_from_board_text(text) {
+        Ok(scene) => Some(scene),
+        Err(error) => {
+            trace_board_text_geometry_fallback(text, "mesh", &error);
+            None
+        }
+    };
+    let glyph_mesh_assets = mesh_scene
+        .as_ref()
+        .map(|scene| {
+            scene
+                .glyph_mesh_assets
+                .iter()
+                .map(glyph_mesh_asset_primitive)
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or_default();
+    let world_transform_nm = mesh_scene
+        .as_ref()
+        .map(|scene| affine_2d_fixed_primitive(scene.batch.world_transform));
+    let block_bbox_em_nm = mesh_scene
+        .as_ref()
+        .map(|scene| mesh_rect_em_primitive(scene.batch.block_bbox_em_nm));
+    let glyphs = mesh_scene
+        .as_ref()
+        .map(|scene| {
+            scene
+                .batch
+                .glyphs
+                .iter()
+                .map(text_glyph_instance_primitive)
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or_default();
+    let mut fills = Vec::new();
+    let mut strokes = Vec::new();
+
+    // The renderer consumes glyph meshes when available. Legacy fill/stroke
+    // fragments are only a fallback; generating both paths doubles import-time
+    // text tessellation cost on real KiCad boards.
+    if glyphs.is_empty() {
+        match layout_text_geometry(&text.text, &TextAttributes::from_board_text(text)) {
+            Ok(primitives) => {
+                for primitive in primitives {
+                    match primitive {
+                        TextGeometryPrimitive::Stroke(stroke) => {
+                            strokes.push(BoardTextStrokePrimitive {
+                                from: PointNm {
+                                    x: stroke.from.x,
+                                    y: stroke.from.y,
+                                },
+                                to: PointNm {
+                                    x: stroke.to.x,
+                                    y: stroke.to.y,
+                                },
+                                width_nm: stroke.width_nm,
+                            });
+                        }
+                        TextGeometryPrimitive::FilledPolygon(polygon) => {
+                            fills.push(BoardTextFillPrimitive {
+                                outer: polygon
+                                    .outer
+                                    .into_iter()
+                                    .map(|point| PointNm {
+                                        x: point.x,
+                                        y: point.y,
+                                    })
+                                    .collect(),
+                                holes: polygon
+                                    .holes
+                                    .into_iter()
+                                    .map(|ring| {
+                                        ring.into_iter()
+                                            .map(|point| PointNm {
+                                                x: point.x,
+                                                y: point.y,
+                                            })
+                                            .collect()
+                                    })
+                                    .collect(),
+                            });
+                        }
+                    }
+                }
+            }
+            Err(error) => trace_board_text_geometry_fallback(text, "legacy", &error),
+        }
+    }
+
+    (
+        BoardTextGeometryPrimitive {
+            object_id: format!("board-text:{}", text.uuid),
+            object_kind: "board_text_geometry".to_string(),
+            text_uuid: text.uuid.to_string(),
+            layer_id: layer_id(text.layer),
+            world_transform_nm,
+            block_bbox_em_nm,
+            glyphs,
+            fills,
+            strokes,
+        },
+        glyph_mesh_assets,
+    )
+}
+
+fn trace_board_text_geometry_fallback(
+    text: &BoardText,
+    stage: &str,
+    error: &dyn std::fmt::Display,
+) {
+    if !kicad_import_text_trace_enabled() {
+        return;
+    }
+    eprintln!(
+        "[datum-import-text] board_text_geometry_fallback stage={stage} text_uuid={} layer={} family={} intent={} chars={} error={error}",
+        text.uuid,
+        layer_id(text.layer),
+        text.family.0,
+        render_intent_to_string(text.render_intent),
+        text.text.chars().count(),
+    );
+}
+
+fn push_board_text_scene_primitives(
+    board_text: &BoardText,
+    primitives: &mut Vec<BoardTextPrimitive>,
+    geometries: &mut Vec<BoardTextGeometryPrimitive>,
+    mesh_assets_by_handle: &mut BTreeMap<GlyphMeshHandlePrimitive, GlyphMeshAssetPrimitive>,
+) {
+    primitives.push(board_text_primitive(board_text));
+    let (geometry, mesh_assets) = board_text_geometry(board_text);
+    geometries.push(geometry);
+    for asset in mesh_assets {
+        mesh_assets_by_handle.entry(asset.handle).or_insert(asset);
+    }
+}
+
+fn kicad_import_text_uuid(kind: &str, key: &str) -> uuid::Uuid {
+    uuid::Uuid::new_v5(
+        &uuid::Uuid::NAMESPACE_URL,
+        format!("datum:kicad-import-text:{kind}:{key}").as_bytes(),
+    )
+}
+
+fn kicad_board_text(
+    uuid: uuid::Uuid,
+    text: String,
+    layer: i32,
+    position: PointNm,
+    rotation_degrees: i32,
+    height_nm: i64,
+    stroke_width_nm: Option<i64>,
+    justify: KicadTextJustify,
+    style_class: Option<String>,
+) -> BoardText {
+    let attrs = kicad_text_attributes(
+        position,
+        rotation_degrees,
+        height_nm,
+        stroke_width_nm,
+        justify,
+    );
+    BoardText {
+        uuid,
+        text,
+        position: attrs.position,
+        rotation: attrs.rotation_degrees,
+        layer,
+        render_intent: attrs.render_intent,
+        family: attrs.family,
+        family_source: attrs.family_source,
+        style: attrs.style,
+        height_nm: attrs.height_nm,
+        stroke_width_nm: attrs.stroke_width_nm,
+        h_align: attrs.h_align,
+        v_align: attrs.v_align,
+        mirrored: attrs.mirrored,
+        keep_upright: attrs.keep_upright,
+        line_spacing_ratio_ppm: attrs.line_spacing_ratio_ppm,
+        italic: attrs.italic,
+        bold: attrs.bold,
+        style_class,
+    }
+}
+
+fn merge_glyph_mesh_assets(
+    target: &mut Vec<GlyphMeshAssetPrimitive>,
+    incoming: Vec<GlyphMeshAssetPrimitive>,
+) {
+    let mut seen: BTreeSet<GlyphMeshHandlePrimitive> =
+        target.iter().map(|asset| asset.handle).collect();
+    for asset in incoming {
+        if seen.insert(asset.handle) {
+            target.push(asset);
+        }
+    }
+}
+
+fn glyph_mesh_asset_primitive(asset: &eda_engine::text::GlyphMeshAsset) -> GlyphMeshAssetPrimitive {
+    GlyphMeshAssetPrimitive {
+        handle: glyph_mesh_handle_primitive(asset.handle),
+        vertices: asset
+            .vertices
+            .iter()
+            .map(|vertex| MeshVertexEmPrimitive {
+                x_em_nm: vertex.x_em_nm,
+                y_em_nm: vertex.y_em_nm,
+            })
+            .collect(),
+        indices: asset.indices.clone(),
+        bbox_em_nm: mesh_rect_em_primitive(asset.bbox_em_nm),
+    }
+}
+
+fn text_glyph_instance_primitive(
+    glyph: &eda_engine::text::TextGlyphInstance,
+) -> TextGlyphInstancePrimitive {
+    TextGlyphInstancePrimitive {
+        glyph_handle: glyph_mesh_handle_primitive(glyph.glyph_handle),
+        origin_em_nm_x: glyph.origin_em_nm_x,
+        origin_em_nm_y: glyph.origin_em_nm_y,
+    }
+}
+
+fn glyph_mesh_handle_primitive(
+    handle: eda_engine::text::GlyphMeshHandle,
+) -> GlyphMeshHandlePrimitive {
+    GlyphMeshHandlePrimitive {
+        font_id: handle.font_id,
+        glyph_id: handle.glyph_id,
+        tolerance_class: handle.tolerance_class,
+        epoch: handle.epoch,
+    }
+}
+
+fn mesh_rect_em_primitive(rect: eda_engine::text::MeshRectEm) -> MeshRectEmPrimitive {
+    MeshRectEmPrimitive {
+        min_x_em_nm: rect.min_x_em_nm,
+        min_y_em_nm: rect.min_y_em_nm,
+        max_x_em_nm: rect.max_x_em_nm,
+        max_y_em_nm: rect.max_y_em_nm,
+    }
+}
+
+fn affine_2d_fixed_primitive(transform: eda_engine::text::Affine2DFixed) -> Affine2DFixedPrimitive {
+    Affine2DFixedPrimitive {
+        m11_ppm: transform.m11_ppm,
+        m12_ppm: transform.m12_ppm,
+        m21_ppm: transform.m21_ppm,
+        m22_ppm: transform.m22_ppm,
+        tx_nm: transform.tx_nm,
+        ty_nm: transform.ty_nm,
+    }
+}
+
 /// Extract footprint graphics from KiCad board file content.
 fn extract_kicad_footprint_graphics(
     contents: &str,
     components: &[BoardComponentPayload],
     layer_table: &std::collections::HashMap<String, i32>,
-) -> (Vec<ComponentGraphicPrimitive>, Vec<ComponentTextPrimitive>) {
+) -> (
+    Vec<ComponentGraphicPrimitive>,
+    Vec<ComponentTextPrimitive>,
+    Vec<BoardTextPrimitive>,
+    Vec<BoardTextGeometryPrimitive>,
+    Vec<GlyphMeshAssetPrimitive>,
+) {
     let mut all_graphics = Vec::new();
-    let mut all_texts = Vec::new();
+    let mut board_texts = Vec::new();
+    let mut board_text_geometries = Vec::new();
+    let mut glyph_mesh_assets_by_handle = BTreeMap::new();
+    let mut text_trace = KicadImportTextTrace::default();
 
     // Build a lookup from UUID string to component.
     let comp_by_uuid: std::collections::HashMap<&str, &BoardComponentPayload> =
@@ -2673,9 +3678,21 @@ fn extract_kicad_footprint_graphics(
 
         let mut graphic_index = 0usize;
         let mut text_index = 0usize;
+        let fp_blocks = kicad_nested_blocks_by_form(
+            &fp_block,
+            &[
+                "fp_line",
+                "fp_rect",
+                "fp_circle",
+                "fp_arc",
+                "fp_poly",
+                "fp_text",
+                "property",
+            ],
+        );
 
         // --- fp_line ---
-        for block in kicad_nested_blocks(&fp_block, "fp_line") {
+        for block in fp_blocks.get("fp_line").into_iter().flatten() {
             let layer_name = match kicad_parse_layer_anywhere(&block) {
                 Some(n) => n,
                 None => continue,
@@ -2706,12 +3723,13 @@ fn extract_kicad_footprint_graphics(
                     transform_component_local_point(component, start),
                     transform_component_local_point(component, end),
                 ],
+                holes: Vec::new(),
             });
             graphic_index += 1;
         }
 
         // --- fp_rect ---
-        for block in kicad_nested_blocks(&fp_block, "fp_rect") {
+        for block in fp_blocks.get("fp_rect").into_iter().flatten() {
             let layer_name = match kicad_parse_layer_anywhere(&block) {
                 Some(n) => n,
                 None => continue,
@@ -2753,12 +3771,13 @@ fn extract_kicad_footprint_graphics(
                     .iter()
                     .map(|p| transform_component_local_point(component, *p))
                     .collect(),
+                holes: Vec::new(),
             });
             graphic_index += 1;
         }
 
         // --- fp_circle ---
-        for block in kicad_nested_blocks(&fp_block, "fp_circle") {
+        for block in fp_blocks.get("fp_circle").into_iter().flatten() {
             let layer_name = match kicad_parse_layer_anywhere(&block) {
                 Some(n) => n,
                 None => continue,
@@ -2789,12 +3808,13 @@ fn extract_kicad_footprint_graphics(
                 width_nm: Some(width),
                 closed: true,
                 path: approximate_circle_path(component, center, radius),
+                holes: Vec::new(),
             });
             graphic_index += 1;
         }
 
         // --- fp_arc ---
-        for block in kicad_nested_blocks(&fp_block, "fp_arc") {
+        for block in fp_blocks.get("fp_arc").into_iter().flatten() {
             let layer_name = match kicad_parse_layer_anywhere(&block) {
                 Some(n) => n,
                 None => continue,
@@ -2838,12 +3858,13 @@ fn extract_kicad_footprint_graphics(
                 width_nm: Some(width),
                 closed: false,
                 path,
+                holes: Vec::new(),
             });
             graphic_index += 1;
         }
 
         // --- fp_poly ---
-        for block in kicad_nested_blocks(&fp_block, "fp_poly") {
+        for block in fp_blocks.get("fp_poly").into_iter().flatten() {
             let layer_name = match kicad_parse_layer_anywhere(&block) {
                 Some(n) => n,
                 None => continue,
@@ -2870,12 +3891,14 @@ fn extract_kicad_footprint_graphics(
                     .into_iter()
                     .map(|p| transform_component_local_point(component, p))
                     .collect(),
+                holes: Vec::new(),
             });
             graphic_index += 1;
         }
 
         // --- fp_text (literal text only, skip ${REFERENCE} and ${VALUE}) ---
-        for block in kicad_nested_blocks(&fp_block, "fp_text") {
+        for block in fp_blocks.get("fp_text").into_iter().flatten() {
+            text_trace.fp_text_total += 1;
             let first_line = match block.lines().next() {
                 Some(l) => l.trim(),
                 None => continue,
@@ -2892,6 +3915,11 @@ fn extract_kicad_footprint_graphics(
                 || text == "%R"
                 || text == "%V"
             {
+                text_trace.fp_text_template_skipped += 1;
+                continue;
+            }
+            if kicad_block_hidden(&block) {
+                text_trace.fp_text_hidden_skipped += 1;
                 continue;
             }
             let layer_name = match kicad_parse_layer_anywhere(&block) {
@@ -2907,42 +3935,44 @@ fn extract_kicad_footprint_graphics(
                 None => continue,
             };
             let lid = kicad_resolve_layer_id(&layer_name, layer_table);
-            let cached_polys = kicad_render_cache_world_polygons(&block);
-            if !cached_polys.is_empty() {
-                for (poly_index, path) in cached_polys.into_iter().enumerate() {
-                    all_graphics.push(ComponentGraphicPrimitive {
-                        graphic_id: format!(
-                            "component-graphic:{}:kicad-text-cache:{}:{}",
-                            fp_uuid, text_index, poly_index
-                        ),
-                        component_uuid: fp_uuid.clone(),
-                        layer_id: Some(layer_id(lid)),
-                        primitive_kind: "polygon".to_string(),
-                        render_role: role.to_string(),
-                        width_nm: None,
-                        closed: true,
-                        path,
-                    });
-                }
-                text_index += 1;
-                continue;
-            }
             let height = kicad_parse_font_height_nm(&block);
-            all_texts.push(ComponentTextPrimitive {
-                text_id: format!("component-text:{}:kicad:{text_index}", fp_uuid),
-                component_uuid: fp_uuid.clone(),
-                layer_id: Some(layer_id(lid)),
-                render_role: role.to_string(),
-                text,
-                position: transform_component_local_point(component, local_pos),
-                rotation_degrees: (component.rotation + local_rot) as f32,
-                height_nm: height,
+            let stroke_width_nm = kicad_parse_font_thickness_nm(&block);
+            let board_pos = transform_component_local_point(component, local_pos);
+            let board_rot = kicad_text_rotation_degrees(component.rotation + local_rot);
+            let mut justify = kicad_parse_text_justify(&block);
+            justify.keep_upright = true;
+            let source_uuid = kicad_parse_uuid(&block).unwrap_or_else(|| {
+                kicad_import_text_uuid("fp_text", &format!("{fp_uuid}/{text_index}/{text}/{lid}"))
+                    .to_string()
             });
+            let Ok(text_uuid) = uuid::Uuid::parse_str(&source_uuid) else {
+                continue;
+            };
+            let board_text = kicad_board_text(
+                text_uuid,
+                text,
+                lid,
+                board_pos,
+                board_rot,
+                height,
+                stroke_width_nm,
+                justify,
+                Some(format!("imported_kicad_fp_text:{fp_uuid}:{role}")),
+            );
+            push_board_text_scene_primitives(
+                &board_text,
+                &mut board_texts,
+                &mut board_text_geometries,
+                &mut glyph_mesh_assets_by_handle,
+            );
+            text_trace.fp_text_imported += 1;
+            text_trace.record_import("fp_text", &layer_name, lid, &board_text.text);
             text_index += 1;
         }
 
         // --- property blocks (Reference/Value on silkscreen/fab layers) ---
-        for prop_section in kicad_nested_blocks(&fp_block, "property") {
+        for prop_section in fp_blocks.get("property").into_iter().flatten() {
+            text_trace.property_total += 1;
             let first_line = match prop_section.lines().next() {
                 Some(line) => line.trim(),
                 None => continue,
@@ -2963,10 +3993,16 @@ fn extract_kicad_footprint_graphics(
             }
             let key = &quoted[0];
             if key != "Reference" && key != "Value" {
+                text_trace.property_metadata_skipped += 1;
                 continue;
             }
             let text = quoted[1].clone();
             if text.is_empty() || text.starts_with('~') {
+                text_trace.property_empty_skipped += 1;
+                continue;
+            }
+            if kicad_block_hidden(&prop_section) {
+                text_trace.property_hidden_skipped += 1;
                 continue;
             }
             let layer_name = match kicad_parse_layer_anywhere(&prop_section) {
@@ -2983,41 +4019,69 @@ fn extract_kicad_footprint_graphics(
                 None => continue,
             };
             let board_pos = transform_component_local_point(component, local_pos);
-            let cached_polys = kicad_render_cache_world_polygons(&prop_section);
-            if !cached_polys.is_empty() {
-                for (poly_index, path) in cached_polys.into_iter().enumerate() {
-                    all_graphics.push(ComponentGraphicPrimitive {
-                        graphic_id: format!(
-                            "component-graphic:{}:prop-cache:{}:{}",
-                            component.uuid, key.to_lowercase(), poly_index
-                        ),
-                        component_uuid: component.uuid.clone(),
-                        layer_id: Some(format!("L{}", layer_id)),
-                        primitive_kind: "polygon".to_string(),
-                        render_role: role.to_string(),
-                        width_nm: None,
-                        closed: true,
-                        path,
-                    });
-                }
-                continue;
-            }
             let height_nm = kicad_parse_font_height_nm(&prop_section);
-
-            all_texts.push(ComponentTextPrimitive {
-                text_id: format!("{}:prop:{}", component.uuid, key.to_lowercase()),
-                component_uuid: component.uuid.clone(),
-                layer_id: Some(format!("L{}", layer_id)),
-                render_role: role.to_string(),
+            let stroke_width_nm = kicad_parse_font_thickness_nm(&prop_section);
+            let board_rot = kicad_text_rotation_degrees(component.rotation + local_rot);
+            let mut justify = kicad_parse_text_justify(&prop_section);
+            justify.keep_upright = true;
+            let text_uuid = kicad_import_text_uuid(
+                "property_text",
+                &format!(
+                    "{}/{}/{text}/{layer_id}",
+                    component.uuid,
+                    key.to_lowercase()
+                ),
+            );
+            let board_text = kicad_board_text(
+                text_uuid,
                 text,
-                position: board_pos,
-                rotation_degrees: (component.rotation + local_rot) as f32,
+                layer_id,
+                board_pos,
+                board_rot,
                 height_nm,
-            });
+                stroke_width_nm,
+                justify,
+                Some(format!(
+                    "imported_kicad_property_text:{}:{}:{role}",
+                    component.uuid,
+                    key.to_lowercase()
+                )),
+            );
+            push_board_text_scene_primitives(
+                &board_text,
+                &mut board_texts,
+                &mut board_text_geometries,
+                &mut glyph_mesh_assets_by_handle,
+            );
+            if key == "Reference" {
+                text_trace.property_reference_imported += 1;
+                text_trace.record_import(
+                    "property_reference",
+                    &layer_name,
+                    layer_id,
+                    &board_text.text,
+                );
+            } else {
+                text_trace.property_value_imported += 1;
+                text_trace.record_import("property_value", &layer_name, layer_id, &board_text.text);
+            }
         }
     }
 
-    (all_graphics, all_texts)
+    text_trace.emit(
+        "footprints",
+        board_texts.len(),
+        board_text_geometries.len(),
+        glyph_mesh_assets_by_handle.len(),
+    );
+
+    (
+        all_graphics,
+        Vec::new(),
+        board_texts,
+        board_text_geometries,
+        glyph_mesh_assets_by_handle.into_values().collect(),
+    )
 }
 
 /// Interpolate an arc from three world-space points into a polyline of ~64
@@ -3127,6 +4191,7 @@ fn extract_kicad_board_graphics(
             source_object_uuid: source,
             layer_id: layer_key,
             path: vec![start, end],
+            holes: Vec::new(),
             width_nm: Some(width),
         });
     }
@@ -3154,6 +4219,7 @@ fn extract_kicad_board_graphics(
             source_object_uuid: source,
             layer_id: layer_key,
             path: kicad_interpolate_arc_world(start, mid, end),
+            holes: Vec::new(),
             width_nm: Some(width),
         });
     }
@@ -3173,7 +4239,10 @@ fn extract_kicad_board_graphics(
         let (object_id, source) = stable_id("poly", &uuid);
         let filled = block.contains("(fill yes)");
         if !filled
-            && path.first().zip(path.last()).is_some_and(|(first, last)| first != last)
+            && path
+                .first()
+                .zip(path.last())
+                .is_some_and(|(first, last)| first != last)
             && let Some(first) = path.first().copied()
         {
             path.push(first);
@@ -3185,6 +4254,7 @@ fn extract_kicad_board_graphics(
             source_object_uuid: source,
             layer_id: layer_key,
             path,
+            holes: Vec::new(),
             width_nm: Some(width),
         });
     }
@@ -3216,32 +4286,93 @@ fn extract_kicad_board_graphics(
             source_object_uuid: source,
             layer_id: layer_key,
             path,
+            holes: Vec::new(),
             width_nm: Some(width),
         });
     }
-    for block in kicad_nested_blocks(contents, "gr_text") {
+    out
+}
+
+fn extract_kicad_board_texts(
+    contents: &str,
+    layer_table: &std::collections::HashMap<String, i32>,
+) -> (
+    Vec<BoardTextPrimitive>,
+    Vec<BoardTextGeometryPrimitive>,
+    Vec<GlyphMeshAssetPrimitive>,
+) {
+    let mut board_texts = Vec::new();
+    let mut board_text_geometries = Vec::new();
+    let mut glyph_mesh_assets_by_handle = BTreeMap::new();
+    let mut text_trace = KicadImportTextTrace::default();
+    for (index, block) in kicad_nested_blocks(contents, "gr_text")
+        .into_iter()
+        .enumerate()
+    {
+        text_trace.gr_text_total += 1;
+        if kicad_block_hidden(&block) {
+            text_trace.gr_text_hidden_skipped += 1;
+            continue;
+        }
         let Some(layer_name) = kicad_parse_layer_anywhere(&block) else {
             continue;
         };
-        let Some(layer_key) = kicad_board_graphic_layer_key(&layer_name, layer_table) else {
+        let layer = kicad_resolve_layer_id(&layer_name, layer_table);
+        let Some((position, rotation)) = kicad_parse_at(&block) else {
             continue;
         };
-        let uuid = kicad_parse_uuid(&block).unwrap_or_default();
-        for (poly_index, path) in kicad_render_cache_world_polygons(&block).into_iter().enumerate() {
-            let (object_id, source) = stable_id(&format!("text-cache:{poly_index}"), &uuid);
-            out.push(BoardGraphicPrimitive {
-                object_id,
-                object_kind: "board_graphic".to_string(),
-                primitive_kind: "polygon".to_string(),
-                source_object_uuid: source,
-                layer_id: layer_key.clone(),
-                path,
-                width_nm: None,
+        let Some(first_line) = block.lines().next().map(str::trim) else {
+            continue;
+        };
+        let Some(start) = first_line.find('"') else {
+            continue;
+        };
+        let rest = &first_line[start + 1..];
+        let Some(end) = rest.find('"') else {
+            continue;
+        };
+        let text = rest[..end].to_string();
+        let uuid = kicad_parse_uuid(&block)
+            .and_then(|value| uuid::Uuid::parse_str(&value).ok())
+            .unwrap_or_else(|| {
+                kicad_import_text_uuid(
+                    "gr_text",
+                    &format!("{index}/{text}/{}/{}/{}", position.x, position.y, layer),
+                )
             });
-        }
+        let board_text = kicad_board_text(
+            uuid,
+            text,
+            layer,
+            position,
+            kicad_text_rotation_degrees(rotation),
+            kicad_parse_font_height_nm(&block),
+            kicad_parse_font_thickness_nm(&block),
+            kicad_parse_text_justify(&block),
+            Some("imported_kicad_gr_text".to_string()),
+        );
+        push_board_text_scene_primitives(
+            &board_text,
+            &mut board_texts,
+            &mut board_text_geometries,
+            &mut glyph_mesh_assets_by_handle,
+        );
+        text_trace.gr_text_imported += 1;
+        text_trace.record_import("gr_text", &layer_name, layer, &board_text.text);
     }
 
-    out
+    text_trace.emit(
+        "board",
+        board_texts.len(),
+        board_text_geometries.len(),
+        glyph_mesh_assets_by_handle.len(),
+    );
+
+    (
+        board_texts,
+        board_text_geometries,
+        glyph_mesh_assets_by_handle.into_values().collect(),
+    )
 }
 
 fn kicad_board_graphic_layer_key(
@@ -3302,6 +4433,7 @@ fn outline_board_graphics_from_outline(
                 source_object_uuid: source,
                 layer_id: edge_cuts_layer_key.to_string(),
                 path: vec![segment[0], segment[1]],
+                holes: Vec::new(),
                 width_nm: None,
             }
         })
@@ -3422,19 +4554,6 @@ fn kicad_extract_fp_text_content(first_line: &str) -> Option<String> {
     Some(inner[..end].to_string())
 }
 
-fn kicad_render_cache_world_polygons(block: &str) -> Vec<Vec<PointNm>> {
-    let Some(render_cache) = kicad_nested_blocks(block, "render_cache").into_iter().next() else {
-        return Vec::new();
-    };
-    kicad_nested_blocks(&render_cache, "polygon")
-        .into_iter()
-        .filter_map(|poly| {
-            let pts = kicad_parse_xy_points(&poly);
-            (!pts.is_empty()).then_some(pts)
-        })
-        .collect()
-}
-
 /// Load the board scene directly from native project JSON files, bypassing
 /// CLI subprocess invocations. Returns the built scene and the resolved
 /// board file path.
@@ -3484,6 +4603,8 @@ fn load_scene_from_engine(request: &LiveReviewRequest) -> Result<(BoardReviewSce
 
     // --- Zones ---
     let zones = extract_zones(&board_value)?;
+    let (native_board_texts, native_board_text_geometries, glyph_mesh_assets) =
+        extract_native_board_texts(&board_value)?;
 
     // --- Component graphics (silkscreen + mechanical) ---
     let (component_graphics, component_texts) =
@@ -3530,6 +4651,9 @@ fn load_scene_from_engine(request: &LiveReviewRequest) -> Result<(BoardReviewSce
         vias,
         zones,
         board_graphics,
+        native_board_texts,
+        native_board_text_geometries,
+        glyph_mesh_assets,
         unrouted_primitives,
         net_display,
         edge_cuts_layer_key,
@@ -3865,8 +4989,121 @@ struct EnginePolygonPayload {
     closed: bool,
 }
 
+#[derive(Debug, Clone, Deserialize)]
+struct EngineBoardTextPayload {
+    uuid: uuid::Uuid,
+    text: String,
+    position: EnginePointPayload,
+    rotation: i32,
+    layer: i32,
+    #[serde(default)]
+    render_intent: TextRenderIntent,
+    #[serde(default)]
+    family: TextFamilyId,
+    #[serde(default)]
+    family_source: eda_engine::text::TextFamilySource,
+    #[serde(default)]
+    style: TextStyleId,
+    #[serde(default = "default_board_text_height_nm")]
+    height_nm: i64,
+    #[serde(default)]
+    stroke_width_nm: i64,
+    #[serde(default = "default_board_text_h_align")]
+    h_align: TextHAlign,
+    #[serde(default = "default_board_text_v_align")]
+    v_align: TextVAlign,
+    #[serde(default)]
+    mirrored: bool,
+    #[serde(default)]
+    keep_upright: bool,
+    #[serde(default = "default_board_text_line_spacing_ratio_ppm")]
+    line_spacing_ratio_ppm: i32,
+    #[serde(default)]
+    italic: bool,
+    #[serde(default)]
+    bold: bool,
+    #[serde(default)]
+    style_class: Option<String>,
+}
+
 fn default_true() -> bool {
     true
+}
+
+fn default_board_text_height_nm() -> i64 {
+    1_000_000
+}
+
+fn default_board_text_h_align() -> TextHAlign {
+    TextHAlign::Left
+}
+
+fn default_board_text_v_align() -> TextVAlign {
+    TextVAlign::Bottom
+}
+
+fn default_board_text_line_spacing_ratio_ppm() -> i32 {
+    1_000_000
+}
+
+fn extract_native_board_texts(
+    board: &Value,
+) -> Result<(
+    Vec<BoardTextPrimitive>,
+    Vec<BoardTextGeometryPrimitive>,
+    Vec<GlyphMeshAssetPrimitive>,
+)> {
+    let texts = board
+        .get("texts")
+        .and_then(|v| v.as_array())
+        .cloned()
+        .unwrap_or_default();
+    let mut primitives = Vec::new();
+    let mut geometries = Vec::new();
+    let mut mesh_assets_by_handle = BTreeMap::new();
+    for value in texts {
+        let text: EngineBoardTextPayload =
+            serde_json::from_value(value).context("failed to parse native board text")?;
+        let board_text = BoardText {
+            uuid: text.uuid,
+            text: text.text,
+            position: eda_engine::ir::geometry::Point {
+                x: text.position.x,
+                y: text.position.y,
+            },
+            rotation: text.rotation,
+            layer: text.layer,
+            render_intent: text.render_intent,
+            family: text.family,
+            family_source: text.family_source,
+            style: text.style,
+            height_nm: text.height_nm,
+            stroke_width_nm: if text.stroke_width_nm > 0 {
+                text.stroke_width_nm
+            } else {
+                default_stroke_width_nm(text.height_nm)
+            },
+            h_align: text.h_align,
+            v_align: text.v_align,
+            mirrored: text.mirrored,
+            keep_upright: text.keep_upright,
+            line_spacing_ratio_ppm: text.line_spacing_ratio_ppm,
+            italic: text.italic,
+            bold: text.bold,
+            style_class: text.style_class,
+        };
+        push_board_text_scene_primitives(
+            &board_text,
+            &mut primitives,
+            &mut geometries,
+            &mut mesh_assets_by_handle,
+        );
+    }
+    Ok((
+        primitives,
+        geometries,
+        mesh_assets_by_handle.into_values().collect(),
+    ))
 }
 
 fn extract_component_graphics(
@@ -4181,6 +5418,9 @@ fn build_board_review_scene(
     vias: Vec<BoardViaPayload>,
     zones: Vec<BoardZonePayload>,
     board_graphics: Vec<BoardGraphicPrimitive>,
+    board_texts: Vec<BoardTextPrimitive>,
+    board_text_geometries: Vec<BoardTextGeometryPrimitive>,
+    glyph_mesh_assets: Vec<GlyphMeshAssetPrimitive>,
     unrouted_primitives: Vec<UnroutedPrimitive>,
     net_display: Vec<NetDisplayEntry>,
     outline_layer_key: String,
@@ -4193,6 +5433,7 @@ fn build_board_review_scene(
         &vias,
         &zones,
         &board_graphics,
+        &board_text_geometries,
     );
     let pads_by_component = pads.iter().fold(
         BTreeMap::<String, Vec<&BoardPadPayload>>::new(),
@@ -4340,6 +5581,11 @@ fn build_board_review_scene(
             .map(|text| text.position)
             .collect::<Vec<_>>()
             .iter(),
+        board_texts
+            .iter()
+            .map(|text| text.position)
+            .collect::<Vec<_>>()
+            .iter(),
         tracks
             .iter()
             .flat_map(|t| t.path.iter().copied())
@@ -4407,6 +5653,9 @@ fn build_board_review_scene(
         vias,
         zones,
         board_graphics,
+        board_texts,
+        board_text_geometries,
+        glyph_mesh_assets,
         unrouted_primitives,
         net_display,
         proposal_overlay_primitives: Vec::new(),
@@ -4436,6 +5685,7 @@ fn component_silkscreen_primitives(
                 transform_component_local_point(component, line.from),
                 transform_component_local_point(component, line.to),
             ],
+            holes: Vec::new(),
         }
     }));
     graphics.extend(
@@ -4459,6 +5709,7 @@ fn component_silkscreen_primitives(
                     .into_iter()
                     .map(|point| transform_component_local_point(component, point))
                     .collect(),
+                holes: Vec::new(),
             }),
     );
     graphics.extend(
@@ -4482,6 +5733,7 @@ fn component_silkscreen_primitives(
                     .into_iter()
                     .map(|point| transform_component_local_point(component, point))
                     .collect(),
+                holes: Vec::new(),
             }),
     );
     graphics.extend(
@@ -4501,6 +5753,7 @@ fn component_silkscreen_primitives(
                 width_nm: Some(circle.width_nm),
                 closed: true,
                 path: approximate_circle_path(component, circle.center, circle.radius_nm),
+                holes: Vec::new(),
             }),
     );
     graphics.extend(payload.arcs.into_iter().enumerate().map(|(index, arc)| {
@@ -4522,6 +5775,7 @@ fn component_silkscreen_primitives(
                 arc.start_angle,
                 arc.end_angle,
             ),
+            holes: Vec::new(),
         }
     }));
     texts.extend(payload.texts.into_iter().enumerate().map(|(index, text)| {
@@ -4534,6 +5788,9 @@ fn component_silkscreen_primitives(
             position: transform_component_local_point(component, text.position),
             rotation_degrees: text.rotation as f32,
             height_nm: text.height_nm.max(text.stroke_width_nm * 3),
+            face_name: None,
+            stroke_width_nm: Some(text.stroke_width_nm),
+            cached_polygons: Vec::new(),
         }
     }));
     (graphics, texts)
@@ -4561,6 +5818,7 @@ fn component_mechanical_primitives(
                 transform_component_local_point(component, line.from),
                 transform_component_local_point(component, line.to),
             ],
+            holes: Vec::new(),
         }
     }));
     graphics.extend(
@@ -4584,6 +5842,7 @@ fn component_mechanical_primitives(
                     .into_iter()
                     .map(|point| transform_component_local_point(component, point))
                     .collect(),
+                holes: Vec::new(),
             }),
     );
     graphics.extend(
@@ -4607,6 +5866,7 @@ fn component_mechanical_primitives(
                     .into_iter()
                     .map(|point| transform_component_local_point(component, point))
                     .collect(),
+                holes: Vec::new(),
             }),
     );
     graphics.extend(
@@ -4626,6 +5886,7 @@ fn component_mechanical_primitives(
                 width_nm: Some(circle.width_nm),
                 closed: true,
                 path: approximate_circle_path(component, circle.center, circle.radius_nm),
+                holes: Vec::new(),
             }),
     );
     graphics.extend(payload.arcs.into_iter().enumerate().map(|(index, arc)| {
@@ -4647,6 +5908,7 @@ fn component_mechanical_primitives(
                 arc.start_angle,
                 arc.end_angle,
             ),
+            holes: Vec::new(),
         }
     }));
     texts.extend(payload.texts.into_iter().enumerate().map(|(index, text)| {
@@ -4659,6 +5921,9 @@ fn component_mechanical_primitives(
             position: transform_component_local_point(component, text.position),
             rotation_degrees: text.rotation as f32,
             height_nm: text.height_nm.max(text.stroke_width_nm * 3),
+            face_name: None,
+            stroke_width_nm: Some(text.stroke_width_nm),
+            cached_polygons: Vec::new(),
         }
     }));
     (graphics, texts)
@@ -4866,9 +6131,9 @@ fn cli_prefix() -> Vec<String> {
         "run".to_string(),
         "--quiet".to_string(),
         "-p".to_string(),
-        "eda-cli".to_string(),
+        "datum-eda-cli".to_string(),
         "--bin".to_string(),
-        "eda".to_string(),
+        "datum-eda".to_string(),
         "--".to_string(),
     ]
 }
@@ -4877,12 +6142,12 @@ fn resolve_workspace_eda_binary() -> Option<String> {
     let exe = std::env::current_exe().ok()?;
     let exe_dir = exe.parent()?;
 
-    let direct = exe_dir.join("eda");
+    let direct = exe_dir.join("datum-eda");
     if direct.is_file() {
         return Some(direct.to_string_lossy().into_owned());
     }
 
-    let deps_sibling = exe_dir.parent()?.join("eda");
+    let deps_sibling = exe_dir.parent()?.join("datum-eda");
     if deps_sibling.is_file() {
         return Some(deps_sibling.to_string_lossy().into_owned());
     }
@@ -4898,6 +6163,7 @@ fn collect_layer_ids(
     vias: &[BoardViaPayload],
     zones: &[BoardZonePayload],
     board_graphics: &[BoardGraphicPrimitive],
+    board_text_geometries: &[BoardTextGeometryPrimitive],
 ) -> Vec<String> {
     let mut layers = BTreeSet::new();
     for component in components {
@@ -4932,6 +6198,9 @@ fn collect_layer_ids(
     }
     for graphic in board_graphics {
         layers.insert(graphic.layer_id.clone());
+    }
+    for text_geometry in board_text_geometries {
+        layers.insert(text_geometry.layer_id.clone());
     }
     if layers.is_empty() {
         layers.insert(layer_id(0));
@@ -4989,7 +6258,10 @@ fn inferred_scene_layer_kind(layer_name: &str) -> &'static str {
         "paste"
     } else if layer_name.ends_with(".SilkS") {
         "silkscreen"
-    } else if layer_name == "Edge.Cuts" || layer_name.ends_with(".CrtYd") || layer_name.ends_with(".Fab") {
+    } else if layer_name == "Edge.Cuts"
+        || layer_name.ends_with(".CrtYd")
+        || layer_name.ends_with(".Fab")
+    {
         "mechanical"
     } else {
         "other"
@@ -5109,6 +6381,7 @@ fn scene_bounds<'a>(
     pads: impl Iterator<Item = &'a PointNm>,
     component_graphics: impl Iterator<Item = &'a PointNm>,
     component_texts: impl Iterator<Item = &'a PointNm>,
+    board_texts: impl Iterator<Item = &'a PointNm>,
     tracks: impl Iterator<Item = &'a PointNm>,
     vias: impl Iterator<Item = &'a PointNm>,
     zones: impl Iterator<Item = &'a PointNm>,
@@ -5119,6 +6392,7 @@ fn scene_bounds<'a>(
     points.extend(pads.copied());
     points.extend(component_graphics.copied());
     points.extend(component_texts.copied());
+    points.extend(board_texts.copied());
     points.extend(tracks.copied());
     points.extend(vias.copied());
     points.extend(zones.copied());
@@ -5182,7 +6456,6 @@ pub fn load_fixture_workspace_state() -> ReviewWorkspaceState {
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[test]
     fn route_review_fixture_decodes_real_payload_shape() {
         let review: RouteProposalReviewPayload =
@@ -5301,6 +6574,765 @@ mod tests {
         assert_eq!(re_decoded, decoded);
     }
 
+    #[test]
+    fn native_board_text_annotation_reaches_outline_geometry() {
+        let board = json!({
+            "texts": [
+                {
+                    "uuid": "00000000-0000-0000-0000-000000000001",
+                    "text": "O",
+                    "position": { "x": 0, "y": 0 },
+                    "rotation": 0,
+                    "layer": 37,
+                    "render_intent": "annotation",
+                    "height_nm": 1_000_000,
+                    "stroke_width_nm": 152_000
+                }
+            ]
+        });
+        let (texts, geometries, glyph_mesh_assets) =
+            extract_native_board_texts(&board).expect("native board text should extract");
+        assert_eq!(texts.len(), 1);
+        assert_eq!(
+            texts[0].object_id,
+            "board-text:00000000-0000-0000-0000-000000000001"
+        );
+        assert_eq!(texts[0].text, "O");
+        assert_eq!(texts[0].render_intent, "annotation");
+        assert_eq!(geometries.len(), 1);
+        assert_eq!(
+            geometries[0].object_id,
+            "board-text:00000000-0000-0000-0000-000000000001"
+        );
+        assert!(!geometries[0].glyphs.is_empty());
+        assert!(!glyph_mesh_assets.is_empty());
+        assert!(
+            geometries[0].fills.is_empty(),
+            "mesh-backed text should not duplicate legacy fill fragments"
+        );
+        assert!(geometries[0].strokes.is_empty());
+        assert!(geometries[0].glyphs.iter().all(|glyph| {
+            glyph_mesh_assets
+                .iter()
+                .any(|asset| asset.handle == glyph.glyph_handle)
+        }));
+        assert!(
+            glyph_mesh_assets
+                .iter()
+                .any(|asset| { asset.vertices.len() >= 3 && !asset.indices.is_empty() })
+        );
+    }
+
+    #[test]
+    fn toggle_board_text_boolean_field_updates_native_board_json() {
+        let root = std::env::temp_dir().join(format!(
+            "datum-gui-protocol-board-text-toggle-{}",
+            uuid::Uuid::new_v4()
+        ));
+        std::fs::create_dir_all(&root).expect("create temp root");
+        let board_path = root.join("board.json");
+        std::fs::write(
+            &board_path,
+            serde_json::to_string_pretty(&json!({
+                "texts": [{
+                    "uuid": "00000000-0000-0000-0000-000000000001",
+                    "text": "TOGGLE",
+                    "position": { "x": 0, "y": 0 },
+                    "rotation": 0,
+                    "layer": 37,
+                    "mirrored": false,
+                    "keep_upright": true,
+                    "bold": false
+                }]
+            }))
+            .expect("serialize temp board"),
+        )
+        .expect("write temp board");
+        let backing = WorkspaceBacking {
+            request: LiveReviewRequest {
+                project_root: root.clone(),
+                board_file: None,
+                artifact_path: None,
+                net_uuid: None,
+                from_anchor_pad_uuid: None,
+                to_anchor_pad_uuid: None,
+                profile: None,
+            },
+            board_path: board_path.clone(),
+        };
+
+        let mirrored = toggle_board_text_boolean_field(
+            &backing,
+            "board-text:00000000-0000-0000-0000-000000000001",
+            BoardTextBooleanField::Mirrored,
+        )
+        .expect("toggle mirrored");
+        assert!(mirrored);
+        let bold = toggle_board_text_boolean_field(
+            &backing,
+            "board-text:00000000-0000-0000-0000-000000000001",
+            BoardTextBooleanField::Bold,
+        )
+        .expect("toggle bold");
+        assert!(bold);
+        let keep_upright = toggle_board_text_boolean_field(
+            &backing,
+            "board-text:00000000-0000-0000-0000-000000000001",
+            BoardTextBooleanField::KeepUpright,
+        )
+        .expect("toggle keep upright");
+        assert!(!keep_upright);
+
+        let board: Value =
+            serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read temp board"))
+                .expect("parse temp board");
+        let text = &board["texts"][0];
+        assert_eq!(text["mirrored"], Value::Bool(true));
+        assert_eq!(text["keep_upright"], Value::Bool(false));
+        assert_eq!(text["bold"], Value::Bool(true));
+
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn cycle_board_text_alignment_field_updates_native_board_json() {
+        let root = std::env::temp_dir().join(format!(
+            "datum-gui-protocol-board-text-align-{}",
+            uuid::Uuid::new_v4()
+        ));
+        std::fs::create_dir_all(&root).expect("create temp root");
+        let board_path = root.join("board.json");
+        std::fs::write(
+            &board_path,
+            serde_json::to_string_pretty(&json!({
+                "texts": [{
+                    "uuid": "00000000-0000-0000-0000-000000000001",
+                    "text": "ALIGN",
+                    "position": { "x": 0, "y": 0 },
+                    "rotation": 0,
+                    "layer": 37,
+                    "h_align": "left",
+                    "v_align": "bottom"
+                }]
+            }))
+            .expect("serialize temp board"),
+        )
+        .expect("write temp board");
+        let backing = WorkspaceBacking {
+            request: LiveReviewRequest {
+                project_root: root.clone(),
+                board_file: None,
+                artifact_path: None,
+                net_uuid: None,
+                from_anchor_pad_uuid: None,
+                to_anchor_pad_uuid: None,
+                profile: None,
+            },
+            board_path: board_path.clone(),
+        };
+
+        let h_align = cycle_board_text_alignment_field(
+            &backing,
+            "board-text:00000000-0000-0000-0000-000000000001",
+            BoardTextAlignmentField::Horizontal,
+        )
+        .expect("cycle horizontal align");
+        assert_eq!(h_align, "center");
+        let v_align = cycle_board_text_alignment_field(
+            &backing,
+            "board-text:00000000-0000-0000-0000-000000000001",
+            BoardTextAlignmentField::Vertical,
+        )
+        .expect("cycle vertical align");
+        assert_eq!(v_align, "top");
+
+        let board: Value =
+            serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read temp board"))
+                .expect("parse temp board");
+        let text = &board["texts"][0];
+        assert_eq!(text["h_align"], Value::String("center".to_string()));
+        assert_eq!(text["v_align"], Value::String("top".to_string()));
+
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn step_board_text_line_spacing_ratio_updates_native_board_json_with_bounds() {
+        let root = std::env::temp_dir().join(format!(
+            "datum-gui-protocol-board-text-line-spacing-{}",
+            uuid::Uuid::new_v4()
+        ));
+        std::fs::create_dir_all(&root).expect("create temp root");
+        let board_path = root.join("board.json");
+        std::fs::write(
+            &board_path,
+            serde_json::to_string_pretty(&json!({
+                "texts": [{
+                    "uuid": "00000000-0000-0000-0000-000000000001",
+                    "text": "LINE",
+                    "position": { "x": 0, "y": 0 },
+                    "rotation": 0,
+                    "layer": 37,
+                    "line_spacing_ratio_ppm": 1_000_000
+                }]
+            }))
+            .expect("serialize temp board"),
+        )
+        .expect("write temp board");
+        let backing = WorkspaceBacking {
+            request: LiveReviewRequest {
+                project_root: root.clone(),
+                board_file: None,
+                artifact_path: None,
+                net_uuid: None,
+                from_anchor_pad_uuid: None,
+                to_anchor_pad_uuid: None,
+                profile: None,
+            },
+            board_path: board_path.clone(),
+        };
+
+        let increased = step_board_text_line_spacing_ratio(
+            &backing,
+            "board-text:00000000-0000-0000-0000-000000000001",
+            BoardTextLineSpacingStep::Increase,
+        )
+        .expect("increase line spacing");
+        assert_eq!(increased, 1_100_000);
+        for _ in 0..20 {
+            step_board_text_line_spacing_ratio(
+                &backing,
+                "board-text:00000000-0000-0000-0000-000000000001",
+                BoardTextLineSpacingStep::Decrease,
+            )
+            .expect("decrease line spacing");
+        }
+
+        let board: Value =
+            serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read temp board"))
+                .expect("parse temp board");
+        let text = &board["texts"][0];
+        assert_eq!(
+            text["line_spacing_ratio_ppm"],
+            Value::Number(serde_json::Number::from(BOARD_TEXT_LINE_SPACING_MIN_PPM))
+        );
+
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn step_board_text_height_updates_native_board_json_and_scales_stroke() {
+        let root = std::env::temp_dir().join(format!(
+            "datum-gui-protocol-board-text-height-{}",
+            uuid::Uuid::new_v4()
+        ));
+        std::fs::create_dir_all(&root).expect("create temp root");
+        let board_path = root.join("board.json");
+        std::fs::write(
+            &board_path,
+            serde_json::to_string_pretty(&json!({
+                "texts": [{
+                    "uuid": "00000000-0000-0000-0000-000000000001",
+                    "text": "HEIGHT",
+                    "position": { "x": 0, "y": 0 },
+                    "rotation": 0,
+                    "layer": 37,
+                    "height_nm": 1_000_000,
+                    "stroke_width_nm": 152_000
+                }]
+            }))
+            .expect("serialize temp board"),
+        )
+        .expect("write temp board");
+        let backing = WorkspaceBacking {
+            request: LiveReviewRequest {
+                project_root: root.clone(),
+                board_file: None,
+                artifact_path: None,
+                net_uuid: None,
+                from_anchor_pad_uuid: None,
+                to_anchor_pad_uuid: None,
+                profile: None,
+            },
+            board_path: board_path.clone(),
+        };
+
+        let increased = step_board_text_height(
+            &backing,
+            "board-text:00000000-0000-0000-0000-000000000001",
+            BoardTextHeightStep::Increase,
+        )
+        .expect("increase height");
+        assert_eq!(increased, 1_100_000);
+
+        let board: Value =
+            serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read temp board"))
+                .expect("parse temp board");
+        let text = &board["texts"][0];
+        assert_eq!(
+            text["height_nm"],
+            Value::Number(serde_json::Number::from(1_100_000))
+        );
+        assert_eq!(
+            text["stroke_width_nm"],
+            Value::Number(serde_json::Number::from(167_200))
+        );
+
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn step_board_text_height_clamps_minimum_and_keeps_stroke_positive() {
+        let root = std::env::temp_dir().join(format!(
+            "datum-gui-protocol-board-text-height-min-{}",
+            uuid::Uuid::new_v4()
+        ));
+        std::fs::create_dir_all(&root).expect("create temp root");
+        let board_path = root.join("board.json");
+        std::fs::write(
+            &board_path,
+            serde_json::to_string_pretty(&json!({
+                "texts": [{
+                    "uuid": "00000000-0000-0000-0000-000000000001",
+                    "text": "HEIGHT",
+                    "position": { "x": 0, "y": 0 },
+                    "rotation": 0,
+                    "layer": 37,
+                    "height_nm": 51_000,
+                    "stroke_width_nm": 7_752
+                }]
+            }))
+            .expect("serialize temp board"),
+        )
+        .expect("write temp board");
+        let backing = WorkspaceBacking {
+            request: LiveReviewRequest {
+                project_root: root.clone(),
+                board_file: None,
+                artifact_path: None,
+                net_uuid: None,
+                from_anchor_pad_uuid: None,
+                to_anchor_pad_uuid: None,
+                profile: None,
+            },
+            board_path: board_path.clone(),
+        };
+
+        let decreased = step_board_text_height(
+            &backing,
+            "board-text:00000000-0000-0000-0000-000000000001",
+            BoardTextHeightStep::Decrease,
+        )
+        .expect("decrease height");
+        assert_eq!(decreased, BOARD_TEXT_HEIGHT_MIN_NM);
+
+        let board: Value =
+            serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read temp board"))
+                .expect("parse temp board");
+        let text = &board["texts"][0];
+        assert_eq!(
+            text["height_nm"],
+            Value::Number(serde_json::Number::from(BOARD_TEXT_HEIGHT_MIN_NM))
+        );
+        assert!(
+            text["stroke_width_nm"]
+                .as_i64()
+                .expect("stroke width number")
+                > 0,
+            "stroke width must stay positive at the minimum height"
+        );
+
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn step_board_text_rotation_updates_native_board_json_with_wraparound() {
+        let root = std::env::temp_dir().join(format!(
+            "datum-gui-protocol-board-text-rotation-{}",
+            uuid::Uuid::new_v4()
+        ));
+        std::fs::create_dir_all(&root).expect("create temp root");
+        let board_path = root.join("board.json");
+        std::fs::write(
+            &board_path,
+            serde_json::to_string_pretty(&json!({
+                "texts": [{
+                    "uuid": "00000000-0000-0000-0000-000000000001",
+                    "text": "ROT",
+                    "position": { "x": 0, "y": 0 },
+                    "rotation": 0,
+                    "layer": 37
+                }]
+            }))
+            .expect("serialize temp board"),
+        )
+        .expect("write temp board");
+        let backing = WorkspaceBacking {
+            request: LiveReviewRequest {
+                project_root: root.clone(),
+                board_file: None,
+                artifact_path: None,
+                net_uuid: None,
+                from_anchor_pad_uuid: None,
+                to_anchor_pad_uuid: None,
+                profile: None,
+            },
+            board_path: board_path.clone(),
+        };
+
+        let ccw = step_board_text_rotation(
+            &backing,
+            "board-text:00000000-0000-0000-0000-000000000001",
+            BoardTextRotationStep::CounterClockwise90,
+        )
+        .expect("rotate counter-clockwise");
+        assert_eq!(ccw, 270);
+        let cw = step_board_text_rotation(
+            &backing,
+            "board-text:00000000-0000-0000-0000-000000000001",
+            BoardTextRotationStep::Clockwise90,
+        )
+        .expect("rotate clockwise");
+        assert_eq!(cw, 0);
+
+        let board: Value =
+            serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read temp board"))
+                .expect("parse temp board");
+        assert_eq!(
+            board["texts"][0]["rotation"],
+            Value::Number(serde_json::Number::from(0))
+        );
+
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn explicit_board_text_setters_update_native_board_json() {
+        let root = std::env::temp_dir().join(format!(
+            "datum-gui-protocol-board-text-setters-{}",
+            uuid::Uuid::new_v4()
+        ));
+        std::fs::create_dir_all(&root).expect("create temp root");
+        let board_path = root.join("board.json");
+        std::fs::write(
+            &board_path,
+            serde_json::to_string_pretty(&json!({
+                "texts": [{
+                    "uuid": "00000000-0000-0000-0000-000000000001",
+                    "text": "OLD",
+                    "position": { "x": 0, "y": 0 },
+                    "rotation": 0,
+                    "layer": 37,
+                    "height_nm": 1_000_000,
+                    "stroke_width_nm": 152_000,
+                    "line_spacing_ratio_ppm": 1_000_000
+                }]
+            }))
+            .expect("serialize temp board"),
+        )
+        .expect("write temp board");
+        let backing = WorkspaceBacking {
+            request: LiveReviewRequest {
+                project_root: root.clone(),
+                board_file: None,
+                artifact_path: None,
+                net_uuid: None,
+                from_anchor_pad_uuid: None,
+                to_anchor_pad_uuid: None,
+                profile: None,
+            },
+            board_path: board_path.clone(),
+        };
+        let object_id = "board-text:00000000-0000-0000-0000-000000000001";
+
+        assert_eq!(
+            set_board_text_height(&backing, object_id, 2_000_000).expect("set height"),
+            2_000_000
+        );
+        assert_eq!(
+            set_board_text_rotation(&backing, object_id, -90).expect("set rotation"),
+            270
+        );
+        assert_eq!(
+            set_board_text_line_spacing_ratio(&backing, object_id, 1_250_000)
+                .expect("set line spacing"),
+            1_250_000
+        );
+        assert_eq!(
+            set_board_text_content(&backing, object_id, "NEW TEXT").expect("set content"),
+            "NEW TEXT"
+        );
+
+        let board: Value =
+            serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read temp board"))
+                .expect("parse temp board");
+        let text = &board["texts"][0];
+        assert_eq!(text["text"], Value::String("NEW TEXT".to_string()));
+        assert_eq!(
+            text["height_nm"],
+            Value::Number(serde_json::Number::from(2_000_000))
+        );
+        assert_eq!(
+            text["stroke_width_nm"],
+            Value::Number(serde_json::Number::from(304_000))
+        );
+        assert_eq!(
+            text["rotation"],
+            Value::Number(serde_json::Number::from(270))
+        );
+        assert_eq!(
+            text["line_spacing_ratio_ppm"],
+            Value::Number(serde_json::Number::from(1_250_000))
+        );
+
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn cycle_board_text_render_intent_updates_native_board_json() {
+        let root = std::env::temp_dir().join(format!(
+            "datum-gui-protocol-board-text-intent-{}",
+            uuid::Uuid::new_v4()
+        ));
+        std::fs::create_dir_all(&root).expect("create temp root");
+        let board_path = root.join("board.json");
+        std::fs::write(
+            &board_path,
+            serde_json::to_string_pretty(&json!({
+                "texts": [{
+                    "uuid": "00000000-0000-0000-0000-000000000001",
+                    "text": "INTENT",
+                    "position": { "x": 0, "y": 0 },
+                    "rotation": 0,
+                    "layer": 37,
+                    "render_intent": "manufacturing",
+                    "family": "inter",
+                    "family_source": "explicit",
+                    "style": "regular"
+                }]
+            }))
+            .expect("serialize temp board"),
+        )
+        .expect("write temp board");
+        let backing = WorkspaceBacking {
+            request: LiveReviewRequest {
+                project_root: root.clone(),
+                board_file: None,
+                artifact_path: None,
+                net_uuid: None,
+                from_anchor_pad_uuid: None,
+                to_anchor_pad_uuid: None,
+                profile: None,
+            },
+            board_path: board_path.clone(),
+        };
+
+        let intent = cycle_board_text_field(
+            &backing,
+            "board-text:00000000-0000-0000-0000-000000000001",
+            BoardTextCycleField::RenderIntent,
+        )
+        .expect("cycle render intent");
+        assert_eq!(intent, "annotation");
+
+        let board: Value =
+            serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read temp board"))
+                .expect("parse temp board");
+        let text = &board["texts"][0];
+        assert_eq!(
+            text["render_intent"],
+            Value::String("annotation".to_string())
+        );
+        assert_eq!(text["family"], Value::String("inter".to_string()));
+        assert_eq!(text["family_source"], Value::String("explicit".to_string()));
+
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn cycle_board_text_family_updates_native_board_json_as_explicit_choice() {
+        let root = std::env::temp_dir().join(format!(
+            "datum-gui-protocol-board-text-family-{}",
+            uuid::Uuid::new_v4()
+        ));
+        std::fs::create_dir_all(&root).expect("create temp root");
+        let board_path = root.join("board.json");
+        std::fs::write(
+            &board_path,
+            serde_json::to_string_pretty(&json!({
+                "texts": [{
+                    "uuid": "00000000-0000-0000-0000-000000000001",
+                    "text": "FONT",
+                    "position": { "x": 0, "y": 0 },
+                    "rotation": 0,
+                    "layer": 37,
+                    "render_intent": "annotation",
+                    "family": "newstroke",
+                    "family_source": "implicit_default",
+                    "style": "regular"
+                }]
+            }))
+            .expect("serialize temp board"),
+        )
+        .expect("write temp board");
+        let backing = WorkspaceBacking {
+            request: LiveReviewRequest {
+                project_root: root.clone(),
+                board_file: None,
+                artifact_path: None,
+                net_uuid: None,
+                from_anchor_pad_uuid: None,
+                to_anchor_pad_uuid: None,
+                profile: None,
+            },
+            board_path: board_path.clone(),
+        };
+
+        let family = cycle_board_text_field(
+            &backing,
+            "board-text:00000000-0000-0000-0000-000000000001",
+            BoardTextCycleField::Family,
+        )
+        .expect("cycle font family");
+        assert_eq!(family, "inter");
+
+        let board: Value =
+            serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read temp board"))
+                .expect("parse temp board");
+        let text = &board["texts"][0];
+        assert_eq!(text["family"], Value::String("inter".to_string()));
+        assert_eq!(text["family_source"], Value::String("explicit".to_string()));
+        assert_eq!(text["style"], Value::String("regular".to_string()));
+
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn explicit_board_text_semantic_setters_update_native_board_json() {
+        let root = std::env::temp_dir().join(format!(
+            "datum-gui-protocol-board-text-semantic-setters-{}",
+            uuid::Uuid::new_v4()
+        ));
+        std::fs::create_dir_all(&root).expect("create temp root");
+        let board_path = root.join("board.json");
+        std::fs::write(
+            &board_path,
+            serde_json::to_string_pretty(&json!({
+                "texts": [{
+                    "uuid": "00000000-0000-0000-0000-000000000001",
+                    "text": "SEMANTIC",
+                    "position": { "x": 0, "y": 0 },
+                    "rotation": 0,
+                    "layer": 37,
+                    "render_intent": "manufacturing",
+                    "family": "newstroke",
+                    "family_source": "implicit_default",
+                    "style": "regular",
+                    "h_align": "left",
+                    "v_align": "bottom"
+                }]
+            }))
+            .expect("serialize temp board"),
+        )
+        .expect("write temp board");
+        let backing = WorkspaceBacking {
+            request: LiveReviewRequest {
+                project_root: root.clone(),
+                board_file: None,
+                artifact_path: None,
+                net_uuid: None,
+                from_anchor_pad_uuid: None,
+                to_anchor_pad_uuid: None,
+                profile: None,
+            },
+            board_path: board_path.clone(),
+        };
+        let object_id = "board-text:00000000-0000-0000-0000-000000000001";
+
+        assert_eq!(
+            set_board_text_alignment(&backing, object_id, "right", "top").expect("set alignment"),
+            ("right".to_string(), "top".to_string())
+        );
+        assert_eq!(
+            set_board_text_h_align(&backing, object_id, "center").expect("set h align"),
+            "center"
+        );
+        assert_eq!(
+            set_board_text_v_align(&backing, object_id, "center").expect("set v align"),
+            "center"
+        );
+        assert_eq!(
+            set_board_text_render_intent(&backing, object_id, "branding")
+                .expect("set render intent"),
+            "branding"
+        );
+        assert_eq!(
+            set_board_text_font_family(&backing, object_id, "ibm_plex_sans_condensed")
+                .expect("set font family"),
+            "ibm_plex_sans_condensed"
+        );
+
+        let board: Value =
+            serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read temp board"))
+                .expect("parse temp board");
+        let text = &board["texts"][0];
+        assert_eq!(text["h_align"], Value::String("center".to_string()));
+        assert_eq!(text["v_align"], Value::String("center".to_string()));
+        assert_eq!(text["render_intent"], Value::String("branding".to_string()));
+        assert_eq!(
+            text["family"],
+            Value::String("ibm_plex_sans_condensed".to_string())
+        );
+        assert_eq!(text["family_source"], Value::String("explicit".to_string()));
+        assert_eq!(text["style"], Value::String("regular".to_string()));
+
+        let _ = std::fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn explicit_board_text_semantic_setters_reject_unknown_values() {
+        let root = std::env::temp_dir().join(format!(
+            "datum-gui-protocol-board-text-semantic-reject-{}",
+            uuid::Uuid::new_v4()
+        ));
+        std::fs::create_dir_all(&root).expect("create temp root");
+        let board_path = root.join("board.json");
+        std::fs::write(
+            &board_path,
+            serde_json::to_string_pretty(&json!({
+                "texts": [{
+                    "uuid": "00000000-0000-0000-0000-000000000001",
+                    "text": "SEMANTIC",
+                    "position": { "x": 0, "y": 0 },
+                    "rotation": 0,
+                    "layer": 37
+                }]
+            }))
+            .expect("serialize temp board"),
+        )
+        .expect("write temp board");
+        let backing = WorkspaceBacking {
+            request: LiveReviewRequest {
+                project_root: root.clone(),
+                board_file: None,
+                artifact_path: None,
+                net_uuid: None,
+                from_anchor_pad_uuid: None,
+                to_anchor_pad_uuid: None,
+                profile: None,
+            },
+            board_path,
+        };
+        let object_id = "board-text:00000000-0000-0000-0000-000000000001";
+
+        assert!(set_board_text_h_align(&backing, object_id, "middle").is_err());
+        assert!(set_board_text_v_align(&backing, object_id, "left").is_err());
+        assert!(set_board_text_render_intent(&backing, object_id, "marketing").is_err());
+        assert!(set_board_text_font_family(&backing, object_id, "papyrus").is_err());
+
+        let _ = std::fs::remove_dir_all(root);
+    }
+
     /// `scene.board_graphics` must default to empty when a saved scene JSON
     /// predates the field — preserves back-compat with the existing checked-in
     /// `board_review_scene_v1.json` fixture.
@@ -5312,6 +7344,18 @@ mod tests {
         assert!(
             scene.board_graphics.is_empty(),
             "board_graphics must default to empty on pre-M7-SCN-007 scene fixtures"
+        );
+        assert!(
+            scene.board_texts.is_empty(),
+            "board_texts must default to empty on pre-Layer-B scene fixtures"
+        );
+        assert!(
+            scene.board_text_geometries.is_empty(),
+            "board_text_geometries must default to empty on pre-Phase-3 scene fixtures"
+        );
+        assert!(
+            scene.glyph_mesh_assets.is_empty(),
+            "glyph_mesh_assets must default to empty on pre-Phase-3 scene fixtures"
         );
     }
 
@@ -5394,6 +7438,15 @@ mod tests {
     }
 
     #[test]
+    fn clearing_authored_selection_preserves_active_review_target() {
+        let mut state = load_fixture_workspace_state();
+        assert!(state.select_authored_object("pad:P1"));
+        state.clear_selection();
+        assert_eq!(state.active_review_target_id, "action-1");
+        assert_eq!(state.selection, SelectionTarget::None);
+    }
+
+    #[test]
     fn live_session_emits_selection_navigation_and_filter_events() {
         let workspace = load_fixture_workspace_state();
         let mut session = LiveDesignSession::new(workspace);
@@ -5423,8 +7476,143 @@ mod tests {
             filter
                 .events
                 .iter()
-                .any(|event| matches!(event, SessionEvent::SceneChanged))
+                .any(|event| matches!(event, SessionEvent::FrameChanged))
         );
+    }
+
+    #[test]
+    fn authored_toggle_is_frame_only() {
+        let workspace = load_fixture_workspace_state();
+        let mut session = LiveDesignSession::new(workspace);
+
+        let result = session.apply(SessionCommand::ToggleShowAuthored);
+
+        assert!(result.handled);
+        assert_eq!(result.events, vec![SessionEvent::FrameChanged]);
+    }
+
+    #[test]
+    fn proposed_toggle_is_frame_only() {
+        let workspace = load_fixture_workspace_state();
+        let mut session = LiveDesignSession::new(workspace);
+
+        let result = session.apply(SessionCommand::ToggleShowProposed);
+
+        assert!(result.handled);
+        assert_eq!(result.events, vec![SessionEvent::FrameChanged]);
+    }
+
+    #[test]
+    fn show_unrouted_toggle_is_frame_only_when_scene_has_no_unrouted_geometry() {
+        let workspace = load_fixture_workspace_state();
+        assert!(workspace.scene.unrouted_primitives.is_empty());
+        let mut session = LiveDesignSession::new(workspace);
+
+        let result = session.apply(SessionCommand::ToggleShowUnrouted);
+
+        assert!(result.handled);
+        assert_eq!(result.events, vec![SessionEvent::FrameChanged]);
+    }
+
+    #[test]
+    fn show_unrouted_toggle_changes_scene_when_unrouted_geometry_exists() {
+        let mut workspace = load_fixture_workspace_state();
+        workspace.scene.unrouted_primitives.push(UnroutedPrimitive {
+            object_id: "unrouted:test".to_string(),
+            object_kind: "unrouted".to_string(),
+            source_object_uuid: "test".to_string(),
+            net_uuid: "net:test".to_string(),
+            from_component: "U1".to_string(),
+            from_pin: "1".to_string(),
+            to_component: "U2".to_string(),
+            to_pin: "2".to_string(),
+            path: vec![PointNm { x: 0, y: 0 }, PointNm { x: 1_000, y: 0 }],
+        });
+        let mut session = LiveDesignSession::new(workspace);
+
+        let result = session.apply(SessionCommand::ToggleShowUnrouted);
+
+        assert!(result.handled);
+        assert_eq!(result.events, vec![SessionEvent::SceneChanged]);
+    }
+
+    #[test]
+    fn dim_unrelated_toggle_is_frame_only_without_focus_or_selection() {
+        let mut workspace = load_fixture_workspace_state();
+        workspace.review.proposal_actions.clear();
+        workspace.selection = SelectionTarget::None;
+        workspace.active_review_target_id = "no-proposal-action".to_string();
+        let mut session = LiveDesignSession::new(workspace);
+
+        let result = session.apply(SessionCommand::ToggleDimUnrelated);
+
+        assert!(result.handled);
+        assert_eq!(result.events, vec![SessionEvent::FrameChanged]);
+    }
+
+    #[test]
+    fn dim_unrelated_toggle_changes_scene_with_authored_selection() {
+        let mut workspace = load_fixture_workspace_state();
+        workspace.review.proposal_actions.clear();
+        workspace.selection = SelectionTarget::AuthoredObject("pad:P1".to_string());
+        workspace.active_review_target_id = "no-proposal-action".to_string();
+        let mut session = LiveDesignSession::new(workspace);
+
+        let result = session.apply(SessionCommand::ToggleDimUnrelated);
+
+        assert!(result.handled);
+        assert_eq!(result.events, vec![SessionEvent::SceneChanged]);
+    }
+
+    #[test]
+    fn layer_toggle_is_frame_only_for_board_graphic_only_layer() {
+        let mut workspace = load_fixture_workspace_state();
+        let layer_id = "L777".to_string();
+        workspace.scene.layers.push(SceneLayer {
+            layer_id: layer_id.clone(),
+            name: "F.SilkS".to_string(),
+            kind: "silkscreen".to_string(),
+            render_order: 777,
+            visible_by_default: true,
+        });
+        workspace
+            .ui
+            .filters
+            .layer_visibility
+            .insert(layer_id.clone(), true);
+        workspace.scene.board_graphics.push(BoardGraphicPrimitive {
+            object_id: "board-graphic:text-only".to_string(),
+            object_kind: "board_graphic".to_string(),
+            primitive_kind: "polyline".to_string(),
+            source_object_uuid: "text-only".to_string(),
+            layer_id: layer_id.clone(),
+            path: vec![PointNm { x: 0, y: 0 }, PointNm { x: 1_000, y: 0 }],
+            holes: Vec::new(),
+            width_nm: Some(100_000),
+        });
+        let mut session = LiveDesignSession::new(workspace);
+
+        let result = session.apply(SessionCommand::ToggleLayerVisibility(layer_id));
+
+        assert!(result.handled);
+        assert_eq!(result.events, vec![SessionEvent::FrameChanged]);
+    }
+
+    #[test]
+    fn layer_toggle_changes_scene_for_copper_layer() {
+        let workspace = load_fixture_workspace_state();
+        let layer_id = workspace
+            .scene
+            .tracks
+            .first()
+            .map(|track| track.layer_id.clone())
+            .unwrap_or_else(|| "L0".to_string());
+        let mut session = LiveDesignSession::new(workspace);
+
+        let result = session.apply(SessionCommand::ToggleLayerVisibility(layer_id));
+
+        assert!(result.handled);
+        assert_eq!(result.events, vec![SessionEvent::SceneChanged]);
     }
 
     #[test]
@@ -5687,6 +7875,9 @@ mod tests {
             vec![],
             vec![],
             vec![],
+            vec![],
+            vec![],
+            vec![],
             vec![NetDisplayEntry {
                 net_uuid: "net-1".to_string(),
                 net_name: "SIG".to_string(),
@@ -5744,8 +7935,8 @@ mod tests {
         let (graphics, texts) = component_silkscreen_primitives(&component, payload);
         assert_eq!(graphics.len(), 1);
         assert!(texts.is_empty());
-        assert_eq!(graphics[0].path[0], PointNm { x: 1_000, y: 2_100 });
-        assert_eq!(graphics[0].path[1], PointNm { x: 800, y: 2_100 });
+        assert_eq!(graphics[0].path[0], PointNm { x: 1_000, y: 1_900 });
+        assert_eq!(graphics[0].path[1], PointNm { x: 1_200, y: 1_900 });
     }
 
     #[test]
@@ -5833,6 +8024,7 @@ mod tests {
                     y: 1_300_000,
                 },
             ],
+            holes: Vec::new(),
         };
         let text = ComponentTextPrimitive {
             text_id: "t1".to_string(),
@@ -5846,6 +8038,9 @@ mod tests {
             },
             rotation_degrees: 0.0,
             height_nm: 1_000_000,
+            face_name: None,
+            stroke_width_nm: None,
+            cached_polygons: Vec::new(),
         };
         let bounds = component_bounds(&component, &[], &[&graphic], &[&text]);
         assert_eq!(bounds.min_x, 680_000);
@@ -5855,10 +8050,246 @@ mod tests {
     }
 
     #[test]
+    fn kicad_text_justify_defaults_to_center_center() {
+        let justify = kicad_parse_text_justify(
+            r#"(property "Reference" "R2"
+  (effects
+    (font (size 1 1) (thickness 0.15))
+  )
+)"#,
+        );
+        assert_eq!(justify.h, KicadTextHJustify::Center);
+        assert_eq!(justify.v, KicadTextVJustify::Center);
+        assert!(!justify.mirrored);
+        assert!(!justify.keep_upright);
+    }
+
+    #[test]
+    fn kicad_text_justify_parses_left_and_bottom_tokens() {
+        let justify = kicad_parse_text_justify(
+            r#"(fp_text user "OUT"
+  (effects
+    (font (size 0.8 0.8) (thickness 0.12))
+    (justify left bottom)
+  )
+)"#,
+        );
+        assert_eq!(justify.h, KicadTextHJustify::Left);
+        assert_eq!(justify.v, KicadTextVJustify::Bottom);
+    }
+
+    #[test]
+    fn kicad_text_justify_parses_mirror_token() {
+        let justify = kicad_parse_text_justify(
+            r#"(fp_text user "OUT"
+  (effects
+    (font (size 0.8 0.8) (thickness 0.12))
+    (justify left mirror)
+  )
+)"#,
+        );
+        assert_eq!(justify.h, KicadTextHJustify::Left);
+        assert!(justify.mirrored);
+    }
+
+    #[test]
+    fn kicad_text_attributes_maps_justify_into_engine_alignments() {
+        let left = kicad_text_attributes(
+            PointNm { x: 0, y: 0 },
+            0,
+            800_000,
+            None,
+            KicadTextJustify {
+                h: KicadTextHJustify::Left,
+                v: KicadTextVJustify::Center,
+                mirrored: false,
+                keep_upright: false,
+            },
+        );
+        let center = kicad_text_attributes(
+            PointNm { x: 0, y: 0 },
+            0,
+            800_000,
+            None,
+            KicadTextJustify {
+                h: KicadTextHJustify::Center,
+                v: KicadTextVJustify::Center,
+                mirrored: false,
+                keep_upright: false,
+            },
+        );
+        let right = kicad_text_attributes(
+            PointNm { x: 0, y: 0 },
+            0,
+            800_000,
+            None,
+            KicadTextJustify {
+                h: KicadTextHJustify::Right,
+                v: KicadTextVJustify::Center,
+                mirrored: false,
+                keep_upright: false,
+            },
+        );
+        assert_eq!(left.h_align, TextHAlign::Left);
+        assert_eq!(center.h_align, TextHAlign::Center);
+        assert_eq!(right.h_align, TextHAlign::Right);
+        assert_eq!(left.v_align, TextVAlign::Center);
+        assert!(!left.keep_upright);
+    }
+
+    #[test]
+    fn kicad_text_attributes_preserves_mirror_and_keep_upright() {
+        let attrs = kicad_text_attributes(
+            PointNm { x: 0, y: 0 },
+            180,
+            800_000,
+            None,
+            KicadTextJustify {
+                h: KicadTextHJustify::Center,
+                v: KicadTextVJustify::Center,
+                mirrored: true,
+                keep_upright: true,
+            },
+        );
+        assert!(attrs.mirrored);
+        assert!(attrs.keep_upright);
+    }
+
+    #[test]
+    fn kicad_text_rotation_is_converted_into_engine_sign_convention() {
+        assert_eq!(kicad_text_rotation_degrees(0), 0);
+        assert_eq!(kicad_text_rotation_degrees(90), -90);
+        assert_eq!(kicad_text_rotation_degrees(-90), 90);
+        assert_eq!(kicad_text_rotation_degrees(180), -180);
+    }
+
+    #[test]
+    fn kicad_layer_parser_canonicalizes_uppercase_silkscreen_name() {
+        let block = r#"(property "Reference" "U1" (at 0 0 0) (layer "F.SILKS"))"#;
+        assert_eq!(
+            kicad_parse_layer_anywhere(block).as_deref(),
+            Some("F.SilkS")
+        );
+        assert_eq!(kicad_render_role("F.SILKS"), Some("component_silkscreen"));
+        assert_eq!(
+            kicad_resolve_layer_id("F.SILKS", &std::collections::HashMap::new()),
+            37
+        );
+    }
+
+    #[test]
+    fn imported_kicad_component_text_ignores_render_cache_for_final_geometry() {
+        let board = r#"(kicad_pcb
+  (footprint "Demo:Part"
+    (layer "F.Cu")
+    (uuid "00000000-0000-0000-0000-00000000cafe")
+    (at 10 20 0)
+    (property "Reference" "U1"
+      (at 1 2 90)
+      (layer "F.SilkS")
+      (effects
+        (font (size 1 1) (thickness 0.15))
+      )
+      (render_cache "U1" 90
+        (polygon
+          (pts
+            (xy 1 2)
+            (xy 3 2)
+            (xy 3 4)
+            (xy 1 4)
+          )
+        )
+      )
+    )
+  )
+)"#;
+        let components = vec![BoardComponentPayload {
+            uuid: "00000000-0000-0000-0000-00000000cafe".to_string(),
+            reference: "U1".to_string(),
+            value: "Demo".to_string(),
+            position: PointNm {
+                x: 10_000_000,
+                y: 20_000_000,
+            },
+            rotation: 0,
+            layer: 0,
+            locked: false,
+        }];
+        let (graphics, texts, board_texts, board_text_geometries, glyph_mesh_assets) =
+            extract_kicad_footprint_graphics(board, &components, &std::collections::HashMap::new());
+        assert!(
+            texts.is_empty(),
+            "imported KiCad text should materialize through geometry only, not the overlay text path"
+        );
+        assert!(
+            board_texts.iter().any(|entry| entry.text == "U1"),
+            "imported KiCad property text should materialize through the structured board-text path"
+        );
+        assert!(
+            board_text_geometries
+                .iter()
+                .any(|entry| entry.layer_id == "L37" && !entry.glyphs.is_empty()),
+            "imported KiCad property text should produce mesh-backed board text geometry"
+        );
+        assert!(
+            !glyph_mesh_assets.is_empty(),
+            "imported KiCad property text should contribute glyph mesh assets"
+        );
+        assert!(
+            graphics
+                .iter()
+                .all(|entry| !entry.graphic_id.contains(":prop-stroke:")
+                    && !entry.graphic_id.contains(":prop-cache:")
+                    && !entry.graphic_id.contains(":kicad-text-cache:")),
+            "cache-derived and stroke-derived imported text ids should disappear once Datum owns final text geometry"
+        );
+    }
+
+    #[test]
+    fn imported_kicad_gr_text_uses_structured_text_geometry_path() {
+        let board = r#"(kicad_pcb
+  (layers
+    (37 "F.SilkS" user "F.SilkS")
+  )
+  (gr_text "Demo"
+    (at 5 5 0)
+    (layer "F.SilkS")
+    (effects
+      (font (size 1 1) (thickness 0.15))
+    )
+    (uuid "66666666-7777-8888-9999-000000000000"))
+)"#;
+        let layer_table = kicad_parse_layer_table(board);
+        let (texts, geometries, glyph_mesh_assets) = extract_kicad_board_texts(board, &layer_table);
+
+        assert_eq!(texts.len(), 1);
+        assert_eq!(texts[0].text, "Demo");
+        assert_eq!(texts[0].layer_id, "L37");
+        assert_eq!(geometries.len(), 1);
+        assert_eq!(geometries[0].text_uuid, texts[0].text_uuid);
+        assert!(
+            !geometries[0].glyphs.is_empty(),
+            "imported gr_text should produce mesh-backed text geometry"
+        );
+        assert!(
+            geometries[0].strokes.is_empty(),
+            "imported gr_text must not route through Newstroke stroke geometry"
+        );
+        assert!(
+            !glyph_mesh_assets.is_empty(),
+            "imported gr_text should contribute glyph mesh assets"
+        );
+    }
+
+    #[test]
     fn datum_test_q_components_own_their_pads() {
         let request = LiveReviewRequest {
-            project_root: PathBuf::from("/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test"),
-            board_file: Some(PathBuf::from("/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb")),
+            project_root: PathBuf::from(
+                "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test",
+            ),
+            board_file: Some(PathBuf::from(
+                "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb",
+            )),
             artifact_path: None,
             net_uuid: None,
             from_anchor_pad_uuid: None,
@@ -5885,6 +8316,153 @@ mod tests {
                 "{reference} should own at least two pads, got {owned_pad_count}"
             );
         }
+    }
+
+    #[test]
+    fn datum_test_r2_reference_text_materializes_through_component_graphics() {
+        let request = LiveReviewRequest {
+            project_root: PathBuf::from(
+                "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test",
+            ),
+            board_file: Some(PathBuf::from(
+                "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb",
+            )),
+            artifact_path: None,
+            net_uuid: None,
+            from_anchor_pad_uuid: None,
+            to_anchor_pad_uuid: None,
+            profile: None,
+        };
+        let workspace =
+            load_board_editor_workspace_state(&request).expect("datum-test workspace should load");
+        let r2 = workspace
+            .scene
+            .components
+            .iter()
+            .find(|component| component.reference == "R2")
+            .expect("R2 should exist");
+        assert!(
+            workspace
+                .scene
+                .component_texts
+                .iter()
+                .all(|text| text.component_uuid != r2.component_uuid),
+            "R2 reference text should not remain on the component_texts branch"
+        );
+        assert!(
+            workspace.scene.board_texts.iter().any(|text| {
+                text.text == "R2"
+                    && text
+                        .style_class
+                        .as_deref()
+                        .is_some_and(|class| class.contains(&r2.component_uuid))
+            }),
+            "R2 reference text should materialize through the structured board-text geometry path"
+        );
+        assert!(
+            workspace
+                .scene
+                .component_graphics
+                .iter()
+                .all(|graphic| !graphic.graphic_id.contains(":prop-stroke:")),
+            "R2 reference text should not remain on the stroke component-graphics branch"
+        );
+    }
+
+    #[test]
+    fn datum_test_q1_reference_text_materializes_through_datum_geometry() {
+        let request = LiveReviewRequest {
+            project_root: PathBuf::from(
+                "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test",
+            ),
+            board_file: Some(PathBuf::from(
+                "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb",
+            )),
+            artifact_path: None,
+            net_uuid: None,
+            from_anchor_pad_uuid: None,
+            to_anchor_pad_uuid: None,
+            profile: None,
+        };
+        let workspace =
+            load_board_editor_workspace_state(&request).expect("datum-test workspace should load");
+        let q1 = workspace
+            .scene
+            .components
+            .iter()
+            .find(|component| component.reference == "Q1")
+            .expect("Q1 should exist");
+        assert!(
+            workspace
+                .scene
+                .component_texts
+                .iter()
+                .all(|text| text.component_uuid != q1.component_uuid),
+            "Q1 should not remain on the component_texts branch"
+        );
+        assert!(
+            workspace.scene.board_texts.iter().any(|text| {
+                text.text == "Q1"
+                    && text
+                        .style_class
+                        .as_deref()
+                        .is_some_and(|class| class.contains(&q1.component_uuid))
+            }),
+            "Q1 reference text should synthesize into the structured board-text geometry path"
+        );
+        assert!(
+            workspace
+                .scene
+                .board_text_geometries
+                .iter()
+                .any(|geometry| !geometry.glyphs.is_empty()),
+            "Q1 reference text path should emit mesh-backed text geometry"
+        );
+    }
+
+    #[test]
+    fn doa2526_q1_reference_text_materializes_through_datum_geometry() {
+        let request = LiveReviewRequest {
+            project_root: PathBuf::from(
+                "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526",
+            ),
+            board_file: Some(PathBuf::from(
+                "/home/bfadmin/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_pcb",
+            )),
+            artifact_path: None,
+            net_uuid: None,
+            from_anchor_pad_uuid: None,
+            to_anchor_pad_uuid: None,
+            profile: None,
+        };
+        let workspace =
+            load_board_editor_workspace_state(&request).expect("DOA2526 workspace should load");
+        let q1 = workspace
+            .scene
+            .components
+            .iter()
+            .find(|component| component.reference == "Q1")
+            .expect("Q1 should exist");
+        assert!(
+            workspace.scene.board_texts.iter().any(|text| {
+                text.text == "Q1"
+                    && text
+                        .style_class
+                        .as_deref()
+                        .is_some_and(|class| class.contains(&q1.component_uuid))
+            }),
+            "DOA2526 Q1 reference text should materialize through the same structured text geometry path as cache-absent fixtures"
+        );
+        assert!(
+            workspace
+                .scene
+                .component_graphics
+                .iter()
+                .all(|graphic| !graphic.graphic_id.contains(":prop-stroke:")
+                    && !graphic.graphic_id.contains(":prop-cache:")
+                    && !graphic.graphic_id.contains(":kicad-text-cache:")),
+            "DOA2526 should not retain stroke-derived or cache-derived imported text geometry ids"
+        );
     }
 
     #[test]

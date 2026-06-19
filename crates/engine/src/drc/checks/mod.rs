@@ -2,7 +2,7 @@
 
 use uuid::Uuid;
 
-use crate::board::{Board, BoardText, Track, Via};
+use crate::board::{Board, BoardText, PlacedPad, Track, Via};
 use crate::ir::geometry::{LayerId, Point};
 use crate::rules::ast::RuleType;
 
@@ -293,6 +293,79 @@ pub(super) fn run_silk_clearance_checks(board: &Board) -> Vec<DrcViolation> {
     }
 
     violations
+}
+
+pub(super) fn run_process_aperture_checks(board: &Board) -> Vec<DrcViolation> {
+    let mut violations = Vec::new();
+    let required_mask_expansion = board.pad_expansion_setup.pad_to_mask_clearance_nm.max(0);
+    let required_paste_reduction = (-board.pad_expansion_setup.pad_to_paste_clearance_nm).max(0);
+
+    if required_mask_expansion == 0 && required_paste_reduction == 0 {
+        return violations;
+    }
+
+    let mut pads: Vec<&PlacedPad> = board.pads.values().collect();
+    pads.sort_by_key(|pad| pad.uuid);
+
+    for pad in pads {
+        if required_mask_expansion > 0
+            && !pad.mask_layers.is_empty()
+            && pad.solder_mask_margin_nm < required_mask_expansion
+        {
+            let code = if pad.solder_mask_margin_nm == 0 {
+                "pad_mask_expansion_missing"
+            } else {
+                "pad_mask_expansion_below_rule"
+            };
+            violations.push(pad_process_aperture_violation(
+                pad,
+                code,
+                format!(
+                    "pad {} solder-mask expansion {}nm is below required {}nm",
+                    pad.name, pad.solder_mask_margin_nm, required_mask_expansion
+                ),
+            ));
+        }
+
+        if required_paste_reduction > 0
+            && !pad.paste_layers.is_empty()
+            && pad.solder_paste_margin_nm > -required_paste_reduction
+        {
+            let actual_reduction = (-pad.solder_paste_margin_nm).max(0);
+            let code = if pad.solder_paste_margin_nm == 0 {
+                "pad_paste_reduction_missing"
+            } else {
+                "pad_paste_reduction_below_rule"
+            };
+            violations.push(pad_process_aperture_violation(
+                pad,
+                code,
+                format!(
+                    "pad {} paste reduction {}nm is below required {}nm",
+                    pad.name, actual_reduction, required_paste_reduction
+                ),
+            ));
+        }
+    }
+
+    violations
+}
+
+fn pad_process_aperture_violation(pad: &PlacedPad, code: &str, message: String) -> DrcViolation {
+    DrcViolation {
+        id: Uuid::new_v4(),
+        code: code.into(),
+        rule_type: RuleType::ProcessAperture,
+        severity: DrcSeverity::Error,
+        message,
+        location: Some(DrcLocation {
+            x_nm: pad.position.x,
+            y_nm: pad.position.y,
+            layer: Some(pad.layer),
+        }),
+        objects: vec![pad.uuid],
+        waived: false,
+    }
 }
 
 fn required_clearance_nm(board: &Board, net_a: Uuid, net_b: Uuid) -> i64 {

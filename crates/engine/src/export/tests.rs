@@ -580,8 +580,20 @@ fn render_rs274x_silkscreen_layer_emits_text_strokes() {
         },
         rotation: 0,
         layer: 3,
+        render_intent: crate::text::TextRenderIntent::Manufacturing,
+        family: crate::text::TextFamilyId::default(),
+        family_source: crate::text::TextFamilySource::ImplicitDefault,
+        style: crate::text::TextStyleId::default(),
         height_nm: 1_000_000,
         stroke_width_nm: 120_000,
+        h_align: crate::text::TextHAlign::Left,
+        v_align: crate::text::TextVAlign::Bottom,
+        mirrored: false,
+        keep_upright: false,
+        line_spacing_ratio_ppm: 1_000_000,
+        italic: false,
+        bold: false,
+        style_class: None,
     }];
 
     let gerber = render_rs274x_silkscreen_layer(3, &texts, &[]).expect("silkscreen should render");
@@ -612,18 +624,30 @@ fn render_rs274x_silkscreen_layer_emits_component_strokes() {
 fn render_rs274x_silkscreen_layer_rejects_unsupported_character() {
     let texts = vec![BoardText {
         uuid: uuid::Uuid::nil(),
-        text: "@".to_string(),
+        text: "🦀".to_string(),
         position: Point { x: 0, y: 0 },
         rotation: 0,
         layer: 3,
+        render_intent: crate::text::TextRenderIntent::Manufacturing,
+        family: crate::text::TextFamilyId::default(),
+        family_source: crate::text::TextFamilySource::ImplicitDefault,
+        style: crate::text::TextStyleId::default(),
         height_nm: 1_000_000,
         stroke_width_nm: 120_000,
+        h_align: crate::text::TextHAlign::Left,
+        v_align: crate::text::TextVAlign::Bottom,
+        mirrored: false,
+        keep_upright: false,
+        line_spacing_ratio_ppm: 1_000_000,
+        italic: false,
+        bold: false,
+        style_class: None,
     }];
 
     let err = render_rs274x_silkscreen_layer(3, &texts, &[]).expect_err("unsupported character");
     assert!(matches!(
         err,
-        ExportError::UnsupportedSilkscreenTextCharacter('@')
+        ExportError::UnsupportedSilkscreenTextCharacter('🦀')
     ));
 }
 

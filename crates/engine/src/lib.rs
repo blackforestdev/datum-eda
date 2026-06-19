@@ -20,3 +20,4 @@ pub mod pool;
 pub mod rules;
 pub mod schematic;
 pub mod session;
+pub mod text;

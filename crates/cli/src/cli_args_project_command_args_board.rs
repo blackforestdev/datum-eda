@@ -22,6 +22,39 @@ pub(crate) struct ProjectPlaceBoardTextArgs {
     /// Stroke width in nm
     #[arg(long = "stroke-width-nm", default_value_t = 100_000)]
     pub(crate) stroke_width_nm: i64,
+    /// Render intent: manufacturing, annotation, branding, documentation, ui_preview
+    #[arg(long = "render-intent")]
+    pub(crate) render_intent: Option<String>,
+    /// Explicit font family id override
+    #[arg(long = "family")]
+    pub(crate) family: Option<String>,
+    /// Explicit font style id override
+    #[arg(long = "style")]
+    pub(crate) style: Option<String>,
+    /// Text style-class handle
+    #[arg(long = "style-class")]
+    pub(crate) style_class: Option<String>,
+    /// Horizontal anchor alignment: left, center, right
+    #[arg(long = "h-align")]
+    pub(crate) h_align: Option<String>,
+    /// Vertical anchor alignment: top, center, bottom
+    #[arg(long = "v-align")]
+    pub(crate) v_align: Option<String>,
+    /// Mirror text across its local X axis
+    #[arg(long)]
+    pub(crate) mirrored: bool,
+    /// Keep text upright when board/view transforms would invert readability
+    #[arg(long = "keep-upright")]
+    pub(crate) keep_upright: bool,
+    /// Multiline line spacing ratio in parts per million
+    #[arg(long = "line-spacing-ratio-ppm", default_value_t = 1_000_000)]
+    pub(crate) line_spacing_ratio_ppm: i32,
+    /// Enable bold styling
+    #[arg(long)]
+    pub(crate) bold: bool,
+    /// Enable italic styling
+    #[arg(long)]
+    pub(crate) italic: bool,
     /// Layer identifier
     #[arg(long)]
     pub(crate) layer: i32,
@@ -52,6 +85,39 @@ pub(crate) struct ProjectEditBoardTextArgs {
     /// Replacement stroke width in nm
     #[arg(long = "stroke-width-nm")]
     pub(crate) stroke_width_nm: Option<i64>,
+    /// Replacement render intent: manufacturing, annotation, branding, documentation, ui_preview
+    #[arg(long = "render-intent")]
+    pub(crate) render_intent: Option<String>,
+    /// Replacement explicit font family id override
+    #[arg(long = "family")]
+    pub(crate) family: Option<String>,
+    /// Replacement explicit font style id override
+    #[arg(long = "style")]
+    pub(crate) style: Option<String>,
+    /// Replacement text style-class handle
+    #[arg(long = "style-class")]
+    pub(crate) style_class: Option<String>,
+    /// Replacement horizontal anchor alignment: left, center, right
+    #[arg(long = "h-align")]
+    pub(crate) h_align: Option<String>,
+    /// Replacement vertical anchor alignment: top, center, bottom
+    #[arg(long = "v-align")]
+    pub(crate) v_align: Option<String>,
+    /// Replacement mirror flag
+    #[arg(long)]
+    pub(crate) mirrored: Option<bool>,
+    /// Replacement keep-upright flag
+    #[arg(long = "keep-upright")]
+    pub(crate) keep_upright: Option<bool>,
+    /// Replacement multiline line spacing ratio in parts per million
+    #[arg(long = "line-spacing-ratio-ppm")]
+    pub(crate) line_spacing_ratio_ppm: Option<i32>,
+    /// Replacement bold styling flag
+    #[arg(long)]
+    pub(crate) bold: Option<bool>,
+    /// Replacement italic styling flag
+    #[arg(long)]
+    pub(crate) italic: Option<bool>,
     /// Replacement layer identifier
     #[arg(long)]
     pub(crate) layer: Option<i32>,

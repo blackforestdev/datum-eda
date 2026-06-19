@@ -124,8 +124,20 @@ pub(crate) fn native_component_mechanical_text_to_strokes(
         position: transform_component_local_point(component, &text.position),
         rotation: component.rotation + text.rotation,
         layer: text.layer,
+        render_intent: eda_engine::text::TextRenderIntent::Manufacturing,
+        family: eda_engine::text::TextFamilyId::default(),
+        family_source: eda_engine::text::TextFamilySource::ImplicitDefault,
+        style: eda_engine::text::TextStyleId::default(),
         height_nm: text.height_nm,
         stroke_width_nm: text.stroke_width_nm,
+        h_align: eda_engine::text::TextHAlign::Left,
+        v_align: eda_engine::text::TextVAlign::Bottom,
+        mirrored: false,
+        keep_upright: false,
+        line_spacing_ratio_ppm: 1_000_000,
+        italic: false,
+        bold: false,
+        style_class: None,
     };
     native_board_text_to_strokes(&text)
 }
