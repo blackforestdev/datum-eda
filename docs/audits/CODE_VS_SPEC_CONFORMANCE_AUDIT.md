@@ -15,11 +15,19 @@ This audit re-measures the Datum EDA production codebase against its
 two-layer specification — formal specs in `specs/` plus design docs in
 `docs/` — AND the ratified product-mechanics direction
 (`docs/DATUM_PRODUCT_MECHANICS.md` "Interop Boundary And Import Posture",
-`docs/decisions/PRODUCT_MECHANICS_000..013`, `docs/contracts/`, and
+`docs/decisions/PRODUCT_MECHANICS_000..012`, `docs/contracts/`, and
 `docs/audits/scope-integration/`). This pass is a DELTA against the
 2026-06-22 refresh #1: for each prior finding it sets resolved / partial /
 open / regressed / obsolete with current evidence, adds newly-landed
 capability and new divergences, and re-rates each subsystem.
+
+> **OBSOLETE (2026-06-23):** The Decision-013 "GUI supervision-reflection"
+> track — the decision record, `specs/GUI_SPEC.md` + the `specs/gui/*` area
+> spec set, and the supervision-reflection code — was a misdirection and has
+> been reverted/removed. Every finding, gap, and priority in this snapshot
+> that references supervision-reflection, Decision-013, or the GUI spec set is
+> VOID. The GUI direction will be redefined from the owner's intent
+> (interactive authoring the user can actually use).
 
 The ratified "north": native-first AI-augmented EDA (schematic → PCB →
 CAM); the native model + native format are the ONLY authority; KiCad

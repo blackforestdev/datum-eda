@@ -126,62 +126,6 @@ pub fn run_fixture(manifest_path: impl AsRef<Path>) -> Result<VisualFixtureOutco
     VisualFixtureRun::load(manifest_path)?.run()
 }
 
-/// Render a code-built `ReviewWorkspaceState` to a deterministic offscreen image.
-///
-/// Some surfaces (e.g. the read-only supervision-reflection panel, which displays
-/// in-process journal / resolver projections) cannot be driven from an on-disk
-/// project the way the manifest harness loads board geometry. This helper renders
-/// such a workspace through the SAME production renderer the manifest path uses,
-/// so the golden still exercises real rendering code, not a placeholder.
-pub fn render_workspace_image(
-    state: &ReviewWorkspaceState,
-    width: u32,
-    height: u32,
-) -> Result<RgbaImage> {
-    let mut renderer = OffscreenRenderer::new(width, height)?;
-    renderer.render_workspace(state, Some(CameraState::fit_to_bounds(&state.scene.bounds)))
-}
-
-/// Compare a freshly rendered workspace against a checked-in PNG golden under the
-/// exact (byte-stable) diff policy, returning an error on any differing pixel.
-pub fn run_workspace_golden(
-    state: &ReviewWorkspaceState,
-    width: u32,
-    height: u32,
-    golden_path: impl AsRef<Path>,
-) -> Result<DiffResult> {
-    let golden_path = golden_path.as_ref();
-    let actual = render_workspace_image(state, width, height)?;
-    let expected = image::open(golden_path)
-        .with_context(|| format!("read workspace golden {}", golden_path.display()))?
-        .to_rgba8();
-    let result = compare_images(&expected, &actual, DiffPolicy::Exact)?;
-    if !result.passed {
-        bail!(
-            "workspace golden {} failed: {} differing pixels ({:.6}%)",
-            golden_path.display(),
-            result.differing_pixels,
-            result.differing_pct
-        );
-    }
-    Ok(result)
-}
-
-/// Bless a code-built workspace golden: render and write the PNG. Used once to
-/// establish the checked-in golden, then re-run via `run_workspace_golden`.
-pub fn bless_workspace_golden(
-    state: &ReviewWorkspaceState,
-    width: u32,
-    height: u32,
-    golden_path: impl AsRef<Path>,
-) -> Result<()> {
-    let golden_path = golden_path.as_ref();
-    let actual = render_workspace_image(state, width, height)?;
-    actual
-        .save(golden_path)
-        .with_context(|| format!("write workspace golden {}", golden_path.display()))
-}
-
 pub fn bless_fixture(manifest_path: impl AsRef<Path>) -> Result<()> {
     VisualFixtureRun::load(manifest_path)?.bless()
 }

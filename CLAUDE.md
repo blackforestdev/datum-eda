@@ -33,11 +33,9 @@ they support the product; they do not define its identity.
   redundant tool is a defect.
 
 > Controlling product doctrine lives in `docs/DATUM_PRODUCT_MECHANICS.md`, the
-> decision records `docs/decisions/PRODUCT_MECHANICS_000..013` (013 =
-> `PRODUCT_MECHANICS_013_GUI_SUPERVISION_AND_PARITY.md`, GUI supervision-
-> reflection vs interactive-authoring parity), and the per-domain tool
-> contracts in `docs/contracts/`. Read those before inferring product intent
-> from code or a milestone.
+> decision records `docs/decisions/PRODUCT_MECHANICS_000..012`, and the
+> per-domain tool contracts in `docs/contracts/`. Read those before inferring
+> product intent from code or a milestone.
 
 ## Current Status
 The project has been course-corrected from a milestone-driven roadmap to the
@@ -56,8 +54,7 @@ product-mechanics docs.
 - **Post-correction sequence (committed):** substrate (committed,
   converging) → library →
   native authoring + GUI surface. The GUI build-out is a named, real phase of
-  this sequence — supervision-reflection parity early, the interactive editor
-  later — **not** an implied "M8 later". See PRODUCT_MECHANICS_013.
+  this sequence — **not** an implied "M8 later".
 - **Frozen:** KiCad import. The M7 spike already imports a board with enough
   fidelity to recognize all design aspects; that is sufficient — no further
   import work until native authoring is real. Native is always the authority;
@@ -101,9 +98,9 @@ Real, shipped capability — read alongside the substrate gap below:
 - **Library:** native pool/library mutation runs through the substrate, but the
   decision-008 native types (Footprint/PinPadMap/LibraryBinding) exist as JSON
   subdirs, not yet Rust types; the IPC footprint system is absent.
-- **GUI:** a review surface, not an editor. Per `PRODUCT_MECHANICS_013`,
-  supervision-reflection parity (the GUI visually displaying engine state) is
-  the first GUI deliverable; interactive authoring is the deferred editor phase.
+- **GUI:** a review surface, not an editor. Interactive authoring in the GUI
+  (the user selecting a tool and drawing/placing/editing, wired to the engine)
+  is not yet built.
 
 The per-domain tool contracts in `docs/contracts/` specify the target each
 domain builds toward once the substrate lands.
@@ -118,13 +115,9 @@ domain builds toward once the substrate lands.
 - **Do not infer product identity** from the active milestone or the nearest
   import/render/regression task. Use the product-mechanics doctrine.
 - No editing path may bypass the canonical operation/commit/journal model.
-- A viewer or review surface is not an editor. But **engine-first/GUI-last**
-  is deliberate only for the GUI *editor*: the GUI must still visually reflect
-  committed engine/native state so a human can supervise progress.
-  **Supervision-reflection parity** (read-only display of authored geometry,
-  operation/check/manufacturing results, agent activity) is required and is
-  the first GUI deliverable; **interactive-authoring parity** is the deferred
-  GUI editor phase. See PRODUCT_MECHANICS_013.
+- A viewer or review surface is not an editor. **Engine-first/GUI-last** is
+  deliberate only for the GUI *editor*: building the GUI editor (interactive
+  authoring) is a real, named phase of the work, not an implied "M8 later".
 - Prefer work that strengthens native EDA primitives and manual workflows.
 - Do not expand import fidelity unless it supports a clear product need.
 

@@ -132,9 +132,6 @@ fn selection_cache_key(workspace: &datum_gui_protocol::ReviewWorkspaceState) -> 
         datum_gui_protocol::SelectionTarget::ReviewAction(id) => format!("review:{id}"),
         datum_gui_protocol::SelectionTarget::AuthoredObject(id) => format!("object:{id}"),
         datum_gui_protocol::SelectionTarget::CheckFinding(id) => format!("finding:{id}"),
-        datum_gui_protocol::SelectionTarget::Finding(id) => format!("finding:{id}"),
-        datum_gui_protocol::SelectionTarget::JournalEntry(id) => format!("journal:{id}"),
-        datum_gui_protocol::SelectionTarget::Relationship(id) => format!("relationship:{id}"),
     }
 }
 
@@ -170,9 +167,6 @@ fn retained_selection_cache_key(
                 format!("object:{id}")
             }
         }
-        datum_gui_protocol::SelectionTarget::Finding(id) => format!("finding:{id}"),
-        datum_gui_protocol::SelectionTarget::JournalEntry(id) => format!("journal:{id}"),
-        datum_gui_protocol::SelectionTarget::Relationship(id) => format!("relationship:{id}"),
     }
 }
 
@@ -717,7 +711,7 @@ impl ApplicationHandler for App {
                                 ui.assistant.input.clear();
                                 ui.assistant.cursor = 0;
                             }
-                            Some(DockTab::Outputs) | Some(DockTab::Supervision) => {}
+                            Some(DockTab::Outputs) => {}
                             None => {}
                         }
                         runtime.invalidate_frame();
@@ -1647,7 +1641,7 @@ impl Runtime {
         match self.workspace().ui.active_dock_tab {
             Some(DockTab::Terminal) => self.modifiers.shift_key(),
             Some(DockTab::Assistant) => !self.modifiers.shift_key(),
-            Some(DockTab::Outputs) | Some(DockTab::Supervision) | None => false,
+            Some(DockTab::Outputs) | None => false,
         }
     }
 
@@ -1869,7 +1863,6 @@ impl Runtime {
             Some(DockTab::Assistant) => self.complete_assistant_input(),
             Some(DockTab::Terminal) => false,
             Some(DockTab::Outputs) => false,
-            Some(DockTab::Supervision) => false,
             None => false,
         }
     }
@@ -1949,7 +1942,6 @@ impl Runtime {
             Some(DockTab::Terminal) => false,
             Some(DockTab::Assistant) => self.submit_assistant_input(),
             Some(DockTab::Outputs) => false,
-            Some(DockTab::Supervision) => false,
             None => false,
         }
     }
@@ -2660,20 +2652,6 @@ impl Runtime {
             HitTarget::TerminalTab => self.set_active_dock(DockTab::Terminal),
             HitTarget::AssistantTab => self.open_terminal_agent_launcher(),
             HitTarget::OutputsTab => self.set_active_dock(DockTab::Outputs),
-            HitTarget::SupervisionTab => self.set_active_dock(DockTab::Supervision),
-            HitTarget::SupervisionJournalEntry(transaction_id) => {
-                // Read-only supervision selection (consumer state only): never a
-                // commit. Cross-highlights the journal entry's diff objects.
-                let handled = self.dispatch_session_command(SessionCommand::SelectJournalEntry(
-                    transaction_id.clone(),
-                ));
-                if handled {
-                    self.log_review_event(format!(
-                        "selected supervision journal entry {transaction_id}"
-                    ));
-                }
-                handled
-            }
             HitTarget::TerminalActivitySummary(summary) => {
                 self.set_active_dock(DockTab::Assistant);
                 self.push_assistant_message(
