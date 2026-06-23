@@ -50,11 +50,10 @@ product-mechanics docs.
   the product-mechanics **substrate** (typed `Operation` enum + single
   `commit()` + journal + `ProjectResolver` + stable
   `ObjectId`/`ComponentInstance` + `model_revision` + Import Map), has
-  substantially **landed in the worktree** (uncommitted at HEAD `22aeebe`) and
-  now backs a growing share of native authoring; the active work is converging
-  every write surface onto it. See the substrate-readiness table in
-  `specs/PROGRESS.md`.
-- **Post-correction sequence (committed):** substrate (landed in worktree,
+  **landed and is committed** (HEAD `5fe3016`) and now backs a growing share of
+  native authoring; the active work is converging every remaining write surface
+  onto it. See the substrate-readiness table in `specs/PROGRESS.md`.
+- **Post-correction sequence (committed):** substrate (committed,
   converging) → library →
   native authoring + GUI surface. The GUI build-out is a named, real phase of
   this sequence — supervision-reflection parity early, the interactive editor
@@ -86,20 +85,19 @@ Real, shipped capability — read alongside the substrate gap below:
   review surface + visual regression harness
 
 ### Known gap between status and ethos (do not overstate)
-- **Uncommitted:** the substrate and most recent native-authoring work live in
-  the worktree at HEAD `22aeebe`, not in any commit — a fresh checkout sees
-  almost none of it. Do not commit code without the matching `SPEC_PARITY.md`
-  refresh, or the parity gate fails.
+- **Committed:** the substrate and the native-authoring work that backs it are
+  committed at HEAD `5fe3016`; a fresh checkout now sees it. Do not commit code
+  without the matching `SPEC_PARITY.md` refresh, or the parity gate fails.
 - **Convergence-debt, not absence:** the substrate exists but is not yet the
   universal write authority. ~14 `write_canonical_json` sites remain (e.g.
-  project-create bootstrap); the daemon dispatch imports zero substrate, so
-  legacy MCP write tools still reach a non-journaled path; the imported-KiCad
-  `Engine::save` text-patch path is still legacy. Routing every surface onto
-  `commit()` is the active convergence work.
-- **Known correctness defects (open P0s):** the schematic global-label merge
-  keys on root-count not name (`connectivity/mod.rs`) and can fuse distinct
-  global nets; the committed engine DRC counts unfilled zones as routed copper
-  (a fabrication-trust hole).
+  project-create bootstrap); the imported-KiCad `Engine::save` text-patch path
+  is still legacy. The public daemon write-bypass is now CLOSED — the daemon
+  write path is fenced by the new daemon write-parity gate. Routing every
+  remaining surface onto `commit()` is the active convergence work.
+- **Known correctness defects (P0s — FIXED):** the schematic global-label merge
+  (formerly keyed on root-count not name in `connectivity/mod.rs`, fusing
+  distinct global nets) is now name-keyed; the engine DRC no longer counts
+  unfilled zones as routed copper. Both are CLOSED as of HEAD `5fe3016`.
 - **Library:** native pool/library mutation runs through the substrate, but the
   decision-008 native types (Footprint/PinPadMap/LibraryBinding) exist as JSON
   subdirs, not yet Rust types; the IPC footprint system is absent.

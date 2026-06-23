@@ -70,9 +70,13 @@ Import Map `import_key`; NO `ComponentInstance`; NO project-local vs
 reusable pool layering; `Padstack` has NO mask/paste/annular/per-layer
 policy; `ModelRef` is a bare path string, not a hashed
 `ModelAttachment`; and the pool FUSES the land pattern into `Package`,
-whereas Decision 008 mandates a SEPARATE `Footprint` object. Every tool
-below therefore depends on a substrate slice that does not exist yet
-(see Not-Yet-Supported and Open Owner Questions).
+whereas Decision 008 mandates a SEPARATE `Footprint` object. The shared
+write substrate these tools build on now EXISTS (committed at HEAD
+`5fe3016`): the typed `Operation`/`OperationBatch` enum, single
+`commit()`/journal, `ObjectId`/`object_revision`, `ComponentInstance`, and
+the Import Map. What remains is the library-specific layer above it — the
+decision-008 native types and the per-kind library ops (see
+Not-Yet-Supported and Open Owner Questions).
 
 ## Reference-Tool Survey (with the lean rationale)
 
@@ -158,8 +162,8 @@ DomainObjects, each with `ObjectId`/`object_revision`.
    `CreateLibraryObject{kind: Symbol|Footprint|Package|Padstack|Part|
    PinPadMap|ModelAttachment, fields}` and
    `EditLibraryObjectField{object_id, patch}`. Both route through the
-   single `commit()` primitive (shared surface; does not exist yet),
-   mint or bump `ObjectId` + `object_revision`, and append a journal
+   single `commit()` primitive (shared surface; committed at HEAD
+   `5fe3016`), mint or bump `ObjectId` + `object_revision`, and append a journal
    `TransactionRecord`. PinPadMap reference resolution, process-aperture
    (mask/paste) policy, and model hash-on-create are kind-specific
    validation INSIDE these two ops — not separate verbs. Unplaced edit

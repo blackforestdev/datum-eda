@@ -41,8 +41,8 @@ paths so an implementer can locate both.
 
 ### Substrate prerequisite (hard, blocks all five domains)
 
-The substrate this contract assumes has substantially LANDED in the worktree
-(uncommitted at HEAD `22aeebe`): a typed `Operation` / `OperationBatch` enum,
+The substrate this contract assumes has LANDED and is committed (HEAD
+`5fe3016`): a typed `Operation` / `OperationBatch` enum,
 journaled `commit()` / `commit_journaled()`, `ProjectResolver`,
 `model_revision` / `object_revision`, `ComponentInstance`, and the Import Map
 (`import_key`) all exist in `crates/engine/src/substrate/`. Imported-board
@@ -52,8 +52,8 @@ mutations also journal via per-method `TransactionRecord`
 What is NOT yet universal: full generic `commit()` coverage across every
 surface, the `DatumToolSession` / `DatumContextEnvelope` session authority, and
 broad GUI-native editing. Convergence gaps: ~14 `write_canonical_json` sites
-remain (e.g. project-create bootstrap), and the daemon dispatch still imports
-zero substrate, so some legacy MCP write tools reach a non-journaled path.
+remain (e.g. project-create bootstrap). The public daemon write-bypass is now
+closed — the daemon write path is fenced by the daemon write-parity gate.
 
 Therefore this document describes the target AI/CLI/MCP surface on a foundation
 that has largely landed. The remaining work is converging every write surface
