@@ -62,10 +62,18 @@ def find_base_ref() -> str | None:
 
 
 def merge_base_commit() -> str | None:
+    head_code, head = run(["git", "rev-parse", "HEAD"])
+    head = head if head_code == 0 else ""
     base_ref = find_base_ref()
     if base_ref:
         code, out = run(["git", "merge-base", "HEAD", base_ref])
-        if code == 0 and out:
+        # Direct-to-main workflow: this project commits straight to main (no PR
+        # branch), so once the commit is pushed, origin/main == HEAD and the
+        # merge-base resolves to HEAD itself. "Shrink vs base" is then
+        # unsatisfiable (a file cannot be smaller than itself), which would
+        # falsely flag any monolith touched in the last commit. Fall through to
+        # HEAD~1 so burn-down is measured against the previous commit instead.
+        if code == 0 and out and out != head:
             return out
     code, out = run(["git", "rev-parse", "HEAD~1"])
     if code == 0 and out:

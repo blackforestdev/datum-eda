@@ -279,8 +279,8 @@ pub fn schematic_net_info(schematic: &Schematic) -> Vec<SchematicNetInfo> {
 
     let mut merged: BTreeMap<String, NetAggregate> = BTreeMap::new();
 
-    for roots in global_label_groups_by_name.values() {
-        let merge_key = format!("global:{}", roots.len());
+    for (name, roots) in &global_label_groups_by_name {
+        let merge_key = format!("global:{name}");
         let entry = merged.entry(merge_key).or_default();
         for root in roots {
             if let Some(group) = point_groups.get(root) {

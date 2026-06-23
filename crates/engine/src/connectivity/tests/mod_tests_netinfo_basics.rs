@@ -279,3 +279,81 @@ fn infers_power_semantics_for_local_supply_labels() {
             .any(|net| net.name == "VEE" && net.semantic_class.as_deref() == Some("power"))
     );
 }
+
+#[test]
+fn distinct_global_labels_with_equal_root_counts_stay_separate() {
+    // Regression: the cross-sheet global-label merge key was once derived from
+    // the COUNT of roots (`global:{roots.len()}`) rather than the label NAME.
+    // Two distinct global nets that happen to occur on the same number of sheets
+    // (here VCC on 3 sheets and GND on 3 sheets) would silently fuse into a
+    // single net, corrupting connectivity feeding ERC/DRC/export. They must
+    // resolve to two separate nets keyed by name.
+    fn global_label_sheet(sheet_uuid: Uuid, name: &str, label_name: &str, x: i64) -> Sheet {
+        Sheet {
+            uuid: sheet_uuid,
+            name: name.into(),
+            frame: None,
+            symbols: HashMap::new(),
+            wires: HashMap::new(),
+            junctions: HashMap::new(),
+            labels: HashMap::from([(
+                Uuid::new_v4(),
+                NetLabel {
+                    uuid: Uuid::new_v4(),
+                    kind: LabelKind::Global,
+                    name: label_name.into(),
+                    position: Point::new(x, 0),
+                },
+            )]),
+            buses: HashMap::new(),
+            bus_entries: HashMap::new(),
+            ports: HashMap::new(),
+            noconnects: HashMap::new(),
+            texts: HashMap::new(),
+            drawings: HashMap::new(),
+        }
+    }
+
+    let mut sheets = HashMap::new();
+    // VCC on three distinct sheets.
+    for (idx, name) in ["A", "B", "C"].into_iter().enumerate() {
+        let id = Uuid::new_v4();
+        sheets.insert(id, global_label_sheet(id, name, "VCC", idx as i64 * 100));
+    }
+    // GND on three distinct sheets — equal root count to VCC.
+    for (idx, name) in ["D", "E", "F"].into_iter().enumerate() {
+        let id = Uuid::new_v4();
+        sheets.insert(id, global_label_sheet(id, name, "GND", idx as i64 * 100));
+    }
+
+    let schematic = Schematic {
+        uuid: Uuid::new_v4(),
+        sheets,
+        sheet_definitions: HashMap::new(),
+        sheet_instances: HashMap::new(),
+        variants: HashMap::new(),
+        waivers: Vec::new(),
+    };
+
+    let nets = schematic_net_info(&schematic);
+    assert_eq!(
+        nets.len(),
+        2,
+        "distinct global labels with equal root counts must not fuse: {:?}",
+        nets.iter().map(|net| &net.name).collect::<Vec<_>>()
+    );
+
+    let vcc = nets
+        .iter()
+        .find(|net| net.name == "VCC")
+        .expect("VCC net present");
+    let gnd = nets
+        .iter()
+        .find(|net| net.name == "GND")
+        .expect("GND net present");
+
+    assert_eq!(vcc.labels, 3, "VCC should aggregate its 3 sheet labels");
+    assert_eq!(gnd.labels, 3, "GND should aggregate its 3 sheet labels");
+    assert_eq!(vcc.sheets, vec!["A".to_string(), "B".to_string(), "C".to_string()]);
+    assert_eq!(gnd.sheets, vec!["D".to_string(), "E".to_string(), "F".to_string()]);
+}

@@ -45,7 +45,7 @@ COMPATIBILITY_TOOL_SPECS: list[dict[str, object]] = [
     {"name": "create_pool_entity", **LIBRARY_TOOL_SCHEMAS["create_pool_entity"]}, {"name": "create_pool_padstack", **LIBRARY_TOOL_SCHEMAS["create_pool_padstack"]}, {"name": "create_pool_package", **LIBRARY_TOOL_SCHEMAS["create_pool_package"]}, {"name": "set_pool_package_pad", **LIBRARY_TOOL_SCHEMAS["set_pool_package_pad"]}, {"name": "set_pool_package_courtyard_rect", **LIBRARY_TOOL_SCHEMAS["set_pool_package_courtyard_rect"]}, {"name": "set_pool_package_courtyard_polygon", **LIBRARY_TOOL_SCHEMAS["set_pool_package_courtyard_polygon"]}, {"name": "add_pool_package_silkscreen_line", **LIBRARY_TOOL_SCHEMAS["add_pool_package_silkscreen_line"]}, {"name": "add_pool_package_silkscreen_rect", **LIBRARY_TOOL_SCHEMAS["add_pool_package_silkscreen_rect"]}, {"name": "add_pool_package_silkscreen_polygon", **LIBRARY_TOOL_SCHEMAS["add_pool_package_silkscreen_polygon"]}, {"name": "add_pool_package_silkscreen_circle", **LIBRARY_TOOL_SCHEMAS["add_pool_package_silkscreen_circle"]}, {"name": "add_pool_package_silkscreen_arc", **LIBRARY_TOOL_SCHEMAS["add_pool_package_silkscreen_arc"]}, {"name": "add_pool_package_silkscreen_text", **LIBRARY_TOOL_SCHEMAS["add_pool_package_silkscreen_text"]}, {"name": "add_pool_package_model_3d", **LIBRARY_TOOL_SCHEMAS["add_pool_package_model_3d"]}, {"name": "set_pool_package_body_heights", **LIBRARY_TOOL_SCHEMAS["set_pool_package_body_heights"]},
     {"name": "create_pool_part", **LIBRARY_TOOL_SCHEMAS["create_pool_part"]}, {"name": "set_pool_part_metadata", **LIBRARY_TOOL_SCHEMAS["set_pool_part_metadata"]}, {"name": "set_pool_part_parametric", **LIBRARY_TOOL_SCHEMAS["set_pool_part_parametric"]}, {"name": "set_pool_part_orderable_mpns", **LIBRARY_TOOL_SCHEMAS["set_pool_part_orderable_mpns"]}, {"name": "set_pool_part_tags", **LIBRARY_TOOL_SCHEMAS["set_pool_part_tags"]}, {"name": "set_pool_part_packaging_options", **LIBRARY_TOOL_SCHEMAS["set_pool_part_packaging_options"]}, {"name": "set_pool_part_supply_chain", **LIBRARY_TOOL_SCHEMAS["set_pool_part_supply_chain"]}, {"name": "set_pool_part_behavioural_models", **LIBRARY_TOOL_SCHEMAS["set_pool_part_behavioural_models"]}, {"name": "attach_pool_part_model", **LIBRARY_TOOL_SCHEMAS["attach_pool_part_model"]}, {"name": "detach_pool_part_model", **LIBRARY_TOOL_SCHEMAS["detach_pool_part_model"]}, {"name": "set_pool_part_thermal", **LIBRARY_TOOL_SCHEMAS["set_pool_part_thermal"]}, {"name": "set_pool_part_pad_map_entry", **LIBRARY_TOOL_SCHEMAS["set_pool_part_pad_map_entry"]}, {"name": "set_pool_part_pad_map", **LIBRARY_TOOL_SCHEMAS["set_pool_part_pad_map"]}, {"name": "set_pool_library_object", **LIBRARY_TOOL_SCHEMAS["set_pool_library_object"]},
 ]
-TOOL_SPECS: list[dict[str, object]] = DATUM_TOOL_SPECS + [
+_LEGACY_FLAT_TOOL_SPECS: list[dict[str, object]] = [
     {
         "name": "open_project",
         "description": "Import a KiCad or Eagle design into the engine session.",
@@ -973,6 +973,85 @@ TOOL_SPECS: list[dict[str, object]] = DATUM_TOOL_SPECS + [
         },
     },
 ]
+# Canonical datum.<group>.<verb> alias names for the remaining legacy flat tools.
+# Each canonical alias dispatches to the same daemon method as its flat counterpart
+# (x_dispatch_method = flat name); the flat tool is moved to compatibility-only
+# dispatch below so it stays callable but is hidden from the public tools/list.
+_LEGACY_CANONICAL_ALIAS_NAMES: dict[str, str] = {
+    "open_project": "datum.session.open",
+    "close_project": "datum.session.close",
+    "save": "datum.session.save",
+    "validate_project": "datum.session.validate",
+    "delete_track": "datum.board.delete_track",
+    "delete_component": "datum.board.delete_component",
+    "move_component": "datum.board.move_component",
+    "rotate_component": "datum.board.rotate_component",
+    "flip_component": "datum.board.flip_component",
+    "set_value": "datum.board.set_component_value",
+    "assign_part": "datum.board.assign_component_part",
+    "set_package": "datum.board.set_component_package",
+    "set_package_with_part": "datum.board.set_component_package_with_part",
+    "replace_component": "datum.board.replace_component",
+    "replace_components": "datum.board.replace_components",
+    "set_reference": "datum.board.set_component_reference",
+    "set_net_class": "datum.board.set_net_class",
+    "delete_via": "datum.board.delete_via",
+    "set_design_rule": "datum.board.set_design_rule",
+    "apply_component_replacement_plan": "datum.replacement.apply_plan",
+    "apply_component_replacement_policy": "datum.replacement.apply_policy",
+    "apply_scoped_component_replacement_policy": "datum.replacement.apply_scoped_policy",
+    "apply_scoped_component_replacement_plan": "datum.replacement.apply_scoped_plan",
+    "get_component_replacement_plan": "datum.replacement.get_plan",
+    "get_scoped_component_replacement_plan": "datum.replacement.get_scoped_plan",
+    "edit_scoped_component_replacement_plan": "datum.replacement.edit_scoped_plan",
+    "get_package_change_candidates": "datum.replacement.package_candidates",
+    "get_part_change_candidates": "datum.replacement.part_candidates",
+    "search_pool": "datum.pool.search",
+    "get_part": "datum.pool.get_part",
+    "get_package": "datum.pool.get_package",
+    "get_net_info": "datum.query.net_info",
+    "get_unrouted": "datum.query.unrouted",
+    "get_hierarchy": "datum.query.imported_hierarchy",
+    "export_route_path_proposal": "datum.route.export_path_proposal",
+    "route_proposal": "datum.route.select_proposal",
+    "review_route_proposal": "datum.route.review_proposal",
+    "route_strategy_report": "datum.route.strategy_report",
+    "route_strategy_compare": "datum.route.strategy_compare",
+    "route_strategy_delta": "datum.route.strategy_delta",
+    "write_route_strategy_curated_fixture_suite": "datum.route.write_strategy_fixture_suite",
+    "capture_route_strategy_curated_baseline": "datum.route.capture_strategy_baseline",
+    "route_strategy_batch_evaluate": "datum.route.strategy_batch_evaluate",
+    "inspect_route_strategy_batch_result": "datum.route.inspect_strategy_batch_result",
+    "validate_route_strategy_batch_result": "datum.route.validate_strategy_batch_result",
+    "compare_route_strategy_batch_result": "datum.route.compare_strategy_batch_result",
+    "gate_route_strategy_batch_result": "datum.route.gate_strategy_batch_result",
+    "summarize_route_strategy_batch_results": "datum.route.summarize_strategy_batch_results",
+    "route_proposal_explain": "datum.route.explain_proposal",
+    "export_route_proposal": "datum.route.export_proposal",
+    "route_apply": "datum.route.apply",
+    "route_apply_selected": "datum.route.apply_selected",
+    "inspect_route_proposal_artifact": "datum.route.inspect_proposal_artifact",
+    "revalidate_route_proposal_artifact": "datum.route.revalidate_proposal_artifact",
+    "apply_route_proposal_artifact": "datum.route.apply_proposal_artifact",
+}
+
+
+def _legacy_canonical_alias(flat_spec: dict[str, Any]) -> dict[str, Any]:
+    flat_name = flat_spec["name"]
+    alias = {key: value for key, value in flat_spec.items() if key != "name"}
+    alias["name"] = _LEGACY_CANONICAL_ALIAS_NAMES[flat_name]
+    alias["x_dispatch_method"] = flat_name
+    return alias
+
+
+_LEGACY_CANONICAL_ALIAS_SPECS: list[dict[str, object]] = [
+    _legacy_canonical_alias(spec) for spec in _LEGACY_FLAT_TOOL_SPECS
+]
+
+# Public catalog: canonical datum.* aliases only (legacy flat tools moved below).
+TOOL_SPECS: list[dict[str, object]] = DATUM_TOOL_SPECS + _LEGACY_CANONICAL_ALIAS_SPECS
+# Legacy flat tools remain dispatchable for compatibility but hidden from tools/list.
+COMPATIBILITY_TOOL_SPECS += _LEGACY_FLAT_TOOL_SPECS
 def _catalog_tool(spec: dict[str, Any]) -> dict[str, Any]:
     return {key: value for key, value in spec.items() if not key.startswith("x_")}
 TOOLS: list[dict[str, Any]] = [_catalog_tool(spec) for spec in TOOL_SPECS]
