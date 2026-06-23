@@ -583,6 +583,9 @@ pub enum DockTab {
     Terminal,
     Assistant,
     Outputs,
+    /// Read-only supervision-reflection ledger (Decision-013 level-1): R12
+    /// journal / activity ledger + R13 resolver status. No edit path.
+    Supervision,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -767,6 +770,9 @@ pub struct ReviewWorkspaceState {
     pub backing: Option<WorkspaceBacking>,
     pub last_command_status: Option<EditorCommandStatus>,
     pub ui: WorkspaceUiState,
+    /// Read-only supervision-reflection projections (R12 journal + R13 resolver
+    /// status); a pure display carrier with no edit/commit affordance.
+    pub supervision: SupervisionReflectionState,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -2412,7 +2418,15 @@ impl ReviewWorkspaceState {
                 },
                 artifact_preview: ArtifactPreviewViewportState::default(),
             },
+            supervision: SupervisionReflectionState::default(),
         }
+    }
+
+    /// Attach read-only supervision-reflection projections (R12/R13) from a
+    /// resolved `DesignModel` (pure display; constructs no operation/commit).
+    pub fn with_supervision_from_model(mut self, model: &eda_engine::substrate::DesignModel) -> Self {
+        self.supervision = SupervisionReflectionState::from_design_model(model);
+        self
     }
 
     pub fn review_rows(&self) -> Vec<ReviewActionRow> {
@@ -7220,7 +7234,7 @@ mod tests {
     fn ps_sr_2_supervision_commands_make_zero_journal_or_revision_changes() {
         // The audited engine state. Supervision is a CONSUMER of this model; the
         // session below must never mutate it.
-        let model = crate::supervision::test_support::fixture_design_model_with_full_provenance();
+        let model = crate::supervision::fixture_design_model_with_full_provenance();
         let journal_before = model.journal.clone();
         let cursor_before = model.journal_cursor.clone();
         let revision_before = model.model_revision.clone();

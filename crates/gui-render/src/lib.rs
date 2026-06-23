@@ -23,6 +23,7 @@ mod outputs_lane;
 mod outputs_preview;
 mod outputs_proposals;
 mod outputs_run_commands;
+mod supervision_dock;
 #[cfg(feature = "visual")]
 pub mod visual_capture;
 use bottom_dock::render_bottom_tabs;
@@ -178,6 +179,11 @@ pub enum HitTarget {
     TerminalTab,
     AssistantTab,
     OutputsTab,
+    SupervisionTab,
+    /// Read-only supervision journal-row selection (consumer state only). Carries
+    /// the `TransactionRecord.transaction_id` so the consumer can cross-highlight
+    /// the entry's diff objects; it carries no operation/commit payload.
+    SupervisionJournalEntry(String),
     TerminalActivitySummary(String),
     CheckFinding(String),
     ProductionArtifact(String),

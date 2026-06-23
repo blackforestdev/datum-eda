@@ -4,6 +4,7 @@ use datum_gui_protocol::{
 };
 
 use super::outputs_lane::render_outputs_lane;
+use super::supervision_dock::render_supervision_lane;
 use super::{
     HitRegion, HitTarget, PANEL_CARD_BORDER, Quad, RectPx, ShellLayout, TEXT_MUTED,
     TEXT_PANEL_VALUE, TEXT_PRIMARY, TEXT_SECONDARY, TextFace, TextRun, draw_text, push_rect_border,
@@ -35,7 +36,13 @@ pub(super) fn render_bottom_tabs(
         width: 120.0,
         height: layout.bottom_strip.height - 16.0,
     };
-    for (rect, label, target, active) in [
+    let supervision_rect = RectPx {
+        x: layout.bottom_strip.x + 396.0,
+        y: layout.bottom_strip.y + 8.0,
+        width: 130.0,
+        height: layout.bottom_strip.height - 16.0,
+    };
+    let mut tabs: Vec<(RectPx, &str, HitTarget, bool)> = vec![
         (
             terminal_rect,
             "TERMINAL",
@@ -54,7 +61,20 @@ pub(super) fn render_bottom_tabs(
             HitTarget::OutputsTab,
             matches!(state.ui.active_dock_tab, Some(DockTab::Outputs)),
         ),
-    ] {
+    ];
+    // The read-only supervision tab is shown only once supervision-reflection
+    // projections (R12/R13) have been attached to the workspace. Workspaces with
+    // no supervision state (e.g. the board-geometry visual fixtures) render the
+    // tab strip unchanged, so this companion surface does not perturb them (§4.4).
+    if state.supervision.journal.is_some() || state.supervision.resolver_status.is_some() {
+        tabs.push((
+            supervision_rect,
+            "SUPERVISION",
+            HitTarget::SupervisionTab,
+            matches!(state.ui.active_dock_tab, Some(DockTab::Supervision)),
+        ));
+    }
+    for (rect, label, target, active) in tabs {
         panel_quads.push(Quad::from_rect(
             rect,
             if active {
@@ -103,6 +123,9 @@ pub(super) fn render_bottom_tabs(
         DockTab::Assistant => render_assistant_lane(state, content_rect, text_runs, hit_regions),
         DockTab::Outputs => {
             render_outputs_lane(state, content_rect, panel_quads, text_runs, hit_regions)
+        }
+        DockTab::Supervision => {
+            render_supervision_lane(state, content_rect, panel_quads, text_runs, hit_regions)
         }
     }
 }

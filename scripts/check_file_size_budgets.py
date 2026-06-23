@@ -83,7 +83,11 @@ BUDGETS: tuple[Budget, ...] = (
     Budget("crates/engine/src/export/mod.rs", 950, mode="pre_test"),
     Budget("crates/engine/src/pool/mod.rs", 586, mode="pre_test"),
     Budget("crates/gui-app/src/main.rs", 3229, mode="pre_test"),
-    Budget("crates/gui-protocol/src/lib.rs", 7210, mode="pre_test"),
+    # +17 for the Decision-013 read-only supervision-reflection crate-root
+    # surface (the `supervision` workspace field + `with_supervision_from_model`
+    # builder + `DockTab::Supervision` arm + supervision command dispatch +
+    # re-export); the larger fixture/golden builders live in supervision.rs.
+    Budget("crates/gui-protocol/src/lib.rs", 7227, mode="pre_test"),
     Budget("crates/gui-render/src/outputs_lane.rs", 1067, mode="pre_test"),
     Budget("crates/cli/src/command_project_check_run_view.rs", 862, mode="pre_test"),
     Budget("crates/gui-render/src/lib.rs", 7853, mode="pre_test"),

@@ -96,6 +96,8 @@ impl Runtime {
                 }
             }
             DockTab::Outputs => return self.handle_outputs_scroll(scroll_lines),
+            // Read-only supervision panel carries no scrollable consumer state.
+            DockTab::Supervision => return false,
         }
         self.invalidate_frame();
         true

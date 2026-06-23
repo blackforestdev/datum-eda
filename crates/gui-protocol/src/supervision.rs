@@ -162,6 +162,42 @@ impl ReviewWorkspaceState {
     }
 }
 
+/// Read-only supervision-reflection projection bundle attached to the workspace
+/// so the GUI renderer can DISPLAY committed engine state (Decision-013 level-1).
+///
+/// This is a pure projection carrier: it holds the already-projected R12 journal
+/// reflection and R13 resolver status. It introduces NO design authority — there
+/// is no field from which a renderer or handler could construct an
+/// `OperationBatch` or reach `commit()`. The renderer reads these to draw the
+/// supervision panel; selection/hover remain consumer state on the workspace.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
+pub struct SupervisionReflectionState {
+    /// R12 — present once a resolved model has been projected.
+    pub journal: Option<SupervisionJournalReflectionV1>,
+    /// R13 — present once a resolved model has been projected.
+    pub resolver_status: Option<SupervisionResolverStatusV1>,
+}
+
+impl SupervisionReflectionState {
+    /// Project both supervision surfaces (R12 + R13) from a resolved
+    /// `DesignModel`. Read-only: borrows the model, never mutates or re-solves.
+    pub fn from_design_model(model: &DesignModel) -> Self {
+        Self {
+            journal: Some(SupervisionJournalReflectionV1::from_design_model(model)),
+            resolver_status: Some(SupervisionResolverStatusV1::from_design_model(model)),
+        }
+    }
+
+    /// True when the resolver projected into recovery mode (§4.8): the canvas is
+    /// suppressed and the diagnostics list is promoted to primary.
+    pub fn is_recovery(&self) -> bool {
+        self.resolver_status
+            .as_ref()
+            .map(|status| status.mode == SUPERVISION_RESOLVER_MODE_RECOVERY)
+            .unwrap_or(false)
+    }
+}
+
 /// R12 — the journal / activity ledger.
 ///
 /// A read-only reflection of `DesignModel.journal` and `journal_cursor`. No new
@@ -369,19 +405,18 @@ impl SupervisionDiagnosticEntry {
     }
 }
 
-#[cfg(test)]
-pub(crate) mod test_support {
-    use super::*;
-    use eda_engine::substrate::{
-        CommitDiff, CommitProvenance, JournalCursor, ModelRevision, ProjectManifestSummary,
-    };
-    use std::collections::BTreeMap;
-    use uuid::Uuid;
+use eda_engine::substrate::{
+    CommitDiff, CommitProvenance, JournalCursor, ModelRevision, ProjectManifestSummary,
+};
+use std::collections::BTreeMap;
+use uuid::Uuid;
 
-    /// Build a deterministic `DesignModel` carrying one journal entry per
-    /// `CommitSource` arm, used by both the projection tests here and the
-    /// PS-SR-2 read-only invariant test in `lib.rs`.
-    pub fn fixture_design_model_with_full_provenance() -> DesignModel {
+/// Build a deterministic `DesignModel` carrying one journal entry per
+/// `CommitSource` arm. Used by the projection tests, the PS-SR-2 read-only
+/// invariant test, and the supervision visual goldens (PS-SR-4). It is a fixture
+/// builder, not design authority: the model is in-memory and read-only.
+pub fn fixture_design_model_with_full_provenance() -> DesignModel {
+    {
         let project_id =
             Uuid::parse_str("11111111-1111-1111-1111-111111111111").expect("uuid parses");
         let sources = [
@@ -451,19 +486,58 @@ pub(crate) mod test_support {
             diagnostics: Vec::new(),
         }
     }
+}
 
-    pub fn with_diagnostics(
-        mut model: DesignModel,
-        diagnostics: Vec<ResolveDiagnostic>,
-    ) -> DesignModel {
-        model.diagnostics = diagnostics;
-        model
-    }
+/// Attach diagnostics to a fixture model (test/golden helper).
+pub fn with_diagnostics(mut model: DesignModel, diagnostics: Vec<ResolveDiagnostic>) -> DesignModel {
+    model.diagnostics = diagnostics;
+    model
+}
+
+/// Fixture model that resolves into RECOVERY mode (§4.8 / PS-SR-6): the
+/// full-provenance model carrying an unclassified (error-severity) diagnostic so
+/// the resolver-status projection promotes to recovery. Drives the
+/// `supervision_resolver_recovery` golden.
+pub fn fixture_design_model_with_split_project_diagnostic() -> DesignModel {
+    with_diagnostics(
+        fixture_design_model_with_full_provenance(),
+        vec![ResolveDiagnostic {
+            code: "SPLIT_PROJECT".to_string(),
+            message: "two project roots resolved; project is incoherent".to_string(),
+            path: Some("/tmp/split-a.kicad_pro".into()),
+        }],
+    )
+}
+
+/// Deterministic supervision-reflection golden fixture: the fixture workspace
+/// scene with the Supervision dock tab active and the read-only R12/R13
+/// projections of `model` attached. Read-only: projections are built from an
+/// in-memory `DesignModel` and carry no edit/commit affordance. The dock is sized
+/// tall enough to show the resolver banner plus all five provenance rows.
+fn supervision_fixture_workspace_state(model: &DesignModel) -> ReviewWorkspaceState {
+    let mut state = crate::load_fixture_workspace_state().with_supervision_from_model(model);
+    state.ui.active_dock_tab = Some(crate::DockTab::Supervision);
+    state.ui.dock_height_px = 320;
+    state.selection = SelectionTarget::None;
+    state
+}
+
+/// PS-SR-4 provenance fixture: a clean (resolved) resolver status and a
+/// provenance-honest journal with one commit per `CommitSource` arm
+/// (`manual`/`cli`/`test`/`tool`/`assistant`). Drives `supervision_activity_provenance`.
+pub fn supervision_fixture_workspace_state_resolved() -> ReviewWorkspaceState {
+    supervision_fixture_workspace_state(&fixture_design_model_with_full_provenance())
+}
+
+/// PS-SR-6 recovery fixture: the resolved model carries an unclassified
+/// (error-severity) diagnostic, so the panel renders the recovery banner with
+/// diagnostics primary (`QG-RESOLVER-RECOVERY`). Drives `supervision_resolver_recovery`.
+pub fn supervision_fixture_workspace_state_recovery() -> ReviewWorkspaceState {
+    supervision_fixture_workspace_state(&fixture_design_model_with_split_project_diagnostic())
 }
 
 #[cfg(test)]
 mod tests {
-    use super::test_support::*;
     use super::*;
     use eda_engine::substrate::ResolveDiagnostic;
 

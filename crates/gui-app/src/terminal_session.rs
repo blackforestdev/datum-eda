@@ -349,6 +349,7 @@ fn dock_tab_name(tab: DockTab) -> &'static str {
         DockTab::Terminal => "terminal",
         DockTab::Assistant => "assistant",
         DockTab::Outputs => "outputs",
+        DockTab::Supervision => "supervision",
     }
 }
 
