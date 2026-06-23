@@ -3,7 +3,14 @@ use super::*;
 pub(super) fn cli_surface_result(cli: &Cli) -> Result<String> {
     let roundtrip_output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "modify",
+            "run",
+            "-q",
+            "-p",
+            "datum-eda-cli",
+            "--",
+            "--format",
+            "json",
+            "modify",
         ])
         .arg(&cli.roundtrip_board_fixture_path)
         .arg("--delete-track")
@@ -50,7 +57,14 @@ pub(super) fn cli_surface_result(cli: &Cli) -> Result<String> {
     let target = unique_temp_path("cli-surface-save", "kicad_pcb");
     let save_output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "modify",
+            "run",
+            "-q",
+            "-p",
+            "datum-eda-cli",
+            "--",
+            "--format",
+            "json",
+            "modify",
         ])
         .arg(&cli.roundtrip_board_fixture_path)
         .arg("--delete-track")
@@ -82,7 +96,14 @@ pub(super) fn cli_surface_result(cli: &Cli) -> Result<String> {
 
     let check_output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "check",
+            "run",
+            "-q",
+            "-p",
+            "datum-eda-cli",
+            "--",
+            "--format",
+            "json",
+            "check",
         ])
         .arg(saved_path)
         .current_dir(&cli.repo_root)
@@ -122,7 +143,14 @@ pub(super) fn cli_via_surface_result(cli: &Cli) -> Result<String> {
     let target = unique_temp_path("cli-surface-via-save", "kicad_pcb");
     let output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "modify",
+            "run",
+            "-q",
+            "-p",
+            "datum-eda-cli",
+            "--",
+            "--format",
+            "json",
+            "modify",
         ])
         .arg(&via_fixture)
         .arg("--delete-via")
@@ -153,7 +181,14 @@ pub(super) fn cli_via_surface_result(cli: &Cli) -> Result<String> {
     }
     let query_output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "query",
+            "run",
+            "-q",
+            "-p",
+            "datum-eda-cli",
+            "--",
+            "--format",
+            "json",
+            "query",
         ])
         .arg(saved_path)
         .arg("nets")
@@ -189,7 +224,14 @@ pub(super) fn cli_component_surface_result(cli: &Cli) -> Result<String> {
     let target = unique_temp_path("cli-surface-component-save", "kicad_pcb");
     let output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "modify",
+            "run",
+            "-q",
+            "-p",
+            "datum-eda-cli",
+            "--",
+            "--format",
+            "json",
+            "modify",
         ])
         .arg(&cli.roundtrip_board_fixture_path)
         .arg("--delete-component")
@@ -214,7 +256,14 @@ pub(super) fn cli_component_surface_result(cli: &Cli) -> Result<String> {
         .ok_or_else(|| anyhow::anyhow!("CLI delete-component save report missing saved_path"))?;
     let query_output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "query",
+            "run",
+            "-q",
+            "-p",
+            "datum-eda-cli",
+            "--",
+            "--format",
+            "json",
+            "query",
         ])
         .arg(saved_path)
         .arg("components")
@@ -252,7 +301,14 @@ pub(super) fn cli_rule_surface_result(cli: &Cli) -> Result<String> {
     let target = unique_temp_path("cli-surface-rule-save", "kicad_pcb");
     let output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "modify",
+            "run",
+            "-q",
+            "-p",
+            "datum-eda-cli",
+            "--",
+            "--format",
+            "json",
+            "modify",
         ])
         .arg(&fixture)
         .arg("--set-clearance-min-nm")
@@ -282,7 +338,14 @@ pub(super) fn cli_rule_surface_result(cli: &Cli) -> Result<String> {
     }
     let query_output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "query",
+            "run",
+            "-q",
+            "-p",
+            "datum-eda-cli",
+            "--",
+            "--format",
+            "json",
+            "query",
         ])
         .arg(saved_path)
         .arg("design-rules")
@@ -314,7 +377,14 @@ pub(super) fn cli_value_surface_result(cli: &Cli) -> Result<String> {
     let target = unique_temp_path("cli-surface-value-save", "kicad_pcb");
     let output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "modify",
+            "run",
+            "-q",
+            "-p",
+            "datum-eda-cli",
+            "--",
+            "--format",
+            "json",
+            "modify",
         ])
         .arg(&cli.roundtrip_board_fixture_path)
         .arg("--set-value")
@@ -339,7 +409,14 @@ pub(super) fn cli_value_surface_result(cli: &Cli) -> Result<String> {
         .ok_or_else(|| anyhow::anyhow!("CLI set-value save report missing saved_path"))?;
     let query_output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "query",
+            "run",
+            "-q",
+            "-p",
+            "datum-eda-cli",
+            "--",
+            "--format",
+            "json",
+            "query",
         ])
         .arg(saved_path)
         .arg("components")
@@ -375,7 +452,14 @@ pub(super) fn cli_reference_surface_result(cli: &Cli) -> Result<String> {
     let target = unique_temp_path("cli-surface-reference-save", "kicad_pcb");
     let output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "modify",
+            "run",
+            "-q",
+            "-p",
+            "datum-eda-cli",
+            "--",
+            "--format",
+            "json",
+            "modify",
         ])
         .arg(&cli.roundtrip_board_fixture_path)
         .arg("--set-reference")
@@ -400,7 +484,14 @@ pub(super) fn cli_reference_surface_result(cli: &Cli) -> Result<String> {
         .ok_or_else(|| anyhow::anyhow!("CLI set-reference save report missing saved_path"))?;
     let query_output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "query",
+            "run",
+            "-q",
+            "-p",
+            "datum-eda-cli",
+            "--",
+            "--format",
+            "json",
+            "query",
         ])
         .arg(saved_path)
         .arg("components")

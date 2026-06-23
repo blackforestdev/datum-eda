@@ -132,8 +132,9 @@ call sites in 8 files (grep-verified), all via
 - `command_project_board_routing_net.rs` (`draw_track:91`,
   `place_zone:124`, `place_via:159`; 10 write sites)
 - `command_project_board_pad.rs` (5)
-- `command_project_board_component_layer.rs` (flip/side via raw field
-  write; 2)
+- `command_project_board_component_layer.rs` now routes side changes
+  through `Operation::SetComponentSide`; older raw layer-field claims are
+  retired.
 - `command_project_board_component_reference.rs` (2)
 - `command_project_board_component_value.rs` (2)
 - `command_project_board_component_mutations.rs` (locked; 8)
@@ -156,11 +157,21 @@ not a CheckProfile parameter (a shared-surface gap).
 catalog. Used here as AI context only.
 
 **NO Operation enum exists** (per-method `TransactionRecord` pattern).
-GREP-CONFIRMED ABSENT from the engine/commit layer:
-- ZoneFill / `zone_fill` / `fill_zone` — zero hits. No filler, no
-  `Filled`/`Unfilled`/`Stale` derived state, no Stale invalidation.
-- `flip` / `SetComponentSide` as a journaled op — only the native field
-  write in `component_layer.rs`; no pad-geometry mirroring.
+CURRENTLY ABSENT from the engine/commit layer:
+- `fill_zone` / `fill_zones` command — the bounded filler exists. The
+  generated-evidence shard substrate exists, and the CLI/MCP producer can
+  persist `Filled` records for closed, non-degenerate, no-thermal zones whose
+  intersecting board pads/tracks/vias are on the same net, plus rectangular
+  foreign pad/via/orthogonal-track cutouts when every inflated obstacle is
+  strictly contained by a rectangular zone, obstacles do not overlap or touch,
+  and positive netclass clearance is known. Non-orthogonal different-net
+  tracks, overlapping/touching obstacles, unresolved component pads, keepouts,
+  general
+  clearance solving, antipads, thermals, or arbitrary obstacle subtraction
+  remain honest `Unsupported` records.
+  The honesty substrate does exist: resolver-derived
+  `ZoneFill{Unfilled}` records, zone-fill query/check findings, and
+  copper export gating are implemented.
 - `set_locked` op — only a native write.
 - align / distribute — none.
 - board-outline / stackup / text / dimension through `commit()` — none.
@@ -194,10 +205,15 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
   package_uuid, position, rotation, side }` → one `commit()` →
   `TransactionRecord`. The join is the `ComponentInstance` Uuid, never the
   reference designator.
-- **CLI command:** `datum-eda project board place-component --root <p>
-  --component-instance <uuid> --package <uuid> --x <nm> --y <nm>
-  [--rotation <deg>] [--side top|bottom]`
-- **MCP/AI tool:** `place_component` (daemon-dispatched, same Operation).
+- **CLI command:** current native-project surface is `datum-eda project
+  place-board-component <root> --part <uuid> --package <uuid> --reference
+  <ref> --value <value> --x-nm <nm> --y-nm <nm> --layer <layer-id>`, with
+  side changes handled by `flip-board-component` /
+  `set-board-component-layer`.
+- **MCP/AI tool:** canonical `datum.pcb.place_component` is
+  native-project scoped, requires explicit `path` plus part/package/ref/value
+  and placement arguments, and dispatches through
+  `datum-eda project place-board-component`.
 - **AI query/context needed:** `model_revision`; available
   `package_uuid`s (DatumQueryTool `library.query` / existing
   `search_pool`/`get_package`); free board area; `ComponentInstance`
@@ -223,14 +239,29 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
   the opposite side (mirrors pads). Local visible undoable → direct
   commit. Multi-select = one `OperationBatch`.
 - **Operation emitted:** `MoveComponent` / `RotateComponent` /
-  `SetComponentSide`. Move and rotate already journal
-  (`basic_mutations.rs`); `SetComponentSide` is NEW and must mirror pad
-  geometry. Multi-select batches as one `OperationBatch`.
-- **CLI command:** `datum-eda project board move-component --root <p> --uuid
-  <u> --x --y` ; `rotate-component --uuid --rotation` ; `flip-component
-  --uuid --side bottom`
-- **MCP/AI tool:** `move_component`, `rotate_component` (exist in
-  dispatch.rs); `flip_component` (gap).
+  `SetComponentSide`. The first `SetComponentSide` substrate slice now
+  journals package side changes, mirrors owned `pads` and persisted
+  `component_pads` across the package origin on X, swaps side-sensitive
+  pad layer arrays, mirrors pad rotation, and captures a same-kind inverse
+  for undo. Multi-select batches as one `OperationBatch`.
+- **CLI command:** current native-project surface is
+  `datum-eda project move-board-component <root> --component <uuid> ...`,
+  `datum-eda project rotate-board-component <root> --component <uuid>
+  --rotation-deg <deg>`, and `datum-eda project flip-board-component <root>
+  --component <uuid> --layer <layer-id>`. The older
+  `set-board-component-layer` remains a compatibility spelling over the same
+  `SetComponentSide` path.
+- **MCP/AI tool:** legacy session tools `move_component`, `rotate_component`,
+  and flat `flip_component` exist in daemon/MCP dispatch. Canonical
+  `datum.pcb.move_component`, `datum.pcb.rotate_component`, and
+  `datum.pcb.flip_component` are native-project scoped: they require an
+  explicit `path` plus component/transform arguments and dispatch through
+  `datum-eda project move-board-component`, `rotate-board-component`, and
+  `flip-board-component`. The same canonical native-project family now also
+  covers `datum.pcb.delete_component`, `set_component_reference`,
+  `set_component_value`, `set_component_part`, `set_component_package`,
+  `lock_component`, and `unlock_component` over the corresponding
+  `datum-eda project ...board-component...` commands.
 - **AI query/context needed:** current `PlacedPackage` position /
   rotation / side, locked flag, `model_revision`; overlap/collision
   context.
@@ -239,9 +270,8 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
 - **Proof slice:** datum-test — move then undo == identity; rotate
   90/270/0 round-trips pad geometry; flip moves the package to bottom and
   mirrors pad coords, undo restores byte-for-byte.
-- **Explicitly not-supported-yet:** flip has no journaled op
-  (`command_project_board_component_layer.rs` sets `.layer` via native
-  write only); pad-geometry mirroring on flip is unimplemented.
+- **Explicitly not-supported-yet:** richer GUI flip UX and multi-select flip
+  batching remain pending.
 
 ---
 
@@ -284,12 +314,14 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
   (+ `AddVia` on a layer change) as an `OperationBatch` → `commit()`.
   `DeleteTrack` already journals (`basic_mutations.rs`). `NetId` resolves
   via resolver connectivity, never by string.
-- **CLI command:** `datum-eda project board draw-track --root <p> --net
-  <netid> --layer <l> --width <nm> --points x1,y1:x2,y2:...` ;
-  `delete-track --uuid <u>`
-- **MCP/AI tool:** `delete_track` (exists); add/draw-track op (gap —
-  native write today). AI typically uses the route-proposal kernel rather
-  than freehand authoring.
+- **CLI command:** current native-project surface is `datum-eda project
+  draw-board-track <root> --net <uuid> --from-x-nm <nm> --from-y-nm <nm>
+  --to-x-nm <nm> --to-y-nm <nm> --width-nm <nm> --layer <layer-id>`,
+  `edit-board-track`, and `delete-board-track`.
+- **MCP/AI tool:** canonical `datum.pcb.draw_track`, `edit_track`, and
+  `delete_track` are native-project scoped, require explicit `path`, and
+  dispatch through the matching `datum-eda project ...board-track` commands.
+  AI typically uses the route-proposal kernel rather than freehand authoring.
 - **AI query/context needed:** unrouted ratsnest (existing
   `get_unrouted` under DatumQueryTool `pcb.query`), pad anchor coords,
   active net-class width/clearance, layer stack, obstacles.
@@ -314,11 +346,13 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
 - **Operation emitted:** `AddVia{ net_id, position, from_layer, to_layer,
   diameter, drill }` → `commit()`. `DeleteVia` already journals
   (`basic_mutations.rs:36`).
-- **CLI command:** `datum-eda project board place-via --root <p> --net
-  <netid> --x --y --diameter <nm> --drill <nm> [--from-layer --to-layer]`
-  ; `delete-via --uuid`
-- **MCP/AI tool:** `delete_via` (exists); `place_via` op (gap — native
-  write today).
+- **CLI command:** current native-project surface is `datum-eda project
+  place-board-via <root> --net <uuid> --x-nm <nm> --y-nm <nm> --drill-nm
+  <nm> --diameter-nm <nm> --from-layer <layer-id> --to-layer <layer-id>`,
+  `edit-board-via`, and `delete-board-via`.
+- **MCP/AI tool:** canonical `datum.pcb.place_via`, `edit_via`, and
+  `delete_via` are native-project scoped, require explicit `path`, and
+  dispatch through the matching `datum-eda project ...board-via` commands.
 - **AI query/context needed:** layer-transition need, via-rule limits
   (annular/drill), keepout/clearance context, `model_revision`.
 - **Validating checks:** `run_drc` `ViaAnnularRing`, `ViaHole`,
@@ -331,19 +365,25 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
 
 ---
 
-### 6. author_zone / delete_zone
+### 6. author_zone / edit_zone / delete_zone
 
 - **Manual UI action:** draw a polygon pour boundary on a layer, set net
   + priority + clearance. Authors ONLY the boundary, NOT copper. Local
   undoable → direct commit.
 - **Operation emitted:** `AddZone{ net_id, layer, polygon, priority,
-  clearance }` → `commit()`. `Zone.polygon` is the authored boundary;
-  `ZoneFill` is derived and is NOT created here.
-- **CLI command:** `datum-eda project board place-zone --root <p> --net
-  <netid> --layer <l> --priority <n> --polygon x1,y1:...` ; `delete-zone
-  --uuid`
-- **MCP/AI tool:** `author_zone` / `delete_zone` op (gap — native write
-  today).
+  clearance }` or `SetZone{ zone_id, replacement }` → `commit()`.
+  `Zone.polygon` is the authored boundary; `ZoneFill` is derived and is NOT
+  created here.
+- **CLI command:** current native-project surface is `datum-eda project
+  place-board-zone <root> --net <uuid> --vertex x,y --layer <layer-id>
+  --thermal-gap-nm <nm> --thermal-spoke-width-nm <nm>` and
+  `edit-board-zone <root> --zone <uuid> ...` and `delete-board-zone`.
+- **MCP/AI tool:** canonical `datum.pcb.place_zone`, `edit_zone`, and
+  `delete_zone` are native-project scoped, require explicit `path`, and
+  dispatch through the matching `datum-eda project ...board-zone` commands.
+  `fill_zones` is
+  separate generated-evidence production, exposed through
+  `datum.check.fill_zones`.
 - **AI query/context needed:** net to pour, layer, board outline,
   keepouts, priority vs other zones, `model_revision`.
 - **Validating checks:** boundary closed / simple / on-board; DRC and
@@ -353,9 +393,9 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
   a `Zone` with `ZoneFill{Unfilled}`; export emits NO copper plus a hard
   finding.
 - **Explicitly not-supported-yet:** `commit()` op missing
-  (`routing_net.rs:124` native write). `ZoneFill` derived state does not
-  exist in the engine (grep-confirmed: no fill geometry, no
-  `Filled`/`Unfilled`/`Stale`).
+  (`routing_net.rs:124` native write). `ZoneFill{Unfilled}` derived
+  state exists through the resolver and blocks copper export, but no
+  `Filled` geometry, `Stale` invalidation, or fill provenance exists yet.
 
 ---
 
@@ -364,14 +404,20 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
 - **Manual UI action:** explicit Fill All Zones / Repour (KiCad B, Altium
   Shift+B). Recomputes derived copper from boundaries. NOT an authored
   mutation — it refreshes revision-keyed derived state.
-- **Operation emitted:** NONE on source. Triggers `ZoneFill`
-  regeneration keyed by `model_revision` → `ZoneFill{ Filled, islands,
-  provenance }`. Derived, never journaled as authored copper. Scope
-  (all / zone / net) is a filter PARAMETER, not separate tools.
-- **CLI command:** `datum-eda project board fill-zones --root <p> [--zone
-  <uuid>] [--net <netid>]`
-- **MCP/AI tool:** `fill_zones` (gap) — a first-class AI derived-state
-  tool; AI checks `ZoneFill` state before relying on copper.
+- **Operation emitted:** `SetZoneFill{ zone_id, previous_zone_fill,
+  zone_fill }` through the journaled generated-evidence path. The record is
+  keyed by `model_revision` and source-zone revision, writes
+  `ZoneFill{ Filled|Unsupported, islands, provenance }`, and remains derived
+  evidence rather than authored copper. `previous_zone_fill` is captured from
+  resolver/journal-materialized evidence, not from the promoted JSON file
+  alone, so undo restores stale or missing-promoted prior fill evidence
+  exactly. Scope (all / zone / net) is a filter PARAMETER, not separate tools.
+- **CLI command:** `datum-eda check fill-zones <p> [--zone <uuid>]
+  [--net <netid>]`; compatibility `datum-eda project fill-zones` remains
+  during taxonomy migration.
+- **MCP/AI tool:** `fill_zones` and canonical `datum.check.fill_zones`
+  — first-slice derived-state producer stubs. AI checks `ZoneFill` state
+  before relying on copper.
 - **AI query/context needed:** `model_revision` (to detect `Stale`), zone
   boundaries, obstacles, clearances.
 - **Validating checks:** post-fill DRC on the resulting copper;
@@ -380,9 +426,15 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
 - **Proof slice:** datum-test — author a zone (`Unfilled`) → `fill-zones`
   → `ZoneFill{Filled}` with islands; move a component → `ZoneFill` marked
   `Stale` (not silently wrong); export uses only `Filled` copper.
-- **Explicitly not-supported-yet:** the entire `ZoneFill` subsystem is
-  unimplemented (no filler, no derived-state model, no `Stale`
-  invalidation). This is the largest single gap in the zones domain.
+- **Explicitly not-supported-yet:** the real pour solver remains
+  unimplemented beyond the bounded same-net and single rectangular pad/via
+  cutout envelope: no general clearance subtraction, antipads, thermal spokes,
+  arbitrary obstacle avoidance, general multi-island decomposition, or richer
+  fill provenance. `datum-eda check fill-zones` persists `Unsupported`
+  generated evidence for those cases rather than fake copper. The honesty half
+  is
+  implemented: authored zones derive `Unfilled`, emit hard findings, and
+  are withheld from copper export.
 
 ---
 
@@ -396,11 +448,13 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
   distinct from `author_zone`: a keepout has no net and no fill state, so
   merging would corrupt the ZoneFill honesty boundary that `fill_zones`
   depends on.
-- **CLI command:** `datum-eda project board place-keepout --root <p> --kind
-  route|via|copper --layers <l1,l2> --polygon x1,y1:...` ; `edit-keepout`
-  ; `delete-keepout`
-- **MCP/AI tool:** `author_keepout` / `edit` / `delete` (gap — native
-  write today).
+- **CLI command:** current native-project surface is `datum-eda project
+  place-board-keepout <root> --kind <kind> --vertex x,y --layer <layer-id>`,
+  plus `edit-board-keepout` and `delete-board-keepout`.
+- **MCP/AI tool:** canonical `datum.pcb.place_keepout`, `edit_keepout`,
+  and `delete_keepout` are native-project scoped, require explicit `path`,
+  and dispatch through the matching `datum-eda project ...board-keepout`
+  commands.
 - **AI query/context needed:** region to protect, affected layers, kind
   semantics, `model_revision`.
 - **Validating checks:** DRC honors the keepout as an obstacle for
@@ -422,9 +476,11 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
 - **Operation emitted:** `SetBoardOutline{ polygon }` → `commit()`.
   Replaces the authored outline; the previous outline is captured for
   undo.
-- **CLI command:** `datum-eda project board set-outline --root <p> --polygon
-  x1,y1:x2,y2:...`
-- **MCP/AI tool:** `set_board_outline` (gap — native write today).
+- **CLI command:** current native-project surface is `datum-eda project
+  set-board-outline <root> --vertex x,y ...`.
+- **MCP/AI tool:** canonical `datum.pcb.set_outline` is native-project
+  scoped, requires explicit `path` plus outline vertices, and dispatches
+  through `datum-eda project set-board-outline`.
 - **AI query/context needed:** current outline, component extents that
   must fit, mounting/keepout context, `model_revision`.
 - **Validating checks:** outline closed / simple; components/zones
@@ -442,24 +498,28 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
 
 - **Manual UI action:** Layer Stack Manager — layer count,
   copper/dielectric thickness, material, layer names. Visible config edit
-  → direct commit; impedance targets deferred.
+  → direct commit; impedance target metadata lives on nets, not stackup
+  layers.
 - **Operation emitted:** `SetStackup{ layers[] }` → `commit()`. The
   `StackupLayer` type exists
   (`command_exec_board_stackup.rs` / `stackup.rs`).
-- **CLI command:** `datum-eda project board set-stackup --root <p> --layers
-  <json|spec>` (plus an `add-default-top-stackup` convenience).
-- **MCP/AI tool:** `edit_stackup` (gap — native write today).
-- **AI query/context needed:** current stackup, layer count needed for
-  routing, `model_revision`; impedance is a deferred stub
-  (`ImpedanceSpec`).
+- **CLI command:** current native-project surface is `datum-eda project
+  set-board-stackup <root>
+  --layer <id:name:type:thickness_nm[:dielectric_constant][:loss_tangent][:copper_weight_oz][:roughness_um][:material_name]>
+  ...` plus `add-default-top-stackup`. The four-field tuple remains valid and
+  leaves material metadata unset.
+- **MCP/AI tool:** canonical `datum.pcb.set_stackup` and
+  `datum.pcb.add_default_top_stackup` are native-project scoped and dispatch
+  through the matching `datum-eda project ...stackup` commands.
+- **AI query/context needed:** current stackup, material metadata, layer count
+  needed for routing, `model_revision`; impedance solving remains deferred.
 - **Validating checks:** track/via/zone layer references resolve to
   existing stackup layers; via from/to layers valid.
 - **Proof slice:** datum-test — set a 4-layer stackup, confirm via
   from/to-layer ops can target inner layers; undo restores 2-layer;
   orphan-layer references flagged.
-- **Explicitly not-supported-yet:** `commit()` op missing (`layout.rs`
-  native write). The controlled-impedance solver is deferred (Standards
-  Audit stub only).
+- **Explicitly not-supported-yet:** The controlled-impedance solver is
+  deferred; per-net `ImpedanceSpec` metadata is authorable separately.
 
 ---
 
@@ -475,7 +535,10 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
   (exists).
 - **MCP/AI tool:** `set_net_class` (exists, dispatch.rs:243);
   `set_design_rule` (engine op + daemon dispatch exist at
-  dispatch.rs:259; verify MCP catalog exposure).
+  dispatch.rs:259; verify MCP catalog exposure). Native board net-class CRUD
+  now also has canonical MCP coverage via `datum.pcb.place_net_class`,
+  `edit_net_class`, and `delete_net_class` over the matching journaled
+  `datum-eda project ...board-net-class` commands.
 - **AI query/context needed:** current rules/net classes, the `RuleType`
   taxonomy (`Connectivity`, `ClearanceCopper`, `TrackWidth`, `ViaHole`,
   `ViaAnnularRing`, `SilkClearance`, `ProcessAperture`), nets needing
@@ -485,9 +548,11 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
 - **Proof slice:** datum-test — set a tighter clearance → `run_drc`
   surfaces a new `ClearanceCopper` violation (clean before); undo
   restores the rule and clears findings.
-- **Explicitly not-supported-yet:** diff-pair / length-match / impedance
-  rule classes not modeled. Altium-style rule-query scoping absent; scope
-  is per-net / per-class only.
+- **Explicitly not-supported-yet:** diff-pair / length-match rule classes and
+  controlled-impedance solving/enforcement are not modeled yet. Per-net
+  `ImpedanceSpec` target metadata is model-backed and CLI-authorable, but
+  Altium-style rule-query scoping remains absent; scope is per-net / per-class
+  only.
 
 ---
 
@@ -509,7 +574,10 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
   `set-reference`, `set-pad-net`, `set-locked`, `edit-pad`, `edit-track`.
 - **MCP/AI tool:** `get_board_summary` / `get_components` (read, exist,
   fold under DatumQueryTool); `set_value` / `set_reference` (write,
-  exist); `set_locked` + multi-object batch (gap).
+  exist); `set_locked` + multi-object batch (gap). Current canonical
+  native-project MCP coverage includes `datum.pcb.place_pad`, `edit_pad`,
+  `delete_pad`, `set_pad_net`, and `clear_pad_net` over the matching
+  journaled `datum-eda project ...board-pad...` commands.
 - **AI query/context needed:** object properties at `model_revision`;
   which fields are authored vs derived (refdes display vs
   `ComponentInstance` identity).
@@ -524,10 +592,9 @@ read named below folds under DatumQueryTool (`datum-eda query pcb.*`); every
   in the engine; per-property native-CLI writes (`pad.rs`,
   `component_mutations.rs` locked, `component_value/reference.rs`) bypass
   `commit()`. Multi-object batch edit not wired as a single
-  `OperationBatch`. Board-text/dimension graphic-primitive authoring
-  (`place_native_project_board_text` in `layout.rs:68`, dimensions in
-  `netclass_dimension.rs`) also native-write today and should fold into a
-  future place-graphic op rather than spawn dedicated tools.
+  `OperationBatch`. Board dimensions and board text now have canonical MCP
+  coverage through `datum.pcb.place_dimension`, `edit_dimension`,
+  `delete_dimension`, `place_text`, `edit_text`, and `delete_text`.
 
 ---
 
@@ -649,14 +716,12 @@ justified against real-world practice.
   route-proposal kernel, not a distinct hand-route tool. Flagged
   not-yet-supported rather than given a premature dedicated tool.
 
-- **`place_board_text` / `place_dimension` as dedicated authoring
-  tools** — both native-write today (`layout.rs:68` board text;
-  `netclass_dimension.rs` dimensions) but are low-leverage
-  silkscreen/documentation graphic primitives. Rather than expand the
-  catalog with two tools, they should fold into a single future
-  `place-graphic-primitive` op once the `commit()` migration lands (noted
-  under `inspect_edit`'s not-yet-supported). Adding them now is premature
-  catalog growth against the lean mandate.
+- **generic `place_graphic_primitive` for all board graphics** — cut from
+  this slice. Board text is covered directly by canonical
+  `datum.pcb.place_text`, `edit_text`, and `delete_text` aliases over the
+  journaled `datum-eda project ...board-text` commands. A future generic
+  graphic-primitive model may fold text, drawing, and documentation graphics
+  into a richer shared surface.
 
 ## Shared Surface
 
@@ -726,16 +791,56 @@ sites.
 
 ## Not-Yet-Supported
 
-- The `ZoneFill` subsystem is entirely unimplemented — no filler, no
-  `Filled`/`Unfilled`/`Stale` derived state, no `Stale` invalidation.
-  Largest single gap. `author_zone` ships boundary-only with a hard
-  no-copper finding; `fill_zones` is a distinct later slice.
-- Component flip / change-side has no journaled `SetComponentSide` op and
-  no pad-geometry mirroring; only a native `.layer` field write exists.
+- The `ZoneFill` subsystem is partially implemented. Resolver-derived
+  `Unfilled` state, zone-fill query/check findings, and copper-export
+  gating exist; `fill_zones` now persists `Filled` islands for closed,
+  no-thermal zones whose intersecting board pads/tracks/vias are same-net,
+  plus rectangular foreign pad/via/orthogonal-track cutouts with positive
+  netclass clearance when the inflated obstacles are strictly contained and
+  non-overlapping, while non-orthogonal different-net tracks,
+  overlapping/touching obstacles, unresolved component pads, keepouts,
+  thermals, and general
+  clearance-subtraction cases produce
+  `Unsupported` evidence. Resolver validation rejects invalid generated
+  evidence before it can render:
+  `Filled` islands must be closed, non-degenerate, and non-self-intersecting,
+  while `Unfilled`/`Unsupported` evidence must not carry islands. The
+  remaining large gap is the real pour solver/projection side: clearance
+  subtraction, antipads, thermal spokes, obstacle avoidance, multi-island
+  decomposition, and richer fill provenance. `fill_zones` persistence is
+  classified as generated evidence and routes through journaled `SetZoneFill`
+  operations rather than CLI-local raw JSON writes; `SetZoneFill` and
+  `DeleteZoneFill` payloads are validated against their operation ids before
+  model application and shard staging.
+- Component lifecycle/property/transform operations now have native-project
+  MCP coverage via `datum.pcb.place_component`, `move_component`,
+  `rotate_component`, `flip_component`, `delete_component`,
+  `set_component_reference`, `set_component_value`, `set_component_part`,
+  `set_component_package`, `lock_component`, and `unlock_component` over
+  journaled native project CLI paths. The flat legacy session tools remain
+  compatibility surfaces. Richer GUI flip UX and broader geometry families
+  remain pending.
 - Engine `align`/`distribute` op does not exist.
-- `add_track`, `add_via`, `author_zone`, `author_keepout`,
-  `set_board_outline`, `edit_stackup`, board-text, and dimensions all
-  lack `commit()` ops (native write today).
+- Track/via/zone authoring now has native-project MCP coverage via
+  `datum.pcb.draw_track`, `edit_track`, `delete_track`, `place_via`,
+  `edit_via`, `delete_via`, `place_zone`, and `delete_zone` over journaled
+  native project CLI paths. Full generic `commit()` op vocabulary coverage,
+  richer route interaction, and GUI-native editing remain pending.
+- Pad and net-class authoring now has native-project MCP coverage via
+  `datum.pcb.place_pad`, `edit_pad`, `delete_pad`, `set_pad_net`,
+  `clear_pad_net`, `place_net`, `edit_net`, `delete_net`,
+  `place_net_class`, `edit_net_class`, and `delete_net_class` over
+  journaled native project CLI paths.
+- Board setup now has native-project MCP coverage via
+  `datum.pcb.set_board_name`, `set_outline`, `set_stackup`, and
+  `add_default_top_stackup` over journaled native project CLI paths.
+- Keepout authoring now has native-project MCP coverage via
+  `datum.pcb.place_keepout`, `edit_keepout`, and `delete_keepout` over
+  journaled native project CLI paths.
+- Dimensions and board text now have native-project MCP coverage via
+  `datum.pcb.place_dimension`, `edit_dimension`, `delete_dimension`,
+  `place_text`, `edit_text`, and `delete_text` over journaled native project
+  CLI paths.
 - Diff-pair and length-matched routing are deferred (net-class attribute
   + kernel), not given dedicated authoring tools.
 - Altium-style rule-query scoping is absent; scope is per-net/per-class
@@ -747,8 +852,9 @@ sites.
 - Blind/buried via classification beyond from/to layer pair, board
   cutouts/multi-hole outlines, and the controlled-impedance solver are
   deferred (Standards Audit stub only).
-- Board-text and dimension authoring are deferred into a future
-  `place-graphic-primitive` op.
+- Generic board-graphic unification is deferred into a future
+  `place-graphic-primitive` op; dimension and board-text authoring have
+  dedicated canonical MCP coverage in this slice.
 
 ## Open Owner Questions
 
@@ -758,16 +864,16 @@ sites.
    `commit()`/journal. Confirm retiring these private writers into typed
    Engine operations is the FIRST PCB-domain implementation slice,
    blocking everything downstream.
-2. `ZoneFill` derived state does not exist in the engine at all
-   (grep-confirmed). Ship `author_zone` boundary-only first (with a hard
-   no-copper finding) and `fill_zones` as a distinct later slice, or one
-   deliverable?
-3. Component flip/change-side: today only
-   `command_project_board_component_layer.rs` native-writes the `.layer`
-   field; there is no journaled `SetComponentSide` op and no pad-geometry
-   mirroring. Confirm flip is in the first manual-authoring slice (given
-   datum-test components may need bottom-side placement), and confirm pad
-   mirroring is in scope.
+2. `fill_zones` currently ships as a minimal generated
+   projection/provenance stub that records `Unsupported`. Decide when the
+   real copper-fill solver enters scope.
+3. Component flip/change-side: the first `SetComponentSide` substrate slice
+   now journals side changes and mirrors owned pad geometry. The user-facing
+   native CLI spelling is `flip-board-component`, with
+   `set-board-component-layer` retained as compatibility. Canonical MCP
+   aliases now exist for native-project move, rotate, and flip with explicit
+   project path/component/transform arguments. Richer GUI behavior and
+   multi-select batching remain open.
 4. Confirm `align_distribute` is ONE mode-parameterized batch op
    (recommended) rather than discrete align tools, and confirm
    direct-commit (visible/undoable) over proposal-first for bulk geometry

@@ -1,17 +1,65 @@
+use super::command_project_board_diagnostics::query_native_project_drc_with_rules;
 use super::*;
+use eda_engine::connectivity::schematic_hierarchy_info;
 use eda_engine::drc::{DrcSeverity, DrcViolation};
+use eda_engine::rules::ast::RuleType;
+use eda_engine::substrate::ProjectResolver;
+
+pub(crate) fn query_native_project_hierarchy(root: &Path) -> Result<HierarchyInfo> {
+    let project = load_native_project(root)?;
+    Ok(schematic_hierarchy_info(&build_native_project_schematic(
+        &project,
+    )?))
+}
+
+pub(crate) fn query_native_project_sheets(root: &Path) -> Result<Vec<serde_json::Value>> {
+    let project = load_native_project(root)?;
+    let model = ProjectResolver::new(&project.root)
+        .resolve()
+        .with_context(|| {
+            format!(
+                "failed to resolve native project {}",
+                project.root.display()
+            )
+        })?;
+    let mut sheets = Vec::new();
+    for (sheet_uuid, relative_path) in &project.schematic.sheets {
+        let path = project.root.join("schematic").join(relative_path);
+        let sheet_value = model
+            .materialized_source_shard_value_by_relative_path(&format!("schematic/{relative_path}"))
+            .with_context(|| format!("failed to materialize {}", path.display()))?;
+        sheets.push(serde_json::json!({
+            "uuid": sheet_uuid,
+            "name": sheet_value.get("name").and_then(serde_json::Value::as_str).unwrap_or(""),
+            "path": format!("schematic/{relative_path}"),
+        }));
+    }
+    sheets.sort_by(|a, b| {
+        a.get("uuid")
+            .and_then(serde_json::Value::as_str)
+            .cmp(&b.get("uuid").and_then(serde_json::Value::as_str))
+    });
+    Ok(sheets)
+}
 
 pub(crate) fn query_native_project_symbols(root: &Path) -> Result<Vec<SymbolInfo>> {
     let project = load_native_project(root)?;
+    let model = ProjectResolver::new(&project.root)
+        .resolve()
+        .with_context(|| {
+            format!(
+                "failed to resolve native project {}",
+                project.root.display()
+            )
+        })?;
     let mut symbols = Vec::new();
     for (sheet_uuid, relative_path) in &project.schematic.sheets {
         let sheet_uuid = Uuid::parse_str(sheet_uuid)
             .with_context(|| format!("invalid sheet UUID key `{sheet_uuid}` in schematic root"))?;
         let path = project.root.join("schematic").join(relative_path);
-        let sheet_text = std::fs::read_to_string(&path)
-            .with_context(|| format!("failed to read {}", path.display()))?;
-        let sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
-            .with_context(|| format!("failed to parse {}", path.display()))?;
+        let sheet_value = model
+            .materialized_source_shard_value_by_relative_path(&format!("schematic/{relative_path}"))
+            .with_context(|| format!("failed to materialize {}", path.display()))?;
         if let Some(entries) = sheet_value
             .get("symbols")
             .and_then(serde_json::Value::as_object)
@@ -117,15 +165,22 @@ pub(crate) fn query_native_project_symbol_pins(
 
 pub(crate) fn query_native_project_texts(root: &Path) -> Result<Vec<serde_json::Value>> {
     let project = load_native_project(root)?;
+    let model = ProjectResolver::new(&project.root)
+        .resolve()
+        .with_context(|| {
+            format!(
+                "failed to resolve native project {}",
+                project.root.display()
+            )
+        })?;
     let mut texts = Vec::new();
     for (sheet_uuid, relative_path) in &project.schematic.sheets {
         let sheet_uuid = Uuid::parse_str(sheet_uuid)
             .with_context(|| format!("invalid sheet UUID key `{sheet_uuid}` in schematic root"))?;
         let path = project.root.join("schematic").join(relative_path);
-        let sheet_text = std::fs::read_to_string(&path)
-            .with_context(|| format!("failed to read {}", path.display()))?;
-        let sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
-            .with_context(|| format!("failed to parse {}", path.display()))?;
+        let sheet_value = model
+            .materialized_source_shard_value_by_relative_path(&format!("schematic/{relative_path}"))
+            .with_context(|| format!("failed to materialize {}", path.display()))?;
         if let Some(entries) = sheet_value
             .get("texts")
             .and_then(serde_json::Value::as_object)
@@ -153,15 +208,22 @@ pub(crate) fn query_native_project_texts(root: &Path) -> Result<Vec<serde_json::
 
 pub(crate) fn query_native_project_drawings(root: &Path) -> Result<Vec<serde_json::Value>> {
     let project = load_native_project(root)?;
+    let model = ProjectResolver::new(&project.root)
+        .resolve()
+        .with_context(|| {
+            format!(
+                "failed to resolve native project {}",
+                project.root.display()
+            )
+        })?;
     let mut drawings = Vec::new();
     for (sheet_uuid, relative_path) in &project.schematic.sheets {
         let sheet_uuid = Uuid::parse_str(sheet_uuid)
             .with_context(|| format!("invalid sheet UUID key `{sheet_uuid}` in schematic root"))?;
         let path = project.root.join("schematic").join(relative_path);
-        let sheet_text = std::fs::read_to_string(&path)
-            .with_context(|| format!("failed to read {}", path.display()))?;
-        let sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
-            .with_context(|| format!("failed to parse {}", path.display()))?;
+        let sheet_value = model
+            .materialized_source_shard_value_by_relative_path(&format!("schematic/{relative_path}"))
+            .with_context(|| format!("failed to materialize {}", path.display()))?;
         if let Some(entries) = sheet_value
             .get("drawings")
             .and_then(serde_json::Value::as_object)
@@ -184,7 +246,7 @@ pub(crate) fn query_native_project_drawings(root: &Path) -> Result<Vec<serde_jso
 }
 
 pub(crate) fn query_native_project_nets(root: &Path) -> Result<Vec<SchematicNetInfo>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(schematic_net_info(&build_native_project_schematic(
         &project,
     )?))
@@ -193,23 +255,53 @@ pub(crate) fn query_native_project_nets(root: &Path) -> Result<Vec<SchematicNetI
 pub(crate) fn query_native_project_diagnostics(
     root: &Path,
 ) -> Result<Vec<ConnectivityDiagnosticInfo>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(schematic_diagnostics(&build_native_project_schematic(
         &project,
     )?))
 }
 
 pub(crate) fn query_native_project_erc(root: &Path) -> Result<Vec<ErcFinding>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(run_prechecks(&build_native_project_schematic(&project)?))
 }
 
 pub(crate) fn query_native_project_check(root: &Path) -> Result<CheckReport> {
-    let project = load_native_project(root)?;
+    query_native_project_check_with_inputs(
+        root,
+        true,
+        true,
+        &[
+            RuleType::Connectivity,
+            RuleType::ClearanceCopper,
+            RuleType::TrackWidth,
+            RuleType::ViaHole,
+            RuleType::ViaAnnularRing,
+            RuleType::SilkClearance,
+            RuleType::ProcessAperture,
+        ],
+    )
+}
+
+pub(crate) fn query_native_project_check_with_inputs(
+    root: &Path,
+    include_relationships: bool,
+    include_erc: bool,
+    drc_rules: &[RuleType],
+) -> Result<CheckReport> {
+    let project = load_native_project_with_resolved_board(root)?;
     let schematic = build_native_project_schematic(&project)?;
-    let diagnostics = schematic_diagnostics(&schematic);
-    let erc = run_prechecks(&schematic);
-    let drc = query_native_project_drc(root)?.violations;
+    let diagnostics = include_relationships
+        .then(|| schematic_diagnostics(&schematic))
+        .unwrap_or_default();
+    let erc = include_erc
+        .then(|| run_prechecks(&schematic))
+        .unwrap_or_default();
+    let drc = if drc_rules.is_empty() {
+        Vec::new()
+    } else {
+        query_native_project_drc_with_rules(root, drc_rules)?.violations
+    };
     Ok(CheckReport::Combined {
         summary: summarize_native_combined_checks(&diagnostics, &erc, &drc),
         diagnostics,

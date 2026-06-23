@@ -3,10 +3,11 @@ use std::path::Path;
 use crate::error::EngineError;
 use crate::import::{ImportKind, ImportObjectCounts, ImportReport};
 use crate::ir::geometry::{Point, Polygon};
-use crate::pool::{Package, Pad, Padstack, PadstackAperture, Primitive};
+use crate::pool::{Pad, Padstack, PadstackAperture, Primitive};
 use crate::schematic::PinElectricalType;
 
 mod board_objects;
+mod footprint;
 mod net_refs;
 mod parser_helpers;
 mod skeleton;
@@ -16,74 +17,14 @@ use parser_helpers::*;
 use skeleton::{parse_board_skeleton, parse_schematic_skeleton};
 
 // KiCad importer — see specs/IMPORT_SPEC.md §3
+pub use footprint::{
+    ImportedKiCadFootprint, footprint_package_import_key, import_footprint_document,
+    import_footprint_document_with_import_map,
+};
 
 pub fn import_board_file(path: &Path) -> Result<ImportReport, EngineError> {
     let (_board, report) = import_board_document(path)?;
     Ok(report)
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ImportedKiCadFootprint {
-    pub package: Package,
-    pub padstacks: Vec<Padstack>,
-    pub mechanical: Vec<Primitive>,
-}
-
-pub fn import_footprint_document(
-    path: &Path,
-) -> Result<(ImportedKiCadFootprint, ImportReport), EngineError> {
-    let contents = std::fs::read_to_string(path)?;
-    let footprint_name = footprint_name(&contents).unwrap_or_else(|| {
-        path.file_stem()
-            .and_then(|stem| stem.to_str())
-            .unwrap_or("kicad-footprint")
-            .to_string()
-    });
-    let package_uuid = crate::ir::ids::import_uuid(
-        &crate::ir::ids::namespace_kicad(),
-        &format!("footprint-package/{}", path.display()),
-    );
-
-    let (silkscreen, mechanical) = import_footprint_graphics(path, &contents)?;
-    let (pads, padstacks) = import_footprint_pads(path, &contents)?;
-    let courtyard = import_footprint_courtyard(&mechanical, &silkscreen);
-
-    let package = Package {
-        uuid: package_uuid,
-        name: footprint_name,
-        pads,
-        courtyard,
-        silkscreen,
-        models_3d: Vec::new(),
-        tags: std::collections::HashSet::from([
-            "source:kicad".to_string(),
-            "imported:footprint".to_string(),
-        ]),
-    };
-    let report = ImportReport::new(
-        ImportKind::KiCadFootprint,
-        path,
-        ImportObjectCounts {
-            padstacks: padstacks.len(),
-            packages: 1,
-            ..ImportObjectCounts::default()
-        },
-    )
-    .with_metadata("pad_count", package.pads.len().to_string())
-    .with_metadata(
-        "silkscreen_primitives",
-        package.silkscreen.len().to_string(),
-    )
-    .with_metadata("mechanical_primitives", mechanical.len().to_string());
-
-    Ok((
-        ImportedKiCadFootprint {
-            package,
-            padstacks,
-            mechanical,
-        },
-        report,
-    ))
 }
 
 pub fn import_board_document(

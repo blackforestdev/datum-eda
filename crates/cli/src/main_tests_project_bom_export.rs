@@ -83,21 +83,22 @@ fn project_export_bom_writes_deterministic_csv_from_board_components() {
     let output = execute(cli).expect("BOM export should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
     assert_eq!(report["action"], "export_bom");
+    assert_eq!(report["production_classification"], "manual_debug_export");
     assert_eq!(report["rows"], 2);
 
     let csv = std::fs::read_to_string(&bom_path).expect("bom should read");
     let lines = csv.lines().collect::<Vec<_>>();
     assert_eq!(
         lines[0],
-        "reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked"
+        "component_instance_uuid,reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked"
     );
     assert_eq!(
         lines[1],
-        format!("C1,\"1uF, \"\"X7R\"\"\",{c1_part_uuid},{c1_package_uuid},1,1000,1500,90,false")
+        format!(",C1,\"1uF, \"\"X7R\"\"\",{c1_part_uuid},{c1_package_uuid},1,1000,1500,90,false")
     );
     assert_eq!(
         lines[2],
-        format!("C2,10uF,{c2_part_uuid},{c2_package_uuid},31,2000,3000,180,true")
+        format!(",C2,10uF,{c2_part_uuid},{c2_package_uuid},31,2000,3000,180,true")
     );
 
     let _ = std::fs::remove_dir_all(&root);

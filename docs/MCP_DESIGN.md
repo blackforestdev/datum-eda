@@ -59,7 +59,7 @@ MCP Client / AI Agent
       "command": "python3",
       "args": ["/path/to/mcp-server/server.py"],
       "env": {
-        "EDA_ENGINE_SOCKET": "/path/to/eda.sock"
+        "DATUM_ENGINE_SOCKET": "/path/to/datum-eda.sock"
       }
     }
   }
@@ -67,7 +67,8 @@ MCP Client / AI Agent
 ```
 
 The current Python MCP process connects to `eda-engine-daemon` over the Unix
-socket in `EDA_ENGINE_SOCKET`. It does not call the CLI binary directly.
+socket in `DATUM_ENGINE_SOCKET`. `EDA_ENGINE_SOCKET` remains a legacy fallback
+for existing local MCP host configs.
 
 ---
 

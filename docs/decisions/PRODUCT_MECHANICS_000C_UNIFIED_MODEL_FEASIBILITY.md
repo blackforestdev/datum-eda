@@ -401,31 +401,34 @@ Required answer (mechanism):
   `board/`, `rules/`), `project validate` already runs schema-version,
   required-file, and dangling-cross-reference checks, and manufacturing export
   already generates Gerber, drill, and BOM output from native projects.
-- The true migration problem is that this format is a CLI-only parallel
+- The true migration problem is that the native format is a CLI-only parallel
   universe: its shard types are duplicated serde structs that do not reuse the
   engine's `Board` and `Schematic` types (the board shard even stores packages
-  as untyped JSON), and the engine cannot load them. Meanwhile imported KiCad
-  boards persist by patching their original source text, which remains the
-  de-facto authority. Datum therefore has TWO authorities — CLI-native JSON and
-  imported KiCad text — and no resolved `DesignModel` between them.
-- Migration proceeds without a rewrite cliff by lifting and converging, not
-  rebuilding. The already-shipped shard layout, loader, and validator become the
-  seed for an engine-owned `ProjectResolver` that resolves shards into one
-  `DesignModel`; the CLI `validate` command becomes a thin caller into it.
-  Authority is then inverted one surface at a time.
+  as untyped JSON), and the engine cannot load them. Native is the only intended
+  authority. The current engine storing imported boards as KiCad source text
+  plus sidecars is a TRANSITIONAL DEFECT, not an accepted second authority and
+  not a design choice; see `docs/DATUM_PRODUCT_MECHANICS.md` "Interop Boundary
+  And Import Posture". Import is a ONE-TIME converter: a KiCad file becomes
+  native data and is thereafter just a native board, with origin retained only
+  as provenance.
+- Migration proceeds without a rewrite cliff by lifting the already-shipped
+  native shard layout, loader, and validator into the engine rather than
+  rebuilding. They become the seed for an engine-owned `ProjectResolver` that
+  resolves native shards into one `DesignModel`; the CLI `validate` command
+  becomes a thin caller into it. The defect fix is that import writes native
+  shards directly — not a phased authority flip from a retained KiCad-text
+  authority.
 - The first slice resolves the smallest viable shard set — manifest, board, and
   a new relationships shard — seeded from the canonical datum-test fixture (32
-  routed segments, 11 footprints, and a schematic), where every imported
+  routed segments, 11 footprints, and a schematic), where every recovered
   footprint is recorded as a `BoardOnly` `Relationship` and the original KiCad
-  text is retained verbatim as a provenance shard rather than discarded.
-  Imported KiCad source is demoted from authority to provenance only when the
-  slice that flips it ships; until then, the existing imported-board save path
-  stays green. Each subsequent slice converts one further surface — persisted
+  text is retained as a provenance shard (provenance only, never authority).
+  Each subsequent slice resolves one further native domain — persisted
   transactions, electrical sheets, manufacturing plans, artifact metadata — so
-  no single step replaces all persistence at once. The authority flip and the
-  from-shards KiCad emitter are DEFERRED until M7 closes AND the emitter passes a
-  byte-identical-when-unmodified fidelity gate on datum-test, run as DUAL-WRITE
-  during a deprecation window.
+  no single step replaces all persistence at once. An optional future
+  from-shards KiCad EXPORTER (native → KiCad) is separate and DEFERRED; if built
+  it would carry its own byte-identical-when-unmodified fidelity gate on
+  datum-test, and it does not gate native maturity in any way.
 
 Domain-to-module map (the concrete answer this section asks for):
 - electrical → native schematic shard + engine connectivity solver
@@ -436,20 +439,22 @@ Domain-to-module map (the concrete answer this section asks for):
 
 Net-new keystone gaps (no code today; the migration must create them):
 - the relationships shard (with `ComponentInstance` as its per-instance
-  electrical-to-physical surrogate) that joins the imported (deterministic v5)
-  and native (random v4) identity spaces without merging them
+  electrical-to-physical surrogate) that carries native identity (persisted v4
+  `ObjectId = Uuid`) alongside the import SEED (the demoted v5 value persisted
+  in the Import Map shard as provenance) without conflating the two
 - the persisted transactions shard (the journal) that turns today's in-memory
   undo into durable, replayable provenance
-- the from-shards KiCad emitter that lets the resolved model round-trip to
-  imported formats; until it passes its fidelity gate, the imported-source patch
-  path remains authoritative
+- (optional, deferred) a from-shards KiCad EXPORTER (native → KiCad) for users
+  who want to round-trip back to imported formats; this is separate from import,
+  optional, and does not gate native maturity
 
 Proof needed:
 - the domain-to-module map above is exercised end-to-end on a resolved
   datum-test model
 - the first migration slice (manifest + board + relationships, seeded
   board-first as all-`BoardOnly` reverse-engineered) loads through the
-  `ProjectResolver` without touching the imported-KiCad save path
+  `ProjectResolver` as native shards, with the original KiCad text retained as a
+  provenance shard only
 
 ## Decision Gates
 
@@ -459,7 +464,7 @@ whose full set lives in 000D (this doc cross-references it). The 10 gates are:
 1 PG-IDENTITY-SUBSTRATE; 2 PG-RESOLVER-RECOVERY; 3 PG-COMMIT-ATOMIC+
 DURABLE-UNDO; 4 PG-SHARD-DIFF-ISOLATION; 5 PG-PROPOSAL-PARITY; 6 PG-LIVE-CAM-
 EQUIVALENCE; 7 PG-PANELIZATION-ISOLATION (deduped, was 4x); 8 PG-VARIANT-
-RESOLUTION (population-only); 9 PG-AUTHORITY-FLIP+ARTIFACT-TRACEABILITY; 10
+RESOLUTION (population-only); 9 PG-ARTIFACT-TRACEABILITY; 10
 PG-HARNESS-WIRING (into `run_drift_gates.sh`).
 
 Before committing to the unified model as governing architecture, Datum should
@@ -491,11 +496,12 @@ Adopt the conventional segmented model if:
 - projection invalidation cannot be made reliable
 - cross-domain transactions are too confusing for users
 - live production projections cannot be made trustworthy
-- migration from current code requires a rewrite cliff — note the lift-and-
-  converge path above is designed to avoid exactly this (surface-by-surface
-  authority inversion, imported-KiCad save path stays green until flipped), so
-  this failure mode fires only if that surface-by-surface inversion proves
-  impossible in practice
+- migration from current code requires a rewrite cliff — note the lift path
+  above is designed to avoid exactly this (the shipped native shard layout,
+  loader, and validator are lifted into an engine-owned `ProjectResolver`, and
+  import is fixed to write native shards directly per the posture), so this
+  failure mode fires only if that domain-by-domain lift proves impossible in
+  practice
 
 Adopt unified authority only for selected domains if:
 - electrical/physical can share authority but library/manufacturing need to
@@ -511,9 +517,11 @@ exception: the four ratified mechanisms (persisted `ObjectId = Uuid`,
 `ComponentInstance`, the journaled `commit()` primitive, and concurrent-with-M7
 sequencing) are DECIDED and may be built now. The identity, resolver, and commit
 modules are additive engine modules built CONCURRENTLY with M7; this work does
-NOT close M7, and the authority flip + from-shards KiCad emitter are DEFERRED
-until M7 closes AND the emitter passes its byte-identical-when-unmodified
-fidelity gate on datum-test, run as DUAL-WRITE during a deprecation window.
+NOT close M7. Native is the only authority; the defect fix is that import writes
+native shards directly. The optional from-shards KiCad EXPORTER (native → KiCad)
+is separate and DEFERRED, would carry its own byte-identical-when-unmodified
+fidelity gate on datum-test if built, and does not gate native maturity. See
+`docs/DATUM_PRODUCT_MECHANICS.md` "Interop Boundary And Import Posture".
 
 Use the docs as a product direction, but do not mark the remaining structural
 forks as finalized until the decision gates are tested against small

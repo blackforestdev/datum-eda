@@ -10,6 +10,7 @@ use super::command_project_gerber_mechanical::NativeComponentMechanicalPolygon;
 use super::command_project_gerber_silkscreen::{
     NativeComponentSilkscreenArc, NativeComponentSilkscreenCircle, NativeComponentSilkscreenLine,
     NativeComponentSilkscreenPolygon, NativeComponentSilkscreenPolyline,
+    NativeComponentSilkscreenText,
 };
 use super::command_project_native_types::NativeComponentPad;
 use super::{LoadedNativeProject, NativePoint, query_native_project_board_stackup};
@@ -34,6 +35,7 @@ pub(crate) fn materialize_supported_pool_package_graphics(
     let mut silkscreen_lines = Vec::new();
     let mut silkscreen_arcs = Vec::new();
     let mut silkscreen_circles = Vec::new();
+    let mut silkscreen_texts = Vec::new();
     let mut silkscreen_polygons = Vec::new();
     let mut silkscreen_polylines = Vec::new();
     let mut mechanical_polygons = Vec::new();
@@ -106,7 +108,18 @@ pub(crate) fn materialize_supported_pool_package_graphics(
                 width_nm: width,
                 layer: silkscreen_layer.id,
             }),
-            Primitive::Text { .. } => {}
+            Primitive::Text {
+                text,
+                position,
+                rotation,
+            } => silkscreen_texts.push(NativeComponentSilkscreenText {
+                text,
+                position: native_point(position),
+                rotation,
+                height_nm: 1_000_000,
+                stroke_width_nm: 150_000,
+                layer: silkscreen_layer.id,
+            }),
         }
     }
 
@@ -134,6 +147,10 @@ pub(crate) fn materialize_supported_pool_package_graphics(
         .board
         .component_silkscreen_circles
         .insert(key.clone(), silkscreen_circles);
+    project
+        .board
+        .component_silkscreen_texts
+        .insert(key.clone(), silkscreen_texts);
     project
         .board
         .component_silkscreen_polygons

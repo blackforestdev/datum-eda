@@ -29,18 +29,53 @@ pub(crate) fn parse_native_stackup_layers(layers: &[String]) -> Result<Vec<Stack
     layers
         .iter()
         .map(|value| {
-            let parts = value.splitn(4, ':').collect::<Vec<_>>();
-            if parts.len() != 4 {
-                bail!("layer must be id:name:type:thickness_nm, got `{value}`");
+            let parts = value.split(':').collect::<Vec<_>>();
+            if parts.len() != 4 && parts.len() != 9 {
+                bail!(
+                    "layer must be id:name:type:thickness_nm[:dielectric_constant][:loss_tangent][:copper_weight_oz][:roughness_um][:material_name], got `{value}`"
+                );
             }
-            Ok(StackupLayer {
-                id: parts[0].parse::<i32>()?,
-                name: parts[1].to_string(),
-                layer_type: parse_stackup_layer_type(parts[2])?,
-                thickness_nm: parts[3].parse::<i64>()?,
-            })
+            let mut layer = StackupLayer::new(
+                parts[0].parse::<i32>()?,
+                parts[1],
+                parse_stackup_layer_type(parts[2])?,
+                parts[3].parse::<i64>()?,
+            );
+            if parts.len() == 9 {
+                layer.dielectric_constant =
+                    parse_optional_stackup_number(parts[4], "dielectric_constant")?;
+                layer.loss_tangent = parse_optional_stackup_number(parts[5], "loss_tangent")?;
+                layer.copper_weight_oz =
+                    parse_optional_stackup_number(parts[6], "copper_weight_oz")?;
+                layer.roughness_um = parse_optional_stackup_number(parts[7], "roughness_um")?;
+                layer.material_name = parse_optional_stackup_text(parts[8]);
+            }
+            Ok(layer)
         })
         .collect()
+}
+
+fn parse_optional_stackup_number(value: &str, field: &str) -> Result<Option<serde_json::Number>> {
+    let trimmed = value.trim();
+    if trimmed.is_empty() {
+        return Ok(None);
+    }
+    let number: serde_json::Number = serde_json::from_str(trimmed)
+        .with_context(|| format!("stackup {field} must be a non-negative JSON number"))?;
+    if number.as_f64().is_some_and(|value| value >= 0.0) {
+        Ok(Some(number))
+    } else {
+        bail!("stackup {field} must be a non-negative JSON number");
+    }
+}
+
+fn parse_optional_stackup_text(value: &str) -> Option<String> {
+    let trimmed = value.trim();
+    if trimmed.is_empty() {
+        None
+    } else {
+        Some(trimmed.to_string())
+    }
 }
 
 fn parse_stackup_layer_type(value: &str) -> Result<StackupLayerType> {

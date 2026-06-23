@@ -1,6 +1,6 @@
 use super::empty_board;
 use crate::board::{Net, NetClass, PlacedPackage, Track};
-use crate::drc::run_with_waivers;
+use crate::drc::{drc_violation_fingerprint, run_with_waivers};
 use crate::ir::geometry::Point;
 use crate::rules::ast::RuleType;
 use crate::schematic::{CheckDomain, CheckWaiver, WaiverTarget};
@@ -35,6 +35,7 @@ fn authored_drc_object_waiver_marks_matching_violation_as_waived() {
             uuid: net_uuid,
             name: "SIG".into(),
             class: class_uuid,
+            controlled_impedance: None,
         },
     );
 
@@ -117,6 +118,30 @@ fn authored_drc_object_waiver_marks_matching_violation_as_waived() {
         },
     );
 
+    let unwaived = run_with_waivers(&board, &[RuleType::Connectivity], &[]);
+    let no_copper_fingerprint = unwaived
+        .violations
+        .iter()
+        .find(|violation| violation.code == "connectivity_no_copper")
+        .map(drc_violation_fingerprint)
+        .expect("connectivity_no_copper violation should exist");
+    let fingerprint_waiver = CheckWaiver {
+        uuid: Uuid::new_v4(),
+        domain: CheckDomain::DRC,
+        target: WaiverTarget::Fingerprint(no_copper_fingerprint),
+        rationale: "Intentional empty copper in fixture".into(),
+        created_by: Some("drc-test".into()),
+    };
+    let fingerprint_report =
+        run_with_waivers(&board, &[RuleType::Connectivity], &[fingerprint_waiver]);
+    assert_eq!(fingerprint_report.summary.waived, 1);
+    assert!(
+        fingerprint_report
+            .violations
+            .iter()
+            .any(|violation| violation.code == "connectivity_no_copper" && violation.waived)
+    );
+
     let waiver = CheckWaiver {
         uuid: Uuid::new_v4(),
         domain: CheckDomain::DRC,
@@ -158,6 +183,7 @@ fn authored_drc_rule_objects_waiver_matches_independent_of_object_order() {
             uuid: net_a,
             name: "A".into(),
             class: class_uuid,
+            controlled_impedance: None,
         },
     );
     board.nets.insert(
@@ -166,6 +192,7 @@ fn authored_drc_rule_objects_waiver_matches_independent_of_object_order() {
             uuid: net_b,
             name: "B".into(),
             class: class_uuid,
+            controlled_impedance: None,
         },
     );
 

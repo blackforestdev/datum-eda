@@ -1,12 +1,26 @@
 pub(crate) use super::*;
 
+pub(crate) use self::cli_args_artifact::{
+    ArtifactCancelOutputJobRunArgs, ArtifactCommands, ArtifactCompareArgs, ArtifactFilesArgs,
+    ArtifactGenerateArgs, ArtifactListArgs, ArtifactPreviewArgs, ArtifactShowArgs,
+    ArtifactStartOutputJobRunArgs, ArtifactValidateArgs,
+};
 pub(crate) use self::cli_args_board_component::{
     BoardComponentMechanicalArgs, BoardComponentModels3dArgs, BoardComponentPadsArgs,
     BoardComponentSilkscreenArgs, SetBoardComponentLayerArgs, SetBoardComponentPackageArgs,
     SetBoardComponentPartArgs, SetBoardComponentReferenceArgs, SetBoardComponentValueArgs,
 };
 pub(crate) use self::cli_args_board_dimension::{EditBoardDimensionArgs, PlaceBoardDimensionArgs};
-pub(crate) use self::cli_args_commands::{Cli, Commands, QueryCommands};
+pub(crate) use self::cli_args_check::{
+    CheckAcceptDeviationArgs, CheckCommands, CheckFillZonesArgs, CheckImportedArgs, CheckListArgs,
+    CheckProfilesArgs, CheckRepairStandardsArgs, CheckRunArgs, CheckShowArgs, CheckWaiveArgs,
+};
+pub(crate) use self::cli_args_commands::{
+    Cli, Commands, ImportedQueryCommandParser, ImportedQueryCommands, QueryCommands, QueryPathArgs,
+};
+pub(crate) use self::cli_args_context::{
+    ContextCommands, ContextGetArgs, ContextSessionActivityArgs, ContextSessionEventsArgs,
+};
 pub(crate) use self::cli_args_drill::{
     CompareDrillArgs, CompareExcellonDrillArgs, ExportDrillArgs, ExportExcellonDrillArgs,
     InspectDrillArgs, ReportDrillHoleClassesArgs, ValidateDrillArgs, ValidateExcellonDrillArgs,
@@ -19,9 +33,13 @@ pub(crate) use self::cli_args_inventory::{
     CompareBomArgs, ComparePnpArgs, ExportBomArgs, ExportPnpArgs, InspectBomArgs, InspectPnpArgs,
     ValidateBomArgs, ValidatePnpArgs,
 };
+pub(crate) use self::cli_args_journal::{JournalCommands, JournalListArgs, JournalShowArgs};
 pub(crate) use self::cli_args_manufacturing::{
     CompareManufacturingSetArgs, ExportManufacturingSetArgs, InspectManufacturingSetArgs,
-    ManifestManufacturingSetArgs, ReportManufacturingArgs, ValidateManufacturingSetArgs,
+    ManifestManufacturingSetArgs, ProjectCreateManufacturingPlanArgs,
+    ProjectCreatePanelProjectionArgs, ProjectDeleteManufacturingPlanArgs,
+    ProjectDeletePanelProjectionArgs, ProjectUpdateManufacturingPlanArgs,
+    ProjectUpdatePanelProjectionArgs, ReportManufacturingArgs, ValidateManufacturingSetArgs,
 };
 pub(crate) use self::cli_args_native_support::{
     NativeHiddenPowerBehaviorArg, NativePortDirectionArg, NativeSymbolDisplayModeArg,
@@ -33,8 +51,54 @@ pub(crate) use self::cli_args_project_command_args_board::*;
 pub(crate) use self::cli_args_project_command_args_schematic_connectivity::*;
 pub(crate) use self::cli_args_project_command_args_schematic_symbols::*;
 pub(crate) use self::cli_args_project_commands::ProjectCommands;
+pub(crate) use self::cli_args_project_component_instances::{
+    ProjectBindComponentInstanceArgs, ProjectDeleteComponentInstanceArgs,
+    ProjectSetComponentInstanceArgs,
+};
+pub(crate) use self::cli_args_project_import::ProjectImportKiCadFootprintArgs;
+pub(crate) use self::cli_args_project_journal::{ProjectRedoArgs, ProjectUndoArgs};
+pub(crate) use self::cli_args_project_library::{
+    ProjectAddPoolPackageModel3dArgs, ProjectAddPoolPackageSilkscreenArcArgs,
+    ProjectAddPoolPackageSilkscreenCircleArgs, ProjectAddPoolPackageSilkscreenLineArgs,
+    ProjectAddPoolPackageSilkscreenPolygonArgs, ProjectAddPoolPackageSilkscreenRectArgs,
+    ProjectAddPoolPackageSilkscreenTextArgs, ProjectAddPoolSymbolArcArgs,
+    ProjectAddPoolSymbolCircleArgs, ProjectAddPoolSymbolLineArgs, ProjectAddPoolSymbolPolygonArgs,
+    ProjectAddPoolSymbolRectArgs, ProjectAddPoolSymbolTextArgs, ProjectAttachPoolPartModelArgs,
+    ProjectCreatePoolEntityArgs, ProjectCreatePoolLibraryObjectArgs, ProjectCreatePoolPackageArgs,
+    ProjectCreatePoolPadstackArgs, ProjectCreatePoolPartArgs, ProjectCreatePoolSymbolArgs,
+    ProjectCreatePoolUnitArgs, ProjectDeletePoolLibraryObjectArgs, ProjectDetachPoolPartModelArgs,
+    ProjectGcPoolModelsArgs, ProjectSetPoolLibraryObjectArgs, ProjectSetPoolPackageBodyHeightsArgs,
+    ProjectSetPoolPackageCourtyardPolygonArgs, ProjectSetPoolPackageCourtyardRectArgs,
+    ProjectSetPoolPackagePadArgs, ProjectSetPoolPartBehaviouralModelsArgs,
+    ProjectSetPoolPartMetadataArgs, ProjectSetPoolPartOrderableMpnsArgs,
+    ProjectSetPoolPartPackagingOptionsArgs, ProjectSetPoolPartPadMapArgs,
+    ProjectSetPoolPartPadMapEntryArgs, ProjectSetPoolPartParametricArgs,
+    ProjectSetPoolPartSupplyChainArgs, ProjectSetPoolPartTagsArgs, ProjectSetPoolPartThermalArgs,
+    ProjectSetPoolSymbolPinAnchorArgs, ProjectSetPoolUnitPinArgs,
+};
+pub(crate) use self::cli_args_project_output_jobs::{
+    ProjectCancelOutputJobRunArgs, ProjectCreateGerberOutputJobArgs, ProjectCreateOutputJobArgs,
+    ProjectDeleteOutputJobArgs, ProjectRunOutputJobArgs, ProjectStartOutputJobRunArgs,
+    ProjectUpdateOutputJobArgs,
+};
+pub(crate) use self::cli_args_project_proposals::{
+    ProjectApplyProposalArgs, ProjectCreateProposalArgs, ProjectDeferProposalArgs,
+    ProjectPreviewProposalArgs, ProjectReviewProposalArgs, ProjectShowProposalArgs,
+    ProjectValidateProposalArgs, ProposalReviewStatusArg, ProposalSourceArg,
+};
 pub(crate) use self::cli_args_project_query_plan::{
     NativeProjectQueryCommands, NativeRoutePathCandidateAuthoredCopperGraphPolicy, PlanCommands,
+};
+pub(crate) use self::cli_args_project_waivers::{
+    ProjectAcceptDeviationArgs, ProjectWaiveFindingArgs,
+};
+pub(crate) use self::cli_args_proposals::{
+    ProjectProposalListArgs, ProjectRejectProposalArgs, ProposalCommands,
+    ProposalCreateManufacturingPlanArgs, ProposalCreateOutputJobArgs,
+    ProposalCreatePanelProjectionArgs, ProposalDeleteManufacturingPlanArgs,
+    ProposalDeleteOutputJobArgs, ProposalDeletePanelProjectionArgs, ProposalDrawWireArgs,
+    ProposalPlaceLabelArgs, ProposalPlaceSymbolArgs, ProposalUpdateManufacturingPlanArgs,
+    ProposalUpdateOutputJobArgs, ProposalUpdatePanelProjectionArgs,
 };
 
 #[derive(Clone, clap::ValueEnum)]

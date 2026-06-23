@@ -97,8 +97,9 @@ fn project_compare_pnp_reports_matched_missing_extra_and_drift() {
     assert_eq!(report["missing_count"], 0);
     assert_eq!(report["extra_count"], 1);
     assert_eq!(report["drift_count"], 1);
-    assert_eq!(report["matched"][0], "U1");
-    assert_eq!(report["extra"][0], "U3");
+    assert_eq!(report["matched"][0], u1_package_uuid.to_string());
+    assert_eq!(report["extra"][0], u1_package_uuid.to_string());
+    assert_eq!(report["drift"][0]["identity"], u2_package_uuid.to_string());
     assert_eq!(report["drift"][0]["reference"], "U2");
     assert_eq!(report["drift"][0]["fields"][0], "position");
 

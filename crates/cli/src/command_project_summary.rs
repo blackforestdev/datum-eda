@@ -7,11 +7,11 @@ use super::{
     NativeProjectSchematicSummaryView, NativeProjectSummaryView,
     collect_native_project_pool_ref_views, collect_schematic_counts,
     component_has_persisted_mechanical, component_has_persisted_silkscreen, component_model_count,
-    component_package_pad_count, load_native_project,
+    component_package_pad_count, load_native_project_with_resolved_board,
 };
 
 pub(crate) fn query_native_project_summary(root: &Path) -> Result<NativeProjectSummaryView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let schematic_counts = collect_schematic_counts(&project.root, &project.schematic)?;
     let components_with_persisted_silkscreen = project
         .board

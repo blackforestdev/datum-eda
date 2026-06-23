@@ -1,5 +1,10 @@
 use super::*;
 
+#[path = "command_project_forward_annotation_review_state.rs"]
+mod command_project_forward_annotation_review_state;
+#[path = "command_project_forward_annotation_substrate.rs"]
+mod command_project_forward_annotation_substrate;
+
 pub(crate) fn apply_native_project_forward_annotation_action(
     root: &Path,
     action_id: &str,
@@ -17,6 +22,30 @@ pub(crate) fn apply_native_project_forward_annotation_action(
         .ok_or_else(|| {
             anyhow::anyhow!("forward-annotation proposal action not found: {action_id}")
         })?;
+
+    if command_project_forward_annotation_substrate::can_apply_with_embedded_proposal(
+        std::slice::from_ref(&action),
+    ) {
+        return command_project_forward_annotation_substrate::apply_forward_annotation_proposal(
+            root,
+            command_project_forward_annotation_substrate::build_forward_annotation_proposal(
+                root,
+                std::slice::from_ref(&action),
+                &[],
+            )?
+            .ok_or_else(|| {
+                anyhow::anyhow!(
+                    "forward-annotation substrate proposal could not be built for action {action_id}"
+                )
+            })?,
+            std::slice::from_ref(&action),
+        )?
+        .into_iter()
+        .next()
+        .ok_or_else(|| {
+            anyhow::anyhow!("forward-annotation substrate proposal did not apply action {action_id}")
+        });
+    }
 
     execute_native_project_forward_annotation_action(
         root,
@@ -146,8 +175,8 @@ pub(crate) fn apply_native_project_forward_annotation_reviewed(
     root: &Path,
 ) -> Result<NativeProjectForwardAnnotationBatchApplyReportView> {
     let proposal = query_native_project_forward_annotation_proposal(root)?;
-    let project = load_native_project(root)?;
-    let review = project.manifest.forward_annotation_review;
+    let review =
+        command_project_forward_annotation_review_state::load_forward_annotation_review(root)?;
     let mut applied = Vec::new();
     let mut skipped = Vec::new();
 
@@ -173,9 +202,7 @@ pub(crate) fn apply_native_project_forward_annotation_reviewed(
         match (action.action.as_str(), action.reason.as_str()) {
             ("remove_component", "board_component_missing_in_schematic")
             | ("update_component", "value_mismatch") => {
-                applied.push(execute_native_project_forward_annotation_action(
-                    root, action, None, None, None, None, None,
-                )?);
+                applied.push(action);
             }
             ("add_component", _) | ("update_component", "part_mismatch") => {
                 skipped.push(NativeProjectForwardAnnotationBatchApplySkippedActionView {
@@ -210,6 +237,22 @@ pub(crate) fn apply_native_project_forward_annotation_reviewed(
         .iter()
         .filter(|entry| entry.skip_reason == "requires_explicit_input")
         .count();
+    let applied = if applied.is_empty() {
+        Vec::new()
+    } else {
+        let proposal =
+            command_project_forward_annotation_substrate::build_forward_annotation_proposal(
+                root,
+                &applied,
+                &[],
+            )?
+            .ok_or_else(|| {
+                anyhow::anyhow!("forward-annotation reviewed substrate proposal could not be built")
+            })?;
+        command_project_forward_annotation_substrate::apply_forward_annotation_proposal(
+            root, proposal, &applied,
+        )?
+    };
 
     Ok(NativeProjectForwardAnnotationBatchApplyReportView {
         action: "apply_forward_annotation_reviewed".to_string(),
@@ -227,10 +270,9 @@ pub(crate) fn apply_native_project_forward_annotation_reviewed(
 pub(crate) fn query_native_project_forward_annotation_review(
     root: &Path,
 ) -> Result<NativeProjectForwardAnnotationReviewView> {
-    let project = load_native_project(root)?;
-    let mut actions = project
-        .manifest
-        .forward_annotation_review
+    let review =
+        command_project_forward_annotation_review_state::load_forward_annotation_review(root)?;
+    let mut actions = review
         .values()
         .map(|record| NativeProjectForwardAnnotationReviewActionView {
             action_id: record.action_id.clone(),
@@ -282,8 +324,9 @@ pub(crate) fn record_native_project_forward_annotation_review(
             anyhow::anyhow!("forward-annotation proposal action not found: {action_id}")
         })?;
 
-    let mut project = load_native_project(root)?;
-    project.manifest.forward_annotation_review.insert(
+    let mut review =
+        command_project_forward_annotation_review_state::load_forward_annotation_review(root)?;
+    review.insert(
         action.action_id.clone(),
         NativeForwardAnnotationReviewRecord {
             action_id: action.action_id.clone(),
@@ -293,7 +336,9 @@ pub(crate) fn record_native_project_forward_annotation_review(
             reason: action.reason.clone(),
         },
     );
-    write_canonical_json(&project.root.join("project.json"), &project.manifest)?;
+    command_project_forward_annotation_review_state::write_forward_annotation_review(
+        root, &review,
+    )?;
 
     Ok(NativeProjectForwardAnnotationReviewReportView {
         action: format!("{decision}_forward_annotation_action"),
@@ -309,15 +354,14 @@ pub(crate) fn clear_native_project_forward_annotation_review(
     root: &Path,
     action_id: &str,
 ) -> Result<NativeProjectForwardAnnotationReviewReportView> {
-    let mut project = load_native_project(root)?;
-    let cleared = project
-        .manifest
-        .forward_annotation_review
-        .remove(action_id)
-        .ok_or_else(|| {
-            anyhow::anyhow!("forward-annotation review action not found: {action_id}")
-        })?;
-    write_canonical_json(&project.root.join("project.json"), &project.manifest)?;
+    let mut review =
+        command_project_forward_annotation_review_state::load_forward_annotation_review(root)?;
+    let cleared = review.remove(action_id).ok_or_else(|| {
+        anyhow::anyhow!("forward-annotation review action not found: {action_id}")
+    })?;
+    command_project_forward_annotation_review_state::write_forward_annotation_review(
+        root, &review,
+    )?;
     Ok(NativeProjectForwardAnnotationReviewReportView {
         action: "clear_forward_annotation_action_review".to_string(),
         action_id: cleared.action_id,

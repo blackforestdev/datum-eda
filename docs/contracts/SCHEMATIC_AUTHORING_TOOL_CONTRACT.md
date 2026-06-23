@@ -147,15 +147,14 @@ restated.
   on the active sheet, drag to set position, type reference/value.
 - **(2) Operation:** `PlaceSymbol{sheet_id, library_ref, position,
   rotation, mirror, component_instance_id}` → single-Operation
-  `OperationBatch` through `commit()`. Today emits NO operation:
-  `place_native_project_symbol` mutates sheet JSON and returns a
-  `NativeProjectSymbolMutationReportView` only.
-- **(3) CLI:** `datum-eda project place-symbol --root <dir> --sheet <uuid>
-  --reference R1 --value 10k --lib-id <id> --x <nm> --y <nm>
-  --rotation <deg> [--mirror]`
-- **(4) MCP/AI:** `place_symbol` (NOT YET in `tools_catalog_data.py`).
-  Dispatches through the daemon to engine `commit()`, returning
-  `OperationResult` + `model_revision`.
+  `OperationBatch` through `commit()`. Current CLI uses the journaled
+  schematic operation path, but ComponentInstance mint semantics remain
+  follow-on.
+- **(3) CLI:** `datum-eda project place-symbol <dir> --sheet <uuid>
+  --reference R1 --value 10k --lib-id <id> --x-nm <nm> --y-nm <nm>
+  --rotation-deg <deg> [--mirrored]`
+- **(4) MCP/AI:** `datum.schematic.place_symbol` exists for the current
+  symbol lifecycle slice.
 - **(5) AI query/context:** Resolved `DesignModel` at a known
   `model_revision`: pool library refs, existing `sheet_id`s, occupied
   grid positions, the current reference-designator set (collision
@@ -171,9 +170,8 @@ restated.
   freshly minted `ComponentInstance` id, the journal gained one
   `TransactionRecord`, undo removes it, `model_revision` changes then
   reverts.
-- **(8) Not yet supported:** No `commit()`/journal — write is a private
-  JSON path with no undo and no `ComponentInstance` minting. No MCP
-  authoring tool. No `ProjectResolver`/`model_revision`.
+- **(8) Not yet supported:** Automatic ComponentInstance minting/binding at
+  place time remains unresolved.
 
 ### 2. transform-symbol (move / rotate / mirror unified)
 
@@ -182,12 +180,12 @@ restated.
 - **(2) Operation:** `TransformSymbol{symbol_id, position?, rotation?,
   mirror?}` (one op, three optional params) → direct local `commit()`
   (local/visible/undoable, direct-commit class). Today three separate
-  fns (move/rotate/mirror_native_project_symbol) write JSON with no undo.
-- **(3) CLI:** `datum-eda project transform-symbol --root <dir> --symbol
-  <uuid> [--x <nm> --y <nm>] [--rotation <deg>] [--mirror <bool>]`
-  (collapses move-symbol / rotate-symbol / mirror-symbol).
-- **(4) MCP/AI:** `transform_symbol` (not present). Direct-commit class;
-  returns `OperationResult` diff(modified).
+  fns (move/rotate/mirror_native_project_symbol) now use the journaled
+  schematic operation path.
+- **(3) CLI:** Current CLI keeps separate `move-symbol`, `rotate-symbol`,
+  and `mirror-symbol` commands.
+- **(4) MCP/AI:** `datum.schematic.move_symbol`, `rotate_symbol`, and
+  `mirror_symbol` exist for the current transform slice.
 - **(5) AI query/context:** `symbol_id`, current position/rotation/mirror
   (`schematic.query` symbols), grid, sheet bounds, attached wire
   endpoints that must stay connected.
@@ -237,12 +235,14 @@ restated.
   net.
 - **(2) Operation:** `DrawWire{sheet_id, points:[Point], net_hint?}` →
   `OperationBatch`; co-emits implicit `PlaceMarker{kind:Junction}` at
-  T-intersections in the SAME batch (one undo entry). Today
-  `draw_native_project_wire` writes JSON, no junction inference, no op.
-- **(3) CLI:** `datum-eda project draw-wire --root <dir> --sheet <uuid>
-  --from <x,y> --to <x,y> [--via <x,y>...]`
-- **(4) MCP/AI:** `draw_wire` (not present). Returns `OperationResult`;
-  the batch includes any auto-junctions.
+  T-intersections in the SAME batch (one undo entry). Current
+  `draw_native_project_wire` uses the journaled schematic operation path, but
+  does not infer junctions.
+- **(3) CLI:** `datum-eda project draw-wire <dir> --sheet <uuid>
+  --from-x-nm <nm> --from-y-nm <nm> --to-x-nm <nm> --to-y-nm <nm>`
+- **(4) MCP/AI:** `datum.schematic.draw_wire` and `delete_wire` exist for
+  the current straight-segment slice. Future richer wire authoring must return
+  the batch including any auto-junctions.
 - **(5) AI query/context:** Sheet pin coordinates and existing
   wire/junction geometry (`schematic.query`
   wires/junctions/symbol_pins) so endpoints snap to pins and
@@ -255,8 +255,8 @@ restated.
   pins; assert derived `net_info` shows both pins on one net, an
   auto-junction op was batched at any T, undo restores prior
   connectivity.
-- **(8) Not yet supported:** No auto-junction inference; no
-  operation/undo; wire is a plain JSON insert today.
+- **(8) Not yet supported:** No auto-junction inference or polyline/arc wire
+  authoring in the canonical MCP slice yet.
 
 ### 5. place-label (kind: local | global | hierarchical | power)
 
@@ -268,8 +268,9 @@ restated.
   Rename = `SetObjectField` on label text; delete = `DeleteObjects`.
 - **(3) CLI:** `datum-eda project place-label --root <dir> --sheet <uuid>
   --x <nm> --y <nm> --text <net> --kind <local|global|hier|power>`
-- **(4) MCP/AI:** `place_label` (not present). One tool with a kind enum;
-  returns `OperationResult`.
+- **(4) MCP/AI:** `datum.schematic.place_label`, `rename_label`, and
+  `delete_label` exist for the current label slice. `place_label` uses one
+  kind enum instead of separate local/global/hierarchical/power tools.
 - **(5) AI query/context:** Existing net names (`schematic.query`
   nets/labels), wire endpoints to attach to, hierarchy port names a
   hierarchical label must match, power-net conventions (GND/+3V3).
@@ -322,13 +323,14 @@ restated.
 - **(2) Operation:** `PlacePort{port_id?, sheet_id, position, name,
   direction}` → `OperationBatch`. With no `port_id` it creates; with a
   `port_id` it edits (collapses the separate edit verb, mirroring
-  `TransformSymbol`'s optional-param edit shape). Today
-  place/edit/delete_native_project_port write JSON.
-- **(3) CLI:** `datum-eda project place-port --root <dir> --sheet <uuid>
-  --x <nm> --y <nm> --name <id> --direction <in|out|bidir|...>
-  [--port <uuid> to edit]`
-- **(4) MCP/AI:** `place_port` (not present). One tool, create-or-edit;
-  returns `OperationResult`. Delete via the unified delete-object.
+  `TransformSymbol`'s optional-param edit shape). Current CLI retains
+  separate journaled create/edit/delete commands.
+- **(3) CLI:** `datum-eda project place-port <dir> --sheet <uuid>
+  --x-nm <nm> --y-nm <nm> --name <id> --direction <input|output|...>`;
+  `edit-port <dir> --port <uuid> [--name ...] [--direction ...]`; and
+  `delete-port <dir> --port <uuid>`.
+- **(4) MCP/AI:** `datum.schematic.place_port`, `edit_port`, and
+  `delete_port` exist for the current port slice.
 - **(5) AI query/context:** Parent-sheet hierarchical-label names this
   port must mirror, existing ports (`schematic.query` ports), direction
   semantics for ERC.
@@ -352,15 +354,15 @@ restated.
   entries are parameters of the bus op (`BusEntry` carries `bus:Uuid` +
   optional `wire` — it is bus-bound, NOT a free point marker, so it stays
   in the bus tool, not place-marker). With a `bus_id`, edits
-  members/geometry (collapses edit-bus-members). Today
-  create_bus/edit_bus_members/place_bus_entry/delete_bus_entry are four
-  JSON writers.
-- **(3) CLI:** `datum-eda project create-bus --root <dir> --sheet <uuid>
-  --points <...> --members D0,D1,.. [--entry x,y[,wire]]...
-  [--bus <uuid> to edit]`
-- **(4) MCP/AI:** `create_bus` (not present). One tool covering
-  create/edit/members/entries; returns `OperationResult`. Delete via the
-  unified delete-object.
+  members/geometry (collapses edit-bus-members). Current CLI retains
+  separate journaled bus and bus-entry commands.
+- **(3) CLI:** `datum-eda project create-bus <dir> --sheet <uuid> --name
+  <bus> --member <net>...`; `edit-bus-members <dir> --bus <uuid>
+  --member <net>...`; `place-bus-entry <dir> --sheet <uuid> --bus <uuid>
+  --x-nm <nm> --y-nm <nm> [--wire <uuid>]`; and `delete-bus-entry <dir>
+  --bus-entry <uuid>`.
+- **(4) MCP/AI:** `datum.schematic.create_bus`, `edit_bus_members`,
+  `place_bus_entry`, and `delete_bus_entry` exist for the current bus slice.
 - **(5) AI query/context:** Existing net names that should become bus
   members (`schematic.query` nets/buses), bus geometry, entry tap points
   on member wires.
@@ -369,9 +371,9 @@ restated.
 - **(7) Proof slice:** On `datum-test` (or a bus fixture), create bus
   D[0..3] with one entry tapping a wire; assert derived `net_info` shows
   4 member nets and the tapped wire joins D0, undo reverts.
-- **(8) Not yet supported:** No operation/undo; bus member-net expansion
-  not revision-keyed; four bus verbs today collapse to one create-or-edit
-  op.
+- **(8) Not yet supported:** The future unified bus create/edit operation
+  that folds geometry, members, and entries into one richer authoring command
+  is not yet exposed.
 
 ### 9. set-symbol-field (reference/value/lib_id/part/entity/unit/gate/...)
 
@@ -620,9 +622,15 @@ a `ComponentInstance` minted at place-symbol and bound at part assignment.
 5. **Waiver home.** Should the proposal-gated `author-waiver` op land in
    THIS schematic contract, or move to the `009` rules/checks contract?
    (run-erc itself is already implemented and read-only.)
-6. **MCP write timing.** Should MCP gain schematic WRITE tools
-   (place_symbol, transform_symbol, delete_objects, draw_wire, place_label,
-   place_marker, place_port, create_bus, set_symbol_field) now, or stay
-   read-only until the `commit()` path lands? Recommendation: MCP write
-   tools land only behind `commit()` so AI authoring is never an
-   unjournaled write surface.
+6. **MCP write timing.** First schematic MCP writes now exist only for
+   journaled connectivity primitives (`draw_wire`, `delete_wire`,
+   `place_junction`, `delete_junction`, `place_noconnect`,
+   `delete_noconnect`) plus labels (`place_label`, `rename_label`,
+   `delete_label`), ports (`place_port`, `edit_port`, `delete_port`), and
+   buses (`create_bus`, `edit_bus_members`, `place_bus_entry`,
+   `delete_bus_entry`), and symbol lifecycle edits (`place_symbol`,
+   `move_symbol`, `rotate_symbol`, `mirror_symbol`, `delete_symbol`,
+   `set_symbol_reference`, `set_symbol_value`, symbol metadata, pin override,
+   and symbol field aliases). Remaining schematic write tools, especially
+   unified heterogeneous `delete_objects`, should land only behind the same
+   journaled substrate.

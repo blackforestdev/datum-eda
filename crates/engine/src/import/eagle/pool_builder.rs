@@ -62,6 +62,8 @@ pub(super) fn build_pool(
                 uuid: symbol_uuid,
                 name: raw.name.clone(),
                 unit: unit_uuid,
+                drawings: Vec::new(),
+                pin_anchors: Vec::new(),
             },
         );
 
@@ -123,6 +125,8 @@ pub(super) fn build_pool(
                 },
                 silkscreen: raw.silkscreen,
                 models_3d: Vec::new(),
+                body_height_nm: None,
+                body_height_mounted_nm: None,
                 tags: HashSet::new(),
             },
         );
@@ -260,14 +264,20 @@ pub(super) fn build_pool(
                     pad_map,
                     mpn: String::new(),
                     manufacturer: String::new(),
+                    manufacturer_jep106: None,
                     value,
                     description: String::new(),
                     datasheet: String::new(),
                     parametric: HashMap::new(),
                     orderable_mpns: Vec::new(),
+                    packaging_options: Vec::new(),
                     tags: HashSet::new(),
                     lifecycle: Lifecycle::Unknown,
                     base: None,
+                    behavioural_models: Vec::new(),
+                    thermal: None,
+                    supply_chain_offers: None,
+                    last_supply_chain_check: None,
                 },
             );
         }

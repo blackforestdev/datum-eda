@@ -1,4 +1,7 @@
+use super::command_project_schematic_symbol_library_materialization::materialize_pool_symbol_pins;
 use super::*;
+use crate::command_project::command_project_schematic_connectivity_mutations::commit_schematic_operation;
+use eda_engine::substrate::Operation;
 
 fn symbol_mutation_report(
     action: &str,
@@ -27,6 +30,33 @@ fn symbol_mutation_report(
     }
 }
 
+fn schematic_sheet_path(project: &LoadedNativeProject, sheet_uuid: Uuid) -> Result<PathBuf> {
+    let sheet_key = sheet_uuid.to_string();
+    let relative_path =
+        project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
+            anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
+        })?;
+    Ok(project.root.join("schematic").join(relative_path))
+}
+
+fn commit_symbol_update(
+    root: &Path,
+    reason: &str,
+    sheet_uuid: Uuid,
+    symbol: &PlacedSymbol,
+) -> Result<()> {
+    commit_schematic_operation(
+        root,
+        reason,
+        Operation::SetSchematicSymbol {
+            sheet_id: sheet_uuid,
+            symbol_id: symbol.uuid,
+            symbol: serde_json::to_value(symbol).expect("native symbol serialization must succeed"),
+        },
+    )?;
+    Ok(())
+}
+
 pub(crate) fn place_native_project_symbol(
     root: &Path,
     sheet_uuid: Uuid,
@@ -38,23 +68,8 @@ pub(crate) fn place_native_project_symbol(
     mirrored: bool,
 ) -> Result<NativeProjectSymbolMutationReportView> {
     let project = load_native_project(root)?;
-    let sheet_key = sheet_uuid.to_string();
-    let relative_path =
-        project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
-            anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
-        })?;
-    let sheet_path = project.root.join("schematic").join(relative_path);
-    let sheet_text = std::fs::read_to_string(&sheet_path)
-        .with_context(|| format!("failed to read {}", sheet_path.display()))?;
-    let mut sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
-        .with_context(|| format!("failed to parse {}", sheet_path.display()))?;
-    let symbols = sheet_value
-        .as_object_mut()
-        .and_then(|object| object.get_mut("symbols"))
-        .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| {
-            anyhow::anyhow!("sheet symbols object missing in {}", sheet_path.display())
-        })?;
+    let sheet_path = schematic_sheet_path(&project, sheet_uuid)?;
+    let pins = materialize_pool_symbol_pins(root, lib_id.as_deref())?;
 
     let symbol_uuid = Uuid::new_v4();
     let symbol = PlacedSymbol {
@@ -66,7 +81,7 @@ pub(crate) fn place_native_project_symbol(
         reference,
         value,
         fields: Vec::<SymbolField>::new(),
-        pins: Vec::<SymbolPin>::new(),
+        pins,
         position,
         rotation: rotation_deg,
         mirrored,
@@ -75,12 +90,16 @@ pub(crate) fn place_native_project_symbol(
         pin_overrides: Vec::<PinDisplayOverride>::new(),
         hidden_power_behavior: HiddenPowerBehavior::SourceDefinedImplicit,
     };
-    symbols.insert(
-        symbol_uuid.to_string(),
-        serde_json::to_value(&symbol).expect("native symbol serialization must succeed"),
-    );
-
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_schematic_operation(
+        root,
+        "place schematic symbol",
+        Operation::CreateSchematicSymbol {
+            sheet_id: sheet_uuid,
+            symbol_id: symbol_uuid,
+            symbol: serde_json::to_value(&symbol)
+                .expect("native symbol serialization must succeed"),
+        },
+    )?;
     Ok(symbol_mutation_report(
         "place_symbol",
         &project,
@@ -96,11 +115,10 @@ pub(crate) fn move_native_project_symbol(
     position: Point,
 ) -> Result<NativeProjectSymbolMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.position = position;
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(root, "move schematic symbol", sheet_uuid, &symbol)?;
     Ok(symbol_mutation_report(
         "move_symbol",
         &project,
@@ -116,11 +134,10 @@ pub(crate) fn rotate_native_project_symbol(
     rotation_deg: i32,
 ) -> Result<NativeProjectSymbolMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.rotation = rotation_deg;
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(root, "rotate schematic symbol", sheet_uuid, &symbol)?;
     Ok(symbol_mutation_report(
         "rotate_symbol",
         &project,
@@ -135,11 +152,10 @@ pub(crate) fn mirror_native_project_symbol(
     symbol_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.mirrored = !symbol.mirrored;
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(root, "mirror schematic symbol", sheet_uuid, &symbol)?;
     Ok(symbol_mutation_report(
         "mirror_symbol",
         &project,
@@ -154,17 +170,18 @@ pub(crate) fn delete_native_project_symbol(
     symbol_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
-    let symbols = sheet_value
-        .as_object_mut()
-        .and_then(|object| object.get_mut("symbols"))
-        .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| {
-            anyhow::anyhow!("sheet symbols object missing in {}", sheet_path.display())
-        })?;
-    symbols.remove(&symbol_uuid.to_string());
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_schematic_operation(
+        root,
+        "delete schematic symbol",
+        Operation::DeleteSchematicSymbol {
+            sheet_id: sheet_uuid,
+            symbol_id: symbol_uuid,
+            symbol: serde_json::to_value(&symbol)
+                .expect("native symbol serialization must succeed"),
+        },
+    )?;
     Ok(symbol_mutation_report(
         "delete_symbol",
         &project,
@@ -180,11 +197,10 @@ pub(crate) fn set_native_project_symbol_reference(
     reference: String,
 ) -> Result<NativeProjectSymbolMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.reference = reference;
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(root, "set schematic symbol reference", sheet_uuid, &symbol)?;
     Ok(symbol_mutation_report(
         "set_symbol_reference",
         &project,
@@ -200,11 +216,10 @@ pub(crate) fn set_native_project_symbol_value(
     value: String,
 ) -> Result<NativeProjectSymbolMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.value = value;
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(root, "set schematic symbol value", sheet_uuid, &symbol)?;
     Ok(symbol_mutation_report(
         "set_symbol_value",
         &project,
@@ -220,11 +235,10 @@ pub(crate) fn set_native_project_symbol_lib_id(
     lib_id: String,
 ) -> Result<NativeProjectSymbolMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.lib_id = Some(lib_id);
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(root, "set schematic symbol lib id", sheet_uuid, &symbol)?;
     Ok(symbol_mutation_report(
         "set_symbol_lib_id",
         &project,
@@ -239,11 +253,10 @@ pub(crate) fn clear_native_project_symbol_lib_id(
     symbol_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.lib_id = None;
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(root, "clear schematic symbol lib id", sheet_uuid, &symbol)?;
     Ok(symbol_mutation_report(
         "clear_symbol_lib_id",
         &project,
@@ -259,12 +272,11 @@ pub(crate) fn set_native_project_symbol_entity(
     entity_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.entity = Some(entity_uuid);
     symbol.part = None;
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(root, "set schematic symbol entity", sheet_uuid, &symbol)?;
     Ok(symbol_mutation_report(
         "set_symbol_entity",
         &project,
@@ -279,11 +291,10 @@ pub(crate) fn clear_native_project_symbol_entity(
     symbol_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.entity = None;
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(root, "clear schematic symbol entity", sheet_uuid, &symbol)?;
     Ok(symbol_mutation_report(
         "clear_symbol_entity",
         &project,
@@ -299,12 +310,11 @@ pub(crate) fn set_native_project_symbol_part(
     part_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.part = Some(part_uuid);
     symbol.entity = None;
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(root, "set schematic symbol part", sheet_uuid, &symbol)?;
     Ok(symbol_mutation_report(
         "set_symbol_part",
         &project,
@@ -319,11 +329,10 @@ pub(crate) fn clear_native_project_symbol_part(
     symbol_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.part = None;
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(root, "clear schematic symbol part", sheet_uuid, &symbol)?;
     Ok(symbol_mutation_report(
         "clear_symbol_part",
         &project,
@@ -339,11 +348,10 @@ pub(crate) fn set_native_project_symbol_unit(
     unit_selection: String,
 ) -> Result<NativeProjectSymbolMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.unit_selection = Some(unit_selection);
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(root, "set schematic symbol unit", sheet_uuid, &symbol)?;
     Ok(symbol_mutation_report(
         "set_symbol_unit",
         &project,
@@ -358,11 +366,10 @@ pub(crate) fn clear_native_project_symbol_unit(
     symbol_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.unit_selection = None;
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(root, "clear schematic symbol unit", sheet_uuid, &symbol)?;
     Ok(symbol_mutation_report(
         "clear_symbol_unit",
         &project,
@@ -378,11 +385,10 @@ pub(crate) fn set_native_project_symbol_gate(
     gate_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.gate = Some(gate_uuid);
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(root, "set schematic symbol gate", sheet_uuid, &symbol)?;
     Ok(symbol_mutation_report(
         "set_symbol_gate",
         &project,
@@ -397,11 +403,10 @@ pub(crate) fn clear_native_project_symbol_gate(
     symbol_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.gate = None;
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(root, "clear schematic symbol gate", sheet_uuid, &symbol)?;
     Ok(symbol_mutation_report(
         "clear_symbol_gate",
         &project,
@@ -417,11 +422,15 @@ pub(crate) fn set_native_project_symbol_display_mode(
     display_mode: SymbolDisplayMode,
 ) -> Result<NativeProjectSymbolMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.display_mode = display_mode;
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(
+        root,
+        "set schematic symbol display mode",
+        sheet_uuid,
+        &symbol,
+    )?;
     Ok(symbol_mutation_report(
         "set_symbol_display_mode",
         &project,
@@ -437,11 +446,15 @@ pub(crate) fn set_native_project_symbol_hidden_power_behavior(
     hidden_power_behavior: HiddenPowerBehavior,
 ) -> Result<NativeProjectSymbolMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.hidden_power_behavior = hidden_power_behavior;
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(
+        root,
+        "set schematic symbol hidden power behavior",
+        sheet_uuid,
+        &symbol,
+    )?;
     Ok(symbol_mutation_report(
         "set_symbol_hidden_power_behavior",
         &project,
@@ -459,7 +472,7 @@ pub(crate) fn set_native_project_symbol_pin_override(
     position: Option<Point>,
 ) -> Result<NativeProjectPinOverrideMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     if !symbol.pins.iter().any(|pin| pin.uuid == pin_uuid) {
         bail!("pin not found on native symbol: {pin_uuid}");
@@ -478,8 +491,12 @@ pub(crate) fn set_native_project_symbol_pin_override(
             position,
         });
     }
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(
+        root,
+        "set schematic symbol pin override",
+        sheet_uuid,
+        &symbol,
+    )?;
 
     Ok(NativeProjectPinOverrideMutationReportView {
         action: "set_pin_override".to_string(),
@@ -500,15 +517,19 @@ pub(crate) fn clear_native_project_symbol_pin_override(
     pin_uuid: Uuid,
 ) -> Result<NativeProjectPinOverrideMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     let before = symbol.pin_overrides.len();
     symbol.pin_overrides.retain(|entry| entry.pin != pin_uuid);
     if symbol.pin_overrides.len() == before {
         bail!("pin override not found on native symbol: {pin_uuid}");
     }
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(
+        root,
+        "clear schematic symbol pin override",
+        sheet_uuid,
+        &symbol,
+    )?;
 
     Ok(NativeProjectPinOverrideMutationReportView {
         action: "clear_pin_override".to_string(),
@@ -532,7 +553,7 @@ pub(crate) fn add_native_project_symbol_field(
     position: Option<Point>,
 ) -> Result<NativeProjectSymbolFieldMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut symbol) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     let field_uuid = Uuid::new_v4();
     symbol.fields.push(SymbolField {
@@ -542,8 +563,7 @@ pub(crate) fn add_native_project_symbol_field(
         position,
         visible,
     });
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(root, "add schematic symbol field", sheet_uuid, &symbol)?;
 
     Ok(NativeProjectSymbolFieldMutationReportView {
         action: "add_symbol_field".to_string(),
@@ -569,7 +589,7 @@ pub(crate) fn edit_native_project_symbol_field(
     position: Option<Point>,
 ) -> Result<NativeProjectSymbolFieldMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, symbol_uuid, mut symbol, mut field) =
+    let (sheet_uuid, sheet_path, _sheet_value, symbol_uuid, mut symbol, mut field) =
         load_native_field_mutation_target(&project, field_uuid)?;
     if let Some(key) = key {
         field.key = key;
@@ -589,8 +609,7 @@ pub(crate) fn edit_native_project_symbol_field(
             break;
         }
     }
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(root, "edit schematic symbol field", sheet_uuid, &symbol)?;
 
     Ok(NativeProjectSymbolFieldMutationReportView {
         action: "edit_symbol_field".to_string(),
@@ -612,11 +631,10 @@ pub(crate) fn delete_native_project_symbol_field(
     field_uuid: Uuid,
 ) -> Result<NativeProjectSymbolFieldMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, symbol_uuid, mut symbol, field) =
+    let (sheet_uuid, sheet_path, _sheet_value, symbol_uuid, mut symbol, field) =
         load_native_field_mutation_target(&project, field_uuid)?;
     symbol.fields.retain(|existing| existing.uuid != field_uuid);
-    write_symbol_into_sheet(&mut sheet_value, &symbol)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_symbol_update(root, "delete schematic symbol field", sheet_uuid, &symbol)?;
 
     Ok(NativeProjectSymbolFieldMutationReportView {
         action: "delete_symbol_field".to_string(),

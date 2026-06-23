@@ -131,14 +131,15 @@ Example MCP client registration:
       "command": "python3",
       "args": ["/path/to/datum-eda/mcp-server/server.py"],
       "env": {
-        "EDA_ENGINE_SOCKET": "/tmp/datum-eda-engine.sock"
+        "DATUM_ENGINE_SOCKET": "/tmp/datum-eda-engine.sock"
       }
     }
   }
 }
 ```
 
-Client-specific config file locations vary by MCP host.
+Client-specific config file locations vary by MCP host. `EDA_ENGINE_SOCKET`
+remains a legacy fallback for existing local configs.
 
 ---
 

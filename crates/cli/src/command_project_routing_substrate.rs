@@ -5,12 +5,14 @@ use eda_engine::board::{RoutingComponentPad, RoutingSubstrateReport};
 use eda_engine::ir::geometry::Point;
 use uuid::Uuid;
 
-use super::super::{LoadedNativeProject, build_native_project_board, load_native_project};
+use super::super::{
+    LoadedNativeProject, build_native_project_board, load_native_project_with_resolved_board,
+};
 
 pub(crate) fn query_native_project_routing_substrate(
     root: &Path,
 ) -> Result<RoutingSubstrateReport> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let board = build_native_project_board(&project)?;
     let component_pads = collect_native_project_component_pads(&project)?;
     Ok(board.routing_substrate(&component_pads))

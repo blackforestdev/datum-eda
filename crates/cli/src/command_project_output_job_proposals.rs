@@ -1,0 +1,237 @@
+use std::path::Path;
+
+use anyhow::{Context, Result};
+use eda_engine::substrate::{
+    CommitProvenance, CommitSource, ObjectRevision, Operation, OperationBatch, OutputJob,
+    ProjectResolver, Proposal, ProposalCreateRequest, ProposalSource,
+    create_draft_proposal_from_batch,
+};
+use serde::Serialize;
+use uuid::Uuid;
+
+use super::command_project_gerber_plan::sanitize_export_prefix;
+use super::command_project_output_job_include::{
+    output_job_id_for_includes, output_job_include_label, parse_output_job_include,
+};
+use super::load_native_project_with_resolved_board;
+
+#[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectOutputJobProposalView {
+    pub(crate) contract: &'static str,
+    pub(crate) action: &'static str,
+    pub(crate) project_id: String,
+    pub(crate) model_revision: String,
+    pub(crate) output_job: OutputJob,
+    pub(crate) proposal_id: Uuid,
+    pub(crate) proposal: Proposal,
+}
+
+pub(crate) fn propose_create_native_project_output_job(
+    root: &Path,
+    prefix: &str,
+    output_dir: Option<&Path>,
+    include: &str,
+    name: Option<&str>,
+    manufacturing_plan: Option<Uuid>,
+    variant: Option<Uuid>,
+    proposal_id: Option<Uuid>,
+    rationale: Option<&str>,
+) -> Result<NativeProjectOutputJobProposalView> {
+    let include = parse_output_job_include(include)?;
+    let project = load_native_project_with_resolved_board(root)?;
+    let prefix = sanitize_export_prefix(prefix);
+    let output_job_id = output_job_id_for_includes(project.manifest.uuid, &prefix, &include);
+    let mut model = ProjectResolver::new(root).resolve()?;
+    if model.output_jobs.contains_key(&output_job_id) {
+        anyhow::bail!("output job {output_job_id} already exists");
+    }
+    let output_job = OutputJob {
+        id: output_job_id,
+        name: name
+            .map(str::to_string)
+            .unwrap_or_else(|| format!("{} {prefix}", output_job_include_label(&include))),
+        include,
+        prefix,
+        output_dir: output_dir.map(Path::to_path_buf),
+        board_or_panel: project.board.uuid,
+        variant,
+        manufacturing_plan,
+        object_revision: ObjectRevision(0),
+    };
+    let batch = OperationBatch {
+        batch_id: Uuid::new_v4(),
+        expected_model_revision: Some(model.model_revision.clone()),
+        provenance: CommitProvenance {
+            actor: "datum-eda-cli".to_string(),
+            source: CommitSource::Cli,
+            reason: "propose create output job".to_string(),
+        },
+        operations: vec![Operation::CreateOutputJob {
+            output_job_id,
+            output_job: serde_json::to_value(&output_job)
+                .context("failed to serialize output job operation")?,
+        }],
+    };
+    write_output_job_proposal(
+        root,
+        &mut model,
+        output_job,
+        proposal_id,
+        batch,
+        "propose_create_output_job",
+        rationale
+            .map(str::to_string)
+            .unwrap_or_else(|| format!("Review OutputJob {output_job_id} creation")),
+    )
+}
+
+pub(crate) fn propose_update_native_project_output_job(
+    root: &Path,
+    output_job_id: Uuid,
+    name: Option<&str>,
+    output_dir: Option<&Path>,
+    manufacturing_plan: Option<Uuid>,
+    variant: Option<Uuid>,
+    clear_manufacturing_plan: bool,
+    clear_variant: bool,
+    clear_output_dir: bool,
+    proposal_id: Option<Uuid>,
+    rationale: Option<&str>,
+) -> Result<NativeProjectOutputJobProposalView> {
+    if name.is_none()
+        && output_dir.is_none()
+        && manufacturing_plan.is_none()
+        && variant.is_none()
+        && !clear_manufacturing_plan
+        && !clear_variant
+        && !clear_output_dir
+    {
+        anyhow::bail!("update-output-job requires at least one replacement field");
+    }
+
+    let mut model = ProjectResolver::new(root).resolve()?;
+    let mut output_job = model
+        .output_jobs
+        .get(&output_job_id)
+        .cloned()
+        .with_context(|| format!("output job {output_job_id} not found"))?;
+    let previous_output_job = output_job.clone();
+    if let Some(name) = name {
+        output_job.name = name.to_string();
+    }
+    if clear_output_dir {
+        output_job.output_dir = None;
+    } else if let Some(output_dir) = output_dir {
+        output_job.output_dir = Some(output_dir.to_path_buf());
+    }
+    if clear_manufacturing_plan {
+        output_job.manufacturing_plan = None;
+    } else if let Some(manufacturing_plan) = manufacturing_plan {
+        output_job.manufacturing_plan = Some(manufacturing_plan);
+    }
+    if clear_variant {
+        output_job.variant = None;
+    } else if let Some(variant) = variant {
+        output_job.variant = Some(variant);
+    }
+    output_job.object_revision = ObjectRevision(output_job.object_revision.0 + 1);
+
+    let batch = OperationBatch {
+        batch_id: Uuid::new_v4(),
+        expected_model_revision: Some(model.model_revision.clone()),
+        provenance: CommitProvenance {
+            actor: "datum-eda-cli".to_string(),
+            source: CommitSource::Cli,
+            reason: "propose update output job".to_string(),
+        },
+        operations: vec![Operation::SetOutputJob {
+            output_job_id,
+            previous_output_job: serde_json::to_value(&previous_output_job)
+                .context("failed to serialize previous output job operation")?,
+            output_job: serde_json::to_value(&output_job)
+                .context("failed to serialize output job operation")?,
+        }],
+    };
+    write_output_job_proposal(
+        root,
+        &mut model,
+        output_job,
+        proposal_id,
+        batch,
+        "propose_update_output_job",
+        rationale
+            .map(str::to_string)
+            .unwrap_or_else(|| format!("Review OutputJob {output_job_id} update")),
+    )
+}
+
+pub(crate) fn propose_delete_native_project_output_job(
+    root: &Path,
+    output_job_id: Uuid,
+    proposal_id: Option<Uuid>,
+    rationale: Option<&str>,
+) -> Result<NativeProjectOutputJobProposalView> {
+    let mut model = ProjectResolver::new(root).resolve()?;
+    let output_job = model
+        .output_jobs
+        .get(&output_job_id)
+        .cloned()
+        .with_context(|| format!("output job {output_job_id} not found"))?;
+    let batch = OperationBatch {
+        batch_id: Uuid::new_v4(),
+        expected_model_revision: Some(model.model_revision.clone()),
+        provenance: CommitProvenance {
+            actor: "datum-eda-cli".to_string(),
+            source: CommitSource::Cli,
+            reason: "propose delete output job".to_string(),
+        },
+        operations: vec![Operation::DeleteOutputJob {
+            output_job_id,
+            output_job: serde_json::to_value(&output_job)
+                .context("failed to serialize output job operation")?,
+        }],
+    };
+    write_output_job_proposal(
+        root,
+        &mut model,
+        output_job,
+        proposal_id,
+        batch,
+        "propose_delete_output_job",
+        rationale
+            .map(str::to_string)
+            .unwrap_or_else(|| format!("Review OutputJob {output_job_id} deletion")),
+    )
+}
+
+fn write_output_job_proposal(
+    root: &Path,
+    model: &mut eda_engine::substrate::DesignModel,
+    output_job: OutputJob,
+    proposal_id: Option<Uuid>,
+    batch: OperationBatch,
+    action: &'static str,
+    rationale: String,
+) -> Result<NativeProjectOutputJobProposalView> {
+    let proposal = create_draft_proposal_from_batch(
+        model,
+        root,
+        ProposalCreateRequest {
+            proposal_id,
+            batch,
+            rationale,
+            source: ProposalSource::Cli,
+            checks_run: Vec::new(),
+            finding_fingerprints: Vec::new(),
+        },
+    )?;
+    Ok(NativeProjectOutputJobProposalView {
+        contract: "proposal_create_v1",
+        action,
+        project_id: model.project.project_id.to_string(),
+        model_revision: model.model_revision.0.clone(),
+        output_job,
+        proposal_id: proposal.proposal_id,
+        proposal,
+    })
+}

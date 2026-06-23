@@ -56,6 +56,27 @@ pub struct Net {
     pub uuid: Uuid,
     pub name: String,
     pub class: Uuid,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub controlled_impedance: Option<ImpedanceSpec>,
+}
+
+impl Net {
+    pub fn new(uuid: Uuid, name: impl Into<String>, class: Uuid) -> Self {
+        Self {
+            uuid,
+            name: name.into(),
+            class,
+            controlled_impedance: None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ImpedanceSpec {
+    pub target_ohms: serde_json::Number,
+    pub tolerance_pct: serde_json::Number,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub controlled_dielectric: Option<LayerId>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

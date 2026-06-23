@@ -1,5 +1,6 @@
 use super::*;
 use eda_engine::schematic::WaiverTarget;
+use eda_engine::substrate::{DesignModel, ProjectResolver, SourceShardKind};
 
 pub(super) fn ensure_project_root(root: &Path) -> Result<()> {
     if root.exists() {
@@ -29,19 +30,25 @@ pub(super) fn load_existing_ids(root: &Path) -> Result<Option<ExistingProjectIds
 
     let schematic_path = root.join(&manifest.schematic);
     let board_path = root.join(&manifest.board);
+    let rules_path = root.join(&manifest.rules);
     let schematic_text = std::fs::read_to_string(&schematic_path)
         .with_context(|| format!("failed to read {}", schematic_path.display()))?;
     let board_text = std::fs::read_to_string(&board_path)
         .with_context(|| format!("failed to read {}", board_path.display()))?;
+    let rules_text = std::fs::read_to_string(&rules_path)
+        .with_context(|| format!("failed to read {}", rules_path.display()))?;
     let schematic: NativeSchematicRoot = serde_json::from_str(&schematic_text)
         .with_context(|| format!("failed to parse {}", schematic_path.display()))?;
     let board: NativeBoardRoot = serde_json::from_str(&board_text)
         .with_context(|| format!("failed to parse {}", board_path.display()))?;
+    let rules: NativeRulesRoot = serde_json::from_str(&rules_text)
+        .with_context(|| format!("failed to parse {}", rules_path.display()))?;
 
     Ok(Some(ExistingProjectIds {
         project_uuid: manifest.uuid,
         schematic_uuid: schematic.uuid,
         board_uuid: board.uuid,
+        rules_uuid: rules.uuid,
     }))
 }
 
@@ -112,10 +119,45 @@ pub(super) fn load_native_project(root: &Path) -> Result<LoadedNativeProject> {
     })
 }
 
+pub(super) fn load_native_project_with_resolved_board(root: &Path) -> Result<LoadedNativeProject> {
+    Ok(load_native_project_with_resolved_board_and_model(root)?.0)
+}
+
+pub(crate) fn load_native_project_with_resolved_board_and_model(
+    root: &Path,
+) -> Result<(LoadedNativeProject, DesignModel)> {
+    let mut project = load_native_project(root)?;
+    let model = ProjectResolver::new(root).resolve()?;
+    let manifest_value = model.materialized_source_shard_value(SourceShardKind::ProjectManifest)?;
+    project.manifest = serde_json::from_value(manifest_value).with_context(|| {
+        format!(
+            "failed to parse resolved {}",
+            root.join("project.json").display()
+        )
+    })?;
+    let schematic_value = model.materialized_source_shard_value(SourceShardKind::SchematicRoot)?;
+    project.schematic = serde_json::from_value(schematic_value).with_context(|| {
+        format!(
+            "failed to parse resolved {}",
+            project.schematic_path.display()
+        )
+    })?;
+    let board_value = model.materialized_source_shard_value(SourceShardKind::BoardRoot)?;
+    project.board = serde_json::from_value(board_value)
+        .with_context(|| format!("failed to parse resolved {}", project.board_path.display()))?;
+    let rules_value = model.materialized_source_shard_value(SourceShardKind::RulesRoot)?;
+    project.rules = serde_json::from_value(rules_value)
+        .with_context(|| format!("failed to parse resolved {}", project.rules_path.display()))?;
+    Ok((project, model))
+}
+
 pub(super) fn collect_schematic_counts(
     root: &Path,
     schematic: &NativeSchematicRoot,
 ) -> Result<NativeSchematicCounts> {
+    let model = ProjectResolver::new(root)
+        .resolve()
+        .with_context(|| format!("failed to resolve native project {}", root.display()))?;
     let mut symbols = 0usize;
     let mut wires = 0usize;
     let mut junctions = 0usize;
@@ -129,10 +171,9 @@ pub(super) fn collect_schematic_counts(
 
     for sheet_path in schematic.sheets.values() {
         let path = root.join("schematic").join(sheet_path);
-        let sheet_text = std::fs::read_to_string(&path)
-            .with_context(|| format!("failed to read {}", path.display()))?;
-        let sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
-            .with_context(|| format!("failed to parse {}", path.display()))?;
+        let sheet_value = model
+            .materialized_source_shard_value_by_relative_path(&format!("schematic/{sheet_path}"))
+            .with_context(|| format!("failed to materialize {}", path.display()))?;
         symbols += json_object_len(&sheet_value, "symbols");
         wires += json_object_len(&sheet_value, "wires");
         junctions += json_object_len(&sheet_value, "junctions");
@@ -161,12 +202,24 @@ pub(super) fn collect_schematic_counts(
 
 pub(super) fn build_native_project_schematic(project: &LoadedNativeProject) -> Result<Schematic> {
     let mut sheets = HashMap::new();
+    let model = ProjectResolver::new(&project.root)
+        .resolve()
+        .with_context(|| {
+            format!(
+                "failed to resolve native project {}",
+                project.root.display()
+            )
+        })?;
 
     for (sheet_uuid, relative_path) in &project.schematic.sheets {
         let expected_uuid = Uuid::parse_str(sheet_uuid)
             .with_context(|| format!("invalid sheet UUID key `{sheet_uuid}` in schematic root"))?;
         let path = project.root.join("schematic").join(relative_path);
-        let native_sheet = load_native_sheet(&path)?;
+        let sheet_value = model
+            .materialized_source_shard_value_by_relative_path(&format!("schematic/{relative_path}"))
+            .with_context(|| format!("failed to materialize {}", path.display()))?;
+        let native_sheet: NativeSheetRoot = serde_json::from_value(sheet_value)
+            .with_context(|| format!("failed to parse materialized sheet {}", path.display()))?;
         if native_sheet.uuid != expected_uuid {
             bail!(
                 "sheet UUID mismatch: schematic root key {} does not match {} in {}",
@@ -177,6 +230,55 @@ pub(super) fn build_native_project_schematic(project: &LoadedNativeProject) -> R
         }
         sheets.insert(expected_uuid, native_sheet_into_engine_sheet(native_sheet));
     }
+    let mut sheet_definitions = HashMap::new();
+    for (definition_key, relative_path) in &project.schematic.definitions {
+        let expected_uuid = Uuid::parse_str(definition_key).with_context(|| {
+            format!("invalid sheet definition UUID key `{definition_key}` in schematic root")
+        })?;
+        let path = project.root.join("schematic").join(relative_path);
+        let definition_text = std::fs::read_to_string(&path)
+            .with_context(|| format!("failed to read {}", path.display()))?;
+        let definition: NativeSheetDefinitionRoot = serde_json::from_str(&definition_text)
+            .with_context(|| format!("failed to parse {}", path.display()))?;
+        if definition.uuid != expected_uuid {
+            bail!(
+                "sheet definition UUID mismatch: schematic root key {} does not match {} in {}",
+                expected_uuid,
+                definition.uuid,
+                path.display()
+            );
+        }
+        sheet_definitions.insert(
+            definition.uuid,
+            SheetDefinition {
+                uuid: definition.uuid,
+                root_sheet: definition.root_sheet,
+                name: definition.name,
+            },
+        );
+    }
+    let sheet_instances = project
+        .schematic
+        .instances
+        .iter()
+        .cloned()
+        .map(|instance| {
+            (
+                instance.uuid,
+                SheetInstance {
+                    uuid: instance.uuid,
+                    definition: instance.definition,
+                    parent_sheet: instance.parent_sheet,
+                    position: Point {
+                        x: instance.position.x,
+                        y: instance.position.y,
+                    },
+                    name: instance.name,
+                    ports: instance.ports,
+                },
+            )
+        })
+        .collect();
 
     let waivers = project
         .schematic
@@ -189,8 +291,8 @@ pub(super) fn build_native_project_schematic(project: &LoadedNativeProject) -> R
     Ok(Schematic {
         uuid: project.schematic.uuid,
         sheets,
-        sheet_definitions: HashMap::new(),
-        sheet_instances: HashMap::new(),
+        sheet_definitions,
+        sheet_instances,
         variants: HashMap::new(),
         waivers,
     })
@@ -323,7 +425,7 @@ pub(super) fn build_native_project_board(project: &LoadedNativeProject) -> Resul
         stackup: Stackup {
             layers: stackup_layers,
         },
-        pad_expansion_setup: eda_engine::board::PadExpansionSetup::default(),
+        pad_expansion_setup: project.board.pad_expansion_setup.clone(),
         outline: Polygon {
             vertices: project
                 .board

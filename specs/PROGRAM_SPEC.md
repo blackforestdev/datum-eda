@@ -170,7 +170,7 @@ run ERC/DRC.
 | DRC correctness | ≤ 5% false positive rate vs. KiCad DRC on DOA2526 |
 | DRC correctness | 0% false negative rate on known violations in test corpus |
 | MCP tools | open_project, close_project, search_pool, get_part, get_package, get_package_change_candidates, get_part_change_candidates, get_component_replacement_plan, get_scoped_component_replacement_plan, edit_scoped_component_replacement_plan, replace_components, apply_component_replacement_plan, apply_component_replacement_policy, apply_scoped_component_replacement_policy, apply_scoped_component_replacement_plan, get_board_summary, get_schematic_summary, get_sheets, get_symbols, get_ports, get_labels, get_buses, get_bus_entries, get_noconnects, get_symbol_fields, get_hierarchy, get_netlist, get_components, get_net_info, get_schematic_net_info, get_connectivity_diagnostics, get_design_rules, get_unrouted, run_erc, run_drc, explain_violation |
-| CLI commands | `tool import`, `tool query`, `tool plan`, `tool erc`, `tool drc`, `tool pool search` |
+| CLI commands | `tool import`, `tool query`, `tool plan`, `tool erc`, `tool drc`, `tool pool search`; native `project` production/check/output commands include `import-kicad-footprint`, `create-pool-library-object`, `create-pool-unit`, `set-pool-unit-pin`, `create-pool-symbol`, `add-pool-symbol-line`, `add-pool-symbol-rect`, `add-pool-symbol-circle`, `add-pool-symbol-polygon`, `add-pool-symbol-arc`, `add-pool-symbol-text`, `set-pool-symbol-pin-anchor`, `create-pool-entity`, `create-pool-padstack`, `create-pool-package`, `set-pool-package-pad`, `set-pool-package-courtyard-rect`, `set-pool-package-courtyard-polygon`, `add-pool-package-silkscreen-line`, `add-pool-package-silkscreen-rect`, `add-pool-package-silkscreen-circle`, `add-pool-package-silkscreen-polygon`, `add-pool-package-silkscreen-arc`, `add-pool-package-silkscreen-text`, `add-pool-package-model-3d`, `create-pool-part`, `set-pool-part-metadata`, `set-pool-part-parametric`, `set-pool-part-orderable-mpns`, `set-pool-part-tags`, `set-pool-part-pad-map-entry`, `set-pool-part-pad-map`, `attach-pool-part-model`, `detach-pool-part-model`, `gc-pool-models`, `set-pool-library-object`, `delete-pool-library-object`, `set-project-name`, `set-project-rules`, `create-project-rule`, `set-project-rule`, `delete-project-rule`, `create-sheet`, `delete-sheet`, `rename-sheet`, `create-sheet-definition`, `create-sheet-instance`, `delete-sheet-instance`, `move-sheet-instance`, `bind-sheet-instance-port`, `unbind-sheet-instance-port`, `set-board-name`, `generate-standards-repair-proposals`, `review-proposal`, `apply-proposal`, `create-panel-projection`, `create-manufacturing-plan`, `create-gerber-output-job`, `update-output-job`, `export-gerber-set`, `validate-gerber-set`, `query pool-library-objects`, `query pool-models`, `query panel-projections`, `query manufacturing-plans`, `query output-jobs`, `query import-map`, and `query proposals` |
 | MCP registration | Works in host MCP client config; tools callable via a standards-compliant MCP client |
 | Test corpus | 10+ designs with ERC/DRC golden files |
 | CLI exit codes | 0 = pass, 1 = violations, 2 = error |
@@ -231,7 +231,7 @@ by forcing fragile imported-schematic write-back into `M3`.
 | Operation determinism | Same operation sequence → identical result |
 | KiCad write-back | Import → modify → export → opens in KiCad without errors |
 | Round-trip fidelity | Unmodified objects byte-identical after round-trip |
-| MCP write tools | move_component, rotate_component, set_value, set_reference, assign_part, set_package, set_package_with_part, set_net_class, set_design_rule, delete_component, delete_track, delete_via, undo, redo, save |
+| MCP write tools | move_component, rotate_component, flip_component, set_value, set_reference, assign_part, set_package, set_package_with_part, set_net_class, set_design_rule, delete_component, delete_track, delete_via, undo, redo, save |
 | Derived data update | Connectivity, airwires, DRC recompute after each operation |
 | CLI modify command | `tool modify <design> --move U1 50,30` works |
 
@@ -253,8 +253,8 @@ by forcing fragile imported-schematic write-back into `M3`.
 | Criterion | Threshold |
 |-----------|-----------|
 | Native format | JSON, schema documented, versioned |
-| Schematic operations | PlaceSymbol, MoveSymbol, RotateSymbol, MirrorSymbol, DeleteSymbol, DrawWire, DeleteWire, PlaceJunction, DeleteJunction, PlaceLabel, RenameLabel, DeleteLabel, PlacePowerSymbol, CreateBus, EditBusMembers, PlaceBusEntry, DeleteBusEntry, CreateSheetInstance, MoveSheetInstance, DeleteSheetInstance, PlaceHierarchicalPort, EditHierarchicalPort, DeleteHierarchicalPort, PlaceNoConnect, DeleteNoConnect, SetFieldValue, MoveField, SetFieldVisibility, Annotate, AssignPart, AssignGate |
-| Board operations | PlaceComponent, AddTrack, AddVia, AddZone, PourCopper, AddKeepout |
+| Schematic operations | PlaceSymbol, MoveSymbol, RotateSymbol, MirrorSymbol, DeleteSymbol, DrawWire, DeleteWire, PlaceJunction, DeleteJunction, PlaceLabel, RenameLabel, DeleteLabel, PlacePowerSymbol, CreateBus, EditBusMembers, DeleteBus, PlaceBusEntry, DeleteBusEntry, CreateSheetInstance, MoveSheetInstance, DeleteSheetInstance, PlaceHierarchicalPort, EditHierarchicalPort, DeleteHierarchicalPort, PlaceNoConnect, DeleteNoConnect, SetFieldValue, MoveField, SetFieldVisibility, Annotate, AssignPart, AssignGate |
+| Board operations | PlaceComponent, AddTrack, AddVia, AddZone, EditZone, DeleteZone, PourCopper, AddKeepout |
 | Schematic query parity | Labels, buses, bus entries, no-connects, hierarchy, field queries available through engine API, CLI, and MCP |
 | Forward annotation | ECO with per-change accept/reject |
 | Gerber export | RS-274X, validates in gerbv without warnings |

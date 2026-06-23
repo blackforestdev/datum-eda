@@ -1,7 +1,10 @@
 use std::collections::BTreeMap;
 use std::path::Path;
 
-use anyhow::{Context, Result};
+use anyhow::{Context, Result, bail};
+use eda_engine::substrate::{
+    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver,
+};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -61,7 +64,10 @@ pub(crate) struct NativeSchematicRoot {
     pub(crate) definitions: BTreeMap<String, String>,
     pub(crate) instances: Vec<NativeSchematicInstance>,
     pub(crate) variants: BTreeMap<String, NativeVariant>,
+    #[serde(default)]
     pub(crate) waivers: Vec<serde_json::Value>,
+    #[serde(default)]
+    pub(crate) deviations: Vec<serde_json::Value>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -70,6 +76,16 @@ pub(crate) struct NativeSchematicInstance {
     pub(crate) definition: Uuid,
     pub(crate) parent_sheet: Option<Uuid>,
     pub(crate) position: NativePoint,
+    pub(crate) name: String,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub(crate) ports: Vec<Uuid>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub(crate) struct NativeSheetDefinitionRoot {
+    pub(crate) schema_version: u32,
+    pub(crate) uuid: Uuid,
+    pub(crate) root_sheet: Uuid,
     pub(crate) name: String,
 }
 
@@ -82,6 +98,10 @@ pub(crate) struct NativeVariant {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub(crate) struct NativeRulesRoot {
     pub(crate) schema_version: u32,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) uuid: Option<Uuid>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) object_revision: Option<u64>,
     pub(crate) rules: Vec<serde_json::Value>,
 }
 
@@ -108,6 +128,7 @@ pub(crate) struct ExistingProjectIds {
     pub(crate) project_uuid: Uuid,
     pub(crate) schematic_uuid: Uuid,
     pub(crate) board_uuid: Uuid,
+    pub(crate) rules_uuid: Option<Uuid>,
 }
 
 pub(crate) fn create_native_project(
@@ -129,6 +150,7 @@ pub(crate) fn create_native_project(
         project_uuid: Uuid::new_v4(),
         schematic_uuid: Uuid::new_v4(),
         board_uuid: Uuid::new_v4(),
+        rules_uuid: None,
     });
 
     let manifest = NativeProjectManifest {
@@ -149,6 +171,7 @@ pub(crate) fn create_native_project(
         instances: Vec::new(),
         variants: BTreeMap::new(),
         waivers: Vec::new(),
+        deviations: Vec::new(),
     };
     let board = NativeBoardRoot {
         schema_version: 1,
@@ -157,6 +180,7 @@ pub(crate) fn create_native_project(
         stackup: NativeStackup {
             layers: default_native_project_stackup_layers(),
         },
+        pad_expansion_setup: eda_engine::board::PadExpansionSetup::default(),
         outline: NativeOutline {
             vertices: Vec::new(),
             closed: true,
@@ -188,6 +212,8 @@ pub(crate) fn create_native_project(
     };
     let rules = NativeRulesRoot {
         schema_version: 1,
+        uuid: Some(ids.rules_uuid.unwrap_or_else(Uuid::new_v4)),
+        object_revision: Some(0),
         rules: Vec::new(),
     };
 
@@ -230,11 +256,232 @@ pub(crate) fn create_native_project(
     })
 }
 
-pub(crate) fn query_native_project_rules(root: &Path) -> Result<NativeProjectRulesView> {
+pub(crate) fn set_native_project_name(
+    root: &Path,
+    name: String,
+) -> Result<NativeProjectNameMutationReportView> {
+    let name = name.trim().to_string();
+    if name.is_empty() {
+        bail!("project name must not be empty");
+    }
+    let mut model = ProjectResolver::new(root).resolve()?;
+    let expected_model_revision = model.model_revision.clone();
+    let project_id = model.project.project_id;
+    model
+        .commit_journaled(
+            root,
+            OperationBatch {
+                batch_id: Uuid::new_v4(),
+                expected_model_revision: Some(expected_model_revision),
+                provenance: CommitProvenance {
+                    actor: "datum-eda-cli".to_string(),
+                    source: CommitSource::Cli,
+                    reason: "set project name".to_string(),
+                },
+                operations: vec![Operation::SetProjectName { project_id, name }],
+            },
+        )
+        .context("failed to commit set project name")?;
+    let model = ProjectResolver::new(root).resolve()?;
+    Ok(NativeProjectNameMutationReportView {
+        action: "set_project_name".to_string(),
+        project_root: root.display().to_string(),
+        project_uuid: model.project.project_id.to_string(),
+        name: model.project.name,
+    })
+}
+
+pub(crate) fn set_native_project_rules(
+    root: &Path,
+    rules_file: &Path,
+) -> Result<NativeProjectRulesMutationReportView> {
+    let replacement_text = std::fs::read_to_string(rules_file)
+        .with_context(|| format!("failed to read {}", rules_file.display()))?;
+    let replacement: NativeRulesRoot = serde_json::from_str(&replacement_text)
+        .with_context(|| format!("failed to parse {}", rules_file.display()))?;
+    let mut model = ProjectResolver::new(root).resolve()?;
+    let expected_model_revision = model.model_revision.clone();
+    let rules = replacement.rules;
+    model
+        .commit_journaled(
+            root,
+            OperationBatch {
+                batch_id: Uuid::new_v4(),
+                expected_model_revision: Some(expected_model_revision),
+                operations: vec![Operation::SetProjectRules { rules }],
+                provenance: CommitProvenance {
+                    source: CommitSource::Cli,
+                    actor: "datum-eda-cli".to_string(),
+                    reason: "set project rules".to_string(),
+                },
+            },
+        )
+        .context("failed to commit set project rules")?;
+    let project = load_native_project_with_resolved_board(root)?;
+    Ok(NativeProjectRulesMutationReportView {
+        action: "set_project_rules".to_string(),
+        project_root: root.display().to_string(),
+        rule_uuid: None,
+        rules_object_revision: project.rules.object_revision,
+        rule_count: project.rules.rules.len(),
+    })
+}
+
+pub(crate) fn create_native_project_rule(
+    root: &Path,
+    rule_file: &Path,
+) -> Result<NativeProjectRulesMutationReportView> {
+    let rule_text = std::fs::read_to_string(rule_file)
+        .with_context(|| format!("failed to read {}", rule_file.display()))?;
+    let rule: serde_json::Value = serde_json::from_str(&rule_text)
+        .with_context(|| format!("failed to parse {}", rule_file.display()))?;
+    let rule_id = rule_uuid(&rule)?;
+    let project = load_native_project_with_resolved_board(root)?;
+    let rules_root_id = project.rules.uuid.ok_or_else(|| {
+        anyhow::anyhow!("rules root is missing uuid; run project new migration first")
+    })?;
+    let mut model = ProjectResolver::new(root).resolve()?;
+    let expected_model_revision = model.model_revision.clone();
+    model
+        .commit_journaled(
+            root,
+            OperationBatch {
+                batch_id: Uuid::new_v4(),
+                expected_model_revision: Some(expected_model_revision),
+                operations: vec![Operation::CreateProjectRule {
+                    rules_root_id,
+                    rule_id,
+                    rule,
+                }],
+                provenance: CommitProvenance {
+                    source: CommitSource::Cli,
+                    actor: "datum-eda-cli".to_string(),
+                    reason: "create project rule".to_string(),
+                },
+            },
+        )
+        .context("failed to commit create project rule")?;
     let project = load_native_project(root)?;
+    Ok(NativeProjectRulesMutationReportView {
+        action: "create_project_rule".to_string(),
+        project_root: root.display().to_string(),
+        rule_uuid: Some(rule_id.to_string()),
+        rules_object_revision: project.rules.object_revision,
+        rule_count: project.rules.rules.len(),
+    })
+}
+
+pub(crate) fn set_native_project_rule(
+    root: &Path,
+    rule_file: &Path,
+) -> Result<NativeProjectRulesMutationReportView> {
+    let rule_text = std::fs::read_to_string(rule_file)
+        .with_context(|| format!("failed to read {}", rule_file.display()))?;
+    let rule: serde_json::Value = serde_json::from_str(&rule_text)
+        .with_context(|| format!("failed to parse {}", rule_file.display()))?;
+    let rule_id = rule_uuid(&rule)?;
+    let project = load_native_project_with_resolved_board(root)?;
+    let rules_root_id = project.rules.uuid.ok_or_else(|| {
+        anyhow::anyhow!("rules root is missing uuid; run project new migration first")
+    })?;
+    if !project
+        .rules
+        .rules
+        .iter()
+        .any(|rule| rule_uuid(rule).ok() == Some(rule_id))
+    {
+        bail!("project rule {rule_id} not found");
+    }
+    let mut model = ProjectResolver::new(root).resolve()?;
+    let expected_model_revision = model.model_revision.clone();
+    model
+        .commit_journaled(
+            root,
+            OperationBatch {
+                batch_id: Uuid::new_v4(),
+                expected_model_revision: Some(expected_model_revision),
+                operations: vec![Operation::SetProjectRule {
+                    rules_root_id,
+                    rule_id,
+                    rule,
+                }],
+                provenance: CommitProvenance {
+                    source: CommitSource::Cli,
+                    actor: "datum-eda-cli".to_string(),
+                    reason: "set project rule".to_string(),
+                },
+            },
+        )
+        .context("failed to commit set project rule")?;
+    let project = load_native_project(root)?;
+    Ok(NativeProjectRulesMutationReportView {
+        action: "set_project_rule".to_string(),
+        project_root: root.display().to_string(),
+        rule_uuid: Some(rule_id.to_string()),
+        rules_object_revision: project.rules.object_revision,
+        rule_count: project.rules.rules.len(),
+    })
+}
+
+pub(crate) fn delete_native_project_rule(
+    root: &Path,
+    rule_id: Uuid,
+) -> Result<NativeProjectRulesMutationReportView> {
+    let project = load_native_project_with_resolved_board(root)?;
+    let rules_root_id = project.rules.uuid.ok_or_else(|| {
+        anyhow::anyhow!("rules root is missing uuid; run project new migration first")
+    })?;
+    let rule = project
+        .rules
+        .rules
+        .iter()
+        .find(|rule| rule_uuid(rule).ok() == Some(rule_id))
+        .cloned()
+        .ok_or_else(|| anyhow::anyhow!("project rule {rule_id} not found"))?;
+    let mut model = ProjectResolver::new(root).resolve()?;
+    let expected_model_revision = model.model_revision.clone();
+    model
+        .commit_journaled(
+            root,
+            OperationBatch {
+                batch_id: Uuid::new_v4(),
+                expected_model_revision: Some(expected_model_revision),
+                operations: vec![Operation::DeleteProjectRule {
+                    rules_root_id,
+                    rule_id,
+                    rule,
+                }],
+                provenance: CommitProvenance {
+                    source: CommitSource::Cli,
+                    actor: "datum-eda-cli".to_string(),
+                    reason: "delete project rule".to_string(),
+                },
+            },
+        )
+        .context("failed to commit delete project rule")?;
+    let project = load_native_project(root)?;
+    Ok(NativeProjectRulesMutationReportView {
+        action: "delete_project_rule".to_string(),
+        project_root: root.display().to_string(),
+        rule_uuid: Some(rule_id.to_string()),
+        rules_object_revision: project.rules.object_revision,
+        rule_count: project.rules.rules.len(),
+    })
+}
+
+pub(crate) fn query_native_project_rules(root: &Path) -> Result<NativeProjectRulesView> {
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectRulesView {
         domain: "native_project",
         count: project.rules.rules.len(),
         rules: project.rules.rules,
     })
+}
+
+fn rule_uuid(rule: &serde_json::Value) -> Result<Uuid> {
+    let uuid = rule
+        .get("uuid")
+        .and_then(serde_json::Value::as_str)
+        .ok_or_else(|| anyhow::anyhow!("project rule missing uuid"))?;
+    Uuid::parse_str(uuid).with_context(|| format!("invalid project rule uuid: {uuid}"))
 }

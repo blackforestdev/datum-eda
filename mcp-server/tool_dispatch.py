@@ -16,9 +16,10 @@ def dispatch_tool_call(daemon: Any, name: str, arguments: dict[str, Any]) -> Any
     if spec is None:
         raise RuntimeError(f"unknown tool: {name}")
 
-    method = getattr(daemon, name, None)
+    method_name = spec.get("x_dispatch_method", name)
+    method = getattr(daemon, method_name, None)
     if method is None:
-        raise RuntimeError(f"registered tool missing daemon method: {name}")
+        raise RuntimeError(f"registered tool missing daemon method: {method_name}")
 
     return method(*_dispatch_args(spec, arguments))
 

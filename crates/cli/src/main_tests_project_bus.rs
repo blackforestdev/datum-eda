@@ -1,3 +1,4 @@
+use super::main_tests_project_journal_support::assert_journal_transaction;
 use super::*;
 use eda_engine::ir::serialization::to_json_deterministic;
 
@@ -56,6 +57,26 @@ fn seed_native_sheet(root: &Path) -> Uuid {
     sheet_uuid
 }
 
+fn assert_bus_journal_transaction(root: &Path, index: usize, reason: &str, operations: u64) {
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "journal-list",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("journal-list should succeed");
+    let journal: serde_json::Value =
+        serde_json::from_str(&output).expect("journal-list JSON should parse");
+    assert_eq!(journal["transactions"][index]["reason"], reason);
+    assert_eq!(journal["transactions"][index]["operations"], operations);
+}
+
 #[test]
 fn project_bus_and_bus_entry_family_update_native_query_surface() {
     let root = unique_project_root("datum-eda-cli-project-bus");
@@ -101,6 +122,7 @@ fn project_bus_and_bus_entry_family_update_native_query_surface() {
     assert_eq!(buses.as_array().unwrap().len(), 1);
     assert_eq!(buses[0]["name"], "DATA");
     assert_eq!(buses[0]["members"].as_array().unwrap().len(), 2);
+    assert_journal_transaction(&root, "create schematic bus", 1);
 
     let edit_bus_cli = Cli::try_parse_from([
         "eda",
@@ -134,6 +156,8 @@ fn project_bus_and_bus_entry_family_update_native_query_surface() {
     let buses: serde_json::Value =
         serde_json::from_str(&buses_output).expect("buses JSON should parse");
     assert_eq!(buses[0]["members"].as_array().unwrap().len(), 3);
+    assert_bus_journal_transaction(&root, 0, "create schematic bus", 1);
+    assert_bus_journal_transaction(&root, 1, "edit schematic bus members", 1);
 
     let place_entry_cli = Cli::try_parse_from([
         "eda",
@@ -175,6 +199,7 @@ fn project_bus_and_bus_entry_family_update_native_query_surface() {
     assert_eq!(entries.as_array().unwrap().len(), 1);
     assert_eq!(entries[0]["uuid"], bus_entry_uuid);
     assert_eq!(entries[0]["bus"], bus_uuid);
+    assert_bus_journal_transaction(&root, 2, "place schematic bus entry", 1);
 
     let summary_cli =
         Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
@@ -182,6 +207,54 @@ fn project_bus_and_bus_entry_family_update_native_query_surface() {
     let summary_output = execute(summary_cli).expect("project query summary should succeed");
     assert!(summary_output.contains("schematic_buses: 1"));
     assert!(summary_output.contains("schematic_bus_entries: 1"));
+    let sheet_path = PathBuf::from(created_bus["sheet_path"].as_str().unwrap());
+    let mut stale_sheet: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&sheet_path).expect("sheet should read"))
+            .expect("sheet should parse");
+    stale_sheet["buses"] = serde_json::json!({});
+    stale_sheet["bus_entries"] = serde_json::json!({});
+    std::fs::write(
+        &sheet_path,
+        format!(
+            "{}\n",
+            to_json_deterministic(&stale_sheet).expect("sheet should serialize")
+        ),
+    )
+    .expect("stale sheet should write");
+
+    let query_entries_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "bus-entries",
+    ])
+    .expect("CLI should parse");
+    let replayed_entries_output =
+        execute(query_entries_cli).expect("project query bus-entries should succeed");
+    let replayed_entries: serde_json::Value =
+        serde_json::from_str(&replayed_entries_output).expect("bus entries JSON should parse");
+    assert_eq!(replayed_entries.as_array().unwrap().len(), 1);
+    assert_eq!(replayed_entries[0]["uuid"], bus_entry_uuid);
+
+    let blocked_delete_bus_cli = Cli::try_parse_from([
+        "eda",
+        "project",
+        "delete-bus",
+        root.to_str().unwrap(),
+        "--bus",
+        &bus_uuid,
+    ])
+    .expect("CLI should parse");
+    let blocked_delete_bus = execute(blocked_delete_bus_cli)
+        .expect_err("project delete-bus should reject referenced buses");
+    assert!(
+        blocked_delete_bus
+            .to_string()
+            .contains("still referenced by bus entry")
+    );
 
     let delete_entry_cli = Cli::try_parse_from([
         "eda",
@@ -195,6 +268,7 @@ fn project_bus_and_bus_entry_family_update_native_query_surface() {
     let delete_entry_output =
         execute(delete_entry_cli).expect("project delete-bus-entry should succeed");
     assert!(delete_entry_output.contains("action: delete_bus_entry"));
+    assert_bus_journal_transaction(&root, 3, "delete schematic bus entry", 1);
 
     let query_entries_cli = Cli::try_parse_from([
         "eda",
@@ -211,6 +285,39 @@ fn project_bus_and_bus_entry_family_update_native_query_surface() {
     let entries: serde_json::Value =
         serde_json::from_str(&entries_output).expect("bus entries JSON should parse");
     assert_eq!(entries.as_array().unwrap().len(), 0);
+
+    let delete_bus_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "delete-bus",
+        root.to_str().unwrap(),
+        "--bus",
+        &bus_uuid,
+    ])
+    .expect("CLI should parse");
+    let delete_bus_output = execute(delete_bus_cli).expect("project delete-bus should succeed");
+    let deleted_bus: serde_json::Value =
+        serde_json::from_str(&delete_bus_output).expect("delete-bus JSON should parse");
+    assert_eq!(deleted_bus["action"], "delete_bus");
+    assert_eq!(deleted_bus["bus_uuid"], bus_uuid);
+    assert_bus_journal_transaction(&root, 4, "delete schematic bus", 1);
+
+    let query_buses_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "buses",
+    ])
+    .expect("CLI should parse");
+    let buses_output = execute(query_buses_cli).expect("project query buses should succeed");
+    let buses: serde_json::Value =
+        serde_json::from_str(&buses_output).expect("buses JSON should parse");
+    assert_eq!(buses.as_array().unwrap().len(), 0);
 
     let _ = std::fs::remove_dir_all(&root);
 }

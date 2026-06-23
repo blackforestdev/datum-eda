@@ -56,6 +56,26 @@ fn seed_native_sheet(root: &Path) -> Uuid {
     sheet_uuid
 }
 
+fn assert_drawing_journal_transaction(root: &Path, index: usize, reason: &str, operations: u64) {
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "journal-list",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("journal-list should succeed");
+    let journal: serde_json::Value =
+        serde_json::from_str(&output).expect("journal-list JSON should parse");
+    assert_eq!(journal["transactions"][index]["reason"], reason);
+    assert_eq!(journal["transactions"][index]["operations"], operations);
+}
+
 #[test]
 fn project_place_edit_and_delete_drawing_line_update_native_query_surface() {
     let root = unique_project_root("datum-eda-cli-project-drawing");
@@ -87,6 +107,7 @@ fn project_place_edit_and_delete_drawing_line_update_native_query_surface() {
         serde_json::from_str(&place_output).expect("place-drawing-line JSON should parse");
     let drawing_uuid = placed["drawing_uuid"].as_str().unwrap().to_string();
     assert_eq!(placed["kind"], "line");
+    assert_drawing_journal_transaction(&root, 0, "place schematic drawing line", 1);
 
     let query_cli = Cli::try_parse_from([
         "eda",
@@ -137,6 +158,24 @@ fn project_place_edit_and_delete_drawing_line_update_native_query_surface() {
     assert!(edit_output.contains("action: edit_drawing_line"));
     assert!(edit_output.contains("from_x_nm: 500"));
     assert!(edit_output.contains("to_y_nm: 800"));
+    assert_drawing_journal_transaction(&root, 1, "edit schematic drawing line", 1);
+
+    let sheet_path = root
+        .join("schematic/sheets")
+        .join(format!("{sheet_uuid}.json"));
+    let mut stale_sheet: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(&sheet_path).expect("sheet should read after drawing edit"),
+    )
+    .expect("sheet should parse after drawing edit");
+    stale_sheet["drawings"] = serde_json::json!({});
+    std::fs::write(
+        &sheet_path,
+        format!(
+            "{}\n",
+            to_json_deterministic(&stale_sheet).expect("sheet JSON should serialize")
+        ),
+    )
+    .expect("stale promoted sheet should write");
 
     let query_cli = Cli::try_parse_from([
         "eda",
@@ -169,6 +208,7 @@ fn project_place_edit_and_delete_drawing_line_update_native_query_surface() {
     let delete_output = execute(delete_cli).expect("project delete-drawing should succeed");
     assert!(delete_output.contains("action: delete_drawing"));
     assert!(delete_output.contains("kind: line"));
+    assert_drawing_journal_transaction(&root, 2, "delete schematic drawing", 1);
 
     let query_cli = Cli::try_parse_from([
         "eda",

@@ -6,6 +6,113 @@ pub(super) fn execute_project_schematic_connectivity_command(
     command: ProjectCommands,
 ) -> Result<(String, i32)> {
     match command {
+        ProjectCommands::CreateSheet(ProjectCreateSheetArgs { path, name, sheet }) => {
+            let report = create_native_project_sheet(&path, name, sheet)?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_sheet_mutation_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::DeleteSheet(ProjectDeleteSheetArgs { path, sheet }) => {
+            let report = delete_native_project_sheet(&path, sheet)?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_sheet_mutation_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::RenameSheet(ProjectRenameSheetArgs { path, sheet, name }) => {
+            let report = rename_native_project_sheet(&path, sheet, name)?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_sheet_mutation_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::CreateSheetDefinition(ProjectCreateSheetDefinitionArgs {
+            path,
+            root_sheet,
+            name,
+            definition,
+        }) => {
+            let report =
+                create_native_project_sheet_definition(&path, root_sheet, name, definition)?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_sheet_definition_mutation_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::CreateSheetInstance(ProjectCreateSheetInstanceArgs {
+            path,
+            definition,
+            parent_sheet,
+            name,
+            x_nm,
+            y_nm,
+            instance,
+        }) => {
+            let report = create_native_project_sheet_instance(
+                &path,
+                definition,
+                parent_sheet,
+                name,
+                x_nm,
+                y_nm,
+                instance,
+            )?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_sheet_instance_mutation_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::DeleteSheetInstance(ProjectDeleteSheetInstanceArgs { path, instance }) => {
+            let report = delete_native_project_sheet_instance(&path, instance)?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_sheet_instance_mutation_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::MoveSheetInstance(ProjectMoveSheetInstanceArgs {
+            path,
+            instance,
+            x_nm,
+            y_nm,
+        }) => {
+            let report = move_native_project_sheet_instance(&path, instance, x_nm, y_nm)?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_sheet_instance_mutation_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::BindSheetInstancePort(ProjectBindSheetInstancePortArgs {
+            path,
+            instance,
+            port,
+        }) => {
+            let report = bind_native_project_sheet_instance_port(&path, instance, port)?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_sheet_instance_mutation_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::UnbindSheetInstancePort(ProjectUnbindSheetInstancePortArgs {
+            path,
+            instance,
+            port,
+        }) => {
+            let report = unbind_native_project_sheet_instance_port(&path, instance, port)?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_sheet_instance_mutation_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
         ProjectCommands::PlaceLabel(ProjectPlaceLabelArgs {
             path,
             sheet,
@@ -179,6 +286,14 @@ pub(super) fn execute_project_schematic_connectivity_command(
         }
         ProjectCommands::EditBusMembers(ProjectEditBusMembersArgs { path, bus, members }) => {
             let report = edit_native_project_bus_members(&path, bus, members)?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_bus_mutation_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::DeleteBus(ProjectDeleteBusArgs { path, bus }) => {
+            let report = delete_native_project_bus(&path, bus)?;
             let output = match format {
                 OutputFormat::Text => render_native_project_bus_mutation_text(&report),
                 OutputFormat::Json => render_output(format, &report),

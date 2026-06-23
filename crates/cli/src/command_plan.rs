@@ -112,7 +112,7 @@ pub(super) fn render_scoped_replacement_manifest_export_text(
     .join("\n")
 }
 
-#[cfg(test)]
+#[allow(dead_code)]
 pub(super) fn load_scoped_replacement_manifest(
     path: &Path,
 ) -> Result<ScopedReplacementPlanManifest> {

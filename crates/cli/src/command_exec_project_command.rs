@@ -1,11 +1,500 @@
 use super::*;
-
 pub(super) fn execute_project_command(
     format: &OutputFormat,
     command: ProjectCommands,
 ) -> Result<(String, i32)> {
     match command {
-        command @ ProjectCommands::PlaceLabel(ProjectPlaceLabelArgs { .. })
+        ProjectCommands::ReviewProposal(ProjectReviewProposalArgs {
+            path,
+            proposal,
+            status,
+        }) => Ok((
+            render_output(
+                format,
+                &review_native_project_proposal(
+                    &path,
+                    proposal,
+                    match status {
+                        ProposalReviewStatusArg::Accepted => eda_engine::substrate::ProposalStatus::Accepted,
+                        ProposalReviewStatusArg::Deferred => eda_engine::substrate::ProposalStatus::Deferred,
+                        ProposalReviewStatusArg::Rejected => eda_engine::substrate::ProposalStatus::Rejected,
+                    },
+                )?,
+            ),
+            0,
+        )),
+        ProjectCommands::ShowProposal(ProjectShowProposalArgs { path, proposal }) => Ok((
+            render_output(format, &show_native_project_proposal(&path, proposal)?),
+            0,
+        )),
+        ProjectCommands::ValidateProposal(ProjectValidateProposalArgs { path, proposal }) => Ok((
+            render_output(format, &validate_native_project_proposal(&path, proposal)?),
+            0,
+        )),
+        ProjectCommands::DeferProposal(ProjectDeferProposalArgs { path, proposal }) => Ok((
+            render_output(format, &defer_native_project_proposal(&path, proposal)?),
+            0,
+        )),
+        ProjectCommands::ApplyProposal(ProjectApplyProposalArgs { path, proposal }) => Ok((
+            render_output(format, &apply_native_project_proposal(&path, proposal)?),
+            0,
+        )),
+        command @ ProjectCommands::ImportKicadFootprint(_) => execute_project_import_command(format, command),
+        command @ ProjectCommands::CreatePoolLibraryObject(_) | command @ ProjectCommands::CreatePoolUnit(_) | command @ ProjectCommands::SetPoolUnitPin(_) | command @ ProjectCommands::CreatePoolSymbol(_) | command @ ProjectCommands::AddPoolSymbolLine(_) | command @ ProjectCommands::AddPoolSymbolPolygon(_) | command @ ProjectCommands::AddPoolSymbolRect(_) | command @ ProjectCommands::AddPoolSymbolCircle(_) | command @ ProjectCommands::AddPoolSymbolText(_) | command @ ProjectCommands::AddPoolSymbolArc(_) | command @ ProjectCommands::SetPoolSymbolPinAnchor(_) | command @ ProjectCommands::CreatePoolEntity(_) | command @ ProjectCommands::CreatePoolPadstack(_) | command @ ProjectCommands::CreatePoolPackage(_) | command @ ProjectCommands::SetPoolPackagePad(_) | command @ ProjectCommands::SetPoolPackageCourtyardRect(_) | command @ ProjectCommands::SetPoolPackageCourtyardPolygon(_) | command @ ProjectCommands::AddPoolPackageSilkscreenLine(_) | command @ ProjectCommands::AddPoolPackageSilkscreenRect(_) | command @ ProjectCommands::AddPoolPackageSilkscreenCircle(_) | command @ ProjectCommands::AddPoolPackageSilkscreenArc(_) | command @ ProjectCommands::AddPoolPackageSilkscreenPolygon(_) | command @ ProjectCommands::AddPoolPackageSilkscreenText(_) | command @ ProjectCommands::AddPoolPackageModel3d(_) | command @ ProjectCommands::SetPoolPackageBodyHeights(_) | command @ ProjectCommands::CreatePoolPart(_) | command @ ProjectCommands::SetPoolPartMetadata(_) | command @ ProjectCommands::SetPoolPartParametric(_) | command @ ProjectCommands::SetPoolPartOrderableMpns(_) | command @ ProjectCommands::SetPoolPartPackagingOptions(_) | command @ ProjectCommands::SetPoolPartBehaviouralModels(_) | command @ ProjectCommands::AttachPoolPartModel(_) | command @ ProjectCommands::DetachPoolPartModel(_) | command @ ProjectCommands::GcPoolModels(_) | command @ ProjectCommands::SetPoolPartThermal(_) | command @ ProjectCommands::SetPoolPartSupplyChain(_) | command @ ProjectCommands::SetPoolPartTags(_) | command @ ProjectCommands::SetPoolPartPadMap(_) | command @ ProjectCommands::SetPoolPartPadMapEntry(_) | command @ ProjectCommands::SetPoolLibraryObject(_) | command @ ProjectCommands::DeletePoolLibraryObject(_) => execute_project_library_command(format, command),
+        ProjectCommands::SetProjectName(ProjectSetProjectNameArgs { path, name }) => {
+            let report = set_native_project_name(&path, name)?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_name_mutation_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::SetProjectRules(ProjectSetProjectRulesArgs { path, rules_file }) => {
+            let report = set_native_project_rules(&path, &rules_file)?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_rules_mutation_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::CreateProjectRule(ProjectCreateProjectRuleArgs { path, rule_file }) => {
+            let report = create_native_project_rule(&path, &rule_file)?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_rules_mutation_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::SetProjectRule(ProjectSetProjectRuleArgs { path, rule_file }) => {
+            let report = set_native_project_rule(&path, &rule_file)?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_rules_mutation_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::DeleteProjectRule(ProjectDeleteProjectRuleArgs { path, rule_uuid }) => {
+            let report = delete_native_project_rule(&path, rule_uuid)?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_rules_mutation_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::Undo(args) => execute_native_project_journal_undo(format, &args.path, args.expected_model_revision.as_deref(), args.expected_tip_transaction),
+        ProjectCommands::Redo(args) => execute_native_project_journal_redo(format, &args.path, args.expected_model_revision.as_deref(), args.expected_tip_transaction),
+        ProjectCommands::GenerateStandardsRepairProposals(
+            ProjectGenerateStandardsRepairProposalsArgs { path },
+        ) => Ok((
+            render_output(
+                format,
+                &generate_native_project_standards_repair_proposals(&path)?,
+            ),
+            0,
+        )),
+        ProjectCommands::WaiveFinding(ProjectWaiveFindingArgs {
+            path,
+            fingerprint,
+            rationale,
+            created_by,
+        }) => Ok((
+            render_output(
+                format,
+                &waive_native_project_finding(&path, &fingerprint, &rationale, created_by)?,
+            ),
+            0,
+        )),
+        ProjectCommands::AcceptDeviation(ProjectAcceptDeviationArgs {
+            path,
+            fingerprint,
+            rationale,
+            accepted_by,
+        }) => Ok((
+            render_output(
+                format,
+                &accept_native_project_deviation(&path, &fingerprint, &rationale, accepted_by)?,
+            ),
+            0,
+        )),
+        ProjectCommands::CreateGerberOutputJob(ProjectCreateGerberOutputJobArgs {
+            path,
+            prefix,
+            output_dir,
+            name,
+            manufacturing_plan,
+            variant,
+            as_proposal,
+            proposal,
+            rationale,
+        }) => Ok((
+            render_output(
+                format,
+                &if as_proposal {
+                    serde_json::to_value(propose_create_native_project_output_job(
+                        &path,
+                        &prefix,
+                        output_dir.as_deref(),
+                        "gerber-set",
+                        name.as_deref(),
+                        manufacturing_plan,
+                        variant,
+                        proposal,
+                        rationale.as_deref(),
+                    )?)?
+                } else {
+                    serde_json::to_value(create_native_project_gerber_set_output_job(
+                        &path,
+                        &prefix,
+                        output_dir.as_deref(),
+                        name.as_deref(),
+                        manufacturing_plan,
+                        variant,
+                    )?)?
+                },
+            ),
+            0,
+        )),
+        ProjectCommands::CreateOutputJob(ProjectCreateOutputJobArgs {
+            path,
+            prefix,
+            output_dir,
+            include,
+            name,
+            manufacturing_plan,
+            variant,
+            as_proposal,
+            proposal,
+            rationale,
+        }) => Ok((
+            render_output(
+                format,
+                &if as_proposal {
+                    serde_json::to_value(propose_create_native_project_output_job(
+                        &path,
+                        &prefix,
+                        output_dir.as_deref(),
+                        &include,
+                        name.as_deref(),
+                        manufacturing_plan,
+                        variant,
+                        proposal,
+                        rationale.as_deref(),
+                    )?)?
+                } else {
+                    serde_json::to_value(create_native_project_output_job(
+                        &path,
+                        &prefix,
+                        output_dir.as_deref(),
+                        &include,
+                        name.as_deref(),
+                        manufacturing_plan,
+                        variant,
+                    )?)?
+                },
+            ),
+            0,
+        )),
+        ProjectCommands::UpdateOutputJob(ProjectUpdateOutputJobArgs {
+            path,
+            output_job,
+            name,
+            output_dir,
+            manufacturing_plan,
+            variant,
+            clear_manufacturing_plan,
+            clear_variant,
+            clear_output_dir,
+            as_proposal,
+            proposal,
+            rationale,
+        }) => Ok((
+            render_output(
+                format,
+                &if as_proposal {
+                    serde_json::to_value(propose_update_native_project_output_job(
+                        &path,
+                        output_job,
+                        name.as_deref(),
+                        output_dir.as_deref(),
+                        manufacturing_plan,
+                        variant,
+                        clear_manufacturing_plan,
+                        clear_variant,
+                        clear_output_dir,
+                        proposal,
+                        rationale.as_deref(),
+                    )?)?
+                } else {
+                    serde_json::to_value(update_native_project_output_job(
+                        &path,
+                        output_job,
+                        name.as_deref(),
+                        output_dir.as_deref(),
+                        manufacturing_plan,
+                        variant,
+                        clear_manufacturing_plan,
+                        clear_variant,
+                        clear_output_dir,
+                    )?)?
+                },
+            ),
+            0,
+        )),
+        ProjectCommands::RunOutputJob(ProjectRunOutputJobArgs {
+            path,
+            output_job,
+            output_dir,
+        }) => {
+            let report = run_native_project_output_job(&path, output_job, output_dir.as_deref())?;
+            let exit_code = report.exit_code;
+            Ok((render_output(format, &report), exit_code))
+        }
+        ProjectCommands::StartOutputJobRun(ProjectStartOutputJobRunArgs { path, output_job }) => {
+            Ok((
+                render_output(
+                    format,
+                    &start_native_project_output_job_run(&path, output_job)?,
+                ),
+                0,
+            ))
+        }
+        ProjectCommands::CancelOutputJobRun(ProjectCancelOutputJobRunArgs { path, run }) => Ok((
+            render_output(format, &cancel_native_project_output_job_run(&path, run)?),
+            0,
+        )),
+        ProjectCommands::DeleteOutputJob(ProjectDeleteOutputJobArgs {
+            path,
+            output_job,
+            as_proposal,
+            proposal,
+            rationale,
+        }) => Ok((
+            render_output(
+                format,
+                &if as_proposal {
+                    serde_json::to_value(propose_delete_native_project_output_job(
+                        &path,
+                        output_job,
+                        proposal,
+                        rationale.as_deref(),
+                    )?)?
+                } else {
+                    serde_json::to_value(delete_native_project_output_job(&path, output_job)?)?
+                },
+            ),
+            0,
+        )),
+        ProjectCommands::CreateManufacturingPlan(ProjectCreateManufacturingPlanArgs {
+            path,
+            prefix,
+            name,
+            variant,
+            panel_projection,
+            as_proposal,
+            proposal,
+            rationale,
+        }) => Ok((
+            render_output(
+                format,
+                &if as_proposal {
+                    serde_json::to_value(propose_create_native_project_manufacturing_plan(
+                        &path,
+                        &prefix,
+                        name.as_deref(),
+                        variant,
+                        panel_projection,
+                        proposal,
+                        rationale.as_deref(),
+                    )?)?
+                } else {
+                    serde_json::to_value(create_native_project_manufacturing_plan(
+                        &path,
+                        &prefix,
+                        name.as_deref(),
+                        variant,
+                        panel_projection,
+                    )?)?
+                },
+            ),
+            0,
+        )),
+        ProjectCommands::UpdateManufacturingPlan(ProjectUpdateManufacturingPlanArgs {
+            path,
+            manufacturing_plan,
+            name,
+            prefix,
+            variant,
+            clear_variant,
+            panel_projection,
+            clear_panel_projection,
+            as_proposal,
+            proposal,
+            rationale,
+        }) => Ok((
+            render_output(
+                format,
+                &if as_proposal {
+                    serde_json::to_value(propose_update_native_project_manufacturing_plan(
+                        &path,
+                        manufacturing_plan,
+                        name.as_deref(),
+                        prefix.as_deref(),
+                        variant,
+                        clear_variant,
+                        panel_projection,
+                        clear_panel_projection,
+                        proposal,
+                        rationale.as_deref(),
+                    )?)?
+                } else {
+                    serde_json::to_value(update_native_project_manufacturing_plan(
+                        &path,
+                        manufacturing_plan,
+                        name.as_deref(),
+                        prefix.as_deref(),
+                        variant,
+                        clear_variant,
+                        panel_projection,
+                        clear_panel_projection,
+                    )?)?
+                },
+            ),
+            0,
+        )),
+        ProjectCommands::DeleteManufacturingPlan(ProjectDeleteManufacturingPlanArgs {
+            path,
+            manufacturing_plan,
+            as_proposal,
+            proposal,
+            rationale,
+        }) => Ok((
+            render_output(
+                format,
+                &if as_proposal {
+                    serde_json::to_value(propose_delete_native_project_manufacturing_plan(
+                        &path,
+                        manufacturing_plan,
+                        proposal,
+                        rationale.as_deref(),
+                    )?)?
+                } else {
+                    serde_json::to_value(delete_native_project_manufacturing_plan(
+                        &path,
+                        manufacturing_plan,
+                    )?)?
+                },
+            ),
+            0,
+        )),
+        ProjectCommands::CreatePanelProjection(ProjectCreatePanelProjectionArgs {
+            path,
+            key,
+            name,
+            board,
+            x_nm,
+            y_nm,
+            rotation_deg,
+            as_proposal,
+            proposal,
+            rationale,
+        }) => Ok((
+            render_output(
+                format,
+                &if as_proposal {
+                    serde_json::to_value(propose_create_native_project_panel_projection(
+                        &path,
+                        &key,
+                        name.as_deref(),
+                        board,
+                        x_nm,
+                        y_nm,
+                        rotation_deg,
+                        proposal,
+                        rationale.as_deref(),
+                    )?)?
+                } else {
+                    serde_json::to_value(create_native_project_panel_projection(
+                        &path,
+                        &key,
+                        name.as_deref(),
+                        board,
+                        x_nm,
+                        y_nm,
+                        rotation_deg,
+                    )?)?
+                },
+            ),
+            0,
+        )),
+        ProjectCommands::UpdatePanelProjection(ProjectUpdatePanelProjectionArgs {
+            path,
+            panel_projection,
+            name,
+            board,
+            x_nm,
+            y_nm,
+            rotation_deg,
+            as_proposal,
+            proposal,
+            rationale,
+        }) => Ok((
+            render_output(
+                format,
+                &if as_proposal {
+                    serde_json::to_value(propose_update_native_project_panel_projection(
+                        &path,
+                        panel_projection,
+                        name.as_deref(),
+                        board,
+                        x_nm,
+                        y_nm,
+                        rotation_deg,
+                        proposal,
+                        rationale.as_deref(),
+                    )?)?
+                } else {
+                    serde_json::to_value(update_native_project_panel_projection(
+                        &path,
+                        panel_projection,
+                        name.as_deref(),
+                        board,
+                        x_nm,
+                        y_nm,
+                        rotation_deg,
+                    )?)?
+                },
+            ),
+            0,
+        )),
+        ProjectCommands::DeletePanelProjection(ProjectDeletePanelProjectionArgs {
+            path,
+            panel_projection,
+            as_proposal,
+            proposal,
+            rationale,
+        }) => Ok((
+            render_output(
+                format,
+                &if as_proposal {
+                    serde_json::to_value(propose_delete_native_project_panel_projection(
+                        &path,
+                        panel_projection,
+                        proposal,
+                        rationale.as_deref(),
+                    )?)?
+                } else {
+                    serde_json::to_value(delete_native_project_panel_projection(
+                        &path,
+                        panel_projection,
+                    )?)?
+                },
+            ),
+            0,
+        )),
+        command @ ProjectCommands::CreateSheet(ProjectCreateSheetArgs { .. })
+        | command @ ProjectCommands::DeleteSheet(ProjectDeleteSheetArgs { .. })
+        | command @ ProjectCommands::RenameSheet(ProjectRenameSheetArgs { .. }) | command @ ProjectCommands::CreateSheetDefinition(ProjectCreateSheetDefinitionArgs { .. })
+        | command @ ProjectCommands::CreateSheetInstance(ProjectCreateSheetInstanceArgs { .. }) | command @ ProjectCommands::DeleteSheetInstance(ProjectDeleteSheetInstanceArgs { .. }) | command @ ProjectCommands::MoveSheetInstance(ProjectMoveSheetInstanceArgs { .. }) | command @ ProjectCommands::BindSheetInstancePort(ProjectBindSheetInstancePortArgs { .. }) | command @ ProjectCommands::UnbindSheetInstancePort(ProjectUnbindSheetInstancePortArgs { .. }) | command @ ProjectCommands::PlaceLabel(ProjectPlaceLabelArgs { .. })
         | command @ ProjectCommands::RenameLabel(ProjectRenameLabelArgs { .. })
         | command @ ProjectCommands::DeleteLabel(ProjectDeleteLabelArgs { .. })
         | command @ ProjectCommands::DrawWire(ProjectDrawWireArgs { .. })
@@ -17,6 +506,7 @@ pub(super) fn execute_project_command(
         | command @ ProjectCommands::DeletePort(ProjectDeletePortArgs { .. })
         | command @ ProjectCommands::CreateBus(ProjectCreateBusArgs { .. })
         | command @ ProjectCommands::EditBusMembers(ProjectEditBusMembersArgs { .. })
+        | command @ ProjectCommands::DeleteBus(ProjectDeleteBusArgs { .. })
         | command @ ProjectCommands::PlaceBusEntry(ProjectPlaceBusEntryArgs { .. })
         | command @ ProjectCommands::DeleteBusEntry(ProjectDeleteBusEntryArgs { .. })
         | command @ ProjectCommands::PlaceNoConnect(ProjectPlaceNoConnectArgs { .. })
@@ -74,13 +564,16 @@ pub(super) fn execute_project_command(
         | command @ ProjectCommands::EditBoardKeepout(ProjectEditBoardKeepoutArgs { .. })
         | command @ ProjectCommands::DeleteBoardKeepout(ProjectDeleteBoardKeepoutArgs { .. })
         | command @ ProjectCommands::SetBoardOutline(ProjectSetBoardOutlineArgs { .. })
+        | command @ ProjectCommands::SetBoardName(ProjectSetBoardNameArgs { .. })
         | command @ ProjectCommands::PlaceBoardComponent(ProjectPlaceBoardComponentArgs { .. })
         | command @ ProjectCommands::DeleteBoardComponent(ProjectDeleteBoardComponentArgs { .. })
         | command @ ProjectCommands::DrawBoardTrack(ProjectDrawBoardTrackArgs { .. })
+        | command @ ProjectCommands::EditBoardTrack(ProjectEditBoardTrackArgs { .. })
         | command @ ProjectCommands::DeleteBoardTrack(ProjectDeleteBoardTrackArgs { .. })
         | command @ ProjectCommands::PlaceBoardVia(ProjectPlaceBoardViaArgs { .. })
+        | command @ ProjectCommands::EditBoardVia(ProjectEditBoardViaArgs { .. })
         | command @ ProjectCommands::DeleteBoardVia(ProjectDeleteBoardViaArgs { .. })
-        | command @ ProjectCommands::PlaceBoardZone(ProjectPlaceBoardZoneArgs { .. })
+        | command @ ProjectCommands::PlaceBoardZone(ProjectPlaceBoardZoneArgs { .. }) | command @ ProjectCommands::EditBoardZone(ProjectEditBoardZoneArgs { .. }) | command @ ProjectCommands::FillZones(ProjectFillZonesArgs { .. })
         | command @ ProjectCommands::DeleteBoardZone(ProjectDeleteBoardZoneArgs { .. })
         | command @ ProjectCommands::SetBoardPadNet(ProjectSetBoardPadNetArgs { .. })
         | command @ ProjectCommands::ClearBoardPadNet(ProjectClearBoardPadNetArgs { .. })
@@ -101,9 +594,22 @@ pub(super) fn execute_project_command(
         ProjectCommands::AddDefaultTopStackup(ProjectAddDefaultTopStackupArgs { path }) => {
             command_exec_board_stackup::execute_add_default_top_stackup(format, path)
         }
-        ProjectCommands::PlaceBoardNet(ProjectPlaceBoardNetArgs { path, name, class_uuid }) => {
-            command_exec_board_net::execute_place_board_net(format, path, name, class_uuid)
-        }
+        ProjectCommands::PlaceBoardNet(ProjectPlaceBoardNetArgs {
+            path,
+            name,
+            class_uuid,
+            impedance_target_ohms,
+            impedance_tolerance_pct,
+            controlled_dielectric_layer,
+        }) => command_exec_board_net::execute_place_board_net(
+            format,
+            path,
+            name,
+            class_uuid,
+            impedance_target_ohms,
+            impedance_tolerance_pct,
+            controlled_dielectric_layer,
+        ),
         ProjectCommands::PlaceBoardNetClass(ProjectPlaceBoardNetClassArgs {
             path,
             name,
@@ -151,7 +657,21 @@ pub(super) fn execute_project_command(
             net_uuid,
             name,
             class_uuid,
-        }) => command_exec_board_net::execute_edit_board_net(format, path, net_uuid, name, class_uuid),
+            impedance_target_ohms,
+            impedance_tolerance_pct,
+            controlled_dielectric_layer,
+            clear_controlled_impedance,
+        }) => command_exec_board_net::execute_edit_board_net(
+            format,
+            path,
+            net_uuid,
+            name,
+            class_uuid,
+            impedance_target_ohms,
+            impedance_tolerance_pct,
+            controlled_dielectric_layer,
+            clear_controlled_impedance,
+        ),
         ProjectCommands::MoveBoardComponent(ProjectMoveBoardComponentArgs {
             path,
             component_uuid,
@@ -184,11 +704,8 @@ pub(super) fn execute_project_command(
             component_uuid,
             package_uuid,
         ),
-        ProjectCommands::SetBoardComponentLayer(SetBoardComponentLayerArgs {
-            path,
-            component_uuid,
-            layer,
-        }) => command_exec_board_component::execute_set_board_component_layer(
+        ProjectCommands::SetBoardComponentLayer(SetBoardComponentLayerArgs { path, component_uuid, layer })
+        | ProjectCommands::FlipBoardComponent(SetBoardComponentLayerArgs { path, component_uuid, layer }) => command_exec_board_component::execute_set_board_component_layer(
             format,
             path,
             component_uuid,
@@ -242,6 +759,40 @@ pub(super) fn execute_project_command(
             component_uuid,
             false,
         ),
+        ProjectCommands::BindComponentInstance(ProjectBindComponentInstanceArgs {
+            path,
+            component_instance,
+            symbol,
+            package,
+        }) => Ok((
+            render_output(
+                format,
+                &bind_native_project_component_instance(&path, component_instance, symbol, package)?,
+            ),
+            0,
+        )),
+        ProjectCommands::SetComponentInstance(ProjectSetComponentInstanceArgs {
+            path,
+            component_instance,
+            symbol,
+            package,
+        }) => Ok((
+            render_output(
+                format,
+                &set_native_project_component_instance(&path, component_instance, symbol, package)?,
+            ),
+            0,
+        )),
+        ProjectCommands::DeleteComponentInstance(ProjectDeleteComponentInstanceArgs {
+            path,
+            component_instance,
+        }) => Ok((
+            render_output(
+                format,
+                &delete_native_project_component_instance(&path, component_instance)?,
+            ),
+            0,
+        )),
         ProjectCommands::DeleteBoardNetClass(ProjectDeleteBoardNetClassArgs { path, net_class_uuid }) => {
             command_exec_board_net::execute_delete_board_net_class(format, path, net_class_uuid)
         }

@@ -1,19 +1,47 @@
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
-use eda_engine::board::{Net, Track, Via, Zone};
+use eda_engine::board::{ImpedanceSpec, Keepout, Net, NetClass, PlacedPad, Track, Via, Zone};
 use eda_engine::ir::geometry::{Point, Polygon};
+use eda_engine::substrate::{
+    CommitProvenance, CommitSource, ModelRevision, Operation, OperationBatch, ProjectResolver,
+    ZoneFill, ZoneFillCopperContext, compute_bounded_zone_fill,
+};
+use serde::Serialize;
 use uuid::Uuid;
 
 use super::{
     NativeProjectBoardNetMutationReportView, NativeProjectBoardTrackMutationReportView,
     NativeProjectBoardViaMutationReportView, NativeProjectBoardZoneMutationReportView,
-    load_native_project, native_project_board_net_report, native_project_board_track_report,
-    native_project_board_via_report, native_project_board_zone_report, write_canonical_json,
+    load_native_project, load_native_project_with_resolved_board, native_project_board_net_report,
+    native_project_board_track_report, native_project_board_via_report,
+    native_project_board_zone_report,
 };
 
+#[derive(Debug, Serialize)]
+pub(crate) struct NativeProjectZoneFillsQueryView {
+    pub(crate) contract: &'static str,
+    pub(crate) project_id: String,
+    pub(crate) model_revision: ModelRevision,
+    pub(crate) zone_fill_count: usize,
+    pub(crate) zone_fills: Vec<ZoneFill>,
+}
+
+#[derive(Debug, Serialize)]
+pub(crate) struct NativeProjectFillZonesView {
+    pub(crate) contract: &'static str,
+    pub(crate) action: &'static str,
+    pub(crate) project_id: String,
+    pub(crate) model_revision: ModelRevision,
+    pub(crate) requested_zone: Option<Uuid>,
+    pub(crate) requested_net: Option<Uuid>,
+    pub(crate) zone_fill_count: usize,
+    pub(crate) zone_fills: Vec<ZoneFill>,
+    pub(crate) zone_fill_paths: Vec<String>,
+}
+
 pub(crate) fn query_native_project_board_tracks(root: &Path) -> Result<Vec<Track>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let mut tracks = project
         .board
         .tracks
@@ -25,7 +53,7 @@ pub(crate) fn query_native_project_board_tracks(root: &Path) -> Result<Vec<Track
 }
 
 pub(crate) fn query_native_project_board_vias(root: &Path) -> Result<Vec<Via>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let mut vias = project
         .board
         .vias
@@ -37,19 +65,217 @@ pub(crate) fn query_native_project_board_vias(root: &Path) -> Result<Vec<Via>> {
 }
 
 pub(crate) fn query_native_project_board_zones(root: &Path) -> Result<Vec<Zone>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let mut zones = project
         .board
         .zones
-        .into_values()
+        .values()
+        .cloned()
         .map(|value| serde_json::from_value(value).context("failed to parse board zone"))
         .collect::<Result<Vec<Zone>>>()?;
     zones.sort_by(|a, b| a.uuid.cmp(&b.uuid));
     Ok(zones)
 }
 
+pub(crate) fn query_native_project_zone_fills(
+    root: &Path,
+) -> Result<NativeProjectZoneFillsQueryView> {
+    let model = ProjectResolver::new(root).resolve()?;
+    let zone_fills: Vec<ZoneFill> = model.zone_fills.into_values().collect();
+    Ok(NativeProjectZoneFillsQueryView {
+        contract: "zone_fills_query_v1",
+        project_id: model.project.project_id.to_string(),
+        model_revision: model.model_revision,
+        zone_fill_count: zone_fills.len(),
+        zone_fills,
+    })
+}
+
+pub(crate) fn fill_native_project_zones(
+    root: &Path,
+    requested_zone: Option<Uuid>,
+    requested_net: Option<Uuid>,
+) -> Result<NativeProjectFillZonesView> {
+    let model = ProjectResolver::new(root).resolve()?;
+    let project = load_native_project_with_resolved_board(root)?;
+    let mut zones = project
+        .board
+        .zones
+        .values()
+        .cloned()
+        .map(|value| serde_json::from_value(value).context("failed to parse board zone"))
+        .collect::<Result<Vec<Zone>>>()?;
+    zones.retain(|zone| {
+        requested_zone.is_none_or(|filter| zone.uuid == filter)
+            && requested_net.is_none_or(|filter| zone.net == filter)
+    });
+    if zones.is_empty() {
+        bail!("no board zones matched fill request");
+    }
+    zones.sort_by(|a, b| a.uuid.cmp(&b.uuid));
+
+    let project_id = model.project.project_id.to_string();
+    let expected_model_revision = model.model_revision.clone();
+    let mut operations = Vec::new();
+    let mut zone_fills = Vec::new();
+    let mut zone_fill_paths = Vec::new();
+    for zone in zones {
+        let source_zone_revision = model
+            .objects
+            .get(&zone.uuid)
+            .map(|object| object.object_revision)
+            .unwrap_or(eda_engine::substrate::ObjectRevision(0));
+        let fill_context = zone_fill_copper_context(&project.board)?;
+        let (state, islands, provenance) = compute_bounded_zone_fill(&zone, &fill_context);
+        let fill = ZoneFill {
+            zone_id: zone.uuid,
+            state,
+            source_zone_revision,
+            model_revision: model.model_revision.clone(),
+            islands,
+            provenance: Some(provenance),
+        };
+        let relative_path = format!(".datum/zone_fills/{}.json", fill.zone_id);
+        let previous_zone_fill = previous_persisted_zone_fill_value(&model, fill.zone_id);
+        operations.push(Operation::SetZoneFill {
+            zone_id: fill.zone_id,
+            previous_zone_fill,
+            zone_fill: serde_json::to_value(&fill)
+                .expect("native zone fill serialization must succeed"),
+        });
+        zone_fill_paths.push(root.join(&relative_path).display().to_string());
+        zone_fills.push(fill);
+    }
+    if !operations.is_empty() {
+        let mut model = model;
+        model.commit_journaled(
+            root,
+            OperationBatch {
+                batch_id: Uuid::new_v4(),
+                expected_model_revision: Some(expected_model_revision.clone()),
+                provenance: CommitProvenance {
+                    actor: "datum-eda-cli".to_string(),
+                    source: CommitSource::Cli,
+                    reason: "fill zones".to_string(),
+                },
+                operations,
+            },
+        )?;
+    }
+
+    Ok(NativeProjectFillZonesView {
+        contract: "zone_fill_generate_v1",
+        action: "fill_zones",
+        project_id,
+        model_revision: expected_model_revision,
+        requested_zone,
+        requested_net,
+        zone_fill_count: zone_fills.len(),
+        zone_fills,
+        zone_fill_paths,
+    })
+}
+
+fn previous_persisted_zone_fill_value(
+    model: &eda_engine::substrate::DesignModel,
+    zone_id: Uuid,
+) -> Option<serde_json::Value> {
+    model
+        .zone_fills
+        .get(&zone_id)
+        .filter(|fill| fill.state != eda_engine::substrate::ZoneFillState::Unfilled)
+        .map(|fill| {
+            serde_json::to_value(fill).expect("resolved zone fill serialization must succeed")
+        })
+        .or_else(|| previous_journaled_zone_fill_value(model, zone_id))
+}
+
+fn previous_journaled_zone_fill_value(
+    model: &eda_engine::substrate::DesignModel,
+    zone_id: Uuid,
+) -> Option<serde_json::Value> {
+    let mut previous = None;
+    for transaction in &model.journal {
+        for operation in &transaction.operations {
+            match operation {
+                Operation::SetZoneFill {
+                    zone_id: operation_zone_id,
+                    zone_fill,
+                    ..
+                } if *operation_zone_id == zone_id => {
+                    previous = Some(zone_fill.clone());
+                }
+                Operation::DeleteZoneFill {
+                    zone_id: operation_zone_id,
+                    ..
+                } if *operation_zone_id == zone_id => {
+                    previous = None;
+                }
+                _ => {}
+            }
+        }
+    }
+    previous
+}
+
+fn zone_fill_copper_context(board: &super::NativeBoardRoot) -> Result<ZoneFillCopperContext> {
+    let nets = board
+        .nets
+        .values()
+        .cloned()
+        .map(|value| serde_json::from_value(value).context("failed to parse board net"))
+        .collect::<Result<Vec<Net>>>()?;
+    let net_classes = board
+        .net_classes
+        .values()
+        .cloned()
+        .map(|value| serde_json::from_value(value).context("failed to parse board net class"))
+        .collect::<Result<Vec<NetClass>>>()?;
+    let net_class_clearance = net_classes
+        .into_iter()
+        .map(|class| (class.uuid, class.clearance))
+        .collect::<std::collections::BTreeMap<_, _>>();
+    let net_clearance_nm = nets
+        .into_iter()
+        .filter_map(|net| {
+            net_class_clearance
+                .get(&net.class)
+                .copied()
+                .map(|clearance| (net.uuid, clearance))
+        })
+        .collect();
+    Ok(ZoneFillCopperContext {
+        pads: board
+            .pads
+            .values()
+            .cloned()
+            .map(|value| serde_json::from_value(value).context("failed to parse board pad"))
+            .collect::<Result<Vec<PlacedPad>>>()?,
+        tracks: board
+            .tracks
+            .values()
+            .cloned()
+            .map(|value| serde_json::from_value(value).context("failed to parse board track"))
+            .collect::<Result<Vec<Track>>>()?,
+        vias: board
+            .vias
+            .values()
+            .cloned()
+            .map(|value| serde_json::from_value(value).context("failed to parse board via"))
+            .collect::<Result<Vec<Via>>>()?,
+        keepouts: board
+            .keepouts
+            .iter()
+            .cloned()
+            .map(|value| serde_json::from_value(value).context("failed to parse board keepout"))
+            .collect::<Result<Vec<Keepout>>>()?,
+        net_clearance_nm,
+        has_unresolved_component_pads: board.component_pads.values().any(|pads| !pads.is_empty()),
+    })
+}
+
 pub(crate) fn query_native_project_board_nets(root: &Path) -> Result<Vec<Net>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let mut nets = project
         .board
         .nets
@@ -61,7 +287,7 @@ pub(crate) fn query_native_project_board_nets(root: &Path) -> Result<Vec<Net>> {
 }
 
 pub(crate) fn query_native_project_board_net(root: &Path, net_uuid: Uuid) -> Result<Net> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let key = net_uuid.to_string();
     let entry = project
         .board
@@ -76,19 +302,31 @@ pub(crate) fn place_native_project_board_net(
     root: &Path,
     name: String,
     class_uuid: Uuid,
+    impedance_target_ohms: Option<String>,
+    impedance_tolerance_pct: Option<String>,
+    controlled_dielectric_layer: Option<i32>,
 ) -> Result<NativeProjectBoardNetMutationReportView> {
-    let mut project = load_native_project(root)?;
     let net_uuid = Uuid::new_v4();
+    let controlled_impedance = parse_controlled_impedance(
+        impedance_target_ohms,
+        impedance_tolerance_pct,
+        controlled_dielectric_layer,
+    )?;
     let net = Net {
         uuid: net_uuid,
         name,
         class: class_uuid,
+        controlled_impedance,
     };
-    project.board.nets.insert(
-        net_uuid.to_string(),
-        serde_json::to_value(&net).expect("native board net serialization must succeed"),
-    );
-    write_canonical_json(&project.board_path, &project.board)?;
+    commit_board_routing_operation(
+        root,
+        "place board net",
+        Operation::CreateBoardNet {
+            net_id: net_uuid,
+            net: serde_json::to_value(&net).expect("native board net serialization must succeed"),
+        },
+    )?;
+    let project = load_native_project(root)?;
     Ok(native_project_board_net_report(
         "place_board_net",
         &project,
@@ -104,7 +342,7 @@ pub(crate) fn place_native_project_board_track(
     width_nm: i64,
     layer: i32,
 ) -> Result<NativeProjectBoardTrackMutationReportView> {
-    let mut project = load_native_project(root)?;
+    let project = load_native_project(root)?;
     if !project.board.nets.contains_key(&net_uuid.to_string()) {
         bail!("board net not found in native project: {net_uuid}");
     }
@@ -117,11 +355,16 @@ pub(crate) fn place_native_project_board_track(
         width: width_nm,
         layer,
     };
-    project.board.tracks.insert(
-        track_uuid.to_string(),
-        serde_json::to_value(&track).expect("native board track serialization must succeed"),
-    );
-    write_canonical_json(&project.board_path, &project.board)?;
+    commit_board_routing_operation(
+        root,
+        "draw board track",
+        Operation::CreateBoardTrack {
+            track_id: track_uuid,
+            track: serde_json::to_value(&track)
+                .expect("native board track serialization must succeed"),
+        },
+    )?;
+    let project = load_native_project(root)?;
     Ok(native_project_board_track_report(
         "draw_board_track",
         &project,
@@ -138,7 +381,7 @@ pub(crate) fn place_native_project_board_via(
     from_layer: i32,
     to_layer: i32,
 ) -> Result<NativeProjectBoardViaMutationReportView> {
-    let mut project = load_native_project(root)?;
+    let project = load_native_project(root)?;
     if !project.board.nets.contains_key(&net_uuid.to_string()) {
         bail!("board net not found in native project: {net_uuid}");
     }
@@ -152,13 +395,140 @@ pub(crate) fn place_native_project_board_via(
         from_layer,
         to_layer,
     };
-    project.board.vias.insert(
-        via_uuid.to_string(),
-        serde_json::to_value(&via).expect("native board via serialization must succeed"),
-    );
-    write_canonical_json(&project.board_path, &project.board)?;
+    commit_board_routing_operation(
+        root,
+        "place board via",
+        Operation::CreateBoardVia {
+            via_id: via_uuid,
+            via: serde_json::to_value(&via).expect("native board via serialization must succeed"),
+        },
+    )?;
+    let project = load_native_project(root)?;
     Ok(native_project_board_via_report(
         "place_board_via",
+        &project,
+        via,
+    ))
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn edit_native_project_board_track(
+    root: &Path,
+    track_uuid: Uuid,
+    net_uuid: Option<Uuid>,
+    from: Option<Point>,
+    to: Option<Point>,
+    width_nm: Option<i64>,
+    layer: Option<i32>,
+) -> Result<NativeProjectBoardTrackMutationReportView> {
+    let project = load_native_project_with_resolved_board(root)?;
+    if let Some(net_uuid) = net_uuid {
+        if !project.board.nets.contains_key(&net_uuid.to_string()) {
+            bail!("board net not found in native project: {net_uuid}");
+        }
+    }
+    let value = project
+        .board
+        .tracks
+        .get(&track_uuid.to_string())
+        .cloned()
+        .ok_or_else(|| anyhow::anyhow!("board track not found in native project: {track_uuid}"))?;
+    let mut track: Track = serde_json::from_value(value).with_context(|| {
+        format!(
+            "failed to parse board track in {}",
+            project.board_path.display()
+        )
+    })?;
+    if let Some(net_uuid) = net_uuid {
+        track.net = net_uuid;
+    }
+    if let Some(from) = from {
+        track.from = from;
+    }
+    if let Some(to) = to {
+        track.to = to;
+    }
+    if let Some(width_nm) = width_nm {
+        track.width = width_nm;
+    }
+    if let Some(layer) = layer {
+        track.layer = layer;
+    }
+    commit_board_routing_operation(
+        root,
+        "edit board track",
+        Operation::SetBoardTrack {
+            track_id: track_uuid,
+            track: serde_json::to_value(&track)
+                .expect("native board track serialization must succeed"),
+        },
+    )?;
+    let project = load_native_project(root)?;
+    Ok(native_project_board_track_report(
+        "edit_board_track",
+        &project,
+        track,
+    ))
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn edit_native_project_board_via(
+    root: &Path,
+    via_uuid: Uuid,
+    net_uuid: Option<Uuid>,
+    position: Option<Point>,
+    drill_nm: Option<i64>,
+    diameter_nm: Option<i64>,
+    from_layer: Option<i32>,
+    to_layer: Option<i32>,
+) -> Result<NativeProjectBoardViaMutationReportView> {
+    let project = load_native_project_with_resolved_board(root)?;
+    if let Some(net_uuid) = net_uuid {
+        if !project.board.nets.contains_key(&net_uuid.to_string()) {
+            bail!("board net not found in native project: {net_uuid}");
+        }
+    }
+    let value = project
+        .board
+        .vias
+        .get(&via_uuid.to_string())
+        .cloned()
+        .ok_or_else(|| anyhow::anyhow!("board via not found in native project: {via_uuid}"))?;
+    let mut via: Via = serde_json::from_value(value).with_context(|| {
+        format!(
+            "failed to parse board via in {}",
+            project.board_path.display()
+        )
+    })?;
+    if let Some(net_uuid) = net_uuid {
+        via.net = net_uuid;
+    }
+    if let Some(position) = position {
+        via.position = position;
+    }
+    if let Some(drill_nm) = drill_nm {
+        via.drill = drill_nm;
+    }
+    if let Some(diameter_nm) = diameter_nm {
+        via.diameter = diameter_nm;
+    }
+    if let Some(from_layer) = from_layer {
+        via.from_layer = from_layer;
+    }
+    if let Some(to_layer) = to_layer {
+        via.to_layer = to_layer;
+    }
+    commit_board_routing_operation(
+        root,
+        "edit board via",
+        Operation::SetBoardVia {
+            via_id: via_uuid,
+            via: serde_json::to_value(&via).expect("native board via serialization must succeed"),
+        },
+    )?;
+    let project = load_native_project(root)?;
+    Ok(native_project_board_via_report(
+        "edit_board_via",
         &project,
         via,
     ))
@@ -174,7 +544,7 @@ pub(crate) fn place_native_project_board_zone(
     thermal_gap_nm: i64,
     thermal_spoke_width_nm: i64,
 ) -> Result<NativeProjectBoardZoneMutationReportView> {
-    let mut project = load_native_project(root)?;
+    let project = load_native_project(root)?;
     if !project.board.nets.contains_key(&net_uuid.to_string()) {
         bail!("board net not found in native project: {net_uuid}");
     }
@@ -189,13 +559,93 @@ pub(crate) fn place_native_project_board_zone(
         thermal_gap: thermal_gap_nm,
         thermal_spoke_width: thermal_spoke_width_nm,
     };
-    project.board.zones.insert(
-        zone_uuid.to_string(),
-        serde_json::to_value(&zone).expect("native board zone serialization must succeed"),
-    );
-    write_canonical_json(&project.board_path, &project.board)?;
+    commit_board_routing_operation(
+        root,
+        "place board zone",
+        Operation::CreateBoardZone {
+            zone_id: zone_uuid,
+            zone: serde_json::to_value(&zone)
+                .expect("native board zone serialization must succeed"),
+        },
+    )?;
+    let project = load_native_project(root)?;
     Ok(native_project_board_zone_report(
         "place_board_zone",
+        &project,
+        zone,
+    ))
+}
+
+pub(crate) fn edit_native_project_board_zone(
+    root: &Path,
+    zone_uuid: Uuid,
+    net_uuid: Option<Uuid>,
+    polygon: Option<Polygon>,
+    layer: Option<i32>,
+    priority: Option<u32>,
+    thermal_relief: Option<bool>,
+    thermal_gap_nm: Option<i64>,
+    thermal_spoke_width_nm: Option<i64>,
+) -> Result<NativeProjectBoardZoneMutationReportView> {
+    if net_uuid.is_none()
+        && polygon.is_none()
+        && layer.is_none()
+        && priority.is_none()
+        && thermal_relief.is_none()
+        && thermal_gap_nm.is_none()
+        && thermal_spoke_width_nm.is_none()
+    {
+        bail!("edit-board-zone requires at least one replacement field");
+    }
+    let project = load_native_project(root)?;
+    let value = project
+        .board
+        .zones
+        .get(&zone_uuid.to_string())
+        .cloned()
+        .ok_or_else(|| anyhow::anyhow!("board zone not found in native project: {zone_uuid}"))?;
+    let mut zone: Zone = serde_json::from_value(value).with_context(|| {
+        format!(
+            "failed to parse board zone in {}",
+            project.board_path.display()
+        )
+    })?;
+    if let Some(net_uuid) = net_uuid {
+        if !project.board.nets.contains_key(&net_uuid.to_string()) {
+            bail!("board net not found in native project: {net_uuid}");
+        }
+        zone.net = net_uuid;
+    }
+    if let Some(polygon) = polygon {
+        zone.polygon = polygon;
+    }
+    if let Some(layer) = layer {
+        zone.layer = layer;
+    }
+    if let Some(priority) = priority {
+        zone.priority = priority;
+    }
+    if let Some(thermal_relief) = thermal_relief {
+        zone.thermal_relief = thermal_relief;
+    }
+    if let Some(thermal_gap_nm) = thermal_gap_nm {
+        zone.thermal_gap = thermal_gap_nm;
+    }
+    if let Some(thermal_spoke_width_nm) = thermal_spoke_width_nm {
+        zone.thermal_spoke_width = thermal_spoke_width_nm;
+    }
+    commit_board_routing_operation(
+        root,
+        "edit board zone",
+        Operation::SetBoardZone {
+            zone_id: zone_uuid,
+            zone: serde_json::to_value(&zone)
+                .expect("native board zone serialization must succeed"),
+        },
+    )?;
+    let project = load_native_project(root)?;
+    Ok(native_project_board_zone_report(
+        "edit_board_zone",
         &project,
         zone,
     ))
@@ -206,8 +656,12 @@ pub(crate) fn edit_native_project_board_net(
     net_uuid: Uuid,
     name: Option<String>,
     class_uuid: Option<Uuid>,
+    impedance_target_ohms: Option<String>,
+    impedance_tolerance_pct: Option<String>,
+    controlled_dielectric_layer: Option<i32>,
+    clear_controlled_impedance: bool,
 ) -> Result<NativeProjectBoardNetMutationReportView> {
-    let mut project = load_native_project(root)?;
+    let project = load_native_project(root)?;
     let key = net_uuid.to_string();
     let entry = project
         .board
@@ -227,11 +681,36 @@ pub(crate) fn edit_native_project_board_net(
     if let Some(class_uuid) = class_uuid {
         net.class = class_uuid;
     }
-    project.board.nets.insert(
-        key,
-        serde_json::to_value(&net).expect("native board net serialization must succeed"),
-    );
-    write_canonical_json(&project.board_path, &project.board)?;
+    if clear_controlled_impedance {
+        if impedance_target_ohms.is_some()
+            || impedance_tolerance_pct.is_some()
+            || controlled_dielectric_layer.is_some()
+        {
+            bail!(
+                "--clear-controlled-impedance cannot be combined with impedance replacement fields"
+            );
+        }
+        net.controlled_impedance = None;
+    } else if impedance_target_ohms.is_some()
+        || impedance_tolerance_pct.is_some()
+        || controlled_dielectric_layer.is_some()
+    {
+        net.controlled_impedance = Some(update_controlled_impedance(
+            net.controlled_impedance,
+            impedance_target_ohms,
+            impedance_tolerance_pct,
+            controlled_dielectric_layer,
+        )?);
+    }
+    commit_board_routing_operation(
+        root,
+        "edit board net",
+        Operation::SetBoardNet {
+            net_id: net_uuid,
+            net: serde_json::to_value(&net).expect("native board net serialization must succeed"),
+        },
+    )?;
+    let project = load_native_project(root)?;
     Ok(native_project_board_net_report(
         "edit_board_net",
         &project,
@@ -239,23 +718,98 @@ pub(crate) fn edit_native_project_board_net(
     ))
 }
 
+fn parse_controlled_impedance(
+    target_ohms: Option<String>,
+    tolerance_pct: Option<String>,
+    controlled_dielectric: Option<i32>,
+) -> Result<Option<ImpedanceSpec>> {
+    if target_ohms.is_none() && tolerance_pct.is_none() && controlled_dielectric.is_none() {
+        return Ok(None);
+    }
+    let target_ohms = target_ohms.ok_or_else(|| {
+        anyhow::anyhow!("--impedance-target-ohms is required when authoring controlled impedance")
+    })?;
+    let tolerance_pct = tolerance_pct.ok_or_else(|| {
+        anyhow::anyhow!("--impedance-tolerance-pct is required when authoring controlled impedance")
+    })?;
+    Ok(Some(ImpedanceSpec {
+        target_ohms: parse_positive_json_number(&target_ohms, "impedance target ohms")?,
+        tolerance_pct: parse_non_negative_json_number(&tolerance_pct, "impedance tolerance pct")?,
+        controlled_dielectric,
+    }))
+}
+
+fn update_controlled_impedance(
+    existing: Option<ImpedanceSpec>,
+    target_ohms: Option<String>,
+    tolerance_pct: Option<String>,
+    controlled_dielectric: Option<i32>,
+) -> Result<ImpedanceSpec> {
+    let Some(mut spec) = existing else {
+        return parse_controlled_impedance(target_ohms, tolerance_pct, controlled_dielectric)?
+            .ok_or_else(|| anyhow::anyhow!("controlled impedance replacement is empty"));
+    };
+    if let Some(target_ohms) = target_ohms {
+        spec.target_ohms = parse_positive_json_number(&target_ohms, "impedance target ohms")?;
+    }
+    if let Some(tolerance_pct) = tolerance_pct {
+        spec.tolerance_pct =
+            parse_non_negative_json_number(&tolerance_pct, "impedance tolerance pct")?;
+    }
+    if let Some(controlled_dielectric) = controlled_dielectric {
+        spec.controlled_dielectric = Some(controlled_dielectric);
+    }
+    Ok(spec)
+}
+
+fn parse_positive_json_number(value: &str, field: &str) -> Result<serde_json::Number> {
+    let number = parse_non_negative_json_number(value, field)?;
+    if number.as_f64().is_some_and(|value| value > 0.0) {
+        Ok(number)
+    } else {
+        bail!("{field} must be a positive JSON number");
+    }
+}
+
+fn parse_non_negative_json_number(value: &str, field: &str) -> Result<serde_json::Number> {
+    let trimmed = value.trim();
+    if trimmed.is_empty() {
+        bail!("{field} must be a non-negative JSON number");
+    }
+    let number: serde_json::Number = serde_json::from_str(trimmed)
+        .with_context(|| format!("{field} must be a non-negative JSON number"))?;
+    if number.as_f64().is_some_and(|value| value >= 0.0) {
+        Ok(number)
+    } else {
+        bail!("{field} must be a non-negative JSON number");
+    }
+}
+
 pub(crate) fn delete_native_project_board_track(
     root: &Path,
     track_uuid: Uuid,
 ) -> Result<NativeProjectBoardTrackMutationReportView> {
-    let mut project = load_native_project(root)?;
+    let project = load_native_project(root)?;
     let value = project
         .board
         .tracks
-        .remove(&track_uuid.to_string())
+        .get(&track_uuid.to_string())
+        .cloned()
         .ok_or_else(|| anyhow::anyhow!("board track not found in native project: {track_uuid}"))?;
-    let track: Track = serde_json::from_value(value).with_context(|| {
+    let track: Track = serde_json::from_value(value.clone()).with_context(|| {
         format!(
             "failed to parse board track in {}",
             project.board_path.display()
         )
     })?;
-    write_canonical_json(&project.board_path, &project.board)?;
+    commit_board_routing_operation(
+        root,
+        "delete board track",
+        Operation::DeleteBoardTrack {
+            track_id: track_uuid,
+            track: value,
+        },
+    )?;
     Ok(native_project_board_track_report(
         "delete_board_track",
         &project,
@@ -263,23 +817,50 @@ pub(crate) fn delete_native_project_board_track(
     ))
 }
 
+fn commit_board_routing_operation(root: &Path, reason: &str, operation: Operation) -> Result<()> {
+    let mut model = ProjectResolver::new(root).resolve()?;
+    let expected_model_revision = model.model_revision.clone();
+    model.commit_journaled(
+        root,
+        OperationBatch {
+            batch_id: Uuid::new_v4(),
+            expected_model_revision: Some(expected_model_revision),
+            provenance: CommitProvenance {
+                actor: "datum-eda-cli".to_string(),
+                source: CommitSource::Cli,
+                reason: reason.to_string(),
+            },
+            operations: vec![operation],
+        },
+    )?;
+    Ok(())
+}
+
 pub(crate) fn delete_native_project_board_via(
     root: &Path,
     via_uuid: Uuid,
 ) -> Result<NativeProjectBoardViaMutationReportView> {
-    let mut project = load_native_project(root)?;
+    let project = load_native_project(root)?;
     let value = project
         .board
         .vias
-        .remove(&via_uuid.to_string())
+        .get(&via_uuid.to_string())
+        .cloned()
         .ok_or_else(|| anyhow::anyhow!("board via not found in native project: {via_uuid}"))?;
-    let via: Via = serde_json::from_value(value).with_context(|| {
+    let via: Via = serde_json::from_value(value.clone()).with_context(|| {
         format!(
             "failed to parse board via in {}",
             project.board_path.display()
         )
     })?;
-    write_canonical_json(&project.board_path, &project.board)?;
+    commit_board_routing_operation(
+        root,
+        "delete board via",
+        Operation::DeleteBoardVia {
+            via_id: via_uuid,
+            via: value,
+        },
+    )?;
     Ok(native_project_board_via_report(
         "delete_board_via",
         &project,
@@ -291,19 +872,27 @@ pub(crate) fn delete_native_project_board_zone(
     root: &Path,
     zone_uuid: Uuid,
 ) -> Result<NativeProjectBoardZoneMutationReportView> {
-    let mut project = load_native_project(root)?;
+    let project = load_native_project(root)?;
     let value = project
         .board
         .zones
-        .remove(&zone_uuid.to_string())
+        .get(&zone_uuid.to_string())
+        .cloned()
         .ok_or_else(|| anyhow::anyhow!("board zone not found in native project: {zone_uuid}"))?;
-    let zone: Zone = serde_json::from_value(value).with_context(|| {
+    let zone: Zone = serde_json::from_value(value.clone()).with_context(|| {
         format!(
             "failed to parse board zone in {}",
             project.board_path.display()
         )
     })?;
-    write_canonical_json(&project.board_path, &project.board)?;
+    commit_board_routing_operation(
+        root,
+        "delete board zone",
+        Operation::DeleteBoardZone {
+            zone_id: zone_uuid,
+            zone: value,
+        },
+    )?;
     Ok(native_project_board_zone_report(
         "delete_board_zone",
         &project,
@@ -315,19 +904,27 @@ pub(crate) fn delete_native_project_board_net(
     root: &Path,
     net_uuid: Uuid,
 ) -> Result<NativeProjectBoardNetMutationReportView> {
-    let mut project = load_native_project(root)?;
+    let project = load_native_project(root)?;
     let value = project
         .board
         .nets
-        .remove(&net_uuid.to_string())
+        .get(&net_uuid.to_string())
+        .cloned()
         .ok_or_else(|| anyhow::anyhow!("board net not found in native project: {net_uuid}"))?;
-    let net: Net = serde_json::from_value(value).with_context(|| {
+    let net: Net = serde_json::from_value(value.clone()).with_context(|| {
         format!(
             "failed to parse board net in {}",
             project.board_path.display()
         )
     })?;
-    write_canonical_json(&project.board_path, &project.board)?;
+    commit_board_routing_operation(
+        root,
+        "delete board net",
+        Operation::DeleteBoardNet {
+            net_id: net_uuid,
+            net: value,
+        },
+    )?;
     Ok(native_project_board_net_report(
         "delete_board_net",
         &project,

@@ -1,0 +1,149 @@
+use std::path::Path;
+
+use super::{
+    DesignModel, EngineError, Operation, OperationBatch, Proposal, SourceShardKind,
+    journal::{StagedShardWrite, stage_new_shard_write},
+};
+
+pub(super) fn maybe_stage_proposal_operation(
+    project_root: &Path,
+    batch: &OperationBatch,
+    operation: &Operation,
+    staged: &mut Vec<StagedShardWrite>,
+) -> Result<(), EngineError> {
+    match operation {
+        Operation::CreateProposalMetadata {
+            relative_path,
+            proposal,
+            ..
+        }
+        | Operation::SetProposalMetadata {
+            relative_path,
+            proposal,
+            ..
+        } => staged.push(stage_new_shard_write(
+            project_root,
+            batch,
+            SourceShardKind::ProposalMetadata,
+            relative_path,
+            proposal,
+        )?),
+        Operation::DeleteProposalMetadata { relative_path, .. } => {
+            staged.push(delete_proposal_shard(project_root, relative_path));
+        }
+        _ => {}
+    }
+    Ok(())
+}
+
+pub(super) fn apply_proposal_shard_operation(
+    shard_kind: &SourceShardKind,
+    value: &mut serde_json::Value,
+    operation: &Operation,
+) -> Result<bool, EngineError> {
+    if shard_kind != &SourceShardKind::ProposalMetadata {
+        return Ok(false);
+    }
+    match operation {
+        Operation::CreateProposalMetadata { proposal, .. }
+        | Operation::SetProposalMetadata { proposal, .. } => {
+            *value = proposal.clone();
+            Ok(true)
+        }
+        _ => Ok(false),
+    }
+}
+
+pub(super) fn inverse_proposal_operation(
+    operation: &Operation,
+    inverse_operations: &mut Vec<Operation>,
+) {
+    match operation {
+        Operation::CreateProposalMetadata {
+            proposal_id,
+            relative_path,
+            proposal,
+        } => inverse_operations.push(Operation::DeleteProposalMetadata {
+            proposal_id: *proposal_id,
+            relative_path: relative_path.clone(),
+            proposal: proposal.clone(),
+        }),
+        Operation::SetProposalMetadata {
+            proposal_id,
+            relative_path,
+            previous_proposal,
+            proposal,
+        } => inverse_operations.push(Operation::SetProposalMetadata {
+            proposal_id: *proposal_id,
+            relative_path: relative_path.clone(),
+            previous_proposal: proposal.clone(),
+            proposal: previous_proposal.clone(),
+        }),
+        Operation::DeleteProposalMetadata {
+            proposal_id,
+            relative_path,
+            proposal,
+        } => inverse_operations.push(Operation::CreateProposalMetadata {
+            proposal_id: *proposal_id,
+            relative_path: relative_path.clone(),
+            proposal: proposal.clone(),
+        }),
+        _ => {}
+    }
+}
+
+pub(super) fn proposal_from_value(value: &serde_json::Value) -> Result<Proposal, EngineError> {
+    serde_json::from_value(value.clone())
+        .map_err(|error| EngineError::Validation(format!("invalid proposal metadata: {error}")))
+}
+
+pub(super) fn apply_proposal_model_operation(
+    model: &mut DesignModel,
+    operation: &Operation,
+) -> Result<bool, EngineError> {
+    match operation {
+        Operation::CreateProposalMetadata {
+            proposal_id,
+            proposal,
+            ..
+        } => {
+            let proposal = proposal_from_value(proposal)?;
+            if model.proposals.get(proposal_id) == Some(&proposal) {
+                return Ok(true);
+            }
+            if model.proposals.contains_key(proposal_id) {
+                return Err(EngineError::Validation(format!(
+                    "proposal {proposal_id} already exists"
+                )));
+            }
+            model.proposals.insert(*proposal_id, proposal);
+            Ok(true)
+        }
+        Operation::SetProposalMetadata {
+            proposal_id,
+            proposal,
+            ..
+        } => {
+            model
+                .proposals
+                .insert(*proposal_id, proposal_from_value(proposal)?);
+            Ok(true)
+        }
+        Operation::DeleteProposalMetadata { proposal_id, .. } => {
+            model.proposals.remove(proposal_id);
+            Ok(true)
+        }
+        _ => Ok(false),
+    }
+}
+
+fn delete_proposal_shard(project_root: &Path, relative_path: &str) -> StagedShardWrite {
+    StagedShardWrite {
+        destination: project_root.join(relative_path),
+        staged: None,
+        kind: SourceShardKind::ProposalMetadata,
+        relative_path: relative_path.to_string(),
+        content_hash: String::new(),
+        delete: true,
+    }
+}

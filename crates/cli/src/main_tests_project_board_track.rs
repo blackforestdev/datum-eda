@@ -108,6 +108,74 @@ fn project_board_track_mutations_round_trip_through_native_query() {
     assert_eq!(tracks[0].width, 250000);
     assert_eq!(tracks[0].layer, 1);
 
+    let edit_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "edit-board-track",
+        root.to_str().unwrap(),
+        "--track",
+        &track_uuid,
+        "--from-x-nm",
+        "1100",
+        "--from-y-nm",
+        "2200",
+        "--to-x-nm",
+        "3300",
+        "--to-y-nm",
+        "4400",
+        "--width-nm",
+        "275000",
+        "--layer",
+        "2",
+    ])
+    .expect("CLI should parse");
+    let edit_output = execute(edit_cli).expect("edit board track should succeed");
+    let edited: serde_json::Value =
+        serde_json::from_str(&edit_output).expect("edit output should parse");
+    assert_eq!(edited["action"], "edit_board_track");
+    assert_eq!(edited["track_uuid"], track_uuid);
+    assert_eq!(edited["from_x_nm"], 1100);
+    assert_eq!(edited["width_nm"], 275000);
+
+    let tracks_output =
+        execute(board_tracks_query_cli(&root)).expect("board tracks query should succeed");
+    let tracks: Vec<Track> =
+        serde_json::from_str(&tracks_output).expect("query output should parse");
+    assert_eq!(tracks[0].from.x, 1100);
+    assert_eq!(tracks[0].from.y, 2200);
+    assert_eq!(tracks[0].to.x, 3300);
+    assert_eq!(tracks[0].to.y, 4400);
+    assert_eq!(tracks[0].width, 275000);
+    assert_eq!(tracks[0].layer, 2);
+
+    execute(
+        Cli::try_parse_from(["eda", "project", "undo", root.to_str().unwrap()])
+            .expect("CLI should parse"),
+    )
+    .expect("undo edit board track should succeed");
+    let tracks_output =
+        execute(board_tracks_query_cli(&root)).expect("board tracks query should succeed");
+    let tracks: Vec<Track> =
+        serde_json::from_str(&tracks_output).expect("query output should parse");
+    assert_eq!(tracks[0].from.x, 1000);
+    assert_eq!(tracks[0].width, 250000);
+    assert_eq!(tracks[0].layer, 1);
+
+    execute(
+        Cli::try_parse_from(["eda", "project", "redo", root.to_str().unwrap()])
+            .expect("CLI should parse"),
+    )
+    .expect("redo edit board track should succeed");
+    let tracks_output =
+        execute(board_tracks_query_cli(&root)).expect("board tracks query should succeed");
+    let tracks: Vec<Track> =
+        serde_json::from_str(&tracks_output).expect("query output should parse");
+    assert_eq!(tracks[0].from.x, 1100);
+    assert_eq!(tracks[0].width, 275000);
+    assert_eq!(tracks[0].layer, 2);
+
     let delete_cli = Cli::try_parse_from([
         "eda",
         "project",

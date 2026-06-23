@@ -3,15 +3,18 @@ use std::path::Path;
 use anyhow::{Context, Result, bail};
 use eda_engine::board::{PadAperture, PadShape, PlacedPad};
 use eda_engine::ir::geometry::Point;
+use eda_engine::substrate::{
+    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver,
+};
 use uuid::Uuid;
 
 use super::{
-    NativeComponentPad, NativeProjectBoardPadMutationReportView, load_native_project,
-    native_project_board_pad_report, write_canonical_json,
+    NativeProjectBoardPadMutationReportView, load_native_project,
+    load_native_project_with_resolved_board, native_project_board_pad_report,
 };
 
 pub(crate) fn query_native_project_board_pads(root: &Path) -> Result<Vec<PlacedPad>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let mut pads = project
         .board
         .pads
@@ -27,81 +30,12 @@ pub(crate) fn query_native_project_board_pads(root: &Path) -> Result<Vec<PlacedP
     Ok(pads)
 }
 
-fn query_native_project_component_pads(root: &Path) -> Result<Vec<PlacedPad>> {
-    let project = load_native_project(root)?;
-    let mut pads = Vec::new();
-    for (component_key, component_pads) in &project.board.component_pads {
-        let component_uuid = Uuid::parse_str(component_key).with_context(|| {
-            format!(
-                "failed to parse component UUID in {}",
-                project.board_path.display()
-            )
-        })?;
-        for pad in component_pads {
-            if let Some(resolved) = native_component_pad_to_placed_pad(component_uuid, pad) {
-                pads.push(resolved);
-            }
-        }
-    }
-    pads.sort_by(|a, b| {
-        a.package
-            .cmp(&b.package)
-            .then_with(|| a.name.cmp(&b.name))
-            .then_with(|| a.uuid.cmp(&b.uuid))
-    });
-    Ok(pads)
-}
-
-pub(crate) fn query_native_project_emitted_copper_pads(root: &Path) -> Result<Vec<PlacedPad>> {
-    let mut pads = query_native_project_board_pads(root)?;
-    pads.extend(query_native_project_component_pads(root)?);
-    pads.sort_by(|a, b| {
-        a.layer
-            .cmp(&b.layer)
-            .then_with(|| a.package.cmp(&b.package))
-            .then_with(|| a.name.cmp(&b.name))
-            .then_with(|| a.uuid.cmp(&b.uuid))
-    });
-    Ok(pads)
-}
-
-fn native_component_pad_to_placed_pad(
-    component_uuid: Uuid,
-    pad: &NativeComponentPad,
-) -> Option<PlacedPad> {
-    let shape = pad.shape?;
-    Some(PlacedPad {
-        uuid: pad.uuid,
-        package: component_uuid,
-        name: pad.name.clone(),
-        net: None,
-        position: Point {
-            x: pad.position.x,
-            y: pad.position.y,
-        },
-        layer: pad.layer,
-        copper_layers: vec![pad.layer],
-        shape,
-        diameter: pad.diameter_nm,
-        width: pad.width_nm,
-        height: pad.height_nm,
-        drill: pad.drill_nm.unwrap_or(0),
-        rotation: 0,
-        mask_layers: Vec::new(),
-        paste_layers: Vec::new(),
-        solder_mask_margin_nm: 0,
-        solder_paste_margin_nm: 0,
-        solder_paste_margin_ratio_ppm: 0,
-        roundrect_rratio_ppm: 250_000,
-    })
-}
-
 pub(crate) fn set_native_project_board_pad_net(
     root: &Path,
     pad_uuid: Uuid,
     net_uuid: Option<Uuid>,
 ) -> Result<NativeProjectBoardPadMutationReportView> {
-    let mut project = load_native_project(root)?;
+    let project = load_native_project(root)?;
     if let Some(net_uuid) = net_uuid
         && !project.board.nets.contains_key(&net_uuid.to_string())
     {
@@ -121,11 +55,19 @@ pub(crate) fn set_native_project_board_pad_net(
         )
     })?;
     pad.net = net_uuid;
-    project.board.pads.insert(
-        key,
-        serde_json::to_value(&pad).expect("native board pad serialization must succeed"),
-    );
-    write_canonical_json(&project.board_path, &project.board)?;
+    commit_board_pad_operation(
+        root,
+        if net_uuid.is_some() {
+            "set board pad net"
+        } else {
+            "clear board pad net"
+        },
+        Operation::SetBoardPad {
+            pad_id: pad_uuid,
+            pad: serde_json::to_value(&pad).expect("native board pad serialization must succeed"),
+        },
+    )?;
+    let project = load_native_project(root)?;
     Ok(native_project_board_pad_report(
         if net_uuid.is_some() {
             "set_board_pad_net"
@@ -174,7 +116,7 @@ pub(crate) fn place_native_project_board_pad(
     height_nm: Option<i64>,
     net_uuid: Option<Uuid>,
 ) -> Result<NativeProjectBoardPadMutationReportView> {
-    let mut project = load_native_project(root)?;
+    let project = load_native_project(root)?;
     if let Some(net_uuid) = net_uuid
         && !project.board.nets.contains_key(&net_uuid.to_string())
     {
@@ -208,11 +150,15 @@ pub(crate) fn place_native_project_board_pad(
         roundrect_rratio_ppm: 250_000,
     };
     validate_native_board_pad_geometry(&pad)?;
-    project.board.pads.insert(
-        pad_uuid.to_string(),
-        serde_json::to_value(&pad).expect("native board pad serialization must succeed"),
-    );
-    write_canonical_json(&project.board_path, &project.board)?;
+    commit_board_pad_operation(
+        root,
+        "place board pad",
+        Operation::CreateBoardPad {
+            pad_id: pad_uuid,
+            pad: serde_json::to_value(&pad).expect("native board pad serialization must succeed"),
+        },
+    )?;
+    let project = load_native_project(root)?;
     Ok(native_project_board_pad_report(
         "place_board_pad",
         &project,
@@ -230,7 +176,7 @@ pub(crate) fn edit_native_project_board_pad(
     width_nm: Option<i64>,
     height_nm: Option<i64>,
 ) -> Result<NativeProjectBoardPadMutationReportView> {
-    let mut project = load_native_project(root)?;
+    let project = load_native_project(root)?;
     let key = pad_uuid.to_string();
     let entry = project
         .board
@@ -263,11 +209,15 @@ pub(crate) fn edit_native_project_board_pad(
         pad.height = height_nm;
     }
     validate_native_board_pad_geometry(&pad)?;
-    project.board.pads.insert(
-        key,
-        serde_json::to_value(&pad).expect("native board pad serialization must succeed"),
-    );
-    write_canonical_json(&project.board_path, &project.board)?;
+    commit_board_pad_operation(
+        root,
+        "edit board pad",
+        Operation::SetBoardPad {
+            pad_id: pad_uuid,
+            pad: serde_json::to_value(&pad).expect("native board pad serialization must succeed"),
+        },
+    )?;
+    let project = load_native_project(root)?;
     Ok(native_project_board_pad_report(
         "edit_board_pad",
         &project,
@@ -279,22 +229,49 @@ pub(crate) fn delete_native_project_board_pad(
     root: &Path,
     pad_uuid: Uuid,
 ) -> Result<NativeProjectBoardPadMutationReportView> {
-    let mut project = load_native_project(root)?;
+    let project = load_native_project(root)?;
     let value = project
         .board
         .pads
-        .remove(&pad_uuid.to_string())
+        .get(&pad_uuid.to_string())
+        .cloned()
         .ok_or_else(|| anyhow::anyhow!("board pad not found in native project: {pad_uuid}"))?;
-    let pad: PlacedPad = serde_json::from_value(value).with_context(|| {
+    let pad: PlacedPad = serde_json::from_value(value.clone()).with_context(|| {
         format!(
             "failed to parse board pad in {}",
             project.board_path.display()
         )
     })?;
-    write_canonical_json(&project.board_path, &project.board)?;
+    commit_board_pad_operation(
+        root,
+        "delete board pad",
+        Operation::DeleteBoardPad {
+            pad_id: pad_uuid,
+            pad: value,
+        },
+    )?;
     Ok(native_project_board_pad_report(
         "delete_board_pad",
         &project,
         pad,
     ))
+}
+
+fn commit_board_pad_operation(root: &Path, reason: &str, operation: Operation) -> Result<()> {
+    let mut model = ProjectResolver::new(root).resolve()?;
+    let expected_model_revision = model.model_revision.clone();
+    model.commit_journaled(
+        root,
+        OperationBatch {
+            batch_id: Uuid::new_v4(),
+            expected_model_revision: Some(expected_model_revision),
+            provenance: CommitProvenance {
+                actor: "datum-eda-cli".to_string(),
+                source: CommitSource::Cli,
+                reason: reason.to_string(),
+            },
+            operations: vec![operation],
+        },
+    )?;
+    Ok(())
 }

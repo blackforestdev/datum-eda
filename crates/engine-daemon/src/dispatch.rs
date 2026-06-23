@@ -86,6 +86,16 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
             }
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
+        "flip_component" => match serde_json::from_value::<FlipComponentParams>(request.params) {
+            Ok(params) => match engine.flip_component(FlipComponentInput {
+                uuid: params.uuid,
+                layer: params.layer,
+            }) {
+                Ok(result) => serialized_success_response(request.id, result),
+                Err(err) => error_response(request.id, -32041, &err.to_string()),
+            },
+            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+        },
         "set_value" => match serde_json::from_value::<SetValueParams>(request.params) {
             Ok(params) => match engine.set_value(SetValueInput {
                 uuid: params.uuid,
@@ -452,17 +462,14 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
             Ok(findings) => serialized_success_response(request.id, findings),
             Err(err) => error_response(request.id, -32002, &err.to_string()),
         },
-        "run_drc" => match engine.run_drc(&[
-            RuleType::Connectivity,
-            RuleType::ClearanceCopper,
-            RuleType::TrackWidth,
-            RuleType::ViaHole,
-            RuleType::ViaAnnularRing,
-            RuleType::SilkClearance,
-            RuleType::ProcessAperture,
-        ]) {
-            Ok(report) => serialized_success_response(request.id, report),
-            Err(err) => error_response(request.id, -32017, &err.to_string()),
+        "run_drc" => match serde_json::from_value::<RunDrcParams>(request.params) {
+            Ok(params) => {
+                match engine.run_drc(params.rules.as_deref().unwrap_or(default_drc_rules())) {
+                    Ok(report) => serialized_success_response(request.id, report),
+                    Err(err) => error_response(request.id, -32017, &err.to_string()),
+                }
+            }
+            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
         "explain_violation" => {
             match serde_json::from_value::<ExplainViolationParams>(request.params) {
@@ -475,4 +482,16 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
         }
         _ => error_response(request.id, -32601, "method not found"),
     }
+}
+
+fn default_drc_rules() -> &'static [RuleType] {
+    &[
+        RuleType::Connectivity,
+        RuleType::ClearanceCopper,
+        RuleType::TrackWidth,
+        RuleType::ViaHole,
+        RuleType::ViaAnnularRing,
+        RuleType::SilkClearance,
+        RuleType::ProcessAperture,
+    ]
 }

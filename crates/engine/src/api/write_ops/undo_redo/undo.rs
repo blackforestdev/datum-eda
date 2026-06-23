@@ -119,6 +119,39 @@ impl Engine {
                     description: format!("undo rotate_component {}", after.uuid),
                 }
             }
+            TransactionRecord::FlipComponent {
+                before,
+                after,
+                before_pads,
+                after_pads: _,
+            } => {
+                let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
+                let board = design.board.as_mut().ok_or_else(|| {
+                    EngineError::Operation(
+                        "undo is currently implemented only for board transactions".to_string(),
+                    )
+                })?;
+                let package = board
+                    .packages
+                    .get_mut(&after.uuid)
+                    .ok_or(EngineError::NotFound {
+                        object_type: "component",
+                        uuid: after.uuid,
+                    })?;
+                *package = before.clone();
+                restore_component_pads(board, after.uuid, before_pads);
+                OperationResult {
+                    diff: OperationDiff {
+                        created: Vec::new(),
+                        modified: vec![OperationRef {
+                            object_type: "component".to_string(),
+                            uuid: after.uuid,
+                        }],
+                        deleted: Vec::new(),
+                    },
+                    description: format!("undo flip_component {}", after.uuid),
+                }
+            }
             TransactionRecord::SetDesignRule { previous, current } => {
                 let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
                 let board = design.board.as_mut().ok_or_else(|| {

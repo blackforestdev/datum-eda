@@ -19,24 +19,24 @@ pub(super) fn execute_inventory_command(
     command: ProjectCommands,
 ) -> Result<(String, i32)> {
     match command {
-        ProjectCommands::ExportBom(ExportBomArgs { path, out }) => {
-            let report = export_native_project_bom(&path, &out)?;
+        ProjectCommands::ExportBom(ExportBomArgs { path, out, variant }) => {
+            let report = export_native_project_bom(&path, &out, variant)?;
             let output = match format {
                 OutputFormat::Text => render_native_project_bom_export_text(&report),
                 OutputFormat::Json => render_output(format, &report),
             };
             Ok((output, 0))
         }
-        ProjectCommands::CompareBom(CompareBomArgs { path, bom }) => {
-            let report = compare_native_project_bom(&path, &bom)?;
+        ProjectCommands::CompareBom(CompareBomArgs { path, bom, variant }) => {
+            let report = compare_native_project_bom(&path, &bom, variant)?;
             let output = match format {
                 OutputFormat::Text => render_native_project_bom_comparison_text(&report),
                 OutputFormat::Json => render_output(format, &report),
             };
             Ok((output, 0))
         }
-        ProjectCommands::ValidateBom(ValidateBomArgs { path, bom }) => {
-            let report = validate_native_project_bom(&path, &bom)?;
+        ProjectCommands::ValidateBom(ValidateBomArgs { path, bom, variant }) => {
+            let report = validate_native_project_bom(&path, &bom, variant)?;
             let output = match format {
                 OutputFormat::Text => render_native_project_bom_validation_text(&report),
                 OutputFormat::Json => render_output(format, &report),
@@ -52,24 +52,24 @@ pub(super) fn execute_inventory_command(
             };
             Ok((output, 0))
         }
-        ProjectCommands::ExportPnp(ExportPnpArgs { path, out }) => {
-            let report = export_native_project_pnp(&path, &out)?;
+        ProjectCommands::ExportPnp(ExportPnpArgs { path, out, variant }) => {
+            let report = export_native_project_pnp(&path, &out, variant)?;
             let output = match format {
                 OutputFormat::Text => render_native_project_pnp_export_text(&report),
                 OutputFormat::Json => render_output(format, &report),
             };
             Ok((output, 0))
         }
-        ProjectCommands::ComparePnp(ComparePnpArgs { path, pnp }) => {
-            let report = compare_native_project_pnp(&path, &pnp)?;
+        ProjectCommands::ComparePnp(ComparePnpArgs { path, pnp, variant }) => {
+            let report = compare_native_project_pnp(&path, &pnp, variant)?;
             let output = match format {
                 OutputFormat::Text => render_native_project_pnp_comparison_text(&report),
                 OutputFormat::Json => render_output(format, &report),
             };
             Ok((output, 0))
         }
-        ProjectCommands::ValidatePnp(ValidatePnpArgs { path, pnp }) => {
-            let report = validate_native_project_pnp(&path, &pnp)?;
+        ProjectCommands::ValidatePnp(ValidatePnpArgs { path, pnp, variant }) => {
+            let report = validate_native_project_pnp(&path, &pnp, variant)?;
             let output = match format {
                 OutputFormat::Text => render_native_project_pnp_validation_text(&report),
                 OutputFormat::Json => render_output(format, &report),

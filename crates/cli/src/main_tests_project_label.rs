@@ -1,4 +1,6 @@
+use super::main_tests_project_journal_support::assert_journal_transaction;
 use super::*;
+use eda_engine::ir::serialization::to_json_deterministic;
 
 fn unique_project_root(label: &str) -> PathBuf {
     std::env::temp_dir().join(format!("{}-{}", label, Uuid::new_v4()))
@@ -55,7 +57,25 @@ fn seed_native_sheet(root: &Path) -> Uuid {
     sheet_uuid
 }
 
-use eda_engine::ir::serialization::to_json_deterministic;
+fn assert_label_journal_transaction(root: &Path, index: usize, reason: &str, operations: u64) {
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "journal-list",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("journal-list should succeed");
+    let journal: serde_json::Value =
+        serde_json::from_str(&output).expect("journal-list JSON should parse");
+    assert_eq!(journal["transactions"][index]["reason"], reason);
+    assert_eq!(journal["transactions"][index]["operations"], operations);
+}
 
 #[test]
 fn project_place_label_writes_native_sheet_and_query_labels_reports_it() {
@@ -104,6 +124,7 @@ fn project_place_label_writes_native_sheet_and_query_labels_reports_it() {
     assert_eq!(labels[0]["kind"], "Global");
     assert_eq!(labels[0]["position"]["x"], 123);
     assert_eq!(labels[0]["position"]["y"], 456);
+    assert_journal_transaction(&root, "place schematic label", 1);
 
     let summary_cli =
         Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
@@ -175,6 +196,38 @@ fn project_rename_and_delete_label_update_native_query_surface() {
     assert_eq!(renamed_labels.as_array().unwrap().len(), 1);
     assert_eq!(renamed_labels[0]["uuid"], label_uuid);
     assert_eq!(renamed_labels[0]["name"], "NEW_NAME");
+    assert_label_journal_transaction(&root, 0, "place schematic label", 1);
+    assert_label_journal_transaction(&root, 1, "rename schematic label", 1);
+    let sheet_path = PathBuf::from(placed["sheet_path"].as_str().unwrap());
+    let mut stale_sheet: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&sheet_path).expect("sheet should read"))
+            .expect("sheet should parse");
+    stale_sheet["labels"] = serde_json::json!({});
+    std::fs::write(
+        &sheet_path,
+        format!(
+            "{}\n",
+            to_json_deterministic(&stale_sheet).expect("sheet should serialize")
+        ),
+    )
+    .expect("stale sheet should write");
+
+    let labels_query_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "labels",
+    ])
+    .expect("CLI should parse");
+    let replayed_labels_output =
+        execute(labels_query_cli).expect("project query labels should succeed");
+    let replayed_labels: serde_json::Value =
+        serde_json::from_str(&replayed_labels_output).expect("labels JSON should parse");
+    assert_eq!(replayed_labels.as_array().unwrap().len(), 1);
+    assert_eq!(replayed_labels[0]["name"], "NEW_NAME");
 
     let delete_cli = Cli::try_parse_from([
         "eda",
@@ -188,6 +241,7 @@ fn project_rename_and_delete_label_update_native_query_surface() {
     let delete_output = execute(delete_cli).expect("project delete-label should succeed");
     assert!(delete_output.contains("action: delete_label"));
     assert!(delete_output.contains("name: NEW_NAME"));
+    assert_label_journal_transaction(&root, 2, "delete schematic label", 1);
 
     let labels_query_cli = Cli::try_parse_from([
         "eda",

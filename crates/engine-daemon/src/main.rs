@@ -16,12 +16,13 @@ use std::path::{Path, PathBuf};
 use anyhow::Result;
 use eda_engine::api::{
     AssignPartInput, ComponentReplacementPolicy, ComponentReplacementScope, Engine,
-    MoveComponentInput, PlannedComponentReplacementInput, PolicyDrivenComponentReplacementInput,
-    ReplaceComponentInput, RotateComponentInput, ScopedComponentReplacementOverride,
-    ScopedComponentReplacementPlanEdit, ScopedComponentReplacementPolicyInput, SetDesignRuleInput,
-    SetNetClassInput, SetPackageInput, SetPackageWithPartInput, SetReferenceInput, SetValueInput,
-    ViolationDomain,
+    FlipComponentInput, MoveComponentInput, PlannedComponentReplacementInput,
+    PolicyDrivenComponentReplacementInput, ReplaceComponentInput, RotateComponentInput,
+    ScopedComponentReplacementOverride, ScopedComponentReplacementPlanEdit,
+    ScopedComponentReplacementPolicyInput, SetDesignRuleInput, SetNetClassInput, SetPackageInput,
+    SetPackageWithPartInput, SetReferenceInput, SetValueInput, ViolationDomain,
 };
+use eda_engine::ir::geometry::LayerId;
 use eda_engine::ir::geometry::Point;
 use eda_engine::ir::units::mm_to_nm;
 use eda_engine::rules::ast::{RuleParams, RuleScope, RuleType};
@@ -92,6 +93,11 @@ struct ExplainViolationParams {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct RunDrcParams {
+    rules: Option<Vec<RuleType>>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 struct SaveParams {
     path: Option<PathBuf>,
 }
@@ -111,6 +117,12 @@ struct MoveComponentParams {
     x_mm: f64,
     y_mm: f64,
     rotation_deg: Option<f64>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct FlipComponentParams {
+    uuid: uuid::Uuid,
+    layer: LayerId,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

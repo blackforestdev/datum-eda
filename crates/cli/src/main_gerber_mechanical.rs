@@ -5,6 +5,7 @@ use super::{NativeProjectGerberGeometryEntryView, append_gerber_geometry_entries
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectGerberMechanicalExportView {
     pub(crate) action: String,
+    pub(crate) production_classification: String,
     pub(crate) project_root: String,
     pub(crate) board_path: String,
     pub(crate) gerber_path: String,

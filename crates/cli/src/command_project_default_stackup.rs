@@ -3,44 +3,21 @@ use std::path::Path;
 
 use anyhow::{Result, bail};
 use eda_engine::board::{StackupLayer, StackupLayerType};
+use eda_engine::substrate::Operation;
 
 use super::{
-    LoadedNativeProject, NativeProjectBoardStackupMutationReportView, NativeStackup,
-    load_native_project, query_native_project_board_stackup, write_canonical_json,
+    LoadedNativeProject, NativeProjectBoardStackupMutationReportView,
+    command_project_board_layout::commit_board_layout_operation, load_native_project,
+    query_native_project_board_stackup,
 };
 
 pub(crate) fn default_native_project_stackup() -> Vec<StackupLayer> {
     vec![
-        StackupLayer {
-            id: 1,
-            name: "Top Copper".to_string(),
-            layer_type: StackupLayerType::Copper,
-            thickness_nm: 35_000,
-        },
-        StackupLayer {
-            id: 2,
-            name: "Top Mask".to_string(),
-            layer_type: StackupLayerType::SolderMask,
-            thickness_nm: 10_000,
-        },
-        StackupLayer {
-            id: 3,
-            name: "Top Silk".to_string(),
-            layer_type: StackupLayerType::Silkscreen,
-            thickness_nm: 10_000,
-        },
-        StackupLayer {
-            id: 4,
-            name: "Top Paste".to_string(),
-            layer_type: StackupLayerType::Paste,
-            thickness_nm: 10_000,
-        },
-        StackupLayer {
-            id: 41,
-            name: "Mechanical 41".to_string(),
-            layer_type: StackupLayerType::Mechanical,
-            thickness_nm: 0,
-        },
+        StackupLayer::new(1, "Top Copper", StackupLayerType::Copper, 35_000),
+        StackupLayer::new(2, "Top Mask", StackupLayerType::SolderMask, 10_000),
+        StackupLayer::new(3, "Top Silk", StackupLayerType::Silkscreen, 10_000),
+        StackupLayer::new(4, "Top Paste", StackupLayerType::Paste, 10_000),
+        StackupLayer::new(41, "Mechanical 41", StackupLayerType::Mechanical, 0),
     ]
 }
 
@@ -56,19 +33,27 @@ pub(crate) fn default_native_project_stackup_layers() -> Vec<serde_json::Value> 
 pub(crate) fn add_native_project_default_top_stackup(
     root: &Path,
 ) -> Result<NativeProjectBoardStackupMutationReportView> {
-    let mut project = load_native_project(root)?;
+    let project = load_native_project(root)?;
     let merged = merge_default_top_stackup(&project)?;
-    project.board.stackup = NativeStackup {
-        layers: merged
+    let stackup = serde_json::json!({
+        "layers": merged
             .into_iter()
             .map(|layer| {
                 serde_json::to_value(layer)
                     .expect("native board stackup serialization must succeed")
             })
-            .collect(),
-    };
-    let layer_count = project.board.stackup.layers.len();
-    write_canonical_json(&project.board_path, &project.board)?;
+            .collect::<Vec<_>>(),
+    });
+    let layer_count = stackup["layers"].as_array().map_or(0, Vec::len);
+    commit_board_layout_operation(
+        root,
+        "add default top stackup",
+        Operation::SetBoardStackup {
+            board_id: project.board.uuid,
+            stackup,
+        },
+    )?;
+    let project = load_native_project(root)?;
     Ok(NativeProjectBoardStackupMutationReportView {
         action: "add_default_top_stackup".to_string(),
         project_root: project.root.display().to_string(),

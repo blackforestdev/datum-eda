@@ -34,10 +34,22 @@ projects, inspect existing work, reverse engineer boards, exchange artifacts,
 and collaborate with manufacturing or adjacent tools. They must not become the
 center of the product model.
 
+Import is frozen. The M7 spike already imports a KiCad PCB with enough fidelity
+to recognize all aspects of a board, which is sufficient for now; no further
+import work happens until native authoring is real. Native author/edit/check/
+output capability is the only authority and the only axis of maturity. Import
+fidelity never gates native readiness. The authoritative statement of this
+boundary is `docs/DATUM_PRODUCT_MECHANICS.md` -> "Interop Boundary And Import
+Posture"; this decision records the converter mechanics that posture implies.
+
 ## Decision
 
-Import shall be treated as interop, migration, audit, and reverse-engineering
-support over Datum's native `DesignModel`.
+Import shall be treated as a one-time converter feeding Datum's native
+`DesignModel`: a KiCad (or other source) file is converted into native data,
+and once converted it is simply a native board. There is no ongoing "imported
+board" state and no second authority; origin is recorded only as provenance.
+Native is the only authority. Export (native -> KiCad and other interchange) is
+a separate, optional, deferred concern.
 
 Imported data must be converted into Datum primitives with explicit source
 provenance, fidelity notes, unknown-basis markers, and relationship states.
@@ -57,8 +69,11 @@ native identity.
 
 ## User-Visible Behavior
 
-Users should understand whether they are working with native Datum-authored
-data, imported data, inferred data, or repaired data.
+Users always work with native Datum data; what may differ is its provenance.
+Users should be able to see whether a given object was authored directly,
+converted from a source by import, inferred, or repaired. These are provenance
+and relationship-state qualities on native data, not a separate "imported board"
+authority state.
 
 Expected behavior:
 - import wizard/review surfaces list source format, source files, parser
@@ -397,6 +412,13 @@ Source-tool architecture must end at step 3. After commit, users edit a native
 Datum project. Source names, paths, and feature encodings remain provenance,
 not a parallel authority.
 
+The current engine, which persists imported boards as KiCad text plus sidecars
+rather than as native shards, is a transitional defect, not a design choice. The
+correct end state is the one above: import writes native shards directly through
+`commit()`. There is no phased authority flip from imported-KiCad to native and
+no dual-write window; the converter produces native data in one step. See
+`docs/DATUM_PRODUCT_MECHANICS.md` -> "Interop Boundary And Import Posture".
+
 Zone fill conversion must be honest. Imported fabricator-accurate fill islands
 may be stored as derived `ZoneFill { state: Filled }` with import provenance
 and source hashes; the authored source zone remains the boundary. Unsupported
@@ -441,9 +463,12 @@ This decision does not:
 - silently rewrite imported data into Datum-preferred style
 - make export artifacts authoritative source files
 
-## First Proof Slice
+## Converter Proof Shape
 
-The first proof slice should demonstrate import as reviewable migration:
+Because import is frozen, this is not a scheduled next slice; it records the
+shape the one-time converter must satisfy whenever it is exercised. The M7
+KiCad-PCB spike already demonstrates this shape at recognition fidelity. A
+converter run demonstrates import as reviewable migration:
 
 1. Import a small board or library sample into native Datum primitives.
 2. Store object-level import provenance and source hashes.
@@ -456,14 +481,20 @@ The first proof slice should demonstrate import as reviewable migration:
 
 ## Owner Questions
 
-- Which import use case is the first product slice: KiCad migration, Eagle
-  migration, imported-board audit, library import, or reverse engineering?
+- SUPERSEDED by the ratified posture (`docs/DATUM_PRODUCT_MECHANICS.md` ->
+  "Interop Boundary And Import Posture"): which import use case is the first
+  product slice. Import is frozen; the M7 KiCad-PCB spike is sufficient for now
+  and the product frontier is native authoring, not a next import slice.
 - How visible should import provenance remain after a project becomes native
-  Datum-authored?
+  Datum data?
 - What source-format lossiness is acceptable before import should fail instead
   of warn?
-- Should imported geometry default to stricter unknown-basis warnings than
-  native Datum geometry?
+- SUPERSEDED by the ratified posture: whether imported geometry should default
+  to stricter unknown-basis warnings than native geometry. There is no ongoing
+  imported-vs-native authority distinction to tune; converted data is native
+  data, and import fidelity never gates native maturity. Unknown-basis and
+  lossiness findings ride on provenance/`LossinessRecord`, not on a separate
+  imported-board state.
 - Which export formats are product-critical versus future interop targets?
 - How should reverse-engineered schematic reconstruction be labeled so users do
   not confuse inferred intent with authored electrical design?

@@ -68,6 +68,7 @@ pub(super) fn resolve_board_net_ref(
                 uuid,
                 name,
                 class: Uuid::nil(),
+                controlled_impedance: None,
             });
             uuid
         }

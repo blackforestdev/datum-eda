@@ -26,6 +26,11 @@ fn project_write_route_strategy_curated_fixture_suite_writes_repeatable_manifest
         report["suite_id"],
         "m6_route_strategy_curated_fixture_suite_v1"
     );
+    assert_eq!(report["authoring_boundary"], "generated_fixture_only");
+    assert_eq!(
+        report["write_path_policy"],
+        "direct project-shard writes are restricted to deterministic regression fixture generation"
+    );
     assert_eq!(
         report["requests_manifest_kind"],
         "native_route_strategy_batch_requests"
@@ -120,6 +125,11 @@ fn project_capture_route_strategy_curated_baseline_writes_reusable_result_artifa
     let report: serde_json::Value = serde_json::from_str(&output).expect("output should parse");
 
     assert_eq!(report["action"], "capture_route_strategy_curated_baseline");
+    assert_eq!(report["authoring_boundary"], "generated_fixture_only");
+    assert_eq!(
+        report["write_path_policy"],
+        "direct project-shard writes are restricted to deterministic regression fixture generation"
+    );
     assert_eq!(
         report["result_kind"],
         "native_route_strategy_batch_result_artifact"

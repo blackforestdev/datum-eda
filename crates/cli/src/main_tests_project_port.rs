@@ -1,3 +1,4 @@
+use super::main_tests_project_journal_support::assert_journal_transaction;
 use super::*;
 use eda_engine::ir::serialization::to_json_deterministic;
 
@@ -56,6 +57,26 @@ fn seed_native_sheet(root: &Path) -> Uuid {
     sheet_uuid
 }
 
+fn assert_port_journal_transaction(root: &Path, index: usize, reason: &str, operations: u64) {
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "journal-list",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("journal-list should succeed");
+    let journal: serde_json::Value =
+        serde_json::from_str(&output).expect("journal-list JSON should parse");
+    assert_eq!(journal["transactions"][index]["reason"], reason);
+    assert_eq!(journal["transactions"][index]["operations"], operations);
+}
+
 #[test]
 fn project_place_edit_and_delete_port_update_native_query_surface() {
     let root = unique_project_root("datum-eda-cli-project-port");
@@ -104,6 +125,7 @@ fn project_place_edit_and_delete_port_update_native_query_surface() {
     assert_eq!(ports[0]["uuid"], port_uuid);
     assert_eq!(ports[0]["name"], "SUB_IN");
     assert_eq!(ports[0]["direction"], "Input");
+    assert_journal_transaction(&root, "place schematic port", 1);
 
     let edit_cli = Cli::try_parse_from([
         "eda",
@@ -145,12 +167,43 @@ fn project_place_edit_and_delete_port_update_native_query_surface() {
     assert_eq!(edited[0]["direction"], "Bidirectional");
     assert_eq!(edited[0]["position"]["x"], 33);
     assert_eq!(edited[0]["position"]["y"], 44);
+    assert_port_journal_transaction(&root, 0, "place schematic port", 1);
+    assert_port_journal_transaction(&root, 1, "edit schematic port", 1);
 
     let summary_cli =
         Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
             .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("project query summary should succeed");
     assert!(summary_output.contains("schematic_ports: 1"));
+    let sheet_path = PathBuf::from(placed["sheet_path"].as_str().unwrap());
+    let mut stale_sheet: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&sheet_path).expect("sheet should read"))
+            .expect("sheet should parse");
+    stale_sheet["ports"] = serde_json::json!({});
+    std::fs::write(
+        &sheet_path,
+        format!(
+            "{}\n",
+            to_json_deterministic(&stale_sheet).expect("sheet should serialize")
+        ),
+    )
+    .expect("stale sheet should write");
+
+    let query_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "ports",
+    ])
+    .expect("CLI should parse");
+    let replayed_output = execute(query_cli).expect("project query ports should succeed");
+    let replayed: serde_json::Value =
+        serde_json::from_str(&replayed_output).expect("ports JSON should parse");
+    assert_eq!(replayed.as_array().unwrap().len(), 1);
+    assert_eq!(replayed[0]["name"], "SUB_IO");
 
     let delete_cli = Cli::try_parse_from([
         "eda",
@@ -163,6 +216,7 @@ fn project_place_edit_and_delete_port_update_native_query_surface() {
     .expect("CLI should parse");
     let delete_output = execute(delete_cli).expect("project delete-port should succeed");
     assert!(delete_output.contains("action: delete_port"));
+    assert_port_journal_transaction(&root, 2, "delete schematic port", 1);
 
     let query_cli = Cli::try_parse_from([
         "eda",

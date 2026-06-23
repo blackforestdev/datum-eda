@@ -284,3 +284,121 @@ fn project_query_forward_annotation_proposal_reports_text_summary() {
 
     let _ = std::fs::remove_dir_all(&root);
 }
+
+#[test]
+fn project_query_forward_annotation_proposal_uses_resolver_materialized_board_state() {
+    let root = unique_project_root("datum-eda-cli-project-forward-annotation-proposal-resolved");
+    create_native_project(&root, Some("Forward Annotation Resolved Demo".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let sheet_uuid = Uuid::new_v4();
+    let symbol_uuid = Uuid::new_v4();
+    write_native_sheet(
+        &root,
+        sheet_uuid,
+        "Main",
+        BTreeMap::from([(
+            symbol_uuid.to_string(),
+            serde_json::to_value(PlacedSymbol {
+                uuid: symbol_uuid,
+                part: None,
+                entity: None,
+                gate: None,
+                lib_id: Some("Device:R".into()),
+                reference: "R1".into(),
+                value: "10k".into(),
+                fields: Vec::new(),
+                pins: Vec::new(),
+                position: Point::new(0, 0),
+                rotation: 0,
+                mirrored: false,
+                unit_selection: None,
+                display_mode: SymbolDisplayMode::LibraryDefault,
+                pin_overrides: Vec::new(),
+                hidden_power_behavior: HiddenPowerBehavior::PreservedAsImportedMetadata,
+            })
+            .expect("symbol should serialize"),
+        )]),
+    );
+
+    let component_uuid = Uuid::new_v4();
+    let board_json = root.join("board/board.json");
+    std::fs::write(
+        &board_json,
+        format!(
+            "{}\n",
+            to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "uuid": Uuid::new_v4(),
+                "name": "Forward Annotation Resolved Board",
+                "stackup": { "layers": [] },
+                "outline": { "vertices": [], "closed": true },
+                "packages": {
+                    component_uuid.to_string(): serde_json::to_value(PlacedPackage {
+                        uuid: component_uuid,
+                        part: Uuid::new_v4(),
+                        package: Uuid::new_v4(),
+                        reference: "R1".into(),
+                        value: "22k".into(),
+                        position: Point::new(0, 0),
+                        rotation: 0,
+                        layer: 1,
+                        locked: false,
+                    }).expect("component should serialize")
+                },
+                "pads": {},
+                "tracks": {},
+                "vias": {},
+                "zones": {},
+                "nets": {},
+                "net_classes": {},
+                "rules": [],
+                "keepouts": [],
+                "dimensions": [],
+                "texts": []
+            }))
+            .expect("canonical serialization should succeed")
+        ),
+    )
+    .expect("board file should write");
+    let stale_board = std::fs::read_to_string(&board_json).expect("board file should read");
+
+    let _ = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "set-board-component-value",
+            root.to_str().unwrap(),
+            "--component",
+            &component_uuid.to_string(),
+            "--value",
+            "10k",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("set board component value should succeed");
+    std::fs::write(&board_json, stale_board).expect("stale board file should restore");
+
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "forward-annotation-proposal",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("forward annotation proposal should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("query JSON should parse");
+    assert_eq!(report["total_actions"], 0);
+    assert!(!report["actions"].as_array().unwrap().iter().any(|entry| {
+        entry["action"] == "update_component" && entry["reason"] == "value_mismatch"
+    }));
+
+    let _ = std::fs::remove_dir_all(&root);
+}

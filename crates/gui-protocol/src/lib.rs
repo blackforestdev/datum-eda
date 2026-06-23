@@ -1,20 +1,38 @@
-use std::collections::{BTreeMap, BTreeSet};
-use std::path::{Path, PathBuf};
-use std::process::Command;
-use std::sync::{Mutex, OnceLock};
-
 use anyhow::{Context, Result, bail};
 use eda_engine::board::BoardText;
 use eda_engine::text::{
-    FAMILY_IBM_PLEX_SANS_CONDENSED, FAMILY_INTER, FAMILY_INTER_DISPLAY, FAMILY_JETBRAINS_MONO,
-    FAMILY_NEWSTROKE, TextAttributes, TextFamilyId, TextFamilySource, TextGeometryPrimitive,
-    TextHAlign, TextRenderIntent, TextStyleId, TextVAlign, default_stroke_width_nm,
-    default_style_for_family, layout_text_geometry, layout_text_mesh_from_board_text,
+    TextAttributes, TextFamilyId, TextGeometryPrimitive, TextHAlign, TextRenderIntent, TextStyleId,
+    TextVAlign, default_stroke_width_nm, layout_text_geometry, layout_text_mesh_from_board_text,
 };
 use serde::de::{DeserializeOwned, Deserializer};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
-
+use std::collections::{BTreeMap, BTreeSet};
+use std::path::{Path, PathBuf};
+use std::process::Command;
+use std::sync::{Mutex, OnceLock};
+mod artifact_preview_viewport;
+pub use artifact_preview_viewport::ArtifactPreviewViewportState;
+mod context_envelope;
+pub use context_envelope::*;
+mod terminal_command_catalog;
+pub use terminal_command_catalog::*;
+mod production_artifacts;
+pub use production_artifacts::*;
+mod production_artifact_runs;
+pub use production_artifact_runs::ProductionArtifactRunSummary;
+use production_artifact_runs::{ArtifactListPayload, artifact_run_summaries};
+mod production_proposals;
+pub use production_proposals::{
+    ProductionProposalPreviewSummary, ProductionProposalRenderDeltaSummary,
+    ProductionProposalSummary, production_status_from_proposals_json,
+};
+use production_proposals::{ProposalsPayload, attach_proposal_validation, proposal_summaries};
+mod check_runs;
+pub use check_runs::{
+    CheckFindingSummary, CheckRunCoverageSummary, CheckRunProfileBasisSummary, CheckRunReviewState,
+    check_finding_scene_target_object_id, check_run_review_state_from_json,
+};
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct BoardReviewSceneV1 {
     pub kind: String,
@@ -375,6 +393,10 @@ pub struct ProposalOverlayPrimitive {
     pub layer_id: Option<String>,
     pub render_role: String,
     pub width_nm: Option<i64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub drill_nm: Option<i64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub diameter_nm: Option<i64>,
     pub path: Vec<PointNm>,
 }
 
@@ -486,6 +508,7 @@ pub enum SelectionTarget {
     None,
     ReviewAction(String),
     AuthoredObject(String),
+    CheckFinding(String),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -553,14 +576,17 @@ pub struct EditorCommandStatus {
 pub enum DockTab {
     Terminal,
     Assistant,
+    Outputs,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TerminalLaneState {
     pub lines: Vec<String>,
+    pub activity_summary: Vec<String>,
     pub input: String,
     pub cursor: usize,
     pub scroll_offset: usize,
+    pub status: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -595,12 +621,68 @@ pub struct WorkspaceUiState {
     pub filters: WorkspaceFilterState,
     pub terminal: TerminalLaneState,
     pub assistant: AssistantLaneState,
+    pub artifact_preview: ArtifactPreviewViewportState,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq, Eq, Default)]
+pub struct ProductionStatus {
+    pub output_job_count: usize,
+    pub artifact_count: usize,
+    pub artifact_run_count: usize,
+    pub proposal_count: usize,
+    pub manufacturing_plan_count: usize,
+    pub panel_projection_count: usize,
+    pub latest_status: Option<String>,
+    pub latest_run_id: Option<String>,
+    pub output_jobs: Vec<ProductionOutputJobSummary>,
+    pub artifact_runs: Vec<ProductionArtifactRunSummary>,
+    pub proposals: Vec<ProductionProposalSummary>,
+    pub manufacturing_plans: Vec<ProductionManufacturingPlanSummary>,
+    pub panel_projections: Vec<ProductionPanelProjectionSummary>,
+    pub focused_artifact: Option<ProductionArtifactDetail>,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+pub struct ProductionOutputJobSummary {
+    pub id: String,
+    pub name: String,
+    pub include: Vec<String>,
+    pub prefix: String,
+    pub output_dir: Option<String>,
+    pub family: String,
+    pub status: String,
+    pub execution_count: usize,
+    pub artifact_count: usize,
+    pub latest_run_id: Option<String>,
+    pub latest_run_artifact_id: Option<String>,
+    pub artifacts: Vec<ProductionArtifactSummary>,
+}
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+pub struct ProductionManufacturingPlanSummary {
+    pub id: String,
+    pub name: String,
+    pub prefix: String,
+    pub board_or_panel: String,
+    pub variant: Option<String>,
+    pub object_revision: u64,
+}
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+pub struct ProductionPanelProjectionSummary {
+    pub id: String,
+    pub name: String,
+    pub board_instance_count: usize,
+    pub first_board: Option<String>,
+    pub first_x_nm: Option<i64>,
+    pub first_y_nm: Option<i64>,
+    pub first_rotation_deg: Option<i32>,
+    pub object_revision: u64,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SessionCommand {
     SelectReviewAction(String),
     SelectAuthoredObject(String),
+    SelectCheckFinding(String),
     ClearSelection,
     SelectPreviousReviewAction,
     SelectNextReviewAction,
@@ -609,6 +691,14 @@ pub enum SessionCommand {
     ToggleShowUnrouted,
     ToggleDimUnrelated,
     ToggleLayerVisibility(String),
+    FocusProductionArtifact(String),
+    FocusProductionArtifactFile(String),
+    ZoomArtifactPreviewIn,
+    ZoomArtifactPreviewOut,
+    PanArtifactPreview { delta_x_ppm: i32, delta_y_ppm: i32 },
+    ResetArtifactPreviewViewport,
+    ToggleArtifactPreviewGeometry,
+    ToggleArtifactPreviewDrills,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -652,6 +742,8 @@ fn layer_visibility_change_is_frame_only(scene: &BoardReviewSceneV1, layer_id: &
 pub struct ReviewWorkspaceState {
     pub scene: BoardReviewSceneV1,
     pub review: RouteProposalReviewPayload,
+    pub production: ProductionStatus,
+    pub checks: CheckRunReviewState,
     pub selection: SelectionTarget,
     pub active_review_target_id: String,
     pub tool: WorkspaceTool,
@@ -698,6 +790,22 @@ impl LiveDesignSession {
             }
             SessionCommand::SelectAuthoredObject(object_id) => {
                 if self.workspace.select_authored_object(&object_id) {
+                    SessionCommandResult {
+                        handled: true,
+                        events: vec![
+                            SessionEvent::SelectionChanged(self.workspace.selection.clone()),
+                            SessionEvent::FrameChanged,
+                        ],
+                    }
+                } else {
+                    SessionCommandResult {
+                        handled: false,
+                        events: Vec::new(),
+                    }
+                }
+            }
+            SessionCommand::SelectCheckFinding(fingerprint) => {
+                if self.workspace.select_check_finding(&fingerprint) {
                     SessionCommandResult {
                         handled: true,
                         events: vec![
@@ -839,6 +947,39 @@ impl LiveDesignSession {
                     }
                 }
             }
+            SessionCommand::FocusProductionArtifact(artifact_id) => {
+                if self.workspace.focus_production_artifact(&artifact_id) {
+                    SessionCommandResult {
+                        handled: true,
+                        events: vec![SessionEvent::FrameChanged],
+                    }
+                } else {
+                    SessionCommandResult {
+                        handled: false,
+                        events: Vec::new(),
+                    }
+                }
+            }
+            SessionCommand::FocusProductionArtifactFile(path) => {
+                if self.workspace.focus_production_artifact_file(&path) {
+                    SessionCommandResult {
+                        handled: true,
+                        events: vec![SessionEvent::FrameChanged],
+                    }
+                } else {
+                    SessionCommandResult {
+                        handled: false,
+                        events: Vec::new(),
+                    }
+                }
+            }
+            command => {
+                self.apply_artifact_preview_command(command)
+                    .unwrap_or(SessionCommandResult {
+                        handled: false,
+                        events: Vec::new(),
+                    })
+            }
         }
     }
 }
@@ -887,6 +1028,160 @@ struct ProjectInspectPayload {
     project_uuid: String,
     board_uuid: String,
     board_path: String,
+}
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq, Default)]
+struct OutputJobsPayload {
+    output_job_count: usize,
+    #[serde(default)]
+    output_jobs: Vec<OutputJobStatusPayload>,
+}
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+struct OutputJobStatusPayload {
+    id: String,
+    name: String,
+    #[serde(default)]
+    include: Vec<String>,
+    #[serde(default)]
+    prefix: String,
+    #[serde(default)]
+    output_dir: Option<PathBuf>,
+    status: String,
+    execution_count: usize,
+    #[serde(default)]
+    latest_run: Option<OutputJobRunPayload>,
+    #[serde(default)]
+    artifacts: Vec<OutputJobArtifactPayload>,
+}
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+struct OutputJobRunPayload {
+    run_id: String,
+    #[serde(default)]
+    run_sequence: u64,
+    #[serde(default)]
+    artifact_id: Option<String>,
+}
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+struct OutputJobArtifactPayload {
+    artifact_id: String,
+    kind: String,
+    #[serde(default)]
+    project_id: Option<String>,
+    #[serde(default)]
+    model_revision: Option<String>,
+    #[serde(default)]
+    output_job: Option<String>,
+    #[serde(default)]
+    variant: Option<String>,
+    #[serde(default)]
+    generator_version: Option<String>,
+    #[serde(default)]
+    output_dir: Option<String>,
+    #[serde(default)]
+    validation_state: Option<String>,
+    #[serde(default)]
+    files: Vec<OutputJobArtifactFilePayload>,
+    #[serde(default)]
+    production_projections: Vec<OutputJobArtifactProjectionPayload>,
+}
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+struct OutputJobArtifactFilePayload {
+    path: PathBuf,
+    sha256: String,
+}
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+struct OutputJobArtifactProjectionPayload {
+    projection_kind: String,
+    projection_contract: String,
+    model_revision: String,
+    byte_count: usize,
+    sha256: String,
+}
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+struct ArtifactFilesPayload {
+    artifact_id: String,
+    kind: String,
+    #[serde(default)]
+    output_dir: Option<String>,
+    validation_state: String,
+    #[serde(default)]
+    files: Vec<OutputJobArtifactFilePayload>,
+    #[serde(default)]
+    production_projections: Vec<OutputJobArtifactProjectionPayload>,
+}
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+struct ArtifactFilePreviewPayload {
+    file: std::path::PathBuf,
+    preview_kind: String,
+    hash_matches_metadata: bool,
+    #[serde(default)]
+    primitive_count: usize,
+    #[serde(default)]
+    primitives: Vec<ArtifactFilePreviewPrimitivePayload>,
+    #[serde(default)]
+    inspection: serde_json::Value,
+}
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+struct ArtifactFilePreviewPrimitivePayload {
+    kind: String,
+    #[serde(default)]
+    aperture_diameter_nm: Option<i64>,
+    #[serde(default)]
+    aperture_width_nm: Option<i64>,
+    #[serde(default)]
+    aperture_height_nm: Option<i64>,
+    #[serde(default)]
+    tool: Option<String>,
+    #[serde(default)]
+    diameter_mm: Option<String>,
+    #[serde(default)]
+    points: Vec<ArtifactFilePreviewPointPayload>,
+}
+
+#[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
+struct ArtifactFilePreviewPointPayload {
+    x_nm: i64,
+    y_nm: i64,
+}
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq, Default)]
+struct ManufacturingPlansPayload {
+    manufacturing_plan_count: usize,
+    #[serde(default)]
+    manufacturing_plans: Vec<ManufacturingPlanPayload>,
+}
+
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+struct ManufacturingPlanPayload {
+    id: String,
+    name: String,
+    board_or_panel: String,
+    #[serde(default)]
+    variant: Option<String>,
+    prefix: String,
+    object_revision: u64,
+}
+
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq, Default)]
+struct PanelProjectionsPayload {
+    panel_projection_count: usize,
+    #[serde(default)]
+    panel_projections: Vec<PanelProjectionPayload>,
+}
+
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+struct PanelProjectionPayload {
+    id: String,
+    name: String,
+    #[serde(default)]
+    board_instances: Vec<PanelBoardInstancePayload>,
+    object_revision: u64,
+}
+
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+struct PanelBoardInstancePayload {
+    board: String,
+    x_nm: i64,
+    y_nm: i64,
+    rotation_deg: i32,
 }
 
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
@@ -2052,6 +2347,8 @@ impl ReviewWorkspaceState {
         Self {
             scene,
             review,
+            production: ProductionStatus::default(),
+            checks: CheckRunReviewState::default(),
             selection: if has_review_actions {
                 SelectionTarget::ReviewAction(active_review_target_id.clone())
             } else {
@@ -2075,18 +2372,19 @@ impl ReviewWorkspaceState {
                 terminal: TerminalLaneState {
                     lines: vec![
                         "datum terminal ready".to_string(),
-                        "terminal lane is read-only in M7; it shows workflow and status output"
-                            .to_string(),
+                        "shell session starts in the active project root".to_string(),
                     ],
+                    activity_summary: Vec::new(),
                     input: String::new(),
                     cursor: 0,
                     scroll_offset: 0,
+                    status: "running".to_string(),
                 },
                 assistant: AssistantLaneState {
                     transcript: vec![AssistantMessage {
                         role: "assistant".to_string(),
                         content:
-                            "assistant lane ready; use /config status or /config api-key <key>"
+                            "assistant lane ready; use /activity, /config status, or /config api-key <key>"
                                 .to_string(),
                     }],
                     input: String::new(),
@@ -2094,6 +2392,7 @@ impl ReviewWorkspaceState {
                     awaiting_api_key: false,
                     scroll_offset: 0,
                 },
+                artifact_preview: ArtifactPreviewViewportState::default(),
             },
         }
     }
@@ -2278,6 +2577,23 @@ impl ReviewWorkspaceState {
         }
     }
 
+    pub fn select_check_finding(&mut self, fingerprint: &str) -> bool {
+        if fingerprint.is_empty() {
+            return false;
+        }
+        let exists = self
+            .checks
+            .findings
+            .iter()
+            .any(|finding| finding.fingerprint == fingerprint);
+        if exists {
+            self.selection = SelectionTarget::CheckFinding(fingerprint.to_string());
+            true
+        } else {
+            false
+        }
+    }
+
     pub fn clear_selection(&mut self) {
         self.selection = SelectionTarget::None;
     }
@@ -2300,22 +2616,75 @@ impl ReviewWorkspaceState {
             .find(|component| &component.object_id == object_id)
     }
 }
-
 pub fn load_live_workspace_state(request: &LiveReviewRequest) -> Result<ReviewWorkspaceState> {
     load_workspace_state_impl(request, true)
 }
-
 pub fn load_board_editor_workspace_state(
     request: &LiveReviewRequest,
 ) -> Result<ReviewWorkspaceState> {
     load_workspace_state_impl(request, false)
 }
-
-mod board_text_mutations;
-pub use board_text_mutations::*;
-mod board_text_field_values;
-pub(crate) use board_text_field_values::*;
-
+pub fn refresh_production_status(request: &LiveReviewRequest) -> Result<ProductionStatus> {
+    load_production_status(&cli_prefix(), request)
+}
+pub fn refresh_check_run_review_state(request: &LiveReviewRequest) -> Result<CheckRunReviewState> {
+    load_check_run_review_state(&cli_prefix(), request)
+}
+pub fn production_status_from_output_jobs_json(payload: &str) -> Result<ProductionStatus> {
+    let payload: OutputJobsPayload =
+        serde_json::from_str(payload).context("failed to decode output-job list JSON")?;
+    Ok(production_payloads_to_production_status(
+        payload,
+        ArtifactListPayload::default(),
+        ProposalsPayload::default(),
+        ManufacturingPlansPayload::default(),
+        PanelProjectionsPayload::default(),
+    ))
+}
+pub fn production_status_from_artifacts_json(payload: &str) -> Result<ProductionStatus> {
+    let payload: ArtifactListPayload =
+        serde_json::from_str(payload).context("failed to decode artifact list JSON")?;
+    Ok(production_payloads_to_production_status(
+        OutputJobsPayload::default(),
+        payload,
+        ProposalsPayload::default(),
+        ManufacturingPlansPayload::default(),
+        PanelProjectionsPayload::default(),
+    ))
+}
+pub fn production_artifact_detail_from_files_json(
+    payload: &str,
+) -> Result<ProductionArtifactDetail> {
+    let payload: ArtifactFilesPayload =
+        serde_json::from_str(payload).context("failed to decode artifact files JSON")?;
+    Ok(artifact_files_payload_to_detail(payload))
+}
+pub fn production_artifact_file_preview_from_json(
+    payload: &str,
+) -> Result<ProductionArtifactFilePreviewSummary> {
+    let payload: ArtifactFilePreviewPayload =
+        serde_json::from_str(payload).context("failed to decode artifact preview JSON")?;
+    Ok(artifact_preview_payload_to_summary(payload))
+}
+pub fn production_status_from_production_json(
+    output_jobs: &str,
+    manufacturing_plans: &str,
+    panel_projections: &str,
+) -> Result<ProductionStatus> {
+    let output_jobs: OutputJobsPayload =
+        serde_json::from_str(output_jobs).context("failed to decode output-job list JSON")?;
+    let manufacturing_plans: ManufacturingPlansPayload = serde_json::from_str(manufacturing_plans)
+        .context("failed to decode manufacturing-plan list JSON")?;
+    let panel_projections: PanelProjectionsPayload = serde_json::from_str(panel_projections)
+        .context("failed to decode panel-projection list JSON")?;
+    Ok(production_payloads_to_production_status(
+        output_jobs,
+        ArtifactListPayload::default(),
+        ProposalsPayload::default(),
+        manufacturing_plans,
+        panel_projections,
+    ))
+}
 fn load_workspace_state_impl(
     request: &LiveReviewRequest,
     include_review: bool,
@@ -2360,6 +2729,8 @@ fn load_workspace_state_impl(
         review_attach_started.elapsed().as_millis()
     ));
     let mut state = ReviewWorkspaceState::new(scene, review);
+    state.production = load_production_status(&cli, request)?;
+    state.checks = load_check_run_review_state(&cli, request)?;
     state.backing = Some(WorkspaceBacking {
         request: request.clone(),
         board_path,
@@ -2369,6 +2740,359 @@ fn load_workspace_state_impl(
         workspace_started.elapsed().as_millis()
     ));
     Ok(state)
+}
+fn load_check_run_review_state(
+    cli: &[String],
+    request: &LiveReviewRequest,
+) -> Result<CheckRunReviewState> {
+    if request.board_file.is_some() {
+        return Ok(CheckRunReviewState::default());
+    }
+    let project_root = request.project_root.display().to_string();
+    if let Ok(context) = run_cli_json::<Value>(
+        cli,
+        &["context", "refresh", "--project-root", &project_root],
+    ) {
+        if let Some(state) = check_runs::check_run_review_state_from_context_value(&context) {
+            return Ok(state);
+        }
+    }
+    run_cli_json(cli, &["check", "run", &project_root])
+        .or_else(|_| Ok(CheckRunReviewState::default()))
+}
+
+fn load_production_status(cli: &[String], request: &LiveReviewRequest) -> Result<ProductionStatus> {
+    if request.board_file.is_some() {
+        return Ok(ProductionStatus::default());
+    }
+    let project_root = request.project_root.display().to_string();
+    let output_jobs: OutputJobsPayload =
+        match run_cli_json(cli, &["project", "query", &project_root, "output-jobs"]) {
+            Ok(payload) => payload,
+            Err(_) => return Ok(ProductionStatus::default()),
+        };
+    let manufacturing_plans = run_cli_json(
+        cli,
+        &["project", "query", &project_root, "manufacturing-plans"],
+    )
+    .unwrap_or_default();
+    let panel_projections = run_cli_json(
+        cli,
+        &["project", "query", &project_root, "panel-projections"],
+    )
+    .unwrap_or_default();
+    let artifact_list = run_cli_json(cli, &["artifact", "list", &project_root]).unwrap_or_default();
+    let proposals = run_cli_json(cli, &["proposal", "list", &project_root]).unwrap_or_default();
+    let mut status = production_payloads_to_production_status(
+        output_jobs,
+        artifact_list,
+        proposals,
+        manufacturing_plans,
+        panel_projections,
+    );
+    attach_proposal_validation(cli, &project_root, &mut status);
+    if let Some(artifact_id) = focused_artifact_id(&status) {
+        let args = vec![
+            "artifact".to_string(),
+            "files".to_string(),
+            project_root.clone(),
+            "--artifact".to_string(),
+            artifact_id,
+        ];
+        if let Ok(payload) = run_cli_json_owned::<ArtifactFilesPayload>(cli, &args) {
+            let mut detail = artifact_files_payload_to_detail(payload);
+            if let Some(file) = detail.focused_file.as_ref() {
+                detail.focused_preview =
+                    load_artifact_file_preview(cli, &project_root, &detail.artifact_id, &file.path)
+                        .ok();
+            }
+            status.focused_artifact = Some(detail);
+        }
+    }
+    Ok(status)
+}
+
+fn focused_artifact_id(status: &ProductionStatus) -> Option<String> {
+    status
+        .output_jobs
+        .iter()
+        .find_map(|job| {
+            job.artifacts
+                .first()
+                .map(|artifact| artifact.artifact_id.clone())
+        })
+        .or_else(|| {
+            status
+                .artifact_runs
+                .last()
+                .map(|run| run.artifact_id.clone())
+        })
+}
+
+fn artifact_files_payload_to_detail(payload: ArtifactFilesPayload) -> ProductionArtifactDetail {
+    let files = payload
+        .files
+        .into_iter()
+        .map(|file| ProductionArtifactFileSummary {
+            path: file.path.display().to_string(),
+            sha256: file.sha256,
+        })
+        .collect::<Vec<_>>();
+    let focused_file = files.first().cloned();
+    ProductionArtifactDetail {
+        artifact_id: payload.artifact_id,
+        kind: payload.kind,
+        output_dir: payload.output_dir,
+        validation_state: payload.validation_state,
+        file_count: files.len(),
+        files,
+        focused_file,
+        focused_preview: None,
+        production_projection_count: payload.production_projections.len(),
+        production_projections: payload
+            .production_projections
+            .into_iter()
+            .map(|projection| ProductionArtifactProjectionSummary {
+                projection_kind: projection.projection_kind,
+                projection_contract: projection.projection_contract,
+                model_revision: projection.model_revision,
+                byte_count: projection.byte_count,
+                sha256: projection.sha256,
+            })
+            .collect(),
+    }
+}
+
+fn load_artifact_file_preview(
+    cli: &[String],
+    project_root: &str,
+    artifact_id: &str,
+    file: &str,
+) -> Result<ProductionArtifactFilePreviewSummary> {
+    let args = vec![
+        "artifact".to_string(),
+        "preview".to_string(),
+        project_root.to_string(),
+        "--artifact".to_string(),
+        artifact_id.to_string(),
+        "--file".to_string(),
+        file.to_string(),
+    ];
+    let payload = run_cli_json_owned::<ArtifactFilePreviewPayload>(cli, &args)?;
+    Ok(artifact_preview_payload_to_summary(payload))
+}
+
+fn artifact_preview_payload_to_summary(
+    payload: ArtifactFilePreviewPayload,
+) -> ProductionArtifactFilePreviewSummary {
+    ProductionArtifactFilePreviewSummary {
+        file: payload.file.display().to_string(),
+        preview_kind: payload.preview_kind,
+        hash_matches_metadata: payload.hash_matches_metadata,
+        primitive_count: payload.primitive_count,
+        primitives: payload
+            .primitives
+            .into_iter()
+            .map(|primitive| ProductionArtifactPreviewPrimitive {
+                kind: primitive.kind,
+                aperture_diameter_nm: primitive.aperture_diameter_nm,
+                aperture_width_nm: primitive.aperture_width_nm,
+                aperture_height_nm: primitive.aperture_height_nm,
+                tool: primitive.tool,
+                diameter_mm: primitive.diameter_mm,
+                points: primitive
+                    .points
+                    .into_iter()
+                    .map(|point| ProductionArtifactPreviewPoint {
+                        x_nm: point.x_nm,
+                        y_nm: point.y_nm,
+                    })
+                    .collect(),
+            })
+            .collect(),
+        geometry_count: payload
+            .inspection
+            .get("geometry_count")
+            .and_then(serde_json::Value::as_u64)
+            .map(|value| value as usize),
+        hit_count: payload
+            .inspection
+            .get("hit_count")
+            .and_then(serde_json::Value::as_u64)
+            .map(|value| value as usize),
+        row_count: payload
+            .inspection
+            .get("row_count")
+            .and_then(serde_json::Value::as_u64)
+            .map(|value| value as usize),
+        csv_columns: payload
+            .inspection
+            .get("columns")
+            .and_then(serde_json::Value::as_array)
+            .map(|values| string_array_values(values))
+            .unwrap_or_default(),
+        csv_rows: payload
+            .inspection
+            .get("rows")
+            .and_then(serde_json::Value::as_array)
+            .map(|values| csv_row_values(values))
+            .unwrap_or_default(),
+    }
+}
+
+fn string_array_values(values: &[serde_json::Value]) -> Vec<String> {
+    values
+        .iter()
+        .filter_map(serde_json::Value::as_str)
+        .map(ToString::to_string)
+        .collect()
+}
+
+fn csv_row_values(values: &[serde_json::Value]) -> Vec<Vec<String>> {
+    values
+        .iter()
+        .filter_map(serde_json::Value::as_array)
+        .map(|row| string_array_values(row))
+        .collect()
+}
+
+fn production_payloads_to_production_status(
+    output_jobs_payload: OutputJobsPayload,
+    artifact_list_payload: ArtifactListPayload,
+    proposals_payload: ProposalsPayload,
+    manufacturing_plans_payload: ManufacturingPlansPayload,
+    panel_projections_payload: PanelProjectionsPayload,
+) -> ProductionStatus {
+    let latest = output_jobs_payload
+        .output_jobs
+        .iter()
+        .filter_map(|job| {
+            job.latest_run
+                .as_ref()
+                .map(|run| (&job.status, run.run_sequence, run.run_id.clone()))
+        })
+        .max_by(|(_, a_sequence, a_id), (_, b_sequence, b_id)| {
+            a_sequence.cmp(b_sequence).then_with(|| a_id.cmp(b_id))
+        });
+    let (latest_status, latest_run_id) = latest
+        .map(|(status, _, run_id)| (Some(status.clone()), Some(run_id)))
+        .unwrap_or((None, None));
+    let output_jobs = output_jobs_payload
+        .output_jobs
+        .iter()
+        .map(|job| ProductionOutputJobSummary {
+            id: job.id.clone(),
+            name: job.name.clone(),
+            include: job.include.clone(),
+            prefix: job.prefix.clone(),
+            output_dir: job
+                .output_dir
+                .as_deref()
+                .map(|path| path.display().to_string()),
+            family: job
+                .include
+                .first()
+                .map(|value| value.replace(['_', '-'], " ").to_uppercase())
+                .unwrap_or_else(|| "UNSCOPED".to_string()),
+            status: job.status.clone(),
+            execution_count: job.execution_count,
+            artifact_count: job.artifacts.len(),
+            latest_run_id: job.latest_run.as_ref().map(|run| run.run_id.clone()),
+            latest_run_artifact_id: job
+                .latest_run
+                .as_ref()
+                .and_then(|run| run.artifact_id.clone()),
+            artifacts: job
+                .artifacts
+                .iter()
+                .map(|artifact| ProductionArtifactSummary {
+                    artifact_id: artifact.artifact_id.clone(),
+                    kind: artifact.kind.clone(),
+                    project_id: artifact.project_id.clone(),
+                    model_revision: artifact.model_revision.clone(),
+                    output_job: artifact.output_job.clone(),
+                    variant: artifact.variant.clone(),
+                    generator_version: artifact.generator_version.clone(),
+                    output_dir: artifact.output_dir.clone(),
+                    validation_state: artifact.validation_state.clone(),
+                    file_count: artifact.files.len(),
+                    files: artifact
+                        .files
+                        .iter()
+                        .map(|file| ProductionArtifactFileSummary {
+                            path: file.path.display().to_string(),
+                            sha256: file.sha256.clone(),
+                        })
+                        .collect(),
+                    production_projection_count: artifact.production_projections.len(),
+                    production_projections: artifact
+                        .production_projections
+                        .iter()
+                        .map(|projection| ProductionArtifactProjectionSummary {
+                            projection_kind: projection.projection_kind.clone(),
+                            projection_contract: projection.projection_contract.clone(),
+                            model_revision: projection.model_revision.clone(),
+                            byte_count: projection.byte_count,
+                            sha256: projection.sha256.clone(),
+                        })
+                        .collect(),
+                })
+                .collect(),
+        })
+        .collect::<Vec<_>>();
+    let artifact_runs = artifact_run_summaries(&artifact_list_payload);
+    let proposals = proposal_summaries(&proposals_payload);
+    let manufacturing_plans = manufacturing_plans_payload
+        .manufacturing_plans
+        .iter()
+        .map(|plan| ProductionManufacturingPlanSummary {
+            id: plan.id.clone(),
+            name: plan.name.clone(),
+            prefix: plan.prefix.clone(),
+            board_or_panel: plan.board_or_panel.clone(),
+            variant: plan.variant.clone(),
+            object_revision: plan.object_revision,
+        })
+        .collect::<Vec<_>>();
+    let panel_projections = panel_projections_payload
+        .panel_projections
+        .iter()
+        .map(|panel| {
+            let first = panel.board_instances.first();
+            ProductionPanelProjectionSummary {
+                id: panel.id.clone(),
+                name: panel.name.clone(),
+                board_instance_count: panel.board_instances.len(),
+                first_board: first.map(|instance| instance.board.clone()),
+                first_x_nm: first.map(|instance| instance.x_nm),
+                first_y_nm: first.map(|instance| instance.y_nm),
+                first_rotation_deg: first.map(|instance| instance.rotation_deg),
+                object_revision: panel.object_revision,
+            }
+        })
+        .collect::<Vec<_>>();
+    ProductionStatus {
+        output_job_count: output_jobs_payload.output_job_count,
+        artifact_count: artifact_list_payload.artifact_count.max(
+            output_jobs_payload
+                .output_jobs
+                .iter()
+                .map(|job| job.artifacts.len())
+                .sum(),
+        ),
+        artifact_run_count: artifact_runs.len(),
+        proposal_count: proposals_payload.proposal_count,
+        manufacturing_plan_count: manufacturing_plans_payload.manufacturing_plan_count,
+        panel_projection_count: panel_projections_payload.panel_projection_count,
+        latest_status,
+        latest_run_id,
+        output_jobs,
+        artifact_runs,
+        proposals,
+        manufacturing_plans,
+        panel_projections,
+        focused_artifact: None,
+    }
 }
 
 /// Load a KiCad .kicad_pcb board via the engine import path.
@@ -6013,6 +6737,8 @@ fn attach_review_primitives(
                 "proposed_overlay".to_string()
             },
             width_nm: Some(action.width_nm),
+            drill_nm: None,
+            diameter_nm: None,
             path: overlay_path_for_action(index, action, review, selected_path_points),
         })
         .collect();
@@ -6026,6 +6752,8 @@ fn attach_review_primitives(
                 layer_id: Some(layer_id(first.layer)),
                 render_role: "authored_related".to_string(),
                 width_nm: None,
+                drill_nm: None,
+                diameter_nm: None,
                 path: vec![
                     selected_path_points
                         .and_then(|points| points.first().copied())
@@ -6043,6 +6771,8 @@ fn attach_review_primitives(
                 layer_id: Some(layer_id(last.layer)),
                 render_role: "authored_related".to_string(),
                 width_nm: None,
+                drill_nm: None,
+                diameter_nm: None,
                 path: vec![
                     selected_path_points
                         .and_then(|points| points.last().copied())
@@ -6623,716 +7353,6 @@ mod tests {
         );
     }
 
-    #[test]
-    fn toggle_board_text_boolean_field_updates_native_board_json() {
-        let root = std::env::temp_dir().join(format!(
-            "datum-gui-protocol-board-text-toggle-{}",
-            uuid::Uuid::new_v4()
-        ));
-        std::fs::create_dir_all(&root).expect("create temp root");
-        let board_path = root.join("board.json");
-        std::fs::write(
-            &board_path,
-            serde_json::to_string_pretty(&json!({
-                "texts": [{
-                    "uuid": "00000000-0000-0000-0000-000000000001",
-                    "text": "TOGGLE",
-                    "position": { "x": 0, "y": 0 },
-                    "rotation": 0,
-                    "layer": 37,
-                    "mirrored": false,
-                    "keep_upright": true,
-                    "bold": false
-                }]
-            }))
-            .expect("serialize temp board"),
-        )
-        .expect("write temp board");
-        let backing = WorkspaceBacking {
-            request: LiveReviewRequest {
-                project_root: root.clone(),
-                board_file: None,
-                artifact_path: None,
-                net_uuid: None,
-                from_anchor_pad_uuid: None,
-                to_anchor_pad_uuid: None,
-                profile: None,
-            },
-            board_path: board_path.clone(),
-        };
-
-        let mirrored = toggle_board_text_boolean_field(
-            &backing,
-            "board-text:00000000-0000-0000-0000-000000000001",
-            BoardTextBooleanField::Mirrored,
-        )
-        .expect("toggle mirrored");
-        assert!(mirrored);
-        let bold = toggle_board_text_boolean_field(
-            &backing,
-            "board-text:00000000-0000-0000-0000-000000000001",
-            BoardTextBooleanField::Bold,
-        )
-        .expect("toggle bold");
-        assert!(bold);
-        let keep_upright = toggle_board_text_boolean_field(
-            &backing,
-            "board-text:00000000-0000-0000-0000-000000000001",
-            BoardTextBooleanField::KeepUpright,
-        )
-        .expect("toggle keep upright");
-        assert!(!keep_upright);
-
-        let board: Value =
-            serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read temp board"))
-                .expect("parse temp board");
-        let text = &board["texts"][0];
-        assert_eq!(text["mirrored"], Value::Bool(true));
-        assert_eq!(text["keep_upright"], Value::Bool(false));
-        assert_eq!(text["bold"], Value::Bool(true));
-
-        let _ = std::fs::remove_dir_all(root);
-    }
-
-    #[test]
-    fn cycle_board_text_alignment_field_updates_native_board_json() {
-        let root = std::env::temp_dir().join(format!(
-            "datum-gui-protocol-board-text-align-{}",
-            uuid::Uuid::new_v4()
-        ));
-        std::fs::create_dir_all(&root).expect("create temp root");
-        let board_path = root.join("board.json");
-        std::fs::write(
-            &board_path,
-            serde_json::to_string_pretty(&json!({
-                "texts": [{
-                    "uuid": "00000000-0000-0000-0000-000000000001",
-                    "text": "ALIGN",
-                    "position": { "x": 0, "y": 0 },
-                    "rotation": 0,
-                    "layer": 37,
-                    "h_align": "left",
-                    "v_align": "bottom"
-                }]
-            }))
-            .expect("serialize temp board"),
-        )
-        .expect("write temp board");
-        let backing = WorkspaceBacking {
-            request: LiveReviewRequest {
-                project_root: root.clone(),
-                board_file: None,
-                artifact_path: None,
-                net_uuid: None,
-                from_anchor_pad_uuid: None,
-                to_anchor_pad_uuid: None,
-                profile: None,
-            },
-            board_path: board_path.clone(),
-        };
-
-        let h_align = cycle_board_text_alignment_field(
-            &backing,
-            "board-text:00000000-0000-0000-0000-000000000001",
-            BoardTextAlignmentField::Horizontal,
-        )
-        .expect("cycle horizontal align");
-        assert_eq!(h_align, "center");
-        let v_align = cycle_board_text_alignment_field(
-            &backing,
-            "board-text:00000000-0000-0000-0000-000000000001",
-            BoardTextAlignmentField::Vertical,
-        )
-        .expect("cycle vertical align");
-        assert_eq!(v_align, "top");
-
-        let board: Value =
-            serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read temp board"))
-                .expect("parse temp board");
-        let text = &board["texts"][0];
-        assert_eq!(text["h_align"], Value::String("center".to_string()));
-        assert_eq!(text["v_align"], Value::String("top".to_string()));
-
-        let _ = std::fs::remove_dir_all(root);
-    }
-
-    #[test]
-    fn step_board_text_line_spacing_ratio_updates_native_board_json_with_bounds() {
-        let root = std::env::temp_dir().join(format!(
-            "datum-gui-protocol-board-text-line-spacing-{}",
-            uuid::Uuid::new_v4()
-        ));
-        std::fs::create_dir_all(&root).expect("create temp root");
-        let board_path = root.join("board.json");
-        std::fs::write(
-            &board_path,
-            serde_json::to_string_pretty(&json!({
-                "texts": [{
-                    "uuid": "00000000-0000-0000-0000-000000000001",
-                    "text": "LINE",
-                    "position": { "x": 0, "y": 0 },
-                    "rotation": 0,
-                    "layer": 37,
-                    "line_spacing_ratio_ppm": 1_000_000
-                }]
-            }))
-            .expect("serialize temp board"),
-        )
-        .expect("write temp board");
-        let backing = WorkspaceBacking {
-            request: LiveReviewRequest {
-                project_root: root.clone(),
-                board_file: None,
-                artifact_path: None,
-                net_uuid: None,
-                from_anchor_pad_uuid: None,
-                to_anchor_pad_uuid: None,
-                profile: None,
-            },
-            board_path: board_path.clone(),
-        };
-
-        let increased = step_board_text_line_spacing_ratio(
-            &backing,
-            "board-text:00000000-0000-0000-0000-000000000001",
-            BoardTextLineSpacingStep::Increase,
-        )
-        .expect("increase line spacing");
-        assert_eq!(increased, 1_100_000);
-        for _ in 0..20 {
-            step_board_text_line_spacing_ratio(
-                &backing,
-                "board-text:00000000-0000-0000-0000-000000000001",
-                BoardTextLineSpacingStep::Decrease,
-            )
-            .expect("decrease line spacing");
-        }
-
-        let board: Value =
-            serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read temp board"))
-                .expect("parse temp board");
-        let text = &board["texts"][0];
-        assert_eq!(
-            text["line_spacing_ratio_ppm"],
-            Value::Number(serde_json::Number::from(BOARD_TEXT_LINE_SPACING_MIN_PPM))
-        );
-
-        let _ = std::fs::remove_dir_all(root);
-    }
-
-    #[test]
-    fn step_board_text_height_updates_native_board_json_and_scales_stroke() {
-        let root = std::env::temp_dir().join(format!(
-            "datum-gui-protocol-board-text-height-{}",
-            uuid::Uuid::new_v4()
-        ));
-        std::fs::create_dir_all(&root).expect("create temp root");
-        let board_path = root.join("board.json");
-        std::fs::write(
-            &board_path,
-            serde_json::to_string_pretty(&json!({
-                "texts": [{
-                    "uuid": "00000000-0000-0000-0000-000000000001",
-                    "text": "HEIGHT",
-                    "position": { "x": 0, "y": 0 },
-                    "rotation": 0,
-                    "layer": 37,
-                    "height_nm": 1_000_000,
-                    "stroke_width_nm": 152_000
-                }]
-            }))
-            .expect("serialize temp board"),
-        )
-        .expect("write temp board");
-        let backing = WorkspaceBacking {
-            request: LiveReviewRequest {
-                project_root: root.clone(),
-                board_file: None,
-                artifact_path: None,
-                net_uuid: None,
-                from_anchor_pad_uuid: None,
-                to_anchor_pad_uuid: None,
-                profile: None,
-            },
-            board_path: board_path.clone(),
-        };
-
-        let increased = step_board_text_height(
-            &backing,
-            "board-text:00000000-0000-0000-0000-000000000001",
-            BoardTextHeightStep::Increase,
-        )
-        .expect("increase height");
-        assert_eq!(increased, 1_100_000);
-
-        let board: Value =
-            serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read temp board"))
-                .expect("parse temp board");
-        let text = &board["texts"][0];
-        assert_eq!(
-            text["height_nm"],
-            Value::Number(serde_json::Number::from(1_100_000))
-        );
-        assert_eq!(
-            text["stroke_width_nm"],
-            Value::Number(serde_json::Number::from(167_200))
-        );
-
-        let _ = std::fs::remove_dir_all(root);
-    }
-
-    #[test]
-    fn step_board_text_height_clamps_minimum_and_keeps_stroke_positive() {
-        let root = std::env::temp_dir().join(format!(
-            "datum-gui-protocol-board-text-height-min-{}",
-            uuid::Uuid::new_v4()
-        ));
-        std::fs::create_dir_all(&root).expect("create temp root");
-        let board_path = root.join("board.json");
-        std::fs::write(
-            &board_path,
-            serde_json::to_string_pretty(&json!({
-                "texts": [{
-                    "uuid": "00000000-0000-0000-0000-000000000001",
-                    "text": "HEIGHT",
-                    "position": { "x": 0, "y": 0 },
-                    "rotation": 0,
-                    "layer": 37,
-                    "height_nm": 51_000,
-                    "stroke_width_nm": 7_752
-                }]
-            }))
-            .expect("serialize temp board"),
-        )
-        .expect("write temp board");
-        let backing = WorkspaceBacking {
-            request: LiveReviewRequest {
-                project_root: root.clone(),
-                board_file: None,
-                artifact_path: None,
-                net_uuid: None,
-                from_anchor_pad_uuid: None,
-                to_anchor_pad_uuid: None,
-                profile: None,
-            },
-            board_path: board_path.clone(),
-        };
-
-        let decreased = step_board_text_height(
-            &backing,
-            "board-text:00000000-0000-0000-0000-000000000001",
-            BoardTextHeightStep::Decrease,
-        )
-        .expect("decrease height");
-        assert_eq!(decreased, BOARD_TEXT_HEIGHT_MIN_NM);
-
-        let board: Value =
-            serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read temp board"))
-                .expect("parse temp board");
-        let text = &board["texts"][0];
-        assert_eq!(
-            text["height_nm"],
-            Value::Number(serde_json::Number::from(BOARD_TEXT_HEIGHT_MIN_NM))
-        );
-        assert!(
-            text["stroke_width_nm"]
-                .as_i64()
-                .expect("stroke width number")
-                > 0,
-            "stroke width must stay positive at the minimum height"
-        );
-
-        let _ = std::fs::remove_dir_all(root);
-    }
-
-    #[test]
-    fn step_board_text_rotation_updates_native_board_json_with_wraparound() {
-        let root = std::env::temp_dir().join(format!(
-            "datum-gui-protocol-board-text-rotation-{}",
-            uuid::Uuid::new_v4()
-        ));
-        std::fs::create_dir_all(&root).expect("create temp root");
-        let board_path = root.join("board.json");
-        std::fs::write(
-            &board_path,
-            serde_json::to_string_pretty(&json!({
-                "texts": [{
-                    "uuid": "00000000-0000-0000-0000-000000000001",
-                    "text": "ROT",
-                    "position": { "x": 0, "y": 0 },
-                    "rotation": 0,
-                    "layer": 37
-                }]
-            }))
-            .expect("serialize temp board"),
-        )
-        .expect("write temp board");
-        let backing = WorkspaceBacking {
-            request: LiveReviewRequest {
-                project_root: root.clone(),
-                board_file: None,
-                artifact_path: None,
-                net_uuid: None,
-                from_anchor_pad_uuid: None,
-                to_anchor_pad_uuid: None,
-                profile: None,
-            },
-            board_path: board_path.clone(),
-        };
-
-        let ccw = step_board_text_rotation(
-            &backing,
-            "board-text:00000000-0000-0000-0000-000000000001",
-            BoardTextRotationStep::CounterClockwise90,
-        )
-        .expect("rotate counter-clockwise");
-        assert_eq!(ccw, 270);
-        let cw = step_board_text_rotation(
-            &backing,
-            "board-text:00000000-0000-0000-0000-000000000001",
-            BoardTextRotationStep::Clockwise90,
-        )
-        .expect("rotate clockwise");
-        assert_eq!(cw, 0);
-
-        let board: Value =
-            serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read temp board"))
-                .expect("parse temp board");
-        assert_eq!(
-            board["texts"][0]["rotation"],
-            Value::Number(serde_json::Number::from(0))
-        );
-
-        let _ = std::fs::remove_dir_all(root);
-    }
-
-    #[test]
-    fn explicit_board_text_setters_update_native_board_json() {
-        let root = std::env::temp_dir().join(format!(
-            "datum-gui-protocol-board-text-setters-{}",
-            uuid::Uuid::new_v4()
-        ));
-        std::fs::create_dir_all(&root).expect("create temp root");
-        let board_path = root.join("board.json");
-        std::fs::write(
-            &board_path,
-            serde_json::to_string_pretty(&json!({
-                "texts": [{
-                    "uuid": "00000000-0000-0000-0000-000000000001",
-                    "text": "OLD",
-                    "position": { "x": 0, "y": 0 },
-                    "rotation": 0,
-                    "layer": 37,
-                    "height_nm": 1_000_000,
-                    "stroke_width_nm": 152_000,
-                    "line_spacing_ratio_ppm": 1_000_000
-                }]
-            }))
-            .expect("serialize temp board"),
-        )
-        .expect("write temp board");
-        let backing = WorkspaceBacking {
-            request: LiveReviewRequest {
-                project_root: root.clone(),
-                board_file: None,
-                artifact_path: None,
-                net_uuid: None,
-                from_anchor_pad_uuid: None,
-                to_anchor_pad_uuid: None,
-                profile: None,
-            },
-            board_path: board_path.clone(),
-        };
-        let object_id = "board-text:00000000-0000-0000-0000-000000000001";
-
-        assert_eq!(
-            set_board_text_height(&backing, object_id, 2_000_000).expect("set height"),
-            2_000_000
-        );
-        assert_eq!(
-            set_board_text_rotation(&backing, object_id, -90).expect("set rotation"),
-            270
-        );
-        assert_eq!(
-            set_board_text_line_spacing_ratio(&backing, object_id, 1_250_000)
-                .expect("set line spacing"),
-            1_250_000
-        );
-        assert_eq!(
-            set_board_text_content(&backing, object_id, "NEW TEXT").expect("set content"),
-            "NEW TEXT"
-        );
-
-        let board: Value =
-            serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read temp board"))
-                .expect("parse temp board");
-        let text = &board["texts"][0];
-        assert_eq!(text["text"], Value::String("NEW TEXT".to_string()));
-        assert_eq!(
-            text["height_nm"],
-            Value::Number(serde_json::Number::from(2_000_000))
-        );
-        assert_eq!(
-            text["stroke_width_nm"],
-            Value::Number(serde_json::Number::from(304_000))
-        );
-        assert_eq!(
-            text["rotation"],
-            Value::Number(serde_json::Number::from(270))
-        );
-        assert_eq!(
-            text["line_spacing_ratio_ppm"],
-            Value::Number(serde_json::Number::from(1_250_000))
-        );
-
-        let _ = std::fs::remove_dir_all(root);
-    }
-
-    #[test]
-    fn cycle_board_text_render_intent_updates_native_board_json() {
-        let root = std::env::temp_dir().join(format!(
-            "datum-gui-protocol-board-text-intent-{}",
-            uuid::Uuid::new_v4()
-        ));
-        std::fs::create_dir_all(&root).expect("create temp root");
-        let board_path = root.join("board.json");
-        std::fs::write(
-            &board_path,
-            serde_json::to_string_pretty(&json!({
-                "texts": [{
-                    "uuid": "00000000-0000-0000-0000-000000000001",
-                    "text": "INTENT",
-                    "position": { "x": 0, "y": 0 },
-                    "rotation": 0,
-                    "layer": 37,
-                    "render_intent": "manufacturing",
-                    "family": "inter",
-                    "family_source": "explicit",
-                    "style": "regular"
-                }]
-            }))
-            .expect("serialize temp board"),
-        )
-        .expect("write temp board");
-        let backing = WorkspaceBacking {
-            request: LiveReviewRequest {
-                project_root: root.clone(),
-                board_file: None,
-                artifact_path: None,
-                net_uuid: None,
-                from_anchor_pad_uuid: None,
-                to_anchor_pad_uuid: None,
-                profile: None,
-            },
-            board_path: board_path.clone(),
-        };
-
-        let intent = cycle_board_text_field(
-            &backing,
-            "board-text:00000000-0000-0000-0000-000000000001",
-            BoardTextCycleField::RenderIntent,
-        )
-        .expect("cycle render intent");
-        assert_eq!(intent, "annotation");
-
-        let board: Value =
-            serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read temp board"))
-                .expect("parse temp board");
-        let text = &board["texts"][0];
-        assert_eq!(
-            text["render_intent"],
-            Value::String("annotation".to_string())
-        );
-        assert_eq!(text["family"], Value::String("inter".to_string()));
-        assert_eq!(text["family_source"], Value::String("explicit".to_string()));
-
-        let _ = std::fs::remove_dir_all(root);
-    }
-
-    #[test]
-    fn cycle_board_text_family_updates_native_board_json_as_explicit_choice() {
-        let root = std::env::temp_dir().join(format!(
-            "datum-gui-protocol-board-text-family-{}",
-            uuid::Uuid::new_v4()
-        ));
-        std::fs::create_dir_all(&root).expect("create temp root");
-        let board_path = root.join("board.json");
-        std::fs::write(
-            &board_path,
-            serde_json::to_string_pretty(&json!({
-                "texts": [{
-                    "uuid": "00000000-0000-0000-0000-000000000001",
-                    "text": "FONT",
-                    "position": { "x": 0, "y": 0 },
-                    "rotation": 0,
-                    "layer": 37,
-                    "render_intent": "annotation",
-                    "family": "newstroke",
-                    "family_source": "implicit_default",
-                    "style": "regular"
-                }]
-            }))
-            .expect("serialize temp board"),
-        )
-        .expect("write temp board");
-        let backing = WorkspaceBacking {
-            request: LiveReviewRequest {
-                project_root: root.clone(),
-                board_file: None,
-                artifact_path: None,
-                net_uuid: None,
-                from_anchor_pad_uuid: None,
-                to_anchor_pad_uuid: None,
-                profile: None,
-            },
-            board_path: board_path.clone(),
-        };
-
-        let family = cycle_board_text_field(
-            &backing,
-            "board-text:00000000-0000-0000-0000-000000000001",
-            BoardTextCycleField::Family,
-        )
-        .expect("cycle font family");
-        assert_eq!(family, "inter");
-
-        let board: Value =
-            serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read temp board"))
-                .expect("parse temp board");
-        let text = &board["texts"][0];
-        assert_eq!(text["family"], Value::String("inter".to_string()));
-        assert_eq!(text["family_source"], Value::String("explicit".to_string()));
-        assert_eq!(text["style"], Value::String("regular".to_string()));
-
-        let _ = std::fs::remove_dir_all(root);
-    }
-
-    #[test]
-    fn explicit_board_text_semantic_setters_update_native_board_json() {
-        let root = std::env::temp_dir().join(format!(
-            "datum-gui-protocol-board-text-semantic-setters-{}",
-            uuid::Uuid::new_v4()
-        ));
-        std::fs::create_dir_all(&root).expect("create temp root");
-        let board_path = root.join("board.json");
-        std::fs::write(
-            &board_path,
-            serde_json::to_string_pretty(&json!({
-                "texts": [{
-                    "uuid": "00000000-0000-0000-0000-000000000001",
-                    "text": "SEMANTIC",
-                    "position": { "x": 0, "y": 0 },
-                    "rotation": 0,
-                    "layer": 37,
-                    "render_intent": "manufacturing",
-                    "family": "newstroke",
-                    "family_source": "implicit_default",
-                    "style": "regular",
-                    "h_align": "left",
-                    "v_align": "bottom"
-                }]
-            }))
-            .expect("serialize temp board"),
-        )
-        .expect("write temp board");
-        let backing = WorkspaceBacking {
-            request: LiveReviewRequest {
-                project_root: root.clone(),
-                board_file: None,
-                artifact_path: None,
-                net_uuid: None,
-                from_anchor_pad_uuid: None,
-                to_anchor_pad_uuid: None,
-                profile: None,
-            },
-            board_path: board_path.clone(),
-        };
-        let object_id = "board-text:00000000-0000-0000-0000-000000000001";
-
-        assert_eq!(
-            set_board_text_alignment(&backing, object_id, "right", "top").expect("set alignment"),
-            ("right".to_string(), "top".to_string())
-        );
-        assert_eq!(
-            set_board_text_h_align(&backing, object_id, "center").expect("set h align"),
-            "center"
-        );
-        assert_eq!(
-            set_board_text_v_align(&backing, object_id, "center").expect("set v align"),
-            "center"
-        );
-        assert_eq!(
-            set_board_text_render_intent(&backing, object_id, "branding")
-                .expect("set render intent"),
-            "branding"
-        );
-        assert_eq!(
-            set_board_text_font_family(&backing, object_id, "ibm_plex_sans_condensed")
-                .expect("set font family"),
-            "ibm_plex_sans_condensed"
-        );
-
-        let board: Value =
-            serde_json::from_str(&std::fs::read_to_string(&board_path).expect("read temp board"))
-                .expect("parse temp board");
-        let text = &board["texts"][0];
-        assert_eq!(text["h_align"], Value::String("center".to_string()));
-        assert_eq!(text["v_align"], Value::String("center".to_string()));
-        assert_eq!(text["render_intent"], Value::String("branding".to_string()));
-        assert_eq!(
-            text["family"],
-            Value::String("ibm_plex_sans_condensed".to_string())
-        );
-        assert_eq!(text["family_source"], Value::String("explicit".to_string()));
-        assert_eq!(text["style"], Value::String("regular".to_string()));
-
-        let _ = std::fs::remove_dir_all(root);
-    }
-
-    #[test]
-    fn explicit_board_text_semantic_setters_reject_unknown_values() {
-        let root = std::env::temp_dir().join(format!(
-            "datum-gui-protocol-board-text-semantic-reject-{}",
-            uuid::Uuid::new_v4()
-        ));
-        std::fs::create_dir_all(&root).expect("create temp root");
-        let board_path = root.join("board.json");
-        std::fs::write(
-            &board_path,
-            serde_json::to_string_pretty(&json!({
-                "texts": [{
-                    "uuid": "00000000-0000-0000-0000-000000000001",
-                    "text": "SEMANTIC",
-                    "position": { "x": 0, "y": 0 },
-                    "rotation": 0,
-                    "layer": 37
-                }]
-            }))
-            .expect("serialize temp board"),
-        )
-        .expect("write temp board");
-        let backing = WorkspaceBacking {
-            request: LiveReviewRequest {
-                project_root: root.clone(),
-                board_file: None,
-                artifact_path: None,
-                net_uuid: None,
-                from_anchor_pad_uuid: None,
-                to_anchor_pad_uuid: None,
-                profile: None,
-            },
-            board_path,
-        };
-        let object_id = "board-text:00000000-0000-0000-0000-000000000001";
-
-        assert!(set_board_text_h_align(&backing, object_id, "middle").is_err());
-        assert!(set_board_text_v_align(&backing, object_id, "left").is_err());
-        assert!(set_board_text_render_intent(&backing, object_id, "marketing").is_err());
-        assert!(set_board_text_font_family(&backing, object_id, "papyrus").is_err());
-
-        let _ = std::fs::remove_dir_all(root);
-    }
-
     /// `scene.board_graphics` must default to empty when a saved scene JSON
     /// predates the field — preserves back-compat with the existing checked-in
     /// `board_review_scene_v1.json` fixture.
@@ -7434,6 +7454,43 @@ mod tests {
         assert_eq!(
             state.selection,
             SelectionTarget::AuthoredObject("pad:P1".to_string())
+        );
+    }
+
+    #[test]
+    fn check_finding_selection_preserves_active_review_target() {
+        let mut state = load_fixture_workspace_state();
+        state.checks.findings = vec![CheckFindingSummary {
+            fingerprint: "sha256:finding-a".to_string(),
+            rule_id: "process_aperture_policy".to_string(),
+            ..CheckFindingSummary::default()
+        }];
+        assert!(state.select_check_finding("sha256:finding-a"));
+        assert_eq!(state.active_review_target_id, "action-1");
+        assert_eq!(
+            state.selection,
+            SelectionTarget::CheckFinding("sha256:finding-a".to_string())
+        );
+        assert!(!state.select_check_finding("sha256:missing"));
+    }
+
+    #[test]
+    fn check_finding_target_resolves_scene_object_id() {
+        let state = load_fixture_workspace_state();
+        let pad_id = state.scene.pads[0].object_id.clone();
+        let pad_uuid = state.scene.pads[0].pad_uuid.clone();
+        let finding = CheckFindingSummary {
+            fingerprint: "sha256:finding-a".to_string(),
+            primary_target: json!({
+                "kind": "pad_uuid",
+                "id": pad_uuid
+            }),
+            ..CheckFindingSummary::default()
+        };
+
+        assert_eq!(
+            check_finding_scene_target_object_id(&state.scene, &finding),
+            Some(pad_id)
         );
     }
 

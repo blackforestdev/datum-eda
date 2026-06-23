@@ -21,10 +21,10 @@ The gate is `python3 scripts/check_spec_parity.py`, wired through
 
 | Inventory | Owner Spec | Count | SHA256 |
 |-----------|------------|-------|--------|
-| `mcp_runtime_methods` | `specs/MCP_API_SPEC.md` | 75 | `0658b5fe73c2650a12f8d46d888612e4e495fa2c64516dd6e018767076bf5c7d` |
-| `cli_project_commands` | `specs/PROGRAM_SPEC.md` | 182 | `5825b5ada7e9f028c35eba7480efac8bd1fa748358537cf7b79929ed6a907411` |
+| `mcp_runtime_methods` | `specs/MCP_API_SPEC.md` | 186 | `b7d70db390667030975a34e1a4ff4413bcda26a333ba62d2b0a39f0255098590` |
+| `cli_project_commands` | `specs/PROGRAM_SPEC.md` | 271 | `51c201fe22fafc063ff2a7a46c9b1303e94088608743da9d637d86cf3da54ffe` |
 | `engine_text_modules` | `docs/gui/DATUM_TEXT_ENGINE_PHASE_2_IMPLEMENTATION_PLAN.md` | 11 | `1233903bce862aa7ef22879e67e8cbef3bae2bf5e823bff9e53f39b4735c8059` |
 | `m7_text_visual_fixtures` | `docs/gui/DATUM_TEXT_ENGINE_FIDELITY_FIXTURES.md` | 4 | `7099fa49aca6e9574dc7ea5847914d8c20969222b5f2cf79090016539044e107` |
 | `workspace_crates` | `specs/PROGRESS.md` | 7 | `2ba0685f5e07398f9fa04025c000cf4b453ae21f17e5c769524fe8e23d2a5d69` |
-| `daemon_dispatch_methods` | `specs/PROGRESS.md` | 53 | `8012a535e97f1c634c2ff24d303d9659aa9ee4c2ef7977301d51a462e12c778f` |
-| `engine_api_pub_fns` | `specs/ENGINE_SPEC.md` | 64 | `98e2f42b17e47de83118e2b8f15779d80dd0087d265a74ee49310d15c9093b06` |
+| `daemon_dispatch_methods` | `specs/PROGRESS.md` | 54 | `ba9f30a2b8465dec68897f5a88f31a6c8d2f8406589c99bb5df580cfc8bc0717` |
+| `engine_api_pub_fns` | `specs/ENGINE_SPEC.md` | 65 | `50cb7c23460e05ff971a9c264ab97744203de31e79e2b75473d0bd78b9557a3b` |

@@ -49,30 +49,9 @@ fn board_diagnostics_reports_empty_and_via_only_nets() {
         )]),
         zones: HashMap::new(),
         nets: HashMap::from([
-            (
-                gnd,
-                Net {
-                    uuid: gnd,
-                    name: "GND".into(),
-                    class,
-                },
-            ),
-            (
-                vcc,
-                Net {
-                    uuid: vcc,
-                    name: "VCC".into(),
-                    class,
-                },
-            ),
-            (
-                avcc,
-                Net {
-                    uuid: avcc,
-                    name: "AVCC".into(),
-                    class,
-                },
-            ),
+            (gnd, Net::new(gnd, "GND", class)),
+            (vcc, Net::new(vcc, "VCC", class)),
+            (avcc, Net::new(avcc, "AVCC", class)),
         ]),
         net_classes: HashMap::new(),
         rules: Vec::new(),
@@ -204,14 +183,7 @@ fn board_diagnostics_report_partially_routed_net() {
         )]),
         vias: HashMap::new(),
         zones: HashMap::new(),
-        nets: HashMap::from([(
-            net_uuid,
-            Net {
-                uuid: net_uuid,
-                name: "SIG".into(),
-                class: Uuid::nil(),
-            },
-        )]),
+        nets: HashMap::from([(net_uuid, Net::new(net_uuid, "SIG", Uuid::nil()))]),
         net_classes: HashMap::new(),
         rules: Vec::new(),
         keepouts: Vec::new(),
@@ -261,14 +233,7 @@ fn board_net_info_counts_zones_as_copper_coverage() {
                 thermal_spoke_width: 200_000,
             },
         )]),
-        nets: HashMap::from([(
-            net_uuid,
-            Net {
-                uuid: net_uuid,
-                name: "GND".into(),
-                class: Uuid::new_v4(),
-            },
-        )]),
+        nets: HashMap::from([(net_uuid, Net::new(net_uuid, "GND", Uuid::new_v4()))]),
         net_classes: HashMap::new(),
         rules: Vec::new(),
         keepouts: Vec::new(),
@@ -384,14 +349,7 @@ fn board_unrouted_computes_airwires_from_pad_endpoints() {
         tracks: HashMap::new(),
         vias: HashMap::new(),
         zones: HashMap::new(),
-        nets: HashMap::from([(
-            net_uuid,
-            Net {
-                uuid: net_uuid,
-                name: "SIG".into(),
-                class: Uuid::nil(),
-            },
-        )]),
+        nets: HashMap::from([(net_uuid, Net::new(net_uuid, "SIG", Uuid::nil()))]),
         net_classes: HashMap::new(),
         rules: Vec::new(),
         keepouts: Vec::new(),
@@ -420,18 +378,8 @@ fn board_unrouted_treats_multilayer_pads_as_connected_on_bottom_copper() {
         name: "bottom-copper-complete".into(),
         stackup: Stackup {
             layers: vec![
-                StackupLayer {
-                    id: 0,
-                    name: "F.Cu".into(),
-                    layer_type: StackupLayerType::Copper,
-                    thickness_nm: 35_000,
-                },
-                StackupLayer {
-                    id: 31,
-                    name: "B.Cu".into(),
-                    layer_type: StackupLayerType::Copper,
-                    thickness_nm: 35_000,
-                },
+                StackupLayer::new(0, "F.Cu", StackupLayerType::Copper, 35_000),
+                StackupLayer::new(31, "B.Cu", StackupLayerType::Copper, 35_000),
             ],
         },
         pad_expansion_setup: crate::board::PadExpansionSetup::default(),
@@ -534,14 +482,7 @@ fn board_unrouted_treats_multilayer_pads_as_connected_on_bottom_copper() {
         )]),
         vias: HashMap::new(),
         zones: HashMap::new(),
-        nets: HashMap::from([(
-            net_uuid,
-            Net {
-                uuid: net_uuid,
-                name: "SIG".into(),
-                class: Uuid::nil(),
-            },
-        )]),
+        nets: HashMap::from([(net_uuid, Net::new(net_uuid, "SIG", Uuid::nil()))]),
         net_classes: HashMap::new(),
         rules: Vec::new(),
         keepouts: Vec::new(),
@@ -568,12 +509,12 @@ fn board_unrouted_treats_track_endpoint_inside_rotated_rect_pad_as_connected() {
         uuid: Uuid::new_v4(),
         name: "pad-shape-complete".into(),
         stackup: Stackup {
-            layers: vec![StackupLayer {
-                id: 0,
-                name: "F.Cu".into(),
-                layer_type: StackupLayerType::Copper,
-                thickness_nm: 35_000,
-            }],
+            layers: vec![StackupLayer::new(
+                0,
+                "F.Cu",
+                StackupLayerType::Copper,
+                35_000,
+            )],
         },
         pad_expansion_setup: crate::board::PadExpansionSetup::default(),
         outline: Polygon::new(vec![
@@ -675,14 +616,7 @@ fn board_unrouted_treats_track_endpoint_inside_rotated_rect_pad_as_connected() {
         )]),
         vias: HashMap::new(),
         zones: HashMap::new(),
-        nets: HashMap::from([(
-            net_uuid,
-            Net {
-                uuid: net_uuid,
-                name: "SIG".into(),
-                class: Uuid::nil(),
-            },
-        )]),
+        nets: HashMap::from([(net_uuid, Net::new(net_uuid, "SIG", Uuid::nil()))]),
         net_classes: HashMap::new(),
         rules: Vec::new(),
         keepouts: Vec::new(),

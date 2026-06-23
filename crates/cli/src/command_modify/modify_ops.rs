@@ -1,5 +1,7 @@
 use super::*;
 
+const LEGACY_KICAD_MODIFY_SAVE_RETIRED_MESSAGE: &str = "legacy KiCad modify persistence is retired for production builds; use journaled native Datum project commands instead";
+
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn modify_board(
     path: &Path,
@@ -58,6 +60,9 @@ pub(crate) fn modify_board(
     }
     if save.is_some() && save_original {
         bail!("specify either --save or --save-original, not both");
+    }
+    if (save.is_some() || save_original) && !legacy_kicad_modify_save_allowed() {
+        bail!("{LEGACY_KICAD_MODIFY_SAVE_RETIRED_MESSAGE}");
     }
 
     let mut engine = Engine::new().context("failed to initialize engine")?;
@@ -314,4 +319,8 @@ pub(crate) fn modify_board(
         saved_path,
         applied_scoped_replacement_manifests: Vec::new(),
     })
+}
+
+fn legacy_kicad_modify_save_allowed() -> bool {
+    cfg!(test)
 }

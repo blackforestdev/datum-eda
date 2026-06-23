@@ -1,7 +1,6 @@
 use super::cli_args_board_component::BoardComponentArgs;
 use super::*;
 use clap::ValueEnum;
-
 #[derive(Clone, Copy, Debug, Eq, PartialEq, ValueEnum)]
 #[value(rename_all = "snake_case")]
 pub(crate) enum NativeRoutePathCandidateAuthoredCopperGraphPolicy {
@@ -12,32 +11,49 @@ pub(crate) enum NativeRoutePathCandidateAuthoredCopperGraphPolicy {
     ZoneObstacleTopologyAware,
     ZoneObstacleTopologyLayerBalanceAware,
 }
-
 #[derive(Subcommand)]
 pub(crate) enum NativeProjectQueryCommands {
     /// Aggregated native project summary
     Summary,
     /// Current resolved native project pool refs
     Pools,
+    #[command(name = "pool-library-objects")]
+    PoolLibraryObjects {
+        #[arg(long)]
+        pool: Option<String>,
+        #[arg(long)]
+        kind: Option<String>,
+        #[arg(long = "object")]
+        object: Option<Uuid>,
+        #[arg(long = "include-payload")]
+        include_payload: bool,
+    },
+    /// Resolver-discovered pool model blobs and attachment references
+    #[command(name = "pool-models")]
+    PoolModels {
+        #[arg(long)]
+        pool: Option<String>,
+        #[arg(long)]
+        role: Option<String>,
+        #[arg(long)]
+        sha256: Option<String>,
+    },
     /// Current native design rules payload
     DesignRules,
     /// Current native schematic symbols
     Symbols,
     /// Current fields for one native schematic symbol
     SymbolFields {
-        /// Symbol UUID
         #[arg(long)]
         symbol: Uuid,
     },
     /// Current semantic selection state for one native schematic symbol
     SymbolSemantics {
-        /// Symbol UUID
         #[arg(long)]
         symbol: Uuid,
     },
     /// Current stored pins for one native schematic symbol
     SymbolPins {
-        /// Symbol UUID
         #[arg(long)]
         symbol: Uuid,
     },
@@ -59,6 +75,7 @@ pub(crate) enum NativeProjectQueryCommands {
     BusEntries,
     /// Current native schematic no-connect markers
     Noconnects,
+    Hierarchy,
     /// Current native schematic connectivity nets
     Nets,
     /// Current native schematic connectivity diagnostics
@@ -69,6 +86,29 @@ pub(crate) enum NativeProjectQueryCommands {
     Drc,
     /// Current native combined schematic check report
     Check,
+    /// Resolver-keyed check run envelope over current native checks
+    #[command(name = "check-run")]
+    CheckRun,
+    /// Resolver-discovered generated artifact metadata manifests
+    Artifacts,
+    /// Resolver-discovered authored output jobs
+    #[command(name = "output-jobs")]
+    OutputJobs,
+    /// Resolver-discovered authored manufacturing plans
+    #[command(name = "manufacturing-plans")]
+    ManufacturingPlans,
+    /// Resolver-discovered authored panel projections
+    #[command(name = "panel-projections")]
+    PanelProjections,
+    Relationships,
+    #[command(name = "component-instances")]
+    ComponentInstances,
+    Variants,
+    /// Resolver-discovered import-key identity sidecar entries
+    #[command(name = "import-map")]
+    ImportMap,
+    /// Resolver-discovered proposal sidecars
+    Proposals,
     /// Current native board text objects
     BoardTexts,
     /// Current native board keepouts
@@ -80,6 +120,26 @@ pub(crate) enum NativeProjectQueryCommands {
     /// Deterministic routing-kernel substrate from persisted native board state
     #[command(name = "routing-substrate")]
     RoutingSubstrate,
+    /// Debug view of the engine-owned ProjectResolver substrate composition
+    #[command(name = "resolve-debug")]
+    ResolveDebug {
+        /// Optional in-memory OperationBatch JSON proof; does not write project shards
+        #[arg(long = "commit-batch")]
+        commit_batch: Option<PathBuf>,
+        /// Persist the OperationBatch transaction journal; project shards are not written yet
+        #[arg(long = "apply", requires = "commit_batch")]
+        apply: bool,
+    },
+    /// Current transaction journal summary from the resolved native project
+    #[command(name = "journal-list")]
+    JournalList,
+    /// Full transaction journal record by transaction UUID
+    #[command(name = "journal-show")]
+    JournalShow {
+        /// Transaction UUID
+        #[arg(long = "transaction")]
+        transaction: Uuid,
+    },
     /// Deterministic single-net routing preflight from persisted native board state
     #[command(name = "route-preflight")]
     RoutePreflight {
@@ -541,6 +601,9 @@ pub(crate) enum NativeProjectQueryCommands {
     BoardVias,
     /// Current native board zones
     BoardZones,
+    /// Current resolver-derived native board zone-fill state
+    #[command(name = "zone-fills")]
+    ZoneFills,
     /// Current native board connectivity diagnostics
     BoardDiagnostics,
     /// Current native board unrouted airwires

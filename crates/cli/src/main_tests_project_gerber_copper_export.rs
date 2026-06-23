@@ -189,10 +189,34 @@ fn project_export_gerber_copper_layer_writes_rs274x_track_file() {
     assert_eq!(report["layer"], 1);
     assert_eq!(report["pad_count"], 4);
     assert_eq!(report["track_count"], 2);
-    assert_eq!(report["zone_count"], 1);
+    assert_eq!(report["zone_count"], 0);
+    assert_eq!(report["unfilled_zone_count"], 1);
+    assert_eq!(report["unfilled_zone_ids"][0], zone_uuid.to_string());
     assert_eq!(report["via_count"], 1);
+    assert_eq!(
+        report["production_projection"]["projection_kind"],
+        "gerber_copper_layer"
+    );
+    assert_eq!(
+        report["production_projection"]["projection_contract"],
+        "datum.production_projection.gerber_copper_layer.v1"
+    );
+    assert!(
+        report["production_projection"]["model_revision"]
+            .as_str()
+            .is_some_and(|revision| revision.len() >= 64)
+    );
+    assert!(
+        report["production_projection"]["sha256"]
+            .as_str()
+            .is_some_and(|hash| hash.starts_with("sha256:"))
+    );
 
     let gerber = std::fs::read_to_string(&gerber_path).expect("gerber should read");
+    assert_eq!(
+        report["production_projection"]["byte_count"],
+        serde_json::json!(gerber.len())
+    );
     assert!(gerber.contains("%ADD10C,0.200000*%"));
     assert!(gerber.contains("%ADD11C,0.300000*%"));
     assert!(gerber.contains("%ADD12C,0.450000*%"));
@@ -206,8 +230,8 @@ fn project_export_gerber_copper_layer_writes_rs274x_track_file() {
     assert!(gerber.contains("X1000000Y0D01*"));
     assert!(gerber.contains("X0Y500000D02*"));
     assert!(gerber.contains("X1000000Y500000D01*"));
-    assert!(gerber.contains("G36*"));
-    assert!(gerber.contains("G37*"));
+    assert!(!gerber.contains("G36*"));
+    assert!(!gerber.contains("G37*"));
     assert!(gerber.contains("D12*"));
     assert!(gerber.contains("X750000Y250000D03*"));
     assert!(gerber.contains("D14*"));
@@ -219,10 +243,382 @@ fn project_export_gerber_copper_layer_writes_rs274x_track_file() {
     assert!(gerber.contains("D16*"));
     assert!(gerber.contains("X2250000Y250000D03*"));
     assert!(!gerber.contains("X2750000Y250000D03*"));
-    assert!(gerber.contains("X0Y1000000D02*"));
-    assert!(gerber.contains("X1000000Y1000000D01*"));
-    assert!(gerber.contains("X1000000Y1500000D01*"));
+    assert!(!gerber.contains("X0Y1000000D02*"));
+    assert!(!gerber.contains("X1000000Y1000000D01*"));
+    assert!(!gerber.contains("X1000000Y1500000D01*"));
     assert!(gerber.ends_with("M02*\n"));
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_export_gerber_copper_layer_renders_safe_filled_zone_island() {
+    let root = unique_project_root("datum-eda-cli-project-gerber-copper-zone-fill-export");
+    create_native_project(&root, Some("Gerber Copper Zone Fill Demo".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let net_uuid = Uuid::new_v4();
+    let class_uuid = Uuid::new_v4();
+    let zone_uuid = Uuid::new_v4();
+    let board_json = root.join("board/board.json");
+    std::fs::write(
+        &board_json,
+        format!(
+            "{}\n",
+            to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "uuid": Uuid::new_v4(),
+                "name": "Gerber Copper Zone Fill Demo Board",
+                "stackup": { "layers": [] },
+                "outline": { "vertices": [], "closed": true },
+                "packages": {},
+                "pads": {},
+                "tracks": {},
+                "vias": {},
+                "zones": {
+                    zone_uuid.to_string(): {
+                        "uuid": zone_uuid,
+                        "net": net_uuid,
+                        "polygon": {
+                            "vertices": [
+                                { "x": 0, "y": 0 },
+                                { "x": 1000000, "y": 0 },
+                                { "x": 1000000, "y": 1000000 },
+                                { "x": 0, "y": 1000000 }
+                            ],
+                            "closed": true
+                        },
+                        "layer": 1,
+                        "priority": 1,
+                        "thermal_relief": false,
+                        "thermal_gap": 0,
+                        "thermal_spoke_width": 0
+                    }
+                },
+                "nets": {
+                    net_uuid.to_string(): {
+                        "uuid": net_uuid,
+                        "name": "GND",
+                        "class": class_uuid
+                    }
+                },
+                "net_classes": {
+                    class_uuid.to_string(): {
+                        "uuid": class_uuid,
+                        "name": "Default",
+                        "clearance": 150000,
+                        "track_width": 200000,
+                        "via_drill": 300000,
+                        "via_diameter": 600000,
+                        "diffpair_width": 0,
+                        "diffpair_gap": 0
+                    }
+                },
+                "rules": [],
+                "keepouts": [],
+                "dimensions": [],
+                "texts": []
+            }))
+            .expect("canonical serialization should succeed")
+        ),
+    )
+    .expect("board file should write");
+
+    let fill_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "check",
+            "fill-zones",
+            root.to_str().unwrap(),
+            "--zone",
+            zone_uuid.to_string().as_str(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("fill-zones should succeed");
+    let fill_report: serde_json::Value =
+        serde_json::from_str(&fill_output).expect("fill report JSON");
+    assert_eq!(fill_report["zone_fills"][0]["state"], "filled");
+
+    let gerber_path = root.join("top-copper-filled-zone.gbr");
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "export-gerber-copper-layer",
+            root.to_str().unwrap(),
+            "--layer",
+            "1",
+            "--out",
+            gerber_path.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("gerber copper export should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
+    assert_eq!(report["zone_count"], 1);
+    assert_eq!(report["unfilled_zone_count"], 0);
+    let gerber = std::fs::read_to_string(&gerber_path).expect("gerber should read");
+    assert!(gerber.contains("G36*"));
+    assert!(gerber.contains("G37*"));
+    assert!(gerber.contains("X0Y0D02*"));
+    assert!(gerber.contains("X1000000Y0D01*"));
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_export_gerber_copper_layer_renders_bounded_foreign_pad_cutout_islands() {
+    let root = unique_project_root("datum-eda-cli-project-gerber-copper-zone-cutout-export");
+    create_native_project(&root, Some("Gerber Copper Zone Cutout Demo".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let zone_net_uuid = Uuid::new_v4();
+    let foreign_net_uuid = Uuid::new_v4();
+    let class_uuid = Uuid::new_v4();
+    let zone_uuid = Uuid::new_v4();
+    let pad_uuid = Uuid::new_v4();
+    let board_json = root.join("board/board.json");
+    std::fs::write(
+        &board_json,
+        format!(
+            "{}\n",
+            to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "uuid": Uuid::new_v4(),
+                "name": "Gerber Copper Zone Cutout Demo Board",
+                "stackup": { "layers": [] },
+                "outline": { "vertices": [], "closed": true },
+                "packages": {},
+                "pads": {
+                    pad_uuid.to_string(): {
+                        "uuid": pad_uuid,
+                        "package": Uuid::new_v4(),
+                        "name": "1",
+                        "net": foreign_net_uuid,
+                        "position": { "x": 500000, "y": 500000 },
+                        "layer": 1,
+                        "shape": "rect",
+                        "diameter": 0,
+                        "width": 100000,
+                        "height": 100000
+                    }
+                },
+                "tracks": {},
+                "vias": {},
+                "zones": {
+                    zone_uuid.to_string(): {
+                        "uuid": zone_uuid,
+                        "net": zone_net_uuid,
+                        "polygon": {
+                            "vertices": [
+                                { "x": 0, "y": 0 },
+                                { "x": 1000000, "y": 0 },
+                                { "x": 1000000, "y": 1000000 },
+                                { "x": 0, "y": 1000000 }
+                            ],
+                            "closed": true
+                        },
+                        "layer": 1,
+                        "priority": 1,
+                        "thermal_relief": false,
+                        "thermal_gap": 0,
+                        "thermal_spoke_width": 0
+                    }
+                },
+                "nets": {
+                    zone_net_uuid.to_string(): {
+                        "uuid": zone_net_uuid,
+                        "name": "GND",
+                        "class": class_uuid
+                    },
+                    foreign_net_uuid.to_string(): {
+                        "uuid": foreign_net_uuid,
+                        "name": "VCC",
+                        "class": class_uuid
+                    }
+                },
+                "net_classes": {
+                    class_uuid.to_string(): {
+                        "uuid": class_uuid,
+                        "name": "Default",
+                        "clearance": 150000,
+                        "track_width": 200000,
+                        "via_drill": 300000,
+                        "via_diameter": 600000,
+                        "diffpair_width": 0,
+                        "diffpair_gap": 0
+                    }
+                },
+                "rules": [],
+                "keepouts": [],
+                "dimensions": [],
+                "texts": []
+            }))
+            .expect("canonical serialization should succeed")
+        ),
+    )
+    .expect("board file should write");
+
+    let fill_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "check",
+            "fill-zones",
+            root.to_str().unwrap(),
+            "--zone",
+            zone_uuid.to_string().as_str(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("fill-zones should succeed");
+    let fill_report: serde_json::Value =
+        serde_json::from_str(&fill_output).expect("fill report JSON");
+    assert_eq!(fill_report["zone_fills"][0]["state"], "filled");
+    assert_eq!(
+        fill_report["zone_fills"][0]["islands"]
+            .as_array()
+            .unwrap()
+            .len(),
+        4
+    );
+
+    let gerber_path = root.join("top-copper-filled-zone-cutout.gbr");
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "export-gerber-copper-layer",
+            root.to_str().unwrap(),
+            "--layer",
+            "1",
+            "--out",
+            gerber_path.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("gerber copper export should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
+    assert_eq!(report["zone_count"], 4);
+    assert_eq!(report["unfilled_zone_count"], 0);
+    let gerber = std::fs::read_to_string(&gerber_path).expect("gerber should read");
+    assert_eq!(gerber.matches("G36*").count(), 4);
+    assert_eq!(gerber.matches("G37*").count(), 4);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_export_gerber_copper_layer_uses_resolver_materialized_board_state() {
+    let root = unique_project_root("datum-eda-cli-project-gerber-copper-resolved-export");
+    create_native_project(
+        &root,
+        Some("Gerber Copper Resolved Export Demo".to_string()),
+    )
+    .expect("initial scaffold should succeed");
+    let board_json = root.join("board/board.json");
+    let stale_board = std::fs::read_to_string(&board_json).expect("board file should read");
+
+    let class_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "place-board-net-class",
+        root.to_str().unwrap(),
+        "--name",
+        "Default",
+        "--clearance-nm",
+        "150000",
+        "--track-width-nm",
+        "200000",
+        "--via-drill-nm",
+        "300000",
+        "--via-diameter-nm",
+        "600000",
+    ])
+    .expect("CLI should parse");
+    let class_output = execute(class_cli).expect("place board net class should succeed");
+    let class_report: serde_json::Value =
+        serde_json::from_str(&class_output).expect("class output should parse");
+
+    let net_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "place-board-net",
+        root.to_str().unwrap(),
+        "--name",
+        "GND",
+        "--class",
+        class_report["net_class_uuid"].as_str().unwrap(),
+    ])
+    .expect("CLI should parse");
+    let net_output = execute(net_cli).expect("place board net should succeed");
+    let net_report: serde_json::Value =
+        serde_json::from_str(&net_output).expect("net output should parse");
+
+    let draw_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "draw-board-track",
+        root.to_str().unwrap(),
+        "--net",
+        net_report["net_uuid"].as_str().unwrap(),
+        "--from-x-nm",
+        "100000",
+        "--from-y-nm",
+        "200000",
+        "--to-x-nm",
+        "900000",
+        "--to-y-nm",
+        "200000",
+        "--width-nm",
+        "250000",
+        "--layer",
+        "1",
+    ])
+    .expect("CLI should parse");
+    let _ = execute(draw_cli).expect("draw board track should succeed");
+    std::fs::write(&board_json, stale_board).expect("stale board file should restore");
+
+    let gerber_path = root.join("top-copper-resolved.gbr");
+    let cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "export-gerber-copper-layer",
+        root.to_str().unwrap(),
+        "--layer",
+        "1",
+        "--out",
+        gerber_path.to_str().unwrap(),
+    ])
+    .expect("CLI should parse");
+    let output = execute(cli).expect("gerber copper export should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
+    assert_eq!(report["track_count"], 1);
+    assert_eq!(report["pad_count"], 0);
+    assert_eq!(report["via_count"], 0);
+    assert_eq!(report["zone_count"], 0);
+    assert_eq!(report["unfilled_zone_count"], 0);
+
+    let gerber = std::fs::read_to_string(&gerber_path).expect("gerber should read");
+    assert!(gerber.contains("%ADD10C,0.250000*%"));
+    assert!(gerber.contains("X100000Y200000D02*"));
+    assert!(gerber.contains("X900000Y200000D01*"));
 
     let _ = std::fs::remove_dir_all(&root);
 }

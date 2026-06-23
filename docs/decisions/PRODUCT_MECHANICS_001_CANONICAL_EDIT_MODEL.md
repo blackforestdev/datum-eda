@@ -326,20 +326,23 @@ paths. A direct file edit, importer repair, CLI helper, or GUI utility that
 changes a shard without producing a transaction is outside the canonical model
 and is a bug or a time-boxed migration exception, never a sanctioned shortcut.
 
-### A concrete bypass to retire, not bless
+### Retired bypasses stay retired
 
-Such a bypass exists today. The board-text editing helpers in the GUI substrate
-(`crates/gui-protocol/src/board_text_mutations.rs`) read the board document via
-`board_path`, mutate the parsed JSON in place, and write it back with
-`write_json_file` — with no operation, no transaction, and no undo. (Verified:
-each helper, e.g. `toggle_board_text_boolean_field` and
-`set_board_text_height`, follows the same read-mutate-`write_json_file` shape
-against `backing.board_path`.)
-This is a migration exception to be retired, not a model loophole. Each such
-helper must instead construct its typed operation and commit it, so the edit
-gains durable undo, a machine-readable diff, and provenance, and so the GUI
-persists through the same atomic, journaled core as the CLI, MCP, importers, and
-agents.
+The former board-text editing helpers in the GUI substrate
+(`crates/gui-protocol/src/board_text_mutations.rs`) were a concrete violation
+of this rule: they read the board document via `board_path`, mutated parsed JSON
+in place, and wrote it back with `write_json_file` with no operation, no
+transaction, and no undo. That helper module has been removed. Selected
+board-text GUI edits now prefill the project PTY with journaled
+`datum-eda project edit-board-text "$DATUM_PROJECT_ROOT" --text <uuid> ...`
+commands, and the drift gate fails if `gui-app` reintroduces those retired
+private writer helper names.
+
+This is the governance pattern for every similar exception: either migrate it
+to a typed operation and commit it, or delete the shortcut. A retired bypass
+must not remain as a dormant public helper because that preserves a side door
+around durable undo, machine-readable diffs, provenance, and the shared
+atomic/journaled core used by CLI, MCP, GUI, importers, and agents.
 
 ### The format-duality landmine (an ordering decision, not a free fold-in)
 

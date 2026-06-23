@@ -138,3 +138,61 @@ fn project_plan_gerber_export_reports_deterministic_artifact_set() {
 
     let _ = std::fs::remove_dir_all(&root);
 }
+
+#[test]
+fn project_plan_gerber_export_uses_resolver_materialized_board_state() {
+    let root = unique_project_root("datum-eda-cli-project-gerber-plan-resolved");
+    create_native_project(&root, Some("Gerber Plan Resolved Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    let board_json = root.join("board/board.json");
+    let stale_board = std::fs::read_to_string(&board_json).expect("board file should read");
+
+    let set_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "set-board-stackup",
+        root.to_str().unwrap(),
+        "--layer",
+        "1:Top Copper:Copper:35000",
+        "--layer",
+        "3:Top Silk:Silkscreen:10000",
+        "--layer",
+        "41:Mechanical 1:Mechanical:0",
+    ])
+    .expect("CLI should parse");
+    let _ = execute(set_cli).expect("set board stackup should succeed");
+    std::fs::write(&board_json, stale_board).expect("stale board file should restore");
+
+    let cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "plan-gerber-export",
+        root.to_str().unwrap(),
+        "--prefix",
+        "Resolved",
+    ])
+    .expect("CLI should parse");
+    let output = execute(cli).expect("gerber plan should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
+    assert_eq!(report["copper_layers"], 1);
+    assert_eq!(report["silkscreen_layers"], 1);
+    assert_eq!(report["mechanical_layers"], 1);
+
+    let artifacts = report["artifacts"].as_array().expect("artifacts array");
+    assert_eq!(artifacts.len(), 4);
+    assert_eq!(
+        artifacts[1]["filename"],
+        "resolved-l1-top-copper-copper.gbr"
+    );
+    assert_eq!(artifacts[2]["filename"], "resolved-l3-top-silk-silk.gbr");
+    assert_eq!(
+        artifacts[3]["filename"],
+        "resolved-l41-mechanical-1-mech.gbr"
+    );
+
+    let _ = std::fs::remove_dir_all(&root);
+}

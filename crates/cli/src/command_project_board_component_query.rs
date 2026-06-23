@@ -9,13 +9,13 @@ use uuid::Uuid;
 use super::{
     LoadedNativeProject, NativeProjectBoardComponentModels3dView,
     NativeProjectBoardComponentPadsView, NativeProjectBoardComponentQueryPointView,
-    NativeProjectBoardComponentQueryView, load_native_project,
+    NativeProjectBoardComponentQueryView, load_native_project_with_resolved_board,
 };
 
 pub(crate) fn query_native_project_board_component_views(
     root: &Path,
 ) -> Result<Vec<NativeProjectBoardComponentQueryView>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let mut components = project
         .board
         .packages
@@ -35,7 +35,7 @@ pub(crate) fn query_native_project_board_component_views(
 }
 
 pub(crate) fn query_native_project_board_components(root: &Path) -> Result<Vec<PlacedPackage>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let mut components = project
         .board
         .packages
@@ -54,7 +54,7 @@ pub(crate) fn query_native_project_board_component_view(
     root: &Path,
     component_uuid: Uuid,
 ) -> Result<NativeProjectBoardComponentQueryView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let key = component_uuid.to_string();
     let component = project
         .board
@@ -74,7 +74,7 @@ pub(crate) fn query_native_project_board_component_models_3d(
     root: &Path,
     component_uuid: Uuid,
 ) -> Result<NativeProjectBoardComponentModels3dView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let key = component_uuid.to_string();
     let models = project
         .board
@@ -93,7 +93,7 @@ pub(crate) fn query_native_project_board_component_pads(
     root: &Path,
     component_uuid: Uuid,
 ) -> Result<NativeProjectBoardComponentPadsView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let key = component_uuid.to_string();
     let pads = project
         .board
@@ -112,7 +112,7 @@ pub(crate) fn query_native_project_board_component_silkscreen(
     root: &Path,
     component_uuid: Uuid,
 ) -> Result<NativeProjectBoardComponentSilkscreenView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let key = component_uuid.to_string();
     let texts = project
         .board
@@ -171,7 +171,7 @@ pub(crate) fn query_native_project_board_component_mechanical(
     root: &Path,
     component_uuid: Uuid,
 ) -> Result<NativeProjectBoardComponentMechanicalView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let key = component_uuid.to_string();
     let texts = project
         .board

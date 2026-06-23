@@ -315,9 +315,13 @@ Standards checks must emit the shared checking contract from
 - each diagnostic is a `CheckFinding`
 - `CheckFinding.domain` is normally `Standards`, `Manufacturing`, or
   `Relationships`
-- fingerprints include `model_revision`, rule revision, normalized targets,
-  observed values, and Import Map `import_key` where imported identity
-  participates
+- fingerprints include rule revision, normalized targets, observed values, and
+  Import Map `import_key` where imported identity participates; `CheckRun` and
+  waiver/deviation records carry the explicit revision scope
+- standards-aware runs must include `CheckRun.profile_basis` and coverage
+  entries that identify the selected standards/process basis and distinguish
+  evaluated rule families from filtered, not-applicable, and not-yet-implemented
+  families
 - waiver and deviation application must be visible in the finding status
 - repair must be proposal-first and must not mutate source geometry or metadata
   during checking

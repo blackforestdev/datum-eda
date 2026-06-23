@@ -40,6 +40,12 @@ Import/export are interoperability infrastructure. They help users migrate
 projects, inspect existing work, and exchange artifacts with other tools. They
 must not define the product identity.
 
+The sole active development focus is native authoring: drawing a schematic,
+laying out a PCB, and generating CAM output — natively, with full AI
+augmentation. KiCad import is frozen; the M7 spike already imports a board with
+enough fidelity to recognize all design aspects, which is sufficient for now.
+See "Interop Boundary And Import Posture" for the full posture.
+
 ## Manual-First Rule
 
 Datum must be fully usable without AI.
@@ -436,22 +442,42 @@ Required rule:
 > Panelization must not mutate source board geometry unless the user
 > explicitly requests a board-level change.
 
-## Interop Boundary
+## Interop Boundary And Import Posture
 
-Importers must preserve source truth and provenance. They should not silently
-heal, rewrite, or reinterpret imported data as if it were native authored
-truth.
+Datum EDA is an AI-augmented native EDA design tool. Its job is to draw a
+schematic, lay out a PCB, and generate CAM output — natively, with full AI
+augmentation. It is not a KiCad import viewer. The old development spec drifted
+into treating KiCad import as the primary goal; that drift turned Datum into an
+import viewer and is the root cause this product-mechanics correction exists to
+undo.
 
-Import should serve:
-- migration
-- fixture coverage
-- compatibility
-- reverse engineering
-- comparison and validation
+Import is frozen. The M7 spike already imports a KiCad PCB with enough fidelity
+to recognize all aspects of a board design; that is sufficient. No further
+import work happens until native authoring (schematic -> PCB -> CAM) is real and
+capable.
 
-Import should not become the center of the roadmap unless the work directly
-supports native Datum authoring, migration quality, or professional exchange
-requirements.
+Native is the only authority. The native model and native file format are
+always the source of truth. Import is a one-time converter: a KiCad file becomes
+native data, and once conversion completes the result is just a native board.
+There is no "imported board" state — origin is retained only as provenance
+metadata. Export (native -> KiCad) is a separate, optional, deferred converter.
+
+Import fidelity does not gate native maturity. Native readiness is judged solely
+by native capability: whether a user and an AI can author, edit, check, and
+output a schematic and board. The KiCad importer's quality is never a gate or
+milestone for the native interface or the native file format.
+
+Import still must not fabricate. Conversion preserves provenance and must not
+silently heal, infer, or invent data the source did not contain; genuine gaps
+(such as missing electrical intent on a recovered board) are marked with
+explicit relationship states such as `ReverseEngineered` or `BoardOnly`, not
+filled in silently.
+
+Resource directive. All development focus goes to native schematic + PCB + CAM
+authoring with AI augmentation. Anything framed around import-as-a-primary-goal,
+"imported vs native" authority, dual-write, or authority-flip is drift from the
+old spec and is removed. This supersedes the earlier "authority flip after M7 +
+dual-write window" framing in the 000-series decisions.
 
 ## Code-Agent Guidance
 

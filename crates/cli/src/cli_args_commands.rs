@@ -1,7 +1,9 @@
+use std::ffi::OsString;
+
 use super::*;
 
 #[derive(Parser)]
-#[command(name = "eda", about = "PCB design analysis and automation")]
+#[command(name = "datum-eda", about = "PCB design analysis and automation")]
 pub(crate) struct Cli {
     #[command(subcommand)]
     pub(crate) command: Commands,
@@ -14,18 +16,20 @@ pub(crate) struct Cli {
 #[derive(Subcommand)]
 #[allow(clippy::large_enum_variant)]
 pub(crate) enum Commands {
+    /// Inspect Datum session/context discovery state
+    Context {
+        #[command(subcommand)]
+        action: ContextCommands,
+    },
     /// Import a KiCad or Eagle design
     Import {
         /// Path to design file (.kicad_pcb, .brd, .lbr)
         path: PathBuf,
     },
-    /// Query design data
+    /// Query resolver-backed native project data
     Query {
-        /// Path to design file
-        path: PathBuf,
-        /// What to query
         #[command(subcommand)]
-        what: QueryCommands,
+        action: QueryCommands,
     },
     /// Run design rule checks
     Drc {
@@ -37,19 +41,30 @@ pub(crate) enum Commands {
         /// Path to schematic file (.kicad_sch in current M1 slice)
         path: PathBuf,
     },
-    /// Run the current unified check surface for an imported design
+    /// Run check, waiver, deviation, and standards-repair workflows
     Check {
-        /// Path to design file
-        path: PathBuf,
-
-        /// Exit nonzero if the check report status meets or exceeds this level
-        #[arg(long, value_enum)]
-        fail_on: Option<FailOn>,
+        #[command(subcommand)]
+        action: CheckCommands,
     },
     /// Search the component pool
     Pool {
         #[command(subcommand)]
         action: PoolCommands,
+    },
+    /// Review and apply persisted native project proposals
+    Proposal {
+        #[command(subcommand)]
+        action: ProposalCommands,
+    },
+    /// Inspect and move the native project journal cursor
+    Journal {
+        #[command(subcommand)]
+        action: JournalCommands,
+    },
+    /// Generate, inspect, and validate production artifacts
+    Artifact {
+        #[command(subcommand)]
+        action: ArtifactCommands,
     },
     /// Create and manage native projects
     Project {
@@ -162,6 +177,74 @@ pub(crate) enum Commands {
 
 #[derive(Subcommand)]
 pub(crate) enum QueryCommands {
+    /// Aggregated native project summary
+    Summary(QueryPathArgs),
+    /// Resolver-derived native project relationships
+    Relationships(QueryPathArgs),
+    /// Resolver-derived native project variants
+    Variants(QueryPathArgs),
+    /// Resolver-validated import-key identity sidecars
+    ImportMap(QueryPathArgs),
+    /// Resolver-derived native project component instances
+    ComponentInstances(QueryPathArgs),
+    /// Native schematic sheet index
+    Sheets(QueryPathArgs),
+    /// Native schematic symbols
+    Symbols(QueryPathArgs),
+    /// Native schematic labels
+    Labels(QueryPathArgs),
+    /// Native schematic hierarchical ports
+    Ports(QueryPathArgs),
+    /// Native schematic buses
+    Buses(QueryPathArgs),
+    /// Native schematic bus entries
+    #[command(name = "bus-entries")]
+    BusEntries(QueryPathArgs),
+    /// Native schematic no-connect markers
+    Noconnects(QueryPathArgs),
+    /// Native schematic hierarchy links
+    Hierarchy(QueryPathArgs),
+    /// Native schematic connectivity nets
+    #[command(name = "schematic-nets")]
+    SchematicNets(QueryPathArgs),
+    /// Native schematic connectivity diagnostics
+    #[command(name = "connectivity-diagnostics")]
+    ConnectivityDiagnostics(QueryPathArgs),
+    /// Resolver-derived native project zone-fill state
+    ZoneFills(QueryPathArgs),
+    /// Resolver-discovered authored panel projections
+    PanelProjections(QueryPathArgs),
+    /// Resolver-discovered authored manufacturing plans
+    ManufacturingPlans(QueryPathArgs),
+    /// Resolver-discovered authored output jobs
+    OutputJobs(QueryPathArgs),
+    /// Legacy imported-design query compatibility
+    Imported {
+        /// Path to design file
+        path: PathBuf,
+        /// What to query
+        #[command(subcommand)]
+        what: ImportedQueryCommands,
+    },
+    /// Legacy `query <path> <what>` imported-design compatibility
+    #[command(external_subcommand)]
+    LegacyImported(Vec<OsString>),
+}
+
+#[derive(clap::Args)]
+pub(crate) struct QueryPathArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+}
+
+#[derive(Parser)]
+pub(crate) struct ImportedQueryCommandParser {
+    #[command(subcommand)]
+    pub(crate) what: ImportedQueryCommands,
+}
+
+#[derive(Subcommand)]
+pub(crate) enum ImportedQueryCommands {
     /// Board summary (dimensions, counts)
     Summary,
     /// List the canonical netlist view

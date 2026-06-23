@@ -19,6 +19,23 @@ fn board_keepout_query_cli(root: &Path) -> Cli {
     .expect("CLI should parse")
 }
 
+fn journal_list(root: &Path) -> serde_json::Value {
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "journal-list",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("journal-list should succeed");
+    serde_json::from_str(&output).expect("journal-list JSON should parse")
+}
+
 #[test]
 fn project_board_keepout_mutations_round_trip_through_native_query() {
     let root = unique_project_root("datum-eda-cli-project-board-keepout");
@@ -64,6 +81,8 @@ fn project_board_keepout_mutations_round_trip_through_native_query() {
     assert_eq!(keepouts[0].layers, vec![1, 16]);
     assert_eq!(keepouts[0].polygon.vertices.len(), 4);
     assert!(keepouts[0].polygon.closed);
+    let journal = journal_list(&root);
+    assert_eq!(journal["transactions"][0]["reason"], "place board keepout");
 
     let edit_cli = Cli::try_parse_from([
         "eda",
@@ -99,6 +118,8 @@ fn project_board_keepout_mutations_round_trip_through_native_query() {
     assert_eq!(keepouts[0].layers, vec![2]);
     assert_eq!(keepouts[0].polygon.vertices[0].x, 10);
     assert_eq!(keepouts[0].polygon.vertices[0].y, 10);
+    let journal = journal_list(&root);
+    assert_eq!(journal["transactions"][1]["reason"], "edit board keepout");
 
     let delete_cli = Cli::try_parse_from([
         "eda",
@@ -117,6 +138,9 @@ fn project_board_keepout_mutations_round_trip_through_native_query() {
     let keepouts: Vec<Keepout> =
         serde_json::from_str(&keepouts_output).expect("query output should parse");
     assert!(keepouts.is_empty());
+    let journal = journal_list(&root);
+    assert_eq!(journal["count"], 3);
+    assert_eq!(journal["transactions"][2]["reason"], "delete board keepout");
 
     let summary_cli =
         Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])

@@ -1,3 +1,4 @@
+use super::main_tests_project_journal_support::assert_journal_transaction;
 use super::*;
 use eda_engine::ir::serialization::to_json_deterministic;
 
@@ -106,12 +107,26 @@ fn project_draw_and_delete_wire_update_native_query_surface() {
     assert_eq!(wires[0]["from"]["y"], 20);
     assert_eq!(wires[0]["to"]["x"], 30);
     assert_eq!(wires[0]["to"]["y"], 40);
+    assert_journal_transaction(&root, "draw schematic wire", 1);
 
     let summary_cli =
         Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
             .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("project query summary should succeed");
     assert!(summary_output.contains("schematic_wires: 1"));
+    let sheet_path = PathBuf::from(drawn["sheet_path"].as_str().unwrap());
+    let mut stale_sheet: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&sheet_path).expect("sheet should read"))
+            .expect("sheet should parse");
+    stale_sheet["wires"] = serde_json::json!({});
+    std::fs::write(
+        &sheet_path,
+        format!(
+            "{}\n",
+            to_json_deterministic(&stale_sheet).expect("sheet should serialize")
+        ),
+    )
+    .expect("stale sheet should write");
 
     let delete_cli = Cli::try_parse_from([
         "eda",

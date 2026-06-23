@@ -34,6 +34,23 @@ fn board_net_class_query_cli(root: &Path, net_class_uuid: Uuid) -> Cli {
     .expect("CLI should parse")
 }
 
+fn journal_list(root: &Path) -> serde_json::Value {
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "journal-list",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("journal-list should succeed");
+    serde_json::from_str(&output).expect("journal-list JSON should parse")
+}
+
 #[test]
 fn project_board_net_class_mutations_round_trip_through_native_query() {
     let root = unique_project_root("datum-eda-cli-project-board-net-class");
@@ -78,6 +95,11 @@ fn project_board_net_class_mutations_round_trip_through_native_query() {
     assert_eq!(classes[0].name, "Default");
     assert_eq!(classes[0].clearance, 150000);
     assert_eq!(classes[0].diffpair_gap, 170000);
+    let journal = journal_list(&root);
+    assert_eq!(
+        journal["transactions"][0]["reason"],
+        "place board net class"
+    );
 
     let edit_cli = Cli::try_parse_from([
         "eda",
@@ -106,6 +128,8 @@ fn project_board_net_class_mutations_round_trip_through_native_query() {
     assert_eq!(classes[0].name, "HighSpeed");
     assert_eq!(classes[0].track_width, 250000);
     assert_eq!(classes[0].diffpair_gap, 190000);
+    let journal = journal_list(&root);
+    assert_eq!(journal["transactions"][1]["reason"], "edit board net class");
 
     let delete_cli = Cli::try_parse_from([
         "eda",
@@ -124,6 +148,12 @@ fn project_board_net_class_mutations_round_trip_through_native_query() {
     let classes: Vec<NetClass> =
         serde_json::from_str(&classes_output).expect("query output should parse");
     assert!(classes.is_empty());
+    let journal = journal_list(&root);
+    assert_eq!(journal["count"], 3);
+    assert_eq!(
+        journal["transactions"][2]["reason"],
+        "delete board net class"
+    );
 
     let summary_cli =
         Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])

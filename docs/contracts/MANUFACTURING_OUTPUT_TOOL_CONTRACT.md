@@ -102,19 +102,24 @@ The only mutation surface in the domain. Everything else is projection.
   regeneration is a single later action. Mirrors Altium OutJob, KiCad
   jobset, and Horizon saved export-settings.
 - **(2) Operation it emits:** A typed `OperationBatch` of
-  `{CreateOutputJob | UpdateOutputJob | DeleteOutputJob}` through the
+  `{CreateOutputJob | SetOutputJob | DeleteOutputJob}` through the
   single `commit()` path, producing one journaled `TransactionRecord`.
   `OutputJob` is authored source state persisted as a manufacturing-plan
-  shard; generated artifacts remain derived. OutputJob create/edit/delete
-  is **direct-commit class** (local, visible, undoable, no hidden
-  cross-domain/destructive implication) per the shared
-  proposal/apply contract.
-- **(3) CLI command:** `datum-eda project output-job {create|edit|delete|`
-  `list|show} <root> --name <job> --include gerber-set,drill,bom,pnp`
-  `--variant <v> --prefix <p>`. One multi-verb noun, not separate tools
-  per verb. **GAP — does not exist today.** Configuration is currently
-  an ad-hoc, prefix-only flag hardcoded in
-  `crates/cli/src/command_project_manufacturing.rs`.
+  shard; generated artifacts remain derived. Manual single-object UI edits
+  may be direct journal commits when they are local, visible, and undoable.
+  Terminal-launched agents, AI tools, scripted/bulk changes, and panel/plan
+  edits default to canonical `datum-eda proposal ...` authoring so production
+  source mutation remains reviewable before apply.
+- **(3) CLI command:** Current compatibility commands are
+  `project create-gerber-output-job`, `project update-output-job`,
+  `project delete-output-job`, `project create-manufacturing-plan`,
+  `project update-manufacturing-plan`, `project delete-manufacturing-plan`,
+  `project create-panel-projection`, `project update-panel-projection`,
+  `project delete-panel-projection`, and the related `project query`
+  production views.
+  The target remains one coherent
+  `datum-eda project output-job {create|edit|delete|list|show}` noun with
+  include/job/variant scoping instead of separate compatibility verbs.
 - **(4) MCP / AI tool:** `project_output_job_upsert` /
   `project_output_job_list`, CLI-bridged via
   `mcp-server/server_runtime.py:_run_cli_json`. `upsert` collapses
@@ -126,16 +131,22 @@ The only mutation surface in the domain. Everything else is projection.
   per-domain read tool.
 - **(6) Validating checks:** Reuse `ProjectResolver` shard-version and
   reference validation; reject jobs referencing a nonexistent variant
-  or layer. `UpdateOutputJob` is a journaled transaction, so undo/redo
+  or layer. `SetOutputJob` is a journaled transaction, so undo/redo
   works through the shared journal.
 - **(7) Proof slice:** On the imported `datum-test` native project,
   create an output job selecting gerber-set + drill + bom + pnp, commit,
   undo, redo; assert a journal `TransactionRecord` exists for each and
   that the base board shards are byte-unchanged across the cycle.
-- **(8) Explicitly not-supported-yet:** The object does not exist. There
-  is no persisted, journaled, variant-aware job today — only a `--prefix`
-  flag. No `OutputJob` symbol appears anywhere in the engine (grep
-  confirmed empty).
+- **(8) Explicitly not-supported-yet:** Full output-job family scoping is
+  not complete. Current support includes Gerber-set compatibility creation,
+  generic `create-output-job --include <scope>[,<scope>...]` for
+  gerber-set/manufacturing-set/bom/pnp/drill/all, stored variant context,
+  name/manufacturing-plan/variant edit, delete, query, and generated
+  artifact/run linkage for matching prefixes. Canonical `artifact generate
+  --output-job <uuid>` executions, including the MCP `run_output_job`
+  compatibility bridge, now persist one aggregate `OutputJobRun` for the
+  command instead of one run per generated artifact. Delete UI exposure and the
+  final noun-shaped command taxonomy remain pending.
 
 ### Tool 2 — `manufacturing-set` projection (one export verb + oracle)
 
@@ -157,13 +168,23 @@ pnp export tools — they are now `--include` scopes.
   `command_project_manufacturing.rs:export_native_project_`
   `manufacturing_set` composes `bom + pnp + drill.csv + drill.drl +`
   gerber-set via `command_project_gerber_plan.rs:export_native_`
-  `project_gerber_set`. **REQUIRED refactor:** report/manifest/export
-  must read **one** T0 projection (today each independently recomputes
-  `plan_native_project_gerber_export`).
+  `project_gerber_set`. First T0 convergence now exists for the oracle
+  readers and export path now share a manufacturing projection helper for
+  expected artifact entries and Gerber plan context, so report, manifest,
+  inspect, validate, compare, and export use the same T0 artifact plan.
 - **(3) CLI command:** `datum-eda project export-manufacturing-set <root>`
   `--output-dir <dir> [--include gerber-set,drill,bom,pnp]`
-  `[--job <name>] [--variant <v>] [--prefix <p>]`. Export EXISTS;
-  `--include` / `--job` / `--variant` are GAPS. Oracle verbs EXIST:
+  `[--output-job <uuid>] [--job <name>] [--variant <v>] [--prefix <p>]`. Export EXISTS, and the
+  current compatibility export/validate/compare surfaces accept `--variant`
+  for BOM/PnP population filtering. Stored OutputJobs now accept comma-separated
+  include scopes; `run-output-job` honors the saved include list; and direct
+  export/validate/compare/manifest/inspect now accept `--include`,
+  `--output-job <uuid>`, and `--job <name>` to inherit a stored job's prefix,
+  variant, and include list. Name matching is exact and ambiguous duplicate
+  names are rejected. OutputJob create/update and canonical artifact execution
+  now store and honor variant context for manufacturing-set and direct BOM/PnP
+  population.
+  Oracle verbs EXIST:
   `validate-manufacturing-set`, `compare-manufacturing-set`,
   `manifest-manufacturing-set`, `inspect-manufacturing-set`. The
   per-domain export-gerber-set / export-bom / export-pnp /
@@ -184,10 +205,12 @@ pnp export tools — they are now `--include` scopes.
   shared query: pad/via drill sizes and plated/non-plated class. BOM/PnP
   context reads `ComponentInstance` + variant fitted state.
 - **(6) Validating checks:** `validate-` / `compare-manufacturing-set`
-  re-render from the projection and assert byte/semantic equality
-  (`command_project_manufacturing.rs`). This **is** the projection ==
-  export oracle — but unification to one T0 projection is required so
-  manifest/report/export cannot diverge. **CRITICAL GAP carried in:**
+  re-render from a shared manufacturing projection and assert byte/semantic
+  equality (`command_project_manufacturing.rs`). This **is** the projection ==
+  export oracle for the current report/manifest/inspect/validate/compare
+  readers, and export now drives family selection and Gerber output from the
+  same manufacturing projection object.
+  **CRITICAL GAP carried in:**
   copper validation currently passes even on dishonest zone copper (see
   item 8).
 - **(7) Proof slice:** Export the manufacturing set for `datum-test` to
@@ -199,20 +222,41 @@ pnp export tools — they are now `--include` scopes.
   compare shows one position drift. ZoneFill slice: a board with an
   unfilled zone must emit **no** copper region and a hard finding.
 - **(8) Explicitly not-supported-yet:**
-  1. **Artifact metadata not emitted.** `ManufacturingArtifactView`
-     today is `kind` + `output_path` only — no `model_revision`,
-     output-job id, variant, generator-version, or content-hash.
-  2. **Variant-scoped export and `--include` scoping not wired.**
-  3. **BOM/PnP rows are reference-string keyed**
-     (`command_project_inventory.rs` `NativeBomRow.reference` /
-     `NativePnpRow.reference`, with drift keyed on
-     `expected_by_reference`), violating the `ComponentInstance` join
-     invariant.
-  4. **ZoneFill DISHONESTY.** `crates/engine/src/export/copper.rs`
-     lines ~176-202 pour the zone `polygon` boundary directly as an
-     exportable G36 region with no `Filled`/`Unfilled`/`Stale` gate and
-     no unfilled-zone finding — a correctness defect that must be fixed
-     before any fabrication trust.
+  1. **Run-evidence unification is still partial.**
+     Generic multi-scope `artifact generate --output-job <uuid>` now suppresses
+     per-artifact run persistence and records one aggregate `OutputJobRun` for
+     the logical command, with per-artifact details in the artifact report and
+     run log.
+     Direct/domain export commands still own their current scoped run evidence,
+     so the final projection layer should converge on one shared T0
+     manufacturing execution/evidence path. Artifact inspection no longer hides
+     linked run evidence: `datum-eda artifact list/show` now reports both ad hoc
+     `ArtifactRun` history and artifact-linked `OutputJobRun` history, and
+     direct Gerber/manufacturing export reports now include the persisted
+     `output_job_run_path` whenever they create an `OutputJobRun`.
+     `artifact_generate_v1.generated[]` entries now also carry normalized
+     top-level `output_job_run`, `output_job_run_path`, `artifact_run`, and
+     `artifact_run_path` fields across all artifact families, instead of
+     requiring clients to parse each nested family report first.
+  2. **BOM/PnP ComponentInstance identity is first-slice only.**
+     `command_project_inventory.rs` now emits `component_instance_uuid` and
+     keys compare/drift by ComponentInstance when present, with package UUID
+     fallback for board-only legacy rows. Direct BOM/PnP export, validate, and
+     compare now accept variant context and filter expected rows through the
+     resolver-derived fitted-state population; manufacturing-set export,
+     validate, and compare pass `--variant` through to those BOM/PnP rows.
+     OutputJob create/update/run stores and honors variant context for
+     manufacturing-set BOM/PnP rows and persists the variant on ArtifactMetadata.
+     Assembly population policy and richer supply columns remain pending.
+  4. **ZoneFill HONESTY SUBSTRATE LANDED.** Native copper export no
+     longer treats an authored zone boundary as filled copper: resolver-
+     derived `ZoneFill{Unfilled}` records produce hard findings and
+     unfilled zones are withheld from G36 copper output. `datum-eda check
+     fill-zones` can persist `Filled` evidence for closed, non-degenerate,
+     no-thermal zones on otherwise empty boards, and persists `Unsupported`
+     evidence for cases requiring real pour solving. Remaining work is the
+     real solver/projection side: clearance subtraction, antipads, thermals,
+     obstacle handling, multi-island decomposition, and richer provenance.
   5. **Drill gaps.** No separate plated/non-plated files, no route/slot
      (G85), no board-edge cutouts; the legacy `drill.csv` is a redundant
      second format alongside `.drl`.
@@ -335,11 +379,11 @@ ZoneFill-honest copper.
 
 ## Shared Surface
 
-This contract adds only the domain-specific `OutputJob` operation
-variants (`CreateOutputJob` / `UpdateOutputJob` / `DeleteOutputJob`) and
-the manufacturing `aiQueryContext`. It does **not** redefine the seven
-shared operations. See `docs/contracts/AI_CLI_MCP_TOOL_SURFACE.md` for
-the single
+This contract adds only the domain-specific authored production operation
+create/set/delete variants for `PanelProjection`, `ManufacturingPlan`, and
+`OutputJob`, plus the manufacturing `aiQueryContext`. It does **not**
+redefine the seven shared operations. See
+`docs/contracts/AI_CLI_MCP_TOOL_SURFACE.md` for the single
 definitions of:
 
 - **Session/Context** (`DatumToolSession` + `DatumContextEnvelope`) —
@@ -351,10 +395,17 @@ definitions of:
 - **Check** (`DatumCheckTool`) — the manufacturing/process check domain
   and the ZoneFill-honesty finding are profiles/findings of the shared
   check surface, not domain checks.
-- **Propose** (`DatumProposalTool`) — used only if/when an OutputJob or
-  panel edit is escalated; OutputJob edits are direct-commit class.
+- **Propose** (`DatumProposalTool`) — the default path for terminal-launched
+  agents, AI tools, scripted/bulk OutputJob edits, and production panel/plan
+  edits. The current CLI/MCP surface exposes canonical
+  `datum-eda proposal create|update|delete-output-job`,
+  `create|update|delete-manufacturing-plan`, and
+  `create|update|delete-panel-projection` commands plus matching
+  `datum.proposal.*` MCP aliases; those builders persist draft proposals and do
+  not mutate authored production shards until accepted and applied.
 - **Commit** (`DatumCommitTool`) — the **only** mutation gateway;
-  OutputJob create/edit/delete is a typed `OperationBatch` through it.
+  direct manual OutputJob/panel/plan edits and accepted production proposals
+  are typed `OperationBatch` writes through it.
   Any per-domain manufacturing save/write path is a forbidden private
   writer.
 - **Artifact** (`DatumArtifactTool`) — the manufacturing-set projection
@@ -388,23 +439,36 @@ slices.
 5. *ZoneFill-honesty slice*: an unfilled zone must emit **no** copper
    region and a hard finding (exercises `copper.rs` ~176-202).
 
-**Fixture blocker (confirmed):** `datum-test.kicad_pcb` contains **zero
-zones** (verified — grep for `zone` returns 0 matches). The
-ZoneFill-honesty slice therefore cannot be exercised against this
-fixture. Per the no-synthetic-fixtures rule, this is an Open Owner
-Question below — do not fabricate a zone; request a zone-bearing
-variant.
+**Fixture note:** `datum-test.kicad_pcb` contains **zero zones**
+(verified — grep for `zone` returns 0 matches), so ZoneFill-honesty
+coverage is locked by native project fixtures rather than that imported
+fixture. A zone-bearing imported fixture is still useful for import-path
+coverage, but the native substrate behavior is now testable without
+fabricating a KiCad zone.
 
 ## Not-Yet-Supported
 
-- `OutputJob` authored state (object, shard, CLI, MCP) — does not exist.
+- `OutputJob` authored state exists for Gerber-set compatibility jobs;
+  full include/delete UI coverage remains pending.
 - Artifact traceability metadata — `ManufacturingArtifactView` is
   `kind` + `output_path` only.
-- `--include` scoping, `--job` selection, and `--variant`-scoped export.
-- `ComponentInstance`-keyed BOM/PnP rows — currently reference-string
-  keyed, drift keyed on the string.
-- ZoneFill-honest copper — currently pours the boundary as G36 copper
-  with no `Filled` gate and no finding.
+- Single logical run evidence across all generated artifact families remains
+  incomplete, though artifact inspection now shows both ad hoc `ArtifactRun`
+  and linked `OutputJobRun` evidence;
+  `--output-job`, exact-name `--job`, and `--include` scoping exist for the
+  current compatibility surface.
+- Richer
+  assembly population policy. Direct BOM/PnP rows now include
+  `component_instance_uuid`, compare by ComponentInstance identity when
+  present, fall back to package UUID for board-only legacy rows, and can filter
+  expected rows by a selected variant's fitted population; manufacturing-set
+  export/validate/compare and OutputJob create/update/run now pass variant
+  context through to BOM/PnP and generated ArtifactMetadata.
+- ZoneFill generated projection — honest `Unfilled` gating, bounded same-net
+  `Filled` evidence, and one rectangular foreign pad/via cutout with positive
+  netclass clearance exist; `fill_zones` persistence is now journaled
+  generated evidence. General pour solving for obstacles, thermals, antipads,
+  arbitrary clearance subtraction, and richer fill provenance remain pending.
 - Drill: plated/non-plated separation, route/slot (G85), board-edge
   cutouts; legacy `drill.csv` is a redundant second format.
 - Assembly extras: MPN/supply columns, top/bottom PnP split, fiducial
@@ -423,16 +487,13 @@ variant.
    (`model_revision` + output-job-id + variant + generator-version +
    per-file content-hash) and where the manifest lives (sidecar JSON in
    the output dir vs a journaled artifact record)?
-3. **ZoneFill honesty fix path:** authorize gating copper export on
-   `ZoneFill{Filled}` and emitting a hard finding for native unfilled
-   zones. Confirm whether a real fill solver is in M7 scope or whether
-   an unfilled zone simply blocks export. Also confirm provision of a
-   **zone-bearing** `datum-test` variant so the honesty slice can run
-   (current fixture has zero zones).
-4. **BOM/PnP join-key migration:** confirm switching row identity from
-   reference-string to `ComponentInstance` is in-scope now (it changes
-   golden CSVs and drift semantics).
-5. **T0 unification:** unify report/manifest/export onto one T0
+3. **ZoneFill projection path:** `fill_zones` now records bounded same-net
+   `Filled` evidence, one rectangular foreign pad/via cutout, and explicit
+   `Unsupported` projection/provenance evidence for harder cases; decide when
+   the real copper-fill solver enters scope. A zone-bearing `datum-test`
+   variant remains useful for imported-design coverage, but native unfilled-zone
+   export/check honesty is already covered.
+4. **T0 unification:** unify report/manifest/export onto one T0
    projection now (removes the triple-recompute divergence risk), or
    accept the current triple-recompute until panelization forces it?
 6. **Plated vs non-plated drill:** separate NC files (fab-standard) or a

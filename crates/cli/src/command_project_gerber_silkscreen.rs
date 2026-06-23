@@ -1,14 +1,11 @@
-use anyhow::{Result, bail};
+use anyhow::{Context, Result, bail};
 use eda_engine::board::{BoardText, PlacedPackage, StackupLayer, StackupLayerType};
 use eda_engine::export::SilkscreenStroke;
 use eda_engine::ir::geometry::Point;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use super::{
-    NativeBoardRoot, NativePoint, load_native_project, query_native_project_board_stackup,
-    query_native_project_board_texts,
-};
+use super::{LoadedNativeProject, NativeBoardRoot, NativePoint};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub(crate) struct NativeComponentSilkscreenLine {
@@ -61,22 +58,32 @@ pub(crate) struct NativeComponentSilkscreenPolyline {
 }
 
 pub(crate) fn resolve_native_project_silkscreen_context(
-    root: &std::path::Path,
+    project: &LoadedNativeProject,
     layer: i32,
 ) -> Result<(StackupLayer, Vec<BoardText>, Vec<SilkscreenStroke>)> {
-    let project = load_native_project(root)?;
-    let stackup = query_native_project_board_stackup(root)?;
-    let silk_layer = stackup
+    let silk_layer = project
+        .board
+        .stackup
+        .layers
         .iter()
-        .find(|entry| entry.id == layer)
         .cloned()
+        .map(|entry| serde_json::from_value(entry).context("failed to parse board stackup layer"))
+        .collect::<Result<Vec<StackupLayer>>>()?
+        .into_iter()
+        .find(|entry| entry.id == layer)
         .ok_or_else(|| {
             anyhow::anyhow!("board stackup layer not found in native project: {layer}")
         })?;
     if !matches!(silk_layer.layer_type, StackupLayerType::Silkscreen) {
         bail!("board stackup layer is not a silkscreen layer: {layer}");
     }
-    let mut texts = query_native_project_board_texts(root)?
+    let mut texts = project
+        .board
+        .texts
+        .iter()
+        .cloned()
+        .map(|entry| serde_json::from_value(entry).context("failed to parse board text"))
+        .collect::<Result<Vec<BoardText>>>()?
         .into_iter()
         .filter(|text| text.layer == layer)
         .collect::<Vec<_>>();

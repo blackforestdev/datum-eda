@@ -164,6 +164,14 @@ pub(super) fn execute_project_board_surface_command(
             };
             Ok((output, 0))
         }
+        ProjectCommands::SetBoardName(ProjectSetBoardNameArgs { path, name }) => {
+            let report = set_native_project_board_name(&path, name)?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_board_name_mutation_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
         ProjectCommands::SetBoardStackup(ProjectSetBoardStackupArgs { path, layers }) => {
             command_exec_board_stackup::execute_set_board_stackup(format, path, layers)
         }
@@ -174,7 +182,18 @@ pub(super) fn execute_project_board_surface_command(
             path,
             name,
             class_uuid,
-        }) => command_exec_board_net::execute_place_board_net(format, path, name, class_uuid),
+            impedance_target_ohms,
+            impedance_tolerance_pct,
+            controlled_dielectric_layer,
+        }) => command_exec_board_net::execute_place_board_net(
+            format,
+            path,
+            name,
+            class_uuid,
+            impedance_target_ohms,
+            impedance_tolerance_pct,
+            controlled_dielectric_layer,
+        ),
         ProjectCommands::PlaceBoardComponent(ProjectPlaceBoardComponentArgs {
             path,
             part_uuid,
@@ -247,9 +266,21 @@ pub(super) fn execute_project_board_surface_command(
             net_uuid,
             name,
             class_uuid,
-        }) => {
-            command_exec_board_net::execute_edit_board_net(format, path, net_uuid, name, class_uuid)
-        }
+            impedance_target_ohms,
+            impedance_tolerance_pct,
+            controlled_dielectric_layer,
+            clear_controlled_impedance,
+        }) => command_exec_board_net::execute_edit_board_net(
+            format,
+            path,
+            net_uuid,
+            name,
+            class_uuid,
+            impedance_target_ohms,
+            impedance_tolerance_pct,
+            controlled_dielectric_layer,
+            clear_controlled_impedance,
+        ),
         ProjectCommands::MoveBoardComponent(ProjectMoveBoardComponentArgs {
             path,
             component_uuid,
@@ -283,6 +314,11 @@ pub(super) fn execute_project_board_surface_command(
             package_uuid,
         ),
         ProjectCommands::SetBoardComponentLayer(SetBoardComponentLayerArgs {
+            path,
+            component_uuid,
+            layer,
+        })
+        | ProjectCommands::FlipBoardComponent(SetBoardComponentLayerArgs {
             path,
             component_uuid,
             layer,
@@ -389,6 +425,36 @@ pub(super) fn execute_project_board_surface_command(
             };
             Ok((output, 0))
         }
+        ProjectCommands::EditBoardTrack(ProjectEditBoardTrackArgs {
+            path,
+            track_uuid,
+            net_uuid,
+            from_x_nm,
+            from_y_nm,
+            to_x_nm,
+            to_y_nm,
+            width_nm,
+            layer,
+        }) => {
+            let from = match (from_x_nm, from_y_nm) {
+                (Some(x), Some(y)) => Some(eda_engine::ir::geometry::Point { x, y }),
+                (None, None) => None,
+                _ => bail!("editing a board track start requires both --from-x-nm and --from-y-nm"),
+            };
+            let to = match (to_x_nm, to_y_nm) {
+                (Some(x), Some(y)) => Some(eda_engine::ir::geometry::Point { x, y }),
+                (None, None) => None,
+                _ => bail!("editing a board track end requires both --to-x-nm and --to-y-nm"),
+            };
+            let report = edit_native_project_board_track(
+                &path, track_uuid, net_uuid, from, to, width_nm, layer,
+            )?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_board_track_mutation_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
         ProjectCommands::PlaceBoardVia(ProjectPlaceBoardViaArgs {
             path,
             net_uuid,
@@ -422,6 +488,38 @@ pub(super) fn execute_project_board_surface_command(
             };
             Ok((output, 0))
         }
+        ProjectCommands::EditBoardVia(ProjectEditBoardViaArgs {
+            path,
+            via_uuid,
+            net_uuid,
+            x_nm,
+            y_nm,
+            drill_nm,
+            diameter_nm,
+            from_layer,
+            to_layer,
+        }) => {
+            let position = match (x_nm, y_nm) {
+                (Some(x), Some(y)) => Some(eda_engine::ir::geometry::Point { x, y }),
+                (None, None) => None,
+                _ => bail!("editing a board via position requires both --x-nm and --y-nm"),
+            };
+            let report = edit_native_project_board_via(
+                &path,
+                via_uuid,
+                net_uuid,
+                position,
+                drill_nm,
+                diameter_nm,
+                from_layer,
+                to_layer,
+            )?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_board_via_mutation_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
         ProjectCommands::PlaceBoardZone(ProjectPlaceBoardZoneArgs {
             path,
             net_uuid,
@@ -449,6 +547,50 @@ pub(super) fn execute_project_board_surface_command(
             };
             Ok((output, 0))
         }
+        ProjectCommands::EditBoardZone(ProjectEditBoardZoneArgs {
+            path,
+            zone_uuid,
+            net_uuid,
+            vertices,
+            layer,
+            priority,
+            thermal_relief,
+            thermal_gap_nm,
+            thermal_spoke_width_nm,
+        }) => {
+            let polygon = if vertices.is_empty() {
+                None
+            } else {
+                Some(parse_native_polygon_vertices(&vertices)?)
+            };
+            let report = edit_native_project_board_zone(
+                &path,
+                zone_uuid,
+                net_uuid,
+                polygon,
+                layer,
+                priority,
+                thermal_relief,
+                thermal_gap_nm,
+                thermal_spoke_width_nm,
+            )?;
+            let output = match format {
+                OutputFormat::Text => render_native_project_board_zone_mutation_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
+        }
+        ProjectCommands::FillZones(ProjectFillZonesArgs {
+            path,
+            zone_uuid,
+            net_uuid,
+        }) => Ok((
+            render_output(
+                format,
+                &fill_native_project_zones(&path, zone_uuid, net_uuid)?,
+            ),
+            0,
+        )),
         ProjectCommands::DeleteBoardZone(ProjectDeleteBoardZoneArgs { path, zone_uuid }) => {
             let report = delete_native_project_board_zone(&path, zone_uuid)?;
             let output = match format {

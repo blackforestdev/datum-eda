@@ -39,12 +39,12 @@ The target public surface has exactly seven shared tool classes:
 
 | Class | CLI shape | MCP shape | Mutates source? |
 |-------|-----------|-----------|-----------------|
-| Context / session | `datum-eda context get|refresh` | `datum.context.get`, `datum.context.refresh` | No |
+| Context / session | `datum-eda context get|refresh|session-events` | `datum.context.get`, `datum.context.refresh`, `datum.context.session_events` | No |
 | Query | `datum-eda query <family>` | `datum.query.*` | No |
 | Check | `datum-eda check run|show` | `datum.check.*` | No source mutation |
 | Proposal | `datum-eda proposal create|show|validate|reject|defer|apply` | `datum.proposal.*` | Apply only |
 | Commit / apply gateway | internal `commit()` | reached through `datum.proposal.apply` or policy-gated direct commit | Yes |
-| Artifact | `datum-eda artifact generate|show|compare|validate` | `datum.artifact.*` | No |
+| Artifact | current: `datum-eda artifact list|generate|show|files|compare|validate|export-manufacturing-set|validate-manufacturing-set`; generic generate currently supports `gerber-set`, `manufacturing-set`, `bom`, `pnp`, `drill`, and `all` scopes | `datum.artifact.*` | No |
 | Journal | `datum-eda journal list|show|undo|redo` | `datum.journal.*` | Undo/redo only |
 
 Per-domain docs may add typed `Operation` variants, query families, check
@@ -109,6 +109,18 @@ Envelope principles:
   transport details, not the public Datum error contract.
 - Compatibility aliases may return legacy payloads during migration, but new
   `datum.*` tools must return the target envelope.
+- Current MCP `tools/call` handling wraps canonical `datum.*` success payloads
+  in this envelope at the MCP boundary. `datum.check.*`, `datum.artifact.*`,
+  `datum.proposal.*`, `datum.journal.*`, `datum.component_instance.*`, and the
+  first resolver-backed `datum.query.*` set now receive first-pass
+  tool-specific normalized `result` payloads. These expose stable check-run,
+  finding, artifact, file, validation, production projection, proposal,
+  transaction, component-instance, relationship, variant, import-map, panel, and
+  manufacturing-plan fields while retaining the original CLI/daemon payload
+  under `result.raw`. During migration it also copies raw result fields at the
+  top level for compatibility with older callers. Tool-level failures for
+  canonical `datum.*` calls return `ok: false` envelopes instead of JSON-RPC
+  transport errors.
 
 ## Model Context Resolution
 
@@ -147,19 +159,71 @@ MCP:
 
 - `datum.context.get`
 - `datum.context.refresh`
+- `datum.context.session_events`
+- `datum.context.session_activity`
 
 CLI:
 
 - `datum-eda context get`
 - `datum-eda context refresh`
+- `datum-eda context session-events`
+- `datum-eda context session-activity`
 
-Returns the `DatumContextEnvelope`: session id, actor, capabilities, project
-identity, model revision, variant, output context, projection/selection/cursor
-context, visible findings/artifacts, provenance seed, and expiry/refresh
-metadata.
+`get` and `refresh` return the `DatumContextEnvelope`: session id, actor,
+capabilities, project identity, model revision, variant, output context,
+projection/selection/cursor context, visible findings/artifacts, provenance
+seed, and expiry/refresh metadata. `session-events` returns
+`datum_tool_session_events_v1` with the resolved context path, tool-session
+event log path, returned `event_count`, `matched_event_count`, raw
+`total_event_count`, applied `filters`, optional `limit`, and parsed JSONL
+events. `session-events` accepts exact-match `event_kind`, `origin`, and
+`command_id` filters; `event_kind` matches the JSONL field named `event`.
+`limit` returns the newest N matching events after filters while preserving
+chronological order in the returned slice. `terminal_command_handoff` events
+carry `origin`, stable `command_id`, optional `mcp_alias`, `handoff_mode`
+(`prefill|execute`), command text, and timestamp. `session-activity` returns
+`datum_tool_session_activity_summary_v1` over the same filter/limit semantics:
+raw/matched/activity counts, first/last occurrence time, event-kind/origin/
+handoff-mode counts, and compact per-command activity summaries.
 
 Context/session is capability state. It is not an `Operation`, is not
 journaled, and must not grant direct filesystem write access.
+
+Current implementation:
+
+- `datum.context.get`, `datum.context.refresh`, `datum.context.session_events`,
+  and `datum.context.session_activity` are exposed as MCP tools and bridge to
+  `datum-eda context get|refresh|session-events|session-activity`.
+- The current context payload remains compatible with the GUI terminal discovery
+  envelope (`datum_terminal_context_v1`) and now carries the first
+  `DatumContextEnvelope` fields: actor type, capabilities, project root/id/name,
+  model revision when resolvable, accepted transaction tip, visible artifact and
+  check-run ids, output context ids, provenance seed, expiry placeholder, and
+  refresh command. GUI terminals write authoritative per-session discovery under
+  `.datum/terminal-contexts/<session>.json` and preserve
+  `.datum/gui-terminal-context.json` as a latest-session compatibility alias.
+  `context get` returns the normalized envelope without mutating it; `context
+  refresh` writes the enriched envelope back to the resolved context file while
+  preserving GUI-owned typed selection/cursor/projection/session fields; and
+  `context session-events` reads `.datum/tool-sessions/<session>.events.jsonl`
+  as parsed, non-journaled tool-session provenance.
+  GUI-authored context files also include first launch-time
+  `selection_context`, `cursor_context`, and `projection_context` snapshots.
+  The shared GUI protocol now defines typed context/session structs for these
+  fields, GUI terminals persist `DatumToolSessionMetadata` under
+  `.datum/tool-sessions/<session>.json`, and GUI selection, cursor/hover, dock,
+  and frame-affecting session events rewrite the same per-session context file.
+  The same discovery envelope includes `agent_commands` templates for
+  terminal-launched optional agents (`codex`, `claude`, `aider`) plus context
+  inspection/refresh helpers; these are shell-launch hints only and do not
+  create a privileged assistant mutation path. The GUI `AGENTS` dock entry now
+  routes to the PTY and prints those launch hints rather than making the
+  assistant lane the canonical agent entry point.
+  Production command templates in that discovery envelope now advertise
+  OutputJob, ManufacturingPlan, and PanelProjection create/update/delete as
+  `datum-eda project ... --as-proposal` commands, so terminal-launched agents
+  discover proposal drafting rather than direct production source mutation.
+  Richer engine-owned session policy/expiry semantics remain target-scope.
 
 ### 2. Query
 
@@ -175,6 +239,74 @@ Queries are read-only. Existing `get_*`, `search_*`, report, relationship,
 pool, schematic, PCB, rules, manufacturing, artifact, transaction, and
 provenance reads fold into query families rather than new peer methods.
 
+Current implementation:
+
+- Current native-project CLI aliases include `datum-eda query summary <root>`,
+  `datum-eda query component-instances <root>`, schematic read aliases
+  `sheets`, `symbols`, `labels`, `ports`, `buses`, `bus-entries`,
+  `noconnects`, `hierarchy`, `schematic-nets`, and
+  `connectivity-diagnostics`, plus `datum-eda query relationships <root>`,
+  `datum-eda query variants <root>`, `datum-eda query import-map <root>`,
+  `datum-eda query zone-fills <root>`, `datum-eda query panel-projections
+  <root>`, `datum-eda query manufacturing-plans <root>`, and `datum-eda query
+  output-jobs <root>`.
+  Legacy imported-design reads remain available as `datum-eda query imported
+  <file> <what>` and through the historical `datum-eda query <file> <what>`
+  compatibility parser.
+- The first compatibility-backed query aliases are exposed:
+  `datum.check.run`, `datum.query.board_summary`,
+  `datum.query.components`, `datum.query.netlist`,
+  `datum.query.schematic_summary`, `datum.query.sheets`,
+  `datum.query.symbols`, `datum.query.symbol_fields`, `datum.query.labels`,
+  `datum.query.ports`, `datum.query.buses`, `datum.query.bus_entries`,
+  `datum.query.noconnects`, `datum.query.hierarchy`,
+  `datum.query.schematic_nets`, `datum.query.connectivity_diagnostics`,
+  `datum.query.design_rules`, `datum.query.zone_fills`,
+  `datum.query.component_instances`, `datum.query.relationships`,
+  `datum.query.variants`, `datum.query.import_map`,
+  `datum.query.panel_projections`, `datum.query.manufacturing_plans`,
+  `datum.query.output_jobs`,
+  `datum.proposal.list`, and `datum.proposal.show`.
+- These aliases dispatch to the existing compatibility implementations
+  (`get_check_run`, `get_board_summary`, `get_components`, `get_netlist`,
+  `get_schematic_summary`, `get_sheets`, `get_symbols`,
+  `get_symbol_fields`, `get_labels`, `get_ports`, `get_buses`,
+  `get_bus_entries`, `get_noconnects`, native path-aware
+  `get_project_hierarchy` with legacy `get_hierarchy` fallback,
+  `get_schematic_net_info`, `get_connectivity_diagnostics`,
+  `get_design_rules`, `get_zone_fills`, `get_component_instances`,
+  `get_relationships`, `get_variants`, `get_import_map`,
+  `get_panel_projections`, `get_manufacturing_plans`, `get_proposals`, and
+  `show_proposal`) until the full `datum.*` families replace flat method
+  names.
+- The first ZoneFill producer aliases are exposed as flat `fill_zones` and
+  canonical `datum.check.fill_zones`. They bridge to canonical CLI
+  `datum-eda check fill-zones`, which currently persists honest
+  `Unsupported` generated evidence rather than pretending a copper-fill
+  solver exists.
+- ComponentInstance write aliases now include `datum.component_instance.bind`,
+  `datum.component_instance.set`, and `datum.component_instance.delete`. These
+  dispatch to journal-backed compatibility implementations
+  (`bind_component_instance`, `set_component_instance`, and
+  `delete_component_instance`).
+- Check aliases now also include `datum.check.repair_standards`,
+  `datum.check.waive`, and `datum.check.accept_deviation`, all dispatched to
+  the existing check/proposal/journal compatibility implementations.
+- Proposal aliases now also include `datum.proposal.validate`,
+  `datum.proposal.review`, `datum.proposal.defer`, `datum.proposal.reject`,
+  `datum.proposal.accept_apply`, and `datum.proposal.apply`, all dispatched to
+  the existing proposal compatibility implementations. Producer-specific
+  production proposal aliases now also exist under the same family:
+  `datum.proposal.create_panel_projection`,
+  `datum.proposal.update_panel_projection`,
+  `datum.proposal.delete_panel_projection`,
+  `datum.proposal.create_manufacturing_plan`,
+  `datum.proposal.update_manufacturing_plan`,
+  `datum.proposal.delete_manufacturing_plan`,
+  `datum.proposal.create_output_job`,
+  `datum.proposal.update_output_job`, and
+  `datum.proposal.delete_output_job`.
+
 Target query responses must be revision-pinned and must prefer stable IDs over
 names. Cross-domain joins use product-mechanics identity such as
 `ComponentInstance`; agents must not reconstruct joins by refdes/name/path
@@ -185,33 +317,69 @@ string matching.
 MCP:
 
 - `datum.check.run`
+- `datum.check.list`
 - `datum.check.show`
+- `datum.check.profiles`
 
 CLI:
 
 - `datum-eda check run --domain <erc|drc|standards|process|manufacturing|all> --profile <id>`
 - `datum-eda check show <check_run_id>`
+- Current native-project implementation supports `datum-eda check run <root>`,
+  `datum-eda check run <root> --profile native-combined`,
+  `datum-eda check list <root>`,
+  `datum-eda check show <root> --check-run <check_run_id>`,
+  `datum-eda check profiles <root>`,
+  `datum-eda check repair-standards <root>`,
+  `datum-eda check waive <root> --fingerprint <sha256:...> --rationale <text>`,
+  and `datum-eda check accept-deviation <root> --fingerprint <sha256:...>
+  --rationale <text>`. Legacy imported-design checking is retained under
+  `datum-eda check imported <file>`.
 
 Checks do not mutate source design state. Persisted `CheckRun` records are
 derived evidence with revision, variant, checker version, profile, status, and
 stable finding fingerprints. Finding explanations and suggested next actions
 belong on `CheckFinding`; standalone index-addressed explain methods are
-compatibility only.
+compatibility only. Current native-project check runs preserve compatibility
+`proposal_refs` and also expose structured `proposal_links` at run and finding
+level with proposal status, source, rationale, current validation snapshot, and
+canonical `datum-eda proposal ...` command templates for show, preview,
+validate, review, and apply actions.
 
 ### 4. Proposal
 
 MCP:
 
 - `datum.proposal.create`
+- `datum.proposal.list`
 - `datum.proposal.show`
+- `datum.proposal.preview`
 - `datum.proposal.validate`
 - `datum.proposal.reject`
 - `datum.proposal.defer`
+- `datum.proposal.review`
+- `datum.proposal.accept_apply`
 - `datum.proposal.apply`
 
 CLI:
 
-- `datum-eda proposal create|show|validate|reject|defer|apply`
+- `datum-eda proposal create|list|show|preview|validate|review|reject|defer|accept-apply|apply`
+- Current native-project implementation supports `datum-eda proposal list
+  <root>`, `datum-eda proposal create <root> --batch <operation-batch.json>
+  --rationale <text>`, `datum-eda proposal show <root> --proposal <uuid>`,
+  `datum-eda proposal preview <root> --proposal <uuid>`,
+  `datum-eda proposal validate <root> --proposal <uuid>`,
+  `datum-eda proposal review <root> --proposal <uuid> --status
+  <accepted|deferred|rejected>`, `datum-eda proposal defer <root> --proposal
+  <uuid>`, `datum-eda proposal reject <root> --proposal <uuid>`,
+  `datum-eda proposal accept-apply <root> --proposal <uuid>`, and
+  `datum-eda proposal apply <root> --proposal <uuid>`. `accept-apply` is a
+  convenience composition of accepted review plus revision-guarded apply; it is
+  not a direct mutation bypass. `proposal preview` dry-runs the stored batch on
+  a cloned resolved model and returns `proposal_preview_v1` with classified
+  diff, affected objects, and validation state; it writes no shards. Generic
+  proposal creation writes draft sidecar metadata only and does not mutate
+  source design state.
 
 Proposals own a typed `OperationBatch`, rationale, affected object IDs,
 expected result, prepared-against `model_revision`, assumptions, risks, checks,
@@ -249,22 +417,57 @@ contract violations.
 
 MCP:
 
-- `datum.artifact.generate`
-- `datum.artifact.show`
-- `datum.artifact.compare`
-- `datum.artifact.validate`
+- Current:
+  - `datum.artifact.list`
+  - `datum.artifact.generate`
+  - `datum.artifact.show`
+  - `datum.artifact.files`
+  - `datum.artifact.preview`
+  - `datum.artifact.compare`
+  - `datum.artifact.validate`
+  - `datum.artifact.export_manufacturing_set`
+  - `datum.artifact.validate_manufacturing_set`
 
 CLI:
 
-- `datum-eda artifact generate --include <scope>[,<scope>...]`
-- `datum-eda artifact show <artifact_id>`
-- `datum-eda artifact compare <before> <after>`
-- `datum-eda artifact validate <artifact_id>`
+- Current:
+  - `datum-eda artifact list <root>`
+  - `datum-eda artifact generate <root> --output-dir <dir> --include <gerber-set|manufacturing-set|bom|pnp|drill|all>[,<scope>...] [--prefix <prefix>]`
+  - `datum-eda artifact generate <root> --output-job <uuid> [--output-dir <dir>]`
+  - `datum-eda artifact show <root> --artifact <artifact_id>`
+  - `datum-eda artifact files <root> --artifact <artifact_id>`
+  - `datum-eda artifact preview <root> --artifact <artifact_id> [--artifact-dir <dir>] --file <relative_path>`
+  - `datum-eda artifact compare <root> --before <artifact_id> --after <artifact_id>`
+  - `datum-eda artifact validate <root> --artifact <artifact_id>`
+  - `datum-eda artifact export-manufacturing-set <root> --output-dir <dir> [--prefix <prefix>] [--include <scope>[,<scope>...]] [--output-job <uuid>|--job <name>] [--variant <uuid>]`
+  - `datum-eda artifact validate-manufacturing-set <root> --output-dir <dir> [--prefix <prefix>] [--include <scope>[,<scope>...]] [--output-job <uuid>|--job <name>] [--variant <uuid>]`
 
 Artifacts are derived projections, never source authority and never committed
 through `commit()`. Format and scope are parameters (`--include`), not separate
-peer tool families. Panel/manufacturing/output-job context is represented in
-`output_context`.
+peer tool families. The current generic generator accepts the implemented
+`gerber-set`, `manufacturing-set`, `bom`, `pnp`, `drill`, and `all` scopes.
+The `bom` and `pnp` scopes each produce one CSV artifact. The `drill` scope
+produces a drill CSV plus Excellon drill artifact and carries the Excellon
+production projection proof. Generic artifact validation performs semantic
+comparison for the `bom`, `pnp`, and `drill` scopes and persists their
+`ArtifactMetadata.validation_state`. `artifact generate --output-job` executes
+an authored `OutputJob`, uses the job's stored include/prefix/variant/output
+directory unless an output-directory override is supplied, and records one
+`OutputJobRun` for the logical command. Panel/manufacturing/output-job context
+is represented in `output_context`.
+
+Current OutputJob authoring also supports
+`datum-eda project create-output-job <root> --prefix <prefix> --include <gerber-set|manufacturing-set|bom|pnp|drill|all>[,<scope>...]`.
+The compatibility MCP bridge exposes the same operation as
+`create_output_job`; the older `create_gerber_output_job` remains for Gerber-set
+compatibility. Generated BOM/PnP/drill artifacts attach to a matching authored
+OutputJob when scope and prefix match, including jobs whose stored include list
+contains multiple scopes.
+Direct manufacturing-set export, validate, compare, manifest, and inspect
+compatibility commands accept `--include`, `--output-job <uuid>`, and exact-name
+`--job <name>`; when a job is supplied, its prefix, variant, and stored include
+list are used unless an explicit CLI flag overrides them. Duplicate job names
+are rejected as ambiguous.
 
 Every artifact records project id, model revision, variant, output context,
 generator version, projection revision, validation/equivalence state, and
@@ -282,6 +485,9 @@ MCP:
 CLI:
 
 - `datum-eda journal list|show|undo|redo`
+- Current native-project implementation supports `datum-eda journal list
+  <root>`, `datum-eda journal show <root> --transaction <uuid>`,
+  `datum-eda journal undo <root>`, and `datum-eda journal redo <root>`.
 
 Journal is global and project-wide. `list` and `show` are read-only. `undo` and
 `redo` are compensating `OperationBatch` commits through the same `commit()`
@@ -312,6 +518,21 @@ Proposal lifecycle:
 Apply rejection reasons include stale model revision, missing acceptance,
 capability denial, invalid operation, object revision mismatch, failed required
 check, proposal conflict, and unsupported operation.
+
+Current implementation:
+
+- Generic proposal validation is backed by the engine-level
+  `ProposalApplyValidation` object.
+- Generic proposal creation accepts an `OperationBatch`, stamps or validates
+  its prepared model revision guard, dry-runs the batch for operation
+  validation/affected-object preview, and writes a draft proposal sidecar.
+- `project validate-proposal` returns stable `blocker_codes` and structured
+  blocker objects with `code` and `message`.
+- `project review-proposal --status accepted` refuses stale proposals and
+  proposals whose embedded `OperationBatch` lacks the prepared model revision
+  guard; deferred and rejected reviews remain allowed for stale drafts.
+- Current blocker codes include `missing_acceptance`, `stale_model_revision`,
+  and `missing_revision_guard`.
 
 ## Compatibility Alias Policy
 
@@ -360,10 +581,10 @@ names. It preserves implementation truth; it is not the target surface.
 
 Current implementation note: implemented in the current daemon/stdio host.
 
-### Current Implemented Methods (2026-03-25)
+### Current Implemented Methods (2026-06-20)
 
 `open_project`, `close_project`, `save`, `delete_track`, `delete_via`,
-`delete_component`, `move_component`, `rotate_component`, `set_value`,
+`delete_component`, `move_component`, `rotate_component`, `flip_component`, `set_value`,
 `set_reference`, `assign_part`, `set_package`, `set_package_with_part`,
 `replace_component`, `replace_components`, `apply_component_replacement_plan`,
 `apply_component_replacement_policy`, `apply_scoped_component_replacement_policy`,
@@ -380,6 +601,115 @@ Current implementation note: implemented in the current daemon/stdio host.
 `get_connectivity_diagnostics`, `get_design_rules`, `run_erc`, `run_drc`,
 `explain_violation`,
 `validate_project`,
+`get_check_run`,
+`get_check_runs`,
+`show_check_run`,
+`get_check_profiles`,
+`get_zone_fills`,
+`fill_zones`,
+`generate_standards_repair_proposals`, `waive_finding`, `accept_deviation`,
+`get_journal_list`,
+`get_journal_transaction`,
+`journal_undo`,
+`journal_redo`,
+`get_panel_projections`,
+`create_panel_projection`,
+`create_panel_projection_proposal`,
+`update_panel_projection`,
+`update_panel_projection_proposal`,
+`delete_panel_projection`,
+`delete_panel_projection_proposal`,
+`get_manufacturing_plans`,
+`create_manufacturing_plan`,
+`create_manufacturing_plan_proposal`,
+`update_manufacturing_plan`,
+`update_manufacturing_plan_proposal`,
+`delete_manufacturing_plan`,
+`delete_manufacturing_plan_proposal`,
+`get_output_jobs`,
+`generate_artifacts`,
+`get_artifacts`,
+`show_artifact`,
+`get_artifact_files`,
+`preview_artifact_file`,
+`compare_artifacts`,
+`validate_artifact`,
+`create_gerber_output_job`,
+`create_output_job`,
+`create_output_job_proposal`,
+`update_output_job`,
+`update_output_job_proposal`,
+`run_output_job`,
+`start_output_job_run`,
+`cancel_output_job_run`,
+`delete_output_job`,
+`delete_output_job_proposal`,
+`export_manufacturing_set`,
+`validate_manufacturing_set`,
+`get_component_instances`,
+`bind_component_instance`,
+`set_component_instance`,
+`delete_component_instance`,
+`get_pool_library_objects`,
+`show_pool_library_object`,
+`get_pool_model_blobs`,
+`gc_pool_model_blobs`,
+`create_pool_library_object`,
+`create_pool_unit`,
+`set_pool_unit_pin`,
+`create_pool_symbol`,
+`add_pool_symbol_line`,
+`add_pool_symbol_rect`,
+`add_pool_symbol_circle`,
+`add_pool_symbol_polygon`,
+`add_pool_symbol_arc`,
+`add_pool_symbol_text`,
+`set_pool_symbol_pin_anchor`,
+`create_pool_entity`,
+`create_pool_padstack`,
+`create_pool_package`,
+`set_pool_package_pad`,
+`set_pool_package_courtyard_rect`,
+`set_pool_package_courtyard_polygon`,
+`add_pool_package_silkscreen_line`,
+`add_pool_package_silkscreen_rect`,
+`add_pool_package_silkscreen_circle`,
+`add_pool_package_silkscreen_polygon`,
+`add_pool_package_silkscreen_arc`,
+`add_pool_package_silkscreen_text`,
+`add_pool_package_model_3d`,
+`set_pool_package_body_heights`,
+`create_pool_part`,
+`set_pool_part_metadata`,
+`set_pool_part_parametric`,
+`set_pool_part_orderable_mpns`,
+`set_pool_part_tags`,
+`set_pool_part_packaging_options`,
+`set_pool_part_supply_chain`,
+`set_pool_part_behavioural_models`,
+`attach_pool_part_model`,
+`detach_pool_part_model`,
+`set_pool_part_thermal`,
+`set_pool_part_pad_map_entry`,
+`set_pool_part_pad_map`,
+`set_pool_library_object`,
+`delete_pool_library_object`,
+`get_relationships`,
+`get_variants`,
+`get_import_map`,
+`create_proposal`,
+`create_draw_wire_proposal`,
+`create_place_label_proposal`,
+`create_place_symbol_proposal`,
+`get_proposals`,
+`show_proposal`,
+`preview_proposal`,
+`validate_proposal`,
+`defer_proposal`,
+`reject_proposal`,
+`review_proposal`,
+`accept_apply_proposal`,
+`apply_proposal`,
 `export_route_path_proposal`,
 `route_proposal`,
 `review_route_proposal`,
@@ -421,39 +751,221 @@ Legacy save compatibility; target commits at apply time.
 
 #### `delete_track`
 
-Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+Per-method write compatibility over the daemon's current open project. The
+canonical MCP aliases `datum.pcb.draw_track`, `datum.pcb.edit_track`, and
+`datum.pcb.delete_track` are native-project scoped and dispatch through
+journaled native CLI authoring via `datum-eda project draw-board-track`,
+`edit-board-track`, and `delete-board-track`.
 
 #### `delete_via`
 
-Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+Per-method write compatibility over the daemon's current open project. The
+canonical MCP aliases `datum.pcb.place_via`, `datum.pcb.edit_via`, and
+`datum.pcb.delete_via` are native-project scoped and dispatch through
+journaled native CLI authoring via `datum-eda project place-board-via`,
+`edit-board-via`, and `delete-board-via`.
+
+#### `place_zone` / `edit_zone` / `delete_zone`
+
+Canonical native-project MCP aliases `datum.pcb.place_zone`,
+`datum.pcb.edit_zone`, and `datum.pcb.delete_zone` require explicit project
+`path` arguments and dispatch through journaled native CLI authoring via
+`datum-eda project place-board-zone`, `edit-board-zone`, and
+`delete-board-zone`. Zone filling remains a generated-evidence check surface
+under `datum.check.fill_zones`.
+
+#### `place_pad` / `edit_pad` / `delete_pad` / `set_pad_net` / `clear_pad_net`
+
+Canonical native-project MCP aliases `datum.pcb.place_pad`, `edit_pad`,
+`delete_pad`, `set_pad_net`, and `clear_pad_net` require explicit project
+`path` arguments and dispatch through journaled native CLI authoring via the
+matching `datum-eda project ...board-pad...` commands.
+
+#### `place_net` / `edit_net` / `delete_net`
+
+Canonical native-project MCP aliases `datum.pcb.place_net`, `edit_net`, and
+`delete_net` require explicit project `path` arguments and dispatch through
+journaled native CLI authoring via the matching `datum-eda project
+...board-net` commands.
+`datum.pcb.place_net` and `datum.pcb.edit_net` expose the same per-net
+controlled-impedance metadata as the native CLI: `impedance_target_ohms`,
+`impedance_tolerance_pct`, and `controlled_dielectric_layer`; `edit_net` also
+accepts `clear_controlled_impedance` to remove the metadata. These map directly
+to the matching `place-board-net` / `edit-board-net` flags.
+
+#### `place_net_class` / `edit_net_class` / `delete_net_class`
+
+Canonical native-project MCP aliases `datum.pcb.place_net_class`,
+`edit_net_class`, and `delete_net_class` require explicit project `path`
+arguments and dispatch through journaled native CLI authoring via the matching
+`datum-eda project ...board-net-class` commands.
+
+#### `set_board_name` / `set_outline` / `set_stackup` / `add_default_top_stackup`
+
+Canonical native-project MCP aliases `datum.pcb.set_board_name`,
+`set_outline`, `set_stackup`, and `add_default_top_stackup` require explicit
+project `path` arguments and dispatch through journaled native CLI authoring via
+the matching `datum-eda project set-board-name`, `set-board-outline`,
+`set-board-stackup`, and `add-default-top-stackup` commands.
+`datum.pcb.set_stackup.layers[]` accepts the same layer tuple syntax as the CLI:
+`id:name:type:thickness_nm` for legacy callers or
+`id:name:type:thickness_nm:dielectric_constant:loss_tangent:copper_weight_oz:roughness_um:material_name`
+for material-aware callers. Empty optional material slots remain unset.
+
+#### `place_keepout` / `edit_keepout` / `delete_keepout`
+
+Canonical native-project MCP aliases `datum.pcb.place_keepout`,
+`edit_keepout`, and `delete_keepout` require explicit project `path` arguments
+and dispatch through journaled native CLI authoring via the matching
+`datum-eda project ...board-keepout` commands.
+
+#### `place_dimension` / `edit_dimension` / `delete_dimension`
+
+Canonical native-project MCP aliases `datum.pcb.place_dimension`,
+`edit_dimension`, and `delete_dimension` require explicit project `path`
+arguments and dispatch through journaled native CLI authoring via the matching
+`datum-eda project ...board-dimension` commands. `edit_dimension` maps
+`clear_text=true` to the CLI `--clear-text` flag.
+
+#### `place_text` / `edit_text` / `delete_text`
+
+Canonical native-project MCP aliases `datum.pcb.place_text`, `edit_text`, and
+`delete_text` require explicit project `path` arguments and dispatch through
+journaled native CLI authoring via the matching `datum-eda project
+...board-text` commands. `place_text` exposes the authored text, position,
+layer, rotation, size, stroke, alignment, style, mirror/upright, line-spacing,
+bold, and italic fields; `edit_text` exposes the same fields as optional
+replacements using the CLI `--text <uuid>` target plus `--value` for content.
+
+#### `create_sheet` / `delete_sheet` / `rename_sheet` / `create_sheet_definition` / `create_sheet_instance` / `delete_sheet_instance` / `move_sheet_instance` / `bind_sheet_instance_port` / `unbind_sheet_instance_port` / `draw_wire` / `delete_wire` / `place_junction` / `delete_junction` / `place_noconnect` / `delete_noconnect` / `place_label` / `rename_label` / `delete_label` / `place_port` / `edit_port` / `delete_port` / `create_bus` / `edit_bus_members` / `place_bus_entry` / `delete_bus_entry` / `place_text` / `edit_text` / `delete_text` / drawing aliases / symbol lifecycle aliases
+
+Canonical native-project MCP aliases `datum.schematic.create_sheet`,
+`delete_sheet`, `rename_sheet`, `create_sheet_definition`,
+`create_sheet_instance`, `delete_sheet_instance`, `move_sheet_instance`,
+`bind_sheet_instance_port`, `unbind_sheet_instance_port`, `draw_wire`,
+`delete_wire`, `place_junction`, `delete_junction`, `place_noconnect`, and
+`delete_noconnect` require explicit project `path` arguments and dispatch
+through journaled native CLI authoring via the matching
+`datum-eda project create-sheet`, `delete-sheet`, `rename-sheet`,
+`create-sheet-definition`, `create-sheet-instance`, `delete-sheet-instance`,
+`move-sheet-instance`, `bind-sheet-instance-port`, `unbind-sheet-instance-port`,
+`draw-wire`, `delete-wire`, `place-junction`, `delete-junction`,
+`place-noconnect`, and `delete-noconnect` commands. `delete_sheet` cascades the
+sheet payload as one journaled sheet-delete operation, preserving undo/redo as
+a whole-sheet restore rather than a sequence of private child writes.
+`create_sheet_definition` creates the definition shard and updates the
+schematic root definitions map as one journaled transaction.
+`create_sheet_instance`, `delete_sheet_instance`, and `move_sheet_instance`
+update the schematic root instances array as undoable journaled transactions.
+`bind_sheet_instance_port` and `unbind_sheet_instance_port` update the
+instance's persisted parent-sheet port list; path-aware hierarchy queries derive
+links from those persisted bindings and matching child hierarchical labels.
+Canonical label aliases
+`datum.schematic.place_label`, `rename_label`, and `delete_label` dispatch
+through the matching journaled `place-label`, `rename-label`, and
+`delete-label` commands; `place_label` accepts `kind` as an optional enum-like
+string matching the CLI value names. Port aliases `datum.schematic.place_port`,
+`edit_port`, and `delete_port` dispatch through the matching journaled
+`place-port`, `edit-port`, and `delete-port` commands; `edit_port` accepts
+optional `name`, `direction`, `x_nm`, and `y_nm` replacements. Bus aliases
+`datum.schematic.create_bus`, `edit_bus_members`, `place_bus_entry`, and
+`delete_bus_entry` dispatch through the matching journaled `create-bus`,
+`edit-bus-members`, `place-bus-entry`, and `delete-bus-entry` commands;
+`create_bus` and `edit_bus_members` serialize `members[]` as repeated
+`--member` flags, and `place_bus_entry` accepts optional `wire`. Schematic
+text aliases `datum.schematic.place_text`, `edit_text`, and `delete_text`
+dispatch through the matching journaled `place-schematic-text`,
+`edit-schematic-text`, and `delete-schematic-text` commands; `edit_text`
+accepts optional `value`, `x_nm`, `y_nm`, and `rotation_deg` replacements.
+Drawing aliases `datum.schematic.place_drawing_line`, `place_drawing_rect`,
+`place_drawing_circle`, `place_drawing_arc`, `edit_drawing_line`,
+`edit_drawing_rect`, `edit_drawing_circle`, `edit_drawing_arc`, and
+`delete_drawing` dispatch through the matching journaled drawing commands.
+Symbol lifecycle aliases `datum.schematic.place_symbol`, `move_symbol`,
+`rotate_symbol`, `mirror_symbol`, `delete_symbol`, `set_symbol_reference`,
+`set_symbol_value`, `set_symbol_display_mode`,
+`set_symbol_hidden_power_behavior`, `set_symbol_unit`, `clear_symbol_unit`,
+`set_symbol_gate`, `clear_symbol_gate`, `set_symbol_entity`,
+`clear_symbol_entity`, `set_symbol_part`, `clear_symbol_part`,
+`set_symbol_lib_id`, `clear_symbol_lib_id`, `set_pin_override`,
+`clear_pin_override`, `add_symbol_field`, `edit_symbol_field`, and
+`delete_symbol_field` dispatch through the matching journaled symbol
+commands.
+
+#### `place_component`
+
+Canonical native-project MCP alias `datum.pcb.place_component` requires
+`path`, `part`, `package`, `reference`, `value`, `x_nm`, `y_nm`, and `layer`;
+it dispatches through journaled native CLI authoring via
+`datum-eda project place-board-component`.
 
 #### `delete_component`
 
-Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+Per-method write compatibility over the daemon's current open project. The
+canonical MCP alias `datum.pcb.delete_component` is native-project scoped and
+requires `path` and `component`; it dispatches through journaled native CLI
+authoring via `datum-eda project delete-board-component`.
 
 #### `move_component`
 
-Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+Per-method write compatibility over the daemon's current open project. The
+canonical MCP alias `datum.pcb.move_component` is native-project scoped and
+requires `path`, `component`, `x_nm`, and `y_nm`; it dispatches through
+journaled native CLI authoring via `datum-eda project move-board-component`.
 
 #### `rotate_component`
 
-Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+Per-method write compatibility over the daemon's current open project. The
+canonical MCP alias `datum.pcb.rotate_component` is native-project scoped and
+requires `path`, `component`, and `rotation_deg`; it dispatches through journaled
+native CLI authoring via `datum-eda project rotate-board-component`.
+
+#### `flip_component`
+
+Per-method write compatibility over the daemon's current open project. Accepts
+`uuid` and target copper `layer`, mutates the component side/layer, and records
+undo/redo state for package and pad layer/position metadata. The canonical MCP
+alias `datum.pcb.flip_component` is native-project scoped and requires `path`,
+`component`, and `layer`; it dispatches through journaled `SetComponentSide`
+via `datum-eda project flip-board-component`. CLI compatibility
+`set-board-component-layer` remains available.
+
+#### `lock_component` / `unlock_component`
+
+Canonical native-project MCP aliases `datum.pcb.lock_component` and
+`datum.pcb.unlock_component` require `path` and `component`; they dispatch
+through journaled native CLI authoring via
+`datum-eda project set-board-component-locked` and
+`datum-eda project clear-board-component-locked`.
 
 #### `set_value`
 
-Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+Per-method write compatibility over the daemon's current open project. The
+canonical MCP alias `datum.pcb.set_component_value` is native-project scoped
+and requires `path`, `component`, and `value`; it dispatches through journaled
+native CLI authoring via `datum-eda project set-board-component-value`.
 
 #### `set_reference`
 
-Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+Per-method write compatibility over the daemon's current open project. The
+canonical MCP alias `datum.pcb.set_component_reference` is native-project
+scoped and requires `path`, `component`, and `reference`; it dispatches through
+journaled native CLI authoring via
+`datum-eda project set-board-component-reference`.
 
 #### `assign_part`
 
-Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+Per-method write compatibility over the daemon's current open project. The
+canonical MCP alias `datum.pcb.set_component_part` is native-project scoped and
+requires `path`, `component`, and `part`; it dispatches through journaled
+native CLI authoring via `datum-eda project set-board-component-part`.
 
 #### `set_package`
 
-Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
+Per-method write compatibility over the daemon's current open project. The
+canonical MCP alias `datum.pcb.set_component_package` is native-project scoped
+and requires `path`, `component`, and `package`; it dispatches through
+journaled native CLI authoring via `datum-eda project set-board-component-package`.
 
 #### `set_package_with_part`
 
@@ -581,7 +1093,10 @@ Query compatibility.
 
 #### `get_hierarchy`
 
-Query compatibility.
+Query compatibility. Canonical `datum.query.hierarchy` accepts an optional
+native project `path`; when present it dispatches through
+`datum-eda project query <path> hierarchy`, otherwise it falls back to the
+legacy open-session `get_hierarchy` compatibility method.
 
 #### `get_net_info`
 
@@ -622,6 +1137,795 @@ Check compatibility.
 #### `validate_project`
 
 Query/check compatibility until resolver-backed validation lands.
+
+#### `get_check_run`
+
+Check/evidence compatibility. Runs the native project check surface through the
+CLI bridge and persists a resolver-owned `CheckRun` generated-evidence artifact.
+
+#### `get_check_runs`
+
+Check/evidence compatibility. Lists resolver-discovered persisted `CheckRun`
+generated-evidence artifacts through the CLI bridge.
+
+#### `show_check_run`
+
+Check/evidence compatibility. Shows one resolver-discovered persisted
+`CheckRun` generated-evidence artifact by UUID through the CLI bridge.
+
+#### `get_check_profiles`
+
+Check/profile compatibility. Lists the supported native-project CheckRun
+profiles visible to agents. Current implementation exposes the single
+`native-combined` compatibility profile. `get_check_run` / `datum.check.run`
+accept optional `profile=native-combined` and reject unsupported profile ids
+instead of silently substituting another profile.
+
+#### `get_zone_fills`
+
+Zone-fill query compatibility. Returns resolver-derived native board zone-fill
+state so agents can distinguish authored zones from generated filled copper.
+
+#### `fill_zones`
+
+Zone-fill producer compatibility. Runs the canonical `datum-eda check
+fill-zones` CLI bridge with optional `zone` and `net` filters. Current
+implementation emits `ZoneFill{Filled}` only for closed, non-degenerate,
+no-thermal zones on otherwise empty boards; harder cases persist
+`ZoneFill{Unsupported}` generated evidence with explanatory provenance. The
+CLI bridge commits journaled `SetZoneFill` generated-evidence operations, so
+MCP-triggered fills are visible in journal show/list and participate in
+undo/redo.
+
+#### `generate_standards_repair_proposals`
+
+Proposal/check compatibility. Generates draft repair proposals from persisted
+standards/process-aperture and dimension-rule check findings. Current repair
+families emit `SetBoardPad` proposals for pad mask/paste aperture findings and
+direct geometry proposals for dimension-rule findings: `SetBoardTrack` for
+`track_width_below_min` and `SetBoardVia` for `via_hole_out_of_range` /
+`via_annular_below_min`. Target routes resulting edits through reviewed
+proposals and `commit()`.
+
+#### `waive_finding`
+
+Check/journal compatibility. Authors a fingerprint-scoped native check finding
+waiver through the CLI bridge and native project journal. Parameters are
+`path`, `fingerprint`, `rationale`, and optional `created_by`. The canonical
+CLI/MCP aliases are now `datum-eda check waive` and `datum.check.waive`; this
+flat method remains as a compatibility name.
+
+#### `accept_deviation`
+
+Check/journal compatibility. Authors a fingerprint-scoped accepted deviation
+through the CLI bridge and native project journal. Parameters are `path`,
+`fingerprint`, `rationale`, and optional `accepted_by`. The canonical CLI/MCP
+aliases are now `datum-eda check accept-deviation` and
+`datum.check.accept_deviation`; this flat method remains as a compatibility
+name.
+
+#### `get_journal_list`
+
+Journal compatibility. Returns the resolver-backed native project transaction
+journal summary and undo/redo availability. The canonical aliases are
+`datum-eda journal list` and `datum.journal.list`; this flat method remains as
+a compatibility name.
+
+#### `get_journal_transaction`
+
+Journal compatibility. Returns one full native project transaction record by
+transaction UUID. The canonical aliases are `datum-eda journal show` and
+`datum.journal.show`; this flat method remains as a compatibility name.
+
+#### `journal_undo`
+
+Journal compatibility. Applies one native project undo through the resolver
+journal as a compensating transaction. The canonical aliases are
+`datum-eda journal undo` and `datum.journal.undo`; this flat method remains as
+a compatibility name.
+
+#### `journal_redo`
+
+Journal compatibility. Applies one native project redo through the resolver
+journal as a compensating transaction. The canonical aliases are
+`datum-eda journal redo` and `datum.journal.redo`; this flat method remains as
+a compatibility name.
+
+#### `get_panel_projections`
+
+PanelProjection query compatibility.
+
+#### `create_panel_projection`
+
+PanelProjection authoring compatibility for production-only panel targets.
+
+#### `create_panel_projection_proposal`
+
+PanelProjection proposal-authoring compatibility. Builds the same
+`CreatePanelProjection` OperationBatch as `create_panel_projection`, persists a
+draft proposal sidecar, and does not create the panel shard until review/apply.
+
+#### `update_panel_projection`
+
+PanelProjection authoring compatibility. Updates one authored panel projection
+through the CLI bridge and the journaled substrate path, preserving object
+identity while bumping `object_revision`.
+
+#### `update_panel_projection_proposal`
+
+PanelProjection proposal-authoring compatibility. Builds the same
+`SetPanelProjection` OperationBatch as `update_panel_projection`, persists a
+draft proposal sidecar, and does not mutate the panel shard until review/apply.
+
+#### `delete_panel_projection`
+
+PanelProjection authoring compatibility. Deletes one authored panel projection
+through the CLI bridge and the journaled substrate path; deletion is refused
+while a ManufacturingPlan still targets the panel projection.
+
+#### `delete_panel_projection_proposal`
+
+PanelProjection proposal-authoring compatibility. Builds the same
+`DeletePanelProjection` OperationBatch as `delete_panel_projection`, persists a
+draft proposal sidecar, and does not remove the panel shard until review/apply.
+
+#### `get_manufacturing_plans`
+
+ManufacturingPlan query compatibility.
+
+#### `create_manufacturing_plan`
+
+ManufacturingPlan authoring compatibility; may link to a PanelProjection.
+
+#### `create_manufacturing_plan_proposal`
+
+ManufacturingPlan proposal-authoring compatibility. Builds the same
+`CreateManufacturingPlan` OperationBatch as `create_manufacturing_plan`,
+persists a draft proposal sidecar, and does not create the plan shard until
+review/apply.
+
+#### `update_manufacturing_plan`
+
+ManufacturingPlan authoring compatibility. Updates one authored manufacturing
+plan through the CLI bridge and the journaled substrate path, preserving object
+identity while bumping `object_revision`.
+
+#### `update_manufacturing_plan_proposal`
+
+ManufacturingPlan proposal-authoring compatibility. Builds the same
+`SetManufacturingPlan` OperationBatch as `update_manufacturing_plan`, persists a
+draft proposal sidecar, and does not mutate the plan shard until review/apply.
+
+#### `delete_manufacturing_plan`
+
+ManufacturingPlan authoring compatibility. Deletes one authored manufacturing
+plan through the CLI bridge and the journaled substrate path; deletion is
+refused while an OutputJob still references the manufacturing plan.
+
+#### `delete_manufacturing_plan_proposal`
+
+ManufacturingPlan proposal-authoring compatibility. Builds the same
+`DeleteManufacturingPlan` OperationBatch as `delete_manufacturing_plan`,
+persists a draft proposal sidecar, and does not remove the plan shard until
+review/apply.
+
+#### `get_output_jobs`
+
+OutputJob/query compatibility.
+
+#### `create_gerber_output_job`
+
+OutputJob authoring compatibility; optional `manufacturing_plan` links the
+Gerber job to ManufacturingPlan intent. Target routes through `OperationBatch`
+and `commit()`.
+
+#### `create_output_job`
+
+OutputJob authoring compatibility for one or more comma-separated artifact
+include scopes (`gerber-set`, `manufacturing-set`, `bom`, `pnp`, `drill`, or
+`all`); optional
+`manufacturing_plan` links the job to ManufacturingPlan intent. This routes
+through the same journaled `OperationBatch` substrate path as the Gerber
+compatibility command.
+
+#### `create_output_job_proposal`
+
+OutputJob proposal-authoring compatibility. Builds the same `CreateOutputJob`
+OperationBatch as `create_output_job`, persists a draft proposal sidecar through
+the generic proposal gateway, and does not create the OutputJob shard until the
+proposal is accepted and applied.
+
+#### `update_output_job`
+
+OutputJob authoring compatibility. Updates one OutputJob name or
+manufacturing-plan link through the CLI bridge and the journaled substrate path.
+
+#### `update_output_job_proposal`
+
+OutputJob proposal-authoring compatibility. Builds the same `SetOutputJob`
+OperationBatch as `update_output_job`, persists a draft proposal sidecar through
+the generic proposal gateway, and does not mutate the OutputJob shard until the
+proposal is accepted and applied.
+
+#### `run_output_job`
+
+OutputJob execution compatibility. Executes one authored OutputJob by resolving
+its stored include scope list, prefix, and preferred output directory, then routes
+generation through the existing generated-evidence artifact path. A caller may
+provide a one-shot `output_dir` override; otherwise the authored OutputJob
+`output_dir` is used before the default generated-artifacts directory. Failed
+generation attempts return structured `output_job_run_v1` JSON with `status:
+failed` and are still persisted as generated evidence instead of being hidden as
+transport errors. Each persisted run receives a monotonic per-job
+`run_sequence`; repeated executions of the same authored job produce distinct
+run records, and output-job queries use `run_sequence` rather than UUID lexical
+order to identify the latest run.
+For generic multi-scope jobs, `run_output_job` persists one aggregate
+`OutputJobRun` for the logical command rather than one run per generated
+artifact; multi-artifact aggregate runs leave `artifact_id` null and report the
+generated scopes in the run log and artifact report.
+
+#### `start_output_job_run`
+
+OutputJob execution-lifecycle compatibility. Persists a generated-evidence
+`OutputJobRun` with `status: running` for one authored OutputJob without
+changing `ModelRevision`. The lifecycle record uses the same per-job
+`run_sequence` ordering contract as completed or failed executions.
+
+#### `cancel_output_job_run`
+
+OutputJob execution-lifecycle compatibility. Marks one existing generated
+evidence `OutputJobRun` as `status: canceled`, preserving the run id and making
+the canceled state query-visible through `get_output_jobs`.
+
+#### `delete_output_job`
+
+OutputJob authoring compatibility. Deletes one authored OutputJob through the
+CLI bridge and the journaled substrate path.
+
+#### `delete_output_job_proposal`
+
+OutputJob proposal-authoring compatibility. Builds the same `DeleteOutputJob`
+OperationBatch as `delete_output_job`, persists a draft proposal sidecar through
+the generic proposal gateway, and does not remove the OutputJob shard until the
+proposal is accepted and applied.
+
+#### `get_artifacts`
+
+Generated-evidence compatibility. Lists resolver-discovered artifact metadata
+and ad hoc `ArtifactRun` generated-evidence records for a native project through
+the canonical artifact CLI bridge.
+
+#### `generate_artifacts`
+
+Generated-evidence compatibility. Generates supported derived production
+artifacts for a native project through the canonical artifact CLI bridge.
+Current include scopes are `gerber-set`, `manufacturing-set`, `bom`, `pnp`,
+`drill`, and `all`. The same method can execute an authored `OutputJob` by
+passing `output_job`, in which case direct include/prefix arguments are not
+used and the response is the `output_job_run_v1` execution envelope.
+
+#### `show_artifact`
+
+Generated-evidence compatibility. Returns one resolver-discovered artifact
+metadata record by artifact id through the canonical artifact CLI bridge,
+including sequence-ordered ad hoc `ArtifactRun` history when the artifact was
+generated outside an authored OutputJob.
+
+#### `get_artifact_files`
+
+Generated-evidence compatibility. Returns the generated file path/hash list and
+production projection proof list for one resolver-discovered artifact through
+the canonical artifact CLI bridge. It does not read or mutate output files.
+
+#### `preview_artifact_file`
+
+Generated-artifact preview compatibility. Verifies that a requested safe
+relative file path belongs to the resolver-discovered artifact, reads it from
+either the caller-supplied artifact directory or persisted
+`ArtifactMetadata.output_dir`, checks the bytes against the artifact metadata
+hash, and returns a read-only semantic preview envelope. Current preview
+readers cover supported RS-274X Gerber inspection, Excellon drill tool/hit
+inspection, bounded Gerber/Excellon preview primitives in nanometer
+coordinates, and CSV row/header summaries for BOM, PnP, and drill tables.
+Older artifact metadata without `output_dir` still requires an explicit
+`artifact_dir` override.
+
+#### `compare_artifacts`
+
+Generated-evidence compatibility. Compares two resolver-discovered artifact
+metadata records by kind, model revision, validation state, file path/hash set,
+and production projection proof set through the canonical artifact CLI bridge.
+
+#### `validate_artifact`
+
+Generated-evidence compatibility. Validates one resolver-discovered artifact
+metadata record by artifact id through the canonical artifact CLI bridge. This
+checks project/model ownership, safe relative artifact paths, file hash fields,
+projection hash fields, and the persisted validation state. It does not rehash
+exported production files because current artifact metadata stores relative
+artifact paths; byte-level validation remains on output-directory scoped
+commands such as `validate_manufacturing_set`.
+
+#### `export_manufacturing_set`
+
+Manufacturing artifact compatibility. Exports the supported manufacturing set
+through the canonical artifact CLI bridge and returns resolver-owned artifact
+metadata, manifest path, and OutputJobRun evidence.
+
+#### `validate_manufacturing_set`
+
+Manufacturing artifact compatibility. Validates an exported manufacturing set
+against current project state and persisted artifact file hashes; validation
+failures still return structured JSON evidence for agent review.
+
+#### `get_component_instances`
+
+ComponentInstance query compatibility. Returns authored ComponentInstance
+records plus resolver-bound symbol/package references for a native project.
+
+#### `bind_component_instance`
+
+ComponentInstance write compatibility. Creates a journaled binding between one
+schematic symbol and one board package through the native project commit path.
+
+#### `set_component_instance`
+
+ComponentInstance write compatibility. Updates one journaled symbol/package
+binding through the native project commit path.
+
+#### `delete_component_instance`
+
+ComponentInstance write compatibility. Deletes one journaled ComponentInstance
+binding through the native project commit path.
+
+#### `get_pool_library_objects`
+
+Native pool-library query compatibility. Lists resolver-discovered
+pool-library objects from project pool refs, with optional pool, kind, object,
+and payload filters.
+
+#### `show_pool_library_object`
+
+Native pool-library query compatibility. Shows one resolver-discovered
+pool-library object with its materialized payload.
+
+#### `get_pool_model_blobs`
+
+Native pool-library model-blob query compatibility. Lists
+content-addressed `pool/models/<role>/<sha256>.<ext>` files, recomputes
+SHA-256, reports deterministic model UUIDs, and includes discovered
+`Part.behavioural_models` attachment references plus explicit `referenced` /
+`orphaned` lifecycle flags. Canonical alias: `datum.library.pool_models`.
+
+#### `gc_pool_model_blobs`
+
+Native pool-library model-blob lifecycle compatibility. Invokes
+`datum-eda project gc-pool-models` in dry-run mode unless `apply` is true and
+reports the native `native_project_pool_model_gc_v1` plan/delete/skip contract.
+The CLI remains the authority for conservative deletion rules: only orphaned
+regular hash-matching blobs may be deleted; referenced blobs, hash-mismatched
+blobs, non-regular files, and AMI bundle roles are preserved.
+
+#### `create_pool_library_object`
+
+Native pool-library authoring compatibility. Creates one pool-library object
+through the native project commit path using CLI-computed
+`<pool>/<kind>/<uuid>.json` object paths.
+
+#### `create_pool_unit`
+
+Native pool-library typed authoring compatibility. Creates one schema-versioned
+native `Unit` shard through the same journaled pool-library commit path without
+requiring callers to author raw JSON.
+
+#### `set_pool_unit_pin`
+
+Native pool-library typed authoring compatibility. Sets one `Unit.pins` entry,
+validating a non-empty pin name, the canonical pin direction enum, and duplicate
+pin identity before committing through the journaled pool-library set path.
+
+#### `create_pool_symbol`
+
+Native pool-library typed authoring compatibility. Creates one schema-versioned
+native `Symbol` shard through the same journaled pool-library commit path and
+rejects symbols whose referenced `Unit` is not present in the resolved model.
+
+#### `add_pool_symbol_line`
+
+Native pool-library typed authoring compatibility. Appends one validated
+`Primitive::Line` entry to `Symbol.drawings`, rejecting zero-length lines and
+non-positive stroke widths before committing through the journaled pool-library
+set path. Canonical alias: `datum.library.add_symbol_line`.
+
+#### `add_pool_symbol_rect`
+
+Native pool-library typed authoring compatibility. Appends one validated
+`Primitive::Rect` entry to `Symbol.drawings`, rejecting zero-area bounds and
+non-positive stroke widths before committing through the journaled pool-library
+set path. Canonical alias: `datum.library.add_symbol_rect`.
+
+#### `add_pool_symbol_circle`
+
+Native pool-library typed authoring compatibility. Appends one validated
+`Primitive::Circle` entry to `Symbol.drawings`, rejecting non-positive radius
+or stroke width before committing through the journaled pool-library set path.
+Canonical alias: `datum.library.add_symbol_circle`.
+
+#### `add_pool_symbol_polygon`
+
+Native pool-library typed polygon/polyline authoring compatibility. Appends one
+validated `Primitive::Polygon` entry to `Symbol.drawings`, persisting vertices,
+`closed`, and stroke width. Vertices are supplied as `x,y;x,y;...`; malformed
+vertices, non-positive stroke widths, fewer than two vertices, and closed
+polygons with fewer than three vertices are rejected before committing through
+the journaled pool-library set path. Canonical alias:
+`datum.library.add_symbol_polygon`.
+
+#### `add_pool_symbol_arc`
+
+Native pool-library typed authoring compatibility. Appends one validated
+`Primitive::Arc` entry to `Symbol.drawings`, rejecting non-positive radius
+or stroke width while persisting center, radius, start angle, end angle, and
+stroke width before committing through the journaled pool-library set path.
+Canonical alias: `datum.library.add_symbol_arc`.
+
+#### `add_pool_symbol_text`
+
+Native pool-library typed authoring compatibility. Appends one validated
+`Primitive::Text` entry to `Symbol.drawings`, rejecting blank text while
+persisting authored position and rotation before committing through the
+journaled pool-library set path. Canonical alias:
+`datum.library.add_symbol_text`.
+
+#### `set_pool_symbol_pin_anchor`
+
+Native pool-library typed authoring compatibility. Sets or replaces one
+`Symbol.pin_anchors` entry for a referenced unit pin, rejecting symbols whose
+unit is missing and pins that are not present in that unit before committing
+through the journaled pool-library set path. Canonical alias:
+`datum.library.set_symbol_pin_anchor`.
+
+#### `create_pool_entity`
+
+Native pool-library typed authoring compatibility. Creates one schema-versioned
+native `Entity` shard with an initial gate over an existing `Unit` and `Symbol`,
+and rejects mismatched symbol/unit combinations before committing the shard.
+
+#### `create_pool_padstack`
+
+Native pool-library typed authoring compatibility. Creates one schema-versioned
+native `Padstack` shard with optional circle/rect aperture geometry and optional
+drill diameter through the journaled pool-library commit path.
+
+#### `create_pool_package`
+
+Native pool-library typed authoring compatibility. Creates one schema-versioned
+native `Package` shard with one initial pad referencing an existing `Padstack`
+through the journaled pool-library commit path.
+
+#### `set_pool_package_pad`
+
+Native pool-library typed authoring compatibility. Sets one `Package.pads`
+entry, validating the referenced padstack, non-empty pad name, positive layer,
+and duplicate pad identity before committing through the journaled pool-library
+set path.
+
+#### `set_pool_package_courtyard_rect`
+
+Native pool-library typed authoring compatibility. Sets a rectangular
+`Package.courtyard` polygon from validated min/max nanometer bounds before
+committing through the journaled pool-library set path.
+
+#### `set_pool_package_courtyard_polygon`
+
+Native pool-library typed authoring compatibility. Sets a closed
+`Package.courtyard` polygon from `x,y;x,y;...` vertices before committing
+through the journaled pool-library set path. Malformed vertices and polygons
+with fewer than three vertices are rejected. Canonical alias:
+`datum.library.set_package_courtyard_polygon`.
+
+#### `add_pool_package_silkscreen_line`
+
+Native pool-library typed authoring compatibility. Appends one validated
+`Primitive::Line` entry to `Package.silkscreen`, rejecting zero-length lines
+and non-positive stroke widths before committing through the journaled
+pool-library set path.
+
+#### `add_pool_package_silkscreen_rect`
+
+Native pool-library typed authoring compatibility. Appends one validated
+`Primitive::Rect` entry to `Package.silkscreen`, rejecting zero-area bounds
+and non-positive stroke widths before committing through the journaled
+pool-library set path.
+
+#### `add_pool_package_silkscreen_circle`
+
+Native pool-library typed authoring compatibility. Appends one validated
+`Primitive::Circle` entry to `Package.silkscreen`, rejecting non-positive radius
+or stroke width before committing through the journaled pool-library set path.
+
+#### `add_pool_package_silkscreen_polygon`
+
+Native pool-library typed authoring compatibility. Appends one validated
+`Primitive::Polygon` entry to `Package.silkscreen`, persisting vertices,
+`closed`, and stroke width. Vertices are supplied as `x,y;x,y;...`; malformed
+vertices, non-positive stroke widths, fewer than two vertices, and closed
+polygons with fewer than three vertices are rejected before committing through
+the journaled pool-library set path. Canonical alias:
+`datum.library.add_package_silkscreen_polygon`.
+
+#### `add_pool_package_silkscreen_arc`
+
+Native pool-library typed authoring compatibility. Appends one validated
+`Primitive::Arc` entry to `Package.silkscreen`, persisting center, radius,
+start angle, end angle, and stroke width while rejecting non-positive radius or
+stroke width before committing through the journaled pool-library set path.
+Canonical alias: `datum.library.add_package_silkscreen_arc`.
+
+#### `add_pool_package_silkscreen_text`
+
+Native pool-library typed authoring compatibility. Appends one validated
+`Primitive::Text` entry to `Package.silkscreen`, rejecting blank text while
+persisting position and rotation before committing through the journaled
+pool-library set path. Canonical alias:
+`datum.library.add_package_silkscreen_text`.
+
+#### `add_pool_package_model_3d`
+
+Native pool-library typed authoring compatibility. Appends one `ModelRef` to
+`Package.models_3d` from `--model-path`, typed `ModelFormat`, and typed
+`Transform3D` fields or JSON, persisting the path, format, transform, and
+empty provenance slot. Blank, absolute, traversal, or uninferable model paths,
+unsupported formats, malformed transform JSON, and nonpositive scales are
+rejected before committing through the journaled pool-library set path.
+Canonical alias:
+`datum.library.add_package_model_3d`.
+
+#### `set_pool_package_body_heights`
+
+Native pool-library typed authoring compatibility. Sets or clears
+`Package.body_height_nm` and `Package.body_height_mounted_nm` through the
+journaled pool-library set path, rejecting empty no-op requests and
+nonpositive heights before committing. Canonical alias:
+`datum.library.set_package_body_heights`.
+
+#### `create_pool_part`
+
+Native pool-library typed authoring compatibility. Creates one schema-versioned
+native `Part` shard binding an existing `Entity` to an existing `Package` with
+an initially empty `pad_map`.
+
+#### `set_pool_part_metadata`
+
+Native pool-library typed authoring compatibility. Updates supplied basic
+`Part` metadata fields (`mpn`, `manufacturer`, `manufacturer_jep106`, `value`,
+`description`, `datasheet`, and `lifecycle`) on an existing part while
+preserving omitted fields. The lifecycle value is validated against the
+canonical lifecycle enum, `manufacturer_jep106` is constrained to the valid
+11-bit JEP106 range, and empty no-op requests are rejected before committing
+through the journaled pool-library set path. Canonical alias:
+`datum.library.set_part_metadata`.
+
+#### `set_pool_part_parametric`
+
+Native pool-library typed authoring compatibility. Sets `Part.parametric`
+fields through `merge` or `replace` mode using repeatable `key=value`
+entries, rejecting malformed entries, blank keys, duplicate request keys, and
+unsupported modes before committing through the journaled pool-library set path.
+Canonical alias: `datum.library.set_part_parametric`.
+
+#### `set_pool_part_packaging_options`
+
+Native pool-library typed authoring compatibility. Sets
+`Part.packaging_options` through `merge` or `replace` mode using repeatable
+JSON packaging option objects that match `PackagingKind` / `PackagingOption`
+from `ENGINE_SPEC.md` §1.2. Semantic schema validation remains in the CLI /
+engine path; MCP forwards option payload strings without rewriting them.
+Canonical alias: `datum.library.set_part_packaging_options`.
+
+#### `set_pool_part_supply_chain`
+
+Native pool-library typed authoring compatibility. Sets or clears the derived
+`Part.supply_chain_offers` cache and `Part.last_supply_chain_check` timestamp
+through the journaled pool-library set path. MCP forwards repeatable
+`SupplyOffer` JSON payload strings and the checked-at timestamp string to the
+CLI/engine path for schema and quality validation. Canonical alias:
+`datum.library.set_part_supply_chain`.
+
+#### `set_pool_part_behavioural_models`
+
+Native pool-library typed authoring compatibility. Sets
+`Part.behavioural_models` through `merge` or `replace` mode using repeatable
+JSON `ModelAttachment` objects. Semantic schema validation remains in the CLI /
+engine path; MCP forwards attachment payload strings without rewriting them.
+This is the metadata-list substrate for model attachments, not yet the
+file-copying attach/detach operation. Canonical alias:
+`datum.library.set_part_behavioural_models`.
+
+#### `attach_pool_part_model`
+
+Native pool-library typed authoring compatibility. Reads a vendor behavioural
+model file, stores it under the content-addressed `pool/models/<role>/`
+directory, creates deterministic model / attachment UUIDs from the model hash
+and target part, and appends the resulting `ModelAttachment` to
+`Part.behavioural_models` through the journaled pool-library set path. Undo
+currently reverts the part attachment list while retaining the content-addressed
+pool blob; full blob lifecycle cleanup and dedicated operation-vocabulary
+inverses remain pending. Canonical alias:
+`datum.library.attach_part_model`.
+
+#### `detach_pool_part_model`
+
+Native pool-library typed authoring compatibility. Removes behavioural model
+attachments from `Part.behavioural_models` by exact attachment UUID or model
+UUID through the same journaled pool-library set path used by attach. Undo
+restores the removed attachment list entry while retaining any
+content-addressed `pool/models` blob; blob garbage collection and dedicated
+operation-vocabulary inverses remain pending. Canonical alias:
+`datum.library.detach_part_model`.
+
+The native CLI read side now exposes `project query <root> pool-models` for
+content-addressed model blob verification and attachment-reference discovery.
+Native project validation also fails provenance-backed behavioural-model
+attachments when the referenced blob is missing, the content-addressed filename
+does not match the file bytes, or the attachment model UUID diverges from the
+deterministic UUID derived from the referenced SHA-256.
+MCP now exposes flat `get_pool_model_blobs` and canonical
+`datum.library.pool_models` aliases over the same CLI verification surface;
+flat `gc_pool_model_blobs` exposes the matching conservative CLI cleanup
+action.
+
+#### `set_pool_part_thermal`
+
+Native pool-library typed authoring compatibility. Sets or clears
+`Part.thermal` through the journaled pool-library set path. Supplied thermal
+numeric fields are forwarded to the CLI as JSON-number strings for validation
+against `ThermalSpec`; `--clear` removes the thermal object before any supplied
+replacement fields are applied. Canonical alias:
+`datum.library.set_part_thermal`.
+
+#### `set_pool_part_orderable_mpns`
+
+Native pool-library typed authoring compatibility. Sets `Part.orderable_mpns`
+in `merge` or full `replace` mode from repeatable MPN values, rejecting blank
+values, duplicate request MPNs, and unsupported modes before committing through
+the journaled pool-library set path. Canonical alias:
+`datum.library.set_part_orderable_mpns`.
+
+#### `set_pool_part_tags`
+
+Native pool-library typed authoring compatibility. Sets `Part.tags` in `merge`
+or full `replace` mode from repeatable tag values, rejecting blank values,
+duplicate request tags, and unsupported modes before committing through the
+journaled pool-library set path. Canonical alias:
+`datum.library.set_part_tags`.
+
+#### `set_pool_part_pad_map_entry`
+
+Native pool-library typed authoring compatibility. Sets one `Part.pad_map`
+entry from a package pad UUID to an entity gate and unit pin, validating the
+pad, gate, and pin against resolved pool shards before committing through the
+journaled pool-library set path.
+
+#### `set_pool_part_pad_map`
+
+Native pool-library typed authoring compatibility. Sets multiple
+`Part.pad_map` entries in `merge` or full `replace` mode, validating every
+package pad, entity gate, and gate unit pin before committing through the
+journaled pool-library set path.
+
+#### `set_pool_library_object`
+
+Native pool-library authoring compatibility. Replaces one pool-library object
+through the native project commit path, preserving object identity, bumping the
+object revision, and using the previous payload as the undo inverse.
+
+#### `delete_pool_library_object`
+
+Native pool-library authoring compatibility. Deletes one pool-library object
+through the native project commit path using CLI-computed
+`<pool>/<kind>/<uuid>.json` object paths.
+
+#### `get_relationships`
+
+Relationship query compatibility. Returns authored relationship records plus
+resolver-derived relationship status for a native project.
+
+#### `get_variants`
+
+Variant query compatibility. Returns authored sparse variant overlays plus
+resolver-derived population/applicability for a native project.
+
+#### `get_import_map`
+
+Import provenance query compatibility. Returns resolver-validated import-key
+identity mappings for a native project without changing model revision.
+
+#### `get_proposals`
+
+Proposal query compatibility. Returns resolver-discovered proposal sidecars for
+a native project without applying or changing proposal status.
+
+#### `create_proposal`
+
+Proposal authoring compatibility. Creates a draft proposal sidecar from an
+OperationBatch JSON file after stamping or validating the prepared model
+revision guard and dry-running the batch for operation validation. It does not
+mutate source design state.
+
+#### `create_draw_wire_proposal`
+
+Schematic authoring proposal compatibility. Creates a draft proposal sidecar
+that contains a revision-guarded OperationBatch for drawing one schematic wire
+on a sheet. It maps to `datum-eda proposal create-draw-wire` and returns the
+`proposal_create_v1` contract with a `propose_draw_wire` action. It does not
+mutate source design state until the proposal is accepted/applied through the
+proposal gateway.
+
+#### `create_place_label_proposal`
+
+Schematic authoring proposal compatibility. Creates a draft proposal sidecar
+that contains a revision-guarded OperationBatch for placing one schematic label
+on a sheet. It maps to `datum-eda proposal create-place-label` and returns the
+`proposal_create_v1` contract with a `propose_place_label` action. It does not
+mutate source design state until the proposal is accepted/applied through the
+proposal gateway.
+
+#### `create_place_symbol_proposal`
+
+Schematic authoring proposal compatibility. Creates a draft proposal sidecar
+that contains a revision-guarded OperationBatch for placing one schematic
+symbol, including optional pool-library materialization inputs. It maps to
+`datum-eda proposal create-place-symbol` and returns the `proposal_create_v1`
+contract with a `propose_place_symbol` action. It does not mutate source design
+state until the proposal is accepted/applied through the proposal gateway.
+
+#### `show_proposal`
+
+Proposal inspection compatibility. Returns one resolver-discovered proposal
+sidecar plus current validation state without applying or changing proposal
+status.
+
+#### `preview_proposal`
+
+Proposal preview compatibility. Dry-runs one resolver-discovered proposal's
+embedded OperationBatch on a cloned resolved model and returns
+`proposal_preview_v1` with classified `CommitDiff`, affected objects, and
+current validation state. It does not write source shards, generated evidence,
+or proposal status.
+
+#### `validate_proposal`
+
+Proposal validation compatibility. Reports whether one persisted proposal was
+prepared against the current model revision, whether its embedded batch carries
+the prepared revision guard, and whether it can be applied now.
+
+#### `defer_proposal`
+
+Proposal review compatibility. Persists `deferred` review status for one draft
+proposal sidecar without applying it.
+
+#### `reject_proposal`
+
+Proposal review compatibility. Persists `rejected` review status for one draft
+proposal sidecar without applying it.
+
+#### `review_proposal`
+
+Proposal review compatibility. Persists `accepted`, `deferred`, or `rejected`
+review status for one draft proposal sidecar without applying it.
+
+#### `accept_apply_proposal`
+
+Proposal review/apply compatibility. Persists accepted review status for one
+draft proposal sidecar and then applies it through the generic revision-guarded
+proposal gateway.
+
+#### `apply_proposal`
+
+Proposal apply compatibility. Applies one accepted persisted proposal through
+the generic revision-guarded proposal gateway.
 
 #### `export_route_path_proposal`
 
@@ -714,21 +2018,29 @@ Apply compatibility; target routes through `OperationBatch` and `commit()`.
 | `open_project`, `close_project` | Context/session compatibility |
 | `save` | Legacy compatibility; no target public save |
 | `search_pool`, `get_part`, `get_package`, `get_*summary`, `get_*info`, `get_*candidates`, schematic and board reads | Query |
-| `get_check_report`, `run_erc`, `run_drc`, `explain_violation` | Check compatibility |
+| `get_check_report`, `get_check_run`, `get_zone_fills`, `fill_zones`, `run_erc`, `run_drc`, `explain_violation` | Check/derived-state compatibility |
 | Replacement plan reads and edits | Query/proposal compatibility depending on mutation |
+| `datum.check.repair_standards`, `datum.check.waive`, `datum.check.accept_deviation`, plus flat `generate_standards_repair_proposals`, `waive_finding`, `accept_deviation` | Check-derived proposal/waiver/deviation compatibility |
+| `datum.journal.list`, `datum.journal.show`, `datum.journal.undo`, `datum.journal.redo`, plus flat `get_journal_list`, `get_journal_transaction`, `journal_undo`, `journal_redo`, `undo`, `redo` | Journal compatibility; undo/redo route through compensating `OperationBatch` + `commit()` |
+| `get_panel_projections`, `create_panel_projection`, `create_panel_projection_proposal`, `update_panel_projection`, `update_panel_projection_proposal`, `delete_panel_projection`, `delete_panel_projection_proposal`, `get_manufacturing_plans`, `create_manufacturing_plan`, `create_manufacturing_plan_proposal`, `update_manufacturing_plan`, `update_manufacturing_plan_proposal`, `delete_manufacturing_plan`, `delete_manufacturing_plan_proposal`, `get_output_jobs`, `create_gerber_output_job`, `create_output_job`, `create_output_job_proposal`, `update_output_job`, `update_output_job_proposal`, `run_output_job`, `start_output_job_run`, `cancel_output_job_run`, `delete_output_job`, `delete_output_job_proposal`, `generate_artifacts`, `get_artifact_files`, `preview_artifact_file`, `export_manufacturing_set`, `validate_manufacturing_set` | Panel/manufacturing/OutputJob/artifact compatibility |
+| `get_relationships`, `get_variants` | Native relationship/variant substrate compatibility |
+| `get_import_map` | Native import provenance substrate compatibility |
+| `create_proposal`, `create_draw_wire_proposal`, `create_place_label_proposal`, `create_place_symbol_proposal`, `get_proposals` | Native proposal substrate compatibility |
+| `show_proposal`, `preview_proposal`, `validate_proposal`, `defer_proposal`, `reject_proposal`, `review_proposal`, `accept_apply_proposal`, `apply_proposal` | Native proposal inspect/preview/validate/defer/reject/review/apply compatibility |
 | `export_route_path_proposal`, `route_proposal`, `review_route_proposal`, `route_proposal_explain`, `route_strategy_*` | Proposal/query compatibility |
 | Batch route strategy artifact methods | Artifact/query/check compatibility, depending on operation |
 | `export_route_proposal`, `inspect_route_proposal_artifact`, `revalidate_route_proposal_artifact` | Artifact/proposal compatibility |
 | `route_apply`, `route_apply_selected`, `apply_route_proposal_artifact` | Apply compatibility; target must route through `commit()` |
 | `delete_*`, `move_component`, `rotate_component`, `set_*`, `assign_part`, package/replacement/rule writes | Per-method write compatibility; target must route through `OperationBatch` + `commit()` |
-| `undo`, `redo` | Journal compatibility; target must route through compensating `OperationBatch` + `commit()` |
 | `validate_project` | Query/check compatibility until resolver-backed validation lands |
 
 ### Current Transport Notes
 
-The current daemon transport may return JSON-RPC numeric error codes plus
-message text instead of the target envelope. Current methods may depend on one
-MCP-server-held open project. Those behaviors are compatibility behavior only.
+Compatibility tool names may still return JSON-RPC numeric error codes plus
+message text instead of the target envelope. Canonical `datum.*` `tools/call`
+responses return the target success/error envelope at the MCP boundary. Current
+legacy methods may depend on one MCP-server-held open project. Those behaviors
+are compatibility behavior only.
 
 ## Error Codes
 
@@ -749,6 +2061,7 @@ Target symbolic error codes include:
 | `proposal_not_found` | Proposal id cannot be resolved |
 | `proposal_conflict` | Proposal conflicts with current model state |
 | `missing_acceptance` | Apply requires acceptance not present in request/proposal |
+| `missing_revision_guard` | Proposal operation batch lacks the prepared model revision guard |
 | `check_failed` | Required pre-apply check failed |
 | `artifact_error` | Artifact generation, validation, or comparison failed |
 | `journal_error` | Journal read/write/undo/redo failed |

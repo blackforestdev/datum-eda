@@ -661,10 +661,17 @@ fn parse_mm_6_to_nm(value: &str) -> Option<i64> {
     }
 }
 pub(crate) fn resolve_native_project_soldermask_context(
-    root: &Path,
+    project: &LoadedNativeProject,
     layer: i32,
-) -> Result<(StackupLayer, i32, Vec<PlacedPad>)> {
-    let stackup = query_native_project_board_stackup(root)?;
+) -> Result<(StackupLayer, i32)> {
+    let stackup = project
+        .board
+        .stackup
+        .layers
+        .iter()
+        .cloned()
+        .map(|value| serde_json::from_value(value).context("failed to parse board stackup layer"))
+        .collect::<Result<Vec<StackupLayer>>>()?;
     let mask_layer = stackup
         .iter()
         .find(|entry| entry.id == layer)
@@ -675,7 +682,6 @@ pub(crate) fn resolve_native_project_soldermask_context(
     if !matches!(mask_layer.layer_type, StackupLayerType::SolderMask) {
         bail!("board stackup layer is not a soldermask layer: {layer}");
     }
-
     let associated_copper_layer = stackup
         .iter()
         .filter(|entry| matches!(entry.layer_type, StackupLayerType::Copper))
@@ -686,11 +692,5 @@ pub(crate) fn resolve_native_project_soldermask_context(
         .ok_or_else(|| {
             anyhow::anyhow!("no copper layer available to derive soldermask openings")
         })?;
-
-    let pads = query_native_project_emitted_copper_pads(root)?
-        .into_iter()
-        .filter(|pad| pad.layer == associated_copper_layer)
-        .collect::<Vec<_>>();
-
-    Ok((mask_layer, associated_copper_layer, pads))
+    Ok((mask_layer, associated_copper_layer))
 }

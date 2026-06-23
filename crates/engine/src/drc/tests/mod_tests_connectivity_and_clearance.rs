@@ -28,6 +28,7 @@ fn connectivity_check_reports_no_copper_net_with_two_pins() {
             uuid: net_uuid,
             name: "SIG".into(),
             class: class_uuid,
+            controlled_impedance: None,
         },
     );
     let pkg_a = Uuid::new_v4();
@@ -151,6 +152,7 @@ fn clearance_check_reports_overlapping_tracks_on_different_nets() {
             uuid: net_a,
             name: "A".into(),
             class: class_uuid,
+            controlled_impedance: None,
         },
     );
     board.nets.insert(
@@ -159,6 +161,7 @@ fn clearance_check_reports_overlapping_tracks_on_different_nets() {
             uuid: net_b,
             name: "B".into(),
             class: class_uuid,
+            controlled_impedance: None,
         },
     );
 
@@ -221,6 +224,7 @@ fn connectivity_reports_single_pin_unconnected_pin_violation() {
             uuid: net_uuid,
             name: "SIG".into(),
             class: class_uuid,
+            controlled_impedance: None,
         },
     );
     let pkg = Uuid::new_v4();

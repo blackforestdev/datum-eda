@@ -5,6 +5,10 @@ use uuid::Uuid;
 
 use crate::ir::geometry::{Arc, Point};
 
+mod check_disposition;
+
+pub use check_disposition::{CheckDeviation, DeviationApprovalStatus};
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Schematic {
     pub uuid: Uuid,
@@ -368,8 +372,12 @@ pub struct ConnectivityDiagnosticInfo {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum CheckDomain {
+    #[serde(alias = "erc")]
     ERC,
+    #[serde(alias = "drc")]
     DRC,
+    #[serde(alias = "standards", alias = "STANDARDS")]
+    Standards,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -386,6 +394,7 @@ pub enum WaiverTarget {
     Object(Uuid),
     RuleObject { rule: String, object: Uuid },
     RuleObjects { rule: String, objects: Vec<Uuid> },
+    Fingerprint(String),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

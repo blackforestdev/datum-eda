@@ -155,10 +155,12 @@ Current live slice:
   persisted native board outline polygon directly on `board/board.json`, while
   `eda project query <dir> board-outline` reads back that canonical outline
   slice.
-- `eda project set-board-stackup <dir> --layer <id:name:type:thickness_nm>...`
-  replaces the ordered native board stackup layer list directly on
-  `board/board.json`, while `eda project query <dir> board-stackup` reads back
-  that persisted stackup slice. Fresh native projects now seed a minimal
+- `eda project set-board-stackup <dir> --layer <id:name:type:thickness_nm[:dielectric_constant][:loss_tangent][:copper_weight_oz][:roughness_um][:material_name]>...`
+  replaces the ordered native board stackup layer list through the journaled
+  `SetBoardStackup` operation, while `eda project query <dir> board-stackup`
+  reads back that persisted stackup slice. The legacy four-field layer tuple
+  remains valid and leaves material metadata unset; empty optional material
+  slots also leave that field unset. Fresh native projects now seed a minimal
   default stackup with `1:Top Copper:Copper:35000`,
   `2:Top Mask:SolderMask:10000`, `3:Top Silk:Silkscreen:10000`,
   `4:Top Paste:Paste:10000`, and `41:Mechanical 41:Mechanical:0` so the
@@ -168,11 +170,15 @@ Current live slice:
   top-side default layers into an existing native project by adding only
   missing default IDs and leaving matching existing layers unchanged; it fails
   instead of overwriting conflicting occupied default IDs.
-- `eda project place-board-net <dir> --name <text> --class <uuid>`,
-  `eda project edit-board-net <dir> --net <uuid> ...`, and
-  `eda project delete-board-net <dir> --net <uuid>` add the first native board
-  net lifecycle on `board/board.json`, while `eda project query <dir>
-  board-nets` reads back that persisted net slice.
+- `eda project place-board-net <dir> --name <text> --class <uuid>
+  [--impedance-target-ohms <number> --impedance-tolerance-pct <number>
+  [--controlled-dielectric-layer <layer-id>]]`, `eda project edit-board-net
+  <dir> --net <uuid> ...`, and `eda project delete-board-net <dir> --net
+  <uuid>` add the first native board net lifecycle on `board/board.json`, while
+  `eda project query <dir> board-nets` reads back that persisted net slice.
+  `edit-board-net` can update the same controlled-impedance metadata or clear
+  it with `--clear-controlled-impedance`; impedance solving and standards export
+  use remain deferred.
 - `eda project query <dir> board-net --net <uuid>` now reads back one
   persisted native board net directly, instead of requiring automation to
   filter the full `board-nets` list.
@@ -653,14 +659,17 @@ Current live slice:
   reads back the persisted package-linked mechanical subset for one native
   board component directly from `board/board.json`, including the currently
   supported text, line, arc, circle, polygon, and polyline buckets.
-- `eda project place-board-component <dir> ...`, `eda project move-board-component
-  <dir> ...`, `eda project set-board-component-part <dir> ...`,
-  `eda project set-board-component-package <dir> ...`, `eda project
-  set-board-component-layer <dir> ...`, `eda project
-  set-board-component-reference <dir> ...`, `eda project
-  set-board-component-value <dir> ...`, `eda project rotate-board-component
-  <dir> ...`, `eda project set-board-component-locked <dir> ...`, `eda
-  project clear-board-component-locked <dir> ...`, and `eda project
+- `datum-eda project place-board-component <dir> ...`,
+  `datum-eda project move-board-component <dir> ...`,
+  `datum-eda project set-board-component-part <dir> ...`,
+  `datum-eda project set-board-component-package <dir> ...`,
+  `datum-eda project set-board-component-layer <dir> ...`,
+  `datum-eda project flip-board-component <dir> ...`,
+  `datum-eda project set-board-component-reference <dir> ...`,
+  `datum-eda project set-board-component-value <dir> ...`,
+  `datum-eda project rotate-board-component <dir> ...`,
+  `datum-eda project set-board-component-locked <dir> ...`,
+  `datum-eda project clear-board-component-locked <dir> ...`, and `datum-eda project
   delete-board-component <dir> ...` now expose the current native
   board-component lifecycle through CLI on persisted `board/board.json`, with
   mutation reports that include the currently persisted package-graphics
@@ -1041,10 +1050,11 @@ Current live slice:
   verifies the persisted via geometry.
 - `eda project place-board-zone <dir> --net <uuid> --vertex <x:y>... --layer
   <i32> --priority <u32> --thermal-relief <bool> --thermal-gap-nm <i64>
-  --thermal-spoke-width-nm <i64>` and `eda project delete-board-zone <dir>
-  --zone <uuid>` extend that native copper authoring path to zones, while
-  `eda project query <dir> board-zones` verifies the persisted copper fill
-  geometry and thermal settings.
+  --thermal-spoke-width-nm <i64>`, `eda project edit-board-zone <dir> --zone
+  <uuid> ...`, and `eda project delete-board-zone <dir> --zone <uuid>` extend
+  that native copper authoring path to zones, while `eda project query <dir>
+  board-zones` verifies the persisted copper fill geometry and thermal
+  settings.
 - `eda project place-board-net-class <dir> ...`,
   `eda project edit-board-net-class <dir> --net-class <uuid> ...`, and
   `eda project delete-board-net-class <dir> --net-class <uuid>` add the first
@@ -1177,6 +1187,20 @@ package-linked drill semantics remain out of scope.
 Relative pool
 paths are resolved from the project root and absolute paths remain valid for
 external pool refs.
+`project validate` now performs read-only logical pool validation for declared
+pools. For `units`, `symbols`, `entities`, `parts`, `packages`, `padstacks`,
+and `pin_pad_maps` JSON shards it checks document-root `schema_version: 1`,
+filename/payload UUID parity, and the first library reference graph:
+`Symbol.unit`, entity gate `unit`/`symbol`, package pad `padstack`,
+`Part.entity`, `Part.package`, `Part.pad_map` pad/gate/pin links, and
+`pin_pad_maps[*].part`. Footprint geometry validation remains intentionally
+out of scope for this slice.
+Journaled pool-library create/set operations enforce the first write-time
+schema gate before staging authored pool shards: document-root
+`schema_version: 1`, UUID/path/kind parity, canonical pool struct
+deserialization for `units`, `symbols`, `entities`, `parts`, `packages`, and
+`padstacks`, and the first `pin_pad_maps` envelope shape. `footprints` remain
+identity/path validated until a canonical footprint schema is defined.
 
 ### 2.2 schematic.json
 
@@ -1262,9 +1286,9 @@ across files would create complex cross-file references.
   "name": "My Board",
   "stackup": {
     "layers": [
-      { "id": 1, "name": "Top", "type": "Copper", "thickness_nm": 35000 },
-      { "id": 2, "name": "Dielectric", "type": "Dielectric", "thickness_nm": 1600000 },
-      { "id": 3, "name": "Bottom", "type": "Copper", "thickness_nm": 35000 }
+      { "id": 1, "name": "Top", "layer_type": "Copper", "thickness_nm": 35000, "copper_weight_oz": 1.0, "roughness_um": 0.4, "material_name": "RA Copper" },
+      { "id": 2, "name": "Dielectric", "layer_type": "Dielectric", "thickness_nm": 1600000, "dielectric_constant": 4.2, "loss_tangent": 0.018, "material_name": "FR-4" },
+      { "id": 3, "name": "Bottom", "layer_type": "Copper", "thickness_nm": 35000, "copper_weight_oz": 1.0, "roughness_um": 0.4, "material_name": "RA Copper" }
     ]
   },
   "outline": {

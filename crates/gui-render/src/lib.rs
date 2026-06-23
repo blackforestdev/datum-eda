@@ -1,8 +1,8 @@
 use datum_gui_protocol::{
     Affine2DFixedPrimitive, BoardGraphicPrimitive, BoardReviewSceneV1, BoardTextGeometryPrimitive,
-    BoardTextPrimitive, ComponentGraphicPrimitive, ComponentTextPrimitive, DockTab,
-    GlyphMeshAssetPrimitive, GlyphMeshHandlePrimitive, PointNm, ProposalOverlayPrimitive,
-    ReviewActionRow, ReviewWorkspaceState, SelectionTarget, UnroutedPrimitive, WorkspaceTool,
+    BoardTextPrimitive, ComponentGraphicPrimitive, ComponentTextPrimitive, GlyphMeshAssetPrimitive,
+    GlyphMeshHandlePrimitive, PointNm, ProposalOverlayPrimitive, ReviewActionRow,
+    ReviewWorkspaceState, SelectionTarget, UnroutedPrimitive, WorkspaceTool,
 };
 use eda_engine::board::BoardText;
 use eda_engine::export::render_silkscreen_text_strokes;
@@ -16,8 +16,16 @@ use std::ops::Range;
 use uuid::Uuid;
 use wgpu::util::DeviceExt;
 
+mod bottom_dock;
+mod inspector_check_finding;
+mod outputs_artifact_runs;
+mod outputs_lane;
+mod outputs_preview;
+mod outputs_proposals;
+mod outputs_run_commands;
 #[cfg(feature = "visual")]
 pub mod visual_capture;
+use bottom_dock::render_bottom_tabs;
 #[cfg(feature = "visual")]
 pub mod visual_diff;
 #[cfg(feature = "visual")]
@@ -169,6 +177,19 @@ pub enum HitTarget {
     EditSelectedBoardTextLineSpacing,
     TerminalTab,
     AssistantTab,
+    OutputsTab,
+    TerminalActivitySummary(String),
+    CheckFinding(String),
+    ProductionArtifact(String),
+    ProductionArtifactFile(String),
+    ProductionOutputJobRun(datum_gui_protocol::TerminalCommandHandoff),
+    ProductionTerminalCommand(datum_gui_protocol::TerminalCommandHandoff),
+    ArtifactPreviewZoomIn,
+    ArtifactPreviewZoomOut,
+    ArtifactPreviewReset,
+    ArtifactPreviewViewport,
+    ToggleArtifactPreviewGeometry,
+    ToggleArtifactPreviewDrills,
     DockResizeHandle,
 }
 
@@ -989,6 +1010,25 @@ fn render_side_panels(
         TextFace::Mono,
         text_runs,
     );
+    draw_text(
+        &format!(
+            "OUTPUTS {} / ART {} / {}",
+            state.production.output_job_count,
+            state.production.artifact_count,
+            state
+                .production
+                .latest_status
+                .as_deref()
+                .unwrap_or("never_run")
+                .to_uppercase()
+        ),
+        filters_rect.x + 12.0,
+        filters_rect.y + 214.0,
+        11.0,
+        TEXT_MUTED,
+        TextFace::Mono,
+        text_runs,
+    );
 
     draw_text(
         "SELECTION",
@@ -1011,6 +1051,14 @@ fn render_side_panels(
                 15.0,
                 TEXT_PRIMARY,
                 TextFace::Mono,
+                text_runs,
+            );
+        }
+        SelectionTarget::CheckFinding(fingerprint) => {
+            inspector_check_finding::render_check_finding_inspector(
+                state,
+                fingerprint,
+                inspector_rect,
                 text_runs,
             );
         }
@@ -1768,249 +1816,11 @@ fn render_side_panels(
     }
 }
 
-fn render_bottom_tabs(
-    state: &ReviewWorkspaceState,
-    layout: &ShellLayout,
-    panel_quads: &mut Vec<Quad>,
-    text_runs: &mut Vec<TextRun>,
-    hit_regions: &mut Vec<HitRegion>,
-) {
-    let terminal_rect = RectPx {
-        x: layout.bottom_strip.x + 12.0,
-        y: layout.bottom_strip.y + 8.0,
-        width: 120.0,
-        height: layout.bottom_strip.height - 16.0,
-    };
-    let assistant_rect = RectPx {
-        x: layout.bottom_strip.x + 140.0,
-        y: layout.bottom_strip.y + 8.0,
-        width: 120.0,
-        height: layout.bottom_strip.height - 16.0,
-    };
-    for (rect, label, target, active) in [
-        (
-            terminal_rect,
-            "TERMINAL",
-            HitTarget::TerminalTab,
-            matches!(state.ui.active_dock_tab, Some(DockTab::Terminal)),
-        ),
-        (
-            assistant_rect,
-            "ASSISTANT",
-            HitTarget::AssistantTab,
-            matches!(state.ui.active_dock_tab, Some(DockTab::Assistant)),
-        ),
-    ] {
-        panel_quads.push(Quad::from_rect(
-            rect,
-            if active {
-                [0.20, 0.22, 0.27]
-            } else {
-                [0.15, 0.16, 0.19]
-            },
-        ));
-        push_rect_border(panel_quads, rect, PANEL_CARD_BORDER, 1.0);
-        draw_text(
-            label,
-            rect.x + 12.0,
-            rect.y + 10.0,
-            12.0,
-            if active { TEXT_PRIMARY } else { TEXT_SECONDARY },
-            TextFace::Ui,
-            text_runs,
-        );
-        hit_regions.push(HitRegion { target, rect });
-    }
-
-    let Some(active_tab) = state.ui.active_dock_tab else {
-        return;
-    };
-    // Drag handle at top of expanded dock
-    let handle_rect = RectPx {
-        x: layout.bottom_strip.x,
-        y: layout.bottom_strip.y,
-        width: layout.bottom_strip.width,
-        height: 6.0,
-    };
-    panel_quads.push(Quad::from_rect(handle_rect, [0.24, 0.26, 0.30]));
-    hit_regions.push(HitRegion {
-        target: HitTarget::DockResizeHandle,
-        rect: handle_rect,
-    });
-    let content_rect = RectPx {
-        x: layout.bottom_strip.x + 12.0,
-        y: layout.bottom_strip.y + 44.0,
-        width: layout.bottom_strip.width - 24.0,
-        height: (layout.bottom_strip.height - 56.0).max(0.0),
-    };
-    panel_quads.push(Quad::from_rect(content_rect, [0.11, 0.12, 0.15]));
-    push_rect_border(panel_quads, content_rect, PANEL_CARD_BORDER, 1.0);
-    match active_tab {
-        DockTab::Terminal => render_terminal_lane(state, content_rect, text_runs),
-        DockTab::Assistant => render_assistant_lane(state, content_rect, text_runs),
-    }
-}
-
-fn render_terminal_lane(state: &ReviewWorkspaceState, rect: RectPx, text_runs: &mut Vec<TextRun>) {
-    draw_text(
-        "DETERMINISTIC LOG",
-        rect.x + 12.0,
-        rect.y + 12.0,
-        12.0,
-        TEXT_SECONDARY,
-        TextFace::Ui,
-        text_runs,
-    );
-    draw_text(
-        "READ-ONLY WORKFLOW / STATUS OUTPUT",
-        rect.x + 12.0,
-        rect.y + 28.0,
-        10.5,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
-    let max_lines = ((rect.height - 56.0) / 16.0).floor().max(1.0) as usize;
-    let total = state.ui.terminal.lines.len();
-    let scroll = state
-        .ui
-        .terminal
-        .scroll_offset
-        .min(total.saturating_sub(max_lines));
-    let tail_start = total.saturating_sub(max_lines + scroll);
-    let mut y = rect.y + 46.0;
-    for line in state
-        .ui
-        .terminal
-        .lines
-        .iter()
-        .skip(tail_start)
-        .take(max_lines)
-    {
-        draw_text(
-            &truncate_text(line, 180),
-            rect.x + 12.0,
-            y,
-            11.0,
-            TEXT_PANEL_VALUE,
-            TextFace::Mono,
-            text_runs,
-        );
-        y += 16.0;
-    }
-}
-
-fn render_assistant_lane(state: &ReviewWorkspaceState, rect: RectPx, text_runs: &mut Vec<TextRun>) {
-    draw_text(
-        "SESSION ASSISTANT",
-        rect.x + 12.0,
-        rect.y + 12.0,
-        12.0,
-        TEXT_SECONDARY,
-        TextFace::Ui,
-        text_runs,
-    );
-    draw_text(
-        &format!(
-            "CONTEXT  TOOL {}  SELECTION {}",
-            workspace_tool_label(state.tool),
-            selection_summary(state)
-        ),
-        rect.x + 12.0,
-        rect.y + 28.0,
-        10.5,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
-    let max_lines = ((rect.height - 58.0) / 18.0).floor().max(1.0) as usize;
-    let total = state.ui.assistant.transcript.len();
-    let scroll = state
-        .ui
-        .assistant
-        .scroll_offset
-        .min(total.saturating_sub(max_lines));
-    let tail_start = total.saturating_sub(max_lines + scroll);
-    let mut y = rect.y + 48.0;
-    for msg in state
-        .ui
-        .assistant
-        .transcript
-        .iter()
-        .skip(tail_start)
-        .take(max_lines)
-    {
-        draw_text(
-            &truncate_text(
-                &format!("{}: {}", msg.role.to_uppercase(), msg.content),
-                160,
-            ),
-            rect.x + 12.0,
-            y,
-            11.0,
-            if msg.role == "assistant" {
-                TEXT_PANEL_VALUE
-            } else {
-                TEXT_PRIMARY
-            },
-            if msg.role == "assistant" {
-                TextFace::Ui
-            } else {
-                TextFace::Mono
-            },
-            text_runs,
-        );
-        y += 18.0;
-    }
-    let display_input = if state.ui.assistant.awaiting_api_key {
-        if state.ui.assistant.input.is_empty() {
-            "[enter api key]".to_string()
-        } else {
-            "[hidden]".to_string()
-        }
-    } else {
-        let (before, after) = split_at_cursor(&state.ui.assistant.input, state.ui.assistant.cursor);
-        format!("{before}|{after}")
-    };
-    draw_text(
-        &format!("> {display_input}"),
-        rect.x + 12.0,
-        rect.y + rect.height - 18.0,
-        11.5,
-        TEXT_PRIMARY,
-        TextFace::Mono,
-        text_runs,
-    );
-}
-
-fn split_at_cursor(input: &str, cursor: usize) -> (&str, &str) {
-    let byte_pos = input
-        .char_indices()
-        .nth(cursor)
-        .map(|(i, _)| i)
-        .unwrap_or(input.len());
-    (&input[..byte_pos], &input[byte_pos..])
-}
-
 fn dock_height_for_state(state: &ReviewWorkspaceState) -> Option<u32> {
     if state.ui.active_dock_tab.is_some() {
         Some(state.ui.dock_height_px)
     } else {
         None
-    }
-}
-
-fn selection_summary(state: &ReviewWorkspaceState) -> String {
-    match &state.selection {
-        SelectionTarget::ReviewAction(action_id) => truncate_text(
-            &format!("REVIEW {}", suffix_id(action_id).to_uppercase()),
-            28,
-        ),
-        SelectionTarget::AuthoredObject(object_id) => truncate_text(
-            &format!("OBJECT {}", suffix_id(object_id).to_uppercase()),
-            28,
-        ),
-        SelectionTarget::None => "NONE".to_string(),
     }
 }
 
@@ -2090,6 +1900,7 @@ fn render_scene(
         SelectionTarget::None => "NONE".to_string(),
         SelectionTarget::ReviewAction(id) => truncate_text(&suffix_id(id).to_uppercase(), 12),
         SelectionTarget::AuthoredObject(id) => truncate_text(&suffix_id(id).to_uppercase(), 12),
+        SelectionTarget::CheckFinding(id) => truncate_text(&suffix_id(id).to_uppercase(), 12),
     };
     let status_bg = RectPx {
         x: layout.viewport.x,
@@ -2263,6 +2074,41 @@ fn component_is_selection_active(
     component_is_selection_related(component_uuid, scene, state)
 }
 
+fn proposal_preview_affected_ids(state: &ReviewWorkspaceState) -> Vec<&str> {
+    state
+        .production
+        .proposals
+        .iter()
+        .filter_map(|proposal| proposal.preview.as_ref())
+        .flat_map(|preview| preview.affected_objects.iter().map(String::as_str))
+        .collect()
+}
+
+fn source_object_matches_preview(
+    affected_ids: &[&str],
+    object_id: &str,
+    source_object_uuid: &str,
+) -> bool {
+    affected_ids
+        .iter()
+        .any(|affected| *affected == object_id || *affected == source_object_uuid)
+}
+
+fn component_matches_preview(
+    component_uuid: &str,
+    scene: &BoardReviewSceneV1,
+    affected_ids: &[&str],
+) -> bool {
+    scene.components.iter().any(|component| {
+        component.component_uuid == component_uuid
+            && source_object_matches_preview(
+                affected_ids,
+                &component.object_id,
+                &component.source_object_uuid,
+            )
+    })
+}
+
 fn component_object_id_for_uuid<'a>(
     scene: &'a BoardReviewSceneV1,
     component_uuid: &str,
@@ -2299,6 +2145,7 @@ fn push_retained_scene_geometry(
 ) {
     let active_move_component_uuid: Option<String> = None;
     let sl = &scene.layers;
+    let preview_affected_ids = proposal_preview_affected_ids(state);
     let layer_app = |id: &str| resolve_layer_appearance_with_scene(Some(id), sl);
     // Render copper in physical stack order first; later stages (paste/mask/silk/mechanical/edge)
     // are handled by explicit render-stage grouping below.
@@ -2312,7 +2159,12 @@ fn push_retained_scene_geometry(
             if !authored_visible(state) || !layer_visible(state, &zone.layer_id) {
                 continue;
             }
-            let related = zone_matches_active_action(zone, state);
+            let related = zone_matches_active_action(zone, state)
+                || source_object_matches_preview(
+                    &preview_affected_ids,
+                    &zone.object_id,
+                    &zone.source_object_uuid,
+                );
             let dimmed = dim_unrelated_active(state) && !related;
             if zone.polygon.len() >= 4 {
                 let za = layer_app(&zone.layer_id);
@@ -2333,7 +2185,12 @@ fn push_retained_scene_geometry(
             if !authored_visible(state) || !layer_visible(state, &track.layer_id) {
                 continue;
             }
-            let related = track_matches_active_action(track, state);
+            let related = track_matches_active_action(track, state)
+                || source_object_matches_preview(
+                    &preview_affected_ids,
+                    &track.object_id,
+                    &track.source_object_uuid,
+                );
             let selected = matches!(state.selection, SelectionTarget::AuthoredObject(ref id) if id == &track.object_id);
             let color = if selected {
                 selected_copper_color(layer_app(&track.layer_id).authored_track)
@@ -2375,7 +2232,13 @@ fn push_retained_scene_geometry(
             let active = matches!(state.selection, SelectionTarget::AuthoredObject(ref id) if id == &pad.object_id)
                 || component_is_selection_active(&pad.component_uuid, scene, state);
             let related = pad_matches_active_action(pad, state)
-                || component_is_selection_related(&pad.component_uuid, scene, state);
+                || component_is_selection_related(&pad.component_uuid, scene, state)
+                || source_object_matches_preview(
+                    &preview_affected_ids,
+                    &pad.object_id,
+                    &pad.source_object_uuid,
+                )
+                || component_matches_preview(&pad.component_uuid, scene, &preview_affected_ids);
             let hovered = is_hovered(state, &pad.object_id);
             let dimmed = dim_unrelated_active(state) && !active && !related && !hovered;
             for render_layer in pad_copper_layer_ids(pad) {
@@ -2424,7 +2287,12 @@ fn push_retained_scene_geometry(
                 state.selection,
                 SelectionTarget::AuthoredObject(ref id) if id == &via.object_id
             );
-            let related = via_matches_active_action(via, state);
+            let related = via_matches_active_action(via, state)
+                || source_object_matches_preview(
+                    &preview_affected_ids,
+                    &via.object_id,
+                    &via.source_object_uuid,
+                );
             let dimmed = dim_unrelated_active(state) && !selected && !related;
             push_via_primitive_world(
                 out,
@@ -2490,7 +2358,13 @@ fn push_retained_scene_geometry(
             for pad in &scene.pads {
                 let active = matches!(state.selection, SelectionTarget::AuthoredObject(ref id) if id == &pad.object_id)
                     || component_is_selection_active(&pad.component_uuid, scene, state);
-                let related = pad_matches_active_action(pad, state);
+                let related = pad_matches_active_action(pad, state)
+                    || source_object_matches_preview(
+                        &preview_affected_ids,
+                        &pad.object_id,
+                        &pad.source_object_uuid,
+                    )
+                    || component_matches_preview(&pad.component_uuid, scene, &preview_affected_ids);
                 let hovered = is_hovered(state, &pad.object_id);
                 let dimmed = dim_unrelated_active(state) && !active && !related && !hovered;
                 let membership = match kind {
@@ -2537,7 +2411,8 @@ fn push_retained_scene_geometry(
                 continue;
             }
             let related = component_graphic_matches_active_action(graphic, scene, state)
-                || component_is_selection_related(&graphic.component_uuid, scene, state);
+                || component_is_selection_related(&graphic.component_uuid, scene, state)
+                || component_matches_preview(&graphic.component_uuid, scene, &preview_affected_ids);
             let selected_component =
                 matches!(
                     state.selection,
@@ -2571,7 +2446,8 @@ fn push_retained_scene_geometry(
                 continue;
             }
             let related = component_graphic_matches_active_action(graphic, scene, state)
-                || component_is_selection_related(&graphic.component_uuid, scene, state);
+                || component_is_selection_related(&graphic.component_uuid, scene, state)
+                || component_matches_preview(&graphic.component_uuid, scene, &preview_affected_ids);
             let selected =
                 matches!(
                     state.selection,
@@ -3148,6 +3024,7 @@ fn push_scene_overlay_and_hits(
     let board_field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
     let projection = Projection::new(board_field, &scene.bounds, camera);
     let active_move_component_uuid: Option<String> = None;
+    let preview_affected_ids = proposal_preview_affected_ids(state);
     push_lightweight_selection_overlay(out, scene, state, &projection);
     for component in &scene.components {
         if !authored_visible(state) || !layer_visible(state, &component.placement_layer) {
@@ -3164,7 +3041,12 @@ fn push_scene_overlay_and_hits(
         let selected = matches!(state.selection, SelectionTarget::AuthoredObject(ref id) if id == &component.object_id)
             || component_is_selection_active(&component.component_uuid, scene, state);
         let related = component_overlaps_active_action(component, state)
-            || component_is_selection_related(&component.component_uuid, scene, state);
+            || component_is_selection_related(&component.component_uuid, scene, state)
+            || source_object_matches_preview(
+                &preview_affected_ids,
+                &component.object_id,
+                &component.source_object_uuid,
+            );
         let dimmed = dim_unrelated_active(state) && !selected && !related;
         let label_rect = project_rect(component.bounds, &projection);
         let label_text = truncate_text(&component.reference.to_uppercase(), 6);
@@ -3244,7 +3126,8 @@ fn push_scene_overlay_and_hits(
         let related = scene.components.iter().any(|component| {
             component.component_uuid == text.component_uuid
                 && component_overlaps_active_action(component, state)
-        }) || component_is_selection_related(&text.component_uuid, scene, state);
+        }) || component_is_selection_related(&text.component_uuid, scene, state)
+            || component_matches_preview(&text.component_uuid, scene, &preview_affected_ids);
         let selected = matches!(
             state.selection,
             SelectionTarget::AuthoredObject(ref id)
@@ -3377,6 +3260,22 @@ fn push_scene_overlay_and_hits(
                 });
             }
         }
+        for overlay in production_proposal_overlay_primitives(state) {
+            if !overlay
+                .layer_id
+                .as_deref()
+                .is_none_or(|layer_id| layer_visible(state, layer_id))
+            {
+                continue;
+            }
+            let rects = push_overlay(out, &overlay, &projection, PROPOSAL_BASE, false, false);
+            for rect in rects {
+                hit_regions.push(HitRegion {
+                    target: HitTarget::ReviewAction(overlay.proposal_action_id.clone()),
+                    rect,
+                });
+            }
+        }
     }
     let active_evidence_key = state
         .selected_review_action()
@@ -3422,6 +3321,43 @@ fn push_scene_overlay_and_hits(
             );
         }
     }
+}
+
+fn production_proposal_overlay_primitives(
+    state: &ReviewWorkspaceState,
+) -> Vec<ProposalOverlayPrimitive> {
+    state
+        .production
+        .proposals
+        .iter()
+        .filter_map(|proposal| {
+            proposal
+                .preview
+                .as_ref()
+                .map(|preview| (proposal.proposal_id.as_str(), preview))
+        })
+        .flat_map(|(proposal_id, preview)| {
+            preview
+                .render_deltas
+                .iter()
+                .enumerate()
+                .filter(|(_, delta)| {
+                    (delta.primitive_kind == "track_path" && delta.path.len() >= 2)
+                        || (delta.primitive_kind == "via" && !delta.path.is_empty())
+                })
+                .map(move |(index, delta)| ProposalOverlayPrimitive {
+                    overlay_id: format!("proposal:{proposal_id}:preview:{index}"),
+                    primitive_kind: delta.primitive_kind.clone(),
+                    proposal_action_id: proposal_id.to_string(),
+                    layer_id: Some(delta.layer_id.clone()),
+                    render_role: "proposed_preview".to_string(),
+                    width_nm: Some(delta.width_nm),
+                    drill_nm: delta.drill_nm,
+                    diameter_nm: delta.diameter_nm,
+                    path: delta.path.clone(),
+                })
+        })
+        .collect()
 }
 
 fn push_lightweight_selection_overlay(
@@ -3728,6 +3664,45 @@ fn push_overlay(
                 core_size,
             ));
             rects
+        }
+        "via" => {
+            let Some(center) = overlay.path.first().copied() else {
+                return Vec::new();
+            };
+            let diameter_nm = overlay
+                .diameter_nm
+                .or(overlay.width_nm)
+                .unwrap_or(600_000)
+                .max(1);
+            let drill_nm = overlay.drill_nm.unwrap_or(diameter_nm / 2).max(1);
+            let radius = (diameter_nm as f32 * 0.5).round() as i64;
+            let drill_radius = (drill_nm as f32 * 0.5).round() as i64;
+            let outer_rect = datum_gui_protocol::RectNm {
+                min_x: center.x - radius,
+                min_y: center.y - radius,
+                max_x: center.x + radius,
+                max_y: center.y + radius,
+            };
+            push_world_ellipse_nm(out, outer_rect, outer_color, 96);
+            let ring_inset = (diameter_nm as f32 * 0.14).round().max(1.0);
+            push_world_ellipse_nm(
+                out,
+                world_inset_rect(outer_rect, ring_inset),
+                fill_color,
+                96,
+            );
+            push_world_ellipse_nm(
+                out,
+                datum_gui_protocol::RectNm {
+                    min_x: center.x - drill_radius,
+                    min_y: center.y - drill_radius,
+                    max_x: center.x + drill_radius,
+                    max_y: center.y + drill_radius,
+                },
+                underlay_color,
+                96,
+            );
+            vec![project_rect(outer_rect, projection)]
         }
         _ => {
             let route_width = overlay_route_width_px(overlay.width_nm, selected, Some(projection));
@@ -7734,6 +7709,117 @@ fn draw_text_clipped(
     });
 }
 
+#[allow(dead_code)]
+fn sample_artifact_preview_primitives()
+-> Vec<datum_gui_protocol::ProductionArtifactPreviewPrimitive> {
+    use datum_gui_protocol::{
+        ProductionArtifactPreviewPoint as P, ProductionArtifactPreviewPrimitive as Prim,
+    };
+    vec![
+        Prim {
+            kind: "stroke".to_string(),
+            aperture_diameter_nm: Some(250_000),
+            aperture_width_nm: None,
+            aperture_height_nm: None,
+            tool: None,
+            diameter_mm: None,
+            points: vec![
+                P { x_nm: 0, y_nm: 0 },
+                P {
+                    x_nm: 1_000_000,
+                    y_nm: 1_000_000,
+                },
+            ],
+        },
+        Prim {
+            kind: "flash".to_string(),
+            aperture_diameter_nm: Some(400_000),
+            aperture_width_nm: None,
+            aperture_height_nm: None,
+            tool: None,
+            diameter_mm: None,
+            points: vec![P {
+                x_nm: 500_000,
+                y_nm: 250_000,
+            }],
+        },
+    ]
+}
+
+#[allow(dead_code)]
+fn panel_vertices_without_artifact_preview(mut state: ReviewWorkspaceState) -> usize {
+    if let Some(artifact) = state.production.focused_artifact.as_mut()
+        && let Some(preview) = artifact.focused_preview.as_mut()
+    {
+        preview.primitives.clear();
+    }
+    PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &RetainedScene::from_workspace(&state, 1280, 800),
+    )
+    .panel_vertices()
+    .len()
+}
+
+#[allow(dead_code)]
+fn artifact_preview_adds_panel_vertices(
+    prepared: &PreparedScene,
+    state: ReviewWorkspaceState,
+) -> bool {
+    prepared.panel_vertices().len() > panel_vertices_without_artifact_preview(state)
+}
+
+#[allow(dead_code)]
+fn prepared_has_artifact_preview_controls(prepared: &PreparedScene) -> bool {
+    let has_zoom = prepared
+        .hit_regions
+        .iter()
+        .any(|region| matches!(region.target, HitTarget::ArtifactPreviewZoomIn));
+    let has_geometry = prepared
+        .hit_regions
+        .iter()
+        .any(|region| matches!(region.target, HitTarget::ToggleArtifactPreviewGeometry));
+    let has_viewport = prepared
+        .hit_regions
+        .iter()
+        .any(|region| matches!(region.target, HitTarget::ArtifactPreviewViewport));
+    has_zoom && has_geometry && has_viewport
+}
+
+#[allow(dead_code)]
+fn outputs_dock_renders_csv_preview_table(mut state: ReviewWorkspaceState) -> bool {
+    if let Some(artifact) = state.production.focused_artifact.as_mut()
+        && let Some(preview) = artifact.focused_preview.as_mut()
+    {
+        preview.preview_kind = "bom_csv".to_string();
+        preview.primitive_count = 0;
+        preview.primitives.clear();
+        preview.row_count = Some(2);
+        preview.csv_columns = vec!["ref".to_string(), "value".to_string()];
+        preview.csv_rows = vec![
+            vec!["R1".to_string(), "10k".to_string()],
+            vec!["C1".to_string(), "100n".to_string()],
+        ];
+    }
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &RetainedScene::from_workspace(&state, 1280, 800),
+    );
+    let text = prepared
+        .text_runs
+        .iter()
+        .map(|run| run.text.as_str())
+        .collect::<Vec<_>>();
+    text.iter().any(|value| value.contains("TABLE 2 ROWS"))
+        && text.iter().any(|value| value.contains("R1 | 10k"))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -7749,18 +7835,319 @@ mod tests {
     }
 
     #[test]
+    fn proposal_preview_affected_ids_match_scene_source_ids() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        let component = state
+            .scene
+            .components
+            .first()
+            .expect("fixture component should exist")
+            .clone();
+        state.production.proposals = vec![datum_gui_protocol::ProductionProposalSummary {
+            proposal_id: "proposal-a".to_string(),
+            status: "draft".to_string(),
+            source: "check".to_string(),
+            rationale: "highlight modified component".to_string(),
+            operation_count: 1,
+            can_apply: Some(false),
+            blocker_codes: Vec::new(),
+            preview: Some(datum_gui_protocol::ProductionProposalPreviewSummary {
+                prepared_against: "rev-before".to_string(),
+                preview_after_model_revision: "rev-after".to_string(),
+                created_count: 0,
+                modified_count: 1,
+                deleted_count: 0,
+                affected_object_count: 1,
+                affected_objects: vec![component.source_object_uuid.clone()],
+                render_deltas: Vec::new(),
+            }),
+        }];
+
+        let affected = proposal_preview_affected_ids(&state);
+        assert!(source_object_matches_preview(
+            &affected,
+            &component.object_id,
+            &component.source_object_uuid
+        ));
+        assert!(component_matches_preview(
+            &component.component_uuid,
+            &state.scene,
+            &affected
+        ));
+    }
+
+    #[test]
+    fn proposal_preview_render_deltas_become_overlay_primitives() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.production.proposals = vec![datum_gui_protocol::ProductionProposalSummary {
+            proposal_id: "proposal-a".to_string(),
+            status: "draft".to_string(),
+            source: "check".to_string(),
+            rationale: "ghost new track".to_string(),
+            operation_count: 1,
+            can_apply: Some(false),
+            blocker_codes: Vec::new(),
+            preview: Some(datum_gui_protocol::ProductionProposalPreviewSummary {
+                prepared_against: "rev-before".to_string(),
+                preview_after_model_revision: "rev-after".to_string(),
+                created_count: 1,
+                modified_count: 0,
+                deleted_count: 0,
+                affected_object_count: 1,
+                affected_objects: vec!["track-a".to_string()],
+                render_deltas: vec![
+                    datum_gui_protocol::ProductionProposalRenderDeltaSummary {
+                        delta_kind: "create".to_string(),
+                        object_id: "track-a".to_string(),
+                        primitive_kind: "track_path".to_string(),
+                        layer_id: "L1".to_string(),
+                        end_layer_id: None,
+                        width_nm: 250_000,
+                        drill_nm: None,
+                        diameter_nm: None,
+                        path: vec![
+                            datum_gui_protocol::PointNm { x: 1000, y: 2000 },
+                            datum_gui_protocol::PointNm { x: 3000, y: 4000 },
+                        ],
+                    },
+                    datum_gui_protocol::ProductionProposalRenderDeltaSummary {
+                        delta_kind: "create".to_string(),
+                        object_id: "via-a".to_string(),
+                        primitive_kind: "via".to_string(),
+                        layer_id: "L1".to_string(),
+                        end_layer_id: Some("L2".to_string()),
+                        width_nm: 650_000,
+                        drill_nm: Some(300_000),
+                        diameter_nm: Some(650_000),
+                        path: vec![datum_gui_protocol::PointNm { x: 5000, y: 6000 }],
+                    },
+                ],
+            }),
+        }];
+
+        let overlays = production_proposal_overlay_primitives(&state);
+        assert_eq!(overlays.len(), 2);
+        assert_eq!(overlays[0].overlay_id, "proposal:proposal-a:preview:0");
+        assert_eq!(overlays[0].primitive_kind, "track_path");
+        assert_eq!(overlays[0].proposal_action_id, "proposal-a");
+        assert_eq!(overlays[0].layer_id.as_deref(), Some("L1"));
+        assert_eq!(overlays[0].width_nm, Some(250_000));
+        assert_eq!(overlays[0].path.len(), 2);
+        assert_eq!(overlays[1].overlay_id, "proposal:proposal-a:preview:1");
+        assert_eq!(overlays[1].primitive_kind, "via");
+        assert_eq!(overlays[1].proposal_action_id, "proposal-a");
+        assert_eq!(overlays[1].layer_id.as_deref(), Some("L1"));
+        assert_eq!(overlays[1].width_nm, Some(650_000));
+        assert_eq!(overlays[1].drill_nm, Some(300_000));
+        assert_eq!(overlays[1].diameter_nm, Some(650_000));
+        assert_eq!(overlays[1].path.len(), 1);
+    }
+
+    #[test]
     fn prepared_scene_preserves_viewport_dominance() {
         let state = datum_gui_protocol::load_fixture_workspace_state();
         let retained = RetainedScene::from_workspace(&state, 1280, 800);
         let prepared = PreparedScene::from_workspace(
             &state,
             1280,
-            800,
+            960,
             CameraState::fit_to_bounds(&state.scene.bounds),
             &retained,
         );
         assert!(prepared.layout.viewport.width > prepared.layout.left_sidebar.width);
         assert!(prepared.layout.viewport.width > prepared.layout.right_sidebar.width / 2.0);
+    }
+
+    #[test]
+    fn outputs_dock_surfaces_artifact_file_summaries() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Outputs);
+        state.ui.dock_height_px = 560;
+        state.production = datum_gui_protocol::ProductionStatus {
+            output_job_count: 1,
+            artifact_count: 1,
+            latest_status: Some("succeeded".to_string()),
+            latest_run_id: Some("00000000-0000-0000-0000-00000000run1".to_string()),
+            manufacturing_plan_count: 1,
+            panel_projection_count: 1,
+            output_jobs: vec![datum_gui_protocol::ProductionOutputJobSummary {
+                id: "00000000-0000-0000-0000-00000000job1".to_string(),
+                name: "Release fabrication".to_string(),
+                include: vec!["drill".to_string()],
+                prefix: "release-a".to_string(),
+                output_dir: None,
+                family: "DRILL".to_string(),
+                status: "succeeded".to_string(),
+                execution_count: 1,
+                artifact_count: 1,
+                latest_run_id: Some("00000000-0000-0000-0000-00000000run1".to_string()),
+                latest_run_artifact_id: Some("00000000-0000-0000-0000-00000000art1".to_string()),
+                artifacts: vec![datum_gui_protocol::ProductionArtifactSummary {
+                    artifact_id: "00000000-0000-0000-0000-00000000art1".to_string(),
+                    kind: "drill".to_string(),
+                    project_id: None,
+                    model_revision: None,
+                    output_job: None,
+                    variant: None,
+                    generator_version: None,
+                    output_dir: Some("/tmp/fab".to_string()),
+                    validation_state: None,
+                    file_count: 1,
+                    files: vec![datum_gui_protocol::ProductionArtifactFileSummary {
+                        path: "fabrication/release-a-drill.drl".to_string(),
+                        sha256: "sha256:abc123".to_string(),
+                    }],
+                    production_projection_count: 1,
+                    production_projections: vec![
+                        datum_gui_protocol::ProductionArtifactProjectionSummary {
+                            projection_kind: "excellon_drill".to_string(),
+                            projection_contract: "datum.production_projection.excellon_drill.v1"
+                                .to_string(),
+                            model_revision: "revision-a".to_string(),
+                            byte_count: 128,
+                            sha256: "sha256:def456".to_string(),
+                        },
+                    ],
+                }],
+            }],
+            manufacturing_plans: vec![datum_gui_protocol::ProductionManufacturingPlanSummary {
+                id: "00000000-0000-0000-0000-00000000fab1".to_string(),
+                name: "Release fabrication".to_string(),
+                prefix: "release-a".to_string(),
+                board_or_panel: "00000000-0000-0000-0000-00000000pan1".to_string(),
+                variant: None,
+                object_revision: 2,
+            }],
+            panel_projections: vec![datum_gui_protocol::ProductionPanelProjectionSummary {
+                id: "00000000-0000-0000-0000-00000000pan1".to_string(),
+                name: "Release panel".to_string(),
+                board_instance_count: 1,
+                first_board: Some("00000000-0000-0000-0000-00000000brd1".to_string()),
+                first_x_nm: Some(1000),
+                first_y_nm: Some(2000),
+                first_rotation_deg: Some(90),
+                object_revision: 3,
+            }],
+            focused_artifact: Some(datum_gui_protocol::ProductionArtifactDetail {
+                artifact_id: "00000000-0000-0000-0000-00000000art1".to_string(),
+                kind: "gerber_set".to_string(),
+                output_dir: Some("/tmp/fab".to_string()),
+                validation_state: "valid".to_string(),
+                file_count: 1,
+                files: vec![datum_gui_protocol::ProductionArtifactFileSummary {
+                    path: "fabrication/board-F_Cu.gbr".to_string(),
+                    sha256: "sha256:abc123".to_string(),
+                }],
+                focused_file: Some(datum_gui_protocol::ProductionArtifactFileSummary {
+                    path: "fabrication/board-F_Cu.gbr".to_string(),
+                    sha256: "sha256:abc123".to_string(),
+                }),
+                focused_preview: Some(datum_gui_protocol::ProductionArtifactFilePreviewSummary {
+                    file: "fabrication/board-F_Cu.gbr".to_string(),
+                    preview_kind: "gerber_rs274x".to_string(),
+                    hash_matches_metadata: true,
+                    primitive_count: 4,
+                    primitives: sample_artifact_preview_primitives(),
+                    geometry_count: Some(4),
+                    hit_count: None,
+                    row_count: None,
+                    csv_columns: Vec::new(),
+                    csv_rows: Vec::new(),
+                }),
+                production_projection_count: 1,
+                production_projections: vec![
+                    datum_gui_protocol::ProductionArtifactProjectionSummary {
+                        projection_kind: "gerber_copper_layer".to_string(),
+                        projection_contract: "datum.production_projection.gerber_copper_layer.v1"
+                            .to_string(),
+                        model_revision: "revision-a".to_string(),
+                        byte_count: 128,
+                        sha256: "sha256:def456".to_string(),
+                    },
+                ],
+            }),
+            ..datum_gui_protocol::ProductionStatus::default()
+        };
+        let retained = RetainedScene::from_workspace(&state, 1280, 960);
+        let prepared = PreparedScene::from_workspace(
+            &state,
+            1280,
+            960,
+            CameraState::fit_to_bounds(&state.scene.bounds),
+            &retained,
+        );
+        let rendered_text = prepared
+            .text_runs
+            .iter()
+            .map(|run| run.text.as_str())
+            .collect::<Vec<_>>();
+        assert!(rendered_text.contains(&"OUTPUT JOBS"));
+        assert_rendered_text_contains(&rendered_text, "ARTIFACTS datum-eda artifact list");
+        assert_rendered_text_contains(&rendered_text, "FOCUS ART GERBER_SET");
+        assert_rendered_text_contains(&rendered_text, "SHOW datum-eda artifact show");
+        assert_rendered_text_contains(&rendered_text, "VALIDATE datum-eda artifact valid");
+        assert_rendered_text_contains(&rendered_text, "FILES datum-eda artifact files");
+        assert_rendered_text_contains(&rendered_text, "FOCUS FILE fabrication/board-F_Cu.gbr");
+        assert_rendered_text_contains(&rendered_text, "GERBER VIEW");
+        assert_rendered_text_contains(&rendered_text, "PREVIEW datum-eda artifact previ");
+        assert_rendered_text_contains(&rendered_text, "GERBER COPPER / fabrication/board-F_Cu.gbr");
+        assert_rendered_text_contains(&rendered_text, "PREVIEW GERBER_RS274X HASH OK PRIM 4 GEO 4");
+        assert_rendered_text_contains(&rendered_text, "CAM VIEWPORT 100% PRIM 2");
+        assert_rendered_text_contains(&rendered_text, "RESET");
+        assert_rendered_text_contains(&rendered_text, "VIEW PROOF GERBER_COPPER_LAYER");
+        assert!(rendered_text.iter().any(|text| text.contains("PANELS 1")));
+        assert_rendered_text_contains(&rendered_text, "PANEL RELEASE PANEL");
+        assert_rendered_text_contains(&rendered_text, "PLAN RELEASE FABRICATION");
+        assert!(prepared.hit_regions.iter().any(|region| matches!(
+            &region.target,
+            HitTarget::ProductionArtifact(id)
+                if id == "00000000-0000-0000-0000-00000000art1"
+        )));
+        assert!(prepared.hit_regions.iter().any(|region| matches!(
+            &region.target,
+            HitTarget::ProductionArtifactFile(path)
+                if path == "fabrication/board-F_Cu.gbr"
+        )));
+        assert!(prepared.hit_regions.iter().any(|region| matches!(
+            &region.target,
+            HitTarget::ProductionTerminalCommand(handoff)
+                if handoff.command_id == "datum.artifact.list"
+                    && handoff.command == "datum-eda artifact list \"$DATUM_PROJECT_ROOT\""
+        )));
+        assert!(prepared.hit_regions.iter().any(|region| matches!(
+            &region.target,
+            HitTarget::ProductionTerminalCommand(handoff)
+                if handoff.command_id == "datum.artifact.show"
+                    && handoff.command
+                        == "datum-eda artifact show \"$DATUM_PROJECT_ROOT\" --artifact 00000000-0000-0000-0000-00000000art1"
+        )));
+        assert!(prepared.hit_regions.iter().any(|region| matches!(
+            &region.target,
+            HitTarget::ProductionTerminalCommand(handoff)
+                if handoff.command_id == "datum.artifact.validate"
+                    && handoff.command
+                        == "datum-eda artifact validate \"$DATUM_PROJECT_ROOT\" --artifact 00000000-0000-0000-0000-00000000art1"
+        )));
+        assert!(prepared.hit_regions.iter().any(|region| matches!(
+            &region.target,
+            HitTarget::ProductionTerminalCommand(handoff)
+                if handoff.command_id == "datum.artifact.files"
+                    && handoff.command
+                        == "datum-eda artifact files \"$DATUM_PROJECT_ROOT\" --artifact 00000000-0000-0000-0000-00000000art1"
+        )));
+        assert!(prepared.hit_regions.iter().any(|region| matches!(
+            &region.target,
+            HitTarget::ProductionTerminalCommand(handoff)
+                if handoff.command_id == "datum.artifact.preview"
+                    && handoff.command
+                        == "datum-eda artifact preview \"$DATUM_PROJECT_ROOT\" --artifact 00000000-0000-0000-0000-00000000art1 --file fabrication/board-F_Cu.gbr"
+        )));
+        assert!(prepared_has_artifact_preview_controls(&prepared));
+        assert!(artifact_preview_adds_panel_vertices(
+            &prepared,
+            state.clone()
+        ));
+        assert!(outputs_dock_renders_csv_preview_table(state));
     }
 
     #[test]
@@ -8252,6 +8639,13 @@ mod tests {
             .hit_test(rect.x + rect.width * 0.5, rect.y + rect.height * 0.5)
             .cloned()
             .expect("hit target should exist at rect center")
+    }
+
+    fn assert_rendered_text_contains(rendered_text: &[&str], needle: &str) {
+        assert!(
+            rendered_text.iter().any(|text| text.contains(needle)),
+            "expected rendered text containing {needle:?}; got {rendered_text:?}"
+        );
     }
 
     #[test]

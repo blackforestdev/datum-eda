@@ -1,8 +1,82 @@
 use super::*;
 use eda_engine::ir::serialization::to_json_deterministic;
+use eda_engine::substrate::{
+    CommitProvenance, CommitSource, ModelRevision, Operation, OperationBatch,
+};
 
 fn unique_project_root(label: &str) -> PathBuf {
     std::env::temp_dir().join(format!("{}-{}", label, Uuid::new_v4()))
+}
+
+fn read_project_core_files(root: &Path) -> Vec<(PathBuf, Vec<u8>)> {
+    [
+        "project.json",
+        "schematic/schematic.json",
+        "board/board.json",
+        "rules/rules.json",
+    ]
+    .into_iter()
+    .map(|relative| {
+        let path = root.join(relative);
+        let bytes = std::fs::read(&path).expect("project core file should read");
+        (path, bytes)
+    })
+    .collect()
+}
+
+#[test]
+fn query_summary_command_reports_native_project_summary() {
+    let root = unique_project_root("datum-eda-cli-query-summary");
+    create_native_project(&root, Some("Canonical Query Demo".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "query",
+            "summary",
+            root.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("query summary should succeed");
+    let report: serde_json::Value =
+        serde_json::from_str(&output).expect("query summary JSON should parse");
+
+    assert_eq!(report["project_name"], "Canonical Query Demo");
+    assert_eq!(report["schematic"]["sheets"], 0);
+    assert_eq!(report["board"]["components"], 0);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn query_zone_fills_command_reports_resolver_zone_fill_state() {
+    let root = unique_project_root("datum-eda-cli-query-zone-fills");
+    create_native_project(&root, Some("Canonical Zone Fill Query Demo".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "query",
+            "zone-fills",
+            root.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("query zone-fills should succeed");
+    let report: serde_json::Value =
+        serde_json::from_str(&output).expect("zone-fills JSON should parse");
+
+    assert_eq!(report["contract"], "zone_fills_query_v1");
+    assert_eq!(report["zone_fill_count"], 0);
+
+    let _ = std::fs::remove_dir_all(&root);
 }
 
 #[test]
@@ -199,6 +273,273 @@ fn project_query_summary_reports_native_scaffold_counts() {
 
     let _ = std::fs::remove_dir_all(&root);
     let _ = std::fs::remove_dir_all(&absolute_pool);
+}
+
+#[test]
+fn project_query_resolve_debug_is_deterministic_and_read_only() {
+    let root = unique_project_root("datum-eda-cli-project-resolve-debug");
+    create_native_project(&root, Some("Resolve Debug Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    let before = read_project_core_files(&root);
+
+    let output_a = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "resolve-debug",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("project query resolve-debug should succeed");
+    let output_b = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "resolve-debug",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("project query resolve-debug should succeed");
+
+    assert_eq!(output_a, output_b);
+
+    let report: serde_json::Value =
+        serde_json::from_str(&output_a).expect("resolve-debug JSON should parse");
+    assert_eq!(report["contract"], "project_resolver_debug_v1");
+    assert_eq!(report["project_name"], "Resolve Debug Demo");
+    assert_eq!(report["diagnostics"].as_array().unwrap().len(), 0);
+    assert!(report["model_revision"].as_str().unwrap().len() >= 64);
+    assert!(report["source_shards"].as_array().unwrap().len() >= 4);
+    assert!(
+        report["source_shards"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|shard| {
+                shard["path"] == "board/board.json"
+                    && shard["authority"] == "AuthoredDesign"
+                    && shard["dirty_state"] == "Clean"
+            })
+    );
+    assert!(report["object_count"].as_u64().unwrap() >= 3);
+
+    for (path, bytes) in before {
+        assert_eq!(
+            std::fs::read(&path).expect("project core file should read after query"),
+            bytes,
+            "resolve-debug must not rewrite {}",
+            path.display()
+        );
+    }
+}
+
+#[test]
+fn project_query_resolve_debug_commit_batch_reports_in_memory_transaction() {
+    let root = unique_project_root("datum-eda-cli-project-resolve-debug-commit");
+    create_native_project(&root, Some("Resolve Debug Commit Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    let before = read_project_core_files(&root);
+    let board: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(root.join("board/board.json")).expect("board should read"),
+    )
+    .expect("board should parse");
+
+    let resolve_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "resolve-debug",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("project query resolve-debug should succeed");
+    let resolve_report: serde_json::Value =
+        serde_json::from_str(&resolve_output).expect("resolve-debug JSON should parse");
+    let batch_path = root.join("commit-batch.json");
+    let batch = OperationBatch {
+        batch_id: Uuid::new_v4(),
+        expected_model_revision: Some(ModelRevision(
+            resolve_report["model_revision"]
+                .as_str()
+                .expect("model revision should exist")
+                .to_string(),
+        )),
+        provenance: CommitProvenance {
+            actor: "cli-test".to_string(),
+            source: CommitSource::Cli,
+            reason: "prove CLI substrate commit debug path".to_string(),
+        },
+        operations: vec![Operation::BumpObjectRevision {
+            object_id: Uuid::parse_str(board["uuid"].as_str().expect("board uuid should exist"))
+                .expect("board uuid should parse"),
+        }],
+    };
+    std::fs::write(
+        &batch_path,
+        to_json_deterministic(&batch).expect("batch should serialize"),
+    )
+    .expect("batch should write");
+
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "resolve-debug",
+            "--commit-batch",
+            batch_path.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("project query resolve-debug --commit-batch should succeed");
+    let report: serde_json::Value =
+        serde_json::from_str(&output).expect("commit debug JSON should parse");
+
+    assert_eq!(report["contract"], "operation_batch_commit_debug_v1");
+    assert_eq!(report["mode"], "dry_run");
+    assert_eq!(report["status"], "accepted");
+    assert_eq!(
+        report["write_boundary"],
+        "in_memory_only_no_project_shards_written"
+    );
+    assert_ne!(
+        report["before_model_revision"],
+        report["after_model_revision"]
+    );
+    assert_eq!(report["journal_len"], 1);
+
+    for (path, bytes) in before {
+        assert_eq!(
+            std::fs::read(&path).expect("project core file should read after query"),
+            bytes,
+            "commit debug must not rewrite {}",
+            path.display()
+        );
+    }
+}
+
+#[test]
+fn project_query_resolve_debug_commit_batch_apply_persists_journal_only() {
+    let root = unique_project_root("datum-eda-cli-project-resolve-debug-commit-apply");
+    create_native_project(&root, Some("Resolve Debug Commit Apply Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    let before = read_project_core_files(&root);
+    let board: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(root.join("board/board.json")).expect("board should read"),
+    )
+    .expect("board should parse");
+
+    let resolve_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "resolve-debug",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("project query resolve-debug should succeed");
+    let resolve_report: serde_json::Value =
+        serde_json::from_str(&resolve_output).expect("resolve-debug JSON should parse");
+    let batch_path = root.join("commit-batch-apply.json");
+    let batch = OperationBatch {
+        batch_id: Uuid::new_v4(),
+        expected_model_revision: Some(ModelRevision(
+            resolve_report["model_revision"]
+                .as_str()
+                .expect("model revision should exist")
+                .to_string(),
+        )),
+        provenance: CommitProvenance {
+            actor: "cli-test".to_string(),
+            source: CommitSource::Cli,
+            reason: "prove CLI substrate journal apply path".to_string(),
+        },
+        operations: vec![Operation::BumpObjectRevision {
+            object_id: Uuid::parse_str(board["uuid"].as_str().expect("board uuid should exist"))
+                .expect("board uuid should parse"),
+        }],
+    };
+    std::fs::write(
+        &batch_path,
+        to_json_deterministic(&batch).expect("batch should serialize"),
+    )
+    .expect("batch should write");
+
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "resolve-debug",
+            "--commit-batch",
+            batch_path.to_str().unwrap(),
+            "--apply",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("project query resolve-debug --commit-batch --apply should succeed");
+    let report: serde_json::Value =
+        serde_json::from_str(&output).expect("commit apply debug JSON should parse");
+
+    assert_eq!(report["contract"], "operation_batch_commit_debug_v1");
+    assert_eq!(report["mode"], "journal_apply");
+    assert_eq!(
+        report["write_boundary"],
+        "journal_only_no_project_shards_written"
+    );
+    assert_eq!(report["journal_len"], 1);
+    assert!(root.join(".datum/journal/transactions.jsonl").exists());
+
+    let reopened_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "resolve-debug",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("project query resolve-debug should succeed after apply");
+    let reopened: serde_json::Value =
+        serde_json::from_str(&reopened_output).expect("reopened resolve-debug JSON should parse");
+    assert_eq!(
+        reopened["model_revision"], report["after_model_revision"],
+        "resolver should replay journaled transactions"
+    );
+
+    for (path, bytes) in before {
+        assert_eq!(
+            std::fs::read(&path).expect("project core file should read after query"),
+            bytes,
+            "journal apply must not rewrite {}",
+            path.display()
+        );
+    }
 }
 
 #[test]

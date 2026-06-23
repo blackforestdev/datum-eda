@@ -12,6 +12,7 @@ fn write_manufacturing_validation_board(root: &Path) {
     let part_uuid = Uuid::new_v4();
     let via_uuid = Uuid::new_v4();
     let net_uuid = Uuid::new_v4();
+    let class_uuid = Uuid::new_v4();
     std::fs::write(
         &board_json,
         format!(
@@ -99,10 +100,21 @@ fn write_manufacturing_validation_board(root: &Path) {
                     net_uuid.to_string(): {
                         "uuid": net_uuid,
                         "name": "N$1",
-                        "class": null
+                        "class": class_uuid
                     }
                 },
-                "net_classes": {},
+                "net_classes": {
+                    class_uuid.to_string(): {
+                        "uuid": class_uuid,
+                        "name": "Default",
+                        "clearance": 150000,
+                        "track_width": 200000,
+                        "via_drill": 300000,
+                        "via_diameter": 600000,
+                        "diffpair_width": 0,
+                        "diffpair_gap": 0
+                    }
+                },
                 "keepouts": [],
                 "dimensions": [],
                 "texts": [{
@@ -132,7 +144,7 @@ fn project_validate_manufacturing_set_passes_for_clean_export() {
     execute(
         Cli::try_parse_from([
             "eda",
-            "project",
+            "artifact",
             "export-manufacturing-set",
             root.to_str().unwrap(),
             "--output-dir",
@@ -149,7 +161,7 @@ fn project_validate_manufacturing_set_passes_for_clean_export() {
             "eda",
             "--format",
             "json",
-            "project",
+            "artifact",
             "validate-manufacturing-set",
             root.to_str().unwrap(),
             "--output-dir",
@@ -168,6 +180,16 @@ fn project_validate_manufacturing_set_passes_for_clean_export() {
     assert_eq!(report["missing_count"], 0);
     assert_eq!(report["mismatched_count"], 0);
     assert_eq!(report["extra_count"], 0);
+    assert_eq!(report["artifact_validation_state"], "valid");
+    assert_eq!(report["artifact_file_hash_mismatch_count"], 0);
+    assert!(
+        report["artifact_id"]
+            .as_str()
+            .unwrap()
+            .parse::<Uuid>()
+            .is_ok()
+    );
+    assert!(std::path::Path::new(report["artifact_manifest_path"].as_str().unwrap()).is_file());
 
     let _ = std::fs::remove_dir_all(&root);
 }
@@ -183,7 +205,7 @@ fn project_validate_manufacturing_set_reports_missing_mismatched_and_extra_files
     execute(
         Cli::try_parse_from([
             "eda",
-            "project",
+            "artifact",
             "export-manufacturing-set",
             root.to_str().unwrap(),
             "--output-dir",
@@ -208,7 +230,7 @@ fn project_validate_manufacturing_set_reports_missing_mismatched_and_extra_files
             "eda",
             "--format",
             "json",
-            "project",
+            "artifact",
             "validate-manufacturing-set",
             root.to_str().unwrap(),
             "--output-dir",
@@ -224,6 +246,51 @@ fn project_validate_manufacturing_set_reports_missing_mismatched_and_extra_files
     assert_eq!(report["missing_count"], 1);
     assert_eq!(report["mismatched_count"], 1);
     assert_eq!(report["extra_count"], 1);
+    assert_eq!(report["artifact_validation_state"], "invalid");
+    assert!(
+        report["artifact_file_hash_mismatch_count"]
+            .as_u64()
+            .unwrap()
+            > 0
+    );
+
+    let check_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "check-run",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("check run should succeed");
+    let check_report: serde_json::Value =
+        serde_json::from_str(&check_output).expect("check run JSON");
+    assert_eq!(check_report["status"], "error");
+    assert!(
+        check_report["findings"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|entry| {
+                let projections = entry["payload"]["production_projections"].as_array();
+                entry["source"] == "artifact"
+                    && entry["code"] == "artifact_validation_invalid"
+                    && entry["payload"]["kind"] == "manufacturing_set"
+                    && entry["payload"]["artifact_id"] == report["artifact_id"]
+                    && projections.is_some_and(|projections| {
+                        projections
+                            .iter()
+                            .any(|projection| projection["projection_kind"] == "excellon_drill")
+                            && projections.iter().any(|projection| {
+                                projection["projection_kind"] == "gerber_copper_layer"
+                            })
+                    })
+            })
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }

@@ -64,6 +64,29 @@ class TestDispatchWriteBasicsCommands(unittest.TestCase):
             "component",
         )
 
+    def test_tools_call_dispatches_flip_component(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 222,
+                "method": "tools/call",
+                "params": {
+                    "name": "flip_component",
+                    "arguments": {
+                        "uuid": "comp-1",
+                        "layer": 2,
+                    },
+                },
+            }
+        )
+        self.assertEqual(daemon.calls, [("flip_component", "comp-1", 2)])
+        self.assertEqual(
+            response["result"]["content"][0]["json"]["diff"]["modified"][0]["object_type"],
+            "component",
+        )
+
     def test_tools_call_dispatches_set_value(self) -> None:
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)

@@ -96,3 +96,89 @@ fn project_export_gerber_mechanical_layer_writes_keepout_regions() {
 
     let _ = std::fs::remove_dir_all(&root);
 }
+
+#[test]
+fn project_export_gerber_mechanical_layer_uses_resolver_materialized_board_state() {
+    let root = unique_project_root("datum-eda-cli-project-gerber-mech-resolved-export");
+    create_native_project(&root, Some("Gerber Mech Resolved Export Demo".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let board_json = root.join("board/board.json");
+    std::fs::write(
+        &board_json,
+        format!(
+            "{}\n",
+            to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "uuid": Uuid::new_v4(),
+                "name": "Gerber Mech Resolved Export Board",
+                "stackup": {
+                    "layers": [
+                        {"id": 41, "name": "Mechanical 1", "layer_type": "Mechanical", "thickness_nm": 0}
+                    ]
+                },
+                "outline": { "vertices": [], "closed": true },
+                "packages": {},
+                "pads": {},
+                "tracks": {},
+                "vias": {},
+                "zones": {},
+                "nets": {},
+                "net_classes": {},
+                "rules": [],
+                "keepouts": [],
+                "dimensions": [],
+                "texts": []
+            }))
+            .expect("canonical serialization should succeed")
+        ),
+    )
+    .expect("board file should write");
+    let stale_board = std::fs::read_to_string(&board_json).expect("board file should read");
+
+    let place_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "place-board-text",
+        root.to_str().unwrap(),
+        "--text",
+        "MECH",
+        "--x-nm",
+        "1000000",
+        "--y-nm",
+        "2000000",
+        "--layer",
+        "41",
+    ])
+    .expect("CLI should parse");
+    let _ = execute(place_cli).expect("place board text should succeed");
+    std::fs::write(&board_json, stale_board).expect("stale board file should restore");
+
+    let gerber_path = root.join("mech1-resolved.gbr");
+    let cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "export-gerber-mechanical-layer",
+        root.to_str().unwrap(),
+        "--layer",
+        "41",
+        "--out",
+        gerber_path.to_str().unwrap(),
+    ])
+    .expect("CLI should parse");
+    let output = execute(cli).expect("gerber mechanical export should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
+    assert_eq!(report["layer"], 41);
+    assert_eq!(report["board_text_count"], 1);
+
+    let gerber = std::fs::read_to_string(&gerber_path).expect("gerber should read");
+    assert!(gerber.contains("G04 datum-eda native mechanical layer 41*"));
+    assert!(gerber.contains("%ADD10C,0.100000*%"));
+    assert!(gerber.contains("D10*"));
+
+    let _ = std::fs::remove_dir_all(&root);
+}

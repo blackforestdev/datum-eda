@@ -3,6 +3,7 @@ use serde::Serialize;
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectBomExportView {
     pub(crate) action: String,
+    pub(crate) production_classification: String,
     pub(crate) project_root: String,
     pub(crate) bom_path: String,
     pub(crate) rows: usize,
@@ -10,6 +11,8 @@ pub(crate) struct NativeProjectBomExportView {
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectBomDriftView {
+    pub(crate) identity: String,
+    pub(crate) component_instance_uuid: Option<String>,
     pub(crate) reference: String,
     pub(crate) fields: Vec<String>,
 }
@@ -34,6 +37,7 @@ pub(crate) struct NativeProjectBomComparisonView {
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectBomInspectionRowView {
+    pub(crate) component_instance_uuid: Option<String>,
     pub(crate) reference: String,
     pub(crate) value: String,
     pub(crate) part_uuid: String,
@@ -67,6 +71,7 @@ pub(crate) struct NativeProjectBomValidationView {
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectPnpExportView {
     pub(crate) action: String,
+    pub(crate) production_classification: String,
     pub(crate) project_root: String,
     pub(crate) pnp_path: String,
     pub(crate) rows: usize,
@@ -74,6 +79,8 @@ pub(crate) struct NativeProjectPnpExportView {
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectPnpDriftView {
+    pub(crate) identity: String,
+    pub(crate) component_instance_uuid: Option<String>,
     pub(crate) reference: String,
     pub(crate) fields: Vec<String>,
 }
@@ -98,6 +105,7 @@ pub(crate) struct NativeProjectPnpComparisonView {
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectPnpInspectionRowView {
+    pub(crate) component_instance_uuid: Option<String>,
     pub(crate) reference: String,
     pub(crate) x_nm: i64,
     pub(crate) y_nm: i64,
@@ -176,8 +184,10 @@ pub(crate) fn render_native_project_bom_comparison_text(
         lines.push("drift:".to_string());
         for entry in &report.drift {
             lines.push(format!(
-                "- {} [{}]",
+                "- {} reference={} component_instance={} [{}]",
+                entry.identity,
                 entry.reference,
+                entry.component_instance_uuid.as_deref().unwrap_or(""),
                 entry.fields.join(", ")
             ));
         }
@@ -197,7 +207,8 @@ pub(crate) fn render_native_project_bom_inspection_text(
         lines.push("rows:".to_string());
         for row in &report.rows {
             lines.push(format!(
-                "- reference={} value={} part_uuid={} package_uuid={} layer={} x_nm={} y_nm={} rotation_deg={} locked={}",
+                "- component_instance={} reference={} value={} part_uuid={} package_uuid={} layer={} x_nm={} y_nm={} rotation_deg={} locked={}",
+                row.component_instance_uuid.as_deref().unwrap_or(""),
                 row.reference,
                 row.value,
                 row.part_uuid,
@@ -275,8 +286,10 @@ pub(crate) fn render_native_project_pnp_comparison_text(
         lines.push("drift:".to_string());
         for entry in &report.drift {
             lines.push(format!(
-                "- {} fields={}",
+                "- {} reference={} component_instance={} fields={}",
+                entry.identity,
                 entry.reference,
+                entry.component_instance_uuid.as_deref().unwrap_or(""),
                 entry.fields.join(",")
             ));
         }
@@ -296,7 +309,8 @@ pub(crate) fn render_native_project_pnp_inspection_text(
         lines.push("rows:".to_string());
         for row in &report.rows {
             lines.push(format!(
-                "- reference={} x_nm={} y_nm={} rotation_deg={} layer={} side={} package_uuid={} part_uuid={} value={} locked={}",
+                "- component_instance={} reference={} x_nm={} y_nm={} rotation_deg={} layer={} side={} package_uuid={} part_uuid={} value={} locked={}",
+                row.component_instance_uuid.as_deref().unwrap_or(""),
                 row.reference,
                 row.x_nm,
                 row.y_nm,

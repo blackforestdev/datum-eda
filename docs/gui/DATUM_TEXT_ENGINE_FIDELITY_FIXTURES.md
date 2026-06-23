@@ -60,8 +60,10 @@ cargo run -p datum-gui-app -- --project-root /home/bfadmin/Documents/datum-eda/c
 ## Inspector Control Surface
 
 Board text selection exposes the current semantic text controls in the
-Inspector. These controls mutate native board JSON through `gui-protocol`; the
-renderer only emits hit targets and redraws the resulting scene.
+Inspector. Center explicit-value controls and edge/cycle controls now focus the
+project terminal with journaled `datum-eda project edit-board-text` commands
+for review before execution. The renderer only emits hit targets and redraws
+the resulting scene.
 
 Current controls:
 
@@ -86,26 +88,25 @@ engine does not currently apply italic outline geometry.
 
 ## Explicit Value Commands
 
-The assistant dock also accepts deterministic board-text edit commands for the
-selected board text object. These commands are local app commands, not AI
-prompts, and mutate native board JSON through `gui-protocol`.
+The Inspector edit affordances now prefill the project terminal with
+canonical `datum-eda project edit-board-text "$DATUM_PROJECT_ROOT" --text
+<uuid> ...` commands. They are not assistant prompts and do not use a
+GUI-private JSON writer. The user can review or edit the shell command before
+pressing Enter, and execution routes through the journaled `SetBoardText`
+operation path.
 
-Supported commands:
+Supported terminal-prefilled options:
 
-- `/text height <value>` where `<value>` is millimeters by default, or explicit
-  `mm` / `nm`, for example `/text height 1.25mm`.
-- `/text rot <degrees>` normalizes into `0..359`, for example `/text rot -90`
+- `--height-nm <nm>` sets text height in nanometers.
+- `--rotation-deg <degrees>` normalizes into `0..359`, for example `-90`
   stores `270`.
-- `/text line <value>` where `<value>` is percent by default, or explicit
-  `ppm`, for example `/text line 125%`.
-- `/text content <value>` replaces the selected board text string.
-- `/text align <h> <v>` sets both alignment axes, where `<h>` is
-  `left`, `center`, or `right`, and `<v>` is `top`, `center`, or `bottom`.
-- `/text halign <left|center|right>` sets horizontal alignment only.
-- `/text valign <top|center|bottom>` sets vertical alignment only.
-- `/text intent <manufacturing|annotation|branding|documentation|ui_preview>`
+- `--line-spacing-ratio-ppm <ppm>` sets multiline spacing directly.
+- `--value <text>` replaces the selected board text string.
+- `--h-align <left|center|right>` and `--v-align <top|center|bottom>` set
+  anchor alignment.
+- `--render-intent <manufacturing|annotation|branding|documentation|ui_preview>`
   sets the render intent exactly.
-- `/text font <newstroke|inter|inter_display|ibm_plex_sans_condensed|jetbrains_mono>`
+- `--family <newstroke|inter|inter_display|ibm_plex_sans_condensed|jetbrains_mono>`
   sets the registered font family exactly and records the family as an
   explicit text choice.
 
@@ -113,24 +114,26 @@ Inspector entry points:
 
 - The selected board-text Inspector shows `EDGE +/-   CENTER EDIT` as the
   in-product hint for numeric rows.
-- Click the selected board-text `TEXT` row or `EDIT CONTENT` row to open the
-  Assistant dock prefilled with `/text content <current text>`.
-- Click the center of `HEIGHT`, `ROT`, or `LINE` to open the Assistant dock
-  prefilled with that row's explicit `/text` command.
-- Click the left/right edges of `HEIGHT`, `ROT`, or `LINE` to apply the
-  stepper behavior directly.
-- Click the center of `INTENT`, `FONT`, or `ALIGN` to open the Assistant dock
-  prefilled with that row's exact `/text` command.
-- Click the edges of `INTENT` or `FONT` to keep the fast cycle behavior.
-- Click the left edge of `ALIGN` to cycle horizontal alignment, or the right
-  edge to cycle vertical alignment.
-- Press Enter to submit the same semantic command path used by manual `/text`
-  entry. The Inspector does not write explicit values through a separate
-  mutation path.
+- Click the selected board-text `TEXT` row or `EDIT CONTENT` row to focus the
+  terminal prefilled with an `edit-board-text --value ...` command.
+- Click the center of `HEIGHT`, `ROT`, or `LINE` to focus the terminal
+  prefilled with that row's explicit `edit-board-text` command.
+- Click the left/right edges of `HEIGHT`, `ROT`, or `LINE` to focus the
+  terminal prefilled with the next stepper command.
+- Click the center of `INTENT`, `FONT`, or `ALIGN` to focus the terminal
+  prefilled with that row's exact `edit-board-text` command.
+- Click the edges of `INTENT` or `FONT` to focus the terminal prefilled with
+  the next cycle command.
+- Click the left edge of `ALIGN` to prefill the next horizontal alignment, or
+  the right edge to prefill the next vertical alignment.
+- Press Enter in the terminal to submit the same CLI command a user or
+  terminal-launched agent would run. The Inspector does not write values
+  through a separate mutation path.
 
-The explicit `height` command uses the same stroke-preservation rule as the
-Inspector `HEIGHT` row: stroke width scales with height to preserve visual
-weight.
+The explicit center `--height-nm` command edits height only. The Inspector
+`HEIGHT` edge steppers generate `--height-nm` plus `--stroke-width-nm` so
+proportional height/stroke scaling still routes through the same journaled CLI
+path.
 
 ## Required Review Checks
 

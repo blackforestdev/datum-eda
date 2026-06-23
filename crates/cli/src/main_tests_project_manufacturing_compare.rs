@@ -12,6 +12,7 @@ fn write_manufacturing_compare_board(root: &Path) {
     let part_uuid = Uuid::new_v4();
     let via_uuid = Uuid::new_v4();
     let net_uuid = Uuid::new_v4();
+    let net_class_uuid = Uuid::new_v4();
     std::fs::write(
         &board_json,
         format!(
@@ -99,10 +100,21 @@ fn write_manufacturing_compare_board(root: &Path) {
                     net_uuid.to_string(): {
                         "uuid": net_uuid,
                         "name": "N$1",
-                        "class": null
+                        "class": net_class_uuid
                     }
                 },
-                "net_classes": {},
+                "net_classes": {
+                    net_class_uuid.to_string(): {
+                        "uuid": net_class_uuid,
+                        "name": "Default",
+                        "clearance": 150000,
+                        "track_width": 200000,
+                        "via_drill": 300000,
+                        "via_diameter": 600000,
+                        "diffpair_width": 0,
+                        "diffpair_gap": 0
+                    }
+                },
                 "keepouts": [],
                 "dimensions": [],
                 "texts": [{

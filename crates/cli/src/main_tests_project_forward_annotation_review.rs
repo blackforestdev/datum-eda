@@ -209,6 +209,8 @@ fn project_forward_annotation_review_persists_defer_and_reject_by_action_id() {
         .as_str()
         .unwrap()
         .to_string();
+    let project_json_before =
+        std::fs::read(root.join("project.json")).expect("project manifest should read");
 
     let defer_cli = Cli::try_parse_from([
         "eda",
@@ -310,6 +312,17 @@ fn project_forward_annotation_review_persists_defer_and_reject_by_action_id() {
             .iter()
             .any(|entry| entry["action_id"] == reject_action_id)
     );
+    assert_eq!(
+        std::fs::read(root.join("project.json")).expect("project manifest should read"),
+        project_json_before
+    );
+    let sidecar: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(root.join(".datum/forward_annotation_review/review.json"))
+            .expect("review sidecar should read"),
+    )
+    .expect("review sidecar should parse");
+    assert_eq!(sidecar["schema_version"], 1);
+    assert_eq!(sidecar["reviews"].as_object().unwrap().len(), 1);
 
     let _ = std::fs::remove_dir_all(&root);
 }

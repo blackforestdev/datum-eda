@@ -202,6 +202,156 @@ Rules:
 - `uuid` identifies the project, not the schematic or board
 - `pools` are ordered by `priority`; lower numeric priority wins
 - missing optional settings files are allowed if omitted from `settings`
+- `project validate` checks declared pool directories when present. For
+  `units`, `symbols`, `entities`, `parts`, `packages`, `padstacks`, and
+  `pin_pad_maps` JSON shards it requires document-root `schema_version: 1`,
+  filename/payload UUID parity, and deterministic dangling-reference findings
+  for the first logical library graph: `Symbol.unit`, entity gate
+  `unit`/`symbol`, package pad `padstack`, `Part.entity`, `Part.package`,
+  `Part.pad_map` pad/gate/pin links, and `pin_pad_maps[*].part`. Footprint
+  geometry validation remains out of scope for this validation slice.
+- Journaled `CreatePoolLibraryObject` and `SetPoolLibraryObject` enforce the
+  first write-time schema gate before staging authored pool shards:
+  document-root `schema_version: 1`, UUID/path/kind parity, canonical pool
+  struct deserialization for `units`, `symbols`, `entities`, `parts`,
+  `packages`, and `padstacks`, and the first `pin_pad_maps` envelope shape.
+  `footprints` remain identity/path validated until a canonical footprint
+  schema is defined.
+- Typed unit-pin authoring mutates the `Unit.pins` map through the same
+  `SetPoolLibraryObject` gate, rejecting duplicate pin IDs, blank names, and
+  unsupported pin-direction enum values before the staged shard is promoted.
+- Typed package-pad authoring mutates the `Package.pads` map through the same
+  gate, rejecting duplicate pad IDs, blank names, missing padstacks, and
+  nonpositive layer ids before the staged shard is promoted.
+- Typed package-courtyard authoring mutates `Package.courtyard` through the
+  same gate, accepting rectangular min/max nanometer bounds when they form
+  nonzero width and height, or a closed polygon from
+  `--vertices "x,y;x,y;..."` when at least three vertices parse cleanly, before
+  the staged shard is promoted.
+- Typed package-silkscreen line authoring mutates `Package.silkscreen` through
+  the same gate, appending one `Primitive::Line` and rejecting zero-length
+  endpoints or non-positive stroke widths before the staged shard is promoted.
+- Typed package-silkscreen rectangle authoring mutates `Package.silkscreen`
+  through the same gate, appending one `Primitive::Rect` and rejecting zero-area
+  bounds or non-positive stroke widths before the staged shard is promoted.
+- Typed package-silkscreen circle authoring mutates `Package.silkscreen`
+  through the same gate, appending one `Primitive::Circle` and rejecting
+  non-positive radius or stroke width before the staged shard is promoted.
+- Typed package-silkscreen polygon/polyline authoring mutates
+  `Package.silkscreen` through the same gate, appending one
+  `Primitive::Polygon` from `--vertices "x,y;x,y;..."` plus
+  `--closed true|false`, persisting vertices, closed state, and `width_nm`,
+  and rejecting malformed vertices, nonpositive widths, too few vertices, or
+  closed polygons with fewer than three vertices before the staged shard is
+  promoted.
+- Typed package-silkscreen arc authoring mutates `Package.silkscreen` through
+  the same gate, appending one `Primitive::Arc`, persisting center, radius,
+  start angle, end angle, and stroke width, and rejecting non-positive radius
+  or stroke width before the staged shard is promoted.
+- Typed package-silkscreen text authoring mutates `Package.silkscreen`
+  through the same gate, appending one `Primitive::Text`, rejecting blank text,
+  and persisting authored position and rotation before the staged shard is
+  promoted.
+- Typed package 3D model authoring mutates `Package.models_3d` through the
+  same gate, appending one `ModelRef` from `--model-path` plus optional
+  `--transform-json`, persisting both the relative path and parsed transform,
+  and rejecting blank, absolute, or traversal model paths and malformed
+  transform JSON before the staged shard is promoted.
+- Typed symbol line authoring mutates `Symbol.drawings` through the same gate,
+  appending one `Primitive::Line` and rejecting zero-length endpoints or
+  non-positive stroke widths before the staged shard is promoted.
+- Typed symbol rectangle authoring mutates `Symbol.drawings` through the same
+  gate, appending one `Primitive::Rect` and rejecting zero-area bounds or
+  non-positive stroke widths before the staged shard is promoted.
+- Typed symbol circle authoring mutates `Symbol.drawings` through the same
+  gate, appending one `Primitive::Circle` and rejecting non-positive radius or
+  stroke width before the staged shard is promoted.
+- Typed symbol polygon/polyline authoring mutates `Symbol.drawings` through the
+  same gate, appending one `Primitive::Polygon` from
+  `--vertices "x,y;x,y;..."` plus `--closed true|false`, persisting vertices,
+  closed state, and `width_nm`, and rejecting malformed vertices, nonpositive
+  widths, too few vertices, or closed polygons with fewer than three vertices
+  before the staged shard is promoted.
+- Typed symbol arc authoring mutates `Symbol.drawings` through the same gate,
+  appending one `Primitive::Arc`, persisting center, radius, start angle, end
+  angle, and stroke width, and rejecting non-positive radius or stroke width
+  before the staged shard is promoted.
+- Typed symbol text authoring mutates `Symbol.drawings` through the same gate,
+  appending one `Primitive::Text`, rejecting blank text, and persisting authored
+  position and rotation before the staged shard is promoted. This makes
+  `Symbol.drawings` authoring explicitly support `Line`, `Rect`, `Circle`,
+  `Text`, `Arc`, and `Polygon` primitives in the native library format.
+- Typed symbol pin-anchor authoring mutates `Symbol.pin_anchors` through the
+  same gate, setting one unit-pin UUID to a symbol-local nanometer position and
+  rejecting missing units or pins before the staged shard is promoted. Placing a
+  schematic symbol with `--lib-id` set to a pool symbol UUID materializes
+  placed `SymbolPin` entries from those anchors while preserving arbitrary
+  non-UUID `lib_id` strings as unresolved compatibility identifiers.
+- Typed package 3D-model authoring appends typed `ModelRef` objects to
+  `Package.models_3d` through the same gate, deriving or accepting
+  `ModelFormat`, constructing typed `Transform3D` translation/rotation/scale
+  values, rejecting blank/absolute/traversal paths, unsupported formats,
+  malformed transform JSON, and nonpositive scale values before the staged
+  shard is promoted.
+- Typed package body-height authoring mutates or clears
+  `Package.body_height_nm` and `Package.body_height_mounted_nm` through the
+  same gate, rejecting empty no-op requests and nonpositive heights before the
+  staged shard is promoted.
+- Typed part metadata authoring mutates the existing `Part` shard through the
+  same gate, preserving omitted fields while updating supplied `mpn`,
+  `manufacturer`, `manufacturer_jep106`, `value`, `description`, `datasheet`,
+  and `lifecycle` values, and rejecting empty no-op requests, unsupported
+  lifecycle enum values, or out-of-range JEP106 manufacturer codes before the
+  staged shard is promoted.
+- Typed part parametric authoring mutates the `Part.parametric` map through the
+  same gate in explicit `merge` or `replace` mode from repeatable `key=value`
+  entries, rejecting malformed entries, blank keys, duplicate request keys, and
+  unsupported modes before the staged shard is promoted.
+- Typed part orderable-MPN authoring mutates the `Part.orderable_mpns` list
+  through the same gate in explicit `merge` or `replace` mode from repeatable
+  MPN values, rejecting blank values, duplicate request MPNs, and unsupported
+  modes before the staged shard is promoted.
+- Typed part packaging-option authoring mutates the `Part.packaging_options`
+  list through the same gate in explicit `merge` or `replace` mode from
+  repeatable JSON objects matching `PackagingKind` / `PackagingOption`,
+  rejecting malformed JSON, schema-invalid options, duplicate request options,
+  and unsupported modes before the staged shard is promoted.
+- Typed part behavioural-model authoring mutates the
+  `Part.behavioural_models` list through the same gate in explicit `merge` or
+  `replace` mode from repeatable JSON objects matching `ModelAttachment`,
+  rejecting malformed JSON, schema-invalid attachments, duplicate request
+  attachments, invalid model-name/provenance strings, inconsistent encryption
+  metadata, and unsupported modes before the staged shard is promoted.
+- Typed part model attachment authoring copies a source behavioural-model file
+  into `pool/models/<role>/<sha256>.<ext>`, derives deterministic model and
+  attachment UUIDs from the hash/target part, and appends the generated
+  `ModelAttachment` through typed `AttachPoolPartModel` substrate operations.
+  Typed part model detach removes matching attachment edges by attachment UUID
+  or model UUID through typed `DetachPoolPartModel` substrate operations. Undo
+  restores the part attachment list exactly and intentionally retains the
+  content-addressed blob; broader blob garbage-collection policy remains
+  additive target work.
+- Typed part thermal authoring mutates or clears the optional `Part.thermal`
+  object through the same gate from supplied `ThermalSpec` fields, rejecting
+  empty no-op requests, malformed/non-negative numeric values, blank
+  references, and schema-invalid thermal objects before the staged shard is
+  promoted.
+- Typed part supply-chain authoring mutates or clears the derived
+  `Part.supply_chain_offers` cache and `Part.last_supply_chain_check`
+  timestamp through the same gate from repeatable `SupplyOffer` JSON objects
+  and a checked-at timestamp string, rejecting empty no-op requests, malformed
+  JSON, schema-invalid offers, blank distributor/link/currency values, zero
+  quantity breaks, negative prices, and duplicate request offers before the
+  staged shard is promoted.
+- Typed part tag authoring mutates the `Part.tags` list through the same gate
+  in explicit `merge` or `replace` mode from repeatable tag values, rejecting
+  blank values, duplicate request tags, and unsupported modes before the staged
+  shard is promoted.
+- Typed part pad-map authoring mutates the `Part.pad_map` map through the same
+  gate in either single-entry merge mode or explicit multi-entry `merge` /
+  `replace` mode, rejecting duplicate request pads, missing package pads,
+  missing entity gates, and missing gate unit pins before the staged shard is
+  promoted.
 
 ### 6.2 `schematic/schematic.json`
 
@@ -315,9 +465,9 @@ Schema example:
   "name": "My Board",
   "stackup": {
     "layers": [
-      { "id": 1, "name": "Top", "type": "Copper", "thickness_nm": 35000 },
-      { "id": 2, "name": "Dielectric", "type": "Dielectric", "thickness_nm": 1600000 },
-      { "id": 3, "name": "Bottom", "type": "Copper", "thickness_nm": 35000 }
+      { "id": 1, "name": "Top", "layer_type": "Copper", "thickness_nm": 35000, "copper_weight_oz": 1.0, "roughness_um": 0.4, "material_name": "RA Copper" },
+      { "id": 2, "name": "Dielectric", "layer_type": "Dielectric", "thickness_nm": 1600000, "dielectric_constant": 4.2, "loss_tangent": 0.018, "material_name": "FR-4" },
+      { "id": 3, "name": "Bottom", "layer_type": "Copper", "thickness_nm": 35000, "copper_weight_oz": 1.0, "roughness_um": 0.4, "material_name": "RA Copper" }
     ]
   },
   "outline": {
@@ -344,6 +494,10 @@ Schema example:
 Rules:
 - board authored state is monolithic in version 1
 - board connectivity, fills, and DRC findings are not canonical board content
+- board net entries may include optional `controlled_impedance` metadata with
+  `target_ohms`, `tolerance_pct`, and `controlled_dielectric`; the dielectric
+  reference is the current `StackupLayer.id`, and historical net entries
+  without this object deserialize with no impedance target
 - a future split requires an explicit schema version bump
 
 ### 6.6 `rules/rules.json`
@@ -425,6 +579,24 @@ File contents:
 - encrypted vendor blocks pass through verbatim — Datum does not
   decrypt and does not re-encrypt
 
+Current validation/query surface:
+- `datum-eda project query <root> pool-models` enumerates regular
+  `pool/models/<role>/<sha256>.<ext>` blobs, recomputes file SHA-256,
+  reports whether the filename hash matches file bytes, derives the
+  deterministic model UUID, and reports part attachment references discovered
+  from `Part.behavioural_models`, including explicit `referenced` / `orphaned`
+  lifecycle flags for retained blobs
+- `datum-eda project validate <root>` reports missing provenance-backed model
+  blobs, filename/hash mismatches, and `Part.behavioural_models` model UUIDs
+  that no longer match the deterministic UUID derived from the referenced
+  content hash
+- `datum-eda project gc-pool-models <root>` is dry-run by default and removes
+  orphaned regular model blob files only when `--apply` is supplied; hash
+  mismatches, non-regular files, referenced blobs, and AMI bundle roles are
+  preserved
+- AMI bundle hashing, richer garbage-collection policy, and migration behavior
+  remain additive target work
+
 Rules:
 - the model UUID is the deterministic UUID v5 over the SHA-256 hex
   string under a fixed namespace; same file at any pool path resolves
@@ -473,6 +645,11 @@ Rules:
 Migration implementation requirements:
 - one explicit migration function per version transition
 - golden tests for each supported historical version
+
+Stackup material fields are optional per layer in schema version 1. Historical
+board files that only contain `id`, `name`, `layer_type`, and `thickness_nm`
+deserialize with unset material metadata; no migration is required for this
+additive shape.
 
 Example:
 

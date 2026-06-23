@@ -458,6 +458,7 @@ pub(super) fn parse_board_skeleton(
                     uuid,
                     name: net_name,
                     class: Uuid::nil(),
+                    controlled_impedance: None,
                 },
             );
         } else {

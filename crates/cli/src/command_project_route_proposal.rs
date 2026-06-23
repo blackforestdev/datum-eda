@@ -56,6 +56,8 @@ const ROUTE_STRATEGY_BATCH_REQUESTS_VERSION: u32 = 1;
 const ROUTE_STRATEGY_BATCH_RESULT_KIND: &str = "native_route_strategy_batch_result_artifact";
 const ROUTE_STRATEGY_BATCH_RESULT_VERSION: u32 = 1;
 const ROUTE_STRATEGY_CURATED_FIXTURE_SUITE_ID: &str = "m6_route_strategy_curated_fixture_suite_v1";
+const ROUTE_STRATEGY_FIXTURE_AUTHORING_BOUNDARY: &str = "generated_fixture_only";
+const ROUTE_STRATEGY_FIXTURE_WRITE_PATH_POLICY: &str = "direct project-shard writes are restricted to deterministic regression fixture generation";
 const ROUTE_PROPOSAL_REASON_AUTHORED_COPPER_PLUS_ONE_GAP: &str = "authored_copper_plus_one_gap";
 const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE: &str = "route_path_candidate";
 const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_VIA: &str = "route_path_candidate_via";
@@ -145,22 +147,6 @@ pub(crate) struct NativeProjectRouteProposalActionView {
     pub(crate) selected_path_layer_segment_bend_count: Option<usize>,
     #[serde(default)]
     pub(crate) selected_path_layer_segment_point_count: Option<usize>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub(crate) struct RouteProposalArtifact {
-    pub(crate) kind: String,
-    pub(crate) version: u32,
-    pub(crate) project_uuid: Uuid,
-    pub(crate) project_name: String,
-    pub(crate) contract: String,
-    pub(crate) actions: Vec<NativeProjectRouteProposalActionView>,
-}
-
-pub(crate) struct LoadedRouteProposalArtifact {
-    pub(crate) artifact_path: PathBuf,
-    pub(crate) source_version: u32,
-    pub(crate) artifact: RouteProposalArtifact,
 }
 
 struct LoadedRouteStrategyBatchResultArtifact {
@@ -267,6 +253,10 @@ fn export_route_proposal_artifact(
         .first()
         .map(|action| action.selected_path_segment_count)
         .unwrap_or(0);
+    let built_proposal =
+        super::command_project_route_proposal_substrate::build_accepted_route_proposal(
+            root, &actions,
+        )?;
     let artifact = RouteProposalArtifact {
         kind: ROUTE_PROPOSAL_ARTIFACT_KIND.to_string(),
         version: ROUTE_PROPOSAL_ARTIFACT_VERSION,
@@ -274,6 +264,7 @@ fn export_route_proposal_artifact(
         project_name: project.manifest.name.clone(),
         contract: actions[0].contract.clone(),
         actions,
+        proposal: built_proposal.proposal,
     };
     write_canonical_json(output_path, &artifact)?;
     Ok(NativeProjectRouteProposalExportReportView {
@@ -888,10 +879,7 @@ pub(crate) fn report_native_project_route_strategy_delta(
     })
 }
 
-fn write_route_strategy_batch_requests_manifest(
-    path: &Path,
-    requests: &[RouteStrategyBatchRequestInput],
-) -> Result<()> {
+fn write_route_strategy_batch_requests_manifest(path: &Path, requests: &[RouteStrategyBatchRequestInput]) -> Result<()> {
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent)
             .with_context(|| format!("failed to create {}", parent.display()))?;
@@ -1301,6 +1289,8 @@ pub(crate) fn write_route_strategy_curated_fixture_suite(
     Ok(NativeProjectRouteStrategyCuratedFixtureSuiteView {
         action: "write_route_strategy_curated_fixture_suite".to_string(),
         suite_id: ROUTE_STRATEGY_CURATED_FIXTURE_SUITE_ID.to_string(),
+        authoring_boundary: ROUTE_STRATEGY_FIXTURE_AUTHORING_BOUNDARY.to_string(),
+        write_path_policy: ROUTE_STRATEGY_FIXTURE_WRITE_PATH_POLICY.to_string(),
         out_dir: out_dir.display().to_string(),
         requests_manifest_path: manifest_path.display().to_string(),
         requests_manifest_kind: ROUTE_STRATEGY_BATCH_REQUESTS_KIND.to_string(),
@@ -1315,11 +1305,7 @@ pub(crate) fn write_route_strategy_curated_fixture_suite(
     })
 }
 
-pub(crate) fn capture_route_strategy_curated_baseline(
-    out_dir: &Path,
-    manifest_path_override: Option<&Path>,
-    result_path_override: Option<&Path>,
-) -> Result<NativeProjectRouteStrategyCuratedBaselineCaptureView> {
+pub(crate) fn capture_route_strategy_curated_baseline(out_dir: &Path, manifest_path_override: Option<&Path>, result_path_override: Option<&Path>) -> Result<NativeProjectRouteStrategyCuratedBaselineCaptureView> {
     let suite = write_route_strategy_curated_fixture_suite(out_dir, manifest_path_override)?;
     let result_artifact_path = result_path_override
         .map(PathBuf::from)
@@ -1330,6 +1316,8 @@ pub(crate) fn capture_route_strategy_curated_baseline(
     Ok(NativeProjectRouteStrategyCuratedBaselineCaptureView {
         action: "capture_route_strategy_curated_baseline".to_string(),
         suite_id: suite.suite_id,
+        authoring_boundary: suite.authoring_boundary,
+        write_path_policy: suite.write_path_policy,
         out_dir: suite.out_dir,
         requests_manifest_path: suite.requests_manifest_path.clone(),
         result_artifact_path: result_artifact_path.display().to_string(),
@@ -3074,10 +3062,21 @@ pub(crate) fn apply_route_proposal_artifact(
             loaded.artifact.contract
         );
     }
-
-    let applied = super::command_project_route_apply::apply_route_proposal_actions(
+    let proposal = loaded.artifact.proposal.clone().ok_or_else(|| anyhow::anyhow!(
+        "route proposal artifact {} is missing accepted proposal metadata; re-export the proposal before apply",
+        loaded.artifact_path.display()
+    ))?;
+    if proposal.status != eda_engine::substrate::ProposalStatus::Accepted {
+        bail!(
+            "route proposal artifact {} has proposal status {:?}; expected accepted before apply",
+            loaded.artifact_path.display(),
+            proposal.status
+        );
+    }
+    let applied = super::command_project_route_proposal_substrate::apply_route_proposal(
         root,
         &loaded.artifact.actions,
+        proposal,
     )?;
 
     Ok(NativeProjectRouteProposalArtifactApplyView {

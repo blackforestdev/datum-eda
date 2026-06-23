@@ -130,6 +130,78 @@ fn project_compare_gerber_outline_is_semantic_and_reports_drift() {
 }
 
 #[test]
+fn project_compare_gerber_outline_uses_resolver_materialized_board_state() {
+    let root = unique_project_root("datum-eda-cli-project-gerber-outline-resolved-compare");
+    create_native_project(
+        &root,
+        Some("Gerber Outline Resolved Compare Demo".to_string()),
+    )
+    .expect("initial scaffold should succeed");
+    let board_json = root.join("board/board.json");
+    let stale_board = std::fs::read_to_string(&board_json).expect("board file should read");
+
+    let set_outline_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "set-board-outline",
+        root.to_str().unwrap(),
+        "--vertex",
+        "0:0",
+        "--vertex",
+        "2000000:0",
+        "--vertex",
+        "2000000:1000000",
+        "--vertex",
+        "0:1000000",
+    ])
+    .expect("CLI should parse");
+    let _ = execute(set_outline_cli).expect("set board outline should succeed");
+    std::fs::write(&board_json, stale_board).expect("stale board file should restore");
+
+    let gerber_path = root.join("outline-resolved.gbr");
+    std::fs::write(
+        &gerber_path,
+        concat!(
+            "G04 semantic resolved outline fixture*\n",
+            "%MOMM*%\n",
+            "%FSLAX46Y46*%\n",
+            "%LPD*%\n",
+            "%ADD11C,0.100000*%\n",
+            "D11*\n",
+            "X0Y0D02*\n",
+            "X2000000Y0D01*\n",
+            "X2000000Y1000000D01*\n",
+            "X0Y1000000D01*\n",
+            "X0Y0D01*\n",
+            "M02*\n"
+        ),
+    )
+    .expect("gerber file should write");
+
+    let cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "compare-gerber-outline",
+        root.to_str().unwrap(),
+        "--gerber",
+        gerber_path.to_str().unwrap(),
+    ])
+    .expect("CLI should parse");
+    let output = execute(cli).expect("outline compare should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
+    assert_eq!(report["matched_count"], 1);
+    assert_eq!(report["missing_count"], 0);
+    assert_eq!(report["extra_count"], 0);
+    assert_eq!(report["matched"][0]["kind"], "outline");
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
 fn project_compare_gerber_outline_matches_equivalent_closed_loop_with_shifted_start() {
     let root = unique_project_root("datum-eda-cli-project-gerber-outline-compare-rotated");
     create_native_project(

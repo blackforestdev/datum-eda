@@ -358,10 +358,15 @@ The first proof slice should show:
   with its authored-binding vs derived-status split visible
 
 This work is additive: the identity, resolver, and commit modules are built
-CONCURRENTLY with M7 and do NOT close it. The authority flip and the
-from-shards KiCad emitter are DEFERRED until M7 closes AND the emitter passes a
-byte-identical-when-unmodified fidelity gate on the `datum-test` fixture, run as
-DUAL-WRITE during a deprecation window.
+CONCURRENTLY with M7 and do NOT close it. Native shards are the only authority;
+import is a one-time converter that writes native shards directly, after which
+the board is simply a native board (origin survives only as provenance). The
+engine that currently stores imported boards as KiCad-text plus sidecars is a
+TRANSITIONAL DEFECT, not a design choice; the fix is "import writes native
+shards directly," not a phased authority flip with a dual-write window. The
+optional from-shards KiCad EXPORTER (native -> KiCad) is separate and DEFERRED;
+it does not gate this slice or native maturity. See
+`docs/DATUM_PRODUCT_MECHANICS.md` "Interop Boundary And Import Posture".
 
 ## Proof Gates
 
@@ -382,9 +387,13 @@ gates most directly load-bearing for this decision are:
 
 The remaining gates (PG-PROPOSAL-PARITY, PG-LIVE-CAM-EQUIVALENCE,
 PG-PANELIZATION-ISOLATION, PG-VARIANT-RESOLUTION,
-PG-AUTHORITY-FLIP+ARTIFACT-TRACEABILITY, PG-HARNESS-WIRING) belong to the
-projection, variant, and migration decisions and are defined in 000D. All ten
-wire into `scripts/run_drift_gates.sh` via PG-HARNESS-WIRING.
+PG-ARTIFACT-TRACEABILITY, PG-HARNESS-WIRING) belong to the projection and
+variant decisions and are defined in 000D. The earlier
+PG-AUTHORITY-FLIP framing is SUPERSEDED: there is no imported-to-native
+authority flip to gate — import writes native shards directly and native is the
+only authority (see `docs/DATUM_PRODUCT_MECHANICS.md` "Interop Boundary And
+Import Posture"). All gates wire into `scripts/run_drift_gates.sh` via
+PG-HARNESS-WIRING.
 
 ## Resolved By Mechanism
 
@@ -402,10 +411,12 @@ recorded here as resolved:
   first: Slice 0 is board-first all-`BoardOnly` with reverse-engineering
   context in provenance, and the `ImplementedBy` seed is the immediate
   follow-on.
-- How much existing native layout can be preserved? The lift-and-converge path
-  keeps the shipped native format, loader, and validate command as the seed for
-  the engine `ProjectResolver`; authority is inverted surface-by-surface with no
-  rewrite cliff.
+- How much existing native layout can be preserved? The shipped native format,
+  loader, and validate command are kept as the seed for the engine
+  `ProjectResolver`, evolved in place with no rewrite cliff. This is a native
+  resolver build-out, not an import-authority migration: native is the only
+  authority throughout (see `docs/DATUM_PRODUCT_MECHANICS.md` "Interop Boundary
+  And Import Posture").
 
 ## Open Owner Questions
 
@@ -414,7 +425,10 @@ recorded here as resolved:
    not decided; the first cut stays on `Uuid`.
 2. Should viewports become first-class persisted objects early, or wait until
    manufacturing/documentation work?
-3. What is the precise length and exit criterion of the dual-write deprecation
-   window before the imported-KiCad authority flip?
+3. SUPERSEDED — there is no dual-write deprecation window and no
+   imported-KiCad authority flip. Import is a one-time converter that writes
+   native shards directly; native is the only authority and the KiCad-text-plus-
+   sidecar storage is a transitional defect to remove, not a window to manage.
+   See `docs/DATUM_PRODUCT_MECHANICS.md` "Interop Boundary And Import Posture".
 4. Should `NetAnchor` refresh policy treat any anchor classes beyond
    user-placed as pinned, or is user-placed the only non-refreshable kind?

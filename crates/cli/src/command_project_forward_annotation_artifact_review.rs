@@ -2,11 +2,14 @@ use super::command_project_forward_annotation_artifact::load_forward_annotation_
 use super::*;
 use std::collections::BTreeMap;
 
+#[path = "command_project_forward_annotation_review_state.rs"]
+mod command_project_forward_annotation_review_state;
+
 pub(crate) fn import_forward_annotation_artifact_review(
     root: &Path,
     artifact_path: &Path,
 ) -> Result<NativeProjectForwardAnnotationArtifactReviewImportView> {
-    let mut project = load_native_project(root)?;
+    let project = load_native_project(root)?;
     let loaded = load_forward_annotation_proposal_artifact(artifact_path)?;
     if loaded.artifact.project_uuid != project.manifest.uuid {
         bail!(
@@ -26,9 +29,11 @@ pub(crate) fn import_forward_annotation_artifact_review(
     let total_artifact_reviews = loaded.artifact.reviews.len();
     let mut imported_reviews = 0usize;
     let mut skipped_missing_live_actions = 0usize;
+    let mut review_state =
+        command_project_forward_annotation_review_state::load_forward_annotation_review(root)?;
     for review in loaded.artifact.reviews {
         if let Some(live_action) = live_actions.get(&review.action_id) {
-            project.manifest.forward_annotation_review.insert(
+            review_state.insert(
                 review.action_id.clone(),
                 NativeForwardAnnotationReviewRecord {
                     action_id: review.action_id,
@@ -44,7 +49,10 @@ pub(crate) fn import_forward_annotation_artifact_review(
         }
     }
 
-    write_canonical_json(&project.root.join("project.json"), &project.manifest)?;
+    command_project_forward_annotation_review_state::write_forward_annotation_review(
+        root,
+        &review_state,
+    )?;
     Ok(NativeProjectForwardAnnotationArtifactReviewImportView {
         action: "import_forward_annotation_artifact_review".to_string(),
         artifact_path: loaded.artifact_path.display().to_string(),
@@ -59,7 +67,7 @@ pub(crate) fn replace_forward_annotation_artifact_review(
     root: &Path,
     artifact_path: &Path,
 ) -> Result<NativeProjectForwardAnnotationArtifactReviewReplaceView> {
-    let mut project = load_native_project(root)?;
+    let project = load_native_project(root)?;
     let loaded = load_forward_annotation_proposal_artifact(artifact_path)?;
     if loaded.artifact.project_uuid != project.manifest.uuid {
         bail!(
@@ -77,7 +85,9 @@ pub(crate) fn replace_forward_annotation_artifact_review(
         .collect::<BTreeMap<_, _>>();
 
     let total_artifact_reviews = loaded.artifact.reviews.len();
-    let removed_existing_reviews = project.manifest.forward_annotation_review.len();
+    let removed_existing_reviews =
+        command_project_forward_annotation_review_state::load_forward_annotation_review(root)?
+            .len();
     let mut replacement_reviews = BTreeMap::new();
     let mut replaced_reviews = 0usize;
     let mut skipped_missing_live_actions = 0usize;
@@ -99,8 +109,10 @@ pub(crate) fn replace_forward_annotation_artifact_review(
         }
     }
 
-    project.manifest.forward_annotation_review = replacement_reviews;
-    write_canonical_json(&project.root.join("project.json"), &project.manifest)?;
+    command_project_forward_annotation_review_state::write_forward_annotation_review(
+        root,
+        &replacement_reviews,
+    )?;
     Ok(NativeProjectForwardAnnotationArtifactReviewReplaceView {
         action: "replace_forward_annotation_artifact_review".to_string(),
         artifact_path: loaded.artifact_path.display().to_string(),

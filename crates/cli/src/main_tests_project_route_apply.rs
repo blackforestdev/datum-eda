@@ -1,6 +1,4 @@
-use super::*;
-use eda_engine::board::Track;
-
+use super::main_tests_project_journal_support::assert_journal_transaction;
 use super::main_tests_project_route_proposal_artifact::{
     board_tracks_query_cli, seed_plus_one_gap_project,
     seed_route_path_candidate_authored_copper_graph_obstacle_aware_project,
@@ -12,6 +10,21 @@ use super::main_tests_project_route_proposal_artifact::{
     seed_route_path_candidate_two_via_project, seed_route_path_candidate_via_project,
     unique_project_root,
 };
+use super::*;
+use eda_engine::board::{Track, Via};
+
+fn board_vias_query_cli(root: &Path) -> Cli {
+    Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "board-vias",
+    ])
+    .expect("CLI should parse")
+}
 
 #[test]
 fn project_route_apply_applies_plus_one_gap_candidate_directly() {
@@ -252,6 +265,18 @@ fn project_route_apply_applies_single_via_route_path_candidate_directly() {
     assert_eq!(apply_report["applied"][0]["to_x_nm"], 2500000);
     assert_eq!(apply_report["applied"][1]["from_x_nm"], 2500000);
     assert_eq!(apply_report["applied"][1]["to_x_nm"], 4500000);
+    assert_eq!(
+        apply_report["applied"][0]["reused_via_uuid"],
+        via_uuid.to_string()
+    );
+    assert_eq!(
+        apply_report["applied"][1]["reused_via_uuid"],
+        via_uuid.to_string()
+    );
+    assert_eq!(
+        apply_report["applied"][0]["reused_via_uuids"],
+        serde_json::json!([via_uuid.to_string()])
+    );
 
     let tracks_output =
         execute(board_tracks_query_cli(&root)).expect("board tracks query should succeed");
@@ -260,7 +285,15 @@ fn project_route_apply_applies_single_via_route_path_candidate_directly() {
     assert_eq!(tracks.len(), 2);
     assert!(tracks.iter().all(|track| track.net == target_net_uuid));
     assert!(tracks.iter().all(|track| track.uuid != via_uuid));
-
+    let vias_output =
+        execute(board_vias_query_cli(&root)).expect("board vias query should succeed");
+    let vias: Vec<Via> = serde_json::from_str(&vias_output).expect("via query output should parse");
+    assert_eq!(vias.len(), 1);
+    assert!(
+        vias.iter()
+            .any(|via| via.uuid == via_uuid && via.net == target_net_uuid)
+    );
+    assert_journal_transaction(&root, "route apply accepted proposal", 3);
     let _ = std::fs::remove_dir_all(&root);
 }
 
@@ -299,7 +332,7 @@ fn project_route_apply_applies_orthogonal_graph_via_candidate_directly() {
     assert_eq!(apply_report["applied_actions"], 5);
     assert_eq!(
         apply_report["applied"][0]["reused_via_uuid"],
-        serde_json::Value::Null
+        via_uuid.to_string()
     );
 
     let tracks_output =
@@ -308,8 +341,6 @@ fn project_route_apply_applies_orthogonal_graph_via_candidate_directly() {
         serde_json::from_str(&tracks_output).expect("track query output should parse");
     assert_eq!(tracks.len(), 9);
     assert!(tracks.iter().any(|track| track.net == target_net_uuid));
-    let _ = via_uuid;
-
     let _ = std::fs::remove_dir_all(&root);
 }
 
@@ -348,7 +379,7 @@ fn project_route_apply_applies_orthogonal_graph_two_via_candidate_directly() {
     assert_eq!(apply_report["applied_actions"], 7);
     assert_eq!(
         apply_report["applied"][0]["reused_via_uuid"],
-        serde_json::Value::Null
+        via_a_uuid.to_string()
     );
 
     let tracks_output =
@@ -357,7 +388,7 @@ fn project_route_apply_applies_orthogonal_graph_two_via_candidate_directly() {
         serde_json::from_str(&tracks_output).expect("track query output should parse");
     assert_eq!(tracks.len(), 10);
     assert!(tracks.iter().any(|track| track.net == target_net_uuid));
-    let _ = (via_a_uuid, via_b_uuid);
+    let _ = via_b_uuid;
 
     let _ = std::fs::remove_dir_all(&root);
 }

@@ -19,6 +19,23 @@ fn board_text_query_cli(root: &Path) -> Cli {
     .expect("CLI should parse")
 }
 
+fn journal_list(root: &Path) -> serde_json::Value {
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "journal-list",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("journal-list should succeed");
+    serde_json::from_str(&output).expect("journal-list JSON should parse")
+}
+
 #[test]
 fn project_board_text_mutations_round_trip_through_native_query() {
     let root = unique_project_root("datum-eda-cli-project-board-text");
@@ -96,6 +113,8 @@ fn project_board_text_mutations_round_trip_through_native_query() {
     assert!(texts[0].bold);
     assert!(texts[0].italic);
     assert_eq!(texts[0].layer, 1);
+    let journal = journal_list(&root);
+    assert_eq!(journal["transactions"][0]["reason"], "place board text");
 
     let edit_cli = Cli::try_parse_from([
         "eda",
@@ -174,6 +193,8 @@ fn project_board_text_mutations_round_trip_through_native_query() {
     assert!(!texts[0].bold);
     assert!(!texts[0].italic);
     assert_eq!(texts[0].layer, 2);
+    let journal = journal_list(&root);
+    assert_eq!(journal["transactions"][1]["reason"], "edit board text");
 
     let delete_cli = Cli::try_parse_from([
         "eda",
@@ -192,6 +213,9 @@ fn project_board_text_mutations_round_trip_through_native_query() {
     let texts: Vec<BoardText> =
         serde_json::from_str(&texts_output).expect("query output should parse");
     assert!(texts.is_empty());
+    let journal = journal_list(&root);
+    assert_eq!(journal["count"], 3);
+    assert_eq!(journal["transactions"][2]["reason"], "delete board text");
 
     let summary_cli =
         Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])

@@ -28,6 +28,7 @@ fn track_width_check_reports_below_minimum_width() {
             uuid: net_uuid,
             name: "SIG".into(),
             class: class_uuid,
+            controlled_impedance: None,
         },
     );
     let track_uuid = Uuid::new_v4();
@@ -74,6 +75,7 @@ fn via_checks_report_small_hole_and_annular_ring() {
             uuid: net_uuid,
             name: "SIG".into(),
             class: class_uuid,
+            controlled_impedance: None,
         },
     );
     let via_uuid = Uuid::new_v4();
@@ -125,6 +127,7 @@ fn silk_clearance_reports_text_too_close_to_track() {
             uuid: net_uuid,
             name: "SIG".into(),
             class: class_uuid,
+            controlled_impedance: None,
         },
     );
 
@@ -211,14 +214,18 @@ fn process_aperture_check_reports_inherited_mask_and_paste() {
 
     let report = run(&board, &[RuleType::ProcessAperture]);
     assert!(!report.passed);
-    assert_eq!(report.summary.errors, 2);
+    assert_eq!(report.summary.errors, 3);
     assert_eq!(
         report
             .violations
             .iter()
             .map(|violation| violation.code.as_str())
             .collect::<Vec<_>>(),
-        vec!["pad_mask_expansion_missing", "pad_paste_reduction_missing"]
+        vec![
+            "pad_mask_expansion_missing",
+            "pad_paste_reduction_missing",
+            "pad_process_aperture_inherited_from_copper"
+        ]
     );
     assert!(
         report
@@ -226,4 +233,70 @@ fn process_aperture_check_reports_inherited_mask_and_paste() {
             .iter()
             .all(|violation| violation.objects == vec![pad_uuid])
     );
+
+    let repeat = run(&board, &[RuleType::ProcessAperture]);
+    assert_eq!(
+        report
+            .violations
+            .iter()
+            .map(|violation| violation.id)
+            .collect::<Vec<_>>(),
+        repeat
+            .violations
+            .iter()
+            .map(|violation| violation.id)
+            .collect::<Vec<_>>()
+    );
+}
+
+#[test]
+fn process_aperture_check_reports_peer_footprint_policy_inconsistency() {
+    let mut board = empty_board();
+    let package_uuid = Uuid::new_v4();
+    let pad_1_uuid = Uuid::new_v4();
+    let pad_2_uuid = Uuid::new_v4();
+    let pad_3_uuid = Uuid::new_v4();
+
+    for (uuid, name, x_nm, mask_margin_nm) in [
+        (pad_1_uuid, "1", 1_000_000, 75_000),
+        (pad_2_uuid, "2", 2_000_000, 75_000),
+        (pad_3_uuid, "3", 3_000_000, 100_000),
+    ] {
+        board.pads.insert(
+            uuid,
+            PlacedPad {
+                uuid,
+                package: package_uuid,
+                name: name.into(),
+                net: None,
+                position: Point::new(x_nm, 2_000_000),
+                layer: 0,
+                copper_layers: vec![0],
+                shape: PadShape::Rect,
+                diameter: 0,
+                width: 1_000_000,
+                height: 500_000,
+                drill: 0,
+                rotation: 0,
+                roundrect_rratio_ppm: 250_000,
+                mask_layers: vec![2],
+                paste_layers: vec![4],
+                solder_mask_margin_nm: mask_margin_nm,
+                solder_paste_margin_nm: -75_000,
+                solder_paste_margin_ratio_ppm: 0,
+            },
+        );
+    }
+
+    let report = run(&board, &[RuleType::ProcessAperture]);
+    assert!(!report.passed);
+    assert_eq!(report.summary.errors, 1);
+    assert_eq!(
+        report.violations[0].code,
+        "pad_process_aperture_inconsistent_with_peer_footprint"
+    );
+    assert_eq!(report.violations[0].objects, vec![pad_3_uuid]);
+
+    let repeat = run(&board, &[RuleType::ProcessAperture]);
+    assert_eq!(report.violations[0].id, repeat.violations[0].id);
 }

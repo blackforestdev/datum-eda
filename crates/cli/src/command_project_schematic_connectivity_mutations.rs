@@ -1,4 +1,7 @@
 use super::*;
+use eda_engine::substrate::{
+    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver,
+};
 
 pub(crate) fn place_native_project_label(
     root: &Path,
@@ -13,38 +16,33 @@ pub(crate) fn place_native_project_label(
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
             anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
         })?;
-    let sheet_path = project.root.join("schematic").join(relative_path);
-    let sheet_text = std::fs::read_to_string(&sheet_path)
-        .with_context(|| format!("failed to read {}", sheet_path.display()))?;
-    let mut sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
-        .with_context(|| format!("failed to parse {}", sheet_path.display()))?;
-    let labels = sheet_value
-        .as_object_mut()
-        .and_then(|object| object.get_mut("labels"))
-        .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| {
-            anyhow::anyhow!("sheet labels object missing in {}", sheet_path.display())
-        })?;
-
     let label_uuid = Uuid::new_v4();
-    labels.insert(
-        label_uuid.to_string(),
-        serde_json::to_value(NetLabel {
-            uuid: label_uuid,
-            kind: kind.clone(),
-            name: name.clone(),
-            position,
-        })
-        .expect("native label serialization must succeed"),
-    );
-
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    let label = NetLabel {
+        uuid: label_uuid,
+        kind: kind.clone(),
+        name: name.clone(),
+        position,
+    };
+    commit_schematic_operation(
+        root,
+        "place schematic label",
+        Operation::CreateSchematicLabel {
+            sheet_id: sheet_uuid,
+            label_id: label_uuid,
+            label: serde_json::to_value(&label).expect("native label serialization must succeed"),
+        },
+    )?;
 
     Ok(NativeProjectLabelMutationReportView {
         action: "place_label".to_string(),
         project_root: project.root.display().to_string(),
         sheet_uuid: sheet_uuid.to_string(),
-        sheet_path: sheet_path.display().to_string(),
+        sheet_path: project
+            .root
+            .join("schematic")
+            .join(relative_path)
+            .display()
+            .to_string(),
         label_uuid: label_uuid.to_string(),
         name,
         kind: render_label_kind(&kind).to_string(),
@@ -59,11 +57,18 @@ pub(crate) fn rename_native_project_label(
     name: String,
 ) -> Result<NativeProjectLabelMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut label) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut label) =
         load_native_label_mutation_target(&project, label_uuid)?;
     label.name = name.clone();
-    write_label_into_sheet(&mut sheet_value, &label)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_schematic_operation(
+        root,
+        "rename schematic label",
+        Operation::SetSchematicLabel {
+            sheet_id: sheet_uuid,
+            label_id: label_uuid,
+            label: serde_json::to_value(&label).expect("native label serialization must succeed"),
+        },
+    )?;
 
     Ok(NativeProjectLabelMutationReportView {
         action: "rename_label".to_string(),
@@ -83,17 +88,17 @@ pub(crate) fn delete_native_project_label(
     label_uuid: Uuid,
 ) -> Result<NativeProjectLabelMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, label) =
+    let (sheet_uuid, sheet_path, _sheet_value, label) =
         load_native_label_mutation_target(&project, label_uuid)?;
-    let labels = sheet_value
-        .as_object_mut()
-        .and_then(|object| object.get_mut("labels"))
-        .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| {
-            anyhow::anyhow!("sheet labels object missing in {}", sheet_path.display())
-        })?;
-    labels.remove(&label_uuid.to_string());
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_schematic_operation(
+        root,
+        "delete schematic label",
+        Operation::DeleteSchematicLabel {
+            sheet_id: sheet_uuid,
+            label_id: label_uuid,
+            label: serde_json::to_value(&label).expect("native label serialization must succeed"),
+        },
+    )?;
 
     Ok(NativeProjectLabelMutationReportView {
         action: "delete_label".to_string(),
@@ -120,35 +125,32 @@ pub(crate) fn draw_native_project_wire(
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
             anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
         })?;
-    let sheet_path = project.root.join("schematic").join(relative_path);
-    let sheet_text = std::fs::read_to_string(&sheet_path)
-        .with_context(|| format!("failed to read {}", sheet_path.display()))?;
-    let mut sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
-        .with_context(|| format!("failed to parse {}", sheet_path.display()))?;
-    let wires = sheet_value
-        .as_object_mut()
-        .and_then(|object| object.get_mut("wires"))
-        .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| anyhow::anyhow!("sheet wires object missing in {}", sheet_path.display()))?;
-
     let wire_uuid = Uuid::new_v4();
-    wires.insert(
-        wire_uuid.to_string(),
-        serde_json::to_value(SchematicWire {
-            uuid: wire_uuid,
-            from,
-            to,
-        })
-        .expect("native wire serialization must succeed"),
-    );
-
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    let wire = SchematicWire {
+        uuid: wire_uuid,
+        from,
+        to,
+    };
+    commit_schematic_operation(
+        root,
+        "draw schematic wire",
+        Operation::CreateSchematicWire {
+            sheet_id: sheet_uuid,
+            wire_id: wire_uuid,
+            wire: serde_json::to_value(&wire).expect("native wire serialization must succeed"),
+        },
+    )?;
 
     Ok(NativeProjectWireMutationReportView {
         action: "draw_wire".to_string(),
         project_root: project.root.display().to_string(),
         sheet_uuid: sheet_uuid.to_string(),
-        sheet_path: sheet_path.display().to_string(),
+        sheet_path: project
+            .root
+            .join("schematic")
+            .join(relative_path)
+            .display()
+            .to_string(),
         wire_uuid: wire_uuid.to_string(),
         from_x_nm: from.x,
         from_y_nm: from.y,
@@ -162,15 +164,17 @@ pub(crate) fn delete_native_project_wire(
     wire_uuid: Uuid,
 ) -> Result<NativeProjectWireMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, wire) =
+    let (sheet_uuid, sheet_path, _sheet_value, wire) =
         load_native_wire_mutation_target(&project, wire_uuid)?;
-    let wires = sheet_value
-        .as_object_mut()
-        .and_then(|object| object.get_mut("wires"))
-        .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| anyhow::anyhow!("sheet wires object missing in {}", sheet_path.display()))?;
-    wires.remove(&wire_uuid.to_string());
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_schematic_operation(
+        root,
+        "delete schematic wire",
+        Operation::DeleteSchematicWire {
+            sheet_id: sheet_uuid,
+            wire_id: wire_uuid,
+            wire: serde_json::to_value(&wire).expect("native wire serialization must succeed"),
+        },
+    )?;
 
     Ok(NativeProjectWireMutationReportView {
         action: "delete_wire".to_string(),
@@ -185,6 +189,32 @@ pub(crate) fn delete_native_project_wire(
     })
 }
 
+pub(super) fn commit_schematic_operation(
+    root: &Path,
+    reason: &str,
+    operation: Operation,
+) -> Result<()> {
+    let mut model = ProjectResolver::new(root)
+        .resolve()
+        .with_context(|| format!("failed to resolve native project {}", root.display()))?;
+    model
+        .commit_journaled(
+            root,
+            OperationBatch {
+                batch_id: Uuid::new_v4(),
+                expected_model_revision: Some(model.model_revision.clone()),
+                provenance: CommitProvenance {
+                    actor: "datum-eda-cli".to_string(),
+                    source: CommitSource::Cli,
+                    reason: reason.to_string(),
+                },
+                operations: vec![operation],
+            },
+        )
+        .map(|_| ())
+        .map_err(Into::into)
+}
+
 pub(crate) fn place_native_project_junction(
     root: &Path,
     sheet_uuid: Uuid,
@@ -196,36 +226,32 @@ pub(crate) fn place_native_project_junction(
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
             anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
         })?;
-    let sheet_path = project.root.join("schematic").join(relative_path);
-    let sheet_text = std::fs::read_to_string(&sheet_path)
-        .with_context(|| format!("failed to read {}", sheet_path.display()))?;
-    let mut sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
-        .with_context(|| format!("failed to parse {}", sheet_path.display()))?;
-    let junctions = sheet_value
-        .as_object_mut()
-        .and_then(|object| object.get_mut("junctions"))
-        .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| {
-            anyhow::anyhow!("sheet junctions object missing in {}", sheet_path.display())
-        })?;
-
     let junction_uuid = Uuid::new_v4();
-    junctions.insert(
-        junction_uuid.to_string(),
-        serde_json::to_value(Junction {
-            uuid: junction_uuid,
-            position,
-        })
-        .expect("native junction serialization must succeed"),
-    );
-
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    let junction = Junction {
+        uuid: junction_uuid,
+        position,
+    };
+    commit_schematic_operation(
+        root,
+        "place schematic junction",
+        Operation::CreateSchematicJunction {
+            sheet_id: sheet_uuid,
+            junction_id: junction_uuid,
+            junction: serde_json::to_value(&junction)
+                .expect("native junction serialization must succeed"),
+        },
+    )?;
 
     Ok(NativeProjectJunctionMutationReportView {
         action: "place_junction".to_string(),
         project_root: project.root.display().to_string(),
         sheet_uuid: sheet_uuid.to_string(),
-        sheet_path: sheet_path.display().to_string(),
+        sheet_path: project
+            .root
+            .join("schematic")
+            .join(relative_path)
+            .display()
+            .to_string(),
         junction_uuid: junction_uuid.to_string(),
         x_nm: position.x,
         y_nm: position.y,
@@ -237,17 +263,18 @@ pub(crate) fn delete_native_project_junction(
     junction_uuid: Uuid,
 ) -> Result<NativeProjectJunctionMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, junction) =
+    let (sheet_uuid, sheet_path, _sheet_value, junction) =
         load_native_junction_mutation_target(&project, junction_uuid)?;
-    let junctions = sheet_value
-        .as_object_mut()
-        .and_then(|object| object.get_mut("junctions"))
-        .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| {
-            anyhow::anyhow!("sheet junctions object missing in {}", sheet_path.display())
-        })?;
-    junctions.remove(&junction_uuid.to_string());
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_schematic_operation(
+        root,
+        "delete schematic junction",
+        Operation::DeleteSchematicJunction {
+            sheet_id: sheet_uuid,
+            junction_id: junction_uuid,
+            junction: serde_json::to_value(&junction)
+                .expect("native junction serialization must succeed"),
+        },
+    )?;
 
     Ok(NativeProjectJunctionMutationReportView {
         action: "delete_junction".to_string(),
@@ -273,36 +300,33 @@ pub(crate) fn place_native_project_port(
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
             anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
         })?;
-    let sheet_path = project.root.join("schematic").join(relative_path);
-    let sheet_text = std::fs::read_to_string(&sheet_path)
-        .with_context(|| format!("failed to read {}", sheet_path.display()))?;
-    let mut sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
-        .with_context(|| format!("failed to parse {}", sheet_path.display()))?;
-    let ports = sheet_value
-        .as_object_mut()
-        .and_then(|object| object.get_mut("ports"))
-        .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| anyhow::anyhow!("sheet ports object missing in {}", sheet_path.display()))?;
-
     let port_uuid = Uuid::new_v4();
-    ports.insert(
-        port_uuid.to_string(),
-        serde_json::to_value(HierarchicalPort {
-            uuid: port_uuid,
-            name: name.clone(),
-            direction: direction.clone(),
-            position,
-        })
-        .expect("native port serialization must succeed"),
-    );
-
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    let port = HierarchicalPort {
+        uuid: port_uuid,
+        name: name.clone(),
+        direction: direction.clone(),
+        position,
+    };
+    commit_schematic_operation(
+        root,
+        "place schematic port",
+        Operation::CreateSchematicPort {
+            sheet_id: sheet_uuid,
+            port_id: port_uuid,
+            port: serde_json::to_value(&port).expect("native port serialization must succeed"),
+        },
+    )?;
 
     Ok(NativeProjectPortMutationReportView {
         action: "place_port".to_string(),
         project_root: project.root.display().to_string(),
         sheet_uuid: sheet_uuid.to_string(),
-        sheet_path: sheet_path.display().to_string(),
+        sheet_path: project
+            .root
+            .join("schematic")
+            .join(relative_path)
+            .display()
+            .to_string(),
         port_uuid: port_uuid.to_string(),
         name,
         direction: render_port_direction(&direction).to_string(),
@@ -320,7 +344,7 @@ pub(crate) fn edit_native_project_port(
     y_nm: Option<i64>,
 ) -> Result<NativeProjectPortMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut port) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut port) =
         load_native_port_mutation_target(&project, port_uuid)?;
     if let Some(name) = name {
         port.name = name;
@@ -334,8 +358,15 @@ pub(crate) fn edit_native_project_port(
             y: y_nm.unwrap_or(port.position.y),
         };
     }
-    write_port_into_sheet(&mut sheet_value, &port)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_schematic_operation(
+        root,
+        "edit schematic port",
+        Operation::SetSchematicPort {
+            sheet_id: sheet_uuid,
+            port_id: port_uuid,
+            port: serde_json::to_value(&port).expect("native port serialization must succeed"),
+        },
+    )?;
 
     Ok(NativeProjectPortMutationReportView {
         action: "edit_port".to_string(),
@@ -355,15 +386,17 @@ pub(crate) fn delete_native_project_port(
     port_uuid: Uuid,
 ) -> Result<NativeProjectPortMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, port) =
+    let (sheet_uuid, sheet_path, _sheet_value, port) =
         load_native_port_mutation_target(&project, port_uuid)?;
-    let ports = sheet_value
-        .as_object_mut()
-        .and_then(|object| object.get_mut("ports"))
-        .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| anyhow::anyhow!("sheet ports object missing in {}", sheet_path.display()))?;
-    ports.remove(&port_uuid.to_string());
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_schematic_operation(
+        root,
+        "delete schematic port",
+        Operation::DeleteSchematicPort {
+            sheet_id: sheet_uuid,
+            port_id: port_uuid,
+            port: serde_json::to_value(&port).expect("native port serialization must succeed"),
+        },
+    )?;
 
     Ok(NativeProjectPortMutationReportView {
         action: "delete_port".to_string(),
@@ -390,34 +423,32 @@ pub(crate) fn create_native_project_bus(
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
             anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
         })?;
-    let sheet_path = project.root.join("schematic").join(relative_path);
-    let sheet_text = std::fs::read_to_string(&sheet_path)
-        .with_context(|| format!("failed to read {}", sheet_path.display()))?;
-    let mut sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
-        .with_context(|| format!("failed to parse {}", sheet_path.display()))?;
-    let buses = sheet_value
-        .as_object_mut()
-        .and_then(|object| object.get_mut("buses"))
-        .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| anyhow::anyhow!("sheet buses object missing in {}", sheet_path.display()))?;
-
     let bus_uuid = Uuid::new_v4();
-    buses.insert(
-        bus_uuid.to_string(),
-        serde_json::to_value(Bus {
-            uuid: bus_uuid,
-            name: name.clone(),
-            members: members.clone(),
-        })
-        .expect("native bus serialization must succeed"),
-    );
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    let bus = Bus {
+        uuid: bus_uuid,
+        name: name.clone(),
+        members: members.clone(),
+    };
+    commit_schematic_operation(
+        root,
+        "create schematic bus",
+        Operation::CreateSchematicBus {
+            sheet_id: sheet_uuid,
+            bus_id: bus_uuid,
+            bus: serde_json::to_value(&bus).expect("native bus serialization must succeed"),
+        },
+    )?;
 
     Ok(NativeProjectBusMutationReportView {
         action: "create_bus".to_string(),
         project_root: project.root.display().to_string(),
         sheet_uuid: sheet_uuid.to_string(),
-        sheet_path: sheet_path.display().to_string(),
+        sheet_path: project
+            .root
+            .join("schematic")
+            .join(relative_path)
+            .display()
+            .to_string(),
         bus_uuid: bus_uuid.to_string(),
         name,
         members,
@@ -430,11 +461,18 @@ pub(crate) fn edit_native_project_bus_members(
     members: Vec<String>,
 ) -> Result<NativeProjectBusMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut bus) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut bus) =
         load_native_bus_mutation_target(&project, bus_uuid)?;
     bus.members = members.clone();
-    write_bus_into_sheet(&mut sheet_value, &bus)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_schematic_operation(
+        root,
+        "edit schematic bus members",
+        Operation::SetSchematicBus {
+            sheet_id: sheet_uuid,
+            bus_id: bus_uuid,
+            bus: serde_json::to_value(&bus).expect("native bus serialization must succeed"),
+        },
+    )?;
 
     Ok(NativeProjectBusMutationReportView {
         action: "edit_bus_members".to_string(),
@@ -444,6 +482,45 @@ pub(crate) fn edit_native_project_bus_members(
         bus_uuid: bus.uuid.to_string(),
         name: bus.name,
         members,
+    })
+}
+
+pub(crate) fn delete_native_project_bus(
+    root: &Path,
+    bus_uuid: Uuid,
+) -> Result<NativeProjectBusMutationReportView> {
+    let project = load_native_project(root)?;
+    let (sheet_uuid, sheet_path, sheet_value, bus) =
+        load_native_bus_mutation_target(&project, bus_uuid)?;
+    let bus_key = bus_uuid.to_string();
+    if let Some(entries) = sheet_value
+        .get("bus_entries")
+        .and_then(serde_json::Value::as_object)
+    {
+        if let Some((entry_uuid, _)) = entries.iter().find(|(_, value)| {
+            value.get("bus").and_then(serde_json::Value::as_str) == Some(bus_key.as_str())
+        }) {
+            bail!("bus {bus_uuid} is still referenced by bus entry {entry_uuid}");
+        }
+    }
+    commit_schematic_operation(
+        root,
+        "delete schematic bus",
+        Operation::DeleteSchematicBus {
+            sheet_id: sheet_uuid,
+            bus_id: bus_uuid,
+            bus: serde_json::to_value(&bus).expect("native bus serialization must succeed"),
+        },
+    )?;
+
+    Ok(NativeProjectBusMutationReportView {
+        action: "delete_bus".to_string(),
+        project_root: project.root.display().to_string(),
+        sheet_uuid: sheet_uuid.to_string(),
+        sheet_path: sheet_path.display().to_string(),
+        bus_uuid: bus.uuid.to_string(),
+        name: bus.name,
+        members: bus.members,
     })
 }
 
@@ -460,40 +537,45 @@ pub(crate) fn place_native_project_bus_entry(
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
             anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
         })?;
-    let sheet_path = project.root.join("schematic").join(relative_path);
-    let sheet_text = std::fs::read_to_string(&sheet_path)
-        .with_context(|| format!("failed to read {}", sheet_path.display()))?;
-    let mut sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
-        .with_context(|| format!("failed to parse {}", sheet_path.display()))?;
-    let bus_entries = sheet_value
-        .as_object_mut()
-        .and_then(|object| object.get_mut("bus_entries"))
-        .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| {
-            anyhow::anyhow!(
-                "sheet bus_entries object missing in {}",
-                sheet_path.display()
-            )
-        })?;
+    let (bus_sheet_uuid, _, _, _) = load_native_bus_mutation_target(&project, bus_uuid)?;
+    if bus_sheet_uuid != sheet_uuid {
+        bail!("bus {bus_uuid} belongs to sheet {bus_sheet_uuid}, not {sheet_uuid}");
+    }
+    if let Some(wire_uuid) = wire_uuid {
+        let (wire_sheet_uuid, _, _, _) = load_native_wire_mutation_target(&project, wire_uuid)?;
+        if wire_sheet_uuid != sheet_uuid {
+            bail!("wire {wire_uuid} belongs to sheet {wire_sheet_uuid}, not {sheet_uuid}");
+        }
+    }
 
     let bus_entry_uuid = Uuid::new_v4();
-    bus_entries.insert(
-        bus_entry_uuid.to_string(),
-        serde_json::to_value(BusEntry {
-            uuid: bus_entry_uuid,
-            bus: bus_uuid,
-            wire: wire_uuid,
-            position,
-        })
-        .expect("native bus entry serialization must succeed"),
-    );
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    let bus_entry = BusEntry {
+        uuid: bus_entry_uuid,
+        bus: bus_uuid,
+        wire: wire_uuid,
+        position,
+    };
+    commit_schematic_operation(
+        root,
+        "place schematic bus entry",
+        Operation::CreateSchematicBusEntry {
+            sheet_id: sheet_uuid,
+            bus_entry_id: bus_entry_uuid,
+            bus_entry: serde_json::to_value(&bus_entry)
+                .expect("native bus entry serialization must succeed"),
+        },
+    )?;
 
     Ok(NativeProjectBusEntryMutationReportView {
         action: "place_bus_entry".to_string(),
         project_root: project.root.display().to_string(),
         sheet_uuid: sheet_uuid.to_string(),
-        sheet_path: sheet_path.display().to_string(),
+        sheet_path: project
+            .root
+            .join("schematic")
+            .join(relative_path)
+            .display()
+            .to_string(),
         bus_entry_uuid: bus_entry_uuid.to_string(),
         bus_uuid: bus_uuid.to_string(),
         wire_uuid: wire_uuid.map(|uuid| uuid.to_string()),
@@ -507,20 +589,18 @@ pub(crate) fn delete_native_project_bus_entry(
     bus_entry_uuid: Uuid,
 ) -> Result<NativeProjectBusEntryMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, bus_entry) =
+    let (sheet_uuid, sheet_path, _sheet_value, bus_entry) =
         load_native_bus_entry_mutation_target(&project, bus_entry_uuid)?;
-    let bus_entries = sheet_value
-        .as_object_mut()
-        .and_then(|object| object.get_mut("bus_entries"))
-        .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| {
-            anyhow::anyhow!(
-                "sheet bus_entries object missing in {}",
-                sheet_path.display()
-            )
-        })?;
-    bus_entries.remove(&bus_entry_uuid.to_string());
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_schematic_operation(
+        root,
+        "delete schematic bus entry",
+        Operation::DeleteSchematicBusEntry {
+            sheet_id: sheet_uuid,
+            bus_entry_id: bus_entry_uuid,
+            bus_entry: serde_json::to_value(&bus_entry)
+                .expect("native bus entry serialization must succeed"),
+        },
+    )?;
 
     Ok(NativeProjectBusEntryMutationReportView {
         action: "delete_bus_entry".to_string(),
@@ -548,40 +628,34 @@ pub(crate) fn place_native_project_noconnect(
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
             anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
         })?;
-    let sheet_path = project.root.join("schematic").join(relative_path);
-    let sheet_text = std::fs::read_to_string(&sheet_path)
-        .with_context(|| format!("failed to read {}", sheet_path.display()))?;
-    let mut sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
-        .with_context(|| format!("failed to parse {}", sheet_path.display()))?;
-    let noconnects = sheet_value
-        .as_object_mut()
-        .and_then(|object| object.get_mut("noconnects"))
-        .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| {
-            anyhow::anyhow!(
-                "sheet noconnects object missing in {}",
-                sheet_path.display()
-            )
-        })?;
-
     let noconnect_uuid = Uuid::new_v4();
-    noconnects.insert(
-        noconnect_uuid.to_string(),
-        serde_json::to_value(NoConnectMarker {
-            uuid: noconnect_uuid,
-            symbol: symbol_uuid,
-            pin: pin_uuid,
-            position,
-        })
-        .expect("native no-connect serialization must succeed"),
-    );
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    let noconnect = NoConnectMarker {
+        uuid: noconnect_uuid,
+        symbol: symbol_uuid,
+        pin: pin_uuid,
+        position,
+    };
+    commit_schematic_operation(
+        root,
+        "place schematic noconnect",
+        Operation::CreateSchematicNoConnect {
+            sheet_id: sheet_uuid,
+            noconnect_id: noconnect_uuid,
+            noconnect: serde_json::to_value(&noconnect)
+                .expect("native no-connect serialization must succeed"),
+        },
+    )?;
 
     Ok(NativeProjectNoConnectMutationReportView {
         action: "place_noconnect".to_string(),
         project_root: project.root.display().to_string(),
         sheet_uuid: sheet_uuid.to_string(),
-        sheet_path: sheet_path.display().to_string(),
+        sheet_path: project
+            .root
+            .join("schematic")
+            .join(relative_path)
+            .display()
+            .to_string(),
         noconnect_uuid: noconnect_uuid.to_string(),
         symbol_uuid: symbol_uuid.to_string(),
         pin_uuid: pin_uuid.to_string(),
@@ -595,20 +669,18 @@ pub(crate) fn delete_native_project_noconnect(
     noconnect_uuid: Uuid,
 ) -> Result<NativeProjectNoConnectMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, marker) =
+    let (sheet_uuid, sheet_path, _sheet_value, marker) =
         load_native_noconnect_mutation_target(&project, noconnect_uuid)?;
-    let noconnects = sheet_value
-        .as_object_mut()
-        .and_then(|object| object.get_mut("noconnects"))
-        .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| {
-            anyhow::anyhow!(
-                "sheet noconnects object missing in {}",
-                sheet_path.display()
-            )
-        })?;
-    noconnects.remove(&noconnect_uuid.to_string());
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_schematic_operation(
+        root,
+        "delete schematic noconnect",
+        Operation::DeleteSchematicNoConnect {
+            sheet_id: sheet_uuid,
+            noconnect_id: noconnect_uuid,
+            noconnect: serde_json::to_value(&marker)
+                .expect("native no-connect serialization must succeed"),
+        },
+    )?;
 
     Ok(NativeProjectNoConnectMutationReportView {
         action: "delete_noconnect".to_string(),

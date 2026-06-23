@@ -330,7 +330,6 @@ fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_throug
         set_value_report["persisted_component_mechanical_line_count"],
         0
     );
-
     let components_output =
         execute(board_components_query_cli(&root)).expect("board components query should succeed");
     let components: Vec<serde_json::Value> =
@@ -380,6 +379,24 @@ fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_throug
         0
     );
 
+    let flip_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "flip-board-component",
+        root.to_str().unwrap(),
+        "--component",
+        &component_uuid,
+        "--layer",
+        "1",
+    ])
+    .expect("CLI should parse");
+    let flip_output = execute(flip_cli).expect("flip board component should succeed");
+    let flip_report: serde_json::Value =
+        serde_json::from_str(&flip_output).expect("flip output should parse");
+    assert_eq!(flip_report["layer"], 1);
+
     let rotate_cli = Cli::try_parse_from([
         "eda",
         "--format",
@@ -412,7 +429,7 @@ fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_throug
     let components: Vec<serde_json::Value> =
         serde_json::from_str(&components_output).expect("query output should parse");
     assert_eq!(components.len(), 1);
-    assert_eq!(components[0]["layer"], 2);
+    assert_eq!(components[0]["layer"], 1);
     assert_eq!(components[0]["rotation"], 180);
     assert_eq!(components[0]["locked"], false);
 

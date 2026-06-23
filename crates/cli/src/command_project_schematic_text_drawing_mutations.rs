@@ -1,4 +1,6 @@
 use super::*;
+use crate::command_project::command_project_schematic_connectivity_mutations::commit_schematic_operation;
+use eda_engine::substrate::Operation;
 
 pub(crate) fn place_native_project_text(
     root: &Path,
@@ -13,35 +15,34 @@ pub(crate) fn place_native_project_text(
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
             anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
         })?;
-    let sheet_path = project.root.join("schematic").join(relative_path);
-    let sheet_text = std::fs::read_to_string(&sheet_path)
-        .with_context(|| format!("failed to read {}", sheet_path.display()))?;
-    let mut sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
-        .with_context(|| format!("failed to parse {}", sheet_path.display()))?;
-    let texts = sheet_value
-        .as_object_mut()
-        .and_then(|object| object.get_mut("texts"))
-        .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| anyhow::anyhow!("sheet texts object missing in {}", sheet_path.display()))?;
-
     let text_uuid = Uuid::new_v4();
-    texts.insert(
-        text_uuid.to_string(),
-        serde_json::to_value(SchematicText {
-            uuid: text_uuid,
-            text: text.clone(),
-            position,
-            rotation: rotation_deg,
-        })
-        .expect("native text serialization must succeed"),
-    );
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    let text_object = SchematicText {
+        uuid: text_uuid,
+        text: text.clone(),
+        position,
+        rotation: rotation_deg,
+    };
+    commit_schematic_operation(
+        root,
+        "place schematic text",
+        Operation::CreateSchematicText {
+            sheet_id: sheet_uuid,
+            text_id: text_uuid,
+            text: serde_json::to_value(&text_object)
+                .expect("native text serialization must succeed"),
+        },
+    )?;
 
     Ok(NativeProjectTextMutationReportView {
         action: "place_text".to_string(),
         project_root: project.root.display().to_string(),
         sheet_uuid: sheet_uuid.to_string(),
-        sheet_path: sheet_path.display().to_string(),
+        sheet_path: project
+            .root
+            .join("schematic")
+            .join(relative_path)
+            .display()
+            .to_string(),
         text_uuid: text_uuid.to_string(),
         text,
         x_nm: position.x,
@@ -58,7 +59,7 @@ pub(crate) fn edit_native_project_text(
     rotation_deg: Option<i32>,
 ) -> Result<NativeProjectTextMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, mut text_object) =
+    let (sheet_uuid, sheet_path, _sheet_value, mut text_object) =
         load_native_text_mutation_target(&project, text_uuid)?;
     if let Some(text) = text {
         text_object.text = text;
@@ -69,8 +70,16 @@ pub(crate) fn edit_native_project_text(
     if let Some(rotation_deg) = rotation_deg {
         text_object.rotation = rotation_deg;
     }
-    write_text_into_sheet(&mut sheet_value, &text_object)?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_schematic_operation(
+        root,
+        "edit schematic text",
+        Operation::SetSchematicText {
+            sheet_id: sheet_uuid,
+            text_id: text_uuid,
+            text: serde_json::to_value(&text_object)
+                .expect("native text serialization must succeed"),
+        },
+    )?;
 
     Ok(NativeProjectTextMutationReportView {
         action: "edit_text".to_string(),
@@ -90,15 +99,18 @@ pub(crate) fn delete_native_project_text(
     text_uuid: Uuid,
 ) -> Result<NativeProjectTextMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, text_object) =
+    let (sheet_uuid, sheet_path, _sheet_value, text_object) =
         load_native_text_mutation_target(&project, text_uuid)?;
-    let texts = sheet_value
-        .as_object_mut()
-        .and_then(|object| object.get_mut("texts"))
-        .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| anyhow::anyhow!("sheet texts object missing in {}", sheet_path.display()))?;
-    texts.remove(&text_uuid.to_string());
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    commit_schematic_operation(
+        root,
+        "delete schematic text",
+        Operation::DeleteSchematicText {
+            sheet_id: sheet_uuid,
+            text_id: text_uuid,
+            text: serde_json::to_value(&text_object)
+                .expect("native text serialization must succeed"),
+        },
+    )?;
 
     Ok(NativeProjectTextMutationReportView {
         action: "delete_text".to_string(),
@@ -113,6 +125,48 @@ pub(crate) fn delete_native_project_text(
     })
 }
 
+fn schematic_sheet_path(project: &LoadedNativeProject, sheet_uuid: Uuid) -> Result<PathBuf> {
+    let sheet_key = sheet_uuid.to_string();
+    let relative_path =
+        project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
+            anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
+        })?;
+    Ok(project.root.join("schematic").join(relative_path))
+}
+
+fn commit_schematic_drawing_operation(
+    root: &Path,
+    reason: &str,
+    operation: Operation,
+) -> Result<()> {
+    commit_schematic_operation(root, reason, operation)?;
+    Ok(())
+}
+
+fn drawing_report(
+    project: &LoadedNativeProject,
+    action: &str,
+    sheet_uuid: Uuid,
+    sheet_path: &Path,
+    drawing_uuid: Uuid,
+    kind: &str,
+    from: Point,
+    to: Point,
+) -> NativeProjectDrawingMutationReportView {
+    NativeProjectDrawingMutationReportView {
+        action: action.to_string(),
+        project_root: project.root.display().to_string(),
+        sheet_uuid: sheet_uuid.to_string(),
+        sheet_path: sheet_path.display().to_string(),
+        drawing_uuid: drawing_uuid.to_string(),
+        kind: kind.to_string(),
+        from_x_nm: from.x,
+        from_y_nm: from.y,
+        to_x_nm: to.x,
+        to_y_nm: to.y,
+    }
+}
+
 pub(crate) fn place_native_project_drawing_line(
     root: &Path,
     sheet_uuid: Uuid,
@@ -120,48 +174,34 @@ pub(crate) fn place_native_project_drawing_line(
     to: Point,
 ) -> Result<NativeProjectDrawingMutationReportView> {
     let project = load_native_project(root)?;
-    let sheet_key = sheet_uuid.to_string();
-    let relative_path =
-        project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
-            anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
-        })?;
-    let sheet_path = project.root.join("schematic").join(relative_path);
-    let sheet_text = std::fs::read_to_string(&sheet_path)
-        .with_context(|| format!("failed to read {}", sheet_path.display()))?;
-    let mut sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
-        .with_context(|| format!("failed to parse {}", sheet_path.display()))?;
-    let drawings = sheet_value
-        .as_object_mut()
-        .and_then(|object| object.get_mut("drawings"))
-        .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| {
-            anyhow::anyhow!("sheet drawings object missing in {}", sheet_path.display())
-        })?;
-
+    let sheet_path = schematic_sheet_path(&project, sheet_uuid)?;
     let drawing_uuid = Uuid::new_v4();
-    drawings.insert(
-        drawing_uuid.to_string(),
-        serde_json::to_value(SchematicPrimitive::Line {
-            uuid: drawing_uuid,
-            from,
-            to,
-        })
-        .expect("native drawing serialization must succeed"),
-    );
-    write_canonical_json(&sheet_path, &sheet_value)?;
+    let drawing = SchematicPrimitive::Line {
+        uuid: drawing_uuid,
+        from,
+        to,
+    };
+    commit_schematic_drawing_operation(
+        root,
+        "place schematic drawing line",
+        Operation::CreateSchematicDrawing {
+            sheet_id: sheet_uuid,
+            drawing_id: drawing_uuid,
+            drawing: serde_json::to_value(&drawing)
+                .expect("native drawing serialization must succeed"),
+        },
+    )?;
 
-    Ok(NativeProjectDrawingMutationReportView {
-        action: "place_drawing_line".to_string(),
-        project_root: project.root.display().to_string(),
-        sheet_uuid: sheet_uuid.to_string(),
-        sheet_path: sheet_path.display().to_string(),
-        drawing_uuid: drawing_uuid.to_string(),
-        kind: "line".to_string(),
-        from_x_nm: from.x,
-        from_y_nm: from.y,
-        to_x_nm: to.x,
-        to_y_nm: to.y,
-    })
+    Ok(drawing_report(
+        &project,
+        "place_drawing_line",
+        sheet_uuid,
+        &sheet_path,
+        drawing_uuid,
+        "line",
+        from,
+        to,
+    ))
 }
 
 pub(crate) fn place_native_project_drawing_rect(
@@ -171,29 +211,33 @@ pub(crate) fn place_native_project_drawing_rect(
     max: Point,
 ) -> Result<NativeProjectDrawingMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_path, mut sheet_value) = load_native_sheet_for_insert(&project, sheet_uuid)?;
+    let sheet_path = schematic_sheet_path(&project, sheet_uuid)?;
     let drawing_uuid = Uuid::new_v4();
-    write_drawing_into_sheet(
-        &mut sheet_value,
-        &SchematicPrimitive::Rect {
-            uuid: drawing_uuid,
-            min,
-            max,
+    let drawing = SchematicPrimitive::Rect {
+        uuid: drawing_uuid,
+        min,
+        max,
+    };
+    commit_schematic_drawing_operation(
+        root,
+        "place schematic drawing rect",
+        Operation::CreateSchematicDrawing {
+            sheet_id: sheet_uuid,
+            drawing_id: drawing_uuid,
+            drawing: serde_json::to_value(&drawing)
+                .expect("native drawing serialization must succeed"),
         },
     )?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
-    Ok(NativeProjectDrawingMutationReportView {
-        action: "place_drawing_rect".to_string(),
-        project_root: project.root.display().to_string(),
-        sheet_uuid: sheet_uuid.to_string(),
-        sheet_path: sheet_path.display().to_string(),
-        drawing_uuid: drawing_uuid.to_string(),
-        kind: "rect".to_string(),
-        from_x_nm: min.x,
-        from_y_nm: min.y,
-        to_x_nm: max.x,
-        to_y_nm: max.y,
-    })
+    Ok(drawing_report(
+        &project,
+        "place_drawing_rect",
+        sheet_uuid,
+        &sheet_path,
+        drawing_uuid,
+        "rect",
+        min,
+        max,
+    ))
 }
 
 pub(crate) fn place_native_project_drawing_circle(
@@ -203,29 +247,36 @@ pub(crate) fn place_native_project_drawing_circle(
     radius: i64,
 ) -> Result<NativeProjectDrawingMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_path, mut sheet_value) = load_native_sheet_for_insert(&project, sheet_uuid)?;
+    let sheet_path = schematic_sheet_path(&project, sheet_uuid)?;
     let drawing_uuid = Uuid::new_v4();
-    write_drawing_into_sheet(
-        &mut sheet_value,
-        &SchematicPrimitive::Circle {
-            uuid: drawing_uuid,
-            center,
-            radius,
+    let drawing = SchematicPrimitive::Circle {
+        uuid: drawing_uuid,
+        center,
+        radius,
+    };
+    commit_schematic_drawing_operation(
+        root,
+        "place schematic drawing circle",
+        Operation::CreateSchematicDrawing {
+            sheet_id: sheet_uuid,
+            drawing_id: drawing_uuid,
+            drawing: serde_json::to_value(&drawing)
+                .expect("native drawing serialization must succeed"),
         },
     )?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
-    Ok(NativeProjectDrawingMutationReportView {
-        action: "place_drawing_circle".to_string(),
-        project_root: project.root.display().to_string(),
-        sheet_uuid: sheet_uuid.to_string(),
-        sheet_path: sheet_path.display().to_string(),
-        drawing_uuid: drawing_uuid.to_string(),
-        kind: "circle".to_string(),
-        from_x_nm: center.x,
-        from_y_nm: center.y,
-        to_x_nm: center.x + radius,
-        to_y_nm: center.y,
-    })
+    Ok(drawing_report(
+        &project,
+        "place_drawing_circle",
+        sheet_uuid,
+        &sheet_path,
+        drawing_uuid,
+        "circle",
+        center,
+        Point {
+            x: center.x + radius,
+            y: center.y,
+        },
+    ))
 }
 
 pub(crate) fn place_native_project_drawing_arc(
@@ -234,28 +285,35 @@ pub(crate) fn place_native_project_drawing_arc(
     arc: Arc,
 ) -> Result<NativeProjectDrawingMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_path, mut sheet_value) = load_native_sheet_for_insert(&project, sheet_uuid)?;
+    let sheet_path = schematic_sheet_path(&project, sheet_uuid)?;
     let drawing_uuid = Uuid::new_v4();
-    write_drawing_into_sheet(
-        &mut sheet_value,
-        &SchematicPrimitive::Arc {
-            uuid: drawing_uuid,
-            arc,
+    let drawing = SchematicPrimitive::Arc {
+        uuid: drawing_uuid,
+        arc,
+    };
+    commit_schematic_drawing_operation(
+        root,
+        "place schematic drawing arc",
+        Operation::CreateSchematicDrawing {
+            sheet_id: sheet_uuid,
+            drawing_id: drawing_uuid,
+            drawing: serde_json::to_value(&drawing)
+                .expect("native drawing serialization must succeed"),
         },
     )?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
-    Ok(NativeProjectDrawingMutationReportView {
-        action: "place_drawing_arc".to_string(),
-        project_root: project.root.display().to_string(),
-        sheet_uuid: sheet_uuid.to_string(),
-        sheet_path: sheet_path.display().to_string(),
-        drawing_uuid: drawing_uuid.to_string(),
-        kind: "arc".to_string(),
-        from_x_nm: arc.center.x,
-        from_y_nm: arc.center.y,
-        to_x_nm: arc.radius,
-        to_y_nm: i64::from(arc.end_angle),
-    })
+    Ok(drawing_report(
+        &project,
+        "place_drawing_arc",
+        sheet_uuid,
+        &sheet_path,
+        drawing_uuid,
+        "arc",
+        arc.center,
+        Point {
+            x: arc.radius,
+            y: i64::from(arc.end_angle),
+        },
+    ))
 }
 
 pub(crate) fn edit_native_project_drawing_line(
@@ -265,7 +323,7 @@ pub(crate) fn edit_native_project_drawing_line(
     to: Option<Point>,
 ) -> Result<NativeProjectDrawingMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, drawing) =
+    let (sheet_uuid, sheet_path, _sheet_value, drawing) =
         load_native_drawing_mutation_target(&project, drawing_uuid)?;
     let (current_from, current_to) = match drawing {
         SchematicPrimitive::Line { from, to, .. } => (from, to),
@@ -273,28 +331,32 @@ pub(crate) fn edit_native_project_drawing_line(
     };
     let from = from.unwrap_or(current_from);
     let to = to.unwrap_or(current_to);
-    write_drawing_into_sheet(
-        &mut sheet_value,
-        &SchematicPrimitive::Line {
-            uuid: drawing_uuid,
-            from,
-            to,
+    let drawing = SchematicPrimitive::Line {
+        uuid: drawing_uuid,
+        from,
+        to,
+    };
+    commit_schematic_drawing_operation(
+        root,
+        "edit schematic drawing line",
+        Operation::SetSchematicDrawing {
+            sheet_id: sheet_uuid,
+            drawing_id: drawing_uuid,
+            drawing: serde_json::to_value(&drawing)
+                .expect("native drawing serialization must succeed"),
         },
     )?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
 
-    Ok(NativeProjectDrawingMutationReportView {
-        action: "edit_drawing_line".to_string(),
-        project_root: project.root.display().to_string(),
-        sheet_uuid: sheet_uuid.to_string(),
-        sheet_path: sheet_path.display().to_string(),
-        drawing_uuid: drawing_uuid.to_string(),
-        kind: "line".to_string(),
-        from_x_nm: from.x,
-        from_y_nm: from.y,
-        to_x_nm: to.x,
-        to_y_nm: to.y,
-    })
+    Ok(drawing_report(
+        &project,
+        "edit_drawing_line",
+        sheet_uuid,
+        &sheet_path,
+        drawing_uuid,
+        "line",
+        from,
+        to,
+    ))
 }
 
 pub(crate) fn edit_native_project_drawing_rect(
@@ -304,7 +366,7 @@ pub(crate) fn edit_native_project_drawing_rect(
     max: Option<Point>,
 ) -> Result<NativeProjectDrawingMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, drawing) =
+    let (sheet_uuid, sheet_path, _sheet_value, drawing) =
         load_native_drawing_mutation_target(&project, drawing_uuid)?;
     let (current_min, current_max) = match drawing {
         SchematicPrimitive::Rect { min, max, .. } => (min, max),
@@ -312,27 +374,31 @@ pub(crate) fn edit_native_project_drawing_rect(
     };
     let min = min.unwrap_or(current_min);
     let max = max.unwrap_or(current_max);
-    write_drawing_into_sheet(
-        &mut sheet_value,
-        &SchematicPrimitive::Rect {
-            uuid: drawing_uuid,
-            min,
-            max,
+    let drawing = SchematicPrimitive::Rect {
+        uuid: drawing_uuid,
+        min,
+        max,
+    };
+    commit_schematic_drawing_operation(
+        root,
+        "edit schematic drawing rect",
+        Operation::SetSchematicDrawing {
+            sheet_id: sheet_uuid,
+            drawing_id: drawing_uuid,
+            drawing: serde_json::to_value(&drawing)
+                .expect("native drawing serialization must succeed"),
         },
     )?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
-    Ok(NativeProjectDrawingMutationReportView {
-        action: "edit_drawing_rect".to_string(),
-        project_root: project.root.display().to_string(),
-        sheet_uuid: sheet_uuid.to_string(),
-        sheet_path: sheet_path.display().to_string(),
-        drawing_uuid: drawing_uuid.to_string(),
-        kind: "rect".to_string(),
-        from_x_nm: min.x,
-        from_y_nm: min.y,
-        to_x_nm: max.x,
-        to_y_nm: max.y,
-    })
+    Ok(drawing_report(
+        &project,
+        "edit_drawing_rect",
+        sheet_uuid,
+        &sheet_path,
+        drawing_uuid,
+        "rect",
+        min,
+        max,
+    ))
 }
 
 pub(crate) fn edit_native_project_drawing_circle(
@@ -342,7 +408,7 @@ pub(crate) fn edit_native_project_drawing_circle(
     radius: Option<i64>,
 ) -> Result<NativeProjectDrawingMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, drawing) =
+    let (sheet_uuid, sheet_path, _sheet_value, drawing) =
         load_native_drawing_mutation_target(&project, drawing_uuid)?;
     let (current_center, current_radius) = match drawing {
         SchematicPrimitive::Circle { center, radius, .. } => (center, radius),
@@ -350,27 +416,34 @@ pub(crate) fn edit_native_project_drawing_circle(
     };
     let center = center.unwrap_or(current_center);
     let radius = radius.unwrap_or(current_radius);
-    write_drawing_into_sheet(
-        &mut sheet_value,
-        &SchematicPrimitive::Circle {
-            uuid: drawing_uuid,
-            center,
-            radius,
+    let drawing = SchematicPrimitive::Circle {
+        uuid: drawing_uuid,
+        center,
+        radius,
+    };
+    commit_schematic_drawing_operation(
+        root,
+        "edit schematic drawing circle",
+        Operation::SetSchematicDrawing {
+            sheet_id: sheet_uuid,
+            drawing_id: drawing_uuid,
+            drawing: serde_json::to_value(&drawing)
+                .expect("native drawing serialization must succeed"),
         },
     )?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
-    Ok(NativeProjectDrawingMutationReportView {
-        action: "edit_drawing_circle".to_string(),
-        project_root: project.root.display().to_string(),
-        sheet_uuid: sheet_uuid.to_string(),
-        sheet_path: sheet_path.display().to_string(),
-        drawing_uuid: drawing_uuid.to_string(),
-        kind: "circle".to_string(),
-        from_x_nm: center.x,
-        from_y_nm: center.y,
-        to_x_nm: center.x + radius,
-        to_y_nm: center.y,
-    })
+    Ok(drawing_report(
+        &project,
+        "edit_drawing_circle",
+        sheet_uuid,
+        &sheet_path,
+        drawing_uuid,
+        "circle",
+        center,
+        Point {
+            x: center.x + radius,
+            y: center.y,
+        },
+    ))
 }
 
 pub(crate) fn edit_native_project_drawing_arc(
@@ -382,7 +455,7 @@ pub(crate) fn edit_native_project_drawing_arc(
     end_angle: Option<i32>,
 ) -> Result<NativeProjectDrawingMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, drawing) =
+    let (sheet_uuid, sheet_path, _sheet_value, drawing) =
         load_native_drawing_mutation_target(&project, drawing_uuid)?;
     let current_arc = match drawing {
         SchematicPrimitive::Arc { arc, .. } => arc,
@@ -394,26 +467,33 @@ pub(crate) fn edit_native_project_drawing_arc(
         start_angle: start_angle.unwrap_or(current_arc.start_angle),
         end_angle: end_angle.unwrap_or(current_arc.end_angle),
     };
-    write_drawing_into_sheet(
-        &mut sheet_value,
-        &SchematicPrimitive::Arc {
-            uuid: drawing_uuid,
-            arc,
+    let drawing = SchematicPrimitive::Arc {
+        uuid: drawing_uuid,
+        arc,
+    };
+    commit_schematic_drawing_operation(
+        root,
+        "edit schematic drawing arc",
+        Operation::SetSchematicDrawing {
+            sheet_id: sheet_uuid,
+            drawing_id: drawing_uuid,
+            drawing: serde_json::to_value(&drawing)
+                .expect("native drawing serialization must succeed"),
         },
     )?;
-    write_canonical_json(&sheet_path, &sheet_value)?;
-    Ok(NativeProjectDrawingMutationReportView {
-        action: "edit_drawing_arc".to_string(),
-        project_root: project.root.display().to_string(),
-        sheet_uuid: sheet_uuid.to_string(),
-        sheet_path: sheet_path.display().to_string(),
-        drawing_uuid: drawing_uuid.to_string(),
-        kind: "arc".to_string(),
-        from_x_nm: arc.center.x,
-        from_y_nm: arc.center.y,
-        to_x_nm: arc.radius,
-        to_y_nm: i64::from(arc.end_angle),
-    })
+    Ok(drawing_report(
+        &project,
+        "edit_drawing_arc",
+        sheet_uuid,
+        &sheet_path,
+        drawing_uuid,
+        "arc",
+        arc.center,
+        Point {
+            x: arc.radius,
+            y: i64::from(arc.end_angle),
+        },
+    ))
 }
 
 pub(crate) fn delete_native_project_drawing(
@@ -421,18 +501,8 @@ pub(crate) fn delete_native_project_drawing(
     drawing_uuid: Uuid,
 ) -> Result<NativeProjectDrawingMutationReportView> {
     let project = load_native_project(root)?;
-    let (sheet_uuid, sheet_path, mut sheet_value, drawing) =
+    let (sheet_uuid, sheet_path, _sheet_value, drawing) =
         load_native_drawing_mutation_target(&project, drawing_uuid)?;
-    let drawings = sheet_value
-        .as_object_mut()
-        .and_then(|object| object.get_mut("drawings"))
-        .and_then(serde_json::Value::as_object_mut)
-        .ok_or_else(|| {
-            anyhow::anyhow!("sheet drawings object missing in {}", sheet_path.display())
-        })?;
-    drawings.remove(&drawing_uuid.to_string());
-    write_canonical_json(&sheet_path, &sheet_value)?;
-
     let (kind, from, to) = match drawing {
         SchematicPrimitive::Line { from, to, .. } => ("line".to_string(), from, to),
         SchematicPrimitive::Rect { min, max, .. } => ("rect".to_string(), min, max),
@@ -446,17 +516,26 @@ pub(crate) fn delete_native_project_drawing(
         ),
         SchematicPrimitive::Arc { arc, .. } => ("arc".to_string(), arc.center, arc.center),
     };
+    let (_, _, _, drawing) = load_native_drawing_mutation_target(&project, drawing_uuid)?;
+    commit_schematic_drawing_operation(
+        root,
+        "delete schematic drawing",
+        Operation::DeleteSchematicDrawing {
+            sheet_id: sheet_uuid,
+            drawing_id: drawing_uuid,
+            drawing: serde_json::to_value(&drawing)
+                .expect("native drawing serialization must succeed"),
+        },
+    )?;
 
-    Ok(NativeProjectDrawingMutationReportView {
-        action: "delete_drawing".to_string(),
-        project_root: project.root.display().to_string(),
-        sheet_uuid: sheet_uuid.to_string(),
-        sheet_path: sheet_path.display().to_string(),
-        drawing_uuid: drawing_uuid.to_string(),
-        kind,
-        from_x_nm: from.x,
-        from_y_nm: from.y,
-        to_x_nm: to.x,
-        to_y_nm: to.y,
-    })
+    Ok(drawing_report(
+        &project,
+        "delete_drawing",
+        sheet_uuid,
+        &sheet_path,
+        drawing_uuid,
+        &kind,
+        from,
+        to,
+    ))
 }

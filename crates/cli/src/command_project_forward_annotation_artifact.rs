@@ -1,6 +1,10 @@
 use super::*;
 use eda_engine::ir::serialization::to_json_deterministic;
+use eda_engine::substrate::Proposal;
 use std::collections::{BTreeMap, BTreeSet};
+
+#[path = "command_project_forward_annotation_substrate.rs"]
+mod command_project_forward_annotation_substrate;
 
 const FORWARD_ANNOTATION_ARTIFACT_KIND: &str = "native_forward_annotation_proposal_artifact";
 const FORWARD_ANNOTATION_ARTIFACT_VERSION: u32 = 1;
@@ -13,6 +17,8 @@ pub(crate) struct ForwardAnnotationProposalArtifact {
     pub(crate) project_name: String,
     pub(crate) actions: Vec<NativeProjectForwardAnnotationProposalActionView>,
     pub(crate) reviews: Vec<NativeProjectForwardAnnotationReviewActionView>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) proposal: Option<Proposal>,
 }
 
 pub(crate) struct LoadedForwardAnnotationProposalArtifact {
@@ -28,13 +34,18 @@ pub(crate) fn export_native_project_forward_annotation_proposal(
     let project = load_native_project(root)?;
     let proposal = query_native_project_forward_annotation_proposal(root)?;
     let review = query_native_project_forward_annotation_review(root)?;
+    let actions = proposal.actions;
+    let reviews = review.actions;
     let artifact = ForwardAnnotationProposalArtifact {
         kind: FORWARD_ANNOTATION_ARTIFACT_KIND.to_string(),
         version: FORWARD_ANNOTATION_ARTIFACT_VERSION,
         project_uuid: project.manifest.uuid,
         project_name: project.manifest.name.clone(),
-        actions: proposal.actions,
-        reviews: review.actions,
+        proposal: command_project_forward_annotation_substrate::build_forward_annotation_proposal(
+            root, &actions, &reviews,
+        )?,
+        actions,
+        reviews,
     };
     write_canonical_json(output_path, &artifact)?;
     Ok(NativeProjectForwardAnnotationExportReportView {
@@ -92,6 +103,9 @@ pub(crate) fn export_native_project_forward_annotation_proposal_selection(
         version: FORWARD_ANNOTATION_ARTIFACT_VERSION,
         project_uuid: project.manifest.uuid,
         project_name: project.manifest.name.clone(),
+        proposal: command_project_forward_annotation_substrate::build_forward_annotation_proposal(
+            root, &actions, &reviews,
+        )?,
         actions,
         reviews,
     };
@@ -153,6 +167,7 @@ pub(crate) fn select_forward_annotation_proposal_artifact(
         project_name: loaded.artifact.project_name,
         actions,
         reviews,
+        proposal: None,
     };
     write_canonical_json(output_path, &artifact)?;
     Ok(NativeProjectForwardAnnotationExportReportView {
@@ -429,23 +444,30 @@ pub(crate) fn filter_forward_annotation_proposal_artifact(
         .map(|action| action.action_id.as_str())
         .collect::<BTreeSet<_>>();
 
+    let actions = loaded
+        .artifact
+        .actions
+        .into_iter()
+        .filter(|action| applicable_action_ids.contains(action.action_id.as_str()))
+        .collect::<Vec<_>>();
+    let reviews = loaded
+        .artifact
+        .reviews
+        .into_iter()
+        .filter(|review| applicable_action_ids.contains(review.action_id.as_str()))
+        .collect::<Vec<_>>();
+    let embedded_proposal =
+        command_project_forward_annotation_substrate::build_forward_annotation_proposal(
+            root, &actions, &reviews,
+        )?;
     let filtered_artifact = ForwardAnnotationProposalArtifact {
         kind: loaded.artifact.kind,
         version: loaded.artifact.version,
         project_uuid: loaded.artifact.project_uuid,
         project_name: loaded.artifact.project_name,
-        actions: loaded
-            .artifact
-            .actions
-            .into_iter()
-            .filter(|action| applicable_action_ids.contains(action.action_id.as_str()))
-            .collect(),
-        reviews: loaded
-            .artifact
-            .reviews
-            .into_iter()
-            .filter(|review| applicable_action_ids.contains(review.action_id.as_str()))
-            .collect(),
+        actions,
+        reviews,
+        proposal: embedded_proposal,
     };
     write_canonical_json(output_path, &filtered_artifact)?;
 
@@ -608,9 +630,9 @@ pub(crate) fn apply_forward_annotation_proposal_artifact(
         .map(|review| (review.action_id.clone(), review.decision.clone()))
         .collect::<BTreeMap<_, _>>();
 
-    let mut applied = Vec::new();
     let mut skipped = Vec::new();
-    for action in loaded.artifact.actions {
+    let mut executable_actions = Vec::new();
+    for action in loaded.artifact.actions.clone() {
         if let Some(review_decision) = review_by_id.get(&action.action_id) {
             let skip_reason = match review_decision.as_str() {
                 "deferred" => Some("deferred_by_review"),
@@ -628,11 +650,34 @@ pub(crate) fn apply_forward_annotation_proposal_artifact(
                 continue;
             }
         }
-
-        applied.push(execute_native_project_forward_annotation_action(
-            root, action, None, None, None, None, None,
-        )?);
+        executable_actions.push(action);
     }
+
+    if !executable_actions.is_empty()
+        && (loaded.artifact.proposal.is_none()
+            || !command_project_forward_annotation_substrate::can_apply_with_embedded_proposal(
+                &executable_actions,
+            ))
+    {
+        bail!(
+            "forward-annotation artifact apply requires an embedded substrate proposal for all executable self-sufficient actions"
+        );
+    }
+
+    let applied = if executable_actions.is_empty() {
+        Vec::new()
+    } else {
+        let proposal = loaded
+            .artifact
+            .proposal
+            .clone()
+            .expect("proposal presence is checked above");
+        command_project_forward_annotation_substrate::apply_forward_annotation_proposal(
+            root,
+            proposal,
+            &executable_actions,
+        )?
+    };
 
     let skipped_deferred_actions = skipped
         .iter()

@@ -57,7 +57,26 @@ fn sample_package() -> Package {
             Point::new(0, 500_000),
         ]),
         silkscreen: vec![],
-        models_3d: vec![],
+        models_3d: vec![ModelRef {
+            path: "models/soic8.step".into(),
+            format: ModelFormat::Step,
+            transform: Transform3D {
+                translation_nm: Point3D {
+                    x: 10,
+                    y: 20,
+                    z: 30,
+                },
+                rotation_tenths_deg: Euler3D {
+                    roll_tenths_deg: 0,
+                    pitch_tenths_deg: 0,
+                    yaw_tenths_deg: 900,
+                },
+                scale: serde_json::Number::from_f64(1.0).unwrap(),
+            },
+            provenance: None,
+        }],
+        body_height_nm: Some(1_750_000),
+        body_height_mounted_nm: Some(1_850_000),
         tags: HashSet::from(["soic".to_string()]),
     }
 }
@@ -102,6 +121,7 @@ fn sample_part() -> Part {
         pad_map,
         mpn: "TL072CDR".into(),
         manufacturer: "TI".into(),
+        manufacturer_jep106: Some(0x29),
         value: "TL072".into(),
         description: "Dual JFET op amp".into(),
         datasheet: "https://example.invalid/tl072.pdf".into(),
@@ -110,9 +130,24 @@ fn sample_part() -> Part {
             ("package".to_string(), "SOIC-8".to_string()),
         ]),
         orderable_mpns: vec!["TL072CDR".into()],
+        packaging_options: Vec::new(),
         tags: HashSet::from(["opamp".to_string()]),
         lifecycle: Lifecycle::Active,
         base: None,
+        behavioural_models: Vec::new(),
+        thermal: None,
+        supply_chain_offers: Some(vec![SupplyOffer {
+            distributor: "Digi-Key".into(),
+            price_breaks: vec![SupplyPriceBreak {
+                qty: 1,
+                price: serde_json::Number::from_f64(1.23).unwrap(),
+                currency: "USD".into(),
+            }],
+            stock: Some(100),
+            lead_time_weeks: None,
+            link: "https://example.invalid/dk".into(),
+        }]),
+        last_supply_chain_check: Some("2026-06-22T12:00:00Z".into()),
     }
 }
 
@@ -125,6 +160,8 @@ fn sample_pool() -> Pool {
             uuid: Uuid::from_u128(4),
             name: "OpAmpA".into(),
             unit: Uuid::from_u128(1),
+            drawings: Vec::new(),
+            pin_anchors: Vec::new(),
         },
     );
     pool.entities.insert(Uuid::from_u128(5), sample_entity());

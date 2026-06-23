@@ -209,6 +209,42 @@ impl Engine {
         })
     }
 
+    pub fn flip_component(
+        &mut self,
+        input: FlipComponentInput,
+    ) -> Result<OperationResult, EngineError> {
+        let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
+        let board = design.board.as_mut().ok_or_else(|| {
+            EngineError::Operation(
+                "flip_component is currently implemented only for board projects".to_string(),
+            )
+        })?;
+        let (before, after, before_pads, after_pads) =
+            flip_component::apply_component_side_transform(board, input.uuid, input.layer)?;
+
+        self.undo_stack.push(TransactionRecord::FlipComponent {
+            before: before.clone(),
+            after: after.clone(),
+            before_pads,
+            after_pads,
+        });
+        self.redo_stack.clear();
+        self.undo_depth = self.undo_stack.len();
+        self.redo_depth = 0;
+
+        Ok(OperationResult {
+            diff: OperationDiff {
+                created: Vec::new(),
+                modified: vec![OperationRef {
+                    object_type: "component".to_string(),
+                    uuid: input.uuid,
+                }],
+                deleted: Vec::new(),
+            },
+            description: format!("flip_component {}", input.uuid),
+        })
+    }
+
     pub fn set_value(&mut self, input: SetValueInput) -> Result<OperationResult, EngineError> {
         let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
         let board = design.board.as_mut().ok_or_else(|| {

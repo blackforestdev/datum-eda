@@ -40,6 +40,8 @@ pub struct DesignModel {
     pub relationships: HashMap<ObjectId, Relationship>,
     pub variants: HashMap<ObjectId, VariantOverlay>,
     pub output_jobs: HashMap<ObjectId, OutputJob>,
+    pub output_job_runs: HashMap<Uuid, OutputJobRun>,
+    pub artifact_runs: HashMap<Uuid, ArtifactRun>,
 }
 
 pub struct ProjectResolver {
@@ -250,7 +252,25 @@ pub enum Operation {
     BindComponentInstance { component_instance_id: ObjectId, refs: Vec<ObjectId> },
     UpdateRelationship { relationship_id: ObjectId, patch: serde_json::Value },
     UpdateVariantOverlay { variant_id: ObjectId, patch: serde_json::Value },
-    UpdateOutputJob { output_job_id: ObjectId, patch: serde_json::Value },
+    SetOutputJob {
+        output_job_id: ObjectId,
+        previous_output_job: serde_json::Value,
+        output_job: serde_json::Value,
+    },
+    SetManufacturingPlan {
+        manufacturing_plan_id: ObjectId,
+        previous_manufacturing_plan: serde_json::Value,
+        manufacturing_plan: serde_json::Value,
+    },
+    SetPanelProjection {
+        panel_projection_id: ObjectId,
+        previous_panel_projection: serde_json::Value,
+        panel_projection: serde_json::Value,
+    },
+    SetComponentSide {
+        package_id: ObjectId,
+        layer: i32,
+    },
 }
 
 pub struct OperationBatch {
@@ -299,6 +319,18 @@ must produce a `Proposal` first and apply only after acceptance. Undo and redo
 are compensating `OperationBatch` transactions through the same `commit()`;
 there are no per-domain private undo/redo paths.
 
+Current native board operation vocabulary includes exact-payload create,
+replace, and delete coverage for authored board pads, tracks, vias, nets,
+netclasses, dimensions, text, and keepouts where the current product surface
+exposes those object families. Track and via replacement is represented as
+`SetBoardTrack` and `SetBoardVia`: the operation preserves object identity,
+bumps the object revision, stages the replacement board shard value through the
+journal, and captures a same-kind inverse operation for undo/redo.
+Component side changes are represented as `SetComponentSide`: the operation
+updates the package side, mirrors owned authored pads and persisted
+`component_pads` across the package origin on X, swaps side-sensitive pad layer
+arrays, mirrors pad rotation, and captures a same-kind inverse for undo/redo.
+
 ### 0.9 Zone And ZoneFill Honesty
 
 `Zone` is authored boundary state. `ZoneFill` is derived projection state.
@@ -331,16 +363,51 @@ they remain derived-with-provenance, not authored board truth. Exporting a
 zone boundary polygon directly as copper is a **Current implementation defect**
 and is not target behavior.
 
+Persisted `ZoneFill` records are generated evidence, not authored source.
+CLI/MCP `fill_zones` producers persist them through journaled generated-evidence
+`SetZoneFill` operations with inverse `DeleteZoneFill`/restore behavior so undo,
+redo, and replay preserve the generated-evidence lifecycle. CLI code must not
+write `.datum/zone_fills` directly with `write_canonical_json`,
+`std::fs::write`, or local deterministic JSON helpers. The low-level
+`persist_zone_fill` helper remains only for engine-owned generated-evidence
+fixtures/imported evidence paths.
+
 ### 0.10 Artifacts, Output Jobs, Checks, And Findings
 
-`OutputJob` is authored source state. Generated files are artifacts: derived
-snapshots with metadata, never design authority.
+`PanelProjection`, `ManufacturingPlan`, and `OutputJob` are authored source
+state. Generated files and job executions are derived evidence with
+metadata/logs, never design authority.
 
 ```rust
+pub struct PanelBoardInstance {
+    pub board: ObjectId,
+    pub x_nm: i64,
+    pub y_nm: i64,
+    pub rotation_deg: i32,
+}
+
+pub struct PanelProjection {
+    pub id: ObjectId,
+    pub name: String,
+    pub board_instances: Vec<PanelBoardInstance>,
+    pub object_revision: ObjectRevision,
+}
+
+pub struct ManufacturingPlan {
+    pub id: ObjectId,
+    pub name: String,
+    pub board_or_panel: ObjectId,
+    pub variant: Option<ObjectId>,
+    pub prefix: String,
+    pub object_revision: ObjectRevision,
+}
+
 pub struct OutputJob {
     pub id: ObjectId,
     pub name: String,
     pub include: Vec<ArtifactKind>,
+    pub prefix: String,
+    pub output_dir: Option<PathBuf>,
     pub board_or_panel: ObjectId,
     pub variant: Option<ObjectId>,
     pub manufacturing_plan: Option<ObjectId>,
@@ -355,7 +422,9 @@ pub struct ArtifactMetadata {
     pub output_job: Option<ObjectId>,
     pub variant: Option<ObjectId>,
     pub generator_version: String,
+    pub output_dir: Option<PathBuf>,
     pub files: Vec<ArtifactFile>,
+    pub production_projections: Vec<ArtifactProductionProjection>,
     pub validation_state: ArtifactValidationState,
 }
 
@@ -363,7 +432,51 @@ pub struct ArtifactFile {
     pub path: PathBuf,
     pub sha256: String,
 }
+
+pub struct OutputJobRun {
+    pub run_id: Uuid,
+    pub output_job: ObjectId,
+    pub run_sequence: u64,
+    pub project_id: Uuid,
+    pub model_revision: ModelRevision,
+    pub status: OutputJobRunStatus,
+    pub artifact_id: Option<Uuid>,
+    pub exit_code: Option<i32>,
+    pub provenance: Option<OutputJobRunProvenance>,
+    pub log: Vec<OutputJobLogEntry>,
+}
+
+pub struct ArtifactRun {
+    pub run_id: Uuid,
+    pub artifact_id: Uuid,
+    pub run_sequence: u64,
+    pub project_id: Uuid,
+    pub model_revision: ModelRevision,
+    pub status: OutputJobRunStatus,
+    pub exit_code: Option<i32>,
+    pub provenance: Option<OutputJobRunProvenance>,
+    pub log: Vec<OutputJobLogEntry>,
+}
+
+pub struct OutputJobRunProvenance {
+    pub launcher: OutputJobRunLauncher,
+    pub terminal_session_id: Option<String>,
+    pub terminal_context_path: Option<PathBuf>,
+    pub project_root: Option<PathBuf>,
+    pub source_revision: Option<String>,
+}
+
+pub enum OutputJobRunLauncher {
+    GuiTerminal,
+}
 ```
+
+`ArtifactKind` currently includes `gerber_set`, `manufacturing_set`, `bom`,
+`pnp`, and `drill`. `gerber_set` covers the CAM Gerber bundle only;
+`manufacturing_set` covers the full fabrication/assembly output projection
+including BOM, PnP, drill CSV, Excellon drill, and Gerber files. The finer
+`bom`, `pnp`, and `drill` kinds expose those production families as
+independently addressable generated artifacts.
 
 Artifact generation uses one projection/oracle per run: generate, manifest,
 validate, compare, and inspect must answer from the same model revision,
@@ -395,9 +508,24 @@ pub struct CheckFinding {
 }
 ```
 
-Finding fingerprints must be deterministic for identical `model_revision`,
-variant, and rule/checker versions. Waivers, proposals, and repairs target
-stable finding fingerprints and affected `ObjectId`s, not `(domain, index)`.
+Finding fingerprints must be deterministic for identical variant, rule/checker
+versions, normalized target identity, and normalized observed values. The
+enclosing `CheckRun` supplies revision scope; adding a waiver or accepted
+disposition must not invalidate the fingerprint it targets. Waivers, proposals,
+and repairs target stable finding fingerprints and affected `ObjectId`s, not
+`(domain, index)`.
+
+Current implementation: fingerprint-scoped schematic waivers are authored by
+`Operation::CreateSchematicWaiver` and removed by
+`Operation::DeleteSchematicWaiver`; fingerprint-scoped accepted deviations are
+authored by `Operation::CreateSchematicDeviation` and removed by
+`Operation::DeleteSchematicDeviation`. The CLI surfaces
+`project waive-finding <root> --fingerprint <sha256:...> --rationale <text>`
+and
+`project accept-deviation <root> --fingerprint <sha256:...> --rationale <text>`
+commit through `OperationBatch` and the append-only journal, so the same edits
+participate in revision guards, source-shard staging, undo, redo, and
+resolver-materialized readback.
 
 ### 0.11 Implementation Slices
 
@@ -415,8 +543,18 @@ Foundational slices, in dependency order:
    revision-keyed invalidation.
 6. Add honest `ZoneFill` derived state before treating zone copper as
    fabrication-valid.
-7. Add `OutputJob`, artifact metadata, `CheckRun`, and `CheckFinding`
+7. Add `OutputJob`, `OutputJobRun`, artifact metadata, `CheckRun`, and `CheckFinding`
    revision/fingerprint addressing.
+
+Current proposal/apply implementation:
+
+- `ProposalApplyValidation` is the shared engine validation object for generic
+  proposal apply policy.
+- `apply_accepted_proposal()` rejects with stable blocker codes for missing
+  acceptance, stale model revision, and missing prepared-revision guards before
+  invoking `commit_journaled()`.
+- `review_proposal_status()` refuses to mark a stale or unguarded draft as
+  `accepted`; stale drafts may still be deferred or rejected.
 
 ## 1. Core Types
 
@@ -804,9 +942,9 @@ pub struct Net {
 /// M5+ `Impedance` rule type and by IPC-2581 Rev C `<ImpedancesProperties>`
 /// / ODB++ impedance-control attribute export.
 pub struct ImpedanceSpec {
-    pub target_ohms: f32,                     // 50 (single-ended), 90 (USB), 100 (LVDS), etc.
-    pub tolerance_pct: f32,                   // ±10 typical
-    pub controlled_dielectric: Option<Uuid>,  // → StackupLayer the impedance is controlled against
+    pub target_ohms: serde_json::Number,      // 50 (single-ended), 90 (USB), 100 (LVDS), etc.
+    pub tolerance_pct: serde_json::Number,    // ±10 typical
+    pub controlled_dielectric: Option<LayerId>,  // → StackupLayer id the impedance is controlled against
 }
 
 pub struct NetClass {
@@ -1347,6 +1485,12 @@ Both operations are **fully reversible**:
   original attachment from the OpDiff payload (including the source
   path snapshot).
 
+Current native implementation note: the substrate journal records this field
+mutation as typed `AttachPoolPartModel` / `DetachPoolPartModel` operations over
+the target `Part.behavioural_models` array. Each operation carries the previous
+and next attachment arrays, so replay, undo, and redo restore exact attachment
+ordering without storing vendor model bytes in the journal.
+
 The pool-side model file lives in
 `pool/models/<role>/<sha256>.<ext>`; attach/detach manipulates the
 `Part.behavioural_models` reference list, never the pool file itself.
@@ -1395,7 +1539,7 @@ This section tracks contract layers:
 - **Target product-mechanics substrate (authoritative for new work)**:
   Section 0 `DesignModel`, `ProjectResolver`, source shards, stable identity,
   `OperationBatch`, `Proposal`, single `commit()`, journal/recovery,
-  `CheckRun`, `ArtifactMetadata`, and `OutputJob`.
+  `CheckRun`, `ArtifactMetadata`, `OutputJob`, and `OutputJobRun`.
 - **Current implementation contract (authoritative for code today)**:
   methods implemented in `crates/engine/src/api/mod.rs`.
 - **Compatibility contract**: old Board/Schematic/KiCad/import APIs retained
@@ -1510,6 +1654,7 @@ through the single journaled `commit()` path.
 | `delete_via` | Delete one via as one transaction |
 | `move_component` | Move one component (optionally with rotation) |
 | `rotate_component` | Rotate one component |
+| `flip_component` | Flip one component to a target copper side/layer |
 | `set_value` | Set one component value |
 | `set_reference` | Set one component reference |
 
@@ -1556,7 +1701,7 @@ through the single journaled `commit()` path.
   CLI/MCP layers and consume the engine through its `Project` types and
   on-disk native scaffold rather than as additional `Engine::*` methods.
   Surface counts for those layers are tracked separately via
-  `cli_project_commands` (182) and `mcp_runtime_methods` (75) in
+  `cli_project_commands` (220) and `mcp_runtime_methods` (139) in
   `specs/SPEC_PARITY.md`.
 
 ### 5.2 Target M2+ Engine API

@@ -23,12 +23,12 @@ pub(super) fn plain_board() -> (Board, Uuid, Uuid, Uuid, Uuid) {
             uuid: Uuid::new_v4(),
             name: "policy-plain".into(),
             stackup: Stackup {
-                layers: vec![StackupLayer {
-                    id: 1,
-                    name: "Top".into(),
-                    layer_type: StackupLayerType::Copper,
-                    thickness_nm: 35_000,
-                }],
+                layers: vec![StackupLayer::new(
+                    1,
+                    "Top",
+                    StackupLayerType::Copper,
+                    35_000,
+                )],
             },
             pad_expansion_setup: crate::board::PadExpansionSetup::default(),
             outline: Polygon::new(vec![
@@ -101,14 +101,7 @@ pub(super) fn plain_board() -> (Board, Uuid, Uuid, Uuid, Uuid) {
             )]),
             vias: HashMap::new(),
             zones: HashMap::new(),
-            nets: HashMap::from([(
-                net_uuid,
-                Net {
-                    uuid: net_uuid,
-                    name: "SIG".into(),
-                    class: class_uuid,
-                },
-            )]),
+            nets: HashMap::from([(net_uuid, Net::new(net_uuid, "SIG", class_uuid))]),
             net_classes: HashMap::from([(
                 class_uuid,
                 NetClass {
@@ -145,12 +138,12 @@ pub(super) fn zone_board() -> (Board, Uuid, Uuid, Uuid, Uuid) {
             uuid: Uuid::new_v4(),
             name: "policy-zone".into(),
             stackup: Stackup {
-                layers: vec![StackupLayer {
-                    id: 1,
-                    name: "Top".into(),
-                    layer_type: StackupLayerType::Copper,
-                    thickness_nm: 35_000,
-                }],
+                layers: vec![StackupLayer::new(
+                    1,
+                    "Top",
+                    StackupLayerType::Copper,
+                    35_000,
+                )],
             },
             pad_expansion_setup: crate::board::PadExpansionSetup::default(),
             outline: Polygon::new(vec![
@@ -230,14 +223,7 @@ pub(super) fn zone_board() -> (Board, Uuid, Uuid, Uuid, Uuid) {
                     thermal_spoke_width: 120_000,
                 },
             )]),
-            nets: HashMap::from([(
-                net_uuid,
-                Net {
-                    uuid: net_uuid,
-                    name: "SIG".into(),
-                    class: class_uuid,
-                },
-            )]),
+            nets: HashMap::from([(net_uuid, Net::new(net_uuid, "SIG", class_uuid))]),
             net_classes: HashMap::from([(
                 class_uuid,
                 NetClass {
@@ -277,24 +263,9 @@ pub(super) fn obstacle_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
             name: "policy-obstacle".into(),
             stackup: Stackup {
                 layers: vec![
-                    StackupLayer {
-                        id: 1,
-                        name: "Top".into(),
-                        layer_type: StackupLayerType::Copper,
-                        thickness_nm: 35_000,
-                    },
-                    StackupLayer {
-                        id: 2,
-                        name: "Core".into(),
-                        layer_type: StackupLayerType::Dielectric,
-                        thickness_nm: 1_000_000,
-                    },
-                    StackupLayer {
-                        id: 3,
-                        name: "Bottom".into(),
-                        layer_type: StackupLayerType::Copper,
-                        thickness_nm: 35_000,
-                    },
+                    StackupLayer::new(1, "Top", StackupLayerType::Copper, 35_000),
+                    StackupLayer::new(2, "Core", StackupLayerType::Dielectric, 1_000_000),
+                    StackupLayer::new(3, "Bottom", StackupLayerType::Copper, 35_000),
                 ],
             },
             pad_expansion_setup: crate::board::PadExpansionSetup::default(),
@@ -392,14 +363,7 @@ pub(super) fn obstacle_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
                 },
             )]),
             zones: HashMap::new(),
-            nets: HashMap::from([(
-                net_uuid,
-                Net {
-                    uuid: net_uuid,
-                    name: "SIG".into(),
-                    class: class_uuid,
-                },
-            )]),
+            nets: HashMap::from([(net_uuid, Net::new(net_uuid, "SIG", class_uuid))]),
             net_classes: HashMap::from([(
                 class_uuid,
                 NetClass {
@@ -438,12 +402,12 @@ fn zone_obstacle_board() -> (Board, Uuid, Uuid, Uuid, Uuid) {
             uuid: Uuid::new_v4(),
             name: "policy-zone-obstacle".into(),
             stackup: Stackup {
-                layers: vec![StackupLayer {
-                    id: 1,
-                    name: "Top".into(),
-                    layer_type: StackupLayerType::Copper,
-                    thickness_nm: 35_000,
-                }],
+                layers: vec![StackupLayer::new(
+                    1,
+                    "Top",
+                    StackupLayerType::Copper,
+                    35_000,
+                )],
             },
             pad_expansion_setup: crate::board::PadExpansionSetup::default(),
             outline: Polygon::new(vec![
@@ -523,14 +487,7 @@ fn zone_obstacle_board() -> (Board, Uuid, Uuid, Uuid, Uuid) {
                     thermal_spoke_width: 120_000,
                 },
             )]),
-            nets: HashMap::from([(
-                net_uuid,
-                Net {
-                    uuid: net_uuid,
-                    name: "SIG".into(),
-                    class: class_uuid,
-                },
-            )]),
+            nets: HashMap::from([(net_uuid, Net::new(net_uuid, "SIG", class_uuid))]),
             net_classes: HashMap::from([(
                 class_uuid,
                 NetClass {
@@ -570,18 +527,8 @@ fn topology_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
             name: "policy-topology".into(),
             stackup: Stackup {
                 layers: vec![
-                    StackupLayer {
-                        id: 1,
-                        name: "Top".into(),
-                        layer_type: StackupLayerType::Copper,
-                        thickness_nm: 35_000,
-                    },
-                    StackupLayer {
-                        id: 2,
-                        name: "Inner".into(),
-                        layer_type: StackupLayerType::Copper,
-                        thickness_nm: 35_000,
-                    },
+                    StackupLayer::new(1, "Top", StackupLayerType::Copper, 35_000),
+                    StackupLayer::new(2, "Inner", StackupLayerType::Copper, 35_000),
                 ],
             },
             pad_expansion_setup: crate::board::PadExpansionSetup::default(),
@@ -679,14 +626,7 @@ fn topology_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid, Uuid) {
                 },
             )]),
             zones: HashMap::new(),
-            nets: HashMap::from([(
-                net_uuid,
-                Net {
-                    uuid: net_uuid,
-                    name: "SIG".into(),
-                    class: class_uuid,
-                },
-            )]),
+            nets: HashMap::from([(net_uuid, Net::new(net_uuid, "SIG", class_uuid))]),
             net_classes: HashMap::from([(
                 class_uuid,
                 NetClass {
@@ -727,18 +667,8 @@ fn layer_balance_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid) {
             name: "policy-layer-balance".into(),
             stackup: Stackup {
                 layers: vec![
-                    StackupLayer {
-                        id: 1,
-                        name: "Top".into(),
-                        layer_type: StackupLayerType::Copper,
-                        thickness_nm: 35_000,
-                    },
-                    StackupLayer {
-                        id: 2,
-                        name: "Inner".into(),
-                        layer_type: StackupLayerType::Copper,
-                        thickness_nm: 35_000,
-                    },
+                    StackupLayer::new(1, "Top", StackupLayerType::Copper, 35_000),
+                    StackupLayer::new(2, "Inner", StackupLayerType::Copper, 35_000),
                 ],
             },
             pad_expansion_setup: crate::board::PadExpansionSetup::default(),
@@ -850,14 +780,7 @@ fn layer_balance_board() -> (Board, Uuid, Uuid, Uuid, Uuid, Uuid) {
                 ),
             ]),
             zones: HashMap::new(),
-            nets: HashMap::from([(
-                net_uuid,
-                Net {
-                    uuid: net_uuid,
-                    name: "SIG".into(),
-                    class: class_uuid,
-                },
-            )]),
+            nets: HashMap::from([(net_uuid, Net::new(net_uuid, "SIG", class_uuid))]),
             net_classes: HashMap::from([(
                 class_uuid,
                 NetClass {

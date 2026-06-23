@@ -187,3 +187,161 @@ fn diagnostic_evidence_marks_endpoints_only_over_proposed_copper() {
              not every path vertex"
     );
 }
+
+#[test]
+fn terminal_and_agent_docks_surface_recent_activity_spans() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.terminal.activity_summary =
+        vec!["#3 command datum.artifact.generate in:7B out:12B".to_string()];
+    state.ui.dock_height_px = 260;
+
+    for tab in [
+        datum_gui_protocol::DockTab::Terminal,
+        datum_gui_protocol::DockTab::Assistant,
+    ] {
+        state.ui.active_dock_tab = Some(tab);
+        let retained = RetainedScene::from_workspace(&state, 1280, 800);
+        let prepared = PreparedScene::from_workspace(
+            &state,
+            1280,
+            800,
+            CameraState::fit_to_bounds(&state.scene.bounds),
+            &retained,
+        );
+        assert!(
+            prepared
+                .text_runs
+                .iter()
+                .any(|run| run.text.contains("ACTIVITY")),
+            "{tab:?} dock should label the terminal activity block"
+        );
+        assert!(
+            prepared
+                .text_runs
+                .iter()
+                .any(|run| run.text.contains("datum.artifact.generate")),
+            "{tab:?} dock should render the terminal activity summary"
+        );
+        let activity_region = prepared.hit_regions.iter().find(|region| {
+            matches!(
+                &region.target,
+                HitTarget::TerminalActivitySummary(summary)
+                    if summary.contains("datum.artifact.generate")
+            )
+        });
+        assert!(
+            activity_region.is_some(),
+            "{tab:?} dock should expose a clickable activity summary hit region"
+        );
+        let rect = activity_region.unwrap().rect;
+        assert!(matches!(
+            prepared.hit_test(rect.x + 1.0, rect.y + 1.0),
+            Some(HitTarget::TerminalActivitySummary(summary))
+                if summary.contains("datum.artifact.generate")
+        ));
+    }
+}
+
+#[test]
+fn terminal_dock_surfaces_copy_and_paste_shortcuts() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+    state.ui.dock_height_px = 260;
+
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+
+    assert!(
+        prepared
+            .text_runs
+            .iter()
+            .any(|run| run.text.contains("COPY SCROLLBACK CTRL+SHIFT+C")),
+        "terminal dock should expose its native scrollback copy shortcut"
+    );
+    assert!(
+        prepared
+            .text_runs
+            .iter()
+            .any(|run| run.text.contains("PASTE CTRL+V")),
+        "terminal dock should expose its paste shortcut"
+    );
+    for (command_id, command) in [
+        (
+            "datum.journal.list",
+            "datum-eda journal list \"$DATUM_PROJECT_ROOT\"",
+        ),
+        (
+            "datum.journal.undo",
+            "datum-eda journal undo \"$DATUM_PROJECT_ROOT\"",
+        ),
+        (
+            "datum.journal.redo",
+            "datum-eda journal redo \"$DATUM_PROJECT_ROOT\"",
+        ),
+    ] {
+        assert!(
+            prepared.hit_regions.iter().any(|region| matches!(
+                &region.target,
+                HitTarget::ProductionTerminalCommand(handoff)
+                    if handoff.command_id == command_id
+                        && handoff.mcp_alias.as_deref() == Some(command_id)
+                        && handoff.command == command
+            )),
+            "terminal dock should expose {command_id} handoff"
+        );
+    }
+}
+
+#[test]
+fn outputs_dock_surfaces_standards_basis_for_process_aperture_findings() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Outputs);
+    state.ui.dock_height_px = 300;
+    state.checks = datum_gui_protocol::check_run_review_state_from_json(
+        r#"{
+          "contract": "check_run_v1",
+          "check_run_id": "00000000-0000-0000-0000-00000000chk2",
+          "profile_id": "standards",
+          "status": "error",
+          "finding_count": 1,
+          "findings": [{
+            "finding_id": "00000000-0000-0000-0000-00000000f002",
+            "source": "drc",
+            "code": "pad_mask_expansion_missing",
+            "severity": "error",
+            "fingerprint": "sha256:process-aperture",
+            "domain": "drc",
+            "rule_id": "process_aperture_policy",
+            "status": "active",
+            "evidence": [{
+              "evidence_kind": "standards_basis",
+              "basis_id": "datum.process_aperture_and_geometry.current"
+            }]
+          }]
+        }"#,
+    )
+    .expect("check-run fixture should decode");
+
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+
+    assert!(
+        prepared
+            .text_runs
+            .iter()
+            .any(|run| run.text.contains("BASIS DATUM.PROCESS_APERTURE")),
+        "standards/process-aperture findings should render their standards basis"
+    );
+}

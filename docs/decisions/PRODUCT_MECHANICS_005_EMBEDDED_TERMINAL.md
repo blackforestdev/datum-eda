@@ -162,6 +162,29 @@ Datum injects context through two stable mechanisms:
 - environment variables for bootstrapping
 - `datum-eda context get|refresh --session $DATUM_SESSION_ID` for current
   structured context
+- `datum-eda context session-events --session $DATUM_SESSION_ID` for the
+  non-journaled tool-session event stream, with optional `--event-kind`,
+  `--origin`, `--command-id`, and `--limit` newest-match filters
+- `datum-eda context session-activity --session $DATUM_SESSION_ID` for the
+  compact aggregate view agents use to orient within recent terminal activity
+
+For GUI-launched terminals, `DATUM_DISCOVERY` points to the authoritative
+per-session discovery file at `.datum/terminal-contexts/<session>.json`.
+`.datum/gui-terminal-context.json` remains a latest-session compatibility alias
+for older tools and manual inspection, but long-running shells must keep using
+their per-session path to avoid cross-tab context races.
+The GUI also persists session metadata at `.datum/tool-sessions/<session>.json`
+and rewrites the same per-session discovery file when selection, cursor/hover,
+dock, or frame-affecting workspace state changes.
+
+The discovery envelope includes an `agent_commands` block with optional
+terminal-launched agent templates such as `codex`, `claude`, and `aider`, plus
+context inspection/refresh helpers. These are command suggestions for the
+user's shell, not privileged assistant backends. A missing executable simply
+means that agent is not installed in the user's environment.
+The visible `AGENTS` dock entry is therefore a terminal-agent launcher: it
+focuses the PTY and prints shell guidance for launching installed agents rather
+than entering a separate design-authoring authority.
 
 CLI naming note: `datum-eda` is the canonical CLI executable. `eda` and bare
 `datum` command examples are legacy/noncanonical; `datum.*` remains reserved

@@ -1,5 +1,6 @@
 use clap::Args;
 use std::path::PathBuf;
+use uuid::Uuid;
 
 #[derive(Args)]
 pub(crate) struct ExportBomArgs {
@@ -8,6 +9,9 @@ pub(crate) struct ExportBomArgs {
     /// Output CSV path
     #[arg(long = "out")]
     pub(crate) out: PathBuf,
+    /// Optional variant overlay UUID used to filter fitted manufacturing rows
+    #[arg(long)]
+    pub(crate) variant: Option<Uuid>,
 }
 
 #[derive(Args)]
@@ -17,6 +21,9 @@ pub(crate) struct CompareBomArgs {
     /// BOM CSV path to compare
     #[arg(long = "bom")]
     pub(crate) bom: PathBuf,
+    /// Optional variant overlay UUID used to filter expected fitted rows
+    #[arg(long)]
+    pub(crate) variant: Option<Uuid>,
 }
 
 #[derive(Args)]
@@ -26,6 +33,9 @@ pub(crate) struct ValidateBomArgs {
     /// BOM CSV path to validate
     #[arg(long = "bom")]
     pub(crate) bom: PathBuf,
+    /// Optional variant overlay UUID used to filter expected fitted rows
+    #[arg(long)]
+    pub(crate) variant: Option<Uuid>,
 }
 
 #[derive(Args)]
@@ -41,6 +51,9 @@ pub(crate) struct ExportPnpArgs {
     /// Output CSV path
     #[arg(long = "out")]
     pub(crate) out: PathBuf,
+    /// Optional variant overlay UUID used to filter fitted manufacturing rows
+    #[arg(long)]
+    pub(crate) variant: Option<Uuid>,
 }
 
 #[derive(Args)]
@@ -50,6 +63,9 @@ pub(crate) struct ComparePnpArgs {
     /// PnP CSV path to compare
     #[arg(long = "pnp")]
     pub(crate) pnp: PathBuf,
+    /// Optional variant overlay UUID used to filter expected fitted rows
+    #[arg(long)]
+    pub(crate) variant: Option<Uuid>,
 }
 
 #[derive(Args)]
@@ -59,6 +75,9 @@ pub(crate) struct ValidatePnpArgs {
     /// PnP CSV path to validate
     #[arg(long = "pnp")]
     pub(crate) pnp: PathBuf,
+    /// Optional variant overlay UUID used to filter expected fitted rows
+    #[arg(long)]
+    pub(crate) variant: Option<Uuid>,
 }
 
 #[derive(Args)]

@@ -8,8 +8,149 @@ pub(crate) enum ProjectCommands {
     Inspect(ProjectInspectArgs),
     /// Validate persisted native-project structure, UUID consistency, and non-dangling references
     Validate(ProjectValidateArgs),
+    /// Import a KiCad .kicad_mod footprint into a project-local native pool
+    ImportKicadFootprint(ProjectImportKiCadFootprintArgs),
+    /// Create a raw native pool-library object through the project journal
+    CreatePoolLibraryObject(ProjectCreatePoolLibraryObjectArgs),
+    /// Create a typed native pool unit through the project journal
+    CreatePoolUnit(ProjectCreatePoolUnitArgs),
+    /// Set one typed native pool unit pin through the project journal
+    SetPoolUnitPin(ProjectSetPoolUnitPinArgs),
+    /// Create a typed native pool symbol through the project journal
+    CreatePoolSymbol(ProjectCreatePoolSymbolArgs),
+    /// Append one typed native pool symbol line primitive through the project journal
+    AddPoolSymbolLine(ProjectAddPoolSymbolLineArgs),
+    /// Append one typed native pool symbol polygon/polyline primitive through the project journal
+    AddPoolSymbolPolygon(ProjectAddPoolSymbolPolygonArgs),
+    /// Append one typed native pool symbol rectangle primitive through the project journal
+    AddPoolSymbolRect(ProjectAddPoolSymbolRectArgs),
+    /// Append one typed native pool symbol circle primitive through the project journal
+    AddPoolSymbolCircle(ProjectAddPoolSymbolCircleArgs),
+    /// Append one typed native pool symbol arc primitive through the project journal
+    AddPoolSymbolArc(ProjectAddPoolSymbolArcArgs),
+    /// Append one typed native pool symbol text primitive through the project journal
+    AddPoolSymbolText(ProjectAddPoolSymbolTextArgs),
+    /// Set one typed native pool symbol pin anchor through the project journal
+    SetPoolSymbolPinAnchor(ProjectSetPoolSymbolPinAnchorArgs),
+    /// Create a typed native pool entity through the project journal
+    CreatePoolEntity(ProjectCreatePoolEntityArgs),
+    /// Create a typed native pool padstack through the project journal
+    CreatePoolPadstack(ProjectCreatePoolPadstackArgs),
+    /// Create a typed native pool package through the project journal
+    CreatePoolPackage(ProjectCreatePoolPackageArgs),
+    /// Set one typed native pool package pad through the project journal
+    SetPoolPackagePad(ProjectSetPoolPackagePadArgs),
+    /// Set typed native pool package rectangular courtyard through the project journal
+    SetPoolPackageCourtyardRect(ProjectSetPoolPackageCourtyardRectArgs),
+    /// Set typed native pool package polygon courtyard through the project journal
+    SetPoolPackageCourtyardPolygon(ProjectSetPoolPackageCourtyardPolygonArgs),
+    /// Append one typed native pool package silkscreen line through the project journal
+    AddPoolPackageSilkscreenLine(ProjectAddPoolPackageSilkscreenLineArgs),
+    /// Append one typed native pool package silkscreen rectangle through the project journal
+    AddPoolPackageSilkscreenRect(ProjectAddPoolPackageSilkscreenRectArgs),
+    /// Append one typed native pool package silkscreen circle through the project journal
+    AddPoolPackageSilkscreenCircle(ProjectAddPoolPackageSilkscreenCircleArgs),
+    /// Append one typed native pool package silkscreen arc through the project journal
+    AddPoolPackageSilkscreenArc(ProjectAddPoolPackageSilkscreenArcArgs),
+    /// Append one typed native pool package silkscreen polygon/polyline through the project journal
+    AddPoolPackageSilkscreenPolygon(ProjectAddPoolPackageSilkscreenPolygonArgs),
+    /// Append one typed native pool package silkscreen text primitive through the project journal
+    AddPoolPackageSilkscreenText(ProjectAddPoolPackageSilkscreenTextArgs),
+    /// Append one typed native pool package 3D model reference through the project journal
+    #[command(name = "add-pool-package-model-3d")]
+    AddPoolPackageModel3d(ProjectAddPoolPackageModel3dArgs),
+    /// Set typed native pool package body-height metadata through the project journal
+    SetPoolPackageBodyHeights(ProjectSetPoolPackageBodyHeightsArgs),
+    /// Create a typed native pool part through the project journal
+    CreatePoolPart(ProjectCreatePoolPartArgs),
+    /// Update typed native pool part metadata through the project journal
+    SetPoolPartMetadata(ProjectSetPoolPartMetadataArgs),
+    /// Set typed native pool part parametric fields through the project journal
+    SetPoolPartParametric(ProjectSetPoolPartParametricArgs),
+    /// Set typed native pool part orderable MPNs through the project journal
+    SetPoolPartOrderableMpns(ProjectSetPoolPartOrderableMpnsArgs),
+    /// Set typed native pool part packaging options through the project journal
+    SetPoolPartPackagingOptions(ProjectSetPoolPartPackagingOptionsArgs),
+    /// Set typed native pool part behavioural model attachments through the project journal
+    SetPoolPartBehaviouralModels(ProjectSetPoolPartBehaviouralModelsArgs),
+    /// Copy a behavioural model into pool/models and attach it to a typed native pool part
+    AttachPoolPartModel(ProjectAttachPoolPartModelArgs),
+    /// Detach a behavioural model reference from a typed native pool part
+    DetachPoolPartModel(ProjectDetachPoolPartModelArgs),
+    /// Garbage-collect orphaned pool model blobs; dry-run unless --apply is supplied
+    GcPoolModels(ProjectGcPoolModelsArgs),
+    /// Set typed native pool part thermal metadata through the project journal
+    SetPoolPartThermal(ProjectSetPoolPartThermalArgs),
+    /// Set typed native pool part supply-chain cache metadata through the project journal
+    SetPoolPartSupplyChain(ProjectSetPoolPartSupplyChainArgs),
+    /// Set typed native pool part tags through the project journal
+    SetPoolPartTags(ProjectSetPoolPartTagsArgs),
+    /// Set typed native pool part pad-map entries through the project journal
+    SetPoolPartPadMap(ProjectSetPoolPartPadMapArgs),
+    /// Set one typed native pool part pad-map entry through the project journal
+    SetPoolPartPadMapEntry(ProjectSetPoolPartPadMapEntryArgs),
+    /// Replace a raw native pool-library object through the project journal
+    SetPoolLibraryObject(ProjectSetPoolLibraryObjectArgs),
+    /// Delete a raw native pool-library object through the project journal
+    DeletePoolLibraryObject(ProjectDeletePoolLibraryObjectArgs),
+    /// Replace the native project name
+    SetProjectName(ProjectSetProjectNameArgs),
+    /// Replace the native project rules payload
+    SetProjectRules(ProjectSetProjectRulesArgs),
+    /// Append one rule to the native project rules root
+    CreateProjectRule(ProjectCreateProjectRuleArgs),
+    /// Replace one rule in the native project rules root
+    SetProjectRule(ProjectSetProjectRuleArgs),
+    /// Delete one rule from the native project rules root
+    DeleteProjectRule(ProjectDeleteProjectRuleArgs),
     /// Query native project data from the on-disk scaffold
     Query(ProjectQueryArgs),
+    /// Show one persisted proposal sidecar
+    ShowProposal(ProjectShowProposalArgs),
+    /// Validate one persisted proposal against the current model revision
+    ValidateProposal(ProjectValidateProposalArgs),
+    /// Defer one draft persisted proposal without applying it
+    DeferProposal(ProjectDeferProposalArgs),
+    /// Review one persisted proposal sidecar without applying it
+    ReviewProposal(ProjectReviewProposalArgs),
+    /// Apply one accepted persisted proposal through the generic proposal gateway
+    ApplyProposal(ProjectApplyProposalArgs),
+    /// Generate draft standards repair proposals from the current check run
+    GenerateStandardsRepairProposals(ProjectGenerateStandardsRepairProposalsArgs),
+    /// Author a fingerprint-scoped waiver through the native project journal
+    WaiveFinding(ProjectWaiveFindingArgs),
+    /// Accept a fingerprint-scoped check finding as a deviation through the native project journal
+    AcceptDeviation(ProjectAcceptDeviationArgs),
+    /// Create or reuse a deterministic Gerber-set OutputJob
+    CreateGerberOutputJob(ProjectCreateGerberOutputJobArgs),
+    /// Create or reuse a deterministic OutputJob for one artifact include scope
+    CreateOutputJob(ProjectCreateOutputJobArgs),
+    /// Update an authored OutputJob through the substrate journal path
+    UpdateOutputJob(ProjectUpdateOutputJobArgs),
+    /// Execute an authored OutputJob using its stored production settings
+    RunOutputJob(ProjectRunOutputJobArgs),
+    /// Persist a running OutputJobRun evidence record for one OutputJob
+    StartOutputJobRun(ProjectStartOutputJobRunArgs),
+    /// Mark an existing OutputJobRun evidence record canceled
+    CancelOutputJobRun(ProjectCancelOutputJobRunArgs),
+    /// Delete an authored OutputJob through the substrate journal path
+    DeleteOutputJob(ProjectDeleteOutputJobArgs),
+    /// Create or reuse a deterministic manufacturing plan
+    CreateManufacturingPlan(ProjectCreateManufacturingPlanArgs),
+    /// Update a deterministic manufacturing plan through the substrate journal path
+    UpdateManufacturingPlan(ProjectUpdateManufacturingPlanArgs),
+    /// Delete a deterministic manufacturing plan through the substrate journal path
+    DeleteManufacturingPlan(ProjectDeleteManufacturingPlanArgs),
+    /// Create or reuse a deterministic panel projection
+    CreatePanelProjection(ProjectCreatePanelProjectionArgs),
+    /// Update a deterministic panel projection through the substrate journal path
+    UpdatePanelProjection(ProjectUpdatePanelProjectionArgs),
+    /// Delete a deterministic panel projection through the substrate journal path
+    DeletePanelProjection(ProjectDeletePanelProjectionArgs),
+    /// Undo the latest journaled native-project transaction by appending a compensating transaction
+    Undo(ProjectUndoArgs),
+    /// Redo the latest journaled native-project undo by appending a compensating transaction
+    Redo(ProjectRedoArgs),
     /// Export a native project BOM as deterministic CSV from persisted board components
     ExportBom(ExportBomArgs),
     /// Compare a BOM CSV against the current native board-component inventory
@@ -181,6 +322,24 @@ pub(crate) enum ProjectCommands {
     RejectForwardAnnotationAction(ProjectRejectForwardAnnotationActionArgs),
     /// Clear one persisted forward-annotation review decision by stable action ID
     ClearForwardAnnotationActionReview(ProjectClearForwardAnnotationActionReviewArgs),
+    /// Create one native schematic sheet through the substrate journal
+    CreateSheet(ProjectCreateSheetArgs),
+    /// Delete one native schematic sheet through the substrate journal
+    DeleteSheet(ProjectDeleteSheetArgs),
+    /// Rename one native schematic sheet through the substrate journal
+    RenameSheet(ProjectRenameSheetArgs),
+    /// Create one native schematic sheet definition through the substrate journal
+    CreateSheetDefinition(ProjectCreateSheetDefinitionArgs),
+    /// Create one native schematic sheet instance through the substrate journal
+    CreateSheetInstance(ProjectCreateSheetInstanceArgs),
+    /// Delete one native schematic sheet instance through the substrate journal
+    DeleteSheetInstance(ProjectDeleteSheetInstanceArgs),
+    /// Move one native schematic sheet instance through the substrate journal
+    MoveSheetInstance(ProjectMoveSheetInstanceArgs),
+    /// Bind a parent-sheet hierarchical port to a sheet instance
+    BindSheetInstancePort(ProjectBindSheetInstancePortArgs),
+    /// Remove a parent-sheet hierarchical port binding from a sheet instance
+    UnbindSheetInstancePort(ProjectUnbindSheetInstancePortArgs),
     /// Place one schematic label into an existing native sheet file
     PlaceLabel(ProjectPlaceLabelArgs),
     /// Rename one schematic label in a native sheet file
@@ -205,6 +364,8 @@ pub(crate) enum ProjectCommands {
     CreateBus(ProjectCreateBusArgs),
     /// Edit one bus member list in a native sheet file
     EditBusMembers(ProjectEditBusMembersArgs),
+    /// Delete one bus from a native sheet file
+    DeleteBus(ProjectDeleteBusArgs),
     /// Place one bus entry in an existing native sheet file
     PlaceBusEntry(ProjectPlaceBusEntryArgs),
     /// Delete one bus entry from a native sheet file
@@ -303,6 +464,8 @@ pub(crate) enum ProjectCommands {
     SetBoardOutline(ProjectSetBoardOutlineArgs),
     /// Replace the native board stackup
     SetBoardStackup(ProjectSetBoardStackupArgs),
+    /// Replace the native board name
+    SetBoardName(ProjectSetBoardNameArgs),
     /// Add a default two-layer stackup to the native board
     AddDefaultTopStackup(ProjectAddDefaultTopStackupArgs),
     /// Place one native board net
@@ -313,14 +476,22 @@ pub(crate) enum ProjectCommands {
     DeleteBoardNet(ProjectDeleteBoardNetArgs),
     /// Draw one native board track
     DrawBoardTrack(ProjectDrawBoardTrackArgs),
+    /// Edit one native board track
+    EditBoardTrack(ProjectEditBoardTrackArgs),
     /// Delete one native board track
     DeleteBoardTrack(ProjectDeleteBoardTrackArgs),
     /// Place one native board via
     PlaceBoardVia(ProjectPlaceBoardViaArgs),
+    /// Edit one native board via
+    EditBoardVia(ProjectEditBoardViaArgs),
     /// Delete one native board via
     DeleteBoardVia(ProjectDeleteBoardViaArgs),
     /// Place one native board zone
     PlaceBoardZone(ProjectPlaceBoardZoneArgs),
+    /// Edit one native board zone
+    EditBoardZone(ProjectEditBoardZoneArgs),
+    /// Attempt to fill native board zones as generated evidence without mutating authored board state
+    FillZones(ProjectFillZonesArgs),
     /// Delete one native board zone
     DeleteBoardZone(ProjectDeleteBoardZoneArgs),
     /// Set one native board pad net assignment
@@ -341,6 +512,12 @@ pub(crate) enum ProjectCommands {
     RotateBoardComponent(ProjectRotateBoardComponentArgs),
     /// Delete one native board component
     DeleteBoardComponent(ProjectDeleteBoardComponentArgs),
+    /// Bind one schematic symbol to one board package as a ComponentInstance
+    BindComponentInstance(ProjectBindComponentInstanceArgs),
+    /// Replace the refs for one authored ComponentInstance
+    SetComponentInstance(ProjectSetComponentInstanceArgs),
+    /// Delete one authored ComponentInstance
+    DeleteComponentInstance(ProjectDeleteComponentInstanceArgs),
     /// Lock one native board component/package
     SetBoardComponentLocked(ProjectSetBoardComponentLockedArgs),
     /// Clear the locked state on one native board component/package
@@ -355,6 +532,8 @@ pub(crate) enum ProjectCommands {
     SetBoardComponentPackage(SetBoardComponentPackageArgs),
     /// Set one native board component copper side/layer
     SetBoardComponentLayer(SetBoardComponentLayerArgs),
+    /// Flip one native board component to a target copper side/layer
+    FlipBoardComponent(SetBoardComponentLayerArgs),
     /// Place one native board net class
     PlaceBoardNetClass(ProjectPlaceBoardNetClassArgs),
     /// Edit one native board net class

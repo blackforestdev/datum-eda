@@ -34,7 +34,14 @@ pub(super) fn run_command_checked(command: &mut Command, label: &str) -> Result<
 pub(super) fn cli_unrouted_distance(repo_root: &Path, board_path: &Path) -> Result<i64> {
     let output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "query",
+            "run",
+            "-q",
+            "-p",
+            "datum-eda-cli",
+            "--",
+            "--format",
+            "json",
+            "query",
         ])
         .arg(board_path)
         .arg("unrouted")

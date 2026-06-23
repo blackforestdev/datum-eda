@@ -20,6 +20,56 @@ fn board_pads_query_cli(root: &Path) -> Cli {
 }
 
 #[test]
+fn project_board_pad_query_reads_resolver_materialized_journal_state() {
+    let root = unique_project_root("datum-eda-cli-project-board-pad-resolved-query");
+    create_native_project(&root, Some("Board Pad Resolved Query Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    let board_json = root.join("board/board.json");
+    let stale_board = std::fs::read_to_string(&board_json).expect("board file should read");
+    let package_uuid = Uuid::new_v4();
+
+    let place_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "place-board-pad",
+        root.to_str().unwrap(),
+        "--package",
+        &package_uuid.to_string(),
+        "--name",
+        "1",
+        "--x-nm",
+        "7000",
+        "--y-nm",
+        "8000",
+        "--layer",
+        "3",
+        "--diameter-nm",
+        "700000",
+    ])
+    .expect("CLI should parse");
+    let place_output = execute(place_cli).expect("place board pad should succeed");
+    let place_report: serde_json::Value =
+        serde_json::from_str(&place_output).expect("place output should parse");
+    let placed_pad_uuid = place_report["pad_uuid"].as_str().unwrap().to_string();
+    std::fs::write(&board_json, stale_board).expect("stale board file should restore");
+
+    let pads_output =
+        execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
+    let pads: Vec<PlacedPad> =
+        serde_json::from_str(&pads_output).expect("query output should parse");
+    assert_eq!(pads.len(), 1);
+    assert_eq!(pads[0].uuid.to_string(), placed_pad_uuid);
+    assert_eq!(pads[0].package, package_uuid);
+    assert_eq!(pads[0].name, "1");
+    assert_eq!(pads[0].position.x, 7000);
+    assert_eq!(pads[0].position.y, 8000);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
 fn project_board_pad_query_edit_and_net_assignment_round_trip() {
     let root = unique_project_root("datum-eda-cli-project-board-pad");
     create_native_project(&root, Some("Board Pad Demo".to_string()))

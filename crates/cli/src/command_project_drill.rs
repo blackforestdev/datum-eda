@@ -1,35 +1,50 @@
 use std::collections::BTreeMap;
 use std::path::Path;
 
-use anyhow::{Context, Result, bail};
-use eda_engine::board::{StackupLayerType, Via};
-use eda_engine::export::render_excellon_drill;
-use eda_engine::ir::geometry::Point;
-use uuid::Uuid;
-
 use super::{
-    NativeProjectDrillComparisonView, NativeProjectDrillExportView,
+    LoadedNativeProject, NativeProjectDrillComparisonView, NativeProjectDrillExportView,
     NativeProjectDrillHoleClassBucketView, NativeProjectDrillHoleClassReportView,
     NativeProjectDrillInspectionRowView, NativeProjectDrillInspectionView,
     NativeProjectDrillValidationView, NativeProjectExcellonDrillComparisonView,
     NativeProjectExcellonDrillExportView, NativeProjectExcellonDrillHitDriftView,
     NativeProjectExcellonDrillInspectionView, NativeProjectExcellonDrillToolView,
     NativeProjectExcellonDrillValidationView, classify_via_hole_class, csv_escape,
-    load_native_project, query_native_project_board_stackup, query_native_project_board_vias,
-    render_mm_6,
+    load_native_project_with_resolved_board, render_mm_6,
+};
+use anyhow::{Context, Result, bail};
+use eda_engine::board::{StackupLayer, StackupLayerType, Via};
+use eda_engine::export::render_excellon_drill;
+use eda_engine::ir::geometry::Point;
+use uuid::Uuid;
+#[path = "command_project_drill_csv.rs"]
+mod command_project_drill_csv;
+#[path = "command_project_drill_panel.rs"]
+mod command_project_drill_panel;
+#[path = "command_project_drill_projection.rs"]
+mod command_project_drill_projection;
+use command_project_drill_csv::{
+    csv_drill_row_from_via, parse_native_project_drill_csv, parse_native_project_drill_csv_rows,
+};
+pub(crate) use command_project_drill_panel::{
+    export_native_project_panel_drill, export_native_project_panel_excellon_drill,
+    render_expected_native_project_panel_drill_csv,
+    render_expected_native_project_panel_excellon_drill,
+};
+use command_project_drill_projection::{
+    render_native_project_excellon_drill_projection,
+    render_native_project_excellon_drill_projection_from_hits,
 };
 
 pub(crate) fn export_native_project_drill(
     root: &Path,
     output_path: &Path,
 ) -> Result<NativeProjectDrillExportView> {
-    let project = load_native_project(root)?;
-    let vias = sorted_native_project_board_vias(root)?;
-    let csv = render_native_project_drill_csv(&vias);
-    std::fs::write(output_path, csv)
-        .with_context(|| format!("failed to write {}", output_path.display()))?;
+    let project = load_native_project_with_resolved_board(root)?;
+    let vias = sorted_native_project_board_vias(&project)?;
+    write_native_project_drill_csv(output_path, &vias)?;
     Ok(NativeProjectDrillExportView {
         action: "export_drill".to_string(),
+        production_classification: "manual_debug_export".to_string(),
         project_root: project.root.display().to_string(),
         drill_path: output_path.display().to_string(),
         rows: vias.len(),
@@ -40,8 +55,8 @@ pub(crate) fn validate_native_project_drill(
     root: &Path,
     drill_path: &Path,
 ) -> Result<NativeProjectDrillValidationView> {
-    let project = load_native_project(root)?;
-    let vias = sorted_native_project_board_vias(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
+    let vias = sorted_native_project_board_vias(&project)?;
     let expected = render_native_project_drill_csv(&vias);
     let actual = std::fs::read_to_string(drill_path)
         .with_context(|| format!("failed to read {}", drill_path.display()))?;
@@ -56,13 +71,12 @@ pub(crate) fn validate_native_project_drill(
         rows: vias.len(),
     })
 }
-
 pub(crate) fn compare_native_project_drill(
     root: &Path,
     drill_path: &Path,
 ) -> Result<NativeProjectDrillComparisonView> {
-    let project = load_native_project(root)?;
-    let expected = sorted_native_project_board_vias(root)?
+    let project = load_native_project_with_resolved_board(root)?;
+    let expected = sorted_native_project_board_vias(&project)?
         .into_iter()
         .map(csv_drill_row_from_via)
         .collect::<BTreeMap<_, _>>();
@@ -145,25 +159,20 @@ pub(crate) fn export_native_project_excellon_drill(
     root: &Path,
     output_path: &Path,
 ) -> Result<NativeProjectExcellonDrillExportView> {
-    let project = load_native_project(root)?;
-    let drill_hits = query_native_project_drill_hits(root)?;
-    let (via_count, component_pad_count) = drill_hit_counts(&drill_hits);
-    let tools = build_excellon_tool_views_for_drill_hits(&drill_hits);
-    let tool_count = tools.len();
-    let excellon = render_excellon_for_drill_hits(&drill_hits)
-        .context("failed to render native board drill hits as Excellon drill")?;
-    std::fs::write(output_path, excellon)
-        .with_context(|| format!("failed to write {}", output_path.display()))?;
+    let projection = render_native_project_excellon_drill_projection(root)?;
+    write_native_project_excellon_drill(output_path, &projection.excellon)?;
     Ok(NativeProjectExcellonDrillExportView {
         action: "export_excellon_drill".to_string(),
-        project_root: project.root.display().to_string(),
-        board_path: project.board_path.display().to_string(),
+        production_classification: "manual_debug_export".to_string(),
+        project_root: projection.project_root,
+        board_path: projection.board_path,
         drill_path: output_path.display().to_string(),
-        via_count,
-        component_pad_count,
-        hit_count: drill_hits.len(),
-        tool_count,
-        tools,
+        via_count: projection.via_count,
+        component_pad_count: projection.component_pad_count,
+        hit_count: projection.hit_count,
+        tool_count: projection.tool_count,
+        tools: projection.tools,
+        production_projection: projection.production_projection,
     })
 }
 
@@ -171,29 +180,24 @@ pub(crate) fn validate_native_project_excellon_drill(
     root: &Path,
     drill_path: &Path,
 ) -> Result<NativeProjectExcellonDrillValidationView> {
-    let project = load_native_project(root)?;
-    let drill_hits = query_native_project_drill_hits(root)?;
-    let (via_count, component_pad_count) = drill_hit_counts(&drill_hits);
-    let tools = build_excellon_tool_views_for_drill_hits(&drill_hits);
-    let tool_count = tools.len();
-    let expected = render_excellon_for_drill_hits(&drill_hits)
-        .context("failed to render expected native board drill hits as Excellon drill")?;
+    let projection = render_native_project_excellon_drill_projection(root)?;
     let actual = std::fs::read_to_string(drill_path)
         .with_context(|| format!("failed to read {}", drill_path.display()))?;
 
     Ok(NativeProjectExcellonDrillValidationView {
         action: "validate_excellon_drill".to_string(),
-        project_root: project.root.display().to_string(),
-        board_path: project.board_path.display().to_string(),
+        project_root: projection.project_root,
+        board_path: projection.board_path,
         drill_path: drill_path.display().to_string(),
-        matches_expected: actual == expected,
-        expected_bytes: expected.len(),
+        matches_expected: actual == projection.excellon,
+        expected_bytes: projection.excellon.len(),
         actual_bytes: actual.len(),
-        via_count,
-        component_pad_count,
-        hit_count: drill_hits.len(),
-        tool_count,
-        tools,
+        via_count: projection.via_count,
+        component_pad_count: projection.component_pad_count,
+        hit_count: projection.hit_count,
+        tool_count: projection.tool_count,
+        tools: projection.tools,
+        production_projection: projection.production_projection,
     })
 }
 
@@ -262,8 +266,8 @@ pub(crate) fn compare_native_project_excellon_drill(
     root: &Path,
     drill_path: &Path,
 ) -> Result<NativeProjectExcellonDrillComparisonView> {
-    let project = load_native_project(root)?;
-    let drill_hits = query_native_project_drill_hits(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
+    let drill_hits = query_native_project_drill_hits(&project)?;
     let expected_tools = build_excellon_tool_views_for_drill_hits(&drill_hits);
     let actual = inspect_excellon_drill(drill_path)?;
 
@@ -336,13 +340,9 @@ pub(crate) fn compare_native_project_excellon_drill(
 pub(crate) fn report_native_project_drill_hole_classes(
     root: &Path,
 ) -> Result<NativeProjectDrillHoleClassReportView> {
-    let project = load_native_project(root)?;
-    let drill_hits = query_native_project_drill_hits(root)?;
-    let copper_layers = query_native_project_board_stackup(root)?
-        .into_iter()
-        .filter(|layer| matches!(layer.layer_type, StackupLayerType::Copper))
-        .map(|layer| layer.id)
-        .collect::<Vec<_>>();
+    let project = load_native_project_with_resolved_board(root)?;
+    let drill_hits = query_native_project_drill_hits(&project)?;
+    let copper_layers = native_project_copper_layers(&project)?;
     let top_copper = copper_layers.iter().min().copied();
     let bottom_copper = copper_layers.iter().max().copied();
 
@@ -398,7 +398,7 @@ enum NativeDrillHitKind {
 }
 
 #[derive(Debug, Clone)]
-struct NativeDrillHit {
+pub(super) struct NativeDrillHit {
     kind: NativeDrillHitKind,
     uuid: Uuid,
     net: Option<Uuid>,
@@ -408,8 +408,10 @@ struct NativeDrillHit {
     to_layer: i32,
 }
 
-fn query_native_project_drill_hits(root: &Path) -> Result<Vec<NativeDrillHit>> {
-    let mut hits = query_native_project_board_vias(root)?
+pub(super) fn query_native_project_drill_hits(
+    project: &LoadedNativeProject,
+) -> Result<Vec<NativeDrillHit>> {
+    let mut hits = sorted_native_project_board_vias(project)?
         .into_iter()
         .map(|via| NativeDrillHit {
             kind: NativeDrillHitKind::Via,
@@ -421,7 +423,7 @@ fn query_native_project_drill_hits(root: &Path) -> Result<Vec<NativeDrillHit>> {
             to_layer: via.to_layer,
         })
         .collect::<Vec<_>>();
-    hits.extend(query_native_project_component_drill_hits(root)?);
+    hits.extend(query_native_project_component_drill_hits(project)?);
     hits.sort_by(|a, b| {
         a.drill_nm
             .cmp(&b.drill_nm)
@@ -434,9 +436,16 @@ fn query_native_project_drill_hits(root: &Path) -> Result<Vec<NativeDrillHit>> {
     Ok(hits)
 }
 
-fn query_native_project_component_drill_hits(root: &Path) -> Result<Vec<NativeDrillHit>> {
-    let project = load_native_project(root)?;
-    let Some((top_copper, bottom_copper)) = native_project_outer_copper_pair(root)? else {
+fn query_native_project_component_drill_hits(
+    project: &LoadedNativeProject,
+) -> Result<Vec<NativeDrillHit>> {
+    let mut copper_layers = native_project_copper_layers(project)?;
+    copper_layers.sort_unstable();
+    let Some((top_copper, bottom_copper)) = copper_layers
+        .first()
+        .copied()
+        .zip(copper_layers.last().copied())
+    else {
         return Ok(Vec::new());
     };
     let mut hits = Vec::new();
@@ -445,60 +454,57 @@ fn query_native_project_component_drill_hits(root: &Path) -> Result<Vec<NativeDr
             let Some(drill_nm) = pad.drill_nm else {
                 continue;
             };
-            if drill_nm <= 0 {
-                continue;
+            if drill_nm > 0 {
+                hits.push(NativeDrillHit {
+                    kind: NativeDrillHitKind::ComponentPad,
+                    uuid: pad.uuid,
+                    net: None,
+                    position: Point {
+                        x: pad.position.x,
+                        y: pad.position.y,
+                    },
+                    drill_nm,
+                    from_layer: top_copper,
+                    to_layer: bottom_copper,
+                });
             }
-            hits.push(NativeDrillHit {
-                kind: NativeDrillHitKind::ComponentPad,
-                uuid: pad.uuid,
-                net: None,
-                position: Point {
-                    x: pad.position.x,
-                    y: pad.position.y,
-                },
-                drill_nm,
-                from_layer: top_copper,
-                to_layer: bottom_copper,
-            });
         }
     }
     Ok(hits)
 }
 
-fn native_project_outer_copper_pair(root: &Path) -> Result<Option<(i32, i32)>> {
-    let mut copper_layers = query_native_project_board_stackup(root)?
+fn native_project_copper_layers(project: &LoadedNativeProject) -> Result<Vec<i32>> {
+    Ok(project
+        .board
+        .stackup
+        .layers
+        .iter()
+        .cloned()
+        .map(|value| {
+            serde_json::from_value::<StackupLayer>(value)
+                .context("failed to parse board stackup layer")
+        })
+        .collect::<Result<Vec<_>>>()?
         .into_iter()
         .filter(|layer| matches!(layer.layer_type, StackupLayerType::Copper))
         .map(|layer| layer.id)
-        .collect::<Vec<_>>();
-    if copper_layers.is_empty() {
-        return Ok(None);
-    }
-    copper_layers.sort_unstable();
-    Ok(copper_layers
-        .first()
-        .copied()
-        .zip(copper_layers.last().copied()))
+        .collect())
 }
 
 pub(crate) fn render_expected_native_project_drill_csv(root: &Path) -> Result<String> {
-    let vias = sorted_native_project_board_vias(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
+    let vias = sorted_native_project_board_vias(&project)?;
     Ok(render_native_project_drill_csv(&vias))
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-struct NativeProjectDrillCsvRow {
-    net_uuid: Uuid,
-    x_nm: i64,
-    y_nm: i64,
-    drill_nm: i64,
-    diameter_nm: i64,
-    from_layer: i32,
-    to_layer: i32,
-}
-
-fn sorted_native_project_board_vias(root: &Path) -> Result<Vec<Via>> {
-    let mut vias = query_native_project_board_vias(root)?;
+pub(super) fn sorted_native_project_board_vias(project: &LoadedNativeProject) -> Result<Vec<Via>> {
+    let mut vias = project
+        .board
+        .vias
+        .values()
+        .cloned()
+        .map(|value| serde_json::from_value(value).context("failed to parse board via"))
+        .collect::<Result<Vec<Via>>>()?;
     vias.sort_by(|a, b| {
         a.position
             .x
@@ -509,7 +515,26 @@ fn sorted_native_project_board_vias(root: &Path) -> Result<Vec<Via>> {
     Ok(vias)
 }
 
-fn render_native_project_drill_csv(vias: &[Via]) -> String {
+pub(super) fn panel_instances_for_project_board_base<'a>(
+    project: &LoadedNativeProject,
+    panel_projection: &'a eda_engine::substrate::PanelProjection,
+) -> Result<Vec<&'a eda_engine::substrate::PanelBoardInstance>> {
+    let instances = panel_projection
+        .board_instances
+        .iter()
+        .filter(|instance| instance.board == project.board.uuid)
+        .collect::<Vec<_>>();
+    if instances.is_empty() {
+        bail!(
+            "panel projection {} does not reference board {}",
+            panel_projection.id,
+            project.board.uuid
+        );
+    }
+    Ok(instances)
+}
+
+pub(super) fn render_native_project_drill_csv(vias: &[Via]) -> String {
     let mut csv =
         String::from("via_uuid,net_uuid,x_nm,y_nm,drill_nm,diameter_nm,from_layer,to_layer\n");
     for via in vias {
@@ -530,115 +555,18 @@ fn render_native_project_drill_csv(vias: &[Via]) -> String {
     csv
 }
 
-fn csv_drill_row_from_via(via: Via) -> (Uuid, NativeProjectDrillCsvRow) {
-    (
-        via.uuid,
-        NativeProjectDrillCsvRow {
-            net_uuid: via.net,
-            x_nm: via.position.x,
-            y_nm: via.position.y,
-            drill_nm: via.drill,
-            diameter_nm: via.diameter,
-            from_layer: via.from_layer,
-            to_layer: via.to_layer,
-        },
-    )
+pub(super) fn write_native_project_drill_csv(output_path: &Path, vias: &[Via]) -> Result<()> {
+    let csv = render_native_project_drill_csv(vias);
+    std::fs::write(output_path, csv)
+        .with_context(|| format!("failed to write {}", output_path.display()))
 }
 
-fn parse_native_project_drill_csv(
-    drill_path: &Path,
-) -> Result<BTreeMap<Uuid, NativeProjectDrillCsvRow>> {
-    Ok(parse_native_project_drill_csv_rows(drill_path)?
-        .into_iter()
-        .collect())
-}
-
-fn parse_native_project_drill_csv_rows(
-    drill_path: &Path,
-) -> Result<Vec<(Uuid, NativeProjectDrillCsvRow)>> {
-    let contents = std::fs::read_to_string(drill_path)
-        .with_context(|| format!("failed to read {}", drill_path.display()))?;
-    let mut lines = contents.lines();
-    let header = lines.next().unwrap_or_default();
-    if header != "via_uuid,net_uuid,x_nm,y_nm,drill_nm,diameter_nm,from_layer,to_layer" {
-        bail!("unexpected drill CSV header in {}", drill_path.display());
-    }
-    let mut rows = Vec::new();
-    for (index, line) in lines.enumerate() {
-        if line.trim().is_empty() {
-            continue;
-        }
-        let columns = line.split(',').collect::<Vec<_>>();
-        if columns.len() != 8 {
-            bail!(
-                "unexpected drill CSV column count on line {} in {}",
-                index + 2,
-                drill_path.display()
-            );
-        }
-        let via_uuid = Uuid::parse_str(columns[0]).with_context(|| {
-            format!(
-                "invalid via_uuid on line {} in {}",
-                index + 2,
-                drill_path.display()
-            )
-        })?;
-        rows.push((
-            via_uuid,
-            NativeProjectDrillCsvRow {
-                net_uuid: Uuid::parse_str(columns[1]).with_context(|| {
-                    format!(
-                        "invalid net_uuid on line {} in {}",
-                        index + 2,
-                        drill_path.display()
-                    )
-                })?,
-                x_nm: columns[2].parse().with_context(|| {
-                    format!(
-                        "invalid x_nm on line {} in {}",
-                        index + 2,
-                        drill_path.display()
-                    )
-                })?,
-                y_nm: columns[3].parse().with_context(|| {
-                    format!(
-                        "invalid y_nm on line {} in {}",
-                        index + 2,
-                        drill_path.display()
-                    )
-                })?,
-                drill_nm: columns[4].parse().with_context(|| {
-                    format!(
-                        "invalid drill_nm on line {} in {}",
-                        index + 2,
-                        drill_path.display()
-                    )
-                })?,
-                diameter_nm: columns[5].parse().with_context(|| {
-                    format!(
-                        "invalid diameter_nm on line {} in {}",
-                        index + 2,
-                        drill_path.display()
-                    )
-                })?,
-                from_layer: columns[6].parse().with_context(|| {
-                    format!(
-                        "invalid from_layer on line {} in {}",
-                        index + 2,
-                        drill_path.display()
-                    )
-                })?,
-                to_layer: columns[7].parse().with_context(|| {
-                    format!(
-                        "invalid to_layer on line {} in {}",
-                        index + 2,
-                        drill_path.display()
-                    )
-                })?,
-            },
-        ));
-    }
-    Ok(rows)
+pub(super) fn write_native_project_excellon_drill(
+    output_path: &Path,
+    excellon: &str,
+) -> Result<()> {
+    std::fs::write(output_path, excellon)
+        .with_context(|| format!("failed to write {}", output_path.display()))
 }
 
 fn drill_hit_counts(hits: &[NativeDrillHit]) -> (usize, usize) {

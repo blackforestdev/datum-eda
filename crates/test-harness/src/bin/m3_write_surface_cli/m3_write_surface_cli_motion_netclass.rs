@@ -16,7 +16,14 @@ pub(super) fn cli_set_net_class_surface_result(cli: &Cli) -> Result<String> {
     let target = unique_temp_path("cli-surface-net-class-save", "kicad_pcb");
     let output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "modify",
+            "run",
+            "-q",
+            "-p",
+            "datum-eda-cli",
+            "--",
+            "--format",
+            "json",
+            "modify",
         ])
         .arg(&fixture)
         .arg("--set-net-class")
@@ -41,7 +48,14 @@ pub(super) fn cli_set_net_class_surface_result(cli: &Cli) -> Result<String> {
         .ok_or_else(|| anyhow::anyhow!("CLI set-net-class save report missing saved_path"))?;
     let query_output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "query",
+            "run",
+            "-q",
+            "-p",
+            "datum-eda-cli",
+            "--",
+            "--format",
+            "json",
+            "query",
         ])
         .arg(saved_path)
         .arg("nets")
@@ -79,7 +93,14 @@ pub(super) fn cli_move_surface_result(cli: &Cli) -> Result<String> {
     let target = unique_temp_path("cli-surface-move-save", "kicad_pcb");
     let output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "modify",
+            "run",
+            "-q",
+            "-p",
+            "datum-eda-cli",
+            "--",
+            "--format",
+            "json",
+            "modify",
         ])
         .arg(&cli.roundtrip_board_fixture_path)
         .arg("--move-component")
@@ -126,7 +147,14 @@ pub(super) fn cli_rotate_surface_result(cli: &Cli) -> Result<String> {
     let target = unique_temp_path("cli-surface-rotate-save", "kicad_pcb");
     let output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "modify",
+            "run",
+            "-q",
+            "-p",
+            "datum-eda-cli",
+            "--",
+            "--format",
+            "json",
+            "modify",
         ])
         .arg(&cli.roundtrip_board_fixture_path)
         .arg("--rotate-component")
@@ -151,7 +179,14 @@ pub(super) fn cli_rotate_surface_result(cli: &Cli) -> Result<String> {
         .ok_or_else(|| anyhow::anyhow!("CLI rotate-component save report missing saved_path"))?;
     let query_output = Command::new("cargo")
         .args([
-            "run", "-q", "-p", "datum-eda-cli", "--", "--format", "json", "query",
+            "run",
+            "-q",
+            "-p",
+            "datum-eda-cli",
+            "--",
+            "--format",
+            "json",
+            "query",
         ])
         .arg(saved_path)
         .arg("components")

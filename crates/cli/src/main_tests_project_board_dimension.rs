@@ -19,6 +19,23 @@ fn board_dimension_query_cli(root: &Path) -> Cli {
     .expect("CLI should parse")
 }
 
+fn journal_list(root: &Path) -> serde_json::Value {
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "journal-list",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("journal-list should succeed");
+    serde_json::from_str(&output).expect("journal-list JSON should parse")
+}
+
 #[test]
 fn project_board_dimension_mutations_round_trip_through_native_query() {
     let root = unique_project_root("datum-eda-cli-project-board-dimension");
@@ -64,6 +81,11 @@ fn project_board_dimension_mutations_round_trip_through_native_query() {
     assert_eq!(dimensions[0].to.y, 500);
     assert_eq!(dimensions[0].layer, 41);
     assert_eq!(dimensions[0].text.as_deref(), Some("1000x500"));
+    let journal = journal_list(&root);
+    assert_eq!(
+        journal["transactions"][0]["reason"],
+        "place board dimension"
+    );
 
     let edit_cli = Cli::try_parse_from([
         "eda",
@@ -101,6 +123,8 @@ fn project_board_dimension_mutations_round_trip_through_native_query() {
     assert_eq!(dimensions[0].to.y, 520);
     assert_eq!(dimensions[0].layer, 42);
     assert_eq!(dimensions[0].text.as_deref(), Some("revised"));
+    let journal = journal_list(&root);
+    assert_eq!(journal["transactions"][1]["reason"], "edit board dimension");
 
     let clear_text_cli = Cli::try_parse_from([
         "eda",
@@ -122,6 +146,8 @@ fn project_board_dimension_mutations_round_trip_through_native_query() {
         serde_json::from_str(&dimensions_output).expect("query output should parse");
     assert_eq!(dimensions.len(), 1);
     assert_eq!(dimensions[0].text, None);
+    let journal = journal_list(&root);
+    assert_eq!(journal["transactions"][2]["reason"], "edit board dimension");
 
     let delete_cli = Cli::try_parse_from([
         "eda",
@@ -140,6 +166,12 @@ fn project_board_dimension_mutations_round_trip_through_native_query() {
     let dimensions: Vec<Dimension> =
         serde_json::from_str(&dimensions_output).expect("query output should parse");
     assert!(dimensions.is_empty());
+    let journal = journal_list(&root);
+    assert_eq!(journal["count"], 4);
+    assert_eq!(
+        journal["transactions"][3]["reason"],
+        "delete board dimension"
+    );
 
     let summary_cli =
         Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])

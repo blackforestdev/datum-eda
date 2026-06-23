@@ -2,11 +2,14 @@ use std::path::Path;
 
 use anyhow::{Context, Result};
 use eda_engine::board::PlacedPackage;
+use eda_engine::substrate::{
+    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver,
+};
 use uuid::Uuid;
 
 use super::{
-    NativeProjectBoardComponentMutationReportView, native_project_board_component_report,
-    write_canonical_json,
+    NativeProjectBoardComponentMutationReportView, load_native_project_with_resolved_board,
+    native_project_board_component_report,
 };
 
 pub(crate) fn set_native_project_board_component_value(
@@ -14,24 +17,36 @@ pub(crate) fn set_native_project_board_component_value(
     component_uuid: Uuid,
     value: String,
 ) -> Result<NativeProjectBoardComponentMutationReportView> {
-    let mut project = super::load_native_project(root)?;
+    let mut model = ProjectResolver::new(root).resolve()?;
+    let expected_model_revision = model.model_revision.clone();
+    model.commit_journaled(
+        root,
+        OperationBatch {
+            batch_id: Uuid::new_v4(),
+            expected_model_revision: Some(expected_model_revision),
+            provenance: CommitProvenance {
+                actor: "datum-eda-cli".to_string(),
+                source: CommitSource::Cli,
+                reason: "set board component value".to_string(),
+            },
+            operations: vec![Operation::SetBoardPackageValue {
+                package_id: component_uuid,
+                value,
+            }],
+        },
+    )?;
+
+    let project = load_native_project_with_resolved_board(root)?;
     let key = component_uuid.to_string();
     let entry = project.board.packages.get(&key).cloned().ok_or_else(|| {
         anyhow::anyhow!("board component not found in native project: {component_uuid}")
     })?;
-    let mut component: PlacedPackage = serde_json::from_value(entry).with_context(|| {
+    let component: PlacedPackage = serde_json::from_value(entry).with_context(|| {
         format!(
             "failed to parse board component in {}",
             project.board_path.display()
         )
     })?;
-    component.value = value;
-    project.board.packages.insert(
-        key,
-        serde_json::to_value(&component)
-            .expect("native board component serialization must succeed"),
-    );
-    write_canonical_json(&project.board_path, &project.board)?;
     Ok(native_project_board_component_report(
         "set_board_component_value",
         &project,

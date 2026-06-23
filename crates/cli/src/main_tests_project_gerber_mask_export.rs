@@ -134,3 +134,63 @@ fn project_export_gerber_soldermask_layer_writes_rs274x_pad_openings() {
 
     let _ = std::fs::remove_dir_all(&root);
 }
+
+#[test]
+fn project_export_gerber_soldermask_layer_uses_resolver_materialized_board_state() {
+    let root = unique_project_root("datum-eda-cli-project-gerber-mask-resolved-export");
+    create_native_project(&root, Some("Gerber Mask Resolved Export Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    let board_json = root.join("board/board.json");
+    let stale_board = std::fs::read_to_string(&board_json).expect("board file should read");
+    let package_uuid = Uuid::new_v4();
+
+    let place_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "place-board-pad",
+        root.to_str().unwrap(),
+        "--package",
+        &package_uuid.to_string(),
+        "--name",
+        "1",
+        "--x-nm",
+        "750000",
+        "--y-nm",
+        "250000",
+        "--layer",
+        "1",
+        "--diameter-nm",
+        "450000",
+    ])
+    .expect("CLI should parse");
+    let _ = execute(place_cli).expect("place board pad should succeed");
+    std::fs::write(&board_json, stale_board).expect("stale board file should restore");
+
+    let gerber_path = root.join("top-mask-resolved.gbr");
+    let cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "export-gerber-soldermask-layer",
+        root.to_str().unwrap(),
+        "--layer",
+        "2",
+        "--out",
+        gerber_path.to_str().unwrap(),
+    ])
+    .expect("CLI should parse");
+    let output = execute(cli).expect("gerber soldermask export should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
+    assert_eq!(report["source_copper_layer"], 1);
+    assert_eq!(report["pad_count"], 1);
+
+    let gerber = std::fs::read_to_string(&gerber_path).expect("gerber should read");
+    assert!(gerber.contains("G04 datum-eda native soldermask layer 2*"));
+    assert!(gerber.contains("%ADD10C,0.450000*%"));
+    assert!(gerber.contains("X750000Y250000D03*"));
+
+    let _ = std::fs::remove_dir_all(&root);
+}

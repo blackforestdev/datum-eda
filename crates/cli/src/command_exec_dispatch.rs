@@ -9,128 +9,17 @@ use crate::command_modify::{
 
 pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
     match cli.command {
+        Commands::Context { action } => {
+            command_exec_context::execute_context_command(&cli.format, action)
+        }
         Commands::Import { path } => {
             let report = import_path(&path)?;
             let view = ImportReportView::from(report);
             Ok((render_output(&cli.format, &view), 0))
         }
-        Commands::Query { path, what } => match what {
-            QueryCommands::Summary => {
-                let summary = query_summary(&path)?;
-                Ok((render_output(&cli.format, &summary), 0))
-            }
-            QueryCommands::Netlist => {
-                let netlist = query_netlist(&path)?;
-                Ok((render_output(&cli.format, &netlist), 0))
-            }
-            QueryCommands::Nets => {
-                let nets = query_nets(&path)?;
-                Ok((render_output(&cli.format, &nets), 0))
-            }
-            QueryCommands::SchematicNets => {
-                let nets = query_schematic_nets(&path)?;
-                Ok((render_output(&cli.format, &nets), 0))
-            }
-            QueryCommands::Components => {
-                let components = query_components(&path)?;
-                Ok((render_output(&cli.format, &components), 0))
-            }
-            QueryCommands::Sheets => {
-                let sheets = query_sheets(&path)?;
-                Ok((render_output(&cli.format, &sheets), 0))
-            }
-            QueryCommands::Symbols => {
-                let symbols = query_symbols(&path)?;
-                Ok((render_output(&cli.format, &symbols), 0))
-            }
-            QueryCommands::Labels => {
-                let labels = query_labels(&path)?;
-                Ok((render_output(&cli.format, &labels), 0))
-            }
-            QueryCommands::Ports => {
-                let ports = query_ports(&path)?;
-                Ok((render_output(&cli.format, &ports), 0))
-            }
-            QueryCommands::Buses => {
-                let buses = query_buses(&path)?;
-                Ok((render_output(&cli.format, &buses), 0))
-            }
-            QueryCommands::BusEntries => {
-                let entries = query_bus_entries(&path)?;
-                Ok((render_output(&cli.format, &entries), 0))
-            }
-            QueryCommands::Noconnects => {
-                let noconnects = query_noconnects(&path)?;
-                Ok((render_output(&cli.format, &noconnects), 0))
-            }
-            QueryCommands::Hierarchy => {
-                let hierarchy = query_hierarchy(&path)?;
-                Ok((render_output(&cli.format, &hierarchy), 0))
-            }
-            QueryCommands::Diagnostics => {
-                let diagnostics = query_diagnostics(&path)?;
-                Ok((render_output(&cli.format, &diagnostics), 0))
-            }
-            QueryCommands::Unrouted => {
-                let airwires = query_unrouted(&path)?;
-                Ok((render_output(&cli.format, &airwires), 0))
-            }
-            QueryCommands::DesignRules => {
-                let rules = query_design_rules(&path)?;
-                Ok((render_output(&cli.format, &rules), 0))
-            }
-            QueryCommands::PackageChangeCandidates { uuid, libraries } => {
-                let report = query_package_change_candidates(&path, &uuid, &libraries)?;
-                Ok((render_output(&cli.format, &report), 0))
-            }
-            QueryCommands::PartChangeCandidates { uuid, libraries } => {
-                let report = query_part_change_candidates(&path, &uuid, &libraries)?;
-                Ok((render_output(&cli.format, &report), 0))
-            }
-            QueryCommands::ComponentReplacementPlan { uuid, libraries } => {
-                let report = query_component_replacement_plan(&path, &uuid, &libraries)?;
-                Ok((render_output(&cli.format, &report), 0))
-            }
-            QueryCommands::ScopedReplacementPlan {
-                policy,
-                ref_prefix,
-                value,
-                package_uuid,
-                part_uuid,
-                exclude_component,
-                override_component,
-                libraries,
-            } => {
-                let policy = match policy {
-                    ReplacementPolicyArg::Package => {
-                        ComponentReplacementPolicy::BestCompatiblePackage
-                    }
-                    ReplacementPolicyArg::Part => ComponentReplacementPolicy::BestCompatiblePart,
-                };
-                let overrides = override_component
-                    .iter()
-                    .map(|value| parse_scoped_replacement_override_arg(value))
-                    .collect::<Result<Vec<_>>>()?;
-                let report = query_scoped_component_replacement_plan(
-                    &path,
-                    ScopedComponentReplacementPolicyInput {
-                        scope: ComponentReplacementScope {
-                            reference_prefix: ref_prefix,
-                            value_equals: value,
-                            current_package_uuid: package_uuid,
-                            current_part_uuid: part_uuid,
-                        },
-                        policy,
-                    },
-                    ScopedComponentReplacementPlanEdit {
-                        exclude_component_uuids: exclude_component,
-                        overrides,
-                    },
-                    &libraries,
-                )?;
-                Ok((render_output(&cli.format, &report), 0))
-            }
-        },
+        Commands::Query { action } => {
+            command_exec_query::execute_query_command(&cli.format, action)
+        }
         Commands::Drc { path } => {
             let report = run_drc(Path::new(&path))?;
             let output = match cli.format {
@@ -149,13 +38,8 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
             };
             Ok((render_output(&cli.format, &findings), exit_code))
         }
-        Commands::Check { path, fail_on } => {
-            let report = run_check(&path)?;
-            let output = match cli.format {
-                OutputFormat::Text => render_check_report_text(&report),
-                OutputFormat::Json => render_output(&cli.format, &report),
-            };
-            Ok((output, check_exit_code(&report, fail_on)))
+        Commands::Check { action } => {
+            command_exec_check::execute_check_command(&cli.format, action)
         }
         Commands::Pool { action } => match action {
             PoolCommands::Search { query, libraries } => {
@@ -163,6 +47,15 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
                 Ok((render_output(&cli.format, &results), 0))
             }
         },
+        Commands::Proposal { action } => {
+            command_exec_proposal::execute_proposal_command(&cli.format, action)
+        }
+        Commands::Journal { action } => {
+            command_exec_journal::execute_journal_command(&cli.format, action)
+        }
+        Commands::Artifact { action } => {
+            command_exec_artifact::execute_artifact_command(&cli.format, action)
+        }
         Commands::Project { action } => {
             let action = *action;
             if command_exec_inventory::is_inventory_command(&action) {

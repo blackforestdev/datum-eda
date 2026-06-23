@@ -105,7 +105,6 @@ fn run() -> Result<i32> {
 fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
     command_exec::execute_with_exit_code(cli)
 }
-
 #[derive(Debug, Clone, Serialize)]
 struct NativeProjectRulesView {
     domain: &'static str,

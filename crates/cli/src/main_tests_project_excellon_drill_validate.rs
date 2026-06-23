@@ -90,6 +90,19 @@ fn project_validate_excellon_drill_reports_match_and_mismatch() {
     assert_eq!(report["tools"][0]["tool"], "T01");
     assert_eq!(report["tools"][0]["diameter_mm"], "0.300000");
     assert_eq!(report["tools"][0]["hits"], 1);
+    assert_eq!(
+        report["production_projection"]["projection_contract"],
+        "datum.production_projection.excellon_drill.v1"
+    );
+    assert_eq!(
+        report["production_projection"]["byte_count"],
+        report["expected_bytes"]
+    );
+    assert!(
+        report["production_projection"]["sha256"]
+            .as_str()
+            .is_some_and(|hash| hash.starts_with("sha256:"))
+    );
 
     std::fs::write(&drill_path, "corrupted\n").expect("drill overwrite should succeed");
     let validate_cli = Cli::try_parse_from([

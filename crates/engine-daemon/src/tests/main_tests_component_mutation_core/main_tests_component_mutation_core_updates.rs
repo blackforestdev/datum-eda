@@ -75,6 +75,42 @@ fn rotate_component_dispatch_updates_component_rotation() {
 }
 
 #[test]
+fn flip_component_dispatch_updates_component_layer() {
+    let mut engine = Engine::new().expect("engine should initialize");
+    let fixture = kicad_fixture_path("partial-route-demo.kicad_pcb");
+    let open = JsonRpcRequest {
+        jsonrpc: "2.0".into(),
+        id: json!(1),
+        method: "open_project".into(),
+        params: serde_json::to_value(OpenProjectParams { path: fixture }).unwrap(),
+    };
+    let open_response = dispatch_request(&mut engine, open);
+    assert!(open_response.error.is_none(), "{open_response:?}");
+
+    let flip_component = JsonRpcRequest {
+        jsonrpc: "2.0".into(),
+        id: json!(2),
+        method: "flip_component".into(),
+        params: json!({
+            "uuid": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            "layer": 2
+        }),
+    };
+    let response = dispatch_request(&mut engine, flip_component);
+    assert!(response.error.is_none(), "{response:?}");
+    assert_eq!(
+        response.result.expect("result should exist")["diff"]["modified"][0]["object_type"],
+        "component"
+    );
+    let components = engine.get_components().expect("components should query");
+    let flipped = components
+        .iter()
+        .find(|component| component.reference == "R1")
+        .unwrap();
+    assert_eq!(flipped.layer, 2);
+}
+
+#[test]
 fn set_value_dispatch_updates_component_value() {
     let mut engine = Engine::new().expect("engine should initialize");
     let fixture = kicad_fixture_path("partial-route-demo.kicad_pcb");

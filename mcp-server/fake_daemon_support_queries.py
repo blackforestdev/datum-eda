@@ -6,7 +6,224 @@ from __future__ import annotations
 from server_runtime import JsonRpcResponse
 
 
+def _context_provenance(session: str | None, path: str | None, project_root: str | None) -> dict:
+    session_id = session or "session-test"
+    return {
+        "context_id": "context-test",
+        "session_id": session_id,
+        "provenance_seed": "datum-context:session-test:context-test:model-test",
+        "project_id": "project-test",
+        "project_root": project_root,
+        "model_revision": "model-test",
+        "source_revision": "model-test",
+        "actor_type": "ExternalAgent",
+        "context_path": path or "/tmp/context.json",
+        "event_log_path": "/tmp/native-project/.datum/tool-sessions/session-test.events.jsonl",
+    }
+
+
 class FakeDaemonClientQueriesMixin:
+    def datum_context_get(
+        self,
+        session: str | None = None,
+        path: str | None = None,
+        project_root: str | None = None,
+    ) -> JsonRpcResponse:
+        self.calls.append(("datum_context_get", session, path, project_root))
+        return JsonRpcResponse(
+            "2.0",
+            125,
+            {
+                "contract": "datum_terminal_context_v1",
+                "session_id": session or "session-test",
+                "context_id": "context-test",
+                "actor_type": "ExternalAgent",
+                "capabilities": ["read", "check", "artifact", "propose", "apply-approved"],
+                "project_root": project_root,
+                "discovery": path,
+                "visible_artifact_ids": [],
+                "visible_check_run_ids": [],
+                "provenance_seed": "datum-context:session-test:context-test:model-test",
+                "expires_at": None,
+            },
+            None,
+        )
+
+    def datum_context_refresh(
+        self,
+        session: str | None = None,
+        path: str | None = None,
+        project_root: str | None = None,
+    ) -> JsonRpcResponse:
+        self.calls.append(("datum_context_refresh", session, path, project_root))
+        return JsonRpcResponse(
+            "2.0",
+            126,
+            {
+                "contract": "datum_terminal_context_v1",
+                "session_id": session or "session-test",
+                "context_id": "context-test",
+                "actor_type": "ExternalAgent",
+                "capabilities": ["read", "check", "artifact", "propose", "apply-approved"],
+                "project_root": project_root,
+                "discovery": path,
+                "visible_artifact_ids": [],
+                "visible_check_run_ids": [],
+                "provenance_seed": "datum-context:session-test:context-test:model-test",
+                "expires_at": None,
+                "refreshed": True,
+            },
+            None,
+        )
+
+    def datum_context_session_events(
+        self,
+        session: str | None = None,
+        path: str | None = None,
+        project_root: str | None = None,
+        event_kind: str | None = None,
+        origin: str | None = None,
+        command_id: str | None = None,
+        execution_id: str | None = None,
+        limit: int | None = None,
+    ) -> JsonRpcResponse:
+        self.calls.append(("datum_context_session_events", session, path, project_root, event_kind, origin, command_id, execution_id, limit))
+        context_provenance = _context_provenance(session, path, project_root)
+        return JsonRpcResponse(
+            "2.0",
+            127,
+            {
+                "contract": "datum_tool_session_events_v1",
+                "session_id": session or "session-test",
+                "context_provenance": context_provenance,
+                "context_path": path or "/tmp/context.json",
+                "event_log_path": "/tmp/native-project/.datum/tool-sessions/session-test.events.jsonl",
+                "event_count": 1,
+                "total_event_count": 1,
+                "matched_event_count": 1,
+                "limit": limit,
+                "filters": {"event_kind": event_kind, "origin": origin, "command_id": command_id, "execution_id": execution_id},
+                "events": [
+                    {
+                        "event": "terminal_command_handoff",
+                        "schema_version": 1,
+                        "session_id": session or "session-test",
+                        "command_id": "datum.artifact.generate",
+                        "execution_id": execution_id or "exec-test",
+                        "mcp_alias": "datum.artifact.generate",
+                    }
+                ],
+                "project_root": project_root,
+            },
+            None,
+        )
+
+    def datum_context_session_activity(
+        self,
+        session: str | None = None,
+        path: str | None = None,
+        project_root: str | None = None,
+        event_kind: str | None = None,
+        origin: str | None = None,
+        command_id: str | None = None,
+        execution_id: str | None = None,
+        limit: int | None = None,
+    ) -> JsonRpcResponse:
+        self.calls.append(("datum_context_session_activity", session, path, project_root, event_kind, origin, command_id, execution_id, limit))
+        context_provenance = _context_provenance(session, path, project_root)
+        return JsonRpcResponse(
+            "2.0",
+            128,
+            {
+                "contract": "datum_tool_session_activity_summary_v1",
+                "session_id": session or "session-test",
+                "context_provenance": context_provenance,
+                "context_path": path or "/tmp/context.json",
+                "event_log_path": "/tmp/native-project/.datum/tool-sessions/session-test.events.jsonl",
+                "total_event_count": 4,
+                "matched_event_count": 4,
+                "activity_event_count": 4,
+                "first_occurred_unix_ms": 1,
+                "last_occurred_unix_ms": 4,
+                "filters": {"event_kind": event_kind, "origin": origin, "command_id": command_id, "execution_id": execution_id},
+                "limit": limit,
+                "event_kinds": {"terminal_command_handoff": 1},
+                "origins": {"production_terminal_command": 1},
+                "terminal_io": {
+                    "input_event_count": 1,
+                    "output_event_count": 1,
+                    "input_byte_count": 7,
+                    "output_byte_count": 12,
+                    "last_input_preview": "ls -al\r",
+                    "last_output_preview": "total 8\n",
+                },
+                "activity_spans": [
+                    {
+                        "span_id": "span-000001",
+                        "span_kind": "command",
+                        "session_id": session or "session-test",
+                        "start_occurred_unix_ms": 1,
+                        "end_occurred_unix_ms": 4,
+                        "event_count": 4,
+                        "event_kinds": {"terminal_command_handoff": 1, "terminal_command_lifecycle": 2, "terminal_io": 1},
+                        "execution_id": execution_id or "exec-test",
+                        "handoff": {
+                            "origin": "production_terminal_command",
+                            "command_id": "datum.artifact.generate",
+                            "execution_id": execution_id or "exec-test",
+                            "mcp_alias": "datum.artifact.generate",
+                            "handoff_mode": "execute",
+                            "command": "datum-eda artifact generate \"$DATUM_PROJECT_ROOT\" --output-job job-1",
+                            "context_provenance": context_provenance,
+                        },
+                        "terminal_io": {
+                            "input_event_count": 1,
+                            "output_event_count": 1,
+                            "input_byte_count": 7,
+                            "output_byte_count": 12,
+                            "last_input_preview": "ls -al\r",
+                            "last_output_preview": "total 8\n",
+                        },
+                        "lifecycle": None,
+                        "command_lifecycle": {
+                            "origin": "production_terminal_command",
+                            "command_id": "datum.artifact.generate",
+                            "execution_id": execution_id or "exec-test",
+                            "command": None,
+                            "lifecycle": "finished",
+                            "process_exit_code": 0,
+                        },
+                        "end_reason": "command_finished",
+                    }
+                ],
+                "executions": [{
+                    "execution_id": execution_id or "exec-test",
+                    "command_id": "datum.artifact.generate",
+                    "origin": "production_terminal_command",
+                    "command": "datum-eda artifact generate \"$DATUM_PROJECT_ROOT\" --output-job job-1",
+                    "event_count": 4,
+                    "event_kinds": {"terminal_command_handoff": 1, "terminal_command_lifecycle": 2, "terminal_io": 1},
+                    "start_occurred_unix_ms": 1,
+                    "end_occurred_unix_ms": 4,
+                    "duration_ms": 3,
+                    "lifecycle": "finished",
+                    "process_exit_code": 0,
+                    "context_provenance": context_provenance,
+                    "terminal_io": {
+                        "input_event_count": 1,
+                        "output_event_count": 1,
+                        "input_byte_count": 7,
+                        "output_byte_count": 12,
+                        "last_input_preview": "ls -al\r",
+                        "last_output_preview": "total 8\n",
+                    },
+                }],
+                "commands": [{"command_id": "datum.artifact.generate", "mcp_alias": "datum.artifact.generate", "origin": "production_terminal_command", "handoff_mode": "execute", "count": 1, "last_execution_id": execution_id or "exec-test", "last_occurred_unix_ms": 1}],
+                "project_root": project_root,
+            },
+            None,
+        )
+
     def validate_project(self, path: str) -> JsonRpcResponse:
         self.calls.append(("validate_project", path))
         return JsonRpcResponse(
@@ -23,6 +240,895 @@ class FakeDaemonClientQueriesMixin:
                 "checked_definition_files": 0,
                 "issue_count": 0,
                 "issues": [],
+            },
+            None,
+        )
+
+    def get_output_jobs(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_output_jobs", path))
+        return JsonRpcResponse(
+            "2.0",
+            124,
+            {
+                "action": "output_jobs",
+                "project_root": path,
+                "output_job_count": 1,
+                "output_jobs": [{"id": "gerber-set-default", "kind": "gerber_set"}],
+            },
+            None,
+        )
+
+    def get_panel_projections(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_panel_projections", path))
+        return JsonRpcResponse(
+            "2.0",
+            126,
+            {
+                "action": "panel_projections",
+                "project_root": path,
+                "panel_projection_count": 1,
+                "panel_projections": [{"key": "main-panel", "name": "Main Panel"}],
+            },
+            None,
+        )
+
+    def create_panel_projection(
+        self,
+        path: str,
+        key: str,
+        name: str | None,
+        board: str | None,
+        x_nm: int | None,
+        y_nm: int | None,
+        rotation_deg: int | None,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "create_panel_projection",
+                {
+                    "path": path,
+                    "key": key,
+                    "name": name,
+                    "board": board,
+                    "x_nm": x_nm,
+                    "y_nm": y_nm,
+                    "rotation_deg": rotation_deg,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            127,
+            {
+                "action": "create_panel_projection",
+                "project_root": path,
+                "panel_projection": {"key": key, "name": name},
+            },
+            None,
+        )
+
+    def create_panel_projection_proposal(
+        self, path: str, key: str, name: str | None, board: str | None, x_nm: int | None, y_nm: int | None, rotation_deg: int | None, proposal: str | None = None, rationale: str | None = None
+    ) -> JsonRpcResponse:
+        self.calls.append(("create_panel_projection_proposal", {"path": path, "key": key, "proposal": proposal, "rationale": rationale}))
+        return JsonRpcResponse("2.0", 137, {"contract": "proposal_create_v1", "action": "propose_create_panel_projection", "project_root": path, "proposal_id": proposal or "proposal-panel-create-test", "panel_projection": {"key": key}}, None)
+
+    def delete_panel_projection(self, path: str, panel_projection: str) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "delete_panel_projection",
+                {"path": path, "panel_projection": panel_projection},
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            134,
+            {
+                "action": "delete_panel_projection",
+                "project_root": path,
+                "panel_projection": {"id": panel_projection},
+                "created": False,
+            },
+            None,
+        )
+
+    def delete_panel_projection_proposal(self, path: str, panel_projection: str, proposal: str | None = None, rationale: str | None = None) -> JsonRpcResponse:
+        self.calls.append(("delete_panel_projection_proposal", {"path": path, "panel_projection": panel_projection, "proposal": proposal, "rationale": rationale}))
+        return JsonRpcResponse("2.0", 138, {"contract": "proposal_create_v1", "action": "propose_delete_panel_projection", "project_root": path, "proposal_id": proposal or "proposal-panel-delete-test", "panel_projection": {"id": panel_projection}}, None)
+
+    def update_panel_projection(
+        self,
+        path: str,
+        panel_projection: str,
+        name: str | None,
+        board: str | None,
+        x_nm: int | None,
+        y_nm: int | None,
+        rotation_deg: int | None,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "update_panel_projection",
+                {
+                    "path": path,
+                    "panel_projection": panel_projection,
+                    "name": name,
+                    "board": board,
+                    "x_nm": x_nm,
+                    "y_nm": y_nm,
+                    "rotation_deg": rotation_deg,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            135,
+            {
+                "action": "update_panel_projection",
+                "project_root": path,
+                "panel_projection": {"id": panel_projection, "name": name},
+                "created": False,
+            },
+            None,
+        )
+
+    def update_panel_projection_proposal(
+        self, path: str, panel_projection: str, name: str | None, board: str | None, x_nm: int | None, y_nm: int | None, rotation_deg: int | None, proposal: str | None = None, rationale: str | None = None
+    ) -> JsonRpcResponse:
+        self.calls.append(("update_panel_projection_proposal", {"path": path, "panel_projection": panel_projection, "proposal": proposal, "rationale": rationale}))
+        return JsonRpcResponse("2.0", 139, {"contract": "proposal_create_v1", "action": "propose_update_panel_projection", "project_root": path, "proposal_id": proposal or "proposal-panel-update-test", "panel_projection": {"id": panel_projection}}, None)
+
+    def get_manufacturing_plans(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_manufacturing_plans", path))
+        return JsonRpcResponse(
+            "2.0",
+            128,
+            {
+                "action": "manufacturing_plans",
+                "project_root": path,
+                "manufacturing_plan_count": 1,
+                "manufacturing_plans": [{"prefix": "fab/doa2526", "name": "Fab"}],
+            },
+            None,
+        )
+
+    def create_manufacturing_plan(
+        self,
+        path: str,
+        prefix: str,
+        name: str | None,
+        variant: str | None,
+        panel_projection: str | None,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "create_manufacturing_plan",
+                {
+                    "path": path,
+                    "prefix": prefix,
+                    "name": name,
+                    "variant": variant,
+                    "panel_projection": panel_projection,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            129,
+            {
+                "action": "create_manufacturing_plan",
+                "project_root": path,
+                "manufacturing_plan": {
+                    "prefix": prefix,
+                    "name": name,
+                    "panel_projection": panel_projection,
+                },
+            },
+            None,
+        )
+
+    def create_manufacturing_plan_proposal(
+        self, path: str, prefix: str, name: str | None, variant: str | None, panel_projection: str | None, proposal: str | None = None, rationale: str | None = None
+    ) -> JsonRpcResponse:
+        self.calls.append(("create_manufacturing_plan_proposal", {"path": path, "prefix": prefix, "proposal": proposal, "rationale": rationale}))
+        return JsonRpcResponse("2.0", 140, {"contract": "proposal_create_v1", "action": "propose_create_manufacturing_plan", "project_root": path, "proposal_id": proposal or "proposal-plan-create-test", "manufacturing_plan": {"prefix": prefix}}, None)
+
+    def delete_manufacturing_plan(self, path: str, manufacturing_plan: str) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "delete_manufacturing_plan",
+                {"path": path, "manufacturing_plan": manufacturing_plan},
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            133,
+            {
+                "action": "delete_manufacturing_plan",
+                "project_root": path,
+                "manufacturing_plan": {"id": manufacturing_plan},
+                "created": False,
+            },
+            None,
+        )
+
+    def delete_manufacturing_plan_proposal(self, path: str, manufacturing_plan: str, proposal: str | None = None, rationale: str | None = None) -> JsonRpcResponse:
+        self.calls.append(("delete_manufacturing_plan_proposal", {"path": path, "manufacturing_plan": manufacturing_plan, "proposal": proposal, "rationale": rationale}))
+        return JsonRpcResponse("2.0", 141, {"contract": "proposal_create_v1", "action": "propose_delete_manufacturing_plan", "project_root": path, "proposal_id": proposal or "proposal-plan-delete-test", "manufacturing_plan": {"id": manufacturing_plan}}, None)
+
+    def update_manufacturing_plan(
+        self,
+        path: str,
+        manufacturing_plan: str,
+        name: str | None,
+        prefix: str | None,
+        variant: str | None,
+        clear_variant: bool | None,
+        panel_projection: str | None,
+        clear_panel_projection: bool | None,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "update_manufacturing_plan",
+                {
+                    "path": path,
+                    "manufacturing_plan": manufacturing_plan,
+                    "name": name,
+                    "prefix": prefix,
+                    "variant": variant,
+                    "clear_variant": clear_variant,
+                    "panel_projection": panel_projection,
+                    "clear_panel_projection": clear_panel_projection,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            136,
+            {
+                "action": "update_manufacturing_plan",
+                "project_root": path,
+                "manufacturing_plan": {"id": manufacturing_plan, "prefix": prefix},
+                "created": False,
+            },
+            None,
+        )
+
+    def update_manufacturing_plan_proposal(
+        self, path: str, manufacturing_plan: str, name: str | None, prefix: str | None, variant: str | None, clear_variant: bool | None, panel_projection: str | None, clear_panel_projection: bool | None, proposal: str | None = None, rationale: str | None = None
+    ) -> JsonRpcResponse:
+        self.calls.append(("update_manufacturing_plan_proposal", {"path": path, "manufacturing_plan": manufacturing_plan, "proposal": proposal, "rationale": rationale}))
+        return JsonRpcResponse("2.0", 142, {"contract": "proposal_create_v1", "action": "propose_update_manufacturing_plan", "project_root": path, "proposal_id": proposal or "proposal-plan-update-test", "manufacturing_plan": {"id": manufacturing_plan}}, None)
+
+    def create_gerber_output_job(
+        self,
+        path: str,
+        prefix: str,
+        name: str | None,
+        manufacturing_plan: str | None,
+        output_dir: str | None = None,
+        variant: str | None = None,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "create_gerber_output_job",
+                {
+                    "path": path,
+                    "prefix": prefix,
+                    "name": name,
+                    "manufacturing_plan": manufacturing_plan,
+                    "output_dir": output_dir,
+                    **({"variant": variant} if variant is not None else {}),
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            125,
+            {
+                "action": "create_gerber_output_job",
+                "project_root": path,
+                "output_job": {
+                    "id": "gerber-set-default",
+                    "prefix": prefix,
+                    "manufacturing_plan": manufacturing_plan,
+                    "output_dir": output_dir,
+                    **({"variant": variant} if variant is not None else {}),
+                },
+            },
+            None,
+        )
+
+    def create_output_job(
+        self,
+        path: str,
+        prefix: str,
+        include: str,
+        name: str | None,
+        manufacturing_plan: str | None,
+        output_dir: str | None = None,
+        variant: str | None = None,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "create_output_job",
+                {
+                    "path": path,
+                    "prefix": prefix,
+                    "include": include,
+                    "name": name,
+                    "manufacturing_plan": manufacturing_plan,
+                    "output_dir": output_dir,
+                    **({"variant": variant} if variant is not None else {}),
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            126,
+            {
+                "action": "create_output_job",
+                "project_root": path,
+                "output_job": {
+                    "id": f"{include}-default",
+                    "prefix": prefix,
+                    "include": [include.replace("-", "_")],
+                    "manufacturing_plan": manufacturing_plan,
+                    "output_dir": output_dir,
+                    **({"variant": variant} if variant is not None else {}),
+                },
+            },
+            None,
+        )
+
+    def create_output_job_proposal(
+        self,
+        path: str,
+        prefix: str,
+        include: str,
+        name: str | None,
+        manufacturing_plan: str | None,
+        output_dir: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+        variant: str | None = None,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "create_output_job_proposal",
+                {
+                    "path": path,
+                    "prefix": prefix,
+                    "include": include,
+                    "name": name,
+                    "manufacturing_plan": manufacturing_plan,
+                    "output_dir": output_dir,
+                    **({"variant": variant} if variant is not None else {}),
+                    "proposal": proposal,
+                    "rationale": rationale,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            127,
+            {
+                "contract": "proposal_create_v1",
+                "action": "propose_create_output_job",
+                "project_root": path,
+                "proposal_id": proposal or "proposal-output-job-create-test",
+                "output_job": {"id": f"{include}-default", "prefix": prefix, "variant": variant},
+            },
+            None,
+        )
+
+    def update_output_job(
+        self,
+        path: str,
+        output_job: str,
+        name: str | None,
+        output_dir: str | None,
+        manufacturing_plan: str | None,
+        clear_manufacturing_plan: bool | None,
+        clear_output_dir: bool | None = None,
+        variant: str | None = None,
+        clear_variant: bool | None = None,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "update_output_job",
+                {
+                    "path": path,
+                    "output_job": output_job,
+                    "name": name,
+                    "manufacturing_plan": manufacturing_plan,
+                    "clear_manufacturing_plan": clear_manufacturing_plan,
+                    "output_dir": output_dir,
+                    "clear_output_dir": clear_output_dir,
+                    **({"variant": variant} if variant is not None else {}),
+                    **({"clear_variant": clear_variant} if clear_variant is not None else {}),
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            132,
+            {
+                "action": "update_output_job",
+                "project_root": path,
+                "output_job": {
+                    "id": output_job,
+                    "name": name,
+                    "manufacturing_plan": manufacturing_plan,
+                    "variant": variant,
+                },
+                "created": False,
+            },
+            None,
+        )
+
+    def update_output_job_proposal(
+        self,
+        path: str,
+        output_job: str,
+        name: str | None,
+        output_dir: str | None,
+        manufacturing_plan: str | None,
+        clear_manufacturing_plan: bool | None,
+        clear_output_dir: bool | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+        variant: str | None = None,
+        clear_variant: bool | None = None,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "update_output_job_proposal",
+                {
+                    "path": path,
+                    "output_job": output_job,
+                    "name": name,
+                    "manufacturing_plan": manufacturing_plan,
+                    "clear_manufacturing_plan": clear_manufacturing_plan,
+                    "output_dir": output_dir,
+                    "clear_output_dir": clear_output_dir,
+                    **({"variant": variant} if variant is not None else {}),
+                    **({"clear_variant": clear_variant} if clear_variant is not None else {}),
+                    "proposal": proposal,
+                    "rationale": rationale,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            133,
+            {
+                "contract": "proposal_create_v1",
+                "action": "propose_update_output_job",
+                "project_root": path,
+                "proposal_id": proposal or "proposal-output-job-test",
+                "output_job": {"id": output_job, "name": name, "variant": variant},
+            },
+            None,
+        )
+
+    def delete_output_job_proposal(
+        self,
+        path: str,
+        output_job: str,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "delete_output_job_proposal",
+                {
+                    "path": path,
+                    "output_job": output_job,
+                    "proposal": proposal,
+                    "rationale": rationale,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            134,
+            {
+                "contract": "proposal_create_v1",
+                "action": "propose_delete_output_job",
+                "project_root": path,
+                "proposal_id": proposal or "proposal-output-job-delete-test",
+                "output_job": {"id": output_job},
+            },
+            None,
+        )
+
+    def run_output_job(
+        self, path: str, output_job: str, output_dir: str | None = None
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "run_output_job",
+                {
+                    "path": path,
+                    "output_job": output_job,
+                    "output_dir": output_dir,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            132,
+            {
+                "contract": "output_job_run_v1",
+                "action": "run_output_job",
+                "project_root": path,
+                "output_job": {"id": output_job},
+                "output_dir": output_dir,
+                "artifact_report": {"generated_count": 1},
+            },
+            None,
+        )
+
+    def start_output_job_run(self, path: str, output_job: str) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "start_output_job_run",
+                {
+                    "path": path,
+                    "output_job": output_job,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            132,
+            {
+                "contract": "output_job_run_lifecycle_v1",
+                "action": "start_output_job_run",
+                "project_root": path,
+                "output_job": {"id": output_job},
+                "output_job_run": {"run_id": "run-test", "status": "running"},
+            },
+            None,
+        )
+
+    def cancel_output_job_run(self, path: str, run: str) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "cancel_output_job_run",
+                {
+                    "path": path,
+                    "run": run,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            132,
+            {
+                "contract": "output_job_run_lifecycle_v1",
+                "action": "cancel_output_job_run",
+                "project_root": path,
+                "output_job_run": {"run_id": run, "status": "canceled"},
+            },
+            None,
+        )
+
+    def delete_output_job(self, path: str, output_job: str) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "delete_output_job",
+                {
+                    "path": path,
+                    "output_job": output_job,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            133,
+            {
+                "action": "delete_output_job",
+                "project_root": path,
+                "output_job": {
+                    "id": output_job,
+                },
+                "created": False,
+            },
+            None,
+        )
+
+    def generate_artifacts(
+        self,
+        path: str,
+        output_dir: str | None,
+        include: str | None,
+        prefix: str | None,
+        output_job: str | None = None,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "generate_artifacts",
+                {
+                    "path": path,
+                    "output_dir": output_dir,
+                    "include": include,
+                    "prefix": prefix,
+                    "output_job": output_job,
+                },
+            )
+        )
+        if output_job is not None:
+            return JsonRpcResponse(
+                "2.0",
+                138,
+                {
+                    "contract": "output_job_run_v1",
+                    "action": "run_output_job",
+                    "project_root": path,
+                    "output_job": {"id": output_job},
+                    "status": "succeeded",
+                    "exit_code": 0,
+                },
+                None,
+            )
+        return JsonRpcResponse(
+            "2.0",
+            138,
+            {
+                "contract": "artifact_generate_v1",
+                "action": "generate_artifacts",
+                "project_root": path,
+                "project_id": "project-test",
+                "model_revision": "model-test",
+                "output_dir": output_dir,
+                "include": include.split(",") if include else [],
+                "generated_count": 1,
+                "generated": [
+                    {
+                        "include": include.split(",")[0],
+                        "artifact_id": "artifact-test",
+                        "kind": "gerber_set",
+                        "project_id": "project-test",
+                        "model_revision": "model-test",
+                        "output_job": "output-job-test",
+                        "variant": "variant-test",
+                        "generator_version": "datum-test",
+                        "file_count": 4,
+                        "report": {
+                            "artifact_metadata": {
+                                "artifact_id": "artifact-test",
+                                "kind": "gerber_set",
+                                "project_id": "project-test",
+                                "model_revision": "model-test",
+                                "output_job": "output-job-test",
+                                "variant": "variant-test",
+                                "generator_version": "datum-test",
+                                "output_dir": output_dir,
+                                "validation_state": "not_validated",
+                                "files": [
+                                    {
+                                        "path": "fabrication/board-F_Cu.gbr",
+                                        "sha256": "sha256:abc123",
+                                    }
+                                ],
+                            }
+                        },
+                    }
+                ],
+            },
+            None,
+        )
+
+    def get_artifacts(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_artifacts", path))
+        return JsonRpcResponse(
+            "2.0",
+            134,
+            {
+                "action": "artifact_metadata_list",
+                "contract": "datum.artifact_metadata_list.v1",
+                "project_root": path,
+                "project_id": "project-test",
+                "model_revision": "model-test",
+                "artifact_count": 1,
+                "artifacts": [
+                    {
+                        "artifact_id": "artifact-test",
+                        "kind": "manufacturing_set",
+                        "project_id": "project-test",
+                        "model_revision": "model-test",
+                        "generator_version": "datum-test",
+                        "output_dir": "/tmp/fab",
+                        "validation_state": "valid",
+                        "files": [{"path": "fab/doa2526.gbr", "sha256": "sha256-test"}],
+                    }
+                ],
+                "artifact_run_count": 1,
+                "artifact_runs": [{"artifact_id": "artifact-test", "status": "succeeded"}],
+            },
+            None,
+        )
+
+    def show_artifact(self, path: str, artifact: str) -> JsonRpcResponse:
+        self.calls.append(("show_artifact", {"path": path, "artifact": artifact}))
+        return JsonRpcResponse(
+            "2.0",
+            135,
+            {
+                "contract": "artifact_metadata_v1",
+                "project_root": path,
+                "artifact": {
+                    "artifact_id": artifact,
+                    "kind": "manufacturing_set",
+                    "project_id": "project-test",
+                    "model_revision": "model-test",
+                    "generator_version": "datum-test",
+                    "output_dir": "/tmp/fab",
+                    "validation_state": "valid",
+                    "files": [{"path": "fab/doa2526.gbr", "sha256": "sha256-test"}],
+                },
+                "run_count": 1,
+                "latest_run": {"artifact_id": artifact, "status": "succeeded"},
+                "runs": [{"artifact_id": artifact, "status": "succeeded"}],
+            },
+            None,
+        )
+
+    def get_artifact_files(self, path: str, artifact: str) -> JsonRpcResponse:
+        self.calls.append(("get_artifact_files", {"path": path, "artifact": artifact}))
+        return JsonRpcResponse(
+            "2.0",
+            139,
+            {
+                "contract": "artifact_files_v1",
+                "project_root": path,
+                "project_id": "project-test",
+                "model_revision": "model-test",
+                "artifact_id": artifact,
+                "kind": "manufacturing_set",
+                "output_dir": "/tmp/fab",
+                "generator_version": "datum-test",
+                "validation_state": "valid",
+                "file_count": 1,
+                "files": [{"path": "fab/doa2526.gbr", "sha256": "sha256-test"}],
+                "production_projection_count": 1,
+                "production_projections": [
+                    {
+                        "projection_kind": "gerber_copper",
+                        "projection_contract": "gerber_copper_projection_v1",
+                        "model_revision": "model-test",
+                        "byte_count": 42,
+                        "sha256": "projection-sha256-test",
+                    }
+                ],
+            },
+            None,
+        )
+
+    def preview_artifact_file(
+        self, path: str, artifact: str, artifact_dir: str | None, file: str
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "preview_artifact_file",
+                {
+                    "path": path,
+                    "artifact": artifact,
+                    "artifact_dir": artifact_dir,
+                    "file": file,
+                },
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            140,
+            {
+                "contract": "artifact_file_preview_v1",
+                "project_root": path,
+                "artifact_id": artifact,
+                "file": file,
+                "file_path": f"{artifact_dir or '/tmp/fab'}/{file}",
+                "hash_matches_metadata": True,
+                "preview_kind": "gerber_rs274x",
+                "preview_available": True,
+                "inspection": {"geometry_count": 1},
+            },
+            None,
+        )
+
+    def compare_artifacts(self, path: str, before: str, after: str) -> JsonRpcResponse:
+        self.calls.append(
+            ("compare_artifacts", {"path": path, "before": before, "after": after})
+        )
+        return JsonRpcResponse(
+            "2.0",
+            136,
+            {
+                "contract": "artifact_metadata_compare_v1",
+                "project_root": path,
+                "before_artifact_id": before,
+                "after_artifact_id": after,
+                "equivalent": False,
+                "files_equal": False,
+            },
+            None,
+        )
+
+    def validate_artifact(self, path: str, artifact: str) -> JsonRpcResponse:
+        self.calls.append(("validate_artifact", {"path": path, "artifact": artifact}))
+        return JsonRpcResponse(
+            "2.0",
+            137,
+            {
+                "contract": "artifact_metadata_validation_v1",
+                "project_root": path,
+                "artifact_id": artifact,
+                "valid": True,
+                "validation_state": "valid",
+            },
+            None,
+        )
+
+    def export_manufacturing_set(
+        self, path: str, output_dir: str, prefix: str | None
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "export_manufacturing_set",
+                {"path": path, "output_dir": output_dir, "prefix": prefix},
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            130,
+            {
+                "action": "export_manufacturing_set",
+                "project_root": path,
+                "project_id": "project-test",
+                "model_revision": "model-test",
+                "output_dir": output_dir,
+                "prefix": prefix,
+                "artifact_manifest_path": f"{output_dir}/datum-artifact-manifest.json",
+                "artifact_metadata": {
+                    "artifact_id": "artifact-test",
+                    "kind": "manufacturing_set",
+                    "project_id": "project-test",
+                    "model_revision": "model-test",
+                    "generator_version": "datum-test",
+                    "output_dir": output_dir,
+                    "file_count": 4,
+                },
+                "output_job_run": {
+                    "output_job_kind": "manufacturing_set",
+                    "status": "succeeded",
+                },
+            },
+            None,
+        )
+
+    def validate_manufacturing_set(
+        self, path: str, output_dir: str, prefix: str | None
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "validate_manufacturing_set",
+                {"path": path, "output_dir": output_dir, "prefix": prefix},
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            131,
+            {
+                "action": "validate_manufacturing_set",
+                "project_root": path,
+                "output_dir": output_dir,
+                "prefix": prefix,
+                "valid": True,
+                "artifact_validation_state": "valid",
+                "artifact_file_hash_mismatch_count": 0,
+                "artifact_manifest_path": f"{output_dir}/datum-artifact-manifest.json",
             },
             None,
         )
@@ -80,6 +1186,79 @@ class FakeDaemonClientQueriesMixin:
             },
             None,
         )
+
+    def get_schematic_wires(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_schematic_wires", path))
+        return JsonRpcResponse("2.0", 212, [{"uuid": "wire-test", "from": {"x": 1, "y": 2}, "to": {"x": 3, "y": 4}}], None)
+
+    def get_schematic_junctions(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_schematic_junctions", path))
+        return JsonRpcResponse("2.0", 214, [{"uuid": "junction-test", "position": {"x": 1, "y": 2}}], None)
+
+    def get_schematic_labels(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_schematic_labels", path))
+        return JsonRpcResponse("2.0", 217, [{"uuid": "label-test", "name": "VIN", "kind": "Global", "position": {"x": 1, "y": 2}}], None)
+
+    def get_schematic_ports(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_schematic_ports", path))
+        return JsonRpcResponse("2.0", 218, [{"uuid": "port-test", "name": "SUB_IN", "direction": "Input", "position": {"x": 1, "y": 2}}], None)
+
+    def get_schematic_noconnects(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_schematic_noconnects", path))
+        return JsonRpcResponse("2.0", 219, [{"uuid": "noconnect-test", "symbol": "symbol-test", "pin": "pin-test", "position": {"x": 1, "y": 2}}], None)
+
+    def get_schematic_buses(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_schematic_buses", path))
+        return JsonRpcResponse("2.0", 220, [{"uuid": "bus-test", "name": "DATA", "members": ["DATA0", "DATA1"]}], None)
+
+    def get_schematic_bus_entries(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_schematic_bus_entries", path))
+        return JsonRpcResponse("2.0", 221, [{"uuid": "bus-entry-test", "bus": "bus-test", "wire": "wire-test", "position": {"x": 1, "y": 2}}], None)
+
+    def get_schematic_texts(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_schematic_texts", path))
+        return JsonRpcResponse("2.0", 222, [{"uuid": "text-test", "text": "note", "position": {"x": 1, "y": 2}, "rotation": 90}], None)
+
+    def get_schematic_drawings(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_schematic_drawings", path))
+        return JsonRpcResponse("2.0", 223, [{"uuid": "drawing-test", "kind": "line", "from": {"x": 1, "y": 2}, "to": {"x": 3, "y": 4}}], None)
+
+    def get_board_tracks(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_board_tracks", path))
+        return JsonRpcResponse("2.0", 213, [{"uuid": "track-test", "net": "net-test", "from": {"x": 1, "y": 2}, "to": {"x": 3, "y": 4}, "width": 5, "layer": 1}], None)
+
+    def get_board_vias(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_board_vias", path))
+        return JsonRpcResponse("2.0", 215, [{"uuid": "via-test", "net": "net-test", "position": {"x": 1, "y": 2}, "drill": 3, "diameter": 4, "from_layer": 1, "to_layer": 2}], None)
+
+    def get_board_pads(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_board_pads", path))
+        return JsonRpcResponse("2.0", 216, [{"uuid": "pad-test", "package": "package-test", "name": "1", "position": {"x": 1, "y": 2}, "layer": 1}], None)
+
+    def get_board_zones(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_board_zones", path))
+        return JsonRpcResponse("2.0", 224, [{"uuid": "zone-test", "net": "net-test", "polygon": {"vertices": [{"x": 0, "y": 0}, {"x": 1, "y": 0}, {"x": 1, "y": 1}], "closed": True}, "layer": 1}], None)
+    def get_board_texts(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_board_texts", path))
+        return JsonRpcResponse("2.0", 225, [{"uuid": "board-text-test", "text": "REF**", "position": {"x": 1, "y": 2}, "layer": 1}], None)
+    def get_board_keepouts(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_board_keepouts", path))
+        return JsonRpcResponse("2.0", 226, [{"uuid": "keepout-test", "kind": "copper", "layers": [1], "polygon": {"vertices": [{"x": 0, "y": 0}, {"x": 1, "y": 0}, {"x": 1, "y": 1}], "closed": True}}], None)
+    def get_board_outline(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_board_outline", path))
+        return JsonRpcResponse("2.0", 227, {"vertices": [{"x": 0, "y": 0}, {"x": 1, "y": 0}, {"x": 1, "y": 1}], "closed": True}, None)
+    def get_board_stackup(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_board_stackup", path))
+        return JsonRpcResponse("2.0", 228, [{"id": 1, "name": "Top", "layer_type": "Copper", "thickness_nm": 35000}], None)
+    def get_board_dimensions(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_board_dimensions", path))
+        return JsonRpcResponse("2.0", 229, [{"uuid": "dimension-test", "from": {"x": 0, "y": 0}, "to": {"x": 1, "y": 1}, "layer": 41}], None)
+    def get_board_nets(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_board_nets", path))
+        return JsonRpcResponse("2.0", 230, [{"uuid": "net-test", "name": "GND", "class": "class-test"}], None)
+    def get_board_net_classes(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_board_net_classes", path))
+        return JsonRpcResponse("2.0", 231, [{"uuid": "class-test", "name": "Default", "clearance": 150000}], None)
 
     def get_sheets(self) -> JsonRpcResponse:
         self.calls.append(("get_sheets", None))
@@ -255,6 +1434,25 @@ class FakeDaemonClientQueriesMixin:
             28,
             {
                 "instances": [{"name": "child"}],
+                "links": [],
+            },
+            None,
+        )
+
+    def get_project_hierarchy(self, path: str | None = None) -> JsonRpcResponse:
+        self.calls.append(("get_project_hierarchy", path))
+        return JsonRpcResponse(
+            "2.0",
+            2801,
+            {
+                "instances": [
+                    {
+                        "uuid": "instance-1",
+                        "definition": "definition-1",
+                        "parent_sheet": "sheet-1",
+                        "name": "Main Instance",
+                    }
+                ],
                 "links": [],
             },
             None,
@@ -627,6 +1825,11 @@ class FakeDaemonClientQueriesMixin:
             {
                 "action": "write_route_strategy_curated_fixture_suite",
                 "suite_id": "m6_route_strategy_curated_fixture_suite_v1",
+                "authoring_boundary": "generated_fixture_only",
+                "write_path_policy": (
+                    "direct project-shard writes are restricted to deterministic "
+                    "regression fixture generation"
+                ),
                 "out_dir": out_dir,
                 "requests_manifest_path": manifest
                 or f"{out_dir}/route-strategy-batch-requests.json",
@@ -679,6 +1882,11 @@ class FakeDaemonClientQueriesMixin:
             {
                 "action": "capture_route_strategy_curated_baseline",
                 "suite_id": "m6_route_strategy_curated_fixture_suite_v1",
+                "authoring_boundary": "generated_fixture_only",
+                "write_path_policy": (
+                    "direct project-shard writes are restricted to deterministic "
+                    "regression fixture generation"
+                ),
                 "out_dir": out_dir,
                 "requests_manifest_path": manifest
                 or f"{out_dir}/route-strategy-batch-requests.json",

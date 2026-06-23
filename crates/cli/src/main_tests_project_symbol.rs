@@ -56,6 +56,26 @@ fn seed_native_sheet(root: &Path) -> Uuid {
     sheet_uuid
 }
 
+fn assert_symbol_journal_transaction(root: &Path, index: usize, reason: &str, operations: u64) {
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "journal-list",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("journal-list should succeed");
+    let journal: serde_json::Value =
+        serde_json::from_str(&output).expect("journal-list JSON should parse");
+    assert_eq!(journal["transactions"][index]["reason"], reason);
+    assert_eq!(journal["transactions"][index]["operations"], operations);
+}
+
 #[test]
 fn project_place_symbol_updates_native_query_surface() {
     let root = unique_project_root("datum-eda-cli-project-symbol");
@@ -91,6 +111,7 @@ fn project_place_symbol_updates_native_query_surface() {
     let placed: serde_json::Value =
         serde_json::from_str(&place_output).expect("place-symbol JSON should parse");
     let symbol_uuid = placed["symbol_uuid"].as_str().unwrap().to_string();
+    assert_symbol_journal_transaction(&root, 0, "place schematic symbol", 1);
     assert_eq!(placed["reference"], "U1");
     assert_eq!(placed["value"], "LM358");
     assert_eq!(placed["lib_id"], "device:opamp");
@@ -180,6 +201,7 @@ fn project_move_rotate_and_delete_symbol_update_native_query_surface() {
     assert!(move_output.contains("action: move_symbol"));
     assert!(move_output.contains("x_nm: 300"));
     assert!(move_output.contains("y_nm: 400"));
+    assert_symbol_journal_transaction(&root, 1, "move schematic symbol", 1);
 
     let rotate_cli = Cli::try_parse_from([
         "eda",
@@ -195,6 +217,24 @@ fn project_move_rotate_and_delete_symbol_update_native_query_surface() {
     let rotate_output = execute(rotate_cli).expect("project rotate-symbol should succeed");
     assert!(rotate_output.contains("action: rotate_symbol"));
     assert!(rotate_output.contains("rotation_deg: 180"));
+    assert_symbol_journal_transaction(&root, 2, "rotate schematic symbol", 1);
+
+    let sheet_path = root
+        .join("schematic/sheets")
+        .join(format!("{sheet_uuid}.json"));
+    let mut stale_sheet: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(&sheet_path).expect("sheet should read after symbol rotate"),
+    )
+    .expect("sheet should parse after symbol rotate");
+    stale_sheet["symbols"] = serde_json::json!({});
+    std::fs::write(
+        &sheet_path,
+        format!(
+            "{}\n",
+            to_json_deterministic(&stale_sheet).expect("sheet JSON should serialize")
+        ),
+    )
+    .expect("stale promoted sheet should write");
 
     let query_cli = Cli::try_parse_from([
         "eda",
@@ -229,6 +269,7 @@ fn project_move_rotate_and_delete_symbol_update_native_query_surface() {
     let delete_output = execute(delete_cli).expect("project delete-symbol should succeed");
     assert!(delete_output.contains("action: delete_symbol"));
     assert!(delete_output.contains("reference: R1"));
+    assert_symbol_journal_transaction(&root, 3, "delete schematic symbol", 1);
 
     let query_cli = Cli::try_parse_from([
         "eda",

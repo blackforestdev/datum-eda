@@ -1,3 +1,4 @@
+use super::main_tests_project_journal_support::assert_journal_transaction;
 use super::*;
 use eda_engine::ir::serialization::to_json_deterministic;
 
@@ -100,12 +101,26 @@ fn project_place_and_delete_junction_update_native_query_surface() {
     assert_eq!(junctions[0]["uuid"], junction_uuid);
     assert_eq!(junctions[0]["position"]["x"], 50);
     assert_eq!(junctions[0]["position"]["y"], 60);
+    assert_journal_transaction(&root, "place schematic junction", 1);
 
     let summary_cli =
         Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
             .expect("CLI should parse");
     let summary_output = execute(summary_cli).expect("project query summary should succeed");
     assert!(summary_output.contains("schematic_junctions: 1"));
+    let sheet_path = PathBuf::from(placed["sheet_path"].as_str().unwrap());
+    let mut stale_sheet: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&sheet_path).expect("sheet should read"))
+            .expect("sheet should parse");
+    stale_sheet["junctions"] = serde_json::json!({});
+    std::fs::write(
+        &sheet_path,
+        format!(
+            "{}\n",
+            to_json_deterministic(&stale_sheet).expect("sheet should serialize")
+        ),
+    )
+    .expect("stale sheet should write");
 
     let delete_cli = Cli::try_parse_from([
         "eda",

@@ -19,6 +19,23 @@ fn board_vias_query_cli(root: &Path) -> Cli {
     .expect("CLI should parse")
 }
 
+fn journal_list(root: &Path) -> serde_json::Value {
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "journal-list",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("journal-list should succeed");
+    serde_json::from_str(&output).expect("journal-list JSON should parse")
+}
+
 #[test]
 fn project_board_via_mutations_round_trip_through_native_query() {
     let root = unique_project_root("datum-eda-cli-project-board-via");
@@ -106,6 +123,77 @@ fn project_board_via_mutations_round_trip_through_native_query() {
     assert_eq!(vias[0].diameter, 600000);
     assert_eq!(vias[0].from_layer, 1);
     assert_eq!(vias[0].to_layer, 2);
+    let journal = journal_list(&root);
+    assert_eq!(journal["transactions"][2]["reason"], "place board via");
+
+    let edit_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "edit-board-via",
+        root.to_str().unwrap(),
+        "--via",
+        &via_uuid,
+        "--x-nm",
+        "7000",
+        "--y-nm",
+        "8000",
+        "--drill-nm",
+        "250000",
+        "--diameter-nm",
+        "550000",
+        "--from-layer",
+        "2",
+        "--to-layer",
+        "4",
+    ])
+    .expect("CLI should parse");
+    let edit_output = execute(edit_cli).expect("edit board via should succeed");
+    let edited: serde_json::Value =
+        serde_json::from_str(&edit_output).expect("edit output should parse");
+    assert_eq!(edited["action"], "edit_board_via");
+    assert_eq!(edited["via_uuid"], via_uuid);
+    assert_eq!(edited["x_nm"], 7000);
+    assert_eq!(edited["diameter_nm"], 550000);
+
+    let vias_output =
+        execute(board_vias_query_cli(&root)).expect("board vias query should succeed");
+    let vias: Vec<Via> = serde_json::from_str(&vias_output).expect("query output should parse");
+    assert_eq!(vias[0].position.x, 7000);
+    assert_eq!(vias[0].position.y, 8000);
+    assert_eq!(vias[0].drill, 250000);
+    assert_eq!(vias[0].diameter, 550000);
+    assert_eq!(vias[0].from_layer, 2);
+    assert_eq!(vias[0].to_layer, 4);
+    let journal = journal_list(&root);
+    assert_eq!(journal["transactions"][3]["reason"], "edit board via");
+
+    execute(
+        Cli::try_parse_from(["eda", "project", "undo", root.to_str().unwrap()])
+            .expect("CLI should parse"),
+    )
+    .expect("undo edit board via should succeed");
+    let vias_output =
+        execute(board_vias_query_cli(&root)).expect("board vias query should succeed");
+    let vias: Vec<Via> = serde_json::from_str(&vias_output).expect("query output should parse");
+    assert_eq!(vias[0].position.x, 5000);
+    assert_eq!(vias[0].drill, 300000);
+    assert_eq!(vias[0].diameter, 600000);
+    assert_eq!(vias[0].from_layer, 1);
+
+    execute(
+        Cli::try_parse_from(["eda", "project", "redo", root.to_str().unwrap()])
+            .expect("CLI should parse"),
+    )
+    .expect("redo edit board via should succeed");
+    let vias_output =
+        execute(board_vias_query_cli(&root)).expect("board vias query should succeed");
+    let vias: Vec<Via> = serde_json::from_str(&vias_output).expect("query output should parse");
+    assert_eq!(vias[0].position.x, 7000);
+    assert_eq!(vias[0].drill, 250000);
+    assert_eq!(vias[0].diameter, 550000);
+    assert_eq!(vias[0].from_layer, 2);
 
     let delete_cli = Cli::try_parse_from([
         "eda",
@@ -123,6 +211,9 @@ fn project_board_via_mutations_round_trip_through_native_query() {
         execute(board_vias_query_cli(&root)).expect("board vias query should succeed");
     let vias: Vec<Via> = serde_json::from_str(&vias_output).expect("query output should parse");
     assert!(vias.is_empty());
+    let journal = journal_list(&root);
+    assert_eq!(journal["count"], 7);
+    assert_eq!(journal["transactions"][6]["reason"], "delete board via");
 
     let summary_cli =
         Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])

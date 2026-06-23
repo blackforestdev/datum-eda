@@ -6,6 +6,23 @@ fn unique_project_root(label: &str) -> PathBuf {
     std::env::temp_dir().join(format!("{}-{}", label, Uuid::new_v4()))
 }
 
+fn journal_list(root: &Path) -> serde_json::Value {
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "journal-list",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("journal-list should succeed");
+    serde_json::from_str(&output).expect("journal-list JSON should parse")
+}
+
 #[test]
 fn project_new_creates_native_scaffold() {
     let root = unique_project_root("datum-eda-cli-project-new");
@@ -41,6 +58,13 @@ fn project_new_creates_native_scaffold() {
     assert_eq!(project_value["schematic"], "schematic/schematic.json");
     assert_eq!(project_value["board"], "board/board.json");
     assert_eq!(project_value["rules"], "rules/rules.json");
+    let rules_value: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(&rules_json).expect("rules.json should read"),
+    )
+    .expect("rules.json should parse");
+    assert!(Uuid::parse_str(rules_value["uuid"].as_str().unwrap()).is_ok());
+    assert_eq!(rules_value["object_revision"], 0);
+    assert_eq!(rules_value["rules"].as_array().unwrap().len(), 0);
 
     let board_value: serde_json::Value = serde_json::from_str(
         &std::fs::read_to_string(&board_json).expect("board.json should read"),
@@ -132,6 +156,88 @@ fn project_new_json_output_reports_created_ids() {
     assert!(report["schematic_uuid"].as_str().is_some());
     assert!(report["board_uuid"].as_str().is_some());
     assert_eq!(report["files_written"].as_array().unwrap().len(), 4);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_set_project_name_round_trips_through_journal_and_resolver_summary() {
+    let root = unique_project_root("datum-eda-cli-project-name");
+    create_native_project(&root, Some("Project Name Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    let project_json = root.join("project.json");
+    let stale_project = std::fs::read_to_string(&project_json).expect("project file should read");
+
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "set-project-name",
+            root.to_str().unwrap(),
+            "--name",
+            "Amplifier Project A",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("set project name should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("output should parse");
+    assert_eq!(report["action"], "set_project_name");
+    assert_eq!(report["name"], "Amplifier Project A");
+
+    let journal = journal_list(&root);
+    assert_eq!(journal["count"], 1);
+    assert_eq!(journal["transactions"][0]["reason"], "set project name");
+    assert_eq!(journal["transactions"][0]["created"], 0);
+    assert_eq!(journal["transactions"][0]["modified"], 1);
+    assert_eq!(journal["transactions"][0]["deleted"], 0);
+    assert_eq!(journal["transactions"][0]["operations"], 1);
+
+    std::fs::write(&project_json, stale_project).expect("stale project file should restore");
+    let summary_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "summary",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("summary query should succeed");
+    let summary: serde_json::Value = serde_json::from_str(&summary_output).expect("summary JSON");
+    assert_eq!(summary["project_name"], "Amplifier Project A");
+
+    let _undo_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "undo",
+            root.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("project undo should succeed");
+    let summary_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "summary",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("summary query should succeed");
+    let summary: serde_json::Value = serde_json::from_str(&summary_output).expect("summary JSON");
+    assert_eq!(summary["project_name"], "Project Name Demo");
 
     let _ = std::fs::remove_dir_all(&root);
 }

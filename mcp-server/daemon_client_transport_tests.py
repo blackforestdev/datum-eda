@@ -9,6 +9,7 @@ import socket
 import tempfile
 import threading
 import unittest
+from unittest.mock import patch
 
 from server_runtime import EngineDaemonClient, JsonRpcResponse
 
@@ -53,8 +54,30 @@ class TestDaemonClientTransport(unittest.TestCase):
 
     def test_call_requires_socket_configuration(self) -> None:
         client = EngineDaemonClient(socket_path=None)
-        with self.assertRaisesRegex(RuntimeError, "EDA_ENGINE_SOCKET is not configured"):
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "DATUM_ENGINE_SOCKET/EDA_ENGINE_SOCKET is not configured",
+        ):
             client.get_check_report()
+
+    @patch.dict(os.environ, {"DATUM_ENGINE_SOCKET": "/tmp/datum.sock"}, clear=True)
+    def test_prefers_canonical_socket_environment(self) -> None:
+        client = EngineDaemonClient(socket_path=None)
+        self.assertEqual(client._socket_path, "/tmp/datum.sock")
+
+    @patch.dict(os.environ, {"EDA_ENGINE_SOCKET": "/tmp/legacy.sock"}, clear=True)
+    def test_accepts_legacy_socket_environment(self) -> None:
+        client = EngineDaemonClient(socket_path=None)
+        self.assertEqual(client._socket_path, "/tmp/legacy.sock")
+
+    @patch.dict(
+        os.environ,
+        {"DATUM_ENGINE_SOCKET": "/tmp/datum.sock", "EDA_ENGINE_SOCKET": "/tmp/legacy.sock"},
+        clear=True,
+    )
+    def test_canonical_socket_environment_wins(self) -> None:
+        client = EngineDaemonClient(socket_path=None)
+        self.assertEqual(client._socket_path, "/tmp/datum.sock")
 
     def test_get_check_report_round_trips_over_unix_socket(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

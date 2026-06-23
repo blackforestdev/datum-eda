@@ -41,21 +41,25 @@ paths so an implementer can locate both.
 
 ### Substrate prerequisite (hard, blocks all five domains)
 
-The current engine does NOT yet have the substrate this contract
-assumes. There is no general `Operation`/`OperationBatch` enum, no single
-generic `commit()` with fsync journal, no `DatumToolSession` /
-`DatumContextEnvelope`, no `project_id` / `model_revision`, no
-`ObjectId` / `object_revision` provenance, no `ComponentInstance`, and no
-Import Map `import_key`. Imported-board mutations journal via per-method
-`TransactionRecord` (`crates/engine/src/api/write_ops/`), but native
-schematic, library, and manufacturing authoring are private JSON writes
-(`write_canonical_json`, 115 call sites across the CLI today).
+The substrate this contract assumes has substantially LANDED in the worktree
+(uncommitted at HEAD `22aeebe`): a typed `Operation` / `OperationBatch` enum,
+journaled `commit()` / `commit_journaled()`, `ProjectResolver`,
+`model_revision` / `object_revision`, `ComponentInstance`, and the Import Map
+(`import_key`) all exist in `crates/engine/src/substrate/`. Imported-board
+mutations also journal via per-method `TransactionRecord`
+(`crates/engine/src/api/write_ops/`).
 
-Therefore this document DOCUMENTS THE TARGET. The substrate build
-(operation enum + commit + journal + session + identity) is its own
-foundational implementation slice and MUST land before any per-domain
-authoring tool. The five domain docs reference this substrate as a
-precondition; they do not re-describe it.
+What is NOT yet universal: full generic `commit()` coverage across every
+surface, the `DatumToolSession` / `DatumContextEnvelope` session authority, and
+broad GUI-native editing. Convergence gaps: ~14 `write_canonical_json` sites
+remain (e.g. project-create bootstrap), and the daemon dispatch still imports
+zero substrate, so some legacy MCP write tools reach a non-journaled path.
+
+Therefore this document describes the target AI/CLI/MCP surface on a foundation
+that has largely landed. The remaining work is converging every write surface
+onto the single `commit()`, building the session/context layer, and exposing
+the canonical `datum.*` families (the first have landed). The five domain docs
+reference this substrate as a precondition; they do not re-describe it.
 
 ## Reference-Tool Survey (with the lean rationale)
 
@@ -133,8 +137,10 @@ remains reserved for MCP tool family names only.
    and seeds the context envelope (selection, projection, cursor).
 2. **Operation emitted**: NONE. Session/context is read-only capability
    state. It is never an Operation and never journaled.
-3. **CLI command**: `datum-eda context get`, `datum-eda context refresh`.
-4. **MCP/AI tool**: `datum.context.get`.
+3. **CLI command**: `datum-eda context get`, `datum-eda context refresh`,
+   `datum-eda context session-events`, `datum-eda context session-activity`.
+4. **MCP/AI tool**: `datum.context.get`, `datum.context.refresh`,
+   `datum.context.session_events`, `datum.context.session_activity`.
 5. **AI query/context needed**: this IS the context bootstrap. Returns
    `session_id`, `actor_type` (`User|Cli|Mcp|Script|Importer|Checker|
    Router|Assistant|ExternalAgent`), `project_id` / `project_root`,
@@ -150,10 +156,43 @@ remains reserved for MCP tool family names only.
 7. **Proof slice**: a terminal-launched agent calls `datum-eda context get`,
    reads `model_revision` and `project_id`, and carries them into a later
    query and proposal. See Proof Slice below.
-8. **Not-supported-yet**: no `DatumToolSession` / `DatumContextEnvelope`,
-   no `project_id` / `model_revision` substrate, no actor/provenance
-   tagging exists today. The engine has `TransactionRecord` (`crates/
-   engine/src/api/write_ops/`) but no actor field, no session, and no
+8. **Current implementation**: GUI terminals now write durable session metadata
+   under `.datum/tool-sessions/<session>.json` plus a per-session
+   `datum_terminal_context_v1` file under
+   `.datum/terminal-contexts/<session>.json`, while
+   `.datum/gui-terminal-context.json` remains a latest-session compatibility
+   alias. `DATUM_DISCOVERY` points to the per-session file. `datum-eda
+   context get` returns a normalized first `DatumContextEnvelope` slice,
+   `datum-eda context refresh` normalizes and writes the refreshed envelope back
+   to the resolved per-session context file, and `datum-eda context
+   session-events` reads the append-only `.datum/tool-sessions/<session>.events.jsonl`
+   tool-session event stream as `datum_tool_session_events_v1` without mutating
+   project source or journal state. GUI-written terminal context now carries
+   visible check-run ids, visible finding fingerprints, and the compact
+   CheckRun status snapshot so an in-Datum agent can inspect and act on the
+   same findings visible in the Outputs dock without scraping UI text.
+   Terminal command handoff events include `origin`, stable `command_id`,
+   optional `mcp_alias`, `handoff_mode`
+   (`prefill|execute`), command text, and timestamp so GUI-provided board-text
+   edit prefill commands are distinguishable from executed terminal actions.
+   The CLI and `datum.context.session_events` MCP alias accept exact-match
+   `event_kind`, `origin`, and `command_id` filters plus `limit` for the newest
+   N matching events after filters; responses include `event_count`,
+   `matched_event_count`, raw `total_event_count`, applied `filters`, and
+   `limit`. `session-activity` / `datum.context.session_activity` returns the
+   same filtered window as a compact `datum_tool_session_activity_summary_v1`
+   aggregate: event-kind/origin/handoff counts, first/last occurrence time, and
+   per-command counts. The context envelope includes
+   `actor_type`, capabilities, resolver-derived project/model fields,
+   accepted transaction tip, visible artifact/check-run ids, output context ids,
+   launch-time `selection_context`, `cursor_context`, `projection_context`,
+   provenance seed, and refresh metadata. GUI selection, cursor/hover, dock, and
+   frame-affecting session events now rewrite the same per-session context file
+   instead of minting a new session.
+9. **Not-supported-yet**: a richer engine-owned durable `DatumToolSession`
+   object with policy/expiry semantics beyond the current GUI-authored metadata.
+   The engine has `TransactionRecord` (`crates/
+   engine/src/api/write_ops/`) but no session, and no
    context endpoint. Defined ONCE here; no domain mints its own session.
 
 ### 2. Query — `DatumQueryTool` (read-only, never mutates)
@@ -192,9 +231,12 @@ remains reserved for MCP tool family names only.
    (`crates/engine/src/api/project_surface.rs`, `crates/engine-daemon/
    src/dispatch.rs`), `get_board_summary` / `get_components` /
    `get_unrouted` / `get_net_info`, `get_design_rules` /
-   `get_check_report` (`dispatch.rs:447/439`). GAP: not unified under one
-   namespace, not `model_revision`-keyed, no `ComponentInstance` join, no
-   `import_key` provenance, no `transactions` / `provenance` query family.
+   `get_check_report` (`dispatch.rs:447/439`). GAP: these legacy daemon
+   reads are not unified under one `datum.query.*` namespace and do not yet
+   expose the substrate's `model_revision`, `ComponentInstance` join,
+   `import_key` provenance, or a `transactions` / `provenance` query family
+   (those primitives exist in the substrate; the daemon read path does not
+   surface them).
 
 ### 3. Run-Check — `DatumCheckTool` (read-only derived, never mutates source)
 
@@ -214,12 +256,15 @@ remains reserved for MCP tool family names only.
 6. **Validating checks**: produces `CheckRun{check_run_id, model_revision
    / projection_revision, checker_version, pass|fail|error|stale}`. Each
    `CheckFinding` carries a stable finding id + affected `ObjectId`s +
-   rule basis + inline explanation + `suggested_next_action` — so there
-   is NO standalone explain tool. Findings are revision/hash-keyed derived
-   state, never authority. Determinism gate: identical `model_revision` +
-   variant + rule-versions => identical finding FINGERPRINTS. ZoneFill
-   honesty: an unfilled / stale / unsupported zone boundary must NOT pass
-   copper checks as if it were copper.
+   rule basis + inline explanation + actionable `proposal_links` for any
+   resolver-discovered repair proposals — so there is NO standalone explain
+   tool. Findings are revision/hash-keyed derived state, never authority. Each
+   `CheckRun` also carries `profile_basis` and coverage entries so a clean or
+   profile-filtered result states what was evaluated, filtered,
+   not-applicable, or not implemented.
+   Determinism gate: identical `model_revision` + variant + rule-versions =>
+   identical finding FINGERPRINTS. ZoneFill honesty: an unfilled / stale /
+   unsupported zone boundary must NOT pass copper checks as if it were copper.
 7. **Proof slice**: `datum-eda check run --domain drc --profile default`
    yields a `CheckRun`; a finding's fingerprint is stable across a
    no-op re-run on the same revision.
@@ -227,10 +272,11 @@ remains reserved for MCP tool family names only.
    `get_check_report` / `run_erc` / `run_drc` / `explain_violation`
    (`dispatch.rs:439/451/455/467`), `CheckSummary` merges ERC+DRC
    (`crates/engine/src/.../check_summary.rs`). GAP: `CheckRun` /
-   `CheckFinding` not persisted nor revision/variant/
-   `input_object_revisions`-keyed; not variant-aware; the `run_drc` rule
-   set is hard-coded (`dispatch.rs:455-463`) instead of a `CheckProfile`
-   parameter; explanation + `suggested_next_action` are not yet fields.
+   `CheckFinding` not fully revision/variant/`input_object_revisions`-keyed;
+   not variant-aware; the `run_drc` rule set is hard-coded
+   (`dispatch.rs:455-463`) instead of a `CheckProfile` parameter.
+   `explanation` and `suggested_next_action` now exist on current live and
+   persisted native check findings.
    `explain_violation` is addressed by `(domain, index)` today
    (`project_surface.rs` `explain_violation`), which breaks across runs;
    it must be re-addressed by stable finding FINGERPRINT.
@@ -263,9 +309,10 @@ remains reserved for MCP tool family names only.
 8. **Not-supported-yet**: EXISTING — only routing-specific proposal
    machinery (`crates/cli/src/command_project_route_proposal.rs`,
    `command_project_forward_annotation_proposal.rs`; review/apply/
-   revalidate/explain in the MCP catalog). GAP: no general `Proposal`
-   primitive, no general `OperationBatch` enum — routing proposals are the
-   TEMPLATE to generalize.
+   revalidate/explain in the MCP catalog). The `OperationBatch` enum now exists and several
+   proposal families (routing, forward-annotation, standards-repair) commit
+   through the substrate; the GAP is generalizing them into one `Proposal`
+   primitive across all domains — routing proposals are the TEMPLATE.
 
 ### 5. Apply / Commit — `DatumCommitTool` (THE ONLY mutation gateway)
 
@@ -339,7 +386,7 @@ remains reserved for MCP tool family names only.
    export/validate/compare/manifest/inspect manufacturing-set
    (`crates/cli/src/command_project_manufacturing.rs`), gerber plan
    (`command_project_gerber_plan.rs`). GAP: no artifact metadata (kind +
-   path only), reference-string-keyed BOM/PnP, ZoneFill dishonesty
+   path only), ZoneFill dishonesty
    (`crates/engine/src/export/.../copper.rs` pours the boundary as G36
    copper), triple-recompute (report/manifest/export) instead of one T0,
    no daemon dispatch (CLI-bridged only), ~30 redundant per-layer /
@@ -503,18 +550,84 @@ content-hashes.
 
 ## Not-Yet-Supported
 
-- The entire substrate (general `Operation`/`OperationBatch`, single
-  `commit()` + fsync journal, `DatumToolSession` /
-  `DatumContextEnvelope`, `project_id` / `model_revision`, `ObjectId` /
-  `object_revision`, `ComponentInstance`, Import Map `import_key`) is
-  NOT IMPLEMENTED. It is the foundational slice that must land first.
-- MCP currently has no write tools and no daemon dispatch for artifacts
-  (CLI-bridged only via `server_runtime.py`). MCP write tools land only
-  behind `commit()`.
+- The target substrate is partially implemented: typed `OperationBatch`,
+  journaled `commit_journaled()`, `ProjectResolver`, `model_revision`,
+  first `ObjectId` / `object_revision` handling, ComponentInstance records,
+  Import Map query, and several production/check/artifact surfaces exist.
+  Remaining gaps include full generic commit coverage, complete session
+  authority, library operations, richer rules, and broad GUI-native editing.
+- MCP has both legacy daemon write tools and canonical `datum.*` aliases for
+  selected families. Native-project MCP writes must land only behind the
+  journaled commit/proposal substrate; the first PCB-side canonical write
+  family is `datum.pcb.place_component`, `move_component`,
+  `rotate_component`, `flip_component`, `delete_component`,
+  `set_component_reference`, `set_component_value`, `set_component_part`,
+  `set_component_package`, `lock_component`, `unlock_component`,
+  `draw_track`, `edit_track`, `delete_track`, `place_via`, `edit_via`,
+  `delete_via`, `place_zone`, `edit_zone`, `delete_zone`, `place_pad`, `edit_pad`,
+  `delete_pad`, `set_pad_net`, `clear_pad_net`, `place_net`, `edit_net`,
+  `delete_net`, `place_net_class`, `edit_net_class`, and
+  `delete_net_class`, `set_board_name`, `set_outline`, `set_stackup`, and
+  `add_default_top_stackup`, `place_keepout`, `edit_keepout`, and
+  `delete_keepout`, `place_dimension`, `edit_dimension`, `delete_dimension`,
+  `place_text`, `edit_text`, and `delete_text`. These aliases require
+  explicit project `path` arguments and bridge to matching
+  `datum-eda project ...board-component...`, `...board-track`,
+  `...board-via`, `...board-zone`, `...board-pad`, and
+  `...board-net...` / `...board-net-class`, board setup commands, and
+  `...board-keepout`, `...board-dimension`, and `...board-text` commands. Flat session
+  compatibility tools, including `move_component`, `rotate_component`, and
+  `flip_component`, are migration surfaces rather than target authority.
+  Native CLI `place-board-net` / `edit-board-net` and canonical MCP
+  `datum.pcb.place_net` / `edit_net` author per-net controlled-impedance
+  metadata using target-ohm, tolerance-percent, and dielectric-layer fields;
+  `edit_net` can also clear the controlled-impedance metadata.
+- Canonical schematic read aliases now expose the existing compatibility query
+  surfaces as `datum.query.sheets`, `symbols`, `symbol_fields`, `labels`,
+  `ports`, `buses`, `bus_entries`, `noconnects`, `hierarchy`,
+  `schematic_nets`, `connectivity_diagnostics`, and `design_rules`; these are
+  read-side context surfaces for GUI panels and agents until full authored
+  sheet/root operations land.
+- First schematic-side canonical MCP writes are
+  `datum.schematic.draw_wire`, `delete_wire`, `place_junction`,
+  `delete_junction`, `place_noconnect`, and `delete_noconnect`. They require
+  explicit project `path` and sheet/object arguments, and bridge to matching
+  journaled `datum-eda project draw-wire`, `delete-wire`, `place-junction`,
+  `delete-junction`, `place-noconnect`, and `delete-noconnect` commands.
+  Label aliases `datum.schematic.place_label`, `rename_label`, and
+  `delete_label` bridge to the matching journaled `place-label`,
+  `rename-label`, and `delete-label` commands. Port aliases
+  `datum.schematic.place_port`, `edit_port`, and `delete_port` bridge to the
+  matching journaled `place-port`, `edit-port`, and `delete-port` commands.
+  Bus aliases `datum.schematic.create_bus`, `edit_bus_members`,
+  `place_bus_entry`, and `delete_bus_entry` bridge to the matching journaled
+  `create-bus`, `edit-bus-members`, `place-bus-entry`, and
+  `delete-bus-entry` commands. Schematic text aliases
+  `datum.schematic.place_text`, `edit_text`, and `delete_text` bridge to the
+  matching journaled `place-schematic-text`, `edit-schematic-text`, and
+  `delete-schematic-text` commands. Schematic drawing aliases
+  `datum.schematic.place_drawing_line`, `place_drawing_rect`,
+  `place_drawing_circle`, `place_drawing_arc`, `edit_drawing_line`,
+  `edit_drawing_rect`, `edit_drawing_circle`, `edit_drawing_arc`, and
+  `delete_drawing` bridge to the matching journaled drawing commands. Symbol
+  lifecycle aliases `datum.schematic.place_symbol`, `move_symbol`,
+  `rotate_symbol`, `mirror_symbol`, `delete_symbol`, `set_symbol_reference`,
+  `set_symbol_value`, `set_symbol_display_mode`,
+  `set_symbol_hidden_power_behavior`, `set_symbol_unit`, `clear_symbol_unit`,
+  `set_symbol_gate`, `clear_symbol_gate`, `set_symbol_entity`,
+  `clear_symbol_entity`, `set_symbol_part`, `clear_symbol_part`,
+  `set_symbol_lib_id`, `clear_symbol_lib_id`, `set_pin_override`,
+  `clear_pin_override`, `add_symbol_field`, `edit_symbol_field`, and
+  `delete_symbol_field` bridge to the matching journaled symbol commands.
 - Findings are addressed by `(domain, index)` today; fingerprint
   addressing is not implemented.
-- ZoneFill is dishonest today (boundary poured as copper); honest
-  projection is not implemented.
+- ZoneFill honesty exists for native copper projection: authored
+  boundaries derive `Unfilled`, emit hard findings, and are withheld from
+  copper export. The current `fill_zones` producer emits `Filled` islands
+  for closed, non-degenerate, no-thermal zones whose intersecting board
+  pads/tracks/vias are same-net, plus one bounded rectangular foreign
+  pad/via cutout when positive netclass clearance is known; harder cases
+  remain explicit `Unsupported` evidence until the real pour solver lands.
 - Direct-commit-by-policy automation is not implemented; default first
   slice is AI-proposes / human-accepts only.
 

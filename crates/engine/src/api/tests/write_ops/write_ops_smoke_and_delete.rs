@@ -1,4 +1,5 @@
 use super::super::*;
+use std::collections::HashMap;
 use std::fs;
 
 #[test]
@@ -19,6 +20,122 @@ fn run_drc_returns_connectivity_violation_for_partial_route_fixture() {
             .violations
             .iter()
             .any(|violation| violation.code == "connectivity_unrouted_net")
+    );
+}
+
+#[test]
+fn run_drc_does_not_count_unfilled_authored_zone_as_copper() {
+    let net = uuid::Uuid::new_v4();
+    let class = uuid::Uuid::new_v4();
+    let package = uuid::Uuid::new_v4();
+    let pad = uuid::Uuid::new_v4();
+    let zone = uuid::Uuid::new_v4();
+    let engine = Engine {
+        pool: Pool::default(),
+        pool_index: PoolIndex::open_in_memory().expect("pool index should initialize"),
+        design: Some(Design {
+            schematic: None,
+            board: Some(crate::board::Board {
+                uuid: uuid::Uuid::new_v4(),
+                name: "zone-honesty".into(),
+                stackup: crate::board::Stackup {
+                    layers: vec![crate::board::StackupLayer::new(
+                        1,
+                        "F.Cu",
+                        crate::board::StackupLayerType::Copper,
+                        35_000,
+                    )],
+                },
+                pad_expansion_setup: crate::board::PadExpansionSetup::default(),
+                outline: crate::ir::geometry::Polygon::new(vec![
+                    crate::ir::geometry::Point::new(0, 0),
+                    crate::ir::geometry::Point::new(20_000_000, 0),
+                    crate::ir::geometry::Point::new(20_000_000, 20_000_000),
+                    crate::ir::geometry::Point::new(0, 20_000_000),
+                ]),
+                packages: HashMap::from([(
+                    package,
+                    crate::board::PlacedPackage {
+                        uuid: package,
+                        part: uuid::Uuid::nil(),
+                        package: uuid::Uuid::nil(),
+                        reference: "J1".into(),
+                        value: "CONN".into(),
+                        position: crate::ir::geometry::Point::new(10_000_000, 10_000_000),
+                        rotation: 0,
+                        layer: 1,
+                        locked: false,
+                    },
+                )]),
+                pads: HashMap::from([(
+                    pad,
+                    crate::board::PlacedPad {
+                        uuid: pad,
+                        package,
+                        name: "1".into(),
+                        net: Some(net),
+                        position: crate::ir::geometry::Point::new(10_000_000, 10_000_000),
+                        layer: 1,
+                        copper_layers: vec![1],
+                        shape: crate::board::PadShape::Circle,
+                        diameter: 1_000_000,
+                        width: 1_000_000,
+                        height: 1_000_000,
+                        drill: 0,
+                        rotation: 0,
+                        mask_layers: Vec::new(),
+                        paste_layers: Vec::new(),
+                        solder_mask_margin_nm: 0,
+                        solder_paste_margin_nm: 0,
+                        solder_paste_margin_ratio_ppm: 0,
+                        roundrect_rratio_ppm: 250_000,
+                    },
+                )]),
+                tracks: HashMap::new(),
+                vias: HashMap::new(),
+                zones: HashMap::from([(
+                    zone,
+                    crate::board::Zone {
+                        uuid: zone,
+                        net,
+                        polygon: crate::ir::geometry::Polygon::new(vec![
+                            crate::ir::geometry::Point::new(0, 0),
+                            crate::ir::geometry::Point::new(20_000_000, 0),
+                            crate::ir::geometry::Point::new(20_000_000, 20_000_000),
+                            crate::ir::geometry::Point::new(0, 20_000_000),
+                        ]),
+                        layer: 1,
+                        priority: 1,
+                        thermal_relief: false,
+                        thermal_gap: 0,
+                        thermal_spoke_width: 0,
+                    },
+                )]),
+                nets: HashMap::from([(net, crate::board::Net::new(net, "GND", class))]),
+                net_classes: HashMap::new(),
+                rules: Vec::new(),
+                keepouts: Vec::new(),
+                dimensions: Vec::new(),
+                texts: Vec::new(),
+            }),
+        }),
+        imported_source: None,
+        undo_stack: Vec::new(),
+        redo_stack: Vec::new(),
+        undo_depth: 0,
+        redo_depth: 0,
+    };
+
+    let report = engine
+        .run_drc(&[RuleType::Connectivity])
+        .expect("drc should run on in-memory board");
+
+    assert!(
+        report
+            .violations
+            .iter()
+            .any(|violation| violation.code == "connectivity_unconnected_pin"),
+        "default engine DRC must not treat authored zone boundaries as filled copper"
     );
 }
 

@@ -482,6 +482,7 @@ class TestDispatchQueries(unittest.TestCase):
         payload = response["result"]["content"][0]["json"]
         self.assertEqual(payload["action"], "write_route_strategy_curated_fixture_suite")
         self.assertEqual(payload["suite_id"], "m6_route_strategy_curated_fixture_suite_v1")
+        self.assertEqual(payload["authoring_boundary"], "generated_fixture_only")
         self.assertEqual(payload["requests_manifest_kind"], "native_route_strategy_batch_requests")
 
     def test_tools_call_dispatches_capture_route_strategy_curated_baseline(self) -> None:
@@ -517,9 +518,8 @@ class TestDispatchQueries(unittest.TestCase):
         )
         payload = response["result"]["content"][0]["json"]
         self.assertEqual(payload["action"], "capture_route_strategy_curated_baseline")
-        self.assertEqual(
-            payload["result_kind"], "native_route_strategy_batch_result_artifact"
-        )
+        self.assertEqual(payload["authoring_boundary"], "generated_fixture_only")
+        self.assertEqual(payload["result_kind"], "native_route_strategy_batch_result_artifact")
         self.assertEqual(payload["total_requests"], 4)
 
     def test_tools_call_dispatches_route_strategy_batch_evaluate(self) -> None:

@@ -123,57 +123,61 @@ expensive) but the cache is always invalidated when authored data changes.
 ## 4. Transaction Model
 
 ### Operations
-Every modification to authored data is an Operation. Operations are:
+Every modification to authored data is a typed `Operation` — a serde-tagged
+enum (not a `dyn` trait), committed in batches through one `commit()` path. The
+variant set lives in `crates/engine/src/substrate/operation.rs`.
 
 ```rust
-pub trait Operation: Send + Sync {
-    /// Check preconditions without modifying state
-    fn validate(&self, design: &Design) -> Result<(), OpError>;
+// serde-tagged; one variant per authored mutation kind (many variants)
+pub enum Operation {
+    SetBoardPackageValue { /* ... */ },
+    CreatePoolLibraryObject { /* ... */ },
+    SetBoardText { /* ... */ },
+    // ...
+}
 
-    /// Execute and return what changed
-    fn execute(&self, design: &mut Design) -> Result<OpDiff, OpError>;
-
-    /// Inverse operation for undo (if possible)
-    fn inverse(&self, diff: &OpDiff) -> Option<Box<dyn Operation>>;
-
-    /// Human-readable description
-    fn describe(&self) -> String;
-
-    /// Serializable representation (for operation log)
-    fn serialize(&self) -> serde_json::Value;
+pub struct OperationBatch {
+    pub batch_id: Uuid,
+    pub operations: Vec<Operation>,
+    pub provenance: CommitProvenance,
 }
 ```
 
-### OpDiff
-Every operation returns a diff describing what changed:
+A batch is applied by a centralized `apply_operation` (validate + mutate the
+resolved `DesignModel`) and reversed by `inverse_operations_for_batch`; undo is
+a compensating batch, not a stored old-value blob.
+
+### CommitDiff
+Committing a batch returns a diff of affected object identities (not old-value
+payloads):
+
 ```rust
-pub struct OpDiff {
-    pub created: Vec<(ObjectType, Uuid)>,
-    pub modified: Vec<(ObjectType, Uuid, serde_json::Value)>,  // old value
-    pub deleted: Vec<(ObjectType, Uuid, serde_json::Value)>,   // deleted object
+pub struct CommitDiff {
+    pub created: Vec<ObjectId>,
+    pub modified: Vec<ObjectId>,
+    pub deleted: Vec<ObjectId>,
 }
 ```
 
-The diff contains enough information to:
-- Undo the operation (restore old values, delete created, recreate deleted)
-- Notify derived-data engines which objects changed
-- Send to GUI for incremental canvas update
-- Send to MCP/CLI as structured change report
+The diff drives derived-data invalidation, change reporting to GUI/MCP/CLI, and
+revision bumps. Undo is achieved by applying the inverse batch, so the diff need
+not carry old values.
 
-### Transaction boundaries
-A single user action may produce multiple operations (e.g., "delete
-component" also deletes its tracks and vias). These are grouped into
-a transaction:
+### Commit, journal, and revisions
+A single user action may produce several operations (e.g., deleting a component
+also removes its tracks and vias), grouped into one `OperationBatch` and
+committed atomically through `commit()` / `commit_journaled()`:
 
-```rust
-pub struct Transaction {
-    pub operations: Vec<(Box<dyn Operation>, OpDiff)>,
-    pub description: String,
-    pub timestamp: Instant,
-}
-```
+1. apply in memory to the resolved `DesignModel`
+2. stage shard bytes + fsync
+3. append a `TransactionRecord` to the journal + fsync — the commit point
+4. atomic rename + directory fsync
 
-Undo/redo operates on transactions, not individual operations.
+The journal is the persisted, replayable history; durable undo/redo are cursors
+into it. Transactions are the sole producers of revisions: `object_revision`
+(monotonic per object) and `model_revision` (sha256 over canonical sorted object
+revisions + the accepted-transaction tip). No wall-clock/`Instant` field is
+stored in source state — that would violate the §5 determinism invariant.
 
 ### Derived data invalidation
 After a transaction commits, the engine recomputes affected derived data:

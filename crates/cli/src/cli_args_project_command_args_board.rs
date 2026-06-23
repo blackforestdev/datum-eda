@@ -193,6 +193,60 @@ pub(crate) struct ProjectSetBoardStackupArgs {
 }
 
 #[derive(clap::Args)]
+pub(crate) struct ProjectSetBoardNameArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Replacement board name
+    #[arg(long = "name")]
+    pub(crate) name: String,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectSetProjectNameArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Replacement project name
+    #[arg(long = "name")]
+    pub(crate) name: String,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectSetProjectRulesArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Native rules root JSON document to apply
+    #[arg(long = "rules-file")]
+    pub(crate) rules_file: PathBuf,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectCreateProjectRuleArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Rule JSON object to append to the native rules root
+    #[arg(long = "rule-file")]
+    pub(crate) rule_file: PathBuf,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectSetProjectRuleArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Replacement rule JSON object; its UUID selects the existing rule
+    #[arg(long = "rule-file")]
+    pub(crate) rule_file: PathBuf,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectDeleteProjectRuleArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Rule UUID to delete from the native rules root
+    #[arg(long = "rule")]
+    pub(crate) rule_uuid: Uuid,
+}
+
+#[derive(clap::Args)]
 pub(crate) struct ProjectAddDefaultTopStackupArgs {
     /// Project root directory
     pub(crate) path: PathBuf,
@@ -208,6 +262,15 @@ pub(crate) struct ProjectPlaceBoardNetArgs {
     /// Assigned net-class UUID
     #[arg(long = "class")]
     pub(crate) class_uuid: Uuid,
+    /// Controlled-impedance target in ohms
+    #[arg(long = "impedance-target-ohms")]
+    pub(crate) impedance_target_ohms: Option<String>,
+    /// Controlled-impedance tolerance percentage
+    #[arg(long = "impedance-tolerance-pct")]
+    pub(crate) impedance_tolerance_pct: Option<String>,
+    /// Stackup layer id for the controlled dielectric reference
+    #[arg(long = "controlled-dielectric-layer")]
+    pub(crate) controlled_dielectric_layer: Option<i32>,
 }
 
 #[derive(clap::Args)]
@@ -223,6 +286,18 @@ pub(crate) struct ProjectEditBoardNetArgs {
     /// Replacement net-class UUID
     #[arg(long = "class")]
     pub(crate) class_uuid: Option<Uuid>,
+    /// Controlled-impedance target in ohms
+    #[arg(long = "impedance-target-ohms")]
+    pub(crate) impedance_target_ohms: Option<String>,
+    /// Controlled-impedance tolerance percentage
+    #[arg(long = "impedance-tolerance-pct")]
+    pub(crate) impedance_tolerance_pct: Option<String>,
+    /// Stackup layer id for the controlled dielectric reference
+    #[arg(long = "controlled-dielectric-layer")]
+    pub(crate) controlled_dielectric_layer: Option<i32>,
+    /// Clear the existing controlled-impedance metadata
+    #[arg(long = "clear-controlled-impedance")]
+    pub(crate) clear_controlled_impedance: bool,
 }
 
 #[derive(clap::Args)]
@@ -271,6 +346,27 @@ pub(crate) struct ProjectDeleteBoardTrackArgs {
 }
 
 #[derive(clap::Args)]
+pub(crate) struct ProjectEditBoardTrackArgs {
+    pub(crate) path: PathBuf,
+    #[arg(long = "track")]
+    pub(crate) track_uuid: Uuid,
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Option<Uuid>,
+    #[arg(long = "from-x-nm")]
+    pub(crate) from_x_nm: Option<i64>,
+    #[arg(long = "from-y-nm")]
+    pub(crate) from_y_nm: Option<i64>,
+    #[arg(long = "to-x-nm")]
+    pub(crate) to_x_nm: Option<i64>,
+    #[arg(long = "to-y-nm")]
+    pub(crate) to_y_nm: Option<i64>,
+    #[arg(long = "width-nm")]
+    pub(crate) width_nm: Option<i64>,
+    #[arg(long)]
+    pub(crate) layer: Option<i32>,
+}
+
+#[derive(clap::Args)]
 pub(crate) struct ProjectPlaceBoardViaArgs {
     /// Project root directory
     pub(crate) path: PathBuf,
@@ -307,22 +403,37 @@ pub(crate) struct ProjectDeleteBoardViaArgs {
 }
 
 #[derive(clap::Args)]
-pub(crate) struct ProjectPlaceBoardZoneArgs {
-    /// Project root directory
+pub(crate) struct ProjectEditBoardViaArgs {
     pub(crate) path: PathBuf,
-    /// Net UUID
+    #[arg(long = "via")]
+    pub(crate) via_uuid: Uuid,
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Option<Uuid>,
+    #[arg(long = "x-nm")]
+    pub(crate) x_nm: Option<i64>,
+    #[arg(long = "y-nm")]
+    pub(crate) y_nm: Option<i64>,
+    #[arg(long = "drill-nm")]
+    pub(crate) drill_nm: Option<i64>,
+    #[arg(long = "diameter-nm")]
+    pub(crate) diameter_nm: Option<i64>,
+    #[arg(long = "from-layer")]
+    pub(crate) from_layer: Option<i32>,
+    #[arg(long = "to-layer")]
+    pub(crate) to_layer: Option<i32>,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectPlaceBoardZoneArgs {
+    pub(crate) path: PathBuf,
     #[arg(long = "net")]
     pub(crate) net_uuid: Uuid,
-    /// Polygon vertices as x_nm:y_nm
     #[arg(long = "vertex")]
     pub(crate) vertices: Vec<String>,
-    /// Layer identifier
     #[arg(long)]
     pub(crate) layer: i32,
-    /// Zone priority
     #[arg(long, default_value_t = 0)]
     pub(crate) priority: u32,
-    /// Thermal relief enabled
     #[arg(
         long = "thermal-relief",
         default_value_t = true,
@@ -339,11 +450,39 @@ pub(crate) struct ProjectPlaceBoardZoneArgs {
 
 #[derive(clap::Args)]
 pub(crate) struct ProjectDeleteBoardZoneArgs {
-    /// Project root directory
     pub(crate) path: PathBuf,
-    /// Zone UUID
     #[arg(long = "zone")]
     pub(crate) zone_uuid: Uuid,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectEditBoardZoneArgs {
+    pub(crate) path: PathBuf,
+    #[arg(long = "zone")]
+    pub(crate) zone_uuid: Uuid,
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Option<Uuid>,
+    #[arg(long = "vertex")]
+    pub(crate) vertices: Vec<String>,
+    #[arg(long)]
+    pub(crate) layer: Option<i32>,
+    #[arg(long)]
+    pub(crate) priority: Option<u32>,
+    #[arg(long = "thermal-relief", action = clap::ArgAction::Set)]
+    pub(crate) thermal_relief: Option<bool>,
+    #[arg(long = "thermal-gap-nm")]
+    pub(crate) thermal_gap_nm: Option<i64>,
+    #[arg(long = "thermal-spoke-width-nm")]
+    pub(crate) thermal_spoke_width_nm: Option<i64>,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectFillZonesArgs {
+    pub(crate) path: PathBuf,
+    #[arg(long = "zone")]
+    pub(crate) zone_uuid: Option<Uuid>,
+    #[arg(long = "net")]
+    pub(crate) net_uuid: Option<Uuid>,
 }
 
 #[derive(clap::Args)]

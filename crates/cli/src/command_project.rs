@@ -38,17 +38,14 @@ mod command_project_gerber_inspect;
 mod command_project_gerber_layers;
 #[path = "command_project_gerber_mechanical.rs"]
 mod command_project_gerber_mechanical;
-#[path = "command_project_gerber_plan.rs"]
-mod command_project_gerber_plan;
-#[path = "command_project_gerber_semantics.rs"]
-mod command_project_gerber_semantics;
+#[rustfmt::skip] #[path = "command_project_gerber_plan.rs"] mod command_project_gerber_plan;
+#[rustfmt::skip] #[path = "command_project_gerber_semantics.rs"] mod command_project_gerber_semantics;
 #[path = "command_project_gerber_semantics_utils.rs"]
 mod command_project_gerber_semantics_utils;
 #[path = "command_project_gerber_silkscreen.rs"]
 mod command_project_gerber_silkscreen;
-#[path = "command_project_inventory.rs"]
 mod command_project_inventory;
-#[path = "command_project_inventory_surface.rs"]
+mod command_project_inventory_csv;
 mod command_project_inventory_surface;
 #[path = "command_project_manufacturing.rs"]
 mod command_project_manufacturing;
@@ -76,8 +73,12 @@ mod command_project_schematic_connectivity_mutations;
 mod command_project_schematic_connectivity_queries;
 #[path = "command_project_schematic_helpers.rs"]
 mod command_project_schematic_helpers;
+#[rustfmt::skip] #[path = "command_project_schematic_proposals.rs"] mod command_project_schematic_proposals;
 #[path = "command_project_schematic_queries.rs"]
 mod command_project_schematic_queries;
+mod command_project_schematic_sheet_mutations;
+#[path = "command_project_schematic_symbol_library_materialization.rs"]
+mod command_project_schematic_symbol_library_materialization;
 #[path = "command_project_schematic_symbol_mutations.rs"]
 mod command_project_schematic_symbol_mutations;
 #[path = "command_project_schematic_text_drawing_mutations.rs"]
@@ -92,7 +93,4 @@ mod command_project_surface;
 mod command_project_validate;
 #[path = "command_project_views.rs"]
 mod command_project_views;
-
-pub(crate) use self::command_project_prelude::*;
-pub(crate) use self::command_project_route_surface::*;
-pub(crate) use self::command_project_surface::*;
+#[rustfmt::skip] pub(crate) use self::{command_project_prelude::*, command_project_route_surface::*, command_project_surface::*};

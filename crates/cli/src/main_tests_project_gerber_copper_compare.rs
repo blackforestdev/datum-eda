@@ -232,13 +232,15 @@ fn project_compare_gerber_copper_layer_is_semantic_and_reports_drift() {
     assert_eq!(report["actual_pad_count"], 4);
     assert_eq!(report["expected_track_count"], 2);
     assert_eq!(report["actual_track_count"], 2);
-    assert_eq!(report["expected_zone_count"], 1);
+    assert_eq!(report["expected_zone_count"], 0);
     assert_eq!(report["actual_zone_count"], 1);
+    assert_eq!(report["unfilled_zone_count"], 1);
+    assert_eq!(report["unfilled_zone_ids"][0], zone_uuid.to_string());
     assert_eq!(report["expected_via_count"], 1);
     assert_eq!(report["actual_via_count"], 1);
-    assert_eq!(report["matched_count"], 8);
+    assert_eq!(report["matched_count"], 7);
     assert_eq!(report["missing_count"], 0);
-    assert_eq!(report["extra_count"], 0);
+    assert_eq!(report["extra_count"], 1);
 
     std::fs::write(
         &gerber_path,
@@ -294,9 +296,125 @@ fn project_compare_gerber_copper_layer_is_semantic_and_reports_drift() {
     assert_eq!(report["actual_track_count"], 1);
     assert_eq!(report["actual_zone_count"], 1);
     assert_eq!(report["actual_via_count"], 0);
-    assert_eq!(report["matched_count"], 5);
+    assert_eq!(report["unfilled_zone_count"], 1);
+    assert_eq!(report["matched_count"], 4);
     assert_eq!(report["missing_count"], 3);
-    assert_eq!(report["extra_count"], 1);
+    assert_eq!(report["extra_count"], 2);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_compare_gerber_copper_layer_uses_resolver_materialized_board_state() {
+    let root = unique_project_root("datum-eda-cli-project-gerber-copper-resolved-compare");
+    create_native_project(
+        &root,
+        Some("Gerber Copper Resolved Compare Demo".to_string()),
+    )
+    .expect("initial scaffold should succeed");
+    let board_json = root.join("board/board.json");
+    let stale_board = std::fs::read_to_string(&board_json).expect("board file should read");
+
+    let class_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "place-board-net-class",
+        root.to_str().unwrap(),
+        "--name",
+        "Default",
+        "--clearance-nm",
+        "150000",
+        "--track-width-nm",
+        "200000",
+        "--via-drill-nm",
+        "300000",
+        "--via-diameter-nm",
+        "600000",
+    ])
+    .expect("CLI should parse");
+    let class_output = execute(class_cli).expect("place board net class should succeed");
+    let class_report: serde_json::Value =
+        serde_json::from_str(&class_output).expect("class output should parse");
+    let net_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "place-board-net",
+        root.to_str().unwrap(),
+        "--name",
+        "GND",
+        "--class",
+        class_report["net_class_uuid"].as_str().unwrap(),
+    ])
+    .expect("CLI should parse");
+    let net_output = execute(net_cli).expect("place board net should succeed");
+    let net_report: serde_json::Value =
+        serde_json::from_str(&net_output).expect("net output should parse");
+    let draw_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "draw-board-track",
+        root.to_str().unwrap(),
+        "--net",
+        net_report["net_uuid"].as_str().unwrap(),
+        "--from-x-nm",
+        "100000",
+        "--from-y-nm",
+        "200000",
+        "--to-x-nm",
+        "900000",
+        "--to-y-nm",
+        "200000",
+        "--width-nm",
+        "250000",
+        "--layer",
+        "1",
+    ])
+    .expect("CLI should parse");
+    let _ = execute(draw_cli).expect("draw board track should succeed");
+    std::fs::write(&board_json, stale_board).expect("stale board file should restore");
+
+    let gerber_path = root.join("top-copper-resolved.gbr");
+    std::fs::write(
+        &gerber_path,
+        concat!(
+            "G04 semantic resolved copper fixture*\n",
+            "%MOMM*%\n",
+            "%FSLAX46Y46*%\n",
+            "%LPD*%\n",
+            "%ADD11C,0.250000*%\n",
+            "D11*\n",
+            "X100000Y200000D02*\n",
+            "X900000Y200000D01*\n",
+            "M02*\n"
+        ),
+    )
+    .expect("gerber file should write");
+
+    let cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "compare-gerber-copper-layer",
+        root.to_str().unwrap(),
+        "--layer",
+        "1",
+        "--gerber",
+        gerber_path.to_str().unwrap(),
+    ])
+    .expect("CLI should parse");
+    let output = execute(cli).expect("copper compare should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
+    assert_eq!(report["expected_track_count"], 1);
+    assert_eq!(report["matched_count"], 1);
+    assert_eq!(report["missing_count"], 0);
+    assert_eq!(report["extra_count"], 0);
 
     let _ = std::fs::remove_dir_all(&root);
 }
@@ -472,13 +590,14 @@ fn project_compare_gerber_copper_layer_matches_equivalent_reordered_geometry() {
     assert_eq!(report["actual_pad_count"], 2);
     assert_eq!(report["expected_track_count"], 1);
     assert_eq!(report["actual_track_count"], 1);
-    assert_eq!(report["expected_zone_count"], 1);
+    assert_eq!(report["expected_zone_count"], 0);
     assert_eq!(report["actual_zone_count"], 1);
+    assert_eq!(report["unfilled_zone_count"], 1);
     assert_eq!(report["expected_via_count"], 1);
     assert_eq!(report["actual_via_count"], 1);
-    assert_eq!(report["matched_count"], 5);
+    assert_eq!(report["matched_count"], 4);
     assert_eq!(report["missing_count"], 0);
-    assert_eq!(report["extra_count"], 0);
+    assert_eq!(report["extra_count"], 1);
 
     let _ = std::fs::remove_dir_all(&root);
 }

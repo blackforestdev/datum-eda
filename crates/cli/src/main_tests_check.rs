@@ -173,6 +173,7 @@ fn execute_check_command_returns_schematic_report_output() {
         "--format",
         "json",
         "check",
+        "imported",
         kicad_fixture_path("simple-demo.kicad_sch")
             .to_str()
             .unwrap(),
@@ -193,6 +194,7 @@ fn execute_check_command_returns_board_report_output() {
         "--format",
         "json",
         "check",
+        "imported",
         kicad_fixture_path("simple-demo.kicad_pcb")
             .to_str()
             .unwrap(),
@@ -234,6 +236,7 @@ fn execute_check_command_returns_partial_route_board_report_output() {
         "--format",
         "json",
         "check",
+        "imported",
         kicad_fixture_path("partial-route-demo.kicad_pcb")
             .to_str()
             .unwrap(),
@@ -251,6 +254,7 @@ fn execute_check_command_text_output_is_compact_for_schematic() {
     let cli = Cli::try_parse_from([
         "eda",
         "check",
+        "imported",
         kicad_fixture_path("simple-demo.kicad_sch")
             .to_str()
             .unwrap(),
@@ -270,6 +274,7 @@ fn execute_check_command_text_output_is_compact_for_board() {
     let cli = Cli::try_parse_from([
         "eda",
         "check",
+        "imported",
         kicad_fixture_path("simple-demo.kicad_pcb")
             .to_str()
             .unwrap(),
@@ -288,6 +293,7 @@ fn execute_check_command_text_output_is_compact_for_partial_route_board() {
     let cli = Cli::try_parse_from([
         "eda",
         "check",
+        "imported",
         kicad_fixture_path("partial-route-demo.kicad_pcb")
             .to_str()
             .unwrap(),
@@ -346,6 +352,7 @@ fn execute_check_command_honors_fail_on_threshold() {
     let cli = Cli::try_parse_from([
         "eda",
         "check",
+        "imported",
         kicad_fixture_path("simple-demo.kicad_sch")
             .to_str()
             .unwrap(),
@@ -364,6 +371,7 @@ fn execute_check_command_allows_higher_fail_on_threshold() {
     let cli = Cli::try_parse_from([
         "eda",
         "check",
+        "imported",
         kicad_fixture_path("simple-demo.kicad_sch")
             .to_str()
             .unwrap(),

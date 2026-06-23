@@ -511,12 +511,12 @@ pub(super) fn parse_board_layers(contents: &str) -> Stackup {
     }
 
     if layers.is_empty() {
-        layers.push(StackupLayer {
-            id: 0,
-            name: "F.Cu".into(),
-            layer_type: StackupLayerType::Copper,
-            thickness_nm: 35_000,
-        });
+        layers.push(StackupLayer::new(
+            0,
+            "F.Cu",
+            StackupLayerType::Copper,
+            35_000,
+        ));
     }
 
     layers.sort_by_key(|layer| layer.id);
@@ -533,12 +533,7 @@ pub(super) fn parse_layer_line(trimmed: &str) -> Option<StackupLayer> {
     } else {
         StackupLayerType::Mechanical
     };
-    Some(StackupLayer {
-        id,
-        name,
-        layer_type,
-        thickness_nm: 0,
-    })
+    Some(StackupLayer::new(id, name, layer_type, 0))
 }
 
 /// Apply a footprint's `(at x y [rot])` placement to a point authored in the

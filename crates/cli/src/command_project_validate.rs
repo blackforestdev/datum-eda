@@ -5,20 +5,15 @@ use uuid::Uuid;
 use super::{
     BoardText, Dimension, Keepout, NativeBoardRoot, NativeProjectManifest,
     NativeProjectValidationIssueView, NativeProjectValidationView, NativeRulesRoot,
-    NativeSchematicInstance, NativeSchematicRoot, NativeSheetRoot, PlacedPackage, PlacedPad, Rule,
-    Track, Via, Zone, drawing_uuid, load_native_sheet,
+    NativeSchematicInstance, NativeSchematicRoot, NativeSheetDefinitionRoot, NativeSheetRoot,
+    PlacedPackage, PlacedPad, Rule, Track, Via, Zone, drawing_uuid, load_native_sheet,
 };
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
+#[path = "command_project_pool_validation.rs"]
+mod command_project_pool_validation;
 const SUPPORTED_NATIVE_SCHEMA_VERSION: u32 = 1;
-
-#[derive(Debug, Clone, serde::Deserialize)]
-struct NativeSheetDefinitionRoot {
-    schema_version: u32,
-    uuid: Uuid,
-    root_sheet: Uuid,
-}
 
 pub(crate) fn validate_native_project(root: &Path) -> Result<NativeProjectValidationView> {
     let mut issues = Vec::new();
@@ -54,6 +49,11 @@ pub(crate) fn validate_native_project(root: &Path) -> Result<NativeProjectValida
             relative_subject(root, &manifest_path),
             manifest.schema_version,
         );
+        command_project_pool_validation::validate_native_project_pools(
+            root,
+            &manifest.pools,
+            &mut issues,
+        )?;
 
         let schematic_path = root.join(&manifest.schematic);
         let board_path = root.join(&manifest.board);

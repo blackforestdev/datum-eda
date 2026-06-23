@@ -488,6 +488,7 @@ fn waiver_matches(waiver: &CheckWaiver, finding: &ErcFinding) -> bool {
             expected.sort();
             actual == expected
         }
+        WaiverTarget::Fingerprint(_) => false,
     }
 }
 

@@ -1,3 +1,4 @@
+use super::main_tests_project_journal_support::assert_journal_transaction;
 use super::*;
 use eda_engine::ir::serialization::to_json_deterministic;
 
@@ -56,6 +57,26 @@ fn seed_native_sheet(root: &Path) -> Uuid {
     sheet_uuid
 }
 
+fn assert_text_journal_transaction(root: &Path, index: usize, reason: &str, operations: u64) {
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "journal-list",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("journal-list should succeed");
+    let journal: serde_json::Value =
+        serde_json::from_str(&output).expect("journal-list JSON should parse");
+    assert_eq!(journal["transactions"][index]["reason"], reason);
+    assert_eq!(journal["transactions"][index]["operations"], operations);
+}
+
 #[test]
 fn project_place_edit_and_delete_text_update_native_query_surface() {
     let root = unique_project_root("datum-eda-cli-project-text");
@@ -109,6 +130,7 @@ fn project_place_edit_and_delete_text_update_native_query_surface() {
     assert_eq!(texts[0]["position"]["x"], 700);
     assert_eq!(texts[0]["position"]["y"], 800);
     assert_eq!(texts[0]["rotation"], 90);
+    assert_journal_transaction(&root, "place schematic text", 1);
 
     let summary_cli =
         Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
@@ -156,6 +178,38 @@ fn project_place_edit_and_delete_text_update_native_query_surface() {
     assert_eq!(texts[0]["position"]["x"], 900);
     assert_eq!(texts[0]["position"]["y"], 1000);
     assert_eq!(texts[0]["rotation"], 180);
+    assert_text_journal_transaction(&root, 0, "place schematic text", 1);
+    assert_text_journal_transaction(&root, 1, "edit schematic text", 1);
+
+    let sheet_path = PathBuf::from(placed["sheet_path"].as_str().unwrap());
+    let mut stale_sheet: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&sheet_path).expect("sheet should read"))
+            .expect("sheet should parse");
+    stale_sheet["texts"] = serde_json::json!({});
+    std::fs::write(
+        &sheet_path,
+        format!(
+            "{}\n",
+            to_json_deterministic(&stale_sheet).expect("sheet should serialize")
+        ),
+    )
+    .expect("stale sheet should write");
+
+    let query_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "texts",
+    ])
+    .expect("CLI should parse");
+    let replayed_texts_output = execute(query_cli).expect("project query texts should succeed");
+    let replayed_texts: serde_json::Value =
+        serde_json::from_str(&replayed_texts_output).expect("texts JSON should parse");
+    assert_eq!(replayed_texts.as_array().unwrap().len(), 1);
+    assert_eq!(replayed_texts[0]["text"], "VOUT");
 
     let delete_cli = Cli::try_parse_from([
         "eda",
@@ -169,6 +223,7 @@ fn project_place_edit_and_delete_text_update_native_query_surface() {
     let delete_output = execute(delete_cli).expect("project delete-text should succeed");
     assert!(delete_output.contains("action: delete_text"));
     assert!(delete_output.contains("text: VOUT"));
+    assert_text_journal_transaction(&root, 2, "delete schematic text", 1);
 
     let query_cli = Cli::try_parse_from([
         "eda",

@@ -39,6 +39,7 @@ fn assert_cli_check_matches_golden(fixture: &str) {
         "--format",
         "json",
         "check",
+        "imported",
         kicad_fixture_path(fixture).to_str().unwrap(),
     ])
     .expect("CLI should parse");

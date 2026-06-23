@@ -1,7 +1,6 @@
 use super::command_exec_project_query_route_graph::*;
 use super::*;
 use anyhow::anyhow;
-
 pub(super) fn execute_native_project_query_command(
     format: &OutputFormat,
     path: PathBuf,
@@ -20,6 +19,8 @@ pub(super) fn execute_native_project_query_command(
             let report = query_native_project_pools(&path)?;
             Ok((render_output(format, &report), 0))
         }
+        NativeProjectQueryCommands::PoolLibraryObjects { pool, kind, object, include_payload } => Ok((render_output(format, &query_native_project_pool_library_objects(&path, pool.as_deref(), kind.as_deref(), object, include_payload)?), 0)),
+        NativeProjectQueryCommands::PoolModels { pool, role, sha256 } => Ok((render_output(format, &query_native_project_pool_models(&path, pool.as_deref(), role.as_deref(), sha256.as_deref())?), 0)),
         NativeProjectQueryCommands::DesignRules => {
             let report = query_native_project_rules(&path)?;
             let output = match format {
@@ -52,10 +53,7 @@ pub(super) fn execute_native_project_query_command(
             };
             Ok((output, 0))
         }
-        NativeProjectQueryCommands::Symbols => {
-            let report = query_native_project_symbols(&path)?;
-            Ok((render_output(format, &report), 0))
-        }
+        NativeProjectQueryCommands::Symbols => Ok((render_output(format, &query_native_project_symbols(&path)?), 0)),
         NativeProjectQueryCommands::SymbolFields { symbol } => {
             let report = query_native_project_symbol_fields(&path, symbol)?;
             Ok((render_output(format, &report), 0))
@@ -68,10 +66,7 @@ pub(super) fn execute_native_project_query_command(
             let report = query_native_project_symbol_pins(&path, symbol)?;
             Ok((render_output(format, &report), 0))
         }
-        NativeProjectQueryCommands::Texts => {
-            let report = query_native_project_texts(&path)?;
-            Ok((render_output(format, &report), 0))
-        }
+        NativeProjectQueryCommands::Texts => Ok((render_output(format, &query_native_project_texts(&path)?), 0)),
         NativeProjectQueryCommands::Drawings => {
             let report = query_native_project_drawings(&path)?;
             Ok((render_output(format, &report), 0))
@@ -104,6 +99,7 @@ pub(super) fn execute_native_project_query_command(
             let report = query_native_project_noconnects(&path)?;
             Ok((render_output(format, &report), 0))
         }
+        NativeProjectQueryCommands::Hierarchy => Ok((render_output(format, &query_native_project_hierarchy(&path)?), 0)),
         NativeProjectQueryCommands::Nets => {
             let report = query_native_project_nets(&path)?;
             Ok((render_output(format, &report), 0))
@@ -132,6 +128,10 @@ pub(super) fn execute_native_project_query_command(
             };
             Ok((output, 0))
         }
+        NativeProjectQueryCommands::CheckRun => Ok((render_output(format, &query_native_project_check_run(&path)?), 0)),
+        NativeProjectQueryCommands::Artifacts => Ok((render_output(format, &query_native_project_artifacts(&path)?), 0)),
+        NativeProjectQueryCommands::ManufacturingPlans => Ok((render_output(format, &query_native_project_manufacturing_plans(&path)?), 0)), NativeProjectQueryCommands::PanelProjections => Ok((render_output(format, &query_native_project_panel_projections(&path)?), 0)),
+        NativeProjectQueryCommands::OutputJobs => Ok((render_output(format, &query_native_project_output_jobs(&path)?), 0)), NativeProjectQueryCommands::Relationships => Ok((render_output(format, &query_native_project_relationships(&path)?), 0)), NativeProjectQueryCommands::ComponentInstances => Ok((render_output(format, &query_native_project_component_instances(&path)?), 0)), NativeProjectQueryCommands::Variants => Ok((render_output(format, &query_native_project_variants(&path)?), 0)), NativeProjectQueryCommands::ImportMap => Ok((render_output(format, &query_native_project_import_map(&path)?), 0)), NativeProjectQueryCommands::Proposals => Ok((render_output(format, &query_native_project_proposals(&path)?), 0)),
         NativeProjectQueryCommands::BoardTexts => {
             let report = query_native_project_board_texts(&path)?;
             Ok((render_output(format, &report), 0))
@@ -156,6 +156,9 @@ pub(super) fn execute_native_project_query_command(
             };
             Ok((output, 0))
         }
+        NativeProjectQueryCommands::ResolveDebug { commit_batch, apply } => execute_native_project_resolve_debug_query(format, &path, commit_batch.as_deref(), apply),
+        NativeProjectQueryCommands::JournalList => Ok((render_output(format, &query_native_project_journal_list(&path)?), 0)),
+        NativeProjectQueryCommands::JournalShow { transaction } => Ok((render_output(format, &query_native_project_journal_show(&path, transaction)?), 0)),
         NativeProjectQueryCommands::RoutePreflight { net } => {
             let report = query_native_project_route_preflight(&path, net)?;
             let output = match format {
@@ -693,10 +696,8 @@ pub(super) fn execute_native_project_query_command(
             let report = query_native_project_board_vias(&path)?;
             Ok((render_output(format, &report), 0))
         }
-        NativeProjectQueryCommands::BoardZones => {
-            let report = query_native_project_board_zones(&path)?;
-            Ok((render_output(format, &report), 0))
-        }
+        NativeProjectQueryCommands::BoardZones => Ok((render_output(format, &query_native_project_board_zones(&path)?), 0)),
+        NativeProjectQueryCommands::ZoneFills => Ok((render_output(format, &query_native_project_zone_fills(&path)?), 0)),
         NativeProjectQueryCommands::BoardDiagnostics => {
             let report = query_native_project_board_diagnostics(&path)?;
             Ok((render_output(format, &report), 0))

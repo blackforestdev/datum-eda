@@ -1,8 +1,11 @@
 use serde::Serialize;
 
+use crate::NativeProjectProductionProjectionView;
+
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectDrillExportView {
     pub(crate) action: String,
+    pub(crate) production_classification: String,
     pub(crate) project_root: String,
     pub(crate) drill_path: String,
     pub(crate) rows: usize,
@@ -59,6 +62,7 @@ pub(crate) struct NativeProjectDrillInspectionView {
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectExcellonDrillExportView {
     pub(crate) action: String,
+    pub(crate) production_classification: String,
     pub(crate) project_root: String,
     pub(crate) board_path: String,
     pub(crate) drill_path: String,
@@ -67,6 +71,7 @@ pub(crate) struct NativeProjectExcellonDrillExportView {
     pub(crate) hit_count: usize,
     pub(crate) tool_count: usize,
     pub(crate) tools: Vec<NativeProjectExcellonDrillToolView>,
+    pub(crate) production_projection: NativeProjectProductionProjectionView,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -83,6 +88,7 @@ pub(crate) struct NativeProjectExcellonDrillValidationView {
     pub(crate) hit_count: usize,
     pub(crate) tool_count: usize,
     pub(crate) tools: Vec<NativeProjectExcellonDrillToolView>,
+    pub(crate) production_projection: NativeProjectProductionProjectionView,
 }
 
 #[derive(Debug, Clone, Serialize)]

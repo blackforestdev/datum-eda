@@ -239,9 +239,10 @@ impl Engine {
             .and_then(|design| design.schematic.as_ref())
             .map(|schematic| schematic.waivers.as_slice())
             .unwrap_or(&[]);
-        Ok(drc::run_with_waivers(
+        Ok(drc::run_with_zone_fills_and_waivers(
             self.require_board()?,
             rule_types,
+            &BTreeMap::new(),
             waivers,
         ))
     }

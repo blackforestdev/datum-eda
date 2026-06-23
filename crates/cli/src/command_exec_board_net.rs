@@ -5,8 +5,18 @@ pub(super) fn execute_place_board_net(
     path: PathBuf,
     name: String,
     class_uuid: Uuid,
+    impedance_target_ohms: Option<String>,
+    impedance_tolerance_pct: Option<String>,
+    controlled_dielectric_layer: Option<i32>,
 ) -> Result<(String, i32)> {
-    let report = place_native_project_board_net(&path, name, class_uuid)?;
+    let report = place_native_project_board_net(
+        &path,
+        name,
+        class_uuid,
+        impedance_target_ohms,
+        impedance_tolerance_pct,
+        controlled_dielectric_layer,
+    )?;
     let output = match format {
         OutputFormat::Text => render_native_project_board_net_mutation_text(&report),
         OutputFormat::Json => render_output(format, &report),
@@ -20,8 +30,21 @@ pub(super) fn execute_edit_board_net(
     net_uuid: Uuid,
     name: Option<String>,
     class_uuid: Option<Uuid>,
+    impedance_target_ohms: Option<String>,
+    impedance_tolerance_pct: Option<String>,
+    controlled_dielectric_layer: Option<i32>,
+    clear_controlled_impedance: bool,
 ) -> Result<(String, i32)> {
-    let report = edit_native_project_board_net(&path, net_uuid, name, class_uuid)?;
+    let report = edit_native_project_board_net(
+        &path,
+        net_uuid,
+        name,
+        class_uuid,
+        impedance_target_ohms,
+        impedance_tolerance_pct,
+        controlled_dielectric_layer,
+        clear_controlled_impedance,
+    )?;
     let output = match format {
         OutputFormat::Text => render_native_project_board_net_mutation_text(&report),
         OutputFormat::Json => render_output(format, &report),

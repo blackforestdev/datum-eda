@@ -102,6 +102,12 @@ enum TransactionRecord {
         before_pads: Vec<(uuid::Uuid, crate::ir::geometry::Point)>,
         after_pads: Vec<(uuid::Uuid, crate::ir::geometry::Point)>,
     },
+    FlipComponent {
+        before: crate::board::PlacedPackage,
+        after: crate::board::PlacedPackage,
+        before_pads: Vec<crate::board::PlacedPad>,
+        after_pads: Vec<crate::board::PlacedPad>,
+    },
     SetValue {
         before: crate::board::PlacedPackage,
         after: crate::board::PlacedPackage,

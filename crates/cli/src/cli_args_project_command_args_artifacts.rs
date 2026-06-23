@@ -22,6 +22,12 @@ pub(crate) struct ProjectValidateArgs {
 }
 
 #[derive(clap::Args)]
+pub(crate) struct ProjectGenerateStandardsRepairProposalsArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+}
+
+#[derive(clap::Args)]
 pub(crate) struct ProjectQueryArgs {
     /// Project root directory
     pub(crate) path: PathBuf,

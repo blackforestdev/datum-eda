@@ -95,6 +95,8 @@ fn project_query_board_component_silkscreen_reads_persisted_component_silkscreen
             },
         ],
         models_3d: Vec::new(),
+        body_height_nm: None,
+        body_height_mounted_nm: None,
         tags: HashSet::new(),
     };
 

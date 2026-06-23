@@ -17,9 +17,20 @@ pub(super) fn execute_manufacturing_command(
             path,
             output_dir,
             prefix,
+            output_job,
+            job,
+            include,
+            variant,
         }) => {
-            let report =
-                export_native_project_manufacturing_set(&path, &output_dir, prefix.as_deref())?;
+            let report = export_native_project_manufacturing_set(
+                &path,
+                &output_dir,
+                prefix.as_deref(),
+                variant,
+                include.as_deref(),
+                output_job,
+                job.as_deref(),
+            )?;
             let output = match format {
                 OutputFormat::Text => render_native_project_manufacturing_export_text(&report),
                 OutputFormat::Json => render_output(format, &report),
@@ -30,9 +41,20 @@ pub(super) fn execute_manufacturing_command(
             path,
             output_dir,
             prefix,
+            output_job,
+            job,
+            include,
+            variant,
         }) => {
-            let report =
-                validate_native_project_manufacturing_set(&path, &output_dir, prefix.as_deref())?;
+            let report = validate_native_project_manufacturing_set(
+                &path,
+                &output_dir,
+                prefix.as_deref(),
+                variant,
+                include.as_deref(),
+                output_job,
+                job.as_deref(),
+            )?;
             let output = match format {
                 OutputFormat::Text => render_native_project_manufacturing_validation_text(&report),
                 OutputFormat::Json => render_output(format, &report),
@@ -51,9 +73,20 @@ pub(super) fn execute_manufacturing_command(
             path,
             output_dir,
             prefix,
+            output_job,
+            job,
+            include,
+            variant,
         }) => {
-            let report =
-                compare_native_project_manufacturing_set(&path, &output_dir, prefix.as_deref())?;
+            let report = compare_native_project_manufacturing_set(
+                &path,
+                &output_dir,
+                prefix.as_deref(),
+                variant,
+                include.as_deref(),
+                output_job,
+                job.as_deref(),
+            )?;
             let output = match format {
                 OutputFormat::Text => render_native_project_manufacturing_comparison_text(&report),
                 OutputFormat::Json => render_output(format, &report),
@@ -72,9 +105,18 @@ pub(super) fn execute_manufacturing_command(
             path,
             output_dir,
             prefix,
+            output_job,
+            job,
+            include,
         }) => {
-            let report =
-                manifest_native_project_manufacturing_set(&path, &output_dir, prefix.as_deref())?;
+            let report = manifest_native_project_manufacturing_set(
+                &path,
+                &output_dir,
+                prefix.as_deref(),
+                include.as_deref(),
+                output_job,
+                job.as_deref(),
+            )?;
             let output = match format {
                 OutputFormat::Text => render_native_project_manufacturing_manifest_text(&report),
                 OutputFormat::Json => render_output(format, &report),
@@ -85,9 +127,18 @@ pub(super) fn execute_manufacturing_command(
             path,
             output_dir,
             prefix,
+            output_job,
+            job,
+            include,
         }) => {
-            let report =
-                inspect_native_project_manufacturing_set(&path, &output_dir, prefix.as_deref())?;
+            let report = inspect_native_project_manufacturing_set(
+                &path,
+                &output_dir,
+                prefix.as_deref(),
+                include.as_deref(),
+                output_job,
+                job.as_deref(),
+            )?;
             let output = match format {
                 OutputFormat::Text => render_native_project_manufacturing_inspection_text(&report),
                 OutputFormat::Json => render_output(format, &report),

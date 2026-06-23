@@ -138,6 +138,39 @@ impl Engine {
                     description: format!("redo rotate_component {}", after.uuid),
                 }
             }
+            TransactionRecord::FlipComponent {
+                before: _,
+                after,
+                before_pads: _,
+                after_pads,
+            } => {
+                let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
+                let board = design.board.as_mut().ok_or_else(|| {
+                    EngineError::Operation(
+                        "redo is currently implemented only for board transactions".to_string(),
+                    )
+                })?;
+                let package = board
+                    .packages
+                    .get_mut(&after.uuid)
+                    .ok_or(EngineError::NotFound {
+                        object_type: "component",
+                        uuid: after.uuid,
+                    })?;
+                *package = after.clone();
+                restore_component_pads(board, after.uuid, after_pads);
+                OperationResult {
+                    diff: OperationDiff {
+                        created: Vec::new(),
+                        modified: vec![OperationRef {
+                            object_type: "component".to_string(),
+                            uuid: after.uuid,
+                        }],
+                        deleted: Vec::new(),
+                    },
+                    description: format!("redo flip_component {}", after.uuid),
+                }
+            }
             TransactionRecord::SetDesignRule {
                 previous: _,
                 current,

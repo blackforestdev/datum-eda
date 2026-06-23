@@ -1,6 +1,126 @@
 use super::*;
 
 #[derive(clap::Args)]
+pub(crate) struct ProjectCreateSheetArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Sheet name
+    #[arg(long)]
+    pub(crate) name: String,
+    /// Optional sheet UUID. Omit to allocate a fresh UUID.
+    #[arg(long)]
+    pub(crate) sheet: Option<Uuid>,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectDeleteSheetArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Sheet UUID
+    #[arg(long)]
+    pub(crate) sheet: Uuid,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectRenameSheetArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Sheet UUID
+    #[arg(long)]
+    pub(crate) sheet: Uuid,
+    /// New sheet name
+    #[arg(long)]
+    pub(crate) name: String,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectCreateSheetDefinitionArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Root sheet UUID for this sheet definition
+    #[arg(long)]
+    pub(crate) root_sheet: Uuid,
+    /// Sheet definition name
+    #[arg(long)]
+    pub(crate) name: String,
+    /// Optional sheet definition UUID. Omit to allocate a fresh UUID.
+    #[arg(long)]
+    pub(crate) definition: Option<Uuid>,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectCreateSheetInstanceArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Sheet definition UUID to instantiate
+    #[arg(long)]
+    pub(crate) definition: Uuid,
+    /// Optional parent sheet UUID for this instance
+    #[arg(long)]
+    pub(crate) parent_sheet: Option<Uuid>,
+    /// Instance name
+    #[arg(long)]
+    pub(crate) name: String,
+    /// X coordinate in nm
+    #[arg(long)]
+    pub(crate) x_nm: i64,
+    /// Y coordinate in nm
+    #[arg(long)]
+    pub(crate) y_nm: i64,
+    /// Optional sheet instance UUID. Omit to allocate a fresh UUID.
+    #[arg(long)]
+    pub(crate) instance: Option<Uuid>,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectDeleteSheetInstanceArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Sheet instance UUID
+    #[arg(long)]
+    pub(crate) instance: Uuid,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectMoveSheetInstanceArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Sheet instance UUID
+    #[arg(long)]
+    pub(crate) instance: Uuid,
+    /// New X coordinate in nm
+    #[arg(long)]
+    pub(crate) x_nm: i64,
+    /// New Y coordinate in nm
+    #[arg(long)]
+    pub(crate) y_nm: i64,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectBindSheetInstancePortArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Sheet instance UUID
+    #[arg(long)]
+    pub(crate) instance: Uuid,
+    /// Parent-sheet hierarchical port UUID to expose through this instance
+    #[arg(long)]
+    pub(crate) port: Uuid,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectUnbindSheetInstancePortArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Sheet instance UUID
+    #[arg(long)]
+    pub(crate) instance: Uuid,
+    /// Parent-sheet hierarchical port UUID to remove from this instance binding
+    #[arg(long)]
+    pub(crate) port: Uuid,
+}
+
+#[derive(clap::Args)]
 pub(crate) struct ProjectPlaceLabelArgs {
     /// Project root directory
     pub(crate) path: PathBuf,
@@ -172,6 +292,15 @@ pub(crate) struct ProjectEditBusMembersArgs {
     /// Replacement bus member labels
     #[arg(long = "member")]
     pub(crate) members: Vec<String>,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProjectDeleteBusArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Bus UUID
+    #[arg(long)]
+    pub(crate) bus: Uuid,
 }
 
 #[derive(clap::Args)]

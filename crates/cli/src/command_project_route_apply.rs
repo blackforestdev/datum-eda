@@ -1,4 +1,5 @@
 use super::*;
+use crate::NativeProjectRouteAppliedTrackReportView;
 use crate::NativeProjectRouteApplyCandidateArg;
 use crate::NativeProjectRouteApplyView;
 use crate::cli_args::NativeRoutePathCandidateAuthoredCopperGraphPolicy;
@@ -208,19 +209,9 @@ pub(super) fn validate_route_proposal_actions(
 pub(super) fn apply_route_proposal_actions(
     root: &Path,
     actions: &[NativeProjectRouteProposalActionView],
-) -> Result<Vec<NativeProjectBoardTrackMutationReportView>> {
-    let mut applied = Vec::new();
-    for action in actions {
-        if action.proposal_action == "draw_track" {
-            applied.push(place_native_project_board_track(
-                root,
-                action.net_uuid,
-                action.from,
-                action.to,
-                action.width_nm,
-                action.layer,
-            )?);
-        }
-    }
-    Ok(applied)
+) -> Result<Vec<NativeProjectRouteAppliedTrackReportView>> {
+    let built = super::command_project_route_proposal_substrate::build_accepted_route_proposal(
+        root, actions,
+    )?;
+    super::command_project_route_proposal_substrate::apply_built_route_proposal(root, built)
 }

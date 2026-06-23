@@ -55,6 +55,15 @@ pub struct Symbol {
     pub uuid: Uuid,
     pub name: String,
     pub unit: Uuid,
+    #[serde(default)]
+    pub drawings: Vec<Primitive>,
+    #[serde(default)]
+    pub pin_anchors: Vec<SymbolPinAnchor>,
+}
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct SymbolPinAnchor {
+    pub pin: Uuid,
+    pub position: Point,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -109,6 +118,10 @@ pub struct Package {
     pub courtyard: Polygon,
     pub silkscreen: Vec<Primitive>,
     pub models_3d: Vec<ModelRef>,
+    #[serde(default)]
+    pub body_height_nm: Option<i64>,
+    #[serde(default)]
+    pub body_height_mounted_nm: Option<i64>,
     pub tags: HashSet<String>,
 }
 
@@ -126,14 +139,159 @@ pub struct Part {
     pub pad_map: HashMap<Uuid, PadMapEntry>,
     pub mpn: String,
     pub manufacturer: String,
+    #[serde(default)]
+    pub manufacturer_jep106: Option<u16>,
     pub value: String,
     pub description: String,
     pub datasheet: String,
     pub parametric: HashMap<String, String>,
     pub orderable_mpns: Vec<String>,
+    #[serde(default)]
+    pub packaging_options: Vec<PackagingOption>,
     pub tags: HashSet<String>,
     pub lifecycle: Lifecycle,
     pub base: Option<Uuid>,
+    #[serde(default)]
+    pub behavioural_models: Vec<ModelAttachment>,
+    #[serde(default)]
+    pub thermal: Option<ThermalSpec>,
+    #[serde(default)]
+    pub supply_chain_offers: Option<Vec<SupplyOffer>>,
+    #[serde(default)]
+    pub last_supply_chain_check: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum PackagingKind {
+    Reel {
+        tape_width_mm: u16,
+        reel_diameter_inch: u8,
+        qty_per_reel: u32,
+    },
+    Tray {
+        qty_per_tray: u32,
+    },
+    Tube {
+        qty_per_tube: u32,
+    },
+    Bag {
+        qty_per_bag: u32,
+    },
+    Cut {
+        qty: u32,
+    },
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct PackagingOption {
+    #[serde(flatten)]
+    pub kind: PackagingKind,
+    pub mpn_suffix: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ThermalSpec {
+    pub theta_ja_c_per_w: Option<serde_json::Number>,
+    pub theta_jc_top_c_per_w: Option<serde_json::Number>,
+    pub theta_jc_bot_c_per_w: Option<serde_json::Number>,
+    pub theta_jb_c_per_w: Option<serde_json::Number>,
+    pub max_junction_c: Option<serde_json::Number>,
+    pub thermal_reference: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ModelProvenance {
+    pub source: String,
+    pub vendor: Option<String>,
+    pub fetched_at: Option<String>,
+    pub sha256: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ModelRole {
+    Spice,
+    Ibis,
+    IbisIss,
+    IbisAmi,
+    Touchstone,
+    VerilogA,
+    VerilogAms,
+    VhdlAms,
+    CompactThermal,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum SpiceDialect {
+    Berkeley3,
+    Ngspice,
+    LTspice,
+    PSpice,
+    HSpice,
+    Xyce,
+    Spectre,
+    Unknown,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum EncryptionScheme {
+    IbisBird176,
+    PSpiceEncryptIt,
+    HSpiceAvantHash,
+    LTspiceObfuscation,
+    SpectreEncrypt,
+    Other(String),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum ModelFormatMetadata {
+    Spice {
+        ngspice_validates: Option<bool>,
+    },
+    Ibis {
+        ibis_version: String,
+        has_ami: bool,
+    },
+    IbisAmi {
+        ami_version: String,
+        platform_binaries: HashMap<String, String>,
+    },
+    Touchstone {
+        ports: u32,
+        frequency_start_hz: serde_json::Number,
+        frequency_end_hz: serde_json::Number,
+    },
+    None,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ModelAttachment {
+    pub uuid: Uuid,
+    pub model_uuid: Uuid,
+    pub role: ModelRole,
+    pub dialect: Option<SpiceDialect>,
+    pub model_names: Vec<String>,
+    pub encrypted: bool,
+    pub encryption_scheme: Option<EncryptionScheme>,
+    pub provenance: Option<ModelProvenance>,
+    pub format_metadata: ModelFormatMetadata,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct SupplyPriceBreak {
+    pub qty: u32,
+    pub price: serde_json::Number,
+    pub currency: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct SupplyOffer {
+    pub distributor: String,
+    pub price_breaks: Vec<SupplyPriceBreak>,
+    pub stock: Option<u32>,
+    pub lead_time_weeks: Option<u32>,
+    pub link: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -148,7 +306,53 @@ pub enum Lifecycle {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ModelRef {
     pub path: String,
-    pub transform: Option<serde_json::Value>,
+    #[serde(default)]
+    pub format: ModelFormat,
+    #[serde(default)]
+    pub transform: Transform3D,
+    #[serde(default)]
+    pub provenance: Option<ModelProvenance>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct Point3D {
+    pub x: i64,
+    pub y: i64,
+    pub z: i64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct Euler3D {
+    pub roll_tenths_deg: i32,
+    pub pitch_tenths_deg: i32,
+    pub yaw_tenths_deg: i32,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Transform3D {
+    pub translation_nm: Point3D,
+    pub rotation_tenths_deg: Euler3D,
+    pub scale: serde_json::Number,
+}
+
+impl Default for Transform3D {
+    fn default() -> Self {
+        Self {
+            translation_nm: Point3D::default(),
+            rotation_tenths_deg: Euler3D::default(),
+            scale: serde_json::Number::from_f64(1.0).expect("1.0 is a finite JSON number"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub enum ModelFormat {
+    #[default]
+    Step,
+    Wrl,
+    Iges,
+    Obj,
+    Gltf,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

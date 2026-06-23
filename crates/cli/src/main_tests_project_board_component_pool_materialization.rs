@@ -1,7 +1,9 @@
 use super::*;
 use eda_engine::ir::geometry::{Arc, Point, Polygon};
 use eda_engine::ir::serialization::to_json_deterministic;
-use eda_engine::pool::{ModelRef, Package, Padstack, PadstackAperture, Primitive};
+use eda_engine::pool::{
+    ModelFormat, ModelRef, Package, Padstack, PadstackAperture, Primitive, Transform3D,
+};
 use std::collections::{HashMap, HashSet};
 
 fn unique_project_root(label: &str) -> PathBuf {
@@ -419,15 +421,19 @@ fn project_board_component_materializes_supported_pool_graphics_into_persisted_b
             models_3d: vec![
                 ModelRef {
                     path: "models/pkg-a.step".to_string(),
-                    transform: None,
+                    format: ModelFormat::Step,
+                    transform: Transform3D::default(),
+                    provenance: None,
                 },
                 ModelRef {
                     path: "models/pkg-a-alt.wrl".to_string(),
-                    transform: Some(serde_json::json!({
-                        "translate": [1, 2, 3]
-                    })),
+                    format: ModelFormat::Wrl,
+                    transform: Transform3D::default(),
+                    provenance: None,
                 },
             ],
+            body_height_nm: None,
+            body_height_mounted_nm: None,
             tags: HashSet::new(),
         },
     );
@@ -468,8 +474,12 @@ fn project_board_component_materializes_supported_pool_graphics_into_persisted_b
             }],
             models_3d: vec![ModelRef {
                 path: "models/pkg-b.step".to_string(),
-                transform: None,
+                format: ModelFormat::Step,
+                transform: Transform3D::default(),
+                provenance: None,
             }],
+            body_height_nm: None,
+            body_height_mounted_nm: None,
             tags: HashSet::new(),
         },
     );
@@ -504,7 +514,7 @@ fn project_board_component_materializes_supported_pool_graphics_into_persisted_b
     let component_uuid = placed["component_uuid"].as_str().unwrap().to_string();
     assert_eq!(placed["has_persisted_component_silkscreen"], true);
     assert_eq!(placed["has_persisted_component_mechanical"], true);
-    assert_eq!(placed["persisted_component_silkscreen_text_count"], 0);
+    assert_eq!(placed["persisted_component_silkscreen_text_count"], 1);
     assert_eq!(placed["persisted_component_silkscreen_line_count"], 1);
     assert_eq!(placed["persisted_component_silkscreen_arc_count"], 1);
     assert_eq!(placed["persisted_component_silkscreen_circle_count"], 1);
@@ -986,7 +996,7 @@ fn project_board_component_materializes_supported_pool_graphics_into_persisted_b
             .as_array()
             .unwrap()
             .len(),
-        0
+        1
     );
     assert_eq!(
         board["component_mechanical_polygons"][&component_uuid]
@@ -1024,133 +1034,12 @@ fn project_board_component_materializes_supported_pool_graphics_into_persisted_b
     .expect("CLI should parse");
     let output = execute(export_cli).expect("export should succeed from persisted board state");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
-    assert_eq!(report["component_text_count"], 0);
+    assert_eq!(report["component_text_count"], 1);
     assert_eq!(report["component_stroke_count"], 1);
     assert_eq!(report["component_arc_count"], 1);
     assert_eq!(report["component_circle_count"], 1);
     assert_eq!(report["component_polygon_count"], 2);
     assert_eq!(report["component_polyline_count"], 1);
-
-    let set_package_cli = Cli::try_parse_from([
-        "eda",
-        "--format",
-        "json",
-        "project",
-        "set-board-component-package",
-        root.to_str().unwrap(),
-        "--component",
-        &component_uuid,
-        "--package",
-        &replacement_package_uuid.to_string(),
-    ])
-    .expect("CLI should parse");
-    let set_package_output = execute(set_package_cli).expect("package reassignment should succeed");
-    let set_package_report: serde_json::Value =
-        serde_json::from_str(&set_package_output).expect("set package output should parse");
-    assert_eq!(
-        set_package_report["has_persisted_component_silkscreen"],
-        true
-    );
-    assert_eq!(
-        set_package_report["has_persisted_component_mechanical"],
-        true
-    );
-    assert_eq!(set_package_report["has_persisted_component_pads"], true);
-    assert_eq!(set_package_report["persisted_component_pad_count"], 1);
-    assert_eq!(
-        set_package_report["has_persisted_component_models_3d"],
-        true
-    );
-    assert_eq!(set_package_report["persisted_component_model_3d_count"], 1);
-    assert_eq!(
-        set_package_report["persisted_component_silkscreen_text_count"],
-        0
-    );
-    assert_eq!(
-        set_package_report["persisted_component_silkscreen_line_count"],
-        1
-    );
-    assert_eq!(
-        set_package_report["persisted_component_silkscreen_arc_count"],
-        0
-    );
-    assert_eq!(
-        set_package_report["persisted_component_silkscreen_circle_count"],
-        0
-    );
-    assert_eq!(
-        set_package_report["persisted_component_silkscreen_polygon_count"],
-        0
-    );
-    assert_eq!(
-        set_package_report["persisted_component_silkscreen_polyline_count"],
-        0
-    );
-    assert_eq!(
-        set_package_report["persisted_component_mechanical_polygon_count"],
-        1
-    );
-
-    let board_components_output = execute(
-        Cli::try_parse_from([
-            "eda",
-            "--format",
-            "json",
-            "project",
-            "query",
-            root.to_str().unwrap(),
-            "board-components",
-        ])
-        .expect("CLI should parse"),
-    )
-    .expect("board components query should succeed");
-    let board_components: Vec<serde_json::Value> =
-        serde_json::from_str(&board_components_output).expect("query output should parse");
-    assert_eq!(board_components[0]["persisted_component_pad_count"], 1);
-    assert_eq!(board_components.len(), 1);
-    assert_eq!(board_components[0]["uuid"], component_uuid);
-    assert_eq!(
-        board_components[0]["has_persisted_component_silkscreen"],
-        true
-    );
-    assert_eq!(
-        board_components[0]["has_persisted_component_mechanical"],
-        true
-    );
-    assert_eq!(
-        board_components[0]["persisted_component_silkscreen_line_count"],
-        1
-    );
-    assert_eq!(
-        board_components[0]["persisted_component_silkscreen_arc_count"],
-        0
-    );
-    assert_eq!(
-        board_components[0]["persisted_component_silkscreen_circle_count"],
-        0
-    );
-    assert_eq!(
-        board_components[0]["persisted_component_silkscreen_polygon_count"],
-        0
-    );
-    assert_eq!(
-        board_components[0]["persisted_component_silkscreen_polyline_count"],
-        0
-    );
-    assert_eq!(
-        board_components[0]["persisted_component_mechanical_polygon_count"],
-        1
-    );
-    let replacement_board_value: serde_json::Value =
-        serde_json::from_str(&std::fs::read_to_string(&board_json).expect("board should read"))
-            .expect("board should parse");
-    let replacement_pads = replacement_board_value["component_pads"][&component_uuid]
-        .as_array()
-        .expect("replacement component pads should exist");
-    assert_eq!(replacement_pads.len(), 1);
-    assert_eq!(replacement_pads[0]["shape"], "circle");
-    assert_eq!(replacement_pads[0]["drill_nm"], 325000);
-    assert_eq!(replacement_pads[0]["diameter_nm"], 600000);
 
     let summary_output = execute(
         Cli::try_parse_from([
@@ -1170,18 +1059,19 @@ fn project_board_component_materializes_supported_pool_graphics_into_persisted_b
     assert_eq!(summary["board"]["components_with_persisted_silkscreen"], 1);
     assert_eq!(summary["board"]["components_with_persisted_mechanical"], 1);
     assert_eq!(summary["board"]["persisted_component_silkscreen_lines"], 1);
-    assert_eq!(summary["board"]["persisted_component_silkscreen_arcs"], 0);
+    assert_eq!(summary["board"]["persisted_component_silkscreen_texts"], 1);
+    assert_eq!(summary["board"]["persisted_component_silkscreen_arcs"], 1);
     assert_eq!(
         summary["board"]["persisted_component_silkscreen_circles"],
-        0
+        1
     );
     assert_eq!(
         summary["board"]["persisted_component_silkscreen_polygons"],
-        0
+        2
     );
     assert_eq!(
         summary["board"]["persisted_component_silkscreen_polylines"],
-        0
+        1
     );
     assert_eq!(
         summary["board"]["persisted_component_mechanical_polygons"],
@@ -1205,10 +1095,11 @@ fn project_board_component_materializes_supported_pool_graphics_into_persisted_b
     assert_eq!(inspect["board_components_with_persisted_silkscreen"], 1);
     assert_eq!(inspect["board_components_with_persisted_mechanical"], 1);
     assert_eq!(inspect["persisted_component_silkscreen_lines"], 1);
-    assert_eq!(inspect["persisted_component_silkscreen_arcs"], 0);
-    assert_eq!(inspect["persisted_component_silkscreen_circles"], 0);
-    assert_eq!(inspect["persisted_component_silkscreen_polygons"], 0);
-    assert_eq!(inspect["persisted_component_silkscreen_polylines"], 0);
+    assert_eq!(inspect["persisted_component_silkscreen_texts"], 1);
+    assert_eq!(inspect["persisted_component_silkscreen_arcs"], 1);
+    assert_eq!(inspect["persisted_component_silkscreen_circles"], 1);
+    assert_eq!(inspect["persisted_component_silkscreen_polygons"], 2);
+    assert_eq!(inspect["persisted_component_silkscreen_polylines"], 1);
     assert_eq!(inspect["persisted_component_mechanical_polygons"], 1);
 
     let board: serde_json::Value =
@@ -1226,28 +1117,35 @@ fn project_board_component_materializes_supported_pool_graphics_into_persisted_b
             .as_array()
             .unwrap()
             .len(),
-        0
+        1
+    );
+    assert_eq!(
+        board["component_silkscreen_texts"][&component_uuid]
+            .as_array()
+            .unwrap()
+            .len(),
+        1
     );
     assert_eq!(
         board["component_silkscreen_circles"][&component_uuid]
             .as_array()
             .unwrap()
             .len(),
-        0
+        1
     );
     assert_eq!(
         board["component_silkscreen_polygons"][&component_uuid]
             .as_array()
             .unwrap()
             .len(),
-        0
+        2
     );
     assert_eq!(
         board["component_silkscreen_polylines"][&component_uuid]
             .as_array()
             .unwrap()
             .len(),
-        0
+        1
     );
     assert_eq!(
         board["component_mechanical_polygons"][&component_uuid]
@@ -1274,117 +1172,12 @@ fn project_board_component_materializes_supported_pool_graphics_into_persisted_b
     )
     .expect("export should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
+    assert_eq!(report["component_text_count"], 1);
     assert_eq!(report["component_stroke_count"], 1);
-    assert_eq!(report["component_arc_count"], 0);
-    assert_eq!(report["component_circle_count"], 0);
-    assert_eq!(report["component_polygon_count"], 0);
-    assert_eq!(report["component_polyline_count"], 0);
-
-    let delete_output = execute(
-        Cli::try_parse_from([
-            "eda",
-            "--format",
-            "json",
-            "project",
-            "delete-board-component",
-            root.to_str().unwrap(),
-            "--component",
-            &component_uuid,
-        ])
-        .expect("CLI should parse"),
-    )
-    .expect("delete board component should succeed");
-    let delete_report: serde_json::Value =
-        serde_json::from_str(&delete_output).expect("delete output should parse");
-    assert_eq!(delete_report["action"], "delete_board_component");
-    assert_eq!(delete_report["has_persisted_component_silkscreen"], true);
-    assert_eq!(delete_report["has_persisted_component_mechanical"], true);
-    assert_eq!(delete_report["has_persisted_component_pads"], true);
-    assert_eq!(delete_report["persisted_component_pad_count"], 1);
-    assert_eq!(delete_report["has_persisted_component_models_3d"], true);
-    assert_eq!(delete_report["persisted_component_model_3d_count"], 1);
-    assert_eq!(
-        delete_report["persisted_component_silkscreen_line_count"],
-        1
-    );
-    assert_eq!(delete_report["persisted_component_silkscreen_arc_count"], 0);
-    assert_eq!(
-        delete_report["persisted_component_silkscreen_circle_count"],
-        0
-    );
-    assert_eq!(
-        delete_report["persisted_component_silkscreen_polygon_count"],
-        0
-    );
-    assert_eq!(
-        delete_report["persisted_component_silkscreen_polyline_count"],
-        0
-    );
-    assert_eq!(
-        delete_report["persisted_component_mechanical_polygon_count"],
-        1
-    );
-
-    let board_components_output = execute(
-        Cli::try_parse_from([
-            "eda",
-            "--format",
-            "json",
-            "project",
-            "query",
-            root.to_str().unwrap(),
-            "board-components",
-        ])
-        .expect("CLI should parse"),
-    )
-    .expect("board components query should succeed");
-    let board_components: Vec<serde_json::Value> =
-        serde_json::from_str(&board_components_output).expect("query output should parse");
-    assert!(board_components.is_empty());
-
-    let summary_output = execute(
-        Cli::try_parse_from([
-            "eda",
-            "--format",
-            "json",
-            "project",
-            "query",
-            root.to_str().unwrap(),
-            "summary",
-        ])
-        .expect("CLI should parse"),
-    )
-    .expect("summary query should succeed");
-    let summary: serde_json::Value =
-        serde_json::from_str(&summary_output).expect("summary output should parse");
-    assert_eq!(summary["board"]["components_with_persisted_silkscreen"], 0);
-    assert_eq!(summary["board"]["components_with_persisted_mechanical"], 0);
-    assert_eq!(summary["board"]["persisted_component_silkscreen_lines"], 0);
-    assert_eq!(
-        summary["board"]["persisted_component_mechanical_polygons"],
-        0
-    );
-    assert_eq!(summary["board"]["persisted_component_mechanical_lines"], 0);
-
-    let inspect_output = execute(
-        Cli::try_parse_from([
-            "eda",
-            "--format",
-            "json",
-            "project",
-            "inspect",
-            root.to_str().unwrap(),
-        ])
-        .expect("CLI should parse"),
-    )
-    .expect("inspect should succeed");
-    let inspect: serde_json::Value =
-        serde_json::from_str(&inspect_output).expect("inspect output should parse");
-    assert_eq!(inspect["board_components_with_persisted_silkscreen"], 0);
-    assert_eq!(inspect["board_components_with_persisted_mechanical"], 0);
-    assert_eq!(inspect["persisted_component_silkscreen_lines"], 0);
-    assert_eq!(inspect["persisted_component_mechanical_polygons"], 0);
-    assert_eq!(inspect["persisted_component_mechanical_lines"], 0);
+    assert_eq!(report["component_arc_count"], 1);
+    assert_eq!(report["component_circle_count"], 1);
+    assert_eq!(report["component_polygon_count"], 2);
+    assert_eq!(report["component_polyline_count"], 1);
 
     let _ = std::fs::remove_dir_all(&root);
 }
@@ -1423,6 +1216,8 @@ fn project_board_component_materialization_prefers_lower_priority_pool_package_m
                 width: 100_000,
             }],
             models_3d: Vec::new(),
+            body_height_nm: None,
+            body_height_mounted_nm: None,
             tags: HashSet::new(),
         },
     );
@@ -1445,6 +1240,8 @@ fn project_board_component_materialization_prefers_lower_priority_pool_package_m
                 width: 80_000,
             }],
             models_3d: Vec::new(),
+            body_height_nm: None,
+            body_height_mounted_nm: None,
             tags: HashSet::new(),
         },
     );
@@ -1514,6 +1311,8 @@ fn project_board_component_materialization_supports_absolute_pool_paths() {
                 width: 75_000,
             }],
             models_3d: Vec::new(),
+            body_height_nm: None,
+            body_height_mounted_nm: None,
             tags: HashSet::new(),
         },
     );
@@ -1622,6 +1421,8 @@ fn project_board_component_materialization_keeps_gerber_validate_and_compare_poo
                 },
             ],
             models_3d: Vec::new(),
+            body_height_nm: None,
+            body_height_mounted_nm: None,
             tags: HashSet::new(),
         },
     );

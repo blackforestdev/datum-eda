@@ -168,10 +168,11 @@ namespace, session) are referenced, not restated.
 2. **Operation it emits.** NONE — check execution never mutates design
    truth (009 step 8). It SHOULD persist a `CheckRun`/`CheckFinding`
    record keyed by `model_revision` + variant + `input_object_revisions`
-   with a deterministic fingerprint, recorded as journaled **evidence**
-   (a derived `commit()` artifact, not a design op). Today nothing is
-   persisted. `explanation` + `suggested_next_action` live **on the
-   finding record**, so no separate explain tool is needed.
+   with a deterministic fingerprint, recorded as generated **evidence**
+   (a derived artifact, not a design op). Current native CheckRun evidence is
+   persisted under `.datum/check_runs`. `explanation` +
+   `suggested_next_action` live **on the finding record**, so no separate
+   explain tool is needed.
 3. **CLI command.** `datum-eda check run <path> [--fail-on warning|error]
    [--profile <id>] [--domain erc|drc|all] [--mode edit|batch]` (live —
    `query_check.rs::run_check`/`check_exit_code`) and
@@ -201,9 +202,9 @@ namespace, session) are referenced, not restated.
    + deterministic fingerprint; not variant-aware (no overlay
    composition before run, 009 step 2); `run_drc` rule set hard-coded
    (`dispatch.rs:455`); only one process-geometry category (paste/mask);
-   no declared/inferred/unknown-basis distinction;
-   `explanation`/`suggested_next_action` not yet fields on the finding
-   record.
+   no declared/inferred/unknown-basis distinction. Current native live and
+   persisted findings already include `explanation` and
+   `suggested_next_action` fields.
 
 ---
 

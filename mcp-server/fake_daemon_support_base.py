@@ -135,8 +135,8 @@ class FakeDaemonClientBase:
         self.calls.append(("run_erc", None))
         return JsonRpcResponse("2.0", 4, [{"code": "undriven_power_net"}], None)
 
-    def run_drc(self) -> JsonRpcResponse:
-        self.calls.append(("run_drc", None))
+    def run_drc(self, rules: list[str] | None = None) -> JsonRpcResponse:
+        self.calls.append(("run_drc", rules))
         return JsonRpcResponse(
             "2.0",
             5,

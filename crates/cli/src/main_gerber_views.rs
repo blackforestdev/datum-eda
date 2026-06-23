@@ -1,8 +1,18 @@
 use serde::Serialize;
 
 #[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectProductionProjectionView {
+    pub(crate) projection_kind: String,
+    pub(crate) projection_contract: String,
+    pub(crate) model_revision: String,
+    pub(crate) byte_count: usize,
+    pub(crate) sha256: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectGerberOutlineExportView {
     pub(crate) action: String,
+    pub(crate) production_classification: String,
     pub(crate) project_root: String,
     pub(crate) board_path: String,
     pub(crate) gerber_path: String,
@@ -13,6 +23,7 @@ pub(crate) struct NativeProjectGerberOutlineExportView {
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectGerberCopperExportView {
     pub(crate) action: String,
+    pub(crate) production_classification: String,
     pub(crate) project_root: String,
     pub(crate) board_path: String,
     pub(crate) gerber_path: String,
@@ -20,12 +31,16 @@ pub(crate) struct NativeProjectGerberCopperExportView {
     pub(crate) pad_count: usize,
     pub(crate) track_count: usize,
     pub(crate) zone_count: usize,
+    pub(crate) unfilled_zone_count: usize,
+    pub(crate) unfilled_zone_ids: Vec<String>,
     pub(crate) via_count: usize,
+    pub(crate) production_projection: NativeProjectProductionProjectionView,
 }
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectGerberSoldermaskExportView {
     pub(crate) action: String,
+    pub(crate) production_classification: String,
     pub(crate) project_root: String,
     pub(crate) board_path: String,
     pub(crate) gerber_path: String,
@@ -37,6 +52,7 @@ pub(crate) struct NativeProjectGerberSoldermaskExportView {
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectGerberPasteExportView {
     pub(crate) action: String,
+    pub(crate) production_classification: String,
     pub(crate) project_root: String,
     pub(crate) board_path: String,
     pub(crate) gerber_path: String,
@@ -71,7 +87,10 @@ pub(crate) struct NativeProjectGerberCopperValidationView {
     pub(crate) pad_count: usize,
     pub(crate) track_count: usize,
     pub(crate) zone_count: usize,
+    pub(crate) unfilled_zone_count: usize,
+    pub(crate) unfilled_zone_ids: Vec<String>,
     pub(crate) via_count: usize,
+    pub(crate) production_projection: NativeProjectProductionProjectionView,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -138,6 +157,8 @@ pub(crate) struct NativeProjectGerberCopperComparisonView {
     pub(crate) actual_track_count: usize,
     pub(crate) expected_zone_count: usize,
     pub(crate) actual_zone_count: usize,
+    pub(crate) unfilled_zone_count: usize,
+    pub(crate) unfilled_zone_ids: Vec<String>,
     pub(crate) expected_via_count: usize,
     pub(crate) actual_via_count: usize,
     pub(crate) matched_count: usize,

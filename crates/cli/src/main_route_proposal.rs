@@ -212,11 +212,12 @@ pub(crate) struct NativeProjectRouteStrategyCuratedFixtureSuiteEntryView {
     pub(crate) to_anchor_pad_uuid: String,
     pub(crate) coverage_labels: Vec<String>,
 }
-
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectRouteStrategyCuratedFixtureSuiteView {
     pub(crate) action: String,
     pub(crate) suite_id: String,
+    pub(crate) authoring_boundary: String,
+    pub(crate) write_path_policy: String,
     pub(crate) out_dir: String,
     pub(crate) requests_manifest_path: String,
     pub(crate) requests_manifest_kind: String,
@@ -226,11 +227,12 @@ pub(crate) struct NativeProjectRouteStrategyCuratedFixtureSuiteView {
     pub(crate) fixtures: Vec<NativeProjectRouteStrategyCuratedFixtureSuiteEntryView>,
     pub(crate) next_step_command: String,
 }
-
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectRouteStrategyCuratedBaselineCaptureView {
     pub(crate) action: String,
     pub(crate) suite_id: String,
+    pub(crate) authoring_boundary: String,
+    pub(crate) write_path_policy: String,
     pub(crate) out_dir: String,
     pub(crate) requests_manifest_path: String,
     pub(crate) result_artifact_path: String,
@@ -244,7 +246,6 @@ pub(crate) struct NativeProjectRouteStrategyCuratedBaselineCaptureView {
     pub(crate) next_inspect_command: String,
     pub(crate) next_gate_example_command: String,
 }
-
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectRouteStrategyBatchResultMalformedEntryView {
     pub(crate) result_index: usize,
@@ -283,7 +284,6 @@ pub(crate) struct NativeProjectRouteStrategyBatchResultValidationView {
     pub(crate) proposal_counts_match_summary: bool,
     pub(crate) malformed_entries: Vec<NativeProjectRouteStrategyBatchResultMalformedEntryView>,
 }
-
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectRouteStrategyBatchResultComparisonCountDeltaView {
     pub(crate) before: usize,
@@ -426,6 +426,25 @@ pub(crate) struct NativeProjectSelectedRouteProposalExportView {
 }
 
 #[derive(Debug, Clone, Serialize)]
+pub(crate) struct NativeProjectRouteAppliedTrackReportView {
+    pub(crate) action: String,
+    pub(crate) project_root: String,
+    pub(crate) board_path: String,
+    pub(crate) track_uuid: String,
+    pub(crate) net_uuid: String,
+    pub(crate) from_x_nm: i64,
+    pub(crate) from_y_nm: i64,
+    pub(crate) to_x_nm: i64,
+    pub(crate) to_y_nm: i64,
+    pub(crate) width_nm: i64,
+    pub(crate) layer: i32,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) reused_via_uuid: Option<String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub(crate) reused_via_uuids: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectRouteApplySelectedView {
     pub(crate) action: String,
     pub(crate) project_root: String,
@@ -436,7 +455,7 @@ pub(crate) struct NativeProjectRouteApplySelectedView {
     pub(crate) contract: String,
     pub(crate) proposal_actions: usize,
     pub(crate) applied_actions: usize,
-    pub(crate) applied: Vec<NativeProjectBoardTrackMutationReportView>,
+    pub(crate) applied: Vec<NativeProjectRouteAppliedTrackReportView>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -494,7 +513,7 @@ pub(crate) struct NativeProjectRouteProposalArtifactApplyView {
     pub(crate) selected_path_bend_count: usize,
     pub(crate) selected_path_point_count: usize,
     pub(crate) selected_path_segment_count: usize,
-    pub(crate) applied: Vec<NativeProjectBoardTrackMutationReportView>,
+    pub(crate) applied: Vec<NativeProjectRouteAppliedTrackReportView>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -541,7 +560,7 @@ pub(crate) struct NativeProjectRouteApplyView {
     pub(crate) contract: String,
     pub(crate) proposal_actions: usize,
     pub(crate) applied_actions: usize,
-    pub(crate) applied: Vec<NativeProjectBoardTrackMutationReportView>,
+    pub(crate) applied: Vec<NativeProjectRouteAppliedTrackReportView>,
 }
 
 pub(super) fn render_native_route_proposal_export_text(

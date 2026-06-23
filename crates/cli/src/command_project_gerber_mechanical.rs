@@ -13,16 +13,16 @@ use self::support::{
     native_component_mechanical_polyline_to_strokes, native_component_mechanical_text_to_strokes,
 };
 use super::{
-    NativeBoardRoot, NativePoint, NativeProjectGerberMechanicalComparisonView,
+    LoadedNativeProject, NativeBoardRoot, NativePoint, NativeProjectGerberMechanicalComparisonView,
     NativeProjectGerberMechanicalExportView, NativeProjectGerberMechanicalValidationView,
-    ParsedGerber, ParsedGerberGeometry, compare_entry_views, load_native_project,
-    parse_rs274x_subset, query_native_project_board_dimensions,
-    query_native_project_board_keepouts, query_native_project_board_stackup,
-    query_native_project_board_texts, render_parsed_flash_geometry, render_region_geometry,
-    render_stroke_geometry,
+    ParsedGerber, ParsedGerberGeometry, compare_entry_views,
+    load_native_project_with_resolved_board, parse_rs274x_subset, render_parsed_flash_geometry,
+    render_region_geometry, render_stroke_geometry,
 };
 use anyhow::{Context, Result, bail};
-use eda_engine::board::{PlacedPackage, StackupLayer, StackupLayerType};
+use eda_engine::board::{
+    BoardText, Dimension, Keepout, PlacedPackage, StackupLayer, StackupLayerType,
+};
 use eda_engine::export::{MechanicalStroke, render_rs274x_mechanical_layer};
 use eda_engine::ir::geometry::Polygon;
 use serde::{Deserialize, Serialize};
@@ -77,7 +77,7 @@ pub(crate) struct NativeComponentMechanicalText {
 }
 
 pub(crate) fn resolve_native_project_mechanical_context(
-    root: &std::path::Path,
+    project: &LoadedNativeProject,
     layer: i32,
 ) -> Result<(
     StackupLayer,
@@ -91,12 +91,16 @@ pub(crate) fn resolve_native_project_mechanical_context(
     Vec<MechanicalStroke>,
     Vec<MechanicalStroke>,
 )> {
-    let project = load_native_project(root)?;
-    let stackup = query_native_project_board_stackup(root)?;
-    let mechanical_layer = stackup
+    let mechanical_layer = project
+        .board
+        .stackup
+        .layers
         .iter()
-        .find(|entry| entry.id == layer)
         .cloned()
+        .map(|entry| serde_json::from_value(entry).context("failed to parse board stackup layer"))
+        .collect::<Result<Vec<StackupLayer>>>()?
+        .into_iter()
+        .find(|entry| entry.id == layer)
         .ok_or_else(|| {
             anyhow::anyhow!("board stackup layer not found in native project: {layer}")
         })?;
@@ -104,17 +108,35 @@ pub(crate) fn resolve_native_project_mechanical_context(
         bail!("board stackup layer is not a mechanical layer: {layer}");
     }
 
-    let polygons = query_native_project_board_keepouts(root)?
+    let polygons = project
+        .board
+        .keepouts
+        .iter()
+        .cloned()
+        .map(|entry| serde_json::from_value(entry).context("failed to parse board keepout"))
+        .collect::<Result<Vec<Keepout>>>()?
         .into_iter()
         .filter(|keepout| keepout.layers.contains(&layer))
         .map(|keepout| keepout.polygon)
         .collect::<Vec<_>>();
-    let dimension_strokes = query_native_project_board_dimensions(root)?
+    let dimension_strokes = project
+        .board
+        .dimensions
+        .iter()
+        .cloned()
+        .map(|entry| serde_json::from_value(entry).context("failed to parse board dimension"))
+        .collect::<Result<Vec<Dimension>>>()?
         .into_iter()
         .filter(|dimension| dimension.layer == layer)
         .map(native_board_dimension_to_stroke)
         .collect::<Vec<_>>();
-    let board_text_strokes = query_native_project_board_texts(root)?
+    let board_text_strokes = project
+        .board
+        .texts
+        .iter()
+        .cloned()
+        .map(|entry| serde_json::from_value(entry).context("failed to parse board text"))
+        .collect::<Result<Vec<BoardText>>>()?
         .into_iter()
         .filter(|text| text.layer == layer)
         .map(|text| native_board_text_to_strokes(&text))
@@ -256,7 +278,7 @@ pub(crate) fn export_native_project_gerber_mechanical_layer(
     layer: i32,
     output_path: &std::path::Path,
 ) -> Result<NativeProjectGerberMechanicalExportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let dimension_count = count_native_board_dimensions(&project.board, layer);
     let board_text_count = count_native_board_texts(&project.board, layer);
     let component_text_count = project
@@ -282,7 +304,7 @@ pub(crate) fn export_native_project_gerber_mechanical_layer(
         dimension_strokes,
         board_text_strokes,
         component_text_strokes,
-    ) = resolve_native_project_mechanical_context(root, layer)?;
+    ) = resolve_native_project_mechanical_context(&project, layer)?;
     let all_polygons = polygons
         .iter()
         .cloned()
@@ -304,6 +326,7 @@ pub(crate) fn export_native_project_gerber_mechanical_layer(
         .with_context(|| format!("failed to write {}", output_path.display()))?;
     Ok(NativeProjectGerberMechanicalExportView {
         action: "export_gerber_mechanical_layer".to_string(),
+        production_classification: "manual_debug_export".to_string(),
         project_root: project.root.display().to_string(),
         board_path: project.board_path.display().to_string(),
         gerber_path: output_path.display().to_string(),
@@ -325,7 +348,7 @@ pub(crate) fn validate_native_project_gerber_mechanical_layer(
     layer: i32,
     gerber_path: &std::path::Path,
 ) -> Result<NativeProjectGerberMechanicalValidationView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let dimension_count = count_native_board_dimensions(&project.board, layer);
     let board_text_count = count_native_board_texts(&project.board, layer);
     let component_text_count = project
@@ -351,7 +374,7 @@ pub(crate) fn validate_native_project_gerber_mechanical_layer(
         dimension_strokes,
         board_text_strokes,
         component_text_strokes,
-    ) = resolve_native_project_mechanical_context(root, layer)?;
+    ) = resolve_native_project_mechanical_context(&project, layer)?;
     let all_polygons = polygons
         .iter()
         .cloned()
@@ -398,7 +421,7 @@ pub(crate) fn compare_native_project_gerber_mechanical_layer(
     layer: i32,
     gerber_path: &std::path::Path,
 ) -> Result<NativeProjectGerberMechanicalComparisonView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let dimension_count = count_native_board_dimensions(&project.board, layer);
     let board_text_count = count_native_board_texts(&project.board, layer);
     let component_text_count = project
@@ -424,7 +447,7 @@ pub(crate) fn compare_native_project_gerber_mechanical_layer(
         dimension_strokes,
         board_text_strokes,
         component_text_strokes,
-    ) = resolve_native_project_mechanical_context(root, layer)?;
+    ) = resolve_native_project_mechanical_context(&project, layer)?;
     let actual_gerber = std::fs::read_to_string(gerber_path)
         .with_context(|| format!("failed to read {}", gerber_path.display()))?;
     let parsed = parse_rs274x_subset(&actual_gerber)

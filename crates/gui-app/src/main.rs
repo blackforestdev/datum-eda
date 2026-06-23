@@ -3,29 +3,20 @@ use arboard::{Clipboard, GetExtLinux, LinuxClipboardKind, SetExtLinux};
 use clap::Parser;
 use datum_gui_protocol::{
     BoardTextAlignmentField, BoardTextBooleanField, BoardTextCycleField, BoardTextHeightStep,
-    BoardTextLineSpacingStep, BoardTextPrimitive, BoardTextRotationStep, DockTab,
-    LiveDesignSession, LiveReviewRequest, PointNm, SceneBounds, SessionCommand, SessionEvent,
-    WorkspaceBacking, WorkspaceTool, WorkspaceUiState, cycle_board_text_alignment_field,
-    cycle_board_text_field, ensure_known_good_demo_request, load_board_editor_workspace_state,
-    load_live_workspace_state, set_board_text_alignment, set_board_text_content,
-    set_board_text_font_family, set_board_text_h_align, set_board_text_height,
-    set_board_text_line_spacing_ratio, set_board_text_render_intent, set_board_text_rotation,
-    set_board_text_v_align, step_board_text_height, step_board_text_line_spacing_ratio,
-    step_board_text_rotation, toggle_board_text_boolean_field,
+    BoardTextLineSpacingStep, BoardTextRotationStep, DockTab, LiveDesignSession, LiveReviewRequest,
+    PointNm, RectNm, SceneBounds, SessionCommand, SessionEvent, WorkspaceTool,
+    ensure_known_good_demo_request, load_board_editor_workspace_state, load_live_workspace_state,
 };
 use datum_gui_render::{
     CameraState, HitTarget, PreparedScene, Renderer, RetainedScene, ShellLayout,
 };
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use std::collections::BTreeMap;
 use std::fs;
-use std::io::{BufRead, BufReader, Write};
-use std::path::Path;
-use std::path::PathBuf;
-use std::process::{Child, ChildStdin, Command, Stdio};
-use std::sync::mpsc::{self, Receiver, Sender, TryRecvError};
-use std::sync::{Arc, Mutex};
-use std::thread;
+use std::io::Write;
+use std::path::{Path, PathBuf};
+use std::process::{Command, Stdio};
+use std::sync::mpsc::TryRecvError;
 use winit::{
     application::ApplicationHandler,
     dpi::LogicalSize,
@@ -35,21 +26,45 @@ use winit::{
     window::{Window, WindowAttributes, WindowId},
 };
 
+mod artifact_preview_controls;
+mod assistant_bridge;
+mod board_text_terminal_commands;
+mod production_status_refresh;
+mod runtime_terminal_context;
+mod terminal_activity_snapshot;
+mod terminal_agent_launcher;
+mod terminal_context;
+mod terminal_input;
+mod terminal_screen;
+mod terminal_session;
+mod terminal_session_events;
+use assistant_bridge::{
+    AssistantBridgeAction, AssistantBridgeConfig, AssistantBridgeInput, AssistantSession,
+    spawn_assistant_session,
+};
+use board_text_terminal_commands::{
+    BoardTextEditTerminalField, BoardTextQuickEditTerminalAction, board_text_edit_terminal_command,
+    board_text_quick_edit_terminal_command,
+};
+use terminal_activity_snapshot::load_terminal_activity_summary_lines;
+use terminal_input::{TerminalKeyAction, terminal_key_action};
+use terminal_screen::{TerminalScreen, terminal_scrollback_copy_text};
+use terminal_session::{
+    TerminalLaunchContext, TerminalSession, refresh_terminal_session_context_from_state,
+    restart_terminal_session as restart_pty_terminal_session, spawn_terminal_session,
+    terminal_launch_context_from_state,
+    terminate_terminal_session as terminate_pty_terminal_session,
+};
+use terminal_session_events::{
+    prepare_terminal_command_execution, record_manual_terminal_command_handoff,
+};
+
 #[cfg(feature = "visual")]
 const COPY_BYTES_PER_PIXEL: u32 = 4;
 #[cfg(feature = "visual")]
 const WGPU_COPY_BYTES_PER_ROW_ALIGNMENT: u32 = 256;
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum BoardTextEditPrefillField {
-    Content,
-    Height,
-    Rotation,
-    LineSpacing,
-    RenderIntent,
-    Family,
-    Alignment,
-}
+const ASSISTANT_ACTIVITY_COMMAND: &str =
+    "datum-eda context session-activity --session \"$DATUM_SESSION_ID\" --limit 20";
 
 const RETAINED_SCENE_CACHE_LIMIT: usize = 6;
 
@@ -103,11 +118,20 @@ fn parse_window_size(value: &str) -> Result<(u32, u32)> {
     Ok((width, height))
 }
 
+fn terminal_raw_input_should_handle(
+    terminal_accepts_raw_input: bool,
+    paste_shortcut: bool,
+    copy_shortcut: bool,
+) -> bool {
+    terminal_accepts_raw_input && !paste_shortcut && !copy_shortcut
+}
+
 fn selection_cache_key(workspace: &datum_gui_protocol::ReviewWorkspaceState) -> String {
     match &workspace.selection {
         datum_gui_protocol::SelectionTarget::None => "none".to_string(),
         datum_gui_protocol::SelectionTarget::ReviewAction(id) => format!("review:{id}"),
         datum_gui_protocol::SelectionTarget::AuthoredObject(id) => format!("object:{id}"),
+        datum_gui_protocol::SelectionTarget::CheckFinding(id) => format!("finding:{id}"),
     }
 }
 
@@ -118,6 +142,7 @@ fn retained_selection_cache_key(
     match selection {
         datum_gui_protocol::SelectionTarget::None => "none".to_string(),
         datum_gui_protocol::SelectionTarget::ReviewAction(id) => format!("review:{id}"),
+        datum_gui_protocol::SelectionTarget::CheckFinding(id) => format!("finding:{id}"),
         datum_gui_protocol::SelectionTarget::AuthoredObject(id) => {
             let lightweight = workspace
                 .scene
@@ -199,66 +224,6 @@ struct App {
     runtime: Option<Runtime>,
 }
 
-struct TerminalSession {
-    _tx: Sender<String>,
-    rx: Receiver<String>,
-}
-
-struct AssistantSession {
-    _child: Child,
-    stdin: Arc<Mutex<ChildStdin>>,
-    rx: Receiver<AssistantBridgeOutput>,
-}
-
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-struct AssistantBridgeConfig {
-    #[serde(default)]
-    api_key: Option<String>,
-    #[serde(default)]
-    model: Option<String>,
-}
-
-#[derive(Debug, Serialize)]
-struct AssistantBridgeInput {
-    #[serde(rename = "type")]
-    kind: &'static str,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    text: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    context: Option<AssistantContext>,
-}
-
-#[derive(Debug, Deserialize)]
-struct AssistantBridgeOutput {
-    #[serde(rename = "type")]
-    kind: String,
-    #[serde(default)]
-    message: String,
-    #[serde(default)]
-    actions: Vec<AssistantBridgeAction>,
-}
-
-#[derive(Debug, Deserialize)]
-#[allow(dead_code)]
-struct AssistantBridgeAction {
-    #[serde(rename = "type")]
-    kind: String,
-    #[serde(default)]
-    tab: Option<String>,
-    #[serde(default)]
-    tool: Option<String>,
-    #[serde(default)]
-    reference: Option<String>,
-    #[serde(default)]
-    action_id: Option<String>,
-    #[serde(default)]
-    dx_nm: Option<i64>,
-    #[serde(default)]
-    dy_nm: Option<i64>,
-    #[serde(default)]
-    command: Option<String>,
-}
-
 #[derive(Debug, Serialize)]
 struct AssistantContext {
     board_name: String,
@@ -267,6 +232,7 @@ struct AssistantContext {
     selection: String,
     active_review_target_id: String,
     project_root: Option<String>,
+    terminal_activity_summary: Vec<String>,
     selected_component: Option<AssistantSelectedComponent>,
     selected_review_action: Option<AssistantSelectedReviewAction>,
     components: Vec<AssistantComponentSummary>,
@@ -502,6 +468,7 @@ impl ApplicationHandler for App {
                     {
                         changed = runtime.update_hover(next_pos) || changed;
                     }
+                    runtime.refresh_terminal_context_snapshot();
                     if changed {
                         self.request_redraw_if_needed();
                     }
@@ -584,6 +551,21 @@ impl ApplicationHandler for App {
             WindowEvent::ModifiersChanged(modifiers) => {
                 if let Some(runtime) = &mut self.runtime {
                     runtime.modifiers = modifiers.state();
+                }
+            }
+            WindowEvent::KeyboardInput { event, .. }
+                if self.runtime.as_ref().is_some_and(|runtime| {
+                    terminal_raw_input_should_handle(
+                        runtime.terminal_accepts_raw_input(),
+                        runtime.is_paste_shortcut(&event),
+                        runtime.is_copy_shortcut(&event),
+                    )
+                }) =>
+            {
+                if let Some(runtime) = &mut self.runtime
+                    && runtime.handle_terminal_key_input(&event)
+                {
+                    self.request_redraw_if_needed();
                 }
             }
             WindowEvent::KeyboardInput { event, .. }
@@ -729,6 +711,7 @@ impl ApplicationHandler for App {
                                 ui.assistant.input.clear();
                                 ui.assistant.cursor = 0;
                             }
+                            Some(DockTab::Outputs) => {}
                             None => {}
                         }
                         runtime.invalidate_frame();
@@ -841,8 +824,10 @@ impl ApplicationHandler for App {
                 ..
             } if text.eq_ignore_ascii_case("f") => {
                 if let Some(runtime) = &mut self.runtime {
-                    runtime.fit_camera();
-                    self.request_redraw_if_needed();
+                    if !runtime.workspace().ui.active_dock_tab.is_some() {
+                        runtime.fit_camera();
+                        self.request_redraw_if_needed();
+                    }
                 }
             }
             WindowEvent::KeyboardInput {
@@ -855,6 +840,7 @@ impl ApplicationHandler for App {
                 ..
             } if text.eq_ignore_ascii_case("t") => {
                 if let Some(runtime) = &mut self.runtime
+                    && !runtime.workspace().ui.active_dock_tab.is_some()
                     && runtime.fit_review_target()
                 {
                     self.request_redraw_if_needed();
@@ -870,6 +856,7 @@ impl ApplicationHandler for App {
                 ..
             } if text == "[" => {
                 if let Some(runtime) = &mut self.runtime
+                    && !runtime.workspace().ui.active_dock_tab.is_some()
                     && runtime.dispatch_session_command(SessionCommand::SelectPreviousReviewAction)
                 {
                     self.request_redraw_if_needed();
@@ -885,6 +872,7 @@ impl ApplicationHandler for App {
                 ..
             } if text == "]" => {
                 if let Some(runtime) = &mut self.runtime
+                    && !runtime.workspace().ui.active_dock_tab.is_some()
                     && runtime.dispatch_session_command(SessionCommand::SelectNextReviewAction)
                 {
                     self.request_redraw_if_needed();
@@ -942,6 +930,10 @@ impl ApplicationHandler for App {
             _ => {}
         }
     }
+
+    fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
+        self.poll_background_work(event_loop);
+    }
 }
 
 struct Runtime {
@@ -963,11 +955,16 @@ struct Runtime {
     prepared_scene: Option<PreparedScene>,
     scene_dirty: bool,
     terminal: TerminalSession,
+    terminal_screen: TerminalScreen,
     assistant: AssistantSession,
     terminal_disconnected_reported: bool,
     assistant_disconnected_reported: bool,
     assistant_config_path: PathBuf,
     assistant_config: AssistantBridgeConfig,
+    terminal_launch_context: TerminalLaunchContext,
+    terminal_production_refresh_pending: bool,
+    terminal_production_refresh_due: Option<std::time::Instant>,
+    terminal_production_refresh_attempts: u8,
     clipboard: Option<Clipboard>,
 }
 
@@ -1067,8 +1064,11 @@ impl Runtime {
             "camera fit {}ms",
             camera_started.elapsed().as_millis()
         ));
+        let terminal_launch_context =
+            terminal_launch_context_from_state(&request.project_root, &state);
         let terminal_started = std::time::Instant::now();
-        let terminal = spawn_terminal_session().context("spawn integrated terminal lane")?;
+        let terminal = spawn_terminal_session(&terminal_launch_context)
+            .context("spawn integrated terminal lane")?;
         trace_startup_timing(format!(
             "terminal spawn {}ms",
             terminal_started.elapsed().as_millis()
@@ -1099,11 +1099,16 @@ impl Runtime {
             prepared_scene: None,
             scene_dirty: true,
             terminal,
+            terminal_screen: TerminalScreen::default(),
             assistant,
             terminal_disconnected_reported: false,
             assistant_disconnected_reported: false,
             assistant_config_path,
             assistant_config,
+            terminal_launch_context,
+            terminal_production_refresh_pending: false,
+            terminal_production_refresh_due: None,
+            terminal_production_refresh_attempts: 0,
             clipboard: Clipboard::new().ok(),
         };
         let assistant_context_started = std::time::Instant::now();
@@ -1128,6 +1133,7 @@ impl Runtime {
         self.config.width = width;
         self.config.height = height;
         self.surface.configure(&self.device, &self.config);
+        self.resize_terminal_to_dock();
         self.invalidate_scene();
     }
 
@@ -1439,27 +1445,6 @@ impl Runtime {
         self.scene_dirty = true;
     }
 
-    fn poll_terminal_output(&mut self) -> bool {
-        let mut changed = false;
-        loop {
-            match self.terminal.rx.try_recv() {
-                Ok(line) => {
-                    self.push_terminal_line(line);
-                    changed = true;
-                }
-                Err(TryRecvError::Empty) => return changed,
-                Err(TryRecvError::Disconnected) => {
-                    if self.terminal_disconnected_reported {
-                        return false;
-                    }
-                    self.terminal_disconnected_reported = true;
-                    self.push_terminal_line("terminal session ended".to_string());
-                    return true;
-                }
-            }
-        }
-    }
-
     fn poll_assistant_output(&mut self) -> bool {
         let mut changed = false;
         loop {
@@ -1504,11 +1489,24 @@ impl Runtime {
         let ui = &mut self.session.workspace_mut().ui;
         ui.terminal.lines.push(line);
         if ui.terminal.lines.len() > 240 {
-            let overflow = ui.terminal.lines.len() - 240;
-            ui.terminal.lines.drain(0..overflow);
+            ui.terminal.lines.drain(0..ui.terminal.lines.len() - 240);
         }
         ui.terminal.scroll_offset = 0;
         self.invalidate_frame();
+    }
+
+    fn refresh_terminal_activity_summary(&mut self) -> bool {
+        let next = match load_terminal_activity_summary_lines(&self.terminal.event_log_path(), 4) {
+            Ok(lines) => lines,
+            Err(err) => vec![format!("activity summary unavailable: {err}")],
+        };
+        let ui = &mut self.session.workspace_mut().ui;
+        if ui.terminal.activity_summary == next {
+            return false;
+        }
+        ui.terminal.activity_summary = next;
+        self.invalidate_frame();
+        true
     }
 
     fn push_assistant_message(&mut self, role: &str, content: String) {
@@ -1520,8 +1518,9 @@ impl Runtime {
                 content,
             });
         if ui.assistant.transcript.len() > 80 {
-            let overflow = ui.assistant.transcript.len() - 80;
-            ui.assistant.transcript.drain(0..overflow);
+            ui.assistant
+                .transcript
+                .drain(0..ui.assistant.transcript.len() - 80);
         }
         ui.assistant.scroll_offset = 0;
         self.invalidate_frame();
@@ -1534,6 +1533,10 @@ impl Runtime {
         }
         ui.active_dock_tab = Some(tab);
         self.invalidate_scene();
+        self.refresh_terminal_context_snapshot();
+        if matches!(tab, DockTab::Terminal) {
+            self.refresh_terminal_activity_summary();
+        }
         true
     }
 
@@ -1544,6 +1547,7 @@ impl Runtime {
         }
         ui.active_dock_tab = None;
         self.invalidate_scene();
+        self.refresh_terminal_context_snapshot();
         true
     }
 
@@ -1551,22 +1555,94 @@ impl Runtime {
         self.workspace().ui.active_dock_tab.is_some()
     }
 
+    fn terminal_accepts_raw_input(&self) -> bool {
+        matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal))
+    }
+
+    fn handle_terminal_key_input(&mut self, event: &KeyEvent) -> bool {
+        match terminal_key_action(event, self.modifiers) {
+            TerminalKeyAction::Write(bytes) => self.write_terminal_bytes(&bytes),
+            TerminalKeyAction::Interrupt => {
+                if let Err(err) = self.terminal.interrupt() {
+                    self.push_terminal_line(format!("terminal interrupt failed: {err}"));
+                }
+                true
+            }
+            TerminalKeyAction::TerminateSession => {
+                self.terminate_terminal_session();
+                true
+            }
+            TerminalKeyAction::RestartSession => {
+                self.restart_terminal_session();
+                true
+            }
+            TerminalKeyAction::ConsumeRelease => true,
+            TerminalKeyAction::LetPasteShortcutHandle
+            | TerminalKeyAction::LetCopyShortcutHandle
+            | TerminalKeyAction::Ignore => false,
+        }
+    }
+
+    fn write_terminal_bytes(&mut self, bytes: &[u8]) -> bool {
+        if bytes.iter().any(|byte| matches!(byte, b'\n' | b'\r')) {
+            self.mark_terminal_production_refresh_pending();
+        }
+        if let Err(err) = self.terminal.write_bytes(bytes) {
+            self.push_terminal_line(format!("terminal write failed: {err}"));
+        }
+        true
+    }
+
+    fn terminate_terminal_session(&mut self) {
+        match terminate_pty_terminal_session(
+            &self.terminal,
+            &mut self.session.workspace_mut().ui.terminal,
+        ) {
+            Ok(()) => {}
+            Err(err) => self.push_terminal_line(format!("terminal terminate failed: {err}")),
+        }
+        self.invalidate_frame();
+    }
+
+    fn restart_terminal_session(&mut self) {
+        match restart_pty_terminal_session(
+            &mut self.terminal,
+            &mut self.terminal_screen,
+            &mut self.session.workspace_mut().ui.terminal,
+            &self.terminal_launch_context,
+        ) {
+            Ok(()) => self.resize_terminal_to_dock(),
+            Err(err) => self.push_terminal_line(format!("terminal restart failed: {err}")),
+        }
+        self.terminal_disconnected_reported = false;
+        self.terminal_production_refresh_pending = false;
+        self.terminal_production_refresh_due = None;
+        self.terminal_production_refresh_attempts = 0;
+        self.invalidate_frame();
+    }
+
     fn is_paste_shortcut(&self, event: &KeyEvent) -> bool {
         if event.state != ElementState::Released {
             return false;
         }
-        if self.modifiers.control_key() {
-            if let PhysicalKey::Code(KeyCode::KeyV) = event.physical_key {
-                return true;
-            }
-        }
-        self.modifiers.shift_key() && matches!(event.logical_key, Key::Named(NamedKey::Insert))
+        (self.modifiers.control_key()
+            && matches!(event.physical_key, PhysicalKey::Code(KeyCode::KeyV)))
+            || (self.modifiers.shift_key()
+                && matches!(event.logical_key, Key::Named(NamedKey::Insert)))
     }
 
     fn is_copy_shortcut(&self, event: &KeyEvent) -> bool {
-        event.state == ElementState::Released
-            && self.modifiers.control_key()
-            && matches!(event.physical_key, PhysicalKey::Code(KeyCode::KeyC))
+        if event.state != ElementState::Released
+            || !self.modifiers.control_key()
+            || !matches!(event.physical_key, PhysicalKey::Code(KeyCode::KeyC))
+        {
+            return false;
+        }
+        match self.workspace().ui.active_dock_tab {
+            Some(DockTab::Terminal) => self.modifiers.shift_key(),
+            Some(DockTab::Assistant) => !self.modifiers.shift_key(),
+            Some(DockTab::Outputs) | None => false,
+        }
     }
 
     fn is_cut_shortcut(&self, event: &KeyEvent) -> bool {
@@ -1595,23 +1671,33 @@ impl Runtime {
     }
 
     fn current_dock_input(&self) -> Option<&str> {
-        let active = self.workspace().ui.active_dock_tab?;
-        match active {
-            DockTab::Terminal => None,
-            DockTab::Assistant => Some(&self.workspace().ui.assistant.input),
-        }
+        matches!(
+            self.workspace().ui.active_dock_tab,
+            Some(DockTab::Assistant)
+        )
+        .then_some(self.workspace().ui.assistant.input.as_str())
     }
 
     fn current_dock_input_mut(&mut self) -> Option<&mut String> {
-        let active = self.workspace().ui.active_dock_tab?;
-        let ui = &mut self.session.workspace_mut().ui;
-        match active {
-            DockTab::Terminal => None,
-            DockTab::Assistant => Some(&mut ui.assistant.input),
-        }
+        matches!(
+            self.workspace().ui.active_dock_tab,
+            Some(DockTab::Assistant)
+        )
+        .then_some(&mut self.session.workspace_mut().ui.assistant.input)
     }
 
     fn copy_dock_input(&mut self) -> bool {
+        if matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)) {
+            let Some(text) = terminal_scrollback_copy_text(&self.workspace().ui.terminal) else {
+                return false;
+            };
+            if self.write_clipboard_text(&text).is_err() {
+                self.push_terminal_line("clipboard copy failed".to_string());
+                return true;
+            }
+            self.push_terminal_line("terminal scrollback copied".to_string());
+            return true;
+        }
         let Some(input) = self
             .workspace()
             .ui
@@ -1653,6 +1739,9 @@ impl Runtime {
         };
         if text.is_empty() {
             return false;
+        }
+        if matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)) {
+            return self.write_terminal_bytes(text.as_bytes());
         }
         self.append_dock_text(&text)
     }
@@ -1773,6 +1862,7 @@ impl Runtime {
         match self.workspace().ui.active_dock_tab {
             Some(DockTab::Assistant) => self.complete_assistant_input(),
             Some(DockTab::Terminal) => false,
+            Some(DockTab::Outputs) => false,
             None => false,
         }
     }
@@ -1793,6 +1883,7 @@ impl Runtime {
 
     fn complete_assistant_text(&self, input: &str) -> String {
         const CONFIG_COMMANDS: &[&str] = &[
+            "/activity",
             "/config status",
             "/config api-key ",
             "/config api-key",
@@ -1800,28 +1891,13 @@ impl Runtime {
             "/config model ",
             "/config clear-model",
             "/config cancel",
-            "/text height ",
-            "/text rot ",
-            "/text line ",
-            "/text content ",
-            "/text align ",
-            "/text halign ",
-            "/text valign ",
-            "/text intent ",
-            "/text font ",
         ];
         let trimmed_start = input.trim_start();
         if !trimmed_start.starts_with('/') {
             return input.to_string();
         }
-        if trimmed_start.starts_with("/text") {
-            if let Some(completed) = best_completion(trimmed_start, CONFIG_COMMANDS) {
-                let replaced = replace_tail(input, trimmed_start, &completed);
-                if replaced != input {
-                    return replaced;
-                }
-            }
-            return input.to_string();
+        if "/activity".starts_with(trimmed_start) {
+            return replace_tail(input, trimmed_start, "/activity");
         }
         if !trimmed_start.starts_with("/config") {
             if "/config".starts_with(trimmed_start) {
@@ -1865,6 +1941,7 @@ impl Runtime {
         match self.workspace().ui.active_dock_tab {
             Some(DockTab::Terminal) => false,
             Some(DockTab::Assistant) => self.submit_assistant_input(),
+            Some(DockTab::Outputs) => false,
             None => false,
         }
     }
@@ -1925,8 +2002,21 @@ impl Runtime {
 
     fn handle_assistant_meta_command(&mut self, input: &str) -> bool {
         let trimmed = input.trim();
-        if trimmed.starts_with("/text") {
-            return self.handle_text_meta_command(trimmed);
+        if trimmed == "/activity" {
+            self.push_assistant_message("user", trimmed.to_string());
+            self.set_active_dock(DockTab::Terminal);
+            if let Err(err) = record_manual_terminal_command_handoff(
+                &self.terminal,
+                "assistant_activity",
+                "datum.gui.session_activity",
+                "execute",
+                ASSISTANT_ACTIVITY_COMMAND,
+            ) {
+                self.push_terminal_line(format!("terminal handoff event write failed: {err}"));
+            }
+            self.write_terminal_bytes(assistant_activity_command_bytes().as_bytes());
+            self.log_review_event("ran assistant activity command".to_string());
+            return true;
         }
         if !trimmed.starts_with("/config") {
             return false;
@@ -2027,108 +2117,6 @@ impl Runtime {
         true
     }
 
-    fn handle_text_meta_command(&mut self, input: &str) -> bool {
-        self.push_assistant_message("user", input.to_string());
-        match self.apply_text_meta_command(input) {
-            Ok(message) => self.push_assistant_message("assistant", message),
-            Err(error) => {
-                self.push_assistant_message("assistant", format!("text edit failed: {error}"))
-            }
-        }
-        true
-    }
-
-    fn apply_text_meta_command(&mut self, input: &str) -> Result<String> {
-        let rest = input
-            .strip_prefix("/text")
-            .ok_or_else(|| {
-                anyhow::anyhow!(
-                    "usage: /text <height|rot|line|content|align|halign|valign|intent|font> <value>"
-                )
-            })?
-            .trim_start();
-        let (command, value) = rest.split_once(char::is_whitespace).unwrap_or((rest, ""));
-        let value = value.trim_start();
-        if command.is_empty() {
-            anyhow::bail!(
-                "usage: /text <height|rot|line|content|align|halign|valign|intent|font> <value>"
-            );
-        }
-        if value.is_empty() {
-            anyhow::bail!("usage: /text {command} <value>");
-        }
-        let (selected_object_id, backing) = self
-            .selected_board_text_edit_context()
-            .ok_or_else(|| anyhow::anyhow!("select a board text object first"))?;
-        let message = match command {
-            "height" => {
-                let height_nm = parse_text_length_nm(value)?;
-                let next = set_board_text_height(&backing, &selected_object_id, height_nm)?;
-                self.reload_workspace_after_board_edit(selected_object_id)?;
-                format!(
-                    "board text height set to {:.3} mm",
-                    next as f64 / 1_000_000.0
-                )
-            }
-            "rot" | "rotation" => {
-                let rotation = value
-                    .trim_end_matches('°')
-                    .parse::<i32>()
-                    .with_context(|| format!("parse rotation degrees from {value:?}"))?;
-                let next = set_board_text_rotation(&backing, &selected_object_id, rotation)?;
-                self.reload_workspace_after_board_edit(selected_object_id)?;
-                format!("board text rotation set to {next}°")
-            }
-            "line" | "line-spacing" => {
-                let ratio_ppm = parse_text_line_spacing_ppm(value)?;
-                let next =
-                    set_board_text_line_spacing_ratio(&backing, &selected_object_id, ratio_ppm)?;
-                self.reload_workspace_after_board_edit(selected_object_id)?;
-                format!("board text line spacing set to {}%", next / 10_000)
-            }
-            "content" | "text" => {
-                let next = set_board_text_content(&backing, &selected_object_id, value)?;
-                self.reload_workspace_after_board_edit(selected_object_id)?;
-                format!("board text content set to {next:?}")
-            }
-            "align" => {
-                let (h_align, v_align) = parse_text_alignment_pair(value)?;
-                let next =
-                    set_board_text_alignment(&backing, &selected_object_id, h_align, v_align)?;
-                self.reload_workspace_after_board_edit(selected_object_id)?;
-                format!("board text alignment set to {} / {}", next.0, next.1)
-            }
-            "halign" | "h-align" => {
-                let h_align = parse_text_h_align(value)?;
-                let next = set_board_text_h_align(&backing, &selected_object_id, h_align)?;
-                self.reload_workspace_after_board_edit(selected_object_id)?;
-                format!("board text horizontal alignment set to {next}")
-            }
-            "valign" | "v-align" => {
-                let v_align = parse_text_v_align(value)?;
-                let next = set_board_text_v_align(&backing, &selected_object_id, v_align)?;
-                self.reload_workspace_after_board_edit(selected_object_id)?;
-                format!("board text vertical alignment set to {next}")
-            }
-            "intent" | "render-intent" => {
-                let intent = parse_text_render_intent(value)?;
-                let next = set_board_text_render_intent(&backing, &selected_object_id, intent)?;
-                self.reload_workspace_after_board_edit(selected_object_id)?;
-                format!("board text render intent set to {next}")
-            }
-            "font" | "family" => {
-                let family = parse_text_font_family(value)?;
-                let next = set_board_text_font_family(&backing, &selected_object_id, family)?;
-                self.reload_workspace_after_board_edit(selected_object_id)?;
-                format!("board text font family set to {next}")
-            }
-            other => anyhow::bail!(
-                "unknown text command `{other}`. Use /text height <mm|nm>, /text rot <degrees>, /text line <percent|ppm>, /text content <value>, /text align <h> <v>, /text halign <left|center|right>, /text valign <top|center|bottom>, /text intent <intent>, or /text font <family>"
-            ),
-        };
-        Ok(message)
-    }
-
     fn assistant_status_summary(&self) -> String {
         let api_key = if self.assistant_config.api_key.is_some() {
             "configured"
@@ -2141,7 +2129,7 @@ impl Runtime {
             .as_deref()
             .unwrap_or("gpt-5.4-mini");
         format!(
-            "assistant config: api-key={api_key}, model={model}. Use /config api-key <key> and /config model <model>."
+            "assistant config: api-key={api_key}, model={model}. Use /activity for recent terminal session activity, /config api-key <key>, and /config model <model>."
         )
     }
 
@@ -2214,6 +2202,7 @@ impl Runtime {
             selection: selection_cache_key(workspace),
             active_review_target_id: workspace.active_review_target_id.clone(),
             project_root,
+            terminal_activity_summary: workspace.ui.terminal.activity_summary.clone(),
             selected_component,
             selected_review_action,
             components: workspace
@@ -2363,6 +2352,7 @@ impl Runtime {
             }
         }
         self.sync_assistant_context();
+        self.refresh_terminal_context_snapshot();
         true
     }
 
@@ -2476,6 +2466,37 @@ impl Runtime {
                 if handled {
                     self.session.workspace_mut().ui.hovered_object_id = None;
                     self.log_review_event(format!("selected authored object {object_id}"));
+                }
+                handled
+            }
+            HitTarget::CheckFinding(fingerprint) => {
+                let handled = self.dispatch_session_command(SessionCommand::SelectCheckFinding(
+                    fingerprint.clone(),
+                ));
+                if handled {
+                    let target = self
+                        .session
+                        .workspace()
+                        .checks
+                        .findings
+                        .iter()
+                        .find(|finding| finding.fingerprint == *fingerprint)
+                        .and_then(|finding| {
+                            datum_gui_protocol::check_finding_scene_target_object_id(
+                                &self.session.workspace().scene,
+                                finding,
+                            )
+                        });
+                    self.session.workspace_mut().ui.hovered_object_id = target.clone();
+                    if let Some(target) = target {
+                        let fit = self.fit_scene_object(&target);
+                        self.log_review_event(format!(
+                            "selected check finding {fingerprint}; target {target}{}",
+                            if fit { "; fit" } else { "" }
+                        ));
+                    } else {
+                        self.log_review_event(format!("selected check finding {fingerprint}"));
+                    }
                 }
                 handled
             }
@@ -2629,7 +2650,80 @@ impl Runtime {
                 self.begin_selected_board_text_alignment_edit()
             }
             HitTarget::TerminalTab => self.set_active_dock(DockTab::Terminal),
-            HitTarget::AssistantTab => self.set_active_dock(DockTab::Assistant),
+            HitTarget::AssistantTab => self.open_terminal_agent_launcher(),
+            HitTarget::OutputsTab => self.set_active_dock(DockTab::Outputs),
+            HitTarget::TerminalActivitySummary(summary) => {
+                self.set_active_dock(DockTab::Assistant);
+                self.push_assistant_message(
+                    "system",
+                    format!("selected terminal activity span: {summary}"),
+                );
+                self.log_review_event("selected terminal activity span".to_string());
+                true
+            }
+            HitTarget::ProductionArtifact(artifact_id) => {
+                let handled = self.dispatch_session_command(
+                    SessionCommand::FocusProductionArtifact(artifact_id.clone()),
+                );
+                if handled {
+                    self.log_review_event(format!("focused production artifact {artifact_id}"));
+                }
+                handled
+            }
+            HitTarget::ProductionArtifactFile(path) => {
+                let handled = self.dispatch_session_command(
+                    SessionCommand::FocusProductionArtifactFile(path.clone()),
+                );
+                if handled {
+                    self.log_review_event(format!("focused production artifact file {path}"));
+                }
+                handled
+            }
+            HitTarget::ProductionOutputJobRun(handoff) => {
+                self.set_active_dock(DockTab::Terminal);
+                let command = prepare_terminal_command_execution(
+                    &self.terminal,
+                    "production_output_job_run",
+                    &handoff,
+                )
+                .unwrap_or_else(|err| {
+                    self.push_terminal_line(format!("terminal handoff prepare failed: {err}"));
+                    handoff.command.clone()
+                });
+                let mut bytes = command.into_bytes();
+                bytes.push(b'\r');
+                self.write_terminal_bytes(&bytes);
+                self.log_review_event(format!("ran production output command {}", handoff.command));
+                true
+            }
+            HitTarget::ProductionTerminalCommand(handoff) => {
+                self.set_active_dock(DockTab::Terminal);
+                let command = prepare_terminal_command_execution(
+                    &self.terminal,
+                    "production_terminal_command",
+                    &handoff,
+                )
+                .unwrap_or_else(|err| {
+                    self.push_terminal_line(format!("terminal handoff prepare failed: {err}"));
+                    handoff.command.clone()
+                });
+                let mut bytes = command.into_bytes();
+                bytes.push(b'\r');
+                self.write_terminal_bytes(&bytes);
+                self.log_review_event(format!(
+                    "ran production terminal command {}",
+                    handoff.command
+                ));
+                true
+            }
+            HitTarget::ArtifactPreviewZoomIn
+            | HitTarget::ArtifactPreviewZoomOut
+            | HitTarget::ArtifactPreviewReset
+            | HitTarget::ToggleArtifactPreviewGeometry
+            | HitTarget::ToggleArtifactPreviewDrills => self
+                .select_artifact_preview_hit_target(target)
+                .unwrap_or(false),
+            HitTarget::ArtifactPreviewViewport => false,
             HitTarget::DockResizeHandle => false, // handled in mouse press
         }
     }
@@ -2653,32 +2747,10 @@ impl Runtime {
             .find(|text| &text.object_id == object_id)
     }
 
-    fn selected_board_text_edit_context(&mut self) -> Option<(String, WorkspaceBacking)> {
-        let selected_object_id = match &self.workspace().selection {
-            datum_gui_protocol::SelectionTarget::AuthoredObject(object_id)
-                if object_id.starts_with("board-text:") =>
-            {
-                object_id.clone()
-            }
-            _ => {
-                self.log_review_event("no board text selected".to_string());
-                return None;
-            }
-        };
-        let Some(backing) = self.workspace().backing.clone() else {
-            self.log_review_event(
-                "board text edit unavailable without workspace backing".to_string(),
-            );
-            return None;
-        };
-        Some((selected_object_id, backing))
-    }
-
     fn begin_selected_board_text_content_edit(&mut self) -> bool {
-        let Some(command) = self
-            .selected_board_text()
-            .map(|text| board_text_edit_prefill_command(text, BoardTextEditPrefillField::Content))
-        else {
+        let Some(command) = self.selected_board_text().map(|text| {
+            board_text_edit_terminal_command(text, BoardTextEditTerminalField::Content)
+        }) else {
             self.log_review_event("no board text selected".to_string());
             return false;
         };
@@ -2688,7 +2760,7 @@ impl Runtime {
     fn begin_selected_board_text_height_edit(&mut self) -> bool {
         let Some(command) = self
             .selected_board_text()
-            .map(|text| board_text_edit_prefill_command(text, BoardTextEditPrefillField::Height))
+            .map(|text| board_text_edit_terminal_command(text, BoardTextEditTerminalField::Height))
         else {
             self.log_review_event("no board text selected".to_string());
             return false;
@@ -2697,10 +2769,9 @@ impl Runtime {
     }
 
     fn begin_selected_board_text_rotation_edit(&mut self) -> bool {
-        let Some(command) = self
-            .selected_board_text()
-            .map(|text| board_text_edit_prefill_command(text, BoardTextEditPrefillField::Rotation))
-        else {
+        let Some(command) = self.selected_board_text().map(|text| {
+            board_text_edit_terminal_command(text, BoardTextEditTerminalField::Rotation)
+        }) else {
             self.log_review_event("no board text selected".to_string());
             return false;
         };
@@ -2709,7 +2780,7 @@ impl Runtime {
 
     fn begin_selected_board_text_line_spacing_edit(&mut self) -> bool {
         let Some(command) = self.selected_board_text().map(|text| {
-            board_text_edit_prefill_command(text, BoardTextEditPrefillField::LineSpacing)
+            board_text_edit_terminal_command(text, BoardTextEditTerminalField::LineSpacing)
         }) else {
             self.log_review_event("no board text selected".to_string());
             return false;
@@ -2722,7 +2793,7 @@ impl Runtime {
 
     fn begin_selected_board_text_render_intent_edit(&mut self) -> bool {
         let Some(command) = self.selected_board_text().map(|text| {
-            board_text_edit_prefill_command(text, BoardTextEditPrefillField::RenderIntent)
+            board_text_edit_terminal_command(text, BoardTextEditTerminalField::RenderIntent)
         }) else {
             self.log_review_event("no board text selected".to_string());
             return false;
@@ -2736,7 +2807,7 @@ impl Runtime {
     fn begin_selected_board_text_family_edit(&mut self) -> bool {
         let Some(command) = self
             .selected_board_text()
-            .map(|text| board_text_edit_prefill_command(text, BoardTextEditPrefillField::Family))
+            .map(|text| board_text_edit_terminal_command(text, BoardTextEditTerminalField::Family))
         else {
             self.log_review_event("no board text selected".to_string());
             return false;
@@ -2746,7 +2817,7 @@ impl Runtime {
 
     fn begin_selected_board_text_alignment_edit(&mut self) -> bool {
         let Some(command) = self.selected_board_text().map(|text| {
-            board_text_edit_prefill_command(text, BoardTextEditPrefillField::Alignment)
+            board_text_edit_terminal_command(text, BoardTextEditTerminalField::Alignment)
         }) else {
             self.log_review_event("no board text selected".to_string());
             return false;
@@ -2760,214 +2831,92 @@ impl Runtime {
     fn begin_selected_board_text_command_edit(
         &mut self,
         command: String,
-        event: &'static str,
+        event: impl Into<String>,
     ) -> bool {
-        let ui = &mut self.session.workspace_mut().ui;
-        prefill_assistant_command(ui, command);
+        self.set_active_dock(DockTab::Terminal);
+        if let Err(err) = record_manual_terminal_command_handoff(
+            &self.terminal,
+            "board_text_terminal_command",
+            "datum.gui.board_text.edit_prefill",
+            "prefill",
+            &command,
+        ) {
+            self.push_terminal_line(format!("terminal handoff event write failed: {err}"));
+        }
+        self.write_terminal_bytes(command.as_bytes());
         self.invalidate_scene();
-        self.log_review_event(event.to_string());
+        self.log_review_event(event.into());
         true
     }
 
     fn toggle_selected_board_text_boolean(&mut self, field: BoardTextBooleanField) -> bool {
-        let Some((selected_object_id, backing)) = self.selected_board_text_edit_context() else {
-            return false;
-        };
         let field_label = match field {
             BoardTextBooleanField::Mirrored => "mirrored",
             BoardTextBooleanField::KeepUpright => "keep-upright",
             BoardTextBooleanField::Bold => "bold",
         };
-        match toggle_board_text_boolean_field(&backing, &selected_object_id, field).and_then(
-            |next| {
-                self.reload_workspace_after_board_edit(selected_object_id.clone())?;
-                Ok(next)
-            },
-        ) {
-            Ok(next) => {
-                let state = if next { "on" } else { "off" };
-                self.log_review_event(format!("board text {field_label} {state}"));
-                true
-            }
-            Err(error) => {
-                self.session.workspace_mut().last_command_status =
-                    Some(datum_gui_protocol::EditorCommandStatus {
-                        action: "edit_board_text".to_string(),
-                        detail: format!("{field_label} failed: {error}"),
-                    });
-                self.invalidate_frame();
-                self.log_review_event(format!("board text {field_label} failed: {error}"));
-                true
-            }
-        }
+        self.begin_selected_board_text_quick_edit(
+            BoardTextQuickEditTerminalAction::ToggleBoolean(field),
+            format!("editing selected board text {field_label}"),
+        )
     }
 
     fn cycle_selected_board_text_field(&mut self, field: BoardTextCycleField) -> bool {
-        let Some((selected_object_id, backing)) = self.selected_board_text_edit_context() else {
-            return false;
-        };
         let field_label = match field {
             BoardTextCycleField::RenderIntent => "render intent",
             BoardTextCycleField::Family => "font family",
         };
-        match cycle_board_text_field(&backing, &selected_object_id, field).and_then(|next| {
-            self.reload_workspace_after_board_edit(selected_object_id.clone())?;
-            Ok(next)
-        }) {
-            Ok(next) => {
-                self.log_review_event(format!("board text {field_label} {next}"));
-                true
-            }
-            Err(error) => {
-                self.session.workspace_mut().last_command_status =
-                    Some(datum_gui_protocol::EditorCommandStatus {
-                        action: "edit_board_text".to_string(),
-                        detail: format!("{field_label} failed: {error}"),
-                    });
-                self.invalidate_frame();
-                self.log_review_event(format!("board text {field_label} failed: {error}"));
-                true
-            }
-        }
+        self.begin_selected_board_text_quick_edit(
+            BoardTextQuickEditTerminalAction::CycleField(field),
+            format!("editing selected board text {field_label}"),
+        )
     }
 
     fn cycle_selected_board_text_alignment(&mut self, field: BoardTextAlignmentField) -> bool {
-        let Some((selected_object_id, backing)) = self.selected_board_text_edit_context() else {
-            return false;
-        };
         let field_label = match field {
             BoardTextAlignmentField::Horizontal => "horizontal align",
             BoardTextAlignmentField::Vertical => "vertical align",
         };
-        match cycle_board_text_alignment_field(&backing, &selected_object_id, field).and_then(
-            |next| {
-                self.reload_workspace_after_board_edit(selected_object_id.clone())?;
-                Ok(next)
-            },
-        ) {
-            Ok(next) => {
-                self.log_review_event(format!("board text {field_label} {next}"));
-                true
-            }
-            Err(error) => {
-                self.session.workspace_mut().last_command_status =
-                    Some(datum_gui_protocol::EditorCommandStatus {
-                        action: "edit_board_text".to_string(),
-                        detail: format!("{field_label} failed: {error}"),
-                    });
-                self.invalidate_frame();
-                self.log_review_event(format!("board text {field_label} failed: {error}"));
-                true
-            }
-        }
+        self.begin_selected_board_text_quick_edit(
+            BoardTextQuickEditTerminalAction::CycleAlignment(field),
+            format!("editing selected board text {field_label}"),
+        )
     }
 
     fn step_selected_board_text_line_spacing(&mut self, step: BoardTextLineSpacingStep) -> bool {
-        let Some((selected_object_id, backing)) = self.selected_board_text_edit_context() else {
-            return false;
-        };
-        match step_board_text_line_spacing_ratio(&backing, &selected_object_id, step).and_then(
-            |next| {
-                self.reload_workspace_after_board_edit(selected_object_id.clone())?;
-                Ok(next)
-            },
-        ) {
-            Ok(next) => {
-                self.log_review_event(format!("board text line spacing {}%", next / 10_000));
-                true
-            }
-            Err(error) => {
-                self.session.workspace_mut().last_command_status =
-                    Some(datum_gui_protocol::EditorCommandStatus {
-                        action: "edit_board_text".to_string(),
-                        detail: format!("line spacing failed: {error}"),
-                    });
-                self.invalidate_frame();
-                self.log_review_event(format!("board text line spacing failed: {error}"));
-                true
-            }
-        }
+        self.begin_selected_board_text_quick_edit(
+            BoardTextQuickEditTerminalAction::StepLineSpacing(step),
+            "editing selected board text line spacing".to_string(),
+        )
     }
 
     fn step_selected_board_text_height(&mut self, step: BoardTextHeightStep) -> bool {
-        let Some((selected_object_id, backing)) = self.selected_board_text_edit_context() else {
-            return false;
-        };
-        match step_board_text_height(&backing, &selected_object_id, step).and_then(|next| {
-            self.reload_workspace_after_board_edit(selected_object_id.clone())?;
-            Ok(next)
-        }) {
-            Ok(next) => {
-                self.log_review_event(format!(
-                    "board text height {:.2} mm",
-                    next as f64 / 1_000_000.0
-                ));
-                true
-            }
-            Err(error) => {
-                self.session.workspace_mut().last_command_status =
-                    Some(datum_gui_protocol::EditorCommandStatus {
-                        action: "edit_board_text".to_string(),
-                        detail: format!("height failed: {error}"),
-                    });
-                self.invalidate_frame();
-                self.log_review_event(format!("board text height failed: {error}"));
-                true
-            }
-        }
+        self.begin_selected_board_text_quick_edit(
+            BoardTextQuickEditTerminalAction::StepHeight(step),
+            "editing selected board text height".to_string(),
+        )
     }
 
     fn step_selected_board_text_rotation(&mut self, step: BoardTextRotationStep) -> bool {
-        let Some((selected_object_id, backing)) = self.selected_board_text_edit_context() else {
-            return false;
-        };
-        match step_board_text_rotation(&backing, &selected_object_id, step).and_then(|next| {
-            self.reload_workspace_after_board_edit(selected_object_id.clone())?;
-            Ok(next)
-        }) {
-            Ok(next) => {
-                self.log_review_event(format!("board text rotation {next}°"));
-                true
-            }
-            Err(error) => {
-                self.session.workspace_mut().last_command_status =
-                    Some(datum_gui_protocol::EditorCommandStatus {
-                        action: "edit_board_text".to_string(),
-                        detail: format!("rotation failed: {error}"),
-                    });
-                self.invalidate_frame();
-                self.log_review_event(format!("board text rotation failed: {error}"));
-                true
-            }
-        }
+        self.begin_selected_board_text_quick_edit(
+            BoardTextQuickEditTerminalAction::StepRotation(step),
+            "editing selected board text rotation".to_string(),
+        )
     }
 
-    fn reload_workspace_after_board_edit(&mut self, selection_object_id: String) -> Result<()> {
-        let Some(backing) = self.workspace().backing.clone() else {
-            anyhow::bail!("workspace has no backing");
+    fn begin_selected_board_text_quick_edit(
+        &mut self,
+        action: BoardTextQuickEditTerminalAction,
+        event: String,
+    ) -> bool {
+        let Some(command) = self
+            .selected_board_text()
+            .map(|text| board_text_quick_edit_terminal_command(text, action))
+        else {
+            self.log_review_event("no board text selected".to_string());
+            return false;
         };
-        let previous_filters = self.workspace().ui.filters.clone();
-        let previous_dock = self.workspace().ui.active_dock_tab;
-        let previous_dock_height = self.workspace().ui.dock_height_px;
-        let include_review = !self.workspace().review.proposal_actions.is_empty();
-        let mut next_workspace = if include_review {
-            load_live_workspace_state(&backing.request)?
-        } else {
-            load_board_editor_workspace_state(&backing.request)?
-        };
-        next_workspace.ui.filters = previous_filters;
-        next_workspace.ui.active_dock_tab = previous_dock;
-        next_workspace.ui.dock_height_px = previous_dock_height;
-        next_workspace.selection =
-            datum_gui_protocol::SelectionTarget::AuthoredObject(selection_object_id);
-        next_workspace.last_command_status = Some(datum_gui_protocol::EditorCommandStatus {
-            action: "edit_board_text".to_string(),
-            detail: "updated selected board text".to_string(),
-        });
-        self.session = LiveDesignSession::new(next_workspace);
-        self.invalidate_scene();
-        self.sync_assistant_context();
-        Ok(())
+        self.begin_selected_board_text_command_edit(command, event)
     }
 
     fn fit_camera(&mut self) {
@@ -2982,6 +2931,58 @@ impl Runtime {
         self.camera = CameraState::fit_to_bounds(&bounds);
         self.invalidate_frame();
         true
+    }
+
+    fn fit_scene_object(&mut self, object_id: &str) -> bool {
+        let Some(bounds) = self.scene_object_bounds(object_id) else {
+            return false;
+        };
+        self.camera = CameraState::fit_to_bounds(&bounds);
+        self.invalidate_frame();
+        true
+    }
+
+    fn scene_object_bounds(&self, object_id: &str) -> Option<SceneBounds> {
+        let scene = &self.workspace().scene;
+        if let Some(component) = scene
+            .components
+            .iter()
+            .find(|item| item.object_id == object_id)
+        {
+            return Some(padded_rect_bounds(component.bounds, 1_500_000));
+        }
+        if let Some(pad) = scene.pads.iter().find(|item| item.object_id == object_id) {
+            return Some(padded_rect_bounds(pad.bounds, 500_000));
+        }
+        if let Some(track) = scene.tracks.iter().find(|item| item.object_id == object_id) {
+            return bounds_from_points(track.path.iter().copied(), 750_000);
+        }
+        if let Some(via) = scene.vias.iter().find(|item| item.object_id == object_id) {
+            let radius = (via.diameter_nm / 2).max(250_000);
+            return bounds_from_points([via.position].into_iter(), radius + 500_000);
+        }
+        if let Some(zone) = scene.zones.iter().find(|item| item.object_id == object_id) {
+            return bounds_from_points(zone.polygon.iter().copied(), 750_000);
+        }
+        if let Some(text) = scene
+            .board_texts
+            .iter()
+            .find(|item| item.object_id == object_id)
+        {
+            return bounds_from_points([text.position].into_iter(), text.height_nm.max(500_000));
+        }
+        if let Some(graphic) = scene
+            .board_graphics
+            .iter()
+            .find(|item| item.object_id == object_id)
+        {
+            return bounds_from_points(graphic.path.iter().copied(), 750_000);
+        }
+        scene
+            .outline
+            .iter()
+            .find(|item| item.object_id == object_id)
+            .and_then(|outline| bounds_from_points(outline.path.iter().copied(), 750_000))
     }
 
     fn active_review_bounds(&self) -> Option<SceneBounds> {
@@ -3050,6 +3051,10 @@ impl Runtime {
         let Some(previous) = self.last_cursor_pos else {
             return false;
         };
+        let prepared = self.prepared_scene().clone();
+        if self.handle_artifact_preview_pan_drag(&prepared, previous, next_cursor_pos) {
+            return true;
+        }
         let scene_viewport = self.scene_viewport();
         let bounds = self.workspace().scene.bounds.clone();
         self.camera.pan_pixels(
@@ -3121,109 +3126,51 @@ impl Runtime {
         let window_height = self.config.height as f32;
         let new_height = (window_height - next_cursor_pos.1).clamp(44.0, window_height * 0.6);
         self.session.workspace_mut().ui.dock_height_px = new_height as u32;
+        self.resize_terminal_to_dock();
         self.invalidate_scene();
         true
     }
 
-    fn handle_dock_scroll(&mut self, scroll_lines: f32) -> bool {
-        let Some(active) = self.workspace().ui.active_dock_tab else {
-            return false;
-        };
-        let delta = if scroll_lines > 0.0 { 1_usize } else { 0_usize };
-        let ui = &mut self.session.workspace_mut().ui;
-        match active {
-            DockTab::Terminal => {
-                if scroll_lines > 0.0 {
-                    // scroll up (more history)
-                    let max = ui.terminal.lines.len();
-                    ui.terminal.scroll_offset = (ui.terminal.scroll_offset + delta).min(max);
-                } else {
-                    // scroll down (toward latest)
-                    ui.terminal.scroll_offset = ui.terminal.scroll_offset.saturating_sub(1);
-                }
-            }
-            DockTab::Assistant => {
-                if scroll_lines > 0.0 {
-                    let max = ui.assistant.transcript.len();
-                    ui.assistant.scroll_offset = (ui.assistant.scroll_offset + delta).min(max);
-                } else {
-                    ui.assistant.scroll_offset = ui.assistant.scroll_offset.saturating_sub(1);
-                }
-            }
+    fn resize_terminal_to_dock(&mut self) {
+        let ui = &self.session.workspace().ui;
+        let cols = ((self.config.width as f32 - 24.0) / 7.5).floor().max(20.0) as u16;
+        let rows = ((ui.dock_height_px as f32 - 76.0) / 16.0).floor().max(4.0) as u16;
+        if let Err(err) = self.terminal.resize(cols, rows) {
+            self.push_terminal_line(format!("terminal resize failed: {err}"));
         }
-        self.invalidate_frame();
-        true
     }
 }
 
-fn spawn_terminal_session() -> Result<TerminalSession> {
-    let (tx, rx) = mpsc::channel();
-    Ok(TerminalSession { _tx: tx, rx })
+fn padded_rect_bounds(rect: RectNm, padding_nm: i64) -> SceneBounds {
+    SceneBounds {
+        min_x: rect.min_x.saturating_sub(padding_nm),
+        min_y: rect.min_y.saturating_sub(padding_nm),
+        max_x: rect.max_x.saturating_add(padding_nm),
+        max_y: rect.max_y.saturating_add(padding_nm),
+    }
 }
 
-fn spawn_assistant_session(config: &AssistantBridgeConfig) -> Result<AssistantSession> {
-    let script =
-        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../scripts/datum_assistant_bridge.py");
-    let mut command = Command::new("/usr/bin/python3");
-    command
-        .arg(&script)
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped());
-    if let Some(api_key) = &config.api_key {
-        command.env("OPENAI_API_KEY", api_key);
+fn bounds_from_points(
+    points: impl IntoIterator<Item = PointNm>,
+    padding_nm: i64,
+) -> Option<SceneBounds> {
+    let mut iter = points.into_iter();
+    let first = iter.next()?;
+    let mut min_x = first.x;
+    let mut max_x = first.x;
+    let mut min_y = first.y;
+    let mut max_y = first.y;
+    for point in iter {
+        min_x = min_x.min(point.x);
+        max_x = max_x.max(point.x);
+        min_y = min_y.min(point.y);
+        max_y = max_y.max(point.y);
     }
-    if let Some(model) = &config.model {
-        command.env("DATUM_ASSISTANT_MODEL", model);
-    }
-    let mut child = command
-        .spawn()
-        .with_context(|| format!("spawn assistant bridge {}", script.display()))?;
-    let stdin = child.stdin.take().context("take assistant bridge stdin")?;
-    let stdout = child
-        .stdout
-        .take()
-        .context("take assistant bridge stdout")?;
-    let stderr = child
-        .stderr
-        .take()
-        .context("take assistant bridge stderr")?;
-    let stdin = Arc::new(Mutex::new(stdin));
-    let (tx, rx) = mpsc::channel();
-    {
-        let tx = tx.clone();
-        thread::spawn(move || {
-            let reader = BufReader::new(stdout);
-            for line in reader.lines().map_while(Result::ok) {
-                match serde_json::from_str::<AssistantBridgeOutput>(&line) {
-                    Ok(message) => {
-                        let _ = tx.send(message);
-                    }
-                    Err(err) => {
-                        let _ = tx.send(AssistantBridgeOutput {
-                            kind: "error".to_string(),
-                            message: format!("assistant bridge emitted invalid JSON: {err}"),
-                            actions: Vec::new(),
-                        });
-                    }
-                }
-            }
-        });
-    }
-    thread::spawn(move || {
-        let reader = BufReader::new(stderr);
-        for line in reader.lines().map_while(Result::ok) {
-            let _ = tx.send(AssistantBridgeOutput {
-                kind: "error".to_string(),
-                message: line,
-                actions: Vec::new(),
-            });
-        }
-    });
-    Ok(AssistantSession {
-        _child: child,
-        stdin,
-        rx,
+    Some(SceneBounds {
+        min_x: min_x.saturating_sub(padding_nm),
+        min_y: min_y.saturating_sub(padding_nm),
+        max_x: max_x.saturating_add(padding_nm),
+        max_y: max_y.saturating_add(padding_nm),
     })
 }
 
@@ -3237,6 +3184,21 @@ mod tests {
     }
 
     #[test]
+    fn bounds_from_points_applies_padding() {
+        let bounds = bounds_from_points([PointNm { x: 10, y: 20 }, PointNm { x: 30, y: -10 }], 5)
+            .expect("bounds should exist");
+        assert_eq!(
+            bounds,
+            SceneBounds {
+                min_x: 5,
+                min_y: -15,
+                max_x: 35,
+                max_y: 25
+            }
+        );
+    }
+
+    #[test]
     fn rejects_invalid_visual_window_size() {
         assert!(parse_window_size("1280").is_err());
         assert!(parse_window_size("0x768").is_err());
@@ -3244,107 +3206,21 @@ mod tests {
     }
 
     #[test]
-    fn parses_explicit_text_edit_values() {
-        assert_eq!(parse_text_length_nm("1.25mm").unwrap(), 1_250_000);
-        assert_eq!(parse_text_length_nm("250000nm").unwrap(), 250_000);
-        assert_eq!(parse_text_length_nm("2").unwrap(), 2_000_000);
-        assert_eq!(parse_text_line_spacing_ppm("125%").unwrap(), 1_250_000);
-        assert_eq!(
-            parse_text_line_spacing_ppm("1250000ppm").unwrap(),
-            1_250_000
-        );
+    fn terminal_raw_input_defers_paste_and_copy_shortcuts() {
+        assert!(terminal_raw_input_should_handle(true, false, false));
+        assert!(!terminal_raw_input_should_handle(true, true, false));
+        assert!(!terminal_raw_input_should_handle(true, false, true));
+        assert!(!terminal_raw_input_should_handle(false, false, false));
     }
 
     #[test]
-    fn parses_explicit_text_semantic_values() {
+    fn assistant_activity_command_is_session_scoped() {
+        assert!(ASSISTANT_ACTIVITY_COMMAND.contains("context session-activity"));
+        assert!(ASSISTANT_ACTIVITY_COMMAND.contains("$DATUM_SESSION_ID"));
+        assert!(ASSISTANT_ACTIVITY_COMMAND.contains("--limit 20"));
         assert_eq!(
-            parse_text_alignment_pair("right top").unwrap(),
-            ("right", "top")
-        );
-        assert_eq!(parse_text_h_align("center").unwrap(), "center");
-        assert_eq!(parse_text_v_align("bottom").unwrap(), "bottom");
-        assert_eq!(parse_text_render_intent("branding").unwrap(), "branding");
-        assert_eq!(
-            parse_text_font_family("ibm_plex_sans_condensed").unwrap(),
-            "ibm_plex_sans_condensed"
-        );
-
-        assert!(parse_text_alignment_pair("left").is_err());
-        assert!(parse_text_alignment_pair("left top extra").is_err());
-        assert!(parse_text_h_align("middle").is_err());
-        assert!(parse_text_v_align("left").is_err());
-        assert!(parse_text_render_intent("marketing").is_err());
-        assert!(parse_text_font_family("papyrus").is_err());
-    }
-
-    #[test]
-    fn builds_board_text_edit_prefill_commands() {
-        let text = BoardTextPrimitive {
-            object_id: "board_text:gain".to_string(),
-            object_kind: "board_text".to_string(),
-            text_uuid: "text-gain".to_string(),
-            text: "GAIN STAGE A1".to_string(),
-            layer_id: "F.SILKS".to_string(),
-            position: PointNm {
-                x: 1_000_000,
-                y: 2_000_000,
-            },
-            rotation_degrees: -90,
-            height_nm: 1_250_000,
-            stroke_width_nm: 150_000,
-            render_intent: "annotation".to_string(),
-            family: "technical_sans".to_string(),
-            style: "regular".to_string(),
-            style_class: None,
-            h_align: "center".to_string(),
-            v_align: "center".to_string(),
-            mirrored: false,
-            keep_upright: true,
-            line_spacing_ratio_ppm: 1_250_000,
-            bold: false,
-            italic: false,
-        };
-
-        assert_eq!(
-            board_text_edit_prefill_command(&text, BoardTextEditPrefillField::Content),
-            "/text content GAIN STAGE A1"
-        );
-        assert_eq!(
-            board_text_edit_prefill_command(&text, BoardTextEditPrefillField::Height),
-            "/text height 1.250mm"
-        );
-        assert_eq!(
-            board_text_edit_prefill_command(&text, BoardTextEditPrefillField::Rotation),
-            "/text rot 270"
-        );
-        assert_eq!(
-            board_text_edit_prefill_command(&text, BoardTextEditPrefillField::LineSpacing),
-            "/text line 125%"
-        );
-        assert_eq!(
-            board_text_edit_prefill_command(&text, BoardTextEditPrefillField::RenderIntent),
-            "/text intent annotation"
-        );
-        assert_eq!(
-            board_text_edit_prefill_command(&text, BoardTextEditPrefillField::Family),
-            "/text font technical_sans"
-        );
-        assert_eq!(
-            board_text_edit_prefill_command(&text, BoardTextEditPrefillField::Alignment),
-            "/text align center center"
-        );
-    }
-
-    #[test]
-    fn board_text_edit_prefill_opens_assistant_with_cursor_at_end() {
-        let mut workspace = datum_gui_protocol::load_fixture_workspace_state();
-        prefill_assistant_command(&mut workspace.ui, "/text height 1.250mm".to_string());
-
-        assert_eq!(workspace.ui.active_dock_tab, Some(DockTab::Assistant));
-        assert_eq!(workspace.ui.assistant.input, "/text height 1.250mm");
-        assert_eq!(
-            workspace.ui.assistant.cursor,
-            "/text height 1.250mm".chars().count()
+            assistant_activity_command_bytes(),
+            "datum-eda context session-activity --session \"$DATUM_SESSION_ID\" --limit 20\r"
         );
     }
 
@@ -3390,6 +3266,10 @@ fn redact_assistant_config_command(command: &str) -> String {
     command.to_string()
 }
 
+fn assistant_activity_command_bytes() -> String {
+    format!("{ASSISTANT_ACTIVITY_COMMAND}\r")
+}
+
 fn redact_secret(secret: &str) -> String {
     if secret.is_empty() {
         return "<empty>".to_string();
@@ -3397,140 +3277,6 @@ fn redact_secret(secret: &str) -> String {
     let tail_len = secret.len().min(4);
     let tail = &secret[secret.len() - tail_len..];
     format!("***{tail}")
-}
-
-fn board_text_edit_prefill_command(
-    text: &BoardTextPrimitive,
-    field: BoardTextEditPrefillField,
-) -> String {
-    match field {
-        BoardTextEditPrefillField::Content => format!("/text content {}", text.text),
-        BoardTextEditPrefillField::Height => {
-            format!("/text height {:.3}mm", text.height_nm as f64 / 1_000_000.0)
-        }
-        BoardTextEditPrefillField::Rotation => {
-            format!("/text rot {}", text.rotation_degrees.rem_euclid(360))
-        }
-        BoardTextEditPrefillField::LineSpacing => {
-            format!("/text line {}%", text.line_spacing_ratio_ppm / 10_000)
-        }
-        BoardTextEditPrefillField::RenderIntent => {
-            format!("/text intent {}", text.render_intent)
-        }
-        BoardTextEditPrefillField::Family => format!("/text font {}", text.family),
-        BoardTextEditPrefillField::Alignment => {
-            format!("/text align {} {}", text.h_align, text.v_align)
-        }
-    }
-}
-
-fn prefill_assistant_command(ui: &mut WorkspaceUiState, command: String) {
-    let cursor = command.chars().count();
-    ui.active_dock_tab = Some(DockTab::Assistant);
-    ui.assistant.input = command;
-    ui.assistant.cursor = cursor;
-}
-
-fn parse_text_length_nm(value: &str) -> Result<i64> {
-    let trimmed = value.trim();
-    if trimmed.is_empty() {
-        anyhow::bail!("text length is empty");
-    }
-    if let Some(number) = trimmed.strip_suffix("nm") {
-        return number
-            .trim()
-            .parse::<i64>()
-            .with_context(|| format!("parse nanometer text length from {value:?}"));
-    }
-    let number = trimmed
-        .strip_suffix("mm")
-        .unwrap_or(trimmed)
-        .trim()
-        .parse::<f64>()
-        .with_context(|| format!("parse millimeter text length from {value:?}"))?;
-    if !number.is_finite() || number <= 0.0 {
-        anyhow::bail!("text length must be a positive finite value");
-    }
-    Ok((number * 1_000_000.0).round() as i64)
-}
-
-fn parse_text_line_spacing_ppm(value: &str) -> Result<i32> {
-    let trimmed = value.trim();
-    if trimmed.is_empty() {
-        anyhow::bail!("line spacing value is empty");
-    }
-    if let Some(number) = trimmed.strip_suffix("ppm") {
-        return number
-            .trim()
-            .parse::<i32>()
-            .with_context(|| format!("parse ppm line spacing from {value:?}"));
-    }
-    let number = trimmed
-        .strip_suffix('%')
-        .unwrap_or(trimmed)
-        .trim()
-        .parse::<f64>()
-        .with_context(|| format!("parse percent line spacing from {value:?}"))?;
-    if !number.is_finite() || number <= 0.0 {
-        anyhow::bail!("line spacing must be a positive finite value");
-    }
-    Ok((number * 10_000.0).round() as i32)
-}
-
-fn parse_text_alignment_pair(value: &str) -> Result<(&str, &str)> {
-    let mut parts = value.split_whitespace();
-    let h_align = parts
-        .next()
-        .ok_or_else(|| anyhow::anyhow!("alignment requires horizontal and vertical values"))?;
-    let v_align = parts
-        .next()
-        .ok_or_else(|| anyhow::anyhow!("alignment requires horizontal and vertical values"))?;
-    if parts.next().is_some() {
-        anyhow::bail!(
-            "alignment expects exactly two values: <left|center|right> <top|center|bottom>"
-        );
-    }
-    Ok((parse_text_h_align(h_align)?, parse_text_v_align(v_align)?))
-}
-
-fn parse_text_h_align(value: &str) -> Result<&str> {
-    match value.trim() {
-        "left" | "center" | "right" => Ok(value.trim()),
-        other => anyhow::bail!(
-            "unsupported horizontal alignment `{other}`; expected left, center, or right"
-        ),
-    }
-}
-
-fn parse_text_v_align(value: &str) -> Result<&str> {
-    match value.trim() {
-        "top" | "center" | "bottom" => Ok(value.trim()),
-        other => anyhow::bail!(
-            "unsupported vertical alignment `{other}`; expected top, center, or bottom"
-        ),
-    }
-}
-
-fn parse_text_render_intent(value: &str) -> Result<&str> {
-    match value.trim() {
-        "manufacturing" | "annotation" | "branding" | "documentation" | "ui_preview" => {
-            Ok(value.trim())
-        }
-        other => anyhow::bail!(
-            "unsupported render intent `{other}`; expected manufacturing, annotation, branding, documentation, or ui_preview"
-        ),
-    }
-}
-
-fn parse_text_font_family(value: &str) -> Result<&str> {
-    match value.trim() {
-        "newstroke" | "inter" | "inter_display" | "ibm_plex_sans_condensed" | "jetbrains_mono" => {
-            Ok(value.trim())
-        }
-        other => anyhow::bail!(
-            "unsupported font family `{other}`; expected newstroke, inter, inter_display, ibm_plex_sans_condensed, or jetbrains_mono"
-        ),
-    }
 }
 
 fn best_completion(prefix: &str, candidates: &[&str]) -> Option<String> {

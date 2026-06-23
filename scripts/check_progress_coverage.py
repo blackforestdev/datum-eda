@@ -39,8 +39,9 @@ def parse_tool_catalog_methods() -> set[str]:
 
 
 def parse_cli_bridge_methods(tool_methods: set[str]) -> set[str]:
-    text = read_text("mcp-server/server_runtime.py")
-    public_methods = set(re.findall(r"^\s{4}def ([a-z_]+)\(", text, flags=re.M))
+    public_methods: set[str] = set()
+    for path in sorted((ROOT / "mcp-server").glob("server_runtime*.py")):
+        public_methods.update(re.findall(r"^\s{4}def ([a-z_]+)\(", path.read_text(encoding="utf-8"), flags=re.M))
     return public_methods & tool_methods
 
 

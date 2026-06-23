@@ -136,3 +136,37 @@ fn run_drc_dispatch_reports_connectivity_violation_on_partial_route_board() {
             .any(|violation| violation["code"] == "connectivity_unrouted_net")
     );
 }
+
+#[test]
+fn run_drc_dispatch_honors_selected_rule_params() {
+    let mut engine = Engine::new().expect("engine should initialize");
+    let open = JsonRpcRequest {
+        jsonrpc: "2.0".into(),
+        id: json!(1),
+        method: "open_project".into(),
+        params: serde_json::to_value(OpenProjectParams {
+            path: kicad_fixture_path("partial-route-demo.kicad_pcb"),
+        })
+        .unwrap(),
+    };
+    let _ = dispatch_request(&mut engine, open);
+
+    let request = JsonRpcRequest {
+        jsonrpc: "2.0".into(),
+        id: json!(2),
+        method: "run_drc".into(),
+        params: json!({"rules": ["TrackWidth"]}),
+    };
+
+    let response = dispatch_request(&mut engine, request);
+    assert!(response.error.is_none(), "{response:?}");
+    let result = response.result.expect("result should exist");
+    let violations = result["violations"]
+        .as_array()
+        .expect("violations should be an array");
+    assert!(
+        violations
+            .iter()
+            .all(|violation| violation["code"] != "connectivity_unrouted_net")
+    );
+}

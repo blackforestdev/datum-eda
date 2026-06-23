@@ -3,6 +3,7 @@ use super::*;
 mod assign_package_rule;
 mod basic_mutations;
 mod component_replacements;
+mod flip_component;
 mod undo_redo;
 
 fn merge_operation_diff(target: &mut OperationDiff, diff: &OperationDiff) {

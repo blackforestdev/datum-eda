@@ -173,6 +173,21 @@ coordination. Datum never decrypts encrypted vendor models — they
 live in the pool as opaque blobs and pass through to export
 operations untouched.
 
+Current implementation note: `attach-pool-part-model` writes raw
+content-addressed files under this tree and `project query pool-models`
+enumerates those blobs, recomputes their SHA-256, derives the deterministic
+model UUID, and reports current `Part.behavioural_models` attachment
+references. `project validate` also checks provenance-backed model
+attachments for missing blobs, filename/hash mismatches, and deterministic
+model UUID drift. Query results mark each blob as `referenced` or `orphaned`
+from the current `Part.behavioural_models` graph; orphaned means retained but
+currently unreferenced. `project gc-pool-models` provides a conservative
+dry-run/apply cleanup action for orphaned regular blob files only; it skips
+referenced blobs, hash-mismatched blobs, non-regular files, and AMI bundle
+roles until bundle hashing semantics are defined. The SQLite `models` and
+`part_model_attachments` tables below are still a derived target index, not the
+current source of truth.
+
 **Why individual files:**
 - Git-friendly: each part is a separate diff
 - AI-parseable: read one file, get one complete object

@@ -26,12 +26,14 @@ stated here as decided: (1) object identity is a persisted surrogate with a
 `ComponentInstance` is introduced now as the canonical electrical-to-physical
 join; (3) the transaction journal is required source state from the first
 cut, with durable undo/redo as cursors into it; (4) the identity, resolver,
-and commit modules are built concurrently with M7 — they do not close M7, and
-the authority flip plus from-shards KiCad emitter are deferred until M7 closes
-and the emitter passes a byte-identical-when-unmodified fidelity gate on the
-datum-test fixture, run as dual-write during a deprecation window. The single
-authority over segmented shards remains the leading hypothesis pending the
-proof gates below; the four mechanism choices above are no longer open.
+and commit modules are built concurrently with M7 — they do not close M7. The
+native source shards are the only authority; import is a one-time converter
+that writes those shards directly (see
+`docs/DATUM_PRODUCT_MECHANICS.md` "Interop Boundary And Import Posture"). An
+optional from-shards KiCad emitter is a separate, deferred export path, not a
+migration step. The single authority over segmented shards remains the leading
+hypothesis pending the proof gates below; the four mechanism choices above are
+no longer open.
 
 ## Product Intent
 
@@ -210,10 +212,11 @@ authored boundary; the fill is carried separately as a derived `ZoneFill`
 projection records the revision of its source zone and a hash of the inputs
 that produced it, so the loader and the equivalence harness can decide whether
 a cached fill is current, stale, or must be recomputed — exactly as the
-resolved-net graph is treated. For imported boards, the fabricator-accurate
-islands the source tool computed are carried as a `Filled` projection with
-import provenance attached; they are trusted geometry but remain
-derived-with-provenance, not re-authored board truth. Native un-filled zones
+resolved-net graph is treated. For a board brought in through the import
+converter, the fabricator-accurate islands the source tool computed are
+carried as a `Filled` projection with import provenance attached; they are
+trusted geometry but remain derived-with-provenance, not re-authored board
+truth. Native un-filled zones
 project as a badged `Unfilled` placeholder and emit no copper; the first
 live-CAM proof does not author native pour fill (if later authorized, the
 polygon-boolean substrate is `i_overlay`, pure-Rust MIT, with no FFI creep).
@@ -759,11 +762,15 @@ proposal/transaction reference resolution, cache staleness, and
 artifact-metadata resolution.
 
 Resolution is the moment the doctrine "files are persistence partitions; the
-resolved `DesignModel` is the authority" becomes operational. On first import
-the resolver bootstraps a native model, records `ImportProvenance` on every
-object, and writes the source shards; thereafter the original imported file is
-retained only as immutable provenance and is never again consulted to resolve
-the project (bootstrap-then-supersede authority). If any check fails fatally,
+resolved `DesignModel` is the authority" becomes operational. Import is a
+one-time converter: it reads a KiCad file once, materializes a native model,
+records `ImportProvenance` on every object, and writes the native source
+shards directly — after which the result is simply a native project and the
+original imported file is retained only as immutable provenance, never again
+consulted to resolve the project. There is no "imported board" state and no
+authority distinct from the native shards; origin is provenance only (see
+`docs/DATUM_PRODUCT_MECHANICS.md` "Interop Boundary And Import Posture"). If any
+check fails fatally,
 the resolver does not assemble a normal authoritative model; it opens a
 recovery/diagnostic model that loads the inspectable shards read-only, reports
 each failing check with the offending object and shard references, and offers
@@ -846,12 +853,13 @@ The ten consolidated gates:
 8. PG-VARIANT-RESOLUTION (population-only) — switching the active variant
    composes the overlay with zero base writes; a variant-to-variant diff is a
    diff of two small overlay maps.
-9. PG-AUTHORITY-FLIP+ARTIFACT-TRACEABILITY — a changed Gerber setting
-   increments the output-job revision; artifact metadata records model
-   revision, output-job revision, generator version, and validation state;
-   three-run regeneration is byte-identical; the from-shards emitter is
-   byte-identical-when-unmodified on datum-test under dual-write before the
-   authority flips.
+9. PG-ARTIFACT-TRACEABILITY — a changed Gerber setting increments the
+   output-job revision; artifact metadata records model revision, output-job
+   revision, generator version, and validation state; three-run regeneration
+   is byte-identical. (The optional from-shards KiCad emitter is a separate,
+   deferred export path; if and when it is built, a
+   byte-identical-when-unmodified fidelity gate on datum-test applies to it
+   as export validation — not as a migration or authority step.)
 10. PG-HARNESS-WIRING — all gates run from a new
     `scripts/run_migration_proof_gates.sh`, invoked from
     `scripts/run_drift_gates.sh`.
@@ -862,7 +870,7 @@ the mismatch is recorded in the relationships shard as an `UnresolvedMismatch`,
 a check reports it, and no shard overwrites another. Library-revision pinning
 (an updated footprint or model attachment leaves the project pinned to its
 prior revision until an accepted proposal/transaction updates it) is covered
-under PG-AUTHORITY-FLIP+ARTIFACT-TRACEABILITY's traceability obligations.
+under PG-ARTIFACT-TRACEABILITY's traceability obligations.
 
 These gates are wired into a runnable harness
 (`scripts/run_migration_proof_gates.sh`, invoked from

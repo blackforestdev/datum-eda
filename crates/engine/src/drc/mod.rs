@@ -7,6 +7,11 @@ use crate::rules::ast::RuleType;
 use crate::schematic::{CheckDomain, CheckWaiver, WaiverTarget};
 
 mod checks;
+mod fingerprint;
+mod zone_fill_projection;
+use fingerprint::attach_drc_violation_fingerprints;
+pub(crate) use fingerprint::drc_violation_fingerprint;
+pub use zone_fill_projection::{run_with_zone_fills, run_with_zone_fills_and_waivers};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -31,6 +36,8 @@ pub struct DrcViolation {
     pub message: String,
     pub location: Option<DrcLocation>,
     pub objects: Vec<Uuid>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fingerprint: Option<String>,
     #[serde(default)]
     pub waived: bool,
 }
@@ -97,6 +104,7 @@ pub fn run_with_waivers(
         warnings: 0,
         waived: 0,
     };
+    attach_drc_violation_fingerprints(&mut violations);
     apply_waivers(&mut violations, waivers);
     for violation in &violations {
         if violation.waived {
@@ -144,51 +152,17 @@ fn waiver_matches(waiver: &CheckWaiver, violation: &DrcViolation) -> bool {
             expected.sort();
             actual == expected
         }
+        WaiverTarget::Fingerprint(fingerprint) => {
+            fingerprint == &drc_violation_fingerprint(violation)
+        }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashMap;
-
-    use super::*;
-    use crate::board::{
-        Board, Keepout, PlacedPackage, Stackup, StackupLayer, StackupLayerType, Zone,
-    };
-    use crate::ir::geometry::{Point, Polygon};
-
-    fn empty_board() -> Board {
-        Board {
-            uuid: Uuid::new_v4(),
-            name: "drc-demo".into(),
-            stackup: Stackup {
-                layers: vec![StackupLayer {
-                    id: 1,
-                    name: "F.Cu".into(),
-                    layer_type: StackupLayerType::Copper,
-                    thickness_nm: 35_000,
-                }],
-            },
-            pad_expansion_setup: crate::board::PadExpansionSetup::default(),
-            outline: Polygon::new(vec![
-                Point::new(0, 0),
-                Point::new(100_000_000, 0),
-                Point::new(100_000_000, 100_000_000),
-                Point::new(0, 100_000_000),
-            ]),
-            packages: HashMap::<Uuid, PlacedPackage>::new(),
-            pads: HashMap::new(),
-            tracks: HashMap::new(),
-            vias: HashMap::new(),
-            zones: HashMap::<Uuid, Zone>::new(),
-            nets: HashMap::new(),
-            net_classes: HashMap::new(),
-            rules: Vec::new(),
-            keepouts: Vec::<Keepout>::new(),
-            dimensions: Vec::new(),
-            texts: Vec::new(),
-        }
-    }
+    #[path = "support.rs"]
+    mod support;
+    use support::empty_board;
 
     #[path = "mod_tests_connectivity_and_clearance.rs"]
     mod connectivity_and_clearance;
@@ -198,4 +172,7 @@ mod tests {
 
     #[path = "mod_tests_waivers.rs"]
     mod waivers;
+
+    #[path = "mod_tests_zone_fill_projection.rs"]
+    mod zone_fill_projection;
 }

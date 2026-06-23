@@ -1,7 +1,7 @@
 use super::*;
 use eda_engine::ir::geometry::Polygon;
 use eda_engine::ir::serialization::to_json_deterministic;
-use eda_engine::pool::{ModelRef, Package};
+use eda_engine::pool::{ModelFormat, ModelRef, Package, Transform3D};
 use std::collections::{HashMap, HashSet};
 
 fn unique_project_root(label: &str) -> PathBuf {
@@ -29,19 +29,19 @@ fn project_query_board_component_models_3d_reads_persisted_model_refs() {
         models_3d: vec![
             ModelRef {
                 path: "models/pkg.step".to_string(),
-                transform: Some(serde_json::json!({
-                    "translate": [1, 2, 3],
-                    "rotate": [0, 90, 180]
-                })),
+                format: ModelFormat::Step,
+                transform: Transform3D::default(),
+                provenance: None,
             },
             ModelRef {
                 path: "models/pkg.wrl".to_string(),
-                transform: Some(serde_json::json!({
-                    "translate": [-1, -2, 0],
-                    "rotate": [10, 20, 30]
-                })),
+                format: ModelFormat::Wrl,
+                transform: Transform3D::default(),
+                provenance: None,
             },
         ],
+        body_height_nm: None,
+        body_height_mounted_nm: None,
         tags: HashSet::new(),
     };
     std::fs::write(

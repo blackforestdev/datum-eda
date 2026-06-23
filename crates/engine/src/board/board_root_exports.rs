@@ -1,6 +1,6 @@
 pub use super::board_info::{Airwire, BoardNetInfo, BoardSummary, ComponentInfo, NetPinRef};
 pub use super::board_types::{
-    BoardText, Dimension, Keepout, Net, NetClass, PlacedPackage, Track, Via, Zone,
+    BoardText, Dimension, ImpedanceSpec, Keepout, Net, NetClass, PlacedPackage, Track, Via, Zone,
 };
 pub use super::pad::{PadAperture, PadExpansionSetup, PadShape, PlacedPad};
 pub use super::route_surface::*;

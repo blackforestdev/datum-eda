@@ -130,13 +130,11 @@ fn get_part_change_candidates_dispatch_returns_compatible_part_report() {
     let report = response.result.expect("response should contain result");
     assert_eq!(report["status"], "candidates_available");
     assert_eq!(report["current_part_uuid"], lmv321_part_uuid);
-    assert!(
-        report["candidates"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .any(|candidate| candidate["package_name"] == "ALT-3" && candidate["value"] == "ALTAMP")
-    );
+    assert!(report["candidates"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .any(|candidate| candidate["package_name"] == "ALT-3" && candidate["value"] == "ALTAMP"));
 }
 
 #[test]

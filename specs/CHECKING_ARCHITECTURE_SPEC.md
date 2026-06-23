@@ -142,8 +142,27 @@ pub struct CheckRun {
     pub completed_at: Option<Timestamp>,
     pub status: CheckRunStatus,
     pub summary: CheckSummary,
+    pub profile_basis: CheckRunProfileBasis,
+    pub coverage: Vec<CheckRunCoverageEntry>,
     pub findings: Vec<CheckFinding>,
     pub artifact_metadata: Vec<CheckArtifactMetadata>,
+}
+
+pub struct CheckRunProfileBasis {
+    pub profile_id: String,
+    pub domains: Vec<CheckDomain>,
+    pub description: String,
+    pub standards_basis: Option<String>,
+}
+
+pub struct CheckRunCoverageEntry {
+    pub domain: CheckDomain,
+    pub rule_id: String,
+    pub status: CheckRunCoverageStatus,
+    pub target_scope: String,
+    pub basis_id: Option<String>,
+    pub rule_revision: Option<String>,
+    pub standards_basis: Option<String>,
 }
 
 pub struct CheckFinding {
@@ -158,25 +177,44 @@ pub struct CheckFinding {
     pub message: String,
     pub evidence: Vec<CheckEvidence>,
     pub proposal_refs: Vec<ProposalRef>,
+    pub proposal_links: Vec<ProposalActionLink>,
     pub waiver_refs: Vec<Uuid>,
     pub deviation_refs: Vec<Uuid>,
 }
 ```
 
+`proposal_refs` remains the stable compatibility identity list. `proposal_links`
+is the actionable view consumed by GUI, CLI, MCP, and agents: it carries proposal
+status/source/rationale, a validation snapshot, and canonical proposal command
+templates so repair review/apply UX routes through the proposal gateway instead
+of private GUI mutation paths.
+
 Finding order must be stable and deterministic.
 
-`CheckFingerprint` must be derived from:
+Every persisted `CheckRun` must carry coverage metadata. The coverage list is
+the contract that makes a clean or filtered result honest: `evaluated` means the
+rule family participated in the run, `filtered_by_profile` means the selected
+profile intentionally excluded it, `not_applicable` means the rule family had no
+targets in the resolved model, and `not_implemented` means Datum knows about the
+rule family but does not yet evaluate it. GUI and agent contexts must expose
+this metadata rather than inferring scope from which findings happened to
+appear.
 
-- `model_revision`
+`CheckFingerprint` must be stable across waiver-only and disposition-only edits.
+It is derived from:
+
 - domain
 - rule id and rule revision
 - normalized target identity
 - normalized relevant observed values
 - Import Map `import_key` where imported identity participates
 
-Fingerprints are used for stable comparison across runs. They are not object
-UUIDs and must not be treated as permanent identity when the underlying model
-revision or rule revision changes.
+The enclosing `CheckRun.model_revision` provides revision scope. Waivers and
+deviations record the revision they were reviewed against separately, so adding
+a waiver does not invalidate the fingerprint it targets. Fingerprints are used
+for stable comparison across runs. They are not object UUIDs and must not be
+treated as permanent identity when rule revision, normalized target identity, or
+observed values change.
 
 ---
 
@@ -278,6 +316,24 @@ M2 minimum:
 - waived findings remain visible but do not fail the check
 - waivers must serialize deterministically
 
+Current implementation:
+
+- `WaiverTarget::Fingerprint` is implemented in the shared waiver model
+- `project query <root> check-run` applies fingerprint-scoped native waivers to
+  normalized `CheckFinding` records, keeping findings visible with
+  `status=waived` and `waiver_refs`
+- `project waive-finding <root> --fingerprint <sha256:...> --rationale <text>`
+  authors a fingerprint-scoped schematic waiver through `OperationBatch`,
+  appends the transaction journal, updates the schematic root source shard, and
+  supports journal undo/redo
+- `project accept-deviation <root> --fingerprint <sha256:...> --rationale <text>`
+  authors a fingerprint-scoped accepted deviation through `OperationBatch`,
+  appends the transaction journal, updates the schematic root source shard, and
+  supports journal undo/redo
+- accepted deviations keep findings visible with `status=accepted_deviation`,
+  populate `deviation_refs`, and suppress active failure counts without being
+  counted as waivers
+
 ---
 
 ## 9. Proposal-First Repairs
@@ -289,6 +345,20 @@ When a finding is mechanically actionable, the check system may attach a repair
 proposal. Applying the proposal is a separate user-authorized transaction that
 records provenance, source finding, model revision, and resulting model
 revision.
+
+Current implementation evidence:
+
+- `project generate-standards-repair-proposals` creates draft
+  `ProposalSource::Check` records from persisted `CheckFinding` fingerprints.
+- Process-aperture repairs group pad mask/paste findings by pad and emit one
+  `SetBoardPad` operation per affected pad.
+- Dimension-rule repairs preserve netclass rules as the authority and emit
+  direct geometry proposals: `track_width_below_min` produces `SetBoardTrack`,
+  while `via_hole_out_of_range` and `via_annular_below_min` are grouped per via
+  into one `SetBoardVia` proposal when both findings affect the same via.
+- Clearance, silkscreen, connectivity, and route-topology findings remain
+  diagnostic-only until their repair policies have explicit geometry/routing
+  proposal mechanics.
 
 This rule applies to all domains, including standards-aware footprint repair,
 manufacturing apertures, ERC no-connect insertion, relationship repair, and
@@ -331,3 +401,10 @@ Minimum pad process-aperture finding codes:
 The finding is detection only. Any geometry repair must be represented as an
 explicit proposal or transaction accepted by the user; import and checking must
 not silently mutate source geometry toward an inferred IPC result.
+
+Current proposal-backed repair coverage is narrower than the full standards
+target: pad process-aperture findings can produce `SetBoardPad` proposals,
+track-width findings can produce `SetBoardTrack` proposals, and via
+hole/annular findings can produce `SetBoardVia` proposals. Ambiguous repairs
+that require moving silkscreen, rerouting copper, relaxing rules, or choosing
+between two clearance offenders remain explicit findings only.

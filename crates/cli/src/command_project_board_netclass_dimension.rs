@@ -1,7 +1,10 @@
 use super::*;
+use eda_engine::substrate::{
+    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver,
+};
 
 pub(crate) fn query_native_project_board_net_classes(root: &Path) -> Result<Vec<NetClass>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let mut net_classes = project
         .board
         .net_classes
@@ -16,7 +19,7 @@ pub(crate) fn query_native_project_board_net_class(
     root: &Path,
     net_class_uuid: Uuid,
 ) -> Result<NetClass> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let key = net_class_uuid.to_string();
     let entry = project
         .board
@@ -30,7 +33,7 @@ pub(crate) fn query_native_project_board_net_class(
 }
 
 pub(crate) fn query_native_project_board_dimensions(root: &Path) -> Result<Vec<Dimension>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let mut dimensions = project
         .board
         .dimensions
@@ -51,7 +54,6 @@ pub(crate) fn place_native_project_board_net_class(
     diffpair_width_nm: i64,
     diffpair_gap_nm: i64,
 ) -> Result<NativeProjectBoardNetClassMutationReportView> {
-    let mut project = load_native_project(root)?;
     let net_class_uuid = Uuid::new_v4();
     let net_class = NetClass {
         uuid: net_class_uuid,
@@ -63,12 +65,16 @@ pub(crate) fn place_native_project_board_net_class(
         diffpair_width: diffpair_width_nm,
         diffpair_gap: diffpair_gap_nm,
     };
-    project.board.net_classes.insert(
-        net_class_uuid.to_string(),
-        serde_json::to_value(&net_class)
-            .expect("native board net class serialization must succeed"),
-    );
-    write_canonical_json(&project.board_path, &project.board)?;
+    commit_board_operation(
+        root,
+        "place board net class",
+        Operation::CreateBoardNetClass {
+            net_class_id: net_class_uuid,
+            net_class: serde_json::to_value(&net_class)
+                .expect("native board net class serialization must succeed"),
+        },
+    )?;
+    let project = load_native_project(root)?;
     Ok(native_project_board_net_class_report(
         "place_board_net_class",
         &project,
@@ -88,7 +94,7 @@ pub(crate) fn edit_native_project_board_net_class(
     diffpair_width_nm: Option<i64>,
     diffpair_gap_nm: Option<i64>,
 ) -> Result<NativeProjectBoardNetClassMutationReportView> {
-    let mut project = load_native_project(root)?;
+    let project = load_native_project(root)?;
     let key = net_class_uuid.to_string();
     let entry = project
         .board
@@ -125,12 +131,16 @@ pub(crate) fn edit_native_project_board_net_class(
     if let Some(diffpair_gap_nm) = diffpair_gap_nm {
         net_class.diffpair_gap = diffpair_gap_nm;
     }
-    project.board.net_classes.insert(
-        key,
-        serde_json::to_value(&net_class)
-            .expect("native board net class serialization must succeed"),
-    );
-    write_canonical_json(&project.board_path, &project.board)?;
+    commit_board_operation(
+        root,
+        "edit board net class",
+        Operation::SetBoardNetClass {
+            net_class_id: net_class_uuid,
+            net_class: serde_json::to_value(&net_class)
+                .expect("native board net class serialization must succeed"),
+        },
+    )?;
+    let project = load_native_project(root)?;
     Ok(native_project_board_net_class_report(
         "edit_board_net_class",
         &project,
@@ -142,26 +152,56 @@ pub(crate) fn delete_native_project_board_net_class(
     root: &Path,
     net_class_uuid: Uuid,
 ) -> Result<NativeProjectBoardNetClassMutationReportView> {
-    let mut project = load_native_project(root)?;
+    let project = load_native_project(root)?;
     let value = project
         .board
         .net_classes
-        .remove(&net_class_uuid.to_string())
+        .get(&net_class_uuid.to_string())
+        .cloned()
         .ok_or_else(|| {
             anyhow::anyhow!("board net class not found in native project: {net_class_uuid}")
         })?;
-    let net_class: NetClass = serde_json::from_value(value).with_context(|| {
+    let net_class: NetClass = serde_json::from_value(value.clone()).with_context(|| {
         format!(
             "failed to parse board net class in {}",
             project.board_path.display()
         )
     })?;
-    write_canonical_json(&project.board_path, &project.board)?;
+    commit_board_operation(
+        root,
+        "delete board net class",
+        Operation::DeleteBoardNetClass {
+            net_class_id: net_class_uuid,
+            net_class: value,
+        },
+    )?;
+    let project = load_native_project(root)?;
     Ok(native_project_board_net_class_report(
         "delete_board_net_class",
         &project,
         net_class,
     ))
+}
+
+fn commit_board_operation(root: &Path, reason: &str, operation: Operation) -> Result<()> {
+    let mut model = ProjectResolver::new(root).resolve()?;
+    let expected_model_revision = model.model_revision.clone();
+    model
+        .commit_journaled(
+            root,
+            OperationBatch {
+                batch_id: Uuid::new_v4(),
+                expected_model_revision: Some(expected_model_revision),
+                provenance: CommitProvenance {
+                    actor: "datum-eda-cli".to_string(),
+                    source: CommitSource::Cli,
+                    reason: reason.to_string(),
+                },
+                operations: vec![operation],
+            },
+        )
+        .with_context(|| format!("failed to commit {reason}"))?;
+    Ok(())
 }
 
 pub(crate) fn place_native_project_board_dimension(
@@ -171,7 +211,6 @@ pub(crate) fn place_native_project_board_dimension(
     layer: i32,
     text: Option<String>,
 ) -> Result<NativeProjectBoardDimensionMutationReportView> {
-    let mut project = load_native_project(root)?;
     let dimension_uuid = Uuid::new_v4();
     let dimension = Dimension {
         uuid: dimension_uuid,
@@ -180,11 +219,16 @@ pub(crate) fn place_native_project_board_dimension(
         layer,
         text,
     };
-    project.board.dimensions.push(
-        serde_json::to_value(&dimension)
-            .expect("native board dimension serialization must succeed"),
-    );
-    write_canonical_json(&project.board_path, &project.board)?;
+    commit_board_operation(
+        root,
+        "place board dimension",
+        Operation::CreateBoardDimension {
+            dimension_id: dimension_uuid,
+            dimension: serde_json::to_value(&dimension)
+                .expect("native board dimension serialization must succeed"),
+        },
+    )?;
+    let project = load_native_project(root)?;
     Ok(NativeProjectBoardDimensionMutationReportView {
         action: "place_board_dimension".to_string(),
         project_root: project.root.display().to_string(),
@@ -210,7 +254,7 @@ pub(crate) fn edit_native_project_board_dimension(
     text: Option<String>,
     clear_text: bool,
 ) -> Result<NativeProjectBoardDimensionMutationReportView> {
-    let mut project = load_native_project(root)?;
+    let project = load_native_project(root)?;
     let index = project
         .board
         .dimensions
@@ -251,9 +295,16 @@ pub(crate) fn edit_native_project_board_dimension(
     if clear_text {
         dimension.text = None;
     }
-    project.board.dimensions[index] = serde_json::to_value(&dimension)
-        .expect("native board dimension serialization must succeed");
-    write_canonical_json(&project.board_path, &project.board)?;
+    commit_board_operation(
+        root,
+        "edit board dimension",
+        Operation::SetBoardDimension {
+            dimension_id: dimension_uuid,
+            dimension: serde_json::to_value(&dimension)
+                .expect("native board dimension serialization must succeed"),
+        },
+    )?;
+    let project = load_native_project(root)?;
     Ok(NativeProjectBoardDimensionMutationReportView {
         action: "edit_board_dimension".to_string(),
         project_root: project.root.display().to_string(),
@@ -272,7 +323,7 @@ pub(crate) fn delete_native_project_board_dimension(
     root: &Path,
     dimension_uuid: Uuid,
 ) -> Result<NativeProjectBoardDimensionMutationReportView> {
-    let mut project = load_native_project(root)?;
+    let project = load_native_project(root)?;
     let index = project
         .board
         .dimensions
@@ -285,14 +336,22 @@ pub(crate) fn delete_native_project_board_dimension(
         .ok_or_else(|| {
             anyhow::anyhow!("board dimension not found in native project: {dimension_uuid}")
         })?;
-    let dimension: Dimension = serde_json::from_value(project.board.dimensions.remove(index))
-        .with_context(|| {
-            format!(
-                "failed to parse board dimension in {}",
-                project.board_path.display()
-            )
-        })?;
-    write_canonical_json(&project.board_path, &project.board)?;
+    let value = project.board.dimensions[index].clone();
+    let dimension: Dimension = serde_json::from_value(value.clone()).with_context(|| {
+        format!(
+            "failed to parse board dimension in {}",
+            project.board_path.display()
+        )
+    })?;
+    commit_board_operation(
+        root,
+        "delete board dimension",
+        Operation::DeleteBoardDimension {
+            dimension_id: dimension_uuid,
+            dimension: value,
+        },
+    )?;
+    let project = load_native_project(root)?;
     Ok(NativeProjectBoardDimensionMutationReportView {
         action: "delete_board_dimension".to_string(),
         project_root: project.root.display().to_string(),

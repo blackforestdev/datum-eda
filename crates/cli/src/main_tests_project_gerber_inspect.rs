@@ -64,7 +64,7 @@ fn project_inspect_gerber_reports_mixed_subset_geometry() {
                         },
                         "layer": 1,
                         "priority": 1,
-                        "thermal_relief": true,
+                        "thermal_relief": false,
                         "thermal_gap": 250000,
                         "thermal_spoke_width": 200000
                     }
@@ -98,6 +98,24 @@ fn project_inspect_gerber_reports_mixed_subset_geometry() {
     )
     .expect("board file should write");
 
+    let fill_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "check",
+            "fill-zones",
+            root.to_str().unwrap(),
+            "--zone",
+            zone_uuid.to_string().as_str(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("fill-zones should succeed");
+    let fill_report: serde_json::Value =
+        serde_json::from_str(&fill_output).expect("fill report JSON");
+    assert_eq!(fill_report["zone_fills"][0]["state"], "unsupported");
+
     let gerber_path = root.join("inspect-top-copper.gbr");
     let export_cli = Cli::try_parse_from([
         "eda",
@@ -126,16 +144,16 @@ fn project_inspect_gerber_reports_mixed_subset_geometry() {
     let output = execute(inspect_cli).expect("gerber inspect should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
     assert_eq!(report["action"], "inspect_gerber");
-    assert_eq!(report["geometry_count"], 3);
+    assert_eq!(report["geometry_count"], 2);
     assert_eq!(report["stroke_count"], 1);
     assert_eq!(report["flash_count"], 1);
-    assert_eq!(report["region_count"], 1);
+    assert_eq!(report["region_count"], 0);
 
     let entries = report["entries"].as_array().expect("entries array");
-    assert_eq!(entries.len(), 3);
+    assert_eq!(entries.len(), 2);
     assert!(entries.iter().any(|entry| entry["kind"] == "stroke"));
     assert!(entries.iter().any(|entry| entry["kind"] == "flash"));
-    assert!(entries.iter().any(|entry| entry["kind"] == "region"));
+    assert!(!entries.iter().any(|entry| entry["kind"] == "region"));
 
     let _ = std::fs::remove_dir_all(&root);
 }

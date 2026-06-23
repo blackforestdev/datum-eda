@@ -44,8 +44,6 @@ scope unless a later owner review finds a concrete defect.
 - `crates/engine/assets/fonts/`
 - `crates/engine/src/text/`
 - `crates/engine/testdata/golden/text/`
-- `crates/gui-protocol/src/board_text_field_values.rs`
-- `crates/gui-protocol/src/board_text_mutations.rs`
 - `crates/gui-app/tests/visual_shell.rs`
 - `crates/gui-render/src/bin/datum_visual_fixture.rs`
 - `crates/gui-render/src/dim_policy.rs`

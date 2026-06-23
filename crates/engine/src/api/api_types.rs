@@ -49,6 +49,12 @@ pub struct RotateComponentInput {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct FlipComponentInput {
+    pub uuid: uuid::Uuid,
+    pub layer: crate::ir::geometry::LayerId,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SetValueInput {
     pub uuid: uuid::Uuid,
     pub value: String,

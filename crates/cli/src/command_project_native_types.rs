@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-use eda_engine::board::PadShape;
+use eda_engine::board::{PadExpansionSetup, PadShape};
 use eda_engine::pool::ModelRef;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -22,6 +22,8 @@ pub(crate) struct NativeBoardRoot {
     pub(crate) uuid: Uuid,
     pub(crate) name: String,
     pub(crate) stackup: NativeStackup,
+    #[serde(default)]
+    pub(crate) pad_expansion_setup: PadExpansionSetup,
     pub(crate) outline: NativeOutline,
     #[serde(default)]
     pub(crate) packages: BTreeMap<String, serde_json::Value>,

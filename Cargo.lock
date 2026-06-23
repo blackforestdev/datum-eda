@@ -707,6 +707,7 @@ dependencies = [
  "eda-engine",
  "serde",
  "serde_json",
+ "sha2",
  "uuid",
 ]
 
@@ -720,6 +721,7 @@ dependencies = [
  "datum-gui-protocol",
  "datum-gui-render",
  "image",
+ "libc",
  "pollster",
  "serde",
  "serde_json",
