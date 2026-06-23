@@ -33,6 +33,8 @@ pub use check_runs::{
     CheckFindingSummary, CheckRunCoverageSummary, CheckRunProfileBasisSummary, CheckRunReviewState,
     check_finding_scene_target_object_id, check_run_review_state_from_json,
 };
+mod supervision;
+pub use supervision::*;
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct BoardReviewSceneV1 {
     pub kind: String,
@@ -509,6 +511,10 @@ pub enum SelectionTarget {
     ReviewAction(String),
     AuthoredObject(String),
     CheckFinding(String),
+    // Supervision-reflection read-only selections (§5).
+    Finding(String),
+    JournalEntry(String),
+    Relationship(String),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -611,6 +617,8 @@ pub struct WorkspaceFilterState {
     pub show_unrouted: bool,
     pub dim_unrelated: bool,
     pub layer_visibility: BTreeMap<String, bool>,
+    /// Supervision active variant: consumer view state, never journaled (§4.4).
+    pub active_variant: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -699,6 +707,15 @@ pub enum SessionCommand {
     ResetArtifactPreviewViewport,
     ToggleArtifactPreviewGeometry,
     ToggleArtifactPreviewDrills,
+    // Supervision-reflection read-only navigation (§5 net-new commands). NONE
+    // carry an `OperationBatch`/commit-bearing payload: no write path exists
+    // structurally (gated: PS-SR-2). Each mutates consumer state only.
+    HoverObject(Option<String>),
+    SelectFinding(String),
+    SelectJournalEntry(String),
+    SelectRelationship(String),
+    SetActiveVariant(Option<String>),
+    RefreshModel,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -973,13 +990,13 @@ impl LiveDesignSession {
                     }
                 }
             }
-            command => {
-                self.apply_artifact_preview_command(command)
-                    .unwrap_or(SessionCommandResult {
-                        handled: false,
-                        events: Vec::new(),
-                    })
-            }
+            // Supervision-reflection read-only navigation (§5; gated: PS-SR-2).
+            command => supervision::apply_supervision_command(&mut self.workspace, &command)
+                .or_else(|| self.apply_artifact_preview_command(command))
+                .unwrap_or(SessionCommandResult {
+                    handled: false,
+                    events: Vec::new(),
+                }),
         }
     }
 }
@@ -2368,6 +2385,7 @@ impl ReviewWorkspaceState {
                     show_unrouted: true,
                     dim_unrelated: has_review_actions,
                     layer_visibility,
+                    active_variant: None,
                 },
                 terminal: TerminalLaneState {
                     lines: vec![
@@ -7186,6 +7204,90 @@ pub fn load_fixture_workspace_state() -> ReviewWorkspaceState {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// PS-SR-2 (runtime half of the §5 read-only invariant). Drive every
+    /// supervision-reflection `SessionCommand` — including the net-new
+    /// `HoverObject` / `SelectFinding` / `SelectJournalEntry` /
+    /// `SelectRelationship` / `SetActiveVariant` / `RefreshModel` arms — and the
+    /// existing read-only `Toggle*` / `ClearSelection` arms, against a resolved
+    /// `DesignModel`, and assert across the entire session that the model's
+    /// `journal`, `journal_cursor`, and `model_revision` are byte-identical
+    /// before and after. The supervision command set carries no `OperationBatch`
+    /// (structural / type-level invariant), so no transition can reach
+    /// `commit()`; this test proves that no projection of the model is mutated
+    /// while navigating it read-only.
+    #[test]
+    fn ps_sr_2_supervision_commands_make_zero_journal_or_revision_changes() {
+        // The audited engine state. Supervision is a CONSUMER of this model; the
+        // session below must never mutate it.
+        let model = crate::supervision::test_support::fixture_design_model_with_full_provenance();
+        let journal_before = model.journal.clone();
+        let cursor_before = model.journal_cursor.clone();
+        let revision_before = model.model_revision.clone();
+
+        // Project the read-only supervision surfaces (R12/R13) from the model.
+        let journal_reflection = SupervisionJournalReflectionV1::from_design_model(&model);
+        let resolver_status = SupervisionResolverStatusV1::from_design_model(&model);
+        assert_eq!(journal_reflection.entries.len(), 5);
+        assert_eq!(resolver_status.mode, SUPERVISION_RESOLVER_MODE_RESOLVED);
+
+        // Drive the full read-only navigation command set through the session.
+        let mut session = LiveDesignSession::new(load_fixture_workspace_state());
+        let supervision_commands = vec![
+            SessionCommand::HoverObject(Some("pad:hover".to_string())),
+            SessionCommand::HoverObject(None),
+            SessionCommand::SelectFinding(
+                journal_reflection.entries[0].transaction_id.clone(),
+            ),
+            SessionCommand::SelectJournalEntry(
+                journal_reflection.entries[0].transaction_id.clone(),
+            ),
+            SessionCommand::SelectRelationship("rel:1".to_string()),
+            SessionCommand::SetActiveVariant(Some("variant:a".to_string())),
+            SessionCommand::SetActiveVariant(None),
+            SessionCommand::ToggleShowAuthored,
+            SessionCommand::ToggleShowProposed,
+            SessionCommand::ToggleShowUnrouted,
+            SessionCommand::ToggleDimUnrelated,
+            SessionCommand::ClearSelection,
+            SessionCommand::RefreshModel,
+        ];
+        for command in supervision_commands {
+            let result = session.apply(command);
+            // No supervision command emits a model-authority mutation event; the
+            // only events are consumer-state Selection/Frame/Scene changes.
+            for event in &result.events {
+                assert!(
+                    matches!(
+                        event,
+                        SessionEvent::SelectionChanged(_)
+                            | SessionEvent::FrameChanged
+                            | SessionEvent::SceneChanged
+                    ),
+                    "supervision command emitted a non-consumer event: {event:?}"
+                );
+            }
+        }
+
+        // The audited engine model is byte-identical: no commit, no re-solve,
+        // no journal append, no cursor move, no revision bump.
+        assert_eq!(model.journal, journal_before, "journal must be unchanged");
+        assert_eq!(
+            model.journal_cursor, cursor_before,
+            "journal cursor must be unchanged"
+        );
+        assert_eq!(
+            model.model_revision, revision_before,
+            "model_revision must be unchanged"
+        );
+
+        // Re-projecting after the session yields identical read-only surfaces.
+        let journal_after = SupervisionJournalReflectionV1::from_design_model(&model);
+        let resolver_after = SupervisionResolverStatusV1::from_design_model(&model);
+        assert_eq!(journal_reflection, journal_after);
+        assert_eq!(resolver_status, resolver_after);
+    }
+
     #[test]
     fn route_review_fixture_decodes_real_payload_shape() {
         let review: RouteProposalReviewPayload =

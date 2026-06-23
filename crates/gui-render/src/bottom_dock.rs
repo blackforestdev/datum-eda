@@ -411,6 +411,18 @@ fn selection_summary(state: &ReviewWorkspaceState) -> String {
             &format!("FINDING {}", suffix_id(fingerprint).to_uppercase()),
             28,
         ),
+        SelectionTarget::Finding(finding_id) => truncate_text(
+            &format!("FINDING {}", suffix_id(finding_id).to_uppercase()),
+            28,
+        ),
+        SelectionTarget::JournalEntry(transaction_id) => truncate_text(
+            &format!("JOURNAL {}", suffix_id(transaction_id).to_uppercase()),
+            28,
+        ),
+        SelectionTarget::Relationship(relationship_id) => truncate_text(
+            &format!("RELATION {}", suffix_id(relationship_id).to_uppercase()),
+            28,
+        ),
         SelectionTarget::None => "NONE".to_string(),
     }
 }

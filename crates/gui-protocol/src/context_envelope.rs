@@ -64,6 +64,18 @@ impl DatumSelectionContext {
                 kind: "check_finding".to_string(),
                 id: Some(id.clone()),
             },
+            SelectionTarget::Finding(id) => Self {
+                kind: "finding".to_string(),
+                id: Some(id.clone()),
+            },
+            SelectionTarget::JournalEntry(id) => Self {
+                kind: "journal_entry".to_string(),
+                id: Some(id.clone()),
+            },
+            SelectionTarget::Relationship(id) => Self {
+                kind: "relationship".to_string(),
+                id: Some(id.clone()),
+            },
         }
     }
 }

@@ -1580,6 +1580,19 @@ fn render_side_panels(
             }
             let _ = y;
         }
+        // Supervision-reflection read-only selections (§5): label-only this
+        // slice; the populated inspector panels are the next (rendering) slice.
+        SelectionTarget::Finding(id)
+        | SelectionTarget::JournalEntry(id)
+        | SelectionTarget::Relationship(id) => draw_text(
+            &truncate_text(&suffix_id(id).to_uppercase(), 14),
+            inspector_rect.x + 12.0,
+            inspector_rect.y + 54.0,
+            15.0,
+            TEXT_PRIMARY,
+            TextFace::Mono,
+            text_runs,
+        ),
         SelectionTarget::None => draw_text(
             "NONE",
             inspector_rect.x + 12.0,
@@ -1899,8 +1912,13 @@ fn render_scene(
     let sel_label = match &state.selection {
         SelectionTarget::None => "NONE".to_string(),
         SelectionTarget::ReviewAction(id) => truncate_text(&suffix_id(id).to_uppercase(), 12),
-        SelectionTarget::AuthoredObject(id) => truncate_text(&suffix_id(id).to_uppercase(), 12),
-        SelectionTarget::CheckFinding(id) => truncate_text(&suffix_id(id).to_uppercase(), 12),
+        SelectionTarget::AuthoredObject(id)
+        | SelectionTarget::CheckFinding(id)
+        | SelectionTarget::Finding(id)
+        | SelectionTarget::JournalEntry(id)
+        | SelectionTarget::Relationship(id) => {
+            truncate_text(&suffix_id(id).to_uppercase(), 12)
+        }
     };
     let status_bg = RectPx {
         x: layout.viewport.x,

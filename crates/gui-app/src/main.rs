@@ -132,6 +132,9 @@ fn selection_cache_key(workspace: &datum_gui_protocol::ReviewWorkspaceState) -> 
         datum_gui_protocol::SelectionTarget::ReviewAction(id) => format!("review:{id}"),
         datum_gui_protocol::SelectionTarget::AuthoredObject(id) => format!("object:{id}"),
         datum_gui_protocol::SelectionTarget::CheckFinding(id) => format!("finding:{id}"),
+        datum_gui_protocol::SelectionTarget::Finding(id) => format!("finding:{id}"),
+        datum_gui_protocol::SelectionTarget::JournalEntry(id) => format!("journal:{id}"),
+        datum_gui_protocol::SelectionTarget::Relationship(id) => format!("relationship:{id}"),
     }
 }
 
@@ -167,6 +170,9 @@ fn retained_selection_cache_key(
                 format!("object:{id}")
             }
         }
+        datum_gui_protocol::SelectionTarget::Finding(id) => format!("finding:{id}"),
+        datum_gui_protocol::SelectionTarget::JournalEntry(id) => format!("journal:{id}"),
+        datum_gui_protocol::SelectionTarget::Relationship(id) => format!("relationship:{id}"),
     }
 }
 
