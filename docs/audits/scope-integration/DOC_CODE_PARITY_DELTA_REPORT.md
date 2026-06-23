@@ -1,5 +1,14 @@
 # Doc/Code Parity Delta Report
 
+> **HISTORICAL SNAPSHOT (2026-05-25) — SUPERSEDED.** This report is a
+> point-in-time audit captured on 2026-05-25. Any counts or inventories it
+> records (including the `mcp_runtime_methods` count in §0A) are frozen at
+> that snapshot and are NOT current. The authoritative, machine-checked
+> inventory shapes now live in `specs/SPEC_PARITY.md`
+> (gated by `scripts/check_spec_parity.py`; run `--print` for live names);
+> consult that file, not this report, for current numbers. Retained for
+> historical/remediation-tracking context only.
+>
 > **Status**: Audit plus remediation record. Initially produced 2026-05-25;
 > updated 2026-05-25 after adding the first machine-checkable spec/code parity
 > gate.

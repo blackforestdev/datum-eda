@@ -8,7 +8,11 @@ import unittest
 from server_runtime import StdioToolHost
 from test_support import FakeDaemonClient
 from tool_dispatch import registered_tool_names
-from tools_catalog_data import TOOLS
+from tools_catalog_data import (
+    NON_JOURNALED_DAEMON_WRITE_METHODS,
+    TOOL_BY_NAME,
+    TOOLS,
+)
 
 
 class TestProtocolCatalog(unittest.TestCase):
@@ -219,6 +223,31 @@ class TestProtocolCatalog(unittest.TestCase):
             }
             & names
         )
+
+    def test_no_public_write_tool_bypasses_the_journaled_commit_path(self) -> None:
+        """Decision 004 (Private Mutation Ban): no publicly-listed MCP write tool may
+        dispatch to a non-journaled daemon write arm. The journaled datum.pcb.*
+        family is the only public board-write surface; the legacy flat tools and
+        the bypassing datum.board.* aliases remain compatibility-only/hidden."""
+        offenders = [
+            tool["name"]
+            for tool in TOOLS
+            if TOOL_BY_NAME[tool["name"]].get("x_dispatch_method", tool["name"])
+            in NON_JOURNALED_DAEMON_WRITE_METHODS
+        ]
+        self.assertEqual(
+            offenders,
+            [],
+            f"public catalog exposes non-journaled write tools: {offenders}",
+        )
+
+    def test_bypassing_board_write_aliases_are_hidden_but_dispatchable(self) -> None:
+        """The legacy board-write aliases stay reachable for backward compatibility
+        but must not appear in the public tools/list."""
+        names = {tool["name"] for tool in TOOLS}
+        for hidden in ("datum.board.move_component", "datum.board.set_net_class", "move_component"):
+            self.assertNotIn(hidden, names)
+            self.assertIn(hidden, TOOL_BY_NAME)
 
     def test_catalog_names_are_unique(self) -> None:
         names = [tool["name"] for tool in TOOLS]

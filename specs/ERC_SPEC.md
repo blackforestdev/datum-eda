@@ -28,19 +28,29 @@ ERC does not consume:
 
 ### 3.1 Pin Electrical Types
 
+The 10-variant taxonomy below is the **target**. The shipped
+`PinElectricalType` (`crates/engine/src/schematic/mod.rs`, verified
+2026-06-22) narrows it to six variants — it omits `TriState`,
+`OpenCollector`, `OpenEmitter`, and `NoConnect` (no-connect is modeled
+separately via no-connect markers, not as a pin electrical type):
+
 ```rust
+// Target taxonomy:
 pub enum PinElectricalType {
     Input,
     Output,
     Bidirectional,
     Passive,
-    TriState,
-    OpenCollector,
-    OpenEmitter,
+    TriState,       // target — not in shipped enum
+    OpenCollector,  // target — not in shipped enum
+    OpenEmitter,    // target — not in shipped enum
     PowerIn,
     PowerOut,
-    NoConnect,
+    NoConnect,      // target — modeled as no-connect markers, not a pin type
 }
+
+// Shipped (six variants):
+//   Input, Output, Bidirectional, Passive, PowerIn, PowerOut
 ```
 
 ### 3.2 Net Semantic Classes
@@ -108,6 +118,10 @@ ERC evaluates pin compatibility by net:
 | Passive + Passive | Warning |
 | TriState + Output | Warning or OK, configurable |
 
+Rows that reference target-only pin types (`TriState`, and the pin-type
+form of `NoConnect`; see § 3.1) are part of the target matrix, not the
+shipped six-variant taxonomy.
+
 The full compatibility matrix is authored in the engine and versioned in
 the canonical ruleset.
 
@@ -115,7 +129,13 @@ the canonical ruleset.
 
 ## 6. Results
 
+The location-bearing form below is the **target** result shape (a typed
+`rule: ErcRuleKind`, a positional `index`, and a `location:
+SchematicLocation`). It is not the shipped shape — see the implemented
+shape that follows it.
+
 ```rust
+// Target (not yet implemented in this exact form):
 pub struct ErcReport {
     pub passed: bool,
     pub violations: Vec<ErcViolation>,
@@ -129,6 +149,27 @@ pub struct ErcViolation {
     pub message: String,
     pub location: SchematicLocation,
     pub objects: Vec<Uuid>,
+    pub waived: bool,
+}
+```
+
+**Shipped shape (`crates/engine/src/erc/mod.rs`, verified 2026-06-22):**
+findings are emitted as `ErcFinding`, which differs from the target above —
+there is no `index`, no `rule: ErcRuleKind` (the rule is a string `code`),
+and no `location: SchematicLocation` (object identity is carried by
+`ErcObjectRef` plus resolved `object_uuids`):
+
+```rust
+pub struct ErcFinding {
+    pub id: Uuid,
+    pub code: &'static str,         // rule code, e.g. "output_to_output_conflict"
+    pub severity: ErcSeverity,
+    pub message: String,
+    pub net_name: Option<String>,
+    pub component: Option<String>,
+    pub pin: Option<String>,
+    pub objects: Vec<ErcObjectRef>, // { kind: &'static str, key: String }
+    pub object_uuids: Vec<Uuid>,
     pub waived: bool,
 }
 ```

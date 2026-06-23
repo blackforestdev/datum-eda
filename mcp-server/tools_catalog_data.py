@@ -4,6 +4,7 @@ from tools_catalog_checks import CHECK_TOOL_SCHEMAS
 from tools_catalog_drc import RUN_DRC_INPUT_SCHEMA
 from tools_catalog_datum import DATUM_TOOL_SPECS
 from tools_catalog_journal import JOURNAL_TOOL_SCHEMAS
+from tools_catalog_legacy_aliases import _LEGACY_CANONICAL_ALIAS_NAMES
 from tools_catalog_import_map import IMPORT_MAP_TOOL_SCHEMAS; from tools_catalog_library import LIBRARY_TOOL_SCHEMAS; from tools_catalog_output_jobs import OUTPUT_JOB_TOOL_SCHEMAS; from tools_catalog_proposals import PROPOSAL_TOOL_SCHEMAS; from tools_catalog_relationships import RELATIONSHIP_TOOL_SCHEMAS
 COMPATIBILITY_TOOL_SPECS: list[dict[str, object]] = [
     {"name": "get_check_run", **CHECK_TOOL_SCHEMAS["get_check_run"]}, {"name": "get_check_runs", **CHECK_TOOL_SCHEMAS["get_check_runs"]}, {"name": "show_check_run", **CHECK_TOOL_SCHEMAS["show_check_run"]}, {"name": "get_check_profiles", **CHECK_TOOL_SCHEMAS["get_check_profiles"]}, {"name": "fill_zones", **CHECK_TOOL_SCHEMAS["fill_zones"]}, {"name": "generate_standards_repair_proposals", **CHECK_TOOL_SCHEMAS["generate_standards_repair_proposals"]}, {"name": "waive_finding", **CHECK_TOOL_SCHEMAS["waive_finding"]}, {"name": "accept_deviation", **CHECK_TOOL_SCHEMAS["accept_deviation"]},
@@ -973,67 +974,8 @@ _LEGACY_FLAT_TOOL_SPECS: list[dict[str, object]] = [
         },
     },
 ]
-# Canonical datum.<group>.<verb> alias names for the remaining legacy flat tools.
-# Each canonical alias dispatches to the same daemon method as its flat counterpart
-# (x_dispatch_method = flat name); the flat tool is moved to compatibility-only
-# dispatch below so it stays callable but is hidden from the public tools/list.
-_LEGACY_CANONICAL_ALIAS_NAMES: dict[str, str] = {
-    "open_project": "datum.session.open",
-    "close_project": "datum.session.close",
-    "save": "datum.session.save",
-    "validate_project": "datum.session.validate",
-    "delete_track": "datum.board.delete_track",
-    "delete_component": "datum.board.delete_component",
-    "move_component": "datum.board.move_component",
-    "rotate_component": "datum.board.rotate_component",
-    "flip_component": "datum.board.flip_component",
-    "set_value": "datum.board.set_component_value",
-    "assign_part": "datum.board.assign_component_part",
-    "set_package": "datum.board.set_component_package",
-    "set_package_with_part": "datum.board.set_component_package_with_part",
-    "replace_component": "datum.board.replace_component",
-    "replace_components": "datum.board.replace_components",
-    "set_reference": "datum.board.set_component_reference",
-    "set_net_class": "datum.board.set_net_class",
-    "delete_via": "datum.board.delete_via",
-    "set_design_rule": "datum.board.set_design_rule",
-    "apply_component_replacement_plan": "datum.replacement.apply_plan",
-    "apply_component_replacement_policy": "datum.replacement.apply_policy",
-    "apply_scoped_component_replacement_policy": "datum.replacement.apply_scoped_policy",
-    "apply_scoped_component_replacement_plan": "datum.replacement.apply_scoped_plan",
-    "get_component_replacement_plan": "datum.replacement.get_plan",
-    "get_scoped_component_replacement_plan": "datum.replacement.get_scoped_plan",
-    "edit_scoped_component_replacement_plan": "datum.replacement.edit_scoped_plan",
-    "get_package_change_candidates": "datum.replacement.package_candidates",
-    "get_part_change_candidates": "datum.replacement.part_candidates",
-    "search_pool": "datum.pool.search",
-    "get_part": "datum.pool.get_part",
-    "get_package": "datum.pool.get_package",
-    "get_net_info": "datum.query.net_info",
-    "get_unrouted": "datum.query.unrouted",
-    "get_hierarchy": "datum.query.imported_hierarchy",
-    "export_route_path_proposal": "datum.route.export_path_proposal",
-    "route_proposal": "datum.route.select_proposal",
-    "review_route_proposal": "datum.route.review_proposal",
-    "route_strategy_report": "datum.route.strategy_report",
-    "route_strategy_compare": "datum.route.strategy_compare",
-    "route_strategy_delta": "datum.route.strategy_delta",
-    "write_route_strategy_curated_fixture_suite": "datum.route.write_strategy_fixture_suite",
-    "capture_route_strategy_curated_baseline": "datum.route.capture_strategy_baseline",
-    "route_strategy_batch_evaluate": "datum.route.strategy_batch_evaluate",
-    "inspect_route_strategy_batch_result": "datum.route.inspect_strategy_batch_result",
-    "validate_route_strategy_batch_result": "datum.route.validate_strategy_batch_result",
-    "compare_route_strategy_batch_result": "datum.route.compare_strategy_batch_result",
-    "gate_route_strategy_batch_result": "datum.route.gate_strategy_batch_result",
-    "summarize_route_strategy_batch_results": "datum.route.summarize_strategy_batch_results",
-    "route_proposal_explain": "datum.route.explain_proposal",
-    "export_route_proposal": "datum.route.export_proposal",
-    "route_apply": "datum.route.apply",
-    "route_apply_selected": "datum.route.apply_selected",
-    "inspect_route_proposal_artifact": "datum.route.inspect_proposal_artifact",
-    "revalidate_route_proposal_artifact": "datum.route.revalidate_proposal_artifact",
-    "apply_route_proposal_artifact": "datum.route.apply_proposal_artifact",
-}
+# _LEGACY_CANONICAL_ALIAS_NAMES is imported from tools_catalog_legacy_aliases.py
+# (extracted to keep this module within its file-size budget).
 
 
 def _legacy_canonical_alias(flat_spec: dict[str, Any]) -> dict[str, Any]:
@@ -1044,14 +986,38 @@ def _legacy_canonical_alias(flat_spec: dict[str, Any]) -> dict[str, Any]:
     return alias
 
 
+# Non-journaled daemon mutation arms (engine-daemon/src/dispatch.rs): these flat
+# methods write the legacy in-memory api::Engine without the substrate commit()/
+# journal path. Per decision 004 (Private Mutation Ban) no *public* MCP write tool
+# may dispatch to one of these; each has a substrate-backed (journaled) public
+# equivalent in the datum.pcb.* family, so the canonical alias bridging to a
+# non-journaled arm stays dispatchable for compatibility but hidden from tools/list.
+NON_JOURNALED_DAEMON_WRITE_METHODS: frozenset[str] = frozenset({
+    "delete_track", "delete_via", "delete_component", "move_component",
+    "rotate_component", "flip_component", "set_value", "assign_part",
+    "set_package", "set_package_with_part", "replace_component",
+    "replace_components", "set_reference", "set_net_class", "set_design_rule",
+})
+
+
+def _alias_dispatches_to_non_journaled_write(alias_spec: dict[str, Any]) -> bool:
+    return alias_spec.get("x_dispatch_method") in NON_JOURNALED_DAEMON_WRITE_METHODS
+
+
 _LEGACY_CANONICAL_ALIAS_SPECS: list[dict[str, object]] = [
     _legacy_canonical_alias(spec) for spec in _LEGACY_FLAT_TOOL_SPECS
 ]
 
-# Public catalog: canonical datum.* aliases only (legacy flat tools moved below).
-TOOL_SPECS: list[dict[str, object]] = DATUM_TOOL_SPECS + _LEGACY_CANONICAL_ALIAS_SPECS
-# Legacy flat tools remain dispatchable for compatibility but hidden from tools/list.
-COMPATIBILITY_TOOL_SPECS += _LEGACY_FLAT_TOOL_SPECS
+# Board-write aliases bridging to non-journaled arms stay dispatchable but are not
+# advertised publicly; the journaled datum.pcb.* family is the only public board
+# write surface.
+_PUBLIC_CANONICAL_ALIAS_SPECS = [s for s in _LEGACY_CANONICAL_ALIAS_SPECS if not _alias_dispatches_to_non_journaled_write(s)]
+_HIDDEN_CANONICAL_ALIAS_SPECS = [s for s in _LEGACY_CANONICAL_ALIAS_SPECS if _alias_dispatches_to_non_journaled_write(s)]
+
+# Public catalog: canonical datum.* aliases that do not bypass the journal.
+TOOL_SPECS: list[dict[str, object]] = DATUM_TOOL_SPECS + _PUBLIC_CANONICAL_ALIAS_SPECS
+# Legacy flat tools + bypassing board-write aliases: dispatchable, hidden from list.
+COMPATIBILITY_TOOL_SPECS += _LEGACY_FLAT_TOOL_SPECS + _HIDDEN_CANONICAL_ALIAS_SPECS
 def _catalog_tool(spec: dict[str, Any]) -> dict[str, Any]:
     return {key: value for key, value in spec.items() if not key.startswith("x_")}
 TOOLS: list[dict[str, Any]] = [_catalog_tool(spec) for spec in TOOL_SPECS]

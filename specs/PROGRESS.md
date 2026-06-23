@@ -503,7 +503,7 @@ M1 imported-query reliability note (2026-03-30):
 | power_without_source | [x] | `erc/mod.rs` (power_in_without_source) |
 | noconnect_connected | [x] | `erc/mod.rs` |
 | unconnected_required_pin | [x] | `erc/mod.rs` (unconnected_component_pin) |
-| passive_only_net | [x] | `erc/mod.rs` |
+| passive_only_net | [~] | No distinct `passive_only_net` rule/code ships in `erc/mod.rs` (0 grep hits 2026-06-22). Passive pins are only consumed as a modifier that softens `input_without_explicit_driver` messaging; a standalone passive-only-net check is target work. |
 | hierarchical_connectivity_mismatch | [x] | Implemented as sheet-level hierarchical-label vs port mismatch check in `erc/mod.rs` |
 
 ERC correctness: [x] `m2_quality` harness reports 0.0% FP / 0.0% FN on current ERC fixtures (2026-03-25)
@@ -1561,7 +1561,7 @@ MCP query aliases, and importer/exporter handlers remain pending.
 | M2 rule: power_without_source | [x] | |
 | M2 rule: noconnect_connected | [x] | |
 | M2 rule: unconnected_required_pin | [x] | |
-| M2 rule: passive_only_net | [x] | |
+| M2 rule: passive_only_net | [~] | No distinct rule/code ships; passive pins only modulate `input_without_explicit_driver` severity (verified 0 grep hits in `erc/` 2026-06-22). Standalone check is target work. |
 | M2 rule: hierarchical_connectivity_mismatch | [x] | Sheet-level hierarchical label/port mismatch check implemented |
 | Compatibility matrix (pin-pair) | [~] | Driving analysis exists; full matrix not formalized |
 | ErcReport struct | [x] | Via CheckReport |

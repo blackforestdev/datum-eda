@@ -182,8 +182,6 @@ Schema:
   "schema_version": 1,
   "uuid": "project-uuid",
   "name": "My Project",
-  "created": "2026-03-24T12:00:00Z",
-  "modified": "2026-03-24T14:30:00Z",
   "pools": [
     { "path": "pool", "priority": 1 },
     { "path": "/shared/team-pool", "priority": 2 }
@@ -200,6 +198,10 @@ Schema:
 
 Rules:
 - `uuid` identifies the project, not the schematic or board
+- the manifest carries no wall-clock `created`/`modified` timestamps:
+  per the § 7 determinism invariant, identical authored data must
+  serialize byte-identically on every save/platform/run, which any
+  wall-clock field would violate
 - `pools` are ordered by `priority`; lower numeric priority wins
 - missing optional settings files are allowed if omitted from `settings`
 - `project validate` checks declared pool directories when present. For
@@ -595,7 +597,9 @@ Current validation/query surface:
   mismatches, non-regular files, referenced blobs, and AMI bundle roles are
   preserved
 - AMI bundle hashing, richer garbage-collection policy, and migration behavior
-  remain additive target work
+  remain additive target work (spec-ahead-of-code as of 2026-06-22: the
+  `pool-models` / `validate` / `gc-pool-models` surfaces above ship, but the
+  AMI-bundle and migration portions of this section are not implemented)
 
 Rules:
 - the model UUID is the deterministic UUID v5 over the SHA-256 hex
@@ -642,7 +646,21 @@ Rules:
 - migration is forward-only
 - an unknown future version is a load error with a clear message
 
-Migration implementation requirements:
+> **Code status (2026-06-22):** the unknown-future-version load gate is
+> shipped at the shard layer — shard/pool readers reject any
+> `schema_version` other than the supported `1` with a clear
+> "unsupported … schema_version …" error (`substrate/source_shard.rs`,
+> `substrate/pool_journal_ops.rs`). `ProjectResolver` already detects
+> these via `is_unsupported_schema_version_error` and propagates them as a
+> load failure rather than swallowing them as a missing-shard diagnostic
+> (`substrate/project_resolver.rs`), and `datum-eda project validate <root>`
+> exercises this path. The remaining items below are **spec-ahead-of-code**:
+> only schema version `1` exists, so no migration functions, no
+> version-to-version transitions, and no `material_db` (the §8 example
+> below) are implemented yet.
+
+Migration implementation requirements (target — no migration machinery
+ships yet; only schema version `1` exists):
 - one explicit migration function per version transition
 - golden tests for each supported historical version
 
@@ -651,7 +669,8 @@ board files that only contain `id`, `name`, `layer_type`, and `thickness_nm`
 deserialize with unset material metadata; no migration is required for this
 additive shape.
 
-Example:
+Example (illustrative target shape; `material_db` and the 1→2 transition
+are not implemented — only schema version `1` exists in code today):
 
 ```text
 Version 1: stackup.layers only
