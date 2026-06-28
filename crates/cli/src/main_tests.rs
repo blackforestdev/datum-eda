@@ -19,8 +19,12 @@ fn execute(cli: Cli) -> Result<String> {
 
 #[path = "main_tests_context.rs"]
 mod main_tests_context;
+#[path = "main_tests_context_active.rs"]
+mod main_tests_context_active;
 #[path = "main_tests_context_check_context.rs"]
 mod main_tests_context_check_context;
+#[path = "main_tests_context_source_shards.rs"]
+mod main_tests_context_source_shards;
 #[path = "main_tests_context_terminal_lifecycle.rs"]
 mod main_tests_context_terminal_lifecycle;
 #[path = "main_tests_project_artifact_runs.rs"]
@@ -127,6 +131,8 @@ mod main_tests_project_manufacturing_export;
 mod main_tests_project_manufacturing_inspect;
 #[path = "main_tests_project_manufacturing_manifest.rs"]
 mod main_tests_project_manufacturing_manifest;
+#[path = "main_tests_project_manufacturing_plan_proposal_validation.rs"]
+mod main_tests_project_manufacturing_plan_proposal_validation;
 #[path = "main_tests_project_manufacturing_plan_proposals.rs"]
 mod main_tests_project_manufacturing_plan_proposals;
 #[path = "main_tests_project_manufacturing_projection_parity.rs"]
@@ -135,8 +141,12 @@ mod main_tests_project_manufacturing_projection_parity;
 mod main_tests_project_manufacturing_validate;
 #[path = "main_tests_project_output_job_include.rs"]
 mod main_tests_project_output_job_include;
+#[path = "main_tests_project_output_job_proposal_validation.rs"]
+mod main_tests_project_output_job_proposal_validation;
 #[path = "main_tests_project_output_job_run.rs"]
 mod main_tests_project_output_job_run;
+#[path = "main_tests_project_output_job_run_replay.rs"]
+mod main_tests_project_output_job_run_replay;
 #[path = "main_tests_project_output_job_update.rs"]
 mod main_tests_project_output_job_update;
 #[path = "main_tests_project_output_job_variant.rs"]
@@ -247,6 +257,8 @@ mod main_tests_project_board_component_pool_materialization;
 mod main_tests_project_board_component_query;
 #[path = "main_tests_project_board_component_query_single.rs"]
 mod main_tests_project_board_component_query_single;
+#[path = "main_tests_project_board_component_replacement_proposal.rs"]
+mod main_tests_project_board_component_replacement_proposal;
 #[path = "main_tests_project_board_component_silkscreen.rs"]
 mod main_tests_project_board_component_silkscreen;
 #[path = "main_tests_project_board_connectivity.rs"]
@@ -275,6 +287,8 @@ mod main_tests_project_board_via;
 mod main_tests_project_board_zone;
 #[path = "main_tests_project_board_zone_drc.rs"]
 mod main_tests_project_board_zone_drc;
+#[path = "main_tests_project_board_zone_fill_solver.rs"]
+mod main_tests_project_board_zone_fill_solver;
 #[path = "main_tests_project_bus.rs"]
 mod main_tests_project_bus;
 #[path = "main_tests_project_check.rs"]
@@ -283,6 +297,8 @@ mod main_tests_project_check;
 mod main_tests_project_check_profiles;
 #[path = "main_tests_project_check_run.rs"]
 mod main_tests_project_check_run;
+#[path = "main_tests_project_check_run_drc_lifecycle.rs"]
+mod main_tests_project_check_run_drc_lifecycle;
 #[path = "main_tests_project_check_run_history.rs"]
 mod main_tests_project_check_run_history;
 #[path = "main_tests_project_connectivity.rs"]
@@ -331,6 +347,12 @@ mod main_tests_project_hierarchy;
 mod main_tests_project_import_map;
 #[path = "main_tests_project_imports.rs"]
 mod main_tests_project_imports;
+#[path = "main_tests_project_imports_eagle.rs"]
+mod main_tests_project_imports_eagle;
+#[path = "main_tests_project_imports_lifecycle.rs"]
+mod main_tests_project_imports_lifecycle;
+#[path = "main_tests_project_imports_schematic.rs"]
+mod main_tests_project_imports_schematic;
 #[path = "main_tests_project_inspect.rs"]
 mod main_tests_project_inspect;
 #[path = "main_tests_project_journal.rs"]
@@ -349,14 +371,22 @@ mod main_tests_project_new;
 mod main_tests_project_noconnect;
 #[path = "main_tests_project_pool_library.rs"]
 mod main_tests_project_pool_library;
+#[path = "main_tests_project_pool_library_proposals.rs"]
+mod main_tests_project_pool_library_proposals;
 #[path = "main_tests_project_pool_package_geometry.rs"]
 mod main_tests_project_pool_package_geometry;
+#[path = "main_tests_project_pool_package_proposals.rs"]
+mod main_tests_project_pool_package_proposals;
 #[path = "main_tests_project_pool_part.rs"]
 mod main_tests_project_pool_part;
+#[path = "main_tests_project_pool_resolver.rs"]
+mod main_tests_project_pool_resolver;
 #[path = "main_tests_project_pool_symbol_library.rs"]
 mod main_tests_project_pool_symbol_library;
 #[path = "main_tests_project_port.rs"]
 mod main_tests_project_port;
+#[path = "main_tests_project_production_idempotency.rs"]
+mod main_tests_project_production_idempotency;
 #[path = "main_tests_project_proposal_policy.rs"]
 mod main_tests_project_proposal_policy;
 #[path = "main_tests_project_proposals.rs"]
@@ -375,6 +405,8 @@ mod main_tests_project_resolve_debug_guards;
 mod main_tests_project_resolver;
 #[path = "main_tests_project_route_apply.rs"]
 mod main_tests_project_route_apply;
+#[path = "main_tests_project_route_apply_taxonomy.rs"]
+mod main_tests_project_route_apply_taxonomy;
 #[path = "main_tests_project_route_corridor.rs"]
 mod main_tests_project_route_corridor;
 #[path = "main_tests_project_route_path_candidate.rs"]
@@ -477,8 +509,30 @@ mod main_tests_project_schematic_proposals;
 mod main_tests_project_selected_route_proposal;
 #[path = "main_tests_project_sheet.rs"]
 mod main_tests_project_sheet;
+#[path = "main_tests_project_source_shard_reporting.rs"]
+mod main_tests_project_source_shard_reporting;
+#[path = "main_tests_project_source_shard_root_replay.rs"]
+mod main_tests_project_source_shard_root_replay;
+#[path = "main_tests_project_source_shard_unknown.rs"]
+mod main_tests_project_source_shard_unknown;
+#[path = "main_tests_project_source_shard_unknown_generated.rs"]
+mod main_tests_project_source_shard_unknown_generated;
+#[path = "main_tests_project_source_shard_unknown_schematic.rs"]
+mod main_tests_project_source_shard_unknown_schematic;
+#[path = "main_tests_project_source_shard_unknown_sidecar.rs"]
+mod main_tests_project_source_shard_unknown_sidecar;
+#[path = "main_tests_project_standards_clearance_repairs.rs"]
+mod main_tests_project_standards_clearance_repairs;
+#[path = "main_tests_project_standards_peer_aperture_repairs.rs"]
+mod main_tests_project_standards_peer_aperture_repairs;
+#[path = "main_tests_project_standards_repair_apply.rs"]
+mod main_tests_project_standards_repair_apply;
 #[path = "main_tests_project_standards_repairs.rs"]
 mod main_tests_project_standards_repairs;
+#[path = "main_tests_project_standards_silk_repairs.rs"]
+mod main_tests_project_standards_silk_repairs;
+#[path = "main_tests_project_standards_zone_fill_repairs.rs"]
+mod main_tests_project_standards_zone_fill_repairs;
 #[path = "main_tests_project_symbol.rs"]
 mod main_tests_project_symbol;
 #[path = "main_tests_project_symbol_library_materialization.rs"]
@@ -491,6 +545,10 @@ mod main_tests_project_symbol_semantics;
 mod main_tests_project_text;
 #[path = "main_tests_project_validate.rs"]
 mod main_tests_project_validate;
+#[path = "main_tests_project_validate_resolver.rs"]
+mod main_tests_project_validate_resolver;
+#[path = "main_tests_project_validate_rules.rs"]
+mod main_tests_project_validate_rules;
 #[path = "main_tests_project_wire.rs"]
 mod main_tests_project_wire;
 #[path = "main_tests_query_goldens.rs"]

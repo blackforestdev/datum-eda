@@ -2,7 +2,7 @@ use super::*;
 use eda_engine::substrate::ProjectResolver;
 
 pub(crate) fn query_native_project_labels(root: &Path) -> Result<Vec<LabelInfo>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let model = ProjectResolver::new(&project.root)
         .resolve()
         .with_context(|| {
@@ -41,16 +41,23 @@ pub(crate) fn query_native_project_labels(root: &Path) -> Result<Vec<LabelInfo>>
 }
 
 pub(crate) fn query_native_project_wires(root: &Path) -> Result<Vec<serde_json::Value>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
+    let model = ProjectResolver::new(&project.root)
+        .resolve()
+        .with_context(|| {
+            format!(
+                "failed to resolve native project {}",
+                project.root.display()
+            )
+        })?;
     let mut wires = Vec::new();
     for (sheet_uuid, relative_path) in &project.schematic.sheets {
         let sheet_uuid = Uuid::parse_str(sheet_uuid)
             .with_context(|| format!("invalid sheet UUID key `{sheet_uuid}` in schematic root"))?;
         let path = project.root.join("schematic").join(relative_path);
-        let sheet_text = std::fs::read_to_string(&path)
-            .with_context(|| format!("failed to read {}", path.display()))?;
-        let sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
-            .with_context(|| format!("failed to parse {}", path.display()))?;
+        let sheet_value = model
+            .materialized_source_shard_value_by_relative_path(&format!("schematic/{relative_path}"))
+            .with_context(|| format!("failed to materialize {}", path.display()))?;
         if let Some(entries) = sheet_value
             .get("wires")
             .and_then(serde_json::Value::as_object)
@@ -76,16 +83,23 @@ pub(crate) fn query_native_project_wires(root: &Path) -> Result<Vec<serde_json::
 }
 
 pub(crate) fn query_native_project_junctions(root: &Path) -> Result<Vec<serde_json::Value>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
+    let model = ProjectResolver::new(&project.root)
+        .resolve()
+        .with_context(|| {
+            format!(
+                "failed to resolve native project {}",
+                project.root.display()
+            )
+        })?;
     let mut junctions = Vec::new();
     for (sheet_uuid, relative_path) in &project.schematic.sheets {
         let sheet_uuid = Uuid::parse_str(sheet_uuid)
             .with_context(|| format!("invalid sheet UUID key `{sheet_uuid}` in schematic root"))?;
         let path = project.root.join("schematic").join(relative_path);
-        let sheet_text = std::fs::read_to_string(&path)
-            .with_context(|| format!("failed to read {}", path.display()))?;
-        let sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
-            .with_context(|| format!("failed to parse {}", path.display()))?;
+        let sheet_value = model
+            .materialized_source_shard_value_by_relative_path(&format!("schematic/{relative_path}"))
+            .with_context(|| format!("failed to materialize {}", path.display()))?;
         if let Some(entries) = sheet_value
             .get("junctions")
             .and_then(serde_json::Value::as_object)
@@ -110,7 +124,7 @@ pub(crate) fn query_native_project_junctions(root: &Path) -> Result<Vec<serde_js
 }
 
 pub(crate) fn query_native_project_ports(root: &Path) -> Result<Vec<PortInfo>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let model = ProjectResolver::new(&project.root)
         .resolve()
         .with_context(|| {
@@ -149,7 +163,7 @@ pub(crate) fn query_native_project_ports(root: &Path) -> Result<Vec<PortInfo>> {
 }
 
 pub(crate) fn query_native_project_buses(root: &Path) -> Result<Vec<BusInfo>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let model = ProjectResolver::new(&project.root)
         .resolve()
         .with_context(|| {
@@ -187,7 +201,7 @@ pub(crate) fn query_native_project_buses(root: &Path) -> Result<Vec<BusInfo>> {
 }
 
 pub(crate) fn query_native_project_bus_entries(root: &Path) -> Result<Vec<BusEntryInfo>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let model = ProjectResolver::new(&project.root)
         .resolve()
         .with_context(|| {
@@ -226,16 +240,23 @@ pub(crate) fn query_native_project_bus_entries(root: &Path) -> Result<Vec<BusEnt
 }
 
 pub(crate) fn query_native_project_noconnects(root: &Path) -> Result<Vec<NoConnectInfo>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
+    let model = ProjectResolver::new(&project.root)
+        .resolve()
+        .with_context(|| {
+            format!(
+                "failed to resolve native project {}",
+                project.root.display()
+            )
+        })?;
     let mut noconnects = Vec::new();
     for (sheet_uuid, relative_path) in &project.schematic.sheets {
         let sheet_uuid = Uuid::parse_str(sheet_uuid)
             .with_context(|| format!("invalid sheet UUID key `{sheet_uuid}` in schematic root"))?;
         let path = project.root.join("schematic").join(relative_path);
-        let sheet_text = std::fs::read_to_string(&path)
-            .with_context(|| format!("failed to read {}", path.display()))?;
-        let sheet_value: serde_json::Value = serde_json::from_str(&sheet_text)
-            .with_context(|| format!("failed to parse {}", path.display()))?;
+        let sheet_value = model
+            .materialized_source_shard_value_by_relative_path(&format!("schematic/{relative_path}"))
+            .with_context(|| format!("failed to materialize {}", path.display()))?;
         if let Some(values) = sheet_value
             .get("noconnects")
             .and_then(serde_json::Value::as_object)

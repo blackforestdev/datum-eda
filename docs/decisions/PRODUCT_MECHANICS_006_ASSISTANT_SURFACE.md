@@ -49,8 +49,10 @@ transaction journal directly.
 
 Assistant-originated changes become design state only when an approved
 `Proposal` or allowed policy-scoped `OperationBatch` calls `commit()` and
-produces a journaled `TransactionRecord` with assistant provenance and an
-explicit acceptance path.
+produces a journaled `TransactionRecord` with assistant provenance. For
+proposal-mediated assistant changes, acceptance is durable through the applied
+`Proposal` whose `source` is assistant-originated and whose
+`applied_transaction_id` matches the committed transaction.
 
 ## User-Visible Behavior
 
@@ -224,7 +226,8 @@ single opaque chat transcript:
 
 Apply controls must never be hidden in generated text. The user approves a
 proposal through a product UI action or configured automation policy, and that
-approval path is recorded in provenance.
+approval path is exposed as UI/API metadata while durable acceptance is proven
+by the applied proposal's transaction link.
 
 ## Standards And Compliance Impact
 

@@ -5,9 +5,9 @@ use uuid::Uuid;
 
 use super::{
     EngineError, ManufacturingPlan, ObjectId, Operation, OperationBatch, OutputJob,
-    PanelProjection, SourceShardKind, TransactionRecord, journal::StagedShardWrite,
+    PanelProjection, SourceShardKind, TransactionRecord,
+    journal::{StagedShardWrite, stage_new_shard_write},
 };
-use crate::ir::serialization::to_json_deterministic;
 
 pub(super) fn stage_production_operation(
     project_root: &Path,
@@ -26,33 +26,12 @@ pub(super) fn stage_production_operation(
             kind,
             relative_path,
             content_hash: String::new(),
+            schema_version: None,
             delete: true,
         }));
     }
 
-    let stage_path = project_root
-        .join(".datum/stage")
-        .join(batch.batch_id.to_string())
-        .join(&relative_path);
-    if let Some(parent) = stage_path.parent() {
-        std::fs::create_dir_all(parent)?;
-    }
-    let json = to_json_deterministic(value)?;
-    let bytes = format!("{json}\n").into_bytes();
-    std::fs::write(&stage_path, &bytes)?;
-    std::fs::File::open(&stage_path)?.sync_all()?;
-    if let Some(parent) = stage_path.parent() {
-        sync_directory(parent)?;
-    }
-
-    Ok(Some(StagedShardWrite {
-        destination,
-        staged: Some(stage_path),
-        kind,
-        relative_path,
-        content_hash: super::sha256_hex(&bytes),
-        delete: false,
-    }))
+    stage_new_shard_write(project_root, batch, kind, &relative_path, value).map(Some)
 }
 
 pub(super) fn inverse_production_operation(
@@ -342,10 +321,5 @@ pub(super) fn apply_production_journal_to_maps(
             }
         }
     }
-    Ok(())
-}
-
-fn sync_directory(path: &Path) -> Result<(), EngineError> {
-    std::fs::File::open(path)?.sync_all()?;
     Ok(())
 }

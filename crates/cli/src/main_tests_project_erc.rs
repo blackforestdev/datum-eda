@@ -7,6 +7,7 @@ use eda_engine::schematic::{
     CheckDomain, HiddenPowerBehavior, LabelKind, NetLabel, PinElectricalType, PlacedSymbol,
     SymbolDisplayMode, SymbolPin, WaiverTarget,
 };
+use eda_engine::substrate::{ProjectResolver, SourceShardKind};
 
 fn unique_project_root(label: &str) -> PathBuf {
     std::env::temp_dir().join(format!("{}-{}", label, Uuid::new_v4()))
@@ -180,18 +181,69 @@ fn project_query_erc_reports_native_precheck_findings() {
     ])
     .expect("CLI should parse");
 
+    let before = ProjectResolver::new(&root)
+        .resolve()
+        .expect("resolver should read fixture before ERC query")
+        .model_revision
+        .0;
     let output = execute(cli).expect("project query erc should succeed");
-    let findings: serde_json::Value =
-        serde_json::from_str(&output).expect("query JSON should parse");
-    let findings = findings.as_array().expect("findings should be an array");
-    assert!(findings.iter().any(|entry| {
+    let report: serde_json::Value = serde_json::from_str(&output).expect("query JSON should parse");
+    assert_eq!(report["contract"], "check_run_v1");
+    assert_eq!(report["persisted"], false);
+    assert_eq!(report["profile_id"], "erc");
+    assert_eq!(report["model_revision"], before);
+    assert_eq!(
+        report["finding_count"],
+        report["findings"].as_array().unwrap().len()
+    );
+    let raw_findings = report["raw_report"]["erc"]
+        .as_array()
+        .expect("raw ERC findings should be preserved");
+    assert!(raw_findings.iter().any(|entry| {
         entry["code"] == "unconnected_component_pin"
             && entry["object_uuids"] == serde_json::json!([passive_pin_uuid.to_string()])
     }));
-    assert!(findings.iter().any(|entry| {
+    assert!(raw_findings.iter().any(|entry| {
         entry["code"] == "power_in_without_source"
             && entry["object_uuids"] == serde_json::json!([power_pin_uuid.to_string()])
     }));
+    assert!(report["findings"].as_array().unwrap().iter().any(|entry| {
+        entry["source"] == "erc"
+            && entry["domain"] == "erc"
+            && entry["rule_id"] == "unconnected_component_pin"
+            && entry["fingerprint"]
+                .as_str()
+                .unwrap()
+                .starts_with("sha256:")
+            && entry["status"] == "active"
+            && entry["primary_target"]["kind"] == "object_uuid"
+            && entry["primary_target"]["id"] == passive_pin_uuid.to_string()
+            && entry["related_targets"].as_array().unwrap().is_empty()
+            && entry["payload"]["object_uuids"] == serde_json::json!([passive_pin_uuid.to_string()])
+            && entry["evidence"][0]["object_uuids"]
+                == serde_json::json!([passive_pin_uuid.to_string()])
+    }));
+    assert!(report["coverage"].as_array().unwrap().iter().any(|entry| {
+        entry["domain"] == "erc"
+            && entry["rule_id"] == "schematic_connectivity"
+            && entry["status"] == "evaluated"
+    }));
+    let check_run_id = report["check_run_id"].as_str().unwrap();
+    assert!(
+        !root
+            .join(format!(".datum/check_runs/{check_run_id}.json"))
+            .exists()
+    );
+    let resolved = ProjectResolver::new(&root)
+        .resolve()
+        .expect("resolver should read project without persisted ERC check run");
+    assert_eq!(resolved.model_revision.0, before);
+    assert!(
+        !resolved
+            .source_shards
+            .iter()
+            .any(|shard| shard.kind == SourceShardKind::CheckRun)
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }
@@ -264,18 +316,30 @@ fn project_query_erc_honors_native_authored_waiver() {
     .expect("CLI should parse");
 
     let output = execute(cli).expect("project query erc should succeed");
-    let findings: serde_json::Value =
-        serde_json::from_str(&output).expect("query JSON should parse");
-    let findings = findings.as_array().expect("findings should be an array");
-    let waived = findings
+    let report: serde_json::Value = serde_json::from_str(&output).expect("query JSON should parse");
+    assert_eq!(report["contract"], "check_run_v1");
+    assert_eq!(report["persisted"], false);
+    assert_eq!(report["profile_id"], "erc");
+    let raw_findings = report["raw_report"]["erc"]
+        .as_array()
+        .expect("raw ERC findings should be preserved");
+    let raw_waived = raw_findings
         .iter()
         .find(|entry| entry["code"] == "unconnected_component_pin")
         .expect("unconnected_component_pin finding should exist");
     assert_eq!(
-        waived["object_uuids"],
+        raw_waived["object_uuids"],
         serde_json::json!([passive_pin_uuid.to_string()])
     );
-    assert_eq!(waived["waived"], true);
+    assert_eq!(raw_waived["waived"], true);
+    let waived = report["findings"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|entry| entry["code"] == "unconnected_component_pin")
+        .expect("normalized unconnected_component_pin finding should exist");
+    assert_eq!(waived["status"], "waived");
+    assert_eq!(report["summary"]["waived"], 1);
 
     let _ = std::fs::remove_dir_all(&root);
 }

@@ -10,6 +10,12 @@ pub(crate) enum ProjectCommands {
     Validate(ProjectValidateArgs),
     /// Import a KiCad .kicad_mod footprint into a project-local native pool
     ImportKicadFootprint(ProjectImportKiCadFootprintArgs),
+    /// Import a KiCad .kicad_pcb board into the native board through journaled operations
+    ImportKicadBoard(ProjectImportKiCadBoardArgs),
+    /// Import KiCad schematic symbols into a native schematic sheet through journaled operations
+    ImportKicadSchematic(ProjectImportKiCadSchematicArgs),
+    /// Import an Eagle .lbr library into a project-local native pool through journaled operations
+    ImportEagleLibrary(ProjectImportEagleLibraryArgs),
     /// Create a raw native pool-library object through the project journal
     CreatePoolLibraryObject(ProjectCreatePoolLibraryObjectArgs),
     /// Create a typed native pool unit through the project journal
@@ -105,13 +111,13 @@ pub(crate) enum ProjectCommands {
     DeleteProjectRule(ProjectDeleteProjectRuleArgs),
     /// Query native project data from the on-disk scaffold
     Query(ProjectQueryArgs),
-    /// Show one persisted proposal sidecar
+    /// Show one persisted proposal record
     ShowProposal(ProjectShowProposalArgs),
     /// Validate one persisted proposal against the current model revision
     ValidateProposal(ProjectValidateProposalArgs),
     /// Defer one draft persisted proposal without applying it
     DeferProposal(ProjectDeferProposalArgs),
-    /// Review one persisted proposal sidecar without applying it
+    /// Review one persisted proposal record without applying it
     ReviewProposal(ProjectReviewProposalArgs),
     /// Apply one accepted persisted proposal through the generic proposal gateway
     ApplyProposal(ProjectApplyProposalArgs),
@@ -288,9 +294,9 @@ pub(crate) enum ProjectCommands {
     RevalidateRouteProposalArtifact(ProjectRevalidateRouteProposalArtifactArgs),
     /// Apply a versioned route proposal artifact when it still matches the current live project state
     ApplyRouteProposalArtifact(ProjectApplyRouteProposalArtifactArgs),
-    /// Apply the currently selected deterministic route proposal directly into native board copper
+    /// Apply the currently selected deterministic route proposal through the proposal journal gateway
     RouteApplySelected(ProjectRouteApplySelectedArgs),
-    /// Apply one deterministic current route candidate directly into native board copper
+    /// Apply one deterministic current route candidate through the proposal journal gateway
     RouteApply(ProjectRouteApplyArgs),
     /// Export the current forward-annotation proposal and review state as a versioned artifact
     ExportForwardAnnotationProposal(ProjectExportForwardAnnotationProposalArgs),

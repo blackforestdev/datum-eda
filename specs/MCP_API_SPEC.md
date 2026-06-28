@@ -35,7 +35,16 @@ CLI and MCP are isomorphic:
 Every CLI command with `--json` returns the same schema as the matching MCP
 tool. Human-readable CLI output is presentation only.
 
-The target public surface has exactly seven shared tool classes:
+The target public surface has exactly seven shared contract classes. Public MCP
+methods may use granular canonical `datum.<family>.*` prefixes such as
+`datum.pcb.*`, `datum.schematic.*`, `datum.library.*`, and `datum.route.*`
+when they are typed realizations of these classes. Those granular prefixes are
+canonical public families, not flat legacy aliases. The drift gate
+`scripts/check_mcp_public_taxonomy.py` locks the current public prefix
+inventory and fails if non-`datum.*` names, hidden compatibility aliases, or
+non-journaled write bypasses re-enter `tools/list`.
+
+The seven contract classes are:
 
 | Class | CLI shape | MCP shape | Mutates source? |
 |-------|-----------|-----------|-----------------|
@@ -262,11 +271,14 @@ Current implementation:
   `datum.query.noconnects`, `datum.query.hierarchy`,
   `datum.query.schematic_nets`, `datum.query.connectivity_diagnostics`,
   `datum.query.design_rules`, `datum.query.zone_fills`,
-  `datum.query.component_instances`, `datum.query.relationships`,
+  `datum.query.source_shards`, `datum.query.component_instances`, `datum.query.relationships`,
   `datum.query.variants`, `datum.query.import_map`,
   `datum.query.panel_projections`, `datum.query.manufacturing_plans`,
   `datum.query.output_jobs`,
   `datum.proposal.list`, and `datum.proposal.show`.
+  `datum.query.source_shards` mirrors resolver source-shard metadata including
+  `dirty_state` and concrete `taxon` values for typed pool shards and authored
+  production records (`ManufacturingPlan`, `PanelProjection`, `OutputJob`).
 - These aliases dispatch to the existing compatibility implementations
   (`get_check_run`, `get_board_summary`, `get_components`, `get_netlist`,
   `get_schematic_summary`, `get_sheets`, `get_symbols`,
@@ -274,7 +286,7 @@ Current implementation:
   `get_bus_entries`, `get_noconnects`, native path-aware
   `get_project_hierarchy` with legacy `get_hierarchy` fallback,
   `get_schematic_net_info`, `get_connectivity_diagnostics`,
-  `get_design_rules`, `get_zone_fills`, `get_component_instances`,
+  `get_design_rules`, `get_source_shards`, `get_zone_fills`, `get_component_instances`,
   `get_relationships`, `get_variants`, `get_import_map`,
   `get_panel_projections`, `get_manufacturing_plans`, `get_proposals`, and
   `show_proposal`) until the full `datum.*` families replace flat method
@@ -290,13 +302,26 @@ Current implementation:
   (`bind_component_instance`, `set_component_instance`, and
   `delete_component_instance`).
 - Check aliases now also include `datum.check.repair_standards`,
-  `datum.check.waive`, and `datum.check.accept_deviation`, all dispatched to
-  the existing check/proposal/journal compatibility implementations.
+  `datum.check.waive`, `datum.check.accept_deviation`, and
+  `datum.check.explain_violation`, all dispatched to the existing
+  check/proposal/journal compatibility implementations as applicable.
 - Proposal aliases now also include `datum.proposal.validate`,
   `datum.proposal.review`, `datum.proposal.defer`, `datum.proposal.reject`,
   `datum.proposal.accept_apply`, and `datum.proposal.apply`, all dispatched to
   the existing proposal compatibility implementations. Producer-specific
-  production proposal aliases now also exist under the same family:
+  proposal aliases now also exist under the same family:
+  `datum.proposal.create_board_component_replacement`,
+  `datum.proposal.create_board_component_replacements`,
+  `datum.proposal.create_board_component_replacement_plan`,
+  `datum.proposal.create_pool_library_object`,
+  `datum.proposal.create_pool_unit`,
+  `datum.proposal.create_pool_symbol`,
+  `datum.proposal.create_pool_entity`,
+  `datum.proposal.create_pool_padstack`,
+  `datum.proposal.create_pool_package`,
+  `datum.proposal.set_pool_package_pad`,
+  `datum.proposal.set_pool_package_courtyard_rect`,
+  `datum.proposal.set_pool_package_courtyard_polygon`,
   `datum.proposal.create_panel_projection`,
   `datum.proposal.update_panel_projection`,
   `datum.proposal.delete_panel_projection`,
@@ -320,6 +345,7 @@ MCP:
 - `datum.check.list`
 - `datum.check.show`
 - `datum.check.profiles`
+- `datum.check.explain_violation`
 
 CLI:
 
@@ -345,6 +371,12 @@ compatibility only. Current native-project check runs preserve compatibility
 level with proposal status, source, rationale, current validation snapshot, and
 canonical `datum-eda proposal ...` command templates for show, preview,
 validate, review, and apply actions.
+Canonical `datum.check.repair_standards` returns the standard `datum.*`
+envelope with normalized `check_run_id`, `proposal_count`, and `proposals[]`
+fields. Each proposal entry exposes the stable proposal id, repair kind,
+affected pad/track/via/net-class/zone ids when applicable, finding
+fingerprints, repair codes, prepared-against revision, current-revision
+readiness, apply blocker codes, operation count, and raw compatibility payload.
 
 ### 4. Proposal
 
@@ -525,7 +557,7 @@ Current implementation:
   `ProposalApplyValidation` object.
 - Generic proposal creation accepts an `OperationBatch`, stamps or validates
   its prepared model revision guard, dry-runs the batch for operation
-  validation/affected-object preview, and writes a draft proposal sidecar.
+  validation/affected-object preview, and writes draft proposal metadata.
 - `project validate-proposal` returns stable `blocker_codes` and structured
   blocker objects with `code` and `message`.
 - `project review-proposal --status accepted` refuses stale proposals and
@@ -548,8 +580,10 @@ Required aliases:
   resolver-backed rather than one global open project
 - `save` -> compatibility wrapper only; target writes are committed at apply
   time and do not require a public save mutation
-- `run_erc` -> `datum.check.run` with `domain = "erc"`
-- `run_drc` -> `datum.check.run` with `domain = "drc"`
+- `run_erc` -> live `check_run_v1` compatibility envelope with `profile_id = "erc"`;
+  persisted generated evidence remains `datum.check.run`
+- `run_drc` -> live `check_run_v1` compatibility envelope with `profile_id = "drc"`;
+  persisted generated evidence remains `datum.check.run`
 
 Per-method write compatibility:
 
@@ -573,6 +607,45 @@ Alias retirement policy:
   deprecated and then removed.
 - Alias payloads may remain legacy during transition, but target `datum.*`
   payloads must use the target JSON envelope.
+- Every hidden compatibility alias registered by the MCP catalog must carry
+  machine-readable retirement metadata:
+  `x_compatibility_visibility = "hidden"`,
+  `x_canonical_replacements`, `x_retirement_status`, and
+  `x_retirement_criteria`.
+- `x_canonical_replacements` is a non-empty list of public replacement tools or
+  explicit `pending:<datum.* surface>` migration targets. Public replacements
+  must appear in `tools/list`; pending targets mark gaps that still require a
+  public canonical surface before the alias can move past
+  `retained_until_migration_plan`.
+- `x_retirement_status` is one of `retained_until_migration_plan`,
+  `deprecated`, or `scheduled_for_removal`. New hidden aliases start as
+  `retained_until_migration_plan`; moving to `deprecated` requires a named
+  canonical `datum.*` replacement and documentation update; moving to
+  `scheduled_for_removal` requires confirmation that current supported clients
+  no longer need the alias.
+- Retirement criteria must state the removal condition. The default condition
+  is: remove after the canonical `datum.*` replacement is public,
+  journal/proposal-backed where it mutates source, documented here, and current
+  client compatibility requirements no longer require the alias.
+- The first deprecated hidden families are legacy session, check,
+  check/explain, journal, artifact/output, ComponentInstance, pool lookup,
+  read-only query, replacement-planning, manufacturing-authoring, OutputJob,
+  route, proposal, PCB, and library aliases. Each has a public
+  `datum.session.*`, `datum.check.*`,
+  `datum.journal.*`, `datum.artifact.*`, `datum.component_instance.*`,
+  `datum.pool.*`, `datum.query.*`, `datum.replacement.*`,
+  `datum.manufacturing.*`, `datum.output_job.*`, `datum.route.*`,
+  `datum.proposal.*`, `datum.pcb.*`, or `datum.library.*` replacement and
+  alias-specific retirement criteria.
+- The hidden flat session aliases (`open_project`, `close_project`, `save`,
+  `validate_project`) are deprecated in favor of public `datum.session.*`
+  replacements. `datum.session.save` remains an imported-design compatibility
+  write-back surface only; target authored writes commit at apply time and no
+  new public save mutation should be introduced.
+- `scripts/check_mcp_public_taxonomy.py` enforces both the public prefix
+  inventory and hidden-alias retirement metadata. A hidden alias without this
+  metadata is a spec drift failure, even if it is not advertised by
+  `tools/list`.
 
 ## Current Compatibility
 
@@ -581,39 +654,23 @@ names. It preserves implementation truth; it is not the target surface.
 
 Current implementation note: implemented in the current daemon/stdio host.
 
-### Current Implemented Methods (2026-06-20)
+### Current Implemented Methods (2026-06-28)
 
-`open_project`, `close_project`, `save`, `delete_track`, `delete_via`,
-`delete_component`, `move_component`, `rotate_component`, `flip_component`, `set_value`,
-`set_reference`, `assign_part`, `set_package`, `set_package_with_part`,
-`replace_component`, `replace_components`, `apply_component_replacement_plan`,
-`apply_component_replacement_policy`, `apply_scoped_component_replacement_policy`,
-`apply_scoped_component_replacement_plan`, `edit_scoped_component_replacement_plan`,
-`set_net_class`, `set_design_rule`, `undo`, `redo`, `search_pool`, `get_part`,
-`get_package`,
-`get_package_change_candidates`, `get_part_change_candidates`,
-`get_component_replacement_plan`, `get_scoped_component_replacement_plan`,
-`get_board_summary`, `get_components`,
-`get_netlist`, `get_schematic_summary`, `get_sheets`, `get_labels`,
-`get_symbols`, `get_symbol_fields`, `get_ports`, `get_buses`,
-`get_bus_entries`, `get_noconnects`, `get_hierarchy`, `get_net_info`,
-`get_unrouted`, `get_schematic_net_info`, `get_check_report`,
-`get_connectivity_diagnostics`, `get_design_rules`, `run_erc`, `run_drc`,
-`explain_violation`,
-`validate_project`,
-`get_check_run`,
-`get_check_runs`,
-`show_check_run`,
-`get_check_profiles`,
-`get_zone_fills`,
-`fill_zones`,
+`close_project`, `edit_scoped_component_replacement_plan`,
+`explain_violation`, `get_board_summary`, `get_bus_entries`, `get_buses`,
+`get_check_report`, `get_component_replacement_plan`, `get_components`,
+`get_connectivity_diagnostics`, `get_design_rules`, `get_hierarchy`,
+`get_labels`, `get_net_info`, `get_netlist`, `get_noconnects`,
+`get_package`, `get_package_change_candidates`, `get_part`,
+`get_part_change_candidates`, `get_ports`, `get_schematic_net_info`,
+`get_schematic_summary`, `get_scoped_component_replacement_plan`,
+`get_sheets`, `get_symbol_fields`, `get_symbols`, `get_unrouted`,
+`open_project`, `redo`, `run_drc`, `run_erc`, `save`, `search_pool`,
+`undo`, `validate_project`, `get_check_run`, `get_check_runs`,
+`show_check_run`, `get_check_profiles`, `get_zone_fills`, `fill_zones`,
 `generate_standards_repair_proposals`, `waive_finding`, `accept_deviation`,
-`get_journal_list`,
-`get_journal_transaction`,
-`journal_undo`,
-`journal_redo`,
-`get_panel_projections`,
-`create_panel_projection`,
+`get_journal_list`, `get_journal_transaction`, `journal_undo`,
+`journal_redo`, `get_panel_projections`, `create_panel_projection`,
 `create_panel_projection_proposal`,
 `update_panel_projection`,
 `update_panel_projection_proposal`,
@@ -701,6 +758,9 @@ Current implementation note: implemented in the current daemon/stdio host.
 `create_draw_wire_proposal`,
 `create_place_label_proposal`,
 `create_place_symbol_proposal`,
+`create_board_component_replacement_proposal`,
+`create_board_component_replacements_proposal`,
+`create_board_component_replacement_plan_proposal`,
 `get_proposals`,
 `show_proposal`,
 `preview_proposal`,
@@ -749,21 +809,11 @@ Context/session compatibility.
 
 Legacy save compatibility; target commits at apply time.
 
-#### `delete_track`
-
-Per-method write compatibility over the daemon's current open project. The
-canonical MCP aliases `datum.pcb.draw_track`, `datum.pcb.edit_track`, and
-`datum.pcb.delete_track` are native-project scoped and dispatch through
-journaled native CLI authoring via `datum-eda project draw-board-track`,
-`edit-board-track`, and `delete-board-track`.
-
-#### `delete_via`
-
-Per-method write compatibility over the daemon's current open project. The
-canonical MCP aliases `datum.pcb.place_via`, `datum.pcb.edit_via`, and
-`datum.pcb.delete_via` are native-project scoped and dispatch through
-journaled native CLI authoring via `datum-eda project place-board-via`,
-`edit-board-via`, and `delete-board-via`.
+Retired private-writer compatibility methods such as flat board component,
+track, via, net-class, design-rule, and replacement apply writes are no longer
+daemon-dispatched compatibility anchors. Their public replacements are the
+canonical `datum.pcb.*`, `datum.proposal.*`, and journal-backed CLI paths
+described below.
 
 #### `place_zone` / `edit_zone` / `delete_zone`
 
@@ -899,36 +949,10 @@ Canonical native-project MCP alias `datum.pcb.place_component` requires
 it dispatches through journaled native CLI authoring via
 `datum-eda project place-board-component`.
 
-#### `delete_component`
-
-Per-method write compatibility over the daemon's current open project. The
-canonical MCP alias `datum.pcb.delete_component` is native-project scoped and
-requires `path` and `component`; it dispatches through journaled native CLI
-authoring via `datum-eda project delete-board-component`.
-
-#### `move_component`
-
-Per-method write compatibility over the daemon's current open project. The
-canonical MCP alias `datum.pcb.move_component` is native-project scoped and
-requires `path`, `component`, `x_nm`, and `y_nm`; it dispatches through
-journaled native CLI authoring via `datum-eda project move-board-component`.
-
-#### `rotate_component`
-
-Per-method write compatibility over the daemon's current open project. The
-canonical MCP alias `datum.pcb.rotate_component` is native-project scoped and
-requires `path`, `component`, and `rotation_deg`; it dispatches through journaled
-native CLI authoring via `datum-eda project rotate-board-component`.
-
-#### `flip_component`
-
-Per-method write compatibility over the daemon's current open project. Accepts
-`uuid` and target copper `layer`, mutates the component side/layer, and records
-undo/redo state for package and pad layer/position metadata. The canonical MCP
-alias `datum.pcb.flip_component` is native-project scoped and requires `path`,
-`component`, and `layer`; it dispatches through journaled `SetComponentSide`
-via `datum-eda project flip-board-component`. CLI compatibility
-`set-board-component-layer` remains available.
+Component delete, move, rotate, flip, reference, value, part, and package edits
+are no longer flat daemon methods. Their canonical MCP aliases are
+native-project scoped and dispatch through journaled CLI authoring via the
+matching `datum-eda project ...board-component...` commands.
 
 #### `lock_component` / `unlock_component`
 
@@ -938,72 +962,7 @@ through journaled native CLI authoring via
 `datum-eda project set-board-component-locked` and
 `datum-eda project clear-board-component-locked`.
 
-#### `set_value`
-
-Per-method write compatibility over the daemon's current open project. The
-canonical MCP alias `datum.pcb.set_component_value` is native-project scoped
-and requires `path`, `component`, and `value`; it dispatches through journaled
-native CLI authoring via `datum-eda project set-board-component-value`.
-
-#### `set_reference`
-
-Per-method write compatibility over the daemon's current open project. The
-canonical MCP alias `datum.pcb.set_component_reference` is native-project
-scoped and requires `path`, `component`, and `reference`; it dispatches through
-journaled native CLI authoring via
-`datum-eda project set-board-component-reference`.
-
-#### `assign_part`
-
-Per-method write compatibility over the daemon's current open project. The
-canonical MCP alias `datum.pcb.set_component_part` is native-project scoped and
-requires `path`, `component`, and `part`; it dispatches through journaled
-native CLI authoring via `datum-eda project set-board-component-part`.
-
-#### `set_package`
-
-Per-method write compatibility over the daemon's current open project. The
-canonical MCP alias `datum.pcb.set_component_package` is native-project scoped
-and requires `path`, `component`, and `package`; it dispatches through
-journaled native CLI authoring via `datum-eda project set-board-component-package`.
-
-#### `set_package_with_part`
-
-Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
-
-#### `replace_component`
-
-Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
-
-#### `replace_components`
-
-Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
-
-#### `apply_component_replacement_plan`
-
-Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
-
-#### `apply_component_replacement_policy`
-
-Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
-
-#### `apply_scoped_component_replacement_policy`
-
-Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
-
-#### `apply_scoped_component_replacement_plan`
-
-Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
-
 #### `edit_scoped_component_replacement_plan`
-
-Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
-
-#### `set_net_class`
-
-Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
-
-#### `set_design_rule`
 
 Per-method write compatibility; target routes through proposal/apply or policy-gated direct commit.
 
@@ -1124,15 +1083,21 @@ Query compatibility.
 
 #### `run_erc`
 
-Check compatibility.
+Check compatibility. Returns a live non-persisted `check_run_v1` envelope with
+normalized ERC findings and raw legacy ERC findings under `raw_report.erc`.
 
 #### `run_drc`
 
-Check compatibility.
+Check compatibility. Returns a live non-persisted `check_run_v1` envelope with
+normalized DRC findings and the raw legacy DRC report under `raw_report.drc`.
 
 #### `explain_violation`
 
-Check compatibility.
+Hidden check compatibility alias. The public canonical MCP tool is
+`datum.check.explain_violation`. Both names dispatch to the same implementation
+and accept `domain` plus preferred `fingerprint` or legacy `index`. Fingerprint
+requests resolve against the current live CheckRun finding set; index remains
+for older positional callers.
 
 #### `validate_project`
 
@@ -1180,12 +1145,14 @@ undo/redo.
 #### `generate_standards_repair_proposals`
 
 Proposal/check compatibility. Generates draft repair proposals from persisted
-standards/process-aperture and dimension-rule check findings. Current repair
-families emit `SetBoardPad` proposals for pad mask/paste aperture findings and
-direct geometry proposals for dimension-rule findings: `SetBoardTrack` for
-`track_width_below_min` and `SetBoardVia` for `via_hole_out_of_range` /
-`via_annular_below_min`. Target routes resulting edits through reviewed
-proposals and `commit()`.
+standards/process-aperture, dimension-rule, and ZoneFill honesty findings.
+Current repair families emit `SetBoardPad` proposals for pad mask/paste
+aperture findings, direct geometry proposals for dimension-rule findings:
+`SetBoardTrack` for `track_width_below_min` and `SetBoardVia` for
+`via_hole_out_of_range` / `via_annular_below_min`, and `SetZoneFill` proposals
+for supported `zone_fill_unfilled` / `zone_fill_stale` findings. Unsupported
+ZoneFill cases remain findings without fake copper proposals. Target routes
+resulting edits through reviewed proposals and `commit()`.
 
 #### `waive_finding`
 
@@ -1243,7 +1210,7 @@ PanelProjection authoring compatibility for production-only panel targets.
 
 PanelProjection proposal-authoring compatibility. Builds the same
 `CreatePanelProjection` OperationBatch as `create_panel_projection`, persists a
-draft proposal sidecar, and does not create the panel shard until review/apply.
+draft proposal metadata, and does not create the panel shard until review/apply.
 
 #### `update_panel_projection`
 
@@ -1255,7 +1222,7 @@ identity while bumping `object_revision`.
 
 PanelProjection proposal-authoring compatibility. Builds the same
 `SetPanelProjection` OperationBatch as `update_panel_projection`, persists a
-draft proposal sidecar, and does not mutate the panel shard until review/apply.
+draft proposal metadata, and does not mutate the panel shard until review/apply.
 
 #### `delete_panel_projection`
 
@@ -1267,7 +1234,7 @@ while a ManufacturingPlan still targets the panel projection.
 
 PanelProjection proposal-authoring compatibility. Builds the same
 `DeletePanelProjection` OperationBatch as `delete_panel_projection`, persists a
-draft proposal sidecar, and does not remove the panel shard until review/apply.
+draft proposal metadata, and does not remove the panel shard until review/apply.
 
 #### `get_manufacturing_plans`
 
@@ -1281,7 +1248,7 @@ ManufacturingPlan authoring compatibility; may link to a PanelProjection.
 
 ManufacturingPlan proposal-authoring compatibility. Builds the same
 `CreateManufacturingPlan` OperationBatch as `create_manufacturing_plan`,
-persists a draft proposal sidecar, and does not create the plan shard until
+persists draft proposal metadata, and does not create the plan shard until
 review/apply.
 
 #### `update_manufacturing_plan`
@@ -1294,7 +1261,7 @@ identity while bumping `object_revision`.
 
 ManufacturingPlan proposal-authoring compatibility. Builds the same
 `SetManufacturingPlan` OperationBatch as `update_manufacturing_plan`, persists a
-draft proposal sidecar, and does not mutate the plan shard until review/apply.
+draft proposal metadata, and does not mutate the plan shard until review/apply.
 
 #### `delete_manufacturing_plan`
 
@@ -1306,7 +1273,7 @@ refused while an OutputJob still references the manufacturing plan.
 
 ManufacturingPlan proposal-authoring compatibility. Builds the same
 `DeleteManufacturingPlan` OperationBatch as `delete_manufacturing_plan`,
-persists a draft proposal sidecar, and does not remove the plan shard until
+persists draft proposal metadata, and does not remove the plan shard until
 review/apply.
 
 #### `get_output_jobs`
@@ -1331,7 +1298,7 @@ compatibility command.
 #### `create_output_job_proposal`
 
 OutputJob proposal-authoring compatibility. Builds the same `CreateOutputJob`
-OperationBatch as `create_output_job`, persists a draft proposal sidecar through
+OperationBatch as `create_output_job`, persists draft proposal metadata through
 the generic proposal gateway, and does not create the OutputJob shard until the
 proposal is accepted and applied.
 
@@ -1343,7 +1310,7 @@ manufacturing-plan link through the CLI bridge and the journaled substrate path.
 #### `update_output_job_proposal`
 
 OutputJob proposal-authoring compatibility. Builds the same `SetOutputJob`
-OperationBatch as `update_output_job`, persists a draft proposal sidecar through
+OperationBatch as `update_output_job`, persists draft proposal metadata through
 the generic proposal gateway, and does not mutate the OutputJob shard until the
 proposal is accepted and applied.
 
@@ -1386,7 +1353,7 @@ CLI bridge and the journaled substrate path.
 #### `delete_output_job_proposal`
 
 OutputJob proposal-authoring compatibility. Builds the same `DeleteOutputJob`
-OperationBatch as `delete_output_job`, persists a draft proposal sidecar through
+OperationBatch as `delete_output_job`, persists draft proposal metadata through
 the generic proposal gateway, and does not remove the OutputJob shard until the
 proposal is accepted and applied.
 
@@ -1751,8 +1718,8 @@ directory, creates deterministic model / attachment UUIDs from the model hash
 and target part, and appends the resulting `ModelAttachment` to
 `Part.behavioural_models` through the journaled pool-library set path. Undo
 currently reverts the part attachment list while retaining the content-addressed
-pool blob; full blob lifecycle cleanup and dedicated operation-vocabulary
-inverses remain pending. Canonical alias:
+pool blob through typed `DetachPoolPartModel` inverse operations; full blob
+lifecycle cleanup remains pending. Canonical alias:
 `datum.library.attach_part_model`.
 
 #### `detach_pool_part_model`
@@ -1761,8 +1728,8 @@ Native pool-library typed authoring compatibility. Removes behavioural model
 attachments from `Part.behavioural_models` by exact attachment UUID or model
 UUID through the same journaled pool-library set path used by attach. Undo
 restores the removed attachment list entry while retaining any
-content-addressed `pool/models` blob; blob garbage collection and dedicated
-operation-vocabulary inverses remain pending. Canonical alias:
+content-addressed `pool/models` blob through typed `AttachPoolPartModel`
+inverse operations; blob garbage collection remains pending. Canonical alias:
 `datum.library.detach_part_model`.
 
 The native CLI read side now exposes `project query <root> pool-models` for
@@ -1844,19 +1811,19 @@ identity mappings for a native project without changing model revision.
 
 #### `get_proposals`
 
-Proposal query compatibility. Returns resolver-discovered proposal sidecars for
+Proposal query compatibility. Returns resolver-discovered proposal records for
 a native project without applying or changing proposal status.
 
 #### `create_proposal`
 
-Proposal authoring compatibility. Creates a draft proposal sidecar from an
+Proposal authoring compatibility. Creates draft proposal metadata from an
 OperationBatch JSON file after stamping or validating the prepared model
 revision guard and dry-running the batch for operation validation. It does not
 mutate source design state.
 
 #### `create_draw_wire_proposal`
 
-Schematic authoring proposal compatibility. Creates a draft proposal sidecar
+Schematic authoring proposal compatibility. Creates draft proposal metadata
 that contains a revision-guarded OperationBatch for drawing one schematic wire
 on a sheet. It maps to `datum-eda proposal create-draw-wire` and returns the
 `proposal_create_v1` contract with a `propose_draw_wire` action. It does not
@@ -1865,7 +1832,7 @@ proposal gateway.
 
 #### `create_place_label_proposal`
 
-Schematic authoring proposal compatibility. Creates a draft proposal sidecar
+Schematic authoring proposal compatibility. Creates draft proposal metadata
 that contains a revision-guarded OperationBatch for placing one schematic label
 on a sheet. It maps to `datum-eda proposal create-place-label` and returns the
 `proposal_create_v1` contract with a `propose_place_label` action. It does not
@@ -1874,17 +1841,49 @@ proposal gateway.
 
 #### `create_place_symbol_proposal`
 
-Schematic authoring proposal compatibility. Creates a draft proposal sidecar
+Schematic authoring proposal compatibility. Creates draft proposal metadata
 that contains a revision-guarded OperationBatch for placing one schematic
 symbol, including optional pool-library materialization inputs. It maps to
 `datum-eda proposal create-place-symbol` and returns the `proposal_create_v1`
 contract with a `propose_place_symbol` action. It does not mutate source design
 state until the proposal is accepted/applied through the proposal gateway.
 
+#### `create_board_component_replacement_proposal`
+
+Board authoring proposal compatibility. Creates draft proposal metadata that
+contains a revision-guarded OperationBatch for replacing one native-project
+board component package, part, and/or value. It maps to `datum-eda proposal
+create-board-component-replacement` and returns the `proposal_create_v1`
+contract with a `propose_board_component_replacement` action. It does not mutate
+source design state until the proposal is accepted/applied through the proposal
+gateway.
+
+#### `create_board_component_replacements_proposal`
+
+Board authoring proposal compatibility. Creates one draft proposal record that
+contains a revision-guarded OperationBatch for replacing multiple
+native-project board component package, part, and/or value sets. It maps to
+`datum-eda proposal create-board-component-replacements` and returns the
+`proposal_create_v1` contract with a `propose_board_component_replacement`
+action. It does not mutate source design state until the proposal is
+accepted/applied through the proposal gateway.
+
+#### `create_board_component_replacement_plan_proposal`
+
+Board authoring proposal compatibility. Creates one draft proposal record from
+legacy replacement-plan shaped selections (`uuid`, optional `package_uuid`,
+optional `part_uuid`, optional `value`) and maps them to the same
+revision-guarded board component replacement OperationBatch used by native
+proposal authoring. It maps to `datum-eda proposal
+create-board-component-replacement-plan` and returns the `proposal_create_v1`
+contract with a `propose_board_component_replacement` action. It does not
+mutate source design state until the proposal is accepted/applied through the
+proposal gateway.
+
 #### `show_proposal`
 
 Proposal inspection compatibility. Returns one resolver-discovered proposal
-sidecar plus current validation state without applying or changing proposal
+record plus current validation state without applying or changing proposal
 status.
 
 #### `preview_proposal`
@@ -1904,22 +1903,22 @@ the prepared revision guard, and whether it can be applied now.
 #### `defer_proposal`
 
 Proposal review compatibility. Persists `deferred` review status for one draft
-proposal sidecar without applying it.
+proposal record without applying it.
 
 #### `reject_proposal`
 
 Proposal review compatibility. Persists `rejected` review status for one draft
-proposal sidecar without applying it.
+proposal record without applying it.
 
 #### `review_proposal`
 
 Proposal review compatibility. Persists `accepted`, `deferred`, or `rejected`
-review status for one draft proposal sidecar without applying it.
+review status for one draft proposal record without applying it.
 
 #### `accept_apply_proposal`
 
 Proposal review/apply compatibility. Persists accepted review status for one
-draft proposal sidecar and then applies it through the generic revision-guarded
+draft proposal record and then applies it through the generic revision-guarded
 proposal gateway.
 
 #### `apply_proposal`
@@ -2025,7 +2024,7 @@ Apply compatibility; target routes through `OperationBatch` and `commit()`.
 | `get_panel_projections`, `create_panel_projection`, `create_panel_projection_proposal`, `update_panel_projection`, `update_panel_projection_proposal`, `delete_panel_projection`, `delete_panel_projection_proposal`, `get_manufacturing_plans`, `create_manufacturing_plan`, `create_manufacturing_plan_proposal`, `update_manufacturing_plan`, `update_manufacturing_plan_proposal`, `delete_manufacturing_plan`, `delete_manufacturing_plan_proposal`, `get_output_jobs`, `create_gerber_output_job`, `create_output_job`, `create_output_job_proposal`, `update_output_job`, `update_output_job_proposal`, `run_output_job`, `start_output_job_run`, `cancel_output_job_run`, `delete_output_job`, `delete_output_job_proposal`, `generate_artifacts`, `get_artifact_files`, `preview_artifact_file`, `export_manufacturing_set`, `validate_manufacturing_set` | Panel/manufacturing/OutputJob/artifact compatibility |
 | `get_relationships`, `get_variants` | Native relationship/variant substrate compatibility |
 | `get_import_map` | Native import provenance substrate compatibility |
-| `create_proposal`, `create_draw_wire_proposal`, `create_place_label_proposal`, `create_place_symbol_proposal`, `get_proposals` | Native proposal substrate compatibility |
+| `create_proposal`, `create_draw_wire_proposal`, `create_place_label_proposal`, `create_place_symbol_proposal`, `create_board_component_replacement_proposal`, `create_board_component_replacements_proposal`, `create_board_component_replacement_plan_proposal`, `get_proposals` | Native proposal substrate compatibility |
 | `show_proposal`, `preview_proposal`, `validate_proposal`, `defer_proposal`, `reject_proposal`, `review_proposal`, `accept_apply_proposal`, `apply_proposal` | Native proposal inspect/preview/validate/defer/reject/review/apply compatibility |
 | `export_route_path_proposal`, `route_proposal`, `review_route_proposal`, `route_proposal_explain`, `route_strategy_*` | Proposal/query compatibility |
 | Batch route strategy artifact methods | Artifact/query/check compatibility, depending on operation |

@@ -165,12 +165,13 @@ namespace, session) are referenced, not restated.
    affected objects, expected-vs-actual, explanation, and suggested
    action. Edit-time vs full-batch is a **mode flag** on this verb; ERC
    and DRC are **domain filters**, not separate tools.
-2. **Operation it emits.** NONE — check execution never mutates design
-   truth (009 step 8). It SHOULD persist a `CheckRun`/`CheckFinding`
-   record keyed by `model_revision` + variant + `input_object_revisions`
-   with a deterministic fingerprint, recorded as generated **evidence**
-   (a derived artifact, not a design op). Current native CheckRun evidence is
-   persisted under `.datum/check_runs`. `explanation` +
+2. **Operation it emits.** Check execution never mutates authored design
+   truth (009 step 8). Persistent check execution SHOULD emit only
+   generated-evidence operations such as `SetCheckRun`, keyed by
+   `model_revision` + variant + `input_object_revisions` with deterministic
+   finding fingerprints. Read-only check query surfaces must not create
+   history. Current native CheckRun evidence is persisted under
+   `.datum/check_runs` by `datum-eda check run`. `explanation` +
    `suggested_next_action` live **on the finding record**, so no separate
    explain tool is needed.
 3. **CLI command.** `datum-eda check run <path> [--fail-on warning|error]
@@ -197,14 +198,13 @@ namespace, session) are referenced, not restated.
    summary counts and a paste/mask `process_geometry` finding carrying
    its explanation inline; assert exit code under `--fail-on`; re-run and
    confirm identical fingerprints.
-8. **Explicitly not-supported-yet.** No persisted `CheckRun`/
-   `CheckFinding` with the revision/variant/`input_object_revisions` key
-   + deterministic fingerprint; not variant-aware (no overlay
-   composition before run, 009 step 2); `run_drc` rule set hard-coded
-   (`dispatch.rs:455`); only one process-geometry category (paste/mask);
-   no declared/inferred/unknown-basis distinction. Current native live and
-   persisted findings already include `explanation` and
-   `suggested_next_action` fields.
+8. **Still not-supported-yet.** Native persisted `CheckRun`/`CheckFinding`
+   records and deterministic fingerprints exist, but full
+   `input_object_revisions` encoding, variant-overlay composition before a
+   run, profile-driven `run_drc`, richer process-geometry categories, and
+   declared/inferred/unknown-basis distinction remain target-state work.
+   Current native live and persisted findings already include
+   `explanation` and `suggested_next_action` fields.
 
 ---
 
@@ -214,22 +214,28 @@ namespace, session) are referenced, not restated.
    and scope. Waived findings stay visible and auditable (KiCad
    exclusion / Allegro waiver analog). Removing a waiver is **undo** of
    this op, not a separate verb.
-2. **Operation it emits.** MUST become an `AddWaiver` Operation through
-   `commit()` + journal (009: waiver creation is an `OperationBatch`).
-   This is a **proposal-first** class action (AI may propose, never
-   silently waive). TODAY there is NO journaled waiver op — `CheckWaiver`
-   lives in `schematic.waivers` and is applied only at run time
-   (`drc/mod.rs:119` `apply_waivers`). **This is the single biggest
-   contract gap in the domain.** Record-as-intent (deviation) is a
-   **disposition value** carried by this same op family, not a separate
-   tool for the first slice (see Minimal-Set Recommendation).
-3. **CLI command.** No waiver verb yet (gap). Proposed taxonomy:
-   `datum-eda check waive --finding <fingerprint> --rationale ...
-   [--disposition suppress|accepted-deviation] [--expires <date>]`.
-4. **MCP/AI tool.** NONE yet (gap). Per 009 AI may PROPOSE a waiver but
-   may not silently waive — so this is a **proposal-producing** surface
-   (routes through the shared `DatumProposalTool`), not a direct AI
-   write.
+2. **Operation it emits.** Current implementation authors
+   fingerprint-scoped waivers through `Operation::CreateSchematicWaiver`
+   and removes them through `Operation::DeleteSchematicWaiver`. Accepted
+   deviations are a sibling operation family
+   (`CreateSchematicDeviation` / `DeleteSchematicDeviation`), not silent
+   finding deletion. Both paths commit through `OperationBatch` and the
+   append-only journal, update the schematic root source shard, and
+   participate in resolver replay, undo, and redo. AI may propose these
+   actions, but must not silently waive or accept a deviation without an
+   explicit reviewed command/proposal path.
+3. **CLI command.** Implemented native compatibility commands:
+   `datum-eda project waive-finding <root> --fingerprint <sha256:...>
+   --rationale <text>` and `datum-eda project accept-deviation <root>
+   --fingerprint <sha256:...> --rationale <text>`. Canonical check-family
+   aliases are documented in `specs/MCP_API_SPEC.md`; richer expiry and
+   review-policy metadata remain target-state extensions.
+4. **MCP/AI tool.** Implemented compatibility MCP methods
+   `waive_finding` / `accept_deviation` and canonical
+   `datum.check.waive` / `datum.check.accept_deviation` bridge to the same
+   journaled CLI path. Policy remains: AI may propose or execute an
+   explicitly requested reviewed action, but may not hide findings
+   silently.
 5. **AI query/context needed.** Finding **fingerprint(s)** to cover (NOT
    `(domain, index)`); rationale; actor; scope; the `model_revision` the
    waiver is approved against; disposition (suppress vs
@@ -238,16 +244,16 @@ namespace, session) are referenced, not restated.
    fingerprint; it must not flip error->ok silently (the summary keeps a
    waived count — `check_summary.rs` already tracks `waived`); waived
    findings stay visible in the report.
-7. **Proof slice.** `datum-test`: waive one DRC finding with rationale
-   via a committed op; re-run check; confirm it moves to **waived** (not
-   removed) and is journaled/undoable.
-8. **Explicitly not-supported-yet.** No waiver-creation Operation/
-   `TransactionRecord`; `CheckWaiver` (`schematic/mod.rs:375`) has only
-   `uuid`/`domain`/`target`/`rationale`/`created_by` — no `expires_at`/
-   `review_policy`/`acceptance_transaction_id`/`disposition`; target is
-   keyed by raw object `Uuid` + rule string (`WaiverTarget`), not by a
-   deterministic finding fingerprint; finding state is only `waived:
-   bool` (no `Deviated`/`Resolved`/`Stale`/`Superseded` enum).
+7. **Proof slice.** Regression coverage must continue to prove that a
+   waiver/deviation authored by command is journaled, visible in
+   `project query <root> check-run`, keeps the finding present with
+   `status=waived` or `status=accepted_deviation`, and can be undone/redone
+   through the journal.
+8. **Still not-supported-yet.** Waiver/deviation metadata is intentionally
+   thin: no `expires_at`, `review_policy`, or explicit
+   `acceptance_transaction_id` field on the waiver/deviation record yet.
+   Richer stale/superseded lifecycle states beyond current waived and
+   accepted-deviation reporting remain target-state work.
 
 ---
 
@@ -265,14 +271,16 @@ namespace, session) are referenced, not restated.
    Underlying ops REUSE existing typed ops (e.g. `set_design_rule` /
    pin-pad-map assign) — `propose_repair` is a grouping/proposal
    generator, **not a new mutation op**.
-3. **CLI command.** No dedicated proposal generator yet (gap); routes
-   through the generic proposal surface —
-   `crates/cli/src/command_project_route_proposal.rs` is the established
-   precedent to mirror (`datum-eda proposal create|show|validate|apply`).
-4. **MCP/AI tool.** NONE yet (gap). This is the primary AI value-add:
-   group related findings and propose bounded repairs; must list
-   `expected_resolved_findings` + `expected_remaining` (009). Routes
-   through the shared `DatumProposalTool`.
+3. **CLI command.** First standards repair generation exists for process
+   aperture pad fixes, track width, and via geometry. It must keep routing
+   through the generic proposal/review/apply gateway; broader repair
+   families and richer expected-resolved/expected-remaining proof remain
+   expansion work.
+4. **MCP/AI tool.** `datum.check.repair_standards` and the compatibility
+   `generate_standards_repair_proposals` method generate draft repair
+   proposals. This is the primary AI value-add: group related findings and
+   propose bounded repairs while listing affected findings and expected
+   outcome. It routes through the shared `DatumProposalTool`.
 5. **AI query/context needed.** The source `CheckRun` id + finding
    fingerprints; affected `ObjectId`s via `ComponentInstance`; the rule
    basis; the `model_revision` the proposal is built against.
@@ -280,13 +288,14 @@ namespace, session) are referenced, not restated.
    `expected_resolved_findings` and produce no unexpected new errors
    (proposal-parity gate); repairs target `ComponentInstance`/`ObjectId`,
    never refdes/names (009).
-7. **Proof slice.** `datum-test`: from a paste-aperture finding, propose
-   `SetPadProcessAperture`, preview the diff, accept, re-run, confirm the
-   finding clears and the transaction is journaled/undoable.
-8. **Explicitly not-supported-yet.** No `RepairProposal` type; no
-   proposal-from-finding generator; no proposal-parity harness for
-   checks; the only existing proposal machinery is for routing
-   (`command_project_route_proposal.rs`), not checks.
+7. **Proof slice.** From a process-aperture, track-width, or via-geometry
+   finding, generate a standards repair proposal, preview/apply it through
+   the proposal gateway, re-run checks, and confirm the expected finding
+   clears while the transaction remains journaled/undoable.
+8. **Still not-supported-yet.** Repair proposal breadth is incomplete:
+   check-derived proposal parity needs stronger expected-resolved /
+   expected-remaining regressions, and additional standards families
+   beyond pad/track/via remain target-state work.
 
 ## Minimal-Set Recommendation
 
@@ -294,12 +303,16 @@ namespace, session) are referenced, not restated.
 (`set_rule`), RUN checks and read findings (`run_check`), SUPPRESS/ACCEPT
 a finding (`waive_finding`), and FIX a finding (`propose_repair`).
 
-- `set_rule` and `run_check` exist in the engine and need **extension**:
-  `severity` + `basis_refs` on the rule; a persisted variant/revision-
-  keyed `CheckRun` with stable-fingerprint addressing and inline
-  explanation.
-- `waive_finding` and `propose_repair` are **real gaps** and are the two
-  journaled/proposal mutation surfaces 009 requires.
+- `set_rule` and `run_check` exist and need **extension**:
+  richer `severity` + `basis_refs` on the rule; broader persisted
+  variant/revision/profile coverage; and standards basis categories beyond
+  the current implemented repair/check families.
+- `waive_finding` exists as a journaled fingerprint-scoped native command
+  and MCP/check alias. `accept_deviation` is a sibling journaled command,
+  not a hidden waiver disposition.
+- `propose_repair` exists for the first standards repair families
+  (process aperture pad fixes, track width, and via geometry) and remains
+  the expansion point for additional check-derived repair proposals.
 
 Everything else is a **parameter, not a tool**:
 
@@ -329,16 +342,13 @@ the load-bearing lean decisions for this domain.
   the violations panel/report, not a separate command, so no new CLI
   verb is warranted.
 
-- **`record_deviation` (as a separate tool in the first slice).**
-  Merged into `waive_finding` as a `disposition` value (`suppress` |
-  `accepted-deviation`). 009 and the 003 `ElectricalDeviation` note
-  explicitly defer the standalone `Deviation` primitive to an
-  owner-review FORK and direct first-slice behavior to
-  accepted-deviation metadata on existing records. A deviation differs
-  from a waiver only by disposition + `basis_ref` and would otherwise
-  duplicate the same proposal->commit->journal path with the same
-  fingerprint addressing. Graduates to its own tool ONLY after the owner
-  ratifies the primitive and its approval state machine.
+- **`record_deviation` (as a separate new tool name).**
+  Cut for now. The implemented surface is `accept_deviation`: a sibling
+  journaled operation family for fingerprint-scoped accepted deviations.
+  It shares the same explicit approval/provenance and check-run visibility
+  requirements as waivers, but is not modeled as silent suppression. A
+  richer standalone `Deviation` primitive graduates only after the owner
+  ratifies its schema and approval state machine.
 
 - **`run_erc` / `run_drc` as separate top-level tools.** Redundant.
   Both exist (`dispatch.rs:451/455`) but are domain-filtered,
@@ -398,18 +408,21 @@ and **not restated** here:
   domain; `run_erc`/`run_drc` are its compatibility aliases. CheckRun/
   CheckFinding revision/fingerprint-keyed; determinism and ZoneFill-
   honesty gates apply.
-- **`DatumProposalTool`** — `waive_finding` (`AddWaiver`) and
-  `propose_repair` (`RepairProposal`) are proposal PRODUCERS that reuse
-  existing typed ops; they do not define their own apply path.
-- **`DatumCommitTool`** — the SOLE mutation gateway. `SetDesignRule`,
-  `AddWaiver`, and accepted repair batches all flow through the one
-  `commit()`. No rules-domain private write path.
+- **`DatumProposalTool`** — standards repair proposal generation is a
+  proposal producer that reuses existing typed ops. Waiver/deviation
+  commands are currently explicit journaled review actions; if policy
+  later requires proposal-first disposition, it must reuse the same proposal
+  gateway and not define a private apply path.
+- **`DatumCommitTool`** — the SOLE mutation gateway. Rules edits,
+  waiver/deviation operations, and accepted repair batches all flow through
+  `OperationBatch` + journaled commit. No rules-domain private write path.
 - **`DatumArtifactTool`** — not used by this domain (checks are derived
   evidence, not artifacts), except that a persisted `CheckRun` is
   recorded as derived evidence via `commit()`.
-- **`DatumJournalTool`** — undo/redo of a `SetDesignRule`/`AddWaiver`/
-  repair transaction is a compensating batch through the same `commit()`.
-  This domain ships NO `clear_waiver`/`delete_deviation` verb.
+- **`DatumJournalTool`** — undo/redo of rules, waiver/deviation, and
+  repair transactions is a compensating batch through the same commit path.
+  This domain ships no separate public `clear_waiver`/`delete_deviation`
+  verb beyond journal undo/redo and the internal inverse operation family.
 
 ## Proof Slice & Fixture
 
@@ -428,20 +441,20 @@ First-slice proof (per 009):
    explain call). Assert the exit code under `--fail-on`. Re-run and
    assert **identical finding fingerprints** at the same `model_revision`
    (determinism gate).
-4. Exercise the two missing gates:
-   - a committed/journaled `waive_finding` (use
-     `disposition=accepted-deviation` on the same path to prove the
-     merged deviation case), confirming the finding moves to **waived**
-     (not removed) and is undoable;
-   - a `propose_repair` (`SetPadProcessAperture`) that clears the
-     finding on re-run and is undoable (proposal-parity gate: exactly
-     the expected-resolved set clears, no new errors).
+4. Exercise the disposition and repair gates:
+   - committed/journaled `waive_finding` and `accept_deviation`, confirming
+     the finding remains visible with **waived** or
+     **accepted_deviation** status and is undoable/redoable;
+   - a standards repair proposal, then accept/apply it and confirm the
+     expected finding clears on re-run without introducing unrelated
+     failures.
 
 ## Not-Yet-Supported
 
-- No persisted `CheckRun`/`CheckFinding` keyed by `model_revision` +
-  variant + `input_object_revisions` with a deterministic fingerprint —
-  reports are ephemeral today.
+- Persisted `CheckRun`/`CheckFinding` records and deterministic
+  fingerprints exist for native check runs, but richer
+  `input_object_revisions` encoding and full target-state profile/variant
+  breadth remain incomplete.
 - Not variant-aware: no overlay composition before a run (009 step 2).
 - `run_drc`'s rule set is hard-coded in the daemon
   (`dispatch.rs:455-463`) instead of taking a `CheckProfile`.
@@ -453,13 +466,16 @@ First-slice proof (per 009):
 - Combinator/regex/`IsDiffpair` scopes parse but error on eval
   (`ast.rs:18-32`); impedance/length-match/diffpair `rule_type`s absent
   (`ast.rs:45`).
-- No waiver-creation Operation; `CheckWaiver` lacks `expires_at`/
-  `review_policy`/`acceptance_transaction_id`/`disposition` and is keyed
-  by raw object `Uuid` + rule string, not by finding fingerprint.
-- Finding state is only `waived: bool` (no `Deviated`/`Resolved`/
-  `Stale`/`Superseded` enum).
-- No `RepairProposal` type, no proposal-from-finding generator, no
-  proposal-parity harness for checks.
+- Waiver/deviation operations exist for fingerprint-scoped native check
+  findings, but `CheckWaiver`/accepted-deviation records still lack
+  `expires_at`, `review_policy`, and explicit
+  `acceptance_transaction_id` fields.
+- Finding state now reports waived and accepted-deviation status through
+  normalized `CheckFinding` records; richer `Resolved` / `Stale` /
+  `Superseded` lifecycle states remain target-state work.
+- Standards repair proposal generation exists for pad process aperture,
+  track width, and via geometry; broader repair families and stronger
+  proposal-parity harnesses remain target-state work.
 - `set_rule` still mutates `board.rules` in place
   (`assign_package_rule.rs:272`) rather than writing a rules source
   shard.
@@ -470,19 +486,15 @@ First-slice proof (per 009):
    / library-release / manufacturing-sign-off), and is profile selection
    a CLI/MCP parameter or a stored project object? (009 leaves this
    open.)
-2. Waiver creation must become a journaled `AddWaiver` Operation (today
-   it is not). Is the target keyed by deterministic finding fingerprint
-   (preferred for stability) or by the current raw object-uuid + rule-
-   string `WaiverTarget` (`schematic/mod.rs:375`)? Extending
-   `CheckWaiver` with `expires_at`/`review_policy`/
-   `acceptance_transaction_id`/`disposition` is required.
-3. **Ratification fork:** for the first slice, deviation is merged into
-   `waive_finding` as `disposition=accepted-deviation` (per the 003
-   `ElectricalDeviation` owner-review fork). Does the owner ratify the
-   standalone `Deviation` primitive + approval state machine + a
-   `Deviated` finding state now (graduating `record_deviation` to its own
-   tool), or keep accepted-deviation metadata on the waiver record until
-   later?
+2. Waiver/deviation metadata expansion remains open: which of
+   `expires_at`, `review_policy`, approver identity, and explicit
+   `acceptance_transaction_id` are required for the next production slice,
+   and which are deferred until release governance?
+3. **Ratification fork:** accepted deviations are currently a sibling
+   journaled operation family and check-run status, not a hidden waiver
+   disposition. Does the owner ratify a standalone `Deviation` primitive +
+   approval state machine + richer lifecycle states now, or keep the
+   current fingerprint-scoped accepted-deviation record until later?
 4. Default severities for standards-aware process-geometry findings, and
    whether unknown-basis imported footprints fail / warn / group as
    audit findings (009 owner question).

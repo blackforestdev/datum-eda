@@ -82,5 +82,6 @@ fn project_query_import_map_is_resolver_backed_and_non_mutating() {
         report["entries"]["kicad:board:root"]["source_hash"],
         "fixture-source-hash"
     );
+    assert_eq!(report["entries"]["kicad:board:root"]["status"], "active");
     assert_eq!(std::fs::read(board_path).unwrap(), board_before);
 }

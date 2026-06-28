@@ -8,8 +8,9 @@ use eda_engine::substrate::{
 use uuid::Uuid;
 
 use super::{
-    NativeProjectBoardComponentMutationReportView, load_native_project_with_resolved_board,
-    native_project_board_component_report,
+    NativeProjectBoardComponentMutationReportView,
+    command_project_operation_guards::guarded_existing_object_operation,
+    load_native_project_with_resolved_board, native_project_board_component_report,
 };
 
 pub(crate) fn set_native_project_board_component_layer(
@@ -29,10 +30,13 @@ pub(crate) fn set_native_project_board_component_layer(
                 source: CommitSource::Cli,
                 reason: "set board component layer".to_string(),
             },
-            operations: vec![Operation::SetComponentSide {
-                package_id: component_uuid,
-                layer,
-            }],
+            operations: guarded_existing_object_operation(
+                &model,
+                Operation::SetComponentSide {
+                    package_id: component_uuid,
+                    layer,
+                },
+            )?,
         },
     )?;
 

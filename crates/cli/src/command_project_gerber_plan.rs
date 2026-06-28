@@ -8,10 +8,10 @@ use crate::{
 use anyhow::{Context, Result};
 use eda_engine::board::StackupLayer;
 use eda_engine::substrate::{
-    persist_artifact_metadata, persist_output_job_run, ArtifactFile, ArtifactKind,
-    ArtifactMetadata, ArtifactProductionProjection, ArtifactValidationState, DesignModel,
-    OutputJobLogEntry, OutputJobLogLevel, OutputJobRun, OutputJobRunStatus, PanelProjection,
-    ProjectResolver,
+    ARTIFACT_METADATA_SCHEMA_VERSION, ArtifactFile, ArtifactKind, ArtifactMetadata,
+    ArtifactProductionProjection,
+    ArtifactValidationState, DesignModel, OutputJobLogEntry, OutputJobLogLevel, OutputJobRun,
+    OutputJobRunStatus, PanelProjection, ProjectResolver, OUTPUT_JOB_RUN_SCHEMA_VERSION,
 };
 use uuid::Uuid;
 
@@ -19,6 +19,8 @@ use uuid::Uuid;
 mod command_project_direct_export_gate;
 #[path = "command_project_gerber_panel.rs"]
 mod command_project_gerber_panel;
+#[path = "command_project_gerber_evidence.rs"]
+mod command_project_gerber_evidence;
 #[path = "command_project_output_log.rs"]
 mod command_project_output_log;
 
@@ -27,6 +29,7 @@ pub(crate) use self::command_project_gerber_panel::panelize_rs274x_gerber;
 use self::command_project_gerber_panel::{
     panel_gerber_production_projection, panelize_and_rewrite_rs274x_gerber_file,
 };
+use self::command_project_gerber_evidence::{artifact_metadata_path, commit_gerber_set_evidence};
 pub(crate) use self::command_project_output_log::{
     append_production_projection_log_entries, terminal_origin_log_entries_from,
     terminal_origin_provenance_from,
@@ -143,9 +146,14 @@ pub(crate) fn export_native_project_gerber_set_from_plan(
     }
     std::fs::create_dir_all(output_dir)
         .with_context(|| format!("failed to create {}", output_dir.display()))?;
-    let (output_job, _, _, _) =
-        ensure_native_project_gerber_set_output_job(root, &plan.prefix, None, None, None, None)?;
-    let model = ProjectResolver::new(root).resolve()?;
+    let output_job = if persist_output_run {
+        let (output_job, _, _, _) =
+            ensure_native_project_gerber_set_output_job(root, &plan.prefix, None, None, None, None)?;
+        Some(output_job)
+    } else {
+        None
+    };
+    let mut model = ProjectResolver::new(root).resolve()?;
     let mut artifacts = Vec::new();
     let mut artifact_files = Vec::new();
     let mut production_projections = Vec::new();
@@ -207,14 +215,13 @@ pub(crate) fn export_native_project_gerber_set_from_plan(
     let artifact_metadata = gerber_set_artifact_metadata(
         &model,
         &plan.prefix,
-        Some(output_job.id),
+        output_job.as_ref().map(|job| job.id),
         output_dir,
         artifact_files,
         production_projections,
     );
-    let artifact_manifest_path = persist_artifact_metadata(root, &artifact_metadata)
-        .context("failed to persist artifact metadata")?;
     let (output_job_run, output_job_run_path) = if persist_output_run {
+        let output_job = output_job.expect("persisted Gerber export should have an OutputJob");
         let run = gerber_set_output_job_run(
             &model,
             output_job.id,
@@ -222,11 +229,16 @@ pub(crate) fn export_native_project_gerber_set_from_plan(
             artifacts.len(),
             &artifact_metadata.production_projections,
         );
-        let path = persist_output_job_run(root, &run).context("failed to persist output job run")?;
+        let (_, path) =
+            commit_gerber_set_evidence(root, &mut model, &artifact_metadata, Some(&run))
+                .context("failed to persist Gerber set generated evidence")?;
         (Some(run), Some(path.display().to_string()))
     } else {
+        commit_gerber_set_evidence(root, &mut model, &artifact_metadata, None)
+            .context("failed to persist Gerber set artifact metadata")?;
         (None, None)
     };
+    let artifact_manifest_path = artifact_metadata_path(root, artifact_metadata.artifact_id);
 
     Ok(NativeProjectGerberSetExportView {
         action: "export_gerber_set".to_string(),
@@ -524,6 +536,7 @@ fn gerber_set_artifact_metadata(
     }
 
     ArtifactMetadata {
+        schema_version: ARTIFACT_METADATA_SCHEMA_VERSION,
         artifact_id: Uuid::new_v5(&model.project.project_id, material.as_bytes()),
         kind: ArtifactKind::GerberSet,
         project_id: model.project.project_id,
@@ -571,6 +584,7 @@ fn gerber_set_output_job_run(
     log.extend(terminal_origin_log_entries_from(&env, 2));
     append_production_projection_log_entries(&mut log, production_projections);
     OutputJobRun {
+        schema_version: OUTPUT_JOB_RUN_SCHEMA_VERSION,
         run_id: Uuid::new_v5(&model.project.project_id, material.as_bytes()),
         output_job,
         run_sequence,
@@ -597,7 +611,7 @@ fn update_gerber_set_artifact_validation(
     plan: &NativeProjectGerberPlanView,
     geometry_matches: bool,
 ) -> Result<Option<GerberSetArtifactValidation>> {
-    let model = ProjectResolver::new(root).resolve()?;
+    let mut model = ProjectResolver::new(root).resolve()?;
     let expected_files = plan
         .artifacts
         .iter()
@@ -637,8 +651,9 @@ fn update_gerber_set_artifact_validation(
     } else {
         ArtifactValidationState::Invalid
     };
-    let manifest_path = persist_artifact_metadata(root, &metadata)
-        .context("failed to persist artifact metadata")?;
+    let manifest_path = commit_gerber_set_evidence(root, &mut model, &metadata, None)
+        .context("failed to persist artifact metadata")?
+        .0;
     let validation_state = match metadata.validation_state {
         ArtifactValidationState::NotValidated => "not_validated",
         ArtifactValidationState::Valid => "valid",

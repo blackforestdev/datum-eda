@@ -323,6 +323,38 @@ fn project_forward_annotation_review_persists_defer_and_reject_by_action_id() {
     .expect("review sidecar should parse");
     assert_eq!(sidecar["schema_version"], 1);
     assert_eq!(sidecar["reviews"].as_object().unwrap().len(), 1);
+    let journal_log = std::fs::read_to_string(root.join(".datum/journal/transactions.jsonl"))
+        .expect("transaction journal should read");
+    let last_transaction: serde_json::Value = serde_json::from_str(
+        journal_log
+            .lines()
+            .last()
+            .expect("journal should contain review transaction"),
+    )
+    .expect("review transaction should parse");
+    assert_eq!(
+        last_transaction["operations"][0]["kind"],
+        "set_forward_annotation_review"
+    );
+    std::fs::remove_file(root.join(".datum/forward_annotation_review/review.json"))
+        .expect("promoted review sidecar should remove");
+    let replayed_review_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "forward-annotation-review",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("review query should replay missing journaled sidecar");
+    let replayed_review: serde_json::Value =
+        serde_json::from_str(&replayed_review_output).expect("replayed review JSON");
+    assert_eq!(replayed_review["total_reviews"], 1);
+    assert_eq!(replayed_review["actions"][0]["action_id"], reject_action_id);
 
     let _ = std::fs::remove_dir_all(&root);
 }
@@ -367,6 +399,63 @@ fn project_forward_annotation_review_rejects_unknown_clear_action_id() {
     let err = execute(clear_cli).expect_err("unknown review clear should fail");
     let msg = format!("{err:#}");
     assert!(msg.contains("forward-annotation review action not found"));
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_forward_annotation_review_fallback_reads_resolver_materialized_manifest() {
+    let root = unique_project_root("datum-eda-cli-project-forward-annotation-review-fallback");
+    create_native_project(
+        &root,
+        Some("Forward Annotation Review Fallback".to_string()),
+    )
+    .expect("initial scaffold should succeed");
+    let project_json = root.join("project.json");
+    let mut manifest: serde_json::Value = serde_json::from_slice(
+        &std::fs::read(&project_json).expect("project manifest should read"),
+    )
+    .expect("project manifest JSON should parse");
+    manifest["forward_annotation_review"] = serde_json::json!({
+        "sha256:legacy": {
+            "action_id": "sha256:legacy",
+            "decision": "rejected",
+            "proposal_action": "remove_component",
+            "reference": "U1",
+            "reason": "board_component_missing_in_schematic"
+        }
+    });
+    std::fs::write(
+        &project_json,
+        format!(
+            "{}\n",
+            to_json_deterministic(&manifest).expect("manifest should serialize")
+        ),
+    )
+    .expect("project manifest should write");
+
+    let review_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "forward-annotation-review",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("review query should succeed");
+    let review: serde_json::Value = serde_json::from_str(&review_output).expect("review JSON");
+    assert_eq!(review["total_reviews"], 1);
+    assert_eq!(review["rejected_actions"], 1);
+    assert_eq!(review["actions"][0]["action_id"], "sha256:legacy");
+    assert!(
+        !root
+            .join(".datum/forward_annotation_review/review.json")
+            .exists()
+    );
 
     let _ = std::fs::remove_dir_all(&root);
 }

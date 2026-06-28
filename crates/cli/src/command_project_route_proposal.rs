@@ -57,7 +57,7 @@ const ROUTE_STRATEGY_BATCH_RESULT_KIND: &str = "native_route_strategy_batch_resu
 const ROUTE_STRATEGY_BATCH_RESULT_VERSION: u32 = 1;
 const ROUTE_STRATEGY_CURATED_FIXTURE_SUITE_ID: &str = "m6_route_strategy_curated_fixture_suite_v1";
 const ROUTE_STRATEGY_FIXTURE_AUTHORING_BOUNDARY: &str = "generated_fixture_only";
-const ROUTE_STRATEGY_FIXTURE_WRITE_PATH_POLICY: &str = "direct project-shard writes are restricted to deterministic regression fixture generation";
+#[rustfmt::skip] const ROUTE_STRATEGY_FIXTURE_WRITE_PATH_POLICY: &str = "direct project-shard writes are restricted to deterministic regression fixture generation";
 const ROUTE_PROPOSAL_REASON_AUTHORED_COPPER_PLUS_ONE_GAP: &str = "authored_copper_plus_one_gap";
 const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE: &str = "route_path_candidate";
 const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_VIA: &str = "route_path_candidate_via";
@@ -66,8 +66,7 @@ const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_THREE_VIA: &str = "route_path_c
 const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_FOUR_VIA: &str = "route_path_candidate_four_via";
 const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_FIVE_VIA: &str = "route_path_candidate_five_via";
 const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_SIX_VIA: &str = "route_path_candidate_six_via";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_VIA_CHAIN: &str =
-    "route_path_candidate_authored_via_chain";
+#[rustfmt::skip] const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_VIA_CHAIN: &str = "route_path_candidate_authored_via_chain";
 const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_DOGLEG: &str =
     "route_path_candidate_orthogonal_dogleg";
 const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_TWO_BEND: &str =
@@ -238,7 +237,7 @@ fn export_route_proposal_artifact(
     action: &str,
     actions: Vec<NativeProjectRouteProposalActionView>,
 ) -> Result<NativeProjectRouteProposalExportReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let segment_evidence =
         orthogonal_graph_route_proposal_artifact_inspection_segment_evidence(&actions);
     let selected_path_bend_count = actions
@@ -879,6 +878,7 @@ pub(crate) fn report_native_project_route_strategy_delta(
     })
 }
 
+#[rustfmt::skip]
 fn write_route_strategy_batch_requests_manifest(path: &Path, requests: &[RouteStrategyBatchRequestInput]) -> Result<()> {
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent)
@@ -1305,6 +1305,7 @@ pub(crate) fn write_route_strategy_curated_fixture_suite(
     })
 }
 
+#[rustfmt::skip]
 pub(crate) fn capture_route_strategy_curated_baseline(out_dir: &Path, manifest_path_override: Option<&Path>, result_path_override: Option<&Path>) -> Result<NativeProjectRouteStrategyCuratedBaselineCaptureView> {
     let suite = write_route_strategy_curated_fixture_suite(out_dir, manifest_path_override)?;
     let result_artifact_path = result_path_override
@@ -3062,22 +3063,19 @@ pub(crate) fn apply_route_proposal_artifact(
             loaded.artifact.contract
         );
     }
-    let proposal = loaded.artifact.proposal.clone().ok_or_else(|| anyhow::anyhow!(
-        "route proposal artifact {} is missing accepted proposal metadata; re-export the proposal before apply",
-        loaded.artifact_path.display()
-    ))?;
-    if proposal.status != eda_engine::substrate::ProposalStatus::Accepted {
-        bail!(
-            "route proposal artifact {} has proposal status {:?}; expected accepted before apply",
-            loaded.artifact_path.display(),
-            proposal.status
-        );
-    }
-    let applied = super::command_project_route_proposal_substrate::apply_route_proposal(
-        root,
-        &loaded.artifact.actions,
-        proposal,
-    )?;
+    #[rustfmt::skip]
+    let has_mutating_actions = loaded.artifact.actions.iter().any(|action| action.proposal_action == "draw_track");
+    #[rustfmt::skip]
+    let applied = if let Some(proposal) = loaded.artifact.proposal.clone() {
+        if proposal.status != eda_engine::substrate::ProposalStatus::Accepted {
+            bail!("route proposal artifact {} has proposal status {:?}; expected accepted before apply", loaded.artifact_path.display(), proposal.status);
+        }
+        super::command_project_route_proposal_substrate::apply_route_proposal(root, &loaded.artifact.actions, proposal)?
+    } else if has_mutating_actions {
+        bail!("route proposal artifact {} is missing accepted proposal metadata; re-export the proposal before apply", loaded.artifact_path.display());
+    } else {
+        Vec::new()
+    };
 
     Ok(NativeProjectRouteProposalArtifactApplyView {
         action: "apply_route_proposal_artifact".to_string(),

@@ -1,5 +1,4 @@
-use std::path::Component;
-use std::path::Path;
+use std::path::{Component, Path};
 
 use anyhow::{Context, Result, bail};
 use eda_engine::substrate::{Operation, ProjectResolver};
@@ -7,9 +6,9 @@ use uuid::Uuid;
 
 use super::command_project_library::{
     NativeProjectPoolLibraryObjectMutationView, commit_pool_library_operations,
-    pool_library_mutation_view, pool_library_relative_path, read_pool_library_object_payload,
-    validate_project_local_pool_path,
+    pool_library_mutation_view, pool_library_relative_path, validate_project_local_pool_path,
 };
+use super::command_project_library_payload::read_project_pool_object_payload;
 
 pub(crate) fn set_native_project_pool_package_courtyard_rect(
     root: &Path,
@@ -24,7 +23,7 @@ pub(crate) fn set_native_project_pool_package_courtyard_rect(
     let vertices = courtyard_rect_vertices(min_x_nm, min_y_nm, max_x_nm, max_y_nm)?;
     ensure_pool_package_exists(root, package_id)?;
     let relative_path = pool_library_relative_path(pool_path, "packages", package_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), package_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, package_id)?;
     let mut object = previous_object.clone();
     object
         .as_object_mut()
@@ -67,7 +66,7 @@ pub(crate) fn set_native_project_pool_package_courtyard_polygon(
     }
     ensure_pool_package_exists(root, package_id)?;
     let relative_path = pool_library_relative_path(pool_path, "packages", package_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), package_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, package_id)?;
     let mut object = previous_object.clone();
     object
         .as_object_mut()
@@ -117,7 +116,7 @@ pub(crate) fn add_native_project_pool_package_silkscreen_line(
     }
     ensure_pool_package_exists(root, package_id)?;
     let relative_path = pool_library_relative_path(pool_path, "packages", package_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), package_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, package_id)?;
     let mut object = previous_object.clone();
     append_silkscreen_primitive(
         &mut object,
@@ -173,7 +172,7 @@ pub(crate) fn add_native_project_pool_package_silkscreen_rect(
     }
     ensure_pool_package_exists(root, package_id)?;
     let relative_path = pool_library_relative_path(pool_path, "packages", package_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), package_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, package_id)?;
     let mut object = previous_object.clone();
     append_silkscreen_primitive(
         &mut object,
@@ -225,7 +224,7 @@ pub(crate) fn add_native_project_pool_package_silkscreen_circle(
     }
     ensure_pool_package_exists(root, package_id)?;
     let relative_path = pool_library_relative_path(pool_path, "packages", package_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), package_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, package_id)?;
     let mut object = previous_object.clone();
     append_silkscreen_primitive(
         &mut object,
@@ -279,7 +278,7 @@ pub(crate) fn add_native_project_pool_package_silkscreen_arc(
     }
     ensure_pool_package_exists(root, package_id)?;
     let relative_path = pool_library_relative_path(pool_path, "packages", package_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), package_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, package_id)?;
     let mut object = previous_object.clone();
     append_silkscreen_primitive(
         &mut object,
@@ -337,7 +336,7 @@ pub(crate) fn add_native_project_pool_package_silkscreen_polygon(
     }
     ensure_pool_package_exists(root, package_id)?;
     let relative_path = pool_library_relative_path(pool_path, "packages", package_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), package_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, package_id)?;
     let mut object = previous_object.clone();
     append_silkscreen_primitive(
         &mut object,
@@ -385,7 +384,7 @@ pub(crate) fn add_native_project_pool_package_silkscreen_text(
     }
     ensure_pool_package_exists(root, package_id)?;
     let relative_path = pool_library_relative_path(pool_path, "packages", package_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), package_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, package_id)?;
     let mut object = previous_object.clone();
     append_silkscreen_primitive(
         &mut object,
@@ -448,7 +447,7 @@ pub(crate) fn add_native_project_pool_package_model_3d(
     )?;
     ensure_pool_package_exists(root, package_id)?;
     let relative_path = pool_library_relative_path(pool_path, "packages", package_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), package_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, package_id)?;
     let mut object = previous_object.clone();
     append_model_3d(
         &mut object,
@@ -496,7 +495,7 @@ pub(crate) fn set_native_project_pool_package_body_heights(
     validate_optional_positive_height(body_height_mounted_nm, "body-height-mounted-nm")?;
     ensure_pool_package_exists(root, package_id)?;
     let relative_path = pool_library_relative_path(pool_path, "packages", package_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), package_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, package_id)?;
     let mut object = previous_object.clone();
     let object_map = object
         .as_object_mut()

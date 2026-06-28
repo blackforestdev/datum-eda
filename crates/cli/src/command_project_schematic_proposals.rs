@@ -77,7 +77,7 @@ pub(crate) fn propose_place_native_project_symbol(
     proposal_id: Option<Uuid>,
     rationale: Option<&str>,
 ) -> Result<NativeProjectSymbolProposalView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let sheet_key = sheet_uuid.to_string();
     let relative_path =
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
@@ -169,7 +169,7 @@ pub(crate) fn propose_place_native_project_label(
     proposal_id: Option<Uuid>,
     rationale: Option<&str>,
 ) -> Result<NativeProjectLabelProposalView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let sheet_key = sheet_uuid.to_string();
     let relative_path =
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
@@ -244,7 +244,7 @@ pub(crate) fn propose_draw_native_project_wire(
     proposal_id: Option<Uuid>,
     rationale: Option<&str>,
 ) -> Result<NativeProjectWireProposalView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let sheet_key = sheet_uuid.to_string();
     let relative_path =
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {

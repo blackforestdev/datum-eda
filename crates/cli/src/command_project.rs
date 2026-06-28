@@ -16,8 +16,7 @@ mod command_project_board_layout;
 mod command_project_board_netclass_dimension;
 #[path = "command_project_board_pad.rs"]
 mod command_project_board_pad;
-#[path = "command_project_board_routing_net.rs"]
-mod command_project_board_routing_net;
+#[rustfmt::skip] #[path = "command_project_board_routing_net.rs"] mod command_project_board_routing_net;
 #[path = "command_project_default_stackup.rs"]
 mod command_project_default_stackup;
 #[path = "command_project_drill.rs"]
@@ -55,10 +54,10 @@ mod command_project_native_inspect;
 mod command_project_native_surface;
 #[path = "command_project_native_types.rs"]
 mod command_project_native_types;
+#[rustfmt::skip] #[path = "command_project_operation_guards.rs"] mod command_project_operation_guards;
 #[path = "command_project_pool_materialization.rs"]
 mod command_project_pool_materialization;
-#[path = "command_project_pool_query.rs"]
-mod command_project_pool_query;
+#[rustfmt::skip] #[path = "command_project_pool_query.rs"] mod command_project_pool_query;
 #[path = "command_project_prelude.rs"]
 mod command_project_prelude;
 #[path = "command_project_project_core.rs"]

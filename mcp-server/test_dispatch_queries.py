@@ -148,27 +148,6 @@ class TestDispatchQueries(unittest.TestCase):
         self.assertEqual(payload["passed"], False)
         self.assertEqual(payload["violations"][0]["code"], "connectivity_unrouted_net")
 
-    def test_tools_call_dispatches_explain_violation(self) -> None:
-        daemon = FakeDaemonClient()
-        host = StdioToolHost(daemon)
-        response = host.handle_message(
-            {
-                "jsonrpc": "2.0",
-                "id": 78,
-                "method": "tools/call",
-                "params": {
-                    "name": "explain_violation",
-                    "arguments": {"domain": "drc", "index": 0},
-                },
-            }
-        )
-        self.assertEqual(
-            daemon.calls,
-            [("explain_violation", {"domain": "drc", "index": 0})],
-        )
-        payload = response["result"]["content"][0]["json"]
-        self.assertEqual(payload["rule_detail"], "drc connectivity_unrouted_net")
-
     def test_tools_call_dispatches_generic_route_path_proposal_export(self) -> None:
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)

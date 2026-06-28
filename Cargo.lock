@@ -720,11 +720,13 @@ dependencies = [
  "clap",
  "datum-gui-protocol",
  "datum-gui-render",
+ "eda-engine",
  "image",
  "libc",
  "pollster",
  "serde",
  "serde_json",
+ "uuid",
  "wgpu",
  "winit",
 ]
@@ -836,6 +838,7 @@ dependencies = [
  "eda-engine",
  "serde",
  "serde_json",
+ "sha2",
  "uuid",
 ]
 

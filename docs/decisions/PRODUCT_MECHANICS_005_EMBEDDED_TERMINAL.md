@@ -222,7 +222,8 @@ Datum boundary:
 - a proposal created by a terminal-launched tool records terminal session,
   executable/argv, actor identity, context revision, and affected objects
 - an accepted proposal or allowed direct commit records the proposal or command
-  as the transaction provenance and acceptance path
+  as transaction provenance; accepted proposals also link their
+  `applied_transaction_id` to the resulting journal transaction
 
 Datum must not record arbitrary shell input as design history merely because a
 terminal exists. Project history records design-significant outcomes:
@@ -326,6 +327,13 @@ The first proof slice should demonstrate a project-scoped real terminal:
   `DATUM_DISCOVERY`, and `DATUM_CLI`
 - create a proposal from a terminal-launched Datum CLI command and apply it
   through the canonical proposal/transaction path
+
+Current implementation note: the terminal renderer retains SGR foreground,
+background, bold, and inverse state as protocol spans. Foreground/bold and a
+visible inverse/background fallback render as colored dock text today; dedicated
+background cell rectangles remain future terminal rendering work. This proves
+ANSI styling is part of the PTY screen model, not post-hoc transcript
+decoration.
 
 The proof does not need complete terminal-emulator parity, but it must prove
 the architecture is a real PTY terminal rather than a text command widget and

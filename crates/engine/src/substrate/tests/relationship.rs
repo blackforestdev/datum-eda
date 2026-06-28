@@ -160,7 +160,7 @@ fn resolver_discovers_sparse_variant_overlay_and_derives_population() {
 }
 
 #[test]
-fn resolver_propagates_variant_population_from_package_to_component_instance() {
+fn resolver_keeps_package_variant_population_without_derived_component_instance() {
     let root = temp_project_root("variant_overlay_component_instance_population");
     let project_id = Uuid::new_v4();
     let board_id = Uuid::new_v4();
@@ -173,11 +173,7 @@ fn resolver_propagates_variant_population_from_package_to_component_instance() {
     let before = ProjectResolver::new(&root)
         .resolve()
         .expect("project resolves before variant");
-    let component_instance_id = *before
-        .component_instances
-        .keys()
-        .next()
-        .expect("component instance should derive before variant");
+    assert!(before.component_instances.is_empty());
     let variant_id = Uuid::new_v4();
     write_json(
         &root.join(".datum/variants/assembly.json"),
@@ -208,15 +204,11 @@ fn resolver_propagates_variant_population_from_package_to_component_instance() {
         population.get(&package_id),
         Some(&DerivedVariantPopulation::NotApplicableForVariant)
     );
-    assert_eq!(
-        population.get(&component_instance_id),
-        Some(&DerivedVariantPopulation::NotApplicableForVariant)
-    );
 }
 
 #[test]
-fn resolver_propagates_variant_population_from_component_instance_to_members() {
-    let root = temp_project_root("variant_overlay_component_instance_member_population");
+fn resolver_does_not_propagate_variant_population_from_legacy_derived_component_instance_id() {
+    let root = temp_project_root("variant_overlay_legacy_derived_component_instance_ignored");
     let project_id = Uuid::new_v4();
     let board_id = Uuid::new_v4();
     let symbol_id = Uuid::new_v4();
@@ -228,11 +220,83 @@ fn resolver_propagates_variant_population_from_component_instance_to_members() {
     let before = ProjectResolver::new(&root)
         .resolve()
         .expect("project resolves before variant");
-    let component_instance_id = *before
-        .component_instances
-        .keys()
-        .next()
-        .expect("component instance should derive before variant");
+    assert!(before.component_instances.is_empty());
+    let legacy_component_instance_id = Uuid::new_v5(
+        &project_id,
+        format!("datum-eda:component-instance:{symbol_id}:{package_id}").as_bytes(),
+    );
+    let variant_id = Uuid::new_v4();
+    write_json(
+        &root.join(".datum/variants/assembly.json"),
+        serde_json::json!({
+            "schema_version": 1,
+            "variants": [{
+                "id": variant_id,
+                "name": "No U1",
+                "base_model_revision": before.model_revision,
+                "variant_revision": 0,
+                "fitted": {
+                    legacy_component_instance_id.to_string(): "unfitted"
+                },
+                "relationship_overrides": {},
+                "property_overrides": {}
+            }]
+        }),
+    );
+
+    let after = ProjectResolver::new(&root)
+        .resolve()
+        .expect("project resolves with propagated variant population");
+    let population = after
+        .variant_populations
+        .get(&variant_id)
+        .expect("variant population should derive");
+    assert_eq!(
+        population.get(&legacy_component_instance_id),
+        Some(&DerivedVariantPopulation::NotApplicableForVariant)
+    );
+    assert_eq!(population.get(&symbol_id), None);
+    assert_eq!(population.get(&package_id), None);
+    assert!(!after.diagnostics.iter().any(|diagnostic| {
+        diagnostic.code == "variant_component_instance_compatibility_derived_ignored"
+    }));
+}
+
+#[test]
+fn resolver_propagates_variant_population_from_authored_component_instance_to_members() {
+    let root = temp_project_root("variant_overlay_authored_component_instance_member_population");
+    let project_id = Uuid::new_v4();
+    let board_id = Uuid::new_v4();
+    let symbol_id = Uuid::new_v4();
+    let package_id = Uuid::new_v4();
+    let part_id = Uuid::new_v4();
+    let component_instance_id = Uuid::new_v4();
+    write_project_with_symbol_and_package(
+        &root, project_id, board_id, symbol_id, package_id, part_id,
+    );
+    write_json(
+        &root.join(format!(
+            ".datum/component_instances/{component_instance_id}.json"
+        )),
+        serde_json::json!({
+            "schema_version": 1,
+            "component_instance": {
+                "uuid": component_instance_id,
+                "object_revision": 0,
+                "placed_symbol_refs": [{
+                    "object_id": symbol_id,
+                    "object_revision": 0
+                }],
+                "placed_package_refs": [{
+                    "object_id": package_id,
+                    "object_revision": 0
+                }]
+            }
+        }),
+    );
+    let before = ProjectResolver::new(&root)
+        .resolve()
+        .expect("project resolves before variant");
     let variant_id = Uuid::new_v4();
     write_json(
         &root.join(".datum/variants/assembly.json"),
@@ -271,6 +335,9 @@ fn resolver_propagates_variant_population_from_component_instance_to_members() {
         population.get(&package_id),
         Some(&DerivedVariantPopulation::NotApplicableForVariant)
     );
+    assert!(!after.diagnostics.iter().any(|diagnostic| {
+        diagnostic.code == "variant_component_instance_compatibility_derived_ignored"
+    }));
 }
 
 #[test]
@@ -525,9 +592,11 @@ fn journaled_relationship_and_variant_create_undo_redo_and_replay() {
     assert!(replayed.source_shards.iter().any(|shard| {
         shard.kind == SourceShardKind::Relationship
             && shard.relative_path == format!(".datum/relationships/{relationship_id}.json")
+            && shard.dirty_state == SourceShardDirtyState::Missing
     }));
     assert!(replayed.source_shards.iter().any(|shard| {
         shard.kind == SourceShardKind::VariantOverlay
             && shard.relative_path == format!(".datum/variants/{variant_id}.json")
+            && shard.dirty_state == SourceShardDirtyState::Missing
     }));
 }

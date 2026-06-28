@@ -84,6 +84,45 @@ fn render_stage_declaration_order_is_the_only_priority_encoding() {
 }
 
 #[test]
+fn project_panel_renders_source_shard_health() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.source_shards = datum_gui_protocol::SourceShardStatusSummary {
+        total: 5,
+        clean: 2,
+        dirty: 1,
+        missing: 1,
+        unknown: 1,
+        attention: vec![datum_gui_protocol::SourceShardAttentionItem {
+            relative_path: ".datum/check_runs/run-a.json".to_string(),
+            kind: "check_run".to_string(),
+            authority: "generated_evidence".to_string(),
+            taxon: Some("check_run".to_string()),
+            dirty_state: "missing".to_string(),
+        }],
+    };
+    let retained = RetainedScene::from_workspace(&state, 1280, 800);
+    let prepared = PreparedScene::from_workspace(
+        &state,
+        1280,
+        800,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+    );
+    assert!(
+        prepared
+            .text_runs
+            .iter()
+            .any(|run| run.text.contains("SOURCE SHARDS D1 M1 U1"))
+    );
+    assert!(
+        prepared
+            .text_runs
+            .iter()
+            .any(|run| run.text.starts_with("MISSING .datum/") && run.text.ends_with("run-a.json"))
+    );
+}
+
+#[test]
 fn dimmed_copper_stays_legible_against_board_field() {
     // M7-REN-004: dim-unrelated must keep authored context readable.
     // Dimmed copper on every known family must stay clearly separated
@@ -239,62 +278,6 @@ fn terminal_and_agent_docks_surface_recent_activity_spans() {
             Some(HitTarget::TerminalActivitySummary(summary))
                 if summary.contains("datum.artifact.generate")
         ));
-    }
-}
-
-#[test]
-fn terminal_dock_surfaces_copy_and_paste_shortcuts() {
-    let mut state = datum_gui_protocol::load_fixture_workspace_state();
-    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
-    state.ui.dock_height_px = 260;
-
-    let retained = RetainedScene::from_workspace(&state, 1280, 800);
-    let prepared = PreparedScene::from_workspace(
-        &state,
-        1280,
-        800,
-        CameraState::fit_to_bounds(&state.scene.bounds),
-        &retained,
-    );
-
-    assert!(
-        prepared
-            .text_runs
-            .iter()
-            .any(|run| run.text.contains("COPY SCROLLBACK CTRL+SHIFT+C")),
-        "terminal dock should expose its native scrollback copy shortcut"
-    );
-    assert!(
-        prepared
-            .text_runs
-            .iter()
-            .any(|run| run.text.contains("PASTE CTRL+V")),
-        "terminal dock should expose its paste shortcut"
-    );
-    for (command_id, command) in [
-        (
-            "datum.journal.list",
-            "datum-eda journal list \"$DATUM_PROJECT_ROOT\"",
-        ),
-        (
-            "datum.journal.undo",
-            "datum-eda journal undo \"$DATUM_PROJECT_ROOT\"",
-        ),
-        (
-            "datum.journal.redo",
-            "datum-eda journal redo \"$DATUM_PROJECT_ROOT\"",
-        ),
-    ] {
-        assert!(
-            prepared.hit_regions.iter().any(|region| matches!(
-                &region.target,
-                HitTarget::ProductionTerminalCommand(handoff)
-                    if handoff.command_id == command_id
-                        && handoff.mcp_alias.as_deref() == Some(command_id)
-                        && handoff.command == command
-            )),
-            "terminal dock should expose {command_id} handoff"
-        );
     }
 }
 

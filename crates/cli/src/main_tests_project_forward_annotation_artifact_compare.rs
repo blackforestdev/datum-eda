@@ -347,8 +347,8 @@ fn project_compare_forward_annotation_artifact_reports_applicable_drifted_and_st
         serde_json::from_str(&compare_output).expect("comparison JSON");
     assert_eq!(comparison["artifact_actions"], 3);
     assert_eq!(comparison["applicable_actions"], 1);
-    assert_eq!(comparison["drifted_actions"], 1);
-    assert_eq!(comparison["stale_actions"], 1);
+    assert_eq!(comparison["drifted_actions"], 0);
+    assert_eq!(comparison["stale_actions"], 2);
 
     let actions = comparison["actions"].as_array().unwrap();
     assert!(actions.iter().any(|entry| {
@@ -367,8 +367,159 @@ fn project_compare_forward_annotation_artifact_reports_applicable_drifted_and_st
         entry["reference"] == "Q1"
             && entry["proposal_action"] == "update_component"
             && entry["reason"] == "part_mismatch"
-            && entry["status"] == "drifted"
+            && entry["status"] == "stale"
     }));
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_compare_forward_annotation_artifact_treats_reference_rename_as_identity_drift() {
+    let root =
+        unique_project_root("datum-eda-cli-project-forward-annotation-compare-reference-rename");
+    create_native_project(
+        &root,
+        Some("Forward Annotation Reference Rename".to_string()),
+    )
+    .expect("initial scaffold should succeed");
+
+    let sheet_uuid = Uuid::new_v4();
+    let symbol_uuid = Uuid::new_v4();
+    let part_uuid = Uuid::new_v4();
+    write_native_sheet(
+        &root,
+        sheet_uuid,
+        "Main",
+        BTreeMap::from([(
+            symbol_uuid.to_string(),
+            serde_json::to_value(PlacedSymbol {
+                uuid: symbol_uuid,
+                part: Some(part_uuid),
+                entity: None,
+                gate: None,
+                lib_id: Some("Device:R".into()),
+                reference: "R1".into(),
+                value: "10k".into(),
+                fields: Vec::new(),
+                pins: Vec::new(),
+                position: Point::new(0, 0),
+                rotation: 0,
+                mirrored: false,
+                unit_selection: None,
+                display_mode: SymbolDisplayMode::LibraryDefault,
+                pin_overrides: Vec::new(),
+                hidden_power_behavior: HiddenPowerBehavior::PreservedAsImportedMetadata,
+            })
+            .expect("symbol should serialize"),
+        )]),
+    );
+
+    let component_uuid = Uuid::new_v4();
+    let board_json = root.join("board/board.json");
+    std::fs::write(
+        &board_json,
+        format!(
+            "{}\n",
+            to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "uuid": Uuid::new_v4(),
+                "name": "Forward Annotation Reference Rename Board",
+                "stackup": { "layers": [] },
+                "outline": { "vertices": [], "closed": true },
+                "packages": {
+                    component_uuid.to_string(): serde_json::to_value(PlacedPackage {
+                        uuid: component_uuid,
+                        part: part_uuid,
+                        package: Uuid::new_v4(),
+                        reference: "R1".into(),
+                        value: "22k".into(),
+                        position: Point::new(0, 0),
+                        rotation: 0,
+                        layer: 1,
+                        locked: false,
+                    }).expect("component should serialize")
+                },
+                "pads": {},
+                "tracks": {},
+                "vias": {},
+                "zones": {},
+                "nets": {},
+                "net_classes": {},
+                "rules": [],
+                "keepouts": [],
+                "dimensions": [],
+                "texts": []
+            }))
+            .expect("canonical serialization should succeed")
+        ),
+    )
+    .expect("board file should write");
+
+    let artifact_path = root.join("forward-annotation-proposal.json");
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "project",
+            "export-forward-annotation-proposal",
+            root.to_str().unwrap(),
+            "--out",
+            artifact_path.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("export should succeed");
+
+    let sheet_path = root
+        .join("schematic/sheets")
+        .join(format!("{sheet_uuid}.json"));
+    let mut sheet: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(&sheet_path).expect("sheet should read"))
+            .expect("sheet should parse");
+    sheet["symbols"][symbol_uuid.to_string()]["reference"] = serde_json::json!("R10");
+    std::fs::write(
+        &sheet_path,
+        format!(
+            "{}\n",
+            to_json_deterministic(&sheet).expect("sheet should serialize")
+        ),
+    )
+    .expect("sheet should write");
+
+    let mut board: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(&board_json).expect("board should read"))
+            .expect("board should parse");
+    board["packages"][component_uuid.to_string()]["reference"] = serde_json::json!("R10");
+    std::fs::write(
+        &board_json,
+        format!(
+            "{}\n",
+            to_json_deterministic(&board).expect("board should serialize")
+        ),
+    )
+    .expect("board should write");
+
+    let compare_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "compare-forward-annotation-proposal-artifact",
+            root.to_str().unwrap(),
+            "--artifact",
+            artifact_path.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("compare should succeed");
+    let comparison: serde_json::Value =
+        serde_json::from_str(&compare_output).expect("comparison JSON");
+    assert_eq!(comparison["artifact_actions"], 1);
+    assert_eq!(comparison["applicable_actions"], 0);
+    assert_eq!(comparison["drifted_actions"], 1);
+    assert_eq!(comparison["stale_actions"], 0);
+    assert_eq!(comparison["actions"][0]["status"], "drifted");
+    assert_eq!(comparison["actions"][0]["reference"], "R1");
 
     let _ = std::fs::remove_dir_all(&root);
 }

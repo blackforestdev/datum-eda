@@ -1,21 +1,26 @@
 use super::*;
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
+
+use eda_engine::board::PlacedPackage;
+use eda_engine::schematic::SymbolInfo;
+use eda_engine::substrate::{ComponentInstanceAuthority, ProjectResolver};
 
 pub(crate) fn query_native_project_forward_annotation_audit(
     root: &Path,
 ) -> Result<NativeProjectForwardAnnotationAuditView> {
     let symbols = query_native_project_symbols(root)?;
     let components = query_native_project_board_components(root)?;
+    let model = ProjectResolver::new(root).resolve()?;
 
-    let mut symbols_by_reference = BTreeMap::new();
-    for symbol in symbols {
-        symbols_by_reference.insert(symbol.reference.clone(), symbol);
-    }
-    let mut components_by_reference = BTreeMap::new();
-    for component in components {
-        components_by_reference.insert(component.reference.clone(), component);
-    }
+    let symbols_by_uuid = symbols
+        .iter()
+        .map(|symbol| (symbol.uuid, symbol))
+        .collect::<BTreeMap<_, _>>();
+    let components_by_uuid = components
+        .iter()
+        .map(|component| (component.uuid, component))
+        .collect::<BTreeMap<_, _>>();
 
     let mut missing_on_board = Vec::new();
     let mut orphaned_on_board = Vec::new();
@@ -23,50 +28,88 @@ pub(crate) fn query_native_project_forward_annotation_audit(
     let mut part_mismatches = Vec::new();
     let mut unresolved_symbol_count = 0usize;
     let mut matched_count = 0usize;
+    let mut matched_symbol_ids = BTreeSet::new();
+    let mut matched_component_ids = BTreeSet::new();
 
-    for (reference, symbol) in &symbols_by_reference {
+    for symbol in &symbols {
         if symbol.part_uuid.is_none() {
             unresolved_symbol_count += 1;
         }
+    }
 
-        if let Some(component) = components_by_reference.get(reference) {
+    for component_instance in model.component_instances.values() {
+        if component_instance.authority != ComponentInstanceAuthority::Authored {
+            continue;
+        }
+        let Some(component) = component_instance
+            .placed_package_refs
+            .iter()
+            .find_map(|component_id| components_by_uuid.get(component_id).copied())
+        else {
+            continue;
+        };
+        matched_component_ids.insert(component.uuid);
+        for symbol_id in &component_instance.placed_symbol_refs {
+            let Some(symbol) = symbols_by_uuid.get(symbol_id).copied() else {
+                continue;
+            };
+            matched_symbol_ids.insert(symbol.uuid);
             matched_count += 1;
-            if symbol.value != component.value {
-                value_mismatches.push(NativeProjectForwardAnnotationValueMismatchView {
-                    reference: reference.clone(),
-                    symbol_uuid: symbol.uuid.to_string(),
-                    component_uuid: component.uuid.to_string(),
-                    schematic_value: symbol.value.clone(),
-                    board_value: component.value.clone(),
-                });
-            }
-            if let Some(part_uuid) = symbol.part_uuid
-                && part_uuid != component.part
-            {
-                part_mismatches.push(NativeProjectForwardAnnotationPartMismatchView {
-                    reference: reference.clone(),
-                    symbol_uuid: symbol.uuid.to_string(),
-                    component_uuid: component.uuid.to_string(),
-                    schematic_part_uuid: part_uuid.to_string(),
-                    board_part_uuid: component.part.to_string(),
-                });
-            }
-        } else {
+            collect_forward_annotation_mismatches(
+                symbol,
+                component,
+                component_instance.part_ref.or(symbol.part_uuid),
+                &mut value_mismatches,
+                &mut part_mismatches,
+            );
+        }
+    }
+
+    let mut uncovered_symbols_by_reference = BTreeMap::new();
+    for symbol in &symbols {
+        if !matched_symbol_ids.contains(&symbol.uuid) {
+            uncovered_symbols_by_reference.insert(symbol.reference.clone(), symbol);
+        }
+    }
+    let mut uncovered_components_by_reference = BTreeMap::new();
+    for component in &components {
+        if !matched_component_ids.contains(&component.uuid) {
+            uncovered_components_by_reference.insert(component.reference.clone(), component);
+        }
+    }
+
+    for (reference, symbol) in &uncovered_symbols_by_reference {
+        if let Some(component) = uncovered_components_by_reference.get(reference) {
+            matched_symbol_ids.insert(symbol.uuid);
+            matched_component_ids.insert(component.uuid);
+            matched_count += 1;
+            collect_forward_annotation_mismatches(
+                symbol,
+                component,
+                symbol.part_uuid,
+                &mut value_mismatches,
+                &mut part_mismatches,
+            );
+        }
+    }
+
+    for symbol in &symbols {
+        if !matched_symbol_ids.contains(&symbol.uuid) {
             missing_on_board.push(NativeProjectForwardAnnotationMissingView {
                 symbol_uuid: symbol.uuid.to_string(),
                 sheet_uuid: symbol.sheet.to_string(),
-                reference: reference.clone(),
+                reference: symbol.reference.clone(),
                 value: symbol.value.clone(),
                 part_uuid: symbol.part_uuid.map(|uuid| uuid.to_string()),
             });
         }
     }
 
-    for (reference, component) in &components_by_reference {
-        if !symbols_by_reference.contains_key(reference) {
+    for component in &components {
+        if !matched_component_ids.contains(&component.uuid) {
             orphaned_on_board.push(NativeProjectForwardAnnotationOrphanView {
                 component_uuid: component.uuid.to_string(),
-                reference: reference.clone(),
+                reference: component.reference.clone(),
                 value: component.value.clone(),
                 part_uuid: component.part.to_string(),
             });
@@ -75,8 +118,8 @@ pub(crate) fn query_native_project_forward_annotation_audit(
 
     Ok(NativeProjectForwardAnnotationAuditView {
         domain: "native_project",
-        schematic_symbol_count: symbols_by_reference.len(),
-        board_component_count: components_by_reference.len(),
+        schematic_symbol_count: symbols.len(),
+        board_component_count: components.len(),
         matched_count,
         unresolved_symbol_count,
         missing_on_board,
@@ -84,6 +127,35 @@ pub(crate) fn query_native_project_forward_annotation_audit(
         value_mismatches,
         part_mismatches,
     })
+}
+
+fn collect_forward_annotation_mismatches(
+    symbol: &SymbolInfo,
+    component: &PlacedPackage,
+    expected_part_uuid: Option<Uuid>,
+    value_mismatches: &mut Vec<NativeProjectForwardAnnotationValueMismatchView>,
+    part_mismatches: &mut Vec<NativeProjectForwardAnnotationPartMismatchView>,
+) {
+    if symbol.value != component.value {
+        value_mismatches.push(NativeProjectForwardAnnotationValueMismatchView {
+            reference: symbol.reference.clone(),
+            symbol_uuid: symbol.uuid.to_string(),
+            component_uuid: component.uuid.to_string(),
+            schematic_value: symbol.value.clone(),
+            board_value: component.value.clone(),
+        });
+    }
+    if let Some(part_uuid) = expected_part_uuid
+        && part_uuid != component.part
+    {
+        part_mismatches.push(NativeProjectForwardAnnotationPartMismatchView {
+            reference: symbol.reference.clone(),
+            symbol_uuid: symbol.uuid.to_string(),
+            component_uuid: component.uuid.to_string(),
+            schematic_part_uuid: part_uuid.to_string(),
+            board_part_uuid: component.part.to_string(),
+        });
+    }
 }
 
 pub(crate) fn query_native_project_forward_annotation_proposal(

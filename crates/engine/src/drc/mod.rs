@@ -1,61 +1,15 @@
-use serde::{Deserialize, Serialize};
-use uuid::Uuid;
-
 use crate::board::Board;
-use crate::ir::geometry::LayerId;
 use crate::rules::ast::RuleType;
 use crate::schematic::{CheckDomain, CheckWaiver, WaiverTarget};
 
 mod checks;
 mod fingerprint;
+mod types;
 mod zone_fill_projection;
 use fingerprint::attach_drc_violation_fingerprints;
 pub(crate) use fingerprint::drc_violation_fingerprint;
+pub use types::{DrcLocation, DrcReport, DrcSeverity, DrcSummary, DrcViolation};
 pub use zone_fill_projection::{run_with_zone_fills, run_with_zone_fills_and_waivers};
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum DrcSeverity {
-    Error,
-    Warning,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct DrcLocation {
-    pub x_nm: i64,
-    pub y_nm: i64,
-    pub layer: Option<LayerId>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct DrcViolation {
-    pub id: Uuid,
-    pub code: String,
-    pub rule_type: RuleType,
-    pub severity: DrcSeverity,
-    pub message: String,
-    pub location: Option<DrcLocation>,
-    pub objects: Vec<Uuid>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub fingerprint: Option<String>,
-    #[serde(default)]
-    pub waived: bool,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct DrcSummary {
-    pub errors: usize,
-    pub warnings: usize,
-    #[serde(default)]
-    pub waived: usize,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct DrcReport {
-    pub passed: bool,
-    pub violations: Vec<DrcViolation>,
-    pub summary: DrcSummary,
-}
 
 pub fn run(board: &Board, selected_rules: &[RuleType]) -> DrcReport {
     run_with_waivers(board, selected_rules, &[])

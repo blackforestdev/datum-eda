@@ -1,7 +1,7 @@
 use anyhow::Result;
 use datum_gui_protocol::{
     DatumToolSessionLifecycle, LiveDesignSession, refresh_check_run_review_state,
-    refresh_production_status,
+    refresh_production_status, refresh_source_shard_status,
 };
 use std::sync::mpsc::TryRecvError;
 use std::time::{Duration, Instant};
@@ -34,14 +34,20 @@ pub(super) fn refresh_after_terminal_output(
     };
     let before_production = session.workspace().production.clone();
     let before_checks = session.workspace().checks.clone();
+    let before_source_shards = session.workspace().source_shards.clone();
     let next_production = refresh_production_status(&backing.request)?;
     let next_checks = refresh_check_run_review_state(&backing.request)?;
-    if next_production == before_production && next_checks == before_checks {
+    let next_source_shards = refresh_source_shard_status(&backing.request)?;
+    if next_production == before_production
+        && next_checks == before_checks
+        && next_source_shards == before_source_shards
+    {
         return Ok(ProductionStatusRefresh::Unchanged);
     }
     let workspace = session.workspace_mut();
     workspace.production = next_production;
     workspace.checks = next_checks;
+    workspace.source_shards = next_source_shards;
     *pending = false;
     Ok(ProductionStatusRefresh::Changed)
 }
@@ -52,7 +58,6 @@ impl App {
         let mut next_refresh_due = None;
         if let Some(runtime) = &mut self.runtime {
             changed |= runtime.poll_terminal_output();
-            changed |= runtime.poll_assistant_output();
             changed |= runtime.poll_scheduled_production_refresh();
             next_refresh_due = runtime.next_production_refresh_due();
         }
@@ -129,12 +134,24 @@ impl Runtime {
     pub(super) fn poll_terminal_output(&mut self) -> bool {
         let mut changed = false;
         loop {
-            match self.terminal.rx.try_recv() {
+            match self.terminal_sessions.active().rx.try_recv() {
                 Ok(TerminalEvent::Output(bytes)) => {
-                    let _ = record_terminal_output_event(&self.terminal, &bytes);
+                    let _ = record_terminal_output_event(self.terminal_sessions.active(), &bytes);
                     self.refresh_terminal_activity_summary();
-                    self.terminal_screen
-                        .apply_bytes(&mut self.session.workspace_mut().ui.terminal, &bytes);
+                    let responses = self
+                        .terminal_sessions
+                        .active_screen_mut()
+                        .apply_bytes_with_responses(
+                            &mut self.session.workspace_mut().ui.terminal,
+                            &bytes,
+                        );
+                    for response in responses {
+                        if let Err(err) = self.terminal_sessions.active().write_bytes(&response) {
+                            self.push_terminal_line(format!(
+                                "terminal status response failed: {err}"
+                            ));
+                        }
+                    }
                     match refresh_after_terminal_output(
                         &mut self.session,
                         &mut self.terminal_production_refresh_pending,
@@ -169,12 +186,12 @@ impl Runtime {
                 }
                 Ok(TerminalEvent::Exited(code)) => {
                     let _ = mark_terminal_session_lifecycle(
-                        &self.terminal,
+                        self.terminal_sessions.active(),
                         DatumToolSessionLifecycle::Exited,
                         code,
                     );
                     let _ = record_terminal_lifecycle_event(
-                        &self.terminal,
+                        self.terminal_sessions.active(),
                         DatumToolSessionLifecycle::Exited,
                         code,
                     );
@@ -184,6 +201,7 @@ impl Runtime {
                         |code| format!("exited {code}"),
                     );
                     self.session.workspace_mut().ui.terminal.status = status.clone();
+                    self.sync_terminal_tabs();
                     self.push_terminal_line(format!("terminal {status}"));
                     match refresh_after_terminal_output(
                         &mut self.session,

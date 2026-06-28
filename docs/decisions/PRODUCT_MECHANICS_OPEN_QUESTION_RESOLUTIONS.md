@@ -180,7 +180,8 @@ honesty, lean tooling) constrains every resolution; none contradicts it.
 - Recommended path: Keep the journal append-only JSONL (one
   `TransactionRecord`/line, `to_json_deterministic`). Each line carries:
   `transaction_id`, `batch_id`, before/after `model_revision`, provenance
-  (actor, source, acceptance_path), and a typed diff. Extend
+  (actor, source, reason), proposal lineage when an applied proposal points at
+  the transaction, and a typed diff. Extend
   `CommitDiff{created,modified,deleted: Vec<ObjectId>}` with a per-object
   field delta `{object_id, field_path, before, after}` for geometry,
   emitted as integer nanometers (the IR unit base), not strings.
@@ -620,7 +621,9 @@ docs/DATUM_PRODUCT_MECHANICS.md "Interop Boundary And Import Posture".
   defaults OFF for every non-User actor. Library field edits: trigger on
   binding-relevant field changed (geometry/pinmap/role/padstack) of a
   placed object, not mere placement. Both paths call the identical
-  `commit()` and differ only in recorded `acceptance_path`.
+  `commit()`; direct commits are classified by `CommitProvenance.source`,
+  while proposal-mediated commits are proven by the applied proposal's
+  `applied_transaction_id` link to the resulting transaction.
 - Production example: Altium commits manual canvas edits (move, route,
   edit pad) directly with undo, but routes ECO-class/cross-domain changes
   through the Engineering Change Order dialog (Validate then Execute) and
@@ -635,9 +638,10 @@ docs/DATUM_PRODUCT_MECHANICS.md "Interop Boundary And Import Posture".
   `forward_annotation_apply_review` commands already encode
   draft-then-explicit-apply.
 - Engineering reason: The enforcement invariant is that both paths
-  terminate at the identical `commit()` and differ only in
-  `acceptance_path`; the classifier must be a function of blast radius and
-  cross-domain implication, computable from the diff
+  terminate at the identical `commit()`; direct/proposal classification is
+  recovered from `CommitProvenance.source` plus the proposal-to-transaction
+  join rather than duplicated as a journal string. The classifier must be a
+  function of blast radius and cross-domain implication, computable from the diff
   (`CommitDiff.deleted`/`modified` spanning multiple domains), not of
   GUI/CLI/AI surface. Relationship/`ComponentInstance`/`LayoutDeviation`
   edits mutate the resolver's derived-status recomputation (convert
@@ -2361,8 +2365,9 @@ docs/DATUM_PRODUCT_MECHANICS.md "Interop Boundary And Import Posture".
   defer the APPLY capability, a scope dial the owner sets. Conflating
   "assistant triggers apply after human click" with "assistant
   auto-applies" is a UX trap — make the Apply card a distinct control whose
-  activation is the recorded acceptance path, never inferred from a chat
-  message. Card UIs can still tempt command typing — route any
+  activation records explicit approval metadata and produces an applied
+  proposal-to-transaction link, never inferred from a chat message. Card UIs can
+  still tempt command typing — route any
   command-shaped input into a Handoff card ("Run in terminal?") rather than
   executing it. The "bounded single proposal" vs "bulk ECO" boundary is a
   judgment call — define a concrete threshold (proposals touching > N

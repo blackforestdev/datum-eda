@@ -1,3 +1,7 @@
+use super::check_run_view::{
+    daemon_drc_check_run_view, daemon_erc_check_run_view, explain_drc_finding_by_fingerprint,
+    explain_erc_finding_by_fingerprint,
+};
 use super::*;
 
 pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> JsonRpcResponse {
@@ -30,253 +34,6 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                     Err(err) => error_response(request.id, -32027, &err.to_string()),
                 }
             }
-            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-        },
-        "delete_track" => match serde_json::from_value::<UuidParams>(request.params) {
-            Ok(params) => match engine.delete_track(&params.uuid) {
-                Ok(result) => serialized_success_response(request.id, result),
-                Err(err) => error_response(request.id, -32028, &err.to_string()),
-            },
-            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-        },
-        "delete_via" => match serde_json::from_value::<UuidParams>(request.params) {
-            Ok(params) => match engine.delete_via(&params.uuid) {
-                Ok(result) => serialized_success_response(request.id, result),
-                Err(err) => error_response(request.id, -32031, &err.to_string()),
-            },
-            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-        },
-        "delete_component" => match serde_json::from_value::<UuidParams>(request.params) {
-            Ok(params) => match engine.delete_component(&params.uuid) {
-                Ok(result) => serialized_success_response(request.id, result),
-                Err(err) => error_response(request.id, -32036, &err.to_string()),
-            },
-            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-        },
-        "move_component" => match serde_json::from_value::<MoveComponentParams>(request.params) {
-            Ok(params) => match engine.move_component(MoveComponentInput {
-                uuid: params.uuid,
-                position: Point::new(mm_to_nm(params.x_mm), mm_to_nm(params.y_mm)),
-                rotation: params.rotation_deg.map(|deg| deg.round() as i32),
-            }) {
-                Ok(result) => serialized_success_response(request.id, result),
-                Err(err) => error_response(request.id, -32033, &err.to_string()),
-            },
-            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-        },
-        "rotate_component" => match serde_json::from_value::<MoveComponentParams>(request.params) {
-            Ok(params) => {
-                let rotation = match params.rotation_deg {
-                    Some(deg) => deg.round() as i32,
-                    None => {
-                        return error_response(
-                            request.id,
-                            -32602,
-                            "invalid params: rotate_component requires rotation_deg",
-                        );
-                    }
-                };
-                match engine.rotate_component(RotateComponentInput {
-                    uuid: params.uuid,
-                    rotation,
-                }) {
-                    Ok(result) => serialized_success_response(request.id, result),
-                    Err(err) => error_response(request.id, -32037, &err.to_string()),
-                }
-            }
-            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-        },
-        "flip_component" => match serde_json::from_value::<FlipComponentParams>(request.params) {
-            Ok(params) => match engine.flip_component(FlipComponentInput {
-                uuid: params.uuid,
-                layer: params.layer,
-            }) {
-                Ok(result) => serialized_success_response(request.id, result),
-                Err(err) => error_response(request.id, -32041, &err.to_string()),
-            },
-            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-        },
-        "set_value" => match serde_json::from_value::<SetValueParams>(request.params) {
-            Ok(params) => match engine.set_value(SetValueInput {
-                uuid: params.uuid,
-                value: params.value,
-            }) {
-                Ok(result) => serialized_success_response(request.id, result),
-                Err(err) => error_response(request.id, -32034, &err.to_string()),
-            },
-            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-        },
-        "set_reference" => match serde_json::from_value::<SetReferenceParams>(request.params) {
-            Ok(params) => match engine.set_reference(SetReferenceInput {
-                uuid: params.uuid,
-                reference: params.reference,
-            }) {
-                Ok(result) => serialized_success_response(request.id, result),
-                Err(err) => error_response(request.id, -32035, &err.to_string()),
-            },
-            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-        },
-        "assign_part" => match serde_json::from_value::<AssignPartParams>(request.params) {
-            Ok(params) => match engine.assign_part(AssignPartInput {
-                uuid: params.uuid,
-                part_uuid: params.part_uuid,
-            }) {
-                Ok(result) => serialized_success_response(request.id, result),
-                Err(err) => error_response(request.id, -32038, &err.to_string()),
-            },
-            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-        },
-        "set_package" => match serde_json::from_value::<SetPackageParams>(request.params) {
-            Ok(params) => match engine.set_package(SetPackageInput {
-                uuid: params.uuid,
-                package_uuid: params.package_uuid,
-            }) {
-                Ok(result) => serialized_success_response(request.id, result),
-                Err(err) => error_response(request.id, -32040, &err.to_string()),
-            },
-            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-        },
-        "set_package_with_part" => {
-            match serde_json::from_value::<SetPackageWithPartParams>(request.params) {
-                Ok(params) => match engine.set_package_with_part(SetPackageWithPartInput {
-                    uuid: params.uuid,
-                    package_uuid: params.package_uuid,
-                    part_uuid: params.part_uuid,
-                }) {
-                    Ok(result) => serialized_success_response(request.id, result),
-                    Err(err) => error_response(request.id, -32041, &err.to_string()),
-                },
-                Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-            }
-        }
-        "replace_component" => {
-            match serde_json::from_value::<ReplaceComponentParams>(request.params) {
-                Ok(params) => match engine.replace_component(ReplaceComponentInput {
-                    uuid: params.uuid,
-                    package_uuid: params.package_uuid,
-                    part_uuid: params.part_uuid,
-                }) {
-                    Ok(result) => serialized_success_response(request.id, result),
-                    Err(err) => error_response(request.id, -32044, &err.to_string()),
-                },
-                Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-            }
-        }
-        "replace_components" => {
-            match serde_json::from_value::<ReplaceComponentsParams>(request.params) {
-                Ok(params) => match engine.replace_components(
-                    params
-                        .replacements
-                        .into_iter()
-                        .map(|item| ReplaceComponentInput {
-                            uuid: item.uuid,
-                            package_uuid: item.package_uuid,
-                            part_uuid: item.part_uuid,
-                        })
-                        .collect(),
-                ) {
-                    Ok(result) => serialized_success_response(request.id, result),
-                    Err(err) => error_response(request.id, -32045, &err.to_string()),
-                },
-                Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-            }
-        }
-        "apply_component_replacement_plan" => {
-            match serde_json::from_value::<ApplyComponentReplacementPlanParams>(request.params) {
-                Ok(params) => match engine.apply_component_replacement_plan(
-                    params
-                        .replacements
-                        .into_iter()
-                        .map(|item| PlannedComponentReplacementInput {
-                            uuid: item.uuid,
-                            package_uuid: item.package_uuid,
-                            part_uuid: item.part_uuid,
-                        })
-                        .collect(),
-                ) {
-                    Ok(result) => serialized_success_response(request.id, result),
-                    Err(err) => error_response(request.id, -32046, &err.to_string()),
-                },
-                Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-            }
-        }
-        "apply_component_replacement_policy" => {
-            match serde_json::from_value::<ApplyComponentReplacementPolicyParams>(request.params) {
-                Ok(params) => match engine.apply_component_replacement_policy(
-                    params
-                        .replacements
-                        .into_iter()
-                        .map(|item| PolicyDrivenComponentReplacementInput {
-                            uuid: item.uuid,
-                            policy: item.policy,
-                        })
-                        .collect(),
-                ) {
-                    Ok(result) => serialized_success_response(request.id, result),
-                    Err(err) => error_response(request.id, -32047, &err.to_string()),
-                },
-                Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-            }
-        }
-        "apply_scoped_component_replacement_policy" => {
-            match serde_json::from_value::<ApplyScopedComponentReplacementPolicyParams>(
-                request.params,
-            ) {
-                Ok(params) => match engine.apply_scoped_component_replacement_policy(
-                    ScopedComponentReplacementPolicyInput {
-                        scope: ComponentReplacementScope {
-                            reference_prefix: params.scope.reference_prefix,
-                            value_equals: params.scope.value_equals,
-                            current_package_uuid: params.scope.current_package_uuid,
-                            current_part_uuid: params.scope.current_part_uuid,
-                        },
-                        policy: params.policy,
-                    },
-                ) {
-                    Ok(result) => serialized_success_response(request.id, result),
-                    Err(err) => error_response(request.id, -32048, &err.to_string()),
-                },
-                Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-            }
-        }
-        "apply_scoped_component_replacement_plan" => {
-            match serde_json::from_value::<ApplyScopedComponentReplacementPlanParams>(
-                request.params,
-            ) {
-                Ok(params) => match engine.apply_scoped_component_replacement_plan(params.plan) {
-                    Ok(result) => serialized_success_response(request.id, result),
-                    Err(err) => error_response(request.id, -32050, &err.to_string()),
-                },
-                Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-            }
-        }
-        "set_net_class" => match serde_json::from_value::<SetNetClassParams>(request.params) {
-            Ok(params) => match engine.set_net_class(SetNetClassInput {
-                net_uuid: params.net_uuid,
-                class_name: params.class_name,
-                clearance: params.clearance,
-                track_width: params.track_width,
-                via_drill: params.via_drill,
-                via_diameter: params.via_diameter,
-                diffpair_width: params.diffpair_width,
-                diffpair_gap: params.diffpair_gap,
-            }) {
-                Ok(result) => serialized_success_response(request.id, result),
-                Err(err) => error_response(request.id, -32039, &err.to_string()),
-            },
-            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
-        },
-        "set_design_rule" => match serde_json::from_value::<SetDesignRuleParams>(request.params) {
-            Ok(params) => match engine.set_design_rule(SetDesignRuleInput {
-                rule_type: params.rule_type,
-                scope: params.scope,
-                parameters: params.parameters,
-                priority: params.priority,
-                name: params.name,
-            }) {
-                Ok(result) => serialized_success_response(request.id, result),
-                Err(err) => error_response(request.id, -32032, &err.to_string()),
-            },
             Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
         },
         "undo" => match engine.undo() {
@@ -459,13 +216,13 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
             Err(err) => error_response(request.id, -32020, &err.to_string()),
         },
         "run_erc" => match engine.run_erc_prechecks() {
-            Ok(findings) => serialized_success_response(request.id, findings),
+            Ok(findings) => success_response(request.id, daemon_erc_check_run_view(&findings)),
             Err(err) => error_response(request.id, -32002, &err.to_string()),
         },
         "run_drc" => match serde_json::from_value::<RunDrcParams>(request.params) {
             Ok(params) => {
                 match engine.run_drc(params.rules.as_deref().unwrap_or(default_drc_rules())) {
-                    Ok(report) => serialized_success_response(request.id, report),
+                    Ok(report) => success_response(request.id, daemon_drc_check_run_view(&report)),
                     Err(err) => error_response(request.id, -32017, &err.to_string()),
                 }
             }
@@ -473,14 +230,55 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
         },
         "explain_violation" => {
             match serde_json::from_value::<ExplainViolationParams>(request.params) {
-                Ok(params) => match engine.explain_violation(params.domain, params.index) {
-                    Ok(explanation) => serialized_success_response(request.id, explanation),
-                    Err(err) => error_response(request.id, -32026, &err.to_string()),
-                },
+                Ok(params) => explain_violation_response(engine, request.id, params),
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
             }
         }
         _ => error_response(request.id, -32601, "method not found"),
+    }
+}
+
+fn explain_violation_response(
+    engine: &mut Engine,
+    request_id: Value,
+    params: ExplainViolationParams,
+) -> JsonRpcResponse {
+    if let Some(fingerprint) = params.fingerprint.as_deref() {
+        return match params.domain {
+            ViolationDomain::Erc => match engine.run_erc_prechecks() {
+                Ok(findings) => match explain_erc_finding_by_fingerprint(&findings, fingerprint) {
+                    Some(explanation) => success_response(request_id, explanation),
+                    None => error_response(
+                        request_id,
+                        -32026,
+                        &format!("erc finding fingerprint `{fingerprint}` was not found"),
+                    ),
+                },
+                Err(err) => error_response(request_id, -32026, &err.to_string()),
+            },
+            ViolationDomain::Drc => match engine.run_drc(default_drc_rules()) {
+                Ok(report) => match explain_drc_finding_by_fingerprint(&report, fingerprint) {
+                    Some(explanation) => success_response(request_id, explanation),
+                    None => error_response(
+                        request_id,
+                        -32026,
+                        &format!("drc finding fingerprint `{fingerprint}` was not found"),
+                    ),
+                },
+                Err(err) => error_response(request_id, -32026, &err.to_string()),
+            },
+        };
+    }
+    let Some(index) = params.index else {
+        return error_response(
+            request_id,
+            -32602,
+            "invalid params: explain_violation requires either fingerprint or index",
+        );
+    };
+    match engine.explain_violation(params.domain, index) {
+        Ok(explanation) => serialized_success_response(request_id, explanation),
+        Err(err) => error_response(request_id, -32026, &err.to_string()),
     }
 }
 

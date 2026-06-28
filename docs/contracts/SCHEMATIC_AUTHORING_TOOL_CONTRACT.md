@@ -599,16 +599,20 @@ a `ComponentInstance` minted at place-symbol and bound at part assignment.
   `erc-waive` CLI / `author_waiver` MCP tool are unimplemented. run-erc
   itself is implemented and read-only.
 - **Auto-junction inference** during `draw-wire`.
-- **MCP schematic write tools.** None exist; they must land only behind
-  `commit()` so AI authoring is never an unjournaled surface.
+- **Remaining MCP schematic write tools.** The first journaled MCP
+  schematic write aliases now exist for connectivity, labels, ports, buses,
+  schematic text/drawing, and symbol lifecycle edits. Remaining authoring
+  tools must land only behind the same `OperationBatch`/journal substrate so
+  AI authoring is never an unjournaled surface.
 
 ## Open Owner Questions
 
-1. **Substrate scope.** Schematic native mutations bypass the engine
-   entirely (private JSON writes in `crates/cli`). Is routing all ten ops
-   through a new engine `commit()`/journal/`ProjectResolver` in scope for
-   this contract layer, or does this matrix document the target and flag
-   the gap for a dedicated substrate slice?
+1. **Substrate scope.** Current schematic native mutations for
+   connectivity, labels, ports, buses, schematic text/drawing, and symbol
+   lifecycle edits route through engine `OperationBatch` + journal +
+   `ProjectResolver` replay rather than private JSON writes. The remaining
+   scope question is which higher-level heterogeneous/bulk schematic edits
+   graduate next, and which must be proposal-first.
 2. **ComponentInstance timing.** Is `ComponentInstance` minted at
    place-symbol, or only at part assignment? Does its absence block any
    schematic authoring before the join exists?

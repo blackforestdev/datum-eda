@@ -240,3 +240,59 @@ fn authored_drc_rule_objects_waiver_matches_independent_of_object_order() {
     assert_eq!(report.violations[0].code, "clearance_copper");
     assert!(report.violations[0].waived);
 }
+
+#[test]
+fn standards_backed_drc_fingerprint_includes_rule_revision_basis() {
+    let mut board = empty_board();
+    let (class_uuid, net_class) = default_net_class();
+    let net_uuid = Uuid::new_v4();
+    board.net_classes.insert(class_uuid, net_class);
+    board.nets.insert(
+        net_uuid,
+        Net {
+            uuid: net_uuid,
+            name: "SIG".into(),
+            class: class_uuid,
+            controlled_impedance: None,
+        },
+    );
+
+    let track_uuid = Uuid::new_v4();
+    board.tracks.insert(
+        track_uuid,
+        Track {
+            uuid: track_uuid,
+            net: net_uuid,
+            from: Point::new(0, 0),
+            to: Point::new(10_000_000, 0),
+            width: 100_000,
+            layer: 1,
+        },
+    );
+
+    let report = run_with_waivers(&board, &[RuleType::TrackWidth], &[]);
+    let violation = report
+        .violations
+        .iter()
+        .find(|violation| violation.code == "track_width_below_min")
+        .expect("track width standards violation should exist");
+    assert_eq!(
+        violation.standards_basis.as_deref(),
+        Some("datum.process_aperture_and_geometry.current")
+    );
+    assert_eq!(violation.rule_revision.as_deref(), Some("v1"));
+    assert_eq!(violation.import_key, None);
+    let expected_fingerprint = drc_violation_fingerprint(violation);
+    assert_eq!(
+        violation.fingerprint.as_deref(),
+        Some(expected_fingerprint.as_str())
+    );
+
+    let mut revised = violation.clone();
+    revised.rule_revision = Some("v2".to_string());
+    assert_ne!(
+        drc_violation_fingerprint(violation),
+        drc_violation_fingerprint(&revised),
+        "standards rule revision must participate in DRC finding identity"
+    );
+}

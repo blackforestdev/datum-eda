@@ -1,5 +1,9 @@
 use anyhow::Result;
 use eda_engine::ir::serialization::to_json_deterministic;
+use eda_engine::substrate::{
+    PROCESS_APERTURE_STANDARDS_BASIS_ID, StandardsBasis, standards_basis_for_id,
+    standards_basis_id_for_check_code,
+};
 use sha2::{Digest, Sha256};
 
 pub(crate) fn is_standards_profile_finding(code: &str) -> bool {
@@ -21,21 +25,18 @@ pub(crate) fn is_standards_profile_finding(code: &str) -> bool {
 }
 
 pub(crate) fn check_finding_standards_basis(code: &str) -> Option<&'static str> {
-    match code {
-        "pad_process_aperture_inherited_from_copper"
-        | "pad_process_aperture_inconsistent_with_peer_footprint"
-        | "pad_mask_expansion_missing"
-        | "pad_mask_expansion_below_rule"
-        | "pad_paste_reduction_missing"
-        | "pad_paste_reduction_below_rule"
-        | "track_width_below_min"
-        | "via_hole_out_of_range"
-        | "via_annular_below_min" => Some("datum.process_aperture_and_geometry.current"),
-        "zone_fill_unfilled" | "zone_fill_stale" | "zone_fill_unsupported" => {
-            Some("datum.zone_fill_honesty.current")
-        }
-        _ => None,
-    }
+    standards_basis_id_for_check_code(code)
+}
+
+pub(crate) fn check_finding_standards_basis_detail(code: &str) -> Option<StandardsBasis> {
+    let basis_id = check_finding_standards_basis(code)?;
+    Some(standards_basis_detail(basis_id))
+}
+
+pub(crate) fn standards_basis_detail(basis_id: &str) -> StandardsBasis {
+    standards_basis_for_id(basis_id).unwrap_or_else(|| {
+        panic!("standards basis id {basis_id} must be registered before CheckRun emission")
+    })
 }
 
 pub(crate) fn check_finding_rule_revision(code: &str) -> Option<&'static str> {
@@ -78,7 +79,7 @@ fn process_aperture_standards_basis(
     .then(|| {
         serde_json::json!({
             "evidence_kind": "standards_basis",
-            "basis_id": "datum.process_aperture_and_geometry.current",
+            "basis_id": PROCESS_APERTURE_STANDARDS_BASIS_ID,
             "rule_family": "process_aperture_policy",
             "rule_revision": "v1",
             "source": "drc",

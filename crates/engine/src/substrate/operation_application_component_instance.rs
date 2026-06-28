@@ -1,9 +1,15 @@
+use std::collections::BTreeSet;
+
 use uuid::Uuid;
 
 use super::{
     CommitDiff, ComponentInstance, DesignModel, DomainObject, EngineError, ObjectId, Operation,
-    SourceShardDirtyState, SourceShardKind, SourceShardRef,
-    component_instance::persisted_component_instance_from_value, source_shard_authority_for_kind,
+    RevisionedRef, SourceShardDirtyState, SourceShardKind, SourceShardRef,
+    component_instance::{
+        PersistedComponentInstance, persisted_component_instance_from_value, validate_role_map,
+    },
+    source_shard::source_shard_taxon_for_path,
+    source_shard_authority_for_kind,
 };
 
 pub(super) fn apply_component_instance_operation(
@@ -39,8 +45,15 @@ pub(super) fn apply_component_instance_create(
     value: &serde_json::Value,
 ) -> Result<(), EngineError> {
     let component_instance = persisted_component_instance_from_value(value)?;
+    let persisted_component_instance: PersistedComponentInstance =
+        serde_json::from_value(value.clone())?;
     validate_component_instance_id(component_instance.id, component_instance_id)?;
-    validate_component_instance_refs(&component_instance, model)?;
+    validate_component_instance_refs(
+        &component_instance,
+        &persisted_component_instance,
+        persisted_component_instance.part_ref.as_ref(),
+        model,
+    )?;
     let shard_id = authored_shard_id(component_instance_id);
     model.objects.insert(
         component_instance_id,
@@ -79,8 +92,15 @@ pub(super) fn apply_component_instance_set(
     value: &serde_json::Value,
 ) -> Result<(), EngineError> {
     let component_instance = persisted_component_instance_from_value(value)?;
+    let persisted_component_instance: PersistedComponentInstance =
+        serde_json::from_value(value.clone())?;
     validate_component_instance_id(component_instance.id, component_instance_id)?;
-    validate_component_instance_refs(&component_instance, model)?;
+    validate_component_instance_refs(
+        &component_instance,
+        &persisted_component_instance,
+        persisted_component_instance.part_ref.as_ref(),
+        model,
+    )?;
     let shard_id = authored_shard_id(component_instance_id);
     model.objects.insert(
         component_instance_id,
@@ -111,6 +131,8 @@ fn validate_component_instance_id(actual: ObjectId, expected: ObjectId) -> Resul
 
 fn validate_component_instance_refs(
     component_instance: &ComponentInstance,
+    persisted_component_instance: &PersistedComponentInstance,
+    part_ref: Option<&RevisionedRef>,
     model: &DesignModel,
 ) -> Result<(), EngineError> {
     if component_instance.placed_symbol_refs.is_empty()
@@ -121,16 +143,91 @@ fn validate_component_instance_refs(
             component_instance.id
         )));
     }
-    for object_id in component_instance
-        .placed_symbol_refs
-        .iter()
-        .chain(&component_instance.placed_package_refs)
-    {
-        if !model.objects.contains_key(object_id) {
+    validate_component_instance_ref_set(
+        component_instance.id,
+        "symbol",
+        &component_instance.placed_symbol_refs,
+        model,
+        "schematic",
+    )?;
+    validate_component_instance_ref_set(
+        component_instance.id,
+        "package",
+        &component_instance.placed_package_refs,
+        model,
+        "board",
+    )?;
+    validate_role_map(
+        &persisted_component_instance.placed_symbol_refs,
+        &persisted_component_instance.placed_symbol_roles,
+        "symbol",
+    )
+    .map_err(|message| {
+        EngineError::Validation(format!(
+            "component instance {} {message}",
+            component_instance.id
+        ))
+    })?;
+    validate_role_map(
+        &persisted_component_instance.placed_package_refs,
+        &persisted_component_instance.placed_package_roles,
+        "package",
+    )
+    .map_err(|message| {
+        EngineError::Validation(format!(
+            "component instance {} {message}",
+            component_instance.id
+        ))
+    })?;
+    if let Some(part_ref) = part_ref {
+        let Some(object) = model.objects.get(&part_ref.object_id) else {
+            return Err(EngineError::NotFound {
+                object_type: "component_instance_part_ref",
+                uuid: part_ref.object_id,
+            });
+        };
+        if object.object_revision != part_ref.object_revision
+            || object.domain != "pool"
+            || object.kind != "parts"
+        {
+            return Err(EngineError::Validation(format!(
+                "component instance {} part_ref {} must target a current pool/parts object, got {}/{} revision {:?}",
+                component_instance.id,
+                part_ref.object_id,
+                object.domain,
+                object.kind,
+                object.object_revision
+            )));
+        }
+    }
+    Ok(())
+}
+
+fn validate_component_instance_ref_set(
+    component_instance_id: ObjectId,
+    label: &str,
+    object_ids: &[ObjectId],
+    model: &DesignModel,
+    expected_domain: &str,
+) -> Result<(), EngineError> {
+    let mut seen = BTreeSet::new();
+    for object_id in object_ids {
+        if !seen.insert(*object_id) {
+            return Err(EngineError::Validation(format!(
+                "component instance {component_instance_id} has duplicate {label} ref {object_id}"
+            )));
+        }
+        let Some(object) = model.objects.get(object_id) else {
             return Err(EngineError::NotFound {
                 object_type: "component_instance_ref",
                 uuid: *object_id,
             });
+        };
+        if object.domain != expected_domain {
+            return Err(EngineError::Validation(format!(
+                "component instance {component_instance_id} {label} ref {object_id} must target {expected_domain} domain, got {}/{}",
+                object.domain, object.kind
+            )));
         }
     }
     Ok(())
@@ -163,6 +260,7 @@ fn ensure_authored_shard(model: &mut DesignModel, component_instance_id: ObjectI
     model.source_shards.push(SourceShardRef {
         shard_id: authored_shard_id(component_instance_id),
         kind: SourceShardKind::ComponentInstance,
+        taxon: source_shard_taxon_for_path(&SourceShardKind::ComponentInstance, &relative_path),
         path: std::path::PathBuf::from(&relative_path),
         relative_path,
         authority: source_shard_authority_for_kind(&SourceShardKind::ComponentInstance),

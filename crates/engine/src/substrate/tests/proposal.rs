@@ -53,6 +53,7 @@ fn test_check_run(
 ) -> CheckRun {
     let check_run_id = Uuid::new_v5(&project_id, b"proposal-policy-check-run");
     CheckRun {
+        schema_version: CHECK_RUN_SCHEMA_VERSION,
         check_run_id,
         project_id,
         model_revision,
@@ -70,6 +71,7 @@ fn test_check_run(
             domain: "standards".to_string(),
             rule_id: "ipc-7351-mask-expansion".to_string(),
             standards_basis: Some("IPC-7351".to_string()),
+            standards_basis_detail: None,
             rule_revision: Some("fixture".to_string()),
             import_key: None,
             status: "open".to_string(),
@@ -259,6 +261,77 @@ fn accepted_proposal_applies_through_journal_and_marks_applied() {
     assert_eq!(
         board["packages"][package_id.to_string()]["value"],
         serde_json::json!("PROPOSED")
+    );
+}
+
+#[test]
+fn proposal_predicted_transaction_id_matches_preview_and_apply_transaction() {
+    let root = temp_project_root("proposal_preview_commit_parity");
+    let project_id = Uuid::new_v4();
+    let board_id = Uuid::new_v4();
+    let package_id = Uuid::new_v4();
+    write_project_with_board_package(&root, project_id, board_id, package_id);
+
+    let before = ProjectResolver::new(&root)
+        .resolve()
+        .expect("project resolves");
+    let proposal = test_proposal(
+        project_id,
+        before.model_revision.clone(),
+        package_id,
+        ProposalStatus::Accepted,
+    );
+    write_legacy_proposal_sidecar(&root, &proposal).expect("proposal should write");
+
+    let mut model = ProjectResolver::new(&root)
+        .resolve()
+        .expect("project resolves with proposal");
+    let preview = preview_proposal_diff_journaled(&model, &root, proposal.proposal_id)
+        .expect("proposal should preview");
+    let predicted = crate::substrate::proposal::predict_journaled_transaction_id(
+        &model,
+        &root,
+        &proposal.batch,
+    )
+    .expect("proposal transaction should predict");
+    assert!(
+        !root
+            .join(".datum/stage")
+            .join(proposal.batch.batch_id.to_string())
+            .exists(),
+        "prediction must clean up staged preview writes"
+    );
+
+    let report = apply_accepted_proposal(&mut model, &root, proposal.proposal_id)
+        .expect("accepted proposal should apply");
+    assert_eq!(
+        preview.preview_after_model_revision,
+        report.transaction.after_model_revision
+    );
+    assert_eq!(
+        predicted,
+        Uuid::new_v5(
+            &project_id,
+            format!(
+                "datum-eda:transaction:{}:{}",
+                proposal.batch.batch_id, preview.preview_after_model_revision.0
+            )
+            .as_bytes(),
+        )
+    );
+    assert_eq!(report.transaction.transaction_id, predicted);
+    assert_eq!(model.journal.len(), 1);
+    assert!(matches!(
+        model.journal[0].operations.last(),
+        Some(Operation::SetProposalMetadata { proposal_id, .. }) if *proposal_id == proposal.proposal_id
+    ));
+    assert_eq!(
+        model
+            .proposals
+            .get(&proposal.proposal_id)
+            .expect("proposal should remain in model")
+            .applied_transaction_id,
+        Some(predicted)
     );
 }
 

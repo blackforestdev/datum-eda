@@ -10,20 +10,31 @@ RELATIONSHIP_TOOL_SCHEMAS = {
         },
     },
     "bind_component_instance": {
-        "description": "Create a journaled ComponentInstance binding between one schematic symbol and one board package.",
+        "description": "Create a journaled ComponentInstance binding between one or more schematic symbols and one board package.",
+        "x_dispatch_args": ["path", "symbol", "package", "component_instance", "symbols", "part", "symbol_roles", "package_roles"],
         "inputSchema": {
             "type": "object",
             "properties": {
                 "path": {"type": "string"},
                 "symbol": {"type": "string"},
                 "package": {"type": "string"},
+                "part": {"type": ["string", "null"]},
+                "symbol_roles": {"type": ["object", "array", "null"]},
+                "package_roles": {"type": ["object", "array", "null"]},
                 "component_instance": {"type": ["string", "null"]},
+                "symbols": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "minItems": 1,
+                },
             },
-            "required": ["path", "symbol", "package"],
+            "required": ["path", "package"],
+            "anyOf": [{"required": ["symbol"]}, {"required": ["symbols"]}],
         },
     },
     "set_component_instance": {
-        "description": "Update a journaled ComponentInstance symbol/package binding.",
+        "description": "Update a journaled ComponentInstance symbol/package binding, preserving multi-symbol authored instances when `symbols` is supplied.",
+        "x_dispatch_args": ["path", "component_instance", "symbol", "package", "symbols", "part", "symbol_roles", "package_roles"],
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -31,8 +42,17 @@ RELATIONSHIP_TOOL_SCHEMAS = {
                 "component_instance": {"type": "string"},
                 "symbol": {"type": "string"},
                 "package": {"type": "string"},
+                "part": {"type": ["string", "null"]},
+                "symbol_roles": {"type": ["object", "array", "null"]},
+                "package_roles": {"type": ["object", "array", "null"]},
+                "symbols": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "minItems": 1,
+                },
             },
-            "required": ["path", "component_instance", "symbol", "package"],
+            "required": ["path", "component_instance", "package"],
+            "anyOf": [{"required": ["symbol"]}, {"required": ["symbols"]}],
         },
     },
     "delete_component_instance": {

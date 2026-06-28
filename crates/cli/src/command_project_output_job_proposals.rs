@@ -2,14 +2,15 @@ use std::path::Path;
 
 use anyhow::{Context, Result};
 use eda_engine::substrate::{
-    CommitProvenance, CommitSource, ObjectRevision, Operation, OperationBatch, OutputJob,
-    ProjectResolver, Proposal, ProposalCreateRequest, ProposalSource,
-    create_draft_proposal_from_batch,
+    CommitProvenance, CommitSource, DesignModel, ObjectRevision, Operation, OperationBatch,
+    OutputJob, PRODUCTION_RECORD_SCHEMA_VERSION, ProjectResolver, Proposal, ProposalCreateRequest,
+    ProposalSource, create_draft_proposal_from_batch,
 };
 use serde::Serialize;
 use uuid::Uuid;
 
 use super::command_project_gerber_plan::sanitize_export_prefix;
+use super::command_project_operation_guards::guarded_operation_batch;
 use super::command_project_output_job_include::{
     output_job_id_for_includes, output_job_include_label, parse_output_job_include,
 };
@@ -46,6 +47,7 @@ pub(crate) fn propose_create_native_project_output_job(
         anyhow::bail!("output job {output_job_id} already exists");
     }
     let output_job = OutputJob {
+        schema_version: PRODUCTION_RECORD_SCHEMA_VERSION,
         id: output_job_id,
         name: name
             .map(str::to_string)
@@ -58,6 +60,7 @@ pub(crate) fn propose_create_native_project_output_job(
         manufacturing_plan,
         object_revision: ObjectRevision(0),
     };
+    validate_output_job_targets(&model, project.board.uuid, &output_job)?;
     let batch = OperationBatch {
         batch_id: Uuid::new_v4(),
         expected_model_revision: Some(model.model_revision.clone()),
@@ -109,6 +112,7 @@ pub(crate) fn propose_update_native_project_output_job(
         anyhow::bail!("update-output-job requires at least one replacement field");
     }
 
+    let project = load_native_project_with_resolved_board(root)?;
     let mut model = ProjectResolver::new(root).resolve()?;
     let mut output_job = model
         .output_jobs
@@ -135,6 +139,7 @@ pub(crate) fn propose_update_native_project_output_job(
         output_job.variant = Some(variant);
     }
     output_job.object_revision = ObjectRevision(output_job.object_revision.0 + 1);
+    validate_output_job_targets(&model, project.board.uuid, &output_job)?;
 
     let batch = OperationBatch {
         batch_id: Uuid::new_v4(),
@@ -213,6 +218,7 @@ fn write_output_job_proposal(
     action: &'static str,
     rationale: String,
 ) -> Result<NativeProjectOutputJobProposalView> {
+    let batch = guarded_operation_batch(model, batch)?;
     let proposal = create_draft_proposal_from_batch(
         model,
         root,
@@ -234,4 +240,37 @@ fn write_output_job_proposal(
         proposal_id: proposal.proposal_id,
         proposal,
     })
+}
+
+fn validate_output_job_targets(
+    model: &DesignModel,
+    project_board_id: Uuid,
+    output_job: &OutputJob,
+) -> Result<()> {
+    if output_job.board_or_panel != project_board_id
+        && !model
+            .panel_projections
+            .contains_key(&output_job.board_or_panel)
+    {
+        anyhow::bail!(
+            "output job references missing board or panel {}",
+            output_job.board_or_panel
+        );
+    }
+    if let Some(variant_id) = output_job.variant {
+        if !model.variants.contains_key(&variant_id) {
+            anyhow::bail!("output job references missing variant {variant_id}");
+        }
+    }
+    if let Some(manufacturing_plan_id) = output_job.manufacturing_plan {
+        if !model
+            .manufacturing_plans
+            .contains_key(&manufacturing_plan_id)
+        {
+            anyhow::bail!(
+                "output job references missing manufacturing plan {manufacturing_plan_id}"
+            );
+        }
+    }
+    Ok(())
 }

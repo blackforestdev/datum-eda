@@ -32,7 +32,6 @@ fn project_update_output_job_round_trips_through_journal_and_undo() {
         .as_str()
         .expect("output job id should serialize")
         .to_string();
-    let variant = Uuid::new_v4().to_string();
 
     let update_output = execute(
         Cli::try_parse_from([
@@ -48,8 +47,6 @@ fn project_update_output_job_round_trips_through_journal_and_undo() {
             "Release A CAM package",
             "--output-dir",
             root.join("fab-rev-b").to_str().unwrap(),
-            "--variant",
-            variant.as_str(),
         ])
         .expect("CLI should parse"),
     )
@@ -73,8 +70,25 @@ fn project_update_output_job_round_trips_through_journal_and_undo() {
         update_report["output_job"]["output_dir"],
         root.join("fab-rev-b").display().to_string()
     );
-    assert_eq!(update_report["output_job"]["variant"], variant);
+    assert!(update_report["output_job"]["variant"].is_null());
     assert_eq!(update_report["output_job"]["object_revision"], 1);
+    let journal_log = std::fs::read_to_string(root.join(".datum/journal/transactions.jsonl"))
+        .expect("transaction journal should read");
+    let update_transaction: serde_json::Value = serde_json::from_str(
+        journal_log
+            .lines()
+            .last()
+            .expect("journal should contain update transaction"),
+    )
+    .expect("update transaction JSON should parse");
+    assert_eq!(
+        update_transaction["operations"].as_array().unwrap().len(),
+        1
+    );
+    assert_eq!(
+        update_transaction["operations"][0]["kind"],
+        "set_output_job"
+    );
 
     let output_job_path = root.join(format!(".datum/output_jobs/{output_job}.json"));
     std::fs::remove_file(&output_job_path).expect("promoted output job shard should remove");
@@ -107,7 +121,7 @@ fn project_update_output_job_round_trips_through_journal_and_undo() {
         query_report["output_jobs"][0]["output_dir"],
         root.join("fab-rev-b").display().to_string()
     );
-    assert_eq!(query_report["output_jobs"][0]["variant"], variant);
+    assert!(query_report["output_jobs"][0]["variant"].is_null());
     assert_eq!(query_report["output_jobs"][0]["object_revision"], 1);
 
     let undo_output = execute(
@@ -322,6 +336,12 @@ fn project_update_output_job_as_proposal_defers_mutation_until_apply() {
     assert_eq!(proposal_report["action"], "propose_update_output_job");
     assert_eq!(proposal_report["proposal_id"], proposal_id);
     assert_eq!(proposal_report["proposal"]["status"], "draft");
+    let proposal_operations = proposal_report["proposal"]["batch"]["operations"]
+        .as_array()
+        .expect("proposal operations should be an array");
+    assert_eq!(proposal_operations.len(), 2);
+    assert_eq!(proposal_operations[0]["kind"], "guard_object_revision");
+    assert_eq!(proposal_operations[1]["kind"], "set_output_job");
 
     let unchanged_output = execute(
         Cli::try_parse_from([

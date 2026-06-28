@@ -3,7 +3,8 @@ use uuid::Uuid;
 use super::{
     CommitDiff, DerivedRelationshipStatus, DerivedVariantPopulation, DesignModel, DomainObject,
     EngineError, ObjectId, Relationship, RelationshipKind, SourceShardDirtyState, SourceShardKind,
-    SourceShardRef, VariantOverlay, source_shard_authority_for_kind,
+    SourceShardRef, VariantOverlay, source_shard::source_shard_taxon_for_path,
+    source_shard_authority_for_kind,
 };
 
 pub(super) fn apply_relationship_create(
@@ -203,6 +204,7 @@ fn ensure_authored_shard(
     model.source_shards.push(SourceShardRef {
         shard_id: authored_shard_id(kind.clone(), object_id)?,
         kind: kind.clone(),
+        taxon: source_shard_taxon_for_path(&kind, &relative_path),
         path: std::path::PathBuf::from(&relative_path),
         relative_path,
         authority: source_shard_authority_for_kind(&kind),

@@ -1,3 +1,9 @@
+pub(crate) use super::cli_args_proposal_library::{
+    ProposalCreatePoolEntityArgs, ProposalCreatePoolLibraryObjectArgs,
+    ProposalCreatePoolPackageArgs, ProposalCreatePoolPadstackArgs, ProposalCreatePoolSymbolArgs,
+    ProposalCreatePoolUnitArgs, ProposalSetPoolPackageCourtyardPolygonArgs,
+    ProposalSetPoolPackageCourtyardRectArgs, ProposalSetPoolPackagePadArgs,
+};
 use super::*;
 
 #[derive(Subcommand)]
@@ -10,6 +16,30 @@ pub(crate) enum ProposalCommands {
     CreatePlaceSymbol(ProposalPlaceSymbolArgs),
     /// Create a draft proposal to draw a schematic wire
     CreateDrawWire(ProposalDrawWireArgs),
+    /// Create a draft proposal to replace one board component package/part/value
+    CreateBoardComponentReplacement(ProposalCreateBoardComponentReplacementArgs),
+    /// Create one draft proposal to replace multiple board component package/part/value sets
+    CreateBoardComponentReplacements(ProposalCreateBoardComponentReplacementsArgs),
+    /// Create one draft proposal from replacement-plan shaped selections
+    CreateBoardComponentReplacementPlan(ProposalCreateBoardComponentReplacementPlanArgs),
+    /// Create a draft proposal to author a raw native pool-library object
+    CreatePoolLibraryObject(ProposalCreatePoolLibraryObjectArgs),
+    /// Create a draft proposal to author a native pool unit
+    CreatePoolUnit(ProposalCreatePoolUnitArgs),
+    /// Create a draft proposal to author a native pool symbol
+    CreatePoolSymbol(ProposalCreatePoolSymbolArgs),
+    /// Create a draft proposal to author a native pool entity
+    CreatePoolEntity(ProposalCreatePoolEntityArgs),
+    /// Create a draft proposal to author a native pool padstack
+    CreatePoolPadstack(ProposalCreatePoolPadstackArgs),
+    /// Create a draft proposal to author a native pool package
+    CreatePoolPackage(ProposalCreatePoolPackageArgs),
+    /// Create a draft proposal to add one pad to a native pool package
+    SetPoolPackagePad(ProposalSetPoolPackagePadArgs),
+    /// Create a draft proposal to set rectangular package courtyard geometry
+    SetPoolPackageCourtyardRect(ProposalSetPoolPackageCourtyardRectArgs),
+    /// Create a draft proposal to set polygon package courtyard geometry
+    SetPoolPackageCourtyardPolygon(ProposalSetPoolPackageCourtyardPolygonArgs),
     /// Create a draft proposal to author an OutputJob
     CreateOutputJob(ProposalCreateOutputJobArgs),
     /// Create a draft proposal to update an OutputJob
@@ -136,6 +166,64 @@ pub(crate) struct ProposalDrawWireArgs {
     /// End Y coordinate in nm
     #[arg(long)]
     pub(crate) to_y_nm: i64,
+    /// Optional stable proposal UUID
+    #[arg(long = "proposal")]
+    pub(crate) proposal: Option<Uuid>,
+    /// Proposal review rationale
+    #[arg(long = "rationale")]
+    pub(crate) rationale: Option<String>,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProposalCreateBoardComponentReplacementArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Board component UUID
+    #[arg(long = "component")]
+    pub(crate) component: Uuid,
+    /// Replacement package UUID
+    #[arg(long = "package")]
+    pub(crate) package: Option<Uuid>,
+    /// Replacement part UUID
+    #[arg(long = "part")]
+    pub(crate) part: Option<Uuid>,
+    /// Replacement component value; defaults to preserving current value
+    #[arg(long = "value")]
+    pub(crate) value: Option<String>,
+    /// Optional stable proposal UUID
+    #[arg(long = "proposal")]
+    pub(crate) proposal: Option<Uuid>,
+    /// Proposal review rationale
+    #[arg(long = "rationale")]
+    pub(crate) rationale: Option<String>,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProposalCreateBoardComponentReplacementsArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Replacement JSON object; repeat for each component.
+    ///
+    /// Example: {"component":"<uuid>","package":"<uuid>","part":"<uuid>","value":"10k"}
+    #[arg(long = "replacement", required = true)]
+    pub(crate) replacements: Vec<String>,
+    /// Optional stable proposal UUID
+    #[arg(long = "proposal")]
+    pub(crate) proposal: Option<Uuid>,
+    /// Proposal review rationale
+    #[arg(long = "rationale")]
+    pub(crate) rationale: Option<String>,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProposalCreateBoardComponentReplacementPlanArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Replacement plan JSON object; repeat for each component.
+    ///
+    /// Example: {"uuid":"<component>","package_uuid":"<package>","part_uuid":"<part>","value":"10k"}
+    #[arg(long = "selection", required = true)]
+    pub(crate) selections: Vec<String>,
     /// Optional stable proposal UUID
     #[arg(long = "proposal")]
     pub(crate) proposal: Option<Uuid>,

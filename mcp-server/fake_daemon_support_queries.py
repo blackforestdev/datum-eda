@@ -22,6 +22,67 @@ def _context_provenance(session: str | None, path: str | None, project_root: str
     }
 
 
+def _active_context_commands(project_root: str | None) -> dict:
+    root_arg = project_root or "$DATUM_PROJECT_ROOT"
+    return {
+        "artifact_list": f"datum-eda artifact list {root_arg}",
+        "artifact_show": f"datum-eda artifact show {root_arg} --artifact artifact-gerber",
+        "artifact_files": f"datum-eda artifact files {root_arg} --artifact artifact-gerber",
+        "artifact_preview": (
+            f"datum-eda artifact preview {root_arg} --artifact artifact-gerber "
+            "--file build/fab/doa2526.gbr"
+        ),
+        "artifact_compare": (
+            f"datum-eda artifact compare {root_arg} --before artifact-previous --after artifact-gerber"
+        ),
+        "artifact_validate": f"datum-eda artifact validate {root_arg} --artifact artifact-gerber",
+        "output_job_generate": f"datum-eda artifact generate {root_arg} --output-job job-gerber",
+        "output_job_start_run": (
+            f"datum-eda artifact start-output-job-run {root_arg} --output-job job-gerber"
+        ),
+        "output_job_cancel_run": (
+            f"datum-eda artifact cancel-output-job-run {root_arg} --run run-gerber-2"
+        ),
+        "proposal_list": f"datum-eda proposal list {root_arg}",
+        "proposal_show": f"datum-eda proposal show {root_arg} --proposal proposal-repair",
+        "proposal_preview": f"datum-eda proposal preview {root_arg} --proposal proposal-repair",
+        "proposal_validate": f"datum-eda proposal validate {root_arg} --proposal proposal-repair",
+        "proposal_review_accept": (
+            f"datum-eda proposal review {root_arg} --proposal proposal-repair --status accepted"
+        ),
+        "proposal_review_reject": (
+            f"datum-eda proposal review {root_arg} --proposal proposal-repair --status rejected"
+        ),
+        "proposal_defer": f"datum-eda proposal defer {root_arg} --proposal proposal-repair",
+        "proposal_reject": f"datum-eda proposal reject {root_arg} --proposal proposal-repair",
+        "proposal_accept_apply": (
+            f"datum-eda proposal accept-apply {root_arg} --proposal proposal-repair"
+        ),
+        "proposal_apply": f"datum-eda proposal apply {root_arg} --proposal proposal-repair",
+        "journal_list": f"datum-eda journal list {root_arg}",
+        "journal_show_tip": (
+            f"datum-eda journal show {root_arg} --transaction transaction-tip"
+        ),
+        "journal_undo": f"datum-eda journal undo {root_arg}",
+        "journal_redo": f"datum-eda journal redo {root_arg}",
+        "source_shards": f"datum-eda project query {root_arg} resolve-debug",
+        "check_run": f"datum-eda check run {root_arg}",
+        "check_list": f"datum-eda check list {root_arg}",
+        "check_profiles": f"datum-eda check profiles {root_arg}",
+        "check_fill_zones": f"datum-eda check fill-zones {root_arg}",
+        "check_show": None,
+        "check_repair_standards": None,
+        "check_waive_finding": (
+            f"datum-eda check waive {root_arg} --fingerprint 'sha256:selected-finding' "
+            "--rationale '<rationale>'"
+        ),
+        "check_accept_deviation": (
+            f"datum-eda check accept-deviation {root_arg} "
+            "--fingerprint 'sha256:selected-finding' --rationale '<rationale>'"
+        ),
+    }
+
+
 class FakeDaemonClientQueriesMixin:
     def datum_context_get(
         self,
@@ -42,7 +103,20 @@ class FakeDaemonClientQueriesMixin:
                 "project_root": project_root,
                 "discovery": path,
                 "visible_artifact_ids": [],
+                "visible_output_job_ids": [],
+                "visible_artifact_file_paths": [],
+                "latest_output_job_id": "job-gerber",
+                "latest_output_job_run_id": "run-gerber-2",
+                "latest_output_job_artifact_id": None,
+                "focused_artifact_id": "artifact-gerber",
+                "focused_artifact_file_path": "build/fab/doa2526.gbr",
+                "visible_proposal_ids": ["proposal-repair"],
+                "latest_proposal_id": "proposal-repair",
+                "accepted_transaction_tip": "transaction-tip",
+                "source_shard_status": {"total": 0, "clean": 0, "dirty": 0, "missing": 0, "unknown": 0, "attention": []},
                 "visible_check_run_ids": [],
+                "selection_context": {"kind": "check_finding", "id": "sha256:selected-finding"},
+                "active_context_commands": _active_context_commands(project_root),
                 "provenance_seed": "datum-context:session-test:context-test:model-test",
                 "expires_at": None,
             },
@@ -68,7 +142,20 @@ class FakeDaemonClientQueriesMixin:
                 "project_root": project_root,
                 "discovery": path,
                 "visible_artifact_ids": [],
+                "visible_output_job_ids": [],
+                "visible_artifact_file_paths": [],
+                "latest_output_job_id": "job-gerber",
+                "latest_output_job_run_id": "run-gerber-2",
+                "latest_output_job_artifact_id": None,
+                "focused_artifact_id": "artifact-gerber",
+                "focused_artifact_file_path": "build/fab/doa2526.gbr",
+                "visible_proposal_ids": ["proposal-repair"],
+                "latest_proposal_id": "proposal-repair",
+                "accepted_transaction_tip": "transaction-tip",
+                "source_shard_status": {"total": 0, "clean": 0, "dirty": 0, "missing": 0, "unknown": 0, "attention": []},
                 "visible_check_run_ids": [],
+                "selection_context": {"kind": "check_finding", "id": "sha256:selected-finding"},
+                "active_context_commands": _active_context_commands(project_root),
                 "provenance_seed": "datum-context:session-test:context-test:model-test",
                 "expires_at": None,
                 "refreshed": True,
@@ -220,6 +307,31 @@ class FakeDaemonClientQueriesMixin:
                 }],
                 "commands": [{"command_id": "datum.artifact.generate", "mcp_alias": "datum.artifact.generate", "origin": "production_terminal_command", "handoff_mode": "execute", "count": 1, "last_execution_id": execution_id or "exec-test", "last_occurred_unix_ms": 1}],
                 "project_root": project_root,
+            },
+            None,
+        )
+
+    def get_source_shards(self, path: str) -> JsonRpcResponse:
+        self.calls.append(("get_source_shards", path))
+        return JsonRpcResponse(
+            "2.0",
+            129,
+            {
+                "source_shards": [
+                    {
+                        "path": "board/board.json",
+                        "kind": "BoardRoot",
+                        "authority": "AuthoredDesign",
+                        "dirty_state": "Clean",
+                    },
+                    {
+                        "path": "pool/symbols/symbol-test.json",
+                        "kind": "Pool",
+                        "taxon": "PoolSymbol",
+                        "authority": "AuthoredDesign",
+                        "dirty_state": "Clean",
+                    }
+                ]
             },
             None,
         )

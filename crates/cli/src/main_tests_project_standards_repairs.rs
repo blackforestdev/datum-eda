@@ -40,7 +40,10 @@ fn project_generate_standards_repair_proposals_links_process_aperture_findings()
         let codes = entry["codes"].as_array().unwrap();
         codes
             .iter()
-            .any(|code| code == "pad_mask_expansion_missing")
+            .any(|code| code == "pad_process_aperture_inherited_from_copper")
+            && codes
+                .iter()
+                .any(|code| code == "pad_mask_expansion_missing")
             && codes
                 .iter()
                 .any(|code| code == "pad_paste_reduction_missing")
@@ -67,11 +70,12 @@ fn project_generate_standards_repair_proposals_links_process_aperture_findings()
         .unwrap()
         .iter()
         .filter(|entry| {
-            entry["code"] == "pad_mask_expansion_missing"
+            entry["code"] == "pad_process_aperture_inherited_from_copper"
+                || entry["code"] == "pad_mask_expansion_missing"
                 || entry["code"] == "pad_paste_reduction_missing"
         })
         .collect::<Vec<_>>();
-    assert_eq!(linked_process_findings.len(), 4);
+    assert_eq!(linked_process_findings.len(), 6);
     assert!(
         linked_process_findings
             .iter()
@@ -121,7 +125,7 @@ fn project_generate_standards_repair_proposals_links_process_aperture_findings()
             proposal.source,
             eda_engine::substrate::ProposalSource::Check
         );
-        assert_eq!(proposal.finding_fingerprints.len(), 2);
+        assert_eq!(proposal.finding_fingerprints.len(), 3);
         assert!(
             proposal
                 .finding_fingerprints
@@ -547,7 +551,7 @@ fn dimension_net_class_uuid() -> Uuid {
     Uuid::parse_str("77777777-7777-4777-8777-777777777777").unwrap()
 }
 
-fn seed_board_dimension_rule_fixture(root: &Path) {
+pub(super) fn seed_board_dimension_rule_fixture(root: &Path) {
     seed_board_process_aperture_fixture(root);
     let net_class_uuid = dimension_net_class_uuid();
     let net_uuid = Uuid::parse_str("88888888-8888-4888-8888-888888888888").unwrap();

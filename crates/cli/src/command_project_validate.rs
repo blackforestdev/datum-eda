@@ -1,4 +1,8 @@
 use anyhow::Result;
+use eda_engine::error::EngineError;
+use eda_engine::substrate::{
+    DesignModel, ProjectResolver, SourceShardKind, validate_native_project_rule_payload,
+};
 use serde::de::DeserializeOwned;
 use uuid::Uuid;
 
@@ -6,13 +10,18 @@ use super::{
     BoardText, Dimension, Keepout, NativeBoardRoot, NativeProjectManifest,
     NativeProjectValidationIssueView, NativeProjectValidationView, NativeRulesRoot,
     NativeSchematicInstance, NativeSchematicRoot, NativeSheetDefinitionRoot, NativeSheetRoot,
-    PlacedPackage, PlacedPad, Rule, Track, Via, Zone, drawing_uuid, load_native_sheet,
+    PlacedPackage, PlacedPad, Track, Via, Zone, drawing_uuid,
 };
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
 #[path = "command_project_pool_validation.rs"]
 mod command_project_pool_validation;
+#[path = "command_project_validate_materialized.rs"]
+mod command_project_validate_materialized;
+use command_project_validate_materialized::{
+    load_materialized_kind_document, load_materialized_relative_path_document,
+};
 const SUPPORTED_NATIVE_SCHEMA_VERSION: u32 = 1;
 
 pub(crate) fn validate_native_project(root: &Path) -> Result<NativeProjectValidationView> {
@@ -39,9 +48,36 @@ pub(crate) fn validate_native_project(root: &Path) -> Result<NativeProjectValida
         ));
     }
 
+    let model = match ProjectResolver::new(root).resolve() {
+        Ok(model) => model,
+        Err(err) => {
+            push_issue(
+                &mut issues,
+                "error",
+                "invalid_json",
+                root.display().to_string(),
+                format!("failed to resolve native project: {err:#}"),
+            );
+            return Ok(finalize_validation_report(
+                root,
+                false,
+                required_files_validated,
+                checked_sheet_files,
+                checked_definition_files,
+                issues,
+            ));
+        }
+    };
+
     let manifest_path = root.join("project.json");
-    let manifest: Option<NativeProjectManifest> =
-        load_json_document(root, &manifest_path, "missing_required_file", &mut issues);
+    let manifest: Option<NativeProjectManifest> = load_materialized_kind_document(
+        &model,
+        SourceShardKind::ProjectManifest,
+        root,
+        &manifest_path,
+        "missing_required_file",
+        &mut issues,
+    );
     if let Some(manifest) = manifest {
         required_files_validated += 1;
         validate_schema_version(
@@ -59,12 +95,30 @@ pub(crate) fn validate_native_project(root: &Path) -> Result<NativeProjectValida
         let board_path = root.join(&manifest.board);
         let rules_path = root.join(&manifest.rules);
 
-        let schematic: Option<NativeSchematicRoot> =
-            load_json_document(root, &schematic_path, "missing_required_file", &mut issues);
-        let board: Option<NativeBoardRoot> =
-            load_json_document(root, &board_path, "missing_required_file", &mut issues);
-        let rules: Option<NativeRulesRoot> =
-            load_json_document(root, &rules_path, "missing_required_file", &mut issues);
+        let schematic: Option<NativeSchematicRoot> = load_materialized_kind_document(
+            &model,
+            SourceShardKind::SchematicRoot,
+            root,
+            &schematic_path,
+            "missing_required_file",
+            &mut issues,
+        );
+        let board: Option<NativeBoardRoot> = load_materialized_kind_document(
+            &model,
+            SourceShardKind::BoardRoot,
+            root,
+            &board_path,
+            "missing_required_file",
+            &mut issues,
+        );
+        let rules: Option<NativeRulesRoot> = load_materialized_kind_document(
+            &model,
+            SourceShardKind::RulesRoot,
+            root,
+            &rules_path,
+            "missing_required_file",
+            &mut issues,
+        );
 
         if let Some(schematic) = schematic {
             required_files_validated += 1;
@@ -74,7 +128,7 @@ pub(crate) fn validate_native_project(root: &Path) -> Result<NativeProjectValida
                 schematic.schema_version,
             );
             let (sheet_uuids, definition_uuids, sheets_checked, defs_checked) =
-                validate_schematic_root(root, &schematic, &mut issues)?;
+                validate_schematic_root(&model, root, &schematic, &mut issues)?;
             checked_sheet_files += sheets_checked;
             checked_definition_files += defs_checked;
             validate_schematic_instances(
@@ -148,6 +202,7 @@ fn finalize_validation_report(
 }
 
 fn validate_schematic_root(
+    model: &DesignModel,
     root: &Path,
     schematic: &NativeSchematicRoot,
     issues: &mut Vec<NativeProjectValidationIssueView>,
@@ -173,7 +228,13 @@ fn validate_schematic_root(
         let subject = format!("schematic/schematic.json#sheets/{sheet_key}");
         let expected_uuid = parse_uuid_key(sheet_key, &subject, issues);
         let path = root.join("schematic").join(relative_path);
-        if let Some(sheet) = load_sheet_document(root, &path, issues)? {
+        if let Some(sheet) = load_materialized_relative_path_document::<NativeSheetRoot>(
+            model,
+            root,
+            &path,
+            "missing_file",
+            issues,
+        ) {
             checked_sheet_files += 1;
             validate_schema_version(issues, relative_subject(root, &path), sheet.schema_version);
             if let Some(expected_uuid) = expected_uuid {
@@ -221,7 +282,7 @@ fn validate_schematic_root(
         let expected_uuid = parse_uuid_key(definition_key, &subject, issues);
         let path = root.join("schematic").join(relative_path);
         let definition: Option<NativeSheetDefinitionRoot> =
-            load_json_document(root, &path, "missing_file", issues);
+            load_materialized_relative_path_document(model, root, &path, "missing_file", issues);
         if let Some(definition) = definition {
             checked_definition_files += 1;
             validate_schema_version(
@@ -738,18 +799,28 @@ fn validate_rules_root(
     let mut seen_rules = BTreeMap::new();
     for (index, value) in rules.rules.iter().enumerate() {
         let subject = format!("rules/rules.json#rules/{index}");
-        match serde_json::from_value::<Rule>(value.clone()) {
-            Ok(rule) => record_uuid("rule", rule.uuid, subject, &mut seen_rules, issues),
+        match validate_native_project_rule_payload(value)
+            .and_then(|_| rule_payload_uuid(value).map_err(EngineError::Validation))
+        {
+            Ok(rule_uuid) => record_uuid("rule", rule_uuid, subject, &mut seen_rules, issues),
             Err(err) => push_issue(
                 issues,
                 "error",
                 "invalid_json",
                 subject,
-                format!("failed to parse rule: {err}"),
+                format!("failed to validate rule: {err}"),
             ),
         }
     }
     Ok(())
+}
+
+fn rule_payload_uuid(value: &serde_json::Value) -> std::result::Result<Uuid, String> {
+    let uuid = value
+        .get("uuid")
+        .and_then(serde_json::Value::as_str)
+        .ok_or_else(|| "project rule missing uuid".to_string())?;
+    Uuid::parse_str(uuid).map_err(|error| format!("invalid project rule uuid: {error}"))
 }
 
 fn validate_component_attachment_key(
@@ -963,80 +1034,4 @@ fn relative_subject(root: &Path, path: &Path) -> String {
         .unwrap_or(path)
         .display()
         .to_string()
-}
-
-fn load_sheet_document(
-    root: &Path,
-    path: &Path,
-    issues: &mut Vec<NativeProjectValidationIssueView>,
-) -> Result<Option<NativeSheetRoot>> {
-    if !path.exists() {
-        push_issue(
-            issues,
-            "error",
-            "missing_file",
-            relative_subject(root, path),
-            "referenced sheet file is missing",
-        );
-        return Ok(None);
-    }
-    match load_native_sheet(path) {
-        Ok(sheet) => Ok(Some(sheet)),
-        Err(err) => {
-            push_issue(
-                issues,
-                "error",
-                "invalid_json",
-                relative_subject(root, path),
-                format!("{err:#}"),
-            );
-            Ok(None)
-        }
-    }
-}
-
-fn load_json_document<T: DeserializeOwned>(
-    root: &Path,
-    path: &Path,
-    missing_code: &str,
-    issues: &mut Vec<NativeProjectValidationIssueView>,
-) -> Option<T> {
-    if !path.exists() {
-        push_issue(
-            issues,
-            "error",
-            missing_code,
-            relative_subject(root, path),
-            "required native project file is missing",
-        );
-        return None;
-    }
-
-    let text = match std::fs::read_to_string(path) {
-        Ok(text) => text,
-        Err(err) => {
-            push_issue(
-                issues,
-                "error",
-                "invalid_json",
-                relative_subject(root, path),
-                format!("failed to read file: {err}"),
-            );
-            return None;
-        }
-    };
-
-    match serde_json::from_str::<T>(&text) {
-        Ok(document) => Some(document),
-        Err(err) => {
-            push_issue(
-                issues,
-                "error",
-                "invalid_json",
-                relative_subject(root, path),
-                format!("failed to parse JSON: {err}"),
-            );
-            None
-        }
-    }
 }

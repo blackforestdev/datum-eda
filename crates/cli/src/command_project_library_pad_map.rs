@@ -6,9 +6,9 @@ use uuid::Uuid;
 
 use super::command_project_library::{
     NativeProjectPoolLibraryObjectMutationView, commit_pool_library_operations,
-    pool_library_mutation_view, pool_library_relative_path, read_pool_library_object_payload,
-    validate_project_local_pool_path,
+    pool_library_mutation_view, pool_library_relative_path, validate_project_local_pool_path,
 };
+use super::command_project_library_payload::read_project_pool_object_payload;
 
 pub(crate) fn set_native_project_pool_part_pad_map_entry(
     root: &Path,
@@ -77,7 +77,7 @@ fn set_native_project_pool_part_pad_map(
         bail!("part pad-map requires at least one entry");
     }
     let relative_path = pool_library_relative_path(pool_path, "parts", part_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), part_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, part_id)?;
     let package_id = uuid_field(&previous_object, "package", "part")?;
     let entity_id = uuid_field(&previous_object, "entity", "part")?;
     let model = ProjectResolver::new(root)

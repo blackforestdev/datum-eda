@@ -16,7 +16,18 @@ class TestDaemonClientDatumTaxonomyRequests(unittest.TestCase):
         run_mock.return_value = subprocess.CompletedProcess(
             args=[],
             returncode=0,
-            stdout='{"contract":"datum_terminal_context_v1","actor_type":"ExternalAgent","visible_artifact_ids":[]}',
+            stdout=(
+                '{"contract":"datum_terminal_context_v1","actor_type":"ExternalAgent",'
+                '"visible_artifact_ids":[],"visible_output_job_ids":[],'
+                '"visible_artifact_file_paths":[],"latest_output_job_id":null,'
+                '"active_context_commands":{"check_waive_finding":'
+                '"datum-eda check waive /tmp/native-project --fingerprint '
+                "'sha256:selected-finding' --rationale '<rationale>'"
+                '","check_accept_deviation":'
+                '"datum-eda check accept-deviation /tmp/native-project --fingerprint '
+                "'sha256:selected-finding' --rationale '<rationale>'"
+                '"}}'
+            ),
             stderr="",
         )
         client = EngineDaemonClient()
@@ -46,6 +57,14 @@ class TestDaemonClientDatumTaxonomyRequests(unittest.TestCase):
         self.assertEqual(response.result["contract"], "datum_terminal_context_v1")
         self.assertEqual(response.result["actor_type"], "ExternalAgent")
         self.assertEqual(response.result["visible_artifact_ids"], [])
+        self.assertEqual(response.result["visible_output_job_ids"], [])
+        self.assertEqual(response.result["visible_artifact_file_paths"], [])
+        self.assertIsNone(response.result["latest_output_job_id"])
+        self.assertEqual(
+            response.result["active_context_commands"]["check_waive_finding"],
+            "datum-eda check waive /tmp/native-project "
+            "--fingerprint 'sha256:selected-finding' --rationale '<rationale>'",
+        )
 
     @patch("server_runtime.subprocess.run")
     def test_datum_context_refresh_uses_cli_context_surface(self, run_mock) -> None:

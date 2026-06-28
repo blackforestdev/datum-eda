@@ -124,3 +124,59 @@ fn proposal_reports_policy_contract_on_create_validate_and_apply() {
 
     let _ = std::fs::remove_dir_all(&root);
 }
+
+#[test]
+fn proposal_create_rejects_lifecycle_metadata_operations() {
+    let root = unique_project_root("datum-eda-cli-proposal-create-lifecycle-bypass");
+    create_native_project(&root, Some("Proposal Policy Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    let model = ProjectResolver::new(&root)
+        .resolve()
+        .expect("project resolves");
+    let blocked_proposal_id = Uuid::new_v5(&model.project.project_id, b"blocked-proposal");
+    let batch = OperationBatch {
+        batch_id: Uuid::new_v5(&model.project.project_id, b"blocked-proposal-batch"),
+        expected_model_revision: Some(model.model_revision),
+        provenance: CommitProvenance {
+            actor: "test".to_string(),
+            source: CommitSource::Cli,
+            reason: "attempt proposal lifecycle mutation".to_string(),
+        },
+        operations: vec![Operation::CreateProposalMetadata {
+            proposal_id: blocked_proposal_id,
+            relative_path: format!(".datum/proposals/{blocked_proposal_id}.json"),
+            proposal: serde_json::json!({ "schema_version": 1 }),
+        }],
+    };
+    let batch_path = root.join("proposal-lifecycle-bypass-batch.json");
+    std::fs::write(&batch_path, serde_json::to_string_pretty(&batch).unwrap()).unwrap();
+
+    let err = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "proposal",
+            "create",
+            root.to_str().unwrap(),
+            "--batch",
+            batch_path.to_str().unwrap(),
+            "--rationale",
+            "attempt proposal lifecycle mutation",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect_err("proposal lifecycle metadata operations should be rejected");
+    assert!(
+        err.to_string()
+            .contains("proposal_metadata_operation_forbidden")
+    );
+
+    let reopened = ProjectResolver::new(&root)
+        .resolve()
+        .expect("project should reopen");
+    assert!(
+        reopened.proposals.is_empty(),
+        "rejected proposal batch must not create proposal metadata"
+    );
+}

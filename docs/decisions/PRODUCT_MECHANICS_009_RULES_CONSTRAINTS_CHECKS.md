@@ -287,6 +287,15 @@ CheckFinding
   resolved_by_transaction_id?
 ```
 
+Concrete implementation note: Datum's current persisted `CheckFinding` schema
+realizes `affected_object_ids[]` as a typed `primary_target: CheckTarget` plus
+`related_targets: CheckTarget[]`. `primary_target` is the stable affected object
+or scope that owns the finding; `related_targets` carries additional affected
+objects when the finding spans multiple objects. This preserves the
+affected-object invariant while allowing non-object targets such as artifacts,
+zone-fill evidence, imported objects, or net scopes to remain typed instead of
+being forced into a UUID-only array.
+
 `fingerprint` is deterministic from rule code/version, normalized affected
 object IDs, observable, basis, and relevant geometry/value signature. It lets
 Datum correlate findings across runs even when each run stores a fresh finding

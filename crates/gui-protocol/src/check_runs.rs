@@ -44,6 +44,8 @@ pub struct CheckRunProfileBasisSummary {
     pub description: String,
     #[serde(default)]
     pub standards_basis: Option<String>,
+    #[serde(default)]
+    pub standards_basis_detail: Option<Value>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
@@ -62,6 +64,8 @@ pub struct CheckRunCoverageSummary {
     pub rule_revision: Option<String>,
     #[serde(default)]
     pub standards_basis: Option<String>,
+    #[serde(default)]
+    pub standards_basis_detail: Option<Value>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
@@ -84,6 +88,8 @@ pub struct CheckFindingSummary {
     pub rule_id: String,
     #[serde(default)]
     pub standards_basis: Option<String>,
+    #[serde(default)]
+    pub standards_basis_detail: Option<Value>,
     #[serde(default)]
     pub rule_revision: Option<String>,
     #[serde(default)]
@@ -129,8 +135,12 @@ impl CheckFindingSummary {
     }
 
     pub fn standards_basis_label(&self) -> Option<String> {
-        self.standards_basis
-            .clone()
+        self.standards_basis_detail
+            .as_ref()
+            .and_then(|detail| detail.get("basis_id"))
+            .and_then(Value::as_str)
+            .map(str::to_string)
+            .or_else(|| self.standards_basis.clone())
             .or_else(|| {
                 self.evidence.iter().find_map(|entry| {
                     (entry.get("evidence_kind").and_then(Value::as_str) == Some("standards_basis"))

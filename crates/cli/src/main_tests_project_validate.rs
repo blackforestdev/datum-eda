@@ -503,7 +503,9 @@ fn project_validate_checks_native_pool_logical_refs() {
             "schema_version": 1,
             "uuid": pin_pad_map_id,
             "part": part_id,
-            "mappings": {}
+            "mappings": {
+                pin_id: pad_id
+            }
         }),
     );
 
@@ -553,6 +555,23 @@ fn project_validate_checks_native_pool_logical_refs() {
                     "gate": Uuid::new_v4(),
                     "pin": Uuid::new_v4()
                 }
+            }
+        }),
+    );
+    let bad_pin_pad_map_id = Uuid::new_v4();
+    let missing_pin_map_key = Uuid::new_v4();
+    let missing_pin_map_pad = Uuid::new_v4();
+    write_pool_json(
+        &root,
+        "pool/pin_pad_maps",
+        bad_pin_pad_map_id,
+        serde_json::json!({
+            "schema_version": 1,
+            "uuid": bad_pin_pad_map_id,
+            "part": part_id,
+            "mappings": {
+                missing_pin_map_key: pad_id,
+                pin_id: missing_pin_map_pad
             }
         }),
     );

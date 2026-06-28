@@ -167,7 +167,9 @@ fn project_component_instance_commands_are_journal_backed() {
     let sheet_file = root.join("schematic").join(&sheet_path);
     std::fs::create_dir_all(sheet_file.parent().unwrap()).unwrap();
     let symbol_id = Uuid::new_v4();
+    let second_symbol_id = Uuid::new_v4();
     let part_id = Uuid::new_v4();
+    seed_pool_part_object(&root, part_id);
     let mut sheet = serde_json::json!({
         "schema_version": 1,
         "uuid": sheet_id,
@@ -194,6 +196,24 @@ fn project_component_instance_commands_are_journal_backed() {
         "fields": [],
         "pins": [],
         "position": { "x": 0, "y": 0 },
+        "rotation": 0,
+        "mirrored": false,
+        "unit_selection": null,
+        "display_mode": "LibraryDefault",
+        "pin_overrides": [],
+        "hidden_power_behavior": "SourceDefinedImplicit"
+    });
+    sheet["symbols"][second_symbol_id.to_string()] = serde_json::json!({
+        "uuid": second_symbol_id,
+        "part": part_id,
+        "entity": Uuid::new_v5(&project_id, b"entity-b"),
+        "gate": Uuid::new_v5(&project_id, b"gate-b"),
+        "lib_id": "test:R",
+        "reference": "U1B",
+        "value": "OLD",
+        "fields": [],
+        "pins": [],
+        "position": { "x": 10, "y": 0 },
         "rotation": 0,
         "mirrored": false,
         "unit_selection": null,
@@ -233,8 +253,18 @@ fn project_component_instance_commands_are_journal_backed() {
             &component_instance_id.to_string(),
             "--symbol",
             &symbol_id.to_string(),
+            "--symbol",
+            &second_symbol_id.to_string(),
             "--package",
             &package_id.to_string(),
+            "--part",
+            &part_id.to_string(),
+            "--symbol-role",
+            &format!("{symbol_id}=logical_unit:A"),
+            "--symbol-role",
+            &format!("{second_symbol_id}=logical_unit:B"),
+            "--package-role",
+            &format!("{package_id}=physical_package:main"),
         ])
         .expect("CLI should parse"),
     )
@@ -263,6 +293,33 @@ fn project_component_instance_commands_are_journal_backed() {
         query["component_instances"][component_instance_id.to_string()]["placed_package_refs"][0],
         package_id.to_string()
     );
+    assert_eq!(
+        query["component_instances"][component_instance_id.to_string()]["part_ref"],
+        part_id.to_string()
+    );
+    assert_eq!(
+        query["component_instances"][component_instance_id.to_string()]["placed_symbol_refs"][0],
+        symbol_id.to_string()
+    );
+    assert_eq!(
+        query["component_instances"][component_instance_id.to_string()]["placed_symbol_refs"][1],
+        second_symbol_id.to_string()
+    );
+    assert_eq!(
+        query["component_instances"][component_instance_id.to_string()]["placed_symbol_roles"]
+            [symbol_id.to_string()]["role"],
+        "logical_unit"
+    );
+    assert_eq!(
+        query["component_instances"][component_instance_id.to_string()]["placed_symbol_roles"]
+            [second_symbol_id.to_string()]["label"],
+        "B"
+    );
+    assert_eq!(
+        query["component_instances"][component_instance_id.to_string()]["placed_package_roles"]
+            [package_id.to_string()]["label"],
+        "main"
+    );
     execute(
         Cli::try_parse_from([
             "eda",
@@ -275,8 +332,18 @@ fn project_component_instance_commands_are_journal_backed() {
             &component_instance_id.to_string(),
             "--symbol",
             &symbol_id.to_string(),
+            "--symbol",
+            &second_symbol_id.to_string(),
             "--package",
             &alternate_package_id.to_string(),
+            "--part",
+            &part_id.to_string(),
+            "--symbol-role",
+            &format!("{symbol_id}=logical_unit:A"),
+            "--symbol-role",
+            &format!("{second_symbol_id}=logical_unit:B"),
+            "--package-role",
+            &format!("{alternate_package_id}=physical_package:alternate"),
         ])
         .expect("CLI should parse"),
     )
@@ -299,6 +366,25 @@ fn project_component_instance_commands_are_journal_backed() {
         set_query["component_instances"][component_instance_id.to_string()]["placed_package_refs"]
             [0],
         alternate_package_id.to_string()
+    );
+    assert_eq!(
+        set_query["component_instances"][component_instance_id.to_string()]["part_ref"],
+        part_id.to_string()
+    );
+    assert_eq!(
+        set_query["component_instances"][component_instance_id.to_string()]["placed_symbol_refs"]
+            [0],
+        symbol_id.to_string()
+    );
+    assert_eq!(
+        set_query["component_instances"][component_instance_id.to_string()]["placed_symbol_refs"]
+            [1],
+        second_symbol_id.to_string()
+    );
+    assert_eq!(
+        set_query["component_instances"][component_instance_id.to_string()]["placed_package_roles"]
+            [alternate_package_id.to_string()]["label"],
+        "alternate"
     );
 
     execute(
@@ -362,6 +448,25 @@ fn project_component_instance_commands_are_journal_backed() {
         undo_query["component_instances"][component_instance_id.to_string()]["placed_package_refs"]
             [0],
         alternate_package_id.to_string()
+    );
+    assert_eq!(
+        undo_query["component_instances"][component_instance_id.to_string()]["part_ref"],
+        part_id.to_string()
+    );
+    assert_eq!(
+        undo_query["component_instances"][component_instance_id.to_string()]["placed_symbol_refs"]
+            [0],
+        symbol_id.to_string()
+    );
+    assert_eq!(
+        undo_query["component_instances"][component_instance_id.to_string()]["placed_symbol_refs"]
+            [1],
+        second_symbol_id.to_string()
+    );
+    assert_eq!(
+        undo_query["component_instances"][component_instance_id.to_string()]["placed_package_roles"]
+            [alternate_package_id.to_string()]["role"],
+        "physical_package"
     );
     let resolve_output = execute(
         Cli::try_parse_from([
@@ -428,6 +533,41 @@ fn project_component_instance_commands_are_journal_backed() {
         "not_applicable_for_variant"
     );
     assert_eq!(board_id.to_string(), board["uuid"].as_str().unwrap());
+}
+
+fn seed_pool_part_object(root: &Path, part_id: Uuid) {
+    let project_path = root.join("project.json");
+    let mut project: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(&project_path).unwrap()).unwrap();
+    project["pools"] = serde_json::json!([{ "path": "pool", "priority": 1 }]);
+    std::fs::write(
+        &project_path,
+        format!("{}\n", to_json_deterministic(&project).unwrap()),
+    )
+    .unwrap();
+    let part_path = root.join(format!("pool/parts/{part_id}.json"));
+    std::fs::create_dir_all(part_path.parent().unwrap()).unwrap();
+    std::fs::write(
+        &part_path,
+        format!(
+            "{}\n",
+            to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "uuid": part_id,
+                "object_revision": 0,
+                "entity": Uuid::new_v5(&part_id, b"entity"),
+                "package": Uuid::new_v5(&part_id, b"package"),
+                "mpn": "TEST-PART",
+                "manufacturer": "Datum",
+                "value": "TEST",
+                "description": "",
+                "datasheet": "",
+                "lifecycle": "Active"
+            }))
+            .unwrap()
+        ),
+    )
+    .unwrap();
 }
 
 fn board_package_json(

@@ -1,16 +1,16 @@
-use std::path::Path;
+use std::{collections::BTreeSet, path::Path};
 
 use anyhow::{Context, Result};
 use eda_engine::substrate::{
-    ArtifactKind, ArtifactProductionProjection, DesignModel, OutputJobLogEntry, OutputJobLogLevel,
-    OutputJobRun, OutputJobRunStatus, ProjectResolver, persist_artifact_metadata,
-    persist_output_job_run,
+    ArtifactKind, ArtifactProductionProjection, DesignModel, OUTPUT_JOB_RUN_SCHEMA_VERSION,
+    OutputJobLogEntry, OutputJobLogLevel, OutputJobRun, OutputJobRunStatus, ProjectResolver,
 };
-use std::collections::BTreeSet;
 use uuid::Uuid;
 
 #[path = "command_project_check_gate.rs"]
 mod command_project_direct_export_gate;
+#[path = "command_project_manufacturing_evidence.rs"]
+mod command_project_manufacturing_evidence;
 #[path = "command_project_manufacturing_match.rs"]
 mod command_project_manufacturing_match;
 #[path = "command_project_manufacturing_panel_projection.rs"]
@@ -48,6 +48,9 @@ use super::{
     export_native_project_pnp, load_native_project_with_resolved_board,
     next_output_job_run_sequence, query_native_project_board_components,
     query_native_project_board_vias, report_native_project_drill_hole_classes,
+};
+use command_project_manufacturing_evidence::{
+    artifact_metadata_path, commit_manufacturing_set_evidence,
 };
 use command_project_manufacturing_match::manufacturing_artifact_matches;
 use command_project_manufacturing_panel_projection::{
@@ -279,12 +282,13 @@ fn export_native_project_manufacturing_set_with_output_run(
         )?;
         output_job.id
     };
-    if scope.include.contains(&ArtifactKind::ManufacturingSet)
-        || scope.include.contains(&ArtifactKind::GerberSet)
+    if persist_output_run
+        && (scope.include.contains(&ArtifactKind::ManufacturingSet)
+            || scope.include.contains(&ArtifactKind::GerberSet))
     {
         ensure_native_project_gerber_set_output_job(root, &scope.prefix, None, None, None, None)?;
     }
-    let model = ProjectResolver::new(root).resolve()?;
+    let mut model = ProjectResolver::new(root).resolve()?;
 
     let mut artifacts = Vec::new();
     let mut artifact_files = Vec::new();
@@ -422,8 +426,6 @@ fn export_native_project_manufacturing_set_with_output_run(
         artifact_files,
         production_projections,
     );
-    let artifact_manifest_path = persist_artifact_metadata(root, &artifact_metadata)
-        .context("failed to persist manufacturing artifact metadata")?;
     let (output_job_run, output_job_run_path) = if persist_output_run {
         let run = manufacturing_set_output_job_run(
             &model,
@@ -432,12 +434,16 @@ fn export_native_project_manufacturing_set_with_output_run(
             artifacts.len(),
             &artifact_metadata.production_projections,
         );
-        let path = persist_output_job_run(root, &run)
-            .context("failed to persist manufacturing output job run")?;
+        let (_, path) =
+            commit_manufacturing_set_evidence(root, &mut model, &artifact_metadata, Some(&run))
+                .context("failed to persist manufacturing generated evidence")?;
         (Some(run), Some(path.display().to_string()))
     } else {
+        commit_manufacturing_set_evidence(root, &mut model, &artifact_metadata, None)
+            .context("failed to persist manufacturing artifact metadata")?;
         (None, None)
     };
+    let artifact_manifest_path = artifact_metadata_path(root, artifact_metadata.artifact_id);
 
     Ok(NativeProjectManufacturingExportView {
         action: "export_manufacturing_set".to_string(),
@@ -679,6 +685,7 @@ fn manufacturing_set_output_job_run(
     log.extend(terminal_origin_log_entries_from(&env, 2));
     append_production_projection_log_entries(&mut log, production_projections);
     OutputJobRun {
+        schema_version: OUTPUT_JOB_RUN_SCHEMA_VERSION,
         run_id: Uuid::new_v5(&model.project.project_id, material.as_bytes()),
         output_job,
         run_sequence,

@@ -60,7 +60,7 @@ CHECK_TOOL_SCHEMAS = {
         },
     },
     "generate_standards_repair_proposals": {
-        "description": "Generate draft standards-repair proposals from persisted process-aperture check findings.",
+        "description": "Generate non-mutating draft standards-repair proposals from persisted CheckRun findings, including process-aperture, geometry, and supported ZoneFill evidence repairs.",
         "inputSchema": {
             "type": "object",
             "properties": {"path": {"type": "string"}},
@@ -91,6 +91,18 @@ CHECK_TOOL_SCHEMAS = {
                 "accepted_by": {"type": ["string", "null"]},
             },
             "required": ["path", "fingerprint", "rationale"],
+        },
+    },
+    "explain_violation": {
+        "description": "Explain an ERC/DRC/check finding by stable fingerprint, with legacy positional index fallback for compatibility.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "domain": {"type": "string", "enum": ["erc", "drc"]},
+                "index": {"type": ["integer", "null"]},
+                "fingerprint": {"type": ["string", "null"]},
+            },
+            "required": ["domain"],
         },
     },
 }

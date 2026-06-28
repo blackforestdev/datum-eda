@@ -73,6 +73,80 @@ class TestDaemonClientProposalRequests(unittest.TestCase):
         self.assertEqual(response.result["action"], "propose_place_symbol")
 
     @patch("server_runtime.subprocess.run")
+    def test_creates_board_component_replacement_proposal_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(args=[], returncode=0, stdout='{"contract":"proposal_create_v1","action":"propose_board_component_replacement"}', stderr="")
+        response = EngineDaemonClient().create_board_component_replacement_proposal("/tmp/native-project", "component-uuid", "package-uuid", "part-uuid", "10k", "proposal-replace", "review replacement")
+        run_mock.assert_called_once_with(
+            ["datum-eda", "--format", "json", "proposal", "create-board-component-replacement", "/tmp/native-project", "--component", "component-uuid", "--package", "package-uuid", "--part", "part-uuid", "--value", "10k", "--proposal", "proposal-replace", "--rationale", "review replacement"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "propose_board_component_replacement")
+
+    @patch("server_runtime.subprocess.run")
+    def test_creates_board_component_replacements_proposal_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(args=[], returncode=0, stdout='{"contract":"proposal_create_v1","action":"propose_board_component_replacement"}', stderr="")
+        replacements = [
+            {"component": "component-u1", "package": "package-u1", "part": "part-u1", "value": "10k"},
+            {"component": "component-u2", "part": "part-u2", "value": "22k"},
+        ]
+        response = EngineDaemonClient().create_board_component_replacements_proposal("/tmp/native-project", replacements, "proposal-replacements", "review replacements")
+        run_mock.assert_called_once_with(
+            [
+                "datum-eda",
+                "--format",
+                "json",
+                "proposal",
+                "create-board-component-replacements",
+                "/tmp/native-project",
+                "--replacement",
+                '{"component":"component-u1","package":"package-u1","part":"part-u1","value":"10k"}',
+                "--replacement",
+                '{"component":"component-u2","part":"part-u2","value":"22k"}',
+                "--proposal",
+                "proposal-replacements",
+                "--rationale",
+                "review replacements",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "propose_board_component_replacement")
+
+    @patch("server_runtime.subprocess.run")
+    def test_creates_board_component_replacement_plan_proposal_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(args=[], returncode=0, stdout='{"contract":"proposal_create_v1","action":"propose_board_component_replacement"}', stderr="")
+        selections = [
+            {"uuid": "component-u1", "package_uuid": "package-u1", "part_uuid": "part-u1", "value": "10k"},
+            {"uuid": "component-u2", "part_uuid": "part-u2"},
+        ]
+        response = EngineDaemonClient().create_board_component_replacement_plan_proposal("/tmp/native-project", selections, "proposal-plan", "review plan")
+        run_mock.assert_called_once_with(
+            [
+                "datum-eda",
+                "--format",
+                "json",
+                "proposal",
+                "create-board-component-replacement-plan",
+                "/tmp/native-project",
+                "--selection",
+                '{"uuid":"component-u1","package_uuid":"package-u1","part_uuid":"part-u1","value":"10k"}',
+                "--selection",
+                '{"uuid":"component-u2","part_uuid":"part-u2"}',
+                "--proposal",
+                "proposal-plan",
+                "--rationale",
+                "review plan",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "propose_board_component_replacement")
+
+    @patch("server_runtime.subprocess.run")
     def test_lists_proposals_via_cli(self, run_mock) -> None:
         run_mock.return_value = subprocess.CompletedProcess(
             args=[],

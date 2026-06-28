@@ -13,7 +13,8 @@ use super::{
     NativeOutline, NativePoint, NativeProjectBoardKeepoutMutationReportView,
     NativeProjectBoardNameMutationReportView, NativeProjectBoardOutlineMutationReportView,
     NativeProjectBoardStackupMutationReportView, NativeProjectBoardTextMutationReportView,
-    load_native_project, load_native_project_with_resolved_board,
+    command_project_operation_guards::guarded_existing_object_operation,
+    load_native_project_with_resolved_board,
 };
 
 pub(crate) fn query_native_project_board_texts(root: &Path) -> Result<Vec<BoardText>> {
@@ -136,7 +137,7 @@ pub(crate) fn place_native_project_board_text(
                 .expect("native board text serialization must succeed"),
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardTextMutationReportView {
         action: "place_board_text".to_string(),
         project_root: project.root.display().to_string(),
@@ -185,7 +186,7 @@ pub(crate) fn edit_native_project_board_text(
     italic: Option<bool>,
     layer: Option<i32>,
 ) -> Result<NativeProjectBoardTextMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let index = project
         .board
         .texts
@@ -274,7 +275,7 @@ pub(crate) fn edit_native_project_board_text(
                 .expect("native board text serialization must succeed"),
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardTextMutationReportView {
         action: "edit_board_text".to_string(),
         project_root: project.root.display().to_string(),
@@ -305,7 +306,7 @@ pub(crate) fn delete_native_project_board_text(
     root: &Path,
     text_uuid: Uuid,
 ) -> Result<NativeProjectBoardTextMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let index = project
         .board
         .texts
@@ -331,7 +332,7 @@ pub(crate) fn delete_native_project_board_text(
             text: value,
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardTextMutationReportView {
         action: "delete_board_text".to_string(),
         project_root: project.root.display().to_string(),
@@ -376,7 +377,7 @@ pub(crate) fn commit_board_layout_operation(
                     source: CommitSource::Cli,
                     reason: reason.to_string(),
                 },
-                operations: vec![operation],
+                operations: guarded_existing_object_operation(&model, operation)?,
             },
         )
         .with_context(|| format!("failed to commit {reason}"))?;
@@ -479,7 +480,7 @@ pub(crate) fn place_native_project_board_keepout(
                 .expect("native board keepout serialization must succeed"),
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardKeepoutMutationReportView {
         action: "place_board_keepout".to_string(),
         project_root: project.root.display().to_string(),
@@ -498,7 +499,7 @@ pub(crate) fn edit_native_project_board_keepout(
     layers: Vec<i32>,
     polygon: Option<Polygon>,
 ) -> Result<NativeProjectBoardKeepoutMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let index = project
         .board
         .keepouts
@@ -536,7 +537,7 @@ pub(crate) fn edit_native_project_board_keepout(
                 .expect("native board keepout serialization must succeed"),
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardKeepoutMutationReportView {
         action: "edit_board_keepout".to_string(),
         project_root: project.root.display().to_string(),
@@ -552,7 +553,7 @@ pub(crate) fn delete_native_project_board_keepout(
     root: &Path,
     keepout_uuid: Uuid,
 ) -> Result<NativeProjectBoardKeepoutMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let index = project
         .board
         .keepouts
@@ -580,7 +581,7 @@ pub(crate) fn delete_native_project_board_keepout(
             keepout: value,
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardKeepoutMutationReportView {
         action: "delete_board_keepout".to_string(),
         project_root: project.root.display().to_string(),
@@ -596,7 +597,7 @@ pub(crate) fn set_native_project_board_outline(
     root: &Path,
     polygon: Polygon,
 ) -> Result<NativeProjectBoardOutlineMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let outline = NativeOutline {
         vertices: polygon
             .vertices
@@ -617,7 +618,7 @@ pub(crate) fn set_native_project_board_outline(
                 .expect("native board outline serialization must succeed"),
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardOutlineMutationReportView {
         action: "set_board_outline".to_string(),
         project_root: project.root.display().to_string(),
@@ -631,7 +632,7 @@ pub(crate) fn set_native_project_board_stackup(
     root: &Path,
     layers: Vec<StackupLayer>,
 ) -> Result<NativeProjectBoardStackupMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let stackup = serde_json::json!({
         "layers": layers
             .into_iter()
@@ -650,7 +651,7 @@ pub(crate) fn set_native_project_board_stackup(
             stackup,
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardStackupMutationReportView {
         action: "set_board_stackup".to_string(),
         project_root: project.root.display().to_string(),

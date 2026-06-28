@@ -6,6 +6,8 @@ use crate::{SceneBounds, SelectionTarget};
 #[serde(rename_all = "snake_case")]
 pub enum DatumToolSessionLifecycle {
     Running,
+    Attached,
+    Detached,
     Terminating,
     Exited,
     Restarted,
@@ -16,6 +18,8 @@ impl DatumToolSessionLifecycle {
     pub fn as_str(self) -> &'static str {
         match self {
             Self::Running => "running",
+            Self::Attached => "attached",
+            Self::Detached => "detached",
             Self::Terminating => "terminating",
             Self::Exited => "exited",
             Self::Restarted => "restarted",

@@ -303,6 +303,8 @@ fn project_bind_sheet_instance_port_enables_hierarchy_link() {
         port_uuid
     );
 
+    std::fs::remove_file(root.join(format!("schematic/definitions/{definition_uuid}.json")))
+        .expect("promoted definition should remove");
     let hierarchy = query_hierarchy_json(&root);
     assert_eq!(hierarchy["links"].as_array().unwrap().len(), 1);
     assert_eq!(hierarchy["links"][0]["parent_port"], port_uuid);

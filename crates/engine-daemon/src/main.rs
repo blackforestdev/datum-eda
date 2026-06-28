@@ -15,20 +15,15 @@ use std::path::{Path, PathBuf};
 
 use anyhow::Result;
 use eda_engine::api::{
-    AssignPartInput, ComponentReplacementPolicy, ComponentReplacementScope, Engine,
-    FlipComponentInput, MoveComponentInput, PlannedComponentReplacementInput,
-    PolicyDrivenComponentReplacementInput, ReplaceComponentInput, RotateComponentInput,
-    ScopedComponentReplacementOverride, ScopedComponentReplacementPlanEdit,
-    ScopedComponentReplacementPolicyInput, SetDesignRuleInput, SetNetClassInput, SetPackageInput,
-    SetPackageWithPartInput, SetReferenceInput, SetValueInput, ViolationDomain,
+    ComponentReplacementPolicy, ComponentReplacementScope, Engine, ScopedComponentReplacementOverride,
+    ScopedComponentReplacementPlanEdit, ScopedComponentReplacementPolicyInput, ViolationDomain,
 };
 use eda_engine::ir::geometry::LayerId;
-use eda_engine::ir::geometry::Point;
-use eda_engine::ir::units::mm_to_nm;
-use eda_engine::rules::ast::{RuleParams, RuleScope, RuleType};
+use eda_engine::rules::ast::RuleType;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 
+mod check_run_view;
 mod dispatch;
 use dispatch::dispatch_request;
 
@@ -89,7 +84,8 @@ struct UuidParams {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 struct ExplainViolationParams {
     domain: ViolationDomain,
-    index: usize,
+    index: Option<usize>,
+    fingerprint: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -100,15 +96,6 @@ struct RunDrcParams {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 struct SaveParams {
     path: Option<PathBuf>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-struct SetDesignRuleParams {
-    rule_type: RuleType,
-    scope: RuleScope,
-    parameters: RuleParams,
-    priority: u32,
-    name: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -228,18 +215,6 @@ struct EditScopedComponentReplacementPlanParams {
     plan: eda_engine::api::ScopedComponentReplacementPlan,
     exclude_component_uuids: Vec<uuid::Uuid>,
     overrides: Vec<ScopedComponentReplacementOverrideParams>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-struct SetNetClassParams {
-    net_uuid: uuid::Uuid,
-    class_name: String,
-    clearance: i64,
-    track_width: i64,
-    via_drill: i64,
-    via_diameter: i64,
-    diffpair_width: i64,
-    diffpair_gap: i64,
 }
 
 fn open_project(engine: &mut Engine, path: &Path) -> Result<Value> {

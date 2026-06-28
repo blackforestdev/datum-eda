@@ -75,10 +75,9 @@ gui-substrate / standards hold on-track; schematic-erc and library-pool
 hold PARTIAL with positive trajectory; import-interop holds PARTIAL (frozen
 lens). Residual defects are bounded and correctly classified as governance
 / plumbing / spec-hygiene rather than correctness — chiefly the unretired
-non-journaled daemon dispatch island (off the public path but unfenced
-cross-language), the unwired PG-* proof-gate harness that specs assert in
-present tense, and a set of doc-orientation lines the cleanup itself left
-stale (substrate still framed as uncommitted-at-22aeebe).
+non-journaled daemon dispatch island (off the public path and now
+cross-language fenced), SPEC_PARITY inventory gaps for shipped slices, and
+larger typed-domain convergence frontiers.
 
 ## Delta Since The 2026-06-22 Refresh #1
 
@@ -104,9 +103,11 @@ mis-judge commit status from stale doc framing" (low).
   path routes all consumers through it; only `ZoneFillState::Filled` zones
   project as copper; conservative empty fill-map under-trusts, never masks.
 - daemon non-journaled AI-write bypass — CLOSED at the public surface &
-  committed (465cc33). 0 public journal-bypassing write tools; bypassing
-  `datum.board.*` aliases hidden compatibility-only; public catalog 298;
-  journaled `datum.pcb.*` the only public board-write surface.
+  committed (465cc33), then tightened again in the active substrate pass. 0
+  public journal-bypassing write tools; bypassing `datum.board.*` and
+  `datum.replacement.apply_*` aliases hidden compatibility-only; public catalog
+  295; journaled `datum.pcb.*` the only public board-write surface, with the
+  hidden daemon write fence cross-language-gated.
 - doc-orientation / specs — CLEANED & committed. CLAUDE.md /
   CANONICAL_IR / AI_CLI_MCP no longer deny the substrate; PROGRESS
   `passive_only_net` `[x]`→`[~]`; NATIVE_FORMAT §6.1/§8; ERC_SPEC
@@ -135,12 +136,9 @@ mis-judge commit status from stale doc framing" (low).
 ### Regressed / newly-widened
 
 - REGRESSED: none structural.
-- NEW (introduced BY the orientation cleanup): the rewritten docs still
-  frame the substrate as "uncommitted at HEAD 22aeebe / a fresh checkout
-  sees almost none of it / do not commit without a SPEC_PARITY refresh"
-  (CLAUDE.md:53,90,91; AI_CLI_MCP_TOOL_SURFACE.md:45), and CLAUDE.md:99-101
-  still lists both P0s as open — all now false. One denial site was missed
-  (LIBRARY_AUTHORING_TOOL_CONTRACT.md:74,161).
+- RESOLVED since the orientation cleanup: the rewritten docs no longer frame
+  the substrate as uncommitted, no longer list both fixed P0s as open, and the
+  missed library substrate-denial sites have been corrected.
 - NEW spec-ahead gap: Decision-013 GUI supervision-reflection is fully
   specified but has ZERO implementation (0 Supervision* types, 0
   supervision goldens, 0 net-new SessionCommands) — a clean spec-vs-code
@@ -250,28 +248,34 @@ Headline: Strongest, most-converged subsystem; moved further. Single commit
 primitive factored into `substrate/commit.rs` with the full ratified
 ordering; new schema_version load gate wired into all shard reads
 (test-backed); object_revision shard-persisted; proposal preview==commit
-machinery with a hard post-commit assert. Open (all P2 governance): the PG-*
-proof-gate harness is absent while specs assert it is present-tense wired;
-the `acceptance_path` provenance field is absent; the compatibility-only
-daemon dispatch arms are not yet routed through commit_journaled.
+machinery with a hard post-commit assert. Open P2 governance: the
+compatibility-only daemon dispatch arms are not yet routed through
+commit_journaled.
 
 Prior-findings resolution:
-- PG-* proof-gate harness wired/machine-enforced — OPEN.
-  `scripts/run_migration_proof_gates.sh` absent; `run_drift_gates.sh`
-  invokes zero PG gates; `grep PG-IDENTITY|PG-COMMIT|PG-PROPOSAL|
-  run_migration_proof_gates` over scripts/+crates/ = empty. Specs still
-  assert present-tense wiring (000D:864-877; 001:496-497; 000:377-388).
-- No proposal preview==commit parity assertion — PARTIAL (machinery
-  landed). `predict_journaled_transaction_id` (`proposal.rs:450-462`)
-  stages writes, clones the model, runs commit() on the bare batch;
-  `apply_accepted_proposal` (:270-289) predicts then hard-asserts
-  transaction_id == predicted (:283-288). Exercised transitively only
-  (tests/proposal.rs); no standalone test calling
-  predict_journaled_transaction_id directly, and no PG-PROPOSAL-PARITY gate.
-- No acceptance_path provenance field — OPEN. `CommitProvenance` is
-  actor/source/reason only (`mod.rs:287-291`); grep `acceptance_path` =
-  empty. Spec mandates it (GUI_AI_SURFACES.md:318,328,333,793). Approximated
-  by CommitSource + ProposalSource + Proposal.applied_transaction_id.
+- PG-* proof-gate harness wired/machine-enforced — RESOLVED for current
+  aggregate proof coverage. `scripts/run_migration_proof_gates.sh` now runs all
+  ten named PG gates and is invoked by `scripts/run_drift_gates.sh`. The gates
+  are backed by focused engine/CLI regressions for import identity, resolver
+  recovery/dirty-state, journal hardening and durable undo/redo, shard-diff
+  isolation, proposal preview/apply parity, Gerber/Excellon production
+  projections, panel-projection isolation, variant population, artifact
+  traceability, and harness self-wiring.
+- No proposal preview==commit parity assertion — RESOLVED for direct code
+  coverage and PG harness wiring.
+  `preview_proposal_diff_journaled` stages proposal writes, updates preview
+  source hashes, and cleans staging without promoting shards;
+  `predict_journaled_transaction_id` uses the same staged source-hash path; and
+  `apply_accepted_proposal` hard-asserts committed transaction_id == predicted.
+  `proposal_predicted_transaction_id_matches_preview_and_apply_transaction`
+  directly asserts preview after-revision, deterministic UUIDv5 prediction, and
+  accepted apply transaction UUID all match.
+- acceptance_path provenance field — RESOLVED BY RATIFICATION.
+  `CommitProvenance` remains actor/source/reason only by design. Direct commit
+  class is `CommitProvenance.source`; proposal-mediated acceptance is proven by
+  an applied `Proposal` whose `applied_transaction_id` equals the durable
+  `TransactionRecord.transaction_id`, with `Proposal.source` preserving the
+  proposer origin and CLI/MCP `approval_path` remaining a surface contract.
 - object_revision journal-replay-derived not shard-persisted — RESOLVED.
   object_revision_for() reads from shard JSON (`mod.rs:503-509`);
   PersistedComponentInstance serde field (`component_instance.rs:24`);
@@ -302,19 +306,14 @@ What's implemented now:
 - ComponentInstance genuinely populated via electrical↔physical join;
   ImportMapEntry keyed by import_key, read-only at resolve.
 
-Still open: PG-* harness; acceptance_path; standalone predict-direct
-preview==commit parity test. Convergence-debt: compatibility-only daemon
-dispatch arms not routed through commit_journaled.
+Convergence-debt: compatibility-only daemon dispatch arms not routed through
+commit_journaled.
 
 Course guidance: Stay the course; strongest, most-converged subsystem and
-moved further. (1) Build `scripts/run_migration_proof_gates.sh` wiring
-PG-IDENTITY/PG-COMMIT/PG-PROPOSAL-PARITY (code already backs them) OR
-downgrade the present-tense spec language to planned. (2) Add a standalone
-predict-direct preview==commit parity test (the schema_version>1 regression
-already exists). (3) Resolve acceptance_path by adding the field or
-ratifying the CommitSource/ProposalSource/applied_transaction_id mechanism.
-(4) Eventually route the compatibility-only daemon arms through
-commit_journaled to retire the dual write path entirely.
+moved further. (1) acceptance_path is resolved by ratifying the
+CommitSource/ProposalSource/applied_transaction_id mechanism. (4) Eventually
+route the compatibility-only daemon arms through commit_journaled to retire the
+dual write path entirely.
 
 ## Subsystem: Schematic Connectivity & ERC
 
@@ -419,25 +418,38 @@ Prior-findings resolution:
   attach_drc_violation_fingerprints runs in run_with_waivers (:107);
   waiver_matches matches Fingerprint against drc_violation_fingerprint
   (:155-157). Live, not just the CLI bridge.
-- Unified typed CheckRun/CheckFinding model absent in the engine — PARTIAL.
-  Engine still returns legacy DrcReport/DrcViolation
-  (`drc/mod.rs:53-58`; `query_surface.rs:235`; `dispatch.rs:468`). Substrate
-  CheckFinding is committed and gained standards_basis/rule_revision/
-  import_key (`check_run.rs:27,29,31`); the legacy→CheckRun bridge is
-  CLI-side. The in-memory engine path still speaks the legacy shape.
-- CheckFingerprint type absent — PARTIAL. No Rust type; engine DRC
-  fingerprint (`drc/fingerprint.rs:14-36`) omits rule_revision/import_key
-  that §6 requires, though CheckFinding now carries those fields.
+- Unified typed CheckRun/CheckFinding model absent in the engine API —
+  PARTIAL. Engine `run_drc` / `run_erc_prechecks` still return raw
+  DrcReport/ErcFinding (`drc/mod.rs:53-58`; `query_surface.rs:235`), but
+  daemon dispatch `run_erc` and `run_drc` now wrap those raw results in live
+  non-persisted `check_run_v1` envelopes with normalized findings and raw
+  compatibility data under `raw_report.erc` / `raw_report.drc`. Substrate
+  CheckFinding is committed and gained standards_basis/rule_revision/import_key
+  (`check_run.rs:27,29,31`), and the native CLI bridge includes read-only
+  `project query <root> erc` / `drc` as `check_run_v1` profile views.
+- CheckFingerprint type absent — PARTIAL. No Rust newtype yet, but the lower
+  engine DRC fingerprint now uses the versioned
+  `datum-eda:drc-violation-fingerprint:v2` material and folds
+  `standards_basis`, `rule_revision`, and `import_key` into the hash when a
+  DRC producer supplies them. Standards-backed DRC producers now stamp
+  `rule_revision="v1"` plus `datum.process_aperture_and_geometry.current`
+  before fingerprinting, and focused DRC waiver coverage proves revision
+  changes alter finding identity.
 - Committed DRC not resolver-pinned — PARTIAL. `run_drc` operates on
-  require_board() in-memory, no model_revision pin; the native CLI path
-  resolves through ProjectResolver (`...board_diagnostics.rs:58`). The
-  daemon-facing engine entry is unpinned. CHECKING_ARCHITECTURE_SPEC:42 not
-  satisfied by the engine entry.
+  require_board() in-memory, no model_revision pin; the native
+  `project query <root> drc` path resolves through ProjectResolver and emits a
+  read-only `check_run_v1` profile view. The daemon-facing compatibility entry
+  now returns a typed live envelope but remains unpinned because it is
+  in-memory/import-session based. CHECKING_ARCHITECTURE_SPEC:42 is satisfied
+  for the native CLI substrate path; imported in-memory daemon sessions remain
+  compatibility-only for resolver pinning.
 - DRC rule set hard-coded; no CheckProfile param — OPEN.
   `dispatch.rs:465-472` takes an explicit RuleType list; not
   profile-parameterized.
-- explain_violation by (domain,index) not fingerprint — OPEN.
-  `dispatch.rs:474-482` keyed by positional index.
+- explain_violation by (domain,index) not fingerprint — RESOLVED for daemon
+  dispatch. `explain_violation` now accepts `fingerprint` and resolves it
+  against the current live CheckRun finding set, while `index` remains accepted
+  for legacy positional callers.
 - Routing kernel — RESOLVED & grew. 71 route_path_candidate* source files;
   170 distinct candidate fn definitions; pure read-only generators; apply
   through the substrate proposal gateway. The most-built part of the
@@ -450,20 +462,21 @@ aperture codes; engine-side Fingerprint waivers; 170 read-only routing
 candidate strategies; route-proposal apply through ProjectResolver +
 apply_accepted_proposal with provenance + model_revision pin.
 
-Still open (convergence-debt): engine entry not resolver-pinned /
-profile-parameterized; engine returns legacy DrcReport; explain_violation
-positional; DRC fingerprint omits rule_revision/import_key; real general
-zone-fill solver absent (derive_zone_fills defaults Unfilled, so imported
-real pours project empty copper).
+Still open (convergence-debt): engine API entry not resolver-pinned /
+profile-parameterized; daemon dispatch wraps raw engine results in typed live
+`check_run_v1`; daemon explain_violation is fingerprint-aware with positional
+fallback; real general zone-fill solver absent
+(derive_zone_fills defaults Unfilled, so imported real pours project empty
+copper).
 
 Course guidance: PARTIAL→ON-TRACK. The fab-trust hole is genuinely closed
 with a bidirectional regression; the conservative empty-fill-map can only
 over-report, never mask — ratify it as the normative imported-board DRC
-posture. Remaining work is convergence-debt: (1) route the engine/daemon DRC
-entry through ProjectResolver + model_revision pin + CheckProfileRef and make
-the engine return the typed CheckRun/CheckFinding model; (2) move
-explain_violation onto fingerprint and fold rule_revision/import_key into the
-DRC fingerprint; (3) the general copper-pour solver remains the one
+posture. Remaining work is convergence-debt: (1) keep native project checks on
+ProjectResolver + model_revision pin + CheckProfileRef while treating
+in-memory/import-session daemon checks as live `check_run_v1` compatibility;
+(2) the lower DRC fingerprint now includes rule revision/import-key slots when
+available; (3) the general copper-pour solver remains the one
 functional gap that lets the native projection==export oracle pass on real
 pours. Keep the routing kernel on course.
 
@@ -575,9 +588,10 @@ Prior-findings resolution:
   in commit()+journal with model_revision keying.
 - No real zone-fill solver — PARTIAL, advanced. zone_fill_copper_projection_
   zones projects only Filled islands; solver now handles bounded rectangular
-  obstacle cutouts v2/v3 with netclass clearance + same-net solid fill
-  (`zone_fill.rs:90-117`). derive_zone_fills default still Unfilled (:555);
-  no general clearance subtraction/antipads/thermals/arbitrary multi-island.
+  obstacle cutouts, keepouts, non-orthogonal track bounds, same-net solid fill,
+  and thermal-relief pass-through when no same-net pad/via anchors need spoke
+  geometry. derive_zone_fills default still Unfilled; no general clearance
+  subtraction/antipads/thermal-anchor generation/arbitrary multi-island.
 - No plated/non-plated NC separation, no G85; legacy drill.csv — OPEN. Both
   {prefix}-drill.csv and {prefix}-drill.drl emitted
   (`command_project_manufacturing.rs:341-362`); render_excellon_drill
@@ -699,13 +713,14 @@ FTS/unit-aware parametric search and a SPEC_PARITY pool/library inventory row.
 
 Conformance now: ON-TRACK (prior: ON-TRACK)
 
-Headline: 298 public datum.* tools across 17 classes with the
-ok/schema/context/result envelope; 0 public tools dispatch to the 15-method
-NON_JOURNALED frozenset; 15 datum.board.* aliases hidden-but-dispatchable;
+Headline: 295 public datum.* tools across 17 classes with the
+ok/schema/context/result envelope; 0 public tools dispatch to the 19-method
+NON_JOURNALED frozenset; datum.board.* and datum.replacement.apply_* aliases
+hidden-but-dispatchable;
 journaled datum.pcb.* the only public board-write surface, machine-gated by
 `test_protocol_catalog.py:227`. SPEC_PARITY green (mcp=186/cli=271/
 daemon=54). The residual defect is convergence-debt: the daemon dispatch
-source island.
+source island persists, but cross-language drift is now fenced.
 
 Prior-findings resolution:
 - 7-class datum.* surface 0% exposed; envelope empty — RESOLVED & committed.
@@ -720,61 +735,63 @@ Prior-findings resolution:
   aliases partition into COMPATIBILITY_TOOL_SPECS (dispatchable, hidden);
   public TOOLS = DATUM_TOOL_SPECS + _PUBLIC_CANONICAL_ALIAS_SPECS
   (:1014-1024). Executed catalog: 0 public tools dispatching to a
-  non-journaled write; 0 public datum.board.*; 15 hidden aliases reachable
+  non-journaled write; 0 public datum.board.* or datum.replacement.apply_*;
+  19 hidden daemon-write aliases reachable
   via TOOL_BY_NAME. Enforced by test_protocol_catalog.py:227
   test_no_public_write_tool_bypasses_the_journaled_commit_path (11/11 catalog
   tests OK). Journaled datum.pcb.* is the only public board-write surface.
 - daemon dispatch.rs imports zero substrate; write arms call legacy engine.*
-  with no journaling — OPEN. grep substrate/commit_journaled/ProjectResolver
+  with no journaling — PARTIAL. grep substrate/commit_journaled/ProjectResolver
   in `engine-daemon/src/dispatch.rs` = empty; legacy write arms at :36,:42,
   :49,:56-57,:99-100,:119-120,:129-130,:253-254,:269-270. The P0 closure
   happened in the Python catalog (hidden), NOT by rewriting dispatch. The
   non-journaled island exists and is reachable via hidden compat aliases /
-  direct socket; no cross-language drift gate.
+  direct socket, but `scripts/check_daemon_write_parity.py` now parses the Rust
+  dispatch source and diffs it against `NON_JOURNALED_DAEMON_WRITE_METHODS`,
+  and the full drift gate invokes it.
 - open_project = engine.import() keeps daemon import-centric — PARTIAL.
   `main.rs:245-246` open_project = engine.import(); no context/proposal/
   commit arm on the socket path; native commit surface lives only in the CLI
   bridge.
-- explain_violation by (domain,index) not fingerprint — OPEN
-  (`dispatch.rs:476`; now hidden/compatibility-only, dispatch shape
-  unchanged).
+- explain_violation by (domain,index) not fingerprint — RESOLVED for daemon
+  dispatch. `fingerprint` is accepted and preferred; `index` remains
+  compatibility-only.
 - Naming eda→datum-eda — RESOLVED (`server_runtime.py:40`,
   `stdio_tool_host.py:31` serverInfo name 'datum-eda').
 - Parity counts — OBSOLETE. Gate GREEN at grown committed counts:
   mcp_runtime_methods=186, cli_project_commands=271, daemon_dispatch_
   methods=54 (`SPEC_PARITY.md:24-29`); check_spec_parity.py passes (7
   inventories).
-- AI_CLI_MCP_TOOL_SURFACE.md denies the substrate — PARTIAL. Rewritten to
+- AI_CLI_MCP_TOOL_SURFACE.md denies the substrate — RESOLVED. Rewritten to
   AFFIRM the substrate (:44-48 "has substantially LANDED ... all exist in
   crates/engine/src/substrate/"); honestly records the daemon non-journaled
-  residue. PARTIAL because new staleness was introduced (:45 "uncommitted at
-  HEAD 22aeebe"; overstated ~115-sites at :349,:493 vs actual ~13).
+  residue, the daemon write-fence gate, and the remaining ~13 classified
+  `write_canonical_json` sites.
 
-What's implemented now: 298 public datum.* tools (17 classes); the
+What's implemented now: 295 public datum.* tools (17 classes); the
 ok/schema/context/result + ok:false envelope; decision-004 Private Mutation
 Ban enforced at the public-surface layer (0 public tools dispatch to a
-non-journaled write), regression-gated; journaled datum.pcb.* the only public
-board-write surface; datum.context/query/check/proposal/journal/library/
-component_instance families CLI-bridged through the substrate; SPEC_PARITY
-green.
+non-journaled write), regression-gated; the hidden compatibility fence is
+cross-language-gated against Rust daemon dispatch; journaled datum.pcb.* is the
+only public board-write surface; datum.context/query/check/proposal/journal/
+library/component_instance families CLI-bridged through the substrate;
+SPEC_PARITY green.
 
 Still open: `dispatch.rs` imports zero substrate and its 15 write arms call
 legacy non-journaled engine.* mutators (closed at the catalog layer, not the
-Rust source); no cross-language drift gate diffing dispatch.rs vs the Python
-allowlist; daemon import-centric; explain_violation positional.
+Rust source); daemon remains import-centric. `explain_violation` is no longer
+positional-only at the daemon/MCP boundary because fingerprint dispatch is
+accepted with index fallback.
 
 Course guidance: Hold ON-TRACK; the subsystem improved. 0 PUBLIC
 journal-bypassing write tools at committed HEAD, machine-gated. The pointed
 question is answered conservatively: dispatch.rs is HIDDEN, not routed
 through commit — the closure happened entirely in the Python catalog
-partition, not in the Rust daemon. Next, in order: (1) add a cross-language
-drift gate that parses the write methods from dispatch.rs and diffs them
-against NON_JOURNALED_DAEMON_WRITE_METHODS, so the hidden-set cannot silently
-fall out of sync and no NEW bypassing arm can be added without tripping a
-gate (the one residual P0-adjacent risk); (2) route the 15 dispatch.rs write
-arms through commit_journaled OR document the daemon as a read/legacy island;
-(3) tidy the minor AI_CLI_MCP staleness. Do NOT add new flat legacy daemon
-write tools or re-promote a datum.board.* write alias.
+partition, not in the Rust daemon. The cross-language drift gate now closes the
+one residual P0-adjacent fencing risk. Next, in order: (1) route the 15
+dispatch.rs write arms through commit_journaled OR document the daemon as a
+read/legacy island; (2) tidy the minor AI_CLI_MCP staleness. Do NOT add new
+flat legacy daemon write tools or re-promote a datum.board.* write alias.
 
 ## Subsystem: GUI Substrate
 
@@ -864,10 +881,10 @@ Headline: Two of three substantive prior findings advanced. Standards
 findings now carry `domain="standards"` and import_key (RESOLVED); named
 standards-basis keying is wired end-to-end with rule_revision +
 standards_basis + import_key folded into the fingerprint (basis-keying
-OPEN→PARTIAL); proposal-first repair with clean claim discipline; zone-fill
-honesty as a second standards basis. Open: typed decision-010 StandardsBasis
-object (JSON-flat-string only); no SPEC_PARITY standards row; ENGINE_SPEC
-batch-1 inline banners.
+OPEN→PARTIAL→PARTIAL+TYPED-V1); proposal-first repair with clean claim
+discipline; zone-fill honesty as a second standards basis; SPEC_PARITY now has
+a `standards_check_surface` row for the shipped standards slice. Open:
+broader StandardsRegistry schema and ENGINE_SPEC batch-1 inline banners.
 
 Prior-findings resolution:
 - Standards check rule-keyed not StandardsBasis-keyed — PARTIAL (advanced).
@@ -875,12 +892,18 @@ Prior-findings resolution:
   per-code basis assignment (`command_project_check_finding_identity.rs:23-39`:
   process-aperture → datum.process_aperture_and_geometry.current; zone-fill →
   datum.zone_fill_honesty.current); CheckRunProfileBasis.standards_basis +
-  coverage rows distinguishing implemented vs not_implemented families
-  (`command_project_check_run_view.rs:218-273`); regression
-  (`main_tests_project_check_profiles.rs:149-179`). The typed decision-010
-  StandardsBasis object (basis_kind discriminator, registry_entry_ref,
-  provenance, uncertainty) is NOT implemented (grep=0); keying is a flat
-  basis-id String.
+  profile-aware coverage rows now mark shipped DRC `clearance_copper` and
+  `silk_clearance_copper` as evaluated/filtered rather than stale
+  not-implemented placeholders (`command_project_check_run_view.rs:218-273`);
+  regression (`main_tests_project_check_profiles.rs:149-220`). Generated
+  CheckRun evidence now also carries typed v1 `standards_basis_detail` on
+  profile basis, coverage rows, and findings with basis_id, registry_entry_ref,
+  basis_kind, disposition, selection scope, and provenance while preserving the
+  flat basis-id string for compatibility. The current process-aperture and
+  ZoneFill honesty details resolve through an engine-owned v1 check
+  standards-basis registry seam instead of CLI-local fallback constructors; the
+  broader project-authored StandardsRegistry schema and full decision-010
+  registry object model remain deferred.
 - CheckFinding lacks domain/import_key — RESOLVED. finding_domain() routes all
   standards-profile codes to domain="standards"
   (`command_project_check_run_view.rs:715-718`); import_key is a CheckFinding
@@ -902,7 +925,10 @@ Prior-findings resolution:
   (datum.check.repair_standards).
 - Batch-1 schema types (StandardsRegistry/etc.) — OPEN (grep=0; correctly
   Planned, not pulled forward).
-- SPEC_PARITY row for the shipped standards slice — OPEN (grep=0).
+- SPEC_PARITY row for the shipped standards slice — RESOLVED.
+  `standards_check_surface` freezes CheckFinding standards fields, standards
+  finding codes, standards repair/check CLI/MCP markers, zone-fill query
+  exposure, and `SetCheckRun`.
 
 What's implemented now: CheckFinding carrying domain/rule_id/standards_basis/
 rule_revision/import_key + sha256 fingerprint; standards-aware fingerprint
@@ -913,21 +939,21 @@ standards repair across pads/tracks/vias; canonical datum.check.repair_standards
 MCP tool, CLI-bridged; zone-fill honesty as a standards basis (only Filled
 zones project as copper — conservative, never masks); regression coverage.
 
-Still open: typed decision-010 StandardsBasis object; StandardsRegistry typed
-schema (correctly deferred); SPEC_PARITY standards row; ENGINE_SPEC inline
-stub banners; import_key emission idle on native findings (slot exists,
-exercise is import-side, correctly idle).
+Still open: broader StandardsRegistry typed schema and full decision-010
+registry integration (correctly deferred); ENGINE_SPEC inline stub banners;
+import_key emission idle on native findings (slot exists, exercise is
+import-side, correctly idle).
 
 Course guidance: Stay the course (ON-TRACK, improved). Two of three
 substantive prior findings advanced (domain/import_key RESOLVED; basis-keying
-OPEN→PARTIAL). The zone-fill DRC fab-trust closure is verified at the
+OPEN→PARTIAL with typed v1 evidence and an engine-owned v1 basis-registry seam now present on CheckRun payloads). The zone-fill DRC fab-trust closure is verified at the
 standards seam (only Filled zones project as copper; unfilled/missing
 surfaced under datum.zone_fill_honesty.current — under-trusts, never masks).
 Next, in priority order: (1) add the SPEC_PARITY inventory row for the shipped
-slice; (2) add ENGINE_SPEC inline stub banners; (3) when M7 import-fidelity
-warrants, promote flat standards_basis to the typed decision-010 StandardsBasis
-with a basis_kind discriminator. Do NOT pull forward deferred batch-1
-schema/MCP stubs.
+slice; (2) add ENGINE_SPEC inline stub banners; (3) when broader standards
+work warrants, connect the typed CheckRun basis detail to a project-authored
+StandardsRegistry rather than only the current engine-owned check-basis registry
+seam. Do NOT pull forward deferred batch-1 schema/MCP stubs.
 
 ## Subsystem: Import / Interop (Frozen Lens)
 
@@ -1000,25 +1026,25 @@ Headline: All four structural prior defects resolved: tree clean + committed
 (uncommitted-at-22aeebe hazard gone); all 10 drift gates + parity gate green
 at committed state; CLAUDE.md / CANONICAL_IR §4 / AI_CLI_MCP rewritten to
 affirm the substrate; passive_only_net honestly `[~]`; parity-delta report
-carries a SUPERSEDED banner. NEW top hazard introduced BY the cleanup: docs
-still frame the substrate as uncommitted-at-22aeebe and list both (now-fixed)
-P0s as open.
+carries a SUPERSEDED banner. The later orientation-cleanup staleness is now
+closed: CLAUDE.md and AI_CLI_MCP no longer frame the substrate as
+uncommitted-at-22aeebe, fixed P0s are not listed as open, and the remaining
+private-writer count is normalized to ~13.
 
 Prior-findings resolution:
 - Green parity status depends on the uncommitted SPEC_PARITY refresh; ~all
   progress uncommitted at 22aeebe — RESOLVED. Tree clean (`git status
   --short` = 0); committed across 720eb55/41f157e/465cc33.
-  check_spec_parity.py exits 0 (7 inventories) at committed state with grown
-  counts (mcp=186, cli=271, daemon=54, engine_api=65, SPEC_PARITY.md:24-30).
+  check_spec_parity.py exits 0 (9 inventories) with grown counts including
+  standards_check_surface and pool_library_surface.
   The "depends on uncommitted refresh" hazard is gone.
 - CLAUDE.md denies ProjectResolver/commit/journal/ComponentInstance —
   RESOLVED. CLAUDE.md:48-56 affirms the substrate "has substantially landed";
   no residual substrate-denial in CLAUDE.md.
 - AI_CLI_MCP_TOOL_SURFACE.md denies the substrate / internally contradictory
-  — PARTIAL. Rewritten to AFFIRM (:44-48,:312). PARTIAL because new staleness
-  was introduced: :45 "uncommitted at HEAD 22aeebe" (false), and the
-  overstated ~115-sites figure persists (:349,:493) vs actual ~13 (CLAUDE.md
-  corrected to ~14 at :94).
+  — RESOLVED. Rewritten to AFFIRM (:44-48,:312), no longer carries the
+  uncommitted-at-22aeebe framing, and normalizes the remaining classified
+  `write_canonical_json` debt to ~13.
 - passive_only_net falsely `[x]` — RESOLVED. PROGRESS.md:506 and :1564 flipped
   `[x]`→`[~]` with honest 0-grep evidence; grep passive_only over
   crates/engine/src = 0.
@@ -1032,41 +1058,32 @@ Prior-findings resolution:
   runs all 10 gates GREEN (318 tests OK, exit 0).
 - PROGRESS substrate-readiness table — RESOLVED. Still the live source of
   truth, native-first headline.
-- CLAUDE.md ~115 private-write sites — PARTIAL. CLAUDE.md:94 corrected to ~14
-  (actual: grep write_canonical_json( = 13); AI_CLI_MCP STILL overstates ~115
-  at :349,:493 (half-fixed; the doc is internally inconsistent, :54 says ~14).
+- CLAUDE.md / AI_CLI_MCP private-write site counts — RESOLVED. Both now report
+  the remaining classified `write_canonical_json` debt as ~13 rather than the
+  stale ~115 figure.
 - ComponentInstance struct location — RESOLVED (substrate present, committed).
 
 New since last audit:
-- NEW staleness introduced BY the orientation cleanup: the rewritten docs
-  still frame the substrate as uncommitted-at-22aeebe (CLAUDE.md:53,90,91;
-  AI_CLI_MCP:45) and "do not commit without a SPEC_PARITY refresh"
-  (CLAUDE.md:91) — all now false at committed 465cc33.
-- CLAUDE.md:99-101 still lists BOTH P0s as open — both now fixed/verified-
-  closed.
-- Missed substrate-denial site the cleanup left:
-  LIBRARY_AUTHORING_TOOL_CONTRACT.md:74 ("depends on a substrate slice that
-  does not exist yet") and :161 ("single commit() primitive ... does not
-  exist yet"). The library/pool mutation surface ships through
-  commit_journaled, so these are now false.
+- Orientation-cleanup staleness is closed. CLAUDE.md and AI_CLI_MCP now frame
+  the substrate as committed/current, fixed P0s are not listed as open,
+  SPEC_PARITY is described as an inventory gate rather than an uncommitted
+  hazard, and AI_CLI_MCP no longer carries the stale ~115 private-writer count.
+- The missed library substrate-denial sites are closed.
+  LIBRARY_AUTHORING_TOOL_CONTRACT now states that the ComponentInstance +
+  commit/journal substrate exists and that the remaining work is the
+  library-specific binding operation family above it.
 - POSITIVE beyond the brief: CANONICAL_IR §4 was fully rewritten, not merely
   the orientation lines — a larger doc-parity gain than enumerated.
 
-Still open: AI_CLI_MCP overstates write-site count (~115 vs ~13); the PG-*
-migration-proof-gate harness is not wired into run_drift_gates.sh while
-PRODUCT_MECHANICS specs assert it is; SPEC_PARITY lacks dedicated rows for the
-shipped standards-aware DRC slice and the pool/library Operation/CLI/MCP
-surface.
+Still open: SPEC_PARITY lacks dedicated rows for the shipped standards-aware
+DRC slice and the pool/library Operation/CLI/MCP surface.
 
 Course guidance: PARTIAL→ON-TRACK. All four structural prior defects are
-resolved at committed HEAD. The remaining meta work is cosmetic-to-orientation,
-not structural: (a) remove the uncommitted-at-22aeebe framing and stale
-open-P0 bullets the cleanup left (CLAUDE.md:53,90,91,99-101; AI_CLI_MCP:45);
-(b) fix the missed denial site (LIBRARY_AUTHORING:74,161); (c) correct
-~115→~13 at AI_CLI_MCP:349,493; (d) the long-standing PG-* harness
-doc-vs-gate gap persists. None can cause a fresh agent to re-implement landed
-work (the docs now affirm the substrate); the risk dropped from
-"re-implement native-first work" to "mis-judge commit status".
+resolved at committed HEAD. The orientation cleanup is now resolved as well.
+The prior PG-* harness doc-vs-gate gap is closed by
+`scripts/run_migration_proof_gates.sh` and its full-drift wiring. Remaining
+meta work is machine-visibility, not false orientation: add SPEC_PARITY rows
+for shipped standards-aware DRC and pool/library surfaces.
 
 ---
 
@@ -1090,17 +1107,17 @@ work (the docs now affirm the substrate); the risk dropped from
    `engine-daemon/src/dispatch.rs` imports zero substrate and its 15 legacy
    write arms remain non-journaled. The P0 closure happened in the Python
    catalog (hidden from public tools/list), NOT by rewriting the Rust source.
-   The hidden-set and the daemon source can drift apart across two languages
-   with no gate enforcing parity.
+   The hidden-set and the daemon source are now protected by
+   `scripts/check_daemon_write_parity.py`, which parses Rust dispatch arms and
+   diffs them against `NON_JOURNALED_DAEMON_WRITE_METHODS`.
 
 4. SPEC-AHEAD HONESTY, IMPROVING BUT UNEVEN. CANONICAL_IR §4, NATIVE_FORMAT
-   §6.1/§8, and ERC_SPEC now carry honest shipped-vs-target banners. But
-   several controlling docs still overstate or mis-state: AI_CLI_MCP cites
-   ~115 write sites vs ~13; PRODUCT_MECHANICS 000/000D/001 assert PG-* proof
-   gates are present-tense wired when no run_migration_proof_gates.sh exists;
-   decision-008/010/011 carry normative-shaped types with no inline
-   not-implemented banner; the cleanup itself left CLAUDE.md/AI_CLI_MCP
-   framing the substrate as uncommitted-at-22aeebe.
+   §6.1/§8, ERC_SPEC, CLAUDE.md, AI_CLI_MCP, and the library contract now carry
+   honest shipped-vs-target framing for the substrate. Remaining spec-ahead
+   concern is narrower: decision-008/010/011 carry normative-shaped types with
+   no inline not-implemented banner. The prior PG-* proof-gate wiring claim is
+   now backed by `scripts/run_migration_proof_gates.sh` and full-drift
+   invocation.
 
 5. TYPED-DOMAIN-OBJECT CONVERGENCE GAP — POOL gated, BOARD not. The engine now
    owns and gates the POOL schema at load (validate_pool_library_object) but
@@ -1111,17 +1128,19 @@ work (the docs now affirm the substrate); the risk dropped from
    deferred under owner-review/frozen posture but a consistent convergence
    frontier.
 
-6. LEGACY vs TYPED CHECK MODEL DUALITY. The engine/daemon still return legacy
-   DrcReport/DrcViolation and ErcFinding (code: &'static str, no
-   SchematicLocation) while the typed substrate CheckRun/CheckFinding model
-   (now with standards_basis/rule_revision/import_key) is the target. The
-   lossless bridge is CLI-side; the in-memory engine path has not adopted the
-   typed return type.
+6. LEGACY vs TYPED CHECK MODEL DUALITY. RESOLVED for daemon dispatch:
+   `run_erc` and `run_drc` now return live non-persisted `check_run_v1`
+   envelopes with normalized CheckFinding-shaped rows and raw compatibility
+   payloads under `raw_report`. The lower in-memory engine API still returns
+   raw DrcReport/DrcViolation and ErcFinding (code: &'static str, no
+   SchematicLocation), so full engine API type convergence remains a smaller
+   follow-on.
 
-7. MACHINE-VISIBILITY GAPS in SPEC_PARITY. Shipped capability slices
-   (standards-aware DRC, the pool/library Operation/CLI/MCP surface, ERC
-   shipped-vs-target) have no parity inventory rows, so they are unguarded
-   against drift even though the shape-count gate is green.
+7. MACHINE-VISIBILITY GAPS in SPEC_PARITY. RESOLVED for the shipped
+   standards-aware DRC slice and pool/library Operation/CLI/MCP surface:
+   `standards_check_surface` and `pool_library_surface` now freeze those
+   marker sets. ERC shipped-vs-target machine visibility remains a smaller
+   follow-on if a dedicated inventory is still desired.
 
 8. FROZEN-IMPORT POSTURE HONORED throughout. No import breadth added; the
    footprint converter is the proof-template, not a prompt for breadth;
@@ -1132,16 +1151,16 @@ work (the docs now affirm the substrate); the risk dropped from
 
 | Pri | Area | Action |
 |-----|------|--------|
-| P1 | MCP/daemon — dispatch island | Add a cross-language drift gate that parses the write methods from `engine-daemon/src/dispatch.rs` and diffs them against the Python `NON_JOURNALED_DAEMON_WRITE_METHODS` allowlist, so the hidden-set cannot silently fall out of sync and no NEW bypassing daemon arm can be added without tripping a gate. The one residual P0-adjacent risk: the public closure depends on a hand-maintained Python list mirroring an unfenced Rust source. |
-| P1 | Substrate / Doc-parity — PG-* proof-gate harness | Either build `scripts/run_migration_proof_gates.sh` (construct the datum-test fixture, perform each edit, assert PG-IDENTITY/PG-COMMIT/PG-PROPOSAL-PARITY thresholds) and wire it into run_drift_gates.sh, OR downgrade the present-tense "wired into a runnable harness" language in PRODUCT_MECHANICS 000/000D/001 to planned/target. Code backs the gates; the spec asserts wiring that does not exist. |
-| P1 | Doc/Code Parity (Meta) — stale orientation framing | Read-only doc pass to remove the uncommitted-at-22aeebe framing the cleanup left (CLAUDE.md:53,90,91; AI_CLI_MCP:45), update CLAUDE.md:99-101 (both P0s are fixed/verified-closed), correct ~115→~13 (AI_CLI_MCP:349,493), and fix the missed denial site LIBRARY_AUTHORING_TOOL_CONTRACT.md:74,161. Low risk now (docs affirm the substrate), but prevents mis-judging commit status. |
+| P1 | MCP/daemon — dispatch island | RESOLVED for drift fencing. `scripts/check_daemon_write_parity.py` parses non-journaled `api/write_ops` mutators, detects daemon dispatch arms that call them, diffs the result against `NON_JOURNALED_DAEMON_WRITE_METHODS`, and is invoked by `scripts/run_drift_gates.sh`. Residual convergence-debt remains: the legacy daemon arms still exist and are hidden/compatibility-only rather than routed through `commit_journaled`. |
+| P1 | Substrate / Doc-parity — PG-* proof-gate harness | RESOLVED. `scripts/run_migration_proof_gates.sh` now runs all ten named PG gates and is wired into `scripts/run_drift_gates.sh`; direct execution passed on 2026-06-26. |
+| P1 | Doc/Code Parity (Meta) — stale orientation framing | RESOLVED. CLAUDE.md, AI_CLI_MCP, and LIBRARY_AUTHORING now affirm the committed substrate, fixed P0s, ~13 remaining classified JSON-write sites, daemon write-fence gate, and library-specific binding gap without stale uncommitted framing. |
 | P1 | Library & Pool — decision-008 ratification | Owner ratifies/reconciles decision-008 vs the M0 Horizon model and answers its 6 open Owner Questions BEFORE further library type work; flip Status to ratified or add a supersede banner. ~1300 lines of pool/library code now ship against an unreconciled draft — the gating blocker for promoting footprints/pin_pad_maps to typed DomainObjects. |
 | P1 | Board, DRC & Routing — copper-pour solver | Build the general copper-pour solver (clearance subtraction, antipads, thermals, arbitrary multi-island) so derive_zone_fills can move beyond the Unfilled default; the one functional gap that lets the native projection==export oracle pass on real pours. Until then the conservative under-trust posture is correct and should be ratified as normative imported-board DRC behavior. |
-| P1 | GUI substrate — Decision-013 supervision-reflection | Begin the GUI_SUPERVISION_REFLECTION mandatory floor (the named FIRST GUI deliverable, currently 0% built): start with the pure-projection journal/activity ledger (R12) and resolver-status/recovery (R13), add the section-5 net-new read-only SessionCommand arms (HoverObject/SelectFinding/SelectJournalEntry/SelectRelationship/SetActiveVariant/RefreshModel) carrying NO OperationBatch, plus the PS-SR-2 read-only invariant test. Read-only by definition (Decision-013 level-1 parity). |
-| P2 | Substrate / Board DRC — engine onto typed model | Route the engine/daemon DRC entry through ProjectResolver + model_revision pin + CheckProfileRef and make the engine return the typed CheckRun/CheckFinding model rather than legacy DrcReport; move explain_violation onto fingerprint and fold rule_revision/import_key into the DRC fingerprint. Convergence-debt, not correctness. |
-| P2 | Spec parity machine-visibility | Add SPEC_PARITY inventory rows for the shipped standards-aware DRC slice, the pool/library Operation/CLI/MCP surface, and the ERC shipped-vs-target slice. |
+| P1 | GUI substrate — Decision-013 supervision-reflection | VOID/OBSOLETE. The audit banner marks Decision-013, the GUI spec set, and supervision-reflection priorities as reverted misdirection. Do not implement this row; redefine GUI work from the owner's interactive-authoring intent. |
+| P2 | Substrate / Board DRC — engine onto typed model | Native `project query <root> drc` now uses ProjectResolver + model_revision pin + DRC CheckRun profile and returns `check_run_v1`; daemon `run_drc` now returns a live non-persisted `check_run_v1` envelope with raw DrcReport under `raw_report.drc`, daemon `explain_violation` now accepts finding fingerprints, and the lower DRC fingerprint folds standards basis, rule revision, and import-key slots into its versioned hash material. Remaining work: move the lower engine API itself onto resolver-pinned typed CheckRun profiles rather than raw compatibility reports. |
+| P2 | Spec parity machine-visibility | PARTIAL RESOLVED. `standards_check_surface` and `pool_library_surface` rows now guard the shipped standards-aware DRC and pool/library Operation/CLI/MCP surfaces. ERC shipped-vs-target remains optional follow-on machine visibility. |
 | P2 | Manufacturing / CAM — drill + ArtifactMetadata | Add plated/non-plated NC separation + G85 route/slot, drop the legacy drill.csv second format, fix the Excellon header (FMAT,2 / coordinate-format); extend ArtifactMetadata to the 000F gate-9 identity set. Collapse the 29 per-format public CLI verbs behind --include. |
-| P2 | Native authoring / Substrate — design-model unification & lineage | Unify api::Design hand-rolled undo/redo with substrate::DesignModel; resolve acceptance_path by adding the field to CommitProvenance/Proposal OR ratifying the existing CommitSource + ProposalSource + applied_transaction_id triple in GUI_AI_SURFACES.md; add a standalone preview==commit parity test calling predict_journaled_transaction_id directly. |
+| P2 | Native authoring / Substrate — design-model unification & lineage | Unify api::Design hand-rolled undo/redo with substrate::DesignModel; acceptance_path lineage is ratified as the existing CommitSource + ProposalSource + applied_transaction_id triple; standalone preview==commit parity coverage now calls the journal prediction path directly. |
 
 ## Stay The Course
 
@@ -1182,31 +1201,26 @@ work (the docs now affirm the substrate); the risk dropped from
 
 | Spec | Change | Pri |
 |------|--------|-----|
-| `PRODUCT_MECHANICS_000/000D/001` (PG-* proof-gate wiring) | Specs assert in present tense that all PG-* gates are "wired into a runnable harness (scripts/run_migration_proof_gates.sh, invoked from run_drift_gates.sh)"; no such script exists and run_drift_gates.sh invokes zero PG gates. Build the harness or downgrade to planned/target and reconcile to one harness name. | P1 |
-| `docs/contracts/AI_CLI_MCP_TOOL_SURFACE.md` (:45, :349, :493) | Drop the stale "uncommitted at HEAD 22aeebe" clause; correct the overstated ~115 write_canonical_json site count to ~13 (one line :54 already corrected to ~14, leaving the doc inconsistent); add a clause noting the bypassing datum.board.* write tools are now hidden compatibility-only aliases excluded from the public catalog (the residual defect is the daemon dispatch source island, not the public surface). | P1 |
-| `CLAUDE.md` (:53, :89-92, :99-101) | Replace the uncommitted/worktree framing with committed-at-465cc33 statements; delete the "do not commit without a matching SPEC_PARITY refresh" warning (gate is green committed); update the open-P0 bullets — global-label merge is fixed and zone-fill DRC fab-trust is verified closed. | P1 |
-| `docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md` (:74, :161) | Missed substrate-denial sites ("depends on a substrate slice that does not exist yet" / "single commit() primitive ... does not exist yet"); the library/pool mutation surface ships through commit_journaled. Update to affirm the substrate exists and backs library pool mutation, pointing at the PROGRESS substrate-readiness table. | P1 |
+| `PRODUCT_MECHANICS_000/000D/001` (PG-* proof-gate wiring) | RESOLVED. `scripts/run_migration_proof_gates.sh` exists, runs all ten named PG gates, and is invoked from `scripts/run_drift_gates.sh`; direct execution passed on 2026-06-26. | P1 |
+| `docs/contracts/AI_CLI_MCP_TOOL_SURFACE.md` (:45, :349, :493) | RESOLVED. The stale uncommitted-at-22aeebe framing is absent, the private-writer count is normalized to ~13, and the current text records that the public daemon write-bypass is closed by the daemon write-parity gate. | P1 |
+| `CLAUDE.md` (:53, :89-92, :99-101) | RESOLVED. CLAUDE.md frames the substrate as committed/current, removes the misleading SPEC_PARITY commit warning, and lists both former P0s as fixed. | P1 |
+| `docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md` (:74, :161) | RESOLVED. The contract now affirms that the ComponentInstance + commit/journal substrate exists and scopes remaining work to the library-specific binding operation family. | P1 |
 | `docs/decisions/PRODUCT_MECHANICS_008` + `LIBRARY_ARCHITECTURE.md` / `POOL_ARCHITECTURE.md` | Decision-008 still "draft for owner review" with 6 unresolved Owner Questions while ~1300 lines of pool/library code ship against the Horizon model; the two models are unreconciled. Owner ratifies/supersedes decision-008 and adds a relationship banner to the Horizon-model docs identifying the on-disk authority. | P1 |
-| `specs/SPEC_PARITY.md` + `spec_parity_manifest.json` | Add inventory rows for the shipped standards-aware DRC slice (standards CheckProfile, process_aperture/zone_fill_honesty bases, CheckFinding standards_basis/rule_revision/import_key, datum.check.repair_standards) and the pool/library Operation/CLI/MCP surface, so these slices are machine-guarded against drift. | P2 |
-| `CHECKING_ARCHITECTURE_SPEC.md` (ProjectResolver pinning :42 + CheckRunRequest profile contract) | Either route the engine/daemon DRC entry through ProjectResolver + model_revision pin + CheckProfileRef (spec mandates all three), OR explicitly scope the resolver/profile mandate to the native CLI/substrate path and mark the in-memory engine run_drc as a legacy/compat alias. Also ratify the conservative empty-fill-map / Filled-only-projects-copper posture as normative imported-board DRC behavior (under-trust over false-pass) with the zone-fill-solver gap as the parked follow-up. | P2 |
+| `specs/SPEC_PARITY.md` + `spec_parity_manifest.json` | PARTIAL RESOLVED. `standards_check_surface` now guards CheckFinding standards fields, standards finding codes, standards repair/check CLI/MCP markers, zone-fill query exposure, and `SetCheckRun`; `pool_library_surface` now guards pool/library Operation variants, ProjectCommands variants, and public `datum.library.*` tools. ERC shipped-vs-target can still get a dedicated row later if needed. | P2 |
+| `CHECKING_ARCHITECTURE_SPEC.md` (ProjectResolver pinning :42 + CheckRunRequest profile contract) | PARTIAL RESOLVED for the native CLI substrate path and daemon dispatch: `project query <root> erc` / `drc` route through ProjectResolver + model_revision + CheckRun profiles, while in-memory daemon `run_erc` / `run_drc` now return live non-persisted `check_run_v1` envelopes with raw compatibility payloads. Also ratify the conservative empty-fill-map / Filled-only-projects-copper posture as normative imported-board DRC behavior (under-trust over false-pass) with the zone-fill-solver gap as the parked follow-up. | P2 |
 | `docs/CANONICAL_IR.md` §4 (note) / §8 + `specs/NATIVE_FORMAT_SPEC.md` (board schema) | §4 rewrite is done and correct; add a note that board-domain schema gating is deferred to a future slice (the pool-domain write-time gate shipped first) so the spec does not imply uniform engine ownership of the board schema today. §8 still overstates a SQLite/FTS pool index with parametric tables vs the implemented exact-string-equality index — banner as spec-ahead or trim (defer to Library/Pool owner). | P2 |
 | `specs/ENGINE_SPEC.md` §1.1a-1.3 (batch-1 type blocks) | Spec-only batch-1 shared enum/reference-type blocks carry no inline deferral banner (honesty lives only in PROGRESS). Add an inline "Batch 1 stub — spec-only, implementation deferred" banner at the head of each block. | P2 |
 | `specs/M7_FRONTEND_SPEC.md` (header + 1.7/1.8) + decision-010/011 banners | Add an inline supersede banner to M7_FRONTEND_SPEC ("superseded by GUI_SPEC §8; scene-contract/identity rules still authoritative") and annotate 1.7 "Not supported: apply/commit" to point at the sanctioned conduit. Add inline spec-ahead/not-implemented banners to decision-011 Core Primitives and the ImportMapEntry status field, and a v1-staging note in STANDARDS_COMPLIANCE_SPEC §5.2 that a flat basis-id String is an acceptable v1 staging of the typed StandardsBasis (domain tokens lowercase: Standards == "standards"). | P2 |
 
 ## Risk Areas
 
-- Cross-language hidden-set drift: the daemon AI-write-bypass closure is
-  enforced only by a hand-maintained Python frozenset
-  (NON_JOURNALED_DAEMON_WRITE_METHODS) mirroring an unfenced Rust source
-  (dispatch.rs) that still imports zero substrate. A new bypassing daemon arm,
-  or re-promotion of a datum.board.* write alias, would not trip any gate.
-  Direct-socket access to the legacy non-journaled write arms also remains.
-- Stale orientation docs causing mis-judgment of commit status: the rewritten
-  CLAUDE.md / AI_CLI_MCP still frame the substrate as uncommitted-at-22aeebe
-  and list both fixed P0s as open. Risk dropped from "re-implement landed
-  native-first work" to "mis-judge commit status", but a fresh agent could
-  still act on false "uncommitted" / "do not commit without SPEC_PARITY
-  refresh" framing.
+- Cross-language hidden-set drift: closed by `scripts/check_daemon_write_parity.py`
+  and full-drift wiring. Direct-socket access to the legacy non-journaled write
+  arms still remains as compatibility convergence-debt.
+- Stale orientation docs causing mis-judgment of commit status: closed for the
+  identified CLAUDE.md, AI_CLI_MCP, and library-contract sites. Remaining meta
+  risk is missing SPEC_PARITY inventory rows for shipped slices, not false
+  uncommitted-status framing.
 - Imported-board DRC under-trust surfacing spurious findings: derive_zone_fills
   defaults to Unfilled and the engine uses an empty fill-map, so imported
   boards with real copper pours will report spurious connectivity/clearance
@@ -1220,10 +1234,11 @@ work (the docs now affirm the substrate); the risk dropped from
   decision-011 Core Primitives, and ENGINE_SPEC batch-1 blocks carry
   normative-shaped definitions with no inline not-implemented banner (grep=0
   in code).
-- Legacy vs typed check-model duality: the engine/daemon return legacy
-  DrcReport/ErcFinding while the typed substrate CheckRun/CheckFinding is the
-  target; the bridge is CLI-side only, so a consumer hitting the in-memory
-  engine path gets the legacy shape with no SchematicLocation and string codes.
+- Legacy vs typed check-model duality: RESOLVED for daemon dispatch.
+  `run_erc` / `run_drc` return live `check_run_v1` envelopes while preserving
+  raw DrcReport/ErcFinding payloads under `raw_report`; only the lower
+  in-memory engine API remains raw for compatibility tests and imported-session
+  internals.
 - Decision-013 supervision-reflection spec-vs-code divergence: the named FIRST
   GUI deliverable is fully specified with zero implementation; reading the
   spec as shipped would mis-scope the GUI frontier.

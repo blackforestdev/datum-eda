@@ -38,6 +38,8 @@ pub(crate) struct NativeProjectBomComparisonView {
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectBomInspectionRowView {
     pub(crate) component_instance_uuid: Option<String>,
+    pub(crate) component_instance_role: Option<String>,
+    pub(crate) component_instance_label: Option<String>,
     pub(crate) reference: String,
     pub(crate) value: String,
     pub(crate) part_uuid: String,
@@ -106,6 +108,8 @@ pub(crate) struct NativeProjectPnpComparisonView {
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectPnpInspectionRowView {
     pub(crate) component_instance_uuid: Option<String>,
+    pub(crate) component_instance_role: Option<String>,
+    pub(crate) component_instance_label: Option<String>,
     pub(crate) reference: String,
     pub(crate) x_nm: i64,
     pub(crate) y_nm: i64,
@@ -207,8 +211,10 @@ pub(crate) fn render_native_project_bom_inspection_text(
         lines.push("rows:".to_string());
         for row in &report.rows {
             lines.push(format!(
-                "- component_instance={} reference={} value={} part_uuid={} package_uuid={} layer={} x_nm={} y_nm={} rotation_deg={} locked={}",
+                "- component_instance={} role={} label={} reference={} value={} part_uuid={} package_uuid={} layer={} x_nm={} y_nm={} rotation_deg={} locked={}",
                 row.component_instance_uuid.as_deref().unwrap_or(""),
+                row.component_instance_role.as_deref().unwrap_or(""),
+                row.component_instance_label.as_deref().unwrap_or(""),
                 row.reference,
                 row.value,
                 row.part_uuid,
@@ -309,8 +315,10 @@ pub(crate) fn render_native_project_pnp_inspection_text(
         lines.push("rows:".to_string());
         for row in &report.rows {
             lines.push(format!(
-                "- component_instance={} reference={} x_nm={} y_nm={} rotation_deg={} layer={} side={} package_uuid={} part_uuid={} value={} locked={}",
+                "- component_instance={} role={} label={} reference={} x_nm={} y_nm={} rotation_deg={} layer={} side={} package_uuid={} part_uuid={} value={} locked={}",
                 row.component_instance_uuid.as_deref().unwrap_or(""),
+                row.component_instance_role.as_deref().unwrap_or(""),
+                row.component_instance_label.as_deref().unwrap_or(""),
                 row.reference,
                 row.x_nm,
                 row.y_nm,

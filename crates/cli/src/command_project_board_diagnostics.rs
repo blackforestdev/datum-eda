@@ -36,21 +36,6 @@ pub(crate) fn query_native_project_board_check(root: &Path) -> Result<CheckRepor
     })
 }
 
-pub(crate) fn query_native_project_drc(root: &Path) -> Result<DrcReport> {
-    query_native_project_drc_with_rules(
-        root,
-        &[
-            RuleType::Connectivity,
-            RuleType::ClearanceCopper,
-            RuleType::TrackWidth,
-            RuleType::ViaHole,
-            RuleType::ViaAnnularRing,
-            RuleType::SilkClearance,
-            RuleType::ProcessAperture,
-        ],
-    )
-}
-
 pub(crate) fn query_native_project_drc_with_rules(
     root: &Path,
     rules: &[RuleType],

@@ -1,12 +1,13 @@
 use super::*;
 use eda_engine::ir::serialization::to_json_deterministic;
 use eda_engine::schematic::{CheckDomain, WaiverTarget};
+use eda_engine::substrate::{ProjectResolver, SourceShardKind};
 
 fn unique_project_root(label: &str) -> PathBuf {
     std::env::temp_dir().join(format!("{}-{}", label, Uuid::new_v4()))
 }
 
-fn seed_board_drc_fixture(root: &Path) -> Uuid {
+pub(super) fn seed_board_drc_fixture(root: &Path) -> Uuid {
     let net_uuid = Uuid::new_v4();
     let class_uuid = Uuid::new_v4();
     let package_a_uuid = Uuid::new_v4();
@@ -136,17 +137,62 @@ fn project_query_drc_reports_native_board_drc_json() {
     ])
     .expect("CLI should parse");
 
+    let before = ProjectResolver::new(&root)
+        .resolve()
+        .expect("resolver should read fixture before DRC query")
+        .model_revision
+        .0;
     let output = execute(cli).expect("project query drc should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("query JSON should parse");
-    assert_eq!(report["passed"], false);
+    assert_eq!(report["contract"], "check_run_v1");
+    assert_eq!(report["persisted"], false);
+    assert_eq!(report["profile_id"], "drc");
+    assert_eq!(report["model_revision"], before);
+    assert_eq!(report["raw_report"]["summary"]["errors"], 2);
     assert_eq!(report["summary"]["errors"], 2);
     assert_eq!(report["summary"]["waived"], 0);
     assert!(
-        report["violations"]
+        report["raw_report"]["drc"]
             .as_array()
             .unwrap()
             .iter()
             .any(|entry| entry["code"] == "connectivity_unrouted_net" && entry["waived"] == false)
+    );
+    assert_eq!(
+        report["finding_count"],
+        report["findings"].as_array().unwrap().len()
+    );
+    assert!(report["findings"].as_array().unwrap().iter().any(|entry| {
+        entry["source"] == "drc"
+            && entry["domain"] == "drc"
+            && entry["rule_id"] == "connectivity_unrouted_net"
+            && entry["fingerprint"]
+                .as_str()
+                .unwrap()
+                .starts_with("sha256:")
+            && entry["status"] == "active"
+            && entry["primary_target"]["kind"].as_str().unwrap() != "unknown"
+    }));
+    assert!(report["coverage"].as_array().unwrap().iter().any(|entry| {
+        entry["domain"] == "drc"
+            && entry["rule_id"] == "board_geometry"
+            && entry["status"] == "evaluated"
+    }));
+    let check_run_id = report["check_run_id"].as_str().unwrap();
+    assert!(
+        !root
+            .join(format!(".datum/check_runs/{check_run_id}.json"))
+            .exists()
+    );
+    let resolved = ProjectResolver::new(&root)
+        .resolve()
+        .expect("resolver should read project without persisted DRC check run");
+    assert_eq!(resolved.model_revision.0, before);
+    assert!(
+        !resolved
+            .source_shards
+            .iter()
+            .any(|shard| shard.kind == SourceShardKind::CheckRun)
     );
 
     let _ = std::fs::remove_dir_all(&root);
@@ -163,8 +209,10 @@ fn project_query_drc_reports_native_board_drc_text() {
         .expect("CLI should parse");
 
     let output = execute(cli).expect("project query drc should succeed");
-    assert!(output.contains("drc: passed=false errors=2 warnings=0 waived=0"));
-    assert!(output.contains("violations:"));
+    assert!(output.contains("\"contract\": \"check_run_v1\""));
+    assert!(output.contains("\"profile_id\": \"drc\""));
+    assert!(output.contains("\"persisted\": false"));
+    assert!(output.contains("\"raw_report\""));
     assert!(output.contains("connectivity_no_copper"));
     assert!(output.contains("connectivity_unrouted_net"));
 
@@ -203,15 +251,25 @@ fn project_query_drc_honors_native_authored_waiver() {
 
     let output = execute(cli).expect("project query drc should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("query JSON should parse");
-    assert_eq!(report["passed"], true);
+    assert_eq!(report["contract"], "check_run_v1");
+    assert_eq!(report["persisted"], false);
+    assert_eq!(report["profile_id"], "drc");
+    assert_eq!(report["raw_report"]["summary"]["errors"], 0);
     assert_eq!(report["summary"]["errors"], 0);
     assert_eq!(report["summary"]["waived"], 2);
     assert!(
-        report["violations"]
+        report["raw_report"]["drc"]
             .as_array()
             .unwrap()
             .iter()
             .all(|entry| entry["waived"] == true)
+    );
+    assert!(
+        report["findings"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|entry| entry["status"] == "waived")
     );
 
     let _ = std::fs::remove_dir_all(&root);

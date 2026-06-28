@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use super::super::*;
+use crate::command_project::command_project_operation_guards::guarded_existing_object_operation;
 
 pub(crate) fn render_symbol_display_mode(mode: &SymbolDisplayMode) -> String {
     match mode {
@@ -278,7 +279,10 @@ pub(crate) fn set_native_project_name(
                     source: CommitSource::Cli,
                     reason: "set project name".to_string(),
                 },
-                operations: vec![Operation::SetProjectName { project_id, name }],
+                operations: guarded_existing_object_operation(
+                    &model,
+                    Operation::SetProjectName { project_id, name },
+                )?,
             },
         )
         .context("failed to commit set project name")?;
@@ -299,8 +303,12 @@ pub(crate) fn set_native_project_rules(
         .with_context(|| format!("failed to read {}", rules_file.display()))?;
     let replacement: NativeRulesRoot = serde_json::from_str(&replacement_text)
         .with_context(|| format!("failed to parse {}", rules_file.display()))?;
+    let project = load_native_project_with_resolved_board(root)?;
     let mut model = ProjectResolver::new(root).resolve()?;
     let expected_model_revision = model.model_revision.clone();
+    let rules_root_id = project.rules.uuid.ok_or_else(|| {
+        anyhow::anyhow!("project rules root is missing uuid; run project new migration first")
+    })?;
     let rules = replacement.rules;
     model
         .commit_journaled(
@@ -308,7 +316,13 @@ pub(crate) fn set_native_project_rules(
             OperationBatch {
                 batch_id: Uuid::new_v4(),
                 expected_model_revision: Some(expected_model_revision),
-                operations: vec![Operation::SetProjectRules { rules }],
+                operations: guarded_existing_object_operation(
+                    &model,
+                    Operation::SetProjectRules {
+                        rules_root_id,
+                        rules,
+                    },
+                )?,
                 provenance: CommitProvenance {
                     source: CommitSource::Cli,
                     actor: "datum-eda-cli".to_string(),
@@ -361,7 +375,7 @@ pub(crate) fn create_native_project_rule(
             },
         )
         .context("failed to commit create project rule")?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectRulesMutationReportView {
         action: "create_project_rule".to_string(),
         project_root: root.display().to_string(),
@@ -400,11 +414,14 @@ pub(crate) fn set_native_project_rule(
             OperationBatch {
                 batch_id: Uuid::new_v4(),
                 expected_model_revision: Some(expected_model_revision),
-                operations: vec![Operation::SetProjectRule {
-                    rules_root_id,
-                    rule_id,
-                    rule,
-                }],
+                operations: guarded_existing_object_operation(
+                    &model,
+                    Operation::SetProjectRule {
+                        rules_root_id,
+                        rule_id,
+                        rule,
+                    },
+                )?,
                 provenance: CommitProvenance {
                     source: CommitSource::Cli,
                     actor: "datum-eda-cli".to_string(),
@@ -413,7 +430,7 @@ pub(crate) fn set_native_project_rule(
             },
         )
         .context("failed to commit set project rule")?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectRulesMutationReportView {
         action: "set_project_rule".to_string(),
         project_root: root.display().to_string(),
@@ -446,11 +463,14 @@ pub(crate) fn delete_native_project_rule(
             OperationBatch {
                 batch_id: Uuid::new_v4(),
                 expected_model_revision: Some(expected_model_revision),
-                operations: vec![Operation::DeleteProjectRule {
-                    rules_root_id,
-                    rule_id,
-                    rule,
-                }],
+                operations: guarded_existing_object_operation(
+                    &model,
+                    Operation::DeleteProjectRule {
+                        rules_root_id,
+                        rule_id,
+                        rule,
+                    },
+                )?,
                 provenance: CommitProvenance {
                     source: CommitSource::Cli,
                     actor: "datum-eda-cli".to_string(),
@@ -459,7 +479,7 @@ pub(crate) fn delete_native_project_rule(
             },
         )
         .context("failed to commit delete project rule")?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectRulesMutationReportView {
         action: "delete_project_rule".to_string(),
         project_root: root.display().to_string(),

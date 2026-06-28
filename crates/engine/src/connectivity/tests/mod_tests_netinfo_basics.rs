@@ -354,6 +354,12 @@ fn distinct_global_labels_with_equal_root_counts_stay_separate() {
 
     assert_eq!(vcc.labels, 3, "VCC should aggregate its 3 sheet labels");
     assert_eq!(gnd.labels, 3, "GND should aggregate its 3 sheet labels");
-    assert_eq!(vcc.sheets, vec!["A".to_string(), "B".to_string(), "C".to_string()]);
-    assert_eq!(gnd.sheets, vec!["D".to_string(), "E".to_string(), "F".to_string()]);
+    assert_eq!(
+        vcc.sheets,
+        vec!["A".to_string(), "B".to_string(), "C".to_string()]
+    );
+    assert_eq!(
+        gnd.sheets,
+        vec!["D".to_string(), "E".to_string(), "F".to_string()]
+    );
 }

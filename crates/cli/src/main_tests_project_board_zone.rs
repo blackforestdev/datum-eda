@@ -2,11 +2,11 @@ use super::*;
 use eda_engine::board::Zone;
 use eda_engine::ir::serialization::to_json_deterministic;
 
-fn unique_project_root(label: &str) -> PathBuf {
+pub(super) fn unique_project_root(label: &str) -> PathBuf {
     std::env::temp_dir().join(format!("{}-{}", label, Uuid::new_v4()))
 }
 
-fn board_zones_query_cli(root: &Path) -> Cli {
+pub(super) fn board_zones_query_cli(root: &Path) -> Cli {
     Cli::try_parse_from([
         "eda",
         "--format",
@@ -19,7 +19,7 @@ fn board_zones_query_cli(root: &Path) -> Cli {
     .expect("CLI should parse")
 }
 
-fn zone_fills_query(root: &Path) -> serde_json::Value {
+pub(super) fn zone_fills_query(root: &Path) -> serde_json::Value {
     let output = execute(
         Cli::try_parse_from([
             "eda",
@@ -36,7 +36,7 @@ fn zone_fills_query(root: &Path) -> serde_json::Value {
     serde_json::from_str(&output).expect("zone-fills JSON should parse")
 }
 
-fn check_run_query(root: &Path) -> serde_json::Value {
+pub(super) fn check_run_query(root: &Path) -> serde_json::Value {
     let output = execute(
         Cli::try_parse_from([
             "eda",
@@ -70,11 +70,11 @@ fn journal_list(root: &Path) -> serde_json::Value {
     serde_json::from_str(&output).expect("journal-list JSON should parse")
 }
 
-fn place_zone_fixture(root: &Path) -> String {
+pub(super) fn place_zone_fixture(root: &Path) -> String {
     place_zone_fixture_with_thermal(root, true)
 }
 
-fn create_board_net_fixture(root: &Path, name: &str) -> String {
+pub(super) fn create_board_net_fixture(root: &Path, name: &str) -> String {
     let class_output = execute(
         Cli::try_parse_from([
             "eda",
@@ -120,7 +120,7 @@ fn create_board_net_fixture(root: &Path, name: &str) -> String {
     net_report["net_uuid"].as_str().unwrap().to_string()
 }
 
-fn place_zone_fixture_with_thermal(root: &Path, thermal_relief: bool) -> String {
+pub(super) fn place_zone_fixture_with_thermal(root: &Path, thermal_relief: bool) -> String {
     let net_uuid = create_board_net_fixture(root, "GND");
 
     let place_output = execute(
@@ -158,7 +158,7 @@ fn place_zone_fixture_with_thermal(root: &Path, thermal_relief: bool) -> String 
     placed["zone_uuid"].as_str().unwrap().to_string()
 }
 
-fn place_rectangular_zone_fixture(root: &Path) -> String {
+pub(super) fn place_rectangular_zone_fixture(root: &Path) -> String {
     let net_uuid = create_board_net_fixture(root, "GND");
 
     let place_output = execute(
@@ -419,6 +419,7 @@ fn project_query_zone_fills_reports_resolver_derived_unfilled_state() {
         .as_array()
         .expect("zone-fills should contain an array");
     assert_eq!(fills.len(), 1);
+    assert_eq!(fills[0]["schema_version"], 1);
     assert_eq!(fills[0]["zone_id"], zone_uuid);
     assert_eq!(fills[0]["state"], "unfilled");
     assert_eq!(fills[0]["source_zone_revision"], 0);
@@ -454,6 +455,7 @@ fn project_fill_zones_persists_filled_generated_evidence_for_safe_simple_zone() 
     assert_eq!(report["contract"], "zone_fill_generate_v1");
     assert_eq!(report["action"], "fill_zones");
     assert_eq!(report["zone_fill_count"], 1);
+    assert_eq!(report["zone_fills"][0]["schema_version"], 1);
     assert_eq!(report["zone_fills"][0]["zone_id"], zone_uuid);
     assert_eq!(report["zone_fills"][0]["state"], "filled");
     assert_eq!(
@@ -468,6 +470,7 @@ fn project_fill_zones_persists_filled_generated_evidence_for_safe_simple_zone() 
     );
 
     let fills = zone_fills_query(&root);
+    assert_eq!(fills["zone_fills"][0]["schema_version"], 1);
     assert_eq!(fills["zone_fills"][0]["zone_id"], zone_uuid);
     assert_eq!(fills["zone_fills"][0]["state"], "filled");
     assert_eq!(
@@ -660,314 +663,7 @@ fn project_fill_zones_undo_restores_stale_prior_generated_evidence() {
 }
 
 #[test]
-fn project_fill_zones_allows_same_net_copper_without_fake_clearance_subtraction() {
-    let root = unique_project_root("datum-eda-cli-project-fill-zones-same-net");
-    create_native_project(&root, Some("Same Net Fill Zones Demo".to_string()))
-        .expect("initial scaffold should succeed");
-    let zone_uuid = place_zone_fixture_with_thermal(&root, false);
-    let zone_id = zone_uuid.to_string();
-    let fills = zone_fills_query(&root);
-    let zone_net = fills["zone_fills"][0]["zone_id"]
-        .as_str()
-        .expect("zone id should exist");
-    assert_eq!(zone_net, zone_id);
-    let zones_output =
-        execute(board_zones_query_cli(&root)).expect("board zones query should succeed");
-    let zones: Vec<Zone> = serde_json::from_str(&zones_output).expect("zones should parse");
-    let net_uuid = zones[0].net.to_string();
-
-    execute(
-        Cli::try_parse_from([
-            "eda",
-            "--format",
-            "json",
-            "project",
-            "draw-board-track",
-            root.to_str().unwrap(),
-            "--net",
-            &net_uuid,
-            "--from-x-nm",
-            "100",
-            "--from-y-nm",
-            "100",
-            "--to-x-nm",
-            "900",
-            "--to-y-nm",
-            "100",
-            "--width-nm",
-            "100",
-            "--layer",
-            "1",
-        ])
-        .expect("CLI should parse"),
-    )
-    .expect("draw same-net track should succeed");
-    execute(
-        Cli::try_parse_from([
-            "eda",
-            "--format",
-            "json",
-            "project",
-            "place-board-via",
-            root.to_str().unwrap(),
-            "--net",
-            &net_uuid,
-            "--x-nm",
-            "500",
-            "--y-nm",
-            "500",
-            "--drill-nm",
-            "100",
-            "--diameter-nm",
-            "200",
-            "--from-layer",
-            "1",
-            "--to-layer",
-            "2",
-        ])
-        .expect("CLI should parse"),
-    )
-    .expect("place same-net via should succeed");
-    execute(
-        Cli::try_parse_from([
-            "eda",
-            "--format",
-            "json",
-            "project",
-            "place-board-pad",
-            root.to_str().unwrap(),
-            "--package",
-            &Uuid::new_v4().to_string(),
-            "--name",
-            "1",
-            "--x-nm",
-            "700",
-            "--y-nm",
-            "700",
-            "--layer",
-            "1",
-            "--diameter-nm",
-            "200",
-            "--net",
-            &net_uuid,
-        ])
-        .expect("CLI should parse"),
-    )
-    .expect("place same-net pad should succeed");
-
-    let output = execute(
-        Cli::try_parse_from([
-            "eda",
-            "--format",
-            "json",
-            "project",
-            "fill-zones",
-            root.to_str().unwrap(),
-            "--zone",
-            zone_id.as_str(),
-        ])
-        .expect("CLI should parse"),
-    )
-    .expect("fill-zones should succeed");
-    let report: serde_json::Value = serde_json::from_str(&output).expect("fill-zones JSON");
-    assert_eq!(report["zone_fills"][0]["state"], "filled");
-    assert_eq!(
-        report["zone_fills"][0]["provenance"],
-        "datum-eda fill-zones: bounded same-net polygon island fill v1; no clearance subtraction required"
-    );
-
-    let _ = std::fs::remove_dir_all(&root);
-}
-
-#[test]
-fn project_fill_zones_cuts_out_single_foreign_orthogonal_track() {
-    let root = unique_project_root("datum-eda-cli-project-fill-zones-foreign-track-cutout");
-    create_native_project(&root, Some("Foreign Track Fill Zones Demo".to_string()))
-        .expect("initial scaffold should succeed");
-    let zone_uuid = place_rectangular_zone_fixture(&root);
-    let foreign_net_uuid = create_board_net_fixture(&root, "VCC");
-
-    execute(
-        Cli::try_parse_from([
-            "eda",
-            "--format",
-            "json",
-            "project",
-            "draw-board-track",
-            root.to_str().unwrap(),
-            "--net",
-            &foreign_net_uuid,
-            "--from-x-nm",
-            "300000",
-            "--from-y-nm",
-            "500000",
-            "--to-x-nm",
-            "700000",
-            "--to-y-nm",
-            "500000",
-            "--width-nm",
-            "100000",
-            "--layer",
-            "1",
-        ])
-        .expect("CLI should parse"),
-    )
-    .expect("draw foreign-net track should succeed");
-
-    let output = execute(
-        Cli::try_parse_from([
-            "eda",
-            "--format",
-            "json",
-            "project",
-            "fill-zones",
-            root.to_str().unwrap(),
-            "--zone",
-            zone_uuid.as_str(),
-        ])
-        .expect("CLI should parse"),
-    )
-    .expect("fill-zones should succeed");
-    let report: serde_json::Value = serde_json::from_str(&output).expect("fill-zones JSON");
-    assert_eq!(report["zone_fills"][0]["state"], "filled");
-    assert_eq!(
-        report["zone_fills"][0]["islands"].as_array().unwrap().len(),
-        4
-    );
-    assert_eq!(
-        report["zone_fills"][0]["provenance"],
-        "datum-eda fill-zones: bounded rectangular obstacle cutout fill v2; one foreign pad/via/orthogonal track inflated by netclass clearance"
-    );
-
-    let _ = std::fs::remove_dir_all(&root);
-}
-
-#[test]
-fn project_fill_zones_cuts_out_multiple_non_overlapping_foreign_pads() {
-    let root = unique_project_root("datum-eda-cli-project-fill-zones-multi-pad-cutout");
-    create_native_project(&root, Some("Foreign Pad Fill Zones Demo".to_string()))
-        .expect("initial scaffold should succeed");
-    let zone_uuid = place_rectangular_zone_fixture(&root);
-    let foreign_net_uuid = create_board_net_fixture(&root, "VCC");
-
-    for (name, x_nm, y_nm) in [("1", "250000", "250000"), ("2", "750000", "750000")] {
-        execute(
-            Cli::try_parse_from([
-                "eda",
-                "--format",
-                "json",
-                "project",
-                "place-board-pad",
-                root.to_str().unwrap(),
-                "--package",
-                &Uuid::new_v4().to_string(),
-                "--name",
-                name,
-                "--x-nm",
-                x_nm,
-                "--y-nm",
-                y_nm,
-                "--layer",
-                "1",
-                "--diameter-nm",
-                "100000",
-                "--net",
-                &foreign_net_uuid,
-            ])
-            .expect("CLI should parse"),
-        )
-        .expect("place foreign-net pad should succeed");
-    }
-
-    let output = execute(
-        Cli::try_parse_from([
-            "eda",
-            "--format",
-            "json",
-            "project",
-            "fill-zones",
-            root.to_str().unwrap(),
-            "--zone",
-            zone_uuid.as_str(),
-        ])
-        .expect("CLI should parse"),
-    )
-    .expect("fill-zones should succeed");
-    let report: serde_json::Value = serde_json::from_str(&output).expect("fill-zones JSON");
-    assert_eq!(report["zone_fills"][0]["state"], "filled");
-    assert_eq!(
-        report["zone_fills"][0]["islands"].as_array().unwrap().len(),
-        23
-    );
-    assert_eq!(
-        report["zone_fills"][0]["provenance"],
-        "datum-eda fill-zones: bounded rectangular obstacle cutout fill v3; multiple non-overlapping foreign pads/vias/orthogonal tracks inflated by netclass clearance"
-    );
-
-    let _ = std::fs::remove_dir_all(&root);
-}
-
-#[test]
-fn project_fill_zones_rejects_non_orthogonal_different_net_track() {
-    let root = unique_project_root("datum-eda-cli-project-fill-zones-foreign-net");
-    create_native_project(&root, Some("Foreign Net Fill Zones Demo".to_string()))
-        .expect("initial scaffold should succeed");
-    let zone_uuid = place_rectangular_zone_fixture(&root);
-    let foreign_net_uuid = create_board_net_fixture(&root, "VCC");
-
-    execute(
-        Cli::try_parse_from([
-            "eda",
-            "--format",
-            "json",
-            "project",
-            "draw-board-track",
-            root.to_str().unwrap(),
-            "--net",
-            &foreign_net_uuid,
-            "--from-x-nm",
-            "300000",
-            "--from-y-nm",
-            "300000",
-            "--to-x-nm",
-            "700000",
-            "--to-y-nm",
-            "700000",
-            "--width-nm",
-            "100000",
-            "--layer",
-            "1",
-        ])
-        .expect("CLI should parse"),
-    )
-    .expect("draw foreign-net track should succeed");
-
-    let output = execute(
-        Cli::try_parse_from([
-            "eda",
-            "--format",
-            "json",
-            "project",
-            "fill-zones",
-            root.to_str().unwrap(),
-            "--zone",
-            zone_uuid.as_str(),
-        ])
-        .expect("CLI should parse"),
-    )
-    .expect("fill-zones should succeed");
-    let report: serde_json::Value = serde_json::from_str(&output).expect("fill-zones JSON");
-    assert_eq!(report["zone_fills"][0]["state"], "unsupported");
-    assert_eq!(
-        report["zone_fills"][0]["provenance"],
-        "datum-eda fill-zones: unsupported because a non-orthogonal different-net track intersects the zone"
-    );
-
-    let _ = std::fs::remove_dir_all(&root);
-}
-
-#[test]
-fn project_fill_zones_leaves_thermal_relief_zone_unsupported() {
+fn project_fill_zones_allows_thermal_relief_zone_without_same_net_anchors() {
     let root = unique_project_root("datum-eda-cli-project-fill-zones-thermal");
     create_native_project(&root, Some("Thermal Fill Zones Demo".to_string()))
         .expect("initial scaffold should succeed");
@@ -989,6 +685,81 @@ fn project_fill_zones_leaves_thermal_relief_zone_unsupported() {
     )
     .expect("fill-zones should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("fill-zones JSON");
+    assert_eq!(report["zone_fills"][0]["state"], "filled");
+    assert!(
+        !report["zone_fills"][0]["islands"]
+            .as_array()
+            .unwrap()
+            .is_empty()
+    );
+    assert_eq!(
+        report["zone_fills"][0]["provenance"],
+        "datum-eda fill-zones: bounded same-net polygon island fill v1; no clearance subtraction required; thermal relief requested but no same-net pad/via anchors intersected the bounded fill"
+    );
+
+    let check = check_run_query(&root);
+    let has_zone_fill_finding =
+        check["findings"].as_array().unwrap().iter().any(|entry| {
+            entry["source"] == "zone_fill" && entry["payload"]["zone_id"] == zone_uuid
+        });
+    assert!(!has_zone_fill_finding);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_fill_zones_rejects_thermal_relief_zone_with_same_net_pad_anchor() {
+    let root = unique_project_root("datum-eda-cli-project-fill-zones-thermal-anchor");
+    create_native_project(&root, Some("Thermal Anchor Fill Zones Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    let zone_uuid = place_zone_fixture(&root);
+    let zones_output =
+        execute(board_zones_query_cli(&root)).expect("board zones query should succeed");
+    let zones: Vec<Zone> = serde_json::from_str(&zones_output).expect("zones should parse");
+    let net_uuid = zones[0].net.to_string();
+
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "place-board-pad",
+            root.to_str().unwrap(),
+            "--package",
+            &Uuid::new_v4().to_string(),
+            "--name",
+            "1",
+            "--x-nm",
+            "500",
+            "--y-nm",
+            "500",
+            "--layer",
+            "1",
+            "--diameter-nm",
+            "200",
+            "--net",
+            &net_uuid,
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("place same-net pad should succeed");
+
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "fill-zones",
+            root.to_str().unwrap(),
+            "--zone",
+            zone_uuid.as_str(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("fill-zones should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("fill-zones JSON");
     assert_eq!(report["zone_fills"][0]["state"], "unsupported");
     assert!(
         report["zone_fills"][0]["islands"]
@@ -998,24 +769,7 @@ fn project_fill_zones_leaves_thermal_relief_zone_unsupported() {
     );
     assert_eq!(
         report["zone_fills"][0]["provenance"],
-        "datum-eda fill-zones: unsupported because thermal relief generation is not implemented"
-    );
-
-    let check = check_run_query(&root);
-    let finding = check["findings"]
-        .as_array()
-        .unwrap()
-        .iter()
-        .find(|entry| entry["code"] == "zone_fill_unsupported")
-        .expect("unsupported zone fill finding should exist");
-    assert_eq!(finding["source"], "zone_fill");
-    assert_eq!(finding["severity"], "error");
-    assert_eq!(finding["payload"]["zone_id"], zone_uuid);
-    assert!(
-        finding["suggested_next_action"]
-            .as_str()
-            .unwrap()
-            .contains("waive")
+        "datum-eda fill-zones: unsupported because thermal relief generation for same-net pad/via anchors is not implemented"
     );
 
     let _ = std::fs::remove_dir_all(&root);
@@ -1072,6 +826,36 @@ fn check_fill_zones_alias_persists_unsupported_generated_evidence() {
         .expect("initial scaffold should succeed");
     let zone_uuid = place_zone_fixture(&root);
     let zone_id = zone_uuid.to_string();
+    let zones_output =
+        execute(board_zones_query_cli(&root)).expect("board zones query should succeed");
+    let zones: Vec<Zone> = serde_json::from_str(&zones_output).expect("zones should parse");
+    let net_uuid = zones[0].net.to_string();
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "place-board-pad",
+            root.to_str().unwrap(),
+            "--package",
+            &Uuid::new_v4().to_string(),
+            "--name",
+            "1",
+            "--x-nm",
+            "500",
+            "--y-nm",
+            "500",
+            "--layer",
+            "1",
+            "--diameter-nm",
+            "200",
+            "--net",
+            &net_uuid,
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("place same-net pad should succeed");
 
     let output = execute(
         Cli::try_parse_from([
@@ -1089,10 +873,12 @@ fn check_fill_zones_alias_persists_unsupported_generated_evidence() {
     .expect("check fill-zones should succeed");
     let report: serde_json::Value = serde_json::from_str(&output).expect("fill-zones JSON");
     assert_eq!(report["contract"], "zone_fill_generate_v1");
+    assert_eq!(report["zone_fills"][0]["schema_version"], 1);
     assert_eq!(report["zone_fills"][0]["zone_id"], zone_uuid);
     assert_eq!(report["zone_fills"][0]["state"], "unsupported");
 
     let fills = zone_fills_query(&root);
+    assert_eq!(fills["zone_fills"][0]["schema_version"], 1);
     assert_eq!(fills["zone_fills"][0]["state"], "unsupported");
 
     let _ = std::fs::remove_dir_all(&root);

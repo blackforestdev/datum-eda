@@ -52,6 +52,8 @@ mod command_exec_project_schematic_connectivity;
 mod command_exec_project_schematic_symbols;
 #[path = "command_exec_proposal.rs"]
 mod command_exec_proposal;
+#[path = "command_exec_proposal_library.rs"]
+mod command_exec_proposal_library;
 #[path = "command_exec_query.rs"]
 mod command_exec_query;
 #[path = "command_exec_route_proposal.rs"]

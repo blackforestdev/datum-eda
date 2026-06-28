@@ -128,3 +128,77 @@ fn project_inspect_manufacturing_set_reports_present_missing_and_extra_files() {
 
     let _ = std::fs::remove_dir_all(&root);
 }
+
+#[test]
+fn project_inspect_manufacturing_set_uses_resolver_materialized_board_state() {
+    let root = unique_project_root("datum-eda-cli-project-manufacturing-inspect-resolved");
+    create_native_project(
+        &root,
+        Some("Manufacturing Inspect Resolved Demo".to_string()),
+    )
+    .expect("initial scaffold should succeed");
+    let board_json = root.join("board/board.json");
+    let stale_board = std::fs::read_to_string(&board_json).expect("board file should read");
+
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "set-board-stackup",
+            root.to_str().unwrap(),
+            "--layer",
+            "1:Top Copper:Copper:35000",
+            "--layer",
+            "3:Top Silk:Silkscreen:10000",
+            "--layer",
+            "41:Mechanical 1:Mechanical:0",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("set board stackup should succeed");
+    std::fs::write(&board_json, stale_board).expect("stale board file should restore");
+
+    let output_dir = root.join("out-resolved");
+    std::fs::create_dir_all(&output_dir).expect("output dir should exist");
+    std::fs::write(
+        output_dir.join("manufacturing-inspect-resolved-demo-board-bom.csv"),
+        "stub\n",
+    )
+    .expect("bom should write");
+
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "inspect-manufacturing-set",
+            root.to_str().unwrap(),
+            "--output-dir",
+            output_dir.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("inspect should succeed from resolver state");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
+    assert_eq!(report["action"], "inspect_manufacturing_set");
+    assert_eq!(report["expected_count"], 8);
+    assert_eq!(report["present_count"], 1);
+    assert_eq!(report["missing_count"], 7);
+    assert_eq!(
+        report["prefix"],
+        "manufacturing-inspect-resolved-demo-board"
+    );
+    assert_eq!(
+        report["entries"][0]["filename"],
+        "manufacturing-inspect-resolved-demo-board-bom.csv"
+    );
+    assert_eq!(
+        report["entries"][5]["filename"],
+        "manufacturing-inspect-resolved-demo-board-l1-top-copper-copper.gbr"
+    );
+
+    let _ = std::fs::remove_dir_all(&root);
+}

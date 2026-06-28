@@ -161,6 +161,79 @@ fn project_journal_undo_reports_guard_basis_when_expected_values_match() {
 }
 
 #[test]
+fn project_set_component_value_uses_object_revision_preflight_without_persisting_guard_operation() {
+    let root = unique_project_root("datum-eda-cli-project-object-guard");
+    create_native_project(&root, Some("Object Guard Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    let component_uuid = place_component(&root);
+    set_value(&root, &component_uuid, "MCU-REV2");
+
+    let transaction_log = std::fs::read_to_string(root.join(".datum/journal/transactions.jsonl"))
+        .expect("transaction journal should read");
+    let last_line = transaction_log
+        .lines()
+        .last()
+        .expect("journal should contain a transaction");
+    let transaction: serde_json::Value =
+        serde_json::from_str(last_line).expect("transaction JSON should parse");
+
+    assert_eq!(component_value(&root, &component_uuid), "MCU-REV2");
+    assert_eq!(transaction["operations"].as_array().unwrap().len(), 1);
+    assert_eq!(
+        transaction["operations"][0]["kind"],
+        "set_board_package_value"
+    );
+    assert_eq!(journal_list(&root)["transactions"][1]["operations"], 1);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_move_component_uses_object_revision_preflight_without_persisting_guard_operation() {
+    let root = unique_project_root("datum-eda-cli-project-object-guard-move");
+    create_native_project(&root, Some("Object Guard Move Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    let component_uuid = place_component(&root);
+
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "move-board-component",
+            root.to_str().unwrap(),
+            "--component",
+            &component_uuid,
+            "--x-nm",
+            "3000",
+            "--y-nm",
+            "4000",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("move component should succeed");
+
+    let transaction_log = std::fs::read_to_string(root.join(".datum/journal/transactions.jsonl"))
+        .expect("transaction journal should read");
+    let last_line = transaction_log
+        .lines()
+        .last()
+        .expect("journal should contain a transaction");
+    let transaction: serde_json::Value =
+        serde_json::from_str(last_line).expect("transaction JSON should parse");
+
+    assert_eq!(transaction["operations"].as_array().unwrap().len(), 1);
+    assert_eq!(
+        transaction["operations"][0]["kind"],
+        "set_board_package_position"
+    );
+    assert_eq!(journal_list(&root)["transactions"][1]["operations"], 1);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
 fn project_journal_undo_rejects_unhealthy_cursor_without_mutation() {
     let root = unique_project_root("datum-eda-cli-project-journal-cursor-guard");
     create_native_project(&root, Some("Journal Cursor Guard Demo".to_string()))

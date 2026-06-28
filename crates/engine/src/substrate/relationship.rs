@@ -2,19 +2,26 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 
 use super::{
     DerivedRelationshipStatus, DomainObject, ObjectId, Relationship, RelationshipKind,
-    ResolveDiagnostic, RevisionedRef, SourceShardDirtyState, SourceShardKind, SourceShardRef,
-    read_json_value, sha256_hex, source_shard_authority_for_kind,
+    ResolveDiagnostic, RevisionedRef, SourceShardKind, SourceShardRef, read_json_value,
+    source_shard::validate_source_shard_schema_version,
+    source_shard_ref_builders::source_shard_ref_for_bytes,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct RelationshipShard {
+    #[serde(default = "default_relationship_shard_schema_version")]
     pub schema_version: u64,
     pub relationships: Vec<Relationship>,
+}
+
+pub const RELATIONSHIP_SHARD_SCHEMA_VERSION: u64 = 1;
+
+fn default_relationship_shard_schema_version() -> u64 {
+    RELATIONSHIP_SHARD_SCHEMA_VERSION
 }
 
 pub(super) fn read_relationship_shards(
@@ -83,25 +90,40 @@ fn read_relationship_shard(
     let schema_version = value
         .get("schema_version")
         .and_then(serde_json::Value::as_u64);
-    let shard = SourceShardRef {
-        shard_id: Uuid::new_v5(
-            &Uuid::NAMESPACE_URL,
-            format!("datum-eda:source-shard:{relative_path}").as_bytes(),
-        ),
-        kind: SourceShardKind::Relationship,
+    validate_source_shard_schema_version(
+        &SourceShardKind::Relationship,
+        &relative_path,
+        schema_version,
+    )
+    .map_err(|error| ResolveDiagnostic {
+        code: "invalid_relationship_shard".to_string(),
+        message: error.to_string(),
+        path: Some(path.clone()),
+    })?;
+    let shard = source_shard_ref_for_bytes(
+        SourceShardKind::Relationship,
         path,
         relative_path,
-        authority: source_shard_authority_for_kind(&SourceShardKind::Relationship),
-        dirty_state: SourceShardDirtyState::Clean,
         schema_version,
-        content_hash: sha256_hex(&bytes),
-    };
+        &bytes,
+        "invalid_relationship_shard",
+    )?;
     let relationship_shard =
         serde_json::from_value::<RelationshipShard>(value).map_err(|error| ResolveDiagnostic {
             code: "invalid_relationship_shard".to_string(),
             message: error.to_string(),
             path: Some(shard.path.clone()),
         })?;
+    if relationship_shard.schema_version != RELATIONSHIP_SHARD_SCHEMA_VERSION {
+        return Err(ResolveDiagnostic {
+            code: "invalid_relationship_shard".to_string(),
+            message: format!(
+                "unsupported RelationshipShard schema_version {}",
+                relationship_shard.schema_version
+            ),
+            path: Some(shard.path.clone()),
+        });
+    }
     Ok((shard, relationship_shard))
 }
 

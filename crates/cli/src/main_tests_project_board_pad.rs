@@ -66,6 +66,41 @@ fn project_board_pad_query_reads_resolver_materialized_journal_state() {
     assert_eq!(pads[0].position.x, 7000);
     assert_eq!(pads[0].position.y, 8000);
 
+    let edit_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "edit-board-pad",
+        root.to_str().unwrap(),
+        "--pad",
+        &placed_pad_uuid,
+        "--x-nm",
+        "9000",
+        "--y-nm",
+        "10000",
+        "--diameter-nm",
+        "750000",
+    ])
+    .expect("CLI should parse");
+    let edit_output = execute(edit_cli).expect("edit board pad should read resolver state");
+    let edit_report: serde_json::Value =
+        serde_json::from_str(&edit_output).expect("edit output should parse");
+    assert_eq!(edit_report["action"].as_str(), Some("edit_board_pad"));
+    assert_eq!(edit_report["x_nm"].as_i64(), Some(9000));
+    assert_eq!(edit_report["y_nm"].as_i64(), Some(10000));
+    assert_eq!(edit_report["diameter_nm"].as_i64(), Some(750000));
+
+    let pads_output =
+        execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
+    let pads: Vec<PlacedPad> =
+        serde_json::from_str(&pads_output).expect("query output should parse");
+    assert_eq!(pads.len(), 1);
+    assert_eq!(pads[0].uuid.to_string(), placed_pad_uuid);
+    assert_eq!(pads[0].position.x, 9000);
+    assert_eq!(pads[0].position.y, 10000);
+    assert_eq!(pads[0].diameter, 750000);
+
     let _ = std::fs::remove_dir_all(&root);
 }
 

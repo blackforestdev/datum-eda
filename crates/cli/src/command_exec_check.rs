@@ -8,7 +8,7 @@ pub(crate) fn execute_check_command(
         CheckCommands::Run(CheckRunArgs { path, profile }) => Ok((
             render_output(
                 format,
-                &query_native_project_check_run_with_profile(&path, profile.as_deref())?,
+                &run_native_project_check_with_profile(&path, profile.as_deref())?,
             ),
             0,
         )),

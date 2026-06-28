@@ -1,5 +1,5 @@
-use std::fs;
 use std::path::{Component, Path, PathBuf};
+use std::{env, fs};
 
 use anyhow::{Context, Result, bail};
 use eda_engine::substrate::{
@@ -9,7 +9,10 @@ use serde::Serialize;
 use sha2::{Digest, Sha256};
 use uuid::Uuid;
 
-use super::load_native_project;
+use super::command_project_library_payload::{
+    read_pool_library_object_payload, read_project_pool_object_payload,
+};
+use super::load_native_project_with_resolved_board;
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectPoolLibraryObjectMutationView {
@@ -56,7 +59,7 @@ pub(crate) fn create_native_project_pool_library_object(
     validate_pool_library_object_kind(object_kind)?;
     let object = read_pool_library_object_payload(source, object_id)?;
     let relative_path = pool_library_relative_path(pool_path, object_kind, object_id);
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let mut operations = Vec::new();
     if !project
         .manifest
@@ -107,7 +110,7 @@ pub(crate) fn create_native_project_pool_unit(
         "pins": {},
         "tags": []
     });
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let mut operations = Vec::new();
     if !project
         .manifest
@@ -166,7 +169,7 @@ pub(crate) fn create_native_project_pool_symbol(
         "name": name,
         "unit": unit_id
     });
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let mut operations = Vec::new();
     if !project
         .manifest
@@ -257,7 +260,7 @@ pub(crate) fn create_native_project_pool_entity(
         },
         "tags": []
     });
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let mut operations = Vec::new();
     if !project
         .manifest
@@ -338,7 +341,7 @@ pub(crate) fn create_native_project_pool_padstack(
         "aperture": aperture_value,
         "drill_nm": drill_nm
     });
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let mut operations = Vec::new();
     if !project
         .manifest
@@ -420,7 +423,7 @@ pub(crate) fn create_native_project_pool_package(
         "body_height_mounted_nm": null,
         "tags": []
     });
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let mut operations = Vec::new();
     if !project
         .manifest
@@ -511,7 +514,7 @@ pub(crate) fn create_native_project_pool_part(
         "behavioural_models": [],
         "thermal": null
     });
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let mut operations = Vec::new();
     if !project
         .manifest
@@ -573,7 +576,7 @@ pub(crate) fn set_native_project_pool_part_metadata(
     }
     let lifecycle = lifecycle.map(validate_part_lifecycle).transpose()?;
     let relative_path = pool_library_relative_path(pool_path, "parts", part_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), part_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, part_id)?;
     let mut object = previous_object.clone();
     let object_map = object
         .as_object_mut()
@@ -666,7 +669,7 @@ pub(crate) fn set_native_project_pool_part_parametric(
         }
     }
     let relative_path = pool_library_relative_path(pool_path, "parts", part_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), part_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, part_id)?;
     let mut object = previous_object.clone();
     let object_map = object
         .as_object_mut()
@@ -732,7 +735,7 @@ pub(crate) fn set_native_project_pool_part_orderable_mpns(
         orderable_mpns.push(mpn.to_string());
     }
     let relative_path = pool_library_relative_path(pool_path, "parts", part_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), part_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, part_id)?;
     let mut object = previous_object.clone();
     let object_map = object
         .as_object_mut()
@@ -815,7 +818,7 @@ pub(crate) fn set_native_project_pool_part_packaging_options(
         packaging_options.push(normalized);
     }
     let relative_path = pool_library_relative_path(pool_path, "parts", part_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), part_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, part_id)?;
     let mut object = previous_object.clone();
     let object_map = object
         .as_object_mut()
@@ -893,7 +896,7 @@ pub(crate) fn set_native_project_pool_part_behavioural_models(
         behavioural_models.push(normalized);
     }
     let relative_path = pool_library_relative_path(pool_path, "parts", part_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), part_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, part_id)?;
     let mut object = previous_object.clone();
     let object_map = object
         .as_object_mut()
@@ -997,7 +1000,7 @@ pub(crate) fn attach_native_project_pool_part_model(
         .unwrap_or(eda_engine::pool::ModelFormatMetadata::None);
     let model_names = normalize_model_names(model_names)?;
     let relative_path = pool_library_relative_path(pool_path, "parts", part_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), part_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, part_id)?;
     let model_bytes = fs::read(source)
         .with_context(|| format!("failed to read model source {}", source.display()))?;
     let sha256 = format!("{:x}", Sha256::digest(&model_bytes));
@@ -1111,7 +1114,7 @@ pub(crate) fn detach_native_project_pool_part_model(
         _ => {}
     }
     let relative_path = pool_library_relative_path(pool_path, "parts", part_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), part_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, part_id)?;
     let mut object = previous_object.clone();
     let object_map = object
         .as_object_mut()
@@ -1315,7 +1318,7 @@ pub(crate) fn set_native_project_pool_part_thermal(
         bail!("set-pool-part-thermal requires --clear or at least one thermal field");
     }
     let relative_path = pool_library_relative_path(pool_path, "parts", part_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), part_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, part_id)?;
     let mut object = previous_object.clone();
     let object_map = object
         .as_object_mut()
@@ -1461,7 +1464,7 @@ pub(crate) fn set_native_project_pool_part_supply_chain(
         parsed_offers.push(normalized);
     }
     let relative_path = pool_library_relative_path(pool_path, "parts", part_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), part_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, part_id)?;
     let mut object = previous_object.clone();
     let object_map = object
         .as_object_mut()
@@ -1547,7 +1550,7 @@ pub(crate) fn set_native_project_pool_part_tags(
         parsed_tags.push(tag.to_string());
     }
     let relative_path = pool_library_relative_path(pool_path, "parts", part_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), part_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, part_id)?;
     let mut object = previous_object.clone();
     let object_map = object
         .as_object_mut()
@@ -1612,8 +1615,7 @@ pub(crate) fn delete_native_project_pool_library_object(
     validate_project_local_pool_path(pool_path)?;
     validate_pool_library_object_kind(object_kind)?;
     let relative_path = pool_library_relative_path(pool_path, object_kind, object_id);
-    let object_path = root.join(&relative_path);
-    let object = read_pool_library_object_payload(&object_path, object_id)?;
+    let object = read_project_pool_object_payload(root, &relative_path, object_id)?;
     commit_pool_library_operations(
         root,
         format!("delete native pool library object {object_id}"),
@@ -1644,7 +1646,7 @@ pub(crate) fn set_native_project_pool_library_object(
     validate_project_local_pool_path(pool_path)?;
     validate_pool_library_object_kind(object_kind)?;
     let relative_path = pool_library_relative_path(pool_path, object_kind, object_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), object_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, object_id)?;
     let object = read_pool_library_object_payload(source, object_id)?;
     commit_pool_library_operations(
         root,
@@ -1682,13 +1684,27 @@ pub(super) fn commit_pool_library_operations(
             expected_model_revision: Some(model.model_revision.clone()),
             provenance: CommitProvenance {
                 actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
+                source: pool_library_commit_source()?,
                 reason,
             },
             operations,
         },
     )?;
     Ok(())
+}
+
+fn pool_library_commit_source() -> Result<CommitSource> {
+    let Ok(value) = env::var("DATUM_COMMIT_SOURCE") else {
+        return Ok(CommitSource::Cli);
+    };
+    match value.as_str() {
+        "cli" => Ok(CommitSource::Cli),
+        "tool" => Ok(CommitSource::Tool),
+        "assistant" => Ok(CommitSource::Assistant),
+        _ => bail!(
+            "unsupported DATUM_COMMIT_SOURCE for pool-library authoring: {value}; expected cli, tool, or assistant"
+        ),
+    }
 }
 
 pub(super) fn pool_library_mutation_view(
@@ -1714,27 +1730,6 @@ pub(super) fn pool_library_mutation_view(
     })
 }
 
-pub(super) fn read_pool_library_object_payload(
-    path: &Path,
-    object_id: Uuid,
-) -> Result<serde_json::Value> {
-    let object: serde_json::Value = serde_json::from_slice(
-        &std::fs::read(path)
-            .with_context(|| format!("failed to read pool library object {}", path.display()))?,
-    )
-    .with_context(|| format!("failed to parse pool library object {}", path.display()))?;
-    let payload_id = object
-        .get("uuid")
-        .and_then(serde_json::Value::as_str)
-        .ok_or_else(|| anyhow::anyhow!("pool library object missing uuid"))?;
-    let payload_id = Uuid::parse_str(payload_id)
-        .with_context(|| format!("invalid pool library object uuid {payload_id}"))?;
-    if payload_id != object_id {
-        bail!("pool library object uuid {payload_id} does not match --object {object_id}");
-    }
-    Ok(object)
-}
-
 pub(super) fn validate_project_local_pool_path(pool_path: &str) -> Result<()> {
     let path = PathBuf::from(pool_path);
     if pool_path.trim().is_empty() || path.is_absolute() {
@@ -1749,7 +1744,7 @@ pub(super) fn validate_project_local_pool_path(pool_path: &str) -> Result<()> {
     Ok(())
 }
 
-fn validate_pool_library_object_kind(kind: &str) -> Result<()> {
+pub(super) fn validate_pool_library_object_kind(kind: &str) -> Result<()> {
     const ALLOWED_KINDS: &[&str] = &[
         "units",
         "symbols",
@@ -1792,6 +1787,6 @@ pub(super) fn pool_library_relative_path(
     format!("{pool_path}/{object_kind}/{object_id}.json")
 }
 
-fn next_pool_priority(pools: &[super::NativeProjectPoolRef]) -> u32 {
+pub(super) fn next_pool_priority(pools: &[super::NativeProjectPoolRef]) -> u32 {
     pools.iter().map(|pool| pool.priority).max().unwrap_or(0) + 1
 }

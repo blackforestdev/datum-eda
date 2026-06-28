@@ -12,7 +12,7 @@ pub(crate) fn create_native_project_sheet(
     if name.is_empty() {
         bail!("sheet name must not be empty");
     }
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let sheet_uuid = sheet_uuid.unwrap_or_else(Uuid::new_v4);
     let sheet_key = sheet_uuid.to_string();
     if project.schematic.sheets.contains_key(&sheet_key) {
@@ -69,7 +69,7 @@ pub(crate) fn delete_native_project_sheet(
     root: &Path,
     sheet_uuid: Uuid,
 ) -> Result<NativeProjectSheetMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let sheet_key = sheet_uuid.to_string();
     let relative_path =
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
@@ -117,7 +117,7 @@ pub(crate) fn rename_native_project_sheet(
     if name.is_empty() {
         bail!("sheet name must not be empty");
     }
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let sheet_key = sheet_uuid.to_string();
     let relative_path =
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
@@ -154,7 +154,7 @@ pub(crate) fn create_native_project_sheet_definition(
     if name.is_empty() {
         bail!("sheet definition name must not be empty");
     }
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let root_sheet_key = root_sheet_uuid.to_string();
     if !project.schematic.sheets.contains_key(&root_sheet_key) {
         bail!("root sheet not found in native schematic root: {root_sheet_uuid}");
@@ -215,7 +215,7 @@ pub(crate) fn create_native_project_sheet_instance(
     if name.is_empty() {
         bail!("sheet instance name must not be empty");
     }
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     if !project
         .schematic
         .definitions
@@ -278,7 +278,7 @@ pub(crate) fn delete_native_project_sheet_instance(
     root: &Path,
     instance_uuid: Uuid,
 ) -> Result<NativeProjectSheetInstanceMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let instance = project
         .schematic
         .instances
@@ -317,7 +317,7 @@ pub(crate) fn move_native_project_sheet_instance(
     x_nm: i64,
     y_nm: i64,
 ) -> Result<NativeProjectSheetInstanceMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let previous_instance = project
         .schematic
         .instances
@@ -359,7 +359,7 @@ pub(crate) fn bind_native_project_sheet_instance_port(
     instance_uuid: Uuid,
     port_uuid: Uuid,
 ) -> Result<NativeProjectSheetInstanceMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (port_sheet_uuid, _port_path, _port_value, _port) =
         load_native_port_mutation_target(&project, port_uuid)?;
     let previous_instance = project
@@ -412,7 +412,7 @@ pub(crate) fn unbind_native_project_sheet_instance_port(
     instance_uuid: Uuid,
     port_uuid: Uuid,
 ) -> Result<NativeProjectSheetInstanceMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let previous_instance = project
         .schematic
         .instances

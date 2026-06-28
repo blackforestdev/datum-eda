@@ -5,16 +5,25 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use super::{
-    ComponentInstance, ComponentInstanceId, DomainObject, EngineError, ObjectId, ObjectRevision,
-    ResolveDiagnostic, RevisionedRef, SourceShardDirtyState, SourceShardKind, SourceShardRef,
-    TransactionRecord, read_json_value, sha256_hex, source_shard_authority_for_kind,
+    ComponentInstance, ComponentInstanceAuthority, ComponentInstanceId,
+    ComponentInstanceRoleMetadata, DomainObject, EngineError, ObjectId, ObjectRevision,
+    ResolveDiagnostic, RevisionedRef, SourceShardKind, SourceShardRef, TransactionRecord,
+    read_json_value, source_shard::validate_source_shard_schema_version,
+    source_shard_ref_builders::source_shard_ref_for_bytes,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ComponentInstanceShard {
+    #[serde(default = "default_component_instance_shard_schema_version")]
     pub schema_version: u64,
     pub component_instance: PersistedComponentInstance,
+}
+
+pub const COMPONENT_INSTANCE_SHARD_SCHEMA_VERSION: u64 = 1;
+
+fn default_component_instance_shard_schema_version() -> u64 {
+    COMPONENT_INSTANCE_SHARD_SCHEMA_VERSION
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -22,8 +31,14 @@ pub struct ComponentInstanceShard {
 pub struct PersistedComponentInstance {
     pub uuid: ComponentInstanceId,
     pub object_revision: ObjectRevision,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub part_ref: Option<RevisionedRef>,
     pub placed_symbol_refs: Vec<RevisionedRef>,
     pub placed_package_refs: Vec<RevisionedRef>,
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub placed_symbol_roles: BTreeMap<ObjectId, ComponentInstanceRoleMetadata>,
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub placed_package_roles: BTreeMap<ObjectId, ComponentInstanceRoleMetadata>,
 }
 
 pub(super) fn persisted_component_instance_from_value(
@@ -36,19 +51,28 @@ pub(super) fn persisted_component_instance_from_value(
 pub(super) fn component_instance_from_persisted(
     persisted: &PersistedComponentInstance,
 ) -> ComponentInstance {
+    let placed_symbol_refs = persisted
+        .placed_symbol_refs
+        .iter()
+        .map(|reference| reference.object_id)
+        .collect::<Vec<_>>();
+    let placed_package_refs = persisted
+        .placed_package_refs
+        .iter()
+        .map(|reference| reference.object_id)
+        .collect::<Vec<_>>();
     ComponentInstance {
         id: persisted.uuid,
         object_revision: persisted.object_revision,
-        placed_symbol_refs: persisted
-            .placed_symbol_refs
-            .iter()
-            .map(|reference| reference.object_id)
-            .collect(),
-        placed_package_refs: persisted
-            .placed_package_refs
-            .iter()
-            .map(|reference| reference.object_id)
-            .collect(),
+        authority: ComponentInstanceAuthority::Authored,
+        part_ref: persisted
+            .part_ref
+            .as_ref()
+            .map(|reference| reference.object_id),
+        placed_symbol_roles: persisted.placed_symbol_roles.clone(),
+        placed_package_roles: persisted.placed_package_roles.clone(),
+        placed_symbol_refs,
+        placed_package_refs,
     }
 }
 
@@ -59,11 +83,10 @@ struct ComponentJoinKey {
 }
 
 pub(super) fn collect_component_instances(
-    project_id: &Uuid,
     shards: &[SourceShardRef],
     journal: &[TransactionRecord],
     objects: &BTreeMap<ObjectId, DomainObject>,
-    mut persisted_instances: BTreeMap<ComponentInstanceId, ComponentInstance>,
+    persisted_instances: BTreeMap<ComponentInstanceId, ComponentInstance>,
     diagnostics: &mut Vec<ResolveDiagnostic>,
 ) -> Result<BTreeMap<ComponentInstanceId, ComponentInstance>, EngineError> {
     let mut covered_symbol_refs = Vec::new();
@@ -131,32 +154,6 @@ pub(super) fn collect_component_instances(
             });
             continue;
         }
-        let id = Uuid::new_v5(
-            project_id,
-            format!(
-                "datum-eda:component-instance:{}:{}",
-                placed_symbol_refs
-                    .iter()
-                    .map(Uuid::to_string)
-                    .collect::<Vec<_>>()
-                    .join(","),
-                placed_package_refs
-                    .iter()
-                    .map(Uuid::to_string)
-                    .collect::<Vec<_>>()
-                    .join(",")
-            )
-            .as_bytes(),
-        );
-        persisted_instances.insert(
-            id,
-            ComponentInstance {
-                id,
-                object_revision: ObjectRevision(0),
-                placed_symbol_refs,
-                placed_package_refs,
-            },
-        );
     }
     for (key, package_ids) in &packages {
         if symbols.contains_key(key) {
@@ -243,25 +240,40 @@ fn read_component_instance_shard(
     let schema_version = value
         .get("schema_version")
         .and_then(serde_json::Value::as_u64);
-    let shard = SourceShardRef {
-        shard_id: Uuid::new_v5(
-            &Uuid::NAMESPACE_URL,
-            format!("datum-eda:source-shard:{relative_path}").as_bytes(),
-        ),
-        kind: SourceShardKind::ComponentInstance,
+    validate_source_shard_schema_version(
+        &SourceShardKind::ComponentInstance,
+        &relative_path,
+        schema_version,
+    )
+    .map_err(|error| ResolveDiagnostic {
+        code: "invalid_component_instance_shard".to_string(),
+        message: error.to_string(),
+        path: Some(path.clone()),
+    })?;
+    let shard = source_shard_ref_for_bytes(
+        SourceShardKind::ComponentInstance,
         path,
         relative_path,
-        authority: source_shard_authority_for_kind(&SourceShardKind::ComponentInstance),
-        dirty_state: SourceShardDirtyState::Clean,
         schema_version,
-        content_hash: sha256_hex(&bytes),
-    };
+        &bytes,
+        "invalid_component_instance_shard",
+    )?;
     let component_instance_shard = serde_json::from_value::<ComponentInstanceShard>(value)
         .map_err(|error| ResolveDiagnostic {
             code: "invalid_component_instance_shard".to_string(),
             message: error.to_string(),
             path: Some(shard.path.clone()),
         })?;
+    if component_instance_shard.schema_version != COMPONENT_INSTANCE_SHARD_SCHEMA_VERSION {
+        return Err(ResolveDiagnostic {
+            code: "invalid_component_instance_shard".to_string(),
+            message: format!(
+                "unsupported ComponentInstanceShard schema_version {}",
+                component_instance_shard.schema_version
+            ),
+            path: Some(shard.path.clone()),
+        });
+    }
     Ok((shard, component_instance_shard))
 }
 
@@ -331,6 +343,57 @@ fn insert_component_instance(
         });
         return;
     }
+    if let Err(message) = validate_role_map(
+        &input.placed_symbol_refs,
+        &input.placed_symbol_roles,
+        "symbol",
+    ) {
+        diagnostics.push(ResolveDiagnostic {
+            code: "component_instance_invalid_symbol_roles".to_string(),
+            message: format!("component instance {} {message}", input.uuid),
+            path: Some(shard.path.clone()),
+        });
+        return;
+    }
+    if let Err(message) = validate_role_map(
+        &input.placed_package_refs,
+        &input.placed_package_roles,
+        "package",
+    ) {
+        diagnostics.push(ResolveDiagnostic {
+            code: "component_instance_invalid_package_roles".to_string(),
+            message: format!("component instance {} {message}", input.uuid),
+            path: Some(shard.path.clone()),
+        });
+        return;
+    }
+    if let Some(part_ref) = &input.part_ref {
+        let Some(object) = objects.get(&part_ref.object_id) else {
+            diagnostics.push(ResolveDiagnostic {
+                code: "component_instance_unresolved_part_ref".to_string(),
+                message: format!(
+                    "component instance {} references missing part object {}",
+                    input.uuid, part_ref.object_id
+                ),
+                path: Some(shard.path.clone()),
+            });
+            return;
+        };
+        if object.object_revision != part_ref.object_revision
+            || object.domain != "pool"
+            || object.kind != "parts"
+        {
+            diagnostics.push(ResolveDiagnostic {
+                code: "component_instance_invalid_part_ref".to_string(),
+                message: format!(
+                    "component instance {} part_ref {} must target a current pool parts object",
+                    input.uuid, part_ref.object_id
+                ),
+                path: Some(shard.path.clone()),
+            });
+            return;
+        }
+    }
     objects.insert(
         input.uuid,
         DomainObject {
@@ -342,6 +405,46 @@ fn insert_component_instance(
         },
     );
     instances.insert(input.uuid, component_instance_from_persisted(&input));
+}
+
+pub(super) fn validate_role_map(
+    refs: &[RevisionedRef],
+    roles: &BTreeMap<ObjectId, ComponentInstanceRoleMetadata>,
+    label: &str,
+) -> Result<(), String> {
+    let ref_ids = refs
+        .iter()
+        .map(|reference| reference.object_id)
+        .collect::<Vec<_>>();
+    for (object_id, metadata) in roles {
+        if metadata.role.trim().is_empty() {
+            return Err(format!("{label} role for {object_id} must not be blank"));
+        }
+        if !metadata
+            .role
+            .chars()
+            .all(|ch| ch.is_ascii_lowercase() || ch.is_ascii_digit() || ch == '_' || ch == '-')
+            || metadata.role.len() > 64
+        {
+            return Err(format!(
+                "{label} role for {object_id} must be a lowercase ASCII identifier"
+            ));
+        }
+        if let Some(role_label) = &metadata.label {
+            if role_label.trim().is_empty()
+                || role_label.len() > 128
+                || role_label.chars().any(char::is_control)
+            {
+                return Err(format!("{label} role label for {object_id} is invalid"));
+            }
+        }
+        if !ref_ids.contains(object_id) {
+            return Err(format!(
+                "{label} role for {object_id} must reference a placed {label}"
+            ));
+        }
+    }
+    Ok(())
 }
 
 fn collect_symbol_join_keys(
@@ -376,7 +479,7 @@ fn materialized_schematic_sheet_value(
     journal: &[TransactionRecord],
 ) -> Result<serde_json::Value, EngineError> {
     let mut value = if shard.path.exists() {
-        Some(read_json_value(&shard.path)?)
+        read_json_value(&shard.path).ok()
     } else {
         None
     };

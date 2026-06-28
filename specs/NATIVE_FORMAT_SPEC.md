@@ -210,8 +210,10 @@ Rules:
   filename/payload UUID parity, and deterministic dangling-reference findings
   for the first logical library graph: `Symbol.unit`, entity gate
   `unit`/`symbol`, package pad `padstack`, `Part.entity`, `Part.package`,
-  `Part.pad_map` pad/gate/pin links, and `pin_pad_maps[*].part`. Footprint
-  geometry validation remains out of scope for this validation slice.
+  `Part.pad_map` pad/gate/pin links, `pin_pad_maps[*].part`, and
+  `pin_pad_maps.mappings` logical-pin keys plus mapped package-pad values
+  against the referenced part. Footprint geometry validation remains out of
+  scope for this validation slice.
 - Journaled `CreatePoolLibraryObject` and `SetPoolLibraryObject` enforce the
   first write-time schema gate before staging authored pool shards:
   document-root `schema_version: 1`, UUID/path/kind parity, canonical pool

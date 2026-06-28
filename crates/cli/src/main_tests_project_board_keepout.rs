@@ -41,6 +41,9 @@ fn project_board_keepout_mutations_round_trip_through_native_query() {
     let root = unique_project_root("datum-eda-cli-project-board-keepout");
     create_native_project(&root, Some("Board Keepout Demo".to_string()))
         .expect("initial scaffold should succeed");
+    let board_json = root.join("board/board.json");
+    let stale_board_without_keepout =
+        std::fs::read_to_string(&board_json).expect("board file should read");
 
     let place_cli = Cli::try_parse_from([
         "eda",
@@ -70,6 +73,8 @@ fn project_board_keepout_mutations_round_trip_through_native_query() {
     let placed: serde_json::Value =
         serde_json::from_str(&placed_output).expect("place output should parse");
     let keepout_uuid = placed["keepout_uuid"].as_str().unwrap().to_string();
+    std::fs::write(&board_json, stale_board_without_keepout)
+        .expect("stale board file should restore");
 
     let keepouts_output =
         execute(board_keepout_query_cli(&root)).expect("board keepout query should succeed");

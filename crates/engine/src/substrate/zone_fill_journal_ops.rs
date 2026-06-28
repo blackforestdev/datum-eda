@@ -3,13 +3,16 @@ use std::path::Path;
 use uuid::Uuid;
 
 use super::{
-    EngineError, Operation, OperationBatch, SourceShardKind,
+    DesignModel, EngineError, Operation, OperationBatch, SourceShardKind, TransactionRecord,
+    ZoneFill,
+    generated_evidence_journal_ops::validate_generated_evidence_scope,
     journal::{StagedShardWrite, stage_new_shard_write},
     zone_fill::validated_zone_fill_payload,
 };
 
 pub(super) fn maybe_stage_zone_fill_operation(
     project_root: &Path,
+    model: &DesignModel,
     batch: &OperationBatch,
     operation: &Operation,
     staged: &mut Vec<StagedShardWrite>,
@@ -18,7 +21,8 @@ pub(super) fn maybe_stage_zone_fill_operation(
         Operation::SetZoneFill {
             zone_id, zone_fill, ..
         } => {
-            validated_zone_fill_payload(*zone_id, zone_fill)?;
+            let fill = validated_zone_fill_payload(*zone_id, zone_fill)?;
+            validate_generated_evidence_scope("zone fill", None, &fill.model_revision, model)?;
             staged.push(stage_new_shard_write(
                 project_root,
                 batch,
@@ -38,6 +42,7 @@ pub(super) fn maybe_stage_zone_fill_operation(
                 kind: SourceShardKind::ZoneFill,
                 relative_path,
                 content_hash: String::new(),
+                schema_version: None,
                 delete: true,
             });
         }
@@ -108,4 +113,28 @@ pub(super) fn apply_zone_fill_shard_operation(
 
 pub(super) fn zone_fill_relative_path(zone_id: Uuid) -> String {
     format!(".datum/zone_fills/{zone_id}.json")
+}
+
+pub(super) fn apply_zone_fill_journal_to_map(
+    journal: &[TransactionRecord],
+    zone_fills: &mut std::collections::BTreeMap<Uuid, ZoneFill>,
+) -> Result<(), EngineError> {
+    for transaction in journal {
+        for operation in &transaction.operations {
+            match operation {
+                Operation::SetZoneFill {
+                    zone_id, zone_fill, ..
+                } => {
+                    let fill = validated_zone_fill_payload(*zone_id, zone_fill)?;
+                    zone_fills.insert(*zone_id, fill);
+                }
+                Operation::DeleteZoneFill { zone_id, zone_fill } => {
+                    validated_zone_fill_payload(*zone_id, zone_fill)?;
+                    zone_fills.remove(zone_id);
+                }
+                _ => {}
+            }
+        }
+    }
+    Ok(())
 }

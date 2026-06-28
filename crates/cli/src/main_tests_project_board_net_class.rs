@@ -56,6 +56,9 @@ fn project_board_net_class_mutations_round_trip_through_native_query() {
     let root = unique_project_root("datum-eda-cli-project-board-net-class");
     create_native_project(&root, Some("Board Net Class Demo".to_string()))
         .expect("initial scaffold should succeed");
+    let board_json = root.join("board/board.json");
+    let stale_board_without_net_class =
+        std::fs::read_to_string(&board_json).expect("board file should read");
 
     let place_cli = Cli::try_parse_from([
         "eda",
@@ -85,6 +88,8 @@ fn project_board_net_class_mutations_round_trip_through_native_query() {
     let placed: serde_json::Value =
         serde_json::from_str(&placed_output).expect("place output should parse");
     let net_class_uuid = placed["net_class_uuid"].as_str().unwrap().to_string();
+    std::fs::write(&board_json, stale_board_without_net_class)
+        .expect("stale board file should restore");
 
     let classes_output = execute(board_net_classes_query_cli(&root))
         .expect("board net classes query should succeed");

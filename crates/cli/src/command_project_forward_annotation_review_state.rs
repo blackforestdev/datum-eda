@@ -1,4 +1,7 @@
 use super::*;
+use eda_engine::substrate::{
+    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver, SourceShardKind,
+};
 use std::collections::BTreeMap;
 
 const FORWARD_ANNOTATION_REVIEW_PATH: &str = ".datum/forward_annotation_review/review.json";
@@ -13,33 +16,104 @@ struct NativeForwardAnnotationReviewSidecar {
 pub(crate) fn load_forward_annotation_review(
     root: &Path,
 ) -> Result<BTreeMap<String, NativeForwardAnnotationReviewRecord>> {
-    let path = root.join(FORWARD_ANNOTATION_REVIEW_PATH);
-    if path.exists() {
-        let text = std::fs::read_to_string(&path)
-            .with_context(|| format!("failed to read {}", path.display()))?;
-        let sidecar: NativeForwardAnnotationReviewSidecar = serde_json::from_str(&text)
-            .with_context(|| format!("failed to parse {}", path.display()))?;
+    let model = ProjectResolver::new(root)
+        .resolve()
+        .with_context(|| format!("failed to resolve native project {}", root.display()))?;
+    if model
+        .source_shards
+        .iter()
+        .any(|shard| shard.kind == SourceShardKind::ForwardAnnotationReview)
+    {
+        let sidecar: NativeForwardAnnotationReviewSidecar = serde_json::from_value(
+            model
+                .materialized_source_shard_value(SourceShardKind::ForwardAnnotationReview)
+                .context("failed to materialize forward-annotation review sidecar")?,
+        )
+        .context("failed to parse resolver-materialized forward-annotation review sidecar")?;
         return Ok(sidecar.reviews);
     }
-    Ok(load_native_project(root)?
-        .manifest
-        .forward_annotation_review)
+    let manifest: NativeProjectManifest = serde_json::from_value(
+        model
+            .materialized_source_shard_value(SourceShardKind::ProjectManifest)
+            .context("failed to materialize project manifest")?,
+    )
+    .context("failed to parse resolver-materialized project manifest")?;
+    Ok(manifest.forward_annotation_review)
 }
 
 pub(crate) fn write_forward_annotation_review(
     root: &Path,
     reviews: &BTreeMap<String, NativeForwardAnnotationReviewRecord>,
 ) -> Result<()> {
-    let path = root.join(FORWARD_ANNOTATION_REVIEW_PATH);
-    if let Some(parent) = path.parent() {
-        std::fs::create_dir_all(parent)
-            .with_context(|| format!("failed to create {}", parent.display()))?;
-    }
-    write_canonical_json(
-        &path,
-        &NativeForwardAnnotationReviewSidecar {
-            schema_version: 1,
-            reviews: reviews.clone(),
+    let mut model = ProjectResolver::new(root)
+        .resolve()
+        .with_context(|| format!("failed to resolve native project {}", root.display()))?;
+    let previous_review = if model
+        .source_shards
+        .iter()
+        .any(|shard| shard.kind == SourceShardKind::ForwardAnnotationReview)
+    {
+        Some(
+            model
+                .materialized_source_shard_value(SourceShardKind::ForwardAnnotationReview)
+                .context("failed to materialize previous forward-annotation review sidecar")?,
+        )
+    } else {
+        None
+    };
+    let review = serde_json::to_value(NativeForwardAnnotationReviewSidecar {
+        schema_version: 1,
+        reviews: reviews.clone(),
+    })?;
+    model.commit_journaled(
+        root,
+        OperationBatch {
+            batch_id: Uuid::new_v4(),
+            expected_model_revision: Some(model.model_revision.clone()),
+            provenance: CommitProvenance {
+                actor: "datum-eda-forward-annotation".to_string(),
+                source: CommitSource::Cli,
+                reason: "update forward-annotation review state".to_string(),
+            },
+            operations: vec![Operation::SetForwardAnnotationReview {
+                relative_path: FORWARD_ANNOTATION_REVIEW_PATH.to_string(),
+                previous_review,
+                review,
+            }],
         },
-    )
+    )?;
+    Ok(())
+}
+
+pub(crate) fn clear_forward_annotation_review_sidecar(root: &Path) -> Result<()> {
+    let mut model = ProjectResolver::new(root)
+        .resolve()
+        .with_context(|| format!("failed to resolve native project {}", root.display()))?;
+    if !model
+        .source_shards
+        .iter()
+        .any(|shard| shard.kind == SourceShardKind::ForwardAnnotationReview)
+    {
+        return Ok(());
+    }
+    let review = model
+        .materialized_source_shard_value(SourceShardKind::ForwardAnnotationReview)
+        .context("failed to materialize previous forward-annotation review sidecar")?;
+    model.commit_journaled(
+        root,
+        OperationBatch {
+            batch_id: Uuid::new_v4(),
+            expected_model_revision: Some(model.model_revision.clone()),
+            provenance: CommitProvenance {
+                actor: "datum-eda-forward-annotation".to_string(),
+                source: CommitSource::Cli,
+                reason: "clear forward-annotation review state".to_string(),
+            },
+            operations: vec![Operation::DeleteForwardAnnotationReview {
+                relative_path: FORWARD_ANNOTATION_REVIEW_PATH.to_string(),
+                review,
+            }],
+        },
+    )?;
+    Ok(())
 }

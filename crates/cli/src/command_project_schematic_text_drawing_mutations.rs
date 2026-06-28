@@ -9,7 +9,7 @@ pub(crate) fn place_native_project_text(
     position: Point,
     rotation_deg: i32,
 ) -> Result<NativeProjectTextMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let sheet_key = sheet_uuid.to_string();
     let relative_path =
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
@@ -58,7 +58,7 @@ pub(crate) fn edit_native_project_text(
     position: Option<Point>,
     rotation_deg: Option<i32>,
 ) -> Result<NativeProjectTextMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut text_object) =
         load_native_text_mutation_target(&project, text_uuid)?;
     if let Some(text) = text {
@@ -98,7 +98,7 @@ pub(crate) fn delete_native_project_text(
     root: &Path,
     text_uuid: Uuid,
 ) -> Result<NativeProjectTextMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, text_object) =
         load_native_text_mutation_target(&project, text_uuid)?;
     commit_schematic_operation(
@@ -173,7 +173,7 @@ pub(crate) fn place_native_project_drawing_line(
     from: Point,
     to: Point,
 ) -> Result<NativeProjectDrawingMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let sheet_path = schematic_sheet_path(&project, sheet_uuid)?;
     let drawing_uuid = Uuid::new_v4();
     let drawing = SchematicPrimitive::Line {
@@ -210,7 +210,7 @@ pub(crate) fn place_native_project_drawing_rect(
     min: Point,
     max: Point,
 ) -> Result<NativeProjectDrawingMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let sheet_path = schematic_sheet_path(&project, sheet_uuid)?;
     let drawing_uuid = Uuid::new_v4();
     let drawing = SchematicPrimitive::Rect {
@@ -246,7 +246,7 @@ pub(crate) fn place_native_project_drawing_circle(
     center: Point,
     radius: i64,
 ) -> Result<NativeProjectDrawingMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let sheet_path = schematic_sheet_path(&project, sheet_uuid)?;
     let drawing_uuid = Uuid::new_v4();
     let drawing = SchematicPrimitive::Circle {
@@ -284,7 +284,7 @@ pub(crate) fn place_native_project_drawing_arc(
     sheet_uuid: Uuid,
     arc: Arc,
 ) -> Result<NativeProjectDrawingMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let sheet_path = schematic_sheet_path(&project, sheet_uuid)?;
     let drawing_uuid = Uuid::new_v4();
     let drawing = SchematicPrimitive::Arc {
@@ -322,7 +322,7 @@ pub(crate) fn edit_native_project_drawing_line(
     from: Option<Point>,
     to: Option<Point>,
 ) -> Result<NativeProjectDrawingMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, drawing) =
         load_native_drawing_mutation_target(&project, drawing_uuid)?;
     let (current_from, current_to) = match drawing {
@@ -365,7 +365,7 @@ pub(crate) fn edit_native_project_drawing_rect(
     min: Option<Point>,
     max: Option<Point>,
 ) -> Result<NativeProjectDrawingMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, drawing) =
         load_native_drawing_mutation_target(&project, drawing_uuid)?;
     let (current_min, current_max) = match drawing {
@@ -407,7 +407,7 @@ pub(crate) fn edit_native_project_drawing_circle(
     center: Option<Point>,
     radius: Option<i64>,
 ) -> Result<NativeProjectDrawingMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, drawing) =
         load_native_drawing_mutation_target(&project, drawing_uuid)?;
     let (current_center, current_radius) = match drawing {
@@ -454,7 +454,7 @@ pub(crate) fn edit_native_project_drawing_arc(
     start_angle: Option<i32>,
     end_angle: Option<i32>,
 ) -> Result<NativeProjectDrawingMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, drawing) =
         load_native_drawing_mutation_target(&project, drawing_uuid)?;
     let current_arc = match drawing {
@@ -500,7 +500,7 @@ pub(crate) fn delete_native_project_drawing(
     root: &Path,
     drawing_uuid: Uuid,
 ) -> Result<NativeProjectDrawingMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, drawing) =
         load_native_drawing_mutation_target(&project, drawing_uuid)?;
     let (kind, from, to) = match drawing {

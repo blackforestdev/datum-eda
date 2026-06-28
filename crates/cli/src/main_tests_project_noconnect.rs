@@ -130,6 +130,23 @@ fn project_place_and_delete_noconnect_update_native_query_surface() {
     )
     .expect("stale sheet should write");
 
+    let query_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "noconnects",
+    ])
+    .expect("CLI should parse");
+    let stale_markers_output =
+        execute(query_cli).expect("project query noconnects should resolve stale sheet");
+    let stale_markers: serde_json::Value =
+        serde_json::from_str(&stale_markers_output).expect("noconnects JSON should parse");
+    assert_eq!(stale_markers.as_array().unwrap().len(), 1);
+    assert_eq!(stale_markers[0]["uuid"], noconnect_uuid);
+
     let delete_cli = Cli::try_parse_from([
         "eda",
         "project",

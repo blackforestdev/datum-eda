@@ -3,11 +3,11 @@ use std::path::{Component, Path, PathBuf};
 use anyhow::{Context, Result, anyhow};
 use eda_engine::substrate::{
     ArtifactKind, ArtifactMetadata, ArtifactValidationState, ProjectResolver,
-    persist_artifact_metadata,
 };
 use serde::Serialize;
 use uuid::Uuid;
 
+use super::command_project_artifacts::commit_artifact_metadata_evidence;
 use super::{
     compare_native_project_bom, compare_native_project_excellon_drill, compare_native_project_pnp,
     compute_source_hash_bytes, render_expected_native_project_drill_csv,
@@ -37,7 +37,7 @@ pub(crate) fn validate_native_project_artifact(
     root: &Path,
     artifact_id: Uuid,
 ) -> Result<NativeProjectArtifactValidationView> {
-    let model = ProjectResolver::new(root).resolve()?;
+    let mut model = ProjectResolver::new(root).resolve()?;
     let mut artifact = model
         .artifact_metadata
         .get(&artifact_id)
@@ -79,7 +79,7 @@ pub(crate) fn validate_native_project_artifact(
             ArtifactValidationState::Invalid
         };
         Some(
-            persist_artifact_metadata(root, &artifact)
+            commit_artifact_metadata_evidence(root, &mut model, &artifact)
                 .context("failed to persist artifact validation state")?
                 .display()
                 .to_string(),

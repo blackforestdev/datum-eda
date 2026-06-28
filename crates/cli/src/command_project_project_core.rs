@@ -76,7 +76,13 @@ pub(super) struct NativeSchematicCounts {
     pub(super) drawings: usize,
 }
 
-pub(super) fn load_native_project(root: &Path) -> Result<LoadedNativeProject> {
+pub(super) fn load_native_project_with_resolved_board(root: &Path) -> Result<LoadedNativeProject> {
+    Ok(load_native_project_with_resolved_board_and_model(root)?.0)
+}
+
+pub(crate) fn load_native_project_with_resolved_board_and_model(
+    root: &Path,
+) -> Result<(LoadedNativeProject, DesignModel)> {
     let root = root.to_path_buf();
     if !root.is_dir() {
         bail!(
@@ -85,29 +91,28 @@ pub(super) fn load_native_project(root: &Path) -> Result<LoadedNativeProject> {
         );
     }
 
-    let manifest_path = root.join("project.json");
-    let manifest_text = std::fs::read_to_string(&manifest_path)
-        .with_context(|| format!("failed to read {}", manifest_path.display()))?;
-    let manifest: NativeProjectManifest = serde_json::from_str(&manifest_text)
-        .with_context(|| format!("failed to parse {}", manifest_path.display()))?;
-
+    let model = ProjectResolver::new(&root).resolve()?;
+    let manifest_value = model.materialized_source_shard_value(SourceShardKind::ProjectManifest)?;
+    let manifest: NativeProjectManifest =
+        serde_json::from_value(manifest_value).with_context(|| {
+            format!(
+                "failed to parse resolved {}",
+                root.join("project.json").display()
+            )
+        })?;
     let schematic_path = root.join(&manifest.schematic);
     let board_path = root.join(&manifest.board);
     let rules_path = root.join(&manifest.rules);
-    let schematic_text = std::fs::read_to_string(&schematic_path)
-        .with_context(|| format!("failed to read {}", schematic_path.display()))?;
-    let board_text = std::fs::read_to_string(&board_path)
-        .with_context(|| format!("failed to read {}", board_path.display()))?;
-    let rules_text = std::fs::read_to_string(&rules_path)
-        .with_context(|| format!("failed to read {}", rules_path.display()))?;
-    let schematic: NativeSchematicRoot = serde_json::from_str(&schematic_text)
-        .with_context(|| format!("failed to parse {}", schematic_path.display()))?;
-    let board: NativeBoardRoot = serde_json::from_str(&board_text)
-        .with_context(|| format!("failed to parse {}", board_path.display()))?;
-    let rules: NativeRulesRoot = serde_json::from_str(&rules_text)
-        .with_context(|| format!("failed to parse {}", rules_path.display()))?;
-
-    Ok(LoadedNativeProject {
+    let schematic_value = model.materialized_source_shard_value(SourceShardKind::SchematicRoot)?;
+    let schematic: NativeSchematicRoot = serde_json::from_value(schematic_value)
+        .with_context(|| format!("failed to parse resolved {}", schematic_path.display()))?;
+    let board_value = model.materialized_source_shard_value(SourceShardKind::BoardRoot)?;
+    let board: NativeBoardRoot = serde_json::from_value(board_value)
+        .with_context(|| format!("failed to parse resolved {}", board_path.display()))?;
+    let rules_value = model.materialized_source_shard_value(SourceShardKind::RulesRoot)?;
+    let rules: NativeRulesRoot = serde_json::from_value(rules_value)
+        .with_context(|| format!("failed to parse resolved {}", rules_path.display()))?;
+    let project = LoadedNativeProject {
         root,
         manifest,
         schematic,
@@ -116,38 +121,7 @@ pub(super) fn load_native_project(root: &Path) -> Result<LoadedNativeProject> {
         schematic_path,
         board_path,
         rules_path,
-    })
-}
-
-pub(super) fn load_native_project_with_resolved_board(root: &Path) -> Result<LoadedNativeProject> {
-    Ok(load_native_project_with_resolved_board_and_model(root)?.0)
-}
-
-pub(crate) fn load_native_project_with_resolved_board_and_model(
-    root: &Path,
-) -> Result<(LoadedNativeProject, DesignModel)> {
-    let mut project = load_native_project(root)?;
-    let model = ProjectResolver::new(root).resolve()?;
-    let manifest_value = model.materialized_source_shard_value(SourceShardKind::ProjectManifest)?;
-    project.manifest = serde_json::from_value(manifest_value).with_context(|| {
-        format!(
-            "failed to parse resolved {}",
-            root.join("project.json").display()
-        )
-    })?;
-    let schematic_value = model.materialized_source_shard_value(SourceShardKind::SchematicRoot)?;
-    project.schematic = serde_json::from_value(schematic_value).with_context(|| {
-        format!(
-            "failed to parse resolved {}",
-            project.schematic_path.display()
-        )
-    })?;
-    let board_value = model.materialized_source_shard_value(SourceShardKind::BoardRoot)?;
-    project.board = serde_json::from_value(board_value)
-        .with_context(|| format!("failed to parse resolved {}", project.board_path.display()))?;
-    let rules_value = model.materialized_source_shard_value(SourceShardKind::RulesRoot)?;
-    project.rules = serde_json::from_value(rules_value)
-        .with_context(|| format!("failed to parse resolved {}", project.rules_path.display()))?;
+    };
     Ok((project, model))
 }
 
@@ -236,10 +210,13 @@ pub(super) fn build_native_project_schematic(project: &LoadedNativeProject) -> R
             format!("invalid sheet definition UUID key `{definition_key}` in schematic root")
         })?;
         let path = project.root.join("schematic").join(relative_path);
-        let definition_text = std::fs::read_to_string(&path)
-            .with_context(|| format!("failed to read {}", path.display()))?;
-        let definition: NativeSheetDefinitionRoot = serde_json::from_str(&definition_text)
-            .with_context(|| format!("failed to parse {}", path.display()))?;
+        let definition_value = model
+            .materialized_source_shard_value_by_relative_path(&format!("schematic/{relative_path}"))
+            .with_context(|| format!("failed to materialize {}", path.display()))?;
+        let definition: NativeSheetDefinitionRoot = serde_json::from_value(definition_value)
+            .with_context(|| {
+                format!("failed to parse materialized definition {}", path.display())
+            })?;
         if definition.uuid != expected_uuid {
             bail!(
                 "sheet definition UUID mismatch: schematic root key {} does not match {} in {}",

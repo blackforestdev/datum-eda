@@ -1,8 +1,19 @@
 use super::*;
+#[path = "command_context_active.rs"]
+mod command_context_active;
 #[path = "command_context_activity.rs"]
 mod command_context_activity;
 #[path = "command_context_checks.rs"]
 mod command_context_checks;
+#[path = "command_context_defaults.rs"]
+mod command_context_defaults;
+#[path = "command_context_production.rs"]
+mod command_context_production;
+#[path = "command_context_proposals.rs"]
+mod command_context_proposals;
+#[path = "command_context_source_shards.rs"]
+mod command_context_source_shards;
+use command_context_active::update_active_context_commands;
 use command_context_activity::{
     command_activity_summaries, command_execution_summaries, count_string_field, occurrence_time,
     terminal_activity_spans, terminal_io_activity_summary,
@@ -11,6 +22,10 @@ use command_context_checks::{
     check_context_summary, check_status_from_context, visible_check_run_ids_from_context,
     visible_finding_fingerprints_from_context,
 };
+use command_context_defaults::{insert_command_defaults, insert_context_defaults};
+use command_context_production::update_production_visibility;
+use command_context_proposals::{latest_proposal_id_from_context, visible_proposal_ids};
+use command_context_source_shards::{empty_source_shard_status, update_source_shard_status};
 use eda_engine::substrate::ProjectResolver;
 use serde_json::{Map, Value};
 
@@ -233,107 +248,8 @@ fn enrich_context_envelope(context_path: &Path, args: &ContextGetArgs, value: &m
     let Some(object) = value.as_object_mut() else {
         return;
     };
-    insert_default(
-        object,
-        "actor_type",
-        Value::String("ExternalAgent".to_string()),
-    );
-    insert_default(
-        object,
-        "capabilities",
-        Value::Array(
-            ["read", "check", "artifact", "propose", "apply-approved"]
-                .into_iter()
-                .map(|capability| Value::String(capability.to_string()))
-                .collect(),
-        ),
-    );
-    insert_default(object, "visible_artifact_ids", Value::Array(Vec::new()));
-    insert_default(object, "visible_check_run_ids", Value::Array(Vec::new()));
-    insert_default(object, "accepted_transaction_tip", Value::Null);
-    insert_default(object, "expires_at", Value::Null);
-    insert_default(
-        object,
-        "session_lifecycle",
-        Value::String("running".to_string()),
-    );
-    insert_default(object, "created_unix_ms", Value::Null);
-    insert_default(object, "updated_unix_ms", Value::Null);
-    insert_default(object, "process_group_id", Value::Null);
-    insert_default(object, "process_exit_code", Value::Null);
-    insert_default(
-        object,
-        "selection_context",
-        serde_json::json!({
-            "kind": "none",
-            "id": null
-        }),
-    );
-    insert_default(
-        object,
-        "cursor_context",
-        serde_json::json!({
-            "screen_px": null,
-            "hovered_object_id": null,
-            "active_dock_tab": null,
-            "active_tool": "select"
-        }),
-    );
-    insert_default(
-        object,
-        "projection_context",
-        serde_json::json!({
-            "scene_id": object
-                .get("scene_id")
-                .and_then(Value::as_str)
-                .unwrap_or("unknown-scene"),
-            "board_id": object.get("board_id").and_then(Value::as_str),
-            "board_name": object.get("board_name").and_then(Value::as_str),
-            "scene_bounds_nm": null,
-            "active_projection_id": null
-        }),
-    );
-    insert_default(
-        object,
-        "refresh_command",
-        Value::String("datum-eda context refresh --session \"$DATUM_SESSION_ID\"".to_string()),
-    );
-    insert_default(
-        object,
-        "agent_commands",
-        serde_json::json!({
-            "codex": "codex",
-            "claude": "claude",
-            "aider": "aider",
-            "codex_with_context": "codex 'You are running inside Datum EDA. Read the Datum context from $DATUM_DISCOVERY before acting, use datum-eda context session-activity --session \"$DATUM_SESSION_ID\" --limit 20 for recent GUI/terminal activity, and use datum-eda CLI commands for project-aware work.'",
-            "claude_with_context": "claude 'You are running inside Datum EDA. Read $DATUM_DISCOVERY and inspect recent activity with datum-eda context session-activity --session \"$DATUM_SESSION_ID\" --limit 20 before acting.'",
-            "context_prompt": "You are running inside Datum EDA. Read the Datum context from $DATUM_DISCOVERY before acting, use datum-eda context session-activity --session \"$DATUM_SESSION_ID\" --limit 20 for recent GUI/terminal activity, and use datum-eda CLI commands for project-aware work.",
-            "inspect_context": "python3 -m json.tool \"$DATUM_DISCOVERY\"",
-            "refresh_context": "datum-eda context refresh --session \"$DATUM_SESSION_ID\"",
-            "session_activity": "datum-eda context session-activity --session \"$DATUM_SESSION_ID\" --limit 20"
-        }),
-    );
-    insert_default(
-        object,
-        "query_commands",
-        serde_json::json!({
-            "resolve_debug": "datum-eda project query \"$DATUM_PROJECT_ROOT\" resolve-debug",
-            "sheets": "datum-eda query sheets \"$DATUM_PROJECT_ROOT\"",
-            "symbols": "datum-eda query symbols \"$DATUM_PROJECT_ROOT\"",
-            "labels": "datum-eda query labels \"$DATUM_PROJECT_ROOT\"",
-            "ports": "datum-eda query ports \"$DATUM_PROJECT_ROOT\"",
-            "buses": "datum-eda query buses \"$DATUM_PROJECT_ROOT\"",
-            "bus_entries": "datum-eda query bus-entries \"$DATUM_PROJECT_ROOT\"",
-            "noconnects": "datum-eda query noconnects \"$DATUM_PROJECT_ROOT\"",
-            "hierarchy": "datum-eda query hierarchy \"$DATUM_PROJECT_ROOT\"",
-            "schematic_nets": "datum-eda query schematic-nets \"$DATUM_PROJECT_ROOT\"",
-            "connectivity_diagnostics": "datum-eda query connectivity-diagnostics \"$DATUM_PROJECT_ROOT\"",
-            "import_map": "datum-eda query import-map \"$DATUM_PROJECT_ROOT\"",
-            "relationships": "datum-eda query relationships \"$DATUM_PROJECT_ROOT\"",
-            "variants": "datum-eda query variants \"$DATUM_PROJECT_ROOT\"",
-            "zone_fills": "datum-eda query zone-fills \"$DATUM_PROJECT_ROOT\""
-        }),
-    );
+    insert_context_defaults(object, empty_source_shard_status());
+    insert_command_defaults(object);
     let project_root = context_project_root(args, object);
     if let Some(root) = &project_root {
         object.insert(
@@ -363,20 +279,43 @@ fn enrich_context_envelope(context_path: &Path, args: &ContextGetArgs, value: &m
                     .map(|transaction| Value::String(transaction.transaction_id.to_string()))
                     .unwrap_or(Value::Null),
             );
+            update_production_visibility(object, &model);
             object.insert(
-                "visible_artifact_ids".to_string(),
-                Value::Array(
-                    model
-                        .artifact_metadata
-                        .keys()
-                        .map(|id| Value::String(id.to_string()))
-                        .collect(),
-                ),
+                "visible_proposal_ids".to_string(),
+                visible_proposal_ids(&model),
             );
+            object.insert(
+                "latest_proposal_id".to_string(),
+                latest_proposal_id_from_context(object, &model)
+                    .map(Value::String)
+                    .unwrap_or(Value::Null),
+            );
+            update_source_shard_status(object, &model);
             let check_context = check_context_summary(&model);
             object.insert(
                 "visible_check_run_ids".to_string(),
                 visible_check_run_ids_from_context(&check_context),
+            );
+            object.insert(
+                "latest_check_run_id".to_string(),
+                check_context
+                    .get("latest_check_run_id")
+                    .cloned()
+                    .unwrap_or(Value::Null),
+            );
+            object.insert(
+                "latest_profile_id".to_string(),
+                check_context
+                    .get("latest_profile_id")
+                    .cloned()
+                    .unwrap_or(Value::Null),
+            );
+            object.insert(
+                "profile_latest_check_runs".to_string(),
+                check_context
+                    .get("profile_latest_check_runs")
+                    .cloned()
+                    .unwrap_or_else(|| Value::Array(Vec::new())),
             );
             object.insert(
                 "visible_finding_fingerprints".to_string(),
@@ -399,6 +338,7 @@ fn enrich_context_envelope(context_path: &Path, args: &ContextGetArgs, value: &m
     }
     update_storage(object, context_path, project_root.as_deref());
     update_session_metadata(object);
+    update_active_context_commands(object);
     let seed = format!(
         "datum-context:{}:{}:{}",
         object
@@ -482,10 +422,6 @@ fn context_project_root(args: &ContextGetArgs, object: &Map<String, Value>) -> O
             .and_then(Value::as_str)
             .map(PathBuf::from)
     })
-}
-
-fn insert_default(object: &mut Map<String, Value>, key: &str, value: Value) {
-    object.entry(key.to_string()).or_insert(value);
 }
 
 fn update_storage(object: &mut Map<String, Value>, context_path: &Path, root: Option<&Path>) {

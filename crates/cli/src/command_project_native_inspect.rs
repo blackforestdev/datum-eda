@@ -13,10 +13,15 @@ mod command_project_artifact_checks;
 mod command_project_check_finding_identity;
 #[path = "command_project_check_proposal_refs.rs"]
 mod command_project_check_proposal_refs;
+#[path = "command_project_check_run_history.rs"]
+mod command_project_check_run_history;
 #[path = "command_project_check_run_view.rs"]
 mod command_project_check_run_view;
+#[path = "command_project_check_targets.rs"]
+mod command_project_check_targets;
 
 use self::command_project_artifact_checks::*;
+pub(crate) use self::command_project_check_run_history::query_native_project_check_run_list;
 pub(crate) use self::command_project_check_run_view::{
     NativeProjectCheckFindingView, NativeProjectCheckProposalCommandTemplates,
     NativeProjectCheckProposalLinkView, NativeProjectCheckRunView, append_finding_values,
@@ -55,6 +60,7 @@ pub(crate) struct NativeProjectResolveDebugView {
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectResolveDebugShardView {
     pub(crate) kind: String,
+    pub(crate) taxon: Option<String>,
     pub(crate) shard_id: String,
     pub(crate) path: String,
     pub(crate) authority: String,
@@ -68,27 +74,6 @@ pub(crate) struct NativeProjectResolveDebugDiagnosticView {
     pub(crate) code: String,
     pub(crate) message: String,
     pub(crate) path: Option<String>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-pub(crate) struct NativeProjectCheckRunListView {
-    pub(crate) contract: &'static str,
-    pub(crate) project_id: String,
-    pub(crate) model_revision: String,
-    pub(crate) check_run_count: usize,
-    pub(crate) check_runs: Vec<NativeProjectCheckRunSummaryView>,
-}
-
-#[derive(Debug, Clone, Serialize)]
-pub(crate) struct NativeProjectCheckRunSummaryView {
-    pub(crate) check_run_id: Uuid,
-    pub(crate) project_id: Uuid,
-    pub(crate) model_revision: String,
-    pub(crate) profile_id: String,
-    pub(crate) status: String,
-    pub(crate) finding_count: usize,
-    pub(crate) coverage_count: usize,
-    pub(crate) proposal_refs: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -180,7 +165,7 @@ pub(crate) struct NativeProjectJournalMutationGuardView {
 }
 
 pub(crate) fn inspect_native_project(root: &Path) -> Result<NativeProjectInspectReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let pool_refs = collect_native_project_pool_ref_views(&project);
 
     Ok(NativeProjectInspectReportView {
@@ -406,15 +391,30 @@ pub(crate) fn query_native_project_journal_show(
 }
 
 pub(crate) fn query_native_project_check_run(root: &Path) -> Result<NativeProjectCheckRunView> {
-    query_native_project_check_run_with_profile(root, None)
+    query_native_project_check_run_with_profile_and_persistence(root, None, false)
 }
 
 pub(crate) fn query_native_project_check_run_with_profile(
     root: &Path,
     profile: Option<&str>,
 ) -> Result<NativeProjectCheckRunView> {
+    query_native_project_check_run_with_profile_and_persistence(root, profile, false)
+}
+
+pub(crate) fn run_native_project_check_with_profile(
+    root: &Path,
+    profile: Option<&str>,
+) -> Result<NativeProjectCheckRunView> {
+    query_native_project_check_run_with_profile_and_persistence(root, profile, true)
+}
+
+fn query_native_project_check_run_with_profile_and_persistence(
+    root: &Path,
+    profile: Option<&str>,
+    persist: bool,
+) -> Result<NativeProjectCheckRunView> {
     let profile_id = resolve_native_project_check_profile(profile)?;
-    let model = ProjectResolver::new(root).resolve()?;
+    let mut model = ProjectResolver::new(root).resolve()?;
     let project = load_native_project_with_resolved_board(root)?;
     let report = query_native_project_check_with_inputs(
         root,
@@ -461,7 +461,7 @@ pub(crate) fn query_native_project_check_run_with_profile(
     );
     let view = NativeProjectCheckRunView {
         contract: "check_run_v1",
-        persisted: true,
+        persisted: persist,
         check_run_id: Uuid::new_v5(&model.project.project_id, run_material.as_bytes()),
         project_id: model.project.project_id.to_string(),
         model_revision: model.model_revision.0.clone(),
@@ -476,44 +476,44 @@ pub(crate) fn query_native_project_check_run_with_profile(
         coverage,
         raw_report: report,
     };
-    persist_check_run(
-        root,
-        &native_check_run_to_substrate(&model.project.project_id, &view)?,
-    )?;
+    if persist {
+        commit_check_run_evidence(root, &mut model, &view)?;
+    }
     Ok(view)
 }
 
-pub(crate) fn query_native_project_check_run_list(
+fn commit_check_run_evidence(
     root: &Path,
-) -> Result<NativeProjectCheckRunListView> {
-    let model = ProjectResolver::new(root).resolve()?;
-    let mut check_runs = model
+    model: &mut DesignModel,
+    view: &NativeProjectCheckRunView,
+) -> Result<()> {
+    let check_run = native_check_run_to_substrate(&model.project.project_id, view)?;
+    if model.check_runs.contains_key(&check_run.check_run_id) {
+        return Ok(());
+    }
+    let previous_check_run = model
         .check_runs
-        .values()
-        .map(|run| NativeProjectCheckRunSummaryView {
-            check_run_id: run.check_run_id,
-            project_id: run.project_id,
-            model_revision: run.model_revision.0.clone(),
-            profile_id: run.profile_id.clone(),
-            status: run.status.clone(),
-            finding_count: run.finding_count,
-            coverage_count: run.coverage.len(),
-            proposal_refs: run.proposal_refs.clone(),
-        })
-        .collect::<Vec<_>>();
-    check_runs.sort_by(|left, right| {
-        left.model_revision
-            .cmp(&right.model_revision)
-            .then_with(|| left.profile_id.cmp(&right.profile_id))
-            .then_with(|| left.check_run_id.cmp(&right.check_run_id))
-    });
-    Ok(NativeProjectCheckRunListView {
-        contract: "check_run_list_v1",
-        project_id: model.project.project_id.to_string(),
-        model_revision: model.model_revision.0,
-        check_run_count: check_runs.len(),
-        check_runs,
-    })
+        .get(&check_run.check_run_id)
+        .map(|run| serde_json::to_value(run).expect("check run serialization must succeed"));
+    model.commit_journaled(
+        root,
+        OperationBatch {
+            batch_id: Uuid::new_v4(),
+            expected_model_revision: Some(model.model_revision.clone()),
+            provenance: CommitProvenance {
+                actor: "datum-eda-cli".to_string(),
+                source: CommitSource::Cli,
+                reason: format!("record {} check run evidence", view.profile_id),
+            },
+            operations: vec![Operation::SetCheckRun {
+                check_run_id: check_run.check_run_id,
+                previous_check_run,
+                check_run: serde_json::to_value(&check_run)
+                    .expect("check run serialization must succeed"),
+            }],
+        },
+    )?;
+    Ok(())
 }
 
 pub(crate) fn query_native_project_check_run_show(
@@ -550,6 +550,7 @@ fn resolve_debug_view(model: DesignModel) -> NativeProjectResolveDebugView {
             .into_iter()
             .map(|shard| NativeProjectResolveDebugShardView {
                 kind: format!("{:?}", shard.kind),
+                taxon: shard.taxon.map(|taxon| format!("{taxon:?}")),
                 shard_id: shard.shard_id.to_string(),
                 path: shard.relative_path,
                 authority: format!("{:?}", shard.authority),
@@ -559,7 +560,11 @@ fn resolve_debug_view(model: DesignModel) -> NativeProjectResolveDebugView {
             })
             .collect(),
         object_count: model.objects.len(),
-        component_instance_count: model.component_instances.len(),
+        component_instance_count: model
+            .component_instances
+            .values()
+            .filter(|instance| instance.authority == ComponentInstanceAuthority::Authored)
+            .count(),
         relationship_count: model.relationships.len(),
         relationship_status_count: model.relationship_statuses.len(),
         variant_count: model.variants.len(),

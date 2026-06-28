@@ -7,8 +7,8 @@ use eda_engine::substrate::Operation;
 
 use super::{
     LoadedNativeProject, NativeProjectBoardStackupMutationReportView,
-    command_project_board_layout::commit_board_layout_operation, load_native_project,
-    query_native_project_board_stackup,
+    command_project_board_layout::commit_board_layout_operation,
+    load_native_project_with_resolved_board, query_native_project_board_stackup,
 };
 
 pub(crate) fn default_native_project_stackup() -> Vec<StackupLayer> {
@@ -33,7 +33,7 @@ pub(crate) fn default_native_project_stackup_layers() -> Vec<serde_json::Value> 
 pub(crate) fn add_native_project_default_top_stackup(
     root: &Path,
 ) -> Result<NativeProjectBoardStackupMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let merged = merge_default_top_stackup(&project)?;
     let stackup = serde_json::json!({
         "layers": merged
@@ -53,7 +53,7 @@ pub(crate) fn add_native_project_default_top_stackup(
             stackup,
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardStackupMutationReportView {
         action: "add_default_top_stackup".to_string(),
         project_root: project.root.display().to_string(),

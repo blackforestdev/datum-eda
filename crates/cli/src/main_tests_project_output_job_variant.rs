@@ -131,7 +131,13 @@ fn write_variant_manufacturing_fixture(root: &Path) -> (Uuid, Uuid, Uuid) {
                         "uuid": instance,
                         "object_revision": 0,
                         "placed_symbol_refs": [{ "object_id": symbol, "object_revision": 0 }],
-                        "placed_package_refs": [{ "object_id": package, "object_revision": 0 }]
+                        "placed_package_refs": [{ "object_id": package, "object_revision": 0 }],
+                        "placed_package_roles": {
+                            package.to_string(): {
+                                "role": "physical_package",
+                                "label": if instance == u1_instance { "main" } else { "spare" }
+                            }
+                        }
                     }
                 }))
                 .unwrap()
@@ -273,8 +279,8 @@ fn project_run_output_job_uses_stored_variant_for_manufacturing_rows() {
     );
     let bom = std::fs::read_to_string(output_dir.join("variant-job-bom.csv")).unwrap();
     let pnp = std::fs::read_to_string(output_dir.join("variant-job-pnp.csv")).unwrap();
-    assert!(bom.contains(&format!("{u1_instance},U1,")));
+    assert!(bom.contains(&format!("{u1_instance},physical_package,main,U1,")));
     assert!(!bom.contains(&format!("{u2_instance},U2,")));
-    assert!(pnp.contains(&format!("{u1_instance},U1,")));
+    assert!(pnp.contains(&format!("{u1_instance},physical_package,main,U1,")));
     assert!(!pnp.contains(&format!("{u2_instance},U2,")));
 }

@@ -2,9 +2,9 @@ use std::path::Path;
 
 use anyhow::{Context, Result};
 use eda_engine::substrate::{
-    ArtifactKind, ArtifactMetadata, CommitProvenance, CommitSource, ObjectRevision, Operation,
-    OperationBatch, OutputJob, OutputJobLogEntry, OutputJobLogLevel, OutputJobRun,
-    OutputJobRunStatus, ProjectResolver, persist_output_job_run,
+    ArtifactKind, ArtifactMetadata, CommitProvenance, CommitSource, OUTPUT_JOB_RUN_SCHEMA_VERSION,
+    ObjectRevision, Operation, OperationBatch, OutputJob, OutputJobLogEntry, OutputJobLogLevel,
+    OutputJobRun, OutputJobRunStatus, PRODUCTION_RECORD_SCHEMA_VERSION, ProjectResolver,
 };
 use serde::Serialize;
 use uuid::Uuid;
@@ -13,12 +13,14 @@ use uuid::Uuid;
 mod command_project_output_job_runs;
 
 use self::command_project_output_job_runs::{
-    existing_generated_output_job_run, failed_output_job_run, persist_successful_output_job_run,
+    existing_generated_output_job_run, failed_output_job_run, persist_output_job_run_journaled,
+    persist_successful_output_job_run,
 };
 use super::command_project_check_gate::{
     ReleaseCheckGateView, release_check_gate, release_check_gate_error,
 };
 use super::command_project_gerber_plan::sanitize_export_prefix;
+use super::command_project_operation_guards::guarded_existing_object_operation;
 use super::command_project_output_job_include::{
     output_job_id, output_job_id_for_includes, output_job_include_label, output_job_kind_scope,
     parse_output_job_include,
@@ -251,13 +253,16 @@ pub(crate) fn update_native_project_output_job(
                 source: CommitSource::Cli,
                 reason: "update output job".to_string(),
             },
-            operations: vec![Operation::SetOutputJob {
-                output_job_id,
-                previous_output_job: serde_json::to_value(&previous_output_job)
-                    .context("failed to serialize previous output job operation")?,
-                output_job: serde_json::to_value(&output_job)
-                    .context("failed to serialize output job operation")?,
-            }],
+            operations: guarded_existing_object_operation(
+                &model,
+                Operation::SetOutputJob {
+                    output_job_id,
+                    previous_output_job: serde_json::to_value(&previous_output_job)
+                        .context("failed to serialize previous output job operation")?,
+                    output_job: serde_json::to_value(&output_job)
+                        .context("failed to serialize output job operation")?,
+                },
+            )?,
         },
     )?;
 
@@ -280,7 +285,7 @@ pub(crate) fn run_native_project_output_job(
     output_job_id: Uuid,
     output_dir_override: Option<&Path>,
 ) -> Result<NativeProjectOutputJobRunView> {
-    let model = ProjectResolver::new(root).resolve()?;
+    let mut model = ProjectResolver::new(root).resolve()?;
     let output_job = model
         .output_jobs
         .get(&output_job_id)
@@ -303,8 +308,9 @@ pub(crate) fn run_native_project_output_job(
     if check_gate.active_error_count > 0 {
         let error = release_check_gate_error(&check_gate);
         let output_job_run = failed_output_job_run(&model, output_job.id, &include, &error);
-        let output_job_run_path = persist_output_job_run(root, &output_job_run)
-            .context("failed to persist failed output job run")?;
+        let output_job_run_path =
+            persist_output_job_run_journaled(root, &mut model, &output_job_run)
+                .context("failed to persist failed output job run")?;
         return Ok(NativeProjectOutputJobRunView {
             contract: "output_job_run_v1",
             action: "run_output_job",
@@ -334,8 +340,9 @@ pub(crate) fn run_native_project_output_job(
         Err(error) => {
             let error = format!("{error:#}");
             let output_job_run = failed_output_job_run(&model, output_job.id, &include, &error);
-            let output_job_run_path = persist_output_job_run(root, &output_job_run)
-                .context("failed to persist failed output job run")?;
+            let output_job_run_path =
+                persist_output_job_run_journaled(root, &mut model, &output_job_run)
+                    .context("failed to persist failed output job run")?;
             return Ok(NativeProjectOutputJobRunView {
                 contract: "output_job_run_v1",
                 action: "run_output_job",
@@ -403,7 +410,7 @@ pub(crate) fn start_native_project_output_job_run(
     root: &Path,
     output_job_id: Uuid,
 ) -> Result<NativeProjectOutputJobRunLifecycleView> {
-    let model = ProjectResolver::new(root).resolve()?;
+    let mut model = ProjectResolver::new(root).resolve()?;
     let output_job = model
         .output_jobs
         .get(&output_job_id)
@@ -417,7 +424,7 @@ pub(crate) fn start_native_project_output_job_run(
         0,
         "output job run started",
     );
-    let output_job_run_path = persist_output_job_run(root, &output_job_run)
+    let output_job_run_path = persist_output_job_run_journaled(root, &mut model, &output_job_run)
         .context("failed to persist running output job run")?;
     Ok(NativeProjectOutputJobRunLifecycleView {
         contract: "output_job_run_lifecycle_v1",
@@ -434,7 +441,7 @@ pub(crate) fn cancel_native_project_output_job_run(
     root: &Path,
     run_id: Uuid,
 ) -> Result<NativeProjectOutputJobRunLifecycleView> {
-    let model = ProjectResolver::new(root).resolve()?;
+    let mut model = ProjectResolver::new(root).resolve()?;
     let mut output_job_run = model
         .output_job_runs
         .get(&run_id)
@@ -453,7 +460,7 @@ pub(crate) fn cancel_native_project_output_job_run(
         level: OutputJobLogLevel::Warning,
         message: "output job run canceled".to_string(),
     });
-    let output_job_run_path = persist_output_job_run(root, &output_job_run)
+    let output_job_run_path = persist_output_job_run_journaled(root, &mut model, &output_job_run)
         .context("failed to persist canceled output job run")?;
     Ok(NativeProjectOutputJobRunLifecycleView {
         contract: "output_job_run_lifecycle_v1",
@@ -479,6 +486,7 @@ fn lifecycle_output_job_run(
         output_job, model.model_revision.0
     );
     OutputJobRun {
+        schema_version: OUTPUT_JOB_RUN_SCHEMA_VERSION,
         run_id: Uuid::new_v5(&model.project.project_id, material.as_bytes()),
         output_job,
         run_sequence,
@@ -518,11 +526,14 @@ pub(crate) fn delete_native_project_output_job(
                 source: CommitSource::Cli,
                 reason: "delete output job".to_string(),
             },
-            operations: vec![Operation::DeleteOutputJob {
-                output_job_id,
-                output_job: serde_json::to_value(&output_job)
-                    .context("failed to serialize output job operation")?,
-            }],
+            operations: guarded_existing_object_operation(
+                &model,
+                Operation::DeleteOutputJob {
+                    output_job_id,
+                    output_job: serde_json::to_value(&output_job)
+                        .context("failed to serialize output job operation")?,
+                },
+            )?,
         },
     )?;
 
@@ -607,17 +618,15 @@ fn ensure_native_project_output_job(
     let project = load_native_project_with_resolved_board(root)?;
     let prefix = sanitize_export_prefix(prefix);
     let job_id = output_job_id_for_includes(project.manifest.uuid, &prefix, &include);
-    let output_job_dir = root.join(".datum/output_jobs");
-    let output_path = output_job_dir.join(format!("{job_id}.json"));
-    if output_path.exists() {
-        let job = serde_json::from_str(
-            &std::fs::read_to_string(&output_path)
-                .with_context(|| format!("failed to read {}", output_path.display()))?,
-        )
-        .with_context(|| format!("failed to parse {}", output_path.display()))?;
+    let output_path = root
+        .join(".datum/output_jobs")
+        .join(format!("{job_id}.json"));
+    let mut model = ProjectResolver::new(root).resolve()?;
+    if let Some(job) = model.output_jobs.get(&job_id).cloned() {
         return Ok((job, output_path, false, project.manifest.uuid));
     }
     let job = OutputJob {
+        schema_version: PRODUCTION_RECORD_SCHEMA_VERSION,
         id: job_id,
         name: name
             .map(str::to_string)
@@ -630,7 +639,6 @@ fn ensure_native_project_output_job(
         manufacturing_plan,
         object_revision: ObjectRevision(0),
     };
-    let mut model = ProjectResolver::new(root).resolve()?;
     let expected_model_revision = model.model_revision.clone();
     model.commit_journaled(
         root,

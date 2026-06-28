@@ -216,7 +216,50 @@ class TestDispatchChecks(unittest.TestCase):
         )
         payload = response["result"]["content"][0]["json"]
         self.assertEqual(payload["action"], "generate_standards_repair_proposals")
-        self.assertEqual(payload["proposal_count"], 1)
+        self.assertEqual(payload["proposal_count"], 2)
+
+    def test_datum_check_repair_standards_normalizes_repair_proposals(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 109,
+                "method": "tools/call",
+                "params": {
+                    "name": "datum.check.repair_standards",
+                    "arguments": {"path": "/tmp/native-project"},
+                },
+            }
+        )
+        self.assertEqual(
+            daemon.calls,
+            [("generate_standards_repair_proposals", "/tmp/native-project")],
+        )
+        payload = response["result"]["content"][0]["json"]
+        self.assertTrue(payload["ok"])
+        self.assertEqual(
+            payload["schema"],
+            {"name": "datum.check.repair_standards", "version": 1},
+        )
+        self.assertEqual(payload["context"]["project_id"], "project-test")
+        self.assertEqual(payload["context"]["model_revision"], "model-test")
+        result = payload["result"]
+        self.assertEqual(result["check_run_id"], "check-run-test")
+        self.assertEqual(result["proposal_count"], 2)
+        self.assertEqual(result["raw"]["action"], "generate_standards_repair_proposals")
+        pad, zone = result["proposals"]
+        self.assertEqual(pad["proposal_id"], "proposal-pad-test")
+        self.assertEqual(pad["repair_kind"], "process_aperture")
+        self.assertEqual(pad["affected_pad"], "pad-test")
+        self.assertIn("pad_mask_expansion_missing", pad["codes"])
+        self.assertEqual(zone["proposal_id"], "proposal-zone-test")
+        self.assertEqual(zone["repair_kind"], "zone_fill")
+        self.assertEqual(zone["affected_zone"], "zone-test")
+        self.assertEqual(zone["finding_fingerprints"], ["sha256:zone-finding-test"])
+        self.assertEqual(zone["blocker_codes"], ["missing_acceptance"])
+        self.assertFalse(zone["can_apply"])
+        self.assertEqual(zone["operations"], 1)
 
     def test_tools_call_dispatches_waive_finding(self) -> None:
         daemon = FakeDaemonClient()

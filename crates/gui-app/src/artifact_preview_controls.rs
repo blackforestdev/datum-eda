@@ -89,10 +89,10 @@ impl Runtime {
             }
             DockTab::Assistant => {
                 if scroll_lines > 0.0 {
-                    let max = ui.assistant.transcript.len();
-                    ui.assistant.scroll_offset = (ui.assistant.scroll_offset + delta).min(max);
+                    let max = ui.terminal.lines.len();
+                    ui.terminal.scroll_offset = (ui.terminal.scroll_offset + delta).min(max);
                 } else {
-                    ui.assistant.scroll_offset = ui.assistant.scroll_offset.saturating_sub(1);
+                    ui.terminal.scroll_offset = ui.terminal.scroll_offset.saturating_sub(1);
                 }
             }
             DockTab::Outputs => return self.handle_outputs_scroll(scroll_lines),

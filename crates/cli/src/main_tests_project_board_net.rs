@@ -110,6 +110,9 @@ fn project_board_net_mutations_round_trip_through_native_query() {
         .to_string();
     let second_class_uuid_value =
         Uuid::parse_str(&second_class_uuid).expect("second class uuid should parse");
+    let board_json = root.join("board/board.json");
+    let stale_board_without_net =
+        std::fs::read_to_string(&board_json).expect("board file should read");
 
     let place_cli = Cli::try_parse_from([
         "eda",
@@ -135,6 +138,7 @@ fn project_board_net_mutations_round_trip_through_native_query() {
     let placed: serde_json::Value =
         serde_json::from_str(&placed_output).expect("place output should parse");
     let net_uuid = placed["net_uuid"].as_str().unwrap().to_string();
+    std::fs::write(&board_json, stale_board_without_net).expect("stale board file should restore");
 
     let nets_output =
         execute(board_nets_query_cli(&root)).expect("board nets query should succeed");

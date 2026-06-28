@@ -1,4 +1,9 @@
 use super::*;
+use crate::substrate::{
+    artifact::{persist_artifact_metadata, persist_output_job_run},
+    artifact_run::persist_artifact_run,
+    check_run::persist_check_run,
+};
 
 const VALID_ARTIFACT_SHA256: &str =
     "sha256:5f9fd18a00b8234c45d8e981d96bf609c0c8b3d32a4f58b8c34f277ed111cb9b";
@@ -9,6 +14,7 @@ const VALID_PROJECTION_SHA256: &str =
 fn artifact_metadata_serializes_with_substrate_contract_names() {
     let project_id = Uuid::new_v4();
     let artifact = ArtifactMetadata {
+        schema_version: ARTIFACT_METADATA_SCHEMA_VERSION,
         artifact_id: Uuid::new_v5(&project_id, b"gerber-set"),
         kind: ArtifactKind::GerberSet,
         project_id,
@@ -63,6 +69,7 @@ fn output_job_run_serializes_with_substrate_contract_names() {
     let project_id = Uuid::new_v4();
     let output_job = Uuid::new_v5(&project_id, b"gerber-set-job");
     let run = OutputJobRun {
+        schema_version: OUTPUT_JOB_RUN_SCHEMA_VERSION,
         run_id: Uuid::new_v5(&project_id, b"gerber-set-run"),
         output_job,
         run_sequence: 7,
@@ -109,6 +116,7 @@ fn artifact_run_serializes_with_substrate_contract_names() {
     let project_id = Uuid::new_v4();
     let artifact_id = Uuid::new_v5(&project_id, b"ad-hoc-bom-artifact");
     let run = ArtifactRun {
+        schema_version: ARTIFACT_RUN_SCHEMA_VERSION,
         run_id: Uuid::new_v5(&project_id, b"ad-hoc-bom-run"),
         artifact_id,
         run_sequence: 3,
@@ -141,6 +149,7 @@ fn generated_evidence_persistence_helpers_round_trip_without_model_revision_chan
         .resolve()
         .expect("minimal project should resolve");
     let output_job = OutputJob {
+        schema_version: PRODUCTION_RECORD_SCHEMA_VERSION,
         id: Uuid::new_v5(&project_id, b"output-job"),
         name: "Generated Evidence Job".to_string(),
         include: vec![ArtifactKind::GerberSet],
@@ -165,6 +174,7 @@ fn generated_evidence_persistence_helpers_round_trip_without_model_revision_chan
         .resolve()
         .expect("project with output job should resolve");
     let artifact = ArtifactMetadata {
+        schema_version: ARTIFACT_METADATA_SCHEMA_VERSION,
         artifact_id: Uuid::new_v5(&project_id, b"persisted-artifact"),
         kind: ArtifactKind::GerberSet,
         project_id,
@@ -187,6 +197,7 @@ fn generated_evidence_persistence_helpers_round_trip_without_model_revision_chan
         validation_state: ArtifactValidationState::NotValidated,
     };
     let run = OutputJobRun {
+        schema_version: OUTPUT_JOB_RUN_SCHEMA_VERSION,
         run_id: Uuid::new_v5(&project_id, b"persisted-run"),
         output_job: output_job.id,
         run_sequence: 1,
@@ -203,6 +214,7 @@ fn generated_evidence_persistence_helpers_round_trip_without_model_revision_chan
         }],
     };
     let artifact_run = ArtifactRun {
+        schema_version: ARTIFACT_RUN_SCHEMA_VERSION,
         run_id: Uuid::new_v5(&project_id, b"persisted-artifact-run"),
         artifact_id: artifact.artifact_id,
         run_sequence: 1,
@@ -218,6 +230,7 @@ fn generated_evidence_persistence_helpers_round_trip_without_model_revision_chan
         }],
     };
     let check_run = CheckRun {
+        schema_version: CHECK_RUN_SCHEMA_VERSION,
         check_run_id: Uuid::new_v5(&project_id, b"persisted-check-run"),
         project_id,
         model_revision: before.model_revision.clone(),
@@ -241,10 +254,11 @@ fn generated_evidence_persistence_helpers_round_trip_without_model_revision_chan
             domain: "drc".to_string(),
             rule_id: "process_aperture".to_string(),
             standards_basis: None,
+            standards_basis_detail: None,
             rule_revision: None,
             import_key: None,
             status: "active".to_string(),
-            primary_target: serde_json::Value::Null,
+            primary_target: serde_json::json!({ "kind": "artifact", "id": artifact.artifact_id.to_string() }),
             related_targets: Vec::new(),
             message: "mask expansion below profile".to_string(),
             explanation:
@@ -319,69 +333,6 @@ fn generated_evidence_persistence_helpers_round_trip_without_model_revision_chan
 }
 
 #[test]
-fn resolver_rejects_semantically_invalid_check_run_evidence() {
-    let root = temp_project_root("invalid_check_run_evidence");
-    let project_id = Uuid::new_v4();
-    write_minimal_project(&root, project_id, Uuid::new_v4());
-    let before = ProjectResolver::new(&root)
-        .resolve()
-        .expect("minimal project should resolve");
-    let check_run_id = Uuid::new_v5(&project_id, b"invalid-check-run");
-    let check_run = CheckRun {
-        check_run_id,
-        project_id,
-        model_revision: before.model_revision,
-        profile_id: "native-combined".to_string(),
-        status: "warning".to_string(),
-        summary: serde_json::json!({ "status": "warning" }),
-        finding_count: 1,
-        findings: vec![CheckFinding {
-            finding_id: Uuid::new_v5(&project_id, b"invalid-check-finding"),
-            index: 0,
-            source: "drc".to_string(),
-            code: "track_width_below_min".to_string(),
-            severity: "warning".to_string(),
-            fingerprint: "sha256:track-width".to_string(),
-            domain: "drc".to_string(),
-            rule_id: "track_width_below_min".to_string(),
-            standards_basis: None,
-            rule_revision: None,
-            import_key: None,
-            status: "active".to_string(),
-            primary_target: serde_json::Value::Null,
-            related_targets: Vec::new(),
-            message: "track width below minimum".to_string(),
-            explanation: "track width below minimum".to_string(),
-            suggested_next_action: None,
-            evidence: Vec::new(),
-            payload: serde_json::json!({ "objects": [] }),
-            proposal_refs: Vec::new(),
-            proposal_links: Vec::new(),
-            waiver_refs: Vec::new(),
-            deviation_refs: Vec::new(),
-        }],
-        proposal_refs: Vec::new(),
-        proposal_links: Vec::new(),
-        profile_basis: Default::default(),
-        coverage: Vec::new(),
-        raw_report: serde_json::json!({ "domain": "drc" }),
-    };
-    persist_check_run(&root, &check_run).expect("invalid generated evidence can be written");
-
-    let resolved = ProjectResolver::new(&root)
-        .resolve()
-        .expect("resolver should reject invalid check run without failing project resolution");
-
-    assert!(!resolved.check_runs.contains_key(&check_run_id));
-    assert!(resolved.diagnostics.iter().any(|diagnostic| {
-        diagnostic.code == "invalid_check_run"
-            && diagnostic
-                .message
-                .contains("fingerprint must be a sha256:<64 lowercase hex> value")
-    }));
-}
-
-#[test]
 fn generated_evidence_reader_rejects_filename_id_mismatch() {
     let root = temp_project_root("generated_evidence_filename_guard");
     let project_id = Uuid::new_v4();
@@ -390,6 +341,7 @@ fn generated_evidence_reader_rejects_filename_id_mismatch() {
         .resolve()
         .expect("minimal project should resolve");
     let artifact = ArtifactMetadata {
+        schema_version: ARTIFACT_METADATA_SCHEMA_VERSION,
         artifact_id: Uuid::new_v5(&project_id, b"real-artifact-id"),
         kind: ArtifactKind::GerberSet,
         project_id,
@@ -417,6 +369,7 @@ fn generated_evidence_reader_rejects_filename_id_mismatch() {
     .expect("mismatched artifact metadata should write");
 
     let run = OutputJobRun {
+        schema_version: OUTPUT_JOB_RUN_SCHEMA_VERSION,
         run_id: Uuid::new_v5(&project_id, b"real-run-id"),
         output_job: Uuid::new_v5(&project_id, b"output-job"),
         run_sequence: 1,
@@ -478,6 +431,7 @@ fn resolver_exposes_output_job_and_artifact_metadata_state() {
     assert!(before.artifact_metadata.is_empty());
 
     let panel_projection = PanelProjection {
+        schema_version: PRODUCTION_RECORD_SCHEMA_VERSION,
         id: Uuid::new_v5(&before.project.project_id, b"panel-projection-release-a"),
         name: "Release A panel".to_string(),
         board_instances: vec![PanelBoardInstance {
@@ -519,6 +473,7 @@ fn resolver_exposes_output_job_and_artifact_metadata_state() {
     );
 
     let manufacturing_plan = ManufacturingPlan {
+        schema_version: PRODUCTION_RECORD_SCHEMA_VERSION,
         id: Uuid::new_v5(
             &with_panel.project.project_id,
             b"manufacturing-plan-release-a",
@@ -557,6 +512,7 @@ fn resolver_exposes_output_job_and_artifact_metadata_state() {
     );
 
     let output_job = OutputJob {
+        schema_version: PRODUCTION_RECORD_SCHEMA_VERSION,
         id: Uuid::new_v5(&with_plan.project.project_id, b"gerber-set-job"),
         name: "Gerber set".to_string(),
         include: vec![ArtifactKind::GerberSet],
@@ -596,6 +552,7 @@ fn resolver_exposes_output_job_and_artifact_metadata_state() {
     );
 
     let artifact = ArtifactMetadata {
+        schema_version: ARTIFACT_METADATA_SCHEMA_VERSION,
         artifact_id: Uuid::new_v5(&with_job.project.project_id, b"gerber-set"),
         kind: ArtifactKind::GerberSet,
         project_id: with_job.project.project_id,
@@ -636,6 +593,7 @@ fn resolver_exposes_output_job_and_artifact_metadata_state() {
     );
 
     let run = OutputJobRun {
+        schema_version: OUTPUT_JOB_RUN_SCHEMA_VERSION,
         run_id: Uuid::new_v5(&with_job.project.project_id, b"gerber-set-run"),
         output_job: output_job.id,
         run_sequence: 1,

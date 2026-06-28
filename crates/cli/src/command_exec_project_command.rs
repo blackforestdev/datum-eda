@@ -39,7 +39,7 @@ pub(super) fn execute_project_command(
             render_output(format, &apply_native_project_proposal(&path, proposal)?),
             0,
         )),
-        command @ ProjectCommands::ImportKicadFootprint(_) => execute_project_import_command(format, command),
+        command @ (ProjectCommands::ImportKicadFootprint(_) | ProjectCommands::ImportKicadBoard(_) | ProjectCommands::ImportKicadSchematic(_) | ProjectCommands::ImportEagleLibrary(_)) => execute_project_import_command(format, command),
         command @ ProjectCommands::CreatePoolLibraryObject(_) | command @ ProjectCommands::CreatePoolUnit(_) | command @ ProjectCommands::SetPoolUnitPin(_) | command @ ProjectCommands::CreatePoolSymbol(_) | command @ ProjectCommands::AddPoolSymbolLine(_) | command @ ProjectCommands::AddPoolSymbolPolygon(_) | command @ ProjectCommands::AddPoolSymbolRect(_) | command @ ProjectCommands::AddPoolSymbolCircle(_) | command @ ProjectCommands::AddPoolSymbolText(_) | command @ ProjectCommands::AddPoolSymbolArc(_) | command @ ProjectCommands::SetPoolSymbolPinAnchor(_) | command @ ProjectCommands::CreatePoolEntity(_) | command @ ProjectCommands::CreatePoolPadstack(_) | command @ ProjectCommands::CreatePoolPackage(_) | command @ ProjectCommands::SetPoolPackagePad(_) | command @ ProjectCommands::SetPoolPackageCourtyardRect(_) | command @ ProjectCommands::SetPoolPackageCourtyardPolygon(_) | command @ ProjectCommands::AddPoolPackageSilkscreenLine(_) | command @ ProjectCommands::AddPoolPackageSilkscreenRect(_) | command @ ProjectCommands::AddPoolPackageSilkscreenCircle(_) | command @ ProjectCommands::AddPoolPackageSilkscreenArc(_) | command @ ProjectCommands::AddPoolPackageSilkscreenPolygon(_) | command @ ProjectCommands::AddPoolPackageSilkscreenText(_) | command @ ProjectCommands::AddPoolPackageModel3d(_) | command @ ProjectCommands::SetPoolPackageBodyHeights(_) | command @ ProjectCommands::CreatePoolPart(_) | command @ ProjectCommands::SetPoolPartMetadata(_) | command @ ProjectCommands::SetPoolPartParametric(_) | command @ ProjectCommands::SetPoolPartOrderableMpns(_) | command @ ProjectCommands::SetPoolPartPackagingOptions(_) | command @ ProjectCommands::SetPoolPartBehaviouralModels(_) | command @ ProjectCommands::AttachPoolPartModel(_) | command @ ProjectCommands::DetachPoolPartModel(_) | command @ ProjectCommands::GcPoolModels(_) | command @ ProjectCommands::SetPoolPartThermal(_) | command @ ProjectCommands::SetPoolPartSupplyChain(_) | command @ ProjectCommands::SetPoolPartTags(_) | command @ ProjectCommands::SetPoolPartPadMap(_) | command @ ProjectCommands::SetPoolPartPadMapEntry(_) | command @ ProjectCommands::SetPoolLibraryObject(_) | command @ ProjectCommands::DeletePoolLibraryObject(_) => execute_project_library_command(format, command),
         ProjectCommands::SetProjectName(ProjectSetProjectNameArgs { path, name }) => {
             let report = set_native_project_name(&path, name)?;
@@ -759,30 +759,30 @@ pub(super) fn execute_project_command(
             component_uuid,
             false,
         ),
-        ProjectCommands::BindComponentInstance(ProjectBindComponentInstanceArgs {
-            path,
-            component_instance,
-            symbol,
-            package,
-        }) => Ok((
-            render_output(
-                format,
-                &bind_native_project_component_instance(&path, component_instance, symbol, package)?,
-            ),
-            0,
-        )),
-        ProjectCommands::SetComponentInstance(ProjectSetComponentInstanceArgs {
-            path,
-            component_instance,
-            symbol,
-            package,
-        }) => Ok((
-            render_output(
-                format,
-                &set_native_project_component_instance(&path, component_instance, symbol, package)?,
-            ),
-            0,
-        )),
+        ProjectCommands::BindComponentInstance(args) => {
+            let view = bind_native_project_component_instance(
+                &args.path,
+                args.component_instance,
+                args.symbols,
+                args.package,
+                args.part,
+                args.symbol_roles,
+                args.package_roles,
+            )?;
+            Ok((render_output(format, &view), 0))
+        }
+        ProjectCommands::SetComponentInstance(args) => {
+            let view = set_native_project_component_instance(
+                &args.path,
+                args.component_instance,
+                args.symbols,
+                args.package,
+                args.part,
+                args.symbol_roles,
+                args.package_roles,
+            )?;
+            Ok((render_output(format, &view), 0))
+        }
         ProjectCommands::DeleteComponentInstance(ProjectDeleteComponentInstanceArgs {
             path,
             component_instance,

@@ -1,22 +1,51 @@
 use {super::*, crate::ir::serialization::to_json_deterministic, std::io::Write};
 mod artifact_metadata;
+mod artifact_metadata_replay;
+mod artifact_metadata_schema;
 mod artifact_metadata_validation;
+mod artifact_output_oracle;
+mod artifact_run_replay;
+mod artifact_run_schema;
+mod check_run_replay;
+mod check_run_schema;
+mod check_run_target_validation;
 mod component_instance;
+mod component_instance_part_ref;
+mod component_instance_proposal_policy;
+mod component_instance_roles;
+mod component_instance_schema;
 mod component_side;
+mod generated_evidence_schema;
+mod generated_evidence_scope;
+mod generated_evidence_scope_project;
+mod import_map_replay;
+mod import_map_schema;
 mod journal_hardening;
 mod journal_replay_conflicts;
 mod journal_replay_diagnostics;
 mod journal_revision_guards;
+mod mixed_family_journal;
+mod output_job_run_replay;
 mod pool_library;
 mod private_writer_migration;
+mod production_replay;
+mod production_schema;
 mod production_writer_migration;
 mod proposal;
+mod proposal_replay;
+mod proposal_schema;
 mod relationship;
+mod relationship_schema;
+mod schematic_definition_replay;
 mod schematic_sheet_writer_migration;
 mod schematic_text_writer_migration;
 mod schematic_writer_migration;
 mod source_shard_metadata;
+mod source_shard_ref_builders;
+mod source_shard_taxonomy;
 mod zone_fill;
+mod zone_fill_replay;
+mod zone_fill_schema;
 fn write_json(path: &Path, value: serde_json::Value) {
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent).expect("parent dir should create");
@@ -255,7 +284,7 @@ fn resolver_reports_missing_required_shard_without_accepted_truth_panic() {
 }
 
 #[test]
-fn resolver_builds_component_instance_from_matching_symbol_and_package() {
+fn resolver_does_not_build_component_instance_from_matching_symbol_and_package() {
     let root = temp_project_root("component_instance_join");
     let project_id = Uuid::new_v4();
     let board_id = Uuid::new_v4();
@@ -270,15 +299,7 @@ fn resolver_builds_component_instance_from_matching_symbol_and_package() {
         .resolve()
         .expect("resolve should succeed");
 
-    assert_eq!(model.component_instances.len(), 1);
-    let instance = model
-        .component_instances
-        .values()
-        .next()
-        .expect("component instance should exist");
-    assert_eq!(instance.object_revision, ObjectRevision(0));
-    assert_eq!(instance.placed_symbol_refs, vec![symbol_id]);
-    assert_eq!(instance.placed_package_refs, vec![package_id]);
+    assert!(model.component_instances.is_empty());
 }
 
 #[test]
@@ -596,6 +617,12 @@ fn resolver_replays_board_package_value_when_promoted_shard_is_stale() {
         reopened.objects[&package_id].object_revision,
         ObjectRevision(1)
     );
+    let board_shard = reopened
+        .source_shards
+        .iter()
+        .find(|shard| shard.kind == SourceShardKind::BoardRoot)
+        .expect("board shard should resolve");
+    assert_eq!(board_shard.dirty_state, SourceShardDirtyState::Dirty);
 }
 
 #[test]

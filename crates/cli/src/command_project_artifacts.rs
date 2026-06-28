@@ -3,23 +3,30 @@ use std::path::{Component, Path, PathBuf};
 
 use anyhow::{Result, anyhow};
 use eda_engine::substrate::{
-    ArtifactFile, ArtifactKind, ArtifactMetadata, ArtifactProductionProjection, ArtifactRun,
-    ArtifactValidationState, DesignModel, OutputJobRun, ProjectResolver, persist_artifact_metadata,
+    ARTIFACT_METADATA_SCHEMA_VERSION, ArtifactFile, ArtifactKind, ArtifactMetadata,
+    ArtifactProductionProjection, ArtifactRun, ArtifactValidationState, DesignModel, OutputJobRun,
+    ProjectResolver,
 };
 use serde::Serialize;
 use uuid::Uuid;
 
 #[path = "command_project_artifact_drill.rs"]
 mod command_project_artifact_drill;
+#[path = "command_project_artifact_evidence.rs"]
+mod command_project_artifact_evidence;
 #[path = "command_project_artifact_include.rs"]
 mod command_project_artifact_include;
 #[path = "command_project_artifact_output_runs.rs"]
 mod command_project_artifact_output_runs;
 #[path = "command_project_artifact_preview.rs"]
 mod command_project_artifact_preview;
-use super::command_project_artifact_runs::{compare_artifact_runs, persist_generic_artifact_run};
+use super::command_project_artifact_runs::compare_artifact_runs;
+pub(super) use command_project_artifact_evidence::{
+    commit_artifact_metadata_evidence, commit_linked_artifact_output_job_evidence,
+    commit_unlinked_artifact_evidence,
+};
 use command_project_artifact_include::parse_artifact_generate_include;
-use command_project_artifact_output_runs::persist_generic_output_job_run;
+use command_project_artifact_output_runs::generic_output_job_run;
 use command_project_artifact_preview::{
     MAX_PREVIEW_PRIMITIVES, NativeProjectArtifactPreviewPrimitive, inspect_artifact_preview_file,
 };
@@ -44,6 +51,9 @@ pub(crate) struct NativeProjectArtifactsView {
     pub(crate) artifact_count: usize,
     pub(crate) artifact_run_count: usize,
     pub(crate) output_job_run_count: usize,
+    pub(crate) latest_artifact_id: Option<Uuid>,
+    pub(crate) latest_artifact_run_id: Option<Uuid>,
+    pub(crate) latest_output_job_run_id: Option<Uuid>,
     pub(crate) artifacts: Vec<ArtifactMetadata>,
     pub(crate) artifact_runs: Vec<ArtifactRun>,
     pub(crate) output_job_runs: Vec<OutputJobRun>,
@@ -276,7 +286,6 @@ fn generated_entry<T: Serialize>(
         report,
     })
 }
-
 fn optional_report_object<T: serde::de::DeserializeOwned>(
     report: &serde_json::Value,
     key: &str,
@@ -286,14 +295,12 @@ fn optional_report_object<T: serde::de::DeserializeOwned>(
         _ => Ok(None),
     }
 }
-
 fn optional_report_string(report: &serde_json::Value, key: &str) -> Option<String> {
     report
         .get(key)
         .and_then(serde_json::Value::as_str)
         .map(str::to_string)
 }
-
 fn generate_single_file_artifact(
     root: &Path,
     output_dir: &Path,
@@ -313,7 +320,7 @@ fn generate_single_file_artifact(
         "pnp" => serde_json::to_value(export_native_project_pnp(root, &output_path, variant)?)?,
         _ => unreachable!("single file artifact scope is not supported"),
     };
-    let model = ProjectResolver::new(root).resolve()?;
+    let mut model = ProjectResolver::new(root).resolve()?;
     let files = vec![artifact_file_from_output(output_dir, &file_name)?];
     let output_job = find_native_project_output_job_for_scope(&model, &prefix, kind);
     let artifact_metadata = generated_artifact_metadata(
@@ -326,23 +333,24 @@ fn generate_single_file_artifact(
         files,
         Vec::new(),
     );
-    let artifact_manifest_path = persist_artifact_metadata(root, &artifact_metadata)?;
-    let output_job_run = persist_generic_output_job_run(
-        root,
-        scope,
-        &model,
-        &artifact_metadata,
-        persist_output_runs,
-    )?;
-    let artifact_run = if output_job_run.is_none() {
-        Some(persist_generic_artifact_run(
-            root,
-            scope,
-            &model,
-            &artifact_metadata,
-        )?)
+    let output_job_run = if persist_output_runs {
+        artifact_metadata
+            .output_job
+            .map(|output_job| generic_output_job_run(&model, output_job, scope, &artifact_metadata))
     } else {
         None
+    };
+    let (artifact_manifest_path, output_job_run_path, artifact_run) = if output_job_run.is_none() {
+        let (manifest_path, run, run_path) =
+            commit_unlinked_artifact_evidence(root, scope, &mut model, &artifact_metadata)?;
+        (manifest_path, None, Some((run, run_path)))
+    } else {
+        let run = output_job_run
+            .as_ref()
+            .expect("output job run should exist for linked artifact");
+        let (manifest_path, run_path) =
+            commit_linked_artifact_output_job_evidence(root, &mut model, &artifact_metadata, run)?;
+        (manifest_path, Some(run_path), None)
     };
     Ok(NativeProjectArtifactGenerateEntryView {
         include: scope.to_string(),
@@ -351,10 +359,10 @@ fn generate_single_file_artifact(
         model_revision: artifact_metadata.model_revision.0.clone(),
         file_count: artifact_metadata.files.len(),
         artifact_manifest_path: artifact_manifest_path.display().to_string(),
-        output_job_run: output_job_run.as_ref().map(|(run, _)| run.clone()),
-        output_job_run_path: output_job_run
+        output_job_run: output_job_run.clone(),
+        output_job_run_path: output_job_run_path
             .as_ref()
-            .map(|(_, path)| path.display().to_string()),
+            .map(|path| path.display().to_string()),
         artifact_run: artifact_run.as_ref().map(|(run, _)| run.clone()),
         artifact_run_path: artifact_run
             .as_ref()
@@ -362,10 +370,10 @@ fn generate_single_file_artifact(
         report: serde_json::json!({
             "action": format!("generate_{scope}_artifact"),
             "artifact_metadata": artifact_metadata,
-            "output_job_run": output_job_run.as_ref().map(|(run, _)| run),
-            "output_job_run_path": output_job_run
+            "output_job_run": output_job_run.as_ref(),
+            "output_job_run_path": output_job_run_path
                 .as_ref()
-                .map(|(_, path)| path.display().to_string()),
+                .map(|path| path.display().to_string()),
             "artifact_run": artifact_run.as_ref().map(|(run, _)| run),
             "artifact_run_path": artifact_run
                 .as_ref()
@@ -409,6 +417,7 @@ fn generated_artifact_metadata(
         material.push_str(&file.sha256);
     }
     ArtifactMetadata {
+        schema_version: ARTIFACT_METADATA_SCHEMA_VERSION,
         artifact_id: Uuid::new_v5(&model.project.project_id, material.as_bytes()),
         kind,
         project_id: model.project.project_id,
@@ -440,7 +449,8 @@ pub(crate) fn query_native_project_artifacts(root: &Path) -> Result<NativeProjec
         .values()
         .cloned()
         .collect::<Vec<_>>();
-    let artifact_runs = model.artifact_runs.values().cloned().collect::<Vec<_>>();
+    let mut artifact_runs = model.artifact_runs.values().cloned().collect::<Vec<_>>();
+    artifact_runs.sort_by(compare_artifact_runs);
     let mut output_job_runs = model
         .output_job_runs
         .values()
@@ -448,6 +458,9 @@ pub(crate) fn query_native_project_artifacts(root: &Path) -> Result<NativeProjec
         .cloned()
         .collect::<Vec<_>>();
     output_job_runs.sort_by(compare_linked_output_job_runs);
+    let latest_artifact_id = latest_artifact_id(&artifacts);
+    let latest_artifact_run_id = latest_artifact_run_id(&artifact_runs);
+    let latest_output_job_run_id = latest_output_job_run_id(&output_job_runs);
     Ok(NativeProjectArtifactsView {
         contract: "artifact_metadata_list_v1",
         project_id: model.project.project_id.to_string(),
@@ -455,10 +468,45 @@ pub(crate) fn query_native_project_artifacts(root: &Path) -> Result<NativeProjec
         artifact_count: artifacts.len(),
         artifact_run_count: artifact_runs.len(),
         output_job_run_count: output_job_runs.len(),
+        latest_artifact_id,
+        latest_artifact_run_id,
+        latest_output_job_run_id,
         artifacts,
         artifact_runs,
         output_job_runs,
     })
+}
+
+fn latest_artifact_id(artifacts: &[ArtifactMetadata]) -> Option<Uuid> {
+    artifacts
+        .iter()
+        .max_by(|a, b| {
+            a.model_revision
+                .0
+                .cmp(&b.model_revision.0)
+                .then_with(|| a.artifact_id.cmp(&b.artifact_id))
+        })
+        .map(|artifact| artifact.artifact_id)
+}
+
+fn latest_artifact_run_id(runs: &[ArtifactRun]) -> Option<Uuid> {
+    runs.iter()
+        .max_by(|a, b| {
+            a.run_sequence
+                .cmp(&b.run_sequence)
+                .then_with(|| a.run_id.cmp(&b.run_id))
+        })
+        .map(|run| run.run_id)
+}
+
+fn latest_output_job_run_id(runs: &[OutputJobRun]) -> Option<Uuid> {
+    runs.iter()
+        .max_by(|a, b| {
+            a.run_sequence
+                .cmp(&b.run_sequence)
+                .then_with(|| a.run_id.cmp(&b.run_id))
+        })
+        .map(|run| run.run_id)
 }
 
 pub(crate) fn query_native_project_artifact(

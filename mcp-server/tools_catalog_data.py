@@ -5,14 +5,15 @@ from tools_catalog_drc import RUN_DRC_INPUT_SCHEMA
 from tools_catalog_datum import DATUM_TOOL_SPECS
 from tools_catalog_journal import JOURNAL_TOOL_SCHEMAS
 from tools_catalog_legacy_aliases import _LEGACY_CANONICAL_ALIAS_NAMES
+from tools_catalog_retirement import DEFAULT_HIDDEN_ALIAS_RETIREMENT_CRITERIA, canonical_replacements_for_hidden_alias, retirement_override_for_hidden_alias
 from tools_catalog_import_map import IMPORT_MAP_TOOL_SCHEMAS; from tools_catalog_library import LIBRARY_TOOL_SCHEMAS; from tools_catalog_output_jobs import OUTPUT_JOB_TOOL_SCHEMAS; from tools_catalog_proposals import PROPOSAL_TOOL_SCHEMAS; from tools_catalog_relationships import RELATIONSHIP_TOOL_SCHEMAS
 COMPATIBILITY_TOOL_SPECS: list[dict[str, object]] = [
     {"name": "get_check_run", **CHECK_TOOL_SCHEMAS["get_check_run"]}, {"name": "get_check_runs", **CHECK_TOOL_SCHEMAS["get_check_runs"]}, {"name": "show_check_run", **CHECK_TOOL_SCHEMAS["show_check_run"]}, {"name": "get_check_profiles", **CHECK_TOOL_SCHEMAS["get_check_profiles"]}, {"name": "fill_zones", **CHECK_TOOL_SCHEMAS["fill_zones"]}, {"name": "generate_standards_repair_proposals", **CHECK_TOOL_SCHEMAS["generate_standards_repair_proposals"]}, {"name": "waive_finding", **CHECK_TOOL_SCHEMAS["waive_finding"]}, {"name": "accept_deviation", **CHECK_TOOL_SCHEMAS["accept_deviation"]},
     {"name": "get_zone_fills", **CHECK_TOOL_SCHEMAS["get_zone_fills"]},
     {"name": "get_check_report", "description": "Legacy unified checking report compatibility alias; canonical check evidence is datum.check.run.", "inputSchema": {"type": "object", "properties": {}}},
-    {"name": "run_erc", "description": "Legacy raw ERC compatibility alias; canonical check evidence is datum.check.run.", "inputSchema": {"type": "object", "properties": {}}},
-    {"name": "run_drc", "description": "Legacy raw DRC compatibility alias; canonical check evidence is datum.check.run.", "inputSchema": RUN_DRC_INPUT_SCHEMA},
-    {"name": "explain_violation", "description": "Legacy finding explanation compatibility alias; canonical findings include explanation fields.", "inputSchema": {"type": "object", "properties": {"domain": {"type": "string", "enum": ["erc", "drc"]}, "index": {"type": "integer"}}, "required": ["domain", "index"]}},
+    {"name": "run_erc", "description": "ERC compatibility alias returning live check_run_v1 with raw ERC findings under raw_report.erc; canonical persisted check evidence is datum.check.run.", "inputSchema": {"type": "object", "properties": {}}},
+    {"name": "run_drc", "description": "DRC compatibility alias returning live check_run_v1 with raw DRC report under raw_report.drc; canonical persisted check evidence is datum.check.run.", "inputSchema": RUN_DRC_INPUT_SCHEMA},
+    {"name": "explain_violation", "description": "Finding explanation compatibility alias. Prefer fingerprint; index remains accepted for legacy positional callers.", "inputSchema": {"type": "object", "properties": {"domain": {"type": "string", "enum": ["erc", "drc"]}, "index": {"type": ["integer", "null"]}, "fingerprint": {"type": ["string", "null"]}}, "required": ["domain"]}, "x_dispatch_args": ["domain", "index", "fingerprint"]},
     {"name": "get_journal_list", **JOURNAL_TOOL_SCHEMAS["get_journal_list"]}, {"name": "get_journal_transaction", **JOURNAL_TOOL_SCHEMAS["get_journal_transaction"]}, {"name": "journal_undo", **JOURNAL_TOOL_SCHEMAS["journal_undo"]}, {"name": "journal_redo", **JOURNAL_TOOL_SCHEMAS["journal_redo"]}, {"name": "undo", "description": "Legacy in-session board undo compatibility alias; canonical project undo is datum.journal.undo.", "inputSchema": {"type": "object", "properties": {}}}, {"name": "redo", "description": "Legacy in-session board redo compatibility alias; canonical project redo is datum.journal.redo.", "inputSchema": {"type": "object", "properties": {}}},
     {"name": "generate_artifacts", **OUTPUT_JOB_TOOL_SCHEMAS["generate_artifacts"]}, {"name": "get_artifacts", **OUTPUT_JOB_TOOL_SCHEMAS["get_artifacts"]}, {"name": "show_artifact", **OUTPUT_JOB_TOOL_SCHEMAS["show_artifact"]}, {"name": "get_artifact_files", **OUTPUT_JOB_TOOL_SCHEMAS["get_artifact_files"]}, {"name": "preview_artifact_file", **OUTPUT_JOB_TOOL_SCHEMAS["preview_artifact_file"]}, {"name": "compare_artifacts", **OUTPUT_JOB_TOOL_SCHEMAS["compare_artifacts"]}, {"name": "validate_artifact", **OUTPUT_JOB_TOOL_SCHEMAS["validate_artifact"]}, {"name": "start_output_job_run", **OUTPUT_JOB_TOOL_SCHEMAS["start_output_job_run"]}, {"name": "cancel_output_job_run", **OUTPUT_JOB_TOOL_SCHEMAS["cancel_output_job_run"]}, {"name": "export_manufacturing_set", **OUTPUT_JOB_TOOL_SCHEMAS["export_manufacturing_set"]}, {"name": "validate_manufacturing_set", **OUTPUT_JOB_TOOL_SCHEMAS["validate_manufacturing_set"]},
     {"name": "get_panel_projections", **OUTPUT_JOB_TOOL_SCHEMAS["get_panel_projections"]}, {"name": "get_manufacturing_plans", **OUTPUT_JOB_TOOL_SCHEMAS["get_manufacturing_plans"]}, {"name": "get_output_jobs", **OUTPUT_JOB_TOOL_SCHEMAS["get_output_jobs"]},
@@ -39,7 +40,7 @@ COMPATIBILITY_TOOL_SPECS: list[dict[str, object]] = [
     {"name": "get_noconnects", "description": "Return the imported schematic no-connect markers for the open project.", "inputSchema": {"type": "object", "properties": {}}},
     {"name": "get_connectivity_diagnostics", "description": "Return raw connectivity diagnostics for the open project.", "inputSchema": {"type": "object", "properties": {}}},
     {"name": "get_design_rules", "description": "Return authored design-rule entries for the open board project.", "inputSchema": {"type": "object", "properties": {}}},
-    {"name": "create_proposal", **PROPOSAL_TOOL_SCHEMAS["create_proposal"]}, {"name": "create_draw_wire_proposal", **PROPOSAL_TOOL_SCHEMAS["create_draw_wire_proposal"]}, {"name": "create_place_label_proposal", **PROPOSAL_TOOL_SCHEMAS["create_place_label_proposal"]}, {"name": "create_place_symbol_proposal", **PROPOSAL_TOOL_SCHEMAS["create_place_symbol_proposal"]}, {"name": "get_proposals", **PROPOSAL_TOOL_SCHEMAS["get_proposals"]}, {"name": "show_proposal", **PROPOSAL_TOOL_SCHEMAS["show_proposal"]}, {"name": "preview_proposal", **PROPOSAL_TOOL_SCHEMAS["preview_proposal"]}, {"name": "validate_proposal", **PROPOSAL_TOOL_SCHEMAS["validate_proposal"]}, {"name": "defer_proposal", **PROPOSAL_TOOL_SCHEMAS["defer_proposal"]}, {"name": "reject_proposal", **PROPOSAL_TOOL_SCHEMAS["reject_proposal"]}, {"name": "review_proposal", **PROPOSAL_TOOL_SCHEMAS["review_proposal"]}, {"name": "accept_apply_proposal", **PROPOSAL_TOOL_SCHEMAS["accept_apply_proposal"]}, {"name": "apply_proposal", **PROPOSAL_TOOL_SCHEMAS["apply_proposal"]},
+    {"name": "create_proposal", **PROPOSAL_TOOL_SCHEMAS["create_proposal"]}, {"name": "create_draw_wire_proposal", **PROPOSAL_TOOL_SCHEMAS["create_draw_wire_proposal"]}, {"name": "create_place_label_proposal", **PROPOSAL_TOOL_SCHEMAS["create_place_label_proposal"]}, {"name": "create_place_symbol_proposal", **PROPOSAL_TOOL_SCHEMAS["create_place_symbol_proposal"]}, {"name": "create_board_component_replacement_proposal", **PROPOSAL_TOOL_SCHEMAS["create_board_component_replacement_proposal"]}, {"name": "create_board_component_replacements_proposal", **PROPOSAL_TOOL_SCHEMAS["create_board_component_replacements_proposal"]}, {"name": "create_board_component_replacement_plan_proposal", **PROPOSAL_TOOL_SCHEMAS["create_board_component_replacement_plan_proposal"]}, {"name": "get_proposals", **PROPOSAL_TOOL_SCHEMAS["get_proposals"]}, {"name": "show_proposal", **PROPOSAL_TOOL_SCHEMAS["show_proposal"]}, {"name": "preview_proposal", **PROPOSAL_TOOL_SCHEMAS["preview_proposal"]}, {"name": "validate_proposal", **PROPOSAL_TOOL_SCHEMAS["validate_proposal"]}, {"name": "defer_proposal", **PROPOSAL_TOOL_SCHEMAS["defer_proposal"]}, {"name": "reject_proposal", **PROPOSAL_TOOL_SCHEMAS["reject_proposal"]}, {"name": "review_proposal", **PROPOSAL_TOOL_SCHEMAS["review_proposal"]}, {"name": "accept_apply_proposal", **PROPOSAL_TOOL_SCHEMAS["accept_apply_proposal"]}, {"name": "apply_proposal", **PROPOSAL_TOOL_SCHEMAS["apply_proposal"]},
     {"name": "get_pool_library_objects", **LIBRARY_TOOL_SCHEMAS["get_pool_library_objects"]}, {"name": "show_pool_library_object", **LIBRARY_TOOL_SCHEMAS["show_pool_library_object"]}, {"name": "get_pool_model_blobs", **LIBRARY_TOOL_SCHEMAS["get_pool_model_blobs"]},
     {"name": "gc_pool_model_blobs", **LIBRARY_TOOL_SCHEMAS["gc_pool_model_blobs"]},
     {"name": "create_pool_library_object", **LIBRARY_TOOL_SCHEMAS["create_pool_library_object"]}, {"name": "delete_pool_library_object", **LIBRARY_TOOL_SCHEMAS["delete_pool_library_object"]}, {"name": "create_pool_unit", **LIBRARY_TOOL_SCHEMAS["create_pool_unit"]}, {"name": "set_pool_unit_pin", **LIBRARY_TOOL_SCHEMAS["set_pool_unit_pin"]}, {"name": "create_pool_symbol", **LIBRARY_TOOL_SCHEMAS["create_pool_symbol"]}, {"name": "add_pool_symbol_line", **LIBRARY_TOOL_SCHEMAS["add_pool_symbol_line"]}, {"name": "add_pool_symbol_rect", **LIBRARY_TOOL_SCHEMAS["add_pool_symbol_rect"]}, {"name": "add_pool_symbol_circle", **LIBRARY_TOOL_SCHEMAS["add_pool_symbol_circle"]}, {"name": "add_pool_symbol_arc", **LIBRARY_TOOL_SCHEMAS["add_pool_symbol_arc"]}, {"name": "add_pool_symbol_polygon", **LIBRARY_TOOL_SCHEMAS["add_pool_symbol_polygon"]}, {"name": "add_pool_symbol_text", **LIBRARY_TOOL_SCHEMAS["add_pool_symbol_text"]}, {"name": "set_pool_symbol_pin_anchor", **LIBRARY_TOOL_SCHEMAS["set_pool_symbol_pin_anchor"]},
@@ -72,318 +73,6 @@ _LEGACY_FLAT_TOOL_SPECS: list[dict[str, object]] = [
             "type": "object",
             "properties": {"path": {"type": "string"}},
             "required": ["path"],
-        },
-    },
-    {
-        "name": "delete_track",
-        "description": "Delete one board track by UUID in the current M3 slice.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {"uuid": {"type": "string"}},
-            "required": ["uuid"],
-        },
-    },
-    {
-        "name": "delete_component",
-        "description": "Delete one board component by UUID in the current M3 slice.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {"uuid": {"type": "string"}},
-            "required": ["uuid"],
-        },
-    },
-    {
-        "name": "move_component",
-        "description": "Move one board component by UUID in the current M3 slice.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "uuid": {"type": "string"},
-                "x_mm": {"type": "number"},
-                "y_mm": {"type": "number"},
-                "rotation_deg": {"type": ["number", "null"]},
-            },
-            "required": ["uuid", "x_mm", "y_mm"],
-        },
-    },
-    {
-        "name": "rotate_component",
-        "description": "Rotate one board component by UUID in the current M3 slice.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "uuid": {"type": "string"},
-                "rotation_deg": {"type": "number"},
-            },
-            "required": ["uuid", "rotation_deg"],
-        },
-    },
-    {"name": "flip_component", "description": "Flip one board component to a target copper side/layer in the current M3 slice.", "inputSchema": {"type": "object", "properties": {"uuid": {"type": "string"}, "layer": {"type": "integer"}}, "required": ["uuid", "layer"]}},
-    {
-        "name": "set_value",
-        "description": "Set one board component value by UUID in the current M3 slice.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "uuid": {"type": "string"},
-                "value": {"type": "string"},
-            },
-            "required": ["uuid", "value"],
-        },
-    },
-    {
-        "name": "assign_part",
-        "description": "Assign one pool part to a board component by UUID in the current M3 slice.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "uuid": {"type": "string"},
-                "part_uuid": {"type": "string"},
-            },
-            "required": ["uuid", "part_uuid"],
-        },
-    },
-    {
-        "name": "set_package",
-        "description": "Assign one pool package to a board component by UUID in the current M3 slice.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "uuid": {"type": "string"},
-                "package_uuid": {"type": "string"},
-            },
-            "required": ["uuid", "package_uuid"],
-        },
-    },
-    {
-        "name": "set_package_with_part",
-        "description": "Assign one pool package plus an explicit compatible pool part to a board component by UUID in the current M3 slice.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "uuid": {"type": "string"},
-                "package_uuid": {"type": "string"},
-                "part_uuid": {"type": "string"},
-            },
-            "required": ["uuid", "package_uuid", "part_uuid"],
-        },
-    },
-    {
-        "name": "replace_component",
-        "description": "Replace one board component with an explicit compatible pool part+package in the current M3 slice.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "uuid": {"type": "string"},
-                "package_uuid": {"type": "string"},
-                "part_uuid": {"type": "string"},
-            },
-            "required": ["uuid", "package_uuid", "part_uuid"],
-        },
-    },
-    {
-        "name": "replace_components",
-        "description": "Replace multiple board components in one transaction using explicit compatible pool part+package selections in the current M3 slice.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "replacements": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "uuid": {"type": "string"},
-                            "package_uuid": {"type": "string"},
-                            "part_uuid": {"type": "string"},
-                        },
-                        "required": ["uuid", "package_uuid", "part_uuid"],
-                    },
-                }
-            },
-            "required": ["replacements"],
-        },
-    },
-    {
-        "name": "apply_component_replacement_plan",
-        "description": "Apply one or more replacement-plan selections in one transaction, resolving the missing side of each component replacement from the current compatibility plan.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "replacements": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "uuid": {"type": "string"},
-                            "package_uuid": {"type": ["string", "null"]},
-                            "part_uuid": {"type": ["string", "null"]},
-                        },
-                        "required": ["uuid"],
-                    },
-                }
-            },
-            "required": ["replacements"],
-        },
-    },
-    {
-        "name": "apply_component_replacement_policy",
-        "description": "Apply one or more deterministic replacement policies in one transaction, choosing the best compatible package or part from the current replacement plan.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "replacements": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "uuid": {"type": "string"},
-                            "policy": {
-                                "type": "string",
-                                "enum": ["best_compatible_package", "best_compatible_part"],
-                            },
-                        },
-                        "required": ["uuid", "policy"],
-                    },
-                }
-            },
-            "required": ["replacements"],
-        },
-    },
-    {
-        "name": "apply_scoped_component_replacement_policy",
-        "description": "Apply a deterministic replacement policy to all components matching a scoped filter in one transaction.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "scope": {
-                    "type": "object",
-                    "properties": {
-                        "reference_prefix": {"type": ["string", "null"]},
-                        "value_equals": {"type": ["string", "null"]},
-                        "current_package_uuid": {"type": ["string", "null"]},
-                        "current_part_uuid": {"type": ["string", "null"]},
-                    },
-                },
-                "policy": {
-                    "type": "string",
-                    "enum": ["best_compatible_package", "best_compatible_part"],
-                },
-            },
-            "required": ["scope", "policy"],
-        },
-    },
-    {
-        "name": "apply_scoped_component_replacement_plan",
-        "description": "Apply a previously previewed scoped component replacement plan without re-resolving policy.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "plan": {
-                    "type": "object",
-                    "properties": {
-                        "scope": {"type": "object"},
-                        "policy": {
-                            "type": "string",
-                            "enum": ["best_compatible_package", "best_compatible_part"],
-                        },
-                        "replacements": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "component_uuid": {"type": "string"},
-                                    "current_reference": {"type": "string"},
-                                    "current_value": {"type": "string"},
-                                    "current_part_uuid": {"type": ["string", "null"]},
-                                    "current_package_uuid": {"type": "string"},
-                                    "target_part_uuid": {"type": "string"},
-                                    "target_package_uuid": {"type": "string"},
-                                    "target_value": {"type": "string"},
-                                    "target_package_name": {"type": "string"},
-                                },
-                                "required": [
-                                    "component_uuid",
-                                    "current_reference",
-                                    "current_value",
-                                    "current_part_uuid",
-                                    "current_package_uuid",
-                                    "target_part_uuid",
-                                    "target_package_uuid",
-                                    "target_value",
-                                    "target_package_name",
-                                ],
-                            },
-                        },
-                    },
-                    "required": ["scope", "policy", "replacements"],
-                }
-            },
-            "required": ["plan"],
-        },
-    },
-    {
-        "name": "set_reference",
-        "description": "Set one board component reference by UUID in the current M3 slice.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "uuid": {"type": "string"},
-                "reference": {"type": "string"},
-            },
-            "required": ["uuid", "reference"],
-        },
-    },
-    {
-        "name": "set_net_class",
-        "description": "Assign one board net to a concrete net class in the current M3 slice.",
-        "x_dispatch_defaults": {
-            "diffpair_width": 0,
-            "diffpair_gap": 0,
-        },
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "net_uuid": {"type": "string"},
-                "class_name": {"type": "string"},
-                "clearance": {"type": "integer"},
-                "track_width": {"type": "integer"},
-                "via_drill": {"type": "integer"},
-                "via_diameter": {"type": "integer"},
-                "diffpair_width": {"type": "integer"},
-                "diffpair_gap": {"type": "integer"},
-            },
-            "required": [
-                "net_uuid",
-                "class_name",
-                "clearance",
-                "track_width",
-                "via_drill",
-                "via_diameter",
-            ],
-        },
-    },
-    {
-        "name": "delete_via",
-        "description": "Delete one board via by UUID in the current M3 slice.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {"uuid": {"type": "string"}},
-            "required": ["uuid"],
-        },
-    },
-    {
-        "name": "set_design_rule",
-        "description": "Create or update one board design rule in the current M3 slice.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "rule_type": {"type": "string"},
-                "scope": {"type": ["object", "string"]},
-                "parameters": {"type": "object"},
-                "priority": {"type": "integer"},
-                "name": {"type": ["string", "null"]},
-            },
-            "required": ["rule_type", "scope", "parameters", "priority"],
         },
     },
     {
@@ -862,7 +551,9 @@ _LEGACY_FLAT_TOOL_SPECS: list[dict[str, object]] = [
     },
     {
         "name": "route_apply",
-        "description": "Apply one accepted current deterministic route candidate directly into native board copper.",
+        "x_public_write_surface_class": "journaled_route_apply",
+        "x_write_surface_evidence": "routes through route-apply proposal/journal gateway",
+        "description": "Apply one accepted deterministic route candidate through the proposal journal gateway.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -917,7 +608,9 @@ _LEGACY_FLAT_TOOL_SPECS: list[dict[str, object]] = [
     },
     {
         "name": "route_apply_selected",
-        "description": "Apply the currently selected deterministic route proposal directly to the current native project.",
+        "x_public_write_surface_class": "journaled_route_apply",
+        "x_write_surface_evidence": "routes through route-apply proposal/journal gateway",
+        "description": "Apply the currently selected deterministic route proposal through the proposal journal gateway.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -963,7 +656,9 @@ _LEGACY_FLAT_TOOL_SPECS: list[dict[str, object]] = [
     },
     {
         "name": "apply_route_proposal_artifact",
-        "description": "Apply one native route proposal artifact when it still matches the current live project state.",
+        "x_public_write_surface_class": "proposal_artifact_apply",
+        "x_write_surface_evidence": "applies embedded route proposal artifact through substrate apply path",
+        "description": "Apply one native route proposal artifact through the proposal journal gateway when it still matches the current live project state.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -992,14 +687,7 @@ def _legacy_canonical_alias(flat_spec: dict[str, Any]) -> dict[str, Any]:
 # may dispatch to one of these; each has a substrate-backed (journaled) public
 # equivalent in the datum.pcb.* family, so the canonical alias bridging to a
 # non-journaled arm stays dispatchable for compatibility but hidden from tools/list.
-NON_JOURNALED_DAEMON_WRITE_METHODS: frozenset[str] = frozenset({
-    "delete_track", "delete_via", "delete_component", "move_component",
-    "rotate_component", "flip_component", "set_value", "assign_part",
-    "set_package", "set_package_with_part", "replace_component",
-    "replace_components", "set_reference", "set_net_class", "set_design_rule",
-})
-
-
+NON_JOURNALED_DAEMON_WRITE_METHODS: frozenset[str] = frozenset({})
 def _alias_dispatches_to_non_journaled_write(alias_spec: dict[str, Any]) -> bool:
     return alias_spec.get("x_dispatch_method") in NON_JOURNALED_DAEMON_WRITE_METHODS
 
@@ -1018,6 +706,35 @@ _HIDDEN_CANONICAL_ALIAS_SPECS = [s for s in _LEGACY_CANONICAL_ALIAS_SPECS if _al
 TOOL_SPECS: list[dict[str, object]] = DATUM_TOOL_SPECS + _PUBLIC_CANONICAL_ALIAS_SPECS
 # Legacy flat tools + bypassing board-write aliases: dispatchable, hidden from list.
 COMPATIBILITY_TOOL_SPECS += _LEGACY_FLAT_TOOL_SPECS + _HIDDEN_CANONICAL_ALIAS_SPECS
+
+
+def _with_retirement_metadata(spec: dict[str, object]) -> dict[str, object]:
+    annotated = dict(spec)
+    public_replacements_by_dispatch = {
+        str(public_spec.get("x_dispatch_method")): str(public_spec["name"])
+        for public_spec in TOOL_SPECS
+        if public_spec.get("x_dispatch_method")
+    }
+    replacements = canonical_replacements_for_hidden_alias(
+        annotated,
+        public_replacements_by_dispatch,
+    )
+    retirement_override = retirement_override_for_hidden_alias(annotated)
+    annotated.setdefault("x_compatibility_visibility", "hidden")
+    annotated.setdefault("x_canonical_replacements", replacements)
+    annotated.setdefault("x_retirement_status", retirement_override.get("status", "retained_until_migration_plan"))
+    annotated.setdefault(
+        "x_retirement_criteria",
+        retirement_override.get("criteria", DEFAULT_HIDDEN_ALIAS_RETIREMENT_CRITERIA),
+    )
+    return annotated
+
+
+COMPATIBILITY_TOOL_SPECS = [
+    _with_retirement_metadata(spec) for spec in COMPATIBILITY_TOOL_SPECS
+]
+
+
 def _catalog_tool(spec: dict[str, Any]) -> dict[str, Any]:
     return {key: value for key, value in spec.items() if not key.startswith("x_")}
 TOOLS: list[dict[str, Any]] = [_catalog_tool(spec) for spec in TOOL_SPECS]

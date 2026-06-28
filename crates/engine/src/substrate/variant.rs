@@ -2,19 +2,26 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 
 use super::{
-    ComponentInstance, ComponentInstanceId, DerivedVariantPopulation, DomainObject, FittedState,
-    ObjectId, ResolveDiagnostic, SourceShardDirtyState, SourceShardKind, SourceShardRef,
-    VariantOverlay, read_json_value, sha256_hex, source_shard_authority_for_kind,
+    ComponentInstance, ComponentInstanceAuthority, ComponentInstanceId, DerivedVariantPopulation,
+    DomainObject, FittedState, ObjectId, ResolveDiagnostic, SourceShardKind, SourceShardRef,
+    VariantOverlay, read_json_value, source_shard::validate_source_shard_schema_version,
+    source_shard_ref_builders::source_shard_ref_for_bytes,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct VariantOverlayShard {
+    #[serde(default = "default_variant_overlay_shard_schema_version")]
     pub schema_version: u64,
     pub variants: Vec<VariantOverlay>,
+}
+
+pub const VARIANT_OVERLAY_SHARD_SCHEMA_VERSION: u64 = 1;
+
+fn default_variant_overlay_shard_schema_version() -> u64 {
+    VARIANT_OVERLAY_SHARD_SCHEMA_VERSION
 }
 
 pub(super) fn read_variant_overlay_shards(
@@ -83,19 +90,24 @@ fn read_variant_overlay_shard(
     let schema_version = value
         .get("schema_version")
         .and_then(serde_json::Value::as_u64);
-    let shard = SourceShardRef {
-        shard_id: Uuid::new_v5(
-            &Uuid::NAMESPACE_URL,
-            format!("datum-eda:source-shard:{relative_path}").as_bytes(),
-        ),
-        kind: SourceShardKind::VariantOverlay,
+    validate_source_shard_schema_version(
+        &SourceShardKind::VariantOverlay,
+        &relative_path,
+        schema_version,
+    )
+    .map_err(|error| ResolveDiagnostic {
+        code: "invalid_variant_overlay_shard".to_string(),
+        message: error.to_string(),
+        path: Some(path.clone()),
+    })?;
+    let shard = source_shard_ref_for_bytes(
+        SourceShardKind::VariantOverlay,
         path,
         relative_path,
-        authority: source_shard_authority_for_kind(&SourceShardKind::VariantOverlay),
-        dirty_state: SourceShardDirtyState::Clean,
         schema_version,
-        content_hash: sha256_hex(&bytes),
-    };
+        &bytes,
+        "invalid_variant_overlay_shard",
+    )?;
     let variant_shard = serde_json::from_value::<VariantOverlayShard>(value).map_err(|error| {
         ResolveDiagnostic {
             code: "invalid_variant_overlay_shard".to_string(),
@@ -103,6 +115,16 @@ fn read_variant_overlay_shard(
             path: Some(shard.path.clone()),
         }
     })?;
+    if variant_shard.schema_version != VARIANT_OVERLAY_SHARD_SCHEMA_VERSION {
+        return Err(ResolveDiagnostic {
+            code: "invalid_variant_overlay_shard".to_string(),
+            message: format!(
+                "unsupported VariantOverlayShard schema_version {}",
+                variant_shard.schema_version
+            ),
+            path: Some(shard.path.clone()),
+        });
+    }
     Ok((shard, variant_shard))
 }
 
@@ -157,9 +179,24 @@ fn derive_variant_population(
 pub(super) fn propagate_variant_population_to_component_instances(
     populations: &mut BTreeMap<ObjectId, BTreeMap<ObjectId, DerivedVariantPopulation>>,
     component_instances: &BTreeMap<ComponentInstanceId, ComponentInstance>,
+    diagnostics: &mut Vec<ResolveDiagnostic>,
 ) {
     for population in populations.values_mut() {
         for (component_instance_id, component_instance) in component_instances {
+            if component_instance.authority != ComponentInstanceAuthority::Authored {
+                if population.contains_key(component_instance_id) {
+                    diagnostics.push(ResolveDiagnostic {
+                        code: "variant_component_instance_compatibility_derived_ignored"
+                            .to_string(),
+                        message: format!(
+                            "variant population references compatibility-derived ComponentInstance {}; authored ComponentInstance refs are required for component-scoped variant propagation",
+                            component_instance_id
+                        ),
+                        path: None,
+                    });
+                }
+                continue;
+            }
             let component_population = population.get(component_instance_id).copied();
             if let Some(component_population) = component_population {
                 for object_id in component_instance

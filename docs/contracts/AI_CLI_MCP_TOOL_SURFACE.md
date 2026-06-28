@@ -17,7 +17,7 @@ PRODUCT_MECHANICS 000-012.
 ## Purpose & Scope
 
 This is the SHARED SUBSTRATE for every Datum authoring and inspection
-surface. It defines, exactly ONCE, the seven shared operations that all
+surface. It defines, exactly ONCE, the seven shared contract classes that all
 agent, CLI, and UI surfaces use, and the four cross-cutting contracts
 (query, proposal/apply, artifact, session) that the five per-domain
 tool-contract docs (schematic, PCB, library, rules, manufacturing) build
@@ -51,7 +51,7 @@ mutations also journal via per-method `TransactionRecord`
 
 What is NOT yet universal: full generic `commit()` coverage across every
 surface, the `DatumToolSession` / `DatumContextEnvelope` session authority, and
-broad GUI-native editing. Convergence gaps: ~14 `write_canonical_json` sites
+broad GUI-native editing. Convergence gaps: ~13 `write_canonical_json` sites
 remain (e.g. project-create bootstrap). The public daemon write-bypass is now
 closed — the daemon write path is fenced by the daemon write-parity gate.
 
@@ -110,9 +110,23 @@ former on purpose. A redundant tool is a defect, not a convenience.
 
 ## Tool Inventory
 
-The shared surface is SEVEN tools. Each maps 1:1 onto a Decision 004
-contract class. Each is answered against the eight questions. Domains add
-variants under these tools; domains do not add peer tools.
+The shared surface is seven contract classes, not seven literal public MCP
+method names. Each maps 1:1 onto a Decision 004 contract class and is answered
+against the eight questions. Domains add typed operation variants, query
+families, check profiles, artifact include values, and proposal producers under
+these classes; domains do not add private write paths or peer lifecycle models.
+
+The public MCP catalog may expose granular canonical `datum.<family>.*`
+families such as `datum.pcb.*`, `datum.schematic.*`, `datum.library.*`, and
+`datum.route.*` when those methods are typed realizations of the shared
+classes. These are canonical public families, not legacy flat aliases. The
+drift gate `scripts/check_mcp_public_taxonomy.py` locks the public prefix
+inventory and prevents non-`datum.*` names, hidden compatibility aliases, or
+non-journaled daemon write bypasses from appearing in `tools/list`.
+The same gate requires every hidden compatibility alias to carry retirement
+metadata (`x_compatibility_visibility`, `x_retirement_status`, and
+`x_retirement_criteria`) so hidden aliases cannot expand without an explicit
+migration/removal condition.
 
 CLI and MCP are isomorphic: `datum-eda <group> <verb>` (CLI) ==
 `datum.<group>.<verb>` (MCP). Every CLI verb has `--json` returning the
@@ -220,20 +234,24 @@ remains reserved for MCP tool family names only.
    matching refdes / name / path / sheet-id / board-id. Imported identity
    resolves via Import Map `import_key` (never `source_hash`);
    `provenance.query` surfaces `import_key`-keyed source provenance plus
-   unknown-basis markers. Queries are pinned to a `model_revision` (or
-   `projection_revision`) so context, findings, and proposals all cite
-   the same revision.
+   unknown-basis markers. Resolver-backed source-shard state is exposed
+   through `datum.query.source_shards`, including per-shard `dirty_state`
+   (`Clean`, `Dirty`, `Missing`, or `Unknown`) so agents can detect stale
+   promoted files or journal-recovered generated evidence without scraping CLI
+   debug text. Queries are pinned to a `model_revision` (or
+   `projection_revision`) so context, findings, and proposals all cite the
+   same revision.
 7. **Proof slice**: `datum-eda query object.get --id <uuid>` returns the
    object with its revision and `ComponentInstance` link; a follow-up
    `object.neighbors` returns the bound package without string matching.
-8. **Not-supported-yet**: EXISTING reads —
+8. **Partially supported**: EXISTING reads —
    `search_pool` / `get_part` / `get_package` / `get_symbols`
    (`crates/engine/src/api/project_surface.rs`, `crates/engine-daemon/
    src/dispatch.rs`), `get_board_summary` / `get_components` /
    `get_unrouted` / `get_net_info`, `get_design_rules` /
-   `get_check_report` (`dispatch.rs:447/439`). GAP: these legacy daemon
-   reads are not unified under one `datum.query.*` namespace and do not yet
-   expose the substrate's `model_revision`, `ComponentInstance` join,
+   `get_check_report` (`dispatch.rs:447/439`). Current public MCP reads are
+   unified under `datum.query.*` aliases, but the legacy daemon read path still
+   does not expose the substrate's `model_revision`, `ComponentInstance` join,
    `import_key` provenance, or a `transactions` / `provenance` query family
    (those primitives exist in the substrate; the daemon read path does not
    surface them).
@@ -255,10 +273,12 @@ remains reserved for MCP tool family names only.
    (kept only as thin compatibility aliases).
 6. **Validating checks**: produces `CheckRun{check_run_id, model_revision
    / projection_revision, checker_version, pass|fail|error|stale}`. Each
-   `CheckFinding` carries a stable finding id + affected `ObjectId`s +
-   rule basis + inline explanation + actionable `proposal_links` for any
-   resolver-discovered repair proposals — so there is NO standalone explain
-   tool. Findings are revision/hash-keyed derived state, never authority. Each
+  `CheckFinding` carries a stable fingerprint + affected `ObjectId`s +
+  rule basis + inline explanation + actionable `proposal_links` for any
+  resolver-discovered repair proposals. The canonical
+  `datum.check.explain_violation` drill-down exists for interactive use and
+  prefers fingerprint addressing, with legacy index addressing retained only as
+  compatibility. Findings are revision/hash-keyed derived state, never authority. Each
    `CheckRun` also carries `profile_basis` and coverage entries so a clean or
    profile-filtered result states what was evaluated, filtered,
    not-applicable, or not implemented.
@@ -268,18 +288,15 @@ remains reserved for MCP tool family names only.
 7. **Proof slice**: `datum-eda check run --domain drc --profile default`
    yields a `CheckRun`; a finding's fingerprint is stable across a
    no-op re-run on the same revision.
-8. **Not-supported-yet**: EXISTING —
-   `get_check_report` / `run_erc` / `run_drc` / `explain_violation`
-   (`dispatch.rs:439/451/455/467`), `CheckSummary` merges ERC+DRC
-   (`crates/engine/src/.../check_summary.rs`). GAP: `CheckRun` /
-   `CheckFinding` not fully revision/variant/`input_object_revisions`-keyed;
-   not variant-aware; the `run_drc` rule set is hard-coded
-   (`dispatch.rs:455-463`) instead of a `CheckProfile` parameter.
-   `explanation` and `suggested_next_action` now exist on current live and
-   persisted native check findings.
-   `explain_violation` is addressed by `(domain, index)` today
-   (`project_surface.rs` `explain_violation`), which breaks across runs;
-   it must be re-addressed by stable finding FINGERPRINT.
+8. **Remaining gaps**: compatibility `get_check_report` / `run_erc` /
+   `run_drc` aliases still exist, but canonical check surfaces are
+   `datum-eda check run|show|repair-standards|waive|accept-deviation` and
+   MCP `datum.check.*`. `explanation` and `suggested_next_action` exist on
+   current live and persisted native check findings, and canonical
+   `datum.check.explain_violation` supports stable finding fingerprint
+   addressing with legacy index fallback. Remaining substrate work is richer
+   variant/check-profile coverage and broader target-category coverage, not
+   first fingerprint-addressed explain support.
 
 ### 4. Propose — `DatumProposalTool`
 
@@ -291,7 +308,11 @@ remains reserved for MCP tool family names only.
 3. **CLI command**: `datum-eda proposal create|show|validate|reject|defer|
    apply`.
 4. **MCP/AI tool**: `datum.proposal.*`. AI may PROPOSE but never silently
-   apply.
+   apply. Board component package/part/value replacements use
+   `datum.proposal.create_board_component_replacement`,
+   `datum.proposal.create_board_component_replacements`, or
+   `datum.proposal.create_board_component_replacement_plan` and then the
+   normal proposal review/apply gateway.
 5. **AI query/context needed**: the proposal carries `OperationBatch` +
    rationale + affected `ObjectId`s + expected result + prepared-against
    `model_revision` + assumptions/risks/checks + `DatumToolSession`
@@ -332,26 +353,33 @@ remains reserved for MCP tool family names only.
    `OperationBatch`, the prepared-against `model_revision`, and the
    session provenance.
 6. **Validating checks**: `commit()` is the sole producer of
-   `object_revision` + `model_revision` and the sole journal writer
+   `object_revision` + `model_revision` and the sole journal writer.
+   Batches may include `GuardObjectRevision{object_id,
+   expected_object_revision}` entries, which are checked before journal
+   staging so stale object writes leave no staged files, journal append, or
+   in-memory mutation. Guard operations are preflight-only and are stripped
+   from durable `TransactionRecord.operations` so undo/redo/replay do not
+   depend on historical object revisions.
    (Decision 001: apply-in-memory -> stage shard bytes + fsync -> append
    one `TransactionRecord` + fsync commit point -> atomic rename + dir
    fsync). REJECTS: stale base revisions (unless explicitly rebased +
    revalidated), unknown/mismatched object revisions, writes to derived
    caches as if source, proposal-policy bypass for AI/assistant/checker/
-   import-repair, missing provenance/acceptance path. There is exactly ONE
+   import-repair, missing provenance, or missing proposal lineage when
+   proposal policy applies. There is exactly ONE
    `commit()`; any per-domain save/write tool is a FORBIDDEN private path.
 7. **Proof slice**: a direct-commit place-component and a proposal-applied
    correction both produce exactly one `TransactionRecord` with full
    provenance; both are undoable.
-8. **Not-supported-yet**: EXISTING — imported-board ops journal correctly
-   via `TransactionRecord` + undo/redo (`crates/engine/src/api/write_ops/`
-   `basic_mutations.rs`, `assign_package_rule.rs`, `undo_redo/`). GAP: no
-   single generic `commit()` / `OperationBatch`; ~115 native-write call
-   sites (`write_canonical_json`) across the PCB CLI files plus the
-   native-schematic CLI functions and all library/manufacturing authoring
-   bypass `commit()` via `load_native_project -> write_canonical_json`
-   (the private-writer migration defect the audit forbids); no fsync /
-   journal-commit-point even on the journaled board path.
+8. **Current convergence gap**: imported-board ops journal correctly via
+   `TransactionRecord` + undo/redo (`crates/engine/src/api/write_ops/`
+   `basic_mutations.rs`, `assign_package_rule.rs`, `undo_redo/`), and native
+   substrate operations use the typed `OperationBatch -> commit_journaled()`
+   path. Remaining private-writer debt is now narrowed and machine-classified:
+   about 13 `write_canonical_json` sites remain across project bootstrap,
+   route/proposal artifact fixtures, and generated output paths; the
+   private-writer guard prevents new source-writing sites from hiding among
+   those exceptions.
 
 ### 6. Artifact — `DatumArtifactTool` (derived projection, NEVER commit())
 
@@ -455,12 +483,11 @@ not a tool. A redundant tool is a defect.
   exposed read-only via `query selection.describe`. It is never an
   Operation and never journaled.
 
-- **Standalone `explain_violation` tool** -> explanation +
+- **Standalone `explain_violation` as a separate authority** -> explanation +
   `suggested_next_action` are FIELDS on the `CheckFinding` returned by
-  `check run/show`. `explain_violation` survives only as an interactive
-  drill-down alias, addressed by stable finding FINGERPRINT (never
-  `(domain, index)`, which breaks across runs —
-  `project_surface.rs` today).
+  `check run/show`. Canonical `datum.check.explain_violation` is an
+  interactive drill-down over the same finding data, addressed by stable
+  finding fingerprint with legacy index fallback for compatibility.
 
 - **Per-domain delete verbs** (schematic `delete-*`, PCB
   delete-track/via/zone/keepout, library delete-object) -> ONE
@@ -490,7 +517,7 @@ not a tool. A redundant tool is a defect.
 - **Per-domain save/write/commit primitive** -> NONE. Every per-domain
   authoring tool EMITS a typed `OperationBatch`; it is not its own commit
   path. Any per-domain save/write tool is a FORBIDDEN private path. (This
-  retires the 115 `write_canonical_json` call sites.)
+  continues retiring the remaining classified `write_canonical_json` sites.)
 
 - **Per-domain context/session bootstrap** -> ONE `DatumToolSession` +
   `DatumContextEnvelope` via `context get|refresh`. Domains consume the
@@ -552,8 +579,15 @@ content-hashes.
 
 - The target substrate is partially implemented: typed `OperationBatch`,
   journaled `commit_journaled()`, `ProjectResolver`, `model_revision`,
-  first `ObjectId` / `object_revision` handling, ComponentInstance records,
-  Import Map query, and several production/check/artifact surfaces exist.
+  first `ObjectId` / `object_revision` handling, explicit
+  `GuardObjectRevision` preflight checks, public CLI guard emission across
+  board component/layout/routing/pad/netclass/dimension helper families,
+  schematic connectivity/text/drawing helper families, and ComponentInstance
+  set/delete, manufacturing plan/panel projection/output job set/delete,
+  project name, whole-root project-rules replacement, granular project rule
+  set/delete, generic batch-file proposals, production proposal builders,
+  ComponentInstance records, Import Map query, and several production/check/
+  artifact surfaces exist.
   Remaining gaps include full generic commit coverage, complete session
   authority, library operations, richer rules, and broad GUI-native editing.
 - MCP has both legacy daemon write tools and canonical `datum.*` aliases for
@@ -619,8 +653,9 @@ content-hashes.
   `set_symbol_lib_id`, `clear_symbol_lib_id`, `set_pin_override`,
   `clear_pin_override`, `add_symbol_field`, `edit_symbol_field`, and
   `delete_symbol_field` bridge to the matching journaled symbol commands.
-- Findings are addressed by `(domain, index)` today; fingerprint
-  addressing is not implemented.
+- Findings are addressed by stable fingerprints on canonical check/waiver/
+  proposal/repair surfaces; legacy index addressing survives only as
+  compatibility fallback for older explain/drill-down callers.
 - ZoneFill honesty exists for native copper projection: authored
   boundaries derive `Unfilled`, emit hard findings, and are withheld from
   copper export. The current `fill_zones` producer emits `Filled` islands
@@ -646,14 +681,13 @@ content-hashes.
 4. **MCP write tools**: land now, or stay read-only until commit()/journal
    lands? Recommendation: MCP write tools land ONLY behind `commit()` so
    AI authoring is never an unjournaled surface.
-5. **Finding addressing**: confirm waivers/proposals/repairs key on a
-   DETERMINISTIC finding fingerprint (stable across rename/move via
-   `ComponentInstance` + `ObjectId`), retiring the current `(domain,
-   index)` addressing (`project_surface.rs`) which breaks across runs.
-6. **`explain_violation`**: confirm it is demoted from a canonical tool to
-   an interactive drill-down alias (explanation/`suggested_next_action`
-   are fields on the finding), re-addressed by fingerprint not
-   `(domain, index)`.
+5. **Finding addressing**: implemented for the canonical first slice.
+   Waivers/proposals/repairs and canonical explain drill-down key on stable
+   finding fingerprints, with index addressing retained only as compatibility
+   fallback.
+6. **`explain_violation`**: canonical `datum.check.explain_violation` remains
+   an interactive drill-down over finding fields, prefers fingerprint
+   addressing, and keeps legacy index addressing only for compatibility.
 7. **`record_deviation`**: confirm deviation ships as a `disposition`
    value on `waive_finding` for the first slice (per the 003
    `ElectricalDeviation` owner-review fork) and graduates to its own tool

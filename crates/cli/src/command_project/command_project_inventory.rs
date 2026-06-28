@@ -11,6 +11,9 @@ use eda_engine::board::PlacedPackage;
 use eda_engine::substrate::{DerivedVariantPopulation, DesignModel, PanelProjection};
 use uuid::Uuid;
 
+#[path = "command_project_inventory_rows.rs"]
+mod command_project_inventory_rows;
+
 use super::command_project_inventory_csv::{
     parse_bom_csv, parse_pnp_csv, render_expected_native_project_bom_csv_rows,
     render_expected_native_project_pnp_csv_rows,
@@ -18,12 +21,17 @@ use super::command_project_inventory_csv::{
 use super::{
     NativeProjectBomComparisonView, NativeProjectBomDriftView, NativeProjectBomExportView,
     NativeProjectPnpComparisonView, NativeProjectPnpDriftView, NativeProjectPnpExportView,
-    load_native_project, load_native_project_with_resolved_board_and_model,
+    load_native_project_with_resolved_board, load_native_project_with_resolved_board_and_model,
+};
+use command_project_inventory_rows::{
+    component_instances_by_package, component_to_bom_row, component_to_pnp_row,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(super) struct NativeBomRow {
     pub(super) component_instance_uuid: Option<Uuid>,
+    pub(super) component_instance_role: Option<String>,
+    pub(super) component_instance_label: Option<String>,
     pub(super) reference: String,
     pub(super) value: String,
     pub(super) part_uuid: String,
@@ -46,6 +54,12 @@ impl NativeBomRow {
         let mut fields = Vec::new();
         if self.reference != other.reference {
             fields.push("reference".to_string());
+        }
+        if self.component_instance_role != other.component_instance_role {
+            fields.push("component_instance_role".to_string());
+        }
+        if self.component_instance_label != other.component_instance_label {
+            fields.push("component_instance_label".to_string());
         }
         if self.value != other.value {
             fields.push("value".to_string());
@@ -90,6 +104,8 @@ impl NativeVariantRow for NativeBomRow {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(super) struct NativePnpRow {
     pub(super) component_instance_uuid: Option<Uuid>,
+    pub(super) component_instance_role: Option<String>,
+    pub(super) component_instance_label: Option<String>,
     pub(super) reference: String,
     pub(super) x_nm: i64,
     pub(super) y_nm: i64,
@@ -113,6 +129,12 @@ impl NativePnpRow {
         let mut fields = Vec::new();
         if self.reference != other.reference {
             fields.push("reference".to_string());
+        }
+        if self.component_instance_role != other.component_instance_role {
+            fields.push("component_instance_role".to_string());
+        }
+        if self.component_instance_label != other.component_instance_label {
+            fields.push("component_instance_label".to_string());
         }
         if self.x_nm != other.x_nm || self.y_nm != other.y_nm {
             fields.push("position".to_string());
@@ -157,7 +179,7 @@ pub(crate) fn export_native_project_bom(
     output_path: &Path,
     variant: Option<Uuid>,
 ) -> Result<NativeProjectBomExportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let rows = native_inventory_bom_rows(root, variant)?;
     let csv = render_expected_native_project_bom_csv_rows(&rows);
     std::fs::write(output_path, csv)
@@ -176,7 +198,7 @@ pub(crate) fn validate_native_project_bom(
     bom_path: &Path,
     variant: Option<Uuid>,
 ) -> Result<NativeProjectBomValidationView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let rows = native_inventory_bom_rows(root, variant)?;
     let expected = render_expected_native_project_bom_csv_rows(&rows);
     let actual = std::fs::read_to_string(bom_path)
@@ -197,7 +219,7 @@ pub(crate) fn compare_native_project_bom(
     bom_path: &Path,
     variant: Option<Uuid>,
 ) -> Result<NativeProjectBomComparisonView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let expected = native_inventory_bom_rows(root, variant)?;
     let actual = parse_bom_csv(bom_path)?;
 
@@ -272,6 +294,8 @@ pub(crate) fn inspect_native_project_bom(
         .into_iter()
         .map(|row| NativeProjectBomInspectionRowView {
             component_instance_uuid: row.component_instance_uuid.map(|id| id.to_string()),
+            component_instance_role: row.component_instance_role,
+            component_instance_label: row.component_instance_label,
             reference: row.reference,
             value: row.value,
             part_uuid: row.part_uuid,
@@ -296,7 +320,7 @@ pub(crate) fn export_native_project_pnp(
     output_path: &Path,
     variant: Option<Uuid>,
 ) -> Result<NativeProjectPnpExportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let rows = native_inventory_pnp_rows(root, variant)?;
     write_native_project_pnp_rows(output_path, &rows)?;
     Ok(NativeProjectPnpExportView {
@@ -314,7 +338,7 @@ pub(crate) fn export_native_project_panel_pnp(
     variant: Option<Uuid>,
     panel_projection: &PanelProjection,
 ) -> Result<NativeProjectPnpExportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let rows = native_inventory_panel_pnp_rows(root, variant, panel_projection)?;
     write_native_project_pnp_rows(output_path, &rows)?;
     Ok(NativeProjectPnpExportView {
@@ -346,7 +370,7 @@ pub(crate) fn validate_native_project_pnp(
     pnp_path: &Path,
     variant: Option<Uuid>,
 ) -> Result<NativeProjectPnpValidationView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let rows = native_inventory_pnp_rows(root, variant)?;
     let expected = render_expected_native_project_pnp_csv_rows(&rows);
     let actual = std::fs::read_to_string(pnp_path)
@@ -367,7 +391,7 @@ pub(crate) fn compare_native_project_pnp(
     pnp_path: &Path,
     variant: Option<Uuid>,
 ) -> Result<NativeProjectPnpComparisonView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let expected = native_inventory_pnp_rows(root, variant)?;
     let actual = parse_pnp_csv(pnp_path)?;
 
@@ -442,6 +466,8 @@ pub(crate) fn inspect_native_project_pnp(
         .into_iter()
         .map(|row| NativeProjectPnpInspectionRowView {
             component_instance_uuid: row.component_instance_uuid.map(|id| id.to_string()),
+            component_instance_role: row.component_instance_role,
+            component_instance_label: row.component_instance_label,
             reference: row.reference,
             x_nm: row.x_nm,
             y_nm: row.y_nm,
@@ -469,9 +495,13 @@ fn native_inventory_bom_rows(root: &Path, variant: Option<Uuid>) -> Result<Vec<N
     Ok(resolved_board_components(&project.board.packages)?
         .into_iter()
         .filter_map(|component| {
-            let component_instance_uuid =
-                component_instances_by_package.get(&component.uuid).copied();
-            let row = component_to_bom_row(component, component_instance_uuid);
+            let component_instance_uuid = component_instances_by_package
+                .get(&component.uuid)
+                .map(|entry| entry.0);
+            let role = component_instances_by_package
+                .get(&component.uuid)
+                .and_then(|entry| entry.1.as_ref());
+            let row = component_to_bom_row(component, component_instance_uuid, role);
             fitted_for_variant(&row, variant_population).then_some(row)
         })
         .collect())
@@ -484,9 +514,13 @@ fn native_inventory_pnp_rows(root: &Path, variant: Option<Uuid>) -> Result<Vec<N
     Ok(resolved_board_components(&project.board.packages)?
         .into_iter()
         .filter_map(|component| {
-            let component_instance_uuid =
-                component_instances_by_package.get(&component.uuid).copied();
-            let row = component_to_pnp_row(component, component_instance_uuid);
+            let component_instance_uuid = component_instances_by_package
+                .get(&component.uuid)
+                .map(|entry| entry.0);
+            let role = component_instances_by_package
+                .get(&component.uuid)
+                .and_then(|entry| entry.1.as_ref());
+            let row = component_to_pnp_row(component, component_instance_uuid, role);
             fitted_for_variant(&row, variant_population).then_some(row)
         })
         .collect())
@@ -503,9 +537,13 @@ fn native_inventory_panel_pnp_rows(
     let base_rows = resolved_board_components(&project.board.packages)?
         .into_iter()
         .filter_map(|component| {
-            let component_instance_uuid =
-                component_instances_by_package.get(&component.uuid).copied();
-            let row = component_to_pnp_row(component, component_instance_uuid);
+            let component_instance_uuid = component_instances_by_package
+                .get(&component.uuid)
+                .map(|entry| entry.0);
+            let role = component_instances_by_package
+                .get(&component.uuid)
+                .and_then(|entry| entry.1.as_ref());
+            let row = component_to_pnp_row(component, component_instance_uuid, role);
             fitted_for_variant(&row, variant_population).then_some(row)
         })
         .collect::<Vec<_>>();
@@ -592,16 +630,6 @@ fn resolved_board_components(
     Ok(components)
 }
 
-fn component_instances_by_package(model: &DesignModel) -> BTreeMap<Uuid, Uuid> {
-    let mut by_package = BTreeMap::new();
-    for (component_instance_id, component_instance) in &model.component_instances {
-        for package_ref in &component_instance.placed_package_refs {
-            by_package.insert(*package_ref, *component_instance_id);
-        }
-    }
-    by_package
-}
-
 fn bom_rows_by_identity(rows: &[NativeBomRow]) -> (BTreeMap<String, NativeBomRow>, Vec<String>) {
     let mut by_identity = BTreeMap::new();
     let mut duplicates = Vec::new();
@@ -628,46 +656,4 @@ fn pnp_rows_by_identity(rows: &[NativePnpRow]) -> (BTreeMap<String, NativePnpRow
         }
     }
     (by_identity, duplicates)
-}
-
-fn component_to_bom_row(
-    component: PlacedPackage,
-    component_instance_uuid: Option<Uuid>,
-) -> NativeBomRow {
-    NativeBomRow {
-        component_instance_uuid,
-        reference: component.reference,
-        value: component.value,
-        part_uuid: component.part.to_string(),
-        package_uuid: component.package.to_string(),
-        layer: component.layer,
-        x_nm: component.position.x,
-        y_nm: component.position.y,
-        rotation_deg: component.rotation,
-        locked: component.locked,
-    }
-}
-
-fn component_to_pnp_row(
-    component: PlacedPackage,
-    component_instance_uuid: Option<Uuid>,
-) -> NativePnpRow {
-    let side = if component.layer <= 16 {
-        "top".to_string()
-    } else {
-        "bottom".to_string()
-    };
-    NativePnpRow {
-        component_instance_uuid,
-        reference: component.reference,
-        x_nm: component.position.x,
-        y_nm: component.position.y,
-        rotation_deg: component.rotation,
-        layer: component.layer,
-        side,
-        package_uuid: component.package.to_string(),
-        part_uuid: component.part.to_string(),
-        value: component.value,
-        locked: component.locked,
-    }
 }

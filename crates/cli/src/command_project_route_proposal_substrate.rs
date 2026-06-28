@@ -39,7 +39,7 @@ pub(crate) fn build_accepted_route_proposal(
     root: &Path,
     actions: &[NativeProjectRouteProposalActionView],
 ) -> Result<BuiltRouteProposal> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let model = ProjectResolver::new(root).resolve()?;
     let expected_model_revision = model.model_revision.clone();
     let mut tracks = Vec::new();
@@ -141,7 +141,7 @@ pub(crate) fn apply_built_route_proposal(
     commit_proposal_metadata_journaled(&mut model, root, proposal)?;
     apply_accepted_proposal(&mut model, root, proposal_id)?;
 
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(built
         .tracks
         .into_iter()

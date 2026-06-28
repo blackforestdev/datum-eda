@@ -5,10 +5,14 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use super::{
-    DomainObject, ModelRevision, ObjectId, ObjectRevision, ResolveDiagnostic,
-    SourceShardDirtyState, SourceShardKind, SourceShardRef,
-    artifact_validation::validate_artifact_metadata, read_json_value,
-    run_evidence_validation::validate_output_job_run, sha256_hex, source_shard_authority_for_kind,
+    DomainObject, ModelRevision, ObjectId, ObjectRevision, ResolveDiagnostic, SourceShardKind,
+    SourceShardRef,
+    artifact_validation::{
+        validate_artifact_metadata, validate_production_record_payload_schema_version,
+    },
+    read_json_value,
+    run_evidence_validation::validate_output_job_run,
+    source_shard_ref_builders::source_shard_ref_for_bytes,
 };
 
 use super::generated_evidence::{persist_generated_evidence, validate_filename_uuid};
@@ -48,8 +52,26 @@ pub enum OutputJobLogLevel {
     Error,
 }
 
+pub const OUTPUT_JOB_RUN_SCHEMA_VERSION: u64 = 1;
+pub const ARTIFACT_METADATA_SCHEMA_VERSION: u64 = 1;
+pub const PRODUCTION_RECORD_SCHEMA_VERSION: u64 = 1;
+
+fn default_output_job_run_schema_version() -> u64 {
+    OUTPUT_JOB_RUN_SCHEMA_VERSION
+}
+
+fn default_artifact_metadata_schema_version() -> u64 {
+    ARTIFACT_METADATA_SCHEMA_VERSION
+}
+
+fn default_production_record_schema_version() -> u64 {
+    PRODUCTION_RECORD_SCHEMA_VERSION
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct OutputJob {
+    #[serde(default = "default_production_record_schema_version")]
+    pub schema_version: u64,
     pub id: ObjectId,
     pub name: String,
     pub include: Vec<ArtifactKind>,
@@ -65,6 +87,8 @@ pub struct OutputJob {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ManufacturingPlan {
+    #[serde(default = "default_production_record_schema_version")]
+    pub schema_version: u64,
     pub id: ObjectId,
     pub name: String,
     pub board_or_panel: ObjectId,
@@ -83,6 +107,8 @@ pub struct PanelBoardInstance {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PanelProjection {
+    #[serde(default = "default_production_record_schema_version")]
+    pub schema_version: u64,
     pub id: ObjectId,
     pub name: String,
     pub board_instances: Vec<PanelBoardInstance>,
@@ -114,6 +140,8 @@ pub struct OutputJobRunProvenance {
 }
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct OutputJobRun {
+    #[serde(default = "default_output_job_run_schema_version")]
+    pub schema_version: u64,
     pub run_id: Uuid,
     pub output_job: ObjectId,
     #[serde(default)]
@@ -144,6 +172,8 @@ pub struct ArtifactProductionProjection {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ArtifactMetadata {
+    #[serde(default = "default_artifact_metadata_schema_version")]
+    pub schema_version: u64,
     pub artifact_id: Uuid,
     pub kind: ArtifactKind,
     pub project_id: Uuid,
@@ -159,7 +189,8 @@ pub struct ArtifactMetadata {
     pub validation_state: ArtifactValidationState,
 }
 
-pub fn persist_artifact_metadata(
+#[allow(dead_code)]
+pub(super) fn persist_artifact_metadata(
     project_root: &Path,
     metadata: &ArtifactMetadata,
 ) -> Result<PathBuf, crate::error::EngineError> {
@@ -172,7 +203,8 @@ pub fn persist_artifact_metadata(
     )
 }
 
-pub fn persist_output_job_run(
+#[allow(dead_code)]
+pub(super) fn persist_output_job_run(
     project_root: &Path,
     run: &OutputJobRun,
 ) -> Result<PathBuf, crate::error::EngineError> {
@@ -461,19 +493,14 @@ fn read_output_job_run_shard(
     let schema_version = value
         .get("schema_version")
         .and_then(serde_json::Value::as_u64);
-    let shard = SourceShardRef {
-        shard_id: Uuid::new_v5(
-            &Uuid::NAMESPACE_URL,
-            format!("datum-eda:source-shard:{relative_path}").as_bytes(),
-        ),
-        kind: SourceShardKind::OutputJobRun,
+    let shard = source_shard_ref_for_bytes(
+        SourceShardKind::OutputJobRun,
         path,
         relative_path,
-        authority: source_shard_authority_for_kind(&SourceShardKind::OutputJobRun),
-        dirty_state: SourceShardDirtyState::Clean,
         schema_version,
-        content_hash: sha256_hex(&bytes),
-    };
+        &bytes,
+        "invalid_output_job_run",
+    )?;
     let run = serde_json::from_value::<OutputJobRun>(value).map_err(|error| ResolveDiagnostic {
         code: "invalid_output_job_run".to_string(),
         message: error.to_string(),
@@ -505,25 +532,27 @@ fn read_manufacturing_plan_shard(
     let schema_version = value
         .get("schema_version")
         .and_then(serde_json::Value::as_u64);
-    let shard = SourceShardRef {
-        shard_id: Uuid::new_v5(
-            &Uuid::NAMESPACE_URL,
-            format!("datum-eda:source-shard:{relative_path}").as_bytes(),
-        ),
-        kind: SourceShardKind::ManufacturingPlan,
+    let shard = source_shard_ref_for_bytes(
+        SourceShardKind::ManufacturingPlan,
         path,
         relative_path,
-        authority: source_shard_authority_for_kind(&SourceShardKind::ManufacturingPlan),
-        dirty_state: SourceShardDirtyState::Clean,
         schema_version,
-        content_hash: sha256_hex(&bytes),
-    };
+        &bytes,
+        "invalid_manufacturing_plan",
+    )?;
     let plan =
         serde_json::from_value::<ManufacturingPlan>(value).map_err(|error| ResolveDiagnostic {
             code: "invalid_manufacturing_plan".to_string(),
             message: error.to_string(),
             path: Some(shard.path.clone()),
         })?;
+    validate_filename_uuid(&shard.path, plan.id, "invalid_manufacturing_plan")?;
+    validate_production_record_schema_version(
+        plan.schema_version,
+        "manufacturing plan",
+        "invalid_manufacturing_plan",
+        &shard,
+    )?;
     Ok((shard, plan))
 }
 
@@ -544,25 +573,27 @@ fn read_panel_projection_shard(
     let schema_version = value
         .get("schema_version")
         .and_then(serde_json::Value::as_u64);
-    let shard = SourceShardRef {
-        shard_id: Uuid::new_v5(
-            &Uuid::NAMESPACE_URL,
-            format!("datum-eda:source-shard:{relative_path}").as_bytes(),
-        ),
-        kind: SourceShardKind::PanelProjection,
+    let shard = source_shard_ref_for_bytes(
+        SourceShardKind::PanelProjection,
         path,
         relative_path,
-        authority: source_shard_authority_for_kind(&SourceShardKind::PanelProjection),
-        dirty_state: SourceShardDirtyState::Clean,
         schema_version,
-        content_hash: sha256_hex(&bytes),
-    };
+        &bytes,
+        "invalid_panel_projection",
+    )?;
     let panel =
         serde_json::from_value::<PanelProjection>(value).map_err(|error| ResolveDiagnostic {
             code: "invalid_panel_projection".to_string(),
             message: error.to_string(),
             path: Some(shard.path.clone()),
         })?;
+    validate_filename_uuid(&shard.path, panel.id, "invalid_panel_projection")?;
+    validate_production_record_schema_version(
+        panel.schema_version,
+        "panel projection",
+        "invalid_panel_projection",
+        &shard,
+    )?;
     Ok((shard, panel))
 }
 
@@ -583,19 +614,14 @@ fn read_artifact_metadata_shard(
     let schema_version = value
         .get("schema_version")
         .and_then(serde_json::Value::as_u64);
-    let shard = SourceShardRef {
-        shard_id: Uuid::new_v5(
-            &Uuid::NAMESPACE_URL,
-            format!("datum-eda:source-shard:{relative_path}").as_bytes(),
-        ),
-        kind: SourceShardKind::ArtifactMetadata,
+    let shard = source_shard_ref_for_bytes(
+        SourceShardKind::ArtifactMetadata,
         path,
         relative_path,
-        authority: source_shard_authority_for_kind(&SourceShardKind::ArtifactMetadata),
-        dirty_state: SourceShardDirtyState::Clean,
         schema_version,
-        content_hash: sha256_hex(&bytes),
-    };
+        &bytes,
+        "invalid_artifact_metadata",
+    )?;
     let metadata =
         serde_json::from_value::<ArtifactMetadata>(value).map_err(|error| ResolveDiagnostic {
             code: "invalid_artifact_metadata".to_string(),
@@ -632,23 +658,40 @@ fn read_output_job_shard(
     let schema_version = value
         .get("schema_version")
         .and_then(serde_json::Value::as_u64);
-    let shard = SourceShardRef {
-        shard_id: Uuid::new_v5(
-            &Uuid::NAMESPACE_URL,
-            format!("datum-eda:source-shard:{relative_path}").as_bytes(),
-        ),
-        kind: SourceShardKind::OutputJob,
+    let shard = source_shard_ref_for_bytes(
+        SourceShardKind::OutputJob,
         path,
         relative_path,
-        authority: source_shard_authority_for_kind(&SourceShardKind::OutputJob),
-        dirty_state: SourceShardDirtyState::Clean,
         schema_version,
-        content_hash: sha256_hex(&bytes),
-    };
+        &bytes,
+        "invalid_output_job",
+    )?;
     let job = serde_json::from_value::<OutputJob>(value).map_err(|error| ResolveDiagnostic {
         code: "invalid_output_job".to_string(),
         message: error.to_string(),
         path: Some(shard.path.clone()),
     })?;
+    validate_filename_uuid(&shard.path, job.id, "invalid_output_job")?;
+    validate_production_record_schema_version(
+        job.schema_version,
+        "output job",
+        "invalid_output_job",
+        &shard,
+    )?;
     Ok((shard, job))
+}
+
+fn validate_production_record_schema_version(
+    schema_version: u64,
+    label: &str,
+    diagnostic_code: &str,
+    shard: &SourceShardRef,
+) -> Result<(), ResolveDiagnostic> {
+    validate_production_record_payload_schema_version(schema_version, label).map_err(|message| {
+        ResolveDiagnostic {
+            code: diagnostic_code.to_string(),
+            message,
+            path: Some(shard.path.clone()),
+        }
+    })
 }

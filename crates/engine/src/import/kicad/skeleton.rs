@@ -11,24 +11,17 @@ use crate::schematic::{
     Bus, HiddenPowerBehavior, Junction, LabelKind, NetLabel, NoConnectMarker, PlacedSymbol,
     SchematicWire, Sheet, SymbolDisplayMode, SymbolPin,
 };
+use crate::substrate::{ImportKey, ImportMapEntry, allocate_import_identity};
 
 use super::board_objects::*;
 use super::net_refs::*;
 use super::parser_helpers::*;
+use super::schematic_bus::{
+    ParsedBusEntrySkeleton, ParsedBusSegment, attached_bus_specs, resolve_bus_entry_attachment,
+};
+use super::schematic_graphics::{parse_schematic_drawings, parse_schematic_texts};
+use super::schematic_identity::schematic_import_id;
 use super::symbol_helpers::*;
-
-#[derive(Clone)]
-struct ParsedBusSegment {
-    uuid: Uuid,
-    points: Vec<Point>,
-}
-
-#[derive(Clone)]
-struct ParsedBusEntrySkeleton {
-    uuid: Uuid,
-    position: Point,
-    size: Point,
-}
 
 pub(super) struct ChildSheetRef {
     pub(super) instance_uuid: Uuid,
@@ -42,18 +35,29 @@ pub(super) struct ParsedSchematicSkeleton {
     pub(super) root_sheet: Sheet,
     pub(super) child_sheets: Vec<ChildSheetRef>,
 }
-
 pub(super) fn parse_schematic_skeleton(
+    path: &Path,
     contents: &str,
     root_sheet_name: &str,
+    import_map: Option<&std::collections::BTreeMap<ImportKey, ImportMapEntry>>,
+    import_identities: Option<&mut Vec<KiCadSchematicImportIdentity>>,
 ) -> Result<ParsedSchematicSkeleton, EngineError> {
     let root_uuid = find_top_level_uuid(contents).unwrap_or_else(Uuid::new_v4);
     let root_sheet_uuid = root_uuid;
     let library_pins = parse_library_symbol_pins(contents);
 
     let mut symbols = HashMap::new();
+    let mut import_identities = import_identities;
     for block in top_level_blocks(contents, "symbol") {
-        let uuid = block_uuid(&block).unwrap_or_else(Uuid::new_v4);
+        let source_uuid = block_uuid(&block).unwrap_or_else(Uuid::new_v4);
+        let uuid = schematic_import_id(
+            path,
+            source_uuid,
+            "symbol",
+            "schematic_symbol",
+            import_map,
+            import_identities.as_deref_mut(),
+        );
         let position = block_at_point(&block).unwrap_or_else(Point::zero);
         let rotation = block_rotation(&block).unwrap_or(0);
         let mirrored = symbol_is_mirrored_y(&block);
@@ -111,7 +115,15 @@ pub(super) fn parse_schematic_skeleton(
 
     let mut wires = HashMap::new();
     for block in top_level_blocks(contents, "wire") {
-        let uuid = block_uuid(&block).unwrap_or_else(Uuid::new_v4);
+        let source_uuid = block_uuid(&block).unwrap_or_else(Uuid::new_v4);
+        let uuid = schematic_import_id(
+            path,
+            source_uuid,
+            "wire",
+            "schematic_wire",
+            import_map,
+            import_identities.as_deref_mut(),
+        );
         let points = block_xy_points(&block);
         if points.len() >= 2 {
             wires.insert(
@@ -127,7 +139,15 @@ pub(super) fn parse_schematic_skeleton(
 
     let mut junctions = HashMap::new();
     for block in top_level_blocks(contents, "junction") {
-        if let (Some(uuid), Some(position)) = (block_uuid(&block), block_at_point(&block)) {
+        if let (Some(source_uuid), Some(position)) = (block_uuid(&block), block_at_point(&block)) {
+            let uuid = schematic_import_id(
+                path,
+                source_uuid,
+                "junction",
+                "schematic_junction",
+                import_map,
+                import_identities.as_deref_mut(),
+            );
             junctions.insert(uuid, Junction { uuid, position });
         }
     }
@@ -139,11 +159,19 @@ pub(super) fn parse_schematic_skeleton(
         ("hierarchical_label", LabelKind::Hierarchical),
     ] {
         for block in top_level_blocks(contents, form) {
-            if let (Some(uuid), Some(position), Some(name)) = (
+            if let (Some(source_uuid), Some(position), Some(name)) = (
                 block_uuid(&block),
                 block_at_point(&block),
                 block_head_string(&block, form),
             ) {
+                let uuid = schematic_import_id(
+                    path,
+                    source_uuid,
+                    "label",
+                    "schematic_label",
+                    import_map,
+                    import_identities.as_deref_mut(),
+                );
                 labels.insert(
                     uuid,
                     NetLabel {
@@ -159,7 +187,15 @@ pub(super) fn parse_schematic_skeleton(
 
     let mut parsed_buses = Vec::new();
     for block in top_level_blocks(contents, "bus") {
-        let uuid = block_uuid(&block).unwrap_or_else(Uuid::new_v4);
+        let source_uuid = block_uuid(&block).unwrap_or_else(Uuid::new_v4);
+        let uuid = schematic_import_id(
+            path,
+            source_uuid,
+            "bus",
+            "schematic_bus",
+            import_map,
+            import_identities.as_deref_mut(),
+        );
         let points = block_xy_points(&block);
         if points.len() >= 2 {
             parsed_buses.push(ParsedBusSegment { uuid, points });
@@ -192,7 +228,14 @@ pub(super) fn parse_schematic_skeleton(
             continue;
         };
         parsed_entries.push(ParsedBusEntrySkeleton {
-            uuid: block_uuid(&block).unwrap_or_else(Uuid::new_v4),
+            uuid: schematic_import_id(
+                path,
+                block_uuid(&block).unwrap_or_else(Uuid::new_v4),
+                "bus-entry",
+                "schematic_bus_entry",
+                import_map,
+                import_identities.as_deref_mut(),
+            ),
             position,
             size: block_size_point(&block).unwrap_or_else(Point::zero),
         });
@@ -216,7 +259,15 @@ pub(super) fn parse_schematic_skeleton(
 
     let mut noconnects = HashMap::new();
     for block in top_level_blocks(contents, "no_connect") {
-        if let (Some(uuid), Some(position)) = (block_uuid(&block), block_at_point(&block)) {
+        if let (Some(source_uuid), Some(position)) = (block_uuid(&block), block_at_point(&block)) {
+            let uuid = schematic_import_id(
+                path,
+                source_uuid,
+                "no-connect",
+                "schematic_no_connect",
+                import_map,
+                import_identities.as_deref_mut(),
+            );
             let (symbol, pin) =
                 pin_at_position(&symbols, position).unwrap_or((Uuid::nil(), Uuid::nil()));
             noconnects.insert(
@@ -268,8 +319,13 @@ pub(super) fn parse_schematic_skeleton(
         bus_entries,
         ports,
         noconnects,
-        texts: HashMap::new(),
-        drawings: HashMap::new(),
+        texts: parse_schematic_texts(path, contents, import_map, import_identities.as_deref_mut()),
+        drawings: parse_schematic_drawings(
+            path,
+            contents,
+            import_map,
+            import_identities.as_deref_mut(),
+        ),
     };
 
     Ok(ParsedSchematicSkeleton {
@@ -278,142 +334,11 @@ pub(super) fn parse_schematic_skeleton(
     })
 }
 
-fn attached_bus_specs<'a>(
-    bus: &ParsedBusSegment,
-    labels: impl Iterator<Item = &'a NetLabel>,
-) -> Vec<(String, Vec<String>)> {
-    let mut specs = Vec::new();
-    for label in labels {
-        if !label_touches_bus(label, bus) {
-            continue;
-        }
-        if let Some(spec) = parse_bus_label_spec(&label.name) {
-            if !specs.iter().any(|existing| existing == &spec) {
-                specs.push(spec);
-            }
-        }
-    }
-    specs.sort_by(|a, b| a.0.cmp(&b.0).then_with(|| a.1.cmp(&b.1)));
-    specs
-}
-
-fn label_touches_bus(label: &NetLabel, bus: &ParsedBusSegment) -> bool {
-    bus.points
-        .windows(2)
-        .any(|segment| point_on_segment(label.position, segment[0], segment[1]))
-}
-
-fn resolve_bus_entry_attachment(
-    entry: &ParsedBusEntrySkeleton,
-    buses: &[ParsedBusSegment],
-    wires: &HashMap<Uuid, SchematicWire>,
-) -> (Option<Uuid>, Option<Uuid>) {
-    let endpoints = [
-        entry.position,
-        Point::new(
-            entry.position.x + entry.size.x,
-            entry.position.y + entry.size.y,
-        ),
-    ];
-
-    for (wire_point, bus_point) in [(endpoints[0], endpoints[1]), (endpoints[1], endpoints[0])] {
-        let bus = unique_bus_at_point(buses, bus_point);
-        let wire = unique_wire_at_point(wires, wire_point);
-        if bus.is_some() && wire.is_some() {
-            return (bus, wire);
-        }
-    }
-
-    let bus = endpoints
-        .iter()
-        .find_map(|point| unique_bus_at_point(buses, *point));
-    let wire = endpoints
-        .iter()
-        .find_map(|point| unique_wire_at_point(wires, *point));
-    (bus, wire)
-}
-
-fn unique_bus_at_point(buses: &[ParsedBusSegment], point: Point) -> Option<Uuid> {
-    let mut matches: Vec<_> = buses
-        .iter()
-        .filter(|bus| {
-            bus.points
-                .windows(2)
-                .any(|segment| point_on_segment(point, segment[0], segment[1]))
-        })
-        .map(|bus| bus.uuid)
-        .collect();
-    matches.sort();
-    matches.dedup();
-    if matches.len() == 1 {
-        matches.first().copied()
-    } else {
-        None
-    }
-}
-
-fn unique_wire_at_point(wires: &HashMap<Uuid, SchematicWire>, point: Point) -> Option<Uuid> {
-    let mut matches: Vec<_> = wires
-        .values()
-        .filter(|wire| point_on_segment(point, wire.from, wire.to))
-        .map(|wire| wire.uuid)
-        .collect();
-    matches.sort();
-    matches.dedup();
-    if matches.len() == 1 {
-        matches.first().copied()
-    } else {
-        None
-    }
-}
-
-fn parse_bus_label_spec(name: &str) -> Option<(String, Vec<String>)> {
-    let open = name.rfind('[')?;
-    let close = name.rfind(']')?;
-    if close <= open + 1 || close != name.len() - 1 {
-        return None;
-    }
-    let base = name[..open].trim();
-    if base.is_empty() {
-        return None;
-    }
-    let body = &name[open + 1..close];
-    let (start_text, end_text) = body.split_once("..")?;
-    let start = start_text.trim().parse::<i32>().ok()?;
-    let end = end_text.trim().parse::<i32>().ok()?;
-    let step = if start <= end { 1 } else { -1 };
-    let mut members = Vec::new();
-    let mut index = start;
-    loop {
-        members.push(format!("{base}{index}"));
-        if index == end {
-            break;
-        }
-        index += step;
-    }
-    Some((base.to_string(), members))
-}
-
-fn point_on_segment(point: Point, a: Point, b: Point) -> bool {
-    if a == b {
-        return point == a;
-    }
-
-    let cross = (point.y - a.y) * (b.x - a.x) - (point.x - a.x) * (b.y - a.y);
-    if cross != 0 {
-        return false;
-    }
-
-    let min_x = a.x.min(b.x);
-    let max_x = a.x.max(b.x);
-    let min_y = a.y.min(b.y);
-    let max_y = a.y.max(b.y);
-    point.x >= min_x && point.x <= max_x && point.y >= min_y && point.y <= max_y
-}
-
 pub(super) fn parse_board_skeleton(
     path: &Path,
     contents: &str,
+    import_map: Option<&std::collections::BTreeMap<ImportKey, ImportMapEntry>>,
+    import_identities: Option<&mut Vec<KiCadBoardImportIdentity>>,
 ) -> Result<(Board, Vec<String>), EngineError> {
     let board_uuid = find_top_level_uuid(contents).unwrap_or_else(Uuid::new_v4);
     let name = path
@@ -448,6 +373,7 @@ pub(super) fn parse_board_skeleton(
     let mut warnings = Vec::new();
     let mut nets = HashMap::new();
     let mut net_lookup = HashMap::new();
+    let mut import_identities = import_identities;
     for block in top_blocks.get("net").into_iter().flatten() {
         if let Some((net_code, net_name)) = parse_net_block(&block) {
             let uuid = deterministic_kicad_board_uuid("net", &net_code.to_string());
@@ -473,7 +399,24 @@ pub(super) fn parse_board_skeleton(
     let mut packages = HashMap::new();
     let mut pads = HashMap::new();
     for block in top_blocks.get("footprint").into_iter().flatten() {
-        let uuid = block_uuid(&block).unwrap_or_else(Uuid::new_v4);
+        let source_uuid = block_uuid(&block).unwrap_or_else(Uuid::new_v4);
+        let allocation = import_map.map(|import_map| {
+            allocate_import_identity(import_map, board_footprint_import_key(path, source_uuid))
+        });
+        let package_uuid = allocation
+            .as_ref()
+            .map(|allocation| allocation.object_id)
+            .unwrap_or(source_uuid);
+        if let (Some(allocation), Some(identities)) =
+            (&allocation, import_identities.as_deref_mut())
+        {
+            identities.push(KiCadBoardImportIdentity::new(
+                "board_footprint",
+                allocation.import_key.clone(),
+                allocation.object_id,
+                source_uuid,
+            ));
+        }
         let reference =
             extract_footprint_property(&block, "Reference").unwrap_or_else(|| "?".into());
         let value = extract_footprint_property(&block, "Value").unwrap_or_default();
@@ -483,14 +426,14 @@ pub(super) fn parse_board_skeleton(
             Some(name) => resolve_layer(name)?,
             None => {
                 return Err(EngineError::Import(format!(
-                    "imported footprint {reference} ({uuid}) has no placement layer"
+                    "imported footprint {reference} ({package_uuid}) has no placement layer"
                 )));
             }
         };
         packages.insert(
-            uuid,
+            package_uuid,
             PlacedPackage {
-                uuid,
+                uuid: package_uuid,
                 part: Uuid::nil(),
                 package: Uuid::nil(),
                 reference,
@@ -502,8 +445,12 @@ pub(super) fn parse_board_skeleton(
             },
         );
         for pad in footprint_pads(
+            path,
             &block,
-            uuid,
+            source_uuid,
+            package_uuid,
+            import_map,
+            import_identities.as_deref_mut(),
             position,
             rotation,
             layer,
@@ -520,7 +467,10 @@ pub(super) fn parse_board_skeleton(
     let blocks_for = |form: &str| top_blocks.get(form).unwrap_or(&no_blocks);
 
     let tracks = parse_tracks(
+        path,
         blocks_for("segment"),
+        import_map,
+        import_identities.as_deref_mut(),
         &net_lookup,
         &mut nets,
         &layer_table,
@@ -528,7 +478,10 @@ pub(super) fn parse_board_skeleton(
     )?;
 
     let vias = parse_vias(
+        path,
         blocks_for("via"),
+        import_map,
+        import_identities.as_deref_mut(),
         &net_lookup,
         &mut nets,
         &layer_table,
@@ -536,7 +489,10 @@ pub(super) fn parse_board_skeleton(
     )?;
 
     let zones = parse_zones(
+        path,
         blocks_for("zone"),
+        import_map,
+        import_identities.as_deref_mut(),
         &net_lookup,
         &mut nets,
         &layer_table,
@@ -634,8 +590,12 @@ pub(super) fn parse_board_skeleton(
 }
 
 fn footprint_pads(
+    path: &Path,
     block: &str,
+    footprint_source_uuid: Uuid,
     package_uuid: Uuid,
+    import_map: Option<&std::collections::BTreeMap<ImportKey, ImportMapEntry>>,
+    import_identities: Option<&mut Vec<KiCadBoardImportIdentity>>,
     package_position: Point,
     package_rotation_deg: i32,
     package_layer: i32,
@@ -645,6 +605,7 @@ fn footprint_pads(
     pad_expansion_setup: &PadExpansionSetup,
 ) -> Result<Vec<PlacedPad>, EngineError> {
     let mut out = Vec::new();
+    let mut import_identities = import_identities;
     let package_flipped = is_back_copper_layer(package_layer, layer_table);
     let footprint_mask_margin_nm =
         parse_footprint_mm_value_before_pads(block, "solder_mask_margin");
@@ -663,9 +624,26 @@ fn footprint_pads(
             ))
         })?;
         let local = block_at_point_anywhere(&pad_block).unwrap_or_else(Point::zero);
-        let uuid = block_uuid(&pad_block).unwrap_or_else(|| {
-            deterministic_kicad_board_uuid("pad", &format!("{package_uuid}/{name}"))
+        let source_uuid = pad_uuid_anywhere(&pad_block).unwrap_or_else(|| {
+            deterministic_kicad_board_uuid("pad", &format!("{footprint_source_uuid}/{name}"))
         });
+        let allocation = import_map.map(|import_map| {
+            allocate_import_identity(import_map, board_pad_import_key(path, source_uuid))
+        });
+        let uuid = allocation
+            .as_ref()
+            .map(|allocation| allocation.object_id)
+            .unwrap_or(source_uuid);
+        if let (Some(allocation), Some(identities)) =
+            (&allocation, import_identities.as_deref_mut())
+        {
+            identities.push(KiCadBoardImportIdentity::new(
+                "board_pad",
+                allocation.import_key.clone(),
+                allocation.object_id,
+                source_uuid,
+            ));
+        }
         let net = block_net_ref(&pad_block)
             .map(|net_ref| resolve_board_net_ref(net_ref, net_lookup, nets));
         let shape = parse_pad_shape_anywhere(&pad_block).ok_or_else(|| {
@@ -734,6 +712,13 @@ fn footprint_pads(
         });
     }
     Ok(out)
+}
+
+fn pad_uuid_anywhere(pad_block: &str) -> Option<Uuid> {
+    let start = pad_block.find("(uuid ")?;
+    let rest = &pad_block[start..];
+    let end = rest.find(')')?;
+    parse_uuid_line(&rest[..=end])
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -1183,9 +1168,7 @@ fn all_copper_layers(layer_table: &HashMap<String, i32>) -> Vec<i32> {
 /// - `"*.Cu"`: expands to all copper layers present in the PCB layer table
 ///   (or the bounded F.Cu/B.Cu fallback when no table is available)
 /// - `"F&B.Cu"`: expands to front and back copper only
-/// - combinations with multiple copper entries: union the recognized copper
-///   layer ids and return them sorted
-///
+/// - combinations with multiple copper entries: sorted union of the recognized copper layer ids
 /// Unsupported encodings return an explicit import error rather than silently
 /// falling back to the footprint's placement layer.
 pub(super) fn resolve_pad_copper_layers(

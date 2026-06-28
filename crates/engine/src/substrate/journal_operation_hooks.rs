@@ -4,6 +4,14 @@ use super::component_instance_journal_ops::{
     apply_component_instance_shard_operation, inverse_component_instance_operation,
     maybe_stage_component_instance_operation,
 };
+use super::forward_annotation_review_journal_ops::{
+    apply_forward_annotation_review_shard_operation, inverse_forward_annotation_review_operation,
+    maybe_stage_forward_annotation_review_operation,
+};
+use super::generated_evidence_journal_ops::{
+    apply_generated_evidence_shard_operation, inverse_generated_evidence_operation,
+    maybe_stage_generated_evidence_operation,
+};
 use super::import_map_journal_ops::{
     apply_import_map_shard_operation, inverse_import_map_operation,
     maybe_stage_import_map_operation,
@@ -28,6 +36,7 @@ use super::{EngineError, Operation, OperationBatch, SourceShardKind, journal::St
 
 pub(super) fn stage_non_core_operation(
     project_root: &Path,
+    model: &super::DesignModel,
     batch: &OperationBatch,
     operation: &Operation,
     staged: &mut Vec<StagedShardWrite>,
@@ -41,7 +50,9 @@ pub(super) fn stage_non_core_operation(
     maybe_stage_pool_operation(project_root, batch, operation, staged)?;
     maybe_stage_import_map_operation(project_root, batch, operation, staged)?;
     maybe_stage_proposal_operation(project_root, batch, operation, staged)?;
-    maybe_stage_zone_fill_operation(project_root, batch, operation, staged)?;
+    maybe_stage_forward_annotation_review_operation(project_root, batch, operation, staged)?;
+    maybe_stage_zone_fill_operation(project_root, model, batch, operation, staged)?;
+    maybe_stage_generated_evidence_operation(project_root, model, batch, operation, staged)?;
     maybe_stage_component_instance_operation(project_root, batch, operation, staged)
 }
 
@@ -54,7 +65,9 @@ pub(super) fn inverse_non_core_operation(
     inverse_pool_operation(operation, inverse_operations);
     inverse_import_map_operation(operation, inverse_operations);
     inverse_proposal_operation(operation, inverse_operations);
+    inverse_forward_annotation_review_operation(operation, inverse_operations);
     inverse_zone_fill_operation(operation, inverse_operations);
+    inverse_generated_evidence_operation(operation, inverse_operations);
     inverse_component_instance_operation(operation, inverse_operations);
 }
 
@@ -83,7 +96,9 @@ pub(super) fn apply_non_core_shard_operation(
     if apply_pool_shard_operation(shard_kind, value, operation)?
         || apply_import_map_shard_operation(shard_kind, value, operation)?
         || apply_proposal_shard_operation(shard_kind, value, operation)?
+        || apply_forward_annotation_review_shard_operation(shard_kind, value, operation)?
         || apply_zone_fill_shard_operation(shard_kind, value, operation)?
+        || apply_generated_evidence_shard_operation(shard_kind, value, operation)?
         || apply_component_instance_shard_operation(shard_kind, value, operation)?
     {
         changed = true;

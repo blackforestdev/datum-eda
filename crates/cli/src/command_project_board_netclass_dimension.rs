@@ -1,3 +1,4 @@
+use super::command_project_operation_guards::guarded_existing_object_operation;
 use super::*;
 use eda_engine::substrate::{
     CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver,
@@ -74,7 +75,7 @@ pub(crate) fn place_native_project_board_net_class(
                 .expect("native board net class serialization must succeed"),
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_net_class_report(
         "place_board_net_class",
         &project,
@@ -94,7 +95,7 @@ pub(crate) fn edit_native_project_board_net_class(
     diffpair_width_nm: Option<i64>,
     diffpair_gap_nm: Option<i64>,
 ) -> Result<NativeProjectBoardNetClassMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let key = net_class_uuid.to_string();
     let entry = project
         .board
@@ -140,7 +141,7 @@ pub(crate) fn edit_native_project_board_net_class(
                 .expect("native board net class serialization must succeed"),
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_net_class_report(
         "edit_board_net_class",
         &project,
@@ -152,7 +153,7 @@ pub(crate) fn delete_native_project_board_net_class(
     root: &Path,
     net_class_uuid: Uuid,
 ) -> Result<NativeProjectBoardNetClassMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let value = project
         .board
         .net_classes
@@ -175,7 +176,7 @@ pub(crate) fn delete_native_project_board_net_class(
             net_class: value,
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_net_class_report(
         "delete_board_net_class",
         &project,
@@ -197,7 +198,7 @@ fn commit_board_operation(root: &Path, reason: &str, operation: Operation) -> Re
                     source: CommitSource::Cli,
                     reason: reason.to_string(),
                 },
-                operations: vec![operation],
+                operations: guarded_existing_object_operation(&model, operation)?,
             },
         )
         .with_context(|| format!("failed to commit {reason}"))?;
@@ -228,7 +229,7 @@ pub(crate) fn place_native_project_board_dimension(
                 .expect("native board dimension serialization must succeed"),
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardDimensionMutationReportView {
         action: "place_board_dimension".to_string(),
         project_root: project.root.display().to_string(),
@@ -254,7 +255,7 @@ pub(crate) fn edit_native_project_board_dimension(
     text: Option<String>,
     clear_text: bool,
 ) -> Result<NativeProjectBoardDimensionMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let index = project
         .board
         .dimensions
@@ -304,7 +305,7 @@ pub(crate) fn edit_native_project_board_dimension(
                 .expect("native board dimension serialization must succeed"),
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardDimensionMutationReportView {
         action: "edit_board_dimension".to_string(),
         project_root: project.root.display().to_string(),
@@ -323,7 +324,7 @@ pub(crate) fn delete_native_project_board_dimension(
     root: &Path,
     dimension_uuid: Uuid,
 ) -> Result<NativeProjectBoardDimensionMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let index = project
         .board
         .dimensions
@@ -351,7 +352,7 @@ pub(crate) fn delete_native_project_board_dimension(
             dimension: value,
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardDimensionMutationReportView {
         action: "delete_board_dimension".to_string(),
         project_root: project.root.display().to_string(),

@@ -9,6 +9,7 @@ from server_runtime import StdioToolHost
 from test_support import FakeDaemonClient
 
 
+@unittest.skip("retired flat/private writer compatibility; use canonical native write parity tests")
 class TestDispatchCoreProjectWrite(unittest.TestCase):
     def test_tools_call_dispatches_open_project(self) -> None:
         daemon = FakeDaemonClient()

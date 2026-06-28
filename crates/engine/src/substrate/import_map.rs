@@ -4,20 +4,39 @@ use std::path::{Path, PathBuf};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[cfg(test)]
-use crate::ir::serialization::to_json_deterministic;
-
-#[cfg(test)]
-use super::EngineError;
 use super::{
-    DomainObject, ImportKey, ImportMapEntry, ObjectId, ResolveDiagnostic, SourceShardDirtyState,
-    SourceShardKind, SourceShardRef, read_json_value, sha256_hex, source_shard_authority_for_kind,
+    DomainObject, ImportKey, ImportMapEntry, ObjectId, ResolveDiagnostic, SourceShardKind,
+    SourceShardRef, read_json_value, source_shard::validate_source_shard_schema_version,
+    source_shard_ref_builders::source_shard_ref_for_bytes,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ImportMapShard {
+    #[serde(default = "default_import_map_shard_schema_version")]
     pub schema_version: u64,
     pub entries: Vec<ImportMapEntry>,
+}
+
+pub const IMPORT_MAP_SHARD_SCHEMA_VERSION: u64 = 1;
+
+fn default_import_map_shard_schema_version() -> u64 {
+    IMPORT_MAP_SHARD_SCHEMA_VERSION
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ImportMapEntryStatus {
+    Active,
+    MissingInSource,
+    Replaced,
+    Split,
+    Merged,
+}
+
+impl Default for ImportMapEntryStatus {
+    fn default() -> Self {
+        Self::Active
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -48,50 +67,6 @@ pub fn allocate_import_identity(
         object_id,
         reused_existing: false,
     }
-}
-
-/// Legacy/test fixture writer for pre-journal import-map sidecars.
-///
-/// Production import-map creation must use `Operation::CreateImportMapShard`
-/// through a journaled `OperationBatch`.
-#[cfg(test)]
-pub(super) fn write_legacy_import_map_sidecar(
-    project_root: impl AsRef<Path>,
-    shard_name: &str,
-    mut entries: Vec<ImportMapEntry>,
-) -> Result<PathBuf, EngineError> {
-    validate_import_map_shard_name(shard_name)?;
-    entries.sort_by(|left, right| left.import_key.cmp(&right.import_key));
-    let shard = ImportMapShard {
-        schema_version: 1,
-        entries,
-    };
-    let directory = project_root.as_ref().join(".datum/import_map");
-    std::fs::create_dir_all(&directory)?;
-    let path = directory.join(shard_name);
-    let temp_path = directory.join(format!("{shard_name}.tmp"));
-    let json = to_json_deterministic(&shard)?;
-    std::fs::write(&temp_path, format!("{json}\n").as_bytes())?;
-    std::fs::File::open(&temp_path)?.sync_all()?;
-    std::fs::rename(&temp_path, &path)?;
-    std::fs::File::open(&directory)?.sync_all()?;
-    Ok(path)
-}
-
-#[cfg(test)]
-fn validate_import_map_shard_name(shard_name: &str) -> Result<(), EngineError> {
-    if shard_name.is_empty()
-        || shard_name.contains('/')
-        || shard_name.contains('\\')
-        || shard_name == "."
-        || shard_name == ".."
-        || !shard_name.ends_with(".json")
-    {
-        return Err(EngineError::Validation(format!(
-            "invalid import map shard name {shard_name:?}"
-        )));
-    }
-    Ok(())
 }
 
 pub(super) fn read_import_map_shards(
@@ -157,25 +132,40 @@ fn read_import_map_shard(
     let schema_version = value
         .get("schema_version")
         .and_then(serde_json::Value::as_u64);
-    let shard = SourceShardRef {
-        shard_id: Uuid::new_v5(
-            &Uuid::NAMESPACE_URL,
-            format!("datum-eda:source-shard:{relative_path}").as_bytes(),
-        ),
-        kind: SourceShardKind::ImportMap,
+    validate_source_shard_schema_version(
+        &SourceShardKind::ImportMap,
+        &relative_path,
+        schema_version,
+    )
+    .map_err(|error| ResolveDiagnostic {
+        code: "invalid_import_map".to_string(),
+        message: error.to_string(),
+        path: Some(path.clone()),
+    })?;
+    let shard = source_shard_ref_for_bytes(
+        SourceShardKind::ImportMap,
         path,
         relative_path,
-        authority: source_shard_authority_for_kind(&SourceShardKind::ImportMap),
-        dirty_state: SourceShardDirtyState::Clean,
         schema_version,
-        content_hash: sha256_hex(&bytes),
-    };
+        &bytes,
+        "invalid_import_map",
+    )?;
     let import_shard =
         serde_json::from_value::<ImportMapShard>(value).map_err(|error| ResolveDiagnostic {
             code: "invalid_import_map".to_string(),
             message: error.to_string(),
             path: Some(shard.path.clone()),
         })?;
+    if import_shard.schema_version != IMPORT_MAP_SHARD_SCHEMA_VERSION {
+        return Err(ResolveDiagnostic {
+            code: "invalid_import_map".to_string(),
+            message: format!(
+                "unsupported ImportMapShard schema_version {}",
+                import_shard.schema_version
+            ),
+            path: Some(shard.path.clone()),
+        });
+    }
     Ok((shard, import_shard))
 }
 

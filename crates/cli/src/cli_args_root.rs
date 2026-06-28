@@ -54,6 +54,8 @@ mod cli_args_project_proposals;
 mod cli_args_project_query_plan;
 #[path = "cli_args_project_waivers.rs"]
 mod cli_args_project_waivers;
+#[path = "cli_args_proposal_library.rs"]
+mod cli_args_proposal_library;
 #[path = "cli_args_proposals.rs"]
 mod cli_args_proposals;
 #[path = "cli_args_surface.rs"]

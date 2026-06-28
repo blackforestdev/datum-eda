@@ -1,7 +1,7 @@
 use super::*;
 
 #[test]
-fn resolver_derives_single_component_instance_for_exact_symbol_package_match() {
+fn resolver_does_not_derive_component_instance_for_exact_symbol_package_match() {
     let root = temp_project_root("component_instance_exact_match");
     let project_id = Uuid::new_v4();
     let board_id = Uuid::new_v4();
@@ -15,14 +15,7 @@ fn resolver_derives_single_component_instance_for_exact_symbol_package_match() {
     let model = ProjectResolver::new(&root)
         .resolve()
         .expect("project resolves");
-    assert_eq!(model.component_instances.len(), 1);
-    let instance = model
-        .component_instances
-        .values()
-        .next()
-        .expect("component instance should exist");
-    assert_eq!(instance.placed_symbol_refs, vec![symbol_id]);
-    assert_eq!(instance.placed_package_refs, vec![package_id]);
+    assert!(model.component_instances.is_empty());
     assert!(
         !model
             .diagnostics
@@ -188,6 +181,7 @@ fn resolver_prefers_persisted_component_instance_over_ambiguous_reference_join()
         .get(&component_instance_id)
         .expect("persisted component instance should resolve");
     assert_eq!(instance.object_revision, ObjectRevision(1));
+    assert_eq!(instance.authority, ComponentInstanceAuthority::Authored);
     assert_eq!(instance.placed_symbol_refs, vec![symbol_id]);
     assert_eq!(instance.placed_package_refs, vec![package_id]);
     assert!(model.source_shards.iter().any(|shard| {
@@ -286,6 +280,83 @@ fn persisted_component_instance_participates_in_model_revision() {
         persisted
             .component_instances
             .contains_key(&component_instance_id)
+    );
+}
+
+#[test]
+fn journaled_component_instance_rejects_duplicate_or_wrong_kind_refs() {
+    let root = temp_project_root("component_instance_invalid_refs");
+    let project_id = Uuid::new_v4();
+    let board_id = Uuid::new_v4();
+    let symbol_id = Uuid::new_v4();
+    let package_id = Uuid::new_v4();
+    let part_id = Uuid::new_v4();
+    write_project_with_symbol_and_package(
+        &root, project_id, board_id, symbol_id, package_id, part_id,
+    );
+    let mut model = ProjectResolver::new(&root)
+        .resolve()
+        .expect("project resolves");
+    let component_instance_id = Uuid::new_v4();
+    let duplicate_symbol_payload = serde_json::json!({
+        "uuid": component_instance_id,
+        "object_revision": 0,
+        "placed_symbol_refs": [
+            { "object_id": symbol_id, "object_revision": 0 },
+            { "object_id": symbol_id, "object_revision": 0 }
+        ],
+        "placed_package_refs": [{ "object_id": package_id, "object_revision": 0 }]
+    });
+    let duplicate_result = model.commit_journaled(
+        &root,
+        OperationBatch {
+            batch_id: Uuid::new_v5(&project_id, b"duplicate-component-instance-ref"),
+            expected_model_revision: Some(model.model_revision.clone()),
+            provenance: CommitProvenance {
+                actor: "unit-test".to_string(),
+                source: CommitSource::Test,
+                reason: "reject duplicate component instance refs".to_string(),
+            },
+            operations: vec![Operation::CreateComponentInstance {
+                component_instance_id,
+                component_instance: duplicate_symbol_payload,
+            }],
+        },
+    );
+    assert!(
+        duplicate_result
+            .expect_err("duplicate ref should be rejected")
+            .to_string()
+            .contains("duplicate symbol ref")
+    );
+
+    let wrong_kind_payload = serde_json::json!({
+        "uuid": component_instance_id,
+        "object_revision": 0,
+        "placed_symbol_refs": [{ "object_id": package_id, "object_revision": 0 }],
+        "placed_package_refs": [{ "object_id": symbol_id, "object_revision": 0 }]
+    });
+    let wrong_kind_result = model.commit_journaled(
+        &root,
+        OperationBatch {
+            batch_id: Uuid::new_v5(&project_id, b"wrong-kind-component-instance-ref"),
+            expected_model_revision: Some(model.model_revision.clone()),
+            provenance: CommitProvenance {
+                actor: "unit-test".to_string(),
+                source: CommitSource::Test,
+                reason: "reject wrong-kind component instance refs".to_string(),
+            },
+            operations: vec![Operation::CreateComponentInstance {
+                component_instance_id,
+                component_instance: wrong_kind_payload,
+            }],
+        },
+    );
+    assert!(
+        wrong_kind_result
+            .expect_err("wrong-kind ref should be rejected")
+            .to_string()
+            .contains("must target schematic domain")
     );
 }
 
@@ -497,6 +568,7 @@ fn journaled_component_instance_create_set_delete_undo_redo_and_replay() {
         shard.kind == SourceShardKind::ComponentInstance
             && shard.relative_path
                 == format!(".datum/component_instances/{component_instance_id}.json")
+            && shard.dirty_state == SourceShardDirtyState::Missing
     }));
 }
 

@@ -57,6 +57,159 @@ class TestDispatchProposals(unittest.TestCase):
         self.assertEqual(payload["contract"], "proposal_create_v1")
         self.assertEqual(payload["action"], "propose_place_symbol")
 
+    def test_tools_call_dispatches_create_board_component_replacement_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 218, "method": "tools/call", "params": {"name": "create_board_component_replacement_proposal", "arguments": {"path": "/tmp/native-project", "component": "component-uuid", "package": "package-uuid", "part": "part-uuid", "value": "10k", "proposal": "proposal-replace", "rationale": "review replacement"}}}
+        )
+        self.assertEqual(daemon.calls, [("create_board_component_replacement_proposal", "/tmp/native-project", "component-uuid", "package-uuid", "part-uuid", "10k", "proposal-replace", "review replacement")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "propose_board_component_replacement")
+
+    def test_tools_call_dispatches_create_board_component_replacements_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        replacements = [
+            {"component": "component-u1", "package": "package-u1", "part": "part-u1", "value": "10k"},
+            {"component": "component-u2", "part": "part-u2", "value": "22k"},
+        ]
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 220, "method": "tools/call", "params": {"name": "create_board_component_replacements_proposal", "arguments": {"path": "/tmp/native-project", "replacements": replacements, "proposal": "proposal-replacements", "rationale": "review replacements"}}}
+        )
+        self.assertEqual(daemon.calls, [("create_board_component_replacements_proposal", "/tmp/native-project", replacements, "proposal-replacements", "review replacements")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "propose_board_component_replacement")
+        self.assertEqual(payload["replacement_count"], 2)
+
+    def test_tools_call_dispatches_create_board_component_replacement_plan_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        selections = [
+            {"uuid": "component-u1", "package_uuid": "package-u1", "part_uuid": "part-u1", "value": "10k"},
+            {"uuid": "component-u2", "part_uuid": "part-u2"},
+        ]
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 222, "method": "tools/call", "params": {"name": "create_board_component_replacement_plan_proposal", "arguments": {"path": "/tmp/native-project", "selections": selections, "proposal": "proposal-plan", "rationale": "review plan"}}}
+        )
+        self.assertEqual(daemon.calls, [("create_board_component_replacement_plan_proposal", "/tmp/native-project", selections, "proposal-plan", "review plan")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "propose_board_component_replacement")
+        self.assertEqual(payload["selection_count"], 2)
+
+    def test_tools_call_dispatches_create_pool_library_object_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 224, "method": "tools/call", "params": {"name": "datum.proposal.create_pool_library_object", "arguments": {"path": "/tmp/native-project", "kind": "symbols", "object": "symbol-uuid", "from_json": "/tmp/symbol.json", "pool": "pool", "proposal": "proposal-library", "rationale": "review library object"}}}
+        )
+        self.assertEqual(daemon.calls, [("create_pool_library_object_proposal", "/tmp/native-project", "symbols", "symbol-uuid", "/tmp/symbol.json", "pool", "proposal-library", "review library object")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "create_pool_library_object_proposal")
+        self.assertEqual(payload["object_uuid"], "symbol-uuid")
+
+    def test_tools_call_dispatches_create_pool_unit_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 225, "method": "tools/call", "params": {"name": "datum.proposal.create_pool_unit", "arguments": {"path": "/tmp/native-project", "unit": "unit-uuid", "name": "OpAmpUnit", "manufacturer": "Datum Semi", "pool": "pool", "proposal": "proposal-unit", "rationale": "review unit"}}}
+        )
+        self.assertEqual(daemon.calls, [("create_pool_unit_proposal", "/tmp/native-project", "unit-uuid", "OpAmpUnit", "Datum Semi", "pool", "proposal-unit", "review unit")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "create_pool_unit_proposal")
+        self.assertEqual(payload["unit_uuid"], "unit-uuid")
+
+    def test_tools_call_dispatches_create_pool_symbol_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 226, "method": "tools/call", "params": {"name": "datum.proposal.create_pool_symbol", "arguments": {"path": "/tmp/native-project", "symbol": "symbol-uuid", "unit": "unit-uuid", "name": "OpAmpSymbol", "pool": "pool", "proposal": "proposal-symbol", "rationale": "review symbol"}}}
+        )
+        self.assertEqual(daemon.calls, [("create_pool_symbol_proposal", "/tmp/native-project", "symbol-uuid", "unit-uuid", "OpAmpSymbol", "pool", "proposal-symbol", "review symbol")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "create_pool_symbol_proposal")
+        self.assertEqual(payload["symbol_uuid"], "symbol-uuid")
+        self.assertEqual(payload["unit_uuid"], "unit-uuid")
+
+    def test_tools_call_dispatches_create_pool_entity_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 227, "method": "tools/call", "params": {"name": "datum.proposal.create_pool_entity", "arguments": {"path": "/tmp/native-project", "entity": "entity-uuid", "gate": "gate-uuid", "unit": "unit-uuid", "symbol": "symbol-uuid", "name": "OpAmp", "prefix": "U", "manufacturer": "Datum Semi", "gate_name": "A", "pool": "pool", "proposal": "proposal-entity", "rationale": "review entity"}}}
+        )
+        self.assertEqual(daemon.calls, [("create_pool_entity_proposal", "/tmp/native-project", "entity-uuid", "gate-uuid", "unit-uuid", "symbol-uuid", "OpAmp", "U", "Datum Semi", "A", "pool", "proposal-entity", "review entity")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "create_pool_entity_proposal")
+        self.assertEqual(payload["entity_uuid"], "entity-uuid")
+        self.assertEqual(payload["symbol_uuid"], "symbol-uuid")
+
+    def test_tools_call_dispatches_create_pool_padstack_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 228, "method": "tools/call", "params": {"name": "datum.proposal.create_pool_padstack", "arguments": {"path": "/tmp/native-project", "padstack": "padstack-uuid", "name": "RoundViaPad", "aperture": "circle", "diameter_nm": 1200000, "drill_nm": 600000, "pool": "pool", "proposal": "proposal-padstack", "rationale": "review padstack"}}}
+        )
+        self.assertEqual(daemon.calls, [("create_pool_padstack_proposal", "/tmp/native-project", "padstack-uuid", "RoundViaPad", "circle", 1200000, None, None, 600000, "pool", "proposal-padstack", "review padstack")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "create_pool_padstack_proposal")
+        self.assertEqual(payload["padstack_uuid"], "padstack-uuid")
+
+    def test_tools_call_dispatches_create_pool_package_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 229, "method": "tools/call", "params": {"name": "datum.proposal.create_pool_package", "arguments": {"path": "/tmp/native-project", "package": "package-uuid", "name": "SOT23", "pad": "pad-uuid", "padstack": "padstack-uuid", "pad_name": "1", "x_nm": 1000, "y_nm": 2000, "layer": 1, "pool": "pool", "proposal": "proposal-package", "rationale": "review package"}}}
+        )
+        self.assertEqual(daemon.calls, [("create_pool_package_proposal", "/tmp/native-project", "package-uuid", "SOT23", "pad-uuid", "padstack-uuid", "1", 1000, 2000, 1, "pool", "proposal-package", "review package")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "create_pool_package_proposal")
+        self.assertEqual(payload["package_uuid"], "package-uuid")
+
+    def test_tools_call_dispatches_set_pool_package_pad_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 230, "method": "tools/call", "params": {"name": "datum.proposal.set_pool_package_pad", "arguments": {"path": "/tmp/native-project", "package": "package-uuid", "pad": "pad-uuid", "padstack": "padstack-uuid", "pad_name": "2", "x_nm": 3000, "y_nm": 4000, "layer": 1, "pool": "pool", "proposal": "proposal-package-pad", "rationale": "review package pad"}}}
+        )
+        self.assertEqual(daemon.calls, [("set_pool_package_pad_proposal", "/tmp/native-project", "package-uuid", "pad-uuid", "padstack-uuid", "2", 3000, 4000, 1, "pool", "proposal-package-pad", "review package pad")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "set_pool_package_pad_proposal")
+        self.assertEqual(payload["package_uuid"], "package-uuid")
+
+    def test_tools_call_dispatches_set_pool_package_courtyard_rect_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 231, "method": "tools/call", "params": {"name": "datum.proposal.set_pool_package_courtyard_rect", "arguments": {"path": "/tmp/native-project", "package": "package-uuid", "min_x_nm": 1000, "min_y_nm": 2000, "max_x_nm": 3000, "max_y_nm": 4000, "pool": "pool", "proposal": "proposal-courtyard-rect", "rationale": "review courtyard"}}}
+        )
+        self.assertEqual(daemon.calls, [("set_pool_package_courtyard_rect_proposal", "/tmp/native-project", "package-uuid", 1000, 2000, 3000, 4000, "pool", "proposal-courtyard-rect", "review courtyard")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "set_pool_package_courtyard_rect_proposal")
+        self.assertEqual(payload["package_uuid"], "package-uuid")
+
+    def test_tools_call_dispatches_set_pool_package_courtyard_polygon_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 232, "method": "tools/call", "params": {"name": "datum.proposal.set_pool_package_courtyard_polygon", "arguments": {"path": "/tmp/native-project", "package": "package-uuid", "vertices": "0,0;1000,0;1000,2000;0,2000", "pool": "pool", "proposal": "proposal-courtyard-poly", "rationale": "review courtyard"}}}
+        )
+        self.assertEqual(daemon.calls, [("set_pool_package_courtyard_polygon_proposal", "/tmp/native-project", "package-uuid", "0,0;1000,0;1000,2000;0,2000", "pool", "proposal-courtyard-poly", "review courtyard")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "set_pool_package_courtyard_polygon_proposal")
+        self.assertEqual(payload["package_uuid"], "package-uuid")
+
     def test_tools_call_dispatches_datum_alias_for_place_symbol_proposal(self) -> None:
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)
@@ -65,6 +218,35 @@ class TestDispatchProposals(unittest.TestCase):
         )
         self.assertEqual(daemon.calls, [("create_place_symbol_proposal", "/tmp/native-project", "sheet-uuid", "U2", "BUF", 300, 400, None, None, None, "proposal-symbol-test", None)])
         self.assertEqual(response["result"]["content"][0]["json"]["action"], "propose_place_symbol")
+
+    def test_tools_call_dispatches_datum_alias_for_board_component_replacement_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 219, "method": "tools/call", "params": {"name": "datum.proposal.create_board_component_replacement", "arguments": {"path": "/tmp/native-project", "component": "component-uuid", "value": "22k"}}}
+        )
+        self.assertEqual(daemon.calls, [("create_board_component_replacement_proposal", "/tmp/native-project", "component-uuid", None, None, "22k", "proposal-component-replacement-test", None)])
+        self.assertEqual(response["result"]["content"][0]["json"]["action"], "propose_board_component_replacement")
+
+    def test_tools_call_dispatches_datum_alias_for_board_component_replacements_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        replacements = [{"component": "component-u1", "value": "22k"}]
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 221, "method": "tools/call", "params": {"name": "datum.proposal.create_board_component_replacements", "arguments": {"path": "/tmp/native-project", "replacements": replacements}}}
+        )
+        self.assertEqual(daemon.calls, [("create_board_component_replacements_proposal", "/tmp/native-project", replacements, "proposal-component-replacements-test", None)])
+        self.assertEqual(response["result"]["content"][0]["json"]["action"], "propose_board_component_replacement")
+
+    def test_tools_call_dispatches_datum_alias_for_board_component_replacement_plan_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        selections = [{"uuid": "component-u1", "part_uuid": "part-u1"}]
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 223, "method": "tools/call", "params": {"name": "datum.proposal.create_board_component_replacement_plan", "arguments": {"path": "/tmp/native-project", "selections": selections}}}
+        )
+        self.assertEqual(daemon.calls, [("create_board_component_replacement_plan_proposal", "/tmp/native-project", selections, "proposal-component-replacement-plan-test", None)])
+        self.assertEqual(response["result"]["content"][0]["json"]["action"], "propose_board_component_replacement")
 
     def test_tools_call_dispatches_get_proposals(self) -> None:
         daemon = FakeDaemonClient()

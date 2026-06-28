@@ -54,6 +54,7 @@ fn production_handoff_catalog_uses_canonical_aliases_and_stable_templates() {
             "datum.proposal.update_output_job",
             "datum.proposal.update_panel_projection",
             "datum.proposal.validate",
+            "datum.query.source_shards",
         ]
     );
 
@@ -129,6 +130,18 @@ fn production_handoff_catalog_uses_canonical_aliases_and_stable_templates() {
             .get("datum.artifact.list")
             .expect("artifact list handoff command"),
         &["datum-eda", "artifact", "list", "{project_root}"],
+    );
+    assert_catalog_entry(
+        catalog
+            .get("datum.query.source_shards")
+            .expect("source-shards handoff command"),
+        &[
+            "datum-eda",
+            "project",
+            "query",
+            "{project_root}",
+            "resolve-debug",
+        ],
     );
     assert_catalog_entry(
         catalog

@@ -6,7 +6,7 @@ impl Runtime {
     pub(super) fn open_terminal_agent_launcher(&mut self) -> bool {
         self.set_active_dock(DockTab::Terminal);
         if let Err(err) = record_manual_terminal_command_handoff(
-            &self.terminal,
+            self.terminal_sessions.active(),
             "terminal_agent_launcher",
             "datum.gui.agent_launcher.prefill",
             "prefill",

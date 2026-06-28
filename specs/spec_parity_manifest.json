@@ -43,6 +43,18 @@
       "kind": "engine_api_pub_fns",
       "source": "crates/engine/src/api/**/*.rs (excluding tests)",
       "owner_spec": "specs/ENGINE_SPEC.md"
+    },
+    {
+      "id": "standards_check_surface",
+      "kind": "standards_check_surface",
+      "source": "CheckFinding identity fields + standards repair/check CLI/MCP markers",
+      "owner_spec": "specs/CHECKING_ARCHITECTURE_SPEC.md"
+    },
+    {
+      "id": "pool_library_surface",
+      "kind": "pool_library_surface",
+      "source": "pool/library Operation variants + ProjectCommands variants + datum.library.* tools",
+      "owner_spec": "docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md"
     }
   ]
 }

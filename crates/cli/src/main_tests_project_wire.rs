@@ -128,6 +128,23 @@ fn project_draw_and_delete_wire_update_native_query_surface() {
     )
     .expect("stale sheet should write");
 
+    let wires_query_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "wires",
+    ])
+    .expect("CLI should parse");
+    let stale_wires_output =
+        execute(wires_query_cli).expect("project query wires should resolve stale sheet");
+    let stale_wires: serde_json::Value =
+        serde_json::from_str(&stale_wires_output).expect("wires JSON should parse");
+    assert_eq!(stale_wires.as_array().unwrap().len(), 1);
+    assert_eq!(stale_wires[0]["uuid"], wire_uuid);
+
     let delete_cli = Cli::try_parse_from([
         "eda",
         "project",

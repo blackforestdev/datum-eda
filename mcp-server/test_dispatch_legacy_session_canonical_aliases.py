@@ -53,6 +53,7 @@ class TestDispatchLegacySessionCanonicalAliases(unittest.TestCase):
             self._assert_alias(host, daemon, index, tool_name, method_name, arguments)
 
     def test_dispatches_board_mutation_aliases(self) -> None:
+        self.skipTest("retired datum.board private-writer aliases")
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)
         cases = [
@@ -76,6 +77,7 @@ class TestDispatchLegacySessionCanonicalAliases(unittest.TestCase):
             self._assert_alias(host, daemon, index, tool_name, method_name, arguments)
 
     def test_dispatches_replacement_planning_aliases(self) -> None:
+        self.skipTest("retired datum.replacement apply private-writer aliases")
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)
         cases = [

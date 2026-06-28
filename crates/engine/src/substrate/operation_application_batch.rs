@@ -14,6 +14,7 @@ pub(super) fn apply_operations(
     propagate_variant_population_to_component_instances(
         &mut model.variant_populations,
         &model.component_instances,
+        &mut model.diagnostics,
     );
     Ok(())
 }

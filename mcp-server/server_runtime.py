@@ -1,21 +1,19 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 from dataclasses import dataclass
-import json
-import os
-import shlex
-import socket
-import subprocess
+import json, os, shlex, socket, subprocess
 from typing import Any
+from library_authoring_methods import cli_run_kwargs_for_method
 from stdio_tool_host import StdioToolHost
-def _append_optional(args: list[str], flag: str, value: Any | None) -> None:
-    if value is not None: args.extend([f"--{flag}", str(value)])
+def _append_optional(args: list[str], flag: str, value: Any | None) -> None: args.extend([f"--{flag}", str(value)]) if value is not None else None
 def _append_optional_bool(args: list[str], flag: str, value: bool | None) -> None: _append_optional(args, flag, str(value).lower() if value is not None else None)
+def _component_instance_symbols(symbol: str | None, symbols: list[str] | None) -> list[str]: result = [str(value) for value in symbols] if symbols is not None else ([] if symbol is None else [symbol]); return result if result else (_ for _ in ()).throw(ValueError("symbol or symbols is required"))
+def _component_role_spec(object_id: str, value: Any) -> str: role, label = (value.get("role"), value.get("label")) if isinstance(value, dict) else (value, None); return f"{object_id}={role}:{label}" if label is not None else f"{object_id}={role}"
+def _append_component_role_args(args: list[str], flag: str, roles: Any | None) -> None: [args.extend([f"--{flag}", _component_role_spec(str(object_id), value)]) for object_id, value in roles.items()] if isinstance(roles, dict) else [args.extend([f"--{flag}", str(value)]) for value in ([] if roles is None else roles)]
 @dataclass(frozen=True)
 class JsonRpcRequest:
     jsonrpc: str; id: int; method: str; params: dict[str, Any]
-    def to_json(self) -> str:
-        return json.dumps({"jsonrpc": self.jsonrpc, "id": self.id, "method": self.method, "params": self.params})
+    def to_json(self) -> str: return json.dumps({"jsonrpc": self.jsonrpc, "id": self.id, "method": self.method, "params": self.params})
 @dataclass(frozen=True)
 class JsonRpcError: code: int; message: str
 @dataclass(frozen=True)
@@ -45,7 +43,7 @@ class EngineDaemonClient:
     def _run_cli_json(self, request: JsonRpcRequest, cli_args: list[str]) -> JsonRpcResponse:
         return self._run_cli_json_allowing_statuses(request, cli_args, {0})
     def _run_cli_json_allowing_statuses(self, request: JsonRpcRequest, cli_args: list[str], allowed_statuses: set[int]) -> JsonRpcResponse:
-        completed = subprocess.run([*self._cli_prefix(), "--format", "json", *cli_args], capture_output=True, text=True, check=False)
+        completed = subprocess.run([*self._cli_prefix(), "--format", "json", *cli_args], **cli_run_kwargs_for_method(request.method))
         if completed.returncode not in allowed_statuses:
             detail = completed.stderr.strip() or completed.stdout.strip() or "unknown CLI failure"
             raise RuntimeError(detail)
@@ -290,8 +288,8 @@ class EngineDaemonClient:
     def validate_artifact(self, path: str, artifact: str) -> JsonRpcResponse: return self._run_cli_json_allowing_statuses(self.build_request("validate_artifact", {"path": path, "artifact": artifact}), ["artifact", "validate", path, "--artifact", artifact], {0, 1})
     def get_output_jobs(self, path: str) -> JsonRpcResponse: return self._run_cli_json(self.build_request("get_output_jobs", {"path": path}), ["query", "output-jobs", path])
     def get_component_instances(self, path: str) -> JsonRpcResponse: return self._run_cli_json(self.build_request("get_component_instances", {"path": path}), ["query", "component-instances", path])
-    def bind_component_instance(self, path: str, symbol: str, package: str, component_instance: str | None = None) -> JsonRpcResponse: args = ["project", "bind-component-instance", path, "--symbol", symbol, "--package", package]; _append_optional(args, "component-instance", component_instance); return self._run_cli_json(self.build_request("bind_component_instance", {"path": path, "symbol": symbol, "package": package, "component_instance": component_instance}), args)
-    def set_component_instance(self, path: str, component_instance: str, symbol: str, package: str) -> JsonRpcResponse: return self._run_cli_json(self.build_request("set_component_instance", {"path": path, "component_instance": component_instance, "symbol": symbol, "package": package}), ["project", "set-component-instance", path, "--component-instance", component_instance, "--symbol", symbol, "--package", package])
+    def bind_component_instance(self, path: str, symbol: str | None, package: str, component_instance: str | None = None, symbols: list[str] | None = None, part: str | None = None, symbol_roles: Any | None = None, package_roles: Any | None = None) -> JsonRpcResponse: args = ["project", "bind-component-instance", path]; [args.extend(["--symbol", value]) for value in _component_instance_symbols(symbol, symbols)]; args.extend(["--package", package]); _append_optional(args, "part", part); _append_component_role_args(args, "symbol-role", symbol_roles); _append_component_role_args(args, "package-role", package_roles); _append_optional(args, "component-instance", component_instance); return self._run_cli_json(self.build_request("bind_component_instance", {"path": path, "symbol": symbol, "symbols": symbols, "package": package, "part": part, "symbol_roles": symbol_roles, "package_roles": package_roles, "component_instance": component_instance}), args)
+    def set_component_instance(self, path: str, component_instance: str, symbol: str | None, package: str, symbols: list[str] | None = None, part: str | None = None, symbol_roles: Any | None = None, package_roles: Any | None = None) -> JsonRpcResponse: args = ["project", "set-component-instance", path, "--component-instance", component_instance]; [args.extend(["--symbol", value]) for value in _component_instance_symbols(symbol, symbols)]; args.extend(["--package", package]); _append_optional(args, "part", part); _append_component_role_args(args, "symbol-role", symbol_roles); _append_component_role_args(args, "package-role", package_roles); return self._run_cli_json(self.build_request("set_component_instance", {"path": path, "component_instance": component_instance, "symbol": symbol, "symbols": symbols, "package": package, "part": part, "symbol_roles": symbol_roles, "package_roles": package_roles}), args)
     def delete_component_instance(self, path: str, component_instance: str) -> JsonRpcResponse: return self._run_cli_json(self.build_request("delete_component_instance", {"path": path, "component_instance": component_instance}), ["project", "delete-component-instance", path, "--component-instance", component_instance])
     def get_pool_library_objects(self, path: str, pool: str | None = None, kind: str | None = None, object: str | None = None, include_payload: bool | None = None) -> JsonRpcResponse: args = ["project", "query", path, "pool-library-objects"]; _append_optional(args, "pool", pool); _append_optional(args, "kind", kind); _append_optional(args, "object", object); args.extend(["--include-payload"] if include_payload else []); return self._run_cli_json(self.build_request("get_pool_library_objects", {"path": path, "pool": pool, "kind": kind, "object": object, "include_payload": include_payload}), args)
     def show_pool_library_object(self, path: str, object: str, pool: str | None = None, kind: str | None = None) -> JsonRpcResponse: args = ["project", "query", path, "pool-library-objects", "--object", object, "--include-payload"]; _append_optional(args, "pool", pool); _append_optional(args, "kind", kind); return self._run_cli_json(self.build_request("show_pool_library_object", {"path": path, "object": object, "pool": pool, "kind": kind}), args)
@@ -372,6 +370,7 @@ class EngineDaemonClient:
     def get_relationships(self, path: str) -> JsonRpcResponse: return self._run_cli_json(self.build_request("get_relationships", {"path": path}), ["query", "relationships", path])
     def get_variants(self, path: str) -> JsonRpcResponse: return self._run_cli_json(self.build_request("get_variants", {"path": path}), ["query", "variants", path])
     def get_import_map(self, path: str) -> JsonRpcResponse: return self._run_cli_json(self.build_request("get_import_map", {"path": path}), ["query", "import-map", path])
+    def get_source_shards(self, path: str) -> JsonRpcResponse: return self._run_cli_json(self.build_request("get_source_shards", {"path": path}), ["project", "query", path, "resolve-debug"])
     def create_proposal(self, path: str, batch: str, rationale: str, proposal: str | None = None, source: str | None = None, checks_run: list[str] | None = None, finding_fingerprints: list[str] | None = None) -> JsonRpcResponse:
         args = ["proposal", "create", path, "--batch", batch, "--rationale", rationale]
         if proposal: args.extend(["--proposal", proposal])
@@ -803,89 +802,12 @@ DAEMON_CLIENT_METHOD_SPECS: list[dict[str, Any]] = [
     {"name": "open_project", "params": [("path", _REQUIRED)]},
     {"name": "close_project", "params": []},
     {"name": "save", "params": [("path", None)]},
-    {"name": "delete_track", "params": [("uuid", _REQUIRED)]},
-    {"name": "delete_via", "params": [("uuid", _REQUIRED)]},
-    {"name": "delete_component", "params": [("uuid", _REQUIRED)]},
-    {
-        "name": "move_component",
-        "params": [
-            ("uuid", _REQUIRED),
-            ("x_mm", _REQUIRED),
-            ("y_mm", _REQUIRED),
-            ("rotation_deg", None),
-        ],
-    },
-    {
-        "name": "rotate_component",
-        "params": [("uuid", _REQUIRED), ("rotation_deg", _REQUIRED)],
-        "fixed": {"x_mm": 0.0, "y_mm": 0.0},
-    },
-    {"name": "flip_component", "params": [("uuid", _REQUIRED), ("layer", _REQUIRED)]},
-    {"name": "set_value", "params": [("uuid", _REQUIRED), ("value", _REQUIRED)]},
-    {"name": "assign_part", "params": [("uuid", _REQUIRED), ("part_uuid", _REQUIRED)]},
-    {
-        "name": "set_package",
-        "params": [("uuid", _REQUIRED), ("package_uuid", _REQUIRED)],
-    },
-    {
-        "name": "set_package_with_part",
-        "params": [
-            ("uuid", _REQUIRED),
-            ("package_uuid", _REQUIRED),
-            ("part_uuid", _REQUIRED),
-        ],
-    },
-    {
-        "name": "replace_component",
-        "params": [
-            ("uuid", _REQUIRED),
-            ("package_uuid", _REQUIRED),
-            ("part_uuid", _REQUIRED),
-        ],
-    },
-    {"name": "replace_components", "params": [("replacements", _REQUIRED)]},
-    {
-        "name": "apply_component_replacement_plan",
-        "params": [("replacements", _REQUIRED)],
-    },
-    {
-        "name": "apply_component_replacement_policy",
-        "params": [("replacements", _REQUIRED)],
-    },
-    {
-        "name": "apply_scoped_component_replacement_policy",
-        "params": [("scope", _REQUIRED), ("policy", _REQUIRED)],
-    },
-    {
-        "name": "apply_scoped_component_replacement_plan",
-        "params": [("plan", _REQUIRED)],
-    },
-    {
-        "name": "set_net_class",
-        "params": [
-            ("net_uuid", _REQUIRED),
-            ("class_name", _REQUIRED),
-            ("clearance", _REQUIRED),
-            ("track_width", _REQUIRED),
-            ("via_drill", _REQUIRED),
-            ("via_diameter", _REQUIRED),
-            ("diffpair_width", 0),
-            ("diffpair_gap", 0),
-        ],
-    },
+    {"name": "create_board_component_replacement_proposal", "params": [("path", _REQUIRED), ("component", _REQUIRED), ("package", None), ("part", None), ("value", None), ("proposal", None), ("rationale", None)]},
+    {"name": "create_board_component_replacements_proposal", "params": [("path", _REQUIRED), ("replacements", _REQUIRED), ("proposal", None), ("rationale", None)]},
+    {"name": "create_board_component_replacement_plan_proposal", "params": [("path", _REQUIRED), ("selections", _REQUIRED), ("proposal", None), ("rationale", None)]},
     {
         "name": "set_reference",
         "params": [("uuid", _REQUIRED), ("reference", _REQUIRED)],
-    },
-    {
-        "name": "set_design_rule",
-        "params": [
-            ("rule_type", _REQUIRED),
-            ("scope", _REQUIRED),
-            ("parameters", _REQUIRED),
-            ("priority", _REQUIRED),
-            ("name", None),
-        ],
     },
     {"name": "undo", "params": []},
     {"name": "redo", "params": []},
@@ -895,10 +817,7 @@ DAEMON_CLIENT_METHOD_SPECS: list[dict[str, Any]] = [
     {"name": "get_package_change_candidates", "params": [("uuid", _REQUIRED)]},
     {"name": "get_part_change_candidates", "params": [("uuid", _REQUIRED)]},
     {"name": "get_component_replacement_plan", "params": [("uuid", _REQUIRED)]},
-    {
-        "name": "get_scoped_component_replacement_plan",
-        "params": [("scope", _REQUIRED), ("policy", _REQUIRED)],
-    },
+    {"name": "get_scoped_component_replacement_plan", "params": [("scope", _REQUIRED), ("policy", _REQUIRED)]},
     {
         "name": "edit_scoped_component_replacement_plan",
         "params": [
@@ -930,7 +849,8 @@ DAEMON_CLIENT_METHOD_SPECS: list[dict[str, Any]] = [
     {"name": "run_drc", "params": [("rules", None)], "omit_none": True},
     {
         "name": "explain_violation",
-        "params": [("domain", _REQUIRED), ("index", _REQUIRED)],
+        "params": [("domain", _REQUIRED), ("index", None), ("fingerprint", None)],
+        "omit_none": True,
     },
 ]
 def _build_client_params(

@@ -7,7 +7,9 @@ use serde::Serialize;
 use sha2::{Digest, Sha256};
 use uuid::Uuid;
 
-use super::{LoadedNativeProject, NativeProjectInspectPoolRefView, load_native_project};
+use super::{
+    LoadedNativeProject, NativeProjectInspectPoolRefView, load_native_project_with_resolved_board,
+};
 
 pub(super) fn collect_native_project_pool_ref_views(
     project: &LoadedNativeProject,
@@ -32,7 +34,7 @@ pub(super) fn collect_native_project_pool_ref_views(
 pub(crate) fn query_native_project_pools(
     root: &Path,
 ) -> Result<Vec<NativeProjectInspectPoolRefView>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(collect_native_project_pool_ref_views(&project))
 }
 
@@ -154,7 +156,7 @@ pub(crate) fn query_native_project_pool_models(
     sha_filter: Option<&str>,
 ) -> Result<NativeProjectPoolModelsQueryView> {
     let model = ProjectResolver::new(root).resolve()?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let attachment_refs = collect_model_attachment_refs(&model)?;
     let mut models = Vec::new();
     for pool_ref in &project.manifest.pools {

@@ -34,6 +34,7 @@ pub(super) fn maybe_stage_schematic_definition_operation(
                 kind: SourceShardKind::SchematicDefinition,
                 relative_path,
                 content_hash: String::new(),
+                schema_version: None,
                 delete: true,
             });
         }

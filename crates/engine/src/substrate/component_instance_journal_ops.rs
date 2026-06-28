@@ -4,11 +4,12 @@ use std::path::Path;
 use uuid::Uuid;
 
 use super::{
-    ComponentInstance, EngineError, ObjectId, Operation, OperationBatch, SourceShardKind,
-    TransactionRecord, component_instance::persisted_component_instance_from_value,
-    journal::StagedShardWrite, operation_application_component_instance::authored_relative_path,
+    COMPONENT_INSTANCE_SHARD_SCHEMA_VERSION, ComponentInstance, EngineError, ObjectId, Operation,
+    OperationBatch, SourceShardKind, TransactionRecord,
+    component_instance::persisted_component_instance_from_value,
+    journal::{StagedShardWrite, stage_new_shard_write},
+    operation_application_component_instance::authored_relative_path,
 };
-use crate::ir::serialization::to_json_deterministic;
 
 pub(super) fn stage_component_instance_operation(
     project_root: &Path,
@@ -27,31 +28,19 @@ pub(super) fn stage_component_instance_operation(
             kind: SourceShardKind::ComponentInstance,
             relative_path,
             content_hash: String::new(),
+            schema_version: None,
             delete: true,
         }));
     }
-    let stage_path = project_root
-        .join(".datum/stage")
-        .join(batch.batch_id.to_string())
-        .join(&relative_path);
-    if let Some(parent) = stage_path.parent() {
-        std::fs::create_dir_all(parent)?;
-    }
     let wrapper = wrap_payload(value.clone());
-    let bytes = format!("{}\n", to_json_deterministic(&wrapper)?).into_bytes();
-    std::fs::write(&stage_path, &bytes)?;
-    std::fs::File::open(&stage_path)?.sync_all()?;
-    if let Some(parent) = stage_path.parent() {
-        std::fs::File::open(parent)?.sync_all()?;
-    }
-    Ok(Some(StagedShardWrite {
-        destination,
-        staged: Some(stage_path),
-        kind: SourceShardKind::ComponentInstance,
-        relative_path,
-        content_hash: super::sha256_hex(&bytes),
-        delete: false,
-    }))
+    stage_new_shard_write(
+        project_root,
+        batch,
+        SourceShardKind::ComponentInstance,
+        &relative_path,
+        &wrapper,
+    )
+    .map(Some)
 }
 
 pub(super) fn maybe_stage_component_instance_operation(
@@ -180,7 +169,7 @@ pub(super) fn apply_component_instance_journal_to_map(
 
 pub(super) fn wrap_payload(payload: serde_json::Value) -> serde_json::Value {
     serde_json::json!({
-        "schema_version": 1,
+        "schema_version": COMPONENT_INSTANCE_SHARD_SCHEMA_VERSION,
         "component_instance": payload
     })
 }

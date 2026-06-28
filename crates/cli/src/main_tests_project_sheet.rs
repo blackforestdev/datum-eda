@@ -275,6 +275,127 @@ fn project_create_sheet_definition_undo_redo_uses_journaled_substrate() {
 }
 
 #[test]
+fn project_sheet_mutations_read_resolver_materialized_schematic_root() {
+    let root = unique_project_root("datum-eda-cli-project-sheet-resolver-root");
+    create_native_project(&root, Some("Sheet Resolver Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    let schematic_path = root.join("schematic/schematic.json");
+    let stale_schematic_root =
+        std::fs::read_to_string(&schematic_path).expect("stale schematic root should read");
+    let sheet_uuid = Uuid::new_v4();
+    let definition_uuid = Uuid::new_v4();
+    let instance_uuid = Uuid::new_v4();
+
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "project",
+            "create-sheet",
+            root.to_str().unwrap(),
+            "--name",
+            "Journal Sheet",
+            "--sheet",
+            &sheet_uuid.to_string(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("create-sheet should succeed");
+    std::fs::write(&schematic_path, &stale_schematic_root)
+        .expect("stale schematic root should restore");
+
+    let renamed = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "rename-sheet",
+            root.to_str().unwrap(),
+            "--sheet",
+            &sheet_uuid.to_string(),
+            "--name",
+            "Resolver Sheet",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("rename-sheet should resolve journal-created sheet");
+    let renamed: serde_json::Value =
+        serde_json::from_str(&renamed).expect("rename-sheet JSON should parse");
+    assert_eq!(renamed["name"], "Resolver Sheet");
+    std::fs::write(&schematic_path, &stale_schematic_root)
+        .expect("stale schematic root should restore");
+
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "project",
+            "create-sheet-definition",
+            root.to_str().unwrap(),
+            "--root-sheet",
+            &sheet_uuid.to_string(),
+            "--name",
+            "Resolver Definition",
+            "--definition",
+            &definition_uuid.to_string(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("create-sheet-definition should resolve journal-created sheet");
+    std::fs::write(&schematic_path, &stale_schematic_root)
+        .expect("stale schematic root should restore");
+
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "project",
+            "create-sheet-instance",
+            root.to_str().unwrap(),
+            "--definition",
+            &definition_uuid.to_string(),
+            "--parent-sheet",
+            &sheet_uuid.to_string(),
+            "--name",
+            "Resolver Instance",
+            "--x-nm",
+            "100",
+            "--y-nm",
+            "200",
+            "--instance",
+            &instance_uuid.to_string(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("create-sheet-instance should resolve journal-created definition and sheet");
+    std::fs::write(&schematic_path, &stale_schematic_root)
+        .expect("stale schematic root should restore");
+
+    let moved = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "move-sheet-instance",
+            root.to_str().unwrap(),
+            "--instance",
+            &instance_uuid.to_string(),
+            "--x-nm",
+            "300",
+            "--y-nm",
+            "400",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("move-sheet-instance should resolve journal-created instance");
+    let moved: serde_json::Value =
+        serde_json::from_str(&moved).expect("move-sheet-instance JSON should parse");
+    assert_eq!(moved["x_nm"], 300);
+    assert_eq!(moved["y_nm"], 400);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
 fn project_create_delete_sheet_instance_undo_redo_uses_journaled_substrate() {
     let root = unique_project_root("datum-eda-cli-project-sheet-instance");
     create_native_project(&root, Some("Sheet Instance Demo".to_string()))

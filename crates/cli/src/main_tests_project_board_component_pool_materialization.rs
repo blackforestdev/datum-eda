@@ -1480,3 +1480,97 @@ fn project_board_component_materialization_keeps_gerber_validate_and_compare_poo
 
     let _ = std::fs::remove_dir_all(&root);
 }
+
+#[test]
+fn project_board_component_materialization_replays_pool_package_and_padstack() {
+    let root = unique_project_root("datum-eda-cli-project-board-component-pool-replay");
+    create_native_project(&root, Some("Board Component Pool Replay Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    configure_native_project_for_pool_materialization(
+        &root,
+        serde_json::json!([{ "path": "pool", "priority": 1 }]),
+        silkscreen_stackup(21),
+    );
+
+    let padstack_uuid = Uuid::new_v4();
+    let package_uuid = Uuid::new_v4();
+    let pad_uuid = Uuid::new_v4();
+    let padstack = padstack_uuid.to_string();
+    let package = package_uuid.to_string();
+    let pad = pad_uuid.to_string();
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "create-pool-padstack",
+            root.to_str().unwrap(),
+            "--padstack",
+            &padstack,
+            "--name",
+            "JournalPad",
+            "--aperture",
+            "circle",
+            "--diameter-nm",
+            "1200000",
+            "--drill-nm",
+            "600000",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("pool padstack create should succeed");
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "create-pool-package",
+            root.to_str().unwrap(),
+            "--package",
+            &package,
+            "--name",
+            "JournalPackage",
+            "--pad",
+            &pad,
+            "--padstack",
+            &padstack,
+            "--pad-name",
+            "1",
+            "--x-nm",
+            "1000",
+            "--y-nm",
+            "2000",
+            "--layer",
+            "1",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("pool package create should succeed");
+
+    std::fs::remove_file(root.join(format!("pool/packages/{package_uuid}.json")))
+        .expect("promoted package file should delete");
+    std::fs::remove_file(root.join(format!("pool/padstacks/{padstack_uuid}.json")))
+        .expect("promoted padstack file should delete");
+
+    let component_uuid = place_component(&root, Uuid::new_v4(), package_uuid);
+    let board_json = root.join("board/board.json");
+    let board: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&board_json).expect("board should read"))
+            .expect("board should parse");
+    let persisted_pads = board["component_pads"][&component_uuid]
+        .as_array()
+        .expect("resolver-replayed component pads should exist");
+    assert_eq!(persisted_pads.len(), 1);
+    assert_eq!(persisted_pads[0]["uuid"], pad_uuid.to_string());
+    assert_eq!(persisted_pads[0]["name"], "1");
+    assert_eq!(persisted_pads[0]["padstack"], padstack_uuid.to_string());
+    assert_eq!(persisted_pads[0]["position"]["x"], 1000);
+    assert_eq!(persisted_pads[0]["position"]["y"], 2000);
+    assert_eq!(persisted_pads[0]["shape"], "circle");
+    assert_eq!(persisted_pads[0]["diameter_nm"], 1200000);
+    assert_eq!(persisted_pads[0]["drill_nm"], 600000);
+
+    let _ = std::fs::remove_dir_all(&root);
+}

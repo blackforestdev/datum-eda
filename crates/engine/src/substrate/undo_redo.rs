@@ -3,8 +3,8 @@ use std::path::Path;
 use uuid::Uuid;
 
 use super::{
-    CommitProvenance, CommitReport, DesignModel, EngineError, OperationBatch, TransactionKind,
-    TransactionRecord,
+    CommitProvenance, CommitReport, DesignModel, EngineError, Operation, OperationBatch,
+    TransactionKind, TransactionRecord,
 };
 
 impl DesignModel {
@@ -99,8 +99,48 @@ impl DesignModel {
             TransactionKind::Redo => (None, Some(target.transaction_id)),
             TransactionKind::Normal => (None, None),
         };
-        self.commit_journaled_with_links(project_root, batch, transaction_kind, undo_of, redo_of)
+        let after_model_revision = if compensation_needs_revision_override(target) {
+            Some(match transaction_kind {
+                TransactionKind::Undo => target.before_model_revision.clone(),
+                TransactionKind::Redo => target.before_model_revision.clone(),
+                TransactionKind::Normal => self.model_revision.clone(),
+            })
+        } else {
+            None
+        };
+        self.commit_journaled_with_links_and_inverse(
+            project_root,
+            batch,
+            transaction_kind,
+            undo_of,
+            redo_of,
+            Some(target.operations.clone()),
+            super::commit::CommitPolicyContext::Direct,
+            after_model_revision,
+        )
     }
+}
+
+fn compensation_needs_revision_override(target: &TransactionRecord) -> bool {
+    target
+        .operations
+        .iter()
+        .chain(target.inverse_operations.iter())
+        .any(|operation| {
+            matches!(
+                operation,
+                Operation::AddProjectPoolRef { .. }
+                    | Operation::DeleteProjectPoolRef { .. }
+                    | Operation::CreatePoolPackage { .. }
+                    | Operation::DeletePoolPackage { .. }
+                    | Operation::CreatePoolPadstack { .. }
+                    | Operation::DeletePoolPadstack { .. }
+                    | Operation::CreatePoolLibraryObject { .. }
+                    | Operation::DeletePoolLibraryObject { .. }
+                    | Operation::CreateImportMapShard { .. }
+                    | Operation::DeleteImportMapShard { .. }
+            )
+        })
 }
 
 impl TransactionKind {

@@ -7,13 +7,21 @@ use uuid::Uuid;
 use super::artifact::{OutputJobLogEntry, OutputJobRunProvenance, OutputJobRunStatus};
 use super::generated_evidence::{persist_generated_evidence, validate_filename_uuid};
 use super::{
-    ModelRevision, ResolveDiagnostic, SourceShardDirtyState, SourceShardKind, SourceShardRef,
-    read_json_value, run_evidence_validation::validate_artifact_run, sha256_hex,
-    source_shard_authority_for_kind,
+    ModelRevision, ResolveDiagnostic, SourceShardKind, SourceShardRef, read_json_value,
+    run_evidence_validation::validate_artifact_run,
+    source_shard_ref_builders::source_shard_ref_for_bytes,
 };
+
+pub const ARTIFACT_RUN_SCHEMA_VERSION: u64 = 1;
+
+fn default_artifact_run_schema_version() -> u64 {
+    ARTIFACT_RUN_SCHEMA_VERSION
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ArtifactRun {
+    #[serde(default = "default_artifact_run_schema_version")]
+    pub schema_version: u64,
     pub run_id: Uuid,
     pub artifact_id: Uuid,
     #[serde(default)]
@@ -27,7 +35,8 @@ pub struct ArtifactRun {
     pub log: Vec<OutputJobLogEntry>,
 }
 
-pub fn persist_artifact_run(
+#[allow(dead_code)]
+pub(super) fn persist_artifact_run(
     project_root: &Path,
     run: &ArtifactRun,
 ) -> Result<PathBuf, crate::error::EngineError> {
@@ -91,19 +100,14 @@ fn read_artifact_run_shard(
     let schema_version = value
         .get("schema_version")
         .and_then(serde_json::Value::as_u64);
-    let shard = SourceShardRef {
-        shard_id: Uuid::new_v5(
-            &Uuid::NAMESPACE_URL,
-            format!("datum-eda:source-shard:{relative_path}").as_bytes(),
-        ),
-        kind: SourceShardKind::ArtifactRun,
+    let shard = source_shard_ref_for_bytes(
+        SourceShardKind::ArtifactRun,
         path,
         relative_path,
-        authority: source_shard_authority_for_kind(&SourceShardKind::ArtifactRun),
-        dirty_state: SourceShardDirtyState::Clean,
         schema_version,
-        content_hash: sha256_hex(&bytes),
-    };
+        &bytes,
+        "invalid_artifact_run",
+    )?;
     let run = serde_json::from_value::<ArtifactRun>(value).map_err(|error| ResolveDiagnostic {
         code: "invalid_artifact_run".to_string(),
         message: error.to_string(),

@@ -16,6 +16,12 @@ pub(crate) struct ArtifactListPayload {
     #[serde(default)]
     pub(crate) artifact_count: usize,
     #[serde(default)]
+    pub(crate) latest_artifact_id: Option<String>,
+    #[serde(default)]
+    pub(crate) latest_artifact_run_id: Option<String>,
+    #[serde(default)]
+    pub(crate) latest_output_job_run_id: Option<String>,
+    #[serde(default)]
     artifact_runs: Vec<ArtifactRunPayload>,
     #[serde(default)]
     output_job_runs: Vec<OutputJobRunPayload>,

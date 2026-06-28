@@ -94,6 +94,58 @@ fn project_inspect_json_output_reports_resolved_paths_and_counts() {
 }
 
 #[test]
+fn project_inspect_reads_resolver_materialized_board_state() {
+    let root = unique_project_root("datum-eda-cli-project-inspect-resolver-board");
+    create_native_project(&root, Some("Inspect Resolver Board".to_string()))
+        .expect("initial scaffold should succeed");
+    let board_json = root.join("board/board.json");
+    let stale_board = std::fs::read_to_string(&board_json).expect("board file should read");
+    let package_uuid = Uuid::new_v4();
+
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "project",
+            "place-board-pad",
+            root.to_str().unwrap(),
+            "--package",
+            &package_uuid.to_string(),
+            "--name",
+            "1",
+            "--x-nm",
+            "7000",
+            "--y-nm",
+            "8000",
+            "--layer",
+            "1",
+            "--diameter-nm",
+            "700000",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("place board pad should succeed");
+    std::fs::write(&board_json, stale_board).expect("stale board file should restore");
+
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "inspect",
+            root.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("inspect should read resolver-materialized board state");
+    let report: serde_json::Value =
+        serde_json::from_str(&output).expect("project inspect JSON should parse");
+    assert_eq!(report["board_pad_count"], 1);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
 fn project_inspect_reports_resolved_pool_refs() {
     let root = unique_project_root("datum-eda-cli-project-inspect-pools");
     create_native_project(&root, Some("Inspect Pools".to_string()))

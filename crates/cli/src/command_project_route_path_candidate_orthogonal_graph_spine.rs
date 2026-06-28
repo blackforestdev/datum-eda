@@ -3,13 +3,13 @@ use std::path::Path;
 use anyhow::Result;
 use eda_engine::board::{Board, RoutePathCandidateStatus};
 
-use super::super::{build_native_project_board, load_native_project};
+use super::super::{build_native_project_board, load_native_project_with_resolved_board};
 
 pub(crate) fn with_native_project_board<T, F>(root: &Path, f: F) -> Result<T>
 where
     F: FnOnce(&Board) -> Result<T>,
 {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let board = build_native_project_board(&project)?;
     f(&board)
 }

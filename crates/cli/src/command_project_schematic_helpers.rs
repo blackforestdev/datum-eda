@@ -2,12 +2,6 @@ use super::*;
 use eda_engine::substrate::ProjectResolver;
 use serde::de::DeserializeOwned;
 
-pub(super) fn load_native_sheet(path: &Path) -> Result<NativeSheetRoot> {
-    let sheet_text = std::fs::read_to_string(path)
-        .with_context(|| format!("failed to read {}", path.display()))?;
-    serde_json::from_str(&sheet_text).with_context(|| format!("failed to parse {}", path.display()))
-}
-
 pub(super) fn native_sheet_into_engine_sheet(native_sheet: NativeSheetRoot) -> Sheet {
     Sheet {
         uuid: native_sheet.uuid,

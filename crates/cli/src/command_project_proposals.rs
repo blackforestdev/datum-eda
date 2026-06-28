@@ -1,17 +1,25 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
-use anyhow::{Result, bail};
+use anyhow::{Context, Result, bail};
+use eda_engine::board::PlacedPackage;
 use eda_engine::substrate::{
-    CommitDiff, CommitReport, Operation, OperationBatch, ProjectResolver, Proposal,
-    ProposalApplyBlocker, ProposalCreateRequest, ProposalSource, ProposalStatus,
-    apply_accepted_proposal, create_draft_proposal_from_batch, preview_proposal_diff,
-    review_proposal_status, validate_proposal_apply,
+    CommitDiff, CommitProvenance, CommitReport, CommitSource, Operation, OperationBatch,
+    ProjectResolver, Proposal, ProposalApplyBlocker, ProposalCreateRequest, ProposalSource,
+    ProposalStatus, apply_accepted_proposal, create_draft_proposal_from_batch,
+    preview_proposal_diff_journaled, review_proposal_status, validate_proposal_apply,
 };
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use crate::NativeBoardRoot;
 use crate::ProposalSourceArg;
+use crate::command_project::{
+    board_package_materialization_payload_for_component,
+    command_project_operation_guards::guarded_operation_batch,
+    current_board_component_materialization_payload,
+    load_native_project_with_resolved_board_and_model,
+};
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectProposalsView {
@@ -97,6 +105,41 @@ pub(crate) struct NativeProjectProposalValidationView {
     pub(crate) blockers: Vec<ProposalApplyBlocker>,
 }
 
+#[derive(Debug, Clone, Deserialize)]
+pub(crate) struct BoardComponentReplacementSpec {
+    #[serde(alias = "component_uuid")]
+    pub(crate) component: Uuid,
+    #[serde(default, alias = "package_uuid")]
+    pub(crate) package: Option<Uuid>,
+    #[serde(default, alias = "part_uuid")]
+    pub(crate) part: Option<Uuid>,
+    #[serde(default)]
+    pub(crate) value: Option<String>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub(crate) struct BoardComponentReplacementPlanSelectionSpec {
+    #[serde(alias = "component", alias = "component_uuid")]
+    pub(crate) uuid: Uuid,
+    #[serde(default, alias = "package")]
+    pub(crate) package_uuid: Option<Uuid>,
+    #[serde(default, alias = "part")]
+    pub(crate) part_uuid: Option<Uuid>,
+    #[serde(default)]
+    pub(crate) value: Option<String>,
+}
+
+impl From<BoardComponentReplacementPlanSelectionSpec> for BoardComponentReplacementSpec {
+    fn from(selection: BoardComponentReplacementPlanSelectionSpec) -> Self {
+        Self {
+            component: selection.uuid,
+            package: selection.package_uuid,
+            part: selection.part_uuid,
+            value: selection.value,
+        }
+    }
+}
+
 pub(crate) fn query_native_project_proposals(root: &Path) -> Result<NativeProjectProposalsView> {
     let model = ProjectResolver::new(root).resolve()?;
     Ok(NativeProjectProposalsView {
@@ -119,6 +162,7 @@ pub(crate) fn create_native_project_proposal(
 ) -> Result<NativeProjectProposalCreateView> {
     let batch = serde_json::from_str::<OperationBatch>(&std::fs::read_to_string(batch_path)?)?;
     let mut model = ProjectResolver::new(root).resolve()?;
+    let batch = guarded_operation_batch(&model, batch)?;
     let source = match source {
         ProposalSourceArg::Manual => ProposalSource::Manual,
         ProposalSourceArg::Cli => ProposalSource::Cli,
@@ -151,6 +195,182 @@ pub(crate) fn create_native_project_proposal(
     })
 }
 
+pub(crate) fn propose_native_project_board_component_replacement(
+    root: &Path,
+    component_uuid: Uuid,
+    package_uuid: Option<Uuid>,
+    part_uuid: Option<Uuid>,
+    value: Option<String>,
+    proposal_id: Option<Uuid>,
+    rationale: Option<&str>,
+) -> Result<NativeProjectProposalCreateView> {
+    propose_native_project_board_component_replacements(
+        root,
+        vec![BoardComponentReplacementSpec {
+            component: component_uuid,
+            package: package_uuid,
+            part: part_uuid,
+            value,
+        }],
+        proposal_id,
+        rationale,
+    )
+}
+
+pub(crate) fn propose_native_project_board_component_replacements(
+    root: &Path,
+    replacements: Vec<BoardComponentReplacementSpec>,
+    proposal_id: Option<Uuid>,
+    rationale: Option<&str>,
+) -> Result<NativeProjectProposalCreateView> {
+    if replacements.is_empty() {
+        bail!("board component replacement proposal requires at least one replacement");
+    }
+    let (project, mut model) = load_native_project_with_resolved_board_and_model(root)?;
+    let mut operations = Vec::new();
+    let mut seen_components = BTreeSet::new();
+    let mut component_ids = Vec::new();
+    for replacement in replacements {
+        if !seen_components.insert(replacement.component) {
+            bail!(
+                "board component replacement proposal repeats component {}",
+                replacement.component
+            );
+        }
+        append_board_component_replacement_operations(
+            root,
+            &project.board,
+            replacement,
+            &mut operations,
+            &mut component_ids,
+        )?;
+    }
+
+    if operations.is_empty() {
+        bail!("board component replacement proposal is a no-op for all components");
+    }
+    let batch = guarded_operation_batch(
+        &model,
+        OperationBatch {
+            batch_id: Uuid::new_v4(),
+            expected_model_revision: Some(model.model_revision.clone()),
+            provenance: CommitProvenance {
+                actor: "datum-eda-cli".to_string(),
+                source: CommitSource::Cli,
+                reason: "propose board component replacement".to_string(),
+            },
+            operations,
+        },
+    )?;
+    let proposal = create_draft_proposal_from_batch(
+        &mut model,
+        root,
+        ProposalCreateRequest {
+            proposal_id,
+            batch,
+            rationale: rationale.map(str::to_string).unwrap_or_else(|| {
+                if component_ids.len() == 1 {
+                    format!("Review board component {} replacement", component_ids[0])
+                } else {
+                    format!(
+                        "Review {} board component replacements",
+                        component_ids.len()
+                    )
+                }
+            }),
+            source: ProposalSource::Cli,
+            checks_run: Vec::new(),
+            finding_fingerprints: Vec::new(),
+        },
+    )?;
+    let validation = validate_proposal_in_model(&model, proposal.proposal_id, &proposal);
+    Ok(NativeProjectProposalCreateView {
+        contract: "proposal_create_v1",
+        action: "propose_board_component_replacement",
+        project_id: model.project.project_id.to_string(),
+        model_revision: model.model_revision.0,
+        proposal_id: proposal.proposal_id,
+        proposal,
+        validation,
+    })
+}
+
+pub(crate) fn propose_native_project_board_component_replacement_plan(
+    root: &Path,
+    selections: Vec<BoardComponentReplacementPlanSelectionSpec>,
+    proposal_id: Option<Uuid>,
+    rationale: Option<&str>,
+) -> Result<NativeProjectProposalCreateView> {
+    let replacements = selections
+        .into_iter()
+        .map(BoardComponentReplacementSpec::from)
+        .collect();
+    propose_native_project_board_component_replacements(root, replacements, proposal_id, rationale)
+}
+
+fn append_board_component_replacement_operations(
+    root: &Path,
+    board: &NativeBoardRoot,
+    replacement: BoardComponentReplacementSpec,
+    operations: &mut Vec<Operation>,
+    component_ids: &mut Vec<Uuid>,
+) -> Result<()> {
+    if replacement.package.is_none() && replacement.part.is_none() && replacement.value.is_none() {
+        bail!(
+            "board component replacement proposal for {} requires package, part, or value",
+            replacement.component
+        );
+    }
+    let component_uuid = replacement.component;
+    let key = component_uuid.to_string();
+    let entry = board.packages.get(&key).cloned().ok_or_else(|| {
+        anyhow::anyhow!("board component not found in native project: {component_uuid}")
+    })?;
+    let mut component: PlacedPackage = serde_json::from_value(entry)
+        .with_context(|| format!("failed to parse board component {component_uuid}"))?;
+    let initial_len = operations.len();
+
+    if let Some(part_id) = replacement.part
+        && part_id != component.part
+    {
+        operations.push(Operation::SetBoardPackagePart {
+            package_id: component_uuid,
+            part_id,
+        });
+        component.part = part_id;
+    }
+
+    if let Some(package_ref_id) = replacement.package
+        && package_ref_id != component.package
+    {
+        let previous_materialized =
+            current_board_component_materialization_payload(root, component_uuid)?;
+        component.package = package_ref_id;
+        let materialized = board_package_materialization_payload_for_component(root, &component)?;
+        operations.push(Operation::SetBoardPackagePackage {
+            package_id: component_uuid,
+            package_ref_id,
+            previous_materialized,
+            materialized,
+        });
+    }
+
+    if let Some(value) = replacement.value
+        && value != component.value
+    {
+        operations.push(Operation::SetBoardPackageValue {
+            package_id: component_uuid,
+            value,
+        });
+    }
+
+    if operations.len() == initial_len {
+        bail!("board component replacement proposal is a no-op for component {component_uuid}");
+    }
+    component_ids.push(component_uuid);
+    Ok(())
+}
+
 pub(crate) fn show_native_project_proposal(
     root: &Path,
     proposal_id: Uuid,
@@ -176,7 +396,7 @@ pub(crate) fn preview_native_project_proposal(
     proposal_id: Uuid,
 ) -> Result<NativeProjectProposalPreviewView> {
     let model = ProjectResolver::new(root).resolve()?;
-    let preview = preview_proposal_diff(&model, proposal_id)?;
+    let preview = preview_proposal_diff_journaled(&model, root, proposal_id)?;
     Ok(NativeProjectProposalPreviewView {
         contract: "proposal_preview_v1",
         project_id: model.project.project_id.to_string(),
@@ -298,7 +518,7 @@ pub(crate) fn validate_native_project_proposal(
     Ok(validate_proposal_in_model(&model, proposal_id, proposal))
 }
 
-fn validate_proposal_in_model(
+pub(super) fn validate_proposal_in_model(
     model: &eda_engine::substrate::DesignModel,
     proposal_id: Uuid,
     _proposal: &Proposal,

@@ -45,7 +45,7 @@ fn context_get_returns_gui_terminal_discovery_envelope() {
         value["capabilities"],
         serde_json::json!(["read", "check", "artifact", "propose", "apply-approved"])
     );
-    assert_eq!(value["visible_artifact_ids"], serde_json::json!([]));
+    assert_eq!(value["visible_output_job_ids"], serde_json::json!([]));
     assert_eq!(value["visible_check_run_ids"], serde_json::json!([]));
     assert_eq!(value["selection_context"]["kind"], "none");
     assert_eq!(value["cursor_context"]["active_tool"], "select");
@@ -134,6 +134,7 @@ fn context_get_enriches_discovery_from_project_resolver() {
     assert_eq!(value["model_revision"], model.model_revision.0);
     assert_eq!(value["accepted_transaction_tip"], serde_json::Value::Null);
     assert_eq!(value["visible_artifact_ids"], serde_json::json!([]));
+    assert_eq!(value["visible_output_job_ids"], serde_json::json!([]));
     assert_eq!(value["visible_check_run_ids"], serde_json::json!([]));
     assert_eq!(value["storage"]["schema_version"], 1);
     assert!(
@@ -142,8 +143,7 @@ fn context_get_enriches_discovery_from_project_resolver() {
             .unwrap()
             .contains("context refresh")
     );
-    assert!(value["output_context"]["output_job_ids"].is_array());
-
+    assert!(value["source_shard_status"]["total"].as_u64().unwrap() >= 4);
     let _ = std::fs::remove_dir_all(&root);
 }
 

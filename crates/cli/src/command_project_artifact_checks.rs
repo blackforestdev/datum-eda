@@ -5,11 +5,14 @@ use eda_engine::ir::serialization::to_json_deterministic;
 use eda_engine::substrate::{ArtifactMetadata, ArtifactValidationState, ZoneFill, ZoneFillState};
 use uuid::Uuid;
 
-use super::command_project_check_finding_identity::check_finding_fingerprint;
+use super::command_project_check_finding_identity::{
+    check_finding_fingerprint, standards_basis_detail,
+};
 use super::command_project_check_run_view::{
     NativeProjectCheckFindingView, check_finding_explanation, check_finding_message,
-    check_finding_suggested_next_action, check_primary_target, finding_domain,
+    check_finding_suggested_next_action, finding_domain,
 };
+use super::command_project_check_targets::check_primary_target;
 
 pub(crate) fn append_artifact_finding_values(
     project_id: &Uuid,
@@ -47,6 +50,7 @@ pub(crate) fn append_artifact_finding_values(
             domain: finding_domain("artifact", code),
             rule_id: code.to_string(),
             standards_basis: None,
+            standards_basis_detail: None,
             rule_revision: None,
             import_key: None,
             status: "active".to_string(),
@@ -116,6 +120,7 @@ pub(crate) fn append_zone_fill_finding_values(
             domain: finding_domain("zone_fill", code),
             rule_id: code.to_string(),
             standards_basis: Some("datum.zone_fill_honesty.current".to_string()),
+            standards_basis_detail: Some(standards_basis_detail("datum.zone_fill_honesty.current")),
             rule_revision: Some("v1".to_string()),
             import_key: None,
             status: "active".to_string(),

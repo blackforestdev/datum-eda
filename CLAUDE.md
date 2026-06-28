@@ -83,10 +83,10 @@ Real, shipped capability — read alongside the substrate gap below:
 
 ### Known gap between status and ethos (do not overstate)
 - **Committed:** the substrate and the native-authoring work that backs it are
-  committed at HEAD `5fe3016`; a fresh checkout now sees it. Do not commit code
-  without the matching `SPEC_PARITY.md` refresh, or the parity gate fails.
+  committed at HEAD `5fe3016`; a fresh checkout now sees it. Keep
+  `SPEC_PARITY.md` and drift gates aligned when inventory shapes change.
 - **Convergence-debt, not absence:** the substrate exists but is not yet the
-  universal write authority. ~14 `write_canonical_json` sites remain (e.g.
+  universal write authority. ~13 `write_canonical_json` sites remain (e.g.
   project-create bootstrap); the imported-KiCad `Engine::save` text-patch path
   is still legacy. The public daemon write-bypass is now CLOSED — the daemon
   write path is fenced by the new daemon write-parity gate. Routing every

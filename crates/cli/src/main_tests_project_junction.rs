@@ -122,6 +122,23 @@ fn project_place_and_delete_junction_update_native_query_surface() {
     )
     .expect("stale sheet should write");
 
+    let query_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "junctions",
+    ])
+    .expect("CLI should parse");
+    let stale_junctions_output =
+        execute(query_cli).expect("project query junctions should resolve stale sheet");
+    let stale_junctions: serde_json::Value =
+        serde_json::from_str(&stale_junctions_output).expect("junctions JSON should parse");
+    assert_eq!(stale_junctions.as_array().unwrap().len(), 1);
+    assert_eq!(stale_junctions[0]["uuid"], junction_uuid);
+
     let delete_cli = Cli::try_parse_from([
         "eda",
         "project",

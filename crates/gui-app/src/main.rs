@@ -4,19 +4,16 @@ use clap::Parser;
 use datum_gui_protocol::{
     BoardTextAlignmentField, BoardTextBooleanField, BoardTextCycleField, BoardTextHeightStep,
     BoardTextLineSpacingStep, BoardTextRotationStep, DockTab, LiveDesignSession, LiveReviewRequest,
-    PointNm, RectNm, SceneBounds, SessionCommand, SessionEvent, WorkspaceTool,
-    ensure_known_good_demo_request, load_board_editor_workspace_state, load_live_workspace_state,
+    PointNm, RectNm, SceneBounds, SessionCommand, SessionEvent, ensure_known_good_demo_request,
+    load_board_editor_workspace_state, load_live_workspace_state,
 };
 use datum_gui_render::{
     CameraState, HitTarget, PreparedScene, Renderer, RetainedScene, ShellLayout,
 };
-use serde::Serialize;
 use std::collections::BTreeMap;
-use std::fs;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
-use std::sync::mpsc::TryRecvError;
 use winit::{
     application::ApplicationHandler,
     dpi::LogicalSize,
@@ -27,33 +24,40 @@ use winit::{
 };
 
 mod artifact_preview_controls;
-mod assistant_bridge;
 mod board_text_terminal_commands;
 mod production_status_refresh;
 mod runtime_terminal_context;
+mod terminal_active_context;
 mod terminal_activity_snapshot;
 mod terminal_agent_launcher;
+mod terminal_check_context;
 mod terminal_context;
+mod terminal_context_io;
 mod terminal_input;
+mod terminal_journal_context;
+mod terminal_proposal_context;
 mod terminal_screen;
 mod terminal_session;
+mod terminal_session_context;
+mod terminal_session_controls;
 mod terminal_session_events;
-use assistant_bridge::{
-    AssistantBridgeAction, AssistantBridgeConfig, AssistantBridgeInput, AssistantSession,
-    spawn_assistant_session,
-};
 use board_text_terminal_commands::{
     BoardTextEditTerminalField, BoardTextQuickEditTerminalAction, board_text_edit_terminal_command,
     board_text_quick_edit_terminal_command,
 };
-use terminal_activity_snapshot::load_terminal_activity_summary_lines;
-use terminal_input::{TerminalKeyAction, terminal_key_action};
-use terminal_screen::{TerminalScreen, terminal_scrollback_copy_text};
+use terminal_input::{
+    TerminalKeyAction, terminal_focus_event_sequence, terminal_key_action,
+    terminal_sgr_mouse_button_sequence, terminal_sgr_mouse_motion_sequence,
+    terminal_sgr_mouse_wheel_sequence, terminal_urxvt_mouse_button_sequence,
+    terminal_urxvt_mouse_motion_sequence, terminal_urxvt_mouse_wheel_sequence,
+    terminal_utf8_mouse_button_sequence, terminal_utf8_mouse_motion_sequence,
+    terminal_utf8_mouse_wheel_sequence, terminal_x10_mouse_button_sequence,
+    terminal_x10_mouse_motion_sequence, terminal_x10_mouse_wheel_sequence,
+};
+use terminal_screen::terminal_scrollback_copy_text;
 use terminal_session::{
-    TerminalLaunchContext, TerminalSession, refresh_terminal_session_context_from_state,
-    restart_terminal_session as restart_pty_terminal_session, spawn_terminal_session,
+    TerminalLaunchContext, TerminalSessionRegistry, refresh_terminal_session_context_from_state,
     terminal_launch_context_from_state,
-    terminate_terminal_session as terminate_pty_terminal_session,
 };
 use terminal_session_events::{
     prepare_terminal_command_execution, record_manual_terminal_command_handoff,
@@ -124,15 +128,6 @@ fn terminal_raw_input_should_handle(
     copy_shortcut: bool,
 ) -> bool {
     terminal_accepts_raw_input && !paste_shortcut && !copy_shortcut
-}
-
-fn selection_cache_key(workspace: &datum_gui_protocol::ReviewWorkspaceState) -> String {
-    match &workspace.selection {
-        datum_gui_protocol::SelectionTarget::None => "none".to_string(),
-        datum_gui_protocol::SelectionTarget::ReviewAction(id) => format!("review:{id}"),
-        datum_gui_protocol::SelectionTarget::AuthoredObject(id) => format!("object:{id}"),
-        datum_gui_protocol::SelectionTarget::CheckFinding(id) => format!("finding:{id}"),
-    }
 }
 
 fn retained_selection_cache_key(
@@ -222,57 +217,6 @@ struct App {
     args: GuiArgs,
     window: Option<&'static Window>,
     runtime: Option<Runtime>,
-}
-
-#[derive(Debug, Serialize)]
-struct AssistantContext {
-    board_name: String,
-    project_name: String,
-    tool: &'static str,
-    selection: String,
-    active_review_target_id: String,
-    project_root: Option<String>,
-    terminal_activity_summary: Vec<String>,
-    selected_component: Option<AssistantSelectedComponent>,
-    selected_review_action: Option<AssistantSelectedReviewAction>,
-    components: Vec<AssistantComponentSummary>,
-    review_actions: Vec<AssistantReviewActionSummary>,
-}
-
-#[derive(Debug, Serialize)]
-struct AssistantSelectedComponent {
-    reference: String,
-    value: Option<String>,
-    object_id: String,
-    component_uuid: String,
-    x_nm: i64,
-    y_nm: i64,
-}
-
-#[derive(Debug, Serialize)]
-struct AssistantSelectedReviewAction {
-    action_id: String,
-    net_name: String,
-    layer: i32,
-    width_nm: i64,
-}
-
-#[derive(Debug, Serialize)]
-struct AssistantComponentSummary {
-    reference: String,
-    value: Option<String>,
-    object_id: String,
-    component_uuid: String,
-    x_nm: i64,
-    y_nm: i64,
-}
-
-#[derive(Debug, Serialize)]
-struct AssistantReviewActionSummary {
-    action_id: String,
-    net_name: String,
-    layer: i32,
-    width_nm: i64,
 }
 
 impl App {
@@ -423,11 +367,6 @@ impl ApplicationHandler for App {
         {
             self.request_redraw_if_needed();
         }
-        if let Some(runtime) = &mut self.runtime
-            && runtime.poll_assistant_output()
-        {
-            self.request_redraw_if_needed();
-        }
         match event {
             WindowEvent::CloseRequested => event_loop.exit(),
             WindowEvent::Ime(winit::event::Ime::Commit(text))
@@ -451,16 +390,25 @@ impl ApplicationHandler for App {
                     }
                 }
             }
+            WindowEvent::Focused(focused) => {
+                if let Some(runtime) = &mut self.runtime {
+                    runtime.report_terminal_focus_event(focused);
+                }
+            }
             WindowEvent::CursorMoved { position, .. } => {
                 if let Some(runtime) = &mut self.runtime {
                     let next_pos = (position.x as f32, position.y as f32);
+                    runtime.last_cursor_pos = Some(next_pos);
+                    if runtime.report_terminal_mouse_motion() {
+                        self.request_redraw_if_needed();
+                        return;
+                    }
                     let mut changed = false;
                     if runtime.dock_drag_active {
                         changed = runtime.handle_dock_resize_drag(next_pos);
                     } else if runtime.middle_drag_active || runtime.right_drag_active {
                         changed = runtime.handle_pan_drag(next_pos);
                     }
-                    runtime.last_cursor_pos = Some(next_pos);
                     // Update hover state
                     if !runtime.dock_drag_active
                         && !runtime.middle_drag_active
@@ -480,6 +428,10 @@ impl ApplicationHandler for App {
                         MouseScrollDelta::LineDelta(_, y) => y,
                         MouseScrollDelta::PixelDelta(pos) => (pos.y as f32) / 20.0,
                     };
+                    if runtime.report_terminal_mouse_wheel(scroll_lines) {
+                        self.request_redraw_if_needed();
+                        return;
+                    }
                     if runtime.cursor_in_dock() && scroll_lines.abs() > 0.01 {
                         if runtime.handle_dock_scroll(scroll_lines) {
                             self.request_redraw_if_needed();
@@ -506,6 +458,9 @@ impl ApplicationHandler for App {
                 ..
             } => {
                 if let Some(runtime) = &mut self.runtime {
+                    if runtime.report_terminal_mouse_button(MouseButton::Middle, state) {
+                        return;
+                    }
                     runtime.middle_drag_active = state == ElementState::Pressed;
                 }
             }
@@ -515,6 +470,9 @@ impl ApplicationHandler for App {
                 ..
             } => {
                 if let Some(runtime) = &mut self.runtime {
+                    if runtime.report_terminal_mouse_button(MouseButton::Right, state) {
+                        return;
+                    }
                     runtime.right_drag_active = state == ElementState::Pressed;
                 }
             }
@@ -524,6 +482,11 @@ impl ApplicationHandler for App {
                 ..
             } => {
                 if let Some(runtime) = &mut self.runtime {
+                    if runtime
+                        .report_terminal_mouse_button(MouseButton::Left, ElementState::Pressed)
+                    {
+                        return;
+                    }
                     // Check if clicking dock resize handle
                     if let Some((x, y)) = runtime.last_cursor_pos {
                         let prepared = runtime.prepared_scene();
@@ -542,6 +505,11 @@ impl ApplicationHandler for App {
             } => {
                 if let Some(runtime) = &mut self.runtime {
                     runtime.dock_drag_active = false;
+                    if runtime
+                        .report_terminal_mouse_button(MouseButton::Left, ElementState::Released)
+                    {
+                        return;
+                    }
                     let handled = runtime.handle_primary_click();
                     if handled {
                         self.request_redraw_if_needed();
@@ -693,6 +661,10 @@ impl ApplicationHandler for App {
                 .is_some_and(|runtime| runtime.workspace().ui.active_dock_tab.is_some()) =>
             {
                 if let Some(runtime) = &mut self.runtime {
+                    if runtime.cancel_terminal_rename() {
+                        self.request_redraw_if_needed();
+                        return;
+                    }
                     // Clear input first; only close dock if input is already empty.
                     let input_was_empty =
                         runtime.current_dock_input().map_or(true, |s| s.is_empty());
@@ -707,11 +679,7 @@ impl ApplicationHandler for App {
                                 ui.terminal.input.clear();
                                 ui.terminal.cursor = 0;
                             }
-                            Some(DockTab::Assistant) => {
-                                ui.assistant.input.clear();
-                                ui.assistant.cursor = 0;
-                            }
-                            Some(DockTab::Outputs) => {}
+                            Some(DockTab::Assistant | DockTab::Outputs) => {}
                             None => {}
                         }
                         runtime.invalidate_frame();
@@ -948,24 +916,26 @@ struct Runtime {
     middle_drag_active: bool,
     right_drag_active: bool,
     dock_drag_active: bool,
+    terminal_mouse_button: Option<MouseButton>,
     modifiers: ModifiersState,
     redraw_pending: bool,
     retained_scene: Option<RetainedScene>,
     retained_scene_cache: Vec<(RetainedSceneCacheKey, RetainedScene)>,
     prepared_scene: Option<PreparedScene>,
     scene_dirty: bool,
-    terminal: TerminalSession,
-    terminal_screen: TerminalScreen,
-    assistant: AssistantSession,
+    terminal_sessions: TerminalSessionRegistry,
     terminal_disconnected_reported: bool,
-    assistant_disconnected_reported: bool,
-    assistant_config_path: PathBuf,
-    assistant_config: AssistantBridgeConfig,
     terminal_launch_context: TerminalLaunchContext,
     terminal_production_refresh_pending: bool,
     terminal_production_refresh_due: Option<std::time::Instant>,
     terminal_production_refresh_attempts: u8,
+    terminal_rename_session_id: Option<String>,
     clipboard: Option<Clipboard>,
+}
+
+fn terminal_scrollback_page_step(workspace: &datum_gui_protocol::ReviewWorkspaceState) -> usize {
+    let visible_hint = workspace.ui.terminal.lines.len().min(24);
+    visible_hint.saturating_sub(1).max(1)
 }
 
 impl Runtime {
@@ -1037,18 +1007,8 @@ impl Runtime {
             "request resolve {}ms",
             request_started.elapsed().as_millis()
         ));
-        let config_started = std::time::Instant::now();
-        let assistant_config_path = assistant_config_path(&request);
-        let assistant_config =
-            load_assistant_config(&assistant_config_path).with_context(|| {
-                format!("load assistant config {}", assistant_config_path.display())
-            })?;
-        trace_startup_timing(format!(
-            "assistant config load {}ms",
-            config_started.elapsed().as_millis()
-        ));
         let workspace_started = std::time::Instant::now();
-        let state = if args.wants_plain_project_board_view() {
+        let mut state = if args.wants_plain_project_board_view() {
             load_board_editor_workspace_state(&request)
                 .context("load board editor workspace state")?
         } else {
@@ -1067,18 +1027,12 @@ impl Runtime {
         let terminal_launch_context =
             terminal_launch_context_from_state(&request.project_root, &state);
         let terminal_started = std::time::Instant::now();
-        let terminal = spawn_terminal_session(&terminal_launch_context)
+        let mut terminal_sessions = TerminalSessionRegistry::spawn(&terminal_launch_context)
             .context("spawn integrated terminal lane")?;
+        terminal_sessions.sync_lane_tabs(&mut state.ui.terminal);
         trace_startup_timing(format!(
             "terminal spawn {}ms",
             terminal_started.elapsed().as_millis()
-        ));
-        let assistant_started = std::time::Instant::now();
-        let assistant = spawn_assistant_session(&assistant_config)
-            .context("spawn integrated assistant lane")?;
-        trace_startup_timing(format!(
-            "assistant spawn {}ms",
-            assistant_started.elapsed().as_millis()
         ));
         let mut runtime = Self {
             surface,
@@ -1092,31 +1046,24 @@ impl Runtime {
             middle_drag_active: false,
             right_drag_active: false,
             dock_drag_active: false,
+            terminal_mouse_button: None,
             modifiers: ModifiersState::empty(),
             redraw_pending: false,
             retained_scene: None,
             retained_scene_cache: Vec::new(),
             prepared_scene: None,
             scene_dirty: true,
-            terminal,
-            terminal_screen: TerminalScreen::default(),
-            assistant,
+            terminal_sessions,
             terminal_disconnected_reported: false,
-            assistant_disconnected_reported: false,
-            assistant_config_path,
-            assistant_config,
             terminal_launch_context,
             terminal_production_refresh_pending: false,
             terminal_production_refresh_due: None,
             terminal_production_refresh_attempts: 0,
+            terminal_rename_session_id: None,
             clipboard: Clipboard::new().ok(),
         };
-        let assistant_context_started = std::time::Instant::now();
-        runtime.sync_assistant_context();
-        trace_startup_timing(format!(
-            "assistant context sync {}ms",
-            assistant_context_started.elapsed().as_millis()
-        ));
+        runtime.sync_terminal_tabs();
+        runtime.resize_terminal_to_dock();
         trace_startup_timing(format!(
             "runtime total {}ms",
             runtime_started.elapsed().as_millis()
@@ -1445,46 +1392,6 @@ impl Runtime {
         self.scene_dirty = true;
     }
 
-    fn poll_assistant_output(&mut self) -> bool {
-        let mut changed = false;
-        loop {
-            match self.assistant.rx.try_recv() {
-                Ok(output) => {
-                    changed = true;
-                    match output.kind.as_str() {
-                        "ready" | "error" => {
-                            self.push_assistant_message("assistant", output.message);
-                        }
-                        "response" => {
-                            if !output.message.is_empty() {
-                                self.push_assistant_message("assistant", output.message);
-                            }
-                            let summary = self.apply_assistant_actions(&output.actions);
-                            if !summary.is_empty() {
-                                self.push_assistant_message("system", summary);
-                            }
-                        }
-                        other => {
-                            self.push_assistant_message(
-                                "system",
-                                format!("assistant bridge sent unknown event `{other}`"),
-                            );
-                        }
-                    }
-                }
-                Err(TryRecvError::Empty) => return changed,
-                Err(TryRecvError::Disconnected) => {
-                    if self.assistant_disconnected_reported {
-                        return false;
-                    }
-                    self.assistant_disconnected_reported = true;
-                    self.push_assistant_message("system", "assistant session ended".to_string());
-                    return true;
-                }
-            }
-        }
-    }
-
     fn push_terminal_line(&mut self, line: String) {
         let ui = &mut self.session.workspace_mut().ui;
         ui.terminal.lines.push(line);
@@ -1492,37 +1399,6 @@ impl Runtime {
             ui.terminal.lines.drain(0..ui.terminal.lines.len() - 240);
         }
         ui.terminal.scroll_offset = 0;
-        self.invalidate_frame();
-    }
-
-    fn refresh_terminal_activity_summary(&mut self) -> bool {
-        let next = match load_terminal_activity_summary_lines(&self.terminal.event_log_path(), 4) {
-            Ok(lines) => lines,
-            Err(err) => vec![format!("activity summary unavailable: {err}")],
-        };
-        let ui = &mut self.session.workspace_mut().ui;
-        if ui.terminal.activity_summary == next {
-            return false;
-        }
-        ui.terminal.activity_summary = next;
-        self.invalidate_frame();
-        true
-    }
-
-    fn push_assistant_message(&mut self, role: &str, content: String) {
-        let ui = &mut self.session.workspace_mut().ui;
-        ui.assistant
-            .transcript
-            .push(datum_gui_protocol::AssistantMessage {
-                role: role.to_string(),
-                content,
-            });
-        if ui.assistant.transcript.len() > 80 {
-            ui.assistant
-                .transcript
-                .drain(0..ui.assistant.transcript.len() - 80);
-        }
-        ui.assistant.scroll_offset = 0;
         self.invalidate_frame();
     }
 
@@ -1557,13 +1433,28 @@ impl Runtime {
 
     fn terminal_accepts_raw_input(&self) -> bool {
         matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal))
+            && self.terminal_rename_session_id.is_none()
+            && self.terminal_sessions.active_attached()
     }
 
     fn handle_terminal_key_input(&mut self, event: &KeyEvent) -> bool {
-        match terminal_key_action(event, self.modifiers) {
+        let application_cursor_keys = self.workspace().ui.terminal.application_cursor_keys;
+        let application_keypad = self.workspace().ui.terminal.application_keypad;
+        match terminal_key_action(
+            event,
+            self.modifiers,
+            application_cursor_keys,
+            application_keypad,
+        ) {
             TerminalKeyAction::Write(bytes) => self.write_terminal_bytes(&bytes),
             TerminalKeyAction::Interrupt => {
-                if let Err(err) = self.terminal.interrupt() {
+                if !self.terminal_sessions.active_attached() {
+                    self.push_terminal_line(
+                        "terminal session is detached; activate the tab to reattach".to_string(),
+                    );
+                    return true;
+                }
+                if let Err(err) = self.terminal_sessions.active().interrupt() {
                     self.push_terminal_line(format!("terminal interrupt failed: {err}"));
                 }
                 true
@@ -1576,6 +1467,24 @@ impl Runtime {
                 self.restart_terminal_session();
                 true
             }
+            TerminalKeyAction::ScrollbackPageUp => {
+                self.scroll_terminal_scrollback(terminal_scrollback_page_step(self.workspace()));
+                true
+            }
+            TerminalKeyAction::ScrollbackPageDown => {
+                self.scroll_terminal_scrollback_down(terminal_scrollback_page_step(
+                    self.workspace(),
+                ));
+                true
+            }
+            TerminalKeyAction::ScrollbackTop => {
+                self.scroll_terminal_scrollback_to_top();
+                true
+            }
+            TerminalKeyAction::ScrollbackBottom => {
+                self.scroll_terminal_scrollback_to_bottom();
+                true
+            }
             TerminalKeyAction::ConsumeRelease => true,
             TerminalKeyAction::LetPasteShortcutHandle
             | TerminalKeyAction::LetCopyShortcutHandle
@@ -1583,31 +1492,196 @@ impl Runtime {
         }
     }
 
+    fn scroll_terminal_scrollback(&mut self, delta: usize) {
+        let terminal = &mut self.session.workspace_mut().ui.terminal;
+        let max = terminal.lines.len();
+        terminal.scroll_offset = (terminal.scroll_offset + delta).min(max);
+        self.invalidate_frame();
+    }
+
+    fn scroll_terminal_scrollback_down(&mut self, delta: usize) {
+        let terminal = &mut self.session.workspace_mut().ui.terminal;
+        terminal.scroll_offset = terminal.scroll_offset.saturating_sub(delta);
+        self.invalidate_frame();
+    }
+
+    fn scroll_terminal_scrollback_to_top(&mut self) {
+        let terminal = &mut self.session.workspace_mut().ui.terminal;
+        terminal.scroll_offset = terminal.lines.len();
+        self.invalidate_frame();
+    }
+
+    fn scroll_terminal_scrollback_to_bottom(&mut self) {
+        self.session.workspace_mut().ui.terminal.scroll_offset = 0;
+        self.invalidate_frame();
+    }
+
     fn write_terminal_bytes(&mut self, bytes: &[u8]) -> bool {
+        if !self.terminal_sessions.active_attached() {
+            self.push_terminal_line(
+                "terminal session is detached; activate the tab to reattach".to_string(),
+            );
+            return true;
+        }
         if bytes.iter().any(|byte| matches!(byte, b'\n' | b'\r')) {
             self.mark_terminal_production_refresh_pending();
         }
-        if let Err(err) = self.terminal.write_bytes(bytes) {
+        if let Err(err) = self.terminal_sessions.active().write_bytes(bytes) {
             self.push_terminal_line(format!("terminal write failed: {err}"));
         }
         true
     }
 
+    fn report_terminal_focus_event(&mut self, focused: bool) {
+        if !self.workspace().ui.terminal.focus_event_reporting
+            || !self.terminal_sessions.active_attached()
+        {
+            return;
+        }
+        let bytes = terminal_focus_event_sequence(focused);
+        if let Err(err) = self.terminal_sessions.active().write_bytes(bytes) {
+            self.push_terminal_line(format!("terminal focus report failed: {err}"));
+        }
+    }
+
+    fn report_terminal_mouse_button(&mut self, button: MouseButton, state: ElementState) -> bool {
+        if !self.terminal_mouse_reporting_active() {
+            return false;
+        }
+        let Some((column, row)) = self.terminal_mouse_cell() else {
+            return false;
+        };
+        let pressed = state == ElementState::Pressed;
+        let Some(bytes) = self.terminal_mouse_encoding_sequence(|encoding| match encoding {
+            Some("sgr") => terminal_sgr_mouse_button_sequence(button, pressed, column, row),
+            Some("urxvt") => terminal_urxvt_mouse_button_sequence(button, pressed, column, row),
+            Some("utf8") => terminal_utf8_mouse_button_sequence(button, pressed, column, row),
+            None => terminal_x10_mouse_button_sequence(button, pressed, column, row),
+            _ => None,
+        }) else {
+            return false;
+        };
+        self.write_terminal_mouse_report(&bytes);
+        self.terminal_mouse_button = if state == ElementState::Pressed {
+            Some(button)
+        } else {
+            None
+        };
+        true
+    }
+
+    fn report_terminal_mouse_motion(&mut self) -> bool {
+        if !self.terminal_mouse_reporting_active() {
+            return false;
+        }
+        let terminal = &self.workspace().ui.terminal;
+        let held_button = match terminal.mouse_reporting_mode.as_deref() {
+            Some("any_event") => self.terminal_mouse_button,
+            Some("button_event") => {
+                let Some(button) = self.terminal_mouse_button else {
+                    return false;
+                };
+                Some(button)
+            }
+            _ => return false,
+        };
+        let Some((column, row)) = self.terminal_mouse_cell() else {
+            return false;
+        };
+        let Some(bytes) = self.terminal_mouse_encoding_sequence(|encoding| match encoding {
+            Some("sgr") => terminal_sgr_mouse_motion_sequence(held_button, column, row),
+            Some("urxvt") => held_button
+                .and_then(|button| terminal_urxvt_mouse_motion_sequence(button, column, row)),
+            Some("utf8") => held_button
+                .and_then(|button| terminal_utf8_mouse_motion_sequence(button, column, row)),
+            None => held_button
+                .and_then(|button| terminal_x10_mouse_motion_sequence(button, column, row)),
+            _ => None,
+        }) else {
+            return false;
+        };
+        self.write_terminal_mouse_report(&bytes);
+        true
+    }
+
+    fn report_terminal_mouse_wheel(&mut self, scroll_lines: f32) -> bool {
+        if !self.terminal_mouse_reporting_active() {
+            return false;
+        }
+        let Some((column, row)) = self.terminal_mouse_cell() else {
+            return false;
+        };
+        let Some(bytes) = self.terminal_mouse_encoding_sequence(|encoding| match encoding {
+            Some("sgr") => terminal_sgr_mouse_wheel_sequence(scroll_lines, column, row),
+            Some("urxvt") => terminal_urxvt_mouse_wheel_sequence(scroll_lines, column, row),
+            Some("utf8") => terminal_utf8_mouse_wheel_sequence(scroll_lines, column, row),
+            None => terminal_x10_mouse_wheel_sequence(scroll_lines, column, row),
+            _ => None,
+        }) else {
+            return false;
+        };
+        self.write_terminal_mouse_report(&bytes);
+        true
+    }
+
+    fn terminal_mouse_reporting_active(&self) -> bool {
+        let terminal = &self.workspace().ui.terminal;
+        terminal.mouse_reporting_mode.is_some() && self.terminal_sessions.active_attached()
+    }
+
+    fn terminal_mouse_encoding_sequence(
+        &self,
+        sequence: impl FnOnce(Option<&str>) -> Option<Vec<u8>>,
+    ) -> Option<Vec<u8>> {
+        sequence(
+            self.workspace()
+                .ui
+                .terminal
+                .mouse_coordinate_encoding
+                .as_deref(),
+        )
+    }
+
+    fn terminal_mouse_cell(&self) -> Option<(u16, u16)> {
+        let (x, y) = self.last_cursor_pos?;
+        let layout = self.current_layout();
+        let rect_x = layout.bottom_strip.x + 12.0;
+        let rect_y = layout.bottom_strip.y + 44.0;
+        let rect_width = layout.bottom_strip.width - 24.0;
+        let rect_height = (layout.bottom_strip.height - 56.0).max(0.0);
+        if x < rect_x || x > rect_x + rect_width || y < rect_y || y > rect_y + rect_height {
+            return None;
+        }
+        let terminal = &self.workspace().ui.terminal;
+        let column =
+            (((x - rect_x) / rect_width.max(1.0)) * terminal.columns as f32).floor() as u16;
+        let row = (((y - rect_y) / rect_height.max(1.0)) * terminal.rows as f32).floor() as u16;
+        Some((
+            column.saturating_add(1).min(terminal.columns.max(1)),
+            row.saturating_add(1).min(terminal.rows.max(1)),
+        ))
+    }
+
+    fn write_terminal_mouse_report(&mut self, bytes: &[u8]) {
+        if let Err(err) = self.terminal_sessions.active().write_bytes(bytes) {
+            self.push_terminal_line(format!("terminal mouse report failed: {err}"));
+        }
+    }
+
     fn terminate_terminal_session(&mut self) {
-        match terminate_pty_terminal_session(
-            &self.terminal,
-            &mut self.session.workspace_mut().ui.terminal,
-        ) {
+        match self
+            .terminal_sessions
+            .terminate_active(&mut self.session.workspace_mut().ui.terminal)
+        {
             Ok(()) => {}
             Err(err) => self.push_terminal_line(format!("terminal terminate failed: {err}")),
         }
+        self.sync_terminal_tabs();
         self.invalidate_frame();
     }
 
     fn restart_terminal_session(&mut self) {
-        match restart_pty_terminal_session(
-            &mut self.terminal,
-            &mut self.terminal_screen,
+        match self.terminal_sessions.restart_active(
             &mut self.session.workspace_mut().ui.terminal,
             &self.terminal_launch_context,
         ) {
@@ -1618,7 +1692,27 @@ impl Runtime {
         self.terminal_production_refresh_pending = false;
         self.terminal_production_refresh_due = None;
         self.terminal_production_refresh_attempts = 0;
+        self.sync_terminal_tabs();
         self.invalidate_frame();
+    }
+
+    fn activate_terminal_session(&mut self, session_id: &str) -> bool {
+        if let Err(err) = self.terminal_sessions.activate(session_id) {
+            self.push_terminal_line(format!("terminal session activate failed: {err}"));
+            return true;
+        }
+        let _ = refresh_terminal_session_context_from_state(
+            self.terminal_sessions.active(),
+            &self.terminal_launch_context,
+            self.workspace(),
+            self.last_cursor_pos,
+        );
+        self.set_active_dock(DockTab::Terminal);
+        self.refresh_terminal_activity_summary();
+        self.sync_terminal_tabs();
+        self.resize_terminal_to_dock();
+        self.invalidate_frame();
+        true
     }
 
     fn is_paste_shortcut(&self, event: &KeyEvent) -> bool {
@@ -1640,8 +1734,7 @@ impl Runtime {
         }
         match self.workspace().ui.active_dock_tab {
             Some(DockTab::Terminal) => self.modifiers.shift_key(),
-            Some(DockTab::Assistant) => !self.modifiers.shift_key(),
-            Some(DockTab::Outputs) | None => false,
+            Some(DockTab::Assistant | DockTab::Outputs) | None => false,
         }
     }
 
@@ -1655,35 +1748,44 @@ impl Runtime {
         let Some(active) = self.workspace().ui.active_dock_tab else {
             return false;
         };
-        if !matches!(active, DockTab::Assistant) {
+        if !self.dock_tab_accepts_edit(active) {
             return false;
         }
-        if text.chars().all(|ch| !ch.is_control()) {
-            let ui = &mut self.session.workspace_mut().ui;
-            let (input, cursor) = (&mut ui.assistant.input, &mut ui.assistant.cursor);
-            let byte_pos = char_to_byte_pos(input, *cursor);
-            input.insert_str(byte_pos, text);
-            *cursor += text.chars().count();
-            self.invalidate_frame();
-            return true;
+        if text.chars().any(|ch| ch.is_control()) {
+            return false;
         }
-        false
+        let ui = &mut self.session.workspace_mut().ui;
+        let (input, cursor) = match active {
+            DockTab::Terminal => (&mut ui.terminal.input, &mut ui.terminal.cursor),
+            DockTab::Assistant | DockTab::Outputs => return false,
+        };
+        let byte_pos = char_to_byte_pos(input, *cursor);
+        input.insert_str(byte_pos, text);
+        *cursor += text.chars().count();
+        self.invalidate_frame();
+        true
+    }
+
+    fn dock_tab_accepts_edit(&self, active: DockTab) -> bool {
+        matches!(active, DockTab::Terminal) && self.terminal_rename_session_id.is_some()
     }
 
     fn current_dock_input(&self) -> Option<&str> {
-        matches!(
-            self.workspace().ui.active_dock_tab,
-            Some(DockTab::Assistant)
-        )
-        .then_some(self.workspace().ui.assistant.input.as_str())
+        match self.workspace().ui.active_dock_tab {
+            Some(DockTab::Terminal) if self.terminal_rename_session_id.is_some() => {
+                Some(self.workspace().ui.terminal.input.as_str())
+            }
+            _ => None,
+        }
     }
 
     fn current_dock_input_mut(&mut self) -> Option<&mut String> {
-        matches!(
-            self.workspace().ui.active_dock_tab,
-            Some(DockTab::Assistant)
-        )
-        .then_some(&mut self.session.workspace_mut().ui.assistant.input)
+        match self.workspace().ui.active_dock_tab {
+            Some(DockTab::Terminal) if self.terminal_rename_session_id.is_some() => {
+                Some(&mut self.session.workspace_mut().ui.terminal.input)
+            }
+            _ => None,
+        }
     }
 
     fn copy_dock_input(&mut self) -> bool {
@@ -1707,7 +1809,7 @@ impl Runtime {
             return false;
         };
         if self.write_clipboard_text(&input).is_err() {
-            self.push_assistant_message("system", "clipboard copy failed".to_string());
+            self.push_terminal_line("clipboard copy failed".to_string());
         }
         false
     }
@@ -1722,7 +1824,7 @@ impl Runtime {
             return false;
         };
         if self.write_clipboard_text(&text).is_err() {
-            self.push_assistant_message("system", "clipboard cut failed".to_string());
+            self.push_terminal_line("clipboard cut failed".to_string());
             return true;
         }
         if let Some(input) = self.current_dock_input_mut() {
@@ -1734,14 +1836,18 @@ impl Runtime {
 
     fn paste_dock_input(&mut self) -> bool {
         let Ok(text) = self.read_clipboard_text() else {
-            self.push_assistant_message("system", "clipboard paste failed".to_string());
+            self.push_terminal_line("clipboard paste failed".to_string());
             return false;
         };
         if text.is_empty() {
             return false;
         }
         if matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)) {
-            return self.write_terminal_bytes(text.as_bytes());
+            let bytes = terminal_paste_bytes(
+                &text,
+                self.terminal_sessions.active_bracketed_paste_enabled(),
+            );
+            return self.write_terminal_bytes(&bytes);
         }
         self.append_dock_text(&text)
     }
@@ -1805,11 +1911,14 @@ impl Runtime {
         let Some(active) = self.workspace().ui.active_dock_tab else {
             return false;
         };
-        if !matches!(active, DockTab::Assistant) {
+        if !self.dock_tab_accepts_edit(active) {
             return false;
         }
         let ui = &mut self.session.workspace_mut().ui;
-        let (input, cursor) = (&mut ui.assistant.input, &mut ui.assistant.cursor);
+        let (input, cursor) = match active {
+            DockTab::Terminal => (&mut ui.terminal.input, &mut ui.terminal.cursor),
+            DockTab::Assistant | DockTab::Outputs => return false,
+        };
         if *cursor > 0 {
             let byte_pos = char_to_byte_pos(input, *cursor - 1);
             let byte_end = char_to_byte_pos(input, *cursor);
@@ -1825,11 +1934,14 @@ impl Runtime {
         let Some(active) = self.workspace().ui.active_dock_tab else {
             return false;
         };
-        if !matches!(active, DockTab::Assistant) {
+        if !self.dock_tab_accepts_edit(active) {
             return false;
         }
         let ui = &mut self.session.workspace_mut().ui;
-        let (input, cursor) = (&ui.assistant.input, &mut ui.assistant.cursor);
+        let (input, cursor) = match active {
+            DockTab::Terminal => (&ui.terminal.input, &mut ui.terminal.cursor),
+            DockTab::Assistant | DockTab::Outputs => return false,
+        };
         let char_count = input.chars().count();
         let new_pos = (*cursor as i32 + delta).clamp(0, char_count as i32) as usize;
         if new_pos != *cursor {
@@ -1844,11 +1956,14 @@ impl Runtime {
         let Some(active) = self.workspace().ui.active_dock_tab else {
             return false;
         };
-        if !matches!(active, DockTab::Assistant) {
+        if !self.dock_tab_accepts_edit(active) {
             return false;
         }
         let ui = &mut self.session.workspace_mut().ui;
-        let (input, cursor) = (&ui.assistant.input, &mut ui.assistant.cursor);
+        let (input, cursor) = match active {
+            DockTab::Terminal => (&ui.terminal.input, &mut ui.terminal.cursor),
+            DockTab::Assistant | DockTab::Outputs => return false,
+        };
         let target = if home { 0 } else { input.chars().count() };
         if target != *cursor {
             *cursor = target;
@@ -1860,454 +1975,20 @@ impl Runtime {
 
     fn complete_dock_input(&mut self) -> bool {
         match self.workspace().ui.active_dock_tab {
-            Some(DockTab::Assistant) => self.complete_assistant_input(),
             Some(DockTab::Terminal) => false,
             Some(DockTab::Outputs) => false,
+            Some(DockTab::Assistant) => false,
             None => false,
         }
-    }
-
-    fn complete_assistant_input(&mut self) -> bool {
-        let current = self.session.workspace().ui.assistant.input.clone();
-        let completed = self.complete_assistant_text(&current);
-        if completed == current {
-            return false;
-        }
-        let cursor = completed.chars().count();
-        let ui = &mut self.session.workspace_mut().ui;
-        ui.assistant.input = completed;
-        ui.assistant.cursor = cursor;
-        self.invalidate_frame();
-        true
-    }
-
-    fn complete_assistant_text(&self, input: &str) -> String {
-        const CONFIG_COMMANDS: &[&str] = &[
-            "/activity",
-            "/config status",
-            "/config api-key ",
-            "/config api-key",
-            "/config clear-api-key",
-            "/config model ",
-            "/config clear-model",
-            "/config cancel",
-        ];
-        let trimmed_start = input.trim_start();
-        if !trimmed_start.starts_with('/') {
-            return input.to_string();
-        }
-        if "/activity".starts_with(trimmed_start) {
-            return replace_tail(input, trimmed_start, "/activity");
-        }
-        if !trimmed_start.starts_with("/config") {
-            if "/config".starts_with(trimmed_start) {
-                return replace_tail(input, trimmed_start, "/config ");
-            }
-            return input.to_string();
-        }
-        if let Some(completed) = best_completion(trimmed_start, CONFIG_COMMANDS) {
-            let replaced = replace_tail(input, trimmed_start, &completed);
-            if replaced != input {
-                return replaced;
-            }
-        }
-
-        if let Some(rest) = trimmed_start.strip_prefix("/config model ") {
-            let models = ["gpt-5.4-mini", "gpt-5.4", "gpt-5.3-codex-spark"];
-            if let Some(model) = best_completion(rest, &models) {
-                return replace_tail(input, trimmed_start, &format!("/config model {model}"));
-            }
-        }
-
-        if let Some(rest) = trimmed_start.strip_prefix("/config select ") {
-            let mut references: Vec<&str> = self
-                .workspace()
-                .scene
-                .components
-                .iter()
-                .map(|component| component.reference.as_str())
-                .collect();
-            references.sort_unstable();
-            references.dedup();
-            if let Some(reference) = best_completion(rest, &references) {
-                return replace_tail(input, trimmed_start, &format!("/config select {reference}"));
-            }
-        }
-
-        input.to_string()
     }
 
     fn submit_dock_input(&mut self) -> bool {
         match self.workspace().ui.active_dock_tab {
-            Some(DockTab::Terminal) => false,
-            Some(DockTab::Assistant) => self.submit_assistant_input(),
+            Some(DockTab::Terminal) => self.submit_terminal_rename_input(),
             Some(DockTab::Outputs) => false,
+            Some(DockTab::Assistant) => self.open_terminal_agent_launcher(),
             None => false,
         }
-    }
-
-    fn submit_assistant_input(&mut self) -> bool {
-        let input = {
-            let ui = &mut self.session.workspace_mut().ui;
-            let input = ui.assistant.input.trim().to_string();
-            ui.assistant.input.clear();
-            ui.assistant.cursor = 0;
-            input
-        };
-        if self.workspace().ui.assistant.awaiting_api_key {
-            return self.submit_assistant_api_key(input);
-        }
-        if input.is_empty() {
-            self.invalidate_frame();
-            return true;
-        }
-        if self.handle_assistant_meta_command(&input) {
-            return true;
-        }
-        {
-            self.push_assistant_message("user", input.clone());
-        }
-        if let Err(err) = self.send_assistant_message(AssistantBridgeInput {
-            kind: "user_message",
-            text: Some(input),
-            context: Some(self.assistant_context()),
-        }) {
-            self.push_assistant_message("assistant", format!("assistant bridge failed: {err}"));
-        }
-        true
-    }
-
-    fn submit_assistant_api_key(&mut self, input: String) -> bool {
-        self.session.workspace_mut().ui.assistant.awaiting_api_key = false;
-        if input.is_empty() {
-            self.push_assistant_message(
-                "assistant",
-                "assistant api-key entry canceled".to_string(),
-            );
-            return true;
-        }
-        self.assistant_config.api_key = Some(input);
-        match self.persist_and_restart_assistant() {
-            Ok(()) => self.push_assistant_message(
-                "assistant",
-                "assistant API key saved locally; bridge restarted".to_string(),
-            ),
-            Err(err) => self.push_assistant_message(
-                "assistant",
-                format!("failed to save assistant API key: {err}"),
-            ),
-        }
-        true
-    }
-
-    fn handle_assistant_meta_command(&mut self, input: &str) -> bool {
-        let trimmed = input.trim();
-        if trimmed == "/activity" {
-            self.push_assistant_message("user", trimmed.to_string());
-            self.set_active_dock(DockTab::Terminal);
-            if let Err(err) = record_manual_terminal_command_handoff(
-                &self.terminal,
-                "assistant_activity",
-                "datum.gui.session_activity",
-                "execute",
-                ASSISTANT_ACTIVITY_COMMAND,
-            ) {
-                self.push_terminal_line(format!("terminal handoff event write failed: {err}"));
-            }
-            self.write_terminal_bytes(assistant_activity_command_bytes().as_bytes());
-            self.log_review_event("ran assistant activity command".to_string());
-            return true;
-        }
-        if !trimmed.starts_with("/config") {
-            return false;
-        }
-        let redacted = redact_assistant_config_command(trimmed);
-        self.push_assistant_message("user", redacted);
-        let mut parts = trimmed.split_whitespace();
-        let _ = parts.next();
-        match parts.next() {
-            Some("status") | None => {
-                self.push_assistant_message("assistant", self.assistant_status_summary());
-            }
-            Some("api-key") => {
-                let key = if let Some(key) = parts.next() {
-                    key.to_string()
-                } else {
-                    self.session.workspace_mut().ui.assistant.awaiting_api_key = true;
-                    self.push_assistant_message(
-                        "assistant",
-                        "enter assistant API key and press Enter; input will be hidden".to_string(),
-                    );
-                    return true;
-                };
-                self.assistant_config.api_key = Some(key);
-                match self.persist_and_restart_assistant() {
-                    Ok(()) => self.push_assistant_message(
-                        "assistant",
-                        "assistant API key saved locally; bridge restarted".to_string(),
-                    ),
-                    Err(err) => self.push_assistant_message(
-                        "assistant",
-                        format!("failed to save assistant API key: {err}"),
-                    ),
-                }
-            }
-            Some("clear-api-key") => {
-                self.assistant_config.api_key = None;
-                match self.persist_and_restart_assistant() {
-                    Ok(()) => self.push_assistant_message(
-                        "assistant",
-                        "assistant API key cleared; bridge restarted".to_string(),
-                    ),
-                    Err(err) => self.push_assistant_message(
-                        "assistant",
-                        format!("failed to clear assistant API key: {err}"),
-                    ),
-                }
-            }
-            Some("model") => {
-                let Some(model) = parts.next() else {
-                    self.push_assistant_message(
-                        "assistant",
-                        "usage: /config model <model>".to_string(),
-                    );
-                    return true;
-                };
-                self.assistant_config.model = Some(model.to_string());
-                match self.persist_and_restart_assistant() {
-                    Ok(()) => self.push_assistant_message(
-                        "assistant",
-                        format!("assistant model set to {model}; bridge restarted"),
-                    ),
-                    Err(err) => self.push_assistant_message(
-                        "assistant",
-                        format!("failed to save assistant model: {err}"),
-                    ),
-                }
-            }
-            Some("clear-model") => {
-                self.assistant_config.model = None;
-                match self.persist_and_restart_assistant() {
-                    Ok(()) => self.push_assistant_message(
-                        "assistant",
-                        "assistant model cleared; bridge restarted".to_string(),
-                    ),
-                    Err(err) => self.push_assistant_message(
-                        "assistant",
-                        format!("failed to clear assistant model: {err}"),
-                    ),
-                }
-            }
-            Some("cancel") => {
-                self.session.workspace_mut().ui.assistant.awaiting_api_key = false;
-                self.push_assistant_message(
-                    "assistant",
-                    "assistant config entry canceled".to_string(),
-                );
-            }
-            Some(other) => {
-                self.push_assistant_message(
-                    "assistant",
-                    format!(
-                        "unknown config command `{other}`. Use /config status | /config api-key | /config api-key <key> | /config clear-api-key | /config model <model> | /config clear-model | /config cancel"
-                    ),
-                );
-            }
-        }
-        true
-    }
-
-    fn assistant_status_summary(&self) -> String {
-        let api_key = if self.assistant_config.api_key.is_some() {
-            "configured"
-        } else {
-            "missing"
-        };
-        let model = self
-            .assistant_config
-            .model
-            .as_deref()
-            .unwrap_or("gpt-5.4-mini");
-        format!(
-            "assistant config: api-key={api_key}, model={model}. Use /activity for recent terminal session activity, /config api-key <key>, and /config model <model>."
-        )
-    }
-
-    fn persist_and_restart_assistant(&mut self) -> Result<()> {
-        save_assistant_config(&self.assistant_config_path, &self.assistant_config)?;
-        self.assistant =
-            spawn_assistant_session(&self.assistant_config).context("restart assistant bridge")?;
-        self.sync_assistant_context();
-        Ok(())
-    }
-
-    fn send_assistant_message(&mut self, message: AssistantBridgeInput) -> Result<()> {
-        let payload =
-            serde_json::to_string(&message).context("serialize assistant bridge input")?;
-        let mut stdin = self
-            .assistant
-            .stdin
-            .lock()
-            .map_err(|_| anyhow::anyhow!("lock assistant stdin"))?;
-        stdin
-            .write_all(payload.as_bytes())
-            .context("write assistant bridge input")?;
-        stdin
-            .write_all(b"\n")
-            .context("terminate assistant bridge input")?;
-        stdin.flush().context("flush assistant bridge input")?;
-        Ok(())
-    }
-
-    fn sync_assistant_context(&mut self) {
-        let _ = self.send_assistant_message(AssistantBridgeInput {
-            kind: "context",
-            text: None,
-            context: Some(self.assistant_context()),
-        });
-    }
-
-    fn assistant_context(&self) -> AssistantContext {
-        let workspace = self.workspace();
-        let project_root = workspace
-            .backing
-            .as_ref()
-            .map(|backing| backing.request.project_root.to_string_lossy().into_owned());
-        let selected_component =
-            workspace
-                .selected_component()
-                .map(|component| AssistantSelectedComponent {
-                    reference: component.reference.clone(),
-                    value: component.value.clone(),
-                    object_id: component.object_id.clone(),
-                    component_uuid: component.component_uuid.clone(),
-                    x_nm: component.position.x,
-                    y_nm: component.position.y,
-                });
-        let selected_review_action =
-            workspace
-                .selected_review_action()
-                .map(|action| AssistantSelectedReviewAction {
-                    action_id: action.action_id.clone(),
-                    net_name: action.net_name.clone(),
-                    layer: action.layer,
-                    width_nm: action.width_nm,
-                });
-        AssistantContext {
-            board_name: workspace.scene.board_name.clone(),
-            project_name: workspace.scene.project_name.clone(),
-            tool: match workspace.tool {
-                WorkspaceTool::Select => "select",
-            },
-            selection: selection_cache_key(workspace),
-            active_review_target_id: workspace.active_review_target_id.clone(),
-            project_root,
-            terminal_activity_summary: workspace.ui.terminal.activity_summary.clone(),
-            selected_component,
-            selected_review_action,
-            components: workspace
-                .scene
-                .components
-                .iter()
-                .map(|component| AssistantComponentSummary {
-                    reference: component.reference.clone(),
-                    value: component.value.clone(),
-                    object_id: component.object_id.clone(),
-                    component_uuid: component.component_uuid.clone(),
-                    x_nm: component.position.x,
-                    y_nm: component.position.y,
-                })
-                .collect(),
-            review_actions: workspace
-                .review
-                .proposal_actions
-                .iter()
-                .map(|action| AssistantReviewActionSummary {
-                    action_id: action.action_id.clone(),
-                    net_name: action.net_name.clone(),
-                    layer: action.layer,
-                    width_nm: action.width_nm,
-                })
-                .collect(),
-        }
-    }
-
-    fn apply_assistant_actions(&mut self, actions: &[AssistantBridgeAction]) -> String {
-        if actions.is_empty() {
-            return String::new();
-        }
-        let mut outcomes = Vec::new();
-        for action in actions {
-            let outcome = match action.kind.as_str() {
-                "open_dock" => match action.tab.as_deref() {
-                    Some("terminal") => {
-                        self.set_active_dock(DockTab::Terminal);
-                        "opened terminal".to_string()
-                    }
-                    Some("assistant") => {
-                        self.set_active_dock(DockTab::Assistant);
-                        "focused assistant".to_string()
-                    }
-                    _ => "assistant requested unknown dock".to_string(),
-                },
-                "set_tool" => "tool changes are disabled in read-only M7 review".to_string(),
-                "select_component_reference" => {
-                    if let Some(reference) = action.reference.as_deref() {
-                        let object_id = self
-                            .workspace()
-                            .scene
-                            .components
-                            .iter()
-                            .find(|component| component.reference.eq_ignore_ascii_case(reference))
-                            .map(|component| component.object_id.clone());
-                        match object_id {
-                            Some(object_id) => {
-                                if self.dispatch_session_command(
-                                    SessionCommand::SelectAuthoredObject(object_id),
-                                ) {
-                                    format!("selected {reference}")
-                                } else {
-                                    format!("could not select {reference}")
-                                }
-                            }
-                            None => format!("component not found: {reference}"),
-                        }
-                    } else {
-                        "assistant omitted component reference".to_string()
-                    }
-                }
-                "select_review_action" => {
-                    if let Some(action_id) = action.action_id.as_deref() {
-                        if self.dispatch_session_command(SessionCommand::SelectReviewAction(
-                            action_id.to_string(),
-                        )) {
-                            format!("selected review action {action_id}")
-                        } else {
-                            format!("review action not found: {action_id}")
-                        }
-                    } else {
-                        "assistant omitted review action id".to_string()
-                    }
-                }
-                "move_selected_by"
-                | "begin_route_selected_proposal"
-                | "apply_selected_route"
-                | "cancel_active_edit" => {
-                    "mutating assistant actions are disabled in read-only M7 review".to_string()
-                }
-                "run_terminal_command" => {
-                    if let Some(command) = action.command.as_deref() {
-                        format!("blocked terminal command `{command}` in read-only mode")
-                    } else {
-                        "assistant omitted terminal command".to_string()
-                    }
-                }
-                other => format!("assistant requested unsupported action `{other}`"),
-            };
-            outcomes.push(outcome);
-        }
-        self.sync_assistant_context();
-        outcomes.join("; ")
     }
 
     fn log_review_event(&mut self, message: impl Into<String>) {
@@ -2351,7 +2032,6 @@ impl Runtime {
                 SessionEvent::FrameChanged => self.invalidate_frame(),
             }
         }
-        self.sync_assistant_context();
         self.refresh_terminal_context_snapshot();
         true
     }
@@ -2650,14 +2330,20 @@ impl Runtime {
                 self.begin_selected_board_text_alignment_edit()
             }
             HitTarget::TerminalTab => self.set_active_dock(DockTab::Terminal),
+            HitTarget::TerminalSessionTab(session_id) => self.activate_terminal_session(session_id),
+            HitTarget::TerminalSessionNew => self.spawn_terminal_session_tab(),
+            HitTarget::TerminalSessionRenameActive => self.rename_active_terminal_session(),
+            HitTarget::TerminalSessionRestartActive => {
+                self.restart_terminal_session();
+                true
+            }
+            HitTarget::TerminalSessionDetachActive => self.detach_active_terminal_session(),
+            HitTarget::TerminalSessionCloseActive => self.close_active_terminal_session(),
             HitTarget::AssistantTab => self.open_terminal_agent_launcher(),
             HitTarget::OutputsTab => self.set_active_dock(DockTab::Outputs),
             HitTarget::TerminalActivitySummary(summary) => {
-                self.set_active_dock(DockTab::Assistant);
-                self.push_assistant_message(
-                    "system",
-                    format!("selected terminal activity span: {summary}"),
-                );
+                self.set_active_dock(DockTab::Terminal);
+                self.push_terminal_line(format!("selected terminal activity span: {summary}"));
                 self.log_review_event("selected terminal activity span".to_string());
                 true
             }
@@ -2682,7 +2368,7 @@ impl Runtime {
             HitTarget::ProductionOutputJobRun(handoff) => {
                 self.set_active_dock(DockTab::Terminal);
                 let command = prepare_terminal_command_execution(
-                    &self.terminal,
+                    self.terminal_sessions.active(),
                     "production_output_job_run",
                     &handoff,
                 )
@@ -2699,7 +2385,7 @@ impl Runtime {
             HitTarget::ProductionTerminalCommand(handoff) => {
                 self.set_active_dock(DockTab::Terminal);
                 let command = prepare_terminal_command_execution(
-                    &self.terminal,
+                    self.terminal_sessions.active(),
                     "production_terminal_command",
                     &handoff,
                 )
@@ -2835,7 +2521,7 @@ impl Runtime {
     ) -> bool {
         self.set_active_dock(DockTab::Terminal);
         if let Err(err) = record_manual_terminal_command_handoff(
-            &self.terminal,
+            self.terminal_sessions.active(),
             "board_text_terminal_command",
             "datum.gui.board_text.edit_prefill",
             "prefill",
@@ -3135,8 +2821,13 @@ impl Runtime {
         let ui = &self.session.workspace().ui;
         let cols = ((self.config.width as f32 - 24.0) / 7.5).floor().max(20.0) as u16;
         let rows = ((ui.dock_height_px as f32 - 76.0) / 16.0).floor().max(4.0) as u16;
-        if let Err(err) = self.terminal.resize(cols, rows) {
-            self.push_terminal_line(format!("terminal resize failed: {err}"));
+        match self.terminal_sessions.resize_active(cols, rows) {
+            Ok(()) => {
+                let terminal = &mut self.session.workspace_mut().ui.terminal;
+                terminal.columns = cols;
+                terminal.rows = rows;
+            }
+            Err(err) => self.push_terminal_line(format!("terminal resize failed: {err}")),
         }
     }
 }
@@ -3214,13 +2905,22 @@ mod tests {
     }
 
     #[test]
+    fn terminal_paste_bytes_wraps_when_bracketed_paste_is_enabled() {
+        assert_eq!(terminal_paste_bytes("alpha\nbeta", false), b"alpha\nbeta");
+        assert_eq!(
+            terminal_paste_bytes("alpha\nbeta", true),
+            b"\x1b[200~alpha\nbeta\x1b[201~"
+        );
+    }
+
+    #[test]
     fn assistant_activity_command_is_session_scoped() {
         assert!(ASSISTANT_ACTIVITY_COMMAND.contains("context session-activity"));
         assert!(ASSISTANT_ACTIVITY_COMMAND.contains("$DATUM_SESSION_ID"));
         assert!(ASSISTANT_ACTIVITY_COMMAND.contains("--limit 20"));
         assert_eq!(
-            assistant_activity_command_bytes(),
-            "datum-eda context session-activity --session \"$DATUM_SESSION_ID\" --limit 20\r"
+            ASSISTANT_ACTIVITY_COMMAND,
+            "datum-eda context session-activity --session \"$DATUM_SESSION_ID\" --limit 20"
         );
     }
 
@@ -3233,74 +2933,20 @@ mod tests {
     }
 }
 
-fn assistant_config_path(request: &LiveReviewRequest) -> PathBuf {
-    request.project_root.join(".datum").join("assistant.json")
-}
-
-fn load_assistant_config(path: &Path) -> Result<AssistantBridgeConfig> {
-    if !path.exists() {
-        return Ok(AssistantBridgeConfig::default());
-    }
-    let text = fs::read_to_string(path)
-        .with_context(|| format!("read assistant config {}", path.display()))?;
-    serde_json::from_str(&text)
-        .with_context(|| format!("parse assistant config {}", path.display()))
-}
-
-fn save_assistant_config(path: &Path, config: &AssistantBridgeConfig) -> Result<()> {
-    let parent = path
-        .parent()
-        .ok_or_else(|| anyhow::anyhow!("assistant config path missing parent"))?;
-    fs::create_dir_all(parent)
-        .with_context(|| format!("create assistant config dir {}", parent.display()))?;
-    let text = serde_json::to_string_pretty(config).context("serialize assistant config")?;
-    fs::write(path, format!("{text}\n"))
-        .with_context(|| format!("write assistant config {}", path.display()))?;
-    Ok(())
-}
-
-fn redact_assistant_config_command(command: &str) -> String {
-    if let Some(rest) = command.strip_prefix("/config api-key ") {
-        return format!("/config api-key {}", redact_secret(rest.trim()));
-    }
-    command.to_string()
-}
-
-fn assistant_activity_command_bytes() -> String {
-    format!("{ASSISTANT_ACTIVITY_COMMAND}\r")
-}
-
-fn redact_secret(secret: &str) -> String {
-    if secret.is_empty() {
-        return "<empty>".to_string();
-    }
-    let tail_len = secret.len().min(4);
-    let tail = &secret[secret.len() - tail_len..];
-    format!("***{tail}")
-}
-
-fn best_completion(prefix: &str, candidates: &[&str]) -> Option<String> {
-    let trimmed = prefix.trim();
-    let mut matches = candidates
-        .iter()
-        .filter(|candidate| candidate.starts_with(trimmed))
-        .copied()
-        .collect::<Vec<_>>();
-    matches.sort_unstable();
-    matches.dedup();
-    matches.first().map(|value| (*value).to_string())
-}
-
-fn replace_tail(original: &str, tail: &str, replacement: &str) -> String {
-    if let Some(prefix) = original.strip_suffix(tail) {
-        return format!("{prefix}{replacement}");
-    }
-    replacement.to_string()
-}
-
 fn char_to_byte_pos(s: &str, char_index: usize) -> usize {
     s.char_indices()
         .nth(char_index)
         .map(|(i, _)| i)
         .unwrap_or(s.len())
+}
+
+fn terminal_paste_bytes(text: &str, bracketed_paste: bool) -> Vec<u8> {
+    if !bracketed_paste {
+        return text.as_bytes().to_vec();
+    }
+    let mut bytes = Vec::with_capacity(text.len() + 12);
+    bytes.extend_from_slice(b"\x1b[200~");
+    bytes.extend_from_slice(text.as_bytes());
+    bytes.extend_from_slice(b"\x1b[201~");
+    bytes
 }

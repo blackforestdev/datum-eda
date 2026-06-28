@@ -6,16 +6,34 @@ const MAX_CONTEXT_FINDINGS_PER_RUN: usize = 8;
 
 pub(super) fn check_context_summary(model: &DesignModel) -> Value {
     let mut check_runs = model.check_runs.values().collect::<Vec<_>>();
-    check_runs.sort_by(|left, right| {
-        left.model_revision
-            .0
-            .cmp(&right.model_revision.0)
-            .then_with(|| left.profile_id.cmp(&right.profile_id))
-            .then_with(|| left.check_run_id.cmp(&right.check_run_id))
-            .reverse()
-    });
+    check_runs.sort_by(compare_check_runs);
+    let latest_check_run_id = check_runs
+        .last()
+        .map(|run| Value::String(run.check_run_id.to_string()))
+        .unwrap_or(Value::Null);
+    let latest_profile_id = check_runs
+        .last()
+        .map(|run| Value::String(run.profile_id.clone()))
+        .unwrap_or(Value::Null);
+    let mut latest_by_profile = std::collections::BTreeMap::<String, &CheckRun>::new();
+    for run in &check_runs {
+        latest_by_profile.insert(run.profile_id.clone(), run);
+    }
+    let profile_latest_check_runs = latest_by_profile
+        .values()
+        .map(|run| {
+            serde_json::json!({
+                "profile_id": run.profile_id,
+                "check_run_id": run.check_run_id,
+                "model_revision": run.model_revision.0,
+                "status": run.status,
+                "finding_count": run.finding_count
+            })
+        })
+        .collect::<Vec<_>>();
     let visible = check_runs
         .into_iter()
+        .rev()
         .take(MAX_CONTEXT_CHECK_RUNS)
         .map(check_run_context_summary)
         .collect::<Vec<_>>();
@@ -23,6 +41,9 @@ pub(super) fn check_context_summary(model: &DesignModel) -> Value {
         "contract": "datum_check_context_v1",
         "check_run_count": model.check_runs.len(),
         "visible_check_run_count": visible.len(),
+        "latest_check_run_id": latest_check_run_id,
+        "latest_profile_id": latest_profile_id,
+        "profile_latest_check_runs": profile_latest_check_runs,
         "visible_check_runs": visible,
         "agent_commands": {
             "run_checks": "datum-eda check run \"$DATUM_PROJECT_ROOT\"",
@@ -33,6 +54,14 @@ pub(super) fn check_context_summary(model: &DesignModel) -> Value {
             "accept_deviation": "datum-eda check accept-deviation \"$DATUM_PROJECT_ROOT\" --fingerprint <fingerprint> --rationale <rationale>"
         }
     })
+}
+
+fn compare_check_runs(left: &&CheckRun, right: &&CheckRun) -> std::cmp::Ordering {
+    left.model_revision
+        .0
+        .cmp(&right.model_revision.0)
+        .then_with(|| left.profile_id.cmp(&right.profile_id))
+        .then_with(|| left.check_run_id.cmp(&right.check_run_id))
 }
 
 pub(super) fn visible_check_run_ids_from_context(check_context: &Value) -> Value {
@@ -126,6 +155,7 @@ fn check_finding_context_summary(finding: &CheckFinding) -> Value {
         "domain": finding.domain,
         "rule_id": finding.rule_id,
         "standards_basis": finding.standards_basis,
+        "standards_basis_detail": finding.standards_basis_detail,
         "rule_revision": finding.rule_revision,
         "import_key": finding.import_key,
         "status": finding.status,

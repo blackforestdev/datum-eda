@@ -1,9 +1,6 @@
-use std::path::{Path, PathBuf};
-
-use anyhow::Result;
 use eda_engine::substrate::{
-    ArtifactMetadata, DesignModel, OutputJobLogEntry, OutputJobLogLevel, OutputJobRun,
-    OutputJobRunStatus, persist_output_job_run,
+    ArtifactMetadata, DesignModel, OUTPUT_JOB_RUN_SCHEMA_VERSION, OutputJobLogEntry,
+    OutputJobLogLevel, OutputJobRun, OutputJobRunStatus,
 };
 use uuid::Uuid;
 
@@ -13,25 +10,7 @@ use super::super::command_project_gerber_plan::{
 };
 use super::super::command_project_output_jobs::next_output_job_run_sequence;
 
-pub(super) fn persist_generic_output_job_run(
-    root: &Path,
-    scope: &str,
-    model: &DesignModel,
-    artifact: &ArtifactMetadata,
-    persist_run: bool,
-) -> Result<Option<(OutputJobRun, PathBuf)>> {
-    let Some(output_job) = artifact.output_job else {
-        return Ok(None);
-    };
-    if !persist_run {
-        return Ok(None);
-    }
-    let run = generic_output_job_run(model, output_job, scope, artifact);
-    let path = persist_output_job_run(root, &run)?;
-    Ok(Some((run, path)))
-}
-
-fn generic_output_job_run(
+pub(super) fn generic_output_job_run(
     model: &DesignModel,
     output_job: Uuid,
     scope: &str,
@@ -54,6 +33,7 @@ fn generic_output_job_run(
     log.extend(terminal_origin_log_entries_from(&env, 2));
     append_production_projection_log_entries(&mut log, &artifact.production_projections);
     OutputJobRun {
+        schema_version: OUTPUT_JOB_RUN_SCHEMA_VERSION,
         run_id: Uuid::new_v5(&model.project.project_id, material.as_bytes()),
         output_job,
         run_sequence,

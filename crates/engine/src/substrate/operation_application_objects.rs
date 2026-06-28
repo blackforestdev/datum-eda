@@ -11,6 +11,22 @@ pub(super) fn apply_operation_to_objects(
     diff: Option<&mut CommitDiff>,
 ) -> Result<(), EngineError> {
     match operation {
+        Operation::GuardObjectRevision {
+            object_id,
+            expected_object_revision,
+        } => {
+            let object = objects.get(object_id).ok_or(EngineError::NotFound {
+                object_type: "domain_object",
+                uuid: *object_id,
+            })?;
+            if object.object_revision != *expected_object_revision {
+                return Err(EngineError::Operation(format!(
+                    "object revision mismatch for {}: expected {}, current {}",
+                    object_id, expected_object_revision.0, object.object_revision.0
+                )));
+            }
+            Ok(())
+        }
         Operation::BumpObjectRevision { object_id } => {
             let object = objects.get_mut(object_id).ok_or(EngineError::NotFound {
                 object_type: "domain_object",
@@ -25,9 +41,10 @@ pub(super) fn apply_operation_to_objects(
         Operation::SetProjectName { project_id, .. } => {
             bump_existing_object(objects, *project_id, diff)
         }
-        Operation::SetProjectRules { .. }
-        | Operation::AddProjectPoolRef { .. }
-        | Operation::DeleteProjectPoolRef { .. } => Ok(()),
+        Operation::SetProjectRules { rules_root_id, .. } => {
+            bump_existing_object(objects, *rules_root_id, diff)
+        }
+        Operation::AddProjectPoolRef { .. } | Operation::DeleteProjectPoolRef { .. } => Ok(()),
         Operation::CreateProjectRule { rules_root_id, .. }
         | Operation::SetProjectRule { rules_root_id, .. }
         | Operation::DeleteProjectRule { rules_root_id, .. } => {
@@ -124,6 +141,14 @@ pub(super) fn apply_operation_to_objects(
         | Operation::CreateComponentInstance { .. }
         | Operation::DeleteComponentInstance { .. }
         | Operation::SetComponentInstance { .. }
+        | Operation::SetOutputJobRun { .. }
+        | Operation::DeleteOutputJobRun { .. }
+        | Operation::SetArtifactRun { .. }
+        | Operation::DeleteArtifactRun { .. }
+        | Operation::SetCheckRun { .. }
+        | Operation::DeleteCheckRun { .. }
+        | Operation::SetArtifactMetadata { .. }
+        | Operation::DeleteArtifactMetadata { .. }
         | Operation::SetZoneFill { .. }
         | Operation::DeleteZoneFill { .. } => Ok(()),
         Operation::CreateSchematicWire { .. }

@@ -4,11 +4,11 @@ use uuid::Uuid;
 
 use super::{
     DerivedRelationshipStatus, DerivedVariantPopulation, DomainObject, EngineError, FittedState,
-    ObjectId, Operation, OperationBatch, Relationship, RelationshipKind, SourceShardKind,
-    VariantOverlay, journal::StagedShardWrite,
+    ObjectId, Operation, OperationBatch, RELATIONSHIP_SHARD_SCHEMA_VERSION, Relationship,
+    RelationshipKind, SourceShardKind, VARIANT_OVERLAY_SHARD_SCHEMA_VERSION, VariantOverlay,
+    journal::{StagedShardWrite, stage_new_shard_write},
     operation_application_relationship::authored_relative_path,
 };
-use crate::ir::serialization::to_json_deterministic;
 
 pub(super) fn stage_relationship_operation(
     project_root: &Path,
@@ -27,31 +27,12 @@ pub(super) fn stage_relationship_operation(
             kind,
             relative_path,
             content_hash: String::new(),
+            schema_version: None,
             delete: true,
         }));
     }
-    let stage_path = project_root
-        .join(".datum/stage")
-        .join(batch.batch_id.to_string())
-        .join(&relative_path);
-    if let Some(parent) = stage_path.parent() {
-        std::fs::create_dir_all(parent)?;
-    }
     let wrapper = wrap_payload(&kind, value.clone());
-    let bytes = format!("{}\n", to_json_deterministic(&wrapper)?).into_bytes();
-    std::fs::write(&stage_path, &bytes)?;
-    std::fs::File::open(&stage_path)?.sync_all()?;
-    if let Some(parent) = stage_path.parent() {
-        std::fs::File::open(parent)?.sync_all()?;
-    }
-    Ok(Some(StagedShardWrite {
-        destination,
-        staged: Some(stage_path),
-        kind,
-        relative_path,
-        content_hash: super::sha256_hex(&bytes),
-        delete: false,
-    }))
+    stage_new_shard_write(project_root, batch, kind, &relative_path, &wrapper).map(Some)
 }
 
 pub(super) fn inverse_relationship_operation(
@@ -314,11 +295,11 @@ pub(super) fn wrap_payload(
 ) -> serde_json::Value {
     match kind {
         SourceShardKind::Relationship => serde_json::json!({
-            "schema_version": 1,
+            "schema_version": RELATIONSHIP_SHARD_SCHEMA_VERSION,
             "relationships": [payload]
         }),
         SourceShardKind::VariantOverlay => serde_json::json!({
-            "schema_version": 1,
+            "schema_version": VARIANT_OVERLAY_SHARD_SCHEMA_VERSION,
             "variants": [payload]
         }),
         _ => payload,

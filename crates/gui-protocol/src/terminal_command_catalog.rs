@@ -472,6 +472,17 @@ pub fn terminal_command_catalog() -> BTreeMap<String, TerminalCommandCatalogEntr
             &["datum-eda", "journal", "redo", "{project_root}"],
             Some("datum.journal.redo"),
         ),
+        entry(
+            "datum.query.source_shards",
+            &[
+                "datum-eda",
+                "project",
+                "query",
+                "{project_root}",
+                "resolve-debug",
+            ],
+            Some("datum.query.source_shards"),
+        ),
     ]
     .into_iter()
     .map(|entry| (entry.command_id.clone(), entry))

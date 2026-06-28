@@ -1,8 +1,31 @@
 use std::path::{Component, Path};
 
-use super::artifact::ArtifactMetadata;
+use super::artifact::{
+    ARTIFACT_METADATA_SCHEMA_VERSION, ArtifactMetadata, PRODUCTION_RECORD_SCHEMA_VERSION,
+};
+
+pub(super) fn validate_production_record_payload_schema_version(
+    schema_version: u64,
+    label: &str,
+) -> Result<(), String> {
+    if schema_version != PRODUCTION_RECORD_SCHEMA_VERSION {
+        return Err(format!(
+            "unsupported {label} schema_version {schema_version}; supported {PRODUCTION_RECORD_SCHEMA_VERSION}"
+        ));
+    }
+    Ok(())
+}
 
 pub(super) fn validate_artifact_metadata(metadata: &ArtifactMetadata) -> Result<(), String> {
+    if metadata.schema_version != ARTIFACT_METADATA_SCHEMA_VERSION {
+        return Err(format!(
+            "unsupported artifact metadata schema_version {}; supported {}",
+            metadata.schema_version, ARTIFACT_METADATA_SCHEMA_VERSION
+        ));
+    }
+    if metadata.generator_version.trim().is_empty() {
+        return Err("artifact generator_version must not be blank".to_string());
+    }
     if metadata
         .output_dir
         .as_ref()

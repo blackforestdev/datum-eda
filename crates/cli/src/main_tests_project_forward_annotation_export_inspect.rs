@@ -1,6 +1,8 @@
 use super::main_tests_project_forward_annotation_support::{
     find_action_id, native_symbol, query_forward_annotation_proposal, unique_project_root,
-    write_board_packages, write_native_sheet_symbols,
+    write_board_packages, write_component_instance_shard,
+    write_component_instance_shard_with_part_ref, write_native_sheet_symbols,
+    write_pool_part_object,
 };
 use super::*;
 use eda_engine::board::PlacedPackage;
@@ -108,6 +110,54 @@ fn project_export_forward_annotation_proposal_writes_versioned_artifact_with_rev
 }
 
 #[test]
+fn project_export_forward_annotation_proposal_uses_resolver_materialized_project_name() {
+    let root = unique_project_root("datum-eda-cli-project-forward-annotation-export-resolver");
+    let _ = setup_export_fixture(
+        &root,
+        "Forward Annotation Stale Name",
+        "Forward Annotation Stale Name Board",
+    );
+    let project_json = root.join("project.json");
+    let stale_project = std::fs::read_to_string(&project_json).expect("project file should read");
+
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "project",
+            "set-project-name",
+            root.to_str().unwrap(),
+            "--name",
+            "Forward Annotation Resolved Name",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("set project name should succeed");
+    std::fs::write(&project_json, stale_project).expect("stale project file should restore");
+
+    let artifact_path = root.join("forward-annotation-proposal-resolved.json");
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "project",
+            "export-forward-annotation-proposal",
+            root.to_str().unwrap(),
+            "--out",
+            artifact_path.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("export should read resolver-materialized project name");
+
+    let artifact: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(&artifact_path).expect("artifact should read"),
+    )
+    .expect("artifact should parse");
+    assert_eq!(artifact["project_name"], "Forward Annotation Resolved Name");
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
 fn project_inspect_forward_annotation_proposal_artifact_reports_counts() {
     let root = unique_project_root("datum-eda-cli-project-forward-annotation-inspect-artifact");
     let _ = setup_export_fixture(
@@ -158,6 +208,193 @@ fn project_inspect_forward_annotation_proposal_artifact_reports_counts() {
     assert_eq!(inspection["update_component_actions"], 0);
     assert_eq!(inspection["deferred_reviews"], 1);
     assert_eq!(inspection["rejected_reviews"], 0);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_forward_annotation_uses_component_instance_before_reference_match() {
+    let root = unique_project_root("datum-eda-cli-forward-annotation-component-instance-first");
+    create_native_project(
+        &root,
+        Some("Forward Annotation ComponentInstance".to_string()),
+    )
+    .expect("initial scaffold should succeed");
+
+    let sheet_uuid = Uuid::new_v4();
+    let symbol_r1 = Uuid::new_v4();
+    let symbol_r2 = Uuid::new_v4();
+    let part_r1 = Uuid::new_v4();
+    let part_r2 = Uuid::new_v4();
+    write_native_sheet_symbols(
+        &root,
+        sheet_uuid,
+        "Main",
+        vec![
+            native_symbol(symbol_r1, "R1", "10k", "Device:R", Some(part_r1), None),
+            native_symbol(symbol_r2, "R2", "1k", "Device:R", Some(part_r2), None),
+        ],
+    );
+
+    let package_r1 = Uuid::new_v4();
+    let package_r99 = Uuid::new_v4();
+    write_board_packages(
+        &root,
+        "Forward Annotation ComponentInstance Board",
+        vec![
+            PlacedPackage {
+                uuid: package_r1,
+                part: part_r2,
+                package: Uuid::new_v4(),
+                reference: "R1".into(),
+                value: "1k".into(),
+                position: Point::new(0, 0),
+                rotation: 0,
+                layer: 1,
+                locked: false,
+            },
+            PlacedPackage {
+                uuid: package_r99,
+                part: part_r1,
+                package: Uuid::new_v4(),
+                reference: "R99".into(),
+                value: "10k".into(),
+                position: Point::new(10, 0),
+                rotation: 0,
+                layer: 1,
+                locked: false,
+            },
+        ],
+    );
+    write_component_instance_shard(&root, Uuid::new_v4(), symbol_r1, package_r99);
+    write_component_instance_shard(&root, Uuid::new_v4(), symbol_r2, package_r1);
+
+    let proposal = query_forward_annotation_proposal(&root);
+    assert_eq!(proposal["total_actions"], 0);
+    assert_eq!(proposal["update_component_actions"], 0);
+    assert_eq!(proposal["add_component_actions"], 0);
+    assert_eq!(proposal["remove_component_actions"], 0);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_forward_annotation_update_targets_component_instance_bound_package() {
+    let root = unique_project_root("datum-eda-cli-forward-annotation-component-instance-target");
+    create_native_project(
+        &root,
+        Some("Forward Annotation ComponentInstance Target".to_string()),
+    )
+    .expect("initial scaffold should succeed");
+
+    let sheet_uuid = Uuid::new_v4();
+    let symbol_uuid = Uuid::new_v4();
+    let part_uuid = Uuid::new_v4();
+    write_native_sheet_symbols(
+        &root,
+        sheet_uuid,
+        "Main",
+        vec![native_symbol(
+            symbol_uuid,
+            "R1",
+            "10k",
+            "Device:R",
+            Some(part_uuid),
+            None,
+        )],
+    );
+
+    let bound_package_uuid = Uuid::new_v4();
+    write_board_packages(
+        &root,
+        "Forward Annotation ComponentInstance Target Board",
+        vec![PlacedPackage {
+            uuid: bound_package_uuid,
+            part: part_uuid,
+            package: Uuid::new_v4(),
+            reference: "R99".into(),
+            value: "22k".into(),
+            position: Point::new(0, 0),
+            rotation: 0,
+            layer: 1,
+            locked: false,
+        }],
+    );
+    write_component_instance_shard(&root, Uuid::new_v4(), symbol_uuid, bound_package_uuid);
+
+    let proposal = query_forward_annotation_proposal(&root);
+    assert_eq!(proposal["update_component_actions"], 1);
+    assert_eq!(proposal["add_component_actions"], 0);
+    assert_eq!(proposal["remove_component_actions"], 0);
+    let update = proposal["actions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|entry| entry["action"] == "update_component")
+        .expect("update action should exist");
+    assert_eq!(update["reason"], "value_mismatch");
+    assert_eq!(update["symbol_uuid"], symbol_uuid.to_string());
+    assert_eq!(update["component_uuid"], bound_package_uuid.to_string());
+    assert_eq!(update["reference"], "R1");
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_forward_annotation_component_instance_part_ref_overrides_symbol_part() {
+    let root = unique_project_root("datum-eda-cli-forward-annotation-component-instance-part-ref");
+    create_native_project(
+        &root,
+        Some("Forward Annotation ComponentInstance Part".to_string()),
+    )
+    .expect("initial scaffold should succeed");
+
+    let sheet_uuid = Uuid::new_v4();
+    let symbol_uuid = Uuid::new_v4();
+    let stale_symbol_part = Uuid::new_v4();
+    let component_instance_part = Uuid::new_v4();
+    write_pool_part_object(&root, component_instance_part);
+    write_native_sheet_symbols(
+        &root,
+        sheet_uuid,
+        "Main",
+        vec![native_symbol(
+            symbol_uuid,
+            "R1",
+            "10k",
+            "Device:R",
+            Some(stale_symbol_part),
+            None,
+        )],
+    );
+
+    let package_uuid = Uuid::new_v4();
+    write_board_packages(
+        &root,
+        "Forward Annotation ComponentInstance Part Board",
+        vec![PlacedPackage {
+            uuid: package_uuid,
+            part: component_instance_part,
+            package: Uuid::new_v4(),
+            reference: "R1".into(),
+            value: "10k".into(),
+            position: Point::new(0, 0),
+            rotation: 0,
+            layer: 1,
+            locked: false,
+        }],
+    );
+    write_component_instance_shard_with_part_ref(
+        &root,
+        Uuid::new_v4(),
+        symbol_uuid,
+        package_uuid,
+        Some(component_instance_part),
+    );
+
+    let proposal = query_forward_annotation_proposal(&root);
+    assert_eq!(proposal["total_actions"], 0);
+    assert_eq!(proposal["update_component_actions"], 0);
 
     let _ = std::fs::remove_dir_all(&root);
 }

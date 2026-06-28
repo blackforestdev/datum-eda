@@ -35,6 +35,9 @@ pub(super) fn run_connectivity_checks(board: &Board) -> Vec<DrcViolation> {
                 location: None,
                 objects: vec![net.uuid],
                 fingerprint: None,
+                standards_basis: None,
+                rule_revision: None,
+                import_key: None,
                 waived: false,
             });
         }
@@ -63,6 +66,9 @@ pub(super) fn run_connectivity_checks(board: &Board) -> Vec<DrcViolation> {
             location: None,
             objects: vec![net_uuid],
             fingerprint: None,
+            standards_basis: None,
+            rule_revision: None,
+            import_key: None,
             waived: false,
         });
     }
@@ -87,6 +93,9 @@ pub(super) fn run_connectivity_checks(board: &Board) -> Vec<DrcViolation> {
                 location: None,
                 objects: vec![net.uuid],
                 fingerprint: None,
+                standards_basis: None,
+                rule_revision: None,
+                import_key: None,
                 waived: false,
             });
         }
@@ -138,6 +147,9 @@ pub(super) fn run_clearance_checks(board: &Board) -> Vec<DrcViolation> {
                     location: Some(violation_location),
                     objects,
                     fingerprint: None,
+                    standards_basis: None,
+                    rule_revision: None,
+                    import_key: None,
                     waived: false,
                 });
             }
@@ -178,6 +190,9 @@ pub(super) fn run_track_width_checks(board: &Board) -> Vec<DrcViolation> {
                 location: Some(violation_location),
                 objects: vec![track.uuid],
                 fingerprint: None,
+                standards_basis: Some("datum.process_aperture_and_geometry.current".to_string()),
+                rule_revision: Some("v1".to_string()),
+                import_key: None,
                 waived: false,
             });
         }
@@ -216,6 +231,9 @@ pub(super) fn run_via_hole_checks(board: &Board) -> Vec<DrcViolation> {
                 location: Some(violation_location),
                 objects: vec![via.uuid],
                 fingerprint: None,
+                standards_basis: Some("datum.process_aperture_and_geometry.current".to_string()),
+                rule_revision: Some("v1".to_string()),
+                import_key: None,
                 waived: false,
             });
         }
@@ -255,6 +273,9 @@ pub(super) fn run_via_annular_checks(board: &Board) -> Vec<DrcViolation> {
                 location: Some(violation_location),
                 objects: vec![via.uuid],
                 fingerprint: None,
+                standards_basis: Some("datum.process_aperture_and_geometry.current".to_string()),
+                rule_revision: Some("v1".to_string()),
+                import_key: None,
                 waived: false,
             });
         }
@@ -312,6 +333,9 @@ pub(super) fn run_silk_clearance_checks(board: &Board) -> Vec<DrcViolation> {
                     location: Some(violation_location),
                     objects,
                     fingerprint: None,
+                    standards_basis: None,
+                    rule_revision: None,
+                    import_key: None,
                     waived: false,
                 });
             }
@@ -346,6 +370,9 @@ pub(super) fn run_silk_clearance_checks(board: &Board) -> Vec<DrcViolation> {
                     location: Some(violation_location),
                     objects,
                     fingerprint: None,
+                    standards_basis: None,
+                    rule_revision: None,
+                    import_key: None,
                     waived: false,
                 });
             }
@@ -524,6 +551,9 @@ fn pad_process_aperture_violation(pad: &PlacedPad, code: &str, message: String) 
         location: Some(location),
         objects: vec![pad.uuid],
         fingerprint: None,
+        standards_basis: Some("datum.process_aperture_and_geometry.current".to_string()),
+        rule_revision: Some("v1".to_string()),
+        import_key: None,
         waived: false,
     }
 }

@@ -122,6 +122,47 @@ fn erc_profile_does_not_execute_drc_domains() {
 }
 
 #[test]
+fn drc_profile_reports_clearance_and_silkscreen_coverage_as_evaluated() {
+    let root = unique_project_root("datum-eda-cli-check-run-drc-profile-coverage");
+    create_native_project(&root, Some("DRC Profile Coverage Demo".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "check",
+            "run",
+            root.to_str().unwrap(),
+            "--profile",
+            "drc",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("drc profile check should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).unwrap();
+    assert_eq!(report["profile_id"], "drc");
+    assert!(report["coverage"].as_array().unwrap().iter().any(|entry| {
+        entry["domain"] == "drc"
+            && entry["rule_id"] == "clearance_copper"
+            && entry["status"] == "evaluated"
+    }));
+    assert!(report["coverage"].as_array().unwrap().iter().any(|entry| {
+        entry["domain"] == "drc"
+            && entry["rule_id"] == "silk_clearance_copper"
+            && entry["status"] == "evaluated"
+    }));
+    assert!(report["coverage"].as_array().unwrap().iter().any(|entry| {
+        entry["domain"] == "erc"
+            && entry["rule_id"] == "schematic_connectivity"
+            && entry["status"] == "filtered_by_profile"
+    }));
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
 fn standards_profile_includes_process_aperture_inherited_from_copper() {
     let root = unique_project_root("datum-eda-cli-check-run-standards-process-aperture");
     create_native_project(&root, Some("Standards Process Aperture Demo".to_string()))
@@ -149,11 +190,21 @@ fn standards_profile_includes_process_aperture_inherited_from_copper() {
         report["profile_basis"]["standards_basis"],
         "datum.process_aperture_and_geometry.current"
     );
+    assert_eq!(
+        report["profile_basis"]["standards_basis_detail"]["basis_id"],
+        "datum.process_aperture_and_geometry.current"
+    );
+    assert_eq!(
+        report["profile_basis"]["standards_basis_detail"]["basis_kind"],
+        "process_aperture_geometry"
+    );
     assert!(report["coverage"].as_array().unwrap().iter().any(|entry| {
         entry["domain"] == "standards"
             && entry["rule_id"] == "process_aperture_policy"
             && entry["status"] == "evaluated"
             && entry["target_scope"] == "board_pads_tracks_vias"
+            && entry["standards_basis_detail"]["basis_id"]
+                == "datum.process_aperture_and_geometry.current"
     }));
     assert!(report["coverage"].as_array().unwrap().iter().any(|entry| {
         entry["domain"] == "erc"
@@ -161,7 +212,14 @@ fn standards_profile_includes_process_aperture_inherited_from_copper() {
             && entry["status"] == "filtered_by_profile"
     }));
     assert!(report["coverage"].as_array().unwrap().iter().any(|entry| {
-        entry["rule_id"] == "clearance_solver" && entry["status"] == "not_implemented"
+        entry["domain"] == "drc"
+            && entry["rule_id"] == "clearance_copper"
+            && entry["status"] == "filtered_by_profile"
+    }));
+    assert!(report["coverage"].as_array().unwrap().iter().any(|entry| {
+        entry["domain"] == "drc"
+            && entry["rule_id"] == "silk_clearance_copper"
+            && entry["status"] == "filtered_by_profile"
     }));
     assert_eq!(report["raw_report"]["erc"], serde_json::json!([]));
     assert!(
@@ -176,6 +234,9 @@ fn standards_profile_includes_process_aperture_inherited_from_copper() {
             && entry["domain"] == "standards"
             && entry["code"] == "pad_process_aperture_inherited_from_copper"
             && entry["standards_basis"] == "datum.process_aperture_and_geometry.current"
+            && entry["standards_basis_detail"]["basis_id"]
+                == "datum.process_aperture_and_geometry.current"
+            && entry["standards_basis_detail"]["basis_kind"] == "process_aperture_geometry"
             && entry["rule_revision"] == "v1"
     }));
     assert!(report["findings"].as_array().unwrap().iter().any(|entry| {

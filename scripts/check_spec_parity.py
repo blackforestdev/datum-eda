@@ -67,7 +67,7 @@ def enum_body(text: str, enum_name: str) -> str:
 
 def rust_enum_variants(path: Path, enum_name: str) -> list[str]:
     body = enum_body(read_text(path), enum_name)
-    variants = re.findall(r"^\s{4}([A-Z][A-Za-z0-9]+)(?:\s*\(|\s*,|\s*$)", body, flags=re.M)
+    variants = re.findall(r"^\s{4}([A-Z][A-Za-z0-9]+)(?:\s*\(|\s*\{|\s*,|\s*$)", body, flags=re.M)
     return sorted(set(variants))
 
 
@@ -87,6 +87,16 @@ def daemon_dispatch_methods() -> list[str]:
     return sorted(parse_daemon_methods())
 
 
+def datum_tool_names(prefix: str) -> list[str]:
+    text = read_text(ROOT / "mcp-server/tools_catalog_datum.py")
+    names = re.findall(r'"name":\s*"([^"]+)"', text)
+    return sorted(name for name in names if name.startswith(prefix))
+
+
+def project_command_variants() -> list[str]:
+    return rust_enum_variants(ROOT / "crates/cli/src/cli_args_project_commands.rs", "ProjectCommands")
+
+
 def engine_api_pub_fns() -> list[str]:
     api_root = ROOT / "crates/engine/src/api"
     names: set[str] = set()
@@ -97,6 +107,76 @@ def engine_api_pub_fns() -> list[str]:
         for match in re.finditer(r"^\s*pub fn ([a-z_][a-z0-9_]*)", text, flags=re.M):
             names.add(match.group(1))
     return sorted(names)
+
+
+def standards_check_surface() -> list[str]:
+    """Current standards-aware check/repair identity surface.
+
+    This inventory is intentionally a marker set rather than every check test:
+    it freezes the implemented schema fields, repair/query public tools,
+    persisted CheckRun operation, and current standards-profile finding codes.
+    """
+    items: set[str] = set()
+    operations = set(rust_enum_variants(ROOT / "crates/engine/src/substrate/operation.rs", "Operation"))
+    if "SetCheckRun" in operations:
+        items.add("operation:SetCheckRun")
+
+    commands = set(project_command_variants())
+    for command in ("GenerateStandardsRepairProposals", "WaiveFinding", "AcceptDeviation"):
+        if command in commands:
+            items.add(f"cli:{command}")
+
+    for name in datum_tool_names("datum.check."):
+        if name in {
+            "datum.check.repair_standards",
+            "datum.check.run",
+            "datum.check.runs",
+            "datum.check.show_run",
+            "datum.check.waive",
+            "datum.check.accept_deviation",
+        }:
+            items.add(f"mcp:{name}")
+    for name in datum_tool_names("datum.query."):
+        if name == "datum.query.zone_fills":
+            items.add(f"mcp:{name}")
+
+    check_run_text = read_text(ROOT / "crates/engine/src/substrate/check_run.rs")
+    for field in ("standards_basis", "rule_revision", "import_key"):
+        if re.search(rf"\bpub\s+{field}\s*:\s*Option<String>", check_run_text):
+            items.add(f"check_finding_field:{field}")
+
+    identity_text = read_text(ROOT / "crates/cli/src/command_project_check_finding_identity.rs")
+    for function in (
+        "is_standards_profile_finding",
+        "check_finding_standards_basis",
+        "check_finding_rule_revision",
+        "check_finding_import_key",
+        "check_finding_fingerprint",
+    ):
+        if re.search(rf"\bfn\s+{function}\b", identity_text):
+            items.add(f"identity_fn:{function}")
+
+    for code in sorted(set(re.findall(r'"([a-z_]+(?:_below_min|_missing|_below_rule|_out_of_range|_unfilled|_stale|_unsupported|_inherited_from_copper|_inconsistent_with_peer_footprint))"', identity_text))):
+        items.add(f"finding_code:{code}")
+
+    return sorted(items)
+
+
+def pool_library_surface() -> list[str]:
+    """Current pool/library operation, CLI, and public MCP surface."""
+    items: set[str] = set()
+    for variant in rust_enum_variants(ROOT / "crates/engine/src/substrate/operation.rs", "Operation"):
+        if variant.startswith("CreatePool") or variant.startswith("SetPool") or variant.startswith("DeletePool"):
+            items.add(f"operation:{variant}")
+
+    for variant in project_command_variants():
+        if "Pool" in variant or "Library" in variant:
+            items.add(f"cli:{variant}")
+
+    for name in datum_tool_names("datum.library."):
+        items.add(f"mcp:{name}")
+
+    return sorted(items)
 
 
 def inventory_items(spec: dict[str, str]) -> list[str]:
@@ -113,6 +193,10 @@ def inventory_items(spec: dict[str, str]) -> list[str]:
         return daemon_dispatch_methods()
     if kind == "engine_api_pub_fns":
         return engine_api_pub_fns()
+    if kind == "standards_check_surface":
+        return standards_check_surface()
+    if kind == "pool_library_surface":
+        return pool_library_surface()
     raise ValueError(f"unknown inventory kind: {kind}")
 
 

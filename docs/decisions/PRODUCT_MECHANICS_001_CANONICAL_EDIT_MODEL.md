@@ -174,7 +174,9 @@ Required fields:
 - ordered operations
 - changed objects
 - before/after diff or equivalent undo data
-- provenance (including the recorded `acceptance_path`)
+- provenance (`actor`, commit `source`, and reason); proposal-mediated
+  acceptance is proven by the applied `Proposal` record whose
+  `applied_transaction_id` matches this transaction ID
 - timestamp
 - check state when relevant
 - undo/redo data
@@ -220,7 +222,8 @@ Minimum provenance fields:
 - actor identity when available
 - source command/tool/import/check/proposal
 - timestamp
-- acceptance path
+- direct/proposal classification, either from `CommitProvenance.source` or from
+  the applied proposal's transaction link
 - source file or external reference where applicable
 
 ## Direct Commit Versus Proposal
@@ -314,9 +317,12 @@ Required transaction revision behavior:
 
 Operations, proposals, and transactions converge on one commit primitive. A
 manual edit that qualifies for direct commit and a proposal accepted by a user
-both call the identical engine commit path; the only difference is the recorded
-`acceptance_path` in provenance. This convergence is what makes the rule that no
-surface may mutate state through a private path enforceable rather than
+both call the identical engine commit path; direct commits are classified by
+`CommitProvenance.source`, while proposal-mediated commits are classified by the
+durable proposal-to-transaction join
+(`Proposal.applied_transaction_id == TransactionRecord.transaction_id`) plus the
+proposal's own `Proposal.source`. This convergence is what makes the rule that
+no surface may mutate state through a private path enforceable rather than
 aspirational: there is exactly one place where shard bytes change and exactly
 one place where the journal grows, so an audit reduces to "did this byte change
 arrive through `commit()`?" rather than an open-ended search for side doors.
@@ -474,7 +480,8 @@ The first proof slice should demonstrate, through the single `commit()` path:
 - one relationship represented in the design model, including a derived
   `UnresolvedMismatch` distinct from an authored deviation
 - one proposal created from a non-manual source and accepted into a transaction,
-  with the recorded `acceptance_path` distinguishing it from a direct edit
+  with `Proposal.applied_transaction_id` linking it to the committed
+  transaction and `Proposal.source` distinguishing it from a direct edit
 - consistent durable undo/redo as journal cursors, with undo recorded as a
   compensating transaction
 - machine-readable diff

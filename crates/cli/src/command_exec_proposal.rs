@@ -119,6 +119,118 @@ pub(crate) fn execute_proposal_command(
             ),
             0,
         )),
+        ProposalCommands::CreateBoardComponentReplacement(
+            ProposalCreateBoardComponentReplacementArgs {
+                path,
+                component,
+                package,
+                part,
+                value,
+                proposal,
+                rationale,
+            },
+        ) => Ok((
+            render_output(
+                format,
+                &propose_native_project_board_component_replacement(
+                    &path,
+                    component,
+                    package,
+                    part,
+                    value,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        )),
+        ProposalCommands::CreateBoardComponentReplacements(
+            ProposalCreateBoardComponentReplacementsArgs {
+                path,
+                replacements,
+                proposal,
+                rationale,
+            },
+        ) => {
+            let replacements = replacements
+                .into_iter()
+                .map(|replacement| {
+                    serde_json::from_str::<BoardComponentReplacementSpec>(&replacement)
+                        .with_context(|| format!("invalid --replacement JSON: {replacement}"))
+                })
+                .collect::<Result<Vec<_>>>()?;
+            Ok((
+                render_output(
+                    format,
+                    &propose_native_project_board_component_replacements(
+                        &path,
+                        replacements,
+                        proposal,
+                        rationale.as_deref(),
+                    )?,
+                ),
+                0,
+            ))
+        }
+        ProposalCommands::CreateBoardComponentReplacementPlan(
+            ProposalCreateBoardComponentReplacementPlanArgs {
+                path,
+                selections,
+                proposal,
+                rationale,
+            },
+        ) => {
+            let selections = selections
+                .into_iter()
+                .map(|selection| {
+                    serde_json::from_str::<BoardComponentReplacementPlanSelectionSpec>(&selection)
+                        .with_context(|| format!("invalid --selection JSON: {selection}"))
+                })
+                .collect::<Result<Vec<_>>>()?;
+            Ok((
+                render_output(
+                    format,
+                    &propose_native_project_board_component_replacement_plan(
+                        &path,
+                        selections,
+                        proposal,
+                        rationale.as_deref(),
+                    )?,
+                ),
+                0,
+            ))
+        }
+        ProposalCommands::CreatePoolLibraryObject(args) => {
+            command_exec_proposal_library::execute_create_pool_library_object_proposal(format, args)
+        }
+        ProposalCommands::CreatePoolUnit(args) => {
+            command_exec_proposal_library::execute_create_pool_unit_proposal(format, args)
+        }
+        ProposalCommands::CreatePoolSymbol(args) => {
+            command_exec_proposal_library::execute_create_pool_symbol_proposal(format, args)
+        }
+        ProposalCommands::CreatePoolEntity(args) => {
+            command_exec_proposal_library::execute_create_pool_entity_proposal(format, args)
+        }
+        ProposalCommands::CreatePoolPadstack(args) => {
+            command_exec_proposal_library::execute_create_pool_padstack_proposal(format, args)
+        }
+        ProposalCommands::CreatePoolPackage(args) => {
+            command_exec_proposal_library::execute_create_pool_package_proposal(format, args)
+        }
+        ProposalCommands::SetPoolPackagePad(args) => {
+            command_exec_proposal_library::execute_set_pool_package_pad_proposal(format, args)
+        }
+        ProposalCommands::SetPoolPackageCourtyardRect(args) => {
+            command_exec_proposal_library::execute_set_pool_package_courtyard_rect_proposal(
+                format, args,
+            )
+        }
+        ProposalCommands::SetPoolPackageCourtyardPolygon(args) => {
+            command_exec_proposal_library::execute_set_pool_package_courtyard_polygon_proposal(
+                format, args,
+            )
+        }
         ProposalCommands::CreateOutputJob(ProposalCreateOutputJobArgs {
             path,
             prefix,

@@ -52,15 +52,16 @@ before more implementation work continues.
    modules, but native project authoring is primarily implemented through CLI
    project-file mutation helpers.
 
-6. The embedded assistant is currently not an AI-first EDA control surface.
-   It can exchange messages with a bridge if configured, but mutating assistant
-   actions are explicitly blocked in read-only M7 review. Terminal commands
-   requested by the assistant are also blocked.
+6. The old embedded assistant bridge is retired as the primary AI architecture.
+   GUI agent entry now routes through the PTY terminal and terminal-launched
+   tools, with Datum context delivered through environment variables and
+   discovery files instead of an assistant-only bridge.
 
-7. The integrated terminal is currently a stub.
-   `spawn_terminal_session()` creates a channel but does not spawn a shell or
-   command process. The terminal pane can display lines, but it is not a real
-   command surface.
+7. The integrated terminal is now the first real AI/tooling substrate.
+   It spawns a project-scoped shell through a PTY, streams terminal output,
+   injects Datum context, and supports terminal-launched agents. Remaining work
+   is terminal fidelity/session-history UX and broader command handoffs, not
+   replacing a stub channel with a shell.
 
 8. The `Terminal | Assistant` dock model is not grounded in agreed product
    mechanics.
@@ -216,19 +217,22 @@ Gaps:
 ### Assistant And Terminal
 
 Implemented foundations:
-- The app spawns `scripts/datum_assistant_bridge.py`.
-- The bridge defines a JSON action schema and can call an OpenAI-compatible
-  chat-completions endpoint if configured.
-- The assistant receives live context including selection and component/review
-  summaries.
+- The old embedded assistant bridge (`scripts/datum_assistant_bridge.py`) has
+  been retired; GUI agent entry now routes through terminal-launched tools.
+- Terminal-launched shells receive Datum project/session/model context through
+  environment variables and `.datum/gui-terminal-context.json`.
+- The terminal discovery/context envelope advertises canonical Datum CLI
+  commands for checks, proposals, artifacts, journal, resolver queries, and
+  agent launch templates.
 
 Gaps:
-- Backend configuration is required manually.
-- Mutating actions are disabled in read-only M7 review.
-- Terminal commands emitted by the assistant are blocked in read-only mode.
-- The integrated terminal is not a real shell.
-- The current `Terminal | Assistant` split implies a product model that was
-  never agreed.
+- The retired assistant bridge should not re-enter as the primary AI path.
+- Some GUI actions still need terminal-command handoffs instead of private
+  writers or assistant-only commands.
+- PTY screen fidelity, attach/detach persistence, and richer session-history UX
+  remain incomplete.
+- Any remaining `Terminal | Assistant` split should be treated as transitional
+  UI, not the agreed product mechanics.
 - The intended primary AI path is a real terminal where users can launch code
   agents and EDA assistants directly against Datum project files, CLI tools,
   and MCP surfaces.
@@ -366,7 +370,7 @@ Until the north-star review is complete:
    active product frontier?
 7. Which existing code should be elevated into the product path first: CLI
    native board commands, CLI schematic commands, route proposal apply, or
-   assistant bridge?
+   terminal-launched agent command handoffs?
 8. What definition of "AI-assisted EDA" should every future code agent load before
    selecting work?
 

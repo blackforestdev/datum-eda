@@ -294,3 +294,98 @@ fn project_validate_manufacturing_set_reports_missing_mismatched_and_extra_files
 
     let _ = std::fs::remove_dir_all(&root);
 }
+
+#[test]
+fn project_validate_manufacturing_set_uses_resolver_materialized_board_state() {
+    let root = unique_project_root("datum-eda-cli-project-manufacturing-validate-resolved");
+    create_native_project(
+        &root,
+        Some("Manufacturing Validate Resolved Demo".to_string()),
+    )
+    .expect("initial scaffold should succeed");
+    let board_json = root.join("board/board.json");
+    let stale_board = std::fs::read_to_string(&board_json).expect("board file should read");
+
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "set-board-stackup",
+            root.to_str().unwrap(),
+            "--layer",
+            "1:Top Copper:Copper:35000",
+            "--layer",
+            "3:Top Silk:Silkscreen:10000",
+            "--layer",
+            "41:Mechanical 1:Mechanical:0",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("set board stackup should succeed");
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "set-board-outline",
+            root.to_str().unwrap(),
+            "--vertex",
+            "0:0",
+            "--vertex",
+            "2000000:0",
+            "--vertex",
+            "2000000:1000000",
+            "--vertex",
+            "0:1000000",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("set board outline should succeed");
+    std::fs::write(&board_json, stale_board).expect("stale board file should restore");
+
+    let output_dir = root.join("manufacturing-resolved");
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "artifact",
+            "export-manufacturing-set",
+            root.to_str().unwrap(),
+            "--output-dir",
+            output_dir.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("export should succeed from resolver state");
+
+    let (output, exit_code) = execute_with_exit_code(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "artifact",
+            "validate-manufacturing-set",
+            root.to_str().unwrap(),
+            "--output-dir",
+            output_dir.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("validation should run from resolver state");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("report JSON");
+    assert_eq!(exit_code, 0);
+    assert_eq!(report["action"], "validate_manufacturing_set");
+    assert_eq!(report["expected_count"], 8);
+    assert_eq!(report["matched_count"], 8);
+    assert_eq!(report["missing_count"], 0);
+    assert_eq!(report["mismatched_count"], 0);
+    assert_eq!(report["extra_count"], 0);
+    assert_eq!(
+        report["prefix"],
+        "manufacturing-validate-resolved-demo-board"
+    );
+
+    let _ = std::fs::remove_dir_all(&root);
+}

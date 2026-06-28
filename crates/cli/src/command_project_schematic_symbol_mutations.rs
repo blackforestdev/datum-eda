@@ -67,7 +67,7 @@ pub(crate) fn place_native_project_symbol(
     rotation_deg: i32,
     mirrored: bool,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let sheet_path = schematic_sheet_path(&project, sheet_uuid)?;
     let pins = materialize_pool_symbol_pins(root, lib_id.as_deref())?;
 
@@ -114,7 +114,7 @@ pub(crate) fn move_native_project_symbol(
     symbol_uuid: Uuid,
     position: Point,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.position = position;
@@ -133,7 +133,7 @@ pub(crate) fn rotate_native_project_symbol(
     symbol_uuid: Uuid,
     rotation_deg: i32,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.rotation = rotation_deg;
@@ -151,7 +151,7 @@ pub(crate) fn mirror_native_project_symbol(
     root: &Path,
     symbol_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.mirrored = !symbol.mirrored;
@@ -169,7 +169,7 @@ pub(crate) fn delete_native_project_symbol(
     root: &Path,
     symbol_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     commit_schematic_operation(
@@ -196,7 +196,7 @@ pub(crate) fn set_native_project_symbol_reference(
     symbol_uuid: Uuid,
     reference: String,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.reference = reference;
@@ -215,7 +215,7 @@ pub(crate) fn set_native_project_symbol_value(
     symbol_uuid: Uuid,
     value: String,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.value = value;
@@ -234,7 +234,7 @@ pub(crate) fn set_native_project_symbol_lib_id(
     symbol_uuid: Uuid,
     lib_id: String,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.lib_id = Some(lib_id);
@@ -252,7 +252,7 @@ pub(crate) fn clear_native_project_symbol_lib_id(
     root: &Path,
     symbol_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.lib_id = None;
@@ -271,7 +271,7 @@ pub(crate) fn set_native_project_symbol_entity(
     symbol_uuid: Uuid,
     entity_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.entity = Some(entity_uuid);
@@ -290,7 +290,7 @@ pub(crate) fn clear_native_project_symbol_entity(
     root: &Path,
     symbol_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.entity = None;
@@ -309,7 +309,7 @@ pub(crate) fn set_native_project_symbol_part(
     symbol_uuid: Uuid,
     part_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.part = Some(part_uuid);
@@ -328,7 +328,7 @@ pub(crate) fn clear_native_project_symbol_part(
     root: &Path,
     symbol_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.part = None;
@@ -347,7 +347,7 @@ pub(crate) fn set_native_project_symbol_unit(
     symbol_uuid: Uuid,
     unit_selection: String,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.unit_selection = Some(unit_selection);
@@ -365,7 +365,7 @@ pub(crate) fn clear_native_project_symbol_unit(
     root: &Path,
     symbol_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.unit_selection = None;
@@ -384,7 +384,7 @@ pub(crate) fn set_native_project_symbol_gate(
     symbol_uuid: Uuid,
     gate_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.gate = Some(gate_uuid);
@@ -402,7 +402,7 @@ pub(crate) fn clear_native_project_symbol_gate(
     root: &Path,
     symbol_uuid: Uuid,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.gate = None;
@@ -421,7 +421,7 @@ pub(crate) fn set_native_project_symbol_display_mode(
     symbol_uuid: Uuid,
     display_mode: SymbolDisplayMode,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.display_mode = display_mode;
@@ -445,7 +445,7 @@ pub(crate) fn set_native_project_symbol_hidden_power_behavior(
     symbol_uuid: Uuid,
     hidden_power_behavior: HiddenPowerBehavior,
 ) -> Result<NativeProjectSymbolMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     symbol.hidden_power_behavior = hidden_power_behavior;
@@ -471,7 +471,7 @@ pub(crate) fn set_native_project_symbol_pin_override(
     visible: bool,
     position: Option<Point>,
 ) -> Result<NativeProjectPinOverrideMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     if !symbol.pins.iter().any(|pin| pin.uuid == pin_uuid) {
@@ -516,7 +516,7 @@ pub(crate) fn clear_native_project_symbol_pin_override(
     symbol_uuid: Uuid,
     pin_uuid: Uuid,
 ) -> Result<NativeProjectPinOverrideMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     let before = symbol.pin_overrides.len();
@@ -552,7 +552,7 @@ pub(crate) fn add_native_project_symbol_field(
     visible: bool,
     position: Option<Point>,
 ) -> Result<NativeProjectSymbolFieldMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
     let field_uuid = Uuid::new_v4();
@@ -588,7 +588,7 @@ pub(crate) fn edit_native_project_symbol_field(
     visible: Option<bool>,
     position: Option<Point>,
 ) -> Result<NativeProjectSymbolFieldMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, symbol_uuid, mut symbol, mut field) =
         load_native_field_mutation_target(&project, field_uuid)?;
     if let Some(key) = key {
@@ -630,7 +630,7 @@ pub(crate) fn delete_native_project_symbol_field(
     root: &Path,
     field_uuid: Uuid,
 ) -> Result<NativeProjectSymbolFieldMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, symbol_uuid, mut symbol, field) =
         load_native_field_mutation_target(&project, field_uuid)?;
     symbol.fields.retain(|existing| existing.uuid != field_uuid);

@@ -1,10 +1,14 @@
 use serde::{Deserialize, Serialize};
 
-use super::ObjectId;
+use super::{ObjectId, ObjectRevision};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum Operation {
+    GuardObjectRevision {
+        object_id: ObjectId,
+        expected_object_revision: ObjectRevision,
+    },
     BumpObjectRevision {
         object_id: ObjectId,
     },
@@ -21,6 +25,7 @@ pub enum Operation {
         priority: u32,
     },
     SetProjectRules {
+        rules_root_id: ObjectId,
         rules: Vec<serde_json::Value>,
     },
     CreateProjectRule {
@@ -282,6 +287,15 @@ pub enum Operation {
         relative_path: String,
         proposal: serde_json::Value,
     },
+    SetForwardAnnotationReview {
+        relative_path: String,
+        previous_review: Option<serde_json::Value>,
+        review: serde_json::Value,
+    },
+    DeleteForwardAnnotationReview {
+        relative_path: String,
+        review: serde_json::Value,
+    },
     CreateManufacturingPlan {
         manufacturing_plan_id: ObjectId,
         manufacturing_plan: serde_json::Value,
@@ -320,6 +334,42 @@ pub enum Operation {
     DeleteOutputJob {
         output_job_id: ObjectId,
         output_job: serde_json::Value,
+    },
+    SetOutputJobRun {
+        run_id: ObjectId,
+        previous_output_job_run: Option<serde_json::Value>,
+        output_job_run: serde_json::Value,
+    },
+    DeleteOutputJobRun {
+        run_id: ObjectId,
+        output_job_run: serde_json::Value,
+    },
+    SetArtifactRun {
+        run_id: ObjectId,
+        previous_artifact_run: Option<serde_json::Value>,
+        artifact_run: serde_json::Value,
+    },
+    DeleteArtifactRun {
+        run_id: ObjectId,
+        artifact_run: serde_json::Value,
+    },
+    SetCheckRun {
+        check_run_id: ObjectId,
+        previous_check_run: Option<serde_json::Value>,
+        check_run: serde_json::Value,
+    },
+    DeleteCheckRun {
+        check_run_id: ObjectId,
+        check_run: serde_json::Value,
+    },
+    SetArtifactMetadata {
+        artifact_id: ObjectId,
+        previous_artifact_metadata: Option<serde_json::Value>,
+        artifact_metadata: serde_json::Value,
+    },
+    DeleteArtifactMetadata {
+        artifact_id: ObjectId,
+        artifact_metadata: serde_json::Value,
     },
     SetZoneFill {
         zone_id: ObjectId,
@@ -567,6 +617,9 @@ pub enum Operation {
 
 impl Operation {
     pub fn writes_project_shard(&self) -> bool {
-        !matches!(self, Operation::BumpObjectRevision { .. })
+        !matches!(
+            self,
+            Operation::GuardObjectRevision { .. } | Operation::BumpObjectRevision { .. }
+        )
     }
 }

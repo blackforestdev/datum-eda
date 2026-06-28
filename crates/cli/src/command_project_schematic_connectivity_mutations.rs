@@ -1,3 +1,4 @@
+use super::command_project_operation_guards::guarded_existing_object_operation;
 use super::*;
 use eda_engine::substrate::{
     CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver,
@@ -10,7 +11,7 @@ pub(crate) fn place_native_project_label(
     kind: LabelKind,
     position: Point,
 ) -> Result<NativeProjectLabelMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let sheet_key = sheet_uuid.to_string();
     let relative_path =
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
@@ -56,7 +57,7 @@ pub(crate) fn rename_native_project_label(
     label_uuid: Uuid,
     name: String,
 ) -> Result<NativeProjectLabelMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut label) =
         load_native_label_mutation_target(&project, label_uuid)?;
     label.name = name.clone();
@@ -87,7 +88,7 @@ pub(crate) fn delete_native_project_label(
     root: &Path,
     label_uuid: Uuid,
 ) -> Result<NativeProjectLabelMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, label) =
         load_native_label_mutation_target(&project, label_uuid)?;
     commit_schematic_operation(
@@ -119,7 +120,7 @@ pub(crate) fn draw_native_project_wire(
     from: Point,
     to: Point,
 ) -> Result<NativeProjectWireMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let sheet_key = sheet_uuid.to_string();
     let relative_path =
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
@@ -163,7 +164,7 @@ pub(crate) fn delete_native_project_wire(
     root: &Path,
     wire_uuid: Uuid,
 ) -> Result<NativeProjectWireMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, wire) =
         load_native_wire_mutation_target(&project, wire_uuid)?;
     commit_schematic_operation(
@@ -208,7 +209,7 @@ pub(super) fn commit_schematic_operation(
                     source: CommitSource::Cli,
                     reason: reason.to_string(),
                 },
-                operations: vec![operation],
+                operations: guarded_existing_object_operation(&model, operation)?,
             },
         )
         .map(|_| ())
@@ -220,7 +221,7 @@ pub(crate) fn place_native_project_junction(
     sheet_uuid: Uuid,
     position: Point,
 ) -> Result<NativeProjectJunctionMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let sheet_key = sheet_uuid.to_string();
     let relative_path =
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
@@ -262,7 +263,7 @@ pub(crate) fn delete_native_project_junction(
     root: &Path,
     junction_uuid: Uuid,
 ) -> Result<NativeProjectJunctionMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, junction) =
         load_native_junction_mutation_target(&project, junction_uuid)?;
     commit_schematic_operation(
@@ -294,7 +295,7 @@ pub(crate) fn place_native_project_port(
     direction: PortDirection,
     position: Point,
 ) -> Result<NativeProjectPortMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let sheet_key = sheet_uuid.to_string();
     let relative_path =
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
@@ -343,7 +344,7 @@ pub(crate) fn edit_native_project_port(
     x_nm: Option<i64>,
     y_nm: Option<i64>,
 ) -> Result<NativeProjectPortMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut port) =
         load_native_port_mutation_target(&project, port_uuid)?;
     if let Some(name) = name {
@@ -385,7 +386,7 @@ pub(crate) fn delete_native_project_port(
     root: &Path,
     port_uuid: Uuid,
 ) -> Result<NativeProjectPortMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, port) =
         load_native_port_mutation_target(&project, port_uuid)?;
     commit_schematic_operation(
@@ -417,7 +418,7 @@ pub(crate) fn create_native_project_bus(
     name: String,
     members: Vec<String>,
 ) -> Result<NativeProjectBusMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let sheet_key = sheet_uuid.to_string();
     let relative_path =
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
@@ -460,7 +461,7 @@ pub(crate) fn edit_native_project_bus_members(
     bus_uuid: Uuid,
     members: Vec<String>,
 ) -> Result<NativeProjectBusMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, mut bus) =
         load_native_bus_mutation_target(&project, bus_uuid)?;
     bus.members = members.clone();
@@ -489,7 +490,7 @@ pub(crate) fn delete_native_project_bus(
     root: &Path,
     bus_uuid: Uuid,
 ) -> Result<NativeProjectBusMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, sheet_value, bus) =
         load_native_bus_mutation_target(&project, bus_uuid)?;
     let bus_key = bus_uuid.to_string();
@@ -531,7 +532,7 @@ pub(crate) fn place_native_project_bus_entry(
     wire_uuid: Option<Uuid>,
     position: Point,
 ) -> Result<NativeProjectBusEntryMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let sheet_key = sheet_uuid.to_string();
     let relative_path =
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
@@ -588,7 +589,7 @@ pub(crate) fn delete_native_project_bus_entry(
     root: &Path,
     bus_entry_uuid: Uuid,
 ) -> Result<NativeProjectBusEntryMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, bus_entry) =
         load_native_bus_entry_mutation_target(&project, bus_entry_uuid)?;
     commit_schematic_operation(
@@ -622,7 +623,7 @@ pub(crate) fn place_native_project_noconnect(
     pin_uuid: Uuid,
     position: Point,
 ) -> Result<NativeProjectNoConnectMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let sheet_key = sheet_uuid.to_string();
     let relative_path =
         project.schematic.sheets.get(&sheet_key).ok_or_else(|| {
@@ -668,7 +669,7 @@ pub(crate) fn delete_native_project_noconnect(
     root: &Path,
     noconnect_uuid: Uuid,
 ) -> Result<NativeProjectNoConnectMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, marker) =
         load_native_noconnect_mutation_target(&project, noconnect_uuid)?;
     commit_schematic_operation(

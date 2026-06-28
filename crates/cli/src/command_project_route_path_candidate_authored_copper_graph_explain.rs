@@ -10,7 +10,7 @@ use uuid::Uuid;
 
 use crate::cli_args::NativeRoutePathCandidateAuthoredCopperGraphPolicy;
 
-use super::super::{build_native_project_board, load_native_project};
+use super::super::{build_native_project_board, load_native_project_with_resolved_board};
 
 pub(crate) fn query_native_project_route_path_candidate_authored_copper_graph_explain(
     root: &Path,
@@ -19,7 +19,7 @@ pub(crate) fn query_native_project_route_path_candidate_authored_copper_graph_ex
     to_anchor_pad_uuid: Uuid,
     policy: NativeRoutePathCandidateAuthoredCopperGraphPolicy,
 ) -> Result<RoutePathCandidateAuthoredCopperGraphPolicyExplainReport> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let board = build_native_project_board(&project)?;
     board
         .route_path_candidate_authored_copper_graph_explain_by_policy(

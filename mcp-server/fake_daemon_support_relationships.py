@@ -52,11 +52,18 @@ class FakeDaemonClientRelationshipsMixin:
     def bind_component_instance(
         self,
         path: str,
-        symbol: str,
+        symbol: str | None,
         package: str,
         component_instance: str | None = None,
+        symbols: list[str] | None = None,
+        part: str | None = None,
+        symbol_roles=None,
+        package_roles=None,
     ) -> JsonRpcResponse:
-        self.calls.append(("bind_component_instance", path, symbol, package, component_instance))
+        symbol_refs = symbols or ([symbol] if symbol is not None else [])
+        self.calls.append(
+            ("bind_component_instance", path, symbol_refs, package, component_instance, part, symbol_roles, package_roles)
+        )
         component_instance_id = component_instance or "ci-created"
         return JsonRpcResponse(
             "2.0",
@@ -68,12 +75,14 @@ class FakeDaemonClientRelationshipsMixin:
                 "component_instance": component_instance_id,
                 "component_instance_id": component_instance_id,
                 "status": "bound",
-                "symbol": symbol,
-                "symbol_id": symbol,
+                "symbol": symbol_refs[0] if symbol_refs else None,
+                "symbols": symbol_refs,
+                "symbol_id": symbol_refs[0] if symbol_refs else None,
                 "package": package,
                 "package_id": package,
+                "part_ref": part,
                 "binding": {
-                    "symbol_id": symbol,
+                    "symbol_id": symbol_refs[0] if symbol_refs else None,
                     "package_id": package,
                     "status": "bound",
                 },
@@ -85,10 +94,17 @@ class FakeDaemonClientRelationshipsMixin:
         self,
         path: str,
         component_instance: str,
-        symbol: str,
+        symbol: str | None,
         package: str,
+        symbols: list[str] | None = None,
+        part: str | None = None,
+        symbol_roles=None,
+        package_roles=None,
     ) -> JsonRpcResponse:
-        self.calls.append(("set_component_instance", path, component_instance, symbol, package))
+        symbol_refs = symbols or ([symbol] if symbol is not None else [])
+        self.calls.append(
+            ("set_component_instance", path, component_instance, symbol_refs, package, part, symbol_roles, package_roles)
+        )
         return JsonRpcResponse(
             "2.0",
             137,
@@ -99,10 +115,12 @@ class FakeDaemonClientRelationshipsMixin:
                 "component_instance": component_instance,
                 "component_instance_id": component_instance,
                 "status": "bound",
-                "symbol": symbol,
-                "symbol_id": symbol,
+                "symbol": symbol_refs[0] if symbol_refs else None,
+                "symbols": symbol_refs,
+                "symbol_id": symbol_refs[0] if symbol_refs else None,
                 "package": package,
                 "package_id": package,
+                "part_ref": part,
                 "binding": {
                     "symbol_id": symbol,
                     "package_id": package,

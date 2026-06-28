@@ -23,9 +23,13 @@ mod outputs_lane;
 mod outputs_preview;
 mod outputs_proposals;
 mod outputs_run_commands;
+mod source_shard_panel;
 #[cfg(feature = "visual")]
 pub mod visual_capture;
 use bottom_dock::render_bottom_tabs;
+use source_shard_panel::{
+    render_source_shard_attention_rows as render_shard_rows, source_shard_health_label,
+};
 #[cfg(feature = "visual")]
 pub mod visual_diff;
 #[cfg(feature = "visual")]
@@ -176,6 +180,12 @@ pub enum HitTarget {
     EditSelectedBoardTextRotation,
     EditSelectedBoardTextLineSpacing,
     TerminalTab,
+    TerminalSessionTab(String),
+    TerminalSessionNew,
+    TerminalSessionRenameActive,
+    TerminalSessionRestartActive,
+    TerminalSessionDetachActive,
+    TerminalSessionCloseActive,
     AssistantTab,
     OutputsTab,
     TerminalActivitySummary(String),
@@ -198,7 +208,6 @@ pub struct HitRegion {
     pub target: HitTarget,
     pub rect: RectPx,
 }
-
 #[derive(Debug, Clone, PartialEq)]
 pub struct PreparedScene {
     pub layout: ShellLayout,
@@ -739,13 +748,13 @@ fn render_side_panels(
         x: left.x + 14.0,
         y: left.y + 14.0,
         width: left.width - 28.0,
-        height: 124.0,
+        height: 146.0,
     };
     let filters_rect = RectPx {
         x: left.x + 14.0,
-        y: left.y + 150.0,
+        y: left.y + 172.0,
         width: left.width - 28.0,
-        height: (left.height - 164.0).max(100.0),
+        height: (left.height - 186.0).max(100.0),
     };
     let board_text_selected = matches!(
         &state.selection,
@@ -834,15 +843,31 @@ fn render_side_panels(
         TextFace::Mono,
         text_runs,
     );
+    let shard_attention_count = state.source_shards.attention_count();
+    let shard_label = source_shard_health_label(&state.source_shards);
+    draw_text(
+        &truncate_text(&shard_label, 26),
+        project_rect.x + 12.0,
+        project_rect.y + 112.0,
+        11.0,
+        if shard_attention_count == 0 {
+            TEXT_MUTED
+        } else {
+            TEXT_ACCENT
+        },
+        TextFace::Mono,
+        text_runs,
+    );
+    let action_y = render_shard_rows(&state.source_shards, project_rect, text_runs);
     let fit_board_rect = RectPx {
         x: project_rect.x + 12.0,
-        y: project_rect.y + 106.0,
+        y: action_y,
         width: 72.0,
         height: 20.0,
     };
     let fit_review_rect = RectPx {
         x: project_rect.x + 92.0,
-        y: project_rect.y + 106.0,
+        y: action_y,
         width: 92.0,
         height: 20.0,
     };
@@ -867,7 +892,7 @@ fn render_side_panels(
         draw_text(
             &truncate_text(&format!("LAST {}", status.action.to_uppercase()), 24),
             project_rect.x + 12.0,
-            project_rect.y + 132.0,
+            project_rect.y + 152.0,
             11.0,
             TEXT_MUTED,
             TextFace::Mono,
@@ -1815,7 +1840,6 @@ fn render_side_panels(
         row_y += 54.0;
     }
 }
-
 fn dock_height_for_state(state: &ReviewWorkspaceState) -> Option<u32> {
     if state.ui.active_dock_tab.is_some() {
         Some(state.ui.dock_height_px)
@@ -7821,10 +7845,14 @@ fn outputs_dock_renders_csv_preview_table(mut state: ReviewWorkspaceState) -> bo
 }
 
 #[cfg(test)]
+mod render_contract_tests;
+#[cfg(test)]
+mod terminal_dock_contract_tests;
+
+#[cfg(test)]
 mod tests {
     use super::*;
     use std::path::PathBuf;
-
     #[test]
     fn shell_layout_reserves_bottom_dock_and_viewport() {
         let layout = ShellLayout::for_window(1280, 800, None);
@@ -7875,7 +7903,6 @@ mod tests {
             &affected
         ));
     }
-
     #[test]
     fn proposal_preview_render_deltas_become_overlay_primitives() {
         let mut state = datum_gui_protocol::load_fixture_workspace_state();
@@ -9253,6 +9280,3 @@ mod tests {
         );
     }
 }
-
-#[cfg(test)]
-mod render_contract_tests;

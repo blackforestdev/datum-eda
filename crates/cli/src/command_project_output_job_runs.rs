@@ -2,8 +2,9 @@ use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result};
 use eda_engine::substrate::{
-    DesignModel, OutputJobLogEntry, OutputJobLogLevel, OutputJobRun, OutputJobRunStatus,
-    ProjectResolver, persist_output_job_run,
+    CommitProvenance, CommitSource, DesignModel, OUTPUT_JOB_RUN_SCHEMA_VERSION, Operation,
+    OperationBatch, OutputJobLogEntry, OutputJobLogLevel, OutputJobRun, OutputJobRunStatus,
+    ProjectResolver,
 };
 use uuid::Uuid;
 
@@ -32,10 +33,40 @@ pub(super) fn persist_successful_output_job_run(
     include: &str,
     artifact_report: &NativeProjectArtifactGenerateView,
 ) -> Result<(OutputJobRun, PathBuf)> {
-    let model = ProjectResolver::new(root).resolve()?;
+    let mut model = ProjectResolver::new(root).resolve()?;
     let run = successful_output_job_run(&model, output_job, include, artifact_report);
-    let path = persist_output_job_run(root, &run).context("failed to persist output job run")?;
+    let path = persist_output_job_run_journaled(root, &mut model, &run)
+        .context("failed to persist output job run")?;
     Ok((run, path))
+}
+
+pub(super) fn persist_output_job_run_journaled(
+    root: &Path,
+    model: &mut DesignModel,
+    run: &OutputJobRun,
+) -> Result<PathBuf> {
+    let previous_output_job_run = model.output_job_runs.get(&run.run_id).map(|previous| {
+        serde_json::to_value(previous).expect("output job run serialization must succeed")
+    });
+    model.commit_journaled(
+        root,
+        OperationBatch {
+            batch_id: Uuid::new_v4(),
+            expected_model_revision: Some(model.model_revision.clone()),
+            provenance: CommitProvenance {
+                actor: "datum-eda-cli".to_string(),
+                source: CommitSource::Cli,
+                reason: "record output job run generated evidence".to_string(),
+            },
+            operations: vec![Operation::SetOutputJobRun {
+                run_id: run.run_id,
+                previous_output_job_run,
+                output_job_run: serde_json::to_value(run)
+                    .expect("output job run serialization must succeed"),
+            }],
+        },
+    )?;
+    Ok(output_job_run_path(root, run.run_id))
 }
 
 pub(super) fn failed_output_job_run(
@@ -50,6 +81,7 @@ pub(super) fn failed_output_job_run(
         output_job, model.model_revision.0
     );
     OutputJobRun {
+        schema_version: OUTPUT_JOB_RUN_SCHEMA_VERSION,
         run_id: Uuid::new_v5(&model.project.project_id, material.as_bytes()),
         output_job,
         run_sequence,
@@ -65,6 +97,10 @@ pub(super) fn failed_output_job_run(
             message: error.to_string(),
         }],
     }
+}
+
+fn output_job_run_path(root: &Path, run_id: Uuid) -> PathBuf {
+    root.join(format!(".datum/output_job_runs/{run_id}.json"))
 }
 
 fn successful_output_job_run(
@@ -102,6 +138,7 @@ fn successful_output_job_run(
         });
     }
     OutputJobRun {
+        schema_version: OUTPUT_JOB_RUN_SCHEMA_VERSION,
         run_id: Uuid::new_v5(&model.project.project_id, material.as_bytes()),
         output_job,
         run_sequence,

@@ -8,14 +8,22 @@ use super::component_instance_journal_ops::{
 };
 use super::production_journal_ops::{production_operation_write, production_relative_path};
 use super::relationship_journal_ops::{relationship_operation_write, wrap_payload};
-use super::schematic_sheet_journal_ops::apply_schematic_sheet_operation;
+use super::replay_forward_annotation::replay_forward_annotation_review_shard;
+use super::replay_generated_evidence::replay_generated_evidence_shards;
+use super::replay_objects::refresh_materialized_shard_objects;
+use super::replay_pool::replay_pool_shards;
+use super::replay_proposal::replay_proposal_shards;
+use super::replay_schematic::{
+    add_missing_journal_schematic_sheet_shards, replay_schematic_shards,
+};
+use super::source_shard_ref_builders::source_shard_ref_for_value;
 use super::transaction_links::validate_transaction_links;
 use super::{
     CommitDiff, DesignModel, DomainObject, EngineError, JournalCursor, ObjectId, ObjectRevision,
-    ProjectManifestSummary, ResolveDiagnostic, SourceShardDirtyState, SourceShardKind,
-    SourceShardRef, TransactionRecord, apply_operation, canonical_json_hash,
-    compute_model_revision, read_json_value, replay_journal_shard_value,
-    source_shard_authority_for_kind, transaction_journal_path,
+    ProjectManifestSummary, ResolveDiagnostic, SourceShardKind, SourceShardRef, TransactionRecord,
+    apply_operation, canonical_json_hash, compute_model_revision, read_json_value,
+    replay_journal_shard_value, source_shard::dirty_state_for_materialized_shard,
+    transaction_journal_path,
 };
 
 pub(super) fn validate_and_replay_journal(
@@ -72,23 +80,44 @@ pub(super) fn validate_and_replay_journal(
         let mut candidate_shards = shards.to_vec();
         let mut candidate_journal = valid.clone();
         candidate_journal.push(transaction.clone());
-        apply_transaction_operations_to_objects(
+        if let Err(error) = apply_transaction_operations_to_objects(
             project_id,
             &candidate_shards,
             &mut candidate_objects,
             transaction,
             &candidate_journal,
-        )?;
-        replay_journal_prefix_to_source_shards(
+        ) {
+            diagnostics.push(ResolveDiagnostic {
+                code: "journal_replay_failed".to_string(),
+                message: format!(
+                    "transaction {} at index {} could not replay against current source shards: {}",
+                    transaction.transaction_id, index, error
+                ),
+                path: Some(transaction_journal_path(project_root)),
+            });
+            break;
+        }
+        if let Err(error) = replay_journal_prefix_to_source_shards(
             project_root,
             &mut candidate_shards,
             &candidate_journal,
-        )?;
+        ) {
+            diagnostics.push(ResolveDiagnostic {
+                code: "journal_replay_failed".to_string(),
+                message: format!(
+                    "transaction {} at index {} could not materialize source shards: {}",
+                    transaction.transaction_id, index, error
+                ),
+                path: Some(transaction_journal_path(project_root)),
+            });
+            break;
+        }
         add_missing_journal_schematic_sheet_shards(
             project_root,
             &mut candidate_shards,
             &candidate_journal,
         )?;
+        replay_proposal_shards(project_root, &mut candidate_shards, &candidate_journal)?;
         let candidate_revision =
             compute_model_revision(project_id, &candidate_shards, &candidate_objects);
         if transaction.after_model_revision != candidate_revision {
@@ -126,72 +155,6 @@ pub(super) fn validate_and_replay_journal(
     Ok(valid)
 }
 
-pub(super) fn add_missing_journal_schematic_sheet_shards(
-    project_root: &Path,
-    shards: &mut Vec<SourceShardRef>,
-    journal: &[TransactionRecord],
-) -> Result<(), EngineError> {
-    let mut values = Vec::new();
-    for transaction in journal {
-        for operation in &transaction.operations {
-            match operation {
-                super::Operation::CreateSchematicSheet {
-                    relative_path,
-                    sheet,
-                    ..
-                } => {
-                    let path = format!("schematic/{relative_path}");
-                    if let Some((_, value)) =
-                        values.iter_mut().find(|(existing, _)| existing == &path)
-                    {
-                        *value = sheet.clone();
-                    } else {
-                        values.push((path, sheet.clone()));
-                    }
-                    continue;
-                }
-                super::Operation::DeleteSchematicSheet { relative_path, .. } => {
-                    let path = format!("schematic/{relative_path}");
-                    values.retain(|(existing, _)| existing != &path);
-                    continue;
-                }
-                _ => {}
-            }
-            for (_, value) in &mut values {
-                apply_schematic_sheet_operation(value, operation)?;
-            }
-        }
-    }
-    for (relative_path, value) in values {
-        if shards
-            .iter()
-            .any(|shard| shard.relative_path == relative_path)
-        {
-            continue;
-        }
-        let bytes = format!(
-            "{}\n",
-            crate::ir::serialization::to_json_deterministic(&value)?
-        );
-        shards.push(SourceShardRef {
-            shard_id: Uuid::new_v5(
-                &Uuid::NAMESPACE_URL,
-                format!("datum-eda:source-shard:{relative_path}").as_bytes(),
-            ),
-            kind: SourceShardKind::SchematicSheet,
-            path: project_root.join(&relative_path),
-            relative_path,
-            authority: source_shard_authority_for_kind(&SourceShardKind::SchematicSheet),
-            dirty_state: SourceShardDirtyState::Clean,
-            schema_version: value
-                .get("schema_version")
-                .and_then(serde_json::Value::as_u64),
-            content_hash: super::sha256_hex(bytes.as_bytes()),
-        });
-    }
-    Ok(())
-}
-
 fn journal_operations_are_production_only(journal: &[TransactionRecord]) -> bool {
     !journal.is_empty()
         && journal.iter().all(|transaction| {
@@ -224,6 +187,9 @@ fn validate_promoted_journal_tip(
         let mut adjusted_shards = shards.to_vec();
         apply_promoted_journal_object_diffs(&mut adjusted_objects, journal);
         add_missing_journal_schematic_sheet_shards(project_root, &mut adjusted_shards, journal)?;
+        replay_proposal_shards(project_root, &mut adjusted_shards, journal)?;
+        replay_generated_evidence_shards(project_root, &mut adjusted_shards, journal)?;
+        replay_pool_shards(project_root, &mut adjusted_shards, journal)?;
         let adjusted_revision =
             compute_model_revision(project_id, &adjusted_shards, &adjusted_objects);
         if tip.after_model_revision == adjusted_revision {
@@ -319,7 +285,15 @@ fn validate_promoted_journal_tip(
                 }
                 return Ok(valid);
             }
-            return Err(error);
+            diagnostics.push(ResolveDiagnostic {
+                code: "journal_replay_failed".to_string(),
+                message: format!(
+                    "transaction {} at index {} could not replay against current source shards: {}",
+                    transaction.transaction_id, index, error
+                ),
+                path: Some(transaction_journal_path(project_root)),
+            });
+            return Ok(journal[..index].to_vec());
         }
         if let Err(error) = replay_journal_prefix_to_source_shards(
             project_root,
@@ -333,11 +307,20 @@ fn validate_promoted_journal_tip(
                 }
                 return Ok(valid);
             }
-            return Err(error);
+            diagnostics.push(ResolveDiagnostic {
+                code: "journal_replay_failed".to_string(),
+                message: format!(
+                    "transaction {} at index {} could not materialize source shards: {}",
+                    transaction.transaction_id, index, error
+                ),
+                path: Some(transaction_journal_path(project_root)),
+            });
+            return Ok(journal[..index].to_vec());
         }
         valid.push(transaction.clone());
     }
 
+    refresh_materialized_shard_objects(project_root, &candidate_shards, &mut candidate_objects)?;
     if let Some(tip) = journal.last() {
         let candidate_revision =
             compute_model_revision(project_id, &candidate_shards, &candidate_objects);
@@ -386,6 +369,43 @@ fn apply_promoted_journal_object_diffs(
                     kind: "schematic_sheet".to_string(),
                 });
             }
+            if let super::Operation::CreateSchematicDefinition {
+                definition_id,
+                relative_path,
+                ..
+            } = operation
+            {
+                objects
+                    .entry(*definition_id)
+                    .or_insert_with(|| DomainObject {
+                        object_id: *definition_id,
+                        object_revision: ObjectRevision(0),
+                        source_shard_id: Uuid::new_v5(
+                            &Uuid::NAMESPACE_URL,
+                            format!("datum-eda:source-shard:schematic/{relative_path}").as_bytes(),
+                        ),
+                        domain: "schematic".to_string(),
+                        kind: "schematic_definition".to_string(),
+                    });
+            }
+            if let super::Operation::CreatePoolLibraryObject {
+                object_id,
+                relative_path,
+                object_kind,
+                ..
+            } = operation
+            {
+                objects.entry(*object_id).or_insert_with(|| DomainObject {
+                    object_id: *object_id,
+                    object_revision: ObjectRevision(0),
+                    source_shard_id: Uuid::new_v5(
+                        &Uuid::NAMESPACE_URL,
+                        format!("datum-eda:source-shard:{relative_path}").as_bytes(),
+                    ),
+                    domain: "pool".to_string(),
+                    kind: object_kind.clone(),
+                });
+            }
         }
         for object_id in &transaction.diff.modified {
             if let Some(object) = objects.get_mut(object_id) {
@@ -405,7 +425,10 @@ fn install_promoted_journal_state(
     journal: &[TransactionRecord],
 ) -> Result<(), EngineError> {
     apply_promoted_journal_object_diffs(objects, journal);
-    add_missing_journal_schematic_sheet_shards(project_root, shards, journal)
+    add_missing_journal_schematic_sheet_shards(project_root, shards, journal)?;
+    replay_generated_evidence_shards(project_root, shards, journal)?;
+    replay_pool_shards(project_root, shards, journal)?;
+    refresh_materialized_shard_objects(project_root, shards, objects)
 }
 
 fn validate_promoted_journal_links(
@@ -539,7 +562,7 @@ fn apply_transaction_operations_to_objects(
     Ok(())
 }
 
-fn replay_journal_prefix_to_source_shards(
+pub(super) fn replay_journal_prefix_to_source_shards(
     project_root: &Path,
     shards: &mut Vec<SourceShardRef>,
     journal: &[TransactionRecord],
@@ -565,115 +588,24 @@ fn replay_journal_prefix_to_source_shards(
             Err(error) => return Err(error),
         };
         if replay_journal_shard_value(&shard.kind, &mut value, journal)? {
-            shard.content_hash = canonical_json_hash(&value)?;
+            let content_hash = canonical_json_hash(&value)?;
+            shard.dirty_state = dirty_state_for_materialized_shard(
+                project_root,
+                &shard.relative_path,
+                &content_hash,
+            );
+            shard.content_hash = content_hash;
         }
     }
     replay_production_shards(project_root, shards, journal)?;
-    replay_schematic_sheet_shards(project_root, shards, journal)?;
+    replay_schematic_shards(project_root, shards, journal)?;
+    replay_generated_evidence_shards(project_root, shards, journal)?;
+    replay_pool_shards(project_root, shards, journal)?;
+    replay_import_map_shards(project_root, shards, journal)?;
+    replay_forward_annotation_review_shard(project_root, shards, journal)?;
     replay_authored_context_shards(project_root, shards, journal)?;
     super::sort_source_shards(shards);
     Ok(())
-}
-
-fn replay_schematic_sheet_shards(
-    project_root: &Path,
-    shards: &mut Vec<SourceShardRef>,
-    journal: &[TransactionRecord],
-) -> Result<(), EngineError> {
-    let mut values = Vec::new();
-    for shard in shards
-        .iter()
-        .filter(|shard| shard.kind == SourceShardKind::SchematicSheet)
-    {
-        if !shard.path.exists() {
-            continue;
-        }
-        values.push((
-            shard.relative_path.clone(),
-            read_json_value(&shard.path)?,
-            false,
-            Some(shard.clone()),
-        ));
-    }
-    for transaction in journal {
-        for operation in &transaction.operations {
-            match operation {
-                super::Operation::CreateSchematicSheet {
-                    relative_path,
-                    sheet,
-                    ..
-                } => {
-                    let path = format!("schematic/{relative_path}");
-                    if let Some((_, value, touched, original)) = values
-                        .iter_mut()
-                        .find(|(existing, _, _, _)| existing == &path)
-                    {
-                        *value = sheet.clone();
-                        *touched = true;
-                        *original = None;
-                    } else {
-                        values.push((path, sheet.clone(), true, None));
-                    }
-                    continue;
-                }
-                super::Operation::DeleteSchematicSheet { relative_path, .. } => {
-                    let path = format!("schematic/{relative_path}");
-                    values.retain(|(existing, _, _, _)| existing != &path);
-                    continue;
-                }
-                _ => {}
-            }
-            for (_, value, touched, original) in &mut values {
-                if apply_schematic_sheet_operation(value, operation)? {
-                    *touched = true;
-                    *original = None;
-                }
-            }
-        }
-    }
-    shards.retain(|shard| shard.kind != SourceShardKind::SchematicSheet);
-    for (relative_path, value, touched, original) in values {
-        if !touched {
-            if let Some(shard) = original {
-                shards.push(shard);
-            }
-            continue;
-        }
-        shards.push(source_shard_ref_for_value(
-            project_root,
-            SourceShardKind::SchematicSheet,
-            relative_path,
-            &value,
-        )?);
-    }
-    Ok(())
-}
-
-fn source_shard_ref_for_value(
-    project_root: &Path,
-    kind: SourceShardKind,
-    relative_path: String,
-    value: &serde_json::Value,
-) -> Result<SourceShardRef, EngineError> {
-    let bytes = format!(
-        "{}\n",
-        crate::ir::serialization::to_json_deterministic(value)?
-    );
-    Ok(SourceShardRef {
-        shard_id: Uuid::new_v5(
-            &Uuid::NAMESPACE_URL,
-            format!("datum-eda:source-shard:{relative_path}").as_bytes(),
-        ),
-        kind: kind.clone(),
-        path: project_root.join(&relative_path),
-        relative_path,
-        authority: source_shard_authority_for_kind(&kind),
-        dirty_state: SourceShardDirtyState::Clean,
-        schema_version: value
-            .get("schema_version")
-            .and_then(serde_json::Value::as_u64),
-        content_hash: super::sha256_hex(bytes.as_bytes()),
-    })
 }
 
 fn replay_production_shards(
@@ -729,25 +661,12 @@ fn replay_production_shards(
         )
     });
     for (relative_path, (kind, value)) in production_values {
-        let bytes = format!(
-            "{}\n",
-            crate::ir::serialization::to_json_deterministic(&value)?
-        );
-        shards.push(SourceShardRef {
-            shard_id: Uuid::new_v5(
-                &Uuid::NAMESPACE_URL,
-                format!("datum-eda:source-shard:{relative_path}").as_bytes(),
-            ),
-            kind: kind.clone(),
-            path: project_root.join(&relative_path),
+        shards.push(source_shard_ref_for_value(
+            project_root,
+            kind,
             relative_path,
-            authority: source_shard_authority_for_kind(&kind),
-            dirty_state: SourceShardDirtyState::Clean,
-            schema_version: value
-                .get("schema_version")
-                .and_then(serde_json::Value::as_u64),
-            content_hash: super::sha256_hex(bytes.as_bytes()),
-        });
+            &value,
+        )?);
     }
     Ok(())
 }
@@ -769,10 +688,10 @@ fn replay_authored_context_shards(
         if !shard.path.exists() {
             continue;
         }
-        values.push((
-            shard.relative_path.clone(),
-            (shard.kind.clone(), read_json_value(&shard.path)?),
-        ));
+        let Ok(value) = read_json_value(&shard.path) else {
+            continue;
+        };
+        values.push((shard.relative_path.clone(), (shard.kind.clone(), value)));
     }
     for transaction in journal {
         for operation in &transaction.operations {
@@ -828,25 +747,64 @@ fn replay_authored_context_shards(
         )
     });
     for (relative_path, (kind, value)) in values {
-        let bytes = format!(
-            "{}\n",
-            crate::ir::serialization::to_json_deterministic(&value)?
-        );
-        shards.push(SourceShardRef {
-            shard_id: Uuid::new_v5(
-                &Uuid::NAMESPACE_URL,
-                format!("datum-eda:source-shard:{relative_path}").as_bytes(),
-            ),
-            kind: kind.clone(),
-            path: project_root.join(&relative_path),
+        shards.push(source_shard_ref_for_value(
+            project_root,
+            kind,
             relative_path,
-            authority: source_shard_authority_for_kind(&kind),
-            dirty_state: SourceShardDirtyState::Clean,
-            schema_version: value
-                .get("schema_version")
-                .and_then(serde_json::Value::as_u64),
-            content_hash: super::sha256_hex(bytes.as_bytes()),
-        });
+            &value,
+        )?);
+    }
+    Ok(())
+}
+
+pub(super) fn replay_import_map_shards(
+    project_root: &Path,
+    shards: &mut Vec<SourceShardRef>,
+    journal: &[TransactionRecord],
+) -> Result<(), EngineError> {
+    let mut values = Vec::new();
+    for shard in shards
+        .iter()
+        .filter(|shard| shard.kind == SourceShardKind::ImportMap)
+    {
+        if !shard.path.exists() {
+            continue;
+        }
+        let Ok(value) = read_json_value(&shard.path) else {
+            continue;
+        };
+        values.push((shard.relative_path.clone(), value));
+    }
+    for transaction in journal {
+        for operation in &transaction.operations {
+            match operation {
+                super::Operation::CreateImportMapShard {
+                    relative_path,
+                    shard,
+                } => {
+                    if let Some((_, value)) =
+                        values.iter_mut().find(|(path, _)| path == relative_path)
+                    {
+                        *value = shard.clone();
+                    } else {
+                        values.push((relative_path.clone(), shard.clone()));
+                    }
+                }
+                super::Operation::DeleteImportMapShard { relative_path, .. } => {
+                    values.retain(|(path, _)| path != relative_path);
+                }
+                _ => {}
+            }
+        }
+    }
+    shards.retain(|shard| shard.kind != SourceShardKind::ImportMap);
+    for (relative_path, value) in values {
+        shards.push(source_shard_ref_for_value(
+            project_root,
+            SourceShardKind::ImportMap,
+            relative_path,
+            &value,
+        )?);
     }
     Ok(())
 }

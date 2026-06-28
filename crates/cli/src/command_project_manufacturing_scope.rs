@@ -2,9 +2,9 @@ use std::path::Path;
 
 use anyhow::{Context, Result, bail};
 use eda_engine::substrate::{
-    ArtifactFile, ArtifactKind, ArtifactMetadata, ArtifactProductionProjection,
-    ArtifactValidationState, DesignModel, ManufacturingPlan, OutputJob, PanelProjection,
-    ProjectResolver, persist_artifact_metadata,
+    ARTIFACT_METADATA_SCHEMA_VERSION, ArtifactFile, ArtifactKind, ArtifactMetadata,
+    ArtifactProductionProjection, ArtifactValidationState, DesignModel, ManufacturingPlan,
+    OutputJob, PanelProjection, ProjectResolver,
 };
 use uuid::Uuid;
 
@@ -18,6 +18,7 @@ use super::super::{
     compute_source_hash_bytes, load_native_project_with_resolved_board,
     plan_native_project_gerber_export,
 };
+use super::command_project_manufacturing_evidence::commit_manufacturing_set_evidence;
 
 #[derive(Debug, Clone)]
 pub(crate) struct NativeProjectManufacturingScope {
@@ -219,6 +220,7 @@ pub(crate) fn manufacturing_set_artifact_metadata(
         material.push_str(&file.sha256);
     }
     ArtifactMetadata {
+        schema_version: ARTIFACT_METADATA_SCHEMA_VERSION,
         artifact_id: Uuid::new_v5(&model.project.project_id, material.as_bytes()),
         kind: ArtifactKind::ManufacturingSet,
         project_id: model.project.project_id,
@@ -246,7 +248,7 @@ pub(crate) fn update_manufacturing_set_artifact_validation(
     expected: &[String],
     content_matches: bool,
 ) -> Result<Option<ManufacturingSetArtifactValidation>> {
-    let model = ProjectResolver::new(root).resolve()?;
+    let mut model = ProjectResolver::new(root).resolve()?;
     let expected_files = expected
         .iter()
         .map(Into::into)
@@ -284,8 +286,9 @@ pub(crate) fn update_manufacturing_set_artifact_validation(
     } else {
         ArtifactValidationState::Invalid
     };
-    let manifest_path = persist_artifact_metadata(root, &metadata)
-        .context("failed to persist manufacturing artifact metadata")?;
+    let manifest_path = commit_manufacturing_set_evidence(root, &mut model, &metadata, None)
+        .context("failed to persist manufacturing artifact metadata")?
+        .0;
     let validation_state = match metadata.validation_state {
         ArtifactValidationState::NotValidated => "not_validated",
         ArtifactValidationState::Valid => "valid",

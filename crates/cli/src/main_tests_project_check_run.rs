@@ -126,7 +126,7 @@ fn project_query_check_run_reports_resolver_keyed_persisted_findings() {
         serde_json::from_str(&output).expect("check-run JSON should parse");
 
     assert_eq!(report["contract"], "check_run_v1");
-    assert_eq!(report["persisted"], true);
+    assert_eq!(report["persisted"], false);
     assert_eq!(report["profile_id"], "native-combined");
     assert_eq!(report["status"], "warning");
     assert!(report["check_run_id"].as_str().unwrap().len() > 20);
@@ -146,7 +146,10 @@ fn project_query_check_run_reports_resolver_keyed_persisted_findings() {
                 .as_str()
                 .unwrap()
                 .starts_with("sha256:")
-            && entry["primary_target"]["kind"].as_str().is_some()
+            && entry["primary_target"]["kind"].as_str().unwrap() != "unknown"
+            && entry["primary_target"]["id"].as_str().is_some()
+            && entry["related_targets"].as_array().is_some()
+            && entry.get("affected_object_ids").is_none()
             && entry["message"].as_str().is_some()
             && entry["explanation"]
                 .as_str()
@@ -161,43 +164,6 @@ fn project_query_check_run_reports_resolver_keyed_persisted_findings() {
             && entry["deviation_refs"] == serde_json::json!([])
             && entry["proposal_refs"] == serde_json::json!([])
     }));
-
-    let check_run_id = report["check_run_id"].as_str().unwrap();
-    let persisted_path = root.join(format!(".datum/check_runs/{check_run_id}.json"));
-    assert!(persisted_path.exists());
-    let persisted: serde_json::Value = serde_json::from_str(
-        &std::fs::read_to_string(&persisted_path).expect("persisted check run should read"),
-    )
-    .expect("persisted check run should parse");
-    assert_eq!(persisted["check_run_id"], check_run_id);
-    assert_eq!(persisted["project_id"], report["project_id"]);
-    assert_eq!(persisted["model_revision"], report["model_revision"]);
-    assert_eq!(persisted["finding_count"], report["finding_count"]);
-    assert_eq!(persisted["profile_basis"], report["profile_basis"]);
-    assert_eq!(persisted["coverage"], report["coverage"]);
-    assert!(
-        persisted["findings"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .any(|entry| {
-                entry["domain"] == "erc"
-                    && entry["status"] == "active"
-                    && entry["fingerprint"]
-                        .as_str()
-                        .unwrap()
-                        .starts_with("sha256:")
-                    && entry["explanation"]
-                        .as_str()
-                        .unwrap()
-                        .contains("Rule unconnected_component_pin")
-                    && entry["suggested_next_action"]
-                        .as_str()
-                        .unwrap()
-                        .contains("fix, waive, or accept")
-                    && entry["evidence"].as_array().unwrap().len() == 1
-            })
-    );
 
     let repeat_output = execute(
         Cli::try_parse_from([
@@ -214,16 +180,19 @@ fn project_query_check_run_reports_resolver_keyed_persisted_findings() {
     .expect("project query check-run repeat should succeed");
     assert_eq!(output, repeat_output);
 
+    let check_run_id = report["check_run_id"].as_str().unwrap();
+    let persisted_path = root.join(format!(".datum/check_runs/{check_run_id}.json"));
+    assert!(!persisted_path.exists());
     let resolved = ProjectResolver::new(&root)
         .resolve()
-        .expect("resolver should read persisted check run");
+        .expect("resolver should read project without persisted check run");
     assert!(
-        resolved
+        !resolved
             .check_runs
             .contains_key(&Uuid::parse_str(check_run_id).unwrap())
     );
     assert!(
-        resolved
+        !resolved
             .source_shards
             .iter()
             .any(|shard| shard.kind == SourceShardKind::CheckRun)
@@ -495,7 +464,11 @@ fn project_accept_deviation_commits_journaled_fingerprint_deviation() {
     let _ = std::fs::remove_dir_all(&root);
 }
 
-fn assert_fingerprint_status(root: &std::path::Path, fingerprint: &str, expected_status: &str) {
+pub(super) fn assert_fingerprint_status(
+    root: &std::path::Path,
+    fingerprint: &str,
+    expected_status: &str,
+) {
     let output = execute(
         Cli::try_parse_from([
             "eda",
@@ -519,7 +492,7 @@ fn assert_fingerprint_status(root: &std::path::Path, fingerprint: &str, expected
     assert_eq!(finding["status"], expected_status);
 }
 
-fn assert_fingerprint_ref_count(
+pub(super) fn assert_fingerprint_ref_count(
     root: &std::path::Path,
     fingerprint: &str,
     ref_field: &str,

@@ -14,6 +14,12 @@ mod command_project_component_instances;
 mod command_project_import_map;
 #[path = "command_project_imports.rs"]
 mod command_project_imports;
+#[path = "command_project_imports_eagle_import_map.rs"]
+mod command_project_imports_eagle_import_map;
+#[path = "command_project_imports_schematic.rs"]
+mod command_project_imports_schematic;
+#[path = "command_project_imports_schematic_identities.rs"]
+mod command_project_imports_schematic_identities;
 #[path = "command_project_library.rs"]
 mod command_project_library;
 #[path = "command_project_library_package_geometry.rs"]
@@ -22,6 +28,10 @@ mod command_project_library_package_geometry;
 mod command_project_library_package_pad;
 #[path = "command_project_library_pad_map.rs"]
 mod command_project_library_pad_map;
+#[path = "command_project_library_payload.rs"]
+mod command_project_library_payload;
+#[path = "command_project_library_proposals.rs"]
+mod command_project_library_proposals;
 #[path = "command_project_library_symbol_geometry.rs"]
 mod command_project_library_symbol_geometry;
 #[path = "command_project_library_unit_pin.rs"]
@@ -42,8 +52,14 @@ mod command_project_output_jobs;
 mod command_project_proposals;
 #[path = "command_project_relationships.rs"]
 mod command_project_relationships;
+#[path = "command_project_standards_clearance_repairs.rs"]
+mod command_project_standards_clearance_repairs;
+#[path = "command_project_standards_peer_aperture.rs"]
+mod command_project_standards_peer_aperture;
 #[path = "command_project_standards_repairs.rs"]
 mod command_project_standards_repairs;
+#[path = "command_project_standards_silk_repairs.rs"]
+mod command_project_standards_silk_repairs;
 #[path = "command_project_waivers.rs"]
 mod command_project_waivers;
 
@@ -55,10 +71,11 @@ pub(crate) use self::command_project_artifacts::{
 };
 pub(crate) use self::command_project_board_component_layer::set_native_project_board_component_layer;
 pub(crate) use self::command_project_board_component_mutations::{
-    delete_native_project_board_component, move_native_project_board_component,
-    place_native_project_board_component, rotate_native_project_board_component,
-    set_native_project_board_component_locked, set_native_project_board_component_package,
-    set_native_project_board_component_part,
+    board_package_materialization_payload_for_component,
+    current_board_component_materialization_payload, delete_native_project_board_component,
+    move_native_project_board_component, place_native_project_board_component,
+    rotate_native_project_board_component, set_native_project_board_component_locked,
+    set_native_project_board_component_package, set_native_project_board_component_part,
 };
 pub(crate) use self::command_project_board_component_query::{
     query_native_project_board_component_mechanical,
@@ -70,7 +87,7 @@ pub(crate) use self::command_project_board_component_reference::set_native_proje
 pub(crate) use self::command_project_board_component_value::set_native_project_board_component_value;
 pub(crate) use self::command_project_board_diagnostics::{
     query_native_project_board_check, query_native_project_board_diagnostics,
-    query_native_project_board_unrouted, query_native_project_drc,
+    query_native_project_board_unrouted,
 };
 pub(crate) use self::command_project_board_layout::{
     delete_native_project_board_keepout, delete_native_project_board_text,
@@ -163,7 +180,11 @@ pub(crate) use self::command_project_gerber_silkscreen::{
     resolve_native_project_silkscreen_context,
 };
 pub(crate) use self::command_project_import_map::query_native_project_import_map;
-pub(crate) use self::command_project_imports::import_native_project_kicad_footprint;
+pub(crate) use self::command_project_imports::{
+    import_native_project_eagle_library, import_native_project_kicad_board,
+    import_native_project_kicad_footprint,
+};
+pub(crate) use self::command_project_imports_schematic::import_native_project_kicad_schematic;
 pub(crate) use self::command_project_inventory_surface::*;
 pub(crate) use self::command_project_library::{
     attach_native_project_pool_part_model, create_native_project_pool_entity,
@@ -190,6 +211,14 @@ pub(crate) use self::command_project_library_package_geometry::{
 pub(crate) use self::command_project_library_package_pad::set_native_project_pool_package_pad;
 pub(crate) use self::command_project_library_pad_map::{
     set_native_project_pool_part_pad_map_entry, set_native_project_pool_part_pad_map_from_entries,
+};
+pub(crate) use self::command_project_library_proposals::{
+    propose_create_native_project_pool_entity, propose_create_native_project_pool_library_object,
+    propose_create_native_project_pool_package, propose_create_native_project_pool_padstack,
+    propose_create_native_project_pool_symbol, propose_create_native_project_pool_unit,
+    propose_set_native_project_pool_package_courtyard_polygon,
+    propose_set_native_project_pool_package_courtyard_rect,
+    propose_set_native_project_pool_package_pad,
 };
 pub(crate) use self::command_project_library_symbol_geometry::{
     add_native_project_pool_symbol_arc, add_native_project_pool_symbol_circle,
@@ -223,7 +252,7 @@ pub(crate) use self::command_project_native_inspect::{
     query_native_project_check_profiles, query_native_project_check_run,
     query_native_project_check_run_list, query_native_project_check_run_show,
     query_native_project_check_run_with_profile, query_native_project_journal_list,
-    query_native_project_journal_show,
+    query_native_project_journal_show, run_native_project_check_with_profile,
 };
 pub(crate) use self::command_project_native_journal_mutation::{
     execute_native_project_journal_redo, execute_native_project_journal_undo,
@@ -252,10 +281,13 @@ pub(crate) use self::command_project_pool_query::{
 };
 pub(super) use self::command_project_project_core::*;
 pub(crate) use self::command_project_proposals::{
+    BoardComponentReplacementPlanSelectionSpec, BoardComponentReplacementSpec,
     accept_and_apply_native_project_proposal, apply_native_project_proposal,
     create_native_project_proposal, defer_native_project_proposal, preview_native_project_proposal,
-    query_native_project_proposals, review_native_project_proposal, show_native_project_proposal,
-    validate_native_project_proposal,
+    propose_native_project_board_component_replacement,
+    propose_native_project_board_component_replacement_plan,
+    propose_native_project_board_component_replacements, query_native_project_proposals,
+    review_native_project_proposal, show_native_project_proposal, validate_native_project_proposal,
 };
 pub(crate) use self::command_project_relationships::{
     query_native_project_relationships, query_native_project_variants,
@@ -281,10 +313,10 @@ pub(crate) use self::command_project_schematic_proposals::{
 };
 pub(crate) use self::command_project_schematic_queries::{
     query_native_project_check, query_native_project_diagnostics, query_native_project_drawings,
-    query_native_project_erc, query_native_project_hierarchy, query_native_project_nets,
-    query_native_project_sheets, query_native_project_symbol_fields,
-    query_native_project_symbol_pins, query_native_project_symbol_semantics,
-    query_native_project_symbols, query_native_project_texts,
+    query_native_project_hierarchy, query_native_project_nets, query_native_project_sheets,
+    query_native_project_symbol_fields, query_native_project_symbol_pins,
+    query_native_project_symbol_semantics, query_native_project_symbols,
+    query_native_project_texts,
 };
 pub(crate) use self::command_project_schematic_sheet_mutations::{
     bind_native_project_sheet_instance_port, create_native_project_sheet,

@@ -212,3 +212,100 @@ pub(super) fn query_board_components(root: &Path) -> Vec<PlacedPackage> {
     let components_output = execute(components_cli).expect("components query should succeed");
     serde_json::from_str(&components_output).expect("components parse")
 }
+
+pub(super) fn write_component_instance_shard(
+    root: &Path,
+    component_instance_id: Uuid,
+    symbol_id: Uuid,
+    package_id: Uuid,
+) {
+    write_component_instance_shard_with_part_ref(
+        root,
+        component_instance_id,
+        symbol_id,
+        package_id,
+        None,
+    );
+}
+
+pub(super) fn write_component_instance_shard_with_part_ref(
+    root: &Path,
+    component_instance_id: Uuid,
+    symbol_id: Uuid,
+    package_id: Uuid,
+    part_id: Option<Uuid>,
+) {
+    let path = root.join(format!(
+        ".datum/component_instances/{component_instance_id}.json"
+    ));
+    std::fs::create_dir_all(path.parent().unwrap()).expect("component instance dir should create");
+    let part_ref = part_id.map(|part_id| {
+        serde_json::json!({
+            "object_id": part_id,
+            "object_revision": 0
+        })
+    });
+    std::fs::write(
+        &path,
+        format!(
+            "{}\n",
+            to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "component_instance": {
+                    "uuid": component_instance_id,
+                    "object_revision": 0,
+                    "part_ref": part_ref,
+                    "placed_symbol_refs": [{
+                        "object_id": symbol_id,
+                        "object_revision": 0
+                    }],
+                    "placed_package_refs": [{
+                        "object_id": package_id,
+                        "object_revision": 0
+                    }]
+                }
+            }))
+            .expect("component instance JSON should serialize")
+        ),
+    )
+    .expect("component instance shard should write");
+}
+
+pub(super) fn write_pool_part_object(root: &Path, part_id: Uuid) {
+    let project_path = root.join("project.json");
+    let mut project: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(&project_path).expect("project JSON should read"))
+            .expect("project JSON should parse");
+    project["pools"] = serde_json::json!([{ "path": "pool", "priority": 1 }]);
+    std::fs::write(
+        &project_path,
+        format!(
+            "{}\n",
+            to_json_deterministic(&project).expect("project JSON should serialize")
+        ),
+    )
+    .expect("project JSON should write");
+    let part_path = root.join(format!("pool/parts/{part_id}.json"));
+    std::fs::create_dir_all(part_path.parent().unwrap()).expect("pool part dir should create");
+    std::fs::write(
+        &part_path,
+        format!(
+            "{}\n",
+            to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "uuid": part_id,
+                "object_revision": 0,
+                "entity": Uuid::new_v5(&part_id, b"entity"),
+                "package": Uuid::new_v5(&part_id, b"package"),
+                "mpn": "TEST-PART",
+                "manufacturer": "Datum",
+                "value": "TEST",
+                "description": "",
+                "datasheet": "",
+                "lifecycle": "Active"
+            }))
+            .expect("pool part JSON should serialize")
+        ),
+    )
+    .expect("pool part should write");
+}

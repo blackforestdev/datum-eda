@@ -8,7 +8,7 @@ use super::command_project_support::{csv_escape, parse_csv_line};
 
 pub(super) fn render_expected_native_project_bom_csv_rows(rows: &[NativeBomRow]) -> String {
     let mut csv = String::from(
-        "component_instance_uuid,reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked\n",
+        "component_instance_uuid,component_instance_role,component_instance_label,reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked\n",
     );
     for row in rows {
         let row = [
@@ -17,6 +17,8 @@ pub(super) fn render_expected_native_project_bom_csv_rows(rows: &[NativeBomRow])
                     .map(|id| id.to_string())
                     .unwrap_or_default(),
             ),
+            csv_escape(row.component_instance_role.as_deref().unwrap_or("")),
+            csv_escape(row.component_instance_label.as_deref().unwrap_or("")),
             csv_escape(&row.reference),
             csv_escape(&row.value),
             csv_escape(&row.part_uuid),
@@ -36,7 +38,7 @@ pub(super) fn render_expected_native_project_bom_csv_rows(rows: &[NativeBomRow])
 
 pub(super) fn render_expected_native_project_pnp_csv_rows(rows: &[NativePnpRow]) -> String {
     let mut csv = String::from(
-        "component_instance_uuid,reference,x_nm,y_nm,rotation_deg,layer,side,package_uuid,part_uuid,value,locked\n",
+        "component_instance_uuid,component_instance_role,component_instance_label,reference,x_nm,y_nm,rotation_deg,layer,side,package_uuid,part_uuid,value,locked\n",
     );
     for row in rows {
         let row = [
@@ -45,6 +47,8 @@ pub(super) fn render_expected_native_project_pnp_csv_rows(rows: &[NativePnpRow])
                     .map(|id| id.to_string())
                     .unwrap_or_default(),
             ),
+            csv_escape(row.component_instance_role.as_deref().unwrap_or("")),
+            csv_escape(row.component_instance_label.as_deref().unwrap_or("")),
             csv_escape(&row.reference),
             row.x_nm.to_string(),
             row.y_nm.to_string(),
@@ -70,11 +74,14 @@ pub(super) fn parse_bom_csv(path: &Path) -> Result<Vec<NativeBomRow>> {
     let header = lines
         .next()
         .ok_or_else(|| anyhow::anyhow!("missing BOM CSV header in {}", path.display()))?;
-    let has_component_instance = match header {
-        "component_instance_uuid,reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked" => {
-            true
+    let component_instance_columns = match header {
+        "component_instance_uuid,component_instance_role,component_instance_label,reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked" => {
+            3
         }
-        "reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked" => false,
+        "component_instance_uuid,reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked" => {
+            1
+        }
+        "reference,value,part_uuid,package_uuid,layer,x_nm,y_nm,rotation_deg,locked" => 0,
         _ => bail!("unexpected BOM CSV header in {}", path.display()),
     };
 
@@ -85,13 +92,15 @@ pub(super) fn parse_bom_csv(path: &Path) -> Result<Vec<NativeBomRow>> {
         }
         let fields = parse_csv_line(line)
             .with_context(|| format!("failed to parse BOM CSV row in {}", path.display()))?;
-        let expected_len = if has_component_instance { 10 } else { 9 };
+        let expected_len = 9 + component_instance_columns;
         if fields.len() != expected_len {
             bail!("unexpected BOM CSV column count in {}", path.display());
         }
-        let offset = if has_component_instance { 1 } else { 0 };
+        let offset = component_instance_columns;
         rows.push(NativeBomRow {
-            component_instance_uuid: parse_optional_uuid(&fields[0..offset]),
+            component_instance_uuid: parse_optional_uuid(&fields[0..component_instance_columns]),
+            component_instance_role: parse_optional_field(&fields, 1, component_instance_columns),
+            component_instance_label: parse_optional_field(&fields, 2, component_instance_columns),
             reference: fields[offset].clone(),
             value: fields[offset + 1].clone(),
             part_uuid: fields[offset + 2].clone(),
@@ -113,11 +122,14 @@ pub(super) fn parse_pnp_csv(path: &Path) -> Result<Vec<NativePnpRow>> {
     let header = lines
         .next()
         .ok_or_else(|| anyhow::anyhow!("missing PnP CSV header in {}", path.display()))?;
-    let has_component_instance = match header {
-        "component_instance_uuid,reference,x_nm,y_nm,rotation_deg,layer,side,package_uuid,part_uuid,value,locked" => {
-            true
+    let component_instance_columns = match header {
+        "component_instance_uuid,component_instance_role,component_instance_label,reference,x_nm,y_nm,rotation_deg,layer,side,package_uuid,part_uuid,value,locked" => {
+            3
         }
-        "reference,x_nm,y_nm,rotation_deg,layer,side,package_uuid,part_uuid,value,locked" => false,
+        "component_instance_uuid,reference,x_nm,y_nm,rotation_deg,layer,side,package_uuid,part_uuid,value,locked" => {
+            1
+        }
+        "reference,x_nm,y_nm,rotation_deg,layer,side,package_uuid,part_uuid,value,locked" => 0,
         _ => bail!("unexpected PnP CSV header in {}", path.display()),
     };
 
@@ -128,13 +140,15 @@ pub(super) fn parse_pnp_csv(path: &Path) -> Result<Vec<NativePnpRow>> {
         }
         let fields = parse_csv_line(line)
             .with_context(|| format!("failed to parse PnP CSV row in {}", path.display()))?;
-        let expected_len = if has_component_instance { 11 } else { 10 };
+        let expected_len = 10 + component_instance_columns;
         if fields.len() != expected_len {
             bail!("unexpected PnP CSV column count in {}", path.display());
         }
-        let offset = if has_component_instance { 1 } else { 0 };
+        let offset = component_instance_columns;
         rows.push(NativePnpRow {
-            component_instance_uuid: parse_optional_uuid(&fields[0..offset]),
+            component_instance_uuid: parse_optional_uuid(&fields[0..component_instance_columns]),
+            component_instance_role: parse_optional_field(&fields, 1, component_instance_columns),
+            component_instance_label: parse_optional_field(&fields, 2, component_instance_columns),
             reference: fields[offset].clone(),
             x_nm: fields[offset + 1].parse().context("invalid x_nm")?,
             y_nm: fields[offset + 2].parse().context("invalid y_nm")?,
@@ -148,6 +162,14 @@ pub(super) fn parse_pnp_csv(path: &Path) -> Result<Vec<NativePnpRow>> {
         });
     }
     Ok(rows)
+}
+
+fn parse_optional_field(fields: &[String], index: usize, available: usize) -> Option<String> {
+    (index < available)
+        .then(|| fields.get(index))
+        .flatten()
+        .filter(|value| !value.is_empty())
+        .cloned()
 }
 
 fn parse_optional_uuid(fields: &[String]) -> Option<Uuid> {

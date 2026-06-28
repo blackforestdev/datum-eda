@@ -20,16 +20,20 @@ mod check_run;
 mod commit;
 mod component_instance;
 mod component_instance_journal_ops;
+mod forward_annotation_review_journal_ops;
 mod generated_evidence;
+mod generated_evidence_journal_ops;
 mod import_map;
 mod import_map_journal_ops;
 mod journal;
+mod journal_io;
 mod journal_operation_hooks;
 mod operation;
 mod operation_application;
 mod operation_application_batch;
 mod operation_application_board_payloads;
 mod operation_application_component_instance;
+mod operation_application_dispatch;
 mod operation_application_object_revision;
 mod operation_application_objects;
 mod operation_application_production;
@@ -44,9 +48,17 @@ mod project_manifest_journal_ops;
 mod project_resolver;
 mod proposal;
 mod proposal_journal_ops;
+mod proposal_policy;
+mod proposal_validation;
 mod relationship;
 mod relationship_journal_ops;
 mod replay;
+mod replay_forward_annotation;
+mod replay_generated_evidence;
+mod replay_objects;
+mod replay_pool;
+mod replay_proposal;
+mod replay_schematic;
 mod rules_journal_ops;
 mod run_evidence_validation;
 mod schematic_definition_journal_ops;
@@ -54,23 +66,33 @@ mod schematic_root_journal_ops;
 mod schematic_sheet_journal_ops;
 mod schematic_sheet_maps;
 mod source_shard;
+mod source_shard_ref_builders;
 mod transaction_links;
 mod undo_redo;
 mod variant;
 mod zone_fill;
+mod zone_fill_geometry;
 mod zone_fill_journal_ops;
 
 pub use artifact::{
-    ArtifactFile, ArtifactKind, ArtifactMetadata, ArtifactProductionProjection,
-    ArtifactValidationState, ManufacturingPlan, OutputJob, OutputJobLogEntry, OutputJobLogLevel,
-    OutputJobRun, OutputJobRunLauncher, OutputJobRunProvenance, OutputJobRunStatus,
-    PanelBoardInstance, PanelProjection, persist_artifact_metadata, persist_output_job_run,
+    ARTIFACT_METADATA_SCHEMA_VERSION, ArtifactFile, ArtifactKind, ArtifactMetadata,
+    ArtifactProductionProjection, ArtifactValidationState, ManufacturingPlan,
+    OUTPUT_JOB_RUN_SCHEMA_VERSION, OutputJob, OutputJobLogEntry, OutputJobLogLevel, OutputJobRun,
+    OutputJobRunLauncher, OutputJobRunProvenance, OutputJobRunStatus,
+    PRODUCTION_RECORD_SCHEMA_VERSION, PanelBoardInstance, PanelProjection,
 };
-pub use artifact_run::{ArtifactRun, persist_artifact_run};
+pub use artifact_run::{ARTIFACT_RUN_SCHEMA_VERSION, ArtifactRun};
 pub use check_run::{
-    CheckFinding, CheckRun, CheckRunCoverageEntry, CheckRunProfileBasis, persist_check_run,
+    CHECK_RUN_SCHEMA_VERSION, CHECK_RUN_STANDARDS_BASIS_REGISTRY, CheckFinding, CheckRun,
+    CheckRunCoverageEntry, CheckRunProfileBasis, PROCESS_APERTURE_STANDARDS_BASIS_ID,
+    StandardsBasis, StandardsBasisRegistryEntry, ZONE_FILL_HONESTY_STANDARDS_BASIS_ID,
+    standards_basis_for_id, standards_basis_id_for_check_code, standards_basis_registry_entry,
 };
-pub use import_map::{ImportIdentityAllocation, ImportMapShard, allocate_import_identity};
+pub use component_instance::{COMPONENT_INSTANCE_SHARD_SCHEMA_VERSION, ComponentInstanceShard};
+pub use import_map::{
+    IMPORT_MAP_SHARD_SCHEMA_VERSION, ImportIdentityAllocation, ImportMapEntryStatus,
+    ImportMapShard, allocate_import_identity,
+};
 pub use journal::transaction_journal_path;
 use journal::{
     canonical_json_hash, materialized_shard_value, replay_journal_shard_value, sort_source_shards,
@@ -79,12 +101,13 @@ use journal::{
 pub use operation::Operation;
 use operation_application::apply_operation;
 pub use proposal::*;
-pub use relationship::RelationshipShard;
-pub use variant::VariantOverlayShard;
+pub use relationship::{RELATIONSHIP_SHARD_SCHEMA_VERSION, RelationshipShard};
+pub use rules_journal_ops::validate_native_project_rule_payload;
+pub use variant::{VARIANT_OVERLAY_SHARD_SCHEMA_VERSION, VariantOverlayShard};
 use zone_fill::derive_model_zone_fills;
 pub use zone_fill::{
-    ZoneFill, ZoneFillCopperContext, ZoneFillState, compute_bounded_zone_fill, persist_zone_fill,
-    zone_fill_copper_projection_zones,
+    ZONE_FILL_SCHEMA_VERSION, ZoneFill, ZoneFillCopperContext, ZoneFillState,
+    compute_bounded_zone_fill, zone_fill_copper_projection_zones,
 };
 
 pub type ObjectId = Uuid;
@@ -119,7 +142,7 @@ pub enum SourceShardKind {
     ZoneFill,
     ArtifactMetadata,
     ProposalMetadata,
-    Unknown,
+    ForwardAnnotationReview,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
@@ -129,7 +152,6 @@ pub enum SourceShardAuthority {
     ImportedDesign,
     SidecarMetadata,
     GeneratedEvidence,
-    Unknown,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
@@ -141,10 +163,39 @@ pub enum SourceShardDirtyState {
     Unknown,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SourceShardTaxon {
+    ComponentInstance,
+    Relationship,
+    VariantOverlay,
+    PoolUnit,
+    PoolSymbol,
+    PoolEntity,
+    PoolPart,
+    PoolPackage,
+    PoolFootprint,
+    PoolPadstack,
+    PoolPinPadMap,
+    ManufacturingPlan,
+    PanelProjection,
+    OutputJob,
+    ImportMap,
+    ProposalMetadata,
+    ForwardAnnotationReview,
+    OutputJobRun,
+    ArtifactRun,
+    CheckRun,
+    ZoneFill,
+    ArtifactMetadata,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SourceShardRef {
     pub shard_id: Uuid,
     pub kind: SourceShardKind,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub taxon: Option<SourceShardTaxon>,
     pub path: PathBuf,
     pub relative_path: String,
     pub authority: SourceShardAuthority,
@@ -162,12 +213,40 @@ pub struct DomainObject {
     pub kind: String,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ComponentInstanceAuthority {
+    Authored,
+    CompatibilityDerived,
+}
+
+impl Default for ComponentInstanceAuthority {
+    fn default() -> Self {
+        Self::Authored
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ComponentInstance {
     pub id: ComponentInstanceId,
     pub object_revision: ObjectRevision,
+    #[serde(default)]
+    pub authority: ComponentInstanceAuthority,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub part_ref: Option<ObjectId>,
     pub placed_symbol_refs: Vec<ObjectId>,
     pub placed_package_refs: Vec<ObjectId>,
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub placed_symbol_roles: BTreeMap<ObjectId, ComponentInstanceRoleMetadata>,
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub placed_package_roles: BTreeMap<ObjectId, ComponentInstanceRoleMetadata>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ComponentInstanceRoleMetadata {
+    pub role: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub label: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -266,6 +345,8 @@ pub struct ImportMapEntry {
     pub import_key: ImportKey,
     pub object_id: ObjectId,
     pub source_shard_id: Uuid,
+    #[serde(default)]
+    pub status: ImportMapEntryStatus,
     #[serde(default)]
     pub source_tool: String,
     #[serde(default)]
@@ -464,6 +545,7 @@ fn collect_uuid_objects_at(
                             import_key: import_key.to_string(),
                             object_id,
                             source_shard_id: shard.shard_id,
+                            status: ImportMapEntryStatus::Active,
                             source_tool: String::new(),
                             source_path: shard.relative_path.clone(),
                             source_object_ref: pointer.to_string(),
@@ -537,7 +619,7 @@ pub(super) fn domain_for_shard_kind(kind: &SourceShardKind) -> &'static str {
         SourceShardKind::ZoneFill => "zone_fill",
         SourceShardKind::ArtifactMetadata => "artifact",
         SourceShardKind::ProposalMetadata => "proposal",
-        SourceShardKind::Unknown => "unknown",
+        SourceShardKind::ForwardAnnotationReview => "forward_annotation_review",
     }
 }
 
@@ -556,15 +638,14 @@ pub(super) fn source_shard_authority_for_kind(kind: &SourceShardKind) -> SourceS
         | SourceShardKind::ManufacturingPlan
         | SourceShardKind::PanelProjection
         | SourceShardKind::OutputJob => SourceShardAuthority::AuthoredDesign,
-        SourceShardKind::ImportMap | SourceShardKind::ProposalMetadata => {
-            SourceShardAuthority::SidecarMetadata
-        }
+        SourceShardKind::ImportMap
+        | SourceShardKind::ProposalMetadata
+        | SourceShardKind::ForwardAnnotationReview => SourceShardAuthority::SidecarMetadata,
         SourceShardKind::OutputJobRun
         | SourceShardKind::ArtifactRun
         | SourceShardKind::CheckRun
         | SourceShardKind::ZoneFill
         | SourceShardKind::ArtifactMetadata => SourceShardAuthority::GeneratedEvidence,
-        SourceShardKind::Unknown => SourceShardAuthority::Unknown,
     }
 }
 
@@ -585,6 +666,7 @@ fn compute_model_revision(
                 | SourceShardKind::ZoneFill
                 | SourceShardKind::ImportMap
                 | SourceShardKind::ProposalMetadata
+                | SourceShardKind::ForwardAnnotationReview
         ) {
             continue;
         }

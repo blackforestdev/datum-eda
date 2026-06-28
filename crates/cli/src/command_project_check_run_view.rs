@@ -1,3 +1,9 @@
+use super::command_project_check_finding_identity::{
+    check_finding_evidence, check_finding_fingerprint, check_finding_import_key,
+    check_finding_rule_revision, check_finding_standards_basis,
+    check_finding_standards_basis_detail, is_standards_profile_finding, standards_basis_detail,
+};
+use super::command_project_check_targets::{check_primary_target, check_related_targets};
 use anyhow::{Result, bail};
 use eda_engine::api::{CheckCodeCount, CheckReport, CheckStatus, CheckSummary};
 use eda_engine::ir::serialization::to_json_deterministic;
@@ -6,17 +12,13 @@ use eda_engine::schematic::{
     CheckDeviation, CheckDomain, CheckWaiver, DeviationApprovalStatus, WaiverTarget,
 };
 use eda_engine::substrate::{
-    CheckFinding, CheckRun, CheckRunCoverageEntry, CheckRunProfileBasis, ModelRevision,
+    CHECK_RUN_SCHEMA_VERSION, CheckFinding, CheckRun, CheckRunCoverageEntry, CheckRunProfileBasis,
+    ModelRevision, StandardsBasis,
 };
 use serde::Serialize;
 use std::collections::BTreeMap;
 use std::path::Path;
 use uuid::Uuid;
-
-use super::command_project_check_finding_identity::{
-    check_finding_evidence, check_finding_fingerprint, check_finding_import_key,
-    check_finding_rule_revision, check_finding_standards_basis, is_standards_profile_finding,
-};
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectCheckRunView {
@@ -48,6 +50,7 @@ pub(crate) struct NativeProjectCheckFindingView {
     pub(crate) domain: String,
     pub(crate) rule_id: String,
     pub(crate) standards_basis: Option<String>,
+    pub(crate) standards_basis_detail: Option<StandardsBasis>,
     pub(crate) rule_revision: Option<String>,
     pub(crate) import_key: Option<String>,
     pub(crate) status: String,
@@ -217,6 +220,8 @@ pub(crate) fn profile_basis_for_check_run(profile_id: &str) -> CheckRunProfileBa
         description: profile.description.to_string(),
         standards_basis: (profile.profile_id == STANDARDS_CHECK_PROFILE)
             .then_some("datum.process_aperture_and_geometry.current".to_string()),
+        standards_basis_detail: (profile.profile_id == STANDARDS_CHECK_PROFILE)
+            .then(|| standards_basis_detail("datum.process_aperture_and_geometry.current")),
     }
 }
 
@@ -258,13 +263,14 @@ pub(crate) fn check_run_coverage_for_profile(profile_id: &str) -> Vec<CheckRunCo
             "generated_artifacts",
             None,
         ),
-        not_implemented_entry(
+        coverage_entry(profile_id, "drc", "clearance_copper", "board_copper", None),
+        coverage_entry(
+            profile_id,
             "drc",
-            "clearance_solver",
-            "board_copper",
-            Some("datum.layout.clearance.future"),
+            "silk_clearance_copper",
+            "board_silkscreen",
+            None,
         ),
-        not_implemented_entry("drc", "silkscreen_clearance", "board_silkscreen", None),
         not_implemented_entry(
             "erc",
             "hierarchical_power_intent",
@@ -358,6 +364,7 @@ fn coverage_entry(
         basis_id: Some(format!("datum.check.coverage.{domain}.{rule_id}.v1")),
         rule_revision: Some("v1".to_string()),
         standards_basis: standards_basis.map(str::to_string),
+        standards_basis_detail: standards_basis.map(standards_basis_detail),
     }
 }
 
@@ -375,6 +382,7 @@ fn not_implemented_entry(
         basis_id: basis_id.map(str::to_string),
         rule_revision: None,
         standards_basis: None,
+        standards_basis_detail: None,
     }
 }
 
@@ -419,19 +427,18 @@ pub(crate) fn native_check_run_to_substrate(
     project_id: &Uuid,
     view: &NativeProjectCheckRunView,
 ) -> Result<CheckRun> {
-    let summary = serde_json::to_value(&view.summary)?;
-    let raw_report = serde_json::to_value(&view.raw_report)?;
     let status = serde_json::to_value(view.status)?
         .as_str()
         .unwrap_or("unknown")
         .to_string();
     Ok(CheckRun {
+        schema_version: CHECK_RUN_SCHEMA_VERSION,
         check_run_id: view.check_run_id,
         project_id: *project_id,
         model_revision: ModelRevision(view.model_revision.clone()),
         profile_id: view.profile_id.to_string(),
         status,
-        summary,
+        summary: serde_json::to_value(&view.summary)?,
         finding_count: view.finding_count,
         findings: view
             .findings
@@ -446,6 +453,7 @@ pub(crate) fn native_check_run_to_substrate(
                 domain: finding.domain.clone(),
                 rule_id: finding.rule_id.clone(),
                 standards_basis: finding.standards_basis.clone(),
+                standards_basis_detail: finding.standards_basis_detail.clone(),
                 rule_revision: finding.rule_revision.clone(),
                 import_key: finding.import_key.clone(),
                 status: finding.status.clone(),
@@ -482,7 +490,7 @@ pub(crate) fn native_check_run_to_substrate(
             .collect(),
         profile_basis: view.profile_basis.clone(),
         coverage: view.coverage.clone(),
-        raw_report,
+        raw_report: serde_json::to_value(&view.raw_report)?,
     })
 }
 
@@ -524,6 +532,7 @@ pub(crate) fn append_finding_values(
         let rule_id = code.clone();
         let primary_target = check_primary_target(source, value);
         let standards_basis = check_finding_standards_basis(&code).map(str::to_string);
+        let standards_basis_detail = check_finding_standards_basis_detail(&code);
         let rule_revision = check_finding_rule_revision(&code).map(str::to_string);
         let import_key = check_finding_import_key(value);
         let related_targets = check_related_targets(&primary_target, value);
@@ -567,6 +576,7 @@ pub(crate) fn append_finding_values(
             domain,
             rule_id,
             standards_basis,
+            standards_basis_detail,
             rule_revision,
             import_key,
             status: status.to_string(),
@@ -727,67 +737,6 @@ pub(crate) fn finding_domain(source: &str, code: &str) -> String {
     .to_string()
 }
 
-pub(crate) fn check_primary_target(source: &str, payload: &serde_json::Value) -> serde_json::Value {
-    if let Some(value) = first_object_id(payload) {
-        return serde_json::json!({
-            "kind": "object_uuid",
-            "id": value,
-        });
-    }
-    for key in [
-        "object_id",
-        "object_uuid",
-        "component_uuid",
-        "symbol_uuid",
-        "pin_uuid",
-        "pad_uuid",
-        "pad_id",
-        "zone_id",
-        "artifact_id",
-        "net_uuid",
-        "uuid",
-    ] {
-        if let Some(value) = payload.get(key) {
-            return serde_json::json!({
-                "kind": key,
-                "id": value,
-            });
-        }
-    }
-    serde_json::json!({
-        "kind": source,
-        "id": "unknown",
-    })
-}
-
-pub(crate) fn check_related_targets(
-    primary_target: &serde_json::Value,
-    payload: &serde_json::Value,
-) -> Vec<serde_json::Value> {
-    let Some(objects) = payload.get("objects").and_then(serde_json::Value::as_array) else {
-        return Vec::new();
-    };
-    objects
-        .iter()
-        .filter_map(serde_json::Value::as_str)
-        .map(|value| {
-            serde_json::json!({
-                "kind": "object_uuid",
-                "id": value,
-            })
-        })
-        .filter(|target| target != primary_target)
-        .collect()
-}
-
-fn first_object_id(payload: &serde_json::Value) -> Option<&str> {
-    payload
-        .get("objects")
-        .and_then(serde_json::Value::as_array)
-        .and_then(|objects| objects.first())
-        .and_then(serde_json::Value::as_str)
-}
-
 pub(crate) fn check_finding_message(code: &str, payload: &serde_json::Value) -> String {
     payload
         .get("message")
@@ -852,7 +801,8 @@ pub(crate) fn check_finding_suggested_next_action(
         "artifact_validation_invalid" => {
             "Regenerate or validate the referenced artifact before release.".to_string()
         }
-        "pad_mask_expansion_missing" | "pad_mask_expansion_below_rule"
+        "pad_process_aperture_inherited_from_copper"
+        | "pad_mask_expansion_missing" | "pad_mask_expansion_below_rule"
         | "pad_paste_reduction_missing" | "pad_paste_reduction_below_rule"
         | "track_width_below_min" | "via_hole_out_of_range" | "via_annular_below_min" => {
             "Run datum-eda check repair-standards to create reviewed repair proposals.".to_string()

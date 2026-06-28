@@ -6,14 +6,14 @@ use eda_engine::rules::ast::RuleType;
 use eda_engine::substrate::ProjectResolver;
 
 pub(crate) fn query_native_project_hierarchy(root: &Path) -> Result<HierarchyInfo> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(schematic_hierarchy_info(&build_native_project_schematic(
         &project,
     )?))
 }
 
 pub(crate) fn query_native_project_sheets(root: &Path) -> Result<Vec<serde_json::Value>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let model = ProjectResolver::new(&project.root)
         .resolve()
         .with_context(|| {
@@ -43,7 +43,7 @@ pub(crate) fn query_native_project_sheets(root: &Path) -> Result<Vec<serde_json:
 }
 
 pub(crate) fn query_native_project_symbols(root: &Path) -> Result<Vec<SymbolInfo>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let model = ProjectResolver::new(&project.root)
         .resolve()
         .with_context(|| {
@@ -95,7 +95,7 @@ pub(crate) fn query_native_project_symbol_fields(
     root: &Path,
     symbol_uuid: Uuid,
 ) -> Result<Vec<SymbolFieldInfo>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (_, _, _, symbol) = load_native_symbol_mutation_target(&project, symbol_uuid)?;
     let mut fields = symbol
         .fields
@@ -117,7 +117,7 @@ pub(crate) fn query_native_project_symbol_semantics(
     root: &Path,
     symbol_uuid: Uuid,
 ) -> Result<NativeProjectSymbolSemanticsView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (_, _, _, symbol) = load_native_symbol_mutation_target(&project, symbol_uuid)?;
     Ok(NativeProjectSymbolSemanticsView {
         symbol_uuid: symbol.uuid.to_string(),
@@ -131,7 +131,7 @@ pub(crate) fn query_native_project_symbol_pins(
     root: &Path,
     symbol_uuid: Uuid,
 ) -> Result<Vec<NativeProjectSymbolPinInfoView>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let (_, _, _, symbol) = load_native_symbol_mutation_target(&project, symbol_uuid)?;
     let mut pins = symbol
         .pins
@@ -164,7 +164,7 @@ pub(crate) fn query_native_project_symbol_pins(
 }
 
 pub(crate) fn query_native_project_texts(root: &Path) -> Result<Vec<serde_json::Value>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let model = ProjectResolver::new(&project.root)
         .resolve()
         .with_context(|| {
@@ -207,7 +207,7 @@ pub(crate) fn query_native_project_texts(root: &Path) -> Result<Vec<serde_json::
 }
 
 pub(crate) fn query_native_project_drawings(root: &Path) -> Result<Vec<serde_json::Value>> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let model = ProjectResolver::new(&project.root)
         .resolve()
         .with_context(|| {
@@ -259,11 +259,6 @@ pub(crate) fn query_native_project_diagnostics(
     Ok(schematic_diagnostics(&build_native_project_schematic(
         &project,
     )?))
-}
-
-pub(crate) fn query_native_project_erc(root: &Path) -> Result<Vec<ErcFinding>> {
-    let project = load_native_project_with_resolved_board(root)?;
-    Ok(run_prechecks(&build_native_project_schematic(&project)?))
 }
 
 pub(crate) fn query_native_project_check(root: &Path) -> Result<CheckReport> {

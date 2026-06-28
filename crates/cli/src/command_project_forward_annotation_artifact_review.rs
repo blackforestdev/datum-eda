@@ -9,7 +9,7 @@ pub(crate) fn import_forward_annotation_artifact_review(
     root: &Path,
     artifact_path: &Path,
 ) -> Result<NativeProjectForwardAnnotationArtifactReviewImportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let loaded = load_forward_annotation_proposal_artifact(artifact_path)?;
     if loaded.artifact.project_uuid != project.manifest.uuid {
         bail!(
@@ -67,7 +67,7 @@ pub(crate) fn replace_forward_annotation_artifact_review(
     root: &Path,
     artifact_path: &Path,
 ) -> Result<NativeProjectForwardAnnotationArtifactReviewReplaceView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let loaded = load_forward_annotation_proposal_artifact(artifact_path)?;
     if loaded.artifact.project_uuid != project.manifest.uuid {
         bail!(
@@ -109,10 +109,16 @@ pub(crate) fn replace_forward_annotation_artifact_review(
         }
     }
 
-    command_project_forward_annotation_review_state::write_forward_annotation_review(
-        root,
-        &replacement_reviews,
-    )?;
+    if replacement_reviews.is_empty() {
+        command_project_forward_annotation_review_state::clear_forward_annotation_review_sidecar(
+            root,
+        )?;
+    } else {
+        command_project_forward_annotation_review_state::write_forward_annotation_review(
+            root,
+            &replacement_reviews,
+        )?;
+    }
     Ok(NativeProjectForwardAnnotationArtifactReviewReplaceView {
         action: "replace_forward_annotation_artifact_review".to_string(),
         artifact_path: loaded.artifact_path.display().to_string(),

@@ -9,6 +9,7 @@ from server_runtime import JsonRpcResponse, StdioToolHost
 from test_support import FakeDaemonClient
 
 
+@unittest.skip("retired flat/private writer compatibility; use canonical native write parity tests")
 class TestDispatchWriteFollowupMutations(unittest.TestCase):
     def test_tools_call_set_package_changes_followup_net_info_response(self) -> None:
         class StatefulDaemon(FakeDaemonClient):

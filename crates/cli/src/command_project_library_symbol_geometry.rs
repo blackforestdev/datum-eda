@@ -6,9 +6,9 @@ use uuid::Uuid;
 
 use super::command_project_library::{
     NativeProjectPoolLibraryObjectMutationView, commit_pool_library_operations,
-    pool_library_mutation_view, pool_library_relative_path, read_pool_library_object_payload,
-    validate_project_local_pool_path,
+    pool_library_mutation_view, pool_library_relative_path, validate_project_local_pool_path,
 };
+use super::command_project_library_payload::read_project_pool_object_payload;
 
 pub(crate) fn add_native_project_pool_symbol_line(
     root: &Path,
@@ -29,7 +29,7 @@ pub(crate) fn add_native_project_pool_symbol_line(
     }
     ensure_pool_symbol_exists(root, symbol_id)?;
     let relative_path = pool_library_relative_path(pool_path, "symbols", symbol_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), symbol_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, symbol_id)?;
     let mut object = previous_object.clone();
     append_symbol_drawing(
         &mut object,
@@ -83,7 +83,7 @@ pub(crate) fn add_native_project_pool_symbol_polygon(
     }
     ensure_pool_symbol_exists(root, symbol_id)?;
     let relative_path = pool_library_relative_path(pool_path, "symbols", symbol_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), symbol_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, symbol_id)?;
     let mut object = previous_object.clone();
     append_symbol_drawing(
         &mut object,
@@ -138,7 +138,7 @@ pub(crate) fn add_native_project_pool_symbol_rect(
     }
     ensure_pool_symbol_exists(root, symbol_id)?;
     let relative_path = pool_library_relative_path(pool_path, "symbols", symbol_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), symbol_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, symbol_id)?;
     let mut object = previous_object.clone();
     append_symbol_drawing(
         &mut object,
@@ -189,7 +189,7 @@ pub(crate) fn add_native_project_pool_symbol_circle(
     }
     ensure_pool_symbol_exists(root, symbol_id)?;
     let relative_path = pool_library_relative_path(pool_path, "symbols", symbol_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), symbol_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, symbol_id)?;
     let mut object = previous_object.clone();
     append_symbol_drawing(
         &mut object,
@@ -243,7 +243,7 @@ pub(crate) fn add_native_project_pool_symbol_arc(
     }
     ensure_pool_symbol_exists(root, symbol_id)?;
     let relative_path = pool_library_relative_path(pool_path, "symbols", symbol_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), symbol_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, symbol_id)?;
     let mut object = previous_object.clone();
     append_symbol_drawing(
         &mut object,
@@ -296,7 +296,7 @@ pub(crate) fn add_native_project_pool_symbol_text(
     }
     ensure_pool_symbol_exists(root, symbol_id)?;
     let relative_path = pool_library_relative_path(pool_path, "symbols", symbol_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), symbol_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, symbol_id)?;
     let mut object = previous_object.clone();
     append_symbol_drawing(
         &mut object,
@@ -352,7 +352,7 @@ pub(crate) fn set_native_project_pool_symbol_pin_anchor(
         bail!("pool unit {unit_id} has no pin {pin_id}");
     }
     let relative_path = pool_library_relative_path(pool_path, "symbols", symbol_id);
-    let previous_object = read_pool_library_object_payload(&root.join(&relative_path), symbol_id)?;
+    let previous_object = read_project_pool_object_payload(root, &relative_path, symbol_id)?;
     let mut object = previous_object.clone();
     set_symbol_pin_anchor(&mut object, pin_id, x_nm, y_nm)?;
     commit_pool_library_operations(

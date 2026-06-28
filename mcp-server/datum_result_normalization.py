@@ -68,6 +68,17 @@ def _normalize_check_result(name: str, raw: dict[str, Any]) -> dict[str, Any]:
             "profiles": raw.get("profiles", []),
             "raw": raw,
         }
+    if name == "datum.check.repair_standards":
+        proposals = raw.get("proposals", [])
+        return {
+            "check_run_id": raw.get("check_run_id"),
+            "proposal_count": raw.get("proposal_count", len(proposals)),
+            "proposals": [
+                _normalize_standards_repair_proposal(proposal)
+                for proposal in proposals
+            ],
+            "raw": raw,
+        }
     return raw
 
 
@@ -94,6 +105,28 @@ def _normalize_finding(raw: Any) -> Any:
         "proposal_links": raw.get("proposal_links", []),
         "waiver_refs": raw.get("waiver_refs", []),
         "deviation_refs": raw.get("deviation_refs", []),
+        "raw": raw,
+    }
+
+
+def _normalize_standards_repair_proposal(raw: Any) -> Any:
+    if not isinstance(raw, dict):
+        return raw
+    return {
+        "proposal_id": raw.get("proposal_id") or raw.get("id"),
+        "repair_kind": raw.get("repair_kind"),
+        "affected_pad": raw.get("affected_pad"),
+        "affected_track": raw.get("affected_track"),
+        "affected_via": raw.get("affected_via"),
+        "affected_net_class": raw.get("affected_net_class"),
+        "affected_zone": raw.get("affected_zone"),
+        "finding_fingerprints": raw.get("finding_fingerprints", []),
+        "codes": raw.get("codes", []),
+        "prepared_against": raw.get("prepared_against"),
+        "prepared_against_current_model": raw.get("prepared_against_current_model"),
+        "can_apply": raw.get("can_apply"),
+        "blocker_codes": raw.get("blocker_codes", []),
+        "operations": raw.get("operations"),
         "raw": raw,
     }
 

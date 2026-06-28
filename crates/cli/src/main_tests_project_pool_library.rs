@@ -21,12 +21,8 @@ fn write_pool_object_payload(root: &Path, kind: &str, object_id: Uuid) -> PathBu
     write_pool_object_payload_named(root, kind, object_id, &format!("Test {kind}"))
 }
 
-fn write_pool_object_payload_named(
-    root: &Path,
-    kind: &str,
-    object_id: Uuid,
-    name: &str,
-) -> PathBuf {
+#[rustfmt::skip]
+fn write_pool_object_payload_named(root: &Path, kind: &str, object_id: Uuid, name: &str) -> PathBuf {
     let path = root.join(format!("{kind}-{object_id}.json"));
     let payload = match kind {
         "units" => {
@@ -41,7 +37,7 @@ fn write_pool_object_payload_named(
         "parts" => {
             serde_json::json!({"schema_version": 1, "uuid": object_id, "entity": Uuid::new_v4(), "package": Uuid::new_v4(), "pad_map": {}, "mpn": "", "manufacturer": "", "value": name, "description": "", "datasheet": "", "parametric": {}, "orderable_mpns": [], "tags": [], "lifecycle": "Active", "base": null})
         }
-        "packages" => {
+        "packages" | "footprints" => {
             serde_json::json!({"schema_version": 1, "uuid": object_id, "name": name, "pads": {}, "courtyard": {"vertices": [], "closed": true}, "silkscreen": [], "models_3d": [], "tags": []})
         }
         "padstacks" => {
@@ -168,13 +164,14 @@ fn project_pool_library_object_create_delete_are_journaled_and_undoable() {
     .expect("resolve-debug should succeed");
     let resolve_report: serde_json::Value =
         serde_json::from_str(&resolve_output).expect("resolve-debug JSON should parse");
-    assert!(
-        resolve_report["source_shards"]
-            .as_array()
-            .expect("source shards should be an array")
-            .iter()
-            .any(|shard| shard["path"] == symbol_relative_path)
-    );
+    let symbol_shard = resolve_report["source_shards"]
+        .as_array()
+        .expect("source shards should be an array")
+        .iter()
+        .find(|shard| shard["path"] == symbol_relative_path)
+        .expect("pool symbol shard should be reported");
+    #[rustfmt::skip]
+    assert_eq!((symbol_shard["kind"].as_str(), symbol_shard["taxon"].as_str()), (Some("Pool"), Some("PoolSymbol")));
 
     let delete_output = execute(
         Cli::try_parse_from([

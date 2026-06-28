@@ -1,7 +1,9 @@
+use std::collections::BTreeMap;
 use std::path::Path;
 
 use super::{
-    EngineError, Operation, OperationBatch, SourceShardKind,
+    EngineError, ImportKey, ImportMapEntry, ImportMapShard, Operation, OperationBatch,
+    SourceShardKind, TransactionRecord,
     journal::{StagedShardWrite, stage_new_shard_write},
 };
 
@@ -70,6 +72,32 @@ pub(super) fn inverse_import_map_operation(
     }
 }
 
+pub(super) fn apply_import_map_journal_to_map(
+    journal: &[TransactionRecord],
+    import_map: &mut BTreeMap<ImportKey, ImportMapEntry>,
+) -> Result<(), EngineError> {
+    for transaction in journal {
+        for operation in &transaction.operations {
+            match operation {
+                Operation::CreateImportMapShard { shard, .. } => {
+                    let shard = serde_json::from_value::<ImportMapShard>(shard.clone())?;
+                    for entry in shard.entries {
+                        import_map.insert(entry.import_key.clone(), entry);
+                    }
+                }
+                Operation::DeleteImportMapShard { shard, .. } => {
+                    let shard = serde_json::from_value::<ImportMapShard>(shard.clone())?;
+                    for entry in shard.entries {
+                        import_map.remove(&entry.import_key);
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+    Ok(())
+}
+
 fn delete_import_map_shard(project_root: &Path, relative_path: &str) -> StagedShardWrite {
     StagedShardWrite {
         destination: project_root.join(relative_path),
@@ -77,6 +105,7 @@ fn delete_import_map_shard(project_root: &Path, relative_path: &str) -> StagedSh
         kind: SourceShardKind::ImportMap,
         relative_path: relative_path.to_string(),
         content_hash: String::new(),
+        schema_version: None,
         delete: true,
     }
 }

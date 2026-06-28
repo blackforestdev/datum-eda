@@ -7,7 +7,7 @@ use eda_engine::board::{
 };
 use uuid::Uuid;
 
-use super::super::{build_native_project_board, load_native_project};
+use super::super::{build_native_project_board, load_native_project_with_resolved_board};
 
 pub(crate) fn query_native_project_route_path_candidate_orthogonal_graph_five_via_explain(
     root: &Path,
@@ -15,7 +15,7 @@ pub(crate) fn query_native_project_route_path_candidate_orthogonal_graph_five_vi
     from_anchor_pad_uuid: Uuid,
     to_anchor_pad_uuid: Uuid,
 ) -> Result<RoutePathCandidateOrthogonalGraphFiveViaExplainReport> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let board = build_native_project_board(&project)?;
     board
         .route_path_candidate_orthogonal_graph_five_via_explain(

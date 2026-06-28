@@ -8,11 +8,13 @@
 //! code path cannot reintroduce silent drops.
 
 use std::collections::HashMap;
+use std::path::Path;
 
 use uuid::Uuid;
 
 use crate::board::{Net, Track, Via, Zone};
 use crate::error::EngineError;
+use crate::substrate::{ImportKey, ImportMapEntry, allocate_import_identity};
 
 use super::net_refs::*;
 use super::parser_helpers::*;
@@ -54,7 +56,10 @@ pub(super) fn check_form_accounting(
 }
 
 pub(super) fn parse_tracks(
+    path: &Path,
     blocks: &[String],
+    import_map: Option<&std::collections::BTreeMap<ImportKey, ImportMapEntry>>,
+    import_identities: Option<&mut Vec<KiCadBoardImportIdentity>>,
     net_lookup: &HashMap<i32, Uuid>,
     nets: &mut HashMap<Uuid, Net>,
     layer_table: &HashMap<String, i32>,
@@ -62,6 +67,7 @@ pub(super) fn parse_tracks(
 ) -> Result<HashMap<Uuid, Track>, EngineError> {
     let mut tracks = HashMap::new();
     let mut dropped = 0usize;
+    let mut import_identities = import_identities;
     for block in blocks {
         let uuid = block_uuid(block);
         let endpoints = block_start_end_points(block);
@@ -82,11 +88,28 @@ pub(super) fn parse_tracks(
             warnings.push(dropped_object_warning("segment", uuid, &missing));
             continue;
         };
+        let allocation = import_map.map(|import_map| {
+            allocate_import_identity(import_map, board_segment_import_key(path, uuid))
+        });
+        let track_uuid = allocation
+            .as_ref()
+            .map(|allocation| allocation.object_id)
+            .unwrap_or(uuid);
+        if let (Some(allocation), Some(identities)) =
+            (&allocation, import_identities.as_deref_mut())
+        {
+            identities.push(KiCadBoardImportIdentity::new(
+                "board_segment",
+                allocation.import_key.clone(),
+                allocation.object_id,
+                uuid,
+            ));
+        }
         let net = resolve_board_net_ref(net_ref, net_lookup, nets);
         tracks.insert(
-            uuid,
+            track_uuid,
             Track {
-                uuid,
+                uuid: track_uuid,
                 net,
                 from,
                 to,
@@ -99,8 +122,71 @@ pub(super) fn parse_tracks(
     Ok(tracks)
 }
 
+pub fn board_footprint_import_key(path: &Path, source_uuid: Uuid) -> ImportKey {
+    format!("kicad:board-footprint:{}:{source_uuid}", path.display())
+}
+
+pub fn board_pad_import_key(path: &Path, source_uuid: Uuid) -> ImportKey {
+    format!("kicad:board-pad:{}:{source_uuid}", path.display())
+}
+
+pub fn board_segment_import_key(path: &Path, source_uuid: Uuid) -> ImportKey {
+    format!("kicad:board-segment:{}:{source_uuid}", path.display())
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct KiCadBoardImportIdentity {
+    pub object_family: &'static str,
+    pub import_key: ImportKey,
+    pub object_id: Uuid,
+    pub source_uuid: Uuid,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct KiCadSchematicImportIdentity {
+    pub object_family: &'static str,
+    pub import_key: ImportKey,
+    pub object_id: Uuid,
+    pub source_uuid: Uuid,
+}
+
+impl KiCadSchematicImportIdentity {
+    pub(super) fn new(
+        object_family: &'static str,
+        import_key: ImportKey,
+        object_id: Uuid,
+        source_uuid: Uuid,
+    ) -> Self {
+        Self {
+            object_family,
+            import_key,
+            object_id,
+            source_uuid,
+        }
+    }
+}
+
+impl KiCadBoardImportIdentity {
+    pub(super) fn new(
+        object_family: &'static str,
+        import_key: ImportKey,
+        object_id: Uuid,
+        source_uuid: Uuid,
+    ) -> Self {
+        Self {
+            object_family,
+            import_key,
+            object_id,
+            source_uuid,
+        }
+    }
+}
+
 pub(super) fn parse_vias(
+    path: &Path,
     blocks: &[String],
+    import_map: Option<&std::collections::BTreeMap<ImportKey, ImportMapEntry>>,
+    import_identities: Option<&mut Vec<KiCadBoardImportIdentity>>,
     net_lookup: &HashMap<i32, Uuid>,
     nets: &mut HashMap<Uuid, Net>,
     layer_table: &HashMap<String, i32>,
@@ -108,6 +194,7 @@ pub(super) fn parse_vias(
 ) -> Result<HashMap<Uuid, Via>, EngineError> {
     let mut vias = HashMap::new();
     let mut dropped = 0usize;
+    let mut import_identities = import_identities;
     for block in blocks {
         let uuid = block_uuid(block);
         let position = block_at_point(block);
@@ -136,11 +223,28 @@ pub(super) fn parse_vias(
             warnings.push(dropped_object_warning("via", uuid, &missing));
             continue;
         };
+        let allocation = import_map.map(|import_map| {
+            allocate_import_identity(import_map, board_via_import_key(path, uuid))
+        });
+        let via_uuid = allocation
+            .as_ref()
+            .map(|allocation| allocation.object_id)
+            .unwrap_or(uuid);
+        if let (Some(allocation), Some(identities)) =
+            (&allocation, import_identities.as_deref_mut())
+        {
+            identities.push(KiCadBoardImportIdentity::new(
+                "board_via",
+                allocation.import_key.clone(),
+                allocation.object_id,
+                uuid,
+            ));
+        }
         let net = resolve_board_net_ref(net_ref, net_lookup, nets);
         vias.insert(
-            uuid,
+            via_uuid,
             Via {
-                uuid,
+                uuid: via_uuid,
                 net,
                 position,
                 drill: mm_to_nm(drill),
@@ -154,8 +258,15 @@ pub(super) fn parse_vias(
     Ok(vias)
 }
 
+pub fn board_via_import_key(path: &Path, source_uuid: Uuid) -> ImportKey {
+    format!("kicad:board-via:{}:{source_uuid}", path.display())
+}
+
 pub(super) fn parse_zones(
+    path: &Path,
     blocks: &[String],
+    import_map: Option<&std::collections::BTreeMap<ImportKey, ImportMapEntry>>,
+    import_identities: Option<&mut Vec<KiCadBoardImportIdentity>>,
     net_lookup: &HashMap<i32, Uuid>,
     nets: &mut HashMap<Uuid, Net>,
     layer_table: &HashMap<String, i32>,
@@ -164,6 +275,7 @@ pub(super) fn parse_zones(
     let mut zones = HashMap::new();
     let mut imported_blocks = 0usize;
     let mut dropped = 0usize;
+    let mut import_identities = import_identities;
     for block in blocks {
         let Some(net_ref) = block_net_ref(block) else {
             dropped += 1;
@@ -194,7 +306,7 @@ pub(super) fn parse_zones(
         // carry no `(uuid ...)`. Derive a deterministic identity from net,
         // layer set, and first boundary point instead of dropping authored
         // copper that belongs in rendering and CAM output.
-        let uuid = block_uuid(block).unwrap_or_else(|| {
+        let source_uuid = block_uuid(block).unwrap_or_else(|| {
             let first_point = block_xy_points(block)
                 .first()
                 .map(|point| format!("{}/{}", point.x, point.y))
@@ -204,6 +316,23 @@ pub(super) fn parse_zones(
                 &format!("{net}/{}/{first_point}", zone_layer_names.join(",")),
             )
         });
+        let allocation = import_map.map(|import_map| {
+            allocate_import_identity(import_map, board_zone_import_key(path, source_uuid))
+        });
+        let uuid = allocation
+            .as_ref()
+            .map(|allocation| allocation.object_id)
+            .unwrap_or(source_uuid);
+        if let (Some(allocation), Some(identities)) =
+            (&allocation, import_identities.as_deref_mut())
+        {
+            identities.push(KiCadBoardImportIdentity::new(
+                "board_zone",
+                allocation.import_key.clone(),
+                allocation.object_id,
+                source_uuid,
+            ));
+        }
         let mut inserted_any = false;
         for (i, layer_name) in zone_layer_names.iter().enumerate() {
             let layer = resolve_layer_id(layer_name, layer_table)?;
@@ -259,6 +388,10 @@ pub(super) fn parse_zones(
     }
     check_form_accounting("zone", blocks.len(), imported_blocks, dropped, warnings);
     Ok(zones)
+}
+
+pub fn board_zone_import_key(path: &Path, source_uuid: Uuid) -> ImportKey {
+    format!("kicad:board-zone:{}:{source_uuid}", path.display())
 }
 
 /// Collect ALL filled-polygon islands for one layer of a zone block.

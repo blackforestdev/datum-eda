@@ -54,6 +54,21 @@ fn context_refresh_exposes_standards_check_context_for_agents() {
     let check_context = &context["check_context"];
     assert_eq!(check_context["contract"], "datum_check_context_v1");
     assert_eq!(check_context["visible_check_run_count"], 1);
+    assert_eq!(
+        check_context["latest_check_run_id"],
+        check_run["check_run_id"]
+    );
+    assert_eq!(check_context["latest_profile_id"], "standards");
+    assert_eq!(context["latest_check_run_id"], check_run["check_run_id"]);
+    assert_eq!(context["latest_profile_id"], "standards");
+    assert_eq!(
+        context["profile_latest_check_runs"][0]["check_run_id"],
+        check_run["check_run_id"]
+    );
+    assert_eq!(
+        check_context["profile_latest_check_runs"][0]["profile_id"],
+        "standards"
+    );
     assert!(
         check_context["agent_commands"]["waive_finding"]
             .as_str()

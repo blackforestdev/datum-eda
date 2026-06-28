@@ -189,6 +189,33 @@ DomainObjects, each with `ObjectId`/`object_revision`.
    AI-authored content (especially name-matched PinPadMap rows or
    datasheet-extracted models) is marked `provenance=AI`,
    `review_state=NeedsReview`, and accepted only via a proposal.
+   The engine commit gateway enforces this boundary for current pool
+   operations: `Tool`/`Assistant` provenance cannot directly create/delete
+   typed pool packages or padstacks, create/set/delete generic pool objects,
+   or attach/detach pool part models; those batches fail with
+   `proposal_required_for_automated_library_operation` before shard staging.
+   MCP-backed library authoring launches the CLI with
+   `DATUM_COMMIT_SOURCE=tool`, so the bridge cannot accidentally downgrade an
+   AI/tool write into manual CLI provenance. The positive review path starts
+   with raw library objects through `datum-eda proposal
+   create-pool-library-object` / `datum.proposal.create_pool_library_object`
+   and the first semantic typed producers through `datum-eda proposal
+   create-pool-unit` / `datum.proposal.create_pool_unit` and
+   `datum-eda proposal create-pool-symbol` /
+   `datum.proposal.create_pool_symbol`, then
+   `datum-eda proposal create-pool-entity` /
+   `datum.proposal.create_pool_entity`, and typed padstacks through
+   `datum-eda proposal create-pool-padstack` /
+   `datum.proposal.create_pool_padstack`, then typed packages through
+   `datum-eda proposal create-pool-package` /
+   `datum.proposal.create_pool_package`, and package pads through
+   `datum-eda proposal set-pool-package-pad` /
+   `datum.proposal.set_pool_package_pad`, plus package courtyards through
+   `datum-eda proposal set-pool-package-courtyard-rect` /
+   `datum.proposal.set_pool_package_courtyard_rect` and
+   `datum-eda proposal set-pool-package-courtyard-polygon` /
+   `datum.proposal.set_pool_package_courtyard_polygon`; all persist only
+   proposal metadata until accept/apply.
 6. Validating checks: per-kind schema/required-field validation;
    referential integrity (Footprint pads resolve to existing Padstacks
    + a Package; Part default refs resolve; every PinPadMap
@@ -270,8 +297,8 @@ library update.
    `UpdateLibraryBinding{binding_id, from_revision, to_revision}` is
    PROPOSAL-FIRST (cross-domain: touches placed boards/checks/artifacts),
    applied via `commit()` only on acceptance. Both depend on the
-   `ComponentInstance` + `commit()`/journal substrate (does not exist
-   yet).
+   `ComponentInstance` + `commit()`/journal substrate, which now exists; the
+   remaining gap is the library-specific binding operation family above it.
 3. CLI command: `datum-eda library bind <component_instance_id>
    --part <id> [--symbol <id> --footprint <id> --pinmap <id>]`;
    `datum-eda library update-binding <binding_id> --to-revision <rev>`
@@ -419,8 +446,11 @@ real-world practice.
 - `import_library` as a library-domain tool. Imported-library handling
   is the IMPORT domain's session / Import-Map (`import_key`) mechanism
   (Decision 008 lines 40-45, 403-409; Decision 011), surfaced to library
-  only as provenance + proposals. Library needs only
-  `set_provenance_state` + `bind` to consume import results.
+  only as provenance + proposals. The implemented project-local Eagle
+  `.lbr` seed path is `datum-eda project import-eagle-library`, which
+  journals pool objects plus Import Map provenance; it is not a separate
+  library-authoring verb. Library needs only `set_provenance_state` +
+  `bind` to consume import results.
 - `search_pool` / `get_part` / `get_package` / `get_symbols` as NEW
   tools. Already implemented (`project_surface.rs`; `dispatch.rs`). They
   are the AI query-context source for the authoring tools and fold under

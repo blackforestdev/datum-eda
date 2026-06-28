@@ -82,6 +82,12 @@ fn proposal_create_command_writes_draft_without_mutating_source() {
     assert_eq!(report["proposal"]["status"], "draft");
     assert_eq!(report["proposal"]["source"], "cli");
     assert!(report["proposal"]["batch"]["expected_model_revision"].is_string());
+    let proposal_operations = report["proposal"]["batch"]["operations"]
+        .as_array()
+        .expect("proposal operations should be an array");
+    assert_eq!(proposal_operations.len(), 2);
+    assert_eq!(proposal_operations[0]["kind"], "guard_object_revision");
+    assert_eq!(proposal_operations[1]["kind"], "set_project_name");
     assert_eq!(report["validation"]["can_apply"], false);
     assert_eq!(
         std::fs::read(root.join("project.json")).unwrap(),

@@ -56,6 +56,7 @@ fn imports_kicad_footprint_reuses_import_map_package_identity() {
             import_key: import_key.clone(),
             object_id: mapped_uuid,
             source_shard_id: uuid::Uuid::new_v4(),
+            status: crate::substrate::ImportMapEntryStatus::Active,
             source_tool: "kicad".to_string(),
             source_path: path.display().to_string(),
             source_object_ref: import_key.clone(),

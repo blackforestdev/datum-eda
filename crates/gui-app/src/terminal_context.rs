@@ -1,3 +1,8 @@
+use crate::terminal_active_context::TerminalActiveContextCommands;
+use crate::terminal_check_context::profile_latest_check_runs_context;
+use crate::terminal_context_io::atomic_write_text;
+use crate::terminal_journal_context::accepted_transaction_tip;
+use crate::terminal_proposal_context::{latest_proposal_id, visible_proposal_ids};
 use crate::{ASSISTANT_ACTIVITY_COMMAND, terminal_session::TerminalLaunchContext};
 use anyhow::{Context, Result};
 use datum_gui_protocol::{
@@ -5,6 +10,7 @@ use datum_gui_protocol::{
     TERMINAL_COMMAND_CATALOG_VERSION, TerminalCommandCatalogEntry, terminal_command_catalog,
 };
 use serde::Serialize;
+use std::collections::BTreeSet;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -34,16 +40,34 @@ struct TerminalContextEnvelope {
     process_exit_code: Option<i32>,
     accepted_transaction_tip: Option<String>,
     visible_artifact_ids: Vec<String>,
+    visible_output_job_ids: Vec<String>,
+    visible_artifact_file_paths: Vec<String>,
+    latest_output_job_id: Option<String>,
+    latest_output_job_run_id: Option<String>,
+    latest_output_job_artifact_id: Option<String>,
+    latest_artifact_id: Option<String>,
+    latest_artifact_run_id: Option<String>,
+    previous_artifact_id: Option<String>,
+    visible_proposal_ids: Vec<String>,
+    latest_proposal_id: Option<String>,
+    focused_artifact_id: Option<String>,
+    focused_artifact_file_path: Option<String>,
+    latest_check_run_id: Option<String>,
+    latest_profile_id: Option<String>,
+    profile_latest_check_runs: Vec<TerminalCheckRunProfileLatest>,
     visible_check_run_ids: Vec<String>,
     visible_finding_fingerprints: Vec<String>,
     check_status: CheckRunReviewState,
+    source_shard_status: datum_gui_protocol::SourceShardStatusSummary,
     provenance_seed: String,
     expires_at: Option<String>,
     refresh_command: &'static str,
     command_catalog_version: &'static str,
     handoff_commands: std::collections::BTreeMap<String, TerminalCommandCatalogEntry>,
+    active_context_commands: TerminalActiveContextCommands,
     storage: TerminalContextStorage,
     session: DatumToolSessionMetadata,
+    terminal_sessions: crate::terminal_session_context::TerminalSessionContextSummary,
     selection_context: datum_gui_protocol::DatumSelectionContext,
     cursor_context: datum_gui_protocol::DatumCursorContext,
     projection_context: datum_gui_protocol::DatumProjectionContext,
@@ -59,6 +83,15 @@ struct TerminalContextEnvelope {
     production_commands: TerminalProductionCommands,
     journal_commands: TerminalJournalCommands,
     query_commands: serde_json::Value,
+}
+
+#[derive(Debug, Serialize)]
+pub(super) struct TerminalCheckRunProfileLatest {
+    pub(super) profile_id: String,
+    pub(super) check_run_id: String,
+    pub(super) model_revision: Option<String>,
+    pub(super) status: Option<String>,
+    pub(super) finding_count: usize,
 }
 
 #[derive(Debug, Serialize)]
@@ -212,6 +245,29 @@ pub(super) fn write_terminal_context_files(
     context: &TerminalLaunchContext,
 ) -> Result<()> {
     let updated_unix_ms = unix_time_ms()?;
+    let production_visibility = production_visibility_context(&context.production_status);
+    let selected_finding_fingerprint = (context.selection_context.kind == "check_finding")
+        .then(|| context.selection_context.id.as_deref())
+        .flatten();
+    let latest_proposal_id =
+        latest_proposal_id(&context.production_status, &context.selection_context);
+    let accepted_transaction_tip = accepted_transaction_tip(context);
+    let active_context_commands = TerminalActiveContextCommands::from_focus(
+        &context.project_root,
+        production_visibility
+            .focused_artifact_id
+            .as_deref()
+            .or(production_visibility.latest_artifact_id.as_deref()),
+        production_visibility.previous_artifact_id.as_deref(),
+        production_visibility.focused_artifact_file_path.as_deref(),
+        production_visibility.latest_output_job_id.as_deref(),
+        production_visibility.latest_output_job_run_id.as_deref(),
+        latest_proposal_id.as_deref(),
+        accepted_transaction_tip.as_deref(),
+        context.check_status.check_run_id.as_deref(),
+        selected_finding_fingerprint,
+    );
+    let profile_latest_check_runs = profile_latest_check_runs_context(&context.check_status);
     let provenance_seed = format!(
         "datum-context:{}:{}:{}",
         terminal_context.session_id,
@@ -260,8 +316,23 @@ pub(super) fn write_terminal_context_files(
         updated_unix_ms,
         process_group_id: terminal_context.process_group_id,
         process_exit_code: None,
-        accepted_transaction_tip: None,
-        visible_artifact_ids: Vec::new(),
+        accepted_transaction_tip,
+        visible_artifact_ids: production_visibility.visible_artifact_ids,
+        visible_output_job_ids: production_visibility.visible_output_job_ids,
+        visible_artifact_file_paths: production_visibility.visible_artifact_file_paths,
+        latest_output_job_id: production_visibility.latest_output_job_id,
+        latest_output_job_run_id: production_visibility.latest_output_job_run_id,
+        latest_output_job_artifact_id: production_visibility.latest_output_job_artifact_id,
+        latest_artifact_id: production_visibility.latest_artifact_id,
+        latest_artifact_run_id: production_visibility.latest_artifact_run_id,
+        previous_artifact_id: production_visibility.previous_artifact_id,
+        visible_proposal_ids: visible_proposal_ids(&context.production_status),
+        latest_proposal_id,
+        focused_artifact_id: production_visibility.focused_artifact_id,
+        focused_artifact_file_path: production_visibility.focused_artifact_file_path,
+        latest_check_run_id: context.check_status.check_run_id.clone(),
+        latest_profile_id: context.check_status.profile_id.clone(),
+        profile_latest_check_runs,
         visible_check_run_ids: context.check_status.check_run_id.iter().cloned().collect(),
         visible_finding_fingerprints: context
             .check_status
@@ -272,11 +343,13 @@ pub(super) fn write_terminal_context_files(
             })
             .collect(),
         check_status: context.check_status.clone(),
+        source_shard_status: context.source_shard_status.clone(),
         provenance_seed,
         expires_at: None,
         refresh_command: "datum-eda context refresh --session \"$DATUM_SESSION_ID\"",
         command_catalog_version: TERMINAL_COMMAND_CATALOG_VERSION,
         handoff_commands: terminal_command_catalog(),
+        active_context_commands,
         storage: TerminalContextStorage {
             context_path: terminal_context.context_path.display().to_string(),
             latest_context_path: terminal_context.latest_context_path.display().to_string(),
@@ -289,6 +362,7 @@ pub(super) fn write_terminal_context_files(
             schema_version: 1,
         },
         session: session.clone(),
+        terminal_sessions: context.terminal_sessions.clone(),
         selection_context: context.selection_context.clone(),
         cursor_context: context.cursor_context.clone(),
         projection_context: context.projection_context.clone(),
@@ -379,27 +453,169 @@ pub(super) fn write_terminal_context_files(
         }),
     };
     let text = serde_json::to_string_pretty(&envelope).context("serialize terminal context")?;
-    fs::write(&terminal_context.context_path, format!("{text}\n")).with_context(|| {
+    atomic_write_text(&terminal_context.context_path, &format!("{text}\n")).with_context(|| {
         format!(
             "write terminal context {}",
             terminal_context.context_path.display()
         )
     })?;
-    fs::write(&terminal_context.latest_context_path, format!("{text}\n")).with_context(|| {
-        format!(
-            "write latest terminal context {}",
-            terminal_context.latest_context_path.display()
-        )
-    })?;
+    atomic_write_text(&terminal_context.latest_context_path, &format!("{text}\n")).with_context(
+        || {
+            format!(
+                "write latest terminal context {}",
+                terminal_context.latest_context_path.display()
+            )
+        },
+    )?;
     let session_text =
         serde_json::to_string_pretty(&session).context("serialize tool session metadata")?;
-    fs::write(&terminal_context.session_path, format!("{session_text}\n")).with_context(|| {
-        format!(
-            "write tool session metadata {}",
-            terminal_context.session_path.display()
-        )
-    })?;
+    atomic_write_text(&terminal_context.session_path, &format!("{session_text}\n")).with_context(
+        || {
+            format!(
+                "write tool session metadata {}",
+                terminal_context.session_path.display()
+            )
+        },
+    )?;
     Ok(())
+}
+
+struct ProductionVisibilityContext {
+    visible_artifact_ids: Vec<String>,
+    visible_output_job_ids: Vec<String>,
+    visible_artifact_file_paths: Vec<String>,
+    latest_output_job_id: Option<String>,
+    latest_output_job_run_id: Option<String>,
+    latest_output_job_artifact_id: Option<String>,
+    latest_artifact_id: Option<String>,
+    latest_artifact_run_id: Option<String>,
+    previous_artifact_id: Option<String>,
+    focused_artifact_id: Option<String>,
+    focused_artifact_file_path: Option<String>,
+}
+
+fn production_visibility_context(status: &ProductionStatus) -> ProductionVisibilityContext {
+    let mut artifact_ids = BTreeSet::new();
+    let mut artifact_file_paths = BTreeSet::new();
+    let visible_output_job_ids = status
+        .output_jobs
+        .iter()
+        .map(|job| job.id.clone())
+        .collect::<Vec<_>>();
+
+    let latest_job = status
+        .output_jobs
+        .iter()
+        .filter_map(|job| {
+            job.latest_run_id.as_ref().map(|run_id| {
+                (
+                    job.id.clone(),
+                    run_id.clone(),
+                    job.latest_run_artifact_id.clone(),
+                )
+            })
+        })
+        .max_by(|(a_job_id, a_run_id, _), (b_job_id, b_run_id, _)| {
+            a_run_id.cmp(b_run_id).then_with(|| a_job_id.cmp(b_job_id))
+        });
+
+    for job in &status.output_jobs {
+        if let Some(artifact_id) = &job.latest_run_artifact_id {
+            artifact_ids.insert(artifact_id.clone());
+        }
+        for artifact in &job.artifacts {
+            artifact_ids.insert(artifact.artifact_id.clone());
+            for file in &artifact.files {
+                artifact_file_paths.insert(file.path.clone());
+            }
+        }
+    }
+    for run in &status.artifact_runs {
+        artifact_ids.insert(run.artifact_id.clone());
+    }
+    let focused_artifact_id = status
+        .focused_artifact
+        .as_ref()
+        .map(|artifact| artifact.artifact_id.clone());
+    let focused_artifact_file_path = status
+        .focused_artifact
+        .as_ref()
+        .and_then(|artifact| artifact.focused_file.as_ref())
+        .map(|file| file.path.clone());
+    if let Some(artifact) = &status.focused_artifact {
+        artifact_ids.insert(artifact.artifact_id.clone());
+        for file in &artifact.files {
+            artifact_file_paths.insert(file.path.clone());
+        }
+    }
+
+    let fallback_output_job_run = status
+        .latest_output_job_run_id
+        .as_ref()
+        .or(status.latest_run_id.as_ref())
+        .and_then(|run_id| {
+            status
+                .artifact_runs
+                .iter()
+                .find(|run| run.run_id == *run_id && run.output_job_id.is_some())
+        })
+        .or_else(|| {
+            status
+                .artifact_runs
+                .iter()
+                .rev()
+                .find(|run| run.output_job_id.is_some())
+        });
+    let (latest_output_job_id, latest_output_job_run_id, latest_output_job_artifact_id) =
+        latest_job
+            .map(|(job_id, run_id, artifact_id)| (Some(job_id), Some(run_id), artifact_id))
+            .unwrap_or_else(|| {
+                (
+                    fallback_output_job_run.and_then(|run| run.output_job_id.clone()),
+                    fallback_output_job_run
+                        .map(|run| run.run_id.clone())
+                        .or(status.latest_output_job_run_id.clone())
+                        .or(status.latest_run_id.clone()),
+                    fallback_output_job_run.map(|run| run.artifact_id.clone()),
+                )
+            });
+    let latest_artifact_id = status
+        .latest_artifact_id
+        .clone()
+        .or(latest_output_job_artifact_id.clone())
+        .or_else(|| {
+            status
+                .artifact_runs
+                .last()
+                .map(|run| run.artifact_id.clone())
+        })
+        .or(focused_artifact_id.clone());
+    let latest_artifact_run_id = status
+        .latest_artifact_run_id
+        .clone()
+        .or_else(|| status.artifact_runs.last().map(|run| run.run_id.clone()));
+    let previous_artifact_id = latest_artifact_id.as_deref().and_then(|latest| {
+        status
+            .artifact_runs
+            .iter()
+            .rev()
+            .find(|run| run.artifact_id != latest)
+            .map(|run| run.artifact_id.clone())
+    });
+
+    ProductionVisibilityContext {
+        visible_artifact_ids: artifact_ids.into_iter().collect(),
+        visible_output_job_ids,
+        visible_artifact_file_paths: artifact_file_paths.into_iter().collect(),
+        latest_output_job_id,
+        latest_output_job_run_id,
+        latest_output_job_artifact_id,
+        latest_artifact_id,
+        latest_artifact_run_id,
+        previous_artifact_id,
+        focused_artifact_id,
+        focused_artifact_file_path,
+    }
 }
 
 pub(super) fn update_terminal_lifecycle_file(
@@ -455,7 +671,7 @@ pub(super) fn update_terminal_lifecycle_file(
     }
     let refreshed = serde_json::to_string_pretty(&value)
         .with_context(|| format!("serialize terminal lifecycle file {}", path.display()))?;
-    fs::write(path, format!("{refreshed}\n"))
+    atomic_write_text(path, &format!("{refreshed}\n"))
         .with_context(|| format!("write terminal lifecycle file {}", path.display()))
 }
 
@@ -478,4 +694,125 @@ pub(super) fn unix_time_ms() -> Result<u128> {
 
 pub(super) fn tool_session_event_log_path(session_path: &Path) -> PathBuf {
     session_path.with_extension("events.jsonl")
+}
+
+#[cfg(test)]
+#[path = "terminal_active_context_tests.rs"]
+mod terminal_active_context_tests;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn atomic_write_text_keeps_terminal_context_json_parseable_across_rewrites() {
+        let root = std::env::temp_dir().join(format!(
+            "datum-terminal-context-atomic-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&root);
+        fs::create_dir_all(&root).expect("atomic context test dir should create");
+        let path = root.join("context.json");
+
+        for index in 0..20 {
+            atomic_write_text(
+                &path,
+                &format!("{{\"contract\":\"datum_terminal_context_v1\",\"index\":{index}}}\n"),
+            )
+            .expect("atomic context write should succeed");
+            let value: serde_json::Value =
+                serde_json::from_str(&fs::read_to_string(&path).expect("context json should read"))
+                    .expect("context json should remain parseable after rewrite");
+            assert_eq!(value["index"], index);
+        }
+
+        let leaked_temp = fs::read_dir(&root)
+            .expect("atomic context test dir should list")
+            .filter_map(|entry| entry.ok())
+            .any(|entry| {
+                entry
+                    .file_name()
+                    .to_string_lossy()
+                    .contains(".context.json.tmp-")
+            });
+        assert!(
+            !leaked_temp,
+            "successful atomic writes should not leak temp files"
+        );
+        let _ = fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn lifecycle_update_rewrites_context_atomically_and_preserves_valid_json() {
+        let root = std::env::temp_dir().join(format!(
+            "datum-terminal-lifecycle-atomic-{}",
+            std::process::id()
+        ));
+        let _ = fs::remove_dir_all(&root);
+        fs::create_dir_all(&root).expect("lifecycle context test dir should create");
+        let path = root.join("context.json");
+        atomic_write_text(
+            &path,
+            r#"{
+  "contract": "datum_terminal_context_v1",
+  "session_lifecycle": "running",
+  "session": {
+    "lifecycle": "running"
+  }
+}
+"#,
+        )
+        .expect("seed context should write");
+
+        update_terminal_lifecycle_file(
+            &path,
+            DatumToolSessionLifecycle::Exited,
+            Some(0),
+            Some(1234),
+        )
+        .expect("lifecycle update should rewrite context");
+
+        let value: serde_json::Value = serde_json::from_str(
+            &fs::read_to_string(&path).expect("updated lifecycle context should read"),
+        )
+        .expect("updated lifecycle context should remain parseable");
+        assert_eq!(value["session_lifecycle"], "exited");
+        assert_eq!(value["session"]["lifecycle"], "exited");
+        assert_eq!(value["process_exit_code"], 0);
+        assert_eq!(value["process_group_id"], 1234);
+        let _ = fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn production_visibility_prefers_canonical_latest_output_job_run_id() {
+        let status = ProductionStatus {
+            latest_run_id: Some("legacy-run".to_string()),
+            latest_output_job_run_id: Some("canonical-output-run".to_string()),
+            artifact_runs: vec![datum_gui_protocol::ProductionArtifactRunSummary {
+                run_id: "canonical-output-run".to_string(),
+                artifact_id: "artifact-from-run".to_string(),
+                run_source: "output_job_run".to_string(),
+                output_job_id: Some("job-from-run".to_string()),
+                run_sequence: 7,
+                status: "succeeded".to_string(),
+                exit_code: Some(0),
+            }],
+            ..ProductionStatus::default()
+        };
+
+        let visibility = production_visibility_context(&status);
+
+        assert_eq!(
+            visibility.latest_output_job_id.as_deref(),
+            Some("job-from-run")
+        );
+        assert_eq!(
+            visibility.latest_output_job_run_id.as_deref(),
+            Some("canonical-output-run")
+        );
+        assert_eq!(
+            visibility.latest_output_job_artifact_id.as_deref(),
+            Some("artifact-from-run")
+        );
+    }
 }

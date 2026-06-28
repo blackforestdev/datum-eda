@@ -74,7 +74,7 @@ TEXT_CHECKS = (
     TextCheck(
         path="specs/MCP_API_SPEC.md",
         must_contain=(
-            "### Current Implemented Methods (2026-06-20)",
+            "### Current Implemented Methods (2026-06-28)",
             "#### `get_design_rules`",
             "Current implementation note: implemented in the current daemon/stdio host",
         ),
@@ -95,6 +95,26 @@ TEXT_CHECKS = (
         ),
         must_not_contain=(
             "Target parity note: full CLI/MCP method parity is required for the target M2+\nsurface at milestone closure. The current implementation exposes a strict\nsubset;",
+        ),
+    ),
+    TextCheck(
+        path="docs/audits/PRIVATE_WRITER_MIGRATION_EXCEPTION_REGISTER.md",
+        must_contain=(
+            "Datum authored source writes must flow through typed `OperationBatch` commits",
+            "| Project bootstrap | Native project creation |",
+            "| Route-strategy fixture generation | Deterministic regression fixtures |",
+            "| Legacy KiCad modify persistence | Retired compatibility island |",
+            "| Proposal apply bridge | Proposal substrate |",
+            "| Legacy proposal sidecar | Retired sidecar boundary |",
+            "| Generated evidence | Resolver-owned generated artifacts |",
+            "| Engine generated-evidence helper | Generated evidence persistence |",
+            "| Engine source-stage helper | Journal staging |",
+            "| Engine journal persistence | Journal owner |",
+            "| Generated export | Output files |",
+            "| GUI board text | GUI command handoff |",
+            "| Legacy import-map sidecar | The former test-only `write_legacy_import_map_sidecar` helper was removed.",
+            "| Forward-annotation review state direct writer | The review-state command remains guarded, but only as a retired path:",
+            "`scripts/check_schematic_private_writers.py` enforces the current file list",
         ),
     ),
     TextCheck(

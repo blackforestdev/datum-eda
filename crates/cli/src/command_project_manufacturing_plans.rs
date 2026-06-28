@@ -3,12 +3,15 @@ use std::path::Path;
 use anyhow::{Context, Result};
 use eda_engine::substrate::{
     CommitProvenance, CommitSource, ManufacturingPlan, ObjectRevision, Operation, OperationBatch,
-    PanelBoardInstance, PanelProjection, ProjectResolver,
+    PRODUCTION_RECORD_SCHEMA_VERSION, PanelBoardInstance, PanelProjection, ProjectResolver,
 };
 use serde::Serialize;
 use uuid::Uuid;
 
-use super::load_native_project_with_resolved_board;
+use super::{
+    command_project_operation_guards::guarded_existing_object_operation,
+    load_native_project_with_resolved_board,
+};
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectManufacturingPlansView {
@@ -78,14 +81,11 @@ pub(crate) fn create_native_project_manufacturing_plan(
         &project.manifest.uuid,
         format!("datum-eda:manufacturing-plan:{prefix}").as_bytes(),
     );
-    let plan_dir = root.join(".datum/manufacturing_plans");
-    let plan_path = plan_dir.join(format!("{plan_id}.json"));
-    if plan_path.exists() {
-        let plan = serde_json::from_str(
-            &std::fs::read_to_string(&plan_path)
-                .with_context(|| format!("failed to read {}", plan_path.display()))?,
-        )
-        .with_context(|| format!("failed to parse {}", plan_path.display()))?;
+    let plan_path = root
+        .join(".datum/manufacturing_plans")
+        .join(format!("{plan_id}.json"));
+    let mut model = ProjectResolver::new(root).resolve()?;
+    if let Some(plan) = model.manufacturing_plans.get(&plan_id).cloned() {
         return Ok(manufacturing_plan_mutation(
             project.manifest.uuid,
             "create_manufacturing_plan",
@@ -95,6 +95,7 @@ pub(crate) fn create_native_project_manufacturing_plan(
         ));
     }
     let plan = ManufacturingPlan {
+        schema_version: PRODUCTION_RECORD_SCHEMA_VERSION,
         id: plan_id,
         name: name
             .map(str::to_string)
@@ -104,7 +105,6 @@ pub(crate) fn create_native_project_manufacturing_plan(
         prefix: prefix.to_string(),
         object_revision: ObjectRevision(0),
     };
-    let mut model = ProjectResolver::new(root).resolve()?;
     let expected_model_revision = model.model_revision.clone();
     model.commit_journaled(
         root,
@@ -166,11 +166,14 @@ pub(crate) fn delete_native_project_manufacturing_plan(
                 source: CommitSource::Cli,
                 reason: "delete manufacturing plan".to_string(),
             },
-            operations: vec![Operation::DeleteManufacturingPlan {
-                manufacturing_plan_id,
-                manufacturing_plan: serde_json::to_value(&plan)
-                    .context("failed to serialize manufacturing plan delete operation")?,
-            }],
+            operations: guarded_existing_object_operation(
+                &model,
+                Operation::DeleteManufacturingPlan {
+                    manufacturing_plan_id,
+                    manufacturing_plan: serde_json::to_value(&plan)
+                        .context("failed to serialize manufacturing plan delete operation")?,
+                },
+            )?,
         },
     )?;
     Ok(manufacturing_plan_mutation(
@@ -254,13 +257,16 @@ pub(crate) fn update_native_project_manufacturing_plan(
                 source: CommitSource::Cli,
                 reason: "update manufacturing plan".to_string(),
             },
-            operations: vec![Operation::SetManufacturingPlan {
-                manufacturing_plan_id,
-                previous_manufacturing_plan: serde_json::to_value(&previous_plan)
-                    .context("failed to serialize previous manufacturing plan operation")?,
-                manufacturing_plan: serde_json::to_value(&plan)
-                    .context("failed to serialize manufacturing plan update operation")?,
-            }],
+            operations: guarded_existing_object_operation(
+                &model,
+                Operation::SetManufacturingPlan {
+                    manufacturing_plan_id,
+                    previous_manufacturing_plan: serde_json::to_value(&previous_plan)
+                        .context("failed to serialize previous manufacturing plan operation")?,
+                    manufacturing_plan: serde_json::to_value(&plan)
+                        .context("failed to serialize manufacturing plan update operation")?,
+                },
+            )?,
         },
     )?;
     Ok(manufacturing_plan_mutation(
@@ -304,14 +310,11 @@ pub(crate) fn create_native_project_panel_projection(
         &project.manifest.uuid,
         format!("datum-eda:panel-projection:{key}").as_bytes(),
     );
-    let panel_dir = root.join(".datum/panel_projections");
-    let panel_path = panel_dir.join(format!("{panel_id}.json"));
-    if panel_path.exists() {
-        let panel = serde_json::from_str(
-            &std::fs::read_to_string(&panel_path)
-                .with_context(|| format!("failed to read {}", panel_path.display()))?,
-        )
-        .with_context(|| format!("failed to parse {}", panel_path.display()))?;
+    let panel_path = root
+        .join(".datum/panel_projections")
+        .join(format!("{panel_id}.json"));
+    let mut model = ProjectResolver::new(root).resolve()?;
+    if let Some(panel) = model.panel_projections.get(&panel_id).cloned() {
         return Ok(panel_projection_mutation(
             project.manifest.uuid,
             "create_panel_projection",
@@ -321,6 +324,7 @@ pub(crate) fn create_native_project_panel_projection(
         ));
     }
     let panel = PanelProjection {
+        schema_version: PRODUCTION_RECORD_SCHEMA_VERSION,
         id: panel_id,
         name: name
             .map(str::to_string)
@@ -333,7 +337,6 @@ pub(crate) fn create_native_project_panel_projection(
         }],
         object_revision: ObjectRevision(0),
     };
-    let mut model = ProjectResolver::new(root).resolve()?;
     let expected_model_revision = model.model_revision.clone();
     model.commit_journaled(
         root,
@@ -395,11 +398,14 @@ pub(crate) fn delete_native_project_panel_projection(
                 source: CommitSource::Cli,
                 reason: "delete panel projection".to_string(),
             },
-            operations: vec![Operation::DeletePanelProjection {
-                panel_projection_id,
-                panel_projection: serde_json::to_value(&panel)
-                    .context("failed to serialize panel projection delete operation")?,
-            }],
+            operations: guarded_existing_object_operation(
+                &model,
+                Operation::DeletePanelProjection {
+                    panel_projection_id,
+                    panel_projection: serde_json::to_value(&panel)
+                        .context("failed to serialize panel projection delete operation")?,
+                },
+            )?,
         },
     )?;
     Ok(panel_projection_mutation(
@@ -480,13 +486,16 @@ pub(crate) fn update_native_project_panel_projection(
                 source: CommitSource::Cli,
                 reason: "update panel projection".to_string(),
             },
-            operations: vec![Operation::SetPanelProjection {
-                panel_projection_id,
-                previous_panel_projection: serde_json::to_value(&previous_panel)
-                    .context("failed to serialize previous panel projection operation")?,
-                panel_projection: serde_json::to_value(&panel)
-                    .context("failed to serialize panel projection update operation")?,
-            }],
+            operations: guarded_existing_object_operation(
+                &model,
+                Operation::SetPanelProjection {
+                    panel_projection_id,
+                    previous_panel_projection: serde_json::to_value(&previous_panel)
+                        .context("failed to serialize previous panel projection operation")?,
+                    panel_projection: serde_json::to_value(&panel)
+                        .context("failed to serialize panel projection update operation")?,
+                },
+            )?,
         },
     )?;
     Ok(panel_projection_mutation(

@@ -2,14 +2,18 @@ use std::path::Path;
 
 use anyhow::{Context, Result};
 use eda_engine::substrate::{
-    CommitProvenance, CommitSource, ManufacturingPlan, ObjectRevision, Operation, OperationBatch,
-    PanelBoardInstance, PanelProjection, ProjectResolver, Proposal, ProposalCreateRequest,
-    ProposalSource, create_draft_proposal_from_batch,
+    CommitProvenance, CommitSource, DesignModel, ManufacturingPlan, ObjectRevision, Operation,
+    OperationBatch, PRODUCTION_RECORD_SCHEMA_VERSION, PanelBoardInstance, PanelProjection,
+    ProjectResolver, Proposal, ProposalCreateRequest, ProposalSource,
+    create_draft_proposal_from_batch,
 };
 use serde::Serialize;
 use uuid::Uuid;
 
-use super::load_native_project_with_resolved_board;
+use super::{
+    command_project_operation_guards::guarded_operation_batch,
+    load_native_project_with_resolved_board,
+};
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectManufacturingPlanProposalView {
@@ -57,6 +61,7 @@ pub(crate) fn propose_create_native_project_manufacturing_plan(
         }
     }
     let plan = ManufacturingPlan {
+        schema_version: PRODUCTION_RECORD_SCHEMA_VERSION,
         id: plan_id,
         name: name
             .map(str::to_string)
@@ -66,6 +71,7 @@ pub(crate) fn propose_create_native_project_manufacturing_plan(
         prefix: prefix.to_string(),
         object_revision: ObjectRevision(0),
     };
+    validate_manufacturing_plan_targets(&model, project.board.uuid, &plan)?;
     let batch = OperationBatch {
         batch_id: Uuid::new_v4(),
         expected_model_revision: Some(model.model_revision.clone()),
@@ -148,6 +154,7 @@ pub(crate) fn propose_update_native_project_manufacturing_plan(
         plan.board_or_panel = panel_projection;
     }
     plan.object_revision = ObjectRevision(plan.object_revision.0 + 1);
+    validate_manufacturing_plan_targets(&model, project.board.uuid, &plan)?;
 
     let batch = OperationBatch {
         batch_id: Uuid::new_v4(),
@@ -239,7 +246,15 @@ pub(crate) fn propose_create_native_project_panel_projection(
     if model.panel_projections.contains_key(&panel_id) {
         anyhow::bail!("panel projection {panel_id} already exists");
     }
+    if let Some(board_id) = board {
+        validate_project_board_target(
+            project.board.uuid,
+            board_id,
+            "panel projection board instance",
+        )?;
+    }
     let panel = PanelProjection {
+        schema_version: PRODUCTION_RECORD_SCHEMA_VERSION,
         id: panel_id,
         name: name
             .map(str::to_string)
@@ -319,6 +334,11 @@ pub(crate) fn propose_update_native_project_panel_projection(
         .first_mut()
         .expect("panel projection should have a first board instance");
     if let Some(board) = board {
+        validate_project_board_target(
+            project.board.uuid,
+            board,
+            "panel projection board instance",
+        )?;
         first.board = board;
     }
     if let Some(x_nm) = x_nm {
@@ -410,6 +430,53 @@ fn proposal_provenance(reason: &str) -> CommitProvenance {
     }
 }
 
+fn validate_manufacturing_plan_targets(
+    model: &DesignModel,
+    project_board_id: Uuid,
+    plan: &ManufacturingPlan,
+) -> Result<()> {
+    validate_board_or_panel_target(
+        model,
+        project_board_id,
+        plan.board_or_panel,
+        "manufacturing plan",
+    )?;
+    if let Some(variant_id) = plan.variant {
+        validate_variant_target(model, variant_id, "manufacturing plan")?;
+    }
+    Ok(())
+}
+
+fn validate_board_or_panel_target(
+    model: &DesignModel,
+    project_board_id: Uuid,
+    target: Uuid,
+    subject: &str,
+) -> Result<()> {
+    if target == project_board_id || model.panel_projections.contains_key(&target) {
+        return Ok(());
+    }
+    anyhow::bail!("{subject} references missing board or panel {target}");
+}
+
+fn validate_project_board_target(
+    project_board_id: Uuid,
+    target: Uuid,
+    subject: &str,
+) -> Result<()> {
+    if target == project_board_id {
+        return Ok(());
+    }
+    anyhow::bail!("{subject} references missing board {target}");
+}
+
+fn validate_variant_target(model: &DesignModel, variant_id: Uuid, subject: &str) -> Result<()> {
+    if model.variants.contains_key(&variant_id) {
+        return Ok(());
+    }
+    anyhow::bail!("{subject} references missing variant {variant_id}");
+}
+
 fn write_manufacturing_plan_proposal(
     root: &Path,
     model: &mut eda_engine::substrate::DesignModel,
@@ -419,6 +486,7 @@ fn write_manufacturing_plan_proposal(
     action: &'static str,
     rationale: String,
 ) -> Result<NativeProjectManufacturingPlanProposalView> {
+    let batch = guarded_operation_batch(model, batch)?;
     let proposal = write_proposal(root, model, proposal_id, batch, rationale)?;
     Ok(NativeProjectManufacturingPlanProposalView {
         contract: "proposal_create_v1",
@@ -440,6 +508,7 @@ fn write_panel_projection_proposal(
     action: &'static str,
     rationale: String,
 ) -> Result<NativeProjectPanelProjectionProposalView> {
+    let batch = guarded_operation_batch(model, batch)?;
     let proposal = write_proposal(root, model, proposal_id, batch, rationale)?;
     Ok(NativeProjectPanelProjectionProposalView {
         contract: "proposal_create_v1",

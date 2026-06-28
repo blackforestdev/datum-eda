@@ -1,17 +1,19 @@
 use crate::{
+    terminal_activity_snapshot::load_terminal_activity_summary_lines,
     terminal_context::{
         DATUM_CLI, DATUM_LEGACY_CLI, TerminalContext, read_session_created_unix_ms,
         tool_session_event_log_path, unix_time_ms, update_terminal_lifecycle_file,
         write_terminal_context, write_terminal_context_files,
     },
     terminal_screen::TerminalScreen,
+    terminal_session_context::{TerminalSessionContextSummary, dock_tab_name, workspace_tool_name},
     terminal_session_events::{record_terminal_input_event, record_terminal_lifecycle_event},
 };
 use anyhow::{Context, Result};
 use datum_gui_protocol::{
     CheckRunReviewState, DatumCursorContext, DatumProjectionContext, DatumSceneBoundsContext,
-    DatumSelectionContext, DatumToolSessionLifecycle, DockTab, ProductionStatus,
-    ReviewWorkspaceState, TerminalLaneState, WorkspaceTool,
+    DatumSelectionContext, DatumToolSessionLifecycle, ProductionStatus, ReviewWorkspaceState,
+    TerminalLaneState, TerminalTabState,
 };
 use std::io::{Read, Write};
 use std::os::fd::{FromRawFd, RawFd};
@@ -41,6 +43,23 @@ pub(super) struct TerminalSession {
     active_execution_id: Arc<Mutex<Option<String>>>,
 }
 
+pub(super) struct TerminalSessionRegistry {
+    sessions: Vec<TerminalSessionSlot>,
+    active_index: usize,
+}
+
+struct TerminalSessionSlot {
+    session: TerminalSession,
+    screen: TerminalScreen,
+    label: String,
+    status: String,
+    attached: bool,
+    previous_session_id: Option<String>,
+    restart_count: usize,
+    columns: u16,
+    rows: u16,
+}
+
 #[derive(Debug, Clone)]
 pub(super) struct TerminalLaunchContext {
     pub(super) project_root: PathBuf,
@@ -51,10 +70,253 @@ pub(super) struct TerminalLaunchContext {
     pub(super) scene_id: Option<String>,
     pub(super) source_revision: Option<String>,
     pub(super) production_status: ProductionStatus,
+    pub(super) source_shard_status: datum_gui_protocol::SourceShardStatusSummary,
     pub(super) check_status: CheckRunReviewState,
     pub(super) selection_context: DatumSelectionContext,
     pub(super) cursor_context: DatumCursorContext,
     pub(super) projection_context: DatumProjectionContext,
+    pub(super) terminal_sessions: TerminalSessionContextSummary,
+}
+
+impl TerminalSessionRegistry {
+    pub(super) fn spawn(context: &TerminalLaunchContext) -> Result<Self> {
+        let session = spawn_terminal_session(context)?;
+        Ok(Self {
+            sessions: vec![TerminalSessionSlot {
+                session,
+                screen: TerminalScreen::default(),
+                label: "shell 1".to_string(),
+                status: "running".to_string(),
+                attached: true,
+                previous_session_id: None,
+                restart_count: 0,
+                columns: 80,
+                rows: 24,
+            }],
+            active_index: 0,
+        })
+    }
+
+    #[allow(dead_code)]
+    pub(super) fn spawn_and_activate(&mut self, context: &TerminalLaunchContext) -> Result<&str> {
+        let previous_active_index = self.active_index;
+        let session = spawn_terminal_session(context)?;
+        self.sessions.push(TerminalSessionSlot {
+            session,
+            screen: TerminalScreen::default(),
+            label: format!("shell {}", self.sessions.len() + 1),
+            status: "running".to_string(),
+            attached: true,
+            previous_session_id: None,
+            restart_count: 0,
+            columns: 80,
+            rows: 24,
+        });
+        self.sessions[previous_active_index].attached = false;
+        mark_terminal_session_lifecycle(
+            &self.sessions[previous_active_index].session,
+            DatumToolSessionLifecycle::Detached,
+            None,
+        )?;
+        record_terminal_lifecycle_event(
+            &self.sessions[previous_active_index].session,
+            DatumToolSessionLifecycle::Detached,
+            None,
+        )?;
+        self.active_index = self.sessions.len() - 1;
+        mark_terminal_session_lifecycle(self.active(), DatumToolSessionLifecycle::Attached, None)?;
+        record_terminal_lifecycle_event(self.active(), DatumToolSessionLifecycle::Attached, None)?;
+        Ok(self.active().session_id())
+    }
+
+    #[allow(dead_code)]
+    pub(super) fn activate(&mut self, session_id: &str) -> Result<()> {
+        let index = self
+            .sessions
+            .iter()
+            .position(|slot| slot.session.session_id() == session_id)
+            .ok_or_else(|| anyhow::anyhow!("terminal session not found: {session_id}"))?;
+        if index == self.active_index && self.sessions[index].attached {
+            return Ok(());
+        }
+        if index != self.active_index {
+            let previous_active_index = self.active_index;
+            self.sessions[previous_active_index].attached = false;
+            mark_terminal_session_lifecycle(
+                &self.sessions[previous_active_index].session,
+                DatumToolSessionLifecycle::Detached,
+                None,
+            )?;
+            record_terminal_lifecycle_event(
+                &self.sessions[previous_active_index].session,
+                DatumToolSessionLifecycle::Detached,
+                None,
+            )?;
+        }
+        self.active_index = index;
+        self.sessions[self.active_index].attached = true;
+        mark_terminal_session_lifecycle(self.active(), DatumToolSessionLifecycle::Attached, None)?;
+        record_terminal_lifecycle_event(self.active(), DatumToolSessionLifecycle::Attached, None)?;
+        Ok(())
+    }
+
+    #[allow(dead_code)]
+    pub(super) fn rename(&mut self, session_id: &str, label: impl Into<String>) -> Result<()> {
+        let slot = self
+            .sessions
+            .iter_mut()
+            .find(|slot| slot.session.session_id() == session_id)
+            .ok_or_else(|| anyhow::anyhow!("terminal session not found: {session_id}"))?;
+        let label = label.into();
+        let trimmed = label.trim();
+        if trimmed.is_empty() {
+            anyhow::bail!("terminal session label must not be empty");
+        }
+        slot.label = trimmed.to_string();
+        Ok(())
+    }
+
+    pub(super) fn active(&self) -> &TerminalSession {
+        &self.sessions[self.active_index].session
+    }
+
+    pub(super) fn active_label(&self) -> &str {
+        &self.sessions[self.active_index].label
+    }
+
+    pub(super) fn active_attached(&self) -> bool {
+        self.sessions[self.active_index].attached
+    }
+
+    pub(super) fn active_screen_mut(&mut self) -> &mut TerminalScreen {
+        &mut self.sessions[self.active_index].screen
+    }
+
+    pub(super) fn active_bracketed_paste_enabled(&self) -> bool {
+        self.sessions[self.active_index]
+            .screen
+            .bracketed_paste_enabled()
+    }
+
+    pub(super) fn resize_active(&mut self, cols: u16, rows: u16) -> Result<()> {
+        let slot = &mut self.sessions[self.active_index];
+        let cols = cols.max(1);
+        let rows = rows.max(1);
+        slot.session.resize(cols, rows)?;
+        slot.screen.resize_grid(cols, rows);
+        slot.columns = cols;
+        slot.rows = rows;
+        Ok(())
+    }
+
+    pub(super) fn detach_active(&mut self, state: &mut TerminalLaneState) -> Result<()> {
+        if !self.sessions[self.active_index].attached {
+            self.sync_lane_tabs(state);
+            return Ok(());
+        }
+        self.sessions[self.active_index].attached = false;
+        mark_terminal_session_lifecycle(self.active(), DatumToolSessionLifecycle::Detached, None)?;
+        record_terminal_lifecycle_event(self.active(), DatumToolSessionLifecycle::Detached, None)?;
+        self.sync_lane_tabs(state);
+        Ok(())
+    }
+
+    pub(super) fn terminate_active(&mut self, state: &mut TerminalLaneState) -> Result<()> {
+        terminate_terminal_session(self.active(), state)?;
+        self.sessions[self.active_index].status = state.status.clone();
+        self.sync_lane_tabs(state);
+        Ok(())
+    }
+
+    pub(super) fn close_active(&mut self, state: &mut TerminalLaneState) -> Result<()> {
+        if self.sessions.len() <= 1 {
+            anyhow::bail!("cannot close the only terminal session");
+        }
+        terminate_terminal_session(self.active(), state)?;
+        self.sessions.remove(self.active_index);
+        if self.active_index >= self.sessions.len() {
+            self.active_index = self.sessions.len() - 1;
+        }
+        self.sessions[self.active_index].attached = true;
+        state.status = self.sessions[self.active_index].status.clone();
+        self.sync_lane_tabs(state);
+        Ok(())
+    }
+
+    pub(super) fn restart_active(
+        &mut self,
+        state: &mut TerminalLaneState,
+        context: &TerminalLaunchContext,
+    ) -> Result<()> {
+        let slot = &mut self.sessions[self.active_index];
+        let previous_session_id = slot.session.session_id().to_string();
+        restart_terminal_session(&mut slot.session, &mut slot.screen, state, context)?;
+        slot.status = state.status.clone();
+        slot.attached = true;
+        slot.previous_session_id = Some(previous_session_id);
+        slot.restart_count += 1;
+        slot.session.resize(slot.columns, slot.rows)?;
+        slot.screen.resize_grid(slot.columns, slot.rows);
+        self.sync_lane_tabs(state);
+        Ok(())
+    }
+
+    pub(super) fn active_event_log_path(&self) -> PathBuf {
+        self.active().event_log_path()
+    }
+
+    pub(super) fn sync_lane_tabs(&mut self, state: &mut TerminalLaneState) {
+        for (index, slot) in self.sessions.iter_mut().enumerate() {
+            if index == self.active_index {
+                slot.status = state.status.clone();
+            }
+        }
+        state.active_session_id = Some(self.active().session_id().to_string());
+        let tabs = self
+            .sessions
+            .iter()
+            .enumerate()
+            .map(|(index, slot)| TerminalTabState {
+                session_id: slot.session.session_id().to_string(),
+                previous_session_id: slot.previous_session_id.clone(),
+                label: slot.label.clone(),
+                event_log_path: slot.session.event_log_path().display().to_string(),
+                activity_event_count: terminal_event_count(&slot.session.event_log_path()),
+                activity_summary: terminal_activity_summary(&slot.session.event_log_path(), 2),
+                active: index == self.active_index,
+                attached: slot.attached,
+                status: slot.status.clone(),
+                restart_count: slot.restart_count,
+            })
+            .collect::<Vec<_>>();
+        if let Some(active_tab) = tabs.iter().find(|tab| tab.active) {
+            state.activity_summary = active_tab.activity_summary.clone();
+        }
+        let active_slot = &self.sessions[self.active_index];
+        state.columns = active_slot.columns;
+        state.rows = active_slot.rows;
+        state.tabs = tabs;
+    }
+
+    #[allow(dead_code)]
+    pub(super) fn len(&self) -> usize {
+        self.sessions.len()
+    }
+}
+
+fn terminal_event_count(path: &Path) -> usize {
+    std::fs::read_to_string(path)
+        .map(|text| text.lines().filter(|line| !line.trim().is_empty()).count())
+        .unwrap_or(0)
+}
+
+fn terminal_activity_summary(path: &Path, max_spans: usize) -> Vec<String> {
+    load_terminal_activity_summary_lines(path, max_spans).unwrap_or_else(|err| {
+        vec![format!(
+            "activity summary unavailable for {}: {err}",
+            path.display()
+        )]
+    })
 }
 
 pub(super) fn terminal_launch_context_from_state(
@@ -70,6 +332,7 @@ pub(super) fn terminal_launch_context_from_state(
         scene_id: Some(state.scene.scene_id.clone()),
         source_revision: Some(state.scene.source_revision.clone()),
         production_status: state.production.clone(),
+        source_shard_status: state.source_shards.clone(),
         check_status: state.checks.clone(),
         selection_context: DatumSelectionContext::from_selection(&state.selection),
         cursor_context: DatumCursorContext {
@@ -89,6 +352,7 @@ pub(super) fn terminal_launch_context_from_state(
             scene_bounds_nm: Some(DatumSceneBoundsContext::from_bounds(&state.scene.bounds)),
             active_projection_id: None,
         },
+        terminal_sessions: TerminalSessionContextSummary::from_lane_state(&state.ui.terminal),
     }
 }
 
@@ -338,20 +602,6 @@ impl TerminalSession {
     }
 }
 
-fn workspace_tool_name(tool: WorkspaceTool) -> &'static str {
-    match tool {
-        WorkspaceTool::Select => "select",
-    }
-}
-
-fn dock_tab_name(tab: DockTab) -> &'static str {
-    match tab {
-        DockTab::Terminal => "terminal",
-        DockTab::Assistant => "assistant",
-        DockTab::Outputs => "outputs",
-    }
-}
-
 impl Drop for TerminalSession {
     fn drop(&mut self) {
         let _ = self.terminate();
@@ -438,323 +688,8 @@ fn configure_child_pty(slave_path: &[u8], master_fd: RawFd) -> io::Result<()> {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use datum_gui_protocol::TERMINAL_COMMAND_CATALOG_VERSION;
-    use std::fs;
-    use std::time::Duration;
-
-    impl TerminalLaunchContext {
-        fn for_project_root(project_root: &std::path::Path) -> Self {
-            Self {
-                project_root: project_root.to_path_buf(),
-                project_id: None,
-                project_name: None,
-                board_id: None,
-                board_name: None,
-                scene_id: None,
-                source_revision: None,
-                production_status: ProductionStatus::default(),
-                check_status: CheckRunReviewState::default(),
-                selection_context: DatumSelectionContext {
-                    kind: "none".to_string(),
-                    id: None,
-                },
-                cursor_context: DatumCursorContext {
-                    screen_px: None,
-                    hovered_object_id: None,
-                    active_dock_tab: None,
-                    active_tool: "select".to_string(),
-                },
-                projection_context: DatumProjectionContext {
-                    scene_id: "test-scene".to_string(),
-                    board_id: None,
-                    board_name: None,
-                    scene_bounds_nm: None,
-                    active_projection_id: None,
-                },
-            }
-        }
-    }
-
-    #[test]
-    fn terminal_session_spawns_real_pty_shell() {
-        let root = std::env::temp_dir().join(format!("datum-terminal-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&root);
-        fs::create_dir_all(&root).expect("terminal test root should create");
-        let mut context = TerminalLaunchContext::for_project_root(&root);
-        context.project_id = Some("project-test".to_string());
-        context.source_revision = Some("source-rev-test".to_string());
-        context.check_status = CheckRunReviewState {
-            check_run_id: Some("check-run-visible".to_string()),
-            finding_count: 1,
-            findings: vec![datum_gui_protocol::CheckFindingSummary {
-                fingerprint: "sha256:visible-finding".to_string(),
-                rule_id: "zone_fill_state".to_string(),
-                ..datum_gui_protocol::CheckFindingSummary::default()
-            }],
-            ..CheckRunReviewState::default()
-        };
-        let session = spawn_terminal_session(&context).expect("spawn PTY terminal session");
-        assert!(session.context_path.exists());
-        assert!(
-            session
-                .context_path
-                .to_string_lossy()
-                .contains(".datum/terminal-contexts/terminal-")
-        );
-        let latest_context_path = root.join(".datum/gui-terminal-context.json");
-        assert!(latest_context_path.exists());
-        let session_context: serde_json::Value =
-            serde_json::from_str(&fs::read_to_string(&session.context_path).unwrap()).unwrap();
-        let latest_context: serde_json::Value =
-            serde_json::from_str(&fs::read_to_string(&latest_context_path).unwrap()).unwrap();
-        assert_eq!(session_context["session_id"], latest_context["session_id"]);
-        assert_eq!(
-            session_context["storage"]["legacy_context_path"],
-            latest_context_path.display().to_string()
-        );
-        assert_eq!(
-            session_context["storage"]["latest_context_path"],
-            latest_context_path.display().to_string()
-        );
-        assert_eq!(
-            session_context["storage"]["compatibility_context_path"],
-            latest_context_path.display().to_string()
-        );
-        assert_eq!(
-            session_context["storage"]["event_log_path"],
-            session.event_log_path().display().to_string()
-        );
-        assert!(session.session_path.exists());
-        let session_metadata: serde_json::Value =
-            serde_json::from_str(&fs::read_to_string(&session.session_path).unwrap()).unwrap();
-        assert_eq!(
-            session_metadata["session_id"],
-            session_context["session_id"]
-        );
-        for key in [
-            "create_gerber_output_job",
-            "update_output_job",
-            "delete_output_job",
-            "create_manufacturing_plan",
-            "update_manufacturing_plan",
-            "delete_manufacturing_plan",
-            "create_panel_projection",
-            "update_panel_projection",
-            "delete_panel_projection",
-        ] {
-            let command = session_context["production_commands"][key]
-                .as_str()
-                .expect("production command template should be a string");
-            assert!(
-                command.starts_with("datum-eda proposal "),
-                "production command template {key} should use canonical proposal CLI: {command}"
-            );
-            assert!(
-                !command.contains("--as-proposal"),
-                "canonical proposal template {key} should not need --as-proposal: {command}"
-            );
-        }
-        assert_eq!(
-            session_context["command_catalog_version"],
-            TERMINAL_COMMAND_CATALOG_VERSION
-        );
-        assert_eq!(
-            session_context["handoff_commands"]["datum.artifact.generate"]["mcp_alias"],
-            "datum.artifact.generate"
-        );
-        assert_eq!(
-            session_context["handoff_commands"]["datum.proposal.accept_apply"]["cli_argv_template"],
-            serde_json::json!([
-                "datum-eda",
-                "proposal",
-                "accept-apply",
-                "{project_root}",
-                "--proposal",
-                "{proposal}"
-            ])
-        );
-        assert_eq!(
-            session_context["proposal_commands"]["preview"],
-            "datum-eda proposal preview \"$DATUM_PROJECT_ROOT\" --proposal <uuid>"
-        );
-        assert_eq!(
-            session_context["visible_check_run_ids"],
-            serde_json::json!(["check-run-visible"])
-        );
-        assert_eq!(
-            session_context["visible_finding_fingerprints"],
-            serde_json::json!(["sha256:visible-finding"])
-        );
-        assert_eq!(
-            session_context["check_status"]["findings"][0]["rule_id"],
-            "zone_fill_state"
-        );
-
-        context.selection_context = DatumSelectionContext {
-            kind: "authored_object".to_string(),
-            id: Some("object-live".to_string()),
-        };
-        context.cursor_context.screen_px = Some([42, 84]);
-        context.cursor_context.hovered_object_id = Some("hover-live".to_string());
-        refresh_terminal_session_context(&session, &context)
-            .expect("refresh existing terminal context");
-        let refreshed: serde_json::Value =
-            serde_json::from_str(&fs::read_to_string(&session.context_path).unwrap()).unwrap();
-        assert_eq!(refreshed["session_id"], session_context["session_id"]);
-        assert_eq!(refreshed["selection_context"]["id"], "object-live");
-        assert_eq!(
-            refreshed["cursor_context"]["screen_px"],
-            serde_json::json!([42, 84])
-        );
-        assert_eq!(
-            refreshed["session"]["session_id"],
-            session_context["session_id"]
-        );
-        assert_eq!(refreshed["contract"], "datum_terminal_context_v1");
-        assert_eq!(refreshed["datum_cli"], "datum-eda");
-        assert_eq!(refreshed["actor_type"], "ExternalAgent");
-        assert_eq!(refreshed["selection_context"]["kind"], "authored_object");
-        assert_eq!(
-            refreshed["agent_commands"]["refresh_context"],
-            "datum-eda context refresh --session \"$DATUM_SESSION_ID\""
-        );
-        assert!(
-            refreshed["agent_commands"]["codex_with_context"]
-                .as_str()
-                .unwrap()
-                .contains("$DATUM_DISCOVERY")
-        );
-        assert!(
-            refreshed["agent_commands"]["context_prompt"]
-                .as_str()
-                .unwrap()
-                .contains("context session-activity")
-        );
-        assert_eq!(
-            refreshed["check_commands"]["run_current"],
-            "datum-eda check run \"$DATUM_PROJECT_ROOT\""
-        );
-        assert_eq!(
-            refreshed["proposal_commands"]["accept_apply"],
-            "datum-eda proposal accept-apply \"$DATUM_PROJECT_ROOT\" --proposal <uuid>"
-        );
-        assert_eq!(
-            refreshed["query_commands"]["import_map"],
-            "datum-eda query import-map \"$DATUM_PROJECT_ROOT\""
-        );
-        assert_eq!(
-            refreshed["query_commands"]["zone_fills"],
-            "datum-eda query zone-fills \"$DATUM_PROJECT_ROOT\""
-        );
-        session.resize(100, 24).expect("resize PTY");
-        session
-            .write_bytes(
-                b"printf 'datum-pty-ok:%s:%s:%s\\n' \"$DATUM_PROJECT_ROOT\" \"$DATUM_CLI\" \"$DATUM_SESSION_ID\"\nexit\n",
-            )
-            .expect("write command to PTY");
-        let mut output = String::new();
-        for _ in 0..80 {
-            if let Ok(event) = session.rx.recv_timeout(Duration::from_millis(100)) {
-                match event {
-                    TerminalEvent::Output(bytes) => {
-                        let _ = crate::terminal_session_events::record_terminal_output_event(
-                            &session, &bytes,
-                        );
-                        output.push_str(&String::from_utf8_lossy(&bytes));
-                        if output.contains("datum-pty-ok:") && output.contains("datum-eda") {
-                            break;
-                        }
-                    }
-                    TerminalEvent::Exited(code) => {
-                        assert_eq!(code, Some(0));
-                    }
-                }
-            }
-        }
-        for expected in ["datum-pty-ok:", "datum-eda"] {
-            assert!(
-                output.contains(expected),
-                "missing {expected:?} in PTY output: {output}"
-            );
-        }
-        let event_log =
-            fs::read_to_string(session.event_log_path()).expect("read terminal event log");
-        assert!(
-            event_log.contains(r#""event":"terminal_io""#),
-            "terminal event log should record I/O events: {event_log}"
-        );
-        assert!(
-            event_log.contains(r#""direction":"input""#),
-            "terminal event log should record PTY input: {event_log}"
-        );
-        assert!(
-            event_log.contains(r#""direction":"output""#),
-            "terminal event log should record PTY output: {event_log}"
-        );
-        assert!(
-            event_log.contains(session.session_id()),
-            "terminal event log should tie events to the session id: {event_log}"
-        );
-        let _ = fs::remove_dir_all(&root);
-    }
-
-    #[test]
-    fn terminal_session_terminate_reports_signal_exit() {
-        let root =
-            std::env::temp_dir().join(format!("datum-terminal-terminate-{}", std::process::id()));
-        let _ = fs::remove_dir_all(&root);
-        fs::create_dir_all(&root).expect("terminal terminate test root should create");
-        let context = TerminalLaunchContext::for_project_root(&root);
-        let session = spawn_terminal_session(&context).expect("spawn PTY terminal session");
-        session
-            .write_bytes(b"printf 'datum-terminate-ready\\n'\nexec sleep 10\n")
-            .expect("start long command");
-        let mut ready = false;
-        for _ in 0..50 {
-            if let Ok(TerminalEvent::Output(bytes)) =
-                session.rx.recv_timeout(Duration::from_millis(100))
-            {
-                if String::from_utf8_lossy(&bytes).contains("datum-terminate-ready") {
-                    ready = true;
-                    break;
-                }
-            }
-        }
-        assert!(
-            ready,
-            "terminal should confirm command execution before termination"
-        );
-        session.terminate().expect("terminate PTY session");
-        let mut observed_exit_code = None;
-        for _ in 0..120 {
-            if let Ok(TerminalEvent::Exited(code)) =
-                session.rx.recv_timeout(Duration::from_millis(100))
-            {
-                observed_exit_code = Some(code);
-                break;
-            }
-        }
-        assert!(
-            observed_exit_code.is_some(),
-            "terminated terminal should emit exit event"
-        );
-        let observed_exit_code = observed_exit_code.flatten();
-        mark_terminal_session_lifecycle(
-            &session,
-            DatumToolSessionLifecycle::Exited,
-            observed_exit_code,
-        )
-        .expect("mark terminated session exited");
-        let context: serde_json::Value =
-            serde_json::from_str(&fs::read_to_string(&session.context_path).unwrap()).unwrap();
-        assert_eq!(context["session_lifecycle"], "exited");
-        assert_eq!(context["session"]["lifecycle"], "exited");
-        assert_eq!(
-            context["process_exit_code"],
-            serde_json::to_value(observed_exit_code).unwrap()
-        );
-        let _ = fs::remove_dir_all(&root);
-    }
-}
+#[path = "terminal_session_context_tests.rs"]
+mod terminal_session_context_tests;
+#[cfg(test)]
+#[path = "terminal_session_tests.rs"]
+mod terminal_session_tests;

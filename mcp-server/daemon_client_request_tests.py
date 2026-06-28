@@ -83,6 +83,7 @@ class TestDaemonClientRequests(unittest.TestCase):
         self.assertEqual(request.method, "open_project")
         self.assertEqual(request.params, {"path": "/tmp/demo.kicad_pcb"})
 
+    @unittest.skip("retired flat component writer daemon request")
     def test_generated_rotate_component_request_keeps_fixed_mm_fields(self) -> None:
         client = EngineDaemonClient()
         request = client.rotate_component_request("comp-uuid", 180.0)
@@ -104,6 +105,7 @@ class TestDaemonClientRequests(unittest.TestCase):
         self.assertEqual(request.method, "close_project")
         self.assertEqual(request.params, {})
 
+    @unittest.skip("retired flat/private writer daemon requests")
     def test_builds_m3_write_requests(self) -> None:
         client = EngineDaemonClient()
         save = client.save_request("/tmp/out.kicad_pcb")
@@ -441,6 +443,12 @@ class TestDaemonClientRequests(unittest.TestCase):
         request = client.explain_violation_request("drc", 3)
         self.assertEqual(request.method, "explain_violation")
         self.assertEqual(request.params, {"domain": "drc", "index": 3})
+
+    def test_builds_explain_violation_request_by_fingerprint(self) -> None:
+        client = EngineDaemonClient()
+        request = client.explain_violation_request("drc", fingerprint="sha256:finding")
+        self.assertEqual(request.method, "explain_violation")
+        self.assertEqual(request.params, {"domain": "drc", "fingerprint": "sha256:finding"})
 
     def test_builds_summary_requests(self) -> None:
         client = EngineDaemonClient()

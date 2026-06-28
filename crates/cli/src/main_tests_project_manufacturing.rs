@@ -295,7 +295,10 @@ fn project_bom_and_pnp_are_keyed_by_component_instance_identity() {
                     "uuid": component_instance_id,
                     "object_revision": 0,
                     "placed_symbol_refs": [{ "object_id": symbol_id, "object_revision": 0 }],
-                    "placed_package_refs": [{ "object_id": package_id, "object_revision": 0 }]
+                    "placed_package_refs": [{ "object_id": package_id, "object_revision": 0 }],
+                    "placed_package_roles": {
+                        package_id.to_string(): { "role": "physical_package", "label": "main" }
+                    }
                 }
             }))
             .unwrap()
@@ -336,13 +339,24 @@ fn project_bom_and_pnp_are_keyed_by_component_instance_identity() {
 
     let bom_csv = std::fs::read_to_string(&bom_path).unwrap();
     let pnp_csv = std::fs::read_to_string(&pnp_path).unwrap();
-    assert!(bom_csv.starts_with("component_instance_uuid,reference,"));
-    assert!(pnp_csv.starts_with("component_instance_uuid,reference,"));
-    assert!(bom_csv.contains(&format!("{component_instance_id},U1,")));
-    assert!(pnp_csv.contains(&format!("{component_instance_id},U1,")));
+    let role_header =
+        "component_instance_uuid,component_instance_role,component_instance_label,reference,";
+    assert!(bom_csv.starts_with(role_header));
+    assert!(pnp_csv.starts_with(role_header));
+    let role_row = format!("{component_instance_id},physical_package,main,U1,");
+    assert!(bom_csv.contains(&role_row));
+    assert!(pnp_csv.contains(&role_row));
 
-    std::fs::write(&bom_path, bom_csv.replace(",U1,", ",U1_RENAMED,")).unwrap();
-    std::fs::write(&pnp_path, pnp_csv.replace(",U1,", ",U1_RENAMED,")).unwrap();
+    std::fs::write(
+        &bom_path,
+        bom_csv.replace(",physical_package,main,", ",alternate,backup,"),
+    )
+    .unwrap();
+    std::fs::write(
+        &pnp_path,
+        pnp_csv.replace(",physical_package,main,", ",alternate,backup,"),
+    )
+    .unwrap();
 
     let bom_compare = execute(
         Cli::try_parse_from([
@@ -370,8 +384,17 @@ fn project_bom_and_pnp_are_keyed_by_component_instance_identity() {
         bom_report["drift"][0]["component_instance_uuid"],
         component_instance_id.to_string()
     );
-    assert_eq!(bom_report["drift"][0]["fields"][0], "reference");
-
+    let bom_fields = bom_report["drift"][0]["fields"].as_array().unwrap();
+    assert!(
+        bom_fields
+            .iter()
+            .any(|field| field == "component_instance_role")
+    );
+    assert!(
+        bom_fields
+            .iter()
+            .any(|field| field == "component_instance_label")
+    );
     let pnp_compare = execute(
         Cli::try_parse_from([
             "eda",
@@ -398,8 +421,17 @@ fn project_bom_and_pnp_are_keyed_by_component_instance_identity() {
         pnp_report["drift"][0]["component_instance_uuid"],
         component_instance_id.to_string()
     );
-    assert_eq!(pnp_report["drift"][0]["fields"][0], "reference");
-
+    let pnp_fields = pnp_report["drift"][0]["fields"].as_array().unwrap();
+    assert!(
+        pnp_fields
+            .iter()
+            .any(|field| field == "component_instance_role")
+    );
+    assert!(
+        pnp_fields
+            .iter()
+            .any(|field| field == "component_instance_label")
+    );
     let _ = std::fs::remove_dir_all(&root);
 }
 
@@ -612,10 +644,10 @@ fn project_bom_and_pnp_variant_filter_uses_component_instance_population() {
         std::fs::read_to_string(manufacturing_dir.join("variant-release-bom.csv")).unwrap();
     let manufacturing_pnp =
         std::fs::read_to_string(manufacturing_dir.join("variant-release-pnp.csv")).unwrap();
-    assert!(manufacturing_bom.contains(&format!("{u1_component_instance_id},U1,")));
-    assert!(!manufacturing_bom.contains(&format!("{u2_component_instance_id},U2,")));
-    assert!(manufacturing_pnp.contains(&format!("{u1_component_instance_id},U1,")));
-    assert!(!manufacturing_pnp.contains(&format!("{u2_component_instance_id},U2,")));
+    assert!(manufacturing_bom.contains(&format!("{u1_component_instance_id},,,U1,")));
+    assert!(!manufacturing_bom.contains(&format!("{u2_component_instance_id},,,U2,")));
+    assert!(manufacturing_pnp.contains(&format!("{u1_component_instance_id},,,U1,")));
+    assert!(!manufacturing_pnp.contains(&format!("{u2_component_instance_id},,,U2,")));
 
     let validation = execute(
         Cli::try_parse_from([

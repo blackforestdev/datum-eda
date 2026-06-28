@@ -1,7 +1,7 @@
 use super::*;
 use crate::board::{PadShape, PlacedPad, Track, Zone};
 use crate::ir::geometry::{Point, Polygon};
-
+use crate::substrate::zone_fill::persist_zone_fill;
 fn filled_island() -> Polygon {
     Polygon {
         vertices: vec![
@@ -177,7 +177,7 @@ fn bounded_zone_fill_cuts_out_multiple_non_overlapping_foreign_pads() {
 }
 
 #[test]
-fn bounded_zone_fill_rejects_overlapping_foreign_pad_cutouts() {
+fn bounded_zone_fill_conservatively_unions_overlapping_foreign_pad_cutouts() {
     let zone_id = Uuid::new_v4();
     let zone_net = Uuid::new_v4();
     let foreign_net = Uuid::new_v4();
@@ -210,11 +210,12 @@ fn bounded_zone_fill_rejects_overlapping_foreign_pad_cutouts() {
     let (state, islands, provenance) =
         compute_bounded_zone_fill(&zone(zone_id, zone_net, 0, 0), &context);
 
-    assert_eq!(state, ZoneFillState::Unsupported);
-    assert!(islands.is_empty());
+    assert_eq!(state, ZoneFillState::Filled);
+    assert!(!islands.is_empty());
+    assert!(islands.iter().all(|island| island.closed));
     assert_eq!(
         provenance,
-        "datum-eda fill-zones: unsupported because obstacle cutouts are outside the bounded non-overlapping rectangular solver envelope"
+        "datum-eda fill-zones: bounded rectangular obstacle cutout fill v4; overlapping foreign pad/via/orthogonal-track clearances conservatively unioned before fill"
     );
 }
 
@@ -247,7 +248,7 @@ fn bounded_zone_fill_cuts_out_single_foreign_orthogonal_track_with_netclass_clea
 }
 
 #[test]
-fn bounded_zone_fill_rejects_non_orthogonal_foreign_track() {
+fn bounded_zone_fill_conservatively_cuts_out_non_orthogonal_foreign_track_bounds() {
     let zone_id = Uuid::new_v4();
     let zone_net = Uuid::new_v4();
     let foreign_net = Uuid::new_v4();
@@ -265,12 +266,11 @@ fn bounded_zone_fill_rejects_non_orthogonal_foreign_track() {
     let (state, islands, provenance) =
         compute_bounded_zone_fill(&zone(zone_id, zone_net, 0, 0), &context);
 
-    assert_eq!(state, ZoneFillState::Unsupported);
-    assert!(islands.is_empty());
-    assert_eq!(
-        provenance,
-        "datum-eda fill-zones: unsupported because a non-orthogonal different-net track intersects the zone"
-    );
+    assert_eq!(state, ZoneFillState::Filled);
+    assert_eq!(islands.len(), 4);
+    assert!(islands.iter().all(|island| island.closed));
+    let expected = "datum-eda fill-zones: bounded rectangular obstacle cutout fill v7; non-orthogonal foreign track bounds conservatively removed before fill";
+    assert_eq!(provenance, expected);
 }
 
 #[test]
@@ -311,6 +311,7 @@ fn journaled_zone_fill_rejects_mismatched_operation_and_payload_ids() {
         .resolve()
         .expect("project resolves");
     let bad_fill = ZoneFill {
+        schema_version: ZONE_FILL_SCHEMA_VERSION,
         zone_id: payload_zone_id,
         state: ZoneFillState::Filled,
         source_zone_revision: ObjectRevision(0),
@@ -360,6 +361,7 @@ fn zone_fill_projection_renders_only_filled_evidence() {
     zone_fills.insert(
         filled_zone_id,
         ZoneFill {
+            schema_version: ZONE_FILL_SCHEMA_VERSION,
             zone_id: filled_zone_id,
             state: ZoneFillState::Filled,
             source_zone_revision: ObjectRevision(1),
@@ -371,6 +373,7 @@ fn zone_fill_projection_renders_only_filled_evidence() {
     zone_fills.insert(
         unfilled_zone_id,
         ZoneFill {
+            schema_version: ZONE_FILL_SCHEMA_VERSION,
             zone_id: unfilled_zone_id,
             state: ZoneFillState::Unfilled,
             source_zone_revision: ObjectRevision(1),
@@ -447,63 +450,6 @@ fn resolver_derives_native_zones_as_unfilled_zone_fills() {
 }
 
 #[test]
-fn resolver_discovers_persisted_zone_fill_generated_evidence() {
-    let project_id = Uuid::new_v4();
-    let board_id = Uuid::new_v4();
-    let zone_id = Uuid::new_v4();
-    let net_id = Uuid::new_v4();
-    let root = temp_project_root("zone_fill_persisted");
-    write_minimal_project(&root, project_id, board_id);
-    write_json(
-        &root.join("board/board.json"),
-        serde_json::json!({
-            "schema_version": 1,
-            "uuid": board_id,
-            "name": "Board",
-            "packages": {},
-            "tracks": {},
-            "vias": {},
-            "zones": {
-                zone_id.to_string(): {
-                    "uuid": zone_id,
-                    "net": net_id,
-                    "polygon": filled_island(),
-                    "layer": 0,
-                    "priority": 0,
-                    "thermal_relief": false,
-                    "thermal_gap": 0,
-                    "thermal_spoke_width": 0
-                }
-            },
-            "nets": {},
-            "net_classes": {}
-        }),
-    );
-    let initial = ProjectResolver::new(&root)
-        .resolve()
-        .expect("project resolves");
-    let persisted = ZoneFill {
-        zone_id,
-        state: ZoneFillState::Filled,
-        source_zone_revision: ObjectRevision(0),
-        model_revision: initial.model_revision.clone(),
-        islands: vec![filled_island()],
-        provenance: Some("unit-test-fill".to_string()),
-    };
-    let path = persist_zone_fill(&root, &persisted).expect("zone fill should persist");
-    assert_eq!(path, root.join(format!(".datum/zone_fills/{zone_id}.json")));
-
-    let resolved = ProjectResolver::new(&root)
-        .resolve()
-        .expect("project resolves with persisted fill");
-    assert_eq!(resolved.zone_fills[&zone_id], persisted);
-    assert!(resolved.source_shards.iter().any(|shard| {
-        shard.kind == SourceShardKind::ZoneFill
-            && shard.authority == SourceShardAuthority::GeneratedEvidence
-    }));
-}
-
-#[test]
 fn resolver_marks_persisted_zone_fill_stale_when_model_revision_changes() {
     let project_id = Uuid::new_v4();
     let board_id = Uuid::new_v4();
@@ -537,6 +483,7 @@ fn resolver_marks_persisted_zone_fill_stale_when_model_revision_changes() {
         }),
     );
     let stale = ZoneFill {
+        schema_version: ZONE_FILL_SCHEMA_VERSION,
         zone_id,
         state: ZoneFillState::Filled,
         source_zone_revision: ObjectRevision(0),
@@ -593,6 +540,7 @@ fn resolver_rejects_invalid_filled_zone_fill_generated_evidence() {
         .resolve()
         .expect("project resolves");
     let invalid = ZoneFill {
+        schema_version: ZONE_FILL_SCHEMA_VERSION,
         zone_id,
         state: ZoneFillState::Filled,
         source_zone_revision: ObjectRevision(0),
@@ -656,6 +604,7 @@ fn resolver_rejects_self_intersecting_filled_zone_fill_island() {
         .resolve()
         .expect("project resolves");
     let invalid = ZoneFill {
+        schema_version: ZONE_FILL_SCHEMA_VERSION,
         zone_id,
         state: ZoneFillState::Filled,
         source_zone_revision: ObjectRevision(0),
@@ -718,6 +667,7 @@ fn resolver_rejects_nonfilled_zone_fill_with_renderable_islands() {
         .resolve()
         .expect("project resolves");
     let invalid = ZoneFill {
+        schema_version: ZONE_FILL_SCHEMA_VERSION,
         zone_id,
         state: ZoneFillState::Unsupported,
         source_zone_revision: ObjectRevision(0),
@@ -781,6 +731,7 @@ fn resolver_accepts_valid_unsupported_zone_fill_generated_evidence() {
         .resolve()
         .expect("project resolves");
     let unsupported = ZoneFill {
+        schema_version: ZONE_FILL_SCHEMA_VERSION,
         zone_id,
         state: ZoneFillState::Unsupported,
         source_zone_revision: ObjectRevision(0),

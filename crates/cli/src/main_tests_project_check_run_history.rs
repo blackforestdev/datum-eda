@@ -71,6 +71,85 @@ fn check_list_and_show_report_persisted_check_run_evidence() {
 }
 
 #[test]
+fn check_list_reports_latest_profile_history() {
+    let root = unique_project_root("datum-eda-cli-check-list-history");
+    create_native_project(&root, Some("Check History Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    build_native_check_fixture(&root);
+
+    let combined_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "check",
+            "run",
+            root.to_str().unwrap(),
+            "--profile",
+            "native-combined",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("combined check run should succeed");
+    let combined: serde_json::Value =
+        serde_json::from_str(&combined_output).expect("combined check run should parse");
+    let standards_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "check",
+            "run",
+            root.to_str().unwrap(),
+            "--profile",
+            "standards",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("standards check run should succeed");
+    let standards: serde_json::Value =
+        serde_json::from_str(&standards_output).expect("standards check run should parse");
+
+    let list_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "check",
+            "list",
+            root.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("check list should succeed");
+    let list: serde_json::Value =
+        serde_json::from_str(&list_output).expect("check list should parse");
+
+    assert_eq!(list["contract"], "check_run_list_v1");
+    assert_eq!(list["check_run_count"], 2);
+    assert_eq!(list["latest_check_run_id"], standards["check_run_id"]);
+    assert_eq!(list["latest_profile_id"], "standards");
+    let latest_profiles = list["profile_latest_check_runs"].as_array().unwrap();
+    assert!(latest_profiles.iter().any(|entry| {
+        entry["profile_id"] == "native-combined"
+            && entry["check_run_id"] == combined["check_run_id"]
+            && entry["finding_count"].as_u64().is_some()
+    }));
+    assert!(latest_profiles.iter().any(|entry| {
+        entry["profile_id"] == "standards"
+            && entry["check_run_id"] == standards["check_run_id"]
+            && entry["finding_count"].as_u64().is_some()
+    }));
+    assert!(list["check_runs"].as_array().unwrap().iter().all(|entry| {
+        entry["latest_for_profile"] == true
+            && entry["coverage_count"].as_u64().is_some()
+            && entry["proposal_refs"].as_array().is_some()
+    }));
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
 fn check_show_enriches_persisted_record_with_current_repair_proposal_links() {
     let root = unique_project_root("datum-eda-cli-check-show-repair-links");
     create_native_project(&root, Some("Check Show Repair Links Demo".to_string()))

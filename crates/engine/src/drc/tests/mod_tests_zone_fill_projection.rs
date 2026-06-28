@@ -4,7 +4,9 @@ use super::empty_board;
 use crate::board::{Net, PadShape, PlacedPackage, PlacedPad, Zone};
 use crate::drc::{RuleType, run_with_zone_fills};
 use crate::ir::geometry::{Point, Polygon};
-use crate::substrate::{ModelRevision, ObjectRevision, ZoneFill, ZoneFillState};
+use crate::substrate::{
+    ModelRevision, ObjectRevision, ZONE_FILL_SCHEMA_VERSION, ZoneFill, ZoneFillState,
+};
 use uuid::Uuid;
 
 #[test]
@@ -85,6 +87,7 @@ fn drc_connectivity_requires_filled_zone_evidence() {
     fills.insert(
         zone,
         ZoneFill {
+            schema_version: ZONE_FILL_SCHEMA_VERSION,
             zone_id: zone,
             state: ZoneFillState::Filled,
             source_zone_revision: ObjectRevision(0),
@@ -182,6 +185,7 @@ fn fill_with_state(board: &crate::board::Board, zone: Uuid, state: ZoneFillState
         Vec::new()
     };
     ZoneFill {
+        schema_version: ZONE_FILL_SCHEMA_VERSION,
         zone_id: zone,
         state,
         source_zone_revision: ObjectRevision(0),

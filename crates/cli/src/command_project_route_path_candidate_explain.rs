@@ -4,7 +4,7 @@ use anyhow::{Result, anyhow};
 use eda_engine::board::{RoutePathCandidateExplainKind, RoutePathCandidateExplainReport};
 use uuid::Uuid;
 
-use super::super::{build_native_project_board, load_native_project};
+use super::super::{build_native_project_board, load_native_project_with_resolved_board};
 
 pub(crate) fn query_native_project_route_path_candidate_explain(
     root: &Path,
@@ -12,7 +12,7 @@ pub(crate) fn query_native_project_route_path_candidate_explain(
     from_anchor_pad_uuid: Uuid,
     to_anchor_pad_uuid: Uuid,
 ) -> Result<RoutePathCandidateExplainReport> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let board = build_native_project_board(&project)?;
     board
         .route_path_candidate_explain(net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid)

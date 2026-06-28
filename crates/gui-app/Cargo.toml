@@ -23,3 +23,7 @@ serde.workspace = true
 serde_json.workspace = true
 winit.workspace = true
 wgpu.workspace = true
+
+[dev-dependencies]
+eda-engine = { path = "../engine" }
+uuid.workspace = true

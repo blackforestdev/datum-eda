@@ -5,12 +5,16 @@ use std::path::{Path, PathBuf};
 use uuid::Uuid;
 
 use super::board_journal_ops::{apply_board_operation, inverse_board_operation};
+use super::forward_annotation_review_journal_ops::reconstruct_forward_annotation_review_value;
+use super::journal_io::{recover_torn_journal_tail, sync_directory};
 use super::journal_operation_hooks::{
     apply_non_core_shard_operation, inverse_non_core_operation, stage_non_core_operation,
 };
+use super::pool_journal_ops::reconstruct_pool_shard_value;
 use super::project_manifest_journal_ops::{
     apply_project_manifest_operation, inverse_project_manifest_operation,
 };
+use super::proposal_journal_ops::reconstruct_proposal_metadata_value;
 use super::rules_journal_ops::{apply_rules_operation, inverse_rules_operation};
 use super::schematic_definition_journal_ops::maybe_stage_schematic_definition_operation;
 use super::schematic_root_journal_ops::{
@@ -19,10 +23,14 @@ use super::schematic_root_journal_ops::{
 use super::schematic_sheet_journal_ops::{
     apply_schematic_sheet_operation, inverse_schematic_sheet_operation,
 };
+use super::source_shard::{
+    validate_source_shard_ownership_path, validate_source_shard_schema_version,
+};
+use super::source_shard_ref_builders::source_shard_ref_for_staged_write;
 use super::{
     DesignModel, EngineError, JOURNAL_RELATIVE_PATH, JournalCursor, Operation, OperationBatch,
-    ResolveDiagnostic, SourceShardDirtyState, SourceShardKind, SourceShardRef, TransactionRecord,
-    read_json_value, sha256_hex, source_shard_authority_for_kind,
+    ResolveDiagnostic, SourceShardKind, SourceShardRef, TransactionRecord, read_json_value,
+    sha256_hex,
 };
 use crate::ir::serialization::to_json_deterministic;
 
@@ -32,7 +40,14 @@ pub(super) struct StagedShardWrite {
     pub(super) kind: SourceShardKind,
     pub(super) relative_path: String,
     pub(super) content_hash: String,
+    pub(super) schema_version: Option<u64>,
     pub(super) delete: bool,
+}
+
+fn shard_schema_version(value: &serde_json::Value) -> Option<u64> {
+    value
+        .get("schema_version")
+        .and_then(serde_json::Value::as_u64)
 }
 
 pub(super) fn stage_operation_shard_writes(
@@ -155,7 +170,7 @@ pub(super) fn stage_operation_shard_writes(
     for operation in &batch.operations {
         maybe_stage_schematic_sheet_operation(project_root, batch, operation, &mut staged)?;
         maybe_stage_schematic_definition_operation(project_root, batch, operation, &mut staged)?;
-        stage_non_core_operation(project_root, batch, operation, &mut staged)?;
+        stage_non_core_operation(project_root, model, batch, operation, &mut staged)?;
     }
 
     Ok(staged)
@@ -190,6 +205,7 @@ fn maybe_stage_schematic_sheet_operation(
                 kind: SourceShardKind::SchematicSheet,
                 relative_path,
                 content_hash: String::new(),
+                schema_version: None,
                 delete: true,
             });
         }
@@ -204,6 +220,9 @@ fn stage_shard_write(
     shard: &SourceShardRef,
     value: &serde_json::Value,
 ) -> Result<StagedShardWrite, EngineError> {
+    validate_source_shard_ownership_path(&shard.kind, &shard.relative_path)?;
+    let schema_version = shard_schema_version(value);
+    validate_source_shard_schema_version(&shard.kind, &shard.relative_path, schema_version)?;
     let stage_path = project_root
         .join(".datum/stage")
         .join(batch.batch_id.to_string())
@@ -225,6 +244,7 @@ fn stage_shard_write(
         kind: shard.kind.clone(),
         relative_path: shard.relative_path.clone(),
         content_hash: sha256_hex(&bytes),
+        schema_version,
         delete: false,
     })
 }
@@ -236,6 +256,9 @@ pub(super) fn stage_new_shard_write(
     relative_path: &str,
     value: &serde_json::Value,
 ) -> Result<StagedShardWrite, EngineError> {
+    validate_source_shard_ownership_path(&kind, relative_path)?;
+    let schema_version = shard_schema_version(value);
+    validate_source_shard_schema_version(&kind, relative_path, schema_version)?;
     let stage_path = project_root
         .join(".datum/stage")
         .join(batch.batch_id.to_string())
@@ -256,6 +279,7 @@ pub(super) fn stage_new_shard_write(
         kind,
         relative_path: relative_path.to_string(),
         content_hash: sha256_hex(&bytes),
+        schema_version,
         delete: false,
     })
 }
@@ -290,33 +314,29 @@ pub(super) fn promote_staged_shard_writes(
 pub(super) fn update_staged_source_hashes(
     shards: &mut Vec<SourceShardRef>,
     writes: &[StagedShardWrite],
-) {
+) -> Result<(), EngineError> {
     for write in writes {
         if write.delete {
             shards.retain(|shard| shard.relative_path != write.relative_path);
             continue;
         }
+        let staged_ref = source_shard_ref_for_staged_write(
+            write.kind.clone(),
+            write.destination.clone(),
+            write.relative_path.clone(),
+            write.schema_version,
+            write.content_hash.clone(),
+        )?;
         if let Some(shard) = shards
             .iter_mut()
             .find(|shard| shard.path == write.destination)
         {
-            shard.content_hash = write.content_hash.clone();
+            *shard = staged_ref;
         } else {
-            shards.push(SourceShardRef {
-                shard_id: Uuid::new_v5(
-                    &Uuid::NAMESPACE_URL,
-                    format!("datum-eda:source-shard:{}", write.relative_path).as_bytes(),
-                ),
-                kind: write.kind.clone(),
-                path: write.destination.clone(),
-                relative_path: write.relative_path.clone(),
-                authority: source_shard_authority_for_kind(&write.kind),
-                dirty_state: SourceShardDirtyState::Clean,
-                schema_version: None,
-                content_hash: write.content_hash.clone(),
-            });
+            shards.push(staged_ref);
         }
     }
+    Ok(())
 }
 
 pub(super) fn sort_source_shards(shards: &mut [SourceShardRef]) {
@@ -457,11 +477,31 @@ pub(super) fn materialized_shard_value(
 ) -> Result<serde_json::Value, EngineError> {
     let mut value = match read_json_value(&shard.path) {
         Ok(value) => value,
-        Err(EngineError::Io(error))
-            if error.kind() == std::io::ErrorKind::NotFound
-                && shard.kind == SourceShardKind::SchematicSheet =>
+        Err(_)
+            if matches!(
+                shard.kind,
+                SourceShardKind::SchematicSheet
+                    | SourceShardKind::SchematicDefinition
+                    | SourceShardKind::Pool
+                    | SourceShardKind::ForwardAnnotationReview
+                    | SourceShardKind::ProposalMetadata
+            ) =>
         {
-            reconstruct_schematic_sheet_value(&shard.relative_path, &model.journal)?
+            match shard.kind {
+                SourceShardKind::Pool => {
+                    reconstruct_pool_shard_value(&shard.relative_path, &model.journal)?
+                }
+                SourceShardKind::ForwardAnnotationReview => {
+                    reconstruct_forward_annotation_review_value(
+                        &shard.relative_path,
+                        &model.journal,
+                    )?
+                }
+                SourceShardKind::ProposalMetadata => {
+                    reconstruct_proposal_metadata_value(&shard.relative_path, &model.journal)?
+                }
+                _ => reconstruct_schematic_object_value(&shard.relative_path, &model.journal)?,
+            }
         }
         Err(error) => return Err(error),
     };
@@ -472,7 +512,7 @@ pub(super) fn materialized_shard_value(
     Ok(value)
 }
 
-fn reconstruct_schematic_sheet_value(
+fn reconstruct_schematic_object_value(
     relative_path: &str,
     journal: &[TransactionRecord],
 ) -> Result<serde_json::Value, EngineError> {
@@ -493,13 +533,26 @@ fn reconstruct_schematic_sheet_value(
                 } if format!("schematic/{operation_path}") == relative_path => {
                     value = None;
                 }
+                Operation::CreateSchematicDefinition {
+                    relative_path: operation_path,
+                    definition,
+                    ..
+                } if format!("schematic/{operation_path}") == relative_path => {
+                    value = Some(definition.clone());
+                }
+                Operation::DeleteSchematicDefinition {
+                    relative_path: operation_path,
+                    ..
+                } if format!("schematic/{operation_path}") == relative_path => {
+                    value = None;
+                }
                 _ => {}
             }
         }
     }
     value.ok_or_else(|| {
         EngineError::Validation(format!(
-            "missing schematic sheet shard {relative_path} has no journal create record"
+            "missing schematic object shard {relative_path} has no journal create record"
         ))
     })
 }
@@ -747,42 +800,5 @@ pub(super) fn append_transaction_journal(
     if let Some(parent) = path.parent() {
         sync_directory(parent)?;
     }
-    Ok(())
-}
-
-fn recover_torn_journal_tail(path: &Path) -> Result<String, EngineError> {
-    let bytes = std::fs::read(path)?;
-    let text = String::from_utf8(bytes).map_err(|error| {
-        EngineError::Operation(format!(
-            "journal append refused: journal is not UTF-8: {error}"
-        ))
-    })?;
-    let Some(last_newline) = text.rfind('\n') else {
-        if text.is_empty() {
-            return Ok(text);
-        }
-        truncate_journal_to(path, 0)?;
-        return Ok(String::new());
-    };
-    if last_newline + 1 == text.len() {
-        return Ok(text);
-    }
-    let repaired = text[..=last_newline].to_string();
-    truncate_journal_to(path, repaired.len() as u64)?;
-    Ok(repaired)
-}
-
-fn truncate_journal_to(path: &Path, len: u64) -> Result<(), EngineError> {
-    let file = std::fs::OpenOptions::new().write(true).open(path)?;
-    file.set_len(len)?;
-    file.sync_all()?;
-    if let Some(parent) = path.parent() {
-        sync_directory(parent)?;
-    }
-    Ok(())
-}
-
-fn sync_directory(path: &Path) -> Result<(), EngineError> {
-    std::fs::File::open(path)?.sync_all()?;
     Ok(())
 }

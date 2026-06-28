@@ -68,25 +68,16 @@ LEGACY_PROPOSAL_SIDECAR_FILES = {
     },
 }
 
-LEGACY_IMPORT_MAP_SIDECAR_FILES = {
-    Path("crates/engine/src/substrate/import_map.rs"): {
-        "writes": 1,
-        "required": [
-            "pub(super) fn write_legacy_import_map_sidecar(",
-            "Production import-map creation must use `Operation::CreateImportMapShard`",
-        ],
-        "forbidden": [
-            "pub fn persist_import_map_shard(",
-            "pub fn write_legacy_import_map_sidecar(",
-        ],
-    },
-}
-
 SUBSTRATE_PUBLIC_EXPORT_FILES = {
     Path("crates/engine/src/substrate/mod.rs"): {
         "forbidden": [
             "write_legacy_import_map_sidecar",
             "write_legacy_proposal_sidecar",
+            "persist_artifact_metadata",
+            "persist_output_job_run",
+            "persist_artifact_run",
+            "persist_check_run",
+            "persist_zone_fill",
         ],
     },
 }
@@ -97,23 +88,9 @@ FORWARD_ANNOTATION_REVIEW_STATE_FILES = [
 
 GENERATED_EVIDENCE_FILES = {
     Path("crates/cli/src/command_project_native_inspect.rs"): [
-        "persist_check_run(",
-    ],
-    Path("crates/cli/src/command_project_gerber_plan.rs"): [
-        "persist_artifact_metadata(",
-        "persist_output_job_run(",
-    ],
-    Path("crates/cli/src/command_project_artifacts.rs"): [
-        "persist_artifact_metadata(",
-    ],
-    Path("crates/cli/src/command_project_artifact_runs.rs"): [
-        "persist_artifact_run(",
-    ],
-    Path("crates/cli/src/command_project_artifact_output_runs.rs"): [
-        "persist_output_job_run(",
-    ],
-    Path("crates/cli/src/command_project_output_jobs.rs"): [
-        "persist_output_job_run(",
+        "commit_check_run_evidence(",
+        "Operation::SetCheckRun",
+        ".commit_journaled(",
     ],
 }
 
@@ -130,31 +107,35 @@ ENGINE_GENERATED_EVIDENCE_FILES = {
     Path("crates/engine/src/substrate/zone_fill.rs"): {
         "writes": 0,
         "required": [
-            "pub fn persist_zone_fill(",
+            "#[allow(dead_code)]",
+            "pub(super) fn persist_zone_fill(",
             'persist_generated_evidence(project_root, ".datum/zone_fills", &fill.zone_id, fill)',
         ],
     },
     Path("crates/engine/src/substrate/check_run.rs"): {
         "writes": 0,
         "required": [
-            "pub fn persist_check_run(",
+            "#[allow(dead_code)]",
+            "pub(super) fn persist_check_run(",
             'persist_generated_evidence(project_root, ".datum/check_runs", &run.check_run_id, run)',
         ],
     },
     Path("crates/engine/src/substrate/artifact_run.rs"): {
         "writes": 0,
         "required": [
-            "pub fn persist_artifact_run(",
+            "#[allow(dead_code)]",
+            "pub(super) fn persist_artifact_run(",
             'persist_generated_evidence(project_root, ".datum/artifact_runs", &run.run_id, run)',
         ],
     },
     Path("crates/engine/src/substrate/artifact.rs"): {
         "writes": 0,
         "required": [
-            "pub fn persist_artifact_metadata(",
+            "#[allow(dead_code)]",
+            "pub(super) fn persist_artifact_metadata(",
             'persist_generated_evidence(',
             '".datum/artifacts"',
-            "pub fn persist_output_job_run(",
+            "pub(super) fn persist_output_job_run(",
             'persist_generated_evidence(project_root, ".datum/output_job_runs", &run.run_id, run)',
         ],
     },
@@ -189,33 +170,27 @@ ENGINE_SOURCE_STAGE_FILES = {
         ],
     },
     Path("crates/engine/src/substrate/component_instance_journal_ops.rs"): {
-        "writes": 1,
+        "writes": 0,
         "required": [
             "pub(super) fn stage_component_instance_operation(",
-            "let stage_path = project_root",
-            'join(".datum/stage")',
-            "std::fs::write(&stage_path, &bytes)?;",
-            "kind: SourceShardKind::ComponentInstance,",
+            "SourceShardKind::ComponentInstance",
+            "stage_new_shard_write(",
         ],
     },
     Path("crates/engine/src/substrate/relationship_journal_ops.rs"): {
-        "writes": 1,
+        "writes": 0,
         "required": [
             "pub(super) fn stage_relationship_operation(",
-            "let stage_path = project_root",
-            'join(".datum/stage")',
-            "std::fs::write(&stage_path, &bytes)?;",
             "let relative_path = authored_relative_path(",
+            "stage_new_shard_write(",
         ],
     },
     Path("crates/engine/src/substrate/production_journal_ops.rs"): {
-        "writes": 1,
+        "writes": 0,
         "required": [
             "pub(super) fn stage_production_operation(",
-            "let stage_path = project_root",
-            'join(".datum/stage")',
-            "std::fs::write(&stage_path, &bytes)?;",
             "let relative_path = production_relative_path(",
+            "stage_new_shard_write(",
         ],
     },
     Path("crates/engine/src/substrate/zone_fill_journal_ops.rs"): {
@@ -319,10 +294,159 @@ FORBIDDEN_GENERATED_EVIDENCE_PATTERNS = [
     ".datum/output_job_runs",
     ".datum/zone_fills",
     ".datum/check_runs",
+    "persist_check_run(",
     "write_canonical_json(",
     "std::fs::write(",
     "to_json_deterministic(",
 ]
+
+FORBIDDEN_PRODUCTION_ZONE_FILL_PATTERNS = [
+    "persist_zone_fill(",
+]
+
+REQUIRED_PRODUCTION_ZONE_FILL_PATTERNS = [
+    "Operation::SetZoneFill",
+    "commit_journaled(",
+]
+
+ARTIFACT_ONLY_EVIDENCE_COMMAND_FILES = {
+    Path("crates/cli/src/command_project_artifacts.rs"): {
+        "required": [
+            "commit_unlinked_artifact_evidence(",
+            "commit_linked_artifact_output_job_evidence(",
+        ],
+        "forbidden": [
+            "persist_artifact_metadata(",
+            "persist_artifact_run(",
+            "persist_output_job_run(",
+        ],
+    },
+    Path("crates/cli/src/command_project_artifact_runs.rs"): {
+        "required": [
+            "pub(crate) fn generic_artifact_run(",
+        ],
+        "forbidden": [
+            "persist_artifact_run(",
+        ],
+    },
+    Path("crates/cli/src/command_project_artifact_drill.rs"): {
+        "required": [
+            "commit_unlinked_artifact_evidence(",
+            "commit_linked_artifact_output_job_evidence(",
+        ],
+        "forbidden": [
+            "persist_artifact_metadata(",
+            "persist_artifact_run(",
+            "persist_output_job_run(",
+        ],
+    },
+    Path("crates/cli/src/command_project_artifact_output_runs.rs"): {
+        "required": [
+            "pub(super) fn generic_output_job_run(",
+        ],
+        "forbidden": [
+            "persist_output_job_run(",
+        ],
+    },
+    Path("crates/cli/src/command_project_artifact_validation.rs"): {
+        "required": [
+            "commit_artifact_metadata_evidence(",
+        ],
+        "forbidden": [
+            "persist_artifact_metadata(",
+        ],
+    },
+    Path("crates/cli/src/command_project_artifact_evidence.rs"): {
+        "required": [
+            "Operation::SetArtifactMetadata",
+            "Operation::SetArtifactRun",
+            "Operation::SetOutputJobRun",
+            "commit_journaled(",
+        ],
+        "forbidden": [
+            "persist_artifact_metadata(",
+            "persist_artifact_run(",
+            "persist_output_job_run(",
+        ],
+    },
+}
+
+OUTPUT_JOB_RUN_EVIDENCE_COMMAND_FILES = {
+    Path("crates/cli/src/command_project_output_jobs.rs"): {
+        "required": [
+            "persist_output_job_run_journaled(",
+        ],
+        "forbidden": [
+            "persist_output_job_run(",
+        ],
+    },
+    Path("crates/cli/src/command_project_output_job_runs.rs"): {
+        "required": [
+            "Operation::SetOutputJobRun",
+            "commit_journaled(",
+            "pub(super) fn persist_output_job_run_journaled(",
+        ],
+        "forbidden": [
+            "persist_output_job_run(",
+        ],
+    },
+}
+
+GERBER_EVIDENCE_COMMAND_FILES = {
+    Path("crates/cli/src/command_project_gerber_plan.rs"): {
+        "required": [
+            "commit_gerber_set_evidence(",
+        ],
+        "forbidden": [
+            "persist_artifact_metadata(",
+            "persist_output_job_run(",
+        ],
+    },
+    Path("crates/cli/src/command_project_gerber_evidence.rs"): {
+        "required": [
+            "Operation::SetArtifactMetadata",
+            "Operation::SetOutputJobRun",
+            "commit_journaled(",
+            "fn commit_gerber_set_evidence(",
+        ],
+        "forbidden": [
+            "persist_artifact_metadata(",
+            "persist_output_job_run(",
+        ],
+    },
+}
+
+MANUFACTURING_EVIDENCE_COMMAND_FILES = {
+    Path("crates/cli/src/command_project_manufacturing.rs"): {
+        "required": [
+            "commit_manufacturing_set_evidence(",
+        ],
+        "forbidden": [
+            "persist_artifact_metadata(",
+            "persist_output_job_run(",
+        ],
+    },
+    Path("crates/cli/src/command_project_manufacturing_scope.rs"): {
+        "required": [
+            "commit_manufacturing_set_evidence(",
+        ],
+        "forbidden": [
+            "persist_artifact_metadata(",
+        ],
+    },
+    Path("crates/cli/src/command_project_manufacturing_evidence.rs"): {
+        "required": [
+            "Operation::SetArtifactMetadata",
+            "Operation::SetOutputJobRun",
+            "commit_journaled(",
+            "pub(crate) fn commit_manufacturing_set_evidence(",
+        ],
+        "forbidden": [
+            "persist_artifact_metadata(",
+            "persist_output_job_run(",
+        ],
+    },
+}
 
 FORBIDDEN_HELPER_PATTERNS = [
     "fn write_",
@@ -330,6 +454,7 @@ FORBIDDEN_HELPER_PATTERNS = [
 
 FORBIDDEN_FORWARD_ANNOTATION_STATE_PATTERNS = [
     "std::fs::write(",
+    "write_canonical_json(",
     "project.json",
 ]
 
@@ -346,7 +471,9 @@ REQUIRED_PROPOSAL_APPLY_PATTERNS = [
 REQUIRED_FORWARD_ANNOTATION_STATE_PATTERNS = [
     'const FORWARD_ANNOTATION_REVIEW_PATH: &str = ".datum/forward_annotation_review/review.json";',
     "pub(crate) fn write_forward_annotation_review(",
-    "write_canonical_json(",
+    "Operation::SetForwardAnnotationReview",
+    "Operation::DeleteForwardAnnotationReview",
+    "commit_journaled(",
 ]
 
 REQUIRED_PROJECT_BOOTSTRAP_PATTERNS = [
@@ -557,30 +684,6 @@ def main() -> int:
                 f"{relative}:{line}: forbidden legacy proposal sidecar API `{pattern}`: {text_line}"
             )
 
-    for relative, config in LEGACY_IMPORT_MAP_SIDECAR_FILES.items():
-        path = ROOT / relative
-        if not path.exists():
-            failures.append(f"missing legacy import-map sidecar file: {relative}")
-            continue
-        text = path.read_text()
-        require_patterns(
-            failures,
-            relative,
-            text,
-            list(config["required"]),
-            "legacy import-map sidecar boundary",
-        )
-        write_count = count_pattern(path, "std::fs::write(")
-        expected_writes = int(config["writes"])
-        if write_count != expected_writes:
-            failures.append(
-                f"{relative}: expected exactly {expected_writes} legacy import-map sidecar std::fs::write call, found {write_count}"
-            )
-        for line, pattern, text_line in matching_lines(path, list(config["forbidden"])):
-            failures.append(
-                f"{relative}:{line}: forbidden legacy import-map sidecar API `{pattern}`: {text_line}"
-            )
-
     for relative, config in SUBSTRATE_PUBLIC_EXPORT_FILES.items():
         path = ROOT / relative
         if not path.exists():
@@ -637,6 +740,109 @@ def main() -> int:
         for line, pattern, text in matching_lines(path, FORBIDDEN_GENERATED_EVIDENCE_PATTERNS):
             failures.append(
                 f"{relative}:{line}: forbidden generated-evidence writer `{pattern}`: {text}"
+            )
+
+    zone_fill_command = Path("crates/cli/src/command_project_board_routing_net.rs")
+    zone_fill_command_path = ROOT / zone_fill_command
+    if not zone_fill_command_path.exists():
+        failures.append(f"missing production ZoneFill command file: {zone_fill_command}")
+    else:
+        text = zone_fill_command_path.read_text()
+        require_patterns(
+            failures,
+            zone_fill_command,
+            text,
+            REQUIRED_PRODUCTION_ZONE_FILL_PATTERNS,
+            "journaled production ZoneFill command",
+        )
+
+    for path in sorted((ROOT / "crates/cli/src").glob("command_project*.rs")):
+        relative = path.relative_to(ROOT)
+        for line, pattern, text_line in matching_lines(
+            path, FORBIDDEN_PRODUCTION_ZONE_FILL_PATTERNS
+        ):
+            failures.append(
+                f"{relative}:{line}: forbidden direct ZoneFill evidence writer `{pattern}`: {text_line}"
+            )
+    for path in sorted((ROOT / "crates/cli/src").glob("main_tests*.rs")):
+        relative = path.relative_to(ROOT)
+        for line, pattern, text_line in matching_lines(
+            path, FORBIDDEN_PRODUCTION_ZONE_FILL_PATTERNS
+        ):
+            failures.append(
+                f"{relative}:{line}: forbidden CLI test ZoneFill evidence writer `{pattern}`: {text_line}"
+            )
+
+    for relative, config in ARTIFACT_ONLY_EVIDENCE_COMMAND_FILES.items():
+        path = ROOT / relative
+        if not path.exists():
+            failures.append(f"missing artifact-only evidence command file: {relative}")
+            continue
+        text = path.read_text()
+        require_patterns(
+            failures,
+            relative,
+            text,
+            list(config["required"]),
+            "journaled artifact-only generated evidence command",
+        )
+        for line, pattern, text_line in matching_lines(path, list(config["forbidden"])):
+            failures.append(
+                f"{relative}:{line}: forbidden direct artifact-only evidence writer `{pattern}`: {text_line}"
+            )
+
+    for relative, config in OUTPUT_JOB_RUN_EVIDENCE_COMMAND_FILES.items():
+        path = ROOT / relative
+        if not path.exists():
+            failures.append(f"missing output-job-run evidence command file: {relative}")
+            continue
+        text = path.read_text()
+        require_patterns(
+            failures,
+            relative,
+            text,
+            list(config["required"]),
+            "journaled output-job-run generated evidence command",
+        )
+        for line, pattern, text_line in matching_lines(path, list(config["forbidden"])):
+            failures.append(
+                f"{relative}:{line}: forbidden direct output-job-run evidence writer `{pattern}`: {text_line}"
+            )
+
+    for relative, config in GERBER_EVIDENCE_COMMAND_FILES.items():
+        path = ROOT / relative
+        if not path.exists():
+            failures.append(f"missing Gerber evidence command file: {relative}")
+            continue
+        text = path.read_text()
+        require_patterns(
+            failures,
+            relative,
+            text,
+            list(config["required"]),
+            "journaled Gerber generated evidence command",
+        )
+        for line, pattern, text_line in matching_lines(path, list(config["forbidden"])):
+            failures.append(
+                f"{relative}:{line}: forbidden direct Gerber evidence writer `{pattern}`: {text_line}"
+            )
+
+    for relative, config in MANUFACTURING_EVIDENCE_COMMAND_FILES.items():
+        path = ROOT / relative
+        if not path.exists():
+            failures.append(f"missing manufacturing evidence command file: {relative}")
+            continue
+        text = path.read_text()
+        require_patterns(
+            failures,
+            relative,
+            text,
+            list(config["required"]),
+            "journaled manufacturing generated evidence command",
+        )
+        for line, pattern, text_line in matching_lines(path, list(config["forbidden"])):
+            failures.append(
+                f"{relative}:{line}: forbidden direct manufacturing evidence writer `{pattern}`: {text_line}"
             )
 
     for relative, config in ENGINE_GENERATED_EVIDENCE_FILES.items():
@@ -772,14 +978,18 @@ def main() -> int:
         f"{len(FORWARD_ANNOTATION_REVIEW_FILES)} forward-annotation review files, "
         f"{len(PROPOSAL_APPLY_FILES)} proposal apply files, "
         f"{len(LEGACY_PROPOSAL_SIDECAR_FILES)} legacy proposal sidecar files, "
-        f"{len(LEGACY_IMPORT_MAP_SIDECAR_FILES)} legacy import-map sidecar files, "
-        f"{len(FORWARD_ANNOTATION_REVIEW_STATE_FILES)} forward-annotation review-state files, "
         f"{len(GENERATED_EVIDENCE_FILES)} generated-evidence files, "
+        "1 production ZoneFill command family, "
+        f"{len(ARTIFACT_ONLY_EVIDENCE_COMMAND_FILES)} artifact-only evidence command files, "
+        f"{len(OUTPUT_JOB_RUN_EVIDENCE_COMMAND_FILES)} output-job-run evidence command files, "
+        f"{len(GERBER_EVIDENCE_COMMAND_FILES)} Gerber evidence command files, "
+        f"{len(MANUFACTURING_EVIDENCE_COMMAND_FILES)} manufacturing evidence command files, "
         f"{len(ENGINE_GENERATED_EVIDENCE_FILES)} engine generated-evidence files, "
         f"{len(ENGINE_SOURCE_STAGE_FILES)} engine source-stage files, "
         f"{len(ENGINE_JOURNAL_PERSISTENCE_FILES)} engine journal-persistence files, "
         f"{len(GENERATED_EXPORT_FILES)} generated-export files, "
         f"{len(GUI_APP_BOARD_TEXT_FILES)} GUI board-text files, "
+        f"{len(FORWARD_ANNOTATION_REVIEW_STATE_FILES)} retired forward-annotation review-state paths, "
         f"{len(RETIRED_GUI_BOARD_TEXT_FILES)} retired GUI board-text paths)."
     )
     return 0

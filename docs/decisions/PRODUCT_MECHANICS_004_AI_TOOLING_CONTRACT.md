@@ -54,7 +54,9 @@ That contract has three hard boundaries:
   `Proposal` records unless an explicit trust policy allows direct commit.
 - All accepted mutations flow through `commit()`, append exactly one
   `TransactionRecord` to the journal, and receive provenance identifying the
-  actor, tool, session, acceptance path, model revision, and affected objects.
+  actor/source/reason, model revision, and affected objects; proposal-mediated
+  mutations also carry durable proposal lineage through the applied proposal's
+  transaction link.
 
 No CLI command, MCP method, assistant action, terminal process, importer,
 checker, router, or script may mutate source shards, projections, caches, or
@@ -273,7 +275,7 @@ point, then performs atomic rename plus directory fsync.
 - writes to derived projection caches as if they were source state
 - attempts to bypass proposal policy for AI/assistant/checker/import repair
   work
-- missing provenance or acceptance path
+- missing provenance, or missing proposal lineage when proposal policy applies
 
 ### DatumJournalTool
 
@@ -325,8 +327,9 @@ Agents and assistants may:
   `DatumCommitTool` or an explicitly configured safe automation policy, where
   every accepted AI mutation reduces to a typed `OperationBatch` and calls the
   single `commit()` primitive, appending exactly one journaled
-  `TransactionRecord` with provenance identifying actor, tool, session,
-  acceptance path, and model revision
+  `TransactionRecord` with provenance identifying actor/source/reason and
+  model revision; proposal acceptance is identified by the applied `Proposal`
+  record linking its `applied_transaction_id` to that transaction
 
 Agents and assistants must not:
 - mutate design state through private file writes or hidden GUI automation

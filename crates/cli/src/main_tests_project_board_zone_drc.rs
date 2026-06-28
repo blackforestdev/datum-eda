@@ -1,9 +1,5 @@
 use super::*;
-use eda_engine::ir::geometry::{Point, Polygon};
 use eda_engine::ir::serialization::to_json_deterministic;
-use eda_engine::substrate::{
-    ObjectRevision, ProjectResolver, ZoneFill, ZoneFillState, persist_zone_fill,
-};
 
 fn unique_project_root(label: &str) -> PathBuf {
     std::env::temp_dir().join(format!("{}-{}", label, Uuid::new_v4()))
@@ -132,39 +128,6 @@ fn seed_unfilled_zone_drc_fixture(root: &Path) -> String {
     zone_uuid.to_string()
 }
 
-fn filled_zone_island() -> Polygon {
-    Polygon {
-        vertices: vec![
-            Point { x: 0, y: 0 },
-            Point { x: 2000000, y: 0 },
-            Point {
-                x: 2000000,
-                y: 2000000,
-            },
-            Point { x: 0, y: 2000000 },
-        ],
-        closed: true,
-    }
-}
-
-fn persist_filled_zone_evidence(root: &Path, zone_id: Uuid) {
-    let model = ProjectResolver::new(root)
-        .resolve()
-        .expect("project should resolve before zone-fill evidence");
-    persist_zone_fill(
-        root,
-        &ZoneFill {
-            zone_id,
-            state: ZoneFillState::Filled,
-            source_zone_revision: ObjectRevision(0),
-            model_revision: model.model_revision,
-            islands: vec![filled_zone_island()],
-            provenance: Some("test filled zone evidence".to_string()),
-        },
-    )
-    .expect("filled zone evidence should persist");
-}
-
 #[test]
 fn project_query_drc_does_not_treat_unfilled_zone_boundary_as_copper() {
     let root = unique_project_root("datum-eda-cli-project-board-zone-drc-unfilled");
@@ -186,7 +149,7 @@ fn project_query_drc_does_not_treat_unfilled_zone_boundary_as_copper() {
     )
     .expect("drc query should succeed");
     let drc: serde_json::Value = serde_json::from_str(&drc_output).expect("drc JSON");
-    let no_copper_fingerprint = drc["violations"]
+    let no_copper_fingerprint = drc["raw_report"]["drc"]
         .as_array()
         .unwrap()
         .iter()
@@ -196,7 +159,7 @@ fn project_query_drc_does_not_treat_unfilled_zone_boundary_as_copper() {
         .to_string();
     assert!(no_copper_fingerprint.starts_with("sha256:"));
     assert!(
-        drc["violations"]
+        drc["raw_report"]["drc"]
             .as_array()
             .unwrap()
             .iter()
@@ -314,7 +277,18 @@ fn project_query_drc_treats_filled_zone_evidence_as_copper() {
     create_native_project(&root, Some("Filled Zone DRC Demo".to_string()))
         .expect("initial scaffold should succeed");
     let zone_uuid = Uuid::parse_str(&seed_unfilled_zone_drc_fixture(&root)).unwrap();
-    persist_filled_zone_evidence(&root, zone_uuid);
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "project",
+            "fill-zones",
+            root.to_str().unwrap(),
+            "--zone",
+            &zone_uuid.to_string(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("fill-zones should persist filled evidence through journal");
 
     let drc_output = execute(
         Cli::try_parse_from([
@@ -331,7 +305,7 @@ fn project_query_drc_treats_filled_zone_evidence_as_copper() {
     .expect("drc query should succeed");
     let drc: serde_json::Value = serde_json::from_str(&drc_output).expect("drc JSON");
     assert!(
-        !drc["violations"]
+        !drc["raw_report"]["drc"]
             .as_array()
             .unwrap()
             .iter()

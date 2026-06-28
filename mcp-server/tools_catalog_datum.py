@@ -249,6 +249,55 @@ def datum_alias(method: str, schema: dict[str, object]) -> dict[str, object]:
     return aliased
 
 
+def proposal_write_alias(
+    method: str,
+    schema: dict[str, object],
+    write_surface_class: str,
+    evidence: str,
+) -> dict[str, object]:
+    aliased = datum_alias(method, schema)
+    aliased["x_public_write_surface_class"] = write_surface_class
+    aliased["x_write_surface_evidence"] = evidence
+    return aliased
+
+
+def gerber_set_proposal_alias() -> dict[str, object]:
+    aliased = proposal_write_alias(
+        "create_output_job_proposal",
+        OUTPUT_JOB_TOOL_SCHEMAS["create_gerber_output_job"],
+        "proposal_metadata_write",
+        PROPOSAL_METADATA_EVIDENCE,
+    )
+    aliased["description"] = (
+        "Create a draft proposal for the deterministic Gerber-set OutputJob without "
+        "mutating the OutputJob shard."
+    )
+    aliased["x_dispatch_args"] = [
+        "path",
+        "prefix",
+        "include",
+        "name",
+        "manufacturing_plan",
+        "output_dir",
+        "proposal",
+        "rationale",
+        "variant",
+    ]
+    aliased["x_dispatch_defaults"] = {"include": "gerber-set"}
+    return aliased
+
+
+PROPOSAL_METADATA_EVIDENCE = (
+    "writes only persisted proposal metadata for later review; does not mutate design shards"
+)
+PROPOSAL_REVIEW_EVIDENCE = (
+    "updates persisted proposal review state without applying design mutations"
+)
+PROPOSAL_APPLY_EVIDENCE = (
+    "applies an accepted proposal through the generic proposal journal gateway"
+)
+
+
 DATUM_TOOL_SCHEMAS = {
     "datum.context.get": DATUM_CONTEXT_SCHEMA,
     "datum.context.refresh": DATUM_CONTEXT_SCHEMA,
@@ -344,6 +393,7 @@ DATUM_TOOL_SPECS = [
     {"name": "datum.check.repair_standards", **datum_alias("generate_standards_repair_proposals", CHECK_TOOL_SCHEMAS["generate_standards_repair_proposals"])},
     {"name": "datum.check.waive", **datum_alias("waive_finding", CHECK_TOOL_SCHEMAS["waive_finding"])},
     {"name": "datum.check.accept_deviation", **datum_alias("accept_deviation", CHECK_TOOL_SCHEMAS["accept_deviation"])},
+    {"name": "datum.check.explain_violation", **datum_alias("explain_violation", CHECK_TOOL_SCHEMAS["explain_violation"])},
     {"name": "datum.query.board_summary", **datum_alias("get_board_summary", DATUM_EMPTY_QUERY_SCHEMA)},
     {"name": "datum.query.components", **datum_alias("get_components", DATUM_EMPTY_QUERY_SCHEMA)},
     {"name": "datum.query.netlist", **datum_alias("get_netlist", DATUM_EMPTY_QUERY_SCHEMA)},
@@ -380,6 +430,7 @@ DATUM_TOOL_SPECS = [
     {"name": "datum.query.schematic_nets", **datum_alias("get_schematic_net_info", DATUM_EMPTY_QUERY_SCHEMA)},
     {"name": "datum.query.connectivity_diagnostics", **datum_alias("get_connectivity_diagnostics", DATUM_EMPTY_QUERY_SCHEMA)},
     {"name": "datum.query.design_rules", **datum_alias("get_design_rules", DATUM_EMPTY_QUERY_SCHEMA)},
+    {"name": "datum.query.source_shards", **datum_alias("get_source_shards", DATUM_PATH_QUERY_SCHEMA)},
     {"name": "datum.query.zone_fills", **datum_alias("get_zone_fills", CHECK_TOOL_SCHEMAS["get_zone_fills"])},
     {"name": "datum.query.component_instances", **datum_alias("get_component_instances", RELATIONSHIP_TOOL_SCHEMAS["get_component_instances"])},
     {"name": "datum.query.relationships", **datum_alias("get_relationships", RELATIONSHIP_TOOL_SCHEMAS["get_relationships"])},
@@ -525,28 +576,40 @@ DATUM_TOOL_SPECS = [
     {"name": "datum.schematic.set_symbol_reference", **datum_alias("set_symbol_reference", DATUM_SCHEMATIC_PRIMITIVE_SCHEMAS["datum.schematic.set_symbol_reference"])},
     {"name": "datum.schematic.set_symbol_value", **datum_alias("set_symbol_value", DATUM_SCHEMATIC_PRIMITIVE_SCHEMAS["datum.schematic.set_symbol_value"])},
     *[{"name": f"datum.schematic.{name}", **datum_alias(name, DATUM_SCHEMATIC_PRIMITIVE_SCHEMAS[f"datum.schematic.{name}"])} for name in DATUM_SCHEMATIC_SYMBOL_METADATA_METHODS],
-    {"name": "datum.proposal.create", **datum_alias("create_proposal", PROPOSAL_TOOL_SCHEMAS["create_proposal"])},
-    {"name": "datum.proposal.create_draw_wire", **datum_alias("create_draw_wire_proposal", PROPOSAL_TOOL_SCHEMAS["create_draw_wire_proposal"])},
-    {"name": "datum.proposal.create_place_label", **datum_alias("create_place_label_proposal", PROPOSAL_TOOL_SCHEMAS["create_place_label_proposal"])},
-    {"name": "datum.proposal.create_place_symbol", **datum_alias("create_place_symbol_proposal", PROPOSAL_TOOL_SCHEMAS["create_place_symbol_proposal"])},
-    {"name": "datum.proposal.create_panel_projection", **datum_alias("create_panel_projection_proposal", OUTPUT_JOB_TOOL_SCHEMAS["create_panel_projection_proposal"])},
-    {"name": "datum.proposal.update_panel_projection", **datum_alias("update_panel_projection_proposal", OUTPUT_JOB_TOOL_SCHEMAS["update_panel_projection_proposal"])},
-    {"name": "datum.proposal.delete_panel_projection", **datum_alias("delete_panel_projection_proposal", OUTPUT_JOB_TOOL_SCHEMAS["delete_panel_projection_proposal"])},
-    {"name": "datum.proposal.create_manufacturing_plan", **datum_alias("create_manufacturing_plan_proposal", OUTPUT_JOB_TOOL_SCHEMAS["create_manufacturing_plan_proposal"])},
-    {"name": "datum.proposal.update_manufacturing_plan", **datum_alias("update_manufacturing_plan_proposal", OUTPUT_JOB_TOOL_SCHEMAS["update_manufacturing_plan_proposal"])},
-    {"name": "datum.proposal.delete_manufacturing_plan", **datum_alias("delete_manufacturing_plan_proposal", OUTPUT_JOB_TOOL_SCHEMAS["delete_manufacturing_plan_proposal"])},
-    {"name": "datum.proposal.create_output_job", **datum_alias("create_output_job_proposal", OUTPUT_JOB_TOOL_SCHEMAS["create_output_job_proposal"])},
-    {"name": "datum.proposal.update_output_job", **datum_alias("update_output_job_proposal", OUTPUT_JOB_TOOL_SCHEMAS["update_output_job_proposal"])},
-    {"name": "datum.proposal.delete_output_job", **datum_alias("delete_output_job_proposal", OUTPUT_JOB_TOOL_SCHEMAS["delete_output_job_proposal"])},
+    {"name": "datum.proposal.create", **proposal_write_alias("create_proposal", PROPOSAL_TOOL_SCHEMAS["create_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.create_draw_wire", **proposal_write_alias("create_draw_wire_proposal", PROPOSAL_TOOL_SCHEMAS["create_draw_wire_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.create_place_label", **proposal_write_alias("create_place_label_proposal", PROPOSAL_TOOL_SCHEMAS["create_place_label_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.create_place_symbol", **proposal_write_alias("create_place_symbol_proposal", PROPOSAL_TOOL_SCHEMAS["create_place_symbol_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.create_board_component_replacement", **proposal_write_alias("create_board_component_replacement_proposal", PROPOSAL_TOOL_SCHEMAS["create_board_component_replacement_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.create_board_component_replacements", **proposal_write_alias("create_board_component_replacements_proposal", PROPOSAL_TOOL_SCHEMAS["create_board_component_replacements_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.create_board_component_replacement_plan", **proposal_write_alias("create_board_component_replacement_plan_proposal", PROPOSAL_TOOL_SCHEMAS["create_board_component_replacement_plan_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.create_pool_library_object", **proposal_write_alias("create_pool_library_object_proposal", PROPOSAL_TOOL_SCHEMAS["create_pool_library_object_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.create_pool_unit", **proposal_write_alias("create_pool_unit_proposal", PROPOSAL_TOOL_SCHEMAS["create_pool_unit_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.create_pool_symbol", **proposal_write_alias("create_pool_symbol_proposal", PROPOSAL_TOOL_SCHEMAS["create_pool_symbol_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.create_pool_entity", **proposal_write_alias("create_pool_entity_proposal", PROPOSAL_TOOL_SCHEMAS["create_pool_entity_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.create_pool_padstack", **proposal_write_alias("create_pool_padstack_proposal", PROPOSAL_TOOL_SCHEMAS["create_pool_padstack_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.create_pool_package", **proposal_write_alias("create_pool_package_proposal", PROPOSAL_TOOL_SCHEMAS["create_pool_package_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.set_pool_package_pad", **proposal_write_alias("set_pool_package_pad_proposal", PROPOSAL_TOOL_SCHEMAS["set_pool_package_pad_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.set_pool_package_courtyard_rect", **proposal_write_alias("set_pool_package_courtyard_rect_proposal", PROPOSAL_TOOL_SCHEMAS["set_pool_package_courtyard_rect_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.set_pool_package_courtyard_polygon", **proposal_write_alias("set_pool_package_courtyard_polygon_proposal", PROPOSAL_TOOL_SCHEMAS["set_pool_package_courtyard_polygon_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.create_panel_projection", **proposal_write_alias("create_panel_projection_proposal", OUTPUT_JOB_TOOL_SCHEMAS["create_panel_projection_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.update_panel_projection", **proposal_write_alias("update_panel_projection_proposal", OUTPUT_JOB_TOOL_SCHEMAS["update_panel_projection_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.delete_panel_projection", **proposal_write_alias("delete_panel_projection_proposal", OUTPUT_JOB_TOOL_SCHEMAS["delete_panel_projection_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.create_manufacturing_plan", **proposal_write_alias("create_manufacturing_plan_proposal", OUTPUT_JOB_TOOL_SCHEMAS["create_manufacturing_plan_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.update_manufacturing_plan", **proposal_write_alias("update_manufacturing_plan_proposal", OUTPUT_JOB_TOOL_SCHEMAS["update_manufacturing_plan_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.delete_manufacturing_plan", **proposal_write_alias("delete_manufacturing_plan_proposal", OUTPUT_JOB_TOOL_SCHEMAS["delete_manufacturing_plan_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.create_output_job", **proposal_write_alias("create_output_job_proposal", OUTPUT_JOB_TOOL_SCHEMAS["create_output_job_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.update_output_job", **proposal_write_alias("update_output_job_proposal", OUTPUT_JOB_TOOL_SCHEMAS["update_output_job_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.proposal.delete_output_job", **proposal_write_alias("delete_output_job_proposal", OUTPUT_JOB_TOOL_SCHEMAS["delete_output_job_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
     {"name": "datum.proposal.list", **datum_alias("get_proposals", PROPOSAL_TOOL_SCHEMAS["get_proposals"])},
     {"name": "datum.proposal.show", **datum_alias("show_proposal", PROPOSAL_TOOL_SCHEMAS["show_proposal"])},
     {"name": "datum.proposal.preview", **datum_alias("preview_proposal", PROPOSAL_TOOL_SCHEMAS["preview_proposal"])},
     {"name": "datum.proposal.validate", **datum_alias("validate_proposal", PROPOSAL_TOOL_SCHEMAS["validate_proposal"])},
-    {"name": "datum.proposal.review", **datum_alias("review_proposal", PROPOSAL_TOOL_SCHEMAS["review_proposal"])},
-    {"name": "datum.proposal.defer", **datum_alias("defer_proposal", PROPOSAL_TOOL_SCHEMAS["defer_proposal"])},
-    {"name": "datum.proposal.reject", **datum_alias("reject_proposal", PROPOSAL_TOOL_SCHEMAS["reject_proposal"])},
-    {"name": "datum.proposal.accept_apply", **datum_alias("accept_apply_proposal", PROPOSAL_TOOL_SCHEMAS["accept_apply_proposal"])},
-    {"name": "datum.proposal.apply", **datum_alias("apply_proposal", PROPOSAL_TOOL_SCHEMAS["apply_proposal"])},
+    {"name": "datum.proposal.review", **proposal_write_alias("review_proposal", PROPOSAL_TOOL_SCHEMAS["review_proposal"], "proposal_review_state_write", PROPOSAL_REVIEW_EVIDENCE)},
+    {"name": "datum.proposal.defer", **proposal_write_alias("defer_proposal", PROPOSAL_TOOL_SCHEMAS["defer_proposal"], "proposal_review_state_write", PROPOSAL_REVIEW_EVIDENCE)},
+    {"name": "datum.proposal.reject", **proposal_write_alias("reject_proposal", PROPOSAL_TOOL_SCHEMAS["reject_proposal"], "proposal_review_state_write", PROPOSAL_REVIEW_EVIDENCE)},
+    {"name": "datum.proposal.accept_apply", **proposal_write_alias("accept_apply_proposal", PROPOSAL_TOOL_SCHEMAS["accept_apply_proposal"], "proposal_gateway_apply", PROPOSAL_APPLY_EVIDENCE)},
+    {"name": "datum.proposal.apply", **proposal_write_alias("apply_proposal", PROPOSAL_TOOL_SCHEMAS["apply_proposal"], "proposal_gateway_apply", PROPOSAL_APPLY_EVIDENCE)},
     {"name": "datum.journal.list", **datum_alias("get_journal_list", JOURNAL_TOOL_SCHEMAS["get_journal_list"])},
     {"name": "datum.journal.show", **datum_alias("get_journal_transaction", JOURNAL_TOOL_SCHEMAS["get_journal_transaction"])},
     {"name": "datum.journal.undo", **datum_alias("journal_undo", JOURNAL_TOOL_SCHEMAS["journal_undo"])},
@@ -562,15 +625,15 @@ DATUM_TOOL_SPECS = [
     {"name": "datum.artifact.cancel_output_job_run", **datum_alias("cancel_output_job_run", OUTPUT_JOB_TOOL_SCHEMAS["cancel_output_job_run"])},
     {"name": "datum.artifact.export_manufacturing_set", **datum_alias("export_manufacturing_set", OUTPUT_JOB_TOOL_SCHEMAS["export_manufacturing_set"])},
     {"name": "datum.artifact.validate_manufacturing_set", **datum_alias("validate_manufacturing_set", OUTPUT_JOB_TOOL_SCHEMAS["validate_manufacturing_set"])},
-    {"name": "datum.manufacturing.create_panel_projection", **datum_alias("create_panel_projection", OUTPUT_JOB_TOOL_SCHEMAS["create_panel_projection"])},
-    {"name": "datum.manufacturing.update_panel_projection", **datum_alias("update_panel_projection", OUTPUT_JOB_TOOL_SCHEMAS["update_panel_projection"])},
-    {"name": "datum.manufacturing.delete_panel_projection", **datum_alias("delete_panel_projection", OUTPUT_JOB_TOOL_SCHEMAS["delete_panel_projection"])},
-    {"name": "datum.manufacturing.create_plan", **datum_alias("create_manufacturing_plan", OUTPUT_JOB_TOOL_SCHEMAS["create_manufacturing_plan"])},
-    {"name": "datum.manufacturing.update_plan", **datum_alias("update_manufacturing_plan", OUTPUT_JOB_TOOL_SCHEMAS["update_manufacturing_plan"])},
-    {"name": "datum.manufacturing.delete_plan", **datum_alias("delete_manufacturing_plan", OUTPUT_JOB_TOOL_SCHEMAS["delete_manufacturing_plan"])},
-    {"name": "datum.output_job.create_gerber_set", **datum_alias("create_gerber_output_job", OUTPUT_JOB_TOOL_SCHEMAS["create_gerber_output_job"])},
-    {"name": "datum.output_job.create", **datum_alias("create_output_job", OUTPUT_JOB_TOOL_SCHEMAS["create_output_job"])},
-    {"name": "datum.output_job.update", **datum_alias("update_output_job", OUTPUT_JOB_TOOL_SCHEMAS["update_output_job"])},
+    {"name": "datum.manufacturing.create_panel_projection", **proposal_write_alias("create_panel_projection_proposal", OUTPUT_JOB_TOOL_SCHEMAS["create_panel_projection_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.manufacturing.update_panel_projection", **proposal_write_alias("update_panel_projection_proposal", OUTPUT_JOB_TOOL_SCHEMAS["update_panel_projection_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.manufacturing.delete_panel_projection", **proposal_write_alias("delete_panel_projection_proposal", OUTPUT_JOB_TOOL_SCHEMAS["delete_panel_projection_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.manufacturing.create_plan", **proposal_write_alias("create_manufacturing_plan_proposal", OUTPUT_JOB_TOOL_SCHEMAS["create_manufacturing_plan_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.manufacturing.update_plan", **proposal_write_alias("update_manufacturing_plan_proposal", OUTPUT_JOB_TOOL_SCHEMAS["update_manufacturing_plan_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.manufacturing.delete_plan", **proposal_write_alias("delete_manufacturing_plan_proposal", OUTPUT_JOB_TOOL_SCHEMAS["delete_manufacturing_plan_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.output_job.create_gerber_set", **gerber_set_proposal_alias()},
+    {"name": "datum.output_job.create", **proposal_write_alias("create_output_job_proposal", OUTPUT_JOB_TOOL_SCHEMAS["create_output_job_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    {"name": "datum.output_job.update", **proposal_write_alias("update_output_job_proposal", OUTPUT_JOB_TOOL_SCHEMAS["update_output_job_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
     {"name": "datum.output_job.run", **datum_alias("run_output_job", OUTPUT_JOB_TOOL_SCHEMAS["run_output_job"])},
-    {"name": "datum.output_job.delete", **datum_alias("delete_output_job", OUTPUT_JOB_TOOL_SCHEMAS["delete_output_job"])},
+    {"name": "datum.output_job.delete", **proposal_write_alias("delete_output_job_proposal", OUTPUT_JOB_TOOL_SCHEMAS["delete_output_job_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
 ]

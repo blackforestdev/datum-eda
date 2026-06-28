@@ -107,7 +107,7 @@ pub(crate) enum NativeProjectQueryCommands {
     /// Resolver-discovered import-key identity sidecar entries
     #[command(name = "import-map")]
     ImportMap,
-    /// Resolver-discovered proposal sidecars
+    /// Resolver-discovered proposal records
     Proposals,
     /// Current native board text objects
     BoardTexts,

@@ -9,6 +9,7 @@ from server_runtime import JsonRpcResponse, StdioToolHost
 from test_support import FakeDaemonClient
 
 
+@unittest.skip("retired flat replacement write compatibility; use proposal/native parity tests")
 class TestDispatchCoreReplacements(unittest.TestCase):
     def test_tools_call_dispatches_set_package_with_part(self) -> None:
         daemon = FakeDaemonClient()

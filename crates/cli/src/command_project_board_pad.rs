@@ -9,7 +9,8 @@ use eda_engine::substrate::{
 use uuid::Uuid;
 
 use super::{
-    NativeProjectBoardPadMutationReportView, load_native_project,
+    NativeProjectBoardPadMutationReportView,
+    command_project_operation_guards::guarded_existing_object_operation,
     load_native_project_with_resolved_board, native_project_board_pad_report,
 };
 
@@ -35,7 +36,7 @@ pub(crate) fn set_native_project_board_pad_net(
     pad_uuid: Uuid,
     net_uuid: Option<Uuid>,
 ) -> Result<NativeProjectBoardPadMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     if let Some(net_uuid) = net_uuid
         && !project.board.nets.contains_key(&net_uuid.to_string())
     {
@@ -67,7 +68,7 @@ pub(crate) fn set_native_project_board_pad_net(
             pad: serde_json::to_value(&pad).expect("native board pad serialization must succeed"),
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_pad_report(
         if net_uuid.is_some() {
             "set_board_pad_net"
@@ -116,7 +117,7 @@ pub(crate) fn place_native_project_board_pad(
     height_nm: Option<i64>,
     net_uuid: Option<Uuid>,
 ) -> Result<NativeProjectBoardPadMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     if let Some(net_uuid) = net_uuid
         && !project.board.nets.contains_key(&net_uuid.to_string())
     {
@@ -158,7 +159,7 @@ pub(crate) fn place_native_project_board_pad(
             pad: serde_json::to_value(&pad).expect("native board pad serialization must succeed"),
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_pad_report(
         "place_board_pad",
         &project,
@@ -176,7 +177,7 @@ pub(crate) fn edit_native_project_board_pad(
     width_nm: Option<i64>,
     height_nm: Option<i64>,
 ) -> Result<NativeProjectBoardPadMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let key = pad_uuid.to_string();
     let entry = project
         .board
@@ -217,7 +218,7 @@ pub(crate) fn edit_native_project_board_pad(
             pad: serde_json::to_value(&pad).expect("native board pad serialization must succeed"),
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_pad_report(
         "edit_board_pad",
         &project,
@@ -229,7 +230,7 @@ pub(crate) fn delete_native_project_board_pad(
     root: &Path,
     pad_uuid: Uuid,
 ) -> Result<NativeProjectBoardPadMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let value = project
         .board
         .pads
@@ -270,7 +271,7 @@ fn commit_board_pad_operation(root: &Path, reason: &str, operation: Operation) -
                 source: CommitSource::Cli,
                 reason: reason.to_string(),
             },
-            operations: vec![operation],
+            operations: guarded_existing_object_operation(&model, operation)?,
         },
     )?;
     Ok(())

@@ -1,11 +1,11 @@
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
-use eda_engine::board::{ImpedanceSpec, Keepout, Net, NetClass, PlacedPad, Track, Via, Zone};
+use eda_engine::board::{ImpedanceSpec, Net, Track, Via, Zone};
 use eda_engine::ir::geometry::{Point, Polygon};
 use eda_engine::substrate::{
     CommitProvenance, CommitSource, ModelRevision, Operation, OperationBatch, ProjectResolver,
-    ZoneFill, ZoneFillCopperContext, compute_bounded_zone_fill,
+    ZONE_FILL_SCHEMA_VERSION, ZoneFill, compute_bounded_zone_fill,
 };
 use serde::Serialize;
 use uuid::Uuid;
@@ -13,10 +13,15 @@ use uuid::Uuid;
 use super::{
     NativeProjectBoardNetMutationReportView, NativeProjectBoardTrackMutationReportView,
     NativeProjectBoardViaMutationReportView, NativeProjectBoardZoneMutationReportView,
-    load_native_project, load_native_project_with_resolved_board, native_project_board_net_report,
+    command_project_operation_guards::guarded_existing_object_operation,
+    load_native_project_with_resolved_board, native_project_board_net_report,
     native_project_board_track_report, native_project_board_via_report,
     native_project_board_zone_report,
 };
+
+#[path = "command_project_zone_fill_context.rs"]
+mod command_project_zone_fill_context;
+pub(crate) use command_project_zone_fill_context::zone_fill_copper_context;
 
 #[derive(Debug, Serialize)]
 pub(crate) struct NativeProjectZoneFillsQueryView {
@@ -128,6 +133,7 @@ pub(crate) fn fill_native_project_zones(
         let fill_context = zone_fill_copper_context(&project.board)?;
         let (state, islands, provenance) = compute_bounded_zone_fill(&zone, &fill_context);
         let fill = ZoneFill {
+            schema_version: ZONE_FILL_SCHEMA_VERSION,
             zone_id: zone.uuid,
             state,
             source_zone_revision,
@@ -176,7 +182,7 @@ pub(crate) fn fill_native_project_zones(
     })
 }
 
-fn previous_persisted_zone_fill_value(
+pub(crate) fn previous_persisted_zone_fill_value(
     model: &eda_engine::substrate::DesignModel,
     zone_id: Uuid,
 ) -> Option<serde_json::Value> {
@@ -216,62 +222,6 @@ fn previous_journaled_zone_fill_value(
         }
     }
     previous
-}
-
-fn zone_fill_copper_context(board: &super::NativeBoardRoot) -> Result<ZoneFillCopperContext> {
-    let nets = board
-        .nets
-        .values()
-        .cloned()
-        .map(|value| serde_json::from_value(value).context("failed to parse board net"))
-        .collect::<Result<Vec<Net>>>()?;
-    let net_classes = board
-        .net_classes
-        .values()
-        .cloned()
-        .map(|value| serde_json::from_value(value).context("failed to parse board net class"))
-        .collect::<Result<Vec<NetClass>>>()?;
-    let net_class_clearance = net_classes
-        .into_iter()
-        .map(|class| (class.uuid, class.clearance))
-        .collect::<std::collections::BTreeMap<_, _>>();
-    let net_clearance_nm = nets
-        .into_iter()
-        .filter_map(|net| {
-            net_class_clearance
-                .get(&net.class)
-                .copied()
-                .map(|clearance| (net.uuid, clearance))
-        })
-        .collect();
-    Ok(ZoneFillCopperContext {
-        pads: board
-            .pads
-            .values()
-            .cloned()
-            .map(|value| serde_json::from_value(value).context("failed to parse board pad"))
-            .collect::<Result<Vec<PlacedPad>>>()?,
-        tracks: board
-            .tracks
-            .values()
-            .cloned()
-            .map(|value| serde_json::from_value(value).context("failed to parse board track"))
-            .collect::<Result<Vec<Track>>>()?,
-        vias: board
-            .vias
-            .values()
-            .cloned()
-            .map(|value| serde_json::from_value(value).context("failed to parse board via"))
-            .collect::<Result<Vec<Via>>>()?,
-        keepouts: board
-            .keepouts
-            .iter()
-            .cloned()
-            .map(|value| serde_json::from_value(value).context("failed to parse board keepout"))
-            .collect::<Result<Vec<Keepout>>>()?,
-        net_clearance_nm,
-        has_unresolved_component_pads: board.component_pads.values().any(|pads| !pads.is_empty()),
-    })
 }
 
 pub(crate) fn query_native_project_board_nets(root: &Path) -> Result<Vec<Net>> {
@@ -326,7 +276,7 @@ pub(crate) fn place_native_project_board_net(
             net: serde_json::to_value(&net).expect("native board net serialization must succeed"),
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_net_report(
         "place_board_net",
         &project,
@@ -342,7 +292,7 @@ pub(crate) fn place_native_project_board_track(
     width_nm: i64,
     layer: i32,
 ) -> Result<NativeProjectBoardTrackMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     if !project.board.nets.contains_key(&net_uuid.to_string()) {
         bail!("board net not found in native project: {net_uuid}");
     }
@@ -364,7 +314,7 @@ pub(crate) fn place_native_project_board_track(
                 .expect("native board track serialization must succeed"),
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_track_report(
         "draw_board_track",
         &project,
@@ -381,7 +331,7 @@ pub(crate) fn place_native_project_board_via(
     from_layer: i32,
     to_layer: i32,
 ) -> Result<NativeProjectBoardViaMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     if !project.board.nets.contains_key(&net_uuid.to_string()) {
         bail!("board net not found in native project: {net_uuid}");
     }
@@ -403,7 +353,7 @@ pub(crate) fn place_native_project_board_via(
             via: serde_json::to_value(&via).expect("native board via serialization must succeed"),
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_via_report(
         "place_board_via",
         &project,
@@ -463,7 +413,7 @@ pub(crate) fn edit_native_project_board_track(
                 .expect("native board track serialization must succeed"),
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_track_report(
         "edit_board_track",
         &project,
@@ -526,7 +476,7 @@ pub(crate) fn edit_native_project_board_via(
             via: serde_json::to_value(&via).expect("native board via serialization must succeed"),
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_via_report(
         "edit_board_via",
         &project,
@@ -544,7 +494,7 @@ pub(crate) fn place_native_project_board_zone(
     thermal_gap_nm: i64,
     thermal_spoke_width_nm: i64,
 ) -> Result<NativeProjectBoardZoneMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     if !project.board.nets.contains_key(&net_uuid.to_string()) {
         bail!("board net not found in native project: {net_uuid}");
     }
@@ -568,7 +518,7 @@ pub(crate) fn place_native_project_board_zone(
                 .expect("native board zone serialization must succeed"),
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_zone_report(
         "place_board_zone",
         &project,
@@ -597,7 +547,7 @@ pub(crate) fn edit_native_project_board_zone(
     {
         bail!("edit-board-zone requires at least one replacement field");
     }
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let value = project
         .board
         .zones
@@ -643,7 +593,7 @@ pub(crate) fn edit_native_project_board_zone(
                 .expect("native board zone serialization must succeed"),
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_zone_report(
         "edit_board_zone",
         &project,
@@ -661,7 +611,7 @@ pub(crate) fn edit_native_project_board_net(
     controlled_dielectric_layer: Option<i32>,
     clear_controlled_impedance: bool,
 ) -> Result<NativeProjectBoardNetMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let key = net_uuid.to_string();
     let entry = project
         .board
@@ -710,7 +660,7 @@ pub(crate) fn edit_native_project_board_net(
             net: serde_json::to_value(&net).expect("native board net serialization must succeed"),
         },
     )?;
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_net_report(
         "edit_board_net",
         &project,
@@ -789,7 +739,7 @@ pub(crate) fn delete_native_project_board_track(
     root: &Path,
     track_uuid: Uuid,
 ) -> Result<NativeProjectBoardTrackMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let value = project
         .board
         .tracks
@@ -830,7 +780,7 @@ fn commit_board_routing_operation(root: &Path, reason: &str, operation: Operatio
                 source: CommitSource::Cli,
                 reason: reason.to_string(),
             },
-            operations: vec![operation],
+            operations: guarded_existing_object_operation(&model, operation)?,
         },
     )?;
     Ok(())
@@ -840,7 +790,7 @@ pub(crate) fn delete_native_project_board_via(
     root: &Path,
     via_uuid: Uuid,
 ) -> Result<NativeProjectBoardViaMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let value = project
         .board
         .vias
@@ -872,7 +822,7 @@ pub(crate) fn delete_native_project_board_zone(
     root: &Path,
     zone_uuid: Uuid,
 ) -> Result<NativeProjectBoardZoneMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let value = project
         .board
         .zones
@@ -904,7 +854,7 @@ pub(crate) fn delete_native_project_board_net(
     root: &Path,
     net_uuid: Uuid,
 ) -> Result<NativeProjectBoardNetMutationReportView> {
-    let project = load_native_project(root)?;
+    let project = load_native_project_with_resolved_board(root)?;
     let value = project
         .board
         .nets
@@ -925,9 +875,5 @@ pub(crate) fn delete_native_project_board_net(
             net: value,
         },
     )?;
-    Ok(native_project_board_net_report(
-        "delete_board_net",
-        &project,
-        net,
-    ))
+    Ok(native_project_board_net_report("delete_board_net", &project, net))
 }

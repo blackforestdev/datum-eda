@@ -2,17 +2,23 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
 use anyhow::{Context, Result};
-use eda_engine::board::{Net, NetClass, PlacedPad, Track, Via};
+use eda_engine::board::{Net, NetClass, PlacedPad, Track, Via, Zone};
 use eda_engine::substrate::{
     CommitProvenance, CommitSource, DesignModel, Operation, OperationBatch, ProjectResolver,
-    ProposalCreateRequest, ProposalSource, create_draft_proposal_from_batch,
-    validate_proposal_apply,
+    ProposalCreateRequest, ProposalSource, ZONE_FILL_SCHEMA_VERSION, ZoneFill, ZoneFillState,
+    compute_bounded_zone_fill, create_draft_proposal_from_batch, validate_proposal_apply,
 };
 use serde::Serialize;
 use uuid::Uuid;
 
+use super::command_project_board_routing_net::{
+    previous_persisted_zone_fill_value, zone_fill_copper_context,
+};
 use super::command_project_native_inspect::NativeProjectCheckFindingView;
-use super::{load_native_project_with_resolved_board, query_native_project_check_run};
+use super::command_project_standards_clearance_repairs::append_copper_clearance_repair_proposals;
+use super::command_project_standards_peer_aperture::apply_unique_peer_process_aperture_policy;
+use super::command_project_standards_silk_repairs::append_silk_clearance_repair_proposals;
+use super::{load_native_project_with_resolved_board, run_native_project_check_with_profile};
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectStandardsRepairProposalView {
@@ -21,11 +27,15 @@ pub(crate) struct NativeProjectStandardsRepairProposalView {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) affected_pad: Option<Uuid>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) affected_text: Option<Uuid>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) affected_track: Option<Uuid>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) affected_via: Option<Uuid>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) affected_net_class: Option<Uuid>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) affected_zone: Option<Uuid>,
     pub(crate) finding_fingerprints: Vec<String>,
     pub(crate) codes: Vec<String>,
     pub(crate) prepared_against: String,
@@ -68,6 +78,12 @@ struct ViaRepair {
     net_class_id: Uuid,
 }
 
+#[derive(Debug, Clone)]
+struct ZoneFillRepair {
+    finding_fingerprints: BTreeSet<String>,
+    codes: BTreeSet<String>,
+}
+
 #[derive(Debug, Clone, Default)]
 struct DimensionGeometryRepairs {
     tracks: BTreeMap<Uuid, TrackRepair>,
@@ -77,7 +93,7 @@ struct DimensionGeometryRepairs {
 pub(crate) fn generate_native_project_standards_repair_proposals(
     root: &Path,
 ) -> Result<NativeProjectStandardsRepairProposalReportView> {
-    let check_run = query_native_project_check_run(root)?;
+    let check_run = run_native_project_check_with_profile(root, None)?;
     let project = load_native_project_with_resolved_board(root)?;
     let mut model = ProjectResolver::new(root).resolve()?;
     let repairs = collect_process_aperture_repairs(&check_run)?;
@@ -117,6 +133,13 @@ pub(crate) fn generate_native_project_standards_repair_proposals(
             pad.solder_paste_margin_nm = -required_paste_reduction;
             changed = true;
         }
+        if repair
+            .codes
+            .iter()
+            .any(|code| code == "pad_process_aperture_inconsistent_with_peer_footprint")
+        {
+            changed |= apply_unique_peer_process_aperture_policy(&project, &mut pad)?;
+        }
         if !changed {
             continue;
         }
@@ -145,9 +168,11 @@ pub(crate) fn generate_native_project_standards_repair_proposals(
             proposal_id,
             repair_kind: "process_aperture",
             affected_pad: Some(pad_id),
+            affected_text: None,
             affected_track: None,
             affected_via: None,
             affected_net_class: None,
+            affected_zone: None,
             finding_fingerprints,
             codes,
             prepared_against: readiness.prepared_against,
@@ -195,9 +220,11 @@ pub(crate) fn generate_native_project_standards_repair_proposals(
             proposal_id,
             repair_kind: "track_geometry",
             affected_pad: None,
+            affected_text: None,
             affected_track: Some(track_id),
             affected_via: None,
             affected_net_class: Some(repair.net_class_id),
+            affected_zone: None,
             finding_fingerprints,
             codes,
             prepared_against: readiness.prepared_against,
@@ -254,9 +281,92 @@ pub(crate) fn generate_native_project_standards_repair_proposals(
             proposal_id,
             repair_kind: "via_geometry",
             affected_pad: None,
+            affected_text: None,
             affected_track: None,
             affected_via: Some(via_id),
             affected_net_class: Some(repair.net_class_id),
+            affected_zone: None,
+            finding_fingerprints,
+            codes,
+            prepared_against: readiness.prepared_against,
+            prepared_against_current_model: readiness.prepared_against_current_model,
+            can_apply: readiness.can_apply,
+            blocker_codes: readiness.blocker_codes,
+            operations: 1,
+        });
+    }
+
+    append_copper_clearance_repair_proposals(root, &mut model, &project, &check_run, &mut views)?;
+    append_silk_clearance_repair_proposals(root, &mut model, &project, &check_run, &mut views)?;
+
+    let zone_fill_repairs = collect_zone_fill_repairs(&check_run)?;
+    let fill_context = zone_fill_copper_context(&project.board)?;
+    for (zone_id, repair) in zone_fill_repairs {
+        if model
+            .zone_fills
+            .get(&zone_id)
+            .is_some_and(|fill| fill.state == ZoneFillState::Unsupported)
+        {
+            continue;
+        }
+        let Some(zone_value) = project.board.zones.get(&zone_id.to_string()).cloned() else {
+            continue;
+        };
+        let zone: Zone =
+            serde_json::from_value(zone_value).context("failed to parse repair target zone")?;
+        if zone.thermal_relief || zone.thermal_gap != 0 || zone.thermal_spoke_width != 0 {
+            continue;
+        }
+        let source_zone_revision = model
+            .objects
+            .get(&zone.uuid)
+            .map(|object| object.object_revision)
+            .unwrap_or(eda_engine::substrate::ObjectRevision(0));
+        let (state, islands, provenance) = compute_bounded_zone_fill(&zone, &fill_context);
+        if state != ZoneFillState::Filled {
+            continue;
+        }
+        let fill = ZoneFill {
+            schema_version: ZONE_FILL_SCHEMA_VERSION,
+            zone_id: zone.uuid,
+            state,
+            source_zone_revision,
+            model_revision: model.model_revision.clone(),
+            islands,
+            provenance: Some(provenance),
+        };
+
+        let finding_fingerprints = repair.finding_fingerprints.into_iter().collect::<Vec<_>>();
+        let codes = repair.codes.into_iter().collect::<Vec<_>>();
+        let proposal_id = Uuid::new_v5(
+            &model.project.project_id,
+            standards_repair_key("zone_fill", zone_id, &codes).as_bytes(),
+        );
+        let operation = Operation::SetZoneFill {
+            zone_id,
+            previous_zone_fill: previous_persisted_zone_fill_value(&model, zone_id),
+            zone_fill: serde_json::to_value(&fill)
+                .expect("native zone fill serialization must succeed"),
+        };
+        let readiness = create_standards_repair_proposal(
+            root,
+            &mut model,
+            proposal_id,
+            "standards zone-fill repair proposal",
+            format!("repair zone-fill standards findings for zone {zone_id}"),
+            vec![operation],
+            check_run.check_run_id,
+            finding_fingerprints.clone(),
+        )?;
+        views.push(NativeProjectStandardsRepairProposalView {
+            proposal_id,
+            repair_kind: "zone_fill",
+            affected_pad: None,
+            affected_text: None,
+            affected_track: None,
+            affected_via: None,
+            affected_net_class: None,
+            affected_zone: Some(zone_id),
             finding_fingerprints,
             codes,
             prepared_against: readiness.prepared_against,
@@ -277,7 +387,7 @@ pub(crate) fn generate_native_project_standards_repair_proposals(
     })
 }
 
-fn standards_repair_key(repair_kind: &str, target_id: Uuid, codes: &[String]) -> String {
+pub(super) fn standards_repair_key(repair_kind: &str, target_id: Uuid, codes: &[String]) -> String {
     format!(
         "datum-eda:standards-repair:{repair_kind}:{target_id}:{}",
         codes.join("|")
@@ -285,14 +395,14 @@ fn standards_repair_key(repair_kind: &str, target_id: Uuid, codes: &[String]) ->
 }
 
 #[derive(Debug, Clone)]
-struct StandardsRepairProposalReadiness {
-    prepared_against: String,
-    prepared_against_current_model: bool,
-    can_apply: bool,
-    blocker_codes: Vec<String>,
+pub(super) struct StandardsRepairProposalReadiness {
+    pub(super) prepared_against: String,
+    pub(super) prepared_against_current_model: bool,
+    pub(super) can_apply: bool,
+    pub(super) blocker_codes: Vec<String>,
 }
 
-fn create_standards_repair_proposal(
+pub(super) fn create_standards_repair_proposal(
     root: &Path,
     model: &mut DesignModel,
     proposal_id: Uuid,
@@ -409,11 +519,45 @@ fn collect_process_aperture_repairs(
 fn is_process_aperture_repair_code(code: &str) -> bool {
     matches!(
         code,
-        "pad_mask_expansion_missing"
+        "pad_process_aperture_inherited_from_copper"
+            | "pad_mask_expansion_missing"
             | "pad_mask_expansion_below_rule"
             | "pad_paste_reduction_missing"
             | "pad_paste_reduction_below_rule"
+            | "pad_process_aperture_inconsistent_with_peer_footprint"
     )
+}
+
+fn collect_zone_fill_repairs(
+    check_run: &super::NativeProjectCheckRunView,
+) -> Result<BTreeMap<Uuid, ZoneFillRepair>> {
+    let mut repairs = BTreeMap::<Uuid, ZoneFillRepair>::new();
+    for finding in &check_run.findings {
+        if finding.source != "zone_fill" || !is_zone_fill_repair_code(&finding.code) {
+            continue;
+        }
+        let Some(zone_id) = finding
+            .payload
+            .get("zone_id")
+            .and_then(serde_json::Value::as_str)
+            .and_then(|value| Uuid::parse_str(value).ok())
+        else {
+            continue;
+        };
+        let entry = repairs.entry(zone_id).or_insert_with(|| ZoneFillRepair {
+            finding_fingerprints: BTreeSet::new(),
+            codes: BTreeSet::new(),
+        });
+        entry
+            .finding_fingerprints
+            .insert(finding.fingerprint.clone());
+        entry.codes.insert(finding.code.clone());
+    }
+    Ok(repairs)
+}
+
+fn is_zone_fill_repair_code(code: &str) -> bool {
+    matches!(code, "zone_fill_unfilled" | "zone_fill_stale")
 }
 
 fn collect_dimension_geometry_repairs(

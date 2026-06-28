@@ -3,13 +3,37 @@
 
 from __future__ import annotations
 
+import subprocess
 import unittest
+from unittest.mock import patch
 
-from server_runtime import StdioToolHost
+from server_runtime import EngineDaemonClient, StdioToolHost
 from test_support import FakeDaemonClient
 
 
 class TestDispatchLibrary(unittest.TestCase):
+    @patch("server_runtime.subprocess.run")
+    def test_cli_backed_library_writes_preserve_tool_provenance(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout='{"contract":"native_project_pool_library_object_mutation_v1"}',
+            stderr="",
+        )
+        client = EngineDaemonClient()
+
+        client.create_pool_library_object(
+            "/tmp/native-project",
+            "pool",
+            "symbols",
+            "symbol-test",
+            "/tmp/symbol.json",
+        )
+
+        _, kwargs = run_mock.call_args
+        self.assertEqual(kwargs["env"]["DATUM_COMMIT_SOURCE"], "tool")
+        self.assertEqual(kwargs["env"]["DATUM_TOOL_SURFACE"], "mcp")
+
     def test_tools_call_dispatches_pool_library_reads(self) -> None:
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)

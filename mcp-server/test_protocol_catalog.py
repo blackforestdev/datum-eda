@@ -9,9 +9,14 @@ from server_runtime import StdioToolHost
 from test_support import FakeDaemonClient
 from tool_dispatch import registered_tool_names
 from tools_catalog_data import (
+    COMPATIBILITY_TOOL_SPECS,
     NON_JOURNALED_DAEMON_WRITE_METHODS,
     TOOL_BY_NAME,
     TOOLS,
+)
+from tools_catalog_retirement import (
+    DEFAULT_HIDDEN_ALIAS_RETIREMENT_CRITERIA,
+    HIDDEN_COMPATIBILITY_RETIREMENT_OVERRIDES,
 )
 
 
@@ -169,25 +174,6 @@ class TestProtocolCatalog(unittest.TestCase):
                 "close_project",
                 "save",
                 "validate_project",
-                "delete_track",
-                "delete_component",
-                "move_component",
-                "rotate_component",
-                "flip_component",
-                "set_value",
-                "assign_part",
-                "set_package",
-                "set_package_with_part",
-                "replace_component",
-                "replace_components",
-                "set_reference",
-                "set_net_class",
-                "delete_via",
-                "set_design_rule",
-                "apply_component_replacement_plan",
-                "apply_component_replacement_policy",
-                "apply_scoped_component_replacement_policy",
-                "apply_scoped_component_replacement_plan",
                 "get_component_replacement_plan",
                 "get_scoped_component_replacement_plan",
                 "edit_scoped_component_replacement_plan",
@@ -241,13 +227,116 @@ class TestProtocolCatalog(unittest.TestCase):
             f"public catalog exposes non-journaled write tools: {offenders}",
         )
 
-    def test_bypassing_board_write_aliases_are_hidden_but_dispatchable(self) -> None:
-        """The legacy board-write aliases stay reachable for backward compatibility
-        but must not appear in the public tools/list."""
+    def test_private_writer_bypass_aliases_are_retired(self) -> None:
         names = {tool["name"] for tool in TOOLS}
-        for hidden in ("datum.board.move_component", "datum.board.set_net_class", "move_component"):
-            self.assertNotIn(hidden, names)
-            self.assertIn(hidden, TOOL_BY_NAME)
+        for retired in (
+            "delete_track",
+            "delete_via",
+            "delete_component",
+            "move_component",
+            "rotate_component",
+            "flip_component",
+            "set_value",
+            "assign_part",
+            "set_package",
+            "set_package_with_part",
+            "set_reference",
+            "set_net_class",
+            "set_design_rule",
+            "datum.board.delete_track",
+            "datum.board.delete_via",
+            "datum.board.delete_component",
+            "datum.board.move_component",
+            "datum.board.rotate_component",
+            "datum.board.flip_component",
+            "datum.board.set_component_value",
+            "datum.board.assign_component_part",
+            "datum.board.set_component_package",
+            "datum.board.set_component_package_with_part",
+            "datum.board.set_component_reference",
+            "datum.board.set_net_class",
+            "datum.board.set_design_rule",
+            "replace_component",
+            "replace_components",
+            "apply_component_replacement_plan",
+            "apply_component_replacement_policy",
+            "apply_scoped_component_replacement_policy",
+            "apply_scoped_component_replacement_plan",
+            "datum.board.replace_component",
+            "datum.board.replace_components",
+            "datum.replacement.apply_plan",
+            "datum.replacement.apply_policy",
+            "datum.replacement.apply_scoped_policy",
+            "datum.replacement.apply_scoped_plan",
+        ):
+            self.assertNotIn(retired, names)
+            self.assertNotIn(retired, TOOL_BY_NAME)
+
+    def test_replacement_apply_aliases_are_retired_but_read_planning_stays_public(self) -> None:
+        names = {tool["name"] for tool in TOOLS}
+        for retired in (
+            "datum.replacement.apply_plan",
+            "datum.replacement.apply_policy",
+            "datum.replacement.apply_scoped_policy",
+            "datum.replacement.apply_scoped_plan",
+        ):
+            self.assertNotIn(retired, names)
+            self.assertNotIn(retired, TOOL_BY_NAME)
+        for public in (
+            "datum.replacement.get_plan",
+            "datum.replacement.get_scoped_plan",
+            "datum.replacement.edit_scoped_plan",
+            "datum.replacement.package_candidates",
+            "datum.replacement.part_candidates",
+        ):
+            self.assertIn(public, names)
+
+    def test_hidden_compatibility_aliases_have_retirement_metadata(self) -> None:
+        public_names = {tool["name"] for tool in TOOLS}
+        for spec in COMPATIBILITY_TOOL_SPECS:
+            self.assertEqual(spec.get("x_compatibility_visibility"), "hidden")
+            self.assertIn(
+                spec.get("x_retirement_status"),
+                {
+                    "retained_until_migration_plan",
+                    "deprecated",
+                    "scheduled_for_removal",
+                },
+            )
+            self.assertTrue(spec.get("x_retirement_criteria"))
+            replacements = spec.get("x_canonical_replacements")
+            self.assertIsInstance(replacements, list)
+            self.assertTrue(replacements)
+            for replacement in replacements:
+                self.assertIsInstance(replacement, str)
+                self.assertTrue(
+                    replacement in public_names or replacement.startswith("pending:"),
+                    f"{spec['name']} replacement {replacement} is neither public nor pending",
+                )
+
+    def test_deprecated_hidden_aliases_have_explicit_retirement_plan(self) -> None:
+        compatibility_by_name = {spec["name"]: spec for spec in COMPATIBILITY_TOOL_SPECS}
+        deprecated_names = {
+            spec["name"]
+            for spec in COMPATIBILITY_TOOL_SPECS
+            if spec.get("x_retirement_status") == "deprecated"
+        }
+        self.assertEqual(
+            deprecated_names,
+            set(HIDDEN_COMPATIBILITY_RETIREMENT_OVERRIDES),
+        )
+        for name, override in sorted(HIDDEN_COMPATIBILITY_RETIREMENT_OVERRIDES.items()):
+            with self.subTest(name=name):
+                spec = compatibility_by_name[name]
+                replacements = spec.get("x_canonical_replacements", [])
+                self.assertEqual(spec.get("x_retirement_status"), "deprecated")
+                self.assertEqual(spec.get("x_retirement_criteria"), override["criteria"])
+                self.assertNotEqual(
+                    spec.get("x_retirement_criteria"),
+                    DEFAULT_HIDDEN_ALIAS_RETIREMENT_CRITERIA,
+                )
+                self.assertIsInstance(replacements, list)
+                self.assertTrue(replacements)
 
     def test_catalog_names_are_unique(self) -> None:
         names = [tool["name"] for tool in TOOLS]
@@ -268,6 +357,90 @@ class TestProtocolCatalog(unittest.TestCase):
                 tools[name]["write_path_policy"],
                 "direct project-shard writes are restricted to deterministic regression fixture generation",
             )
+
+    def test_route_apply_tools_have_internal_write_surface_classification(self) -> None:
+        expected = {
+            "datum.route.apply": "journaled_route_apply",
+            "datum.route.apply_selected": "journaled_route_apply",
+            "datum.route.apply_proposal_artifact": "proposal_artifact_apply",
+        }
+        for name, expected_class in expected.items():
+            self.assertEqual(
+                TOOL_BY_NAME[name].get("x_public_write_surface_class"),
+                expected_class,
+            )
+            self.assertTrue(TOOL_BY_NAME[name].get("x_write_surface_evidence"))
+            description = TOOL_BY_NAME[name].get("description", "")
+            self.assertIn("proposal", description)
+            self.assertIn("journal", description)
+            self.assertNotIn("directly", description.lower())
+
+    def test_proposal_write_tools_have_public_write_surface_classification(self) -> None:
+        expected = {
+            "datum.proposal.create": "proposal_metadata_write",
+            "datum.proposal.create_draw_wire": "proposal_metadata_write",
+            "datum.proposal.create_place_label": "proposal_metadata_write",
+            "datum.proposal.create_place_symbol": "proposal_metadata_write",
+            "datum.proposal.create_board_component_replacement": "proposal_metadata_write",
+            "datum.proposal.create_board_component_replacements": "proposal_metadata_write",
+            "datum.proposal.create_board_component_replacement_plan": "proposal_metadata_write",
+            "datum.proposal.create_panel_projection": "proposal_metadata_write",
+            "datum.proposal.update_panel_projection": "proposal_metadata_write",
+            "datum.proposal.delete_panel_projection": "proposal_metadata_write",
+            "datum.proposal.create_manufacturing_plan": "proposal_metadata_write",
+            "datum.proposal.update_manufacturing_plan": "proposal_metadata_write",
+            "datum.proposal.delete_manufacturing_plan": "proposal_metadata_write",
+            "datum.proposal.create_output_job": "proposal_metadata_write",
+            "datum.proposal.update_output_job": "proposal_metadata_write",
+            "datum.proposal.delete_output_job": "proposal_metadata_write",
+            "datum.proposal.review": "proposal_review_state_write",
+            "datum.proposal.defer": "proposal_review_state_write",
+            "datum.proposal.reject": "proposal_review_state_write",
+            "datum.proposal.accept_apply": "proposal_gateway_apply",
+            "datum.proposal.apply": "proposal_gateway_apply",
+        }
+        read_tools = {
+            "datum.proposal.list",
+            "datum.proposal.show",
+            "datum.proposal.preview",
+            "datum.proposal.validate",
+        }
+        for name, expected_class in expected.items():
+            self.assertEqual(
+                TOOL_BY_NAME[name].get("x_public_write_surface_class"),
+                expected_class,
+            )
+            self.assertTrue(TOOL_BY_NAME[name].get("x_write_surface_evidence"))
+            description = TOOL_BY_NAME[name].get("description", "")
+            self.assertIn("proposal", description)
+            self.assertNotIn("directly", description.lower())
+        for name in read_tools:
+            self.assertIsNone(TOOL_BY_NAME[name].get("x_public_write_surface_class"))
+
+    def test_public_production_authoring_aliases_are_proposal_mediated(self) -> None:
+        expected = {
+            "datum.manufacturing.create_panel_projection": "create_panel_projection_proposal",
+            "datum.manufacturing.update_panel_projection": "update_panel_projection_proposal",
+            "datum.manufacturing.delete_panel_projection": "delete_panel_projection_proposal",
+            "datum.manufacturing.create_plan": "create_manufacturing_plan_proposal",
+            "datum.manufacturing.update_plan": "update_manufacturing_plan_proposal",
+            "datum.manufacturing.delete_plan": "delete_manufacturing_plan_proposal",
+            "datum.output_job.create_gerber_set": "create_output_job_proposal",
+            "datum.output_job.create": "create_output_job_proposal",
+            "datum.output_job.update": "update_output_job_proposal",
+            "datum.output_job.delete": "delete_output_job_proposal",
+        }
+        for name, dispatch_method in expected.items():
+            self.assertEqual(TOOL_BY_NAME[name].get("x_dispatch_method"), dispatch_method)
+            self.assertEqual(
+                TOOL_BY_NAME[name].get("x_public_write_surface_class"),
+                "proposal_metadata_write",
+            )
+            self.assertTrue(TOOL_BY_NAME[name].get("x_write_surface_evidence"))
+            description = TOOL_BY_NAME[name].get("description", "")
+            self.assertIn("proposal", description)
+            self.assertNotIn("directly", description.lower())
+        self.assertIsNone(TOOL_BY_NAME["datum.output_job.run"].get("x_public_write_surface_class"))
 
     def test_initialize_returns_server_info_and_capabilities(self) -> None:
         host = StdioToolHost(FakeDaemonClient())

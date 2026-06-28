@@ -22,6 +22,18 @@ pub use production_artifacts::*;
 mod production_artifact_runs;
 pub use production_artifact_runs::ProductionArtifactRunSummary;
 use production_artifact_runs::{ArtifactListPayload, artifact_run_summaries};
+mod production_focus;
+use production_focus::focused_artifact_id;
+mod source_shard_status;
+pub use source_shard_status::{
+    SourceShardAttentionItem, SourceShardStatusSummary,
+    load_accepted_transaction_tip as refresh_accepted_transaction_tip,
+    load_source_shard_status as refresh_source_shard_status,
+};
+mod terminal_lane;
+pub use terminal_lane::{
+    TerminalLaneState, TerminalStyleSpan, TerminalStyledLine, TerminalTabState, TerminalTextStyle,
+};
 mod production_proposals;
 pub use production_proposals::{
     ProductionProposalPreviewSummary, ProductionProposalRenderDeltaSummary,
@@ -580,31 +592,6 @@ pub enum DockTab {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct TerminalLaneState {
-    pub lines: Vec<String>,
-    pub activity_summary: Vec<String>,
-    pub input: String,
-    pub cursor: usize,
-    pub scroll_offset: usize,
-    pub status: String,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct AssistantMessage {
-    pub role: String,
-    pub content: String,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct AssistantLaneState {
-    pub transcript: Vec<AssistantMessage>,
-    pub input: String,
-    pub cursor: usize,
-    pub awaiting_api_key: bool,
-    pub scroll_offset: usize,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct WorkspaceFilterState {
     pub show_authored: bool,
     pub show_proposed: bool,
@@ -620,7 +607,6 @@ pub struct WorkspaceUiState {
     pub hovered_object_id: Option<String>,
     pub filters: WorkspaceFilterState,
     pub terminal: TerminalLaneState,
-    pub assistant: AssistantLaneState,
     pub artifact_preview: ArtifactPreviewViewportState,
 }
 
@@ -634,6 +620,9 @@ pub struct ProductionStatus {
     pub panel_projection_count: usize,
     pub latest_status: Option<String>,
     pub latest_run_id: Option<String>,
+    pub latest_artifact_id: Option<String>,
+    pub latest_artifact_run_id: Option<String>,
+    pub latest_output_job_run_id: Option<String>,
     pub output_jobs: Vec<ProductionOutputJobSummary>,
     pub artifact_runs: Vec<ProductionArtifactRunSummary>,
     pub proposals: Vec<ProductionProposalSummary>,
@@ -743,6 +732,7 @@ pub struct ReviewWorkspaceState {
     pub scene: BoardReviewSceneV1,
     pub review: RouteProposalReviewPayload,
     pub production: ProductionStatus,
+    pub source_shards: SourceShardStatusSummary,
     pub checks: CheckRunReviewState,
     pub selection: SelectionTarget,
     pub active_review_target_id: String,
@@ -2348,6 +2338,7 @@ impl ReviewWorkspaceState {
             scene,
             review,
             production: ProductionStatus::default(),
+            source_shards: SourceShardStatusSummary::default(),
             checks: CheckRunReviewState::default(),
             selection: if has_review_actions {
                 SelectionTarget::ReviewAction(active_review_target_id.clone())
@@ -2374,23 +2365,29 @@ impl ReviewWorkspaceState {
                         "datum terminal ready".to_string(),
                         "shell session starts in the active project root".to_string(),
                     ],
+                    styled_lines: Vec::new(),
                     activity_summary: Vec::new(),
+                    tabs: Vec::new(),
+                    active_session_id: None,
+                    rename_session_id: None,
+                    title: None,
+                    current_working_directory: None,
+                    bell_count: 0,
                     input: String::new(),
                     cursor: 0,
+                    columns: 80,
+                    rows: 24,
+                    screen_cursor_row: 0,
+                    screen_cursor_col: 0,
+                    screen_cursor_visible: true,
+                    screen_cursor_style: None,
+                    application_cursor_keys: false,
+                    application_keypad: false,
+                    focus_event_reporting: false,
+                    mouse_reporting_mode: None,
+                    mouse_coordinate_encoding: None,
                     scroll_offset: 0,
                     status: "running".to_string(),
-                },
-                assistant: AssistantLaneState {
-                    transcript: vec![AssistantMessage {
-                        role: "assistant".to_string(),
-                        content:
-                            "assistant lane ready; use /activity, /config status, or /config api-key <key>"
-                                .to_string(),
-                    }],
-                    input: String::new(),
-                    cursor: 0,
-                    awaiting_api_key: false,
-                    scroll_offset: 0,
                 },
                 artifact_preview: ArtifactPreviewViewportState::default(),
             },
@@ -2730,6 +2727,7 @@ fn load_workspace_state_impl(
     ));
     let mut state = ReviewWorkspaceState::new(scene, review);
     state.production = load_production_status(&cli, request)?;
+    state.source_shards = refresh_source_shard_status(request)?;
     state.checks = load_check_run_review_state(&cli, request)?;
     state.backing = Some(WorkspaceBacking {
         request: request.clone(),
@@ -2810,23 +2808,6 @@ fn load_production_status(cli: &[String], request: &LiveReviewRequest) -> Result
         }
     }
     Ok(status)
-}
-
-fn focused_artifact_id(status: &ProductionStatus) -> Option<String> {
-    status
-        .output_jobs
-        .iter()
-        .find_map(|job| {
-            job.artifacts
-                .first()
-                .map(|artifact| artifact.artifact_id.clone())
-        })
-        .or_else(|| {
-            status
-                .artifact_runs
-                .last()
-                .map(|run| run.artifact_id.clone())
-        })
 }
 
 fn artifact_files_payload_to_detail(payload: ArtifactFilesPayload) -> ProductionArtifactDetail {
@@ -3086,6 +3067,9 @@ fn production_payloads_to_production_status(
         panel_projection_count: panel_projections_payload.panel_projection_count,
         latest_status,
         latest_run_id,
+        latest_artifact_id: artifact_list_payload.latest_artifact_id,
+        latest_artifact_run_id: artifact_list_payload.latest_artifact_run_id,
+        latest_output_job_run_id: artifact_list_payload.latest_output_job_run_id,
         output_jobs,
         artifact_runs,
         proposals,
@@ -7186,6 +7170,107 @@ pub fn load_fixture_workspace_state() -> ReviewWorkspaceState {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn focused_artifact_prefers_latest_artifact_navigation_context() {
+        let status = ProductionStatus {
+            latest_artifact_id: Some("artifact-latest".to_string()),
+            output_jobs: vec![production_output_job_for_focus(
+                "job-old",
+                Some("run-old"),
+                Some("artifact-old"),
+                "artifact-first",
+            )],
+            artifact_runs: vec![ProductionArtifactRunSummary {
+                run_id: "run-latest".to_string(),
+                artifact_id: "artifact-run-latest".to_string(),
+                run_source: "artifact_run".to_string(),
+                output_job_id: None,
+                run_sequence: 2,
+                status: "succeeded".to_string(),
+                exit_code: Some(0),
+            }],
+            ..ProductionStatus::default()
+        };
+
+        assert_eq!(
+            focused_artifact_id(&status).as_deref(),
+            Some("artifact-latest")
+        );
+    }
+
+    #[test]
+    fn focused_artifact_uses_latest_output_job_run_before_first_job_artifact() {
+        let status = ProductionStatus {
+            latest_output_job_run_id: Some("run-new".to_string()),
+            output_jobs: vec![
+                production_output_job_for_focus(
+                    "job-old",
+                    Some("run-old"),
+                    Some("artifact-old-run"),
+                    "artifact-first-old",
+                ),
+                production_output_job_for_focus(
+                    "job-new",
+                    Some("run-new"),
+                    Some("artifact-new-run"),
+                    "artifact-first-new",
+                ),
+            ],
+            artifact_runs: vec![ProductionArtifactRunSummary {
+                run_id: "artifact-run-only".to_string(),
+                artifact_id: "artifact-run-fallback".to_string(),
+                run_source: "artifact_run".to_string(),
+                output_job_id: None,
+                run_sequence: 1,
+                status: "succeeded".to_string(),
+                exit_code: Some(0),
+            }],
+            ..ProductionStatus::default()
+        };
+
+        assert_eq!(
+            focused_artifact_id(&status).as_deref(),
+            Some("artifact-new-run")
+        );
+    }
+
+    fn production_output_job_for_focus(
+        id: &str,
+        latest_run_id: Option<&str>,
+        latest_run_artifact_id: Option<&str>,
+        first_artifact_id: &str,
+    ) -> ProductionOutputJobSummary {
+        ProductionOutputJobSummary {
+            id: id.to_string(),
+            name: id.to_string(),
+            include: Vec::new(),
+            prefix: "test".to_string(),
+            output_dir: None,
+            family: "test".to_string(),
+            status: "succeeded".to_string(),
+            execution_count: usize::from(latest_run_id.is_some()),
+            artifact_count: 1,
+            latest_run_id: latest_run_id.map(str::to_string),
+            latest_run_artifact_id: latest_run_artifact_id.map(str::to_string),
+            artifacts: vec![ProductionArtifactSummary {
+                artifact_id: first_artifact_id.to_string(),
+                kind: "gerber_set".to_string(),
+                project_id: None,
+                model_revision: None,
+                output_job: Some(id.to_string()),
+                variant: None,
+                generator_version: None,
+                output_dir: None,
+                validation_state: None,
+                file_count: 0,
+                files: Vec::new(),
+                production_projection_count: 0,
+                production_projections: Vec::new(),
+            }],
+        }
+    }
+
     #[test]
     fn route_review_fixture_decodes_real_payload_shape() {
         let review: RouteProposalReviewPayload =

@@ -4,11 +4,14 @@ use std::path::{Path, PathBuf};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use super::proposal_policy::{format_proposal_policy_blockers, proposal_batch_policy_blockers};
+use super::proposal_validation::{is_sha256_fingerprint, proposal_payload_schema_diagnostic};
 use super::{
     CommitDiff, CommitProvenance, CommitReport, CommitSource, DesignModel, ModelRevision, ObjectId,
-    Operation, OperationBatch, ResolveDiagnostic, SourceShardDirtyState, SourceShardKind,
-    SourceShardRef, read_json_value, sha256_hex, sort_source_shards,
-    source_shard_authority_for_kind, stage_operation_shard_writes, update_staged_source_hashes,
+    Operation, OperationBatch, ResolveDiagnostic, SourceShardKind, SourceShardRef, read_json_value,
+    sort_source_shards, source_shard::validate_source_shard_schema_version,
+    source_shard_ref_builders::source_shard_ref_for_bytes, stage_operation_shard_writes,
+    update_staged_source_hashes,
 };
 use crate::error::EngineError;
 
@@ -41,6 +44,7 @@ pub struct ProposalRef {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Proposal {
+    #[serde(default = "default_proposal_schema_version")]
     pub schema_version: u64,
     pub proposal_id: Uuid,
     pub project_id: Uuid,
@@ -54,6 +58,12 @@ pub struct Proposal {
     pub status: ProposalStatus,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub applied_transaction_id: Option<Uuid>,
+}
+
+pub const PROPOSAL_SCHEMA_VERSION: u64 = 1;
+
+fn default_proposal_schema_version() -> u64 {
+    PROPOSAL_SCHEMA_VERSION
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -200,6 +210,13 @@ pub fn create_draft_proposal_from_batch(
     } else {
         batch.expected_model_revision = Some(prepared_against.clone());
     }
+    let batch_blockers = proposal_batch_policy_blockers(&batch);
+    if !batch_blockers.is_empty() {
+        return Err(EngineError::Validation(format!(
+            "proposal batch violates policy: {}",
+            format_proposal_policy_blockers(&batch_blockers)
+        )));
+    }
 
     let mut preview = model.clone();
     let preview_report = preview.commit(batch.clone())?;
@@ -216,7 +233,7 @@ pub fn create_draft_proposal_from_batch(
         )));
     }
     let proposal = Proposal {
-        schema_version: 1,
+        schema_version: PROPOSAL_SCHEMA_VERSION,
         proposal_id,
         project_id: model.project.project_id,
         prepared_against,
@@ -279,7 +296,7 @@ pub fn apply_accepted_proposal(
         previous_proposal: proposal_value(&proposal)?,
         proposal: proposal_value(&applied)?,
     });
-    let report = model.commit_journaled(project_root, batch)?;
+    let report = model.commit_journaled_accepted_proposal_apply(project_root, batch)?;
     if report.transaction.transaction_id != predicted_transaction_id {
         return Err(EngineError::Operation(format!(
             "proposal {proposal_id} predicted transaction id {predicted_transaction_id} but committed {}",
@@ -348,13 +365,39 @@ pub fn preview_proposal_diff(
         .ok_or_else(|| EngineError::Validation(format!("proposal {proposal_id} not found")))?;
     let mut preview = model.clone();
     let report = preview.commit(proposal.batch.clone())?;
+    proposal_preview_from_report(model, proposal, report)
+}
+
+pub fn preview_proposal_diff_journaled(
+    model: &DesignModel,
+    project_root: &Path,
+    proposal_id: Uuid,
+) -> Result<ProposalPreview, EngineError> {
+    let proposal = model
+        .proposals
+        .get(&proposal_id)
+        .ok_or_else(|| EngineError::Validation(format!("proposal {proposal_id} not found")))?;
+    let staged_writes = stage_operation_shard_writes(project_root, model, &proposal.batch)?;
+    let mut preview = model.clone();
+    update_staged_source_hashes(&mut preview.source_shards, &staged_writes)?;
+    sort_source_shards(&mut preview.source_shards);
+    let report = preview.commit_without_direct_policy(proposal.batch.clone());
+    cleanup_stage_dir(project_root, proposal.batch.batch_id);
+    proposal_preview_from_report(model, proposal, report?)
+}
+
+fn proposal_preview_from_report(
+    model: &DesignModel,
+    proposal: &Proposal,
+    report: CommitReport,
+) -> Result<ProposalPreview, EngineError> {
     let mut affected_objects = report.transaction.diff.created.clone();
     affected_objects.extend(report.transaction.diff.modified.clone());
     affected_objects.extend(report.transaction.diff.deleted.clone());
     affected_objects.sort();
     affected_objects.dedup();
     Ok(ProposalPreview {
-        proposal_id,
+        proposal_id: proposal.proposal_id,
         prepared_against: proposal.prepared_against.clone(),
         current_model_revision: model.model_revision.clone(),
         preview_after_model_revision: report.transaction.after_model_revision,
@@ -447,16 +490,16 @@ fn proposal_value(proposal: &Proposal) -> Result<serde_json::Value, EngineError>
     serde_json::to_value(proposal).map_err(EngineError::from)
 }
 
-fn predict_journaled_transaction_id(
+pub(crate) fn predict_journaled_transaction_id(
     model: &DesignModel,
     project_root: &Path,
     batch: &OperationBatch,
 ) -> Result<Uuid, EngineError> {
     let staged_writes = stage_operation_shard_writes(project_root, model, batch)?;
     let mut committed = model.clone();
-    update_staged_source_hashes(&mut committed.source_shards, &staged_writes);
+    update_staged_source_hashes(&mut committed.source_shards, &staged_writes)?;
     sort_source_shards(&mut committed.source_shards);
-    let report = committed.commit(batch.clone());
+    let report = committed.commit_without_direct_policy(batch.clone());
     cleanup_stage_dir(project_root, batch.batch_id);
     Ok(report?.transaction.transaction_id)
 }
@@ -501,11 +544,7 @@ fn validate_proposal_source_policy(
     Err(EngineError::Validation(format!(
         "proposal {} violates source policy: {}",
         proposal.proposal_id,
-        blockers
-            .iter()
-            .map(|blocker| format!("{}: {}", blocker.code, blocker.message))
-            .collect::<Vec<_>>()
-            .join("; ")
+        format_proposal_policy_blockers(&blockers)
     )))
 }
 
@@ -513,7 +552,7 @@ fn proposal_source_policy_blockers(
     model: &DesignModel,
     proposal: &Proposal,
 ) -> Vec<ProposalApplyBlocker> {
-    let mut blockers = Vec::new();
+    let mut blockers = proposal_batch_policy_blockers(&proposal.batch);
     if proposal.source == ProposalSource::Check {
         if proposal.checks_run.is_empty() {
             blockers.push(ProposalApplyBlocker {
@@ -571,16 +610,6 @@ fn proposal_source_policy_blockers(
     blockers
 }
 
-fn is_sha256_fingerprint(value: &str) -> bool {
-    let Some(digest) = value.strip_prefix("sha256:") else {
-        return false;
-    };
-    digest.len() == 64
-        && digest
-            .bytes()
-            .all(|byte| matches!(byte, b'0'..=b'9' | b'a'..=b'f'))
-}
-
 fn read_proposal_shard(
     path: PathBuf,
     relative_path: String,
@@ -598,25 +627,35 @@ fn read_proposal_shard(
     let schema_version = value
         .get("schema_version")
         .and_then(serde_json::Value::as_u64);
-    let shard = SourceShardRef {
-        shard_id: Uuid::new_v5(
-            &Uuid::NAMESPACE_URL,
-            format!("datum-eda:source-shard:{relative_path}").as_bytes(),
-        ),
-        kind: SourceShardKind::ProposalMetadata,
+    validate_source_shard_schema_version(
+        &SourceShardKind::ProposalMetadata,
+        &relative_path,
+        schema_version,
+    )
+    .map_err(|error| ResolveDiagnostic {
+        code: "invalid_proposal_metadata".to_string(),
+        message: error.to_string(),
+        path: Some(path.clone()),
+    })?;
+    let shard = source_shard_ref_for_bytes(
+        SourceShardKind::ProposalMetadata,
         path,
         relative_path,
-        authority: source_shard_authority_for_kind(&SourceShardKind::ProposalMetadata),
-        dirty_state: SourceShardDirtyState::Clean,
         schema_version,
-        content_hash: sha256_hex(&bytes),
-    };
+        &bytes,
+        "invalid_proposal_metadata",
+    )?;
     let proposal =
         serde_json::from_value::<Proposal>(value).map_err(|error| ResolveDiagnostic {
             code: "invalid_proposal_metadata".to_string(),
             message: error.to_string(),
             path: Some(shard.path.clone()),
         })?;
+    if let Some(diagnostic) =
+        proposal_payload_schema_diagnostic(&proposal, Some(shard.path.clone()))
+    {
+        return Err(diagnostic);
+    }
     let expected_filename = format!("{}.json", proposal.proposal_id);
     let actual_filename = shard
         .path

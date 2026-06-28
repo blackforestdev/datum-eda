@@ -167,6 +167,77 @@ pub(super) fn apply_pool_shard_operation(
     }
 }
 
+pub(super) fn reconstruct_pool_shard_value(
+    relative_path: &str,
+    journal: &[super::TransactionRecord],
+) -> Result<serde_json::Value, EngineError> {
+    let mut value = None;
+    for transaction in journal {
+        for operation in &transaction.operations {
+            match operation {
+                Operation::CreatePoolPackage {
+                    relative_path: operation_path,
+                    package,
+                    ..
+                } if operation_path == relative_path => {
+                    value = Some(package.clone());
+                }
+                Operation::CreatePoolPadstack {
+                    relative_path: operation_path,
+                    padstack,
+                    ..
+                } if operation_path == relative_path => {
+                    value = Some(padstack.clone());
+                }
+                Operation::CreatePoolLibraryObject {
+                    relative_path: operation_path,
+                    object,
+                    ..
+                }
+                | Operation::SetPoolLibraryObject {
+                    relative_path: operation_path,
+                    object,
+                    ..
+                } if operation_path == relative_path => {
+                    value = Some(object.clone());
+                }
+                Operation::DeletePoolPackage {
+                    relative_path: operation_path,
+                    ..
+                }
+                | Operation::DeletePoolPadstack {
+                    relative_path: operation_path,
+                    ..
+                }
+                | Operation::DeletePoolLibraryObject {
+                    relative_path: operation_path,
+                    ..
+                } if operation_path == relative_path => {
+                    value = None;
+                }
+                Operation::AttachPoolPartModel {
+                    relative_path: operation_path,
+                    ..
+                }
+                | Operation::DetachPoolPartModel {
+                    relative_path: operation_path,
+                    ..
+                } if operation_path == relative_path => {
+                    if let Some(current) = &mut value {
+                        apply_pool_shard_operation(&SourceShardKind::Pool, current, operation)?;
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+    value.ok_or_else(|| {
+        EngineError::Validation(format!(
+            "missing pool shard {relative_path} has no journal create record"
+        ))
+    })
+}
+
 pub(super) fn inverse_pool_operation(
     operation: &Operation,
     inverse_operations: &mut Vec<Operation>,
@@ -308,6 +379,7 @@ fn delete_pool_shard(project_root: &Path, relative_path: &str) -> StagedShardWri
         kind: SourceShardKind::Pool,
         relative_path: relative_path.to_string(),
         content_hash: String::new(),
+        schema_version: None,
         delete: true,
     }
 }
@@ -402,7 +474,7 @@ fn validate_pool_library_object_shape(
         "entities" => validate_typed_pool_object::<Entity>(object_kind, value),
         "parts" => validate_typed_pool_object::<Part>(object_kind, value),
         "packages" => validate_typed_pool_object::<Package>(object_kind, value),
-        "footprints" => Ok(()),
+        "footprints" => validate_typed_pool_object::<Package>(object_kind, value),
         "padstacks" => validate_typed_pool_object::<Padstack>(object_kind, value),
         "pin_pad_maps" => validate_pin_pad_map_shape(object),
         _ => Ok(()),

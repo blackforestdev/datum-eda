@@ -18,10 +18,7 @@ Daemon write arms are derived structurally, not hand-listed: the authoritative
 universe of legacy non-journaled mutators is every `pub fn` declared under
 `crates/engine/src/api/write_ops/` (excluding the journaled undo/redo module),
 and a daemon write arm is any dispatch arm that calls one of those mutators as
-`engine.<mutator>(`. The four scoped/plan/policy component-replacement arms
-dispatch to non-journaled mutators too, but are intentionally exposed as public
-`datum.replacement.*` tools rather than fenced, so they are recorded here as an
-explicit, documented exclusion from the fence allowlist (not re-encoding it).
+`engine.<mutator>(`.
 """
 
 from __future__ import annotations
@@ -35,21 +32,6 @@ ROOT = Path(__file__).resolve().parents[1]
 DISPATCH = ROOT / "crates/engine-daemon/src/dispatch.rs"
 WRITE_OPS_DIR = ROOT / "crates/engine/src/api/write_ops"
 CATALOG = ROOT / "mcp-server/tools_catalog_data.py"
-
-# Daemon arms that dispatch to a non-journaled write_ops mutator but are
-# intentionally NOT part of the non-journaled fence allowlist: the component
-# replacement plan/policy family is published as public `datum.replacement.*`
-# tools by deliberate decision. New entries here must be a conscious, reviewed
-# divergence from the fence, never a convenience escape hatch.
-KNOWN_NON_FENCED_REPLACEMENT_ARMS: frozenset[str] = frozenset(
-    {
-        "apply_component_replacement_plan",
-        "apply_component_replacement_policy",
-        "apply_scoped_component_replacement_plan",
-        "apply_scoped_component_replacement_policy",
-    }
-)
-
 
 def read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
@@ -103,7 +85,7 @@ def check() -> int:
     allowlist = python_allowlist()
     mutators = write_ops_mutators()
 
-    expected_fenced = daemon_arms - KNOWN_NON_FENCED_REPLACEMENT_ARMS
+    expected_fenced = daemon_arms
     failures: list[str] = []
 
     for arm in sorted(expected_fenced - allowlist):
@@ -112,12 +94,7 @@ def check() -> int:
             "NON_JOURNALED_DAEMON_WRITE_METHODS: an unfenced public write bypass."
         )
     for arm in sorted(allowlist - expected_fenced):
-        if arm in KNOWN_NON_FENCED_REPLACEMENT_ARMS:
-            failures.append(
-                f"allowlist entry `{arm}` is in KNOWN_NON_FENCED_REPLACEMENT_ARMS; "
-                "the fence and the documented public-replacement exclusion disagree."
-            )
-        elif arm not in mutators:
+        if arm not in mutators:
             failures.append(
                 f"allowlist entry `{arm}` is not a known api/write_ops mutator: "
                 "stale or fabricated fence entry."
@@ -127,12 +104,6 @@ def check() -> int:
                 f"allowlist entry `{arm}` has no matching non-journaled daemon "
                 "dispatch arm: stale fence entry."
             )
-
-    for arm in sorted(KNOWN_NON_FENCED_REPLACEMENT_ARMS - daemon_arms):
-        failures.append(
-            f"documented public-replacement exclusion `{arm}` is no longer a daemon "
-            "write arm: prune KNOWN_NON_FENCED_REPLACEMENT_ARMS."
-        )
 
     if failures:
         print("Daemon write-parity drift gate failed:", file=sys.stderr)
@@ -149,8 +120,7 @@ def check() -> int:
 
     print(
         "Daemon write-parity drift gate passed "
-        f"({len(allowlist)} fenced arms, "
-        f"{len(KNOWN_NON_FENCED_REPLACEMENT_ARMS)} documented public-replacement arms)."
+        f"({len(allowlist)} fenced arms)."
     )
     return 0
 

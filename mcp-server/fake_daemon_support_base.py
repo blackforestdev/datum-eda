@@ -148,8 +148,15 @@ class FakeDaemonClientBase:
             None,
         )
 
-    def explain_violation(self, domain: str, index: int) -> JsonRpcResponse:
-        self.calls.append(("explain_violation", {"domain": domain, "index": index}))
+    def explain_violation(
+        self, domain: str, index: int | None = None, fingerprint: str | None = None
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "explain_violation",
+                {"domain": domain, "index": index, "fingerprint": fingerprint},
+            )
+        )
         return JsonRpcResponse(
             "2.0",
             108,
@@ -158,6 +165,7 @@ class FakeDaemonClientBase:
                 "rule_detail": "drc connectivity_unrouted_net",
                 "objects_involved": [],
                 "suggestion": "Route the remaining airwires.",
+                "fingerprint": fingerprint,
             },
             None,
         )

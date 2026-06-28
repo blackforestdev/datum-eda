@@ -9,7 +9,7 @@ use super::{
         board_payload_objects, board_text_payload_objects, board_track_payload_objects,
         board_via_payload_objects, board_zone_payload_objects, materialized_payload_objects,
     },
-    operation_application_component_instance::apply_component_instance_operation,
+    operation_application_dispatch::apply_pre_match_operation,
     operation_application_object_revision::bump_existing_object,
     operation_application_objects::apply_operation_to_objects,
     operation_application_production::{
@@ -22,10 +22,7 @@ use super::{
     operation_application_schematic::{
         apply_schematic_map_create, apply_schematic_map_delete, apply_schematic_map_set,
     },
-    operation_application_schematic_definition::apply_schematic_definition_operation,
-    operation_application_schematic_instance::apply_schematic_instance_operation,
-    operation_application_schematic_waiver::apply_schematic_disposition_operation,
-    proposal_journal_ops::apply_proposal_model_operation,
+    source_shard::source_shard_taxon_for_path,
     source_shard_authority_for_kind,
     zone_fill::validated_zone_fill_payload,
 };
@@ -35,19 +32,7 @@ pub(super) fn apply_operation(
     operation: &Operation,
     diff: &mut CommitDiff,
 ) -> Result<(), EngineError> {
-    if apply_component_instance_operation(model, diff, operation)? {
-        return Ok(());
-    }
-    if apply_schematic_disposition_operation(model, diff, operation)? {
-        return Ok(());
-    }
-    if apply_schematic_definition_operation(model, diff, operation)? {
-        return Ok(());
-    }
-    if apply_schematic_instance_operation(model, diff, operation)? {
-        return Ok(());
-    }
-    if apply_proposal_model_operation(model, operation)? {
+    if apply_pre_match_operation(model, operation, diff)? {
         return Ok(());
     }
     match operation {
@@ -64,9 +49,10 @@ pub(super) fn apply_operation(
             diff.modified.push(*project_id);
             Ok(())
         }
-        Operation::SetProjectRules { .. }
-        | Operation::AddProjectPoolRef { .. }
-        | Operation::DeleteProjectPoolRef { .. } => Ok(()),
+        Operation::SetProjectRules { rules_root_id, .. } => {
+            bump_existing_object(&mut model.objects, *rules_root_id, Some(diff))
+        }
+        Operation::AddProjectPoolRef { .. } | Operation::DeleteProjectPoolRef { .. } => Ok(()),
         Operation::CreateProjectRule {
             rules_root_id,
             rule_id,
@@ -108,14 +94,7 @@ pub(super) fn apply_operation(
             ..
         } => {
             bump_existing_object(&mut model.objects, *rules_root_id, Some(diff))?;
-            if model.objects.contains_key(rule_id) {
-                Ok(())
-            } else {
-                Err(EngineError::NotFound {
-                    object_type: "project_rule",
-                    uuid: *rule_id,
-                })
-            }
+            bump_existing_object(&mut model.objects, *rule_id, Some(diff))
         }
         Operation::DeleteProjectRule {
             rules_root_id,
@@ -692,15 +671,17 @@ fn schematic_sheet_payload_objects(
     sheet: &serde_json::Value,
 ) -> BTreeMap<uuid::Uuid, DomainObject> {
     let kind = SourceShardKind::SchematicSheet;
+    let relative_path = format!("schematic/{relative_path}");
     let shard = SourceShardRef {
         shard_id: uuid::Uuid::new_v5(
             &uuid::Uuid::NAMESPACE_URL,
-            format!("datum-eda:source-shard:schematic/{relative_path}").as_bytes(),
+            format!("datum-eda:source-shard:{relative_path}").as_bytes(),
         ),
         authority: source_shard_authority_for_kind(&kind),
+        taxon: source_shard_taxon_for_path(&kind, &relative_path),
         kind,
-        path: PathBuf::from(format!("schematic/{relative_path}")),
-        relative_path: format!("schematic/{relative_path}"),
+        path: PathBuf::from(&relative_path),
+        relative_path,
         dirty_state: SourceShardDirtyState::Clean,
         schema_version: sheet
             .get("schema_version")

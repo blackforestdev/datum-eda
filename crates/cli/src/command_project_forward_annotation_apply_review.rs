@@ -359,9 +359,15 @@ pub(crate) fn clear_native_project_forward_annotation_review(
     let cleared = review.remove(action_id).ok_or_else(|| {
         anyhow::anyhow!("forward-annotation review action not found: {action_id}")
     })?;
-    command_project_forward_annotation_review_state::write_forward_annotation_review(
-        root, &review,
-    )?;
+    if review.is_empty() {
+        command_project_forward_annotation_review_state::clear_forward_annotation_review_sidecar(
+            root,
+        )?;
+    } else {
+        command_project_forward_annotation_review_state::write_forward_annotation_review(
+            root, &review,
+        )?;
+    }
     Ok(NativeProjectForwardAnnotationReviewReportView {
         action: "clear_forward_annotation_action_review".to_string(),
         action_id: cleared.action_id,

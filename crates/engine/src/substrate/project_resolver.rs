@@ -13,19 +13,29 @@ use super::artifact_run::read_artifact_run_shards;
 use super::check_run::read_check_run_shards;
 use super::component_instance::{collect_component_instances, read_component_instance_shards};
 use super::component_instance_journal_ops::apply_component_instance_journal_to_map;
+use super::forward_annotation_review_journal_ops::FORWARD_ANNOTATION_REVIEW_RELATIVE_PATH;
+use super::generated_evidence_journal_ops::{
+    apply_artifact_metadata_journal_to_map, apply_artifact_run_journal_to_map,
+    apply_check_run_journal_to_map, apply_output_job_run_journal_to_map,
+};
 use super::import_map::read_import_map_shards;
+use super::import_map_journal_ops::apply_import_map_journal_to_map;
 use super::journal::{read_journal_cursor, read_transaction_journal};
 use super::production_journal_ops::apply_production_journal_to_maps;
 use super::proposal::read_proposal_shards;
+use super::proposal_journal_ops::apply_proposal_journal_to_map;
 use super::relationship::read_relationship_shards;
 use super::relationship_journal_ops::apply_relationship_journal_to_maps;
-use super::replay::{add_missing_journal_schematic_sheet_shards, validate_and_replay_journal};
+use super::replay::{replay_import_map_shards, validate_and_replay_journal};
+use super::replay_proposal::replay_proposal_shards;
+use super::replay_schematic::add_missing_journal_schematic_sheet_shards;
 use super::run_evidence_validation::validate_run_evidence_links;
 use super::source_shard::{collect_referenced_shards, read_source_shard};
 use super::variant::{
     propagate_variant_population_to_component_instances, read_variant_overlay_shards,
 };
 use super::zone_fill::read_zone_fill_shards;
+use super::zone_fill_journal_ops::apply_zone_fill_journal_to_map;
 use super::{
     DesignModel, EngineError, ProjectManifestSummary, ProjectResolver, ResolveDiagnostic,
     SourceShardKind, collect_uuid_objects, compute_model_revision, domain_for_shard_kind,
@@ -182,6 +192,28 @@ impl ProjectResolver {
             read_proposal_shards(&self.project_root);
         shards.extend(proposal_shards);
         diagnostics.extend(proposal_diagnostics);
+        if self
+            .project_root
+            .join(FORWARD_ANNOTATION_REVIEW_RELATIVE_PATH)
+            .exists()
+        {
+            match read_source_shard(
+                &self.project_root,
+                SourceShardKind::ForwardAnnotationReview,
+                FORWARD_ANNOTATION_REVIEW_RELATIVE_PATH,
+                None,
+            ) {
+                Ok(shard) => shards.push(shard),
+                Err(error) => diagnostics.push(ResolveDiagnostic {
+                    code: "invalid_forward_annotation_review".to_string(),
+                    message: error.to_string(),
+                    path: Some(
+                        self.project_root
+                            .join(FORWARD_ANNOTATION_REVIEW_RELATIVE_PATH),
+                    ),
+                }),
+            }
+        }
         let (import_map_shards, import_map_diagnostics) =
             read_import_map_shards(&self.project_root, &objects, &mut import_map);
         shards.extend(import_map_shards);
@@ -217,6 +249,8 @@ impl ProjectResolver {
             &mut diagnostics,
         )?;
         add_missing_journal_schematic_sheet_shards(&self.project_root, &mut shards, &journal)?;
+        replay_import_map_shards(&self.project_root, &mut shards, &journal)?;
+        replay_proposal_shards(&self.project_root, &mut shards, &journal)?;
         sort_source_shards(&mut shards);
         let mut manufacturing_plans = manufacturing_plans;
         let mut panel_projections = panel_projections;
@@ -244,8 +278,20 @@ impl ProjectResolver {
         diagnostics.extend(cursor_diagnostics);
         let mut persisted_component_instances = persisted_component_instances;
         apply_component_instance_journal_to_map(&journal, &mut persisted_component_instances)?;
+        apply_import_map_journal_to_map(&journal, &mut import_map)?;
+        let mut persisted_zone_fills = persisted_zone_fills;
+        apply_zone_fill_journal_to_map(&journal, &mut persisted_zone_fills)?;
+        let mut output_job_runs = output_job_runs;
+        apply_output_job_run_journal_to_map(&journal, &mut output_job_runs)?;
+        let mut artifact_runs = artifact_runs;
+        apply_artifact_run_journal_to_map(&journal, &mut artifact_runs)?;
+        let mut check_runs = check_runs;
+        apply_check_run_journal_to_map(&journal, &mut check_runs)?;
+        let mut artifact_metadata = artifact_metadata;
+        apply_artifact_metadata_journal_to_map(&journal, &mut artifact_metadata)?;
+        let mut proposals = proposals;
+        apply_proposal_journal_to_map(&journal, &mut proposals)?;
         let component_instances = collect_component_instances(
-            &manifest.uuid,
             &shards,
             &journal,
             &objects,
@@ -255,6 +301,7 @@ impl ProjectResolver {
         propagate_variant_population_to_component_instances(
             &mut variant_populations,
             &component_instances,
+            &mut diagnostics,
         );
         let computed_model_revision = compute_model_revision(&manifest.uuid, &shards, &objects);
         let model_revision = journal
@@ -378,7 +425,17 @@ fn read_pool_directory_shards(
         let relative_path = format!("{pool_path}/{subdir}/{filename}");
         match read_source_shard(project_root, SourceShardKind::Pool, &relative_path, None) {
             Ok(shard) => {
-                let value = read_json_value(&shard.path)?;
+                let value = match read_json_value(&shard.path) {
+                    Ok(value) => value,
+                    Err(error) => {
+                        diagnostics.push(ResolveDiagnostic {
+                            code: "unreadable_pool_shard".to_string(),
+                            message: error.to_string(),
+                            path: Some(path),
+                        });
+                        continue;
+                    }
+                };
                 collect_uuid_objects(&value, &shard, "pool", objects, import_map);
                 set_pool_root_object_kind(&value, subdir, objects);
                 shards.push(shard);

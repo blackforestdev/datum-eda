@@ -6,9 +6,15 @@ use uuid::Uuid;
 
 use super::generated_evidence::{persist_generated_evidence, validate_filename_uuid};
 use super::{
-    ModelRevision, ResolveDiagnostic, SourceShardDirtyState, SourceShardKind, SourceShardRef,
-    read_json_value, sha256_hex, source_shard_authority_for_kind,
+    ModelRevision, ResolveDiagnostic, SourceShardKind, SourceShardRef, read_json_value,
+    source_shard_ref_builders::source_shard_ref_for_bytes,
 };
+
+pub const CHECK_RUN_SCHEMA_VERSION: u64 = 1;
+
+fn default_check_run_schema_version() -> u64 {
+    CHECK_RUN_SCHEMA_VERSION
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CheckFinding {
@@ -25,6 +31,8 @@ pub struct CheckFinding {
     pub rule_id: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub standards_basis: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub standards_basis_detail: Option<StandardsBasis>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub rule_revision: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -55,6 +63,8 @@ pub struct CheckFinding {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CheckRun {
+    #[serde(default = "default_check_run_schema_version")]
+    pub schema_version: u64,
     pub check_run_id: Uuid,
     pub project_id: Uuid,
     pub model_revision: ModelRevision,
@@ -83,6 +93,8 @@ pub struct CheckRunProfileBasis {
     pub description: String,
     #[serde(default)]
     pub standards_basis: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub standards_basis_detail: Option<StandardsBasis>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -97,12 +109,113 @@ pub struct CheckRunCoverageEntry {
     pub rule_revision: Option<String>,
     #[serde(default)]
     pub standards_basis: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub standards_basis_detail: Option<StandardsBasis>,
 }
 
-pub fn persist_check_run(
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct StandardsBasis {
+    pub basis_id: String,
+    pub registry_entry_ref: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub revision_or_profile: Option<String>,
+    pub selected_by: String,
+    pub selection_scope: String,
+    pub basis_kind: String,
+    pub disposition: String,
+    #[serde(default)]
+    pub evidence_refs: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub uncertainty: Option<String>,
+    pub provenance: String,
+}
+
+pub const PROCESS_APERTURE_STANDARDS_BASIS_ID: &str = "datum.process_aperture_and_geometry.current";
+pub const ZONE_FILL_HONESTY_STANDARDS_BASIS_ID: &str = "datum.zone_fill_honesty.current";
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct StandardsBasisRegistryEntry {
+    pub basis_id: &'static str,
+    pub registry_entry_ref: &'static str,
+    pub revision_or_profile: Option<&'static str>,
+    pub selected_by: &'static str,
+    pub selection_scope: &'static str,
+    pub basis_kind: &'static str,
+    pub disposition: &'static str,
+    pub provenance: &'static str,
+}
+
+pub const CHECK_RUN_STANDARDS_BASIS_REGISTRY: &[StandardsBasisRegistryEntry] = &[
+    StandardsBasisRegistryEntry {
+        basis_id: PROCESS_APERTURE_STANDARDS_BASIS_ID,
+        registry_entry_ref: "datum.registry.standards.process_aperture_and_geometry",
+        revision_or_profile: Some("current"),
+        selected_by: "datum.check.profile",
+        selection_scope: "board_pads_tracks_vias",
+        basis_kind: "process_aperture_geometry",
+        disposition: "declared",
+        provenance: "datum-eda check standards basis registry v1",
+    },
+    StandardsBasisRegistryEntry {
+        basis_id: ZONE_FILL_HONESTY_STANDARDS_BASIS_ID,
+        registry_entry_ref: "datum.registry.standards.zone_fill_honesty",
+        revision_or_profile: Some("current"),
+        selected_by: "datum.check.profile",
+        selection_scope: "board_zones",
+        basis_kind: "zone_fill_honesty",
+        disposition: "declared",
+        provenance: "datum-eda check standards basis registry v1",
+    },
+];
+
+pub fn standards_basis_registry_entry(
+    basis_id: &str,
+) -> Option<&'static StandardsBasisRegistryEntry> {
+    CHECK_RUN_STANDARDS_BASIS_REGISTRY
+        .iter()
+        .find(|entry| entry.basis_id == basis_id)
+}
+
+pub fn standards_basis_for_id(basis_id: &str) -> Option<StandardsBasis> {
+    let entry = standards_basis_registry_entry(basis_id)?;
+    Some(StandardsBasis {
+        basis_id: entry.basis_id.to_string(),
+        registry_entry_ref: entry.registry_entry_ref.to_string(),
+        revision_or_profile: entry.revision_or_profile.map(str::to_string),
+        selected_by: entry.selected_by.to_string(),
+        selection_scope: entry.selection_scope.to_string(),
+        basis_kind: entry.basis_kind.to_string(),
+        disposition: entry.disposition.to_string(),
+        evidence_refs: Vec::new(),
+        uncertainty: None,
+        provenance: entry.provenance.to_string(),
+    })
+}
+
+pub fn standards_basis_id_for_check_code(code: &str) -> Option<&'static str> {
+    match code {
+        "pad_process_aperture_inherited_from_copper"
+        | "pad_process_aperture_inconsistent_with_peer_footprint"
+        | "pad_mask_expansion_missing"
+        | "pad_mask_expansion_below_rule"
+        | "pad_paste_reduction_missing"
+        | "pad_paste_reduction_below_rule"
+        | "track_width_below_min"
+        | "via_hole_out_of_range"
+        | "via_annular_below_min" => Some(PROCESS_APERTURE_STANDARDS_BASIS_ID),
+        "zone_fill_unfilled" | "zone_fill_stale" | "zone_fill_unsupported" => {
+            Some(ZONE_FILL_HONESTY_STANDARDS_BASIS_ID)
+        }
+        _ => None,
+    }
+}
+
+#[allow(dead_code)]
+pub(super) fn persist_check_run(
     project_root: &Path,
     run: &CheckRun,
 ) -> Result<PathBuf, crate::error::EngineError> {
+    validate_check_run(run).map_err(crate::error::EngineError::Validation)?;
     persist_generated_evidence(project_root, ".datum/check_runs", &run.check_run_id, run)
 }
 
@@ -162,19 +275,14 @@ fn read_check_run_shard(
     let schema_version = value
         .get("schema_version")
         .and_then(serde_json::Value::as_u64);
-    let shard = SourceShardRef {
-        shard_id: Uuid::new_v5(
-            &Uuid::NAMESPACE_URL,
-            format!("datum-eda:source-shard:{relative_path}").as_bytes(),
-        ),
-        kind: SourceShardKind::CheckRun,
+    let shard = source_shard_ref_for_bytes(
+        SourceShardKind::CheckRun,
         path,
         relative_path,
-        authority: source_shard_authority_for_kind(&SourceShardKind::CheckRun),
-        dirty_state: SourceShardDirtyState::Clean,
         schema_version,
-        content_hash: sha256_hex(&bytes),
-    };
+        &bytes,
+        "invalid_check_run",
+    )?;
     let run = serde_json::from_value::<CheckRun>(value).map_err(|error| ResolveDiagnostic {
         code: "invalid_check_run".to_string(),
         message: error.to_string(),
@@ -189,7 +297,13 @@ fn read_check_run_shard(
     Ok((shard, run))
 }
 
-fn validate_check_run(run: &CheckRun) -> Result<(), String> {
+pub(super) fn validate_check_run(run: &CheckRun) -> Result<(), String> {
+    if run.schema_version != CHECK_RUN_SCHEMA_VERSION {
+        return Err(format!(
+            "unsupported check run schema_version {}; supported {}",
+            run.schema_version, CHECK_RUN_SCHEMA_VERSION
+        ));
+    }
     if run.profile_id.trim().is_empty() {
         return Err("check run profile_id must not be blank".to_string());
     }
@@ -209,6 +323,9 @@ fn validate_check_run(run: &CheckRun) -> Result<(), String> {
     }
     for (index, coverage) in run.coverage.iter().enumerate() {
         validate_check_run_coverage(coverage, index)?;
+    }
+    if let Some(detail) = &run.profile_basis.standards_basis_detail {
+        validate_standards_basis(detail, "check run profile_basis standards_basis_detail")?;
     }
     for (expected_index, finding) in run.findings.iter().enumerate() {
         validate_check_finding(finding, expected_index)?;
@@ -240,7 +357,14 @@ fn validate_check_run_coverage(
         other => Err(format!(
             "check run coverage {index} has unsupported status {other}"
         )),
+    }?;
+    if let Some(detail) = &coverage.standards_basis_detail {
+        validate_standards_basis(
+            detail,
+            &format!("check run coverage {index} standards_basis_detail"),
+        )?;
     }
+    Ok(())
 }
 
 fn validate_check_finding(finding: &CheckFinding, expected_index: usize) -> Result<(), String> {
@@ -282,11 +406,142 @@ fn validate_check_finding(finding: &CheckFinding, expected_index: usize) -> Resu
             "check finding {expected_index} rule_id must not be blank"
         ));
     }
+    if let Some(detail) = &finding.standards_basis_detail {
+        validate_standards_basis(
+            detail,
+            &format!("check finding {expected_index} standards_basis_detail"),
+        )?;
+    }
     let status = finding.status.to_ascii_lowercase();
     if !matches!(status.as_str(), "active" | "waived" | "accepted_deviation") {
         return Err(format!(
             "check finding {expected_index} has unsupported status {}",
             finding.status
+        ));
+    }
+    validate_check_target(&finding.primary_target, expected_index, "primary_target")?;
+    for (target_index, target) in finding.related_targets.iter().enumerate() {
+        validate_check_target(
+            target,
+            expected_index,
+            &format!("related_targets[{target_index}]"),
+        )?;
+    }
+    Ok(())
+}
+
+fn validate_standards_basis(basis: &StandardsBasis, label: &str) -> Result<(), String> {
+    if basis.basis_id.trim().is_empty() {
+        return Err(format!("{label}.basis_id must not be blank"));
+    }
+    if basis.registry_entry_ref.trim().is_empty() {
+        return Err(format!("{label}.registry_entry_ref must not be blank"));
+    }
+    if basis.selected_by.trim().is_empty() {
+        return Err(format!("{label}.selected_by must not be blank"));
+    }
+    if basis.selection_scope.trim().is_empty() {
+        return Err(format!("{label}.selection_scope must not be blank"));
+    }
+    if basis.basis_kind.trim().is_empty() {
+        return Err(format!("{label}.basis_kind must not be blank"));
+    }
+    match basis.disposition.as_str() {
+        "declared" | "inferred" | "user_selected" | "imported" | "unknown" => Ok(()),
+        other => Err(format!("{label}.disposition has unsupported value {other}")),
+    }?;
+    if basis.provenance.trim().is_empty() {
+        return Err(format!("{label}.provenance must not be blank"));
+    }
+    if let Some(entry) = standards_basis_registry_entry(&basis.basis_id) {
+        validate_registered_standards_basis_field(
+            label,
+            "registry_entry_ref",
+            &basis.registry_entry_ref,
+            entry.registry_entry_ref,
+        )?;
+        if basis.revision_or_profile.as_deref() != entry.revision_or_profile {
+            return Err(format!(
+                "{label}.revision_or_profile must match registry value for {}",
+                basis.basis_id
+            ));
+        }
+        validate_registered_standards_basis_field(
+            label,
+            "selected_by",
+            &basis.selected_by,
+            entry.selected_by,
+        )?;
+        validate_registered_standards_basis_field(
+            label,
+            "selection_scope",
+            &basis.selection_scope,
+            entry.selection_scope,
+        )?;
+        validate_registered_standards_basis_field(
+            label,
+            "basis_kind",
+            &basis.basis_kind,
+            entry.basis_kind,
+        )?;
+        validate_registered_standards_basis_field(
+            label,
+            "disposition",
+            &basis.disposition,
+            entry.disposition,
+        )?;
+        validate_registered_standards_basis_field(
+            label,
+            "provenance",
+            &basis.provenance,
+            entry.provenance,
+        )?;
+    }
+    Ok(())
+}
+
+fn validate_registered_standards_basis_field(
+    label: &str,
+    field: &str,
+    actual: &str,
+    expected: &str,
+) -> Result<(), String> {
+    if actual == expected {
+        return Ok(());
+    }
+    Err(format!(
+        "{label}.{field} must match registry value {expected}"
+    ))
+}
+
+fn validate_check_target(
+    target: &serde_json::Value,
+    finding_index: usize,
+    label: &str,
+) -> Result<(), String> {
+    let Some(object) = target.as_object() else {
+        return Err(format!(
+            "check finding {finding_index} {label} must be a typed target object"
+        ));
+    };
+    let kind = object
+        .get("kind")
+        .and_then(serde_json::Value::as_str)
+        .unwrap_or("")
+        .trim();
+    if kind.is_empty() || kind == "unknown" {
+        return Err(format!(
+            "check finding {finding_index} {label}.kind must be a concrete target kind"
+        ));
+    }
+    let id = object
+        .get("id")
+        .and_then(serde_json::Value::as_str)
+        .unwrap_or("")
+        .trim();
+    if id.is_empty() {
+        return Err(format!(
+            "check finding {finding_index} {label}.id must not be blank"
         ));
     }
     Ok(())

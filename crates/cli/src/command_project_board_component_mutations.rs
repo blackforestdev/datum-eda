@@ -9,9 +9,10 @@ use eda_engine::substrate::{
 use uuid::Uuid;
 
 use super::{
-    NativeProjectBoardComponentMutationReportView, load_native_project_with_resolved_board,
-    load_native_project_with_resolved_board_and_model, materialize_supported_pool_package_graphics,
-    native_project_board_component_report,
+    NativeProjectBoardComponentMutationReportView,
+    command_project_operation_guards::guarded_existing_object_operation,
+    load_native_project_with_resolved_board, load_native_project_with_resolved_board_and_model,
+    materialize_supported_pool_package_graphics, native_project_board_component_report,
 };
 
 pub(crate) fn place_native_project_board_component(
@@ -83,11 +84,14 @@ pub(crate) fn move_native_project_board_component(
                 source: CommitSource::Cli,
                 reason: "move board component".to_string(),
             },
-            operations: vec![Operation::SetBoardPackagePosition {
-                package_id: component_uuid,
-                x: position.x,
-                y: position.y,
-            }],
+            operations: guarded_existing_object_operation(
+                &model,
+                Operation::SetBoardPackagePosition {
+                    package_id: component_uuid,
+                    x: position.x,
+                    y: position.y,
+                },
+            )?,
         },
     )?;
 
@@ -126,10 +130,13 @@ pub(crate) fn set_native_project_board_component_part(
                 source: CommitSource::Cli,
                 reason: "set board component part".to_string(),
             },
-            operations: vec![Operation::SetBoardPackagePart {
-                package_id: component_uuid,
-                part_id: part_uuid,
-            }],
+            operations: guarded_existing_object_operation(
+                &model,
+                Operation::SetBoardPackagePart {
+                    package_id: component_uuid,
+                    part_id: part_uuid,
+                },
+            )?,
         },
     )?;
 
@@ -189,12 +196,15 @@ pub(crate) fn set_native_project_board_component_package(
                 source: CommitSource::Cli,
                 reason: "set board component package".to_string(),
             },
-            operations: vec![Operation::SetBoardPackagePackage {
-                package_id: component_uuid,
-                package_ref_id: package_uuid,
-                previous_materialized,
-                materialized,
-            }],
+            operations: guarded_existing_object_operation(
+                &model,
+                Operation::SetBoardPackagePackage {
+                    package_id: component_uuid,
+                    package_ref_id: package_uuid,
+                    previous_materialized,
+                    materialized,
+                },
+            )?,
         },
     )?;
 
@@ -216,7 +226,19 @@ pub(crate) fn set_native_project_board_component_package(
     ))
 }
 
-fn board_package_materialization_payload_for_component(
+pub(crate) fn current_board_component_materialization_payload(
+    root: &Path,
+    component_uuid: Uuid,
+) -> Result<serde_json::Value> {
+    let project = load_native_project_with_resolved_board(root)?;
+    let key = component_uuid.to_string();
+    if !project.board.packages.contains_key(&key) {
+        anyhow::bail!("board component not found in native project: {component_uuid}");
+    }
+    Ok(component_materialization_payload(&project, &key))
+}
+
+pub(crate) fn board_package_materialization_payload_for_component(
     root: &Path,
     component: &PlacedPackage,
 ) -> Result<serde_json::Value> {
@@ -368,10 +390,13 @@ pub(crate) fn rotate_native_project_board_component(
                 source: CommitSource::Cli,
                 reason: "rotate board component".to_string(),
             },
-            operations: vec![Operation::SetBoardPackageRotation {
-                package_id: component_uuid,
-                rotation: rotation_deg,
-            }],
+            operations: guarded_existing_object_operation(
+                &model,
+                Operation::SetBoardPackageRotation {
+                    package_id: component_uuid,
+                    rotation: rotation_deg,
+                },
+            )?,
         },
     )?;
 
@@ -414,10 +439,13 @@ pub(crate) fn set_native_project_board_component_locked(
                     "clear board component locked".to_string()
                 },
             },
-            operations: vec![Operation::SetBoardPackageLocked {
-                package_id: component_uuid,
-                locked,
-            }],
+            operations: guarded_existing_object_operation(
+                &model,
+                Operation::SetBoardPackageLocked {
+                    package_id: component_uuid,
+                    locked,
+                },
+            )?,
         },
     )?;
 
@@ -477,11 +505,14 @@ pub(crate) fn delete_native_project_board_component(
                 source: CommitSource::Cli,
                 reason: "delete board component".to_string(),
             },
-            operations: vec![Operation::DeleteBoardPackage {
-                package_id: component_uuid,
-                package: value,
-                materialized,
-            }],
+            operations: guarded_existing_object_operation(
+                &model,
+                Operation::DeleteBoardPackage {
+                    package_id: component_uuid,
+                    package: value,
+                    materialized,
+                },
+            )?,
         },
     )?;
     Ok(report)

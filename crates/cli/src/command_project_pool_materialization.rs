@@ -5,6 +5,7 @@ use eda_engine::board::PadShape;
 use eda_engine::board::{PlacedPackage, StackupLayer, StackupLayerType};
 use eda_engine::ir::geometry::{Point, Polygon};
 use eda_engine::pool::{Package, Padstack, PadstackAperture, Primitive};
+use eda_engine::substrate::{DesignModel, ProjectResolver};
 
 use super::command_project_gerber_mechanical::NativeComponentMechanicalPolygon;
 use super::command_project_gerber_silkscreen::{
@@ -22,8 +23,17 @@ pub(crate) fn materialize_supported_pool_package_graphics(
     component: &PlacedPackage,
 ) -> Result<()> {
     initialize_component_graphic_maps(project, component.uuid.to_string());
+    let model = ProjectResolver::new(&project.root)
+        .resolve()
+        .with_context(|| {
+            format!(
+                "failed to resolve native project {}",
+                project.root.display()
+            )
+        })?;
 
-    let Some(package) = resolve_native_project_pool_package(project, component.package)? else {
+    let Some(package) = resolve_native_project_pool_package(project, &model, component.package)?
+    else {
         return Ok(());
     };
     let Some(silkscreen_layer) = resolve_component_silkscreen_layer(project, component.layer)?
@@ -44,7 +54,7 @@ pub(crate) fn materialize_supported_pool_package_graphics(
         .values()
         .cloned()
         .map(|pad| {
-            let padstack = resolve_native_project_pool_padstack(project, pad.padstack)?;
+            let padstack = resolve_native_project_pool_padstack(project, &model, pad.padstack)?;
             Ok(native_component_pad(pad, padstack.as_ref()))
         })
         .collect::<Result<Vec<_>>>()?;
@@ -271,6 +281,7 @@ fn native_component_pad(
 
 fn resolve_native_project_pool_package(
     project: &LoadedNativeProject,
+    model: &DesignModel,
     package_uuid: uuid::Uuid,
 ) -> Result<Option<Package>> {
     let mut refs = project.manifest.pools.clone();
@@ -280,23 +291,38 @@ fn resolve_native_project_pool_package(
             .then_with(|| a.path.cmp(&b.path))
     });
     for pool_ref in refs {
-        let pool_root = resolve_native_project_pool_path(&project.root, &pool_ref.path);
-        if !pool_root.exists() {
-            return Err(anyhow::anyhow!(
-                "native project pool path does not exist: {}",
-                pool_root.display()
-            ));
+        let pool_path = PathBuf::from(&pool_ref.path);
+        if pool_path.is_absolute() {
+            let package_path = pool_path
+                .join("packages")
+                .join(format!("{package_uuid}.json"));
+            if !package_path.exists() {
+                continue;
+            }
+            let package: Package = serde_json::from_str(
+                &std::fs::read_to_string(&package_path)
+                    .with_context(|| format!("failed to read {}", package_path.display()))?,
+            )
+            .with_context(|| format!("failed to parse {}", package_path.display()))?;
+            return Ok(Some(package));
         }
-        let package_path = pool_root
-            .join("packages")
-            .join(format!("{}.json", package_uuid));
+        let relative_path = format!("{}/packages/{package_uuid}.json", pool_ref.path);
+        if let Ok(package_value) =
+            model.materialized_source_shard_value_by_relative_path(&relative_path)
+        {
+            let package: Package = serde_json::from_value(package_value)
+                .with_context(|| format!("failed to parse materialized {relative_path}"))?;
+            return Ok(Some(package));
+        }
+        let package_path = project.root.join(&relative_path);
         if !package_path.exists() {
             continue;
         }
-        let package_text = std::fs::read_to_string(&package_path)
-            .with_context(|| format!("failed to read {}", package_path.display()))?;
-        let package: Package = serde_json::from_str(&package_text)
-            .with_context(|| format!("failed to parse {}", package_path.display()))?;
+        let package: Package = serde_json::from_str(
+            &std::fs::read_to_string(&package_path)
+                .with_context(|| format!("failed to read {}", package_path.display()))?,
+        )
+        .with_context(|| format!("failed to parse {}", package_path.display()))?;
         return Ok(Some(package));
     }
     Ok(None)
@@ -304,6 +330,7 @@ fn resolve_native_project_pool_package(
 
 fn resolve_native_project_pool_padstack(
     project: &LoadedNativeProject,
+    model: &DesignModel,
     padstack_uuid: uuid::Uuid,
 ) -> Result<Option<Padstack>> {
     let mut refs = project.manifest.pools.clone();
@@ -313,23 +340,38 @@ fn resolve_native_project_pool_padstack(
             .then_with(|| a.path.cmp(&b.path))
     });
     for pool_ref in refs {
-        let pool_root = resolve_native_project_pool_path(&project.root, &pool_ref.path);
-        if !pool_root.exists() {
-            return Err(anyhow::anyhow!(
-                "native project pool path does not exist: {}",
-                pool_root.display()
-            ));
+        let pool_path = PathBuf::from(&pool_ref.path);
+        if pool_path.is_absolute() {
+            let padstack_path = pool_path
+                .join("padstacks")
+                .join(format!("{padstack_uuid}.json"));
+            if !padstack_path.exists() {
+                continue;
+            }
+            let padstack: Padstack = serde_json::from_str(
+                &std::fs::read_to_string(&padstack_path)
+                    .with_context(|| format!("failed to read {}", padstack_path.display()))?,
+            )
+            .with_context(|| format!("failed to parse {}", padstack_path.display()))?;
+            return Ok(Some(padstack));
         }
-        let padstack_path = pool_root
-            .join("padstacks")
-            .join(format!("{}.json", padstack_uuid));
+        let relative_path = format!("{}/padstacks/{padstack_uuid}.json", pool_ref.path);
+        if let Ok(padstack_value) =
+            model.materialized_source_shard_value_by_relative_path(&relative_path)
+        {
+            let padstack: Padstack = serde_json::from_value(padstack_value)
+                .with_context(|| format!("failed to parse materialized {relative_path}"))?;
+            return Ok(Some(padstack));
+        }
+        let padstack_path = project.root.join(&relative_path);
         if !padstack_path.exists() {
             continue;
         }
-        let padstack_text = std::fs::read_to_string(&padstack_path)
-            .with_context(|| format!("failed to read {}", padstack_path.display()))?;
-        let padstack: Padstack = serde_json::from_str(&padstack_text)
-            .with_context(|| format!("failed to parse {}", padstack_path.display()))?;
+        let padstack: Padstack = serde_json::from_str(
+            &std::fs::read_to_string(&padstack_path)
+                .with_context(|| format!("failed to read {}", padstack_path.display()))?,
+        )
+        .with_context(|| format!("failed to parse {}", padstack_path.display()))?;
         return Ok(Some(padstack));
     }
     Ok(None)

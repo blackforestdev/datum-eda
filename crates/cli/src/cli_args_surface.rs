@@ -55,7 +55,10 @@ pub(crate) use self::cli_args_project_component_instances::{
     ProjectBindComponentInstanceArgs, ProjectDeleteComponentInstanceArgs,
     ProjectSetComponentInstanceArgs,
 };
-pub(crate) use self::cli_args_project_import::ProjectImportKiCadFootprintArgs;
+pub(crate) use self::cli_args_project_import::{
+    ProjectImportEagleLibraryArgs, ProjectImportKiCadBoardArgs, ProjectImportKiCadFootprintArgs,
+    ProjectImportKiCadSchematicArgs,
+};
 pub(crate) use self::cli_args_project_journal::{ProjectRedoArgs, ProjectUndoArgs};
 pub(crate) use self::cli_args_project_library::{
     ProjectAddPoolPackageModel3dArgs, ProjectAddPoolPackageSilkscreenArcArgs,
@@ -94,11 +97,17 @@ pub(crate) use self::cli_args_project_waivers::{
 };
 pub(crate) use self::cli_args_proposals::{
     ProjectProposalListArgs, ProjectRejectProposalArgs, ProposalCommands,
-    ProposalCreateManufacturingPlanArgs, ProposalCreateOutputJobArgs,
-    ProposalCreatePanelProjectionArgs, ProposalDeleteManufacturingPlanArgs,
-    ProposalDeleteOutputJobArgs, ProposalDeletePanelProjectionArgs, ProposalDrawWireArgs,
-    ProposalPlaceLabelArgs, ProposalPlaceSymbolArgs, ProposalUpdateManufacturingPlanArgs,
-    ProposalUpdateOutputJobArgs, ProposalUpdatePanelProjectionArgs,
+    ProposalCreateBoardComponentReplacementArgs, ProposalCreateBoardComponentReplacementPlanArgs,
+    ProposalCreateBoardComponentReplacementsArgs, ProposalCreateManufacturingPlanArgs,
+    ProposalCreateOutputJobArgs, ProposalCreatePanelProjectionArgs, ProposalCreatePoolEntityArgs,
+    ProposalCreatePoolLibraryObjectArgs, ProposalCreatePoolPackageArgs,
+    ProposalCreatePoolPadstackArgs, ProposalCreatePoolSymbolArgs, ProposalCreatePoolUnitArgs,
+    ProposalDeleteManufacturingPlanArgs, ProposalDeleteOutputJobArgs,
+    ProposalDeletePanelProjectionArgs, ProposalDrawWireArgs, ProposalPlaceLabelArgs,
+    ProposalPlaceSymbolArgs, ProposalSetPoolPackageCourtyardPolygonArgs,
+    ProposalSetPoolPackageCourtyardRectArgs, ProposalSetPoolPackagePadArgs,
+    ProposalUpdateManufacturingPlanArgs, ProposalUpdateOutputJobArgs,
+    ProposalUpdatePanelProjectionArgs,
 };
 
 #[derive(Clone, clap::ValueEnum)]
