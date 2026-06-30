@@ -210,18 +210,22 @@ Rules:
   filename/payload UUID parity, and deterministic dangling-reference findings
   for the first logical library graph: `Symbol.unit`, entity gate
   `unit`/`symbol`, package pad `padstack`, `Part.entity`, `Part.package`,
-  `Part.pad_map` pad/gate/pin links, `pin_pad_maps[*].part`, and
-  `pin_pad_maps.mappings` logical-pin keys plus mapped package-pad values
-  against the referenced part. This is current implementation evidence, not
-  the target authority model: `Footprint` geometry and first-class
-  `PinPadMap` validation must move into the engine library graph.
+  legacy `Part.pad_map` pad/gate/pin links, `pin_pad_maps[*].part`, and
+  `pin_pad_maps.mappings` pad keys plus `{gate, pin}` values against the
+  referenced part. Runtime part-compatibility signatures
+  and component-pad net remapping prefer `Part.default_pin_pad_map` resolved
+  through `pool/pin_pad_maps` when valid, then fall back to legacy
+  `Part.pad_map` for migration/import compatibility. This is current
+  implementation evidence, not the full target authority model: `Footprint`
+  geometry and first-class `PinPadMap` validation must move into the engine
+  library graph.
 - Journaled `CreatePoolLibraryObject` and `SetPoolLibraryObject` enforce the
   first write-time schema gate before staging authored pool shards:
   document-root `schema_version: 1`, UUID/path/kind parity, canonical pool
   struct deserialization for `units`, `symbols`, `entities`, `parts`,
-  `packages`, and `padstacks`, and the first `pin_pad_maps` envelope shape.
-  `footprints` are currently accepted through a package-compatible compatibility
-  path until the canonical `Footprint` schema below is implemented.
+  `packages`, `footprints`, `padstacks`, and the first `pin_pad_maps` envelope
+  shape. `Footprint` is the canonical land-pattern payload; package land-pattern
+  fields remain readable only for import and compatibility fallback.
 
 ### Library foundation target schema
 
@@ -253,10 +257,12 @@ serialize these object boundaries:
   policy, mask policy, paste policy, unknown/import-preserved process states,
   provenance/review/lifecycle state, and standards/deviation metadata when
   derived from a known basis.
-- `PinPadMap`: first-class logical-to-physical binding. Required fields:
+- `PinPadMap`: first-class logical-to-physical binding. It is gate-aware:
+  canonical mapping rows are `pad -> {gate, pin}` rather than `pin -> pad`.
+  Required fields:
   `schema_version`, `uuid`, `object_revision`, `entity_ref`, `symbol_ref` when
   symbol-specific mapping matters, `package_ref`, `footprint_ref`, mapping rows
-  from logical pins to package terminals and footprint pads, optional electrical
+  from physical pads to `{gate, pin}` logical bindings, optional electrical
   role and variant condition, provenance/review/lifecycle state, and conflict
   diagnostics for duplicate, open, shorted, stale, or missing mappings.
 - `Part`: purchasable/selectable component. Required fields:
@@ -283,37 +289,65 @@ Validation tiers:
 - Typed unit-pin authoring mutates the `Unit.pins` map through the same
   `SetPoolLibraryObject` gate, rejecting duplicate pin IDs, blank names, and
   unsupported pin-direction enum values before the staged shard is promoted.
-- Typed package-pad authoring mutates the `Package.pads` map through the same
-  gate, rejecting duplicate pad IDs, blank names, missing padstacks, and
+- Typed package authoring can now create body-only `Package` records without
+  package land-pattern pads. Legacy `--pad` / `--padstack` compatibility input
+  remains accepted for old scripts and mutates the legacy `Package.pads` map
+  only when supplied, rejecting duplicate pad IDs, blank names, missing
+  padstacks, and nonpositive layer ids before the staged shard is promoted.
+  Runtime board pad regeneration prefers first-class `Footprint` pads and uses
+  `Package.pads` only as fallback when no usable footprint is resolved.
+- Legacy typed package-pad mutation is now a compatibility entry point into
+  Footprint authority: `set-pool-package-pad` requires exactly one
+  package-linked `Footprint` in the requested pool and writes
+  `Footprint.pads`, leaving legacy `Package.pads` unchanged. New land-pattern
+  pads should be authored directly with `set-pool-footprint-pad`.
+- Typed first-class footprint authoring creates `Footprint` pool objects tied
+  to existing `Package` records and mutates `Footprint.pads` through the same
+  gate, rejecting missing packages, missing padstacks, blank pad names, and
   nonpositive layer ids before the staged shard is promoted.
-- Typed package-courtyard authoring mutates `Package.courtyard` through the
-  same gate, accepting rectangular min/max nanometer bounds when they form
-  nonzero width and height, or a closed polygon from
-  `--vertices "x,y;x,y;..."` when at least three vertices parse cleanly, before
-  the staged shard is promoted.
-- Typed package-silkscreen line authoring mutates `Package.silkscreen` through
-  the same gate, appending one `Primitive::Line` and rejecting zero-length
-  endpoints or non-positive stroke widths before the staged shard is promoted.
-- Typed package-silkscreen rectangle authoring mutates `Package.silkscreen`
-  through the same gate, appending one `Primitive::Rect` and rejecting zero-area
-  bounds or non-positive stroke widths before the staged shard is promoted.
-- Typed package-silkscreen circle authoring mutates `Package.silkscreen`
-  through the same gate, appending one `Primitive::Circle` and rejecting
-  non-positive radius or stroke width before the staged shard is promoted.
-- Typed package-silkscreen polygon/polyline authoring mutates
-  `Package.silkscreen` through the same gate, appending one
-  `Primitive::Polygon` from `--vertices "x,y;x,y;..."` plus
-  `--closed true|false`, persisting vertices, closed state, and `width_nm`,
-  and rejecting malformed vertices, nonpositive widths, too few vertices, or
-  closed polygons with fewer than three vertices before the staged shard is
-  promoted.
-- Typed package-silkscreen arc authoring mutates `Package.silkscreen` through
-  the same gate, appending one `Primitive::Arc`, persisting center, radius,
-  start angle, end angle, and stroke width, and rejecting non-positive radius
-  or stroke width before the staged shard is promoted.
-- Typed package-silkscreen text authoring mutates `Package.silkscreen`
-  through the same gate, appending one `Primitive::Text`, rejecting blank text,
-  and persisting authored position and rotation before the staged shard is
+- Typed first-class footprint-courtyard authoring mutates
+  `Footprint.courtyard` through the same gate, accepting rectangular min/max
+  nanometer bounds when they form nonzero width and height, or a closed polygon
+  from `--vertices "x,y;x,y;..."` when at least three vertices parse cleanly,
+  before the staged shard is promoted.
+- Typed first-class footprint-silkscreen authoring mutates
+  `Footprint.silkscreen` through the same gate, appending `Primitive::Line`,
+  `Primitive::Rect`, `Primitive::Circle`, or `Primitive::Polygon` entries and
+  rejecting zero-length lines, zero-area rectangles, non-positive circle radii,
+  malformed or underspecified polygons/polylines, and non-positive stroke
+  widths before the staged shard is promoted.
+- Compatibility typed package-courtyard authoring is now a package-named
+  Footprint authority shim: it requires exactly one package-linked `Footprint`
+  in the requested pool and mutates `Footprint.courtyard`, leaving legacy
+  `Package.courtyard` unchanged. Rectangular min/max nanometer bounds must form
+  nonzero width and height; polygon vertices must parse cleanly and contain at
+  least three points before the staged shard is promoted.
+- Compatibility typed package-silkscreen authoring is now a package-named
+  Footprint authority shim: it requires exactly one package-linked `Footprint`
+  in the requested pool and mutates `Footprint.silkscreen`, leaving legacy
+  `Package.silkscreen` unchanged.
+- Compatibility typed package-silkscreen line authoring appends one
+  `Primitive::Line` to `Footprint.silkscreen` and rejects zero-length endpoints
+  or non-positive stroke widths before the staged shard is promoted.
+- Compatibility typed package-silkscreen rectangle authoring appends one
+  `Primitive::Rect` to `Footprint.silkscreen` and rejects zero-area bounds or
+  non-positive stroke widths before the staged shard is promoted.
+- Compatibility typed package-silkscreen circle authoring appends one
+  `Primitive::Circle` to `Footprint.silkscreen` and rejects non-positive
+  radius or stroke width before the staged shard is promoted.
+- Compatibility typed package-silkscreen polygon/polyline authoring appends one
+  `Primitive::Polygon` to `Footprint.silkscreen` from
+  `--vertices "x,y;x,y;..."` plus `--closed true|false`, persisting vertices,
+  closed state, and `width_nm`, and rejecting malformed vertices, nonpositive
+  widths, too few vertices, or closed polygons with fewer than three vertices
+  before the staged shard is promoted.
+- Compatibility typed package-silkscreen arc authoring appends one
+  `Primitive::Arc` to `Footprint.silkscreen`, persisting center, radius, start
+  angle, end angle, and stroke width, and rejecting non-positive radius or
+  stroke width before the staged shard is promoted.
+- Compatibility typed package-silkscreen text authoring appends one
+  `Primitive::Text` to `Footprint.silkscreen`, rejecting blank text, and
+  persisting authored position and rotation before the staged shard is
   promoted.
 - Typed package 3D model authoring mutates `Package.models_3d` through the
   same gate, appending one `ModelRef` from `--model-path` plus optional
@@ -410,11 +444,21 @@ Validation tiers:
   in explicit `merge` or `replace` mode from repeatable tag values, rejecting
   blank values, duplicate request tags, and unsupported modes before the staged
   shard is promoted.
-- Typed part pad-map authoring mutates the `Part.pad_map` map through the same
-  gate in either single-entry merge mode or explicit multi-entry `merge` /
-  `replace` mode, rejecting duplicate request pads, missing package pads,
-  missing entity gates, and missing gate unit pins before the staged shard is
-  promoted.
+- Typed first-class PinPadMap authoring creates and updates `pool/pin_pad_maps`
+  records through the same gate using canonical `pad_uuid:gate_uuid:pin_uuid`
+  mappings. The compatibility shorthand `pin_uuid:pad_uuid` is accepted only
+  when the pin resolves to exactly one entity gate. Authoring rejects duplicate
+  request pads, duplicate gate/pin pairs, missing entity gates or pins, missing
+  first-class footprint pads when `footprint` is present, missing legacy package
+  pads when no footprint is present, and footprint/package mismatches before the
+  staged shard is promoted.
+  Runtime part compatibility and board pad-net remapping consume these records
+  first through `Part.default_pin_pad_map` when present and valid. Legacy-named
+  part pad-map commands accept `pad:gate:pin` compatibility input, require a
+  `Part.default_pin_pad_map`, and update the referenced first-class
+  `pool/pin_pad_maps` record; they do not write `Part.pad_map`. Runtime uses
+  `Part.pad_map` only as fallback when the first-class map is absent or
+  unusable.
 
 ### 6.2 `schematic/schematic.json`
 

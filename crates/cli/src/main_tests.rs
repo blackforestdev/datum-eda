@@ -371,22 +371,38 @@ mod main_tests_project_label;
 mod main_tests_project_new;
 #[path = "main_tests_project_noconnect.rs"]
 mod main_tests_project_noconnect;
+#[path = "main_tests_project_pool_footprint.rs"]
+mod main_tests_project_pool_footprint;
+#[path = "main_tests_project_pool_footprint_proposals.rs"]
+mod main_tests_project_pool_footprint_proposals;
+#[path = "main_tests_project_pool_footprint_silkscreen.rs"]
+mod main_tests_project_pool_footprint_silkscreen;
+#[path = "main_tests_project_pool_footprint_silkscreen_proposals.rs"]
+mod main_tests_project_pool_footprint_silkscreen_proposals;
 #[path = "main_tests_project_pool_library.rs"]
 mod main_tests_project_pool_library;
 #[path = "main_tests_project_pool_library_b.rs"]
 mod main_tests_project_pool_library_b;
 #[path = "main_tests_project_pool_library_proposals.rs"]
 mod main_tests_project_pool_library_proposals;
+#[path = "main_tests_project_pool_package_courtyard.rs"]
+mod main_tests_project_pool_package_courtyard;
 #[path = "main_tests_project_pool_package_geometry.rs"]
 mod main_tests_project_pool_package_geometry;
 #[path = "main_tests_project_pool_package_proposals.rs"]
 mod main_tests_project_pool_package_proposals;
 #[path = "main_tests_project_pool_part.rs"]
 mod main_tests_project_pool_part;
+#[path = "main_tests_project_pool_part_pin_semantics.rs"]
+mod main_tests_project_pool_part_pin_semantics;
+#[path = "main_tests_project_pool_pin_pad_map.rs"]
+mod main_tests_project_pool_pin_pad_map;
 #[path = "main_tests_project_pool_resolver.rs"]
 mod main_tests_project_pool_resolver;
 #[path = "main_tests_project_pool_symbol_library.rs"]
 mod main_tests_project_pool_symbol_library;
+#[path = "main_tests_project_pool_symbol_pin_anchor.rs"]
+mod main_tests_project_pool_symbol_pin_anchor;
 #[path = "main_tests_project_port.rs"]
 mod main_tests_project_port;
 #[path = "main_tests_project_production_idempotency.rs"]
@@ -549,6 +565,8 @@ mod main_tests_project_symbol_semantics;
 mod main_tests_project_text;
 #[path = "main_tests_project_validate.rs"]
 mod main_tests_project_validate;
+#[path = "main_tests_project_validate_pool_defaults.rs"]
+mod main_tests_project_validate_pool_defaults;
 #[path = "main_tests_project_validate_pool_refs.rs"]
 mod main_tests_project_validate_pool_refs;
 #[path = "main_tests_project_validate_resolver.rs"]

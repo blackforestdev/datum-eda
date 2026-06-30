@@ -85,9 +85,12 @@ pub(crate) struct ProjectSetPoolUnitPinArgs {
     /// Human-readable pin name/number
     #[arg(long)]
     pub(crate) name: String,
-    /// Pin electrical direction enum
-    #[arg(long, default_value = "Passive")]
-    pub(crate) direction: String,
+    /// Pin electrical type enum; prefer --electrical-type for new scripts
+    #[arg(long)]
+    pub(crate) direction: Option<String>,
+    /// Pin electrical type enum
+    #[arg(long = "electrical-type")]
+    pub(crate) electrical_type: Option<String>,
     /// Pin-swap group; zero means not swappable
     #[arg(long = "swap-group", default_value_t = 0)]
     pub(crate) swap_group: u32,
@@ -265,27 +268,6 @@ pub(crate) struct ProjectAddPoolSymbolTextArgs {
 }
 
 #[derive(clap::Args)]
-pub(crate) struct ProjectSetPoolSymbolPinAnchorArgs {
-    /// Project root directory
-    pub(crate) path: PathBuf,
-    /// Project-local pool path; defaults to pool
-    #[arg(long, default_value = "pool")]
-    pub(crate) pool: String,
-    /// Symbol UUID
-    #[arg(long = "symbol")]
-    pub(crate) symbol_uuid: Uuid,
-    /// Unit pin UUID to anchor on the symbol
-    #[arg(long = "pin")]
-    pub(crate) pin_uuid: Uuid,
-    /// Pin anchor X coordinate in nanometers
-    #[arg(long = "x-nm")]
-    pub(crate) x_nm: i64,
-    /// Pin anchor Y coordinate in nanometers
-    #[arg(long = "y-nm")]
-    pub(crate) y_nm: i64,
-}
-
-#[derive(clap::Args)]
 pub(crate) struct ProjectCreatePoolEntityArgs {
     /// Project root directory
     pub(crate) path: PathBuf,
@@ -361,13 +343,13 @@ pub(crate) struct ProjectCreatePoolPackageArgs {
     /// Human-readable package name
     #[arg(long)]
     pub(crate) name: String,
-    /// Initial pad UUID
+    /// Legacy initial package-pad UUID; prefer creating a Footprint for land-pattern pads
     #[arg(long = "pad")]
-    pub(crate) pad_uuid: Uuid,
-    /// Referenced padstack UUID
+    pub(crate) pad_uuid: Option<Uuid>,
+    /// Legacy referenced padstack UUID; required only when --pad is supplied
     #[arg(long = "padstack")]
-    pub(crate) padstack_uuid: Uuid,
-    /// Human-readable pad name
+    pub(crate) padstack_uuid: Option<Uuid>,
+    /// Legacy human-readable pad name
     #[arg(long = "pad-name", default_value = "1")]
     pub(crate) pad_name: String,
     /// Pad X position in nanometers

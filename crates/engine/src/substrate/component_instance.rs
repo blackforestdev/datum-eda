@@ -319,11 +319,11 @@ fn insert_component_instance(
         });
         return;
     }
-    if input.placed_symbol_refs.is_empty() || input.placed_package_refs.is_empty() {
+    if input.placed_symbol_refs.is_empty() {
         diagnostics.push(ResolveDiagnostic {
             code: "component_instance_empty_refs".to_string(),
             message: format!(
-                "component instance {} must reference at least one symbol and one board package",
+                "component instance {} must reference at least one symbol",
                 input.uuid
             ),
             path: Some(shard.path.clone()),
@@ -331,7 +331,8 @@ fn insert_component_instance(
         return;
     }
     if !refs_match_objects(&input.placed_symbol_refs, objects)
-        || !refs_match_objects(&input.placed_package_refs, objects)
+        || (!input.placed_package_refs.is_empty()
+            && !refs_match_objects(&input.placed_package_refs, objects))
     {
         diagnostics.push(ResolveDiagnostic {
             code: "component_instance_unresolved_ref".to_string(),

@@ -100,7 +100,10 @@ pub(crate) fn align_to(value: u32, alignment: u32) -> u32 {
 }
 
 #[cfg(feature = "visual")]
-pub(crate) fn convert_texture_pixels_to_rgba(pixels: &mut [u8], format: wgpu::TextureFormat) -> Result<()> {
+pub(crate) fn convert_texture_pixels_to_rgba(
+    pixels: &mut [u8],
+    format: wgpu::TextureFormat,
+) -> Result<()> {
     match format {
         wgpu::TextureFormat::Rgba8Unorm | wgpu::TextureFormat::Rgba8UnormSrgb => Ok(()),
         wgpu::TextureFormat::Bgra8Unorm | wgpu::TextureFormat::Bgra8UnormSrgb => {
@@ -112,4 +115,3 @@ pub(crate) fn convert_texture_pixels_to_rgba(pixels: &mut [u8], format: wgpu::Te
         other => anyhow::bail!("unsupported visual screenshot surface format: {other:?}"),
     }
 }
-

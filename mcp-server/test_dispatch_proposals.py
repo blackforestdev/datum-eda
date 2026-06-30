@@ -174,6 +174,30 @@ class TestDispatchProposals(unittest.TestCase):
         self.assertEqual(payload["action"], "create_pool_package_proposal")
         self.assertEqual(payload["package_uuid"], "package-uuid")
 
+    def test_tools_call_dispatches_body_only_create_pool_package_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 230, "method": "tools/call", "params": {"name": "datum.proposal.create_pool_package", "arguments": {"path": "/tmp/native-project", "package": "package-uuid", "name": "SOT23", "pool": "pool", "proposal": "proposal-package", "rationale": "review package body"}}}
+        )
+        self.assertEqual(daemon.calls, [("create_pool_package_proposal", "/tmp/native-project", "package-uuid", "SOT23", None, None, "1", 0, 0, 1, "pool", "proposal-package", "review package body")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "create_pool_package_proposal")
+        self.assertEqual(payload["package_uuid"], "package-uuid")
+
+    def test_tools_call_dispatches_create_pool_footprint_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 233, "method": "tools/call", "params": {"name": "datum.proposal.create_pool_footprint", "arguments": {"path": "/tmp/native-project", "footprint": "footprint-uuid", "package": "package-uuid", "name": "SOT23_LandPattern", "pool": "pool", "proposal": "proposal-footprint", "rationale": "review footprint"}}}
+        )
+        self.assertEqual(daemon.calls, [("create_pool_footprint_proposal", "/tmp/native-project", "footprint-uuid", "package-uuid", "SOT23_LandPattern", "pool", "proposal-footprint", "review footprint")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "create_pool_footprint_proposal")
+        self.assertEqual(payload["footprint_uuid"], "footprint-uuid")
+
     def test_tools_call_dispatches_set_pool_package_pad_proposal(self) -> None:
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)
@@ -185,6 +209,87 @@ class TestDispatchProposals(unittest.TestCase):
         self.assertEqual(payload["contract"], "proposal_create_v1")
         self.assertEqual(payload["action"], "set_pool_package_pad_proposal")
         self.assertEqual(payload["package_uuid"], "package-uuid")
+
+    def test_tools_call_dispatches_set_pool_footprint_pad_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 234, "method": "tools/call", "params": {"name": "datum.proposal.set_pool_footprint_pad", "arguments": {"path": "/tmp/native-project", "footprint": "footprint-uuid", "pad": "pad-uuid", "padstack": "padstack-uuid", "pad_name": "2", "x_nm": 3000, "y_nm": 4000, "layer": 1, "pool": "pool", "proposal": "proposal-footprint-pad", "rationale": "review footprint pad"}}}
+        )
+        self.assertEqual(daemon.calls, [("set_pool_footprint_pad_proposal", "/tmp/native-project", "footprint-uuid", "pad-uuid", "padstack-uuid", "2", 3000, 4000, 1, "pool", "proposal-footprint-pad", "review footprint pad")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "set_pool_footprint_pad_proposal")
+        self.assertEqual(payload["footprint_uuid"], "footprint-uuid")
+
+    def test_tools_call_dispatches_set_pool_footprint_courtyard_rect_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 235, "method": "tools/call", "params": {"name": "datum.proposal.set_pool_footprint_courtyard_rect", "arguments": {"path": "/tmp/native-project", "footprint": "footprint-uuid", "min_x_nm": 1000, "min_y_nm": 2000, "max_x_nm": 3000, "max_y_nm": 4000, "pool": "pool", "proposal": "proposal-footprint-courtyard-rect", "rationale": "review footprint courtyard"}}}
+        )
+        self.assertEqual(daemon.calls, [("set_pool_footprint_courtyard_rect_proposal", "/tmp/native-project", "footprint-uuid", 1000, 2000, 3000, 4000, "pool", "proposal-footprint-courtyard-rect", "review footprint courtyard")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "set_pool_footprint_courtyard_rect_proposal")
+        self.assertEqual(payload["footprint_uuid"], "footprint-uuid")
+
+    def test_tools_call_dispatches_set_pool_footprint_courtyard_polygon_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 236, "method": "tools/call", "params": {"name": "datum.proposal.set_pool_footprint_courtyard_polygon", "arguments": {"path": "/tmp/native-project", "footprint": "footprint-uuid", "vertices": "0,0;1000,0;1000,2000;0,2000", "pool": "pool", "proposal": "proposal-footprint-courtyard-poly", "rationale": "review footprint courtyard"}}}
+        )
+        self.assertEqual(daemon.calls, [("set_pool_footprint_courtyard_polygon_proposal", "/tmp/native-project", "footprint-uuid", "0,0;1000,0;1000,2000;0,2000", "pool", "proposal-footprint-courtyard-poly", "review footprint courtyard")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "set_pool_footprint_courtyard_polygon_proposal")
+        self.assertEqual(payload["footprint_uuid"], "footprint-uuid")
+
+    def test_tools_call_dispatches_add_pool_footprint_silkscreen_line_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 237, "method": "tools/call", "params": {"name": "datum.proposal.add_pool_footprint_silkscreen_line", "arguments": {"path": "/tmp/native-project", "footprint": "footprint-uuid", "from_x_nm": 1000, "from_y_nm": 2000, "to_x_nm": 3000, "to_y_nm": 4000, "width_nm": 150000, "pool": "pool", "proposal": "proposal-footprint-silk-line", "rationale": "review footprint silkscreen line"}}}
+        )
+        self.assertEqual(daemon.calls, [("add_pool_footprint_silkscreen_line_proposal", "/tmp/native-project", "footprint-uuid", 1000, 2000, 3000, 4000, 150000, "pool", "proposal-footprint-silk-line", "review footprint silkscreen line")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "add_pool_footprint_silkscreen_line_proposal")
+        self.assertEqual(payload["footprint_uuid"], "footprint-uuid")
+
+    def test_tools_call_dispatches_add_pool_footprint_silkscreen_shape_proposals(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        cases = [
+            (
+                "datum.proposal.add_pool_footprint_silkscreen_rect",
+                {"path": "/tmp/native-project", "footprint": "footprint-uuid", "min_x_nm": 1000, "min_y_nm": 2000, "max_x_nm": 3000, "max_y_nm": 4000, "width_nm": 150000, "pool": "pool", "proposal": "proposal-footprint-silk-rect", "rationale": "review footprint silkscreen rect"},
+                ("add_pool_footprint_silkscreen_rect_proposal", "/tmp/native-project", "footprint-uuid", 1000, 2000, 3000, 4000, 150000, "pool", "proposal-footprint-silk-rect", "review footprint silkscreen rect"),
+                "add_pool_footprint_silkscreen_rect_proposal",
+            ),
+            (
+                "datum.proposal.add_pool_footprint_silkscreen_circle",
+                {"path": "/tmp/native-project", "footprint": "footprint-uuid", "center_x_nm": 5000, "center_y_nm": 6000, "radius_nm": 7000, "width_nm": 150000, "pool": "pool", "proposal": "proposal-footprint-silk-circle", "rationale": "review footprint silkscreen circle"},
+                ("add_pool_footprint_silkscreen_circle_proposal", "/tmp/native-project", "footprint-uuid", 5000, 6000, 7000, 150000, "pool", "proposal-footprint-silk-circle", "review footprint silkscreen circle"),
+                "add_pool_footprint_silkscreen_circle_proposal",
+            ),
+            (
+                "datum.proposal.add_pool_footprint_silkscreen_polygon",
+                {"path": "/tmp/native-project", "footprint": "footprint-uuid", "vertices": "0,0;1000,0;1000,1000", "closed": True, "width_nm": 150000, "pool": "pool", "proposal": "proposal-footprint-silk-polygon", "rationale": "review footprint silkscreen polygon"},
+                ("add_pool_footprint_silkscreen_polygon_proposal", "/tmp/native-project", "footprint-uuid", "0,0;1000,0;1000,1000", True, 150000, "pool", "proposal-footprint-silk-polygon", "review footprint silkscreen polygon"),
+                "add_pool_footprint_silkscreen_polygon_proposal",
+            ),
+        ]
+        for tool_name, arguments, expected_call, expected_action in cases:
+            response = host.handle_message(
+                {"jsonrpc": "2.0", "id": 238, "method": "tools/call", "params": {"name": tool_name, "arguments": arguments}}
+            )
+            self.assertEqual(daemon.calls[-1], expected_call)
+            payload = response["result"]["content"][0]["json"]
+            self.assertEqual(payload["contract"], "proposal_create_v1")
+            self.assertEqual(payload["action"], expected_action)
+            self.assertEqual(payload["footprint_uuid"], "footprint-uuid")
 
     def test_tools_call_dispatches_set_pool_package_courtyard_rect_proposal(self) -> None:
         daemon = FakeDaemonClient()

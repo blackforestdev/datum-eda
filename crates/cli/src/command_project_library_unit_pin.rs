@@ -16,11 +16,12 @@ pub(crate) fn set_native_project_pool_unit_pin(
     unit_id: Uuid,
     pin_id: Uuid,
     name: String,
-    direction: String,
+    direction: Option<String>,
+    electrical_type: Option<String>,
     swap_group: u32,
 ) -> Result<NativeProjectPoolLibraryObjectMutationView> {
     validate_project_local_pool_path(pool_path)?;
-    let direction = validate_pin_direction(direction)?;
+    let direction = resolve_pin_electrical_type(direction, electrical_type)?;
     let name = name.trim().to_string();
     if name.is_empty() {
         bail!("pool unit pin name must not be empty");
@@ -45,6 +46,7 @@ pub(crate) fn set_native_project_pool_unit_pin(
             "uuid": pin_id,
             "name": name,
             "direction": direction,
+            "electrical_type": direction,
             "swap_group": swap_group,
             "alternates": []
         }),
@@ -70,12 +72,26 @@ pub(crate) fn set_native_project_pool_unit_pin(
     )
 }
 
-fn validate_pin_direction(direction: String) -> Result<String> {
+fn resolve_pin_electrical_type(
+    direction: Option<String>,
+    electrical_type: Option<String>,
+) -> Result<String> {
+    match (direction, electrical_type) {
+        (Some(direction), Some(electrical_type)) if direction != electrical_type => bail!(
+            "conflicting pin electrical type {electrical_type} and direction {direction}; pass only one value or use matching values"
+        ),
+        (Some(direction), _) => validate_pin_electrical_type(direction),
+        (_, Some(electrical_type)) => validate_pin_electrical_type(electrical_type),
+        (None, None) => Ok("Passive".to_string()),
+    }
+}
+
+fn validate_pin_electrical_type(direction: String) -> Result<String> {
     match direction.as_str() {
         "Input" | "Output" | "Bidirectional" | "Passive" | "PowerIn" | "PowerOut"
         | "OpenCollector" | "OpenEmitter" | "TriState" | "NoConnect" => Ok(direction),
         other => bail!(
-            "unsupported pin direction {other}; expected Input, Output, Bidirectional, Passive, PowerIn, PowerOut, OpenCollector, OpenEmitter, TriState, or NoConnect"
+            "unsupported pin direction/electrical type {other}; expected Input, Output, Bidirectional, Passive, PowerIn, PowerOut, OpenCollector, OpenEmitter, TriState, or NoConnect"
         ),
     }
 }

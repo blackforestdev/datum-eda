@@ -37,8 +37,15 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
         .expect("initial scaffold should succeed");
     let sheet_uuid = seed_native_sheet(&root);
     let unit_id = Uuid::new_v4();
-    let pin_id = Uuid::new_v4();
+    let output_pin_id = Uuid::new_v4();
+    let power_pin_id = Uuid::new_v4();
     let symbol_id = Uuid::new_v4();
+    let entity_id = Uuid::new_v4();
+    let gate_id = Uuid::new_v4();
+    let padstack_id = Uuid::new_v4();
+    let package_id = Uuid::new_v4();
+    let package_pad_id = Uuid::new_v4();
+    let part_id = Uuid::new_v4();
     execute(
         Cli::try_parse_from([
             "eda",
@@ -66,15 +73,35 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
             "--unit",
             &unit_id.to_string(),
             "--pin",
-            &pin_id.to_string(),
+            &output_pin_id.to_string(),
             "--name",
             "OUT",
-            "--direction",
+            "--electrical-type",
             "Output",
         ])
         .expect("CLI should parse"),
     )
-    .expect("typed pool unit pin set should succeed");
+    .expect("output pool unit pin set should succeed");
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "set-pool-unit-pin",
+            root.to_str().unwrap(),
+            "--unit",
+            &unit_id.to_string(),
+            "--pin",
+            &power_pin_id.to_string(),
+            "--name",
+            "VCC",
+            "--electrical-type",
+            "PowerIn",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("power pool unit pin set should succeed");
     execute(
         Cli::try_parse_from([
             "eda",
@@ -104,7 +131,7 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
             "--symbol",
             &symbol_id.to_string(),
             "--pin",
-            &pin_id.to_string(),
+            &output_pin_id.to_string(),
             "--x-nm",
             "100",
             "--y-nm",
@@ -112,7 +139,115 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
         ])
         .expect("CLI should parse"),
     )
-    .expect("symbol pin anchor set should succeed");
+    .expect("output symbol pin anchor set should succeed");
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "set-pool-symbol-pin-anchor",
+            root.to_str().unwrap(),
+            "--symbol",
+            &symbol_id.to_string(),
+            "--pin",
+            &power_pin_id.to_string(),
+            "--x-nm",
+            "300",
+            "--y-nm",
+            "400",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("power symbol pin anchor set should succeed");
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "create-pool-entity",
+            root.to_str().unwrap(),
+            "--entity",
+            &entity_id.to_string(),
+            "--gate",
+            &gate_id.to_string(),
+            "--unit",
+            &unit_id.to_string(),
+            "--symbol",
+            &symbol_id.to_string(),
+            "--name",
+            "OpAmp",
+            "--prefix",
+            "U",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("typed pool entity create should succeed");
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "create-pool-padstack",
+            root.to_str().unwrap(),
+            "--padstack",
+            &padstack_id.to_string(),
+            "--name",
+            "RoundPad",
+            "--aperture",
+            "circle",
+            "--diameter-nm",
+            "1200000",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("typed pool padstack create should succeed");
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "create-pool-package",
+            root.to_str().unwrap(),
+            "--package",
+            &package_id.to_string(),
+            "--name",
+            "SOT23",
+            "--pad",
+            &package_pad_id.to_string(),
+            "--padstack",
+            &padstack_id.to_string(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("typed pool package create should succeed");
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "create-pool-part",
+            root.to_str().unwrap(),
+            "--part",
+            &part_id.to_string(),
+            "--entity",
+            &entity_id.to_string(),
+            "--package",
+            &package_id.to_string(),
+            "--mpn",
+            "OPA1656ID",
+            "--manufacturer",
+            "Texas Instruments",
+            "--value",
+            "OPA1656",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("typed pool part create should succeed");
     let place_output = execute(
         Cli::try_parse_from([
             "eda",
@@ -141,6 +276,49 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
         serde_json::from_str(&place_output).expect("place-symbol JSON should parse");
     let placed_symbol =
         Uuid::parse_str(placed["symbol_uuid"].as_str().unwrap()).expect("symbol uuid should parse");
+    assert_eq!(placed["gate_uuid"], gate_id.to_string());
+
+    let component_instances_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "component-instances",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("component-instances query should succeed");
+    let component_instances: serde_json::Value = serde_json::from_str(&component_instances_output)
+        .expect("component-instances JSON should parse");
+    assert_eq!(
+        component_instances["contract"],
+        "component_instances_query_v1"
+    );
+    assert_eq!(component_instances["component_instance_count"], 1);
+    let instances = component_instances["component_instances"]
+        .as_object()
+        .expect("component_instances should be object");
+    let instance = instances
+        .values()
+        .next()
+        .expect("one component instance should exist");
+    assert_eq!(instance["authority"], "authored");
+    assert_eq!(instance["part_ref"], part_id.to_string());
+    assert_eq!(
+        instance["placed_symbol_refs"],
+        serde_json::json!([placed_symbol.to_string()])
+    );
+    assert_eq!(
+        instance["placed_package_refs"]
+            .as_array()
+            .expect("package refs should be array")
+            .len(),
+        0
+    );
+
     let pins_output = execute(
         Cli::try_parse_from([
             "eda",
@@ -158,11 +336,64 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
     .expect("symbol-pins query should succeed");
     let pins: serde_json::Value =
         serde_json::from_str(&pins_output).expect("symbol pins JSON should parse");
-    assert_eq!(pins.as_array().expect("pins should be array").len(), 1);
-    assert_eq!(pins[0]["pin_uuid"], pin_id.to_string());
+    assert_eq!(pins.as_array().expect("pins should be array").len(), 2);
+    assert_eq!(pins[0]["pin_uuid"], output_pin_id.to_string());
     assert_eq!(pins[0]["number"], "OUT");
     assert_eq!(pins[0]["electrical_type"], "Output");
     assert_eq!(pins[0]["x_nm"], 100);
     assert_eq!(pins[0]["y_nm"], 200);
+    assert_eq!(pins[1]["pin_uuid"], power_pin_id.to_string());
+    assert_eq!(pins[1]["number"], "VCC");
+    assert_eq!(pins[1]["electrical_type"], "PowerIn");
+    assert_eq!(pins[1]["x_nm"], 300);
+    assert_eq!(pins[1]["y_nm"], 400);
+
+    let nets_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "nets",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("nets query should succeed");
+    let nets: serde_json::Value =
+        serde_json::from_str(&nets_output).expect("nets JSON should parse");
+    assert!(nets.as_array().unwrap().iter().any(|net| {
+        net["pins"].as_array().unwrap().iter().any(|pin| {
+            pin["uuid"] == power_pin_id.to_string()
+                && pin["component"] == "U1"
+                && pin["pin"] == "VCC"
+                && pin["electrical_type"] == "PowerIn"
+        })
+    }));
+    let erc_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "erc",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("erc query should succeed");
+    let erc: serde_json::Value = serde_json::from_str(&erc_output).expect("erc JSON should parse");
+    assert!(
+        erc["raw_report"]["erc"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|entry| {
+                entry["code"] == "power_in_without_source"
+                    && entry["object_uuids"] == serde_json::json!([power_pin_id.to_string()])
+            })
+    );
     let _ = std::fs::remove_dir_all(&root);
 }

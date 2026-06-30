@@ -59,6 +59,13 @@ fn project_query_board_component_pads_reads_persisted_component_pads() {
             diameter_nm: 600_000,
         }),
         drill_nm: Some(300_000),
+        plated: None,
+        layer_span: Default::default(),
+        mask_policy: Default::default(),
+        paste_policy: Default::default(),
+        annular_ring_nm: None,
+        thermal: None,
+        antipad: None,
     };
     std::fs::write(
         pool_root

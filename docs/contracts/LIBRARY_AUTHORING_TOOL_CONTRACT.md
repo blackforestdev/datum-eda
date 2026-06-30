@@ -47,8 +47,10 @@ mutations, and broad CLI/MCP library command surfaces. Current implementation
 evidence includes:
 
 - `crates/engine/src/pool/mod.rs`: canonical pool structs for `Unit`,
-  `Symbol`, `Entity`, `Padstack`, `Package`, `Part`, lifecycle, primitives,
-  part metadata, model references, and a simple pool search/index.
+  `Symbol`, `Entity`, `Footprint`, `Padstack`, `Package`, `Part`,
+  `PinPadMap`, lifecycle, primitives, part metadata, symbol fields/style
+  assertions, model attachments, model references, and a simple pool
+  search/index.
 - `crates/engine/src/substrate/operation.rs`: generic
   `CreatePoolLibraryObject` / `SetPoolLibraryObject` /
   `DeletePoolLibraryObject` operations plus legacy typed package/padstack and
@@ -62,6 +64,13 @@ evidence includes:
   `mcp-server/tools_catalog_library.py`: broad typed library-authoring
   facades for units, symbols, entities, padstacks, packages, parts, package
   graphics, metadata, model attachment, and resolver-backed list/show.
+- `crates/cli/src/command_project_library_footprint.rs` and the matching MCP
+  aliases now provide the first typed first-class `Footprint` authoring slice:
+  create a footprint tied to an existing `Package` and set/update footprint pad
+  records tied to existing `Padstack`s, plus rectangular/polygon
+  `Footprint.courtyard` geometry and first `Footprint.silkscreen`
+  line/rectangle/circle/polygon primitives, through the same journaled
+  pool-object gate.
 
 The remaining blocker is not "no substrate." It is that the library-specific
 authority model is still split across engine structs, generic substrate
@@ -74,15 +83,19 @@ validation. This contract therefore defines the implementation target:
   body/terminal family; `Footprint` carries the PCB land pattern, courtyard,
   paste/mask process apertures, fabrication/assembly graphics, and pad
   geometry.
-- `PinPadMap` is first-class library data. The legacy `Part.pad_map` shape is
-  a compatibility/import convenience until migrated behind explicit
+- `PinPadMap` is first-class library data. Its canonical mapping is
+  gate-aware `pad -> {gate, pin}`, not `pin -> pad`, so multi-gate parts can
+  bind the same unit pin to distinct physical pads. The legacy `Part.pad_map`
+  shape is a compatibility/import convenience until migrated behind explicit
   `PinPadMap` objects.
-- `Padstack` must model layer spans, copper, drill, annular, thermal/anti-pad,
-  plated/non-plated state, and explicit mask/paste policy rather than simple
-  copper aperture geometry only.
-- `ModelAttachment` must become a governed content object or governed
-  attachment record with hash/provenance/role/review state. Bare path-only
-  `ModelRef` remains insufficient for the product target.
+- `Padstack` now has model fields for layer spans, copper aperture, drill,
+  annular ring, thermal/anti-pad, plated state, and mask/paste policy; the
+  remaining target is systematic consumption in footprint materialization,
+  checks, standards repair, and fabrication outputs.
+- `ModelAttachment` now exists for Part behavioural models with hash/provenance
+  and review-state fields, but the product target is a governed attachment
+  contract across Part/Package/Footprint targets. Bare path-only 3D `ModelRef`
+  remains insufficient for that full target.
 - Pool layering, duplicate UUID/shadowing, project-local overrides,
   automated-authoring proposal policy, binding materialization, and
   validation tiers must be defined once in the engine contract and consumed by
@@ -189,10 +202,11 @@ DomainObjects, each with `ObjectId`/`object_revision`.
    behind `commit()` so AI authoring is never an unjournaled surface.
 5. AI query/context needed: target pool ref (reusable vs project-local),
    the schema for the kind, current `model_revision`, and the resolved
-   `object_id`s referenced — a Footprint needs valid `padstack_ref`s + a
-   `Package` ref; a Part needs `default_symbol`/`footprint`/`pinmap`; a
-   PinPadMap needs symbol pin ids + names, footprint pad ids + names, and
-   package terminal ids; a ModelAttachment needs `target_object_id` plus
+  `object_id`s referenced — a Footprint needs valid `padstack_ref`s + a
+  `Package` ref; a Part needs default symbol/footprint context and
+  `Part.default_pin_pad_map`; a
+  PinPadMap needs symbol pin ids + names, footprint pad ids + names, and
+  package terminal ids; a ModelAttachment needs `target_object_id` plus
    declared format/role and a data-egress/encrypted-content policy.
    Sourced via the existing read tools (`search_pool`/`get_part`/
    `get_package`/`get_symbols`) folded under `datum.query.library`.
@@ -218,9 +232,28 @@ DomainObjects, each with `ObjectId`/`object_revision`.
    `datum-eda proposal create-pool-padstack` /
    `datum.proposal.create_pool_padstack`, then typed packages through
    `datum-eda proposal create-pool-package` /
-   `datum.proposal.create_pool_package`, and package pads through
+   `datum.proposal.create_pool_package`; legacy package-pad compatibility
+   remains callable through
    `datum-eda proposal set-pool-package-pad` /
-   `datum.proposal.set_pool_package_pad`, plus package courtyards through
+   `datum.proposal.set_pool_package_pad`, first-class Footprints through
+   `datum-eda proposal create-pool-footprint` /
+   `datum.proposal.create_pool_footprint`, and new land-pattern pads through
+   `datum-eda proposal set-pool-footprint-pad` /
+   `datum.proposal.set_pool_footprint_pad`, Footprint courtyards through
+   `datum-eda proposal set-pool-footprint-courtyard-rect` /
+   `datum.proposal.set_pool_footprint_courtyard_rect` and
+   `datum-eda proposal set-pool-footprint-courtyard-polygon` /
+   `datum.proposal.set_pool_footprint_courtyard_polygon`, Footprint
+   silkscreen lines/rectangles/circles/polygons through `datum-eda proposal
+   add-pool-footprint-silkscreen-line`,
+   `add-pool-footprint-silkscreen-rect`,
+   `add-pool-footprint-silkscreen-circle`, and
+   `add-pool-footprint-silkscreen-polygon` /
+   `datum.proposal.add_pool_footprint_silkscreen_line`,
+   `datum.proposal.add_pool_footprint_silkscreen_rect`,
+   `datum.proposal.add_pool_footprint_silkscreen_circle`, and
+   `datum.proposal.add_pool_footprint_silkscreen_polygon`, plus compatibility
+   package courtyards through
    `datum-eda proposal set-pool-package-courtyard-rect` /
    `datum.proposal.set_pool_package_courtyard_rect` and
    `datum-eda proposal set-pool-package-courtyard-polygon` /
@@ -415,8 +448,11 @@ real-world practice.
   equal DomainObjects (Decision 008 lines 308-343) with the same
   `ObjectId`/`object_revision` as every other kind. Its "distinct
   validation" (ref-resolution, `variant_condition`) is per-kind
-  create/edit logic — every kind has distinct validation. Folded into
-  `library.author` as `kind=PinPadMap`.
+  create/edit logic — every kind has distinct validation. Product-level AI/MCP
+  authoring should fold it into `library.author` as `kind=PinPadMap`; the
+  current CLI also exposes typed `create-pool-pin-pad-map` /
+  `set-pool-pin-pad-map` helpers as transitional ergonomic commands over the
+  same first-class pool object.
 - `library.attach_model` as its own tool. `ModelAttachment` is a
   first-class DomainObject (Decision 008 lines 345-374) whose
   `target_object_id` points at a Part/Package/Footprint. Attaching =
@@ -520,33 +556,56 @@ Two fixtures.
 
 Fixture 2 is now partially executable: the shared journal/commit substrate,
 `ComponentInstance`, Import Map, resolver pool-shard discovery, raw library
-object operations, typed CLI producers, and MCP bridges exist. The fixture is
-not complete until the native library model stops treating `footprints` as
-package-compatible payloads, migrates package land-pattern data into a real
-`Footprint` object, resolves `PinPadMap` authority, and runs dependency
-validation through an engine-owned library graph rather than CLI-only checks.
+object operations, typed CLI producers, MCP bridges, real `Footprint` pool
+payload validation, body-oriented `Package` fields, richer `Padstack` fields,
+and Part model attachments exist. The fixture is not complete until
+`PinPadMap` authority is fully migrated beyond the current runtime-preferred
+`Part.default_pin_pad_map` slice and footprint-first runtime board pad
+regeneration, legacy package land-pattern compatibility is migrated behind
+explicit policy, model attachments are governed consistently across library
+targets, and the first engine-owned `LibraryGraph` diagnostic seam expands into
+one resolver/commit/validate dependency contract instead of only projecting
+engine diagnostics through `project validate`.
 
 ## Not-Yet-Supported / Not-Yet-Systematic
 
-- A canonical `Footprint` DomainObject. Resolver discovers
-  `pool/footprints`, but current validation treats footprints as
-  package-compatible payloads. The target schema must separate component body
-  (`Package`) from board land pattern (`Footprint`).
+- Full `Footprint` authority. `Footprint` is now a real pool type and
+  `project validate` checks footprint package refs plus footprint-pad padstack
+  refs. Runtime board pad regeneration now prefers first-class `Footprint`
+  land-pattern pads through `Part.default_footprint`, `PinPadMap.footprint`, or
+  a unique package-matching footprint before falling back to legacy
+  `Package.pads`. Typed CLI/MCP authoring can now create first-class
+  Footprints, set Footprint pads directly, and set rectangular/polygon
+  Footprint courtyards plus Footprint silkscreen lines/rectangles/circles/polygons directly. Importers and compatibility
+  materialization still preserve legacy package land-pattern fields in some
+  paths, and footprint fab/silkscreen primitives beyond lines/rectangles/circles/polygons, assembly/mechanical/model/
+  process-policy authoring remains pending. The target schema separates
+  component body (`Package`) from board land pattern (`Footprint`) without
+  relying on compatibility fallback.
 - Engine-owned `LibraryGraph` authority. The code has pool structs,
-  resolver-discovered shards, write-time shape validation, and CLI dependency
-  validation, but no single engine-level resolved graph consumed by CLI/MCP/GUI.
-- First-class `PinPadMap` authority. `Part.pad_map` and
-  `pool/pin_pad_maps` currently coexist; the first-class object is the target,
-  with `Part.pad_map` retained only as compatibility/import input until
-  migrated.
-- Padstack process policy. Current padstacks validate basic aperture shape;
-  the target includes layer spans, copper, drill, annular, plated/non-plated,
-  thermal/anti-pad, and explicit mask/paste policy including unknown/import
-  preserved states.
-- `ModelAttachment` as governed library data. Existing package `ModelRef` and
-  part behavioural model attachment are useful slices, but the target needs
-  hash/provenance/role/review-state semantics consistently across Part,
-  Package, and Footprint targets.
+  resolver-discovered shards, write-time shape validation, and a first
+  engine-owned dependency diagnostic seam consumed by `project validate`, but
+  no single engine-level resolved graph governing resolver, commit-time,
+  CLI/MCP/GUI, duplicate/shadowing, and materialization policy.
+- First-class gate-aware `PinPadMap` authority. `pool/pin_pad_maps` now has direct typed
+  CLI authoring and validation, and runtime part-compatibility signatures plus
+  component-pad net remapping prefer a valid `Part.default_pin_pad_map`
+  resolved through `Pool.pin_pad_maps`. Legacy-named part pad-map commands now
+  bridge compatibility inputs into that default first-class map and do not
+  write `Part.pad_map`. `Part.pad_map` still coexists for legacy imports and
+  fallback when a first-class map is absent or unusable; it does not override
+  usable `Footprint` / `PinPadMap` authority. The remaining target is to retire
+  `Part.pad_map` to migrated import input behind explicit policy.
+- Padstack process-policy consumption. Current padstacks model layer spans,
+  aperture, drill, annular, plated/non-plated, thermal/anti-pad, and explicit
+  mask/paste policy; the remaining gap is systematic consumption by footprint
+  generation/materialization, checks, standards repairs, and fabrication
+  outputs, including unknown/import-preserved states.
+- `ModelAttachment` as governed library data across targets. Existing package
+  `ModelRef`, content-addressed model blobs, and part behavioural-model
+  attachments are useful slices, but the target needs one hash/provenance/role/
+  review-state contract consistently across Part, Package, and Footprint
+  targets.
 - `LibraryBinding` / update-binding operations. `ComponentInstance` exists,
   but library bindings are not yet the single first-class join that pins
   revisions for Part, Symbol, Package, Footprint, PinPadMap, and models.
@@ -581,7 +640,8 @@ validation through an engine-owned library graph rather than CLI-only checks.
    placed `ComponentInstance` is forced proposal-first. Is "has a placed
    binding" the right trigger, or should it be "the edit changes a field
    the binding depends on"?
-6. Should dependency validation be promoted into an engine-owned
-   `LibraryGraph` before any more CLI/MCP library authoring commands land?
-   This contract recommends yes: CLI and MCP should call the engine graph,
-   not duplicate semantic validation.
+6. How far should the first engine-owned `LibraryGraph` diagnostic seam be
+   promoted before any more CLI/MCP library authoring commands land? This
+   contract recommends continuing the migration: CLI and MCP should call the
+   engine graph, and resolver/commit-time validation should share that same
+   semantic policy rather than duplicate it.

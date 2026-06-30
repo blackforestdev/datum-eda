@@ -77,9 +77,19 @@ pub(crate) use self::cli_args_project_library::{
     ProjectSetPoolPartPackagingOptionsArgs, ProjectSetPoolPartPadMapArgs,
     ProjectSetPoolPartPadMapEntryArgs, ProjectSetPoolPartParametricArgs,
     ProjectSetPoolPartSupplyChainArgs, ProjectSetPoolPartTagsArgs, ProjectSetPoolPartThermalArgs,
-    ProjectSetPoolSymbolPinAnchorArgs, ProjectSetPoolUnitPinArgs,
+    ProjectSetPoolUnitPinArgs,
+};
+pub(crate) use self::cli_args_project_library_footprint::{
+    ProjectAddPoolFootprintSilkscreenCircleArgs, ProjectAddPoolFootprintSilkscreenLineArgs,
+    ProjectAddPoolFootprintSilkscreenPolygonArgs, ProjectAddPoolFootprintSilkscreenRectArgs,
+    ProjectCreatePoolFootprintArgs, ProjectSetPoolFootprintCourtyardPolygonArgs,
+    ProjectSetPoolFootprintCourtyardRectArgs, ProjectSetPoolFootprintPadArgs,
 };
 pub(crate) use self::cli_args_project_library_part_bindings::ProjectSetPoolPartBindingsArgs;
+pub(crate) use self::cli_args_project_library_pin_pad_map::{
+    ProjectCreatePoolPinPadMapArgs, ProjectSetPoolPinPadMapArgs,
+};
+pub(crate) use self::cli_args_project_library_symbol_pin::ProjectSetPoolSymbolPinAnchorArgs;
 pub(crate) use self::cli_args_project_output_jobs::{
     ProjectCancelOutputJobRunArgs, ProjectCreateGerberOutputJobArgs, ProjectCreateOutputJobArgs,
     ProjectDeleteOutputJobArgs, ProjectRunOutputJobArgs, ProjectStartOutputJobRunArgs,
@@ -97,18 +107,22 @@ pub(crate) use self::cli_args_project_waivers::{
     ProjectAcceptDeviationArgs, ProjectWaiveFindingArgs,
 };
 pub(crate) use self::cli_args_proposals::{
-    ProjectProposalListArgs, ProjectRejectProposalArgs, ProposalCommands,
-    ProposalCreateBoardComponentReplacementArgs, ProposalCreateBoardComponentReplacementPlanArgs,
-    ProposalCreateBoardComponentReplacementsArgs, ProposalCreateManufacturingPlanArgs,
-    ProposalCreateOutputJobArgs, ProposalCreatePanelProjectionArgs, ProposalCreatePoolEntityArgs,
-    ProposalCreatePoolLibraryObjectArgs, ProposalCreatePoolPackageArgs,
-    ProposalCreatePoolPadstackArgs, ProposalCreatePoolSymbolArgs, ProposalCreatePoolUnitArgs,
-    ProposalDeleteManufacturingPlanArgs, ProposalDeleteOutputJobArgs,
+    ProjectProposalListArgs, ProjectRejectProposalArgs,
+    ProposalAddPoolFootprintSilkscreenCircleArgs, ProposalAddPoolFootprintSilkscreenLineArgs,
+    ProposalAddPoolFootprintSilkscreenPolygonArgs, ProposalAddPoolFootprintSilkscreenRectArgs,
+    ProposalCommands, ProposalCreateBoardComponentReplacementArgs,
+    ProposalCreateBoardComponentReplacementPlanArgs, ProposalCreateBoardComponentReplacementsArgs,
+    ProposalCreateManufacturingPlanArgs, ProposalCreateOutputJobArgs,
+    ProposalCreatePanelProjectionArgs, ProposalCreatePoolEntityArgs,
+    ProposalCreatePoolFootprintArgs, ProposalCreatePoolLibraryObjectArgs,
+    ProposalCreatePoolPackageArgs, ProposalCreatePoolPadstackArgs, ProposalCreatePoolSymbolArgs,
+    ProposalCreatePoolUnitArgs, ProposalDeleteManufacturingPlanArgs, ProposalDeleteOutputJobArgs,
     ProposalDeletePanelProjectionArgs, ProposalDrawWireArgs, ProposalPlaceLabelArgs,
-    ProposalPlaceSymbolArgs, ProposalSetPoolPackageCourtyardPolygonArgs,
-    ProposalSetPoolPackageCourtyardRectArgs, ProposalSetPoolPackagePadArgs,
-    ProposalUpdateManufacturingPlanArgs, ProposalUpdateOutputJobArgs,
-    ProposalUpdatePanelProjectionArgs,
+    ProposalPlaceSymbolArgs, ProposalSetPoolFootprintCourtyardPolygonArgs,
+    ProposalSetPoolFootprintCourtyardRectArgs, ProposalSetPoolFootprintPadArgs,
+    ProposalSetPoolPackageCourtyardPolygonArgs, ProposalSetPoolPackageCourtyardRectArgs,
+    ProposalSetPoolPackagePadArgs, ProposalUpdateManufacturingPlanArgs,
+    ProposalUpdateOutputJobArgs, ProposalUpdatePanelProjectionArgs,
 };
 
 #[derive(Clone, clap::ValueEnum)]

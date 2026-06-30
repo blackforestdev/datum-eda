@@ -260,21 +260,125 @@ LIBRARY_TOOL_SCHEMAS = {
         "x_dispatch_defaults": {"pool": "pool"},
     },
     "create_pool_package": {
-        "description": "Create one typed native pool package with one initial pad referencing an existing padstack.",
+        "description": "Create one typed native pool package body record; optional pad/padstack fields are legacy land-pattern compatibility input and should be replaced by first-class Footprint authoring.",
         "inputSchema": {
             "type": "object",
             "properties": {
                 "path": {"type": "string"}, "pool": {"type": "string"}, "package": {"type": "string"},
-                "name": {"type": "string"}, "pad": {"type": "string"}, "padstack": {"type": "string"},
+                "name": {"type": "string"}, "pad": {"type": ["string", "null"]}, "padstack": {"type": ["string", "null"]},
                 "pad_name": {"type": "string"}, "x_nm": {"type": "integer"}, "y_nm": {"type": "integer"},
                 "layer": {"type": "integer"},
             },
-            "required": ["path", "package", "name", "pad", "padstack"],
+            "required": ["path", "package", "name"],
+        },
+        "x_dispatch_defaults": {"pool": "pool", "pad": None, "padstack": None, "pad_name": "1", "x_nm": 0, "y_nm": 0, "layer": 1},
+    },
+    "create_pool_footprint": {
+        "description": "Create one first-class typed native pool footprint for an existing package.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"}, "pool": {"type": "string"}, "footprint": {"type": "string"},
+                "package": {"type": "string"}, "name": {"type": "string"},
+            },
+            "required": ["path", "footprint", "package", "name"],
+        },
+        "x_dispatch_defaults": {"pool": "pool"},
+    },
+    "set_pool_footprint_pad": {
+        "description": "Set one first-class typed native pool footprint pad entry referencing an existing padstack.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"}, "pool": {"type": "string"}, "footprint": {"type": "string"},
+                "pad": {"type": "string"}, "padstack": {"type": "string"}, "pad_name": {"type": "string"},
+                "x_nm": {"type": "integer"}, "y_nm": {"type": "integer"}, "layer": {"type": "integer"},
+            },
+            "required": ["path", "footprint", "pad", "padstack"],
         },
         "x_dispatch_defaults": {"pool": "pool", "pad_name": "1", "x_nm": 0, "y_nm": 0, "layer": 1},
     },
+    "set_pool_footprint_courtyard_rect": {
+        "description": "Set first-class typed native pool footprint rectangular courtyard geometry.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"}, "pool": {"type": "string"}, "footprint": {"type": "string"},
+                "min_x_nm": {"type": "integer"}, "min_y_nm": {"type": "integer"},
+                "max_x_nm": {"type": "integer"}, "max_y_nm": {"type": "integer"},
+            },
+            "required": ["path", "footprint", "min_x_nm", "min_y_nm", "max_x_nm", "max_y_nm"],
+        },
+        "x_dispatch_defaults": {"pool": "pool"},
+    },
+    "set_pool_footprint_courtyard_polygon": {
+        "description": "Set first-class typed native pool footprint polygon courtyard geometry.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"}, "pool": {"type": "string"}, "footprint": {"type": "string"},
+                "vertices": {"type": "string"},
+            },
+            "required": ["path", "footprint", "vertices"],
+        },
+        "x_dispatch_defaults": {"pool": "pool"},
+    },
+    "add_pool_footprint_silkscreen_line": {
+        "description": "Append one first-class typed native pool footprint silkscreen line primitive.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"}, "pool": {"type": "string"}, "footprint": {"type": "string"},
+                "from_x_nm": {"type": "integer"}, "from_y_nm": {"type": "integer"},
+                "to_x_nm": {"type": "integer"}, "to_y_nm": {"type": "integer"},
+                "width_nm": {"type": "integer"},
+            },
+            "required": ["path", "footprint", "from_x_nm", "from_y_nm", "to_x_nm", "to_y_nm", "width_nm"],
+        },
+        "x_dispatch_defaults": {"pool": "pool"},
+    },
+    "add_pool_footprint_silkscreen_rect": {
+        "description": "Append one first-class typed native pool footprint silkscreen rectangle primitive.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"}, "pool": {"type": "string"}, "footprint": {"type": "string"},
+                "min_x_nm": {"type": "integer"}, "min_y_nm": {"type": "integer"},
+                "max_x_nm": {"type": "integer"}, "max_y_nm": {"type": "integer"},
+                "width_nm": {"type": "integer"},
+            },
+            "required": ["path", "footprint", "min_x_nm", "min_y_nm", "max_x_nm", "max_y_nm", "width_nm"],
+        },
+        "x_dispatch_defaults": {"pool": "pool"},
+    },
+    "add_pool_footprint_silkscreen_circle": {
+        "description": "Append one first-class typed native pool footprint silkscreen circle primitive.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"}, "pool": {"type": "string"}, "footprint": {"type": "string"},
+                "center_x_nm": {"type": "integer"}, "center_y_nm": {"type": "integer"},
+                "radius_nm": {"type": "integer"}, "width_nm": {"type": "integer"},
+            },
+            "required": ["path", "footprint", "center_x_nm", "center_y_nm", "radius_nm", "width_nm"],
+        },
+        "x_dispatch_defaults": {"pool": "pool"},
+    },
+    "add_pool_footprint_silkscreen_polygon": {
+        "description": "Append one first-class typed native pool footprint silkscreen polygon or polyline primitive.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"}, "pool": {"type": "string"}, "footprint": {"type": "string"},
+                "vertices": {"type": "string", "description": "Semicolon-separated x,y vertex pairs, e.g. x,y;x,y;x,y."},
+                "closed": {"type": "boolean"}, "width_nm": {"type": "integer"},
+            },
+            "required": ["path", "footprint", "vertices", "closed", "width_nm"],
+        },
+        "x_dispatch_defaults": {"pool": "pool"},
+    },
     "set_pool_package_pad": {
-        "description": "Set one typed native pool package pad entry referencing an existing padstack.",
+        "description": "Legacy package-named compatibility path that writes one pad to the package-linked Footprint; prefer set_pool_footprint_pad.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -287,7 +391,7 @@ LIBRARY_TOOL_SCHEMAS = {
         "x_dispatch_defaults": {"pool": "pool", "pad_name": "1", "x_nm": 0, "y_nm": 0, "layer": 1},
     },
     "set_pool_package_courtyard_rect": {
-        "description": "Set typed native pool package rectangular courtyard geometry.",
+        "description": "Legacy package-named compatibility path that writes rectangular courtyard geometry to the package-linked Footprint.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -300,7 +404,7 @@ LIBRARY_TOOL_SCHEMAS = {
         "x_dispatch_defaults": {"pool": "pool"},
     },
     "set_pool_package_courtyard_polygon": {
-        "description": "Set typed native pool package polygon courtyard geometry.",
+        "description": "Legacy package-named compatibility path that writes polygon courtyard geometry to the package-linked Footprint.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -312,7 +416,7 @@ LIBRARY_TOOL_SCHEMAS = {
         "x_dispatch_defaults": {"pool": "pool"},
     },
     "add_pool_package_silkscreen_line": {
-        "description": "Append one typed native pool package silkscreen line primitive.",
+        "description": "Legacy package-named compatibility path that appends one silkscreen line primitive to the unique package-linked Footprint.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -326,7 +430,7 @@ LIBRARY_TOOL_SCHEMAS = {
         "x_dispatch_defaults": {"pool": "pool"},
     },
     "add_pool_package_silkscreen_rect": {
-        "description": "Append one typed native pool package silkscreen rectangle primitive.",
+        "description": "Legacy package-named compatibility path that appends one silkscreen rectangle primitive to the unique package-linked Footprint.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -340,7 +444,7 @@ LIBRARY_TOOL_SCHEMAS = {
         "x_dispatch_defaults": {"pool": "pool"},
     },
     "add_pool_package_silkscreen_polygon": {
-        "description": "Append one typed native pool package silkscreen polygon or polyline primitive.",
+        "description": "Legacy package-named compatibility path that appends one silkscreen polygon or polyline primitive to the unique package-linked Footprint.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -353,7 +457,7 @@ LIBRARY_TOOL_SCHEMAS = {
         "x_dispatch_defaults": {"pool": "pool"},
     },
     "add_pool_package_silkscreen_circle": {
-        "description": "Append one typed native pool package silkscreen circle primitive.",
+        "description": "Legacy package-named compatibility path that appends one silkscreen circle primitive to the unique package-linked Footprint.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -366,7 +470,7 @@ LIBRARY_TOOL_SCHEMAS = {
         "x_dispatch_defaults": {"pool": "pool"},
     },
     "add_pool_package_silkscreen_arc": {
-        "description": "Append one typed native pool package silkscreen arc primitive.",
+        "description": "Legacy package-named compatibility path that appends one silkscreen arc primitive to the unique package-linked Footprint.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -379,7 +483,7 @@ LIBRARY_TOOL_SCHEMAS = {
         "x_dispatch_defaults": {"pool": "pool"},
     },
     "add_pool_package_silkscreen_text": {
-        "description": "Append one typed native pool package silkscreen text primitive.",
+        "description": "Legacy package-named compatibility path that appends one silkscreen text primitive to the unique package-linked Footprint.",
         "inputSchema": {
             "type": "object",
             "properties": {
@@ -602,6 +706,34 @@ LIBRARY_TOOL_SCHEMAS = {
                 "entries": {"type": "array", "items": {"type": "object", "properties": {"pad": {"type": "string"}, "gate": {"type": "string"}, "pin": {"type": "string"}}, "required": ["pad", "gate", "pin"]}},
             },
             "required": ["path", "part", "entries"],
+        },
+        "x_dispatch_defaults": {"pool": "pool", "mode": "merge"},
+    },
+    "create_pool_pin_pad_map": {
+        "description": "Create one first-class native pool PinPadMap through the journaled project commit path.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"}, "pool": {"type": "string"}, "map": {"type": "string"},
+                "part": {"type": "string"}, "footprint": {"type": ["string", "null"]},
+                "entries": {"type": "array", "items": {"type": "object", "properties": {"pad": {"type": "string"}, "gate": {"type": "string"}, "pin": {"type": "string"}}, "required": ["pad", "pin"]}},
+                "set_default": {"type": "boolean"},
+            },
+            "required": ["path", "map", "part", "entries"],
+        },
+        "x_dispatch_defaults": {"pool": "pool", "footprint": None, "set_default": False},
+        "x_dispatch_args": ["path", "pool", "map", "part", "entries", "footprint", "set_default"],
+    },
+    "set_pool_pin_pad_map": {
+        "description": "Update first-class native pool PinPadMap mappings through the journaled project commit path.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"}, "pool": {"type": "string"}, "map": {"type": "string"},
+                "mode": {"type": "string"},
+                "entries": {"type": "array", "items": {"type": "object", "properties": {"pad": {"type": "string"}, "gate": {"type": "string"}, "pin": {"type": "string"}}, "required": ["pad", "pin"]}},
+            },
+            "required": ["path", "map", "entries"],
         },
         "x_dispatch_defaults": {"pool": "pool", "mode": "merge"},
     },

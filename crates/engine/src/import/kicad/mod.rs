@@ -381,6 +381,13 @@ fn import_footprint_pads(
             ),
             aperture,
             drill_nm,
+            plated: drill_nm.map(|_| true),
+            layer_span: Default::default(),
+            mask_policy: Default::default(),
+            paste_policy: Default::default(),
+            annular_ring_nm: None,
+            thermal: None,
+            antipad: None,
         });
         pads.insert(
             pad_uuid,

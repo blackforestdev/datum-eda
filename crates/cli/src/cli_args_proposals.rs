@@ -1,7 +1,11 @@
 pub(crate) use super::cli_args_proposal_library::{
-    ProposalCreatePoolEntityArgs, ProposalCreatePoolLibraryObjectArgs,
-    ProposalCreatePoolPackageArgs, ProposalCreatePoolPadstackArgs, ProposalCreatePoolSymbolArgs,
-    ProposalCreatePoolUnitArgs, ProposalSetPoolPackageCourtyardPolygonArgs,
+    ProposalAddPoolFootprintSilkscreenCircleArgs, ProposalAddPoolFootprintSilkscreenLineArgs,
+    ProposalAddPoolFootprintSilkscreenPolygonArgs, ProposalAddPoolFootprintSilkscreenRectArgs,
+    ProposalCreatePoolEntityArgs, ProposalCreatePoolFootprintArgs,
+    ProposalCreatePoolLibraryObjectArgs, ProposalCreatePoolPackageArgs,
+    ProposalCreatePoolPadstackArgs, ProposalCreatePoolSymbolArgs, ProposalCreatePoolUnitArgs,
+    ProposalSetPoolFootprintCourtyardPolygonArgs, ProposalSetPoolFootprintCourtyardRectArgs,
+    ProposalSetPoolFootprintPadArgs, ProposalSetPoolPackageCourtyardPolygonArgs,
     ProposalSetPoolPackageCourtyardRectArgs, ProposalSetPoolPackagePadArgs,
 };
 use super::*;
@@ -34,6 +38,22 @@ pub(crate) enum ProposalCommands {
     CreatePoolPadstack(ProposalCreatePoolPadstackArgs),
     /// Create a draft proposal to author a native pool package
     CreatePoolPackage(ProposalCreatePoolPackageArgs),
+    /// Create a draft proposal to author a native pool footprint
+    CreatePoolFootprint(ProposalCreatePoolFootprintArgs),
+    /// Create a draft proposal to set one pad on a native pool footprint
+    SetPoolFootprintPad(ProposalSetPoolFootprintPadArgs),
+    /// Create a draft proposal to set rectangular footprint courtyard geometry
+    SetPoolFootprintCourtyardRect(ProposalSetPoolFootprintCourtyardRectArgs),
+    /// Create a draft proposal to set polygon footprint courtyard geometry
+    SetPoolFootprintCourtyardPolygon(ProposalSetPoolFootprintCourtyardPolygonArgs),
+    /// Create a draft proposal to append one footprint silkscreen line
+    AddPoolFootprintSilkscreenLine(ProposalAddPoolFootprintSilkscreenLineArgs),
+    /// Create a draft proposal to append one footprint silkscreen rectangle
+    AddPoolFootprintSilkscreenRect(ProposalAddPoolFootprintSilkscreenRectArgs),
+    /// Create a draft proposal to append one footprint silkscreen circle
+    AddPoolFootprintSilkscreenCircle(ProposalAddPoolFootprintSilkscreenCircleArgs),
+    /// Create a draft proposal to append one footprint silkscreen polygon/polyline
+    AddPoolFootprintSilkscreenPolygon(ProposalAddPoolFootprintSilkscreenPolygonArgs),
     /// Create a draft proposal to add one pad to a native pool package
     SetPoolPackagePad(ProposalSetPoolPackagePadArgs),
     /// Create a draft proposal to set rectangular package courtyard geometry

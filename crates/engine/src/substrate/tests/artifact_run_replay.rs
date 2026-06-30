@@ -32,6 +32,9 @@ fn journal_replay_recovers_missing_artifact_run_generated_evidence() {
         validation_state: ArtifactValidationState::NotValidated,
     };
     persist_artifact_metadata(&root, &artifact).expect("artifact metadata should persist");
+    model = ProjectResolver::new(&root)
+        .resolve()
+        .expect("project resolves after artifact metadata persist");
 
     let run = ArtifactRun {
         schema_version: ARTIFACT_RUN_SCHEMA_VERSION,
@@ -125,6 +128,9 @@ fn journal_replay_deleted_artifact_run_suppresses_stale_promoted_evidence() {
         validation_state: ArtifactValidationState::NotValidated,
     };
     persist_artifact_metadata(&root, &artifact).expect("artifact metadata should persist");
+    model = ProjectResolver::new(&root)
+        .resolve()
+        .expect("project resolves after artifact metadata persist");
 
     let run = ArtifactRun {
         schema_version: ARTIFACT_RUN_SCHEMA_VERSION,

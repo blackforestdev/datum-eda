@@ -10,7 +10,6 @@ from unittest.mock import patch
 from server_runtime import EngineDaemonClient, StdioToolHost
 from test_support import FakeDaemonClient
 
-
 class TestDispatchLibrary(unittest.TestCase):
     @patch("server_runtime.subprocess.run")
     def test_cli_backed_library_writes_preserve_tool_provenance(self, run_mock) -> None:
@@ -506,6 +505,16 @@ class TestDispatchLibrary(unittest.TestCase):
                 ),
             ),
             (
+                "create_pool_pin_pad_map",
+                {"path": "/tmp/native-project", "pool": "pool", "map": "map-test", "part": "part-test", "footprint": "footprint-test", "entries": [{"pad": "pad-test", "gate": "gate-test", "pin": "pin-test"}], "set_default": True},
+                ("create_pool_pin_pad_map", "/tmp/native-project", "pool", "map-test", "part-test", "footprint-test", [{"pad": "pad-test", "gate": "gate-test", "pin": "pin-test"}], True),
+            ),
+            (
+                "set_pool_pin_pad_map",
+                {"path": "/tmp/native-project", "pool": "pool", "map": "map-test", "mode": "replace", "entries": [{"pad": "pad-test", "gate": "gate-test", "pin": "pin-test"}]},
+                ("set_pool_pin_pad_map", "/tmp/native-project", "pool", "map-test", "replace", [{"pad": "pad-test", "gate": "gate-test", "pin": "pin-test"}]),
+            ),
+            (
                 "set_pool_package_pad",
                 {
                     "path": "/tmp/native-project",
@@ -673,4 +682,19 @@ class TestDispatchLibrary(unittest.TestCase):
             )
             self.assertEqual(daemon.calls[-1], expected_call)
             payload = response["result"]["content"][0]["json"]
-            self.assertEqual(payload["object_uuid"], expected_call[3] if expected_call[0] in {"create_pool_unit", "set_pool_unit_pin", "create_pool_symbol", "add_pool_symbol_line", "add_pool_symbol_rect", "add_pool_symbol_circle", "add_pool_symbol_arc", "add_pool_symbol_polygon", "add_pool_symbol_text", "set_pool_symbol_pin_anchor", "create_pool_entity", "create_pool_padstack", "create_pool_package", "set_pool_package_pad", "set_pool_package_courtyard_rect", "set_pool_package_courtyard_polygon", "add_pool_package_silkscreen_line", "add_pool_package_silkscreen_rect", "add_pool_package_silkscreen_polygon", "add_pool_package_silkscreen_circle", "add_pool_package_silkscreen_arc", "add_pool_package_silkscreen_text", "add_pool_package_model_3d", "set_pool_package_body_heights", "create_pool_part", "set_pool_part_metadata", "set_pool_part_parametric", "set_pool_part_orderable_mpns", "set_pool_part_tags", "set_pool_part_packaging_options", "set_pool_part_supply_chain", "set_pool_part_behavioural_models", "attach_pool_part_model", "detach_pool_part_model", "set_pool_part_thermal", "set_pool_part_pad_map_entry", "set_pool_part_pad_map"} else expected_call[4])
+            package_silkscreen_methods = {
+                "add_pool_package_silkscreen_line",
+                "add_pool_package_silkscreen_rect",
+                "add_pool_package_silkscreen_polygon",
+                "add_pool_package_silkscreen_circle",
+                "add_pool_package_silkscreen_arc",
+                "add_pool_package_silkscreen_text",
+            }
+            expected_uuid = (
+                f"footprint-for-{expected_call[3]}"
+                if expected_call[0] in package_silkscreen_methods
+                else expected_call[3]
+                if expected_call[0] in {"create_pool_unit", "set_pool_unit_pin", "create_pool_symbol", "add_pool_symbol_line", "add_pool_symbol_rect", "add_pool_symbol_circle", "add_pool_symbol_arc", "add_pool_symbol_polygon", "add_pool_symbol_text", "set_symbol_pin_anchor", "set_pool_symbol_pin_anchor", "create_pool_entity", "create_pool_padstack", "create_pool_package", "set_pool_package_pad", "set_pool_package_courtyard_rect", "set_pool_package_courtyard_polygon", "add_pool_package_model_3d", "set_pool_package_body_heights", "create_pool_part", "set_pool_part_metadata", "set_pool_part_parametric", "set_pool_part_orderable_mpns", "set_pool_part_tags", "set_pool_part_packaging_options", "set_pool_part_supply_chain", "set_pool_part_behavioural_models", "attach_pool_part_model", "detach_pool_part_model", "set_pool_part_thermal", "set_pool_part_pad_map_entry", "set_pool_part_pad_map", "create_pool_pin_pad_map", "set_pool_pin_pad_map"}
+                else expected_call[4]
+            )
+            self.assertEqual(payload["object_uuid"], expected_uuid)

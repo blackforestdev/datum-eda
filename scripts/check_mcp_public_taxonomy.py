@@ -28,12 +28,12 @@ EXPECTED_PUBLIC_PREFIX_COUNTS = {
     "datum.component_instance": 3,
     "datum.context": 4,
     "datum.journal": 4,
-    "datum.library": 44,
+    "datum.library": 54,
     "datum.manufacturing": 6,
     "datum.output_job": 5,
     "datum.pcb": 44,
     "datum.pool": 3,
-    "datum.proposal": 34,
+    "datum.proposal": 42,
     "datum.query": 48,
     "datum.replacement": 5,
     "datum.route": 21,
@@ -42,8 +42,8 @@ EXPECTED_PUBLIC_PREFIX_COUNTS = {
 }
 
 EXPECTED_PUBLIC_COUNT = sum(EXPECTED_PUBLIC_PREFIX_COUNTS.values())
-EXPECTED_REGISTERED_COUNT = 479
-EXPECTED_HIDDEN_COMPATIBILITY_COUNT = 171
+EXPECTED_REGISTERED_COUNT = 507
+EXPECTED_HIDDEN_COMPATIBILITY_COUNT = 181
 ALLOWED_HIDDEN_RETIREMENT_STATUSES = {
     "retained_until_migration_plan",
     "deprecated",
@@ -73,6 +73,14 @@ PROPOSAL_WRITE_TOOLS = {
     "datum.proposal.create_pool_entity": "proposal_metadata_write",
     "datum.proposal.create_pool_padstack": "proposal_metadata_write",
     "datum.proposal.create_pool_package": "proposal_metadata_write",
+    "datum.proposal.create_pool_footprint": "proposal_metadata_write",
+    "datum.proposal.set_pool_footprint_pad": "proposal_metadata_write",
+    "datum.proposal.set_pool_footprint_courtyard_rect": "proposal_metadata_write",
+    "datum.proposal.set_pool_footprint_courtyard_polygon": "proposal_metadata_write",
+    "datum.proposal.add_pool_footprint_silkscreen_line": "proposal_metadata_write",
+    "datum.proposal.add_pool_footprint_silkscreen_rect": "proposal_metadata_write",
+    "datum.proposal.add_pool_footprint_silkscreen_circle": "proposal_metadata_write",
+    "datum.proposal.add_pool_footprint_silkscreen_polygon": "proposal_metadata_write",
     "datum.proposal.set_pool_package_pad": "proposal_metadata_write",
     "datum.proposal.set_pool_package_courtyard_rect": "proposal_metadata_write",
     "datum.proposal.set_pool_package_courtyard_polygon": "proposal_metadata_write",

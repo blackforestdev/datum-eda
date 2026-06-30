@@ -8,67 +8,26 @@ use crate::ir::geometry::{Arc, LayerId, Point, Polygon};
 
 mod footprint;
 mod library_graph;
+mod library_graph_diagnostics;
 mod package;
+mod padstack;
+mod pin;
 mod pin_pad_map;
+mod symbol;
 
 pub use footprint::Footprint;
-pub use library_graph::{LibraryGraph, LibraryModelBlob};
+pub use library_graph::{LibraryGraph, LibraryGraphDiagnostic, LibraryModelBlob};
 pub use package::{Package, PackageBodyDimensions, PackageTerminal};
+pub use padstack::{
+    Padstack, PadstackAntipad, PadstackAperture, PadstackLayerSpan, PadstackMaskPolicy,
+    PadstackPastePolicy, PadstackThermal,
+};
+pub use pin::{AlternateName, LibraryPinElectricalType, Pin, PinDirection, Unit};
 pub use pin_pad_map::PinPadMap;
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct Pin {
-    pub uuid: Uuid,
-    pub name: String,
-    pub direction: PinDirection,
-    pub swap_group: u32,
-    pub alternates: Vec<AlternateName>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum PinDirection {
-    Input,
-    Output,
-    Bidirectional,
-    Passive,
-    PowerIn,
-    PowerOut,
-    OpenCollector,
-    OpenEmitter,
-    TriState,
-    NoConnect,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct AlternateName {
-    pub name: String,
-    pub kind: String,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct Unit {
-    pub uuid: Uuid,
-    pub name: String,
-    pub manufacturer: String,
-    pub pins: HashMap<Uuid, Pin>,
-    pub tags: HashSet<String>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct Symbol {
-    pub uuid: Uuid,
-    pub name: String,
-    pub unit: Uuid,
-    #[serde(default)]
-    pub drawings: Vec<Primitive>,
-    #[serde(default)]
-    pub pin_anchors: Vec<SymbolPinAnchor>,
-}
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct SymbolPinAnchor {
-    pub pin: Uuid,
-    pub position: Point,
-}
+pub use symbol::{
+    LibraryCheckState, LibraryCheckStatus, LibraryObjectProvenance, LibrarySymbolField, Symbol,
+    SymbolPinAnchor, SymbolPinDecoration, SymbolPinOrientation,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Gate {
@@ -86,23 +45,6 @@ pub struct Entity {
     pub manufacturer: String,
     pub gates: HashMap<Uuid, Gate>,
     pub tags: HashSet<String>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct Padstack {
-    pub uuid: Uuid,
-    pub name: String,
-    #[serde(default)]
-    pub aperture: Option<PadstackAperture>,
-    #[serde(default)]
-    pub drill_nm: Option<i64>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum PadstackAperture {
-    Circle { diameter_nm: i64 },
-    Rect { width_nm: i64, height_nm: i64 },
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -269,6 +211,19 @@ pub struct ModelAttachment {
     pub encryption_scheme: Option<EncryptionScheme>,
     pub provenance: Option<ModelProvenance>,
     pub format_metadata: ModelFormatMetadata,
+    #[serde(default)]
+    pub reviewed: Option<ModelReviewState>,
+    #[serde(default)]
+    pub notes: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct ModelReviewState {
+    pub approved: bool,
+    #[serde(default)]
+    pub reviewed_by: Option<String>,
+    #[serde(default)]
+    pub reviewed_at: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

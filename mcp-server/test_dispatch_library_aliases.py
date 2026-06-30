@@ -127,6 +127,17 @@ class TestDispatchLibraryAliases(unittest.TestCase):
                 "create_pool_package",
             ),
             (
+                "datum.library.create_footprint",
+                {
+                    "path": "/tmp/native-project",
+                    "pool": "pool",
+                    "footprint": "footprint-test",
+                    "package": "package-test",
+                    "name": "SOT23_LandPattern",
+                },
+                "create_pool_footprint",
+            ),
+            (
                 "datum.library.create_part",
                 {
                     "path": "/tmp/native-project",
@@ -234,6 +245,31 @@ class TestDispatchLibraryAliases(unittest.TestCase):
                     "entries": [{"pad": "pad-test", "gate": "gate-test", "pin": "pin-test"}],
                 },
                 "set_pool_part_pad_map",
+            ),
+            (
+                "datum.library.create_pin_pad_map",
+                {"path": "/tmp/native-project", "pool": "pool", "map": "map-test", "part": "part-test", "entries": [{"pad": "pad-test", "gate": "gate-test", "pin": "pin-test"}], "set_default": True},
+                "create_pool_pin_pad_map",
+            ),
+            (
+                "datum.library.set_pin_pad_map",
+                {"path": "/tmp/native-project", "pool": "pool", "map": "map-test", "mode": "replace", "entries": [{"pad": "pad-test", "gate": "gate-test", "pin": "pin-test"}]},
+                "set_pool_pin_pad_map",
+            ),
+            (
+                "datum.library.set_footprint_pad",
+                {
+                    "path": "/tmp/native-project",
+                    "pool": "pool",
+                    "footprint": "footprint-test",
+                    "pad": "pad-test",
+                    "padstack": "padstack-test",
+                    "pad_name": "2",
+                    "x_nm": 1000,
+                    "y_nm": 2000,
+                    "layer": 1,
+                },
+                "set_pool_footprint_pad",
             ),
             (
                 "datum.library.set_package_pad",
@@ -356,4 +392,19 @@ class TestDispatchLibraryAliases(unittest.TestCase):
             payload = response["result"]["content"][0]["json"]
             self.assertTrue(payload["ok"])
             self.assertEqual(payload["schema"], {"name": tool_name, "version": 1})
-            self.assertEqual(payload["result"]["object_uuid"], daemon.calls[-1][3] if expected_method in {"create_pool_unit", "set_pool_unit_pin", "create_pool_symbol", "add_pool_symbol_line", "add_pool_symbol_rect", "add_pool_symbol_circle", "add_pool_symbol_arc", "add_pool_symbol_polygon", "add_pool_symbol_text", "set_pool_symbol_pin_anchor", "create_pool_entity", "create_pool_padstack", "create_pool_package", "set_pool_package_pad", "set_pool_package_courtyard_rect", "set_pool_package_courtyard_polygon", "add_pool_package_silkscreen_line", "add_pool_package_silkscreen_rect", "add_pool_package_silkscreen_polygon", "add_pool_package_silkscreen_circle", "add_pool_package_silkscreen_arc", "add_pool_package_silkscreen_text", "add_pool_package_model_3d", "set_pool_package_body_heights", "create_pool_part", "set_pool_part_metadata", "set_pool_part_parametric", "set_pool_part_orderable_mpns", "set_pool_part_tags", "set_pool_part_packaging_options", "set_pool_part_supply_chain", "set_pool_part_behavioural_models", "attach_pool_part_model", "detach_pool_part_model", "set_pool_part_thermal", "set_pool_part_pad_map_entry", "set_pool_part_pad_map"} else daemon.calls[-1][4])
+            package_silkscreen_methods = {
+                "add_pool_package_silkscreen_line",
+                "add_pool_package_silkscreen_rect",
+                "add_pool_package_silkscreen_polygon",
+                "add_pool_package_silkscreen_circle",
+                "add_pool_package_silkscreen_arc",
+                "add_pool_package_silkscreen_text",
+            }
+            expected_uuid = (
+                f"footprint-for-{daemon.calls[-1][3]}"
+                if expected_method in package_silkscreen_methods
+                else daemon.calls[-1][3]
+                if expected_method in {"create_pool_unit", "set_pool_unit_pin", "create_pool_symbol", "add_pool_symbol_line", "add_pool_symbol_rect", "add_pool_symbol_circle", "add_pool_symbol_arc", "add_pool_symbol_polygon", "add_pool_symbol_text", "set_pool_symbol_pin_anchor", "create_pool_entity", "create_pool_padstack", "create_pool_package", "create_pool_footprint", "set_pool_footprint_pad", "set_pool_package_pad", "set_pool_package_courtyard_rect", "set_pool_package_courtyard_polygon", "add_pool_package_model_3d", "set_pool_package_body_heights", "create_pool_part", "set_pool_part_metadata", "set_pool_part_parametric", "set_pool_part_orderable_mpns", "set_pool_part_tags", "set_pool_part_packaging_options", "set_pool_part_supply_chain", "set_pool_part_behavioural_models", "attach_pool_part_model", "detach_pool_part_model", "set_pool_part_thermal", "set_pool_part_pad_map_entry", "set_pool_part_pad_map", "create_pool_pin_pad_map", "set_pool_pin_pad_map"}
+                else daemon.calls[-1][4]
+            )
+            self.assertEqual(payload["result"]["object_uuid"], expected_uuid)

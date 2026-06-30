@@ -42,6 +42,22 @@ pub(crate) enum ProjectCommands {
     CreatePoolEntity(ProjectCreatePoolEntityArgs),
     /// Create a typed native pool padstack through the project journal
     CreatePoolPadstack(ProjectCreatePoolPadstackArgs),
+    /// Create a first-class typed native pool footprint through the project journal
+    CreatePoolFootprint(ProjectCreatePoolFootprintArgs),
+    /// Set one first-class typed native pool footprint pad through the project journal
+    SetPoolFootprintPad(ProjectSetPoolFootprintPadArgs),
+    /// Set first-class typed native pool footprint rectangular courtyard through the project journal
+    SetPoolFootprintCourtyardRect(ProjectSetPoolFootprintCourtyardRectArgs),
+    /// Set first-class typed native pool footprint polygon courtyard through the project journal
+    SetPoolFootprintCourtyardPolygon(ProjectSetPoolFootprintCourtyardPolygonArgs),
+    /// Append one first-class typed native pool footprint silkscreen line through the project journal
+    AddPoolFootprintSilkscreenLine(ProjectAddPoolFootprintSilkscreenLineArgs),
+    /// Append one first-class typed native pool footprint silkscreen rectangle through the project journal
+    AddPoolFootprintSilkscreenRect(ProjectAddPoolFootprintSilkscreenRectArgs),
+    /// Append one first-class typed native pool footprint silkscreen circle through the project journal
+    AddPoolFootprintSilkscreenCircle(ProjectAddPoolFootprintSilkscreenCircleArgs),
+    /// Append one first-class typed native pool footprint silkscreen polygon/polyline through the project journal
+    AddPoolFootprintSilkscreenPolygon(ProjectAddPoolFootprintSilkscreenPolygonArgs),
     /// Create a typed native pool package through the project journal
     CreatePoolPackage(ProjectCreatePoolPackageArgs),
     /// Set one typed native pool package pad through the project journal
@@ -97,6 +113,10 @@ pub(crate) enum ProjectCommands {
     SetPoolPartPadMap(ProjectSetPoolPartPadMapArgs),
     /// Set one typed native pool part pad-map entry through the project journal
     SetPoolPartPadMapEntry(ProjectSetPoolPartPadMapEntryArgs),
+    /// Create a first-class typed native pool PinPadMap through the project journal
+    CreatePoolPinPadMap(ProjectCreatePoolPinPadMapArgs),
+    /// Update first-class typed native pool PinPadMap mappings through the project journal
+    SetPoolPinPadMap(ProjectSetPoolPinPadMapArgs),
     /// Replace a raw native pool-library object through the project journal
     SetPoolLibraryObject(ProjectSetPoolLibraryObjectArgs),
     /// Delete a raw native pool-library object through the project journal

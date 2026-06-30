@@ -174,7 +174,10 @@ fn project_validate_checks_native_pool_logical_refs() {
             "part": part_id,
             "footprint": footprint_id,
             "mappings": {
-                pin_id: footprint_pad_id
+                footprint_pad_id: {
+                    "gate": gate_id,
+                    "pin": pin_id
+                }
             }
         }),
     );
@@ -241,8 +244,14 @@ fn project_validate_checks_native_pool_logical_refs() {
             "part": part_id,
             "footprint": footprint_id,
             "mappings": {
-                missing_pin_map_key: pad_id,
-                pin_id: missing_pin_map_pad
+                pad_id: {
+                    "gate": gate_id,
+                    "pin": missing_pin_map_key
+                },
+                missing_pin_map_pad: {
+                    "gate": gate_id,
+                    "pin": pin_id
+                }
             }
         }),
     );
@@ -296,6 +305,231 @@ fn project_validate_checks_native_pool_logical_refs() {
     assert!(issue_codes.contains(&"uuid_filename_mismatch".to_string()));
     assert!(issue_codes.contains(&"dangling_reference".to_string()));
 
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_validate_checks_part_default_footprint_and_pin_pad_map_consistency() {
+    let root = unique_project_root("datum-eda-cli-project-validate-pool-default-map-consistency");
+    create_native_project(&root, Some("Validate Pool Default Map Bad".to_string()))
+        .expect("native project scaffold should succeed");
+    add_project_pool(&root, "pool");
+
+    let unit_id = Uuid::new_v4();
+    let pin_id = Uuid::new_v4();
+    let symbol_id = Uuid::new_v4();
+    let entity_id = Uuid::new_v4();
+    let gate_id = Uuid::new_v4();
+    let package_id = Uuid::new_v4();
+    let other_package_id = Uuid::new_v4();
+    let padstack_id = Uuid::new_v4();
+    let default_footprint_id = Uuid::new_v4();
+    let map_footprint_id = Uuid::new_v4();
+    let map_pad_id = Uuid::new_v4();
+    let missing_footprint_pad_id = Uuid::new_v4();
+    let part_id = Uuid::new_v4();
+    let other_part_id = Uuid::new_v4();
+    let pin_pad_map_id = Uuid::new_v4();
+
+    write_pool_json(
+        &root,
+        "pool/units",
+        unit_id,
+        serde_json::json!({
+            "schema_version": 1,
+            "uuid": unit_id,
+            "name": "U",
+            "manufacturer": "Datum",
+            "pins": {
+                pin_id: {
+                    "uuid": pin_id,
+                    "name": "A",
+                    "direction": "Passive",
+                    "swap_group": 0,
+                    "alternates": []
+                }
+            },
+            "tags": []
+        }),
+    );
+    write_pool_json(
+        &root,
+        "pool/symbols",
+        symbol_id,
+        serde_json::json!({
+            "schema_version": 1,
+            "uuid": symbol_id,
+            "name": "SYM",
+            "unit": unit_id
+        }),
+    );
+    write_pool_json(
+        &root,
+        "pool/entities",
+        entity_id,
+        serde_json::json!({
+            "schema_version": 1,
+            "uuid": entity_id,
+            "name": "E",
+            "prefix": "U",
+            "manufacturer": "Datum",
+            "gates": {
+                gate_id: {
+                    "uuid": gate_id,
+                    "name": "A",
+                    "unit": unit_id,
+                    "symbol": symbol_id
+                }
+            },
+            "tags": []
+        }),
+    );
+    write_pool_json(
+        &root,
+        "pool/padstacks",
+        padstack_id,
+        serde_json::json!({
+            "schema_version": 1,
+            "uuid": padstack_id,
+            "name": "P",
+            "aperture": { "circle": { "diameter_nm": 500000 } },
+            "drill_nm": null
+        }),
+    );
+    for package in [package_id, other_package_id] {
+        write_pool_json(
+            &root,
+            "pool/packages",
+            package,
+            serde_json::json!({
+                "schema_version": 1,
+                "uuid": package,
+                "name": "PKG",
+                "pads": {},
+                "courtyard": { "points": [] },
+                "silkscreen": [],
+                "models_3d": [],
+                "tags": []
+            }),
+        );
+    }
+    write_pool_json(
+        &root,
+        "pool/footprints",
+        default_footprint_id,
+        serde_json::json!({
+            "schema_version": 1,
+            "uuid": default_footprint_id,
+            "name": "DEFAULT-FP",
+            "package": package_id,
+            "pads": {},
+            "courtyard": { "points": [] },
+            "silkscreen": [],
+            "fab": [],
+            "assembly": [],
+            "mechanical": [],
+            "models_3d": [],
+            "tags": []
+        }),
+    );
+    write_pool_json(
+        &root,
+        "pool/footprints",
+        map_footprint_id,
+        serde_json::json!({
+            "schema_version": 1,
+            "uuid": map_footprint_id,
+            "name": "MAP-FP",
+            "package": other_package_id,
+            "pads": {
+                map_pad_id: {
+                    "uuid": map_pad_id,
+                    "name": "1",
+                    "position": { "x": 0, "y": 0 },
+                    "padstack": padstack_id,
+                    "layer": 1
+                }
+            },
+            "courtyard": { "points": [] },
+            "silkscreen": [],
+            "fab": [],
+            "assembly": [],
+            "mechanical": [],
+            "models_3d": [],
+            "tags": []
+        }),
+    );
+    write_pool_json(
+        &root,
+        "pool/parts",
+        part_id,
+        serde_json::json!({
+            "schema_version": 1,
+            "uuid": part_id,
+            "entity": entity_id,
+            "package": package_id,
+            "default_footprint": default_footprint_id,
+            "default_pin_pad_map": pin_pad_map_id,
+            "pad_map": {},
+            "mpn": "D-1",
+            "manufacturer": "Datum",
+            "value": "1k",
+            "description": "",
+            "datasheet": "",
+            "parametric": {},
+            "orderable_mpns": [],
+            "tags": [],
+            "lifecycle": "Active",
+            "base": null
+        }),
+    );
+    write_pool_json(
+        &root,
+        "pool/parts",
+        other_part_id,
+        serde_json::json!({
+            "schema_version": 1,
+            "uuid": other_part_id,
+            "entity": entity_id,
+            "package": package_id,
+            "pad_map": {},
+            "mpn": "D-ALT",
+            "manufacturer": "Datum",
+            "value": "1k",
+            "description": "",
+            "datasheet": "",
+            "parametric": {},
+            "orderable_mpns": [],
+            "tags": [],
+            "lifecycle": "Active",
+            "base": null
+        }),
+    );
+    write_pool_json(
+        &root,
+        "pool/pin_pad_maps",
+        pin_pad_map_id,
+        serde_json::json!({
+            "schema_version": 1,
+            "uuid": pin_pad_map_id,
+            "part": other_part_id,
+            "footprint": map_footprint_id,
+            "mappings": {
+                missing_footprint_pad_id: {
+                    "gate": gate_id,
+                    "pin": pin_id
+                }
+            }
+        }),
+    );
+
+    let (report, exit_code) = validate_project_json(&root);
+    assert_eq!(exit_code, 1);
+    assert_eq!(report["valid"], false);
+    assert_issue_code(&report, "part_mismatch");
+    assert_issue_code(&report, "footprint_mismatch");
+    assert_issue_code(&report, "package_mismatch");
+    assert_issue_code(&report, "dangling_reference");
     let _ = std::fs::remove_dir_all(&root);
 }
 

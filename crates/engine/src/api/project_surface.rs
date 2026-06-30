@@ -250,6 +250,8 @@ impl Engine {
         for (key, value) in &part.parametric {
             parametric.insert(key.clone(), value.clone());
         }
+        let package_pads =
+            super::ops_helpers_landpattern::land_pattern_pads_for_part(part, package, &self.pool);
 
         Ok(PartDetail {
             uuid: part.uuid,
@@ -266,7 +268,7 @@ impl Engine {
             package: PartPackageDetail {
                 uuid: package.uuid,
                 name: package.name.clone(),
-                pads: package.pads.len(),
+                pads: package_pads.len(),
             },
             parametric,
             lifecycle: match part.lifecycle {
@@ -284,16 +286,16 @@ impl Engine {
             object_type: "package",
             uuid: *uuid,
         })?;
-        let mut pads: Vec<_> = package
-            .pads
-            .values()
-            .map(|pad| PackagePadDetail {
-                name: pad.name.clone(),
-                x_mm: nm_to_mm(pad.position.x),
-                y_mm: nm_to_mm(pad.position.y),
-                layer: pad.layer.to_string(),
-            })
-            .collect();
+        let mut pads: Vec<_> =
+            super::ops_helpers_landpattern::land_pattern_pads_for_package(package, &self.pool)
+                .into_iter()
+                .map(|pad| PackagePadDetail {
+                    name: pad.name.clone(),
+                    x_mm: nm_to_mm(pad.position.x),
+                    y_mm: nm_to_mm(pad.position.y),
+                    layer: pad.layer.to_string(),
+                })
+                .collect();
         pads.sort_by(|a, b| a.name.cmp(&b.name));
         let courtyard = package
             .courtyard

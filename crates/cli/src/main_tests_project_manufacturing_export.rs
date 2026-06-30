@@ -1,10 +1,8 @@
 use super::*;
 use eda_engine::ir::serialization::to_json_deterministic;
-
 fn unique_project_root(label: &str) -> PathBuf {
     std::env::temp_dir().join(format!("{}-{}", label, Uuid::new_v4()))
 }
-
 #[test]
 fn project_export_manufacturing_set_writes_supported_artifacts() {
     let root = unique_project_root("datum-eda-cli-project-manufacturing-export");
@@ -101,9 +99,7 @@ fn project_export_manufacturing_set_writes_supported_artifacts() {
                 },
                 "zones": {},
                 "nets": {
-                    net_uuid.to_string(): {
-                        "uuid": net_uuid, "name": "N$1", "class": net_class_uuid
-                    }
+                    net_uuid.to_string(): { "uuid": net_uuid, "name": "N$1", "class": net_class_uuid }
                 },
                 "net_classes": {
                     net_class_uuid.to_string(): {
@@ -281,9 +277,16 @@ fn project_export_manufacturing_set_writes_supported_artifacts() {
         bom_preview["inspection"]["columns"][0],
         "component_instance_uuid"
     );
-    assert_eq!(bom_preview["inspection"]["columns"][1], "reference");
-    assert_eq!(bom_preview["inspection"]["rows"][0][1], "U1");
-
+    assert_eq!(
+        bom_preview["inspection"]["columns"][1],
+        "component_instance_role"
+    );
+    assert_eq!(
+        bom_preview["inspection"]["columns"][2],
+        "component_instance_label"
+    );
+    assert_eq!(bom_preview["inspection"]["columns"][3], "reference");
+    assert_eq!(bom_preview["inspection"]["rows"][0][3], "U1");
     let artifacts = execute(
         Cli::try_parse_from([
             "eda",
@@ -399,7 +402,6 @@ fn project_export_manufacturing_set_writes_supported_artifacts() {
         artifact_validation_report["invalid_file_hashes"],
         serde_json::json!([])
     );
-
     let generated_dir = root.join("generated-gerbers");
     let generated = execute(
         Cli::try_parse_from([
@@ -679,7 +681,6 @@ fn project_export_manufacturing_set_writes_supported_artifacts() {
         scoped_drill_artifact["latest_output_job_run"]["output_job"],
         scoped_drill_job_id
     );
-
     let artifact_list = execute(
         Cli::try_parse_from([
             "eda",
@@ -703,7 +704,6 @@ fn project_export_manufacturing_set_writes_supported_artifacts() {
             .any(|run| run["artifact_id"] == drill_artifact_id
                 && run["output_job"] == scoped_drill_job_id)
     );
-
     assert!(output_dir.join("release-a-bom.csv").is_file());
     assert!(output_dir.join("release-a-pnp.csv").is_file());
     assert!(output_dir.join("release-a-drill.csv").is_file());
@@ -731,7 +731,6 @@ fn project_export_manufacturing_set_writes_supported_artifacts() {
             .join("release-a-l41-mechanical-41-mech.gbr")
             .is_file()
     );
-
     let output_jobs = execute(
         Cli::try_parse_from([
             "eda",

@@ -31,13 +31,13 @@
 
 | Baseline | Datum | Status |
 |---|---|---|
-| 1 separation | `Part → Entity/Unit/Symbol` + `Package/Pad/Padstack` + `Part.pad_map` | ✅ **exceeds** — `Unit` (electrical interface) is separated from `Symbol` (drawing), more granular than Altium |
-| 2 electrical type | `pool::PinDirection` enum (10 values, ⊇ Altium's 8) | ✅ present (see Delta D1 — naming + alignment) |
-| 4 number vs name | `Pin.name` (logical) + `Pad.name` (designator) linked by `pad_map` | ✅ architectural |
+| 1 separation | `Part → Entity/Unit/Symbol` + `Package/Pad/Padstack` + first-class `PinPadMap` | ✅ **exceeds** — `Unit` (electrical interface) is separated from `Symbol` (drawing), more granular than Altium |
+| 2 electrical type | `pool::PinDirection` aliases `LibraryPinElectricalType` (10 values, ⊇ Altium's 8) | ✅ partial — library taxonomy exists; schematic still has its own ERC enum and a materialization mapping (see D1) |
+| 4 number vs name | `Pin.name` (logical) + `Pad.name` (designator) linked by `PinPadMap` | ✅ architectural |
 | 5 multi-gate | `Entity.gates: HashMap<_, Gate>`, `Gate { unit, symbol }` | ✅ (shared-power = convention, see D6) |
-| 6 many-pads→one-pin | `pad_map: HashMap<pad_uuid, PadMapEntry{gate,pin}>` | ✅ |
-| 7 padstack | `Padstack { aperture, drill_nm }` | ✅ |
-| 8 lifecycle | `Part.lifecycle = Active/Nrnd/Eol/Obsolete/Unknown` | ✅ (revision immutability via substrate — confirm) |
+| 6 many-pads→one-pin | `PinPadMap { part, footprint?, mappings: pad → {gate, pin} }`; `Part.pad_map` is fallback/import compatibility only | ✅ partial — first-class authority exists and is gate-aware; full migration policy remains |
+| 7 padstack | `Padstack { aperture, drill_nm, plated, layer_span, mask_policy, paste_policy, annular_ring_nm, thermal, antipad }` | ✅ partial — schema depth exists; downstream consumption remains incomplete |
+| 8 lifecycle | `Part.lifecycle = Active/Nrnd/Eol/Obsolete/Unknown` | ✅ partial (revision guards/object revisions exist; release immutability policy still needs library-level closure) |
 | 10 alternates | `Pin.alternates: Vec<AlternateName>` | ✅ partial (see D4) |
 | 11 swap | `Pin.swap_group: u32` | ✅ (gate swap — confirm) |
 | 12 parametric/MPN/etc. | `Part.{mpn, manufacturer_jep106, parametric, base, orderable_mpns, supply_chain_offers, behavioural_models, thermal, packaging_options}` | ✅ **exceeds** |
@@ -48,28 +48,30 @@ remaining work is narrow, targeted deltas — not a redesign.
 ## C. Deltas to close
 
 **D1 — Reconcile the two pin-type enums (table-stakes).**
-Two representations exist: `pool::PinDirection` (library side, 10 values) and
-`schematic::PinElectricalType` (schematic side, consumed by ERC at
-`connectivity/mod.rs:220` and the ERC prechecks). Define **one canonical
-electrical-type taxonomy**, make the library type the authority, and specify the
-**library→schematic mapping** so a placed component's pin types flow into ERC.
-Rename/alias `pool::PinDirection` → pin *electrical type* for honesty (the enum
-already carries Power/OpenCollector/etc., which are types, not directions).
-*Acceptance:* a placed library pin's electrical type is the value ERC checks.
+Two representations still exist: library-side `LibraryPinElectricalType`
+(`pool::PinDirection` is now a compatibility alias) and
+`schematic::PinElectricalType`, which ERC consumes. Current place-symbol
+materialization maps library pin types into schematic pins, so this is no
+longer a pure naming gap. The remaining target is **one canonical
+electrical-type taxonomy** with the library type as authority and schematic/ERC
+as consumers rather than parallel owners. *Acceptance:* a placed library pin's
+canonical electrical type is the value ERC checks, including persisted
+CheckRun evidence.
 
 **D2 — Pin graphic style on the symbol (table-stakes; the converter needs it).**
-`SymbolPinAnchor { pin, position }` carries position only. Add per-pin graphic
-style: decoration (`none | inverted-dot | clock | active-low | clock+inverted`),
-length, and orientation. Without this, a KiCad/Horizon import loses pin styling.
-Confirm whether decision-008 §Symbol `pins[]` already names this; if not, add it
-there too.
+`SymbolPinAnchor` now carries `orientation`, optional `length_nm`, and
+`decoration` (`none | inverted | clock | inverted_clock`) in addition to
+position. This closes the first schema slice, but the target remains broader:
+preserve/import/export active-low and alternate-function style semantics without
+collapsing distinct source styles into one decoration.
 
 **D3 — Converge the Rust `Symbol` type to the decision-008 schema (convergence-debt).**
 decision-008 `Symbol` specifies `fields[]`, `style_profile_assertions[]`
-(IEEE-315 / IEC-60617 / JIS-C-0617), `standards_basis[]`, `default_refdes_prefix`,
-`check_state`. The Rust `Symbol { uuid, name, unit, drawings, pin_anchors }` lags.
-Converge so designator/value/parameter **fields** and **style profiles** are
-first-class (not just free `Primitive::Text`).
+(IEEE-315 / IEC-60617 / JIS-C-0617), `standards_basis[]`,
+`default_refdes_prefix`, and `check_state`. The Rust `Symbol` now carries these
+fields plus provenance, drawings, and pin anchors. Remaining convergence debt is
+behavioral: rendering/check/import/export parity must consume these fields as
+first-class schema, not only store them.
 
 **D4 — Alternate-function parity (differentiator, trending table-stakes).**
 `AlternateName { name, kind }` → optionally carry per-alternate **electrical type
@@ -89,6 +91,7 @@ behavior (a model flag + a connectivity rule).
   depth of alternate-function support in v1; De Morgan alternate symbols.
 
 ## E. Confirm items (verify before marking done)
-- Library **revision immutability** semantics vs the substrate's `model_revision`.
-- Whether decision-008 §Symbol `pins[]` already includes graphic style (D2).
+- Library **revision immutability** semantics vs object revisions/model revision.
+- Whether decision-008 §Symbol `pins[]` should name active-low separately from
+  the current `inverted` decoration (D2).
 - Gate-swap representation (pin swap via `swap_group` is present).

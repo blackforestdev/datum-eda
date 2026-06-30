@@ -8,6 +8,10 @@ use super::command_project_library::{
     NativeProjectPoolLibraryObjectMutationView, commit_pool_library_operations,
     pool_library_mutation_view, pool_library_relative_path, validate_project_local_pool_path,
 };
+use super::command_project_library_footprint::{
+    footprint_object_with_appended_silkscreen, footprint_object_with_courtyard,
+};
+use super::command_project_library_package_pad::legacy_target_footprint_for_package;
 use super::command_project_library_payload::read_project_pool_object_payload;
 
 pub(crate) fn set_native_project_pool_package_courtyard_rect(
@@ -22,23 +26,21 @@ pub(crate) fn set_native_project_pool_package_courtyard_rect(
     validate_project_local_pool_path(pool_path)?;
     let vertices = courtyard_rect_vertices(min_x_nm, min_y_nm, max_x_nm, max_y_nm)?;
     ensure_pool_package_exists(root, package_id)?;
-    let relative_path = pool_library_relative_path(pool_path, "packages", package_id);
-    let previous_object = read_project_pool_object_payload(root, &relative_path, package_id)?;
-    let mut object = previous_object.clone();
-    object
-        .as_object_mut()
-        .context("pool package payload must be a JSON object")?
-        .insert(
-            "courtyard".to_string(),
-            serde_json::json!({"vertices": vertices, "closed": true}),
-        );
+    let model = ProjectResolver::new(root)
+        .resolve()
+        .with_context(|| format!("failed to resolve native project {}", root.display()))?;
+    let (footprint_id, _) = legacy_target_footprint_for_package(pool_path, package_id, &model)?;
+    let (relative_path, previous_object, object) =
+        footprint_object_with_courtyard(root, pool_path, footprint_id, vertices)?;
     commit_pool_library_operations(
         root,
-        format!("set native pool package rectangular courtyard on package {package_id}"),
+        format!(
+            "route legacy package rectangular courtyard on package {package_id} to footprint {footprint_id}"
+        ),
         vec![Operation::SetPoolLibraryObject {
-            object_id: package_id,
+            object_id: footprint_id,
             relative_path: relative_path.clone(),
-            object_kind: "packages".to_string(),
+            object_kind: "footprints".to_string(),
             previous_object,
             object,
         }],
@@ -47,8 +49,8 @@ pub(crate) fn set_native_project_pool_package_courtyard_rect(
         root,
         "set_package_courtyard_rect",
         pool_path,
-        "packages",
-        package_id,
+        "footprints",
+        footprint_id,
         &relative_path,
     )
 }
@@ -65,23 +67,21 @@ pub(crate) fn set_native_project_pool_package_courtyard_polygon(
         bail!("package courtyard polygon must have at least 3 vertices");
     }
     ensure_pool_package_exists(root, package_id)?;
-    let relative_path = pool_library_relative_path(pool_path, "packages", package_id);
-    let previous_object = read_project_pool_object_payload(root, &relative_path, package_id)?;
-    let mut object = previous_object.clone();
-    object
-        .as_object_mut()
-        .context("pool package payload must be a JSON object")?
-        .insert(
-            "courtyard".to_string(),
-            serde_json::json!({"vertices": vertices, "closed": true}),
-        );
+    let model = ProjectResolver::new(root)
+        .resolve()
+        .with_context(|| format!("failed to resolve native project {}", root.display()))?;
+    let (footprint_id, _) = legacy_target_footprint_for_package(pool_path, package_id, &model)?;
+    let (relative_path, previous_object, object) =
+        footprint_object_with_courtyard(root, pool_path, footprint_id, vertices)?;
     commit_pool_library_operations(
         root,
-        format!("set native pool package courtyard polygon on package {package_id}"),
+        format!(
+            "route legacy package courtyard polygon on package {package_id} to footprint {footprint_id}"
+        ),
         vec![Operation::SetPoolLibraryObject {
-            object_id: package_id,
+            object_id: footprint_id,
             relative_path: relative_path.clone(),
-            object_kind: "packages".to_string(),
+            object_kind: "footprints".to_string(),
             previous_object,
             object,
         }],
@@ -90,8 +90,8 @@ pub(crate) fn set_native_project_pool_package_courtyard_polygon(
         root,
         "set_package_courtyard_polygon",
         pool_path,
-        "packages",
-        package_id,
+        "footprints",
+        footprint_id,
         &relative_path,
     )
 }
@@ -114,12 +114,10 @@ pub(crate) fn add_native_project_pool_package_silkscreen_line(
     if width_nm <= 0 {
         bail!("package silkscreen line width-nm must be positive");
     }
-    ensure_pool_package_exists(root, package_id)?;
-    let relative_path = pool_library_relative_path(pool_path, "packages", package_id);
-    let previous_object = read_project_pool_object_payload(root, &relative_path, package_id)?;
-    let mut object = previous_object.clone();
-    append_silkscreen_primitive(
-        &mut object,
+    commit_legacy_package_silkscreen_primitive(
+        root,
+        pool_path,
+        package_id,
         serde_json::json!({
             "Line": {
                 "from": {"x": from_x_nm, "y": from_y_nm},
@@ -127,25 +125,8 @@ pub(crate) fn add_native_project_pool_package_silkscreen_line(
                 "width": width_nm
             }
         }),
-    )?;
-    commit_pool_library_operations(
-        root,
-        format!("add native pool package silkscreen line to package {package_id}"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: package_id,
-            relative_path: relative_path.clone(),
-            object_kind: "packages".to_string(),
-            previous_object,
-            object,
-        }],
-    )?;
-    pool_library_mutation_view(
-        root,
         "add_package_silkscreen_line",
-        pool_path,
-        "packages",
-        package_id,
-        &relative_path,
+        format!("add native pool package silkscreen line to package {package_id}"),
     )
 }
 
@@ -170,12 +151,10 @@ pub(crate) fn add_native_project_pool_package_silkscreen_rect(
     if width_nm <= 0 {
         bail!("package silkscreen rect width-nm must be positive");
     }
-    ensure_pool_package_exists(root, package_id)?;
-    let relative_path = pool_library_relative_path(pool_path, "packages", package_id);
-    let previous_object = read_project_pool_object_payload(root, &relative_path, package_id)?;
-    let mut object = previous_object.clone();
-    append_silkscreen_primitive(
-        &mut object,
+    commit_legacy_package_silkscreen_primitive(
+        root,
+        pool_path,
+        package_id,
         serde_json::json!({
             "Rect": {
                 "min": {"x": min_x_nm, "y": min_y_nm},
@@ -183,25 +162,8 @@ pub(crate) fn add_native_project_pool_package_silkscreen_rect(
                 "width": width_nm
             }
         }),
-    )?;
-    commit_pool_library_operations(
-        root,
-        format!("add native pool package silkscreen rect to package {package_id}"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: package_id,
-            relative_path: relative_path.clone(),
-            object_kind: "packages".to_string(),
-            previous_object,
-            object,
-        }],
-    )?;
-    pool_library_mutation_view(
-        root,
         "add_package_silkscreen_rect",
-        pool_path,
-        "packages",
-        package_id,
-        &relative_path,
+        format!("add native pool package silkscreen rect to package {package_id}"),
     )
 }
 
@@ -222,12 +184,10 @@ pub(crate) fn add_native_project_pool_package_silkscreen_circle(
     if width_nm <= 0 {
         bail!("package silkscreen circle width-nm must be positive");
     }
-    ensure_pool_package_exists(root, package_id)?;
-    let relative_path = pool_library_relative_path(pool_path, "packages", package_id);
-    let previous_object = read_project_pool_object_payload(root, &relative_path, package_id)?;
-    let mut object = previous_object.clone();
-    append_silkscreen_primitive(
-        &mut object,
+    commit_legacy_package_silkscreen_primitive(
+        root,
+        pool_path,
+        package_id,
         serde_json::json!({
             "Circle": {
                 "center": {"x": center_x_nm, "y": center_y_nm},
@@ -235,25 +195,8 @@ pub(crate) fn add_native_project_pool_package_silkscreen_circle(
                 "width": width_nm
             }
         }),
-    )?;
-    commit_pool_library_operations(
-        root,
-        format!("add native pool package silkscreen circle to package {package_id}"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: package_id,
-            relative_path: relative_path.clone(),
-            object_kind: "packages".to_string(),
-            previous_object,
-            object,
-        }],
-    )?;
-    pool_library_mutation_view(
-        root,
         "add_package_silkscreen_circle",
-        pool_path,
-        "packages",
-        package_id,
-        &relative_path,
+        format!("add native pool package silkscreen circle to package {package_id}"),
     )
 }
 
@@ -276,12 +219,10 @@ pub(crate) fn add_native_project_pool_package_silkscreen_arc(
     if width_nm <= 0 {
         bail!("package silkscreen arc width-nm must be positive");
     }
-    ensure_pool_package_exists(root, package_id)?;
-    let relative_path = pool_library_relative_path(pool_path, "packages", package_id);
-    let previous_object = read_project_pool_object_payload(root, &relative_path, package_id)?;
-    let mut object = previous_object.clone();
-    append_silkscreen_primitive(
-        &mut object,
+    commit_legacy_package_silkscreen_primitive(
+        root,
+        pool_path,
+        package_id,
         serde_json::json!({
             "Arc": {
                 "arc": {
@@ -293,25 +234,8 @@ pub(crate) fn add_native_project_pool_package_silkscreen_arc(
                 "width": width_nm
             }
         }),
-    )?;
-    commit_pool_library_operations(
-        root,
-        format!("add native pool package silkscreen arc to package {package_id}"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: package_id,
-            relative_path: relative_path.clone(),
-            object_kind: "packages".to_string(),
-            previous_object,
-            object,
-        }],
-    )?;
-    pool_library_mutation_view(
-        root,
         "add_package_silkscreen_arc",
-        pool_path,
-        "packages",
-        package_id,
-        &relative_path,
+        format!("add native pool package silkscreen arc to package {package_id}"),
     )
 }
 
@@ -334,37 +258,18 @@ pub(crate) fn add_native_project_pool_package_silkscreen_polygon(
     if width_nm <= 0 {
         bail!("package silkscreen polygon width-nm must be positive");
     }
-    ensure_pool_package_exists(root, package_id)?;
-    let relative_path = pool_library_relative_path(pool_path, "packages", package_id);
-    let previous_object = read_project_pool_object_payload(root, &relative_path, package_id)?;
-    let mut object = previous_object.clone();
-    append_silkscreen_primitive(
-        &mut object,
+    commit_legacy_package_silkscreen_primitive(
+        root,
+        pool_path,
+        package_id,
         serde_json::json!({
             "Polygon": {
                 "polygon": {"vertices": vertices, "closed": closed},
                 "width": width_nm
             }
         }),
-    )?;
-    commit_pool_library_operations(
-        root,
-        format!("add native pool package silkscreen polygon to package {package_id}"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: package_id,
-            relative_path: relative_path.clone(),
-            object_kind: "packages".to_string(),
-            previous_object,
-            object,
-        }],
-    )?;
-    pool_library_mutation_view(
-        root,
         "add_package_silkscreen_polygon",
-        pool_path,
-        "packages",
-        package_id,
-        &relative_path,
+        format!("add native pool package silkscreen polygon to package {package_id}"),
     )
 }
 
@@ -382,12 +287,10 @@ pub(crate) fn add_native_project_pool_package_silkscreen_text(
     if text.is_empty() {
         bail!("package silkscreen text must not be empty");
     }
-    ensure_pool_package_exists(root, package_id)?;
-    let relative_path = pool_library_relative_path(pool_path, "packages", package_id);
-    let previous_object = read_project_pool_object_payload(root, &relative_path, package_id)?;
-    let mut object = previous_object.clone();
-    append_silkscreen_primitive(
-        &mut object,
+    commit_legacy_package_silkscreen_primitive(
+        root,
+        pool_path,
+        package_id,
         serde_json::json!({
             "Text": {
                 "text": text,
@@ -395,24 +298,43 @@ pub(crate) fn add_native_project_pool_package_silkscreen_text(
                 "rotation": rotation
             }
         }),
-    )?;
+        "add_package_silkscreen_text",
+        format!("add native pool package silkscreen text to package {package_id}"),
+    )
+}
+
+fn commit_legacy_package_silkscreen_primitive(
+    root: &Path,
+    pool_path: &str,
+    package_id: Uuid,
+    primitive: serde_json::Value,
+    action: &'static str,
+    reason: String,
+) -> Result<NativeProjectPoolLibraryObjectMutationView> {
+    ensure_pool_package_exists(root, package_id)?;
+    let model = ProjectResolver::new(root)
+        .resolve()
+        .with_context(|| format!("failed to resolve native project {}", root.display()))?;
+    let (footprint_id, _) = legacy_target_footprint_for_package(pool_path, package_id, &model)?;
+    let (relative_path, previous_object, object) =
+        footprint_object_with_appended_silkscreen(root, pool_path, footprint_id, primitive)?;
     commit_pool_library_operations(
         root,
-        format!("add native pool package silkscreen text to package {package_id}"),
+        reason,
         vec![Operation::SetPoolLibraryObject {
-            object_id: package_id,
+            object_id: footprint_id,
             relative_path: relative_path.clone(),
-            object_kind: "packages".to_string(),
+            object_kind: "footprints".to_string(),
             previous_object,
             object,
         }],
     )?;
     pool_library_mutation_view(
         root,
-        "add_package_silkscreen_text",
+        action,
         pool_path,
-        "packages",
-        package_id,
+        "footprints",
+        footprint_id,
         &relative_path,
     )
 }
@@ -703,22 +625,6 @@ fn append_model_3d(object: &mut serde_json::Value, model: serde_json::Value) -> 
         .as_array_mut()
         .context("pool package models_3d field must be an array")?
         .push(model);
-    Ok(())
-}
-
-fn append_silkscreen_primitive(
-    object: &mut serde_json::Value,
-    primitive: serde_json::Value,
-) -> Result<()> {
-    let silkscreen = object
-        .as_object_mut()
-        .context("pool package payload must be a JSON object")?
-        .entry("silkscreen")
-        .or_insert_with(|| serde_json::json!([]));
-    silkscreen
-        .as_array_mut()
-        .context("pool package silkscreen field must be an array")?
-        .push(primitive);
     Ok(())
 }
 

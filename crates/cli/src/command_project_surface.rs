@@ -24,16 +24,26 @@ mod command_project_imports_schematic;
 mod command_project_imports_schematic_identities;
 #[path = "command_project_library.rs"]
 mod command_project_library;
+#[path = "command_project_library_footprint.rs"]
+mod command_project_library_footprint;
+#[path = "command_project_library_footprint_proposals.rs"]
+mod command_project_library_footprint_proposals;
+#[path = "command_project_library_package.rs"]
+mod command_project_library_package;
 #[path = "command_project_library_package_geometry.rs"]
 mod command_project_library_package_geometry;
 #[path = "command_project_library_package_pad.rs"]
 mod command_project_library_package_pad;
+#[path = "command_project_library_package_proposals.rs"]
+mod command_project_library_package_proposals;
 #[path = "command_project_library_pad_map.rs"]
 mod command_project_library_pad_map;
 #[path = "command_project_library_part_bindings.rs"]
 mod command_project_library_part_bindings;
 #[path = "command_project_library_payload.rs"]
 mod command_project_library_payload;
+#[path = "command_project_library_pin_pad_map.rs"]
+mod command_project_library_pin_pad_map;
 #[path = "command_project_library_proposals.rs"]
 mod command_project_library_proposals;
 #[path = "command_project_library_symbol_geometry.rs"]
@@ -160,7 +170,8 @@ pub(crate) use self::command_project_gerber_mechanical::{
 pub(crate) use self::command_project_gerber_plan::{
     compare_native_project_gerber_export_plan, compare_native_project_gerber_set,
     export_native_project_gerber_set, export_native_project_gerber_set_from_plan,
-    export_native_project_gerber_set_without_output_run, panelize_rs274x_gerber,
+    export_native_project_gerber_set_without_output_run,
+    export_native_project_gerber_set_without_output_run_for_output_job, panelize_rs274x_gerber,
     plan_native_project_gerber_export, validate_native_project_gerber_set,
 };
 pub(crate) use self::command_project_gerber_semantics::{
@@ -192,16 +203,35 @@ pub(crate) use self::command_project_imports_schematic::import_native_project_ki
 pub(crate) use self::command_project_inventory_surface::*;
 pub(crate) use self::command_project_library::{
     attach_native_project_pool_part_model, create_native_project_pool_entity,
-    create_native_project_pool_library_object, create_native_project_pool_package,
-    create_native_project_pool_padstack, create_native_project_pool_part,
-    create_native_project_pool_symbol, create_native_project_pool_unit,
-    delete_native_project_pool_library_object, detach_native_project_pool_part_model,
-    gc_native_project_pool_models, set_native_project_pool_library_object,
-    set_native_project_pool_part_behavioural_models, set_native_project_pool_part_metadata,
-    set_native_project_pool_part_orderable_mpns, set_native_project_pool_part_packaging_options,
-    set_native_project_pool_part_parametric, set_native_project_pool_part_supply_chain,
-    set_native_project_pool_part_tags, set_native_project_pool_part_thermal,
+    create_native_project_pool_library_object, create_native_project_pool_padstack,
+    create_native_project_pool_part, create_native_project_pool_symbol,
+    create_native_project_pool_unit, delete_native_project_pool_library_object,
+    detach_native_project_pool_part_model, gc_native_project_pool_models,
+    set_native_project_pool_library_object, set_native_project_pool_part_behavioural_models,
+    set_native_project_pool_part_metadata, set_native_project_pool_part_orderable_mpns,
+    set_native_project_pool_part_packaging_options, set_native_project_pool_part_parametric,
+    set_native_project_pool_part_supply_chain, set_native_project_pool_part_tags,
+    set_native_project_pool_part_thermal,
 };
+pub(crate) use self::command_project_library_footprint::{
+    add_native_project_pool_footprint_silkscreen_circle,
+    add_native_project_pool_footprint_silkscreen_line,
+    add_native_project_pool_footprint_silkscreen_polygon,
+    add_native_project_pool_footprint_silkscreen_rect, create_native_project_pool_footprint,
+    set_native_project_pool_footprint_courtyard_polygon,
+    set_native_project_pool_footprint_courtyard_rect, set_native_project_pool_footprint_pad,
+};
+pub(crate) use self::command_project_library_footprint_proposals::{
+    propose_add_native_project_pool_footprint_silkscreen_circle,
+    propose_add_native_project_pool_footprint_silkscreen_line,
+    propose_add_native_project_pool_footprint_silkscreen_polygon,
+    propose_add_native_project_pool_footprint_silkscreen_rect,
+    propose_create_native_project_pool_footprint,
+    propose_set_native_project_pool_footprint_courtyard_polygon,
+    propose_set_native_project_pool_footprint_courtyard_rect,
+    propose_set_native_project_pool_footprint_pad,
+};
+pub(crate) use self::command_project_library_package::create_native_project_pool_package;
 pub(crate) use self::command_project_library_package_geometry::{
     add_native_project_pool_package_model_3d, add_native_project_pool_package_silkscreen_arc,
     add_native_project_pool_package_silkscreen_circle,
@@ -213,14 +243,18 @@ pub(crate) use self::command_project_library_package_geometry::{
     set_native_project_pool_package_courtyard_rect,
 };
 pub(crate) use self::command_project_library_package_pad::set_native_project_pool_package_pad;
+pub(crate) use self::command_project_library_package_proposals::propose_create_native_project_pool_package;
 pub(crate) use self::command_project_library_pad_map::{
     set_native_project_pool_part_pad_map_entry, set_native_project_pool_part_pad_map_from_entries,
 };
 pub(crate) use self::command_project_library_part_bindings::set_native_project_pool_part_bindings;
+pub(crate) use self::command_project_library_pin_pad_map::{
+    create_native_project_pool_pin_pad_map, set_native_project_pool_pin_pad_map,
+};
 pub(crate) use self::command_project_library_proposals::{
     propose_create_native_project_pool_entity, propose_create_native_project_pool_library_object,
-    propose_create_native_project_pool_package, propose_create_native_project_pool_padstack,
-    propose_create_native_project_pool_symbol, propose_create_native_project_pool_unit,
+    propose_create_native_project_pool_padstack, propose_create_native_project_pool_symbol,
+    propose_create_native_project_pool_unit,
     propose_set_native_project_pool_package_courtyard_polygon,
     propose_set_native_project_pool_package_courtyard_rect,
     propose_set_native_project_pool_package_pad,

@@ -61,6 +61,12 @@ pub(super) fn build_pool(
                 uuid: symbol_uuid,
                 name: raw.name.clone(),
                 unit: unit_uuid,
+                fields: Vec::new(),
+                default_refdes_prefix: None,
+                style_profile_assertions: Vec::new(),
+                standards_basis: None,
+                check_state: None,
+                provenance: None,
                 drawings: Vec::new(),
                 pin_anchors: Vec::new(),
             },
@@ -97,10 +103,8 @@ pub(super) fn build_pool(
             pool.padstacks.insert(
                 padstack_uuid,
                 Padstack {
-                    uuid: padstack_uuid,
-                    name: pad.padstack_name,
-                    aperture: None,
                     drill_nm: pad.drill_nm,
+                    ..Padstack::new(padstack_uuid, pad.padstack_name)
                 },
             );
 
@@ -251,14 +255,12 @@ pub(super) fn build_pool(
                         ))
                     })?;
 
-                pad_map.insert(
-                    pad_uuid,
-                    PadMapEntry {
-                        gate: gate_uuid,
-                        pin: pin_uuid,
-                    },
-                );
-                mappings.insert(pin_uuid, pad_uuid);
+                let entry = PadMapEntry {
+                    gate: gate_uuid,
+                    pin: pin_uuid,
+                };
+                pad_map.insert(pad_uuid, entry.clone());
+                mappings.insert(pad_uuid, entry);
             }
 
             let value = if device.name.is_empty() {

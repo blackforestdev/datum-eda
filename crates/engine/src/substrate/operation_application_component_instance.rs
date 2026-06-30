@@ -135,11 +135,9 @@ fn validate_component_instance_refs(
     part_ref: Option<&RevisionedRef>,
     model: &DesignModel,
 ) -> Result<(), EngineError> {
-    if component_instance.placed_symbol_refs.is_empty()
-        || component_instance.placed_package_refs.is_empty()
-    {
+    if component_instance.placed_symbol_refs.is_empty() {
         return Err(EngineError::Validation(format!(
-            "component instance {} must reference at least one symbol and one board package",
+            "component instance {} must reference at least one symbol",
             component_instance.id
         )));
     }
@@ -150,13 +148,15 @@ fn validate_component_instance_refs(
         model,
         "schematic",
     )?;
-    validate_component_instance_ref_set(
-        component_instance.id,
-        "package",
-        &component_instance.placed_package_refs,
-        model,
-        "board",
-    )?;
+    if !component_instance.placed_package_refs.is_empty() {
+        validate_component_instance_ref_set(
+            component_instance.id,
+            "package",
+            &component_instance.placed_package_refs,
+            model,
+            "board",
+        )?;
+    }
     validate_role_map(
         &persisted_component_instance.placed_symbol_refs,
         &persisted_component_instance.placed_symbol_roles,

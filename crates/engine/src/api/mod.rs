@@ -12,6 +12,10 @@ use check_summary::{
 };
 mod ops_helpers;
 use ops_helpers::*;
+mod ops_helpers_geometry;
+mod ops_helpers_landpattern;
+mod ops_helpers_pin_pad_map;
+use ops_helpers_pin_pad_map::*;
 mod persistence_helpers;
 use persistence_helpers::{
     deterministic_net_class_uuid, net_class_sidecar_payload, persist_net_class_sidecar,
@@ -179,6 +183,8 @@ impl Engine {
         self.pool.entities.extend(imported.entities);
         self.pool.padstacks.extend(imported.padstacks);
         self.pool.packages.extend(imported.packages);
+        self.pool.footprints.extend(imported.footprints);
+        self.pool.pin_pad_maps.extend(imported.pin_pad_maps);
         self.pool.parts.extend(imported.parts);
     }
 }

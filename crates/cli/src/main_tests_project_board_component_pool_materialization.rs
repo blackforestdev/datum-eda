@@ -304,6 +304,13 @@ fn project_board_component_materializes_supported_pool_graphics_into_persisted_b
                 diameter_nm: 500_000,
             }),
             drill_nm: Some(300_000),
+            plated: None,
+            layer_span: Default::default(),
+            mask_policy: Default::default(),
+            paste_policy: Default::default(),
+            annular_ring_nm: None,
+            thermal: None,
+            antipad: None,
         },
     );
     write_pool_padstack(
@@ -316,6 +323,13 @@ fn project_board_component_materializes_supported_pool_graphics_into_persisted_b
                 height_nm: 400_000,
             }),
             drill_nm: Some(350_000),
+            plated: None,
+            layer_span: Default::default(),
+            mask_policy: Default::default(),
+            paste_policy: Default::default(),
+            annular_ring_nm: None,
+            thermal: None,
+            antipad: None,
         },
     );
     write_pool_padstack(
@@ -327,6 +341,13 @@ fn project_board_component_materializes_supported_pool_graphics_into_persisted_b
                 diameter_nm: 600_000,
             }),
             drill_nm: Some(325_000),
+            plated: None,
+            layer_span: Default::default(),
+            mask_policy: Default::default(),
+            paste_policy: Default::default(),
+            annular_ring_nm: None,
+            thermal: None,
+            antipad: None,
         },
     );
     write_pool_package(
@@ -1263,6 +1284,13 @@ fn project_board_component_materialization_prefers_footprint_over_legacy_package
                 diameter_nm: 111_000,
             }),
             drill_nm: None,
+            plated: None,
+            layer_span: Default::default(),
+            mask_policy: Default::default(),
+            paste_policy: Default::default(),
+            annular_ring_nm: None,
+            thermal: None,
+            antipad: None,
         },
     );
     write_pool_padstack(
@@ -1275,6 +1303,13 @@ fn project_board_component_materialization_prefers_footprint_over_legacy_package
                 height_nm: 333_000,
             }),
             drill_nm: None,
+            plated: None,
+            layer_span: Default::default(),
+            mask_policy: Default::default(),
+            paste_policy: Default::default(),
+            annular_ring_nm: None,
+            thermal: None,
+            antipad: None,
         },
     );
     write_pool_package(
@@ -1447,6 +1482,13 @@ fn project_board_component_materialization_uses_part_default_footprint() {
                 diameter_nm: 111_000,
             }),
             drill_nm: None,
+            plated: None,
+            layer_span: Default::default(),
+            mask_policy: Default::default(),
+            paste_policy: Default::default(),
+            annular_ring_nm: None,
+            thermal: None,
+            antipad: None,
         },
     );
     write_pool_padstack(
@@ -1459,6 +1501,13 @@ fn project_board_component_materialization_uses_part_default_footprint() {
                 height_nm: 555_000,
             }),
             drill_nm: None,
+            plated: None,
+            layer_span: Default::default(),
+            mask_policy: Default::default(),
+            paste_policy: Default::default(),
+            annular_ring_nm: None,
+            thermal: None,
+            antipad: None,
         },
     );
     write_pool_package(

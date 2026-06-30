@@ -12,6 +12,9 @@ pub(crate) fn execute_project_import_or_part_binding_command(
         ProjectCommands::SetPoolPartBindings(_) => {
             execute_project_library_part_bindings_command(format, command)
         }
+        ProjectCommands::SetPoolSymbolPinAnchor(_) => {
+            execute_project_library_symbol_pin_command(format, command)
+        }
         _ => unreachable!("unsupported project import or part binding command"),
     }
 }

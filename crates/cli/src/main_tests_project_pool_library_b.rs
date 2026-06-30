@@ -96,6 +96,37 @@ fn project_create_pool_package_authors_typed_package_with_pad() {
 }
 
 #[test]
+fn project_create_pool_package_authors_body_only_package() {
+    let root = unique_project_root("datum-eda-cli-project-pool-package-body-only");
+    create_native_project(&root, Some("Pool Package Body Only".to_string()))
+        .expect("initial scaffold should succeed");
+    let package_id = Uuid::new_v4();
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "create-pool-package",
+            root.to_str().unwrap(),
+            "--package",
+            &package_id.to_string(),
+            "--name",
+            "SOT23",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("body-only package create should succeed");
+    let report: serde_json::Value =
+        serde_json::from_str(&output).expect("create-package report JSON should parse");
+    assert_eq!(report["action"], "create_package");
+    let payload = query_pool_object_payload(&root, "packages", package_id);
+    assert_eq!(payload["name"], "SOT23");
+    assert_eq!(payload["pads"].as_object().unwrap().len(), 0);
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
 fn project_create_pool_package_rejects_missing_padstack() {
     let root = unique_project_root("datum-eda-cli-project-pool-package-missing-padstack");
     create_native_project(&root, Some("Pool Package Missing Padstack".to_string()))

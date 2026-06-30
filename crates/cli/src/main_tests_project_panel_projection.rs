@@ -1,7 +1,37 @@
 use super::*;
+use eda_engine::ir::serialization::to_json_deterministic;
+use eda_engine::substrate::ProjectResolver;
 
 fn unique_project_root(label: &str) -> PathBuf {
     std::env::temp_dir().join(format!("{}-{}", label, Uuid::new_v4()))
+}
+
+fn write_variant_fixture(root: &Path, variant_id: Uuid, name: &str) {
+    let model = ProjectResolver::new(root)
+        .resolve()
+        .expect("project should resolve before variant fixture");
+    let variant_path = root.join(".datum/variants/panel-test.json");
+    std::fs::create_dir_all(variant_path.parent().unwrap()).expect("variant dir should create");
+    std::fs::write(
+        &variant_path,
+        format!(
+            "{}\n",
+            to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "variants": [{
+                    "id": variant_id,
+                    "name": name,
+                    "base_model_revision": model.model_revision.0,
+                    "variant_revision": 0,
+                    "fitted": {},
+                    "relationship_overrides": {},
+                    "property_overrides": {}
+                }]
+            }))
+            .expect("variant fixture should serialize")
+        ),
+    )
+    .expect("variant fixture should write");
 }
 
 #[test]
@@ -174,7 +204,9 @@ fn project_panel_projection_round_trips_through_manufacturing_plan() {
     assert_eq!(panel_after_redo["name"], "Release A panel updated");
     assert_eq!(panel_after_redo["board_instances"][0]["rotation_deg"], 90);
 
-    let variant = Uuid::new_v4().to_string();
+    let variant_id = Uuid::new_v4();
+    write_variant_fixture(&root, variant_id, "Release A variant");
+    let variant = variant_id.to_string();
     let update_plan_cli = Cli::try_parse_from([
         "eda",
         "--format",

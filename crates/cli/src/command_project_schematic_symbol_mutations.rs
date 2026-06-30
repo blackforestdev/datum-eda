@@ -1,7 +1,13 @@
-use super::command_project_schematic_symbol_library_materialization::materialize_pool_symbol_pins;
+use super::command_project_schematic_symbol_component_instance::component_instance_operation_for_pool_symbol;
+use super::command_project_schematic_symbol_library_materialization::{
+    materialize_pool_symbol_pins, resolve_pool_symbol_component_binding,
+};
 use super::*;
+use crate::command_project::command_project_operation_guards::guarded_operation_batch;
 use crate::command_project::command_project_schematic_connectivity_mutations::commit_schematic_operation;
-use eda_engine::substrate::Operation;
+use eda_engine::substrate::{
+    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver,
+};
 
 fn symbol_mutation_report(
     action: &str,
@@ -57,6 +63,33 @@ fn commit_symbol_update(
     Ok(())
 }
 
+fn commit_schematic_operations(
+    root: &Path,
+    reason: &str,
+    operations: Vec<Operation>,
+) -> Result<()> {
+    let mut model = ProjectResolver::new(root)
+        .resolve()
+        .with_context(|| format!("failed to resolve native project {}", root.display()))?;
+    let batch = guarded_operation_batch(
+        &model,
+        OperationBatch {
+            batch_id: Uuid::new_v4(),
+            expected_model_revision: Some(model.model_revision.clone()),
+            provenance: CommitProvenance {
+                actor: "datum-eda-cli".to_string(),
+                source: CommitSource::Cli,
+                reason: reason.to_string(),
+            },
+            operations,
+        },
+    )?;
+    model
+        .commit_journaled(root, batch)
+        .map(|_| ())
+        .map_err(Into::into)
+}
+
 pub(crate) fn place_native_project_symbol(
     root: &Path,
     sheet_uuid: Uuid,
@@ -70,13 +103,14 @@ pub(crate) fn place_native_project_symbol(
     let project = load_native_project_with_resolved_board(root)?;
     let sheet_path = schematic_sheet_path(&project, sheet_uuid)?;
     let pins = materialize_pool_symbol_pins(root, lib_id.as_deref())?;
+    let binding = resolve_pool_symbol_component_binding(root, lib_id.as_deref())?;
 
     let symbol_uuid = Uuid::new_v4();
     let symbol = PlacedSymbol {
         uuid: symbol_uuid,
-        part: None,
-        entity: None,
-        gate: None,
+        part: binding.as_ref().and_then(|binding| binding.part_id),
+        entity: binding.as_ref().map(|binding| binding.entity_id),
+        gate: binding.as_ref().map(|binding| binding.gate_id),
         lib_id,
         reference,
         value,
@@ -90,16 +124,19 @@ pub(crate) fn place_native_project_symbol(
         pin_overrides: Vec::<PinDisplayOverride>::new(),
         hidden_power_behavior: HiddenPowerBehavior::SourceDefinedImplicit,
     };
-    commit_schematic_operation(
-        root,
-        "place schematic symbol",
-        Operation::CreateSchematicSymbol {
-            sheet_id: sheet_uuid,
-            symbol_id: symbol_uuid,
-            symbol: serde_json::to_value(&symbol)
-                .expect("native symbol serialization must succeed"),
-        },
-    )?;
+    let mut operations = vec![Operation::CreateSchematicSymbol {
+        sheet_id: sheet_uuid,
+        symbol_id: symbol_uuid,
+        symbol: serde_json::to_value(&symbol).expect("native symbol serialization must succeed"),
+    }];
+    if let Some(binding) = &binding {
+        if let Some(operation) =
+            component_instance_operation_for_pool_symbol(root, symbol_uuid, binding)?
+        {
+            operations.push(operation);
+        }
+    }
+    commit_schematic_operations(root, "place schematic symbol", operations)?;
     Ok(symbol_mutation_report(
         "place_symbol",
         &project,

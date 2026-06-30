@@ -203,7 +203,13 @@ fn sample_pin_pad_map() -> PinPadMap {
         uuid: Uuid::from_u128(22),
         part: Uuid::from_u128(6),
         footprint: Some(Uuid::from_u128(21)),
-        mappings: HashMap::from([(Uuid::nil(), Uuid::from_u128(11))]),
+        mappings: HashMap::from([(
+            Uuid::from_u128(11),
+            PadMapEntry {
+                gate: Uuid::from_u128(3),
+                pin: Uuid::nil(),
+            },
+        )]),
         tags: HashSet::from(["soic".to_string()]),
     }
 }
@@ -217,8 +223,35 @@ fn sample_pool() -> Pool {
             uuid: Uuid::from_u128(4),
             name: "OpAmpA".into(),
             unit: Uuid::from_u128(1),
+            fields: vec![LibrarySymbolField {
+                key: "Value".into(),
+                value: "TL072".into(),
+                position: Some(Point::new(10, 20)),
+                visible: true,
+            }],
+            default_refdes_prefix: Some("U".into()),
+            style_profile_assertions: vec!["datum.symbol.style.default".into()],
+            standards_basis: Some("Decision 008A".into()),
+            check_state: Some(LibraryCheckState {
+                status: LibraryCheckStatus::Passed,
+                checked_at: Some("2026-06-22T12:00:00Z".into()),
+                checked_by: Some("fixture".into()),
+                notes: Vec::new(),
+            }),
+            provenance: Some(LibraryObjectProvenance {
+                source: Some("fixture".into()),
+                source_hash: Some("sha256:test".into()),
+                reviewed_by: None,
+                reviewed_at: None,
+            }),
             drawings: Vec::new(),
-            pin_anchors: Vec::new(),
+            pin_anchors: vec![SymbolPinAnchor {
+                pin: Uuid::nil(),
+                position: Point::new(0, 0),
+                orientation: SymbolPinOrientation::Left,
+                length_nm: Some(2_540_000),
+                decoration: SymbolPinDecoration::Inverted,
+            }],
         },
     );
     pool.entities.insert(Uuid::from_u128(5), sample_entity());
@@ -231,6 +264,20 @@ fn sample_pool() -> Pool {
                 diameter_nm: 500_000,
             }),
             drill_nm: Some(300_000),
+            plated: Some(true),
+            layer_span: PadstackLayerSpan::Through,
+            mask_policy: PadstackMaskPolicy::Exposed,
+            paste_policy: PadstackPastePolicy::None,
+            annular_ring_nm: Some(100_000),
+            thermal: Some(PadstackThermal {
+                spoke_count: Some(4),
+                spoke_width_nm: Some(200_000),
+                gap_nm: Some(150_000),
+            }),
+            antipad: Some(PadstackAntipad {
+                clearance_nm: Some(250_000),
+                aperture: None,
+            }),
         },
     );
     pool.packages.insert(Uuid::from_u128(2), sample_package());
@@ -248,6 +295,114 @@ fn unit_round_trip() {
     let json = serde_json::to_string(&unit).unwrap();
     let decoded: Unit = serde_json::from_str(&json).unwrap();
     assert_eq!(unit, decoded);
+}
+
+#[test]
+fn library_pin_electrical_type_preserves_legacy_direction_json() {
+    let pin = Pin {
+        uuid: Uuid::from_u128(30),
+        name: "OC".into(),
+        direction: PinDirection::OpenCollector,
+        swap_group: 0,
+        alternates: Vec::new(),
+    };
+
+    let json = serde_json::to_value(&pin).unwrap();
+    assert_eq!(json["direction"], "OpenCollector");
+
+    let decoded: Pin = serde_json::from_value(json).unwrap();
+    assert_eq!(decoded.direction, LibraryPinElectricalType::OpenCollector);
+}
+
+#[test]
+fn legacy_symbol_json_defaults_production_schema_fields() {
+    let symbol_id = Uuid::from_u128(31);
+    let unit_id = Uuid::from_u128(32);
+    let pin_id = Uuid::from_u128(33);
+    let decoded: Symbol = serde_json::from_value(serde_json::json!({
+        "uuid": symbol_id,
+        "name": "LegacySymbol",
+        "unit": unit_id,
+        "pin_anchors": [{
+            "pin": pin_id,
+            "position": { "x": 100, "y": 200 }
+        }]
+    }))
+    .expect("legacy symbol schema should remain valid");
+
+    assert!(decoded.fields.is_empty());
+    assert_eq!(decoded.default_refdes_prefix, None);
+    assert!(decoded.style_profile_assertions.is_empty());
+    assert_eq!(decoded.standards_basis, None);
+    assert_eq!(decoded.check_state, None);
+    assert_eq!(decoded.provenance, None);
+    assert!(decoded.drawings.is_empty());
+    assert_eq!(
+        decoded.pin_anchors[0].orientation,
+        SymbolPinOrientation::Right
+    );
+    assert_eq!(decoded.pin_anchors[0].length_nm, None);
+    assert_eq!(decoded.pin_anchors[0].decoration, SymbolPinDecoration::None);
+}
+
+#[test]
+fn legacy_padstack_json_defaults_production_fields() {
+    let padstack_id = Uuid::from_u128(34);
+    let decoded: Padstack = serde_json::from_value(serde_json::json!({
+        "uuid": padstack_id,
+        "name": "legacy",
+        "aperture": {
+            "circle": {
+                "diameter_nm": 500_000
+            }
+        },
+        "drill_nm": 300_000
+    }))
+    .expect("legacy padstack schema should remain valid");
+
+    assert_eq!(decoded.plated, None);
+    assert_eq!(decoded.layer_span, PadstackLayerSpan::PadLayer);
+    assert_eq!(decoded.mask_policy, PadstackMaskPolicy::Inherit);
+    assert_eq!(decoded.paste_policy, PadstackPastePolicy::Inherit);
+    assert_eq!(decoded.annular_ring_nm, None);
+    assert_eq!(decoded.thermal, None);
+    assert_eq!(decoded.antipad, None);
+}
+
+#[test]
+fn legacy_model_attachment_json_defaults_review_fields() {
+    let attachment_id = Uuid::from_u128(35);
+    let model_id = Uuid::from_u128(36);
+    let decoded: ModelAttachment = serde_json::from_value(serde_json::json!({
+        "uuid": attachment_id,
+        "model_uuid": model_id,
+        "role": "Spice",
+        "dialect": "Ngspice",
+        "model_names": ["TL072"],
+        "encrypted": false,
+        "encryption_scheme": null,
+        "provenance": {
+            "source": "vendor",
+            "vendor": "TI",
+            "fetched_at": null,
+            "sha256": "abc123"
+        },
+        "format_metadata": {
+            "kind": "spice",
+            "ngspice_validates": true
+        }
+    }))
+    .expect("legacy model attachment schema should remain valid");
+
+    assert_eq!(decoded.reviewed, None);
+    assert!(decoded.notes.is_empty());
+    assert_eq!(
+        decoded
+            .provenance
+            .as_ref()
+            .map(|provenance| &provenance.sha256),
+        Some(&"abc123".to_string())
+    );
 }
 
 #[test]
@@ -321,6 +476,112 @@ fn pool_deterministic_serialization() {
     let a = crate::ir::serialization::to_json_deterministic(&pool).unwrap();
     let b = crate::ir::serialization::to_json_deterministic(&pool).unwrap();
     assert_eq!(a, b);
+}
+
+#[test]
+fn library_graph_reports_reference_diagnostics_in_engine() {
+    let unit_id = Uuid::from_u128(101);
+    let entity_id = Uuid::from_u128(102);
+    let part_id = Uuid::from_u128(103);
+    let other_part_id = Uuid::from_u128(104);
+    let package_id = Uuid::from_u128(105);
+    let other_package_id = Uuid::from_u128(106);
+    let footprint_id = Uuid::from_u128(107);
+    let map_id = Uuid::from_u128(108);
+    let symbol_id = Uuid::from_u128(109);
+    let other_footprint_id = Uuid::from_u128(110);
+
+    let mut graph = LibraryGraph::default();
+    graph
+        .units
+        .insert(unit_id, serde_json::json!({ "uuid": unit_id, "pins": {} }));
+    graph.entities.insert(
+        entity_id,
+        serde_json::json!({ "uuid": entity_id, "gates": {} }),
+    );
+    graph.packages.insert(
+        package_id,
+        serde_json::json!({ "uuid": package_id, "pads": {} }),
+    );
+    graph.packages.insert(
+        other_package_id,
+        serde_json::json!({ "uuid": other_package_id, "pads": {} }),
+    );
+    graph.footprints.insert(
+        footprint_id,
+        serde_json::json!({
+            "uuid": footprint_id,
+            "package": other_package_id,
+            "pads": {}
+        }),
+    );
+    graph.footprints.insert(
+        other_footprint_id,
+        serde_json::json!({
+            "uuid": other_footprint_id,
+            "package": other_package_id,
+            "pads": {}
+        }),
+    );
+    graph.parts.insert(
+        part_id,
+        serde_json::json!({
+            "uuid": part_id,
+            "entity": entity_id,
+            "package": package_id,
+            "default_footprint": footprint_id,
+            "default_pin_pad_map": map_id
+        }),
+    );
+    graph.parts.insert(
+        other_part_id,
+        serde_json::json!({
+            "uuid": other_part_id,
+            "entity": entity_id,
+            "package": package_id
+        }),
+    );
+    graph.pin_pad_maps.insert(
+        map_id,
+        serde_json::json!({
+            "uuid": map_id,
+            "part": other_part_id,
+            "footprint": other_footprint_id,
+            "mappings": {}
+        }),
+    );
+    graph.symbols.insert(
+        symbol_id,
+        serde_json::json!({
+            "uuid": symbol_id,
+            "unit": Uuid::from_u128(999)
+        }),
+    );
+    for id in [
+        unit_id,
+        entity_id,
+        part_id,
+        other_part_id,
+        package_id,
+        other_package_id,
+        footprint_id,
+        other_footprint_id,
+        map_id,
+        symbol_id,
+    ] {
+        graph.subjects.insert(id, format!("fixture/{id}.json"));
+    }
+
+    let codes = graph
+        .dependency_diagnostics()
+        .into_iter()
+        .map(|diagnostic| diagnostic.code)
+        .collect::<std::collections::BTreeSet<_>>();
+
+    assert!(codes.contains("dangling_reference"));
+    assert!(codes.contains("package_mismatch"));
+    assert!(codes.contains("part_mismatch"));
+    assert!(codes.contains("footprint_mismatch"));
 }
 
 #[test]

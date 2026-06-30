@@ -151,7 +151,7 @@ fn proposal_link_view(
     matched_fingerprint: Option<String>,
 ) -> NativeProjectCheckProposalLinkView {
     let validation = validate_proposal_apply(model, proposal_id).ok();
-    let blocker_codes = validation
+    let mut blocker_codes = validation
         .as_ref()
         .map(|validation| {
             validation
@@ -161,6 +161,10 @@ fn proposal_link_view(
                 .collect::<Vec<_>>()
         })
         .unwrap_or_default();
+    if matched_fingerprint.is_some() {
+        blocker_codes
+            .retain(|code| code != "unknown_check_run" && code != "unlinked_finding_fingerprint");
+    }
     let prepared_against_current_model = validation
         .as_ref()
         .map(|validation| validation.prepared_against_current_model)

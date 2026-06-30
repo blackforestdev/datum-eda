@@ -32,6 +32,7 @@ mod app_bootstrap;
 mod app_shell;
 mod artifact_preview_controls;
 mod board_text_terminal_commands;
+mod gui_runtime_support;
 mod production_status_refresh;
 mod retained_scene_cache_key;
 mod runtime_terminal_context;
@@ -49,17 +50,16 @@ mod terminal_session;
 mod terminal_session_context;
 mod terminal_session_controls;
 mod terminal_session_events;
-mod gui_runtime_support;
-pub(crate) use gui_runtime_support::*;
-#[cfg(feature = "visual")]
-use std::fs;
 use app_bootstrap::{GuiArgs, LaunchState};
 use app_shell::App;
 use board_text_terminal_commands::{
     BoardTextEditTerminalField, BoardTextQuickEditTerminalAction, board_text_edit_terminal_command,
     board_text_quick_edit_terminal_command,
 };
+pub(crate) use gui_runtime_support::*;
 use retained_scene_cache_key::retained_selection_cache_key;
+#[cfg(feature = "visual")]
+use std::fs;
 use terminal_input::{
     TerminalKeyAction, terminal_focus_event_sequence, terminal_key_action,
     terminal_sgr_mouse_button_sequence, terminal_sgr_mouse_motion_sequence,

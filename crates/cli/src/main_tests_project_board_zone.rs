@@ -139,6 +139,8 @@ pub(super) fn place_zone_fixture_with_thermal(root: &Path, thermal_relief: bool)
             "1000:0",
             "--vertex",
             "1000:1000",
+            "--vertex",
+            "0:1000",
             "--layer",
             "1",
             "--priority",

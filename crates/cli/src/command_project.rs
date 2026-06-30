@@ -76,10 +76,9 @@ mod command_project_schematic_helpers;
 #[path = "command_project_schematic_queries.rs"]
 mod command_project_schematic_queries;
 mod command_project_schematic_sheet_mutations;
-#[path = "command_project_schematic_symbol_library_materialization.rs"]
-mod command_project_schematic_symbol_library_materialization;
-#[path = "command_project_schematic_symbol_mutations.rs"]
-mod command_project_schematic_symbol_mutations;
+#[rustfmt::skip] #[path = "command_project_schematic_symbol_component_instance.rs"] mod command_project_schematic_symbol_component_instance;
+#[rustfmt::skip] #[path = "command_project_schematic_symbol_library_materialization.rs"] mod command_project_schematic_symbol_library_materialization;
+#[rustfmt::skip] #[path = "command_project_schematic_symbol_mutations.rs"] mod command_project_schematic_symbol_mutations;
 #[path = "command_project_schematic_text_drawing_mutations.rs"]
 mod command_project_schematic_text_drawing_mutations;
 #[path = "command_project_summary.rs"]

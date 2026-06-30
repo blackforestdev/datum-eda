@@ -122,7 +122,7 @@ pub(crate) fn export_native_project_gerber_set(
     prefix_override: Option<&str>,
 ) -> Result<NativeProjectGerberSetExportView> {
     let plan = plan_native_project_gerber_export(root, prefix_override)?;
-    export_native_project_gerber_set_from_plan(root, output_dir, plan, true, None)
+    export_native_project_gerber_set_from_plan(root, output_dir, plan, true, None, None)
 }
 
 pub(crate) fn export_native_project_gerber_set_without_output_run(
@@ -131,7 +131,17 @@ pub(crate) fn export_native_project_gerber_set_without_output_run(
     prefix_override: Option<&str>,
 ) -> Result<NativeProjectGerberSetExportView> {
     let plan = plan_native_project_gerber_export(root, prefix_override)?;
-    export_native_project_gerber_set_from_plan(root, output_dir, plan, false, None)
+    export_native_project_gerber_set_from_plan(root, output_dir, plan, false, None, None)
+}
+
+pub(crate) fn export_native_project_gerber_set_without_output_run_for_output_job(
+    root: &Path,
+    output_dir: &Path,
+    prefix_override: Option<&str>,
+    output_job: Uuid,
+) -> Result<NativeProjectGerberSetExportView> {
+    let plan = plan_native_project_gerber_export(root, prefix_override)?;
+    export_native_project_gerber_set_from_plan(root, output_dir, plan, false, None, Some(output_job))
 }
 
 pub(crate) fn export_native_project_gerber_set_from_plan(
@@ -140,6 +150,7 @@ pub(crate) fn export_native_project_gerber_set_from_plan(
     plan: NativeProjectGerberPlanView,
     persist_output_run: bool,
     panel_projection: Option<&PanelProjection>,
+    output_job_override: Option<Uuid>,
 ) -> Result<NativeProjectGerberSetExportView> {
     if persist_output_run {
         ensure_release_check_gate_clear(root)?;
@@ -153,6 +164,7 @@ pub(crate) fn export_native_project_gerber_set_from_plan(
     } else {
         None
     };
+    let output_job_id = output_job.as_ref().map(|job| job.id).or(output_job_override);
     let mut model = ProjectResolver::new(root).resolve()?;
     let mut artifacts = Vec::new();
     let mut artifact_files = Vec::new();
@@ -215,7 +227,7 @@ pub(crate) fn export_native_project_gerber_set_from_plan(
     let artifact_metadata = gerber_set_artifact_metadata(
         &model,
         &plan.prefix,
-        output_job.as_ref().map(|job| job.id),
+        output_job_id,
         output_dir,
         artifact_files,
         production_projections,

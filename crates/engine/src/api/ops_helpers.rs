@@ -1,9 +1,15 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeMap;
 
 use crate::board::Board;
 use crate::error::EngineError;
 use crate::pool::Pool;
 use crate::rules::ast::RuleType;
+
+use super::ops_helpers_geometry::{
+    inverse_transform_board_local_point, transform_board_local_point,
+};
+use super::ops_helpers_landpattern::{land_pattern_pads_for_package, land_pattern_pads_for_part};
+use super::ops_helpers_pin_pad_map::{part_pin_signature, resolved_part_pad_map};
 
 type PadPositions = Vec<(uuid::Uuid, crate::ir::geometry::Point)>;
 
@@ -100,38 +106,28 @@ pub(super) fn replace_component_pads_from_pool_package(
     board: &mut Board,
     component: &crate::board::PlacedPackage,
     package: &crate::pool::Package,
+    pool: &Pool,
 ) -> Result<(), EngineError> {
     let net_by_name: BTreeMap<String, Option<uuid::Uuid>> = component_pads(board, component.uuid)
         .into_iter()
         .map(|pad| (pad.name, pad.net))
         .collect();
     let mut regenerated = Vec::new();
-    for package_pad in package.pads.values() {
-        regenerated.push(crate::board::PlacedPad {
-            uuid: deterministic_component_pad_uuid(component.uuid, &package_pad.name),
-            package: component.uuid,
-            name: package_pad.name.clone(),
-            net: net_by_name.get(&package_pad.name).copied().flatten(),
-            position: transform_board_local_point(
+    for package_pad in land_pattern_pads_for_package(package, pool) {
+        let pad_name = package_pad.name;
+        let net = net_by_name.get(&pad_name).copied().flatten();
+        regenerated.push(placed_pad_from_land_pattern(
+            component.uuid,
+            pad_name,
+            net,
+            transform_board_local_point(
                 component.position,
                 component.rotation,
                 package_pad.position,
             ),
-            layer: package_pad.layer,
-            copper_layers: Vec::new(),
-            shape: crate::board::PadShape::Circle,
-            diameter: 0,
-            width: 0,
-            height: 0,
-            drill: 0,
-            rotation: component.rotation,
-            mask_layers: Vec::new(),
-            paste_layers: Vec::new(),
-            solder_mask_margin_nm: 0,
-            solder_paste_margin_nm: 0,
-            solder_paste_margin_ratio_ppm: 0,
-            roundrect_rratio_ppm: 250_000,
-        });
+            package_pad.layer,
+            component.rotation,
+        ));
     }
     regenerated.sort_by_key(|pad| pad.uuid);
     restore_component_pads(board, component.uuid, &regenerated);
@@ -165,14 +161,33 @@ pub(super) fn replace_component_pads_for_assign_part(
                 target_uuid: previous_component.package,
             },
         )?;
-        let current_pad_name_by_uuid: BTreeMap<uuid::Uuid, &str> = current_package
+        let current_land_pads = land_pattern_pads_for_part(current_part, current_package, pool);
+        let current_land_pad_name_by_uuid: BTreeMap<uuid::Uuid, &str> = current_land_pads
+            .iter()
+            .map(|pad| (pad.uuid, pad.name.as_str()))
+            .collect();
+        let current_package_pad_name_by_uuid: BTreeMap<uuid::Uuid, &str> = current_package
             .pads
             .values()
             .map(|pad| (pad.uuid, pad.name.as_str()))
             .collect();
+        let current_land_pad_name_by_package_pad_uuid: BTreeMap<uuid::Uuid, &str> = current_package
+            .pads
+            .values()
+            .filter_map(|package_pad| {
+                current_land_pads
+                    .iter()
+                    .find(|land_pad| land_pad.name == package_pad.name)
+                    .map(|land_pad| (package_pad.uuid, land_pad.name.as_str()))
+            })
+            .collect();
 
-        for (pad_uuid, entry) in &current_part.pad_map {
-            if let Some(pad_name) = current_pad_name_by_uuid.get(pad_uuid)
+        for (pad_uuid, entry) in resolved_part_pad_map(current_part, pool) {
+            let pad_name = current_land_pad_name_by_uuid
+                .get(&pad_uuid)
+                .or_else(|| current_land_pad_name_by_package_pad_uuid.get(&pad_uuid))
+                .or_else(|| current_package_pad_name_by_uuid.get(&pad_uuid));
+            if let Some(pad_name) = pad_name
                 && let Some(net) = net_by_name.get(*pad_name).copied().flatten()
             {
                 net_by_pin.insert(entry.pin, net);
@@ -181,37 +196,35 @@ pub(super) fn replace_component_pads_for_assign_part(
     }
 
     let mut regenerated = Vec::new();
-    for package_pad in target_package.pads.values() {
-        let net = target_part
-            .pad_map
+    let target_pad_map = resolved_part_pad_map(target_part, pool);
+    let target_package_pad_by_name: BTreeMap<&str, uuid::Uuid> = target_package
+        .pads
+        .values()
+        .map(|pad| (pad.name.as_str(), pad.uuid))
+        .collect();
+    for package_pad in land_pattern_pads_for_part(target_part, target_package, pool) {
+        let map_pad_uuid = target_package_pad_by_name
+            .get(package_pad.name.as_str())
+            .copied()
+            .unwrap_or(package_pad.uuid);
+        let net = target_pad_map
             .get(&package_pad.uuid)
+            .or_else(|| target_pad_map.get(&map_pad_uuid))
             .and_then(|entry| net_by_pin.get(&entry.pin).copied())
             .or_else(|| net_by_name.get(&package_pad.name).copied().flatten());
-        regenerated.push(crate::board::PlacedPad {
-            uuid: deterministic_component_pad_uuid(next_component.uuid, &package_pad.name),
-            package: next_component.uuid,
-            name: package_pad.name.clone(),
+        let pad_name = package_pad.name;
+        regenerated.push(placed_pad_from_land_pattern(
+            next_component.uuid,
+            pad_name,
             net,
-            position: transform_board_local_point(
+            transform_board_local_point(
                 next_component.position,
                 next_component.rotation,
                 package_pad.position,
             ),
-            layer: package_pad.layer,
-            copper_layers: Vec::new(),
-            shape: crate::board::PadShape::Circle,
-            diameter: 0,
-            width: 0,
-            height: 0,
-            drill: 0,
-            rotation: next_component.rotation,
-            mask_layers: Vec::new(),
-            paste_layers: Vec::new(),
-            solder_mask_margin_nm: 0,
-            solder_paste_margin_nm: 0,
-            solder_paste_margin_ratio_ppm: 0,
-            roundrect_rratio_ppm: 250_000,
-        });
+            package_pad.layer,
+            next_component.rotation,
+        ));
     }
     regenerated.sort_by_key(|pad| pad.uuid);
     restore_component_pads(board, next_component.uuid, &regenerated);
@@ -241,21 +254,6 @@ pub(super) fn resolve_compatible_part_for_package_change(
     }
 }
 
-pub(super) fn part_pin_signature(
-    part: &crate::pool::Part,
-    pool: &Pool,
-) -> Option<BTreeSet<String>> {
-    let entity = pool.entities.get(&part.entity)?;
-    let mut pins = BTreeSet::new();
-    for entry in part.pad_map.values() {
-        let gate = entity.gates.get(&entry.gate)?;
-        let unit = pool.units.get(&gate.unit)?;
-        let pin = unit.pins.get(&entry.pin)?;
-        pins.insert(pin.name.clone());
-    }
-    Some(pins)
-}
-
 pub(super) fn deterministic_component_pad_uuid(
     component_uuid: uuid::Uuid,
     pad_name: &str,
@@ -266,31 +264,34 @@ pub(super) fn deterministic_component_pad_uuid(
     )
 }
 
-pub(super) fn transform_board_local_point(
-    origin: crate::ir::geometry::Point,
-    rotation_deg: i32,
-    local: crate::ir::geometry::Point,
-) -> crate::ir::geometry::Point {
-    let rotated = match rotation_deg.rem_euclid(360) {
-        90 => crate::ir::geometry::Point::new(-local.y, local.x),
-        180 => crate::ir::geometry::Point::new(-local.x, -local.y),
-        270 => crate::ir::geometry::Point::new(local.y, -local.x),
-        _ => local,
-    };
-    crate::ir::geometry::Point::new(origin.x + rotated.x, origin.y + rotated.y)
-}
-
-pub(super) fn inverse_transform_board_local_point(
-    origin: crate::ir::geometry::Point,
-    rotation_deg: i32,
-    absolute: crate::ir::geometry::Point,
-) -> crate::ir::geometry::Point {
-    let translated = crate::ir::geometry::Point::new(absolute.x - origin.x, absolute.y - origin.y);
-    match rotation_deg.rem_euclid(360) {
-        90 => crate::ir::geometry::Point::new(translated.y, -translated.x),
-        180 => crate::ir::geometry::Point::new(-translated.x, -translated.y),
-        270 => crate::ir::geometry::Point::new(-translated.y, translated.x),
-        _ => translated,
+fn placed_pad_from_land_pattern(
+    component_uuid: uuid::Uuid,
+    name: String,
+    net: Option<uuid::Uuid>,
+    position: crate::ir::geometry::Point,
+    layer: crate::ir::geometry::LayerId,
+    rotation: i32,
+) -> crate::board::PlacedPad {
+    crate::board::PlacedPad {
+        uuid: deterministic_component_pad_uuid(component_uuid, &name),
+        package: component_uuid,
+        name,
+        net,
+        position,
+        layer,
+        copper_layers: Vec::new(),
+        shape: crate::board::PadShape::Circle,
+        diameter: 0,
+        width: 0,
+        height: 0,
+        drill: 0,
+        rotation,
+        mask_layers: Vec::new(),
+        paste_layers: Vec::new(),
+        solder_mask_margin_nm: 0,
+        solder_paste_margin_nm: 0,
+        solder_paste_margin_ratio_ppm: 0,
+        roundrect_rratio_ppm: 250_000,
     }
 }
 

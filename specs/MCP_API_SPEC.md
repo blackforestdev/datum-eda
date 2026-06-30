@@ -319,6 +319,14 @@ Current implementation:
   `datum.proposal.create_pool_entity`,
   `datum.proposal.create_pool_padstack`,
   `datum.proposal.create_pool_package`,
+  `datum.proposal.create_pool_footprint`,
+  `datum.proposal.set_pool_footprint_pad`,
+  `datum.proposal.set_pool_footprint_courtyard_rect`,
+  `datum.proposal.set_pool_footprint_courtyard_polygon`,
+  `datum.proposal.add_pool_footprint_silkscreen_line`,
+  `datum.proposal.add_pool_footprint_silkscreen_rect`,
+  `datum.proposal.add_pool_footprint_silkscreen_circle`,
+  `datum.proposal.add_pool_footprint_silkscreen_polygon`,
   `datum.proposal.set_pool_package_pad`,
   `datum.proposal.set_pool_package_courtyard_rect`,
   `datum.proposal.set_pool_package_courtyard_polygon`,
@@ -725,6 +733,14 @@ Current implementation note: implemented in the current daemon/stdio host.
 `create_pool_entity`,
 `create_pool_padstack`,
 `create_pool_package`,
+`create_pool_footprint`,
+`set_pool_footprint_pad`,
+`set_pool_footprint_courtyard_rect`,
+`set_pool_footprint_courtyard_polygon`,
+`add_pool_footprint_silkscreen_line`,
+`add_pool_footprint_silkscreen_rect`,
+`add_pool_footprint_silkscreen_circle`,
+`add_pool_footprint_silkscreen_polygon`,
 `set_pool_package_pad`,
 `set_pool_package_courtyard_rect`,
 `set_pool_package_courtyard_polygon`,
@@ -749,6 +765,8 @@ Current implementation note: implemented in the current daemon/stdio host.
 `set_pool_part_thermal`,
 `set_pool_part_pad_map_entry`,
 `set_pool_part_pad_map`,
+`create_pool_pin_pad_map`,
+`set_pool_pin_pad_map`,
 `set_pool_library_object`,
 `delete_pool_library_object`,
 `get_relationships`,
@@ -1567,75 +1585,150 @@ drill diameter through the journaled pool-library commit path.
 
 #### `create_pool_package`
 
-Native pool-library typed authoring compatibility. Creates one schema-versioned
-native `Package` shard with one initial pad referencing an existing `Padstack`
-through the journaled pool-library commit path.
+Native pool-library typed package authoring. Creates one schema-versioned
+native `Package` body shard through the journaled pool-library commit path.
+Optional `pad`/`padstack` inputs remain accepted as legacy land-pattern
+compatibility input, but new land-pattern authoring should use first-class
+`Footprint` tools.
+
+#### `create_pool_footprint`
+
+Native pool-library typed authoring compatibility. Creates one
+schema-versioned native `Footprint` shard tied to an existing `Package` through
+the journaled pool-library commit path. Canonical alias:
+`datum.library.create_footprint`.
+
+#### `set_pool_footprint_pad`
+
+Native pool-library typed first-class `Footprint` authoring. Sets one `Footprint.pads`
+entry, validating the referenced padstack, non-empty pad name, and positive
+layer before committing through the journaled pool-library set path. Canonical
+alias: `datum.library.set_footprint_pad`.
+
+#### `set_pool_footprint_courtyard_rect`
+
+Native pool-library typed first-class `Footprint` authoring. Sets a
+rectangular `Footprint.courtyard` polygon from validated min/max nanometer
+bounds before committing through the journaled pool-library set path.
+Canonical alias: `datum.library.set_footprint_courtyard_rect`.
+
+#### `set_pool_footprint_courtyard_polygon`
+
+Native pool-library typed first-class `Footprint` authoring. Sets a closed
+`Footprint.courtyard` polygon from `x,y;x,y;...` vertices before committing
+through the journaled pool-library set path. Malformed vertices and polygons
+with fewer than three vertices are rejected. Canonical alias:
+`datum.library.set_footprint_courtyard_polygon`.
+
+#### `add_pool_footprint_silkscreen_line`
+
+Native pool-library typed first-class `Footprint` authoring. Appends one
+`Primitive::Line` entry to `Footprint.silkscreen`, validating distinct
+endpoints and positive stroke width before committing through the journaled
+pool-library set path. Canonical alias:
+`datum.library.add_footprint_silkscreen_line`.
+
+#### `add_pool_footprint_silkscreen_rect`
+
+Native pool-library typed first-class `Footprint` authoring. Appends one
+`Primitive::Rect` entry to `Footprint.silkscreen`, validating nonzero bounds and
+positive stroke width before committing through the journaled pool-library set
+path. Canonical alias: `datum.library.add_footprint_silkscreen_rect`.
+
+#### `add_pool_footprint_silkscreen_circle`
+
+Native pool-library typed first-class `Footprint` authoring. Appends one
+`Primitive::Circle` entry to `Footprint.silkscreen`, validating positive radius
+and stroke width before committing through the journaled pool-library set path.
+Canonical alias: `datum.library.add_footprint_silkscreen_circle`.
+
+#### `add_pool_footprint_silkscreen_polygon`
+
+Native pool-library typed first-class `Footprint` authoring. Appends one
+`Primitive::Polygon` entry to `Footprint.silkscreen`, validating semicolon
+separated `x,y` vertices, closed/open state, minimum vertex count, and positive
+stroke width before committing through the journaled pool-library set path.
+Canonical alias: `datum.library.add_footprint_silkscreen_polygon`.
 
 #### `set_pool_package_pad`
 
-Native pool-library typed authoring compatibility. Sets one `Package.pads`
-entry, validating the referenced padstack, non-empty pad name, positive layer,
-and duplicate pad identity before committing through the journaled pool-library
-set path.
+Native pool-library typed authoring compatibility. Legacy package-named path
+that requires exactly one first-class `Footprint` for the target `Package` in
+the requested pool, then sets one `Footprint.pads` entry through the journaled
+pool-library set path. The shim validates the referenced padstack, non-empty
+pad name, positive layer, and duplicate pad identity on the target Footprint.
+New land-pattern pads should be authored directly with `set_pool_footprint_pad`.
 
 #### `set_pool_package_courtyard_rect`
 
-Native pool-library typed authoring compatibility. Sets a rectangular
-`Package.courtyard` polygon from validated min/max nanometer bounds before
-committing through the journaled pool-library set path.
+Native pool-library typed authoring compatibility. Legacy package-named path
+that requires exactly one first-class `Footprint` for the target `Package` in
+the requested pool, then sets a rectangular `Footprint.courtyard` polygon from
+validated min/max nanometer bounds through the journaled pool-library set path.
 
 #### `set_pool_package_courtyard_polygon`
 
-Native pool-library typed authoring compatibility. Sets a closed
-`Package.courtyard` polygon from `x,y;x,y;...` vertices before committing
-through the journaled pool-library set path. Malformed vertices and polygons
-with fewer than three vertices are rejected. Canonical alias:
+Native pool-library typed authoring compatibility. Legacy package-named path
+that requires exactly one first-class `Footprint` for the target `Package` in
+the requested pool, then sets a closed `Footprint.courtyard` polygon from
+`x,y;x,y;...` vertices through the journaled pool-library set path. Malformed
+vertices and polygons with fewer than three vertices are rejected. Canonical alias:
 `datum.library.set_package_courtyard_polygon`.
 
 #### `add_pool_package_silkscreen_line`
 
-Native pool-library typed authoring compatibility. Appends one validated
-`Primitive::Line` entry to `Package.silkscreen`, rejecting zero-length lines
-and non-positive stroke widths before committing through the journaled
-pool-library set path.
+Native pool-library typed authoring compatibility. Legacy package-named path
+that requires exactly one first-class `Footprint` for the target `Package` in
+the requested pool, then appends one validated `Primitive::Line` entry to
+`Footprint.silkscreen`, rejecting zero-length lines and non-positive stroke
+widths before committing through the journaled pool-library set path.
 
 #### `add_pool_package_silkscreen_rect`
 
-Native pool-library typed authoring compatibility. Appends one validated
-`Primitive::Rect` entry to `Package.silkscreen`, rejecting zero-area bounds
-and non-positive stroke widths before committing through the journaled
-pool-library set path.
+Native pool-library typed authoring compatibility. Legacy package-named path
+that requires exactly one first-class `Footprint` for the target `Package` in
+the requested pool, then appends one validated `Primitive::Rect` entry to
+`Footprint.silkscreen`, rejecting zero-area bounds and non-positive stroke
+widths before committing through the journaled pool-library set path.
 
 #### `add_pool_package_silkscreen_circle`
 
-Native pool-library typed authoring compatibility. Appends one validated
-`Primitive::Circle` entry to `Package.silkscreen`, rejecting non-positive radius
-or stroke width before committing through the journaled pool-library set path.
+Native pool-library typed authoring compatibility. Legacy package-named path
+that requires exactly one first-class `Footprint` for the target `Package` in
+the requested pool, then appends one validated `Primitive::Circle` entry to
+`Footprint.silkscreen`, rejecting non-positive radius or stroke width before
+committing through the journaled pool-library set path.
 
 #### `add_pool_package_silkscreen_polygon`
 
-Native pool-library typed authoring compatibility. Appends one validated
-`Primitive::Polygon` entry to `Package.silkscreen`, persisting vertices,
-`closed`, and stroke width. Vertices are supplied as `x,y;x,y;...`; malformed
-vertices, non-positive stroke widths, fewer than two vertices, and closed
-polygons with fewer than three vertices are rejected before committing through
-the journaled pool-library set path. Canonical alias:
+Native pool-library typed authoring compatibility. Legacy package-named path
+that requires exactly one first-class `Footprint` for the target `Package` in
+the requested pool, then appends one validated `Primitive::Polygon` entry to
+`Footprint.silkscreen`, persisting vertices, `closed`, and stroke width.
+Vertices are supplied as `x,y;x,y;...`; malformed vertices, non-positive stroke
+widths, fewer than two vertices, and closed polygons with fewer than three
+vertices are rejected before committing through the journaled pool-library set
+path. Canonical alias:
 `datum.library.add_package_silkscreen_polygon`.
 
 #### `add_pool_package_silkscreen_arc`
 
-Native pool-library typed authoring compatibility. Appends one validated
-`Primitive::Arc` entry to `Package.silkscreen`, persisting center, radius,
-start angle, end angle, and stroke width while rejecting non-positive radius or
-stroke width before committing through the journaled pool-library set path.
+Native pool-library typed authoring compatibility. Legacy package-named path
+that requires exactly one first-class `Footprint` for the target `Package` in
+the requested pool, then appends one validated `Primitive::Arc` entry to
+`Footprint.silkscreen`, persisting center, radius, start angle, end angle, and
+stroke width while rejecting non-positive radius or stroke width before
+committing through the journaled pool-library set path.
 Canonical alias: `datum.library.add_package_silkscreen_arc`.
 
 #### `add_pool_package_silkscreen_text`
 
-Native pool-library typed authoring compatibility. Appends one validated
-`Primitive::Text` entry to `Package.silkscreen`, rejecting blank text while
-persisting position and rotation before committing through the journaled
-pool-library set path. Canonical alias:
+Native pool-library typed authoring compatibility. Legacy package-named path
+that requires exactly one first-class `Footprint` for the target `Package` in
+the requested pool, then appends one validated `Primitive::Text` entry to
+`Footprint.silkscreen`, rejecting blank text while persisting position and
+rotation before committing through the journaled pool-library set path.
+Canonical alias:
 `datum.library.add_package_silkscreen_text`.
 
 #### `add_pool_package_model_3d`
@@ -1770,17 +1863,31 @@ journaled pool-library set path. Canonical alias:
 
 #### `set_pool_part_pad_map_entry`
 
-Native pool-library typed authoring compatibility. Sets one `Part.pad_map`
-entry from a package pad UUID to an entity gate and unit pin, validating the
-pad, gate, and pin against resolved pool shards before committing through the
-journaled pool-library set path.
+Native pool-library typed authoring compatibility. Accepts one legacy-shaped
+package pad / entity gate / unit pin request, requires the part to name a
+`Part.default_pin_pad_map`, and bridges the update into that first-class
+`pool/pin_pad_maps` record before committing through the journaled pool-library
+set path. It does not write `Part.pad_map`.
 
 #### `set_pool_part_pad_map`
 
-Native pool-library typed authoring compatibility. Sets multiple
-`Part.pad_map` entries in `merge` or full `replace` mode, validating every
-package pad, entity gate, and gate unit pin before committing through the
-journaled pool-library set path.
+Native pool-library typed authoring compatibility. Accepts multiple
+legacy-shaped pad/gate/pin requests in `merge` or full `replace` mode, requires
+the part to name a `Part.default_pin_pad_map`, validates every package pad,
+entity gate, and gate unit pin, and writes the equivalent pin/pad mappings to
+the first-class `pool/pin_pad_maps` record. It does not write `Part.pad_map`.
+
+#### `create_pool_pin_pad_map`
+
+Native pool-library typed authoring. Creates one first-class `PinPadMap`
+record in `pool/pin_pad_maps` from repeatable pin/pad mappings and can bind it
+as the part default in the same journaled commit with `set_default`.
+
+#### `set_pool_pin_pad_map`
+
+Native pool-library typed authoring. Updates one first-class `PinPadMap`
+mapping set in `merge` or full `replace` mode through the journaled
+pool-library set path.
 
 #### `set_pool_library_object`
 

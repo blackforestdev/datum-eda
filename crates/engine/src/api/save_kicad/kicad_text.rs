@@ -347,7 +347,11 @@ fn render_kicad_footprint_block(
         "    (property \"Value\" \"{}\" (at 0 2 0) (layer \"F.Fab\"))",
         component.value
     ));
-    let mut pads: Vec<_> = package.pads.values().collect();
+    let mut pads: Vec<_> = board
+        .pads
+        .values()
+        .filter(|pad| pad.package == component.uuid)
+        .collect();
     pads.sort_by(|a, b| a.name.cmp(&b.name).then_with(|| a.uuid.cmp(&b.uuid)));
     for pad in pads {
         lines.push(format!("    (pad \"{}\" smd rect", pad.name));
@@ -361,11 +365,7 @@ fn render_kicad_footprint_block(
             "      (layers \"{}\" \"F.Paste\" \"F.Mask\")",
             kicad_layer_name_for_id(pad.layer)
         ));
-        let pad_state = board
-            .pads
-            .values()
-            .find(|candidate| candidate.package == component.uuid && candidate.name == pad.name);
-        if let Some(net_uuid) = pad_state.and_then(|pad| pad.net)
+        if let Some(net_uuid) = pad.net
             && let Some(net_code) = net_codes.get(&net_uuid)
         {
             let net_name = board

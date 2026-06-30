@@ -16,6 +16,8 @@ mod command_project_artifact_drill;
 mod command_project_artifact_evidence;
 #[path = "command_project_artifact_include.rs"]
 mod command_project_artifact_include;
+#[path = "command_project_artifact_latest.rs"]
+mod command_project_artifact_latest;
 #[path = "command_project_artifact_output_runs.rs"]
 mod command_project_artifact_output_runs;
 #[path = "command_project_artifact_preview.rs"]
@@ -26,6 +28,7 @@ pub(super) use command_project_artifact_evidence::{
     commit_unlinked_artifact_evidence,
 };
 use command_project_artifact_include::parse_artifact_generate_include;
+use command_project_artifact_latest::latest_artifact_id;
 use command_project_artifact_output_runs::generic_output_job_run;
 use command_project_artifact_preview::{
     MAX_PREVIEW_PRIMITIVES, NativeProjectArtifactPreviewPrimitive, inspect_artifact_preview_file,
@@ -38,7 +41,9 @@ use super::command_project_gerber_plan::{
 use super::{
     compute_source_hash_bytes, export_native_project_bom, export_native_project_drill,
     export_native_project_excellon_drill, export_native_project_gerber_set,
-    export_native_project_gerber_set_without_output_run, export_native_project_manufacturing_set,
+    export_native_project_gerber_set_without_output_run,
+    export_native_project_gerber_set_without_output_run_for_output_job,
+    export_native_project_manufacturing_set,
     export_native_project_manufacturing_set_without_output_run, export_native_project_pnp,
     find_native_project_output_job_for_scope, load_native_project_with_resolved_board,
 };
@@ -175,6 +180,13 @@ pub(crate) fn generate_native_project_artifacts(
             "gerber-set" => {
                 let report = if persist_output_runs {
                     export_native_project_gerber_set(root, output_dir, prefix)?
+                } else if let Some(output_job_id) = output_job_id {
+                    export_native_project_gerber_set_without_output_run_for_output_job(
+                        root,
+                        output_dir,
+                        prefix,
+                        output_job_id,
+                    )?
                 } else {
                     export_native_project_gerber_set_without_output_run(root, output_dir, prefix)?
                 };
@@ -458,7 +470,7 @@ pub(crate) fn query_native_project_artifacts(root: &Path) -> Result<NativeProjec
         .cloned()
         .collect::<Vec<_>>();
     output_job_runs.sort_by(compare_linked_output_job_runs);
-    let latest_artifact_id = latest_artifact_id(&artifacts);
+    let latest_artifact_id = latest_artifact_id(&model, &artifacts);
     let latest_artifact_run_id = latest_artifact_run_id(&artifact_runs);
     let latest_output_job_run_id = latest_output_job_run_id(&output_job_runs);
     Ok(NativeProjectArtifactsView {
@@ -475,18 +487,6 @@ pub(crate) fn query_native_project_artifacts(root: &Path) -> Result<NativeProjec
         artifact_runs,
         output_job_runs,
     })
-}
-
-fn latest_artifact_id(artifacts: &[ArtifactMetadata]) -> Option<Uuid> {
-    artifacts
-        .iter()
-        .max_by(|a, b| {
-            a.model_revision
-                .0
-                .cmp(&b.model_revision.0)
-                .then_with(|| a.artifact_id.cmp(&b.artifact_id))
-        })
-        .map(|artifact| artifact.artifact_id)
 }
 
 fn latest_artifact_run_id(runs: &[ArtifactRun]) -> Option<Uuid> {

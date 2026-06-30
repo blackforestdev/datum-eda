@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 use super::{
     DesignModel, EngineError, Operation, OperationBatch, SourceShardKind, TransactionRecord,
-    ZoneFill,
+    ZoneFill, ZoneFillState,
     generated_evidence_journal_ops::validate_generated_evidence_scope,
     journal::{StagedShardWrite, stage_new_shard_write},
     zone_fill::validated_zone_fill_payload,
@@ -22,7 +22,9 @@ pub(super) fn maybe_stage_zone_fill_operation(
             zone_id, zone_fill, ..
         } => {
             let fill = validated_zone_fill_payload(*zone_id, zone_fill)?;
-            validate_generated_evidence_scope("zone fill", None, &fill.model_revision, model)?;
+            if fill.state != ZoneFillState::Stale {
+                validate_generated_evidence_scope("zone fill", None, &fill.model_revision, model)?;
+            }
             staged.push(stage_new_shard_write(
                 project_root,
                 batch,

@@ -208,6 +208,74 @@ pub(super) fn execute_create_pool_package_proposal(
     ))
 }
 
+pub(super) fn execute_create_pool_footprint_proposal(
+    format: &OutputFormat,
+    args: ProposalCreatePoolFootprintArgs,
+) -> Result<(String, i32)> {
+    let ProposalCreatePoolFootprintArgs {
+        path,
+        pool,
+        footprint,
+        package,
+        name,
+        proposal,
+        rationale,
+    } = args;
+    Ok((
+        render_output(
+            format,
+            &propose_create_native_project_pool_footprint(
+                &path,
+                &pool,
+                footprint,
+                package,
+                name,
+                proposal,
+                rationale.as_deref(),
+            )?,
+        ),
+        0,
+    ))
+}
+
+pub(super) fn execute_set_pool_footprint_pad_proposal(
+    format: &OutputFormat,
+    args: ProposalSetPoolFootprintPadArgs,
+) -> Result<(String, i32)> {
+    let ProposalSetPoolFootprintPadArgs {
+        path,
+        pool,
+        footprint,
+        pad,
+        padstack,
+        pad_name,
+        x_nm,
+        y_nm,
+        layer,
+        proposal,
+        rationale,
+    } = args;
+    Ok((
+        render_output(
+            format,
+            &propose_set_native_project_pool_footprint_pad(
+                &path,
+                &pool,
+                footprint,
+                pad,
+                padstack,
+                pad_name,
+                x_nm,
+                y_nm,
+                layer,
+                proposal,
+                rationale.as_deref(),
+            )?,
+        ),
+        0,
+    ))
+}
+
 pub(super) fn execute_set_pool_package_pad_proposal(
     format: &OutputFormat,
     args: ProposalSetPoolPackagePadArgs,
@@ -238,6 +306,206 @@ pub(super) fn execute_set_pool_package_pad_proposal(
                 x_nm,
                 y_nm,
                 layer,
+                proposal,
+                rationale.as_deref(),
+            )?,
+        ),
+        0,
+    ))
+}
+
+pub(super) fn execute_set_pool_footprint_courtyard_rect_proposal(
+    format: &OutputFormat,
+    args: ProposalSetPoolFootprintCourtyardRectArgs,
+) -> Result<(String, i32)> {
+    let ProposalSetPoolFootprintCourtyardRectArgs {
+        path,
+        pool,
+        footprint,
+        min_x_nm,
+        min_y_nm,
+        max_x_nm,
+        max_y_nm,
+        proposal,
+        rationale,
+    } = args;
+    Ok((
+        render_output(
+            format,
+            &propose_set_native_project_pool_footprint_courtyard_rect(
+                &path,
+                &pool,
+                footprint,
+                min_x_nm,
+                min_y_nm,
+                max_x_nm,
+                max_y_nm,
+                proposal,
+                rationale.as_deref(),
+            )?,
+        ),
+        0,
+    ))
+}
+
+pub(super) fn execute_set_pool_footprint_courtyard_polygon_proposal(
+    format: &OutputFormat,
+    args: ProposalSetPoolFootprintCourtyardPolygonArgs,
+) -> Result<(String, i32)> {
+    let ProposalSetPoolFootprintCourtyardPolygonArgs {
+        path,
+        pool,
+        footprint,
+        vertices,
+        proposal,
+        rationale,
+    } = args;
+    Ok((
+        render_output(
+            format,
+            &propose_set_native_project_pool_footprint_courtyard_polygon(
+                &path,
+                &pool,
+                footprint,
+                &vertices,
+                proposal,
+                rationale.as_deref(),
+            )?,
+        ),
+        0,
+    ))
+}
+
+pub(super) fn execute_add_pool_footprint_silkscreen_line_proposal(
+    format: &OutputFormat,
+    args: ProposalAddPoolFootprintSilkscreenLineArgs,
+) -> Result<(String, i32)> {
+    let ProposalAddPoolFootprintSilkscreenLineArgs {
+        path,
+        pool,
+        footprint,
+        from_x_nm,
+        from_y_nm,
+        to_x_nm,
+        to_y_nm,
+        width_nm,
+        proposal,
+        rationale,
+    } = args;
+    Ok((
+        render_output(
+            format,
+            &propose_add_native_project_pool_footprint_silkscreen_line(
+                &path,
+                &pool,
+                footprint,
+                from_x_nm,
+                from_y_nm,
+                to_x_nm,
+                to_y_nm,
+                width_nm,
+                proposal,
+                rationale.as_deref(),
+            )?,
+        ),
+        0,
+    ))
+}
+
+pub(super) fn execute_add_pool_footprint_silkscreen_rect_proposal(
+    format: &OutputFormat,
+    args: ProposalAddPoolFootprintSilkscreenRectArgs,
+) -> Result<(String, i32)> {
+    let ProposalAddPoolFootprintSilkscreenRectArgs {
+        path,
+        pool,
+        footprint,
+        min_x_nm,
+        min_y_nm,
+        max_x_nm,
+        max_y_nm,
+        width_nm,
+        proposal,
+        rationale,
+    } = args;
+    Ok((
+        render_output(
+            format,
+            &propose_add_native_project_pool_footprint_silkscreen_rect(
+                &path,
+                &pool,
+                footprint,
+                min_x_nm,
+                min_y_nm,
+                max_x_nm,
+                max_y_nm,
+                width_nm,
+                proposal,
+                rationale.as_deref(),
+            )?,
+        ),
+        0,
+    ))
+}
+
+pub(super) fn execute_add_pool_footprint_silkscreen_circle_proposal(
+    format: &OutputFormat,
+    args: ProposalAddPoolFootprintSilkscreenCircleArgs,
+) -> Result<(String, i32)> {
+    let ProposalAddPoolFootprintSilkscreenCircleArgs {
+        path,
+        pool,
+        footprint,
+        center_x_nm,
+        center_y_nm,
+        radius_nm,
+        width_nm,
+        proposal,
+        rationale,
+    } = args;
+    Ok((
+        render_output(
+            format,
+            &propose_add_native_project_pool_footprint_silkscreen_circle(
+                &path,
+                &pool,
+                footprint,
+                center_x_nm,
+                center_y_nm,
+                radius_nm,
+                width_nm,
+                proposal,
+                rationale.as_deref(),
+            )?,
+        ),
+        0,
+    ))
+}
+
+pub(super) fn execute_add_pool_footprint_silkscreen_polygon_proposal(
+    format: &OutputFormat,
+    args: ProposalAddPoolFootprintSilkscreenPolygonArgs,
+) -> Result<(String, i32)> {
+    let ProposalAddPoolFootprintSilkscreenPolygonArgs {
+        path,
+        pool,
+        footprint,
+        vertices,
+        closed,
+        width_nm,
+        proposal,
+        rationale,
+    } = args;
+    Ok((
+        render_output(
+            format,
+            &propose_add_native_project_pool_footprint_silkscreen_polygon(
+                &path,
+                &pool,
+                footprint,
+                &vertices,
+                closed,
+                width_nm,
                 proposal,
                 rationale.as_deref(),
             )?,

@@ -361,6 +361,65 @@ fn journaled_component_instance_rejects_duplicate_or_wrong_kind_refs() {
 }
 
 #[test]
+fn journaled_component_instance_accepts_symbol_first_instance_without_board_package() {
+    let root = temp_project_root("component_instance_symbol_first");
+    let project_id = Uuid::new_v4();
+    let board_id = Uuid::new_v4();
+    let symbol_id = Uuid::new_v4();
+    let package_id = Uuid::new_v4();
+    let part_id = Uuid::new_v4();
+    write_project_with_symbol_and_package(
+        &root, project_id, board_id, symbol_id, package_id, part_id,
+    );
+    let mut model = ProjectResolver::new(&root)
+        .resolve()
+        .expect("project resolves");
+    let component_instance_id = Uuid::new_v4();
+    model
+        .commit_journaled(
+            &root,
+            OperationBatch {
+                batch_id: Uuid::new_v5(&project_id, b"symbol-first-component-instance"),
+                expected_model_revision: Some(model.model_revision.clone()),
+                provenance: CommitProvenance {
+                    actor: "unit-test".to_string(),
+                    source: CommitSource::Test,
+                    reason: "accept symbol-first component instance".to_string(),
+                },
+                operations: vec![Operation::CreateComponentInstance {
+                    component_instance_id,
+                    component_instance: serde_json::json!({
+                        "uuid": component_instance_id,
+                        "object_revision": 0,
+                        "placed_symbol_refs": [{
+                            "object_id": symbol_id,
+                            "object_revision": 0
+                        }],
+                        "placed_package_refs": []
+                    }),
+                }],
+            },
+        )
+        .expect("symbol-first component instance should commit");
+    let instance = model
+        .component_instances
+        .get(&component_instance_id)
+        .expect("component instance should materialize");
+    assert_eq!(instance.part_ref, None);
+    assert_eq!(instance.placed_symbol_refs, vec![symbol_id]);
+    assert!(instance.placed_package_refs.is_empty());
+
+    let reopened = ProjectResolver::new(&root)
+        .resolve()
+        .expect("project should replay symbol-first component instance");
+    assert!(
+        reopened
+            .component_instances
+            .contains_key(&component_instance_id)
+    );
+}
+
+#[test]
 fn journaled_component_instance_create_set_delete_undo_redo_and_replay() {
     let root = temp_project_root("component_instance_journaled_ops");
     let project_id = Uuid::new_v4();

@@ -188,6 +188,44 @@ def install_proposal_authoring_methods(client_cls: type, append_optional: Any) -
         path: str,
         package: str,
         name: str,
+        pad: str | None = None,
+        padstack: str | None = None,
+        pad_name: str | None = None,
+        x_nm: int | None = None,
+        y_nm: int | None = None,
+        layer: int | None = None,
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ):
+        args = ["proposal", "create-pool-package", path, "--package", package, "--name", name]
+        append_optional(args, "pad", pad); append_optional(args, "padstack", padstack)
+        if pad is not None or padstack is not None:
+            append_optional(args, "pad-name", pad_name); append_optional(args, "x-nm", x_nm)
+            append_optional(args, "y-nm", y_nm); append_optional(args, "layer", layer)
+        append_optional(args, "pool", pool); append_optional(args, "proposal", proposal)
+        append_optional(args, "rationale", rationale)
+        return run(self, "create_pool_package_proposal", locals_without_self(locals()), args)
+
+    def create_pool_footprint_proposal(
+        self,
+        path: str,
+        footprint: str,
+        package: str,
+        name: str,
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ):
+        args = ["proposal", "create-pool-footprint", path, "--footprint", footprint, "--package", package, "--name", name]
+        append_optional(args, "pool", pool); append_optional(args, "proposal", proposal)
+        append_optional(args, "rationale", rationale)
+        return run(self, "create_pool_footprint_proposal", locals_without_self(locals()), args)
+
+    def set_pool_footprint_pad_proposal(
+        self,
+        path: str,
+        footprint: str,
         pad: str,
         padstack: str,
         pad_name: str | None = None,
@@ -198,12 +236,112 @@ def install_proposal_authoring_methods(client_cls: type, append_optional: Any) -
         proposal: str | None = None,
         rationale: str | None = None,
     ):
-        args = ["proposal", "create-pool-package", path, "--package", package, "--name", name, "--pad", pad, "--padstack", padstack]
+        args = ["proposal", "set-pool-footprint-pad", path, "--footprint", footprint, "--pad", pad, "--padstack", padstack]
         append_optional(args, "pad-name", pad_name); append_optional(args, "x-nm", x_nm)
         append_optional(args, "y-nm", y_nm); append_optional(args, "layer", layer)
         append_optional(args, "pool", pool); append_optional(args, "proposal", proposal)
         append_optional(args, "rationale", rationale)
-        return run(self, "create_pool_package_proposal", locals_without_self(locals()), args)
+        return run(self, "set_pool_footprint_pad_proposal", locals_without_self(locals()), args)
+
+    def set_pool_footprint_courtyard_rect_proposal(
+        self,
+        path: str,
+        footprint: str,
+        min_x_nm: int,
+        min_y_nm: int,
+        max_x_nm: int,
+        max_y_nm: int,
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ):
+        args = ["proposal", "set-pool-footprint-courtyard-rect", path, "--footprint", footprint, "--min-x-nm", str(min_x_nm), "--min-y-nm", str(min_y_nm), "--max-x-nm", str(max_x_nm), "--max-y-nm", str(max_y_nm)]
+        append_optional(args, "pool", pool); append_optional(args, "proposal", proposal)
+        append_optional(args, "rationale", rationale)
+        return run(self, "set_pool_footprint_courtyard_rect_proposal", locals_without_self(locals()), args)
+
+    def set_pool_footprint_courtyard_polygon_proposal(
+        self,
+        path: str,
+        footprint: str,
+        vertices: str,
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ):
+        args = ["proposal", "set-pool-footprint-courtyard-polygon", path, "--footprint", footprint, "--vertices", vertices]
+        append_optional(args, "pool", pool); append_optional(args, "proposal", proposal)
+        append_optional(args, "rationale", rationale)
+        return run(self, "set_pool_footprint_courtyard_polygon_proposal", locals_without_self(locals()), args)
+
+    def add_pool_footprint_silkscreen_line_proposal(
+        self,
+        path: str,
+        footprint: str,
+        from_x_nm: int,
+        from_y_nm: int,
+        to_x_nm: int,
+        to_y_nm: int,
+        width_nm: int,
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ):
+        args = ["proposal", "add-pool-footprint-silkscreen-line", path, "--footprint", footprint, "--from-x-nm", str(from_x_nm), "--from-y-nm", str(from_y_nm), "--to-x-nm", str(to_x_nm), "--to-y-nm", str(to_y_nm), "--width-nm", str(width_nm)]
+        append_optional(args, "pool", pool); append_optional(args, "proposal", proposal)
+        append_optional(args, "rationale", rationale)
+        return run(self, "add_pool_footprint_silkscreen_line_proposal", locals_without_self(locals()), args)
+
+    def add_pool_footprint_silkscreen_rect_proposal(
+        self,
+        path: str,
+        footprint: str,
+        min_x_nm: int,
+        min_y_nm: int,
+        max_x_nm: int,
+        max_y_nm: int,
+        width_nm: int,
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ):
+        args = ["proposal", "add-pool-footprint-silkscreen-rect", path, "--footprint", footprint, "--min-x-nm", str(min_x_nm), "--min-y-nm", str(min_y_nm), "--max-x-nm", str(max_x_nm), "--max-y-nm", str(max_y_nm), "--width-nm", str(width_nm)]
+        append_optional(args, "pool", pool); append_optional(args, "proposal", proposal)
+        append_optional(args, "rationale", rationale)
+        return run(self, "add_pool_footprint_silkscreen_rect_proposal", locals_without_self(locals()), args)
+
+    def add_pool_footprint_silkscreen_circle_proposal(
+        self,
+        path: str,
+        footprint: str,
+        center_x_nm: int,
+        center_y_nm: int,
+        radius_nm: int,
+        width_nm: int,
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ):
+        args = ["proposal", "add-pool-footprint-silkscreen-circle", path, "--footprint", footprint, "--center-x-nm", str(center_x_nm), "--center-y-nm", str(center_y_nm), "--radius-nm", str(radius_nm), "--width-nm", str(width_nm)]
+        append_optional(args, "pool", pool); append_optional(args, "proposal", proposal)
+        append_optional(args, "rationale", rationale)
+        return run(self, "add_pool_footprint_silkscreen_circle_proposal", locals_without_self(locals()), args)
+
+    def add_pool_footprint_silkscreen_polygon_proposal(
+        self,
+        path: str,
+        footprint: str,
+        vertices: str,
+        closed: bool,
+        width_nm: int,
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ):
+        args = ["proposal", "add-pool-footprint-silkscreen-polygon", path, "--footprint", footprint, "--vertices", vertices, "--closed", str(closed).lower(), "--width-nm", str(width_nm)]
+        append_optional(args, "pool", pool); append_optional(args, "proposal", proposal)
+        append_optional(args, "rationale", rationale)
+        return run(self, "add_pool_footprint_silkscreen_polygon_proposal", locals_without_self(locals()), args)
 
     def set_pool_package_pad_proposal(
         self,
@@ -257,7 +395,7 @@ def install_proposal_authoring_methods(client_cls: type, append_optional: Any) -
         append_optional(args, "rationale", rationale)
         return run(self, "set_pool_package_courtyard_polygon_proposal", locals_without_self(locals()), args)
 
-    for method in [create_draw_wire_proposal, create_place_label_proposal, create_place_symbol_proposal, create_board_component_replacement_proposal, create_board_component_replacements_proposal, create_board_component_replacement_plan_proposal, create_pool_library_object_proposal, create_pool_unit_proposal, create_pool_symbol_proposal, create_pool_entity_proposal, create_pool_padstack_proposal, create_pool_package_proposal, set_pool_package_pad_proposal, set_pool_package_courtyard_rect_proposal, set_pool_package_courtyard_polygon_proposal]:
+    for method in [create_draw_wire_proposal, create_place_label_proposal, create_place_symbol_proposal, create_board_component_replacement_proposal, create_board_component_replacements_proposal, create_board_component_replacement_plan_proposal, create_pool_library_object_proposal, create_pool_unit_proposal, create_pool_symbol_proposal, create_pool_entity_proposal, create_pool_padstack_proposal, create_pool_package_proposal, create_pool_footprint_proposal, set_pool_footprint_pad_proposal, set_pool_footprint_courtyard_rect_proposal, set_pool_footprint_courtyard_polygon_proposal, add_pool_footprint_silkscreen_line_proposal, add_pool_footprint_silkscreen_rect_proposal, add_pool_footprint_silkscreen_circle_proposal, add_pool_footprint_silkscreen_polygon_proposal, set_pool_package_pad_proposal, set_pool_package_courtyard_rect_proposal, set_pool_package_courtyard_polygon_proposal]:
         setattr(client_cls, method.__name__, method)
 
 

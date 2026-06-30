@@ -9,9 +9,6 @@ use crate::{
     NativeProjectPoolRef, NativeProjectValidationIssueView, resolve_native_project_pool_path,
 };
 
-#[path = "command_project_pool_validation_refs.rs"]
-mod command_project_pool_validation_refs;
-
 pub(crate) fn validate_native_project_pools(
     root: &Path,
     pools: &[NativeProjectPoolRef],
@@ -36,7 +33,15 @@ pub(crate) fn validate_native_project_pools(
         }
         read_pool_model_blobs(root, &pool_root, &mut graph, issues)?;
     }
-    command_project_pool_validation_refs::validate_pool_refs(&graph, issues);
+    for diagnostic in graph.dependency_diagnostics() {
+        push_issue(
+            issues,
+            diagnostic.severity,
+            diagnostic.code,
+            diagnostic.subject,
+            diagnostic.message,
+        );
+    }
     Ok(())
 }
 
@@ -289,27 +294,6 @@ fn validate_pool_object(
             graph.pin_pad_maps.insert(object_id, value.clone());
         }
         _ => {}
-    }
-}
-
-fn parse_uuid_field(
-    value: &serde_json::Value,
-    field: &str,
-    subject: &str,
-    label: &str,
-    issues: &mut Vec<NativeProjectValidationIssueView>,
-) -> Option<Uuid> {
-    if let Some(reference) = value.get(field) {
-        parse_uuid_value(reference, subject, field, issues)
-    } else {
-        push_issue(
-            issues,
-            "error",
-            "missing_required_field",
-            subject.to_string(),
-            format!("{label} missing {field}"),
-        );
-        None
     }
 }
 

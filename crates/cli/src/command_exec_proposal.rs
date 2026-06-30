@@ -218,6 +218,42 @@ pub(crate) fn execute_proposal_command(
         ProposalCommands::CreatePoolPackage(args) => {
             command_exec_proposal_library::execute_create_pool_package_proposal(format, args)
         }
+        ProposalCommands::CreatePoolFootprint(args) => {
+            command_exec_proposal_library::execute_create_pool_footprint_proposal(format, args)
+        }
+        ProposalCommands::SetPoolFootprintPad(args) => {
+            command_exec_proposal_library::execute_set_pool_footprint_pad_proposal(format, args)
+        }
+        ProposalCommands::SetPoolFootprintCourtyardRect(args) => {
+            command_exec_proposal_library::execute_set_pool_footprint_courtyard_rect_proposal(
+                format, args,
+            )
+        }
+        ProposalCommands::SetPoolFootprintCourtyardPolygon(args) => {
+            command_exec_proposal_library::execute_set_pool_footprint_courtyard_polygon_proposal(
+                format, args,
+            )
+        }
+        ProposalCommands::AddPoolFootprintSilkscreenLine(args) => {
+            command_exec_proposal_library::execute_add_pool_footprint_silkscreen_line_proposal(
+                format, args,
+            )
+        }
+        ProposalCommands::AddPoolFootprintSilkscreenRect(args) => {
+            command_exec_proposal_library::execute_add_pool_footprint_silkscreen_rect_proposal(
+                format, args,
+            )
+        }
+        ProposalCommands::AddPoolFootprintSilkscreenCircle(args) => {
+            command_exec_proposal_library::execute_add_pool_footprint_silkscreen_circle_proposal(
+                format, args,
+            )
+        }
+        ProposalCommands::AddPoolFootprintSilkscreenPolygon(args) => {
+            command_exec_proposal_library::execute_add_pool_footprint_silkscreen_polygon_proposal(
+                format, args,
+            )
+        }
         ProposalCommands::SetPoolPackagePad(args) => {
             command_exec_proposal_library::execute_set_pool_package_pad_proposal(format, args)
         }

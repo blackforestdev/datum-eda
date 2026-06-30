@@ -257,69 +257,6 @@ fn positive_required_dimension(value: Option<i64>, name: &str) -> Result<i64> {
 }
 
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn propose_create_native_project_pool_package(
-    root: &Path,
-    pool_path: &str,
-    package_id: Uuid,
-    name: String,
-    pad_id: Uuid,
-    padstack_id: Uuid,
-    pad_name: String,
-    x_nm: i64,
-    y_nm: i64,
-    layer: i32,
-    proposal_id: Option<Uuid>,
-    rationale: Option<&str>,
-) -> Result<NativeProjectProposalCreateView> {
-    validate_project_local_pool_path(pool_path)?;
-    if layer <= 0 {
-        bail!("package pad layer must be positive");
-    }
-    let model = ProjectResolver::new(root)
-        .resolve()
-        .with_context(|| format!("failed to resolve native project {}", root.display()))?;
-    if model
-        .objects
-        .get(&padstack_id)
-        .filter(|object| object.domain == "pool" && object.kind == "padstacks")
-        .is_none()
-    {
-        bail!("missing pool padstack {padstack_id} for package {package_id}");
-    }
-    let object = serde_json::json!({
-        "schema_version": 1,
-        "uuid": package_id,
-        "name": name,
-        "pads": {
-            pad_id.to_string(): {
-                "uuid": pad_id,
-                "name": pad_name,
-                "position": {"x": x_nm, "y": y_nm},
-                "padstack": padstack_id,
-                "layer": layer
-            }
-        },
-        "courtyard": {"vertices": [], "closed": true},
-        "silkscreen": [],
-        "models_3d": [],
-        "body_height_nm": null,
-        "body_height_mounted_nm": null,
-        "tags": []
-    });
-    propose_create_pool_library_object_value(
-        root,
-        pool_path,
-        "packages",
-        package_id,
-        object,
-        proposal_id,
-        rationale,
-        "create_pool_package_proposal",
-        "Create native pool package",
-    )
-}
-
-#[allow(clippy::too_many_arguments)]
 pub(crate) fn propose_set_native_project_pool_package_pad(
     root: &Path,
     pool_path: &str,
@@ -625,7 +562,7 @@ fn courtyard_rect_vertices(
 }
 
 #[allow(clippy::too_many_arguments)]
-fn propose_create_pool_library_object_value(
+pub(super) fn propose_create_pool_library_object_value(
     root: &Path,
     pool_path: &str,
     object_kind: &str,

@@ -1,4 +1,4 @@
-use eda_engine::substrate::DesignModel;
+use eda_engine::substrate::{ArtifactMetadata, DesignModel, Operation};
 use serde_json::{Map, Value};
 use std::collections::BTreeSet;
 
@@ -23,23 +23,13 @@ pub(super) fn update_production_visibility(object: &mut Map<String, Value>, mode
             .cmp(&b.run_sequence)
             .then_with(|| a.run_id.cmp(&b.run_id))
     });
-    let latest_artifact = model.artifact_metadata.values().max_by(|a, b| {
-        a.model_revision
-            .0
-            .cmp(&b.model_revision.0)
-            .then_with(|| a.artifact_id.cmp(&b.artifact_id))
-    });
+    let latest_artifact = latest_artifact(model);
     let previous_artifact = latest_artifact.and_then(|latest| {
         model
             .artifact_metadata
             .values()
             .filter(|artifact| artifact.artifact_id != latest.artifact_id)
-            .max_by(|a, b| {
-                a.model_revision
-                    .0
-                    .cmp(&b.model_revision.0)
-                    .then_with(|| a.artifact_id.cmp(&b.artifact_id))
-            })
+            .max_by(|a, b| artifact_fallback_order(a).cmp(&artifact_fallback_order(b)))
     });
     let latest_artifact_run = model.artifact_runs.values().max_by(|a, b| {
         a.run_sequence
@@ -103,4 +93,37 @@ pub(super) fn update_production_visibility(object: &mut Map<String, Value>, mode
             .or_else(|| existing_previous_artifact_id.map(Value::String))
             .unwrap_or(Value::Null),
     );
+}
+
+fn latest_artifact(model: &DesignModel) -> Option<&ArtifactMetadata> {
+    let latest_journaled = model
+        .journal
+        .iter()
+        .enumerate()
+        .flat_map(|(transaction_index, transaction)| {
+            transaction.operations.iter().enumerate().filter_map(
+                move |(operation_index, operation)| match operation {
+                    Operation::SetArtifactMetadata { artifact_id, .. }
+                        if model.artifact_metadata.contains_key(artifact_id) =>
+                    {
+                        Some((transaction_index, operation_index, *artifact_id))
+                    }
+                    _ => None,
+                },
+            )
+        })
+        .max_by_key(|(transaction_index, operation_index, artifact_id)| {
+            (*transaction_index, *operation_index, *artifact_id)
+        })
+        .and_then(|(_, _, artifact_id)| model.artifact_metadata.get(&artifact_id));
+    latest_journaled.or_else(|| {
+        model
+            .artifact_metadata
+            .values()
+            .max_by(|a, b| artifact_fallback_order(a).cmp(&artifact_fallback_order(b)))
+    })
+}
+
+fn artifact_fallback_order(artifact: &ArtifactMetadata) -> (&str, uuid::Uuid) {
+    (artifact.model_revision.0.as_str(), artifact.artifact_id)
 }

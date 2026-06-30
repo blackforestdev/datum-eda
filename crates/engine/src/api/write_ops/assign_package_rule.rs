@@ -164,7 +164,7 @@ impl Engine {
                 &self.pool,
             )?;
         } else {
-            replace_component_pads_from_pool_package(board, &after, target_package)?;
+            replace_component_pads_from_pool_package(board, &after, target_package, &self.pool)?;
         }
         let after_pads = component_pads(board, input.uuid);
 

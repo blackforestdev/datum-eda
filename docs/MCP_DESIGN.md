@@ -145,7 +145,8 @@ Current `M2` availability is defined by `specs/MCP_API_SPEC.md` and
 `specs/PROGRESS.md`; this method is implemented in the current slice.
 
 #### `get_package`
-Package geometry — pads, courtyard, silkscreen.
+Package/body compatibility view: body metadata plus legacy package
+land-pattern fields when present. New land-pattern authority is `Footprint`.
 Current `M2` availability is defined by `specs/MCP_API_SPEC.md` and
 `specs/PROGRESS.md`; this method is implemented in the current slice.
 

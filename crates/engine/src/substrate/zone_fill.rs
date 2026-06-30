@@ -71,6 +71,11 @@ pub fn compute_bounded_zone_fill(
             "datum-eda fill-zones: unsupported because zone polygon is open or degenerate",
         );
     }
+    if !is_axis_aligned_rectangle(&zone.polygon) {
+        return unsupported(
+            "datum-eda fill-zones: unsupported because bounded rectangular fill only supports axis-aligned rectangular zone polygons",
+        );
+    }
     let mut foreign_obstacles = Vec::new();
     let keepout_obstacle_count = collect_keepout_obstacles(context, zone, &mut foreign_obstacles);
     if let Some(reason) = collect_foreign_pad_obstacles(context, zone, &mut foreign_obstacles) {
@@ -154,6 +159,35 @@ pub fn compute_bounded_zone_fill(
             thermal_requested,
         ),
     )
+}
+
+fn is_axis_aligned_rectangle(polygon: &Polygon) -> bool {
+    if !polygon.closed {
+        return false;
+    }
+    let Some(bounds) = polygon.bounding_box() else {
+        return false;
+    };
+    if bounds.min.x == bounds.max.x || bounds.min.y == bounds.max.y {
+        return false;
+    }
+    let expected = [
+        (bounds.min.x, bounds.min.y),
+        (bounds.min.x, bounds.max.y),
+        (bounds.max.x, bounds.min.y),
+        (bounds.max.x, bounds.max.y),
+    ];
+    let mut unique = Vec::new();
+    for point in &polygon.vertices {
+        let corner = (point.x, point.y);
+        if !expected.contains(&corner) {
+            return false;
+        }
+        if !unique.contains(&corner) {
+            unique.push(corner);
+        }
+    }
+    unique.len() == 4
 }
 
 fn unsupported(reason: &str) -> (ZoneFillState, Vec<Polygon>, String) {

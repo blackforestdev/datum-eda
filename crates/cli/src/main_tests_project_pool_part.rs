@@ -226,142 +226,24 @@ fn create_minimal_package(root: &Path, pad_name: &str) -> (Uuid, Uuid, Uuid) {
     (padstack_id, package_id, pad_id)
 }
 
-struct PinnedPartFixture {
-    part_id: Uuid,
-    gate_id: Uuid,
-    pin_ids: Vec<Uuid>,
-    pad_ids: Vec<Uuid>,
-}
-
-fn create_pinned_part_fixture(
-    root: &Path,
-    pin_names: &[&str],
-    pad_names: &[&str],
-) -> PinnedPartFixture {
-    let unit_id = Uuid::new_v4();
+fn create_minimal_footprint(root: &Path, package_id: Uuid) -> Uuid {
+    let footprint_id = Uuid::new_v4();
     run_project_command(&[
         "eda",
         "--format",
         "json",
         "project",
-        "create-pool-unit",
+        "create-pool-footprint",
         root.to_str().unwrap(),
-        "--unit",
-        &unit_id.to_string(),
-        "--name",
-        "PinnedUnit",
-    ])
-    .expect("unit create should succeed");
-    let pin_ids = pin_names
-        .iter()
-        .map(|name| {
-            let pin_id = Uuid::new_v4();
-            run_project_command(&[
-                "eda",
-                "--format",
-                "json",
-                "project",
-                "set-pool-unit-pin",
-                root.to_str().unwrap(),
-                "--unit",
-                &unit_id.to_string(),
-                "--pin",
-                &pin_id.to_string(),
-                "--name",
-                name,
-                "--direction",
-                "Input",
-            ])
-            .expect("unit pin set should succeed");
-            pin_id
-        })
-        .collect::<Vec<_>>();
-    let symbol_id = Uuid::new_v4();
-    run_project_command(&[
-        "eda",
-        "--format",
-        "json",
-        "project",
-        "create-pool-symbol",
-        root.to_str().unwrap(),
-        "--symbol",
-        &symbol_id.to_string(),
-        "--unit",
-        &unit_id.to_string(),
-        "--name",
-        "PinnedSymbol",
-    ])
-    .expect("symbol create should succeed");
-    let entity_id = Uuid::new_v4();
-    let gate_id = Uuid::new_v4();
-    run_project_command(&[
-        "eda",
-        "--format",
-        "json",
-        "project",
-        "create-pool-entity",
-        root.to_str().unwrap(),
-        "--entity",
-        &entity_id.to_string(),
-        "--gate",
-        &gate_id.to_string(),
-        "--unit",
-        &unit_id.to_string(),
-        "--symbol",
-        &symbol_id.to_string(),
-        "--name",
-        "PinnedEntity",
-        "--prefix",
-        "U",
-    ])
-    .expect("entity create should succeed");
-    let (padstack_id, package_id, first_pad_id) = create_minimal_package(root, pad_names[0]);
-    let mut pad_ids = vec![first_pad_id];
-    for name in &pad_names[1..] {
-        let pad_id = Uuid::new_v4();
-        run_project_command(&[
-            "eda",
-            "--format",
-            "json",
-            "project",
-            "set-pool-package-pad",
-            root.to_str().unwrap(),
-            "--package",
-            &package_id.to_string(),
-            "--pad",
-            &pad_id.to_string(),
-            "--padstack",
-            &padstack_id.to_string(),
-            "--pad-name",
-            name,
-        ])
-        .expect("package pad set should succeed");
-        pad_ids.push(pad_id);
-    }
-    let part_id = Uuid::new_v4();
-    run_project_command(&[
-        "eda",
-        "--format",
-        "json",
-        "project",
-        "create-pool-part",
-        root.to_str().unwrap(),
-        "--part",
-        &part_id.to_string(),
-        "--entity",
-        &entity_id.to_string(),
+        "--footprint",
+        &footprint_id.to_string(),
         "--package",
         &package_id.to_string(),
-        "--mpn",
-        "PINNED",
+        "--name",
+        "SOT23_LandPattern",
     ])
-    .expect("part create should succeed");
-    PinnedPartFixture {
-        part_id,
-        gate_id,
-        pin_ids,
-        pad_ids,
-    }
+    .expect("footprint create should succeed");
+    footprint_id
 }
 
 #[test]
@@ -582,7 +464,7 @@ fn project_set_pool_part_metadata_rejects_missing_part() {
         "MISSING",
     ])
     .expect_err("missing part metadata update should fail");
-    assert!(format!("{error:#}").contains("failed to read pool library object"));
+    assert!(format!("{error:#}").contains("failed to materialize pool library object"));
     let _ = std::fs::remove_dir_all(&root);
 }
 
@@ -1887,193 +1769,6 @@ fn project_set_pool_part_tags_rejects_invalid_requests() {
 }
 
 #[test]
-fn project_set_pool_part_pad_map_entry_maps_package_pad_to_entity_gate_pin() {
-    let root = unique_project_root("datum-eda-cli-project-pool-part-pad-map");
-    create_native_project(&root, Some("Pool Part Pad Map".to_string()))
-        .expect("initial scaffold should succeed");
-    let fixture = create_pinned_part_fixture(&root, &["IN+"], &["1"]);
-    let (part_id, pad_id, gate_id, pin_id) = (
-        fixture.part_id,
-        fixture.pad_ids[0],
-        fixture.gate_id,
-        fixture.pin_ids[0],
-    );
-    let output = run_project_command(&[
-        "eda",
-        "--format",
-        "json",
-        "project",
-        "set-pool-part-pad-map-entry",
-        root.to_str().unwrap(),
-        "--part",
-        &part_id.to_string(),
-        "--pad",
-        &pad_id.to_string(),
-        "--gate",
-        &gate_id.to_string(),
-        "--pin",
-        &pin_id.to_string(),
-    ])
-    .expect("pad map set should succeed");
-    let report: serde_json::Value =
-        serde_json::from_str(&output).expect("pad map report JSON should parse");
-    assert_eq!(report["action"], "set_part_pad_map_entry");
-    let payload = query_pool_object_payload(&root, "parts", part_id);
-    assert_eq!(
-        payload["pad_map"][pad_id.to_string()]["gate"],
-        gate_id.to_string()
-    );
-    assert_eq!(
-        payload["pad_map"][pad_id.to_string()]["pin"],
-        pin_id.to_string()
-    );
-    let _ = std::fs::remove_dir_all(&root);
-}
-
-#[test]
-fn project_set_pool_part_pad_map_entry_rejects_missing_pin() {
-    let root = unique_project_root("datum-eda-cli-project-pool-part-pad-map-missing-pin");
-    create_native_project(&root, Some("Pool Part Pad Map Missing Pin".to_string()))
-        .expect("initial scaffold should succeed");
-    let fixture = create_pinned_part_fixture(&root, &["IN+"], &["1"]);
-    let (part_id, pad_id, gate_id) = (fixture.part_id, fixture.pad_ids[0], fixture.gate_id);
-    let missing_pin = Uuid::new_v4();
-    let error = run_project_command(&[
-        "eda",
-        "--format",
-        "json",
-        "project",
-        "set-pool-part-pad-map-entry",
-        root.to_str().unwrap(),
-        "--part",
-        &part_id.to_string(),
-        "--pad",
-        &pad_id.to_string(),
-        "--gate",
-        &gate_id.to_string(),
-        "--pin",
-        &missing_pin.to_string(),
-    ])
-    .expect_err("missing pin should fail");
-    assert!(format!("{error:#}").contains("has no pin"));
-    let payload = query_pool_object_payload(&root, "parts", part_id);
-    assert_eq!(
-        payload["pad_map"]
-            .as_object()
-            .expect("pad_map should be object")
-            .len(),
-        0
-    );
-    let _ = std::fs::remove_dir_all(&root);
-}
-
-#[test]
-fn project_set_pool_part_pad_map_replace_maps_multiple_entries() {
-    let root = unique_project_root("datum-eda-cli-project-pool-part-pad-map-replace");
-    create_native_project(&root, Some("Pool Part Pad Map Replace".to_string()))
-        .expect("initial scaffold should succeed");
-    let fixture = create_pinned_part_fixture(&root, &["IN+", "OUT"], &["1", "2"]);
-    let (part_id, gate_id, pin_a_id, pin_b_id, pad_a_id, pad_b_id) = (
-        fixture.part_id,
-        fixture.gate_id,
-        fixture.pin_ids[0],
-        fixture.pin_ids[1],
-        fixture.pad_ids[0],
-        fixture.pad_ids[1],
-    );
-    run_project_command(&[
-        "eda",
-        "--format",
-        "json",
-        "project",
-        "set-pool-part-pad-map-entry",
-        root.to_str().unwrap(),
-        "--part",
-        &part_id.to_string(),
-        "--pad",
-        &pad_a_id.to_string(),
-        "--gate",
-        &gate_id.to_string(),
-        "--pin",
-        &pin_a_id.to_string(),
-    ])
-    .expect("initial pad map set should succeed");
-    let output = run_project_command(&[
-        "eda",
-        "--format",
-        "json",
-        "project",
-        "set-pool-part-pad-map",
-        root.to_str().unwrap(),
-        "--part",
-        &part_id.to_string(),
-        "--mode",
-        "replace",
-        "--entry",
-        &format!("{pad_b_id}:{gate_id}:{pin_b_id}"),
-    ])
-    .expect("bulk pad map replace should succeed");
-    let report: serde_json::Value =
-        serde_json::from_str(&output).expect("pad map report JSON should parse");
-    assert_eq!(report["action"], "set_part_pad_map");
-    let payload = query_pool_object_payload(&root, "parts", part_id);
-    let pad_map = payload["pad_map"]
-        .as_object()
-        .expect("pad_map should be object");
-    assert_eq!(pad_map.len(), 1);
-    assert!(pad_map.get(&pad_a_id.to_string()).is_none());
-    assert_eq!(
-        payload["pad_map"][pad_b_id.to_string()]["gate"],
-        gate_id.to_string()
-    );
-    assert_eq!(
-        payload["pad_map"][pad_b_id.to_string()]["pin"],
-        pin_b_id.to_string()
-    );
-    let _ = std::fs::remove_dir_all(&root);
-}
-
-#[test]
-fn project_set_pool_part_pad_map_rejects_duplicate_entries() {
-    let root = unique_project_root("datum-eda-cli-project-pool-part-pad-map-duplicate");
-    create_native_project(&root, Some("Pool Part Pad Map Duplicate".to_string()))
-        .expect("initial scaffold should succeed");
-    let fixture = create_pinned_part_fixture(&root, &["IN+"], &["1"]);
-    let (part_id, pad_id, gate_id, pin_id) = (
-        fixture.part_id,
-        fixture.pad_ids[0],
-        fixture.gate_id,
-        fixture.pin_ids[0],
-    );
-    let entry = format!("{pad_id}:{gate_id}:{pin_id}");
-    let error = run_project_command(&[
-        "eda",
-        "--format",
-        "json",
-        "project",
-        "set-pool-part-pad-map",
-        root.to_str().unwrap(),
-        "--part",
-        &part_id.to_string(),
-        "--entry",
-        &entry,
-        "--entry",
-        &entry,
-    ])
-    .expect_err("duplicate entries should fail");
-    assert!(format!("{error:#}").contains("duplicate pad-map entry"));
-    let payload = query_pool_object_payload(&root, "parts", part_id);
-    assert_eq!(
-        payload["pad_map"]
-            .as_object()
-            .expect("pad_map should be object")
-            .len(),
-        0
-    );
-    let _ = std::fs::remove_dir_all(&root);
-}
-
-#[test]
 fn project_set_pool_unit_pin_authors_typed_pin() {
     let root = unique_project_root("datum-eda-cli-project-pool-unit-pin");
     create_native_project(&root, Some("Pool Unit Pin".to_string()))
@@ -2245,6 +1940,7 @@ fn project_set_pool_package_pad_authors_additional_pad() {
     create_native_project(&root, Some("Pool Package Pad".to_string()))
         .expect("initial scaffold should succeed");
     let (padstack_id, package_id, _) = create_minimal_package(&root, "1");
+    let footprint_id = create_minimal_footprint(&root, package_id);
     let second_pad_id = Uuid::new_v4();
     let output = run_project_command(&[
         "eda",
@@ -2272,22 +1968,34 @@ fn project_set_pool_package_pad_authors_additional_pad() {
     let report: serde_json::Value =
         serde_json::from_str(&output).expect("package pad report JSON should parse");
     assert_eq!(report["action"], "set_package_pad");
-    assert_eq!(report["object_uuid"], package_id.to_string());
-    let payload = query_pool_object_payload(&root, "packages", package_id);
+    assert_eq!(report["object_kind"], "footprints");
+    assert_eq!(report["object_uuid"], footprint_id.to_string());
+    let package_payload = query_pool_object_payload(&root, "packages", package_id);
     assert_eq!(
-        payload["pads"]
+        package_payload["pads"]
             .as_object()
             .expect("pads should be object")
             .len(),
-        2
+        1
     );
-    assert_eq!(payload["pads"][second_pad_id.to_string()]["name"], "2");
+    let footprint_payload = query_pool_object_payload(&root, "footprints", footprint_id);
     assert_eq!(
-        payload["pads"][second_pad_id.to_string()]["position"]["x"],
+        footprint_payload["pads"]
+            .as_object()
+            .expect("pads should be object")
+            .len(),
+        1
+    );
+    assert_eq!(
+        footprint_payload["pads"][second_pad_id.to_string()]["name"],
+        "2"
+    );
+    assert_eq!(
+        footprint_payload["pads"][second_pad_id.to_string()]["position"]["x"],
         1000
     );
     assert_eq!(
-        payload["pads"][second_pad_id.to_string()]["position"]["y"],
+        footprint_payload["pads"][second_pad_id.to_string()]["position"]["y"],
         2000
     );
     let _ = std::fs::remove_dir_all(&root);
@@ -2299,6 +2007,24 @@ fn project_set_pool_package_pad_rejects_duplicate_pad() {
     create_native_project(&root, Some("Pool Package Pad Duplicate".to_string()))
         .expect("initial scaffold should succeed");
     let (padstack_id, package_id, pad_id) = create_minimal_package(&root, "1");
+    let footprint_id = create_minimal_footprint(&root, package_id);
+    run_project_command(&[
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "set-pool-footprint-pad",
+        root.to_str().unwrap(),
+        "--footprint",
+        &footprint_id.to_string(),
+        "--pad",
+        &pad_id.to_string(),
+        "--padstack",
+        &padstack_id.to_string(),
+        "--pad-name",
+        "1",
+    ])
+    .expect("footprint pad set should succeed");
     let error = run_project_command(&[
         "eda",
         "--format",
@@ -2317,7 +2043,7 @@ fn project_set_pool_package_pad_rejects_duplicate_pad() {
     ])
     .expect_err("duplicate package pad should fail");
     assert!(format!("{error:#}").contains("already has pad"));
-    let payload = query_pool_object_payload(&root, "packages", package_id);
+    let payload = query_pool_object_payload(&root, "footprints", footprint_id);
     assert_eq!(
         payload["pads"]
             .as_object()
@@ -2359,6 +2085,83 @@ fn project_set_pool_package_pad_rejects_invalid_layer() {
     let payload = query_pool_object_payload(&root, "packages", package_id);
     assert_eq!(
         payload["pads"]
+            .as_object()
+            .expect("pads should be object")
+            .len(),
+        1
+    );
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_set_pool_package_pad_requires_footprint_authority() {
+    let root = unique_project_root("datum-eda-cli-project-pool-package-pad-no-footprint");
+    create_native_project(&root, Some("Pool Package Pad No Footprint".to_string()))
+        .expect("initial scaffold should succeed");
+    let (padstack_id, package_id, _) = create_minimal_package(&root, "1");
+    let second_pad_id = Uuid::new_v4();
+    let error = run_project_command(&[
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "set-pool-package-pad",
+        root.to_str().unwrap(),
+        "--package",
+        &package_id.to_string(),
+        "--pad",
+        &second_pad_id.to_string(),
+        "--padstack",
+        &padstack_id.to_string(),
+        "--pad-name",
+        "2",
+    ])
+    .expect_err("legacy package pad requires a first-class footprint");
+    assert!(format!("{error:#}").contains("requires one footprint"));
+    let payload = query_pool_object_payload(&root, "packages", package_id);
+    assert_eq!(
+        payload["pads"]
+            .as_object()
+            .expect("pads should be object")
+            .len(),
+        1
+    );
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_set_pool_package_pad_rejects_ambiguous_footprint_authority() {
+    let root = unique_project_root("datum-eda-cli-project-pool-package-pad-ambiguous-footprint");
+    create_native_project(
+        &root,
+        Some("Pool Package Pad Ambiguous Footprint".to_string()),
+    )
+    .expect("initial scaffold should succeed");
+    let (padstack_id, package_id, _) = create_minimal_package(&root, "1");
+    let _ = create_minimal_footprint(&root, package_id);
+    let _ = create_minimal_footprint(&root, package_id);
+    let second_pad_id = Uuid::new_v4();
+    let error = run_project_command(&[
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "set-pool-package-pad",
+        root.to_str().unwrap(),
+        "--package",
+        &package_id.to_string(),
+        "--pad",
+        &second_pad_id.to_string(),
+        "--padstack",
+        &padstack_id.to_string(),
+        "--pad-name",
+        "2",
+    ])
+    .expect_err("legacy package pad requires unambiguous footprint authority");
+    assert!(format!("{error:#}").contains("ambiguous"));
+    let package_payload = query_pool_object_payload(&root, "packages", package_id);
+    assert_eq!(
+        package_payload["pads"]
             .as_object()
             .expect("pads should be object")
             .len(),

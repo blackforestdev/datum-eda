@@ -21,3 +21,24 @@ pub struct LibraryGraph {
 pub struct LibraryModelBlob {
     pub model_uuid: Uuid,
 }
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct LibraryGraphDiagnostic {
+    pub severity: &'static str,
+    pub code: &'static str,
+    pub subject: String,
+    pub message: String,
+}
+
+impl LibraryGraph {
+    pub fn dependency_diagnostics(&self) -> Vec<LibraryGraphDiagnostic> {
+        let mut diagnostics = Vec::new();
+        self.validate_symbol_refs(&mut diagnostics);
+        self.validate_entity_refs(&mut diagnostics);
+        self.validate_part_refs(&mut diagnostics);
+        self.validate_package_refs(&mut diagnostics);
+        self.validate_footprint_refs(&mut diagnostics);
+        self.validate_pin_pad_map_refs(&mut diagnostics);
+        diagnostics
+    }
+}

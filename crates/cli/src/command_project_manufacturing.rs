@@ -56,7 +56,6 @@ use command_project_manufacturing_match::manufacturing_artifact_matches;
 use command_project_manufacturing_panel_projection::{
     panel_drill_csv_production_projection, panel_pnp_production_projection,
 };
-
 pub(crate) fn report_native_project_manufacturing(
     root: &Path,
     prefix_override: Option<&str>,
@@ -400,6 +399,7 @@ fn export_native_project_manufacturing_set_with_output_run(
             gerber_plan,
             false,
             scope.panel_projection.as_ref(),
+            None,
         )?;
         production_projections.extend(
             gerber_report

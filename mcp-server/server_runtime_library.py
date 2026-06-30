@@ -50,6 +50,54 @@ def install_library_methods(client_cls: type) -> None:
             ["project", "set-pool-package-pad", path, "--pool", pool, "--package", package, "--pad", pad, "--padstack", padstack, "--pad-name", pad_name, "--x-nm", str(x_nm), "--y-nm", str(y_nm), "--layer", str(layer)],
         )
 
+    def create_pool_footprint(self, path: str, pool: str, footprint: str, package: str, name: str):
+        return self._run_cli_json(
+            self.build_request("create_pool_footprint", {"path": path, "pool": pool, "footprint": footprint, "package": package, "name": name}),
+            ["project", "create-pool-footprint", path, "--pool", pool, "--footprint", footprint, "--package", package, "--name", name],
+        )
+
+    def set_pool_footprint_pad(self, path: str, pool: str, footprint: str, pad: str, padstack: str, pad_name: str, x_nm: int, y_nm: int, layer: int):
+        return self._run_cli_json(
+            self.build_request("set_pool_footprint_pad", {"path": path, "pool": pool, "footprint": footprint, "pad": pad, "padstack": padstack, "pad_name": pad_name, "x_nm": x_nm, "y_nm": y_nm, "layer": layer}),
+            ["project", "set-pool-footprint-pad", path, "--pool", pool, "--footprint", footprint, "--pad", pad, "--padstack", padstack, "--pad-name", pad_name, "--x-nm", str(x_nm), "--y-nm", str(y_nm), "--layer", str(layer)],
+        )
+
+    def set_pool_footprint_courtyard_rect(self, path: str, pool: str, footprint: str, min_x_nm: int, min_y_nm: int, max_x_nm: int, max_y_nm: int):
+        return self._run_cli_json(
+            self.build_request("set_pool_footprint_courtyard_rect", {"path": path, "pool": pool, "footprint": footprint, "min_x_nm": min_x_nm, "min_y_nm": min_y_nm, "max_x_nm": max_x_nm, "max_y_nm": max_y_nm}),
+            ["project", "set-pool-footprint-courtyard-rect", path, "--pool", pool, "--footprint", footprint, "--min-x-nm", str(min_x_nm), "--min-y-nm", str(min_y_nm), "--max-x-nm", str(max_x_nm), "--max-y-nm", str(max_y_nm)],
+        )
+
+    def set_pool_footprint_courtyard_polygon(self, path: str, pool: str, footprint: str, vertices: str):
+        return self._run_cli_json(
+            self.build_request("set_pool_footprint_courtyard_polygon", {"path": path, "pool": pool, "footprint": footprint, "vertices": vertices}),
+            ["project", "set-pool-footprint-courtyard-polygon", path, "--pool", pool, "--footprint", footprint, "--vertices", vertices],
+        )
+
+    def add_pool_footprint_silkscreen_line(self, path: str, pool: str, footprint: str, from_x_nm: int, from_y_nm: int, to_x_nm: int, to_y_nm: int, width_nm: int):
+        return self._run_cli_json(
+            self.build_request("add_pool_footprint_silkscreen_line", {"path": path, "pool": pool, "footprint": footprint, "from_x_nm": from_x_nm, "from_y_nm": from_y_nm, "to_x_nm": to_x_nm, "to_y_nm": to_y_nm, "width_nm": width_nm}),
+            ["project", "add-pool-footprint-silkscreen-line", path, "--pool", pool, "--footprint", footprint, "--from-x-nm", str(from_x_nm), "--from-y-nm", str(from_y_nm), "--to-x-nm", str(to_x_nm), "--to-y-nm", str(to_y_nm), "--width-nm", str(width_nm)],
+        )
+
+    def add_pool_footprint_silkscreen_rect(self, path: str, pool: str, footprint: str, min_x_nm: int, min_y_nm: int, max_x_nm: int, max_y_nm: int, width_nm: int):
+        return self._run_cli_json(
+            self.build_request("add_pool_footprint_silkscreen_rect", {"path": path, "pool": pool, "footprint": footprint, "min_x_nm": min_x_nm, "min_y_nm": min_y_nm, "max_x_nm": max_x_nm, "max_y_nm": max_y_nm, "width_nm": width_nm}),
+            ["project", "add-pool-footprint-silkscreen-rect", path, "--pool", pool, "--footprint", footprint, "--min-x-nm", str(min_x_nm), "--min-y-nm", str(min_y_nm), "--max-x-nm", str(max_x_nm), "--max-y-nm", str(max_y_nm), "--width-nm", str(width_nm)],
+        )
+
+    def add_pool_footprint_silkscreen_circle(self, path: str, pool: str, footprint: str, center_x_nm: int, center_y_nm: int, radius_nm: int, width_nm: int):
+        return self._run_cli_json(
+            self.build_request("add_pool_footprint_silkscreen_circle", {"path": path, "pool": pool, "footprint": footprint, "center_x_nm": center_x_nm, "center_y_nm": center_y_nm, "radius_nm": radius_nm, "width_nm": width_nm}),
+            ["project", "add-pool-footprint-silkscreen-circle", path, "--pool", pool, "--footprint", footprint, "--center-x-nm", str(center_x_nm), "--center-y-nm", str(center_y_nm), "--radius-nm", str(radius_nm), "--width-nm", str(width_nm)],
+        )
+
+    def add_pool_footprint_silkscreen_polygon(self, path: str, pool: str, footprint: str, vertices: str, closed: bool, width_nm: int):
+        return self._run_cli_json(
+            self.build_request("add_pool_footprint_silkscreen_polygon", {"path": path, "pool": pool, "footprint": footprint, "vertices": vertices, "closed": closed, "width_nm": width_nm}),
+            ["project", "add-pool-footprint-silkscreen-polygon", path, "--pool", pool, "--footprint", footprint, "--vertices", vertices, "--closed", str(closed).lower(), "--width-nm", str(width_nm)],
+        )
+
     def set_pool_package_courtyard_rect(self, path: str, pool: str, package: str, min_x_nm: int, min_y_nm: int, max_x_nm: int, max_y_nm: int):
         return self._run_cli_json(
             self.build_request("set_pool_package_courtyard_rect", {"path": path, "pool": pool, "package": package, "min_x_nm": min_x_nm, "min_y_nm": min_y_nm, "max_x_nm": max_x_nm, "max_y_nm": max_y_nm}),
@@ -310,10 +358,42 @@ def install_library_methods(client_cls: type) -> None:
             args,
         )
 
+    def create_pool_pin_pad_map(self, path: str, pool: str, map: str, part: str, entries: list[dict[str, str]], footprint: str | None = None, set_default: bool = False):
+        args = ["project", "create-pool-pin-pad-map", path, "--pool", pool, "--map", map, "--part", part]
+        if footprint is not None:
+            args.extend(["--footprint", footprint])
+        if set_default:
+            args.append("--set-default")
+        for entry in entries:
+            value = f"{entry['pad']}:{entry['gate']}:{entry['pin']}" if entry.get("gate") else f"{entry['pin']}:{entry['pad']}"
+            args.extend(["--entry", value])
+        return self._run_cli_json(
+            self.build_request("create_pool_pin_pad_map", {"path": path, "pool": pool, "map": map, "part": part, "footprint": footprint, "entries": entries, "set_default": set_default}),
+            args,
+        )
+
+    def set_pool_pin_pad_map(self, path: str, pool: str, map: str, mode: str, entries: list[dict[str, str]]):
+        args = ["project", "set-pool-pin-pad-map", path, "--pool", pool, "--map", map, "--mode", mode]
+        for entry in entries:
+            value = f"{entry['pad']}:{entry['gate']}:{entry['pin']}" if entry.get("gate") else f"{entry['pin']}:{entry['pad']}"
+            args.extend(["--entry", value])
+        return self._run_cli_json(
+            self.build_request("set_pool_pin_pad_map", {"path": path, "pool": pool, "map": map, "mode": mode, "entries": entries}),
+            args,
+        )
+
     setattr(client_cls, "get_pool_model_blobs", get_pool_model_blobs)
     setattr(client_cls, "gc_pool_model_blobs", gc_pool_model_blobs)
     setattr(client_cls, "set_pool_unit_pin", set_pool_unit_pin)
     setattr(client_cls, "set_pool_package_pad", set_pool_package_pad)
+    setattr(client_cls, "create_pool_footprint", create_pool_footprint)
+    setattr(client_cls, "set_pool_footprint_pad", set_pool_footprint_pad)
+    setattr(client_cls, "set_pool_footprint_courtyard_rect", set_pool_footprint_courtyard_rect)
+    setattr(client_cls, "set_pool_footprint_courtyard_polygon", set_pool_footprint_courtyard_polygon)
+    setattr(client_cls, "add_pool_footprint_silkscreen_line", add_pool_footprint_silkscreen_line)
+    setattr(client_cls, "add_pool_footprint_silkscreen_rect", add_pool_footprint_silkscreen_rect)
+    setattr(client_cls, "add_pool_footprint_silkscreen_circle", add_pool_footprint_silkscreen_circle)
+    setattr(client_cls, "add_pool_footprint_silkscreen_polygon", add_pool_footprint_silkscreen_polygon)
     setattr(client_cls, "set_pool_package_courtyard_rect", set_pool_package_courtyard_rect)
     setattr(client_cls, "set_pool_package_courtyard_polygon", set_pool_package_courtyard_polygon)
     setattr(client_cls, "add_pool_symbol_line", add_pool_symbol_line)
@@ -342,3 +422,5 @@ def install_library_methods(client_cls: type) -> None:
     setattr(client_cls, "detach_pool_part_model", detach_pool_part_model)
     setattr(client_cls, "set_pool_part_thermal", set_pool_part_thermal)
     setattr(client_cls, "set_pool_part_pad_map", set_pool_part_pad_map)
+    setattr(client_cls, "create_pool_pin_pad_map", create_pool_pin_pad_map)
+    setattr(client_cls, "set_pool_pin_pad_map", set_pool_pin_pad_map)

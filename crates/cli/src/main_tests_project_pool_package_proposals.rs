@@ -183,6 +183,71 @@ fn proposal_create_pool_package_defers_until_accept_apply() {
 }
 
 #[test]
+fn proposal_create_pool_package_authors_body_only_package() {
+    let root = unique_project_root("datum-eda-cli-project-pool-package-body-proposal");
+    create_native_project(&root, Some("Pool Package Body Proposal Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    let package_id = Uuid::new_v4();
+    let proposal_id = Uuid::new_v4();
+
+    let package_path = root.join(format!("pool/packages/{package_id}.json"));
+    let create_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "proposal",
+            "create-pool-package",
+            root.to_str().unwrap(),
+            "--package",
+            &package_id.to_string(),
+            "--name",
+            "SOT23",
+            "--proposal",
+            &proposal_id.to_string(),
+            "--rationale",
+            "review package body",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("body-only pool package proposal create should succeed");
+    let create_report: serde_json::Value =
+        serde_json::from_str(&create_output).expect("create report JSON should parse");
+    assert_eq!(create_report["contract"], "proposal_create_v1");
+    assert_eq!(create_report["action"], "create_pool_package_proposal");
+    assert!(
+        !package_path.exists(),
+        "proposal creation must not write the pool package shard"
+    );
+
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "proposal",
+            "accept-apply",
+            root.to_str().unwrap(),
+            "--proposal",
+            &proposal_id.to_string(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("body-only pool package proposal accept-apply should succeed");
+
+    let queried = query_pool_object_payload(&root, "packages", package_id);
+    assert_eq!(queried["uuid"], package_id.to_string());
+    assert_eq!(queried["name"], "SOT23");
+    assert_eq!(
+        queried["pads"]
+            .as_object()
+            .expect("pads should be an object")
+            .len(),
+        0
+    );
+}
+
+#[test]
 fn proposal_create_pool_package_rejects_missing_padstack() {
     let root = unique_project_root("datum-eda-cli-project-pool-package-proposal-missing-padstack");
     create_native_project(

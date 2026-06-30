@@ -42,8 +42,10 @@ gaps, not tools.
 
 ### Current-engine grounding (verified)
 
-Native schematic authoring today does **not** flow through the engine
-Operation/commit/journal. It is a private JSON write path, confirmed in:
+Native schematic authoring has partially migrated onto the engine
+OperationBatch/journal/ProjectResolver path. The old private JSON writer
+inventory is retained below as historical scope evidence, but those families
+are no longer allowed to be the active authority for migrated surfaces:
 
 - `crates/cli/src/command_project_schematic_symbol_mutations.rs` (25 fns:
   place/move/rotate/mirror/delete symbol; set_/clear_ reference, value,
@@ -56,16 +58,17 @@ Operation/commit/journal. It is a private JSON write path, confirmed in:
 - `crates/cli/src/command_project_schematic_text_drawing_mutations.rs`
   (12 fns: text + drawing primitive families)
 
-All load via `load_native_project`, mutate a `serde_json::Value`
-(`write_symbol_into_sheet` etc. in
-`crates/cli/src/command_project_schematic_helpers.rs`), and persist with
-`write_canonical_json`. There is NO `OperationResult`, NO
-`TransactionRecord`, NO undo/redo, NO `model_revision`. By contrast the
-imported-board ops in `crates/engine/src/api/write_ops/basic_mutations.rs`
-push a `TransactionRecord` onto the undo stack
-(`crates/engine/src/api/save_kicad/transaction_state.rs`) and return an
-`OperationResult{OperationDiff}` — but they are board/KiCad-only and still
-lack an fsync/journal `commit()`.
+Current evidence: schematic symbol, connectivity, text/drawing, sheet
+definition, sheet-instance, and hierarchy binding mutations route through
+journaled native-project operations and resolver replay; canonical MCP
+`datum.schematic.*` aliases bridge to the matching CLI commands. The
+remaining product gap is not "no schematic substrate"; it is completion and
+normalization of the contract shape: heterogeneous delete/set-field collapse,
+part-assignment binding completion, revision-keyed ERC/binding semantics, and
+proposal boundaries for higher-level cross-domain edits. Pool-backed
+`place-symbol` now mints an authored symbol-first `ComponentInstance` when the
+pool symbol resolves to a unique entity/gate/part; compatibility `lib_id`
+placement and board-package binding remain partial.
 
 Confirmed IR facts the matrix relies on:
 
@@ -83,12 +86,13 @@ Confirmed IR facts the matrix relies on:
   hierarchical-connectivity-mismatch check
   (`erc/mod.rs:291`), with severity overrides and waivers; NOT
   revision-keyed.
-- There is NO `ProjectResolver`, NO single resolved `DesignModel`, and NO
-  `ComponentInstance` in the schematic IR. `PlacedSymbol` carries a
-  reference string + optional part/entity/gate UUIDs.
-- MCP catalog (`mcp-server/tools_catalog_data.py`) exposes only read-only
-  schematic tools (`get_schematic_summary`/`net_info`/`symbols`/... and
-  the unified check report). There are NO schematic write tools.
+- `ProjectResolver` and resolver-materialized schematic read/write paths exist
+  for the current native-project slices; `PlacedSymbol` still carries a
+  reference string + optional part/entity/gate UUIDs rather than a guaranteed
+  minted `ComponentInstance` join.
+- MCP exposes canonical schematic write aliases for the current journaled
+  slices. These are still mostly compatibility-shaped verbs rather than the
+  normalized ten-operation contract below.
 
 ## Reference-Tool Survey
 
@@ -148,8 +152,9 @@ restated.
 - **(2) Operation:** `PlaceSymbol{sheet_id, library_ref, position,
   rotation, mirror, component_instance_id}` → single-Operation
   `OperationBatch` through `commit()`. Current CLI uses the journaled
-  schematic operation path, but ComponentInstance mint semantics remain
-  follow-on.
+  schematic operation path and, for pool-symbol UUID `lib_id`s that resolve to
+  a unique entity/gate/part, batches `CreateSchematicSymbol` with a symbol-first
+  `CreateComponentInstance`.
 - **(3) CLI:** `datum-eda project place-symbol <dir> --sheet <uuid>
   --reference R1 --value 10k --lib-id <id> --x-nm <nm> --y-nm <nm>
   --rotation-deg <deg> [--mirrored]`
@@ -170,8 +175,9 @@ restated.
   freshly minted `ComponentInstance` id, the journal gained one
   `TransactionRecord`, undo removes it, `model_revision` changes then
   reverts.
-- **(8) Not yet supported:** Automatic ComponentInstance minting/binding at
-  place time remains unresolved.
+- **(8) Not yet supported:** Compatibility/non-pool symbols do not mint
+  ComponentInstances, part-assignment binding is not yet automatic, and board
+  package refs attach only after the physical package exists.
 
 ### 2. transform-symbol (move / rotate / mirror unified)
 
@@ -459,13 +465,13 @@ parametric-kind / optional-id principle consistently:
    (`BusEntry` is bus-bound, so it correctly stays inside the bus tool
    rather than over-merging into `PlaceMarker`).
 
-The load-bearing, non-negotiable work is NOT new tools but routing all ten
-through the missing engine `commit()`/journal/`ProjectResolver` and
-minting/binding `ComponentInstance` at place-symbol and at part
-assignment. Today every native schematic write is a private JSON path with
-no undo, directly violating the readiness audit. ERC stays read-only (no
-operation) and is implemented; only proposal-gated waiver authoring is new
-and may defer to the `009` contract.
+The load-bearing, non-negotiable work is NOT new tools but finishing the
+contract normalization on top of the journaled schematic substrate and
+minting/binding `ComponentInstance` at place-symbol and at part assignment.
+Today the current schematic write slices are journaled and MCP-visible, but
+the public shape is still compatibility-heavy. ERC stays read-only (no
+operation) and is implemented; only proposal-gated waiver authoring is new and
+may defer to the `009` contract.
 
 Direct-commit class (local, visible, undoable): place-symbol,
 transform-symbol, draw-wire, place-label, place-marker, place-port,
@@ -579,16 +585,17 @@ a `ComponentInstance` minted at place-symbol and bound at part assignment.
 
 ## Not-Yet-Supported
 
-- **commit()/journal/ProjectResolver substrate.** All ten ops currently
-  run as private JSON writes (`load_native_project` →
-  `write_canonical_json`) with no `OperationResult`, no
-  `TransactionRecord`, no undo, no `model_revision`. This substrate is the
-  hard prerequisite for the entire contract and is a foundational slice in
-  its own right (see the shared-surface substrate prerequisite).
-- **ComponentInstance.** Not present in the schematic IR; `PlacedSymbol`
-  carries a reference string + optional part/entity/gate UUIDs. The
-  electrical-to-physical join cannot be formed until it is minted at
-  place-symbol and bound at part assignment.
+- **Contract-normalized schematic operations.** Current schematic write slices
+  use journaled operations and resolver replay, but they remain exposed mostly
+  as compatibility-shaped per-kind/per-field commands. The ten-operation
+  contract still needs normalized `DeleteObjects`, `SetSymbolField`,
+  `PlaceMarker`, richer `CreateBus`, and consistent `OperationResult` /
+  `model_revision` reporting.
+- **ComponentInstance mint/bind from schematic placement.** Pool-backed
+  `place-symbol` now stores part/entity/gate UUIDs and mints an authored
+  symbol-first `ComponentInstance` with a `part_ref`. Compatibility `lib_id`s,
+  ambiguous library matches, automatic part-assignment binding, and later
+  board-package attachment remain partial.
 - **Hierarchy authoring.** create-sheet / sheet-instance / sheet-pin have
   no authoring op (only `ProjectNew` scaffold + read queries;
   `sheet_instances` is in the IR). Deferred to a later slice; net-rewiring

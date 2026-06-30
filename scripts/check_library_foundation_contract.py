@@ -39,7 +39,19 @@ REQUIRED = {
         "The remaining blocker is not \"no substrate.\"",
         "`Package` is not a `Footprint`.",
         "`PinPadMap` is first-class library data.",
+        "Runtime board pad regeneration now prefers first-class `Footprint`",
         "Engine-owned `LibraryGraph` authority.",
+        "Part behavioural models with hash/provenance",
+        "Full `Footprint` authority.",
+    ],
+    "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md": [
+        "Native schematic authoring has partially migrated onto the engine",
+        "ComponentInstance mint/bind from schematic placement.",
+    ],
+    "docs/decisions/PRODUCT_MECHANICS_008A_SYMBOL_MODEL_RECONCILIATION.md": [
+        "`pool::PinDirection` is now a compatibility alias",
+        "`SymbolPinAnchor` now carries `orientation`",
+        "behavioral: rendering/check/import/export parity",
     ],
     "docs/LIBRARY_ARCHITECTURE.md": [
         "Horizon's library architecture is useful prior art, not the target ceiling",
@@ -63,6 +75,11 @@ REQUIRED = {
     "specs/PROGRESS.md": [
         "Native library foundation",
         "This is the next implementation axis before board-editor expansion.",
+        "Next Production Goals",
+        "`PinPadMap` authority",
+        "engine runtime board pad regeneration now prefer first-class `Footprint`",
+        "Typed CLI/MCP authoring now creates first-class `Footprint` objects",
+        "Schematic place-symbol",
     ],
     "docs/ENGINE_DESIGN.md": [
         "Package (physical component body / terminal family)",

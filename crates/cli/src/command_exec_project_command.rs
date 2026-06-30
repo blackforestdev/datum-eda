@@ -4,43 +4,26 @@ pub(super) fn execute_project_command(
     command: ProjectCommands,
 ) -> Result<(String, i32)> {
     match command {
-        ProjectCommands::ReviewProposal(ProjectReviewProposalArgs {
-            path,
-            proposal,
-            status,
-        }) => Ok((
-            render_output(
-                format,
-                &review_native_project_proposal(
-                    &path,
-                    proposal,
-                    match status {
-                        ProposalReviewStatusArg::Accepted => eda_engine::substrate::ProposalStatus::Accepted,
-                        ProposalReviewStatusArg::Deferred => eda_engine::substrate::ProposalStatus::Deferred,
-                        ProposalReviewStatusArg::Rejected => eda_engine::substrate::ProposalStatus::Rejected,
-                    },
-                )?,
-            ),
-            0,
-        )),
-        ProjectCommands::ShowProposal(ProjectShowProposalArgs { path, proposal }) => Ok((
-            render_output(format, &show_native_project_proposal(&path, proposal)?),
-            0,
-        )),
-        ProjectCommands::ValidateProposal(ProjectValidateProposalArgs { path, proposal }) => Ok((
-            render_output(format, &validate_native_project_proposal(&path, proposal)?),
-            0,
-        )),
-        ProjectCommands::DeferProposal(ProjectDeferProposalArgs { path, proposal }) => Ok((
-            render_output(format, &defer_native_project_proposal(&path, proposal)?),
-            0,
-        )),
-        ProjectCommands::ApplyProposal(ProjectApplyProposalArgs { path, proposal }) => Ok((
-            render_output(format, &apply_native_project_proposal(&path, proposal)?),
-            0,
-        )),
-        command @ (ProjectCommands::ImportKicadFootprint(_) | ProjectCommands::ImportKicadBoard(_) | ProjectCommands::ImportKicadSchematic(_) | ProjectCommands::ImportEagleLibrary(_) | ProjectCommands::SetPoolPartBindings(_)) => execute_project_import_or_part_binding_command(format, command),
-        command @ ProjectCommands::CreatePoolLibraryObject(_) | command @ ProjectCommands::CreatePoolUnit(_) | command @ ProjectCommands::SetPoolUnitPin(_) | command @ ProjectCommands::CreatePoolSymbol(_) | command @ ProjectCommands::AddPoolSymbolLine(_) | command @ ProjectCommands::AddPoolSymbolPolygon(_) | command @ ProjectCommands::AddPoolSymbolRect(_) | command @ ProjectCommands::AddPoolSymbolCircle(_) | command @ ProjectCommands::AddPoolSymbolText(_) | command @ ProjectCommands::AddPoolSymbolArc(_) | command @ ProjectCommands::SetPoolSymbolPinAnchor(_) | command @ ProjectCommands::CreatePoolEntity(_) | command @ ProjectCommands::CreatePoolPadstack(_) | command @ ProjectCommands::CreatePoolPackage(_) | command @ ProjectCommands::SetPoolPackagePad(_) | command @ ProjectCommands::SetPoolPackageCourtyardRect(_) | command @ ProjectCommands::SetPoolPackageCourtyardPolygon(_) | command @ ProjectCommands::AddPoolPackageSilkscreenLine(_) | command @ ProjectCommands::AddPoolPackageSilkscreenRect(_) | command @ ProjectCommands::AddPoolPackageSilkscreenCircle(_) | command @ ProjectCommands::AddPoolPackageSilkscreenArc(_) | command @ ProjectCommands::AddPoolPackageSilkscreenPolygon(_) | command @ ProjectCommands::AddPoolPackageSilkscreenText(_) | command @ ProjectCommands::AddPoolPackageModel3d(_) | command @ ProjectCommands::SetPoolPackageBodyHeights(_) | command @ ProjectCommands::CreatePoolPart(_) | command @ ProjectCommands::SetPoolPartMetadata(_) | command @ ProjectCommands::SetPoolPartParametric(_) | command @ ProjectCommands::SetPoolPartOrderableMpns(_) | command @ ProjectCommands::SetPoolPartPackagingOptions(_) | command @ ProjectCommands::SetPoolPartBehaviouralModels(_) | command @ ProjectCommands::AttachPoolPartModel(_) | command @ ProjectCommands::DetachPoolPartModel(_) | command @ ProjectCommands::GcPoolModels(_) | command @ ProjectCommands::SetPoolPartThermal(_) | command @ ProjectCommands::SetPoolPartSupplyChain(_) | command @ ProjectCommands::SetPoolPartTags(_) | command @ ProjectCommands::SetPoolPartPadMap(_) | command @ ProjectCommands::SetPoolPartPadMapEntry(_) | command @ ProjectCommands::SetPoolLibraryObject(_) | command @ ProjectCommands::DeletePoolLibraryObject(_) => execute_project_library_command(format, command),
+        command @ (ProjectCommands::ReviewProposal(_)
+        | ProjectCommands::ShowProposal(_)
+        | ProjectCommands::ValidateProposal(_)
+        | ProjectCommands::DeferProposal(_)
+        | ProjectCommands::ApplyProposal(_)) => {
+            execute_project_proposal_lifecycle_command(format, command)
+        }
+        command @ (ProjectCommands::ImportKicadFootprint(_) | ProjectCommands::ImportKicadBoard(_) | ProjectCommands::ImportKicadSchematic(_) | ProjectCommands::ImportEagleLibrary(_) | ProjectCommands::SetPoolPartBindings(_) | ProjectCommands::SetPoolSymbolPinAnchor(_)) => execute_project_import_or_part_binding_command(format, command),
+        command @ (ProjectCommands::CreatePoolFootprint(_)
+        | ProjectCommands::SetPoolFootprintPad(_)
+        | ProjectCommands::SetPoolFootprintCourtyardRect(_)
+        | ProjectCommands::SetPoolFootprintCourtyardPolygon(_)
+        | ProjectCommands::AddPoolFootprintSilkscreenLine(_)
+        | ProjectCommands::AddPoolFootprintSilkscreenRect(_)
+        | ProjectCommands::AddPoolFootprintSilkscreenCircle(_)
+        | ProjectCommands::AddPoolFootprintSilkscreenPolygon(_)) => {
+            execute_project_library_footprint_command(format, command)
+        }
+        command @ (ProjectCommands::CreatePoolPinPadMap(_) | ProjectCommands::SetPoolPinPadMap(_)) => execute_project_library_pin_pad_map_command(format, command),
+        command @ ProjectCommands::CreatePoolLibraryObject(_) | command @ ProjectCommands::CreatePoolUnit(_) | command @ ProjectCommands::SetPoolUnitPin(_) | command @ ProjectCommands::CreatePoolSymbol(_) | command @ ProjectCommands::AddPoolSymbolLine(_) | command @ ProjectCommands::AddPoolSymbolPolygon(_) | command @ ProjectCommands::AddPoolSymbolRect(_) | command @ ProjectCommands::AddPoolSymbolCircle(_) | command @ ProjectCommands::AddPoolSymbolText(_) | command @ ProjectCommands::AddPoolSymbolArc(_) | command @ ProjectCommands::CreatePoolEntity(_) | command @ ProjectCommands::CreatePoolPadstack(_) | command @ ProjectCommands::CreatePoolPackage(_) | command @ ProjectCommands::SetPoolPackagePad(_) | command @ ProjectCommands::SetPoolPackageCourtyardRect(_) | command @ ProjectCommands::SetPoolPackageCourtyardPolygon(_) | command @ ProjectCommands::AddPoolPackageSilkscreenLine(_) | command @ ProjectCommands::AddPoolPackageSilkscreenRect(_) | command @ ProjectCommands::AddPoolPackageSilkscreenCircle(_) | command @ ProjectCommands::AddPoolPackageSilkscreenArc(_) | command @ ProjectCommands::AddPoolPackageSilkscreenPolygon(_) | command @ ProjectCommands::AddPoolPackageSilkscreenText(_) | command @ ProjectCommands::AddPoolPackageModel3d(_) | command @ ProjectCommands::SetPoolPackageBodyHeights(_) | command @ ProjectCommands::CreatePoolPart(_) | command @ ProjectCommands::SetPoolPartMetadata(_) | command @ ProjectCommands::SetPoolPartParametric(_) | command @ ProjectCommands::SetPoolPartOrderableMpns(_) | command @ ProjectCommands::SetPoolPartPackagingOptions(_) | command @ ProjectCommands::SetPoolPartBehaviouralModels(_) | command @ ProjectCommands::AttachPoolPartModel(_) | command @ ProjectCommands::DetachPoolPartModel(_) | command @ ProjectCommands::GcPoolModels(_) | command @ ProjectCommands::SetPoolPartThermal(_) | command @ ProjectCommands::SetPoolPartSupplyChain(_) | command @ ProjectCommands::SetPoolPartTags(_) | command @ ProjectCommands::SetPoolPartPadMap(_) | command @ ProjectCommands::SetPoolPartPadMapEntry(_) | command @ ProjectCommands::SetPoolLibraryObject(_) | command @ ProjectCommands::DeletePoolLibraryObject(_) => execute_project_library_command(format, command),
         ProjectCommands::SetProjectName(ProjectSetProjectNameArgs { path, name }) => {
             let report = set_native_project_name(&path, name)?;
             let output = match format {

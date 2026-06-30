@@ -6,6 +6,10 @@ from __future__ import annotations
 from server_runtime import JsonRpcResponse
 
 
+def _package_silkscreen_footprint_uuid(package: str) -> str:
+    return f"footprint-for-{package}"
+
+
 class FakeDaemonClientLibraryMixin:
     def get_pool_library_objects(
         self,
@@ -271,12 +275,12 @@ class FakeDaemonClientLibraryMixin:
         pool: str,
         package: str,
         name: str,
-        pad: str,
-        padstack: str,
-        pad_name: str,
-        x_nm: int,
-        y_nm: int,
-        layer: int,
+        pad: str | None = None,
+        padstack: str | None = None,
+        pad_name: str = "1",
+        x_nm: int = 0,
+        y_nm: int = 0,
+        layer: int = 1,
     ) -> JsonRpcResponse:
         self.calls.append(("create_pool_package", path, pool, package, name, pad, padstack, pad_name, x_nm, y_nm, layer))
         return JsonRpcResponse(
@@ -296,6 +300,31 @@ class FakeDaemonClientLibraryMixin:
                 "x_nm": x_nm,
                 "y_nm": y_nm,
                 "layer": layer,
+            },
+            None,
+        )
+
+    def create_pool_footprint(
+        self,
+        path: str,
+        pool: str,
+        footprint: str,
+        package: str,
+        name: str,
+    ) -> JsonRpcResponse:
+        self.calls.append(("create_pool_footprint", path, pool, footprint, package, name))
+        return JsonRpcResponse(
+            "2.0",
+            188,
+            {
+                "contract": "native_project_pool_library_object_mutation_v1",
+                "action": "create_footprint",
+                "project_root": path,
+                "pool": pool,
+                "object_kind": "footprints",
+                "object_uuid": footprint,
+                "package": package,
+                "name": name,
             },
             None,
         )
@@ -714,6 +743,39 @@ class FakeDaemonClientLibraryMixin:
             None,
         )
 
+    def set_pool_footprint_pad(
+        self,
+        path: str,
+        pool: str,
+        footprint: str,
+        pad: str,
+        padstack: str,
+        pad_name: str,
+        x_nm: int,
+        y_nm: int,
+        layer: int,
+    ) -> JsonRpcResponse:
+        self.calls.append(("set_pool_footprint_pad", path, pool, footprint, pad, padstack, pad_name, x_nm, y_nm, layer))
+        return JsonRpcResponse(
+            "2.0",
+            192,
+            {
+                "contract": "native_project_pool_library_object_mutation_v1",
+                "action": "set_footprint_pad",
+                "project_root": path,
+                "pool": pool,
+                "object_kind": "footprints",
+                "object_uuid": footprint,
+                "pad": pad,
+                "padstack": padstack,
+                "pad_name": pad_name,
+                "x_nm": x_nm,
+                "y_nm": y_nm,
+                "layer": layer,
+            },
+            None,
+        )
+
     def set_pool_package_courtyard_rect(
         self,
         path: str,
@@ -740,6 +802,143 @@ class FakeDaemonClientLibraryMixin:
                 "max_x_nm": max_x_nm,
                 "max_y_nm": max_y_nm,
             },
+            None,
+        )
+
+    def set_pool_footprint_courtyard_rect(
+        self,
+        path: str,
+        pool: str,
+        footprint: str,
+        min_x_nm: int,
+        min_y_nm: int,
+        max_x_nm: int,
+        max_y_nm: int,
+    ) -> JsonRpcResponse:
+        self.calls.append(("set_pool_footprint_courtyard_rect", path, pool, footprint, min_x_nm, min_y_nm, max_x_nm, max_y_nm))
+        return JsonRpcResponse(
+            "2.0",
+            195,
+            {
+                "contract": "native_project_pool_library_object_mutation_v1",
+                "action": "set_footprint_courtyard_rect",
+                "project_root": path,
+                "pool": pool,
+                "object_kind": "footprints",
+                "object_uuid": footprint,
+                "min_x_nm": min_x_nm,
+                "min_y_nm": min_y_nm,
+                "max_x_nm": max_x_nm,
+                "max_y_nm": max_y_nm,
+            },
+            None,
+        )
+
+    def set_pool_footprint_courtyard_polygon(
+        self,
+        path: str,
+        pool: str,
+        footprint: str,
+        vertices: str,
+    ) -> JsonRpcResponse:
+        self.calls.append(("set_pool_footprint_courtyard_polygon", path, pool, footprint, vertices))
+        return JsonRpcResponse(
+            "2.0",
+            196,
+            {
+                "contract": "native_project_pool_library_object_mutation_v1",
+                "action": "set_footprint_courtyard_polygon",
+                "project_root": path,
+                "pool": pool,
+                "object_kind": "footprints",
+                "object_uuid": footprint,
+                "vertices": vertices,
+            },
+            None,
+        )
+
+    def add_pool_footprint_silkscreen_line(
+        self,
+        path: str,
+        pool: str,
+        footprint: str,
+        from_x_nm: int,
+        from_y_nm: int,
+        to_x_nm: int,
+        to_y_nm: int,
+        width_nm: int,
+    ) -> JsonRpcResponse:
+        self.calls.append(("add_pool_footprint_silkscreen_line", path, pool, footprint, from_x_nm, from_y_nm, to_x_nm, to_y_nm, width_nm))
+        return JsonRpcResponse(
+            "2.0",
+            197,
+            {
+                "contract": "native_project_pool_library_object_mutation_v1",
+                "action": "add_footprint_silkscreen_line",
+                "project_root": path,
+                "pool": pool,
+                "object_kind": "footprints",
+                "object_uuid": footprint,
+                "from_x_nm": from_x_nm,
+                "from_y_nm": from_y_nm,
+                "to_x_nm": to_x_nm,
+                "to_y_nm": to_y_nm,
+                "width_nm": width_nm,
+            },
+            None,
+        )
+
+    def add_pool_footprint_silkscreen_rect(
+        self,
+        path: str,
+        pool: str,
+        footprint: str,
+        min_x_nm: int,
+        min_y_nm: int,
+        max_x_nm: int,
+        max_y_nm: int,
+        width_nm: int,
+    ) -> JsonRpcResponse:
+        self.calls.append(("add_pool_footprint_silkscreen_rect", path, pool, footprint, min_x_nm, min_y_nm, max_x_nm, max_y_nm, width_nm))
+        return JsonRpcResponse(
+            "2.0",
+            198,
+            {"contract": "native_project_pool_library_object_mutation_v1", "action": "add_footprint_silkscreen_rect", "project_root": path, "pool": pool, "object_kind": "footprints", "object_uuid": footprint, "width_nm": width_nm},
+            None,
+        )
+
+    def add_pool_footprint_silkscreen_circle(
+        self,
+        path: str,
+        pool: str,
+        footprint: str,
+        center_x_nm: int,
+        center_y_nm: int,
+        radius_nm: int,
+        width_nm: int,
+    ) -> JsonRpcResponse:
+        self.calls.append(("add_pool_footprint_silkscreen_circle", path, pool, footprint, center_x_nm, center_y_nm, radius_nm, width_nm))
+        return JsonRpcResponse(
+            "2.0",
+            199,
+            {"contract": "native_project_pool_library_object_mutation_v1", "action": "add_footprint_silkscreen_circle", "project_root": path, "pool": pool, "object_kind": "footprints", "object_uuid": footprint, "radius_nm": radius_nm, "width_nm": width_nm},
+            None,
+        )
+
+    def add_pool_footprint_silkscreen_polygon(
+        self,
+        path: str,
+        pool: str,
+        footprint: str,
+        vertices: str,
+        closed: bool,
+        width_nm: int,
+    ) -> JsonRpcResponse:
+        self.calls.append(("add_pool_footprint_silkscreen_polygon", path, pool, footprint, vertices, closed, width_nm))
+        return JsonRpcResponse(
+            "2.0",
+            200,
+            {"contract": "native_project_pool_library_object_mutation_v1", "action": "add_footprint_silkscreen_polygon", "project_root": path, "pool": pool, "object_kind": "footprints", "object_uuid": footprint, "vertices": vertices, "closed": closed, "width_nm": width_nm},
             None,
         )
 
@@ -786,8 +985,8 @@ class FakeDaemonClientLibraryMixin:
                 "action": "add_package_silkscreen_line",
                 "project_root": path,
                 "pool": pool,
-                "object_kind": "packages",
-                "object_uuid": package,
+                "object_kind": "footprints",
+                "object_uuid": _package_silkscreen_footprint_uuid(package),
                 "from_x_nm": from_x_nm,
                 "from_y_nm": from_y_nm,
                 "to_x_nm": to_x_nm,
@@ -845,8 +1044,8 @@ class FakeDaemonClientLibraryMixin:
                 "action": "add_package_silkscreen_rect",
                 "project_root": path,
                 "pool": pool,
-                "object_kind": "packages",
-                "object_uuid": package,
+                "object_kind": "footprints",
+                "object_uuid": _package_silkscreen_footprint_uuid(package),
                 "min_x_nm": min_x_nm,
                 "min_y_nm": min_y_nm,
                 "max_x_nm": max_x_nm,
@@ -858,7 +1057,7 @@ class FakeDaemonClientLibraryMixin:
 
     def add_pool_package_silkscreen_polygon(self, path: str, pool: str, package: str, vertices: str, closed: bool, width_nm: int) -> JsonRpcResponse:
         self.calls.append(("add_pool_package_silkscreen_polygon", path, pool, package, vertices, closed, width_nm))
-        return JsonRpcResponse("2.0", 199, {"contract": "native_project_pool_library_object_mutation_v1", "action": "add_package_silkscreen_polygon", "project_root": path, "pool": pool, "object_kind": "packages", "object_uuid": package, "vertices": vertices, "closed": closed, "width_nm": width_nm}, None)
+        return JsonRpcResponse("2.0", 199, {"contract": "native_project_pool_library_object_mutation_v1", "action": "add_package_silkscreen_polygon", "project_root": path, "pool": pool, "object_kind": "footprints", "object_uuid": _package_silkscreen_footprint_uuid(package), "vertices": vertices, "closed": closed, "width_nm": width_nm}, None)
 
     def add_pool_package_silkscreen_circle(
         self,
@@ -879,8 +1078,8 @@ class FakeDaemonClientLibraryMixin:
                 "action": "add_package_silkscreen_circle",
                 "project_root": path,
                 "pool": pool,
-                "object_kind": "packages",
-                "object_uuid": package,
+                "object_kind": "footprints",
+                "object_uuid": _package_silkscreen_footprint_uuid(package),
                 "center_x_nm": center_x_nm,
                 "center_y_nm": center_y_nm,
                 "radius_nm": radius_nm,
@@ -891,11 +1090,11 @@ class FakeDaemonClientLibraryMixin:
 
     def add_pool_package_silkscreen_text(self, path: str, pool: str, package: str, text: str, x_nm: int, y_nm: int, rotation: float) -> JsonRpcResponse:
         self.calls.append(("add_pool_package_silkscreen_text", path, pool, package, text, x_nm, y_nm, rotation))
-        return JsonRpcResponse("2.0", 197, {"contract": "native_project_pool_library_object_mutation_v1", "action": "add_package_silkscreen_text", "project_root": path, "pool": pool, "object_kind": "packages", "object_uuid": package, "text": text, "x_nm": x_nm, "y_nm": y_nm, "rotation": rotation}, None)
+        return JsonRpcResponse("2.0", 197, {"contract": "native_project_pool_library_object_mutation_v1", "action": "add_package_silkscreen_text", "project_root": path, "pool": pool, "object_kind": "footprints", "object_uuid": _package_silkscreen_footprint_uuid(package), "text": text, "x_nm": x_nm, "y_nm": y_nm, "rotation": rotation}, None)
 
     def add_pool_package_silkscreen_arc(self, path: str, pool: str, package: str, x_nm: int, y_nm: int, radius_nm: int, start_angle: int, end_angle: int, width_nm: int) -> JsonRpcResponse:
         self.calls.append(("add_pool_package_silkscreen_arc", path, pool, package, x_nm, y_nm, radius_nm, start_angle, end_angle, width_nm))
-        return JsonRpcResponse("2.0", 198, {"contract": "native_project_pool_library_object_mutation_v1", "action": "add_package_silkscreen_arc", "project_root": path, "pool": pool, "object_kind": "packages", "object_uuid": package, "x_nm": x_nm, "y_nm": y_nm, "radius_nm": radius_nm, "start_angle": start_angle, "end_angle": end_angle, "width_nm": width_nm}, None)
+        return JsonRpcResponse("2.0", 198, {"contract": "native_project_pool_library_object_mutation_v1", "action": "add_package_silkscreen_arc", "project_root": path, "pool": pool, "object_kind": "footprints", "object_uuid": _package_silkscreen_footprint_uuid(package), "x_nm": x_nm, "y_nm": y_nm, "radius_nm": radius_nm, "start_angle": start_angle, "end_angle": end_angle, "width_nm": width_nm}, None)
 
     def add_pool_package_model_3d(self, path: str, pool: str, package: str, model_path: str, transform_json: str | None = None, format: str | None = None, tx_nm: int | None = None, ty_nm: int | None = None, tz_nm: int | None = None, roll_tenths_deg: int | None = None, pitch_tenths_deg: int | None = None, yaw_tenths_deg: int | None = None, scale: object | None = None) -> JsonRpcResponse:
         options = {"format": format, "tx_nm": tx_nm, "ty_nm": ty_nm, "tz_nm": tz_nm, "roll_tenths_deg": roll_tenths_deg, "pitch_tenths_deg": pitch_tenths_deg, "yaw_tenths_deg": yaw_tenths_deg, "scale": scale}
@@ -925,6 +1124,60 @@ class FakeDaemonClientLibraryMixin:
                 "pool": pool,
                 "object_kind": "parts",
                 "object_uuid": part,
+                "mode": mode,
+                "entries": entries,
+            },
+            None,
+        )
+
+    def create_pool_pin_pad_map(
+        self,
+        path: str,
+        pool: str,
+        map: str,
+        part: str,
+        entries: list[dict[str, str]],
+        footprint: str | None = None,
+        set_default: bool = False,
+    ) -> JsonRpcResponse:
+        self.calls.append(("create_pool_pin_pad_map", path, pool, map, part, footprint, entries, set_default))
+        return JsonRpcResponse(
+            "2.0",
+            202,
+            {
+                "contract": "native_project_pool_library_object_mutation_v1",
+                "action": "create_pin_pad_map",
+                "project_root": path,
+                "pool": pool,
+                "object_kind": "pin_pad_maps",
+                "object_uuid": map,
+                "part": part,
+                "footprint": footprint,
+                "entries": entries,
+                "set_default": set_default,
+            },
+            None,
+        )
+
+    def set_pool_pin_pad_map(
+        self,
+        path: str,
+        pool: str,
+        map: str,
+        mode: str,
+        entries: list[dict[str, str]],
+    ) -> JsonRpcResponse:
+        self.calls.append(("set_pool_pin_pad_map", path, pool, map, mode, entries))
+        return JsonRpcResponse(
+            "2.0",
+            203,
+            {
+                "contract": "native_project_pool_library_object_mutation_v1",
+                "action": "set_pin_pad_map",
+                "project_root": path,
+                "pool": pool,
+                "object_kind": "pin_pad_maps",
+                "object_uuid": map,
                 "mode": mode,
                 "entries": entries,
             },

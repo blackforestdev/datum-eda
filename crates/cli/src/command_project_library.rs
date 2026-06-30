@@ -375,89 +375,6 @@ pub(crate) fn create_native_project_pool_padstack(
     )
 }
 
-pub(crate) fn create_native_project_pool_package(
-    root: &Path,
-    pool_path: &str,
-    package_id: Uuid,
-    name: String,
-    pad_id: Uuid,
-    padstack_id: Uuid,
-    pad_name: String,
-    x_nm: i64,
-    y_nm: i64,
-    layer: i32,
-) -> Result<NativeProjectPoolLibraryObjectMutationView> {
-    validate_project_local_pool_path(pool_path)?;
-    if layer <= 0 {
-        bail!("package pad layer must be positive");
-    }
-    let model = ProjectResolver::new(root)
-        .resolve()
-        .with_context(|| format!("failed to resolve native project {}", root.display()))?;
-    if model
-        .objects
-        .get(&padstack_id)
-        .filter(|object| object.domain == "pool" && object.kind == "padstacks")
-        .is_none()
-    {
-        bail!("missing pool padstack {padstack_id} for package {package_id}");
-    }
-    let relative_path = pool_library_relative_path(pool_path, "packages", package_id);
-    let object = serde_json::json!({
-        "schema_version": 1,
-        "uuid": package_id,
-        "name": name,
-        "pads": {
-            pad_id.to_string(): {
-                "uuid": pad_id,
-                "name": pad_name,
-                "position": {"x": x_nm, "y": y_nm},
-                "padstack": padstack_id,
-                "layer": layer
-            }
-        },
-        "courtyard": {"vertices": [], "closed": true},
-        "silkscreen": [],
-        "models_3d": [],
-        "body_height_nm": null,
-        "body_height_mounted_nm": null,
-        "tags": []
-    });
-    let project = load_native_project_with_resolved_board(root)?;
-    let mut operations = Vec::new();
-    if !project
-        .manifest
-        .pools
-        .iter()
-        .any(|pool| pool.path == pool_path)
-    {
-        operations.push(Operation::AddProjectPoolRef {
-            path: pool_path.to_string(),
-            priority: next_pool_priority(&project.manifest.pools),
-        });
-    }
-    operations.push(Operation::CreatePoolLibraryObject {
-        object_id: package_id,
-        relative_path: relative_path.clone(),
-        object_kind: "packages".to_string(),
-        object,
-    });
-    commit_pool_library_operations(
-        root,
-        format!("create native pool package {package_id} with pad {pad_id}"),
-        operations,
-    )?;
-    pool_library_mutation_view(
-        root,
-        "create_package",
-        pool_path,
-        "packages",
-        package_id,
-        &relative_path,
-    )
-}
-
-#[allow(clippy::too_many_arguments)]
 pub(crate) fn create_native_project_pool_part(
     root: &Path,
     pool_path: &str,
@@ -1059,6 +976,8 @@ pub(crate) fn attach_native_project_pool_part_model(
         encryption_scheme,
         provenance: Some(provenance),
         format_metadata,
+        reviewed: None,
+        notes: Vec::new(),
     };
     validate_model_attachment(&attachment)?;
     let attachment_value = serde_json::to_value(attachment)?;

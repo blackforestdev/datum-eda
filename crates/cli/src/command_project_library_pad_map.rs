@@ -1,14 +1,15 @@
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
-use eda_engine::substrate::{Operation, ProjectResolver};
+use eda_engine::substrate::ProjectResolver;
 use uuid::Uuid;
 
 use super::command_project_library::{
-    NativeProjectPoolLibraryObjectMutationView, commit_pool_library_operations,
-    pool_library_mutation_view, pool_library_relative_path, validate_project_local_pool_path,
+    NativeProjectPoolLibraryObjectMutationView, pool_library_relative_path,
+    validate_project_local_pool_path,
 };
 use super::command_project_library_payload::read_project_pool_object_payload;
+use super::command_project_library_pin_pad_map::set_native_project_pool_pin_pad_map;
 
 pub(crate) fn set_native_project_pool_part_pad_map_entry(
     root: &Path,
@@ -68,9 +69,9 @@ fn set_native_project_pool_part_pad_map(
     action: &'static str,
 ) -> Result<NativeProjectPoolLibraryObjectMutationView> {
     validate_project_local_pool_path(pool_path)?;
-    let replace = match mode.as_str() {
-        "merge" => false,
-        "replace" => true,
+    match mode.as_str() {
+        "merge" => {}
+        "replace" => {}
         other => bail!("unsupported part pad-map mode {other}; expected merge or replace"),
     };
     if entries.is_empty() {
@@ -78,53 +79,40 @@ fn set_native_project_pool_part_pad_map(
     }
     let relative_path = pool_library_relative_path(pool_path, "parts", part_id);
     let previous_object = read_project_pool_object_payload(root, &relative_path, part_id)?;
-    let package_id = uuid_field(&previous_object, "package", "part")?;
     let entity_id = uuid_field(&previous_object, "entity", "part")?;
+    let default_pin_pad_map = optional_uuid_field(&previous_object, "default_pin_pad_map", "part")?
+        .ok_or_else(|| {
+            anyhow::anyhow!(
+                "legacy part pad-map authoring requires part default_pin_pad_map; create a first-class PinPadMap with create-pool-pin-pad-map --set-default"
+            )
+        })?;
     let model = ProjectResolver::new(root)
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
     require_pool_object(&model, part_id, "parts")?;
-    let package = materialized_pool_object(&model, package_id, "packages")?;
-    let package_pads = package
-        .get("pads")
-        .and_then(serde_json::Value::as_object)
-        .ok_or_else(|| anyhow::anyhow!("pool package {package_id} has no pads map"))?;
     let entity = materialized_pool_object(&model, entity_id, "entities")?;
-    let mut requested_pads = std::collections::HashSet::new();
-    let mut object = previous_object.clone();
-    let pad_map = object
-        .as_object_mut()
-        .ok_or_else(|| anyhow::anyhow!("part {part_id} payload is not an object"))?
-        .entry("pad_map")
-        .or_insert_with(|| serde_json::json!({}));
-    if replace {
-        *pad_map = serde_json::json!({});
-    }
-    let pad_map = pad_map
-        .as_object_mut()
-        .ok_or_else(|| anyhow::anyhow!("part {part_id} pad_map is not an object"))?;
-    for entry in entries {
-        if !requested_pads.insert(entry.pad) {
-            bail!("duplicate pad-map entry for pad {}", entry.pad);
+    let mut requested_gate_pins = std::collections::HashSet::new();
+    let mut pin_pad_entries = Vec::new();
+    for entry in &entries {
+        if !requested_gate_pins.insert((entry.gate, entry.pin)) {
+            bail!(
+                "duplicate pad-map entry for gate {} pin {}",
+                entry.gate,
+                entry.pin
+            );
         }
-        validate_pad_map_entry(&model, package_id, package_pads, entity_id, &entity, &entry)?;
-        pad_map.insert(
-            entry.pad.to_string(),
-            serde_json::json!({"gate": entry.gate, "pin": entry.pin}),
-        );
+        validate_pad_map_entry(&model, entity_id, &entity, entry)?;
+        pin_pad_entries.push(format!("{}:{}:{}", entry.pad, entry.gate, entry.pin));
     }
-    commit_pool_library_operations(
+    let mut view = set_native_project_pool_pin_pad_map(
         root,
-        format!("set native pool part {part_id} pad map"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: part_id,
-            relative_path: relative_path.clone(),
-            object_kind: "parts".to_string(),
-            previous_object,
-            object,
-        }],
+        pool_path,
+        default_pin_pad_map,
+        mode,
+        pin_pad_entries,
     )?;
-    pool_library_mutation_view(root, action, pool_path, "parts", part_id, &relative_path)
+    view.action = action;
+    Ok(view)
 }
 
 fn parse_pad_map_entry(entry: &str) -> Result<PartPadMapEntryInput> {
@@ -153,15 +141,10 @@ fn parse_pad_map_entry(entry: &str) -> Result<PartPadMapEntryInput> {
 
 fn validate_pad_map_entry(
     model: &eda_engine::substrate::DesignModel,
-    package_id: Uuid,
-    package_pads: &serde_json::Map<String, serde_json::Value>,
     entity_id: Uuid,
     entity: &serde_json::Value,
     entry: &PartPadMapEntryInput,
 ) -> Result<()> {
-    if !package_pads.contains_key(&entry.pad.to_string()) {
-        bail!("pool package {package_id} has no pad {}", entry.pad);
-    }
     let gate = entity
         .get("gates")
         .and_then(serde_json::Value::as_object)
@@ -215,4 +198,22 @@ fn uuid_field(value: &serde_json::Value, field: &str, label: &str) -> Result<Uui
         .and_then(serde_json::Value::as_str)
         .ok_or_else(|| anyhow::anyhow!("{label} missing {field}"))?;
     Uuid::parse_str(raw).with_context(|| format!("{label} has invalid {field} uuid {raw}"))
+}
+
+fn optional_uuid_field(
+    value: &serde_json::Value,
+    field: &str,
+    label: &str,
+) -> Result<Option<Uuid>> {
+    match value.get(field) {
+        None | Some(serde_json::Value::Null) => Ok(None),
+        Some(value) => {
+            let raw = value
+                .as_str()
+                .ok_or_else(|| anyhow::anyhow!("{label} {field} is not a string"))?;
+            Uuid::parse_str(raw)
+                .map(Some)
+                .with_context(|| format!("{label} has invalid {field} uuid {raw}"))
+        }
+    }
 }

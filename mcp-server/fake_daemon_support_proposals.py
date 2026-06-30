@@ -429,8 +429,8 @@ class FakeDaemonClientProposalsMixin:
         path: str,
         package: str,
         name: str,
-        pad: str,
-        padstack: str,
+        pad: str | None = None,
+        padstack: str | None = None,
         pad_name: str | None = None,
         x_nm: int | None = None,
         y_nm: int | None = None,
@@ -467,6 +467,96 @@ class FakeDaemonClientProposalsMixin:
                 "proposal_id": proposal,
                 "package_uuid": package,
                 "name": name,
+                "pad_uuid": pad,
+                "padstack_uuid": padstack,
+                "pad_name": pad_name or "1",
+                "x_nm": x_nm or 0,
+                "y_nm": y_nm or 0,
+                "layer": layer or 1,
+                "pool_path": pool or "pool",
+            },
+            None,
+        )
+
+    def create_pool_footprint_proposal(
+        self,
+        path: str,
+        footprint: str,
+        package: str,
+        name: str,
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ) -> JsonRpcResponse:
+        proposal = proposal or "proposal-pool-footprint-test"
+        self.calls.append(
+            (
+                "create_pool_footprint_proposal",
+                path,
+                footprint,
+                package,
+                name,
+                pool,
+                proposal,
+                rationale,
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            164,
+            {
+                "contract": "proposal_create_v1",
+                "action": "create_pool_footprint_proposal",
+                "project_root": path,
+                "proposal_id": proposal,
+                "footprint_uuid": footprint,
+                "package_uuid": package,
+                "name": name,
+                "pool_path": pool or "pool",
+            },
+            None,
+        )
+
+    def set_pool_footprint_pad_proposal(
+        self,
+        path: str,
+        footprint: str,
+        pad: str,
+        padstack: str,
+        pad_name: str | None = None,
+        x_nm: int | None = None,
+        y_nm: int | None = None,
+        layer: int | None = None,
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ) -> JsonRpcResponse:
+        proposal = proposal or "proposal-pool-footprint-pad-test"
+        self.calls.append(
+            (
+                "set_pool_footprint_pad_proposal",
+                path,
+                footprint,
+                pad,
+                padstack,
+                pad_name,
+                x_nm,
+                y_nm,
+                layer,
+                pool,
+                proposal,
+                rationale,
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            165,
+            {
+                "contract": "proposal_create_v1",
+                "action": "set_pool_footprint_pad_proposal",
+                "project_root": path,
+                "proposal_id": proposal,
+                "footprint_uuid": footprint,
                 "pad_uuid": pad,
                 "padstack_uuid": padstack,
                 "pad_name": pad_name or "1",
@@ -526,6 +616,198 @@ class FakeDaemonClientProposalsMixin:
                 "layer": layer or 1,
                 "pool_path": pool or "pool",
             },
+            None,
+        )
+
+    def set_pool_footprint_courtyard_rect_proposal(
+        self,
+        path: str,
+        footprint: str,
+        min_x_nm: int,
+        min_y_nm: int,
+        max_x_nm: int,
+        max_y_nm: int,
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ) -> JsonRpcResponse:
+        proposal = proposal or "proposal-pool-footprint-courtyard-rect-test"
+        self.calls.append(
+            (
+                "set_pool_footprint_courtyard_rect_proposal",
+                path,
+                footprint,
+                min_x_nm,
+                min_y_nm,
+                max_x_nm,
+                max_y_nm,
+                pool,
+                proposal,
+                rationale,
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            166,
+            {
+                "contract": "proposal_create_v1",
+                "action": "set_pool_footprint_courtyard_rect_proposal",
+                "project_root": path,
+                "proposal_id": proposal,
+                "footprint_uuid": footprint,
+                "min_x_nm": min_x_nm,
+                "min_y_nm": min_y_nm,
+                "max_x_nm": max_x_nm,
+                "max_y_nm": max_y_nm,
+                "pool_path": pool or "pool",
+            },
+            None,
+        )
+
+    def set_pool_footprint_courtyard_polygon_proposal(
+        self,
+        path: str,
+        footprint: str,
+        vertices: str,
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ) -> JsonRpcResponse:
+        proposal = proposal or "proposal-pool-footprint-courtyard-polygon-test"
+        self.calls.append(
+            (
+                "set_pool_footprint_courtyard_polygon_proposal",
+                path,
+                footprint,
+                vertices,
+                pool,
+                proposal,
+                rationale,
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            167,
+            {
+                "contract": "proposal_create_v1",
+                "action": "set_pool_footprint_courtyard_polygon_proposal",
+                "project_root": path,
+                "proposal_id": proposal,
+                "footprint_uuid": footprint,
+                "vertices": vertices,
+                "pool_path": pool or "pool",
+            },
+            None,
+        )
+
+    def add_pool_footprint_silkscreen_line_proposal(
+        self,
+        path: str,
+        footprint: str,
+        from_x_nm: int,
+        from_y_nm: int,
+        to_x_nm: int,
+        to_y_nm: int,
+        width_nm: int,
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ) -> JsonRpcResponse:
+        proposal = proposal or "proposal-pool-footprint-silkscreen-line-test"
+        self.calls.append(
+            (
+                "add_pool_footprint_silkscreen_line_proposal",
+                path,
+                footprint,
+                from_x_nm,
+                from_y_nm,
+                to_x_nm,
+                to_y_nm,
+                width_nm,
+                pool,
+                proposal,
+                rationale,
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            168,
+            {
+                "contract": "proposal_create_v1",
+                "action": "add_pool_footprint_silkscreen_line_proposal",
+                "project_root": path,
+                "proposal_id": proposal,
+                "footprint_uuid": footprint,
+                "from_x_nm": from_x_nm,
+                "from_y_nm": from_y_nm,
+                "to_x_nm": to_x_nm,
+                "to_y_nm": to_y_nm,
+                "width_nm": width_nm,
+                "pool_path": pool or "pool",
+            },
+            None,
+        )
+
+    def add_pool_footprint_silkscreen_rect_proposal(
+        self,
+        path: str,
+        footprint: str,
+        min_x_nm: int,
+        min_y_nm: int,
+        max_x_nm: int,
+        max_y_nm: int,
+        width_nm: int,
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ) -> JsonRpcResponse:
+        proposal = proposal or "proposal-pool-footprint-silkscreen-rect-test"
+        self.calls.append(("add_pool_footprint_silkscreen_rect_proposal", path, footprint, min_x_nm, min_y_nm, max_x_nm, max_y_nm, width_nm, pool, proposal, rationale))
+        return JsonRpcResponse(
+            "2.0",
+            169,
+            {"contract": "proposal_create_v1", "action": "add_pool_footprint_silkscreen_rect_proposal", "project_root": path, "proposal_id": proposal, "footprint_uuid": footprint, "width_nm": width_nm, "pool_path": pool or "pool"},
+            None,
+        )
+
+    def add_pool_footprint_silkscreen_circle_proposal(
+        self,
+        path: str,
+        footprint: str,
+        center_x_nm: int,
+        center_y_nm: int,
+        radius_nm: int,
+        width_nm: int,
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ) -> JsonRpcResponse:
+        proposal = proposal or "proposal-pool-footprint-silkscreen-circle-test"
+        self.calls.append(("add_pool_footprint_silkscreen_circle_proposal", path, footprint, center_x_nm, center_y_nm, radius_nm, width_nm, pool, proposal, rationale))
+        return JsonRpcResponse(
+            "2.0",
+            170,
+            {"contract": "proposal_create_v1", "action": "add_pool_footprint_silkscreen_circle_proposal", "project_root": path, "proposal_id": proposal, "footprint_uuid": footprint, "radius_nm": radius_nm, "width_nm": width_nm, "pool_path": pool or "pool"},
+            None,
+        )
+
+    def add_pool_footprint_silkscreen_polygon_proposal(
+        self,
+        path: str,
+        footprint: str,
+        vertices: str,
+        closed: bool,
+        width_nm: int,
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ) -> JsonRpcResponse:
+        proposal = proposal or "proposal-pool-footprint-silkscreen-polygon-test"
+        self.calls.append(("add_pool_footprint_silkscreen_polygon_proposal", path, footprint, vertices, closed, width_nm, pool, proposal, rationale))
+        return JsonRpcResponse(
+            "2.0",
+            171,
+            {"contract": "proposal_create_v1", "action": "add_pool_footprint_silkscreen_polygon_proposal", "project_root": path, "proposal_id": proposal, "footprint_uuid": footprint, "vertices": vertices, "closed": closed, "width_nm": width_nm, "pool_path": pool or "pool"},
             None,
         )
 

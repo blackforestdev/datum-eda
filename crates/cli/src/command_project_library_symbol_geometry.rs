@@ -336,8 +336,13 @@ pub(crate) fn set_native_project_pool_symbol_pin_anchor(
     pin_id: Uuid,
     x_nm: i64,
     y_nm: i64,
+    orientation: String,
+    length_nm: Option<i64>,
+    decoration: String,
 ) -> Result<NativeProjectPoolLibraryObjectMutationView> {
     validate_project_local_pool_path(pool_path)?;
+    let orientation = validate_symbol_pin_orientation(orientation)?;
+    let decoration = validate_symbol_pin_decoration(decoration)?;
     let model = ProjectResolver::new(root)
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
@@ -354,7 +359,15 @@ pub(crate) fn set_native_project_pool_symbol_pin_anchor(
     let relative_path = pool_library_relative_path(pool_path, "symbols", symbol_id);
     let previous_object = read_project_pool_object_payload(root, &relative_path, symbol_id)?;
     let mut object = previous_object.clone();
-    set_symbol_pin_anchor(&mut object, pin_id, x_nm, y_nm)?;
+    set_symbol_pin_anchor(
+        &mut object,
+        pin_id,
+        x_nm,
+        y_nm,
+        &orientation,
+        length_nm,
+        &decoration,
+    )?;
     commit_pool_library_operations(
         root,
         format!("set native pool symbol pin anchor {pin_id} on symbol {symbol_id}"),
@@ -426,6 +439,9 @@ fn set_symbol_pin_anchor(
     pin_id: Uuid,
     x_nm: i64,
     y_nm: i64,
+    orientation: &str,
+    length_nm: Option<i64>,
+    decoration: &str,
 ) -> Result<()> {
     let anchors = object
         .as_object_mut()
@@ -438,8 +454,32 @@ fn set_symbol_pin_anchor(
     anchors.retain(|anchor| {
         anchor.get("pin").and_then(serde_json::Value::as_str) != Some(pin_id.to_string().as_str())
     });
-    anchors.push(serde_json::json!({"pin": pin_id, "position": {"x": x_nm, "y": y_nm}}));
+    anchors.push(serde_json::json!({
+        "pin": pin_id,
+        "position": {"x": x_nm, "y": y_nm},
+        "orientation": orientation,
+        "length_nm": length_nm,
+        "decoration": decoration
+    }));
     Ok(())
+}
+
+fn validate_symbol_pin_orientation(orientation: String) -> Result<String> {
+    match orientation.as_str() {
+        "Left" | "Right" | "Up" | "Down" => Ok(orientation),
+        other => {
+            bail!("unsupported symbol pin orientation {other}; expected Left, Right, Up, or Down")
+        }
+    }
+}
+
+fn validate_symbol_pin_decoration(decoration: String) -> Result<String> {
+    match decoration.as_str() {
+        "none" | "inverted" | "clock" | "inverted_clock" => Ok(decoration),
+        other => bail!(
+            "unsupported symbol pin decoration {other}; expected none, inverted, clock, or inverted_clock"
+        ),
+    }
 }
 
 fn append_symbol_drawing(object: &mut serde_json::Value, drawing: serde_json::Value) -> Result<()> {

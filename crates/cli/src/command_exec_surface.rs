@@ -42,8 +42,16 @@ mod command_exec_project_import;
 mod command_exec_project_inspect;
 #[path = "command_exec_project_library.rs"]
 mod command_exec_project_library;
+#[path = "command_exec_project_library_footprint.rs"]
+mod command_exec_project_library_footprint;
 #[path = "command_exec_project_library_part_bindings.rs"]
 mod command_exec_project_library_part_bindings;
+#[path = "command_exec_project_library_pin_pad_map.rs"]
+mod command_exec_project_library_pin_pad_map;
+#[path = "command_exec_project_library_symbol_pin.rs"]
+mod command_exec_project_library_symbol_pin;
+#[path = "command_exec_project_proposal_lifecycle.rs"]
+mod command_exec_project_proposal_lifecycle;
 #[path = "command_exec_project_query.rs"]
 mod command_exec_project_query;
 #[path = "command_exec_project_query_route_graph.rs"]
@@ -64,4 +72,8 @@ mod command_exec_route_proposal;
 pub(crate) use self::command_exec_dispatch::execute_with_exit_code;
 pub(super) use self::command_exec_project_import::execute_project_import_command;
 pub(super) use self::command_exec_project_library::execute_project_library_command;
+pub(super) use self::command_exec_project_library_footprint::execute_project_library_footprint_command;
 pub(super) use self::command_exec_project_library_part_bindings::execute_project_import_or_part_binding_command;
+pub(super) use self::command_exec_project_library_pin_pad_map::execute_project_library_pin_pad_map_command;
+pub(super) use self::command_exec_project_library_symbol_pin::execute_project_library_symbol_pin_command;
+pub(super) use self::command_exec_project_proposal_lifecycle::execute_project_proposal_lifecycle_command;
