@@ -87,6 +87,16 @@ fn imports_kicad_board_header_and_skeleton_counts() {
     assert_eq!(board.texts[0].text, "Demo");
     assert_eq!(board.texts[0].layer, 37);
     assert_eq!(board.stackup.layers.len(), 3);
+    assert!(board.stackup.layers.iter().any(|layer| {
+        layer.id == 0
+            && layer.name == "F.Cu"
+            && matches!(layer.layer_type, crate::board::StackupLayerType::Copper)
+    }));
+    assert!(board.stackup.layers.iter().any(|layer| {
+        layer.id == 44
+            && layer.name == "Edge.Cuts"
+            && matches!(layer.layer_type, crate::board::StackupLayerType::Mechanical)
+    }));
 }
 
 #[test]

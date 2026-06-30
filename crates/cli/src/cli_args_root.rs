@@ -46,6 +46,8 @@ mod cli_args_project_import;
 mod cli_args_project_journal;
 #[path = "cli_args_project_library.rs"]
 mod cli_args_project_library;
+#[path = "cli_args_project_library_part_bindings.rs"]
+mod cli_args_project_library_part_bindings;
 #[path = "cli_args_project_output_jobs.rs"]
 mod cli_args_project_output_jobs;
 #[path = "cli_args_project_proposals.rs"]

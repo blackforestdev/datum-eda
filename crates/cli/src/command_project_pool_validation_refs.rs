@@ -50,6 +50,22 @@ pub(super) fn validate_pool_refs(
     for (part_id, part) in &graph.parts {
         let subject = graph.subjects.get(part_id).cloned().unwrap_or_default();
         let package_id = parse_uuid_field(part, "package", &subject, "part", issues);
+        let default_footprint_id = validate_optional_uuid_ref(
+            part,
+            "default_footprint",
+            &graph.footprints.keys().copied().collect(),
+            &subject,
+            "part",
+            issues,
+        );
+        let default_pin_pad_map_id = validate_optional_uuid_ref(
+            part,
+            "default_pin_pad_map",
+            &graph.pin_pad_maps.keys().copied().collect(),
+            &subject,
+            "part",
+            issues,
+        );
         validate_uuid_ref(
             part,
             "entity",
@@ -69,11 +85,43 @@ pub(super) fn validate_pool_refs(
         if let Some(pad_map) = part.get("pad_map").and_then(serde_json::Value::as_object) {
             for (map_key, entry) in pad_map {
                 let map_subject = format!("{subject}#pad_map/{map_key}");
-                if let Some(package_id) = package_id {
-                    validate_part_pad_map_key(map_key, package_id, graph, &map_subject, issues);
+                if let Some(default_footprint_id) = default_footprint_id {
+                    validate_part_pad_map_key_against_footprint(
+                        map_key,
+                        default_footprint_id,
+                        graph,
+                        &map_subject,
+                        issues,
+                    );
+                } else if let Some(package_id) = package_id {
+                    validate_part_pad_map_key_against_package(
+                        map_key,
+                        package_id,
+                        graph,
+                        &map_subject,
+                        issues,
+                    );
                 }
                 validate_part_pad_map_entry(entry, part, graph, &map_subject, issues);
             }
+        }
+        if let (Some(package_id), Some(default_footprint_id)) = (package_id, default_footprint_id) {
+            validate_part_default_footprint_package(
+                default_footprint_id,
+                package_id,
+                graph,
+                &subject,
+                issues,
+            );
+        }
+        if let Some(default_pin_pad_map_id) = default_pin_pad_map_id {
+            validate_part_default_pin_pad_map(
+                default_pin_pad_map_id,
+                *part_id,
+                graph,
+                &subject,
+                issues,
+            );
         }
         validate_part_model_attachments(part, graph, &subject, issues);
     }
@@ -90,6 +138,35 @@ pub(super) fn validate_pool_refs(
                 &graph.padstacks.keys().copied().collect(),
                 &pad_subject,
                 "package pad",
+                issues,
+            );
+        }
+    }
+    for (footprint_id, footprint) in &graph.footprints {
+        let subject = graph
+            .subjects
+            .get(footprint_id)
+            .cloned()
+            .unwrap_or_default();
+        validate_uuid_ref(
+            footprint,
+            "package",
+            &graph.packages.keys().copied().collect(),
+            &subject,
+            "footprint",
+            issues,
+        );
+        let Some(pads) = footprint.get("pads").and_then(serde_json::Value::as_object) else {
+            continue;
+        };
+        for (pad_key, pad) in pads {
+            let pad_subject = format!("{subject}#pads/{pad_key}");
+            validate_uuid_ref(
+                pad,
+                "padstack",
+                &graph.padstacks.keys().copied().collect(),
+                &pad_subject,
+                "footprint pad",
                 issues,
             );
         }
@@ -170,7 +247,7 @@ fn validate_part_model_attachments(
     }
 }
 
-fn validate_part_pad_map_key(
+fn validate_part_pad_map_key_against_package(
     map_key: &str,
     package_id: Uuid,
     graph: &PoolValidationGraph,
@@ -202,6 +279,26 @@ fn validate_part_pad_map_key(
             format!("part pad_map key {pad_id} references missing package pad"),
         );
     }
+}
+
+fn validate_part_pad_map_key_against_footprint(
+    map_key: &str,
+    footprint_id: Uuid,
+    graph: &PoolValidationGraph,
+    subject: &str,
+    issues: &mut Vec<NativeProjectValidationIssueView>,
+) {
+    let Some(pad_id) = Uuid::parse_str(map_key).ok() else {
+        push_issue(
+            issues,
+            "error",
+            "invalid_uuid_key",
+            subject.to_string(),
+            format!("part pad_map key `{map_key}` is not a valid UUID"),
+        );
+        return;
+    };
+    validate_footprint_pad_exists(footprint_id, pad_id, graph, subject, issues);
 }
 
 fn validate_part_pad_map_entry(
@@ -259,6 +356,14 @@ fn validate_pin_pad_map_mappings(
         return;
     };
     let package_id = parse_uuid_field(part, "package", subject, "pin_pad_map part", issues);
+    let footprint_id = validate_optional_uuid_ref(
+        map,
+        "footprint",
+        &graph.footprints.keys().copied().collect(),
+        subject,
+        "pin_pad_map",
+        issues,
+    );
     let entity_id = parse_uuid_field(part, "entity", subject, "pin_pad_map part", issues);
     for (pin_key, pad_value) in mappings {
         let mapping_subject = format!("{subject}#mappings/{pin_key}");
@@ -278,9 +383,75 @@ fn validate_pin_pad_map_mappings(
         let Some(pad_id) = parse_uuid_value(pad_value, &mapping_subject, "pad", issues) else {
             continue;
         };
-        if let Some(package_id) = package_id {
+        if let Some(footprint_id) = footprint_id {
+            validate_footprint_pad_exists(footprint_id, pad_id, graph, &mapping_subject, issues);
+        } else if let Some(package_id) = package_id {
             validate_package_pad_exists(package_id, pad_id, graph, &mapping_subject, issues);
         }
+    }
+}
+
+fn validate_part_default_footprint_package(
+    footprint_id: Uuid,
+    package_id: Uuid,
+    graph: &PoolValidationGraph,
+    subject: &str,
+    issues: &mut Vec<NativeProjectValidationIssueView>,
+) {
+    let Some(footprint) = graph.footprints.get(&footprint_id) else {
+        return;
+    };
+    let Some(footprint_package_id) = parse_uuid_field(
+        footprint,
+        "package",
+        subject,
+        "part default_footprint",
+        issues,
+    ) else {
+        return;
+    };
+    if footprint_package_id != package_id {
+        push_issue(
+            issues,
+            "error",
+            "package_mismatch",
+            subject.to_string(),
+            format!(
+                "part default_footprint {footprint_id} belongs to package {footprint_package_id}, not part package {package_id}"
+            ),
+        );
+    }
+}
+
+fn validate_part_default_pin_pad_map(
+    pin_pad_map_id: Uuid,
+    part_id: Uuid,
+    graph: &PoolValidationGraph,
+    subject: &str,
+    issues: &mut Vec<NativeProjectValidationIssueView>,
+) {
+    let Some(pin_pad_map) = graph.pin_pad_maps.get(&pin_pad_map_id) else {
+        return;
+    };
+    let Some(map_part_id) = parse_uuid_field(
+        pin_pad_map,
+        "part",
+        subject,
+        "part default_pin_pad_map",
+        issues,
+    ) else {
+        return;
+    };
+    if map_part_id != part_id {
+        push_issue(
+            issues,
+            "error",
+            "part_mismatch",
+            subject.to_string(),
+            format!(
+                "part default_pin_pad_map {pin_pad_map_id} belongs to part {map_part_id}, not {part_id}"
+            ),
+        );
     }
 }
 
@@ -373,6 +544,30 @@ fn validate_package_pad_exists(
     }
 }
 
+fn validate_footprint_pad_exists(
+    footprint_id: Uuid,
+    pad_id: Uuid,
+    graph: &PoolValidationGraph,
+    subject: &str,
+    issues: &mut Vec<NativeProjectValidationIssueView>,
+) {
+    let Some(footprint) = graph.footprints.get(&footprint_id) else {
+        return;
+    };
+    let Some(pads) = footprint.get("pads").and_then(serde_json::Value::as_object) else {
+        return;
+    };
+    if !pads.contains_key(&pad_id.to_string()) {
+        push_issue(
+            issues,
+            "error",
+            "dangling_reference",
+            subject.to_string(),
+            format!("pin_pad_map mapping references missing footprint pad {pad_id}"),
+        );
+    }
+}
+
 fn validate_uuid_ref(
     value: &serde_json::Value,
     field: &str,
@@ -384,6 +579,36 @@ fn validate_uuid_ref(
     let Some(reference) = value.get(field) else {
         return None;
     };
+    let Some(reference) = parse_uuid_value(reference, subject, field, issues) else {
+        return None;
+    };
+    if !allowed.contains(&reference) {
+        push_issue(
+            issues,
+            "error",
+            "dangling_reference",
+            subject.to_string(),
+            format!("{label} references missing {field} {reference}"),
+        );
+        return None;
+    }
+    Some(reference)
+}
+
+fn validate_optional_uuid_ref(
+    value: &serde_json::Value,
+    field: &str,
+    allowed: &BTreeSet<Uuid>,
+    subject: &str,
+    label: &str,
+    issues: &mut Vec<NativeProjectValidationIssueView>,
+) -> Option<Uuid> {
+    let Some(reference) = value.get(field) else {
+        return None;
+    };
+    if reference.is_null() {
+        return None;
+    }
     let Some(reference) = parse_uuid_value(reference, subject, field, issues) else {
         return None;
     };

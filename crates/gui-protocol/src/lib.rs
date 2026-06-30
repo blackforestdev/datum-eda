@@ -7,10 +7,17 @@ use eda_engine::text::{
 use serde::de::{DeserializeOwned, Deserializer};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
+use std::collections::hash_map::DefaultHasher;
 use std::collections::{BTreeMap, BTreeSet};
+use std::hash::{Hash, Hasher};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::{Mutex, OnceLock};
+mod kicad_scene_import;
+use kicad_scene_import::{
+    load_scene_from_kicad_import, outline_board_graphics_from_outline,
+    push_board_text_scene_primitives, trace_protocol_timing,
+};
 mod artifact_preview_viewport;
 pub use artifact_preview_viewport::ArtifactPreviewViewportState;
 mod context_envelope;
@@ -576,6 +583,68 @@ pub const BOARD_TEXT_HEIGHT_STEP_PPM: i64 = 100_000;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum WorkspaceTool {
     Select,
+    DrawBoardTrack,
+    PlaceBoardVia,
+    PlaceBoardText,
+    Move,
+    Delete,
+}
+
+impl WorkspaceTool {
+    pub fn label(self) -> &'static str {
+        match self {
+            WorkspaceTool::Select => "select",
+            WorkspaceTool::DrawBoardTrack => "draw-board-track",
+            WorkspaceTool::PlaceBoardVia => "place-board-via",
+            WorkspaceTool::PlaceBoardText => "place-board-text",
+            WorkspaceTool::Move => "move",
+            WorkspaceTool::Delete => "delete",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct AuthoringSnapState {
+    pub enabled: bool,
+    pub grid_nm: i64,
+}
+
+impl Default for AuthoringSnapState {
+    fn default() -> Self {
+        Self {
+            enabled: true,
+            grid_nm: 100_000,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct AuthoringGestureState {
+    pub tool: WorkspaceTool,
+    pub anchor: Option<PointNm>,
+    pub preview: Option<PointNm>,
+    pub target_object_id: Option<String>,
+}
+
+impl AuthoringGestureState {
+    pub fn idle(tool: WorkspaceTool) -> Self {
+        Self {
+            tool,
+            anchor: None,
+            preview: None,
+            target_object_id: None,
+        }
+    }
+
+    pub fn is_active(&self) -> bool {
+        self.anchor.is_some() || self.preview.is_some() || self.target_object_id.is_some()
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct AuthoringToolState {
+    pub snap: AuthoringSnapState,
+    pub gesture: AuthoringGestureState,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -669,6 +738,16 @@ pub struct ProductionPanelProjectionSummary {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SessionCommand {
+    SetTool(WorkspaceTool),
+    BeginAuthoringGesture {
+        world: PointNm,
+        target_object_id: Option<String>,
+    },
+    PreviewAuthoringGesture {
+        world: PointNm,
+        target_object_id: Option<String>,
+    },
+    CancelAuthoringGesture,
     SelectReviewAction(String),
     SelectAuthoredObject(String),
     SelectCheckFinding(String),
@@ -684,7 +763,10 @@ pub enum SessionCommand {
     FocusProductionArtifactFile(String),
     ZoomArtifactPreviewIn,
     ZoomArtifactPreviewOut,
-    PanArtifactPreview { delta_x_ppm: i32, delta_y_ppm: i32 },
+    PanArtifactPreview {
+        delta_x_ppm: i32,
+        delta_y_ppm: i32,
+    },
     ResetArtifactPreviewViewport,
     ToggleArtifactPreviewGeometry,
     ToggleArtifactPreviewDrills,
@@ -695,6 +777,7 @@ pub enum SessionEvent {
     SelectionChanged(SelectionTarget),
     SceneChanged,
     FrameChanged,
+    ToolChanged(WorkspaceTool),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -737,6 +820,7 @@ pub struct ReviewWorkspaceState {
     pub selection: SelectionTarget,
     pub active_review_target_id: String,
     pub tool: WorkspaceTool,
+    pub authoring: AuthoringToolState,
     pub backing: Option<WorkspaceBacking>,
     pub last_command_status: Option<EditorCommandStatus>,
     pub ui: WorkspaceUiState,
@@ -762,6 +846,70 @@ impl LiveDesignSession {
 
     pub fn apply(&mut self, command: SessionCommand) -> SessionCommandResult {
         match command {
+            SessionCommand::SetTool(tool) => {
+                if self.workspace.set_tool(tool) {
+                    SessionCommandResult {
+                        handled: true,
+                        events: vec![SessionEvent::ToolChanged(tool), SessionEvent::FrameChanged],
+                    }
+                } else {
+                    SessionCommandResult {
+                        handled: false,
+                        events: Vec::new(),
+                    }
+                }
+            }
+            SessionCommand::BeginAuthoringGesture {
+                world,
+                target_object_id,
+            } => {
+                if self
+                    .workspace
+                    .begin_authoring_gesture(world, target_object_id)
+                {
+                    SessionCommandResult {
+                        handled: true,
+                        events: vec![SessionEvent::FrameChanged],
+                    }
+                } else {
+                    SessionCommandResult {
+                        handled: false,
+                        events: Vec::new(),
+                    }
+                }
+            }
+            SessionCommand::PreviewAuthoringGesture {
+                world,
+                target_object_id,
+            } => {
+                if self
+                    .workspace
+                    .preview_authoring_gesture(world, target_object_id)
+                {
+                    SessionCommandResult {
+                        handled: true,
+                        events: vec![SessionEvent::FrameChanged],
+                    }
+                } else {
+                    SessionCommandResult {
+                        handled: false,
+                        events: Vec::new(),
+                    }
+                }
+            }
+            SessionCommand::CancelAuthoringGesture => {
+                if self.workspace.cancel_authoring_gesture() {
+                    SessionCommandResult {
+                        handled: true,
+                        events: vec![SessionEvent::FrameChanged],
+                    }
+                } else {
+                    SessionCommandResult {
+                        handled: false,
+                        events: Vec::new(),
+                    }
+                }
+            }
             SessionCommand::SelectReviewAction(action_id) => {
                 if self.workspace.select_review_action(&action_id) {
                     SessionCommandResult {
@@ -1009,6 +1157,92 @@ pub fn ensure_known_good_demo_request() -> Result<LiveReviewRequest> {
         to_anchor_pad_uuid: Some("00000000-0000-0000-0000-00000000c219".to_string()),
         profile: Some("default".to_string()),
     })
+}
+
+pub fn materialize_kicad_board_request(
+    board_file: &Path,
+    project_root: Option<PathBuf>,
+) -> Result<LiveReviewRequest> {
+    let source = board_file
+        .canonicalize()
+        .with_context(|| format!("failed to resolve KiCad board {}", board_file.display()))?;
+    let root =
+        project_root.unwrap_or_else(|| default_materialized_kicad_board_project_root(&source));
+    let root_display = root.display().to_string();
+    let source_display = source.display().to_string();
+    let cli = cli_prefix();
+
+    if !root.join("project.json").is_file() {
+        let project_name = materialized_kicad_board_project_name(&source);
+        run_cli_json_owned::<Value>(
+            &cli,
+            &[
+                "project".to_string(),
+                "new".to_string(),
+                root_display.clone(),
+                "--name".to_string(),
+                project_name,
+            ],
+        )
+        .with_context(|| {
+            format!(
+                "failed to create native Datum project at {}",
+                root.display()
+            )
+        })?;
+    }
+
+    run_cli_json_owned::<Value>(
+        &cli,
+        &[
+            "project".to_string(),
+            "import-kicad-board".to_string(),
+            root_display,
+            "--source".to_string(),
+            source_display,
+        ],
+    )
+    .with_context(|| {
+        format!(
+            "failed to materialize KiCad board {} into native Datum project {}",
+            source.display(),
+            root.display()
+        )
+    })?;
+
+    Ok(LiveReviewRequest {
+        project_root: root,
+        board_file: None,
+        artifact_path: None,
+        net_uuid: None,
+        from_anchor_pad_uuid: None,
+        to_anchor_pad_uuid: None,
+        profile: None,
+    })
+}
+
+fn default_materialized_kicad_board_project_root(source: &Path) -> PathBuf {
+    let mut hasher = DefaultHasher::new();
+    source.display().to_string().hash(&mut hasher);
+    let digest = hasher.finish();
+    let stem = source
+        .file_stem()
+        .and_then(|value| value.to_str())
+        .filter(|value| !value.is_empty())
+        .unwrap_or("board");
+    std::env::temp_dir()
+        .join("datum-eda")
+        .join("gui-imports")
+        .join(format!("{stem}-{digest:016x}"))
+}
+
+fn materialized_kicad_board_project_name(source: &Path) -> String {
+    let stem = source
+        .file_stem()
+        .and_then(|value| value.to_str())
+        .filter(|value| !value.is_empty())
+        .unwrap_or("Imported Board");
+    format!("{stem} Datum Workspace")
 }
 
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
@@ -2347,6 +2581,10 @@ impl ReviewWorkspaceState {
             },
             active_review_target_id,
             tool: WorkspaceTool::Select,
+            authoring: AuthoringToolState {
+                snap: AuthoringSnapState::default(),
+                gesture: AuthoringGestureState::idle(WorkspaceTool::Select),
+            },
             backing: None,
             last_command_status: None,
             ui: WorkspaceUiState {
@@ -2600,7 +2838,347 @@ impl ReviewWorkspaceState {
             return false;
         }
         self.tool = tool;
+        self.authoring.gesture = AuthoringGestureState::idle(tool);
+        self.last_command_status = Some(EditorCommandStatus {
+            action: "set_tool".to_string(),
+            detail: format!("tool {}", tool.label()),
+        });
         true
+    }
+
+    pub fn snap_authoring_point(&self, point: PointNm) -> PointNm {
+        let snap = self.authoring.snap;
+        if !snap.enabled || snap.grid_nm <= 0 {
+            return point;
+        }
+        PointNm {
+            x: snap_nm(point.x, snap.grid_nm),
+            y: snap_nm(point.y, snap.grid_nm),
+        }
+    }
+
+    pub fn begin_authoring_gesture(
+        &mut self,
+        world: PointNm,
+        target_object_id: Option<String>,
+    ) -> bool {
+        if self.tool == WorkspaceTool::Select {
+            return false;
+        }
+        let point = self.snap_authoring_point(world);
+        self.authoring.gesture = AuthoringGestureState {
+            tool: self.tool,
+            anchor: Some(point),
+            preview: Some(point),
+            target_object_id,
+        };
+        self.last_command_status = Some(EditorCommandStatus {
+            action: "begin_authoring_gesture".to_string(),
+            detail: format!("{} @ {},{}", self.tool.label(), point.x, point.y),
+        });
+        true
+    }
+
+    pub fn preview_authoring_gesture(
+        &mut self,
+        world: PointNm,
+        target_object_id: Option<String>,
+    ) -> bool {
+        if !self.authoring.gesture.is_active() {
+            return false;
+        }
+        let point = self.snap_authoring_point(world);
+        if self.authoring.gesture.preview == Some(point)
+            && self.authoring.gesture.target_object_id == target_object_id
+        {
+            return false;
+        }
+        self.authoring.gesture.preview = Some(point);
+        self.authoring.gesture.target_object_id = target_object_id;
+        true
+    }
+
+    pub fn cancel_authoring_gesture(&mut self) -> bool {
+        if !self.authoring.gesture.is_active() {
+            return false;
+        }
+        self.authoring.gesture = AuthoringGestureState::idle(self.tool);
+        self.last_command_status = Some(EditorCommandStatus {
+            action: "cancel_authoring_gesture".to_string(),
+            detail: format!("cancelled {}", self.tool.label()),
+        });
+        true
+    }
+
+    pub fn finish_draw_board_track_handoff(
+        &mut self,
+        world: PointNm,
+    ) -> Option<TerminalCommandHandoff> {
+        if self.tool != WorkspaceTool::DrawBoardTrack {
+            return None;
+        }
+        let from = self.authoring.gesture.anchor?;
+        let to = self.snap_authoring_point(world);
+        if from == to {
+            self.authoring.gesture.preview = Some(to);
+            self.last_command_status = Some(EditorCommandStatus {
+                action: "draw_board_track".to_string(),
+                detail: "track end must differ from start".to_string(),
+            });
+            return None;
+        }
+        let handoff = self.draw_board_track_handoff(from, to)?;
+        self.authoring.gesture = AuthoringGestureState::idle(self.tool);
+        self.last_command_status = Some(EditorCommandStatus {
+            action: "draw_board_track".to_string(),
+            detail: format!("queued track {},{} -> {},{}", from.x, from.y, to.x, to.y),
+        });
+        Some(handoff)
+    }
+
+    pub fn finish_place_board_via_handoff(
+        &mut self,
+        world: PointNm,
+    ) -> Option<TerminalCommandHandoff> {
+        if self.tool != WorkspaceTool::PlaceBoardVia {
+            return None;
+        }
+        let point = self.snap_authoring_point(world);
+        let handoff = self.place_board_via_handoff(point)?;
+        self.authoring.gesture = AuthoringGestureState::idle(self.tool);
+        self.last_command_status = Some(EditorCommandStatus {
+            action: "place_board_via".to_string(),
+            detail: format!("queued via @ {},{}", point.x, point.y),
+        });
+        Some(handoff)
+    }
+
+    pub fn finish_place_board_text_handoff(
+        &mut self,
+        world: PointNm,
+    ) -> Option<TerminalCommandHandoff> {
+        if self.tool != WorkspaceTool::PlaceBoardText {
+            return None;
+        }
+        let point = self.snap_authoring_point(world);
+        let handoff = self.place_board_text_handoff(point)?;
+        self.authoring.gesture = AuthoringGestureState::idle(self.tool);
+        self.last_command_status = Some(EditorCommandStatus {
+            action: "place_board_text".to_string(),
+            detail: format!("queued board text @ {},{}", point.x, point.y),
+        });
+        Some(handoff)
+    }
+
+    pub fn finish_move_component_handoff(
+        &mut self,
+        world: PointNm,
+    ) -> Option<TerminalCommandHandoff> {
+        if self.tool != WorkspaceTool::Move {
+            return None;
+        }
+        let target = self.authoring.gesture.target_object_id.clone()?;
+        let point = self.snap_authoring_point(world);
+        let handoff = self.move_component_handoff(&target, point)?;
+        self.authoring.gesture = AuthoringGestureState::idle(self.tool);
+        self.last_command_status = Some(EditorCommandStatus {
+            action: "move_board_component".to_string(),
+            detail: format!("queued component move {target} -> {},{}", point.x, point.y),
+        });
+        Some(handoff)
+    }
+
+    pub fn draw_board_track_handoff(
+        &self,
+        from: PointNm,
+        to: PointNm,
+    ) -> Option<TerminalCommandHandoff> {
+        let backing = self.backing.as_ref()?;
+        let net_uuid = self.review.net_uuid.as_deref().or_else(|| {
+            self.scene
+                .net_display
+                .first()
+                .map(|net| net.net_uuid.as_str())
+        })?;
+        let layer = self
+            .review
+            .proposal_actions
+            .first()
+            .map(|action| action.layer)
+            .unwrap_or(1);
+        let width_nm = self
+            .review
+            .proposal_actions
+            .first()
+            .map(|action| action.width_nm)
+            .unwrap_or(200_000);
+        let root = backing.request.project_root.to_string_lossy();
+        let command = [
+            shell_quote_arg("datum-eda"),
+            shell_quote_arg("project"),
+            shell_quote_arg("draw-board-track"),
+            shell_quote_arg(&root),
+            shell_quote_arg("--net"),
+            shell_quote_arg(net_uuid),
+            shell_quote_arg("--from-x-nm"),
+            shell_quote_arg(&from.x.to_string()),
+            shell_quote_arg("--from-y-nm"),
+            shell_quote_arg(&from.y.to_string()),
+            shell_quote_arg("--to-x-nm"),
+            shell_quote_arg(&to.x.to_string()),
+            shell_quote_arg("--to-y-nm"),
+            shell_quote_arg(&to.y.to_string()),
+            shell_quote_arg("--width-nm"),
+            shell_quote_arg(&width_nm.to_string()),
+            shell_quote_arg("--layer"),
+            shell_quote_arg(&layer.to_string()),
+        ]
+        .join(" ");
+        Some(TerminalCommandHandoff {
+            command_id: "datum.pcb.draw_board_track".to_string(),
+            mcp_alias: Some("datum.pcb.draw_board_track".to_string()),
+            command,
+        })
+    }
+
+    pub fn place_board_via_handoff(&self, at: PointNm) -> Option<TerminalCommandHandoff> {
+        let backing = self.backing.as_ref()?;
+        let net_uuid = self.default_authoring_net_uuid()?;
+        let root = backing.request.project_root.to_string_lossy();
+        let command = [
+            shell_quote_arg("datum-eda"),
+            shell_quote_arg("project"),
+            shell_quote_arg("place-board-via"),
+            shell_quote_arg(&root),
+            shell_quote_arg("--net"),
+            shell_quote_arg(net_uuid),
+            shell_quote_arg("--x-nm"),
+            shell_quote_arg(&at.x.to_string()),
+            shell_quote_arg("--y-nm"),
+            shell_quote_arg(&at.y.to_string()),
+            shell_quote_arg("--drill-nm"),
+            shell_quote_arg("300000"),
+            shell_quote_arg("--diameter-nm"),
+            shell_quote_arg("600000"),
+            shell_quote_arg("--from-layer"),
+            shell_quote_arg("1"),
+            shell_quote_arg("--to-layer"),
+            shell_quote_arg("16"),
+        ]
+        .join(" ");
+        Some(TerminalCommandHandoff {
+            command_id: "datum.pcb.place_board_via".to_string(),
+            mcp_alias: Some("datum.pcb.place_board_via".to_string()),
+            command,
+        })
+    }
+
+    pub fn place_board_text_handoff(&self, at: PointNm) -> Option<TerminalCommandHandoff> {
+        let backing = self.backing.as_ref()?;
+        let root = backing.request.project_root.to_string_lossy();
+        let command = [
+            shell_quote_arg("datum-eda"),
+            shell_quote_arg("project"),
+            shell_quote_arg("place-board-text"),
+            shell_quote_arg(&root),
+            shell_quote_arg("--text"),
+            shell_quote_arg("TEXT"),
+            shell_quote_arg("--x-nm"),
+            shell_quote_arg(&at.x.to_string()),
+            shell_quote_arg("--y-nm"),
+            shell_quote_arg(&at.y.to_string()),
+            shell_quote_arg("--render-intent"),
+            shell_quote_arg("annotation"),
+            shell_quote_arg("--h-align"),
+            shell_quote_arg("center"),
+            shell_quote_arg("--v-align"),
+            shell_quote_arg("center"),
+            shell_quote_arg("--layer"),
+            shell_quote_arg("21"),
+        ]
+        .join(" ");
+        Some(TerminalCommandHandoff {
+            command_id: "datum.pcb.place_board_text".to_string(),
+            mcp_alias: Some("datum.pcb.place_board_text".to_string()),
+            command,
+        })
+    }
+
+    pub fn delete_authored_object_handoff(
+        &self,
+        target_object_id: &str,
+    ) -> Option<TerminalCommandHandoff> {
+        let backing = self.backing.as_ref()?;
+        let root = backing.request.project_root.to_string_lossy();
+        let (command_id, verb, flag, uuid) = delete_command_parts_from_object_id(target_object_id)?;
+        let command = [
+            shell_quote_arg("datum-eda"),
+            shell_quote_arg("project"),
+            shell_quote_arg(verb),
+            shell_quote_arg(&root),
+            shell_quote_arg(flag),
+            shell_quote_arg(uuid),
+        ]
+        .join(" ");
+        Some(TerminalCommandHandoff {
+            command_id: command_id.to_string(),
+            mcp_alias: Some(command_id.to_string()),
+            command,
+        })
+    }
+
+    pub fn move_component_handoff(
+        &self,
+        target_object_id: &str,
+        to: PointNm,
+    ) -> Option<TerminalCommandHandoff> {
+        let backing = self.backing.as_ref()?;
+        let component = self.component_from_target_object_id(target_object_id)?;
+        let root = backing.request.project_root.to_string_lossy();
+        let command = [
+            shell_quote_arg("datum-eda"),
+            shell_quote_arg("project"),
+            shell_quote_arg("move-board-component"),
+            shell_quote_arg(&root),
+            shell_quote_arg("--component"),
+            shell_quote_arg(&component.component_uuid),
+            shell_quote_arg("--x-nm"),
+            shell_quote_arg(&to.x.to_string()),
+            shell_quote_arg("--y-nm"),
+            shell_quote_arg(&to.y.to_string()),
+        ]
+        .join(" ");
+        Some(TerminalCommandHandoff {
+            command_id: "datum.pcb.move_board_component".to_string(),
+            mcp_alias: Some("datum.pcb.move_board_component".to_string()),
+            command,
+        })
+    }
+
+    fn default_authoring_net_uuid(&self) -> Option<&str> {
+        self.review.net_uuid.as_deref().or_else(|| {
+            self.scene
+                .net_display
+                .first()
+                .map(|net| net.net_uuid.as_str())
+        })
+    }
+
+    fn component_from_target_object_id(&self, target_object_id: &str) -> Option<&ComponentBounds> {
+        let normalized = target_object_id
+            .strip_prefix("component:")
+            .and_then(|component_uuid| {
+                self.scene
+                    .components
+                    .iter()
+                    .find(|component| component.component_uuid == component_uuid)
+                    .map(|component| component.object_id.as_str())
+            })
+            .unwrap_or(target_object_id);
+        self.scene
+            .components
+            .iter()
+            .find(|component| component.object_id == normalized)
     }
 
     pub fn selected_component(&self) -> Option<&ComponentBounds> {
@@ -2612,6 +3190,64 @@ impl ReviewWorkspaceState {
             .iter()
             .find(|component| &component.object_id == object_id)
     }
+}
+
+fn snap_nm(value: i64, grid_nm: i64) -> i64 {
+    let half = grid_nm / 2;
+    if value >= 0 {
+        ((value + half) / grid_nm) * grid_nm
+    } else {
+        ((value - half) / grid_nm) * grid_nm
+    }
+}
+
+fn shell_quote_arg(value: &str) -> String {
+    if value
+        .chars()
+        .all(|ch| ch.is_ascii_alphanumeric() || matches!(ch, '_' | '-' | '.' | '/' | ':' | '='))
+    {
+        value.to_string()
+    } else {
+        format!("'{}'", value.replace('\'', "'\\''"))
+    }
+}
+
+fn delete_command_parts_from_object_id(
+    object_id: &str,
+) -> Option<(&'static str, &'static str, &'static str, &str)> {
+    if let Some(uuid) = object_id.strip_prefix("track:") {
+        return Some((
+            "datum.pcb.delete_board_track",
+            "delete-board-track",
+            "--track",
+            uuid,
+        ));
+    }
+    if let Some(uuid) = object_id.strip_prefix("via:") {
+        return Some((
+            "datum.pcb.delete_board_via",
+            "delete-board-via",
+            "--via",
+            uuid,
+        ));
+    }
+    if let Some(uuid) = object_id.strip_prefix("component:") {
+        return Some((
+            "datum.pcb.delete_board_component",
+            "delete-board-component",
+            "--component",
+            uuid,
+        ));
+    }
+    if let Some(uuid) = object_id.strip_prefix("board-text:") {
+        return Some((
+            "datum.pcb.delete_board_text",
+            "delete-board-text",
+            "--text",
+            uuid,
+        ));
+    }
+    None
 }
 pub fn load_live_workspace_state(request: &LiveReviewRequest) -> Result<ReviewWorkspaceState> {
     load_workspace_state_impl(request, true)
@@ -3079,2123 +3715,34 @@ fn production_payloads_to_production_status(
     }
 }
 
-/// Load a KiCad .kicad_pcb board via the engine import path.
-fn load_scene_from_kicad_import(board_file: &Path) -> Result<(BoardReviewSceneV1, PathBuf)> {
-    let import_started = std::time::Instant::now();
-    let engine_started = std::time::Instant::now();
-    let mut engine =
-        eda_engine::api::Engine::new().map_err(|e| anyhow::anyhow!("engine init: {e}"))?;
-    trace_protocol_timing(format!(
-        "kicad engine init {}ms",
-        engine_started.elapsed().as_millis()
-    ));
-    let engine_import_started = std::time::Instant::now();
-    let import_report = engine
-        .import(board_file)
-        .map_err(|e| anyhow::anyhow!("import {}: {e}", board_file.display()))?;
-    // Import warnings are fidelity signals (dropped objects, accounting
-    // mismatches). They must surface, not vanish with the report.
-    for warning in &import_report.warnings {
-        eprintln!("datum-import warning [{}]: {warning}", board_file.display());
-    }
-    trace_protocol_timing(format!(
-        "kicad engine import {}ms warnings={}",
-        engine_import_started.elapsed().as_millis(),
-        import_report.warnings.len()
-    ));
-    let board_borrow_started = std::time::Instant::now();
-    let board = engine
-        .board()
-        .map_err(|e| anyhow::anyhow!("no board after import: {e}"))?;
-    trace_protocol_timing(format!(
-        "kicad board borrow {}ms",
-        board_borrow_started.elapsed().as_millis()
-    ));
-
-    let board_uuid = board.uuid.to_string();
-    let project_name = board_file
-        .file_stem()
-        .map(|s| s.to_string_lossy().into_owned())
-        .unwrap_or_else(|| "imported".to_string());
-
-    let stackup_started = std::time::Instant::now();
-    let stackup = engine
-        .get_stackup()
-        .map_err(|e| anyhow::anyhow!("stackup: {e}"))?;
-    trace_protocol_timing(format!(
-        "kicad stackup {}ms",
-        stackup_started.elapsed().as_millis()
-    ));
-    let layer_name_map: std::collections::HashMap<i32, String> = stackup
-        .layers
-        .iter()
-        .map(|l| (l.id, l.name.clone()))
-        .collect();
-    let _layer_name = |id: i32| -> String {
-        layer_name_map
-            .get(&id)
-            .cloned()
-            .unwrap_or_else(|| format!("L{}", id))
-    };
-    let components_started = std::time::Instant::now();
-    let components = engine
-        .get_components()
-        .map_err(|e| anyhow::anyhow!("components: {e}"))?;
-    trace_protocol_timing(format!(
-        "kicad components {}ms count={}",
-        components_started.elapsed().as_millis(),
-        components.len()
-    ));
-
-    // Re-borrow board after the method calls above (they borrow &self temporarily).
-    let board_reborrow_started = std::time::Instant::now();
-    let board = engine.board().map_err(|e| anyhow::anyhow!("board: {e}"))?;
-    trace_protocol_timing(format!(
-        "kicad board reborrow {}ms",
-        board_reborrow_started.elapsed().as_millis()
-    ));
-
-    let payload_started = std::time::Instant::now();
-    let outline_vertices: Vec<PointNm> = board
-        .outline
-        .vertices
-        .iter()
-        .map(|p| PointNm { x: p.x, y: p.y })
-        .collect();
-
-    let outline_payload = OutlinePayload {
-        vertices: outline_vertices,
-        closed: !board.outline.vertices.is_empty(),
-    };
-    let pad_expansion_setup = ScenePadExpansionSetup {
-        pad_to_mask_clearance_nm: board.pad_expansion_setup.pad_to_mask_clearance_nm,
-        pad_to_paste_clearance_nm: board.pad_expansion_setup.pad_to_paste_clearance_nm,
-        pad_to_paste_ratio_ppm: board.pad_expansion_setup.pad_to_paste_ratio_ppm,
-        solder_mask_min_width_nm: board.pad_expansion_setup.solder_mask_min_width_nm,
-    };
-
-    let component_payloads: Vec<BoardComponentPayload> = components
-        .iter()
-        .map(|c| BoardComponentPayload {
-            uuid: c.uuid.to_string(),
-            reference: c.reference.clone(),
-            value: c.value.clone(),
-            position: PointNm {
-                x: c.position.x,
-                y: c.position.y,
-            },
-            rotation: c.rotation,
-            layer: c.layer,
-            locked: c.locked,
-        })
-        .collect();
-
-    let pad_payloads: Vec<BoardPadPayload> = board
-        .pads
-        .values()
-        .map(|p| {
-            let shape_str = match p.shape {
-                eda_engine::board::PadShape::Circle => "circle",
-                eda_engine::board::PadShape::Rect => "rect",
-                eda_engine::board::PadShape::Oval => "oval",
-                eda_engine::board::PadShape::RoundRect => "roundrect",
-            };
-            BoardPadPayload {
-                uuid: p.uuid.to_string(),
-                package: p.package.to_string(),
-                name: p.name.clone(),
-                net: p.net.map(|n| n.to_string()),
-                position: PointNm {
-                    x: p.position.x,
-                    y: p.position.y,
-                },
-                layer: p.layer,
-                copper_layers: p.copper_layers.clone(),
-                shape: shape_str.to_string(),
-                diameter: p.diameter,
-                width: p.width,
-                height: p.height,
-                roundrect_rratio_ppm: p.roundrect_rratio_ppm,
-                mask_layers: p.mask_layers.clone(),
-                paste_layers: p.paste_layers.clone(),
-                solder_mask_margin_nm: p.solder_mask_margin_nm,
-                solder_paste_margin_nm: p.solder_paste_margin_nm,
-                solder_paste_margin_ratio_ppm: p.solder_paste_margin_ratio_ppm,
-                drill: if p.drill > 0 { Some(p.drill) } else { None },
-                rotation: p.rotation,
-            }
-        })
-        .collect();
-
-    let track_payloads: Vec<BoardTrackPayload> = board
-        .tracks
-        .values()
-        .map(|t| BoardTrackPayload {
-            uuid: t.uuid.to_string(),
-            net: t.net.to_string(),
-            from: PointNm {
-                x: t.from.x,
-                y: t.from.y,
-            },
-            to: PointNm {
-                x: t.to.x,
-                y: t.to.y,
-            },
-            width: t.width,
-            layer: t.layer,
-        })
-        .collect();
-
-    let via_payloads: Vec<BoardViaPayload> = board
-        .vias
-        .values()
-        .map(|v| BoardViaPayload {
-            uuid: v.uuid.to_string(),
-            net: v.net.to_string(),
-            position: PointNm {
-                x: v.position.x,
-                y: v.position.y,
-            },
-            drill: v.drill,
-            diameter: v.diameter,
-            from_layer: v.from_layer,
-            to_layer: v.to_layer,
-        })
-        .collect();
-
-    let zone_payloads: Vec<BoardZonePayload> = board
-        .zones
-        .values()
-        .map(|z| BoardZonePayload {
-            uuid: z.uuid.to_string(),
-            net: z.net.to_string(),
-            layer: z.layer,
-            polygon: OutlinePayload {
-                vertices: z
-                    .polygon
-                    .vertices
-                    .iter()
-                    .map(|p| PointNm { x: p.x, y: p.y })
-                    .collect(),
-                closed: true,
-            },
-        })
-        .collect();
-    let unrouted_primitives = unrouted_primitives_from_airwires(&board.unrouted());
-    let net_display = net_display_from_imported_board(board);
-    trace_protocol_timing(format!(
-        "kicad payload build {}ms components={} pads={} tracks={} vias={} zones={}",
-        payload_started.elapsed().as_millis(),
-        component_payloads.len(),
-        pad_payloads.len(),
-        track_payloads.len(),
-        via_payloads.len(),
-        zone_payloads.len()
-    ));
-
-    let inspect = ProjectInspectPayload {
-        project_root: board_file
-            .parent()
-            .unwrap_or(Path::new("."))
-            .display()
-            .to_string(),
-        project_name,
-        project_uuid: board_uuid.clone(),
-        board_uuid,
-        board_path: board_file.display().to_string(),
-    };
-
-    // --- Footprint graphics (silkscreen, fab, courtyard) + board-level
-    // Edge.Cuts authored graphics (M7-SCN-007 Option B). Resolve Edge.Cuts to
-    // its numeric id from the PCB's own layer table so the scene-level
-    // `L{n}` key matches the visibility map for both the outline primitive
-    // and the authored board_graphics primitives. KiCad 7 canonically uses
-    // id 44; KiCad 9 may renumber — DOA2526 uses id 25 for Edge.Cuts.
-    let (
-        kicad_graphics,
-        kicad_texts,
-        mut imported_board_texts,
-        mut imported_board_text_geometries,
-        mut imported_glyph_mesh_assets,
-        board_graphics,
-        mut imported_gr_texts,
-        mut imported_gr_text_geometries,
-        imported_gr_glyph_mesh_assets,
-        edge_cuts_layer_key,
-    ) = {
-        let direct_parse_started = std::time::Instant::now();
-        let read_started = std::time::Instant::now();
-        let contents = std::fs::read_to_string(board_file)
-            .with_context(|| format!("failed to read {}", board_file.display()))?;
-        trace_protocol_timing(format!(
-            "kicad direct read {}ms bytes={}",
-            read_started.elapsed().as_millis(),
-            contents.len()
-        ));
-        let layer_table_started = std::time::Instant::now();
-        let layer_table = kicad_parse_layer_table(&contents);
-        trace_protocol_timing(format!(
-            "kicad layer table parse {}ms layers={}",
-            layer_table_started.elapsed().as_millis(),
-            layer_table.len()
-        ));
-        let edge_cuts_key = layer_table
-            .get("Edge.Cuts")
-            .copied()
-            .map(layer_id)
-            .unwrap_or_else(|| layer_id(44));
-        let footprint_parse_started = std::time::Instant::now();
-        let (g, t, bt, btg, gma) =
-            extract_kicad_footprint_graphics(&contents, &component_payloads, &layer_table);
-        trace_protocol_timing(format!(
-            "kicad footprint graphics/text parse {}ms graphics={} texts={} board_texts={} geometries={} glyph_assets={}",
-            footprint_parse_started.elapsed().as_millis(),
-            g.len(),
-            t.len(),
-            bt.len(),
-            btg.len(),
-            gma.len()
-        ));
-        let board_graphics_started = std::time::Instant::now();
-        let bg = extract_kicad_board_graphics(&contents, &inspect.board_uuid, &layer_table);
-        trace_protocol_timing(format!(
-            "kicad board graphics parse {}ms graphics={}",
-            board_graphics_started.elapsed().as_millis(),
-            bg.len()
-        ));
-        let board_text_started = std::time::Instant::now();
-        let (gr_texts, gr_geometries, gr_assets) =
-            extract_kicad_board_texts(&contents, &layer_table);
-        trace_protocol_timing(format!(
-            "kicad board text parse {}ms texts={} geometries={} glyph_assets={}",
-            board_text_started.elapsed().as_millis(),
-            gr_texts.len(),
-            gr_geometries.len(),
-            gr_assets.len()
-        ));
-        trace_protocol_timing(format!(
-            "kicad direct parse total {}ms",
-            direct_parse_started.elapsed().as_millis()
-        ));
-        (
-            g,
-            t,
-            bt,
-            btg,
-            gma,
-            bg,
-            gr_texts,
-            gr_geometries,
-            gr_assets,
-            edge_cuts_key,
-        )
-    };
-    let merge_started = std::time::Instant::now();
-    imported_board_texts.append(&mut imported_gr_texts);
-    imported_board_text_geometries.append(&mut imported_gr_text_geometries);
-    merge_glyph_mesh_assets(
-        &mut imported_glyph_mesh_assets,
-        imported_gr_glyph_mesh_assets,
-    );
-    trace_protocol_timing(format!(
-        "kicad text merge {}ms board_texts={} geometries={} glyph_assets={}",
-        merge_started.elapsed().as_millis(),
-        imported_board_texts.len(),
-        imported_board_text_geometries.len(),
-        imported_glyph_mesh_assets.len()
-    ));
-    let scene_build_started = std::time::Instant::now();
-    let mut scene = build_board_review_scene(
-        &inspect,
-        outline_payload,
-        component_payloads,
-        kicad_graphics,
-        kicad_texts,
-        pad_expansion_setup,
-        pad_payloads,
-        track_payloads,
-        via_payloads,
-        zone_payloads,
-        board_graphics,
-        imported_board_texts,
-        imported_board_text_geometries,
-        imported_glyph_mesh_assets,
-        unrouted_primitives,
-        net_display,
-        edge_cuts_layer_key,
-    );
-    trace_protocol_timing(format!(
-        "kicad scene build {}ms",
-        scene_build_started.elapsed().as_millis()
-    ));
-    // Replace auto-generated L0/L31 layers with real stackup names
-    let layer_replace_started = std::time::Instant::now();
-    scene.layers = stackup
-        .layers
-        .iter()
-        .enumerate()
-        .map(|(i, l)| SceneLayer {
-            layer_id: layer_id(l.id),
-            name: l.name.clone(),
-            kind: match l.layer_type {
-                eda_engine::board::StackupLayerType::Copper => "copper",
-                eda_engine::board::StackupLayerType::Silkscreen => "silkscreen",
-                eda_engine::board::StackupLayerType::SolderMask => "mask",
-                eda_engine::board::StackupLayerType::Paste => "paste",
-                eda_engine::board::StackupLayerType::Mechanical => "mechanical",
-                eda_engine::board::StackupLayerType::Dielectric => "dielectric",
-            }
-            .to_string(),
-            render_order: i as u32,
-            visible_by_default: matches!(l.layer_type, eda_engine::board::StackupLayerType::Copper)
-                || l.name.ends_with(".Cu")
-                || l.name == "F.Cu"
-                || l.name == "B.Cu"
-                || l.name == "Edge.Cuts"
-                || l.name == "F.SilkS",
-        })
-        .collect();
-    trace_protocol_timing(format!(
-        "kicad layer replace {}ms scene_layers={}",
-        layer_replace_started.elapsed().as_millis(),
-        scene.layers.len()
-    ));
-    trace_protocol_timing(format!(
-        "kicad scene import total {}ms",
-        import_started.elapsed().as_millis()
-    ));
-    Ok((scene, board_file.to_path_buf()))
-}
-
-// ---------------------------------------------------------------------------
-// KiCad footprint graphics extraction (direct file parsing)
-// ---------------------------------------------------------------------------
-
-/// Parse the `(layers ...)` section from a KiCad PCB file to build a
-/// layer-name to numeric-id map.
-fn kicad_parse_layer_table(contents: &str) -> std::collections::HashMap<String, i32> {
-    let mut map = std::collections::HashMap::new();
-    let start = match contents.find("(layers") {
-        Some(s) => s,
-        None => return map,
-    };
-    let rest = &contents[start..];
-    // Walk until balanced parens close the (layers ...) block.
-    let mut depth: i32 = 0;
-    let mut block_end = rest.len();
-    for (i, ch) in rest.char_indices() {
-        match ch {
-            '(' => depth += 1,
-            ')' => {
-                depth -= 1;
-                if depth == 0 {
-                    block_end = i + 1;
-                    break;
-                }
-            }
-            _ => {}
-        }
-    }
-    let block = &rest[..block_end];
-    for line in block.lines() {
-        let trimmed = line.trim();
-        if trimmed.starts_with('(') && !trimmed.starts_with("(layers") {
-            let inner = trimmed.trim_start_matches('(').trim_end_matches(')');
-            let mut parts = inner.split_whitespace();
-            if let Some(id_str) = parts.next() {
-                if let Ok(id) = id_str.parse::<i32>() {
-                    if let Some(name) = parts.next() {
-                        let name = canonicalize_kicad_layer_name(name.trim_matches('"'));
-                        map.insert(name.to_string(), id);
-                    }
-                }
-            }
-        }
-    }
-    map
-}
-
-fn canonicalize_kicad_layer_name(name: &str) -> String {
-    match name.to_ascii_lowercase().as_str() {
-        "f.cu" => "F.Cu".to_string(),
-        "b.cu" => "B.Cu".to_string(),
-        "b.adhes" => "B.Adhes".to_string(),
-        "f.adhes" => "F.Adhes".to_string(),
-        "b.paste" => "B.Paste".to_string(),
-        "f.paste" => "F.Paste".to_string(),
-        "b.silks" => "B.SilkS".to_string(),
-        "f.silks" => "F.SilkS".to_string(),
-        "b.mask" => "B.Mask".to_string(),
-        "f.mask" => "F.Mask".to_string(),
-        "dwgs.user" => "Dwgs.User".to_string(),
-        "cmts.user" => "Cmts.User".to_string(),
-        "eco1.user" => "Eco1.User".to_string(),
-        "eco2.user" => "Eco2.User".to_string(),
-        "edge.cuts" => "Edge.Cuts".to_string(),
-        "margin" => "Margin".to_string(),
-        "b.crtyd" => "B.CrtYd".to_string(),
-        "f.crtyd" => "F.CrtYd".to_string(),
-        "b.fab" => "B.Fab".to_string(),
-        "f.fab" => "F.Fab".to_string(),
-        _ => name.to_string(),
-    }
-}
-
-fn kicad_resolve_layer_id(name: &str, table: &std::collections::HashMap<String, i32>) -> i32 {
-    let canonical_name = canonicalize_kicad_layer_name(name);
-    if let Some(&id) = table.get(&canonical_name) {
-        return id;
-    }
-    // Hardcoded fallbacks for common layers.
-    match canonical_name.as_str() {
-        "F.Cu" => 0,
-        "B.Cu" => 31,
-        "B.SilkS" => 36,
-        "F.SilkS" => 37,
-        "B.Fab" => 35,
-        "F.Fab" => 38,
-        "B.CrtYd" => 34,
-        "F.CrtYd" => 39,
-        "Edge.Cuts" => 44,
-        _ => 0,
-    }
-}
-
-fn kicad_render_role(layer_name: &str) -> Option<&'static str> {
-    match canonicalize_kicad_layer_name(layer_name).as_str() {
-        "F.SilkS" | "B.SilkS" => Some("component_silkscreen"),
-        "F.CrtYd" | "B.CrtYd" | "F.Fab" | "B.Fab" => Some("component_mechanical"),
-        _ => None,
-    }
-}
-
-#[derive(Default)]
-struct KicadImportTextTrace {
-    fp_text_total: usize,
-    fp_text_template_skipped: usize,
-    fp_text_hidden_skipped: usize,
-    fp_text_imported: usize,
-    property_total: usize,
-    property_metadata_skipped: usize,
-    property_empty_skipped: usize,
-    property_hidden_skipped: usize,
-    property_reference_imported: usize,
-    property_value_imported: usize,
-    gr_text_total: usize,
-    gr_text_hidden_skipped: usize,
-    gr_text_imported: usize,
-    by_kind: BTreeMap<String, usize>,
-    by_layer: BTreeMap<String, usize>,
-    samples: Vec<String>,
-}
-
-impl KicadImportTextTrace {
-    fn record_import(&mut self, kind: &str, layer_name: &str, layer: i32, text: &str) {
-        *self.by_kind.entry(kind.to_string()).or_insert(0) += 1;
-        *self
-            .by_layer
-            .entry(format!(
-                "{}:{}",
-                canonicalize_kicad_layer_name(layer_name),
-                layer_id(layer)
-            ))
-            .or_insert(0) += 1;
-        if self.samples.len() < 16 {
-            self.samples.push(format!(
-                "{}:{}:{}",
-                kind,
-                canonicalize_kicad_layer_name(layer_name),
-                text
-            ));
-        }
-    }
-
-    fn emit(&self, scope: &str, board_texts: usize, geometries: usize, glyph_assets: usize) {
-        if !kicad_import_text_trace_enabled() {
-            return;
-        }
-        eprintln!(
-            "[datum-import-text] {scope} fp_text total={} imported={} skipped_template={} skipped_hidden={} property total={} ref={} value={} skipped_metadata={} skipped_empty={} skipped_hidden={} gr_text total={} imported={} skipped_hidden={} board_texts={} geometries={} glyph_assets={} by_kind={:?} by_layer={:?} samples={:?}",
-            self.fp_text_total,
-            self.fp_text_imported,
-            self.fp_text_template_skipped,
-            self.fp_text_hidden_skipped,
-            self.property_total,
-            self.property_reference_imported,
-            self.property_value_imported,
-            self.property_metadata_skipped,
-            self.property_empty_skipped,
-            self.property_hidden_skipped,
-            self.gr_text_total,
-            self.gr_text_imported,
-            self.gr_text_hidden_skipped,
-            board_texts,
-            geometries,
-            glyph_assets,
-            self.by_kind,
-            self.by_layer,
-            self.samples,
-        );
-    }
-}
-
-fn kicad_import_text_trace_enabled() -> bool {
-    std::env::var_os("DATUM_TRACE_IMPORT_TEXT").is_some()
-        || std::env::var_os("DATUM_TRACE_TIMING").is_some()
-}
-
-fn trace_protocol_timing(message: String) {
-    if std::env::var_os("DATUM_TRACE_TIMING").is_some() {
-        eprintln!("[datum-protocol] {message}");
-    }
-}
-
-fn kicad_block_hidden(block: &str) -> bool {
-    block.contains("(hide yes)")
-}
-
-/// Convert mm to nm.
-fn kicad_mm_to_nm(mm: f64) -> i64 {
-    (mm * 1_000_000.0).round() as i64
-}
-
-/// Parse a `(form x y ...)` anywhere in a line and return the (x, y) in nm.
-fn kicad_parse_xy_anywhere(line: &str, form: &str) -> Option<PointNm> {
-    let marker = format!("({form} ");
-    let start = line.find(&marker)? + marker.len();
-    let rest = &line[start..];
-    let end = rest.find(')').unwrap_or(rest.len());
-    let mut parts = rest[..end].split_whitespace();
-    let x = parts.next()?.parse::<f64>().ok()?;
-    let y = parts.next()?.parse::<f64>().ok()?;
-    Some(PointNm {
-        x: kicad_mm_to_nm(x),
-        y: kicad_mm_to_nm(y),
-    })
-}
-
-/// Parse the stroke/line width from a KiCad block.
-/// Handles both old-style `(width 0.12)` and new-style `(stroke (width 0.12) ...)`.
-fn kicad_parse_width_nm(block: &str) -> i64 {
-    // Try `(stroke (width N) ...)` first (KiCad 7+).
-    for line in block.lines() {
-        let trimmed = line.trim();
-        if let Some(pos) = trimmed.find("(stroke ") {
-            let rest = &trimmed[pos..];
-            if let Some(w_pos) = rest.find("(width ") {
-                let after = &rest[w_pos + "(width ".len()..];
-                let end = after.find(')').unwrap_or(after.len());
-                if let Ok(mm) = after[..end].trim().parse::<f64>() {
-                    return kicad_mm_to_nm(mm);
-                }
-            }
-        }
-    }
-    // Fall back to top-level `(width N)`.
-    for line in block.lines() {
-        let trimmed = line.trim();
-        if trimmed.starts_with("(width ") {
-            let rest = trimmed.trim_start_matches("(width ").trim_end_matches(')');
-            if let Ok(mm) = rest.split_whitespace().next().unwrap_or("").parse::<f64>() {
-                return kicad_mm_to_nm(mm);
-            }
-        }
-    }
-    120_000 // default 0.12mm
-}
-
-/// Parse a `(layer "Name")` from anywhere in a block line.
-fn kicad_parse_layer_anywhere(block: &str) -> Option<String> {
-    block.lines().find_map(|line| {
-        let trimmed = line.trim();
-        let start = trimmed.find("(layer ")? + "(layer ".len();
-        let rest = &trimmed[start..];
-        // Quoted name
-        if rest.starts_with('"') {
-            let inner = &rest[1..];
-            let end = inner.find('"')?;
-            Some(canonicalize_kicad_layer_name(&inner[..end]))
-        } else {
-            let end = rest.find(')')?;
-            Some(canonicalize_kicad_layer_name(rest[..end].trim()))
-        }
-    })
-}
-
-/// Parse a `(uuid "...")` from a block.
-fn kicad_parse_uuid(block: &str) -> Option<String> {
-    block.lines().find_map(|line| {
-        let trimmed = line.trim();
-        let start = trimmed.find("(uuid ")? + "(uuid ".len();
-        let rest = &trimmed[start..];
-        if rest.starts_with('"') {
-            let inner = &rest[1..];
-            let end = inner.find('"')?;
-            Some(inner[..end].to_string())
-        } else {
-            let end = rest.find(')')?;
-            Some(rest[..end].trim().to_string())
-        }
-    })
-}
-
-/// Parse `(at x y [rotation])` from a block's first `(at ...)` line.
-fn kicad_parse_at(block: &str) -> Option<(PointNm, i32)> {
-    let line = block.lines().find(|l| l.trim().contains("(at "))?;
-    let trimmed = line.trim();
-    let start = trimmed.find("(at ")? + "(at ".len();
-    let rest = &trimmed[start..];
-    let end = rest.find(')').unwrap_or(rest.len());
-    let mut parts = rest[..end].split_whitespace();
-    let x = parts.next()?.parse::<f64>().ok()?;
-    let y = parts.next()?.parse::<f64>().ok()?;
-    let rotation = parts
-        .next()
-        .and_then(|s| s.parse::<f64>().ok())
-        .map(|r| r.round() as i32)
-        .unwrap_or(0);
-    Some((
-        PointNm {
-            x: kicad_mm_to_nm(x),
-            y: kicad_mm_to_nm(y),
-        },
-        rotation,
-    ))
-}
-
-/// Parse `(xy x y)` points from a block (used for polygons).
-fn kicad_parse_xy_points(block: &str) -> Vec<PointNm> {
-    let mut points = Vec::new();
-    let mut rest = block;
-    let marker = "(xy ";
-    while let Some(start) = rest.find(marker) {
-        let after = &rest[start + marker.len()..];
-        let Some(end) = after.find(')') else { break };
-        let mut parts = after[..end].split_whitespace();
-        if let (Some(x), Some(y)) = (
-            parts.next().and_then(|v| v.parse::<f64>().ok()),
-            parts.next().and_then(|v| v.parse::<f64>().ok()),
-        ) {
-            points.push(PointNm {
-                x: kicad_mm_to_nm(x),
-                y: kicad_mm_to_nm(y),
-            });
-        }
-        rest = &after[end + 1..];
-    }
-    points
-}
-
-/// Extract nested s-expression blocks for a given form within a parent block.
-fn kicad_nested_blocks(contents: &str, form: &str) -> Vec<String> {
-    let mut blocks = Vec::new();
-    let mut current = Vec::new();
-    let mut capturing = false;
-    let mut depth: i32 = 0;
-    let prefix = format!("({form}");
-
-    for line in contents.lines() {
-        let trimmed = line.trim_start();
-
-        if !capturing
-            && trimmed.starts_with(&prefix)
-            && matches!(
-                trimmed.as_bytes().get(prefix.len()),
-                Some(b' ') | Some(b'\t') | Some(b')') | None
-            )
-        {
-            capturing = true;
-            current.clear();
-            depth = 0;
-        }
-
-        if capturing {
-            current.push(line.to_string());
-            let opens = line.chars().filter(|c| *c == '(').count() as i32;
-            let closes = line.chars().filter(|c| *c == ')').count() as i32;
-            depth += opens - closes;
-            if depth <= 0 {
-                blocks.push(current.join("\n"));
-                current.clear();
-                capturing = false;
-            }
-        }
-    }
-    blocks
-}
-
-/// Extract nested s-expression blocks for several forms with one parent scan.
-fn kicad_nested_blocks_by_form(contents: &str, forms: &[&str]) -> BTreeMap<String, Vec<String>> {
-    let mut blocks = forms
-        .iter()
-        .map(|form| ((*form).to_string(), Vec::new()))
-        .collect::<BTreeMap<_, _>>();
-    let prefixes = forms
-        .iter()
-        .map(|form| ((*form).to_string(), format!("({form}")))
-        .collect::<Vec<_>>();
-    let mut current = Vec::new();
-    let mut capturing_form: Option<String> = None;
-    let mut depth: i32 = 0;
-
-    for line in contents.lines() {
-        let trimmed = line.trim_start();
-
-        if capturing_form.is_none() {
-            if let Some((form, _)) = prefixes.iter().find(|(_, prefix)| {
-                trimmed.starts_with(prefix)
-                    && matches!(
-                        trimmed.as_bytes().get(prefix.len()),
-                        Some(b' ') | Some(b'\t') | Some(b')') | None
-                    )
-            }) {
-                capturing_form = Some(form.clone());
-                current.clear();
-                depth = 0;
-            }
-        }
-
-        if let Some(form) = capturing_form.as_ref() {
-            current.push(line.to_string());
-            let opens = line.chars().filter(|c| *c == '(').count() as i32;
-            let closes = line.chars().filter(|c| *c == ')').count() as i32;
-            depth += opens - closes;
-            if depth <= 0 {
-                blocks
-                    .entry(form.clone())
-                    .or_default()
-                    .push(current.join("\n"));
-                current.clear();
-                capturing_form = None;
-            }
-        }
-    }
-
-    blocks
-}
-
-/// Compute arc center, radius, start_angle_tenths, end_angle_tenths from three
-/// points (start, mid, end), all in nm. Returns None for collinear points.
-fn kicad_arc_from_three_points(
-    start: &PointNm,
-    mid: &PointNm,
-    end: &PointNm,
-) -> Option<(PointNm, i64, i32, i32)> {
-    let (x1, y1) = (start.x as f64, start.y as f64);
-    let (x2, y2) = (mid.x as f64, mid.y as f64);
-    let (x3, y3) = (end.x as f64, end.y as f64);
-    let d = 2.0 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2));
-    if d.abs() < f64::EPSILON {
-        return None;
-    }
-    let ux = ((x1 * x1 + y1 * y1) * (y2 - y3)
-        + (x2 * x2 + y2 * y2) * (y3 - y1)
-        + (x3 * x3 + y3 * y3) * (y1 - y2))
-        / d;
-    let uy = ((x1 * x1 + y1 * y1) * (x3 - x2)
-        + (x2 * x2 + y2 * y2) * (x1 - x3)
-        + (x3 * x3 + y3 * y3) * (x2 - x1))
-        / d;
-    let center = PointNm {
-        x: ux.round() as i64,
-        y: uy.round() as i64,
-    };
-    let radius = ((x1 - ux).powi(2) + (y1 - uy).powi(2)).sqrt().round() as i64;
-    let start_angle =
-        (((y1 - uy).atan2(x1 - ux).to_degrees() * 10.0).round() as i32).rem_euclid(3600);
-    let end_angle =
-        (((y3 - uy).atan2(x3 - ux).to_degrees() * 10.0).round() as i32).rem_euclid(3600);
-    Some((center, radius, start_angle, end_angle))
-}
-
-/// Parse font size from `(effects (font (size H W) ...))`.
-fn kicad_parse_font_height_nm(block: &str) -> i64 {
-    for line in block.lines() {
-        let trimmed = line.trim();
-        if let Some(pos) = trimmed.find("(size ") {
-            let rest = &trimmed[pos + "(size ".len()..];
-            let end = rest.find(')').unwrap_or(rest.len());
-            let mut parts = rest[..end].split_whitespace();
-            if let Some(h) = parts.next().and_then(|v| v.parse::<f64>().ok()) {
-                return kicad_mm_to_nm(h);
-            }
-        }
-    }
-    1_000_000 // default 1mm
-}
-
-fn kicad_parse_font_thickness_nm(block: &str) -> Option<i64> {
-    for line in block.lines() {
-        let trimmed = line.trim();
-        if !trimmed.starts_with("(thickness ") {
-            continue;
-        }
-        let inner = trimmed
-            .trim_start_matches("(thickness ")
-            .trim_end_matches(')');
-        if let Ok(mm) = inner.trim().parse::<f64>() {
-            return Some(kicad_mm_to_nm(mm));
-        }
-    }
-    None
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum KicadTextHJustify {
-    Left,
-    Center,
-    Right,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum KicadTextVJustify {
-    Top,
-    Center,
-    Bottom,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-struct KicadTextJustify {
-    h: KicadTextHJustify,
-    v: KicadTextVJustify,
-    mirrored: bool,
-    keep_upright: bool,
-}
-
-impl Default for KicadTextJustify {
-    fn default() -> Self {
-        Self {
-            h: KicadTextHJustify::Center,
-            v: KicadTextVJustify::Center,
-            mirrored: false,
-            keep_upright: false,
-        }
-    }
-}
-
-fn kicad_parse_text_justify(block: &str) -> KicadTextJustify {
-    let mut justify = KicadTextJustify::default();
-    for line in block.lines() {
-        let trimmed = line.trim();
-        if !trimmed.starts_with("(justify ") {
-            continue;
-        }
-        if trimmed.contains(" left") {
-            justify.h = KicadTextHJustify::Left;
-        } else if trimmed.contains(" right") {
-            justify.h = KicadTextHJustify::Right;
-        }
-        if trimmed.contains(" top") {
-            justify.v = KicadTextVJustify::Top;
-        } else if trimmed.contains(" bottom") {
-            justify.v = KicadTextVJustify::Bottom;
-        }
-        if trimmed.contains(" mirror") {
-            justify.mirrored = true;
-        }
-    }
-    justify
-}
-
-fn kicad_text_attributes(
-    anchor_position: PointNm,
-    rotation_degrees: i32,
-    height_nm: i64,
-    stroke_width_nm: Option<i64>,
-    justify: KicadTextJustify,
-) -> TextAttributes {
-    TextAttributes {
-        position: eda_engine::ir::geometry::Point {
-            x: anchor_position.x,
-            y: anchor_position.y,
-        },
-        rotation_degrees,
-        height_nm,
-        stroke_width_nm: stroke_width_nm.unwrap_or(default_stroke_width_nm(height_nm)),
-        h_align: match justify.h {
-            KicadTextHJustify::Left => TextHAlign::Left,
-            KicadTextHJustify::Center => TextHAlign::Center,
-            KicadTextHJustify::Right => TextHAlign::Right,
-        },
-        v_align: match justify.v {
-            KicadTextVJustify::Top => TextVAlign::Top,
-            KicadTextVJustify::Center => TextVAlign::Center,
-            KicadTextVJustify::Bottom => TextVAlign::Bottom,
-        },
-        mirrored: justify.mirrored,
-        keep_upright: justify.keep_upright,
-        line_spacing_ratio_ppm: 1_350_000,
-        render_intent: TextRenderIntent::Manufacturing,
-        family: TextFamilyId::default(),
-        family_source: eda_engine::text::TextFamilySource::ImplicitDefault,
-        style: TextStyleId::default(),
-        italic: false,
-        bold: false,
-        style_class: None,
-    }
-}
-
-fn kicad_text_rotation_degrees(rotation_degrees: i32) -> i32 {
-    -rotation_degrees
-}
-
-fn board_text_primitive(text: &BoardText) -> BoardTextPrimitive {
-    BoardTextPrimitive {
-        object_id: format!("board-text:{}", text.uuid),
-        object_kind: "board_text".to_string(),
-        text_uuid: text.uuid.to_string(),
-        text: text.text.clone(),
-        layer_id: layer_id(text.layer),
-        position: PointNm {
-            x: text.position.x,
-            y: text.position.y,
-        },
-        rotation_degrees: text.rotation,
-        height_nm: text.height_nm,
-        stroke_width_nm: text.stroke_width_nm,
-        render_intent: render_intent_to_string(text.render_intent).to_string(),
-        family: text.family.0.clone(),
-        style: text.style.0.clone(),
-        style_class: text.style_class.clone(),
-        h_align: h_align_to_string(text.h_align).to_string(),
-        v_align: v_align_to_string(text.v_align).to_string(),
-        mirrored: text.mirrored,
-        keep_upright: text.keep_upright,
-        line_spacing_ratio_ppm: text.line_spacing_ratio_ppm,
-        bold: text.bold,
-        italic: text.italic,
-    }
-}
-
-fn render_intent_to_string(intent: TextRenderIntent) -> &'static str {
-    match intent {
-        TextRenderIntent::Manufacturing => "manufacturing",
-        TextRenderIntent::Annotation => "annotation",
-        TextRenderIntent::Branding => "branding",
-        TextRenderIntent::Documentation => "documentation",
-        TextRenderIntent::UiPreview => "ui_preview",
-    }
-}
-
-fn h_align_to_string(align: TextHAlign) -> &'static str {
-    match align {
-        TextHAlign::Left => "left",
-        TextHAlign::Center => "center",
-        TextHAlign::Right => "right",
-    }
-}
-
-fn v_align_to_string(align: TextVAlign) -> &'static str {
-    match align {
-        TextVAlign::Top => "top",
-        TextVAlign::Center => "center",
-        TextVAlign::Bottom => "bottom",
-    }
-}
-
-fn board_text_geometry(
-    text: &BoardText,
-) -> (BoardTextGeometryPrimitive, Vec<GlyphMeshAssetPrimitive>) {
-    let mesh_scene = match layout_text_mesh_from_board_text(text) {
-        Ok(scene) => Some(scene),
-        Err(error) => {
-            trace_board_text_geometry_fallback(text, "mesh", &error);
-            None
-        }
-    };
-    let glyph_mesh_assets = mesh_scene
-        .as_ref()
-        .map(|scene| {
-            scene
-                .glyph_mesh_assets
-                .iter()
-                .map(glyph_mesh_asset_primitive)
-                .collect::<Vec<_>>()
-        })
+fn net_display_from_native_board_value(board: &Value) -> Result<Vec<NetDisplayEntry>> {
+    let nets_map = board
+        .get("nets")
+        .and_then(|value| value.as_object())
+        .cloned()
         .unwrap_or_default();
-    let world_transform_nm = mesh_scene
-        .as_ref()
-        .map(|scene| affine_2d_fixed_primitive(scene.batch.world_transform));
-    let block_bbox_em_nm = mesh_scene
-        .as_ref()
-        .map(|scene| mesh_rect_em_primitive(scene.batch.block_bbox_em_nm));
-    let glyphs = mesh_scene
-        .as_ref()
-        .map(|scene| {
-            scene
-                .batch
-                .glyphs
-                .iter()
-                .map(text_glyph_instance_primitive)
-                .collect::<Vec<_>>()
-        })
-        .unwrap_or_default();
-    let mut fills = Vec::new();
-    let mut strokes = Vec::new();
-
-    // The renderer consumes glyph meshes when available. Legacy fill/stroke
-    // fragments are only a fallback; generating both paths doubles import-time
-    // text tessellation cost on real KiCad boards.
-    if glyphs.is_empty() {
-        match layout_text_geometry(&text.text, &TextAttributes::from_board_text(text)) {
-            Ok(primitives) => {
-                for primitive in primitives {
-                    match primitive {
-                        TextGeometryPrimitive::Stroke(stroke) => {
-                            strokes.push(BoardTextStrokePrimitive {
-                                from: PointNm {
-                                    x: stroke.from.x,
-                                    y: stroke.from.y,
-                                },
-                                to: PointNm {
-                                    x: stroke.to.x,
-                                    y: stroke.to.y,
-                                },
-                                width_nm: stroke.width_nm,
-                            });
-                        }
-                        TextGeometryPrimitive::FilledPolygon(polygon) => {
-                            fills.push(BoardTextFillPrimitive {
-                                outer: polygon
-                                    .outer
-                                    .into_iter()
-                                    .map(|point| PointNm {
-                                        x: point.x,
-                                        y: point.y,
-                                    })
-                                    .collect(),
-                                holes: polygon
-                                    .holes
-                                    .into_iter()
-                                    .map(|ring| {
-                                        ring.into_iter()
-                                            .map(|point| PointNm {
-                                                x: point.x,
-                                                y: point.y,
-                                            })
-                                            .collect()
-                                    })
-                                    .collect(),
-                            });
-                        }
-                    }
-                }
-            }
-            Err(error) => trace_board_text_geometry_fallback(text, "legacy", &error),
-        }
-    }
-
-    (
-        BoardTextGeometryPrimitive {
-            object_id: format!("board-text:{}", text.uuid),
-            object_kind: "board_text_geometry".to_string(),
-            text_uuid: text.uuid.to_string(),
-            layer_id: layer_id(text.layer),
-            world_transform_nm,
-            block_bbox_em_nm,
-            glyphs,
-            fills,
-            strokes,
-        },
-        glyph_mesh_assets,
-    )
-}
-
-fn trace_board_text_geometry_fallback(
-    text: &BoardText,
-    stage: &str,
-    error: &dyn std::fmt::Display,
-) {
-    if !kicad_import_text_trace_enabled() {
-        return;
-    }
-    eprintln!(
-        "[datum-import-text] board_text_geometry_fallback stage={stage} text_uuid={} layer={} family={} intent={} chars={} error={error}",
-        text.uuid,
-        layer_id(text.layer),
-        text.family.0,
-        render_intent_to_string(text.render_intent),
-        text.text.chars().count(),
-    );
-}
-
-fn push_board_text_scene_primitives(
-    board_text: &BoardText,
-    primitives: &mut Vec<BoardTextPrimitive>,
-    geometries: &mut Vec<BoardTextGeometryPrimitive>,
-    mesh_assets_by_handle: &mut BTreeMap<GlyphMeshHandlePrimitive, GlyphMeshAssetPrimitive>,
-) {
-    primitives.push(board_text_primitive(board_text));
-    let (geometry, mesh_assets) = board_text_geometry(board_text);
-    geometries.push(geometry);
-    for asset in mesh_assets {
-        mesh_assets_by_handle.entry(asset.handle).or_insert(asset);
-    }
-}
-
-fn kicad_import_text_uuid(kind: &str, key: &str) -> uuid::Uuid {
-    uuid::Uuid::new_v5(
-        &uuid::Uuid::NAMESPACE_URL,
-        format!("datum:kicad-import-text:{kind}:{key}").as_bytes(),
-    )
-}
-
-fn kicad_board_text(
-    uuid: uuid::Uuid,
-    text: String,
-    layer: i32,
-    position: PointNm,
-    rotation_degrees: i32,
-    height_nm: i64,
-    stroke_width_nm: Option<i64>,
-    justify: KicadTextJustify,
-    style_class: Option<String>,
-) -> BoardText {
-    let attrs = kicad_text_attributes(
-        position,
-        rotation_degrees,
-        height_nm,
-        stroke_width_nm,
-        justify,
-    );
-    BoardText {
-        uuid,
-        text,
-        position: attrs.position,
-        rotation: attrs.rotation_degrees,
-        layer,
-        render_intent: attrs.render_intent,
-        family: attrs.family,
-        family_source: attrs.family_source,
-        style: attrs.style,
-        height_nm: attrs.height_nm,
-        stroke_width_nm: attrs.stroke_width_nm,
-        h_align: attrs.h_align,
-        v_align: attrs.v_align,
-        mirrored: attrs.mirrored,
-        keep_upright: attrs.keep_upright,
-        line_spacing_ratio_ppm: attrs.line_spacing_ratio_ppm,
-        italic: attrs.italic,
-        bold: attrs.bold,
-        style_class,
-    }
-}
-
-fn merge_glyph_mesh_assets(
-    target: &mut Vec<GlyphMeshAssetPrimitive>,
-    incoming: Vec<GlyphMeshAssetPrimitive>,
-) {
-    let mut seen: BTreeSet<GlyphMeshHandlePrimitive> =
-        target.iter().map(|asset| asset.handle).collect();
-    for asset in incoming {
-        if seen.insert(asset.handle) {
-            target.push(asset);
-        }
-    }
-}
-
-fn glyph_mesh_asset_primitive(asset: &eda_engine::text::GlyphMeshAsset) -> GlyphMeshAssetPrimitive {
-    GlyphMeshAssetPrimitive {
-        handle: glyph_mesh_handle_primitive(asset.handle),
-        vertices: asset
-            .vertices
-            .iter()
-            .map(|vertex| MeshVertexEmPrimitive {
-                x_em_nm: vertex.x_em_nm,
-                y_em_nm: vertex.y_em_nm,
-            })
-            .collect(),
-        indices: asset.indices.clone(),
-        bbox_em_nm: mesh_rect_em_primitive(asset.bbox_em_nm),
-    }
-}
-
-fn text_glyph_instance_primitive(
-    glyph: &eda_engine::text::TextGlyphInstance,
-) -> TextGlyphInstancePrimitive {
-    TextGlyphInstancePrimitive {
-        glyph_handle: glyph_mesh_handle_primitive(glyph.glyph_handle),
-        origin_em_nm_x: glyph.origin_em_nm_x,
-        origin_em_nm_y: glyph.origin_em_nm_y,
-    }
-}
-
-fn glyph_mesh_handle_primitive(
-    handle: eda_engine::text::GlyphMeshHandle,
-) -> GlyphMeshHandlePrimitive {
-    GlyphMeshHandlePrimitive {
-        font_id: handle.font_id,
-        glyph_id: handle.glyph_id,
-        tolerance_class: handle.tolerance_class,
-        epoch: handle.epoch,
-    }
-}
-
-fn mesh_rect_em_primitive(rect: eda_engine::text::MeshRectEm) -> MeshRectEmPrimitive {
-    MeshRectEmPrimitive {
-        min_x_em_nm: rect.min_x_em_nm,
-        min_y_em_nm: rect.min_y_em_nm,
-        max_x_em_nm: rect.max_x_em_nm,
-        max_y_em_nm: rect.max_y_em_nm,
-    }
-}
-
-fn affine_2d_fixed_primitive(transform: eda_engine::text::Affine2DFixed) -> Affine2DFixedPrimitive {
-    Affine2DFixedPrimitive {
-        m11_ppm: transform.m11_ppm,
-        m12_ppm: transform.m12_ppm,
-        m21_ppm: transform.m21_ppm,
-        m22_ppm: transform.m22_ppm,
-        tx_nm: transform.tx_nm,
-        ty_nm: transform.ty_nm,
-    }
-}
-
-/// Extract footprint graphics from KiCad board file content.
-fn extract_kicad_footprint_graphics(
-    contents: &str,
-    components: &[BoardComponentPayload],
-    layer_table: &std::collections::HashMap<String, i32>,
-) -> (
-    Vec<ComponentGraphicPrimitive>,
-    Vec<ComponentTextPrimitive>,
-    Vec<BoardTextPrimitive>,
-    Vec<BoardTextGeometryPrimitive>,
-    Vec<GlyphMeshAssetPrimitive>,
-) {
-    let mut all_graphics = Vec::new();
-    let mut board_texts = Vec::new();
-    let mut board_text_geometries = Vec::new();
-    let mut glyph_mesh_assets_by_handle = BTreeMap::new();
-    let mut text_trace = KicadImportTextTrace::default();
-
-    // Build a lookup from UUID string to component.
-    let comp_by_uuid: std::collections::HashMap<&str, &BoardComponentPayload> =
-        components.iter().map(|c| (c.uuid.as_str(), c)).collect();
-
-    for fp_block in kicad_nested_blocks(contents, "footprint") {
-        // Find the footprint UUID and match to a known component.
-        let fp_uuid = match kicad_parse_uuid(&fp_block) {
-            Some(u) => u,
-            None => continue,
-        };
-        let component = match comp_by_uuid.get(fp_uuid.as_str()) {
-            Some(c) => *c,
-            None => continue,
-        };
-
-        let mut graphic_index = 0usize;
-        let mut text_index = 0usize;
-        let fp_blocks = kicad_nested_blocks_by_form(
-            &fp_block,
-            &[
-                "fp_line",
-                "fp_rect",
-                "fp_circle",
-                "fp_arc",
-                "fp_poly",
-                "fp_text",
-                "property",
-            ],
-        );
-
-        // --- fp_line ---
-        for block in fp_blocks.get("fp_line").into_iter().flatten() {
-            let layer_name = match kicad_parse_layer_anywhere(&block) {
-                Some(n) => n,
-                None => continue,
-            };
-            let role = match kicad_render_role(&layer_name) {
-                Some(r) => r,
-                None => continue,
-            };
-            let start = match kicad_parse_xy_anywhere(&block, "start") {
-                Some(p) => p,
-                None => continue,
-            };
-            let end = match kicad_parse_xy_anywhere(&block, "end") {
-                Some(p) => p,
-                None => continue,
-            };
-            let width = kicad_parse_width_nm(&block);
-            let lid = kicad_resolve_layer_id(&layer_name, layer_table);
-            all_graphics.push(ComponentGraphicPrimitive {
-                graphic_id: format!("component-graphic:{}:kicad-line:{graphic_index}", fp_uuid),
-                component_uuid: fp_uuid.clone(),
-                layer_id: Some(layer_id(lid)),
-                primitive_kind: "polyline".to_string(),
-                render_role: role.to_string(),
-                width_nm: Some(width),
-                closed: false,
-                path: vec![
-                    transform_component_local_point(component, start),
-                    transform_component_local_point(component, end),
-                ],
-                holes: Vec::new(),
-            });
-            graphic_index += 1;
-        }
-
-        // --- fp_rect ---
-        for block in fp_blocks.get("fp_rect").into_iter().flatten() {
-            let layer_name = match kicad_parse_layer_anywhere(&block) {
-                Some(n) => n,
-                None => continue,
-            };
-            let role = match kicad_render_role(&layer_name) {
-                Some(r) => r,
-                None => continue,
-            };
-            let s = match kicad_parse_xy_anywhere(&block, "start") {
-                Some(p) => p,
-                None => continue,
-            };
-            let e = match kicad_parse_xy_anywhere(&block, "end") {
-                Some(p) => p,
-                None => continue,
-            };
-            let width = kicad_parse_width_nm(&block);
-            let lid = kicad_resolve_layer_id(&layer_name, layer_table);
-            let min_x = s.x.min(e.x);
-            let min_y = s.y.min(e.y);
-            let max_x = s.x.max(e.x);
-            let max_y = s.y.max(e.y);
-            let corners = [
-                PointNm { x: min_x, y: min_y },
-                PointNm { x: max_x, y: min_y },
-                PointNm { x: max_x, y: max_y },
-                PointNm { x: min_x, y: max_y },
-                PointNm { x: min_x, y: min_y },
-            ];
-            all_graphics.push(ComponentGraphicPrimitive {
-                graphic_id: format!("component-graphic:{}:kicad-rect:{graphic_index}", fp_uuid),
-                component_uuid: fp_uuid.clone(),
-                layer_id: Some(layer_id(lid)),
-                primitive_kind: "polyline".to_string(),
-                render_role: role.to_string(),
-                width_nm: Some(width),
-                closed: true,
-                path: corners
-                    .iter()
-                    .map(|p| transform_component_local_point(component, *p))
-                    .collect(),
-                holes: Vec::new(),
-            });
-            graphic_index += 1;
-        }
-
-        // --- fp_circle ---
-        for block in fp_blocks.get("fp_circle").into_iter().flatten() {
-            let layer_name = match kicad_parse_layer_anywhere(&block) {
-                Some(n) => n,
-                None => continue,
-            };
-            let role = match kicad_render_role(&layer_name) {
-                Some(r) => r,
-                None => continue,
-            };
-            let center = match kicad_parse_xy_anywhere(&block, "center") {
-                Some(p) => p,
-                None => continue,
-            };
-            let end_pt = match kicad_parse_xy_anywhere(&block, "end") {
-                Some(p) => p,
-                None => continue,
-            };
-            let dx = end_pt.x - center.x;
-            let dy = end_pt.y - center.y;
-            let radius = ((dx as f64 * dx as f64 + dy as f64 * dy as f64).sqrt()).round() as i64;
-            let width = kicad_parse_width_nm(&block);
-            let lid = kicad_resolve_layer_id(&layer_name, layer_table);
-            all_graphics.push(ComponentGraphicPrimitive {
-                graphic_id: format!("component-graphic:{}:kicad-circle:{graphic_index}", fp_uuid),
-                component_uuid: fp_uuid.clone(),
-                layer_id: Some(layer_id(lid)),
-                primitive_kind: "polyline".to_string(),
-                render_role: role.to_string(),
-                width_nm: Some(width),
-                closed: true,
-                path: approximate_circle_path(component, center, radius),
-                holes: Vec::new(),
-            });
-            graphic_index += 1;
-        }
-
-        // --- fp_arc ---
-        for block in fp_blocks.get("fp_arc").into_iter().flatten() {
-            let layer_name = match kicad_parse_layer_anywhere(&block) {
-                Some(n) => n,
-                None => continue,
-            };
-            let role = match kicad_render_role(&layer_name) {
-                Some(r) => r,
-                None => continue,
-            };
-            let start = match kicad_parse_xy_anywhere(&block, "start") {
-                Some(p) => p,
-                None => continue,
-            };
-            let mid = match kicad_parse_xy_anywhere(&block, "mid") {
-                Some(p) => p,
-                None => continue,
-            };
-            let end = match kicad_parse_xy_anywhere(&block, "end") {
-                Some(p) => p,
-                None => continue,
-            };
-            let width = kicad_parse_width_nm(&block);
-            let lid = kicad_resolve_layer_id(&layer_name, layer_table);
-            let path = if let Some((center, radius, start_angle, end_angle)) =
-                kicad_arc_from_three_points(&start, &mid, &end)
-            {
-                approximate_arc_path(component, center, radius, start_angle, end_angle)
-            } else {
-                // Collinear fallback — just draw start→mid→end.
-                vec![
-                    transform_component_local_point(component, start),
-                    transform_component_local_point(component, mid),
-                    transform_component_local_point(component, end),
-                ]
-            };
-            all_graphics.push(ComponentGraphicPrimitive {
-                graphic_id: format!("component-graphic:{}:kicad-arc:{graphic_index}", fp_uuid),
-                component_uuid: fp_uuid.clone(),
-                layer_id: Some(layer_id(lid)),
-                primitive_kind: "polyline".to_string(),
-                render_role: role.to_string(),
-                width_nm: Some(width),
-                closed: false,
-                path,
-                holes: Vec::new(),
-            });
-            graphic_index += 1;
-        }
-
-        // --- fp_poly ---
-        for block in fp_blocks.get("fp_poly").into_iter().flatten() {
-            let layer_name = match kicad_parse_layer_anywhere(&block) {
-                Some(n) => n,
-                None => continue,
-            };
-            let role = match kicad_render_role(&layer_name) {
-                Some(r) => r,
-                None => continue,
-            };
-            let vertices = kicad_parse_xy_points(&block);
-            if vertices.is_empty() {
-                continue;
-            }
-            let width = kicad_parse_width_nm(&block);
-            let lid = kicad_resolve_layer_id(&layer_name, layer_table);
-            all_graphics.push(ComponentGraphicPrimitive {
-                graphic_id: format!("component-graphic:{}:kicad-poly:{graphic_index}", fp_uuid),
-                component_uuid: fp_uuid.clone(),
-                layer_id: Some(layer_id(lid)),
-                primitive_kind: "polygon".to_string(),
-                render_role: role.to_string(),
-                width_nm: Some(width),
-                closed: true,
-                path: vertices
-                    .into_iter()
-                    .map(|p| transform_component_local_point(component, p))
-                    .collect(),
-                holes: Vec::new(),
-            });
-            graphic_index += 1;
-        }
-
-        // --- fp_text (literal text only, skip ${REFERENCE} and ${VALUE}) ---
-        for block in fp_blocks.get("fp_text").into_iter().flatten() {
-            text_trace.fp_text_total += 1;
-            let first_line = match block.lines().next() {
-                Some(l) => l.trim(),
-                None => continue,
-            };
-            // Extract the text content — it is the second quoted token.
-            // Format: (fp_text TYPE "text" (at ...) ...)
-            let text = match kicad_extract_fp_text_content(first_line) {
-                Some(t) => t,
-                None => continue,
-            };
-            // Skip template references handled by the label system.
-            if text.contains("${REFERENCE}")
-                || text.contains("${VALUE}")
-                || text == "%R"
-                || text == "%V"
-            {
-                text_trace.fp_text_template_skipped += 1;
-                continue;
-            }
-            if kicad_block_hidden(&block) {
-                text_trace.fp_text_hidden_skipped += 1;
-                continue;
-            }
-            let layer_name = match kicad_parse_layer_anywhere(&block) {
-                Some(n) => n,
-                None => continue,
-            };
-            let role = match kicad_render_role(&layer_name) {
-                Some(r) => r,
-                None => continue,
-            };
-            let (local_pos, local_rot) = match kicad_parse_at(&block) {
-                Some(v) => v,
-                None => continue,
-            };
-            let lid = kicad_resolve_layer_id(&layer_name, layer_table);
-            let height = kicad_parse_font_height_nm(&block);
-            let stroke_width_nm = kicad_parse_font_thickness_nm(&block);
-            let board_pos = transform_component_local_point(component, local_pos);
-            let board_rot = kicad_text_rotation_degrees(component.rotation + local_rot);
-            let mut justify = kicad_parse_text_justify(&block);
-            justify.keep_upright = true;
-            let source_uuid = kicad_parse_uuid(&block).unwrap_or_else(|| {
-                kicad_import_text_uuid("fp_text", &format!("{fp_uuid}/{text_index}/{text}/{lid}"))
-                    .to_string()
-            });
-            let Ok(text_uuid) = uuid::Uuid::parse_str(&source_uuid) else {
-                continue;
-            };
-            let board_text = kicad_board_text(
-                text_uuid,
-                text,
-                lid,
-                board_pos,
-                board_rot,
-                height,
-                stroke_width_nm,
-                justify,
-                Some(format!("imported_kicad_fp_text:{fp_uuid}:{role}")),
-            );
-            push_board_text_scene_primitives(
-                &board_text,
-                &mut board_texts,
-                &mut board_text_geometries,
-                &mut glyph_mesh_assets_by_handle,
-            );
-            text_trace.fp_text_imported += 1;
-            text_trace.record_import("fp_text", &layer_name, lid, &board_text.text);
-            text_index += 1;
-        }
-
-        // --- property blocks (Reference/Value on silkscreen/fab layers) ---
-        for prop_section in fp_blocks.get("property").into_iter().flatten() {
-            text_trace.property_total += 1;
-            let first_line = match prop_section.lines().next() {
-                Some(line) => line.trim(),
-                None => continue,
-            };
-            let mut quoted = Vec::new();
-            let mut rest = first_line;
-            while let Some(start) = rest.find('"') {
-                let after = &rest[start + 1..];
-                if let Some(end) = after.find('"') {
-                    quoted.push(after[..end].to_string());
-                    rest = &after[end + 1..];
-                } else {
-                    break;
-                }
-            }
-            if quoted.len() < 2 {
-                continue;
-            }
-            let key = &quoted[0];
-            if key != "Reference" && key != "Value" {
-                text_trace.property_metadata_skipped += 1;
-                continue;
-            }
-            let text = quoted[1].clone();
-            if text.is_empty() || text.starts_with('~') {
-                text_trace.property_empty_skipped += 1;
-                continue;
-            }
-            if kicad_block_hidden(&prop_section) {
-                text_trace.property_hidden_skipped += 1;
-                continue;
-            }
-            let layer_name = match kicad_parse_layer_anywhere(&prop_section) {
-                Some(n) => n,
-                None => continue,
-            };
-            let role = match kicad_render_role(&layer_name) {
-                Some(r) => r,
-                None => continue,
-            };
-            let layer_id = kicad_resolve_layer_id(&layer_name, layer_table);
-            let (local_pos, local_rot) = match kicad_parse_at(&prop_section) {
-                Some(v) => v,
-                None => continue,
-            };
-            let board_pos = transform_component_local_point(component, local_pos);
-            let height_nm = kicad_parse_font_height_nm(&prop_section);
-            let stroke_width_nm = kicad_parse_font_thickness_nm(&prop_section);
-            let board_rot = kicad_text_rotation_degrees(component.rotation + local_rot);
-            let mut justify = kicad_parse_text_justify(&prop_section);
-            justify.keep_upright = true;
-            let text_uuid = kicad_import_text_uuid(
-                "property_text",
-                &format!(
-                    "{}/{}/{text}/{layer_id}",
-                    component.uuid,
-                    key.to_lowercase()
-                ),
-            );
-            let board_text = kicad_board_text(
-                text_uuid,
-                text,
-                layer_id,
-                board_pos,
-                board_rot,
-                height_nm,
-                stroke_width_nm,
-                justify,
-                Some(format!(
-                    "imported_kicad_property_text:{}:{}:{role}",
-                    component.uuid,
-                    key.to_lowercase()
-                )),
-            );
-            push_board_text_scene_primitives(
-                &board_text,
-                &mut board_texts,
-                &mut board_text_geometries,
-                &mut glyph_mesh_assets_by_handle,
-            );
-            if key == "Reference" {
-                text_trace.property_reference_imported += 1;
-                text_trace.record_import(
-                    "property_reference",
-                    &layer_name,
-                    layer_id,
-                    &board_text.text,
-                );
-            } else {
-                text_trace.property_value_imported += 1;
-                text_trace.record_import("property_value", &layer_name, layer_id, &board_text.text);
-            }
-        }
-    }
-
-    text_trace.emit(
-        "footprints",
-        board_texts.len(),
-        board_text_geometries.len(),
-        glyph_mesh_assets_by_handle.len(),
-    );
-
-    (
-        all_graphics,
-        Vec::new(),
-        board_texts,
-        board_text_geometries,
-        glyph_mesh_assets_by_handle.into_values().collect(),
-    )
-}
-
-/// Interpolate an arc from three world-space points into a polyline of ~64
-/// segments. Mirrors the segment count used by the engine's outline assembly.
-fn kicad_interpolate_arc_world(start: PointNm, mid: PointNm, end: PointNm) -> Vec<PointNm> {
-    let Some((center, radius, start_tenths, end_tenths)) =
-        kicad_arc_from_three_points(&start, &mid, &end)
-    else {
-        return vec![start, mid, end];
-    };
-    let mut sweep_tenths = end_tenths - start_tenths;
-    // Pick the sweep direction that includes the mid-angle.
-    let mid_tenths = (((mid.y as f64 - center.y as f64)
-        .atan2(mid.x as f64 - center.x as f64)
-        .to_degrees()
-        * 10.0)
-        .round() as i32)
-        .rem_euclid(3600);
-    let includes_mid = |s_t: i32, sweep: i32, m_t: i32| -> bool {
-        let mut rel = (m_t - s_t).rem_euclid(3600);
-        if sweep >= 0 {
-            rel <= sweep
-        } else {
-            rel = rel - 3600;
-            rel >= sweep
-        }
-    };
-    if !includes_mid(start_tenths, sweep_tenths, mid_tenths) {
-        if sweep_tenths > 0 {
-            sweep_tenths -= 3600;
-        } else {
-            sweep_tenths += 3600;
-        }
-    }
-    const SEGMENT_ANGLE_TENTHS: i32 = 100; // ~10 deg → ≈36 segments for a full circle
-    let segment_count = (sweep_tenths.abs() / SEGMENT_ANGLE_TENTHS).max(1);
-    let mut out: Vec<PointNm> = (0..=segment_count)
-        .map(|idx| {
-            let t = start_tenths + sweep_tenths * idx / segment_count;
-            let rad = (f64::from(t) / 10.0).to_radians();
-            PointNm {
-                x: (center.x as f64 + radius as f64 * rad.cos()).round() as i64,
-                y: (center.y as f64 + radius as f64 * rad.sin()).round() as i64,
-            }
-        })
-        .collect();
-    // Force first/last to exact source endpoints so chaining against adjacent
-    // contributors remains precise.
-    if let Some(first) = out.first_mut() {
-        *first = start;
-    }
-    if let Some(last) = out.last_mut() {
-        *last = end;
-    }
-    out
-}
-
-/// Extract imported Edge.Cuts contributors as authored board-level graphics.
-/// One walk produces primitives for top-level `gr_line` / `gr_arc` and
-/// footprint-embedded `fp_line` / `fp_arc` on Edge.Cuts, under the footprint
-/// `(at x y rot)` transform where applicable. See M7-SCN-007 brief.
-///
-/// `edge_cuts_layer_key` is the scene-level layer-id key under which the
-/// Edge.Cuts layer is indexed (the `"L{n}"` form used by `scene.layers` and
-/// the layer-visibility map). This must match the rest of the scene's
-/// layer-id convention so visibility toggles actually gate these primitives.
-fn extract_kicad_board_graphics(
-    contents: &str,
-    board_uuid: &str,
-    layer_table: &std::collections::HashMap<String, i32>,
-) -> Vec<BoardGraphicPrimitive> {
-    let mut out: Vec<BoardGraphicPrimitive> = Vec::new();
-    let mut ordinal: usize = 0;
-
-    let mut stable_id = |kind: &str, src_uuid: &str| -> (String, String) {
-        let src = if src_uuid.is_empty() {
-            format!("{board_uuid}:edge-cuts:{kind}:{ordinal}")
-        } else {
-            src_uuid.to_string()
-        };
-        let oid = format!("board-graphic:{src}");
-        ordinal += 1;
-        (oid, src)
-    };
-
-    // Top-level contributors (no transform).
-    for block in kicad_nested_blocks(contents, "gr_line") {
-        let Some(layer_name) = kicad_parse_layer_anywhere(&block) else {
-            continue;
-        };
-        let Some(layer_key) = kicad_board_graphic_layer_key(&layer_name, layer_table) else {
-            continue;
-        };
-        let (Some(start), Some(end)) = (
-            kicad_parse_xy_anywhere_block(&block, "start"),
-            kicad_parse_xy_anywhere_block(&block, "end"),
-        ) else {
-            continue;
-        };
-        let width = kicad_parse_width_nm(&block);
-        let uuid = kicad_parse_uuid(&block).unwrap_or_default();
-        let (object_id, source) = stable_id("line", &uuid);
-        out.push(BoardGraphicPrimitive {
-            object_id,
-            object_kind: "board_graphic".to_string(),
-            primitive_kind: "polyline".to_string(),
-            source_object_uuid: source,
-            layer_id: layer_key,
-            path: vec![start, end],
-            holes: Vec::new(),
-            width_nm: Some(width),
-        });
-    }
-    for block in kicad_nested_blocks(contents, "gr_arc") {
-        let Some(layer_name) = kicad_parse_layer_anywhere(&block) else {
-            continue;
-        };
-        let Some(layer_key) = kicad_board_graphic_layer_key(&layer_name, layer_table) else {
-            continue;
-        };
-        let (Some(start), Some(mid), Some(end)) = (
-            kicad_parse_xy_anywhere_block(&block, "start"),
-            kicad_parse_xy_anywhere_block(&block, "mid"),
-            kicad_parse_xy_anywhere_block(&block, "end"),
-        ) else {
-            continue;
-        };
-        let width = kicad_parse_width_nm(&block);
-        let uuid = kicad_parse_uuid(&block).unwrap_or_default();
-        let (object_id, source) = stable_id("arc", &uuid);
-        out.push(BoardGraphicPrimitive {
-            object_id,
-            object_kind: "board_graphic".to_string(),
-            primitive_kind: "polyline".to_string(),
-            source_object_uuid: source,
-            layer_id: layer_key,
-            path: kicad_interpolate_arc_world(start, mid, end),
-            holes: Vec::new(),
-            width_nm: Some(width),
-        });
-    }
-    for block in kicad_nested_blocks(contents, "gr_poly") {
-        let Some(layer_name) = kicad_parse_layer_anywhere(&block) else {
-            continue;
-        };
-        let Some(layer_key) = kicad_board_graphic_layer_key(&layer_name, layer_table) else {
-            continue;
-        };
-        let mut path = kicad_parse_xy_points(&block);
-        if path.len() < 2 {
-            continue;
-        }
-        let width = kicad_parse_width_nm(&block);
-        let uuid = kicad_parse_uuid(&block).unwrap_or_default();
-        let (object_id, source) = stable_id("poly", &uuid);
-        let filled = block.contains("(fill yes)");
-        if !filled
-            && path
-                .first()
-                .zip(path.last())
-                .is_some_and(|(first, last)| first != last)
-            && let Some(first) = path.first().copied()
-        {
-            path.push(first);
-        }
-        out.push(BoardGraphicPrimitive {
-            object_id,
-            object_kind: "board_graphic".to_string(),
-            primitive_kind: if filled { "polygon" } else { "polyline" }.to_string(),
-            source_object_uuid: source,
-            layer_id: layer_key,
-            path,
-            holes: Vec::new(),
-            width_nm: Some(width),
-        });
-    }
-    for block in kicad_nested_blocks(contents, "gr_circle") {
-        let Some(layer_name) = kicad_parse_layer_anywhere(&block) else {
-            continue;
-        };
-        let Some(layer_key) = kicad_board_graphic_layer_key(&layer_name, layer_table) else {
-            continue;
-        };
-        let (Some(center), Some(end_pt)) = (
-            kicad_parse_xy_anywhere_block(&block, "center"),
-            kicad_parse_xy_anywhere_block(&block, "end"),
-        ) else {
-            continue;
-        };
-        let dx = end_pt.x - center.x;
-        let dy = end_pt.y - center.y;
-        let radius = ((dx as f64 * dx as f64 + dy as f64 * dy as f64).sqrt()).round() as i64;
-        let width = kicad_parse_width_nm(&block);
-        let uuid = kicad_parse_uuid(&block).unwrap_or_default();
-        let (object_id, source) = stable_id("circle", &uuid);
-        let filled = block.contains("(fill yes)");
-        let path = approximate_world_circle_path(center, radius);
-        out.push(BoardGraphicPrimitive {
-            object_id,
-            object_kind: "board_graphic".to_string(),
-            primitive_kind: if filled { "polygon" } else { "polyline" }.to_string(),
-            source_object_uuid: source,
-            layer_id: layer_key,
-            path,
-            holes: Vec::new(),
-            width_nm: Some(width),
-        });
-    }
-    out
-}
-
-fn extract_kicad_board_texts(
-    contents: &str,
-    layer_table: &std::collections::HashMap<String, i32>,
-) -> (
-    Vec<BoardTextPrimitive>,
-    Vec<BoardTextGeometryPrimitive>,
-    Vec<GlyphMeshAssetPrimitive>,
-) {
-    let mut board_texts = Vec::new();
-    let mut board_text_geometries = Vec::new();
-    let mut glyph_mesh_assets_by_handle = BTreeMap::new();
-    let mut text_trace = KicadImportTextTrace::default();
-    for (index, block) in kicad_nested_blocks(contents, "gr_text")
-        .into_iter()
-        .enumerate()
-    {
-        text_trace.gr_text_total += 1;
-        if kicad_block_hidden(&block) {
-            text_trace.gr_text_hidden_skipped += 1;
-            continue;
-        }
-        let Some(layer_name) = kicad_parse_layer_anywhere(&block) else {
-            continue;
-        };
-        let layer = kicad_resolve_layer_id(&layer_name, layer_table);
-        let Some((position, rotation)) = kicad_parse_at(&block) else {
-            continue;
-        };
-        let Some(first_line) = block.lines().next().map(str::trim) else {
-            continue;
-        };
-        let Some(start) = first_line.find('"') else {
-            continue;
-        };
-        let rest = &first_line[start + 1..];
-        let Some(end) = rest.find('"') else {
-            continue;
-        };
-        let text = rest[..end].to_string();
-        let uuid = kicad_parse_uuid(&block)
-            .and_then(|value| uuid::Uuid::parse_str(&value).ok())
-            .unwrap_or_else(|| {
-                kicad_import_text_uuid(
-                    "gr_text",
-                    &format!("{index}/{text}/{}/{}/{}", position.x, position.y, layer),
-                )
-            });
-        let board_text = kicad_board_text(
-            uuid,
-            text,
-            layer,
-            position,
-            kicad_text_rotation_degrees(rotation),
-            kicad_parse_font_height_nm(&block),
-            kicad_parse_font_thickness_nm(&block),
-            kicad_parse_text_justify(&block),
-            Some("imported_kicad_gr_text".to_string()),
-        );
-        push_board_text_scene_primitives(
-            &board_text,
-            &mut board_texts,
-            &mut board_text_geometries,
-            &mut glyph_mesh_assets_by_handle,
-        );
-        text_trace.gr_text_imported += 1;
-        text_trace.record_import("gr_text", &layer_name, layer, &board_text.text);
-    }
-
-    text_trace.emit(
-        "board",
-        board_texts.len(),
-        board_text_geometries.len(),
-        glyph_mesh_assets_by_handle.len(),
-    );
-
-    (
-        board_texts,
-        board_text_geometries,
-        glyph_mesh_assets_by_handle.into_values().collect(),
-    )
-}
-
-fn kicad_board_graphic_layer_key(
-    layer_name: &str,
-    layer_table: &std::collections::HashMap<String, i32>,
-) -> Option<String> {
-    match layer_name {
-        "F.SilkS" | "B.SilkS" | "F.Fab" | "B.Fab" | "F.CrtYd" | "B.CrtYd" | "Edge.Cuts" => {
-            Some(layer_id(kicad_resolve_layer_id(layer_name, layer_table)))
-        }
-        _ => None,
-    }
-}
-
-fn approximate_world_circle_path(center: PointNm, radius: i64) -> Vec<PointNm> {
-    let segments = 32usize;
-    (0..=segments)
-        .map(|i| {
-            let angle = std::f64::consts::TAU * (i as f64) / (segments as f64);
-            PointNm {
-                x: center.x + (radius as f64 * angle.cos()).round() as i64,
-                y: center.y + (radius as f64 * angle.sin()).round() as i64,
-            }
-        })
-        .collect()
-}
-
-/// Native-project parity helper for M7-SCN-007 Option B.
-///
-/// Native board JSON persists the assembled board outline polygon but does not
-/// currently preserve the original per-contributor Edge.Cuts primitives or
-/// their source identities. For native projects, derive stable board-scoped
-/// Edge.Cuts line primitives from the persisted outline so authored-layer
-/// visibility, stacking, and picking behave consistently with imported boards.
-fn outline_board_graphics_from_outline(
-    outline: &OutlinePayload,
-    board_uuid: &str,
-    edge_cuts_layer_key: &str,
-) -> Vec<BoardGraphicPrimitive> {
-    let mut vertices = outline.vertices.clone();
-    if vertices.len() < 2 {
-        return Vec::new();
-    }
-    if outline.closed && vertices.first() != vertices.last() {
-        if let Some(first) = vertices.first().copied() {
-            vertices.push(first);
-        }
-    }
-    vertices
-        .windows(2)
-        .enumerate()
-        .map(|(index, segment)| {
-            let source = format!("{board_uuid}:outline-segment:{index}");
-            BoardGraphicPrimitive {
-                object_id: format!("board-graphic:{source}"),
-                object_kind: "board_graphic".to_string(),
-                primitive_kind: "line".to_string(),
-                source_object_uuid: source,
-                layer_id: edge_cuts_layer_key.to_string(),
-                path: vec![segment[0], segment[1]],
-                holes: Vec::new(),
-                width_nm: None,
-            }
-        })
-        .collect()
-}
-
-fn unrouted_primitives_from_airwires(
-    airwires: &[eda_engine::board::Airwire],
-) -> Vec<UnroutedPrimitive> {
-    airwires
-        .iter()
-        .map(|airwire| {
-            let source = format!(
-                "{}:{}:{}:{}:{}",
-                airwire.net,
-                airwire.from.component,
-                airwire.from.pin,
-                airwire.to.component,
-                airwire.to.pin
-            );
-            UnroutedPrimitive {
-                object_id: format!("unrouted:{source}"),
-                object_kind: "unrouted".to_string(),
-                source_object_uuid: source,
-                net_uuid: airwire.net.to_string(),
-                from_component: airwire.from.component.clone(),
-                from_pin: airwire.from.pin.clone(),
-                to_component: airwire.to.component.clone(),
-                to_pin: airwire.to.pin.clone(),
-                path: vec![
-                    PointNm {
-                        x: airwire.from_position.x,
-                        y: airwire.from_position.y,
-                    },
-                    PointNm {
-                        x: airwire.to_position.x,
-                        y: airwire.to_position.y,
-                    },
-                ],
-            }
-        })
-        .collect()
-}
-
-fn net_display_from_imported_board(board: &eda_engine::board::Board) -> Vec<NetDisplayEntry> {
-    let mut nets: Vec<_> = board.nets.values().collect();
-    nets.sort_by(|a, b| a.name.cmp(&b.name).then_with(|| a.uuid.cmp(&b.uuid)));
-    nets.into_iter()
-        .map(|net| NetDisplayEntry {
+    let mut nets = Vec::with_capacity(nets_map.len());
+    for (_key, value) in nets_map {
+        let net: EngineNetPayload =
+            serde_json::from_value(value).context("failed to parse native board net")?;
+        nets.push(NetDisplayEntry {
             net_uuid: net.uuid.to_string(),
-            net_name: net.name.clone(),
+            net_name: net.name,
             airwire_color_rgb: deterministic_airwire_color(net.uuid.as_bytes()),
-        })
-        .collect()
+        });
+    }
+    nets.sort_by(|a, b| {
+        a.net_name
+            .cmp(&b.net_name)
+            .then_with(|| a.net_uuid.cmp(&b.net_uuid))
+    });
+    Ok(nets)
+}
+
+#[derive(Debug, Clone, Deserialize)]
+struct EngineNetPayload {
+    uuid: uuid::Uuid,
+    name: String,
 }
 
 fn deterministic_airwire_color(bytes: &[u8]) -> [f32; 3] {
@@ -5225,41 +3772,6 @@ fn hsv_to_rgb(h: f32, s: f32, v: f32) -> [f32; 3] {
         4 => [t, p, v],
         _ => [v, p, q],
     }
-}
-
-/// Block-level variant of `kicad_parse_xy_anywhere`: scan every line of the
-/// block to locate the first `(form x y ...)` occurrence.
-fn kicad_parse_xy_anywhere_block(block: &str, form: &str) -> Option<PointNm> {
-    block
-        .lines()
-        .find_map(|line| kicad_parse_xy_anywhere(line.trim_start(), form))
-}
-
-/// Extract the text content from an `fp_text` first line.
-/// Format: `(fp_text TYPE "text content" (at ...`
-fn kicad_extract_fp_text_content(first_line: &str) -> Option<String> {
-    let trimmed = first_line.trim();
-    if !trimmed.starts_with("(fp_text ") {
-        return None;
-    }
-    let after = &trimmed["(fp_text ".len()..];
-    // Skip the type token (reference, value, user).
-    let rest = after.trim_start();
-    let rest = if rest.starts_with('"') {
-        // Type is quoted (rare).
-        let end = rest[1..].find('"')?;
-        rest[end + 2..].trim_start()
-    } else {
-        let end = rest.find(|c: char| c.is_whitespace())?;
-        rest[end..].trim_start()
-    };
-    // Now the text content should be quoted.
-    if !rest.starts_with('"') {
-        return None;
-    }
-    let inner = &rest[1..];
-    let end = inner.find('"')?;
-    Some(inner[..end].to_string())
 }
 
 /// Load the board scene directly from native project JSON files, bypassing
@@ -5345,9 +3857,9 @@ fn load_scene_from_engine(request: &LiveReviewRequest) -> Result<(BoardReviewSce
     let board_graphics =
         outline_board_graphics_from_outline(&outline, &inspect.board_uuid, &edge_cuts_layer_key);
     let unrouted_primitives: Vec<UnroutedPrimitive> = Vec::new();
-    let net_display: Vec<NetDisplayEntry> = Vec::new();
+    let net_display = net_display_from_native_board_value(&board_value)?;
 
-    let scene = build_board_review_scene(
+    let mut scene = build_board_review_scene(
         &inspect,
         outline,
         components,
@@ -5366,6 +3878,9 @@ fn load_scene_from_engine(request: &LiveReviewRequest) -> Result<(BoardReviewSce
         net_display,
         edge_cuts_layer_key,
     );
+    if let Some(layers) = scene_layers_from_native_stackup_value(&board_value) {
+        scene.layers = layers;
+    }
     Ok((scene, board_path))
 }
 
@@ -6990,6 +5505,52 @@ fn inferred_scene_layer_visible_by_default(layer_name: &str) -> bool {
         || layer_name == "F.SilkS"
 }
 
+fn scene_layers_from_native_stackup_value(board: &Value) -> Option<Vec<SceneLayer>> {
+    let layers = board
+        .get("stackup")
+        .and_then(|stackup| stackup.get("layers"))
+        .and_then(|layers| layers.as_array())?;
+    let mut scene_layers = Vec::with_capacity(layers.len());
+    for (render_order, layer) in layers.iter().enumerate() {
+        let id = layer.get("id").and_then(|value| value.as_i64())? as i32;
+        let name = layer
+            .get("name")
+            .and_then(|value| value.as_str())
+            .unwrap_or_else(|| standard_layer_name(id).unwrap_or("layer"))
+            .to_string();
+        let kind = layer
+            .get("layer_type")
+            .and_then(|value| value.as_str())
+            .map(native_stackup_layer_kind)
+            .unwrap_or_else(|| inferred_scene_layer_kind(&name))
+            .to_string();
+        scene_layers.push(SceneLayer {
+            layer_id: layer_id(id),
+            name: name.clone(),
+            kind,
+            render_order: render_order as u32,
+            visible_by_default: inferred_scene_layer_visible_by_default(&name),
+        });
+    }
+    if scene_layers.is_empty() {
+        None
+    } else {
+        Some(scene_layers)
+    }
+}
+
+fn native_stackup_layer_kind(layer_type: &str) -> &'static str {
+    match layer_type {
+        "Copper" => "copper",
+        "SolderMask" => "mask",
+        "Paste" => "paste",
+        "Silkscreen" => "silkscreen",
+        "Mechanical" => "mechanical",
+        "Dielectric" => "dielectric",
+        _ => "other",
+    }
+}
+
 fn component_bounds(
     component: &BoardComponentPayload,
     pads: &[&BoardPadPayload],
@@ -7169,6 +5730,7 @@ pub fn load_fixture_workspace_state() -> ReviewWorkspaceState {
 
 #[cfg(test)]
 mod tests {
+    use super::kicad_scene_import::*;
     use super::*;
 
     #[test]
@@ -7623,6 +6185,154 @@ mod tests {
     }
 
     #[test]
+    fn authoring_tool_switch_resets_gesture_and_reports_status() {
+        let workspace = load_fixture_workspace_state();
+        let mut session = LiveDesignSession::new(workspace);
+
+        let set = session.apply(SessionCommand::SetTool(WorkspaceTool::DrawBoardTrack));
+        assert!(set.handled);
+        assert!(set.events.iter().any(|event| matches!(
+            event,
+            SessionEvent::ToolChanged(WorkspaceTool::DrawBoardTrack)
+        )));
+
+        let begin = session.apply(SessionCommand::BeginAuthoringGesture {
+            world: PointNm {
+                x: 151_000,
+                y: 249_000,
+            },
+            target_object_id: None,
+        });
+        assert!(begin.handled);
+        assert_eq!(
+            session.workspace().authoring.gesture.anchor,
+            Some(PointNm {
+                x: 200_000,
+                y: 200_000
+            })
+        );
+
+        let select = session.apply(SessionCommand::SetTool(WorkspaceTool::Select));
+        assert!(select.handled);
+        assert!(!session.workspace().authoring.gesture.is_active());
+        assert_eq!(
+            session
+                .workspace()
+                .last_command_status
+                .as_ref()
+                .expect("status")
+                .detail,
+            "tool select"
+        );
+    }
+
+    #[test]
+    fn draw_board_track_handoff_uses_backing_and_review_defaults() {
+        let mut state = load_fixture_workspace_state();
+        state.backing = Some(WorkspaceBacking {
+            request: LiveReviewRequest {
+                project_root: PathBuf::from("/tmp/datum authoring demo"),
+                board_file: None,
+                artifact_path: None,
+                net_uuid: None,
+                from_anchor_pad_uuid: None,
+                to_anchor_pad_uuid: None,
+                profile: None,
+            },
+            board_path: PathBuf::from("/tmp/datum authoring demo/board/board.json"),
+        });
+
+        let handoff = state
+            .draw_board_track_handoff(
+                PointNm {
+                    x: 100_000,
+                    y: 200_000,
+                },
+                PointNm {
+                    x: 300_000,
+                    y: 400_000,
+                },
+            )
+            .expect("handoff");
+
+        assert_eq!(handoff.command_id, "datum.pcb.draw_board_track");
+        assert!(handoff.command.contains("draw-board-track"));
+        assert!(handoff.command.contains("'/tmp/datum authoring demo'"));
+        assert!(handoff.command.contains("--from-x-nm 100000"));
+        assert!(handoff.command.contains("--to-y-nm 400000"));
+        assert!(handoff.command.contains("--width-nm"));
+    }
+
+    #[test]
+    fn via_move_and_delete_authoring_handoffs_use_scene_context() {
+        let mut state = load_fixture_workspace_state();
+        state.backing = Some(WorkspaceBacking {
+            request: LiveReviewRequest {
+                project_root: PathBuf::from("/tmp/datum authoring demo"),
+                board_file: None,
+                artifact_path: None,
+                net_uuid: None,
+                from_anchor_pad_uuid: None,
+                to_anchor_pad_uuid: None,
+                profile: None,
+            },
+            board_path: PathBuf::from("/tmp/datum authoring demo/board/board.json"),
+        });
+
+        let via = state
+            .place_board_via_handoff(PointNm {
+                x: 500_000,
+                y: 600_000,
+            })
+            .expect("via handoff");
+        assert_eq!(via.command_id, "datum.pcb.place_board_via");
+        assert!(via.command.contains("place-board-via"));
+        assert!(via.command.contains("--x-nm 500000"));
+        assert!(via.command.contains("--diameter-nm 600000"));
+
+        let component = state.scene.components.first().expect("fixture component");
+        let move_component = state
+            .move_component_handoff(
+                &component.object_id,
+                PointNm {
+                    x: 700_000,
+                    y: 800_000,
+                },
+            )
+            .expect("move handoff");
+        assert_eq!(move_component.command_id, "datum.pcb.move_board_component");
+        assert!(move_component.command.contains("move-board-component"));
+        assert!(move_component.command.contains("--component"));
+        assert!(move_component.command.contains(&component.component_uuid));
+
+        let delete_track = state
+            .delete_authored_object_handoff("track:00000000-0000-0000-0000-000000000123")
+            .expect("delete track handoff");
+        assert_eq!(delete_track.command_id, "datum.pcb.delete_board_track");
+        assert!(delete_track.command.contains("delete-board-track"));
+        assert!(delete_track.command.contains("--track"));
+
+        let text = state
+            .place_board_text_handoff(PointNm {
+                x: 900_000,
+                y: 1_000_000,
+            })
+            .expect("text handoff");
+        assert_eq!(text.command_id, "datum.pcb.place_board_text");
+        assert!(text.command.contains("place-board-text"));
+        assert!(text.command.contains("--text TEXT"));
+        assert!(text.command.contains("--x-nm 900000"));
+        assert!(text.command.contains("--render-intent annotation"));
+
+        let delete_text = state
+            .delete_authored_object_handoff("board-text:00000000-0000-0000-0000-000000000456")
+            .expect("delete text handoff");
+        assert_eq!(delete_text.command_id, "datum.pcb.delete_board_text");
+        assert!(delete_text.command.contains("delete-board-text"));
+        assert!(delete_text.command.contains("--text"));
+    }
+
+    #[test]
     fn authored_toggle_is_frame_only() {
         let workspace = load_fixture_workspace_state();
         let mut session = LiveDesignSession::new(workspace);
@@ -8047,6 +6757,40 @@ mod tests {
         let color_c = deterministic_airwire_color(b"net-b");
         assert_eq!(color_a, color_b);
         assert_ne!(color_a, color_c);
+    }
+
+    #[test]
+    fn native_stackup_scene_layers_preserve_nonstandard_kicad_layer_ids() {
+        let board = json!({
+            "stackup": {
+                "layers": [
+                    { "id": 0, "name": "F.Cu", "layer_type": "Copper", "thickness_nm": 0 },
+                    { "id": 2, "name": "B.Cu", "layer_type": "Copper", "thickness_nm": 0 },
+                    { "id": 13, "name": "F.Paste", "layer_type": "Paste", "thickness_nm": 0 },
+                    { "id": 25, "name": "Edge.Cuts", "layer_type": "Mechanical", "thickness_nm": 0 }
+                ]
+            }
+        });
+        let layers = scene_layers_from_native_stackup_value(&board).expect("scene layers");
+
+        assert!(layers.iter().any(|layer| {
+            layer.layer_id == "L2"
+                && layer.name == "B.Cu"
+                && layer.kind == "copper"
+                && layer.visible_by_default
+        }));
+        assert!(layers.iter().any(|layer| {
+            layer.layer_id == "L13"
+                && layer.name == "F.Paste"
+                && layer.kind == "paste"
+                && !layer.visible_by_default
+        }));
+        assert!(layers.iter().any(|layer| {
+            layer.layer_id == "L25"
+                && layer.name == "Edge.Cuts"
+                && layer.kind == "mechanical"
+                && layer.visible_by_default
+        }));
     }
 
     #[test]
@@ -8653,6 +7397,26 @@ mod tests {
                 .iter()
                 .any(|entry| entry["text"] == serde_json::Value::String("J2".to_string())),
             "KiCad-backed reference text should be materialized for J2"
+        );
+    }
+
+    #[test]
+    fn materialized_kicad_board_defaults_to_stable_native_workspace_root() {
+        let source = PathBuf::from("/tmp/example boards/DOA2526.kicad_pcb");
+        let first = default_materialized_kicad_board_project_root(&source);
+        let second = default_materialized_kicad_board_project_root(&source);
+
+        assert_eq!(first, second);
+        assert!(first.starts_with(std::env::temp_dir().join("datum-eda/gui-imports")));
+        assert!(
+            first
+                .file_name()
+                .and_then(|value| value.to_str())
+                .is_some_and(|value| value.starts_with("DOA2526-"))
+        );
+        assert_eq!(
+            materialized_kicad_board_project_name(&source),
+            "DOA2526 Datum Workspace"
         );
     }
 

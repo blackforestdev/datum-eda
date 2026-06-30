@@ -528,12 +528,19 @@ pub(super) fn parse_layer_line(trimmed: &str) -> Option<StackupLayer> {
     let mut parts = inner.split_whitespace();
     let id = parts.next()?.parse::<i32>().ok()?;
     let name = parse_next_quoted_from(inner)?;
-    let layer_type = if inner.contains(" signal") {
+    let canonical_name = canonicalize_kicad_layer_name(&name);
+    let layer_type = if inner.contains(" signal") || canonical_name.ends_with(".Cu") {
         StackupLayerType::Copper
+    } else if canonical_name.ends_with(".Mask") {
+        StackupLayerType::SolderMask
+    } else if canonical_name.ends_with(".Paste") {
+        StackupLayerType::Paste
+    } else if canonical_name.ends_with(".SilkS") {
+        StackupLayerType::Silkscreen
     } else {
         StackupLayerType::Mechanical
     };
-    Some(StackupLayer::new(id, name, layer_type, 0))
+    Some(StackupLayer::new(id, canonical_name, layer_type, 0))
 }
 
 /// Apply a footprint's `(at x y [rot])` placement to a point authored in the

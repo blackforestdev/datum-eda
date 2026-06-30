@@ -1,6 +1,8 @@
 use std::path::{Component, Path};
 
-use crate::pool::{Entity, ModelAttachment, Package, Padstack, Part, Symbol, Unit};
+use crate::pool::{
+    Entity, Footprint, ModelAttachment, Package, Padstack, Part, PinPadMap, Symbol, Unit,
+};
 
 use super::{
     EngineError, Operation, OperationBatch, SourceShardKind,
@@ -474,9 +476,9 @@ fn validate_pool_library_object_shape(
         "entities" => validate_typed_pool_object::<Entity>(object_kind, value),
         "parts" => validate_typed_pool_object::<Part>(object_kind, value),
         "packages" => validate_typed_pool_object::<Package>(object_kind, value),
-        "footprints" => validate_typed_pool_object::<Package>(object_kind, value),
+        "footprints" => validate_typed_pool_object::<Footprint>(object_kind, value),
         "padstacks" => validate_typed_pool_object::<Padstack>(object_kind, value),
-        "pin_pad_maps" => validate_pin_pad_map_shape(object),
+        "pin_pad_maps" => validate_typed_pool_object::<PinPadMap>(object_kind, value),
         _ => Ok(()),
     }
 }
@@ -495,31 +497,4 @@ where
                 "invalid pool library {object_kind} object: {error}"
             ))
         })
-}
-
-fn validate_pin_pad_map_shape(
-    object: &serde_json::Map<String, serde_json::Value>,
-) -> Result<(), EngineError> {
-    let value = object
-        .get("part")
-        .and_then(serde_json::Value::as_str)
-        .ok_or_else(|| {
-            EngineError::Validation(format!(
-                "pool library pin_pad_maps object missing uuid field part"
-            ))
-        })?;
-    uuid::Uuid::parse_str(value).map(|_| ()).map_err(|error| {
-        EngineError::Validation(format!(
-            "pool library pin_pad_maps object field part is not a valid UUID: {error}"
-        ))
-    })?;
-    match object
-        .get("mappings")
-        .and_then(serde_json::Value::as_object)
-    {
-        Some(_) => Ok(()),
-        None => Err(EngineError::Validation(
-            "pool library pin_pad_maps object missing object field mappings".to_string(),
-        )),
-    }
 }

@@ -13,7 +13,7 @@ fn write_temp_footprint(name: &str, contents: &str) -> std::path::PathBuf {
 }
 
 #[test]
-fn imports_kicad_footprint_into_package_and_padstacks() {
+fn imports_kicad_footprint_into_package_footprint_and_padstacks() {
     let path = write_temp_footprint(
         "demo.kicad_mod",
         r#"(footprint "R_0805_2012Metric"
@@ -29,12 +29,17 @@ fn imports_kicad_footprint_into_package_and_padstacks() {
     let (imported, report) = import_footprint_document(&path).expect("footprint should import");
     assert_eq!(report.kind, ImportKind::KiCadFootprint);
     assert_eq!(imported.package.name, "R_0805_2012Metric");
+    assert_eq!(imported.footprint.name, "R_0805_2012Metric");
+    assert_eq!(imported.footprint.package, imported.package.uuid);
     assert!(report.metadata["source_hash"].starts_with("sha256:"));
-    assert_eq!(imported.package.pads.len(), 2);
+    assert!(imported.package.pads.is_empty());
+    assert!(imported.package.silkscreen.is_empty());
+    assert!(imported.package.courtyard.vertices.is_empty());
+    assert_eq!(imported.footprint.pads.len(), 2);
     assert_eq!(imported.padstacks.len(), 2);
-    assert!(!imported.package.silkscreen.is_empty());
+    assert!(!imported.footprint.silkscreen.is_empty());
     assert!(!imported.mechanical.is_empty());
-    assert!(!imported.package.courtyard.vertices.is_empty());
+    assert!(!imported.footprint.courtyard.vertices.is_empty());
 }
 
 #[test]
@@ -68,6 +73,7 @@ fn imports_kicad_footprint_reuses_import_map_package_identity() {
         import_footprint_document_with_import_map(&path, &import_map).expect("footprint imports");
 
     assert_eq!(imported.package.uuid, mapped_uuid);
+    assert_eq!(imported.footprint.package, mapped_uuid);
     assert_eq!(report.metadata["import_key"], import_key);
     assert!(report.metadata["source_hash"].starts_with("sha256:"));
     assert_eq!(report.metadata["reused_existing_identity"], "true");
@@ -88,6 +94,7 @@ fn imports_kicad_footprint_allocates_deterministic_identity_for_new_import_key()
     let (second, second_report) = import_footprint_document(&path).expect("second import");
 
     assert_eq!(first.package.uuid, second.package.uuid);
+    assert_eq!(first.footprint.uuid, second.footprint.uuid);
     assert_eq!(
         first_report.metadata["import_key"],
         footprint_package_import_key(&path)
@@ -108,7 +115,7 @@ fn imports_kicad_footprint_drilled_padstack() {
     );
 
     let (imported, _report) = import_footprint_document(&path).expect("footprint should import");
-    assert_eq!(imported.package.pads.len(), 1);
+    assert_eq!(imported.footprint.pads.len(), 1);
     assert_eq!(imported.padstacks.len(), 1);
     assert_eq!(imported.padstacks[0].drill_nm, Some(1_000_000));
 }
@@ -128,7 +135,7 @@ fn imports_kicad_footprint_texts_on_uppercase_silkscreen_layers() {
 
     let (imported, _report) = import_footprint_document(&path).expect("footprint should import");
     let silk_texts = imported
-        .package
+        .footprint
         .silkscreen
         .iter()
         .filter_map(|primitive| match primitive {

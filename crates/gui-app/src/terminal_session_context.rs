@@ -63,9 +63,7 @@ impl TerminalSessionContextSummary {
 }
 
 pub(super) fn workspace_tool_name(tool: WorkspaceTool) -> &'static str {
-    match tool {
-        WorkspaceTool::Select => "select",
-    }
+    tool.label()
 }
 
 pub(super) fn dock_tab_name(tab: DockTab) -> &'static str {

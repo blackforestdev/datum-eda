@@ -79,6 +79,7 @@ pub(crate) use self::cli_args_project_library::{
     ProjectSetPoolPartSupplyChainArgs, ProjectSetPoolPartTagsArgs, ProjectSetPoolPartThermalArgs,
     ProjectSetPoolSymbolPinAnchorArgs, ProjectSetPoolUnitPinArgs,
 };
+pub(crate) use self::cli_args_project_library_part_bindings::ProjectSetPoolPartBindingsArgs;
 pub(crate) use self::cli_args_project_output_jobs::{
     ProjectCancelOutputJobRunArgs, ProjectCreateGerberOutputJobArgs, ProjectCreateOutputJobArgs,
     ProjectDeleteOutputJobArgs, ProjectRunOutputJobArgs, ProjectStartOutputJobRunArgs,

@@ -498,6 +498,8 @@ pub(crate) fn create_native_project_pool_part(
         "uuid": part_id,
         "entity": entity_id,
         "package": package_id,
+        "default_footprint": null,
+        "default_pin_pad_map": null,
         "pad_map": {},
         "mpn": mpn,
         "manufacturer": manufacturer,

@@ -103,6 +103,15 @@ Locked workspace composition for `M7` v1:
 - one bottom dock strip containing the integrated `Terminal` and `Assistant`
   lanes
 
+Layout implementation rule for `M7` v1:
+- the shell layout is solved through the adopted Taffy-backed frontend layout
+  seam defined by `docs/decisions/PRODUCT_MECHANICS_014_UI_LAYOUT_SYSTEM.md`
+  and `docs/contracts/UI_LAYOUT_SYSTEM_CONTRACT.md`
+- the renderer consumes solved logical-pixel rectangles; engine/protocol
+  contracts do not depend on Taffy
+- populated-state layout regressions are acceptance failures even when the
+  empty/default visual fixture passes
+
 Post-spike validation items for this area:
 - exact sidebar widths and heights beyond initial implementation defaults
 - exact collapsed/default-open behavior details for bottom dock tabs

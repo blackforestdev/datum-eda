@@ -12,7 +12,9 @@ fn imports_symbol_package_entity_and_part() {
     assert_eq!(pool.symbols.len(), 1);
     assert_eq!(pool.entities.len(), 2);
     assert_eq!(pool.packages.len(), 2);
+    assert_eq!(pool.footprints.len(), 2);
     assert_eq!(pool.parts.len(), 2);
+    assert_eq!(pool.pin_pad_maps.len(), 2);
     assert_eq!(pool.padstacks.len(), 6);
 
     let unit = pool.units.values().next().unwrap();
@@ -34,8 +36,15 @@ fn imports_symbol_package_entity_and_part() {
         .find(|package| package.name == "SOT23-5")
         .unwrap();
     assert_eq!(package.name, "SOT23-5");
-    assert_eq!(package.pads.len(), 3);
-    assert_eq!(package.silkscreen.len(), 1);
+    assert!(package.pads.is_empty());
+    assert!(package.silkscreen.is_empty());
+    let footprint = pool
+        .footprints
+        .values()
+        .find(|footprint| footprint.package == package.uuid)
+        .unwrap();
+    assert_eq!(footprint.pads.len(), 3);
+    assert_eq!(footprint.silkscreen.len(), 1);
 
     let part = pool
         .parts
@@ -44,6 +53,14 @@ fn imports_symbol_package_entity_and_part() {
         .unwrap();
     assert_eq!(part.entity, entity.uuid);
     assert_eq!(part.package, package.uuid);
+    assert_eq!(part.default_footprint, Some(footprint.uuid));
+    let pin_pad_map = pool
+        .pin_pad_maps
+        .get(&part.default_pin_pad_map.unwrap())
+        .unwrap();
+    assert_eq!(pin_pad_map.part, part.uuid);
+    assert_eq!(pin_pad_map.footprint, Some(footprint.uuid));
+    assert_eq!(pin_pad_map.mappings.len(), 3);
     assert_eq!(part.pad_map.len(), 3);
 }
 
@@ -71,23 +88,19 @@ fn imports_multi_gate_device_and_through_hole_pad() {
     assert_eq!(pool.symbols.len(), 1);
     assert_eq!(pool.entities.len(), 1);
     assert_eq!(pool.packages.len(), 1);
+    assert_eq!(pool.footprints.len(), 1);
     assert_eq!(pool.parts.len(), 1);
 
     let entity = pool.entities.values().next().unwrap();
     assert_eq!(entity.gates.len(), 2);
 
     let package = pool.packages.values().next().unwrap();
-    assert_eq!(package.pads.len(), 4);
-    assert!(package.pads.values().any(|pad| {
-        package
-            .pads
-            .values()
-            .find(|p| p.uuid == pad.uuid)
-            .map(|_| true)
-            .unwrap_or(false)
-    }));
+    assert!(package.pads.is_empty());
+    let footprint = pool.footprints.values().next().unwrap();
+    assert_eq!(footprint.package, package.uuid);
+    assert_eq!(footprint.pads.len(), 4);
 
-    let through_hole_count = package
+    let through_hole_count = footprint
         .pads
         .values()
         .filter(|pad| {
@@ -98,7 +111,7 @@ fn imports_multi_gate_device_and_through_hole_pad() {
         })
         .count();
     assert_eq!(through_hole_count, 4);
-    assert!(package.pads.values().all(|pad| {
+    assert!(footprint.pads.values().all(|pad| {
         pool.padstacks
             .get(&pad.padstack)
             .map(|stack| stack.drill_nm.is_some())
@@ -106,6 +119,13 @@ fn imports_multi_gate_device_and_through_hole_pad() {
     }));
 
     let part = pool.parts.values().next().unwrap();
+    assert_eq!(part.default_footprint, Some(footprint.uuid));
+    let pin_pad_map = pool
+        .pin_pad_maps
+        .get(&part.default_pin_pad_map.unwrap())
+        .unwrap();
+    assert_eq!(pin_pad_map.footprint, Some(footprint.uuid));
+    assert!(!pin_pad_map.mappings.is_empty());
     assert_eq!(part.pad_map.len(), 4);
 }
 

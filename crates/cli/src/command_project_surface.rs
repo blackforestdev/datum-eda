@@ -16,6 +16,8 @@ mod command_project_import_map;
 mod command_project_imports;
 #[path = "command_project_imports_eagle_import_map.rs"]
 mod command_project_imports_eagle_import_map;
+#[path = "command_project_imports_kicad_footprint.rs"]
+mod command_project_imports_kicad_footprint;
 #[path = "command_project_imports_schematic.rs"]
 mod command_project_imports_schematic;
 #[path = "command_project_imports_schematic_identities.rs"]
@@ -28,6 +30,8 @@ mod command_project_library_package_geometry;
 mod command_project_library_package_pad;
 #[path = "command_project_library_pad_map.rs"]
 mod command_project_library_pad_map;
+#[path = "command_project_library_part_bindings.rs"]
+mod command_project_library_part_bindings;
 #[path = "command_project_library_payload.rs"]
 mod command_project_library_payload;
 #[path = "command_project_library_proposals.rs"]
@@ -182,8 +186,8 @@ pub(crate) use self::command_project_gerber_silkscreen::{
 pub(crate) use self::command_project_import_map::query_native_project_import_map;
 pub(crate) use self::command_project_imports::{
     import_native_project_eagle_library, import_native_project_kicad_board,
-    import_native_project_kicad_footprint,
 };
+pub(crate) use self::command_project_imports_kicad_footprint::import_native_project_kicad_footprint;
 pub(crate) use self::command_project_imports_schematic::import_native_project_kicad_schematic;
 pub(crate) use self::command_project_inventory_surface::*;
 pub(crate) use self::command_project_library::{
@@ -212,6 +216,7 @@ pub(crate) use self::command_project_library_package_pad::set_native_project_poo
 pub(crate) use self::command_project_library_pad_map::{
     set_native_project_pool_part_pad_map_entry, set_native_project_pool_part_pad_map_from_entries,
 };
+pub(crate) use self::command_project_library_part_bindings::set_native_project_pool_part_bindings;
 pub(crate) use self::command_project_library_proposals::{
     propose_create_native_project_pool_entity, propose_create_native_project_pool_library_object,
     propose_create_native_project_pool_package, propose_create_native_project_pool_padstack,

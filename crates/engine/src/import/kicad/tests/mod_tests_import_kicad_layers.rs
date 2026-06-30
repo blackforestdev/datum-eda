@@ -1,5 +1,7 @@
 use crate::error::EngineError;
-use crate::import::kicad::parser_helpers::{kicad_layer_name_to_id, resolve_layer_id};
+use crate::import::kicad::parser_helpers::{
+    kicad_layer_name_to_id, parse_board_layers, resolve_layer_id,
+};
 
 #[test]
 fn hardcoded_layer_fallback_is_bounded_to_recognized_names() {
@@ -56,4 +58,35 @@ fn resolve_layer_errors_explicitly_on_unknown_name() {
         }
         other => panic!("expected EngineError::Import, got {other:?}"),
     }
+}
+
+#[test]
+fn parse_board_layers_classifies_kicad_process_layers_by_name() {
+    let stackup = parse_board_layers(
+        r#"(kicad_pcb
+  (layers
+    (0 "F.Cu" signal)
+    (1 "F.Mask" user)
+    (5 "F.SilkS" user "F.Silkscreen")
+    (13 "F.Paste" user)
+    (25 "Edge.Cuts" user)
+  )
+)"#,
+    );
+
+    assert!(stackup.layers.iter().any(|layer| {
+        layer.id == 1
+            && layer.name == "F.Mask"
+            && matches!(layer.layer_type, crate::board::StackupLayerType::SolderMask)
+    }));
+    assert!(stackup.layers.iter().any(|layer| {
+        layer.id == 5
+            && layer.name == "F.SilkS"
+            && matches!(layer.layer_type, crate::board::StackupLayerType::Silkscreen)
+    }));
+    assert!(stackup.layers.iter().any(|layer| {
+        layer.id == 13
+            && layer.name == "F.Paste"
+            && matches!(layer.layer_type, crate::board::StackupLayerType::Paste)
+    }));
 }

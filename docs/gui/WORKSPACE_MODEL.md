@@ -31,6 +31,12 @@ For the opening `M7` slice, this shell is now locked to:
 - a right sidebar for `Inspector` and `Review`
 - a bottom dock strip for `Terminal` and `Assistant`
 
+Layout governance for this shell is now defined by
+`docs/decisions/PRODUCT_MECHANICS_014_UI_LAYOUT_SYSTEM.md` and
+`docs/contracts/UI_LAYOUT_SYSTEM_CONTRACT.md`. The shell and future panel chrome
+must be solved in logical pixels through the adopted layout system rather than
+through independent hand-tuned pixel offsets.
+
 ## First-Class Lanes
 
 ### 1. Graphical Canvas / Review Lane
@@ -177,5 +183,6 @@ The first `M7` workspace should use this shell model in a narrow way:
 platform.
 
 Post-spike validation items remain open:
-- exact sidebar widths and heights beyond initial implementation defaults
+- exact tokenized sidebar widths and heights beyond initial implementation
+  defaults
 - exact bottom-dock open/collapsed behavior details

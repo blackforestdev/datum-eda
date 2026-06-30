@@ -37,46 +37,56 @@ rule/check authoring (Decision 009). Read access to the pool and the
 session/query/check/proposal/commit/artifact/journal machinery are the
 shared surface and are referenced, not redefined.
 
-The current engine exposes the pool as READ + board-consume ONLY.
-Verified pointers:
-- Pool types: `crates/engine/src/pool/mod.rs` (`Pin`, `Unit`, `Symbol`,
-  `Gate`, `Entity`, `Padstack` + `PadstackAperture` Circle/Rect only,
-  `Pad`, `Package` with courtyard/silkscreen/models_3d, `PadMapEntry`,
-  `Part` with mpn/manufacturer/value/parametric/orderable_mpns/lifecycle/
-  base, `Lifecycle{Active,Nrnd,Eol,Obsolete,Unknown}`, `ModelRef{path,
-  transform}`, `Primitive`, `Pool`, `PartSummary`).
-- Pool is populated ONLY by Eagle import
-  (`crates/engine/src/import/eagle/pool_builder.rs`) and merged via
-  `crates/engine/src/api/mod.rs` `merge_pool`.
-- Read API: `crates/engine/src/api/project_surface.rs` `search_pool`
-  (l.200), `get_part`->`PartDetail` (l.204), `get_package`->
-  `PackageDetail` (l.282).
-- Board-consume writes: `crates/engine/src/api/write_ops/
-  assign_package_rule.rs` (`assign_part` l.4, `set_package` l.83);
-  `component_replacements.rs` (`set_package_with_part` l.125,
-  `replace_component(s)` l.137/149, `apply_component_replacement_plan`
-  l.271, policies l.322/411).
-- Daemon bridge `crates/engine-daemon/src/dispatch.rs`: `search_pool`
-  l.280, `get_part` l.287, `get_package` l.294, `get_symbols` l.396,
-  `assign_part` l.109, `set_package` l.119, `set_package_with_part`
-  l.129.
+## Current Implementation Reality
 
-Verified GAPS (grep returned 0 hits across `crates/engine/src/` for
-`OperationBatch`, `ComponentInstance`, `import_key`): NO library
-authoring operation of any kind; NO general `Operation`/`OperationBatch`
-enum and NO single `commit()`/journal; NO `ObjectId`/`object_revision`/
-provenance/approval on pool objects (only the `Lifecycle` enum); NO
-Import Map `import_key`; NO `ComponentInstance`; NO project-local vs
-reusable pool layering; `Padstack` has NO mask/paste/annular/per-layer
-policy; `ModelRef` is a bare path string, not a hashed
-`ModelAttachment`; and the pool FUSES the land pattern into `Package`,
-whereas Decision 008 mandates a SEPARATE `Footprint` object. The shared
-write substrate these tools build on now EXISTS (committed at HEAD
-`5fe3016`): the typed `Operation`/`OperationBatch` enum, single
-`commit()`/journal, `ObjectId`/`object_revision`, `ComponentInstance`, and
-the Import Map. What remains is the library-specific layer above it — the
-decision-008 native types and the per-kind library ops (see
-Not-Yet-Supported and Open Owner Questions).
+The shared write substrate now exists and is not the blocker. The engine has
+`Operation`/`OperationBatch`, the single journaled commit path, revision guards,
+`ObjectId`/`object_revision` discovery, `ComponentInstance` shards, Import Map
+sidecars, resolver-visible pool shards, proposal policy for automated library
+mutations, and broad CLI/MCP library command surfaces. Current implementation
+evidence includes:
+
+- `crates/engine/src/pool/mod.rs`: canonical pool structs for `Unit`,
+  `Symbol`, `Entity`, `Padstack`, `Package`, `Part`, lifecycle, primitives,
+  part metadata, model references, and a simple pool search/index.
+- `crates/engine/src/substrate/operation.rs`: generic
+  `CreatePoolLibraryObject` / `SetPoolLibraryObject` /
+  `DeletePoolLibraryObject` operations plus legacy typed package/padstack and
+  model attach/detach operations.
+- `crates/engine/src/substrate/pool_journal_ops.rs`: write-time schema and
+  path/kind/UUID validation for authored pool shards.
+- `crates/engine/src/substrate/project_resolver.rs`: resolver discovery of
+  `units`, `symbols`, `entities`, `parts`, `packages`, `footprints`,
+  `padstacks`, and `pin_pad_maps` pool directories.
+- `crates/cli/src/command_project_library.rs` and
+  `mcp-server/tools_catalog_library.py`: broad typed library-authoring
+  facades for units, symbols, entities, padstacks, packages, parts, package
+  graphics, metadata, model attachment, and resolver-backed list/show.
+
+The remaining blocker is not "no substrate." It is that the library-specific
+authority model is still split across engine structs, generic substrate
+operations, CLI-side JSON constructors, MCP bridge methods, and ad hoc
+validation. This contract therefore defines the implementation target:
+
+- The engine must own a typed `LibraryGraph`/pool dependency contract rather
+  than leaving dependency semantics in CLI validation only.
+- `Package` is not a `Footprint`. `Package` carries the physical component
+  body/terminal family; `Footprint` carries the PCB land pattern, courtyard,
+  paste/mask process apertures, fabrication/assembly graphics, and pad
+  geometry.
+- `PinPadMap` is first-class library data. The legacy `Part.pad_map` shape is
+  a compatibility/import convenience until migrated behind explicit
+  `PinPadMap` objects.
+- `Padstack` must model layer spans, copper, drill, annular, thermal/anti-pad,
+  plated/non-plated state, and explicit mask/paste policy rather than simple
+  copper aperture geometry only.
+- `ModelAttachment` must become a governed content object or governed
+  attachment record with hash/provenance/role/review state. Bare path-only
+  `ModelRef` remains insufficient for the product target.
+- Pool layering, duplicate UUID/shadowing, project-local overrides,
+  automated-authoring proposal policy, binding materialization, and
+  validation tiers must be defined once in the engine contract and consumed by
+  CLI/MCP/GUI.
 
 ## Reference-Tool Survey (with the lean rationale)
 
@@ -508,59 +518,70 @@ Two fixtures.
    Map `import_key` (NOT `source_hash`) with preserved provenance /
    unknown-basis markers.
 
-NOTE: no native library-authoring operation, `ComponentInstance`,
-`import_key`, or `commit()`/journal exists yet (grep returned 0 hits), so
-fixture 2 currently proves the GAP, not behavior. It becomes executable
-only after the substrate slice lands.
+Fixture 2 is now partially executable: the shared journal/commit substrate,
+`ComponentInstance`, Import Map, resolver pool-shard discovery, raw library
+object operations, typed CLI producers, and MCP bridges exist. The fixture is
+not complete until the native library model stops treating `footprints` as
+package-compatible payloads, migrates package land-pattern data into a real
+`Footprint` object, resolves `PinPadMap` authority, and runs dependency
+validation through an engine-owned library graph rather than CLI-only checks.
 
-## Not-Yet-Supported
+## Not-Yet-Supported / Not-Yet-Systematic
 
-- The entire authoring substrate. No `Operation`/`OperationBatch` enum,
-  no single `commit()`/journal-with-fsync, no `ObjectId`/
-  `object_revision`/provenance, no `ComponentInstance`, no Import Map
-  `import_key`, and no project-local-vs-reusable pool layering exist in
-  the current engine. All four tools depend on this foundational slice.
-- The `Footprint` DomainObject. The pool fuses the land pattern into
-  `Package` (`crates/engine/src/pool/mod.rs`); Decision 008 mandates a
-  separate `Footprint`. The schema must be EXTENDED, not just populated.
-- Padstack per-layer policy. `PadstackAperture` is Circle/Rect copper
-  only; mask/paste/annular/per-layer plated/non-plated policy
-  (Decision 008 lines 290-306) is unmodeled.
-- `ModelAttachment`. `ModelRef` is a bare path string; the hashed,
-  role-tagged, validation-stateful `ModelAttachment` is unmodeled. Model
-  execution/decryption is out of scope entirely.
-- IPC-7351 full coverage, IPC-7352 naming, thermal/anti-pad solver
-  optimization, multi-format symbol style rendering (IEEE 315 /
-  IEC 60617), automatic diff-pair/bus pin-group inference, and
-  cross-project ECO fan-out.
+- A canonical `Footprint` DomainObject. Resolver discovers
+  `pool/footprints`, but current validation treats footprints as
+  package-compatible payloads. The target schema must separate component body
+  (`Package`) from board land pattern (`Footprint`).
+- Engine-owned `LibraryGraph` authority. The code has pool structs,
+  resolver-discovered shards, write-time shape validation, and CLI dependency
+  validation, but no single engine-level resolved graph consumed by CLI/MCP/GUI.
+- First-class `PinPadMap` authority. `Part.pad_map` and
+  `pool/pin_pad_maps` currently coexist; the first-class object is the target,
+  with `Part.pad_map` retained only as compatibility/import input until
+  migrated.
+- Padstack process policy. Current padstacks validate basic aperture shape;
+  the target includes layer spans, copper, drill, annular, plated/non-plated,
+  thermal/anti-pad, and explicit mask/paste policy including unknown/import
+  preserved states.
+- `ModelAttachment` as governed library data. Existing package `ModelRef` and
+  part behavioural model attachment are useful slices, but the target needs
+  hash/provenance/role/review-state semantics consistently across Part,
+  Package, and Footprint targets.
+- `LibraryBinding` / update-binding operations. `ComponentInstance` exists,
+  but library bindings are not yet the single first-class join that pins
+  revisions for Part, Symbol, Package, Footprint, PinPadMap, and models.
+- Pool layering and override policy. Priority ordering exists, but duplicate
+  UUID/shadowing, same-UUID override versus fork semantics, writable pool
+  targets, conflict diagnostics, and project-local override records need one
+  normative rule set.
+- Validation tiers. Commit-time rejection, resolver diagnostics, and
+  `project validate` findings are not yet a single documented contract.
+- IPC footprint generation. Standards basis/deviation recording is specified,
+  but full IPC-7351/7352 generation, naming, thermal/anti-pad synthesis,
+  density family coverage, and standards-derived pad/mask/paste checks remain
+  future work.
+- Multi-format symbol style rendering (IEEE 315 / IEC 60617), automatic
+  diff-pair/bus pin-group inference, and cross-project ECO fan-out.
 
 ## Open Owner Questions
 
-1. CONFIRM (resolved by Decision 008, confirm engine intent): Decision
-   008 (lines 50-51, 67-74, 246-277) splits `Footprint` from `Package`;
-   Horizon's fused `Package` is NOT followed. `library.author` therefore
-   has seven kinds and the pool schema must add a `Footprint` object.
-   Confirm the engine team will extend `pool/mod.rs` rather than keep the
-   fused `Package`.
-2. Which library pool types ship first: bundled-Datum, user-local,
+1. Which library pool types ship first: bundled-Datum, user-local,
    organization, project-local, imported, vendor-derived? This sets the
    `pool_ref` enum and `LibraryBinding` layering.
-3. Which `approval_state` values gate placement, and is the placement
+2. Which `approval_state` values gate placement, and is the placement
    gate a hard block or a warning by default?
-4. IPC-7351B vs IPC-7352 as the default generated-footprint naming/basis,
+3. IPC-7351B vs IPC-7352 as the default generated-footprint naming/basis,
    and which first package family the generator supports?
-5. How strict should default checks be for imported `UnknownBasis`
+4. How strict should default checks be for imported `UnknownBasis`
    library data (warn vs fail)?
-6. SUBSTRATE SEQUENCING (hard prerequisite): there is no
-   `Operation`/`OperationBatch`, single `commit()`/journal, `ObjectId`/
-   `object_revision`, provenance, Import Map `import_key`, or
-   `ComponentInstance` in the current engine (Decisions 000/001/003
-   substrate). ALL four library tools depend on this substrate — library
-   authoring cannot land before it exists.
-7. Boundary for `EditLibraryObjectField`: the decision says library
+5. Boundary for `EditLibraryObjectField`: the decision says library
    changes touching placed objects are proposal-first (lines 99-100,
    431-434). Confirm the rule: editing an UNPLACED library object commits
    directly (local); editing an object that has any `LibraryBinding` to a
    placed `ComponentInstance` is forced proposal-first. Is "has a placed
    binding" the right trigger, or should it be "the edit changes a field
    the binding depends on"?
+6. Should dependency validation be promoted into an engine-owned
+   `LibraryGraph` before any more CLI/MCP library authoring commands land?
+   This contract recommends yes: CLI and MCP should call the engine graph,
+   not duplicate semantic validation.

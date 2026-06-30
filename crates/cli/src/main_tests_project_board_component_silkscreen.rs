@@ -22,6 +22,11 @@ fn project_query_board_component_silkscreen_reads_persisted_component_silkscreen
     let package = Package {
         uuid: package_uuid,
         name: "PKG".to_string(),
+        package_family: None,
+        package_code: None,
+        mounting_type: None,
+        body_dimensions: None,
+        terminals: HashMap::new(),
         pads: HashMap::new(),
         courtyard: Polygon {
             vertices: Vec::new(),

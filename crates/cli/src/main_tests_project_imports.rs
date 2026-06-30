@@ -26,9 +26,30 @@ fn write_temp_board(root: &Path, name: &str) -> PathBuf {
   (version 20221018)
   (layers
     (0 "F.Cu" signal)
-    (31 "B.Cu" signal))
+    (31 "B.Cu" signal)
+    (44 "Edge.Cuts" user))
   (net 0 "")
   (net 1 "SIG")
+  (gr_line
+    (start 0 0)
+    (end 10 0)
+    (layer "Edge.Cuts")
+    (width 0.1))
+  (gr_line
+    (start 10 0)
+    (end 10 8)
+    (layer "Edge.Cuts")
+    (width 0.1))
+  (gr_line
+    (start 10 8)
+    (end 0 8)
+    (layer "Edge.Cuts")
+    (width 0.1))
+  (gr_line
+    (start 0 8)
+    (end 0 0)
+    (layer "Edge.Cuts")
+    (width 0.1))
   (footprint "Demo:Mapped"
     (layer "F.Cu")
     (uuid 11111111-1111-1111-1111-111111111111)
@@ -103,7 +124,31 @@ fn project_import_kicad_board_persists_board_objects_and_import_map() {
     assert!(journal.contains("\"kind\":\"create_board_track\""));
     assert!(journal.contains("\"kind\":\"create_board_via\""));
     assert!(journal.contains("\"kind\":\"create_board_zone\""));
+    assert!(journal.contains("\"kind\":\"set_board_outline\""));
+    assert!(journal.contains("\"kind\":\"set_board_stackup\""));
     assert!(journal.contains("\"kind\":\"create_import_map_shard\""));
+
+    let board_json: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(root.join("board/board.json")).unwrap())
+            .expect("native board JSON should parse");
+    let stackup_layers = board_json["stackup"]["layers"]
+        .as_array()
+        .expect("imported board should persist stackup layers");
+    assert!(
+        stackup_layers
+            .iter()
+            .any(|layer| layer["id"] == 0 && layer["name"] == "F.Cu"),
+        "KiCad board import must preserve source layer ids/names for GUI rendering"
+    );
+    let outline_vertices = board_json["outline"]["vertices"]
+        .as_array()
+        .expect("imported board should persist outline vertices");
+    assert_eq!(
+        outline_vertices.len(),
+        5,
+        "KiCad board import must preserve Edge.Cuts outline vertices for native GUI rendering"
+    );
+    assert_eq!(outline_vertices.first(), outline_vertices.last());
 
     let import_map_output = execute(
         Cli::try_parse_from([
@@ -269,6 +314,9 @@ fn project_import_kicad_footprint_persists_pool_and_import_map() {
     let package_uuid = report["package_uuid"]
         .as_str()
         .expect("package uuid should be present");
+    let footprint_uuid = report["footprint_uuid"]
+        .as_str()
+        .expect("footprint uuid should be present");
 
     assert_eq!(
         report["contract"],
@@ -281,6 +329,30 @@ fn project_import_kicad_footprint_persists_pool_and_import_map() {
             .join(format!("{package_uuid}.json"))
             .exists()
     );
+    assert!(
+        root.join("pool/footprints")
+            .join(format!("{footprint_uuid}.json"))
+            .exists()
+    );
+    let package_json: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(
+            root.join("pool/packages")
+                .join(format!("{package_uuid}.json")),
+        )
+        .expect("package should read"),
+    )
+    .expect("package should parse");
+    let footprint_json: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(
+            root.join("pool/footprints")
+                .join(format!("{footprint_uuid}.json")),
+        )
+        .expect("footprint should read"),
+    )
+    .expect("footprint should parse");
+    assert_eq!(package_json["pads"].as_object().unwrap().len(), 0);
+    assert_eq!(footprint_json["package"], package_uuid);
+    assert_eq!(footprint_json["pads"].as_object().unwrap().len(), 1);
     assert!(
         root.join("pool/padstacks")
             .read_dir()

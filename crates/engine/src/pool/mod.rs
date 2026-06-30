@@ -6,11 +6,15 @@ use uuid::Uuid;
 
 use crate::ir::geometry::{Arc, LayerId, Point, Polygon};
 
-/// Pool-domain types.
-///
-/// This is the M0 foundation layer only: canonical pool objects, simple pool
-/// container types, and serialization tests. Indexing, search, and import
-/// population are added in later M0 slices.
+mod footprint;
+mod library_graph;
+mod package;
+mod pin_pad_map;
+
+pub use footprint::Footprint;
+pub use library_graph::{LibraryGraph, LibraryModelBlob};
+pub use package::{Package, PackageBodyDimensions, PackageTerminal};
+pub use pin_pad_map::PinPadMap;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Pin {
@@ -111,21 +115,6 @@ pub struct Pad {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct Package {
-    pub uuid: Uuid,
-    pub name: String,
-    pub pads: HashMap<Uuid, Pad>,
-    pub courtyard: Polygon,
-    pub silkscreen: Vec<Primitive>,
-    pub models_3d: Vec<ModelRef>,
-    #[serde(default)]
-    pub body_height_nm: Option<i64>,
-    #[serde(default)]
-    pub body_height_mounted_nm: Option<i64>,
-    pub tags: HashSet<String>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PadMapEntry {
     pub gate: Uuid,
     pub pin: Uuid,
@@ -136,6 +125,10 @@ pub struct Part {
     pub uuid: Uuid,
     pub entity: Uuid,
     pub package: Uuid,
+    #[serde(default)]
+    pub default_footprint: Option<Uuid>,
+    #[serde(default)]
+    pub default_pin_pad_map: Option<Uuid>,
     pub pad_map: HashMap<Uuid, PadMapEntry>,
     pub mpn: String,
     pub manufacturer: String,
@@ -394,6 +387,8 @@ pub struct Pool {
     pub entities: HashMap<Uuid, Entity>,
     pub padstacks: HashMap<Uuid, Padstack>,
     pub packages: HashMap<Uuid, Package>,
+    pub footprints: HashMap<Uuid, Footprint>,
+    pub pin_pad_maps: HashMap<Uuid, PinPadMap>,
     pub parts: HashMap<Uuid, Part>,
 }
 

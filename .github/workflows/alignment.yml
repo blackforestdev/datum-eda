@@ -37,6 +37,12 @@ jobs:
       - name: Touched monolith burn-down guardrail
         run: python3 scripts/check_touched_monolith_growth.py
 
+      - name: GUI design token and contrast gate
+        run: python3 scripts/check_gui_design_tokens.py
+
+      - name: GUI icon asset gate
+        run: python3 scripts/check_gui_icon_assets.py
+
       - name: MCP server self-test
         run: python3 mcp-server/server.py --self-test
 

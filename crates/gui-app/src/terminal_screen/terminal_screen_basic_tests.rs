@@ -110,6 +110,15 @@ fn insert_and_delete_line_shift_rows_within_screen() {
 }
 
 #[test]
+fn delete_line_count_larger_than_visible_region_clears_without_underflow() {
+    let mut screen = TerminalScreen::default();
+    screen.resize_grid(8, 3);
+    let mut state = terminal_state();
+    screen.apply_bytes(&mut state, b"top\nmid\nbot\x1b[1;1H\x1b[80M");
+    assert_eq!(state.lines, vec!["", "", ""]);
+}
+
+#[test]
 fn cursor_up_and_down_rewrite_addressed_rows() {
     let mut screen = TerminalScreen::default();
     let mut state = terminal_state();

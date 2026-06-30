@@ -1,15 +1,21 @@
 use datum_gui_protocol::{ReviewWorkspaceState, TerminalCommandHandoff};
 
-use super::outputs_artifact_runs::render_artifact_runs_section;
+use super::outputs_artifact_runs::{
+    estimate_artifact_runs_section_height, render_artifact_runs_section,
+};
 use super::outputs_run_commands::{
     proposal_accept_apply_command, proposal_defer_command, proposal_list_command,
     proposal_preview_command, proposal_reject_command, proposal_show_command,
     proposal_validate_command, push_production_terminal_command_hit_region,
 };
-use super::{HitRegion, draw_text, suffix_id, truncate_text};
+use super::{HitRegion, draw_text, output_row_height, suffix_id, truncate_text};
 use super::{RectPx, TEXT_MUTED, TEXT_SECONDARY, TextFace, TextRun};
 
 const MAX_PROPOSALS: usize = 4;
+
+pub(super) fn estimate_action_sections_height(state: &ReviewWorkspaceState) -> f32 {
+    estimate_artifact_runs_section_height(state) + estimate_proposals_section_height(state)
+}
 
 pub(super) fn render_action_sections(
     state: &ReviewWorkspaceState,
@@ -21,6 +27,28 @@ pub(super) fn render_action_sections(
 ) -> Option<f32> {
     let y = render_artifact_runs_section(state, rect, y, bottom, text_runs, hit_regions)?;
     render_proposals_section(state, rect, y, bottom, text_runs, hit_regions)
+}
+
+fn estimate_proposals_section_height(state: &ReviewWorkspaceState) -> f32 {
+    if state.production.proposals.is_empty() {
+        return 0.0;
+    }
+    let mut rows = 1;
+    rows += usize::from(proposal_list_command().is_some());
+    for proposal in state.production.proposals.iter().take(MAX_PROPOSALS) {
+        rows += 2;
+        rows += usize::from(!proposal.blocker_codes.is_empty());
+        rows += usize::from(proposal.preview.is_some());
+        rows += usize::from(proposal_accept_apply_command(&proposal.proposal_id).is_some());
+        rows += usize::from(proposal_show_command(&proposal.proposal_id).is_some());
+        rows += usize::from(proposal_preview_command(&proposal.proposal_id).is_some());
+        rows += usize::from(proposal_validate_command(&proposal.proposal_id).is_some());
+        rows += usize::from(proposal_defer_command(&proposal.proposal_id).is_some());
+        rows += usize::from(proposal_reject_command(&proposal.proposal_id).is_some());
+    }
+    rows as f32 * output_row_height()
+        + state.production.proposals.len().min(MAX_PROPOSALS) as f32 * 4.0
+        + 2.0
 }
 
 pub(super) fn render_proposals_section(
@@ -43,7 +71,8 @@ pub(super) fn render_proposals_section(
         TextFace::Mono,
         text_runs,
     );
-    y += 14.0;
+    let row_height = output_row_height();
+    y += row_height;
     y = render_proposal_command(
         rect,
         y,
@@ -54,7 +83,7 @@ pub(super) fn render_proposals_section(
         hit_regions,
     )?;
     for proposal in state.production.proposals.iter().take(MAX_PROPOSALS) {
-        if y + 14.0 > bottom {
+        if y + row_height > bottom {
             return None;
         }
         draw_text(
@@ -79,8 +108,8 @@ pub(super) fn render_proposals_section(
             TextFace::Mono,
             text_runs,
         );
-        y += 14.0;
-        if y + 14.0 > bottom {
+        y += row_height;
+        if y + row_height > bottom {
             return None;
         }
         draw_text(
@@ -96,9 +125,9 @@ pub(super) fn render_proposals_section(
             TextFace::Mono,
             text_runs,
         );
-        y += 14.0;
+        y += row_height;
         if !proposal.blocker_codes.is_empty() {
-            if y + 14.0 > bottom {
+            if y + row_height > bottom {
                 return None;
             }
             draw_text(
@@ -113,10 +142,10 @@ pub(super) fn render_proposals_section(
                 TextFace::Mono,
                 text_runs,
             );
-            y += 14.0;
+            y += row_height;
         }
         if let Some(preview) = &proposal.preview {
-            if y + 14.0 > bottom {
+            if y + row_height > bottom {
                 return None;
             }
             draw_text(
@@ -134,7 +163,7 @@ pub(super) fn render_proposals_section(
                 TextFace::Mono,
                 text_runs,
             );
-            y += 14.0;
+            y += row_height;
         }
         y = render_proposal_command(
             rect,
@@ -205,7 +234,8 @@ fn render_proposal_command(
     hit_regions: &mut Vec<HitRegion>,
 ) -> Option<f32> {
     let command = command?;
-    if y + 14.0 > bottom {
+    let row_height = output_row_height();
+    if y + row_height > bottom {
         return None;
     }
     push_production_terminal_command_hit_region(hit_regions, rect, y, &command);
@@ -218,7 +248,7 @@ fn render_proposal_command(
         TextFace::Mono,
         text_runs,
     );
-    Some(y + 14.0)
+    Some(y + row_height)
 }
 
 #[cfg(test)]

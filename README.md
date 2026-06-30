@@ -1,13 +1,20 @@
 # Datum EDA
 
-Datum EDA is an AI-native electronics design platform with a deterministic
-engine core and machine-native control surfaces.
+Datum EDA is a professional, headless-first electronics design system for Linux:
+a deterministic Rust engine core with **manual-first** workflows and **optional
+first-class AI** collaboration, all driven through one inspectable
+design-mutation model that the GUI, CLI, scripts, MCP, and AI agents share.
 
-It is being built as an independent EDA system, not as a wrapper around
-another tool.
+Datum is an independent, native EDA system — not a wrapper around another tool.
+Its product center is **native governed libraries**, **schematic capture** as the
+normal electrical source of truth, PCB implementation from that authority, and
+manufacturing-ready output from one resolved native model. The normal product
+flow is **library → schematic → PCB → manufacturing**.
 
-KiCad-first support is the current execution path for fast, verifiable
-delivery. It is not the long-term product boundary.
+KiCad-first support is an interop/migration on-ramp for fast, verifiable
+delivery — it is **not the long-term product boundary**. Import and export are
+compatibility infrastructure (migration, fixtures, reverse engineering); they
+support the product, they do not define it.
 
 ---
 
@@ -15,18 +22,35 @@ delivery. It is not the long-term product boundary.
 
 Most EDA systems were built GUI-first and automation was layered in later.
 Datum inverts that model:
-- Engine-first deterministic core.
-- AI/CLI as first-class interfaces.
-- GUI as a downstream consumer, not the system of record.
+- **Engine-first deterministic core** (Rust library crate, no GUI/rendering dep).
+- **Manual-first.** Every core workflow is possible without AI.
+- **Optional first-class AI / CLI / MCP.** They are collaborators operating
+  through the same typed operations a user does — stable IDs, queries, proposals,
+  checks, diffs, provenance — never private edit authorities.
+- **One canonical `DesignModel`.** Schematic, PCB, library, rules, manufacturing
+  are projections over one model. Every committed change — manual, CLI, MCP, AI,
+  import-repair — flows through one `commit()` + journal with provenance, diff,
+  and undo.
+- **GUI as a downstream consumer**, not the system of record.
 
 ---
 
-## Direction and Scope
+## Direction and scope
 
-Roadmap sequencing is intentional:
-- foundation: deterministic IR and reliable import/query/check surfaces
-- expansion: safe write operations and native authoring
-- later: broader ecosystem interop, including commercial migration paths
+Product flow and roadmap sequencing follow one native authority:
+
+- **Substrate** (landed): typed `Operation` + single `commit()` + journal +
+  `ProjectResolver` + stable `ObjectId`/`ComponentInstance` + `model_revision` +
+  Import Map.
+- **Native library** → **schematic capture** → **constraint/ERC** → **PCB
+  layout** → **manufacturing/CAM**.
+- **Interop** (KiCad/Eagle import/export) runs alongside as a compatibility path
+  throughout — never the maturity metric.
+
+Controlling product doctrine: `docs/DATUM_PRODUCT_MECHANICS.md`, the decision
+records in `docs/decisions/` (including `PRODUCT_MECHANICS_016_PRODUCT_NORTH_STAR`),
+and the per-domain tool contracts in `docs/contracts/`. Status sources of truth:
+[`specs/PROGRESS.md`](specs/PROGRESS.md) and `specs/SPEC_PARITY.md`.
 
 Canonical scope terminology is defined in
 [`specs/PROGRAM_SPEC.md`](specs/PROGRAM_SPEC.md) (`Product identity`,
@@ -36,29 +60,47 @@ Canonical scope terminology is defined in
 
 ## What it can do today
 
-- Import/query/check KiCad `.kicad_pcb` and `.kicad_sch` designs.
-- Import Eagle `.lbr` libraries into the pool.
-- Run ERC/DRC and consume structured check reports in CLI and MCP.
-- Modify imported KiCad board slices via deterministic operation flows.
-- Create and edit native project slices (`project new`, native query/check,
-  forward-annotation review/apply + artifact slices, and manufacturing exports
-  (Gerber/drill/set report/export/validate/compare surfaces).
-- Run deterministic M5 routing-kernel query slices from persisted native board
-  state (routing substrate, preflight/corridor, and path-candidate explain
-  surfaces).
+Foundation (landed, committed):
+- The canonical mutation substrate above, backing a growing share of native
+  authoring; remaining write surfaces are converging onto it.
+- ERC (7 rules) + DRC (7 rules) at 0% FP/FN quality gates.
+- MCP runtime tools (daemon-dispatched + CLI-bridged) and a CLI with proper exit
+  codes.
 
-See [`docs/USER_WORKFLOWS.md`](docs/USER_WORKFLOWS.md) for end-to-end usage
-examples and [`specs/MCP_API_SPEC.md`](specs/MCP_API_SPEC.md) for the full
-MCP tool catalog.
+Native authoring:
+- Native projects: `project new`, native query/check, forward-annotation
+  review/apply, and manufacturing export (Gerber, Excellon drill, BOM,
+  pick-and-place).
+- Deterministic routing kernel (60+ path-candidate strategies) and route-proposal
+  export/apply/inspect/revalidate.
 
-For milestone-scoped status and limitations, use
-[`specs/PROGRESS.md`](specs/PROGRESS.md).
+Native library (in progress):
+- Governed pool with `Unit`/`Symbol`/`Gate`/`Entity`/`Part` and a real
+  `Footprint` land-pattern type; per-user KiCad/Horizon symbol import that
+  normalizes into the native model (no third-party library content is bundled).
+
+Interop / compatibility:
+- Deterministic KiCad `.kicad_pcb` / `.kicad_sch` import, query, and check.
+- Eagle `.lbr` library import into the pool.
+- KiCad write-back with round-trip fidelity; imported-board modify slices with
+  undo/redo.
+
+GUI (engine consumer):
+- Read-only board review surface + visual-regression harness. A Taffy-based
+  layout system and a token-based design system are landing. The interactive
+  editor is a named, in-progress phase — not yet end-to-end.
+
+See [`docs/USER_WORKFLOWS.md`](docs/USER_WORKFLOWS.md) for usage examples,
+[`specs/MCP_API_SPEC.md`](specs/MCP_API_SPEC.md) for the MCP tool catalog, and
+[`specs/PROGRESS.md`](specs/PROGRESS.md) for status and limitations.
 
 ---
 
 ## Build
 
-Requires Rust stable (1.80+) and a C linker.
+Requires Rust stable and a C linker. The GUI/visual features additionally need a
+Vulkan-capable environment (software Vulkan/lavapipe is sufficient for headless
+rendering).
 
 ```bash
 cargo build
@@ -82,37 +124,34 @@ cargo run -p eda-engine-daemon -- --socket /tmp/datum-eda-engine.sock
 ## CLI quick start
 
 ```bash
-# Import Eagle libraries into the pool
+# Import an Eagle library into the pool
 cargo run -p datum-eda-cli -- import library.lbr
 
-# Check a KiCad design
+# Check imported KiCad designs (compatibility path)
 cargo run -p datum-eda-cli -- erc design.kicad_sch
 cargo run -p datum-eda-cli -- drc design.kicad_pcb
 
 # Query a design
 cargo run -p datum-eda-cli -- query design.kicad_pcb summary
 cargo run -p datum-eda-cli -- query design.kicad_pcb nets
-cargo run -p datum-eda-cli -- query design.kicad_pcb components
 
 # Search the component pool
 cargo run -p datum-eda-cli -- pool search "100nF 0402" --library library.lbr
 
-# Imported-board modify slice
-cargo run -p datum-eda-cli -- modify design.kicad_pcb --move-component "<uuid>:25:15:90" --save out.kicad_pcb
-
-# Native project slice (M4 closed for scope; M5 in progress)
+# Native project
 cargo run -p datum-eda-cli -- project new ./demo --name "Demo"
 cargo run -p datum-eda-cli -- project query ./demo summary
-cargo run -p datum-eda-cli -- project query ./demo routing-substrate
 ```
 
-Exit codes: `0` = pass, `1` = violations found, `2` = execution error.
+Exit codes: `0` = pass, `1` = violations found, `2` = execution error. The CLI,
+MCP, and GUI share one operation vocabulary; see `specs/MCP_API_SPEC.md` for the
+current canonical surface.
 
 ---
 
 ## MCP server
 
-The MCP server exposes the current engine surface to AI agents over stdio.
+The MCP server exposes the engine surface to AI agents over stdio.
 
 ```bash
 # Start the engine daemon
@@ -122,7 +161,7 @@ cargo run -p eda-engine-daemon -- --socket /tmp/datum-eda-engine.sock
 python3 mcp-server/server.py
 ```
 
-Example MCP client registration:
+Example client registration:
 
 ```json
 {
@@ -130,62 +169,58 @@ Example MCP client registration:
     "datum-eda": {
       "command": "python3",
       "args": ["/path/to/datum-eda/mcp-server/server.py"],
-      "env": {
-        "DATUM_ENGINE_SOCKET": "/tmp/datum-eda-engine.sock"
-      }
+      "env": { "DATUM_ENGINE_SOCKET": "/tmp/datum-eda-engine.sock" }
     }
   }
 }
 ```
 
-Client-specific config file locations vary by MCP host. `EDA_ENGINE_SOCKET`
-remains a legacy fallback for existing local configs.
+`EDA_ENGINE_SOCKET` remains a legacy fallback for existing local configs.
 
 ---
 
 ## Architecture
 
 ```
-┌─────────────┐
-│  MCP Server  │  ← AI agents (Python, stdio)
-└──────┬──────┘
-       │ JSON-RPC / Unix socket
-┌──────┴──────┐    ┌──────────┐
-│   Engine    │←───│   CLI    │
-│   (Rust)    │    │  (Rust)  │
-└─────────────┘    └──────────┘
+                    ┌─────────────┐
+                    │  MCP Server  │  ← AI agents (Python, stdio)
+                    └──────┬──────┘
+                           │ JSON-RPC / Unix socket
+    ┌──────────┐    ┌──────┴──────┐    ┌──────────┐
+    │   GUI    │───→│   Engine    │←───│   CLI    │
+    │ (wgpu)   │    │   (Rust)    │    │ datum-eda│
+    └──────────┘    └─────────────┘    └──────────┘
+                           │
+                    ┌──────┴──────┐
+                    │   Python    │  ← scripting (PyO3)
+                    └─────────────┘
 ```
 
-The engine is a Rust library crate with no GUI/rendering dependency.
-The daemon exposes it over Unix socket JSON-RPC.
-The MCP server is a thin Python translation layer over that daemon.
+The engine is a Rust library crate with no GUI/rendering dependency; the daemon
+exposes it over Unix-socket JSON-RPC, the MCP server is a thin Python translation
+layer, and the GUI consumes the engine through the `gui-protocol` scene contract.
+Every surface operates on one resolved `DesignModel` through the same
+operation/commit model.
 
 Key documentation:
 
 | Document | Contents |
 |----------|----------|
+| [`docs/DATUM_PRODUCT_MECHANICS.md`](docs/DATUM_PRODUCT_MECHANICS.md) | Controlling product-mechanics doctrine |
 | [`docs/CANONICAL_IR.md`](docs/CANONICAL_IR.md) | Core data model and invariants |
 | [`docs/ENGINE_DESIGN.md`](docs/ENGINE_DESIGN.md) | Operation model and API surface |
-| [`docs/RESEARCH_TRACEABILITY.md`](docs/RESEARCH_TRACEABILITY.md) | Research conclusions mapped to roadmap/spec sequencing |
-| [`specs/PROGRAM_SPEC.md`](specs/PROGRAM_SPEC.md) | Controlling feature specification |
-| [`specs/MCP_API_SPEC.md`](specs/MCP_API_SPEC.md) | Full MCP tool catalog |
+| [`docs/decisions/`](docs/decisions/) | Ratified product-mechanics decision records |
+| [`docs/contracts/`](docs/contracts/) | Per-domain tool contracts |
 | [`specs/PROGRESS.md`](specs/PROGRESS.md) | Implementation status per spec requirement |
 
 ---
 
 ## Roadmap
 
-See [`PLAN.md`](PLAN.md).
-
-Directionally, Datum targets a full AI-native EDA stack:
-- independent deterministic core architecture
-- broad format interoperability
-- native design-authoring capability
-- higher-level automation and strategy layers
-
-Formal milestone contracts live in [`specs/PROGRAM_SPEC.md`](specs/PROGRAM_SPEC.md).
-Current M5 entry boundary is defined in
-[`specs/progress/m5_opening.md`](specs/progress/m5_opening.md).
+See [`PLAN.md`](PLAN.md) and the product-mechanics doctrine above. The program is
+governed by the product-mechanics model and the ratified North Star, not by a
+milestone roadmap; legacy milestone rows in `specs/PROGRESS.md` are historical
+evidence, not the next implementation priority.
 
 ---
 

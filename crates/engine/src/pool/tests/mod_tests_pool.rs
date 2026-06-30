@@ -49,6 +49,15 @@ fn sample_package() -> Package {
     Package {
         uuid: Uuid::from_u128(2),
         name: "SOIC-8".into(),
+        package_family: Some("SOIC".into()),
+        package_code: Some("SOIC-8".into()),
+        mounting_type: Some("smd".into()),
+        body_dimensions: Some(PackageBodyDimensions {
+            x_nm: Some(4_900_000),
+            y_nm: Some(3_900_000),
+            z_nm: Some(1_750_000),
+        }),
+        terminals: HashMap::new(),
         pads,
         courtyard: Polygon::new(vec![
             Point::new(0, 0),
@@ -77,6 +86,42 @@ fn sample_package() -> Package {
         }],
         body_height_nm: Some(1_750_000),
         body_height_mounted_nm: Some(1_850_000),
+        tags: HashSet::from(["soic".to_string()]),
+    }
+}
+
+fn sample_footprint() -> Footprint {
+    let pad_id = Uuid::from_u128(11);
+    let mut pads = HashMap::new();
+    pads.insert(
+        pad_id,
+        Pad {
+            uuid: pad_id,
+            name: "1".into(),
+            position: Point::new(0, 0),
+            padstack: Uuid::from_u128(20),
+            layer: 1,
+        },
+    );
+
+    Footprint {
+        uuid: Uuid::from_u128(21),
+        name: "SOIC-8-density-b".into(),
+        package: Uuid::from_u128(2),
+        pads,
+        courtyard: Polygon::new(vec![
+            Point::new(0, 0),
+            Point::new(1_000_000, 0),
+            Point::new(1_000_000, 500_000),
+            Point::new(0, 500_000),
+        ]),
+        silkscreen: vec![],
+        fab: vec![],
+        assembly: vec![],
+        mechanical: vec![],
+        models_3d: vec![],
+        standards_basis: Some("IPC-7351 density B".into()),
+        process_aperture_policy: Some("explicit".into()),
         tags: HashSet::from(["soic".to_string()]),
     }
 }
@@ -118,6 +163,8 @@ fn sample_part() -> Part {
         uuid: Uuid::from_u128(6),
         entity: Uuid::from_u128(5),
         package: Uuid::from_u128(2),
+        default_footprint: Some(Uuid::from_u128(21)),
+        default_pin_pad_map: Some(Uuid::from_u128(22)),
         pad_map,
         mpn: "TL072CDR".into(),
         manufacturer: "TI".into(),
@@ -151,6 +198,16 @@ fn sample_part() -> Part {
     }
 }
 
+fn sample_pin_pad_map() -> PinPadMap {
+    PinPadMap {
+        uuid: Uuid::from_u128(22),
+        part: Uuid::from_u128(6),
+        footprint: Some(Uuid::from_u128(21)),
+        mappings: HashMap::from([(Uuid::nil(), Uuid::from_u128(11))]),
+        tags: HashSet::from(["soic".to_string()]),
+    }
+}
+
 fn sample_pool() -> Pool {
     let mut pool = Pool::default();
     pool.units.insert(Uuid::from_u128(1), sample_unit());
@@ -177,6 +234,10 @@ fn sample_pool() -> Pool {
         },
     );
     pool.packages.insert(Uuid::from_u128(2), sample_package());
+    pool.footprints
+        .insert(Uuid::from_u128(21), sample_footprint());
+    pool.pin_pad_maps
+        .insert(Uuid::from_u128(22), sample_pin_pad_map());
     pool.parts.insert(Uuid::from_u128(6), sample_part());
     pool
 }
@@ -195,6 +256,55 @@ fn package_round_trip() {
     let json = serde_json::to_string(&package).unwrap();
     let decoded: Package = serde_json::from_str(&json).unwrap();
     assert_eq!(package, decoded);
+}
+
+#[test]
+fn body_only_package_deserializes_without_land_pattern_fields() {
+    let package_id = Uuid::from_u128(22);
+    let terminal_id = Uuid::from_u128(23);
+    let decoded: Package = serde_json::from_value(serde_json::json!({
+        "uuid": package_id,
+        "name": "SOIC-8 body",
+        "package_family": "SOIC",
+        "package_code": "SOIC-8",
+        "mounting_type": "smd",
+        "body_dimensions": {
+            "x_nm": 4_900_000,
+            "y_nm": 3_900_000,
+            "z_nm": 1_750_000
+        },
+        "terminals": {
+            terminal_id: {
+                "uuid": terminal_id,
+                "name": "1",
+                "role": "lead"
+            }
+        }
+    }))
+    .expect("body-only package should be valid");
+
+    assert_eq!(decoded.uuid, package_id);
+    assert_eq!(decoded.package_family.as_deref(), Some("SOIC"));
+    assert!(decoded.pads.is_empty());
+    assert!(decoded.courtyard.vertices.is_empty());
+    assert!(decoded.silkscreen.is_empty());
+    assert!(decoded.terminals.contains_key(&terminal_id));
+}
+
+#[test]
+fn footprint_round_trip() {
+    let footprint = sample_footprint();
+    let json = serde_json::to_string(&footprint).unwrap();
+    let decoded: Footprint = serde_json::from_str(&json).unwrap();
+    assert_eq!(footprint, decoded);
+}
+
+#[test]
+fn pin_pad_map_round_trip() {
+    let pin_pad_map = sample_pin_pad_map();
+    let json = serde_json::to_string(&pin_pad_map).unwrap();
+    let decoded: PinPadMap = serde_json::from_str(&json).unwrap();
+    assert_eq!(pin_pad_map, decoded);
 }
 
 #[test]

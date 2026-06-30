@@ -25,6 +25,13 @@ Terminology follows `specs/PROGRAM_SPEC.md`:
 `Product identity`, `Implementation slice`, `Execution strategy`, and
 `Non-goals`.
 
+Current product authority also follows
+`docs/decisions/PRODUCT_MECHANICS_016_PRODUCT_NORTH_STAR.md`: Datum's product
+sequence is native governed library -> schematic capture -> schematic-to-PCB
+implementation -> PCB layout -> manufacturing -> interop. Historical
+KiCad-first execution language below is a launch-wedge record, not the current
+North Star.
+
 ## Mission Layers
 
 **Product identity**: AI-native EDA platform with deterministic core semantics

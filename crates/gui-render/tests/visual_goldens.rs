@@ -3,7 +3,8 @@
 use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result};
-use datum_gui_render::visual_runner::run_fixture;
+use datum_gui_render::design_artboards::check_design_artboards;
+use datum_gui_render::visual_runner::{VisualFixtureRun, run_fixture};
 
 const FIXTURE_NAMES: &[&str] = &[
     "text-density-repro",
@@ -17,15 +18,44 @@ const FIXTURE_NAMES: &[&str] = &[
 fn board_text_visual_goldens_match() -> Result<()> {
     for fixture_name in FIXTURE_NAMES {
         let manifest = fixture_manifest_path(fixture_name);
-        let outcome = run_fixture(&manifest)
+        let outcomes = run_fixture(&manifest)
             .with_context(|| format!("run visual fixture {}", manifest.display()))?;
-        assert_eq!(
-            outcome.result.differing_pixels, 0,
-            "fixture {fixture_name} should have visual parity under its fixture diff policy"
-        );
+        for outcome in outcomes {
+            assert_eq!(
+                outcome.result.differing_pixels, 0,
+                "fixture {fixture_name} scale {} should have visual parity under its fixture diff policy",
+                outcome.scale_factor
+            );
+        }
         assert_no_generated_artifacts(&manifest)?;
     }
     Ok(())
+}
+
+#[test]
+#[ignore = "requires local visual rendering authority; exercises non-golden HiDPI scale rendering"]
+fn board_text_multi_scale_visual_smoke_renders_nonblank() -> Result<()> {
+    let scales = [1.0_f32, 1.25, 1.5, 2.0];
+    let manifest = fixture_manifest_path("text-density-repro");
+    let run = VisualFixtureRun::load(&manifest)
+        .with_context(|| format!("load visual fixture {}", manifest.display()))?;
+
+    for scale_factor in scales {
+        let image = run
+            .render_actual_at_scale(scale_factor)
+            .with_context(|| format!("render scale {scale_factor}"))?;
+        assert!(
+            image.pixels().any(|pixel| pixel.0 != [0, 0, 0, 0]),
+            "scale {scale_factor} render should not be blank"
+        );
+    }
+    Ok(())
+}
+
+#[test]
+#[ignore = "requires local visual rendering authority; checks Design Book artboard goldens"]
+fn design_system_artboards_match() -> Result<()> {
+    check_design_artboards()
 }
 
 fn fixture_manifest_path(fixture_name: &str) -> PathBuf {

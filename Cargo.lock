@@ -753,6 +753,7 @@ dependencies = [
  "glyphon",
  "image",
  "pollster",
+ "taffy",
  "uuid",
  "wgpu",
 ]
@@ -1247,6 +1248,12 @@ checksum = "fdf242682df893b86f33a73828fb09ca4b2d3bb6cc95249707fc684d27484b91"
 dependencies = [
  "bitflags 2.11.0",
 ]
+
+[[package]]
+name = "grid"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b40ca9252762c466af32d0b1002e91e4e1bc5398f77455e55474deb466355ff5"
 
 [[package]]
 name = "half"
@@ -3042,6 +3049,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8eab9a99a024a169fe8a903cf9d4a3b3601109bcc13bd9e3c6fff259138626c4"
 dependencies = [
  "libc",
+]
+
+[[package]]
+name = "taffy"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dfde4e2f8595f222ceaae1fb16b4963952e9b33e358869dc4cd6316b0e0790cd"
+dependencies = [
+ "arrayvec",
+ "grid",
+ "serde",
+ "slotmap",
 ]
 
 [[package]]

@@ -4,10 +4,12 @@ use crate::pool::Pool;
 
 mod parser;
 mod pool_builder;
+mod pool_builder_landpattern;
+mod pool_counts;
 mod xml_helpers;
 
 use parser::parse_library;
-use pool_builder::pool_counts;
+use pool_counts::pool_counts;
 use xml_helpers::extract_library_name;
 
 /// Import a standalone Eagle library (`.lbr`) into pool objects.

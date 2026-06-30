@@ -70,6 +70,12 @@ Part (purchasable component — THE key abstraction)
   └── → optional base Part (inheritance)
 ```
 
+Datum uses this as prior-art evidence for explicit identity and binding, not as
+the final native model. Horizon fuses package body and PCB land pattern into
+`Package`; Datum's product mechanics split those into `Package` (component
+body/terminal family) and `Footprint` (PCB land pattern/process geometry) with
+first-class `PinPadMap` binding.
+
 ### Pool SQLite Schema (schema.sql)
 - `units` (uuid, name, manufacturer, filename)
 - `entities` (uuid, name, manufacturer, n_gates, prefix, filename)

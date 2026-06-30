@@ -11,6 +11,7 @@ pub struct FixtureManifest {
     pub project_path: PathBuf,
     pub project_kind: String,
     pub viewport: VisualViewport,
+    pub ui_scale_factors: Vec<f32>,
     pub golden: VisualGolden,
     pub blank_check: VisualBlankCheck,
 }
@@ -66,6 +67,11 @@ impl FixtureManifest {
                 center_mm: required_f64_array_2(&doc, &["viewport", "center_mm"])?,
                 zoom_mm_per_px: required_f64(&doc, &["viewport", "zoom_mm_per_px"])?,
             },
+            ui_scale_factors: optional_f64_array(&doc, &["viewport", "ui_scale_factors"])?
+                .unwrap_or_else(|| vec![1.0])
+                .into_iter()
+                .map(|value| value as f32)
+                .collect(),
             golden: VisualGolden {
                 filename: required_string(&doc, &["golden", "filename"])?,
                 diff_policy: required_string(&doc, &["golden", "diff_policy"])?,
@@ -108,6 +114,14 @@ impl FixtureManifest {
         }
         if self.viewport.zoom_mm_per_px <= 0.0 {
             bail!("viewport.zoom_mm_per_px must be positive");
+        }
+        if self.ui_scale_factors.is_empty() {
+            bail!("viewport.ui_scale_factors must not be empty");
+        }
+        for scale_factor in &self.ui_scale_factors {
+            if !scale_factor.is_finite() || *scale_factor <= 0.0 {
+                bail!("viewport.ui_scale_factors must contain only positive finite numbers");
+            }
         }
         match self.golden.diff_policy.as_str() {
             "exact" => {
@@ -284,6 +298,16 @@ fn required_f64_array_2(doc: &SimpleToml, path: &[&str]) -> Result<[f64; 2]> {
     }
 }
 
+fn optional_f64_array(doc: &SimpleToml, path: &[&str]) -> Result<Option<Vec<f64>>> {
+    let Some(value) = doc.get(path) else {
+        return Ok(None);
+    };
+    match value {
+        SimpleTomlValue::FloatArray(values) => Ok(Some(values.clone())),
+        _ => bail!("manifest key {} must be an array", path.join(".")),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -324,6 +348,45 @@ mod tests {
         assert_eq!(manifest.name, "text-density-repro");
         assert_eq!(manifest.viewport.width_px, 1024);
         assert_eq!(manifest.viewport.center_mm, [100.0, 75.0]);
+        assert_eq!(manifest.ui_scale_factors, vec![1.0]);
+    }
+
+    #[test]
+    fn parses_explicit_ui_scale_factors() {
+        let manifest = FixtureManifest::parse(
+            r#"
+            [fixture]
+            name = "scale-repro"
+            lane = "A"
+            suite = "layout"
+            fixture_format_version = 1
+
+            [input]
+            project_path = "crates/engine/testdata/golden/text/native/text-density-repro"
+            project_kind = "datum-native"
+
+            [viewport]
+            width_px = 1024
+            height_px = 768
+            center_mm = [100.0, 75.0]
+            zoom_mm_per_px = 0.12
+            ui_scale_factors = [1.0, 1.25, 1.5, 2.0]
+
+            [golden]
+            filename = "scale-repro.golden.png"
+            diff_policy = "exact"
+            diff_tolerance_per_pixel = 0
+            diff_tolerance_total_px_pct = 0.0
+            ssim_threshold = 0.0
+            mask_filename = ""
+
+            [blank_check]
+            expect_non_blank_pct = 1.0
+            "#,
+        )
+        .expect("manifest should parse explicit UI scales");
+
+        assert_eq!(manifest.ui_scale_factors, vec![1.0, 1.25, 1.5, 2.0]);
     }
 
     #[test]

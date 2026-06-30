@@ -4,8 +4,10 @@ use anyhow::{Context, Result};
 use eda_engine::board::PadShape;
 use eda_engine::board::{PlacedPackage, StackupLayer, StackupLayerType};
 use eda_engine::ir::geometry::{Point, Polygon};
-use eda_engine::pool::{Package, Padstack, PadstackAperture, Primitive};
-use eda_engine::substrate::{DesignModel, ProjectResolver};
+use eda_engine::pool::{
+    Footprint, ModelRef, Package, Pad, Padstack, PadstackAperture, Part, Primitive,
+};
+use eda_engine::substrate::{DesignModel, ProjectResolver, SourceShardTaxon};
 
 use super::command_project_gerber_mechanical::NativeComponentMechanicalPolygon;
 use super::command_project_gerber_silkscreen::{
@@ -36,10 +38,13 @@ pub(crate) fn materialize_supported_pool_package_graphics(
     else {
         return Ok(());
     };
+    let footprint =
+        resolve_native_project_pool_footprint_for_component(project, &model, component)?;
     let Some(silkscreen_layer) = resolve_component_silkscreen_layer(project, component.layer)?
     else {
         return Ok(());
     };
+    let geometry = PoolLandPatternGeometry::from_footprint_or_package(footprint, package);
 
     let key = component.uuid.to_string();
     let mut silkscreen_lines = Vec::new();
@@ -49,19 +54,18 @@ pub(crate) fn materialize_supported_pool_package_graphics(
     let mut silkscreen_polygons = Vec::new();
     let mut silkscreen_polylines = Vec::new();
     let mut mechanical_polygons = Vec::new();
-    let mut pads = package
+    let mut pads = geometry
         .pads
-        .values()
-        .cloned()
+        .into_iter()
         .map(|pad| {
             let padstack = resolve_native_project_pool_padstack(project, &model, pad.padstack)?;
             Ok(native_component_pad(pad, padstack.as_ref()))
         })
         .collect::<Result<Vec<_>>>()?;
     pads.sort_by(|a, b| a.name.cmp(&b.name).then_with(|| a.uuid.cmp(&b.uuid)));
-    let models_3d = package.models_3d.clone();
+    let models_3d = geometry.models_3d;
 
-    for primitive in package.silkscreen {
+    for primitive in geometry.silkscreen {
         match primitive {
             Primitive::Line { from, to, width } => {
                 silkscreen_lines.push(NativeComponentSilkscreenLine {
@@ -133,9 +137,9 @@ pub(crate) fn materialize_supported_pool_package_graphics(
         }
     }
 
-    if package.courtyard.closed && package.courtyard.vertices.len() >= 2 {
+    if geometry.courtyard.closed && geometry.courtyard.vertices.len() >= 2 {
         mechanical_polygons.push(NativeComponentMechanicalPolygon {
-            vertices: package
+            vertices: geometry
                 .courtyard
                 .vertices
                 .into_iter()
@@ -183,6 +187,36 @@ pub(crate) fn materialize_supported_pool_package_graphics(
         .insert(component.uuid.to_string(), models_3d);
 
     Ok(())
+}
+
+struct PoolLandPatternGeometry {
+    pads: Vec<Pad>,
+    courtyard: Polygon,
+    silkscreen: Vec<Primitive>,
+    models_3d: Vec<ModelRef>,
+}
+
+impl PoolLandPatternGeometry {
+    fn from_footprint_or_package(footprint: Option<Footprint>, package: Package) -> Self {
+        if let Some(footprint) = footprint {
+            return Self {
+                pads: footprint.pads.into_values().collect(),
+                courtyard: footprint.courtyard,
+                silkscreen: footprint.silkscreen,
+                models_3d: if footprint.models_3d.is_empty() {
+                    package.models_3d
+                } else {
+                    footprint.models_3d
+                },
+            };
+        }
+        Self {
+            pads: package.pads.into_values().collect(),
+            courtyard: package.courtyard,
+            silkscreen: package.silkscreen,
+            models_3d: package.models_3d,
+        }
+    }
 }
 
 fn initialize_component_graphic_maps(project: &mut LoadedNativeProject, key: String) {
@@ -324,6 +358,194 @@ fn resolve_native_project_pool_package(
         )
         .with_context(|| format!("failed to parse {}", package_path.display()))?;
         return Ok(Some(package));
+    }
+    Ok(None)
+}
+
+fn resolve_native_project_pool_footprint_for_package(
+    project: &LoadedNativeProject,
+    model: &DesignModel,
+    package_uuid: uuid::Uuid,
+) -> Result<Option<Footprint>> {
+    let mut refs = project.manifest.pools.clone();
+    refs.sort_by(|a, b| {
+        a.priority
+            .cmp(&b.priority)
+            .then_with(|| a.path.cmp(&b.path))
+    });
+    for pool_ref in refs {
+        let prefix = format!("{}/footprints/", pool_ref.path);
+        let pool_path = PathBuf::from(&pool_ref.path);
+        if pool_path.is_absolute() {
+            let Some(footprint) = read_matching_footprint_from_directory(
+                &pool_path.join("footprints"),
+                package_uuid,
+            )?
+            else {
+                continue;
+            };
+            return Ok(Some(footprint));
+        }
+
+        let mut relative_paths = model
+            .source_shards
+            .iter()
+            .filter(|shard| shard.taxon == Some(SourceShardTaxon::PoolFootprint))
+            .filter(|shard| shard.relative_path.starts_with(&prefix))
+            .map(|shard| shard.relative_path.clone())
+            .collect::<Vec<_>>();
+        relative_paths.sort();
+        for relative_path in relative_paths {
+            let footprint_value = model
+                .materialized_source_shard_value_by_relative_path(&relative_path)
+                .with_context(|| format!("failed to materialize {relative_path}"))?;
+            let footprint: Footprint = serde_json::from_value(footprint_value)
+                .with_context(|| format!("failed to parse materialized {relative_path}"))?;
+            if footprint.package == package_uuid {
+                return Ok(Some(footprint));
+            }
+        }
+
+        let directory = project.root.join(&pool_ref.path).join("footprints");
+        if let Some(footprint) = read_matching_footprint_from_directory(&directory, package_uuid)? {
+            return Ok(Some(footprint));
+        }
+    }
+    Ok(None)
+}
+
+fn resolve_native_project_pool_footprint_for_component(
+    project: &LoadedNativeProject,
+    model: &DesignModel,
+    component: &PlacedPackage,
+) -> Result<Option<Footprint>> {
+    if component.part != uuid::Uuid::nil()
+        && let Some(part) = resolve_native_project_pool_part(project, model, component.part)?
+        && let Some(default_footprint) = part.default_footprint
+    {
+        return resolve_native_project_pool_footprint(project, model, default_footprint);
+    }
+    resolve_native_project_pool_footprint_for_package(project, model, component.package)
+}
+
+fn resolve_native_project_pool_part(
+    project: &LoadedNativeProject,
+    model: &DesignModel,
+    part_uuid: uuid::Uuid,
+) -> Result<Option<Part>> {
+    let mut refs = project.manifest.pools.clone();
+    refs.sort_by(|a, b| {
+        a.priority
+            .cmp(&b.priority)
+            .then_with(|| a.path.cmp(&b.path))
+    });
+    for pool_ref in refs {
+        let pool_path = PathBuf::from(&pool_ref.path);
+        if pool_path.is_absolute() {
+            let part_path = pool_path.join("parts").join(format!("{part_uuid}.json"));
+            if !part_path.exists() {
+                continue;
+            }
+            let part: Part = serde_json::from_str(
+                &std::fs::read_to_string(&part_path)
+                    .with_context(|| format!("failed to read {}", part_path.display()))?,
+            )
+            .with_context(|| format!("failed to parse {}", part_path.display()))?;
+            return Ok(Some(part));
+        }
+        let relative_path = format!("{}/parts/{part_uuid}.json", pool_ref.path);
+        if let Ok(part_value) =
+            model.materialized_source_shard_value_by_relative_path(&relative_path)
+        {
+            let part: Part = serde_json::from_value(part_value)
+                .with_context(|| format!("failed to parse materialized {relative_path}"))?;
+            return Ok(Some(part));
+        }
+        let part_path = project.root.join(&relative_path);
+        if !part_path.exists() {
+            continue;
+        }
+        let part: Part = serde_json::from_str(
+            &std::fs::read_to_string(&part_path)
+                .with_context(|| format!("failed to read {}", part_path.display()))?,
+        )
+        .with_context(|| format!("failed to parse {}", part_path.display()))?;
+        return Ok(Some(part));
+    }
+    Ok(None)
+}
+
+fn resolve_native_project_pool_footprint(
+    project: &LoadedNativeProject,
+    model: &DesignModel,
+    footprint_uuid: uuid::Uuid,
+) -> Result<Option<Footprint>> {
+    let mut refs = project.manifest.pools.clone();
+    refs.sort_by(|a, b| {
+        a.priority
+            .cmp(&b.priority)
+            .then_with(|| a.path.cmp(&b.path))
+    });
+    for pool_ref in refs {
+        let pool_path = PathBuf::from(&pool_ref.path);
+        if pool_path.is_absolute() {
+            let footprint_path = pool_path
+                .join("footprints")
+                .join(format!("{footprint_uuid}.json"));
+            if !footprint_path.exists() {
+                continue;
+            }
+            let footprint: Footprint = serde_json::from_str(
+                &std::fs::read_to_string(&footprint_path)
+                    .with_context(|| format!("failed to read {}", footprint_path.display()))?,
+            )
+            .with_context(|| format!("failed to parse {}", footprint_path.display()))?;
+            return Ok(Some(footprint));
+        }
+        let relative_path = format!("{}/footprints/{footprint_uuid}.json", pool_ref.path);
+        if let Ok(footprint_value) =
+            model.materialized_source_shard_value_by_relative_path(&relative_path)
+        {
+            let footprint: Footprint = serde_json::from_value(footprint_value)
+                .with_context(|| format!("failed to parse materialized {relative_path}"))?;
+            return Ok(Some(footprint));
+        }
+        let footprint_path = project.root.join(&relative_path);
+        if !footprint_path.exists() {
+            continue;
+        }
+        let footprint: Footprint = serde_json::from_str(
+            &std::fs::read_to_string(&footprint_path)
+                .with_context(|| format!("failed to read {}", footprint_path.display()))?,
+        )
+        .with_context(|| format!("failed to parse {}", footprint_path.display()))?;
+        return Ok(Some(footprint));
+    }
+    Ok(None)
+}
+
+fn read_matching_footprint_from_directory(
+    directory: &Path,
+    package_uuid: uuid::Uuid,
+) -> Result<Option<Footprint>> {
+    let Ok(entries) = std::fs::read_dir(directory) else {
+        return Ok(None);
+    };
+    let mut paths = entries
+        .filter_map(|entry| entry.ok())
+        .map(|entry| entry.path())
+        .filter(|path| path.extension().and_then(|value| value.to_str()) == Some("json"))
+        .collect::<Vec<_>>();
+    paths.sort();
+    for path in paths {
+        let footprint: Footprint = serde_json::from_str(
+            &std::fs::read_to_string(&path)
+                .with_context(|| format!("failed to read {}", path.display()))?,
+        )
+        .with_context(|| format!("failed to parse {}", path.display()))?;
+        if footprint.package == package_uuid {
+            return Ok(Some(footprint));
+        }
     }
     Ok(None)
 }

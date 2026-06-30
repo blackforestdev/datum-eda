@@ -71,6 +71,8 @@ pub(crate) enum ProjectCommands {
     CreatePoolPart(ProjectCreatePoolPartArgs),
     /// Update typed native pool part metadata through the project journal
     SetPoolPartMetadata(ProjectSetPoolPartMetadataArgs),
+    /// Update typed native pool part default footprint / pin-pad-map bindings through the project journal
+    SetPoolPartBindings(ProjectSetPoolPartBindingsArgs),
     /// Set typed native pool part parametric fields through the project journal
     SetPoolPartParametric(ProjectSetPoolPartParametricArgs),
     /// Set typed native pool part orderable MPNs through the project journal

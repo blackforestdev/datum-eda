@@ -4,6 +4,12 @@ This file records the opening boundary for `M7`. Progress-state updates belong
 in `specs/PROGRESS.md`; this shard pins the opening scope, guardrails, and the
 first accepted slice.
 
+> **Product-identity note**: This is historical/frontend milestone scope. It is
+> subordinate to
+> `docs/decisions/PRODUCT_MECHANICS_016_PRODUCT_NORTH_STAR.md`. M7 imported-board
+> review does not define Datum's roadmap center; native governed library and
+> schematic capture do.
+
 Concrete opening workspace, first frontend-consumed scene contract, and the
 opening architecture spike plan now live in `specs/M7_FRONTEND_SPEC.md`.
 Imported-board correction planning for the post-spike fidelity track now lives
@@ -50,6 +56,9 @@ Specified next accepted frontend slice:
   all remaining read-only
 - one single-selection model with a separate active review target
 - explicit authored/proposed/diagnostic visual-state separation
+- interim adoption of Taffy as the frontend shell/panel layout solver behind
+  the retained `wgpu` renderer, governed by
+  `docs/decisions/PRODUCT_MECHANICS_014_UI_LAYOUT_SYSTEM.md`
 
 Specified post-spike correction track inside opening `M7`:
 - one bounded imported-board fidelity program defined in

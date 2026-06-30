@@ -44,6 +44,7 @@ proptest = "1"
 # GUI spike
 winit = "0.30"
 wgpu = "28"
+taffy = "0.11.0"
 pollster = "0.4"
 bytemuck = { version = "1", features = ["derive"] }
 arboard = "3"

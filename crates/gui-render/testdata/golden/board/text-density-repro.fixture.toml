@@ -17,6 +17,7 @@ width_px = 1024
 height_px = 768
 center_mm = [105.0, 75.0]
 zoom_mm_per_px = 0.16
+ui_scale_factors = [1.0, 1.25, 1.5, 2.0]
 
 [golden]
 filename = "text-density-repro.golden.png"

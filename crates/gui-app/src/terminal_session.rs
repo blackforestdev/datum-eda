@@ -202,6 +202,9 @@ impl TerminalSessionRegistry {
         let slot = &mut self.sessions[self.active_index];
         let cols = cols.max(1);
         let rows = rows.max(1);
+        if slot.columns == cols && slot.rows == rows {
+            return Ok(());
+        }
         slot.session.resize(cols, rows)?;
         slot.screen.resize_grid(cols, rows);
         slot.columns = cols;

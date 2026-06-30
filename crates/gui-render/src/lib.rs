@@ -13,20 +13,29 @@ use glyphon::{
 };
 use std::collections::BTreeMap;
 use std::ops::Range;
+use taffy::prelude::*;
 use uuid::Uuid;
 use wgpu::util::DeviceExt;
 
 mod bottom_dock;
+#[cfg(feature = "visual")]
+pub mod design_artboards;
+mod design_tokens;
 mod inspector_check_finding;
 mod outputs_artifact_runs;
 mod outputs_lane;
+mod outputs_lane_layout;
+mod outputs_lane_sections;
 mod outputs_preview;
+mod outputs_preview_controls;
 mod outputs_proposals;
 mod outputs_run_commands;
+mod side_panels;
 mod source_shard_panel;
 #[cfg(feature = "visual")]
 pub mod visual_capture;
 use bottom_dock::render_bottom_tabs;
+use side_panels::render_side_panels;
 use source_shard_panel::{
     render_source_shard_attention_rows as render_shard_rows, source_shard_health_label,
 };
@@ -36,6 +45,24 @@ pub mod visual_diff;
 pub mod visual_manifest;
 #[cfg(feature = "visual")]
 pub mod visual_runner;
+
+const UI_CARD_MARGIN: f32 = design_tokens::spacing::SP_04;
+const UI_CARD_PADDING_X: f32 = design_tokens::spacing::SP_04;
+const UI_CARD_TITLE_Y: f32 = design_tokens::spacing::SP_04;
+const UI_CARD_DIVIDER_Y: f32 = design_tokens::spacing::SP_07 - design_tokens::spacing::SP_02;
+const UI_CARD_CONTENT_TOP: f32 = design_tokens::spacing::SP_07 + design_tokens::spacing::SP_01;
+const UI_CARD_CONTENT_BOTTOM: f32 = design_tokens::typography::BODY_LINE;
+const UI_ROW_PROJECT_TITLE: f32 = design_tokens::typography::BODY_LINE;
+const UI_ROW_BOARD_SUBTITLE: f32 = design_tokens::typography::HEADER_LINE;
+const UI_ROW_NET: f32 = design_tokens::typography::BODY_LINE;
+const UI_ROW_SOURCE_LABEL: f32 = design_tokens::typography::CAPTION_LINE;
+const UI_ROW_SOURCE_ATTENTION: f32 = design_tokens::typography::CAPTION_LINE;
+const UI_ROW_BUTTON: f32 = design_tokens::spacing::SP_06 - design_tokens::spacing::SP_02;
+const UI_ROW_TOOL_LABEL: f32 = design_tokens::typography::CAPTION_LINE;
+const UI_ROW_TOOL_GRID: f32 = design_tokens::spacing::SP_08 + design_tokens::spacing::SP_02;
+const UI_ROW_NOTICE: f32 = design_tokens::typography::CAPTION_LINE;
+const UI_STACK_GAP_SMALL: f32 = design_tokens::spacing::SP_03;
+const UI_STACK_GAP_MEDIUM: f32 = design_tokens::spacing::SP_04;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct RectPx {
@@ -48,6 +75,15 @@ pub struct RectPx {
 impl RectPx {
     pub fn contains(self, x: f32, y: f32) -> bool {
         x >= self.x && x <= self.x + self.width && y >= self.y && y <= self.y + self.height
+    }
+
+    fn scale_by(self, scale: f32) -> Self {
+        Self {
+            x: self.x * scale,
+            y: self.y * scale,
+            width: self.width * scale,
+            height: self.height * scale,
+        }
     }
 }
 
@@ -104,6 +140,18 @@ pub struct ShellLayout {
 }
 
 impl ShellLayout {
+    pub fn for_surface(
+        physical_width: u32,
+        physical_height: u32,
+        scale_factor: f32,
+        dock_height_px: Option<u32>,
+    ) -> Self {
+        let scale = scale_factor.max(0.01);
+        let logical_width = ((physical_width as f32) / scale).round().max(1.0) as u32;
+        let logical_height = ((physical_height as f32) / scale).round().max(1.0) as u32;
+        Self::for_window(logical_width, logical_height, dock_height_px).scale_by(scale)
+    }
+
     pub fn for_window(width: u32, height: u32, dock_height_px: Option<u32>) -> Self {
         let width = width as f32;
         let height = height as f32;
@@ -113,6 +161,13 @@ impl ShellLayout {
             Some(h) => (h as f32).clamp(44.0, height * 0.6),
             None => 44.0_f32.min(height * 0.25),
         };
+        if let Some(layout) =
+            solve_shell_layout_with_taffy(width, height, left_width, right_width, bottom_height)
+        {
+            return layout;
+        }
+        // Taffy is the adopted shell solver; keep a manual fallback so a
+        // malformed runtime input cannot prevent the GUI from opening.
         Self {
             left_sidebar: RectPx {
                 x: 0.0,
@@ -144,6 +199,93 @@ impl ShellLayout {
     pub fn scene_viewport(&self) -> RectPx {
         inset_rect(self.viewport, 16.0, 76.0, 16.0, 16.0)
     }
+
+    fn scale_by(self, scale: f32) -> Self {
+        Self {
+            viewport: self.viewport.scale_by(scale),
+            left_sidebar: self.left_sidebar.scale_by(scale),
+            right_sidebar: self.right_sidebar.scale_by(scale),
+            bottom_strip: self.bottom_strip.scale_by(scale),
+        }
+    }
+}
+
+fn solve_shell_layout_with_taffy(
+    width: f32,
+    height: f32,
+    left_width: f32,
+    right_width: f32,
+    bottom_height: f32,
+) -> Option<ShellLayout> {
+    let mut taffy: TaffyTree<()> = TaffyTree::new();
+    let left_sidebar = taffy
+        .new_leaf(Style {
+            grid_row: line(1),
+            grid_column: line(1),
+            ..Default::default()
+        })
+        .ok()?;
+    let viewport = taffy
+        .new_leaf(Style {
+            grid_row: line(1),
+            grid_column: line(2),
+            ..Default::default()
+        })
+        .ok()?;
+    let right_sidebar = taffy
+        .new_leaf(Style {
+            grid_row: line(1),
+            grid_column: line(3),
+            ..Default::default()
+        })
+        .ok()?;
+    let bottom_strip = taffy
+        .new_leaf(Style {
+            grid_row: line(2),
+            grid_column: span(3),
+            ..Default::default()
+        })
+        .ok()?;
+    let root = taffy
+        .new_with_children(
+            Style {
+                display: Display::Grid,
+                size: Size {
+                    width: length(width),
+                    height: length(height),
+                },
+                grid_template_columns: vec![length(left_width), fr(1.0), length(right_width)],
+                grid_template_rows: vec![fr(1.0), length(bottom_height)],
+                ..Default::default()
+            },
+            &[left_sidebar, viewport, right_sidebar, bottom_strip],
+        )
+        .ok()?;
+    taffy
+        .compute_layout(
+            root,
+            Size {
+                width: AvailableSpace::Definite(width),
+                height: AvailableSpace::Definite(height),
+            },
+        )
+        .ok()?;
+
+    let rect_for = |tree: &TaffyTree<()>, node| -> Option<RectPx> {
+        let layout = tree.layout(node).ok()?;
+        Some(RectPx {
+            x: layout.location.x,
+            y: layout.location.y,
+            width: layout.size.width,
+            height: layout.size.height,
+        })
+    };
+    Some(ShellLayout {
+        left_sidebar: rect_for(&taffy, left_sidebar)?,
+        viewport: rect_for(&taffy, viewport)?,
+        right_sidebar: rect_for(&taffy, right_sidebar)?,
+        bottom_strip: rect_for(&taffy, bottom_strip)?,
+    })
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -152,6 +294,7 @@ pub enum HitTarget {
     AuthoredObject(String),
     FitBoard,
     FitReviewTarget,
+    SetWorkspaceTool(WorkspaceTool),
     ReviewPrev,
     ReviewNext,
     ToggleShowAuthored,
@@ -385,60 +528,84 @@ struct TextBufferCacheStats {
     misses: usize,
 }
 
-const APP_BG: [f32; 3] = [0.07, 0.08, 0.09];
-const PANEL_BG: [f32; 3] = [0.11, 0.12, 0.14];
-const PANEL_CARD_BG: [f32; 3] = [0.14, 0.15, 0.18];
-const PANEL_CARD_BORDER: [f32; 3] = [0.20, 0.22, 0.26];
-const VIEWPORT_BG: [f32; 3] = [0.08, 0.09, 0.11];
-const VIEWPORT_FRAME: [f32; 3] = [0.16, 0.18, 0.21];
-const BOARD_OUTER_FIELD: [f32; 3] = [0.07, 0.10, 0.11];
-const BOARD_INNER_FIELD: [f32; 3] = [0.16, 0.22, 0.21];
-const BOARD_GRID_MAJOR: [f32; 3] = [0.22, 0.30, 0.29];
-const BOARD_GRID_MINOR: [f32; 3] = [0.17, 0.24, 0.23];
-const BOARD_EDGE: [f32; 3] = [0.88, 0.90, 0.84];
-const TEXT_PRIMARY: [f32; 3] = [0.92, 0.93, 0.95];
-const TEXT_SECONDARY: [f32; 3] = [0.62, 0.66, 0.72];
-const TEXT_MUTED: [f32; 3] = [0.48, 0.52, 0.58];
-const TEXT_ACCENT: [f32; 3] = [0.96, 0.78, 0.41];
-const TEXT_PANEL_VALUE: [f32; 3] = [0.95, 0.96, 0.98];
-const COMPONENT_BODY: [f32; 3] = [0.14, 0.18, 0.17];
-const COMPONENT_BODY_RELATED: [f32; 3] = [0.18, 0.23, 0.22];
-const COMPONENT_BODY_SELECTED: [f32; 3] = [0.24, 0.30, 0.28];
-const COMPONENT_HEADER: [f32; 3] = [0.09, 0.10, 0.11];
-const COMPONENT_OUTLINE: [f32; 3] = [0.72, 0.74, 0.79];
-const COMPONENT_MECHANICAL: [f32; 3] = [0.42, 0.49, 0.46];
-const COMPONENT_MECHANICAL_RELATED: [f32; 3] = [0.73, 0.82, 0.74];
-const COMPONENT_SILK: [f32; 3] = [0.89, 0.91, 0.82];
-const COMPONENT_SILK_RELATED: [f32; 3] = [0.98, 0.97, 0.87];
-const PAD_COPPER: [f32; 3] = [0.84, 0.48, 0.22];
-const PAD_COPPER_RELATED: [f32; 3] = [0.93, 0.68, 0.39];
-const TOP_MASK_OPENING: [f32; 3] = [0.70, 0.44, 0.78];
-const BOTTOM_MASK_OPENING: [f32; 3] = [0.44, 0.72, 0.82];
-const TOP_PASTE_OPENING: [f32; 3] = [0.89, 0.86, 0.76];
-const BOTTOM_PASTE_OPENING: [f32; 3] = [0.72, 0.83, 0.87];
-const AUTHOR_BASE: [f32; 3] = [0.84, 0.48, 0.22];
-const AUTHOR_RELATED: [f32; 3] = [0.93, 0.72, 0.47];
-const AUTHOR_SELECTED: [f32; 3] = [0.85, 0.95, 1.00];
-const PROPOSAL_BASE: [f32; 3] = [0.98, 0.72, 0.22];
-const PROPOSAL_FOCUS: [f32; 3] = [1.00, 0.88, 0.48];
-const PROPOSAL_UNDERLAY: [f32; 3] = [0.47, 0.26, 0.07];
-const PROPOSAL_OUTER: [f32; 3] = [0.86, 0.58, 0.16];
-const PROPOSAL_CENTERLINE: [f32; 3] = [1.00, 0.97, 0.86];
-const PROPOSAL_ANCHOR_RING: [f32; 3] = [1.00, 0.89, 0.58];
-const PROPOSAL_ANCHOR_CORE: [f32; 3] = [0.31, 0.19, 0.08];
-const DIAGNOSTIC_BASE: [f32; 3] = [0.48, 0.78, 0.82];
-const DIAGNOSTIC_FOCUS: [f32; 3] = [0.72, 0.93, 0.97];
-const UNROUTED_BASE: [f32; 3] = [0.66, 0.86, 0.90];
-const UNROUTED_FOCUS: [f32; 3] = [0.86, 0.96, 0.98];
-const DIAGNOSTIC_UNDERLAY: [f32; 3] = [0.18, 0.32, 0.35];
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct TextPrepareSignature {
+    width: u32,
+    height: u32,
+    runs: Vec<TextPrepareRunKey>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct TextPrepareRunKey {
+    buffer_index: usize,
+    x_bits: u32,
+    y_bits: u32,
+    color_bits: [u32; 3],
+    clip_bounds: Option<RectBits>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct RectBits {
+    x_bits: u32,
+    y_bits: u32,
+    width_bits: u32,
+    height_bits: u32,
+}
+
+const APP_BG: [f32; 3] = design_tokens::chrome::BG_BASE;
+const PANEL_BG: [f32; 3] = design_tokens::chrome::SURFACE_01;
+const PANEL_CARD_BG: [f32; 3] = design_tokens::chrome::SURFACE_02;
+const PANEL_CARD_BORDER: [f32; 3] = design_tokens::chrome::BORDER_SUBTLE;
+const VIEWPORT_BG: [f32; 3] = design_tokens::chrome::CANVAS;
+const VIEWPORT_FRAME: [f32; 3] = design_tokens::chrome::BORDER_STRONG;
+const BOARD_OUTER_FIELD: [f32; 3] = design_tokens::chrome::CANVAS;
+const BOARD_INNER_FIELD: [f32; 3] = design_tokens::chrome::SURFACE_01;
+const BOARD_GRID_MAJOR: [f32; 3] = design_tokens::chrome::BORDER_STRONG;
+const BOARD_GRID_MINOR: [f32; 3] = design_tokens::chrome::BORDER_SUBTLE;
+const BOARD_EDGE: [f32; 3] = design_tokens::content::EDGE;
+const TEXT_PRIMARY: [f32; 3] = design_tokens::chrome::TEXT_PRIMARY;
+const TEXT_SECONDARY: [f32; 3] = design_tokens::chrome::TEXT_SECONDARY;
+const TEXT_MUTED: [f32; 3] = design_tokens::chrome::TEXT_MUTED;
+const TEXT_ACCENT: [f32; 3] = design_tokens::chrome::ACCENT;
+const TEXT_PANEL_VALUE: [f32; 3] = design_tokens::chrome::TEXT_PRIMARY;
+const COMPONENT_BODY: [f32; 3] = design_tokens::chrome::SURFACE_02;
+const COMPONENT_BODY_RELATED: [f32; 3] = design_tokens::chrome::SURFACE_03;
+const COMPONENT_BODY_SELECTED: [f32; 3] = design_tokens::chrome::ACCENT_TINT;
+const COMPONENT_HEADER: [f32; 3] = design_tokens::chrome::CANVAS;
+const COMPONENT_OUTLINE: [f32; 3] = design_tokens::chrome::TEXT_SECONDARY;
+const COMPONENT_MECHANICAL: [f32; 3] = design_tokens::content::EXCLUSION;
+const COMPONENT_MECHANICAL_RELATED: [f32; 3] = design_tokens::chrome::TEXT_SECONDARY;
+const COMPONENT_SILK: [f32; 3] = design_tokens::content::SILK_TOP;
+const COMPONENT_SILK_RELATED: [f32; 3] = design_tokens::chrome::TEXT_PRIMARY;
+const PAD_COPPER: [f32; 3] = design_tokens::content::PAD;
+const PAD_COPPER_RELATED: [f32; 3] = design_tokens::content::VIA;
+const TOP_MASK_OPENING: [f32; 3] = design_tokens::content::MASK;
+const BOTTOM_MASK_OPENING: [f32; 3] = design_tokens::content::MASK;
+const TOP_PASTE_OPENING: [f32; 3] = design_tokens::content::PASTE;
+const BOTTOM_PASTE_OPENING: [f32; 3] = design_tokens::content::PASTE;
+const AUTHOR_BASE: [f32; 3] = design_tokens::content::PAD;
+const AUTHOR_RELATED: [f32; 3] = design_tokens::content::VIA;
+const AUTHOR_SELECTED: [f32; 3] = design_tokens::content::SELECTION;
+const PROPOSAL_BASE: [f32; 3] = design_tokens::chrome::STATUS_WARN;
+const PROPOSAL_FOCUS: [f32; 3] = design_tokens::chrome::ACCENT_HOVER;
+const PROPOSAL_UNDERLAY: [f32; 3] = design_tokens::chrome::ACCENT_TINT;
+const PROPOSAL_OUTER: [f32; 3] = design_tokens::chrome::ACCENT;
+const PROPOSAL_CENTERLINE: [f32; 3] = design_tokens::chrome::TEXT_PRIMARY;
+const PROPOSAL_ANCHOR_RING: [f32; 3] = design_tokens::chrome::ACCENT_HOVER;
+const PROPOSAL_ANCHOR_CORE: [f32; 3] = design_tokens::chrome::TEXT_ON_ACCENT;
+const DIAGNOSTIC_BASE: [f32; 3] = design_tokens::chrome::STATUS_INFO;
+const DIAGNOSTIC_FOCUS: [f32; 3] = design_tokens::chrome::TEXT_PRIMARY;
+const UNROUTED_BASE: [f32; 3] = design_tokens::content::RATSNEST;
+const UNROUTED_FOCUS: [f32; 3] = design_tokens::chrome::TEXT_PRIMARY;
+const DIAGNOSTIC_UNDERLAY: [f32; 3] = design_tokens::chrome::SURFACE_03;
 const AUTHORED_DIM_FACTOR: f32 = 0.82;
 const PROCESS_DIM_FACTOR: f32 = 0.88;
 const STRUCTURAL_DIM_FACTOR: f32 = 0.74;
 const CONTEXT_DIM_FACTOR: f32 = 0.90;
-const REVIEW_ROW_BG: [f32; 3] = [0.16, 0.17, 0.20];
-const REVIEW_ROW_ACTIVE_BG: [f32; 3] = [0.27, 0.19, 0.11];
-const REVIEW_ROW_BADGE: [f32; 3] = [0.23, 0.25, 0.29];
-const REVIEW_ROW_BADGE_ACTIVE: [f32; 3] = [0.63, 0.43, 0.16];
+const REVIEW_ROW_BG: [f32; 3] = design_tokens::chrome::SURFACE_02;
+const REVIEW_ROW_ACTIVE_BG: [f32; 3] = design_tokens::chrome::ACCENT_TINT;
+const REVIEW_ROW_BADGE: [f32; 3] = design_tokens::chrome::SURFACE_03;
+const REVIEW_ROW_BADGE_ACTIVE: [f32; 3] = design_tokens::chrome::ACCENT;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum LayerFamily {
@@ -517,7 +684,19 @@ impl PreparedScene {
         camera: CameraState,
         retained_scene: &RetainedScene,
     ) -> Self {
-        let layout = ShellLayout::for_window(width, height, dock_height_for_state(state));
+        Self::from_workspace_for_surface(state, width, height, 1.0, camera, retained_scene)
+    }
+
+    pub fn from_workspace_for_surface(
+        state: &ReviewWorkspaceState,
+        width: u32,
+        height: u32,
+        scale_factor: f32,
+        camera: CameraState,
+        retained_scene: &RetainedScene,
+    ) -> Self {
+        let scale = scale_factor.max(0.01);
+        let layout = ShellLayout::for_surface(width, height, scale, dock_height_for_state(state));
         let mut panel_quads = Vec::new();
         let mut viewport_underlay_quads = Vec::new();
         let mut viewport_overlay_quads = Vec::new();
@@ -554,6 +733,9 @@ impl PreparedScene {
             &mut text_runs,
             &mut hit_regions,
         );
+        if (scale - 1.0).abs() > f32::EPSILON {
+            scale_text_run_sizes(&mut text_runs, scale);
+        }
         let panel_vertices = quads_to_vertices(&panel_quads);
         let viewport_underlay_vertices = quads_to_vertices(&viewport_underlay_quads);
         let viewport_overlay_vertices = quads_to_vertices(&viewport_overlay_quads);
@@ -609,8 +791,18 @@ impl PreparedScene {
 
 impl RetainedScene {
     pub fn from_workspace(state: &ReviewWorkspaceState, width: u32, height: u32) -> Self {
+        Self::from_workspace_for_surface(state, width, height, 1.0)
+    }
+
+    pub fn from_workspace_for_surface(
+        state: &ReviewWorkspaceState,
+        width: u32,
+        height: u32,
+        scale_factor: f32,
+    ) -> Self {
         let started = std::time::Instant::now();
-        let layout = ShellLayout::for_window(width, height, dock_height_for_state(state));
+        let layout =
+            ShellLayout::for_surface(width, height, scale_factor, dock_height_for_state(state));
         let scene_viewport = layout.scene_viewport();
         let board_field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
         let reference_projection = Projection::new(
@@ -734,1112 +926,6 @@ impl WorldHitShape {
     }
 }
 
-fn render_side_panels(
-    state: &ReviewWorkspaceState,
-    layout: &ShellLayout,
-    panel_quads: &mut Vec<Quad>,
-    text_runs: &mut Vec<TextRun>,
-    hit_regions: &mut Vec<HitRegion>,
-) {
-    let left = layout.left_sidebar;
-    let right = layout.right_sidebar;
-
-    let project_rect = RectPx {
-        x: left.x + 14.0,
-        y: left.y + 14.0,
-        width: left.width - 28.0,
-        height: 146.0,
-    };
-    let filters_rect = RectPx {
-        x: left.x + 14.0,
-        y: left.y + 172.0,
-        width: left.width - 28.0,
-        height: (left.height - 186.0).max(100.0),
-    };
-    let board_text_selected = matches!(
-        &state.selection,
-        SelectionTarget::AuthoredObject(object_id)
-            if state.scene.board_texts.iter().any(|text| &text.object_id == object_id)
-    );
-    let inspector_height = if board_text_selected { 330.0 } else { 150.0 };
-    let inspector_rect = RectPx {
-        x: right.x + 14.0,
-        y: right.y + 14.0,
-        width: right.width - 28.0,
-        height: inspector_height,
-    };
-    let review_y = inspector_rect.y + inspector_rect.height + 12.0;
-    let review_rect = RectPx {
-        x: right.x + 14.0,
-        y: review_y,
-        width: right.width - 28.0,
-        height: (right.y + right.height - review_y - 14.0).max(100.0),
-    };
-
-    for (rect, title) in [
-        (project_rect, "PROJECT"),
-        (filters_rect, "FILTERS"),
-        (inspector_rect, "INSPECTOR"),
-        (review_rect, "REVIEW"),
-    ] {
-        panel_quads.push(Quad::from_rect(rect, PANEL_CARD_BG));
-        push_rect_border(panel_quads, rect, PANEL_CARD_BORDER, 1.0);
-        draw_text(
-            title,
-            rect.x + 12.0,
-            rect.y + 12.0,
-            12.0,
-            TEXT_SECONDARY,
-            TextFace::Ui,
-            text_runs,
-        );
-        push_section_divider(
-            panel_quads,
-            rect.x + 12.0,
-            rect.y + 28.0,
-            rect.width - 24.0,
-            PANEL_CARD_BORDER,
-        );
-    }
-
-    draw_text(
-        &truncate_text(&state.scene.project_name.to_uppercase(), 22),
-        project_rect.x + 12.0,
-        project_rect.y + 34.0,
-        16.0,
-        TEXT_PRIMARY,
-        TextFace::Ui,
-        text_runs,
-    );
-    draw_text(
-        &format!(
-            "BOARD {}",
-            truncate_text(&state.scene.board_name.to_uppercase(), 18)
-        ),
-        project_rect.x + 12.0,
-        project_rect.y + 54.0,
-        12.5,
-        TEXT_SECONDARY,
-        TextFace::Ui,
-        text_runs,
-    );
-    if let Some(action) = state.selected_review_action() {
-        draw_text(
-            &format!("NET {}", truncate_text(&action.net_name.to_uppercase(), 18)),
-            project_rect.x + 12.0,
-            project_rect.y + 74.0,
-            13.0,
-            TEXT_ACCENT,
-            TextFace::Ui,
-            text_runs,
-        );
-    }
-    draw_text(
-        &format!("TOOL {}", workspace_tool_label(state.tool)),
-        project_rect.x + 12.0,
-        project_rect.y + 94.0,
-        12.0,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
-    let shard_attention_count = state.source_shards.attention_count();
-    let shard_label = source_shard_health_label(&state.source_shards);
-    draw_text(
-        &truncate_text(&shard_label, 26),
-        project_rect.x + 12.0,
-        project_rect.y + 112.0,
-        11.0,
-        if shard_attention_count == 0 {
-            TEXT_MUTED
-        } else {
-            TEXT_ACCENT
-        },
-        TextFace::Mono,
-        text_runs,
-    );
-    let action_y = render_shard_rows(&state.source_shards, project_rect, text_runs);
-    let fit_board_rect = RectPx {
-        x: project_rect.x + 12.0,
-        y: action_y,
-        width: 72.0,
-        height: 20.0,
-    };
-    let fit_review_rect = RectPx {
-        x: project_rect.x + 92.0,
-        y: action_y,
-        width: 92.0,
-        height: 20.0,
-    };
-    for (rect, label, target) in [
-        (fit_board_rect, "FIT BOARD", HitTarget::FitBoard),
-        (fit_review_rect, "FIT REVIEW", HitTarget::FitReviewTarget),
-    ] {
-        panel_quads.push(Quad::from_rect(rect, REVIEW_ROW_BADGE));
-        push_rect_border(panel_quads, rect, PANEL_CARD_BORDER, 1.0);
-        draw_text(
-            label,
-            rect.x + 7.0,
-            rect.y + 5.0,
-            10.0,
-            TEXT_SECONDARY,
-            TextFace::Ui,
-            text_runs,
-        );
-        hit_regions.push(HitRegion { target, rect });
-    }
-    if let Some(status) = &state.last_command_status {
-        draw_text(
-            &truncate_text(&format!("LAST {}", status.action.to_uppercase()), 24),
-            project_rect.x + 12.0,
-            project_rect.y + 152.0,
-            11.0,
-            TEXT_MUTED,
-            TextFace::Mono,
-            text_runs,
-        );
-    }
-    push_boolean_row(
-        filters_rect.x + 12.0,
-        filters_rect.y + 36.0,
-        "AUTHORED",
-        state.ui.filters.show_authored,
-        text_runs,
-    );
-    hit_regions.push(HitRegion {
-        target: HitTarget::ToggleShowAuthored,
-        rect: RectPx {
-            x: filters_rect.x + 4.0,
-            y: filters_rect.y + 28.0,
-            width: filters_rect.width - 8.0,
-            height: 22.0,
-        },
-    });
-    push_boolean_row(
-        filters_rect.x + 12.0,
-        filters_rect.y + 56.0,
-        "PROPOSED",
-        state.ui.filters.show_proposed,
-        text_runs,
-    );
-    hit_regions.push(HitRegion {
-        target: HitTarget::ToggleShowProposed,
-        rect: RectPx {
-            x: filters_rect.x + 4.0,
-            y: filters_rect.y + 48.0,
-            width: filters_rect.width - 8.0,
-            height: 22.0,
-        },
-    });
-    push_boolean_row(
-        filters_rect.x + 12.0,
-        filters_rect.y + 76.0,
-        "UNROUTED",
-        state.ui.filters.show_unrouted,
-        text_runs,
-    );
-    hit_regions.push(HitRegion {
-        target: HitTarget::ToggleShowUnrouted,
-        rect: RectPx {
-            x: filters_rect.x + 4.0,
-            y: filters_rect.y + 68.0,
-            width: filters_rect.width - 8.0,
-            height: 22.0,
-        },
-    });
-    push_boolean_row(
-        filters_rect.x + 12.0,
-        filters_rect.y + 96.0,
-        "DIM UNRELATED",
-        state.ui.filters.dim_unrelated,
-        text_runs,
-    );
-    hit_regions.push(HitRegion {
-        target: HitTarget::ToggleDimUnrelated,
-        rect: RectPx {
-            x: filters_rect.x + 4.0,
-            y: filters_rect.y + 88.0,
-            width: filters_rect.width - 8.0,
-            height: 22.0,
-        },
-    });
-    let mut layer_y = filters_rect.y + 120.0;
-    let max_layer_rows = ((filters_rect.height - 140.0) / 20.0).floor().max(1.0) as usize;
-    // Show all layers — copper first, then non-copper
-    let mut display_layers: Vec<&_> = state.scene.layers.iter().collect();
-    display_layers.sort_by_key(|l| {
-        (
-            !l.visible_by_default,
-            scene_layer_stack_priority(&l.layer_id, &state.scene.layers),
-            l.render_order,
-        )
-    });
-    for layer in display_layers.iter().take(max_layer_rows) {
-        let visible = state
-            .ui
-            .filters
-            .layer_visibility
-            .get(&layer.layer_id)
-            .copied()
-            .unwrap_or(layer.visible_by_default);
-        push_boolean_row(
-            filters_rect.x + 12.0,
-            layer_y,
-            &truncate_text(&layer.name.to_uppercase(), 18),
-            visible,
-            text_runs,
-        );
-        hit_regions.push(HitRegion {
-            target: HitTarget::ToggleLayer(layer.layer_id.clone()),
-            rect: RectPx {
-                x: filters_rect.x + 4.0,
-                y: layer_y - 8.0,
-                width: filters_rect.width - 8.0,
-                height: 22.0,
-            },
-        });
-        layer_y += 20.0;
-    }
-    if let Some(action) = state.selected_review_action() {
-        draw_text(
-            &format!(
-                "ACTIVE {}",
-                truncate_text(&suffix_id(&action.action_id).to_uppercase(), 14)
-            ),
-            filters_rect.x + 12.0,
-            filters_rect.y + 164.0,
-            11.0,
-            TEXT_MUTED,
-            TextFace::Mono,
-            text_runs,
-        );
-    }
-    draw_text(
-        &format!("LAYERS {}", state.scene.layers.len()),
-        filters_rect.x + 12.0,
-        filters_rect.y + 182.0,
-        11.0,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
-    draw_text(
-        &format!(
-            "FOCUS {}",
-            if has_review_focus(state) { "ON" } else { "OFF" }
-        ),
-        filters_rect.x + 12.0,
-        filters_rect.y + 198.0,
-        11.0,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
-    draw_text(
-        &format!(
-            "OUTPUTS {} / ART {} / {}",
-            state.production.output_job_count,
-            state.production.artifact_count,
-            state
-                .production
-                .latest_status
-                .as_deref()
-                .unwrap_or("never_run")
-                .to_uppercase()
-        ),
-        filters_rect.x + 12.0,
-        filters_rect.y + 214.0,
-        11.0,
-        TEXT_MUTED,
-        TextFace::Mono,
-        text_runs,
-    );
-
-    draw_text(
-        "SELECTION",
-        inspector_rect.x + 12.0,
-        inspector_rect.y + 34.0,
-        12.0,
-        TEXT_SECONDARY,
-        TextFace::Ui,
-        text_runs,
-    );
-    match &state.selection {
-        SelectionTarget::ReviewAction(action_id) => {
-            draw_text(
-                &format!(
-                    "ACTION {}",
-                    truncate_text(&suffix_id(action_id).to_uppercase(), 14)
-                ),
-                inspector_rect.x + 12.0,
-                inspector_rect.y + 54.0,
-                15.0,
-                TEXT_PRIMARY,
-                TextFace::Mono,
-                text_runs,
-            );
-        }
-        SelectionTarget::CheckFinding(fingerprint) => {
-            inspector_check_finding::render_check_finding_inspector(
-                state,
-                fingerprint,
-                inspector_rect,
-                text_runs,
-            );
-        }
-        SelectionTarget::AuthoredObject(object_id) => {
-            let mut y = inspector_rect.y + 54.0;
-            if let Some(comp) = state
-                .scene
-                .components
-                .iter()
-                .find(|c| &c.object_id == object_id)
-            {
-                draw_text(
-                    &comp.reference.to_uppercase(),
-                    inspector_rect.x + 12.0,
-                    y,
-                    15.0,
-                    TEXT_PRIMARY,
-                    TextFace::Mono,
-                    text_runs,
-                );
-                y += 20.0;
-                if let Some(value) = &comp.value {
-                    push_key_value(
-                        inspector_rect.x + 12.0,
-                        y,
-                        "VALUE",
-                        &value.to_uppercase(),
-                        text_runs,
-                        TextFace::Ui,
-                    );
-                    y += 18.0;
-                }
-                push_key_value(
-                    inspector_rect.x + 12.0,
-                    y,
-                    "LAYER",
-                    &comp.placement_layer.to_uppercase(),
-                    text_runs,
-                    TextFace::Mono,
-                );
-                y += 18.0;
-                let pos = format!(
-                    "{:.2}, {:.2} mm",
-                    comp.position.x as f64 / 1_000_000.0,
-                    comp.position.y as f64 / 1_000_000.0
-                );
-                push_key_value(
-                    inspector_rect.x + 12.0,
-                    y,
-                    "POS",
-                    &pos,
-                    text_runs,
-                    TextFace::Mono,
-                );
-            } else if let Some(pad) = state.scene.pads.iter().find(|p| &p.object_id == object_id) {
-                draw_text(
-                    &format!("PAD {}", pad.shape_kind.to_uppercase()),
-                    inspector_rect.x + 12.0,
-                    y,
-                    15.0,
-                    TEXT_PRIMARY,
-                    TextFace::Mono,
-                    text_runs,
-                );
-                y += 20.0;
-                push_key_value(
-                    inspector_rect.x + 12.0,
-                    y,
-                    "LAYER",
-                    &pad.layer_id.to_uppercase(),
-                    text_runs,
-                    TextFace::Mono,
-                );
-                y += 18.0;
-                let w = (pad.bounds.max_x - pad.bounds.min_x) as f64 / 1_000_000.0;
-                let h = (pad.bounds.max_y - pad.bounds.min_y) as f64 / 1_000_000.0;
-                push_key_value(
-                    inspector_rect.x + 12.0,
-                    y,
-                    "SIZE",
-                    &format!("{w:.2} x {h:.2} mm"),
-                    text_runs,
-                    TextFace::Mono,
-                );
-                y += 18.0;
-                if let Some(drill) = pad.drill_nm {
-                    push_key_value(
-                        inspector_rect.x + 12.0,
-                        y,
-                        "DRILL",
-                        &format!("{:.2} mm", drill as f64 / 1_000_000.0),
-                        text_runs,
-                        TextFace::Mono,
-                    );
-                }
-            } else if let Some(track) = state
-                .scene
-                .tracks
-                .iter()
-                .find(|t| &t.object_id == object_id)
-            {
-                draw_text(
-                    "TRACK",
-                    inspector_rect.x + 12.0,
-                    y,
-                    15.0,
-                    TEXT_PRIMARY,
-                    TextFace::Mono,
-                    text_runs,
-                );
-                y += 20.0;
-                push_key_value(
-                    inspector_rect.x + 12.0,
-                    y,
-                    "LAYER",
-                    &track.layer_id.to_uppercase(),
-                    text_runs,
-                    TextFace::Mono,
-                );
-                y += 18.0;
-                push_key_value(
-                    inspector_rect.x + 12.0,
-                    y,
-                    "WIDTH",
-                    &format!("{:.2} mm", track.width_nm as f64 / 1_000_000.0),
-                    text_runs,
-                    TextFace::Mono,
-                );
-            } else if let Some(via) = state.scene.vias.iter().find(|v| &v.object_id == object_id) {
-                draw_text(
-                    "VIA",
-                    inspector_rect.x + 12.0,
-                    y,
-                    15.0,
-                    TEXT_PRIMARY,
-                    TextFace::Mono,
-                    text_runs,
-                );
-                y += 20.0;
-                push_key_value(
-                    inspector_rect.x + 12.0,
-                    y,
-                    "DIA",
-                    &format!("{:.2} mm", via.diameter_nm as f64 / 1_000_000.0),
-                    text_runs,
-                    TextFace::Mono,
-                );
-                y += 18.0;
-                push_key_value(
-                    inspector_rect.x + 12.0,
-                    y,
-                    "DRILL",
-                    &format!("{:.2} mm", via.drill_nm as f64 / 1_000_000.0),
-                    text_runs,
-                    TextFace::Mono,
-                );
-                y += 18.0;
-                push_key_value(
-                    inspector_rect.x + 12.0,
-                    y,
-                    "LAYERS",
-                    &format!(
-                        "{} → {}",
-                        via.start_layer_id.to_uppercase(),
-                        via.end_layer_id.to_uppercase()
-                    ),
-                    text_runs,
-                    TextFace::Mono,
-                );
-            } else if let Some(text) = state
-                .scene
-                .board_texts
-                .iter()
-                .find(|t| &t.object_id == object_id)
-            {
-                draw_text(
-                    "BOARD TEXT",
-                    inspector_rect.x + 12.0,
-                    y,
-                    15.0,
-                    TEXT_PRIMARY,
-                    TextFace::Mono,
-                    text_runs,
-                );
-                y += 20.0;
-                push_board_text_property_row(
-                    inspector_rect.x + 12.0,
-                    y,
-                    "TEXT",
-                    &truncate_text(&text.text.to_uppercase(), 18),
-                    text_runs,
-                );
-                hit_regions.push(HitRegion {
-                    target: HitTarget::EditSelectedBoardTextContent,
-                    rect: RectPx {
-                        x: inspector_rect.x + 8.0,
-                        y: y - 6.0,
-                        width: inspector_rect.width - 16.0,
-                        height: 18.0,
-                    },
-                });
-                y += 18.0;
-                push_board_text_property_row(
-                    inspector_rect.x + 12.0,
-                    y,
-                    "EDIT",
-                    "CONTENT",
-                    text_runs,
-                );
-                hit_regions.push(HitRegion {
-                    target: HitTarget::EditSelectedBoardTextContent,
-                    rect: RectPx {
-                        x: inspector_rect.x + 8.0,
-                        y: y - 6.0,
-                        width: inspector_rect.width - 16.0,
-                        height: 18.0,
-                    },
-                });
-                y += 18.0;
-                push_board_text_property_row(
-                    inspector_rect.x + 12.0,
-                    y,
-                    "INTENT",
-                    &text.render_intent.to_uppercase(),
-                    text_runs,
-                );
-                let row_x = inspector_rect.x + 8.0;
-                let row_w = inspector_rect.width - 16.0;
-                hit_regions.push(HitRegion {
-                    target: HitTarget::CycleSelectedBoardTextRenderIntent,
-                    rect: RectPx {
-                        x: row_x,
-                        y: y - 6.0,
-                        width: row_w * 0.25,
-                        height: 18.0,
-                    },
-                });
-                hit_regions.push(HitRegion {
-                    target: HitTarget::EditSelectedBoardTextRenderIntent,
-                    rect: RectPx {
-                        x: row_x + row_w * 0.25,
-                        y: y - 6.0,
-                        width: row_w * 0.5,
-                        height: 18.0,
-                    },
-                });
-                hit_regions.push(HitRegion {
-                    target: HitTarget::CycleSelectedBoardTextRenderIntent,
-                    rect: RectPx {
-                        x: row_x + row_w * 0.75,
-                        y: y - 6.0,
-                        width: row_w * 0.25,
-                        height: 18.0,
-                    },
-                });
-                y += 18.0;
-                push_board_text_property_row(
-                    inspector_rect.x + 12.0,
-                    y,
-                    "FONT",
-                    &truncate_text(&text.family.to_uppercase(), 16),
-                    text_runs,
-                );
-                let row_x = inspector_rect.x + 8.0;
-                let row_w = inspector_rect.width - 16.0;
-                hit_regions.push(HitRegion {
-                    target: HitTarget::CycleSelectedBoardTextFamily,
-                    rect: RectPx {
-                        x: row_x,
-                        y: y - 6.0,
-                        width: row_w * 0.25,
-                        height: 18.0,
-                    },
-                });
-                hit_regions.push(HitRegion {
-                    target: HitTarget::EditSelectedBoardTextFamily,
-                    rect: RectPx {
-                        x: row_x + row_w * 0.25,
-                        y: y - 6.0,
-                        width: row_w * 0.5,
-                        height: 18.0,
-                    },
-                });
-                hit_regions.push(HitRegion {
-                    target: HitTarget::CycleSelectedBoardTextFamily,
-                    rect: RectPx {
-                        x: row_x + row_w * 0.75,
-                        y: y - 6.0,
-                        width: row_w * 0.25,
-                        height: 18.0,
-                    },
-                });
-                y += 18.0;
-                push_board_text_property_row(
-                    inspector_rect.x + 12.0,
-                    y,
-                    "HEIGHT",
-                    &format!("{:.2} mm", text.height_nm as f64 / 1_000_000.0),
-                    text_runs,
-                );
-                let row_x = inspector_rect.x + 8.0;
-                let row_w = inspector_rect.width - 16.0;
-                hit_regions.push(HitRegion {
-                    target: HitTarget::DecreaseSelectedBoardTextHeight,
-                    rect: RectPx {
-                        x: row_x,
-                        y: y - 6.0,
-                        width: row_w * 0.25,
-                        height: 18.0,
-                    },
-                });
-                hit_regions.push(HitRegion {
-                    target: HitTarget::EditSelectedBoardTextHeight,
-                    rect: RectPx {
-                        x: row_x + row_w * 0.25,
-                        y: y - 6.0,
-                        width: row_w * 0.5,
-                        height: 18.0,
-                    },
-                });
-                hit_regions.push(HitRegion {
-                    target: HitTarget::IncreaseSelectedBoardTextHeight,
-                    rect: RectPx {
-                        x: row_x + row_w * 0.75,
-                        y: y - 6.0,
-                        width: row_w * 0.25,
-                        height: 18.0,
-                    },
-                });
-                y += 18.0;
-                push_board_text_property_row(
-                    inspector_rect.x + 12.0,
-                    y,
-                    "ROT",
-                    &format!("{}°", text.rotation_degrees.rem_euclid(360)),
-                    text_runs,
-                );
-                let row_x = inspector_rect.x + 8.0;
-                let row_w = inspector_rect.width - 16.0;
-                hit_regions.push(HitRegion {
-                    target: HitTarget::RotateSelectedBoardTextCounterClockwise90,
-                    rect: RectPx {
-                        x: row_x,
-                        y: y - 6.0,
-                        width: row_w * 0.25,
-                        height: 18.0,
-                    },
-                });
-                hit_regions.push(HitRegion {
-                    target: HitTarget::EditSelectedBoardTextRotation,
-                    rect: RectPx {
-                        x: row_x + row_w * 0.25,
-                        y: y - 6.0,
-                        width: row_w * 0.5,
-                        height: 18.0,
-                    },
-                });
-                hit_regions.push(HitRegion {
-                    target: HitTarget::RotateSelectedBoardTextClockwise90,
-                    rect: RectPx {
-                        x: row_x + row_w * 0.75,
-                        y: y - 6.0,
-                        width: row_w * 0.25,
-                        height: 18.0,
-                    },
-                });
-                y += 18.0;
-                push_board_text_property_row(
-                    inspector_rect.x + 12.0,
-                    y,
-                    "ALIGN",
-                    &format!(
-                        "{} / {}",
-                        text.h_align.to_uppercase(),
-                        text.v_align.to_uppercase()
-                    ),
-                    text_runs,
-                );
-                let row_x = inspector_rect.x + 8.0;
-                let row_w = inspector_rect.width - 16.0;
-                hit_regions.push(HitRegion {
-                    target: HitTarget::CycleSelectedBoardTextHAlign,
-                    rect: RectPx {
-                        x: row_x,
-                        y: y - 6.0,
-                        width: row_w * 0.25,
-                        height: 18.0,
-                    },
-                });
-                hit_regions.push(HitRegion {
-                    target: HitTarget::EditSelectedBoardTextAlignment,
-                    rect: RectPx {
-                        x: row_x + row_w * 0.25,
-                        y: y - 6.0,
-                        width: row_w * 0.5,
-                        height: 18.0,
-                    },
-                });
-                hit_regions.push(HitRegion {
-                    target: HitTarget::CycleSelectedBoardTextVAlign,
-                    rect: RectPx {
-                        x: row_x + row_w * 0.75,
-                        y: y - 6.0,
-                        width: row_w * 0.25,
-                        height: 18.0,
-                    },
-                });
-                y += 18.0;
-                push_board_text_property_row(
-                    inspector_rect.x + 12.0,
-                    y,
-                    "LINE",
-                    &format!("{}%", text.line_spacing_ratio_ppm / 10_000),
-                    text_runs,
-                );
-                let row_x = inspector_rect.x + 8.0;
-                let row_w = inspector_rect.width - 16.0;
-                hit_regions.push(HitRegion {
-                    target: HitTarget::DecreaseSelectedBoardTextLineSpacing,
-                    rect: RectPx {
-                        x: row_x,
-                        y: y - 6.0,
-                        width: row_w * 0.25,
-                        height: 18.0,
-                    },
-                });
-                hit_regions.push(HitRegion {
-                    target: HitTarget::EditSelectedBoardTextLineSpacing,
-                    rect: RectPx {
-                        x: row_x + row_w * 0.25,
-                        y: y - 6.0,
-                        width: row_w * 0.5,
-                        height: 18.0,
-                    },
-                });
-                hit_regions.push(HitRegion {
-                    target: HitTarget::IncreaseSelectedBoardTextLineSpacing,
-                    rect: RectPx {
-                        x: row_x + row_w * 0.75,
-                        y: y - 6.0,
-                        width: row_w * 0.25,
-                        height: 18.0,
-                    },
-                });
-                y += 18.0;
-                push_board_text_property_row(
-                    inspector_rect.x + 12.0,
-                    y,
-                    "BOLD",
-                    if text.bold { "ON" } else { "OFF" },
-                    text_runs,
-                );
-                hit_regions.push(HitRegion {
-                    target: HitTarget::ToggleSelectedBoardTextBold,
-                    rect: RectPx {
-                        x: inspector_rect.x + 8.0,
-                        y: y - 6.0,
-                        width: inspector_rect.width - 16.0,
-                        height: 18.0,
-                    },
-                });
-                y += 18.0;
-                push_board_text_property_row(
-                    inspector_rect.x + 12.0,
-                    y,
-                    "MIRROR",
-                    if text.mirrored { "ON" } else { "OFF" },
-                    text_runs,
-                );
-                hit_regions.push(HitRegion {
-                    target: HitTarget::ToggleSelectedBoardTextMirrored,
-                    rect: RectPx {
-                        x: inspector_rect.x + 8.0,
-                        y: y - 6.0,
-                        width: inspector_rect.width - 16.0,
-                        height: 18.0,
-                    },
-                });
-                y += 18.0;
-                push_board_text_property_row(
-                    inspector_rect.x + 12.0,
-                    y,
-                    "UPRIGHT",
-                    if text.keep_upright { "ON" } else { "OFF" },
-                    text_runs,
-                );
-                hit_regions.push(HitRegion {
-                    target: HitTarget::ToggleSelectedBoardTextKeepUpright,
-                    rect: RectPx {
-                        x: inspector_rect.x + 8.0,
-                        y: y - 6.0,
-                        width: inspector_rect.width - 16.0,
-                        height: 18.0,
-                    },
-                });
-                y += 20.0;
-                draw_text(
-                    "EDGE +/-   CENTER EDIT",
-                    inspector_rect.x + 12.0,
-                    y,
-                    10.5,
-                    TEXT_MUTED,
-                    TextFace::Mono,
-                    text_runs,
-                );
-            } else {
-                draw_text(
-                    &format!(
-                        "OBJECT {}",
-                        truncate_text(&suffix_id(object_id).to_uppercase(), 14)
-                    ),
-                    inspector_rect.x + 12.0,
-                    y,
-                    15.0,
-                    TEXT_PRIMARY,
-                    TextFace::Mono,
-                    text_runs,
-                );
-            }
-            let _ = y;
-        }
-        SelectionTarget::None => draw_text(
-            "NONE",
-            inspector_rect.x + 12.0,
-            inspector_rect.y + 54.0,
-            15.0,
-            TEXT_MUTED,
-            TextFace::Ui,
-            text_runs,
-        ),
-    }
-    if let Some(action) = state.selected_review_action() {
-        push_section_divider(
-            panel_quads,
-            inspector_rect.x + 12.0,
-            inspector_rect.y + 76.0,
-            inspector_rect.width - 24.0,
-            [0.23, 0.25, 0.29],
-        );
-        push_key_value(
-            inspector_rect.x + 12.0,
-            inspector_rect.y + 84.0,
-            "CONTRACT",
-            &truncate_text(&action.contract.to_uppercase(), 18),
-            text_runs,
-            TextFace::Mono,
-        );
-        push_key_value(
-            inspector_rect.x + 12.0,
-            inspector_rect.y + 104.0,
-            "NET",
-            &truncate_text(&action.net_name.to_uppercase(), 16),
-            text_runs,
-            TextFace::Ui,
-        );
-        push_key_value(
-            inspector_rect.x + 12.0,
-            inspector_rect.y + 124.0,
-            "SEGMENT",
-            &format!(
-                "{} OF {}",
-                action.selected_path_segment_index + 1,
-                action.selected_path_segment_count
-            ),
-            text_runs,
-            TextFace::Mono,
-        );
-    }
-    if let Some(segment) = state.selected_segment_evidence() {
-        push_key_value(
-            inspector_rect.x + 12.0,
-            inspector_rect.y + 144.0,
-            "LAYER",
-            &segment.layer.to_string(),
-            text_runs,
-            TextFace::Mono,
-        );
-    }
-    if let Some(status) = &state.last_command_status {
-        push_key_value(
-            inspector_rect.x + 12.0,
-            inspector_rect.y + 164.0,
-            "LAST",
-            &truncate_text(&status.detail.to_uppercase(), 20),
-            text_runs,
-            TextFace::Mono,
-        );
-    }
-
-    draw_text(
-        &format!(
-            "SOURCE {}",
-            truncate_text(&state.review.review_source.to_uppercase(), 20)
-        ),
-        review_rect.x + 12.0,
-        review_rect.y + 34.0,
-        12.0,
-        TEXT_SECONDARY,
-        TextFace::Mono,
-        text_runs,
-    );
-    let prev_rect = RectPx {
-        x: review_rect.x + review_rect.width - 98.0,
-        y: review_rect.y + 30.0,
-        width: 36.0,
-        height: 20.0,
-    };
-    let next_rect = RectPx {
-        x: review_rect.x + review_rect.width - 54.0,
-        y: review_rect.y + 30.0,
-        width: 36.0,
-        height: 20.0,
-    };
-    for (rect, label, target) in [
-        (prev_rect, "PREV", HitTarget::ReviewPrev),
-        (next_rect, "NEXT", HitTarget::ReviewNext),
-    ] {
-        panel_quads.push(Quad::from_rect(rect, REVIEW_ROW_BADGE));
-        push_rect_border(panel_quads, rect, PANEL_CARD_BORDER, 1.0);
-        draw_text(
-            label,
-            rect.x + 7.0,
-            rect.y + 5.0,
-            10.5,
-            TEXT_SECONDARY,
-            TextFace::Ui,
-            text_runs,
-        );
-        hit_regions.push(HitRegion { target, rect });
-    }
-    draw_text(
-        &format!("{} ACTIONS", state.review.proposal_actions.len()),
-        review_rect.x + 12.0,
-        review_rect.y + 54.0,
-        15.0,
-        TEXT_PRIMARY,
-        TextFace::Ui,
-        text_runs,
-    );
-    push_section_divider(
-        panel_quads,
-        review_rect.x + 12.0,
-        review_rect.y + 72.0,
-        review_rect.width - 24.0,
-        [0.23, 0.25, 0.29],
-    );
-
-    let rows: Vec<ReviewActionRow> = state.review_rows();
-    let mut row_y = review_rect.y + 82.0;
-    for (index, row) in rows.into_iter().enumerate() {
-        let selected = row.action_id == state.active_review_target_id;
-        let row_rect = RectPx {
-            x: review_rect.x + 8.0,
-            y: row_y,
-            width: review_rect.width - 16.0,
-            height: 52.0,
-        };
-        let badge_rect = RectPx {
-            x: row_rect.x + 10.0,
-            y: row_rect.y + 10.0,
-            width: 30.0,
-            height: 30.0,
-        };
-        let accent_rect = RectPx {
-            x: row_rect.x,
-            y: row_rect.y,
-            width: 4.0,
-            height: row_rect.height,
-        };
-        panel_quads.push(Quad::from_rect(
-            row_rect,
-            if selected {
-                REVIEW_ROW_ACTIVE_BG
-            } else {
-                REVIEW_ROW_BG
-            },
-        ));
-        panel_quads.push(Quad::from_rect(
-            accent_rect,
-            if selected {
-                PROPOSAL_BASE
-            } else {
-                PANEL_CARD_BORDER
-            },
-        ));
-        panel_quads.push(Quad::from_rect(
-            badge_rect,
-            if selected {
-                REVIEW_ROW_BADGE_ACTIVE
-            } else {
-                REVIEW_ROW_BADGE
-            },
-        ));
-        push_rect_border(
-            panel_quads,
-            row_rect,
-            if selected {
-                PROPOSAL_BASE
-            } else {
-                PANEL_CARD_BORDER
-            },
-            1.0,
-        );
-        draw_text(
-            &(index + 1).to_string(),
-            badge_rect.x + 11.0,
-            badge_rect.y + 7.0,
-            14.0,
-            if selected {
-                TEXT_PRIMARY
-            } else {
-                TEXT_SECONDARY
-            },
-            TextFace::Mono,
-            text_runs,
-        );
-        draw_text(
-            &truncate_text(&row.title, 22),
-            row_rect.x + 52.0,
-            row_rect.y + 10.0,
-            14.0,
-            if selected {
-                TEXT_ACCENT
-            } else {
-                TEXT_PANEL_VALUE
-            },
-            TextFace::Ui,
-            text_runs,
-        );
-        draw_text(
-            &truncate_text(&row.subtitle, 28),
-            row_rect.x + 52.0,
-            row_rect.y + 28.0,
-            11.0,
-            TEXT_SECONDARY,
-            TextFace::Mono,
-            text_runs,
-        );
-        if selected {
-            draw_text(
-                "ACTIVE",
-                row_rect.x + row_rect.width - 48.0,
-                row_rect.y + 11.0,
-                10.5,
-                TEXT_ACCENT,
-                TextFace::Ui,
-                text_runs,
-            );
-        }
-        hit_regions.push(HitRegion {
-            target: HitTarget::ReviewAction(row.action_id),
-            rect: row_rect,
-        });
-        row_y += 54.0;
-    }
-}
 fn dock_height_for_state(state: &ReviewWorkspaceState) -> Option<u32> {
     if state.ui.active_dock_tab.is_some() {
         Some(state.ui.dock_height_px)
@@ -6789,6 +5875,11 @@ fn push_board_text_property_row(
 fn workspace_tool_label(tool: WorkspaceTool) -> &'static str {
     match tool {
         WorkspaceTool::Select => "SELECT",
+        WorkspaceTool::DrawBoardTrack => "DRAW TRACK",
+        WorkspaceTool::PlaceBoardVia => "PLACE VIA",
+        WorkspaceTool::PlaceBoardText => "PLACE TEXT",
+        WorkspaceTool::Move => "MOVE",
+        WorkspaceTool::Delete => "DELETE",
     }
 }
 
@@ -6851,6 +5942,12 @@ fn estimated_text_run_width_px(text: &str, size: f32, face: TextFace) -> f32 {
     glyphs * size * advance_factor + 16.0
 }
 
+fn scale_text_run_sizes(text_runs: &mut [TextRun], scale: f32) {
+    for run in text_runs {
+        run.size *= scale;
+    }
+}
+
 fn text_attrs(face: TextFace) -> Attrs<'static> {
     match face {
         TextFace::Ui => Attrs::new().family(Family::SansSerif),
@@ -6891,6 +5988,34 @@ fn build_text_areas<'a>(
             custom_glyphs: &[],
         })
         .collect()
+}
+
+fn text_prepare_signature(
+    indices: &[usize],
+    runs: &[TextRun],
+    width: u32,
+    height: u32,
+) -> TextPrepareSignature {
+    TextPrepareSignature {
+        width,
+        height,
+        runs: indices
+            .iter()
+            .zip(runs.iter())
+            .map(|(index, run)| TextPrepareRunKey {
+                buffer_index: *index,
+                x_bits: run.x.to_bits(),
+                y_bits: run.y.to_bits(),
+                color_bits: run.color.map(f32::to_bits),
+                clip_bounds: run.clip_bounds.map(|rect| RectBits {
+                    x_bits: rect.x.to_bits(),
+                    y_bits: rect.y.to_bits(),
+                    width_bits: rect.width.to_bits(),
+                    height_bits: rect.height.to_bits(),
+                }),
+            })
+            .collect(),
+    }
 }
 
 #[repr(C)]
@@ -6988,6 +6113,7 @@ pub struct Renderer {
     atlas: TextAtlas,
     text_renderer: TextRenderer,
     text_buffer_cache: Vec<CachedTextBuffer>,
+    last_text_prepare_signature: Option<TextPrepareSignature>,
     panel_vertex_buffer: Option<wgpu::Buffer>,
     panel_vertex_capacity: usize,
     viewport_underlay_vertex_buffer: Option<wgpu::Buffer>,
@@ -7364,6 +6490,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             atlas,
             text_renderer,
             text_buffer_cache: Vec::new(),
+            last_text_prepare_signature: None,
             panel_vertex_buffer: None,
             panel_vertex_capacity: 0,
             viewport_underlay_vertex_buffer: None,
@@ -7575,44 +6702,54 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         let text_prepare_started = std::time::Instant::now();
         let (text_buffer_indices, text_cache_stats) =
             self.cached_text_buffer_indices(&prepared.text_runs, width, height);
-        let prepare_result = self.text_renderer.prepare(
-            device,
-            queue,
-            &mut self.font_system,
-            &mut self.atlas,
-            &self.viewport,
-            build_text_areas(
-                &self.text_buffer_cache,
-                &text_buffer_indices,
-                &prepared.text_runs,
-            ),
-            &mut self.swash_cache,
-        );
-        if let Err(initial_error) = prepare_result {
-            // Keep the glyph atlas warm during normal interaction. Trim only
-            // when prepare reports pressure, then retry with the same semantic
-            // text areas. This preserves the DOA2526 atlas-safety behavior
-            // without forcing avoidable re-rasterization on every selection.
-            self.atlas.trim();
-            self.text_renderer
-                .prepare(
-                    device,
-                    queue,
-                    &mut self.font_system,
-                    &mut self.atlas,
-                    &self.viewport,
-                    build_text_areas(
-                        &self.text_buffer_cache,
-                        &text_buffer_indices,
-                        &prepared.text_runs,
-                    ),
-                    &mut self.swash_cache,
-                )
-                .map_err(|retry_error| {
-                    anyhow::anyhow!(
-                        "prepare GUI text after atlas trim: {retry_error}; initial: {initial_error}"
+        let text_signature =
+            text_prepare_signature(&text_buffer_indices, &prepared.text_runs, width, height);
+        let skipped_text_prepare = self
+            .last_text_prepare_signature
+            .as_ref()
+            .is_some_and(|previous| previous == &text_signature)
+            && text_cache_stats.misses == 0;
+        if !skipped_text_prepare {
+            let prepare_result = self.text_renderer.prepare(
+                device,
+                queue,
+                &mut self.font_system,
+                &mut self.atlas,
+                &self.viewport,
+                build_text_areas(
+                    &self.text_buffer_cache,
+                    &text_buffer_indices,
+                    &prepared.text_runs,
+                ),
+                &mut self.swash_cache,
+            );
+            if let Err(initial_error) = prepare_result {
+                // Keep the glyph atlas warm during normal interaction. Trim only
+                // when prepare reports pressure, then retry with the same semantic
+                // text areas. This preserves the DOA2526 atlas-safety behavior
+                // without forcing avoidable re-rasterization on every selection.
+                self.atlas.trim();
+                self.text_renderer
+                    .prepare(
+                        device,
+                        queue,
+                        &mut self.font_system,
+                        &mut self.atlas,
+                        &self.viewport,
+                        build_text_areas(
+                            &self.text_buffer_cache,
+                            &text_buffer_indices,
+                            &prepared.text_runs,
+                        ),
+                        &mut self.swash_cache,
                     )
-                })?;
+                    .map_err(|retry_error| {
+                        anyhow::anyhow!(
+                            "prepare GUI text after atlas trim: {retry_error}; initial: {initial_error}"
+                        )
+                    })?;
+            }
+            self.last_text_prepare_signature = Some(text_signature);
         }
         let text_prepare_elapsed = text_prepare_started.elapsed();
         let text_encode_started = std::time::Instant::now();
@@ -7642,7 +6779,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         queue.submit([encoder.finish()]);
         let submit_elapsed = submit_started.elapsed();
         trace_render_timing(format!(
-            "renderer total={}ms upload={}ms encode={}ms text_prepare={}ms text_encode={}ms submit={}ms vertices panel={} underlay={} world={} overlay={} text_runs={} text_cache={}/{}",
+            "renderer total={}ms upload={}ms encode={}ms text_prepare={}ms text_encode={}ms submit={}ms vertices panel={} underlay={} world={} overlay={} text_runs={} text_cache={}/{} text_prepare_skipped={}",
             render_started.elapsed().as_millis(),
             upload_elapsed.as_millis(),
             encode_elapsed.as_millis(),
@@ -7656,6 +6793,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             prepared.text_runs.len(),
             text_cache_stats.hits,
             text_cache_stats.misses,
+            skipped_text_prepare,
         ));
         Ok(())
     }
@@ -7731,6 +6869,18 @@ fn draw_text_clipped(
         face,
         clip_bounds: Some(clip_bounds),
     });
+}
+
+fn text_row_height_for_size(size: f32) -> f32 {
+    (size * 1.6).ceil().max(size + 4.0)
+}
+
+fn key_value_row_height() -> f32 {
+    text_row_height_for_size(12.5)
+}
+
+fn output_row_height() -> f32 {
+    text_row_height_for_size(10.5)
 }
 
 #[allow(dead_code)]
@@ -7845,6 +6995,8 @@ fn outputs_dock_renders_csv_preview_table(mut state: ReviewWorkspaceState) -> bo
 }
 
 #[cfg(test)]
+mod lib_extra_tests;
+#[cfg(test)]
 mod render_contract_tests;
 #[cfg(test)]
 mod terminal_dock_contract_tests;
@@ -7852,7 +7004,6 @@ mod terminal_dock_contract_tests;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::path::PathBuf;
     #[test]
     fn shell_layout_reserves_bottom_dock_and_viewport() {
         let layout = ShellLayout::for_window(1280, 800, None);
@@ -7860,6 +7011,175 @@ mod tests {
         assert_eq!(layout.bottom_strip.height, 44.0);
         assert!(layout.left_sidebar.width > 0.0);
         assert!(layout.right_sidebar.width > 0.0);
+    }
+
+    #[test]
+    fn text_buffer_key_ignores_position_and_color_but_tracks_content() {
+        let base = TextRun {
+            text: "PROJECT".to_string(),
+            x: 12.0,
+            y: 24.0,
+            size: 12.0,
+            color: TEXT_PRIMARY,
+            face: TextFace::Ui,
+            clip_bounds: None,
+        };
+        let mut moved = base.clone();
+        moved.x += 100.0;
+        moved.y += 50.0;
+        moved.color = TEXT_SECONDARY;
+
+        assert_eq!(
+            text_buffer_key(&base, 1280, 768),
+            text_buffer_key(&moved, 1280, 768)
+        );
+
+        let mut changed_text = base.clone();
+        changed_text.text.push('!');
+        assert_ne!(
+            text_buffer_key(&base, 1280, 768),
+            text_buffer_key(&changed_text, 1280, 768)
+        );
+
+        let mut changed_size = base.clone();
+        changed_size.size = 13.0;
+        assert_ne!(
+            text_buffer_key(&base, 1280, 768),
+            text_buffer_key(&changed_size, 1280, 768)
+        );
+
+        let mut clipped = base.clone();
+        clipped.clip_bounds = Some(RectPx {
+            x: 0.0,
+            y: 0.0,
+            width: 44.0,
+            height: 18.0,
+        });
+        assert_ne!(
+            text_buffer_key(&base, 1280, 768),
+            text_buffer_key(&clipped, 1280, 768)
+        );
+    }
+
+    #[test]
+    fn text_prepare_signature_tracks_render_relevant_inputs() {
+        let run = TextRun {
+            text: "TERMINAL".to_string(),
+            x: 12.0,
+            y: 24.0,
+            size: 12.0,
+            color: TEXT_PRIMARY,
+            face: TextFace::Ui,
+            clip_bounds: None,
+        };
+        let base = text_prepare_signature(&[4], std::slice::from_ref(&run), 1280, 768);
+        let mut moved = run.clone();
+        moved.x += 1.0;
+        assert_ne!(
+            base,
+            text_prepare_signature(&[4], std::slice::from_ref(&moved), 1280, 768)
+        );
+        let mut recolored = run.clone();
+        recolored.color = TEXT_SECONDARY;
+        assert_ne!(
+            base,
+            text_prepare_signature(&[4], std::slice::from_ref(&recolored), 1280, 768)
+        );
+        assert_ne!(
+            base,
+            text_prepare_signature(&[5], std::slice::from_ref(&run), 1280, 768)
+        );
+        assert_ne!(
+            base,
+            text_prepare_signature(&[4], std::slice::from_ref(&run), 1281, 768)
+        );
+    }
+
+    #[test]
+    fn shell_layout_is_solved_by_taffy_grid_contract() {
+        let layout = ShellLayout::for_window(1280, 800, Some(260));
+
+        assert_eq!(
+            layout.left_sidebar,
+            RectPx {
+                x: 0.0,
+                y: 0.0,
+                width: 280.0,
+                height: 540.0,
+            }
+        );
+        assert_eq!(
+            layout.viewport,
+            RectPx {
+                x: 280.0,
+                y: 0.0,
+                width: 660.0,
+                height: 540.0,
+            }
+        );
+        assert_eq!(
+            layout.right_sidebar,
+            RectPx {
+                x: 940.0,
+                y: 0.0,
+                width: 340.0,
+                height: 540.0,
+            }
+        );
+        assert_eq!(
+            layout.bottom_strip,
+            RectPx {
+                x: 0.0,
+                y: 540.0,
+                width: 1280.0,
+                height: 260.0,
+            }
+        );
+    }
+
+    #[test]
+    fn shell_layout_solves_logical_pixels_then_scales_to_surface_pixels() {
+        let layout = ShellLayout::for_surface(1600, 1000, 1.25, Some(260));
+
+        assert_eq!(layout.left_sidebar.width, 350.0);
+        assert_eq!(layout.right_sidebar.width, 425.0);
+        assert_eq!(layout.bottom_strip.height, 325.0);
+        assert_eq!(layout.viewport.x, 350.0);
+        assert_eq!(layout.viewport.width, 825.0);
+        assert_eq!(layout.bottom_strip.y, 675.0);
+    }
+
+    #[test]
+    fn prepared_scene_uses_surface_scale_for_layout_and_text() {
+        let state = datum_gui_protocol::load_fixture_workspace_state();
+        let retained = RetainedScene::from_workspace_for_surface(&state, 1600, 1000, 1.25);
+        let prepared = PreparedScene::from_workspace_for_surface(
+            &state,
+            1600,
+            1000,
+            1.25,
+            CameraState::fit_to_bounds(&state.scene.bounds),
+            &retained,
+        );
+
+        assert_eq!(
+            prepared.layout,
+            ShellLayout::for_surface(1600, 1000, 1.25, dock_height_for_state(&state))
+        );
+        let project_title = prepared
+            .text_runs
+            .iter()
+            .find(|run| run.text == "PROJECT")
+            .expect("project title should render");
+        assert_eq!(project_title.size, 15.0);
+        assert!(
+            prepared
+                .hit_test(
+                    prepared.layout.left_sidebar.x + 20.0,
+                    prepared.layout.left_sidebar.y + 20.0,
+                )
+                .is_none()
+        );
     }
 
     #[test]
@@ -7983,6 +7303,208 @@ mod tests {
         );
         assert!(prepared.layout.viewport.width > prepared.layout.left_sidebar.width);
         assert!(prepared.layout.viewport.width > prepared.layout.right_sidebar.width / 2.0);
+    }
+
+    #[test]
+    fn workspace_tool_buttons_stay_inside_left_sidebar() {
+        let state = datum_gui_protocol::load_fixture_workspace_state();
+        let retained = RetainedScene::from_workspace(&state, 1280, 800);
+        let prepared = PreparedScene::from_workspace(
+            &state,
+            1280,
+            800,
+            CameraState::fit_to_bounds(&state.scene.bounds),
+            &retained,
+        );
+        let tool_regions = prepared
+            .hit_regions
+            .iter()
+            .filter(|region| matches!(region.target, HitTarget::SetWorkspaceTool(_)))
+            .collect::<Vec<_>>();
+
+        assert_eq!(tool_regions.len(), 6);
+        for region in tool_regions {
+            assert!(
+                prepared
+                    .layout
+                    .left_sidebar
+                    .contains(region.rect.x, region.rect.y)
+            );
+            assert!(prepared.layout.left_sidebar.contains(
+                region.rect.x + region.rect.width,
+                region.rect.y + region.rect.height
+            ));
+        }
+    }
+
+    #[test]
+    fn project_card_controls_flow_above_filter_controls() {
+        let state = datum_gui_protocol::load_fixture_workspace_state();
+        let retained = RetainedScene::from_workspace(&state, 1280, 800);
+        let prepared = PreparedScene::from_workspace(
+            &state,
+            1280,
+            800,
+            CameraState::fit_to_bounds(&state.scene.bounds),
+            &retained,
+        );
+        let tool_top = prepared
+            .hit_regions
+            .iter()
+            .filter_map(|region| {
+                if matches!(region.target, HitTarget::SetWorkspaceTool(_)) {
+                    Some(region.rect.y)
+                } else {
+                    None
+                }
+            })
+            .fold(f32::MAX, f32::min);
+        let tool_bottom = prepared
+            .hit_regions
+            .iter()
+            .filter_map(|region| {
+                if matches!(region.target, HitTarget::SetWorkspaceTool(_)) {
+                    Some(region.rect.y + region.rect.height)
+                } else {
+                    None
+                }
+            })
+            .fold(0.0_f32, f32::max);
+        let fit_bottom = prepared
+            .hit_regions
+            .iter()
+            .filter_map(|region| {
+                if matches!(
+                    region.target,
+                    HitTarget::FitBoard | HitTarget::FitReviewTarget
+                ) {
+                    Some(region.rect.y + region.rect.height)
+                } else {
+                    None
+                }
+            })
+            .fold(0.0_f32, f32::max);
+        let filter_top = prepared
+            .hit_regions
+            .iter()
+            .find(|region| matches!(region.target, HitTarget::ToggleShowAuthored))
+            .expect("authored filter hit region should render")
+            .rect
+            .y;
+
+        assert!(fit_bottom < tool_top);
+        assert!(tool_bottom < filter_top);
+    }
+
+    #[test]
+    fn populated_inspector_status_stays_above_review_card() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        let action_id = "action-populated".to_string();
+        state.active_review_target_id = action_id.clone();
+        state.selection = SelectionTarget::ReviewAction(action_id.clone());
+        state.review.proposal_actions = vec![datum_gui_protocol::RouteProposalActionPayload {
+            action_id,
+            proposal_action: "draw_track".to_string(),
+            reason: "qa populated review state".to_string(),
+            contract: "m7_populated_layout_contract".to_string(),
+            net_uuid: "net-populated".to_string(),
+            net_name: "BOARD_STATUS_NET".to_string(),
+            from_anchor_pad_uuid: "pad-a".to_string(),
+            to_anchor_pad_uuid: "pad-b".to_string(),
+            layer: 1,
+            width_nm: 200_000,
+            from: datum_gui_protocol::PointNm { x: 0, y: 0 },
+            to: datum_gui_protocol::PointNm { x: 1_000_000, y: 0 },
+            reused_via_uuid: None,
+            reused_via_uuids: Vec::new(),
+            reused_object_kind: None,
+            reused_object_uuid: None,
+            reused_object_from_layer: None,
+            reused_object_to_layer: None,
+            selected_path_bend_count: 1,
+            selected_path_point_count: 2,
+            selected_path_segment_index: 0,
+            selected_path_segment_count: 1,
+            selected_path_layer_segment_index: Some(0),
+            selected_path_layer_segment_count: Some(1),
+            selected_path_layer_segment_bend_count: Some(1),
+            selected_path_layer_segment_point_count: Some(2),
+        }];
+        state.review.segment_evidence = vec![datum_gui_protocol::RouteProposalSegmentEvidence {
+            layer_segment_index: 0,
+            layer_segment_count: 1,
+            layer: 1,
+            bend_count: 1,
+            point_count: 2,
+            track_action_count: 1,
+        }];
+        state.last_command_status = Some(datum_gui_protocol::EditorCommandStatus {
+            action: "place_board_text".to_string(),
+            detail: "queued board text @ 140700000,90100000".to_string(),
+        });
+
+        let layout = ShellLayout::for_window(1280, 800, dock_height_for_state(&state));
+        let right_layout =
+            side_panels::solve_right_panel_layout_with_taffy(&state, layout.right_sidebar)
+                .expect("right panel layout should solve");
+        let inspector_bottom = right_layout.inspector_rect.y + right_layout.inspector_rect.height;
+        let review_top = right_layout.review_rect.y;
+        let retained = RetainedScene::from_workspace(&state, 1280, 800);
+        let prepared = PreparedScene::from_workspace(
+            &state,
+            1280,
+            800,
+            CameraState::fit_to_bounds(&state.scene.bounds),
+            &retained,
+        );
+        let last_row_y = prepared
+            .text_runs
+            .iter()
+            .find(|run| run.text == "LAST")
+            .expect("populated inspector should render LAST key")
+            .y;
+        let review_title_y = prepared
+            .text_runs
+            .iter()
+            .find(|run| run.text == "REVIEW")
+            .expect("review card title should render")
+            .y;
+
+        assert!(last_row_y + 12.0 <= inspector_bottom);
+        assert!(review_title_y >= review_top + 12.0);
+        assert!(last_row_y + 16.0 < review_title_y);
+    }
+
+    #[test]
+    fn filter_summary_renders_below_layer_rows() {
+        let state = datum_gui_protocol::load_fixture_workspace_state();
+        let retained = RetainedScene::from_workspace(&state, 1280, 800);
+        let prepared = PreparedScene::from_workspace(
+            &state,
+            1280,
+            800,
+            CameraState::fit_to_bounds(&state.scene.bounds),
+            &retained,
+        );
+        let layer_bottom = prepared
+            .hit_regions
+            .iter()
+            .filter_map(|region| {
+                if matches!(region.target, HitTarget::ToggleLayer(_)) {
+                    Some(region.rect.y + region.rect.height)
+                } else {
+                    None
+                }
+            })
+            .fold(0.0_f32, f32::max);
+        let outputs_y = prepared
+            .text_runs
+            .iter()
+            .find(|run| run.text.starts_with("OUTPUTS "))
+            .expect("production output summary should render")
+            .y;
+
+        assert!(outputs_y > layer_bottom);
     }
 
     #[test]
@@ -8744,539 +8266,5 @@ mod tests {
         );
 
         assert!(roundrect_out.len() > rect_out.len());
-    }
-
-    #[test]
-    fn roundrect_ratio_changes_corner_radius() {
-        let viewport = RectPx {
-            x: 0.0,
-            y: 0.0,
-            width: 200.0,
-            height: 120.0,
-        };
-        let bounds = datum_gui_protocol::SceneBounds {
-            min_x: 0,
-            min_y: 0,
-            max_x: 2_000_000,
-            max_y: 1_200_000,
-        };
-        let projection = Projection::new(viewport, &bounds, CameraState::fit_to_bounds(&bounds));
-        let small = datum_gui_protocol::PadPrimitive {
-            object_id: "pad:rr-small".to_string(),
-            object_kind: "pad".to_string(),
-            source_object_uuid: "rr-small".to_string(),
-            pad_uuid: "rr-small".to_string(),
-            component_uuid: "U1".to_string(),
-            net_uuid: None,
-            layer_id: "L1".to_string(),
-            copper_layer_ids: vec!["L1".to_string()],
-            center: PointNm {
-                x: 1_000_000,
-                y: 600_000,
-            },
-            bounds: datum_gui_protocol::RectNm {
-                min_x: 700_000,
-                min_y: 350_000,
-                max_x: 1_300_000,
-                max_y: 850_000,
-            },
-            shape_kind: "roundrect".to_string(),
-            roundrect_rratio_ppm: 100_000,
-            mask_layer_ids: vec![],
-            paste_layer_ids: vec![],
-            solder_mask_margin_nm: 0,
-            solder_paste_margin_nm: 0,
-            solder_paste_margin_ratio_ppm: 0,
-            drill_nm: None,
-            rotation_degrees: 0.0,
-        };
-        let mut large = small.clone();
-        large.pad_uuid = "rr-large".to_string();
-        large.object_id = "pad:rr-large".to_string();
-        large.source_object_uuid = "rr-large".to_string();
-        large.roundrect_rratio_ppm = 400_000;
-        let small_points = projected_pad_outline(&small, &projection, 0.0);
-        let large_points = projected_pad_outline(&large, &projection, 0.0);
-        assert_ne!(small_points[0], large_points[0]);
-    }
-
-    #[test]
-    fn rotated_rect_pad_produces_non_axis_aligned_geometry() {
-        let viewport = RectPx {
-            x: 0.0,
-            y: 0.0,
-            width: 200.0,
-            height: 120.0,
-        };
-        let bounds = datum_gui_protocol::SceneBounds {
-            min_x: 0,
-            min_y: 0,
-            max_x: 2_000_000,
-            max_y: 1_200_000,
-        };
-        let projection = Projection::new(viewport, &bounds, CameraState::fit_to_bounds(&bounds));
-        let pad = datum_gui_protocol::PadPrimitive {
-            object_id: "pad:rot".to_string(),
-            object_kind: "pad".to_string(),
-            source_object_uuid: "rot".to_string(),
-            pad_uuid: "rot".to_string(),
-            component_uuid: "U1".to_string(),
-            net_uuid: None,
-            layer_id: "L1".to_string(),
-            copper_layer_ids: vec!["L1".to_string()],
-            center: PointNm {
-                x: 1_000_000,
-                y: 600_000,
-            },
-            bounds: datum_gui_protocol::RectNm {
-                min_x: 700_000,
-                min_y: 450_000,
-                max_x: 1_300_000,
-                max_y: 750_000,
-            },
-            shape_kind: "rect".to_string(),
-            roundrect_rratio_ppm: 250_000,
-            mask_layer_ids: vec![],
-            paste_layer_ids: vec![],
-            solder_mask_margin_nm: 0,
-            solder_paste_margin_nm: 0,
-            solder_paste_margin_ratio_ppm: 0,
-            drill_nm: None,
-            rotation_degrees: 45.0,
-        };
-
-        let points = projected_pad_outline(&pad, &projection, 0.0);
-        assert_eq!(points.len(), 4);
-        assert!((points[0].0 - points[1].0).abs() > 0.1);
-        assert!((points[0].1 - points[1].1).abs() > 0.1);
-    }
-
-    #[test]
-    fn derived_mask_pad_expands_by_clearance() {
-        let pad = datum_gui_protocol::PadPrimitive {
-            object_id: "pad:mask".to_string(),
-            object_kind: "pad".to_string(),
-            source_object_uuid: "mask".to_string(),
-            pad_uuid: "mask".to_string(),
-            component_uuid: "U1".to_string(),
-            net_uuid: None,
-            layer_id: "L0".to_string(),
-            copper_layer_ids: vec!["L1".to_string()],
-            center: PointNm {
-                x: 1_000_000,
-                y: 600_000,
-            },
-            bounds: datum_gui_protocol::RectNm {
-                min_x: 900_000,
-                min_y: 500_000,
-                max_x: 1_100_000,
-                max_y: 700_000,
-            },
-            shape_kind: "rect".to_string(),
-            roundrect_rratio_ppm: 250_000,
-            mask_layer_ids: vec!["L39".to_string()],
-            paste_layer_ids: vec![],
-            solder_mask_margin_nm: 25_000,
-            solder_paste_margin_nm: 0,
-            solder_paste_margin_ratio_ppm: 0,
-            drill_nm: None,
-            rotation_degrees: 0.0,
-        };
-        let setup = datum_gui_protocol::ScenePadExpansionSetup {
-            pad_to_mask_clearance_nm: 25_000,
-            ..Default::default()
-        };
-        let derived = derived_process_pad(&pad, "L39", PadProcessLayerKind::Mask, &setup);
-        assert_eq!(derived.layer_id, "L39");
-        assert_eq!(derived.bounds.min_x, 875_000);
-        assert_eq!(derived.bounds.max_x, 1_125_000);
-        assert_eq!(derived.bounds.min_y, 475_000);
-        assert_eq!(derived.bounds.max_y, 725_000);
-        assert_eq!(derived.drill_nm, None);
-    }
-
-    #[test]
-    fn derived_paste_pad_applies_ratio_and_clearance() {
-        let pad = datum_gui_protocol::PadPrimitive {
-            object_id: "pad:paste".to_string(),
-            object_kind: "pad".to_string(),
-            source_object_uuid: "paste".to_string(),
-            pad_uuid: "paste".to_string(),
-            component_uuid: "U1".to_string(),
-            net_uuid: None,
-            layer_id: "L0".to_string(),
-            copper_layer_ids: vec!["L1".to_string()],
-            center: PointNm {
-                x: 1_000_000,
-                y: 600_000,
-            },
-            bounds: datum_gui_protocol::RectNm {
-                min_x: 900_000,
-                min_y: 500_000,
-                max_x: 1_100_000,
-                max_y: 700_000,
-            },
-            shape_kind: "rect".to_string(),
-            roundrect_rratio_ppm: 250_000,
-            mask_layer_ids: vec![],
-            paste_layer_ids: vec!["L35".to_string()],
-            solder_mask_margin_nm: 0,
-            solder_paste_margin_nm: -10_000,
-            solder_paste_margin_ratio_ppm: -100_000,
-            drill_nm: None,
-            rotation_degrees: 0.0,
-        };
-        let setup = datum_gui_protocol::ScenePadExpansionSetup {
-            pad_to_paste_clearance_nm: -10_000,
-            pad_to_paste_ratio_ppm: -100_000,
-            ..Default::default()
-        };
-        let derived = derived_process_pad(&pad, "L35", PadProcessLayerKind::Paste, &setup);
-        assert_eq!(derived.layer_id, "L35");
-        assert_eq!(derived.bounds.min_x, 920_000);
-        assert_eq!(derived.bounds.max_x, 1_080_000);
-        assert_eq!(derived.bounds.min_y, 520_000);
-        assert_eq!(derived.bounds.max_y, 680_000);
-    }
-
-    #[test]
-    fn derived_process_pad_uses_pad_level_overrides_not_board_globals() {
-        let pad = datum_gui_protocol::PadPrimitive {
-            object_id: "pad:override".to_string(),
-            object_kind: "pad".to_string(),
-            source_object_uuid: "override".to_string(),
-            pad_uuid: "override".to_string(),
-            component_uuid: "U1".to_string(),
-            net_uuid: None,
-            layer_id: "L0".to_string(),
-            copper_layer_ids: vec!["L1".to_string()],
-            center: PointNm {
-                x: 1_000_000,
-                y: 600_000,
-            },
-            bounds: datum_gui_protocol::RectNm {
-                min_x: 900_000,
-                min_y: 500_000,
-                max_x: 1_100_000,
-                max_y: 700_000,
-            },
-            shape_kind: "rect".to_string(),
-            roundrect_rratio_ppm: 250_000,
-            mask_layer_ids: vec!["L39".to_string()],
-            paste_layer_ids: vec!["L35".to_string()],
-            solder_mask_margin_nm: 50_000,
-            solder_paste_margin_nm: -50_000,
-            solder_paste_margin_ratio_ppm: 0,
-            drill_nm: None,
-            rotation_degrees: 0.0,
-        };
-        let setup = datum_gui_protocol::ScenePadExpansionSetup {
-            pad_to_mask_clearance_nm: 0,
-            pad_to_paste_clearance_nm: 0,
-            pad_to_paste_ratio_ppm: 0,
-            ..Default::default()
-        };
-        let mask = derived_process_pad(&pad, "L39", PadProcessLayerKind::Mask, &setup);
-        let paste = derived_process_pad(&pad, "L35", PadProcessLayerKind::Paste, &setup);
-        assert_eq!(mask.bounds.min_x, 850_000);
-        assert_eq!(mask.bounds.max_x, 1_150_000);
-        assert_eq!(paste.bounds.min_x, 950_000);
-        assert_eq!(paste.bounds.max_x, 1_050_000);
-    }
-
-    #[test]
-    fn render_stage_orders_layer_type_then_side() {
-        let layers = vec![
-            datum_gui_protocol::SceneLayer {
-                layer_id: "L0".to_string(),
-                name: "F.Cu".to_string(),
-                kind: "copper".to_string(),
-                render_order: 0,
-                visible_by_default: true,
-            },
-            datum_gui_protocol::SceneLayer {
-                layer_id: "L38".to_string(),
-                name: "B.Mask".to_string(),
-                kind: "mask".to_string(),
-                render_order: 1,
-                visible_by_default: false,
-            },
-            datum_gui_protocol::SceneLayer {
-                layer_id: "L39".to_string(),
-                name: "F.Mask".to_string(),
-                kind: "mask".to_string(),
-                render_order: 2,
-                visible_by_default: false,
-            },
-            datum_gui_protocol::SceneLayer {
-                layer_id: "L34".to_string(),
-                name: "B.Paste".to_string(),
-                kind: "paste".to_string(),
-                render_order: 3,
-                visible_by_default: false,
-            },
-            datum_gui_protocol::SceneLayer {
-                layer_id: "L35".to_string(),
-                name: "F.Paste".to_string(),
-                kind: "paste".to_string(),
-                render_order: 4,
-                visible_by_default: false,
-            },
-        ];
-        assert!(
-            scene_layer_stack_priority("L39", &layers) > scene_layer_stack_priority("L0", &layers)
-        );
-        assert!(
-            scene_layer_stack_priority("L35", &layers) > scene_layer_stack_priority("L39", &layers)
-        );
-        assert!(
-            scene_layer_stack_priority("L39", &layers) > scene_layer_stack_priority("L38", &layers)
-        );
-        assert!(
-            scene_layer_stack_priority("L35", &layers) > scene_layer_stack_priority("L34", &layers)
-        );
-    }
-
-    #[test]
-    fn component_polygon_graphic_adds_fill_and_outline() {
-        let viewport = RectPx {
-            x: 0.0,
-            y: 0.0,
-            width: 240.0,
-            height: 160.0,
-        };
-        let bounds = datum_gui_protocol::SceneBounds {
-            min_x: 0,
-            min_y: 0,
-            max_x: 2_400_000,
-            max_y: 1_600_000,
-        };
-        let projection = Projection::new(viewport, &bounds, CameraState::fit_to_bounds(&bounds));
-        let graphic = ComponentGraphicPrimitive {
-            graphic_id: "g1".to_string(),
-            component_uuid: "U1".to_string(),
-            layer_id: Some("L1".to_string()),
-            primitive_kind: "polygon".to_string(),
-            render_role: "component_mechanical".to_string(),
-            width_nm: Some(120_000),
-            closed: true,
-            path: vec![
-                PointNm {
-                    x: 300_000,
-                    y: 300_000,
-                },
-                PointNm {
-                    x: 2_100_000,
-                    y: 300_000,
-                },
-                PointNm {
-                    x: 2_100_000,
-                    y: 1_300_000,
-                },
-                PointNm {
-                    x: 300_000,
-                    y: 1_300_000,
-                },
-            ],
-            holes: Vec::new(),
-        };
-        let mut out = Vec::new();
-
-        push_component_graphic_primitive(&mut out, &graphic, &projection, false, false, false);
-
-        assert!(out.len() > 1);
-    }
-
-    #[test]
-    fn layer_appearance_distinguishes_top_and_bottom_copper() {
-        let top = resolve_layer_appearance(Some("F.Cu"));
-        let bottom = resolve_layer_appearance(Some("B.Cu"));
-
-        assert_ne!(top.authored_track, bottom.authored_track);
-        assert_ne!(top.proposal, bottom.proposal);
-        assert_ne!(top.silkscreen, bottom.silkscreen);
-    }
-
-    #[test]
-    fn detail_tier_changes_with_projected_board_scale() {
-        let viewport = RectPx {
-            x: 0.0,
-            y: 0.0,
-            width: 1200.0,
-            height: 800.0,
-        };
-        let fine_bounds = datum_gui_protocol::SceneBounds {
-            min_x: 0,
-            min_y: 0,
-            max_x: 20_000_000,
-            max_y: 10_000_000,
-        };
-        let coarse_bounds = datum_gui_protocol::SceneBounds {
-            min_x: 0,
-            min_y: 0,
-            max_x: 300_000_000,
-            max_y: 200_000_000,
-        };
-
-        let fine_projection = Projection::new(
-            viewport,
-            &fine_bounds,
-            CameraState::fit_to_bounds(&fine_bounds),
-        );
-        let coarse_projection = Projection::new(
-            viewport,
-            &coarse_bounds,
-            CameraState::fit_to_bounds(&coarse_bounds),
-        );
-
-        assert_eq!(detail_tier(&fine_projection), DetailTier::Fine);
-        assert_eq!(detail_tier(&coarse_projection), DetailTier::Coarse);
-    }
-
-    #[test]
-    fn debug_datum_test_q1_q2_component_geometry() {
-        let request = datum_gui_protocol::LiveReviewRequest {
-            project_root: PathBuf::from(
-                "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test",
-            ),
-            board_file: Some(PathBuf::from(
-                "/home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb",
-            )),
-            artifact_path: None,
-            net_uuid: None,
-            from_anchor_pad_uuid: None,
-            to_anchor_pad_uuid: None,
-            profile: None,
-        };
-        let state = datum_gui_protocol::load_board_editor_workspace_state(&request)
-            .expect("datum-test workspace should load");
-        for reference in ["Q1", "Q2"] {
-            let component = state
-                .scene
-                .components
-                .iter()
-                .find(|component| component.reference == reference)
-                .unwrap_or_else(|| panic!("missing component {reference}"));
-            let pads: Vec<_> = state
-                .scene
-                .pads
-                .iter()
-                .filter(|pad| pad.component_uuid == component.component_uuid)
-                .collect();
-            let body = inferred_component_body_bounds(&pads);
-            eprintln!(
-                "{reference}: object_id={} component_uuid={} pos=({}, {}) body={body:?}",
-                component.object_id,
-                component.component_uuid,
-                component.position.x,
-                component.position.y,
-            );
-            for pad in pads {
-                eprintln!(
-                    "  pad {} center=({}, {}) bounds=({}, {}, {}, {})",
-                    pad.object_id,
-                    pad.center.x,
-                    pad.center.y,
-                    pad.bounds.min_x,
-                    pad.bounds.min_y,
-                    pad.bounds.max_x,
-                    pad.bounds.max_y
-                );
-            }
-        }
-    }
-
-    #[test]
-    fn inferred_component_body_geometry_handles_quarter_turn_parts() {
-        let pads = vec![
-            datum_gui_protocol::PadPrimitive {
-                object_id: "pad:a".to_string(),
-                object_kind: "pad".to_string(),
-                source_object_uuid: "a".to_string(),
-                pad_uuid: "a".to_string(),
-                component_uuid: "QX".to_string(),
-                net_uuid: None,
-                layer_id: "L0".to_string(),
-                copper_layer_ids: vec!["L0".to_string()],
-                center: PointNm { x: 0, y: 900_000 },
-                bounds: datum_gui_protocol::RectNm {
-                    min_x: -250_000,
-                    min_y: 600_000,
-                    max_x: 250_000,
-                    max_y: 1_200_000,
-                },
-                shape_kind: "rect".to_string(),
-                roundrect_rratio_ppm: 0,
-                mask_layer_ids: vec![],
-                paste_layer_ids: vec![],
-                solder_mask_margin_nm: 0,
-                solder_paste_margin_nm: 0,
-                solder_paste_margin_ratio_ppm: 0,
-                drill_nm: None,
-                rotation_degrees: 90.0,
-            },
-            datum_gui_protocol::PadPrimitive {
-                object_id: "pad:b".to_string(),
-                object_kind: "pad".to_string(),
-                source_object_uuid: "b".to_string(),
-                pad_uuid: "b".to_string(),
-                component_uuid: "QX".to_string(),
-                net_uuid: None,
-                layer_id: "L0".to_string(),
-                copper_layer_ids: vec!["L0".to_string()],
-                center: PointNm { x: 0, y: -900_000 },
-                bounds: datum_gui_protocol::RectNm {
-                    min_x: -250_000,
-                    min_y: -1_200_000,
-                    max_x: 250_000,
-                    max_y: -600_000,
-                },
-                shape_kind: "rect".to_string(),
-                roundrect_rratio_ppm: 0,
-                mask_layer_ids: vec![],
-                paste_layer_ids: vec![],
-                solder_mask_margin_nm: 0,
-                solder_paste_margin_nm: 0,
-                solder_paste_margin_ratio_ppm: 0,
-                drill_nm: None,
-                rotation_degrees: 90.0,
-            },
-            datum_gui_protocol::PadPrimitive {
-                object_id: "pad:c".to_string(),
-                object_kind: "pad".to_string(),
-                source_object_uuid: "c".to_string(),
-                pad_uuid: "c".to_string(),
-                component_uuid: "QX".to_string(),
-                net_uuid: None,
-                layer_id: "L0".to_string(),
-                copper_layer_ids: vec!["L0".to_string()],
-                center: PointNm { x: 800_000, y: 0 },
-                bounds: datum_gui_protocol::RectNm {
-                    min_x: 550_000,
-                    min_y: -300_000,
-                    max_x: 1_050_000,
-                    max_y: 300_000,
-                },
-                shape_kind: "rect".to_string(),
-                roundrect_rratio_ppm: 0,
-                mask_layer_ids: vec![],
-                paste_layer_ids: vec![],
-                solder_mask_margin_nm: 0,
-                solder_paste_margin_nm: 0,
-                solder_paste_margin_ratio_ppm: 0,
-                drill_nm: None,
-                rotation_degrees: 90.0,
-            },
-        ];
-        let pad_refs: Vec<_> = pads.iter().collect();
-
-        let (_, width, height, rotation_degrees) =
-            inferred_component_body_geometry(&pad_refs, 90.0).expect("body geometry");
-
-        assert_eq!(rotation_degrees.round() as i32, 90);
-        assert!(
-            height > width,
-            "quarter-turn body should stay tall, got {width}x{height}"
-        );
     }
 }

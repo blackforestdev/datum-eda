@@ -24,6 +24,11 @@ fn project_query_board_component_pads_reads_persisted_component_pads() {
     let package = Package {
         uuid: package_uuid,
         name: "PKG".to_string(),
+        package_family: None,
+        package_code: None,
+        mounting_type: None,
+        body_dimensions: None,
+        terminals: HashMap::new(),
         pads: HashMap::from([(
             pad_uuid,
             Pad {

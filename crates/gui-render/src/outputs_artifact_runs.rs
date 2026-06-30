@@ -6,9 +6,28 @@ use super::outputs_run_commands::{
 };
 use super::{HitRegion, HitTarget, RectPx};
 use super::{TEXT_MUTED, TEXT_SECONDARY, TextFace, TextRun};
-use super::{draw_text, suffix_id, truncate_text};
+use super::{draw_text, output_row_height, suffix_id, truncate_text};
 
 const MAX_ARTIFACT_RUNS: usize = 4;
+
+pub(super) fn estimate_artifact_runs_section_height(state: &ReviewWorkspaceState) -> f32 {
+    if state.production.artifact_runs.is_empty() {
+        return 0.0;
+    }
+    let mut rows = 1;
+    if latest_artifact_compare_command(state).is_some() {
+        rows += 1;
+    }
+    rows += state
+        .production
+        .artifact_runs
+        .iter()
+        .rev()
+        .take(MAX_ARTIFACT_RUNS)
+        .map(|run| 1 + usize::from(artifact_validate_command(&run.artifact_id).is_some()))
+        .sum::<usize>();
+    rows as f32 * output_row_height() + 6.0
+}
 
 pub(super) fn render_artifact_runs_section(
     state: &ReviewWorkspaceState,
@@ -30,9 +49,10 @@ pub(super) fn render_artifact_runs_section(
         TextFace::Mono,
         text_runs,
     );
-    y += 14.0;
+    let row_height = output_row_height();
+    y += row_height;
     if let Some(command) = latest_artifact_compare_command(state) {
-        if y + 14.0 > bottom {
+        if y + row_height > bottom {
             return None;
         }
         push_production_terminal_command_hit_region(hit_regions, rect, y, &command);
@@ -45,7 +65,7 @@ pub(super) fn render_artifact_runs_section(
             TextFace::Mono,
             text_runs,
         );
-        y += 14.0;
+        y += row_height;
     }
     for run in state
         .production
@@ -54,7 +74,7 @@ pub(super) fn render_artifact_runs_section(
         .rev()
         .take(MAX_ARTIFACT_RUNS)
     {
-        if y + 14.0 > bottom {
+        if y + row_height > bottom {
             return None;
         }
         hit_regions.push(HitRegion {
@@ -63,7 +83,7 @@ pub(super) fn render_artifact_runs_section(
                 x: rect.x + 18.0,
                 y: y - 2.0,
                 width: (rect.width - 36.0).max(0.0),
-                height: 14.0,
+                height: row_height,
             },
         });
         draw_text(
@@ -85,11 +105,11 @@ pub(super) fn render_artifact_runs_section(
             TextFace::Mono,
             text_runs,
         );
-        y += 14.0;
+        y += row_height;
         let Some(command) = artifact_validate_command(&run.artifact_id) else {
             continue;
         };
-        if y + 14.0 > bottom {
+        if y + row_height > bottom {
             return None;
         }
         push_production_terminal_command_hit_region(hit_regions, rect, y, &command);
@@ -102,7 +122,7 @@ pub(super) fn render_artifact_runs_section(
             TextFace::Mono,
             text_runs,
         );
-        y += 14.0;
+        y += row_height;
     }
     Some(y + 6.0)
 }

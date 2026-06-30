@@ -253,6 +253,8 @@ mod main_tests_project_board_component_models_3d;
 mod main_tests_project_board_component_pads;
 #[path = "main_tests_project_board_component_pool_materialization.rs"]
 mod main_tests_project_board_component_pool_materialization;
+#[path = "main_tests_project_board_component_pool_materialization_b.rs"]
+mod main_tests_project_board_component_pool_materialization_b;
 #[path = "main_tests_project_board_component_query.rs"]
 mod main_tests_project_board_component_query;
 #[path = "main_tests_project_board_component_query_single.rs"]
@@ -371,6 +373,8 @@ mod main_tests_project_new;
 mod main_tests_project_noconnect;
 #[path = "main_tests_project_pool_library.rs"]
 mod main_tests_project_pool_library;
+#[path = "main_tests_project_pool_library_b.rs"]
+mod main_tests_project_pool_library_b;
 #[path = "main_tests_project_pool_library_proposals.rs"]
 mod main_tests_project_pool_library_proposals;
 #[path = "main_tests_project_pool_package_geometry.rs"]
@@ -545,6 +549,8 @@ mod main_tests_project_symbol_semantics;
 mod main_tests_project_text;
 #[path = "main_tests_project_validate.rs"]
 mod main_tests_project_validate;
+#[path = "main_tests_project_validate_pool_refs.rs"]
+mod main_tests_project_validate_pool_refs;
 #[path = "main_tests_project_validate_resolver.rs"]
 mod main_tests_project_validate_resolver;
 #[path = "main_tests_project_validate_rules.rs"]

@@ -4,9 +4,12 @@ use clap::Parser;
 use datum_gui_protocol::{
     BoardTextAlignmentField, BoardTextBooleanField, BoardTextCycleField, BoardTextHeightStep,
     BoardTextLineSpacingStep, BoardTextRotationStep, DockTab, LiveDesignSession, LiveReviewRequest,
-    PointNm, RectNm, SceneBounds, SessionCommand, SessionEvent, ensure_known_good_demo_request,
-    load_board_editor_workspace_state, load_live_workspace_state,
+    PointNm, RectNm, SceneBounds, SessionCommand, SessionEvent, TerminalCommandHandoff,
+    WorkspaceTool, ensure_known_good_demo_request, load_board_editor_workspace_state,
+    load_live_workspace_state, materialize_kicad_board_request,
 };
+#[cfg(feature = "visual")]
+use datum_gui_render::visual_capture::OffscreenRenderer;
 use datum_gui_render::{
     CameraState, HitTarget, PreparedScene, Renderer, RetainedScene, ShellLayout,
 };
@@ -14,6 +17,8 @@ use std::collections::BTreeMap;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
+#[cfg(feature = "visual")]
+use std::sync::mpsc;
 use winit::{
     application::ApplicationHandler,
     dpi::LogicalSize,
@@ -23,9 +28,12 @@ use winit::{
     window::{Window, WindowAttributes, WindowId},
 };
 
+mod app_bootstrap;
+mod app_shell;
 mod artifact_preview_controls;
 mod board_text_terminal_commands;
 mod production_status_refresh;
+mod retained_scene_cache_key;
 mod runtime_terminal_context;
 mod terminal_active_context;
 mod terminal_activity_snapshot;
@@ -41,10 +49,17 @@ mod terminal_session;
 mod terminal_session_context;
 mod terminal_session_controls;
 mod terminal_session_events;
+mod gui_runtime_support;
+pub(crate) use gui_runtime_support::*;
+#[cfg(feature = "visual")]
+use std::fs;
+use app_bootstrap::{GuiArgs, LaunchState};
+use app_shell::App;
 use board_text_terminal_commands::{
     BoardTextEditTerminalField, BoardTextQuickEditTerminalAction, board_text_edit_terminal_command,
     board_text_quick_edit_terminal_command,
 };
+use retained_scene_cache_key::retained_selection_cache_key;
 use terminal_input::{
     TerminalKeyAction, terminal_focus_event_sequence, terminal_key_action,
     terminal_sgr_mouse_button_sequence, terminal_sgr_mouse_motion_sequence,
@@ -78,6 +93,7 @@ struct RetainedSceneCacheKey {
     source_revision: String,
     width: u32,
     height: u32,
+    scale_bits: u32,
     dock_height_px: u32,
     show_authored: bool,
     show_proposed: bool,
@@ -88,238 +104,81 @@ struct RetainedSceneCacheKey {
 }
 
 fn main() -> Result<()> {
+    install_gui_panic_hook();
+    reset_gui_diagnostic_log();
     let args = GuiArgs::parse();
+    append_gui_diagnostic_line(format!("startup args={args:?}"));
+    if args.visual_test && args.exit_after_screenshot && !args.window_visual_test {
+        return run_offscreen_visual_test(&args);
+    }
     let event_loop = EventLoop::new().context("failed to create event loop")?;
     let mut app = App::new(args);
     event_loop.run_app(&mut app).context("failed to run app")
 }
 
+#[cfg(feature = "visual")]
+fn run_offscreen_visual_test(args: &GuiArgs) -> Result<()> {
+    args.validate_visual_args()?;
+    append_gui_diagnostic_line("offscreen visual test begin");
+    let request = args
+        .resolve_request()
+        .context("resolve offscreen visual-test review context")?;
+    let workspace_include_review = !args.wants_plain_project_board_view();
+    let state = if args.wants_plain_project_board_view() {
+        load_board_editor_workspace_state(&request)
+            .context("load board editor offscreen workspace state")?
+    } else {
+        load_live_workspace_state(&request).context("load live offscreen workspace state")?
+    };
+    let camera = CameraState::fit_to_bounds(&state.scene.bounds);
+    let (width, height) = args.visual_window_size()?;
+    let scale_factor = args.visual_scale_factor.unwrap_or(1.0);
+    let screenshot_out = args
+        .screenshot_out
+        .as_ref()
+        .context("--screenshot-out is required for --visual-test")?;
+    let mut renderer =
+        OffscreenRenderer::new(width, height).context("create offscreen renderer")?;
+    renderer
+        .warm_workspace_for_surface_scale(&state, Some(camera), scale_factor)
+        .context("warm offscreen visual-test renderer")?;
+    let image = renderer
+        .render_workspace_for_surface_scale(&state, Some(camera), scale_factor)
+        .context("render offscreen visual-test workspace")?;
+    if let Some(parent) = screenshot_out.parent() {
+        fs::create_dir_all(parent)
+            .with_context(|| format!("create screenshot directory {}", parent.display()))?;
+    }
+    image.save(screenshot_out).with_context(|| {
+        format!(
+            "write offscreen visual-test screenshot {}",
+            screenshot_out.display()
+        )
+    })?;
+    append_gui_diagnostic_line(format!(
+        "offscreen visual test end path={} include_review={workspace_include_review}",
+        screenshot_out.display()
+    ));
+    Ok(())
+}
+
+#[cfg(not(feature = "visual"))]
+fn run_offscreen_visual_test(_args: &GuiArgs) -> Result<()> {
+    anyhow::bail!("datum-gui --visual-test requires the datum-gui-app visual feature")
+}
+
 fn fatal_gui_error(event_loop: &ActiveEventLoop, context: &str, err: impl std::fmt::Display) -> ! {
+    append_gui_diagnostic_line(format!("fatal {context}: {err}"));
     eprintln!("datum-gui error: {context}: {err}");
     event_loop.exit();
     std::process::exit(1);
 }
 
-fn trace_startup_timing(message: String) {
-    if std::env::var_os("DATUM_TRACE_TIMING").is_some() {
-        eprintln!("[datum-startup] {message}");
-    }
-}
-
-fn parse_window_size(value: &str) -> Result<(u32, u32)> {
-    let (width, height) = value
-        .split_once('x')
-        .ok_or_else(|| anyhow::anyhow!("window size must use <width>x<height>"))?;
-    let width = width
-        .parse::<u32>()
-        .with_context(|| format!("parse window width from {value:?}"))?;
-    let height = height
-        .parse::<u32>()
-        .with_context(|| format!("parse window height from {value:?}"))?;
-    if width == 0 || height == 0 {
-        anyhow::bail!("window size dimensions must be non-zero");
-    }
-    Ok((width, height))
-}
-
-fn terminal_raw_input_should_handle(
-    terminal_accepts_raw_input: bool,
-    paste_shortcut: bool,
-    copy_shortcut: bool,
-) -> bool {
-    terminal_accepts_raw_input && !paste_shortcut && !copy_shortcut
-}
-
-fn retained_selection_cache_key(
-    workspace: &datum_gui_protocol::ReviewWorkspaceState,
-    selection: &datum_gui_protocol::SelectionTarget,
-) -> String {
-    match selection {
-        datum_gui_protocol::SelectionTarget::None => "none".to_string(),
-        datum_gui_protocol::SelectionTarget::ReviewAction(id) => format!("review:{id}"),
-        datum_gui_protocol::SelectionTarget::CheckFinding(id) => format!("finding:{id}"),
-        datum_gui_protocol::SelectionTarget::AuthoredObject(id) => {
-            let lightweight = workspace
-                .scene
-                .board_texts
-                .iter()
-                .any(|text| &text.object_id == id)
-                || workspace
-                    .scene
-                    .outline
-                    .iter()
-                    .any(|outline| &outline.object_id == id)
-                || workspace
-                    .scene
-                    .board_graphics
-                    .iter()
-                    .any(|graphic| &graphic.object_id == id);
-            if lightweight && !workspace.ui.filters.dim_unrelated {
-                "none".to_string()
-            } else if lightweight {
-                "lightweight-authored".to_string()
-            } else {
-                format!("object:{id}")
-            }
-        }
-    }
-}
-
-#[cfg(feature = "visual")]
-fn align_to(value: u32, alignment: u32) -> u32 {
-    value.div_ceil(alignment) * alignment
-}
-
-#[cfg(feature = "visual")]
-fn convert_texture_pixels_to_rgba(pixels: &mut [u8], format: wgpu::TextureFormat) -> Result<()> {
-    match format {
-        wgpu::TextureFormat::Rgba8Unorm | wgpu::TextureFormat::Rgba8UnormSrgb => Ok(()),
-        wgpu::TextureFormat::Bgra8Unorm | wgpu::TextureFormat::Bgra8UnormSrgb => {
-            for pixel in pixels.chunks_exact_mut(4) {
-                pixel.swap(0, 2);
-            }
-            Ok(())
-        }
-        other => anyhow::bail!("unsupported visual screenshot surface format: {other:?}"),
-    }
-}
-
-#[derive(Debug, Clone, Parser)]
-#[command(name = "datum-gui", about = "Datum M7 route-proposal review spike")]
-struct GuiArgs {
-    #[arg(long = "demo-known-good", default_value_t = false)]
-    demo_known_good: bool,
-    #[arg(long = "board", help = "Open a KiCad .kicad_pcb board file directly")]
-    board_file: Option<PathBuf>,
-    #[arg(long = "artifact")]
-    artifact_path: Option<PathBuf>,
-    #[arg(long = "project-root")]
-    project_root: Option<PathBuf>,
-    #[arg(long = "net")]
-    net_uuid: Option<String>,
-    #[arg(long = "from-anchor")]
-    from_anchor_pad_uuid: Option<String>,
-    #[arg(long = "to-anchor")]
-    to_anchor_pad_uuid: Option<String>,
-    #[arg(long = "profile")]
-    profile: Option<String>,
-    #[arg(long = "visual-test", default_value_t = false)]
-    visual_test: bool,
-    #[arg(long = "window-size", default_value = "1280x768")]
-    window_size: String,
-    #[arg(long = "screenshot-out")]
-    screenshot_out: Option<PathBuf>,
-    #[arg(long = "exit-after-screenshot", default_value_t = false)]
-    exit_after_screenshot: bool,
-}
-
-struct App {
-    args: GuiArgs,
-    window: Option<&'static Window>,
-    runtime: Option<Runtime>,
-}
-
-impl App {
-    fn new(args: GuiArgs) -> Self {
-        Self {
-            args,
-            window: None,
-            runtime: None,
-        }
-    }
-
-    fn request_redraw_if_needed(&mut self) {
-        if let (Some(runtime), Some(window)) = (&mut self.runtime, self.window)
-            && !runtime.redraw_pending
-        {
-            runtime.redraw_pending = true;
-            window.request_redraw();
-        }
-    }
-}
-
-impl GuiArgs {
-    fn visual_window_size(&self) -> Result<(u32, u32)> {
-        parse_window_size(&self.window_size)
-    }
-
-    fn validate_visual_args(&self) -> Result<()> {
-        if !self.visual_test {
-            return Ok(());
-        }
-        if self.screenshot_out.is_none() {
-            anyhow::bail!("--visual-test requires --screenshot-out");
-        }
-        self.visual_window_size()?;
-        Ok(())
-    }
-
-    fn wants_plain_project_board_view(&self) -> bool {
-        self.project_root.is_some()
-            && self.board_file.is_none()
-            && self.artifact_path.is_none()
-            && self.net_uuid.is_none()
-            && self.from_anchor_pad_uuid.is_none()
-            && self.to_anchor_pad_uuid.is_none()
-    }
-
-    fn resolve_request(&self) -> Result<LiveReviewRequest> {
-        if self.demo_known_good {
-            return ensure_known_good_demo_request();
-        }
-        if let Some(board_file) = &self.board_file {
-            let project_root = self
-                .project_root
-                .clone()
-                .or_else(|| board_file.parent().map(PathBuf::from))
-                .unwrap_or_else(|| PathBuf::from("."));
-            return Ok(LiveReviewRequest {
-                project_root,
-                board_file: Some(board_file.clone()),
-                artifact_path: None,
-                net_uuid: None,
-                from_anchor_pad_uuid: None,
-                to_anchor_pad_uuid: None,
-                profile: None,
-            });
-        }
-        if let Some(artifact_path) = &self.artifact_path {
-            let project_root = self
-                .project_root
-                .clone()
-                .or_else(|| artifact_path.parent().map(PathBuf::from))
-                .ok_or_else(|| {
-                    anyhow::anyhow!(
-                        "--project-root is required when --artifact has no parent directory"
-                    )
-                })?;
-            return Ok(LiveReviewRequest {
-                project_root,
-                board_file: None,
-                artifact_path: Some(artifact_path.clone()),
-                net_uuid: None,
-                from_anchor_pad_uuid: None,
-                to_anchor_pad_uuid: None,
-                profile: self.profile.clone(),
-            });
-        }
-        Ok(LiveReviewRequest {
-            project_root: self.project_root.clone().ok_or_else(|| {
-                anyhow::anyhow!("--project-root, --board, or --demo-known-good is required")
-            })?,
-            board_file: None,
-            artifact_path: None,
-            net_uuid: self.net_uuid.clone(),
-            from_anchor_pad_uuid: self.from_anchor_pad_uuid.clone(),
-            to_anchor_pad_uuid: self.to_anchor_pad_uuid.clone(),
-            profile: self.profile.clone(),
-        })
-    }
-}
-
 impl ApplicationHandler for App {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
+        append_gui_diagnostic_line("resumed event");
         if self.window.is_some() {
+            append_gui_diagnostic_line("resumed ignored; window already exists");
             return;
         }
         // Block the event loop until there is work to do. Winit 0.30 defaults
@@ -331,6 +190,12 @@ impl ApplicationHandler for App {
         self.args
             .validate_visual_args()
             .unwrap_or_else(|err| fatal_gui_error(event_loop, "visual launch args invalid", err));
+        append_gui_diagnostic_line("launch state load begin");
+        let launch_state = self
+            .args
+            .load_launch_state()
+            .unwrap_or_else(|err| fatal_gui_error(event_loop, "launch state load failed", err));
+        append_gui_diagnostic_line("launch state load end");
         let (window_width, window_height) = self
             .args
             .visual_window_size()
@@ -339,15 +204,25 @@ impl ApplicationHandler for App {
             .create_window(
                 WindowAttributes::default()
                     .with_title("Datum M7 Spike")
-                    .with_inner_size(LogicalSize::new(window_width as f64, window_height as f64)),
+                    .with_inner_size(LogicalSize::new(window_width as f64, window_height as f64))
+                    .with_visible(false),
             )
             .unwrap_or_else(|err| fatal_gui_error(event_loop, "window creation failed", err));
+        append_gui_diagnostic_line("window created");
         window.set_ime_allowed(true);
         let window_ref: &'static Window = Box::leak(Box::new(window));
-        let runtime = pollster::block_on(Runtime::new(window_ref, &self.args))
-            .unwrap_or_else(|err| fatal_gui_error(event_loop, "runtime creation failed", err));
+        append_gui_diagnostic_line("runtime creation begin");
+        let runtime = pollster::block_on(Runtime::new(
+            window_ref,
+            launch_state,
+            self.args.visual_scale_factor,
+        ))
+        .unwrap_or_else(|err| fatal_gui_error(event_loop, "runtime creation failed", err));
+        append_gui_diagnostic_line("runtime creation end");
         self.runtime = Some(runtime);
         self.window = Some(window_ref);
+        window_ref.set_visible(true);
+        append_gui_diagnostic_line("window visible");
         self.request_redraw_if_needed();
     }
 
@@ -362,13 +237,20 @@ impl ApplicationHandler for App {
                 return;
             }
         }
+        if let Some(label) = window_event_diagnostic_label(&event) {
+            append_gui_verbose_diagnostic_line(format!("window event {label}"));
+        }
+        if matches!(event, WindowEvent::CloseRequested) {
+            append_gui_diagnostic_line("close requested");
+            event_loop.exit();
+            return;
+        }
         if let Some(runtime) = &mut self.runtime
             && runtime.poll_terminal_output()
         {
             self.request_redraw_if_needed();
         }
         match event {
-            WindowEvent::CloseRequested => event_loop.exit(),
             WindowEvent::Ime(winit::event::Ime::Commit(text))
                 if self
                     .runtime
@@ -382,12 +264,20 @@ impl ApplicationHandler for App {
                 }
             }
             WindowEvent::Resized(size) => {
-                if let (Some(runtime), Some(window)) = (&mut self.runtime, self.window) {
+                if let Some(runtime) = &mut self.runtime {
                     runtime.resize(size.width, size.height);
-                    if runtime.needs_redraw() {
-                        let _ = window;
-                        self.request_redraw_if_needed();
-                    }
+                    self.request_redraw_if_needed();
+                }
+            }
+            WindowEvent::ScaleFactorChanged { scale_factor, .. } => {
+                if let Some(runtime) = &mut self.runtime {
+                    let scale_factor = self
+                        .args
+                        .visual_scale_factor
+                        .map(f64::from)
+                        .unwrap_or(scale_factor);
+                    runtime.set_scale_factor(scale_factor);
+                    self.request_redraw_if_needed();
                 }
             }
             WindowEvent::Focused(focused) => {
@@ -414,9 +304,9 @@ impl ApplicationHandler for App {
                         && !runtime.middle_drag_active
                         && !runtime.right_drag_active
                     {
+                        changed = runtime.handle_authoring_pointer_move(next_pos) || changed;
                         changed = runtime.update_hover(next_pos) || changed;
                     }
-                    runtime.refresh_terminal_context_snapshot();
                     if changed {
                         self.request_redraw_if_needed();
                     }
@@ -790,6 +680,102 @@ impl ApplicationHandler for App {
                         ..
                     },
                 ..
+            } if text.eq_ignore_ascii_case("s") => {
+                if let Some(runtime) = &mut self.runtime
+                    && !runtime.workspace().ui.active_dock_tab.is_some()
+                    && runtime.set_workspace_tool(WorkspaceTool::Select)
+                {
+                    self.request_redraw_if_needed();
+                }
+            }
+            WindowEvent::KeyboardInput {
+                event:
+                    KeyEvent {
+                        logical_key: Key::Character(ref text),
+                        state: ElementState::Released,
+                        ..
+                    },
+                ..
+            } if text.eq_ignore_ascii_case("b") => {
+                if let Some(runtime) = &mut self.runtime
+                    && !runtime.workspace().ui.active_dock_tab.is_some()
+                    && runtime.set_workspace_tool(WorkspaceTool::PlaceBoardText)
+                {
+                    self.request_redraw_if_needed();
+                }
+            }
+            WindowEvent::KeyboardInput {
+                event:
+                    KeyEvent {
+                        logical_key: Key::Character(ref text),
+                        state: ElementState::Released,
+                        ..
+                    },
+                ..
+            } if text.eq_ignore_ascii_case("v") => {
+                if let Some(runtime) = &mut self.runtime
+                    && !runtime.workspace().ui.active_dock_tab.is_some()
+                    && runtime.set_workspace_tool(WorkspaceTool::PlaceBoardVia)
+                {
+                    self.request_redraw_if_needed();
+                }
+            }
+            WindowEvent::KeyboardInput {
+                event:
+                    KeyEvent {
+                        logical_key: Key::Character(ref text),
+                        state: ElementState::Released,
+                        ..
+                    },
+                ..
+            } if text.eq_ignore_ascii_case("m") => {
+                if let Some(runtime) = &mut self.runtime
+                    && !runtime.workspace().ui.active_dock_tab.is_some()
+                    && runtime.set_workspace_tool(WorkspaceTool::Move)
+                {
+                    self.request_redraw_if_needed();
+                }
+            }
+            WindowEvent::KeyboardInput {
+                event:
+                    KeyEvent {
+                        logical_key: Key::Character(ref text),
+                        state: ElementState::Released,
+                        ..
+                    },
+                ..
+            } if text.eq_ignore_ascii_case("x") => {
+                if let Some(runtime) = &mut self.runtime
+                    && !runtime.workspace().ui.active_dock_tab.is_some()
+                    && runtime.set_workspace_tool(WorkspaceTool::Delete)
+                {
+                    self.request_redraw_if_needed();
+                }
+            }
+            WindowEvent::KeyboardInput {
+                event:
+                    KeyEvent {
+                        logical_key: Key::Character(ref text),
+                        state: ElementState::Released,
+                        ..
+                    },
+                ..
+            } if text.eq_ignore_ascii_case("r") => {
+                if let Some(runtime) = &mut self.runtime
+                    && !runtime.workspace().ui.active_dock_tab.is_some()
+                    && runtime.set_workspace_tool(WorkspaceTool::DrawBoardTrack)
+                {
+                    self.request_redraw_if_needed();
+                }
+            }
+            WindowEvent::KeyboardInput {
+                event:
+                    KeyEvent {
+                        logical_key: Key::Character(ref text),
+                        state: ElementState::Released,
+                        ..
+                    },
+                ..
             } if text.eq_ignore_ascii_case("f") => {
                 if let Some(runtime) = &mut self.runtime {
                     if !runtime.workspace().ui.active_dock_tab.is_some() {
@@ -856,18 +842,22 @@ impl ApplicationHandler for App {
                 ..
             } => {
                 if let Some(runtime) = &mut self.runtime {
+                    if runtime.dispatch_session_command(SessionCommand::CancelAuthoringGesture) {
+                        self.request_redraw_if_needed();
+                        return;
+                    }
                     if !matches!(
                         runtime.workspace().selection,
                         datum_gui_protocol::SelectionTarget::None
-                    ) {
-                        let _ = runtime.dispatch_session_command(SessionCommand::ClearSelection);
-                        runtime.invalidate_scene();
+                    ) && runtime.dispatch_session_command(SessionCommand::ClearSelection)
+                    {
                         self.request_redraw_if_needed();
                     }
                 }
             }
             WindowEvent::RedrawRequested => {
                 if let Some(runtime) = &mut self.runtime {
+                    append_gui_verbose_diagnostic_line("redraw handler begin");
                     runtime.redraw_pending = false;
                     let render_started = std::time::Instant::now();
                     if let Err(err) = runtime.render() {
@@ -877,6 +867,21 @@ impl ApplicationHandler for App {
                         "redraw render {}ms",
                         render_started.elapsed().as_millis()
                     ));
+                }
+                if self.advance_kwin_lifecycle_smoke(event_loop) {
+                    return;
+                }
+                if let Some(runtime) = &mut self.runtime {
+                    if self.args.interaction_smoke
+                        && let Err(err) = runtime.run_interaction_smoke()
+                    {
+                        fatal_gui_error(event_loop, "interaction smoke failed", err);
+                    }
+                    if self.args.resize_torture_smoke
+                        && let Err(err) = runtime.run_resize_torture_smoke()
+                    {
+                        fatal_gui_error(event_loop, "resize torture smoke failed", err);
+                    }
                     if self.args.visual_test {
                         let screenshot_out =
                             self.args.screenshot_out.as_ref().unwrap_or_else(|| {
@@ -893,6 +898,7 @@ impl ApplicationHandler for App {
                             event_loop.exit();
                         }
                     }
+                    append_gui_verbose_diagnostic_line("redraw handler end");
                 }
             }
             _ => {}
@@ -909,6 +915,7 @@ struct Runtime {
     device: wgpu::Device,
     queue: wgpu::Queue,
     config: wgpu::SurfaceConfiguration,
+    scale_factor: f32,
     renderer: Renderer,
     session: LiveDesignSession,
     camera: CameraState,
@@ -926,7 +933,9 @@ struct Runtime {
     terminal_sessions: TerminalSessionRegistry,
     terminal_disconnected_reported: bool,
     terminal_launch_context: TerminalLaunchContext,
+    workspace_include_review: bool,
     terminal_production_refresh_pending: bool,
+    terminal_workspace_refresh_pending: bool,
     terminal_production_refresh_due: Option<std::time::Instant>,
     terminal_production_refresh_attempts: u8,
     terminal_rename_session_id: Option<String>,
@@ -943,11 +952,25 @@ impl Runtime {
         self.session.workspace()
     }
 
-    async fn new(window: &'static Window, args: &GuiArgs) -> Result<Self> {
+    async fn new(
+        window: &'static Window,
+        launch_state: LaunchState,
+        scale_factor_override: Option<f32>,
+    ) -> Result<Self> {
         let runtime_started = std::time::Instant::now();
+        let LaunchState {
+            request: _request,
+            state,
+            camera,
+            terminal_launch_context,
+            terminal_sessions,
+            workspace_include_review,
+        } = launch_state;
         let wgpu_started = std::time::Instant::now();
+        append_gui_diagnostic_line("wgpu instance create begin");
         let instance = wgpu::Instance::default();
         let surface = instance.create_surface(window).context("create surface")?;
+        append_gui_diagnostic_line("wgpu request adapter begin");
         let adapter = instance
             .request_adapter(&wgpu::RequestAdapterOptions {
                 power_preference: wgpu::PowerPreference::LowPower,
@@ -956,12 +979,13 @@ impl Runtime {
             })
             .await
             .context("request adapter")?;
-        let want_msaa8 =
+        append_gui_diagnostic_line("wgpu request device begin");
+        let adapter_format_features =
             wgpu::Features::TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES & adapter.features();
         let (device, queue) = adapter
             .request_device(&wgpu::DeviceDescriptor {
                 label: Some("datum-m7-spike-device"),
-                required_features: want_msaa8,
+                required_features: adapter_format_features,
                 required_limits: wgpu::Limits::default(),
                 memory_hints: wgpu::MemoryHints::default(),
                 experimental_features: wgpu::ExperimentalFeatures::disabled(),
@@ -969,76 +993,52 @@ impl Runtime {
             })
             .await
             .context("request device")?;
+        append_gui_diagnostic_line("wgpu request device end");
         trace_startup_timing(format!(
             "wgpu init {}ms",
             wgpu_started.elapsed().as_millis()
         ));
-        let msaa_samples =
-            if want_msaa8.contains(wgpu::Features::TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES) {
-                8
-            } else {
-                4
-            };
         let size = window.inner_size();
+        let scale_factor = scale_factor_override.unwrap_or_else(|| window.scale_factor() as f32);
         let caps = surface.get_capabilities(&adapter);
         let format = caps.formats[0];
+        let msaa_samples = select_msaa_samples(&adapter, format);
+        let present_mode = caps
+            .present_modes
+            .iter()
+            .copied()
+            .find(|mode| *mode == wgpu::PresentMode::Fifo)
+            .unwrap_or(caps.present_modes[0]);
         let config = wgpu::SurfaceConfiguration {
             usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
             format,
             width: size.width.max(1),
             height: size.height.max(1),
-            present_mode: caps.present_modes[0],
+            present_mode,
             alpha_mode: caps.alpha_modes[0],
             view_formats: vec![],
             desired_maximum_frame_latency: 2,
         };
+        append_gui_diagnostic_line(format!(
+            "initial surface configure begin {}x{} format={:?} present={:?} msaa={}",
+            config.width, config.height, config.format, config.present_mode, msaa_samples
+        ));
         surface.configure(&device, &config);
+        append_gui_diagnostic_line("initial surface configure end");
         let renderer_started = std::time::Instant::now();
+        append_gui_diagnostic_line("renderer init begin");
         let renderer = Renderer::new(&device, &queue, config.format, msaa_samples);
+        append_gui_diagnostic_line("renderer init end");
         trace_startup_timing(format!(
             "renderer init {}ms",
             renderer_started.elapsed().as_millis()
-        ));
-        let request_started = std::time::Instant::now();
-        let request = args
-            .resolve_request()
-            .context("resolve GUI launch review context")?;
-        trace_startup_timing(format!(
-            "request resolve {}ms",
-            request_started.elapsed().as_millis()
-        ));
-        let workspace_started = std::time::Instant::now();
-        let mut state = if args.wants_plain_project_board_view() {
-            load_board_editor_workspace_state(&request)
-                .context("load board editor workspace state")?
-        } else {
-            load_live_workspace_state(&request).context("load live M7 review workspace state")?
-        };
-        trace_startup_timing(format!(
-            "workspace load {}ms",
-            workspace_started.elapsed().as_millis()
-        ));
-        let camera_started = std::time::Instant::now();
-        let camera = CameraState::fit_to_bounds(&state.scene.bounds);
-        trace_startup_timing(format!(
-            "camera fit {}ms",
-            camera_started.elapsed().as_millis()
-        ));
-        let terminal_launch_context =
-            terminal_launch_context_from_state(&request.project_root, &state);
-        let terminal_started = std::time::Instant::now();
-        let mut terminal_sessions = TerminalSessionRegistry::spawn(&terminal_launch_context)
-            .context("spawn integrated terminal lane")?;
-        terminal_sessions.sync_lane_tabs(&mut state.ui.terminal);
-        trace_startup_timing(format!(
-            "terminal spawn {}ms",
-            terminal_started.elapsed().as_millis()
         ));
         let mut runtime = Self {
             surface,
             device,
             queue,
             config,
+            scale_factor,
             renderer,
             session: LiveDesignSession::new(state),
             camera,
@@ -1056,7 +1056,9 @@ impl Runtime {
             terminal_sessions,
             terminal_disconnected_reported: false,
             terminal_launch_context,
+            workspace_include_review,
             terminal_production_refresh_pending: false,
+            terminal_workspace_refresh_pending: false,
             terminal_production_refresh_due: None,
             terminal_production_refresh_attempts: 0,
             terminal_rename_session_id: None,
@@ -1072,26 +1074,77 @@ impl Runtime {
     }
 
     fn resize(&mut self, width: u32, height: u32) {
-        let width = width.max(1);
-        let height = height.max(1);
+        self.apply_resize(width.max(1), height.max(1));
+    }
+
+    fn set_scale_factor(&mut self, scale_factor: f64) {
+        let next = (scale_factor as f32).max(0.01);
+        if (self.scale_factor - next).abs() <= f32::EPSILON {
+            return;
+        }
+        append_gui_diagnostic_line(format!(
+            "scale factor apply {:.4} -> {:.4}",
+            self.scale_factor, next
+        ));
+        self.scale_factor = next;
+        if matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)) {
+            self.resize_terminal_to_dock();
+        }
+        self.invalidate_scene();
+    }
+
+    fn apply_resize(&mut self, width: u32, height: u32) {
         if self.config.width == width && self.config.height == height {
             return;
         }
+        append_gui_diagnostic_line(format!(
+            "resize apply {}x{} -> {width}x{height}",
+            self.config.width, self.config.height
+        ));
         self.config.width = width;
         self.config.height = height;
+        append_gui_diagnostic_line("surface configure begin");
         self.surface.configure(&self.device, &self.config);
-        self.resize_terminal_to_dock();
+        append_gui_diagnostic_line("surface configure end");
+        if matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)) {
+            self.resize_terminal_to_dock();
+        }
         self.invalidate_scene();
     }
 
     fn render(&mut self) -> Result<()> {
         let render_started = std::time::Instant::now();
         let acquire_started = std::time::Instant::now();
-        let frame = self
-            .surface
-            .get_current_texture()
-            .context("acquire next surface texture")?;
+        append_gui_verbose_diagnostic_line(format!(
+            "render begin {}x{}",
+            self.config.width, self.config.height
+        ));
+        append_gui_verbose_diagnostic_line("render acquire begin");
+        let frame = match self.surface.get_current_texture() {
+            Ok(frame) => frame,
+            Err(wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated) => {
+                append_gui_diagnostic_line(format!(
+                    "surface acquire recovered by reconfigure at {}x{}",
+                    self.config.width, self.config.height
+                ));
+                self.surface.configure(&self.device, &self.config);
+                self.invalidate_frame();
+                return Ok(());
+            }
+            Err(wgpu::SurfaceError::Timeout) => {
+                append_gui_diagnostic_line("surface acquire timeout; frame skipped");
+                self.invalidate_frame();
+                return Ok(());
+            }
+            Err(wgpu::SurfaceError::OutOfMemory) => {
+                anyhow::bail!("surface out of memory");
+            }
+            Err(err) => {
+                anyhow::bail!("acquire next surface texture: {err}");
+            }
+        };
         let acquire_elapsed = acquire_started.elapsed();
+        append_gui_verbose_diagnostic_line("render acquire end");
         let view = frame
             .texture
             .create_view(&wgpu::TextureViewDescriptor::default());
@@ -1101,29 +1154,42 @@ impl Runtime {
         let mut retained_build_ms = 0;
         let mut prepared_build_ms = 0;
         if self.prepared_scene.is_none() {
+            append_gui_verbose_diagnostic_line(format!(
+                "render scene prepare begin retained_cached={retained_was_cached}"
+            ));
             self.scene_dirty = false;
             if self.retained_scene.is_none() {
                 let retained_started = std::time::Instant::now();
-                self.retained_scene = Some(RetainedScene::from_workspace(
+                append_gui_verbose_diagnostic_line("retained scene build begin");
+                self.retained_scene = Some(RetainedScene::from_workspace_for_surface(
                     self.session.workspace(),
                     self.config.width,
                     self.config.height,
+                    self.scale_factor,
                 ));
                 retained_build_ms = retained_started.elapsed().as_millis();
+                append_gui_verbose_diagnostic_line(format!(
+                    "retained scene build end {retained_build_ms}ms"
+                ));
             }
             let retained = self
                 .retained_scene
                 .as_ref()
                 .context("retained scene should exist before prepared scene rebuild")?;
             let prepared_started = std::time::Instant::now();
-            self.prepared_scene = Some(PreparedScene::from_workspace(
+            append_gui_verbose_diagnostic_line("prepared scene build begin");
+            self.prepared_scene = Some(PreparedScene::from_workspace_for_surface(
                 self.session.workspace(),
                 self.config.width,
                 self.config.height,
+                self.scale_factor,
                 self.camera,
                 retained,
             ));
             prepared_build_ms = prepared_started.elapsed().as_millis();
+            append_gui_verbose_diagnostic_line(format!(
+                "prepared scene build end {prepared_build_ms}ms"
+            ));
         }
         let scene_elapsed = scene_started.elapsed();
         let retained = self
@@ -1135,6 +1201,7 @@ impl Runtime {
             .as_ref()
             .context("prepared scene should exist before render")?;
         let renderer_started = std::time::Instant::now();
+        append_gui_verbose_diagnostic_line("renderer render begin");
         self.renderer.render(
             &self.device,
             &self.queue,
@@ -1145,9 +1212,19 @@ impl Runtime {
             self.config.height,
         )?;
         let renderer_elapsed = renderer_started.elapsed();
+        append_gui_verbose_diagnostic_line(format!(
+            "renderer render end {}ms",
+            renderer_elapsed.as_millis()
+        ));
         let present_started = std::time::Instant::now();
+        append_gui_verbose_diagnostic_line("frame present begin");
         frame.present();
         let present_elapsed = present_started.elapsed();
+        append_gui_verbose_diagnostic_line(format!(
+            "frame present end {}ms total={}ms",
+            present_elapsed.as_millis(),
+            render_started.elapsed().as_millis()
+        ));
         self.trace_timing(format!(
             "runtime render total={}ms acquire={}ms scene={}ms retained_build={}ms prepared_build={}ms renderer={}ms present={}ms retained_was_cached={} prepared_was_cached={}",
             render_started.elapsed().as_millis(),
@@ -1160,6 +1237,48 @@ impl Runtime {
             retained_was_cached,
             prepared_was_cached
         ));
+        Ok(())
+    }
+
+    fn run_interaction_smoke(&mut self) -> Result<()> {
+        let resized_width = self.config.width.saturating_add(137).max(1);
+        let resized_height = self.config.height.saturating_add(83).max(1);
+        self.resize(resized_width, resized_height);
+        self.render().context("interaction smoke resize render")?;
+
+        let prepared = self
+            .prepared_scene
+            .as_ref()
+            .context("prepared scene should exist before interaction smoke click")?;
+        let click = (
+            prepared.scene_viewport.x + prepared.scene_viewport.width * 0.5,
+            prepared.scene_viewport.y + prepared.scene_viewport.height * 0.5,
+        );
+        self.last_cursor_pos = Some(click);
+        let _ = self.update_hover(click);
+        let _ = self.handle_primary_click();
+        self.render().context("interaction smoke click render")?;
+        Ok(())
+    }
+
+    fn run_resize_torture_smoke(&mut self) -> Result<()> {
+        let restored = (1344_u32, 806_u32);
+        let maximized = (1920_u32, 1051_u32);
+        append_gui_verbose_diagnostic_line("resize torture begin");
+        for (index, (width, height)) in [
+            maximized, restored, maximized, restored, maximized, restored,
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            append_gui_verbose_diagnostic_line(format!(
+                "resize torture step {index} target {width}x{height}"
+            ));
+            self.resize(width, height);
+            self.render()
+                .with_context(|| format!("resize torture render step {index} {width}x{height}"))?;
+        }
+        append_gui_verbose_diagnostic_line("resize torture end");
         Ok(())
     }
 
@@ -1200,16 +1319,18 @@ impl Runtime {
         if self.prepared_scene.is_none() {
             self.scene_dirty = false;
             let retained = self.retained_scene.get_or_insert_with(|| {
-                RetainedScene::from_workspace(
+                RetainedScene::from_workspace_for_surface(
                     self.session.workspace(),
                     self.config.width,
                     self.config.height,
+                    self.scale_factor,
                 )
             });
-            self.prepared_scene = Some(PreparedScene::from_workspace(
+            self.prepared_scene = Some(PreparedScene::from_workspace_for_surface(
                 self.session.workspace(),
                 self.config.width,
                 self.config.height,
+                self.scale_factor,
                 self.camera,
                 retained,
             ));
@@ -1308,18 +1429,20 @@ impl Runtime {
 
     fn prepared_scene(&mut self) -> &PreparedScene {
         let retained = self.retained_scene.get_or_insert_with(|| {
-            RetainedScene::from_workspace(
+            RetainedScene::from_workspace_for_surface(
                 self.session.workspace(),
                 self.config.width,
                 self.config.height,
+                self.scale_factor,
             )
         });
         self.prepared_scene.get_or_insert_with(|| {
             self.scene_dirty = false;
-            PreparedScene::from_workspace(
+            PreparedScene::from_workspace_for_surface(
                 self.session.workspace(),
                 self.config.width,
                 self.config.height,
+                self.scale_factor,
                 self.camera,
                 retained,
             )
@@ -1333,6 +1456,7 @@ impl Runtime {
             source_revision: workspace.scene.source_revision.clone(),
             width: self.config.width,
             height: self.config.height,
+            scale_bits: self.scale_factor.to_bits(),
             dock_height_px: workspace.ui.dock_height_px,
             show_authored: workspace.ui.filters.show_authored,
             show_proposed: workspace.ui.filters.show_proposed,
@@ -1407,10 +1531,15 @@ impl Runtime {
         if ui.active_dock_tab == Some(tab) {
             return false;
         }
+        let dock_was_open = ui.active_dock_tab.is_some();
         ui.active_dock_tab = Some(tab);
-        self.invalidate_scene();
-        self.refresh_terminal_context_snapshot();
+        if dock_was_open {
+            self.invalidate_frame();
+        } else {
+            self.invalidate_scene();
+        }
         if matches!(tab, DockTab::Terminal) {
+            self.resize_terminal_to_dock();
             self.refresh_terminal_activity_summary();
         }
         true
@@ -1423,7 +1552,6 @@ impl Runtime {
         }
         ui.active_dock_tab = None;
         self.invalidate_scene();
-        self.refresh_terminal_context_snapshot();
         true
     }
 
@@ -1690,6 +1818,7 @@ impl Runtime {
         }
         self.terminal_disconnected_reported = false;
         self.terminal_production_refresh_pending = false;
+        self.terminal_workspace_refresh_pending = false;
         self.terminal_production_refresh_due = None;
         self.terminal_production_refresh_attempts = 0;
         self.sync_terminal_tabs();
@@ -2030,9 +2159,9 @@ impl Runtime {
                     }
                 }
                 SessionEvent::FrameChanged => self.invalidate_frame(),
+                SessionEvent::ToolChanged(_) => self.invalidate_frame(),
             }
         }
-        self.refresh_terminal_context_snapshot();
         true
     }
 
@@ -2042,8 +2171,188 @@ impl Runtime {
         self.apply_session_result(result, Some(previous_retained_key))
     }
 
-    fn needs_redraw(&self) -> bool {
-        self.scene_dirty
+    fn set_workspace_tool(&mut self, tool: WorkspaceTool) -> bool {
+        let handled = self.dispatch_session_command(SessionCommand::SetTool(tool));
+        if handled {
+            self.log_review_event(format!("tool {}", tool.label()));
+        }
+        handled
+    }
+
+    fn active_tool_is_authoring(&self) -> bool {
+        !matches!(self.workspace().tool, WorkspaceTool::Select)
+    }
+
+    fn handle_authoring_pointer_move(&mut self, screen_pos: (f32, f32)) -> bool {
+        if !self.active_tool_is_authoring() || !self.workspace().authoring.gesture.is_active() {
+            return false;
+        }
+        let prepared = self.prepared_scene();
+        let Some(world) = prepared.world_point_at_screen(screen_pos.0, screen_pos.1) else {
+            return false;
+        };
+        let target_object_id = self.authoring_target_object_id(world);
+        self.dispatch_session_command(SessionCommand::PreviewAuthoringGesture {
+            world,
+            target_object_id,
+        })
+    }
+
+    fn handle_authoring_canvas_click(
+        &mut self,
+        world: PointNm,
+        target_object_id: Option<String>,
+    ) -> bool {
+        if !self.active_tool_is_authoring() {
+            return false;
+        }
+        match self.workspace().tool {
+            WorkspaceTool::DrawBoardTrack
+                if self.workspace().authoring.gesture.anchor.is_some() =>
+            {
+                let Some(handoff) = self
+                    .session
+                    .workspace_mut()
+                    .finish_draw_board_track_handoff(world)
+                else {
+                    self.invalidate_frame();
+                    return true;
+                };
+                self.queue_authoring_terminal_handoff(handoff, "draw-board-track");
+                self.invalidate_scene();
+                return true;
+            }
+            WorkspaceTool::PlaceBoardVia => {
+                let Some(handoff) = self
+                    .session
+                    .workspace_mut()
+                    .finish_place_board_via_handoff(world)
+                else {
+                    self.push_terminal_line("place via requires a board net context".to_string());
+                    self.invalidate_frame();
+                    return true;
+                };
+                self.queue_authoring_terminal_handoff(handoff, "place-board-via");
+                self.invalidate_scene();
+                return true;
+            }
+            WorkspaceTool::PlaceBoardText => {
+                let Some(handoff) = self
+                    .session
+                    .workspace_mut()
+                    .finish_place_board_text_handoff(world)
+                else {
+                    self.push_terminal_line("place text requires project backing".to_string());
+                    self.invalidate_frame();
+                    return true;
+                };
+                self.queue_authoring_terminal_handoff(handoff, "place-board-text");
+                self.invalidate_scene();
+                return true;
+            }
+            WorkspaceTool::Move if self.workspace().authoring.gesture.anchor.is_some() => {
+                let Some(handoff) = self
+                    .session
+                    .workspace_mut()
+                    .finish_move_component_handoff(world)
+                else {
+                    self.push_terminal_line(
+                        "move requires a selected component target".to_string(),
+                    );
+                    self.invalidate_frame();
+                    return true;
+                };
+                self.queue_authoring_terminal_handoff(handoff, "move-board-component");
+                self.invalidate_scene();
+                return true;
+            }
+            WorkspaceTool::Move => {
+                let Some(target) = target_object_id.clone() else {
+                    self.push_terminal_line("move requires clicking a component first".to_string());
+                    return true;
+                };
+                if !target.starts_with("component:") {
+                    self.push_terminal_line("move currently supports components only".to_string());
+                    return true;
+                }
+            }
+            WorkspaceTool::Delete => {
+                let Some(target) = target_object_id else {
+                    self.push_terminal_line(
+                        "delete requires an authored object target".to_string(),
+                    );
+                    return true;
+                };
+                let Some(handoff) = self.workspace().delete_authored_object_handoff(&target) else {
+                    self.push_terminal_line(format!("delete unsupported target {target}"));
+                    return true;
+                };
+                self.queue_authoring_terminal_handoff(handoff, "delete-authored-object");
+                self.invalidate_scene();
+                return true;
+            }
+            WorkspaceTool::Select | WorkspaceTool::DrawBoardTrack => {}
+        }
+        self.dispatch_session_command(SessionCommand::BeginAuthoringGesture {
+            world,
+            target_object_id,
+        })
+    }
+
+    fn authoring_target_object_id(&mut self, world: PointNm) -> Option<String> {
+        let target = {
+            let retained = self.retained_scene.get_or_insert_with(|| {
+                RetainedScene::from_workspace_for_surface(
+                    self.session.workspace(),
+                    self.config.width,
+                    self.config.height,
+                    self.scale_factor,
+                )
+            });
+            retained
+                .hit_test_authored_world(world, self.session.workspace())
+                .cloned()
+        };
+        match target {
+            Some(HitTarget::AuthoredObject(id)) => Some(id),
+            Some(HitTarget::ReviewAction(id)) => Some(id),
+            _ => None,
+        }
+    }
+
+    fn queue_authoring_terminal_handoff(
+        &mut self,
+        handoff: TerminalCommandHandoff,
+        event_label: &str,
+    ) {
+        if self
+            .workspace()
+            .backing
+            .as_ref()
+            .is_some_and(|backing| backing.request.board_file.is_some())
+        {
+            self.set_active_dock(DockTab::Terminal);
+            self.push_terminal_line(
+                "authoring tools require a native Datum project; open with --project-root instead of --board <kicad_pcb>"
+                    .to_string(),
+            );
+            return;
+        }
+        self.set_active_dock(DockTab::Terminal);
+        self.mark_terminal_workspace_refresh_pending();
+        let command = prepare_terminal_command_execution(
+            self.terminal_sessions.active(),
+            "authoring_tool_command",
+            &handoff,
+        )
+        .unwrap_or_else(|err| {
+            self.push_terminal_line(format!("terminal handoff prepare failed: {err}"));
+            handoff.command.clone()
+        });
+        let mut bytes = command.into_bytes();
+        bytes.push(b'\r');
+        self.write_terminal_bytes(&bytes);
+        self.log_review_event(format!("queued authoring command {event_label}"));
     }
 
     fn handle_primary_click(&mut self) -> bool {
@@ -2072,10 +2381,11 @@ impl Runtime {
             let retained_started = std::time::Instant::now();
             let retained_target = {
                 let retained = self.retained_scene.get_or_insert_with(|| {
-                    RetainedScene::from_workspace(
+                    RetainedScene::from_workspace_for_surface(
                         self.session.workspace(),
                         self.config.width,
                         self.config.height,
+                        self.scale_factor,
                     )
                 });
                 retained
@@ -2083,6 +2393,23 @@ impl Runtime {
                     .cloned()
             };
             let retained_elapsed = retained_started.elapsed();
+            let target_object_id = match &retained_target {
+                Some(HitTarget::AuthoredObject(id)) | Some(HitTarget::ReviewAction(id)) => {
+                    Some(id.clone())
+                }
+                _ => None,
+            };
+            if self.handle_authoring_canvas_click(world_point, target_object_id) {
+                self.trace_click(format!(
+                    "primary click ({x:.1}, {y:.1}) world ({}, {}) handled by authoring tool {}; prepare {}ms; retained {}ms",
+                    world_point.x,
+                    world_point.y,
+                    self.workspace().tool.label(),
+                    prepared_elapsed.as_millis(),
+                    retained_elapsed.as_millis()
+                ));
+                return true;
+            }
             if let Some(target) = retained_target {
                 self.trace_click(format!(
                     "primary click ({x:.1}, {y:.1}) world ({}, {}) retained target {target:?}; prepare {}ms; retained {}ms; dock {:?}",
@@ -2192,6 +2519,7 @@ impl Runtime {
                 }
                 handled
             }
+            HitTarget::SetWorkspaceTool(tool) => self.set_workspace_tool(*tool),
             HitTarget::ReviewPrev => {
                 let handled =
                     self.dispatch_session_command(SessionCommand::SelectPreviousReviewAction);
@@ -2530,7 +2858,7 @@ impl Runtime {
             self.push_terminal_line(format!("terminal handoff event write failed: {err}"));
         }
         self.write_terminal_bytes(command.as_bytes());
-        self.invalidate_scene();
+        self.invalidate_frame();
         self.log_review_event(event.into());
         true
     }
@@ -2769,9 +3097,10 @@ impl Runtime {
     }
 
     fn current_layout(&self) -> ShellLayout {
-        ShellLayout::for_window(
+        ShellLayout::for_surface(
             self.config.width,
             self.config.height,
+            self.scale_factor,
             if self.workspace().ui.active_dock_tab.is_some() {
                 Some(self.workspace().ui.dock_height_px)
             } else {
@@ -2810,24 +3139,35 @@ impl Runtime {
 
     fn handle_dock_resize_drag(&mut self, next_cursor_pos: (f32, f32)) -> bool {
         let window_height = self.config.height as f32;
-        let new_height = (window_height - next_cursor_pos.1).clamp(44.0, window_height * 0.6);
-        self.session.workspace_mut().ui.dock_height_px = new_height as u32;
+        let new_height_physical =
+            (window_height - next_cursor_pos.1).clamp(44.0, window_height * 0.6);
+        let new_height_logical = new_height_physical / self.scale_factor.max(0.01);
+        let new_height_logical = new_height_logical as u32;
+        if self.workspace().ui.dock_height_px == new_height_logical {
+            return false;
+        }
+        self.session.workspace_mut().ui.dock_height_px = new_height_logical;
         self.resize_terminal_to_dock();
         self.invalidate_scene();
         true
     }
 
     fn resize_terminal_to_dock(&mut self) {
-        let ui = &self.session.workspace().ui;
+        let bottom_height = self.current_layout().bottom_strip.height;
         let cols = ((self.config.width as f32 - 24.0) / 7.5).floor().max(20.0) as u16;
-        let rows = ((ui.dock_height_px as f32 - 76.0) / 16.0).floor().max(4.0) as u16;
+        let rows = ((bottom_height - 76.0) / 16.0).floor().max(4.0) as u16;
+        append_gui_verbose_diagnostic_line(format!("terminal resize begin {cols}x{rows}"));
         match self.terminal_sessions.resize_active(cols, rows) {
             Ok(()) => {
                 let terminal = &mut self.session.workspace_mut().ui.terminal;
                 terminal.columns = cols;
                 terminal.rows = rows;
+                append_gui_verbose_diagnostic_line("terminal resize end");
             }
-            Err(err) => self.push_terminal_line(format!("terminal resize failed: {err}")),
+            Err(err) => {
+                append_gui_diagnostic_line(format!("terminal resize failed: {err}"));
+                self.push_terminal_line(format!("terminal resize failed: {err}"));
+            }
         }
     }
 }
@@ -2868,6 +3208,7 @@ fn bounds_from_points(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::app_bootstrap::parse_window_size;
 
     #[test]
     fn parses_visual_window_size() {

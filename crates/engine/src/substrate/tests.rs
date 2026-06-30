@@ -27,6 +27,7 @@ mod journal_revision_guards;
 mod mixed_family_journal;
 mod output_job_run_replay;
 mod pool_library;
+mod pool_library_reject;
 mod private_writer_migration;
 mod production_replay;
 mod production_schema;

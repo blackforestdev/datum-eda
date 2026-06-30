@@ -18,8 +18,10 @@ symbols to physical footprints to purchasable components.
 - **Altium**: Unified component model, lifecycle metadata, supply chain data
 
 This pool takes Horizon's structural separation (Unit/Entity/Part/Package)
-and extends it with Eagle's explicit binding model and Altium's
-professional metadata (lifecycle, supply chain, parametric search).
+as lineage, but Datum's target model extends it with a separate `Footprint`
+object, Eagle's explicit binding model, and Altium-class professional metadata
+(lifecycle, supply chain, parametric search, standards basis, and revisioned
+library governance).
 
 ---
 
@@ -42,13 +44,18 @@ Unit (electrical identity of one gate)
   └──→ Entity (multi-gate logical component)
         │  "How many gates, what prefix?"
         │
-        ├──→ Package (physical footprint)
-        │     │  "What pads, what courtyard, what silkscreen?"
+        ├──→ Package (physical body / terminal family)
+        │     │  "What component body, terminals, and tolerances?"
+        │     │
+        ├──→ Footprint (PCB land pattern)
+        │     │  "What pads, courtyard, paste/mask, fab, and assembly marks?"
         │     │
         │     └──→ Padstack (pad geometry — through-hole, SMD, etc.)
         │
+        ├──→ PinPadMap (logical pin to package terminal / footprint pad map)
+        │
         └──→ Part (the purchasable thing)
-              "What MPN, what value, what package, which pin goes where?"
+              "What MPN, what value, what package/footprint options?"
 ```
 
 ### Unit
@@ -84,13 +91,27 @@ A multi-gate logical component. Maps gates to Units.
   but is just one deep.
 
 ### Package
-The physical footprint. Defines pads, courtyard, silkscreen, 3D models.
+The physical component body and terminal family. In older Horizon-derived code,
+`Package` also carries pads, courtyard, and silkscreen. That fused shape is
+current implementation debt, not the Datum target.
 
 - **Identity**: UUID
-- **Pads**: positioned pads, each with a padstack (geometry, layers)
+- **Body**: dimensions, tolerances, mounting style, body height, package family
+- **Terminals**: logical physical terminals that a footprint maps to pads
+- **3D models**: references to STEP or other geometry files
+- **Target invariant**: package body data and PCB land-pattern data are separate
+
+### Footprint
+The PCB land pattern for a package and process basis.
+
+- **Identity**: UUID
+- **References**: Package UUID plus padstack UUIDs
+- **Pads**: positioned pads, each with a padstack and package-terminal mapping
 - **Courtyard**: bounding polygon for assembly clearance checking
-- **Silkscreen**: graphics for board markings
-- **3D models**: references to STEP files (paths, not embedded)
+- **Fab / silkscreen / assembly / mechanical graphics**: board-facing drawing
+  primitives
+- **Process aperture policy**: mask/paste expansion or explicit aperture rules
+- **Standards basis**: IPC/package-family/density/deviation metadata when known
 
 ### Padstack
 The geometry of a single pad. Defines the copper shape, mask openings,
@@ -106,9 +127,10 @@ The purchasable component. THE key abstraction — this is what gets placed
 on a schematic, ordered from a distributor, and assembled onto a board.
 
 - **Identity**: UUID
-- **References**: Entity UUID + Package UUID
-- **Pad map**: explicit mapping from Package Pad UUIDs to (Gate UUID, Pin UUID)
-  pairs. This is the Eagle-style explicit binding that KiCad lacks.
+- **References**: Entity UUID + default Package/Footprint/PinPadMap UUIDs
+- **Pin/pad binding**: authoritative mapping is a `PinPadMap`; legacy
+  `Part.pad_map` compatibility may seed that object but is not the target
+  storage authority.
 - **Attributes**: MPN, value, manufacturer, datasheet URL, description
 - **Parametric**: key-value pairs for parametric search (resistance,
   capacitance, voltage, tolerance, temperature coefficient, etc.)
@@ -141,9 +163,15 @@ pool/
 │   ├── 0402.json
 │   ├── 0603.json
 │   └── soic-8.json
+├── footprints/
+│   ├── 0402-density-b.json
+│   └── soic-8-density-b.json
 ├── padstacks/
 │   ├── smd-rect.json
 │   └── th-round.json
+├── pin_pad_maps/
+│   ├── resistor-0402.json
+│   └── soic-8-opamp.json
 ├── parts/
 │   ├── generic/
 │   │   └── resistor-0402-10k.json
@@ -332,8 +360,10 @@ pool_index_rebuild(pool_path):
      a. Parse and validate
      b. Insert/update index tables
   3. Rebuild FTS index
-  4. Verify referential integrity (all Entity→Unit, Part→Entity,
-     Part→Package references are valid)
+  4. Verify referential integrity (Entity->Unit/Symbol, Part->Entity,
+     Part->Package/Footprint/PinPadMap, Footprint->Package/Padstack, and
+     PinPadMap->logical pins/package terminals/footprint pads references are
+     valid)
 ```
 
 Rebuild is idempotent and safe to run at any time.
@@ -376,9 +406,10 @@ search_by_tag("passive", "resistor") → all parts tagged passive+resistor
 Direct UUID lookup for any pool object.
 
 ```
-get_part(uuid) → full Part with resolved Entity and Package
+get_part(uuid) → full Part with resolved Entity, Package, Footprint, PinPadMap
 get_entity(uuid) → Entity with Gates and Units
-get_package(uuid) → Package with Pads and Padstacks
+get_package(uuid) → Package body/terminal metadata
+get_footprint(uuid) → Footprint with Pads and Padstacks
 ```
 
 ---
@@ -388,7 +419,8 @@ get_package(uuid) → Package with Pads and Padstacks
 ### From imports
 When a KiCad or Eagle design is imported:
 1. Library data from the design creates pool objects
-2. Eagle .lbr: deviceset→device→connect maps to Entity→Part→Package+pad_map
+2. Eagle .lbr: deviceset->device->connect maps to
+   Entity->Part->Package/Footprint/PinPadMap
 3. KiCad: symbol+footprint pairs create synthetic Parts
 4. Imported pool objects get deterministic UUIDs (v5, import namespace)
 5. Duplicate detection: if a pool object with the same UUID already exists,
@@ -400,12 +432,12 @@ Eagle's library format maps cleanly to the pool:
 | Eagle concept | Pool concept |
 |--------------|-------------|
 | symbol | Symbol |
-| package | Package |
+| package | Package + Footprint seed |
 | deviceset | Entity |
 | gate | Gate |
 | device | Part (one per device variant) |
-| connect | pad_map entry |
-| technology | Part variant (different attributes, same Entity+Package) |
+| connect | PinPadMap entry |
+| technology | Part variant (different attributes, same Entity+Package/Footprint) |
 
 ### From KiCad libraries (M1)
 KiCad's library model is flatter:
@@ -413,7 +445,7 @@ KiCad's library model is flatter:
 | KiCad concept | Pool concept |
 |--------------|-------------|
 | .kicad_sym symbol | Unit + Symbol + Entity (single-gate) |
-| .kicad_mod footprint | Package |
+| .kicad_mod footprint | Footprint plus package seed when package data is absent |
 | symbol+footprint pair (from design) | Part |
 
 KiCad does not have a "Part" concept — the binding of symbol to footprint
@@ -422,7 +454,8 @@ Parts from the symbol-footprint pairs it finds in actual designs.
 
 ### Manual / scripted
 Pool objects can be created directly:
-- CLI: `tool pool create-part --entity ... --package ... --mpn ...`
+- CLI: `datum-eda project create-pool-part ...` and related
+  `datum-eda project create-pool-*` / `set-pool-*` commands
 - MCP: `create_part` tool (M4+)
 - Python: pool API via PyO3
 
@@ -450,9 +483,12 @@ When searching, results are merged across all pools. When a UUID exists
 in multiple pools, the highest-priority pool wins.
 
 ### Pool versioning
-Pool JSON files are designed for git. Each modification to a pool object
-is a file change that git tracks. Pool versioning IS git versioning — no
-separate versioning system.
+Pool JSON files are designed for git, but git is not the product-level revision
+model. Each governed pool object carries stable identity and object revision;
+library writes flow through the journal/proposal substrate, and git becomes an
+outer storage/history mechanism. Same-UUID shadowing across layered pools,
+project-local overrides, and approval/review transitions must be resolved by
+Datum semantics before git history is consulted.
 
 ---
 
@@ -465,6 +501,8 @@ that share everything except one or two attributes (typically value).
 Base Part: "Generic 0402 1% resistor"
   Entity: resistor
   Package: 0402
+  Footprint: 0402-density-b
+  PinPadMap: resistor-0402
   Manufacturer: (any)
   Tolerance: 1%
   Parametric table: resistor

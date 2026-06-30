@@ -107,6 +107,7 @@ Build Layer B when one of these conditions is true:
 
 - M7 work changes shell layout, sidebars, inspector, toolbar/menu, dock panels,
   terminal/assistant panels, modal layering, or status-strip composition.
+- Taffy-backed layout contracts or design-token-derived dimensions change.
 - A bug can be reproduced in the real application window but not through Layer A
   offscreen rendering.
 - A UI regression depends on `winit`, surface sizing, swapchain/window size,
@@ -555,6 +556,29 @@ Explicit Layer A golden test:
 
 ```sh
 cargo test -p datum-gui-render --features visual --test visual_goldens -- --ignored --nocapture
+```
+
+The same test target includes the explicit multi-scale HiDPI smoke:
+
+```sh
+cargo test -p datum-gui-render --features visual --test visual_goldens board_text_multi_scale_visual_smoke_renders_nonblank -- --ignored --nocapture
+```
+
+Layer A manifests may opt into scaled goldens with:
+
+```toml
+[viewport]
+ui_scale_factors = [1.0, 1.25, 1.5, 2.0]
+```
+
+When a fixture declares more than one scale factor, non-legacy artifacts and
+goldens are written with scale suffixes, for example:
+
+```text
+text-density-repro.scale-1_25.golden.png
+text-density-repro.scale-1_25.actual.png
+text-density-repro.scale-1_25.diff.png
+text-density-repro.scale-1_25.report.txt
 ```
 
 Explicit Layer B shell smoke test:

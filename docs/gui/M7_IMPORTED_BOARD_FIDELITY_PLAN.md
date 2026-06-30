@@ -4,6 +4,9 @@
 > fidelity track.
 > This document defines the bounded correction program required before Datum
 > should treat imported KiCad PCB board review as a credible product surface.
+> It is a compatibility/review-quality plan, not Datum's product North Star.
+> Native governed library and schematic capture priority is controlled by
+> `docs/decisions/PRODUCT_MECHANICS_016_PRODUCT_NORTH_STAR.md`.
 
 ## Purpose
 

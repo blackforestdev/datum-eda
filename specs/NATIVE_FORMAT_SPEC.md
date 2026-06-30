@@ -212,15 +212,74 @@ Rules:
   `unit`/`symbol`, package pad `padstack`, `Part.entity`, `Part.package`,
   `Part.pad_map` pad/gate/pin links, `pin_pad_maps[*].part`, and
   `pin_pad_maps.mappings` logical-pin keys plus mapped package-pad values
-  against the referenced part. Footprint geometry validation remains out of
-  scope for this validation slice.
+  against the referenced part. This is current implementation evidence, not
+  the target authority model: `Footprint` geometry and first-class
+  `PinPadMap` validation must move into the engine library graph.
 - Journaled `CreatePoolLibraryObject` and `SetPoolLibraryObject` enforce the
   first write-time schema gate before staging authored pool shards:
   document-root `schema_version: 1`, UUID/path/kind parity, canonical pool
   struct deserialization for `units`, `symbols`, `entities`, `parts`,
   `packages`, and `padstacks`, and the first `pin_pad_maps` envelope shape.
-  `footprints` remain identity/path validated until a canonical footprint
-  schema is defined.
+  `footprints` are currently accepted through a package-compatible compatibility
+  path until the canonical `Footprint` schema below is implemented.
+
+### Library foundation target schema
+
+The native library target is governed by
+`docs/decisions/PRODUCT_MECHANICS_008_LIBRARY_COMPONENT_SYSTEM.md` and
+`docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md`. Current package-compatible
+footprint handling is a migration bridge only. The canonical pool graph must
+serialize these object boundaries:
+
+- `Package`: component body/package-family data. Required fields:
+  `schema_version`, `uuid`, `object_revision`, `display_name`, package family,
+  mounting style, body dimensions/tolerances, body height, terminal definitions,
+  provenance/review/lifecycle state, and optional package-level model refs. It
+  must not be the authoritative owner of PCB land-pattern pads, courtyard,
+  silkscreen, paste, or solder-mask openings.
+  Current compatibility note: the engine can now deserialize body-only packages
+  and explicit package terminals, while legacy `pads`/`courtyard`/`silkscreen`
+  package fields remain accepted for import/materialization compatibility until
+  those paths are migrated to `Footprint`.
+- `Footprint`: PCB land pattern. Required fields: `schema_version`, `uuid`,
+  `object_revision`, `package_ref`, `display_name`, origin, pad records
+  referencing `padstack_ref`s and package terminals, courtyard/fab/silkscreen/
+  assembly/mechanical primitives, process-aperture policy, standards basis,
+  deviations, provenance/review/lifecycle state, and optional footprint-level
+  model refs.
+- `Padstack`: reusable pad/process primitive. Required fields:
+  `schema_version`, `uuid`, `object_revision`, layer span, copper apertures,
+  drill definition, plated/non-plated state, annular policy, thermal/anti-pad
+  policy, mask policy, paste policy, unknown/import-preserved process states,
+  provenance/review/lifecycle state, and standards/deviation metadata when
+  derived from a known basis.
+- `PinPadMap`: first-class logical-to-physical binding. Required fields:
+  `schema_version`, `uuid`, `object_revision`, `entity_ref`, `symbol_ref` when
+  symbol-specific mapping matters, `package_ref`, `footprint_ref`, mapping rows
+  from logical pins to package terminals and footprint pads, optional electrical
+  role and variant condition, provenance/review/lifecycle state, and conflict
+  diagnostics for duplicate, open, shorted, stale, or missing mappings.
+- `Part`: purchasable/selectable component. Required fields:
+  `schema_version`, `uuid`, `object_revision`, `entity_ref`, default
+  `package_ref`, default `footprint_ref`, default `pin_pad_map_ref`, MPN/value/
+  manufacturer/lifecycle/parametric/orderable/supply-chain fields, optional
+  model attachment refs, provenance/review state, and compatibility import data.
+  Legacy `Part.pad_map` may seed a `PinPadMap` during migration but is not the
+  target authority for schematic-to-PCB binding.
+- `ModelAttachment`: governed attachment record or governed content object with
+  `schema_version`, `uuid`, `object_revision`, target object ref, role, format,
+  content hash, source/provenance, transform or simulation binding metadata,
+  encrypted/opaque-content policy, review state, and lifecycle.
+
+Validation tiers:
+- Commit-time validation rejects malformed object identity, unsupported schema
+  versions, stale object revisions, bad UUID/path/kind parity, and references
+  that cannot be resolved in the current library graph for strict fields.
+- Resolver diagnostics report shadowed objects, duplicate UUIDs across pool
+  layers, missing optional references, imported unknown-basis process data,
+  stale model blobs, and non-fatal compatibility migration issues.
+- `project validate` runs the full dependency graph and standards/process checks
+  without mutating the project.
 - Typed unit-pin authoring mutates the `Unit.pins` map through the same
   `SetPoolLibraryObject` gate, rejecting duplicate pin IDs, blank names, and
   unsupported pin-direction enum values before the staged shard is promoted.

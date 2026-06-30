@@ -74,6 +74,7 @@ inheritance.
 | rusqlite | MIT | None |
 | serde / serde_json | MIT/Apache 2.0 | None |
 | wgpu | MIT/Apache 2.0 | None |
+| taffy | MIT | None — commercial use allowed with copyright/license notice retention |
 | pyo3 | MIT/Apache 2.0 | None |
 | geo (Rust) | MIT/Apache 2.0 | None |
 | nlohmann/json | MIT | None (if any C++ interop needed) |
@@ -81,3 +82,10 @@ inheritance.
 
 The Rust ecosystem is overwhelmingly MIT/Apache 2.0 dual-licensed.
 No significant license risk from Rust dependencies.
+
+Commercial distribution requirement:
+- maintain a generated or curated third-party notice bundle before any public
+  binary distribution
+- include MIT/Apache/BSD copyright and license text for shipped dependencies
+- keep solver/framework dependencies out of engine/protocol contracts unless
+  explicitly ratified

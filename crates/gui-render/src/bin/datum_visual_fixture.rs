@@ -1,6 +1,9 @@
 use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result, bail};
+use datum_gui_render::design_artboards::{
+    bless_design_artboards, check_design_artboards, clean_design_artboard_artifacts,
+};
 use datum_gui_render::visual_runner::{bless_fixture, clean_fixture, run_fixture};
 
 const BOARD_FIXTURE_DIR: &str = "crates/gui-render/testdata/golden/board";
@@ -15,13 +18,15 @@ fn main() -> Result<()> {
     match command.as_str() {
         "check" => {
             let manifest = required_manifest_arg(args.next())?;
-            let outcome = run_fixture(&manifest)?;
-            println!(
-                "VISUAL-CHECK: fixture={} passed=true differing_pixels={} differing_pct={:.6}",
-                outcome.run.manifest.name,
-                outcome.result.differing_pixels,
-                outcome.result.differing_pct
-            );
+            for outcome in run_fixture(&manifest)? {
+                println!(
+                    "VISUAL-CHECK: fixture={} scale={:.2} passed=true differing_pixels={} differing_pct={:.6}",
+                    outcome.run.manifest.name,
+                    outcome.scale_factor,
+                    outcome.result.differing_pixels,
+                    outcome.result.differing_pct
+                );
+            }
         }
         "bless" => {
             let manifest = required_manifest_arg(args.next())?;
@@ -35,13 +40,15 @@ fn main() -> Result<()> {
         }
         "check-all" => {
             for manifest in fixture_manifests()? {
-                let outcome = run_fixture(&manifest)?;
-                println!(
-                    "VISUAL-CHECK: fixture={} passed=true differing_pixels={} differing_pct={:.6}",
-                    outcome.run.manifest.name,
-                    outcome.result.differing_pixels,
-                    outcome.result.differing_pct
-                );
+                for outcome in run_fixture(&manifest)? {
+                    println!(
+                        "VISUAL-CHECK: fixture={} scale={:.2} passed=true differing_pixels={} differing_pct={:.6}",
+                        outcome.run.manifest.name,
+                        outcome.scale_factor,
+                        outcome.result.differing_pixels,
+                        outcome.result.differing_pct
+                    );
+                }
             }
         }
         "bless-all" => {
@@ -55,6 +62,18 @@ fn main() -> Result<()> {
                 clean_fixture(&manifest)?;
                 println!("VISUAL-CLEAN: manifest={}", manifest.display());
             }
+        }
+        "check-design-artboards" => {
+            check_design_artboards()?;
+            println!("DESIGN-ARTBOARD-CHECK: passed=true");
+        }
+        "bless-design-artboards" => {
+            bless_design_artboards()?;
+            println!("DESIGN-ARTBOARD-BLESS: passed=true");
+        }
+        "clean-design-artboards" => {
+            clean_design_artboard_artifacts()?;
+            println!("DESIGN-ARTBOARD-CLEAN: passed=true");
         }
         _ => {
             print_usage();
@@ -102,6 +121,6 @@ fn repo_root() -> PathBuf {
 
 fn print_usage() {
     eprintln!(
-        "usage:\n  datum-visual-fixture check <fixture.toml>\n  datum-visual-fixture bless <fixture.toml>\n  datum-visual-fixture clean <fixture.toml>\n  datum-visual-fixture check-all\n  datum-visual-fixture bless-all\n  datum-visual-fixture clean-all"
+        "usage:\n  datum-visual-fixture check <fixture.toml>\n  datum-visual-fixture bless <fixture.toml>\n  datum-visual-fixture clean <fixture.toml>\n  datum-visual-fixture check-all\n  datum-visual-fixture bless-all\n  datum-visual-fixture clean-all\n  datum-visual-fixture check-design-artboards\n  datum-visual-fixture bless-design-artboards\n  datum-visual-fixture clean-design-artboards"
     );
 }

@@ -24,6 +24,7 @@ pub struct VisualFixtureRun {
 #[derive(Debug, Clone, PartialEq)]
 pub struct VisualFixtureOutcome {
     pub run: VisualFixtureRun,
+    pub scale_factor: f32,
     pub result: DiffResult,
 }
 
@@ -60,52 +61,74 @@ impl VisualFixtureRun {
     }
 
     pub fn render_actual(&self) -> Result<RgbaImage> {
+        self.render_actual_at_scale(1.0)
+    }
+
+    pub fn render_actual_at_scale(&self, scale_factor: f32) -> Result<RgbaImage> {
         let state = load_state_for_manifest(&self.manifest)?;
         let camera = camera_for_manifest(&self.manifest, &state);
         let mut renderer = OffscreenRenderer::new(
             self.manifest.viewport.width_px,
             self.manifest.viewport.height_px,
         )?;
-        renderer.render_workspace(&state, Some(camera))
+        renderer.render_workspace_for_surface_scale(&state, Some(camera), scale_factor)
     }
 
     pub fn bless(&self) -> Result<()> {
-        let actual = self.render_actual()?;
-        assert_non_blank(&actual, self.manifest.blank_check.expect_non_blank_pct)?;
-        actual
-            .save(&self.golden_path)
-            .with_context(|| format!("write visual golden {}", self.golden_path.display()))?;
+        for scale_factor in &self.manifest.ui_scale_factors {
+            self.bless_at_scale(*scale_factor)?;
+        }
         self.clean_artifacts()
     }
 
-    pub fn run(&self) -> Result<VisualFixtureOutcome> {
-        self.clean_artifacts()?;
-        let actual = self.render_actual()?;
+    pub fn bless_at_scale(&self, scale_factor: f32) -> Result<()> {
+        let actual = self.render_actual_at_scale(scale_factor)?;
         assert_non_blank(&actual, self.manifest.blank_check.expect_non_blank_pct)?;
-        let result = self.compare_actual(actual)?;
-
-        Ok(VisualFixtureOutcome {
-            run: self.clone(),
-            result,
-        })
+        let golden_path = self.golden_path_for_scale(scale_factor);
+        actual
+            .save(&golden_path)
+            .with_context(|| format!("write visual golden {}", golden_path.display()))?;
+        self.clean_artifacts()
     }
 
-    fn compare_actual(&self, actual: RgbaImage) -> Result<DiffResult> {
-        actual
-            .save(&self.actual_path)
-            .with_context(|| format!("write visual actual {}", self.actual_path.display()))?;
+    pub fn run(&self) -> Result<Vec<VisualFixtureOutcome>> {
+        self.clean_artifacts()?;
+        let mut outcomes = Vec::new();
+        for scale_factor in &self.manifest.ui_scale_factors {
+            let actual = self.render_actual_at_scale(*scale_factor)?;
+            assert_non_blank(&actual, self.manifest.blank_check.expect_non_blank_pct)?;
+            let result = self.compare_actual_at_scale(actual, *scale_factor)?;
+            outcomes.push(VisualFixtureOutcome {
+                run: self.clone(),
+                scale_factor: *scale_factor,
+                result,
+            });
+        }
 
-        let expected = image::open(&self.golden_path)
-            .with_context(|| format!("read visual golden {}", self.golden_path.display()))?
+        Ok(outcomes)
+    }
+
+    fn compare_actual_at_scale(&self, actual: RgbaImage, scale_factor: f32) -> Result<DiffResult> {
+        let actual_path = self.actual_path_for_scale(scale_factor);
+        let diff_path = self.diff_path_for_scale(scale_factor);
+        let report_path = self.report_path_for_scale(scale_factor);
+        let golden_path = self.golden_path_for_scale(scale_factor);
+        actual
+            .save(&actual_path)
+            .with_context(|| format!("write visual actual {}", actual_path.display()))?;
+
+        let expected = image::open(&golden_path)
+            .with_context(|| format!("read visual golden {}", golden_path.display()))?
             .to_rgba8();
         let policy = diff_policy_for_manifest(&self.manifest)?;
         let result = compare_images(&expected, &actual, policy.clone())?;
-        write_report(&result, &policy, &self.report_path)?;
+        write_report(&result, &policy, &report_path)?;
         if !result.passed {
-            write_diff_image(&expected, &actual, &self.diff_path)?;
+            write_diff_image(&expected, &actual, &diff_path)?;
             bail!(
-                "visual fixture {} failed: {} differing pixels ({:.6}%)",
+                "visual fixture {} scale {} failed: {} differing pixels ({:.6}%)",
                 self.manifest.name,
+                scale_factor,
                 result.differing_pixels,
                 result.differing_pct
             );
@@ -118,11 +141,70 @@ impl VisualFixtureRun {
         for path in [&self.actual_path, &self.diff_path, &self.report_path] {
             remove_file_if_exists(path)?;
         }
+        for scale_factor in &self.manifest.ui_scale_factors {
+            for path in [
+                self.actual_path_for_scale(*scale_factor),
+                self.diff_path_for_scale(*scale_factor),
+                self.report_path_for_scale(*scale_factor),
+            ] {
+                remove_file_if_exists(&path)?;
+            }
+        }
         Ok(())
+    }
+
+    fn golden_path_for_scale(&self, scale_factor: f32) -> PathBuf {
+        if self.uses_legacy_single_scale_path(scale_factor) {
+            return self.golden_path.clone();
+        }
+        self.scaled_artifact_path(scale_factor, "golden.png")
+    }
+
+    fn actual_path_for_scale(&self, scale_factor: f32) -> PathBuf {
+        if self.uses_legacy_single_scale_path(scale_factor) {
+            return self.actual_path.clone();
+        }
+        self.scaled_artifact_path(scale_factor, "actual.png")
+    }
+
+    fn diff_path_for_scale(&self, scale_factor: f32) -> PathBuf {
+        if self.uses_legacy_single_scale_path(scale_factor) {
+            return self.diff_path.clone();
+        }
+        self.scaled_artifact_path(scale_factor, "diff.png")
+    }
+
+    fn report_path_for_scale(&self, scale_factor: f32) -> PathBuf {
+        if self.uses_legacy_single_scale_path(scale_factor) {
+            return self.report_path.clone();
+        }
+        self.scaled_artifact_path(scale_factor, "report.txt")
+    }
+
+    fn scaled_artifact_path(&self, scale_factor: f32, suffix: &str) -> PathBuf {
+        let manifest_dir = self
+            .manifest_path
+            .parent()
+            .expect("loaded fixture manifests always have a parent");
+        let stem = self
+            .manifest_path
+            .file_stem()
+            .and_then(|stem| stem.to_str())
+            .expect("loaded fixture manifests always have UTF-8 stems");
+        let artifact_stem = stem.strip_suffix(".fixture").unwrap_or(stem);
+        manifest_dir.join(format!(
+            "{artifact_stem}.scale-{}.{}",
+            scale_suffix(scale_factor),
+            suffix
+        ))
+    }
+
+    fn uses_legacy_single_scale_path(&self, scale_factor: f32) -> bool {
+        self.manifest.ui_scale_factors.len() == 1 && scale_is_one(scale_factor)
     }
 }
 
-pub fn run_fixture(manifest_path: impl AsRef<Path>) -> Result<VisualFixtureOutcome> {
+pub fn run_fixture(manifest_path: impl AsRef<Path>) -> Result<Vec<VisualFixtureOutcome>> {
     VisualFixtureRun::load(manifest_path)?.run()
 }
 
@@ -142,6 +224,15 @@ fn remove_file_if_exists(path: &Path) -> Result<()> {
             Err(error).with_context(|| format!("remove visual artifact {}", path.display()))
         }
     }
+}
+
+fn scale_is_one(scale_factor: f32) -> bool {
+    (scale_factor - 1.0).abs() < f32::EPSILON
+}
+
+fn scale_suffix(scale_factor: f32) -> String {
+    let rounded = (scale_factor * 100.0).round() / 100.0;
+    format!("{rounded:.2}").replace('.', "_")
 }
 
 fn load_state_for_manifest(manifest: &FixtureManifest) -> Result<ReviewWorkspaceState> {
@@ -245,6 +336,26 @@ mod tests {
     }
 
     #[test]
+    fn scaled_artifacts_use_scale_suffixes() {
+        let mut run = VisualFixtureRun::load(fixture_path("text-density-repro"))
+            .expect("fixture run should load");
+        run.manifest.ui_scale_factors = vec![1.0, 1.25, 1.5, 2.0];
+
+        assert!(
+            run.golden_path_for_scale(1.0)
+                .ends_with("text-density-repro.scale-1_00.golden.png")
+        );
+        assert!(
+            run.golden_path_for_scale(1.25)
+                .ends_with("text-density-repro.scale-1_25.golden.png")
+        );
+        assert!(
+            run.report_path_for_scale(2.0)
+                .ends_with("text-density-repro.scale-2_00.report.txt")
+        );
+    }
+
+    #[test]
     fn manifest_camera_uses_semantic_mm_per_pixel_scale() {
         let manifest = FixtureManifest::load(fixture_path("text-density-repro"))
             .expect("fixture manifest should load");
@@ -287,10 +398,10 @@ mod tests {
         let actual = image::RgbaImage::from_pixel(2, 2, image::Rgba([9, 2, 3, 255]));
 
         let error = run
-            .compare_actual(actual)
+            .compare_actual_at_scale(actual, 1.0)
             .expect_err("different images should fail exact compare");
 
-        assert!(error.to_string().contains("visual fixture fixture failed"));
+        assert!(error.to_string().contains("visual fixture fixture scale 1"));
         assert!(run.actual_path.exists());
         assert!(run.diff_path.exists());
         assert!(run.report_path.exists());

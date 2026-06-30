@@ -1,14 +1,13 @@
 use std::collections::{HashMap, HashSet};
 
 use crate::error::EngineError;
-use crate::import::ImportObjectCounts;
-use crate::ir::geometry::Polygon;
 use crate::ir::ids::{import_uuid, namespace_eagle};
 use crate::pool::{
-    Entity, Gate, Lifecycle, Package, Pad, PadMapEntry, Padstack, Part, Pin, Pool, Symbol, Unit,
+    Entity, Gate, Lifecycle, Pad, PadMapEntry, Padstack, Part, Pin, PinPadMap, Pool, Symbol, Unit,
 };
 
 use super::parser::{RawDeviceset, RawPackage, RawSymbol};
+use super::pool_builder_landpattern::{eagle_body_package, eagle_footprint};
 
 pub(super) fn build_pool(
     library_name: &str,
@@ -72,9 +71,13 @@ pub(super) fn build_pool(
     }
 
     let mut package_pad_by_name = HashMap::new();
+    let mut package_footprint_by_name = HashMap::new();
 
     for raw in raw_packages {
         let package_uuid = import_uuid(&ns, &format!("lbr:{library_name}:package:{}", raw.name));
+        let footprint_uuid =
+            import_uuid(&ns, &format!("lbr:{library_name}:footprint:{}", raw.name));
+        package_footprint_by_name.insert(raw.name.clone(), footprint_uuid);
         let mut pads = HashMap::new();
 
         for pad in raw.pads {
@@ -115,20 +118,11 @@ pub(super) fn build_pool(
 
         pool.packages.insert(
             package_uuid,
-            Package {
-                uuid: package_uuid,
-                name: raw.name.clone(),
-                pads,
-                courtyard: Polygon {
-                    vertices: Vec::new(),
-                    closed: true,
-                },
-                silkscreen: raw.silkscreen,
-                models_3d: Vec::new(),
-                body_height_nm: None,
-                body_height_mounted_nm: None,
-                tags: HashSet::new(),
-            },
+            eagle_body_package(package_uuid, raw.name.clone()),
+        );
+        pool.footprints.insert(
+            footprint_uuid,
+            eagle_footprint(footprint_uuid, package_uuid, raw.name, pads, raw.silkscreen),
         );
     }
 
@@ -198,8 +192,25 @@ pub(super) fn build_pool(
                     device.name, raw.name, device.package
                 ))
             })?;
+            let footprint_uuid =
+                *package_footprint_by_name
+                    .get(&device.package)
+                    .ok_or_else(|| {
+                        EngineError::Import(format!(
+                            "device {} in deviceset {} references unknown footprint for package {}",
+                            device.name, raw.name, device.package
+                        ))
+                    })?;
+            let pin_pad_map_uuid = import_uuid(
+                &ns,
+                &format!(
+                    "lbr:{library_name}:{}:{}:pin-pad-map",
+                    raw.name, device.name
+                ),
+            );
 
             let mut pad_map = HashMap::new();
+            let mut mappings = HashMap::new();
             for connect in device.connects {
                 let gate_uuid = *gate_by_name.get(&connect.gate).ok_or_else(|| {
                     EngineError::Import(format!(
@@ -247,6 +258,7 @@ pub(super) fn build_pool(
                         pin: pin_uuid,
                     },
                 );
+                mappings.insert(pin_uuid, pad_uuid);
             }
 
             let value = if device.name.is_empty() {
@@ -261,6 +273,8 @@ pub(super) fn build_pool(
                     uuid: part_uuid,
                     entity: entity_uuid,
                     package: package_uuid,
+                    default_footprint: Some(footprint_uuid),
+                    default_pin_pad_map: Some(pin_pad_map_uuid),
                     pad_map,
                     mpn: String::new(),
                     manufacturer: String::new(),
@@ -280,19 +294,18 @@ pub(super) fn build_pool(
                     last_supply_chain_check: None,
                 },
             );
+            pool.pin_pad_maps.insert(
+                pin_pad_map_uuid,
+                PinPadMap {
+                    uuid: pin_pad_map_uuid,
+                    part: part_uuid,
+                    footprint: Some(footprint_uuid),
+                    mappings,
+                    tags: HashSet::new(),
+                },
+            );
         }
     }
 
     Ok(pool)
-}
-
-pub(super) fn pool_counts(pool: &Pool) -> ImportObjectCounts {
-    ImportObjectCounts {
-        units: pool.units.len(),
-        symbols: pool.symbols.len(),
-        entities: pool.entities.len(),
-        padstacks: pool.padstacks.len(),
-        packages: pool.packages.len(),
-        parts: pool.parts.len(),
-    }
 }

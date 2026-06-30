@@ -72,6 +72,37 @@ impl OffscreenRenderer {
         state: &ReviewWorkspaceState,
         camera: Option<CameraState>,
     ) -> anyhow::Result<RgbaImage> {
+        self.render_workspace_for_surface_scale(state, camera, 1.0)
+    }
+
+    pub fn render_workspace_for_surface_scale(
+        &mut self,
+        state: &ReviewWorkspaceState,
+        camera: Option<CameraState>,
+        scale_factor: f32,
+    ) -> anyhow::Result<RgbaImage> {
+        let target =
+            self.render_workspace_texture_for_surface_scale(state, camera, scale_factor)?;
+        self.read_texture(&target)
+    }
+
+    pub fn warm_workspace_for_surface_scale(
+        &mut self,
+        state: &ReviewWorkspaceState,
+        camera: Option<CameraState>,
+        scale_factor: f32,
+    ) -> anyhow::Result<()> {
+        let _target =
+            self.render_workspace_texture_for_surface_scale(state, camera, scale_factor)?;
+        Ok(())
+    }
+
+    fn render_workspace_texture_for_surface_scale(
+        &mut self,
+        state: &ReviewWorkspaceState,
+        camera: Option<CameraState>,
+        scale_factor: f32,
+    ) -> anyhow::Result<wgpu::Texture> {
         let target = self.device.create_texture(&wgpu::TextureDescriptor {
             label: Some("datum-gui-visual-capture-target"),
             size: self.extent(),
@@ -83,10 +114,17 @@ impl OffscreenRenderer {
             view_formats: &[],
         });
         let target_view = target.create_view(&wgpu::TextureViewDescriptor::default());
-        let retained = RetainedScene::from_workspace(state, self.width, self.height);
+        let retained =
+            RetainedScene::from_workspace_for_surface(state, self.width, self.height, scale_factor);
         let camera = camera.unwrap_or_else(|| CameraState::fit_to_bounds(&state.scene.bounds));
-        let prepared =
-            PreparedScene::from_workspace(state, self.width, self.height, camera, &retained);
+        let prepared = PreparedScene::from_workspace_for_surface(
+            state,
+            self.width,
+            self.height,
+            scale_factor,
+            camera,
+            &retained,
+        );
 
         self.renderer.render(
             &self.device,
@@ -98,7 +136,7 @@ impl OffscreenRenderer {
             self.height,
         )?;
 
-        self.read_texture(&target)
+        Ok(target)
     }
 
     fn extent(&self) -> wgpu::Extent3d {

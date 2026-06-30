@@ -16,9 +16,10 @@ pub(super) fn source_shard_health_label(summary: &SourceShardStatusSummary) -> S
 pub(super) fn render_source_shard_attention_rows(
     summary: &SourceShardStatusSummary,
     project_rect: RectPx,
+    start_y: f32,
     text_runs: &mut Vec<TextRun>,
 ) -> f32 {
-    let mut y = project_rect.y + 126.0;
+    let mut y = start_y;
     for item in summary.attention.iter().take(2) {
         draw_text(
             &truncate_text(

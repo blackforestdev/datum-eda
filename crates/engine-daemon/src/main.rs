@@ -15,8 +15,9 @@ use std::path::{Path, PathBuf};
 
 use anyhow::Result;
 use eda_engine::api::{
-    ComponentReplacementPolicy, ComponentReplacementScope, Engine, ScopedComponentReplacementOverride,
-    ScopedComponentReplacementPlanEdit, ScopedComponentReplacementPolicyInput, ViolationDomain,
+    ComponentReplacementPolicy, ComponentReplacementScope, Engine,
+    ScopedComponentReplacementOverride, ScopedComponentReplacementPlanEdit,
+    ScopedComponentReplacementPolicyInput, ViolationDomain,
 };
 use eda_engine::ir::geometry::LayerId;
 use eda_engine::rules::ast::RuleType;

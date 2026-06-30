@@ -54,6 +54,11 @@ parallel authorities.
 Rendering is product infrastructure, not a disposable shell detail.
 
 Principles:
+- GUI chrome layout is solver-backed frontend presentation geometry. The
+  ratified interim solver is `taffy`, isolated inside frontend/rendering crates
+  per `docs/contracts/UI_LAYOUT_SYSTEM_CONTRACT.md`.
+- layout uses logical pixels; conversion to physical pixels happens at the
+  window/renderer boundary, not inside engine or protocol contracts
 - render layers should map to semantic layers
 - authored geometry should inherit visibility, ordering, and base appearance
   from the scene's layer/material model rather than bespoke per-import-item
@@ -73,6 +78,8 @@ The frontend should be built as a deterministic consumer wherever practical.
 Expectations:
 - versioned frontend-consumed contracts
 - fixture-backed view-model and scene derivation tests
+- solver-backed layout invariant tests for populated states, not only empty
+  fixture states
 - stable ordering and identity where contracts promise it
 - snapshot or image-based render checks where appropriate
 - lane-specific tests for context synchronization and action visibility

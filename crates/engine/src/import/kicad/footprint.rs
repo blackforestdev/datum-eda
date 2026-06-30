@@ -4,12 +4,14 @@ use std::path::Path;
 use crate::error::EngineError;
 use crate::import::ids_sidecar::compute_source_hash_bytes;
 use crate::import::{ImportKind, ImportObjectCounts, ImportReport};
-use crate::pool::{Package, Padstack, Primitive};
+use crate::ir::geometry::Polygon;
+use crate::pool::{Footprint, Package, Padstack, Primitive};
 use crate::substrate::{ImportKey, ImportMapEntry, allocate_import_identity};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ImportedKiCadFootprint {
     pub package: Package,
+    pub footprint: Footprint,
     pub padstacks: Vec<Padstack>,
     pub mechanical: Vec<Primitive>,
 }
@@ -34,6 +36,7 @@ pub fn import_footprint_document_with_import_map(
     });
     let import_key = footprint_package_import_key(path);
     let identity = allocate_import_identity(import_map, import_key.clone());
+    let footprint_uuid = footprint_identity_for_package(identity.object_id);
 
     let (silkscreen, mechanical) = super::import_footprint_graphics(path, &contents)?;
     let (pads, padstacks) = super::import_footprint_pads(path, &contents)?;
@@ -41,13 +44,36 @@ pub fn import_footprint_document_with_import_map(
 
     let package = Package {
         uuid: identity.object_id,
-        name: footprint_name,
-        pads,
-        courtyard,
-        silkscreen,
+        name: footprint_name.clone(),
+        package_family: None,
+        package_code: None,
+        mounting_type: None,
+        body_dimensions: None,
+        terminals: std::collections::HashMap::new(),
+        pads: std::collections::HashMap::new(),
+        courtyard: Polygon::new(Vec::new()),
+        silkscreen: Vec::new(),
         models_3d: Vec::new(),
         body_height_nm: None,
         body_height_mounted_nm: None,
+        tags: std::collections::HashSet::from([
+            "source:kicad".to_string(),
+            "imported:footprint".to_string(),
+        ]),
+    };
+    let footprint = Footprint {
+        uuid: footprint_uuid,
+        name: footprint_name,
+        package: identity.object_id,
+        pads,
+        courtyard,
+        silkscreen,
+        fab: Vec::new(),
+        assembly: Vec::new(),
+        mechanical: mechanical.clone(),
+        models_3d: Vec::new(),
+        standards_basis: None,
+        process_aperture_policy: Some("import_preserved".to_string()),
         tags: std::collections::HashSet::from([
             "source:kicad".to_string(),
             "imported:footprint".to_string(),
@@ -62,13 +88,14 @@ pub fn import_footprint_document_with_import_map(
             ..ImportObjectCounts::default()
         },
     )
-    .with_metadata("pad_count", package.pads.len().to_string())
+    .with_metadata("pad_count", footprint.pads.len().to_string())
     .with_metadata(
         "silkscreen_primitives",
-        package.silkscreen.len().to_string(),
+        footprint.silkscreen.len().to_string(),
     )
     .with_metadata("mechanical_primitives", mechanical.len().to_string())
     .with_metadata("import_key", import_key)
+    .with_metadata("footprint_uuid", footprint_uuid.to_string())
     .with_metadata("source_hash", source_hash)
     .with_metadata(
         "reused_existing_identity",
@@ -78,6 +105,7 @@ pub fn import_footprint_document_with_import_map(
     Ok((
         ImportedKiCadFootprint {
             package,
+            footprint,
             padstacks,
             mechanical,
         },
@@ -87,4 +115,11 @@ pub fn import_footprint_document_with_import_map(
 
 pub fn footprint_package_import_key(path: &Path) -> ImportKey {
     format!("kicad:footprint-package:{}", path.display())
+}
+
+fn footprint_identity_for_package(package_id: uuid::Uuid) -> uuid::Uuid {
+    uuid::Uuid::new_v5(
+        &uuid::Uuid::NAMESPACE_URL,
+        format!("datum-eda:kicad-footprint-landpattern:{package_id}").as_bytes(),
+    )
 }

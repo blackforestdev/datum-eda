@@ -1,8 +1,8 @@
-use super::*;
 use super::generated_evidence_scope::{
     empty_polygon, evidence_batch, minimal_artifact_metadata, minimal_artifact_run,
     minimal_check_run, minimal_output_job_run, stale_revision,
 };
+use super::*;
 
 fn minimal_zone_fill(zone_id: Uuid, model_revision: ModelRevision) -> ZoneFill {
     ZoneFill {

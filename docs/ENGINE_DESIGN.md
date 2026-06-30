@@ -71,20 +71,28 @@ Entity (multi-gate logical component)
   └── gates: Map<UUID, Gate>
       └── Gate { name, unit: UUID → Unit, symbol: UUID → Symbol }
 
-Package (physical footprint)
+Package (physical component body / terminal family)
   ├── uuid: UUID
   ├── name: String
+  ├── body dimensions / tolerances / mounting style
+  ├── terminals: Map<UUID, Terminal>
+  └── models: Vec<Model3D> (package-level STEP file references)
+
+Footprint (PCB land pattern)
+  ├── uuid: UUID
+  ├── package: UUID → Package
   ├── pads: Map<UUID, Pad>
-  │   └── Pad { name, position, padstack: UUID, layer }
+  │   └── Pad { name, position, terminal: UUID, padstack: UUID, layer }
   ├── courtyard: Polygon
-  ├── silkscreen: Vec<Primitive>
-  └── models: Vec<Model3D> (STEP file references)
+  ├── silkscreen/fab/assembly/mechanical: Vec<Primitive>
+  └── process aperture policy (mask/paste/standards basis)
 
 Part (the purchasable thing — key abstraction)
   ├── uuid: UUID
   ├── entity: UUID → Entity
   ├── package: UUID → Package
-  ├── pad_map: Map<PadUUID, (GateUUID, PinUUID)>
+  ├── footprint: UUID → Footprint
+  ├── pin_pad_map: UUID → PinPadMap
   ├── attributes: { MPN, value, manufacturer, datasheet, description }
   ├── parametric: Map<String, String> (resistance, capacitance, etc.)
   ├── orderable_mpns: Vec<String>

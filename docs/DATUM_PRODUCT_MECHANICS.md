@@ -17,6 +17,12 @@ Companion documentation goals:
   documentation work needed before new roadmap or feature implementation work
   resumes.
 
+Controlling North Star:
+- `docs/decisions/PRODUCT_MECHANICS_016_PRODUCT_NORTH_STAR.md` ratifies the
+  product identity and priority order: governed native library -> schematic
+  capture -> schematic-to-PCB implementation -> PCB layout -> manufacturing ->
+  interop.
+
 ## Purpose
 
 This document defines how Datum should function as an application before
@@ -45,6 +51,10 @@ laying out a PCB, and generating CAM output — natively, with full AI
 augmentation. KiCad import is frozen; the M7 spike already imports a board with
 enough fidelity to recognize all design aspects, which is sufficient for now.
 See "Interop Boundary And Import Posture" for the full posture.
+
+The next product-driving foundation is native governed library data and
+schematic capture. PCB layout and imported-board review are downstream or
+supporting surfaces until the library/schematic foundation is viable.
 
 ## Manual-First Rule
 

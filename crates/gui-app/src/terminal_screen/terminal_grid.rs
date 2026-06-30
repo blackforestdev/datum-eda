@@ -204,11 +204,12 @@ pub(super) fn delete_lines_at(
         return;
     };
     let count = count.min(bottom - row + 1);
-    for target in row..=bottom - count {
+    let shift_end = bottom + 1 - count;
+    for target in row..shift_end {
         state.lines[target] = state.lines[target + count].clone();
         state.styled_lines[target] = state.styled_lines[target + count].clone();
     }
-    for target in bottom - count + 1..=bottom {
+    for target in shift_end..=bottom {
         state.lines[target].clear();
         state.styled_lines[target] = TerminalStyledLine::default();
     }

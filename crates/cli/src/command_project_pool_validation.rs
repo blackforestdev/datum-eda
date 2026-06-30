@@ -1,7 +1,7 @@
-use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 use anyhow::Result;
+use eda_engine::pool::{LibraryGraph as PoolValidationGraph, LibraryModelBlob as PoolModelBlob};
 use sha2::{Digest, Sha256};
 use uuid::Uuid;
 
@@ -28,6 +28,7 @@ pub(crate) fn validate_native_project_pools(
             "entities",
             "parts",
             "packages",
+            "footprints",
             "padstacks",
             "pin_pad_maps",
         ] {
@@ -37,25 +38,6 @@ pub(crate) fn validate_native_project_pools(
     }
     command_project_pool_validation_refs::validate_pool_refs(&graph, issues);
     Ok(())
-}
-
-#[derive(Default)]
-struct PoolValidationGraph {
-    units: BTreeMap<Uuid, serde_json::Value>,
-    symbols: BTreeMap<Uuid, serde_json::Value>,
-    entities: BTreeMap<Uuid, serde_json::Value>,
-    parts: BTreeMap<Uuid, serde_json::Value>,
-    packages: BTreeMap<Uuid, serde_json::Value>,
-    padstacks: BTreeMap<Uuid, serde_json::Value>,
-    pin_pad_maps: BTreeMap<Uuid, serde_json::Value>,
-    model_blobs: BTreeMap<String, PoolModelBlob>,
-    seen: BTreeMap<Uuid, String>,
-    subjects: BTreeMap<Uuid, String>,
-}
-
-#[derive(Debug, Clone)]
-struct PoolModelBlob {
-    model_uuid: Uuid,
 }
 
 fn validate_pool_path(
@@ -296,6 +278,9 @@ fn validate_pool_object(
         }
         "packages" => {
             graph.packages.insert(object_id, value.clone());
+        }
+        "footprints" => {
+            graph.footprints.insert(object_id, value.clone());
         }
         "padstacks" => {
             graph.padstacks.insert(object_id, value.clone());

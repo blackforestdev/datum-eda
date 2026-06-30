@@ -25,6 +25,10 @@ they support the product; they do not define its identity.
   manufacturing, and analysis are projections over one model assembled by an
   engine-owned resolver — not separate authorities. Files are persistence
   partitions; the resolved model is the authority.
+- **Product North Star.** Datum is a professional native EDA system whose
+  foundation is governed library plus schematic authority. The normal product
+  flow is library -> schematic -> PCB -> manufacturing; import/export are
+  compatibility paths, not the center of the roadmap.
 - **One mutation path.** Every committed design change — manual, CLI, MCP,
   agent, import-repair, check-fix — reduces to typed operations through one
   `commit()` + journal, with provenance, diff, and undo. No private writers.

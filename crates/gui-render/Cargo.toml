@@ -11,6 +11,7 @@ datum-gui-protocol = { path = "../gui-protocol" }
 eda-engine = { path = "../engine" }
 bytemuck.workspace = true
 wgpu.workspace = true
+taffy.workspace = true
 glyphon = "0.10.0"
 anyhow.workspace = true
 uuid.workspace = true
