@@ -32,7 +32,7 @@ def datum_cli_prefix() -> list[str]:
 def run_cli_json(root: Path, *args: str):
     completed = subprocess.run(
         [*datum_cli_prefix(), "--format", "json", *args],
-        cwd=root,
+        cwd=REPO_ROOT,
         capture_output=True,
         text=True,
         check=False,

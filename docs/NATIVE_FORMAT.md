@@ -1193,8 +1193,10 @@ and `pin_pad_maps` JSON shards it checks document-root `schema_version: 1`,
 filename/payload UUID parity, and the first library reference graph:
 `Symbol.unit`, entity gate `unit`/`symbol`, package pad `padstack`,
 `Part.entity`, `Part.package`, `Part.pad_map` pad/gate/pin links, and
-`pin_pad_maps[*].part` plus `pin_pad_maps.mappings` logical-pin keys and
-mapped package-pad values against the referenced part. Footprint geometry
+`pin_pad_maps[*].part` plus canonical `pin_pad_maps.mappings` pad keys with
+`{gate, pin}` values against the referenced part. Historical pin-keyed rows
+with pad values are migrated only when the pin resolves to exactly one entity
+gate; multi-gate ambiguity is reported instead of inferred. Footprint geometry
 validation remains intentionally out of scope for this slice.
 Journaled pool-library create/set operations enforce the first write-time
 schema gate before staging authored pool shards: document-root

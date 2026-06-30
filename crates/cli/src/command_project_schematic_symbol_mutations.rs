@@ -2,39 +2,16 @@ use super::command_project_schematic_symbol_component_instance::component_instan
 use super::command_project_schematic_symbol_library_materialization::{
     materialize_pool_symbol_pins, resolve_pool_symbol_component_binding,
 };
+use super::command_project_schematic_symbol_reports::{
+    binding_evidence_for_pool_symbol, component_instance_uuid_for_pool_symbol,
+    symbol_mutation_report, symbol_mutation_report_with_binding,
+};
 use super::*;
 use crate::command_project::command_project_operation_guards::guarded_operation_batch;
 use crate::command_project::command_project_schematic_connectivity_mutations::commit_schematic_operation;
 use eda_engine::substrate::{
     CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver,
 };
-
-fn symbol_mutation_report(
-    action: &str,
-    project: &LoadedNativeProject,
-    sheet_uuid: Uuid,
-    sheet_path: &Path,
-    symbol: &PlacedSymbol,
-) -> NativeProjectSymbolMutationReportView {
-    NativeProjectSymbolMutationReportView {
-        action: action.to_string(),
-        project_root: project.root.display().to_string(),
-        sheet_uuid: sheet_uuid.to_string(),
-        sheet_path: sheet_path.display().to_string(),
-        symbol_uuid: symbol.uuid.to_string(),
-        reference: symbol.reference.clone(),
-        value: symbol.value.clone(),
-        lib_id: symbol.lib_id.clone(),
-        x_nm: symbol.position.x,
-        y_nm: symbol.position.y,
-        rotation_deg: symbol.rotation,
-        mirrored: symbol.mirrored,
-        gate_uuid: symbol.gate.map(|uuid| uuid.to_string()),
-        unit_selection: symbol.unit_selection.clone(),
-        display_mode: render_symbol_display_mode(&symbol.display_mode),
-        hidden_power_behavior: render_hidden_power_behavior(&symbol.hidden_power_behavior),
-    }
-}
 
 fn schematic_sheet_path(project: &LoadedNativeProject, sheet_uuid: Uuid) -> Result<PathBuf> {
     let sheet_key = sheet_uuid.to_string();
@@ -103,12 +80,15 @@ pub(crate) fn place_native_project_symbol(
     let project = load_native_project_with_resolved_board(root)?;
     let sheet_path = schematic_sheet_path(&project, sheet_uuid)?;
     let pins = materialize_pool_symbol_pins(root, lib_id.as_deref())?;
-    let binding = resolve_pool_symbol_component_binding(root, lib_id.as_deref())?;
+    let binding_resolution = resolve_pool_symbol_component_binding(root, lib_id.as_deref())?;
+    let binding = binding_resolution.binding.clone();
 
     let symbol_uuid = Uuid::new_v4();
     let symbol = PlacedSymbol {
         uuid: symbol_uuid,
-        part: binding.as_ref().and_then(|binding| binding.part_id),
+        part: binding
+            .as_ref()
+            .and_then(|binding| binding.part.as_ref().map(|part| part.part_id)),
         entity: binding.as_ref().map(|binding| binding.entity_id),
         gate: binding.as_ref().map(|binding| binding.gate_id),
         lib_id,
@@ -136,13 +116,26 @@ pub(crate) fn place_native_project_symbol(
             operations.push(operation);
         }
     }
+    let component_instance_uuid = binding.as_ref().and_then(|binding| {
+        binding
+            .part
+            .as_ref()
+            .map(|_| component_instance_uuid_for_pool_symbol(&project, symbol_uuid, binding))
+    });
+    let binding_evidence = binding.as_ref().map(|binding| {
+        binding_evidence_for_pool_symbol(binding, symbol_uuid, component_instance_uuid)
+    });
     commit_schematic_operations(root, "place schematic symbol", operations)?;
-    Ok(symbol_mutation_report(
+    Ok(symbol_mutation_report_with_binding(
         "place_symbol",
         &project,
         sheet_uuid,
         &sheet_path,
         &symbol,
+        binding_resolution.status.to_string(),
+        binding_resolution.diagnostics,
+        binding_evidence,
+        component_instance_uuid,
     ))
 }
 

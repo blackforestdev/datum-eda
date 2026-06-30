@@ -258,42 +258,15 @@ fn validate_pool_object(
             format!("pool {kind} filename {filename} does not match payload UUID {object_id}"),
         );
     }
-    if let Some(previous) = graph.seen.insert(object_id, subject.to_string()) {
+    for diagnostic in graph.insert_pool_object(kind, object_id, subject.to_string(), value.clone())
+    {
         push_issue(
             issues,
-            "error",
-            "duplicate_uuid_within_type",
-            subject.to_string(),
-            format!("pool object UUID {object_id} already appeared at {previous}"),
+            diagnostic.severity,
+            diagnostic.code,
+            diagnostic.subject,
+            diagnostic.message,
         );
-    }
-    graph.subjects.insert(object_id, subject.to_string());
-    match kind {
-        "units" => {
-            graph.units.insert(object_id, value.clone());
-        }
-        "symbols" => {
-            graph.symbols.insert(object_id, value.clone());
-        }
-        "entities" => {
-            graph.entities.insert(object_id, value.clone());
-        }
-        "parts" => {
-            graph.parts.insert(object_id, value.clone());
-        }
-        "packages" => {
-            graph.packages.insert(object_id, value.clone());
-        }
-        "footprints" => {
-            graph.footprints.insert(object_id, value.clone());
-        }
-        "padstacks" => {
-            graph.padstacks.insert(object_id, value.clone());
-        }
-        "pin_pad_maps" => {
-            graph.pin_pad_maps.insert(object_id, value.clone());
-        }
-        _ => {}
     }
 }
 

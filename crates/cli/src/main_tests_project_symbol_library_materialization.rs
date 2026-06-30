@@ -136,6 +136,12 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
             "100",
             "--y-nm",
             "200",
+            "--orientation",
+            "Left",
+            "--length-nm",
+            "2540000",
+            "--decoration",
+            "inverted",
         ])
         .expect("CLI should parse"),
     )
@@ -276,7 +282,40 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
         serde_json::from_str(&place_output).expect("place-symbol JSON should parse");
     let placed_symbol =
         Uuid::parse_str(placed["symbol_uuid"].as_str().unwrap()).expect("symbol uuid should parse");
+    assert_eq!(placed["binding_status"], "bound_with_part");
+    assert_eq!(placed["entity_uuid"], entity_id.to_string());
     assert_eq!(placed["gate_uuid"], gate_id.to_string());
+    assert_eq!(placed["part_uuid"], part_id.to_string());
+    assert!(placed["component_instance_uuid"].as_str().is_some());
+    assert_eq!(placed["binding_diagnostics"], serde_json::json!([]));
+    assert_eq!(
+        placed["binding_evidence"]["pool_symbol_ref"],
+        serde_json::json!({"object_id": symbol_id.to_string(), "object_revision": 2})
+    );
+    assert_eq!(
+        placed["binding_evidence"]["pool_unit_ref"],
+        serde_json::json!({"object_id": unit_id.to_string(), "object_revision": 2})
+    );
+    assert_eq!(
+        placed["binding_evidence"]["entity_ref"],
+        serde_json::json!({"object_id": entity_id.to_string(), "object_revision": 0})
+    );
+    assert_eq!(
+        placed["binding_evidence"]["part_ref"],
+        serde_json::json!({"object_id": part_id.to_string(), "object_revision": 0})
+    );
+    assert_eq!(
+        placed["binding_evidence"]["placed_symbol_ref"],
+        serde_json::json!({"object_id": placed_symbol.to_string(), "object_revision": 0})
+    );
+    assert_eq!(
+        placed["binding_evidence"]["component_instance_ref"]["object_id"],
+        placed["component_instance_uuid"]
+    );
+    assert_eq!(
+        placed["binding_evidence"]["component_instance_ref"]["object_revision"],
+        0
+    );
 
     let component_instances_output = execute(
         Cli::try_parse_from([
@@ -342,11 +381,17 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
     assert_eq!(pins[0]["electrical_type"], "Output");
     assert_eq!(pins[0]["x_nm"], 100);
     assert_eq!(pins[0]["y_nm"], 200);
+    assert_eq!(pins[0]["anchor_orientation"], "Left");
+    assert_eq!(pins[0]["anchor_length_nm"], 2540000);
+    assert_eq!(pins[0]["anchor_decoration"], "inverted");
     assert_eq!(pins[1]["pin_uuid"], power_pin_id.to_string());
     assert_eq!(pins[1]["number"], "VCC");
     assert_eq!(pins[1]["electrical_type"], "PowerIn");
     assert_eq!(pins[1]["x_nm"], 300);
     assert_eq!(pins[1]["y_nm"], 400);
+    assert_eq!(pins[1]["anchor_orientation"], "Right");
+    assert!(pins[1]["anchor_length_nm"].is_null());
+    assert_eq!(pins[1]["anchor_decoration"], "none");
 
     let nets_output = execute(
         Cli::try_parse_from([
@@ -395,5 +440,164 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
                     && entry["object_uuids"] == serde_json::json!([power_pin_id.to_string()])
             })
     );
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_place_symbol_reports_ambiguous_pool_symbol_entity_gate_binding() {
+    let root = unique_project_root("datum-eda-cli-project-symbol-ambiguous-binding");
+    create_native_project(&root, Some("Symbol Ambiguous Binding".to_string()))
+        .expect("initial scaffold should succeed");
+    let sheet_uuid = seed_native_sheet(&root);
+    let unit_id = Uuid::new_v4();
+    let pin_id = Uuid::new_v4();
+    let symbol_id = Uuid::new_v4();
+    let entity_a_id = Uuid::new_v4();
+    let gate_a_id = Uuid::new_v4();
+    let entity_b_id = Uuid::new_v4();
+    let gate_b_id = Uuid::new_v4();
+
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "create-pool-unit",
+            root.to_str().unwrap(),
+            "--unit",
+            &unit_id.to_string(),
+            "--name",
+            "AmbiguousUnit",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("typed pool unit create should succeed");
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "set-pool-unit-pin",
+            root.to_str().unwrap(),
+            "--unit",
+            &unit_id.to_string(),
+            "--pin",
+            &pin_id.to_string(),
+            "--name",
+            "A",
+            "--electrical-type",
+            "Passive",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("pool unit pin set should succeed");
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "create-pool-symbol",
+            root.to_str().unwrap(),
+            "--symbol",
+            &symbol_id.to_string(),
+            "--unit",
+            &unit_id.to_string(),
+            "--name",
+            "AmbiguousSymbol",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("typed pool symbol create should succeed");
+    for (entity_id, gate_id, name) in [
+        (entity_a_id, gate_a_id, "EntityA"),
+        (entity_b_id, gate_b_id, "EntityB"),
+    ] {
+        execute(
+            Cli::try_parse_from([
+                "eda",
+                "--format",
+                "json",
+                "project",
+                "create-pool-entity",
+                root.to_str().unwrap(),
+                "--entity",
+                &entity_id.to_string(),
+                "--gate",
+                &gate_id.to_string(),
+                "--unit",
+                &unit_id.to_string(),
+                "--symbol",
+                &symbol_id.to_string(),
+                "--name",
+                name,
+                "--prefix",
+                "U",
+            ])
+            .expect("CLI should parse"),
+        )
+        .expect("typed pool entity create should succeed");
+    }
+
+    let place_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "place-symbol",
+            root.to_str().unwrap(),
+            "--sheet",
+            &sheet_uuid.to_string(),
+            "--reference",
+            "U2",
+            "--value",
+            "AMB",
+            "--lib-id",
+            &symbol_id.to_string(),
+            "--x-nm",
+            "10",
+            "--y-nm",
+            "20",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("ambiguous place-symbol should still place unresolved symbol");
+    let placed: serde_json::Value =
+        serde_json::from_str(&place_output).expect("place-symbol JSON should parse");
+    assert_eq!(placed["binding_status"], "ambiguous_entity_gate");
+    assert!(placed["entity_uuid"].is_null());
+    assert!(placed["gate_uuid"].is_null());
+    assert!(placed["part_uuid"].is_null());
+    assert!(placed["component_instance_uuid"].is_null());
+    assert!(placed["binding_evidence"].is_null());
+    let diagnostic = placed["binding_diagnostics"][0]
+        .as_str()
+        .expect("diagnostic should be a string");
+    assert!(diagnostic.contains("resolves to multiple entity gates"));
+    assert!(diagnostic.contains(&entity_a_id.to_string()));
+    assert!(diagnostic.contains(&gate_a_id.to_string()));
+    assert!(diagnostic.contains(&entity_b_id.to_string()));
+    assert!(diagnostic.contains(&gate_b_id.to_string()));
+
+    let component_instances_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "component-instances",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("component-instances query should succeed");
+    let component_instances: serde_json::Value = serde_json::from_str(&component_instances_output)
+        .expect("component-instances JSON should parse");
+    assert_eq!(component_instances["component_instance_count"], 0);
+
     let _ = std::fs::remove_dir_all(&root);
 }

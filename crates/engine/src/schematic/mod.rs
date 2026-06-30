@@ -7,6 +7,7 @@ use crate::ir::geometry::{Arc, Point};
 
 mod check_disposition;
 
+pub use crate::pool::LibraryPinElectricalType as PinElectricalType;
 pub use check_disposition::{CheckDeviation, DeviationApprovalStatus};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -99,16 +100,6 @@ pub struct SymbolPin {
     pub name: String,
     pub electrical_type: PinElectricalType,
     pub position: Point,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum PinElectricalType {
-    Input,
-    Output,
-    Bidirectional,
-    Passive,
-    PowerIn,
-    PowerOut,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

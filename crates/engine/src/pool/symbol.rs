@@ -71,16 +71,55 @@ pub struct LibraryObjectProvenance {
     pub reviewed_at: Option<String>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct SymbolPinAnchor {
     pub pin: Uuid,
     pub position: Point,
+    #[serde(default)]
+    pub style: SymbolPinStyle,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct SymbolPinStyle {
     #[serde(default)]
     pub orientation: SymbolPinOrientation,
     #[serde(default)]
     pub length_nm: Option<i64>,
     #[serde(default)]
     pub decoration: SymbolPinDecoration,
+}
+
+impl<'de> Deserialize<'de> for SymbolPinAnchor {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        #[derive(Deserialize)]
+        struct SymbolPinAnchorPayload {
+            pin: Uuid,
+            position: Point,
+            #[serde(default)]
+            style: Option<SymbolPinStyle>,
+            #[serde(default)]
+            orientation: Option<SymbolPinOrientation>,
+            #[serde(default)]
+            length_nm: Option<i64>,
+            #[serde(default)]
+            decoration: Option<SymbolPinDecoration>,
+        }
+
+        let payload = SymbolPinAnchorPayload::deserialize(deserializer)?;
+        let base_style = payload.style.unwrap_or_default();
+        Ok(Self {
+            pin: payload.pin,
+            position: payload.position,
+            style: SymbolPinStyle {
+                orientation: payload.orientation.unwrap_or(base_style.orientation),
+                length_nm: payload.length_nm.or(base_style.length_nm),
+                decoration: payload.decoration.unwrap_or(base_style.decoration),
+            },
+        })
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]

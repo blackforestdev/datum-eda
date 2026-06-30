@@ -7,6 +7,9 @@ use uuid::Uuid;
 use crate::connectivity;
 use crate::schematic::{CheckDomain, CheckWaiver, PinElectricalType, Schematic, WaiverTarget};
 
+mod electrical;
+use electrical::{is_conflicting_output, is_explicit_driver, is_input, is_passive, is_power_input};
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ErcSeverity {
     Error,
@@ -62,32 +65,35 @@ pub fn run_prechecks_with_config_and_waivers(
         let output_pins: Vec<_> = net
             .pins
             .iter()
-            .filter(|pin| {
-                matches!(
-                    pin.electrical_type,
-                    PinElectricalType::Output | PinElectricalType::PowerOut
-                )
-            })
+            .filter(|pin| is_conflicting_output(&pin.electrical_type))
             .collect();
         let input_pins: Vec<_> = net
             .pins
             .iter()
-            .filter(|pin| matches!(pin.electrical_type, PinElectricalType::Input))
+            .filter(|pin| is_input(&pin.electrical_type))
             .collect();
         let passive_pins: Vec<_> = net
             .pins
             .iter()
-            .filter(|pin| matches!(pin.electrical_type, PinElectricalType::Passive))
+            .filter(|pin| is_passive(&pin.electrical_type))
             .collect();
         let power_in_pins: Vec<_> = net
             .pins
             .iter()
-            .filter(|pin| matches!(pin.electrical_type, PinElectricalType::PowerIn))
+            .filter(|pin| is_power_input(&pin.electrical_type))
             .collect();
+        let explicit_driver_count = net
+            .pins
+            .iter()
+            .filter(|pin| is_explicit_driver(&pin.electrical_type))
+            .count();
         let noconnect_marked_pins: Vec<_> = net
             .pins
             .iter()
-            .filter(|pin| noconnect_pins.contains(&pin.uuid))
+            .filter(|pin| {
+                noconnect_pins.contains(&pin.uuid)
+                    || matches!(pin.electrical_type, PinElectricalType::NoConnect)
+            })
             .collect();
 
         if output_pins.len() > 1 {
@@ -114,7 +120,7 @@ pub fn run_prechecks_with_config_and_waivers(
             ));
         }
 
-        if !power_in_pins.is_empty() && output_pins.is_empty() {
+        if !power_in_pins.is_empty() && explicit_driver_count == 0 {
             findings.push(build_finding(
                 "power_in_without_source",
                 severity_for(config, "power_in_without_source", ErcSeverity::Warning),
@@ -165,9 +171,8 @@ pub fn run_prechecks_with_config_and_waivers(
             ));
         }
 
-        let dangling_pin_is_noconnect =
-            is_single_dangling_pin && noconnect_pins.contains(&net.pins[0].uuid);
-        if !input_pins.is_empty() && output_pins.is_empty() && !is_single_dangling_pin {
+        let dangling_pin_is_noconnect = is_single_dangling_pin && !noconnect_marked_pins.is_empty();
+        if !input_pins.is_empty() && explicit_driver_count == 0 && !is_single_dangling_pin {
             let has_passive_biasing = !passive_pins.is_empty();
             let is_named = !net_name.starts_with("N$");
             let (code, severity, message) = if has_passive_biasing && is_named {

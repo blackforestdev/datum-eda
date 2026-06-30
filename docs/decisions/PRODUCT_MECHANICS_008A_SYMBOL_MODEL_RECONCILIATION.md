@@ -59,9 +59,14 @@ canonical electrical type is the value ERC checks, including persisted
 CheckRun evidence.
 
 **D2 — Pin graphic style on the symbol (table-stakes; the converter needs it).**
-`SymbolPinAnchor` now carries `orientation`, optional `length_nm`, and
-`decoration` (`none | inverted | clock | inverted_clock`) in addition to
-position. This closes the first schema slice, but the target remains broader:
+Compatibility summary: `SymbolPinAnchor` now carries `orientation` semantics via
+the nested `style.orientation` field, not as a new top-level authoring field.
+`SymbolPinAnchor` now carries `position` plus an engine-owned nested `style`
+with `orientation`, optional `length_nm`, and `decoration`
+(`none | inverted | clock | inverted_clock`). Legacy top-level style fields are
+accepted on read, but new CLI-authored anchors write the converged `style`
+shape and placed-symbol pin queries expose it for pool-backed symbols. This
+closes the first schema slice, but the target remains broader:
 preserve/import/export active-low and alternate-function style semantics without
 collapsing distinct source styles into one decoration.
 

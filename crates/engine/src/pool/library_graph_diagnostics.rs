@@ -333,33 +333,17 @@ impl LibraryGraph {
         );
         let entity_id =
             self.parse_uuid_field(part, "entity", subject, "pin_pad_map part", diagnostics);
-        for (pad_key, entry) in mappings {
-            let mapping_subject = format!("{subject}#mappings/{pad_key}");
-            let Some(pad_id) = Uuid::parse_str(pad_key).ok() else {
-                diagnostics.push(LibraryGraphDiagnostic {
-                    severity: "error",
-                    code: "invalid_uuid_key",
-                    subject: mapping_subject.clone(),
-                    message: format!("pin_pad_map mapping key `{pad_key}` is not a valid UUID"),
-                });
-                continue;
-            };
-            let Some(gate_id) = self.parse_uuid_field(
+        for (mapping_key, entry) in mappings {
+            let mapping_subject = format!("{subject}#mappings/{mapping_key}");
+            let Some((pad_id, gate_id, pin_id)) = self.resolve_pin_pad_map_mapping(
+                mapping_key,
                 entry,
-                "gate",
+                entity_id,
                 &mapping_subject,
-                "pin_pad_map mapping",
                 diagnostics,
             ) else {
                 continue;
             };
-            let pin_id = self.parse_uuid_field(
-                entry,
-                "pin",
-                &mapping_subject,
-                "pin_pad_map mapping",
-                diagnostics,
-            );
             if let Some(entity_id) = entity_id {
                 self.validate_entity_gate_pin_exists(
                     entity_id,

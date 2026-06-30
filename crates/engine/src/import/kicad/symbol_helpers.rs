@@ -174,8 +174,10 @@ pub(super) fn parse_kicad_pin_electrical_type(pin_block: &str) -> PinElectricalT
         .next()
         .map(str::trim_start)
         .unwrap_or_default();
-    if first.contains("(pin output ") || first.contains("(pin tri_state ") {
+    if first.contains("(pin output ") {
         PinElectricalType::Output
+    } else if first.contains("(pin tri_state ") {
+        PinElectricalType::TriState
     } else if first.contains("(pin input ") {
         PinElectricalType::Input
     } else if first.contains("(pin bidirectional ") {
@@ -184,6 +186,12 @@ pub(super) fn parse_kicad_pin_electrical_type(pin_block: &str) -> PinElectricalT
         PinElectricalType::PowerIn
     } else if first.contains("(pin power_out ") {
         PinElectricalType::PowerOut
+    } else if first.contains("(pin open_collector ") {
+        PinElectricalType::OpenCollector
+    } else if first.contains("(pin open_emitter ") {
+        PinElectricalType::OpenEmitter
+    } else if first.contains("(pin no_connect ") {
+        PinElectricalType::NoConnect
     } else {
         PinElectricalType::Passive
     }

@@ -457,9 +457,11 @@ fn set_symbol_pin_anchor(
     anchors.push(serde_json::json!({
         "pin": pin_id,
         "position": {"x": x_nm, "y": y_nm},
-        "orientation": orientation,
-        "length_nm": length_nm,
-        "decoration": decoration
+        "style": {
+            "orientation": orientation,
+            "length_nm": length_nm,
+            "decoration": decoration
+        }
     }));
     Ok(())
 }

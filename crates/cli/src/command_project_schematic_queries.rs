@@ -2,8 +2,10 @@ use super::command_project_board_diagnostics::query_native_project_drc_with_rule
 use super::*;
 use eda_engine::connectivity::schematic_hierarchy_info;
 use eda_engine::drc::{DrcSeverity, DrcViolation};
+use eda_engine::pool::{Symbol, SymbolPinStyle};
 use eda_engine::rules::ast::RuleType;
 use eda_engine::substrate::ProjectResolver;
+use std::collections::HashMap;
 
 pub(crate) fn query_native_project_hierarchy(root: &Path) -> Result<HierarchyInfo> {
     let project = load_native_project_with_resolved_board(root)?;
@@ -133,6 +135,7 @@ pub(crate) fn query_native_project_symbol_pins(
 ) -> Result<Vec<NativeProjectSymbolPinInfoView>> {
     let project = load_native_project_with_resolved_board(root)?;
     let (_, _, _, symbol) = load_native_symbol_mutation_target(&project, symbol_uuid)?;
+    let anchor_styles = pool_symbol_anchor_styles(root, symbol.lib_id.as_deref())?;
     let mut pins = symbol
         .pins
         .into_iter()
@@ -141,6 +144,7 @@ pub(crate) fn query_native_project_symbol_pins(
                 .pin_overrides
                 .iter()
                 .find(|entry| entry.pin == pin.uuid);
+            let anchor_style = anchor_styles.get(&pin.uuid);
             NativeProjectSymbolPinInfoView {
                 symbol_uuid: symbol_uuid.to_string(),
                 pin_uuid: pin.uuid.to_string(),
@@ -149,6 +153,14 @@ pub(crate) fn query_native_project_symbol_pins(
                 electrical_type: format!("{:?}", pin.electrical_type),
                 x_nm: pin.position.x,
                 y_nm: pin.position.y,
+                anchor_orientation: anchor_style.map(|style| format!("{:?}", style.orientation)),
+                anchor_length_nm: anchor_style.and_then(|style| style.length_nm),
+                anchor_decoration: anchor_style.map(|style| {
+                    serde_json::to_value(&style.decoration)
+                        .ok()
+                        .and_then(|value| value.as_str().map(str::to_string))
+                        .unwrap_or_else(|| format!("{:?}", style.decoration))
+                }),
                 visible_override: pin_override.map(|entry| entry.visible),
                 override_x_nm: pin_override.and_then(|entry| entry.position.map(|p| p.x)),
                 override_y_nm: pin_override.and_then(|entry| entry.position.map(|p| p.y)),
@@ -161,6 +173,45 @@ pub(crate) fn query_native_project_symbol_pins(
             .then_with(|| a.pin_uuid.cmp(&b.pin_uuid))
     });
     Ok(pins)
+}
+
+fn pool_symbol_anchor_styles(
+    root: &Path,
+    lib_id: Option<&str>,
+) -> Result<HashMap<Uuid, SymbolPinStyle>> {
+    let Some(lib_id) = lib_id else {
+        return Ok(HashMap::new());
+    };
+    let Ok(symbol_id) = Uuid::parse_str(lib_id) else {
+        return Ok(HashMap::new());
+    };
+    let model = ProjectResolver::new(root)
+        .resolve()
+        .with_context(|| format!("failed to resolve native project {}", root.display()))?;
+    let Some(object) = model
+        .objects
+        .get(&symbol_id)
+        .filter(|object| object.domain == "pool" && object.kind == "symbols")
+    else {
+        return Ok(HashMap::new());
+    };
+    let Some(shard) = model
+        .source_shards
+        .iter()
+        .find(|shard| shard.shard_id == object.source_shard_id)
+    else {
+        return Ok(HashMap::new());
+    };
+    let symbol_value = model
+        .materialized_source_shard_value_by_relative_path(&shard.relative_path)
+        .with_context(|| format!("failed to materialize pool symbol {symbol_id}"))?;
+    let symbol: Symbol = serde_json::from_value(symbol_value)
+        .with_context(|| format!("failed to parse pool symbol {symbol_id}"))?;
+    Ok(symbol
+        .pin_anchors
+        .into_iter()
+        .map(|anchor| (anchor.pin, anchor.style))
+        .collect())
 }
 
 pub(crate) fn query_native_project_texts(root: &Path) -> Result<Vec<serde_json::Value>> {

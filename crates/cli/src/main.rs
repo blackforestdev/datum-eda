@@ -30,6 +30,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 mod cli_args;
+mod cli_symbol_views;
 mod command_exec;
 mod command_modify;
 mod command_plan;
@@ -56,6 +57,11 @@ mod main_route_proposal;
 mod main_summary;
 
 use cli_args::*;
+pub(crate) use cli_symbol_views::{
+    NativeProjectPlaceSymbolBindingEvidenceView, NativeProjectRevisionedRefView,
+    NativeProjectSymbolFieldMutationReportView, NativeProjectSymbolMutationReportView,
+    NativeProjectSymbolPinInfoView,
+};
 use command_plan::*;
 use command_project::*;
 use command_query::*;
@@ -200,60 +206,11 @@ struct NativeProjectNoConnectMutationReportView {
 }
 
 #[derive(Debug, Clone, Serialize)]
-struct NativeProjectSymbolMutationReportView {
-    action: String,
-    project_root: String,
-    sheet_uuid: String,
-    sheet_path: String,
-    symbol_uuid: String,
-    reference: String,
-    value: String,
-    lib_id: Option<String>,
-    x_nm: i64,
-    y_nm: i64,
-    rotation_deg: i32,
-    mirrored: bool,
-    gate_uuid: Option<String>,
-    unit_selection: Option<String>,
-    display_mode: String,
-    hidden_power_behavior: String,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectSymbolFieldMutationReportView {
-    action: String,
-    project_root: String,
-    sheet_uuid: String,
-    sheet_path: String,
-    symbol_uuid: String,
-    field_uuid: String,
-    key: String,
-    value: String,
-    visible: bool,
-    x_nm: Option<i64>,
-    y_nm: Option<i64>,
-}
-
-#[derive(Debug, Clone, Serialize)]
 struct NativeProjectSymbolSemanticsView {
     symbol_uuid: String,
     gate_uuid: Option<String>,
     unit_selection: Option<String>,
     hidden_power_behavior: String,
-}
-
-#[derive(Debug, Clone, Serialize)]
-struct NativeProjectSymbolPinInfoView {
-    symbol_uuid: String,
-    pin_uuid: String,
-    number: String,
-    name: String,
-    electrical_type: String,
-    x_nm: i64,
-    y_nm: i64,
-    visible_override: Option<bool>,
-    override_x_nm: Option<i64>,
-    override_y_nm: Option<i64>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -904,8 +861,24 @@ fn render_native_project_symbol_mutation_text(
     if let Some(lib_id) = &report.lib_id {
         lines.push(format!("lib_id: {}", lib_id));
     }
+    if let Some(entity_uuid) = &report.entity_uuid {
+        lines.push(format!("entity_uuid: {}", entity_uuid));
+    }
     if let Some(gate_uuid) = &report.gate_uuid {
         lines.push(format!("gate_uuid: {}", gate_uuid));
+    }
+    if let Some(part_uuid) = &report.part_uuid {
+        lines.push(format!("part_uuid: {}", part_uuid));
+    }
+    if let Some(component_instance_uuid) = &report.component_instance_uuid {
+        lines.push(format!(
+            "component_instance_uuid: {}",
+            component_instance_uuid
+        ));
+    }
+    lines.push(format!("binding_status: {}", report.binding_status));
+    for diagnostic in &report.binding_diagnostics {
+        lines.push(format!("binding_diagnostic: {}", diagnostic));
     }
     if let Some(unit_selection) = &report.unit_selection {
         lines.push(format!("unit_selection: {}", unit_selection));

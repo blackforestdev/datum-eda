@@ -1,13 +1,31 @@
 use super::*;
+use eda_engine::pool::Symbol;
 use eda_engine::schematic::PinElectricalType;
 use eda_engine::substrate::ProjectResolver;
 
 #[derive(Debug, Clone)]
 pub(crate) struct PoolSymbolComponentBinding {
     pub(crate) symbol_id: Uuid,
+    pub(crate) symbol_revision: u64,
+    pub(crate) unit_id: Uuid,
+    pub(crate) unit_revision: u64,
     pub(crate) entity_id: Uuid,
+    pub(crate) entity_revision: u64,
     pub(crate) gate_id: Uuid,
-    pub(crate) part_id: Option<Uuid>,
+    pub(crate) part: Option<PoolSymbolPartBinding>,
+}
+
+#[derive(Debug, Clone)]
+pub(crate) struct PoolSymbolPartBinding {
+    pub(crate) part_id: Uuid,
+    pub(crate) part_revision: u64,
+}
+
+#[derive(Debug, Clone)]
+pub(crate) struct PoolSymbolBindingResolution {
+    pub(crate) binding: Option<PoolSymbolComponentBinding>,
+    pub(crate) status: &'static str,
+    pub(crate) diagnostics: Vec<String>,
 }
 
 pub(crate) fn materialize_pool_symbol_pins(
@@ -23,21 +41,18 @@ pub(crate) fn materialize_pool_symbol_pins(
     let model = ProjectResolver::new(root)
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
-    let symbol = materialized_pool_object(&model, symbol_id, "symbols")?;
-    let unit_id = uuid_field(&symbol, "unit", "pool symbol")?;
+    let symbol_value = materialized_pool_object(&model, symbol_id, "symbols")?;
+    let symbol: Symbol = serde_json::from_value(symbol_value.clone())
+        .with_context(|| format!("failed to parse pool symbol {symbol_id}"))?;
+    let unit_id = symbol.unit;
     let unit = materialized_pool_object(&model, unit_id, "units")?;
     let unit_pins = unit
         .get("pins")
         .and_then(serde_json::Value::as_object)
         .ok_or_else(|| anyhow::anyhow!("pool unit {unit_id} has no pins map"))?;
-    let anchors = symbol
-        .get("pin_anchors")
-        .and_then(serde_json::Value::as_array)
-        .map(Vec::as_slice)
-        .unwrap_or(&[]);
     let mut pins = Vec::new();
-    for anchor in anchors {
-        let pin_id = uuid_field(anchor, "pin", "pool symbol pin anchor")?;
+    for anchor in &symbol.pin_anchors {
+        let pin_id = anchor.pin;
         let unit_pin = unit_pins
             .get(&pin_id.to_string())
             .ok_or_else(|| anyhow::anyhow!("pool unit {unit_id} has no pin {pin_id}"))?;
@@ -56,7 +71,7 @@ pub(crate) fn materialize_pool_symbol_pins(
             number: name.clone(),
             name,
             electrical_type: pool_pin_electrical_type_to_schematic(electrical_type),
-            position: point_field(anchor, "position", "pool symbol pin anchor")?,
+            position: anchor.position,
         });
     }
     Ok(pins)
@@ -65,18 +80,31 @@ pub(crate) fn materialize_pool_symbol_pins(
 pub(crate) fn resolve_pool_symbol_component_binding(
     root: &Path,
     lib_id: Option<&str>,
-) -> Result<Option<PoolSymbolComponentBinding>> {
+) -> Result<PoolSymbolBindingResolution> {
     let Some(lib_id) = lib_id else {
-        return Ok(None);
+        return Ok(PoolSymbolBindingResolution {
+            binding: None,
+            status: "no_lib_id",
+            diagnostics: Vec::new(),
+        });
     };
     let Ok(symbol_id) = Uuid::parse_str(lib_id) else {
-        return Ok(None);
+        return Ok(PoolSymbolBindingResolution {
+            binding: None,
+            status: "compatibility_lib_id",
+            diagnostics: vec![format!(
+                "lib_id {lib_id} is not a pool symbol UUID; placed as compatibility identifier"
+            )],
+        });
     };
     let model = ProjectResolver::new(root)
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
     let symbol = materialized_pool_object(&model, symbol_id, "symbols")?;
+    let symbol_revision = object_revision(&model, symbol_id, "pool symbol")?;
     let unit_id = uuid_field(&symbol, "unit", "pool symbol")?;
+    let _unit = materialized_pool_object(&model, unit_id, "units")?;
+    let unit_revision = object_revision(&model, unit_id, "pool unit")?;
 
     let mut matches = Vec::new();
     for object in model
@@ -114,17 +142,70 @@ pub(crate) fn resolve_pool_symbol_component_binding(
             matches.push((object.object_id, gate_id));
         }
     }
+    matches.sort();
 
     let [(entity_id, gate_id)] = matches.as_slice() else {
-        return Ok(None);
+        let diagnostics = match matches.as_slice() {
+            [] => vec![format!(
+                "pool symbol {symbol_id} did not resolve to any entity gate"
+            )],
+            _ => vec![format!(
+                "pool symbol {symbol_id} resolves to multiple entity gates: {}",
+                matches
+                    .iter()
+                    .map(|(entity_id, gate_id)| format!("{entity_id}/{gate_id}"))
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            )],
+        };
+        return Ok(PoolSymbolBindingResolution {
+            binding: None,
+            status: "ambiguous_entity_gate",
+            diagnostics,
+        });
     };
-    let part_id = unique_part_for_entity(&model, *entity_id)?;
-    Ok(Some(PoolSymbolComponentBinding {
-        symbol_id,
-        entity_id: *entity_id,
-        gate_id: *gate_id,
-        part_id,
-    }))
+    let entity_revision = object_revision(&model, *entity_id, "pool entity")?;
+    let part = unique_part_for_entity(&model, *entity_id)?;
+    let (part, part_diagnostics, status) = match part {
+        UniquePartResolution::Unique(part) => (
+            Some(part),
+            Vec::new(),
+            "bound_with_part",
+        ),
+        UniquePartResolution::None => (
+            None,
+            vec![format!(
+                "pool entity {entity_id} has no pool part; placed symbol is bound to entity/gate only"
+            )],
+            "bound_without_part",
+        ),
+        UniquePartResolution::Ambiguous(part_ids) => (
+            None,
+            vec![format!(
+                "pool entity {entity_id} has multiple pool parts and cannot assign a unique part: {}",
+                part_ids
+                    .iter()
+                    .map(Uuid::to_string)
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            )],
+            "ambiguous_part",
+        ),
+    };
+    Ok(PoolSymbolBindingResolution {
+        binding: Some(PoolSymbolComponentBinding {
+            symbol_id,
+            symbol_revision,
+            unit_id,
+            unit_revision,
+            entity_id: *entity_id,
+            entity_revision,
+            gate_id: *gate_id,
+            part,
+        }),
+        status,
+        diagnostics: part_diagnostics,
+    })
 }
 
 fn materialized_pool_object(
@@ -149,10 +230,16 @@ fn materialized_pool_object(
         .with_context(|| format!("failed to materialize pool {object_kind} {object_id}"))
 }
 
+enum UniquePartResolution {
+    None,
+    Unique(PoolSymbolPartBinding),
+    Ambiguous(Vec<Uuid>),
+}
+
 fn unique_part_for_entity(
     model: &eda_engine::substrate::DesignModel,
     entity_id: Uuid,
-) -> Result<Option<Uuid>> {
+) -> Result<UniquePartResolution> {
     let mut matches = Vec::new();
     for object in model
         .objects
@@ -169,11 +256,27 @@ fn unique_part_for_entity(
             matches.push(object.object_id);
         }
     }
+    matches.sort();
     Ok(match matches.as_slice() {
-        [] => None,
-        [part_id] => Some(*part_id),
-        _ => None,
+        [] => UniquePartResolution::None,
+        [part_id] => UniquePartResolution::Unique(PoolSymbolPartBinding {
+            part_id: *part_id,
+            part_revision: object_revision(model, *part_id, "pool part")?,
+        }),
+        _ => UniquePartResolution::Ambiguous(matches),
     })
+}
+
+fn object_revision(
+    model: &eda_engine::substrate::DesignModel,
+    object_id: Uuid,
+    label: &str,
+) -> Result<u64> {
+    model
+        .objects
+        .get(&object_id)
+        .map(|object| object.object_revision.0)
+        .ok_or_else(|| anyhow::anyhow!("{label} {object_id} was not found in resolved model"))
 }
 
 fn uuid_field(value: &serde_json::Value, field: &str, label: &str) -> Result<Uuid> {
@@ -182,21 +285,6 @@ fn uuid_field(value: &serde_json::Value, field: &str, label: &str) -> Result<Uui
         .and_then(serde_json::Value::as_str)
         .ok_or_else(|| anyhow::anyhow!("{label} missing {field}"))?;
     Uuid::parse_str(raw).with_context(|| format!("{label} has invalid {field} uuid {raw}"))
-}
-
-fn point_field(value: &serde_json::Value, field: &str, label: &str) -> Result<Point> {
-    let point = value
-        .get(field)
-        .ok_or_else(|| anyhow::anyhow!("{label} missing {field}"))?;
-    let x = point
-        .get("x")
-        .and_then(serde_json::Value::as_i64)
-        .ok_or_else(|| anyhow::anyhow!("{label} {field} missing x"))?;
-    let y = point
-        .get("y")
-        .and_then(serde_json::Value::as_i64)
-        .ok_or_else(|| anyhow::anyhow!("{label} {field} missing y"))?;
-    Ok(Point { x, y })
 }
 
 fn pool_pin_electrical_type_to_schematic(electrical_type: &str) -> PinElectricalType {

@@ -452,6 +452,10 @@ Validation tiers:
   first-class footprint pads when `footprint` is present, missing legacy package
   pads when no footprint is present, and footprint/package mismatches before the
   staged shard is promoted.
+  Read-side validation also recognizes historical persisted pin-keyed JSON rows
+  (`pin_uuid: pad_uuid` or `pin_uuid: { "pad": pad_uuid }`) under the same
+  exact-one-gate constraint; pins shared by multiple entity gates are reported
+  as ambiguous and are never silently resolved.
   Runtime part compatibility and board pad-net remapping consume these records
   first through `Part.default_pin_pad_map` when present and valid. Legacy-named
   part pad-map commands accept `pad:gate:pin` compatibility input, require a

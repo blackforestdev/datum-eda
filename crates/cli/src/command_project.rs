@@ -79,12 +79,11 @@ mod command_project_schematic_sheet_mutations;
 #[rustfmt::skip] #[path = "command_project_schematic_symbol_component_instance.rs"] mod command_project_schematic_symbol_component_instance;
 #[rustfmt::skip] #[path = "command_project_schematic_symbol_library_materialization.rs"] mod command_project_schematic_symbol_library_materialization;
 #[rustfmt::skip] #[path = "command_project_schematic_symbol_mutations.rs"] mod command_project_schematic_symbol_mutations;
+#[rustfmt::skip] #[path = "command_project_schematic_symbol_reports.rs"] mod command_project_schematic_symbol_reports;
 #[path = "command_project_schematic_text_drawing_mutations.rs"]
 mod command_project_schematic_text_drawing_mutations;
-#[path = "command_project_summary.rs"]
-mod command_project_summary;
-#[path = "command_project_support.rs"]
-mod command_project_support;
+#[rustfmt::skip] #[path = "command_project_summary.rs"] mod command_project_summary;
+#[rustfmt::skip] #[path = "command_project_support.rs"] mod command_project_support;
 #[path = "command_project_surface.rs"]
 mod command_project_surface;
 #[path = "command_project_validate.rs"]

@@ -7,13 +7,13 @@ pub(crate) fn component_instance_operation_for_pool_symbol(
     symbol_uuid: Uuid,
     binding: &PoolSymbolComponentBinding,
 ) -> Result<Option<Operation>> {
-    let Some(part_id) = binding.part_id else {
+    let Some(part) = &binding.part else {
         return Ok(None);
     };
     let model = ProjectResolver::new(root)
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
-    let part_ref = revisioned_ref(&model, part_id)?;
+    let part_ref = revisioned_ref(&model, part.part_id)?;
     let component_instance_id = Uuid::new_v5(
         &model.project.project_id,
         format!(

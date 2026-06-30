@@ -9,6 +9,7 @@ use crate::ir::geometry::{Arc, LayerId, Point, Polygon};
 mod footprint;
 mod library_graph;
 mod library_graph_diagnostics;
+mod library_graph_pin_pad_map_compat;
 mod package;
 mod padstack;
 mod pin;
@@ -26,7 +27,7 @@ pub use pin::{AlternateName, LibraryPinElectricalType, Pin, PinDirection, Unit};
 pub use pin_pad_map::PinPadMap;
 pub use symbol::{
     LibraryCheckState, LibraryCheckStatus, LibraryObjectProvenance, LibrarySymbolField, Symbol,
-    SymbolPinAnchor, SymbolPinDecoration, SymbolPinOrientation,
+    SymbolPinAnchor, SymbolPinDecoration, SymbolPinOrientation, SymbolPinStyle,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

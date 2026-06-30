@@ -129,6 +129,29 @@ fn imports_kicad_schematic_into_canonical_objects() {
 }
 
 #[test]
+fn parses_kicad_pin_electrical_types_into_canonical_pool_taxonomy() {
+    let cases = [
+        ("(pin input line", PinElectricalType::Input),
+        ("(pin output line", PinElectricalType::Output),
+        ("(pin bidirectional line", PinElectricalType::Bidirectional),
+        ("(pin passive line", PinElectricalType::Passive),
+        ("(pin power_in line", PinElectricalType::PowerIn),
+        ("(pin power_out line", PinElectricalType::PowerOut),
+        ("(pin open_collector line", PinElectricalType::OpenCollector),
+        ("(pin open_emitter line", PinElectricalType::OpenEmitter),
+        ("(pin tri_state line", PinElectricalType::TriState),
+        ("(pin no_connect line", PinElectricalType::NoConnect),
+    ];
+
+    for (pin_block, expected) in cases {
+        assert_eq!(
+            super::super::symbol_helpers::parse_kicad_pin_electrical_type(pin_block),
+            expected
+        );
+    }
+}
+
+#[test]
 fn imports_kicad_noconnect_with_pin_binding_when_marker_overlaps_pin() {
     let (schematic, _report) =
         import_schematic_document(&fixture_path("erc-coverage-demo.kicad_sch"))

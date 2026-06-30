@@ -136,9 +136,10 @@ fn project_set_pool_symbol_pin_anchor_authors_anchor_and_undoes() {
     );
     assert_eq!(payload["pin_anchors"][0]["pin"], pin_id.to_string());
     assert_eq!(payload["pin_anchors"][0]["position"]["x"], 100);
-    assert_eq!(payload["pin_anchors"][0]["orientation"], "Right");
-    assert!(payload["pin_anchors"][0]["length_nm"].is_null());
-    assert_eq!(payload["pin_anchors"][0]["decoration"], "none");
+    assert_eq!(payload["pin_anchors"][0]["style"]["orientation"], "Right");
+    assert!(payload["pin_anchors"][0]["style"]["length_nm"].is_null());
+    assert_eq!(payload["pin_anchors"][0]["style"]["decoration"], "none");
+    assert!(payload["pin_anchors"][0].get("orientation").is_none());
     execute(
         Cli::try_parse_from([
             "eda",
@@ -203,9 +204,9 @@ fn project_set_pool_symbol_pin_anchor_authors_style_fields() {
     assert_eq!(payload["pin_anchors"][0]["pin"], pin_id.to_string());
     assert_eq!(payload["pin_anchors"][0]["position"]["x"], 100);
     assert_eq!(payload["pin_anchors"][0]["position"]["y"], 200);
-    assert_eq!(payload["pin_anchors"][0]["orientation"], "Left");
-    assert_eq!(payload["pin_anchors"][0]["length_nm"], 2540000);
-    assert_eq!(payload["pin_anchors"][0]["decoration"], "inverted");
+    assert_eq!(payload["pin_anchors"][0]["style"]["orientation"], "Left");
+    assert_eq!(payload["pin_anchors"][0]["style"]["length_nm"], 2540000);
+    assert_eq!(payload["pin_anchors"][0]["style"]["decoration"], "inverted");
     let _ = std::fs::remove_dir_all(&root);
 }
 

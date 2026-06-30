@@ -1,6 +1,9 @@
 use super::*;
 use crate::ir::geometry::Point;
 
+#[path = "mod_tests_library_graph.rs"]
+mod library_graph;
+
 fn sample_pin() -> (Uuid, Pin) {
     let id = Uuid::nil();
     (
@@ -248,9 +251,11 @@ fn sample_pool() -> Pool {
             pin_anchors: vec![SymbolPinAnchor {
                 pin: Uuid::nil(),
                 position: Point::new(0, 0),
-                orientation: SymbolPinOrientation::Left,
-                length_nm: Some(2_540_000),
-                decoration: SymbolPinDecoration::Inverted,
+                style: SymbolPinStyle {
+                    orientation: SymbolPinOrientation::Left,
+                    length_nm: Some(2_540_000),
+                    decoration: SymbolPinDecoration::Inverted,
+                },
             }],
         },
     );
@@ -338,11 +343,71 @@ fn legacy_symbol_json_defaults_production_schema_fields() {
     assert_eq!(decoded.provenance, None);
     assert!(decoded.drawings.is_empty());
     assert_eq!(
-        decoded.pin_anchors[0].orientation,
+        decoded.pin_anchors[0].style.orientation,
         SymbolPinOrientation::Right
     );
-    assert_eq!(decoded.pin_anchors[0].length_nm, None);
-    assert_eq!(decoded.pin_anchors[0].decoration, SymbolPinDecoration::None);
+    assert_eq!(decoded.pin_anchors[0].style.length_nm, None);
+    assert_eq!(
+        decoded.pin_anchors[0].style.decoration,
+        SymbolPinDecoration::None
+    );
+}
+
+#[test]
+fn symbol_pin_anchor_style_accepts_converged_schema_and_legacy_fields() {
+    let symbol_id = Uuid::from_u128(35);
+    let unit_id = Uuid::from_u128(36);
+    let first_pin_id = Uuid::from_u128(37);
+    let second_pin_id = Uuid::from_u128(38);
+    let decoded: Symbol = serde_json::from_value(serde_json::json!({
+        "uuid": symbol_id,
+        "name": "StyledSymbol",
+        "unit": unit_id,
+        "pin_anchors": [
+            {
+                "pin": first_pin_id,
+                "position": { "x": 100, "y": 200 },
+                "style": {
+                    "orientation": "Left",
+                    "length_nm": 2540000,
+                    "decoration": "inverted"
+                }
+            },
+            {
+                "pin": second_pin_id,
+                "position": { "x": 300, "y": 400 },
+                "orientation": "Up",
+                "length_nm": 1270000,
+                "decoration": "clock"
+            }
+        ]
+    }))
+    .expect("symbol pin anchor style should decode");
+
+    assert_eq!(
+        decoded.pin_anchors[0].style.orientation,
+        SymbolPinOrientation::Left
+    );
+    assert_eq!(decoded.pin_anchors[0].style.length_nm, Some(2_540_000));
+    assert_eq!(
+        decoded.pin_anchors[0].style.decoration,
+        SymbolPinDecoration::Inverted
+    );
+    assert_eq!(
+        decoded.pin_anchors[1].style.orientation,
+        SymbolPinOrientation::Up
+    );
+    assert_eq!(decoded.pin_anchors[1].style.length_nm, Some(1_270_000));
+    assert_eq!(
+        decoded.pin_anchors[1].style.decoration,
+        SymbolPinDecoration::Clock
+    );
+
+    let encoded = serde_json::to_value(&decoded.pin_anchors[0]).expect("anchor should encode");
+    assert_eq!(encoded["style"]["orientation"], "Left");
+    assert_eq!(encoded["style"]["length_nm"], 2540000);
+    assert_eq!(encoded["style"]["decoration"], "inverted");
+    assert!(encoded.get("orientation").is_none());
 }
 
 #[test]
@@ -476,112 +541,6 @@ fn pool_deterministic_serialization() {
     let a = crate::ir::serialization::to_json_deterministic(&pool).unwrap();
     let b = crate::ir::serialization::to_json_deterministic(&pool).unwrap();
     assert_eq!(a, b);
-}
-
-#[test]
-fn library_graph_reports_reference_diagnostics_in_engine() {
-    let unit_id = Uuid::from_u128(101);
-    let entity_id = Uuid::from_u128(102);
-    let part_id = Uuid::from_u128(103);
-    let other_part_id = Uuid::from_u128(104);
-    let package_id = Uuid::from_u128(105);
-    let other_package_id = Uuid::from_u128(106);
-    let footprint_id = Uuid::from_u128(107);
-    let map_id = Uuid::from_u128(108);
-    let symbol_id = Uuid::from_u128(109);
-    let other_footprint_id = Uuid::from_u128(110);
-
-    let mut graph = LibraryGraph::default();
-    graph
-        .units
-        .insert(unit_id, serde_json::json!({ "uuid": unit_id, "pins": {} }));
-    graph.entities.insert(
-        entity_id,
-        serde_json::json!({ "uuid": entity_id, "gates": {} }),
-    );
-    graph.packages.insert(
-        package_id,
-        serde_json::json!({ "uuid": package_id, "pads": {} }),
-    );
-    graph.packages.insert(
-        other_package_id,
-        serde_json::json!({ "uuid": other_package_id, "pads": {} }),
-    );
-    graph.footprints.insert(
-        footprint_id,
-        serde_json::json!({
-            "uuid": footprint_id,
-            "package": other_package_id,
-            "pads": {}
-        }),
-    );
-    graph.footprints.insert(
-        other_footprint_id,
-        serde_json::json!({
-            "uuid": other_footprint_id,
-            "package": other_package_id,
-            "pads": {}
-        }),
-    );
-    graph.parts.insert(
-        part_id,
-        serde_json::json!({
-            "uuid": part_id,
-            "entity": entity_id,
-            "package": package_id,
-            "default_footprint": footprint_id,
-            "default_pin_pad_map": map_id
-        }),
-    );
-    graph.parts.insert(
-        other_part_id,
-        serde_json::json!({
-            "uuid": other_part_id,
-            "entity": entity_id,
-            "package": package_id
-        }),
-    );
-    graph.pin_pad_maps.insert(
-        map_id,
-        serde_json::json!({
-            "uuid": map_id,
-            "part": other_part_id,
-            "footprint": other_footprint_id,
-            "mappings": {}
-        }),
-    );
-    graph.symbols.insert(
-        symbol_id,
-        serde_json::json!({
-            "uuid": symbol_id,
-            "unit": Uuid::from_u128(999)
-        }),
-    );
-    for id in [
-        unit_id,
-        entity_id,
-        part_id,
-        other_part_id,
-        package_id,
-        other_package_id,
-        footprint_id,
-        other_footprint_id,
-        map_id,
-        symbol_id,
-    ] {
-        graph.subjects.insert(id, format!("fixture/{id}.json"));
-    }
-
-    let codes = graph
-        .dependency_diagnostics()
-        .into_iter()
-        .map(|diagnostic| diagnostic.code)
-        .collect::<std::collections::BTreeSet<_>>();
-
-    assert!(codes.contains("dangling_reference"));
-    assert!(codes.contains("package_mismatch"));
-    assert!(codes.contains("part_mismatch"));
-    assert!(codes.contains("footprint_mismatch"));
 }
 
 #[test]
