@@ -117,6 +117,10 @@ fn project_place_symbol_updates_native_query_surface() {
     assert_eq!(placed["lib_id"], "device:opamp");
     assert_eq!(placed["rotation_deg"], 90);
     assert_eq!(placed["mirrored"], true);
+    assert_eq!(placed["binding_status"], "compatibility_lib_id");
+    assert!(placed["binding_evidence"].is_null());
+    let diagnostic = placed["binding_diagnostics"][0].as_str().unwrap();
+    assert!(diagnostic.contains("placed as compatibility identifier"));
 
     let query_cli = Cli::try_parse_from([
         "eda",

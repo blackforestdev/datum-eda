@@ -2,12 +2,88 @@ use std::collections::HashMap;
 
 use uuid::Uuid;
 
+use super::super::electrical::{
+    PIN_ELECTRICAL_TAXONOMY_REVISION, canonical_pin_electrical_type_name, is_conflicting_output,
+    is_explicit_driver, is_input, is_no_connect, is_passive, is_power_input,
+};
 use crate::erc::{ErcSeverity, run_prechecks};
 use crate::ir::geometry::Point;
+use crate::pool::LibraryPinElectricalType;
 use crate::schematic::{
     CheckWaiver, HiddenPowerBehavior, LabelKind, NetLabel, PinElectricalType, PlacedSymbol,
     Schematic, Sheet, SymbolDisplayMode, SymbolPin, Variant,
 };
+
+#[test]
+fn erc_pin_taxonomy_is_bound_to_library_alias_and_canonical_values() {
+    let schematic_pin_type: PinElectricalType = LibraryPinElectricalType::OpenEmitter;
+    assert_eq!(
+        canonical_pin_electrical_type_name(&schematic_pin_type),
+        "open_emitter"
+    );
+    assert_eq!(
+        PIN_ELECTRICAL_TAXONOMY_REVISION,
+        "LibraryPinElectricalType:v1"
+    );
+
+    let cases = [
+        (LibraryPinElectricalType::Input, "input"),
+        (LibraryPinElectricalType::Output, "output"),
+        (LibraryPinElectricalType::Bidirectional, "bidirectional"),
+        (LibraryPinElectricalType::Passive, "passive"),
+        (LibraryPinElectricalType::PowerIn, "power_in"),
+        (LibraryPinElectricalType::PowerOut, "power_out"),
+        (LibraryPinElectricalType::OpenCollector, "open_collector"),
+        (LibraryPinElectricalType::OpenEmitter, "open_emitter"),
+        (LibraryPinElectricalType::TriState, "tri_state"),
+        (LibraryPinElectricalType::NoConnect, "no_connect"),
+    ];
+
+    for (electrical_type, canonical_name) in cases {
+        let schematic_pin_type: PinElectricalType = electrical_type;
+        assert_eq!(
+            canonical_pin_electrical_type_name(&schematic_pin_type),
+            canonical_name
+        );
+    }
+}
+
+#[test]
+fn erc_preserves_richer_library_electrical_roles() {
+    let cases = [
+        (
+            LibraryPinElectricalType::OpenCollector,
+            "open_collector",
+            true,
+            false,
+        ),
+        (
+            LibraryPinElectricalType::OpenEmitter,
+            "open_emitter",
+            true,
+            false,
+        ),
+        (LibraryPinElectricalType::TriState, "tri_state", true, false),
+        (LibraryPinElectricalType::PowerOut, "power_out", true, true),
+    ];
+
+    for (electrical_type, canonical_name, explicit_driver, conflicting_output) in cases {
+        let schematic_pin_type: PinElectricalType = electrical_type;
+        assert_eq!(
+            canonical_pin_electrical_type_name(&schematic_pin_type),
+            canonical_name
+        );
+        assert_eq!(is_explicit_driver(&schematic_pin_type), explicit_driver);
+        assert_eq!(
+            is_conflicting_output(&schematic_pin_type),
+            conflicting_output
+        );
+        assert!(!is_input(&schematic_pin_type));
+        assert!(!is_passive(&schematic_pin_type));
+        assert!(!is_power_input(&schematic_pin_type));
+        assert!(!is_no_connect(&schematic_pin_type));
+    }
+}
 
 #[test]
 fn passive_biased_input_net_becomes_info_not_hard_undriven_warning() {

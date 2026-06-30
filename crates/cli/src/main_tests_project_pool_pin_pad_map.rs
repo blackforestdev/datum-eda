@@ -22,6 +22,22 @@ fn query_pool_object_payload(root: &Path, kind: &str, object_id: Uuid) -> serde_
         .expect("pool object should parse")
 }
 
+fn set_part_default_pin_pad_map_raw(root: &Path, part_id: Uuid, map_id: Uuid) {
+    let path = root.join(format!("pool/parts/{part_id}.json"));
+    let mut part: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(&path).expect("part should read"))
+            .expect("part should parse");
+    part["default_pin_pad_map"] = serde_json::Value::String(map_id.to_string());
+    std::fs::write(
+        path,
+        format!(
+            "{}\n",
+            serde_json::to_string_pretty(&part).expect("part should serialize")
+        ),
+    )
+    .expect("part should write");
+}
+
 fn create_fixture(root: &Path, pin_names: &[&str], pad_names: &[&str]) -> PinnedMapFixture {
     let unit_id = Uuid::new_v4();
     run_project_command(&[
@@ -433,6 +449,46 @@ fn project_legacy_part_pad_map_requires_default_pin_pad_map() {
     .expect_err("legacy pad map command should require default PinPadMap");
     assert!(format!("{error:#}").contains("requires part default_pin_pad_map"));
     let part_payload = query_pool_object_payload(&root, "parts", fixture.part_id);
+    assert_eq!(part_payload["pad_map"].as_object().unwrap().len(), 0);
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_legacy_part_pad_map_requires_existing_default_pin_pad_map() {
+    let root = unique_project_root("datum-eda-cli-project-pool-part-pad-map-missing-default");
+    create_native_project(&root, Some("Pool Part Pad Map Missing Default".to_string()))
+        .expect("initial scaffold should succeed");
+    let fixture = create_fixture(&root, &["IN+"], &["1"]);
+    let missing_map_id = Uuid::new_v4();
+    set_part_default_pin_pad_map_raw(&root, fixture.part_id, missing_map_id);
+
+    let error = run_project_command(&[
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "set-pool-part-pad-map-entry",
+        root.to_str().unwrap(),
+        "--part",
+        &fixture.part_id.to_string(),
+        "--pad",
+        &fixture.pad_ids[0].to_string(),
+        "--gate",
+        &fixture.gate_id.to_string(),
+        "--pin",
+        &fixture.pin_ids[0].to_string(),
+    ])
+    .expect_err("legacy pad map command should require an existing default PinPadMap");
+    let error = format!("{error:#}");
+    assert!(
+        error.contains("default_pin_pad_map") || error.contains(&missing_map_id.to_string()),
+        "unexpected error: {error}"
+    );
+    let part_payload = query_pool_object_payload(&root, "parts", fixture.part_id);
+    assert_eq!(
+        part_payload["default_pin_pad_map"],
+        missing_map_id.to_string()
+    );
     assert_eq!(part_payload["pad_map"].as_object().unwrap().len(), 0);
     let _ = std::fs::remove_dir_all(&root);
 }

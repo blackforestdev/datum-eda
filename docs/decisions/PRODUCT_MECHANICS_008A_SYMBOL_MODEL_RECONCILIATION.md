@@ -32,7 +32,7 @@
 | Baseline | Datum | Status |
 |---|---|---|
 | 1 separation | `Part → Entity/Unit/Symbol` + `Package/Pad/Padstack` + first-class `PinPadMap` | ✅ **exceeds** — `Unit` (electrical interface) is separated from `Symbol` (drawing), more granular than Altium |
-| 2 electrical type | `pool::PinDirection` aliases `LibraryPinElectricalType` (10 values, ⊇ Altium's 8) | ✅ partial — library taxonomy exists; schematic still has its own ERC enum and a materialization mapping (see D1) |
+| 2 electrical type | `pool::PinDirection` aliases `LibraryPinElectricalType` (10 values, ⊇ Altium's 8); schematic `PinElectricalType` is now the same type alias | ✅ partial — library taxonomy is the schematic/ERC authority; persisted CheckRun evidence still needs explicit binding/taxonomy revision context (see D1) |
 | 4 number vs name | `Pin.name` (logical) + `Pad.name` (designator) linked by `PinPadMap` | ✅ architectural |
 | 5 multi-gate | `Entity.gates: HashMap<_, Gate>`, `Gate { unit, symbol }` | ✅ (shared-power = convention, see D6) |
 | 6 many-pads→one-pin | `PinPadMap { part, footprint?, mappings: pad → {gate, pin} }`; `Part.pad_map` is fallback/import compatibility only | ✅ partial — first-class authority exists and is gate-aware; full migration policy remains |
@@ -48,15 +48,15 @@ remaining work is narrow, targeted deltas — not a redesign.
 ## C. Deltas to close
 
 **D1 — Reconcile the two pin-type enums (table-stakes).**
-Two representations still exist: library-side `LibraryPinElectricalType`
-(`pool::PinDirection` is now a compatibility alias) and
-`schematic::PinElectricalType`, which ERC consumes. Current place-symbol
-materialization maps library pin types into schematic pins, so this is no
-longer a pure naming gap. The remaining target is **one canonical
-electrical-type taxonomy** with the library type as authority and schematic/ERC
-as consumers rather than parallel owners. *Acceptance:* a placed library pin's
-canonical electrical type is the value ERC checks, including persisted
-CheckRun evidence.
+The duplicate enum has been removed: `pool::PinDirection` is now a compatibility alias, `schematic::PinElectricalType` is now the pool-owned
+`LibraryPinElectricalType` alias, and ERC tests lock the richer library roles
+(`OpenCollector`, `OpenEmitter`, `TriState`, `NoConnect`) as the
+classification input. The remaining target is evidence depth, not enum
+ownership: persisted CheckRun findings should expose enough model revision,
+library binding revision, and taxonomy context to prove which library pin type
+was checked. *Acceptance:* a placed library pin's canonical electrical type is
+the value ERC checks, including persisted CheckRun evidence tied to the resolved
+binding.
 
 **D2 — Pin graphic style on the symbol (table-stakes; the converter needs it).**
 Compatibility summary: `SymbolPinAnchor` now carries `orientation` semantics via

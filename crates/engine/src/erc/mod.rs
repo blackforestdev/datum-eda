@@ -5,10 +5,12 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::connectivity;
-use crate::schematic::{CheckDomain, CheckWaiver, PinElectricalType, Schematic, WaiverTarget};
+use crate::schematic::{CheckDomain, CheckWaiver, Schematic, WaiverTarget};
 
 mod electrical;
-use electrical::{is_conflicting_output, is_explicit_driver, is_input, is_passive, is_power_input};
+use electrical::{
+    is_conflicting_output, is_explicit_driver, is_input, is_no_connect, is_passive, is_power_input,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ErcSeverity {
@@ -90,10 +92,7 @@ pub fn run_prechecks_with_config_and_waivers(
         let noconnect_marked_pins: Vec<_> = net
             .pins
             .iter()
-            .filter(|pin| {
-                noconnect_pins.contains(&pin.uuid)
-                    || matches!(pin.electrical_type, PinElectricalType::NoConnect)
-            })
+            .filter(|pin| noconnect_pins.contains(&pin.uuid) || is_no_connect(&pin.electrical_type))
             .collect();
 
         if output_pins.len() > 1 {

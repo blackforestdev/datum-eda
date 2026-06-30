@@ -555,6 +555,8 @@ mod main_tests_project_standards_silk_repairs;
 mod main_tests_project_standards_zone_fill_repairs;
 #[path = "main_tests_project_symbol.rs"]
 mod main_tests_project_symbol;
+#[path = "main_tests_project_symbol_binding.rs"]
+mod main_tests_project_symbol_binding;
 #[path = "main_tests_project_symbol_library_materialization.rs"]
 mod main_tests_project_symbol_library_materialization;
 #[path = "main_tests_project_symbol_resolution.rs"]

@@ -17,7 +17,10 @@ mod pin_pad_map;
 mod symbol;
 
 pub use footprint::Footprint;
-pub use library_graph::{LibraryGraph, LibraryGraphDiagnostic, LibraryModelBlob};
+pub use library_graph::{
+    LibraryGraph, LibraryGraphDiagnostic, LibraryGraphValidationReport,
+    LibraryGraphValidationSummary, LibraryGraphValidationTier, LibraryModelBlob,
+};
 pub use package::{Package, PackageBodyDimensions, PackageTerminal};
 pub use padstack::{
     Padstack, PadstackAntipad, PadstackAperture, PadstackLayerSpan, PadstackMaskPolicy,

@@ -145,6 +145,68 @@ fn library_graph_owns_pool_object_registration_policy() {
             .message
             .contains("already appeared at pool/symbols/700.json")
     );
+    assert_eq!(
+        diagnostics[0].tier(),
+        LibraryGraphValidationTier::Registration
+    );
+    assert!(
+        diagnostics[0]
+            .message
+            .contains("shadows the earlier registration")
+    );
+}
+
+#[test]
+fn library_graph_reports_engine_owned_validation_summary() {
+    let object_id = Uuid::from_u128(800);
+    let missing_unit_id = Uuid::from_u128(801);
+    let mut graph = LibraryGraph::default();
+
+    assert!(
+        graph
+            .insert_pool_object(
+                "symbols",
+                object_id,
+                "pool-a/symbols/800.json",
+                serde_json::json!({
+                    "uuid": object_id,
+                    "unit": missing_unit_id
+                }),
+            )
+            .is_empty()
+    );
+    graph.insert_pool_object(
+        "symbols",
+        object_id,
+        "pool-b/symbols/800.json",
+        serde_json::json!({
+            "uuid": object_id,
+            "unit": missing_unit_id
+        }),
+    );
+
+    let report = graph.validation_report();
+    let codes = report
+        .diagnostics
+        .iter()
+        .map(|diagnostic| diagnostic.code)
+        .collect::<std::collections::BTreeSet<_>>();
+
+    assert!(!report.valid);
+    assert_eq!(report.summary.diagnostics, 2);
+    assert_eq!(report.summary.errors, 2);
+    assert_eq!(report.summary.by_tier.get("registration").copied(), Some(1));
+    assert_eq!(report.summary.by_tier.get("dependency").copied(), Some(1));
+    assert_eq!(
+        report.summary.by_code.get("duplicate_uuid").copied(),
+        Some(1)
+    );
+    assert_eq!(
+        report.summary.by_code.get("dangling_reference").copied(),
+        Some(1)
+    );
+    assert!(codes.contains("duplicate_uuid"));
+    assert!(codes.contains("dangling_reference"));
 }
 
 #[test]

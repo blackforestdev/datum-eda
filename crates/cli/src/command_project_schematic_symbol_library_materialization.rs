@@ -160,12 +160,16 @@ pub(crate) fn resolve_pool_symbol_component_binding(
         };
         return Ok(PoolSymbolBindingResolution {
             binding: None,
-            status: "ambiguous_entity_gate",
+            status: if matches.is_empty() {
+                "unresolved_entity_gate"
+            } else {
+                "ambiguous_entity_gate"
+            },
             diagnostics,
         });
     };
     let entity_revision = object_revision(&model, *entity_id, "pool entity")?;
-    let part = unique_part_for_entity(&model, *entity_id)?;
+    let part = unique_part_for_entity_gate(&model, *entity_id, *gate_id)?;
     let (part, part_diagnostics, status) = match part {
         UniquePartResolution::Unique(part) => (
             Some(part),
@@ -182,7 +186,7 @@ pub(crate) fn resolve_pool_symbol_component_binding(
         UniquePartResolution::Ambiguous(part_ids) => (
             None,
             vec![format!(
-                "pool entity {entity_id} has multiple pool parts and cannot assign a unique part: {}",
+                "pool entity {entity_id} has multiple compatible pool parts and cannot assign a unique part: {}",
                 part_ids
                     .iter()
                     .map(Uuid::to_string)
@@ -190,6 +194,18 @@ pub(crate) fn resolve_pool_symbol_component_binding(
                     .join(", ")
             )],
             "ambiguous_part",
+        ),
+        UniquePartResolution::Incompatible(part_ids) => (
+            None,
+            vec![format!(
+                "pool entity {entity_id} has pool parts, but none are compatible with gate {gate_id}: {}",
+                part_ids
+                    .iter()
+                    .map(Uuid::to_string)
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            )],
+            "incompatible_part",
         ),
     };
     Ok(PoolSymbolBindingResolution {
@@ -234,13 +250,16 @@ enum UniquePartResolution {
     None,
     Unique(PoolSymbolPartBinding),
     Ambiguous(Vec<Uuid>),
+    Incompatible(Vec<Uuid>),
 }
 
-fn unique_part_for_entity(
+fn unique_part_for_entity_gate(
     model: &eda_engine::substrate::DesignModel,
     entity_id: Uuid,
+    gate_id: Uuid,
 ) -> Result<UniquePartResolution> {
-    let mut matches = Vec::new();
+    let mut entity_matches = Vec::new();
+    let mut compatible_matches = Vec::new();
     for object in model
         .objects
         .values()
@@ -253,18 +272,66 @@ fn unique_part_for_entity(
             .and_then(|raw| Uuid::parse_str(raw).ok())
             == Some(entity_id)
         {
-            matches.push(object.object_id);
+            entity_matches.push(object.object_id);
+            if part_is_compatible_with_gate(model, &part, gate_id)? {
+                compatible_matches.push(object.object_id);
+            }
         }
     }
-    matches.sort();
-    Ok(match matches.as_slice() {
-        [] => UniquePartResolution::None,
+    entity_matches.sort();
+    compatible_matches.sort();
+    Ok(match compatible_matches.as_slice() {
+        [] if entity_matches.is_empty() => UniquePartResolution::None,
+        [] => UniquePartResolution::Incompatible(entity_matches),
         [part_id] => UniquePartResolution::Unique(PoolSymbolPartBinding {
             part_id: *part_id,
             part_revision: object_revision(model, *part_id, "pool part")?,
         }),
-        _ => UniquePartResolution::Ambiguous(matches),
+        _ => UniquePartResolution::Ambiguous(compatible_matches),
     })
+}
+
+fn part_is_compatible_with_gate(
+    model: &eda_engine::substrate::DesignModel,
+    part: &serde_json::Value,
+    gate_id: Uuid,
+) -> Result<bool> {
+    if let Some(compatible) = explicit_part_gate_mapping_compatibility(part.get("pad_map"), gate_id)
+    {
+        return Ok(compatible);
+    }
+    let Some(default_pin_pad_map_id) = part
+        .get("default_pin_pad_map")
+        .and_then(serde_json::Value::as_str)
+        .and_then(|raw| Uuid::parse_str(raw).ok())
+    else {
+        return Ok(true);
+    };
+    let pin_pad_map = materialized_pool_object(model, default_pin_pad_map_id, "pin_pad_maps")?;
+    Ok(explicit_part_gate_mapping_compatibility(
+        pin_pad_map.get("mappings"),
+        gate_id,
+    )
+    .unwrap_or(true))
+}
+
+fn explicit_part_gate_mapping_compatibility(
+    mappings: Option<&serde_json::Value>,
+    gate_id: Uuid,
+) -> Option<bool> {
+    let Some(mappings) = mappings.and_then(serde_json::Value::as_object) else {
+        return None;
+    };
+    if mappings.is_empty() {
+        return None;
+    };
+    Some(mappings.values().all(|entry| {
+        entry
+            .get("gate")
+            .and_then(serde_json::Value::as_str)
+            .and_then(|raw| Uuid::parse_str(raw).ok())
+            == Some(gate_id)
+    }))
 }
 
 fn object_revision(

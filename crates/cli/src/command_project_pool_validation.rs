@@ -33,7 +33,7 @@ pub(crate) fn validate_native_project_pools(
         }
         read_pool_model_blobs(root, &pool_root, &mut graph, issues)?;
     }
-    for diagnostic in graph.dependency_diagnostics() {
+    for diagnostic in graph.validation_report().diagnostics {
         push_issue(
             issues,
             diagnostic.severity,
@@ -258,16 +258,7 @@ fn validate_pool_object(
             format!("pool {kind} filename {filename} does not match payload UUID {object_id}"),
         );
     }
-    for diagnostic in graph.insert_pool_object(kind, object_id, subject.to_string(), value.clone())
-    {
-        push_issue(
-            issues,
-            diagnostic.severity,
-            diagnostic.code,
-            diagnostic.subject,
-            diagnostic.message,
-        );
-    }
+    graph.insert_pool_object(kind, object_id, subject.to_string(), value.clone());
 }
 
 fn parse_payload_uuid(

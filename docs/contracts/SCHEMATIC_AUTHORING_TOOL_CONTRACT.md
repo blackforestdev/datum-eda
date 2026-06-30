@@ -64,11 +64,13 @@ journaled native-project operations and resolver replay; canonical MCP
 `datum.schematic.*` aliases bridge to the matching CLI commands. The
 remaining product gap is not "no schematic substrate"; it is completion and
 normalization of the contract shape: heterogeneous delete/set-field collapse,
-part-assignment binding completion, revision-keyed ERC/binding semantics, and
+binding evidence breadth, revision-keyed ERC/binding semantics, and
 proposal boundaries for higher-level cross-domain edits. Pool-backed
 `place-symbol` now mints an authored symbol-first `ComponentInstance` when the
-pool symbol resolves to a unique entity/gate/part; compatibility `lib_id`
-placement and board-package binding remain partial.
+pool symbol resolves to a unique entity/gate/compatible part. It reports
+explicit status for compatibility `lib_id`s, unresolved/ambiguous entity gates,
+bound-without-part, ambiguous compatible parts, incompatible parts, and
+bound-with-part; board-package binding remains partial.
 
 Confirmed IR facts the matrix relies on:
 
@@ -176,8 +178,9 @@ restated.
   `TransactionRecord`, undo removes it, `model_revision` changes then
   reverts.
 - **(8) Not yet supported:** Compatibility/non-pool symbols do not mint
-  ComponentInstances, part-assignment binding is not yet automatic, and board
-  package refs attach only after the physical package exists.
+  ComponentInstances, ambiguous/unresolved library bindings remain explicit
+  non-ComponentInstance placements, and board package refs attach only after
+  the physical package exists.
 
 ### 2. transform-symbol (move / rotate / mirror unified)
 
@@ -593,9 +596,10 @@ a `ComponentInstance` minted at place-symbol and bound at part assignment.
   `model_revision` reporting.
 - **ComponentInstance mint/bind from schematic placement.** Pool-backed
   `place-symbol` now stores part/entity/gate UUIDs and mints an authored
-  symbol-first `ComponentInstance` with a `part_ref`. Compatibility `lib_id`s,
-  ambiguous library matches, automatic part-assignment binding, and later
-  board-package attachment remain partial.
+  symbol-first `ComponentInstance` with a `part_ref` when the resolved
+  entity/gate has one compatible part. Compatibility `lib_id`s, unresolved or
+  ambiguous entity-gate matches, ambiguous compatible parts, incompatible part
+  mappings, and later board-package attachment remain explicit partial states.
 - **Hierarchy authoring.** create-sheet / sheet-instance / sheet-pin have
   no authoring op (only `ProjectNew` scaffold + read queries;
   `sheet_instances` is in the IR). Deferred to a later slice; net-rewiring
