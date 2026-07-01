@@ -41,26 +41,53 @@ Surfaces currently locked: `mcp_runtime_methods`, `cli_project_commands`,
 
 Every specification that steers development is classified in
 `specs/spec_governance_manifest.json` and enforced by
-`scripts/check_spec_governance.py` (wired into `scripts/run_drift_gates.sh`): no
-spec, contract, or decision record may exist unclassified, `governed` specs must
-be tracked here or by a real gate, and known orphans must carry a visible
-remediation note. This is the machine-checked backstop for the CLAUDE.md
+`scripts/check_spec_governance.py` (wired into `scripts/run_drift_gates.sh`).
+The gate imposes two obligations: (1) **coverage** — no spec, contract, or
+decision record may exist unclassified; (2) **enforcement honesty** — every
+non-historical entry must carry an `enforcement` block whose `enforced_by`
+references (gates / proof-gates / spec-parity inventories / tests) the gate
+**verifies exist**, and/or an explicit `gap` naming what is NOT enforced. A spec
+cannot claim enforcement it lacks, and cannot sit un-enforced without the gap
+being visible. This is the machine-checked backstop for the CLAUDE.md
 "Specification Governance (controlling)" rule.
 
-The `governed` compliance/library specs newly woven in (their manifest
-`progress_anchor` is the path string below):
+Verified enforcement of every previously-untracked spec (the manifest holds the
+full per-reference detail; `progress_anchor` is the path/name below):
 
-| Spec | Status | Enforcement |
-|------|--------|-------------|
-| `specs/STANDARDS_COMPLIANCE_SPEC.md` | [~] Disposition table + registry specced; enforced standards checks are process-aperture + zone-fill DRC only. §4 dispositions are not yet gate-reconciled with code. | governed via `check_spec_governance`; deeper disposition↔code reconciliation gate pending. |
-| `docs/IPC_FOOTPRINT_SYSTEM.md` | [~] Footprint system + IPC-7351B generator architecture specced. Generator, structured `IpcFootprintBasis`, density/toe-heel-side, and governed mask/paste-in-export are not built; padstack mask/paste policy is modeled but unconsumed by export. | governed via `check_spec_governance`. |
-| `docs/decisions/PRODUCT_MECHANICS_010_INDUSTRY_STANDARDS_COMPLIANCE.md` | [~] Standards-compliance mechanism ratified. IPC-7351B basis to be consolidated here from `OPEN_QUESTION_RESOLUTIONS`. | governed via `check_spec_governance`. |
-| `docs/contracts/RULES_CHECKS_TOOL_CONTRACT.md` | [~] Rules/checks tool contract; ERC/DRC surface partially implemented. | governed via `check_spec_governance`. |
-| `docs/SYMBOL_LIBRARY_IMPORT_SPEC.md` | [~] Per-user KiCad/Horizon symbol import (path B); skeleton import only today. | governed via `check_spec_governance`. |
+| Spec | Verified enforcement | Honest gap |
+|------|----------------------|------------|
+| `specs/STANDARDS_COMPLIANCE_SPEC.md` | `PG-STANDARDS-REPAIR-PROPOSALS` + `standards_check_surface` parity | §4 disposition table ungated; named IPC/IEEE numbers not mechanically substantiated |
+| `docs/IPC_FOOTPRINT_SYSTEM.md` | pool/import footprint tests | IPC-7351B generator + structured basis + governed mask/paste-in-export unbuilt/ungated |
+| `docs/decisions/PRODUCT_MECHANICS_010_INDUSTRY_STANDARDS_COMPLIANCE.md` | `PG-STANDARDS-REPAIR-PROPOSALS` | IPC-7351B structured-basis generator doctrine-only |
+| `docs/contracts/RULES_CHECKS_TOOL_CONTRACT.md` | `PG-CHECKRUN-GENERATED-EVIDENCE` + `standards_check_surface` parity | four-tool set + rules-shard migration + revision-keyed ERC ungated |
+| `docs/SYMBOL_LIBRARY_IMPORT_SPEC.md` | `check_library_foundation_contract` (pool substrate) | no spec-specific normalization test; skeleton import only |
+| `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md` | `check_mcp_public_taxonomy` + `check_daemon_write_parity` + `PG-ZONEFILL-SUBSTRATE` | 13-tool matrix + commit() write-collapse + align_distribute ungated |
+| `docs/contracts/MANUFACTURING_OUTPUT_TOOL_CONTRACT.md` | `check_schematic_private_writers` + `PG-OUTPUT-JOB-RUN-REPLAY` | three-surface lean thesis + T0 unification + panelization ungated |
+| `docs/contracts/AI_CLI_MCP_TOOL_SURFACE.md` | `check_mcp_public_taxonomy` + `check_daemon_write_parity` + `mcp_runtime_methods` parity | DatumToolSession + generic commit() coverage + unified Proposal not-yet |
+| `docs/contracts/UI_LAYOUT_SYSTEM_CONTRACT.md` | scale/layout unit tests + checked-in goldens | **no drift gate** for layout invariants / visual-regression matrix |
+| `specs/ERC_SPEC.md` | engine + CLI ERC tests | no drift gate; target-vs-shipped `PinElectricalType` divergence not machine-reconciled |
+| `specs/SCHEMATIC_CONNECTIVITY_SPEC.md` | engine + CLI connectivity tests | no connectivity-owned drift gate |
+| `specs/IMPORT_SPEC.md` | `check_import_query_determinism` (CI) + `PG-IDENTITY-SUBSTRATE` | feature matrices / round-trip ungated (import frozen) |
 
-Remaining orphans (tool contracts, ERC/connectivity/import specs, guidance) are
-classified `pending` in the manifest with remediation notes; the `000..016`
-decision series is classified `doctrine`. See the manifest for the full ledger.
+Decision records `000..016` are `doctrine` — most are **enforced** by named
+proof-gates/substrate gates (see the manifest's per-record `enforced_by`); the
+genuinely thin ones carry an explicit gap.
+
+Enumerated enforcement gaps (the honest worklist — these steer development but
+no gate reconciles them with code):
+1. **UI layout invariants** (contract + decision 014): no shell-grid/no-overlap
+   or 1.0–2.0 visual-regression gate — the highest-priority gap.
+2. **IPC-7351B footprint generator / structured basis** (010, IPC doc): unbuilt.
+3. **STANDARDS_COMPLIANCE §4 disposition table**: ungated prose.
+4. **ERC / connectivity specs**: proven by cargo tests only, no drift gate, and
+   ERC has an un-reconciled target-vs-shipped taxonomy divergence.
+5. **Manual-editor GUI workflow (002)** and **workspace UX (007)**: substrate
+   gated, UX not.
+6. **`OPEN_QUESTION_RESOLUTIONS`**: unenforced ratifications log; consolidate
+   into numbered decision records.
+
+Closing these gaps (a dedicated gate/test per item) is the remaining governance
+work; until then each is visible and gate-required to stay declared, not silent.
 
 ---
 
