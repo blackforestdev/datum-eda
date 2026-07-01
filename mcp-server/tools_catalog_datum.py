@@ -91,6 +91,25 @@ DATUM_PLACE_COMPONENT_SCHEMA = {
     },
 }
 
+DATUM_GENERATE_BOARD_COMPONENTS_SCHEMA = {
+    "description": "Generate initial native-project board components from schematic symbols with bound parts/packages; previews by default and journals only when apply is true.",
+    "inputSchema": {
+        "type": "object",
+        "properties": {
+            "path": {"type": "string"},
+            "apply": {"type": ["boolean", "null"]},
+            "as_proposal": {"type": ["boolean", "null"]},
+            "proposal": {"type": ["string", "null"]},
+            "rationale": {"type": ["string", "null"]},
+            "origin_x_nm": {"type": ["integer", "null"]},
+            "origin_y_nm": {"type": ["integer", "null"]},
+            "pitch_nm": {"type": ["integer", "null"]},
+            "layer": {"type": ["integer", "null"]},
+        },
+        "required": ["path"],
+    },
+}
+
 DATUM_MOVE_COMPONENT_SCHEMA = {
     "description": "Move one native-project board component through the journaled board-package position path.",
     "inputSchema": {
@@ -440,6 +459,7 @@ DATUM_TOOL_SPECS = [
     {"name": "datum.query.manufacturing_plans", **datum_alias("get_manufacturing_plans", OUTPUT_JOB_TOOL_SCHEMAS["get_manufacturing_plans"])},
     {"name": "datum.query.output_jobs", **datum_alias("get_output_jobs", OUTPUT_JOB_TOOL_SCHEMAS["get_output_jobs"])},
     {"name": "datum.pcb.place_component", **datum_alias("place_board_component", DATUM_PLACE_COMPONENT_SCHEMA)},
+    {"name": "datum.pcb.generate_board_components", **datum_alias("generate_board_components", DATUM_GENERATE_BOARD_COMPONENTS_SCHEMA), "x_dispatch_args": ["path", "apply", "as_proposal", "proposal", "rationale", "origin_x_nm", "origin_y_nm", "pitch_nm", "layer"]},
     {"name": "datum.pcb.move_component", **datum_alias("move_board_component", DATUM_MOVE_COMPONENT_SCHEMA)},
     {"name": "datum.pcb.rotate_component", **datum_alias("rotate_board_component", DATUM_ROTATE_COMPONENT_SCHEMA)},
     {"name": "datum.pcb.flip_component", **datum_alias("flip_board_component", DATUM_FLIP_COMPONENT_SCHEMA)},

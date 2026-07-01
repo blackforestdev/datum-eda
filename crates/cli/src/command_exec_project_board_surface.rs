@@ -203,22 +203,9 @@ pub(super) fn execute_project_board_surface_command(
             y_nm,
             layer,
         ),
-        ProjectCommands::GenerateBoardComponents(ProjectGenerateBoardComponentsArgs {
-            path,
-            apply,
-            origin_x_nm,
-            origin_y_nm,
-            pitch_nm,
-            layer,
-        }) => command_exec_project_board_handoff::execute_generate_board_components(
-            format,
-            path,
-            apply,
-            origin_x_nm,
-            origin_y_nm,
-            pitch_nm,
-            layer,
-        ),
+        ProjectCommands::GenerateBoardComponents(args) => {
+            command_exec_project_board_handoff::execute_generate_board_components(format, args)
+        }
         ProjectCommands::PlaceBoardNetClass(ProjectPlaceBoardNetClassArgs {
             path,
             name,

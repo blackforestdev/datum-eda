@@ -3,6 +3,8 @@ use crate::ir::geometry::Point;
 
 #[path = "mod_tests_library_graph.rs"]
 mod library_graph;
+#[path = "mod_tests_library_graph_default_pin_pad_map.rs"]
+mod library_graph_default_pin_pad_map;
 
 fn sample_pin() -> (Uuid, Pin) {
     let id = Uuid::nil();

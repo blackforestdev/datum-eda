@@ -331,6 +331,17 @@ class EngineDaemonClient:
     def edit_schematic_text(self, path: str, text: str, value: str | None = None, x_nm: int | None = None, y_nm: int | None = None, rotation_deg: int | None = None) -> JsonRpcResponse: args = ["project", "edit-text", path, "--text", text]; _append_optional(args, "value", value); _append_optional(args, "x-nm", x_nm); _append_optional(args, "y-nm", y_nm); _append_optional(args, "rotation-deg", rotation_deg); return self._run_cli_json(self.build_request("edit_schematic_text", {"path": path, "text": text, "value": value, "x_nm": x_nm, "y_nm": y_nm, "rotation_deg": rotation_deg}), args)
     def delete_schematic_text(self, path: str, text: str) -> JsonRpcResponse: return self._run_cli_json(self.build_request("delete_schematic_text", {"path": path, "text": text}), ["project", "delete-text", path, "--text", text])
     def place_board_component(self, path: str, part: str, package: str, reference: str, value: str, x_nm: int, y_nm: int, layer: int) -> JsonRpcResponse: return self._run_cli_json(self.build_request("place_board_component", {"path": path, "part": part, "package": package, "reference": reference, "value": value, "x_nm": x_nm, "y_nm": y_nm, "layer": layer}), ["project", "place-board-component", path, "--part", part, "--package", package, "--reference", reference, "--value", value, "--x-nm", str(x_nm), "--y-nm", str(y_nm), "--layer", str(layer)])
+    def generate_board_components(self, path: str, apply: bool | None = None, as_proposal: bool | None = None, proposal: str | None = None, rationale: str | None = None, origin_x_nm: int | None = None, origin_y_nm: int | None = None, pitch_nm: int | None = None, layer: int | None = None) -> JsonRpcResponse:
+        args = ["project", "generate-board-components", path]
+        args.extend(["--apply"] if apply else [])
+        args.extend(["--as-proposal"] if as_proposal else [])
+        _append_optional(args, "proposal", proposal)
+        _append_optional(args, "rationale", rationale)
+        _append_optional(args, "origin-x-nm", origin_x_nm)
+        _append_optional(args, "origin-y-nm", origin_y_nm)
+        _append_optional(args, "pitch-nm", pitch_nm)
+        _append_optional(args, "layer", layer)
+        return self._run_cli_json(self.build_request("generate_board_components", {"path": path, "apply": apply, "as_proposal": as_proposal, "proposal": proposal, "rationale": rationale, "origin_x_nm": origin_x_nm, "origin_y_nm": origin_y_nm, "pitch_nm": pitch_nm, "layer": layer}), args)
     def move_board_component(self, path: str, component: str, x_nm: int, y_nm: int) -> JsonRpcResponse: return self._run_cli_json(self.build_request("move_board_component", {"path": path, "component": component, "x_nm": x_nm, "y_nm": y_nm}), ["project", "move-board-component", path, "--component", component, "--x-nm", str(x_nm), "--y-nm", str(y_nm)])
     def rotate_board_component(self, path: str, component: str, rotation_deg: int) -> JsonRpcResponse: return self._run_cli_json(self.build_request("rotate_board_component", {"path": path, "component": component, "rotation_deg": rotation_deg}), ["project", "rotate-board-component", path, "--component", component, "--rotation-deg", str(rotation_deg)])
     def flip_board_component(self, path: str, component: str, layer: int) -> JsonRpcResponse: return self._run_cli_json(self.build_request("flip_board_component", {"path": path, "component": component, "layer": layer}), ["project", "flip-board-component", path, "--component", component, "--layer", str(layer)])

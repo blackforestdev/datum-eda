@@ -165,7 +165,7 @@ impl LibraryGraph {
             if let Some(part_id) =
                 self.validate_uuid_ref(map, "part", &part_ids, &subject, "pin_pad_map", diagnostics)
             {
-                self.validate_pin_pad_map_mappings(map, part_id, &subject, diagnostics);
+                self.validate_pin_pad_map_mappings(*map_id, map, part_id, &subject, diagnostics);
             }
         }
     }
@@ -310,6 +310,7 @@ impl LibraryGraph {
 
     fn validate_pin_pad_map_mappings(
         &self,
+        map_id: Uuid,
         map: &serde_json::Value,
         part_id: Uuid,
         subject: &str,
@@ -331,6 +332,20 @@ impl LibraryGraph {
             "pin_pad_map",
             diagnostics,
         );
+        let default_footprint_id = if footprint_id.is_none()
+            && part
+                .get("default_pin_pad_map")
+                .and_then(serde_json::Value::as_str)
+                .and_then(|raw| Uuid::parse_str(raw).ok())
+                == Some(map_id)
+        {
+            part.get("default_footprint")
+                .and_then(serde_json::Value::as_str)
+                .and_then(|raw| Uuid::parse_str(raw).ok())
+        } else {
+            None
+        };
+        let effective_footprint_id = footprint_id.or(default_footprint_id);
         let entity_id =
             self.parse_uuid_field(part, "entity", subject, "pin_pad_map part", diagnostics);
         for (mapping_key, entry) in mappings {
@@ -355,7 +370,7 @@ impl LibraryGraph {
             } else {
                 continue;
             }
-            if let Some(footprint_id) = footprint_id {
+            if let Some(footprint_id) = effective_footprint_id {
                 self.validate_footprint_pad_exists(
                     footprint_id,
                     pad_id,

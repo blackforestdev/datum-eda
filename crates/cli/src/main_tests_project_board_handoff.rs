@@ -282,3 +282,138 @@ fn project_generate_board_components_reports_and_applies_initial_packages() {
 
     let _ = std::fs::remove_dir_all(&root);
 }
+
+#[test]
+fn project_generate_board_components_can_create_and_apply_proposal() {
+    let root = unique_project_root("datum-eda-cli-project-board-handoff-proposal");
+    create_native_project(&root, Some("Board Handoff Proposal".to_string()))
+        .expect("initial scaffold should succeed");
+    let sheet_uuid = seed_native_sheet(&root);
+    add_local_pool_ref(&root);
+    let part_uuid = Uuid::new_v4();
+    let package_uuid = Uuid::new_v4();
+    let footprint_uuid = Uuid::new_v4();
+    write_pool_part_with_default_footprint(&root, part_uuid, package_uuid, footprint_uuid);
+    let symbol_uuid = place_symbol_with_part(&root, sheet_uuid, part_uuid);
+    let proposal_id = Uuid::new_v4();
+
+    let proposal_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "generate-board-components",
+            root.to_str().unwrap(),
+            "--as-proposal",
+            "--proposal",
+            &proposal_id.to_string(),
+            "--rationale",
+            "Review schematic handoff package generation",
+            "--origin-x-nm",
+            "4000",
+            "--origin-y-nm",
+            "5000",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("generate-board-components proposal should succeed");
+    let proposal_report: serde_json::Value =
+        serde_json::from_str(&proposal_output).expect("proposal output should parse");
+    assert_eq!(proposal_report["applied"], false);
+    assert_eq!(proposal_report["proposed"], true);
+    assert_eq!(proposal_report["proposal_id"], proposal_id.to_string());
+    assert_eq!(proposal_report["generated_count"], 1);
+    assert_eq!(
+        proposal_report["generated_packages"][0]["symbol_uuid"],
+        symbol_uuid
+    );
+    assert_eq!(
+        proposal_report["proposal"]["batch"]["operations"][0]["kind"],
+        "create_board_package"
+    );
+    assert_eq!(
+        proposal_report["proposal"]["batch"]["operations"][0]["package_id"],
+        proposal_report["generated_packages"][0]["package_uuid"]
+    );
+
+    let components_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "board-components",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("board-components query should succeed");
+    let components: serde_json::Value =
+        serde_json::from_str(&components_output).expect("components output should parse");
+    assert_eq!(
+        components.as_array().unwrap().len(),
+        0,
+        "proposal creation must not mutate board packages"
+    );
+
+    let preview_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "proposal",
+            "preview",
+            root.to_str().unwrap(),
+            "--proposal",
+            &proposal_id.to_string(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("proposal preview should succeed");
+    let preview: serde_json::Value =
+        serde_json::from_str(&preview_output).expect("preview output should parse");
+    assert_eq!(preview["proposal_id"], proposal_id.to_string());
+    assert_eq!(preview["validation"]["can_apply"], false);
+    assert_eq!(preview["validation"]["acceptance_required"], true);
+
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "proposal",
+            "accept-apply",
+            root.to_str().unwrap(),
+            "--proposal",
+            &proposal_id.to_string(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("proposal accept-apply should succeed");
+
+    let components_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "query",
+            root.to_str().unwrap(),
+            "board-components",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("board-components query should succeed");
+    let components: serde_json::Value =
+        serde_json::from_str(&components_output).expect("components output should parse");
+    assert_eq!(components.as_array().unwrap().len(), 1);
+    assert_eq!(components[0]["reference"], "R1");
+    assert_eq!(components[0]["part"], part_uuid.to_string());
+    assert_eq!(components[0]["package"], package_uuid.to_string());
+    assert_eq!(components[0]["position"]["x"], 4000);
+    assert_eq!(components[0]["position"]["y"], 5000);
+
+    let _ = std::fs::remove_dir_all(&root);
+}

@@ -259,6 +259,52 @@ class TestDaemonClientRelationshipRequests(unittest.TestCase):
         self.assertEqual(response.result["contract"], "relationships_query_v1")
 
     @patch("server_runtime.subprocess.run")
+    def test_generates_board_components_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(
+            args=[],
+            returncode=0,
+            stdout='{"contract":"native_project_board_handoff_v1","applied":false,"proposed":true,"proposal_id":"proposal-1","generated_count":1}',
+            stderr="",
+        )
+        response = EngineDaemonClient().generate_board_components(
+            "/tmp/native-project",
+            as_proposal=True,
+            proposal="proposal-1",
+            rationale="review handoff",
+            origin_x_nm=1000,
+            origin_y_nm=2000,
+            pitch_nm=3000,
+            layer=2,
+        )
+        run_mock.assert_called_once_with(
+            [
+                "datum-eda",
+                "--format",
+                "json",
+                "project",
+                "generate-board-components",
+                "/tmp/native-project",
+                "--as-proposal",
+                "--proposal",
+                "proposal-1",
+                "--rationale",
+                "review handoff",
+                "--origin-x-nm",
+                "1000",
+                "--origin-y-nm",
+                "2000",
+                "--pitch-nm",
+                "3000",
+                "--layer",
+                "2",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["contract"], "native_project_board_handoff_v1")
+
+    @patch("server_runtime.subprocess.run")
     def test_lists_variants_via_cli(self, run_mock) -> None:
         run_mock.return_value = subprocess.CompletedProcess(
             args=[],

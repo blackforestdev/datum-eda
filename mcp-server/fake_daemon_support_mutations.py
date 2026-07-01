@@ -641,6 +641,44 @@ class FakeDaemonClientMutationsMixin:
         self.calls.append(("place_board_component", path, part, package, reference, value, x_nm, y_nm, layer))
         return self._component_modified_response(1149, "comp-placed", "place_board_component comp-placed")
 
+    def generate_board_components(
+        self,
+        path: str,
+        apply: bool | None = None,
+        as_proposal: bool | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+        origin_x_nm: int | None = None,
+        origin_y_nm: int | None = None,
+        pitch_nm: int | None = None,
+        layer: int | None = None,
+    ) -> JsonRpcResponse:
+        self.calls.append((
+            "generate_board_components",
+            path,
+            apply,
+            as_proposal,
+            proposal,
+            rationale,
+            origin_x_nm,
+            origin_y_nm,
+            pitch_nm,
+            layer,
+        ))
+        return JsonRpcResponse(
+            "2.0",
+            1150,
+            {
+                "contract": "native_project_board_handoff_v1",
+                "applied": bool(apply),
+                "proposed": bool(as_proposal),
+                "proposal_id": proposal,
+                "generated_count": 1,
+                "generated_packages": [{"package_uuid": "pkg-generated"}],
+            },
+            None,
+        )
+
     def rotate_board_component(self, path: str, component: str, rotation_deg: int) -> JsonRpcResponse:
         self.calls.append(("rotate_board_component", path, component, rotation_deg))
         return self._component_modified_response(1191, component, f"rotate_board_component {component}")

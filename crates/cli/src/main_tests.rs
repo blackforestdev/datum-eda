@@ -417,6 +417,8 @@ mod main_tests_project_proposals;
 mod main_tests_project_query;
 #[path = "main_tests_project_query_canonical.rs"]
 mod main_tests_project_query_canonical;
+#[path = "main_tests_project_relationship_diagnostics.rs"]
+mod main_tests_project_relationship_diagnostics;
 #[path = "main_tests_project_relationships.rs"]
 mod main_tests_project_relationships;
 #[path = "main_tests_project_repo_validation.rs"]

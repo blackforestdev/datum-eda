@@ -7,14 +7,16 @@ use eda_engine::ir::geometry::Point;
 use eda_engine::pool::{Footprint, Part};
 use eda_engine::schematic::PlacedSymbol;
 use eda_engine::substrate::{
-    CommitProvenance, CommitSource, DesignModel, Operation, OperationBatch, ResolveDiagnostic,
-    SourceShardTaxon,
+    CommitProvenance, CommitSource, DesignModel, Operation, OperationBatch, Proposal,
+    ProposalCreateRequest, ProposalSource, ResolveDiagnostic, SourceShardTaxon,
+    create_draft_proposal_from_batch,
 };
 use serde::Serialize;
 use uuid::Uuid;
 
 use super::{
     board_package_materialization_payload_for_component, build_native_project_schematic,
+    command_project_operation_guards::guarded_operation_batch,
     load_native_project_with_resolved_board_and_model,
 };
 
@@ -22,6 +24,9 @@ use super::{
 pub(crate) struct NativeProjectBoardHandoffReport {
     pub(crate) contract: &'static str,
     pub(crate) applied: bool,
+    pub(crate) proposed: bool,
+    pub(crate) proposal_id: Option<Uuid>,
+    pub(crate) proposal: Option<Proposal>,
     pub(crate) generated_count: usize,
     pub(crate) skipped_count: usize,
     pub(crate) unresolved_count: usize,
@@ -64,10 +69,16 @@ pub(crate) struct NativeProjectBoardUnresolvedSymbol {
 pub(crate) fn generate_native_project_board_components(
     root: &Path,
     apply: bool,
+    as_proposal: bool,
+    proposal_id: Option<Uuid>,
+    rationale: Option<String>,
     origin: Point,
     pitch_nm: i64,
     layer: i32,
 ) -> Result<NativeProjectBoardHandoffReport> {
+    if apply && as_proposal {
+        anyhow::bail!("--apply and --as-proposal are mutually exclusive");
+    }
     let (project, mut model) = load_native_project_with_resolved_board_and_model(root)?;
     let schematic = build_native_project_schematic(&project)?;
     let existing_join_keys = existing_board_join_keys(&project.board.packages)?;
@@ -144,54 +155,44 @@ pub(crate) fn generate_native_project_board_components(
         });
     }
 
-    if apply && !generated.is_empty() {
-        let operations = generated
-            .iter()
-            .map(|entry| {
-                let component = PlacedPackage {
-                    uuid: entry.package_uuid,
-                    part: entry.part_uuid,
-                    package: entry.package_ref_uuid,
-                    reference: entry.reference.clone(),
-                    value: entry.value.clone(),
-                    position: Point {
-                        x: entry.x_nm,
-                        y: entry.y_nm,
-                    },
-                    rotation: 0,
-                    layer: entry.layer,
-                    locked: false,
-                };
-                let package = serde_json::to_value(&component)
-                    .expect("native board component serialization must succeed");
-                let materialized =
-                    board_package_materialization_payload_for_component(root, &component)?;
-                Ok(Operation::CreateBoardPackage {
-                    package_id: component.uuid,
-                    package,
-                    materialized,
-                })
-            })
-            .collect::<Result<Vec<_>>>()?;
-        let expected_model_revision = model.model_revision.clone();
-        model.commit_journaled(
+    let proposal = if (apply || as_proposal) && !generated.is_empty() {
+        let batch = generated_board_component_operation_batch(
             root,
-            OperationBatch {
-                batch_id: Uuid::new_v4(),
-                expected_model_revision: Some(expected_model_revision),
-                provenance: CommitProvenance {
-                    actor: "datum-eda-cli".to_string(),
-                    source: CommitSource::Cli,
-                    reason: "generate board components from schematic".to_string(),
-                },
-                operations,
-            },
+            &model,
+            &generated,
+            "generate board components from schematic",
         )?;
-    }
+        if apply {
+            model.commit_journaled(root, batch)?;
+            None
+        } else {
+            let batch = guarded_operation_batch(&model, batch)?;
+            Some(create_draft_proposal_from_batch(
+                &mut model,
+                root,
+                ProposalCreateRequest {
+                    proposal_id,
+                    batch,
+                    rationale: rationale.unwrap_or_else(|| {
+                        "Review generated board components from schematic".to_string()
+                    }),
+                    source: ProposalSource::Cli,
+                    checks_run: Vec::new(),
+                    finding_fingerprints: Vec::new(),
+                },
+            )?)
+        }
+    } else {
+        None
+    };
+    let created_proposal_id = proposal.as_ref().map(|proposal| proposal.proposal_id);
 
     Ok(NativeProjectBoardHandoffReport {
         contract: "native_project_board_handoff_v1",
         applied: apply,
+        proposed: created_proposal_id.is_some(),
+        proposal_id: created_proposal_id,
+        proposal,
         generated_count: generated.len(),
         skipped_count: skipped.len(),
         unresolved_count: unresolved.len(),
@@ -202,12 +203,62 @@ pub(crate) fn generate_native_project_board_components(
     })
 }
 
+fn generated_board_component_operation_batch(
+    root: &Path,
+    model: &DesignModel,
+    generated: &[NativeProjectBoardGeneratedPackage],
+    reason: &str,
+) -> Result<OperationBatch> {
+    let operations = generated
+        .iter()
+        .map(|entry| {
+            let component = PlacedPackage {
+                uuid: entry.package_uuid,
+                part: entry.part_uuid,
+                package: entry.package_ref_uuid,
+                reference: entry.reference.clone(),
+                value: entry.value.clone(),
+                position: Point {
+                    x: entry.x_nm,
+                    y: entry.y_nm,
+                },
+                rotation: 0,
+                layer: entry.layer,
+                locked: false,
+            };
+            let package = serde_json::to_value(&component)
+                .expect("native board component serialization must succeed");
+            let materialized =
+                board_package_materialization_payload_for_component(root, &component)?;
+            Ok(Operation::CreateBoardPackage {
+                package_id: component.uuid,
+                package,
+                materialized,
+            })
+        })
+        .collect::<Result<Vec<_>>>()?;
+    Ok(OperationBatch {
+        batch_id: Uuid::new_v4(),
+        expected_model_revision: Some(model.model_revision.clone()),
+        provenance: CommitProvenance {
+            actor: "datum-eda-cli".to_string(),
+            source: CommitSource::Cli,
+            reason: reason.to_string(),
+        },
+        operations,
+    })
+}
+
 pub(crate) fn render_native_project_board_handoff_text(
     report: &NativeProjectBoardHandoffReport,
 ) -> String {
     let mut lines = Vec::new();
     lines.push(format!("contract: {}", report.contract));
     lines.push(format!("applied: {}", report.applied));
+    lines.push(format!("proposed: {}", report.proposed));
+    if let Some(proposal_id) = report.proposal_id {
+        lines.push(format!("proposal: {proposal_id}"));
+    }
     lines.push(format!("generated: {}", report.generated_count));
     lines.push(format!("skipped: {}", report.skipped_count));
     lines.push(format!("unresolved: {}", report.unresolved_count));

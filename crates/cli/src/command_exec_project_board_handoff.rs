@@ -56,16 +56,25 @@ pub(super) fn execute_set_board_name(
 
 pub(super) fn execute_generate_board_components(
     format: &OutputFormat,
-    path: PathBuf,
-    apply: bool,
-    origin_x_nm: i64,
-    origin_y_nm: i64,
-    pitch_nm: i64,
-    layer: i32,
+    args: ProjectGenerateBoardComponentsArgs,
 ) -> Result<(String, i32)> {
+    let ProjectGenerateBoardComponentsArgs {
+        path,
+        apply,
+        as_proposal,
+        proposal,
+        rationale,
+        origin_x_nm,
+        origin_y_nm,
+        pitch_nm,
+        layer,
+    } = args;
     let report = generate_native_project_board_components(
         &path,
         apply,
+        as_proposal,
+        proposal,
+        rationale,
         eda_engine::ir::geometry::Point {
             x: origin_x_nm,
             y: origin_y_nm,
