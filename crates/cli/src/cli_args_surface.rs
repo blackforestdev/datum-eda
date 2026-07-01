@@ -116,14 +116,15 @@ pub(crate) use self::cli_args_proposals::{
     ProposalCreateManufacturingPlanArgs, ProposalCreateOutputJobArgs,
     ProposalCreatePanelProjectionArgs, ProposalCreatePoolEntityArgs,
     ProposalCreatePoolFootprintArgs, ProposalCreatePoolLibraryObjectArgs,
-    ProposalCreatePoolPackageArgs, ProposalCreatePoolPadstackArgs, ProposalCreatePoolSymbolArgs,
-    ProposalCreatePoolUnitArgs, ProposalDeleteManufacturingPlanArgs, ProposalDeleteOutputJobArgs,
-    ProposalDeletePanelProjectionArgs, ProposalDrawWireArgs, ProposalPlaceLabelArgs,
-    ProposalPlaceSymbolArgs, ProposalSetPoolFootprintCourtyardPolygonArgs,
+    ProposalCreatePoolPackageArgs, ProposalCreatePoolPadstackArgs, ProposalCreatePoolPinPadMapArgs,
+    ProposalCreatePoolSymbolArgs, ProposalCreatePoolUnitArgs, ProposalDeleteManufacturingPlanArgs,
+    ProposalDeleteOutputJobArgs, ProposalDeletePanelProjectionArgs, ProposalDrawWireArgs,
+    ProposalPlaceLabelArgs, ProposalPlaceSymbolArgs, ProposalSetPoolFootprintCourtyardPolygonArgs,
     ProposalSetPoolFootprintCourtyardRectArgs, ProposalSetPoolFootprintPadArgs,
     ProposalSetPoolPackageCourtyardPolygonArgs, ProposalSetPoolPackageCourtyardRectArgs,
-    ProposalSetPoolPackagePadArgs, ProposalUpdateManufacturingPlanArgs,
-    ProposalUpdateOutputJobArgs, ProposalUpdatePanelProjectionArgs,
+    ProposalSetPoolPackagePadArgs, ProposalSetPoolPinPadMapArgs,
+    ProposalUpdateManufacturingPlanArgs, ProposalUpdateOutputJobArgs,
+    ProposalUpdatePanelProjectionArgs,
 };
 
 #[derive(Clone, clap::ValueEnum)]

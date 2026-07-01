@@ -147,6 +147,30 @@ class TestDaemonClientProposalRequests(unittest.TestCase):
         self.assertEqual(response.result["action"], "propose_board_component_replacement")
 
     @patch("server_runtime.subprocess.run")
+    def test_creates_pool_pin_pad_map_proposal_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(args=[], returncode=0, stdout='{"contract":"proposal_create_v1","action":"create_pool_pin_pad_map_proposal"}', stderr="")
+        response = EngineDaemonClient().create_pool_pin_pad_map_proposal("/tmp/native-project", "map-uuid", "part-uuid", ["pin-uuid:pad-uuid"], "footprint-uuid", True, "pool", "proposal-pin-pad-map", "review pin pad map")
+        run_mock.assert_called_once_with(
+            ["datum-eda", "--format", "json", "proposal", "create-pool-pin-pad-map", "/tmp/native-project", "--map", "map-uuid", "--part", "part-uuid", "--footprint", "footprint-uuid", "--entry", "pin-uuid:pad-uuid", "--set-default", "--pool", "pool", "--proposal", "proposal-pin-pad-map", "--rationale", "review pin pad map"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "create_pool_pin_pad_map_proposal")
+
+    @patch("server_runtime.subprocess.run")
+    def test_sets_pool_pin_pad_map_proposal_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(args=[], returncode=0, stdout='{"contract":"proposal_create_v1","action":"set_pool_pin_pad_map_proposal"}', stderr="")
+        response = EngineDaemonClient().set_pool_pin_pad_map_proposal("/tmp/native-project", "map-uuid", "replace", ["pad-uuid:gate-uuid:pin-uuid"], "pool", "proposal-pin-pad-map-set", "review pin pad map update")
+        run_mock.assert_called_once_with(
+            ["datum-eda", "--format", "json", "proposal", "set-pool-pin-pad-map", "/tmp/native-project", "--map", "map-uuid", "--mode", "replace", "--entry", "pad-uuid:gate-uuid:pin-uuid", "--pool", "pool", "--proposal", "proposal-pin-pad-map-set", "--rationale", "review pin pad map update"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "set_pool_pin_pad_map_proposal")
+
+    @patch("server_runtime.subprocess.run")
     def test_lists_proposals_via_cli(self, run_mock) -> None:
         run_mock.return_value = subprocess.CompletedProcess(
             args=[],

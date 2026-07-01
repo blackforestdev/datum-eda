@@ -320,6 +320,8 @@ Current implementation:
   `datum.proposal.create_pool_padstack`,
   `datum.proposal.create_pool_package`,
   `datum.proposal.create_pool_footprint`,
+  `datum.proposal.create_pool_pin_pad_map`,
+  `datum.proposal.set_pool_pin_pad_map`,
   `datum.proposal.set_pool_footprint_pad`,
   `datum.proposal.set_pool_footprint_courtyard_rect`,
   `datum.proposal.set_pool_footprint_courtyard_polygon`,
@@ -779,6 +781,8 @@ Current implementation note: implemented in the current daemon/stdio host.
 `create_board_component_replacement_proposal`,
 `create_board_component_replacements_proposal`,
 `create_board_component_replacement_plan_proposal`,
+`create_pool_pin_pad_map_proposal`,
+`set_pool_pin_pad_map_proposal`,
 `get_proposals`,
 `show_proposal`,
 `preview_proposal`,
@@ -1986,6 +1990,26 @@ create-board-component-replacement-plan` and returns the `proposal_create_v1`
 contract with a `propose_board_component_replacement` action. It does not
 mutate source design state until the proposal is accepted/applied through the
 proposal gateway.
+
+#### `create_pool_pin_pad_map_proposal`
+
+Native library authoring proposal compatibility. Creates draft proposal
+metadata containing a revision-guarded OperationBatch for one first-class
+`PinPadMap` object, with optional same-batch `Part.default_pin_pad_map`
+binding. It maps to `datum-eda proposal create-pool-pin-pad-map` and returns
+the `proposal_create_v1` contract with a
+`create_pool_pin_pad_map_proposal` action. It does not mutate source design
+state until the proposal is accepted/applied through the proposal gateway.
+
+#### `set_pool_pin_pad_map_proposal`
+
+Native library authoring proposal compatibility. Creates draft proposal
+metadata containing a revision-guarded OperationBatch for updating one
+first-class `PinPadMap` mapping table in `merge` or `replace` mode. It maps to
+`datum-eda proposal set-pool-pin-pad-map` and returns the
+`proposal_create_v1` contract with a `set_pool_pin_pad_map_proposal` action.
+It does not mutate source design state until the proposal is accepted/applied
+through the proposal gateway.
 
 #### `show_proposal`
 

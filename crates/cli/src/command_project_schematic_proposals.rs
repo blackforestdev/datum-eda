@@ -8,7 +8,11 @@ use eda_engine::substrate::{
 use serde::Serialize;
 use uuid::Uuid;
 
-use super::command_project_schematic_symbol_library_materialization::materialize_pool_symbol_pins;
+use super::command_project_schematic_symbol_component_instance::component_instance_operation_for_pool_symbol;
+use super::command_project_schematic_symbol_library_materialization::{
+    materialize_pool_symbol_pins, resolve_pool_symbol_component_binding,
+};
+use super::command_project_schematic_symbol_reports::component_instance_uuid_for_pool_symbol;
 use super::*;
 
 #[derive(Debug, Clone, Serialize)]
@@ -61,6 +65,12 @@ pub(crate) struct NativeProjectSymbolProposalView {
     pub(crate) y_nm: i64,
     pub(crate) rotation_deg: i32,
     pub(crate) mirrored: bool,
+    pub(crate) entity_uuid: Option<String>,
+    pub(crate) gate_uuid: Option<String>,
+    pub(crate) part_uuid: Option<String>,
+    pub(crate) component_instance_uuid: Option<String>,
+    pub(crate) binding_status: String,
+    pub(crate) binding_diagnostics: Vec<String>,
     pub(crate) proposal_id: Uuid,
     pub(crate) proposal: Proposal,
 }
@@ -84,12 +94,16 @@ pub(crate) fn propose_place_native_project_symbol(
             anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
         })?;
     let pins = materialize_pool_symbol_pins(root, lib_id.as_deref())?;
+    let binding_resolution = resolve_pool_symbol_component_binding(root, lib_id.as_deref())?;
+    let binding = binding_resolution.binding.clone();
     let symbol_uuid = Uuid::new_v4();
     let symbol = PlacedSymbol {
         uuid: symbol_uuid,
-        part: None,
-        entity: None,
-        gate: None,
+        part: binding
+            .as_ref()
+            .and_then(|binding| binding.part.as_ref().map(|part| part.part_id)),
+        entity: binding.as_ref().map(|binding| binding.entity_id),
+        gate: binding.as_ref().map(|binding| binding.gate_id),
         lib_id: lib_id.clone(),
         reference: reference.clone(),
         value: value.clone(),
@@ -106,6 +120,24 @@ pub(crate) fn propose_place_native_project_symbol(
     let mut model = ProjectResolver::new(root)
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
+    let mut operations = vec![Operation::CreateSchematicSymbol {
+        sheet_id: sheet_uuid,
+        symbol_id: symbol_uuid,
+        symbol: serde_json::to_value(&symbol).context("failed to serialize symbol operation")?,
+    }];
+    if let Some(binding) = &binding {
+        if let Some(operation) =
+            component_instance_operation_for_pool_symbol(root, symbol_uuid, binding)?
+        {
+            operations.push(operation);
+        }
+    }
+    let component_instance_uuid = binding.as_ref().and_then(|binding| {
+        binding
+            .part
+            .as_ref()
+            .map(|_| component_instance_uuid_for_pool_symbol(&project, symbol_uuid, binding))
+    });
     let batch = OperationBatch {
         batch_id: Uuid::new_v4(),
         expected_model_revision: Some(model.model_revision.clone()),
@@ -114,11 +146,7 @@ pub(crate) fn propose_place_native_project_symbol(
             source: CommitSource::Cli,
             reason: "propose place schematic symbol".to_string(),
         },
-        operations: vec![Operation::CreateSchematicSymbol {
-            sheet_id: sheet_uuid,
-            symbol_id: symbol_uuid,
-            symbol: serde_json::to_value(&symbol).context("failed to serialize symbol operation")?,
-        }],
+        operations,
     };
     let proposal = create_draft_proposal_from_batch(
         &mut model,
@@ -155,6 +183,12 @@ pub(crate) fn propose_place_native_project_symbol(
         y_nm: position.y,
         rotation_deg,
         mirrored,
+        entity_uuid: symbol.entity.map(|uuid| uuid.to_string()),
+        gate_uuid: symbol.gate.map(|uuid| uuid.to_string()),
+        part_uuid: symbol.part.map(|uuid| uuid.to_string()),
+        component_instance_uuid: component_instance_uuid.map(|uuid| uuid.to_string()),
+        binding_status: binding_resolution.status.to_string(),
+        binding_diagnostics: binding_resolution.diagnostics,
         proposal_id: proposal.proposal_id,
         proposal,
     })

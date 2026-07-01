@@ -357,10 +357,14 @@ fn uuid_field(value: &serde_json::Value, field: &str, label: &str) -> Result<Uui
 fn pool_pin_electrical_type_to_schematic(electrical_type: &str) -> PinElectricalType {
     match electrical_type {
         "Input" => PinElectricalType::Input,
-        "Output" | "OpenCollector" | "OpenEmitter" | "TriState" => PinElectricalType::Output,
+        "Output" => PinElectricalType::Output,
         "Bidirectional" => PinElectricalType::Bidirectional,
         "PowerIn" => PinElectricalType::PowerIn,
         "PowerOut" => PinElectricalType::PowerOut,
+        "OpenCollector" => PinElectricalType::OpenCollector,
+        "OpenEmitter" => PinElectricalType::OpenEmitter,
+        "TriState" => PinElectricalType::TriState,
+        "NoConnect" => PinElectricalType::NoConnect,
         _ => PinElectricalType::Passive,
     }
 }

@@ -20,8 +20,19 @@ pub(super) fn parse_window_size(value: &str) -> Result<(u32, u32)> {
 pub(super) struct GuiArgs {
     #[arg(long = "demo-known-good", default_value_t = false)]
     pub(super) demo_known_good: bool,
-    #[arg(long = "board", help = "Open a KiCad .kicad_pcb board file directly")]
+    #[arg(
+        long = "board",
+        help = "Open a KiCad .kicad_pcb board file directly",
+        conflicts_with = "schematic_file"
+    )]
     pub(super) board_file: Option<PathBuf>,
+    #[arg(
+        long = "schematic",
+        help = "Open a KiCad .kicad_sch schematic file directly",
+        conflicts_with = "artifact_path",
+        conflicts_with = "demo_known_good"
+    )]
+    pub(super) schematic_file: Option<PathBuf>,
     #[arg(long = "artifact")]
     pub(super) artifact_path: Option<PathBuf>,
     #[arg(long = "project-root")]
@@ -83,7 +94,7 @@ impl GuiArgs {
     }
 
     pub(super) fn wants_plain_project_board_view(&self) -> bool {
-        (self.project_root.is_some() || self.board_file.is_some())
+        (self.project_root.is_some() || self.board_file.is_some() || self.schematic_file.is_some())
             && self.artifact_path.is_none()
             && self.net_uuid.is_none()
             && self.from_anchor_pad_uuid.is_none()
@@ -96,6 +107,31 @@ impl GuiArgs {
         }
         if let Some(board_file) = &self.board_file {
             return materialize_kicad_board_request(board_file, self.project_root.clone());
+        }
+        if let Some(schematic_file) = &self.schematic_file {
+            let source = schematic_file.canonicalize().with_context(|| {
+                format!(
+                    "failed to resolve KiCad schematic {}",
+                    schematic_file.display()
+                )
+            })?;
+            return Ok(LiveReviewRequest {
+                project_root: self
+                    .project_root
+                    .clone()
+                    .or_else(|| source.parent().map(PathBuf::from))
+                    .ok_or_else(|| {
+                        anyhow::anyhow!(
+                            "--project-root is required when --schematic has no parent directory"
+                        )
+                    })?,
+                board_file: None,
+                artifact_path: None,
+                net_uuid: None,
+                from_anchor_pad_uuid: None,
+                to_anchor_pad_uuid: None,
+                profile: None,
+            });
         }
         if let Some(artifact_path) = &self.artifact_path {
             let project_root = self
@@ -119,7 +155,9 @@ impl GuiArgs {
         }
         Ok(LiveReviewRequest {
             project_root: self.project_root.clone().ok_or_else(|| {
-                anyhow::anyhow!("--project-root, --board, or --demo-known-good is required")
+                anyhow::anyhow!(
+                    "--project-root, --board, --schematic, or --demo-known-good is required"
+                )
             })?,
             board_file: None,
             artifact_path: None,
@@ -149,7 +187,10 @@ impl GuiArgs {
         let workspace_started = std::time::Instant::now();
         append_gui_diagnostic_line("workspace load begin");
         let workspace_include_review = !self.wants_plain_project_board_view();
-        let mut state = if self.wants_plain_project_board_view() {
+        let mut state = if let Some(schematic_file) = &self.schematic_file {
+            load_kicad_schematic_workspace_state(schematic_file)
+                .context("load schematic workspace state")?
+        } else if self.wants_plain_project_board_view() {
             load_board_editor_workspace_state(&request)
                 .context("load board editor workspace state")?
         } else {

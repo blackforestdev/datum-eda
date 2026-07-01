@@ -221,6 +221,12 @@ pub(crate) fn execute_proposal_command(
         ProposalCommands::CreatePoolFootprint(args) => {
             command_exec_proposal_library::execute_create_pool_footprint_proposal(format, args)
         }
+        ProposalCommands::CreatePoolPinPadMap(args) => {
+            command_exec_proposal_library::execute_create_pool_pin_pad_map_proposal(format, args)
+        }
+        ProposalCommands::SetPoolPinPadMap(args) => {
+            command_exec_proposal_library::execute_set_pool_pin_pad_map_proposal(format, args)
+        }
         ProposalCommands::SetPoolFootprintPad(args) => {
             command_exec_proposal_library::execute_set_pool_footprint_pad_proposal(format, args)
         }

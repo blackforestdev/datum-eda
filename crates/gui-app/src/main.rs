@@ -6,7 +6,8 @@ use datum_gui_protocol::{
     BoardTextLineSpacingStep, BoardTextRotationStep, DockTab, LiveDesignSession, LiveReviewRequest,
     PointNm, RectNm, SceneBounds, SessionCommand, SessionEvent, TerminalCommandHandoff,
     WorkspaceTool, ensure_known_good_demo_request, load_board_editor_workspace_state,
-    load_live_workspace_state, materialize_kicad_board_request,
+    load_kicad_schematic_workspace_state, load_live_workspace_state,
+    materialize_kicad_board_request,
 };
 #[cfg(feature = "visual")]
 use datum_gui_render::visual_capture::OffscreenRenderer;
@@ -124,7 +125,10 @@ fn run_offscreen_visual_test(args: &GuiArgs) -> Result<()> {
         .resolve_request()
         .context("resolve offscreen visual-test review context")?;
     let workspace_include_review = !args.wants_plain_project_board_view();
-    let state = if args.wants_plain_project_board_view() {
+    let state = if let Some(schematic_file) = &args.schematic_file {
+        load_kicad_schematic_workspace_state(schematic_file)
+            .context("load schematic offscreen workspace state")?
+    } else if args.wants_plain_project_board_view() {
         load_board_editor_workspace_state(&request)
             .context("load board editor offscreen workspace state")?
     } else {

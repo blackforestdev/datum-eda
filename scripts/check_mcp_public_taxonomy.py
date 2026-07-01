@@ -33,7 +33,7 @@ EXPECTED_PUBLIC_PREFIX_COUNTS = {
     "datum.output_job": 5,
     "datum.pcb": 45,
     "datum.pool": 3,
-    "datum.proposal": 42,
+    "datum.proposal": 44,
     "datum.query": 48,
     "datum.replacement": 5,
     "datum.route": 21,
@@ -42,8 +42,8 @@ EXPECTED_PUBLIC_PREFIX_COUNTS = {
 }
 
 EXPECTED_PUBLIC_COUNT = sum(EXPECTED_PUBLIC_PREFIX_COUNTS.values())
-EXPECTED_REGISTERED_COUNT = 508
-EXPECTED_HIDDEN_COMPATIBILITY_COUNT = 181
+EXPECTED_REGISTERED_COUNT = 512
+EXPECTED_HIDDEN_COMPATIBILITY_COUNT = 183
 ALLOWED_HIDDEN_RETIREMENT_STATUSES = {
     "retained_until_migration_plan",
     "deprecated",
@@ -74,6 +74,8 @@ PROPOSAL_WRITE_TOOLS = {
     "datum.proposal.create_pool_padstack": "proposal_metadata_write",
     "datum.proposal.create_pool_package": "proposal_metadata_write",
     "datum.proposal.create_pool_footprint": "proposal_metadata_write",
+    "datum.proposal.create_pool_pin_pad_map": "proposal_metadata_write",
+    "datum.proposal.set_pool_pin_pad_map": "proposal_metadata_write",
     "datum.proposal.set_pool_footprint_pad": "proposal_metadata_write",
     "datum.proposal.set_pool_footprint_courtyard_rect": "proposal_metadata_write",
     "datum.proposal.set_pool_footprint_courtyard_polygon": "proposal_metadata_write",

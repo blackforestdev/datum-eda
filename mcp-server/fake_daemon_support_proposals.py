@@ -517,6 +517,90 @@ class FakeDaemonClientProposalsMixin:
             None,
         )
 
+    def create_pool_pin_pad_map_proposal(
+        self,
+        path: str,
+        map: str,
+        part: str,
+        entries: list[str] | None = None,
+        footprint: str | None = None,
+        set_default: bool | None = None,
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ) -> JsonRpcResponse:
+        proposal = proposal or "proposal-pool-pin-pad-map-test"
+        self.calls.append(
+            (
+                "create_pool_pin_pad_map_proposal",
+                path,
+                map,
+                part,
+                entries or [],
+                footprint,
+                set_default,
+                pool,
+                proposal,
+                rationale,
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            174,
+            {
+                "contract": "proposal_create_v1",
+                "action": "create_pool_pin_pad_map_proposal",
+                "project_root": path,
+                "proposal_id": proposal,
+                "map_uuid": map,
+                "part_uuid": part,
+                "footprint_uuid": footprint,
+                "entry_count": len(entries or []),
+                "set_default": bool(set_default),
+                "pool_path": pool or "pool",
+            },
+            None,
+        )
+
+    def set_pool_pin_pad_map_proposal(
+        self,
+        path: str,
+        map: str,
+        mode: str | None,
+        entries: list[str],
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ) -> JsonRpcResponse:
+        proposal = proposal or "proposal-pool-pin-pad-map-set-test"
+        self.calls.append(
+            (
+                "set_pool_pin_pad_map_proposal",
+                path,
+                map,
+                mode,
+                entries,
+                pool,
+                proposal,
+                rationale,
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            175,
+            {
+                "contract": "proposal_create_v1",
+                "action": "set_pool_pin_pad_map_proposal",
+                "project_root": path,
+                "proposal_id": proposal,
+                "map_uuid": map,
+                "mode": mode or "merge",
+                "entry_count": len(entries),
+                "pool_path": pool or "pool",
+            },
+            None,
+        )
+
     def set_pool_footprint_pad_proposal(
         self,
         path: str,

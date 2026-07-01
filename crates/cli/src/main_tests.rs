@@ -399,6 +399,8 @@ mod main_tests_project_pool_part;
 mod main_tests_project_pool_part_pin_semantics;
 #[path = "main_tests_project_pool_pin_pad_map.rs"]
 mod main_tests_project_pool_pin_pad_map;
+#[path = "main_tests_project_pool_pin_pad_map_b.rs"]
+mod main_tests_project_pool_pin_pad_map_b;
 #[path = "main_tests_project_pool_resolver.rs"]
 mod main_tests_project_pool_resolver;
 #[path = "main_tests_project_pool_symbol_library.rs"]
@@ -529,6 +531,8 @@ mod main_tests_project_routing_substrate;
 mod main_tests_project_rules;
 #[path = "main_tests_project_schematic_proposals.rs"]
 mod main_tests_project_schematic_proposals;
+#[path = "main_tests_project_schematic_proposals_b.rs"]
+mod main_tests_project_schematic_proposals_b;
 #[path = "main_tests_project_selected_route_proposal.rs"]
 mod main_tests_project_selected_route_proposal;
 #[path = "main_tests_project_sheet.rs"]

@@ -187,10 +187,14 @@ fn finalize_validation_report(
             .then_with(|| a.message.cmp(&b.message))
     });
     let issue_count = issues.len();
+    let error_count = issues
+        .iter()
+        .filter(|issue| issue.severity == "error")
+        .count();
     NativeProjectValidationView {
         action: "validate_project".to_string(),
         project_root: root.display().to_string(),
-        valid: issue_count == 0,
+        valid: error_count == 0,
         schema_compatible,
         required_files_expected: 4,
         required_files_validated,

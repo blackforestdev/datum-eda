@@ -133,7 +133,7 @@ pub(crate) fn set_native_project_pool_pin_pad_map(
     )
 }
 
-fn set_part_default_pin_pad_map_operation(
+pub(super) fn set_part_default_pin_pad_map_operation(
     root: &Path,
     pool_path: &str,
     part_id: Uuid,
@@ -158,7 +158,7 @@ fn set_part_default_pin_pad_map_operation(
     })
 }
 
-fn validate_pin_pad_map_payload(
+pub(super) fn validate_pin_pad_map_payload(
     model: &eda_engine::substrate::DesignModel,
     part_id: Uuid,
     footprint_id: Option<Uuid>,
@@ -292,7 +292,7 @@ pub(crate) struct PinPadMapEntryInput {
     pub(crate) pin: Uuid,
 }
 
-fn parse_mapping_entries(
+pub(super) fn parse_mapping_entries(
     entries: Vec<String>,
     model: &eda_engine::substrate::DesignModel,
     part_id: Uuid,
@@ -333,7 +333,7 @@ fn parse_mapping_entries(
     Ok(parsed)
 }
 
-fn mappings_as_json(entries: &[PinPadMapEntryInput]) -> serde_json::Value {
+pub(super) fn mappings_as_json(entries: &[PinPadMapEntryInput]) -> serde_json::Value {
     serde_json::Value::Object(
         entries
             .iter()

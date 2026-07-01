@@ -1,28 +1,32 @@
 use super::*;
 
-struct PinnedMapFixture {
-    part_id: Uuid,
-    gate_id: Uuid,
-    footprint_id: Uuid,
-    pin_ids: Vec<Uuid>,
-    pad_ids: Vec<Uuid>,
+pub(super) struct PinnedMapFixture {
+    pub(super) part_id: Uuid,
+    pub(super) gate_id: Uuid,
+    pub(super) footprint_id: Uuid,
+    pub(super) pin_ids: Vec<Uuid>,
+    pub(super) pad_ids: Vec<Uuid>,
 }
 
-fn unique_project_root(label: &str) -> PathBuf {
+pub(super) fn unique_project_root(label: &str) -> PathBuf {
     std::env::temp_dir().join(format!("{}-{}", label, Uuid::new_v4()))
 }
 
-fn run_project_command(args: &[&str]) -> Result<String> {
+pub(super) fn run_project_command(args: &[&str]) -> Result<String> {
     execute(Cli::try_parse_from(args).expect("CLI should parse"))
 }
 
-fn query_pool_object_payload(root: &Path, kind: &str, object_id: Uuid) -> serde_json::Value {
+pub(super) fn query_pool_object_payload(
+    root: &Path,
+    kind: &str,
+    object_id: Uuid,
+) -> serde_json::Value {
     let path = root.join(format!("pool/{kind}/{object_id}.json"));
     serde_json::from_str(&std::fs::read_to_string(path).expect("pool object should read"))
         .expect("pool object should parse")
 }
 
-fn set_part_default_pin_pad_map_raw(root: &Path, part_id: Uuid, map_id: Uuid) {
+pub(super) fn set_part_default_pin_pad_map_raw(root: &Path, part_id: Uuid, map_id: Uuid) {
     let path = root.join(format!("pool/parts/{part_id}.json"));
     let mut part: serde_json::Value =
         serde_json::from_str(&std::fs::read_to_string(&path).expect("part should read"))
@@ -38,7 +42,11 @@ fn set_part_default_pin_pad_map_raw(root: &Path, part_id: Uuid, map_id: Uuid) {
     .expect("part should write");
 }
 
-fn create_fixture(root: &Path, pin_names: &[&str], pad_names: &[&str]) -> PinnedMapFixture {
+pub(super) fn create_fixture(
+    root: &Path,
+    pin_names: &[&str],
+    pad_names: &[&str],
+) -> PinnedMapFixture {
     let unit_id = Uuid::new_v4();
     run_project_command(&[
         "eda",
@@ -222,7 +230,7 @@ fn create_fixture(root: &Path, pin_names: &[&str], pad_names: &[&str]) -> Pinned
     }
 }
 
-fn create_default_pin_pad_map(
+pub(super) fn create_default_pin_pad_map(
     root: &Path,
     fixture: &PinnedMapFixture,
     entries: &[(Uuid, Uuid)],

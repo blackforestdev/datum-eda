@@ -959,8 +959,13 @@ fn render_scene(
         text_runs,
         hit_regions,
     );
+    let viewport_title = if is_schematic_scene(&state.scene) {
+        format!("SCHEMATIC {}", state.scene.board_name.to_uppercase())
+    } else {
+        state.scene.board_name.to_uppercase()
+    };
     draw_text(
-        &truncate_text(&state.scene.board_name.to_uppercase(), 28),
+        &truncate_text(&viewport_title, 28),
         layout.viewport.x + 16.0,
         layout.viewport.y + 16.0,
         12.0,
@@ -1052,6 +1057,10 @@ fn render_scene(
             text_runs,
         );
     }
+}
+
+fn is_schematic_scene(scene: &BoardReviewSceneV1) -> bool {
+    scene.kind == "schematic_review_scene"
 }
 
 fn push_scene_underlay(

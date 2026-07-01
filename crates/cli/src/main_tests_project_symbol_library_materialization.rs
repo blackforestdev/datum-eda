@@ -39,6 +39,7 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
     let unit_id = Uuid::new_v4();
     let output_pin_id = Uuid::new_v4();
     let power_pin_id = Uuid::new_v4();
+    let open_collector_pin_id = Uuid::new_v4();
     let symbol_id = Uuid::new_v4();
     let entity_id = Uuid::new_v4();
     let gate_id = Uuid::new_v4();
@@ -108,6 +109,26 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
             "--format",
             "json",
             "project",
+            "set-pool-unit-pin",
+            root.to_str().unwrap(),
+            "--unit",
+            &unit_id.to_string(),
+            "--pin",
+            &open_collector_pin_id.to_string(),
+            "--name",
+            "FAULT",
+            "--electrical-type",
+            "OpenCollector",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("open-collector pool unit pin set should succeed");
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
             "create-pool-symbol",
             root.to_str().unwrap(),
             "--symbol",
@@ -166,6 +187,26 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
         .expect("CLI should parse"),
     )
     .expect("power symbol pin anchor set should succeed");
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "set-pool-symbol-pin-anchor",
+            root.to_str().unwrap(),
+            "--symbol",
+            &symbol_id.to_string(),
+            "--pin",
+            &open_collector_pin_id.to_string(),
+            "--x-nm",
+            "500",
+            "--y-nm",
+            "600",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("open-collector symbol pin anchor set should succeed");
     execute(
         Cli::try_parse_from([
             "eda",
@@ -290,11 +331,11 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
     assert_eq!(placed["binding_diagnostics"], serde_json::json!([]));
     assert_eq!(
         placed["binding_evidence"]["pool_symbol_ref"],
-        serde_json::json!({"object_id": symbol_id.to_string(), "object_revision": 2})
+        serde_json::json!({"object_id": symbol_id.to_string(), "object_revision": 3})
     );
     assert_eq!(
         placed["binding_evidence"]["pool_unit_ref"],
-        serde_json::json!({"object_id": unit_id.to_string(), "object_revision": 2})
+        serde_json::json!({"object_id": unit_id.to_string(), "object_revision": 3})
     );
     assert_eq!(
         placed["binding_evidence"]["entity_ref"],
@@ -375,23 +416,39 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
     .expect("symbol-pins query should succeed");
     let pins: serde_json::Value =
         serde_json::from_str(&pins_output).expect("symbol pins JSON should parse");
-    assert_eq!(pins.as_array().expect("pins should be array").len(), 2);
-    assert_eq!(pins[0]["pin_uuid"], output_pin_id.to_string());
-    assert_eq!(pins[0]["number"], "OUT");
-    assert_eq!(pins[0]["electrical_type"], "Output");
-    assert_eq!(pins[0]["x_nm"], 100);
-    assert_eq!(pins[0]["y_nm"], 200);
-    assert_eq!(pins[0]["anchor_orientation"], "Left");
-    assert_eq!(pins[0]["anchor_length_nm"], 2540000);
-    assert_eq!(pins[0]["anchor_decoration"], "inverted");
-    assert_eq!(pins[1]["pin_uuid"], power_pin_id.to_string());
-    assert_eq!(pins[1]["number"], "VCC");
-    assert_eq!(pins[1]["electrical_type"], "PowerIn");
-    assert_eq!(pins[1]["x_nm"], 300);
-    assert_eq!(pins[1]["y_nm"], 400);
-    assert_eq!(pins[1]["anchor_orientation"], "Right");
-    assert!(pins[1]["anchor_length_nm"].is_null());
-    assert_eq!(pins[1]["anchor_decoration"], "none");
+    let pin_entries = pins.as_array().expect("pins should be array");
+    assert_eq!(pin_entries.len(), 3);
+    let output_pin_uuid = output_pin_id.to_string();
+    let output_pin = pin_entries
+        .iter()
+        .find(|pin| pin["pin_uuid"].as_str() == Some(output_pin_uuid.as_str()))
+        .expect("output pin should be present");
+    assert_eq!(output_pin["number"], "OUT");
+    assert_eq!(output_pin["electrical_type"], "Output");
+    assert_eq!(output_pin["x_nm"], 100);
+    assert_eq!(output_pin["y_nm"], 200);
+    assert_eq!(output_pin["anchor_orientation"], "Left");
+    assert_eq!(output_pin["anchor_length_nm"], 2540000);
+    assert_eq!(output_pin["anchor_decoration"], "inverted");
+    let power_pin_uuid = power_pin_id.to_string();
+    let power_pin = pin_entries
+        .iter()
+        .find(|pin| pin["pin_uuid"].as_str() == Some(power_pin_uuid.as_str()))
+        .expect("power pin should be present");
+    assert_eq!(power_pin["number"], "VCC");
+    assert_eq!(power_pin["electrical_type"], "PowerIn");
+    assert_eq!(power_pin["x_nm"], 300);
+    assert_eq!(power_pin["y_nm"], 400);
+    assert_eq!(power_pin["anchor_orientation"], "Right");
+    assert!(power_pin["anchor_length_nm"].is_null());
+    assert_eq!(power_pin["anchor_decoration"], "none");
+    let open_collector_pin_uuid = open_collector_pin_id.to_string();
+    let open_collector_pin = pin_entries
+        .iter()
+        .find(|pin| pin["pin_uuid"].as_str() == Some(open_collector_pin_uuid.as_str()))
+        .expect("open-collector pin should be present");
+    assert_eq!(open_collector_pin["number"], "FAULT");
+    assert_eq!(open_collector_pin["electrical_type"], "OpenCollector");
 
     let nets_output = execute(
         Cli::try_parse_from([
@@ -414,6 +471,14 @@ fn project_place_symbol_materializes_pins_from_pool_symbol_uuid_lib_id() {
                 && pin["component"] == "U1"
                 && pin["pin"] == "VCC"
                 && pin["electrical_type"] == "PowerIn"
+        })
+    }));
+    assert!(nets.as_array().unwrap().iter().any(|net| {
+        net["pins"].as_array().unwrap().iter().any(|pin| {
+            pin["uuid"] == open_collector_pin_id.to_string()
+                && pin["component"] == "U1"
+                && pin["pin"] == "FAULT"
+                && pin["electrical_type"] == "OpenCollector"
         })
     }));
     let erc_output = execute(

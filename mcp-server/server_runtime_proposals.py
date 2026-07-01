@@ -222,6 +222,45 @@ def install_proposal_authoring_methods(client_cls: type, append_optional: Any) -
         append_optional(args, "rationale", rationale)
         return run(self, "create_pool_footprint_proposal", locals_without_self(locals()), args)
 
+    def create_pool_pin_pad_map_proposal(
+        self,
+        path: str,
+        map: str,
+        part: str,
+        entries: list[str] | None = None,
+        footprint: str | None = None,
+        set_default: bool | None = None,
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ):
+        args = ["proposal", "create-pool-pin-pad-map", path, "--map", map, "--part", part]
+        append_optional(args, "footprint", footprint)
+        for entry in entries or []:
+            args.extend(["--entry", entry])
+        args.extend(["--set-default"] if set_default else [])
+        append_optional(args, "pool", pool); append_optional(args, "proposal", proposal)
+        append_optional(args, "rationale", rationale)
+        return run(self, "create_pool_pin_pad_map_proposal", locals_without_self(locals()), args)
+
+    def set_pool_pin_pad_map_proposal(
+        self,
+        path: str,
+        map: str,
+        mode: str | None,
+        entries: list[str],
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ):
+        args = ["proposal", "set-pool-pin-pad-map", path, "--map", map]
+        append_optional(args, "mode", mode)
+        for entry in entries:
+            args.extend(["--entry", entry])
+        append_optional(args, "pool", pool); append_optional(args, "proposal", proposal)
+        append_optional(args, "rationale", rationale)
+        return run(self, "set_pool_pin_pad_map_proposal", locals_without_self(locals()), args)
+
     def set_pool_footprint_pad_proposal(
         self,
         path: str,
@@ -395,7 +434,7 @@ def install_proposal_authoring_methods(client_cls: type, append_optional: Any) -
         append_optional(args, "rationale", rationale)
         return run(self, "set_pool_package_courtyard_polygon_proposal", locals_without_self(locals()), args)
 
-    for method in [create_draw_wire_proposal, create_place_label_proposal, create_place_symbol_proposal, create_board_component_replacement_proposal, create_board_component_replacements_proposal, create_board_component_replacement_plan_proposal, create_pool_library_object_proposal, create_pool_unit_proposal, create_pool_symbol_proposal, create_pool_entity_proposal, create_pool_padstack_proposal, create_pool_package_proposal, create_pool_footprint_proposal, set_pool_footprint_pad_proposal, set_pool_footprint_courtyard_rect_proposal, set_pool_footprint_courtyard_polygon_proposal, add_pool_footprint_silkscreen_line_proposal, add_pool_footprint_silkscreen_rect_proposal, add_pool_footprint_silkscreen_circle_proposal, add_pool_footprint_silkscreen_polygon_proposal, set_pool_package_pad_proposal, set_pool_package_courtyard_rect_proposal, set_pool_package_courtyard_polygon_proposal]:
+    for method in [create_draw_wire_proposal, create_place_label_proposal, create_place_symbol_proposal, create_board_component_replacement_proposal, create_board_component_replacements_proposal, create_board_component_replacement_plan_proposal, create_pool_library_object_proposal, create_pool_unit_proposal, create_pool_symbol_proposal, create_pool_entity_proposal, create_pool_padstack_proposal, create_pool_package_proposal, create_pool_footprint_proposal, create_pool_pin_pad_map_proposal, set_pool_pin_pad_map_proposal, set_pool_footprint_pad_proposal, set_pool_footprint_courtyard_rect_proposal, set_pool_footprint_courtyard_polygon_proposal, add_pool_footprint_silkscreen_line_proposal, add_pool_footprint_silkscreen_rect_proposal, add_pool_footprint_silkscreen_circle_proposal, add_pool_footprint_silkscreen_polygon_proposal, set_pool_package_pad_proposal, set_pool_package_courtyard_rect_proposal, set_pool_package_courtyard_polygon_proposal]:
         setattr(client_cls, method.__name__, method)
 
 

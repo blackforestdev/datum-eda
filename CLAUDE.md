@@ -37,9 +37,36 @@ they support the product; they do not define its identity.
   redundant tool is a defect.
 
 > Controlling product doctrine lives in `docs/DATUM_PRODUCT_MECHANICS.md`, the
-> decision records `docs/decisions/PRODUCT_MECHANICS_000..012`, and the
-> per-domain tool contracts in `docs/contracts/`. Read those before inferring
-> product intent from code or a milestone.
+> ratified decision records in `docs/decisions/` (`PRODUCT_MECHANICS_000..016`),
+> and the per-domain tool contracts in `docs/contracts/`. Read those before
+> inferring product intent from code or a milestone.
+
+## Specification Governance (controlling)
+Every specification, contract, or decision record that steers development MUST
+be woven into the tracked roadmap. A spec that exists in the repo but is not
+(a) reflected in `specs/PROGRESS.md` (single-source status) **and** (b) locked
+by a drift gate is an **orphaned spec** — a governance defect and a drift risk,
+not a neutral document. Code agents cannot follow intent the roadmap does not
+track; ungated dispositions (`Planned`/`Implemented`/`Deferred`) silently drift
+from the code.
+
+When you CREATE or REFINE any spec / contract / decision record, in the SAME
+change you MUST:
+1. Add or update its status row in `specs/PROGRESS.md` (current vs target).
+2. Wire it into a drift gate — extend an existing contract gate
+   (`check_library_foundation_contract.py`, `check_product_north_star.py`) or
+   add a sibling gate that locks its target/current marker claims against
+   `PROGRESS.md`, and register that gate in `scripts/run_drift_gates.sh`.
+3. Register any inventory shapes it defines in
+   `specs/spec_parity_manifest.json` (enforced by `check_spec_parity.py`).
+4. If it ratifies mechanism, it must be a numbered decision record in
+   `docs/decisions/`, not a loose doc or an `OPEN_QUESTION_RESOLUTIONS` entry.
+
+Disposition claims must be reconciled with code by a gate, never maintained by
+hand alone. If you cannot gate a spec in the same change, it is **not done** —
+say so explicitly to the owner rather than leaving it silently untracked.
+Writing spec content without wiring it into the roadmap is the exact failure
+this rule exists to prevent.
 
 ## Current Status
 The project has been course-corrected from a milestone-driven roadmap to the

@@ -3,10 +3,11 @@ pub(crate) use super::cli_args_proposal_library::{
     ProposalAddPoolFootprintSilkscreenPolygonArgs, ProposalAddPoolFootprintSilkscreenRectArgs,
     ProposalCreatePoolEntityArgs, ProposalCreatePoolFootprintArgs,
     ProposalCreatePoolLibraryObjectArgs, ProposalCreatePoolPackageArgs,
-    ProposalCreatePoolPadstackArgs, ProposalCreatePoolSymbolArgs, ProposalCreatePoolUnitArgs,
-    ProposalSetPoolFootprintCourtyardPolygonArgs, ProposalSetPoolFootprintCourtyardRectArgs,
-    ProposalSetPoolFootprintPadArgs, ProposalSetPoolPackageCourtyardPolygonArgs,
-    ProposalSetPoolPackageCourtyardRectArgs, ProposalSetPoolPackagePadArgs,
+    ProposalCreatePoolPadstackArgs, ProposalCreatePoolPinPadMapArgs, ProposalCreatePoolSymbolArgs,
+    ProposalCreatePoolUnitArgs, ProposalSetPoolFootprintCourtyardPolygonArgs,
+    ProposalSetPoolFootprintCourtyardRectArgs, ProposalSetPoolFootprintPadArgs,
+    ProposalSetPoolPackageCourtyardPolygonArgs, ProposalSetPoolPackageCourtyardRectArgs,
+    ProposalSetPoolPackagePadArgs, ProposalSetPoolPinPadMapArgs,
 };
 use super::*;
 
@@ -40,6 +41,10 @@ pub(crate) enum ProposalCommands {
     CreatePoolPackage(ProposalCreatePoolPackageArgs),
     /// Create a draft proposal to author a native pool footprint
     CreatePoolFootprint(ProposalCreatePoolFootprintArgs),
+    /// Create a draft proposal to author a native pool PinPadMap
+    CreatePoolPinPadMap(ProposalCreatePoolPinPadMapArgs),
+    /// Create a draft proposal to update native pool PinPadMap mappings
+    SetPoolPinPadMap(ProposalSetPoolPinPadMapArgs),
     /// Create a draft proposal to set one pad on a native pool footprint
     SetPoolFootprintPad(ProposalSetPoolFootprintPadArgs),
     /// Create a draft proposal to set rectangular footprint courtyard geometry

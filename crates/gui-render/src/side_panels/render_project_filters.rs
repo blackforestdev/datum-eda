@@ -16,9 +16,15 @@ fn render_project_and_filters_panel(
         TextFace::Ui,
         text_runs,
     );
+    let scene_label = if state.scene.kind == "schematic_review_scene" {
+        "SCHEMATIC"
+    } else {
+        "BOARD"
+    };
     draw_text(
         &format!(
-            "BOARD {}",
+            "{} {}",
+            scene_label,
             truncate_text(&state.scene.board_name.to_uppercase(), 18)
         ),
         project_layout.board_name.x,
@@ -73,8 +79,13 @@ fn render_project_and_filters_panel(
         width: 92.0,
         height: 20.0,
     };
+    let fit_scene_label = if state.scene.kind == "schematic_review_scene" {
+        "FIT SCH"
+    } else {
+        "FIT BOARD"
+    };
     for (rect, label, target) in [
-        (fit_board_rect, "FIT BOARD", HitTarget::FitBoard),
+        (fit_board_rect, fit_scene_label, HitTarget::FitBoard),
         (fit_review_rect, "FIT REVIEW", HitTarget::FitReviewTarget),
     ] {
         panel_quads.push(Quad::from_rect(rect, REVIEW_ROW_BADGE));

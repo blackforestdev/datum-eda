@@ -37,6 +37,33 @@ Surfaces currently locked: `mcp_runtime_methods`, `cli_project_commands`,
 
 ---
 
+## Spec Governance Coverage
+
+Every specification that steers development is classified in
+`specs/spec_governance_manifest.json` and enforced by
+`scripts/check_spec_governance.py` (wired into `scripts/run_drift_gates.sh`): no
+spec, contract, or decision record may exist unclassified, `governed` specs must
+be tracked here or by a real gate, and known orphans must carry a visible
+remediation note. This is the machine-checked backstop for the CLAUDE.md
+"Specification Governance (controlling)" rule.
+
+The `governed` compliance/library specs newly woven in (their manifest
+`progress_anchor` is the path string below):
+
+| Spec | Status | Enforcement |
+|------|--------|-------------|
+| `specs/STANDARDS_COMPLIANCE_SPEC.md` | [~] Disposition table + registry specced; enforced standards checks are process-aperture + zone-fill DRC only. §4 dispositions are not yet gate-reconciled with code. | governed via `check_spec_governance`; deeper disposition↔code reconciliation gate pending. |
+| `docs/IPC_FOOTPRINT_SYSTEM.md` | [~] Footprint system + IPC-7351B generator architecture specced. Generator, structured `IpcFootprintBasis`, density/toe-heel-side, and governed mask/paste-in-export are not built; padstack mask/paste policy is modeled but unconsumed by export. | governed via `check_spec_governance`. |
+| `docs/decisions/PRODUCT_MECHANICS_010_INDUSTRY_STANDARDS_COMPLIANCE.md` | [~] Standards-compliance mechanism ratified. IPC-7351B basis to be consolidated here from `OPEN_QUESTION_RESOLUTIONS`. | governed via `check_spec_governance`. |
+| `docs/contracts/RULES_CHECKS_TOOL_CONTRACT.md` | [~] Rules/checks tool contract; ERC/DRC surface partially implemented. | governed via `check_spec_governance`. |
+| `docs/SYMBOL_LIBRARY_IMPORT_SPEC.md` | [~] Per-user KiCad/Horizon symbol import (path B); skeleton import only today. | governed via `check_spec_governance`. |
+
+Remaining orphans (tool contracts, ERC/connectivity/import specs, guidance) are
+classified `pending` in the manifest with remediation notes; the `000..016`
+decision series is classified `doctrine`. See the manifest for the full ledger.
+
+---
+
 ## Scope Integration / Substrate Readiness
 
 This is the active tracking surface for the new scope. Items here should move

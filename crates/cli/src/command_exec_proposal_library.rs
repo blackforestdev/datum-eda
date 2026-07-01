@@ -238,6 +238,70 @@ pub(super) fn execute_create_pool_footprint_proposal(
     ))
 }
 
+pub(super) fn execute_create_pool_pin_pad_map_proposal(
+    format: &OutputFormat,
+    args: ProposalCreatePoolPinPadMapArgs,
+) -> Result<(String, i32)> {
+    let ProposalCreatePoolPinPadMapArgs {
+        path,
+        pool,
+        map_uuid,
+        part_uuid,
+        footprint_uuid,
+        entries,
+        set_default,
+        proposal,
+        rationale,
+    } = args;
+    Ok((
+        render_output(
+            format,
+            &propose_create_native_project_pool_pin_pad_map(
+                &path,
+                &pool,
+                map_uuid,
+                part_uuid,
+                footprint_uuid,
+                entries,
+                set_default,
+                proposal,
+                rationale.as_deref(),
+            )?,
+        ),
+        0,
+    ))
+}
+
+pub(super) fn execute_set_pool_pin_pad_map_proposal(
+    format: &OutputFormat,
+    args: ProposalSetPoolPinPadMapArgs,
+) -> Result<(String, i32)> {
+    let ProposalSetPoolPinPadMapArgs {
+        path,
+        pool,
+        map_uuid,
+        mode,
+        entries,
+        proposal,
+        rationale,
+    } = args;
+    Ok((
+        render_output(
+            format,
+            &propose_set_native_project_pool_pin_pad_map(
+                &path,
+                &pool,
+                map_uuid,
+                mode,
+                entries,
+                proposal,
+                rationale.as_deref(),
+            )?,
+        ),
+        0,
+    ))
+}
+
 pub(super) fn execute_set_pool_footprint_pad_proposal(
     format: &OutputFormat,
     args: ProposalSetPoolFootprintPadArgs,

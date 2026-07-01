@@ -21,7 +21,7 @@ The gate is `python3 scripts/check_spec_parity.py`, wired through
 
 | Inventory | Owner Spec | Count | SHA256 |
 |-----------|------------|-------|--------|
-| `mcp_runtime_methods` | `specs/MCP_API_SPEC.md` | 180 | `5fec60aca69d175aed847801709b3029bfa3a3d51132b16ab77506cfec0bb890` |
+| `mcp_runtime_methods` | `specs/MCP_API_SPEC.md` | 182 | `8b6254b4bb9ab3ac6da3b0f9d9566ae9bbfde4deb6618e494ebadf2361d2e211` |
 | `cli_project_commands` | `specs/PROGRAM_SPEC.md` | 286 | `86eb5b27881684a8340972b377e47e831d56806ccccb018485c8cd36a0162730` |
 | `engine_text_modules` | `docs/gui/DATUM_TEXT_ENGINE_PHASE_2_IMPLEMENTATION_PLAN.md` | 11 | `1233903bce862aa7ef22879e67e8cbef3bae2bf5e823bff9e53f39b4735c8059` |
 | `m7_text_visual_fixtures` | `docs/gui/DATUM_TEXT_ENGINE_FIDELITY_FIXTURES.md` | 4 | `7099fa49aca6e9574dc7ea5847914d8c20969222b5f2cf79090016539044e107` |

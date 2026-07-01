@@ -34,6 +34,8 @@ mod command_project_library_footprint_proposals;
 mod command_project_library_package;
 #[path = "command_project_library_package_geometry.rs"]
 mod command_project_library_package_geometry;
+#[path = "command_project_library_package_geometry_proposals.rs"]
+mod command_project_library_package_geometry_proposals;
 #[path = "command_project_library_package_pad.rs"]
 mod command_project_library_package_pad;
 #[path = "command_project_library_package_proposals.rs"]
@@ -247,6 +249,11 @@ pub(crate) use self::command_project_library_package_geometry::{
     set_native_project_pool_package_courtyard_polygon,
     set_native_project_pool_package_courtyard_rect,
 };
+pub(crate) use self::command_project_library_package_geometry_proposals::{
+    propose_set_native_project_pool_package_courtyard_polygon,
+    propose_set_native_project_pool_package_courtyard_rect,
+    propose_set_native_project_pool_package_pad,
+};
 pub(crate) use self::command_project_library_package_pad::set_native_project_pool_package_pad;
 pub(crate) use self::command_project_library_package_proposals::propose_create_native_project_pool_package;
 pub(crate) use self::command_project_library_pad_map::{
@@ -258,11 +265,9 @@ pub(crate) use self::command_project_library_pin_pad_map::{
 };
 pub(crate) use self::command_project_library_proposals::{
     propose_create_native_project_pool_entity, propose_create_native_project_pool_library_object,
-    propose_create_native_project_pool_padstack, propose_create_native_project_pool_symbol,
-    propose_create_native_project_pool_unit,
-    propose_set_native_project_pool_package_courtyard_polygon,
-    propose_set_native_project_pool_package_courtyard_rect,
-    propose_set_native_project_pool_package_pad,
+    propose_create_native_project_pool_padstack, propose_create_native_project_pool_pin_pad_map,
+    propose_create_native_project_pool_symbol, propose_create_native_project_pool_unit,
+    propose_set_native_project_pool_pin_pad_map,
 };
 pub(crate) use self::command_project_library_symbol_geometry::{
     add_native_project_pool_symbol_arc, add_native_project_pool_symbol_circle,

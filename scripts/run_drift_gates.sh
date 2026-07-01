@@ -7,6 +7,7 @@ python3 scripts/check_alignment.py
 python3 scripts/check_alignment.py --run-gates
 python3 scripts/check_product_north_star.py
 python3 scripts/check_library_foundation_contract.py
+python3 scripts/check_spec_governance.py
 python3 scripts/check_resolver_raw_loads.py
 python3 scripts/check_gui_agent_terminal_convergence.py
 python3 scripts/check_gui_design_tokens.py

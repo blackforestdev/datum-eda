@@ -222,6 +222,34 @@ class TestDispatchProposals(unittest.TestCase):
         self.assertEqual(payload["action"], "set_pool_footprint_pad_proposal")
         self.assertEqual(payload["footprint_uuid"], "footprint-uuid")
 
+    def test_tools_call_dispatches_create_pool_pin_pad_map_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        entries = ["pin-uuid:pad-uuid"]
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 239, "method": "tools/call", "params": {"name": "datum.proposal.create_pool_pin_pad_map", "arguments": {"path": "/tmp/native-project", "map": "map-uuid", "part": "part-uuid", "footprint": "footprint-uuid", "entries": entries, "set_default": True, "pool": "pool", "proposal": "proposal-pin-pad-map", "rationale": "review pin pad map"}}}
+        )
+        self.assertEqual(daemon.calls, [("create_pool_pin_pad_map_proposal", "/tmp/native-project", "map-uuid", "part-uuid", entries, "footprint-uuid", True, "pool", "proposal-pin-pad-map", "review pin pad map")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "create_pool_pin_pad_map_proposal")
+        self.assertEqual(payload["map_uuid"], "map-uuid")
+        self.assertEqual(payload["entry_count"], 1)
+
+    def test_tools_call_dispatches_set_pool_pin_pad_map_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        entries = ["pad-uuid:gate-uuid:pin-uuid"]
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 240, "method": "tools/call", "params": {"name": "datum.proposal.set_pool_pin_pad_map", "arguments": {"path": "/tmp/native-project", "map": "map-uuid", "mode": "replace", "entries": entries, "pool": "pool", "proposal": "proposal-pin-pad-map-set", "rationale": "review pin pad map update"}}}
+        )
+        self.assertEqual(daemon.calls, [("set_pool_pin_pad_map_proposal", "/tmp/native-project", "map-uuid", "replace", entries, "pool", "proposal-pin-pad-map-set", "review pin pad map update")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "set_pool_pin_pad_map_proposal")
+        self.assertEqual(payload["map_uuid"], "map-uuid")
+        self.assertEqual(payload["mode"], "replace")
+
     def test_tools_call_dispatches_set_pool_footprint_courtyard_rect_proposal(self) -> None:
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)
