@@ -534,6 +534,8 @@ pub(crate) enum ProjectCommands {
     DeleteBoardPad(ProjectDeleteBoardPadArgs),
     /// Place one native board component/package
     PlaceBoardComponent(ProjectPlaceBoardComponentArgs),
+    /// Generate initial native board components from schematic symbols and part package bindings
+    GenerateBoardComponents(ProjectGenerateBoardComponentsArgs),
     /// Move one native board component/package
     MoveBoardComponent(ProjectMoveBoardComponentArgs),
     /// Rotate one native board component/package

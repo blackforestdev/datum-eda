@@ -48,6 +48,7 @@ pub(crate) use self::cli_args_output::{FailOn, OutputFormat};
 pub(crate) use self::cli_args_pool::{PoolCommands, ReplacementPolicyArg};
 pub(crate) use self::cli_args_project_command_args_artifacts::*;
 pub(crate) use self::cli_args_project_command_args_board::*;
+pub(crate) use self::cli_args_project_command_args_board_handoff::*;
 pub(crate) use self::cli_args_project_command_args_schematic_connectivity::*;
 pub(crate) use self::cli_args_project_command_args_schematic_symbols::*;
 pub(crate) use self::cli_args_project_commands::ProjectCommands;

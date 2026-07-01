@@ -156,21 +156,10 @@ pub(super) fn execute_project_board_surface_command(
             Ok((output, 0))
         }
         ProjectCommands::SetBoardOutline(ProjectSetBoardOutlineArgs { path, vertices }) => {
-            let polygon = parse_native_polygon_vertices(&vertices)?;
-            let report = set_native_project_board_outline(&path, polygon)?;
-            let output = match format {
-                OutputFormat::Text => render_native_project_board_outline_mutation_text(&report),
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
+            command_exec_project_board_handoff::execute_set_board_outline(format, path, vertices)
         }
         ProjectCommands::SetBoardName(ProjectSetBoardNameArgs { path, name }) => {
-            let report = set_native_project_board_name(&path, name)?;
-            let output = match format {
-                OutputFormat::Text => render_native_project_board_name_mutation_text(&report),
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
+            command_exec_project_board_handoff::execute_set_board_name(format, path, name)
         }
         ProjectCommands::SetBoardStackup(ProjectSetBoardStackupArgs { path, layers }) => {
             command_exec_board_stackup::execute_set_board_stackup(format, path, layers)
@@ -203,22 +192,33 @@ pub(super) fn execute_project_board_surface_command(
             x_nm,
             y_nm,
             layer,
-        }) => {
-            let report = place_native_project_board_component(
-                &path,
-                part_uuid,
-                package_uuid,
-                reference,
-                value,
-                eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
-                layer,
-            )?;
-            let output = match format {
-                OutputFormat::Text => render_native_project_board_component_mutation_text(&report),
-                OutputFormat::Json => render_output(format, &report),
-            };
-            Ok((output, 0))
-        }
+        }) => command_exec_project_board_handoff::execute_place_board_component(
+            format,
+            path,
+            part_uuid,
+            package_uuid,
+            reference,
+            value,
+            x_nm,
+            y_nm,
+            layer,
+        ),
+        ProjectCommands::GenerateBoardComponents(ProjectGenerateBoardComponentsArgs {
+            path,
+            apply,
+            origin_x_nm,
+            origin_y_nm,
+            pitch_nm,
+            layer,
+        }) => command_exec_project_board_handoff::execute_generate_board_components(
+            format,
+            path,
+            apply,
+            origin_x_nm,
+            origin_y_nm,
+            pitch_nm,
+            layer,
+        ),
         ProjectCommands::PlaceBoardNetClass(ProjectPlaceBoardNetClassArgs {
             path,
             name,

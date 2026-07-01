@@ -63,6 +63,19 @@ pub struct LibraryGraphValidationReport {
     pub valid: bool,
     pub diagnostics: Vec<LibraryGraphDiagnostic>,
     pub summary: LibraryGraphValidationSummary,
+    pub legacy_pin_pad_map_migration: LibraryGraphLegacyPinPadMapMigrationReport,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct LibraryGraphLegacyPinPadMapMigrationReport {
+    pub parts: usize,
+    pub rows: usize,
+    pub migratable_rows: usize,
+    pub shadowed_rows: usize,
+    pub blocked_rows: usize,
+    pub migratable_subjects: Vec<String>,
+    pub shadowed_subjects: Vec<String>,
+    pub blocked_subjects: Vec<String>,
 }
 
 impl LibraryGraphDiagnostic {
@@ -149,11 +162,14 @@ impl LibraryGraph {
     pub fn validation_report(&self) -> LibraryGraphValidationReport {
         let mut diagnostics = self.registration_diagnostics.clone();
         diagnostics.extend(self.dependency_diagnostics());
+        let legacy_pin_pad_map_migration = self.legacy_pin_pad_map_migration_report();
+        diagnostics.extend(legacy_pin_pad_map_migration.diagnostics());
         let summary = LibraryGraphValidationSummary::from_diagnostics(&diagnostics);
         LibraryGraphValidationReport {
             valid: summary.errors == 0,
             diagnostics,
             summary,
+            legacy_pin_pad_map_migration,
         }
     }
 }

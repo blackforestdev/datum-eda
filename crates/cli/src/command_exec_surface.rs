@@ -32,6 +32,8 @@ mod command_exec_manufacturing;
 mod command_exec_native_support;
 #[path = "command_exec_plan.rs"]
 mod command_exec_plan;
+#[path = "command_exec_project_board_handoff.rs"]
+mod command_exec_project_board_handoff;
 #[path = "command_exec_project_board_surface.rs"]
 mod command_exec_project_board_surface;
 #[path = "command_exec_project_command.rs"]

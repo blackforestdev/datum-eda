@@ -18,8 +18,9 @@ mod symbol;
 
 pub use footprint::Footprint;
 pub use library_graph::{
-    LibraryGraph, LibraryGraphDiagnostic, LibraryGraphValidationReport,
-    LibraryGraphValidationSummary, LibraryGraphValidationTier, LibraryModelBlob,
+    LibraryGraph, LibraryGraphDiagnostic, LibraryGraphLegacyPinPadMapMigrationReport,
+    LibraryGraphValidationReport, LibraryGraphValidationSummary, LibraryGraphValidationTier,
+    LibraryModelBlob,
 };
 pub use package::{Package, PackageBodyDimensions, PackageTerminal};
 pub use padstack::{

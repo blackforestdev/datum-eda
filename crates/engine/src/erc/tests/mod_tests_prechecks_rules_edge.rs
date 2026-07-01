@@ -86,6 +86,92 @@ fn erc_preserves_richer_library_electrical_roles() {
 }
 
 #[test]
+fn erc_findings_include_pin_taxonomy_and_symbol_binding_evidence() {
+    let sheet_uuid = Uuid::new_v4();
+    let symbol_uuid = Uuid::new_v4();
+    let pin_uuid = Uuid::new_v4();
+    let part_uuid = Uuid::new_v4();
+    let entity_uuid = Uuid::new_v4();
+    let gate_uuid = Uuid::new_v4();
+    let schematic = Schematic {
+        uuid: Uuid::new_v4(),
+        sheets: HashMap::from([(
+            sheet_uuid,
+            Sheet {
+                uuid: sheet_uuid,
+                name: "Root".into(),
+                frame: None,
+                symbols: HashMap::from([(
+                    symbol_uuid,
+                    PlacedSymbol {
+                        uuid: symbol_uuid,
+                        part: Some(part_uuid),
+                        entity: Some(entity_uuid),
+                        gate: Some(gate_uuid),
+                        lib_id: Some("Device:R".into()),
+                        reference: "R1".into(),
+                        value: "10k".into(),
+                        fields: Vec::new(),
+                        pins: vec![SymbolPin {
+                            uuid: pin_uuid,
+                            number: "1".into(),
+                            name: "~".into(),
+                            electrical_type: PinElectricalType::Passive,
+                            position: Point::new(20, 20),
+                        }],
+                        position: Point::new(10, 10),
+                        rotation: 0,
+                        mirrored: false,
+                        unit_selection: Some("1".into()),
+                        display_mode: SymbolDisplayMode::LibraryDefault,
+                        pin_overrides: Vec::new(),
+                        hidden_power_behavior: HiddenPowerBehavior::PreservedAsImportedMetadata,
+                    },
+                )]),
+                wires: HashMap::new(),
+                junctions: HashMap::new(),
+                labels: HashMap::new(),
+                buses: HashMap::new(),
+                bus_entries: HashMap::new(),
+                ports: HashMap::new(),
+                noconnects: HashMap::new(),
+                texts: HashMap::new(),
+                drawings: HashMap::new(),
+            },
+        )]),
+        sheet_definitions: HashMap::new(),
+        sheet_instances: HashMap::new(),
+        variants: HashMap::<Uuid, Variant>::new(),
+        waivers: Vec::<CheckWaiver>::new(),
+    };
+
+    let findings = run_prechecks(&schematic);
+    let finding = findings
+        .iter()
+        .find(|finding| finding.code == "unconnected_component_pin")
+        .expect("dangling passive pin should produce a finding");
+    let evidence = finding
+        .pin_evidence
+        .first()
+        .expect("pin evidence should be attached to pin finding");
+    assert_eq!(evidence.pin_uuid, pin_uuid);
+    assert_eq!(evidence.symbol_uuid, symbol_uuid);
+    assert_eq!(evidence.reference, "R1");
+    assert_eq!(evidence.pin_number, "1");
+    assert_eq!(evidence.pin_name, "~");
+    assert_eq!(evidence.canonical_pin_type, "passive");
+    assert_eq!(
+        evidence.pin_taxonomy_revision,
+        "LibraryPinElectricalType:v1"
+    );
+    assert_eq!(evidence.lib_id.as_deref(), Some("Device:R"));
+    assert_eq!(evidence.unit_selection.as_deref(), Some("1"));
+    assert_eq!(evidence.part, Some(part_uuid));
+    assert_eq!(evidence.entity, Some(entity_uuid));
+    assert_eq!(evidence.gate, Some(gate_uuid));
+}
+
+#[test]
 fn passive_biased_input_net_becomes_info_not_hard_undriven_warning() {
     let sheet_uuid = Uuid::new_v4();
     let input_uuid = Uuid::new_v4();

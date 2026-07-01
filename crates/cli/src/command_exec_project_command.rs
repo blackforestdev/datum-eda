@@ -549,6 +549,9 @@ pub(super) fn execute_project_command(
         | command @ ProjectCommands::SetBoardOutline(ProjectSetBoardOutlineArgs { .. })
         | command @ ProjectCommands::SetBoardName(ProjectSetBoardNameArgs { .. })
         | command @ ProjectCommands::PlaceBoardComponent(ProjectPlaceBoardComponentArgs { .. })
+        | command @ ProjectCommands::GenerateBoardComponents(
+            ProjectGenerateBoardComponentsArgs { .. },
+        )
         | command @ ProjectCommands::DeleteBoardComponent(ProjectDeleteBoardComponentArgs { .. })
         | command @ ProjectCommands::DrawBoardTrack(ProjectDrawBoardTrackArgs { .. })
         | command @ ProjectCommands::EditBoardTrack(ProjectEditBoardTrackArgs { .. })

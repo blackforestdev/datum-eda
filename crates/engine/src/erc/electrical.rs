@@ -1,9 +1,7 @@
 use crate::schematic::PinElectricalType;
 
-#[cfg(test)]
 pub(crate) const PIN_ELECTRICAL_TAXONOMY_REVISION: &str = "LibraryPinElectricalType:v1";
 
-#[cfg(test)]
 pub(crate) fn canonical_pin_electrical_type_name(
     electrical_type: &PinElectricalType,
 ) -> &'static str {

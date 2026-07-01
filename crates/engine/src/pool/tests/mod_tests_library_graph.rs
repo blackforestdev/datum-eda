@@ -304,6 +304,136 @@ fn library_graph_rejects_ambiguous_legacy_pin_pad_map_rows() {
     assert!(codes.contains("ambiguous_legacy_pin_pad_map"));
 }
 
+#[test]
+fn library_graph_reports_migratable_legacy_part_pad_map_rows() {
+    let pad_id = Uuid::from_u128(30);
+    let part_id = Uuid::from_u128(31);
+    let mut graph = legacy_part_pad_map_graph(part_id, pad_id, &[("1", pad_id)]);
+    graph.parts.insert(
+        part_id,
+        serde_json::json!({
+            "uuid": part_id,
+            "entity": Uuid::from_u128(32),
+            "package": Uuid::from_u128(33),
+            "default_footprint": Uuid::from_u128(34),
+            "pad_map": {
+                pad_id: {
+                    "gate": Uuid::from_u128(35),
+                    "pin": Uuid::from_u128(36)
+                }
+            }
+        }),
+    );
+    graph
+        .subjects
+        .insert(part_id, format!("fixture/parts/{part_id}.json"));
+
+    let report = graph.validation_report();
+
+    assert_eq!(report.legacy_pin_pad_map_migration.parts, 1);
+    assert_eq!(report.legacy_pin_pad_map_migration.rows, 1);
+    assert_eq!(report.legacy_pin_pad_map_migration.migratable_rows, 1);
+    assert_eq!(
+        report.legacy_pin_pad_map_migration.migratable_subjects,
+        vec![format!("fixture/parts/{part_id}.json#pad_map/{pad_id}")]
+    );
+    assert!(
+        report
+            .diagnostics
+            .iter()
+            .any(|diagnostic| diagnostic.code == "legacy_part_pad_map_migratable")
+    );
+}
+
+#[test]
+fn library_graph_reports_shadowed_legacy_part_pad_map_rows() {
+    let pad_id = Uuid::from_u128(40);
+    let part_id = Uuid::from_u128(41);
+    let map_id = Uuid::from_u128(42);
+    let mut graph = legacy_part_pad_map_graph(part_id, pad_id, &[("1", pad_id)]);
+    graph.parts.insert(
+        part_id,
+        serde_json::json!({
+            "uuid": part_id,
+            "entity": Uuid::from_u128(32),
+            "package": Uuid::from_u128(33),
+            "default_pin_pad_map": map_id,
+            "pad_map": {
+                pad_id: {
+                    "gate": Uuid::from_u128(35),
+                    "pin": Uuid::from_u128(36)
+                }
+            }
+        }),
+    );
+    graph.pin_pad_maps.insert(
+        map_id,
+        serde_json::json!({
+            "uuid": map_id,
+            "part": part_id,
+            "mappings": {}
+        }),
+    );
+    graph
+        .subjects
+        .insert(part_id, format!("fixture/parts/{part_id}.json"));
+
+    let report = graph.validation_report();
+
+    assert_eq!(report.legacy_pin_pad_map_migration.shadowed_rows, 1);
+    assert_eq!(report.legacy_pin_pad_map_migration.migratable_rows, 0);
+    assert!(
+        report
+            .diagnostics
+            .iter()
+            .any(|diagnostic| diagnostic.code == "legacy_part_pad_map_shadowed")
+    );
+}
+
+#[test]
+fn library_graph_reports_ambiguous_legacy_part_pad_map_migration_rows() {
+    let package_pad_id = Uuid::from_u128(50);
+    let part_id = Uuid::from_u128(51);
+    let mut graph = legacy_part_pad_map_graph(
+        part_id,
+        package_pad_id,
+        &[("1", Uuid::from_u128(52)), ("1", Uuid::from_u128(53))],
+    );
+    graph.parts.insert(
+        part_id,
+        serde_json::json!({
+            "uuid": part_id,
+            "entity": Uuid::from_u128(32),
+            "package": Uuid::from_u128(33),
+            "default_footprint": Uuid::from_u128(34),
+            "pad_map": {
+                package_pad_id: {
+                    "gate": Uuid::from_u128(35),
+                    "pin": Uuid::from_u128(36)
+                }
+            }
+        }),
+    );
+    graph
+        .subjects
+        .insert(part_id, format!("fixture/parts/{part_id}.json"));
+
+    let report = graph.validation_report();
+
+    assert_eq!(report.legacy_pin_pad_map_migration.blocked_rows, 1);
+    assert_eq!(
+        report.legacy_pin_pad_map_migration.blocked_subjects,
+        vec![format!(
+            "fixture/parts/{part_id}.json#pad_map/{package_pad_id}"
+        )]
+    );
+    assert!(report.diagnostics.iter().any(|diagnostic| {
+        diagnostic.code == "legacy_part_pad_map_migration_blocked"
+            && diagnostic.subject
+                == format!("fixture/parts/{part_id}.json#pad_map/{package_pad_id}")
+    }));
+}
+
 #[allow(clippy::too_many_arguments)]
 fn legacy_pin_pad_map_graph(
     unit_id: Uuid,
@@ -399,6 +529,57 @@ fn legacy_pin_pad_map_graph(
         part_id,
         map_id,
     ] {
+        graph.subjects.insert(id, format!("fixture/{id}.json"));
+    }
+    graph
+}
+
+fn legacy_part_pad_map_graph(
+    part_id: Uuid,
+    package_pad_id: Uuid,
+    footprint_pads: &[(&str, Uuid)],
+) -> LibraryGraph {
+    let package_id = Uuid::from_u128(33);
+    let footprint_id = Uuid::from_u128(34);
+    let padstack_id = Uuid::from_u128(37);
+    let mut graph = LibraryGraph::default();
+    graph.packages.insert(
+        package_id,
+        serde_json::json!({
+            "uuid": package_id,
+            "pads": {
+                package_pad_id: {
+                    "uuid": package_pad_id,
+                    "name": "1",
+                    "padstack": padstack_id
+                }
+            }
+        }),
+    );
+    graph.footprints.insert(
+        footprint_id,
+        serde_json::json!({
+            "uuid": footprint_id,
+            "package": package_id,
+            "pads": footprint_pads.iter().map(|(name, pad_id)| {
+                (
+                    pad_id.to_string(),
+                    serde_json::json!({
+                        "uuid": pad_id,
+                        "name": name,
+                        "padstack": padstack_id
+                    }),
+                )
+            }).collect::<serde_json::Map<_, _>>()
+        }),
+    );
+    graph.padstacks.insert(
+        padstack_id,
+        serde_json::json!({
+            "uuid": padstack_id
+        }),
+    );
+    for id in [package_id, footprint_id, padstack_id, part_id] {
         graph.subjects.insert(id, format!("fixture/{id}.json"));
     }
     graph

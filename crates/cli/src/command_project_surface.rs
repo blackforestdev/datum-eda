@@ -6,6 +6,8 @@ mod command_project_artifact_runs;
 mod command_project_artifact_validation;
 #[path = "command_project_artifacts.rs"]
 mod command_project_artifacts;
+#[path = "command_project_board_handoff.rs"]
+mod command_project_board_handoff;
 #[path = "command_project_check_gate.rs"]
 mod command_project_check_gate;
 #[path = "command_project_component_instances.rs"]
@@ -102,6 +104,9 @@ pub(crate) use self::command_project_board_component_value::set_native_project_b
 pub(crate) use self::command_project_board_diagnostics::{
     query_native_project_board_check, query_native_project_board_diagnostics,
     query_native_project_board_unrouted,
+};
+pub(crate) use self::command_project_board_handoff::{
+    generate_native_project_board_components, render_native_project_board_handoff_text,
 };
 pub(crate) use self::command_project_board_layout::{
     delete_native_project_board_keepout, delete_native_project_board_text,

@@ -159,7 +159,17 @@ fn project_query_check_run_reports_resolver_keyed_persisted_findings() {
                 .as_str()
                 .unwrap()
                 .contains("fix, waive, or accept")
-            && entry["evidence"].as_array().unwrap().len() == 1
+            && entry["evidence"].as_array().unwrap().len() == 2
+            && entry["evidence"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|evidence| {
+                    evidence["evidence_kind"] == "erc_pin_taxonomy"
+                        && evidence["pin_taxonomy_revision"] == "LibraryPinElectricalType:v1"
+                        && evidence["pins"][0]["canonical_pin_type"] == "passive"
+                        && evidence["pins"][0]["lib_id"] == "Device:R"
+                })
             && entry["waiver_refs"] == serde_json::json!([])
             && entry["deviation_refs"] == serde_json::json!([])
             && entry["proposal_refs"] == serde_json::json!([])

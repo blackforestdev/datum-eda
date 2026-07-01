@@ -1,6 +1,6 @@
 use super::*;
 use eda_engine::substrate::{
-    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver,
+    CommitProvenance, CommitReport, CommitSource, Operation, OperationBatch, ProjectResolver,
 };
 
 pub(crate) fn create_native_project_sheet(
@@ -38,7 +38,7 @@ pub(crate) fn create_native_project_sheet(
         texts: BTreeMap::new(),
         drawings: BTreeMap::new(),
     };
-    commit_schematic_operations(
+    let report = commit_schematic_operations(
         root,
         "create schematic sheet",
         vec![Operation::CreateSchematicSheet {
@@ -48,11 +48,15 @@ pub(crate) fn create_native_project_sheet(
             sheet: serde_json::to_value(&sheet).expect("native sheet serialization must succeed"),
         }],
     )?;
+    let evidence = schematic_commit_evidence(&report);
 
     Ok(NativeProjectSheetMutationReportView {
         action: "create_sheet".to_string(),
         project_root: project.root.display().to_string(),
         schematic_uuid: project.schematic.uuid.to_string(),
+        model_revision: evidence.model_revision,
+        created_ids: evidence.created_ids,
+        modified_ids: evidence.modified_ids,
         sheet_uuid: sheet_uuid.to_string(),
         sheet_path: project
             .root
@@ -86,7 +90,7 @@ pub(crate) fn delete_native_project_sheet(
         .with_context(|| format!("failed to parse {}", sheet_path.display()))?;
 
     let cascaded_objects = sheet_child_object_count(&sheet);
-    commit_schematic_operations(
+    let report = commit_schematic_operations(
         root,
         "delete schematic sheet",
         vec![Operation::DeleteSchematicSheet {
@@ -96,11 +100,15 @@ pub(crate) fn delete_native_project_sheet(
             sheet: sheet_value,
         }],
     )?;
+    let evidence = schematic_commit_evidence(&report);
 
     Ok(NativeProjectSheetMutationReportView {
         action: "delete_sheet".to_string(),
         project_root: project.root.display().to_string(),
         schematic_uuid: project.schematic.uuid.to_string(),
+        model_revision: evidence.model_revision,
+        created_ids: evidence.created_ids,
+        modified_ids: evidence.modified_ids,
         sheet_uuid: sheet_uuid.to_string(),
         sheet_path: sheet_path.display().to_string(),
         name: sheet.name,
@@ -124,7 +132,7 @@ pub(crate) fn rename_native_project_sheet(
             anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
         })?;
     let sheet_path = project.root.join("schematic").join(relative_path);
-    commit_schematic_operations(
+    let report = commit_schematic_operations(
         root,
         "rename schematic sheet",
         vec![Operation::SetSchematicSheetName {
@@ -132,11 +140,15 @@ pub(crate) fn rename_native_project_sheet(
             name: name.clone(),
         }],
     )?;
+    let evidence = schematic_commit_evidence(&report);
 
     Ok(NativeProjectSheetMutationReportView {
         action: "rename_sheet".to_string(),
         project_root: project.root.display().to_string(),
         schematic_uuid: project.schematic.uuid.to_string(),
+        model_revision: evidence.model_revision,
+        created_ids: evidence.created_ids,
+        modified_ids: evidence.modified_ids,
         sheet_uuid: sheet_uuid.to_string(),
         sheet_path: sheet_path.display().to_string(),
         name,
@@ -174,7 +186,7 @@ pub(crate) fn create_native_project_sheet_definition(
         root_sheet: root_sheet_uuid,
         name: name.clone(),
     };
-    commit_schematic_operations(
+    let report = commit_schematic_operations(
         root,
         "create schematic sheet definition",
         vec![Operation::CreateSchematicDefinition {
@@ -185,11 +197,15 @@ pub(crate) fn create_native_project_sheet_definition(
                 .expect("native sheet definition serialization must succeed"),
         }],
     )?;
+    let evidence = schematic_commit_evidence(&report);
 
     Ok(NativeProjectSheetDefinitionMutationReportView {
         action: "create_sheet_definition".to_string(),
         project_root: project.root.display().to_string(),
         schematic_uuid: project.schematic.uuid.to_string(),
+        model_revision: evidence.model_revision,
+        created_ids: evidence.created_ids,
+        modified_ids: evidence.modified_ids,
         definition_uuid: definition_uuid.to_string(),
         definition_path: project
             .root
@@ -249,7 +265,7 @@ pub(crate) fn create_native_project_sheet_instance(
         name: name.clone(),
         ports: Vec::new(),
     };
-    commit_schematic_operations(
+    let report = commit_schematic_operations(
         root,
         "create schematic sheet instance",
         vec![Operation::CreateSchematicSheetInstance {
@@ -259,11 +275,15 @@ pub(crate) fn create_native_project_sheet_instance(
                 .expect("native sheet instance serialization must succeed"),
         }],
     )?;
+    let evidence = schematic_commit_evidence(&report);
 
     Ok(NativeProjectSheetInstanceMutationReportView {
         action: "create_sheet_instance".to_string(),
         project_root: project.root.display().to_string(),
         schematic_uuid: project.schematic.uuid.to_string(),
+        model_revision: evidence.model_revision,
+        created_ids: evidence.created_ids,
+        modified_ids: evidence.modified_ids,
         instance_uuid: instance_uuid.to_string(),
         definition_uuid: definition_uuid.to_string(),
         parent_sheet_uuid: parent_sheet_uuid.map(|uuid| uuid.to_string()),
@@ -286,7 +306,7 @@ pub(crate) fn delete_native_project_sheet_instance(
         .find(|candidate| candidate.uuid == instance_uuid)
         .cloned()
         .ok_or_else(|| anyhow::anyhow!("sheet instance not found: {instance_uuid}"))?;
-    commit_schematic_operations(
+    let report = commit_schematic_operations(
         root,
         "delete schematic sheet instance",
         vec![Operation::DeleteSchematicSheetInstance {
@@ -296,11 +316,15 @@ pub(crate) fn delete_native_project_sheet_instance(
                 .expect("native sheet instance serialization must succeed"),
         }],
     )?;
+    let evidence = schematic_commit_evidence(&report);
 
     Ok(NativeProjectSheetInstanceMutationReportView {
         action: "delete_sheet_instance".to_string(),
         project_root: project.root.display().to_string(),
         schematic_uuid: project.schematic.uuid.to_string(),
+        model_revision: evidence.model_revision,
+        created_ids: evidence.created_ids,
+        modified_ids: evidence.modified_ids,
         instance_uuid: instance.uuid.to_string(),
         definition_uuid: instance.definition.to_string(),
         parent_sheet_uuid: instance.parent_sheet.map(|uuid| uuid.to_string()),
@@ -327,7 +351,7 @@ pub(crate) fn move_native_project_sheet_instance(
         .ok_or_else(|| anyhow::anyhow!("sheet instance not found: {instance_uuid}"))?;
     let mut instance = previous_instance.clone();
     instance.position = NativePoint { x: x_nm, y: y_nm };
-    commit_schematic_operations(
+    let report = commit_schematic_operations(
         root,
         "move schematic sheet instance",
         vec![Operation::SetSchematicSheetInstance {
@@ -339,11 +363,15 @@ pub(crate) fn move_native_project_sheet_instance(
                 .expect("native sheet instance serialization must succeed"),
         }],
     )?;
+    let evidence = schematic_commit_evidence(&report);
 
     Ok(NativeProjectSheetInstanceMutationReportView {
         action: "move_sheet_instance".to_string(),
         project_root: project.root.display().to_string(),
         schematic_uuid: project.schematic.uuid.to_string(),
+        model_revision: evidence.model_revision,
+        created_ids: evidence.created_ids,
+        modified_ids: evidence.modified_ids,
         instance_uuid: instance.uuid.to_string(),
         definition_uuid: instance.definition.to_string(),
         parent_sheet_uuid: instance.parent_sheet.map(|uuid| uuid.to_string()),
@@ -380,7 +408,7 @@ pub(crate) fn bind_native_project_sheet_instance_port(
     let mut instance = previous_instance.clone();
     instance.ports.push(port_uuid);
     instance.ports.sort();
-    commit_schematic_operations(
+    let report = commit_schematic_operations(
         root,
         "bind schematic sheet instance port",
         vec![Operation::SetSchematicSheetInstance {
@@ -392,11 +420,15 @@ pub(crate) fn bind_native_project_sheet_instance_port(
                 .expect("native sheet instance serialization must succeed"),
         }],
     )?;
+    let evidence = schematic_commit_evidence(&report);
 
     Ok(NativeProjectSheetInstanceMutationReportView {
         action: "bind_sheet_instance_port".to_string(),
         project_root: project.root.display().to_string(),
         schematic_uuid: project.schematic.uuid.to_string(),
+        model_revision: evidence.model_revision,
+        created_ids: evidence.created_ids,
+        modified_ids: evidence.modified_ids,
         instance_uuid: instance.uuid.to_string(),
         definition_uuid: instance.definition.to_string(),
         parent_sheet_uuid: instance.parent_sheet.map(|uuid| uuid.to_string()),
@@ -425,7 +457,7 @@ pub(crate) fn unbind_native_project_sheet_instance_port(
     }
     let mut instance = previous_instance.clone();
     instance.ports.retain(|candidate| candidate != &port_uuid);
-    commit_schematic_operations(
+    let report = commit_schematic_operations(
         root,
         "unbind schematic sheet instance port",
         vec![Operation::SetSchematicSheetInstance {
@@ -437,11 +469,15 @@ pub(crate) fn unbind_native_project_sheet_instance_port(
                 .expect("native sheet instance serialization must succeed"),
         }],
     )?;
+    let evidence = schematic_commit_evidence(&report);
 
     Ok(NativeProjectSheetInstanceMutationReportView {
         action: "unbind_sheet_instance_port".to_string(),
         project_root: project.root.display().to_string(),
         schematic_uuid: project.schematic.uuid.to_string(),
+        model_revision: evidence.model_revision,
+        created_ids: evidence.created_ids,
+        modified_ids: evidence.modified_ids,
         instance_uuid: instance.uuid.to_string(),
         definition_uuid: instance.definition.to_string(),
         parent_sheet_uuid: instance.parent_sheet.map(|uuid| uuid.to_string()),
@@ -469,7 +505,7 @@ fn commit_schematic_operations(
     root: &Path,
     reason: &str,
     operations: Vec<Operation>,
-) -> Result<()> {
+) -> Result<CommitReport> {
     let mut model = ProjectResolver::new(root)
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
@@ -487,6 +523,31 @@ fn commit_schematic_operations(
                 operations,
             },
         )
-        .map(|_| ())
         .map_err(Into::into)
+}
+
+struct SchematicCommitEvidence {
+    model_revision: String,
+    created_ids: Vec<String>,
+    modified_ids: Vec<String>,
+}
+
+fn schematic_commit_evidence(report: &CommitReport) -> SchematicCommitEvidence {
+    SchematicCommitEvidence {
+        model_revision: report.transaction.after_model_revision.0.clone(),
+        created_ids: report
+            .transaction
+            .diff
+            .created
+            .iter()
+            .map(ToString::to_string)
+            .collect(),
+        modified_ids: report
+            .transaction
+            .diff
+            .modified
+            .iter()
+            .map(ToString::to_string)
+            .collect(),
+    }
 }

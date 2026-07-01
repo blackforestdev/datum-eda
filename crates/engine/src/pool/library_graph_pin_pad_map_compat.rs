@@ -1,8 +1,69 @@
 use uuid::Uuid;
 
-use super::library_graph::{LibraryGraph, LibraryGraphDiagnostic};
+use super::library_graph::{
+    LibraryGraph, LibraryGraphDiagnostic, LibraryGraphLegacyPinPadMapMigrationReport,
+};
 
 impl LibraryGraph {
+    pub fn legacy_pin_pad_map_migration_report(
+        &self,
+    ) -> LibraryGraphLegacyPinPadMapMigrationReport {
+        let mut report = LibraryGraphLegacyPinPadMapMigrationReport::default();
+        for (part_id, part) in &self.parts {
+            let Some(pad_map) = part.get("pad_map").and_then(serde_json::Value::as_object) else {
+                continue;
+            };
+            if pad_map.is_empty() {
+                continue;
+            }
+            report.parts += 1;
+            let subject = self
+                .subjects
+                .get(part_id)
+                .cloned()
+                .unwrap_or_else(|| part_id.to_string());
+            let default_map_is_authoritative = part
+                .get("default_pin_pad_map")
+                .and_then(serde_json::Value::as_str)
+                .and_then(|raw| Uuid::parse_str(raw).ok())
+                .and_then(|map_id| self.pin_pad_maps.get(&map_id))
+                .and_then(|map| map.get("part").and_then(serde_json::Value::as_str))
+                .and_then(|raw| Uuid::parse_str(raw).ok())
+                == Some(*part_id);
+            let package_id = part
+                .get("package")
+                .and_then(serde_json::Value::as_str)
+                .and_then(|raw| Uuid::parse_str(raw).ok());
+            let footprint_id = part
+                .get("default_footprint")
+                .and_then(serde_json::Value::as_str)
+                .and_then(|raw| Uuid::parse_str(raw).ok());
+            for (pad_key, entry) in pad_map {
+                report.rows += 1;
+                let row_subject = format!("{subject}#pad_map/{pad_key}");
+                if default_map_is_authoritative {
+                    report.shadowed_rows += 1;
+                    report.shadowed_subjects.push(row_subject);
+                    continue;
+                }
+                if legacy_part_pad_map_row_is_migratable(
+                    self,
+                    package_id,
+                    footprint_id,
+                    pad_key,
+                    entry,
+                ) {
+                    report.migratable_rows += 1;
+                    report.migratable_subjects.push(row_subject);
+                } else {
+                    report.blocked_rows += 1;
+                    report.blocked_subjects.push(row_subject);
+                }
+            }
+        }
+        report
+    }
+
     pub(super) fn resolve_pin_pad_map_mapping(
         &self,
         mapping_key: &str,
@@ -93,6 +154,127 @@ impl LibraryGraph {
             }
         }
     }
+}
+
+impl LibraryGraphLegacyPinPadMapMigrationReport {
+    pub fn diagnostics(&self) -> Vec<LibraryGraphDiagnostic> {
+        let mut diagnostics = Vec::new();
+        if self.migratable_rows > 0 {
+            diagnostics.push(LibraryGraphDiagnostic {
+                severity: "info",
+                code: "legacy_part_pad_map_migratable",
+                subject: "pool/parts#pad_map".to_string(),
+                message: format!(
+                    "{} legacy Part.pad_map row(s) can seed first-class PinPadMap records",
+                    self.migratable_rows
+                ),
+            });
+        }
+        if self.shadowed_rows > 0 {
+            diagnostics.push(LibraryGraphDiagnostic {
+                severity: "info",
+                code: "legacy_part_pad_map_shadowed",
+                subject: "pool/parts#pad_map".to_string(),
+                message: format!(
+                    "{} legacy Part.pad_map row(s) are ignored because Part.default_pin_pad_map already names an authoritative first-class PinPadMap",
+                    self.shadowed_rows
+                ),
+            });
+        }
+        if self.blocked_rows > 0 {
+            for subject in &self.blocked_subjects {
+                diagnostics.push(LibraryGraphDiagnostic {
+                    severity: "warning",
+                    code: "legacy_part_pad_map_migration_blocked",
+                    subject: subject.clone(),
+                    message: "legacy Part.pad_map row cannot be migrated without resolving malformed references or footprint-pad ambiguity".to_string(),
+                });
+            }
+        }
+        diagnostics
+    }
+}
+
+fn legacy_part_pad_map_row_is_migratable(
+    graph: &LibraryGraph,
+    package_id: Option<Uuid>,
+    footprint_id: Option<Uuid>,
+    pad_key: &str,
+    entry: &serde_json::Value,
+) -> bool {
+    let Some(pad_id) = Uuid::parse_str(pad_key).ok() else {
+        return false;
+    };
+    if !entry.get("gate").is_some_and(serde_json::Value::is_string)
+        || !entry.get("pin").is_some_and(serde_json::Value::is_string)
+        || entry
+            .get("gate")
+            .and_then(serde_json::Value::as_str)
+            .and_then(|raw| Uuid::parse_str(raw).ok())
+            .is_none()
+        || entry
+            .get("pin")
+            .and_then(serde_json::Value::as_str)
+            .and_then(|raw| Uuid::parse_str(raw).ok())
+            .is_none()
+    {
+        return false;
+    }
+    if let Some(footprint_id) = footprint_id {
+        return legacy_part_pad_map_pad_resolves_to_footprint(
+            graph,
+            package_id,
+            footprint_id,
+            pad_id,
+        );
+    }
+    package_id.is_some_and(|package_id| {
+        graph
+            .packages
+            .get(&package_id)
+            .and_then(|package| package.get("pads"))
+            .and_then(serde_json::Value::as_object)
+            .is_some_and(|pads| pads.contains_key(&pad_id.to_string()))
+    })
+}
+
+fn legacy_part_pad_map_pad_resolves_to_footprint(
+    graph: &LibraryGraph,
+    package_id: Option<Uuid>,
+    footprint_id: Uuid,
+    pad_id: Uuid,
+) -> bool {
+    let Some(footprint_pads) = graph
+        .footprints
+        .get(&footprint_id)
+        .and_then(|footprint| footprint.get("pads"))
+        .and_then(serde_json::Value::as_object)
+    else {
+        return false;
+    };
+    if footprint_pads.contains_key(&pad_id.to_string()) {
+        return true;
+    }
+    let Some(package_pads) = package_id
+        .and_then(|package_id| graph.packages.get(&package_id))
+        .and_then(|package| package.get("pads"))
+        .and_then(serde_json::Value::as_object)
+    else {
+        return false;
+    };
+    let Some(package_pad_name) = package_pads
+        .get(&pad_id.to_string())
+        .and_then(|pad| pad.get("name"))
+        .and_then(serde_json::Value::as_str)
+    else {
+        return false;
+    };
+    footprint_pads
+        .values()
+        .filter(|pad| pad.get("name").and_then(serde_json::Value::as_str) == Some(package_pad_name))
+        .take(2)
+        .count()
+        == 1
 }
 
 fn parse_uuid_key(

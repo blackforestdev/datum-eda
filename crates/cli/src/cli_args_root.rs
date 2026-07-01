@@ -32,6 +32,8 @@ mod cli_args_prelude;
 mod cli_args_project_command_args_artifacts;
 #[path = "cli_args_project_command_args_board.rs"]
 mod cli_args_project_command_args_board;
+#[path = "cli_args_project_command_args_board_handoff.rs"]
+mod cli_args_project_command_args_board_handoff;
 #[path = "cli_args_project_command_args_schematic_connectivity.rs"]
 mod cli_args_project_command_args_schematic_connectivity;
 #[path = "cli_args_project_command_args_schematic_symbols.rs"]

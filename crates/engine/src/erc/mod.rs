@@ -8,9 +8,15 @@ use crate::connectivity;
 use crate::schematic::{CheckDomain, CheckWaiver, Schematic, WaiverTarget};
 
 mod electrical;
+mod finding_id;
+mod pin_evidence;
 use electrical::{
     is_conflicting_output, is_explicit_driver, is_input, is_no_connect, is_passive, is_power_input,
 };
+use finding_id::stable_finding_id;
+use pin_evidence::{evidence_for_pins, pin_evidence_by_uuid};
+
+pub use pin_evidence::ErcPinEvidence;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ErcSeverity {
@@ -35,6 +41,8 @@ pub struct ErcFinding {
     pub pin: Option<String>,
     pub objects: Vec<ErcObjectRef>,
     pub object_uuids: Vec<Uuid>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub pin_evidence: Vec<ErcPinEvidence>,
     pub waived: bool,
 }
 
@@ -61,6 +69,7 @@ pub fn run_prechecks_with_config_and_waivers(
     findings.extend(hierarchical_mismatch_findings(schematic, config));
     let nets = connectivity::schematic_net_info(schematic);
     let noconnect_pins = noconnect_pin_uuids(schematic);
+    let pin_evidence_by_uuid = pin_evidence_by_uuid(schematic);
 
     for net in nets {
         let net_name = net.name.clone();
@@ -116,6 +125,7 @@ pub fn run_prechecks_with_config_and_waivers(
                     .map(|pin| object_ref("pin", format!("{}.{}", pin.component, pin.pin)))
                     .collect(),
                 output_pins.iter().map(|pin| pin.uuid).collect(),
+                evidence_for_pins(&pin_evidence_by_uuid, output_pins.iter().copied()),
             ));
         }
 
@@ -140,6 +150,7 @@ pub fn run_prechecks_with_config_and_waivers(
                     .map(|pin| object_ref("pin", format!("{}.{}", pin.component, pin.pin)))
                     .collect(),
                 power_in_pins.iter().map(|pin| pin.uuid).collect(),
+                evidence_for_pins(&pin_evidence_by_uuid, power_in_pins.iter().copied()),
             ));
         }
 
@@ -167,6 +178,7 @@ pub fn run_prechecks_with_config_and_waivers(
                     .map(|pin| object_ref("pin", format!("{}.{}", pin.component, pin.pin)))
                     .collect(),
                 noconnect_marked_pins.iter().map(|pin| pin.uuid).collect(),
+                evidence_for_pins(&pin_evidence_by_uuid, noconnect_marked_pins.iter().copied()),
             ));
         }
 
@@ -215,6 +227,7 @@ pub fn run_prechecks_with_config_and_waivers(
                     .map(|pin| object_ref("pin", format!("{}.{}", pin.component, pin.pin)))
                     .collect(),
                 input_pins.iter().map(|pin| pin.uuid).collect(),
+                evidence_for_pins(&pin_evidence_by_uuid, input_pins.iter().copied()),
             ));
         }
 
@@ -232,6 +245,7 @@ pub fn run_prechecks_with_config_and_waivers(
                 Some(pin.pin.clone()),
                 vec![object_ref("pin", format!("{}.{}", pin.component, pin.pin))],
                 vec![pin.uuid],
+                evidence_for_pins(&pin_evidence_by_uuid, std::iter::once(pin)),
             ));
         }
 
@@ -248,6 +262,7 @@ pub fn run_prechecks_with_config_and_waivers(
                 None,
                 vec![object_ref("port", net_name.clone())],
                 net.port_uuids.clone(),
+                Vec::new(),
             ));
         }
 
@@ -272,6 +287,7 @@ pub fn run_prechecks_with_config_and_waivers(
                 None,
                 vec![object_ref("net", net_name)],
                 vec![net.uuid],
+                Vec::new(),
             ));
         }
     }
@@ -378,6 +394,7 @@ fn hierarchical_mismatch_findings(schematic: &Schematic, config: &ErcConfig) -> 
             None,
             objects,
             object_uuids,
+            Vec::new(),
         ));
     }
     findings
@@ -401,11 +418,14 @@ fn build_finding(
     pin: Option<String>,
     mut objects: Vec<ErcObjectRef>,
     mut object_uuids: Vec<Uuid>,
+    mut pin_evidence: Vec<ErcPinEvidence>,
 ) -> ErcFinding {
     objects.sort();
     objects.dedup();
     object_uuids.sort();
     object_uuids.dedup();
+    pin_evidence.sort();
+    pin_evidence.dedup();
     let id = stable_finding_id(
         code,
         net_name.as_deref(),
@@ -423,35 +443,13 @@ fn build_finding(
         pin,
         objects,
         object_uuids,
+        pin_evidence,
         waived: false,
     }
 }
 
 fn object_ref(kind: &'static str, key: String) -> ErcObjectRef {
     ErcObjectRef { kind, key }
-}
-
-fn stable_finding_id(
-    code: &str,
-    net_name: Option<&str>,
-    component: Option<&str>,
-    pin: Option<&str>,
-    objects: &[ErcObjectRef],
-) -> Uuid {
-    let mut material = vec![format!("code={code}")];
-    if let Some(net_name) = net_name {
-        material.push(format!("net={net_name}"));
-    }
-    if let Some(component) = component {
-        material.push(format!("component={component}"));
-    }
-    if let Some(pin) = pin {
-        material.push(format!("pin={pin}"));
-    }
-    for object in objects {
-        material.push(format!("obj:{}={}", object.kind, object.key));
-    }
-    Uuid::new_v5(&Uuid::NAMESPACE_DNS, material.join("|").as_bytes())
 }
 
 fn apply_waivers(findings: &mut [ErcFinding], waivers: &[CheckWaiver]) {

@@ -336,6 +336,7 @@ fn render_check_report_text_includes_input_without_explicit_driver() {
                 key: "Q1.1".into(),
             }],
             object_uuids: vec![test_uuid],
+            pin_evidence: Vec::new(),
             waived: false,
         }],
         drc: Vec::new(),

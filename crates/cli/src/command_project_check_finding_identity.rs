@@ -57,10 +57,41 @@ pub(crate) fn check_finding_evidence(
     primary_target: &serde_json::Value,
 ) -> Vec<serde_json::Value> {
     let mut evidence = vec![payload.clone()];
+    if let Some(pin_taxonomy) = erc_pin_taxonomy_evidence(code, payload, primary_target) {
+        evidence.push(pin_taxonomy);
+    }
     if let Some(standards_basis) = process_aperture_standards_basis(code, primary_target) {
         evidence.push(standards_basis);
     }
     evidence
+}
+
+fn erc_pin_taxonomy_evidence(
+    code: &str,
+    payload: &serde_json::Value,
+    primary_target: &serde_json::Value,
+) -> Option<serde_json::Value> {
+    let pin_evidence = payload
+        .get("pin_evidence")
+        .and_then(serde_json::Value::as_array)
+        .filter(|pins| !pins.is_empty())?;
+    let revision = pin_evidence
+        .iter()
+        .filter_map(|pin| {
+            pin.get("pin_taxonomy_revision")
+                .and_then(serde_json::Value::as_str)
+        })
+        .min()
+        .unwrap_or("unknown");
+
+    Some(serde_json::json!({
+        "evidence_kind": "erc_pin_taxonomy",
+        "source": "erc",
+        "code": code,
+        "pin_taxonomy_revision": revision,
+        "primary_target": primary_target,
+        "pins": pin_evidence,
+    }))
 }
 
 fn process_aperture_standards_basis(

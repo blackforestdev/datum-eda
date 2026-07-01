@@ -267,6 +267,8 @@ mod main_tests_project_board_component_silkscreen;
 mod main_tests_project_board_connectivity;
 #[path = "main_tests_project_board_dimension.rs"]
 mod main_tests_project_board_dimension;
+#[path = "main_tests_project_board_handoff.rs"]
+mod main_tests_project_board_handoff;
 #[path = "main_tests_project_board_keepout.rs"]
 mod main_tests_project_board_keepout;
 #[path = "main_tests_project_board_net.rs"]
