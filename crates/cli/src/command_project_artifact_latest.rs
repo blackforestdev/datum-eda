@@ -1,4 +1,5 @@
-use eda_engine::substrate::{ArtifactMetadata, DesignModel, Operation};
+use eda_engine::api::native_write::artifacts::latest_journaled_artifact_id;
+use eda_engine::substrate::{ArtifactMetadata, DesignModel};
 use uuid::Uuid;
 
 pub(crate) fn latest_artifact_id(
@@ -9,29 +10,8 @@ pub(crate) fn latest_artifact_id(
         .iter()
         .map(|artifact| artifact.artifact_id)
         .collect::<std::collections::BTreeSet<_>>();
-    let latest_journaled = model
-        .journal
-        .iter()
-        .enumerate()
-        .flat_map(|(transaction_index, transaction)| {
-            let existing = &existing;
-            transaction.operations.iter().enumerate().filter_map(
-                move |(operation_index, operation)| match operation {
-                    Operation::SetArtifactMetadata { artifact_id, .. }
-                        if existing.contains(artifact_id) =>
-                    {
-                        Some((transaction_index, operation_index, *artifact_id))
-                    }
-                    _ => None,
-                },
-            )
-        })
-        .max_by_key(|(transaction_index, operation_index, artifact_id)| {
-            (*transaction_index, *operation_index, *artifact_id)
-        })
-        .map(|(_, _, artifact_id)| artifact_id);
-    if latest_journaled.is_some() {
-        return latest_journaled;
+    if let Some(latest_journaled) = latest_journaled_artifact_id(model, &existing) {
+        return Some(latest_journaled);
     }
 
     artifacts

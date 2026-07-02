@@ -1,10 +1,15 @@
 use std::path::Path;
 
 use anyhow::{Context, Result};
+use eda_engine::api::native_write::output_jobs::{
+    build_create_output_job, build_delete_output_job, build_set_output_job,
+    derive_output_job_run_id,
+};
+use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::substrate::{
-    ArtifactKind, ArtifactMetadata, CommitProvenance, CommitSource, OUTPUT_JOB_RUN_SCHEMA_VERSION,
-    ObjectRevision, Operation, OperationBatch, OutputJob, OutputJobLogEntry, OutputJobLogLevel,
-    OutputJobRun, OutputJobRunStatus, PRODUCTION_RECORD_SCHEMA_VERSION, ProjectResolver,
+    ArtifactKind, ArtifactMetadata, CommitSource, OUTPUT_JOB_RUN_SCHEMA_VERSION, ObjectRevision,
+    OutputJob, OutputJobLogEntry, OutputJobLogLevel, OutputJobRun, OutputJobRunStatus,
+    PRODUCTION_RECORD_SCHEMA_VERSION, ProjectResolver,
 };
 use serde::Serialize;
 use uuid::Uuid;
@@ -20,12 +25,15 @@ use super::command_project_check_gate::{
     ReleaseCheckGateView, release_check_gate, release_check_gate_error,
 };
 use super::command_project_gerber_plan::sanitize_export_prefix;
-use super::command_project_operation_guards::guarded_existing_object_operation;
 use super::command_project_output_job_include::{
     output_job_id, output_job_id_for_includes, output_job_include_label, output_job_kind_scope,
     parse_output_job_include,
 };
 use super::load_native_project_with_resolved_board;
+
+fn cli_provenance(reason: &str) -> WriteProvenance {
+    WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason)
+}
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectOutputJobsView {
@@ -242,29 +250,13 @@ pub(crate) fn update_native_project_output_job(
     }
     output_job.object_revision = ObjectRevision(output_job.object_revision.0 + 1);
 
-    let expected_model_revision = model.model_revision.clone();
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(expected_model_revision),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "update output job".to_string(),
-            },
-            operations: guarded_existing_object_operation(
-                &model,
-                Operation::SetOutputJob {
-                    output_job_id,
-                    previous_output_job: serde_json::to_value(&previous_output_job)
-                        .context("failed to serialize previous output job operation")?,
-                    output_job: serde_json::to_value(&output_job)
-                        .context("failed to serialize output job operation")?,
-                },
-            )?,
-        },
+    let prepared = build_set_output_job(
+        &model,
+        cli_provenance("update output job"),
+        &previous_output_job,
+        &output_job,
     )?;
+    commit_prepared(&mut model, root, prepared)?;
 
     Ok(NativeProjectOutputJobMutationView {
         contract: "output_job_mutation_v1",
@@ -481,13 +473,18 @@ fn lifecycle_output_job_run(
     sequence_seed: u8,
     message: &str,
 ) -> OutputJobRun {
-    let material = format!(
-        "datum-eda:output-job-run:lifecycle:{}:{}:{run_sequence}:{sequence_seed}",
-        output_job, model.model_revision.0
-    );
     OutputJobRun {
         schema_version: OUTPUT_JOB_RUN_SCHEMA_VERSION,
-        run_id: Uuid::new_v5(&model.project.project_id, material.as_bytes()),
+        run_id: derive_output_job_run_id(
+            &model.project.project_id,
+            &[
+                "lifecycle".to_string(),
+                output_job.to_string(),
+                model.model_revision.0.clone(),
+                run_sequence.to_string(),
+                sequence_seed.to_string(),
+            ],
+        ),
         output_job,
         run_sequence,
         project_id: model.project.project_id,
@@ -515,27 +512,9 @@ pub(crate) fn delete_native_project_output_job(
         .cloned()
         .with_context(|| format!("output job {output_job_id} not found"))?;
 
-    let expected_model_revision = model.model_revision.clone();
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(expected_model_revision),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "delete output job".to_string(),
-            },
-            operations: guarded_existing_object_operation(
-                &model,
-                Operation::DeleteOutputJob {
-                    output_job_id,
-                    output_job: serde_json::to_value(&output_job)
-                        .context("failed to serialize output job operation")?,
-                },
-            )?,
-        },
-    )?;
+    let prepared =
+        build_delete_output_job(&model, cli_provenance("delete output job"), &output_job)?;
+    commit_prepared(&mut model, root, prepared)?;
 
     Ok(NativeProjectOutputJobMutationView {
         contract: "output_job_mutation_v1",
@@ -639,23 +618,7 @@ fn ensure_native_project_output_job(
         manufacturing_plan,
         object_revision: ObjectRevision(0),
     };
-    let expected_model_revision = model.model_revision.clone();
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(expected_model_revision),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "create output job".to_string(),
-            },
-            operations: vec![Operation::CreateOutputJob {
-                output_job_id: job_id,
-                output_job: serde_json::to_value(&job)
-                    .context("failed to serialize output job operation")?,
-            }],
-        },
-    )?;
+    let prepared = build_create_output_job(&model, cli_provenance("create output job"), &job)?;
+    commit_prepared(&mut model, root, prepared)?;
     Ok((job, output_path, true, project.manifest.uuid))
 }

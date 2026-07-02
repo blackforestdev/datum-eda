@@ -491,28 +491,16 @@ fn commit_check_run_evidence(
     if model.check_runs.contains_key(&check_run.check_run_id) {
         return Ok(());
     }
-    let previous_check_run = model
-        .check_runs
-        .get(&check_run.check_run_id)
-        .map(|run| serde_json::to_value(run).expect("check run serialization must succeed"));
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(model.model_revision.clone()),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: format!("record {} check run evidence", view.profile_id),
-            },
-            operations: vec![Operation::SetCheckRun {
-                check_run_id: check_run.check_run_id,
-                previous_check_run,
-                check_run: serde_json::to_value(&check_run)
-                    .expect("check run serialization must succeed"),
-            }],
-        },
+    let prepared = eda_engine::api::native_write::artifacts::build_set_check_run(
+        model,
+        eda_engine::api::native_write::WriteProvenance::new(
+            "datum-eda-cli",
+            CommitSource::Cli,
+            format!("record {} check run evidence", view.profile_id),
+        ),
+        &check_run,
     )?;
+    eda_engine::api::native_write::commit_prepared(model, root, prepared)?;
     Ok(())
 }
 

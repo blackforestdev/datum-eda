@@ -1,10 +1,9 @@
 use std::path::{Path, PathBuf};
 
 use anyhow::Result;
-use eda_engine::substrate::{
-    ArtifactMetadata, CommitProvenance, CommitSource, DesignModel, Operation, OperationBatch,
-    OutputJobRun,
-};
+use eda_engine::api::native_write::artifacts::build_artifact_evidence;
+use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
+use eda_engine::substrate::{ArtifactMetadata, CommitSource, DesignModel, OutputJobRun};
 use uuid::Uuid;
 
 pub(super) fn commit_gerber_set_evidence(
@@ -13,45 +12,21 @@ pub(super) fn commit_gerber_set_evidence(
     artifact_metadata: &ArtifactMetadata,
     output_job_run: Option<&OutputJobRun>,
 ) -> Result<(PathBuf, PathBuf)> {
-    let previous_artifact_metadata = model
-        .artifact_metadata
-        .get(&artifact_metadata.artifact_id)
-        .map(|artifact| {
-            serde_json::to_value(artifact).expect("artifact metadata serialization must succeed")
-        });
-    let mut operations = vec![Operation::SetArtifactMetadata {
-        artifact_id: artifact_metadata.artifact_id,
-        previous_artifact_metadata,
-        artifact_metadata: serde_json::to_value(artifact_metadata)
-            .expect("artifact metadata serialization must succeed"),
-    }];
-    let output_run_path = if let Some(run) = output_job_run {
-        let previous_output_job_run = model.output_job_runs.get(&run.run_id).map(|previous| {
-            serde_json::to_value(previous).expect("output job run serialization must succeed")
-        });
-        operations.push(Operation::SetOutputJobRun {
-            run_id: run.run_id,
-            previous_output_job_run,
-            output_job_run: serde_json::to_value(run)
-                .expect("output job run serialization must succeed"),
-        });
-        output_job_run_path(root, run.run_id)
-    } else {
-        PathBuf::new()
-    };
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(model.model_revision.clone()),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "record Gerber set generated evidence".to_string(),
-            },
-            operations,
-        },
+    let prepared = build_artifact_evidence(
+        model,
+        WriteProvenance::new(
+            "datum-eda-cli",
+            CommitSource::Cli,
+            "record Gerber set generated evidence",
+        ),
+        artifact_metadata,
+        None,
+        output_job_run,
     )?;
+    commit_prepared(model, root, prepared)?;
+    let output_run_path = output_job_run
+        .map(|run| output_job_run_path(root, run.run_id))
+        .unwrap_or_default();
     Ok((
         artifact_metadata_path(root, artifact_metadata.artifact_id),
         output_run_path,

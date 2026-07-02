@@ -89,8 +89,8 @@ FORWARD_ANNOTATION_REVIEW_STATE_FILES = [
 GENERATED_EVIDENCE_FILES = {
     Path("crates/cli/src/command_project_native_inspect.rs"): [
         "commit_check_run_evidence(",
-        "Operation::SetCheckRun",
-        ".commit_journaled(",
+        "build_set_check_run(",
+        "commit_prepared(",
     ],
 }
 
@@ -358,10 +358,8 @@ ARTIFACT_ONLY_EVIDENCE_COMMAND_FILES = {
     },
     Path("crates/cli/src/command_project_artifact_evidence.rs"): {
         "required": [
-            "Operation::SetArtifactMetadata",
-            "Operation::SetArtifactRun",
-            "Operation::SetOutputJobRun",
-            "commit_journaled(",
+            "build_artifact_evidence(",
+            "commit_prepared(",
         ],
         "forbidden": [
             "persist_artifact_metadata(",
@@ -382,8 +380,8 @@ OUTPUT_JOB_RUN_EVIDENCE_COMMAND_FILES = {
     },
     Path("crates/cli/src/command_project_output_job_runs.rs"): {
         "required": [
-            "Operation::SetOutputJobRun",
-            "commit_journaled(",
+            "build_set_output_job_run(",
+            "commit_prepared(",
             "pub(super) fn persist_output_job_run_journaled(",
         ],
         "forbidden": [
@@ -404,9 +402,8 @@ GERBER_EVIDENCE_COMMAND_FILES = {
     },
     Path("crates/cli/src/command_project_gerber_evidence.rs"): {
         "required": [
-            "Operation::SetArtifactMetadata",
-            "Operation::SetOutputJobRun",
-            "commit_journaled(",
+            "build_artifact_evidence(",
+            "commit_prepared(",
             "fn commit_gerber_set_evidence(",
         ],
         "forbidden": [
@@ -436,9 +433,8 @@ MANUFACTURING_EVIDENCE_COMMAND_FILES = {
     },
     Path("crates/cli/src/command_project_manufacturing_evidence.rs"): {
         "required": [
-            "Operation::SetArtifactMetadata",
-            "Operation::SetOutputJobRun",
-            "commit_journaled(",
+            "build_artifact_evidence(",
+            "commit_prepared(",
             "pub(crate) fn commit_manufacturing_set_evidence(",
         ],
         "forbidden": [

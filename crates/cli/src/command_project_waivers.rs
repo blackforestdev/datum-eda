@@ -1,10 +1,20 @@
+//! Thin CLI callers for check-finding dispositions (waive / accept-deviation).
+//!
+//! All operation authoring lives in the engine facade
+//! (`eda_engine::api::native_write::waivers`); this file only validates the
+//! finding against the current check run, builds the typed request, and
+//! renders the view.
+
 use std::path::Path;
 
 use anyhow::{Result, bail};
-use eda_engine::schematic::{
-    CheckDeviation, CheckDomain, CheckWaiver, DeviationApprovalStatus, WaiverTarget,
+use eda_engine::api::native_write::WriteProvenance;
+use eda_engine::api::native_write::waivers::{
+    CreateSchematicDeviationRequest, CreateSchematicWaiverRequest,
+    create_schematic_deviation_and_commit, create_schematic_waiver_and_commit,
 };
-use eda_engine::substrate::{CommitProvenance, CommitSource, Operation, OperationBatch};
+use eda_engine::schematic::CheckDomain;
+use eda_engine::substrate::CommitSource;
 use serde::Serialize;
 use uuid::Uuid;
 
@@ -64,38 +74,20 @@ pub(crate) fn waive_native_project_finding(
         other => bail!("fingerprint waiver authoring for domain `{other}` is not implemented"),
     };
     let (project, mut model) = load_native_project_with_resolved_board_and_model(root)?;
-    let waiver_id = Uuid::new_v5(
-        &model.project.project_id,
-        format!(
-            "datum-eda:schematic-waiver:{}:{}:{}",
-            model.model_revision.0, fingerprint, rationale
-        )
-        .as_bytes(),
-    );
-    let waiver = CheckWaiver {
-        uuid: waiver_id,
-        domain: domain.clone(),
-        target: WaiverTarget::Fingerprint(fingerprint.to_string()),
-        rationale: rationale.to_string(),
-        created_by,
-    };
-    let waiver_payload = serde_json::to_value(&waiver)?;
-    let before_model_revision = model.model_revision.0.clone();
-    let report = model.commit_journaled(
+    let (waiver_id, report) = create_schematic_waiver_and_commit(
+        &mut model,
         root,
-        OperationBatch {
-            batch_id: Uuid::new_v5(&model.project.project_id, waiver_id.as_bytes()),
-            expected_model_revision: Some(model.model_revision.clone()),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: format!("waive check finding {fingerprint}"),
-            },
-            operations: vec![Operation::CreateSchematicWaiver {
-                schematic_id: project.schematic.uuid,
-                waiver_id,
-                waiver: waiver_payload,
-            }],
+        WriteProvenance::new(
+            "datum-eda-cli",
+            CommitSource::Cli,
+            format!("waive check finding {fingerprint}"),
+        ),
+        &CreateSchematicWaiverRequest {
+            schematic_id: project.schematic.uuid,
+            domain,
+            fingerprint: fingerprint.to_string(),
+            rationale: rationale.to_string(),
+            created_by,
         },
     )?;
     Ok(NativeProjectWaiveFindingView {
@@ -105,7 +97,7 @@ pub(crate) fn waive_native_project_finding(
         waiver_id,
         fingerprint: fingerprint.to_string(),
         domain: finding.domain.clone(),
-        before_model_revision,
+        before_model_revision: report.transaction.before_model_revision.0.clone(),
         after_model_revision: report.transaction.after_model_revision.0.clone(),
         transaction_id: report.transaction.transaction_id,
         journal_len: report.journal_len,
@@ -137,39 +129,20 @@ pub(crate) fn accept_native_project_deviation(
         other => bail!("fingerprint deviation authoring for domain `{other}` is not implemented"),
     };
     let (project, mut model) = load_native_project_with_resolved_board_and_model(root)?;
-    let deviation_id = Uuid::new_v5(
-        &model.project.project_id,
-        format!(
-            "datum-eda:schematic-deviation:{}:{}:{}",
-            model.model_revision.0, fingerprint, rationale
-        )
-        .as_bytes(),
-    );
-    let deviation = CheckDeviation {
-        uuid: deviation_id,
-        domain: domain.clone(),
-        target: WaiverTarget::Fingerprint(fingerprint.to_string()),
-        rationale: rationale.to_string(),
-        accepted_by,
-        approval_status: DeviationApprovalStatus::Accepted,
-    };
-    let deviation_payload = serde_json::to_value(&deviation)?;
-    let before_model_revision = model.model_revision.0.clone();
-    let report = model.commit_journaled(
+    let (deviation_id, report) = create_schematic_deviation_and_commit(
+        &mut model,
         root,
-        OperationBatch {
-            batch_id: Uuid::new_v5(&model.project.project_id, deviation_id.as_bytes()),
-            expected_model_revision: Some(model.model_revision.clone()),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: format!("accept check finding deviation {fingerprint}"),
-            },
-            operations: vec![Operation::CreateSchematicDeviation {
-                schematic_id: project.schematic.uuid,
-                deviation_id,
-                deviation: deviation_payload,
-            }],
+        WriteProvenance::new(
+            "datum-eda-cli",
+            CommitSource::Cli,
+            format!("accept check finding deviation {fingerprint}"),
+        ),
+        &CreateSchematicDeviationRequest {
+            schematic_id: project.schematic.uuid,
+            domain,
+            fingerprint: fingerprint.to_string(),
+            rationale: rationale.to_string(),
+            accepted_by,
         },
     )?;
     Ok(NativeProjectAcceptDeviationView {
@@ -179,7 +152,7 @@ pub(crate) fn accept_native_project_deviation(
         deviation_id,
         fingerprint: fingerprint.to_string(),
         domain: finding.domain.clone(),
-        before_model_revision,
+        before_model_revision: report.transaction.before_model_revision.0.clone(),
         after_model_revision: report.transaction.after_model_revision.0.clone(),
         transaction_id: report.transaction.transaction_id,
         journal_len: report.journal_len,

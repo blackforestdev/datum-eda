@@ -1,20 +1,27 @@
 use std::path::Path;
 
 use anyhow::{Context, Result};
+use eda_engine::api::native_write::output_jobs::{
+    build_create_output_job, build_delete_output_job, build_set_output_job,
+};
+use eda_engine::api::native_write::{PreparedWrite, WriteProvenance};
 use eda_engine::substrate::{
-    CommitProvenance, CommitSource, DesignModel, ObjectRevision, Operation, OperationBatch,
-    OutputJob, PRODUCTION_RECORD_SCHEMA_VERSION, ProjectResolver, Proposal, ProposalCreateRequest,
-    ProposalSource, create_draft_proposal_from_batch,
+    CommitSource, DesignModel, ObjectRevision, OutputJob, PRODUCTION_RECORD_SCHEMA_VERSION,
+    ProjectResolver, Proposal, ProposalCreateRequest, ProposalSource,
+    create_draft_proposal_from_batch,
 };
 use serde::Serialize;
 use uuid::Uuid;
 
 use super::command_project_gerber_plan::sanitize_export_prefix;
-use super::command_project_operation_guards::guarded_operation_batch;
 use super::command_project_output_job_include::{
     output_job_id_for_includes, output_job_include_label, parse_output_job_include,
 };
 use super::load_native_project_with_resolved_board;
+
+fn proposal_provenance(reason: &str) -> WriteProvenance {
+    WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason)
+}
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectOutputJobProposalView {
@@ -61,26 +68,17 @@ pub(crate) fn propose_create_native_project_output_job(
         object_revision: ObjectRevision(0),
     };
     validate_output_job_targets(&model, project.board.uuid, &output_job)?;
-    let batch = OperationBatch {
-        batch_id: Uuid::new_v4(),
-        expected_model_revision: Some(model.model_revision.clone()),
-        provenance: CommitProvenance {
-            actor: "datum-eda-cli".to_string(),
-            source: CommitSource::Cli,
-            reason: "propose create output job".to_string(),
-        },
-        operations: vec![Operation::CreateOutputJob {
-            output_job_id,
-            output_job: serde_json::to_value(&output_job)
-                .context("failed to serialize output job operation")?,
-        }],
-    };
+    let prepared = build_create_output_job(
+        &model,
+        proposal_provenance("propose create output job"),
+        &output_job,
+    )?;
     write_output_job_proposal(
         root,
         &mut model,
         output_job,
         proposal_id,
-        batch,
+        prepared,
         "propose_create_output_job",
         rationale
             .map(str::to_string)
@@ -141,28 +139,18 @@ pub(crate) fn propose_update_native_project_output_job(
     output_job.object_revision = ObjectRevision(output_job.object_revision.0 + 1);
     validate_output_job_targets(&model, project.board.uuid, &output_job)?;
 
-    let batch = OperationBatch {
-        batch_id: Uuid::new_v4(),
-        expected_model_revision: Some(model.model_revision.clone()),
-        provenance: CommitProvenance {
-            actor: "datum-eda-cli".to_string(),
-            source: CommitSource::Cli,
-            reason: "propose update output job".to_string(),
-        },
-        operations: vec![Operation::SetOutputJob {
-            output_job_id,
-            previous_output_job: serde_json::to_value(&previous_output_job)
-                .context("failed to serialize previous output job operation")?,
-            output_job: serde_json::to_value(&output_job)
-                .context("failed to serialize output job operation")?,
-        }],
-    };
+    let prepared = build_set_output_job(
+        &model,
+        proposal_provenance("propose update output job"),
+        &previous_output_job,
+        &output_job,
+    )?;
     write_output_job_proposal(
         root,
         &mut model,
         output_job,
         proposal_id,
-        batch,
+        prepared,
         "propose_update_output_job",
         rationale
             .map(str::to_string)
@@ -182,26 +170,17 @@ pub(crate) fn propose_delete_native_project_output_job(
         .get(&output_job_id)
         .cloned()
         .with_context(|| format!("output job {output_job_id} not found"))?;
-    let batch = OperationBatch {
-        batch_id: Uuid::new_v4(),
-        expected_model_revision: Some(model.model_revision.clone()),
-        provenance: CommitProvenance {
-            actor: "datum-eda-cli".to_string(),
-            source: CommitSource::Cli,
-            reason: "propose delete output job".to_string(),
-        },
-        operations: vec![Operation::DeleteOutputJob {
-            output_job_id,
-            output_job: serde_json::to_value(&output_job)
-                .context("failed to serialize output job operation")?,
-        }],
-    };
+    let prepared = build_delete_output_job(
+        &model,
+        proposal_provenance("propose delete output job"),
+        &output_job,
+    )?;
     write_output_job_proposal(
         root,
         &mut model,
         output_job,
         proposal_id,
-        batch,
+        prepared,
         "propose_delete_output_job",
         rationale
             .map(str::to_string)
@@ -214,17 +193,16 @@ fn write_output_job_proposal(
     model: &mut eda_engine::substrate::DesignModel,
     output_job: OutputJob,
     proposal_id: Option<Uuid>,
-    batch: OperationBatch,
+    prepared: PreparedWrite,
     action: &'static str,
     rationale: String,
 ) -> Result<NativeProjectOutputJobProposalView> {
-    let batch = guarded_operation_batch(model, batch)?;
     let proposal = create_draft_proposal_from_batch(
         model,
         root,
         ProposalCreateRequest {
             proposal_id,
-            batch,
+            batch: prepared.batch,
             rationale,
             source: ProposalSource::Cli,
             checks_run: Vec::new(),

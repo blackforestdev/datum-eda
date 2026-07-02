@@ -1,15 +1,18 @@
 use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result};
+use eda_engine::api::native_write::output_jobs::{
+    build_set_output_job_run, derive_output_job_run_id,
+};
+use eda_engine::api::native_write::commit_prepared;
 use eda_engine::substrate::{
-    CommitProvenance, CommitSource, DesignModel, OUTPUT_JOB_RUN_SCHEMA_VERSION, Operation,
-    OperationBatch, OutputJobLogEntry, OutputJobLogLevel, OutputJobRun, OutputJobRunStatus,
-    ProjectResolver,
+    DesignModel, OUTPUT_JOB_RUN_SCHEMA_VERSION, OutputJobLogEntry, OutputJobLogLevel,
+    OutputJobRun, OutputJobRunStatus, ProjectResolver,
 };
 use uuid::Uuid;
 
 use super::super::command_project_artifacts::NativeProjectArtifactGenerateView;
-use super::next_output_job_run_sequence;
+use super::{cli_provenance, next_output_job_run_sequence};
 
 pub(super) fn existing_generated_output_job_run(
     root: &Path,
@@ -45,27 +48,12 @@ pub(super) fn persist_output_job_run_journaled(
     model: &mut DesignModel,
     run: &OutputJobRun,
 ) -> Result<PathBuf> {
-    let previous_output_job_run = model.output_job_runs.get(&run.run_id).map(|previous| {
-        serde_json::to_value(previous).expect("output job run serialization must succeed")
-    });
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(model.model_revision.clone()),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "record output job run generated evidence".to_string(),
-            },
-            operations: vec![Operation::SetOutputJobRun {
-                run_id: run.run_id,
-                previous_output_job_run,
-                output_job_run: serde_json::to_value(run)
-                    .expect("output job run serialization must succeed"),
-            }],
-        },
+    let prepared = build_set_output_job_run(
+        model,
+        cli_provenance("record output job run generated evidence"),
+        run,
     )?;
+    commit_prepared(model, root, prepared)?;
     Ok(output_job_run_path(root, run.run_id))
 }
 
@@ -76,13 +64,19 @@ pub(super) fn failed_output_job_run(
     error: &str,
 ) -> OutputJobRun {
     let run_sequence = next_output_job_run_sequence(model, output_job);
-    let material = format!(
-        "datum-eda:output-job-run:failed:{include}:{}:{}:{run_sequence}:{error}",
-        output_job, model.model_revision.0
-    );
     OutputJobRun {
         schema_version: OUTPUT_JOB_RUN_SCHEMA_VERSION,
-        run_id: Uuid::new_v5(&model.project.project_id, material.as_bytes()),
+        run_id: derive_output_job_run_id(
+            &model.project.project_id,
+            &[
+                "failed".to_string(),
+                include.to_string(),
+                output_job.to_string(),
+                model.model_revision.0.clone(),
+                run_sequence.to_string(),
+                error.to_string(),
+            ],
+        ),
         output_job,
         run_sequence,
         project_id: model.project.project_id,
@@ -115,10 +109,6 @@ fn successful_output_job_run(
     } else {
         None
     };
-    let material = format!(
-        "datum-eda:output-job-run:aggregate:{include}:{}:{}:{run_sequence}:{}",
-        output_job, model.model_revision.0, artifact_report.generated_count
-    );
     let mut log = vec![OutputJobLogEntry {
         sequence: 1,
         level: OutputJobLogLevel::Info,
@@ -139,7 +129,17 @@ fn successful_output_job_run(
     }
     OutputJobRun {
         schema_version: OUTPUT_JOB_RUN_SCHEMA_VERSION,
-        run_id: Uuid::new_v5(&model.project.project_id, material.as_bytes()),
+        run_id: derive_output_job_run_id(
+            &model.project.project_id,
+            &[
+                "aggregate".to_string(),
+                include.to_string(),
+                output_job.to_string(),
+                model.model_revision.0.clone(),
+                run_sequence.to_string(),
+                artifact_report.generated_count.to_string(),
+            ],
+        ),
         output_job,
         run_sequence,
         project_id: model.project.project_id,

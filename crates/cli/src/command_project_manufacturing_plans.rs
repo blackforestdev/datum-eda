@@ -1,17 +1,24 @@
 use std::path::Path;
 
 use anyhow::{Context, Result};
+use eda_engine::api::native_write::manufacturing::{
+    build_create_manufacturing_plan, build_create_panel_projection,
+    build_delete_manufacturing_plan, build_delete_panel_projection, build_set_manufacturing_plan,
+    build_set_panel_projection, derive_manufacturing_plan_id, derive_panel_projection_id,
+};
+use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::substrate::{
-    CommitProvenance, CommitSource, ManufacturingPlan, ObjectRevision, Operation, OperationBatch,
-    PRODUCTION_RECORD_SCHEMA_VERSION, PanelBoardInstance, PanelProjection, ProjectResolver,
+    CommitSource, ManufacturingPlan, ObjectRevision, PRODUCTION_RECORD_SCHEMA_VERSION,
+    PanelBoardInstance, PanelProjection, ProjectResolver,
 };
 use serde::Serialize;
 use uuid::Uuid;
 
-use super::{
-    command_project_operation_guards::guarded_existing_object_operation,
-    load_native_project_with_resolved_board,
-};
+use super::load_native_project_with_resolved_board;
+
+fn cli_provenance(reason: &str) -> WriteProvenance {
+    WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason)
+}
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectManufacturingPlansView {
@@ -77,10 +84,7 @@ pub(crate) fn create_native_project_manufacturing_plan(
     panel_projection: Option<Uuid>,
 ) -> Result<NativeProjectManufacturingPlanMutationView> {
     let project = load_native_project_with_resolved_board(root)?;
-    let plan_id = Uuid::new_v5(
-        &project.manifest.uuid,
-        format!("datum-eda:manufacturing-plan:{prefix}").as_bytes(),
-    );
+    let plan_id = derive_manufacturing_plan_id(&project.manifest.uuid, prefix);
     let plan_path = root
         .join(".datum/manufacturing_plans")
         .join(format!("{plan_id}.json"));
@@ -105,24 +109,12 @@ pub(crate) fn create_native_project_manufacturing_plan(
         prefix: prefix.to_string(),
         object_revision: ObjectRevision(0),
     };
-    let expected_model_revision = model.model_revision.clone();
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(expected_model_revision),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "create manufacturing plan".to_string(),
-            },
-            operations: vec![Operation::CreateManufacturingPlan {
-                manufacturing_plan_id: plan_id,
-                manufacturing_plan: serde_json::to_value(&plan)
-                    .context("failed to serialize manufacturing plan operation")?,
-            }],
-        },
+    let prepared = build_create_manufacturing_plan(
+        &model,
+        cli_provenance("create manufacturing plan"),
+        &plan,
     )?;
+    commit_prepared(&mut model, root, prepared)?;
     Ok(manufacturing_plan_mutation(
         project.manifest.uuid,
         "create_manufacturing_plan",
@@ -155,27 +147,12 @@ pub(crate) fn delete_native_project_manufacturing_plan(
     let plan_path = root
         .join(".datum/manufacturing_plans")
         .join(format!("{manufacturing_plan_id}.json"));
-    let expected_model_revision = model.model_revision.clone();
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(expected_model_revision),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "delete manufacturing plan".to_string(),
-            },
-            operations: guarded_existing_object_operation(
-                &model,
-                Operation::DeleteManufacturingPlan {
-                    manufacturing_plan_id,
-                    manufacturing_plan: serde_json::to_value(&plan)
-                        .context("failed to serialize manufacturing plan delete operation")?,
-                },
-            )?,
-        },
+    let prepared = build_delete_manufacturing_plan(
+        &model,
+        cli_provenance("delete manufacturing plan"),
+        &plan,
     )?;
+    commit_prepared(&mut model, root, prepared)?;
     Ok(manufacturing_plan_mutation(
         model.project.project_id,
         "delete_manufacturing_plan",
@@ -246,29 +223,13 @@ pub(crate) fn update_native_project_manufacturing_plan(
     let plan_path = root
         .join(".datum/manufacturing_plans")
         .join(format!("{manufacturing_plan_id}.json"));
-    let expected_model_revision = model.model_revision.clone();
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(expected_model_revision),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "update manufacturing plan".to_string(),
-            },
-            operations: guarded_existing_object_operation(
-                &model,
-                Operation::SetManufacturingPlan {
-                    manufacturing_plan_id,
-                    previous_manufacturing_plan: serde_json::to_value(&previous_plan)
-                        .context("failed to serialize previous manufacturing plan operation")?,
-                    manufacturing_plan: serde_json::to_value(&plan)
-                        .context("failed to serialize manufacturing plan update operation")?,
-                },
-            )?,
-        },
+    let prepared = build_set_manufacturing_plan(
+        &model,
+        cli_provenance("update manufacturing plan"),
+        &previous_plan,
+        &plan,
     )?;
+    commit_prepared(&mut model, root, prepared)?;
     Ok(manufacturing_plan_mutation(
         project.manifest.uuid,
         "update_manufacturing_plan",
@@ -306,10 +267,7 @@ pub(crate) fn create_native_project_panel_projection(
     rotation_deg: i32,
 ) -> Result<NativeProjectPanelProjectionMutationView> {
     let project = load_native_project_with_resolved_board(root)?;
-    let panel_id = Uuid::new_v5(
-        &project.manifest.uuid,
-        format!("datum-eda:panel-projection:{key}").as_bytes(),
-    );
+    let panel_id = derive_panel_projection_id(&project.manifest.uuid, key);
     let panel_path = root
         .join(".datum/panel_projections")
         .join(format!("{panel_id}.json"));
@@ -337,24 +295,9 @@ pub(crate) fn create_native_project_panel_projection(
         }],
         object_revision: ObjectRevision(0),
     };
-    let expected_model_revision = model.model_revision.clone();
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(expected_model_revision),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "create panel projection".to_string(),
-            },
-            operations: vec![Operation::CreatePanelProjection {
-                panel_projection_id: panel_id,
-                panel_projection: serde_json::to_value(&panel)
-                    .context("failed to serialize panel projection operation")?,
-            }],
-        },
-    )?;
+    let prepared =
+        build_create_panel_projection(&model, cli_provenance("create panel projection"), &panel)?;
+    commit_prepared(&mut model, root, prepared)?;
     Ok(panel_projection_mutation(
         project.manifest.uuid,
         "create_panel_projection",
@@ -387,27 +330,9 @@ pub(crate) fn delete_native_project_panel_projection(
     let panel_path = root
         .join(".datum/panel_projections")
         .join(format!("{panel_projection_id}.json"));
-    let expected_model_revision = model.model_revision.clone();
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(expected_model_revision),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "delete panel projection".to_string(),
-            },
-            operations: guarded_existing_object_operation(
-                &model,
-                Operation::DeletePanelProjection {
-                    panel_projection_id,
-                    panel_projection: serde_json::to_value(&panel)
-                        .context("failed to serialize panel projection delete operation")?,
-                },
-            )?,
-        },
-    )?;
+    let prepared =
+        build_delete_panel_projection(&model, cli_provenance("delete panel projection"), &panel)?;
+    commit_prepared(&mut model, root, prepared)?;
     Ok(panel_projection_mutation(
         model.project.project_id,
         "delete_panel_projection",
@@ -475,29 +400,13 @@ pub(crate) fn update_native_project_panel_projection(
     let panel_path = root
         .join(".datum/panel_projections")
         .join(format!("{panel_projection_id}.json"));
-    let expected_model_revision = model.model_revision.clone();
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(expected_model_revision),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "update panel projection".to_string(),
-            },
-            operations: guarded_existing_object_operation(
-                &model,
-                Operation::SetPanelProjection {
-                    panel_projection_id,
-                    previous_panel_projection: serde_json::to_value(&previous_panel)
-                        .context("failed to serialize previous panel projection operation")?,
-                    panel_projection: serde_json::to_value(&panel)
-                        .context("failed to serialize panel projection update operation")?,
-                },
-            )?,
-        },
+    let prepared = build_set_panel_projection(
+        &model,
+        cli_provenance("update panel projection"),
+        &previous_panel,
+        &panel,
     )?;
+    commit_prepared(&mut model, root, prepared)?;
     Ok(panel_projection_mutation(
         project.manifest.uuid,
         "update_panel_projection",

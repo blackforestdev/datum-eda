@@ -1,19 +1,21 @@
 use std::path::Path;
 
 use anyhow::{Context, Result};
+use eda_engine::api::native_write::manufacturing::{
+    build_create_manufacturing_plan, build_create_panel_projection,
+    build_delete_manufacturing_plan, build_delete_panel_projection, build_set_manufacturing_plan,
+    build_set_panel_projection, derive_manufacturing_plan_id, derive_panel_projection_id,
+};
+use eda_engine::api::native_write::{PreparedWrite, WriteProvenance};
 use eda_engine::substrate::{
-    CommitProvenance, CommitSource, DesignModel, ManufacturingPlan, ObjectRevision, Operation,
-    OperationBatch, PRODUCTION_RECORD_SCHEMA_VERSION, PanelBoardInstance, PanelProjection,
-    ProjectResolver, Proposal, ProposalCreateRequest, ProposalSource,
-    create_draft_proposal_from_batch,
+    CommitSource, DesignModel, ManufacturingPlan, ObjectRevision,
+    PRODUCTION_RECORD_SCHEMA_VERSION, PanelBoardInstance, PanelProjection, ProjectResolver,
+    Proposal, ProposalCreateRequest, ProposalSource, create_draft_proposal_from_batch,
 };
 use serde::Serialize;
 use uuid::Uuid;
 
-use super::{
-    command_project_operation_guards::guarded_operation_batch,
-    load_native_project_with_resolved_board,
-};
+use super::load_native_project_with_resolved_board;
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectManufacturingPlanProposalView {
@@ -47,10 +49,7 @@ pub(crate) fn propose_create_native_project_manufacturing_plan(
     rationale: Option<&str>,
 ) -> Result<NativeProjectManufacturingPlanProposalView> {
     let project = load_native_project_with_resolved_board(root)?;
-    let plan_id = Uuid::new_v5(
-        &project.manifest.uuid,
-        format!("datum-eda:manufacturing-plan:{prefix}").as_bytes(),
-    );
+    let plan_id = derive_manufacturing_plan_id(&project.manifest.uuid, prefix);
     let mut model = ProjectResolver::new(root).resolve()?;
     if model.manufacturing_plans.contains_key(&plan_id) {
         anyhow::bail!("manufacturing plan {plan_id} already exists");
@@ -72,22 +71,17 @@ pub(crate) fn propose_create_native_project_manufacturing_plan(
         object_revision: ObjectRevision(0),
     };
     validate_manufacturing_plan_targets(&model, project.board.uuid, &plan)?;
-    let batch = OperationBatch {
-        batch_id: Uuid::new_v4(),
-        expected_model_revision: Some(model.model_revision.clone()),
-        provenance: proposal_provenance("propose create manufacturing plan"),
-        operations: vec![Operation::CreateManufacturingPlan {
-            manufacturing_plan_id: plan_id,
-            manufacturing_plan: serde_json::to_value(&plan)
-                .context("failed to serialize manufacturing plan operation")?,
-        }],
-    };
+    let prepared = build_create_manufacturing_plan(
+        &model,
+        proposal_provenance("propose create manufacturing plan"),
+        &plan,
+    )?;
     write_manufacturing_plan_proposal(
         root,
         &mut model,
         plan,
         proposal_id,
-        batch,
+        prepared,
         "propose_create_manufacturing_plan",
         rationale
             .map(str::to_string)
@@ -156,24 +150,18 @@ pub(crate) fn propose_update_native_project_manufacturing_plan(
     plan.object_revision = ObjectRevision(plan.object_revision.0 + 1);
     validate_manufacturing_plan_targets(&model, project.board.uuid, &plan)?;
 
-    let batch = OperationBatch {
-        batch_id: Uuid::new_v4(),
-        expected_model_revision: Some(model.model_revision.clone()),
-        provenance: proposal_provenance("propose update manufacturing plan"),
-        operations: vec![Operation::SetManufacturingPlan {
-            manufacturing_plan_id,
-            previous_manufacturing_plan: serde_json::to_value(&previous_plan)
-                .context("failed to serialize previous manufacturing plan operation")?,
-            manufacturing_plan: serde_json::to_value(&plan)
-                .context("failed to serialize manufacturing plan update operation")?,
-        }],
-    };
+    let prepared = build_set_manufacturing_plan(
+        &model,
+        proposal_provenance("propose update manufacturing plan"),
+        &previous_plan,
+        &plan,
+    )?;
     write_manufacturing_plan_proposal(
         root,
         &mut model,
         plan,
         proposal_id,
-        batch,
+        prepared,
         "propose_update_manufacturing_plan",
         rationale
             .map(str::to_string)
@@ -203,22 +191,17 @@ pub(crate) fn propose_delete_native_project_manufacturing_plan(
             output_job.id
         );
     }
-    let batch = OperationBatch {
-        batch_id: Uuid::new_v4(),
-        expected_model_revision: Some(model.model_revision.clone()),
-        provenance: proposal_provenance("propose delete manufacturing plan"),
-        operations: vec![Operation::DeleteManufacturingPlan {
-            manufacturing_plan_id,
-            manufacturing_plan: serde_json::to_value(&plan)
-                .context("failed to serialize manufacturing plan delete operation")?,
-        }],
-    };
+    let prepared = build_delete_manufacturing_plan(
+        &model,
+        proposal_provenance("propose delete manufacturing plan"),
+        &plan,
+    )?;
     write_manufacturing_plan_proposal(
         root,
         &mut model,
         plan,
         proposal_id,
-        batch,
+        prepared,
         "propose_delete_manufacturing_plan",
         rationale.map(str::to_string).unwrap_or_else(|| {
             format!("Review ManufacturingPlan {manufacturing_plan_id} deletion")
@@ -238,10 +221,7 @@ pub(crate) fn propose_create_native_project_panel_projection(
     rationale: Option<&str>,
 ) -> Result<NativeProjectPanelProjectionProposalView> {
     let project = load_native_project_with_resolved_board(root)?;
-    let panel_id = Uuid::new_v5(
-        &project.manifest.uuid,
-        format!("datum-eda:panel-projection:{key}").as_bytes(),
-    );
+    let panel_id = derive_panel_projection_id(&project.manifest.uuid, key);
     let mut model = ProjectResolver::new(root).resolve()?;
     if model.panel_projections.contains_key(&panel_id) {
         anyhow::bail!("panel projection {panel_id} already exists");
@@ -267,22 +247,17 @@ pub(crate) fn propose_create_native_project_panel_projection(
         }],
         object_revision: ObjectRevision(0),
     };
-    let batch = OperationBatch {
-        batch_id: Uuid::new_v4(),
-        expected_model_revision: Some(model.model_revision.clone()),
-        provenance: proposal_provenance("propose create panel projection"),
-        operations: vec![Operation::CreatePanelProjection {
-            panel_projection_id: panel_id,
-            panel_projection: serde_json::to_value(&panel)
-                .context("failed to serialize panel projection operation")?,
-        }],
-    };
+    let prepared = build_create_panel_projection(
+        &model,
+        proposal_provenance("propose create panel projection"),
+        &panel,
+    )?;
     write_panel_projection_proposal(
         root,
         &mut model,
         panel,
         proposal_id,
-        batch,
+        prepared,
         "propose_create_panel_projection",
         rationale
             .map(str::to_string)
@@ -352,24 +327,18 @@ pub(crate) fn propose_update_native_project_panel_projection(
     }
     panel.object_revision = ObjectRevision(panel.object_revision.0 + 1);
 
-    let batch = OperationBatch {
-        batch_id: Uuid::new_v4(),
-        expected_model_revision: Some(model.model_revision.clone()),
-        provenance: proposal_provenance("propose update panel projection"),
-        operations: vec![Operation::SetPanelProjection {
-            panel_projection_id,
-            previous_panel_projection: serde_json::to_value(&previous_panel)
-                .context("failed to serialize previous panel projection operation")?,
-            panel_projection: serde_json::to_value(&panel)
-                .context("failed to serialize panel projection update operation")?,
-        }],
-    };
+    let prepared = build_set_panel_projection(
+        &model,
+        proposal_provenance("propose update panel projection"),
+        &previous_panel,
+        &panel,
+    )?;
     write_panel_projection_proposal(
         root,
         &mut model,
         panel,
         proposal_id,
-        batch,
+        prepared,
         "propose_update_panel_projection",
         rationale
             .map(str::to_string)
@@ -399,22 +368,17 @@ pub(crate) fn propose_delete_native_project_panel_projection(
             plan.id
         );
     }
-    let batch = OperationBatch {
-        batch_id: Uuid::new_v4(),
-        expected_model_revision: Some(model.model_revision.clone()),
-        provenance: proposal_provenance("propose delete panel projection"),
-        operations: vec![Operation::DeletePanelProjection {
-            panel_projection_id,
-            panel_projection: serde_json::to_value(&panel)
-                .context("failed to serialize panel projection delete operation")?,
-        }],
-    };
+    let prepared = build_delete_panel_projection(
+        &model,
+        proposal_provenance("propose delete panel projection"),
+        &panel,
+    )?;
     write_panel_projection_proposal(
         root,
         &mut model,
         panel,
         proposal_id,
-        batch,
+        prepared,
         "propose_delete_panel_projection",
         rationale
             .map(str::to_string)
@@ -422,12 +386,8 @@ pub(crate) fn propose_delete_native_project_panel_projection(
     )
 }
 
-fn proposal_provenance(reason: &str) -> CommitProvenance {
-    CommitProvenance {
-        actor: "datum-eda-cli".to_string(),
-        source: CommitSource::Cli,
-        reason: reason.to_string(),
-    }
+fn proposal_provenance(reason: &str) -> WriteProvenance {
+    WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason)
 }
 
 fn validate_manufacturing_plan_targets(
@@ -482,12 +442,11 @@ fn write_manufacturing_plan_proposal(
     model: &mut eda_engine::substrate::DesignModel,
     manufacturing_plan: ManufacturingPlan,
     proposal_id: Option<Uuid>,
-    batch: OperationBatch,
+    prepared: PreparedWrite,
     action: &'static str,
     rationale: String,
 ) -> Result<NativeProjectManufacturingPlanProposalView> {
-    let batch = guarded_operation_batch(model, batch)?;
-    let proposal = write_proposal(root, model, proposal_id, batch, rationale)?;
+    let proposal = write_proposal(root, model, proposal_id, prepared, rationale)?;
     Ok(NativeProjectManufacturingPlanProposalView {
         contract: "proposal_create_v1",
         action,
@@ -504,12 +463,11 @@ fn write_panel_projection_proposal(
     model: &mut eda_engine::substrate::DesignModel,
     panel_projection: PanelProjection,
     proposal_id: Option<Uuid>,
-    batch: OperationBatch,
+    prepared: PreparedWrite,
     action: &'static str,
     rationale: String,
 ) -> Result<NativeProjectPanelProjectionProposalView> {
-    let batch = guarded_operation_batch(model, batch)?;
-    let proposal = write_proposal(root, model, proposal_id, batch, rationale)?;
+    let proposal = write_proposal(root, model, proposal_id, prepared, rationale)?;
     Ok(NativeProjectPanelProjectionProposalView {
         contract: "proposal_create_v1",
         action,
@@ -525,7 +483,7 @@ fn write_proposal(
     root: &Path,
     model: &mut eda_engine::substrate::DesignModel,
     proposal_id: Option<Uuid>,
-    batch: OperationBatch,
+    prepared: PreparedWrite,
     rationale: String,
 ) -> Result<Proposal> {
     Ok(create_draft_proposal_from_batch(
@@ -533,7 +491,7 @@ fn write_proposal(
         root,
         ProposalCreateRequest {
             proposal_id,
-            batch,
+            batch: prepared.batch,
             rationale,
             source: ProposalSource::Cli,
             checks_run: Vec::new(),

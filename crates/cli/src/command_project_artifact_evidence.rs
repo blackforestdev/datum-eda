@@ -1,13 +1,18 @@
 use std::path::{Path, PathBuf};
 
 use anyhow::Result;
+use eda_engine::api::native_write::artifacts::build_artifact_evidence;
+use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::substrate::{
-    ArtifactMetadata, ArtifactRun, CommitProvenance, CommitSource, DesignModel, Operation,
-    OperationBatch, OutputJobRun,
+    ArtifactMetadata, ArtifactRun, CommitSource, DesignModel, OutputJobRun,
 };
 use uuid::Uuid;
 
 use super::super::command_project_artifact_runs::generic_artifact_run;
+
+fn evidence_provenance(reason: impl Into<String>) -> WriteProvenance {
+    WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason)
+}
 
 pub(crate) fn commit_unlinked_artifact_evidence(
     root: &Path,
@@ -16,42 +21,14 @@ pub(crate) fn commit_unlinked_artifact_evidence(
     artifact_metadata: &ArtifactMetadata,
 ) -> Result<(PathBuf, ArtifactRun, PathBuf)> {
     let artifact_run = generic_artifact_run(scope, model, artifact_metadata);
-    let previous_artifact_metadata = model
-        .artifact_metadata
-        .get(&artifact_metadata.artifact_id)
-        .map(|artifact| {
-            serde_json::to_value(artifact).expect("artifact metadata serialization must succeed")
-        });
-    let previous_artifact_run = model
-        .artifact_runs
-        .get(&artifact_run.run_id)
-        .map(|run| serde_json::to_value(run).expect("artifact run serialization must succeed"));
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(model.model_revision.clone()),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: format!("generate unlinked {scope} artifact evidence"),
-            },
-            operations: vec![
-                Operation::SetArtifactMetadata {
-                    artifact_id: artifact_metadata.artifact_id,
-                    previous_artifact_metadata,
-                    artifact_metadata: serde_json::to_value(artifact_metadata)
-                        .expect("artifact metadata serialization must succeed"),
-                },
-                Operation::SetArtifactRun {
-                    run_id: artifact_run.run_id,
-                    previous_artifact_run,
-                    artifact_run: serde_json::to_value(&artifact_run)
-                        .expect("artifact run serialization must succeed"),
-                },
-            ],
-        },
+    let prepared = build_artifact_evidence(
+        model,
+        evidence_provenance(format!("generate unlinked {scope} artifact evidence")),
+        artifact_metadata,
+        Some(&artifact_run),
+        None,
     )?;
+    commit_prepared(model, root, prepared)?;
     let manifest_path = artifact_metadata_path(root, artifact_metadata.artifact_id);
     let run_path = artifact_run_path(root, artifact_run.run_id);
     Ok((manifest_path, artifact_run, run_path))
@@ -62,30 +39,14 @@ pub(crate) fn commit_artifact_metadata_evidence(
     model: &mut DesignModel,
     artifact_metadata: &ArtifactMetadata,
 ) -> Result<PathBuf> {
-    let previous_artifact_metadata = model
-        .artifact_metadata
-        .get(&artifact_metadata.artifact_id)
-        .map(|artifact| {
-            serde_json::to_value(artifact).expect("artifact metadata serialization must succeed")
-        });
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(model.model_revision.clone()),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "record generated artifact metadata".to_string(),
-            },
-            operations: vec![Operation::SetArtifactMetadata {
-                artifact_id: artifact_metadata.artifact_id,
-                previous_artifact_metadata,
-                artifact_metadata: serde_json::to_value(artifact_metadata)
-                    .expect("artifact metadata serialization must succeed"),
-            }],
-        },
+    let prepared = build_artifact_evidence(
+        model,
+        evidence_provenance("record generated artifact metadata"),
+        artifact_metadata,
+        None,
+        None,
     )?;
+    commit_prepared(model, root, prepared)?;
     Ok(artifact_metadata_path(root, artifact_metadata.artifact_id))
 }
 
@@ -95,42 +56,14 @@ pub(crate) fn commit_linked_artifact_output_job_evidence(
     artifact_metadata: &ArtifactMetadata,
     output_job_run: &OutputJobRun,
 ) -> Result<(PathBuf, PathBuf)> {
-    let previous_artifact_metadata = model
-        .artifact_metadata
-        .get(&artifact_metadata.artifact_id)
-        .map(|artifact| {
-            serde_json::to_value(artifact).expect("artifact metadata serialization must succeed")
-        });
-    let previous_output_job_run = model
-        .output_job_runs
-        .get(&output_job_run.run_id)
-        .map(|run| serde_json::to_value(run).expect("output job run serialization must succeed"));
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(model.model_revision.clone()),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "record linked artifact output-job evidence".to_string(),
-            },
-            operations: vec![
-                Operation::SetArtifactMetadata {
-                    artifact_id: artifact_metadata.artifact_id,
-                    previous_artifact_metadata,
-                    artifact_metadata: serde_json::to_value(artifact_metadata)
-                        .expect("artifact metadata serialization must succeed"),
-                },
-                Operation::SetOutputJobRun {
-                    run_id: output_job_run.run_id,
-                    previous_output_job_run,
-                    output_job_run: serde_json::to_value(output_job_run)
-                        .expect("output job run serialization must succeed"),
-                },
-            ],
-        },
+    let prepared = build_artifact_evidence(
+        model,
+        evidence_provenance("record linked artifact output-job evidence"),
+        artifact_metadata,
+        None,
+        Some(output_job_run),
     )?;
+    commit_prepared(model, root, prepared)?;
     Ok((
         artifact_metadata_path(root, artifact_metadata.artifact_id),
         output_job_run_path(root, output_job_run.run_id),
