@@ -12,6 +12,12 @@
     "docs/STANDARDS_AUDIT_BATCH_1_GUIDANCE.md",
     "docs/CHECKING_ARCHITECTURE.md"
   ],
+  "authority_docs": [
+    "README.md",
+    "PLAN.md",
+    "CLAUDE.md",
+    "docs/DATUM_PRODUCT_MECHANICS.md"
+  ],
   "entries": {
     "specs/PROGRESS.md": {"class": "governed", "self_tracker": true, "enforcement": {"enforced_by": ["check_progress_coverage", "check_alignment"], "gap": ""}},
     "specs/SPEC_PARITY.md": {"class": "governed", "self_tracker": true, "enforcement": {"enforced_by": ["check_spec_parity"], "gap": ""}},
@@ -61,6 +67,28 @@
     "docs/SYMBOL_LIBRARY_IMPORT_SPEC.md": {"class": "governed", "progress_anchor": "docs/SYMBOL_LIBRARY_IMPORT_SPEC.md", "enforcement": {"enforced_by": ["check_library_foundation_contract"], "gap": "Underlying pool/library substrate is gated (library foundation contract + PG-LIBRARY-AUTHORING), but this per-user symbol-import normalization/provenance contract has no spec-specific test; skeleton import only today."}},
     "docs/STANDARDS_AUDIT_BATCH_1_GUIDANCE.md": {"class": "pending", "remediation": "Standards Audit Batch 1 guidance; referenced by the PROGRESS batch section. Govern, or mark historical once the batch closes.", "enforcement": {"enforced_by": [], "gap": "Process/bridging guidance; its outcomes land in STANDARDS_COMPLIANCE_SPEC Section 4 dispositions, which are ungated. No enforceable code surface."}},
     "docs/STANDARDS_COMPLIANCE_INTEGRATION_GUIDANCE.md": {"class": "pending", "remediation": "Research->spec integration meta-guidance; partially realized in STANDARDS_COMPLIANCE_SPEC. Fold into that spec or govern in the standards governance pass.", "enforcement": {"enforced_by": [], "gap": "Process doc (research->docs/*GUIDANCE*->specs change-control rule); nothing enforces the change-control rule and it has no code surface."}},
-    "docs/CHECKING_ARCHITECTURE.md": {"class": "historical", "reason": "Non-normative design rationale; superseded by the governed specs/CHECKING_ARCHITECTURE_SPEC.md (gated via check_spec_parity standards_check_surface). The doc self-declares non-normative."}
+    "docs/CHECKING_ARCHITECTURE.md": {"class": "historical", "reason": "Non-normative design rationale; superseded by the governed specs/CHECKING_ARCHITECTURE_SPEC.md (gated via check_spec_parity standards_check_surface). The doc self-declares non-normative."},
+    "README.md": {"class": "governed", "enforcement": {"enforced_by": ["check_product_north_star"], "gap": ""}},
+    "CLAUDE.md": {"class": "governed", "enforcement": {"enforced_by": ["check_product_north_star"], "gap": ""}},
+    "PLAN.md": {"class": "governed", "enforcement": {"enforced_by": ["check_progress_coverage"], "gap": "PLAN's 'Active Execution Window' still centers on M7/imported-board fidelity though it is authority-demoted below the North Star; the wording should be reconciled."}},
+    "docs/DATUM_PRODUCT_MECHANICS.md": {"class": "doctrine", "controlling": true, "enforcement": {"enforced_by": [], "gap": "Named controlling doctrine by README/CLAUDE, but no content gate reads it, and its header still self-declares 'draft foundation document for owner review' — inconsistent with its controlling role; reconcile the status line or add a marker gate."}},
+    "docs/DECOMPOSITION_PLAN.md": {"class": "governed", "enforcement": {"enforced_by": ["check_decomposition_coverage", "check_touched_monolith_growth", "check_file_size_budgets"], "gap": ""}},
+    "docs/DECOMPOSITION_BACKLOG.md": {"class": "governed", "enforcement": {"enforced_by": ["check_decomposition_coverage", "check_file_size_budgets"], "gap": "Backlog of candidate decompositions; the aggregate budgets are gated, individual backlog items are not."}},
+    "docs/PRODUCTION_CLEANUP_MANIFEST.md": {"class": "pending", "remediation": "Point-in-time worktree cleanup manifest (dated 2026-06-19); confirm whether still in use or retire as historical.", "enforcement": {"enforced_by": [], "gap": "One-time cleanup manifest; no ongoing enforceable surface."}},
+    "docs/gui/DATUM_TEXT_ENGINE_PHASE_2_IMPLEMENTATION_PLAN.md": {"class": "governed", "enforcement": {"enforced_by": ["spec_parity:engine_text_modules"], "gap": "Text-engine module inventory hash-locked; behavioral text-fidelity completeness is partial."}},
+    "docs/gui/DATUM_TEXT_ENGINE_FIDELITY_FIXTURES.md": {"class": "governed", "enforcement": {"enforced_by": ["spec_parity:m7_text_visual_fixtures"], "gap": ""}},
+    "docs/gui/M7_IMP_014_IMPLEMENTATION_PLAN.md": {"class": "governed", "enforcement": {"enforced_by": ["spec_parity:engine_text_modules"], "gap": "Imported-text-normalization plan feeding the text engine; module inventory hash-locked; superseded in part by the Phase 2 text-engine plan."}},
+    "docs/gui/DATUM_GUI_VISUAL_REGRESSION_HARNESS.md": {"class": "governed", "enforcement": {"enforced_by": ["tests:crates/gui-render/src/render_contract_tests.rs"], "gap": "Harness + checked-in multi-scale goldens are live infra, but the visual-regression matrix runs only under the visual feature / #[ignore]; no CI gate executes it yet (the PG-UI-LAYOUT-INVARIANTS gate is the intended closer)."}},
+    "docs/gui/M7_RENDER_SEMANTIC_CONTRACT.md": {"class": "governed", "enforcement": {"enforced_by": ["tests:crates/gui-render/src/render_contract_tests.rs"], "gap": "Render-semantic vocabulary (stack order, copper colors, dim legibility, evidence markers) partly enforced by render_contract_tests; full semantic coverage not gated."}},
+    "docs/gui/M7_RENDER_LAYER_DISCIPLINE_MEMO.md": {"class": "governed", "enforcement": {"enforced_by": ["tests:crates/gui-render/src/render_contract_tests.rs"], "gap": "Render-stack layer discipline partly enforced by render_contract_tests stack-order assertions; not fully gated."}},
+    "docs/gui/M7_COPPER_RENDERING_GUIDANCE.md": {"class": "governed", "enforcement": {"enforced_by": ["tests:crates/gui-render/src/render_contract_tests.rs"], "gap": "Copper material colors partly enforced by render_contract_tests; broader copper guidance not gated."}},
+    "docs/gui/M7_AIRWIRE_RENDERING_GUIDANCE.md": {"class": "governed", "enforcement": {"enforced_by": ["tests:crates/gui-render/src/render_contract_tests.rs"], "gap": "Airwire rendering partly covered by render tests; guidance not fully gated."}},
+    "docs/gui/M7_IMPORTED_BOARD_FIDELITY_PLAN.md": {"class": "historical", "reason": "M7 imported-board fidelity spike closed-for-scope per the ratified North Star sequence (import frozen; decision 011). Retained as historical evidence."},
+    "docs/gui/M7_IMPORTED_BOARD_FIDELITY_CHECKLIST.md": {"class": "historical", "reason": "M7 imported-board fidelity spike closed-for-scope (import frozen; decision 011). Historical evidence."},
+    "docs/gui/M7_IMPORTED_BOARD_FIDELITY_ISSUES.md": {"class": "historical", "reason": "M7 imported-board fidelity spike closed-for-scope (import frozen; decision 011). Historical evidence."},
+    "docs/gui/M7_IMPORTED_BOARD_FIDELITY_ARTIFACTS.md": {"class": "historical", "reason": "M7 imported-board fidelity spike closed-for-scope (import frozen; decision 011). Historical evidence."},
+    "docs/gui/M7_IMPORTED_BOARD_FIDELITY_FIXTURES.md": {"class": "historical", "reason": "M7 imported-board fidelity spike closed-for-scope (import frozen; decision 011). Historical evidence."},
+    "docs/gui/M7_BOARD_REVIEW_FIDELITY_GAP.md": {"class": "historical", "reason": "M7 imported-board review fidelity-gap analysis; the M7 spike is closed-for-scope (import frozen). Historical evidence."},
+    "docs/gui/M7_DELIVERY_GATES.md": {"class": "historical", "reason": "M7 spike delivery-gate checklist; the M7 spike is closed-for-scope per the ratified sequence. Historical evidence."}
   }
 }

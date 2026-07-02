@@ -31,7 +31,13 @@ from __future__ import annotations
 import glob
 import json
 import pathlib
+import re
 import sys
+
+# A doc that declares itself active in its header steers development and MUST be
+# classified. Matches "Status: active", "> **Status**: Active", etc.
+ACTIVE_HEADER = re.compile(r"status.{0,12}active", re.IGNORECASE)
+ACTIVE_SWEEP_GLOBS = ["docs/**/*.md", "*.md"]
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "specs/spec_governance_manifest.json"
@@ -78,14 +84,30 @@ def main() -> int:
         return False
 
     # 1. Every spec file on disk under the enforced surface must be classified.
-    disk_files: set[str] = set(tracked_docs)
+    #    Surface = hard globs (specs/, docs/contracts/, docs/decisions/) + the
+    #    explicit tracked_docs + named authority_docs + any doc that declares
+    #    itself active in its header (auto-discovered, so new active docs cannot
+    #    slip in unclassified).
+    disk_files: set[str] = set(tracked_docs) | set(manifest.get("authority_docs", []))
     for pattern in enforced_globs:
         for path in glob.glob(str(ROOT / pattern)):
             disk_files.add(str(pathlib.Path(path).relative_to(ROOT)))
+    active_sweep: set[str] = set()
+    for pattern in ACTIVE_SWEEP_GLOBS:
+        for path in glob.glob(str(ROOT / pattern), recursive=True):
+            p = pathlib.Path(path)
+            try:
+                header = "".join(p.read_text(encoding="utf-8").splitlines(keepends=True)[:8])
+            except (OSError, UnicodeDecodeError):
+                continue
+            if ACTIVE_HEADER.search(header):
+                active_sweep.add(str(p.relative_to(ROOT)))
+    disk_files |= active_sweep
     for rel in sorted(disk_files):
         if rel not in entries:
+            hint = " (declares itself active in its header)" if rel in active_sweep else ""
             failures.append(
-                f"unclassified spec (orphan): {rel} — add an entry to "
+                f"unclassified spec (orphan): {rel}{hint} — add an entry to "
                 f"specs/spec_governance_manifest.json (governed/doctrine/pending/historical)"
             )
 
@@ -119,8 +141,11 @@ def main() -> int:
                     f"{rel}: governed entry declares progress_anchor {anchor!r} absent from PROGRESS.md"
                 )
         elif cls == "doctrine":
-            if not rel.startswith("docs/decisions/"):
-                failures.append(f"{rel}: class 'doctrine' is reserved for docs/decisions/ records")
+            if not rel.startswith("docs/decisions/") and not entry.get("controlling"):
+                failures.append(
+                    f"{rel}: class 'doctrine' is reserved for docs/decisions/ records "
+                    f"or entries explicitly flagged \"controlling\": true"
+                )
         elif cls == "pending":
             if not entry.get("remediation"):
                 failures.append(f"{rel}: class 'pending' must carry a non-empty 'remediation' note")
