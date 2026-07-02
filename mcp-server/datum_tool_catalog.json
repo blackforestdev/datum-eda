@@ -1,0 +1,599 @@
+{
+  "catalog_version": 1,
+  "verbs": [
+    {
+      "description": "Mark one existing OutputJobRun evidence record canceled.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "artifact"
+          },
+          {
+            "lit": "cancel-output-job-run"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--run",
+            "param": "run"
+          }
+        ],
+        "kind": "cli",
+        "method": "cancel_output_job_run"
+      },
+      "dispatch_args": [
+        "path",
+        "run"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "run": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "run"
+        ],
+        "type": "object"
+      },
+      "name": "datum.artifact.cancel_output_job_run",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Compare two resolver-discovered generated artifact metadata records for a native project.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "artifact"
+          },
+          {
+            "lit": "compare"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--before",
+            "param": "before"
+          },
+          {
+            "flag": "--after",
+            "param": "after"
+          }
+        ],
+        "kind": "cli",
+        "method": "compare_artifacts"
+      },
+      "dispatch_args": [
+        "path",
+        "before",
+        "after"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "after": {
+            "type": "string"
+          },
+          "before": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "before",
+          "after"
+        ],
+        "type": "object"
+      },
+      "name": "datum.artifact.compare",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Export the current supported manufacturing set and persist resolver-owned artifact/run evidence.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "artifact"
+          },
+          {
+            "lit": "export-manufacturing-set"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--output-dir",
+            "param": "output_dir"
+          },
+          {
+            "flag": "--prefix",
+            "param": "prefix"
+          }
+        ],
+        "kind": "cli",
+        "method": "export_manufacturing_set"
+      },
+      "dispatch_args": [
+        "path",
+        "output_dir",
+        "prefix"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "output_dir": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "prefix": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "output_dir"
+        ],
+        "type": "object"
+      },
+      "name": "datum.artifact.export_manufacturing_set",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Return generated files and production projection proofs for one artifact.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "artifact"
+          },
+          {
+            "lit": "files"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--artifact",
+            "param": "artifact"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_artifact_files"
+      },
+      "dispatch_args": [
+        "path",
+        "artifact"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "artifact": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "artifact"
+        ],
+        "type": "object"
+      },
+      "name": "datum.artifact.files",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Generate derived production artifacts from include scopes for a native project, or execute one authored OutputJob by id.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "artifact"
+          },
+          {
+            "lit": "generate"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--output-dir",
+            "param": "output_dir"
+          },
+          {
+            "flag": "--include",
+            "param": "include"
+          },
+          {
+            "flag": "--prefix",
+            "param": "prefix"
+          },
+          {
+            "flag": "--output-job",
+            "param": "output_job"
+          }
+        ],
+        "kind": "cli",
+        "method": "generate_artifacts"
+      },
+      "dispatch_args": [
+        "path",
+        "output_dir",
+        "include",
+        "prefix",
+        "output_job"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "include": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "output_dir": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "output_job": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "prefix": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.artifact.generate",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Return resolver-discovered generated artifact metadata for one native project.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "artifact"
+          },
+          {
+            "lit": "list"
+          },
+          {
+            "param": "path"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_artifacts"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.artifact.list",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Preview one generated artifact file through supported semantic readers.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "artifact"
+          },
+          {
+            "lit": "preview"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--artifact",
+            "param": "artifact"
+          },
+          {
+            "flag": "--artifact-dir",
+            "param": "artifact_dir"
+          },
+          {
+            "flag": "--file",
+            "param": "file"
+          }
+        ],
+        "kind": "cli",
+        "method": "preview_artifact_file"
+      },
+      "dispatch_args": [
+        "path",
+        "artifact",
+        "artifact_dir",
+        "file"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "artifact": {
+            "type": "string"
+          },
+          "artifact_dir": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "file": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "artifact",
+          "file"
+        ],
+        "type": "object"
+      },
+      "name": "datum.artifact.preview",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Return one resolver-discovered generated artifact metadata record for a native project.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "artifact"
+          },
+          {
+            "lit": "show"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--artifact",
+            "param": "artifact"
+          }
+        ],
+        "kind": "cli",
+        "method": "show_artifact"
+      },
+      "dispatch_args": [
+        "path",
+        "artifact"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "artifact": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "artifact"
+        ],
+        "type": "object"
+      },
+      "name": "datum.artifact.show",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Persist a running OutputJobRun evidence record for one authored OutputJob.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "artifact"
+          },
+          {
+            "lit": "start-output-job-run"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--output-job",
+            "param": "output_job"
+          }
+        ],
+        "kind": "cli",
+        "method": "start_output_job_run"
+      },
+      "dispatch_args": [
+        "path",
+        "output_job"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "output_job": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "output_job"
+        ],
+        "type": "object"
+      },
+      "name": "datum.artifact.start_output_job_run",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Validate one resolver-discovered generated artifact metadata record for a native project.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "artifact"
+          },
+          {
+            "lit": "validate"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--artifact",
+            "param": "artifact"
+          }
+        ],
+        "kind": "cli",
+        "method": "validate_artifact"
+      },
+      "dispatch_args": [
+        "path",
+        "artifact"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "artifact": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "artifact"
+        ],
+        "type": "object"
+      },
+      "name": "datum.artifact.validate",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Validate an exported manufacturing set against current project state and persisted artifact hashes.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "artifact"
+          },
+          {
+            "lit": "validate-manufacturing-set"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--output-dir",
+            "param": "output_dir"
+          },
+          {
+            "flag": "--prefix",
+            "param": "prefix"
+          }
+        ],
+        "kind": "cli",
+        "method": "validate_manufacturing_set"
+      },
+      "dispatch_args": [
+        "path",
+        "output_dir",
+        "prefix"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "output_dir": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "prefix": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "output_dir"
+        ],
+        "type": "object"
+      },
+      "name": "datum.artifact.validate_manufacturing_set",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    }
+  ]
+}

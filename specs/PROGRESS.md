@@ -106,6 +106,23 @@ test/gate, and CLI/MCP/API surface where applicable. Imported-board fidelity can
 continue only after the relevant substrate contracts are implemented or after an
 explicit governance decision records why a fidelity slice is exempt.
 
+### Single-Source Verb Registry (Decision 017)
+
+`docs/decisions/PRODUCT_MECHANICS_017_VERB_REGISTRY.md` — the user-facing verb
+surface (MCP tool name == GUI terminal command id) is declared once in the
+leaf crate `crates/verb-registry` and projected into the checked-in
+`mcp-server/datum_tool_catalog.json` (generated/gated by
+`datum-verb-catalog --write|--check` in `scripts/run_drift_gates.sh`); the MCP
+catalog merges generated families through `MIGRATED_PREFIXES` in
+`mcp-server/tools_catalog_generated.py`, and argv templates are behaviorally
+locked against the real CLI by `crates/cli/tests/verb_registry_roundtrip.rs`.
+
+| Item | Status | Notes |
+|------|--------|-------|
+| Registry crate + generated catalog + drift gate + clap round-trip test | [x] | Landed; `datum.artifact` family (11 verbs) is registry-owned, hand-written entries deleted, registered tool set unchanged (530) |
+| All registered verbs registry-owned; hand-written MCP catalogs deleted | [ ] | Migrate per prefix via `MIGRATED_PREFIXES`; taxonomy/count gates keep their invariants during migration |
+| CLI clap / daemon dispatch / GUI terminal catalog generated from the registry | [ ] | Target projections after catalog migration completes; execution stays on the bridge until then |
+
 ### Next Production Goals — Current / Target Ledger
 
 This ledger is the active parity surface for the next library/schematic
@@ -2891,7 +2908,7 @@ Status: [x] Closed for scoped M4 slice
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Rust workspace (7 crates) | [x] | engine, cli, engine-daemon, test-harness, gui-protocol, gui-render, gui-app (locked via `specs/SPEC_PARITY.md` → `workspace_crates`) |
+| Rust workspace (8 crates) | [x] | engine, cli, engine-daemon, test-harness, gui-protocol, gui-render, gui-app, verb-registry (locked via `specs/SPEC_PARITY.md` → `workspace_crates`) |
 | Engine compiles without GUI deps | [x] | |
 | Test harness (golden file utilities) | [x] | test-harness crate |
 | Test corpus (real designs) | [ ] | tests/corpus/ empty |

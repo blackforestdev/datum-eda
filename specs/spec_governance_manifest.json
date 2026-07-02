@@ -63,6 +63,7 @@
     "docs/decisions/PRODUCT_MECHANICS_014_UI_LAYOUT_SYSTEM.md": {"class": "doctrine"},
     "docs/decisions/PRODUCT_MECHANICS_015_UI_DESIGN_SYSTEM.md": {"class": "doctrine"},
     "docs/decisions/PRODUCT_MECHANICS_016_PRODUCT_NORTH_STAR.md": {"class": "doctrine"},
+    "docs/decisions/PRODUCT_MECHANICS_017_VERB_REGISTRY.md": {"class": "doctrine", "enforcement": {"enforced_by": ["scripts/run_drift_gates.sh -> datum-verb-catalog --check", "crates/verb-registry unit tests", "crates/cli/tests/verb_registry_roundtrip.rs", "scripts/check_mcp_public_taxonomy.py", "mcp-server/server.py --self-test"], "gap": "only datum.artifact is registry-owned; remaining prefixes are still hand-mirrored"}},
     "docs/decisions/PRODUCT_MECHANICS_OPEN_QUESTION_RESOLUTIONS.md": {"class": "pending", "remediation": "Ratified resolutions log (e.g. IPC-7351B basis) should be consolidated into numbered decision records (010). Do not add new ratifications here."},
     "docs/IPC_FOOTPRINT_SYSTEM.md": {"class": "governed", "progress_anchor": "docs/IPC_FOOTPRINT_SYSTEM.md"},
     "docs/SYMBOL_LIBRARY_IMPORT_SPEC.md": {"class": "governed", "progress_anchor": "docs/SYMBOL_LIBRARY_IMPORT_SPEC.md"},

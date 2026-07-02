@@ -25,8 +25,8 @@ The gate is `python3 scripts/check_spec_parity.py`, wired through
 | `cli_project_commands` | `specs/PROGRAM_SPEC.md` | 287 | `40ef328f49a6dc21e44625d65999da45e0d320816de3ea236529f9f8d6c69dc9` |
 | `engine_text_modules` | `docs/gui/DATUM_TEXT_ENGINE_PHASE_2_IMPLEMENTATION_PLAN.md` | 11 | `1233903bce862aa7ef22879e67e8cbef3bae2bf5e823bff9e53f39b4735c8059` |
 | `m7_text_visual_fixtures` | `docs/gui/DATUM_TEXT_ENGINE_FIDELITY_FIXTURES.md` | 4 | `7099fa49aca6e9574dc7ea5847914d8c20969222b5f2cf79090016539044e107` |
-| `workspace_crates` | `specs/PROGRESS.md` | 7 | `2ba0685f5e07398f9fa04025c000cf4b453ae21f17e5c769524fe8e23d2a5d69` |
+| `workspace_crates` | `specs/PROGRESS.md` | 8 | `d48e33427561b9af0d9986d51f36230e8321898487657f43a46f7c1c0e2ed4da` |
 | `daemon_dispatch_methods` | `specs/PROGRESS.md` | 50 | `4b49d100eb6c09e6131a0dd736a2cf23fcee242c68627a5a9f2de78c37acbdfd` |
-| `engine_api_pub_fns` | `specs/ENGINE_SPEC.md` | 77 | `07dcbe8b88d112a8d7c7de166e85381c1509774735f8497f7c399f44214789d9` |
+| `engine_api_pub_fns` | `specs/ENGINE_SPEC.md` | 101 | `c5c6038b997c25ead7801f192187d37c1007df3b3a1e6da95e9a8c7f3014a13a` |
 | `standards_check_surface` | `specs/CHECKING_ARCHITECTURE_SPEC.md` | 29 | `56e6d1bca3d5e3245655ab9e4f5089013b0b1368156a4b7303aabd394550f2af` |
 | `pool_library_surface` | `docs/contracts/LIBRARY_AUTHORING_TOOL_CONTRACT.md` | 114 | `edb4bf8faf38c8007792ce1e0c47760e18a87d2fdfb0a5db45e1b9ca844c22e6` |

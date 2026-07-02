@@ -1,6 +1,7 @@
 """Canonical datum.* MCP tool aliases."""
 
 from tools_catalog_checks import CHECK_TOOL_SCHEMAS
+from tools_catalog_generated import generated_specs_for_prefix, reject_hand_written_duplicates
 from tools_catalog_import_map import IMPORT_MAP_TOOL_SCHEMAS
 from tools_catalog_journal import JOURNAL_TOOL_SCHEMAS
 from tools_catalog_library import LIBRARY_TOOL_SCHEMAS
@@ -398,6 +399,8 @@ DATUM_SCHEMATIC_PRIMITIVE_SCHEMAS.update({
     "datum.schematic.delete_symbol_field": _symbol_schema("Delete one native-project schematic symbol field.", {"path": _STR, "field": _STR}, ["path", "field"]),
 })
 
+_GENERATED_ARTIFACT_TOOL_SPECS = generated_specs_for_prefix("datum.artifact")
+
 DATUM_TOOL_SPECS = [
     {"name": "datum.context.get", **datum_alias("datum_context_get", DATUM_TOOL_SCHEMAS["datum.context.get"])},
     {"name": "datum.context.refresh", **datum_alias("datum_context_refresh", DATUM_TOOL_SCHEMAS["datum.context.refresh"])},
@@ -657,17 +660,10 @@ DATUM_TOOL_SPECS = [
     {"name": "datum.journal.show", **datum_alias("get_journal_transaction", JOURNAL_TOOL_SCHEMAS["get_journal_transaction"])},
     {"name": "datum.journal.undo", **datum_alias("journal_undo", JOURNAL_TOOL_SCHEMAS["journal_undo"])},
     {"name": "datum.journal.redo", **datum_alias("journal_redo", JOURNAL_TOOL_SCHEMAS["journal_redo"])},
-    {"name": "datum.artifact.generate", **datum_alias("generate_artifacts", OUTPUT_JOB_TOOL_SCHEMAS["generate_artifacts"])},
-    {"name": "datum.artifact.list", **datum_alias("get_artifacts", OUTPUT_JOB_TOOL_SCHEMAS["get_artifacts"])},
-    {"name": "datum.artifact.show", **datum_alias("show_artifact", OUTPUT_JOB_TOOL_SCHEMAS["show_artifact"])},
-    {"name": "datum.artifact.files", **datum_alias("get_artifact_files", OUTPUT_JOB_TOOL_SCHEMAS["get_artifact_files"])},
-    {"name": "datum.artifact.preview", **datum_alias("preview_artifact_file", OUTPUT_JOB_TOOL_SCHEMAS["preview_artifact_file"])},
-    {"name": "datum.artifact.compare", **datum_alias("compare_artifacts", OUTPUT_JOB_TOOL_SCHEMAS["compare_artifacts"])},
-    {"name": "datum.artifact.validate", **datum_alias("validate_artifact", OUTPUT_JOB_TOOL_SCHEMAS["validate_artifact"])},
-    {"name": "datum.artifact.start_output_job_run", **datum_alias("start_output_job_run", OUTPUT_JOB_TOOL_SCHEMAS["start_output_job_run"])},
-    {"name": "datum.artifact.cancel_output_job_run", **datum_alias("cancel_output_job_run", OUTPUT_JOB_TOOL_SCHEMAS["cancel_output_job_run"])},
-    {"name": "datum.artifact.export_manufacturing_set", **datum_alias("export_manufacturing_set", OUTPUT_JOB_TOOL_SCHEMAS["export_manufacturing_set"])},
-    {"name": "datum.artifact.validate_manufacturing_set", **datum_alias("validate_manufacturing_set", OUTPUT_JOB_TOOL_SCHEMAS["validate_manufacturing_set"])},
+    # datum.artifact.* is generated from the single-source verb registry
+    # (crates/verb-registry -> mcp-server/datum_tool_catalog.json); hand-written
+    # entries for migrated prefixes are forbidden (duplicate guard below).
+    *_GENERATED_ARTIFACT_TOOL_SPECS,
     {"name": "datum.manufacturing.create_panel_projection", **proposal_write_alias("create_panel_projection_proposal", OUTPUT_JOB_TOOL_SCHEMAS["create_panel_projection_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
     {"name": "datum.manufacturing.update_panel_projection", **proposal_write_alias("update_panel_projection_proposal", OUTPUT_JOB_TOOL_SCHEMAS["update_panel_projection_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
     {"name": "datum.manufacturing.delete_panel_projection", **proposal_write_alias("delete_panel_projection_proposal", OUTPUT_JOB_TOOL_SCHEMAS["delete_panel_projection_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
@@ -680,3 +676,10 @@ DATUM_TOOL_SPECS = [
     {"name": "datum.output_job.run", **datum_alias("run_output_job", OUTPUT_JOB_TOOL_SCHEMAS["run_output_job"])},
     {"name": "datum.output_job.delete", **proposal_write_alias("delete_output_job_proposal", OUTPUT_JOB_TOOL_SCHEMAS["delete_output_job_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
 ]
+
+# Import-time guard: a hand-written entry for a verb the generated catalog
+# already owns is a defect and must fail loudly (caught by server.py --self-test).
+_GENERATED_SPEC_IDS = {id(spec) for spec in _GENERATED_ARTIFACT_TOOL_SPECS}
+reject_hand_written_duplicates(
+    [str(spec["name"]) for spec in DATUM_TOOL_SPECS if id(spec) not in _GENERATED_SPEC_IDS]
+)

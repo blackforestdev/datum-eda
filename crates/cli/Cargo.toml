@@ -15,3 +15,6 @@ serde_json.workspace = true
 anyhow.workspace = true
 uuid.workspace = true
 sha2.workspace = true
+
+[dev-dependencies]
+datum-verb-registry = { path = "../verb-registry" }
