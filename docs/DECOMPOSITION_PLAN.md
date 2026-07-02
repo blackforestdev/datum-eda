@@ -1,7 +1,11 @@
 # Structural Decomposition Plan
 
-Status: active structural-only stabilization track.
-Scope: decomposition and governance only. No behavior changes.
+Status: historical — the size-budget gate system this plan is built around
+(`check_file_size_budgets.py`, `check_decomposition_coverage.py`,
+`check_touched_monolith_growth.py`, `check_test_file_sizes.py`) was retired
+2026-07-02; decomposition is now organic and governance-triggered, not
+gate-scheduled. Retained as evidence of the completed stabilization track.
+Scope (historical): decomposition and governance only. No behavior changes.
 
 ## 1. Purpose
 

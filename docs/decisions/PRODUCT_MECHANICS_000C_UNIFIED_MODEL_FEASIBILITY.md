@@ -465,7 +465,8 @@ whose full set lives in 000D (this doc cross-references it). The 10 gates are:
 DURABLE-UNDO; 4 PG-SHARD-DIFF-ISOLATION; 5 PG-PROPOSAL-PARITY; 6 PG-LIVE-CAM-
 EQUIVALENCE; 7 PG-PANELIZATION-ISOLATION (deduped, was 4x); 8 PG-VARIANT-
 RESOLUTION (population-only); 9 PG-ARTIFACT-TRACEABILITY; 10
-PG-HARNESS-WIRING (into `run_drift_gates.sh`).
+PG-HARNESS-WIRING (into `run_drift_gates.sh`; retired 2026-07-02 —
+self-referential wiring check superseded by CI invoking the runner directly).
 
 Before committing to the unified model as governing architecture, Datum should
 prove:

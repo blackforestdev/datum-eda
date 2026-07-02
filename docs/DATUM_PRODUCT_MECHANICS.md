@@ -1,7 +1,7 @@
 # Datum Product Mechanics
 
-Status: draft foundation document for owner review.
-Date: 2026-06-14
+Status: controlling product doctrine (ratified).
+Last reconciled: 2026-07-02
 
 Companion review agenda:
 - `docs/audits/scope-integration/DATUM_PRODUCT_MECHANICS_REVIEW_AGENDA.md` breaks unresolved mechanics

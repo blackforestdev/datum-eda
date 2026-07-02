@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
-"""Static and executable alignment audit for Datum EDA docs/specs.
+"""Executable alignment audit for Datum EDA.
 
-Default mode runs fast static checks for known parity contracts.
-Optional flags run slower executable verification for milestone gates and
-workspace health.
+The historical static doc-string checks (pinned must_contain/must_not_contain
+literals) were retired in the governance diet: behavioral enforcement lives in
+the drift/proof gates, not in pinned prose. This script now only runs
+executable verification modes:
+
+  --run-gates         milestone executable gates (m2 quality/perf harnesses,
+                      MCP self-test)
+  --run-health        broader workspace health (cargo test -q)
+  --run-m3-preflight  M3 preflight evidence hooks (documented deferred/pass)
+
+The default no-flag invocation is a no-op that exits 0.
 """
 
 from __future__ import annotations
@@ -11,175 +19,10 @@ from __future__ import annotations
 import argparse
 import subprocess
 import sys
-from dataclasses import dataclass
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
-
-
-@dataclass(frozen=True)
-class TextCheck:
-    path: str
-    must_contain: tuple[str, ...] = ()
-    must_not_contain: tuple[str, ...] = ()
-
-
-TEXT_CHECKS = (
-    TextCheck(
-        path="specs/PROGRAM_SPEC.md",
-        must_contain=(
-            "## Scope Integrity Terms",
-            "Status tracking rule:",
-            "`specs/PROGRESS.md` is the sole source of truth for implementation status.",
-            "**Product identity**",
-            "**Implementation slice**",
-            "**Execution strategy**",
-            "**Non-goals**",
-            "Do not infer product identity from implementation-slice limits.",
-            "Do not infer permanent product limits from milestone non-goals.",
-        ),
-    ),
-    TextCheck(
-        path="README.md",
-        must_contain=(
-            "Canonical scope terminology is defined in",
-            "Implementation slice",
-            "Execution strategy",
-        ),
-    ),
-    TextCheck(
-        path="specs/PROGRESS.md",
-        must_contain=(
-            "**M2 overall**: [x] Complete for the current implementation slice",
-            "Current repo health status (2026-03-25 audit):",
-            "- `cargo test -q` currently passes.",
-            "M3 determinism evidence hook behavioral",
-            "M3 undo/redo evidence hook behavioral",
-            "M3 write-surface parity hook behavioral",
-        ),
-    ),
-    TextCheck(
-        path="specs/INTEGRATED_PROGRAM_SPEC.md",
-        must_contain=(
-            "Status authority rule:",
-            "`specs/PROGRESS.md` is the only source of truth for implementation status.",
-            "Milestone completion state must be recorded in `specs/PROGRESS.md` only.",
-            "| Workspace health | Automated test run | `cargo test -q`",
-            "m3_op_determinism",
-            "m3_undo_redo_roundtrip",
-            "m3_write_surface_parity",
-        ),
-    ),
-    TextCheck(
-        path="specs/MCP_API_SPEC.md",
-        must_contain=(
-            "### Current Implemented Methods (2026-07-02)",
-            "#### `get_design_rules`",
-            "Current implementation note: implemented in the current daemon/stdio host",
-        ),
-        must_not_contain=(
-            "Status: `Target M2+` (not implemented in current daemon/MCP slice).",
-            "Current slice is read/check-focused. Write operations, save, and close-project\nlifecycle control are deferred.",
-        ),
-    ),
-    TextCheck(
-        path="specs/ENGINE_SPEC.md",
-        # Per-method signature presence was previously asserted here. The
-        # engine_api_pub_fns inventory in specs/SPEC_PARITY.md now enforces
-        # the full pub-fn surface structurally, so the per-method assertions
-        # were removed to avoid duplicate-source drift when §5.1 reformats.
-        must_contain=(
-            "### 5.1 Current Implemented Engine API",
-            "engine_api_pub_fns",
-        ),
-        must_not_contain=(
-            "Target parity note: full CLI/MCP method parity is required for the target M2+\nsurface at milestone closure. The current implementation exposes a strict\nsubset;",
-        ),
-    ),
-    TextCheck(
-        path="docs/audits/PRIVATE_WRITER_MIGRATION_EXCEPTION_REGISTER.md",
-        must_contain=(
-            "Datum authored source writes must flow through typed `OperationBatch` commits",
-            "| Project bootstrap | Native project creation |",
-            "| Route-strategy fixture generation | Deterministic regression fixtures |",
-            "| Legacy KiCad modify persistence | Retired compatibility island |",
-            "| Proposal apply bridge | Proposal substrate |",
-            "| Legacy proposal sidecar | Retired sidecar boundary |",
-            "| Generated evidence | Resolver-owned generated artifacts |",
-            "| Engine generated-evidence helper | Generated evidence persistence |",
-            "| Engine source-stage helper | Journal staging |",
-            "| Engine journal persistence | Journal owner |",
-            "| Generated export | Output files |",
-            "| GUI board text | GUI command handoff |",
-            "| Legacy import-map sidecar | The former test-only `write_legacy_import_map_sidecar` helper was removed.",
-            "| Forward-annotation review state direct writer | The review-state command remains guarded, but only as a retired path:",
-            "`scripts/check_schematic_private_writers.py` enforces the current file list",
-        ),
-    ),
-    TextCheck(
-        path="docs/IMPLEMENTATION_GUARDRAILS.md",
-        must_contain=(
-            "**Status**: Historical pre-`M2` implementation control snapshot.",
-            "It no longer describes the current repository state.",
-        ),
-        must_not_contain=(
-            "The repository has completed `M0` and is now entering `M1`:",
-            "- `engine-daemon` and `mcp-server` are still stubs",
-            "- process stub only",
-        ),
-    ),
-    TextCheck(
-        path="docs/M1_TASK_CHECKLIST.md",
-        must_contain=(
-            "**Status**: Historical `M1` implementation checklist.",
-            "Current repo status lives in `specs/PROGRESS.md`.",
-        ),
-        must_not_contain=(
-            "- [`crates/engine-daemon/src/main.rs`](../crates/engine-daemon/src/main.rs): still stub",
-            "- [`mcp-server/server.py`](../mcp-server/server.py): still stub",
-        ),
-    ),
-    TextCheck(
-        path="docs/MCP_DESIGN.md",
-        must_contain=(
-            "Tool-availability notes below include historical planning text; current",
-            "Methods that were previously staged later in planning but are now implemented",
-            "Current `M2` availability is defined by `specs/MCP_API_SPEC.md` and",
-        ),
-        must_not_contain=(
-            "#### `close_project`\nClose the currently open project.\nStatus: Target M2+.",
-            "Status: Target M2+.\n\n#### `get_part`",
-            "Specified for later slices, but not currently implemented in the daemon/stdio host:\n- `get_netlist`\n- `get_design_rules`\n- `explain_violation`",
-            "#### `get_design_rules`\nAll configured rules with scopes and values.\nStatus: Target M2+.",
-            "#### `explain_violation`\nNatural language explanation of a DRC violation with context.\n```json\nInput:  {\"violation_index\": 0}\nOutput: {\"explanation\": \"Two tracks on the Top layer are 0.08mm apart,\n          but the clearance rule for net class 'default' requires 0.1mm.\n          The tracks belong to nets VCC and GND near component U1.\",\n         \"suggestion\": \"Move track segment or increase spacing.\"}\n```\nStatus: Target M2+.",
-        ),
-    ),
-    TextCheck(
-        path="docs/USER_WORKFLOWS.md",
-        must_contain=(
-            "`explain_violation` is part of the current `M2` MCP surface.",
-        ),
-        must_not_contain=(
-            "`explain_violation` is `Target M2+`; in the current slice, the agent explains",
-        ),
-    ),
-    TextCheck(
-        path="CLAUDE.md",
-        must_contain=(
-            "├── crates/",
-            "│   ├── engine/",
-            "│   ├── cli/",
-            "│   ├── test-harness/",
-            "│   └── gui-app/",
-            "specs/",
-        ),
-        must_not_contain=(
-            "├── engine/                 # Core engine (Rust library crate)",
-            "├── cli/                    # CLI binary (Rust, depends on engine)",
-        ),
-    ),
-)
 
 
 def run_command(command: list[str]) -> tuple[int, str]:
@@ -192,56 +35,6 @@ def run_command(command: list[str]) -> tuple[int, str]:
         check=False,
     )
     return completed.returncode, completed.stdout
-
-
-def run_text_checks() -> list[str]:
-    failures: list[str] = []
-    for check in TEXT_CHECKS:
-        text = (ROOT / check.path).read_text()
-        for needle in check.must_contain:
-            if needle not in text:
-                failures.append(f"{check.path}: missing required text: {needle!r}")
-        for needle in check.must_not_contain:
-            if needle in text:
-                failures.append(f"{check.path}: found stale text: {needle!r}")
-    return failures
-
-
-def run_workflow_compaction_checks() -> list[str]:
-    failures: list[str] = []
-    path = ROOT / "docs/USER_WORKFLOWS.md"
-    lines = path.read_text().splitlines()
-
-    try:
-        start = next(i for i, line in enumerate(lines) if line.strip() == "Current live slice:")
-    except StopIteration:
-        failures.append("docs/USER_WORKFLOWS.md: missing 'Current live slice:' marker")
-        return failures
-
-    try:
-        end = next(
-            i for i, line in enumerate(lines[start + 1 :], start + 1)
-            if line.startswith("MCP tools for this flow")
-        )
-    except StopIteration:
-        failures.append("docs/USER_WORKFLOWS.md: missing 'MCP tools for this flow' marker")
-        return failures
-
-    live_slice_lines = lines[start + 1 : end]
-    live_slice_bullets = sum(1 for line in live_slice_lines if line.startswith("- "))
-    if live_slice_bullets > 8:
-        failures.append(
-            "docs/USER_WORKFLOWS.md: M4 'Current live slice' section is overgrown; "
-            "keep it compact and move detailed ledger content to docs/workflows/m4_live_slice.md"
-        )
-
-    text = "\n".join(lines)
-    if "docs/workflows/m4_live_slice.md" not in text:
-        failures.append(
-            "docs/USER_WORKFLOWS.md: missing pointer to docs/workflows/m4_live_slice.md"
-        )
-
-    return failures
 
 
 def run_exec_check(label: str, command: list[str], failures: list[str]) -> None:
@@ -278,12 +71,12 @@ def main() -> int:
     parser.add_argument(
         "--run-gates",
         action="store_true",
-        help="Run current milestone executable gates in addition to static checks.",
+        help="Run current milestone executable gates.",
     )
     parser.add_argument(
         "--run-health",
         action="store_true",
-        help="Run broader workspace health checks in addition to static checks.",
+        help="Run broader workspace health checks.",
     )
     parser.add_argument(
         "--run-m3-preflight",
@@ -292,25 +85,16 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    failures = run_text_checks()
-    failures.extend(run_workflow_compaction_checks())
+    if not (args.run_gates or args.run_health or args.run_m3_preflight):
+        print(
+            "Alignment audit: static doc-string checks were retired (governance diet); "
+            "nothing to do without --run-gates / --run-health / --run-m3-preflight."
+        )
+        return 0
+
+    failures: list[str] = []
 
     if args.run_gates:
-        run_exec_check(
-            "decomposition_coverage",
-            ["python3", "scripts/check_decomposition_coverage.py"],
-            failures,
-        )
-        run_exec_check(
-            "touched_monolith_growth",
-            ["python3", "scripts/check_touched_monolith_growth.py"],
-            failures,
-        )
-        run_exec_check(
-            "source_file_size_budgets",
-            ["python3", "scripts/check_file_size_budgets.py"],
-            failures,
-        )
         run_exec_check(
             "m2_quality",
             ["cargo", "run", "-q", "-p", "eda-test-harness", "--bin", "m2_quality", "--", "--json"],

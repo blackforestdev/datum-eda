@@ -471,7 +471,9 @@ The gates load-bearing for view composition and live production are:
 - PG-VARIANT-RESOLUTION (gate 8, population-only) — assembly-variant overlays
   resolve population three-valued without base writes.
 
-These run via PG-HARNESS-WIRING (gate 10) into `run_drift_gates.sh`.
+These run via `run_migration_proof_gates.sh` into `run_drift_gates.sh`
+(PG-HARNESS-WIRING, gate 10, retired 2026-07-02 — self-referential wiring
+check superseded by CI invoking the runner directly).
 
 ## First Proof Slice
 

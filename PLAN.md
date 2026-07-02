@@ -46,42 +46,33 @@ query, ERC/DRC, transformation, and export.
 **Full CAD ambition**: Native editing, interactive routing, GUI, advanced
 constraints. This is the trajectory, not the launch.
 
-## Stabilization Track (2026-03-26)
+## Stabilization Track (2026-03-26, historical)
 
-Structural debt retirement is tracked in `docs/STABILIZATION_PLAN.md` and runs
-in parallel with milestone delivery.
-The stabilization track is scoped to non-behavioral decomposition and
-guardrails, not feature expansion.
+Structural debt retirement was tracked in `docs/STABILIZATION_PLAN.md` (now
+historical). The size-budget gate system behind it was retired 2026-07-02;
+decomposition is now organic and governance-triggered, not gate-scheduled.
 
 ## Active Execution Window
 
-Current planning focus: the opening `M7` read-only route-review slice on top
-of the closed `M5` routing-kernel substrate and the frozen `M6`
-strategy-evidence slice, following the active frontier recorded in
-`specs/PROGRESS.md` and the current milestone shard in `specs/progress/`.
-Imported KiCad PCB board-review fidelity is now treated as the required
-post-spike correction track inside the opening `M7` milestone rather than as
-optional renderer polish; see `docs/gui/M7_IMPORTED_BOARD_FIDELITY_PLAN.md`.
+Current focus (post-correction, committed course): the canonical mutation
+substrate (typed `Operation` + single `commit()` + journal +
+`ProjectResolver`) has landed and is converging — routing every remaining
+write surface onto it is active work, not a future phase. On that substrate,
+the active product frontier is **native authoring**: governed library →
+schematic capture → PCB layout → manufacturing output, with full AI
+augmentation through the same deterministic primitives.
 
-Near-term execution order:
-1. Keep `M5` closed except for regression fixes; do not reopen routing-kernel
-   semantics without an explicit milestone decision.
-2. Keep `M6` frozen pending accumulated evidence from the current strategy
-   baseline gates; do not add objectives, profiles, or broader intent
-   semantics by default.
-3. Keep the opening `M7` scope narrow: one read-only route-proposal review
-   workspace consuming existing machine-native route proposal and artifact data
-   plus one bounded frontend board-review scene contract, a locked
-   viewport-centered three-column shell, and read-only supporting terminal/AI
-   lanes.
-4. After the opening `M7` architecture spike proves the crate boundary and
-   review-workspace viability, execute the bounded imported-board fidelity
-   track before broadening imported-board review claims; keep that track split
-   into import, scene-contract, and renderer passes rather than reopening GUI
-   scope.
-5. Use `specs/PROGRESS.md` plus the active milestone shard in
-   `specs/progress/` as the source for the next bounded slice; do not let
-   local worktree momentum redefine roadmap priority.
+Boundaries of the window:
+1. KiCad import is FROZEN. The M7 spike imports a board with sufficient
+   fidelity; import is a one-time converter, not a fidelity track, and never
+   gates native maturity.
+2. The GUI editor (interactive authoring in the GUI, wired to the engine) is
+   a named later phase of the committed sequence — real, but after the
+   substrate convergence and native-authoring foundation.
+3. Legacy milestones stay closed/frozen: `M0`–`M5` closed for scope, `M6`
+   strategy reporting frozen pending evidence runs; regression fixes only.
+4. Use `specs/PROGRESS.md` as the source for the next bounded slice; do not
+   let local worktree momentum redefine roadmap priority.
 
 ## Milestones
 

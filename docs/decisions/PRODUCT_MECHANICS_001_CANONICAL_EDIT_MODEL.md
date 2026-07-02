@@ -501,7 +501,9 @@ This slice maps onto the consolidated proof plan whose full set lives in
 `PRODUCT_MECHANICS_000D_STORAGE_AND_VERSIONING_MODEL.md`. The gates this
 document is most directly accountable to are PG-IDENTITY-SUBSTRATE (1),
 PG-COMMIT-ATOMIC+DURABLE-UNDO (3), and PG-PROPOSAL-PARITY (5); all gates are
-wired into `run_drift_gates.sh` under PG-HARNESS-WIRING (10).
+wired into `run_drift_gates.sh` via `run_migration_proof_gates.sh`
+(PG-HARNESS-WIRING (10) retired 2026-07-02 — self-referential wiring check
+superseded by CI invoking the runner directly).
 
 ## Resolved Mechanism (was open; ratified 2026-06-18)
 

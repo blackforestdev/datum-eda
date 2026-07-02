@@ -233,8 +233,10 @@ This matrix is the minimum verification layer for integrated-spec freeze.
 
 Transport note:
 - Socket transport proof is tracked separately from behavioral surface proof.
-- Sandbox-compatible audits (`check_alignment.py`, M3 preflight, workspace health)
-  must not require live Unix socket listeners or socket-pair IPC.
+- Sandbox-compatible audits (`check_alignment.py` — which now only runs cargo
+  quality/perf gates via `--run-gates`, with no static doc checks — M3
+  preflight, workspace health) must not require live Unix socket listeners or
+  socket-pair IPC.
 - Unix socket transport is instead validated in unrestricted CI and release
   candidate checks.
 

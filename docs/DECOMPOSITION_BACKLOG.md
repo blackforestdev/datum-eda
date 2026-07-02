@@ -1,7 +1,9 @@
 # Decomposition Backlog (PR-Ready)
 
-Status: active.
-Mode: structural-only refactors; no behavior changes.
+Status: historical — the size-budget gate system this backlog is built around
+was retired 2026-07-02; decomposition is now organic and governance-triggered,
+not gate-scheduled. Script names below refer to retired tooling.
+Mode (historical): structural-only refactors; no behavior changes.
 
 ## Operating Lanes
 

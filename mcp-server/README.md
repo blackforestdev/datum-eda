@@ -28,5 +28,5 @@ This directory is intentionally split to keep runtime logic and tests isolated.
 
 ```bash
 python3 mcp-server/server.py --self-test
-python3 scripts/check_alignment.py
+bash scripts/run_drift_gates.sh
 ```

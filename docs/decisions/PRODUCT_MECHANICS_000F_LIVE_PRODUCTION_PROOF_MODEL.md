@@ -561,7 +561,9 @@ The gates this document is responsible for are:
   expected, tolerated mismatch class.
 
 Wiring of these gates into `scripts/run_drift_gates.sh` is gate 10
-(`PG-HARNESS-WIRING`), owned in 000D alongside the consolidated plan.
+(`PG-HARNESS-WIRING`, retired 2026-07-02 — self-referential wiring check
+superseded by CI invoking the runner directly), owned in 000D alongside the
+consolidated plan.
 
 ## Resolved (no longer open)
 

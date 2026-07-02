@@ -18,12 +18,8 @@
 - [ ] If lane state is `closed` or `blocked-awaiting-contract`: this PR includes one explicit next branch decision (`define-contract` or `switch-slice`) and does not continue same-lane exploratory audit work.
 - [ ] If lane state is `blocked-awaiting-contract`: this PR includes a single `fallback_slice` target.
 - [ ] I ran required local gates:
-  - `python3 scripts/check_file_size_budgets.py`
-  - `python3 scripts/check_decomposition_coverage.py`
-  - `python3 scripts/check_touched_monolith_growth.py`
-  - `python3 scripts/check_test_file_sizes.py --max-lines 700`
-  - `python3 scripts/check_alignment.py`
-  - `python3 scripts/check_progress_coverage.py`
+  - `bash scripts/run_drift_gates.sh`
+  - `cargo test --workspace`
 
 ## Scope
 

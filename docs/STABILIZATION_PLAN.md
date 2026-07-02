@@ -1,5 +1,9 @@
 # Stabilization Plan (Structural Debt Retirement)
 
+Status: historical — the size-budget gate system referenced below was retired
+2026-07-02; decomposition is now organic and governance-triggered, not
+gate-scheduled. Script names in dated entries record actions against
+then-existing tooling.
 Date: 2026-03-26
 Scope: eliminate monolithic runtime files and large inline test blocks without
 changing runtime behavior.

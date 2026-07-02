@@ -115,6 +115,3 @@ run_pg "PG-RESOLVER-BACKED-VALIDATION" \
 
 run_pg "PG-UI-LAYOUT-INVARIANTS" \
   cargo test -p datum-gui-render layout_invariant_tests -- --nocapture
-
-run_pg "PG-HARNESS-WIRING" \
-  python3 -c 'from pathlib import Path; drift=Path("scripts/run_drift_gates.sh").read_text(); assert Path("scripts/run_migration_proof_gates.sh").exists(); assert "scripts/run_migration_proof_gates.sh" in drift'

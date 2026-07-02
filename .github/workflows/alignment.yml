@@ -26,11 +26,10 @@ jobs:
           python-version: "3.12"
 
       # Authoritative gate set — single source of truth. Runs the full drift
-      # gates (governance, spec-parity, contract locks, private-writer/daemon
-      # -write bans, MCP taxonomy, and all PG-* proof gates) plus the size,
-      # decomposition, GUI-token, alignment, and progress-coverage guardrails.
-      # scripts/check_ci_gate_parity.py (inside the runner) fails if this line
-      # is ever removed, so CI and the runner cannot silently diverge again.
+      # gates: governance coverage/classification, spec parity, contract
+      # write-fences (private-writer bans, daemon write parity), MCP public
+      # taxonomy, GUI token/icon/terminal gates, progress coverage, and all
+      # PG-* proof gates.
       - name: Full drift gates (scripts/run_drift_gates.sh)
         run: bash scripts/run_drift_gates.sh
 

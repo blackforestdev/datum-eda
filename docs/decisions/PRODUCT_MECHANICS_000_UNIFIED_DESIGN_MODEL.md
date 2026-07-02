@@ -387,13 +387,14 @@ gates most directly load-bearing for this decision are:
 
 The remaining gates (PG-PROPOSAL-PARITY, PG-LIVE-CAM-EQUIVALENCE,
 PG-PANELIZATION-ISOLATION, PG-VARIANT-RESOLUTION,
-PG-ARTIFACT-TRACEABILITY, PG-HARNESS-WIRING) belong to the projection and
+PG-ARTIFACT-TRACEABILITY, PG-HARNESS-WIRING (retired 2026-07-02)) belong to the projection and
 variant decisions and are defined in 000D. The earlier
 PG-AUTHORITY-FLIP framing is SUPERSEDED: there is no imported-to-native
 authority flip to gate — import writes native shards directly and native is the
 only authority (see `docs/DATUM_PRODUCT_MECHANICS.md` "Interop Boundary And
 Import Posture"). All gates wire into `scripts/run_drift_gates.sh` via
-PG-HARNESS-WIRING.
+`run_migration_proof_gates.sh` (PG-HARNESS-WIRING retired 2026-07-02 —
+self-referential wiring check superseded by CI invoking the runner directly).
 
 ## Resolved By Mechanism
 

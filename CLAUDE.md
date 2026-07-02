@@ -42,31 +42,34 @@ they support the product; they do not define its identity.
 > inferring product intent from code or a milestone.
 
 ## Specification Governance (controlling)
-Every specification, contract, or decision record that steers development MUST
-be woven into the tracked roadmap. A spec that exists in the repo but is not
-(a) reflected in `specs/PROGRESS.md` (single-source status) **and** (b) locked
-by a drift gate is an **orphaned spec** — a governance defect and a drift risk,
-not a neutral document. Code agents cannot follow intent the roadmap does not
-track; ungated dispositions (`Planned`/`Implemented`/`Deferred`) silently drift
-from the code.
+Core principle: **no orphaned specs.** Every active specification, contract,
+or decision record is tracked and classified; a doc that exists in the repo
+but is not tracked is a governance defect, not a neutral document.
 
 When you CREATE or REFINE any spec / contract / decision record, in the SAME
 change you MUST:
 1. Add or update its status row in `specs/PROGRESS.md` (current vs target).
-2. Wire it into a drift gate — extend an existing contract gate
-   (`check_library_foundation_contract.py`, `check_product_north_star.py`) or
-   add a sibling gate that locks its target/current marker claims against
-   `PROGRESS.md`, and register that gate in `scripts/run_drift_gates.sh`.
+2. Classify it in `specs/spec_governance_manifest.json`
+   (`class`: `governed` / `doctrine` / `pending` / `historical`), enforced by
+   `check_spec_governance.py` (coverage + classification).
 3. Register any inventory shapes it defines in
    `specs/spec_parity_manifest.json` (enforced by `check_spec_parity.py`).
 4. If it ratifies mechanism, it must be a numbered decision record in
    `docs/decisions/`, not a loose doc or an `OPEN_QUESTION_RESOLUTIONS` entry.
 
-Disposition claims must be reconciled with code by a gate, never maintained by
-hand alone. If you cannot gate a spec in the same change, it is **not done** —
-say so explicitly to the owner rather than leaving it silently untracked.
-Writing spec content without wiring it into the roadmap is the exact failure
-this rule exists to prevent.
+Behavioral invariants are enforced by the PG-* proof gates
+(`run_migration_proof_gates.sh`) and the write-fence gates
+(`check_schematic_private_writers.py`, `check_daemon_write_parity.py`,
+`check_resolver_raw_loads.py`, `check_spec_parity.py`). There is NO per-doc
+enforcement ledger and no doc-string pinning gates: gates lock behavior in
+code, not prose in docs.
+
+Authority ordering (lower layers must not contradict higher ones; on conflict
+the higher layer wins and the lower doc is the one to fix):
+1. `CLAUDE.md` — operational instructions
+2. `docs/DATUM_PRODUCT_MECHANICS.md` + `docs/decisions/` — product doctrine
+3. `docs/contracts/` — domain tool contracts
+4. `specs/PROGRESS.md` — status truth
 
 ## Current Status
 The project has been course-corrected from a milestone-driven roadmap to the
@@ -288,10 +291,11 @@ project/
 │   ├── SCHEMATIC_CONNECTIVITY_SPEC.md / STANDARDS_COMPLIANCE_SPEC.md
 │   └── progress/           # Per-milestone shards (historical)
 ├── scripts/                # Validation and governance gates
-│   ├── check_spec_parity.py / check_alignment.py / check_file_size_budgets.py
-│   ├── check_decomposition_coverage.py / check_progress_coverage.py
+│   ├── check_spec_parity.py / check_alignment.py / check_spec_governance.py
+│   ├── check_progress_coverage.py / check_schematic_private_writers.py
+│   ├── check_daemon_write_parity.py / check_resolver_raw_loads.py
 │   ├── check_import_query_determinism.py / check_native_project_fixtures.py
-│   └── run_drift_gates.sh  # Drift gate runner
+│   └── run_drift_gates.sh  # Drift gate runner (+ run_migration_proof_gates.sh)
 ├── .github/                # CI/CD (alignment.yml) and PR template
 ├── tests/corpus/           # Real designs for golden testing
 └── research/               # Analysis artifacts (gitignored working notes)

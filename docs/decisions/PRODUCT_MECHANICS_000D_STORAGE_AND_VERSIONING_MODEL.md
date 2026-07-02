@@ -860,7 +860,8 @@ The ten consolidated gates:
    deferred export path; if and when it is built, a
    byte-identical-when-unmodified fidelity gate on datum-test applies to it
    as export validation — not as a migration or authority step.)
-10. PG-HARNESS-WIRING — all gates run from a new
+10. PG-HARNESS-WIRING (retired 2026-07-02 — self-referential wiring check
+    superseded by CI invoking the runner directly) — all gates run from a new
     `scripts/run_migration_proof_gates.sh`, invoked from
     `scripts/run_drift_gates.sh`.
 
