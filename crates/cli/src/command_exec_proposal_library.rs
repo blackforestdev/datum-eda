@@ -238,6 +238,58 @@ pub(super) fn execute_create_pool_footprint_proposal(
     ))
 }
 
+pub(super) fn execute_generate_ipc7351b_two_terminal_chip_proposal(
+    format: &OutputFormat,
+    args: ProposalGenerateIpc7351bTwoTerminalChipArgs,
+) -> Result<(String, i32)> {
+    let ProposalGenerateIpc7351bTwoTerminalChipArgs {
+        path,
+        pool,
+        footprint,
+        package,
+        padstack,
+        pad_a,
+        pad_b,
+        name,
+        metric_code,
+        body_length_nm,
+        body_width_nm,
+        terminal_length_nm,
+        terminal_width_nm,
+        density,
+        mask_expansion_nm,
+        paste_reduction_nm,
+        proposal,
+        rationale,
+    } = args;
+    Ok((
+        render_output(
+            format,
+            &propose_generate_native_project_ipc7351b_two_terminal_chip(
+                &path,
+                &pool,
+                footprint,
+                package,
+                padstack,
+                pad_a,
+                pad_b,
+                name,
+                metric_code,
+                body_length_nm,
+                body_width_nm,
+                terminal_length_nm,
+                terminal_width_nm,
+                density,
+                mask_expansion_nm,
+                paste_reduction_nm,
+                proposal,
+                rationale.as_deref(),
+            )?,
+        ),
+        0,
+    ))
+}
+
 pub(super) fn execute_create_pool_pin_pad_map_proposal(
     format: &OutputFormat,
     args: ProposalCreatePoolPinPadMapArgs,

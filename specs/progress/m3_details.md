@@ -120,8 +120,10 @@ evidence hooks.
 
 ## Round-trip fidelity
 
-Current M3 board and sidecar save->reimport->save artifact stability is covered
-by dedicated fidelity hooks.
+Current M3 board and sidecar save->reimport->save stability is covered by
+dedicated fidelity hooks: pure board writes remain artifact-stable, while
+sidecar-backed package/part replacements verify semantic sidecar replay and
+reimported board state after intentional footprint/body materialization.
 
 ## MCP write tools
 

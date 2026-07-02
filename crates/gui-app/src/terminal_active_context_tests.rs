@@ -370,6 +370,56 @@ fn terminal_context_projects_active_artifact_and_check_commands() {
             "datum-eda check accept-deviation {root_arg} --fingerprint 'sha256:selected-finding' --rationale '<rationale>'"
         )
     );
+    assert_eq!(
+        envelope["active_context_commands"]["library_list_objects"],
+        format!("datum-eda query pool-library-objects {root_arg} --pool pool")
+    );
+    assert_eq!(
+        envelope["active_context_commands"]["library_show_object"],
+        format!(
+            "datum-eda query pool-library-objects {root_arg} --pool pool --kind '<kind>' --object '<uuid>' --include-payload"
+        )
+    );
+    assert_eq!(
+        envelope["active_context_commands"]["project_validate_pool"],
+        format!("datum-eda project validate {root_arg}")
+    );
+    assert_eq!(
+        envelope["active_context_commands"]["project_create_pin_pad_map"],
+        format!(
+            "datum-eda project create-pool-pin-pad-map {root_arg} --pool pool --map '<map-uuid>' --part '<part-uuid>' --entry '<pad-uuid>:<gate-uuid>:<pin-uuid>'"
+        )
+    );
+    assert_eq!(
+        envelope["active_context_commands"]["project_set_pin_pad_map"],
+        format!(
+            "datum-eda project set-pool-pin-pad-map {root_arg} --pool pool --map '<map-uuid>' --mode merge --entry '<pad-uuid>:<gate-uuid>:<pin-uuid>'"
+        )
+    );
+    assert_eq!(
+        envelope["active_context_commands"]["proposal_create_pin_pad_map"],
+        format!(
+            "datum-eda proposal create-pool-pin-pad-map {root_arg} --pool pool --map '<map-uuid>' --part '<part-uuid>' --entry '<pad-uuid>:<gate-uuid>:<pin-uuid>' --rationale 'create PinPadMap'"
+        )
+    );
+    assert_eq!(
+        envelope["active_context_commands"]["proposal_set_pin_pad_map"],
+        format!(
+            "datum-eda proposal set-pool-pin-pad-map {root_arg} --pool pool --map '<map-uuid>' --mode merge --entry '<pad-uuid>:<gate-uuid>:<pin-uuid>' --rationale 'update PinPadMap'"
+        )
+    );
+    assert_eq!(
+        envelope["library_commands"]["validate_pool"],
+        "datum-eda project validate \"$DATUM_PROJECT_ROOT\""
+    );
+    assert_eq!(
+        envelope["library_commands"]["list_objects"],
+        "datum-eda query pool-library-objects \"$DATUM_PROJECT_ROOT\" --pool pool"
+    );
+    assert_eq!(
+        envelope["library_commands"]["show_object"],
+        "datum-eda query pool-library-objects \"$DATUM_PROJECT_ROOT\" --pool pool --kind <kind> --object <uuid> --include-payload"
+    );
     let empty_context = context_for_root(&root);
     write_terminal_context_files(&terminal_context, &empty_context)
         .expect("rewrite terminal context without active focus");
@@ -421,5 +471,13 @@ fn terminal_context_projects_active_artifact_and_check_commands() {
     assert!(empty["active_context_commands"]["check_show"].is_null());
     assert!(empty["active_context_commands"]["check_waive_finding"].is_null());
     assert!(empty["active_context_commands"]["check_accept_deviation"].is_null());
+    assert!(empty["active_context_commands"]["library_list_objects"].is_string());
+    assert!(empty["active_context_commands"]["library_show_object"].is_string());
+    assert_eq!(
+        empty["active_context_commands"]["project_validate_pool"],
+        format!("datum-eda project validate {root_arg}")
+    );
+    assert!(empty["active_context_commands"]["project_create_pin_pad_map"].is_string());
+    assert!(empty["active_context_commands"]["proposal_set_pin_pad_map"].is_string());
     let _ = fs::remove_dir_all(&root);
 }

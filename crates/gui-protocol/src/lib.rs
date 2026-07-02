@@ -7384,21 +7384,29 @@ mod tests {
                 .len()
                 >= 4
         );
-        let u1_silk_lines = board["component_silkscreen"]["00000000-0000-0000-0000-00000000c203"]
-            .as_array()
-            .expect("U1 silkscreen lines should be an array");
+        let u1_mechanical_lines =
+            board["component_mechanical_lines"]["00000000-0000-0000-0000-00000000c203"]
+                .as_array()
+                .expect("U1 mechanical lines should be an array");
         assert!(
-            u1_silk_lines.len() >= 6,
-            "KiCad-backed U1 silkscreen should replace the minimal demo geometry"
+            u1_mechanical_lines.len() >= 6,
+            "KiCad-backed U1 package geometry should replace the minimal demo geometry"
         );
-        let j2_texts = board["component_silkscreen_texts"]["00000000-0000-0000-0000-00000000c204"]
-            .as_array()
-            .expect("J2 silkscreen texts should be an array");
+        let j2_mechanical_lines =
+            board["component_mechanical_lines"]["00000000-0000-0000-0000-00000000c204"]
+                .as_array()
+                .expect("J2 mechanical lines should be an array");
         assert!(
-            j2_texts
-                .iter()
-                .any(|entry| entry["text"] == serde_json::Value::String("J2".to_string())),
-            "KiCad-backed reference text should be materialized for J2"
+            j2_mechanical_lines.len() >= 5,
+            "KiCad-backed J2 package geometry should be materialized"
+        );
+        let tp1_mechanical_circles =
+            board["component_mechanical_circles"]["00000000-0000-0000-0000-00000000c209"]
+                .as_array()
+                .expect("TP1 mechanical circles should be an array");
+        assert!(
+            !tp1_mechanical_circles.is_empty(),
+            "KiCad-backed TP1 circular geometry should be materialized"
         );
     }
 

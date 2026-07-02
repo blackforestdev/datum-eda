@@ -42,6 +42,7 @@ mod terminal_activity_snapshot;
 mod terminal_agent_launcher;
 mod terminal_check_context;
 mod terminal_context;
+mod terminal_context_contract;
 mod terminal_context_io;
 mod terminal_input;
 mod terminal_journal_context;

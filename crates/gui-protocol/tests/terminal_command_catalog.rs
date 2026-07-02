@@ -36,11 +36,17 @@ fn production_handoff_catalog_uses_canonical_aliases_and_stable_templates() {
             "datum.journal.redo",
             "datum.journal.show",
             "datum.journal.undo",
+            "datum.library.list_objects",
+            "datum.library.show_object",
+            "datum.project.create_pool_pin_pad_map",
+            "datum.project.set_pool_pin_pad_map",
+            "datum.project.validate",
             "datum.proposal.accept_apply",
             "datum.proposal.apply",
             "datum.proposal.create_manufacturing_plan",
             "datum.proposal.create_output_job",
             "datum.proposal.create_panel_projection",
+            "datum.proposal.create_pool_pin_pad_map",
             "datum.proposal.defer",
             "datum.proposal.delete_manufacturing_plan",
             "datum.proposal.delete_output_job",
@@ -49,6 +55,7 @@ fn production_handoff_catalog_uses_canonical_aliases_and_stable_templates() {
             "datum.proposal.preview",
             "datum.proposal.reject",
             "datum.proposal.review",
+            "datum.proposal.set_pool_pin_pad_map",
             "datum.proposal.show",
             "datum.proposal.update_manufacturing_plan",
             "datum.proposal.update_output_job",
@@ -298,6 +305,81 @@ fn production_handoff_catalog_uses_canonical_aliases_and_stable_templates() {
     );
     assert_catalog_entry(
         catalog
+            .get("datum.project.validate")
+            .expect("project validation handoff command"),
+        &["datum-eda", "project", "validate", "{project_root}"],
+    );
+    assert_catalog_entry(
+        catalog
+            .get("datum.library.list_objects")
+            .expect("pool library list handoff command"),
+        &[
+            "datum-eda",
+            "query",
+            "pool-library-objects",
+            "{project_root}",
+            "--pool",
+            "{pool}",
+        ],
+    );
+    assert_catalog_entry(
+        catalog
+            .get("datum.library.show_object")
+            .expect("pool library show handoff command"),
+        &[
+            "datum-eda",
+            "query",
+            "pool-library-objects",
+            "{project_root}",
+            "--pool",
+            "{pool}",
+            "--kind",
+            "{kind}",
+            "--object",
+            "{object}",
+            "--include-payload",
+        ],
+    );
+    assert_catalog_entry(
+        catalog
+            .get("datum.project.create_pool_pin_pad_map")
+            .expect("project PinPadMap create handoff command"),
+        &[
+            "datum-eda",
+            "project",
+            "create-pool-pin-pad-map",
+            "{project_root}",
+            "--pool",
+            "{pool}",
+            "--map",
+            "{map}",
+            "--part",
+            "{part}",
+            "--entry",
+            "{entry}",
+        ],
+    );
+    assert_catalog_entry(
+        catalog
+            .get("datum.project.set_pool_pin_pad_map")
+            .expect("project PinPadMap set handoff command"),
+        &[
+            "datum-eda",
+            "project",
+            "set-pool-pin-pad-map",
+            "{project_root}",
+            "--pool",
+            "{pool}",
+            "--map",
+            "{map}",
+            "--mode",
+            "{mode}",
+            "--entry",
+            "{entry}",
+        ],
+    );
+    assert_catalog_entry(
+        catalog
             .get("datum.proposal.preview")
             .expect("proposal preview handoff command"),
         &[
@@ -307,6 +389,48 @@ fn production_handoff_catalog_uses_canonical_aliases_and_stable_templates() {
             "{project_root}",
             "--proposal",
             "{proposal}",
+        ],
+    );
+    assert_catalog_entry(
+        catalog
+            .get("datum.proposal.create_pool_pin_pad_map")
+            .expect("proposal PinPadMap create handoff command"),
+        &[
+            "datum-eda",
+            "proposal",
+            "create-pool-pin-pad-map",
+            "{project_root}",
+            "--pool",
+            "{pool}",
+            "--map",
+            "{map}",
+            "--part",
+            "{part}",
+            "--entry",
+            "{entry}",
+            "--rationale",
+            "{rationale}",
+        ],
+    );
+    assert_catalog_entry(
+        catalog
+            .get("datum.proposal.set_pool_pin_pad_map")
+            .expect("proposal PinPadMap set handoff command"),
+        &[
+            "datum-eda",
+            "proposal",
+            "set-pool-pin-pad-map",
+            "{project_root}",
+            "--pool",
+            "{pool}",
+            "--map",
+            "{map}",
+            "--mode",
+            "{mode}",
+            "--entry",
+            "{entry}",
+            "--rationale",
+            "{rationale}",
         ],
     );
     assert_catalog_entry(

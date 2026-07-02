@@ -10,7 +10,8 @@
     "docs/SYMBOL_LIBRARY_IMPORT_SPEC.md",
     "docs/STANDARDS_COMPLIANCE_INTEGRATION_GUIDANCE.md",
     "docs/STANDARDS_AUDIT_BATCH_1_GUIDANCE.md",
-    "docs/CHECKING_ARCHITECTURE.md"
+    "docs/CHECKING_ARCHITECTURE.md",
+    "docs/LIBRARY_BOOTSTRAP_STRATEGY.md"
   ],
   "authority_docs": [
     "README.md",
@@ -63,7 +64,7 @@
     "docs/decisions/PRODUCT_MECHANICS_015_UI_DESIGN_SYSTEM.md": {"class": "doctrine", "enforcement": {"enforced_by": ["check_gui_design_tokens", "check_gui_icon_assets"], "gap": ""}},
     "docs/decisions/PRODUCT_MECHANICS_016_PRODUCT_NORTH_STAR.md": {"class": "doctrine", "enforcement": {"enforced_by": ["check_product_north_star"], "gap": ""}},
     "docs/decisions/PRODUCT_MECHANICS_OPEN_QUESTION_RESOLUTIONS.md": {"class": "pending", "remediation": "Ratified resolutions log (e.g. IPC-7351B basis) should be consolidated into numbered decision records (010). Do not add new ratifications here.", "enforcement": {"enforced_by": [], "gap": "Unenforced log: individual resolutions are echoed by other decisions' gates (e.g. 010 standards PGs), but the log file itself is untracked and nothing checks development against it."}},
-    "docs/IPC_FOOTPRINT_SYSTEM.md": {"class": "governed", "progress_anchor": "docs/IPC_FOOTPRINT_SYSTEM.md", "enforcement": {"enforced_by": ["tests:crates/engine/src/pool/footprint.rs"], "gap": "GENUINE GAP: the normative content (IPC-7351B generator, structured IpcFootprintBasis, density/toe-heel-side, governed mask/paste-in-export) is unbuilt and ungated. Existing footprint tests lock generic pool/import behavior, not this doc's IPC generator."}},
+    "docs/IPC_FOOTPRINT_SYSTEM.md": {"class": "governed", "progress_anchor": "docs/IPC_FOOTPRINT_SYSTEM.md", "enforcement": {"enforced_by": ["tests:crates/engine/src/pool/footprint.rs"], "gap": "GENUINE GAP: the first engine-owned IPC-7351B two-terminal chip generator, structured IpcFootprintBasis, CLI/proposal generation surfaces, and LibraryGraph validation diagnostics now exist, but MCP surfaces, SOIC/SOT families, check-run findings, governed mask/paste export consumption, deviation tracking, and import audit remain unbuilt/ungated."}},
     "docs/SYMBOL_LIBRARY_IMPORT_SPEC.md": {"class": "governed", "progress_anchor": "docs/SYMBOL_LIBRARY_IMPORT_SPEC.md", "enforcement": {"enforced_by": ["check_library_foundation_contract"], "gap": "Underlying pool/library substrate is gated (library foundation contract + PG-LIBRARY-AUTHORING), but this per-user symbol-import normalization/provenance contract has no spec-specific test; skeleton import only today."}},
     "docs/STANDARDS_AUDIT_BATCH_1_GUIDANCE.md": {"class": "pending", "remediation": "Standards Audit Batch 1 guidance; referenced by the PROGRESS batch section. Govern, or mark historical once the batch closes.", "enforcement": {"enforced_by": [], "gap": "Process/bridging guidance; its outcomes land in STANDARDS_COMPLIANCE_SPEC Section 4 dispositions, which are ungated. No enforceable code surface."}},
     "docs/STANDARDS_COMPLIANCE_INTEGRATION_GUIDANCE.md": {"class": "pending", "remediation": "Research->spec integration meta-guidance; partially realized in STANDARDS_COMPLIANCE_SPEC. Fold into that spec or govern in the standards governance pass.", "enforcement": {"enforced_by": [], "gap": "Process doc (research->docs/*GUIDANCE*->specs change-control rule); nothing enforces the change-control rule and it has no code surface."}},
@@ -75,6 +76,7 @@
     "docs/DECOMPOSITION_PLAN.md": {"class": "governed", "enforcement": {"enforced_by": ["check_decomposition_coverage", "check_touched_monolith_growth", "check_file_size_budgets"], "gap": ""}},
     "docs/DECOMPOSITION_BACKLOG.md": {"class": "governed", "enforcement": {"enforced_by": ["check_decomposition_coverage", "check_file_size_budgets"], "gap": "Backlog of candidate decompositions; the aggregate budgets are gated, individual backlog items are not."}},
     "docs/PRODUCTION_CLEANUP_MANIFEST.md": {"class": "pending", "remediation": "Point-in-time worktree cleanup manifest (dated 2026-06-19); confirm whether still in use or retire as historical.", "enforcement": {"enforced_by": [], "gap": "One-time cleanup manifest; no ongoing enforceable surface."}},
+    "docs/LIBRARY_BOOTSTRAP_STRATEGY.md": {"class": "pending", "remediation": "Open library-bootstrap/content-strategy discussion; ratify into a numbered decision record (PRODUCT_MECHANICS_0xx) + PROGRESS row once the owner resolves D4 (offline vs optional-online) and the content-path A/B fork.", "enforcement": {"enforced_by": [], "gap": "Discussion capture, not yet ratified; no enforceable surface until it becomes a decision record."}},
     "docs/gui/DATUM_TEXT_ENGINE_PHASE_2_IMPLEMENTATION_PLAN.md": {"class": "governed", "enforcement": {"enforced_by": ["spec_parity:engine_text_modules"], "gap": "Text-engine module inventory hash-locked; behavioral text-fidelity completeness is partial."}},
     "docs/gui/DATUM_TEXT_ENGINE_FIDELITY_FIXTURES.md": {"class": "governed", "enforcement": {"enforced_by": ["spec_parity:m7_text_visual_fixtures"], "gap": ""}},
     "docs/gui/M7_IMP_014_IMPLEMENTATION_PLAN.md": {"class": "governed", "enforcement": {"enforced_by": ["spec_parity:engine_text_modules"], "gap": "Imported-text-normalization plan feeding the text engine; module inventory hash-locked; superseded in part by the Phase 2 text-engine plan."}},

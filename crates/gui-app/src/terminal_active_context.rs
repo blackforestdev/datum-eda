@@ -36,6 +36,13 @@ pub(super) struct TerminalActiveContextCommands {
     check_repair_standards: Option<String>,
     check_waive_finding: Option<String>,
     check_accept_deviation: Option<String>,
+    library_list_objects: Option<String>,
+    library_show_object: Option<String>,
+    project_validate_pool: Option<String>,
+    project_create_pin_pad_map: Option<String>,
+    project_set_pin_pad_map: Option<String>,
+    proposal_create_pin_pad_map: Option<String>,
+    proposal_set_pin_pad_map: Option<String>,
 }
 
 impl TerminalActiveContextCommands {
@@ -251,6 +258,55 @@ impl TerminalActiveContextCommands {
                     ],
                 )
             }),
+            library_list_objects: render_terminal_command(
+                "datum.library.list_objects",
+                &[("project_root", project_root_binding), ("pool", "pool")],
+            ),
+            library_show_object: render_terminal_command(
+                "datum.library.show_object",
+                &[
+                    ("project_root", project_root_binding),
+                    ("pool", "pool"),
+                    ("kind", "<kind>"),
+                    ("object", "<uuid>"),
+                ],
+            ),
+            project_validate_pool: render_terminal_command(
+                "datum.project.validate",
+                &[("project_root", project_root_binding)],
+            ),
+            project_create_pin_pad_map: pin_pad_map_create_command(
+                project_root_binding,
+                "datum.project.create_pool_pin_pad_map",
+                "<part-uuid>",
+                "<map-uuid>",
+                "<pad-uuid>:<gate-uuid>:<pin-uuid>",
+                None,
+            ),
+            project_set_pin_pad_map: pin_pad_map_set_command(
+                project_root_binding,
+                "datum.project.set_pool_pin_pad_map",
+                "<map-uuid>",
+                "merge",
+                "<pad-uuid>:<gate-uuid>:<pin-uuid>",
+                None,
+            ),
+            proposal_create_pin_pad_map: pin_pad_map_create_command(
+                project_root_binding,
+                "datum.proposal.create_pool_pin_pad_map",
+                "<part-uuid>",
+                "<map-uuid>",
+                "<pad-uuid>:<gate-uuid>:<pin-uuid>",
+                Some("create PinPadMap"),
+            ),
+            proposal_set_pin_pad_map: pin_pad_map_set_command(
+                project_root_binding,
+                "datum.proposal.set_pool_pin_pad_map",
+                "<map-uuid>",
+                "merge",
+                "<pad-uuid>:<gate-uuid>:<pin-uuid>",
+                Some("update PinPadMap"),
+            ),
         }
     }
 }
@@ -303,4 +359,46 @@ fn proposal_review_command(
             ],
         )
     })
+}
+
+fn pin_pad_map_create_command(
+    project_root: &str,
+    command_id: &str,
+    part: &str,
+    map: &str,
+    entry: &str,
+    rationale: Option<&str>,
+) -> Option<String> {
+    let mut bindings = vec![
+        ("project_root", project_root),
+        ("pool", "pool"),
+        ("map", map),
+        ("part", part),
+        ("entry", entry),
+    ];
+    if let Some(rationale) = rationale {
+        bindings.push(("rationale", rationale));
+    }
+    render_terminal_command(command_id, &bindings)
+}
+
+fn pin_pad_map_set_command(
+    project_root: &str,
+    command_id: &str,
+    map: &str,
+    mode: &str,
+    entry: &str,
+    rationale: Option<&str>,
+) -> Option<String> {
+    let mut bindings = vec![
+        ("project_root", project_root),
+        ("pool", "pool"),
+        ("map", map),
+        ("mode", mode),
+        ("entry", entry),
+    ];
+    if let Some(rationale) = rationale {
+        bindings.push(("rationale", rationale));
+    }
+    render_terminal_command(command_id, &bindings)
 }

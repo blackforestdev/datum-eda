@@ -74,7 +74,7 @@ TEXT_CHECKS = (
     TextCheck(
         path="specs/MCP_API_SPEC.md",
         must_contain=(
-            "### Current Implemented Methods (2026-06-28)",
+            "### Current Implemented Methods (2026-07-02)",
             "#### `get_design_rules`",
             "Current implementation note: implemented in the current daemon/stdio host",
         ),

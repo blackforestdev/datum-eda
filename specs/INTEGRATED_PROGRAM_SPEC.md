@@ -404,7 +404,7 @@ Current behavior: returns structured `passed` status for unmodified KiCad-board 
 Companion hook for sidecar-backed save fidelity:
 `cargo run -p eda-test-harness --bin m3_sidecar_roundtrip_fidelity -- --json`
 Current behavior: returns structured `passed` status for the current
-`set_design_rule`/`assign_part`/`set_package`/`set_package_with_part`/`replace_component`/`replace_components`/`apply_component_replacement_plan`/`apply_component_replacement_policy`/`apply_scoped_component_replacement_policy`/`apply_scoped_component_replacement_plan`/`set_net_class` save→reimport→save artifact-stability slice and should fail if KiCad-board or sidecar round-trip fidelity regresses.
+`set_design_rule`/`assign_part`/`set_package`/`set_package_with_part`/`replace_component`/`replace_components`/`apply_component_replacement_plan`/`apply_component_replacement_policy`/`apply_scoped_component_replacement_policy`/`apply_scoped_component_replacement_plan`/`set_net_class` save→reimport→save slice and should fail if sidecar-only rule/net-class byte stability, package/part semantic sidecar replay, or reimported board state regresses.
 Companion hook for CLI/MCP/daemon write-surface readiness:
 `cargo run -p eda-test-harness --bin m3_write_surface_parity -- --json`
 Current behavior: returns structured `passed` status for the current

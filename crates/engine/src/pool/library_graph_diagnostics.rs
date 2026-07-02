@@ -142,6 +142,7 @@ impl LibraryGraph {
                 diagnostics,
             );
             let Some(pads) = footprint.get("pads").and_then(serde_json::Value::as_object) else {
+                self.validate_ipc_footprint_basis(footprint, &subject, diagnostics);
                 continue;
             };
             for (pad_key, pad) in pads {
@@ -155,6 +156,7 @@ impl LibraryGraph {
                     diagnostics,
                 );
             }
+            self.validate_ipc_footprint_basis(footprint, &subject, diagnostics);
         }
     }
 

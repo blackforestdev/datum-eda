@@ -5,7 +5,7 @@ use uuid::Uuid;
 
 use crate::ir::geometry::Polygon;
 
-use super::{ModelRef, Pad, Primitive};
+use super::{IpcFootprintBasis, ModelRef, Pad, Primitive};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Footprint {
@@ -27,6 +27,8 @@ pub struct Footprint {
     pub models_3d: Vec<ModelRef>,
     #[serde(default)]
     pub standards_basis: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub ipc_basis: Option<IpcFootprintBasis>,
     #[serde(default)]
     pub process_aperture_policy: Option<String>,
     #[serde(default)]

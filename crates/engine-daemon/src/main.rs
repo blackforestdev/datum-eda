@@ -15,11 +15,14 @@ use std::path::{Path, PathBuf};
 
 use anyhow::Result;
 use eda_engine::api::{
-    ComponentReplacementPolicy, ComponentReplacementScope, Engine,
+    AssignPartInput, ComponentReplacementPolicy, ComponentReplacementScope, Engine,
+    FlipComponentInput, MoveComponentInput, PlannedComponentReplacementInput,
+    PolicyDrivenComponentReplacementInput, ReplaceComponentInput, RotateComponentInput,
     ScopedComponentReplacementOverride, ScopedComponentReplacementPlanEdit,
-    ScopedComponentReplacementPolicyInput, ViolationDomain,
+    ScopedComponentReplacementPolicyInput, SetNetClassInput, SetPackageInput,
+    SetPackageWithPartInput, SetReferenceInput, SetValueInput, ViolationDomain,
 };
-use eda_engine::ir::geometry::LayerId;
+use eda_engine::ir::geometry::{LayerId, Point};
 use eda_engine::rules::ast::RuleType;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};

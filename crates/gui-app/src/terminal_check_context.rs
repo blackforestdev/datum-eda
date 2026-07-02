@@ -1,4 +1,4 @@
-use crate::terminal_context::TerminalCheckRunProfileLatest;
+use crate::terminal_context_contract::TerminalCheckRunProfileLatest;
 use datum_gui_protocol::CheckRunReviewState;
 
 pub(super) fn profile_latest_check_runs_context(

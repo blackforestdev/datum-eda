@@ -225,6 +225,7 @@ pub(crate) use self::command_project_library_footprint::{
     add_native_project_pool_footprint_silkscreen_line,
     add_native_project_pool_footprint_silkscreen_polygon,
     add_native_project_pool_footprint_silkscreen_rect, create_native_project_pool_footprint,
+    generate_native_project_ipc7351b_two_terminal_chip,
     set_native_project_pool_footprint_courtyard_polygon,
     set_native_project_pool_footprint_courtyard_rect, set_native_project_pool_footprint_pad,
 };
@@ -234,6 +235,7 @@ pub(crate) use self::command_project_library_footprint_proposals::{
     propose_add_native_project_pool_footprint_silkscreen_polygon,
     propose_add_native_project_pool_footprint_silkscreen_rect,
     propose_create_native_project_pool_footprint,
+    propose_generate_native_project_ipc7351b_two_terminal_chip,
     propose_set_native_project_pool_footprint_courtyard_polygon,
     propose_set_native_project_pool_footprint_courtyard_rect,
     propose_set_native_project_pool_footprint_pad,

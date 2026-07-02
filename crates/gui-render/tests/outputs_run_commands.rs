@@ -266,7 +266,7 @@ fn outputs_dock_exposes_proposal_review_terminal_commands() {
 fn outputs_dock_exposes_zone_fill_check_finding_actions() {
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
     state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Outputs);
-    state.ui.dock_height_px = 320;
+    state.ui.dock_height_px = 420;
     state.checks = datum_gui_protocol::CheckRunReviewState {
         check_run_id: Some("00000000-0000-0000-0000-00000000chk1".to_string()),
         profile_id: Some("native-combined".to_string()),
@@ -349,7 +349,7 @@ fn outputs_dock_exposes_zone_fill_check_finding_actions() {
 fn outputs_dock_exposes_standards_finding_and_linked_proposal_actions() {
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
     state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Outputs);
-    state.ui.dock_height_px = 360;
+    state.ui.dock_height_px = 420;
     state.checks = datum_gui_protocol::CheckRunReviewState {
         check_run_id: Some("00000000-0000-0000-0000-00000000chk2".to_string()),
         profile_id: Some("standards".to_string()),

@@ -479,6 +479,7 @@ fn footprint(
         mechanical: Vec::new(),
         models_3d: Vec::new(),
         standards_basis: None,
+        ipc_basis: None,
         process_aperture_policy: None,
         tags: HashSet::new(),
     }

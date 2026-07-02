@@ -1,5 +1,6 @@
 use std::path::Path;
 
+use crate::IpcDensityLevelArg;
 use anyhow::{Context, Result, bail};
 use eda_engine::substrate::{
     CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver,
@@ -14,7 +15,7 @@ use super::command_project_library_footprint::{
     courtyard_rect_vertices, footprint_object_with_appended_silkscreen,
     footprint_object_with_courtyard, footprint_silkscreen_circle_primitive,
     footprint_silkscreen_line_primitive, footprint_silkscreen_polygon_primitive,
-    footprint_silkscreen_rect_primitive, parse_vertices,
+    footprint_silkscreen_rect_primitive, ipc7351b_two_terminal_chip_operations, parse_vertices,
 };
 use super::command_project_library_payload::read_project_pool_object_payload;
 use super::command_project_operation_guards::guarded_operation_batch;
@@ -75,6 +76,54 @@ pub(crate) fn propose_create_native_project_pool_footprint(
         proposal_id,
         rationale.unwrap_or("Create native pool footprint"),
         "create_pool_footprint_proposal",
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn propose_generate_native_project_ipc7351b_two_terminal_chip(
+    root: &Path,
+    pool_path: &str,
+    footprint_id: Uuid,
+    package_id: Uuid,
+    padstack_id: Uuid,
+    pad_a_id: Uuid,
+    pad_b_id: Uuid,
+    name: Option<String>,
+    metric_code: String,
+    body_length_nm: i64,
+    body_width_nm: i64,
+    terminal_length_nm: i64,
+    terminal_width_nm: i64,
+    density: IpcDensityLevelArg,
+    mask_expansion_nm: i64,
+    paste_reduction_nm: i64,
+    proposal_id: Option<Uuid>,
+    rationale: Option<&str>,
+) -> Result<NativeProjectProposalCreateView> {
+    let operations = ipc7351b_two_terminal_chip_operations(
+        root,
+        pool_path,
+        footprint_id,
+        package_id,
+        padstack_id,
+        pad_a_id,
+        pad_b_id,
+        name,
+        metric_code,
+        body_length_nm,
+        body_width_nm,
+        terminal_length_nm,
+        terminal_width_nm,
+        density,
+        mask_expansion_nm,
+        paste_reduction_nm,
+    )?;
+    create_pool_footprint_proposal_from_operations(
+        root,
+        operations,
+        proposal_id,
+        rationale.unwrap_or("Generate IPC-7351B two-terminal chip footprint"),
+        "generate_ipc7351b_two_terminal_chip_proposal",
     )
 }
 

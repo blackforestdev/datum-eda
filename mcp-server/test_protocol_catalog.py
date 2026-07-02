@@ -231,12 +231,10 @@ class TestProtocolCatalog(unittest.TestCase):
             f"public catalog exposes non-journaled write tools: {offenders}",
         )
 
-    def test_private_writer_bypass_aliases_are_retired(self) -> None:
+    def test_private_writer_bypass_aliases_are_hidden_compatibility(self) -> None:
         names = {tool["name"] for tool in TOOLS}
-        for retired in (
-            "delete_track",
-            "delete_via",
-            "delete_component",
+        compatibility_by_name = {spec["name"]: spec for spec in COMPATIBILITY_TOOL_SPECS}
+        for hidden in (
             "move_component",
             "rotate_component",
             "flip_component",
@@ -246,6 +244,24 @@ class TestProtocolCatalog(unittest.TestCase):
             "set_package_with_part",
             "set_reference",
             "set_net_class",
+            "replace_component",
+            "replace_components",
+            "apply_component_replacement_plan",
+            "apply_component_replacement_policy",
+            "apply_scoped_component_replacement_policy",
+            "apply_scoped_component_replacement_plan",
+        ):
+            self.assertNotIn(hidden, names)
+            self.assertIn(hidden, compatibility_by_name)
+            self.assertEqual(
+                compatibility_by_name[hidden].get("x_compatibility_visibility"),
+                "hidden",
+            )
+            self.assertTrue(compatibility_by_name[hidden].get("x_canonical_replacements"))
+        for retired in (
+            "delete_track",
+            "delete_via",
+            "delete_component",
             "set_design_rule",
             "datum.board.delete_track",
             "datum.board.delete_via",
@@ -260,12 +276,6 @@ class TestProtocolCatalog(unittest.TestCase):
             "datum.board.set_component_reference",
             "datum.board.set_net_class",
             "datum.board.set_design_rule",
-            "replace_component",
-            "replace_components",
-            "apply_component_replacement_plan",
-            "apply_component_replacement_policy",
-            "apply_scoped_component_replacement_policy",
-            "apply_scoped_component_replacement_plan",
             "datum.board.replace_component",
             "datum.board.replace_components",
             "datum.replacement.apply_plan",

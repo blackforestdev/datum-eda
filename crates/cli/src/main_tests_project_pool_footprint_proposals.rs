@@ -85,6 +85,101 @@ fn proposal_create_pool_footprint_defers_until_accept_apply() {
 }
 
 #[test]
+fn proposal_generate_ipc7351b_two_terminal_chip_defers_until_accept_apply() {
+    let root = main_tests_project_pool_library::unique_project_root(
+        "datum-eda-cli-ipc-footprint-proposal",
+    );
+    create_native_project(&root, Some("IPC Footprint Proposal Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    seed_promoted_pool_padstack(
+        &root,
+        main_tests_project_pool_footprint::PACKAGE_PADSTACK_ID,
+    );
+    seed_promoted_pool_package(&root);
+    let proposal_id = Uuid::new_v4();
+    let footprint_path = root.join(format!(
+        "pool/footprints/{}.json",
+        main_tests_project_pool_footprint::IPC_FOOTPRINT_ID
+    ));
+    let padstack_path = root.join(format!(
+        "pool/padstacks/{}.json",
+        main_tests_project_pool_footprint::IPC_PADSTACK_ID
+    ));
+
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "proposal",
+            "generate-ipc7351b-two-terminal-chip",
+            root.to_str().unwrap(),
+            "--footprint",
+            &main_tests_project_pool_footprint::IPC_FOOTPRINT_ID.to_string(),
+            "--package",
+            &main_tests_project_pool_footprint::PACKAGE_ID.to_string(),
+            "--padstack",
+            &main_tests_project_pool_footprint::IPC_PADSTACK_ID.to_string(),
+            "--pad-a",
+            &main_tests_project_pool_footprint::IPC_PAD_A_ID.to_string(),
+            "--pad-b",
+            &main_tests_project_pool_footprint::IPC_PAD_B_ID.to_string(),
+            "--metric-code",
+            "0603",
+            "--body-length-nm",
+            "1600000",
+            "--body-width-nm",
+            "800000",
+            "--terminal-length-nm",
+            "300000",
+            "--terminal-width-nm",
+            "800000",
+            "--density",
+            "nominal",
+            "--proposal",
+            &proposal_id.to_string(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("IPC footprint proposal should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("report should parse");
+    assert_eq!(
+        report["action"],
+        "generate_ipc7351b_two_terminal_chip_proposal"
+    );
+    assert_eq!(report["proposal_id"], proposal_id.to_string());
+    assert!(!footprint_path.exists());
+    assert!(!padstack_path.exists());
+
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "proposal",
+            "accept-apply",
+            root.to_str().unwrap(),
+            "--proposal",
+            &proposal_id.to_string(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("IPC footprint proposal accept-apply should succeed");
+
+    assert!(footprint_path.exists());
+    assert!(padstack_path.exists());
+    let footprint = main_tests_project_pool_library::query_pool_object_payload(
+        &root,
+        "footprints",
+        main_tests_project_pool_footprint::IPC_FOOTPRINT_ID,
+    );
+    assert_eq!(footprint["ipc_basis"]["package_code"], "0603");
+    assert_eq!(footprint["pads"].as_object().unwrap().len(), 2);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
 fn proposal_set_pool_footprint_pad_defers_until_accept_apply() {
     let root = main_tests_project_pool_library::unique_project_root(
         "datum-eda-cli-footprint-pad-proposal",

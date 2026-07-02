@@ -669,6 +669,84 @@ _LEGACY_FLAT_TOOL_SPECS: list[dict[str, object]] = [
         },
     },
 ]
+
+_HIDDEN_DAEMON_WRITE_TOOL_SPECS: list[dict[str, object]] = [
+    {
+        "name": "move_component",
+        "description": "Hidden compatibility alias for moving one component in the currently open daemon session; public native-project writes use datum.pcb.move_component.",
+        "inputSchema": {"type": "object", "properties": {"uuid": {"type": "string"}, "x_mm": {"type": "number"}, "y_mm": {"type": "number"}, "rotation_deg": {"type": ["number", "null"]}}, "required": ["uuid", "x_mm", "y_mm"]},
+    },
+    {
+        "name": "rotate_component",
+        "description": "Hidden compatibility alias for rotating one component in the currently open daemon session; public native-project writes use datum.pcb.rotate_component.",
+        "inputSchema": {"type": "object", "properties": {"uuid": {"type": "string"}, "rotation_deg": {"type": "number"}}, "required": ["uuid", "rotation_deg"]},
+    },
+    {
+        "name": "flip_component",
+        "description": "Hidden compatibility alias for flipping one component in the currently open daemon session; public native-project writes use datum.pcb.flip_component.",
+        "inputSchema": {"type": "object", "properties": {"uuid": {"type": "string"}, "layer": {"type": "integer"}}, "required": ["uuid", "layer"]},
+    },
+    {
+        "name": "set_value",
+        "description": "Hidden compatibility alias for setting one component value in the currently open daemon session; public native-project writes use datum.pcb.set_component_value.",
+        "inputSchema": {"type": "object", "properties": {"uuid": {"type": "string"}, "value": {"type": "string"}}, "required": ["uuid", "value"]},
+    },
+    {
+        "name": "set_reference",
+        "description": "Hidden compatibility alias for setting one component reference in the currently open daemon session; public native-project writes use datum.pcb.set_component_reference.",
+        "inputSchema": {"type": "object", "properties": {"uuid": {"type": "string"}, "reference": {"type": "string"}}, "required": ["uuid", "reference"]},
+    },
+    {
+        "name": "assign_part",
+        "description": "Hidden compatibility alias for assigning one part UUID in the currently open daemon session; public native-project writes use datum.pcb.set_component_part.",
+        "inputSchema": {"type": "object", "properties": {"uuid": {"type": "string"}, "part_uuid": {"type": "string"}}, "required": ["uuid", "part_uuid"]},
+    },
+    {
+        "name": "set_package",
+        "description": "Hidden compatibility alias for assigning one package UUID in the currently open daemon session; public native-project writes use datum.pcb.set_component_package.",
+        "inputSchema": {"type": "object", "properties": {"uuid": {"type": "string"}, "package_uuid": {"type": "string"}}, "required": ["uuid", "package_uuid"]},
+    },
+    {
+        "name": "set_package_with_part",
+        "description": "Hidden compatibility alias for assigning one compatible package and part in the currently open daemon session; public native-project replacement is split across journaled component package and part writes until a single combined replacement tool lands.",
+        "inputSchema": {"type": "object", "properties": {"uuid": {"type": "string"}, "package_uuid": {"type": "string"}, "part_uuid": {"type": "string"}}, "required": ["uuid", "package_uuid", "part_uuid"]},
+    },
+    {
+        "name": "replace_component",
+        "description": "Hidden compatibility alias for replacing one component package and part in the currently open daemon session; public native-project replacement goes through proposal-mediated board-component replacement.",
+        "inputSchema": {"type": "object", "properties": {"uuid": {"type": "string"}, "package_uuid": {"type": "string"}, "part_uuid": {"type": "string"}}, "required": ["uuid", "package_uuid", "part_uuid"]},
+    },
+    {
+        "name": "replace_components",
+        "description": "Hidden compatibility alias for replacing multiple components in the currently open daemon session; public native-project replacement goes through proposal-mediated board-component replacements.",
+        "inputSchema": {"type": "object", "properties": {"replacements": {"type": "array", "items": {"type": "object"}}}, "required": ["replacements"]},
+    },
+    {
+        "name": "apply_component_replacement_plan",
+        "description": "Hidden compatibility alias for applying an explicit component replacement plan in the currently open daemon session; public native-project replacement goes through proposal-mediated replacement plans.",
+        "inputSchema": {"type": "object", "properties": {"replacements": {"type": "array", "items": {"type": "object"}}}, "required": ["replacements"]},
+    },
+    {
+        "name": "apply_component_replacement_policy",
+        "description": "Hidden compatibility alias for applying component replacement policies in the currently open daemon session; a journaled public policy-apply surface is pending.",
+        "inputSchema": {"type": "object", "properties": {"replacements": {"type": "array", "items": {"type": "object"}}}, "required": ["replacements"]},
+    },
+    {
+        "name": "apply_scoped_component_replacement_policy",
+        "description": "Hidden compatibility alias for applying a scoped component replacement policy in the currently open daemon session; a journaled public scoped-policy apply surface is pending.",
+        "inputSchema": {"type": "object", "properties": {"scope": {"type": "object"}, "policy": {"type": "string"}}, "required": ["scope", "policy"]},
+    },
+    {
+        "name": "apply_scoped_component_replacement_plan",
+        "description": "Hidden compatibility alias for applying a scoped component replacement plan in the currently open daemon session; a journaled public scoped-plan apply surface is pending.",
+        "inputSchema": {"type": "object", "properties": {"plan": {"type": "object"}}, "required": ["plan"]},
+    },
+    {
+        "name": "set_net_class",
+        "description": "Hidden compatibility alias for assigning one imported-board net class and class dimensions in the currently open daemon session; exact journaled native-project net-class assignment replacement is pending.",
+        "inputSchema": {"type": "object", "properties": {"net_uuid": {"type": "string"}, "class_name": {"type": "string"}, "clearance": {"type": "integer"}, "track_width": {"type": "integer"}, "via_drill": {"type": "integer"}, "via_diameter": {"type": "integer"}, "diffpair_width": {"type": "integer"}, "diffpair_gap": {"type": "integer"}}, "required": ["net_uuid", "class_name", "clearance", "track_width", "via_drill", "via_diameter"]},
+    },
+]
 # _LEGACY_CANONICAL_ALIAS_NAMES is imported from tools_catalog_legacy_aliases.py
 # (extracted to keep this module within its file-size budget).
 
@@ -687,7 +765,23 @@ def _legacy_canonical_alias(flat_spec: dict[str, Any]) -> dict[str, Any]:
 # may dispatch to one of these; each has a substrate-backed (journaled) public
 # equivalent in the datum.pcb.* family, so the canonical alias bridging to a
 # non-journaled arm stays dispatchable for compatibility but hidden from tools/list.
-NON_JOURNALED_DAEMON_WRITE_METHODS: frozenset[str] = frozenset({})
+NON_JOURNALED_DAEMON_WRITE_METHODS: frozenset[str] = frozenset({
+    "apply_component_replacement_plan",
+    "apply_component_replacement_policy",
+    "apply_scoped_component_replacement_plan",
+    "apply_scoped_component_replacement_policy",
+    "assign_part",
+    "flip_component",
+    "move_component",
+    "replace_component",
+    "replace_components",
+    "rotate_component",
+    "set_net_class",
+    "set_package",
+    "set_package_with_part",
+    "set_reference",
+    "set_value",
+})
 def _alias_dispatches_to_non_journaled_write(alias_spec: dict[str, Any]) -> bool:
     return alias_spec.get("x_dispatch_method") in NON_JOURNALED_DAEMON_WRITE_METHODS
 
@@ -705,7 +799,7 @@ _HIDDEN_CANONICAL_ALIAS_SPECS = [s for s in _LEGACY_CANONICAL_ALIAS_SPECS if _al
 # Public catalog: canonical datum.* aliases that do not bypass the journal.
 TOOL_SPECS: list[dict[str, object]] = DATUM_TOOL_SPECS + _PUBLIC_CANONICAL_ALIAS_SPECS
 # Legacy flat tools + bypassing board-write aliases: dispatchable, hidden from list.
-COMPATIBILITY_TOOL_SPECS += _LEGACY_FLAT_TOOL_SPECS + _HIDDEN_CANONICAL_ALIAS_SPECS
+COMPATIBILITY_TOOL_SPECS += _LEGACY_FLAT_TOOL_SPECS + _HIDDEN_DAEMON_WRITE_TOOL_SPECS + _HIDDEN_CANONICAL_ALIAS_SPECS
 
 
 def _with_retirement_metadata(spec: dict[str, object]) -> dict[str, object]:

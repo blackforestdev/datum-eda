@@ -1,5 +1,5 @@
-use super::main_tests_project_schematic_proposals::*;
 use super::main_tests_project_schematic_proposals::execute;
+use super::main_tests_project_schematic_proposals::*;
 use super::*;
 use eda_engine::substrate::{ProjectResolver, ProposalStatus};
 

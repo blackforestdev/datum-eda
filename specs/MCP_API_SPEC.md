@@ -664,19 +664,24 @@ names. It preserves implementation truth; it is not the target surface.
 
 Current implementation note: implemented in the current daemon/stdio host.
 
-### Current Implemented Methods (2026-06-28)
+### Current Implemented Methods (2026-07-02)
 
+`apply_component_replacement_plan`, `apply_component_replacement_policy`,
+`apply_scoped_component_replacement_plan`,
+`apply_scoped_component_replacement_policy`, `assign_part`,
 `close_project`, `edit_scoped_component_replacement_plan`,
 `explain_violation`, `get_board_summary`, `get_bus_entries`, `get_buses`,
-`get_check_report`, `get_component_replacement_plan`, `get_components`,
+`flip_component`, `get_check_report`, `get_component_replacement_plan`, `get_components`,
 `get_connectivity_diagnostics`, `get_design_rules`, `get_hierarchy`,
 `get_labels`, `get_net_info`, `get_netlist`, `get_noconnects`,
 `get_package`, `get_package_change_candidates`, `get_part`,
 `get_part_change_candidates`, `get_ports`, `get_schematic_net_info`,
 `get_schematic_summary`, `get_scoped_component_replacement_plan`,
 `get_sheets`, `get_symbol_fields`, `get_symbols`, `get_unrouted`,
-`open_project`, `redo`, `run_drc`, `run_erc`, `save`, `search_pool`,
-`undo`, `validate_project`, `get_check_run`, `get_check_runs`,
+`move_component`, `open_project`, `redo`, `replace_component`,
+`replace_components`, `rotate_component`, `run_drc`, `run_erc`, `save`,
+`search_pool`, `set_net_class`, `set_package`, `set_package_with_part`,
+`set_reference`, `set_value`, `undo`, `validate_project`, `get_check_run`, `get_check_runs`,
 `show_check_run`, `get_check_profiles`, `get_zone_fills`, `fill_zones`,
 `generate_standards_repair_proposals`, `waive_finding`, `accept_deviation`,
 `get_journal_list`, `get_journal_transaction`, `journal_undo`,
@@ -831,11 +836,108 @@ Context/session compatibility.
 
 Legacy save compatibility; target commits at apply time.
 
-Retired private-writer compatibility methods such as flat board component,
-track, via, net-class, design-rule, and replacement apply writes are no longer
-daemon-dispatched compatibility anchors. Their public replacements are the
-canonical `datum.pcb.*`, `datum.proposal.*`, and journal-backed CLI paths
-described below.
+The daemon still implements a narrow imported-board M3 write compatibility
+surface for existing open-session clients. These methods are hidden from
+`tools/list` and must remain fenced by
+`NON_JOURNALED_DAEMON_WRITE_METHODS`; public native-project writes use
+journaled `datum.pcb.*` methods or proposal-mediated replacements.
+
+#### `move_component`
+
+Hidden imported-board session write compatibility. Parameters: `uuid`,
+`x_mm`, `y_mm`, optional `rotation_deg`. Canonical public replacement:
+`datum.pcb.move_component`, which uses explicit project `path`, `component`,
+`x_nm`, and `y_nm` and journals through the native board-package path.
+
+#### `rotate_component`
+
+Hidden imported-board session write compatibility. Parameters: `uuid`,
+`rotation_deg`; the MCP daemon client sends fixed `x_mm=0.0` and `y_mm=0.0`
+for the daemon request shape. Canonical public replacement:
+`datum.pcb.rotate_component`.
+
+#### `flip_component`
+
+Hidden imported-board session write compatibility. Parameters: `uuid`,
+`layer`. Canonical public replacement: `datum.pcb.flip_component`.
+
+#### `set_value`
+
+Hidden imported-board session write compatibility. Parameters: `uuid`,
+`value`. Canonical public replacement: `datum.pcb.set_component_value`.
+
+#### `set_reference`
+
+Hidden imported-board session write compatibility. Parameters: `uuid`,
+`reference`. Canonical public replacement:
+`datum.pcb.set_component_reference`.
+
+#### `assign_part`
+
+Hidden imported-board session write compatibility. Parameters: `uuid`,
+`part_uuid`. Canonical public replacement: `datum.pcb.set_component_part`.
+
+#### `set_package`
+
+Hidden imported-board session write compatibility. Parameters: `uuid`,
+`package_uuid`. Canonical public replacement:
+`datum.pcb.set_component_package`.
+
+#### `set_package_with_part`
+
+Hidden imported-board session write compatibility. Parameters: `uuid`,
+`package_uuid`, `part_uuid`. There is no single public native-project method
+with this exact combined contract yet; callers should use the journaled
+component package and part setters, or the proposal-mediated replacement
+surface when the operation is semantically a replacement.
+
+#### `replace_component`
+
+Hidden imported-board session write compatibility. Parameters: `uuid`,
+`package_uuid`, `part_uuid`. Canonical public replacement:
+`datum.proposal.create_board_component_replacement` followed by proposal
+review/apply.
+
+#### `replace_components`
+
+Hidden imported-board session write compatibility. Parameter: `replacements[]`
+of component/package/part selections. Canonical public replacement:
+`datum.proposal.create_board_component_replacements` followed by proposal
+review/apply.
+
+#### `apply_component_replacement_plan`
+
+Hidden imported-board session write compatibility. Parameter: `replacements[]`
+of planned component replacement selections. Canonical public replacement:
+`datum.proposal.create_board_component_replacement_plan` followed by proposal
+review/apply.
+
+#### `apply_component_replacement_policy`
+
+Hidden imported-board session write compatibility. Parameter: `replacements[]`
+of `{uuid, policy}` records. Exact journaled native-project policy apply is
+pending; this method must not be promoted as a public `datum.*` tool until that
+proposal/journal contract exists.
+
+#### `apply_scoped_component_replacement_policy`
+
+Hidden imported-board session write compatibility. Parameters: `scope`,
+`policy`. Exact journaled native-project scoped-policy apply is pending; this
+method must remain compatibility-only.
+
+#### `apply_scoped_component_replacement_plan`
+
+Hidden imported-board session write compatibility. Parameter: `plan`. Exact
+journaled native-project scoped-plan apply is pending; this method must remain
+compatibility-only.
+
+#### `set_net_class`
+
+Hidden imported-board session write compatibility. Parameters: `net_uuid`,
+`class_name`, `clearance`, `track_width`, `via_drill`, `via_diameter`, optional
+`diffpair_width`, and optional `diffpair_gap`. Exact journaled native-project
+net-class assignment with this imported-board sidecar contract is pending; do
+not expose this as a public direct write.
 
 #### `place_zone` / `edit_zone` / `delete_zone`
 

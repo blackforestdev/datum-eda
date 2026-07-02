@@ -117,7 +117,7 @@ fn serialize_current_kicad_board_slice(
     let referenced_components = transaction_state::active_set_reference_components(undo_stack);
     let assigned_components = transaction_state::active_assigned_part_components(undo_stack);
     let package_rewritten_components =
-        transaction_state::active_package_rewritten_components(board);
+        transaction_state::active_package_rewritten_components(undo_stack);
     let forms = [
         ("segment", &deleted_tracks),
         ("via", &deleted_vias),

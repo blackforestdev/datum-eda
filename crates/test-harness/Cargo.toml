@@ -2,6 +2,49 @@
 name = "eda-test-harness"
 version.workspace = true
 edition.workspace = true
+# Explicit bin targets so a flat src/bin/*.rs companion shard (included via
+# include! for monolith burn-down) is not auto-detected as its own binary.
+autobins = false
+
+[[bin]]
+name = "m2_perf"
+path = "src/bin/m2_perf.rs"
+
+[[bin]]
+name = "m2_quality"
+path = "src/bin/m2_quality.rs"
+
+[[bin]]
+name = "m3_acceptance_gate"
+path = "src/bin/m3_acceptance_gate.rs"
+
+[[bin]]
+name = "m3_board_roundtrip_fidelity"
+path = "src/bin/m3_board_roundtrip_fidelity.rs"
+
+[[bin]]
+name = "m3_op_determinism"
+path = "src/bin/m3_op_determinism.rs"
+
+[[bin]]
+name = "m3_replacement_op_determinism"
+path = "src/bin/m3_replacement_op_determinism.rs"
+
+[[bin]]
+name = "m3_replacement_undo_redo_roundtrip"
+path = "src/bin/m3_replacement_undo_redo_roundtrip.rs"
+
+[[bin]]
+name = "m3_sidecar_roundtrip_fidelity"
+path = "src/bin/m3_sidecar_roundtrip_fidelity.rs"
+
+[[bin]]
+name = "m3_undo_redo_roundtrip"
+path = "src/bin/m3_undo_redo_roundtrip.rs"
+
+[[bin]]
+name = "m3_write_surface_parity"
+path = "src/bin/m3_write_surface_parity.rs"
 
 [dependencies]
 eda-engine = { path = "../engine" }

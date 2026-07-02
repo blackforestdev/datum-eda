@@ -1,6 +1,7 @@
 use super::*;
 
 pub(super) struct PinnedMapFixture {
+    pub(super) symbol_id: Uuid,
     pub(super) part_id: Uuid,
     pub(super) gate_id: Uuid,
     pub(super) footprint_id: Uuid,
@@ -47,6 +48,18 @@ pub(super) fn create_fixture(
     pin_names: &[&str],
     pad_names: &[&str],
 ) -> PinnedMapFixture {
+    let pin_specs = pin_names
+        .iter()
+        .map(|name| (*name, "Input"))
+        .collect::<Vec<_>>();
+    create_fixture_with_pin_types(root, &pin_specs, pad_names)
+}
+
+pub(super) fn create_fixture_with_pin_types(
+    root: &Path,
+    pin_specs: &[(&str, &str)],
+    pad_names: &[&str],
+) -> PinnedMapFixture {
     let unit_id = Uuid::new_v4();
     run_project_command(&[
         "eda",
@@ -62,9 +75,9 @@ pub(super) fn create_fixture(
     ])
     .expect("unit create should succeed");
 
-    let pin_ids = pin_names
+    let pin_ids = pin_specs
         .iter()
-        .map(|name| {
+        .map(|(name, electrical_type)| {
             let pin_id = Uuid::new_v4();
             run_project_command(&[
                 "eda",
@@ -79,8 +92,8 @@ pub(super) fn create_fixture(
                 &pin_id.to_string(),
                 "--name",
                 name,
-                "--direction",
-                "Input",
+                "--electrical-type",
+                electrical_type,
             ])
             .expect("unit pin set should succeed");
             pin_id
@@ -103,6 +116,26 @@ pub(super) fn create_fixture(
         "PinnedSymbol",
     ])
     .expect("symbol create should succeed");
+
+    for (index, pin_id) in pin_ids.iter().enumerate() {
+        run_project_command(&[
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "set-pool-symbol-pin-anchor",
+            root.to_str().unwrap(),
+            "--symbol",
+            &symbol_id.to_string(),
+            "--pin",
+            &pin_id.to_string(),
+            "--x-nm",
+            &(index as i64 * 2_540_000).to_string(),
+            "--y-nm",
+            "0",
+        ])
+        .expect("symbol pin anchor set should succeed");
+    }
 
     let entity_id = Uuid::new_v4();
     let gate_id = Uuid::new_v4();
@@ -222,6 +255,7 @@ pub(super) fn create_fixture(
     .expect("part create should succeed");
 
     PinnedMapFixture {
+        symbol_id,
         part_id,
         gate_id,
         footprint_id,
@@ -324,6 +358,141 @@ fn project_create_pool_pin_pad_map_authors_first_class_map_and_default_binding()
 }
 
 #[test]
+fn project_library_pin_pad_map_symbol_component_instance_workflow_is_end_to_end() {
+    let root = unique_project_root("datum-eda-cli-project-library-pin-pad-map-e2e");
+    create_native_project(&root, Some("Library PinPadMap E2E".to_string()))
+        .expect("initial scaffold should succeed");
+    let sheet_uuid = super::main_tests_project_schematic_proposals::seed_native_sheet(&root);
+    let fixture = create_fixture(&root, &["IN", "OUT"], &["1", "2"]);
+    let map_id = create_default_pin_pad_map(
+        &root,
+        &fixture,
+        &[
+            (fixture.pin_ids[0], fixture.pad_ids[0]),
+            (fixture.pin_ids[1], fixture.pad_ids[1]),
+        ],
+    );
+
+    let map_payload = query_pool_object_payload(&root, "pin_pad_maps", map_id);
+    assert_eq!(map_payload["part"], fixture.part_id.to_string());
+    assert_eq!(map_payload["footprint"], fixture.footprint_id.to_string());
+    assert_eq!(
+        map_payload["mappings"][fixture.pad_ids[0].to_string()]["pin"],
+        fixture.pin_ids[0].to_string()
+    );
+
+    let place_output = run_project_command(&[
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "place-symbol",
+        root.to_str().unwrap(),
+        "--sheet",
+        &sheet_uuid.to_string(),
+        "--reference",
+        "U1",
+        "--value",
+        "PINNED",
+        "--lib-id",
+        &fixture.symbol_id.to_string(),
+        "--x-nm",
+        "1000",
+        "--y-nm",
+        "2000",
+    ])
+    .expect("pool symbol placement should succeed");
+    let placed: serde_json::Value =
+        serde_json::from_str(&place_output).expect("place-symbol JSON should parse");
+    assert_eq!(placed["binding_status"], "bound_with_part");
+    assert_eq!(placed["gate_uuid"], fixture.gate_id.to_string());
+    assert_eq!(placed["part_uuid"], fixture.part_id.to_string());
+    let placed_symbol_id = placed["symbol_uuid"]
+        .as_str()
+        .expect("placed symbol id should be string")
+        .to_string();
+    let component_instance_id = placed["component_instance_uuid"]
+        .as_str()
+        .expect("component instance id should be string")
+        .to_string();
+
+    let component_instances =
+        super::main_tests_project_schematic_proposals::query_component_instances(&root);
+    assert_eq!(
+        component_instances["component_instances"][&component_instance_id]["part_ref"],
+        fixture.part_id.to_string()
+    );
+    assert_eq!(
+        component_instances["component_instances"][&component_instance_id]["placed_symbol_refs"],
+        serde_json::json!([placed_symbol_id])
+    );
+
+    let validate_output = run_project_command(&[
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "validate",
+        root.to_str().unwrap(),
+    ])
+    .expect("project validate should succeed");
+    let validate_report: serde_json::Value =
+        serde_json::from_str(&validate_output).expect("validate JSON should parse");
+    assert_eq!(validate_report["valid"], true);
+    assert!(
+        validate_report["issues"]
+            .as_array()
+            .expect("issues should be array")
+            .iter()
+            .all(|issue| issue["severity"] != "error")
+    );
+
+    let erc_output = run_project_command(&[
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "erc",
+    ])
+    .expect("project ERC query should succeed");
+    let erc_report: serde_json::Value =
+        serde_json::from_str(&erc_output).expect("ERC JSON should parse");
+    assert_eq!(erc_report["profile_id"], "erc");
+    assert!(erc_report["raw_report"]["erc"].is_array());
+
+    let check_output = run_project_command(&[
+        "eda",
+        "--format",
+        "json",
+        "check",
+        "run",
+        root.to_str().unwrap(),
+        "--profile",
+        "native-combined",
+    ])
+    .expect("combined check run should succeed");
+    let check_report: serde_json::Value =
+        serde_json::from_str(&check_output).expect("check-run JSON should parse");
+    assert_eq!(check_report["contract"], "check_run_v1");
+    assert_eq!(check_report["profile_id"], "native-combined");
+    assert!(
+        check_report["coverage"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|entry| {
+                entry["domain"] == "erc"
+                    && entry["rule_id"] == "schematic_connectivity"
+                    && entry["status"] == "evaluated"
+            })
+    );
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
 fn project_set_pool_pin_pad_map_replaces_mappings_without_touching_part_pad_map() {
     let root = unique_project_root("datum-eda-cli-project-pool-pin-pad-map-replace");
     create_native_project(&root, Some("Pool PinPadMap Replace".to_string()))
@@ -385,183 +554,6 @@ fn project_set_pool_pin_pad_map_replaces_mappings_without_touching_part_pad_map(
             .len(),
         0
     );
-    let _ = std::fs::remove_dir_all(&root);
-}
-
-#[test]
-fn project_legacy_part_pad_map_entry_bridges_to_default_pin_pad_map() {
-    let root = unique_project_root("datum-eda-cli-project-pool-part-pad-map");
-    create_native_project(&root, Some("Pool Part Pad Map".to_string()))
-        .expect("initial scaffold should succeed");
-    let fixture = create_fixture(&root, &["IN+"], &["1"]);
-    let map_id =
-        create_default_pin_pad_map(&root, &fixture, &[(fixture.pin_ids[0], fixture.pad_ids[0])]);
-    let output = run_project_command(&[
-        "eda",
-        "--format",
-        "json",
-        "project",
-        "set-pool-part-pad-map-entry",
-        root.to_str().unwrap(),
-        "--part",
-        &fixture.part_id.to_string(),
-        "--pad",
-        &fixture.pad_ids[0].to_string(),
-        "--gate",
-        &fixture.gate_id.to_string(),
-        "--pin",
-        &fixture.pin_ids[0].to_string(),
-    ])
-    .expect("legacy pad map bridge should succeed");
-    let report: serde_json::Value =
-        serde_json::from_str(&output).expect("pad map report JSON should parse");
-    assert_eq!(report["action"], "set_part_pad_map_entry");
-    assert_eq!(report["object_kind"], "pin_pad_maps");
-    assert_eq!(report["object_uuid"], map_id.to_string());
-    let map_payload = query_pool_object_payload(&root, "pin_pad_maps", map_id);
-    assert_eq!(
-        map_payload["mappings"][fixture.pad_ids[0].to_string()]["gate"],
-        fixture.gate_id.to_string()
-    );
-    assert_eq!(
-        map_payload["mappings"][fixture.pad_ids[0].to_string()]["pin"],
-        fixture.pin_ids[0].to_string()
-    );
-    let part_payload = query_pool_object_payload(&root, "parts", fixture.part_id);
-    assert_eq!(part_payload["pad_map"].as_object().unwrap().len(), 0);
-    let _ = std::fs::remove_dir_all(&root);
-}
-
-#[test]
-fn project_legacy_part_pad_map_requires_default_pin_pad_map() {
-    let root = unique_project_root("datum-eda-cli-project-pool-part-pad-map-no-default");
-    create_native_project(&root, Some("Pool Part Pad Map No Default".to_string()))
-        .expect("initial scaffold should succeed");
-    let fixture = create_fixture(&root, &["IN+"], &["1"]);
-    let error = run_project_command(&[
-        "eda",
-        "--format",
-        "json",
-        "project",
-        "set-pool-part-pad-map-entry",
-        root.to_str().unwrap(),
-        "--part",
-        &fixture.part_id.to_string(),
-        "--pad",
-        &fixture.pad_ids[0].to_string(),
-        "--gate",
-        &fixture.gate_id.to_string(),
-        "--pin",
-        &fixture.pin_ids[0].to_string(),
-    ])
-    .expect_err("legacy pad map command should require default PinPadMap");
-    assert!(format!("{error:#}").contains("requires part default_pin_pad_map"));
-    let part_payload = query_pool_object_payload(&root, "parts", fixture.part_id);
-    assert_eq!(part_payload["pad_map"].as_object().unwrap().len(), 0);
-    let _ = std::fs::remove_dir_all(&root);
-}
-
-#[test]
-fn project_legacy_part_pad_map_requires_existing_default_pin_pad_map() {
-    let root = unique_project_root("datum-eda-cli-project-pool-part-pad-map-missing-default");
-    create_native_project(&root, Some("Pool Part Pad Map Missing Default".to_string()))
-        .expect("initial scaffold should succeed");
-    let fixture = create_fixture(&root, &["IN+"], &["1"]);
-    let missing_map_id = Uuid::new_v4();
-    set_part_default_pin_pad_map_raw(&root, fixture.part_id, missing_map_id);
-
-    let error = run_project_command(&[
-        "eda",
-        "--format",
-        "json",
-        "project",
-        "set-pool-part-pad-map-entry",
-        root.to_str().unwrap(),
-        "--part",
-        &fixture.part_id.to_string(),
-        "--pad",
-        &fixture.pad_ids[0].to_string(),
-        "--gate",
-        &fixture.gate_id.to_string(),
-        "--pin",
-        &fixture.pin_ids[0].to_string(),
-    ])
-    .expect_err("legacy pad map command should require an existing default PinPadMap");
-    let error = format!("{error:#}");
-    assert!(
-        error.contains("default_pin_pad_map") || error.contains(&missing_map_id.to_string()),
-        "unexpected error: {error}"
-    );
-    let part_payload = query_pool_object_payload(&root, "parts", fixture.part_id);
-    assert_eq!(
-        part_payload["default_pin_pad_map"],
-        missing_map_id.to_string()
-    );
-    assert_eq!(part_payload["pad_map"].as_object().unwrap().len(), 0);
-    let _ = std::fs::remove_dir_all(&root);
-}
-
-#[test]
-fn project_legacy_part_pad_map_replace_and_duplicate_checks_target_default_map() {
-    let root = unique_project_root("datum-eda-cli-project-pool-part-pad-map-replace");
-    create_native_project(&root, Some("Pool Part Pad Map Replace".to_string()))
-        .expect("initial scaffold should succeed");
-    let fixture = create_fixture(&root, &["IN+", "OUT"], &["1", "2"]);
-    let map_id =
-        create_default_pin_pad_map(&root, &fixture, &[(fixture.pin_ids[0], fixture.pad_ids[0])]);
-    let output = run_project_command(&[
-        "eda",
-        "--format",
-        "json",
-        "project",
-        "set-pool-part-pad-map",
-        root.to_str().unwrap(),
-        "--part",
-        &fixture.part_id.to_string(),
-        "--mode",
-        "replace",
-        "--entry",
-        &format!(
-            "{}:{}:{}",
-            fixture.pad_ids[1], fixture.gate_id, fixture.pin_ids[1]
-        ),
-    ])
-    .expect("bulk pad map replace should succeed");
-    let report: serde_json::Value =
-        serde_json::from_str(&output).expect("pad map report JSON should parse");
-    assert_eq!(report["object_kind"], "pin_pad_maps");
-    let map_payload = query_pool_object_payload(&root, "pin_pad_maps", map_id);
-    assert_eq!(map_payload["mappings"].as_object().unwrap().len(), 1);
-    assert_eq!(
-        map_payload["mappings"][fixture.pad_ids[1].to_string()]["gate"],
-        fixture.gate_id.to_string()
-    );
-    assert_eq!(
-        map_payload["mappings"][fixture.pad_ids[1].to_string()]["pin"],
-        fixture.pin_ids[1].to_string()
-    );
-    let entry = format!(
-        "{}:{}:{}",
-        fixture.pad_ids[1], fixture.gate_id, fixture.pin_ids[1]
-    );
-    let error = run_project_command(&[
-        "eda",
-        "--format",
-        "json",
-        "project",
-        "set-pool-part-pad-map",
-        root.to_str().unwrap(),
-        "--part",
-        &fixture.part_id.to_string(),
-        "--entry",
-        &entry,
-        "--entry",
-        &entry,
-    ])
-    .expect_err("duplicate entries should fail");
-    assert!(format!("{error:#}").contains("duplicate pad-map entry for gate"));
-    let part_payload = query_pool_object_payload(&root, "parts", fixture.part_id);
-    assert_eq!(part_payload["pad_map"].as_object().unwrap().len(), 0);
     let _ = std::fs::remove_dir_all(&root);
 }
 

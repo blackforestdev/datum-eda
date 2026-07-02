@@ -1,6 +1,11 @@
 use std::path::Path;
 
+use crate::IpcDensityLevelArg;
 use anyhow::{Context, Result, bail};
+use eda_engine::pool::{
+    GeneratedIpcFootprint, IpcDensityLevel, IpcSourceDimensions, IpcTwoTerminalChipSpec,
+    generate_ipc7351b_two_terminal_chip,
+};
 use eda_engine::substrate::{Operation, ProjectResolver};
 use uuid::Uuid;
 
@@ -69,6 +74,155 @@ pub(crate) fn create_native_project_pool_footprint(
         footprint_id,
         &relative_path,
     )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn generate_native_project_ipc7351b_two_terminal_chip(
+    root: &Path,
+    pool_path: &str,
+    footprint_id: Uuid,
+    package_id: Uuid,
+    padstack_id: Uuid,
+    pad_a_id: Uuid,
+    pad_b_id: Uuid,
+    name: Option<String>,
+    metric_code: String,
+    body_length_nm: i64,
+    body_width_nm: i64,
+    terminal_length_nm: i64,
+    terminal_width_nm: i64,
+    density: IpcDensityLevelArg,
+    mask_expansion_nm: i64,
+    paste_reduction_nm: i64,
+) -> Result<NativeProjectPoolLibraryObjectMutationView> {
+    let operations = ipc7351b_two_terminal_chip_operations(
+        root,
+        pool_path,
+        footprint_id,
+        package_id,
+        padstack_id,
+        pad_a_id,
+        pad_b_id,
+        name,
+        metric_code,
+        body_length_nm,
+        body_width_nm,
+        terminal_length_nm,
+        terminal_width_nm,
+        density,
+        mask_expansion_nm,
+        paste_reduction_nm,
+    )?;
+    commit_pool_library_operations(
+        root,
+        format!("generate IPC-7351B two-terminal chip footprint {footprint_id}"),
+        operations,
+    )?;
+    let relative_path = pool_library_relative_path(pool_path, "footprints", footprint_id);
+    pool_library_mutation_view(
+        root,
+        "generate_ipc7351b_two_terminal_chip",
+        pool_path,
+        "footprints",
+        footprint_id,
+        &relative_path,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn ipc7351b_two_terminal_chip_operations(
+    root: &Path,
+    pool_path: &str,
+    footprint_id: Uuid,
+    package_id: Uuid,
+    padstack_id: Uuid,
+    pad_a_id: Uuid,
+    pad_b_id: Uuid,
+    name: Option<String>,
+    metric_code: String,
+    body_length_nm: i64,
+    body_width_nm: i64,
+    terminal_length_nm: i64,
+    terminal_width_nm: i64,
+    density: IpcDensityLevelArg,
+    mask_expansion_nm: i64,
+    paste_reduction_nm: i64,
+) -> Result<Vec<Operation>> {
+    validate_project_local_pool_path(pool_path)?;
+    ensure_pool_object_exists(root, package_id, "packages", "package")?;
+    let generated = generate_ipc7351b_two_terminal_chip(IpcTwoTerminalChipSpec {
+        footprint_uuid: footprint_id,
+        package_uuid: package_id,
+        padstack_uuid: padstack_id,
+        pad_a_uuid: pad_a_id,
+        pad_b_uuid: pad_b_id,
+        name,
+        metric_code,
+        dimensions: IpcSourceDimensions {
+            body_length_nm,
+            body_width_nm,
+            terminal_length_nm,
+            terminal_width_nm,
+        },
+        density_level: ipc_density_level(density),
+        mask_expansion_nm,
+        paste_reduction_nm,
+    })
+    .map_err(anyhow::Error::msg)?;
+    ipc_generated_footprint_operations(root, pool_path, generated)
+}
+
+fn ipc_generated_footprint_operations(
+    root: &Path,
+    pool_path: &str,
+    generated: GeneratedIpcFootprint,
+) -> Result<Vec<Operation>> {
+    let project = load_native_project_with_resolved_board(root)?;
+    let mut operations = Vec::new();
+    if !project
+        .manifest
+        .pools
+        .iter()
+        .any(|pool| pool.path == pool_path)
+    {
+        operations.push(Operation::AddProjectPoolRef {
+            path: pool_path.to_string(),
+            priority: next_pool_priority(&project.manifest.pools),
+        });
+    }
+    operations.push(Operation::CreatePoolLibraryObject {
+        object_id: generated.padstack.uuid,
+        relative_path: pool_library_relative_path(pool_path, "padstacks", generated.padstack.uuid),
+        object_kind: "padstacks".to_string(),
+        object: pool_object_value_with_schema(serde_json::to_value(generated.padstack)?)?,
+    });
+    operations.push(Operation::CreatePoolLibraryObject {
+        object_id: generated.footprint.uuid,
+        relative_path: pool_library_relative_path(
+            pool_path,
+            "footprints",
+            generated.footprint.uuid,
+        ),
+        object_kind: "footprints".to_string(),
+        object: pool_object_value_with_schema(serde_json::to_value(generated.footprint)?)?,
+    });
+    Ok(operations)
+}
+
+fn pool_object_value_with_schema(mut object: serde_json::Value) -> Result<serde_json::Value> {
+    object
+        .as_object_mut()
+        .ok_or_else(|| anyhow::anyhow!("generated pool object must serialize as a JSON object"))?
+        .insert("schema_version".to_string(), serde_json::json!(1));
+    Ok(object)
+}
+
+pub(crate) fn ipc_density_level(value: IpcDensityLevelArg) -> IpcDensityLevel {
+    match value {
+        IpcDensityLevelArg::Most => IpcDensityLevel::Most,
+        IpcDensityLevelArg::Nominal => IpcDensityLevel::Nominal,
+        IpcDensityLevelArg::Least => IpcDensityLevel::Least,
+    }
 }
 
 #[allow(clippy::too_many_arguments)]

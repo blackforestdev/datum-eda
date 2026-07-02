@@ -4,10 +4,11 @@ pub(crate) use super::cli_args_proposal_library::{
     ProposalCreatePoolEntityArgs, ProposalCreatePoolFootprintArgs,
     ProposalCreatePoolLibraryObjectArgs, ProposalCreatePoolPackageArgs,
     ProposalCreatePoolPadstackArgs, ProposalCreatePoolPinPadMapArgs, ProposalCreatePoolSymbolArgs,
-    ProposalCreatePoolUnitArgs, ProposalSetPoolFootprintCourtyardPolygonArgs,
-    ProposalSetPoolFootprintCourtyardRectArgs, ProposalSetPoolFootprintPadArgs,
-    ProposalSetPoolPackageCourtyardPolygonArgs, ProposalSetPoolPackageCourtyardRectArgs,
-    ProposalSetPoolPackagePadArgs, ProposalSetPoolPinPadMapArgs,
+    ProposalCreatePoolUnitArgs, ProposalGenerateIpc7351bTwoTerminalChipArgs,
+    ProposalSetPoolFootprintCourtyardPolygonArgs, ProposalSetPoolFootprintCourtyardRectArgs,
+    ProposalSetPoolFootprintPadArgs, ProposalSetPoolPackageCourtyardPolygonArgs,
+    ProposalSetPoolPackageCourtyardRectArgs, ProposalSetPoolPackagePadArgs,
+    ProposalSetPoolPinPadMapArgs,
 };
 use super::*;
 
@@ -41,6 +42,8 @@ pub(crate) enum ProposalCommands {
     CreatePoolPackage(ProposalCreatePoolPackageArgs),
     /// Create a draft proposal to author a native pool footprint
     CreatePoolFootprint(ProposalCreatePoolFootprintArgs),
+    /// Create a draft proposal to generate an IPC-7351B two-terminal chip footprint + padstack
+    GenerateIpc7351bTwoTerminalChip(ProposalGenerateIpc7351bTwoTerminalChipArgs),
     /// Create a draft proposal to author a native pool PinPadMap
     CreatePoolPinPadMap(ProposalCreatePoolPinPadMapArgs),
     /// Create a draft proposal to update native pool PinPadMap mappings

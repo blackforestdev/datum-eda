@@ -1,6 +1,8 @@
 use super::*;
 use crate::ir::geometry::Point;
 
+#[path = "mod_tests_ipc_footprint.rs"]
+mod ipc_footprint;
 #[path = "mod_tests_library_graph.rs"]
 mod library_graph;
 #[path = "mod_tests_library_graph_default_pin_pad_map.rs"]
@@ -126,6 +128,7 @@ fn sample_footprint() -> Footprint {
         mechanical: vec![],
         models_3d: vec![],
         standards_basis: Some("IPC-7351 density B".into()),
+        ipc_basis: None,
         process_aperture_policy: Some("explicit".into()),
         tags: HashSet::from(["soic".to_string()]),
     }

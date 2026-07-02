@@ -13,6 +13,7 @@ pub(super) fn execute_project_command(
         }
         command @ (ProjectCommands::ImportKicadFootprint(_) | ProjectCommands::ImportKicadBoard(_) | ProjectCommands::ImportKicadSchematic(_) | ProjectCommands::ImportEagleLibrary(_) | ProjectCommands::SetPoolPartBindings(_) | ProjectCommands::SetPoolSymbolPinAnchor(_)) => execute_project_import_or_part_binding_command(format, command),
         command @ (ProjectCommands::CreatePoolFootprint(_)
+        | ProjectCommands::GenerateIpc7351bTwoTerminalChip(_)
         | ProjectCommands::SetPoolFootprintPad(_)
         | ProjectCommands::SetPoolFootprintCourtyardRect(_)
         | ProjectCommands::SetPoolFootprintCourtyardPolygon(_)

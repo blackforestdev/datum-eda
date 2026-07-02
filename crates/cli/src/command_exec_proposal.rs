@@ -221,6 +221,11 @@ pub(crate) fn execute_proposal_command(
         ProposalCommands::CreatePoolFootprint(args) => {
             command_exec_proposal_library::execute_create_pool_footprint_proposal(format, args)
         }
+        ProposalCommands::GenerateIpc7351bTwoTerminalChip(args) => {
+            command_exec_proposal_library::execute_generate_ipc7351b_two_terminal_chip_proposal(
+                format, args,
+            )
+        }
         ProposalCommands::CreatePoolPinPadMap(args) => {
             command_exec_proposal_library::execute_create_pool_pin_pad_map_proposal(format, args)
         }

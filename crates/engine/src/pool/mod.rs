@@ -7,8 +7,10 @@ use uuid::Uuid;
 use crate::ir::geometry::{Arc, LayerId, Point, Polygon};
 
 mod footprint;
+mod ipc_footprint;
 mod library_graph;
 mod library_graph_diagnostics;
+mod library_graph_diagnostics_ipc;
 mod library_graph_pin_pad_map_compat;
 mod package;
 mod padstack;
@@ -17,6 +19,10 @@ mod pin_pad_map;
 mod symbol;
 
 pub use footprint::Footprint;
+pub use ipc_footprint::{
+    GeneratedIpcFootprint, IpcDensityLevel, IpcFootprintBasis, IpcJValues, IpcSourceDimensions,
+    IpcTwoTerminalChipSpec, generate_ipc7351b_two_terminal_chip,
+};
 pub use library_graph::{
     LibraryGraph, LibraryGraphDiagnostic, LibraryGraphLegacyPinPadMapMigrationReport,
     LibraryGraphValidationReport, LibraryGraphValidationSummary, LibraryGraphValidationTier,

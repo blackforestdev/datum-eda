@@ -97,13 +97,30 @@ pub(super) fn merge_component_value_overrides(
     merged
 }
 
-pub(super) fn active_package_rewritten_components(board: &Board) -> BTreeSet<uuid::Uuid> {
-    board
-        .packages
-        .values()
-        .filter(|package| package.package != uuid::Uuid::nil())
-        .map(|package| package.uuid)
-        .collect()
+pub(super) fn active_package_rewritten_components(
+    undo_stack: &[TransactionRecord],
+) -> BTreeSet<uuid::Uuid> {
+    let mut rewritten = BTreeSet::new();
+    collect_package_rewritten_components(undo_stack, &mut rewritten);
+    rewritten
+}
+
+fn collect_package_rewritten_components(
+    records: &[TransactionRecord],
+    rewritten: &mut BTreeSet<uuid::Uuid>,
+) {
+    for transaction in records {
+        match transaction {
+            TransactionRecord::AssignPart { after, .. }
+            | TransactionRecord::SetPackage { after, .. } => {
+                rewritten.insert(after.uuid);
+            }
+            TransactionRecord::Batch { records, .. } => {
+                collect_package_rewritten_components(records, rewritten);
+            }
+            _ => {}
+        }
+    }
 }
 
 pub(super) fn filter_component_map(

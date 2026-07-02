@@ -211,6 +211,63 @@ pub(crate) struct ProposalCreatePoolFootprintArgs {
 }
 
 #[derive(clap::Args)]
+pub(crate) struct ProposalGenerateIpc7351bTwoTerminalChipArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Project-local pool path
+    #[arg(long = "pool", default_value = "pool")]
+    pub(crate) pool: String,
+    /// Generated Footprint UUID
+    #[arg(long = "footprint")]
+    pub(crate) footprint: Uuid,
+    /// Referenced package UUID
+    #[arg(long = "package")]
+    pub(crate) package: Uuid,
+    /// Generated Padstack UUID
+    #[arg(long = "padstack")]
+    pub(crate) padstack: Uuid,
+    /// Generated pad 1 UUID
+    #[arg(long = "pad-a")]
+    pub(crate) pad_a: Uuid,
+    /// Generated pad 2 UUID
+    #[arg(long = "pad-b")]
+    pub(crate) pad_b: Uuid,
+    /// Optional human-readable footprint name
+    #[arg(long)]
+    pub(crate) name: Option<String>,
+    /// IPC metric package code, e.g. 0603 or 1608
+    #[arg(long = "metric-code")]
+    pub(crate) metric_code: String,
+    /// Component body length in nanometers
+    #[arg(long = "body-length-nm")]
+    pub(crate) body_length_nm: i64,
+    /// Component body width in nanometers
+    #[arg(long = "body-width-nm")]
+    pub(crate) body_width_nm: i64,
+    /// Terminal length in nanometers
+    #[arg(long = "terminal-length-nm")]
+    pub(crate) terminal_length_nm: i64,
+    /// Terminal width in nanometers
+    #[arg(long = "terminal-width-nm")]
+    pub(crate) terminal_width_nm: i64,
+    /// IPC density level
+    #[arg(long = "density", value_enum, default_value = "nominal")]
+    pub(crate) density: IpcDensityLevelArg,
+    /// Solder-mask expansion in nanometers
+    #[arg(long = "mask-expansion-nm", default_value_t = 50_000)]
+    pub(crate) mask_expansion_nm: i64,
+    /// Paste aperture reduction in nanometers
+    #[arg(long = "paste-reduction-nm", default_value_t = 50_000)]
+    pub(crate) paste_reduction_nm: i64,
+    /// Optional stable proposal UUID
+    #[arg(long = "proposal")]
+    pub(crate) proposal: Option<Uuid>,
+    /// Proposal review rationale
+    #[arg(long = "rationale")]
+    pub(crate) rationale: Option<String>,
+}
+
+#[derive(clap::Args)]
 pub(crate) struct ProposalCreatePoolPinPadMapArgs {
     /// Project root directory
     pub(crate) path: PathBuf,

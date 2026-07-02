@@ -1,184 +1,25 @@
 use crate::terminal_active_context::TerminalActiveContextCommands;
 use crate::terminal_check_context::profile_latest_check_runs_context;
+use crate::terminal_context_contract::{
+    TerminalAgentCommands, TerminalCheckCommands, TerminalContextCommands, TerminalContextEnvelope,
+    TerminalContextStorage, TerminalJournalCommands, TerminalLibraryCommands,
+    TerminalProductionCommands, TerminalProposalCommands,
+};
 use crate::terminal_context_io::atomic_write_text;
 use crate::terminal_journal_context::accepted_transaction_tip;
 use crate::terminal_proposal_context::{latest_proposal_id, visible_proposal_ids};
 use crate::{ASSISTANT_ACTIVITY_COMMAND, terminal_session::TerminalLaunchContext};
 use anyhow::{Context, Result};
 use datum_gui_protocol::{
-    CheckRunReviewState, DatumToolSessionLifecycle, DatumToolSessionMetadata, ProductionStatus,
-    TERMINAL_COMMAND_CATALOG_VERSION, TerminalCommandCatalogEntry, terminal_command_catalog,
+    DatumToolSessionLifecycle, DatumToolSessionMetadata, ProductionStatus,
+    TERMINAL_COMMAND_CATALOG_VERSION, terminal_command_catalog,
 };
-use serde::Serialize;
 use std::collections::BTreeSet;
 use std::fs;
 use std::path::{Path, PathBuf};
 
 pub(super) const DATUM_CLI: &str = "datum-eda";
 pub(super) const DATUM_LEGACY_CLI: &str = "eda";
-
-#[derive(Debug, Serialize)]
-struct TerminalContextEnvelope {
-    contract: &'static str,
-    project_root: String,
-    project_id: Option<String>,
-    project_name: Option<String>,
-    board_id: Option<String>,
-    board_name: Option<String>,
-    scene_id: Option<String>,
-    model_revision: Option<String>,
-    source_revision: Option<String>,
-    context_id: String,
-    session_id: String,
-    terminal_session_id: String,
-    session_lifecycle: DatumToolSessionLifecycle,
-    actor_type: &'static str,
-    capabilities: Vec<&'static str>,
-    created_unix_ms: u128,
-    updated_unix_ms: u128,
-    process_group_id: Option<i32>,
-    process_exit_code: Option<i32>,
-    accepted_transaction_tip: Option<String>,
-    visible_artifact_ids: Vec<String>,
-    visible_output_job_ids: Vec<String>,
-    visible_artifact_file_paths: Vec<String>,
-    latest_output_job_id: Option<String>,
-    latest_output_job_run_id: Option<String>,
-    latest_output_job_artifact_id: Option<String>,
-    latest_artifact_id: Option<String>,
-    latest_artifact_run_id: Option<String>,
-    previous_artifact_id: Option<String>,
-    visible_proposal_ids: Vec<String>,
-    latest_proposal_id: Option<String>,
-    focused_artifact_id: Option<String>,
-    focused_artifact_file_path: Option<String>,
-    latest_check_run_id: Option<String>,
-    latest_profile_id: Option<String>,
-    profile_latest_check_runs: Vec<TerminalCheckRunProfileLatest>,
-    visible_check_run_ids: Vec<String>,
-    visible_finding_fingerprints: Vec<String>,
-    check_status: CheckRunReviewState,
-    source_shard_status: datum_gui_protocol::SourceShardStatusSummary,
-    provenance_seed: String,
-    expires_at: Option<String>,
-    refresh_command: &'static str,
-    command_catalog_version: &'static str,
-    handoff_commands: std::collections::BTreeMap<String, TerminalCommandCatalogEntry>,
-    active_context_commands: TerminalActiveContextCommands,
-    storage: TerminalContextStorage,
-    session: DatumToolSessionMetadata,
-    terminal_sessions: crate::terminal_session_context::TerminalSessionContextSummary,
-    selection_context: datum_gui_protocol::DatumSelectionContext,
-    cursor_context: datum_gui_protocol::DatumCursorContext,
-    projection_context: datum_gui_protocol::DatumProjectionContext,
-    datum_cli: &'static str,
-    legacy_cli: &'static str,
-    discovery: String,
-    discovery_command: &'static str,
-    context_commands: TerminalContextCommands,
-    agent_commands: TerminalAgentCommands,
-    check_commands: TerminalCheckCommands,
-    proposal_commands: TerminalProposalCommands,
-    production_status: ProductionStatus,
-    production_commands: TerminalProductionCommands,
-    journal_commands: TerminalJournalCommands,
-    query_commands: serde_json::Value,
-}
-
-#[derive(Debug, Serialize)]
-pub(super) struct TerminalCheckRunProfileLatest {
-    pub(super) profile_id: String,
-    pub(super) check_run_id: String,
-    pub(super) model_revision: Option<String>,
-    pub(super) status: Option<String>,
-    pub(super) finding_count: usize,
-}
-
-#[derive(Debug, Serialize)]
-struct TerminalContextStorage {
-    context_path: String,
-    latest_context_path: String,
-    compatibility_context_path: String,
-    legacy_context_path: String,
-    session_path: String,
-    event_log_path: String,
-    schema_version: u64,
-}
-
-#[derive(Debug, Serialize)]
-struct TerminalContextCommands {
-    get: &'static str,
-    refresh: &'static str,
-    legacy_resolve_debug: &'static str,
-}
-
-#[derive(Debug, Serialize)]
-struct TerminalAgentCommands {
-    codex: &'static str,
-    claude: &'static str,
-    aider: &'static str,
-    codex_with_context: &'static str,
-    claude_with_context: &'static str,
-    context_prompt: &'static str,
-    inspect_context: &'static str,
-    refresh_context: &'static str,
-    session_activity: &'static str,
-}
-
-#[derive(Debug, Serialize)]
-struct TerminalCheckCommands {
-    run_current: &'static str,
-    run_profile: &'static str,
-    list: &'static str,
-    show_current: &'static str,
-    profiles: &'static str,
-    generate_standards_repairs: &'static str,
-    waive: &'static str,
-    accept_deviation: &'static str,
-}
-
-#[derive(Debug, Serialize)]
-struct TerminalProposalCommands {
-    query: &'static str,
-    show: &'static str,
-    preview: &'static str,
-    validate: &'static str,
-    defer: &'static str,
-    review_accept: &'static str,
-    review_reject: &'static str,
-    reject: &'static str,
-    accept_apply: &'static str,
-    apply: &'static str,
-}
-
-#[derive(Debug, Serialize)]
-struct TerminalProductionCommands {
-    query_output_jobs: &'static str,
-    create_gerber_output_job: &'static str,
-    update_output_job: &'static str,
-    run_output_job: &'static str,
-    start_output_job_run: &'static str,
-    cancel_output_job_run: &'static str,
-    export_manufacturing_set: &'static str,
-    validate_manufacturing_set: &'static str,
-    delete_output_job: &'static str,
-    query_manufacturing_plans: &'static str,
-    create_manufacturing_plan: &'static str,
-    update_manufacturing_plan: &'static str,
-    delete_manufacturing_plan: &'static str,
-    query_panel_projections: &'static str,
-    create_panel_projection: &'static str,
-    update_panel_projection: &'static str,
-    delete_panel_projection: &'static str,
-}
-
-#[derive(Debug, Serialize)]
-struct TerminalJournalCommands {
-    list: &'static str,
-    show: &'static str,
-    undo: &'static str,
-    redo: &'static str,
-}
 
 pub(super) struct TerminalContext {
     pub(super) project_root: PathBuf,
@@ -395,6 +236,15 @@ pub(super) fn write_terminal_context_files(
             generate_standards_repairs: "datum-eda check repair-standards \"$DATUM_PROJECT_ROOT\"",
             waive: "datum-eda check waive \"$DATUM_PROJECT_ROOT\" --fingerprint <sha256:...> --rationale <text>",
             accept_deviation: "datum-eda check accept-deviation \"$DATUM_PROJECT_ROOT\" --fingerprint <sha256:...> --rationale <text>",
+        },
+        library_commands: TerminalLibraryCommands {
+            validate_pool: "datum-eda project validate \"$DATUM_PROJECT_ROOT\"",
+            list_objects: "datum-eda query pool-library-objects \"$DATUM_PROJECT_ROOT\" --pool pool",
+            show_object: "datum-eda query pool-library-objects \"$DATUM_PROJECT_ROOT\" --pool pool --kind <kind> --object <uuid> --include-payload",
+            create_pin_pad_map: "datum-eda project create-pool-pin-pad-map \"$DATUM_PROJECT_ROOT\" --pool pool --map <uuid> --part <uuid> --entry <pad_uuid>:<gate_uuid>:<pin_uuid> [--footprint <uuid>] [--set-default]",
+            set_pin_pad_map: "datum-eda project set-pool-pin-pad-map \"$DATUM_PROJECT_ROOT\" --pool pool --map <uuid> --mode merge --entry <pad_uuid>:<gate_uuid>:<pin_uuid>",
+            propose_create_pin_pad_map: "datum-eda proposal create-pool-pin-pad-map \"$DATUM_PROJECT_ROOT\" --pool pool --map <uuid> --part <uuid> --entry <pad_uuid>:<gate_uuid>:<pin_uuid> [--footprint <uuid>] [--set-default] --rationale <text>",
+            propose_set_pin_pad_map: "datum-eda proposal set-pool-pin-pad-map \"$DATUM_PROJECT_ROOT\" --pool pool --map <uuid> --mode merge --entry <pad_uuid>:<gate_uuid>:<pin_uuid> --rationale <text>",
         },
         proposal_commands: TerminalProposalCommands {
             query: "datum-eda proposal list \"$DATUM_PROJECT_ROOT\"",

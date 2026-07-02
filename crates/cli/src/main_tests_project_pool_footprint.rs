@@ -6,6 +6,10 @@ pub(super) const PACKAGE_ID: Uuid = uuid::uuid!("33333333-3333-3333-3333-3333333
 pub(super) const PACKAGE_PAD_ID: Uuid = uuid::uuid!("44444444-4444-4444-4444-444444444444");
 pub(super) const FOOTPRINT_ID: Uuid = uuid::uuid!("55555555-5555-5555-5555-555555555555");
 pub(super) const FOOTPRINT_PAD_ID: Uuid = uuid::uuid!("66666666-6666-6666-6666-666666666666");
+pub(super) const IPC_FOOTPRINT_ID: Uuid = uuid::uuid!("77777777-7777-7777-7777-777777777777");
+pub(super) const IPC_PADSTACK_ID: Uuid = uuid::uuid!("88888888-8888-8888-8888-888888888888");
+pub(super) const IPC_PAD_A_ID: Uuid = uuid::uuid!("99999999-9999-9999-9999-999999999999");
+pub(super) const IPC_PAD_B_ID: Uuid = uuid::uuid!("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
 
 #[test]
 fn project_create_pool_footprint_is_journaled_query_visible_and_undoable() {
@@ -119,6 +123,94 @@ fn project_create_pool_footprint_rejects_missing_package() {
     )
     .expect_err("missing package should fail");
     assert!(format!("{err:#}").contains("missing pool package"));
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_generate_ipc7351b_two_terminal_chip_creates_footprint_and_padstack() {
+    let root = main_tests_project_pool_library::unique_project_root("datum-eda-cli-ipc-footprint");
+    create_native_project(&root, Some("IPC Footprint Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    create_package_fixture(&root);
+    let footprint_path = root.join(format!("pool/footprints/{IPC_FOOTPRINT_ID}.json"));
+    let padstack_path = root.join(format!("pool/padstacks/{IPC_PADSTACK_ID}.json"));
+
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "generate-ipc7351b-two-terminal-chip",
+            root.to_str().unwrap(),
+            "--footprint",
+            &IPC_FOOTPRINT_ID.to_string(),
+            "--package",
+            &PACKAGE_ID.to_string(),
+            "--padstack",
+            &IPC_PADSTACK_ID.to_string(),
+            "--pad-a",
+            &IPC_PAD_A_ID.to_string(),
+            "--pad-b",
+            &IPC_PAD_B_ID.to_string(),
+            "--metric-code",
+            "0603",
+            "--body-length-nm",
+            "1600000",
+            "--body-width-nm",
+            "800000",
+            "--terminal-length-nm",
+            "300000",
+            "--terminal-width-nm",
+            "800000",
+            "--density",
+            "nominal",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("IPC footprint generation should succeed");
+    let report: serde_json::Value =
+        serde_json::from_str(&output).expect("generate report JSON should parse");
+    assert_eq!(report["action"], "generate_ipc7351b_two_terminal_chip");
+    assert!(footprint_path.exists());
+    assert!(padstack_path.exists());
+
+    let footprint = main_tests_project_pool_library::query_pool_object_payload(
+        &root,
+        "footprints",
+        IPC_FOOTPRINT_ID,
+    );
+    assert_eq!(footprint["package"], PACKAGE_ID.to_string());
+    assert_eq!(footprint["ipc_basis"]["family"], "IPC-7351");
+    assert_eq!(footprint["ipc_basis"]["revision"], "B");
+    assert_eq!(
+        footprint["ipc_basis"]["package_family"],
+        "two_terminal_chip"
+    );
+    assert_eq!(footprint["pads"].as_object().unwrap().len(), 2);
+    let padstack = main_tests_project_pool_library::query_pool_object_payload(
+        &root,
+        "padstacks",
+        IPC_PADSTACK_ID,
+    );
+    assert_eq!(padstack["mask_policy"]["expansion_nm"], 50_000);
+    assert_eq!(padstack["paste_policy"]["expansion_nm"], -50_000);
+
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "undo",
+            root.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("IPC footprint generation undo should succeed");
+    assert!(!footprint_path.exists());
+    assert!(!padstack_path.exists());
 
     let _ = std::fs::remove_dir_all(&root);
 }

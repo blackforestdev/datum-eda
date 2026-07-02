@@ -49,6 +49,7 @@ pub(super) fn eagle_footprint(
         mechanical: Vec::new(),
         models_3d: Vec::new(),
         standards_basis: None,
+        ipc_basis: None,
         process_aperture_policy: Some("import_preserved".to_string()),
         tags: HashSet::new(),
     }

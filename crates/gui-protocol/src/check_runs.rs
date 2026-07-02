@@ -126,11 +126,7 @@ impl CheckFindingSummary {
             .chain(self.related_targets.iter())
             .find(|target| target_id(target).is_some())?;
         let id = target_id(target)?;
-        let kind = target
-            .get("kind")
-            .and_then(Value::as_str)
-            .filter(|kind| !kind.is_empty())
-            .unwrap_or("target");
+        let kind = target_kind(target).unwrap_or("target");
         Some(format!("{kind}:{id}"))
     }
 
@@ -205,11 +201,27 @@ pub fn check_finding_scene_target_object_id(
         .find_map(|id| scene_object_id_for_target_id(scene, id))
 }
 
+fn target_kind(target: &Value) -> Option<&str> {
+    target
+        .get("kind")
+        .or_else(|| target.get("pool_kind"))
+        .or_else(|| target.get("object_kind"))
+        .and_then(Value::as_str)
+        .filter(|kind| !kind.is_empty())
+}
+
 fn target_id(target: &Value) -> Option<&str> {
     target
         .get("id")
         .or_else(|| target.get("object_id"))
         .or_else(|| target.get("object_uuid"))
+        .or_else(|| target.get("pool_object_uuid"))
+        .or_else(|| target.get("pool_uuid"))
+        .or_else(|| target.get("part_uuid"))
+        .or_else(|| target.get("package_uuid"))
+        .or_else(|| target.get("footprint_uuid"))
+        .or_else(|| target.get("pin_pad_map_uuid"))
+        .or_else(|| target.get("map_uuid"))
         .or_else(|| target.get("uuid"))
         .and_then(Value::as_str)
         .filter(|id| !id.is_empty() && *id != "unknown")
@@ -505,5 +517,37 @@ mod tests {
         );
         assert_eq!(finding.rule_revision.as_deref(), Some("v1"));
         assert_eq!(finding.import_key.as_deref(), Some("kicad:pad:1"));
+    }
+
+    #[test]
+    fn library_graph_targets_render_pool_object_labels() {
+        let finding = CheckFindingSummary {
+            primary_target: serde_json::json!({
+                "pool_kind": "pin_pad_maps",
+                "pool_object_uuid": "00000000-0000-0000-0000-00000000aa01"
+            }),
+            ..CheckFindingSummary::default()
+        };
+
+        assert_eq!(
+            finding.target_label().as_deref(),
+            Some("pin_pad_maps:00000000-0000-0000-0000-00000000aa01")
+        );
+    }
+
+    #[test]
+    fn library_graph_targets_render_pin_pad_map_labels() {
+        let finding = CheckFindingSummary {
+            primary_target: serde_json::json!({
+                "kind": "pin_pad_map",
+                "pin_pad_map_uuid": "00000000-0000-0000-0000-00000000bb02"
+            }),
+            ..CheckFindingSummary::default()
+        };
+
+        assert_eq!(
+            finding.target_label().as_deref(),
+            Some("pin_pad_map:00000000-0000-0000-0000-00000000bb02")
+        );
     }
 }

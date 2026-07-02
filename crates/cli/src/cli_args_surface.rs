@@ -81,9 +81,10 @@ pub(crate) use self::cli_args_project_library::{
     ProjectSetPoolUnitPinArgs,
 };
 pub(crate) use self::cli_args_project_library_footprint::{
-    ProjectAddPoolFootprintSilkscreenCircleArgs, ProjectAddPoolFootprintSilkscreenLineArgs,
-    ProjectAddPoolFootprintSilkscreenPolygonArgs, ProjectAddPoolFootprintSilkscreenRectArgs,
-    ProjectCreatePoolFootprintArgs, ProjectSetPoolFootprintCourtyardPolygonArgs,
+    IpcDensityLevelArg, ProjectAddPoolFootprintSilkscreenCircleArgs,
+    ProjectAddPoolFootprintSilkscreenLineArgs, ProjectAddPoolFootprintSilkscreenPolygonArgs,
+    ProjectAddPoolFootprintSilkscreenRectArgs, ProjectCreatePoolFootprintArgs,
+    ProjectGenerateIpc7351bTwoTerminalChipArgs, ProjectSetPoolFootprintCourtyardPolygonArgs,
     ProjectSetPoolFootprintCourtyardRectArgs, ProjectSetPoolFootprintPadArgs,
 };
 pub(crate) use self::cli_args_project_library_part_bindings::ProjectSetPoolPartBindingsArgs;
@@ -119,11 +120,11 @@ pub(crate) use self::cli_args_proposals::{
     ProposalCreatePoolPackageArgs, ProposalCreatePoolPadstackArgs, ProposalCreatePoolPinPadMapArgs,
     ProposalCreatePoolSymbolArgs, ProposalCreatePoolUnitArgs, ProposalDeleteManufacturingPlanArgs,
     ProposalDeleteOutputJobArgs, ProposalDeletePanelProjectionArgs, ProposalDrawWireArgs,
-    ProposalPlaceLabelArgs, ProposalPlaceSymbolArgs, ProposalSetPoolFootprintCourtyardPolygonArgs,
-    ProposalSetPoolFootprintCourtyardRectArgs, ProposalSetPoolFootprintPadArgs,
-    ProposalSetPoolPackageCourtyardPolygonArgs, ProposalSetPoolPackageCourtyardRectArgs,
-    ProposalSetPoolPackagePadArgs, ProposalSetPoolPinPadMapArgs,
-    ProposalUpdateManufacturingPlanArgs, ProposalUpdateOutputJobArgs,
+    ProposalGenerateIpc7351bTwoTerminalChipArgs, ProposalPlaceLabelArgs, ProposalPlaceSymbolArgs,
+    ProposalSetPoolFootprintCourtyardPolygonArgs, ProposalSetPoolFootprintCourtyardRectArgs,
+    ProposalSetPoolFootprintPadArgs, ProposalSetPoolPackageCourtyardPolygonArgs,
+    ProposalSetPoolPackageCourtyardRectArgs, ProposalSetPoolPackagePadArgs,
+    ProposalSetPoolPinPadMapArgs, ProposalUpdateManufacturingPlanArgs, ProposalUpdateOutputJobArgs,
     ProposalUpdatePanelProjectionArgs,
 };
 
