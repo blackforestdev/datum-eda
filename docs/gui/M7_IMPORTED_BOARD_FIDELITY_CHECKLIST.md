@@ -1,6 +1,6 @@
 # M7 Imported Board Fidelity Checklist
 
-> **Status**: Active execution checklist for the imported-board fidelity track
+> **Status**: Historical -- imported-board fidelity track closed-for-scope (import frozen per decision 011); retained as historical evidence.
 > inside the opening `M7` milestone.
 > This checklist derives from
 > `docs/gui/M7_IMPORTED_BOARD_FIDELITY_PLAN.md`.

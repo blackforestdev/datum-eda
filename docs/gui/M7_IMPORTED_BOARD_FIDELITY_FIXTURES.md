@@ -1,6 +1,6 @@
 # M7 Imported Board Fidelity Fixture Manifest
 
-> **Status**: Active fixture manifest for `M7-FIX-001`.
+> **Status**: Historical -- `M7-FIX-001` fixture manifest, M7 spike closed-for-scope; retained as historical evidence.
 > This document freezes the imported-board fidelity fixture set used by the
 > opening `M7` post-spike correction track.
 

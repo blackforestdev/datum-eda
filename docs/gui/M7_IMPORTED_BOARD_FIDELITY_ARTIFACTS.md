@@ -1,6 +1,6 @@
 # M7 Imported Board Fidelity Reference Artifacts
 
-> **Status**: Active reference-artifact definition for `M7-FIX-002`.
+> **Status**: Historical -- `M7-FIX-002` reference-artifact definition, M7 spike closed-for-scope; retained as historical evidence.
 > This document defines the required proof artifacts for each imported-board
 > fidelity fixture.
 

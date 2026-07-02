@@ -1,6 +1,6 @@
 # M7 Delivery Gates
 
-> **Status**: Active delivery rule for opening `M7`.
+> **Status**: Historical -- opening `M7` delivery rules, spike closed-for-scope; retained as historical evidence.
 > This note defines when a slice is allowed to count as "done enough" to move
 > on without hiding dependency debt behind anti-scope-creep language.
 

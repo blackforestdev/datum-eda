@@ -1,6 +1,6 @@
 # M7 Imported Board Fidelity Issue Inventory
 
-> **Status**: Active issue inventory for `M7-FIX-003`.
+> **Status**: Historical -- `M7-FIX-003` issue inventory, M7 spike closed-for-scope (import frozen); retained as historical evidence.
 > This document records the currently known imported-board fidelity gaps with
 > ticket IDs, severity, stage mapping, and concrete file evidence.
 

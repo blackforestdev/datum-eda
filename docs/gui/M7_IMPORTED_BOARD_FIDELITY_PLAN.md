@@ -1,6 +1,6 @@
 # M7 Imported Board Fidelity Plan
 
-> **Status**: Active execution plan for the post-spike `M7` board-review
+> **Status**: Historical -- M7 imported-board fidelity spike closed-for-scope (import frozen per decision 011); retained as historical evidence.
 > fidelity track.
 > This document defines the bounded correction program required before Datum
 > should treat imported KiCad PCB board review as a credible product surface.

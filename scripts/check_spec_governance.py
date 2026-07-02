@@ -152,6 +152,16 @@ def main() -> int:
         elif cls == "historical":
             if not entry.get("reason"):
                 failures.append(f"{rel}: class 'historical' must carry a non-empty 'reason'")
+            # A historical doc must not contradict its status by self-declaring active.
+            try:
+                header = "".join((ROOT / rel).read_text(encoding="utf-8").splitlines(keepends=True)[:8])
+                if ACTIVE_HEADER.search(header):
+                    failures.append(
+                        f"{rel}: classified 'historical' but its header still self-declares active — "
+                        f"reconcile the doc's Status line with its governed status"
+                    )
+            except (OSError, UnicodeDecodeError):
+                pass
             continue  # historical is exempt from the enforcement declaration
 
         # 3b. Enforcement declaration (required for governed/doctrine/pending).

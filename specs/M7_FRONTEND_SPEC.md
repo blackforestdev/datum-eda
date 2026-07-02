@@ -1,6 +1,6 @@
 # M7 Frontend Opening Spec
 
-> **Status**: Active opening specification artifact for the opening `M7` slice.
+> **Status**: Historical -- opening `M7` slice specification, superseded by GUI decisions 014/015 and the North Star; retained as historical evidence.
 > This document defines the first concrete frontend-facing `M7` workspace
 > contract and architecture spike boundary. It is intentionally narrow and
 > derives from the frontend foundation under `docs/gui/`.

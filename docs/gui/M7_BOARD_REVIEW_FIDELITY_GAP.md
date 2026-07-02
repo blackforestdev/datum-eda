@@ -1,6 +1,6 @@
 # M7 Board Review Fidelity Gap
 
-> **Status**: Active checkpoint document for the current `M7` opening slice.
+> **Status**: Historical -- M7 opening-slice fidelity-gap checkpoint, spike closed-for-scope; retained as historical evidence.
 > This document does not change `M7` scope or semantics. It identifies the
 > fidelity gap between the currently working `M7` route-review client and the
 > level of board-review credibility required for a serious EDA product.
