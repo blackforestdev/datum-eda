@@ -75,8 +75,10 @@ genuinely thin ones carry an explicit gap.
 
 Enumerated enforcement gaps (the honest worklist — these steer development but
 no gate reconciles them with code):
-1. **UI layout invariants** (contract + decision 014): no shell-grid/no-overlap
-   or 1.0–2.0 visual-regression gate — the highest-priority gap.
+1. **UI layout invariants** (contract + decision 014): CLOSED — now gated by
+   `PG-UI-LAYOUT-INVARIANTS` (shell validity, column non-overlap, hit-region
+   containment across the 1.0–2.0 scale matrix). Remaining: the PNG golden
+   image matrix in CI and broader populated-state coverage.
 2. **IPC-7351B footprint generator / structured basis** (010, IPC doc): unbuilt.
 3. **STANDARDS_COMPLIANCE §4 disposition table**: ungated prose.
 4. **ERC / connectivity specs**: proven by cargo tests only, no drift gate, and

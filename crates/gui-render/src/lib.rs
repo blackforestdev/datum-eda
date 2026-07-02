@@ -7006,6 +7006,8 @@ fn outputs_dock_renders_csv_preview_table(mut state: ReviewWorkspaceState) -> bo
 #[cfg(test)]
 mod lib_extra_tests;
 #[cfg(test)]
+mod layout_invariant_tests;
+#[cfg(test)]
 mod render_contract_tests;
 #[cfg(test)]
 mod terminal_dock_contract_tests;
