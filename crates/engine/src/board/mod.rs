@@ -13,6 +13,7 @@ mod net_graph;
 mod pad;
 mod polygon;
 mod route_surface;
+pub mod route_proposal;
 mod rule_set;
 mod stackup;
 mod text;

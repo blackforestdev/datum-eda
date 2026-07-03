@@ -1,22 +1,29 @@
 use std::path::{Component, Path, PathBuf};
 
 use anyhow::{Context, Result, bail};
-use eda_engine::board::Board;
+use eda_engine::api::native_write::imports::{
+    build_eagle_library_import, build_kicad_board_import, eagle_library_import_map_relative_path,
+    kicad_board_import_map_relative_path,
+};
+use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::import::eagle::import_library_file;
 use eda_engine::import::ids_sidecar::compute_source_hash_file;
 use eda_engine::import::kicad::{
     KiCadBoardImportIdentity, import_board_document_with_import_map_identities,
 };
 use eda_engine::pool::Pool;
-use eda_engine::substrate::{
-    CommitProvenance, CommitSource, ImportMapEntry, ImportMapShard, Operation, OperationBatch,
-    ProjectResolver, SourceShardKind,
-};
+use eda_engine::substrate::{CommitSource, ImportMapEntry, ProjectResolver, SourceShardKind};
 use serde::Serialize;
 use uuid::Uuid;
 
-use super::NativeProjectManifest;
 use super::command_project_imports_eagle_import_map::eagle_pool_import_map_entries;
+
+// Deterministic import identity/path derivations are engine-owned now
+// (native_write::imports); re-exported for the sibling import modules.
+pub(super) use eda_engine::api::native_write::imports::{
+    eagle_pool_import_key, eagle_pool_object_refs, eagle_pool_relative_path,
+    source_shard_id_for_relative_path,
+};
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectKiCadBoardImportView {
@@ -78,21 +85,6 @@ pub(crate) fn import_native_project_kicad_board(
         .ok_or_else(|| anyhow::anyhow!("native board root missing uuid before KiCad import"))?
         .parse::<Uuid>()
         .context("failed to parse native board uuid before KiCad import")?;
-    let mut operations = board_import_create_operations(&before.objects, &board)?;
-    let imported_outline = serde_json::to_value(&board.outline)?;
-    if board_root.get("outline") != Some(&imported_outline) {
-        operations.push(Operation::SetBoardOutline {
-            board_id,
-            outline: imported_outline,
-        });
-    }
-    let imported_stackup = serde_json::to_value(&board.stackup)?;
-    if board_root.get("stackup") != Some(&imported_stackup) {
-        operations.push(Operation::SetBoardStackup {
-            board_id,
-            stackup: imported_stackup,
-        });
-    }
     let reused_existing_identity_count = identities
         .iter()
         .filter(|identity| before.import_map.contains_key(&identity.import_key))
@@ -104,45 +96,24 @@ pub(crate) fn import_native_project_kicad_board(
         source,
         &source_hash,
     );
-    let import_map_relative_path = board_import_map_relative_path(source);
-    if !import_map_entries.is_empty() {
-        operations.push(Operation::CreateImportMapShard {
-            relative_path: import_map_relative_path.clone(),
-            shard: serde_json::to_value(ImportMapShard {
-                schema_version: 1,
-                entries: import_map_entries.clone(),
-            })?,
-        });
-    }
-    let created_object_count = operations
-        .iter()
-        .filter(|operation| {
-            matches!(
-                operation,
-                Operation::CreateBoardPackage { .. }
-                    | Operation::CreateBoardPad { .. }
-                    | Operation::CreateBoardTrack { .. }
-                    | Operation::CreateBoardVia { .. }
-                    | Operation::CreateBoardZone { .. }
-                    | Operation::CreateBoardNet { .. }
-            )
-        })
-        .count();
-    if !operations.is_empty() {
+    let import_map_relative_path = kicad_board_import_map_relative_path(source);
+    let import_map_entry_count = import_map_entries.len();
+    let write = build_kicad_board_import(
+        &before,
+        WriteProvenance::new(
+            "datum-eda-cli",
+            CommitSource::Cli,
+            format!("import KiCad board {}", source.display()),
+        ),
+        board_id,
+        &board,
+        import_map_entries,
+        source,
+    )?;
+    let created_object_count = write.created_object_count;
+    if let Some(prepared) = write.prepared {
         let mut model = before;
-        model.commit_journaled(
-            root,
-            OperationBatch {
-                batch_id: Uuid::new_v4(),
-                expected_model_revision: Some(model.model_revision.clone()),
-                provenance: CommitProvenance {
-                    actor: "datum-eda-cli".to_string(),
-                    source: CommitSource::Cli,
-                    reason: format!("import KiCad board {}", source.display()),
-                },
-                operations,
-            },
-        )?;
+        commit_prepared(&mut model, root, prepared)?;
     }
     let after_write = ProjectResolver::new(root).resolve().with_context(|| {
         format!(
@@ -172,7 +143,7 @@ pub(crate) fn import_native_project_kicad_board(
         imported_track_count: board.tracks.len(),
         imported_via_count: board.vias.len(),
         imported_zone_count: board.zones.len(),
-        import_map_entry_count: import_map_entries.len(),
+        import_map_entry_count,
         created_object_count,
         reused_existing_identity_count,
     })
@@ -187,31 +158,9 @@ pub(crate) fn import_native_project_eagle_library(
     let before = ProjectResolver::new(root)
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
-    let project_manifest: NativeProjectManifest = serde_json::from_value(
-        before
-            .materialized_source_shard_value(SourceShardKind::ProjectManifest)
-            .context("failed to materialize project manifest")?,
-    )
-    .context("failed to parse resolver-materialized project manifest")?;
     let (pool, _report) = import_library_file(source)
         .with_context(|| format!("failed to import Eagle library {}", source.display()))?;
     let source_hash = compute_source_hash_file(source)?;
-    let mut operations = Vec::new();
-    if !project_manifest
-        .pools
-        .iter()
-        .any(|pool| pool.path == pool_path)
-    {
-        operations.push(Operation::AddProjectPoolRef {
-            path: pool_path.to_string(),
-            priority: next_pool_priority(&project_manifest.pools),
-        });
-    }
-    operations.extend(eagle_pool_create_operations(
-        &before.objects,
-        pool_path,
-        &pool,
-    )?);
     let existing_eagle_identity_count = eagle_pool_object_ids(&pool)
         .into_iter()
         .filter(|object_id| before.objects.contains_key(object_id))
@@ -219,34 +168,23 @@ pub(crate) fn import_native_project_eagle_library(
     let import_map_entries =
         eagle_pool_import_map_entries(&before.import_map, pool_path, &pool, source, &source_hash);
     let import_map_relative_path = eagle_library_import_map_relative_path(source);
-    if !import_map_entries.is_empty() {
-        operations.push(Operation::CreateImportMapShard {
-            relative_path: import_map_relative_path.clone(),
-            shard: serde_json::to_value(ImportMapShard {
-                schema_version: 1,
-                entries: import_map_entries.clone(),
-            })?,
-        });
-    }
-    let created_object_count = operations
-        .iter()
-        .filter(|operation| matches!(operation, Operation::CreatePoolLibraryObject { .. }))
-        .count();
-    if !operations.is_empty() {
+    let import_map_entry_count = import_map_entries.len();
+    let write = build_eagle_library_import(
+        &before,
+        WriteProvenance::new(
+            "datum-eda-cli",
+            CommitSource::Cli,
+            format!("import Eagle library {}", source.display()),
+        ),
+        pool_path,
+        &pool,
+        import_map_entries,
+        source,
+    )?;
+    let created_object_count = write.created_object_count;
+    if let Some(prepared) = write.prepared {
         let mut model = before;
-        model.commit_journaled(
-            root,
-            OperationBatch {
-                batch_id: Uuid::new_v4(),
-                expected_model_revision: Some(model.model_revision.clone()),
-                provenance: CommitProvenance {
-                    actor: "datum-eda-cli".to_string(),
-                    source: CommitSource::Cli,
-                    reason: format!("import Eagle library {}", source.display()),
-                },
-                operations,
-            },
-        )?;
+        commit_prepared(&mut model, root, prepared)?;
     }
     let after_write = ProjectResolver::new(root).resolve().with_context(|| {
         format!(
@@ -271,93 +209,10 @@ pub(crate) fn import_native_project_eagle_library(
         imported_part_count: pool.parts.len(),
         imported_package_count: pool.packages.len(),
         imported_padstack_count: pool.padstacks.len(),
-        import_map_entry_count: import_map_entries.len(),
+        import_map_entry_count,
         created_object_count,
         reused_existing_identity_count: existing_eagle_identity_count,
     })
-}
-
-fn eagle_pool_create_operations(
-    existing_objects: &std::collections::BTreeMap<Uuid, eda_engine::substrate::DomainObject>,
-    pool_path: &str,
-    pool: &Pool,
-) -> Result<Vec<Operation>> {
-    let mut operations = Vec::new();
-    push_eagle_pool_object_operations(
-        &mut operations,
-        existing_objects,
-        pool_path,
-        "units",
-        pool.units.iter().map(|(id, object)| (*id, object)),
-    )?;
-    push_eagle_pool_object_operations(
-        &mut operations,
-        existing_objects,
-        pool_path,
-        "symbols",
-        pool.symbols.iter().map(|(id, object)| (*id, object)),
-    )?;
-    push_eagle_pool_object_operations(
-        &mut operations,
-        existing_objects,
-        pool_path,
-        "entities",
-        pool.entities.iter().map(|(id, object)| (*id, object)),
-    )?;
-    push_eagle_pool_object_operations(
-        &mut operations,
-        existing_objects,
-        pool_path,
-        "padstacks",
-        pool.padstacks.iter().map(|(id, object)| (*id, object)),
-    )?;
-    push_eagle_pool_object_operations(
-        &mut operations,
-        existing_objects,
-        pool_path,
-        "packages",
-        pool.packages.iter().map(|(id, object)| (*id, object)),
-    )?;
-    push_eagle_pool_object_operations(
-        &mut operations,
-        existing_objects,
-        pool_path,
-        "parts",
-        pool.parts.iter().map(|(id, object)| (*id, object)),
-    )?;
-    Ok(operations)
-}
-
-fn push_eagle_pool_object_operations<T: serde::Serialize>(
-    operations: &mut Vec<Operation>,
-    existing_objects: &std::collections::BTreeMap<Uuid, eda_engine::substrate::DomainObject>,
-    pool_path: &str,
-    object_kind: &str,
-    objects: impl Iterator<Item = (Uuid, T)>,
-) -> Result<()> {
-    let mut objects: Vec<_> = objects.collect();
-    objects.sort_by_key(|(id, _)| *id);
-    for (object_id, object) in objects {
-        if existing_objects.contains_key(&object_id) {
-            continue;
-        }
-        operations.push(Operation::CreatePoolLibraryObject {
-            object_id,
-            relative_path: eagle_pool_relative_path(pool_path, object_kind, object_id),
-            object_kind: object_kind.to_string(),
-            object: eagle_pool_object_payload(object)?,
-        });
-    }
-    Ok(())
-}
-
-fn eagle_pool_object_payload<T: serde::Serialize>(object: T) -> Result<serde_json::Value> {
-    let mut object = serde_json::to_value(object)?;
-    let document = object
-        .as_object_mut()
-        .context("imported Eagle pool object must serialize as a JSON object")?;
-    document.insert("schema_version".to_string(), serde_json::json!(1));
-    Ok(object)
 }
 
 fn eagle_pool_object_ids(pool: &Pool) -> Vec<Uuid> {
@@ -365,113 +220,6 @@ fn eagle_pool_object_ids(pool: &Pool) -> Vec<Uuid> {
         .into_iter()
         .map(|(_, object_id)| object_id)
         .collect()
-}
-
-pub(super) fn eagle_pool_object_refs(pool: &Pool) -> Vec<(&'static str, Uuid)> {
-    let mut refs = Vec::new();
-    refs.extend(pool.units.keys().copied().map(|id| ("units", id)));
-    refs.extend(pool.symbols.keys().copied().map(|id| ("symbols", id)));
-    refs.extend(pool.entities.keys().copied().map(|id| ("entities", id)));
-    refs.extend(pool.padstacks.keys().copied().map(|id| ("padstacks", id)));
-    refs.extend(pool.packages.keys().copied().map(|id| ("packages", id)));
-    refs.extend(pool.parts.keys().copied().map(|id| ("parts", id)));
-    refs.sort_by_key(|(_, object_id)| *object_id);
-    refs
-}
-
-pub(super) fn eagle_pool_import_key(source: &Path, object_kind: &str, object_id: Uuid) -> String {
-    format!("eagle:lbr:{}:{object_kind}:{object_id}", source.display())
-}
-
-pub(super) fn eagle_pool_relative_path(
-    pool_path: &str,
-    object_kind: &str,
-    object_id: Uuid,
-) -> String {
-    format!("{pool_path}/{object_kind}/{object_id}.json")
-}
-
-fn eagle_library_import_map_relative_path(source: &Path) -> String {
-    let import_id = Uuid::new_v5(
-        &Uuid::NAMESPACE_URL,
-        format!("datum-eda:eagle-library-import-map:{}", source.display()).as_bytes(),
-    );
-    format!(".datum/import_map/eagle-library-{import_id}.json")
-}
-
-fn board_import_create_operations(
-    existing_objects: &std::collections::BTreeMap<Uuid, eda_engine::substrate::DomainObject>,
-    board: &Board,
-) -> Result<Vec<Operation>> {
-    let mut operations = Vec::new();
-    let mut nets: Vec<_> = board.nets.values().collect();
-    nets.sort_by_key(|net| net.uuid);
-    for net in nets {
-        if existing_objects.contains_key(&net.uuid) {
-            continue;
-        }
-        operations.push(Operation::CreateBoardNet {
-            net_id: net.uuid,
-            net: serde_json::to_value(net)?,
-        });
-    }
-    let mut packages: Vec<_> = board.packages.values().collect();
-    packages.sort_by_key(|package| package.uuid);
-    for package in packages {
-        if existing_objects.contains_key(&package.uuid) {
-            continue;
-        }
-        operations.push(Operation::CreateBoardPackage {
-            package_id: package.uuid,
-            package: serde_json::to_value(package)?,
-            materialized: serde_json::json!({}),
-        });
-    }
-    let mut pads: Vec<_> = board.pads.values().collect();
-    pads.sort_by_key(|pad| pad.uuid);
-    for pad in pads {
-        if existing_objects.contains_key(&pad.uuid) {
-            continue;
-        }
-        operations.push(Operation::CreateBoardPad {
-            pad_id: pad.uuid,
-            pad: serde_json::to_value(pad)?,
-        });
-    }
-    let mut tracks: Vec<_> = board.tracks.values().collect();
-    tracks.sort_by_key(|track| track.uuid);
-    for track in tracks {
-        if existing_objects.contains_key(&track.uuid) {
-            continue;
-        }
-        operations.push(Operation::CreateBoardTrack {
-            track_id: track.uuid,
-            track: serde_json::to_value(track)?,
-        });
-    }
-    let mut vias: Vec<_> = board.vias.values().collect();
-    vias.sort_by_key(|via| via.uuid);
-    for via in vias {
-        if existing_objects.contains_key(&via.uuid) {
-            continue;
-        }
-        operations.push(Operation::CreateBoardVia {
-            via_id: via.uuid,
-            via: serde_json::to_value(via)?,
-        });
-    }
-    let mut zones: Vec<_> = board.zones.values().collect();
-    zones.sort_by_key(|zone| zone.uuid);
-    for zone in zones {
-        if existing_objects.contains_key(&zone.uuid) {
-            continue;
-        }
-        operations.push(Operation::CreateBoardZone {
-            zone_id: zone.uuid,
-            zone: serde_json::to_value(zone)?,
-        });
-    }
-    Ok(operations)
 }
 
 fn board_import_map_entries(
@@ -541,14 +289,6 @@ fn is_same_kicad_board_source_entry(entry: &ImportMapEntry, source_path: &str) -
             || entry.import_key.starts_with("kicad:board-zone:"))
 }
 
-fn board_import_map_relative_path(source: &Path) -> String {
-    let import_id = Uuid::new_v5(
-        &Uuid::NAMESPACE_URL,
-        format!("datum-eda:kicad-board-import-map:{}", source.display()).as_bytes(),
-    );
-    format!(".datum/import_map/kicad-board-{import_id}.json")
-}
-
 pub(super) fn validate_project_local_pool_path(pool_path: &str) -> Result<()> {
     let path = PathBuf::from(pool_path);
     if pool_path.trim().is_empty() || path.is_absolute() {
@@ -561,15 +301,4 @@ pub(super) fn validate_project_local_pool_path(pool_path: &str) -> Result<()> {
         bail!("project pool path must not contain parent-directory components");
     }
     Ok(())
-}
-
-pub(super) fn next_pool_priority(pools: &[super::NativeProjectPoolRef]) -> u32 {
-    pools.iter().map(|pool| pool.priority).max().unwrap_or(0) + 1
-}
-
-pub(super) fn source_shard_id_for_relative_path(relative_path: &str) -> Uuid {
-    Uuid::new_v5(
-        &Uuid::NAMESPACE_URL,
-        format!("datum-eda:source-shard:{relative_path}").as_bytes(),
-    )
 }

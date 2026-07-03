@@ -1,21 +1,13 @@
 use super::*;
 use crate::NativeProjectRouteAppliedTrackReportView;
-use eda_engine::board::Track;
+use eda_engine::api::native_write::WriteProvenance;
+use eda_engine::board::route_proposal;
 use eda_engine::substrate::{
-    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver, Proposal,
-    ProposalSource, ProposalStatus, apply_accepted_proposal, commit_proposal_metadata_journaled,
+    CommitSource, ProjectResolver, Proposal, apply_accepted_proposal,
+    commit_proposal_metadata_journaled,
 };
 
-pub(crate) struct BuiltRouteProposal {
-    pub(crate) proposal: Option<Proposal>,
-    pub(crate) tracks: Vec<BuiltRouteTrack>,
-}
-
-pub(crate) struct BuiltRouteTrack {
-    pub(crate) track: Track,
-    pub(crate) reused_via_uuid: Option<Uuid>,
-    pub(crate) reused_via_uuids: Vec<Uuid>,
-}
+pub(crate) use eda_engine::board::route_proposal::{BuiltRouteProposal, BuiltRouteTrack};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub(crate) struct RouteProposalArtifact {
@@ -41,92 +33,17 @@ pub(crate) fn build_accepted_route_proposal(
 ) -> Result<BuiltRouteProposal> {
     let project = load_native_project_with_resolved_board(root)?;
     let model = ProjectResolver::new(root).resolve()?;
-    let expected_model_revision = model.model_revision.clone();
-    let mut tracks = Vec::new();
-    let mut operations = Vec::new();
-    for action in actions {
-        if action.proposal_action == "draw_track" {
-            if !project
-                .board
-                .nets
-                .contains_key(&action.net_uuid.to_string())
-            {
-                bail!("board net not found in native project: {}", action.net_uuid);
-            }
-            let track_uuid = Uuid::new_v5(
-                &model.project.project_id,
-                format!(
-                    "datum-eda:route-apply-track:{}:{}",
-                    expected_model_revision.0, action.action_id
-                )
-                .as_bytes(),
-            );
-            let track = Track {
-                uuid: track_uuid,
-                net: action.net_uuid,
-                from: action.from,
-                to: action.to,
-                width: action.width_nm,
-                layer: action.layer,
-            };
-            operations.push(Operation::CreateBoardTrack {
-                track_id: track.uuid,
-                track: serde_json::to_value(&track)
-                    .expect("native board track serialization must succeed"),
-            });
-            tracks.push(BuiltRouteTrack {
-                track,
-                reused_via_uuid: action.reused_via_uuid,
-                reused_via_uuids: action.reused_via_uuids.clone(),
-            });
-        }
-    }
-    if operations.is_empty() {
-        return Ok(BuiltRouteProposal {
-            proposal: None,
-            tracks,
-        });
-    }
-
-    let proposal_id = Uuid::new_v5(
-        &model.project.project_id,
-        format!(
-            "datum-eda:route-apply-proposal:{}:{}",
-            expected_model_revision.0,
-            actions
-                .iter()
-                .map(|action| action.action_id.as_str())
-                .collect::<Vec<_>>()
-                .join("|")
-        )
-        .as_bytes(),
-    );
-    Ok(BuiltRouteProposal {
-        proposal: Some(Proposal {
-            schema_version: 1,
-            proposal_id,
-            project_id: model.project.project_id,
-            prepared_against: expected_model_revision.clone(),
-            batch: OperationBatch {
-                batch_id: Uuid::new_v5(&model.project.project_id, proposal_id.as_bytes()),
-                expected_model_revision: Some(expected_model_revision),
-                provenance: CommitProvenance {
-                    actor: "datum-eda-cli".to_string(),
-                    source: CommitSource::Cli,
-                    reason: "route apply accepted proposal".to_string(),
-                },
-                operations,
-            },
-            rationale: "route proposal apply draw tracks".to_string(),
-            affected_objects: route_proposal_affected_objects(&tracks),
-            checks_run: Vec::new(),
-            finding_fingerprints: Vec::new(),
-            source: ProposalSource::Cli,
-            status: ProposalStatus::Accepted,
-            applied_transaction_id: None,
-        }),
-        tracks,
-    })
+    route_proposal::build_accepted_route_proposal(
+        &model,
+        WriteProvenance::new(
+            "datum-eda-cli",
+            CommitSource::Cli,
+            "route apply accepted proposal",
+        ),
+        actions,
+        |net_uuid| project.board.nets.contains_key(&net_uuid.to_string()),
+    )
+    .map_err(anyhow::Error::msg)
 }
 
 pub(crate) fn apply_built_route_proposal(
@@ -157,19 +74,6 @@ pub(crate) fn apply_route_proposal(
     let mut built = build_accepted_route_proposal(root, actions)?;
     built.proposal = Some(proposal);
     apply_built_route_proposal(root, built)
-}
-
-fn route_proposal_affected_objects(tracks: &[BuiltRouteTrack]) -> Vec<Uuid> {
-    let mut affected = Vec::new();
-    for track in tracks {
-        affected.push(track.track.uuid);
-        for via_uuid in &track.reused_via_uuids {
-            if !affected.contains(via_uuid) {
-                affected.push(*via_uuid);
-            }
-        }
-    }
-    affected
 }
 
 fn native_project_route_applied_track_report(

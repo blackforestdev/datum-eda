@@ -38,15 +38,11 @@ use crate::NativeProjectRouteStrategyReportView;
 use crate::NativeProjectSelectedRouteProposalExportView;
 use crate::cli_args::NativeProjectRouteStrategyBatchGatePolicyArg;
 use crate::cli_args::NativeRoutePathCandidateAuthoredCopperGraphPolicy;
-use eda_engine::board::{
-    RoutePathCandidateAuthoredCopperGraphObstacleAwareStepKindView,
-    RoutePathCandidateAuthoredCopperGraphPolicyStepKindView,
-    RoutePathCandidateAuthoredCopperGraphZoneAwareStepKindView,
-    RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareStepKindView,
-    RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareStepKindView,
-    RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareStepKindView,
-    RoutePathCandidateAuthoredCopperPlusOneGapStepKindView, RoutePathCandidateStatus,
-};
+use eda_engine::board::RoutePathCandidateAuthoredCopperGraphPolicy as EngineAuthoredCopperGraphPolicy;
+use eda_engine::board::route_proposal::{self, RouteProposalCandidate, RouteProposalProfile};
+use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
+use eda_engine::board::{Net, NetClass, PadShape, PlacedPad, StackupLayer, StackupLayerType, Track, Via};
+use eda_engine::substrate::{CommitSource, ProjectResolver};
 use serde_json::Value;
 
 const ROUTE_PROPOSAL_ARTIFACT_KIND: &str = "native_route_proposal_artifact";
@@ -58,95 +54,8 @@ const ROUTE_STRATEGY_BATCH_RESULT_VERSION: u32 = 1;
 const ROUTE_STRATEGY_CURATED_FIXTURE_SUITE_ID: &str = "m6_route_strategy_curated_fixture_suite_v1";
 const ROUTE_STRATEGY_FIXTURE_AUTHORING_BOUNDARY: &str = "generated_fixture_only";
 #[rustfmt::skip] const ROUTE_STRATEGY_FIXTURE_WRITE_PATH_POLICY: &str = "direct project-shard writes are restricted to deterministic regression fixture generation";
-const ROUTE_PROPOSAL_REASON_AUTHORED_COPPER_PLUS_ONE_GAP: &str = "authored_copper_plus_one_gap";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE: &str = "route_path_candidate";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_VIA: &str = "route_path_candidate_via";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_TWO_VIA: &str = "route_path_candidate_two_via";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_THREE_VIA: &str = "route_path_candidate_three_via";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_FOUR_VIA: &str = "route_path_candidate_four_via";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_FIVE_VIA: &str = "route_path_candidate_five_via";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_SIX_VIA: &str = "route_path_candidate_six_via";
-#[rustfmt::skip] const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_VIA_CHAIN: &str = "route_path_candidate_authored_via_chain";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_DOGLEG: &str =
-    "route_path_candidate_orthogonal_dogleg";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_TWO_BEND: &str =
-    "route_path_candidate_orthogonal_two_bend";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH: &str =
-    "route_path_candidate_orthogonal_graph";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_VIA: &str =
-    "route_path_candidate_orthogonal_graph_via";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_TWO_VIA: &str =
-    "route_path_candidate_orthogonal_graph_two_via";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_THREE_VIA: &str =
-    "route_path_candidate_orthogonal_graph_three_via";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_FOUR_VIA: &str =
-    "route_path_candidate_orthogonal_graph_four_via";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_FIVE_VIA: &str =
-    "route_path_candidate_orthogonal_graph_five_via";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_SIX_VIA: &str =
-    "route_path_candidate_orthogonal_graph_six_via";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_AWARE: &str =
-    "route_path_candidate_authored_copper_graph_zone_aware";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE: &str =
-    "route_path_candidate_authored_copper_graph_zone_obstacle_aware";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE_TOPOLOGY_AWARE: &str =
-    "route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE_TOPOLOGY_AWARE_LAYER_BALANCE_AWARE: &str =
-    "route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_OBSTACLE_AWARE: &str =
-    "route_path_candidate_authored_copper_graph_obstacle_aware";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_PLAIN: &str =
-    "route_path_candidate_authored_copper_graph_policy_plain";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_AWARE: &str =
-    "route_path_candidate_authored_copper_graph_policy_zone_aware";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_OBSTACLE_AWARE: &str =
-    "route_path_candidate_authored_copper_graph_policy_obstacle_aware";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_OBSTACLE_AWARE: &str =
-    "route_path_candidate_authored_copper_graph_policy_zone_obstacle_aware";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_OBSTACLE_TOPOLOGY_AWARE: &str =
-    "route_path_candidate_authored_copper_graph_policy_zone_obstacle_topology_aware";
-const ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_OBSTACLE_TOPOLOGY_LAYER_BALANCE_AWARE: &str =
-    "route_path_candidate_authored_copper_graph_policy_zone_obstacle_topology_layer_balance_aware";
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub(crate) struct NativeProjectRouteProposalActionView {
-    pub(crate) action_id: String,
-    pub(crate) proposal_action: String,
-    pub(crate) reason: String,
-    pub(crate) contract: String,
-    pub(crate) net_uuid: Uuid,
-    pub(crate) net_name: String,
-    pub(crate) from_anchor_pad_uuid: Uuid,
-    pub(crate) to_anchor_pad_uuid: Uuid,
-    pub(crate) layer: i32,
-    pub(crate) width_nm: i64,
-    pub(crate) from: Point,
-    pub(crate) to: Point,
-    pub(crate) reused_via_uuid: Option<Uuid>,
-    #[serde(default)]
-    pub(crate) reused_via_uuids: Vec<Uuid>,
-    #[serde(default)]
-    pub(crate) reused_object_kind: Option<String>,
-    #[serde(default)]
-    pub(crate) reused_object_uuid: Option<Uuid>,
-    #[serde(default)]
-    pub(crate) reused_object_from_layer: Option<i32>,
-    #[serde(default)]
-    pub(crate) reused_object_to_layer: Option<i32>,
-    #[serde(default)]
-    pub(crate) selected_path_bend_count: usize,
-    pub(crate) selected_path_point_count: usize,
-    pub(crate) selected_path_segment_index: usize,
-    pub(crate) selected_path_segment_count: usize,
-    #[serde(default)]
-    pub(crate) selected_path_layer_segment_index: Option<usize>,
-    #[serde(default)]
-    pub(crate) selected_path_layer_segment_count: Option<usize>,
-    #[serde(default)]
-    pub(crate) selected_path_layer_segment_bend_count: Option<usize>,
-    #[serde(default)]
-    pub(crate) selected_path_layer_segment_point_count: Option<usize>,
-}
+pub(crate) use eda_engine::board::route_proposal::RouteProposalAction as NativeProjectRouteProposalActionView;
 
 struct LoadedRouteStrategyBatchResultArtifact {
     artifact_path: PathBuf,
@@ -175,40 +84,6 @@ struct CuratedRouteStrategyFixtureSpec {
     request_id: &'static str,
     fixture_id: &'static str,
     coverage_labels: &'static [&'static str],
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum OrthogonalGraphArtifactDriftKind {
-    CandidateAvailabilityChanged,
-    DeterministicCostWinnerChanged,
-    GeometryChanged,
-}
-
-impl OrthogonalGraphArtifactDriftKind {
-    fn as_str(self) -> &'static str {
-        match self {
-            Self::CandidateAvailabilityChanged => "candidate_availability_changed",
-            Self::DeterministicCostWinnerChanged => "deterministic_cost_winner_changed",
-            Self::GeometryChanged => "geometry_changed",
-        }
-    }
-}
-
-struct RouteProposalArtifactRevalidationState {
-    live_actions: Result<Vec<NativeProjectRouteProposalActionView>>,
-    matches_live: bool,
-    drift_kind: Option<OrthogonalGraphArtifactDriftKind>,
-    drift_message: Option<String>,
-}
-
-#[derive(Debug, Clone)]
-struct OrthogonalGraphArtifactSegmentFacts {
-    layer_segment_index: usize,
-    layer_segment_count: usize,
-    layer: i32,
-    bend_count: usize,
-    point_count: usize,
-    track_action_count: usize,
 }
 
 pub(crate) fn export_native_project_route_path_proposal(
@@ -294,180 +169,155 @@ fn build_route_path_proposal_actions(
             "export-route-path-proposal --policy is supported only for candidate authored-copper-graph"
         );
     }
+    let spec = engine_route_proposal_candidate(candidate, policy).ok_or_else(|| {
+        anyhow::anyhow!(
+            "export-route-path-proposal candidate authored-copper-graph requires --policy"
+        )
+    })?;
+    build_route_proposal_actions_for_spec(
+        root,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        spec,
+    )
+}
 
-    match candidate {
+/// Map the CLI candidate/policy args onto the engine candidate spec.
+///
+/// `None` marks the single unrepresentable combination — authored-copper-graph
+/// without a policy — so each caller can raise its own command-specific
+/// missing-policy error (historical error texts differ per command).
+pub(crate) fn engine_route_proposal_candidate(
+    candidate: NativeProjectRouteApplyCandidateArg,
+    policy: Option<NativeRoutePathCandidateAuthoredCopperGraphPolicy>,
+) -> Option<RouteProposalCandidate> {
+    Some(match candidate {
         NativeProjectRouteApplyCandidateArg::RoutePathCandidate => {
-            build_route_path_candidate_proposal_actions(
-                root,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-            )
+            RouteProposalCandidate::RoutePathCandidate
         }
         NativeProjectRouteApplyCandidateArg::RoutePathCandidateVia => {
-            build_route_path_candidate_via_proposal_actions(
-                root,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-            )
+            RouteProposalCandidate::RoutePathCandidateVia
         }
         NativeProjectRouteApplyCandidateArg::RoutePathCandidateTwoVia => {
-            build_route_path_candidate_two_via_proposal_actions(
-                root,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-            )
+            RouteProposalCandidate::RoutePathCandidateTwoVia
         }
         NativeProjectRouteApplyCandidateArg::RoutePathCandidateThreeVia => {
-            build_route_path_candidate_three_via_proposal_actions(
-                root,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-            )
+            RouteProposalCandidate::RoutePathCandidateThreeVia
         }
         NativeProjectRouteApplyCandidateArg::RoutePathCandidateFourVia => {
-            build_route_path_candidate_four_via_proposal_actions(
-                root,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-            )
+            RouteProposalCandidate::RoutePathCandidateFourVia
         }
         NativeProjectRouteApplyCandidateArg::RoutePathCandidateFiveVia => {
-            build_route_path_candidate_five_via_proposal_actions(
-                root,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-            )
+            RouteProposalCandidate::RoutePathCandidateFiveVia
         }
         NativeProjectRouteApplyCandidateArg::RoutePathCandidateSixVia => {
-            build_route_path_candidate_six_via_proposal_actions(
-                root,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-            )
+            RouteProposalCandidate::RoutePathCandidateSixVia
         }
         NativeProjectRouteApplyCandidateArg::RoutePathCandidateAuthoredViaChain => {
-            build_route_path_candidate_authored_via_chain_proposal_actions(
-                root,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-            )
+            RouteProposalCandidate::RoutePathCandidateAuthoredViaChain
         }
         NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalDogleg => {
-            build_route_path_candidate_orthogonal_dogleg_proposal_actions(
-                root,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-            )
+            RouteProposalCandidate::RoutePathCandidateOrthogonalDogleg
         }
         NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalTwoBend => {
-            build_route_path_candidate_orthogonal_two_bend_proposal_actions(
-                root,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-            )
+            RouteProposalCandidate::RoutePathCandidateOrthogonalTwoBend
         }
         NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraph => {
-            build_route_path_candidate_orthogonal_graph_proposal_actions(
-                root,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-            )
+            RouteProposalCandidate::RoutePathCandidateOrthogonalGraph
         }
         NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphVia => {
-            build_route_path_candidate_orthogonal_graph_via_proposal_actions(
-                root,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-            )
+            RouteProposalCandidate::RoutePathCandidateOrthogonalGraphVia
         }
         NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphTwoVia => {
-            build_route_path_candidate_orthogonal_graph_two_via_proposal_actions(
-                root,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-            )
+            RouteProposalCandidate::RoutePathCandidateOrthogonalGraphTwoVia
         }
         NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphThreeVia => {
-            build_route_path_candidate_orthogonal_graph_three_via_proposal_actions(
-                root,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-            )
+            RouteProposalCandidate::RoutePathCandidateOrthogonalGraphThreeVia
         }
         NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphFourVia => {
-            build_route_path_candidate_orthogonal_graph_four_via_proposal_actions(
-                root,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-            )
+            RouteProposalCandidate::RoutePathCandidateOrthogonalGraphFourVia
         }
         NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphFiveVia => {
-            build_route_path_candidate_orthogonal_graph_five_via_proposal_actions(
-                root,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-            )
+            RouteProposalCandidate::RoutePathCandidateOrthogonalGraphFiveVia
         }
         NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphSixVia => {
-            build_route_path_candidate_orthogonal_graph_six_via_proposal_actions(
-                root,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-            )
+            RouteProposalCandidate::RoutePathCandidateOrthogonalGraphSixVia
         }
         NativeProjectRouteApplyCandidateArg::AuthoredCopperPlusOneGap => {
-            build_plus_one_gap_route_proposal_actions(
-                root,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-            )
+            RouteProposalCandidate::AuthoredCopperPlusOneGap
         }
         NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph => {
-            let policy = policy.ok_or_else(|| {
-                anyhow::anyhow!(
-                    "export-route-path-proposal candidate authored-copper-graph requires --policy"
-                )
-            })?;
-            build_route_path_candidate_authored_copper_graph_policy_proposal_actions(
-                root,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-                policy,
-            )
+            return policy.map(|policy| {
+                RouteProposalCandidate::AuthoredCopperGraph(engine_authored_copper_graph_policy(
+                    policy,
+                ))
+            });
+        }
+    })
+}
+
+fn engine_authored_copper_graph_policy(
+    policy: NativeRoutePathCandidateAuthoredCopperGraphPolicy,
+) -> EngineAuthoredCopperGraphPolicy {
+    match policy {
+        NativeRoutePathCandidateAuthoredCopperGraphPolicy::Plain => {
+            EngineAuthoredCopperGraphPolicy::Plain
+        }
+        NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneAware => {
+            EngineAuthoredCopperGraphPolicy::ZoneAware
+        }
+        NativeRoutePathCandidateAuthoredCopperGraphPolicy::ObstacleAware => {
+            EngineAuthoredCopperGraphPolicy::ObstacleAware
+        }
+        NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleAware => {
+            EngineAuthoredCopperGraphPolicy::ZoneObstacleAware
+        }
+        NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyAware => {
+            EngineAuthoredCopperGraphPolicy::ZoneObstacleTopologyAware
+        }
+        NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyLayerBalanceAware => {
+            EngineAuthoredCopperGraphPolicy::ZoneObstacleTopologyLayerBalanceAware
         }
     }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq)]
-struct RouteProposalSelectionCandidateSpec {
-    candidate: NativeProjectRouteApplyCandidateArg,
-    policy: Option<NativeRoutePathCandidateAuthoredCopperGraphPolicy>,
+fn engine_route_proposal_profile(
+    profile: NativeProjectRouteProposalProfileArg,
+) -> RouteProposalProfile {
+    match profile {
+        NativeProjectRouteProposalProfileArg::Default => RouteProposalProfile::Default,
+        NativeProjectRouteProposalProfileArg::AuthoredCopperPriority => {
+            RouteProposalProfile::AuthoredCopperPriority
+        }
+    }
+}
+
+/// Resolve the project board and build one candidate's proposal actions
+/// through the engine route-proposal kernel.
+pub(crate) fn build_route_proposal_actions_for_spec(
+    root: &Path,
+    net_uuid: Uuid,
+    from_anchor_pad_uuid: Uuid,
+    to_anchor_pad_uuid: Uuid,
+    spec: RouteProposalCandidate,
+) -> Result<Vec<NativeProjectRouteProposalActionView>> {
+    let project = load_native_project_with_resolved_board(root)?;
+    let board = build_native_project_board(&project)?;
+    route_proposal::build_route_proposal_actions(
+        &board,
+        net_uuid,
+        from_anchor_pad_uuid,
+        to_anchor_pad_uuid,
+        spec,
+    )
+    .map_err(anyhow::Error::msg)
 }
 
 struct RouteProposalSelectionOutcome {
     report: NativeProjectRouteProposalSelectionView,
-    selected_spec: Option<RouteProposalSelectionCandidateSpec>,
+    selected_spec: Option<RouteProposalCandidate>,
 }
-
 pub(crate) fn select_native_project_route_proposal(
     root: &Path,
     net_uuid: Uuid,
@@ -646,19 +496,18 @@ fn review_selected_native_project_route_proposal(
             "route-proposal found no selectable route under current authored constraints"
         )
     })?;
-    let actions = build_route_path_proposal_actions(
+    let actions = build_route_proposal_actions_for_spec(
         root,
         net_uuid,
         from_anchor_pad_uuid,
         to_anchor_pad_uuid,
-        selected_spec.candidate,
-        selected_spec.policy,
+        selected_spec,
     )?;
     super::command_project_route_apply::validate_route_proposal_actions(&actions)?;
     let first_action = actions.first().ok_or_else(|| {
         anyhow::anyhow!(
             "route proposal review candidate {} produced no actions",
-            route_proposal_selection_spec_name(&selected_spec)
+            route_proposal::candidate_spec_name(&selected_spec)
         )
     })?;
     let segment_evidence =
@@ -683,10 +532,8 @@ fn review_selected_native_project_route_proposal(
         to_anchor_pad_uuid: Some(to_anchor_pad_uuid.to_string()),
         selection_profile: Some(route_proposal_profile_name(profile).to_string()),
         selection_rule: Some(selection.report.selection_rule),
-        selected_candidate: Some(route_apply_candidate_name(selected_spec.candidate).to_string()),
-        selected_policy: selected_spec
-            .policy
-            .map(route_authored_copper_graph_policy_name),
+        selected_candidate: Some(route_proposal::candidate_name(selected_spec).to_string()),
+        selected_policy: route_proposal::candidate_policy_name(selected_spec),
         contract: first_action.contract.clone(),
         actions: actions.len(),
         draw_track_actions: actions
@@ -894,12 +741,121 @@ fn write_route_strategy_batch_requests_manifest(path: &Path, requests: &[RouteSt
     )
 }
 
-fn write_route_strategy_fixture_board(root: &Path, board: &Value) -> Result<()> {
-    write_canonical_json(&root.join("board/board.json"), board)
+/// Provenance stamped on every curated route-strategy fixture commit.
+fn route_strategy_fixture_provenance() -> WriteProvenance {
+    WriteProvenance::new(
+        "datum-eda-cli",
+        CommitSource::Cli,
+        "seed route strategy curated fixture board",
+    )
+}
+
+/// Commit one curated fixture board spec as a single composed batch through
+/// the native-write facade (see `route_proposal::fixtures`): the fixtures
+/// exercise the facade + resolver instead of hand-written `board.json`.
+fn commit_route_strategy_fixture_board(
+    root: &Path,
+    board_uuid: Uuid,
+    spec: &route_proposal::RouteStrategyFixtureBoardSpec,
+) -> Result<()> {
+    let mut model = ProjectResolver::new(root).resolve()?;
+    let prepared = route_proposal::build_route_strategy_fixture_board_write(
+        &model,
+        route_strategy_fixture_provenance(),
+        board_uuid,
+        spec,
+    )?;
+    commit_prepared(&mut model, root, prepared)?;
+    Ok(())
+}
+
+fn route_strategy_fixture_board_uuid(created: &NativeProjectCreateReportView) -> Result<Uuid> {
+    Uuid::parse_str(&created.board_uuid).context("fixture project board uuid must parse")
+}
+
+/// The single curated net class every fixture uses (byte-identical facts to
+/// the historical hand-written fixture `net_classes` entry).
+fn route_strategy_fixture_net_class(class_uuid: Uuid) -> NetClass {
+    NetClass {
+        uuid: class_uuid,
+        name: "Default".to_string(),
+        clearance: 150_000,
+        track_width: 200_000,
+        via_drill: 300_000,
+        via_diameter: 600_000,
+        diffpair_width: 0,
+        diffpair_gap: 0,
+    }
+}
+
+fn route_strategy_fixture_net(uuid: Uuid, name: &str, class: Uuid) -> Net {
+    Net {
+        uuid,
+        name: name.to_string(),
+        class,
+        controlled_impedance: None,
+    }
+}
+
+/// One circular anchor pad (parses back to the same `PlacedPad` facts the
+/// historical hand-written fixture pads produced).
+fn route_strategy_fixture_pad(
+    uuid: Uuid,
+    package: Uuid,
+    net: Uuid,
+    position: Point,
+    layer: i32,
+    diameter: i64,
+) -> PlacedPad {
+    PlacedPad {
+        uuid,
+        package,
+        name: "1".to_string(),
+        net: Some(net),
+        position,
+        layer,
+        copper_layers: Vec::new(),
+        shape: PadShape::Circle,
+        diameter,
+        width: 0,
+        height: 0,
+        drill: 0,
+        rotation: 0,
+        roundrect_rratio_ppm: 250_000,
+        mask_layers: Vec::new(),
+        paste_layers: Vec::new(),
+        solder_mask_margin_nm: 0,
+        solder_paste_margin_nm: 0,
+        solder_paste_margin_ratio_ppm: 0,
+    }
+}
+
+/// Copper(1) / Dielectric / Copper(3) — the cross-layer fixture stackup.
+fn route_strategy_fixture_three_layer_stackup() -> Vec<StackupLayer> {
+    vec![
+        StackupLayer::new(1, "Top Copper", StackupLayerType::Copper, 35_000),
+        StackupLayer::new(2, "Core", StackupLayerType::Dielectric, 1_600_000),
+        StackupLayer::new(3, "Bottom Copper", StackupLayerType::Copper, 35_000),
+    ]
+}
+
+fn route_strategy_fixture_outline(width_nm: i64, height_nm: i64) -> Polygon {
+    Polygon {
+        vertices: vec![
+            Point { x: 0, y: 0 },
+            Point { x: width_nm, y: 0 },
+            Point {
+                x: width_nm,
+                y: height_nm,
+            },
+            Point { x: 0, y: height_nm },
+        ],
+        closed: true,
+    }
 }
 
 fn seed_curated_route_strategy_same_outcome_fixture(root: &Path) -> Result<(Uuid, Uuid, Uuid)> {
-    create_native_project(
+    let created = create_native_project(
         root,
         Some("Route Strategy Curated Same Outcome Demo".to_string()),
     )?;
@@ -911,94 +867,49 @@ fn seed_curated_route_strategy_same_outcome_fixture(root: &Path) -> Result<(Uuid
     let package_b_uuid = Uuid::from_u128(0xc204);
     let anchor_a_uuid = Uuid::from_u128(0xc205);
     let anchor_b_uuid = Uuid::from_u128(0xc206);
-    write_route_strategy_fixture_board(
-        root,
-        &serde_json::json!({
-            "schema_version": 1,
-            "uuid": Uuid::from_u128(0xc207),
-            "name": "Route Strategy Curated Same Outcome Demo Board",
-            "stackup": {
-                "layers": [
-                    { "id": 1, "name": "Top Copper", "layer_type": "Copper", "thickness_nm": 35000 },
-                    { "id": 2, "name": "Core", "layer_type": "Dielectric", "thickness_nm": 1600000 },
-                    { "id": 3, "name": "Bottom Copper", "layer_type": "Copper", "thickness_nm": 35000 }
-                ]
-            },
-            "outline": {
-                "vertices": [
-                    { "x": 0, "y": 0 },
-                    { "x": 5000000, "y": 0 },
-                    { "x": 5000000, "y": 3000000 },
-                    { "x": 0, "y": 3000000 }
-                ],
-                "closed": true
-            },
-            "packages": {},
-            "pads": {
-                anchor_a_uuid.to_string(): {
-                    "uuid": anchor_a_uuid,
-                    "package": package_a_uuid,
-                    "name": "1",
-                    "net": target_net_uuid,
-                    "position": { "x": 500000, "y": 600000 },
-                    "layer": 1,
-                    "shape": "circle",
-                    "diameter": 450000,
-                    "width": 0,
-                    "height": 0
+    let spec = route_proposal::RouteStrategyFixtureBoardSpec {
+        stackup_layers: route_strategy_fixture_three_layer_stackup(),
+        outline: route_strategy_fixture_outline(5_000_000, 3_000_000),
+        net_classes: vec![route_strategy_fixture_net_class(class_uuid)],
+        nets: vec![
+            route_strategy_fixture_net(target_net_uuid, "SIG", class_uuid),
+            route_strategy_fixture_net(other_net_uuid, "GND", class_uuid),
+        ],
+        pads: vec![
+            route_strategy_fixture_pad(
+                anchor_a_uuid,
+                package_a_uuid,
+                target_net_uuid,
+                Point {
+                    x: 500_000,
+                    y: 600_000,
                 },
-                anchor_b_uuid.to_string(): {
-                    "uuid": anchor_b_uuid,
-                    "package": package_b_uuid,
-                    "name": "1",
-                    "net": target_net_uuid,
-                    "position": { "x": 4500000, "y": 2400000 },
-                    "layer": 1,
-                    "shape": "circle",
-                    "diameter": 450000,
-                    "width": 0,
-                    "height": 0
-                }
-            },
-            "tracks": {},
-            "vias": {},
-            "zones": {},
-            "nets": {
-                target_net_uuid.to_string(): {
-                    "uuid": target_net_uuid,
-                    "name": "SIG",
-                    "class": class_uuid
+                1,
+                450_000,
+            ),
+            route_strategy_fixture_pad(
+                anchor_b_uuid,
+                package_b_uuid,
+                target_net_uuid,
+                Point {
+                    x: 4_500_000,
+                    y: 2_400_000,
                 },
-                other_net_uuid.to_string(): {
-                    "uuid": other_net_uuid,
-                    "name": "GND",
-                    "class": class_uuid
-                }
-            },
-            "net_classes": {
-                class_uuid.to_string(): {
-                    "uuid": class_uuid,
-                    "name": "Default",
-                    "clearance": 150000,
-                    "track_width": 200000,
-                    "via_drill": 300000,
-                    "via_diameter": 600000,
-                    "diffpair_width": 0,
-                    "diffpair_gap": 0
-                }
-            },
-            "keepouts": [],
-            "dimensions": [],
-            "texts": []
-        }),
-    )?;
+                1,
+                450_000,
+            ),
+        ],
+        tracks: Vec::new(),
+        vias: Vec::new(),
+    };
+    commit_route_strategy_fixture_board(root, route_strategy_fixture_board_uuid(&created)?, &spec)?;
     Ok((target_net_uuid, anchor_a_uuid, anchor_b_uuid))
 }
 
 fn seed_curated_route_strategy_profile_divergence_fixture(
     root: &Path,
 ) -> Result<(Uuid, Uuid, Uuid)> {
-    create_native_project(
+    let created = create_native_project(
         root,
         Some("Route Strategy Curated Profile Divergence Demo".to_string()),
     )?;
@@ -1010,94 +921,62 @@ fn seed_curated_route_strategy_profile_divergence_fixture(
     let anchor_a_uuid = Uuid::from_u128(0xc284);
     let anchor_b_uuid = Uuid::from_u128(0xc285);
     let authored_track_uuid = Uuid::from_u128(0xc286);
-    write_route_strategy_fixture_board(
-        root,
-        &serde_json::json!({
-            "schema_version": 1,
-            "uuid": Uuid::from_u128(0xc287),
-            "name": "Route Strategy Curated Profile Divergence Demo Board",
-            "stackup": {
-                "layers": [
-                    { "id": 1, "name": "Top Copper", "layer_type": "Copper", "thickness_nm": 35000 }
-                ]
-            },
-            "outline": {
-                "vertices": [
-                    { "x": 0, "y": 0 },
-                    { "x": 4000000, "y": 0 },
-                    { "x": 4000000, "y": 1000000 },
-                    { "x": 0, "y": 1000000 }
-                ],
-                "closed": true
-            },
-            "packages": {},
-            "pads": {
-                anchor_a_uuid.to_string(): {
-                    "uuid": anchor_a_uuid,
-                    "package": package_a_uuid,
-                    "name": "1",
-                    "net": target_net_uuid,
-                    "position": { "x": 500000, "y": 500000 },
-                    "layer": 1,
-                    "shape": "circle",
-                    "diameter": 400000,
-                    "width": 0,
-                    "height": 0
+    let spec = route_proposal::RouteStrategyFixtureBoardSpec {
+        stackup_layers: vec![StackupLayer::new(
+            1,
+            "Top Copper",
+            StackupLayerType::Copper,
+            35_000,
+        )],
+        outline: route_strategy_fixture_outline(4_000_000, 1_000_000),
+        net_classes: vec![route_strategy_fixture_net_class(class_uuid)],
+        nets: vec![route_strategy_fixture_net(target_net_uuid, "SIG", class_uuid)],
+        pads: vec![
+            route_strategy_fixture_pad(
+                anchor_a_uuid,
+                package_a_uuid,
+                target_net_uuid,
+                Point {
+                    x: 500_000,
+                    y: 500_000,
                 },
-                anchor_b_uuid.to_string(): {
-                    "uuid": anchor_b_uuid,
-                    "package": package_b_uuid,
-                    "name": "1",
-                    "net": target_net_uuid,
-                    "position": { "x": 3500000, "y": 500000 },
-                    "layer": 1,
-                    "shape": "circle",
-                    "diameter": 400000,
-                    "width": 0,
-                    "height": 0
-                }
+                1,
+                400_000,
+            ),
+            route_strategy_fixture_pad(
+                anchor_b_uuid,
+                package_b_uuid,
+                target_net_uuid,
+                Point {
+                    x: 3_500_000,
+                    y: 500_000,
+                },
+                1,
+                400_000,
+            ),
+        ],
+        tracks: vec![Track {
+            uuid: authored_track_uuid,
+            net: target_net_uuid,
+            from: Point {
+                x: 500_000,
+                y: 500_000,
             },
-            "tracks": {
-                authored_track_uuid.to_string(): {
-                    "uuid": authored_track_uuid,
-                    "net": target_net_uuid,
-                    "from": { "x": 500000, "y": 500000 },
-                    "to": { "x": 3500000, "y": 500000 },
-                    "width": 200000,
-                    "layer": 1
-                }
+            to: Point {
+                x: 3_500_000,
+                y: 500_000,
             },
-            "vias": {},
-            "zones": {},
-            "nets": {
-                target_net_uuid.to_string(): {
-                    "uuid": target_net_uuid,
-                    "name": "SIG",
-                    "class": class_uuid
-                }
-            },
-            "net_classes": {
-                class_uuid.to_string(): {
-                    "uuid": class_uuid,
-                    "name": "Default",
-                    "clearance": 150000,
-                    "track_width": 200000,
-                    "via_drill": 300000,
-                    "via_diameter": 600000,
-                    "diffpair_width": 0,
-                    "diffpair_gap": 0
-                }
-            },
-            "keepouts": [],
-            "dimensions": [],
-            "texts": []
-        }),
-    )?;
+            width: 200_000,
+            layer: 1,
+        }],
+        vias: Vec::new(),
+    };
+    commit_route_strategy_fixture_board(root, route_strategy_fixture_board_uuid(&created)?, &spec)?;
     Ok((target_net_uuid, anchor_a_uuid, anchor_b_uuid))
 }
 
 fn seed_curated_route_strategy_via_fixture(root: &Path) -> Result<(Uuid, Uuid, Uuid)> {
-    create_native_project(root, Some("Route Strategy Curated Via Demo".to_string()))?;
+    let created = create_native_project(root, Some("Route Strategy Curated Via Demo".to_string()))?;
 
     let target_net_uuid = Uuid::from_u128(0xa10);
     let class_uuid = Uuid::from_u128(0xa11);
@@ -1106,106 +985,65 @@ fn seed_curated_route_strategy_via_fixture(root: &Path) -> Result<(Uuid, Uuid, U
     let anchor_a_uuid = Uuid::from_u128(0xa14);
     let anchor_b_uuid = Uuid::from_u128(0xa15);
     let via_uuid = Uuid::from_u128(0xa16);
-    write_route_strategy_fixture_board(
-        root,
-        &serde_json::json!({
-            "schema_version": 1,
-            "uuid": Uuid::from_u128(0xa17),
-            "name": "Route Strategy Curated Via Demo Board",
-            "stackup": {
-                "layers": [
-                    { "id": 1, "name": "Top Copper", "layer_type": "Copper", "thickness_nm": 35000 },
-                    { "id": 2, "name": "Core", "layer_type": "Dielectric", "thickness_nm": 1600000 },
-                    { "id": 3, "name": "Bottom Copper", "layer_type": "Copper", "thickness_nm": 35000 }
-                ]
-            },
-            "outline": {
-                "vertices": [
-                    { "x": 0, "y": 0 },
-                    { "x": 5000000, "y": 0 },
-                    { "x": 5000000, "y": 3000000 },
-                    { "x": 0, "y": 3000000 }
-                ],
-                "closed": true
-            },
-            "packages": {},
-            "pads": {
-                anchor_a_uuid.to_string(): {
-                    "uuid": anchor_a_uuid,
-                    "package": package_a_uuid,
-                    "name": "1",
-                    "net": target_net_uuid,
-                    "position": { "x": 500000, "y": 600000 },
-                    "layer": 1,
-                    "shape": "circle",
-                    "diameter": 450000,
-                    "width": 0,
-                    "height": 0
+    let spec = route_proposal::RouteStrategyFixtureBoardSpec {
+        stackup_layers: route_strategy_fixture_three_layer_stackup(),
+        outline: route_strategy_fixture_outline(5_000_000, 3_000_000),
+        net_classes: vec![route_strategy_fixture_net_class(class_uuid)],
+        nets: vec![route_strategy_fixture_net(target_net_uuid, "SIG", class_uuid)],
+        pads: vec![
+            route_strategy_fixture_pad(
+                anchor_a_uuid,
+                package_a_uuid,
+                target_net_uuid,
+                Point {
+                    x: 500_000,
+                    y: 600_000,
                 },
-                anchor_b_uuid.to_string(): {
-                    "uuid": anchor_b_uuid,
-                    "package": package_b_uuid,
-                    "name": "1",
-                    "net": target_net_uuid,
-                    "position": { "x": 4500000, "y": 2400000 },
-                    "layer": 3,
-                    "shape": "circle",
-                    "diameter": 450000,
-                    "width": 0,
-                    "height": 0
-                }
+                1,
+                450_000,
+            ),
+            route_strategy_fixture_pad(
+                anchor_b_uuid,
+                package_b_uuid,
+                target_net_uuid,
+                Point {
+                    x: 4_500_000,
+                    y: 2_400_000,
+                },
+                3,
+                450_000,
+            ),
+        ],
+        tracks: Vec::new(),
+        vias: vec![Via {
+            uuid: via_uuid,
+            net: target_net_uuid,
+            position: Point {
+                x: 2_500_000,
+                y: 1_500_000,
             },
-            "tracks": {},
-            "vias": {
-                via_uuid.to_string(): {
-                    "uuid": via_uuid,
-                    "net": target_net_uuid,
-                    "position": { "x": 2500000, "y": 1500000 },
-                    "drill": 300000,
-                    "diameter": 600000,
-                    "from_layer": 1,
-                    "to_layer": 3
-                }
-            },
-            "zones": {},
-            "nets": {
-                target_net_uuid.to_string(): {
-                    "uuid": target_net_uuid,
-                    "name": "SIG",
-                    "class": class_uuid
-                }
-            },
-            "net_classes": {
-                class_uuid.to_string(): {
-                    "uuid": class_uuid,
-                    "name": "Default",
-                    "clearance": 150000,
-                    "track_width": 200000,
-                    "via_drill": 300000,
-                    "via_diameter": 600000,
-                    "diffpair_width": 0,
-                    "diffpair_gap": 0
-                }
-            },
-            "keepouts": [],
-            "dimensions": [],
-            "texts": []
-        }),
-    )?;
+            drill: 300_000,
+            diameter: 600_000,
+            from_layer: 1,
+            to_layer: 3,
+        }],
+    };
+    commit_route_strategy_fixture_board(root, route_strategy_fixture_board_uuid(&created)?, &spec)?;
     Ok((target_net_uuid, anchor_a_uuid, anchor_b_uuid))
 }
 
 fn seed_curated_route_strategy_no_proposal_fixture(root: &Path) -> Result<(Uuid, Uuid, Uuid)> {
     let (net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid) =
         seed_curated_route_strategy_same_outcome_fixture(root)?;
-    let board_path = root.join("board/board.json");
-    let mut board: Value = serde_json::from_str(
-        &std::fs::read_to_string(&board_path)
-            .with_context(|| format!("failed to read {}", board_path.display()))?,
-    )
-    .with_context(|| format!("failed to parse {}", board_path.display()))?;
-    board["nets"][net_uuid.to_string()]["class"] = Value::Null;
-    write_route_strategy_fixture_board(root, &board)?;
+    // Clear the target net's class to JSON null (the historical fixture's
+    // defining no-proposal state) through the facade-guarded SetBoardNet.
+    let mut model = ProjectResolver::new(root).resolve()?;
+    let prepared = route_proposal::build_route_strategy_fixture_net_class_clear(
+        &model,
+        route_strategy_fixture_provenance(),
+        &route_strategy_fixture_net(net_uuid, "SIG", Uuid::from_u128(0xc202)),
+    )?;
+    commit_prepared(&mut model, root, prepared)?;
     Ok((net_uuid, from_anchor_pad_uuid, to_anchor_pad_uuid))
 }
 
@@ -2387,24 +2225,22 @@ pub(crate) fn export_selected_native_project_route_proposal(
             "route-proposal found no selectable route under current authored constraints"
         )
     })?;
-    let export = export_native_project_route_path_proposal(
+    let actions = build_route_proposal_actions_for_spec(
         root,
         net_uuid,
         from_anchor_pad_uuid,
         to_anchor_pad_uuid,
-        selected_spec.candidate,
-        selected_spec.policy,
-        output_path,
+        selected_spec,
     )?;
+    let export =
+        export_route_proposal_artifact(root, output_path, "export_route_path_proposal", actions)?;
     Ok(NativeProjectSelectedRouteProposalExportView {
         action: "export_route_proposal".to_string(),
         project_root: root.display().to_string(),
         selection_profile: route_proposal_profile_name(profile).to_string(),
         selection_rule: selection.report.selection_rule,
-        selected_candidate: route_apply_candidate_name(selected_spec.candidate).to_string(),
-        selected_policy: selected_spec
-            .policy
-            .map(route_authored_copper_graph_policy_name),
+        selected_candidate: route_proposal::candidate_name(selected_spec).to_string(),
+        selected_policy: route_proposal::candidate_policy_name(selected_spec),
         artifact_path: export.artifact_path,
         kind: export.kind,
         version: export.version,
@@ -2437,23 +2273,20 @@ pub(crate) fn apply_selected_native_project_route(
             "route-proposal found no selectable route under current authored constraints"
         )
     })?;
-    let apply = apply_native_project_route(
+    let apply = super::command_project_route_apply::apply_native_project_route_for_spec(
         root,
         net_uuid,
         from_anchor_pad_uuid,
         to_anchor_pad_uuid,
-        selected_spec.candidate,
-        selected_spec.policy,
+        selected_spec,
     )?;
     Ok(NativeProjectRouteApplySelectedView {
         action: "route_apply_selected".to_string(),
         project_root: root.display().to_string(),
         selection_profile: route_proposal_profile_name(profile).to_string(),
         selection_rule: selection.report.selection_rule,
-        selected_candidate: route_apply_candidate_name(selected_spec.candidate).to_string(),
-        selected_policy: selected_spec
-            .policy
-            .map(route_authored_copper_graph_policy_name),
+        selected_candidate: route_proposal::candidate_name(selected_spec).to_string(),
+        selected_policy: route_proposal::candidate_policy_name(selected_spec),
         contract: apply.contract,
         proposal_actions: apply.proposal_actions,
         applied_actions: apply.applied_actions,
@@ -2468,81 +2301,36 @@ fn run_native_project_route_proposal_selection(
     to_anchor_pad_uuid: Uuid,
     profile: NativeProjectRouteProposalProfileArg,
 ) -> Result<RouteProposalSelectionOutcome> {
-    let specs = route_proposal_selection_specs(profile);
-    let selection_rule = format!(
-        "profile {} selects the first successful candidate in this deterministic order: {}",
-        route_proposal_profile_name(profile),
-        specs
-            .iter()
-            .map(route_proposal_selection_spec_name)
-            .collect::<Vec<_>>()
-            .join(" > ")
-    );
-    let mut selected_candidate: Option<(usize, RouteProposalSelectionCandidateSpec)> = None;
-    let mut candidates = Vec::with_capacity(specs.len());
+    let outcome = route_proposal::run_route_proposal_selection(
+        engine_route_proposal_profile(profile),
+        |spec| {
+            build_route_proposal_actions_for_spec(
+                root,
+                net_uuid,
+                from_anchor_pad_uuid,
+                to_anchor_pad_uuid,
+                *spec,
+            )
+            .map_err(|error| error.to_string())
+        },
+    )
+    .map_err(anyhow::Error::msg)?;
 
-    for (index, spec) in specs.iter().copied().enumerate() {
-        match build_route_path_proposal_actions(
-            root,
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid,
-            spec.candidate,
-            spec.policy,
-        ) {
-            Ok(actions) => {
-                super::command_project_route_apply::validate_route_proposal_actions(&actions)?;
-                let first_action = actions.first().ok_or_else(|| {
-                    anyhow::anyhow!(
-                        "route proposal selector candidate {} produced no actions",
-                        route_proposal_selection_spec_name(&spec)
-                    )
-                })?;
-                let message = if let Some((winner_index, winner)) = selected_candidate {
-                    Some(format!(
-                        "available but skipped because earlier candidate {} won at selection index {}",
-                        route_proposal_selection_spec_name(&winner),
-                        winner_index
-                    ))
-                } else {
-                    selected_candidate = Some((index, spec));
-                    None
-                };
-                candidates.push(NativeProjectRouteProposalSelectionCandidateView {
-                    candidate: route_apply_candidate_name(spec.candidate).to_string(),
-                    policy: spec.policy.map(route_authored_copper_graph_policy_name),
-                    selected: selected_candidate == Some((index, spec)),
-                    contract: Some(first_action.contract.clone()),
-                    actions: Some(actions.len()),
-                    selected_path_bend_count: Some(first_action.selected_path_bend_count),
-                    selected_path_point_count: Some(first_action.selected_path_point_count),
-                    selected_path_segment_count: Some(first_action.selected_path_segment_count),
-                    message,
-                });
-            }
-            Err(error) => {
-                candidates.push(NativeProjectRouteProposalSelectionCandidateView {
-                    candidate: route_apply_candidate_name(spec.candidate).to_string(),
-                    policy: spec.policy.map(route_authored_copper_graph_policy_name),
-                    selected: false,
-                    contract: None,
-                    actions: None,
-                    selected_path_bend_count: None,
-                    selected_path_point_count: None,
-                    selected_path_segment_count: None,
-                    message: Some(error.to_string()),
-                });
-            }
-        }
-    }
-
-    let selected_view = selected_candidate.and_then(|(winner_index, winner_spec)| {
-        candidates
-            .get(winner_index)
-            .map(|candidate| (winner_spec, candidate.clone()))
-    });
-
-    let selected_spec = selected_view.as_ref().map(|(spec, _)| *spec);
+    let candidates = outcome
+        .candidates
+        .into_iter()
+        .map(|candidate| NativeProjectRouteProposalSelectionCandidateView {
+            candidate: candidate.candidate,
+            policy: candidate.policy,
+            selected: candidate.selected,
+            contract: candidate.contract,
+            actions: candidate.actions,
+            selected_path_bend_count: candidate.selected_path_bend_count,
+            selected_path_point_count: candidate.selected_path_point_count,
+            selected_path_segment_count: candidate.selected_path_segment_count,
+            message: candidate.message,
+        })
+        .collect();
 
     Ok(RouteProposalSelectionOutcome {
         report: NativeProjectRouteProposalSelectionView {
@@ -2552,49 +2340,20 @@ fn run_native_project_route_proposal_selection(
             from_anchor_pad_uuid: from_anchor_pad_uuid.to_string(),
             to_anchor_pad_uuid: to_anchor_pad_uuid.to_string(),
             selection_profile: route_proposal_profile_name(profile).to_string(),
-            status: if selected_view.is_some() {
-                "deterministic_route_proposal_selected".to_string()
-            } else {
-                "no_route_proposal_under_current_authored_constraints".to_string()
-            },
-            selection_rule,
-            attempted_candidates: candidates.len(),
-            selected_candidate: selected_view
-                .as_ref()
-                .map(|(spec, _)| route_apply_candidate_name(spec.candidate).to_string()),
-            selected_policy: selected_view
-                .as_ref()
-                .and_then(|(spec, _)| spec.policy.map(route_authored_copper_graph_policy_name)),
-            selected_contract: selected_view
-                .as_ref()
-                .and_then(|(_, candidate)| candidate.contract.clone()),
-            selected_actions: selected_view
-                .as_ref()
-                .and_then(|(_, candidate)| candidate.actions),
-            selected_path_bend_count: selected_view
-                .as_ref()
-                .and_then(|(_, candidate)| candidate.selected_path_bend_count),
-            selected_path_point_count: selected_view
-                .as_ref()
-                .and_then(|(_, candidate)| candidate.selected_path_point_count),
-            selected_path_segment_count: selected_view
-                .as_ref()
-                .and_then(|(_, candidate)| candidate.selected_path_segment_count),
+            status: outcome.status,
+            selection_rule: outcome.selection_rule,
+            attempted_candidates: outcome.attempted_candidates,
+            selected_candidate: outcome.selected_candidate,
+            selected_policy: outcome.selected_policy,
+            selected_contract: outcome.selected_contract,
+            selected_actions: outcome.selected_actions,
+            selected_path_bend_count: outcome.selected_path_bend_count,
+            selected_path_point_count: outcome.selected_path_point_count,
+            selected_path_segment_count: outcome.selected_path_segment_count,
             candidates,
         },
-        selected_spec,
+        selected_spec: outcome.selected_spec,
     })
-}
-
-fn route_proposal_selection_specs(
-    profile: NativeProjectRouteProposalProfileArg,
-) -> Vec<RouteProposalSelectionCandidateSpec> {
-    match profile {
-        NativeProjectRouteProposalProfileArg::Default => default_route_proposal_selection_specs(),
-        NativeProjectRouteProposalProfileArg::AuthoredCopperPriority => {
-            authored_copper_priority_route_proposal_selection_specs()
-        }
-    }
 }
 
 fn accepted_route_strategy_profiles() -> [NativeProjectRouteProposalProfileArg; 2] {
@@ -2604,127 +2363,8 @@ fn accepted_route_strategy_profiles() -> [NativeProjectRouteProposalProfileArg; 
     ]
 }
 
-fn default_route_proposal_selection_specs() -> Vec<RouteProposalSelectionCandidateSpec> {
-    vec![
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::RoutePathCandidate,
-            policy: None,
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalDogleg,
-            policy: None,
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalTwoBend,
-            policy: None,
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraph,
-            policy: None,
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::AuthoredCopperPlusOneGap,
-            policy: None,
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::RoutePathCandidateVia,
-            policy: None,
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::RoutePathCandidateTwoVia,
-            policy: None,
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::RoutePathCandidateThreeVia,
-            policy: None,
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::RoutePathCandidateFourVia,
-            policy: None,
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::RoutePathCandidateFiveVia,
-            policy: None,
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::RoutePathCandidateSixVia,
-            policy: None,
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::RoutePathCandidateAuthoredViaChain,
-            policy: None,
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphVia,
-            policy: None,
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphTwoVia,
-            policy: None,
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate:
-                NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphThreeVia,
-            policy: None,
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate:
-                NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphFourVia,
-            policy: None,
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate:
-                NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphFiveVia,
-            policy: None,
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphSixVia,
-            policy: None,
-        },
-    ]
-}
-
-fn authored_copper_priority_route_proposal_selection_specs()
--> Vec<RouteProposalSelectionCandidateSpec> {
-    let mut specs = vec![
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph,
-            policy: Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::Plain),
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph,
-            policy: Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneAware),
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph,
-            policy: Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::ObstacleAware),
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph,
-            policy: Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleAware),
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph,
-            policy: Some(
-                NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyAware,
-            ),
-        },
-        RouteProposalSelectionCandidateSpec {
-            candidate: NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph,
-            policy: Some(
-                NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyLayerBalanceAware,
-            ),
-        },
-    ];
-    specs.extend(default_route_proposal_selection_specs());
-    specs
-}
-
 fn route_proposal_profile_name(profile: NativeProjectRouteProposalProfileArg) -> &'static str {
-    match profile {
-        NativeProjectRouteProposalProfileArg::Default => "default",
-        NativeProjectRouteProposalProfileArg::AuthoredCopperPriority => "authored-copper-priority",
-    }
+    route_proposal::profile_name(engine_route_proposal_profile(profile))
 }
 
 fn route_proposal_profile_from_name(name: &str) -> Result<NativeProjectRouteProposalProfileArg> {
@@ -2740,103 +2380,7 @@ fn route_proposal_profile_from_name(name: &str) -> Result<NativeProjectRouteProp
 fn route_strategy_profile_distinction(
     profile: NativeProjectRouteProposalProfileArg,
 ) -> &'static str {
-    match profile {
-        NativeProjectRouteProposalProfileArg::Default => {
-            "baseline profile: preserves the accepted selector family order exactly"
-        }
-        NativeProjectRouteProposalProfileArg::AuthoredCopperPriority => {
-            "reuse-priority profile: prepends the accepted authored-copper-graph policy family ahead of the unchanged default order"
-        }
-    }
-}
-
-fn route_proposal_selection_spec_name(spec: &RouteProposalSelectionCandidateSpec) -> String {
-    if let Some(policy) = spec.policy {
-        format!(
-            "{}:{}",
-            route_apply_candidate_name(spec.candidate),
-            route_authored_copper_graph_policy_name(policy)
-        )
-    } else {
-        route_apply_candidate_name(spec.candidate).to_string()
-    }
-}
-
-fn route_authored_copper_graph_policy_name(
-    policy: NativeRoutePathCandidateAuthoredCopperGraphPolicy,
-) -> String {
-    match policy {
-        NativeRoutePathCandidateAuthoredCopperGraphPolicy::Plain => "plain".to_string(),
-        NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneAware => "zone_aware".to_string(),
-        NativeRoutePathCandidateAuthoredCopperGraphPolicy::ObstacleAware => {
-            "obstacle_aware".to_string()
-        }
-        NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleAware => {
-            "zone_obstacle_aware".to_string()
-        }
-        NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyAware => {
-            "zone_obstacle_topology_aware".to_string()
-        }
-        NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyLayerBalanceAware => {
-            "zone_obstacle_topology_layer_balance_aware".to_string()
-        }
-    }
-}
-
-fn route_apply_candidate_name(candidate: NativeProjectRouteApplyCandidateArg) -> &'static str {
-    match candidate {
-        NativeProjectRouteApplyCandidateArg::RoutePathCandidate => "route-path-candidate",
-        NativeProjectRouteApplyCandidateArg::RoutePathCandidateVia => "route-path-candidate-via",
-        NativeProjectRouteApplyCandidateArg::RoutePathCandidateTwoVia => {
-            "route-path-candidate-two-via"
-        }
-        NativeProjectRouteApplyCandidateArg::RoutePathCandidateThreeVia => {
-            "route-path-candidate-three-via"
-        }
-        NativeProjectRouteApplyCandidateArg::RoutePathCandidateFourVia => {
-            "route-path-candidate-four-via"
-        }
-        NativeProjectRouteApplyCandidateArg::RoutePathCandidateFiveVia => {
-            "route-path-candidate-five-via"
-        }
-        NativeProjectRouteApplyCandidateArg::RoutePathCandidateSixVia => {
-            "route-path-candidate-six-via"
-        }
-        NativeProjectRouteApplyCandidateArg::RoutePathCandidateAuthoredViaChain => {
-            "route-path-candidate-authored-via-chain"
-        }
-        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalDogleg => {
-            "route-path-candidate-orthogonal-dogleg"
-        }
-        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalTwoBend => {
-            "route-path-candidate-orthogonal-two-bend"
-        }
-        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraph => {
-            "route-path-candidate-orthogonal-graph"
-        }
-        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphVia => {
-            "route-path-candidate-orthogonal-graph-via"
-        }
-        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphTwoVia => {
-            "route-path-candidate-orthogonal-graph-two-via"
-        }
-        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphThreeVia => {
-            "route-path-candidate-orthogonal-graph-three-via"
-        }
-        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphFourVia => {
-            "route-path-candidate-orthogonal-graph-four-via"
-        }
-        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphFiveVia => {
-            "route-path-candidate-orthogonal-graph-five-via"
-        }
-        NativeProjectRouteApplyCandidateArg::RoutePathCandidateOrthogonalGraphSixVia => {
-            "route-path-candidate-orthogonal-graph-six-via"
-        }
-        NativeProjectRouteApplyCandidateArg::AuthoredCopperPlusOneGap => {
-            "authored-copper-plus-one-gap"
-        }
-        NativeProjectRouteApplyCandidateArg::AuthoredCopperGraph => "authored-copper-graph",
-    }
+    route_proposal::profile_distinction(engine_route_proposal_profile(profile))
 }
 
 pub(crate) fn load_route_proposal_artifact(
@@ -3043,8 +2587,9 @@ pub(crate) fn apply_route_proposal_artifact(
             loaded.artifact_path.display()
         )
     })?;
-    let revalidation = analyze_route_proposal_artifact_revalidation(
-        root,
+    let live_board = load_route_proposal_live_board(root);
+    let revalidation = route_proposal::analyze_route_proposal_artifact_revalidation(
+        &live_board,
         &loaded.artifact.contract,
         first_action,
         &loaded.artifact.actions,
@@ -3056,7 +2601,7 @@ pub(crate) fn apply_route_proposal_artifact(
             diagnostic
         );
     }
-    let _live_actions = revalidation.live_actions?;
+    let _live_actions = revalidation.live_actions.map_err(anyhow::Error::msg)?;
     if !revalidation.matches_live {
         bail!(
             "route proposal artifact drifted for contract {}: geometry changed under the same ranked path; refresh the proposal before apply",
@@ -3116,8 +2661,9 @@ pub(crate) fn revalidate_route_proposal_artifact(
             loaded.artifact_path.display()
         )
     })?;
-    let revalidation = analyze_route_proposal_artifact_revalidation(
-        root,
+    let live_board = load_route_proposal_live_board(root);
+    let revalidation = route_proposal::analyze_route_proposal_artifact_revalidation(
+        &live_board,
         &loaded.artifact.contract,
         first_action,
         &loaded.artifact.actions,
@@ -3192,403 +2738,38 @@ pub(crate) fn revalidate_route_proposal_artifact(
     })
 }
 
-fn rebuild_route_proposal_artifact_live_actions(
-    root: &Path,
-    contract: &str,
-    first_action: &NativeProjectRouteProposalActionView,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    if contract == "m5_route_path_candidate_authored_copper_graph_policy_v1" {
-        let policy =
-            route_path_candidate_authored_copper_graph_policy_from_reason(&first_action.reason)
-                .ok_or_else(|| {
-                    anyhow::anyhow!(
-                        "route proposal artifact apply is not supported for contract={} reason={}",
-                        contract,
-                        first_action.reason
-                    )
-                })?;
-        return build_route_path_candidate_authored_copper_graph_policy_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-            policy,
-        );
-    }
-
-    match (contract, first_action.reason.as_str()) {
-        ("m5_route_path_candidate_v2", ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE) => {
-            build_route_path_candidate_proposal_actions(
-                root,
-                first_action.net_uuid,
-                first_action.from_anchor_pad_uuid,
-                first_action.to_anchor_pad_uuid,
-            )
-        }
-        ("m5_route_path_candidate_via_v1", ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_VIA) => {
-            build_route_path_candidate_via_proposal_actions(
-                root,
-                first_action.net_uuid,
-                first_action.from_anchor_pad_uuid,
-                first_action.to_anchor_pad_uuid,
-            )
-        }
-        (
-            "m5_route_path_candidate_two_via_v1",
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_TWO_VIA,
-        ) => build_route_path_candidate_two_via_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        (
-            "m5_route_path_candidate_three_via_v1",
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_THREE_VIA,
-        ) => build_route_path_candidate_three_via_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        (
-            "m5_route_path_candidate_four_via_v1",
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_FOUR_VIA,
-        ) => build_route_path_candidate_four_via_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        (
-            "m5_route_path_candidate_five_via_v1",
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_FIVE_VIA,
-        ) => build_route_path_candidate_five_via_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        (
-            "m5_route_path_candidate_six_via_v1",
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_SIX_VIA,
-        ) => build_route_path_candidate_six_via_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        (
-            "m5_route_path_candidate_authored_via_chain_v1",
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_VIA_CHAIN,
-        ) => build_route_path_candidate_authored_via_chain_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        (
-            "m5_route_path_candidate_orthogonal_dogleg_v1",
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_DOGLEG,
-        ) => build_route_path_candidate_orthogonal_dogleg_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        (
-            "m5_route_path_candidate_orthogonal_two_bend_v1",
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_TWO_BEND,
-        ) => build_route_path_candidate_orthogonal_two_bend_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        (
-            "m5_route_path_candidate_orthogonal_graph_v1",
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH,
-        ) => build_route_path_candidate_orthogonal_graph_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        (
-            "m5_route_path_candidate_orthogonal_graph_via_v1",
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_VIA,
-        ) => build_route_path_candidate_orthogonal_graph_via_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        (
-            "m5_route_path_candidate_orthogonal_graph_two_via_v1",
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_TWO_VIA,
-        ) => build_route_path_candidate_orthogonal_graph_two_via_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        (
-            "m5_route_path_candidate_orthogonal_graph_three_via_v1",
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_THREE_VIA,
-        ) => build_route_path_candidate_orthogonal_graph_three_via_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        (
-            "m5_route_path_candidate_orthogonal_graph_four_via_v1",
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_FOUR_VIA,
-        ) => build_route_path_candidate_orthogonal_graph_four_via_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        (
-            "m5_route_path_candidate_orthogonal_graph_five_via_v1",
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_FIVE_VIA,
-        ) => build_route_path_candidate_orthogonal_graph_five_via_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        (
-            "m5_route_path_candidate_orthogonal_graph_six_via_v1",
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_SIX_VIA,
-        ) => build_route_path_candidate_orthogonal_graph_six_via_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        (
-            "m5_route_path_candidate_authored_copper_graph_zone_aware_v1",
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_AWARE,
-        ) => build_route_path_candidate_authored_copper_graph_zone_aware_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        (
-            "m5_route_path_candidate_authored_copper_graph_zone_obstacle_aware_v1",
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE,
-        ) => build_route_path_candidate_authored_copper_graph_zone_obstacle_aware_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        (
-            "m5_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_v1",
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE_TOPOLOGY_AWARE,
-        ) => build_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        (
-            "m5_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_v1",
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE_TOPOLOGY_AWARE_LAYER_BALANCE_AWARE,
-        ) => build_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        (
-            "m5_route_path_candidate_authored_copper_graph_obstacle_aware_v1",
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_OBSTACLE_AWARE,
-        ) => build_route_path_candidate_authored_copper_graph_obstacle_aware_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        (
-            "m5_route_path_candidate_authored_copper_plus_one_gap_v1",
-            ROUTE_PROPOSAL_REASON_AUTHORED_COPPER_PLUS_ONE_GAP,
-        ) => build_plus_one_gap_route_proposal_actions(
-            root,
-            first_action.net_uuid,
-            first_action.from_anchor_pad_uuid,
-            first_action.to_anchor_pad_uuid,
-        ),
-        _ => bail!(
-            "route proposal artifact apply is not supported for contract={} reason={}",
-            contract,
-            first_action.reason
-        ),
-    }
-}
-
-fn analyze_route_proposal_artifact_revalidation(
-    root: &Path,
-    contract: &str,
-    first_action: &NativeProjectRouteProposalActionView,
-    artifact_actions: &[NativeProjectRouteProposalActionView],
-) -> RouteProposalArtifactRevalidationState {
-    let live_actions = rebuild_route_proposal_artifact_live_actions(root, contract, first_action);
-    let drift_kind = orthogonal_graph_route_proposal_artifact_drift_kind(
-        contract,
-        artifact_actions,
-        &live_actions,
-    );
-    let drift_message = drift_kind.map(|kind| {
-        let artifact_first = artifact_actions
-            .first()
-            .expect("route proposal artifact revalidation requires one action");
-        render_orthogonal_graph_route_proposal_drift_message(
-            kind,
-            artifact_first,
-            live_actions
-                .as_ref()
-                .ok()
-                .and_then(|actions| actions.first()),
-            live_actions.as_ref().err(),
-        )
-    });
-    let matches_live = match &live_actions {
-        Ok(actions) => actions == artifact_actions,
-        Err(_) => false,
-    };
-
-    RouteProposalArtifactRevalidationState {
-        live_actions,
-        matches_live,
-        drift_kind,
-        drift_message,
-    }
-}
-
-fn orthogonal_graph_route_proposal_artifact_drift_kind(
-    contract: &str,
-    artifact_actions: &[NativeProjectRouteProposalActionView],
-    live_actions: &Result<Vec<NativeProjectRouteProposalActionView>>,
-) -> Option<OrthogonalGraphArtifactDriftKind> {
-    if !is_orthogonal_graph_route_proposal_contract(contract) {
-        return None;
-    }
-
-    let artifact_first = artifact_actions.first()?;
-    match live_actions {
-        Ok(live_actions) => {
-            let live_first = live_actions.first()?;
-            if live_actions == artifact_actions {
-                return None;
-            }
-            if artifact_first.selected_path_bend_count != live_first.selected_path_bend_count
-                || artifact_first.selected_path_point_count != live_first.selected_path_point_count
-                || artifact_first.selected_path_segment_count
-                    != live_first.selected_path_segment_count
-                || artifact_first.reused_via_uuids != live_first.reused_via_uuids
-            {
-                Some(OrthogonalGraphArtifactDriftKind::DeterministicCostWinnerChanged)
-            } else {
-                Some(OrthogonalGraphArtifactDriftKind::GeometryChanged)
-            }
-        }
-        Err(_) => Some(OrthogonalGraphArtifactDriftKind::CandidateAvailabilityChanged),
-    }
-}
-
-fn is_orthogonal_graph_route_proposal_contract(contract: &str) -> bool {
-    matches!(
-        contract,
-        "m5_route_path_candidate_orthogonal_graph_v1"
-            | "m5_route_path_candidate_orthogonal_graph_via_v1"
-            | "m5_route_path_candidate_orthogonal_graph_two_via_v1"
-            | "m5_route_path_candidate_orthogonal_graph_three_via_v1"
-            | "m5_route_path_candidate_orthogonal_graph_four_via_v1"
-            | "m5_route_path_candidate_orthogonal_graph_five_via_v1"
-            | "m5_route_path_candidate_orthogonal_graph_six_via_v1"
-    )
-}
-
-fn render_orthogonal_graph_route_proposal_drift_message(
-    drift_kind: OrthogonalGraphArtifactDriftKind,
-    artifact_action: &NativeProjectRouteProposalActionView,
-    live_action: Option<&NativeProjectRouteProposalActionView>,
-    error: Option<&anyhow::Error>,
-) -> String {
-    match drift_kind {
-        OrthogonalGraphArtifactDriftKind::CandidateAvailabilityChanged => format!(
-            "candidate availability changed under current authored constraints (artifact bends={}, points={}, segments={}; live rebuild failed: {})",
-            artifact_action.selected_path_bend_count,
-            artifact_action.selected_path_point_count,
-            artifact_action.selected_path_segment_count,
-            error
-                .map(|error| error.to_string())
-                .unwrap_or_else(|| "unknown live rebuild failure".to_string())
-        ),
-        OrthogonalGraphArtifactDriftKind::DeterministicCostWinnerChanged => {
-            let live_action = live_action.expect("cost-winner drift requires a live action");
-            format!(
-                "deterministic cost winner changed (bends {} -> {}, points {} -> {}, segments {} -> {}, reused_vias {} -> {})",
-                artifact_action.selected_path_bend_count,
-                live_action.selected_path_bend_count,
-                artifact_action.selected_path_point_count,
-                live_action.selected_path_point_count,
-                artifact_action.selected_path_segment_count,
-                live_action.selected_path_segment_count,
-                artifact_action.reused_via_uuids.len(),
-                live_action.reused_via_uuids.len(),
-            )
-        }
-        OrthogonalGraphArtifactDriftKind::GeometryChanged => {
-            let live_action = live_action.expect("geometry drift requires a live action");
-            format!(
-                "geometry changed under the same ranked path (artifact action {} no longer matches live action {})",
-                artifact_action.action_id, live_action.action_id
-            )
-        }
-    }
+fn load_route_proposal_live_board(root: &Path) -> std::result::Result<Board, String> {
+    load_native_project_with_resolved_board(root)
+        .and_then(|project| build_native_project_board(&project))
+        .map_err(|error| error.to_string())
 }
 
 fn orthogonal_graph_route_proposal_artifact_segment_evidence(
     artifact_actions: &[NativeProjectRouteProposalActionView],
     live_actions: Option<&[NativeProjectRouteProposalActionView]>,
 ) -> Option<Vec<NativeProjectRouteProposalArtifactRevalidationSegmentView>> {
-    let artifact_segments = orthogonal_graph_route_proposal_segment_facts(artifact_actions)?;
-    let live_segments = live_actions.and_then(orthogonal_graph_route_proposal_segment_facts);
-    let live_segment_map = live_segments
-        .unwrap_or_default()
-        .into_iter()
-        .map(|segment| (segment.layer_segment_index, segment))
-        .collect::<BTreeMap<_, _>>();
     Some(
-        artifact_segments
-            .into_iter()
-            .map(|artifact_segment| {
-                let live_segment = live_segment_map.get(&artifact_segment.layer_segment_index);
-                NativeProjectRouteProposalArtifactRevalidationSegmentView {
-                    layer_segment_index: artifact_segment.layer_segment_index,
-                    layer_segment_count: artifact_segment.layer_segment_count,
-                    artifact_layer: artifact_segment.layer,
-                    artifact_bend_count: artifact_segment.bend_count,
-                    artifact_point_count: artifact_segment.point_count,
-                    artifact_track_action_count: artifact_segment.track_action_count,
-                    live_layer: live_segment.map(|segment| segment.layer),
-                    live_bend_count: live_segment.map(|segment| segment.bend_count),
-                    live_point_count: live_segment.map(|segment| segment.point_count),
-                    live_track_action_count: live_segment.map(|segment| segment.track_action_count),
-                    matches_live: live_segment.is_some_and(|segment| {
-                        segment.layer == artifact_segment.layer
-                            && segment.bend_count == artifact_segment.bend_count
-                            && segment.point_count == artifact_segment.point_count
-                            && segment.track_action_count == artifact_segment.track_action_count
-                    }),
-                }
-            })
-            .collect(),
+        route_proposal::orthogonal_graph_route_proposal_segment_comparison(
+            artifact_actions,
+            live_actions,
+        )?
+        .into_iter()
+        .map(
+            |segment| NativeProjectRouteProposalArtifactRevalidationSegmentView {
+                layer_segment_index: segment.layer_segment_index,
+                layer_segment_count: segment.layer_segment_count,
+                artifact_layer: segment.artifact_layer,
+                artifact_bend_count: segment.artifact_bend_count,
+                artifact_point_count: segment.artifact_point_count,
+                artifact_track_action_count: segment.artifact_track_action_count,
+                live_layer: segment.live_layer,
+                live_bend_count: segment.live_bend_count,
+                live_point_count: segment.live_point_count,
+                live_track_action_count: segment.live_track_action_count,
+                matches_live: segment.matches_live,
+            },
+        )
+        .collect(),
     )
 }
 
@@ -3596,7 +2777,7 @@ fn orthogonal_graph_route_proposal_artifact_inspection_segment_evidence(
     artifact_actions: &[NativeProjectRouteProposalActionView],
 ) -> Option<Vec<NativeProjectRouteProposalArtifactInspectionSegmentView>> {
     Some(
-        orthogonal_graph_route_proposal_segment_facts(artifact_actions)?
+        route_proposal::orthogonal_graph_route_proposal_segment_facts(artifact_actions)?
             .into_iter()
             .map(
                 |segment| NativeProjectRouteProposalArtifactInspectionSegmentView {
@@ -3610,2672 +2791,4 @@ fn orthogonal_graph_route_proposal_artifact_inspection_segment_evidence(
             )
             .collect(),
     )
-}
-
-fn orthogonal_graph_route_proposal_segment_facts(
-    actions: &[NativeProjectRouteProposalActionView],
-) -> Option<Vec<OrthogonalGraphArtifactSegmentFacts>> {
-    let mut grouped = BTreeMap::<usize, Vec<&NativeProjectRouteProposalActionView>>::new();
-    for action in actions {
-        let layer_segment_index = action.selected_path_layer_segment_index?;
-        grouped.entry(layer_segment_index).or_default().push(action);
-    }
-    Some(
-        grouped
-            .into_iter()
-            .map(|(layer_segment_index, grouped_actions)| {
-                let first = grouped_actions[0];
-                OrthogonalGraphArtifactSegmentFacts {
-                    layer_segment_index,
-                    layer_segment_count: first.selected_path_layer_segment_count.unwrap_or(0),
-                    layer: first.layer,
-                    bend_count: first.selected_path_layer_segment_bend_count.unwrap_or(0),
-                    point_count: first.selected_path_layer_segment_point_count.unwrap_or(0),
-                    track_action_count: grouped_actions.len(),
-                }
-            })
-            .collect(),
-    )
-}
-
-pub(super) fn build_plus_one_gap_route_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_authored_copper_plus_one_gap(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic plus-one-gap path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    let gap_steps = path
-        .steps
-        .iter()
-        .enumerate()
-        .filter(|(_, step)| {
-            matches!(
-                step.kind,
-                RoutePathCandidateAuthoredCopperPlusOneGapStepKindView::Gap
-            )
-        })
-        .collect::<Vec<_>>();
-    if gap_steps.len() != 1 {
-        bail!(
-            "route proposal requires exactly one eligible gap, found {} for net {}",
-            gap_steps.len(),
-            net_uuid
-        );
-    }
-    let (selected_gap_step_index, gap_step) = gap_steps[0];
-    let action_id = route_proposal_action_id(
-        &report.contract,
-        "draw_track",
-        ROUTE_PROPOSAL_REASON_AUTHORED_COPPER_PLUS_ONE_GAP,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-        gap_step.layer,
-        gap_step.from,
-        gap_step.to,
-        net_class.track_width_nm,
-        None,
-        &[],
-        None,
-        None,
-        None,
-        None,
-    );
-
-    Ok(vec![NativeProjectRouteProposalActionView {
-        action_id,
-        proposal_action: "draw_track".to_string(),
-        reason: ROUTE_PROPOSAL_REASON_AUTHORED_COPPER_PLUS_ONE_GAP.to_string(),
-        contract: report.contract,
-        net_uuid: report.net_uuid,
-        net_name: report.net_name,
-        from_anchor_pad_uuid: report.from_anchor_pad_uuid,
-        to_anchor_pad_uuid: report.to_anchor_pad_uuid,
-        layer: gap_step.layer,
-        width_nm: net_class.track_width_nm,
-        from: gap_step.from,
-        to: gap_step.to,
-        reused_via_uuid: None,
-        reused_via_uuids: Vec::new(),
-        reused_object_kind: None,
-        reused_object_uuid: None,
-        reused_object_from_layer: None,
-        reused_object_to_layer: None,
-        selected_path_bend_count: 0,
-        selected_path_point_count: path.steps.len() + 1,
-        selected_path_segment_index: selected_gap_step_index,
-        selected_path_segment_count: path.steps.len(),
-        selected_path_layer_segment_index: None,
-        selected_path_layer_segment_count: None,
-        selected_path_layer_segment_bend_count: None,
-        selected_path_layer_segment_point_count: None,
-    }])
-}
-
-pub(super) fn build_route_path_candidate_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic single-layer path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    if path.points.len() < 2 {
-        bail!(
-            "route proposal requires at least two path points for net {}",
-            net_uuid
-        );
-    }
-    let selected_path_segment_count = path.points.len() - 1;
-    let actions = path
-        .points
-        .windows(2)
-        .enumerate()
-        .map(|(selected_path_segment_index, segment)| {
-            let from = segment[0];
-            let to = segment[1];
-            let action_id = route_proposal_action_id(
-                &report.contract,
-                "draw_track",
-                ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-                path.layer,
-                from,
-                to,
-                net_class.track_width_nm,
-                None,
-                &[],
-                None,
-                None,
-                None,
-                None,
-            );
-            NativeProjectRouteProposalActionView {
-                action_id,
-                proposal_action: "draw_track".to_string(),
-                reason: ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE.to_string(),
-                contract: report.contract.clone(),
-                net_uuid: report.net_uuid,
-                net_name: report.net_name.clone(),
-                from_anchor_pad_uuid: report.from_anchor_pad_uuid,
-                to_anchor_pad_uuid: report.to_anchor_pad_uuid,
-                layer: path.layer,
-                width_nm: net_class.track_width_nm,
-                from,
-                to,
-                reused_via_uuid: None,
-                reused_via_uuids: Vec::new(),
-                reused_object_kind: None,
-                reused_object_uuid: None,
-                reused_object_from_layer: None,
-                reused_object_to_layer: None,
-                selected_path_bend_count: 0,
-                selected_path_point_count: path.points.len(),
-                selected_path_segment_index,
-                selected_path_segment_count,
-                selected_path_layer_segment_index: None,
-                selected_path_layer_segment_count: None,
-                selected_path_layer_segment_bend_count: None,
-                selected_path_layer_segment_point_count: None,
-            }
-        })
-        .collect::<Vec<_>>();
-    Ok(actions)
-}
-
-pub(super) fn build_route_path_candidate_orthogonal_dogleg_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_orthogonal_dogleg(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic orthogonal dogleg path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected orthogonal dogleg path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    if path.points.len() < 2 {
-        bail!(
-            "route proposal requires at least two path points for net {}",
-            net_uuid
-        );
-    }
-    let selected_path_segment_count = path.points.len() - 1;
-    let actions = path
-        .points
-        .windows(2)
-        .enumerate()
-        .map(|(selected_path_segment_index, segment)| {
-            let from = segment[0];
-            let to = segment[1];
-            let action_id = route_proposal_action_id(
-                &report.contract,
-                "draw_track",
-                ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_DOGLEG,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-                path.layer,
-                from,
-                to,
-                net_class.track_width_nm,
-                None,
-                &[],
-                None,
-                None,
-                None,
-                None,
-            );
-            NativeProjectRouteProposalActionView {
-                action_id,
-                proposal_action: "draw_track".to_string(),
-                reason: ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_DOGLEG.to_string(),
-                contract: report.contract.clone(),
-                net_uuid: report.net_uuid,
-                net_name: report.net_name.clone(),
-                from_anchor_pad_uuid: report.from_anchor_pad_uuid,
-                to_anchor_pad_uuid: report.to_anchor_pad_uuid,
-                layer: path.layer,
-                width_nm: net_class.track_width_nm,
-                from,
-                to,
-                reused_via_uuid: None,
-                reused_via_uuids: Vec::new(),
-                reused_object_kind: None,
-                reused_object_uuid: None,
-                reused_object_from_layer: None,
-                reused_object_to_layer: None,
-                selected_path_bend_count: 0,
-                selected_path_point_count: path.points.len(),
-                selected_path_segment_index,
-                selected_path_segment_count,
-                selected_path_layer_segment_index: None,
-                selected_path_layer_segment_count: None,
-                selected_path_layer_segment_bend_count: None,
-                selected_path_layer_segment_point_count: None,
-            }
-        })
-        .collect::<Vec<_>>();
-    Ok(actions)
-}
-
-pub(super) fn build_route_path_candidate_orthogonal_two_bend_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_orthogonal_two_bend(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic orthogonal two-bend path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected orthogonal two-bend path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    if path.points.len() < 2 {
-        bail!(
-            "route proposal requires at least two path points for net {}",
-            net_uuid
-        );
-    }
-    let selected_path_segment_count = path.points.len() - 1;
-    let actions = path
-        .points
-        .windows(2)
-        .enumerate()
-        .map(|(selected_path_segment_index, segment)| {
-            let from = segment[0];
-            let to = segment[1];
-            let action_id = route_proposal_action_id(
-                &report.contract,
-                "draw_track",
-                ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_TWO_BEND,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-                path.layer,
-                from,
-                to,
-                net_class.track_width_nm,
-                None,
-                &[],
-                None,
-                None,
-                None,
-                None,
-            );
-            NativeProjectRouteProposalActionView {
-                action_id,
-                proposal_action: "draw_track".to_string(),
-                reason: ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_TWO_BEND.to_string(),
-                contract: report.contract.clone(),
-                net_uuid: report.net_uuid,
-                net_name: report.net_name.clone(),
-                from_anchor_pad_uuid: report.from_anchor_pad_uuid,
-                to_anchor_pad_uuid: report.to_anchor_pad_uuid,
-                layer: path.layer,
-                width_nm: net_class.track_width_nm,
-                from,
-                to,
-                reused_via_uuid: None,
-                reused_via_uuids: Vec::new(),
-                reused_object_kind: None,
-                reused_object_uuid: None,
-                reused_object_from_layer: None,
-                reused_object_to_layer: None,
-                selected_path_bend_count: 0,
-                selected_path_point_count: path.points.len(),
-                selected_path_segment_index,
-                selected_path_segment_count,
-                selected_path_layer_segment_index: None,
-                selected_path_layer_segment_count: None,
-                selected_path_layer_segment_bend_count: None,
-                selected_path_layer_segment_point_count: None,
-            }
-        })
-        .collect::<Vec<_>>();
-    Ok(actions)
-}
-
-pub(super) fn build_route_path_candidate_orthogonal_graph_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_orthogonal_graph(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic orthogonal graph path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected orthogonal graph path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    if path.points.len() < 2 {
-        bail!(
-            "route proposal requires at least two path points for net {}",
-            net_uuid
-        );
-    }
-    let selected_path_segment_count = path.points.len() - 1;
-    let actions = path
-        .points
-        .windows(2)
-        .enumerate()
-        .map(|(selected_path_segment_index, segment)| {
-            let from = segment[0];
-            let to = segment[1];
-            let action_id = route_proposal_action_id(
-                &report.contract,
-                "draw_track",
-                ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-                path.layer,
-                from,
-                to,
-                net_class.track_width_nm,
-                None,
-                &[],
-                None,
-                None,
-                None,
-                None,
-            );
-            NativeProjectRouteProposalActionView {
-                action_id,
-                proposal_action: "draw_track".to_string(),
-                reason: ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH.to_string(),
-                contract: report.contract.clone(),
-                net_uuid: report.net_uuid,
-                net_name: report.net_name.clone(),
-                from_anchor_pad_uuid: report.from_anchor_pad_uuid,
-                to_anchor_pad_uuid: report.to_anchor_pad_uuid,
-                layer: path.layer,
-                width_nm: net_class.track_width_nm,
-                from,
-                to,
-                reused_via_uuid: None,
-                reused_via_uuids: Vec::new(),
-                reused_object_kind: None,
-                reused_object_uuid: None,
-                reused_object_from_layer: None,
-                reused_object_to_layer: None,
-                selected_path_bend_count: path.cost.bend_count,
-                selected_path_point_count: path.points.len(),
-                selected_path_segment_index,
-                selected_path_segment_count,
-                selected_path_layer_segment_index: Some(0),
-                selected_path_layer_segment_count: Some(1),
-                selected_path_layer_segment_bend_count: Some(path.cost.bend_count),
-                selected_path_layer_segment_point_count: Some(path.points.len()),
-            }
-        })
-        .collect::<Vec<_>>();
-    Ok(actions)
-}
-
-pub(super) fn build_route_path_candidate_orthogonal_graph_via_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_orthogonal_graph_via(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic orthogonal graph via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected orthogonal graph via path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    let selected_path_segment_count = path
-        .segments
-        .iter()
-        .map(|segment| segment.points.len().saturating_sub(1))
-        .sum::<usize>();
-    let selected_path_layer_segment_count = path.segments.len();
-    let actions = path
-        .segments
-        .iter()
-        .enumerate()
-        .flat_map(|(selected_path_layer_segment_index, segment)| {
-            segment
-                .points
-                .windows(2)
-                .enumerate()
-                .map(move |(edge_index, window)| {
-                    (
-                        selected_path_layer_segment_index,
-                        edge_index,
-                        segment.layer,
-                        segment.cost.bend_count,
-                        segment.points.len(),
-                        window[0],
-                        window[1],
-                    )
-                })
-        })
-        .scan(0usize, |selected_path_segment_index, segment| {
-            let current = *selected_path_segment_index;
-            *selected_path_segment_index += 1;
-            Some((current, segment))
-        })
-        .map(
-            |(
-                selected_path_segment_index,
-                (
-                    selected_path_layer_segment_index,
-                    _edge_index,
-                    layer,
-                    selected_path_layer_segment_bend_count,
-                    selected_path_layer_segment_point_count,
-                    from,
-                    to,
-                ),
-            )| {
-                let action_id = route_proposal_action_id(
-                    &report.contract,
-                    "draw_track",
-                    ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_VIA,
-                    net_uuid,
-                    from_anchor_pad_uuid,
-                    to_anchor_pad_uuid,
-                    layer,
-                    from,
-                    to,
-                    net_class.track_width_nm,
-                    Some(path.via_uuid),
-                    &[path.via_uuid],
-                    None,
-                    None,
-                    None,
-                    None,
-                );
-                NativeProjectRouteProposalActionView {
-                    action_id,
-                    proposal_action: "draw_track".to_string(),
-                    reason: ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_VIA
-                        .to_string(),
-                    contract: report.contract.clone(),
-                    net_uuid: report.net_uuid,
-                    net_name: report.net_name.clone(),
-                    from_anchor_pad_uuid: report.from_anchor_pad_uuid,
-                    to_anchor_pad_uuid: report.to_anchor_pad_uuid,
-                    layer,
-                    width_nm: net_class.track_width_nm,
-                    from,
-                    to,
-                    reused_via_uuid: Some(path.via_uuid),
-                    reused_via_uuids: vec![path.via_uuid],
-                    reused_object_kind: None,
-                    reused_object_uuid: None,
-                    reused_object_from_layer: None,
-                    reused_object_to_layer: None,
-                    selected_path_bend_count: path
-                        .segments
-                        .iter()
-                        .map(|segment| segment.cost.bend_count)
-                        .sum(),
-                    selected_path_point_count: path
-                        .segments
-                        .iter()
-                        .map(|segment| segment.points.len())
-                        .sum(),
-                    selected_path_segment_index,
-                    selected_path_segment_count,
-                    selected_path_layer_segment_index: Some(selected_path_layer_segment_index),
-                    selected_path_layer_segment_count: Some(selected_path_layer_segment_count),
-                    selected_path_layer_segment_bend_count: Some(
-                        selected_path_layer_segment_bend_count,
-                    ),
-                    selected_path_layer_segment_point_count: Some(
-                        selected_path_layer_segment_point_count,
-                    ),
-                }
-            },
-        )
-        .collect::<Vec<_>>();
-    Ok(actions)
-}
-
-pub(super) fn build_route_path_candidate_orthogonal_graph_two_via_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_orthogonal_graph_two_via(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic orthogonal graph two-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected orthogonal graph two-via path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    let reused_via_uuids = vec![path.via_a_uuid, path.via_b_uuid];
-    let selected_path_segment_count = path
-        .segments
-        .iter()
-        .map(|segment| segment.points.len().saturating_sub(1))
-        .sum::<usize>();
-    let selected_path_point_count = path
-        .segments
-        .iter()
-        .map(|segment| segment.points.len())
-        .sum();
-    let selected_path_layer_segment_count = path.segments.len();
-    let actions = path
-        .segments
-        .iter()
-        .enumerate()
-        .flat_map(|(selected_path_layer_segment_index, segment)| {
-            segment
-                .points
-                .windows(2)
-                .enumerate()
-                .map(move |(edge_index, window)| {
-                    (
-                        selected_path_layer_segment_index,
-                        edge_index,
-                        segment.layer,
-                        segment.cost.bend_count,
-                        segment.points.len(),
-                        window[0],
-                        window[1],
-                    )
-                })
-        })
-        .scan(0usize, |selected_path_segment_index, segment| {
-            let current = *selected_path_segment_index;
-            *selected_path_segment_index += 1;
-            Some((current, segment))
-        })
-        .map(
-            |(
-                selected_path_segment_index,
-                (
-                    selected_path_layer_segment_index,
-                    _edge_index,
-                    layer,
-                    selected_path_layer_segment_bend_count,
-                    selected_path_layer_segment_point_count,
-                    from,
-                    to,
-                ),
-            )| {
-                let action_id = route_proposal_action_id(
-                    &report.contract,
-                    "draw_track",
-                    ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_TWO_VIA,
-                    net_uuid,
-                    from_anchor_pad_uuid,
-                    to_anchor_pad_uuid,
-                    layer,
-                    from,
-                    to,
-                    net_class.track_width_nm,
-                    Some(path.via_a_uuid),
-                    &reused_via_uuids,
-                    None,
-                    None,
-                    None,
-                    None,
-                );
-                NativeProjectRouteProposalActionView {
-                    action_id,
-                    proposal_action: "draw_track".to_string(),
-                    reason: ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_TWO_VIA
-                        .to_string(),
-                    contract: report.contract.clone(),
-                    net_uuid: report.net_uuid,
-                    net_name: report.net_name.clone(),
-                    from_anchor_pad_uuid: report.from_anchor_pad_uuid,
-                    to_anchor_pad_uuid: report.to_anchor_pad_uuid,
-                    layer,
-                    width_nm: net_class.track_width_nm,
-                    from,
-                    to,
-                    reused_via_uuid: Some(path.via_a_uuid),
-                    reused_via_uuids: reused_via_uuids.clone(),
-                    reused_object_kind: None,
-                    reused_object_uuid: None,
-                    reused_object_from_layer: None,
-                    reused_object_to_layer: None,
-                    selected_path_bend_count: path
-                        .segments
-                        .iter()
-                        .map(|segment| segment.cost.bend_count)
-                        .sum(),
-                    selected_path_point_count,
-                    selected_path_segment_index,
-                    selected_path_segment_count,
-                    selected_path_layer_segment_index: Some(selected_path_layer_segment_index),
-                    selected_path_layer_segment_count: Some(selected_path_layer_segment_count),
-                    selected_path_layer_segment_bend_count: Some(
-                        selected_path_layer_segment_bend_count,
-                    ),
-                    selected_path_layer_segment_point_count: Some(
-                        selected_path_layer_segment_point_count,
-                    ),
-                }
-            },
-        )
-        .collect::<Vec<_>>();
-    Ok(actions)
-}
-
-pub(super) fn build_route_path_candidate_orthogonal_graph_three_via_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_orthogonal_graph_three_via(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic orthogonal graph three-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected orthogonal graph three-via path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    let reused_via_uuids = vec![path.via_a_uuid, path.via_b_uuid, path.via_c_uuid];
-    let selected_path_segment_count = path
-        .segments
-        .iter()
-        .map(|segment| segment.points.len().saturating_sub(1))
-        .sum::<usize>();
-    let selected_path_point_count = path
-        .segments
-        .iter()
-        .map(|segment| segment.points.len())
-        .sum();
-    let selected_path_layer_segment_count = path.segments.len();
-    let actions = path
-        .segments
-        .iter()
-        .enumerate()
-        .flat_map(|(selected_path_layer_segment_index, segment)| {
-            segment
-                .points
-                .windows(2)
-                .enumerate()
-                .map(move |(edge_index, window)| {
-                    (
-                        selected_path_layer_segment_index,
-                        edge_index,
-                        segment.layer,
-                        segment.cost.bend_count,
-                        segment.points.len(),
-                        window[0],
-                        window[1],
-                    )
-                })
-        })
-        .scan(0usize, |selected_path_segment_index, segment| {
-            let current = *selected_path_segment_index;
-            *selected_path_segment_index += 1;
-            Some((current, segment))
-        })
-        .map(
-            |(
-                selected_path_segment_index,
-                (
-                    selected_path_layer_segment_index,
-                    _edge_index,
-                    layer,
-                    selected_path_layer_segment_bend_count,
-                    selected_path_layer_segment_point_count,
-                    from,
-                    to,
-                ),
-            )| {
-                let action_id = route_proposal_action_id(
-                    &report.contract,
-                    "draw_track",
-                    ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_THREE_VIA,
-                    net_uuid,
-                    from_anchor_pad_uuid,
-                    to_anchor_pad_uuid,
-                    layer,
-                    from,
-                    to,
-                    net_class.track_width_nm,
-                    Some(path.via_a_uuid),
-                    &reused_via_uuids,
-                    None,
-                    None,
-                    None,
-                    None,
-                );
-                NativeProjectRouteProposalActionView {
-                    action_id,
-                    proposal_action: "draw_track".to_string(),
-                    reason: ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_THREE_VIA
-                        .to_string(),
-                    contract: report.contract.clone(),
-                    net_uuid: report.net_uuid,
-                    net_name: report.net_name.clone(),
-                    from_anchor_pad_uuid: report.from_anchor_pad_uuid,
-                    to_anchor_pad_uuid: report.to_anchor_pad_uuid,
-                    layer,
-                    width_nm: net_class.track_width_nm,
-                    from,
-                    to,
-                    reused_via_uuid: Some(path.via_a_uuid),
-                    reused_via_uuids: reused_via_uuids.clone(),
-                    reused_object_kind: None,
-                    reused_object_uuid: None,
-                    reused_object_from_layer: None,
-                    reused_object_to_layer: None,
-                    selected_path_bend_count: path
-                        .segments
-                        .iter()
-                        .map(|segment| segment.cost.bend_count)
-                        .sum(),
-                    selected_path_point_count,
-                    selected_path_segment_index,
-                    selected_path_segment_count,
-                    selected_path_layer_segment_index: Some(selected_path_layer_segment_index),
-                    selected_path_layer_segment_count: Some(selected_path_layer_segment_count),
-                    selected_path_layer_segment_bend_count: Some(
-                        selected_path_layer_segment_bend_count,
-                    ),
-                    selected_path_layer_segment_point_count: Some(
-                        selected_path_layer_segment_point_count,
-                    ),
-                }
-            },
-        )
-        .collect::<Vec<_>>();
-    Ok(actions)
-}
-
-pub(super) fn build_route_path_candidate_orthogonal_graph_four_via_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_orthogonal_graph_four_via(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic orthogonal graph four-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected orthogonal graph four-via path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    let reused_via_uuids = vec![
-        path.via_a_uuid,
-        path.via_b_uuid,
-        path.via_c_uuid,
-        path.via_d_uuid,
-    ];
-    let selected_path_segment_count = path
-        .segments
-        .iter()
-        .map(|segment| segment.points.len().saturating_sub(1))
-        .sum::<usize>();
-    let selected_path_point_count = path
-        .segments
-        .iter()
-        .map(|segment| segment.points.len())
-        .sum();
-    let selected_path_layer_segment_count = path.segments.len();
-    let actions = path
-        .segments
-        .iter()
-        .enumerate()
-        .flat_map(|(selected_path_layer_segment_index, segment)| {
-            segment
-                .points
-                .windows(2)
-                .enumerate()
-                .map(move |(edge_index, window)| {
-                    (
-                        selected_path_layer_segment_index,
-                        edge_index,
-                        segment.layer,
-                        segment.cost.bend_count,
-                        segment.points.len(),
-                        window[0],
-                        window[1],
-                    )
-                })
-        })
-        .scan(0usize, |selected_path_segment_index, segment| {
-            let current = *selected_path_segment_index;
-            *selected_path_segment_index += 1;
-            Some((current, segment))
-        })
-        .map(
-            |(
-                selected_path_segment_index,
-                (
-                    selected_path_layer_segment_index,
-                    _edge_index,
-                    layer,
-                    selected_path_layer_segment_bend_count,
-                    selected_path_layer_segment_point_count,
-                    from,
-                    to,
-                ),
-            )| {
-                let action_id = route_proposal_action_id(
-                    &report.contract,
-                    "draw_track",
-                    ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_FOUR_VIA,
-                    net_uuid,
-                    from_anchor_pad_uuid,
-                    to_anchor_pad_uuid,
-                    layer,
-                    from,
-                    to,
-                    net_class.track_width_nm,
-                    Some(path.via_a_uuid),
-                    &reused_via_uuids,
-                    None,
-                    None,
-                    None,
-                    None,
-                );
-                NativeProjectRouteProposalActionView {
-                    action_id,
-                    proposal_action: "draw_track".to_string(),
-                    reason: ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_FOUR_VIA
-                        .to_string(),
-                    contract: report.contract.clone(),
-                    net_uuid: report.net_uuid,
-                    net_name: report.net_name.clone(),
-                    from_anchor_pad_uuid: report.from_anchor_pad_uuid,
-                    to_anchor_pad_uuid: report.to_anchor_pad_uuid,
-                    layer,
-                    width_nm: net_class.track_width_nm,
-                    from,
-                    to,
-                    reused_via_uuid: Some(path.via_a_uuid),
-                    reused_via_uuids: reused_via_uuids.clone(),
-                    reused_object_kind: None,
-                    reused_object_uuid: None,
-                    reused_object_from_layer: None,
-                    reused_object_to_layer: None,
-                    selected_path_bend_count: path
-                        .segments
-                        .iter()
-                        .map(|segment| segment.cost.bend_count)
-                        .sum(),
-                    selected_path_point_count,
-                    selected_path_segment_index,
-                    selected_path_segment_count,
-                    selected_path_layer_segment_index: Some(selected_path_layer_segment_index),
-                    selected_path_layer_segment_count: Some(selected_path_layer_segment_count),
-                    selected_path_layer_segment_bend_count: Some(
-                        selected_path_layer_segment_bend_count,
-                    ),
-                    selected_path_layer_segment_point_count: Some(
-                        selected_path_layer_segment_point_count,
-                    ),
-                }
-            },
-        )
-        .collect::<Vec<_>>();
-    Ok(actions)
-}
-
-pub(super) fn build_route_path_candidate_orthogonal_graph_five_via_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_orthogonal_graph_five_via(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic orthogonal graph five-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected orthogonal graph five-via path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    let reused_via_uuids = vec![
-        path.via_a_uuid,
-        path.via_b_uuid,
-        path.via_c_uuid,
-        path.via_d_uuid,
-        path.via_e_uuid,
-    ];
-    let selected_path_segment_count = path
-        .segments
-        .iter()
-        .map(|segment| segment.points.len().saturating_sub(1))
-        .sum::<usize>();
-    let selected_path_point_count = path
-        .segments
-        .iter()
-        .map(|segment| segment.points.len())
-        .sum();
-    let selected_path_layer_segment_count = path.segments.len();
-    let actions = path
-        .segments
-        .iter()
-        .enumerate()
-        .flat_map(|(selected_path_layer_segment_index, segment)| {
-            segment
-                .points
-                .windows(2)
-                .enumerate()
-                .map(move |(edge_index, window)| {
-                    (
-                        selected_path_layer_segment_index,
-                        edge_index,
-                        segment.layer,
-                        segment.cost.bend_count,
-                        segment.points.len(),
-                        window[0],
-                        window[1],
-                    )
-                })
-        })
-        .scan(0usize, |selected_path_segment_index, segment| {
-            let current = *selected_path_segment_index;
-            *selected_path_segment_index += 1;
-            Some((current, segment))
-        })
-        .map(
-            |(
-                selected_path_segment_index,
-                (
-                    selected_path_layer_segment_index,
-                    _edge_index,
-                    layer,
-                    selected_path_layer_segment_bend_count,
-                    selected_path_layer_segment_point_count,
-                    from,
-                    to,
-                ),
-            )| {
-                let action_id = route_proposal_action_id(
-                    &report.contract,
-                    "draw_track",
-                    ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_FIVE_VIA,
-                    net_uuid,
-                    from_anchor_pad_uuid,
-                    to_anchor_pad_uuid,
-                    layer,
-                    from,
-                    to,
-                    net_class.track_width_nm,
-                    Some(path.via_a_uuid),
-                    &reused_via_uuids,
-                    None,
-                    None,
-                    None,
-                    None,
-                );
-                NativeProjectRouteProposalActionView {
-                    action_id,
-                    proposal_action: "draw_track".to_string(),
-                    reason: ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_FIVE_VIA
-                        .to_string(),
-                    contract: report.contract.clone(),
-                    net_uuid: report.net_uuid,
-                    net_name: report.net_name.clone(),
-                    from_anchor_pad_uuid: report.from_anchor_pad_uuid,
-                    to_anchor_pad_uuid: report.to_anchor_pad_uuid,
-                    layer,
-                    width_nm: net_class.track_width_nm,
-                    from,
-                    to,
-                    reused_via_uuid: Some(path.via_a_uuid),
-                    reused_via_uuids: reused_via_uuids.clone(),
-                    reused_object_kind: None,
-                    reused_object_uuid: None,
-                    reused_object_from_layer: None,
-                    reused_object_to_layer: None,
-                    selected_path_bend_count: path
-                        .segments
-                        .iter()
-                        .map(|segment| segment.cost.bend_count)
-                        .sum(),
-                    selected_path_point_count,
-                    selected_path_segment_index,
-                    selected_path_segment_count,
-                    selected_path_layer_segment_index: Some(selected_path_layer_segment_index),
-                    selected_path_layer_segment_count: Some(selected_path_layer_segment_count),
-                    selected_path_layer_segment_bend_count: Some(
-                        selected_path_layer_segment_bend_count,
-                    ),
-                    selected_path_layer_segment_point_count: Some(
-                        selected_path_layer_segment_point_count,
-                    ),
-                }
-            },
-        )
-        .collect::<Vec<_>>();
-    Ok(actions)
-}
-
-pub(super) fn build_route_path_candidate_orthogonal_graph_six_via_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_orthogonal_graph_six_via(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic orthogonal graph six-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected orthogonal graph six-via path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    let reused_via_uuids = vec![
-        path.via_a_uuid,
-        path.via_b_uuid,
-        path.via_c_uuid,
-        path.via_d_uuid,
-        path.via_e_uuid,
-        path.via_f_uuid,
-    ];
-    let selected_path_segment_count = path
-        .segments
-        .iter()
-        .map(|segment| segment.points.len().saturating_sub(1))
-        .sum::<usize>();
-    let selected_path_point_count = path
-        .segments
-        .iter()
-        .map(|segment| segment.points.len())
-        .sum();
-    let selected_path_layer_segment_count = path.segments.len();
-    let actions = path
-        .segments
-        .iter()
-        .enumerate()
-        .flat_map(|(selected_path_layer_segment_index, segment)| {
-            segment
-                .points
-                .windows(2)
-                .enumerate()
-                .map(move |(edge_index, window)| {
-                    (
-                        selected_path_layer_segment_index,
-                        edge_index,
-                        segment.layer,
-                        segment.cost.bend_count,
-                        segment.points.len(),
-                        window[0],
-                        window[1],
-                    )
-                })
-        })
-        .scan(0usize, |selected_path_segment_index, segment| {
-            let current = *selected_path_segment_index;
-            *selected_path_segment_index += 1;
-            Some((current, segment))
-        })
-        .map(
-            |(
-                selected_path_segment_index,
-                (
-                    selected_path_layer_segment_index,
-                    _edge_index,
-                    layer,
-                    selected_path_layer_segment_bend_count,
-                    selected_path_layer_segment_point_count,
-                    from,
-                    to,
-                ),
-            )| {
-                let action_id = route_proposal_action_id(
-                    &report.contract,
-                    "draw_track",
-                    ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_SIX_VIA,
-                    net_uuid,
-                    from_anchor_pad_uuid,
-                    to_anchor_pad_uuid,
-                    layer,
-                    from,
-                    to,
-                    net_class.track_width_nm,
-                    Some(path.via_a_uuid),
-                    &reused_via_uuids,
-                    None,
-                    None,
-                    None,
-                    None,
-                );
-                NativeProjectRouteProposalActionView {
-                    action_id,
-                    proposal_action: "draw_track".to_string(),
-                    reason: ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_ORTHOGONAL_GRAPH_SIX_VIA
-                        .to_string(),
-                    contract: report.contract.clone(),
-                    net_uuid: report.net_uuid,
-                    net_name: report.net_name.clone(),
-                    from_anchor_pad_uuid: report.from_anchor_pad_uuid,
-                    to_anchor_pad_uuid: report.to_anchor_pad_uuid,
-                    layer,
-                    width_nm: net_class.track_width_nm,
-                    from,
-                    to,
-                    reused_via_uuid: Some(path.via_a_uuid),
-                    reused_via_uuids: reused_via_uuids.clone(),
-                    reused_object_kind: None,
-                    reused_object_uuid: None,
-                    reused_object_from_layer: None,
-                    reused_object_to_layer: None,
-                    selected_path_bend_count: path
-                        .segments
-                        .iter()
-                        .map(|segment| segment.cost.bend_count)
-                        .sum(),
-                    selected_path_point_count,
-                    selected_path_segment_index,
-                    selected_path_segment_count,
-                    selected_path_layer_segment_index: Some(selected_path_layer_segment_index),
-                    selected_path_layer_segment_count: Some(selected_path_layer_segment_count),
-                    selected_path_layer_segment_bend_count: Some(
-                        selected_path_layer_segment_bend_count,
-                    ),
-                    selected_path_layer_segment_point_count: Some(
-                        selected_path_layer_segment_point_count,
-                    ),
-                }
-            },
-        )
-        .collect::<Vec<_>>();
-    Ok(actions)
-}
-
-pub(super) fn build_route_path_candidate_via_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_via(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic single-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected via path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    let selected_path_segment_count = path.segments.len();
-    let actions = path
-        .segments
-        .iter()
-        .enumerate()
-        .flat_map(|(selected_path_segment_index, segment)| {
-            segment
-                .points
-                .windows(2)
-                .map(move |pair| (selected_path_segment_index, segment.layer, pair))
-        })
-        .map(|(selected_path_segment_index, layer, pair)| {
-            let from = pair[0];
-            let to = pair[1];
-            let action_id = route_proposal_action_id(
-                &report.contract,
-                "draw_track",
-                ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_VIA,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-                layer,
-                from,
-                to,
-                net_class.track_width_nm,
-                Some(path.via_uuid),
-                &[path.via_uuid],
-                None,
-                None,
-                None,
-                None,
-            );
-            NativeProjectRouteProposalActionView {
-                action_id,
-                proposal_action: "draw_track".to_string(),
-                reason: ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_VIA.to_string(),
-                contract: report.contract.clone(),
-                net_uuid: report.net_uuid,
-                net_name: report.net_name.clone(),
-                from_anchor_pad_uuid: report.from_anchor_pad_uuid,
-                to_anchor_pad_uuid: report.to_anchor_pad_uuid,
-                layer,
-                width_nm: net_class.track_width_nm,
-                from,
-                to,
-                reused_via_uuid: Some(path.via_uuid),
-                reused_via_uuids: vec![path.via_uuid],
-                reused_object_kind: None,
-                reused_object_uuid: None,
-                reused_object_from_layer: None,
-                reused_object_to_layer: None,
-                selected_path_bend_count: 0,
-                selected_path_point_count: path
-                    .segments
-                    .get(selected_path_segment_index)
-                    .map(|segment| segment.points.len())
-                    .unwrap_or(0),
-                selected_path_segment_index,
-                selected_path_segment_count,
-                selected_path_layer_segment_index: None,
-                selected_path_layer_segment_count: None,
-                selected_path_layer_segment_bend_count: None,
-                selected_path_layer_segment_point_count: None,
-            }
-        })
-        .collect::<Vec<_>>();
-    Ok(actions)
-}
-
-pub(super) fn build_route_path_candidate_two_via_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_two_via(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic two-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected two-via path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    let reused_via_uuids = vec![path.via_a_uuid, path.via_b_uuid];
-    Ok(build_segmented_route_proposal_actions(
-        &report.contract,
-        ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_TWO_VIA,
-        report.net_uuid,
-        &report.net_name,
-        report.from_anchor_pad_uuid,
-        report.to_anchor_pad_uuid,
-        net_class.track_width_nm,
-        path.segments
-            .iter()
-            .map(|segment| (segment.layer, segment.points.as_slice()))
-            .collect(),
-        &reused_via_uuids,
-    ))
-}
-
-pub(super) fn build_route_path_candidate_three_via_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_three_via(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic three-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected three-via path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    let reused_via_uuids = vec![path.via_a_uuid, path.via_b_uuid, path.via_c_uuid];
-    Ok(build_segmented_route_proposal_actions(
-        &report.contract,
-        ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_THREE_VIA,
-        report.net_uuid,
-        &report.net_name,
-        report.from_anchor_pad_uuid,
-        report.to_anchor_pad_uuid,
-        net_class.track_width_nm,
-        path.segments
-            .iter()
-            .map(|segment| (segment.layer, segment.points.as_slice()))
-            .collect(),
-        &reused_via_uuids,
-    ))
-}
-
-pub(super) fn build_route_path_candidate_four_via_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_four_via(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic four-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected four-via path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    let reused_via_uuids = vec![
-        path.via_a_uuid,
-        path.via_b_uuid,
-        path.via_c_uuid,
-        path.via_d_uuid,
-    ];
-    Ok(build_segmented_route_proposal_actions(
-        &report.contract,
-        ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_FOUR_VIA,
-        report.net_uuid,
-        &report.net_name,
-        report.from_anchor_pad_uuid,
-        report.to_anchor_pad_uuid,
-        net_class.track_width_nm,
-        path.segments
-            .iter()
-            .map(|segment| (segment.layer, segment.points.as_slice()))
-            .collect(),
-        &reused_via_uuids,
-    ))
-}
-
-pub(super) fn build_route_path_candidate_five_via_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_five_via(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic five-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected five-via path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    let reused_via_uuids = vec![
-        path.via_a_uuid,
-        path.via_b_uuid,
-        path.via_c_uuid,
-        path.via_d_uuid,
-        path.via_e_uuid,
-    ];
-    Ok(build_segmented_route_proposal_actions(
-        &report.contract,
-        ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_FIVE_VIA,
-        report.net_uuid,
-        &report.net_name,
-        report.from_anchor_pad_uuid,
-        report.to_anchor_pad_uuid,
-        net_class.track_width_nm,
-        path.segments
-            .iter()
-            .map(|segment| (segment.layer, segment.points.as_slice()))
-            .collect(),
-        &reused_via_uuids,
-    ))
-}
-
-pub(super) fn build_route_path_candidate_six_via_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_six_via(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic six-via path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected six-via path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    let reused_via_uuids = vec![
-        path.via_a_uuid,
-        path.via_b_uuid,
-        path.via_c_uuid,
-        path.via_d_uuid,
-        path.via_e_uuid,
-        path.via_f_uuid,
-    ];
-    Ok(build_segmented_route_proposal_actions(
-        &report.contract,
-        ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_SIX_VIA,
-        report.net_uuid,
-        &report.net_name,
-        report.from_anchor_pad_uuid,
-        report.to_anchor_pad_uuid,
-        net_class.track_width_nm,
-        path.segments
-            .iter()
-            .map(|segment| (segment.layer, segment.points.as_slice()))
-            .collect(),
-        &reused_via_uuids,
-    ))
-}
-
-pub(super) fn build_route_path_candidate_authored_via_chain_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_authored_via_chain(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic authored via chain path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected authored via chain path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    let reused_via_uuids = path
-        .via_chain
-        .iter()
-        .map(|via| via.via_uuid)
-        .collect::<Vec<_>>();
-    Ok(build_segmented_route_proposal_actions(
-        &report.contract,
-        ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_VIA_CHAIN,
-        report.net_uuid,
-        &report.net_name,
-        report.from_anchor_pad_uuid,
-        report.to_anchor_pad_uuid,
-        net_class.track_width_nm,
-        path.segments
-            .iter()
-            .map(|segment| (segment.layer, segment.points.as_slice()))
-            .collect(),
-        &reused_via_uuids,
-    ))
-}
-
-fn build_route_path_candidate_authored_copper_graph_zone_aware_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_authored_copper_graph_zone_aware(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic zone-aware authored-copper path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected zone-aware authored-copper path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    let selected_path_segment_count = path.steps.len();
-    let actions = path
-        .steps
-        .iter()
-        .enumerate()
-        .map(|(selected_path_segment_index, step)| {
-            let reused_object_kind = match step.kind {
-                RoutePathCandidateAuthoredCopperGraphZoneAwareStepKindView::Track => "track",
-                RoutePathCandidateAuthoredCopperGraphZoneAwareStepKindView::Via => "via",
-                RoutePathCandidateAuthoredCopperGraphZoneAwareStepKindView::Zone => "zone",
-            };
-            let action_id = route_proposal_action_id(
-                &report.contract,
-                "reuse_existing_copper_step",
-                ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_AWARE,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-                step.layer,
-                step.from,
-                step.to,
-                net_class.track_width_nm,
-                None,
-                &[],
-                Some(reused_object_kind),
-                Some(step.object_uuid),
-                step.from_layer,
-                step.to_layer,
-            );
-            NativeProjectRouteProposalActionView {
-                action_id,
-                proposal_action: "reuse_existing_copper_step".to_string(),
-                reason: ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_AWARE
-                    .to_string(),
-                contract: report.contract.clone(),
-                net_uuid: report.net_uuid,
-                net_name: report.net_name.clone(),
-                from_anchor_pad_uuid: report.from_anchor_pad_uuid,
-                to_anchor_pad_uuid: report.to_anchor_pad_uuid,
-                layer: step.layer,
-                width_nm: net_class.track_width_nm,
-                from: step.from,
-                to: step.to,
-                reused_via_uuid: None,
-                reused_via_uuids: Vec::new(),
-                reused_object_kind: Some(reused_object_kind.to_string()),
-                reused_object_uuid: Some(step.object_uuid),
-                reused_object_from_layer: step.from_layer,
-                reused_object_to_layer: step.to_layer,
-                selected_path_bend_count: 0,
-                selected_path_point_count: path.steps.len() + 1,
-                selected_path_segment_index,
-                selected_path_segment_count,
-                selected_path_layer_segment_index: None,
-                selected_path_layer_segment_count: None,
-                selected_path_layer_segment_bend_count: None,
-                selected_path_layer_segment_point_count: None,
-            }
-        })
-        .collect::<Vec<_>>();
-    Ok(actions)
-}
-
-fn build_route_path_candidate_authored_copper_graph_zone_obstacle_aware_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report =
-        query_native_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware(
-            root,
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid,
-        )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic zone-obstacle-aware authored-copper path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected zone-obstacle-aware authored-copper path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    let selected_path_segment_count = path.steps.len();
-    let actions = path
-        .steps
-        .iter()
-        .enumerate()
-        .map(|(selected_path_segment_index, step)| {
-            let reused_object_kind = match step.kind {
-                RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareStepKindView::Track => {
-                    "track"
-                }
-                RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareStepKindView::Via => "via",
-                RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareStepKindView::Zone => "zone",
-            };
-            let action_id = route_proposal_action_id(
-                &report.contract,
-                "reuse_existing_copper_step",
-                ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-                step.layer,
-                step.from,
-                step.to,
-                net_class.track_width_nm,
-                None,
-                &[],
-                Some(reused_object_kind),
-                Some(step.object_uuid),
-                step.from_layer,
-                step.to_layer,
-            );
-            NativeProjectRouteProposalActionView {
-                action_id,
-                proposal_action: "reuse_existing_copper_step".to_string(),
-                reason: ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE
-                    .to_string(),
-                contract: report.contract.clone(),
-                net_uuid: report.net_uuid,
-                net_name: report.net_name.clone(),
-                from_anchor_pad_uuid: report.from_anchor_pad_uuid,
-                to_anchor_pad_uuid: report.to_anchor_pad_uuid,
-                layer: step.layer,
-                width_nm: net_class.track_width_nm,
-                from: step.from,
-                to: step.to,
-                reused_via_uuid: None,
-                reused_via_uuids: Vec::new(),
-                reused_object_kind: Some(reused_object_kind.to_string()),
-                reused_object_uuid: Some(step.object_uuid),
-                reused_object_from_layer: step.from_layer,
-                reused_object_to_layer: step.to_layer,
-                selected_path_bend_count: 0,
-                selected_path_point_count: path.steps.len() + 1,
-                selected_path_segment_index,
-                selected_path_segment_count,
-                selected_path_layer_segment_index: None,
-                selected_path_layer_segment_count: None,
-                selected_path_layer_segment_bend_count: None,
-                selected_path_layer_segment_point_count: None,
-            }
-        })
-        .collect::<Vec<_>>();
-    Ok(actions)
-}
-
-fn build_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic topology-aware zone-obstacle-aware authored-copper path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected topology-aware zone-obstacle-aware authored-copper path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    let selected_path_segment_count = path.steps.len();
-    let actions = path
-        .steps
-        .iter()
-        .enumerate()
-        .map(|(selected_path_segment_index, step)| {
-            let reused_object_kind = match step.kind {
-                RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareStepKindView::Track => "track",
-                RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareStepKindView::Via => "via",
-                RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareStepKindView::Zone => "zone",
-            };
-            let action_id = route_proposal_action_id(
-                &report.contract,
-                "reuse_existing_copper_step",
-                ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE_TOPOLOGY_AWARE,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-                step.layer,
-                step.from,
-                step.to,
-                net_class.track_width_nm,
-                None,
-                &[],
-                Some(reused_object_kind),
-                Some(step.object_uuid),
-                step.from_layer,
-                step.to_layer,
-            );
-            NativeProjectRouteProposalActionView {
-                action_id,
-                proposal_action: "reuse_existing_copper_step".to_string(),
-                reason: ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE_TOPOLOGY_AWARE
-                    .to_string(),
-                contract: report.contract.clone(),
-                net_uuid: report.net_uuid,
-                net_name: report.net_name.clone(),
-                from_anchor_pad_uuid: report.from_anchor_pad_uuid,
-                to_anchor_pad_uuid: report.to_anchor_pad_uuid,
-                layer: step.layer,
-                width_nm: net_class.track_width_nm,
-                from: step.from,
-                to: step.to,
-                reused_via_uuid: None,
-                reused_via_uuids: Vec::new(),
-                reused_object_kind: Some(reused_object_kind.to_string()),
-                reused_object_uuid: Some(step.object_uuid),
-                reused_object_from_layer: step.from_layer,
-                reused_object_to_layer: step.to_layer,
-                selected_path_bend_count: 0,
-                selected_path_point_count: path.steps.len() + 1,
-                selected_path_segment_index,
-                selected_path_segment_count,
-                selected_path_layer_segment_index: None,
-                selected_path_layer_segment_count: None,
-                selected_path_layer_segment_bend_count: None,
-                selected_path_layer_segment_point_count: None,
-            }
-        })
-        .collect::<Vec<_>>();
-    Ok(actions)
-}
-
-fn build_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_authored_copper_graph_zone_obstacle_aware_topology_aware_layer_balance_aware(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic layer-balance-aware topology-aware zone-obstacle-aware authored-copper path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected layer-balance-aware topology-aware zone-obstacle-aware authored-copper path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    let selected_path_segment_count = path.steps.len();
-    let actions = path
-        .steps
-        .iter()
-        .enumerate()
-        .map(|(selected_path_segment_index, step)| {
-            let reused_object_kind = match step.kind {
-                RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareStepKindView::Track => "track",
-                RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareStepKindView::Via => "via",
-                RoutePathCandidateAuthoredCopperGraphZoneObstacleAwareTopologyAwareLayerBalanceAwareStepKindView::Zone => "zone",
-            };
-            let action_id = route_proposal_action_id(
-                &report.contract,
-                "reuse_existing_copper_step",
-                ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE_TOPOLOGY_AWARE_LAYER_BALANCE_AWARE,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-                step.layer,
-                step.from,
-                step.to,
-                net_class.track_width_nm,
-                None,
-                &[],
-                Some(reused_object_kind),
-                Some(step.object_uuid),
-                step.from_layer,
-                step.to_layer,
-            );
-            NativeProjectRouteProposalActionView {
-                action_id,
-                proposal_action: "reuse_existing_copper_step".to_string(),
-                reason: ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_ZONE_OBSTACLE_AWARE_TOPOLOGY_AWARE_LAYER_BALANCE_AWARE
-                    .to_string(),
-                contract: report.contract.clone(),
-                net_uuid: report.net_uuid,
-                net_name: report.net_name.clone(),
-                from_anchor_pad_uuid: report.from_anchor_pad_uuid,
-                to_anchor_pad_uuid: report.to_anchor_pad_uuid,
-                layer: step.layer,
-                width_nm: net_class.track_width_nm,
-                from: step.from,
-                to: step.to,
-                reused_via_uuid: None,
-                reused_via_uuids: Vec::new(),
-                reused_object_kind: Some(reused_object_kind.to_string()),
-                reused_object_uuid: Some(step.object_uuid),
-                reused_object_from_layer: step.from_layer,
-                reused_object_to_layer: step.to_layer,
-                selected_path_bend_count: 0,
-                selected_path_point_count: path.steps.len() + 1,
-                selected_path_segment_index,
-                selected_path_segment_count,
-                selected_path_layer_segment_index: None,
-                selected_path_layer_segment_count: None,
-                selected_path_layer_segment_bend_count: None,
-                selected_path_layer_segment_point_count: None,
-            }
-        })
-        .collect::<Vec<_>>();
-    Ok(actions)
-}
-
-fn build_route_path_candidate_authored_copper_graph_obstacle_aware_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_authored_copper_graph_obstacle_aware(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic obstacle-aware authored-copper path for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        );
-    }
-
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected obstacle-aware authored-copper path data for net {} between {} and {}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid
-        )
-    })?;
-    let selected_path_segment_count = path.steps.len();
-    let actions = path
-        .steps
-        .iter()
-        .enumerate()
-        .map(|(selected_path_segment_index, step)| {
-            let reused_object_kind = match step.kind {
-                RoutePathCandidateAuthoredCopperGraphObstacleAwareStepKindView::Track => "track",
-                RoutePathCandidateAuthoredCopperGraphObstacleAwareStepKindView::Via => "via",
-            };
-            let action_id = route_proposal_action_id(
-                &report.contract,
-                "reuse_existing_copper_step",
-                ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_OBSTACLE_AWARE,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-                step.layer,
-                step.from,
-                step.to,
-                net_class.track_width_nm,
-                None,
-                &[],
-                Some(reused_object_kind),
-                Some(step.object_uuid),
-                step.from_layer,
-                step.to_layer,
-            );
-            NativeProjectRouteProposalActionView {
-                action_id,
-                proposal_action: "reuse_existing_copper_step".to_string(),
-                reason:
-                    ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_OBSTACLE_AWARE
-                        .to_string(),
-                contract: report.contract.clone(),
-                net_uuid: report.net_uuid,
-                net_name: report.net_name.clone(),
-                from_anchor_pad_uuid: report.from_anchor_pad_uuid,
-                to_anchor_pad_uuid: report.to_anchor_pad_uuid,
-                layer: step.layer,
-                width_nm: net_class.track_width_nm,
-                from: step.from,
-                to: step.to,
-                reused_via_uuid: None,
-                reused_via_uuids: Vec::new(),
-                reused_object_kind: Some(reused_object_kind.to_string()),
-                reused_object_uuid: Some(step.object_uuid),
-                reused_object_from_layer: step.from_layer,
-                reused_object_to_layer: step.to_layer,
-                selected_path_bend_count: 0,
-                selected_path_point_count: path.steps.len() + 1,
-                selected_path_segment_index,
-                selected_path_segment_count,
-                selected_path_layer_segment_index: None,
-                selected_path_layer_segment_count: None,
-                selected_path_layer_segment_bend_count: None,
-                selected_path_layer_segment_point_count: None,
-            }
-        })
-        .collect::<Vec<_>>();
-    Ok(actions)
-}
-
-pub(super) fn build_route_path_candidate_authored_copper_graph_policy_proposal_actions(
-    root: &Path,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-    policy: NativeRoutePathCandidateAuthoredCopperGraphPolicy,
-) -> Result<Vec<NativeProjectRouteProposalActionView>> {
-    let report = query_native_project_route_path_candidate_authored_copper_graph(
-        root,
-        net_uuid,
-        from_anchor_pad_uuid,
-        to_anchor_pad_uuid,
-        policy,
-    )?;
-    if report.status != RoutePathCandidateStatus::DeterministicPathFound {
-        bail!(
-            "route proposal requires deterministic authored-copper graph path for net {} between {} and {} under policy {:?}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid,
-            policy
-        );
-    }
-
-    let preflight = query_native_project_route_preflight(root, net_uuid)?;
-    let net_class = preflight.persisted_constraints.net_class.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires persisted net-class facts for net {}",
-            net_uuid
-        )
-    })?;
-    let path = report.path.ok_or_else(|| {
-        anyhow::anyhow!(
-            "route proposal requires selected authored-copper graph path data for net {} between {} and {} under policy {:?}",
-            net_uuid,
-            from_anchor_pad_uuid,
-            to_anchor_pad_uuid,
-            policy
-        )
-    })?;
-    let reason = route_path_candidate_authored_copper_graph_policy_reason(policy);
-    let selected_path_segment_count = path.steps.len();
-    let actions = path
-        .steps
-        .iter()
-        .enumerate()
-        .map(|(selected_path_segment_index, step)| {
-            let reused_object_kind = match step.kind {
-                RoutePathCandidateAuthoredCopperGraphPolicyStepKindView::Track => "track",
-                RoutePathCandidateAuthoredCopperGraphPolicyStepKindView::Via => "via",
-                RoutePathCandidateAuthoredCopperGraphPolicyStepKindView::Zone => "zone",
-            };
-            let action_id = route_proposal_action_id(
-                &report.contract,
-                "reuse_existing_copper_step",
-                reason,
-                net_uuid,
-                from_anchor_pad_uuid,
-                to_anchor_pad_uuid,
-                step.layer,
-                step.from,
-                step.to,
-                net_class.track_width_nm,
-                None,
-                &[],
-                Some(reused_object_kind),
-                Some(step.object_uuid),
-                step.from_layer,
-                step.to_layer,
-            );
-            NativeProjectRouteProposalActionView {
-                action_id,
-                proposal_action: "reuse_existing_copper_step".to_string(),
-                reason: reason.to_string(),
-                contract: report.contract.clone(),
-                net_uuid: report.net_uuid,
-                net_name: report.net_name.clone(),
-                from_anchor_pad_uuid: report.from_anchor_pad_uuid,
-                to_anchor_pad_uuid: report.to_anchor_pad_uuid,
-                layer: step.layer,
-                width_nm: net_class.track_width_nm,
-                from: step.from,
-                to: step.to,
-                reused_via_uuid: None,
-                reused_via_uuids: Vec::new(),
-                reused_object_kind: Some(reused_object_kind.to_string()),
-                reused_object_uuid: Some(step.object_uuid),
-                reused_object_from_layer: step.from_layer,
-                reused_object_to_layer: step.to_layer,
-                selected_path_bend_count: 0,
-                selected_path_point_count: path.steps.len() + 1,
-                selected_path_segment_index,
-                selected_path_segment_count,
-                selected_path_layer_segment_index: None,
-                selected_path_layer_segment_count: None,
-                selected_path_layer_segment_bend_count: None,
-                selected_path_layer_segment_point_count: None,
-            }
-        })
-        .collect::<Vec<_>>();
-    Ok(actions)
-}
-
-fn route_path_candidate_authored_copper_graph_policy_reason(
-    policy: NativeRoutePathCandidateAuthoredCopperGraphPolicy,
-) -> &'static str {
-    match policy {
-        NativeRoutePathCandidateAuthoredCopperGraphPolicy::Plain => {
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_PLAIN
-        }
-        NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneAware => {
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_AWARE
-        }
-        NativeRoutePathCandidateAuthoredCopperGraphPolicy::ObstacleAware => {
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_OBSTACLE_AWARE
-        }
-        NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleAware => {
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_OBSTACLE_AWARE
-        }
-        NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyAware => {
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_OBSTACLE_TOPOLOGY_AWARE
-        }
-        NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyLayerBalanceAware => {
-            ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_OBSTACLE_TOPOLOGY_LAYER_BALANCE_AWARE
-        }
-    }
-}
-
-fn route_path_candidate_authored_copper_graph_policy_from_reason(
-    reason: &str,
-) -> Option<NativeRoutePathCandidateAuthoredCopperGraphPolicy> {
-    match reason {
-        ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_PLAIN => {
-            Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::Plain)
-        }
-        ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_AWARE => {
-            Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneAware)
-        }
-        ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_OBSTACLE_AWARE => {
-            Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::ObstacleAware)
-        }
-        ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_OBSTACLE_AWARE => {
-            Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleAware)
-        }
-        ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_OBSTACLE_TOPOLOGY_AWARE => {
-            Some(NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyAware)
-        }
-        ROUTE_PROPOSAL_REASON_ROUTE_PATH_CANDIDATE_AUTHORED_COPPER_GRAPH_POLICY_ZONE_OBSTACLE_TOPOLOGY_LAYER_BALANCE_AWARE => {
-            Some(
-                NativeRoutePathCandidateAuthoredCopperGraphPolicy::ZoneObstacleTopologyLayerBalanceAware,
-            )
-        }
-        _ => None,
-    }
-}
-
-fn build_segmented_route_proposal_actions(
-    contract: &str,
-    reason: &str,
-    net_uuid: Uuid,
-    net_name: &str,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-    width_nm: i64,
-    segments: Vec<(i32, &[Point])>,
-    reused_via_uuids: &[Uuid],
-) -> Vec<NativeProjectRouteProposalActionView> {
-    let selected_path_segment_count = segments.len();
-    let primary_reused_via_uuid = reused_via_uuids.first().copied();
-    segments
-        .into_iter()
-        .enumerate()
-        .flat_map(|(selected_path_segment_index, (layer, points))| {
-            points.windows(2).map(move |pair| {
-                (
-                    selected_path_segment_index,
-                    layer,
-                    points.len(),
-                    pair[0],
-                    pair[1],
-                )
-            })
-        })
-        .map(
-            |(selected_path_segment_index, layer, selected_path_point_count, from, to)| {
-                let action_id = route_proposal_action_id(
-                    contract,
-                    "draw_track",
-                    reason,
-                    net_uuid,
-                    from_anchor_pad_uuid,
-                    to_anchor_pad_uuid,
-                    layer,
-                    from,
-                    to,
-                    width_nm,
-                    primary_reused_via_uuid,
-                    reused_via_uuids,
-                    None,
-                    None,
-                    None,
-                    None,
-                );
-                NativeProjectRouteProposalActionView {
-                    action_id,
-                    proposal_action: "draw_track".to_string(),
-                    reason: reason.to_string(),
-                    contract: contract.to_string(),
-                    net_uuid,
-                    net_name: net_name.to_string(),
-                    from_anchor_pad_uuid,
-                    to_anchor_pad_uuid,
-                    layer,
-                    width_nm,
-                    from,
-                    to,
-                    reused_via_uuid: primary_reused_via_uuid,
-                    reused_via_uuids: reused_via_uuids.to_vec(),
-                    reused_object_kind: None,
-                    reused_object_uuid: None,
-                    reused_object_from_layer: None,
-                    reused_object_to_layer: None,
-                    selected_path_bend_count: 0,
-                    selected_path_point_count,
-                    selected_path_segment_index,
-                    selected_path_segment_count,
-                    selected_path_layer_segment_index: None,
-                    selected_path_layer_segment_count: None,
-                    selected_path_layer_segment_bend_count: None,
-                    selected_path_layer_segment_point_count: None,
-                }
-            },
-        )
-        .collect()
-}
-
-fn route_proposal_action_id(
-    contract: &str,
-    proposal_action: &str,
-    reason: &str,
-    net_uuid: Uuid,
-    from_anchor_pad_uuid: Uuid,
-    to_anchor_pad_uuid: Uuid,
-    layer: i32,
-    from: Point,
-    to: Point,
-    width_nm: i64,
-    reused_via_uuid: Option<Uuid>,
-    reused_via_uuids: &[Uuid],
-    reused_object_kind: Option<&str>,
-    reused_object_uuid: Option<Uuid>,
-    reused_object_from_layer: Option<i32>,
-    reused_object_to_layer: Option<i32>,
-) -> String {
-    let reused_via_uuid_sequence = reused_via_uuids
-        .iter()
-        .map(Uuid::to_string)
-        .collect::<Vec<_>>()
-        .join(",");
-    let reused_object_kind = reused_object_kind.unwrap_or_default();
-    let stable_key = format!(
-        "{contract}|{proposal_action}|{reason}|{net_uuid}|{from_anchor_pad_uuid}|{to_anchor_pad_uuid}|{layer}|{}:{}|{}:{}|{width_nm}|{}|{reused_via_uuid_sequence}|{reused_object_kind}|{}|{}|{}",
-        from.x,
-        from.y,
-        to.x,
-        to.y,
-        reused_via_uuid
-            .map(|uuid| uuid.to_string())
-            .unwrap_or_default(),
-        reused_object_uuid
-            .map(|uuid| uuid.to_string())
-            .unwrap_or_default(),
-        reused_object_from_layer
-            .map(|layer| layer.to_string())
-            .unwrap_or_default(),
-        reused_object_to_layer
-            .map(|layer| layer.to_string())
-            .unwrap_or_default(),
-    );
-    compute_source_hash_bytes(stable_key.as_bytes())
 }

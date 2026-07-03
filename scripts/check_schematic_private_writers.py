@@ -498,8 +498,9 @@ REQUIRED_PROJECT_BOOTSTRAP_PATTERNS = [
 
 REQUIRED_ROUTE_STRATEGY_FIXTURE_PATTERNS = [
     "write_route_strategy_batch_requests_manifest(",
-    "fn write_route_strategy_fixture_board(root: &Path, board: &Value) -> Result<()> {",
-    'write_canonical_json(&root.join("board/board.json"), board)',
+    "route_proposal::build_route_strategy_fixture_board_write(",
+    "route_proposal::build_route_strategy_fixture_net_class_clear(",
+    "commit_prepared(&mut model, root, prepared)?;",
     "write_canonical_json(output_path, &artifact)?;",
     "write_canonical_json(&result_artifact_path, &report)?;",
 ]
@@ -601,9 +602,9 @@ def main() -> int:
             "route-strategy fixture/artifact",
         )
         write_count = count_pattern(path, "write_canonical_json(")
-        if write_count != 4:
+        if write_count != 3:
             failures.append(
-                f"{relative}: expected exactly 4 route-strategy fixture/artifact write_canonical_json calls, found {write_count}"
+                f"{relative}: expected exactly 3 route-strategy artifact write_canonical_json calls (fixture boards are facade-committed), found {write_count}"
             )
         for line, pattern, text_line in matching_lines(path, ["std::fs::write("]):
             failures.append(

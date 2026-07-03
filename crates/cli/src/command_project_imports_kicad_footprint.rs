@@ -1,21 +1,22 @@
 use std::path::Path;
 
 use anyhow::{Context, Result};
+use eda_engine::api::native_write::imports::{
+    build_kicad_footprint_import, kicad_footprint_import_map_relative_path,
+};
+use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::import::ids_sidecar::compute_source_hash_file;
 use eda_engine::import::kicad::{
     footprint_package_import_key, import_footprint_document_with_import_map,
 };
-use eda_engine::substrate::{
-    CommitProvenance, CommitSource, ImportMapEntry, ImportMapShard, Operation, OperationBatch,
-    ProjectResolver, SourceShardKind,
-};
+use eda_engine::substrate::{CommitSource, ImportMapEntry, ProjectResolver};
 use serde::Serialize;
 use uuid::Uuid;
 
 use super::command_project_imports::{
-    next_pool_priority, source_shard_id_for_relative_path, validate_project_local_pool_path,
+    source_shard_id_for_relative_path, validate_project_local_pool_path,
 };
-use super::{NativeProjectManifest, resolve_native_project_pool_path};
+use super::resolve_native_project_pool_path;
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectKiCadFootprintImportView {
@@ -50,84 +51,40 @@ pub(crate) fn import_native_project_kicad_footprint(
         .get("reused_existing_identity")
         .map(|value| value == "true")
         .unwrap_or(false);
-    let project_manifest: NativeProjectManifest = serde_json::from_value(
-        before
-            .materialized_source_shard_value(SourceShardKind::ProjectManifest)
-            .context("failed to materialize project manifest")?,
-    )
-    .context("failed to parse resolver-materialized project manifest")?;
     let pool_root = resolve_native_project_pool_path(root, pool_path);
     let package_relative_path = format!("{pool_path}/packages/{package_uuid}.json");
-    let footprint_relative_path = format!("{pool_path}/footprints/{footprint_uuid}.json");
     let import_key = footprint_package_import_key(source);
-    let import_map_relative_path = format!(".datum/import_map/kicad-footprint-{package_uuid}.json");
-    let mut operations = Vec::new();
-    if !project_manifest
-        .pools
-        .iter()
-        .any(|pool| pool.path == pool_path)
-    {
-        operations.push(Operation::AddProjectPoolRef {
-            path: pool_path.to_string(),
-            priority: next_pool_priority(&project_manifest.pools),
-        });
-    }
-    if !reused_existing_identity {
-        let mut footprint_value = serde_json::to_value(&imported.footprint)?;
-        if let Some(document) = footprint_value.as_object_mut() {
-            document.insert("schema_version".to_string(), serde_json::json!(1));
-        }
+    let import_map_relative_path = kicad_footprint_import_map_relative_path(package_uuid);
+    let import_map_entries = if reused_existing_identity {
+        Vec::new()
+    } else {
         let source_hash = compute_source_hash_file(source)?;
-        for padstack in imported.padstacks {
-            operations.push(Operation::CreatePoolPadstack {
-                padstack_id: padstack.uuid,
-                relative_path: format!("{pool_path}/padstacks/{}.json", padstack.uuid),
-                padstack: serde_json::to_value(padstack)?,
-            });
-        }
-        operations.push(Operation::CreatePoolPackage {
-            package_id: package_uuid,
-            relative_path: package_relative_path.clone(),
-            package: serde_json::to_value(&imported.package)?,
-        });
-        operations.push(Operation::CreatePoolLibraryObject {
-            object_id: footprint_uuid,
-            relative_path: footprint_relative_path.clone(),
-            object_kind: "footprints".to_string(),
-            object: footprint_value,
-        });
-        operations.push(Operation::CreateImportMapShard {
-            relative_path: import_map_relative_path.clone(),
-            shard: serde_json::to_value(ImportMapShard {
-                schema_version: 1,
-                entries: vec![ImportMapEntry {
-                    import_key: import_key.clone(),
-                    object_id: package_uuid,
-                    source_shard_id: source_shard_id_for_relative_path(&package_relative_path),
-                    status: eda_engine::substrate::ImportMapEntryStatus::Active,
-                    source_tool: "kicad".to_string(),
-                    source_path: source.display().to_string(),
-                    source_object_ref: import_key.clone(),
-                    source_hash,
-                }],
-            })?,
-        });
-    }
-    if !operations.is_empty() {
+        vec![ImportMapEntry {
+            import_key: import_key.clone(),
+            object_id: package_uuid,
+            source_shard_id: source_shard_id_for_relative_path(&package_relative_path),
+            status: eda_engine::substrate::ImportMapEntryStatus::Active,
+            source_tool: "kicad".to_string(),
+            source_path: source.display().to_string(),
+            source_object_ref: import_key.clone(),
+            source_hash,
+        }]
+    };
+    let write = build_kicad_footprint_import(
+        &before,
+        WriteProvenance::new(
+            "datum-eda-cli",
+            CommitSource::Cli,
+            format!("import KiCad footprint {}", source.display()),
+        ),
+        pool_path,
+        &imported,
+        reused_existing_identity,
+        import_map_entries,
+    )?;
+    if let Some(prepared) = write.prepared {
         let mut model = before;
-        model.commit_journaled(
-            root,
-            OperationBatch {
-                batch_id: Uuid::new_v4(),
-                expected_model_revision: Some(model.model_revision.clone()),
-                provenance: CommitProvenance {
-                    actor: "datum-eda-cli".to_string(),
-                    source: CommitSource::Cli,
-                    reason: format!("import KiCad footprint {}", source.display()),
-                },
-                operations,
-            },
-        )?;
+        commit_prepared(&mut model, root, prepared)?;
     }
 
     let after_write = ProjectResolver::new(root)
