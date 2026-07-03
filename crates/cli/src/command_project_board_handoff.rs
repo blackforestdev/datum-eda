@@ -2,21 +2,23 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
 use anyhow::{Context, Result};
+use eda_engine::api::native_write::board_components::{
+    BoardPackagePlacement, build_place_board_packages, derive_board_package_from_symbol_id,
+};
+use eda_engine::api::native_write::{PreparedWrite, WriteProvenance, commit_prepared};
 use eda_engine::board::PlacedPackage;
 use eda_engine::ir::geometry::Point;
 use eda_engine::pool::{Footprint, Part};
 use eda_engine::schematic::PlacedSymbol;
 use eda_engine::substrate::{
-    CommitProvenance, CommitSource, DesignModel, Operation, OperationBatch, Proposal,
-    ProposalCreateRequest, ProposalSource, ResolveDiagnostic, SourceShardTaxon,
-    create_draft_proposal_from_batch,
+    CommitSource, DesignModel, Proposal, ProposalCreateRequest, ProposalSource, ResolveDiagnostic,
+    SourceShardTaxon, create_draft_proposal_from_batch,
 };
 use serde::Serialize;
 use uuid::Uuid;
 
 use super::{
     board_package_materialization_payload_for_component, build_native_project_schematic,
-    command_project_operation_guards::guarded_operation_batch,
     load_native_project_with_resolved_board_and_model,
 };
 
@@ -156,23 +158,22 @@ pub(crate) fn generate_native_project_board_components(
     }
 
     let proposal = if (apply || as_proposal) && !generated.is_empty() {
-        let batch = generated_board_component_operation_batch(
+        let prepared = generated_board_component_prepared_write(
             root,
             &model,
             &generated,
             "generate board components from schematic",
         )?;
         if apply {
-            model.commit_journaled(root, batch)?;
+            commit_prepared(&mut model, root, prepared)?;
             None
         } else {
-            let batch = guarded_operation_batch(&model, batch)?;
             Some(create_draft_proposal_from_batch(
                 &mut model,
                 root,
                 ProposalCreateRequest {
                     proposal_id,
-                    batch,
+                    batch: prepared.batch,
                     rationale: rationale.unwrap_or_else(|| {
                         "Review generated board components from schematic".to_string()
                     }),
@@ -203,13 +204,13 @@ pub(crate) fn generate_native_project_board_components(
     })
 }
 
-fn generated_board_component_operation_batch(
+fn generated_board_component_prepared_write(
     root: &Path,
     model: &DesignModel,
     generated: &[NativeProjectBoardGeneratedPackage],
     reason: &str,
-) -> Result<OperationBatch> {
-    let operations = generated
+) -> Result<PreparedWrite> {
+    let placements = generated
         .iter()
         .map(|entry| {
             let component = PlacedPackage {
@@ -226,27 +227,19 @@ fn generated_board_component_operation_batch(
                 layer: entry.layer,
                 locked: false,
             };
-            let package = serde_json::to_value(&component)
-                .expect("native board component serialization must succeed");
             let materialized =
                 board_package_materialization_payload_for_component(root, &component)?;
-            Ok(Operation::CreateBoardPackage {
-                package_id: component.uuid,
-                package,
+            Ok(BoardPackagePlacement {
+                package: component,
                 materialized,
             })
         })
         .collect::<Result<Vec<_>>>()?;
-    Ok(OperationBatch {
-        batch_id: Uuid::new_v4(),
-        expected_model_revision: Some(model.model_revision.clone()),
-        provenance: CommitProvenance {
-            actor: "datum-eda-cli".to_string(),
-            source: CommitSource::Cli,
-            reason: reason.to_string(),
-        },
-        operations,
-    })
+    Ok(build_place_board_packages(
+        model,
+        WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason),
+        &placements,
+    )?)
 }
 
 pub(crate) fn render_native_project_board_handoff_text(
@@ -311,10 +304,7 @@ fn generated_component(
     position: Point,
     layer: i32,
 ) -> PlacedPackage {
-    let uuid = Uuid::new_v5(
-        project_id,
-        format!("datum-eda:board-package-from-symbol:{}", symbol.uuid).as_bytes(),
-    );
+    let uuid = derive_board_package_from_symbol_id(project_id, symbol.uuid);
     PlacedPackage {
         uuid,
         part: part_uuid,

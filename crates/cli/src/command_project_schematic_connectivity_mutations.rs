@@ -1,8 +1,15 @@
-use super::command_project_operation_guards::guarded_existing_object_operation;
 use super::*;
-use eda_engine::substrate::{
-    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver,
+use eda_engine::api::native_write::schematic_connectivity::{
+    build_create_schematic_bus, build_create_schematic_bus_entry, build_create_schematic_junction,
+    build_create_schematic_label, build_create_schematic_noconnect, build_create_schematic_port,
+    build_create_schematic_wire, build_delete_schematic_bus, build_delete_schematic_bus_entry,
+    build_delete_schematic_junction, build_delete_schematic_label,
+    build_delete_schematic_noconnect, build_delete_schematic_port, build_delete_schematic_wire,
+    build_set_schematic_bus, build_set_schematic_label, build_set_schematic_port,
 };
+use eda_engine::api::native_write::{PreparedWrite, WriteProvenance, commit_prepared};
+use eda_engine::error::EngineError;
+use eda_engine::substrate::{CommitReport, CommitSource, DesignModel, ProjectResolver};
 
 pub(crate) fn place_native_project_label(
     root: &Path,
@@ -24,15 +31,9 @@ pub(crate) fn place_native_project_label(
         name: name.clone(),
         position,
     };
-    commit_schematic_operation(
-        root,
-        "place schematic label",
-        Operation::CreateSchematicLabel {
-            sheet_id: sheet_uuid,
-            label_id: label_uuid,
-            label: serde_json::to_value(&label).expect("native label serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "place schematic label", |model, provenance| {
+        build_create_schematic_label(model, provenance, sheet_uuid, &label)
+    })?;
 
     Ok(NativeProjectLabelMutationReportView {
         action: "place_label".to_string(),
@@ -61,15 +62,9 @@ pub(crate) fn rename_native_project_label(
     let (sheet_uuid, sheet_path, _sheet_value, mut label) =
         load_native_label_mutation_target(&project, label_uuid)?;
     label.name = name.clone();
-    commit_schematic_operation(
-        root,
-        "rename schematic label",
-        Operation::SetSchematicLabel {
-            sheet_id: sheet_uuid,
-            label_id: label_uuid,
-            label: serde_json::to_value(&label).expect("native label serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "rename schematic label", |model, provenance| {
+        build_set_schematic_label(model, provenance, sheet_uuid, &label)
+    })?;
 
     Ok(NativeProjectLabelMutationReportView {
         action: "rename_label".to_string(),
@@ -91,15 +86,9 @@ pub(crate) fn delete_native_project_label(
     let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, label) =
         load_native_label_mutation_target(&project, label_uuid)?;
-    commit_schematic_operation(
-        root,
-        "delete schematic label",
-        Operation::DeleteSchematicLabel {
-            sheet_id: sheet_uuid,
-            label_id: label_uuid,
-            label: serde_json::to_value(&label).expect("native label serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "delete schematic label", |model, provenance| {
+        build_delete_schematic_label(model, provenance, sheet_uuid, &label)
+    })?;
 
     Ok(NativeProjectLabelMutationReportView {
         action: "delete_label".to_string(),
@@ -132,15 +121,9 @@ pub(crate) fn draw_native_project_wire(
         from,
         to,
     };
-    commit_schematic_operation(
-        root,
-        "draw schematic wire",
-        Operation::CreateSchematicWire {
-            sheet_id: sheet_uuid,
-            wire_id: wire_uuid,
-            wire: serde_json::to_value(&wire).expect("native wire serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "draw schematic wire", |model, provenance| {
+        build_create_schematic_wire(model, provenance, sheet_uuid, &wire)
+    })?;
 
     Ok(NativeProjectWireMutationReportView {
         action: "draw_wire".to_string(),
@@ -167,15 +150,9 @@ pub(crate) fn delete_native_project_wire(
     let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, wire) =
         load_native_wire_mutation_target(&project, wire_uuid)?;
-    commit_schematic_operation(
-        root,
-        "delete schematic wire",
-        Operation::DeleteSchematicWire {
-            sheet_id: sheet_uuid,
-            wire_id: wire_uuid,
-            wire: serde_json::to_value(&wire).expect("native wire serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "delete schematic wire", |model, provenance| {
+        build_delete_schematic_wire(model, provenance, sheet_uuid, &wire)
+    })?;
 
     Ok(NativeProjectWireMutationReportView {
         action: "delete_wire".to_string(),
@@ -190,30 +167,19 @@ pub(crate) fn delete_native_project_wire(
     })
 }
 
-pub(super) fn commit_schematic_operation(
-    root: &Path,
-    reason: &str,
-    operation: Operation,
-) -> Result<()> {
+/// Resolve the native project, author one write through the engine's
+/// native-write facade builders, and commit it through the single journaled
+/// commit path.
+pub(super) fn commit_schematic_write<F>(root: &Path, reason: &str, build: F) -> Result<CommitReport>
+where
+    F: FnOnce(&DesignModel, WriteProvenance) -> Result<PreparedWrite, EngineError>,
+{
     let mut model = ProjectResolver::new(root)
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
-    model
-        .commit_journaled(
-            root,
-            OperationBatch {
-                batch_id: Uuid::new_v4(),
-                expected_model_revision: Some(model.model_revision.clone()),
-                provenance: CommitProvenance {
-                    actor: "datum-eda-cli".to_string(),
-                    source: CommitSource::Cli,
-                    reason: reason.to_string(),
-                },
-                operations: guarded_existing_object_operation(&model, operation)?,
-            },
-        )
-        .map(|_| ())
-        .map_err(Into::into)
+    let provenance = WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason);
+    let prepared = build(&model, provenance)?;
+    commit_prepared(&mut model, root, prepared).map_err(Into::into)
 }
 
 pub(crate) fn place_native_project_junction(
@@ -232,16 +198,9 @@ pub(crate) fn place_native_project_junction(
         uuid: junction_uuid,
         position,
     };
-    commit_schematic_operation(
-        root,
-        "place schematic junction",
-        Operation::CreateSchematicJunction {
-            sheet_id: sheet_uuid,
-            junction_id: junction_uuid,
-            junction: serde_json::to_value(&junction)
-                .expect("native junction serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "place schematic junction", |model, provenance| {
+        build_create_schematic_junction(model, provenance, sheet_uuid, &junction)
+    })?;
 
     Ok(NativeProjectJunctionMutationReportView {
         action: "place_junction".to_string(),
@@ -266,16 +225,9 @@ pub(crate) fn delete_native_project_junction(
     let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, junction) =
         load_native_junction_mutation_target(&project, junction_uuid)?;
-    commit_schematic_operation(
-        root,
-        "delete schematic junction",
-        Operation::DeleteSchematicJunction {
-            sheet_id: sheet_uuid,
-            junction_id: junction_uuid,
-            junction: serde_json::to_value(&junction)
-                .expect("native junction serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "delete schematic junction", |model, provenance| {
+        build_delete_schematic_junction(model, provenance, sheet_uuid, &junction)
+    })?;
 
     Ok(NativeProjectJunctionMutationReportView {
         action: "delete_junction".to_string(),
@@ -308,15 +260,9 @@ pub(crate) fn place_native_project_port(
         direction: direction.clone(),
         position,
     };
-    commit_schematic_operation(
-        root,
-        "place schematic port",
-        Operation::CreateSchematicPort {
-            sheet_id: sheet_uuid,
-            port_id: port_uuid,
-            port: serde_json::to_value(&port).expect("native port serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "place schematic port", |model, provenance| {
+        build_create_schematic_port(model, provenance, sheet_uuid, &port)
+    })?;
 
     Ok(NativeProjectPortMutationReportView {
         action: "place_port".to_string(),
@@ -359,15 +305,9 @@ pub(crate) fn edit_native_project_port(
             y: y_nm.unwrap_or(port.position.y),
         };
     }
-    commit_schematic_operation(
-        root,
-        "edit schematic port",
-        Operation::SetSchematicPort {
-            sheet_id: sheet_uuid,
-            port_id: port_uuid,
-            port: serde_json::to_value(&port).expect("native port serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "edit schematic port", |model, provenance| {
+        build_set_schematic_port(model, provenance, sheet_uuid, &port)
+    })?;
 
     Ok(NativeProjectPortMutationReportView {
         action: "edit_port".to_string(),
@@ -389,15 +329,9 @@ pub(crate) fn delete_native_project_port(
     let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, port) =
         load_native_port_mutation_target(&project, port_uuid)?;
-    commit_schematic_operation(
-        root,
-        "delete schematic port",
-        Operation::DeleteSchematicPort {
-            sheet_id: sheet_uuid,
-            port_id: port_uuid,
-            port: serde_json::to_value(&port).expect("native port serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "delete schematic port", |model, provenance| {
+        build_delete_schematic_port(model, provenance, sheet_uuid, &port)
+    })?;
 
     Ok(NativeProjectPortMutationReportView {
         action: "delete_port".to_string(),
@@ -430,15 +364,9 @@ pub(crate) fn create_native_project_bus(
         name: name.clone(),
         members: members.clone(),
     };
-    commit_schematic_operation(
-        root,
-        "create schematic bus",
-        Operation::CreateSchematicBus {
-            sheet_id: sheet_uuid,
-            bus_id: bus_uuid,
-            bus: serde_json::to_value(&bus).expect("native bus serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "create schematic bus", |model, provenance| {
+        build_create_schematic_bus(model, provenance, sheet_uuid, &bus)
+    })?;
 
     Ok(NativeProjectBusMutationReportView {
         action: "create_bus".to_string(),
@@ -465,15 +393,9 @@ pub(crate) fn edit_native_project_bus_members(
     let (sheet_uuid, sheet_path, _sheet_value, mut bus) =
         load_native_bus_mutation_target(&project, bus_uuid)?;
     bus.members = members.clone();
-    commit_schematic_operation(
-        root,
-        "edit schematic bus members",
-        Operation::SetSchematicBus {
-            sheet_id: sheet_uuid,
-            bus_id: bus_uuid,
-            bus: serde_json::to_value(&bus).expect("native bus serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "edit schematic bus members", |model, provenance| {
+        build_set_schematic_bus(model, provenance, sheet_uuid, &bus)
+    })?;
 
     Ok(NativeProjectBusMutationReportView {
         action: "edit_bus_members".to_string(),
@@ -504,15 +426,9 @@ pub(crate) fn delete_native_project_bus(
             bail!("bus {bus_uuid} is still referenced by bus entry {entry_uuid}");
         }
     }
-    commit_schematic_operation(
-        root,
-        "delete schematic bus",
-        Operation::DeleteSchematicBus {
-            sheet_id: sheet_uuid,
-            bus_id: bus_uuid,
-            bus: serde_json::to_value(&bus).expect("native bus serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "delete schematic bus", |model, provenance| {
+        build_delete_schematic_bus(model, provenance, sheet_uuid, &bus)
+    })?;
 
     Ok(NativeProjectBusMutationReportView {
         action: "delete_bus".to_string(),
@@ -556,16 +472,9 @@ pub(crate) fn place_native_project_bus_entry(
         wire: wire_uuid,
         position,
     };
-    commit_schematic_operation(
-        root,
-        "place schematic bus entry",
-        Operation::CreateSchematicBusEntry {
-            sheet_id: sheet_uuid,
-            bus_entry_id: bus_entry_uuid,
-            bus_entry: serde_json::to_value(&bus_entry)
-                .expect("native bus entry serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "place schematic bus entry", |model, provenance| {
+        build_create_schematic_bus_entry(model, provenance, sheet_uuid, &bus_entry)
+    })?;
 
     Ok(NativeProjectBusEntryMutationReportView {
         action: "place_bus_entry".to_string(),
@@ -592,16 +501,9 @@ pub(crate) fn delete_native_project_bus_entry(
     let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, bus_entry) =
         load_native_bus_entry_mutation_target(&project, bus_entry_uuid)?;
-    commit_schematic_operation(
-        root,
-        "delete schematic bus entry",
-        Operation::DeleteSchematicBusEntry {
-            sheet_id: sheet_uuid,
-            bus_entry_id: bus_entry_uuid,
-            bus_entry: serde_json::to_value(&bus_entry)
-                .expect("native bus entry serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "delete schematic bus entry", |model, provenance| {
+        build_delete_schematic_bus_entry(model, provenance, sheet_uuid, &bus_entry)
+    })?;
 
     Ok(NativeProjectBusEntryMutationReportView {
         action: "delete_bus_entry".to_string(),
@@ -636,16 +538,9 @@ pub(crate) fn place_native_project_noconnect(
         pin: pin_uuid,
         position,
     };
-    commit_schematic_operation(
-        root,
-        "place schematic noconnect",
-        Operation::CreateSchematicNoConnect {
-            sheet_id: sheet_uuid,
-            noconnect_id: noconnect_uuid,
-            noconnect: serde_json::to_value(&noconnect)
-                .expect("native no-connect serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "place schematic noconnect", |model, provenance| {
+        build_create_schematic_noconnect(model, provenance, sheet_uuid, &noconnect)
+    })?;
 
     Ok(NativeProjectNoConnectMutationReportView {
         action: "place_noconnect".to_string(),
@@ -672,16 +567,9 @@ pub(crate) fn delete_native_project_noconnect(
     let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, marker) =
         load_native_noconnect_mutation_target(&project, noconnect_uuid)?;
-    commit_schematic_operation(
-        root,
-        "delete schematic noconnect",
-        Operation::DeleteSchematicNoConnect {
-            sheet_id: sheet_uuid,
-            noconnect_id: noconnect_uuid,
-            noconnect: serde_json::to_value(&marker)
-                .expect("native no-connect serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "delete schematic noconnect", |model, provenance| {
+        build_delete_schematic_noconnect(model, provenance, sheet_uuid, &marker)
+    })?;
 
     Ok(NativeProjectNoConnectMutationReportView {
         action: "delete_noconnect".to_string(),

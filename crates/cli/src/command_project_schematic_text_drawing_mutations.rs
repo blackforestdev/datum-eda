@@ -1,6 +1,9 @@
 use super::*;
-use crate::command_project::command_project_schematic_connectivity_mutations::commit_schematic_operation;
-use eda_engine::substrate::Operation;
+use crate::command_project::command_project_schematic_connectivity_mutations::commit_schematic_write;
+use eda_engine::api::native_write::schematic_sheets::{
+    build_create_schematic_drawing, build_create_schematic_text, build_delete_schematic_drawing,
+    build_delete_schematic_text, build_set_schematic_drawing, build_set_schematic_text,
+};
 
 pub(crate) fn place_native_project_text(
     root: &Path,
@@ -22,16 +25,9 @@ pub(crate) fn place_native_project_text(
         position,
         rotation: rotation_deg,
     };
-    commit_schematic_operation(
-        root,
-        "place schematic text",
-        Operation::CreateSchematicText {
-            sheet_id: sheet_uuid,
-            text_id: text_uuid,
-            text: serde_json::to_value(&text_object)
-                .expect("native text serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "place schematic text", |model, provenance| {
+        build_create_schematic_text(model, provenance, sheet_uuid, &text_object)
+    })?;
 
     Ok(NativeProjectTextMutationReportView {
         action: "place_text".to_string(),
@@ -70,16 +66,9 @@ pub(crate) fn edit_native_project_text(
     if let Some(rotation_deg) = rotation_deg {
         text_object.rotation = rotation_deg;
     }
-    commit_schematic_operation(
-        root,
-        "edit schematic text",
-        Operation::SetSchematicText {
-            sheet_id: sheet_uuid,
-            text_id: text_uuid,
-            text: serde_json::to_value(&text_object)
-                .expect("native text serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "edit schematic text", |model, provenance| {
+        build_set_schematic_text(model, provenance, sheet_uuid, &text_object)
+    })?;
 
     Ok(NativeProjectTextMutationReportView {
         action: "edit_text".to_string(),
@@ -101,16 +90,9 @@ pub(crate) fn delete_native_project_text(
     let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, text_object) =
         load_native_text_mutation_target(&project, text_uuid)?;
-    commit_schematic_operation(
-        root,
-        "delete schematic text",
-        Operation::DeleteSchematicText {
-            sheet_id: sheet_uuid,
-            text_id: text_uuid,
-            text: serde_json::to_value(&text_object)
-                .expect("native text serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "delete schematic text", |model, provenance| {
+        build_delete_schematic_text(model, provenance, sheet_uuid, &text_object)
+    })?;
 
     Ok(NativeProjectTextMutationReportView {
         action: "delete_text".to_string(),
@@ -134,14 +116,6 @@ fn schematic_sheet_path(project: &LoadedNativeProject, sheet_uuid: Uuid) -> Resu
     Ok(project.root.join("schematic").join(relative_path))
 }
 
-fn commit_schematic_drawing_operation(
-    root: &Path,
-    reason: &str,
-    operation: Operation,
-) -> Result<()> {
-    commit_schematic_operation(root, reason, operation)?;
-    Ok(())
-}
 
 fn drawing_report(
     project: &LoadedNativeProject,
@@ -181,16 +155,9 @@ pub(crate) fn place_native_project_drawing_line(
         from,
         to,
     };
-    commit_schematic_drawing_operation(
-        root,
-        "place schematic drawing line",
-        Operation::CreateSchematicDrawing {
-            sheet_id: sheet_uuid,
-            drawing_id: drawing_uuid,
-            drawing: serde_json::to_value(&drawing)
-                .expect("native drawing serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "place schematic drawing line", |model, provenance| {
+        build_create_schematic_drawing(model, provenance, sheet_uuid, &drawing)
+    })?;
 
     Ok(drawing_report(
         &project,
@@ -218,16 +185,9 @@ pub(crate) fn place_native_project_drawing_rect(
         min,
         max,
     };
-    commit_schematic_drawing_operation(
-        root,
-        "place schematic drawing rect",
-        Operation::CreateSchematicDrawing {
-            sheet_id: sheet_uuid,
-            drawing_id: drawing_uuid,
-            drawing: serde_json::to_value(&drawing)
-                .expect("native drawing serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "place schematic drawing rect", |model, provenance| {
+        build_create_schematic_drawing(model, provenance, sheet_uuid, &drawing)
+    })?;
     Ok(drawing_report(
         &project,
         "place_drawing_rect",
@@ -254,15 +214,10 @@ pub(crate) fn place_native_project_drawing_circle(
         center,
         radius,
     };
-    commit_schematic_drawing_operation(
+    commit_schematic_write(
         root,
         "place schematic drawing circle",
-        Operation::CreateSchematicDrawing {
-            sheet_id: sheet_uuid,
-            drawing_id: drawing_uuid,
-            drawing: serde_json::to_value(&drawing)
-                .expect("native drawing serialization must succeed"),
-        },
+        |model, provenance| build_create_schematic_drawing(model, provenance, sheet_uuid, &drawing),
     )?;
     Ok(drawing_report(
         &project,
@@ -291,16 +246,9 @@ pub(crate) fn place_native_project_drawing_arc(
         uuid: drawing_uuid,
         arc,
     };
-    commit_schematic_drawing_operation(
-        root,
-        "place schematic drawing arc",
-        Operation::CreateSchematicDrawing {
-            sheet_id: sheet_uuid,
-            drawing_id: drawing_uuid,
-            drawing: serde_json::to_value(&drawing)
-                .expect("native drawing serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "place schematic drawing arc", |model, provenance| {
+        build_create_schematic_drawing(model, provenance, sheet_uuid, &drawing)
+    })?;
     Ok(drawing_report(
         &project,
         "place_drawing_arc",
@@ -336,16 +284,9 @@ pub(crate) fn edit_native_project_drawing_line(
         from,
         to,
     };
-    commit_schematic_drawing_operation(
-        root,
-        "edit schematic drawing line",
-        Operation::SetSchematicDrawing {
-            sheet_id: sheet_uuid,
-            drawing_id: drawing_uuid,
-            drawing: serde_json::to_value(&drawing)
-                .expect("native drawing serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "edit schematic drawing line", |model, provenance| {
+        build_set_schematic_drawing(model, provenance, sheet_uuid, &drawing)
+    })?;
 
     Ok(drawing_report(
         &project,
@@ -379,16 +320,9 @@ pub(crate) fn edit_native_project_drawing_rect(
         min,
         max,
     };
-    commit_schematic_drawing_operation(
-        root,
-        "edit schematic drawing rect",
-        Operation::SetSchematicDrawing {
-            sheet_id: sheet_uuid,
-            drawing_id: drawing_uuid,
-            drawing: serde_json::to_value(&drawing)
-                .expect("native drawing serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "edit schematic drawing rect", |model, provenance| {
+        build_set_schematic_drawing(model, provenance, sheet_uuid, &drawing)
+    })?;
     Ok(drawing_report(
         &project,
         "edit_drawing_rect",
@@ -421,16 +355,9 @@ pub(crate) fn edit_native_project_drawing_circle(
         center,
         radius,
     };
-    commit_schematic_drawing_operation(
-        root,
-        "edit schematic drawing circle",
-        Operation::SetSchematicDrawing {
-            sheet_id: sheet_uuid,
-            drawing_id: drawing_uuid,
-            drawing: serde_json::to_value(&drawing)
-                .expect("native drawing serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "edit schematic drawing circle", |model, provenance| {
+        build_set_schematic_drawing(model, provenance, sheet_uuid, &drawing)
+    })?;
     Ok(drawing_report(
         &project,
         "edit_drawing_circle",
@@ -471,16 +398,9 @@ pub(crate) fn edit_native_project_drawing_arc(
         uuid: drawing_uuid,
         arc,
     };
-    commit_schematic_drawing_operation(
-        root,
-        "edit schematic drawing arc",
-        Operation::SetSchematicDrawing {
-            sheet_id: sheet_uuid,
-            drawing_id: drawing_uuid,
-            drawing: serde_json::to_value(&drawing)
-                .expect("native drawing serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "edit schematic drawing arc", |model, provenance| {
+        build_set_schematic_drawing(model, provenance, sheet_uuid, &drawing)
+    })?;
     Ok(drawing_report(
         &project,
         "edit_drawing_arc",
@@ -517,16 +437,9 @@ pub(crate) fn delete_native_project_drawing(
         SchematicPrimitive::Arc { arc, .. } => ("arc".to_string(), arc.center, arc.center),
     };
     let (_, _, _, drawing) = load_native_drawing_mutation_target(&project, drawing_uuid)?;
-    commit_schematic_drawing_operation(
-        root,
-        "delete schematic drawing",
-        Operation::DeleteSchematicDrawing {
-            sheet_id: sheet_uuid,
-            drawing_id: drawing_uuid,
-            drawing: serde_json::to_value(&drawing)
-                .expect("native drawing serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "delete schematic drawing", |model, provenance| {
+        build_delete_schematic_drawing(model, provenance, sheet_uuid, &drawing)
+    })?;
 
     Ok(drawing_report(
         &project,

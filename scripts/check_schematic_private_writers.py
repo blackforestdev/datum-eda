@@ -11,6 +11,8 @@ SCHEMATIC_AUTHORING_FILES = [
     Path("crates/cli/src/command_project_schematic_connectivity_mutations.rs"),
     Path("crates/cli/src/command_project_schematic_symbol_mutations.rs"),
     Path("crates/cli/src/command_project_schematic_text_drawing_mutations.rs"),
+    Path("crates/cli/src/command_project/command_project_schematic_sheet_mutations.rs"),
+    Path("crates/cli/src/command_project_schematic_proposals.rs"),
 ]
 
 SCHEMATIC_HELPER_FILES = [
@@ -95,6 +97,15 @@ GENERATED_EVIDENCE_FILES = {
 }
 
 ENGINE_GENERATED_EVIDENCE_FILES = {
+    Path("crates/engine/src/api/native_write/genesis.rs"): {
+        "writes": 0,
+        "required": [
+            "pub fn bootstrap_native_project(",
+            "fn write_genesis_shard",
+            "std::fs::rename(&temp_path, path)?;",
+            "ProjectResolver::new(root).resolve()?;",
+        ],
+    },
     Path("crates/engine/src/substrate/generated_evidence.rs"): {
         "writes": 1,
         "required": [
@@ -305,8 +316,8 @@ FORBIDDEN_PRODUCTION_ZONE_FILL_PATTERNS = [
 ]
 
 REQUIRED_PRODUCTION_ZONE_FILL_PATTERNS = [
-    "Operation::SetZoneFill",
-    "commit_journaled(",
+    "build_set_zone_fills(",
+    "commit_prepared(",
 ]
 
 ARTIFACT_ONLY_EVIDENCE_COMMAND_FILES = {
@@ -473,13 +484,9 @@ REQUIRED_FORWARD_ANNOTATION_STATE_PATTERNS = [
 ]
 
 REQUIRED_PROJECT_BOOTSTRAP_PATTERNS = [
-    'schematic: "schematic/schematic.json".to_string(),',
-    'board: "board/board.json".to_string(),',
-    'rules: "rules/rules.json".to_string(),',
-    "write_canonical_json(&project_json, &manifest)?;",
-    "write_canonical_json(&schematic_json, &schematic)?;",
-    "write_canonical_json(&board_json, &board)?;",
-    "write_canonical_json(&rules_json, &rules)?;",
+    "bootstrap_native_project(",
+    "GenesisSpec {",
+    "use eda_engine::api::native_write::genesis::",
 ]
 
 REQUIRED_ROUTE_STRATEGY_FIXTURE_PATTERNS = [
@@ -564,9 +571,9 @@ def main() -> int:
             failures, relative, text, REQUIRED_PROJECT_BOOTSTRAP_PATTERNS, "project bootstrap"
         )
         write_count = count_pattern(path, "write_canonical_json(")
-        if write_count != 4:
+        if write_count != 0:
             failures.append(
-                f"{relative}: expected exactly 4 project bootstrap write_canonical_json calls, found {write_count}"
+                f"{relative}: expected 0 project bootstrap write_canonical_json calls (genesis is engine-owned), found {write_count}"
             )
         for line, pattern, text_line in matching_lines(path, ["std::fs::write("]):
             failures.append(

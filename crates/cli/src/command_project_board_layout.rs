@@ -1,20 +1,25 @@
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
-use eda_engine::board::{BoardText, Keepout, StackupLayer};
-use eda_engine::ir::geometry::{Point, Polygon};
-use eda_engine::substrate::{
-    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver,
+use eda_engine::api::native_write::board_annotations::{
+    build_delete_board_keepout, build_delete_board_text, build_place_board_keepout,
+    build_place_board_text, build_set_board_keepout, build_set_board_text,
 };
+use eda_engine::api::native_write::board_layout::{
+    build_set_board_name, build_set_board_outline, build_set_board_stackup,
+};
+use eda_engine::api::native_write::{PreparedWrite, WriteProvenance, commit_prepared};
+use eda_engine::board::{BoardText, Keepout, StackupLayer};
+use eda_engine::error::EngineError;
+use eda_engine::ir::geometry::{Point, Polygon};
+use eda_engine::substrate::{CommitSource, DesignModel, ProjectResolver};
 use eda_engine::text::{TextFamilyId, TextHAlign, TextRenderIntent, TextStyleId, TextVAlign};
 use uuid::Uuid;
 
 use super::{
-    NativeOutline, NativePoint, NativeProjectBoardKeepoutMutationReportView,
-    NativeProjectBoardNameMutationReportView, NativeProjectBoardOutlineMutationReportView,
-    NativeProjectBoardStackupMutationReportView, NativeProjectBoardTextMutationReportView,
-    command_project_operation_guards::guarded_existing_object_operation,
-    load_native_project_with_resolved_board,
+    NativeProjectBoardKeepoutMutationReportView, NativeProjectBoardNameMutationReportView,
+    NativeProjectBoardOutlineMutationReportView, NativeProjectBoardStackupMutationReportView,
+    NativeProjectBoardTextMutationReportView, load_native_project_with_resolved_board,
 };
 
 pub(crate) fn query_native_project_board_texts(root: &Path) -> Result<Vec<BoardText>> {
@@ -128,15 +133,9 @@ pub(crate) fn place_native_project_board_text(
         stroke_width_nm,
         layer,
     };
-    commit_board_layout_operation(
-        root,
-        "place board text",
-        Operation::CreateBoardText {
-            text_id: text_uuid,
-            text: serde_json::to_value(&board_text)
-                .expect("native board text serialization must succeed"),
-        },
-    )?;
+    commit_board_layout_write(root, "place board text", |model, provenance| {
+        build_place_board_text(model, provenance, &board_text)
+    })?;
     let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardTextMutationReportView {
         action: "place_board_text".to_string(),
@@ -266,15 +265,9 @@ pub(crate) fn edit_native_project_board_text(
         bail!("board text stroke width must be positive");
     }
     validate_line_spacing_ratio(board_text.line_spacing_ratio_ppm)?;
-    commit_board_layout_operation(
-        root,
-        "edit board text",
-        Operation::SetBoardText {
-            text_id: text_uuid,
-            text: serde_json::to_value(&board_text)
-                .expect("native board text serialization must succeed"),
-        },
-    )?;
+    commit_board_layout_write(root, "edit board text", |model, provenance| {
+        build_set_board_text(model, provenance, &board_text)
+    })?;
     let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardTextMutationReportView {
         action: "edit_board_text".to_string(),
@@ -324,14 +317,9 @@ pub(crate) fn delete_native_project_board_text(
             project.board_path.display()
         )
     })?;
-    commit_board_layout_operation(
-        root,
-        "delete board text",
-        Operation::DeleteBoardText {
-            text_id: text_uuid,
-            text: value,
-        },
-    )?;
+    commit_board_layout_write(root, "delete board text", |model, provenance| {
+        build_delete_board_text(model, provenance, text_uuid, value)
+    })?;
     let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardTextMutationReportView {
         action: "delete_board_text".to_string(),
@@ -359,27 +347,19 @@ pub(crate) fn delete_native_project_board_text(
     })
 }
 
-pub(crate) fn commit_board_layout_operation(
-    root: &Path,
-    reason: &str,
-    operation: Operation,
-) -> Result<()> {
+/// Resolve, build through the native-write facade, and commit one board
+/// layout/annotation write with the historical `failed to commit <reason>`
+/// error context.
+pub(crate) fn commit_board_layout_write<F>(root: &Path, reason: &str, build: F) -> Result<()>
+where
+    F: FnOnce(&DesignModel, WriteProvenance) -> Result<PreparedWrite, EngineError>,
+{
     let mut model = ProjectResolver::new(root).resolve()?;
-    let expected_model_revision = model.model_revision.clone();
-    model
-        .commit_journaled(
-            root,
-            OperationBatch {
-                batch_id: Uuid::new_v4(),
-                expected_model_revision: Some(expected_model_revision),
-                provenance: CommitProvenance {
-                    actor: "datum-eda-cli".to_string(),
-                    source: CommitSource::Cli,
-                    reason: reason.to_string(),
-                },
-                operations: guarded_existing_object_operation(&model, operation)?,
-            },
-        )
+    let prepared = build(
+        &model,
+        WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason),
+    )?;
+    commit_prepared(&mut model, root, prepared)
         .with_context(|| format!("failed to commit {reason}"))?;
     Ok(())
 }
@@ -471,15 +451,9 @@ pub(crate) fn place_native_project_board_keepout(
         layers,
         kind: kind.clone(),
     };
-    commit_board_layout_operation(
-        root,
-        "place board keepout",
-        Operation::CreateBoardKeepout {
-            keepout_id: keepout_uuid,
-            keepout: serde_json::to_value(&keepout)
-                .expect("native board keepout serialization must succeed"),
-        },
-    )?;
+    commit_board_layout_write(root, "place board keepout", |model, provenance| {
+        build_place_board_keepout(model, provenance, &keepout)
+    })?;
     let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardKeepoutMutationReportView {
         action: "place_board_keepout".to_string(),
@@ -528,15 +502,9 @@ pub(crate) fn edit_native_project_board_keepout(
     if let Some(polygon) = polygon {
         keepout.polygon = polygon;
     }
-    commit_board_layout_operation(
-        root,
-        "edit board keepout",
-        Operation::SetBoardKeepout {
-            keepout_id: keepout_uuid,
-            keepout: serde_json::to_value(&keepout)
-                .expect("native board keepout serialization must succeed"),
-        },
-    )?;
+    commit_board_layout_write(root, "edit board keepout", |model, provenance| {
+        build_set_board_keepout(model, provenance, &keepout)
+    })?;
     let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardKeepoutMutationReportView {
         action: "edit_board_keepout".to_string(),
@@ -573,14 +541,9 @@ pub(crate) fn delete_native_project_board_keepout(
             project.board_path.display()
         )
     })?;
-    commit_board_layout_operation(
-        root,
-        "delete board keepout",
-        Operation::DeleteBoardKeepout {
-            keepout_id: keepout_uuid,
-            keepout: value,
-        },
-    )?;
+    commit_board_layout_write(root, "delete board keepout", |model, provenance| {
+        build_delete_board_keepout(model, provenance, keepout_uuid, value)
+    })?;
     let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardKeepoutMutationReportView {
         action: "delete_board_keepout".to_string(),
@@ -598,26 +561,9 @@ pub(crate) fn set_native_project_board_outline(
     polygon: Polygon,
 ) -> Result<NativeProjectBoardOutlineMutationReportView> {
     let project = load_native_project_with_resolved_board(root)?;
-    let outline = NativeOutline {
-        vertices: polygon
-            .vertices
-            .iter()
-            .map(|point| NativePoint {
-                x: point.x,
-                y: point.y,
-            })
-            .collect(),
-        closed: polygon.closed,
-    };
-    commit_board_layout_operation(
-        root,
-        "set board outline",
-        Operation::SetBoardOutline {
-            board_id: project.board.uuid,
-            outline: serde_json::to_value(&outline)
-                .expect("native board outline serialization must succeed"),
-        },
-    )?;
+    commit_board_layout_write(root, "set board outline", |model, provenance| {
+        build_set_board_outline(model, provenance, project.board.uuid, &polygon)
+    })?;
     let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardOutlineMutationReportView {
         action: "set_board_outline".to_string(),
@@ -633,24 +579,10 @@ pub(crate) fn set_native_project_board_stackup(
     layers: Vec<StackupLayer>,
 ) -> Result<NativeProjectBoardStackupMutationReportView> {
     let project = load_native_project_with_resolved_board(root)?;
-    let stackup = serde_json::json!({
-        "layers": layers
-            .into_iter()
-            .map(|layer| {
-                serde_json::to_value(layer)
-                    .expect("native board stackup serialization must succeed")
-            })
-            .collect::<Vec<_>>(),
-    });
-    let layer_count = stackup["layers"].as_array().map_or(0, Vec::len);
-    commit_board_layout_operation(
-        root,
-        "set board stackup",
-        Operation::SetBoardStackup {
-            board_id: project.board.uuid,
-            stackup,
-        },
-    )?;
+    let layer_count = layers.len();
+    commit_board_layout_write(root, "set board stackup", |model, provenance| {
+        build_set_board_stackup(model, provenance, project.board.uuid, &layers)
+    })?;
     let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardStackupMutationReportView {
         action: "set_board_stackup".to_string(),
@@ -669,14 +601,9 @@ pub(crate) fn set_native_project_board_name(
         bail!("board name must not be empty");
     }
     let project = load_native_project_with_resolved_board(root)?;
-    commit_board_layout_operation(
-        root,
-        "set board name",
-        Operation::SetBoardName {
-            board_id: project.board.uuid,
-            name,
-        },
-    )?;
+    commit_board_layout_write(root, "set board name", |model, provenance| {
+        build_set_board_name(model, provenance, project.board.uuid, name.clone())
+    })?;
     let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardNameMutationReportView {
         action: "set_board_name".to_string(),

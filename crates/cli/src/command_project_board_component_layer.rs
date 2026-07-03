@@ -1,16 +1,17 @@
 use std::path::Path;
 
 use anyhow::{Context, Result};
-use eda_engine::board::PlacedPackage;
-use eda_engine::substrate::{
-    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver,
+use eda_engine::api::native_write::board_components::{
+    BoardPackageEdit, build_edit_board_package,
 };
+use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
+use eda_engine::board::PlacedPackage;
+use eda_engine::substrate::{CommitSource, ProjectResolver};
 use uuid::Uuid;
 
 use super::{
-    NativeProjectBoardComponentMutationReportView,
-    command_project_operation_guards::guarded_existing_object_operation,
-    load_native_project_with_resolved_board, native_project_board_component_report,
+    NativeProjectBoardComponentMutationReportView, load_native_project_with_resolved_board,
+    native_project_board_component_report,
 };
 
 pub(crate) fn set_native_project_board_component_layer(
@@ -19,26 +20,17 @@ pub(crate) fn set_native_project_board_component_layer(
     layer: i32,
 ) -> Result<NativeProjectBoardComponentMutationReportView> {
     let mut model = ProjectResolver::new(root).resolve()?;
-    let expected_model_revision = model.model_revision.clone();
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(expected_model_revision),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "set board component layer".to_string(),
-            },
-            operations: guarded_existing_object_operation(
-                &model,
-                Operation::SetComponentSide {
-                    package_id: component_uuid,
-                    layer,
-                },
-            )?,
-        },
+    let prepared = build_edit_board_package(
+        &model,
+        WriteProvenance::new(
+            "datum-eda-cli",
+            CommitSource::Cli,
+            "set board component layer",
+        ),
+        component_uuid,
+        BoardPackageEdit::Side { layer },
     )?;
+    commit_prepared(&mut model, root, prepared)?;
 
     let project = load_native_project_with_resolved_board(root)?;
     let key = component_uuid.to_string();

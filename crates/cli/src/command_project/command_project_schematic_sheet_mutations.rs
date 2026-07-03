@@ -1,7 +1,12 @@
 use super::*;
-use eda_engine::substrate::{
-    CommitProvenance, CommitReport, CommitSource, Operation, OperationBatch, ProjectResolver,
+use super::command_project_schematic_connectivity_mutations::commit_schematic_write;
+use eda_engine::api::native_write::schematic_sheets::{
+    build_create_schematic_definition, build_create_schematic_sheet,
+    build_create_schematic_sheet_instance, build_delete_schematic_sheet,
+    build_delete_schematic_sheet_instance, build_rename_schematic_sheet,
+    build_set_schematic_sheet_instance,
 };
+use eda_engine::substrate::{CommitReport, ProjectResolver};
 
 pub(crate) fn create_native_project_sheet(
     root: &Path,
@@ -38,16 +43,16 @@ pub(crate) fn create_native_project_sheet(
         texts: BTreeMap::new(),
         drawings: BTreeMap::new(),
     };
-    let report = commit_schematic_operations(
-        root,
-        "create schematic sheet",
-        vec![Operation::CreateSchematicSheet {
-            schematic_id: project.schematic.uuid,
-            sheet_id: sheet_uuid,
-            relative_path: relative_path.clone(),
-            sheet: serde_json::to_value(&sheet).expect("native sheet serialization must succeed"),
-        }],
-    )?;
+    let report = commit_schematic_write(root, "create schematic sheet", |model, provenance| {
+        build_create_schematic_sheet(
+            model,
+            provenance,
+            project.schematic.uuid,
+            sheet_uuid,
+            &relative_path,
+            serde_json::to_value(&sheet).expect("native sheet serialization must succeed"),
+        )
+    })?;
     let evidence = schematic_commit_evidence(&report);
 
     Ok(NativeProjectSheetMutationReportView {
@@ -90,16 +95,16 @@ pub(crate) fn delete_native_project_sheet(
         .with_context(|| format!("failed to parse {}", sheet_path.display()))?;
 
     let cascaded_objects = sheet_child_object_count(&sheet);
-    let report = commit_schematic_operations(
-        root,
-        "delete schematic sheet",
-        vec![Operation::DeleteSchematicSheet {
-            schematic_id: project.schematic.uuid,
-            sheet_id: sheet_uuid,
-            relative_path: relative_path.clone(),
-            sheet: sheet_value,
-        }],
-    )?;
+    let report = commit_schematic_write(root, "delete schematic sheet", |model, provenance| {
+        build_delete_schematic_sheet(
+            model,
+            provenance,
+            project.schematic.uuid,
+            sheet_uuid,
+            relative_path,
+            sheet_value,
+        )
+    })?;
     let evidence = schematic_commit_evidence(&report);
 
     Ok(NativeProjectSheetMutationReportView {
@@ -132,14 +137,9 @@ pub(crate) fn rename_native_project_sheet(
             anyhow::anyhow!("sheet not found in native schematic root: {sheet_uuid}")
         })?;
     let sheet_path = project.root.join("schematic").join(relative_path);
-    let report = commit_schematic_operations(
-        root,
-        "rename schematic sheet",
-        vec![Operation::SetSchematicSheetName {
-            sheet_id: sheet_uuid,
-            name: name.clone(),
-        }],
-    )?;
+    let report = commit_schematic_write(root, "rename schematic sheet", |model, provenance| {
+        build_rename_schematic_sheet(model, provenance, sheet_uuid, &name)
+    })?;
     let evidence = schematic_commit_evidence(&report);
 
     Ok(NativeProjectSheetMutationReportView {
@@ -186,16 +186,20 @@ pub(crate) fn create_native_project_sheet_definition(
         root_sheet: root_sheet_uuid,
         name: name.clone(),
     };
-    let report = commit_schematic_operations(
+    let report = commit_schematic_write(
         root,
         "create schematic sheet definition",
-        vec![Operation::CreateSchematicDefinition {
-            schematic_id: project.schematic.uuid,
-            definition_id: definition_uuid,
-            relative_path: relative_path.clone(),
-            definition: serde_json::to_value(&definition)
-                .expect("native sheet definition serialization must succeed"),
-        }],
+        |model, provenance| {
+            build_create_schematic_definition(
+                model,
+                provenance,
+                project.schematic.uuid,
+                definition_uuid,
+                &relative_path,
+                serde_json::to_value(&definition)
+                    .expect("native sheet definition serialization must succeed"),
+            )
+        },
     )?;
     let evidence = schematic_commit_evidence(&report);
 
@@ -265,15 +269,19 @@ pub(crate) fn create_native_project_sheet_instance(
         name: name.clone(),
         ports: Vec::new(),
     };
-    let report = commit_schematic_operations(
+    let report = commit_schematic_write(
         root,
         "create schematic sheet instance",
-        vec![Operation::CreateSchematicSheetInstance {
-            schematic_id: project.schematic.uuid,
-            instance_id: instance_uuid,
-            instance: serde_json::to_value(&instance)
-                .expect("native sheet instance serialization must succeed"),
-        }],
+        |model, provenance| {
+            build_create_schematic_sheet_instance(
+                model,
+                provenance,
+                project.schematic.uuid,
+                instance_uuid,
+                serde_json::to_value(&instance)
+                    .expect("native sheet instance serialization must succeed"),
+            )
+        },
     )?;
     let evidence = schematic_commit_evidence(&report);
 
@@ -306,15 +314,19 @@ pub(crate) fn delete_native_project_sheet_instance(
         .find(|candidate| candidate.uuid == instance_uuid)
         .cloned()
         .ok_or_else(|| anyhow::anyhow!("sheet instance not found: {instance_uuid}"))?;
-    let report = commit_schematic_operations(
+    let report = commit_schematic_write(
         root,
         "delete schematic sheet instance",
-        vec![Operation::DeleteSchematicSheetInstance {
-            schematic_id: project.schematic.uuid,
-            instance_id: instance_uuid,
-            instance: serde_json::to_value(&instance)
-                .expect("native sheet instance serialization must succeed"),
-        }],
+        |model, provenance| {
+            build_delete_schematic_sheet_instance(
+                model,
+                provenance,
+                project.schematic.uuid,
+                instance_uuid,
+                serde_json::to_value(&instance)
+                    .expect("native sheet instance serialization must succeed"),
+            )
+        },
     )?;
     let evidence = schematic_commit_evidence(&report);
 
@@ -351,17 +363,21 @@ pub(crate) fn move_native_project_sheet_instance(
         .ok_or_else(|| anyhow::anyhow!("sheet instance not found: {instance_uuid}"))?;
     let mut instance = previous_instance.clone();
     instance.position = NativePoint { x: x_nm, y: y_nm };
-    let report = commit_schematic_operations(
+    let report = commit_schematic_write(
         root,
         "move schematic sheet instance",
-        vec![Operation::SetSchematicSheetInstance {
-            schematic_id: project.schematic.uuid,
-            instance_id: instance_uuid,
-            previous_instance: serde_json::to_value(&previous_instance)
-                .expect("native sheet instance serialization must succeed"),
-            instance: serde_json::to_value(&instance)
-                .expect("native sheet instance serialization must succeed"),
-        }],
+        |model, provenance| {
+            build_set_schematic_sheet_instance(
+                model,
+                provenance,
+                project.schematic.uuid,
+                instance_uuid,
+                serde_json::to_value(&previous_instance)
+                    .expect("native sheet instance serialization must succeed"),
+                serde_json::to_value(&instance)
+                    .expect("native sheet instance serialization must succeed"),
+            )
+        },
     )?;
     let evidence = schematic_commit_evidence(&report);
 
@@ -408,17 +424,21 @@ pub(crate) fn bind_native_project_sheet_instance_port(
     let mut instance = previous_instance.clone();
     instance.ports.push(port_uuid);
     instance.ports.sort();
-    let report = commit_schematic_operations(
+    let report = commit_schematic_write(
         root,
         "bind schematic sheet instance port",
-        vec![Operation::SetSchematicSheetInstance {
-            schematic_id: project.schematic.uuid,
-            instance_id: instance_uuid,
-            previous_instance: serde_json::to_value(&previous_instance)
-                .expect("native sheet instance serialization must succeed"),
-            instance: serde_json::to_value(&instance)
-                .expect("native sheet instance serialization must succeed"),
-        }],
+        |model, provenance| {
+            build_set_schematic_sheet_instance(
+                model,
+                provenance,
+                project.schematic.uuid,
+                instance_uuid,
+                serde_json::to_value(&previous_instance)
+                    .expect("native sheet instance serialization must succeed"),
+                serde_json::to_value(&instance)
+                    .expect("native sheet instance serialization must succeed"),
+            )
+        },
     )?;
     let evidence = schematic_commit_evidence(&report);
 
@@ -457,17 +477,21 @@ pub(crate) fn unbind_native_project_sheet_instance_port(
     }
     let mut instance = previous_instance.clone();
     instance.ports.retain(|candidate| candidate != &port_uuid);
-    let report = commit_schematic_operations(
+    let report = commit_schematic_write(
         root,
         "unbind schematic sheet instance port",
-        vec![Operation::SetSchematicSheetInstance {
-            schematic_id: project.schematic.uuid,
-            instance_id: instance_uuid,
-            previous_instance: serde_json::to_value(&previous_instance)
-                .expect("native sheet instance serialization must succeed"),
-            instance: serde_json::to_value(&instance)
-                .expect("native sheet instance serialization must succeed"),
-        }],
+        |model, provenance| {
+            build_set_schematic_sheet_instance(
+                model,
+                provenance,
+                project.schematic.uuid,
+                instance_uuid,
+                serde_json::to_value(&previous_instance)
+                    .expect("native sheet instance serialization must succeed"),
+                serde_json::to_value(&instance)
+                    .expect("native sheet instance serialization must succeed"),
+            )
+        },
     )?;
     let evidence = schematic_commit_evidence(&report);
 
@@ -499,31 +523,6 @@ fn sheet_child_object_count(sheet: &NativeSheetRoot) -> usize {
         + sheet.noconnects.len()
         + sheet.texts.len()
         + sheet.drawings.len()
-}
-
-fn commit_schematic_operations(
-    root: &Path,
-    reason: &str,
-    operations: Vec<Operation>,
-) -> Result<CommitReport> {
-    let mut model = ProjectResolver::new(root)
-        .resolve()
-        .with_context(|| format!("failed to resolve native project {}", root.display()))?;
-    model
-        .commit_journaled(
-            root,
-            OperationBatch {
-                batch_id: Uuid::new_v4(),
-                expected_model_revision: Some(model.model_revision.clone()),
-                provenance: CommitProvenance {
-                    actor: "datum-eda-cli".to_string(),
-                    source: CommitSource::Cli,
-                    reason: reason.to_string(),
-                },
-                operations,
-            },
-        )
-        .map_err(Into::into)
 }
 
 struct SchematicCommitEvidence {

@@ -1,19 +1,37 @@
 use std::path::Path;
 
 use anyhow::{Context, Result};
+use eda_engine::api::native_write::board_components::{
+    BoardPackageEdit, BoardPackagePlacement, build_delete_board_package, build_edit_board_package,
+    build_place_board_package,
+};
+use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::board::PlacedPackage;
 use eda_engine::ir::geometry::Point;
-use eda_engine::substrate::{
-    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver,
-};
+use eda_engine::substrate::{CommitSource, ProjectResolver};
 use uuid::Uuid;
 
 use super::{
-    NativeProjectBoardComponentMutationReportView,
-    command_project_operation_guards::guarded_existing_object_operation,
-    load_native_project_with_resolved_board, load_native_project_with_resolved_board_and_model,
+    NativeProjectBoardComponentMutationReportView, load_native_project_with_resolved_board,
+    load_native_project_with_resolved_board_and_model,
     materialize_supported_pool_package_graphics, native_project_board_component_report,
 };
+
+fn cli_provenance(reason: &str) -> WriteProvenance {
+    WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason)
+}
+
+fn commit_board_component_edit(
+    root: &Path,
+    reason: &str,
+    component_uuid: Uuid,
+    edit: BoardPackageEdit,
+) -> Result<()> {
+    let mut model = ProjectResolver::new(root).resolve()?;
+    let prepared = build_edit_board_package(&model, cli_provenance(reason), component_uuid, edit)?;
+    commit_prepared(&mut model, root, prepared)?;
+    Ok(())
+}
 
 pub(crate) fn place_native_project_board_component(
     root: &Path,
@@ -36,28 +54,17 @@ pub(crate) fn place_native_project_board_component(
         layer,
         locked: false,
     };
-    let package = serde_json::to_value(&component)
-        .expect("native board component serialization must succeed");
     let materialized = board_package_materialization_payload_for_component(root, &component)?;
     let mut model = ProjectResolver::new(root).resolve()?;
-    let expected_model_revision = model.model_revision.clone();
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(expected_model_revision),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "place board component".to_string(),
-            },
-            operations: vec![Operation::CreateBoardPackage {
-                package_id: component_uuid,
-                package,
-                materialized,
-            }],
+    let prepared = build_place_board_package(
+        &model,
+        cli_provenance("place board component"),
+        &BoardPackagePlacement {
+            package: component.clone(),
+            materialized,
         },
     )?;
+    commit_prepared(&mut model, root, prepared)?;
 
     let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_component_report(
@@ -72,26 +79,13 @@ pub(crate) fn move_native_project_board_component(
     component_uuid: Uuid,
     position: Point,
 ) -> Result<NativeProjectBoardComponentMutationReportView> {
-    let mut model = ProjectResolver::new(root).resolve()?;
-    let expected_model_revision = model.model_revision.clone();
-    model.commit_journaled(
+    commit_board_component_edit(
         root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(expected_model_revision),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "move board component".to_string(),
-            },
-            operations: guarded_existing_object_operation(
-                &model,
-                Operation::SetBoardPackagePosition {
-                    package_id: component_uuid,
-                    x: position.x,
-                    y: position.y,
-                },
-            )?,
+        "move board component",
+        component_uuid,
+        BoardPackageEdit::Position {
+            x: position.x,
+            y: position.y,
         },
     )?;
 
@@ -118,26 +112,11 @@ pub(crate) fn set_native_project_board_component_part(
     component_uuid: Uuid,
     part_uuid: Uuid,
 ) -> Result<NativeProjectBoardComponentMutationReportView> {
-    let mut model = ProjectResolver::new(root).resolve()?;
-    let expected_model_revision = model.model_revision.clone();
-    model.commit_journaled(
+    commit_board_component_edit(
         root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(expected_model_revision),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "set board component part".to_string(),
-            },
-            operations: guarded_existing_object_operation(
-                &model,
-                Operation::SetBoardPackagePart {
-                    package_id: component_uuid,
-                    part_id: part_uuid,
-                },
-            )?,
-        },
+        "set board component part",
+        component_uuid,
+        BoardPackageEdit::Part { part_id: part_uuid },
     )?;
 
     let project = load_native_project_with_resolved_board(root)?;
@@ -184,27 +163,14 @@ pub(crate) fn set_native_project_board_component_package(
     clear_loaded_component_materialization(&mut project, &key);
     materialize_supported_pool_package_graphics(&mut project, &component)?;
     let materialized = component_materialization_payload(&project, &key);
-    let mut model = ProjectResolver::new(root).resolve()?;
-    let expected_model_revision = model.model_revision.clone();
-    model.commit_journaled(
+    commit_board_component_edit(
         root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(expected_model_revision),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "set board component package".to_string(),
-            },
-            operations: guarded_existing_object_operation(
-                &model,
-                Operation::SetBoardPackagePackage {
-                    package_id: component_uuid,
-                    package_ref_id: package_uuid,
-                    previous_materialized,
-                    materialized,
-                },
-            )?,
+        "set board component package",
+        component_uuid,
+        BoardPackageEdit::Package {
+            package_ref_id: package_uuid,
+            previous_materialized,
+            materialized,
         },
     )?;
 
@@ -378,25 +344,12 @@ pub(crate) fn rotate_native_project_board_component(
     component_uuid: Uuid,
     rotation_deg: i32,
 ) -> Result<NativeProjectBoardComponentMutationReportView> {
-    let mut model = ProjectResolver::new(root).resolve()?;
-    let expected_model_revision = model.model_revision.clone();
-    model.commit_journaled(
+    commit_board_component_edit(
         root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(expected_model_revision),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "rotate board component".to_string(),
-            },
-            operations: guarded_existing_object_operation(
-                &model,
-                Operation::SetBoardPackageRotation {
-                    package_id: component_uuid,
-                    rotation: rotation_deg,
-                },
-            )?,
+        "rotate board component",
+        component_uuid,
+        BoardPackageEdit::Rotation {
+            rotation: rotation_deg,
         },
     )?;
 
@@ -423,30 +376,15 @@ pub(crate) fn set_native_project_board_component_locked(
     component_uuid: Uuid,
     locked: bool,
 ) -> Result<NativeProjectBoardComponentMutationReportView> {
-    let mut model = ProjectResolver::new(root).resolve()?;
-    let expected_model_revision = model.model_revision.clone();
-    model.commit_journaled(
+    commit_board_component_edit(
         root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(expected_model_revision),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: if locked {
-                    "set board component locked".to_string()
-                } else {
-                    "clear board component locked".to_string()
-                },
-            },
-            operations: guarded_existing_object_operation(
-                &model,
-                Operation::SetBoardPackageLocked {
-                    package_id: component_uuid,
-                    locked,
-                },
-            )?,
+        if locked {
+            "set board component locked"
+        } else {
+            "clear board component locked"
         },
+        component_uuid,
+        BoardPackageEdit::Locked { locked },
     )?;
 
     let project = load_native_project_with_resolved_board(root)?;
@@ -494,26 +432,13 @@ pub(crate) fn delete_native_project_board_component(
         native_project_board_component_report("delete_board_component", &project, component);
     let materialized = component_materialization_payload(&project, &component_uuid.to_string());
     let mut model = ProjectResolver::new(root).resolve()?;
-    let expected_model_revision = model.model_revision.clone();
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(expected_model_revision),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "delete board component".to_string(),
-            },
-            operations: guarded_existing_object_operation(
-                &model,
-                Operation::DeleteBoardPackage {
-                    package_id: component_uuid,
-                    package: value,
-                    materialized,
-                },
-            )?,
-        },
+    let prepared = build_delete_board_package(
+        &model,
+        cli_provenance("delete board component"),
+        component_uuid,
+        value,
+        materialized,
     )?;
+    commit_prepared(&mut model, root, prepared)?;
     Ok(report)
 }

@@ -310,7 +310,7 @@ pub(crate) use self::command_project_native_journal_mutation::{
 };
 pub(crate) use self::command_project_native_surface::*;
 pub(crate) use self::command_project_native_types::{
-    NativeBoardRoot, NativeComponentPad, NativeOutline, NativePoint, NativeStackup,
+    NativeBoardRoot, NativeComponentPad, NativeOutline, NativePoint,
 };
 pub(crate) use self::command_project_output_job_proposals::{
     propose_create_native_project_output_job, propose_delete_native_project_output_job,

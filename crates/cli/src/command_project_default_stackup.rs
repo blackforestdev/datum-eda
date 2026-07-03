@@ -2,12 +2,12 @@ use std::collections::BTreeMap;
 use std::path::Path;
 
 use anyhow::{Result, bail};
+use eda_engine::api::native_write::board_layout::build_set_board_stackup;
 use eda_engine::board::{StackupLayer, StackupLayerType};
-use eda_engine::substrate::Operation;
 
 use super::{
     LoadedNativeProject, NativeProjectBoardStackupMutationReportView,
-    command_project_board_layout::commit_board_layout_operation,
+    command_project_board_layout::commit_board_layout_write,
     load_native_project_with_resolved_board, query_native_project_board_stackup,
 };
 
@@ -35,24 +35,10 @@ pub(crate) fn add_native_project_default_top_stackup(
 ) -> Result<NativeProjectBoardStackupMutationReportView> {
     let project = load_native_project_with_resolved_board(root)?;
     let merged = merge_default_top_stackup(&project)?;
-    let stackup = serde_json::json!({
-        "layers": merged
-            .into_iter()
-            .map(|layer| {
-                serde_json::to_value(layer)
-                    .expect("native board stackup serialization must succeed")
-            })
-            .collect::<Vec<_>>(),
-    });
-    let layer_count = stackup["layers"].as_array().map_or(0, Vec::len);
-    commit_board_layout_operation(
-        root,
-        "add default top stackup",
-        Operation::SetBoardStackup {
-            board_id: project.board.uuid,
-            stackup,
-        },
-    )?;
+    let layer_count = merged.len();
+    commit_board_layout_write(root, "add default top stackup", |model, provenance| {
+        build_set_board_stackup(model, provenance, project.board.uuid, &merged)
+    })?;
     let project = load_native_project_with_resolved_board(root)?;
     Ok(NativeProjectBoardStackupMutationReportView {
         action: "add_default_top_stackup".to_string(),

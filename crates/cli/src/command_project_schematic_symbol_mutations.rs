@@ -1,4 +1,4 @@
-use super::command_project_schematic_symbol_component_instance::component_instance_operation_for_pool_symbol;
+use super::command_project_schematic_symbol_component_instance::part_binding_for_pool_symbol;
 use super::command_project_schematic_symbol_library_materialization::{
     materialize_pool_symbol_pins, resolve_pool_symbol_component_binding,
 };
@@ -7,10 +7,9 @@ use super::command_project_schematic_symbol_reports::{
     symbol_mutation_report, symbol_mutation_report_with_binding,
 };
 use super::*;
-use crate::command_project::command_project_operation_guards::guarded_operation_batch;
-use crate::command_project::command_project_schematic_connectivity_mutations::commit_schematic_operation;
-use eda_engine::substrate::{
-    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver,
+use crate::command_project::command_project_schematic_connectivity_mutations::commit_schematic_write;
+use eda_engine::api::native_write::schematic_symbols::{
+    build_delete_schematic_symbol, build_place_schematic_symbol, build_set_schematic_symbol,
 };
 
 fn schematic_sheet_path(project: &LoadedNativeProject, sheet_uuid: Uuid) -> Result<PathBuf> {
@@ -28,43 +27,10 @@ fn commit_symbol_update(
     sheet_uuid: Uuid,
     symbol: &PlacedSymbol,
 ) -> Result<()> {
-    commit_schematic_operation(
-        root,
-        reason,
-        Operation::SetSchematicSymbol {
-            sheet_id: sheet_uuid,
-            symbol_id: symbol.uuid,
-            symbol: serde_json::to_value(symbol).expect("native symbol serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, reason, |model, provenance| {
+        build_set_schematic_symbol(model, provenance, sheet_uuid, symbol)
+    })?;
     Ok(())
-}
-
-fn commit_schematic_operations(
-    root: &Path,
-    reason: &str,
-    operations: Vec<Operation>,
-) -> Result<()> {
-    let mut model = ProjectResolver::new(root)
-        .resolve()
-        .with_context(|| format!("failed to resolve native project {}", root.display()))?;
-    let batch = guarded_operation_batch(
-        &model,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(model.model_revision.clone()),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: reason.to_string(),
-            },
-            operations,
-        },
-    )?;
-    model
-        .commit_journaled(root, batch)
-        .map(|_| ())
-        .map_err(Into::into)
 }
 
 pub(crate) fn place_native_project_symbol(
@@ -104,18 +70,7 @@ pub(crate) fn place_native_project_symbol(
         pin_overrides: Vec::<PinDisplayOverride>::new(),
         hidden_power_behavior: HiddenPowerBehavior::SourceDefinedImplicit,
     };
-    let mut operations = vec![Operation::CreateSchematicSymbol {
-        sheet_id: sheet_uuid,
-        symbol_id: symbol_uuid,
-        symbol: serde_json::to_value(&symbol).expect("native symbol serialization must succeed"),
-    }];
-    if let Some(binding) = &binding {
-        if let Some(operation) =
-            component_instance_operation_for_pool_symbol(root, symbol_uuid, binding)?
-        {
-            operations.push(operation);
-        }
-    }
+    let part_binding = binding.as_ref().and_then(part_binding_for_pool_symbol);
     let component_instance_uuid = binding.as_ref().and_then(|binding| {
         binding
             .part
@@ -125,7 +80,9 @@ pub(crate) fn place_native_project_symbol(
     let binding_evidence = binding.as_ref().map(|binding| {
         binding_evidence_for_pool_symbol(binding, symbol_uuid, component_instance_uuid)
     });
-    commit_schematic_operations(root, "place schematic symbol", operations)?;
+    commit_schematic_write(root, "place schematic symbol", |model, provenance| {
+        build_place_schematic_symbol(model, provenance, sheet_uuid, &symbol, part_binding.as_ref())
+    })?;
     Ok(symbol_mutation_report_with_binding(
         "place_symbol",
         &project,
@@ -202,16 +159,9 @@ pub(crate) fn delete_native_project_symbol(
     let project = load_native_project_with_resolved_board(root)?;
     let (sheet_uuid, sheet_path, _sheet_value, symbol) =
         load_native_symbol_mutation_target(&project, symbol_uuid)?;
-    commit_schematic_operation(
-        root,
-        "delete schematic symbol",
-        Operation::DeleteSchematicSymbol {
-            sheet_id: sheet_uuid,
-            symbol_id: symbol_uuid,
-            symbol: serde_json::to_value(&symbol)
-                .expect("native symbol serialization must succeed"),
-        },
-    )?;
+    commit_schematic_write(root, "delete schematic symbol", |model, provenance| {
+        build_delete_schematic_symbol(model, provenance, sheet_uuid, &symbol)
+    })?;
     Ok(symbol_mutation_report(
         "delete_symbol",
         &project,

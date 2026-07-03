@@ -1,14 +1,19 @@
 use std::path::Path;
 
 use anyhow::{Context, Result};
+use eda_engine::api::native_write::WriteProvenance;
+use eda_engine::api::native_write::schematic_connectivity::{
+    build_create_schematic_label, build_create_schematic_wire,
+};
+use eda_engine::api::native_write::schematic_symbols::build_place_schematic_symbol;
 use eda_engine::substrate::{
-    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver, Proposal,
-    ProposalCreateRequest, ProposalSource, create_draft_proposal_from_batch,
+    CommitSource, ProjectResolver, Proposal, ProposalCreateRequest, ProposalSource,
+    create_draft_proposal_from_batch,
 };
 use serde::Serialize;
 use uuid::Uuid;
 
-use super::command_project_schematic_symbol_component_instance::component_instance_operation_for_pool_symbol;
+use super::command_project_schematic_symbol_component_instance::part_binding_for_pool_symbol;
 use super::command_project_schematic_symbol_library_materialization::{
     materialize_pool_symbol_pins, resolve_pool_symbol_component_binding,
 };
@@ -120,34 +125,25 @@ pub(crate) fn propose_place_native_project_symbol(
     let mut model = ProjectResolver::new(root)
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
-    let mut operations = vec![Operation::CreateSchematicSymbol {
-        sheet_id: sheet_uuid,
-        symbol_id: symbol_uuid,
-        symbol: serde_json::to_value(&symbol).context("failed to serialize symbol operation")?,
-    }];
-    if let Some(binding) = &binding {
-        if let Some(operation) =
-            component_instance_operation_for_pool_symbol(root, symbol_uuid, binding)?
-        {
-            operations.push(operation);
-        }
-    }
+    let part_binding = binding.as_ref().and_then(part_binding_for_pool_symbol);
     let component_instance_uuid = binding.as_ref().and_then(|binding| {
         binding
             .part
             .as_ref()
             .map(|_| component_instance_uuid_for_pool_symbol(&project, symbol_uuid, binding))
     });
-    let batch = OperationBatch {
-        batch_id: Uuid::new_v4(),
-        expected_model_revision: Some(model.model_revision.clone()),
-        provenance: CommitProvenance {
-            actor: "datum-eda-cli".to_string(),
-            source: CommitSource::Cli,
-            reason: "propose place schematic symbol".to_string(),
-        },
-        operations,
-    };
+    let prepared = build_place_schematic_symbol(
+        &model,
+        WriteProvenance::new(
+            "datum-eda-cli",
+            CommitSource::Cli,
+            "propose place schematic symbol",
+        ),
+        sheet_uuid,
+        &symbol,
+        part_binding.as_ref(),
+    )?;
+    let batch = prepared.batch;
     let proposal = create_draft_proposal_from_batch(
         &mut model,
         root,
@@ -219,20 +215,17 @@ pub(crate) fn propose_place_native_project_label(
     let mut model = ProjectResolver::new(root)
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
-    let batch = OperationBatch {
-        batch_id: Uuid::new_v4(),
-        expected_model_revision: Some(model.model_revision.clone()),
-        provenance: CommitProvenance {
-            actor: "datum-eda-cli".to_string(),
-            source: CommitSource::Cli,
-            reason: "propose place schematic label".to_string(),
-        },
-        operations: vec![Operation::CreateSchematicLabel {
-            sheet_id: sheet_uuid,
-            label_id: label_uuid,
-            label: serde_json::to_value(&label).context("failed to serialize label operation")?,
-        }],
-    };
+    let prepared = build_create_schematic_label(
+        &model,
+        WriteProvenance::new(
+            "datum-eda-cli",
+            CommitSource::Cli,
+            "propose place schematic label",
+        ),
+        sheet_uuid,
+        &label,
+    )?;
+    let batch = prepared.batch;
     let proposal = create_draft_proposal_from_batch(
         &mut model,
         root,
@@ -293,20 +286,17 @@ pub(crate) fn propose_draw_native_project_wire(
     let mut model = ProjectResolver::new(root)
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
-    let batch = OperationBatch {
-        batch_id: Uuid::new_v4(),
-        expected_model_revision: Some(model.model_revision.clone()),
-        provenance: CommitProvenance {
-            actor: "datum-eda-cli".to_string(),
-            source: CommitSource::Cli,
-            reason: "propose draw schematic wire".to_string(),
-        },
-        operations: vec![Operation::CreateSchematicWire {
-            sheet_id: sheet_uuid,
-            wire_id: wire_uuid,
-            wire: serde_json::to_value(&wire).context("failed to serialize wire operation")?,
-        }],
-    };
+    let prepared = build_create_schematic_wire(
+        &model,
+        WriteProvenance::new(
+            "datum-eda-cli",
+            CommitSource::Cli,
+            "propose draw schematic wire",
+        ),
+        sheet_uuid,
+        &wire,
+    )?;
+    let batch = prepared.batch;
     let proposal = create_draft_proposal_from_batch(
         &mut model,
         root,

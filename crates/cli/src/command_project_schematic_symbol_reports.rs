@@ -65,13 +65,10 @@ pub(crate) fn component_instance_uuid_for_pool_symbol(
     symbol_uuid: Uuid,
     binding: &PoolSymbolComponentBinding,
 ) -> Uuid {
-    Uuid::new_v5(
+    eda_engine::api::native_write::schematic_symbols::placed_symbol_component_instance_id(
         &project.manifest.uuid,
-        format!(
-            "datum-eda:component-instance:schematic:{}:{symbol_uuid}",
-            binding.symbol_id
-        )
-        .as_bytes(),
+        binding.symbol_id,
+        symbol_uuid,
     )
 }
 

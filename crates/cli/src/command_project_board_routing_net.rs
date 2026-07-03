@@ -1,19 +1,28 @@
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
+use eda_engine::api::native_write::board_routing::{
+    build_delete_board_net, build_delete_board_track, build_delete_board_via,
+    build_delete_board_zone, build_place_board_net, build_place_board_track,
+    build_place_board_via, build_place_board_zone, build_set_board_net, build_set_board_track,
+    build_set_board_via, build_set_board_zone, build_set_zone_fills,
+};
+use eda_engine::api::native_write::{PreparedWrite, WriteProvenance, commit_prepared};
 use eda_engine::board::{ImpedanceSpec, Net, Track, Via, Zone};
+use eda_engine::error::EngineError;
 use eda_engine::ir::geometry::{Point, Polygon};
 use eda_engine::substrate::{
-    CommitProvenance, CommitSource, ModelRevision, Operation, OperationBatch, ProjectResolver,
-    ZONE_FILL_SCHEMA_VERSION, ZoneFill, compute_bounded_zone_fill,
+    CommitSource, DesignModel, ModelRevision, ProjectResolver, ZONE_FILL_SCHEMA_VERSION, ZoneFill,
+    compute_bounded_zone_fill,
 };
 use serde::Serialize;
 use uuid::Uuid;
 
+pub(crate) use eda_engine::api::native_write::board_routing::previous_persisted_zone_fill_value;
+
 use super::{
     NativeProjectBoardNetMutationReportView, NativeProjectBoardTrackMutationReportView,
     NativeProjectBoardViaMutationReportView, NativeProjectBoardZoneMutationReportView,
-    command_project_operation_guards::guarded_existing_object_operation,
     load_native_project_with_resolved_board, native_project_board_net_report,
     native_project_board_track_report, native_project_board_via_report,
     native_project_board_zone_report,
@@ -121,7 +130,6 @@ pub(crate) fn fill_native_project_zones(
 
     let project_id = model.project.project_id.to_string();
     let expected_model_revision = model.model_revision.clone();
-    let mut operations = Vec::new();
     let mut zone_fills = Vec::new();
     let mut zone_fill_paths = Vec::new();
     for zone in zones {
@@ -142,31 +150,13 @@ pub(crate) fn fill_native_project_zones(
             provenance: Some(provenance),
         };
         let relative_path = format!(".datum/zone_fills/{}.json", fill.zone_id);
-        let previous_zone_fill = previous_persisted_zone_fill_value(&model, fill.zone_id);
-        operations.push(Operation::SetZoneFill {
-            zone_id: fill.zone_id,
-            previous_zone_fill,
-            zone_fill: serde_json::to_value(&fill)
-                .expect("native zone fill serialization must succeed"),
-        });
         zone_fill_paths.push(root.join(&relative_path).display().to_string());
         zone_fills.push(fill);
     }
-    if !operations.is_empty() {
+    if !zone_fills.is_empty() {
         let mut model = model;
-        model.commit_journaled(
-            root,
-            OperationBatch {
-                batch_id: Uuid::new_v4(),
-                expected_model_revision: Some(expected_model_revision.clone()),
-                provenance: CommitProvenance {
-                    actor: "datum-eda-cli".to_string(),
-                    source: CommitSource::Cli,
-                    reason: "fill zones".to_string(),
-                },
-                operations,
-            },
-        )?;
+        let prepared = build_set_zone_fills(&model, cli_provenance("fill zones"), &zone_fills)?;
+        commit_prepared(&mut model, root, prepared)?;
     }
 
     Ok(NativeProjectFillZonesView {
@@ -180,48 +170,6 @@ pub(crate) fn fill_native_project_zones(
         zone_fills,
         zone_fill_paths,
     })
-}
-
-pub(crate) fn previous_persisted_zone_fill_value(
-    model: &eda_engine::substrate::DesignModel,
-    zone_id: Uuid,
-) -> Option<serde_json::Value> {
-    model
-        .zone_fills
-        .get(&zone_id)
-        .filter(|fill| fill.state != eda_engine::substrate::ZoneFillState::Unfilled)
-        .map(|fill| {
-            serde_json::to_value(fill).expect("resolved zone fill serialization must succeed")
-        })
-        .or_else(|| previous_journaled_zone_fill_value(model, zone_id))
-}
-
-fn previous_journaled_zone_fill_value(
-    model: &eda_engine::substrate::DesignModel,
-    zone_id: Uuid,
-) -> Option<serde_json::Value> {
-    let mut previous = None;
-    for transaction in &model.journal {
-        for operation in &transaction.operations {
-            match operation {
-                Operation::SetZoneFill {
-                    zone_id: operation_zone_id,
-                    zone_fill,
-                    ..
-                } if *operation_zone_id == zone_id => {
-                    previous = Some(zone_fill.clone());
-                }
-                Operation::DeleteZoneFill {
-                    zone_id: operation_zone_id,
-                    ..
-                } if *operation_zone_id == zone_id => {
-                    previous = None;
-                }
-                _ => {}
-            }
-        }
-    }
-    previous
 }
 
 pub(crate) fn query_native_project_board_nets(root: &Path) -> Result<Vec<Net>> {
@@ -268,14 +216,9 @@ pub(crate) fn place_native_project_board_net(
         class: class_uuid,
         controlled_impedance,
     };
-    commit_board_routing_operation(
-        root,
-        "place board net",
-        Operation::CreateBoardNet {
-            net_id: net_uuid,
-            net: serde_json::to_value(&net).expect("native board net serialization must succeed"),
-        },
-    )?;
+    commit_board_routing_write(root, "place board net", |model, provenance| {
+        build_place_board_net(model, provenance, &net)
+    })?;
     let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_net_report(
         "place_board_net",
@@ -305,15 +248,9 @@ pub(crate) fn place_native_project_board_track(
         width: width_nm,
         layer,
     };
-    commit_board_routing_operation(
-        root,
-        "draw board track",
-        Operation::CreateBoardTrack {
-            track_id: track_uuid,
-            track: serde_json::to_value(&track)
-                .expect("native board track serialization must succeed"),
-        },
-    )?;
+    commit_board_routing_write(root, "draw board track", |model, provenance| {
+        build_place_board_track(model, provenance, &track)
+    })?;
     let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_track_report(
         "draw_board_track",
@@ -345,14 +282,9 @@ pub(crate) fn place_native_project_board_via(
         from_layer,
         to_layer,
     };
-    commit_board_routing_operation(
-        root,
-        "place board via",
-        Operation::CreateBoardVia {
-            via_id: via_uuid,
-            via: serde_json::to_value(&via).expect("native board via serialization must succeed"),
-        },
-    )?;
+    commit_board_routing_write(root, "place board via", |model, provenance| {
+        build_place_board_via(model, provenance, &via)
+    })?;
     let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_via_report(
         "place_board_via",
@@ -404,15 +336,9 @@ pub(crate) fn edit_native_project_board_track(
     if let Some(layer) = layer {
         track.layer = layer;
     }
-    commit_board_routing_operation(
-        root,
-        "edit board track",
-        Operation::SetBoardTrack {
-            track_id: track_uuid,
-            track: serde_json::to_value(&track)
-                .expect("native board track serialization must succeed"),
-        },
-    )?;
+    commit_board_routing_write(root, "edit board track", |model, provenance| {
+        build_set_board_track(model, provenance, &track)
+    })?;
     let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_track_report(
         "edit_board_track",
@@ -468,14 +394,9 @@ pub(crate) fn edit_native_project_board_via(
     if let Some(to_layer) = to_layer {
         via.to_layer = to_layer;
     }
-    commit_board_routing_operation(
-        root,
-        "edit board via",
-        Operation::SetBoardVia {
-            via_id: via_uuid,
-            via: serde_json::to_value(&via).expect("native board via serialization must succeed"),
-        },
-    )?;
+    commit_board_routing_write(root, "edit board via", |model, provenance| {
+        build_set_board_via(model, provenance, &via)
+    })?;
     let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_via_report(
         "edit_board_via",
@@ -509,15 +430,9 @@ pub(crate) fn place_native_project_board_zone(
         thermal_gap: thermal_gap_nm,
         thermal_spoke_width: thermal_spoke_width_nm,
     };
-    commit_board_routing_operation(
-        root,
-        "place board zone",
-        Operation::CreateBoardZone {
-            zone_id: zone_uuid,
-            zone: serde_json::to_value(&zone)
-                .expect("native board zone serialization must succeed"),
-        },
-    )?;
+    commit_board_routing_write(root, "place board zone", |model, provenance| {
+        build_place_board_zone(model, provenance, &zone)
+    })?;
     let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_zone_report(
         "place_board_zone",
@@ -584,15 +499,9 @@ pub(crate) fn edit_native_project_board_zone(
     if let Some(thermal_spoke_width_nm) = thermal_spoke_width_nm {
         zone.thermal_spoke_width = thermal_spoke_width_nm;
     }
-    commit_board_routing_operation(
-        root,
-        "edit board zone",
-        Operation::SetBoardZone {
-            zone_id: zone_uuid,
-            zone: serde_json::to_value(&zone)
-                .expect("native board zone serialization must succeed"),
-        },
-    )?;
+    commit_board_routing_write(root, "edit board zone", |model, provenance| {
+        build_set_board_zone(model, provenance, &zone)
+    })?;
     let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_zone_report(
         "edit_board_zone",
@@ -652,14 +561,9 @@ pub(crate) fn edit_native_project_board_net(
             controlled_dielectric_layer,
         )?);
     }
-    commit_board_routing_operation(
-        root,
-        "edit board net",
-        Operation::SetBoardNet {
-            net_id: net_uuid,
-            net: serde_json::to_value(&net).expect("native board net serialization must succeed"),
-        },
-    )?;
+    commit_board_routing_write(root, "edit board net", |model, provenance| {
+        build_set_board_net(model, provenance, &net)
+    })?;
     let project = load_native_project_with_resolved_board(root)?;
     Ok(native_project_board_net_report(
         "edit_board_net",
@@ -752,14 +656,9 @@ pub(crate) fn delete_native_project_board_track(
             project.board_path.display()
         )
     })?;
-    commit_board_routing_operation(
-        root,
-        "delete board track",
-        Operation::DeleteBoardTrack {
-            track_id: track_uuid,
-            track: value,
-        },
-    )?;
+    commit_board_routing_write(root, "delete board track", |model, provenance| {
+        build_delete_board_track(model, provenance, track_uuid, value)
+    })?;
     Ok(native_project_board_track_report(
         "delete_board_track",
         &project,
@@ -767,22 +666,17 @@ pub(crate) fn delete_native_project_board_track(
     ))
 }
 
-fn commit_board_routing_operation(root: &Path, reason: &str, operation: Operation) -> Result<()> {
+fn cli_provenance(reason: &str) -> WriteProvenance {
+    WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason)
+}
+
+fn commit_board_routing_write<F>(root: &Path, reason: &str, build: F) -> Result<()>
+where
+    F: FnOnce(&DesignModel, WriteProvenance) -> Result<PreparedWrite, EngineError>,
+{
     let mut model = ProjectResolver::new(root).resolve()?;
-    let expected_model_revision = model.model_revision.clone();
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(expected_model_revision),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: reason.to_string(),
-            },
-            operations: guarded_existing_object_operation(&model, operation)?,
-        },
-    )?;
+    let prepared = build(&model, cli_provenance(reason))?;
+    commit_prepared(&mut model, root, prepared)?;
     Ok(())
 }
 
@@ -803,14 +697,9 @@ pub(crate) fn delete_native_project_board_via(
             project.board_path.display()
         )
     })?;
-    commit_board_routing_operation(
-        root,
-        "delete board via",
-        Operation::DeleteBoardVia {
-            via_id: via_uuid,
-            via: value,
-        },
-    )?;
+    commit_board_routing_write(root, "delete board via", |model, provenance| {
+        build_delete_board_via(model, provenance, via_uuid, value)
+    })?;
     Ok(native_project_board_via_report(
         "delete_board_via",
         &project,
@@ -835,14 +724,9 @@ pub(crate) fn delete_native_project_board_zone(
             project.board_path.display()
         )
     })?;
-    commit_board_routing_operation(
-        root,
-        "delete board zone",
-        Operation::DeleteBoardZone {
-            zone_id: zone_uuid,
-            zone: value,
-        },
-    )?;
+    commit_board_routing_write(root, "delete board zone", |model, provenance| {
+        build_delete_board_zone(model, provenance, zone_uuid, value)
+    })?;
     Ok(native_project_board_zone_report(
         "delete_board_zone",
         &project,
@@ -867,13 +751,8 @@ pub(crate) fn delete_native_project_board_net(
             project.board_path.display()
         )
     })?;
-    commit_board_routing_operation(
-        root,
-        "delete board net",
-        Operation::DeleteBoardNet {
-            net_id: net_uuid,
-            net: value,
-        },
-    )?;
+    commit_board_routing_write(root, "delete board net", |model, provenance| {
+        build_delete_board_net(model, provenance, net_uuid, value)
+    })?;
     Ok(native_project_board_net_report("delete_board_net", &project, net))
 }
