@@ -3,10 +3,10 @@ use super::super::*;
 impl Engine {
     fn apply_undo_transaction(
         &mut self,
-        transaction: &TransactionRecord,
+        transaction: &ImportedSessionUndoRecord,
     ) -> Result<OperationResult, EngineError> {
         Ok(match transaction {
-            TransactionRecord::DeleteTrack { track } => {
+            ImportedSessionUndoRecord::DeleteTrack { track } => {
                 let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
                 let board = design.board.as_mut().ok_or_else(|| {
                     EngineError::Operation(
@@ -26,7 +26,7 @@ impl Engine {
                     description: format!("undo delete_track {}", track.uuid),
                 }
             }
-            TransactionRecord::DeleteVia { via } => {
+            ImportedSessionUndoRecord::DeleteVia { via } => {
                 let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
                 let board = design.board.as_mut().ok_or_else(|| {
                     EngineError::Operation(
@@ -46,7 +46,7 @@ impl Engine {
                     description: format!("undo delete_via {}", via.uuid),
                 }
             }
-            TransactionRecord::DeleteComponent { package, pads } => {
+            ImportedSessionUndoRecord::DeleteComponent { package, pads } => {
                 let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
                 let board = design.board.as_mut().ok_or_else(|| {
                     EngineError::Operation(
@@ -69,7 +69,7 @@ impl Engine {
                     description: format!("undo delete_component {}", package.uuid),
                 }
             }
-            TransactionRecord::MoveComponent {
+            ImportedSessionUndoRecord::MoveComponent {
                 before,
                 after,
                 before_pads,
@@ -94,7 +94,7 @@ impl Engine {
                     description: format!("undo move_component {}", after.uuid),
                 }
             }
-            TransactionRecord::RotateComponent {
+            ImportedSessionUndoRecord::RotateComponent {
                 before,
                 after,
                 before_pads,
@@ -119,7 +119,7 @@ impl Engine {
                     description: format!("undo rotate_component {}", after.uuid),
                 }
             }
-            TransactionRecord::FlipComponent {
+            ImportedSessionUndoRecord::FlipComponent {
                 before,
                 after,
                 before_pads,
@@ -152,7 +152,7 @@ impl Engine {
                     description: format!("undo flip_component {}", after.uuid),
                 }
             }
-            TransactionRecord::SetDesignRule { previous, current } => {
+            ImportedSessionUndoRecord::SetDesignRule { previous, current } => {
                 let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
                 let board = design.board.as_mut().ok_or_else(|| {
                     EngineError::Operation(
@@ -206,7 +206,7 @@ impl Engine {
                     }
                 }
             }
-            TransactionRecord::SetValue { before, after } => {
+            ImportedSessionUndoRecord::SetValue { before, after } => {
                 let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
                 let board = design.board.as_mut().ok_or_else(|| {
                     EngineError::Operation(
@@ -233,7 +233,7 @@ impl Engine {
                     description: format!("undo set_value {}", after.uuid),
                 }
             }
-            TransactionRecord::SetReference { before, after } => {
+            ImportedSessionUndoRecord::SetReference { before, after } => {
                 let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
                 let board = design.board.as_mut().ok_or_else(|| {
                     EngineError::Operation(
@@ -260,7 +260,7 @@ impl Engine {
                     description: format!("undo set_reference {}", after.uuid),
                 }
             }
-            TransactionRecord::AssignPart {
+            ImportedSessionUndoRecord::AssignPart {
                 before,
                 after,
                 before_pads,
@@ -293,7 +293,7 @@ impl Engine {
                     description: format!("undo assign_part {}", after.uuid),
                 }
             }
-            TransactionRecord::SetPackage {
+            ImportedSessionUndoRecord::SetPackage {
                 before,
                 after,
                 before_pads,
@@ -326,7 +326,7 @@ impl Engine {
                     description: format!("undo set_package {}", after.uuid),
                 }
             }
-            TransactionRecord::SetNetClass {
+            ImportedSessionUndoRecord::SetNetClass {
                 before_net,
                 after_net: _,
                 previous_class,
@@ -365,7 +365,7 @@ impl Engine {
                     description: format!("undo set_net_class {}", before_net.uuid),
                 }
             }
-            TransactionRecord::Batch {
+            ImportedSessionUndoRecord::Batch {
                 description,
                 records,
             } => {

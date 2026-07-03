@@ -57,7 +57,7 @@ impl Engine {
         )?;
         let after_pads = component_pads(board, input.uuid);
 
-        self.undo_stack.push(TransactionRecord::AssignPart {
+        self.undo_stack.push(ImportedSessionUndoRecord::AssignPart {
             before: before.clone(),
             after: after.clone(),
             before_pads,
@@ -168,7 +168,7 @@ impl Engine {
         }
         let after_pads = component_pads(board, input.uuid);
 
-        self.undo_stack.push(TransactionRecord::SetPackage {
+        self.undo_stack.push(ImportedSessionUndoRecord::SetPackage {
             before: before.clone(),
             after: after.clone(),
             before_pads,
@@ -239,7 +239,7 @@ impl Engine {
         net.class = target_class_uuid;
         let after_net = net.clone();
 
-        self.undo_stack.push(TransactionRecord::SetNetClass {
+        self.undo_stack.push(ImportedSessionUndoRecord::SetNetClass {
             before_net: before_net.clone(),
             after_net: after_net.clone(),
             previous_class: previous_class.clone(),
@@ -326,7 +326,7 @@ impl Engine {
                 .then_with(|| a.uuid.cmp(&b.uuid))
         });
 
-        self.undo_stack.push(TransactionRecord::SetDesignRule {
+        self.undo_stack.push(ImportedSessionUndoRecord::SetDesignRule {
             previous: previous.clone(),
             current: rule.clone(),
         });

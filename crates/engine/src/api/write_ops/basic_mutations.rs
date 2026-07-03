@@ -13,7 +13,7 @@ impl Engine {
             uuid: *uuid,
         })?;
 
-        self.undo_stack.push(TransactionRecord::DeleteTrack {
+        self.undo_stack.push(ImportedSessionUndoRecord::DeleteTrack {
             track: track.clone(),
         });
         self.redo_stack.clear();
@@ -46,7 +46,7 @@ impl Engine {
         })?;
 
         self.undo_stack
-            .push(TransactionRecord::DeleteVia { via: via.clone() });
+            .push(ImportedSessionUndoRecord::DeleteVia { via: via.clone() });
         self.redo_stack.clear();
         self.undo_depth = self.undo_stack.len();
         self.redo_depth = 0;
@@ -91,7 +91,7 @@ impl Engine {
         }
         pads.sort_by_key(|pad| pad.uuid);
 
-        self.undo_stack.push(TransactionRecord::DeleteComponent {
+        self.undo_stack.push(ImportedSessionUndoRecord::DeleteComponent {
             package: package.clone(),
             pads,
         });
@@ -138,7 +138,7 @@ impl Engine {
         };
         let (before_pads, after_pads) = apply_package_transform(board, &before, &after)?;
 
-        self.undo_stack.push(TransactionRecord::MoveComponent {
+        self.undo_stack.push(ImportedSessionUndoRecord::MoveComponent {
             before: before.clone(),
             after: after.clone(),
             before_pads,
@@ -186,7 +186,7 @@ impl Engine {
         };
         let (before_pads, after_pads) = apply_package_transform(board, &before, &after)?;
 
-        self.undo_stack.push(TransactionRecord::RotateComponent {
+        self.undo_stack.push(ImportedSessionUndoRecord::RotateComponent {
             before: before.clone(),
             after: after.clone(),
             before_pads,
@@ -222,7 +222,7 @@ impl Engine {
         let (before, after, before_pads, after_pads) =
             flip_component::apply_component_side_transform(board, input.uuid, input.layer)?;
 
-        self.undo_stack.push(TransactionRecord::FlipComponent {
+        self.undo_stack.push(ImportedSessionUndoRecord::FlipComponent {
             before: before.clone(),
             after: after.clone(),
             before_pads,
@@ -271,7 +271,7 @@ impl Engine {
         package.value = input.value;
         let after = package.clone();
 
-        self.undo_stack.push(TransactionRecord::SetValue {
+        self.undo_stack.push(ImportedSessionUndoRecord::SetValue {
             before: before.clone(),
             after: after.clone(),
         });
@@ -321,7 +321,7 @@ impl Engine {
         package.reference = input.reference;
         let after = package.clone();
 
-        self.undo_stack.push(TransactionRecord::SetReference {
+        self.undo_stack.push(ImportedSessionUndoRecord::SetReference {
             before: before.clone(),
             after: after.clone(),
         });

@@ -2,20 +2,20 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use super::*;
 
-pub(super) fn active_deleted_track_uuids(undo_stack: &[TransactionRecord]) -> BTreeSet<uuid::Uuid> {
+pub(super) fn active_deleted_track_uuids(undo_stack: &[ImportedSessionUndoRecord]) -> BTreeSet<uuid::Uuid> {
     let mut deleted = BTreeSet::new();
     for transaction in undo_stack {
-        if let TransactionRecord::DeleteTrack { track } = transaction {
+        if let ImportedSessionUndoRecord::DeleteTrack { track } = transaction {
             deleted.insert(track.uuid);
         }
     }
     deleted
 }
 
-pub(super) fn active_deleted_via_uuids(undo_stack: &[TransactionRecord]) -> BTreeSet<uuid::Uuid> {
+pub(super) fn active_deleted_via_uuids(undo_stack: &[ImportedSessionUndoRecord]) -> BTreeSet<uuid::Uuid> {
     let mut deleted = BTreeSet::new();
     for transaction in undo_stack {
-        if let TransactionRecord::DeleteVia { via } = transaction {
+        if let ImportedSessionUndoRecord::DeleteVia { via } = transaction {
             deleted.insert(via.uuid);
         }
     }
@@ -23,11 +23,11 @@ pub(super) fn active_deleted_via_uuids(undo_stack: &[TransactionRecord]) -> BTre
 }
 
 pub(super) fn active_deleted_component_uuids(
-    undo_stack: &[TransactionRecord],
+    undo_stack: &[ImportedSessionUndoRecord],
 ) -> BTreeSet<uuid::Uuid> {
     let mut deleted = BTreeSet::new();
     for transaction in undo_stack {
-        if let TransactionRecord::DeleteComponent { package, .. } = transaction {
+        if let ImportedSessionUndoRecord::DeleteComponent { package, .. } = transaction {
             deleted.insert(package.uuid);
         }
     }
@@ -35,13 +35,13 @@ pub(super) fn active_deleted_component_uuids(
 }
 
 pub(super) fn active_moved_components(
-    undo_stack: &[TransactionRecord],
+    undo_stack: &[ImportedSessionUndoRecord],
 ) -> BTreeMap<uuid::Uuid, crate::board::PlacedPackage> {
     let mut moved = BTreeMap::new();
     for transaction in undo_stack {
         match transaction {
-            TransactionRecord::MoveComponent { after, .. }
-            | TransactionRecord::RotateComponent { after, .. } => {
+            ImportedSessionUndoRecord::MoveComponent { after, .. }
+            | ImportedSessionUndoRecord::RotateComponent { after, .. } => {
                 moved.insert(after.uuid, after.clone());
             }
             _ => {}
@@ -51,11 +51,11 @@ pub(super) fn active_moved_components(
 }
 
 pub(super) fn active_set_value_components(
-    undo_stack: &[TransactionRecord],
+    undo_stack: &[ImportedSessionUndoRecord],
 ) -> BTreeMap<uuid::Uuid, crate::board::PlacedPackage> {
     let mut valued = BTreeMap::new();
     for transaction in undo_stack {
-        if let TransactionRecord::SetValue { after, .. } = transaction {
+        if let ImportedSessionUndoRecord::SetValue { after, .. } = transaction {
             valued.insert(after.uuid, after.clone());
         }
     }
@@ -63,11 +63,11 @@ pub(super) fn active_set_value_components(
 }
 
 pub(super) fn active_set_reference_components(
-    undo_stack: &[TransactionRecord],
+    undo_stack: &[ImportedSessionUndoRecord],
 ) -> BTreeMap<uuid::Uuid, crate::board::PlacedPackage> {
     let mut referenced = BTreeMap::new();
     for transaction in undo_stack {
-        if let TransactionRecord::SetReference { after, .. } = transaction {
+        if let ImportedSessionUndoRecord::SetReference { after, .. } = transaction {
             referenced.insert(after.uuid, after.clone());
         }
     }
@@ -75,11 +75,11 @@ pub(super) fn active_set_reference_components(
 }
 
 pub(super) fn active_assigned_part_components(
-    undo_stack: &[TransactionRecord],
+    undo_stack: &[ImportedSessionUndoRecord],
 ) -> BTreeMap<uuid::Uuid, crate::board::PlacedPackage> {
     let mut assigned = BTreeMap::new();
     for transaction in undo_stack {
-        if let TransactionRecord::AssignPart { after, .. } = transaction {
+        if let ImportedSessionUndoRecord::AssignPart { after, .. } = transaction {
             assigned.insert(after.uuid, after.clone());
         }
     }
@@ -98,7 +98,7 @@ pub(super) fn merge_component_value_overrides(
 }
 
 pub(super) fn active_package_rewritten_components(
-    undo_stack: &[TransactionRecord],
+    undo_stack: &[ImportedSessionUndoRecord],
 ) -> BTreeSet<uuid::Uuid> {
     let mut rewritten = BTreeSet::new();
     collect_package_rewritten_components(undo_stack, &mut rewritten);
@@ -106,16 +106,16 @@ pub(super) fn active_package_rewritten_components(
 }
 
 fn collect_package_rewritten_components(
-    records: &[TransactionRecord],
+    records: &[ImportedSessionUndoRecord],
     rewritten: &mut BTreeSet<uuid::Uuid>,
 ) {
     for transaction in records {
         match transaction {
-            TransactionRecord::AssignPart { after, .. }
-            | TransactionRecord::SetPackage { after, .. } => {
+            ImportedSessionUndoRecord::AssignPart { after, .. }
+            | ImportedSessionUndoRecord::SetPackage { after, .. } => {
                 rewritten.insert(after.uuid);
             }
-            TransactionRecord::Batch { records, .. } => {
+            ImportedSessionUndoRecord::Batch { records, .. } => {
                 collect_package_rewritten_components(records, rewritten);
             }
             _ => {}

@@ -107,7 +107,7 @@ fn serialize_current_kicad_board_slice(
     original_contents: &str,
     board: &Board,
     pool: &Pool,
-    undo_stack: &[TransactionRecord],
+    undo_stack: &[ImportedSessionUndoRecord],
 ) -> Result<String, EngineError> {
     let deleted_tracks = transaction_state::active_deleted_track_uuids(undo_stack);
     let deleted_vias = transaction_state::active_deleted_via_uuids(undo_stack);

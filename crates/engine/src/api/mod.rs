@@ -60,8 +60,8 @@ pub struct Engine {
     pool_index: PoolIndex,
     design: Option<Design>,
     imported_source: Option<ImportedDesignSource>,
-    undo_stack: Vec<TransactionRecord>,
-    redo_stack: Vec<TransactionRecord>,
+    undo_stack: Vec<ImportedSessionUndoRecord>,
+    redo_stack: Vec<ImportedSessionUndoRecord>,
     undo_depth: usize,
     redo_depth: usize,
 }
@@ -83,8 +83,13 @@ struct ImportedDesignSource {
     loaded_net_class_sidecar: bool,
 }
 
+/// Imported-board session undo memo: before/after snapshots recorded per
+/// legacy mutator on the in-memory undo/redo stacks. Part of the frozen
+/// one-time-converter path per decision 011 (import posture). This is NOT
+/// the journal's `substrate::TransactionRecord`; it is private to the
+/// imported-KiCad session and never serialized or journaled.
 #[derive(Debug, Clone, PartialEq, Eq)]
-enum TransactionRecord {
+enum ImportedSessionUndoRecord {
     DeleteTrack {
         track: crate::board::Track,
     },
@@ -145,7 +150,7 @@ enum TransactionRecord {
     },
     Batch {
         description: String,
-        records: Vec<TransactionRecord>,
+        records: Vec<ImportedSessionUndoRecord>,
     },
 }
 

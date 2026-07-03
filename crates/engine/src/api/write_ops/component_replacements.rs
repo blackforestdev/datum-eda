@@ -99,7 +99,7 @@ impl Engine {
         )?;
         let after_pads = component_pads(board, uuid);
 
-        self.undo_stack.push(TransactionRecord::SetPackage {
+        self.undo_stack.push(ImportedSessionUndoRecord::SetPackage {
             before: before.clone(),
             after: after.clone(),
             before_pads,
@@ -199,7 +199,7 @@ impl Engine {
             }
         }
 
-        self.undo_stack.push(TransactionRecord::Batch {
+        self.undo_stack.push(ImportedSessionUndoRecord::Batch {
             description: format!("replace_components {}", records.len()),
             records,
         });

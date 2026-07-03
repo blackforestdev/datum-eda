@@ -3,10 +3,10 @@ use super::super::*;
 impl Engine {
     fn apply_redo_transaction(
         &mut self,
-        transaction: &TransactionRecord,
+        transaction: &ImportedSessionUndoRecord,
     ) -> Result<OperationResult, EngineError> {
         Ok(match transaction {
-            TransactionRecord::DeleteTrack { track } => {
+            ImportedSessionUndoRecord::DeleteTrack { track } => {
                 let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
                 let board = design.board.as_mut().ok_or_else(|| {
                     EngineError::Operation(
@@ -32,7 +32,7 @@ impl Engine {
                     description: format!("redo delete_track {}", track.uuid),
                 }
             }
-            TransactionRecord::DeleteVia { via } => {
+            ImportedSessionUndoRecord::DeleteVia { via } => {
                 let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
                 let board = design.board.as_mut().ok_or_else(|| {
                     EngineError::Operation(
@@ -55,7 +55,7 @@ impl Engine {
                     description: format!("redo delete_via {}", via.uuid),
                 }
             }
-            TransactionRecord::DeleteComponent { package, pads } => {
+            ImportedSessionUndoRecord::DeleteComponent { package, pads } => {
                 let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
                 let board = design.board.as_mut().ok_or_else(|| {
                     EngineError::Operation(
@@ -88,7 +88,7 @@ impl Engine {
                     description: format!("redo delete_component {}", package.uuid),
                 }
             }
-            TransactionRecord::MoveComponent {
+            ImportedSessionUndoRecord::MoveComponent {
                 before: _,
                 after,
                 before_pads: _,
@@ -113,7 +113,7 @@ impl Engine {
                     description: format!("redo move_component {}", after.uuid),
                 }
             }
-            TransactionRecord::RotateComponent {
+            ImportedSessionUndoRecord::RotateComponent {
                 before: _,
                 after,
                 before_pads: _,
@@ -138,7 +138,7 @@ impl Engine {
                     description: format!("redo rotate_component {}", after.uuid),
                 }
             }
-            TransactionRecord::FlipComponent {
+            ImportedSessionUndoRecord::FlipComponent {
                 before: _,
                 after,
                 before_pads: _,
@@ -171,7 +171,7 @@ impl Engine {
                     description: format!("redo flip_component {}", after.uuid),
                 }
             }
-            TransactionRecord::SetDesignRule {
+            ImportedSessionUndoRecord::SetDesignRule {
                 previous: _,
                 current,
             } => {
@@ -219,7 +219,7 @@ impl Engine {
                     }
                 }
             }
-            TransactionRecord::SetValue { before: _, after } => {
+            ImportedSessionUndoRecord::SetValue { before: _, after } => {
                 let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
                 let board = design.board.as_mut().ok_or_else(|| {
                     EngineError::Operation(
@@ -246,7 +246,7 @@ impl Engine {
                     description: format!("redo set_value {}", after.uuid),
                 }
             }
-            TransactionRecord::SetReference { before: _, after } => {
+            ImportedSessionUndoRecord::SetReference { before: _, after } => {
                 let design = self.design.as_mut().ok_or(EngineError::NoProjectOpen)?;
                 let board = design.board.as_mut().ok_or_else(|| {
                     EngineError::Operation(
@@ -273,7 +273,7 @@ impl Engine {
                     description: format!("redo set_reference {}", after.uuid),
                 }
             }
-            TransactionRecord::AssignPart {
+            ImportedSessionUndoRecord::AssignPart {
                 before: _,
                 after,
                 before_pads: _,
@@ -306,7 +306,7 @@ impl Engine {
                     description: format!("redo assign_part {}", after.uuid),
                 }
             }
-            TransactionRecord::SetPackage {
+            ImportedSessionUndoRecord::SetPackage {
                 before: _,
                 after,
                 before_pads: _,
@@ -339,7 +339,7 @@ impl Engine {
                     description: format!("redo set_package {}", after.uuid),
                 }
             }
-            TransactionRecord::SetNetClass {
+            ImportedSessionUndoRecord::SetNetClass {
                 before_net: _,
                 after_net,
                 previous_class: _,
@@ -374,7 +374,7 @@ impl Engine {
                     description: format!("redo set_net_class {}", after_net.uuid),
                 }
             }
-            TransactionRecord::Batch {
+            ImportedSessionUndoRecord::Batch {
                 description,
                 records,
             } => {
