@@ -767,21 +767,15 @@ def main() -> int:
             "journaled production ZoneFill command",
         )
 
-    for path in sorted((ROOT / "crates/cli/src").glob("command_project*.rs")):
+    # rglob: scan every CLI source file regardless of directory layout so
+    # file moves can never silently shrink the forbidden-writer scan scope.
+    for path in sorted((ROOT / "crates/cli/src").rglob("*.rs")):
         relative = path.relative_to(ROOT)
         for line, pattern, text_line in matching_lines(
             path, FORBIDDEN_PRODUCTION_ZONE_FILL_PATTERNS
         ):
             failures.append(
-                f"{relative}:{line}: forbidden direct ZoneFill evidence writer `{pattern}`: {text_line}"
-            )
-    for path in sorted((ROOT / "crates/cli/src").glob("main_tests*.rs")):
-        relative = path.relative_to(ROOT)
-        for line, pattern, text_line in matching_lines(
-            path, FORBIDDEN_PRODUCTION_ZONE_FILL_PATTERNS
-        ):
-            failures.append(
-                f"{relative}:{line}: forbidden CLI test ZoneFill evidence writer `{pattern}`: {text_line}"
+                f"{relative}:{line}: forbidden CLI ZoneFill evidence writer `{pattern}`: {text_line}"
             )
 
     for relative, config in ARTIFACT_ONLY_EVIDENCE_COMMAND_FILES.items():
