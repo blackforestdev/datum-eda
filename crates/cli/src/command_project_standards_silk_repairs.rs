@@ -2,13 +2,14 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
 use anyhow::{Context, Result};
+use eda_engine::api::native_write::board_annotations::build_set_board_text;
 use eda_engine::board::BoardText;
-use eda_engine::substrate::{DesignModel, Operation};
+use eda_engine::substrate::DesignModel;
 use uuid::Uuid;
 
 use super::command_project_standards_repairs::{
     NativeProjectStandardsRepairProposalView, create_standards_repair_proposal,
-    standards_repair_key,
+    standards_repair_proposal_id, standards_repair_provenance,
 };
 
 #[derive(Debug, Clone)]
@@ -45,22 +46,18 @@ pub(super) fn append_silk_clearance_repair_proposals(
 
         let finding_fingerprints = repair.finding_fingerprints.into_iter().collect::<Vec<_>>();
         let codes = repair.codes.into_iter().collect::<Vec<_>>();
-        let proposal_id = Uuid::new_v5(
-            &model.project.project_id,
-            standards_repair_key("silk_clearance", text_id, &codes).as_bytes(),
-        );
-        let operation = Operation::SetBoardText {
-            text_id,
-            text: serde_json::to_value(&text)
-                .expect("native board text serialization must succeed"),
-        };
+        let proposal_id = standards_repair_proposal_id(model, "silk_clearance", text_id, &codes);
+        let prepared = build_set_board_text(
+            model,
+            standards_repair_provenance("standards silkscreen-clearance repair proposal"),
+            &text,
+        )?;
         let readiness = create_standards_repair_proposal(
             root,
             model,
             proposal_id,
-            "standards silkscreen-clearance repair proposal",
+            prepared,
             format!("repair silkscreen-clearance standards findings for board text {text_id}"),
-            vec![operation],
             check_run.check_run_id,
             finding_fingerprints.clone(),
         )?;

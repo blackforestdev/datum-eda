@@ -1,7 +1,8 @@
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
-use eda_engine::substrate::{Operation, ProjectResolver};
+use eda_engine::api::native_write::library::{PoolLibraryObjectTarget, PoolLibraryOperationSpec};
+use eda_engine::substrate::ProjectResolver;
 use uuid::Uuid;
 
 use super::command_project_library::{
@@ -83,11 +84,9 @@ pub(crate) fn set_native_project_pool_part_bindings(
     commit_pool_library_operations(
         root,
         format!("set native pool part {part_id} default bindings"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: part_id,
-            relative_path: relative_path.clone(),
-            object_kind: "parts".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "parts", part_id),
             object,
         }],
     )?;

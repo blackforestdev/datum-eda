@@ -1,9 +1,13 @@
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
+use eda_engine::api::native_write::WriteProvenance;
+use eda_engine::api::native_write::library::{
+    PoolLibraryObjectTarget, PoolLibraryOperationSpec, build_pool_library_write,
+};
 use eda_engine::substrate::{
-    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver,
-    ProposalCreateRequest, ProposalSource, create_draft_proposal_from_batch,
+    CommitSource, ProjectResolver, ProposalCreateRequest, ProposalSource,
+    create_draft_proposal_from_batch,
 };
 use uuid::Uuid;
 
@@ -11,7 +15,6 @@ use super::command_project_library::{
     pool_library_relative_path, validate_project_local_pool_path,
 };
 use super::command_project_library_payload::read_project_pool_object_payload;
-use super::command_project_operation_guards::guarded_operation_batch;
 use super::command_project_proposals::{
     NativeProjectProposalCreateView, validate_proposal_in_model,
 };
@@ -82,31 +85,29 @@ pub(crate) fn propose_set_native_project_pool_package_pad(
         }),
     );
     let mut model = ProjectResolver::new(root).resolve()?;
-    let batch = guarded_operation_batch(
+    let prepared = build_pool_library_write(
         &model,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(model.model_revision.clone()),
-            provenance: CommitProvenance {
-                actor: "datum-eda-proposal".to_string(),
-                source: CommitSource::Cli,
-                reason: format!("propose native pool package pad {pad_id}"),
-            },
-            operations: vec![Operation::SetPoolLibraryObject {
-                object_id: package_id,
+        WriteProvenance::new(
+            "datum-eda-proposal",
+            CommitSource::Cli,
+            format!("propose native pool package pad {pad_id}"),
+        ),
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::at_relative_path(
+                package_id,
+                "packages",
                 relative_path,
-                object_kind: "packages".to_string(),
-                previous_object,
-                object,
-            }],
-        },
+            ),
+            object,
+        }],
     )?;
     let proposal = create_draft_proposal_from_batch(
         &mut model,
         root,
         ProposalCreateRequest {
             proposal_id,
-            batch,
+            batch: prepared.batch,
             rationale: rationale
                 .unwrap_or("Set native pool package pad")
                 .to_string(),
@@ -210,34 +211,26 @@ fn propose_set_pool_package_object_value(
     action: &'static str,
     default_rationale: &'static str,
 ) -> Result<NativeProjectProposalCreateView> {
-    let relative_path = pool_library_relative_path(pool_path, "packages", package_id);
-    let previous_object = read_project_pool_object_payload(root, &relative_path, package_id)?;
     let mut model = ProjectResolver::new(root).resolve()?;
-    let batch = guarded_operation_batch(
+    let prepared = build_pool_library_write(
         &model,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(model.model_revision.clone()),
-            provenance: CommitProvenance {
-                actor: "datum-eda-proposal".to_string(),
-                source: CommitSource::Cli,
-                reason: format!("propose native pool package update {package_id}"),
-            },
-            operations: vec![Operation::SetPoolLibraryObject {
-                object_id: package_id,
-                relative_path,
-                object_kind: "packages".to_string(),
-                previous_object,
-                object,
-            }],
-        },
+        WriteProvenance::new(
+            "datum-eda-proposal",
+            CommitSource::Cli,
+            format!("propose native pool package update {package_id}"),
+        ),
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "packages", package_id),
+            object,
+        }],
     )?;
     let proposal = create_draft_proposal_from_batch(
         &mut model,
         root,
         ProposalCreateRequest {
             proposal_id,
-            batch,
+            batch: prepared.batch,
             rationale: rationale.unwrap_or(default_rationale).to_string(),
             source: ProposalSource::Tool,
             checks_run: Vec::new(),

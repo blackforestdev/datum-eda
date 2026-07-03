@@ -18,8 +18,6 @@ use eda_engine::substrate::{
 use serde::Serialize;
 use uuid::Uuid;
 
-pub(crate) use eda_engine::api::native_write::board_routing::previous_persisted_zone_fill_value;
-
 use super::{
     NativeProjectBoardNetMutationReportView, NativeProjectBoardTrackMutationReportView,
     NativeProjectBoardViaMutationReportView, NativeProjectBoardZoneMutationReportView,

@@ -2,18 +2,21 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
 use anyhow::{Context, Result};
+use eda_engine::api::native_write::board_routing::{
+    build_set_board_pad, build_set_board_track, build_set_board_via, build_set_zone_fills,
+};
+use eda_engine::api::native_write::ids::derive_object_id;
+use eda_engine::api::native_write::{PreparedWrite, WriteProvenance};
 use eda_engine::board::{Net, NetClass, PlacedPad, Track, Via, Zone};
 use eda_engine::substrate::{
-    CommitProvenance, CommitSource, DesignModel, Operation, OperationBatch, ProjectResolver,
-    ProposalCreateRequest, ProposalSource, ZONE_FILL_SCHEMA_VERSION, ZoneFill, ZoneFillState,
-    compute_bounded_zone_fill, create_draft_proposal_from_batch, validate_proposal_apply,
+    CommitSource, DesignModel, ProjectResolver, ProposalCreateRequest, ProposalSource,
+    ZONE_FILL_SCHEMA_VERSION, ZoneFill, ZoneFillState, compute_bounded_zone_fill,
+    create_draft_proposal_from_batch, validate_proposal_apply,
 };
 use serde::Serialize;
 use uuid::Uuid;
 
-use super::command_project_board_routing_net::{
-    previous_persisted_zone_fill_value, zone_fill_copper_context,
-};
+use super::command_project_board_routing_net::zone_fill_copper_context;
 use super::command_project_native_inspect::NativeProjectCheckFindingView;
 use super::command_project_standards_clearance_repairs::append_copper_clearance_repair_proposals;
 use super::command_project_standards_peer_aperture::apply_unique_peer_process_aperture_policy;
@@ -146,21 +149,18 @@ pub(crate) fn generate_native_project_standards_repair_proposals(
 
         let finding_fingerprints = repair.finding_fingerprints.into_iter().collect::<Vec<_>>();
         let codes = repair.codes.into_iter().collect::<Vec<_>>();
-        let proposal_id = Uuid::new_v5(
-            &model.project.project_id,
-            standards_repair_key("process_aperture", pad_id, &codes).as_bytes(),
-        );
-        let operation = Operation::SetBoardPad {
-            pad_id,
-            pad: serde_json::to_value(&pad).expect("native board pad serialization must succeed"),
-        };
+        let proposal_id = standards_repair_proposal_id(&model, "process_aperture", pad_id, &codes);
+        let prepared = build_set_board_pad(
+            &model,
+            standards_repair_provenance("standards process-aperture repair proposal"),
+            &pad,
+        )?;
         let readiness = create_standards_repair_proposal(
             root,
             &mut model,
             proposal_id,
-            "standards process-aperture repair proposal",
+            prepared,
             format!("repair process-aperture standards findings for pad {pad_id}"),
-            vec![operation],
             check_run.check_run_id,
             finding_fingerprints.clone(),
         )?;
@@ -197,22 +197,18 @@ pub(crate) fn generate_native_project_standards_repair_proposals(
 
         let finding_fingerprints = repair.finding_fingerprints.into_iter().collect::<Vec<_>>();
         let codes = repair.codes.into_iter().collect::<Vec<_>>();
-        let proposal_id = Uuid::new_v5(
-            &model.project.project_id,
-            standards_repair_key("track_geometry", track_id, &codes).as_bytes(),
-        );
-        let operation = Operation::SetBoardTrack {
-            track_id,
-            track: serde_json::to_value(&track)
-                .expect("native board track serialization must succeed"),
-        };
+        let proposal_id = standards_repair_proposal_id(&model, "track_geometry", track_id, &codes);
+        let prepared = build_set_board_track(
+            &model,
+            standards_repair_provenance("standards track-width repair proposal"),
+            &track,
+        )?;
         let readiness = create_standards_repair_proposal(
             root,
             &mut model,
             proposal_id,
-            "standards track-width repair proposal",
+            prepared,
             format!("repair track-width standards findings for track {track_id}"),
-            vec![operation],
             check_run.check_run_id,
             finding_fingerprints.clone(),
         )?;
@@ -259,21 +255,18 @@ pub(crate) fn generate_native_project_standards_repair_proposals(
 
         let finding_fingerprints = repair.finding_fingerprints.into_iter().collect::<Vec<_>>();
         let codes = repair.codes.into_iter().collect::<Vec<_>>();
-        let proposal_id = Uuid::new_v5(
-            &model.project.project_id,
-            standards_repair_key("via_geometry", via_id, &codes).as_bytes(),
-        );
-        let operation = Operation::SetBoardVia {
-            via_id,
-            via: serde_json::to_value(&via).expect("native board via serialization must succeed"),
-        };
+        let proposal_id = standards_repair_proposal_id(&model, "via_geometry", via_id, &codes);
+        let prepared = build_set_board_via(
+            &model,
+            standards_repair_provenance("standards via-geometry repair proposal"),
+            &via,
+        )?;
         let readiness = create_standards_repair_proposal(
             root,
             &mut model,
             proposal_id,
-            "standards via-geometry repair proposal",
+            prepared,
             format!("repair via-geometry standards findings for via {via_id}"),
-            vec![operation],
             check_run.check_run_id,
             finding_fingerprints.clone(),
         )?;
@@ -338,23 +331,18 @@ pub(crate) fn generate_native_project_standards_repair_proposals(
 
         let finding_fingerprints = repair.finding_fingerprints.into_iter().collect::<Vec<_>>();
         let codes = repair.codes.into_iter().collect::<Vec<_>>();
-        let proposal_id = Uuid::new_v5(
-            &model.project.project_id,
-            standards_repair_key("zone_fill", zone_id, &codes).as_bytes(),
-        );
-        let operation = Operation::SetZoneFill {
-            zone_id,
-            previous_zone_fill: previous_persisted_zone_fill_value(&model, zone_id),
-            zone_fill: serde_json::to_value(&fill)
-                .expect("native zone fill serialization must succeed"),
-        };
+        let proposal_id = standards_repair_proposal_id(&model, "zone_fill", zone_id, &codes);
+        let prepared = build_set_zone_fills(
+            &model,
+            standards_repair_provenance("standards zone-fill repair proposal"),
+            std::slice::from_ref(&fill),
+        )?;
         let readiness = create_standards_repair_proposal(
             root,
             &mut model,
             proposal_id,
-            "standards zone-fill repair proposal",
+            prepared,
             format!("repair zone-fill standards findings for zone {zone_id}"),
-            vec![operation],
             check_run.check_run_id,
             finding_fingerprints.clone(),
         )?;
@@ -387,11 +375,32 @@ pub(crate) fn generate_native_project_standards_repair_proposals(
     })
 }
 
-pub(super) fn standards_repair_key(repair_kind: &str, target_id: Uuid, codes: &[String]) -> String {
-    format!(
-        "datum-eda:standards-repair:{repair_kind}:{target_id}:{}",
-        codes.join("|")
+/// Deterministic standards-repair proposal id, namespaced by the project id.
+///
+/// Composes the engine facade's [`derive_object_id`] (v5 seed
+/// `datum-eda:<tag>:<parts joined by ':'>`), which is byte-identical to the
+/// historical CLI derivation over the seed
+/// `datum-eda:standards-repair:<repair_kind>:<target_id>:<codes joined by '|'>`.
+pub(super) fn standards_repair_proposal_id(
+    model: &DesignModel,
+    repair_kind: &str,
+    target_id: Uuid,
+    codes: &[String],
+) -> Uuid {
+    derive_object_id(
+        &model.project.project_id,
+        "standards-repair",
+        &[
+            repair_kind.to_string(),
+            target_id.to_string(),
+            codes.join("|"),
+        ],
     )
+}
+
+/// The provenance every standards-repair proposal batch is authored under.
+pub(super) fn standards_repair_provenance(reason: &'static str) -> WriteProvenance {
+    WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason)
 }
 
 #[derive(Debug, Clone)]
@@ -406,9 +415,8 @@ pub(super) fn create_standards_repair_proposal(
     root: &Path,
     model: &mut DesignModel,
     proposal_id: Uuid,
-    reason: &'static str,
+    prepared: PreparedWrite,
     rationale: String,
-    operations: Vec<Operation>,
     check_run_id: Uuid,
     finding_fingerprints: Vec<String>,
 ) -> Result<StandardsRepairProposalReadiness> {
@@ -416,16 +424,21 @@ pub(super) fn create_standards_repair_proposal(
     if model.proposals.contains_key(&proposal_id) {
         return standards_repair_readiness(model, proposal_id);
     }
-    let batch = OperationBatch {
-        batch_id: Uuid::new_v5(&model.project.project_id, proposal_id.as_bytes()),
-        expected_model_revision: Some(model.model_revision.clone()),
-        provenance: CommitProvenance {
-            actor: "datum-eda-cli".to_string(),
-            source: CommitSource::Cli,
-            reason: reason.to_string(),
-        },
-        operations,
-    };
+    // Standards-repair proposal batches are a persisted contract: exactly the
+    // repair mutation (no object-revision guard — the facade-stamped
+    // `expected_model_revision` already pins the whole model for draft
+    // proposals) under a deterministic batch id seeded by the proposal id.
+    // The facade builders always emit the mutation as the final operation of
+    // the prepared batch, so keep only that operation. The batch-id
+    // derivation stays here until a standards-repair facade module exists to
+    // own it: the persisted bytes must not drift.
+    let mut batch = prepared.batch;
+    let mutation = batch
+        .operations
+        .pop()
+        .expect("prepared standards repair write must contain its repair mutation");
+    batch.operations = vec![mutation];
+    batch.batch_id = Uuid::new_v5(&model.project.project_id, proposal_id.as_bytes());
     create_draft_proposal_from_batch(
         model,
         root,

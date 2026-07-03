@@ -2,13 +2,14 @@ use std::collections::BTreeSet;
 use std::path::Path;
 
 use anyhow::{Context, Result};
+use eda_engine::api::native_write::board_routing::build_set_board_track;
 use eda_engine::board::{Net, NetClass, Track};
-use eda_engine::substrate::{DesignModel, Operation};
+use eda_engine::substrate::DesignModel;
 use uuid::Uuid;
 
 use super::command_project_standards_repairs::{
     NativeProjectStandardsRepairProposalView, create_standards_repair_proposal,
-    standards_repair_key,
+    standards_repair_proposal_id, standards_repair_provenance,
 };
 
 #[derive(Debug, Clone)]
@@ -28,25 +29,22 @@ pub(super) fn append_copper_clearance_repair_proposals(
 ) -> Result<()> {
     for repair in collect_copper_clearance_repairs(project, check_run)? {
         let codes = vec!["clearance_copper".to_string()];
-        let proposal_id = Uuid::new_v5(
-            &model.project.project_id,
-            standards_repair_key("copper_clearance", repair.moved_track_id, &codes).as_bytes(),
-        );
-        let operation = Operation::SetBoardTrack {
-            track_id: repair.moved_track_id,
-            track: serde_json::to_value(&repair.repaired_track)
-                .expect("native board track serialization must succeed"),
-        };
+        let proposal_id =
+            standards_repair_proposal_id(model, "copper_clearance", repair.moved_track_id, &codes);
+        let prepared = build_set_board_track(
+            model,
+            standards_repair_provenance("standards copper-clearance repair proposal"),
+            &repair.repaired_track,
+        )?;
         let readiness = create_standards_repair_proposal(
             root,
             model,
             proposal_id,
-            "standards copper-clearance repair proposal",
+            prepared,
             format!(
                 "repair copper-clearance standards finding between tracks {} and {}",
                 repair.moved_track_id, repair.fixed_track_id
             ),
-            vec![operation],
             check_run.check_run_id,
             vec![repair.finding_fingerprint.clone()],
         )?;

@@ -1,7 +1,8 @@
 use std::path::{Component, Path};
 
 use anyhow::{Context, Result, bail};
-use eda_engine::substrate::{Operation, ProjectResolver};
+use eda_engine::api::native_write::library::{PoolLibraryObjectTarget, PoolLibraryOperationSpec};
+use eda_engine::substrate::ProjectResolver;
 use uuid::Uuid;
 
 use super::command_project_library::{
@@ -30,18 +31,20 @@ pub(crate) fn set_native_project_pool_package_courtyard_rect(
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
     let (footprint_id, _) = legacy_target_footprint_for_package(pool_path, package_id, &model)?;
-    let (relative_path, previous_object, object) =
+    let (relative_path, object) =
         footprint_object_with_courtyard(root, pool_path, footprint_id, vertices)?;
     commit_pool_library_operations(
         root,
         format!(
             "route legacy package rectangular courtyard on package {package_id} to footprint {footprint_id}"
         ),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: footprint_id,
-            relative_path: relative_path.clone(),
-            object_kind: "footprints".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::at_relative_path(
+                footprint_id,
+                "footprints",
+                relative_path.clone(),
+            ),
             object,
         }],
     )?;
@@ -71,18 +74,20 @@ pub(crate) fn set_native_project_pool_package_courtyard_polygon(
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
     let (footprint_id, _) = legacy_target_footprint_for_package(pool_path, package_id, &model)?;
-    let (relative_path, previous_object, object) =
+    let (relative_path, object) =
         footprint_object_with_courtyard(root, pool_path, footprint_id, vertices)?;
     commit_pool_library_operations(
         root,
         format!(
             "route legacy package courtyard polygon on package {package_id} to footprint {footprint_id}"
         ),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: footprint_id,
-            relative_path: relative_path.clone(),
-            object_kind: "footprints".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::at_relative_path(
+                footprint_id,
+                "footprints",
+                relative_path.clone(),
+            ),
             object,
         }],
     )?;
@@ -316,16 +321,18 @@ fn commit_legacy_package_silkscreen_primitive(
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
     let (footprint_id, _) = legacy_target_footprint_for_package(pool_path, package_id, &model)?;
-    let (relative_path, previous_object, object) =
+    let (relative_path, object) =
         footprint_object_with_appended_silkscreen(root, pool_path, footprint_id, primitive)?;
     commit_pool_library_operations(
         root,
         reason,
-        vec![Operation::SetPoolLibraryObject {
-            object_id: footprint_id,
-            relative_path: relative_path.clone(),
-            object_kind: "footprints".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::at_relative_path(
+                footprint_id,
+                "footprints",
+                relative_path.clone(),
+            ),
             object,
         }],
     )?;
@@ -383,11 +390,9 @@ pub(crate) fn add_native_project_pool_package_model_3d(
     commit_pool_library_operations(
         root,
         format!("add native pool package 3D model to package {package_id}"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: package_id,
-            relative_path: relative_path.clone(),
-            object_kind: "packages".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "packages", package_id),
             object,
         }],
     )?;
@@ -444,11 +449,9 @@ pub(crate) fn set_native_project_pool_package_body_heights(
     commit_pool_library_operations(
         root,
         format!("set native pool package body heights on package {package_id}"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: package_id,
-            relative_path: relative_path.clone(),
-            object_kind: "packages".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "packages", package_id),
             object,
         }],
     )?;

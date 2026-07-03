@@ -54,7 +54,6 @@ mod command_project_native_inspect;
 mod command_project_native_surface;
 #[path = "command_project_native_types.rs"]
 mod command_project_native_types;
-#[rustfmt::skip] #[path = "command_project_operation_guards.rs"] mod command_project_operation_guards;
 #[path = "command_project_pool_materialization.rs"]
 mod command_project_pool_materialization;
 #[rustfmt::skip] #[path = "command_project_pool_query.rs"] mod command_project_pool_query;

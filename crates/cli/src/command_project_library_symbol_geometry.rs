@@ -1,7 +1,8 @@
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
-use eda_engine::substrate::{Operation, ProjectResolver};
+use eda_engine::api::native_write::library::{PoolLibraryObjectTarget, PoolLibraryOperationSpec};
+use eda_engine::substrate::ProjectResolver;
 use uuid::Uuid;
 
 use super::command_project_library::{
@@ -44,12 +45,10 @@ pub(crate) fn add_native_project_pool_symbol_line(
     commit_pool_library_operations(
         root,
         format!("add native pool symbol line to symbol {symbol_id}"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: symbol_id,
-            relative_path: relative_path.clone(),
-            object_kind: "symbols".to_string(),
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "symbols", symbol_id),
             object,
-            previous_object,
         }],
     )?;
     pool_library_mutation_view(
@@ -97,12 +96,10 @@ pub(crate) fn add_native_project_pool_symbol_polygon(
     commit_pool_library_operations(
         root,
         format!("add native pool symbol polygon to symbol {symbol_id}"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: symbol_id,
-            relative_path: relative_path.clone(),
-            object_kind: "symbols".to_string(),
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "symbols", symbol_id),
             object,
-            previous_object,
         }],
     )?;
     pool_library_mutation_view(
@@ -153,12 +150,10 @@ pub(crate) fn add_native_project_pool_symbol_rect(
     commit_pool_library_operations(
         root,
         format!("add native pool symbol rect to symbol {symbol_id}"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: symbol_id,
-            relative_path: relative_path.clone(),
-            object_kind: "symbols".to_string(),
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "symbols", symbol_id),
             object,
-            previous_object,
         }],
     )?;
     pool_library_mutation_view(
@@ -204,12 +199,10 @@ pub(crate) fn add_native_project_pool_symbol_circle(
     commit_pool_library_operations(
         root,
         format!("add native pool symbol circle to symbol {symbol_id}"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: symbol_id,
-            relative_path: relative_path.clone(),
-            object_kind: "symbols".to_string(),
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "symbols", symbol_id),
             object,
-            previous_object,
         }],
     )?;
     pool_library_mutation_view(
@@ -262,12 +255,10 @@ pub(crate) fn add_native_project_pool_symbol_arc(
     commit_pool_library_operations(
         root,
         format!("add native pool symbol arc to symbol {symbol_id}"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: symbol_id,
-            relative_path: relative_path.clone(),
-            object_kind: "symbols".to_string(),
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "symbols", symbol_id),
             object,
-            previous_object,
         }],
     )?;
     pool_library_mutation_view(
@@ -311,12 +302,10 @@ pub(crate) fn add_native_project_pool_symbol_text(
     commit_pool_library_operations(
         root,
         format!("add native pool symbol text to symbol {symbol_id}"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: symbol_id,
-            relative_path: relative_path.clone(),
-            object_kind: "symbols".to_string(),
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "symbols", symbol_id),
             object,
-            previous_object,
         }],
     )?;
     pool_library_mutation_view(
@@ -371,12 +360,10 @@ pub(crate) fn set_native_project_pool_symbol_pin_anchor(
     commit_pool_library_operations(
         root,
         format!("set native pool symbol pin anchor {pin_id} on symbol {symbol_id}"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: symbol_id,
-            relative_path: relative_path.clone(),
-            object_kind: "symbols".to_string(),
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "symbols", symbol_id),
             object,
-            previous_object,
         }],
     )?;
     pool_library_mutation_view(

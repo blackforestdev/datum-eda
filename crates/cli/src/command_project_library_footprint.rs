@@ -2,19 +2,22 @@ use std::path::Path;
 
 use crate::IpcDensityLevelArg;
 use anyhow::{Context, Result, bail};
+use eda_engine::api::native_write::library::{PoolLibraryObjectTarget, PoolLibraryOperationSpec};
+use eda_engine::api::native_write::library_footprint::{
+    generated_ipc_footprint_specs, pool_footprint_payload,
+};
 use eda_engine::pool::{
-    GeneratedIpcFootprint, IpcDensityLevel, IpcSourceDimensions, IpcTwoTerminalChipSpec,
+    IpcDensityLevel, IpcSourceDimensions, IpcTwoTerminalChipSpec,
     generate_ipc7351b_two_terminal_chip,
 };
-use eda_engine::substrate::{Operation, ProjectResolver};
+use eda_engine::substrate::ProjectResolver;
 use uuid::Uuid;
 
 use super::command_project_library::{
-    NativeProjectPoolLibraryObjectMutationView, commit_pool_library_operations, next_pool_priority,
+    NativeProjectPoolLibraryObjectMutationView, commit_pool_library_operations,
     pool_library_mutation_view, pool_library_relative_path, validate_project_local_pool_path,
 };
 use super::command_project_library_payload::read_project_pool_object_payload;
-use super::load_native_project_with_resolved_board;
 
 pub(crate) fn create_native_project_pool_footprint(
     root: &Path,
@@ -26,45 +29,15 @@ pub(crate) fn create_native_project_pool_footprint(
     validate_project_local_pool_path(pool_path)?;
     ensure_pool_object_exists(root, package_id, "packages", "package")?;
     let relative_path = pool_library_relative_path(pool_path, "footprints", footprint_id);
-    let object = serde_json::json!({
-        "schema_version": 1,
-        "uuid": footprint_id,
-        "name": name,
-        "package": package_id,
-        "pads": {},
-        "courtyard": {"vertices": [], "closed": true},
-        "silkscreen": [],
-        "fab": [],
-        "assembly": [],
-        "mechanical": [],
-        "models_3d": [],
-        "standards_basis": null,
-        "process_aperture_policy": null,
-        "tags": []
-    });
-    let project = load_native_project_with_resolved_board(root)?;
-    let mut operations = Vec::new();
-    if !project
-        .manifest
-        .pools
-        .iter()
-        .any(|pool| pool.path == pool_path)
-    {
-        operations.push(Operation::AddProjectPoolRef {
-            path: pool_path.to_string(),
-            priority: next_pool_priority(&project.manifest.pools),
-        });
-    }
-    operations.push(Operation::CreatePoolLibraryObject {
-        object_id: footprint_id,
-        relative_path: relative_path.clone(),
-        object_kind: "footprints".to_string(),
-        object,
-    });
+    let object = pool_footprint_payload(footprint_id, package_id, &name);
     commit_pool_library_operations(
         root,
         format!("create native pool footprint {footprint_id} for package {package_id}"),
-        operations,
+        Some(pool_path),
+        vec![PoolLibraryOperationSpec::Create {
+            target: PoolLibraryObjectTarget::new(pool_path, "footprints", footprint_id),
+            object,
+        }],
     )?;
     pool_library_mutation_view(
         root,
@@ -116,6 +89,7 @@ pub(crate) fn generate_native_project_ipc7351b_two_terminal_chip(
     commit_pool_library_operations(
         root,
         format!("generate IPC-7351B two-terminal chip footprint {footprint_id}"),
+        Some(pool_path),
         operations,
     )?;
     let relative_path = pool_library_relative_path(pool_path, "footprints", footprint_id);
@@ -147,7 +121,7 @@ pub(crate) fn ipc7351b_two_terminal_chip_operations(
     density: IpcDensityLevelArg,
     mask_expansion_nm: i64,
     paste_reduction_nm: i64,
-) -> Result<Vec<Operation>> {
+) -> Result<Vec<PoolLibraryOperationSpec>> {
     validate_project_local_pool_path(pool_path)?;
     ensure_pool_object_exists(root, package_id, "packages", "package")?;
     let generated = generate_ipc7351b_two_terminal_chip(IpcTwoTerminalChipSpec {
@@ -169,52 +143,7 @@ pub(crate) fn ipc7351b_two_terminal_chip_operations(
         paste_reduction_nm,
     })
     .map_err(anyhow::Error::msg)?;
-    ipc_generated_footprint_operations(root, pool_path, generated)
-}
-
-fn ipc_generated_footprint_operations(
-    root: &Path,
-    pool_path: &str,
-    generated: GeneratedIpcFootprint,
-) -> Result<Vec<Operation>> {
-    let project = load_native_project_with_resolved_board(root)?;
-    let mut operations = Vec::new();
-    if !project
-        .manifest
-        .pools
-        .iter()
-        .any(|pool| pool.path == pool_path)
-    {
-        operations.push(Operation::AddProjectPoolRef {
-            path: pool_path.to_string(),
-            priority: next_pool_priority(&project.manifest.pools),
-        });
-    }
-    operations.push(Operation::CreatePoolLibraryObject {
-        object_id: generated.padstack.uuid,
-        relative_path: pool_library_relative_path(pool_path, "padstacks", generated.padstack.uuid),
-        object_kind: "padstacks".to_string(),
-        object: pool_object_value_with_schema(serde_json::to_value(generated.padstack)?)?,
-    });
-    operations.push(Operation::CreatePoolLibraryObject {
-        object_id: generated.footprint.uuid,
-        relative_path: pool_library_relative_path(
-            pool_path,
-            "footprints",
-            generated.footprint.uuid,
-        ),
-        object_kind: "footprints".to_string(),
-        object: pool_object_value_with_schema(serde_json::to_value(generated.footprint)?)?,
-    });
-    Ok(operations)
-}
-
-fn pool_object_value_with_schema(mut object: serde_json::Value) -> Result<serde_json::Value> {
-    object
-        .as_object_mut()
-        .ok_or_else(|| anyhow::anyhow!("generated pool object must serialize as a JSON object"))?
-        .insert("schema_version".to_string(), serde_json::json!(1));
-    Ok(object)
+    Ok(generated_ipc_footprint_specs(pool_path, generated)?)
 }
 
 pub(crate) fn ipc_density_level(value: IpcDensityLevelArg) -> IpcDensityLevel {
@@ -270,11 +199,9 @@ pub(crate) fn set_native_project_pool_footprint_pad(
     commit_pool_library_operations(
         root,
         format!("set native pool footprint {footprint_id} pad {pad_id}"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: footprint_id,
-            relative_path: relative_path.clone(),
-            object_kind: "footprints".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "footprints", footprint_id),
             object,
         }],
     )?;
@@ -341,16 +268,18 @@ pub(crate) fn add_native_project_pool_footprint_silkscreen_line(
 ) -> Result<NativeProjectPoolLibraryObjectMutationView> {
     let primitive =
         footprint_silkscreen_line_primitive(from_x_nm, from_y_nm, to_x_nm, to_y_nm, width_nm)?;
-    let (relative_path, previous_object, object) =
+    let (relative_path, object) =
         footprint_object_with_appended_silkscreen(root, pool_path, footprint_id, primitive)?;
     commit_pool_library_operations(
         root,
         format!("add native pool footprint {footprint_id} silkscreen line"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: footprint_id,
-            relative_path: relative_path.clone(),
-            object_kind: "footprints".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::at_relative_path(
+                footprint_id,
+                "footprints",
+                relative_path.clone(),
+            ),
             object,
         }],
     )?;
@@ -432,12 +361,11 @@ pub(crate) fn footprint_object_with_courtyard(
     pool_path: &str,
     footprint_id: Uuid,
     vertices: Vec<serde_json::Value>,
-) -> Result<(String, serde_json::Value, serde_json::Value)> {
+) -> Result<(String, serde_json::Value)> {
     validate_project_local_pool_path(pool_path)?;
     ensure_pool_object_exists(root, footprint_id, "footprints", "footprint")?;
     let relative_path = pool_library_relative_path(pool_path, "footprints", footprint_id);
-    let previous_object = read_project_pool_object_payload(root, &relative_path, footprint_id)?;
-    let mut object = previous_object.clone();
+    let mut object = read_project_pool_object_payload(root, &relative_path, footprint_id)?;
     object
         .as_object_mut()
         .ok_or_else(|| anyhow::anyhow!("footprint {footprint_id} payload is not an object"))?
@@ -445,7 +373,7 @@ pub(crate) fn footprint_object_with_courtyard(
             "courtyard".to_string(),
             serde_json::json!({"vertices": vertices, "closed": true}),
         );
-    Ok((relative_path, previous_object, object))
+    Ok((relative_path, object))
 }
 
 pub(crate) fn footprint_object_with_appended_silkscreen(
@@ -453,14 +381,13 @@ pub(crate) fn footprint_object_with_appended_silkscreen(
     pool_path: &str,
     footprint_id: Uuid,
     primitive: serde_json::Value,
-) -> Result<(String, serde_json::Value, serde_json::Value)> {
+) -> Result<(String, serde_json::Value)> {
     validate_project_local_pool_path(pool_path)?;
     ensure_pool_object_exists(root, footprint_id, "footprints", "footprint")?;
     let relative_path = pool_library_relative_path(pool_path, "footprints", footprint_id);
-    let previous_object = read_project_pool_object_payload(root, &relative_path, footprint_id)?;
-    let mut object = previous_object.clone();
+    let mut object = read_project_pool_object_payload(root, &relative_path, footprint_id)?;
     append_silkscreen_primitive(&mut object, primitive)?;
-    Ok((relative_path, previous_object, object))
+    Ok((relative_path, object))
 }
 
 fn ensure_pool_object_exists(root: &Path, object_id: Uuid, kind: &str, label: &str) -> Result<()> {
@@ -486,16 +413,18 @@ fn set_native_project_pool_footprint_courtyard(
     action: &'static str,
     reason: String,
 ) -> Result<NativeProjectPoolLibraryObjectMutationView> {
-    let (relative_path, previous_object, object) =
+    let (relative_path, object) =
         footprint_object_with_courtyard(root, pool_path, footprint_id, vertices)?;
     commit_pool_library_operations(
         root,
         reason,
-        vec![Operation::SetPoolLibraryObject {
-            object_id: footprint_id,
-            relative_path: relative_path.clone(),
-            object_kind: "footprints".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::at_relative_path(
+                footprint_id,
+                "footprints",
+                relative_path.clone(),
+            ),
             object,
         }],
     )?;
@@ -651,16 +580,18 @@ fn commit_footprint_silkscreen_primitive(
     action: &'static str,
     reason: String,
 ) -> Result<NativeProjectPoolLibraryObjectMutationView> {
-    let (relative_path, previous_object, object) =
+    let (relative_path, object) =
         footprint_object_with_appended_silkscreen(root, pool_path, footprint_id, primitive)?;
     commit_pool_library_operations(
         root,
         reason,
-        vec![Operation::SetPoolLibraryObject {
-            object_id: footprint_id,
-            relative_path: relative_path.clone(),
-            object_kind: "footprints".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::at_relative_path(
+                footprint_id,
+                "footprints",
+                relative_path.clone(),
+            ),
             object,
         }],
     )?;

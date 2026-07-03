@@ -1,24 +1,30 @@
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
+use eda_engine::api::native_write::WriteProvenance;
+use eda_engine::api::native_write::library::{
+    PoolLibraryObjectTarget, PoolLibraryOperationSpec, build_pool_library_write,
+    pool_entity_payload, pool_padstack_payload, pool_symbol_payload, pool_unit_payload,
+};
+use eda_engine::api::native_write::library_pin_pad_map::{
+    pin_pad_map_payload, set_part_default_pin_pad_map_spec,
+};
 use eda_engine::substrate::{
-    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver,
-    ProposalCreateRequest, ProposalSource, create_draft_proposal_from_batch,
+    CommitSource, ProjectResolver, ProposalCreateRequest, ProposalSource,
+    create_draft_proposal_from_batch,
 };
 use uuid::Uuid;
 
 use super::command_project_library::{
-    next_pool_priority, pool_library_relative_path, validate_pool_library_object_kind,
+    pool_library_relative_path, validate_pool_library_object_kind,
     validate_project_local_pool_path,
 };
 use super::command_project_library_payload::{
     read_pool_library_object_payload, read_project_pool_object_payload,
 };
 use super::command_project_library_pin_pad_map::{
-    mappings_as_json, parse_mapping_entries, set_part_default_pin_pad_map_operation,
-    validate_pin_pad_map_payload,
+    parse_mapping_entries, validate_pin_pad_map_payload,
 };
-use super::command_project_operation_guards::guarded_operation_batch;
 use super::command_project_proposals::{
     NativeProjectProposalCreateView, validate_proposal_in_model,
 };
@@ -58,14 +64,7 @@ pub(crate) fn propose_create_native_project_pool_unit(
     rationale: Option<&str>,
 ) -> Result<NativeProjectProposalCreateView> {
     validate_project_local_pool_path(pool_path)?;
-    let object = serde_json::json!({
-        "schema_version": 1,
-        "uuid": unit_id,
-        "name": name,
-        "manufacturer": manufacturer,
-        "pins": {},
-        "tags": []
-    });
+    let object = pool_unit_payload(unit_id, &name, &manufacturer);
     propose_create_pool_library_object_value(
         root,
         pool_path,
@@ -99,12 +98,7 @@ pub(crate) fn propose_create_native_project_pool_symbol(
     if unit.is_none() {
         bail!("missing pool unit {unit_id} for symbol {symbol_id}");
     }
-    let object = serde_json::json!({
-        "schema_version": 1,
-        "uuid": symbol_id,
-        "name": name,
-        "unit": unit_id
-    });
+    let object = pool_symbol_payload(symbol_id, unit_id, &name);
     propose_create_pool_library_object_value(
         root,
         pool_path,
@@ -161,22 +155,16 @@ pub(crate) fn propose_create_native_project_pool_entity(
     {
         bail!("pool symbol {symbol_id} does not reference unit {unit_id}");
     }
-    let object = serde_json::json!({
-        "schema_version": 1,
-        "uuid": entity_id,
-        "name": name,
-        "prefix": prefix,
-        "manufacturer": manufacturer,
-        "gates": {
-            gate_id.to_string(): {
-                "uuid": gate_id,
-                "name": gate_name,
-                "unit": unit_id,
-                "symbol": symbol_id
-            }
-        },
-        "tags": []
-    });
+    let object = pool_entity_payload(
+        entity_id,
+        gate_id,
+        unit_id,
+        symbol_id,
+        &name,
+        &prefix,
+        &manufacturer,
+        &gate_name,
+    );
     propose_create_pool_library_object_value(
         root,
         pool_path,
@@ -232,13 +220,7 @@ pub(crate) fn propose_create_native_project_pool_padstack(
         }
         Some(kind) => bail!("unsupported padstack aperture {kind}; expected circle or rect"),
     };
-    let object = serde_json::json!({
-        "schema_version": 1,
-        "uuid": padstack_id,
-        "name": name,
-        "aperture": aperture_value,
-        "drill_nm": drill_nm
-    });
+    let object = pool_padstack_payload(padstack_id, &name, aperture_value, drill_nm);
     propose_create_pool_library_object_value(
         root,
         pool_path,
@@ -270,45 +252,32 @@ pub(crate) fn propose_create_native_project_pool_pin_pad_map(
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
     let mappings = parse_mapping_entries(entries, &model, part_id)?;
     validate_pin_pad_map_payload(&model, part_id, footprint_id, &mappings)?;
-    let relative_path = pool_library_relative_path(pool_path, "pin_pad_maps", map_id);
-    let object = serde_json::json!({
-        "schema_version": 1,
-        "uuid": map_id,
-        "part": part_id,
-        "footprint": footprint_id,
-        "mappings": mappings_as_json(&mappings),
-        "tags": []
-    });
-    let mut operations = vec![Operation::CreatePoolLibraryObject {
-        object_id: map_id,
-        relative_path,
-        object_kind: "pin_pad_maps".to_string(),
+    let object = pin_pad_map_payload(map_id, part_id, footprint_id, &mappings);
+    let mut operations = vec![PoolLibraryOperationSpec::Create {
+        target: PoolLibraryObjectTarget::new(pool_path, "pin_pad_maps", map_id),
         object,
     }];
     if set_default {
-        operations.push(set_part_default_pin_pad_map_operation(
-            root, pool_path, part_id, map_id,
+        operations.push(set_part_default_pin_pad_map_spec(
+            &model, pool_path, part_id, map_id,
         )?);
     }
-    let batch = guarded_operation_batch(
+    let prepared = build_pool_library_write(
         &model,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(model.model_revision.clone()),
-            provenance: CommitProvenance {
-                actor: "datum-eda-proposal".to_string(),
-                source: CommitSource::Cli,
-                reason: format!("propose native pool PinPadMap {map_id} for part {part_id}"),
-            },
-            operations,
-        },
+        WriteProvenance::new(
+            "datum-eda-proposal",
+            CommitSource::Cli,
+            format!("propose native pool PinPadMap {map_id} for part {part_id}"),
+        ),
+        None,
+        operations,
     )?;
     let proposal = create_draft_proposal_from_batch(
         &mut model,
         root,
         ProposalCreateRequest {
             proposal_id,
-            batch,
+            batch: prepared.batch,
             rationale: rationale
                 .unwrap_or("Create native pool PinPadMap")
                 .to_string(),
@@ -398,31 +367,25 @@ pub(crate) fn propose_set_native_project_pool_pin_pad_map(
         })
         .collect::<Result<Vec<_>>>()?;
     validate_pin_pad_map_payload(&model, part_id, footprint_id, &merged)?;
-    let batch = guarded_operation_batch(
+    let prepared = build_pool_library_write(
         &model,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(model.model_revision.clone()),
-            provenance: CommitProvenance {
-                actor: "datum-eda-proposal".to_string(),
-                source: CommitSource::Cli,
-                reason: format!("propose native pool PinPadMap update {map_id}"),
-            },
-            operations: vec![Operation::SetPoolLibraryObject {
-                object_id: map_id,
-                relative_path,
-                object_kind: "pin_pad_maps".to_string(),
-                previous_object,
-                object,
-            }],
-        },
+        WriteProvenance::new(
+            "datum-eda-proposal",
+            CommitSource::Cli,
+            format!("propose native pool PinPadMap update {map_id}"),
+        ),
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::at_relative_path(map_id, "pin_pad_maps", relative_path),
+            object,
+        }],
     )?;
     let proposal = create_draft_proposal_from_batch(
         &mut model,
         root,
         ProposalCreateRequest {
             proposal_id,
-            batch,
+            batch: prepared.batch,
             rationale: rationale
                 .unwrap_or("Set native pool PinPadMap mappings")
                 .to_string(),
@@ -465,46 +428,26 @@ pub(super) fn propose_create_pool_library_object_value(
 ) -> Result<NativeProjectProposalCreateView> {
     validate_project_local_pool_path(pool_path)?;
     validate_pool_library_object_kind(object_kind)?;
-    let project = super::load_native_project_with_resolved_board(root)?;
-    let relative_path = pool_library_relative_path(pool_path, object_kind, object_id);
-    let mut operations = Vec::new();
-    if !project
-        .manifest
-        .pools
-        .iter()
-        .any(|pool| pool.path == pool_path)
-    {
-        operations.push(Operation::AddProjectPoolRef {
-            path: pool_path.to_string(),
-            priority: next_pool_priority(&project.manifest.pools),
-        });
-    }
-    operations.push(Operation::CreatePoolLibraryObject {
-        object_id,
-        relative_path,
-        object_kind: object_kind.to_string(),
-        object,
-    });
     let mut model = ProjectResolver::new(root).resolve()?;
-    let batch = guarded_operation_batch(
+    let prepared = build_pool_library_write(
         &model,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(model.model_revision.clone()),
-            provenance: CommitProvenance {
-                actor: "datum-eda-proposal".to_string(),
-                source: CommitSource::Cli,
-                reason: format!("propose native pool library object {object_id}"),
-            },
-            operations,
-        },
+        WriteProvenance::new(
+            "datum-eda-proposal",
+            CommitSource::Cli,
+            format!("propose native pool library object {object_id}"),
+        ),
+        Some(pool_path),
+        vec![PoolLibraryOperationSpec::Create {
+            target: PoolLibraryObjectTarget::new(pool_path, object_kind, object_id),
+            object,
+        }],
     )?;
     let proposal = create_draft_proposal_from_batch(
         &mut model,
         root,
         ProposalCreateRequest {
             proposal_id,
-            batch,
+            batch: prepared.batch,
             rationale: rationale.unwrap_or(default_rationale).to_string(),
             source: ProposalSource::Tool,
             checks_run: Vec::new(),

@@ -1,7 +1,8 @@
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
-use eda_engine::substrate::{Operation, ProjectResolver};
+use eda_engine::api::native_write::library::{PoolLibraryObjectTarget, PoolLibraryOperationSpec};
+use eda_engine::substrate::ProjectResolver;
 use serde_json::Value;
 use uuid::Uuid;
 
@@ -80,11 +81,13 @@ pub(crate) fn set_native_project_pool_package_pad(
         format!(
             "route legacy package pad {pad_id} on package {package_id} to footprint {footprint_id}"
         ),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: footprint_id,
-            relative_path: relative_path.clone(),
-            object_kind: "footprints".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::at_relative_path(
+                footprint_id,
+                "footprints",
+                relative_path.clone(),
+            ),
             object,
         }],
     )?;

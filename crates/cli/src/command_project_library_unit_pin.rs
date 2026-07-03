@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
-use eda_engine::substrate::Operation;
+use eda_engine::api::native_write::library::{PoolLibraryObjectTarget, PoolLibraryOperationSpec};
 use uuid::Uuid;
 
 use super::command_project_library::{
@@ -54,11 +54,9 @@ pub(crate) fn set_native_project_pool_unit_pin(
     commit_pool_library_operations(
         root,
         format!("set native pool unit pin {pin_id} on unit {unit_id}"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: unit_id,
-            relative_path: relative_path.clone(),
-            object_kind: "units".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "units", unit_id),
             object,
         }],
     )?;

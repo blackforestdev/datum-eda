@@ -1,10 +1,14 @@
 use std::collections::BTreeMap;
 
 use super::*;
+use eda_engine::api::native_write::WriteProvenance;
+use eda_engine::api::native_write::forward_annotation::{
+    ForwardAnnotationProposalAction, build_forward_annotation_accepted_proposal,
+};
 use eda_engine::board::PlacedPackage;
 use eda_engine::substrate::{
-    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver, Proposal,
-    ProposalSource, ProposalStatus, apply_accepted_proposal, commit_proposal_metadata_journaled,
+    CommitSource, ProjectResolver, Proposal, apply_accepted_proposal,
+    commit_proposal_metadata_journaled,
 };
 
 pub(crate) fn build_forward_annotation_proposal(
@@ -17,9 +21,7 @@ pub(crate) fn build_forward_annotation_proposal(
         .map(|review| (review.action_id.as_str(), review.decision.as_str()))
         .collect::<BTreeMap<_, _>>();
     let model = ProjectResolver::new(root).resolve()?;
-    let prepared_against = model.model_revision.clone();
-    let mut operations = Vec::new();
-    let mut affected_objects = Vec::new();
+    let mut proposal_actions = Vec::new();
     for action in actions {
         if matches!(
             review_by_id.get(action.action_id.as_str()),
@@ -35,14 +37,13 @@ pub(crate) fn build_forward_annotation_proposal(
                     .ok_or_else(|| anyhow::anyhow!("proposal action missing component UUID"))?,
             )
             .context("invalid component UUID in forward-annotation proposal")?;
-            operations.push(Operation::SetBoardPackageValue {
+            proposal_actions.push(ForwardAnnotationProposalAction::SetComponentValue {
                 package_id,
                 value: action
                     .schematic_value
                     .clone()
                     .ok_or_else(|| anyhow::anyhow!("proposal action missing schematic value"))?,
             });
-            affected_objects.push(package_id);
         } else if action.action == "remove_component"
             && action.reason == "board_component_missing_in_schematic"
         {
@@ -52,54 +53,29 @@ pub(crate) fn build_forward_annotation_proposal(
             let package = project.board.packages.get(&key).cloned().ok_or_else(|| {
                 anyhow::anyhow!("board component not found in native project: {package_id}")
             })?;
-            operations.push(Operation::DeleteBoardPackage {
+            proposal_actions.push(ForwardAnnotationProposalAction::RemoveComponent {
                 package_id,
                 package,
                 materialized: component_materialization_payload(&project, &key),
             });
-            affected_objects.push(package_id);
         }
-    }
-    if operations.is_empty() {
-        return Ok(None);
     }
 
     let action_ids = actions
         .iter()
         .map(|action| action.action_id.as_str())
-        .collect::<Vec<_>>()
-        .join("|");
-    let proposal_id = Uuid::new_v5(
-        &model.project.project_id,
-        format!(
-            "datum-eda:forward-annotation-proposal:{}:{action_ids}",
-            prepared_against.0
-        )
-        .as_bytes(),
-    );
-    Ok(Some(Proposal {
-        schema_version: 1,
-        proposal_id,
-        project_id: model.project.project_id,
-        prepared_against: prepared_against.clone(),
-        batch: OperationBatch {
-            batch_id: Uuid::new_v5(&model.project.project_id, proposal_id.as_bytes()),
-            expected_model_revision: Some(prepared_against),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "forward annotation accepted proposal".to_string(),
-            },
-            operations,
-        },
-        rationale: "forward annotation self-sufficient board updates".to_string(),
-        affected_objects,
-        checks_run: Vec::new(),
-        finding_fingerprints: Vec::new(),
-        source: ProposalSource::Cli,
-        status: ProposalStatus::Accepted,
-        applied_transaction_id: None,
-    }))
+        .collect::<Vec<_>>();
+    Ok(build_forward_annotation_accepted_proposal(
+        &model,
+        WriteProvenance::new(
+            "datum-eda-cli",
+            CommitSource::Cli,
+            "forward annotation accepted proposal",
+        ),
+        "forward annotation self-sufficient board updates".to_string(),
+        &action_ids,
+        proposal_actions,
+    )?)
 }
 
 pub(crate) fn can_apply_with_embedded_proposal(

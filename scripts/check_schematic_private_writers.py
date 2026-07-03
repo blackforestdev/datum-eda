@@ -97,6 +97,14 @@ GENERATED_EVIDENCE_FILES = {
 }
 
 ENGINE_GENERATED_EVIDENCE_FILES = {
+    Path("crates/engine/src/api/native_write/forward_annotation.rs"): {
+        "writes": 0,
+        "required": [
+            'pub const FORWARD_ANNOTATION_REVIEW_PATH: &str = ".datum/forward_annotation_review/review.json";',
+            "Operation::SetForwardAnnotationReview",
+            "Operation::DeleteForwardAnnotationReview",
+        ],
+    },
     Path("crates/engine/src/api/native_write/genesis.rs"): {
         "writes": 0,
         "required": [
@@ -476,11 +484,10 @@ REQUIRED_PROPOSAL_APPLY_PATTERNS = [
 ]
 
 REQUIRED_FORWARD_ANNOTATION_STATE_PATTERNS = [
-    'const FORWARD_ANNOTATION_REVIEW_PATH: &str = ".datum/forward_annotation_review/review.json";',
     "pub(crate) fn write_forward_annotation_review(",
-    "Operation::SetForwardAnnotationReview",
-    "Operation::DeleteForwardAnnotationReview",
-    "commit_journaled(",
+    "build_set_forward_annotation_review(",
+    "build_clear_forward_annotation_review(",
+    "commit_prepared(",
 ]
 
 REQUIRED_PROJECT_BOOTSTRAP_PATTERNS = [

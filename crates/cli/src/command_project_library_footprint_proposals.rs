@@ -2,14 +2,19 @@ use std::path::Path;
 
 use crate::IpcDensityLevelArg;
 use anyhow::{Context, Result, bail};
+use eda_engine::api::native_write::WriteProvenance;
+use eda_engine::api::native_write::library::{
+    PoolLibraryObjectTarget, PoolLibraryOperationSpec, build_pool_library_write,
+};
+use eda_engine::api::native_write::library_footprint::pool_footprint_payload;
 use eda_engine::substrate::{
-    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver,
-    ProposalCreateRequest, ProposalSource, create_draft_proposal_from_batch,
+    CommitSource, ProjectResolver, ProposalCreateRequest, ProposalSource,
+    create_draft_proposal_from_batch,
 };
 use uuid::Uuid;
 
 use super::command_project_library::{
-    next_pool_priority, pool_library_relative_path, validate_project_local_pool_path,
+    pool_library_relative_path, validate_project_local_pool_path,
 };
 use super::command_project_library_footprint::{
     courtyard_rect_vertices, footprint_object_with_appended_silkscreen,
@@ -18,7 +23,6 @@ use super::command_project_library_footprint::{
     footprint_silkscreen_rect_primitive, ipc7351b_two_terminal_chip_operations, parse_vertices,
 };
 use super::command_project_library_payload::read_project_pool_object_payload;
-use super::command_project_operation_guards::guarded_operation_batch;
 use super::command_project_proposals::{
     NativeProjectProposalCreateView, validate_proposal_in_model,
 };
@@ -34,45 +38,14 @@ pub(crate) fn propose_create_native_project_pool_footprint(
 ) -> Result<NativeProjectProposalCreateView> {
     validate_project_local_pool_path(pool_path)?;
     ensure_pool_object_exists(root, package_id, "packages", "package")?;
-    let object = serde_json::json!({
-        "schema_version": 1,
-        "uuid": footprint_id,
-        "name": name,
-        "package": package_id,
-        "pads": {},
-        "courtyard": {"vertices": [], "closed": true},
-        "silkscreen": [],
-        "fab": [],
-        "assembly": [],
-        "mechanical": [],
-        "models_3d": [],
-        "standards_basis": null,
-        "process_aperture_policy": null,
-        "tags": []
-    });
-    let project = super::load_native_project_with_resolved_board(root)?;
-    let relative_path = pool_library_relative_path(pool_path, "footprints", footprint_id);
-    let mut operations = Vec::new();
-    if !project
-        .manifest
-        .pools
-        .iter()
-        .any(|pool| pool.path == pool_path)
-    {
-        operations.push(Operation::AddProjectPoolRef {
-            path: pool_path.to_string(),
-            priority: next_pool_priority(&project.manifest.pools),
-        });
-    }
-    operations.push(Operation::CreatePoolLibraryObject {
-        object_id: footprint_id,
-        relative_path,
-        object_kind: "footprints".to_string(),
-        object,
-    });
+    let object = pool_footprint_payload(footprint_id, package_id, &name);
     create_pool_footprint_proposal_from_operations(
         root,
-        operations,
+        Some(pool_path),
+        vec![PoolLibraryOperationSpec::Create {
+            target: PoolLibraryObjectTarget::new(pool_path, "footprints", footprint_id),
+            object,
+        }],
         proposal_id,
         rationale.unwrap_or("Create native pool footprint"),
         "create_pool_footprint_proposal",
@@ -120,6 +93,7 @@ pub(crate) fn propose_generate_native_project_ipc7351b_two_terminal_chip(
     )?;
     create_pool_footprint_proposal_from_operations(
         root,
+        Some(pool_path),
         operations,
         proposal_id,
         rationale.unwrap_or("Generate IPC-7351B two-terminal chip footprint"),
@@ -174,11 +148,13 @@ pub(crate) fn propose_set_native_project_pool_footprint_pad(
     );
     create_pool_footprint_proposal_from_operations(
         root,
-        vec![Operation::SetPoolLibraryObject {
-            object_id: footprint_id,
-            relative_path,
-            object_kind: "footprints".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::at_relative_path(
+                footprint_id,
+                "footprints",
+                relative_path,
+            ),
             object,
         }],
         proposal_id,
@@ -248,15 +224,17 @@ pub(crate) fn propose_add_native_project_pool_footprint_silkscreen_line(
 ) -> Result<NativeProjectProposalCreateView> {
     let primitive =
         footprint_silkscreen_line_primitive(from_x_nm, from_y_nm, to_x_nm, to_y_nm, width_nm)?;
-    let (relative_path, previous_object, object) =
+    let (relative_path, object) =
         footprint_object_with_appended_silkscreen(root, pool_path, footprint_id, primitive)?;
     create_pool_footprint_proposal_from_operations(
         root,
-        vec![Operation::SetPoolLibraryObject {
-            object_id: footprint_id,
-            relative_path,
-            object_kind: "footprints".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::at_relative_path(
+                footprint_id,
+                "footprints",
+                relative_path,
+            ),
             object,
         }],
         proposal_id,
@@ -361,15 +339,17 @@ fn create_pool_footprint_courtyard_proposal(
     rationale: &str,
     action: &'static str,
 ) -> Result<NativeProjectProposalCreateView> {
-    let (relative_path, previous_object, object) =
+    let (relative_path, object) =
         footprint_object_with_courtyard(root, pool_path, footprint_id, vertices)?;
     create_pool_footprint_proposal_from_operations(
         root,
-        vec![Operation::SetPoolLibraryObject {
-            object_id: footprint_id,
-            relative_path,
-            object_kind: "footprints".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::at_relative_path(
+                footprint_id,
+                "footprints",
+                relative_path,
+            ),
             object,
         }],
         proposal_id,
@@ -387,15 +367,17 @@ fn create_pool_footprint_silkscreen_proposal(
     rationale: &str,
     action: &'static str,
 ) -> Result<NativeProjectProposalCreateView> {
-    let (relative_path, previous_object, object) =
+    let (relative_path, object) =
         footprint_object_with_appended_silkscreen(root, pool_path, footprint_id, primitive)?;
     create_pool_footprint_proposal_from_operations(
         root,
-        vec![Operation::SetPoolLibraryObject {
-            object_id: footprint_id,
-            relative_path,
-            object_kind: "footprints".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::at_relative_path(
+                footprint_id,
+                "footprints",
+                relative_path,
+            ),
             object,
         }],
         proposal_id,
@@ -406,31 +388,29 @@ fn create_pool_footprint_silkscreen_proposal(
 
 fn create_pool_footprint_proposal_from_operations(
     root: &Path,
-    operations: Vec<Operation>,
+    ensure_pool_ref: Option<&str>,
+    operations: Vec<PoolLibraryOperationSpec>,
     proposal_id: Option<Uuid>,
     rationale: &str,
     action: &'static str,
 ) -> Result<NativeProjectProposalCreateView> {
     let mut model = ProjectResolver::new(root).resolve()?;
-    let batch = guarded_operation_batch(
+    let prepared = build_pool_library_write(
         &model,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(model.model_revision.clone()),
-            provenance: CommitProvenance {
-                actor: "datum-eda-proposal".to_string(),
-                source: CommitSource::Cli,
-                reason: "propose native pool footprint update".to_string(),
-            },
-            operations,
-        },
+        WriteProvenance::new(
+            "datum-eda-proposal",
+            CommitSource::Cli,
+            "propose native pool footprint update",
+        ),
+        ensure_pool_ref,
+        operations,
     )?;
     let proposal = create_draft_proposal_from_batch(
         &mut model,
         root,
         ProposalCreateRequest {
             proposal_id,
-            batch,
+            batch: prepared.batch,
             rationale: rationale.to_string(),
             source: ProposalSource::Tool,
             checks_run: Vec::new(),

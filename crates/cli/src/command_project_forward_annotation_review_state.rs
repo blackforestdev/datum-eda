@@ -1,16 +1,20 @@
 use super::*;
-use eda_engine::substrate::{
-    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver, SourceShardKind,
+use eda_engine::api::native_write::forward_annotation::{
+    build_clear_forward_annotation_review, build_set_forward_annotation_review,
 };
+use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
+use eda_engine::substrate::{CommitSource, ProjectResolver, SourceShardKind};
 use std::collections::BTreeMap;
-
-const FORWARD_ANNOTATION_REVIEW_PATH: &str = ".datum/forward_annotation_review/review.json";
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct NativeForwardAnnotationReviewSidecar {
     schema_version: u32,
     #[serde(default)]
     reviews: BTreeMap<String, NativeForwardAnnotationReviewRecord>,
+}
+
+fn forward_annotation_provenance(reason: &str) -> WriteProvenance {
+    WriteProvenance::new("datum-eda-forward-annotation", CommitSource::Cli, reason)
 }
 
 pub(crate) fn load_forward_annotation_review(
@@ -65,23 +69,13 @@ pub(crate) fn write_forward_annotation_review(
         schema_version: 1,
         reviews: reviews.clone(),
     })?;
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(model.model_revision.clone()),
-            provenance: CommitProvenance {
-                actor: "datum-eda-forward-annotation".to_string(),
-                source: CommitSource::Cli,
-                reason: "update forward-annotation review state".to_string(),
-            },
-            operations: vec![Operation::SetForwardAnnotationReview {
-                relative_path: FORWARD_ANNOTATION_REVIEW_PATH.to_string(),
-                previous_review,
-                review,
-            }],
-        },
+    let prepared = build_set_forward_annotation_review(
+        &model,
+        forward_annotation_provenance("update forward-annotation review state"),
+        previous_review,
+        review,
     )?;
+    commit_prepared(&mut model, root, prepared)?;
     Ok(())
 }
 
@@ -99,21 +93,11 @@ pub(crate) fn clear_forward_annotation_review_sidecar(root: &Path) -> Result<()>
     let review = model
         .materialized_source_shard_value(SourceShardKind::ForwardAnnotationReview)
         .context("failed to materialize previous forward-annotation review sidecar")?;
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(model.model_revision.clone()),
-            provenance: CommitProvenance {
-                actor: "datum-eda-forward-annotation".to_string(),
-                source: CommitSource::Cli,
-                reason: "clear forward-annotation review state".to_string(),
-            },
-            operations: vec![Operation::DeleteForwardAnnotationReview {
-                relative_path: FORWARD_ANNOTATION_REVIEW_PATH.to_string(),
-                review,
-            }],
-        },
+    let prepared = build_clear_forward_annotation_review(
+        &model,
+        forward_annotation_provenance("clear forward-annotation review state"),
+        review,
     )?;
+    commit_prepared(&mut model, root, prepared)?;
     Ok(())
 }

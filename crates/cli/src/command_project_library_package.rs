@@ -1,14 +1,16 @@
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
-use eda_engine::substrate::{Operation, ProjectResolver};
+use eda_engine::api::native_write::library::{
+    PoolLibraryObjectTarget, PoolLibraryOperationSpec, pool_package_payload,
+};
+use eda_engine::substrate::ProjectResolver;
 use uuid::Uuid;
 
 use super::command_project_library::{
-    NativeProjectPoolLibraryObjectMutationView, commit_pool_library_operations, next_pool_priority,
+    NativeProjectPoolLibraryObjectMutationView, commit_pool_library_operations,
     pool_library_mutation_view, pool_library_relative_path, validate_project_local_pool_path,
 };
-use super::load_native_project_with_resolved_board;
 
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn create_native_project_pool_package(
@@ -60,41 +62,15 @@ pub(crate) fn create_native_project_pool_package(
             })
         })
         .unwrap_or_else(|| serde_json::json!({}));
-    let object = serde_json::json!({
-        "schema_version": 1,
-        "uuid": package_id,
-        "name": name,
-        "pads": pads,
-        "courtyard": {"vertices": [], "closed": true},
-        "silkscreen": [],
-        "models_3d": [],
-        "body_height_nm": null,
-        "body_height_mounted_nm": null,
-        "tags": []
-    });
-    let project = load_native_project_with_resolved_board(root)?;
-    let mut operations = Vec::new();
-    if !project
-        .manifest
-        .pools
-        .iter()
-        .any(|pool| pool.path == pool_path)
-    {
-        operations.push(Operation::AddProjectPoolRef {
-            path: pool_path.to_string(),
-            priority: next_pool_priority(&project.manifest.pools),
-        });
-    }
-    operations.push(Operation::CreatePoolLibraryObject {
-        object_id: package_id,
-        relative_path: relative_path.clone(),
-        object_kind: "packages".to_string(),
-        object,
-    });
+    let object = pool_package_payload(package_id, &name, pads);
     commit_pool_library_operations(
         root,
         format!("create native pool package {package_id}"),
-        operations,
+        Some(pool_path),
+        vec![PoolLibraryOperationSpec::Create {
+            target: PoolLibraryObjectTarget::new(pool_path, "packages", package_id),
+            object,
+        }],
     )?;
     pool_library_mutation_view(
         root,

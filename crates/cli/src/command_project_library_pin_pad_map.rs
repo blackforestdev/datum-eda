@@ -1,7 +1,11 @@
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
-use eda_engine::substrate::{Operation, ProjectResolver};
+use eda_engine::api::native_write::library::{PoolLibraryObjectTarget, PoolLibraryOperationSpec};
+use eda_engine::api::native_write::library_pin_pad_map::{
+    pin_pad_map_mapping_json, pin_pad_map_payload, set_part_default_pin_pad_map_spec,
+};
+use eda_engine::substrate::ProjectResolver;
 use uuid::Uuid;
 
 use super::command_project_library::{
@@ -27,28 +31,20 @@ pub(crate) fn create_native_project_pool_pin_pad_map(
     validate_pin_pad_map_payload(&model, part_id, footprint_id, &mappings)?;
 
     let relative_path = pool_library_relative_path(pool_path, "pin_pad_maps", map_id);
-    let object = serde_json::json!({
-        "schema_version": 1,
-        "uuid": map_id,
-        "part": part_id,
-        "footprint": footprint_id,
-        "mappings": mappings_as_json(&mappings),
-        "tags": []
-    });
-    let mut operations = vec![Operation::CreatePoolLibraryObject {
-        object_id: map_id,
-        relative_path: relative_path.clone(),
-        object_kind: "pin_pad_maps".to_string(),
+    let object = pin_pad_map_payload(map_id, part_id, footprint_id, &mappings);
+    let mut operations = vec![PoolLibraryOperationSpec::Create {
+        target: PoolLibraryObjectTarget::new(pool_path, "pin_pad_maps", map_id),
         object,
     }];
     if set_default {
-        operations.push(set_part_default_pin_pad_map_operation(
-            root, pool_path, part_id, map_id,
+        operations.push(set_part_default_pin_pad_map_spec(
+            &model, pool_path, part_id, map_id,
         )?);
     }
     commit_pool_library_operations(
         root,
         format!("create native pool PinPadMap {map_id} for part {part_id}"),
+        None,
         operations,
     )?;
     pool_library_mutation_view(
@@ -96,7 +92,7 @@ pub(crate) fn set_native_project_pool_pin_pad_map(
         .as_object_mut()
         .ok_or_else(|| anyhow::anyhow!("pin_pad_map {map_id} mappings is not an object"))?;
     for entry in entries {
-        mappings.insert(entry.pad.to_string(), mapping_entry_as_json(&entry));
+        mappings.insert(entry.pad.to_string(), pin_pad_map_mapping_json(&entry));
     }
     let merged = mappings
         .iter()
@@ -115,11 +111,9 @@ pub(crate) fn set_native_project_pool_pin_pad_map(
     commit_pool_library_operations(
         root,
         format!("set native pool PinPadMap {map_id} mappings"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: map_id,
-            relative_path: relative_path.clone(),
-            object_kind: "pin_pad_maps".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "pin_pad_maps", map_id),
             object,
         }],
     )?;
@@ -131,31 +125,6 @@ pub(crate) fn set_native_project_pool_pin_pad_map(
         map_id,
         &relative_path,
     )
-}
-
-pub(super) fn set_part_default_pin_pad_map_operation(
-    root: &Path,
-    pool_path: &str,
-    part_id: Uuid,
-    map_id: Uuid,
-) -> Result<Operation> {
-    let relative_path = pool_library_relative_path(pool_path, "parts", part_id);
-    let previous_object = read_project_pool_object_payload(root, &relative_path, part_id)?;
-    let mut object = previous_object.clone();
-    object
-        .as_object_mut()
-        .ok_or_else(|| anyhow::anyhow!("part {part_id} payload is not an object"))?
-        .insert(
-            "default_pin_pad_map".to_string(),
-            serde_json::Value::String(map_id.to_string()),
-        );
-    Ok(Operation::SetPoolLibraryObject {
-        object_id: part_id,
-        relative_path,
-        object_kind: "parts".to_string(),
-        previous_object,
-        object,
-    })
 }
 
 pub(super) fn validate_pin_pad_map_payload(
@@ -285,12 +254,7 @@ fn object_keys(
         .collect()
 }
 
-#[derive(Clone)]
-pub(crate) struct PinPadMapEntryInput {
-    pub(crate) pad: Uuid,
-    pub(crate) gate: Uuid,
-    pub(crate) pin: Uuid,
-}
+pub(crate) use eda_engine::api::native_write::library_pin_pad_map::PinPadMapMapping as PinPadMapEntryInput;
 
 pub(super) fn parse_mapping_entries(
     entries: Vec<String>,
@@ -333,21 +297,6 @@ pub(super) fn parse_mapping_entries(
     Ok(parsed)
 }
 
-pub(super) fn mappings_as_json(entries: &[PinPadMapEntryInput]) -> serde_json::Value {
-    serde_json::Value::Object(
-        entries
-            .iter()
-            .map(|entry| (entry.pad.to_string(), mapping_entry_as_json(entry)))
-            .collect(),
-    )
-}
-
-fn mapping_entry_as_json(entry: &PinPadMapEntryInput) -> serde_json::Value {
-    serde_json::json!({
-        "gate": entry.gate,
-        "pin": entry.pin
-    })
-}
 
 fn materialized_pool_object(
     model: &eda_engine::substrate::DesignModel,

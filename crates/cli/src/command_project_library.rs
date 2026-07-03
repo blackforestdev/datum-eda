@@ -2,9 +2,14 @@ use std::path::{Component, Path, PathBuf};
 use std::{env, fs};
 
 use anyhow::{Context, Result, bail};
-use eda_engine::substrate::{
-    CommitProvenance, CommitSource, Operation, OperationBatch, ProjectResolver,
+use eda_engine::api::native_write::library::{
+    PoolLibraryObjectTarget, PoolLibraryOperationSpec, build_pool_library_write,
+    derive_pool_model_attachment_uuid, derive_pool_model_uuid, pool_entity_payload,
+    pool_padstack_payload, pool_part_payload, pool_symbol_payload, pool_unit_payload,
+    write_pool_model_blob,
 };
+use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
+use eda_engine::substrate::{CommitSource, ProjectResolver};
 use serde::Serialize;
 use sha2::{Digest, Sha256};
 use uuid::Uuid;
@@ -12,7 +17,6 @@ use uuid::Uuid;
 use super::command_project_library_payload::{
     read_pool_library_object_payload, read_project_pool_object_payload,
 };
-use super::load_native_project_with_resolved_board;
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectPoolLibraryObjectMutationView {
@@ -59,29 +63,14 @@ pub(crate) fn create_native_project_pool_library_object(
     validate_pool_library_object_kind(object_kind)?;
     let object = read_pool_library_object_payload(source, object_id)?;
     let relative_path = pool_library_relative_path(pool_path, object_kind, object_id);
-    let project = load_native_project_with_resolved_board(root)?;
-    let mut operations = Vec::new();
-    if !project
-        .manifest
-        .pools
-        .iter()
-        .any(|pool| pool.path == pool_path)
-    {
-        operations.push(Operation::AddProjectPoolRef {
-            path: pool_path.to_string(),
-            priority: next_pool_priority(&project.manifest.pools),
-        });
-    }
-    operations.push(Operation::CreatePoolLibraryObject {
-        object_id,
-        relative_path: relative_path.clone(),
-        object_kind: object_kind.to_string(),
-        object,
-    });
     commit_pool_library_operations(
         root,
         format!("create native pool library object {object_id}"),
-        operations,
+        Some(pool_path),
+        vec![PoolLibraryOperationSpec::Create {
+            target: PoolLibraryObjectTarget::new(pool_path, object_kind, object_id),
+            object,
+        }],
     )?;
     pool_library_mutation_view(
         root,
@@ -102,37 +91,15 @@ pub(crate) fn create_native_project_pool_unit(
 ) -> Result<NativeProjectPoolLibraryObjectMutationView> {
     validate_project_local_pool_path(pool_path)?;
     let relative_path = pool_library_relative_path(pool_path, "units", unit_id);
-    let object = serde_json::json!({
-        "schema_version": 1,
-        "uuid": unit_id,
-        "name": name,
-        "manufacturer": manufacturer,
-        "pins": {},
-        "tags": []
-    });
-    let project = load_native_project_with_resolved_board(root)?;
-    let mut operations = Vec::new();
-    if !project
-        .manifest
-        .pools
-        .iter()
-        .any(|pool| pool.path == pool_path)
-    {
-        operations.push(Operation::AddProjectPoolRef {
-            path: pool_path.to_string(),
-            priority: next_pool_priority(&project.manifest.pools),
-        });
-    }
-    operations.push(Operation::CreatePoolLibraryObject {
-        object_id: unit_id,
-        relative_path: relative_path.clone(),
-        object_kind: "units".to_string(),
-        object,
-    });
+    let object = pool_unit_payload(unit_id, &name, &manufacturer);
     commit_pool_library_operations(
         root,
         format!("create native pool unit {unit_id}"),
-        operations,
+        Some(pool_path),
+        vec![PoolLibraryOperationSpec::Create {
+            target: PoolLibraryObjectTarget::new(pool_path, "units", unit_id),
+            object,
+        }],
     )?;
     pool_library_mutation_view(
         root,
@@ -163,35 +130,15 @@ pub(crate) fn create_native_project_pool_symbol(
         bail!("missing pool unit {unit_id} for symbol {symbol_id}");
     }
     let relative_path = pool_library_relative_path(pool_path, "symbols", symbol_id);
-    let object = serde_json::json!({
-        "schema_version": 1,
-        "uuid": symbol_id,
-        "name": name,
-        "unit": unit_id
-    });
-    let project = load_native_project_with_resolved_board(root)?;
-    let mut operations = Vec::new();
-    if !project
-        .manifest
-        .pools
-        .iter()
-        .any(|pool| pool.path == pool_path)
-    {
-        operations.push(Operation::AddProjectPoolRef {
-            path: pool_path.to_string(),
-            priority: next_pool_priority(&project.manifest.pools),
-        });
-    }
-    operations.push(Operation::CreatePoolLibraryObject {
-        object_id: symbol_id,
-        relative_path: relative_path.clone(),
-        object_kind: "symbols".to_string(),
-        object,
-    });
+    let object = pool_symbol_payload(symbol_id, unit_id, &name);
     commit_pool_library_operations(
         root,
         format!("create native pool symbol {symbol_id} for unit {unit_id}"),
-        operations,
+        Some(pool_path),
+        vec![PoolLibraryOperationSpec::Create {
+            target: PoolLibraryObjectTarget::new(pool_path, "symbols", symbol_id),
+            object,
+        }],
     )?;
     pool_library_mutation_view(
         root,
@@ -244,45 +191,24 @@ pub(crate) fn create_native_project_pool_entity(
         bail!("pool symbol {symbol_id} does not reference unit {unit_id}");
     }
     let relative_path = pool_library_relative_path(pool_path, "entities", entity_id);
-    let object = serde_json::json!({
-        "schema_version": 1,
-        "uuid": entity_id,
-        "name": name,
-        "prefix": prefix,
-        "manufacturer": manufacturer,
-        "gates": {
-            gate_id.to_string(): {
-                "uuid": gate_id,
-                "name": gate_name,
-                "unit": unit_id,
-                "symbol": symbol_id
-            }
-        },
-        "tags": []
-    });
-    let project = load_native_project_with_resolved_board(root)?;
-    let mut operations = Vec::new();
-    if !project
-        .manifest
-        .pools
-        .iter()
-        .any(|pool| pool.path == pool_path)
-    {
-        operations.push(Operation::AddProjectPoolRef {
-            path: pool_path.to_string(),
-            priority: next_pool_priority(&project.manifest.pools),
-        });
-    }
-    operations.push(Operation::CreatePoolLibraryObject {
-        object_id: entity_id,
-        relative_path: relative_path.clone(),
-        object_kind: "entities".to_string(),
-        object,
-    });
+    let object = pool_entity_payload(
+        entity_id,
+        gate_id,
+        unit_id,
+        symbol_id,
+        &name,
+        &prefix,
+        &manufacturer,
+        &gate_name,
+    );
     commit_pool_library_operations(
         root,
         format!("create native pool entity {entity_id} for unit {unit_id} and symbol {symbol_id}"),
-        operations,
+        Some(pool_path),
+        vec![PoolLibraryOperationSpec::Create {
+            target: PoolLibraryObjectTarget::new(pool_path, "entities", entity_id),
+            object,
+        }],
     )?;
     pool_library_mutation_view(
         root,
@@ -334,36 +260,15 @@ pub(crate) fn create_native_project_pool_padstack(
         Some(kind) => bail!("unsupported padstack aperture {kind}; expected circle or rect"),
     };
     let relative_path = pool_library_relative_path(pool_path, "padstacks", padstack_id);
-    let object = serde_json::json!({
-        "schema_version": 1,
-        "uuid": padstack_id,
-        "name": name,
-        "aperture": aperture_value,
-        "drill_nm": drill_nm
-    });
-    let project = load_native_project_with_resolved_board(root)?;
-    let mut operations = Vec::new();
-    if !project
-        .manifest
-        .pools
-        .iter()
-        .any(|pool| pool.path == pool_path)
-    {
-        operations.push(Operation::AddProjectPoolRef {
-            path: pool_path.to_string(),
-            priority: next_pool_priority(&project.manifest.pools),
-        });
-    }
-    operations.push(Operation::CreatePoolLibraryObject {
-        object_id: padstack_id,
-        relative_path: relative_path.clone(),
-        object_kind: "padstacks".to_string(),
-        object,
-    });
+    let object = pool_padstack_payload(padstack_id, &name, aperture_value, drill_nm);
     commit_pool_library_operations(
         root,
         format!("create native pool padstack {padstack_id}"),
-        operations,
+        Some(pool_path),
+        vec![PoolLibraryOperationSpec::Create {
+            target: PoolLibraryObjectTarget::new(pool_path, "padstacks", padstack_id),
+            object,
+        }],
     )?;
     pool_library_mutation_view(
         root,
@@ -410,54 +315,27 @@ pub(crate) fn create_native_project_pool_part(
         bail!("missing pool package {package_id} for part {part_id}");
     }
     let relative_path = pool_library_relative_path(pool_path, "parts", part_id);
-    let object = serde_json::json!({
-        "schema_version": 1,
-        "uuid": part_id,
-        "entity": entity_id,
-        "package": package_id,
-        "default_footprint": null,
-        "default_pin_pad_map": null,
-        "pad_map": {},
-        "mpn": mpn,
-        "manufacturer": manufacturer,
-        "manufacturer_jep106": null,
-        "value": value,
-        "description": description,
-        "datasheet": datasheet,
-        "parametric": {},
-        "orderable_mpns": [],
-        "packaging_options": [],
-        "tags": [],
-        "lifecycle": lifecycle,
-        "base": null,
-        "behavioural_models": [],
-        "thermal": null
-    });
-    let project = load_native_project_with_resolved_board(root)?;
-    let mut operations = Vec::new();
-    if !project
-        .manifest
-        .pools
-        .iter()
-        .any(|pool| pool.path == pool_path)
-    {
-        operations.push(Operation::AddProjectPoolRef {
-            path: pool_path.to_string(),
-            priority: next_pool_priority(&project.manifest.pools),
-        });
-    }
-    operations.push(Operation::CreatePoolLibraryObject {
-        object_id: part_id,
-        relative_path: relative_path.clone(),
-        object_kind: "parts".to_string(),
-        object,
-    });
+    let object = pool_part_payload(
+        part_id,
+        entity_id,
+        package_id,
+        &mpn,
+        &manufacturer,
+        &value,
+        &description,
+        &datasheet,
+        &lifecycle,
+    );
     commit_pool_library_operations(
         root,
         format!(
             "create native pool part {part_id} for entity {entity_id} and package {package_id}"
         ),
-        operations,
+        Some(pool_path),
+        vec![PoolLibraryOperationSpec::Create {
+            target: PoolLibraryObjectTarget::new(pool_path, "parts", part_id),
+            object,
+        }],
     )?;
     pool_library_mutation_view(
         root,
@@ -542,11 +420,9 @@ pub(crate) fn set_native_project_pool_part_metadata(
     commit_pool_library_operations(
         root,
         format!("set native pool part {part_id} metadata"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: part_id,
-            relative_path: relative_path.clone(),
-            object_kind: "parts".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "parts", part_id),
             object,
         }],
     )?;
@@ -616,11 +492,9 @@ pub(crate) fn set_native_project_pool_part_parametric(
     commit_pool_library_operations(
         root,
         format!("set native pool part {part_id} parametric fields"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: part_id,
-            relative_path: relative_path.clone(),
-            object_kind: "parts".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "parts", part_id),
             object,
         }],
     )?;
@@ -692,11 +566,9 @@ pub(crate) fn set_native_project_pool_part_orderable_mpns(
     commit_pool_library_operations(
         root,
         format!("set native pool part {part_id} orderable MPNs"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: part_id,
-            relative_path: relative_path.clone(),
-            object_kind: "parts".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "parts", part_id),
             object,
         }],
     )?;
@@ -767,11 +639,9 @@ pub(crate) fn set_native_project_pool_part_packaging_options(
     commit_pool_library_operations(
         root,
         format!("set native pool part {part_id} packaging options"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: part_id,
-            relative_path: relative_path.clone(),
-            object_kind: "parts".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "parts", part_id),
             object,
         }],
     )?;
@@ -847,11 +717,9 @@ pub(crate) fn set_native_project_pool_part_behavioural_models(
     commit_pool_library_operations(
         root,
         format!("set native pool part {part_id} behavioural model attachments"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: part_id,
-            relative_path: relative_path.clone(),
-            object_kind: "parts".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "parts", part_id),
             object,
         }],
     )?;
@@ -931,35 +799,10 @@ pub(crate) fn attach_native_project_pool_part_model(
         .filter(|extension| !extension.is_empty())
         .unwrap_or_else(|| default_model_extension(&role));
     let model_relative_path = format!("{pool_path}/models/{role_dir}/{sha256}.{extension}");
-    let model_target = root.join(&model_relative_path);
-    if let Some(parent) = model_target.parent() {
-        fs::create_dir_all(parent).with_context(|| {
-            format!(
-                "failed to create model target directory {}",
-                parent.display()
-            )
-        })?;
-    }
-    if !model_target.exists() {
-        fs::write(&model_target, &model_bytes).with_context(|| {
-            format!(
-                "failed to write content-addressed model {}",
-                model_target.display()
-            )
-        })?;
-    }
-    let model_uuid = Uuid::new_v5(
-        &Uuid::NAMESPACE_URL,
-        format!("datum-eda:pool-model:{sha256}").as_bytes(),
-    );
-    let attachment_uuid = Uuid::new_v5(
-        &Uuid::NAMESPACE_URL,
-        format!(
-            "datum-eda:model-attachment:{part_id}:{model_uuid}:{:?}:{model_names:?}",
-            role
-        )
-        .as_bytes(),
-    );
+    write_pool_model_blob(root, &model_relative_path, &model_bytes)?;
+    let model_uuid = derive_pool_model_uuid(&sha256);
+    let attachment_uuid =
+        derive_pool_model_attachment_uuid(part_id, model_uuid, &role, &model_names);
     let provenance = eda_engine::pool::ModelProvenance {
         source: source.to_string_lossy().to_string(),
         vendor: normalize_optional_string(vendor),
@@ -991,7 +834,6 @@ pub(crate) fn attach_native_project_pool_part_model(
     let existing_array = existing.as_array_mut().ok_or_else(|| {
         anyhow::anyhow!("part {part_id} behavioural_models field is not an array")
     })?;
-    let previous_attachments = existing_array.clone();
     if !existing_array
         .iter()
         .any(|existing| existing == &attachment_value)
@@ -1002,10 +844,10 @@ pub(crate) fn attach_native_project_pool_part_model(
     commit_pool_library_operations(
         root,
         format!("attach behavioural model {sha256} to native pool part {part_id}"),
-        vec![Operation::AttachPoolPartModel {
+        None,
+        vec![PoolLibraryOperationSpec::AttachPartModel {
             part_id,
             relative_path: relative_path.clone(),
-            previous_attachments,
             attachments,
         }],
     )?;
@@ -1077,10 +919,10 @@ pub(crate) fn detach_native_project_pool_part_model(
     commit_pool_library_operations(
         root,
         format!("detach behavioural model from native pool part {part_id}"),
-        vec![Operation::DetachPoolPartModel {
+        None,
+        vec![PoolLibraryOperationSpec::DetachPartModel {
             part_id,
             relative_path: relative_path.clone(),
-            previous_attachments,
             attachments,
         }],
     )?;
@@ -1310,11 +1152,9 @@ pub(crate) fn set_native_project_pool_part_thermal(
     commit_pool_library_operations(
         root,
         format!("set native pool part {part_id} thermal metadata"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: part_id,
-            relative_path: relative_path.clone(),
-            object_kind: "parts".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "parts", part_id),
             object,
         }],
     )?;
@@ -1412,11 +1252,9 @@ pub(crate) fn set_native_project_pool_part_supply_chain(
     commit_pool_library_operations(
         root,
         format!("set native pool part {part_id} supply-chain cache"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: part_id,
-            relative_path: relative_path.clone(),
-            object_kind: "parts".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "parts", part_id),
             object,
         }],
     )?;
@@ -1509,11 +1347,9 @@ pub(crate) fn set_native_project_pool_part_tags(
     commit_pool_library_operations(
         root,
         format!("set native pool part {part_id} tags"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id: part_id,
-            relative_path: relative_path.clone(),
-            object_kind: "parts".to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, "parts", part_id),
             object,
         }],
     )?;
@@ -1536,15 +1372,15 @@ pub(crate) fn delete_native_project_pool_library_object(
     validate_project_local_pool_path(pool_path)?;
     validate_pool_library_object_kind(object_kind)?;
     let relative_path = pool_library_relative_path(pool_path, object_kind, object_id);
-    let object = read_project_pool_object_payload(root, &relative_path, object_id)?;
+    // Validate existence and payload uuid exactly as the pre-migration CLI
+    // did; the facade re-sources the stored payload from the same model view.
+    read_project_pool_object_payload(root, &relative_path, object_id)?;
     commit_pool_library_operations(
         root,
         format!("delete native pool library object {object_id}"),
-        vec![Operation::DeletePoolLibraryObject {
-            object_id,
-            relative_path: relative_path.clone(),
-            object_kind: object_kind.to_string(),
-            object,
+        None,
+        vec![PoolLibraryOperationSpec::Delete {
+            target: PoolLibraryObjectTarget::new(pool_path, object_kind, object_id),
         }],
     )?;
     pool_library_mutation_view(
@@ -1567,16 +1403,16 @@ pub(crate) fn set_native_project_pool_library_object(
     validate_project_local_pool_path(pool_path)?;
     validate_pool_library_object_kind(object_kind)?;
     let relative_path = pool_library_relative_path(pool_path, object_kind, object_id);
-    let previous_object = read_project_pool_object_payload(root, &relative_path, object_id)?;
+    // Validate existence and payload uuid exactly as the pre-migration CLI
+    // did; the facade re-sources the previous payload from the same model view.
+    read_project_pool_object_payload(root, &relative_path, object_id)?;
     let object = read_pool_library_object_payload(source, object_id)?;
     commit_pool_library_operations(
         root,
         format!("set native pool library object {object_id}"),
-        vec![Operation::SetPoolLibraryObject {
-            object_id,
-            relative_path: relative_path.clone(),
-            object_kind: object_kind.to_string(),
-            previous_object,
+        None,
+        vec![PoolLibraryOperationSpec::Set {
+            target: PoolLibraryObjectTarget::new(pool_path, object_kind, object_id),
             object,
         }],
     )?;
@@ -1590,27 +1426,26 @@ pub(crate) fn set_native_project_pool_library_object(
     )
 }
 
+/// Author and commit one pool-library write through the native write facade:
+/// resolve, build the typed batch (with the ensure-pool-ref rule applied by
+/// the engine when `ensure_pool_ref` names a pool), and commit through the
+/// single journaled path.
 pub(super) fn commit_pool_library_operations(
     root: &Path,
     reason: String,
-    operations: Vec<Operation>,
+    ensure_pool_ref: Option<&str>,
+    operations: Vec<PoolLibraryOperationSpec>,
 ) -> Result<()> {
     let mut model = ProjectResolver::new(root)
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
-    model.commit_journaled(
-        root,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(model.model_revision.clone()),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: pool_library_commit_source()?,
-                reason,
-            },
-            operations,
-        },
+    let prepared = build_pool_library_write(
+        &model,
+        WriteProvenance::new("datum-eda-cli", pool_library_commit_source()?, reason),
+        ensure_pool_ref,
+        operations,
     )?;
+    commit_prepared(&mut model, root, prepared)?;
     Ok(())
 }
 
@@ -1700,14 +1535,15 @@ fn validate_part_lifecycle(lifecycle: String) -> Result<String> {
     }
 }
 
+/// Thin shim over the engine facade's canonical pool shard path rule.
 pub(super) fn pool_library_relative_path(
     pool_path: &str,
     object_kind: &str,
     object_id: Uuid,
 ) -> String {
-    format!("{pool_path}/{object_kind}/{object_id}.json")
-}
-
-pub(super) fn next_pool_priority(pools: &[super::NativeProjectPoolRef]) -> u32 {
-    pools.iter().map(|pool| pool.priority).max().unwrap_or(0) + 1
+    eda_engine::api::native_write::library::pool_library_relative_path(
+        pool_path,
+        object_kind,
+        object_id,
+    )
 }

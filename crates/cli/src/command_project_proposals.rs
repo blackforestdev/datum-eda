@@ -2,12 +2,18 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
+use eda_engine::api::native_write::WriteProvenance;
+use eda_engine::api::native_write::board_components::BoardPackageEdit;
+use eda_engine::api::native_write::forward_annotation::{
+    ProposalRenderDelta, build_board_component_replacement_proposal_batch, guard_proposal_batch,
+    proposal_render_deltas,
+};
 use eda_engine::board::PlacedPackage;
 use eda_engine::substrate::{
-    CommitDiff, CommitProvenance, CommitReport, CommitSource, Operation, OperationBatch,
-    ProjectResolver, Proposal, ProposalApplyBlocker, ProposalCreateRequest, ProposalSource,
-    ProposalStatus, apply_accepted_proposal, create_draft_proposal_from_batch,
-    preview_proposal_diff_journaled, review_proposal_status, validate_proposal_apply,
+    CommitDiff, CommitReport, CommitSource, ProjectResolver, Proposal, ProposalApplyBlocker,
+    ProposalCreateRequest, ProposalSource, ProposalStatus, apply_accepted_proposal,
+    create_draft_proposal_from_batch, preview_proposal_diff_journaled, review_proposal_status,
+    validate_proposal_apply,
 };
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -16,7 +22,6 @@ use crate::NativeBoardRoot;
 use crate::ProposalSourceArg;
 use crate::command_project::{
     board_package_materialization_payload_for_component,
-    command_project_operation_guards::guarded_operation_batch,
     current_board_component_materialization_payload,
     load_native_project_with_resolved_board_and_model,
 };
@@ -160,9 +165,9 @@ pub(crate) fn create_native_project_proposal(
     checks_run: Vec<Uuid>,
     finding_fingerprints: Vec<String>,
 ) -> Result<NativeProjectProposalCreateView> {
-    let batch = serde_json::from_str::<OperationBatch>(&std::fs::read_to_string(batch_path)?)?;
+    let batch = serde_json::from_str(&std::fs::read_to_string(batch_path)?)?;
     let mut model = ProjectResolver::new(root).resolve()?;
-    let batch = guarded_operation_batch(&model, batch)?;
+    let batch = guard_proposal_batch(&model, batch)?;
     let source = match source {
         ProposalSourceArg::Manual => ProposalSource::Manual,
         ProposalSourceArg::Cli => ProposalSource::Cli,
@@ -227,7 +232,7 @@ pub(crate) fn propose_native_project_board_component_replacements(
         bail!("board component replacement proposal requires at least one replacement");
     }
     let (project, mut model) = load_native_project_with_resolved_board_and_model(root)?;
-    let mut operations = Vec::new();
+    let mut edits = Vec::new();
     let mut seen_components = BTreeSet::new();
     let mut component_ids = Vec::new();
     for replacement in replacements {
@@ -237,30 +242,26 @@ pub(crate) fn propose_native_project_board_component_replacements(
                 replacement.component
             );
         }
-        append_board_component_replacement_operations(
+        append_board_component_replacement_edits(
             root,
             &project.board,
             replacement,
-            &mut operations,
+            &mut edits,
             &mut component_ids,
         )?;
     }
 
-    if operations.is_empty() {
+    if edits.is_empty() {
         bail!("board component replacement proposal is a no-op for all components");
     }
-    let batch = guarded_operation_batch(
+    let batch = build_board_component_replacement_proposal_batch(
         &model,
-        OperationBatch {
-            batch_id: Uuid::new_v4(),
-            expected_model_revision: Some(model.model_revision.clone()),
-            provenance: CommitProvenance {
-                actor: "datum-eda-cli".to_string(),
-                source: CommitSource::Cli,
-                reason: "propose board component replacement".to_string(),
-            },
-            operations,
-        },
+        WriteProvenance::new(
+            "datum-eda-cli",
+            CommitSource::Cli,
+            "propose board component replacement",
+        ),
+        edits,
     )?;
     let proposal = create_draft_proposal_from_batch(
         &mut model,
@@ -308,11 +309,11 @@ pub(crate) fn propose_native_project_board_component_replacement_plan(
     propose_native_project_board_component_replacements(root, replacements, proposal_id, rationale)
 }
 
-fn append_board_component_replacement_operations(
+fn append_board_component_replacement_edits(
     root: &Path,
     board: &NativeBoardRoot,
     replacement: BoardComponentReplacementSpec,
-    operations: &mut Vec<Operation>,
+    edits: &mut Vec<(Uuid, BoardPackageEdit)>,
     component_ids: &mut Vec<Uuid>,
 ) -> Result<()> {
     if replacement.package.is_none() && replacement.part.is_none() && replacement.value.is_none() {
@@ -328,15 +329,12 @@ fn append_board_component_replacement_operations(
     })?;
     let mut component: PlacedPackage = serde_json::from_value(entry)
         .with_context(|| format!("failed to parse board component {component_uuid}"))?;
-    let initial_len = operations.len();
+    let initial_len = edits.len();
 
     if let Some(part_id) = replacement.part
         && part_id != component.part
     {
-        operations.push(Operation::SetBoardPackagePart {
-            package_id: component_uuid,
-            part_id,
-        });
+        edits.push((component_uuid, BoardPackageEdit::Part { part_id }));
         component.part = part_id;
     }
 
@@ -347,24 +345,23 @@ fn append_board_component_replacement_operations(
             current_board_component_materialization_payload(root, component_uuid)?;
         component.package = package_ref_id;
         let materialized = board_package_materialization_payload_for_component(root, &component)?;
-        operations.push(Operation::SetBoardPackagePackage {
-            package_id: component_uuid,
-            package_ref_id,
-            previous_materialized,
-            materialized,
-        });
+        edits.push((
+            component_uuid,
+            BoardPackageEdit::Package {
+                package_ref_id,
+                previous_materialized,
+                materialized,
+            },
+        ));
     }
 
     if let Some(value) = replacement.value
         && value != component.value
     {
-        operations.push(Operation::SetBoardPackageValue {
-            package_id: component_uuid,
-            value,
-        });
+        edits.push((component_uuid, BoardPackageEdit::Value { value }));
     }
 
-    if operations.len() == initial_len {
+    if edits.len() == initial_len {
         bail!("board component replacement proposal is a no-op for component {component_uuid}");
     }
     component_ids.push(component_uuid);
@@ -416,7 +413,10 @@ pub(crate) fn preview_native_project_proposal(
                 .get(&proposal_id)
                 .ok_or_else(|| anyhow::anyhow!("proposal {proposal_id} not found"))?
                 .batch,
-        )?,
+        )?
+        .into_iter()
+        .map(proposal_render_delta_view)
+        .collect(),
         validation: validate_proposal_in_model(
             &model,
             proposal_id,
@@ -428,82 +428,25 @@ pub(crate) fn preview_native_project_proposal(
     })
 }
 
-fn proposal_render_deltas(
-    batch: &OperationBatch,
-) -> Result<Vec<NativeProjectProposalRenderDeltaView>> {
-    batch
-        .operations
-        .iter()
-        .filter_map(|operation| match operation {
-            Operation::CreateBoardTrack { track_id, track } => Some(proposal_track_render_delta(
-                "create",
-                track_id.to_string(),
-                track,
-            )),
-            Operation::SetBoardTrack { track_id, track } => Some(proposal_track_render_delta(
-                "set",
-                track_id.to_string(),
-                track,
-            )),
-            Operation::CreateBoardVia { via_id, via } => {
-                Some(proposal_via_render_delta("create", via_id.to_string(), via))
-            }
-            Operation::SetBoardVia { via_id, via } => {
-                Some(proposal_via_render_delta("set", via_id.to_string(), via))
-            }
-            _ => None,
-        })
-        .collect()
-}
-
-fn proposal_track_render_delta(
-    delta_kind: &'static str,
-    object_id: String,
-    track: &serde_json::Value,
-) -> Result<NativeProjectProposalRenderDeltaView> {
-    let track: eda_engine::board::Track = serde_json::from_value(track.clone())?;
-    Ok(NativeProjectProposalRenderDeltaView {
-        delta_kind,
-        object_id,
-        primitive_kind: "track_path",
-        layer_id: format!("L{}", track.layer),
-        end_layer_id: None,
-        width_nm: track.width,
-        drill_nm: None,
-        diameter_nm: None,
-        path: vec![
-            NativeProjectProposalRenderPointView {
-                x: track.from.x,
-                y: track.from.y,
-            },
-            NativeProjectProposalRenderPointView {
-                x: track.to.x,
-                y: track.to.y,
-            },
-        ],
-    })
-}
-
-fn proposal_via_render_delta(
-    delta_kind: &'static str,
-    object_id: String,
-    via: &serde_json::Value,
-) -> Result<NativeProjectProposalRenderDeltaView> {
-    let via: eda_engine::board::Via = serde_json::from_value(via.clone())?;
-    Ok(NativeProjectProposalRenderDeltaView {
-        delta_kind,
-        object_id,
-        primitive_kind: "via",
-        layer_id: format!("L{}", via.from_layer),
-        end_layer_id: Some(format!("L{}", via.to_layer)),
-        width_nm: via.diameter,
-        drill_nm: Some(via.drill),
-        diameter_nm: Some(via.diameter),
-        path: vec![NativeProjectProposalRenderPointView {
-            x: via.position.x,
-            y: via.position.y,
-        }],
-    })
+fn proposal_render_delta_view(delta: ProposalRenderDelta) -> NativeProjectProposalRenderDeltaView {
+    NativeProjectProposalRenderDeltaView {
+        delta_kind: delta.delta_kind,
+        object_id: delta.object_id,
+        primitive_kind: delta.primitive_kind,
+        layer_id: delta.layer_id,
+        end_layer_id: delta.end_layer_id,
+        width_nm: delta.width_nm,
+        drill_nm: delta.drill_nm,
+        diameter_nm: delta.diameter_nm,
+        path: delta
+            .path
+            .into_iter()
+            .map(|point| NativeProjectProposalRenderPointView {
+                x: point.x,
+                y: point.y,
+            })
+            .collect(),
+    }
 }
 
 pub(crate) fn validate_native_project_proposal(
