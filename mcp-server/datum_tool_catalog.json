@@ -594,6 +594,2792 @@
       "retirement": null,
       "status": "public",
       "write_surface": null
+    },
+    {
+      "description": "Accept a fingerprint-scoped check finding as a deviation through the native project journal.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "check"
+          },
+          {
+            "lit": "accept-deviation"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--fingerprint",
+            "param": "fingerprint"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          },
+          {
+            "flag": "--accepted-by",
+            "param": "accepted_by"
+          }
+        ],
+        "kind": "cli",
+        "method": "accept_deviation"
+      },
+      "dispatch_args": [
+        "path",
+        "fingerprint",
+        "rationale",
+        "accepted_by"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "accepted_by": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "fingerprint": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "fingerprint",
+          "rationale"
+        ],
+        "type": "object"
+      },
+      "name": "datum.check.accept_deviation",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Persist honest generated ZoneFill evidence for native board zones. The bounded solver fills closed same-net zones, supports one rectangular foreign pad/via cutout with positive netclass clearance, and records Unsupported evidence for thermals, keepouts, unresolved pads, tracks, or general pour cases.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "check"
+          },
+          {
+            "lit": "fill-zones"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--zone",
+            "param": "zone"
+          },
+          {
+            "flag": "--net",
+            "param": "net"
+          }
+        ],
+        "kind": "cli",
+        "method": "fill_zones"
+      },
+      "dispatch_args": [
+        "path",
+        "zone",
+        "net"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "net": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "zone": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.check.fill_zones",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "List resolver-discovered persisted CheckRun evidence artifacts.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "check"
+          },
+          {
+            "lit": "list"
+          },
+          {
+            "param": "path"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_check_runs"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.check.list",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "List supported native-project CheckRun profiles.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "check"
+          },
+          {
+            "lit": "profiles"
+          },
+          {
+            "param": "path"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_check_profiles"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.check.profiles",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Generate non-mutating draft standards-repair proposals from persisted CheckRun findings, including process-aperture, geometry, and supported ZoneFill evidence repairs.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "check"
+          },
+          {
+            "lit": "repair-standards"
+          },
+          {
+            "param": "path"
+          }
+        ],
+        "kind": "cli",
+        "method": "generate_standards_repair_proposals"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.check.repair_standards",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Run a native project CheckRun profile and persist a resolver-owned CheckRun evidence artifact.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "check"
+          },
+          {
+            "lit": "run"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--profile",
+            "param": "profile"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_check_run"
+      },
+      "dispatch_args": [
+        "path",
+        "profile"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "profile": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.check.run",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Run a native project CheckRun profile and persist a resolver-owned CheckRun evidence artifact.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "check"
+          },
+          {
+            "lit": "run"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--profile",
+            "param": "profile"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_check_run"
+      },
+      "dispatch_args": [
+        "path",
+        "profile"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "profile": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.check.run_profile",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Show one resolver-discovered persisted CheckRun evidence artifact by UUID.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "check"
+          },
+          {
+            "lit": "show"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--check-run",
+            "param": "check_run"
+          }
+        ],
+        "kind": "cli",
+        "method": "show_check_run"
+      },
+      "dispatch_args": [
+        "path",
+        "check_run"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "check_run": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "check_run"
+        ],
+        "type": "object"
+      },
+      "name": "datum.check.show",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Author a fingerprint-scoped check finding waiver through the native project journal.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "check"
+          },
+          {
+            "lit": "waive"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--fingerprint",
+            "param": "fingerprint"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          },
+          {
+            "flag": "--created-by",
+            "param": "created_by"
+          }
+        ],
+        "kind": "cli",
+        "method": "waive_finding"
+      },
+      "dispatch_args": [
+        "path",
+        "fingerprint",
+        "rationale",
+        "created_by"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "created_by": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "fingerprint": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "fingerprint",
+          "rationale"
+        ],
+        "type": "object"
+      },
+      "name": "datum.check.waive",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Return the resolver-backed native project transaction journal summary.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "journal"
+          },
+          {
+            "lit": "list"
+          },
+          {
+            "param": "path"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_journal_list"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.journal.list",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Apply one native project journal redo as a compensating transaction, optionally guarded by model revision or journal tip.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "journal"
+          },
+          {
+            "lit": "redo"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--expected-model-revision",
+            "param": "expected_model_revision"
+          },
+          {
+            "flag": "--expected-tip-transaction",
+            "param": "expected_tip_transaction"
+          }
+        ],
+        "kind": "cli",
+        "method": "journal_redo"
+      },
+      "dispatch_args": [
+        "path",
+        "expected_model_revision",
+        "expected_tip_transaction"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "expected_model_revision": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "expected_tip_transaction": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.journal.redo",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Return one full native project transaction journal record by transaction UUID.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "journal"
+          },
+          {
+            "lit": "show"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--transaction",
+            "param": "transaction"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_journal_transaction"
+      },
+      "dispatch_args": [
+        "path",
+        "transaction"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "transaction": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "transaction"
+        ],
+        "type": "object"
+      },
+      "name": "datum.journal.show",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Apply one native project journal undo as a compensating transaction, optionally guarded by model revision or journal tip.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "journal"
+          },
+          {
+            "lit": "undo"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--expected-model-revision",
+            "param": "expected_model_revision"
+          },
+          {
+            "flag": "--expected-tip-transaction",
+            "param": "expected_tip_transaction"
+          }
+        ],
+        "kind": "cli",
+        "method": "journal_undo"
+      },
+      "dispatch_args": [
+        "path",
+        "expected_model_revision",
+        "expected_tip_transaction"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "expected_model_revision": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "expected_tip_transaction": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.journal.undo",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "List resolver-discovered native pool-library objects.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "pool-library-objects"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--kind",
+            "param": "kind"
+          },
+          {
+            "flag": "--object",
+            "param": "object"
+          },
+          {
+            "param": "include_payload",
+            "switch": "--include-payload"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_pool_library_objects"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "kind",
+        "object",
+        "include_payload"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "include_payload": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "kind": {
+            "enum": [
+              "units",
+              "symbols",
+              "entities",
+              "parts",
+              "packages",
+              "footprints",
+              "padstacks",
+              "pin_pad_maps"
+            ],
+            "type": "string"
+          },
+          "object": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.list_objects",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Show one resolver-discovered native pool-library object with its materialized payload.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "pool-library-objects"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--kind",
+            "param": "kind"
+          },
+          {
+            "flag": "--object",
+            "param": "object"
+          },
+          {
+            "lit": "--include-payload"
+          }
+        ],
+        "kind": "cli",
+        "method": "show_pool_library_object"
+      },
+      "dispatch_args": [
+        "path",
+        "object",
+        "pool",
+        "kind"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "units",
+              "symbols",
+              "entities",
+              "parts",
+              "packages",
+              "footprints",
+              "padstacks",
+              "pin_pad_maps"
+            ],
+            "type": "string"
+          },
+          "object": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "object"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.show_object",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Create one first-class native pool PinPadMap through the journaled project commit path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "create-pool-pin-pad-map"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--map",
+            "param": "map"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "param": "set_default",
+            "switch": "--set-default"
+          },
+          {
+            "param": "entries",
+            "repeated": "--entry"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_pool_pin_pad_map"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "map",
+        "part",
+        "entries",
+        "footprint",
+        "set_default"
+      ],
+      "dispatch_defaults": {
+        "footprint": null,
+        "pool": "pool",
+        "set_default": false
+      },
+      "inputSchema": {
+        "properties": {
+          "entries": {
+            "items": {
+              "properties": {
+                "gate": {
+                  "type": "string"
+                },
+                "pad": {
+                  "type": "string"
+                },
+                "pin": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "pad",
+                "pin"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "footprint": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "map": {
+            "type": "string"
+          },
+          "part": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "set_default": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "path",
+          "map",
+          "part",
+          "entries"
+        ],
+        "type": "object"
+      },
+      "name": "datum.project.create_pool_pin_pad_map",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Update first-class native pool PinPadMap mappings through the journaled project commit path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-pin-pad-map"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--map",
+            "param": "map"
+          },
+          {
+            "flag": "--mode",
+            "param": "mode"
+          },
+          {
+            "param": "entries",
+            "repeated": "--entry"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_pin_pad_map"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "map",
+        "mode",
+        "entries"
+      ],
+      "dispatch_defaults": {
+        "mode": "merge",
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "entries": {
+            "items": {
+              "properties": {
+                "gate": {
+                  "type": "string"
+                },
+                "pad": {
+                  "type": "string"
+                },
+                "pin": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "pad",
+                "pin"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "map": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "map",
+          "entries"
+        ],
+        "type": "object"
+      },
+      "name": "datum.project.set_pool_pin_pad_map",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Validate one native project directory for required files, schema versions, UUID consistency, and persisted references.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "validate"
+          },
+          {
+            "param": "path"
+          }
+        ],
+        "kind": "cli",
+        "method": "validate_project"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.project.validate",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Accept one draft native-project proposal and apply it through the generic proposal gateway.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "accept-apply"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          }
+        ],
+        "kind": "cli",
+        "method": "accept_apply_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "proposal"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "proposal"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.accept_apply",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_gateway_apply",
+        "evidence": "applies an accepted proposal through the generic proposal journal gateway"
+      }
+    },
+    {
+      "description": "Apply one accepted persisted native-project proposal through the generic proposal gateway.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "apply"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          }
+        ],
+        "kind": "cli",
+        "method": "apply_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "proposal"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "proposal"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.apply",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_gateway_apply",
+        "evidence": "applies an accepted proposal through the generic proposal journal gateway"
+      }
+    },
+    {
+      "description": "Create a draft proposal for a ManufacturingPlan creation without mutating manufacturing plan shards.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-manufacturing-plan"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--prefix",
+            "param": "prefix"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--variant",
+            "param": "variant"
+          },
+          {
+            "flag": "--panel-projection",
+            "param": "panel_projection"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_manufacturing_plan_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "prefix",
+        "name",
+        "variant",
+        "panel_projection",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "panel_projection": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "prefix": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "variant": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "prefix"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.create_manufacturing_plan",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a draft proposal for an OutputJob creation without mutating the OutputJob shard.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-output-job"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--prefix",
+            "param": "prefix"
+          },
+          {
+            "flag": "--include",
+            "param": "include"
+          },
+          {
+            "flag": "--output-dir",
+            "param": "output_dir"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--manufacturing-plan",
+            "param": "manufacturing_plan"
+          },
+          {
+            "flag": "--variant",
+            "param": "variant"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_output_job_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "prefix",
+        "include",
+        "name",
+        "manufacturing_plan",
+        "output_dir",
+        "proposal",
+        "rationale",
+        "variant"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "include": {
+            "type": "string"
+          },
+          "manufacturing_plan": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "output_dir": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "prefix": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "variant": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "prefix",
+          "include"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.create_output_job",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a draft proposal for a PanelProjection creation without mutating panel shards.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-panel-projection"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--key",
+            "param": "key"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--board",
+            "param": "board"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--rotation-deg",
+            "param": "rotation_deg"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_panel_projection_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "key",
+        "name",
+        "board",
+        "x_nm",
+        "y_nm",
+        "rotation_deg",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "board": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "key": {
+            "type": "string"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rotation_deg": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "key"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.create_panel_projection",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to author one first-class native pool PinPadMap.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-pool-pin-pad-map"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--map",
+            "param": "map"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "param": "set_default",
+            "switch": "--set-default"
+          },
+          {
+            "param": "entries",
+            "repeated": "--entry"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_pool_pin_pad_map_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "map",
+        "part",
+        "entries",
+        "footprint",
+        "set_default",
+        "pool",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool",
+        "set_default": false
+      },
+      "inputSchema": {
+        "properties": {
+          "entries": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "footprint": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "map": {
+            "type": "string"
+          },
+          "part": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "set_default": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "map",
+          "part",
+          "entries"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.create_pool_pin_pad_map",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Defer one draft native-project proposal without applying it.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "defer"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          }
+        ],
+        "kind": "cli",
+        "method": "defer_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "proposal"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "proposal"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.defer",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_review_state_write",
+        "evidence": "updates persisted proposal review state without applying design mutations"
+      }
+    },
+    {
+      "description": "Create a draft proposal for deleting one ManufacturingPlan without mutating manufacturing plan shards.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "delete-manufacturing-plan"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--manufacturing-plan",
+            "param": "manufacturing_plan"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_manufacturing_plan_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "manufacturing_plan",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "manufacturing_plan": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "manufacturing_plan"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.delete_manufacturing_plan",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a draft proposal for deleting one OutputJob without mutating the OutputJob shard.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "delete-output-job"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--output-job",
+            "param": "output_job"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_output_job_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "output_job",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "output_job": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "output_job"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.delete_output_job",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a draft proposal for deleting one PanelProjection without mutating panel shards.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "delete-panel-projection"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--panel-projection",
+            "param": "panel_projection"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_panel_projection_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "panel_projection",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "panel_projection": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "panel_projection"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.delete_panel_projection",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Read resolver-discovered proposal records for a native project.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "list"
+          },
+          {
+            "param": "path"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_proposals"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.list",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Preview one persisted native-project proposal's classified diff without writing shards.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "preview"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          }
+        ],
+        "kind": "cli",
+        "method": "preview_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "proposal"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "proposal"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.preview",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Reject one draft native-project proposal without applying it.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "reject"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          }
+        ],
+        "kind": "cli",
+        "method": "reject_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "proposal"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "proposal"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.reject",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_review_state_write",
+        "evidence": "updates persisted proposal review state without applying design mutations"
+      }
+    },
+    {
+      "description": "Review one persisted native-project proposal as accepted, deferred, or rejected.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "review"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--status",
+            "param": "status"
+          }
+        ],
+        "kind": "cli",
+        "method": "review_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "proposal",
+        "status"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "accepted",
+              "deferred",
+              "rejected"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "proposal",
+          "status"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.review",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_review_state_write",
+        "evidence": "updates persisted proposal review state without applying design mutations"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to update first-class native pool PinPadMap mappings.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "set-pool-pin-pad-map"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--map",
+            "param": "map"
+          },
+          {
+            "flag": "--mode",
+            "param": "mode"
+          },
+          {
+            "param": "entries",
+            "repeated": "--entry"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_pin_pad_map_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "map",
+        "mode",
+        "entries",
+        "pool",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "mode": "merge",
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "entries": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "map": {
+            "type": "string"
+          },
+          "mode": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "map",
+          "entries"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.set_pool_pin_pad_map",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Show one persisted native-project proposal plus validation state.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "show"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          }
+        ],
+        "kind": "cli",
+        "method": "show_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "proposal"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "proposal"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.show",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Create a draft proposal for a ManufacturingPlan update without mutating manufacturing plan shards.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "update-manufacturing-plan"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--manufacturing-plan",
+            "param": "manufacturing_plan"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--prefix",
+            "param": "prefix"
+          },
+          {
+            "flag": "--variant",
+            "param": "variant"
+          },
+          {
+            "param": "clear_variant",
+            "switch": "--clear-variant"
+          },
+          {
+            "flag": "--panel-projection",
+            "param": "panel_projection"
+          },
+          {
+            "param": "clear_panel_projection",
+            "switch": "--clear-panel-projection"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "update_manufacturing_plan_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "manufacturing_plan",
+        "name",
+        "prefix",
+        "variant",
+        "clear_variant",
+        "panel_projection",
+        "clear_panel_projection",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "clear_panel_projection": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "clear_variant": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "manufacturing_plan": {
+            "type": "string"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "panel_projection": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "prefix": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "variant": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "manufacturing_plan"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.update_manufacturing_plan",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a draft proposal for an OutputJob settings update without mutating the OutputJob shard.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "update-output-job"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--output-job",
+            "param": "output_job"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--output-dir",
+            "param": "output_dir"
+          },
+          {
+            "flag": "--manufacturing-plan",
+            "param": "manufacturing_plan"
+          },
+          {
+            "flag": "--variant",
+            "param": "variant"
+          },
+          {
+            "param": "clear_manufacturing_plan",
+            "switch": "--clear-manufacturing-plan"
+          },
+          {
+            "param": "clear_variant",
+            "switch": "--clear-variant"
+          },
+          {
+            "param": "clear_output_dir",
+            "switch": "--clear-output-dir"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "update_output_job_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "output_job",
+        "name",
+        "output_dir",
+        "manufacturing_plan",
+        "clear_manufacturing_plan",
+        "clear_output_dir",
+        "proposal",
+        "rationale",
+        "variant",
+        "clear_variant"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "clear_manufacturing_plan": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "clear_output_dir": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "clear_variant": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "manufacturing_plan": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "output_dir": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "output_job": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "variant": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "output_job"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.update_output_job",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a draft proposal for a PanelProjection update without mutating panel shards.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "update-panel-projection"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--panel-projection",
+            "param": "panel_projection"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--board",
+            "param": "board"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--rotation-deg",
+            "param": "rotation_deg"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "update_panel_projection_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "panel_projection",
+        "name",
+        "board",
+        "x_nm",
+        "y_nm",
+        "rotation_deg",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "board": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "panel_projection": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rotation_deg": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "panel_projection"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.update_panel_projection",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Validate one persisted native-project proposal against the current model revision.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "validate"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          }
+        ],
+        "kind": "cli",
+        "method": "validate_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "proposal"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "proposal"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.validate",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "resolve-debug"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_source_shards"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.source_shards",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
     }
   ]
 }

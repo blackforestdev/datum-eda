@@ -8,4 +8,5 @@ anyhow.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 uuid.workspace = true
+datum-verb-registry = { path = "../verb-registry" }
 eda-engine = { path = "../engine" }

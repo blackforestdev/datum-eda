@@ -3,14 +3,21 @@
 //! Each user-facing verb (MCP tool name == GUI terminal command id) is declared
 //! exactly once as a [`VerbSpec`]. Projections (the checked-in
 //! `mcp-server/datum_tool_catalog.json` consumed by the MCP Python catalog, and
-//! eventually the CLI clap surface, daemon dispatch, and GUI terminal catalog)
-//! are generated from this table instead of being mirrored by hand.
+//! the GUI terminal command catalog rendered by `datum-gui-protocol` from
+//! verbs marked `terminal`; eventually also the CLI clap surface and daemon
+//! dispatch) are generated from this table instead of being mirrored by hand.
 //!
 //! This crate is a leaf: it depends only on `serde`/`serde_json` and nothing
 //! from the workspace, so every surface can consume it without cycles.
 
 mod catalog;
 mod verbs_artifact;
+mod verbs_check;
+mod verbs_journal;
+mod verbs_library;
+mod verbs_project;
+mod verbs_proposal;
+mod verbs_query;
 
 pub use catalog::{CATALOG_VERSION, catalog_json, catalog_string};
 
@@ -157,6 +164,15 @@ pub struct VerbSpec {
     pub write_surface: Option<WriteSurface>,
     /// Advertised in the GUI terminal command catalog.
     pub terminal: bool,
+    /// Optional parameters advertised in the GUI terminal argv template.
+    /// Required parameters and literal tokens are always advertised; optional
+    /// flags are omitted from the template unless named here.
+    pub terminal_optional_params: &'static [&'static str],
+    /// Full replacement for the GUI terminal argv tokens when the advertised
+    /// template cannot be derived from the dispatch argv (e.g. a historical
+    /// GUI template whose token layout diverges from the canonical CLI form).
+    /// Tokens are rendered with the same rules as the dispatch argv.
+    pub terminal_argv_override: Option<&'static [ArgvToken]>,
 }
 
 impl VerbSpec {
@@ -171,7 +187,23 @@ impl VerbSpec {
 
 /// The full verb table, assembled from per-family modules, sorted by id.
 pub fn verbs() -> &'static [VerbSpec] {
-    verbs_artifact::VERBS
+    static ALL: std::sync::LazyLock<Vec<VerbSpec>> = std::sync::LazyLock::new(|| {
+        let families: [&[VerbSpec]; 7] = [
+            verbs_artifact::VERBS,
+            verbs_check::VERBS,
+            verbs_journal::VERBS,
+            verbs_library::VERBS,
+            verbs_project::VERBS,
+            verbs_proposal::VERBS,
+            verbs_query::VERBS,
+        ];
+        let mut verbs = Vec::with_capacity(families.iter().map(|family| family.len()).sum());
+        for family in families {
+            verbs.extend_from_slice(family);
+        }
+        verbs
+    });
+    &ALL
 }
 
 #[cfg(test)]
@@ -226,7 +258,14 @@ mod tests {
     #[test]
     fn argv_tokens_reference_declared_params() {
         for verb in verbs() {
+            let mut token_lists: Vec<&[ArgvToken]> = Vec::new();
             if let Dispatch::Cli { argv, .. } = verb.dispatch {
+                token_lists.push(argv);
+            }
+            if let Some(argv) = verb.terminal_argv_override {
+                token_lists.push(argv);
+            }
+            for argv in token_lists {
                 for token in argv {
                     if let Some(param) = token.param_name() {
                         assert!(
@@ -237,6 +276,52 @@ mod tests {
                         );
                     }
                 }
+            }
+        }
+    }
+
+    #[test]
+    fn terminal_verbs_are_cli_dispatched() {
+        for verb in verbs() {
+            if verb.terminal {
+                assert!(
+                    matches!(verb.dispatch, Dispatch::Cli { .. }),
+                    "{} is a terminal verb but is not CLI-dispatched",
+                    verb.id
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn terminal_optional_params_reference_declared_optional_params() {
+        for verb in verbs() {
+            for name in verb.terminal_optional_params {
+                let param = verb
+                    .params
+                    .iter()
+                    .find(|p| p.name == *name)
+                    .unwrap_or_else(|| {
+                        panic!("{} advertises undeclared terminal param {name}", verb.id)
+                    });
+                assert!(
+                    !param.required,
+                    "{} lists required param {name} as a terminal optional",
+                    verb.id
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn terminal_metadata_only_on_terminal_verbs() {
+        for verb in verbs() {
+            if !verb.terminal {
+                assert!(
+                    verb.terminal_optional_params.is_empty() && verb.terminal_argv_override.is_none(),
+                    "{} carries terminal metadata but is not a terminal verb",
+                    verb.id
+                );
             }
         }
     }

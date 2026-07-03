@@ -119,9 +119,9 @@ locked against the real CLI by `crates/cli/tests/verb_registry_roundtrip.rs`.
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Registry crate + generated catalog + drift gate + clap round-trip test | [x] | Landed; `datum.artifact` family (11 verbs) is registry-owned, hand-written entries deleted, registered tool set unchanged (530) |
+| Registry crate + generated catalog + drift gate + clap round-trip test | [x] | Landed; registry declares 50 verbs: the `datum.artifact` family (11 verbs) is registry-owned in the MCP catalog (hand-written entries deleted) and 39 further terminal verbs (check/journal/library/project/proposal/query) are registry-declared; registered tool set unchanged (530) |
 | All registered verbs registry-owned; hand-written MCP catalogs deleted | [ ] | Migrate per prefix via `MIGRATED_PREFIXES`; taxonomy/count gates keep their invariants during migration |
-| CLI clap / daemon dispatch / GUI terminal catalog generated from the registry | [ ] | Target projections after catalog migration completes; execution stays on the bridge until then |
+| CLI clap / daemon dispatch / GUI terminal catalog generated from the registry | [~] | GUI terminal catalog is now a registry projection (`datum-gui-protocol` renders all 50 `terminal` verbs; hand-written table and regex parity test deleted, templates locked byte-identical by gui-protocol tests + clap round-trip); CLI clap and daemon dispatch remain target projections |
 
 ### Next Production Goals — Current / Target Ledger
 

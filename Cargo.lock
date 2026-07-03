@@ -737,6 +737,7 @@ name = "datum-gui-protocol"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "datum-verb-registry",
  "eda-engine",
  "serde",
  "serde_json",

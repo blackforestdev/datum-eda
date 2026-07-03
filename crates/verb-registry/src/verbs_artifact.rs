@@ -45,6 +45,8 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         schema_json_override: None,
         write_surface: None,
         terminal: true,
+        terminal_optional_params: &[],
+        terminal_argv_override: None,
     },
     VerbSpec {
         id: "datum.artifact.compare",
@@ -82,6 +84,8 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         schema_json_override: None,
         write_surface: None,
         terminal: true,
+        terminal_optional_params: &[],
+        terminal_argv_override: None,
     },
     VerbSpec {
         id: "datum.artifact.export_manufacturing_set",
@@ -119,6 +123,8 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         schema_json_override: None,
         write_surface: None,
         terminal: true,
+        terminal_optional_params: &[],
+        terminal_argv_override: None,
     },
     VerbSpec {
         id: "datum.artifact.files",
@@ -148,6 +154,8 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         schema_json_override: None,
         write_surface: None,
         terminal: true,
+        terminal_optional_params: &[],
+        terminal_argv_override: None,
     },
     VerbSpec {
         id: "datum.artifact.generate",
@@ -201,6 +209,10 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         schema_json_override: None,
         write_surface: None,
         terminal: true,
+        // The GUI advertises `artifact generate` as the authored OutputJob
+        // launcher, so `--output-job` is the one advertised optional flag.
+        terminal_optional_params: &["output_job"],
+        terminal_argv_override: None,
     },
     VerbSpec {
         id: "datum.artifact.list",
@@ -220,6 +232,8 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         schema_json_override: None,
         write_surface: None,
         terminal: true,
+        terminal_optional_params: &[],
+        terminal_argv_override: None,
     },
     VerbSpec {
         id: "datum.artifact.preview",
@@ -265,6 +279,8 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         schema_json_override: None,
         write_surface: None,
         terminal: true,
+        terminal_optional_params: &[],
+        terminal_argv_override: None,
     },
     VerbSpec {
         id: "datum.artifact.show",
@@ -294,6 +310,8 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         schema_json_override: None,
         write_surface: None,
         terminal: true,
+        terminal_optional_params: &[],
+        terminal_argv_override: None,
     },
     VerbSpec {
         id: "datum.artifact.start_output_job_run",
@@ -323,6 +341,8 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         schema_json_override: None,
         write_surface: None,
         terminal: true,
+        terminal_optional_params: &[],
+        terminal_argv_override: None,
     },
     VerbSpec {
         id: "datum.artifact.validate",
@@ -352,6 +372,8 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         schema_json_override: None,
         write_surface: None,
         terminal: true,
+        terminal_optional_params: &[],
+        terminal_argv_override: None,
     },
     VerbSpec {
         id: "datum.artifact.validate_manufacturing_set",
@@ -389,5 +411,7 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         schema_json_override: None,
         write_surface: None,
         terminal: true,
+        terminal_optional_params: &[],
+        terminal_argv_override: None,
     },
 ];

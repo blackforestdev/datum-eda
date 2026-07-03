@@ -25,6 +25,11 @@ const CLAP_PARSE_FAILURE_MARKERS: &[&str] = &[
 ];
 
 fn dummy_value(param: &ParamSpec) -> &'static str {
+    // `proposal review --status` is a clap value_enum; the generic per-type
+    // dummy is not a valid variant, so use a real one.
+    if param.name == "status" {
+        return "accepted";
+    }
     match param.ty {
         ParamType::Str => "verb-registry-roundtrip-dummy",
         ParamType::Int => "1",

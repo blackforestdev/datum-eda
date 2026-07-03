@@ -7,8 +7,12 @@ drift-gated by `-- --check` in `scripts/run_drift_gates.sh`.
 
 Verb families migrate out of the hand-written catalogs one prefix at a time:
 a prefix listed in ``MIGRATED_PREFIXES`` is owned by the generated catalog and
-its hand-written entries must be deleted. Generated specs carry the exact same
-dict shape as hand-written ones (``name``/``description``/``inputSchema`` plus
+its hand-written entries must be deleted. The registry also declares verbs for
+prefixes that are not yet migrated here (e.g. families whose GUI terminal
+catalog is registry-projected while the MCP server still uses its hand-written
+dicts); this loader filters strictly by ``MIGRATED_PREFIXES`` so those verbs
+are never double-registered. Generated specs carry the exact same dict shape
+as hand-written ones (``name``/``description``/``inputSchema`` plus
 ``x_dispatch_*`` and write-surface keys), so runtime dispatch through
 ``tool_dispatch.dispatch_tool_call`` and the ``server_runtime`` bridge methods
 is byte-identical.
@@ -60,10 +64,9 @@ def _load_generated_specs() -> list[dict[str, object]]:
             raise RuntimeError(f"duplicate tool name in generated catalog: {name}")
         seen.add(name)
         if _tool_prefix(name) not in MIGRATED_PREFIXES:
-            raise RuntimeError(
-                f"generated catalog contains {name} but its prefix is not in "
-                f"MIGRATED_PREFIXES; add the prefix when migrating its family"
-            )
+            # Registry-declared but not yet MCP-migrated (e.g. GUI-terminal-only
+            # families); the hand-written catalog still owns this prefix.
+            continue
         if verb.get("status") != "public":
             raise RuntimeError(
                 f"generated catalog verb {name} has unsupported status "
