@@ -202,6 +202,25 @@ struct ApplyScopedComponentReplacementPlanParams {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct NativeDescribeParams {
+    project_root: PathBuf,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+struct NativeWriteParams {
+    project_root: PathBuf,
+    verb: String,
+    #[serde(default)]
+    params: Value,
+    reason: String,
+    actor: Option<String>,
+    source: Option<String>,
+    expected_model_revision: Option<String>,
+    #[serde(default)]
+    dry_run: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 struct GetScopedComponentReplacementPlanParams {
     scope: ComponentReplacementScopeParams,
     policy: ComponentReplacementPolicy,
@@ -372,6 +391,8 @@ mod tests {
     mod dispatch_replacements;
     #[path = "main_tests_mutation_basics.rs"]
     mod mutation_basics;
+    #[path = "main_tests_native_write.rs"]
+    mod native_write;
     #[path = "main_tests_package_replacements.rs"]
     mod package_replacements;
     #[path = "main_tests_package_replacements_apply.rs"]

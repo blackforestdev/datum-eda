@@ -1,3 +1,7 @@
+use eda_engine::api::native_write::registry::{NativeWriteContext, find_native_write_verb};
+use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
+use eda_engine::substrate::{CommitSource, Operation, ProjectResolver};
+
 use super::check_run_view::{
     daemon_drc_check_run_view, daemon_erc_check_run_view, explain_drc_finding_by_fingerprint,
     explain_erc_finding_by_fingerprint,
@@ -436,6 +440,14 @@ pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> 
                 Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
             }
         }
+        "native.describe" => match serde_json::from_value::<NativeDescribeParams>(request.params) {
+            Ok(params) => native_describe_response(request.id, &params.project_root),
+            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+        },
+        "native.write" => match serde_json::from_value::<NativeWriteParams>(request.params) {
+            Ok(params) => native_write_response(request.id, params),
+            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+        },
         _ => error_response(request.id, -32601, "method not found"),
     }
 }
@@ -482,6 +494,140 @@ fn explain_violation_response(
         Ok(explanation) => serialized_success_response(request_id, explanation),
         Err(err) => error_response(request_id, -32026, &err.to_string()),
     }
+}
+
+/// `native.describe`: resolve the native project at `project_root` and report
+/// the stale-guard anchor a `native.write` client needs (current
+/// `model_revision`), plus the manifest name and journal length.
+fn native_describe_response(request_id: Value, project_root: &Path) -> JsonRpcResponse {
+    match ProjectResolver::new(project_root).resolve() {
+        Ok(model) => success_response(
+            request_id,
+            json!({
+                "project_root": project_root.display().to_string(),
+                "project_id": model.project.project_id,
+                "project_name": model.project.name,
+                "model_revision": model.model_revision.0,
+                "journal_len": model.journal.len(),
+            }),
+        ),
+        Err(err) => error_response(request_id, -32060, &err.to_string()),
+    }
+}
+
+/// `native.write`: verb-addressed native mutation through the engine's
+/// native-write verb registry. Resolves the project per request, enforces the
+/// optional `expected_model_revision` stale guard, builds via the registered
+/// verb, then either previews (`dry_run`) or commits through the one
+/// journaled commit path.
+///
+/// Error codes: -32602 invalid params (bad source, empty reason),
+/// -32060 engine resolve/build/commit failure, -32061 stale
+/// `expected_model_revision`, -32062 unknown verb.
+fn native_write_response(request_id: Value, params: NativeWriteParams) -> JsonRpcResponse {
+    let reason = params.reason.trim().to_string();
+    if reason.is_empty() {
+        return error_response(
+            request_id,
+            -32602,
+            "invalid params: native.write requires a non-empty reason",
+        );
+    }
+    let source = match params.source.as_deref() {
+        None | Some("tool") => CommitSource::Tool,
+        Some("assistant") => CommitSource::Assistant,
+        Some(other) => {
+            return error_response(
+                request_id,
+                -32602,
+                &format!(
+                    "invalid params: native.write source must be \"tool\" or \"assistant\", got \"{other}\""
+                ),
+            );
+        }
+    };
+    let actor = params
+        .actor
+        .unwrap_or_else(|| "datum-eda-daemon".to_string());
+
+    let mut model = match ProjectResolver::new(&params.project_root).resolve() {
+        Ok(model) => model,
+        Err(err) => return error_response(request_id, -32060, &err.to_string()),
+    };
+    if let Some(expected) = params.expected_model_revision.as_deref() {
+        if expected != model.model_revision.0 {
+            return error_response(
+                request_id,
+                -32061,
+                &format!(
+                    "stale expected_model_revision: expected {expected}, current {}",
+                    model.model_revision.0
+                ),
+            );
+        }
+    }
+    let Some(verb) = find_native_write_verb(&params.verb) else {
+        return error_response(
+            request_id,
+            -32062,
+            &format!("unknown native write verb: {}", params.verb),
+        );
+    };
+
+    let provenance = WriteProvenance::new(actor, source, reason);
+    let prepared = {
+        let context = NativeWriteContext {
+            model: &model,
+            project_root: &params.project_root,
+        };
+        match (verb.build)(&context, provenance, params.params) {
+            Ok(prepared) => prepared,
+            Err(err) => return error_response(request_id, -32060, &err.to_string()),
+        }
+    };
+
+    if params.dry_run {
+        let operation_kinds: Vec<String> =
+            prepared.batch.operations.iter().map(operation_kind).collect();
+        return success_response(
+            request_id,
+            json!({
+                "verb": params.verb,
+                "status": "dry_run",
+                "operation_kinds": operation_kinds,
+                "operation_count": prepared.batch.operations.len(),
+                "primary_object_id": prepared.primary_object_id,
+                "expected_model_revision": model.model_revision.0,
+            }),
+        );
+    }
+
+    let primary_object_id = prepared.primary_object_id;
+    let operation_count = prepared.batch.operations.len();
+    match commit_prepared(&mut model, &params.project_root, prepared) {
+        Ok(report) => success_response(
+            request_id,
+            json!({
+                "verb": params.verb,
+                "status": "applied",
+                "transaction_id": report.transaction.transaction_id,
+                "before_model_revision": report.transaction.before_model_revision.0,
+                "after_model_revision": report.transaction.after_model_revision.0,
+                "operation_count": operation_count,
+                "primary_object_id": primary_object_id,
+                "journal_len": report.journal_len,
+            }),
+        ),
+        Err(err) => error_response(request_id, -32060, &err.to_string()),
+    }
+}
+
+/// The serialized `kind` tag of one operation, for dry-run previews.
+fn operation_kind(operation: &Operation) -> String {
+    serde_json::to_value(operation)
+        .ok()
+        .and_then(|value| value.get("kind").and_then(Value::as_str).map(str::to_string))
+        .unwrap_or_else(|| "unknown".to_string())
 }
 
 fn default_drc_rules() -> &'static [RuleType] {

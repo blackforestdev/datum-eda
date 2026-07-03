@@ -220,6 +220,108 @@ pub fn create_schematic_deviation_and_commit(
     Ok((deviation_id, report))
 }
 
+// ---------------------------------------------------------------------------
+// Verb registry entries (see `super::registry`): JSON-params adapters over
+// the builders above. Verb ids match the existing public taxonomy tools
+// `datum.check.waive` / `datum.check.accept_deviation`
+// (`mcp-server/tools_catalog_datum.py`). Unlike the MCP tool schema, the
+// verb params carry the check `domain` explicitly (the adapter has no check
+// run to derive it from); `schematic_id` defaults to the project's schematic
+// root when omitted.
+// ---------------------------------------------------------------------------
+
+use super::registry::{NativeWriteContext, NativeWriteVerb, parse_verb_params};
+
+/// Waiver-family verbs, registered by [`super::registry::native_write_verbs`].
+pub(super) const VERBS: &[NativeWriteVerb] = &[
+    NativeWriteVerb {
+        id: "datum.check.accept_deviation",
+        build: verb_accept_deviation,
+    },
+    NativeWriteVerb {
+        id: "datum.check.waive",
+        build: verb_waive,
+    },
+];
+
+/// The schematic root object id, from the model's `SchematicRoot` shard.
+fn schematic_root_id(model: &DesignModel) -> Result<ObjectId, EngineError> {
+    model
+        .materialized_source_shard_value(crate::substrate::SourceShardKind::SchematicRoot)?
+        .get("uuid")
+        .and_then(serde_json::Value::as_str)
+        .and_then(|uuid| Uuid::parse_str(uuid).ok())
+        .ok_or_else(|| EngineError::Validation("schematic root is missing uuid".to_string()))
+}
+
+fn verb_waive(
+    context: &NativeWriteContext<'_>,
+    provenance: WriteProvenance,
+    params: serde_json::Value,
+) -> Result<PreparedWrite, EngineError> {
+    #[derive(serde::Deserialize)]
+    struct Params {
+        domain: CheckDomain,
+        fingerprint: String,
+        rationale: String,
+        #[serde(default)]
+        created_by: Option<String>,
+        #[serde(default)]
+        schematic_id: Option<ObjectId>,
+    }
+    let params: Params = parse_verb_params("datum.check.waive", params)?;
+    let schematic_id = match params.schematic_id {
+        Some(schematic_id) => schematic_id,
+        None => schematic_root_id(context.model)?,
+    };
+    let prepared = build_create_schematic_waiver(
+        context.model,
+        provenance,
+        &CreateSchematicWaiverRequest {
+            schematic_id,
+            domain: params.domain,
+            fingerprint: params.fingerprint,
+            rationale: params.rationale,
+            created_by: params.created_by,
+        },
+    )?;
+    Ok(prepared.write)
+}
+
+fn verb_accept_deviation(
+    context: &NativeWriteContext<'_>,
+    provenance: WriteProvenance,
+    params: serde_json::Value,
+) -> Result<PreparedWrite, EngineError> {
+    #[derive(serde::Deserialize)]
+    struct Params {
+        domain: CheckDomain,
+        fingerprint: String,
+        rationale: String,
+        #[serde(default)]
+        accepted_by: Option<String>,
+        #[serde(default)]
+        schematic_id: Option<ObjectId>,
+    }
+    let params: Params = parse_verb_params("datum.check.accept_deviation", params)?;
+    let schematic_id = match params.schematic_id {
+        Some(schematic_id) => schematic_id,
+        None => schematic_root_id(context.model)?,
+    };
+    let prepared = build_create_schematic_deviation(
+        context.model,
+        provenance,
+        &CreateSchematicDeviationRequest {
+            schematic_id,
+            domain: params.domain,
+            fingerprint: params.fingerprint,
+            rationale: params.rationale,
+            accepted_by: params.accepted_by,
+        },
+    )?;
+    Ok(prepared.write)
+}
+
 #[cfg(test)]
 mod tests {
     use std::path::PathBuf;

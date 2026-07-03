@@ -175,6 +175,105 @@ fn current_rules(model: &DesignModel) -> Result<Vec<serde_json::Value>, EngineEr
         .unwrap_or_default())
 }
 
+// ---------------------------------------------------------------------------
+// Verb registry entries (see `super::registry`): JSON-params adapters over
+// the builders above. Verb ids extend the public `datum.project.*` taxonomy.
+// ---------------------------------------------------------------------------
+
+use super::registry::{NativeWriteContext, NativeWriteVerb, parse_verb_params};
+
+/// Project-family verbs, registered by [`super::registry::native_write_verbs`].
+pub(super) const VERBS: &[NativeWriteVerb] = &[
+    NativeWriteVerb {
+        id: "datum.project.create_rule",
+        build: verb_create_rule,
+    },
+    NativeWriteVerb {
+        id: "datum.project.delete_rule",
+        build: verb_delete_rule,
+    },
+    NativeWriteVerb {
+        id: "datum.project.set_name",
+        build: verb_set_name,
+    },
+    NativeWriteVerb {
+        id: "datum.project.set_rule",
+        build: verb_set_rule,
+    },
+    NativeWriteVerb {
+        id: "datum.project.set_rules",
+        build: verb_set_rules,
+    },
+];
+
+fn verb_set_name(
+    context: &NativeWriteContext<'_>,
+    provenance: WriteProvenance,
+    params: serde_json::Value,
+) -> Result<PreparedWrite, EngineError> {
+    #[derive(serde::Deserialize)]
+    struct Params {
+        name: String,
+    }
+    let params: Params = parse_verb_params("datum.project.set_name", params)?;
+    build_set_project_name(context.model, provenance, &params.name)
+}
+
+fn verb_set_rules(
+    context: &NativeWriteContext<'_>,
+    provenance: WriteProvenance,
+    params: serde_json::Value,
+) -> Result<PreparedWrite, EngineError> {
+    #[derive(serde::Deserialize)]
+    struct Params {
+        rules: Vec<serde_json::Value>,
+    }
+    let params: Params = parse_verb_params("datum.project.set_rules", params)?;
+    build_set_project_rules(context.model, provenance, params.rules)
+}
+
+fn verb_create_rule(
+    context: &NativeWriteContext<'_>,
+    provenance: WriteProvenance,
+    params: serde_json::Value,
+) -> Result<PreparedWrite, EngineError> {
+    #[derive(serde::Deserialize)]
+    struct Params {
+        rule: serde_json::Value,
+    }
+    let params: Params = parse_verb_params("datum.project.create_rule", params)?;
+    build_create_project_rule(context.model, provenance, params.rule)
+        .map(|(prepared, _rule_id)| prepared)
+}
+
+fn verb_set_rule(
+    context: &NativeWriteContext<'_>,
+    provenance: WriteProvenance,
+    params: serde_json::Value,
+) -> Result<PreparedWrite, EngineError> {
+    #[derive(serde::Deserialize)]
+    struct Params {
+        rule: serde_json::Value,
+    }
+    let params: Params = parse_verb_params("datum.project.set_rule", params)?;
+    build_set_project_rule(context.model, provenance, params.rule)
+        .map(|(prepared, _rule_id)| prepared)
+}
+
+fn verb_delete_rule(
+    context: &NativeWriteContext<'_>,
+    provenance: WriteProvenance,
+    params: serde_json::Value,
+) -> Result<PreparedWrite, EngineError> {
+    #[derive(serde::Deserialize)]
+    struct Params {
+        rule_id: Uuid,
+    }
+    let params: Params = parse_verb_params("datum.project.delete_rule", params)?;
+    build_delete_project_rule(context.model, provenance, params.rule_id)
+        .map(|(prepared, _rule)| prepared)
+}
+
 #[cfg(test)]
 mod tests {
     use std::path::PathBuf;

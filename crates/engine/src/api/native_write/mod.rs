@@ -37,6 +37,7 @@ pub mod library_pin_pad_map;
 pub mod manufacturing;
 pub mod output_jobs;
 pub mod project;
+pub mod registry;
 pub mod schematic_connectivity;
 pub mod schematic_sheets;
 pub mod schematic_symbols;

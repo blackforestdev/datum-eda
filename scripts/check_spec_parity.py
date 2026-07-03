@@ -27,7 +27,7 @@ def digest_items(items: list[str]) -> str:
 
 def parse_daemon_methods() -> set[str]:
     text = read_text(ROOT / "crates/engine-daemon/src/dispatch.rs")
-    return set(re.findall(r'^\s*"([a-z_]+)"\s*=>', text, flags=re.M))
+    return set(re.findall(r'^\s*"([a-z_.]+)"\s*=>', text, flags=re.M))
 
 
 def parse_tool_catalog_methods() -> set[str]:
