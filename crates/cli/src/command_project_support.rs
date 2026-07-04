@@ -321,13 +321,13 @@ pub(crate) fn parse_native_field_position(
     }
 }
 
-pub(super) fn write_canonical_json<T: Serialize>(path: &Path, value: &T) -> Result<()> {
+pub(crate) fn write_canonical_json<T: Serialize>(path: &Path, value: &T) -> Result<()> {
     let json = to_json_deterministic(value).context("failed to serialize canonical JSON")?;
     std::fs::write(path, format!("{json}\n"))
         .with_context(|| format!("failed to write {}", path.display()))
 }
 
-pub(super) fn csv_escape(value: &str) -> String {
+pub(crate) fn csv_escape(value: &str) -> String {
     if value.contains([',', '"', '\n']) {
         format!("\"{}\"", value.replace('"', "\"\""))
     } else {
@@ -364,7 +364,7 @@ pub(super) fn parse_csv_line(line: &str) -> Result<Vec<String>> {
     Ok(fields)
 }
 
-pub(super) fn native_outline_to_polygon(outline: &NativeOutline) -> Polygon {
+pub(crate) fn native_outline_to_polygon(outline: &NativeOutline) -> Polygon {
     Polygon {
         vertices: outline
             .vertices

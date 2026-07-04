@@ -16,11 +16,7 @@ pub(crate) struct ReleaseCheckGateView {
 }
 
 pub(crate) fn release_check_gate(root: &Path) -> Result<ReleaseCheckGateView> {
-    let check_run =
-        super::super::command_project_native_inspect::query_native_project_check_run_with_profile(
-            root,
-            Some("release"),
-        )?;
+    let check_run = crate::query_native_project_check_run_with_profile(root, Some("release"))?;
     let active_error_findings = check_run
         .findings
         .iter()

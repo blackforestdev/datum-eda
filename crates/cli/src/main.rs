@@ -35,7 +35,10 @@ use uuid::Uuid;
 // directories without touching this block again; Wave 3 deletes the legacy
 // chains and the exec layer.
 mod args;
-mod cli_args;
+// Wave 2 compat alias: a handful of command_exec_*/command_project_* files
+// still import via `crate::cli_args::...`; Wave 3 rewrites those paths to
+// `crate::args::...` and deletes this line.
+use crate::args as cli_args;
 mod cli_symbol_views;
 mod command_exec;
 mod command_modify;
@@ -45,23 +48,15 @@ mod command_query;
 mod commands;
 mod context;
 mod main_board_component;
-mod main_drill;
 mod main_forward_annotation;
 mod main_forward_annotation_audit_views;
 mod main_forward_annotation_reports;
 mod main_forward_annotation_views;
-mod main_gerber_inspect;
-mod main_gerber_mechanical;
-mod main_gerber_set;
-mod main_gerber_silkscreen;
-mod main_gerber_views;
 mod main_import_report;
 mod main_inspect;
 mod main_inventory;
-mod main_manufacturing;
 mod main_modify;
 mod main_project;
-mod main_route_proposal;
 mod main_summary;
 
 use args::*;
@@ -74,23 +69,15 @@ use commands::*;
 #[allow(unused_imports)] // Wave 2 anchor: context/ re-exports flow to crate scope here.
 use context::*;
 pub(crate) use main_board_component::*;
-pub(crate) use main_drill::*;
 pub(crate) use main_forward_annotation::*;
 pub(crate) use main_forward_annotation_audit_views::*;
 pub(crate) use main_forward_annotation_reports::*;
 pub(crate) use main_forward_annotation_views::*;
-pub(crate) use main_gerber_inspect::*;
-pub(crate) use main_gerber_mechanical::*;
-pub(crate) use main_gerber_set::*;
-pub(crate) use main_gerber_silkscreen::*;
-pub(crate) use main_gerber_views::*;
 pub(crate) use main_import_report::*;
 pub(crate) use main_inspect::*;
 pub(crate) use main_inventory::*;
-pub(crate) use main_manufacturing::*;
 pub(crate) use main_modify::*;
 pub(crate) use main_project::*;
-pub(crate) use main_route_proposal::*;
 pub(crate) use main_summary::*;
 
 fn main() {

@@ -9,8 +9,8 @@ use eda_engine::pool::{
 };
 use eda_engine::substrate::{DesignModel, ProjectResolver, SourceShardTaxon};
 
-use super::command_project_gerber_mechanical::NativeComponentMechanicalPolygon;
-use super::command_project_gerber_silkscreen::{
+use crate::NativeComponentMechanicalPolygon;
+use crate::{
     NativeComponentSilkscreenArc, NativeComponentSilkscreenCircle, NativeComponentSilkscreenLine,
     NativeComponentSilkscreenPolygon, NativeComponentSilkscreenPolyline,
     NativeComponentSilkscreenText,

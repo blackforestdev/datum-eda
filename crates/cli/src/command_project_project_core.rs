@@ -53,14 +53,14 @@ pub(super) fn load_existing_ids(root: &Path) -> Result<Option<ExistingProjectIds
 }
 
 pub(crate) struct LoadedNativeProject {
-    pub(super) root: std::path::PathBuf,
-    pub(super) manifest: NativeProjectManifest,
-    pub(super) schematic: NativeSchematicRoot,
-    pub(super) board: NativeBoardRoot,
-    pub(super) rules: NativeRulesRoot,
-    pub(super) schematic_path: std::path::PathBuf,
-    pub(super) board_path: std::path::PathBuf,
-    pub(super) rules_path: std::path::PathBuf,
+    pub(crate) root: std::path::PathBuf,
+    pub(crate) manifest: NativeProjectManifest,
+    pub(crate) schematic: NativeSchematicRoot,
+    pub(crate) board: NativeBoardRoot,
+    pub(crate) rules: NativeRulesRoot,
+    pub(crate) schematic_path: std::path::PathBuf,
+    pub(crate) board_path: std::path::PathBuf,
+    pub(crate) rules_path: std::path::PathBuf,
 }
 
 pub(super) struct NativeSchematicCounts {
@@ -76,7 +76,7 @@ pub(super) struct NativeSchematicCounts {
     pub(super) drawings: usize,
 }
 
-pub(super) fn load_native_project_with_resolved_board(root: &Path) -> Result<LoadedNativeProject> {
+pub(crate) fn load_native_project_with_resolved_board(root: &Path) -> Result<LoadedNativeProject> {
     Ok(load_native_project_with_resolved_board_and_model(root)?.0)
 }
 
@@ -284,7 +284,7 @@ fn parse_native_check_waiver(value: serde_json::Value) -> Result<CheckWaiver> {
     Ok(waiver)
 }
 
-pub(super) fn build_native_project_board(project: &LoadedNativeProject) -> Result<Board> {
+pub(crate) fn build_native_project_board(project: &LoadedNativeProject) -> Result<Board> {
     let stackup_layers = project
         .board
         .stackup

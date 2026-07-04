@@ -1,7 +1,6 @@
 pub(crate) use super::*;
 
-#[path = "command_context.rs"]
-mod command_context;
+pub(crate) use crate::context as command_context; // Wave 2 compat: exec dispatch still calls command_context::*; Wave 3 removes.
 #[path = "command_exec_artifact.rs"]
 mod command_exec_artifact;
 #[path = "command_exec_board_component.rs"]

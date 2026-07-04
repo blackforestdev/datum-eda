@@ -5,12 +5,12 @@ use eda_engine::pool::ModelRef;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use super::command_project_gerber_mechanical::{
+use crate::{
     NativeComponentMechanicalArc, NativeComponentMechanicalCircle, NativeComponentMechanicalLine,
     NativeComponentMechanicalPolygon, NativeComponentMechanicalPolyline,
     NativeComponentMechanicalText,
 };
-use super::command_project_gerber_silkscreen::{
+use crate::{
     NativeComponentSilkscreenArc, NativeComponentSilkscreenCircle, NativeComponentSilkscreenLine,
     NativeComponentSilkscreenPolygon, NativeComponentSilkscreenPolyline,
     NativeComponentSilkscreenText,

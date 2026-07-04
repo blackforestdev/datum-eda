@@ -7,7 +7,7 @@ use eda_engine::substrate::*;
 use serde::Serialize;
 use uuid::Uuid;
 
-#[path = "command_project_artifact_checks.rs"]
+#[path = "commands/artifacts/checks.rs"]
 mod command_project_artifact_checks;
 #[path = "command_project_check_finding_identity.rs"]
 mod command_project_check_finding_identity;

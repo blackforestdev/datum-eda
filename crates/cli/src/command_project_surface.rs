@@ -1,15 +1,7 @@
 pub(crate) use super::*;
 
-#[path = "command_project_artifact_runs.rs"]
-mod command_project_artifact_runs;
-#[path = "command_project_artifact_validation.rs"]
-mod command_project_artifact_validation;
-#[path = "command_project_artifacts.rs"]
-mod command_project_artifacts;
 #[path = "command_project_board_handoff.rs"]
 mod command_project_board_handoff;
-#[path = "command_project_check_gate.rs"]
-mod command_project_check_gate;
 #[path = "command_project_component_instances.rs"]
 mod command_project_component_instances;
 #[path = "command_project_import_map.rs"]
@@ -54,18 +46,8 @@ mod command_project_library_proposals;
 mod command_project_library_symbol_geometry;
 #[path = "command_project_library_unit_pin.rs"]
 mod command_project_library_unit_pin;
-#[path = "command_project_manufacturing_plan_proposals.rs"]
-mod command_project_manufacturing_plan_proposals;
-#[path = "command_project_manufacturing_plans.rs"]
-mod command_project_manufacturing_plans;
 #[path = "command_project_native_journal_mutation.rs"]
 mod command_project_native_journal_mutation;
-#[path = "command_project_output_job_include.rs"]
-mod command_project_output_job_include;
-#[path = "command_project_output_job_proposals.rs"]
-mod command_project_output_job_proposals;
-#[path = "command_project_output_jobs.rs"]
-mod command_project_output_jobs;
 #[path = "command_project_proposals.rs"]
 mod command_project_proposals;
 #[path = "command_project_relationships.rs"]
@@ -81,12 +63,6 @@ mod command_project_standards_silk_repairs;
 #[path = "command_project_waivers.rs"]
 mod command_project_waivers;
 
-pub(crate) use self::command_project_artifact_validation::validate_native_project_artifact;
-pub(crate) use self::command_project_artifacts::{
-    compare_native_project_artifacts, generate_native_project_artifacts,
-    preview_native_project_artifact_file, query_native_project_artifact,
-    query_native_project_artifact_files, query_native_project_artifacts,
-};
 pub(crate) use self::command_project_board_component_layer::set_native_project_board_component_layer;
 pub(crate) use self::command_project_board_component_mutations::{
     board_package_materialization_payload_for_component,
@@ -147,60 +123,7 @@ pub(crate) use self::command_project_component_instances::{
 };
 pub(crate) use self::command_project_default_stackup::add_native_project_default_top_stackup;
 pub(crate) use self::command_project_default_stackup::default_native_project_stackup_layers;
-pub(crate) use self::command_project_drill::{
-    compare_native_project_drill, compare_native_project_excellon_drill,
-    export_native_project_drill, export_native_project_excellon_drill,
-    export_native_project_panel_drill, export_native_project_panel_excellon_drill,
-    inspect_excellon_drill, inspect_native_project_drill, render_expected_native_project_drill_csv,
-    render_expected_native_project_panel_drill_csv,
-    render_expected_native_project_panel_excellon_drill, report_native_project_drill_hole_classes,
-    validate_native_project_drill, validate_native_project_excellon_drill,
-};
 pub(crate) use self::command_project_forward_annotation_surface::*;
-pub(crate) use self::command_project_gerber_inspect::inspect_gerber;
-pub(crate) use self::command_project_gerber_layers::{
-    compare_native_project_gerber_copper_layer, compare_native_project_gerber_outline,
-    compare_native_project_gerber_paste_layer, compare_native_project_gerber_silkscreen_layer,
-    compare_native_project_gerber_soldermask_layer, export_native_project_gerber_copper_layer,
-    export_native_project_gerber_outline, export_native_project_gerber_paste_layer,
-    export_native_project_gerber_silkscreen_layer, export_native_project_gerber_soldermask_layer,
-    validate_native_project_gerber_copper_layer, validate_native_project_gerber_outline,
-    validate_native_project_gerber_paste_layer, validate_native_project_gerber_silkscreen_layer,
-    validate_native_project_gerber_soldermask_layer,
-};
-pub(crate) use self::command_project_gerber_mechanical::{
-    NativeComponentMechanicalArc, NativeComponentMechanicalCircle, NativeComponentMechanicalLine,
-    NativeComponentMechanicalPolygon, NativeComponentMechanicalPolyline,
-    NativeComponentMechanicalText, compare_native_project_gerber_mechanical_layer,
-    export_native_project_gerber_mechanical_layer, validate_native_project_gerber_mechanical_layer,
-};
-pub(crate) use self::command_project_gerber_plan::{
-    compare_native_project_gerber_export_plan, compare_native_project_gerber_set,
-    export_native_project_gerber_set, export_native_project_gerber_set_from_plan,
-    export_native_project_gerber_set_without_output_run,
-    export_native_project_gerber_set_without_output_run_for_output_job, panelize_rs274x_gerber,
-    plan_native_project_gerber_export, validate_native_project_gerber_set,
-};
-pub(crate) use self::command_project_gerber_semantics::{
-    DEFAULT_GERBER_OUTLINE_APERTURE_NM, ParsedGerber, ParsedGerberAperture, ParsedGerberGeometry,
-    classify_via_hole_class, compare_entry_views, gerber_copper_actual_entries,
-    gerber_copper_expected_entries, gerber_outline_actual_entries, gerber_outline_expected_entries,
-    gerber_silkscreen_expected_entries, gerber_soldermask_actual_entries,
-    gerber_soldermask_expected_entries, parse_rs274x_subset, render_circular_flash_geometry,
-    render_mm_6, render_pad_flash_geometry, render_parsed_flash_geometry, render_region_geometry,
-    render_stroke_geometry, resolve_native_project_soldermask_context,
-};
-pub(crate) use self::command_project_gerber_silkscreen::{
-    NativeComponentSilkscreenArc, NativeComponentSilkscreenCircle, NativeComponentSilkscreenLine,
-    NativeComponentSilkscreenPolygon, NativeComponentSilkscreenPolyline,
-    NativeComponentSilkscreenText,
-};
-pub(crate) use self::command_project_gerber_silkscreen::{
-    count_native_component_silkscreen_arcs, count_native_component_silkscreen_circles,
-    count_native_component_silkscreen_lines, count_native_component_silkscreen_polygons,
-    count_native_component_silkscreen_polylines, count_native_component_silkscreen_texts,
-    resolve_native_project_silkscreen_context,
-};
 pub(crate) use self::command_project_import_map::query_native_project_import_map;
 pub(crate) use self::command_project_imports::{
     import_native_project_eagle_library, import_native_project_kicad_board,
@@ -278,26 +201,6 @@ pub(crate) use self::command_project_library_symbol_geometry::{
     set_native_project_pool_symbol_pin_anchor,
 };
 pub(crate) use self::command_project_library_unit_pin::set_native_project_pool_unit_pin;
-pub(crate) use self::command_project_manufacturing::{
-    compare_native_project_manufacturing_set, export_native_project_manufacturing_set,
-    export_native_project_manufacturing_set_without_output_run,
-    inspect_native_project_manufacturing_set, manifest_native_project_manufacturing_set,
-    report_native_project_manufacturing, validate_native_project_manufacturing_set,
-};
-pub(crate) use self::command_project_manufacturing_plan_proposals::{
-    propose_create_native_project_manufacturing_plan,
-    propose_create_native_project_panel_projection,
-    propose_delete_native_project_manufacturing_plan,
-    propose_delete_native_project_panel_projection,
-    propose_update_native_project_manufacturing_plan,
-    propose_update_native_project_panel_projection,
-};
-pub(crate) use self::command_project_manufacturing_plans::{
-    create_native_project_manufacturing_plan, create_native_project_panel_projection,
-    delete_native_project_manufacturing_plan, delete_native_project_panel_projection,
-    query_native_project_manufacturing_plans, query_native_project_panel_projections,
-    update_native_project_manufacturing_plan, update_native_project_panel_projection,
-};
 pub(crate) use self::command_project_native_inspect::{
     NativeProjectCheckRunView, execute_native_project_resolve_debug_query, inspect_native_project,
     query_native_project_check_profiles, query_native_project_check_run,
@@ -312,25 +215,13 @@ pub(crate) use self::command_project_native_surface::*;
 pub(crate) use self::command_project_native_types::{
     NativeBoardRoot, NativeComponentPad, NativeOutline, NativePoint,
 };
-pub(crate) use self::command_project_output_job_proposals::{
-    propose_create_native_project_output_job, propose_delete_native_project_output_job,
-    propose_update_native_project_output_job,
-};
-pub(crate) use self::command_project_output_jobs::{
-    cancel_native_project_output_job_run, create_native_project_gerber_set_output_job,
-    create_native_project_output_job, delete_native_project_output_job,
-    ensure_native_project_gerber_set_output_job,
-    ensure_native_project_manufacturing_set_output_job, find_native_project_output_job_for_scope,
-    next_output_job_run_sequence, query_native_project_output_jobs, run_native_project_output_job,
-    start_native_project_output_job_run, update_native_project_output_job,
-};
 pub(crate) use self::command_project_pool_materialization::{
     materialize_supported_pool_package_graphics, resolve_native_project_pool_path,
 };
 pub(crate) use self::command_project_pool_query::{
     query_native_project_pool_library_objects, query_native_project_pool_models,
 };
-pub(super) use self::command_project_project_core::*;
+pub(crate) use self::command_project_project_core::*;
 pub(crate) use self::command_project_proposals::{
     BoardComponentReplacementPlanSelectionSpec, BoardComponentReplacementSpec,
     accept_and_apply_native_project_proposal, apply_native_project_proposal,
@@ -343,7 +234,6 @@ pub(crate) use self::command_project_proposals::{
 pub(crate) use self::command_project_relationships::{
     query_native_project_relationships, query_native_project_variants,
 };
-pub(crate) use self::command_project_route_surface::*;
 pub(crate) use self::command_project_schematic_connectivity_mutations::{
     create_native_project_bus, delete_native_project_bus, delete_native_project_bus_entry,
     delete_native_project_junction, delete_native_project_label, delete_native_project_noconnect,

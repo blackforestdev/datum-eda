@@ -20,8 +20,8 @@ SCHEMATIC_HELPER_FILES = [
 ]
 
 PRODUCTION_AUTHORING_FILES = [
-    Path("crates/cli/src/command_project_manufacturing_plans.rs"),
-    Path("crates/cli/src/command_project_output_jobs.rs"),
+    Path("crates/cli/src/commands/manufacturing/plans.rs"),
+    Path("crates/cli/src/commands/output_jobs/output_jobs.rs"),
 ]
 
 PROJECT_BOOTSTRAP_FILES = [
@@ -29,7 +29,7 @@ PROJECT_BOOTSTRAP_FILES = [
 ]
 
 ROUTE_STRATEGY_FIXTURE_FILES = [
-    Path("crates/cli/src/command_project_route_proposal.rs"),
+    Path("crates/cli/src/commands/route/proposal.rs"),
 ]
 
 LEGACY_KICAD_MODIFY_FILES = {
@@ -53,7 +53,7 @@ FORWARD_ANNOTATION_REVIEW_FILES = [
 
 PROPOSAL_APPLY_FILES = [
     Path("crates/cli/src/command_project_forward_annotation_substrate.rs"),
-    Path("crates/cli/src/command_project_route_proposal_substrate.rs"),
+    Path("crates/cli/src/commands/route/proposal_substrate.rs"),
 ]
 
 LEGACY_PROPOSAL_SIDECAR_FILES = {
@@ -252,7 +252,7 @@ ENGINE_JOURNAL_PERSISTENCE_FILES = {
 }
 
 GENERATED_EXPORT_FILES = {
-    Path("crates/cli/src/command_project_gerber_layers.rs"): {
+    Path("crates/cli/src/commands/gerber/layers.rs"): {
         "writes": 5,
         "required": [
             "export_native_project_gerber_outline(",
@@ -262,20 +262,20 @@ GENERATED_EXPORT_FILES = {
             "export_native_project_gerber_paste_layer(",
         ],
     },
-    Path("crates/cli/src/command_project_gerber_mechanical.rs"): {
+    Path("crates/cli/src/commands/gerber/mechanical.rs"): {
         "writes": 1,
         "required": [
             "export_native_project_gerber_mechanical_layer(",
         ],
     },
-    Path("crates/cli/src/command_project_gerber_panel.rs"): {
+    Path("crates/cli/src/commands/gerber/panel.rs"): {
         "writes": 1,
         "required": [
             "panelize_and_rewrite_rs274x_gerber_file(",
             "panelize_rs274x_gerber(",
         ],
     },
-    Path("crates/cli/src/command_project_drill.rs"): {
+    Path("crates/cli/src/commands/drill/drill.rs"): {
         "writes": 2,
         "required": [
             "export_native_project_drill(",
@@ -329,7 +329,7 @@ REQUIRED_PRODUCTION_ZONE_FILL_PATTERNS = [
 ]
 
 ARTIFACT_ONLY_EVIDENCE_COMMAND_FILES = {
-    Path("crates/cli/src/command_project_artifacts.rs"): {
+    Path("crates/cli/src/commands/artifacts/artifacts.rs"): {
         "required": [
             "commit_unlinked_artifact_evidence(",
             "commit_linked_artifact_output_job_evidence(",
@@ -340,7 +340,7 @@ ARTIFACT_ONLY_EVIDENCE_COMMAND_FILES = {
             "persist_output_job_run(",
         ],
     },
-    Path("crates/cli/src/command_project_artifact_runs.rs"): {
+    Path("crates/cli/src/commands/artifacts/runs.rs"): {
         "required": [
             "pub(crate) fn generic_artifact_run(",
         ],
@@ -348,7 +348,7 @@ ARTIFACT_ONLY_EVIDENCE_COMMAND_FILES = {
             "persist_artifact_run(",
         ],
     },
-    Path("crates/cli/src/command_project_artifact_drill.rs"): {
+    Path("crates/cli/src/commands/artifacts/drill.rs"): {
         "required": [
             "commit_unlinked_artifact_evidence(",
             "commit_linked_artifact_output_job_evidence(",
@@ -359,7 +359,7 @@ ARTIFACT_ONLY_EVIDENCE_COMMAND_FILES = {
             "persist_output_job_run(",
         ],
     },
-    Path("crates/cli/src/command_project_artifact_output_runs.rs"): {
+    Path("crates/cli/src/commands/artifacts/output_runs.rs"): {
         "required": [
             "pub(super) fn generic_output_job_run(",
         ],
@@ -367,7 +367,7 @@ ARTIFACT_ONLY_EVIDENCE_COMMAND_FILES = {
             "persist_output_job_run(",
         ],
     },
-    Path("crates/cli/src/command_project_artifact_validation.rs"): {
+    Path("crates/cli/src/commands/artifacts/validation.rs"): {
         "required": [
             "commit_artifact_metadata_evidence(",
         ],
@@ -375,7 +375,7 @@ ARTIFACT_ONLY_EVIDENCE_COMMAND_FILES = {
             "persist_artifact_metadata(",
         ],
     },
-    Path("crates/cli/src/command_project_artifact_evidence.rs"): {
+    Path("crates/cli/src/commands/artifacts/evidence.rs"): {
         "required": [
             "build_artifact_evidence(",
             "commit_prepared(",
@@ -389,7 +389,7 @@ ARTIFACT_ONLY_EVIDENCE_COMMAND_FILES = {
 }
 
 OUTPUT_JOB_RUN_EVIDENCE_COMMAND_FILES = {
-    Path("crates/cli/src/command_project_output_jobs.rs"): {
+    Path("crates/cli/src/commands/output_jobs/output_jobs.rs"): {
         "required": [
             "persist_output_job_run_journaled(",
         ],
@@ -397,7 +397,7 @@ OUTPUT_JOB_RUN_EVIDENCE_COMMAND_FILES = {
             "persist_output_job_run(",
         ],
     },
-    Path("crates/cli/src/command_project_output_job_runs.rs"): {
+    Path("crates/cli/src/commands/output_jobs/runs.rs"): {
         "required": [
             "build_set_output_job_run(",
             "commit_prepared(",
@@ -410,7 +410,7 @@ OUTPUT_JOB_RUN_EVIDENCE_COMMAND_FILES = {
 }
 
 GERBER_EVIDENCE_COMMAND_FILES = {
-    Path("crates/cli/src/command_project_gerber_plan.rs"): {
+    Path("crates/cli/src/commands/gerber/plan.rs"): {
         "required": [
             "commit_gerber_set_evidence(",
         ],
@@ -419,7 +419,7 @@ GERBER_EVIDENCE_COMMAND_FILES = {
             "persist_output_job_run(",
         ],
     },
-    Path("crates/cli/src/command_project_gerber_evidence.rs"): {
+    Path("crates/cli/src/commands/gerber/evidence.rs"): {
         "required": [
             "build_artifact_evidence(",
             "commit_prepared(",
@@ -433,7 +433,7 @@ GERBER_EVIDENCE_COMMAND_FILES = {
 }
 
 MANUFACTURING_EVIDENCE_COMMAND_FILES = {
-    Path("crates/cli/src/command_project_manufacturing.rs"): {
+    Path("crates/cli/src/commands/manufacturing/manufacturing.rs"): {
         "required": [
             "commit_manufacturing_set_evidence(",
         ],
@@ -442,7 +442,7 @@ MANUFACTURING_EVIDENCE_COMMAND_FILES = {
             "persist_output_job_run(",
         ],
     },
-    Path("crates/cli/src/command_project_manufacturing_scope.rs"): {
+    Path("crates/cli/src/commands/manufacturing/scope.rs"): {
         "required": [
             "commit_manufacturing_set_evidence(",
         ],
@@ -450,7 +450,7 @@ MANUFACTURING_EVIDENCE_COMMAND_FILES = {
             "persist_artifact_metadata(",
         ],
     },
-    Path("crates/cli/src/command_project_manufacturing_evidence.rs"): {
+    Path("crates/cli/src/commands/manufacturing/evidence.rs"): {
         "required": [
             "build_artifact_evidence(",
             "commit_prepared(",

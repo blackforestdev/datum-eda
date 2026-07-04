@@ -35,6 +35,20 @@
 #[allow(unused_imports)] // Wave 2 anchor: scope prelude for moved family files.
 use super::*;
 
+mod artifacts;
+mod drill;
+mod gerber;
+mod manufacturing;
+mod output_jobs;
+mod route;
+
+pub(crate) use self::artifacts::*;
+pub(crate) use self::drill::*;
+pub(crate) use self::gerber::*;
+pub(crate) use self::manufacturing::*;
+pub(crate) use self::output_jobs::*;
+pub(crate) use self::route::*;
+
 pub(crate) use crate::command_plan::*;
 pub(crate) use crate::command_project::*;
 pub(crate) use crate::command_query::*;

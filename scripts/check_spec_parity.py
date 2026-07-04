@@ -94,7 +94,7 @@ def datum_tool_names(prefix: str) -> list[str]:
 
 
 def project_command_variants() -> list[str]:
-    return rust_enum_variants(ROOT / "crates/cli/src/cli_args_project_commands.rs", "ProjectCommands")
+    return rust_enum_variants(ROOT / "crates/cli/src/args/project.rs", "ProjectCommands")
 
 
 def engine_api_pub_fns() -> list[str]:

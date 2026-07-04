@@ -242,8 +242,10 @@ def section_slice_by_h2(text: str, heading: str) -> str | None:
 
 def check_schematic_editor_progress_drift(progress_text: str, failures: list[str]) -> None:
     schematic_editor_text = read_text("specs/SCHEMATIC_EDITOR_SPEC.md")
-    cli_args_text = read_text("crates/cli/src/cli_args.rs")
-    command_exec_text = read_text("crates/cli/src/command_exec.rs")
+    # args/project.rs holds the real ProjectCommands enum; the old
+    # cli_args.rs 4-line shim this check regexed was vacuous (zero variants).
+    cli_args_text = read_text("crates/cli/src/args/project.rs")
+    command_exec_text = read_text("crates/cli/src/command_exec_project_command.rs")
 
     required_ops = parse_m4_required_schematic_ops(schematic_editor_text)
     if not required_ops:

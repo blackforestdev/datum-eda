@@ -10,7 +10,7 @@
     {
       "id": "cli_project_commands",
       "kind": "rust_enum_variants",
-      "path": "crates/cli/src/cli_args_project_commands.rs",
+      "path": "crates/cli/src/args/project.rs",
       "enum": "ProjectCommands",
       "owner_spec": "specs/PROGRAM_SPEC.md"
     },

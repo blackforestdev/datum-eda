@@ -19,8 +19,6 @@ mod command_project_board_pad;
 #[rustfmt::skip] #[path = "command_project_board_routing_net.rs"] mod command_project_board_routing_net;
 #[path = "command_project_default_stackup.rs"]
 mod command_project_default_stackup;
-#[path = "command_project_drill.rs"]
-mod command_project_drill;
 #[path = "command_project_forward_annotation_apply_review.rs"]
 mod command_project_forward_annotation_apply_review;
 #[path = "command_project_forward_annotation_artifact.rs"]
@@ -31,23 +29,9 @@ mod command_project_forward_annotation_artifact_review;
 mod command_project_forward_annotation_proposal;
 #[path = "command_project_forward_annotation_surface.rs"]
 mod command_project_forward_annotation_surface;
-#[path = "command_project_gerber_inspect.rs"]
-mod command_project_gerber_inspect;
-#[path = "command_project_gerber_layers.rs"]
-mod command_project_gerber_layers;
-#[path = "command_project_gerber_mechanical.rs"]
-mod command_project_gerber_mechanical;
-#[rustfmt::skip] #[path = "command_project_gerber_plan.rs"] mod command_project_gerber_plan;
-#[rustfmt::skip] #[path = "command_project_gerber_semantics.rs"] mod command_project_gerber_semantics;
-#[path = "command_project_gerber_semantics_utils.rs"]
-mod command_project_gerber_semantics_utils;
-#[path = "command_project_gerber_silkscreen.rs"]
-mod command_project_gerber_silkscreen;
 mod command_project_inventory;
 mod command_project_inventory_csv;
 mod command_project_inventory_surface;
-#[path = "command_project_manufacturing.rs"]
-mod command_project_manufacturing;
 #[path = "command_project_native_inspect.rs"]
 mod command_project_native_inspect;
 #[path = "command_project_native_surface.rs"]
@@ -63,8 +47,6 @@ mod command_project_prelude;
 mod command_project_project_core;
 #[path = "command_project_root_imports.rs"]
 mod command_project_root_imports;
-#[path = "command_project_route_surface.rs"]
-mod command_project_route_surface;
 #[path = "command_project_schematic_connectivity_mutations.rs"]
 mod command_project_schematic_connectivity_mutations;
 #[path = "command_project_schematic_connectivity_queries.rs"]
@@ -89,4 +71,4 @@ mod command_project_surface;
 mod command_project_validate;
 #[path = "command_project_views.rs"]
 mod command_project_views;
-#[rustfmt::skip] pub(crate) use self::{command_project_prelude::*, command_project_route_surface::*, command_project_surface::*};
+#[rustfmt::skip] pub(crate) use self::{command_project_prelude::*, command_project_surface::*};
