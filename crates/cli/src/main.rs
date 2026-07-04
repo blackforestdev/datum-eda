@@ -29,6 +29,12 @@ use eda_engine::{board::Airwire, board::BoardNetInfo, board::ComponentInfo};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+// CLI reorg Wave 1: `args`, `commands`, and `context` are the target
+// directory modules; the flat legacy chains declared below still host every
+// file and are re-exported through them. Wave 2 lanes move families into the
+// directories without touching this block again; Wave 3 deletes the legacy
+// chains and the exec layer.
+mod args;
 mod cli_args;
 mod cli_symbol_views;
 mod command_exec;
@@ -36,6 +42,8 @@ mod command_modify;
 mod command_plan;
 mod command_project;
 mod command_query;
+mod commands;
+mod context;
 mod main_board_component;
 mod main_drill;
 mod main_forward_annotation;
@@ -56,15 +64,15 @@ mod main_project;
 mod main_route_proposal;
 mod main_summary;
 
-use cli_args::*;
+use args::*;
 pub(crate) use cli_symbol_views::{
     NativeProjectPlaceSymbolBindingEvidenceView, NativeProjectRevisionedRefView,
     NativeProjectSymbolFieldMutationReportView, NativeProjectSymbolMutationReportView,
     NativeProjectSymbolPinInfoView,
 };
-use command_plan::*;
-use command_project::*;
-use command_query::*;
+use commands::*;
+#[allow(unused_imports)] // Wave 2 anchor: context/ re-exports flow to crate scope here.
+use context::*;
 pub(crate) use main_board_component::*;
 pub(crate) use main_drill::*;
 pub(crate) use main_forward_annotation::*;
