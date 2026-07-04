@@ -8,15 +8,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 SCHEMATIC_AUTHORING_FILES = [
-    Path("crates/cli/src/command_project_schematic_connectivity_mutations.rs"),
-    Path("crates/cli/src/command_project_schematic_symbol_mutations.rs"),
-    Path("crates/cli/src/command_project_schematic_text_drawing_mutations.rs"),
-    Path("crates/cli/src/command_project/command_project_schematic_sheet_mutations.rs"),
-    Path("crates/cli/src/command_project_schematic_proposals.rs"),
+    Path("crates/cli/src/commands/schematic/connectivity_mutations.rs"),
+    Path("crates/cli/src/commands/schematic/symbol_mutations.rs"),
+    Path("crates/cli/src/commands/schematic/text_drawing_mutations.rs"),
+    Path("crates/cli/src/commands/schematic/sheet_mutations.rs"),
+    Path("crates/cli/src/commands/schematic/proposals.rs"),
 ]
 
 SCHEMATIC_HELPER_FILES = [
-    Path("crates/cli/src/command_project_schematic_helpers.rs"),
+    Path("crates/cli/src/commands/schematic/helpers.rs"),
 ]
 
 PRODUCTION_AUTHORING_FILES = [
@@ -25,7 +25,7 @@ PRODUCTION_AUTHORING_FILES = [
 ]
 
 PROJECT_BOOTSTRAP_FILES = [
-    Path("crates/cli/src/command_project_roots.rs"),
+    Path("crates/cli/src/commands/project/roots.rs"),
 ]
 
 ROUTE_STRATEGY_FIXTURE_FILES = [
@@ -47,12 +47,12 @@ LEGACY_KICAD_MODIFY_FILES = {
 }
 
 FORWARD_ANNOTATION_REVIEW_FILES = [
-    Path("crates/cli/src/command_project_forward_annotation_apply_review.rs"),
-    Path("crates/cli/src/command_project_forward_annotation_artifact_review.rs"),
+    Path("crates/cli/src/commands/forward_annotation/apply_review.rs"),
+    Path("crates/cli/src/commands/forward_annotation/artifact_review.rs"),
 ]
 
 PROPOSAL_APPLY_FILES = [
-    Path("crates/cli/src/command_project_forward_annotation_substrate.rs"),
+    Path("crates/cli/src/commands/forward_annotation/substrate.rs"),
     Path("crates/cli/src/commands/route/proposal_substrate.rs"),
 ]
 
@@ -85,11 +85,11 @@ SUBSTRATE_PUBLIC_EXPORT_FILES = {
 }
 
 FORWARD_ANNOTATION_REVIEW_STATE_FILES = [
-    Path("crates/cli/src/command_project_forward_annotation_review_state.rs"),
+    Path("crates/cli/src/commands/forward_annotation/review_state.rs"),
 ]
 
 GENERATED_EVIDENCE_FILES = {
-    Path("crates/cli/src/command_project_native_inspect.rs"): [
+    Path("crates/cli/src/commands/check/native_inspect.rs"): [
         "commit_check_run_evidence(",
         "build_set_check_run(",
         "commit_prepared(",
@@ -282,7 +282,7 @@ GENERATED_EXPORT_FILES = {
             "export_native_project_excellon_drill(",
         ],
     },
-    Path("crates/cli/src/command_project/command_project_inventory.rs"): {
+    Path("crates/cli/src/commands/inventory/inventory.rs"): {
         "writes": 2,
         "required": [
             "export_native_project_bom(",
@@ -753,7 +753,7 @@ def main() -> int:
                 f"{relative}:{line}: forbidden generated-evidence writer `{pattern}`: {text}"
             )
 
-    zone_fill_command = Path("crates/cli/src/command_project_board_routing_net.rs")
+    zone_fill_command = Path("crates/cli/src/commands/board/routing_net.rs")
     zone_fill_command_path = ROOT / zone_fill_command
     if not zone_fill_command_path.exists():
         failures.append(f"missing production ZoneFill command file: {zone_fill_command}")

@@ -17,7 +17,7 @@ use uuid::Uuid;
 
 use super::load_native_project_with_resolved_board;
 
-use crate::command_project::cli_commit_source;
+use crate::cli_commit_source;
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectManufacturingPlanProposalView {

@@ -15,13 +15,13 @@ use eda_engine::substrate::{
 };
 use uuid::Uuid;
 
-#[path = "../../command_project_check_gate.rs"]
+#[path = "../check/gate.rs"]
 mod command_project_direct_export_gate;
 #[path = "evidence.rs"]
 mod command_project_gerber_evidence;
 #[path = "panel.rs"]
 mod command_project_gerber_panel;
-#[path = "../../command_project_output_log.rs"]
+#[path = "../project/output_log.rs"]
 mod command_project_output_log;
 
 use self::command_project_direct_export_gate::ensure_release_check_gate_clear;

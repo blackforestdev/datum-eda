@@ -14,14 +14,14 @@ use eda_engine::substrate::{
 use serde::Serialize;
 use uuid::Uuid;
 
-use crate::command_project::cli_commit_source;
+use crate::cli_commit_source;
 
 #[path = "runs.rs"]
 mod command_project_output_job_runs;
 // Own instantiation of the shared release-check gate helper; output jobs
 // use the raw gate + error rendering, not the ensure_ wrapper.
 #[allow(dead_code)]
-#[path = "../../command_project_check_gate.rs"]
+#[path = "../check/gate.rs"]
 mod command_project_check_gate;
 
 use self::command_project_check_gate::{

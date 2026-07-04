@@ -145,7 +145,7 @@ def standards_check_surface() -> list[str]:
         if re.search(rf"\bpub\s+{field}\s*:\s*Option<String>", check_run_text):
             items.add(f"check_finding_field:{field}")
 
-    identity_text = read_text(ROOT / "crates/cli/src/command_project_check_finding_identity.rs")
+    identity_text = read_text(ROOT / "crates/cli/src/commands/check/finding_identity.rs")
     for function in (
         "is_standards_profile_finding",
         "check_finding_standards_basis",

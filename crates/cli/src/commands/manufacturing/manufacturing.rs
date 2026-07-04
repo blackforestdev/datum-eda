@@ -7,7 +7,7 @@ use eda_engine::substrate::{
 };
 use uuid::Uuid;
 
-#[path = "../../command_project_check_gate.rs"]
+#[path = "../check/gate.rs"]
 mod command_project_direct_export_gate;
 #[path = "evidence.rs"]
 mod command_project_manufacturing_evidence;

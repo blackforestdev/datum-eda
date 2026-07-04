@@ -18,7 +18,7 @@ use super::include::{
 use super::load_native_project_with_resolved_board;
 use crate::commands::gerber::plan::sanitize_export_prefix;
 
-use crate::command_project::cli_commit_source;
+use crate::cli_commit_source;
 
 fn proposal_provenance(reason: &str) -> Result<WriteProvenance> {
     Ok(WriteProvenance::new(

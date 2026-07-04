@@ -3,7 +3,7 @@ use eda_engine::substrate::DesignModel;
 use std::collections::BTreeSet;
 #[path = "copper_projection.rs"]
 mod command_project_gerber_copper_projection;
-#[path = "../../command_project_zone_fill_projection.rs"]
+#[path = "../board/zone_fill_projection.rs"]
 mod command_project_zone_fill_projection;
 use command_project_gerber_copper_projection::render_native_project_gerber_copper_projection;
 use command_project_zone_fill_projection::zone_fill_copper_projection_zones;

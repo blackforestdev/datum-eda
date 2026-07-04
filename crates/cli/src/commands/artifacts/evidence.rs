@@ -8,7 +8,7 @@ use uuid::Uuid;
 
 use super::super::runs::generic_artifact_run;
 
-use crate::command_project::cli_commit_source;
+use crate::cli_commit_source;
 
 fn evidence_provenance(reason: impl Into<String>) -> Result<WriteProvenance> {
     Ok(WriteProvenance::new(

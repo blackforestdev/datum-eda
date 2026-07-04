@@ -22,7 +22,7 @@ mod command_project_artifact_latest;
 mod command_project_artifact_output_runs;
 #[path = "preview.rs"]
 mod command_project_artifact_preview;
-#[path = "../../command_project_check_gate.rs"]
+#[path = "../check/gate.rs"]
 mod command_project_check_gate;
 use super::runs::compare_artifact_runs;
 pub(super) use command_project_artifact_evidence::{

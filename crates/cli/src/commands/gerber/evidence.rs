@@ -6,7 +6,7 @@ use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::substrate::{ArtifactMetadata, DesignModel, OutputJobRun};
 use uuid::Uuid;
 
-use crate::command_project::cli_commit_source;
+use crate::cli_commit_source;
 
 pub(super) fn commit_gerber_set_evidence(
     root: &Path,

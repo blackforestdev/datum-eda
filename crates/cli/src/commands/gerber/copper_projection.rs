@@ -1,6 +1,6 @@
 use super::*;
 use crate::NativeProjectProductionProjectionView;
-use crate::command_project::load_native_project_with_resolved_board_and_model;
+use crate::load_native_project_with_resolved_board_and_model;
 
 pub(super) struct NativeGerberCopperProjection {
     pub(super) project_root: String,

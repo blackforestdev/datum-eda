@@ -1,0 +1,617 @@
+use std::path::Path;
+
+use anyhow::{Context, Result, bail};
+use eda_engine::api::native_write::board_annotations::{
+    build_delete_board_keepout, build_delete_board_text, build_place_board_keepout,
+    build_place_board_text, build_set_board_keepout, build_set_board_text,
+};
+use eda_engine::api::native_write::board_layout::{
+    build_set_board_name, build_set_board_outline, build_set_board_stackup,
+};
+use eda_engine::api::native_write::{PreparedWrite, WriteProvenance, commit_prepared};
+use eda_engine::board::{BoardText, Keepout, StackupLayer};
+use eda_engine::error::EngineError;
+use eda_engine::ir::geometry::{Point, Polygon};
+use eda_engine::substrate::{DesignModel, ProjectResolver};
+use eda_engine::text::{TextFamilyId, TextHAlign, TextRenderIntent, TextStyleId, TextVAlign};
+use uuid::Uuid;
+
+use crate::{
+    NativeProjectBoardKeepoutMutationReportView, NativeProjectBoardNameMutationReportView,
+    NativeProjectBoardOutlineMutationReportView, NativeProjectBoardStackupMutationReportView,
+    NativeProjectBoardTextMutationReportView, load_native_project_with_resolved_board,
+};
+
+use crate::cli_commit_source;
+
+pub(crate) fn query_native_project_board_texts(root: &Path) -> Result<Vec<BoardText>> {
+    let project = load_native_project_with_resolved_board(root)?;
+    let mut texts = project
+        .board
+        .texts
+        .into_iter()
+        .map(|entry| serde_json::from_value(entry).context("failed to parse board text"))
+        .collect::<Result<Vec<BoardText>>>()?;
+    texts.sort_by(|a, b| a.text.cmp(&b.text).then_with(|| a.uuid.cmp(&b.uuid)));
+    Ok(texts)
+}
+
+pub(crate) fn query_native_project_board_keepouts(root: &Path) -> Result<Vec<Keepout>> {
+    let project = load_native_project_with_resolved_board(root)?;
+    let mut keepouts = project
+        .board
+        .keepouts
+        .into_iter()
+        .map(|entry| serde_json::from_value(entry).context("failed to parse board keepout"))
+        .collect::<Result<Vec<Keepout>>>()?;
+    keepouts.sort_by(|a, b| a.kind.cmp(&b.kind).then_with(|| a.uuid.cmp(&b.uuid)));
+    Ok(keepouts)
+}
+
+pub(crate) fn query_native_project_board_outline(root: &Path) -> Result<Polygon> {
+    let project = load_native_project_with_resolved_board(root)?;
+    Ok(Polygon {
+        vertices: project
+            .board
+            .outline
+            .vertices
+            .iter()
+            .map(|point| Point {
+                x: point.x,
+                y: point.y,
+            })
+            .collect(),
+        closed: project.board.outline.closed,
+    })
+}
+
+pub(crate) fn query_native_project_board_stackup(root: &Path) -> Result<Vec<StackupLayer>> {
+    let project = load_native_project_with_resolved_board(root)?;
+    project
+        .board
+        .stackup
+        .layers
+        .into_iter()
+        .map(|value| serde_json::from_value(value).context("failed to parse board stackup layer"))
+        .collect::<Result<Vec<StackupLayer>>>()
+}
+
+pub(crate) fn place_native_project_board_text(
+    root: &Path,
+    text: String,
+    position: Point,
+    rotation_deg: i32,
+    height_nm: i64,
+    stroke_width_nm: i64,
+    render_intent: Option<String>,
+    family: Option<String>,
+    style: Option<String>,
+    style_class: Option<String>,
+    h_align: Option<String>,
+    v_align: Option<String>,
+    mirrored: bool,
+    keep_upright: bool,
+    line_spacing_ratio_ppm: i32,
+    bold: bool,
+    italic: bool,
+    layer: i32,
+) -> Result<NativeProjectBoardTextMutationReportView> {
+    let text_uuid = Uuid::new_v4();
+    if height_nm <= 0 {
+        bail!("board text height must be positive");
+    }
+    if stroke_width_nm <= 0 {
+        bail!("board text stroke width must be positive");
+    }
+    let render_intent = parse_text_render_intent(render_intent.as_deref())?;
+    let h_align = parse_text_h_align(h_align.as_deref())?;
+    let v_align = parse_text_v_align(v_align.as_deref())?;
+    validate_line_spacing_ratio(line_spacing_ratio_ppm)?;
+    let family_source = if family.is_some() {
+        eda_engine::text::TextFamilySource::Explicit
+    } else {
+        eda_engine::text::TextFamilySource::ImplicitDefault
+    };
+    let board_text = BoardText {
+        uuid: text_uuid,
+        text: text.clone(),
+        position,
+        rotation: rotation_deg,
+        render_intent,
+        family: family
+            .map(TextFamilyId)
+            .unwrap_or_else(TextFamilyId::default),
+        family_source,
+        style: style.map(TextStyleId).unwrap_or_else(TextStyleId::default),
+        h_align,
+        v_align,
+        mirrored,
+        keep_upright,
+        line_spacing_ratio_ppm,
+        italic,
+        bold,
+        style_class,
+        height_nm,
+        stroke_width_nm,
+        layer,
+    };
+    commit_board_layout_write(root, "place board text", |model, provenance| {
+        build_place_board_text(model, provenance, &board_text)
+    })?;
+    let project = load_native_project_with_resolved_board(root)?;
+    Ok(NativeProjectBoardTextMutationReportView {
+        action: "place_board_text".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        text_uuid: text_uuid.to_string(),
+        text,
+        x_nm: position.x,
+        y_nm: position.y,
+        rotation_deg,
+        height_nm,
+        stroke_width_nm,
+        render_intent: render_intent_to_string(board_text.render_intent),
+        family: board_text.family.0.clone(),
+        style: board_text.style.0.clone(),
+        style_class: board_text.style_class.clone(),
+        h_align: text_h_align_to_string(board_text.h_align),
+        v_align: text_v_align_to_string(board_text.v_align),
+        mirrored: board_text.mirrored,
+        keep_upright: board_text.keep_upright,
+        line_spacing_ratio_ppm: board_text.line_spacing_ratio_ppm,
+        bold: board_text.bold,
+        italic: board_text.italic,
+        layer,
+    })
+}
+
+pub(crate) fn edit_native_project_board_text(
+    root: &Path,
+    text_uuid: Uuid,
+    value: Option<String>,
+    x_nm: Option<i64>,
+    y_nm: Option<i64>,
+    rotation_deg: Option<i32>,
+    height_nm: Option<i64>,
+    stroke_width_nm: Option<i64>,
+    render_intent: Option<String>,
+    family: Option<String>,
+    style: Option<String>,
+    style_class: Option<String>,
+    h_align: Option<String>,
+    v_align: Option<String>,
+    mirrored: Option<bool>,
+    keep_upright: Option<bool>,
+    line_spacing_ratio_ppm: Option<i32>,
+    bold: Option<bool>,
+    italic: Option<bool>,
+    layer: Option<i32>,
+) -> Result<NativeProjectBoardTextMutationReportView> {
+    let project = load_native_project_with_resolved_board(root)?;
+    let index = project
+        .board
+        .texts
+        .iter()
+        .position(|entry| {
+            serde_json::from_value::<BoardText>(entry.clone())
+                .map(|text| text.uuid == text_uuid)
+                .unwrap_or(false)
+        })
+        .ok_or_else(|| anyhow::anyhow!("board text not found in native project: {text_uuid}"))?;
+    let mut board_text: BoardText = serde_json::from_value(project.board.texts[index].clone())
+        .with_context(|| {
+            format!(
+                "failed to parse board text in {}",
+                project.board_path.display()
+            )
+        })?;
+    if let Some(value) = value {
+        board_text.text = value;
+    }
+    match (x_nm, y_nm) {
+        (None, None) => {}
+        (Some(x), Some(y)) => board_text.position = Point { x, y },
+        _ => bail!("board text position requires both --x-nm and --y-nm"),
+    }
+    if let Some(rotation_deg) = rotation_deg {
+        board_text.rotation = rotation_deg;
+    }
+    if let Some(height_nm) = height_nm {
+        board_text.height_nm = height_nm;
+    }
+    if let Some(stroke_width_nm) = stroke_width_nm {
+        board_text.stroke_width_nm = stroke_width_nm;
+    }
+    if let Some(render_intent) = render_intent {
+        board_text.render_intent = parse_text_render_intent(Some(&render_intent))?;
+    }
+    if let Some(family) = family {
+        board_text.family = TextFamilyId(family);
+        board_text.family_source = eda_engine::text::TextFamilySource::Explicit;
+    }
+    if let Some(style) = style {
+        board_text.style = TextStyleId(style);
+    }
+    if let Some(style_class) = style_class {
+        board_text.style_class = Some(style_class);
+    }
+    if let Some(h_align) = h_align {
+        board_text.h_align = parse_text_h_align(Some(&h_align))?;
+    }
+    if let Some(v_align) = v_align {
+        board_text.v_align = parse_text_v_align(Some(&v_align))?;
+    }
+    if let Some(mirrored) = mirrored {
+        board_text.mirrored = mirrored;
+    }
+    if let Some(keep_upright) = keep_upright {
+        board_text.keep_upright = keep_upright;
+    }
+    if let Some(line_spacing_ratio_ppm) = line_spacing_ratio_ppm {
+        validate_line_spacing_ratio(line_spacing_ratio_ppm)?;
+        board_text.line_spacing_ratio_ppm = line_spacing_ratio_ppm;
+    }
+    if let Some(bold) = bold {
+        board_text.bold = bold;
+    }
+    if let Some(italic) = italic {
+        board_text.italic = italic;
+    }
+    if let Some(layer) = layer {
+        board_text.layer = layer;
+    }
+    if board_text.height_nm <= 0 {
+        bail!("board text height must be positive");
+    }
+    if board_text.stroke_width_nm <= 0 {
+        bail!("board text stroke width must be positive");
+    }
+    validate_line_spacing_ratio(board_text.line_spacing_ratio_ppm)?;
+    commit_board_layout_write(root, "edit board text", |model, provenance| {
+        build_set_board_text(model, provenance, &board_text)
+    })?;
+    let project = load_native_project_with_resolved_board(root)?;
+    Ok(NativeProjectBoardTextMutationReportView {
+        action: "edit_board_text".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        text_uuid: board_text.uuid.to_string(),
+        text: board_text.text,
+        x_nm: board_text.position.x,
+        y_nm: board_text.position.y,
+        rotation_deg: board_text.rotation,
+        height_nm: board_text.height_nm,
+        stroke_width_nm: board_text.stroke_width_nm,
+        render_intent: render_intent_to_string(board_text.render_intent),
+        family: board_text.family.0.clone(),
+        style: board_text.style.0.clone(),
+        style_class: board_text.style_class.clone(),
+        h_align: text_h_align_to_string(board_text.h_align),
+        v_align: text_v_align_to_string(board_text.v_align),
+        mirrored: board_text.mirrored,
+        keep_upright: board_text.keep_upright,
+        line_spacing_ratio_ppm: board_text.line_spacing_ratio_ppm,
+        bold: board_text.bold,
+        italic: board_text.italic,
+        layer: board_text.layer,
+    })
+}
+
+pub(crate) fn delete_native_project_board_text(
+    root: &Path,
+    text_uuid: Uuid,
+) -> Result<NativeProjectBoardTextMutationReportView> {
+    let project = load_native_project_with_resolved_board(root)?;
+    let index = project
+        .board
+        .texts
+        .iter()
+        .position(|entry| {
+            serde_json::from_value::<BoardText>(entry.clone())
+                .map(|text| text.uuid == text_uuid)
+                .unwrap_or(false)
+        })
+        .ok_or_else(|| anyhow::anyhow!("board text not found in native project: {text_uuid}"))?;
+    let value = project.board.texts[index].clone();
+    let board_text: BoardText = serde_json::from_value(value.clone()).with_context(|| {
+        format!(
+            "failed to parse board text in {}",
+            project.board_path.display()
+        )
+    })?;
+    commit_board_layout_write(root, "delete board text", |model, provenance| {
+        build_delete_board_text(model, provenance, text_uuid, value)
+    })?;
+    let project = load_native_project_with_resolved_board(root)?;
+    Ok(NativeProjectBoardTextMutationReportView {
+        action: "delete_board_text".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        text_uuid: board_text.uuid.to_string(),
+        text: board_text.text,
+        x_nm: board_text.position.x,
+        y_nm: board_text.position.y,
+        rotation_deg: board_text.rotation,
+        height_nm: board_text.height_nm,
+        stroke_width_nm: board_text.stroke_width_nm,
+        render_intent: render_intent_to_string(board_text.render_intent),
+        family: board_text.family.0.clone(),
+        style: board_text.style.0.clone(),
+        style_class: board_text.style_class.clone(),
+        h_align: text_h_align_to_string(board_text.h_align),
+        v_align: text_v_align_to_string(board_text.v_align),
+        mirrored: board_text.mirrored,
+        keep_upright: board_text.keep_upright,
+        line_spacing_ratio_ppm: board_text.line_spacing_ratio_ppm,
+        bold: board_text.bold,
+        italic: board_text.italic,
+        layer: board_text.layer,
+    })
+}
+
+/// Resolve, build through the native-write facade, and commit one board
+/// layout/annotation write with the historical `failed to commit <reason>`
+/// error context.
+pub(crate) fn commit_board_layout_write<F>(root: &Path, reason: &str, build: F) -> Result<()>
+where
+    F: FnOnce(&DesignModel, WriteProvenance) -> Result<PreparedWrite, EngineError>,
+{
+    let mut model = ProjectResolver::new(root).resolve()?;
+    let prepared = build(
+        &model,
+        WriteProvenance::new("datum-eda-cli", cli_commit_source()?, reason),
+    )?;
+    commit_prepared(&mut model, root, prepared)
+        .with_context(|| format!("failed to commit {reason}"))?;
+    Ok(())
+}
+
+fn parse_text_render_intent(value: Option<&str>) -> Result<TextRenderIntent> {
+    match value.unwrap_or("manufacturing") {
+        "manufacturing" => Ok(TextRenderIntent::Manufacturing),
+        "annotation" => Ok(TextRenderIntent::Annotation),
+        "branding" => Ok(TextRenderIntent::Branding),
+        "documentation" => Ok(TextRenderIntent::Documentation),
+        "ui_preview" => Ok(TextRenderIntent::UiPreview),
+        other => bail!(
+            "unsupported board text render intent '{}'; expected one of: manufacturing, annotation, branding, documentation, ui_preview",
+            other
+        ),
+    }
+}
+
+fn render_intent_to_string(intent: TextRenderIntent) -> String {
+    match intent {
+        TextRenderIntent::Manufacturing => "manufacturing",
+        TextRenderIntent::Annotation => "annotation",
+        TextRenderIntent::Branding => "branding",
+        TextRenderIntent::Documentation => "documentation",
+        TextRenderIntent::UiPreview => "ui_preview",
+    }
+    .to_string()
+}
+
+fn parse_text_h_align(value: Option<&str>) -> Result<TextHAlign> {
+    match value.unwrap_or("left") {
+        "left" => Ok(TextHAlign::Left),
+        "center" => Ok(TextHAlign::Center),
+        "right" => Ok(TextHAlign::Right),
+        other => bail!(
+            "unsupported board text horizontal alignment '{}'; expected one of: left, center, right",
+            other
+        ),
+    }
+}
+
+fn parse_text_v_align(value: Option<&str>) -> Result<TextVAlign> {
+    match value.unwrap_or("bottom") {
+        "top" => Ok(TextVAlign::Top),
+        "center" => Ok(TextVAlign::Center),
+        "bottom" => Ok(TextVAlign::Bottom),
+        other => bail!(
+            "unsupported board text vertical alignment '{}'; expected one of: top, center, bottom",
+            other
+        ),
+    }
+}
+
+fn validate_line_spacing_ratio(line_spacing_ratio_ppm: i32) -> Result<()> {
+    if line_spacing_ratio_ppm <= 0 {
+        bail!("board text line spacing ratio must be positive");
+    }
+    Ok(())
+}
+
+fn text_h_align_to_string(align: TextHAlign) -> String {
+    match align {
+        TextHAlign::Left => "left",
+        TextHAlign::Center => "center",
+        TextHAlign::Right => "right",
+    }
+    .to_string()
+}
+
+fn text_v_align_to_string(align: TextVAlign) -> String {
+    match align {
+        TextVAlign::Top => "top",
+        TextVAlign::Center => "center",
+        TextVAlign::Bottom => "bottom",
+    }
+    .to_string()
+}
+
+pub(crate) fn place_native_project_board_keepout(
+    root: &Path,
+    kind: String,
+    layers: Vec<i32>,
+    polygon: Polygon,
+) -> Result<NativeProjectBoardKeepoutMutationReportView> {
+    let keepout_uuid = Uuid::new_v4();
+    let keepout = Keepout {
+        uuid: keepout_uuid,
+        polygon,
+        layers,
+        kind: kind.clone(),
+    };
+    commit_board_layout_write(root, "place board keepout", |model, provenance| {
+        build_place_board_keepout(model, provenance, &keepout)
+    })?;
+    let project = load_native_project_with_resolved_board(root)?;
+    Ok(NativeProjectBoardKeepoutMutationReportView {
+        action: "place_board_keepout".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        keepout_uuid: keepout_uuid.to_string(),
+        kind,
+        layer_count: keepout.layers.len(),
+        vertex_count: keepout.polygon.vertices.len(),
+    })
+}
+
+pub(crate) fn edit_native_project_board_keepout(
+    root: &Path,
+    keepout_uuid: Uuid,
+    kind: Option<String>,
+    layers: Vec<i32>,
+    polygon: Option<Polygon>,
+) -> Result<NativeProjectBoardKeepoutMutationReportView> {
+    let project = load_native_project_with_resolved_board(root)?;
+    let index = project
+        .board
+        .keepouts
+        .iter()
+        .position(|entry| {
+            serde_json::from_value::<Keepout>(entry.clone())
+                .map(|keepout| keepout.uuid == keepout_uuid)
+                .unwrap_or(false)
+        })
+        .ok_or_else(|| {
+            anyhow::anyhow!("board keepout not found in native project: {keepout_uuid}")
+        })?;
+    let mut keepout: Keepout = serde_json::from_value(project.board.keepouts[index].clone())
+        .with_context(|| {
+            format!(
+                "failed to parse board keepout in {}",
+                project.board_path.display()
+            )
+        })?;
+    if let Some(kind) = kind {
+        keepout.kind = kind;
+    }
+    if !layers.is_empty() {
+        keepout.layers = layers;
+    }
+    if let Some(polygon) = polygon {
+        keepout.polygon = polygon;
+    }
+    commit_board_layout_write(root, "edit board keepout", |model, provenance| {
+        build_set_board_keepout(model, provenance, &keepout)
+    })?;
+    let project = load_native_project_with_resolved_board(root)?;
+    Ok(NativeProjectBoardKeepoutMutationReportView {
+        action: "edit_board_keepout".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        keepout_uuid: keepout.uuid.to_string(),
+        kind: keepout.kind,
+        layer_count: keepout.layers.len(),
+        vertex_count: keepout.polygon.vertices.len(),
+    })
+}
+
+pub(crate) fn delete_native_project_board_keepout(
+    root: &Path,
+    keepout_uuid: Uuid,
+) -> Result<NativeProjectBoardKeepoutMutationReportView> {
+    let project = load_native_project_with_resolved_board(root)?;
+    let index = project
+        .board
+        .keepouts
+        .iter()
+        .position(|entry| {
+            serde_json::from_value::<Keepout>(entry.clone())
+                .map(|keepout| keepout.uuid == keepout_uuid)
+                .unwrap_or(false)
+        })
+        .ok_or_else(|| {
+            anyhow::anyhow!("board keepout not found in native project: {keepout_uuid}")
+        })?;
+    let value = project.board.keepouts[index].clone();
+    let keepout: Keepout = serde_json::from_value(value.clone()).with_context(|| {
+        format!(
+            "failed to parse board keepout in {}",
+            project.board_path.display()
+        )
+    })?;
+    commit_board_layout_write(root, "delete board keepout", |model, provenance| {
+        build_delete_board_keepout(model, provenance, keepout_uuid, value)
+    })?;
+    let project = load_native_project_with_resolved_board(root)?;
+    Ok(NativeProjectBoardKeepoutMutationReportView {
+        action: "delete_board_keepout".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        keepout_uuid: keepout.uuid.to_string(),
+        kind: keepout.kind,
+        layer_count: keepout.layers.len(),
+        vertex_count: keepout.polygon.vertices.len(),
+    })
+}
+
+pub(crate) fn set_native_project_board_outline(
+    root: &Path,
+    polygon: Polygon,
+) -> Result<NativeProjectBoardOutlineMutationReportView> {
+    let project = load_native_project_with_resolved_board(root)?;
+    commit_board_layout_write(root, "set board outline", |model, provenance| {
+        build_set_board_outline(model, provenance, project.board.uuid, &polygon)
+    })?;
+    let project = load_native_project_with_resolved_board(root)?;
+    Ok(NativeProjectBoardOutlineMutationReportView {
+        action: "set_board_outline".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        vertex_count: polygon.vertices.len(),
+        closed: polygon.closed,
+    })
+}
+
+pub(crate) fn set_native_project_board_stackup(
+    root: &Path,
+    layers: Vec<StackupLayer>,
+) -> Result<NativeProjectBoardStackupMutationReportView> {
+    let project = load_native_project_with_resolved_board(root)?;
+    let layer_count = layers.len();
+    commit_board_layout_write(root, "set board stackup", |model, provenance| {
+        build_set_board_stackup(model, provenance, project.board.uuid, &layers)
+    })?;
+    let project = load_native_project_with_resolved_board(root)?;
+    Ok(NativeProjectBoardStackupMutationReportView {
+        action: "set_board_stackup".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        layer_count,
+    })
+}
+
+pub(crate) fn set_native_project_board_name(
+    root: &Path,
+    name: String,
+) -> Result<NativeProjectBoardNameMutationReportView> {
+    let name = name.trim().to_string();
+    if name.is_empty() {
+        bail!("board name must not be empty");
+    }
+    let project = load_native_project_with_resolved_board(root)?;
+    commit_board_layout_write(root, "set board name", |model, provenance| {
+        build_set_board_name(model, provenance, project.board.uuid, name.clone())
+    })?;
+    let project = load_native_project_with_resolved_board(root)?;
+    Ok(NativeProjectBoardNameMutationReportView {
+        action: "set_board_name".to_string(),
+        project_root: project.root.display().to_string(),
+        board_path: project.board_path.display().to_string(),
+        board_uuid: project.board.uuid.to_string(),
+        name: project.board.name,
+    })
+}

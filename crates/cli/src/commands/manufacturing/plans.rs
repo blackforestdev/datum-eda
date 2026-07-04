@@ -16,7 +16,7 @@ use uuid::Uuid;
 
 use super::load_native_project_with_resolved_board;
 
-use crate::command_project::cli_commit_source;
+use crate::cli_commit_source;
 
 fn cli_provenance(reason: &str) -> Result<WriteProvenance> {
     Ok(WriteProvenance::new(

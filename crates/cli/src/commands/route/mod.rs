@@ -9,6 +9,10 @@
 //     corridor, preflight, and the path-candidate strategies
 //     (path_candidate_orthogonal_graph_spine stays module-private, as before).
 //   - main.rs: glob re-export of main_route_proposal.rs (now views.rs).
+//
+// routing_substrate.rs joined in the wave-2 endgame lane: it came from
+// command_project_native_surface.rs (dissolved), which exported its two
+// query/render fns by name; the list below reproduces that.
 
 mod apply;
 mod corridor;
@@ -54,6 +58,7 @@ mod path_candidate_via_explain;
 mod preflight;
 mod proposal;
 mod proposal_substrate;
+mod routing_substrate;
 mod views;
 
 pub(crate) use self::apply::*;
@@ -216,4 +221,7 @@ pub(crate) use self::preflight::{
 };
 pub(crate) use self::proposal::*;
 pub(crate) use self::proposal_substrate::*;
+pub(crate) use self::routing_substrate::{
+    query_native_project_routing_substrate, render_native_project_routing_substrate_text,
+};
 pub(crate) use self::views::*;

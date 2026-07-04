@@ -18,6 +18,7 @@ mod silkscreen;
 mod views;
 mod views_inspect;
 mod views_mechanical;
+mod views_render;
 mod views_set;
 mod views_silkscreen;
 
@@ -68,5 +69,6 @@ pub(crate) use self::silkscreen::{
 pub(crate) use self::views::*;
 pub(crate) use self::views_inspect::*;
 pub(crate) use self::views_mechanical::*;
+pub(crate) use self::views_render::*;
 pub(crate) use self::views_set::*;
 pub(crate) use self::views_silkscreen::*;
