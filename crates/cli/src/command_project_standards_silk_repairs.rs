@@ -49,7 +49,7 @@ pub(super) fn append_silk_clearance_repair_proposals(
         let proposal_id = standards_repair_proposal_id(model, "silk_clearance", text_id, &codes);
         let prepared = build_set_board_text(
             model,
-            standards_repair_provenance("standards silkscreen-clearance repair proposal"),
+            standards_repair_provenance("standards silkscreen-clearance repair proposal")?,
             &text,
         )?;
         let readiness = create_standards_repair_proposal(

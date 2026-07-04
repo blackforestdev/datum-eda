@@ -6,13 +6,15 @@ use eda_engine::api::native_write::board_components::{
 };
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::board::PlacedPackage;
-use eda_engine::substrate::{CommitSource, ProjectResolver};
+use eda_engine::substrate::ProjectResolver;
 use uuid::Uuid;
 
 use super::{
     NativeProjectBoardComponentMutationReportView, load_native_project_with_resolved_board,
     native_project_board_component_report,
 };
+
+use crate::command_project::cli_commit_source;
 
 pub(crate) fn set_native_project_board_component_layer(
     root: &Path,
@@ -24,7 +26,7 @@ pub(crate) fn set_native_project_board_component_layer(
         &model,
         WriteProvenance::new(
             "datum-eda-cli",
-            CommitSource::Cli,
+            cli_commit_source()?,
             "set board component layer",
         ),
         component_uuid,

@@ -8,10 +8,12 @@ use eda_engine::api::native_write::component_instances::{
 };
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::substrate::{
-    CommitSource, ComponentInstance, ComponentInstanceAuthority, ProjectResolver,
+    ComponentInstance, ComponentInstanceAuthority, ProjectResolver,
 };
 use serde::Serialize;
 use uuid::Uuid;
+
+use crate::command_project::cli_commit_source;
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectComponentInstancesView {
@@ -65,7 +67,7 @@ pub(crate) fn bind_native_project_component_instance(
     )?;
     let (prepared, component_instance_id) = build_bind_component_instance(
         &model,
-        cli_provenance("bind component instance"),
+        cli_provenance("bind component instance")?,
         component_instance_id,
         &spec,
     )?;
@@ -103,7 +105,7 @@ pub(crate) fn set_native_project_component_instance(
     )?;
     let prepared = build_set_component_instance(
         &model,
-        cli_provenance("set component instance"),
+        cli_provenance("set component instance")?,
         component_instance_id,
         &spec,
     )?;
@@ -129,7 +131,7 @@ pub(crate) fn delete_native_project_component_instance(
     let mut model = ProjectResolver::new(root).resolve()?;
     let (prepared, previous) = build_delete_component_instance(
         &model,
-        cli_provenance("delete component instance"),
+        cli_provenance("delete component instance")?,
         component_instance_id,
     )?;
     let report = commit_prepared(&mut model, root, prepared)?;
@@ -142,8 +144,8 @@ pub(crate) fn delete_native_project_component_instance(
     ))
 }
 
-fn cli_provenance(reason: &str) -> WriteProvenance {
-    WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason)
+fn cli_provenance(reason: &str) -> Result<WriteProvenance> {
+    Ok(WriteProvenance::new("datum-eda-cli", cli_commit_source()?, reason))
 }
 
 fn component_instance_spec(

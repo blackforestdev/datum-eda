@@ -9,7 +9,7 @@ use eda_engine::import::ids_sidecar::compute_source_hash_file;
 use eda_engine::import::kicad::{
     footprint_package_import_key, import_footprint_document_with_import_map,
 };
-use eda_engine::substrate::{CommitSource, ImportMapEntry, ProjectResolver};
+use eda_engine::substrate::{ImportMapEntry, ProjectResolver};
 use serde::Serialize;
 use uuid::Uuid;
 
@@ -17,6 +17,8 @@ use super::command_project_imports::{
     source_shard_id_for_relative_path, validate_project_local_pool_path,
 };
 use super::resolve_native_project_pool_path;
+
+use crate::command_project::cli_commit_source;
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectKiCadFootprintImportView {
@@ -74,7 +76,7 @@ pub(crate) fn import_native_project_kicad_footprint(
         &before,
         WriteProvenance::new(
             "datum-eda-cli",
-            CommitSource::Cli,
+            cli_commit_source()?,
             format!("import KiCad footprint {}", source.display()),
         ),
         pool_path,

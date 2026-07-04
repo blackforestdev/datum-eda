@@ -7,7 +7,7 @@ use eda_engine::api::native_write::schematic_connectivity::{
 };
 use eda_engine::api::native_write::schematic_symbols::build_place_schematic_symbol;
 use eda_engine::substrate::{
-    CommitSource, ProjectResolver, Proposal, ProposalCreateRequest, ProposalSource,
+    ProjectResolver, Proposal, ProposalCreateRequest, ProposalSource,
     create_draft_proposal_from_batch,
 };
 use serde::Serialize;
@@ -136,7 +136,7 @@ pub(crate) fn propose_place_native_project_symbol(
         &model,
         WriteProvenance::new(
             "datum-eda-cli",
-            CommitSource::Cli,
+            cli_commit_source()?,
             "propose place schematic symbol",
         ),
         sheet_uuid,
@@ -219,7 +219,7 @@ pub(crate) fn propose_place_native_project_label(
         &model,
         WriteProvenance::new(
             "datum-eda-cli",
-            CommitSource::Cli,
+            cli_commit_source()?,
             "propose place schematic label",
         ),
         sheet_uuid,
@@ -290,7 +290,7 @@ pub(crate) fn propose_draw_native_project_wire(
         &model,
         WriteProvenance::new(
             "datum-eda-cli",
-            CommitSource::Cli,
+            cli_commit_source()?,
             "propose draw schematic wire",
         ),
         sheet_uuid,

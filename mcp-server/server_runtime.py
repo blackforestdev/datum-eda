@@ -870,7 +870,16 @@ def _install_daemon_client_methods() -> None:
         setattr(EngineDaemonClient, name, call_method)
 _install_daemon_client_methods()
 from server_runtime_library import install_library_methods; from server_runtime_project_query import install_project_query_methods; from server_runtime_proposals import install_proposal_authoring_methods; from server_runtime_schematic_drawing import install_schematic_drawing_methods; from server_runtime_schematic_sheet import install_schematic_sheet_methods; from server_runtime_schematic_symbol import install_schematic_symbol_methods; install_library_methods(EngineDaemonClient); install_project_query_methods(EngineDaemonClient); install_proposal_authoring_methods(EngineDaemonClient, _append_optional); install_schematic_drawing_methods(EngineDaemonClient, _append_optional); install_schematic_sheet_methods(EngineDaemonClient, _append_optional); install_schematic_symbol_methods(EngineDaemonClient, _append_optional)
+# AI-provenance default for MCP-originated CLI-shelled dispatches. MCP is the
+# AI surface, so CLI subprocesses spawned by the running server inherit
+# DATUM_COMMIT_SOURCE=assistant (the CLI facade maps it onto CommitSource and
+# the substrate's proposal-gating policy keys on it). Operators can override by
+# exporting DATUM_COMMIT_SOURCE themselves before launching the server —
+# subprocess env is inherited, so an explicit operator value wins. Library
+# authoring methods keep their pinned "tool" value (cli_run_kwargs_for_method).
+MCP_DEFAULT_COMMIT_SOURCE = "assistant"
 def run_server() -> None:
+    os.environ.setdefault("DATUM_COMMIT_SOURCE", MCP_DEFAULT_COMMIT_SOURCE)
     host = StdioToolHost(EngineDaemonClient())
     host.run_stdio()
 if __name__ == "__main__":

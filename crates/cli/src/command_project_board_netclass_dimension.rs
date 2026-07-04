@@ -6,7 +6,7 @@ use eda_engine::api::native_write::board_routing::{
 };
 use eda_engine::api::native_write::{PreparedWrite, WriteProvenance, commit_prepared};
 use eda_engine::error::EngineError;
-use eda_engine::substrate::{CommitSource, DesignModel, ProjectResolver};
+use eda_engine::substrate::{DesignModel, ProjectResolver};
 
 use super::*;
 
@@ -183,7 +183,7 @@ where
     let mut model = ProjectResolver::new(root).resolve()?;
     let prepared = build(
         &model,
-        WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason),
+        WriteProvenance::new("datum-eda-cli", cli_commit_source()?, reason),
     )?;
     commit_prepared(&mut model, root, prepared)
         .with_context(|| format!("failed to commit {reason}"))?;

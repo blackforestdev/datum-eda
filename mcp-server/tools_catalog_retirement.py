@@ -2,40 +2,67 @@ from __future__ import annotations
 
 from tools_catalog_legacy_aliases import _LEGACY_CANONICAL_ALIAS_NAMES
 
+# Retired tombstones: former hidden non-journaled daemon write aliases whose
+# daemon dispatch arms and hidden tool specs were removed once their canonical
+# journaled replacements shipped. The name -> replacement mapping is preserved
+# so clients calling a retired tool get a graceful error pointing at the
+# canonical journaled flow (see tool_dispatch.dispatch_tool_call).
+RETIRED_TOOL_TOMBSTONE_CRITERIA = "canonical journaled replacement shipped"
+RETIRED_TOOL_TOMBSTONES: dict[str, dict[str, object]] = {
+    name: {
+        "status": "retired",
+        "criteria": RETIRED_TOOL_TOMBSTONE_CRITERIA,
+        "replacements": replacements,
+    }
+    for name, replacements in {
+        "move_component": ["datum.pcb.move_component"],
+        "rotate_component": ["datum.pcb.rotate_component"],
+        "flip_component": ["datum.pcb.flip_component"],
+        "set_value": ["datum.pcb.set_component_value"],
+        "set_reference": ["datum.pcb.set_component_reference"],
+        "assign_part": ["datum.pcb.set_component_part"],
+        "set_package": ["datum.pcb.set_component_package"],
+        "set_package_with_part": [
+            "datum.pcb.set_component_package",
+            "datum.pcb.set_component_part",
+        ],
+        "replace_component": [
+            "datum.proposal.create_board_component_replacement",
+            "datum.proposal.accept_apply",
+        ],
+        "replace_components": [
+            "datum.proposal.create_board_component_replacements",
+            "datum.proposal.accept_apply",
+        ],
+        "apply_component_replacement_plan": [
+            "datum.proposal.create_board_component_replacement_plan",
+            "datum.proposal.accept_apply",
+        ],
+    }.items()
+}
+
 HIDDEN_COMPATIBILITY_REPLACEMENTS: dict[str, list[str]] = {
-    "move_component": ["datum.pcb.move_component"],
-    "rotate_component": ["datum.pcb.rotate_component"],
-    "flip_component": ["datum.pcb.flip_component"],
-    "set_value": ["datum.pcb.set_component_value"],
-    "set_reference": ["datum.pcb.set_component_reference"],
-    "assign_part": ["datum.pcb.set_component_part"],
-    "set_package": ["datum.pcb.set_component_package"],
-    "set_package_with_part": [
-        "datum.pcb.set_component_package",
-        "datum.pcb.set_component_part",
-    ],
-    "replace_component": [
-        "datum.proposal.create_board_component_replacement",
-        "datum.proposal.accept_apply",
-    ],
-    "replace_components": [
+    # Terminally frozen imported-session writers (no journaled equivalent will
+    # be built): the native workflow is a one-time native import followed by
+    # the journaled datum.pcb.* / datum.proposal.* flow.
+    "apply_component_replacement_policy": [
         "datum.proposal.create_board_component_replacements",
         "datum.proposal.accept_apply",
     ],
-    "apply_component_replacement_plan": [
+    "apply_scoped_component_replacement_policy": [
+        "datum.replacement.get_scoped_plan",
+        "datum.proposal.create_board_component_replacements",
+        "datum.proposal.accept_apply",
+    ],
+    "apply_scoped_component_replacement_plan": [
+        "datum.replacement.get_scoped_plan",
         "datum.proposal.create_board_component_replacement_plan",
         "datum.proposal.accept_apply",
     ],
-    "apply_component_replacement_policy": [
-        "pending:journaled_component_replacement_policy_apply"
+    "set_net_class": [
+        "datum.pcb.place_net_class",
+        "datum.pcb.edit_net_class",
     ],
-    "apply_scoped_component_replacement_policy": [
-        "pending:journaled_scoped_component_replacement_policy_apply"
-    ],
-    "apply_scoped_component_replacement_plan": [
-        "pending:journaled_scoped_component_replacement_plan_apply"
-    ],
-    "set_net_class": ["pending:journaled_net_class_assignment"],
     "get_check_report": ["datum.check.run"],
     "run_erc": ["datum.check.run"],
     "run_drc": ["datum.check.run"],

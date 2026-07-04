@@ -8,7 +8,7 @@ use eda_engine::api::native_write::board_components::{
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::board::PlacedPackage;
 use eda_engine::ir::geometry::Point;
-use eda_engine::substrate::{CommitSource, ProjectResolver};
+use eda_engine::substrate::ProjectResolver;
 use uuid::Uuid;
 
 use super::{
@@ -17,8 +17,10 @@ use super::{
     materialize_supported_pool_package_graphics, native_project_board_component_report,
 };
 
-fn cli_provenance(reason: &str) -> WriteProvenance {
-    WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason)
+use crate::command_project::cli_commit_source;
+
+fn cli_provenance(reason: &str) -> Result<WriteProvenance> {
+    Ok(WriteProvenance::new("datum-eda-cli", cli_commit_source()?, reason))
 }
 
 fn commit_board_component_edit(
@@ -28,7 +30,7 @@ fn commit_board_component_edit(
     edit: BoardPackageEdit,
 ) -> Result<()> {
     let mut model = ProjectResolver::new(root).resolve()?;
-    let prepared = build_edit_board_package(&model, cli_provenance(reason), component_uuid, edit)?;
+    let prepared = build_edit_board_package(&model, cli_provenance(reason)?, component_uuid, edit)?;
     commit_prepared(&mut model, root, prepared)?;
     Ok(())
 }
@@ -58,7 +60,7 @@ pub(crate) fn place_native_project_board_component(
     let mut model = ProjectResolver::new(root).resolve()?;
     let prepared = build_place_board_package(
         &model,
-        cli_provenance("place board component"),
+        cli_provenance("place board component")?,
         &BoardPackagePlacement {
             package: component.clone(),
             materialized,
@@ -434,7 +436,7 @@ pub(crate) fn delete_native_project_board_component(
     let mut model = ProjectResolver::new(root).resolve()?;
     let prepared = build_delete_board_package(
         &model,
-        cli_provenance("delete board component"),
+        cli_provenance("delete board component")?,
         component_uuid,
         value,
         materialized,

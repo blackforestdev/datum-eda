@@ -12,11 +12,13 @@ use eda_engine::import::kicad::{
     KiCadBoardImportIdentity, import_board_document_with_import_map_identities,
 };
 use eda_engine::pool::Pool;
-use eda_engine::substrate::{CommitSource, ImportMapEntry, ProjectResolver, SourceShardKind};
+use eda_engine::substrate::{ImportMapEntry, ProjectResolver, SourceShardKind};
 use serde::Serialize;
 use uuid::Uuid;
 
 use super::command_project_imports_eagle_import_map::eagle_pool_import_map_entries;
+
+use crate::command_project::cli_commit_source;
 
 // Deterministic import identity/path derivations are engine-owned now
 // (native_write::imports); re-exported for the sibling import modules.
@@ -102,7 +104,7 @@ pub(crate) fn import_native_project_kicad_board(
         &before,
         WriteProvenance::new(
             "datum-eda-cli",
-            CommitSource::Cli,
+            cli_commit_source()?,
             format!("import KiCad board {}", source.display()),
         ),
         board_id,
@@ -173,7 +175,7 @@ pub(crate) fn import_native_project_eagle_library(
         &before,
         WriteProvenance::new(
             "datum-eda-cli",
-            CommitSource::Cli,
+            cli_commit_source()?,
             format!("import Eagle library {}", source.display()),
         ),
         pool_path,

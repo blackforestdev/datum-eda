@@ -3,8 +3,10 @@ use std::path::{Path, PathBuf};
 use anyhow::Result;
 use eda_engine::api::native_write::artifacts::build_artifact_evidence;
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
-use eda_engine::substrate::{ArtifactMetadata, CommitSource, DesignModel, OutputJobRun};
+use eda_engine::substrate::{ArtifactMetadata, DesignModel, OutputJobRun};
 use uuid::Uuid;
+
+use crate::command_project::cli_commit_source;
 
 pub(super) fn commit_gerber_set_evidence(
     root: &Path,
@@ -16,7 +18,7 @@ pub(super) fn commit_gerber_set_evidence(
         model,
         WriteProvenance::new(
             "datum-eda-cli",
-            CommitSource::Cli,
+            cli_commit_source()?,
             "record Gerber set generated evidence",
         ),
         artifact_metadata,

@@ -8,7 +8,7 @@ use eda_engine::api::native_write::manufacturing::{
 };
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::substrate::{
-    CommitSource, ManufacturingPlan, ObjectRevision, PRODUCTION_RECORD_SCHEMA_VERSION,
+    ManufacturingPlan, ObjectRevision, PRODUCTION_RECORD_SCHEMA_VERSION,
     PanelBoardInstance, PanelProjection, ProjectResolver,
 };
 use serde::Serialize;
@@ -16,8 +16,10 @@ use uuid::Uuid;
 
 use super::load_native_project_with_resolved_board;
 
-fn cli_provenance(reason: &str) -> WriteProvenance {
-    WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason)
+use crate::command_project::cli_commit_source;
+
+fn cli_provenance(reason: &str) -> Result<WriteProvenance> {
+    Ok(WriteProvenance::new("datum-eda-cli", cli_commit_source()?, reason))
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -111,7 +113,7 @@ pub(crate) fn create_native_project_manufacturing_plan(
     };
     let prepared = build_create_manufacturing_plan(
         &model,
-        cli_provenance("create manufacturing plan"),
+        cli_provenance("create manufacturing plan")?,
         &plan,
     )?;
     commit_prepared(&mut model, root, prepared)?;
@@ -149,7 +151,7 @@ pub(crate) fn delete_native_project_manufacturing_plan(
         .join(format!("{manufacturing_plan_id}.json"));
     let prepared = build_delete_manufacturing_plan(
         &model,
-        cli_provenance("delete manufacturing plan"),
+        cli_provenance("delete manufacturing plan")?,
         &plan,
     )?;
     commit_prepared(&mut model, root, prepared)?;
@@ -225,7 +227,7 @@ pub(crate) fn update_native_project_manufacturing_plan(
         .join(format!("{manufacturing_plan_id}.json"));
     let prepared = build_set_manufacturing_plan(
         &model,
-        cli_provenance("update manufacturing plan"),
+        cli_provenance("update manufacturing plan")?,
         &previous_plan,
         &plan,
     )?;
@@ -296,7 +298,7 @@ pub(crate) fn create_native_project_panel_projection(
         object_revision: ObjectRevision(0),
     };
     let prepared =
-        build_create_panel_projection(&model, cli_provenance("create panel projection"), &panel)?;
+        build_create_panel_projection(&model, cli_provenance("create panel projection")?, &panel)?;
     commit_prepared(&mut model, root, prepared)?;
     Ok(panel_projection_mutation(
         project.manifest.uuid,
@@ -331,7 +333,7 @@ pub(crate) fn delete_native_project_panel_projection(
         .join(".datum/panel_projections")
         .join(format!("{panel_projection_id}.json"));
     let prepared =
-        build_delete_panel_projection(&model, cli_provenance("delete panel projection"), &panel)?;
+        build_delete_panel_projection(&model, cli_provenance("delete panel projection")?, &panel)?;
     commit_prepared(&mut model, root, prepared)?;
     Ok(panel_projection_mutation(
         model.project.project_id,
@@ -402,7 +404,7 @@ pub(crate) fn update_native_project_panel_projection(
         .join(format!("{panel_projection_id}.json"));
     let prepared = build_set_panel_projection(
         &model,
-        cli_provenance("update panel projection"),
+        cli_provenance("update panel projection")?,
         &previous_panel,
         &panel,
     )?;

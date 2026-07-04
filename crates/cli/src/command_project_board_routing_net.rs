@@ -12,7 +12,7 @@ use eda_engine::board::{ImpedanceSpec, Net, Track, Via, Zone};
 use eda_engine::error::EngineError;
 use eda_engine::ir::geometry::{Point, Polygon};
 use eda_engine::substrate::{
-    CommitSource, DesignModel, ModelRevision, ProjectResolver, ZONE_FILL_SCHEMA_VERSION, ZoneFill,
+    DesignModel, ModelRevision, ProjectResolver, ZONE_FILL_SCHEMA_VERSION, ZoneFill,
     compute_bounded_zone_fill,
 };
 use serde::Serialize;
@@ -25,6 +25,8 @@ use super::{
     native_project_board_track_report, native_project_board_via_report,
     native_project_board_zone_report,
 };
+
+use crate::command_project::cli_commit_source;
 
 #[path = "command_project_zone_fill_context.rs"]
 mod command_project_zone_fill_context;
@@ -153,7 +155,7 @@ pub(crate) fn fill_native_project_zones(
     }
     if !zone_fills.is_empty() {
         let mut model = model;
-        let prepared = build_set_zone_fills(&model, cli_provenance("fill zones"), &zone_fills)?;
+        let prepared = build_set_zone_fills(&model, cli_provenance("fill zones")?, &zone_fills)?;
         commit_prepared(&mut model, root, prepared)?;
     }
 
@@ -664,8 +666,8 @@ pub(crate) fn delete_native_project_board_track(
     ))
 }
 
-fn cli_provenance(reason: &str) -> WriteProvenance {
-    WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason)
+fn cli_provenance(reason: &str) -> Result<WriteProvenance> {
+    Ok(WriteProvenance::new("datum-eda-cli", cli_commit_source()?, reason))
 }
 
 fn commit_board_routing_write<F>(root: &Path, reason: &str, build: F) -> Result<()>
@@ -673,7 +675,7 @@ where
     F: FnOnce(&DesignModel, WriteProvenance) -> Result<PreparedWrite, EngineError>,
 {
     let mut model = ProjectResolver::new(root).resolve()?;
-    let prepared = build(&model, cli_provenance(reason))?;
+    let prepared = build(&model, cli_provenance(reason)?)?;
     commit_prepared(&mut model, root, prepared)?;
     Ok(())
 }

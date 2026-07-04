@@ -7,7 +7,7 @@ use eda_engine::api::native_write::forward_annotation::{
 };
 use eda_engine::board::PlacedPackage;
 use eda_engine::substrate::{
-    CommitSource, ProjectResolver, Proposal, apply_accepted_proposal,
+    ProjectResolver, Proposal, apply_accepted_proposal,
     commit_proposal_metadata_journaled,
 };
 
@@ -69,7 +69,7 @@ pub(crate) fn build_forward_annotation_proposal(
         &model,
         WriteProvenance::new(
             "datum-eda-cli",
-            CommitSource::Cli,
+            cli_commit_source()?,
             "forward annotation accepted proposal",
         ),
         "forward annotation self-sufficient board updates".to_string(),

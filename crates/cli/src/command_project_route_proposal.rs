@@ -42,7 +42,7 @@ use eda_engine::board::RoutePathCandidateAuthoredCopperGraphPolicy as EngineAuth
 use eda_engine::board::route_proposal::{self, RouteProposalCandidate, RouteProposalProfile};
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::board::{Net, NetClass, PadShape, PlacedPad, StackupLayer, StackupLayerType, Track, Via};
-use eda_engine::substrate::{CommitSource, ProjectResolver};
+use eda_engine::substrate::ProjectResolver;
 use serde_json::Value;
 
 const ROUTE_PROPOSAL_ARTIFACT_KIND: &str = "native_route_proposal_artifact";
@@ -742,12 +742,12 @@ fn write_route_strategy_batch_requests_manifest(path: &Path, requests: &[RouteSt
 }
 
 /// Provenance stamped on every curated route-strategy fixture commit.
-fn route_strategy_fixture_provenance() -> WriteProvenance {
-    WriteProvenance::new(
+fn route_strategy_fixture_provenance() -> Result<WriteProvenance> {
+    Ok(WriteProvenance::new(
         "datum-eda-cli",
-        CommitSource::Cli,
+        cli_commit_source()?,
         "seed route strategy curated fixture board",
-    )
+    ))
 }
 
 /// Commit one curated fixture board spec as a single composed batch through
@@ -761,7 +761,7 @@ fn commit_route_strategy_fixture_board(
     let mut model = ProjectResolver::new(root).resolve()?;
     let prepared = route_proposal::build_route_strategy_fixture_board_write(
         &model,
-        route_strategy_fixture_provenance(),
+        route_strategy_fixture_provenance()?,
         board_uuid,
         spec,
     )?;
@@ -1040,7 +1040,7 @@ fn seed_curated_route_strategy_no_proposal_fixture(root: &Path) -> Result<(Uuid,
     let mut model = ProjectResolver::new(root).resolve()?;
     let prepared = route_proposal::build_route_strategy_fixture_net_class_clear(
         &model,
-        route_strategy_fixture_provenance(),
+        route_strategy_fixture_provenance()?,
         &route_strategy_fixture_net(net_uuid, "SIG", Uuid::from_u128(0xc202)),
     )?;
     commit_prepared(&mut model, root, prepared)?;

@@ -12,7 +12,7 @@ use eda_engine::api::native_write::{PreparedWrite, WriteProvenance, commit_prepa
 use eda_engine::board::{BoardText, Keepout, StackupLayer};
 use eda_engine::error::EngineError;
 use eda_engine::ir::geometry::{Point, Polygon};
-use eda_engine::substrate::{CommitSource, DesignModel, ProjectResolver};
+use eda_engine::substrate::{DesignModel, ProjectResolver};
 use eda_engine::text::{TextFamilyId, TextHAlign, TextRenderIntent, TextStyleId, TextVAlign};
 use uuid::Uuid;
 
@@ -21,6 +21,8 @@ use super::{
     NativeProjectBoardOutlineMutationReportView, NativeProjectBoardStackupMutationReportView,
     NativeProjectBoardTextMutationReportView, load_native_project_with_resolved_board,
 };
+
+use crate::command_project::cli_commit_source;
 
 pub(crate) fn query_native_project_board_texts(root: &Path) -> Result<Vec<BoardText>> {
     let project = load_native_project_with_resolved_board(root)?;
@@ -357,7 +359,7 @@ where
     let mut model = ProjectResolver::new(root).resolve()?;
     let prepared = build(
         &model,
-        WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason),
+        WriteProvenance::new("datum-eda-cli", cli_commit_source()?, reason),
     )?;
     commit_prepared(&mut model, root, prepared)
         .with_context(|| format!("failed to commit {reason}"))?;

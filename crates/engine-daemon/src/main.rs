@@ -15,14 +15,11 @@ use std::path::{Path, PathBuf};
 
 use anyhow::Result;
 use eda_engine::api::{
-    AssignPartInput, ComponentReplacementPolicy, ComponentReplacementScope, Engine,
-    FlipComponentInput, MoveComponentInput, PlannedComponentReplacementInput,
-    PolicyDrivenComponentReplacementInput, ReplaceComponentInput, RotateComponentInput,
-    ScopedComponentReplacementOverride, ScopedComponentReplacementPlanEdit,
-    ScopedComponentReplacementPolicyInput, SetNetClassInput, SetPackageInput,
-    SetPackageWithPartInput, SetReferenceInput, SetValueInput, ViolationDomain,
+    ComponentReplacementPolicy, ComponentReplacementScope, Engine,
+    PolicyDrivenComponentReplacementInput, ScopedComponentReplacementOverride,
+    ScopedComponentReplacementPlanEdit, ScopedComponentReplacementPolicyInput, SetNetClassInput,
+    ViolationDomain,
 };
-use eda_engine::ir::geometry::{LayerId, Point};
 use eda_engine::rules::ast::RuleType;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
@@ -100,75 +97,6 @@ struct RunDrcParams {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 struct SaveParams {
     path: Option<PathBuf>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-struct MoveComponentParams {
-    uuid: uuid::Uuid,
-    x_mm: f64,
-    y_mm: f64,
-    rotation_deg: Option<f64>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-struct FlipComponentParams {
-    uuid: uuid::Uuid,
-    layer: LayerId,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-struct SetValueParams {
-    uuid: uuid::Uuid,
-    value: String,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-struct SetReferenceParams {
-    uuid: uuid::Uuid,
-    reference: String,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-struct AssignPartParams {
-    uuid: uuid::Uuid,
-    part_uuid: uuid::Uuid,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-struct SetPackageParams {
-    uuid: uuid::Uuid,
-    package_uuid: uuid::Uuid,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-struct SetPackageWithPartParams {
-    uuid: uuid::Uuid,
-    package_uuid: uuid::Uuid,
-    part_uuid: uuid::Uuid,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-struct ReplaceComponentParams {
-    uuid: uuid::Uuid,
-    package_uuid: uuid::Uuid,
-    part_uuid: uuid::Uuid,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-struct ReplaceComponentsParams {
-    replacements: Vec<ReplaceComponentParams>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-struct PlannedComponentReplacementParams {
-    uuid: uuid::Uuid,
-    package_uuid: Option<uuid::Uuid>,
-    part_uuid: Option<uuid::Uuid>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-struct ApplyComponentReplacementPlanParams {
-    replacements: Vec<PlannedComponentReplacementParams>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -383,8 +311,6 @@ mod tests {
         JsonRpcResponse::from_json(&line).expect("response should parse")
     }
 
-    #[path = "main_tests_component_mutation_core.rs"]
-    mod component_mutation_core;
     #[path = "main_tests_dispatch_followups_transport.rs"]
     mod dispatch_followups_transport;
     #[path = "main_tests_dispatch_replacements.rs"]
@@ -393,10 +319,6 @@ mod tests {
     mod mutation_basics;
     #[path = "main_tests_native_write.rs"]
     mod native_write;
-    #[path = "main_tests_package_replacements.rs"]
-    mod package_replacements;
-    #[path = "main_tests_package_replacements_apply.rs"]
-    mod package_replacements_apply;
     #[path = "main_tests_query_check.rs"]
     mod query_check;
     #[path = "main_tests_query_check_runs.rs"]

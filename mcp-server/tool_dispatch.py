@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from tools_catalog_data import TOOL_BY_NAME
+from tools_catalog_retirement import RETIRED_TOOL_TOMBSTONES
 
 
 def registered_tool_names() -> list[str]:
@@ -14,6 +15,13 @@ def registered_tool_names() -> list[str]:
 def dispatch_tool_call(daemon: Any, name: str, arguments: dict[str, Any]) -> Any:
     spec = TOOL_BY_NAME.get(name)
     if spec is None:
+        tombstone = RETIRED_TOOL_TOMBSTONES.get(name)
+        if tombstone is not None:
+            replacements = ", ".join(str(r) for r in tombstone.get("replacements", []))
+            raise RuntimeError(
+                f"retired tool: {name} ({tombstone.get('criteria')}); "
+                f"use the journaled replacement flow: {replacements}"
+            )
         raise RuntimeError(f"unknown tool: {name}")
 
     method_name = spec.get("x_dispatch_method", name)

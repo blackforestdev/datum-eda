@@ -2912,7 +2912,7 @@ Status: [x] Closed for scoped M4 slice
 | Engine compiles without GUI deps | [x] | |
 | Test harness (golden file utilities) | [x] | test-harness crate |
 | Test corpus (real designs) | [ ] | tests/corpus/ empty |
-| Daemon JSON-RPC dispatch | [x] | 50 methods in `dispatch.rs`, with imported-board writer bypasses fenced as hidden compatibility and coverage in daemon tests |
+| Daemon JSON-RPC dispatch | [x] | 39 methods in `dispatch.rs`, with the 11 retired imported-board writer arms removed (Retired tombstones point at datum.pcb.*/datum.proposal.*) and the 4 terminally frozen imported-session writers fenced as hidden compatibility, with coverage in daemon tests |
 | Daemon socket transport | [x] | `main()` parses `--socket` and serves Unix socket; live smoke is environment-gated because sandboxed local runs deny socket IPC |
 | MCP Python server (tool host) | [x] | Tool definitions + stdio dispatch |
 | MCP→daemon transport | [x] | `EngineDaemonClient.call()` uses Unix socket JSON-RPC; behavioral parity remains covered separately from live socket smoke |

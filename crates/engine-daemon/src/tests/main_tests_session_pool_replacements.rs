@@ -1,4 +1,20 @@
+// Read-side replacement planning dispatch tests. Setup part assignment uses the
+// engine API directly because the retired `assign_part` dispatch arm no longer
+// exists (canonical journaled replacement: datum.pcb.set_component_part).
+
+use eda_engine::api::AssignPartInput;
+
 use super::*;
+
+fn assign_part_via_engine(engine: &mut Engine, component_uuid: &str, part_uuid: &serde_json::Value) {
+    engine
+        .assign_part(AssignPartInput {
+            uuid: uuid::Uuid::parse_str(component_uuid).expect("component uuid should parse"),
+            part_uuid: uuid::Uuid::parse_str(part_uuid.as_str().expect("part uuid should be str"))
+                .expect("part uuid should parse"),
+        })
+        .expect("assign_part should succeed");
+}
 
 #[test]
 fn get_package_change_candidates_dispatch_returns_unique_candidate_report() {
@@ -36,19 +52,12 @@ fn get_package_change_candidates_dispatch_returns_unique_candidate_report() {
             params: json!({"query": "LMV321"}),
         },
     );
-    let assign = dispatch_request(
+    let lmv321_part_uuid = search.result.as_ref().unwrap()[0]["uuid"].clone();
+    assign_part_via_engine(
         &mut engine,
-        JsonRpcRequest {
-            jsonrpc: "2.0".into(),
-            id: json!(4),
-            method: "assign_part".into(),
-            params: json!({
-                "uuid": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
-                "part_uuid": search.result.as_ref().unwrap()[0]["uuid"],
-            }),
-        },
+        "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+        &lmv321_part_uuid,
     );
-    assert!(assign.error.is_none(), "{assign:?}");
 
     let response = dispatch_request(
         &mut engine,
@@ -103,19 +112,11 @@ fn get_part_change_candidates_dispatch_returns_compatible_part_report() {
         },
     );
     let lmv321_part_uuid = search.result.as_ref().unwrap()[0]["uuid"].clone();
-    let assign = dispatch_request(
+    assign_part_via_engine(
         &mut engine,
-        JsonRpcRequest {
-            jsonrpc: "2.0".into(),
-            id: json!(4),
-            method: "assign_part".into(),
-            params: json!({
-                "uuid": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
-                "part_uuid": lmv321_part_uuid,
-            }),
-        },
+        "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+        &lmv321_part_uuid,
     );
-    assert!(assign.error.is_none(), "{assign:?}");
 
     let response = dispatch_request(
         &mut engine,
@@ -174,19 +175,11 @@ fn get_component_replacement_plan_dispatch_returns_combined_report() {
         },
     );
     let lmv321_part_uuid = search.result.as_ref().unwrap()[0]["uuid"].clone();
-    let assign = dispatch_request(
+    assign_part_via_engine(
         &mut engine,
-        JsonRpcRequest {
-            jsonrpc: "2.0".into(),
-            id: json!(4),
-            method: "assign_part".into(),
-            params: json!({
-                "uuid": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
-                "part_uuid": lmv321_part_uuid,
-            }),
-        },
+        "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+        &lmv321_part_uuid,
     );
-    assert!(assign.error.is_none(), "{assign:?}");
 
     let response = dispatch_request(
         &mut engine,
@@ -242,23 +235,11 @@ fn get_scoped_component_replacement_plan_dispatch_returns_resolved_preview() {
         },
     );
     let lmv321_part_uuid = search.result.as_ref().unwrap()[0]["uuid"].clone();
-    for (id, uuid) in [
-        (4, "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
-        (5, "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+    for uuid in [
+        "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+        "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
     ] {
-        let assign = dispatch_request(
-            &mut engine,
-            JsonRpcRequest {
-                jsonrpc: "2.0".into(),
-                id: json!(id),
-                method: "assign_part".into(),
-                params: json!({
-                    "uuid": uuid,
-                    "part_uuid": lmv321_part_uuid,
-                }),
-            },
-        );
-        assert!(assign.error.is_none(), "{assign:?}");
+        assign_part_via_engine(&mut engine, uuid, &lmv321_part_uuid);
     }
 
     let response = dispatch_request(
@@ -333,23 +314,11 @@ fn edit_scoped_component_replacement_plan_dispatch_applies_exclusions_and_overri
     );
     let altamp_part_uuid = altamp.result.as_ref().unwrap()[0]["uuid"].clone();
     let altamp_package_uuid = altamp.result.as_ref().unwrap()[0]["package_uuid"].clone();
-    for (id, uuid) in [
-        (5, "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
-        (6, "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+    for uuid in [
+        "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+        "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
     ] {
-        let assign = dispatch_request(
-            &mut engine,
-            JsonRpcRequest {
-                jsonrpc: "2.0".into(),
-                id: json!(id),
-                method: "assign_part".into(),
-                params: json!({
-                    "uuid": uuid,
-                    "part_uuid": lmv321_part_uuid,
-                }),
-            },
-        );
-        assert!(assign.error.is_none(), "{assign:?}");
+        assign_part_via_engine(&mut engine, uuid, &lmv321_part_uuid);
     }
 
     let preview = dispatch_request(

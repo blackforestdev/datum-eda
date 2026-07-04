@@ -50,7 +50,7 @@ pub(super) fn persist_output_job_run_journaled(
 ) -> Result<PathBuf> {
     let prepared = build_set_output_job_run(
         model,
-        cli_provenance("record output job run generated evidence"),
+        cli_provenance("record output job run generated evidence")?,
         run,
     )?;
     commit_prepared(model, root, prepared)?;

@@ -4,14 +4,16 @@ use anyhow::Result;
 use eda_engine::api::native_write::artifacts::build_artifact_evidence;
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::substrate::{
-    ArtifactMetadata, ArtifactRun, CommitSource, DesignModel, OutputJobRun,
+    ArtifactMetadata, ArtifactRun, DesignModel, OutputJobRun,
 };
 use uuid::Uuid;
 
 use super::super::command_project_artifact_runs::generic_artifact_run;
 
-fn evidence_provenance(reason: impl Into<String>) -> WriteProvenance {
-    WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason)
+use crate::command_project::cli_commit_source;
+
+fn evidence_provenance(reason: impl Into<String>) -> Result<WriteProvenance> {
+    Ok(WriteProvenance::new("datum-eda-cli", cli_commit_source()?, reason))
 }
 
 pub(crate) fn commit_unlinked_artifact_evidence(
@@ -23,7 +25,7 @@ pub(crate) fn commit_unlinked_artifact_evidence(
     let artifact_run = generic_artifact_run(scope, model, artifact_metadata);
     let prepared = build_artifact_evidence(
         model,
-        evidence_provenance(format!("generate unlinked {scope} artifact evidence")),
+        evidence_provenance(format!("generate unlinked {scope} artifact evidence"))?,
         artifact_metadata,
         Some(&artifact_run),
         None,
@@ -41,7 +43,7 @@ pub(crate) fn commit_artifact_metadata_evidence(
 ) -> Result<PathBuf> {
     let prepared = build_artifact_evidence(
         model,
-        evidence_provenance("record generated artifact metadata"),
+        evidence_provenance("record generated artifact metadata")?,
         artifact_metadata,
         None,
         None,
@@ -58,7 +60,7 @@ pub(crate) fn commit_linked_artifact_output_job_evidence(
 ) -> Result<(PathBuf, PathBuf)> {
     let prepared = build_artifact_evidence(
         model,
-        evidence_provenance("record linked artifact output-job evidence"),
+        evidence_provenance("record linked artifact output-job evidence")?,
         artifact_metadata,
         None,
         Some(output_job_run),

@@ -12,7 +12,7 @@ use eda_engine::import::kicad::{
     KiCadSchematicImportIdentity, import_schematic_document_with_import_map_identities,
 };
 use eda_engine::schematic::{Sheet, SheetDefinition, SheetInstance};
-use eda_engine::substrate::{CommitSource, ImportMapEntry, ProjectResolver, SourceShardKind};
+use eda_engine::substrate::{ImportMapEntry, ProjectResolver, SourceShardKind};
 use serde::Serialize;
 use uuid::Uuid;
 
@@ -20,6 +20,8 @@ use super::command_project_imports_schematic_identities::{
     is_same_kicad_schematic_source_entry, schematic_generated_port_import_identities,
     schematic_import_object_source_shards,
 };
+
+use crate::command_project::cli_commit_source;
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectKiCadSchematicImportView {
@@ -90,7 +92,7 @@ pub(crate) fn import_native_project_kicad_schematic(
             &before,
             WriteProvenance::new(
                 "datum-eda-cli",
-                CommitSource::Cli,
+                cli_commit_source()?,
                 format!(
                     "create sheet for KiCad schematic import {}",
                     source.display()
@@ -143,7 +145,7 @@ pub(crate) fn import_native_project_kicad_schematic(
         &before,
         WriteProvenance::new(
             "datum-eda-cli",
-            CommitSource::Cli,
+            cli_commit_source()?,
             format!("import KiCad schematic root sheet {}", source.display()),
         ),
         KiCadSchematicImportSpec {

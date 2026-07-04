@@ -8,13 +8,15 @@ use eda_engine::api::native_write::{PreparedWrite, WriteProvenance, commit_prepa
 use eda_engine::board::{PadAperture, PadShape, PlacedPad};
 use eda_engine::error::EngineError;
 use eda_engine::ir::geometry::Point;
-use eda_engine::substrate::{CommitSource, DesignModel, ProjectResolver};
+use eda_engine::substrate::{DesignModel, ProjectResolver};
 use uuid::Uuid;
 
 use super::{
     NativeProjectBoardPadMutationReportView, load_native_project_with_resolved_board,
     native_project_board_pad_report,
 };
+
+use crate::command_project::cli_commit_source;
 
 pub(crate) fn query_native_project_board_pads(root: &Path) -> Result<Vec<PlacedPad>> {
     let project = load_native_project_with_resolved_board(root)?;
@@ -249,7 +251,7 @@ where
     let mut model = ProjectResolver::new(root).resolve()?;
     let prepared = build(
         &model,
-        WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason),
+        WriteProvenance::new("datum-eda-cli", cli_commit_source()?, reason),
     )?;
     commit_prepared(&mut model, root, prepared)?;
     Ok(())

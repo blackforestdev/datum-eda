@@ -8,7 +8,7 @@ use eda_engine::api::native_write::library::{
 };
 use eda_engine::api::native_write::library_footprint::pool_footprint_payload;
 use eda_engine::substrate::{
-    CommitSource, ProjectResolver, ProposalCreateRequest, ProposalSource,
+    ProjectResolver, ProposalCreateRequest, ProposalSource,
     create_draft_proposal_from_batch,
 };
 use uuid::Uuid;
@@ -26,6 +26,8 @@ use super::command_project_library_payload::read_project_pool_object_payload;
 use super::command_project_proposals::{
     NativeProjectProposalCreateView, validate_proposal_in_model,
 };
+
+use crate::command_project::cli_commit_source;
 
 pub(crate) fn propose_create_native_project_pool_footprint(
     root: &Path,
@@ -399,7 +401,7 @@ fn create_pool_footprint_proposal_from_operations(
         &model,
         WriteProvenance::new(
             "datum-eda-proposal",
-            CommitSource::Cli,
+            cli_commit_source()?,
             "propose native pool footprint update",
         ),
         ensure_pool_ref,

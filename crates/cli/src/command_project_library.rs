@@ -1,5 +1,5 @@
+use std::fs;
 use std::path::{Component, Path, PathBuf};
-use std::{env, fs};
 
 use anyhow::{Context, Result, bail};
 use eda_engine::api::native_write::library::{
@@ -9,7 +9,9 @@ use eda_engine::api::native_write::library::{
     write_pool_model_blob,
 };
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
-use eda_engine::substrate::{CommitSource, ProjectResolver};
+use eda_engine::substrate::ProjectResolver;
+
+use crate::command_project::cli_commit_source;
 use serde::Serialize;
 use sha2::{Digest, Sha256};
 use uuid::Uuid;
@@ -1441,26 +1443,12 @@ pub(super) fn commit_pool_library_operations(
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
     let prepared = build_pool_library_write(
         &model,
-        WriteProvenance::new("datum-eda-cli", pool_library_commit_source()?, reason),
+        WriteProvenance::new("datum-eda-cli", cli_commit_source()?, reason),
         ensure_pool_ref,
         operations,
     )?;
     commit_prepared(&mut model, root, prepared)?;
     Ok(())
-}
-
-fn pool_library_commit_source() -> Result<CommitSource> {
-    let Ok(value) = env::var("DATUM_COMMIT_SOURCE") else {
-        return Ok(CommitSource::Cli);
-    };
-    match value.as_str() {
-        "cli" => Ok(CommitSource::Cli),
-        "tool" => Ok(CommitSource::Tool),
-        "assistant" => Ok(CommitSource::Assistant),
-        _ => bail!(
-            "unsupported DATUM_COMMIT_SOURCE for pool-library authoring: {value}; expected cli, tool, or assistant"
-        ),
-    }
 }
 
 pub(super) fn pool_library_mutation_view(

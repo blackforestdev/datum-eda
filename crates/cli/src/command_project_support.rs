@@ -1,5 +1,25 @@
 use super::*;
 
+/// Resolve the `CommitSource` recorded in CLI-facade write provenance.
+///
+/// Reads `DATUM_COMMIT_SOURCE` so wrapping surfaces (MCP tools, agent shells)
+/// can carry their true provenance through CLI-shelled writes; defaults to
+/// `CommitSource::Cli` when the variable is unset.
+pub(crate) fn cli_commit_source() -> Result<eda_engine::substrate::CommitSource> {
+    use eda_engine::substrate::CommitSource;
+    let Ok(value) = std::env::var("DATUM_COMMIT_SOURCE") else {
+        return Ok(CommitSource::Cli);
+    };
+    match value.as_str() {
+        "cli" => Ok(CommitSource::Cli),
+        "tool" => Ok(CommitSource::Tool),
+        "assistant" => Ok(CommitSource::Assistant),
+        _ => bail!(
+            "unsupported DATUM_COMMIT_SOURCE for pool-library authoring: {value}; expected cli, tool, or assistant"
+        ),
+    }
+}
+
 pub(crate) fn parse_native_polygon_vertices(vertices: &[String]) -> Result<Polygon> {
     if vertices.len() < 3 {
         bail!("polygon requires at least three --vertex entries");

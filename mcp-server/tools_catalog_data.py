@@ -670,81 +670,48 @@ _LEGACY_FLAT_TOOL_SPECS: list[dict[str, object]] = [
     },
 ]
 
+# Terminally frozen imported-session compatibility writers (decision 011): the
+# four daemon write arms below are kept only for the one-time imported-board
+# converter session. No journaled equivalent will be built for them and they
+# die with the converter session. The eleven retired siblings (move_component,
+# rotate_component, flip_component, set_value, set_reference, assign_part,
+# set_package, set_package_with_part, replace_component, replace_components,
+# apply_component_replacement_plan) now live only as Retired tombstones in
+# tools_catalog_retirement.RETIRED_TOOL_TOMBSTONES -- their canonical journaled
+# replacements shipped (datum.pcb.* / datum.proposal.*).
+_FROZEN_IMPORTED_SESSION_RETIREMENT_CRITERIA = (
+    "Terminally frozen imported-session compatibility: no journaled equivalent "
+    "will be built; this surface is removed together with the one-time "
+    "imported-board converter session (decision 011)."
+)
 _HIDDEN_DAEMON_WRITE_TOOL_SPECS: list[dict[str, object]] = [
     {
-        "name": "move_component",
-        "description": "Hidden compatibility alias for moving one component in the currently open daemon session; public native-project writes use datum.pcb.move_component.",
-        "inputSchema": {"type": "object", "properties": {"uuid": {"type": "string"}, "x_mm": {"type": "number"}, "y_mm": {"type": "number"}, "rotation_deg": {"type": ["number", "null"]}}, "required": ["uuid", "x_mm", "y_mm"]},
-    },
-    {
-        "name": "rotate_component",
-        "description": "Hidden compatibility alias for rotating one component in the currently open daemon session; public native-project writes use datum.pcb.rotate_component.",
-        "inputSchema": {"type": "object", "properties": {"uuid": {"type": "string"}, "rotation_deg": {"type": "number"}}, "required": ["uuid", "rotation_deg"]},
-    },
-    {
-        "name": "flip_component",
-        "description": "Hidden compatibility alias for flipping one component in the currently open daemon session; public native-project writes use datum.pcb.flip_component.",
-        "inputSchema": {"type": "object", "properties": {"uuid": {"type": "string"}, "layer": {"type": "integer"}}, "required": ["uuid", "layer"]},
-    },
-    {
-        "name": "set_value",
-        "description": "Hidden compatibility alias for setting one component value in the currently open daemon session; public native-project writes use datum.pcb.set_component_value.",
-        "inputSchema": {"type": "object", "properties": {"uuid": {"type": "string"}, "value": {"type": "string"}}, "required": ["uuid", "value"]},
-    },
-    {
-        "name": "set_reference",
-        "description": "Hidden compatibility alias for setting one component reference in the currently open daemon session; public native-project writes use datum.pcb.set_component_reference.",
-        "inputSchema": {"type": "object", "properties": {"uuid": {"type": "string"}, "reference": {"type": "string"}}, "required": ["uuid", "reference"]},
-    },
-    {
-        "name": "assign_part",
-        "description": "Hidden compatibility alias for assigning one part UUID in the currently open daemon session; public native-project writes use datum.pcb.set_component_part.",
-        "inputSchema": {"type": "object", "properties": {"uuid": {"type": "string"}, "part_uuid": {"type": "string"}}, "required": ["uuid", "part_uuid"]},
-    },
-    {
-        "name": "set_package",
-        "description": "Hidden compatibility alias for assigning one package UUID in the currently open daemon session; public native-project writes use datum.pcb.set_component_package.",
-        "inputSchema": {"type": "object", "properties": {"uuid": {"type": "string"}, "package_uuid": {"type": "string"}}, "required": ["uuid", "package_uuid"]},
-    },
-    {
-        "name": "set_package_with_part",
-        "description": "Hidden compatibility alias for assigning one compatible package and part in the currently open daemon session; public native-project replacement is split across journaled component package and part writes until a single combined replacement tool lands.",
-        "inputSchema": {"type": "object", "properties": {"uuid": {"type": "string"}, "package_uuid": {"type": "string"}, "part_uuid": {"type": "string"}}, "required": ["uuid", "package_uuid", "part_uuid"]},
-    },
-    {
-        "name": "replace_component",
-        "description": "Hidden compatibility alias for replacing one component package and part in the currently open daemon session; public native-project replacement goes through proposal-mediated board-component replacement.",
-        "inputSchema": {"type": "object", "properties": {"uuid": {"type": "string"}, "package_uuid": {"type": "string"}, "part_uuid": {"type": "string"}}, "required": ["uuid", "package_uuid", "part_uuid"]},
-    },
-    {
-        "name": "replace_components",
-        "description": "Hidden compatibility alias for replacing multiple components in the currently open daemon session; public native-project replacement goes through proposal-mediated board-component replacements.",
-        "inputSchema": {"type": "object", "properties": {"replacements": {"type": "array", "items": {"type": "object"}}}, "required": ["replacements"]},
-    },
-    {
-        "name": "apply_component_replacement_plan",
-        "description": "Hidden compatibility alias for applying an explicit component replacement plan in the currently open daemon session; public native-project replacement goes through proposal-mediated replacement plans.",
-        "inputSchema": {"type": "object", "properties": {"replacements": {"type": "array", "items": {"type": "object"}}}, "required": ["replacements"]},
-    },
-    {
         "name": "apply_component_replacement_policy",
-        "description": "Hidden compatibility alias for applying component replacement policies in the currently open daemon session; a journaled public policy-apply surface is pending.",
+        "description": "Hidden, terminally frozen imported-session compatibility alias for applying component replacement policies in the currently open converter session; native projects use the import -> datum.proposal.* replacement flow.",
         "inputSchema": {"type": "object", "properties": {"replacements": {"type": "array", "items": {"type": "object"}}}, "required": ["replacements"]},
+        "x_retirement_status": "scheduled_for_removal",
+        "x_retirement_criteria": _FROZEN_IMPORTED_SESSION_RETIREMENT_CRITERIA,
     },
     {
         "name": "apply_scoped_component_replacement_policy",
-        "description": "Hidden compatibility alias for applying a scoped component replacement policy in the currently open daemon session; a journaled public scoped-policy apply surface is pending.",
+        "description": "Hidden, terminally frozen imported-session compatibility alias for applying a scoped component replacement policy in the currently open converter session; native projects use the import -> datum.proposal.* replacement flow.",
         "inputSchema": {"type": "object", "properties": {"scope": {"type": "object"}, "policy": {"type": "string"}}, "required": ["scope", "policy"]},
+        "x_retirement_status": "scheduled_for_removal",
+        "x_retirement_criteria": _FROZEN_IMPORTED_SESSION_RETIREMENT_CRITERIA,
     },
     {
         "name": "apply_scoped_component_replacement_plan",
-        "description": "Hidden compatibility alias for applying a scoped component replacement plan in the currently open daemon session; a journaled public scoped-plan apply surface is pending.",
+        "description": "Hidden, terminally frozen imported-session compatibility alias for applying a scoped component replacement plan in the currently open converter session; native projects use the import -> datum.proposal.* replacement flow.",
         "inputSchema": {"type": "object", "properties": {"plan": {"type": "object"}}, "required": ["plan"]},
+        "x_retirement_status": "scheduled_for_removal",
+        "x_retirement_criteria": _FROZEN_IMPORTED_SESSION_RETIREMENT_CRITERIA,
     },
     {
         "name": "set_net_class",
-        "description": "Hidden compatibility alias for assigning one imported-board net class and class dimensions in the currently open daemon session; exact journaled native-project net-class assignment replacement is pending.",
+        "description": "Hidden, terminally frozen imported-session compatibility alias for assigning one imported-board net class and class dimensions in the currently open converter session; native projects use the import -> datum.pcb.* net-class flow.",
         "inputSchema": {"type": "object", "properties": {"net_uuid": {"type": "string"}, "class_name": {"type": "string"}, "clearance": {"type": "integer"}, "track_width": {"type": "integer"}, "via_drill": {"type": "integer"}, "via_diameter": {"type": "integer"}, "diffpair_width": {"type": "integer"}, "diffpair_gap": {"type": "integer"}}, "required": ["net_uuid", "class_name", "clearance", "track_width", "via_drill", "via_diameter"]},
+        "x_retirement_status": "scheduled_for_removal",
+        "x_retirement_criteria": _FROZEN_IMPORTED_SESSION_RETIREMENT_CRITERIA,
     },
 ]
 # _LEGACY_CANONICAL_ALIAS_NAMES is imported from tools_catalog_legacy_aliases.py
@@ -762,25 +729,17 @@ def _legacy_canonical_alias(flat_spec: dict[str, Any]) -> dict[str, Any]:
 # Non-journaled daemon mutation arms (engine-daemon/src/dispatch.rs): these flat
 # methods write the legacy in-memory api::Engine without the substrate commit()/
 # journal path. Per decision 004 (Private Mutation Ban) no *public* MCP write tool
-# may dispatch to one of these; each has a substrate-backed (journaled) public
-# equivalent in the datum.pcb.* family, so the canonical alias bridging to a
-# non-journaled arm stays dispatchable for compatibility but hidden from tools/list.
+# may dispatch to one of these. The four remaining arms are terminally frozen
+# imported-session compatibility (decision 011): dispatchable but hidden from
+# tools/list, no journaled equivalent will be built, and they die with the
+# one-time converter session. Locked two-directionally against dispatch.rs by
+# scripts/check_daemon_write_parity.py. The eleven retired arms live only as
+# tombstones in tools_catalog_retirement.RETIRED_TOOL_TOMBSTONES.
 NON_JOURNALED_DAEMON_WRITE_METHODS: frozenset[str] = frozenset({
-    "apply_component_replacement_plan",
     "apply_component_replacement_policy",
     "apply_scoped_component_replacement_plan",
     "apply_scoped_component_replacement_policy",
-    "assign_part",
-    "flip_component",
-    "move_component",
-    "replace_component",
-    "replace_components",
-    "rotate_component",
     "set_net_class",
-    "set_package",
-    "set_package_with_part",
-    "set_reference",
-    "set_value",
 })
 def _alias_dispatches_to_non_journaled_write(alias_spec: dict[str, Any]) -> bool:
     return alias_spec.get("x_dispatch_method") in NON_JOURNALED_DAEMON_WRITE_METHODS

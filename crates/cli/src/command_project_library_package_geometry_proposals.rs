@@ -6,7 +6,7 @@ use eda_engine::api::native_write::library::{
     PoolLibraryObjectTarget, PoolLibraryOperationSpec, build_pool_library_write,
 };
 use eda_engine::substrate::{
-    CommitSource, ProjectResolver, ProposalCreateRequest, ProposalSource,
+    ProjectResolver, ProposalCreateRequest, ProposalSource,
     create_draft_proposal_from_batch,
 };
 use uuid::Uuid;
@@ -18,6 +18,8 @@ use super::command_project_library_payload::read_project_pool_object_payload;
 use super::command_project_proposals::{
     NativeProjectProposalCreateView, validate_proposal_in_model,
 };
+
+use crate::command_project::cli_commit_source;
 
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn propose_set_native_project_pool_package_pad(
@@ -89,7 +91,7 @@ pub(crate) fn propose_set_native_project_pool_package_pad(
         &model,
         WriteProvenance::new(
             "datum-eda-proposal",
-            CommitSource::Cli,
+            cli_commit_source()?,
             format!("propose native pool package pad {pad_id}"),
         ),
         None,
@@ -216,7 +218,7 @@ fn propose_set_pool_package_object_value(
         &model,
         WriteProvenance::new(
             "datum-eda-proposal",
-            CommitSource::Cli,
+            cli_commit_source()?,
             format!("propose native pool package update {package_id}"),
         ),
         None,

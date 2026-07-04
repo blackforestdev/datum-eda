@@ -6,6 +6,14 @@ mod transaction_state;
 impl Engine {
     /// M3 save entry point for the current implemented write-back slice.
     ///
+    /// FENCE: imported-session write-back only. This is part of the one-time
+    /// converter for imported KiCad boards (decision 011, Interop Boundary And
+    /// Import Posture) — a legacy text-patch path that persists the in-memory
+    /// imported session back to KiCad text plus sidecars. It is never a public
+    /// mutation surface for native projects: native authored writes flow
+    /// through the single journaled `commit()` path and persist at commit
+    /// time, and no new capability may be added here.
+    ///
     /// Current scope: imported KiCad boards can be written back byte-identically
     /// when unmodified, and can persist the current `delete_track` slice by
     /// removing deleted top-level KiCad `segment` forms from the imported

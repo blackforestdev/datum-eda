@@ -6,7 +6,7 @@ use eda_engine::api::native_write::output_jobs::{
 };
 use eda_engine::api::native_write::{PreparedWrite, WriteProvenance};
 use eda_engine::substrate::{
-    CommitSource, DesignModel, ObjectRevision, OutputJob, PRODUCTION_RECORD_SCHEMA_VERSION,
+    DesignModel, ObjectRevision, OutputJob, PRODUCTION_RECORD_SCHEMA_VERSION,
     ProjectResolver, Proposal, ProposalCreateRequest, ProposalSource,
     create_draft_proposal_from_batch,
 };
@@ -19,8 +19,10 @@ use super::command_project_output_job_include::{
 };
 use super::load_native_project_with_resolved_board;
 
-fn proposal_provenance(reason: &str) -> WriteProvenance {
-    WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason)
+use crate::command_project::cli_commit_source;
+
+fn proposal_provenance(reason: &str) -> Result<WriteProvenance> {
+    Ok(WriteProvenance::new("datum-eda-cli", cli_commit_source()?, reason))
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -70,7 +72,7 @@ pub(crate) fn propose_create_native_project_output_job(
     validate_output_job_targets(&model, project.board.uuid, &output_job)?;
     let prepared = build_create_output_job(
         &model,
-        proposal_provenance("propose create output job"),
+        proposal_provenance("propose create output job")?,
         &output_job,
     )?;
     write_output_job_proposal(
@@ -141,7 +143,7 @@ pub(crate) fn propose_update_native_project_output_job(
 
     let prepared = build_set_output_job(
         &model,
-        proposal_provenance("propose update output job"),
+        proposal_provenance("propose update output job")?,
         &previous_output_job,
         &output_job,
     )?;
@@ -172,7 +174,7 @@ pub(crate) fn propose_delete_native_project_output_job(
         .with_context(|| format!("output job {output_job_id} not found"))?;
     let prepared = build_delete_output_job(
         &model,
-        proposal_provenance("propose delete output job"),
+        proposal_provenance("propose delete output job")?,
         &output_job,
     )?;
     write_output_job_proposal(

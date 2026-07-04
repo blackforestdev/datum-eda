@@ -218,8 +218,12 @@ pub fn create_draft_proposal_from_batch(
         )));
     }
 
+    // Preview only: proposal-specific policy was already enforced above via
+    // proposal_batch_policy_blockers; the direct-commit source policy must
+    // not apply to a draft preview (a preview is not a commit — matches the
+    // preview sites below).
     let mut preview = model.clone();
-    let preview_report = preview.commit(batch.clone())?;
+    let preview_report = preview.commit_without_direct_policy(batch.clone())?;
     let mut affected_objects = preview_report.transaction.diff.created;
     affected_objects.extend(preview_report.transaction.diff.modified);
     affected_objects.extend(preview_report.transaction.diff.deleted);

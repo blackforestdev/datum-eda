@@ -7,12 +7,14 @@ use eda_engine::api::native_write::output_jobs::{
 };
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::substrate::{
-    ArtifactKind, ArtifactMetadata, CommitSource, OUTPUT_JOB_RUN_SCHEMA_VERSION, ObjectRevision,
+    ArtifactKind, ArtifactMetadata, OUTPUT_JOB_RUN_SCHEMA_VERSION, ObjectRevision,
     OutputJob, OutputJobLogEntry, OutputJobLogLevel, OutputJobRun, OutputJobRunStatus,
     PRODUCTION_RECORD_SCHEMA_VERSION, ProjectResolver,
 };
 use serde::Serialize;
 use uuid::Uuid;
+
+use crate::command_project::cli_commit_source;
 
 #[path = "command_project_output_job_runs.rs"]
 mod command_project_output_job_runs;
@@ -31,8 +33,8 @@ use super::command_project_output_job_include::{
 };
 use super::load_native_project_with_resolved_board;
 
-fn cli_provenance(reason: &str) -> WriteProvenance {
-    WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason)
+fn cli_provenance(reason: &str) -> Result<WriteProvenance> {
+    Ok(WriteProvenance::new("datum-eda-cli", cli_commit_source()?, reason))
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -252,7 +254,7 @@ pub(crate) fn update_native_project_output_job(
 
     let prepared = build_set_output_job(
         &model,
-        cli_provenance("update output job"),
+        cli_provenance("update output job")?,
         &previous_output_job,
         &output_job,
     )?;
@@ -513,7 +515,7 @@ pub(crate) fn delete_native_project_output_job(
         .with_context(|| format!("output job {output_job_id} not found"))?;
 
     let prepared =
-        build_delete_output_job(&model, cli_provenance("delete output job"), &output_job)?;
+        build_delete_output_job(&model, cli_provenance("delete output job")?, &output_job)?;
     commit_prepared(&mut model, root, prepared)?;
 
     Ok(NativeProjectOutputJobMutationView {
@@ -618,7 +620,7 @@ fn ensure_native_project_output_job(
         manufacturing_plan,
         object_revision: ObjectRevision(0),
     };
-    let prepared = build_create_output_job(&model, cli_provenance("create output job"), &job)?;
+    let prepared = build_create_output_job(&model, cli_provenance("create output job")?, &job)?;
     commit_prepared(&mut model, root, prepared)?;
     Ok((job, output_path, true, project.manifest.uuid))
 }

@@ -10,14 +10,14 @@ use eda_engine::api::native_write::project::{
     build_set_project_rule, build_set_project_rules,
 };
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
-use eda_engine::substrate::{CommitSource, ProjectResolver};
+use eda_engine::substrate::ProjectResolver;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use super::super::*;
 
-fn cli_write_provenance(reason: &str) -> WriteProvenance {
-    WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason)
+fn cli_write_provenance(reason: &str) -> Result<WriteProvenance> {
+    Ok(WriteProvenance::new("datum-eda-cli", cli_commit_source()?, reason))
 }
 
 pub(crate) fn render_symbol_display_mode(mode: &SymbolDisplayMode) -> String {
@@ -199,7 +199,7 @@ pub(crate) fn set_native_project_name(
     name: String,
 ) -> Result<NativeProjectNameMutationReportView> {
     let mut model = ProjectResolver::new(root).resolve()?;
-    let prepared = build_set_project_name(&model, cli_write_provenance("set project name"), &name)?;
+    let prepared = build_set_project_name(&model, cli_write_provenance("set project name")?, &name)?;
     commit_prepared(&mut model, root, prepared)
         .context("failed to commit set project name")?;
     let model = ProjectResolver::new(root).resolve()?;
@@ -222,7 +222,7 @@ pub(crate) fn set_native_project_rules(
     let mut model = ProjectResolver::new(root).resolve()?;
     let prepared = build_set_project_rules(
         &model,
-        cli_write_provenance("set project rules"),
+        cli_write_provenance("set project rules")?,
         replacement.rules,
     )?;
     commit_prepared(&mut model, root, prepared)
@@ -247,7 +247,7 @@ pub(crate) fn create_native_project_rule(
         .with_context(|| format!("failed to parse {}", rule_file.display()))?;
     let mut model = ProjectResolver::new(root).resolve()?;
     let (prepared, rule_id) =
-        build_create_project_rule(&model, cli_write_provenance("create project rule"), rule)?;
+        build_create_project_rule(&model, cli_write_provenance("create project rule")?, rule)?;
     commit_prepared(&mut model, root, prepared)
         .context("failed to commit create project rule")?;
     let project = load_native_project_with_resolved_board(root)?;
@@ -270,7 +270,7 @@ pub(crate) fn set_native_project_rule(
         .with_context(|| format!("failed to parse {}", rule_file.display()))?;
     let mut model = ProjectResolver::new(root).resolve()?;
     let (prepared, rule_id) =
-        build_set_project_rule(&model, cli_write_provenance("set project rule"), rule)?;
+        build_set_project_rule(&model, cli_write_provenance("set project rule")?, rule)?;
     commit_prepared(&mut model, root, prepared)
         .context("failed to commit set project rule")?;
     let project = load_native_project_with_resolved_board(root)?;
@@ -289,7 +289,7 @@ pub(crate) fn delete_native_project_rule(
 ) -> Result<NativeProjectRulesMutationReportView> {
     let mut model = ProjectResolver::new(root).resolve()?;
     let (prepared, _deleted_rule) =
-        build_delete_project_rule(&model, cli_write_provenance("delete project rule"), rule_id)?;
+        build_delete_project_rule(&model, cli_write_provenance("delete project rule")?, rule_id)?;
     commit_prepared(&mut model, root, prepared)
         .context("failed to commit delete project rule")?;
     let project = load_native_project_with_resolved_board(root)?;

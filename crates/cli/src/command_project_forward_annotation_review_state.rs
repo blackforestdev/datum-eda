@@ -3,7 +3,7 @@ use eda_engine::api::native_write::forward_annotation::{
     build_clear_forward_annotation_review, build_set_forward_annotation_review,
 };
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
-use eda_engine::substrate::{CommitSource, ProjectResolver, SourceShardKind};
+use eda_engine::substrate::{ProjectResolver, SourceShardKind};
 use std::collections::BTreeMap;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -13,8 +13,8 @@ struct NativeForwardAnnotationReviewSidecar {
     reviews: BTreeMap<String, NativeForwardAnnotationReviewRecord>,
 }
 
-fn forward_annotation_provenance(reason: &str) -> WriteProvenance {
-    WriteProvenance::new("datum-eda-forward-annotation", CommitSource::Cli, reason)
+fn forward_annotation_provenance(reason: &str) -> Result<WriteProvenance> {
+    Ok(WriteProvenance::new("datum-eda-forward-annotation", cli_commit_source()?, reason))
 }
 
 pub(crate) fn load_forward_annotation_review(
@@ -71,7 +71,7 @@ pub(crate) fn write_forward_annotation_review(
     })?;
     let prepared = build_set_forward_annotation_review(
         &model,
-        forward_annotation_provenance("update forward-annotation review state"),
+        forward_annotation_provenance("update forward-annotation review state")?,
         previous_review,
         review,
     )?;
@@ -95,7 +95,7 @@ pub(crate) fn clear_forward_annotation_review_sidecar(root: &Path) -> Result<()>
         .context("failed to materialize previous forward-annotation review sidecar")?;
     let prepared = build_clear_forward_annotation_review(
         &model,
-        forward_annotation_provenance("clear forward-annotation review state"),
+        forward_annotation_provenance("clear forward-annotation review state")?,
         review,
     )?;
     commit_prepared(&mut model, root, prepared)?;

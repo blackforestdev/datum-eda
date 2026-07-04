@@ -9,7 +9,7 @@ use eda_engine::api::native_write::ids::derive_object_id;
 use eda_engine::api::native_write::{PreparedWrite, WriteProvenance};
 use eda_engine::board::{Net, NetClass, PlacedPad, Track, Via, Zone};
 use eda_engine::substrate::{
-    CommitSource, DesignModel, ProjectResolver, ProposalCreateRequest, ProposalSource,
+    DesignModel, ProjectResolver, ProposalCreateRequest, ProposalSource,
     ZONE_FILL_SCHEMA_VERSION, ZoneFill, ZoneFillState, compute_bounded_zone_fill,
     create_draft_proposal_from_batch, validate_proposal_apply,
 };
@@ -22,6 +22,8 @@ use super::command_project_standards_clearance_repairs::append_copper_clearance_
 use super::command_project_standards_peer_aperture::apply_unique_peer_process_aperture_policy;
 use super::command_project_standards_silk_repairs::append_silk_clearance_repair_proposals;
 use super::{load_native_project_with_resolved_board, run_native_project_check_with_profile};
+
+use crate::command_project::cli_commit_source;
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectStandardsRepairProposalView {
@@ -152,7 +154,7 @@ pub(crate) fn generate_native_project_standards_repair_proposals(
         let proposal_id = standards_repair_proposal_id(&model, "process_aperture", pad_id, &codes);
         let prepared = build_set_board_pad(
             &model,
-            standards_repair_provenance("standards process-aperture repair proposal"),
+            standards_repair_provenance("standards process-aperture repair proposal")?,
             &pad,
         )?;
         let readiness = create_standards_repair_proposal(
@@ -200,7 +202,7 @@ pub(crate) fn generate_native_project_standards_repair_proposals(
         let proposal_id = standards_repair_proposal_id(&model, "track_geometry", track_id, &codes);
         let prepared = build_set_board_track(
             &model,
-            standards_repair_provenance("standards track-width repair proposal"),
+            standards_repair_provenance("standards track-width repair proposal")?,
             &track,
         )?;
         let readiness = create_standards_repair_proposal(
@@ -258,7 +260,7 @@ pub(crate) fn generate_native_project_standards_repair_proposals(
         let proposal_id = standards_repair_proposal_id(&model, "via_geometry", via_id, &codes);
         let prepared = build_set_board_via(
             &model,
-            standards_repair_provenance("standards via-geometry repair proposal"),
+            standards_repair_provenance("standards via-geometry repair proposal")?,
             &via,
         )?;
         let readiness = create_standards_repair_proposal(
@@ -334,7 +336,7 @@ pub(crate) fn generate_native_project_standards_repair_proposals(
         let proposal_id = standards_repair_proposal_id(&model, "zone_fill", zone_id, &codes);
         let prepared = build_set_zone_fills(
             &model,
-            standards_repair_provenance("standards zone-fill repair proposal"),
+            standards_repair_provenance("standards zone-fill repair proposal")?,
             std::slice::from_ref(&fill),
         )?;
         let readiness = create_standards_repair_proposal(
@@ -399,8 +401,8 @@ pub(super) fn standards_repair_proposal_id(
 }
 
 /// The provenance every standards-repair proposal batch is authored under.
-pub(super) fn standards_repair_provenance(reason: &'static str) -> WriteProvenance {
-    WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason)
+pub(super) fn standards_repair_provenance(reason: &'static str) -> Result<WriteProvenance> {
+    Ok(WriteProvenance::new("datum-eda-cli", cli_commit_source()?, reason))
 }
 
 #[derive(Debug, Clone)]

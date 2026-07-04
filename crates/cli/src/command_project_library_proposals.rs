@@ -10,7 +10,7 @@ use eda_engine::api::native_write::library_pin_pad_map::{
     pin_pad_map_payload, set_part_default_pin_pad_map_spec,
 };
 use eda_engine::substrate::{
-    CommitSource, ProjectResolver, ProposalCreateRequest, ProposalSource,
+    ProjectResolver, ProposalCreateRequest, ProposalSource,
     create_draft_proposal_from_batch,
 };
 use uuid::Uuid;
@@ -28,6 +28,8 @@ use super::command_project_library_pin_pad_map::{
 use super::command_project_proposals::{
     NativeProjectProposalCreateView, validate_proposal_in_model,
 };
+
+use crate::command_project::cli_commit_source;
 
 pub(crate) fn propose_create_native_project_pool_library_object(
     root: &Path,
@@ -266,7 +268,7 @@ pub(crate) fn propose_create_native_project_pool_pin_pad_map(
         &model,
         WriteProvenance::new(
             "datum-eda-proposal",
-            CommitSource::Cli,
+            cli_commit_source()?,
             format!("propose native pool PinPadMap {map_id} for part {part_id}"),
         ),
         None,
@@ -371,7 +373,7 @@ pub(crate) fn propose_set_native_project_pool_pin_pad_map(
         &model,
         WriteProvenance::new(
             "datum-eda-proposal",
-            CommitSource::Cli,
+            cli_commit_source()?,
             format!("propose native pool PinPadMap update {map_id}"),
         ),
         None,
@@ -433,7 +435,7 @@ pub(super) fn propose_create_pool_library_object_value(
         &model,
         WriteProvenance::new(
             "datum-eda-proposal",
-            CommitSource::Cli,
+            cli_commit_source()?,
             format!("propose native pool library object {object_id}"),
         ),
         Some(pool_path),

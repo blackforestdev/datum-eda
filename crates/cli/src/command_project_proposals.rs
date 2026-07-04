@@ -10,7 +10,7 @@ use eda_engine::api::native_write::forward_annotation::{
 };
 use eda_engine::board::PlacedPackage;
 use eda_engine::substrate::{
-    CommitDiff, CommitReport, CommitSource, ProjectResolver, Proposal, ProposalApplyBlocker,
+    CommitDiff, CommitReport, ProjectResolver, Proposal, ProposalApplyBlocker,
     ProposalCreateRequest, ProposalSource, ProposalStatus, apply_accepted_proposal,
     create_draft_proposal_from_batch, preview_proposal_diff_journaled, review_proposal_status,
     validate_proposal_apply,
@@ -25,6 +25,8 @@ use crate::command_project::{
     current_board_component_materialization_payload,
     load_native_project_with_resolved_board_and_model,
 };
+
+use crate::command_project::cli_commit_source;
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectProposalsView {
@@ -258,7 +260,7 @@ pub(crate) fn propose_native_project_board_component_replacements(
         &model,
         WriteProvenance::new(
             "datum-eda-cli",
-            CommitSource::Cli,
+            cli_commit_source()?,
             "propose board component replacement",
         ),
         edits,

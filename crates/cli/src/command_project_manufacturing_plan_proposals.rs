@@ -8,7 +8,7 @@ use eda_engine::api::native_write::manufacturing::{
 };
 use eda_engine::api::native_write::{PreparedWrite, WriteProvenance};
 use eda_engine::substrate::{
-    CommitSource, DesignModel, ManufacturingPlan, ObjectRevision,
+    DesignModel, ManufacturingPlan, ObjectRevision,
     PRODUCTION_RECORD_SCHEMA_VERSION, PanelBoardInstance, PanelProjection, ProjectResolver,
     Proposal, ProposalCreateRequest, ProposalSource, create_draft_proposal_from_batch,
 };
@@ -16,6 +16,8 @@ use serde::Serialize;
 use uuid::Uuid;
 
 use super::load_native_project_with_resolved_board;
+
+use crate::command_project::cli_commit_source;
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectManufacturingPlanProposalView {
@@ -73,7 +75,7 @@ pub(crate) fn propose_create_native_project_manufacturing_plan(
     validate_manufacturing_plan_targets(&model, project.board.uuid, &plan)?;
     let prepared = build_create_manufacturing_plan(
         &model,
-        proposal_provenance("propose create manufacturing plan"),
+        proposal_provenance("propose create manufacturing plan")?,
         &plan,
     )?;
     write_manufacturing_plan_proposal(
@@ -152,7 +154,7 @@ pub(crate) fn propose_update_native_project_manufacturing_plan(
 
     let prepared = build_set_manufacturing_plan(
         &model,
-        proposal_provenance("propose update manufacturing plan"),
+        proposal_provenance("propose update manufacturing plan")?,
         &previous_plan,
         &plan,
     )?;
@@ -193,7 +195,7 @@ pub(crate) fn propose_delete_native_project_manufacturing_plan(
     }
     let prepared = build_delete_manufacturing_plan(
         &model,
-        proposal_provenance("propose delete manufacturing plan"),
+        proposal_provenance("propose delete manufacturing plan")?,
         &plan,
     )?;
     write_manufacturing_plan_proposal(
@@ -249,7 +251,7 @@ pub(crate) fn propose_create_native_project_panel_projection(
     };
     let prepared = build_create_panel_projection(
         &model,
-        proposal_provenance("propose create panel projection"),
+        proposal_provenance("propose create panel projection")?,
         &panel,
     )?;
     write_panel_projection_proposal(
@@ -329,7 +331,7 @@ pub(crate) fn propose_update_native_project_panel_projection(
 
     let prepared = build_set_panel_projection(
         &model,
-        proposal_provenance("propose update panel projection"),
+        proposal_provenance("propose update panel projection")?,
         &previous_panel,
         &panel,
     )?;
@@ -370,7 +372,7 @@ pub(crate) fn propose_delete_native_project_panel_projection(
     }
     let prepared = build_delete_panel_projection(
         &model,
-        proposal_provenance("propose delete panel projection"),
+        proposal_provenance("propose delete panel projection")?,
         &panel,
     )?;
     write_panel_projection_proposal(
@@ -386,8 +388,8 @@ pub(crate) fn propose_delete_native_project_panel_projection(
     )
 }
 
-fn proposal_provenance(reason: &str) -> WriteProvenance {
-    WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason)
+fn proposal_provenance(reason: &str) -> Result<WriteProvenance> {
+    Ok(WriteProvenance::new("datum-eda-cli", cli_commit_source()?, reason))
 }
 
 fn validate_manufacturing_plan_targets(

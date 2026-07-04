@@ -495,7 +495,7 @@ fn commit_check_run_evidence(
         model,
         eda_engine::api::native_write::WriteProvenance::new(
             "datum-eda-cli",
-            CommitSource::Cli,
+            cli_commit_source()?,
             format!("record {} check run evidence", view.profile_id),
         ),
         &check_run,

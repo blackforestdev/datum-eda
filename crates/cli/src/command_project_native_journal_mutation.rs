@@ -10,6 +10,8 @@ use super::command_project_native_inspect::{
 };
 use crate::{OutputFormat, render_output};
 
+use crate::command_project::cli_commit_source;
+
 pub(crate) fn execute_native_project_journal_undo(
     format: &OutputFormat,
     root: &Path,
@@ -64,7 +66,7 @@ fn execute_native_project_journal_mutation(
     let cursor_before = model.journal_cursor.applied_transaction_count;
     let provenance = CommitProvenance {
         actor: "datum-eda-cli".to_string(),
-        source: CommitSource::Cli,
+        source: cli_commit_source()?,
         reason: format!("journal {action} requested from CLI"),
     };
     let report = match action {

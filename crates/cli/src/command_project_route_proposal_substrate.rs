@@ -3,7 +3,7 @@ use crate::NativeProjectRouteAppliedTrackReportView;
 use eda_engine::api::native_write::WriteProvenance;
 use eda_engine::board::route_proposal;
 use eda_engine::substrate::{
-    CommitSource, ProjectResolver, Proposal, apply_accepted_proposal,
+    ProjectResolver, Proposal, apply_accepted_proposal,
     commit_proposal_metadata_journaled,
 };
 
@@ -37,7 +37,7 @@ pub(crate) fn build_accepted_route_proposal(
         &model,
         WriteProvenance::new(
             "datum-eda-cli",
-            CommitSource::Cli,
+            cli_commit_source()?,
             "route apply accepted proposal",
         ),
         actions,

@@ -17,6 +17,8 @@ from tools_catalog_data import (
 from tools_catalog_retirement import (
     DEFAULT_HIDDEN_ALIAS_RETIREMENT_CRITERIA,
     HIDDEN_COMPATIBILITY_RETIREMENT_OVERRIDES,
+    RETIRED_TOOL_TOMBSTONE_CRITERIA,
+    RETIRED_TOOL_TOMBSTONES,
 )
 
 
@@ -232,21 +234,14 @@ class TestProtocolCatalog(unittest.TestCase):
         )
 
     def test_private_writer_bypass_aliases_are_hidden_compatibility(self) -> None:
+        """The four terminally frozen imported-session writers stay hidden
+        compatibility; the eleven retired writers are gone from the catalog and
+        live only as Retired tombstones (canonical journaled replacement
+        shipped)."""
         names = {tool["name"] for tool in TOOLS}
         compatibility_by_name = {spec["name"]: spec for spec in COMPATIBILITY_TOOL_SPECS}
         for hidden in (
-            "move_component",
-            "rotate_component",
-            "flip_component",
-            "set_value",
-            "assign_part",
-            "set_package",
-            "set_package_with_part",
-            "set_reference",
             "set_net_class",
-            "replace_component",
-            "replace_components",
-            "apply_component_replacement_plan",
             "apply_component_replacement_policy",
             "apply_scoped_component_replacement_policy",
             "apply_scoped_component_replacement_plan",
@@ -258,6 +253,34 @@ class TestProtocolCatalog(unittest.TestCase):
                 "hidden",
             )
             self.assertTrue(compatibility_by_name[hidden].get("x_canonical_replacements"))
+            self.assertEqual(
+                compatibility_by_name[hidden].get("x_retirement_status"),
+                "scheduled_for_removal",
+            )
+            self.assertIn(
+                "imported-session",
+                str(compatibility_by_name[hidden].get("x_retirement_criteria")),
+            )
+        for retired in (
+            "move_component",
+            "rotate_component",
+            "flip_component",
+            "set_value",
+            "assign_part",
+            "set_package",
+            "set_package_with_part",
+            "set_reference",
+            "replace_component",
+            "replace_components",
+            "apply_component_replacement_plan",
+        ):
+            self.assertNotIn(retired, names)
+            self.assertNotIn(retired, TOOL_BY_NAME)
+            tombstone = RETIRED_TOOL_TOMBSTONES[retired]
+            self.assertEqual(tombstone["status"], "retired")
+            self.assertEqual(tombstone["criteria"], RETIRED_TOOL_TOMBSTONE_CRITERIA)
+            for replacement in tombstone["replacements"]:
+                self.assertIn(replacement, names)
         for retired in (
             "delete_track",
             "delete_via",
@@ -285,6 +308,20 @@ class TestProtocolCatalog(unittest.TestCase):
         ):
             self.assertNotIn(retired, names)
             self.assertNotIn(retired, TOOL_BY_NAME)
+
+    def test_retired_tools_error_gracefully_with_replacement_pointer(self) -> None:
+        from tool_dispatch import dispatch_tool_call
+
+        with self.assertRaises(RuntimeError) as ctx:
+            dispatch_tool_call(
+                FakeDaemonClient(),
+                "move_component",
+                {"uuid": "comp-1", "x_mm": 1.0, "y_mm": 2.0},
+            )
+        message = str(ctx.exception)
+        self.assertIn("retired tool: move_component", message)
+        self.assertIn(RETIRED_TOOL_TOMBSTONE_CRITERIA, message)
+        self.assertIn("datum.pcb.move_component", message)
 
     def test_replacement_apply_aliases_are_retired_but_read_planning_stays_public(self) -> None:
         names = {tool["name"] for tool in TOOLS}

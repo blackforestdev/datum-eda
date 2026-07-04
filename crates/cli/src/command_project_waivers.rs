@@ -14,11 +14,12 @@ use eda_engine::api::native_write::waivers::{
     create_schematic_deviation_and_commit, create_schematic_waiver_and_commit,
 };
 use eda_engine::schematic::CheckDomain;
-use eda_engine::substrate::CommitSource;
 use serde::Serialize;
 use uuid::Uuid;
 
 use super::{load_native_project_with_resolved_board_and_model, query_native_project_check_run};
+
+use crate::command_project::cli_commit_source;
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectWaiveFindingView {
@@ -79,7 +80,7 @@ pub(crate) fn waive_native_project_finding(
         root,
         WriteProvenance::new(
             "datum-eda-cli",
-            CommitSource::Cli,
+            cli_commit_source()?,
             format!("waive check finding {fingerprint}"),
         ),
         &CreateSchematicWaiverRequest {
@@ -134,7 +135,7 @@ pub(crate) fn accept_native_project_deviation(
         root,
         WriteProvenance::new(
             "datum-eda-cli",
-            CommitSource::Cli,
+            cli_commit_source()?,
             format!("accept check finding deviation {fingerprint}"),
         ),
         &CreateSchematicDeviationRequest {

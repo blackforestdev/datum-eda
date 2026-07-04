@@ -33,7 +33,7 @@ pub(super) fn append_copper_clearance_repair_proposals(
             standards_repair_proposal_id(model, "copper_clearance", repair.moved_track_id, &codes);
         let prepared = build_set_board_track(
             model,
-            standards_repair_provenance("standards copper-clearance repair proposal"),
+            standards_repair_provenance("standards copper-clearance repair proposal")?,
             &repair.repaired_track,
         )?;
         let readiness = create_standards_repair_proposal(

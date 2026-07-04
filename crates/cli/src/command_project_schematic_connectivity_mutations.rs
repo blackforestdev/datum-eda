@@ -9,7 +9,7 @@ use eda_engine::api::native_write::schematic_connectivity::{
 };
 use eda_engine::api::native_write::{PreparedWrite, WriteProvenance, commit_prepared};
 use eda_engine::error::EngineError;
-use eda_engine::substrate::{CommitReport, CommitSource, DesignModel, ProjectResolver};
+use eda_engine::substrate::{CommitReport, DesignModel, ProjectResolver};
 
 pub(crate) fn place_native_project_label(
     root: &Path,
@@ -177,7 +177,7 @@ where
     let mut model = ProjectResolver::new(root)
         .resolve()
         .with_context(|| format!("failed to resolve native project {}", root.display()))?;
-    let provenance = WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason);
+    let provenance = WriteProvenance::new("datum-eda-cli", cli_commit_source()?, reason);
     let prepared = build(&model, provenance)?;
     commit_prepared(&mut model, root, prepared).map_err(Into::into)
 }

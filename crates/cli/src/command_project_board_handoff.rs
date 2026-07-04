@@ -11,7 +11,7 @@ use eda_engine::ir::geometry::Point;
 use eda_engine::pool::{Footprint, Part};
 use eda_engine::schematic::PlacedSymbol;
 use eda_engine::substrate::{
-    CommitSource, DesignModel, Proposal, ProposalCreateRequest, ProposalSource, ResolveDiagnostic,
+    DesignModel, Proposal, ProposalCreateRequest, ProposalSource, ResolveDiagnostic,
     SourceShardTaxon, create_draft_proposal_from_batch,
 };
 use serde::Serialize;
@@ -21,6 +21,8 @@ use super::{
     board_package_materialization_payload_for_component, build_native_project_schematic,
     load_native_project_with_resolved_board_and_model,
 };
+
+use crate::command_project::cli_commit_source;
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectBoardHandoffReport {
@@ -237,7 +239,7 @@ fn generated_board_component_prepared_write(
         .collect::<Result<Vec<_>>>()?;
     Ok(build_place_board_packages(
         model,
-        WriteProvenance::new("datum-eda-cli", CommitSource::Cli, reason),
+        WriteProvenance::new("datum-eda-cli", cli_commit_source()?, reason),
         &placements,
     )?)
 }
