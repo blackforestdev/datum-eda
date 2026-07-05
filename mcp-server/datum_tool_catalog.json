@@ -1976,6 +1976,3056 @@
       "write_surface": null
     },
     {
+      "description": "Append one first-class typed native pool footprint silkscreen circle primitive.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "add-pool-footprint-silkscreen-circle"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "flag": "--center-x-nm",
+            "param": "center_x_nm"
+          },
+          {
+            "flag": "--center-y-nm",
+            "param": "center_y_nm"
+          },
+          {
+            "flag": "--radius-nm",
+            "param": "radius_nm"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_footprint_silkscreen_circle"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "footprint",
+        "center_x_nm",
+        "center_y_nm",
+        "radius_nm",
+        "width_nm"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "center_x_nm": {
+            "type": "integer"
+          },
+          "center_y_nm": {
+            "type": "integer"
+          },
+          "footprint": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "radius_nm": {
+            "type": "integer"
+          },
+          "width_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "footprint",
+          "center_x_nm",
+          "center_y_nm",
+          "radius_nm",
+          "width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.add_footprint_silkscreen_circle",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Append one first-class typed native pool footprint silkscreen line primitive.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "add-pool-footprint-silkscreen-line"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "flag": "--from-x-nm",
+            "param": "from_x_nm"
+          },
+          {
+            "flag": "--from-y-nm",
+            "param": "from_y_nm"
+          },
+          {
+            "flag": "--to-x-nm",
+            "param": "to_x_nm"
+          },
+          {
+            "flag": "--to-y-nm",
+            "param": "to_y_nm"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_footprint_silkscreen_line"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "footprint",
+        "from_x_nm",
+        "from_y_nm",
+        "to_x_nm",
+        "to_y_nm",
+        "width_nm"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "footprint": {
+            "type": "string"
+          },
+          "from_x_nm": {
+            "type": "integer"
+          },
+          "from_y_nm": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "to_x_nm": {
+            "type": "integer"
+          },
+          "to_y_nm": {
+            "type": "integer"
+          },
+          "width_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "footprint",
+          "from_x_nm",
+          "from_y_nm",
+          "to_x_nm",
+          "to_y_nm",
+          "width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.add_footprint_silkscreen_line",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Append one first-class typed native pool footprint silkscreen polygon or polyline primitive.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "add-pool-footprint-silkscreen-polygon"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "flag": "--vertices",
+            "param": "vertices"
+          },
+          {
+            "param": "closed",
+            "switch": "--closed"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_footprint_silkscreen_polygon"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "footprint",
+        "vertices",
+        "closed",
+        "width_nm"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "closed": {
+            "type": "boolean"
+          },
+          "footprint": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "vertices": {
+            "description": "Semicolon-separated x,y vertex pairs, e.g. x,y;x,y;x,y.",
+            "type": "string"
+          },
+          "width_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "footprint",
+          "vertices",
+          "closed",
+          "width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.add_footprint_silkscreen_polygon",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Append one first-class typed native pool footprint silkscreen rectangle primitive.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "add-pool-footprint-silkscreen-rect"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "flag": "--min-x-nm",
+            "param": "min_x_nm"
+          },
+          {
+            "flag": "--min-y-nm",
+            "param": "min_y_nm"
+          },
+          {
+            "flag": "--max-x-nm",
+            "param": "max_x_nm"
+          },
+          {
+            "flag": "--max-y-nm",
+            "param": "max_y_nm"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_footprint_silkscreen_rect"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "footprint",
+        "min_x_nm",
+        "min_y_nm",
+        "max_x_nm",
+        "max_y_nm",
+        "width_nm"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "footprint": {
+            "type": "string"
+          },
+          "max_x_nm": {
+            "type": "integer"
+          },
+          "max_y_nm": {
+            "type": "integer"
+          },
+          "min_x_nm": {
+            "type": "integer"
+          },
+          "min_y_nm": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "width_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "footprint",
+          "min_x_nm",
+          "min_y_nm",
+          "max_x_nm",
+          "max_y_nm",
+          "width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.add_footprint_silkscreen_rect",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Attach one 3D model to a typed native pool package.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "add-pool-package-model-3d"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--model-path",
+            "param": "model_path"
+          },
+          {
+            "flag": "--transform-json",
+            "param": "transform_json"
+          },
+          {
+            "flag": "--format",
+            "param": "format"
+          },
+          {
+            "flag": "--tx-nm",
+            "param": "tx_nm"
+          },
+          {
+            "flag": "--ty-nm",
+            "param": "ty_nm"
+          },
+          {
+            "flag": "--tz-nm",
+            "param": "tz_nm"
+          },
+          {
+            "flag": "--roll-tenths-deg",
+            "param": "roll_tenths_deg"
+          },
+          {
+            "flag": "--pitch-tenths-deg",
+            "param": "pitch_tenths_deg"
+          },
+          {
+            "flag": "--yaw-tenths-deg",
+            "param": "yaw_tenths_deg"
+          },
+          {
+            "flag": "--scale",
+            "param": "scale"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_package_model_3d"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "package",
+        "model_path",
+        "transform_json",
+        "format",
+        "tx_nm",
+        "ty_nm",
+        "tz_nm",
+        "roll_tenths_deg",
+        "pitch_tenths_deg",
+        "yaw_tenths_deg",
+        "scale"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool",
+        "transform_json": null
+      },
+      "inputSchema": {
+        "properties": {
+          "format": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "model_path": {
+            "type": "string"
+          },
+          "package": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pitch_tenths_deg": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "pool": {
+            "type": "string"
+          },
+          "roll_tenths_deg": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "scale": {
+            "type": [
+              "string",
+              "number",
+              "null"
+            ]
+          },
+          "transform_json": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "tx_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "ty_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "tz_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "yaw_tenths_deg": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "package",
+          "model_path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.add_package_model_3d",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Legacy package-named compatibility path that appends one silkscreen arc primitive to the unique package-linked Footprint.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "add-pool-package-silkscreen-arc"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--radius-nm",
+            "param": "radius_nm"
+          },
+          {
+            "flag": "--start-angle",
+            "param": "start_angle"
+          },
+          {
+            "flag": "--end-angle",
+            "param": "end_angle"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_package_silkscreen_arc"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "package",
+        "x_nm",
+        "y_nm",
+        "radius_nm",
+        "start_angle",
+        "end_angle",
+        "width_nm"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "end_angle": {
+            "type": "integer"
+          },
+          "package": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "radius_nm": {
+            "type": "integer"
+          },
+          "start_angle": {
+            "type": "integer"
+          },
+          "width_nm": {
+            "type": "integer"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "package",
+          "x_nm",
+          "y_nm",
+          "radius_nm",
+          "start_angle",
+          "end_angle",
+          "width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.add_package_silkscreen_arc",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Legacy package-named compatibility path that appends one silkscreen circle primitive to the unique package-linked Footprint.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "add-pool-package-silkscreen-circle"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--center-x-nm",
+            "param": "center_x_nm"
+          },
+          {
+            "flag": "--center-y-nm",
+            "param": "center_y_nm"
+          },
+          {
+            "flag": "--radius-nm",
+            "param": "radius_nm"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_package_silkscreen_circle"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "package",
+        "center_x_nm",
+        "center_y_nm",
+        "radius_nm",
+        "width_nm"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "center_x_nm": {
+            "type": "integer"
+          },
+          "center_y_nm": {
+            "type": "integer"
+          },
+          "package": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "radius_nm": {
+            "type": "integer"
+          },
+          "width_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "package",
+          "center_x_nm",
+          "center_y_nm",
+          "radius_nm",
+          "width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.add_package_silkscreen_circle",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Legacy package-named compatibility path that appends one silkscreen line primitive to the unique package-linked Footprint.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "add-pool-package-silkscreen-line"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--from-x-nm",
+            "param": "from_x_nm"
+          },
+          {
+            "flag": "--from-y-nm",
+            "param": "from_y_nm"
+          },
+          {
+            "flag": "--to-x-nm",
+            "param": "to_x_nm"
+          },
+          {
+            "flag": "--to-y-nm",
+            "param": "to_y_nm"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_package_silkscreen_line"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "package",
+        "from_x_nm",
+        "from_y_nm",
+        "to_x_nm",
+        "to_y_nm",
+        "width_nm"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "from_x_nm": {
+            "type": "integer"
+          },
+          "from_y_nm": {
+            "type": "integer"
+          },
+          "package": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "to_x_nm": {
+            "type": "integer"
+          },
+          "to_y_nm": {
+            "type": "integer"
+          },
+          "width_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "package",
+          "from_x_nm",
+          "from_y_nm",
+          "to_x_nm",
+          "to_y_nm",
+          "width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.add_package_silkscreen_line",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Legacy package-named compatibility path that appends one silkscreen polygon or polyline primitive to the unique package-linked Footprint.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "add-pool-package-silkscreen-polygon"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--vertices",
+            "param": "vertices"
+          },
+          {
+            "param": "closed",
+            "switch": "--closed"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_package_silkscreen_polygon"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "package",
+        "vertices",
+        "closed",
+        "width_nm"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "closed": {
+            "type": "boolean"
+          },
+          "package": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "vertices": {
+            "description": "Semicolon-separated x,y vertex pairs, e.g. x,y;x,y;x,y.",
+            "type": "string"
+          },
+          "width_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "package",
+          "vertices",
+          "closed",
+          "width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.add_package_silkscreen_polygon",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Legacy package-named compatibility path that appends one silkscreen rectangle primitive to the unique package-linked Footprint.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "add-pool-package-silkscreen-rect"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--min-x-nm",
+            "param": "min_x_nm"
+          },
+          {
+            "flag": "--min-y-nm",
+            "param": "min_y_nm"
+          },
+          {
+            "flag": "--max-x-nm",
+            "param": "max_x_nm"
+          },
+          {
+            "flag": "--max-y-nm",
+            "param": "max_y_nm"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_package_silkscreen_rect"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "package",
+        "min_x_nm",
+        "min_y_nm",
+        "max_x_nm",
+        "max_y_nm",
+        "width_nm"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "max_x_nm": {
+            "type": "integer"
+          },
+          "max_y_nm": {
+            "type": "integer"
+          },
+          "min_x_nm": {
+            "type": "integer"
+          },
+          "min_y_nm": {
+            "type": "integer"
+          },
+          "package": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "width_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "package",
+          "min_x_nm",
+          "min_y_nm",
+          "max_x_nm",
+          "max_y_nm",
+          "width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.add_package_silkscreen_rect",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Legacy package-named compatibility path that appends one silkscreen text primitive to the unique package-linked Footprint.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "add-pool-package-silkscreen-text"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--text",
+            "param": "text"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--rotation",
+            "param": "rotation"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_package_silkscreen_text"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "package",
+        "text",
+        "x_nm",
+        "y_nm",
+        "rotation"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "package": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "rotation": {
+            "type": "number"
+          },
+          "text": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "package",
+          "text",
+          "x_nm",
+          "y_nm",
+          "rotation"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.add_package_silkscreen_text",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Append one typed native pool symbol arc primitive.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "add-pool-symbol-arc"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--radius-nm",
+            "param": "radius_nm"
+          },
+          {
+            "flag": "--start-angle",
+            "param": "start_angle"
+          },
+          {
+            "flag": "--end-angle",
+            "param": "end_angle"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_symbol_arc"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "symbol",
+        "x_nm",
+        "y_nm",
+        "radius_nm",
+        "start_angle",
+        "end_angle",
+        "width_nm"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "end_angle": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "radius_nm": {
+            "type": "integer"
+          },
+          "start_angle": {
+            "type": "integer"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "width_nm": {
+            "type": "integer"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "x_nm",
+          "y_nm",
+          "radius_nm",
+          "start_angle",
+          "end_angle",
+          "width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.add_symbol_arc",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Append one typed native pool symbol circle primitive.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "add-pool-symbol-circle"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--center-x-nm",
+            "param": "center_x_nm"
+          },
+          {
+            "flag": "--center-y-nm",
+            "param": "center_y_nm"
+          },
+          {
+            "flag": "--radius-nm",
+            "param": "radius_nm"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_symbol_circle"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "symbol",
+        "center_x_nm",
+        "center_y_nm",
+        "radius_nm",
+        "width_nm"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "center_x_nm": {
+            "type": "integer"
+          },
+          "center_y_nm": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "radius_nm": {
+            "type": "integer"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "width_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "center_x_nm",
+          "center_y_nm",
+          "radius_nm",
+          "width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.add_symbol_circle",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Append one typed native pool symbol line primitive.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "add-pool-symbol-line"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--from-x-nm",
+            "param": "from_x_nm"
+          },
+          {
+            "flag": "--from-y-nm",
+            "param": "from_y_nm"
+          },
+          {
+            "flag": "--to-x-nm",
+            "param": "to_x_nm"
+          },
+          {
+            "flag": "--to-y-nm",
+            "param": "to_y_nm"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_symbol_line"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "symbol",
+        "from_x_nm",
+        "from_y_nm",
+        "to_x_nm",
+        "to_y_nm",
+        "width_nm"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "from_x_nm": {
+            "type": "integer"
+          },
+          "from_y_nm": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "to_x_nm": {
+            "type": "integer"
+          },
+          "to_y_nm": {
+            "type": "integer"
+          },
+          "width_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "from_x_nm",
+          "from_y_nm",
+          "to_x_nm",
+          "to_y_nm",
+          "width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.add_symbol_line",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Append one typed native pool symbol polygon or polyline primitive.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "add-pool-symbol-polygon"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--vertices",
+            "param": "vertices"
+          },
+          {
+            "param": "closed",
+            "switch": "--closed"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_symbol_polygon"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "symbol",
+        "vertices",
+        "closed",
+        "width_nm"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "closed": {
+            "type": "boolean"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "vertices": {
+            "type": "string"
+          },
+          "width_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "vertices",
+          "closed",
+          "width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.add_symbol_polygon",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Append one typed native pool symbol rectangle primitive.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "add-pool-symbol-rect"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--min-x-nm",
+            "param": "min_x_nm"
+          },
+          {
+            "flag": "--min-y-nm",
+            "param": "min_y_nm"
+          },
+          {
+            "flag": "--max-x-nm",
+            "param": "max_x_nm"
+          },
+          {
+            "flag": "--max-y-nm",
+            "param": "max_y_nm"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_symbol_rect"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "symbol",
+        "min_x_nm",
+        "min_y_nm",
+        "max_x_nm",
+        "max_y_nm",
+        "width_nm"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "max_x_nm": {
+            "type": "integer"
+          },
+          "max_y_nm": {
+            "type": "integer"
+          },
+          "min_x_nm": {
+            "type": "integer"
+          },
+          "min_y_nm": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "width_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "min_x_nm",
+          "min_y_nm",
+          "max_x_nm",
+          "max_y_nm",
+          "width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.add_symbol_rect",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Append one typed native pool symbol text primitive.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "add-pool-symbol-text"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--text",
+            "param": "text"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--rotation",
+            "param": "rotation"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_symbol_text"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "symbol",
+        "text",
+        "x_nm",
+        "y_nm",
+        "rotation"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "rotation": {
+            "type": "integer"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "text",
+          "x_nm",
+          "y_nm",
+          "rotation"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.add_symbol_text",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Attach one model source file to a typed native pool part without parsing the model payload.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "attach-pool-part-model"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "flag": "--source",
+            "param": "source"
+          },
+          {
+            "flag": "--role",
+            "param": "role"
+          },
+          {
+            "flag": "--dialect",
+            "param": "dialect"
+          },
+          {
+            "param": "model_names",
+            "repeated": "--model-name"
+          },
+          {
+            "param": "encrypted",
+            "switch": "--encrypted"
+          },
+          {
+            "flag": "--encryption-scheme",
+            "param": "encryption_scheme"
+          },
+          {
+            "flag": "--vendor",
+            "param": "vendor"
+          },
+          {
+            "flag": "--fetched-at",
+            "param": "fetched_at"
+          },
+          {
+            "flag": "--format-metadata-json",
+            "param": "format_metadata_json"
+          }
+        ],
+        "kind": "cli",
+        "method": "attach_pool_part_model"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "part",
+        "source",
+        "role",
+        "dialect",
+        "model_names",
+        "encrypted",
+        "encryption_scheme",
+        "vendor",
+        "fetched_at",
+        "format_metadata_json"
+      ],
+      "dispatch_defaults": {
+        "dialect": null,
+        "encrypted": false,
+        "encryption_scheme": null,
+        "fetched_at": null,
+        "format_metadata_json": null,
+        "model_names": [],
+        "pool": "pool",
+        "vendor": null
+      },
+      "inputSchema": {
+        "properties": {
+          "dialect": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "encrypted": {
+            "type": "boolean"
+          },
+          "encryption_scheme": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "fetched_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "format_metadata_json": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "model_names": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "part": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "vendor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "part",
+          "source",
+          "role"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.attach_part_model",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Create one typed native pool entity with an initial gate over an existing unit and symbol.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "create-pool-entity"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--entity",
+            "param": "entity"
+          },
+          {
+            "flag": "--gate",
+            "param": "gate"
+          },
+          {
+            "flag": "--unit",
+            "param": "unit"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--prefix",
+            "param": "prefix"
+          },
+          {
+            "flag": "--manufacturer",
+            "param": "manufacturer"
+          },
+          {
+            "flag": "--gate-name",
+            "param": "gate_name"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_pool_entity"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "entity",
+        "gate",
+        "unit",
+        "symbol",
+        "name",
+        "prefix",
+        "manufacturer",
+        "gate_name"
+      ],
+      "dispatch_defaults": {
+        "gate_name": "A",
+        "manufacturer": "",
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "entity": {
+            "type": "string"
+          },
+          "gate": {
+            "type": "string"
+          },
+          "gate_name": {
+            "type": "string"
+          },
+          "manufacturer": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "prefix": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "entity",
+          "gate",
+          "unit",
+          "symbol",
+          "name",
+          "prefix"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.create_entity",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Create one first-class typed native pool footprint for an existing package.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "create-pool-footprint"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_pool_footprint"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "footprint",
+        "package",
+        "name"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "footprint": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "package": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "footprint",
+          "package",
+          "name"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.create_footprint",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Create one native pool-library object through the journaled project commit path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "create-pool-library-object"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--kind",
+            "param": "kind"
+          },
+          {
+            "flag": "--object",
+            "param": "object"
+          },
+          {
+            "flag": "--from-json",
+            "param": "from_json"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_pool_library_object"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "kind",
+        "object",
+        "from_json"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "from_json": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "units",
+              "symbols",
+              "entities",
+              "parts",
+              "packages",
+              "footprints",
+              "padstacks",
+              "pin_pad_maps"
+            ],
+            "type": "string"
+          },
+          "object": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "kind",
+          "object",
+          "from_json"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.create_object",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Create one typed native pool package body record; optional pad/padstack fields are legacy land-pattern compatibility input and should be replaced by first-class Footprint authoring.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "create-pool-package"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--pad",
+            "param": "pad"
+          },
+          {
+            "flag": "--padstack",
+            "param": "padstack"
+          },
+          {
+            "flag": "--pad-name",
+            "param": "pad_name"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--layer",
+            "param": "layer"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_pool_package"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "package",
+        "name",
+        "pad",
+        "padstack",
+        "pad_name",
+        "x_nm",
+        "y_nm",
+        "layer"
+      ],
+      "dispatch_defaults": {
+        "layer": 1,
+        "pad": null,
+        "pad_name": "1",
+        "padstack": null,
+        "pool": "pool",
+        "x_nm": 0,
+        "y_nm": 0
+      },
+      "inputSchema": {
+        "properties": {
+          "layer": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "package": {
+            "type": "string"
+          },
+          "pad": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pad_name": {
+            "type": "string"
+          },
+          "padstack": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "package",
+          "name"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.create_package",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Create one typed native pool padstack with optional circle/rect aperture and drill diameter.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "create-pool-padstack"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--padstack",
+            "param": "padstack"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--aperture",
+            "param": "aperture"
+          },
+          {
+            "flag": "--diameter-nm",
+            "param": "diameter_nm"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          },
+          {
+            "flag": "--height-nm",
+            "param": "height_nm"
+          },
+          {
+            "flag": "--drill-nm",
+            "param": "drill_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_pool_padstack"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "padstack",
+        "name",
+        "aperture",
+        "diameter_nm",
+        "width_nm",
+        "height_nm",
+        "drill_nm"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "aperture": {
+            "type": "string"
+          },
+          "diameter_nm": {
+            "type": "integer"
+          },
+          "drill_nm": {
+            "type": "integer"
+          },
+          "height_nm": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "padstack": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "width_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "padstack",
+          "name"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.create_padstack",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Create one typed native pool part binding an existing entity to an existing package.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "create-pool-part"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "flag": "--entity",
+            "param": "entity"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--mpn",
+            "param": "mpn"
+          },
+          {
+            "flag": "--manufacturer",
+            "param": "manufacturer"
+          },
+          {
+            "flag": "--value",
+            "param": "value"
+          },
+          {
+            "flag": "--description",
+            "param": "description"
+          },
+          {
+            "flag": "--datasheet",
+            "param": "datasheet"
+          },
+          {
+            "flag": "--lifecycle",
+            "param": "lifecycle"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_pool_part"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "part",
+        "entity",
+        "package",
+        "mpn",
+        "manufacturer",
+        "value",
+        "description",
+        "datasheet",
+        "lifecycle"
+      ],
+      "dispatch_defaults": {
+        "datasheet": "",
+        "description": "",
+        "lifecycle": "Active",
+        "manufacturer": "",
+        "pool": "pool",
+        "value": ""
+      },
+      "inputSchema": {
+        "properties": {
+          "datasheet": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "entity": {
+            "type": "string"
+          },
+          "lifecycle": {
+            "type": "string"
+          },
+          "manufacturer": {
+            "type": "string"
+          },
+          "mpn": {
+            "type": "string"
+          },
+          "package": {
+            "type": "string"
+          },
+          "part": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "part",
+          "entity",
+          "package",
+          "mpn"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.create_part",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Create one first-class native pool PinPadMap through the journaled project commit path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "create-pool-pin-pad-map"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--map",
+            "param": "map"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "param": "entries",
+            "repeated": "--entry"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "param": "set_default",
+            "switch": "--set-default"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_pool_pin_pad_map"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "map",
+        "part",
+        "entries",
+        "footprint",
+        "set_default"
+      ],
+      "dispatch_defaults": {
+        "footprint": null,
+        "pool": "pool",
+        "set_default": false
+      },
+      "inputSchema": {
+        "properties": {
+          "entries": {
+            "items": {
+              "properties": {
+                "gate": {
+                  "type": "string"
+                },
+                "pad": {
+                  "type": "string"
+                },
+                "pin": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "pad",
+                "pin"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "footprint": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "map": {
+            "type": "string"
+          },
+          "part": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "set_default": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "path",
+          "map",
+          "part",
+          "entries"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.create_pin_pad_map",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Create one typed native pool symbol for an existing pool unit through the journaled project commit path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "create-pool-symbol"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--unit",
+            "param": "unit"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_pool_symbol"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "symbol",
+        "unit",
+        "name"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "unit",
+          "name"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.create_symbol",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Create one typed native pool unit through the journaled project commit path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "create-pool-unit"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--unit",
+            "param": "unit"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--manufacturer",
+            "param": "manufacturer"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_pool_unit"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "unit",
+        "name",
+        "manufacturer"
+      ],
+      "dispatch_defaults": {
+        "manufacturer": "",
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "manufacturer": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "unit",
+          "name"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.create_unit",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native pool-library object through the journaled project commit path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-pool-library-object"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--kind",
+            "param": "kind"
+          },
+          {
+            "flag": "--object",
+            "param": "object"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_pool_library_object"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "kind",
+        "object"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "units",
+              "symbols",
+              "entities",
+              "parts",
+              "packages",
+              "footprints",
+              "padstacks",
+              "pin_pad_maps"
+            ],
+            "type": "string"
+          },
+          "object": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "kind",
+          "object"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.delete_object",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Detach one model attachment from a typed native pool part.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "detach-pool-part-model"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "flag": "--attachment",
+            "param": "attachment"
+          },
+          {
+            "flag": "--model",
+            "param": "model"
+          }
+        ],
+        "kind": "cli",
+        "method": "detach_pool_part_model"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "part",
+        "attachment",
+        "model"
+      ],
+      "dispatch_defaults": {
+        "attachment": null,
+        "model": null,
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "attachment": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "model": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "part": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "part"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.detach_part_model",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Dry-run or apply conservative garbage collection for orphaned native pool behavioural-model blobs.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "gc-pool-models"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--role",
+            "param": "role"
+          },
+          {
+            "flag": "--sha256",
+            "param": "sha256"
+          },
+          {
+            "param": "apply",
+            "switch": "--apply"
+          }
+        ],
+        "kind": "cli",
+        "method": "gc_pool_model_blobs"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "role",
+        "sha256",
+        "apply"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "apply": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "role": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sha256": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.gc_pool_models",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
       "description": "List resolver-discovered native pool-library objects.",
       "dispatch": {
         "argv": [
@@ -2069,6 +5119,2024 @@
       "write_surface": null
     },
     {
+      "description": "List and verify native pool behavioural-model blobs and attachment references.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "pool-models"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--role",
+            "param": "role"
+          },
+          {
+            "flag": "--sha256",
+            "param": "sha256"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_pool_model_blobs"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "role",
+        "sha256"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "role": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sha256": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.pool_models",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set first-class typed native pool footprint polygon courtyard geometry.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-footprint-courtyard-polygon"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "flag": "--vertices",
+            "param": "vertices"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_footprint_courtyard_polygon"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "footprint",
+        "vertices"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "footprint": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "vertices": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "footprint",
+          "vertices"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_footprint_courtyard_polygon",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set first-class typed native pool footprint rectangular courtyard geometry.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-footprint-courtyard-rect"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "flag": "--min-x-nm",
+            "param": "min_x_nm"
+          },
+          {
+            "flag": "--min-y-nm",
+            "param": "min_y_nm"
+          },
+          {
+            "flag": "--max-x-nm",
+            "param": "max_x_nm"
+          },
+          {
+            "flag": "--max-y-nm",
+            "param": "max_y_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_footprint_courtyard_rect"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "footprint",
+        "min_x_nm",
+        "min_y_nm",
+        "max_x_nm",
+        "max_y_nm"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "footprint": {
+            "type": "string"
+          },
+          "max_x_nm": {
+            "type": "integer"
+          },
+          "max_y_nm": {
+            "type": "integer"
+          },
+          "min_x_nm": {
+            "type": "integer"
+          },
+          "min_y_nm": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "footprint",
+          "min_x_nm",
+          "min_y_nm",
+          "max_x_nm",
+          "max_y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_footprint_courtyard_rect",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set one first-class typed native pool footprint pad entry referencing an existing padstack.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-footprint-pad"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "flag": "--pad",
+            "param": "pad"
+          },
+          {
+            "flag": "--padstack",
+            "param": "padstack"
+          },
+          {
+            "flag": "--pad-name",
+            "param": "pad_name"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--layer",
+            "param": "layer"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_footprint_pad"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "footprint",
+        "pad",
+        "padstack",
+        "pad_name",
+        "x_nm",
+        "y_nm",
+        "layer"
+      ],
+      "dispatch_defaults": {
+        "layer": 1,
+        "pad_name": "1",
+        "pool": "pool",
+        "x_nm": 0,
+        "y_nm": 0
+      },
+      "inputSchema": {
+        "properties": {
+          "footprint": {
+            "type": "string"
+          },
+          "layer": {
+            "type": "integer"
+          },
+          "pad": {
+            "type": "string"
+          },
+          "pad_name": {
+            "type": "string"
+          },
+          "padstack": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "footprint",
+          "pad",
+          "padstack"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_footprint_pad",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Replace one native pool-library object through the journaled project commit path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-library-object"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--kind",
+            "param": "kind"
+          },
+          {
+            "flag": "--object",
+            "param": "object"
+          },
+          {
+            "flag": "--from-json",
+            "param": "from_json"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_library_object"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "kind",
+        "object",
+        "from_json"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "from_json": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "units",
+              "symbols",
+              "entities",
+              "parts",
+              "packages",
+              "footprints",
+              "padstacks",
+              "pin_pad_maps"
+            ],
+            "type": "string"
+          },
+          "object": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "kind",
+          "object",
+          "from_json"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_object",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set or clear typed native pool package body-height metadata.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-package-body-heights"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--body-height-nm",
+            "param": "body_height_nm"
+          },
+          {
+            "flag": "--body-height-mounted-nm",
+            "param": "body_height_mounted_nm"
+          },
+          {
+            "param": "clear",
+            "switch": "--clear"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_package_body_heights"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "package",
+        "body_height_nm",
+        "body_height_mounted_nm",
+        "clear"
+      ],
+      "dispatch_defaults": {
+        "body_height_mounted_nm": null,
+        "body_height_nm": null,
+        "clear": null,
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "body_height_mounted_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "body_height_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "clear": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "package": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "package"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_package_body_heights",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Legacy package-named compatibility path that writes polygon courtyard geometry to the package-linked Footprint.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-package-courtyard-polygon"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--vertices",
+            "param": "vertices"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_package_courtyard_polygon"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "package",
+        "vertices"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "package": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "vertices": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "package",
+          "vertices"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_package_courtyard_polygon",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Legacy package-named compatibility path that writes rectangular courtyard geometry to the package-linked Footprint.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-package-courtyard-rect"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--min-x-nm",
+            "param": "min_x_nm"
+          },
+          {
+            "flag": "--min-y-nm",
+            "param": "min_y_nm"
+          },
+          {
+            "flag": "--max-x-nm",
+            "param": "max_x_nm"
+          },
+          {
+            "flag": "--max-y-nm",
+            "param": "max_y_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_package_courtyard_rect"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "package",
+        "min_x_nm",
+        "min_y_nm",
+        "max_x_nm",
+        "max_y_nm"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "max_x_nm": {
+            "type": "integer"
+          },
+          "max_y_nm": {
+            "type": "integer"
+          },
+          "min_x_nm": {
+            "type": "integer"
+          },
+          "min_y_nm": {
+            "type": "integer"
+          },
+          "package": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "package",
+          "min_x_nm",
+          "min_y_nm",
+          "max_x_nm",
+          "max_y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_package_courtyard_rect",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Legacy package-named compatibility path that writes one pad to the package-linked Footprint; prefer set_pool_footprint_pad.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-package-pad"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--pad",
+            "param": "pad"
+          },
+          {
+            "flag": "--padstack",
+            "param": "padstack"
+          },
+          {
+            "flag": "--pad-name",
+            "param": "pad_name"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--layer",
+            "param": "layer"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_package_pad"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "package",
+        "pad",
+        "padstack",
+        "pad_name",
+        "x_nm",
+        "y_nm",
+        "layer"
+      ],
+      "dispatch_defaults": {
+        "layer": 1,
+        "pad_name": "1",
+        "pool": "pool",
+        "x_nm": 0,
+        "y_nm": 0
+      },
+      "inputSchema": {
+        "properties": {
+          "layer": {
+            "type": "integer"
+          },
+          "package": {
+            "type": "string"
+          },
+          "pad": {
+            "type": "string"
+          },
+          "pad_name": {
+            "type": "string"
+          },
+          "padstack": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "package",
+          "pad",
+          "padstack"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_package_pad",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set typed native pool part behavioural model attachment payloads.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-part-behavioural-models"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "flag": "--mode",
+            "param": "mode"
+          },
+          {
+            "param": "models",
+            "repeated": "--model"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_part_behavioural_models"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "part",
+        "mode",
+        "models"
+      ],
+      "dispatch_defaults": {
+        "mode": "merge",
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "mode": {
+            "enum": [
+              "merge",
+              "replace"
+            ],
+            "type": "string"
+          },
+          "models": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "part": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "part",
+          "models"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_part_behavioural_models",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set typed native pool part metadata fields.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-part-metadata"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "flag": "--mpn",
+            "param": "mpn"
+          },
+          {
+            "flag": "--manufacturer",
+            "param": "manufacturer"
+          },
+          {
+            "flag": "--manufacturer-jep106",
+            "param": "manufacturer_jep106"
+          },
+          {
+            "flag": "--value",
+            "param": "value"
+          },
+          {
+            "flag": "--description",
+            "param": "description"
+          },
+          {
+            "flag": "--datasheet",
+            "param": "datasheet"
+          },
+          {
+            "flag": "--lifecycle",
+            "param": "lifecycle"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_part_metadata"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "part",
+        "mpn",
+        "manufacturer",
+        "manufacturer_jep106",
+        "value",
+        "description",
+        "datasheet",
+        "lifecycle"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "datasheet": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "lifecycle": {
+            "type": "string"
+          },
+          "manufacturer": {
+            "type": "string"
+          },
+          "manufacturer_jep106": {
+            "type": "integer"
+          },
+          "mpn": {
+            "type": "string"
+          },
+          "part": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "part"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_part_metadata",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set typed native pool part orderable manufacturer part numbers.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-part-orderable-mpns"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "flag": "--mode",
+            "param": "mode"
+          },
+          {
+            "param": "mpns",
+            "repeated": "--mpn"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_part_orderable_mpns"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "part",
+        "mode",
+        "mpns"
+      ],
+      "dispatch_defaults": {
+        "mode": "merge",
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "mode": {
+            "enum": [
+              "merge",
+              "replace"
+            ],
+            "type": "string"
+          },
+          "mpns": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "part": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "part",
+          "mpns"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_part_orderable_mpns",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set typed native pool part encoded packaging option payloads.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-part-packaging-options"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "flag": "--mode",
+            "param": "mode"
+          },
+          {
+            "param": "options",
+            "repeated": "--option"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_part_packaging_options"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "part",
+        "mode",
+        "options"
+      ],
+      "dispatch_defaults": {
+        "mode": "merge",
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "mode": {
+            "enum": [
+              "merge",
+              "replace"
+            ],
+            "type": "string"
+          },
+          "options": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "part": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "part",
+          "options"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_part_packaging_options",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set typed native pool part pad-map entries in merge or replace mode.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-part-pad-map"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "flag": "--mode",
+            "param": "mode"
+          },
+          {
+            "param": "entries",
+            "repeated": "--entry"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_part_pad_map"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "part",
+        "mode",
+        "entries"
+      ],
+      "dispatch_defaults": {
+        "mode": "merge",
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "entries": {
+            "items": {
+              "properties": {
+                "gate": {
+                  "type": "string"
+                },
+                "pad": {
+                  "type": "string"
+                },
+                "pin": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "pad",
+                "gate",
+                "pin"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "part": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "part",
+          "entries"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_part_pad_map",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set one typed native pool part pad-map entry from package pad to entity gate pin.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-part-pad-map-entry"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "flag": "--pad",
+            "param": "pad"
+          },
+          {
+            "flag": "--gate",
+            "param": "gate"
+          },
+          {
+            "flag": "--pin",
+            "param": "pin"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_part_pad_map_entry"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "part",
+        "pad",
+        "gate",
+        "pin"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "gate": {
+            "type": "string"
+          },
+          "pad": {
+            "type": "string"
+          },
+          "part": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pin": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "part",
+          "pad",
+          "gate",
+          "pin"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_part_pad_map_entry",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set typed native pool part parametric key-value fields.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-part-parametric"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "flag": "--mode",
+            "param": "mode"
+          },
+          {
+            "param": "params",
+            "repeated": "--param"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_part_parametric"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "part",
+        "mode",
+        "params"
+      ],
+      "dispatch_defaults": {
+        "mode": "merge",
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "mode": {
+            "enum": [
+              "merge",
+              "replace"
+            ],
+            "type": "string"
+          },
+          "params": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "part": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "part",
+          "params"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_part_parametric",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set or clear typed native pool part supply-chain offer metadata.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-part-supply-chain"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "param": "clear",
+            "switch": "--clear"
+          },
+          {
+            "flag": "--checked-at",
+            "param": "checked_at"
+          },
+          {
+            "param": "offers",
+            "repeated": "--offer"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_part_supply_chain"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "part",
+        "clear",
+        "checked_at",
+        "offers"
+      ],
+      "dispatch_defaults": {
+        "checked_at": null,
+        "clear": false,
+        "offers": [],
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "checked_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "clear": {
+            "type": "boolean"
+          },
+          "offers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "part": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "part"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_part_supply_chain",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set typed native pool part tags.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-part-tags"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "flag": "--mode",
+            "param": "mode"
+          },
+          {
+            "param": "tags",
+            "repeated": "--tag"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_part_tags"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "part",
+        "mode",
+        "tags"
+      ],
+      "dispatch_defaults": {
+        "mode": "merge",
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "mode": {
+            "enum": [
+              "merge",
+              "replace"
+            ],
+            "type": "string"
+          },
+          "part": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "path",
+          "part",
+          "tags"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_part_tags",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set or clear typed native pool part thermal characteristics.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-part-thermal"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "flag": "--theta-ja-c-per-w",
+            "param": "theta_ja_c_per_w"
+          },
+          {
+            "flag": "--theta-jc-top-c-per-w",
+            "param": "theta_jc_top_c_per_w"
+          },
+          {
+            "flag": "--theta-jc-bot-c-per-w",
+            "param": "theta_jc_bot_c_per_w"
+          },
+          {
+            "flag": "--theta-jb-c-per-w",
+            "param": "theta_jb_c_per_w"
+          },
+          {
+            "flag": "--max-junction-c",
+            "param": "max_junction_c"
+          },
+          {
+            "flag": "--thermal-reference",
+            "param": "thermal_reference"
+          },
+          {
+            "param": "clear",
+            "switch": "--clear"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_part_thermal"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "part",
+        "theta_ja_c_per_w",
+        "theta_jc_top_c_per_w",
+        "theta_jc_bot_c_per_w",
+        "theta_jb_c_per_w",
+        "max_junction_c",
+        "thermal_reference",
+        "clear"
+      ],
+      "dispatch_defaults": {
+        "clear": false,
+        "max_junction_c": null,
+        "pool": "pool",
+        "thermal_reference": null,
+        "theta_ja_c_per_w": null,
+        "theta_jb_c_per_w": null,
+        "theta_jc_bot_c_per_w": null,
+        "theta_jc_top_c_per_w": null
+      },
+      "inputSchema": {
+        "properties": {
+          "clear": {
+            "type": "boolean"
+          },
+          "max_junction_c": {
+            "type": [
+              "number",
+              "string",
+              "null"
+            ]
+          },
+          "part": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "thermal_reference": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "theta_ja_c_per_w": {
+            "type": [
+              "number",
+              "string",
+              "null"
+            ]
+          },
+          "theta_jb_c_per_w": {
+            "type": [
+              "number",
+              "string",
+              "null"
+            ]
+          },
+          "theta_jc_bot_c_per_w": {
+            "type": [
+              "number",
+              "string",
+              "null"
+            ]
+          },
+          "theta_jc_top_c_per_w": {
+            "type": [
+              "number",
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "part"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_part_thermal",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Update first-class native pool PinPadMap mappings through the journaled project commit path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-pin-pad-map"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--map",
+            "param": "map"
+          },
+          {
+            "flag": "--mode",
+            "param": "mode"
+          },
+          {
+            "param": "entries",
+            "repeated": "--entry"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_pin_pad_map"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "map",
+        "mode",
+        "entries"
+      ],
+      "dispatch_defaults": {
+        "mode": "merge",
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "entries": {
+            "items": {
+              "properties": {
+                "gate": {
+                  "type": "string"
+                },
+                "pad": {
+                  "type": "string"
+                },
+                "pin": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "pad",
+                "pin"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "map": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "map",
+          "entries"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_pin_pad_map",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set one typed native pool symbol pin anchor for a unit pin.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-symbol-pin-anchor"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--pin",
+            "param": "pin"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_symbol_pin_anchor"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "symbol",
+        "pin",
+        "x_nm",
+        "y_nm"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "pin": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "pin",
+          "x_nm",
+          "y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_symbol_pin_anchor",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set one typed native pool unit pin entry.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pool-unit-pin"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--unit",
+            "param": "unit"
+          },
+          {
+            "flag": "--pin",
+            "param": "pin"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--direction",
+            "param": "direction"
+          },
+          {
+            "flag": "--swap-group",
+            "param": "swap_group"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_unit_pin"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "unit",
+        "pin",
+        "name",
+        "direction",
+        "swap_group"
+      ],
+      "dispatch_defaults": {
+        "direction": "Passive",
+        "pool": "pool",
+        "swap_group": 0
+      },
+      "inputSchema": {
+        "properties": {
+          "direction": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pin": {
+            "type": "string"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "swap_group": {
+            "type": "integer"
+          },
+          "unit": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "unit",
+          "pin",
+          "name"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.set_unit_pin",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
       "description": "Show one resolver-discovered native pool-library object with its materialized payload.",
       "dispatch": {
         "argv": [
@@ -2085,19 +7153,19 @@
             "lit": "pool-library-objects"
           },
           {
+            "flag": "--object",
+            "param": "object"
+          },
+          {
+            "lit": "--include-payload"
+          },
+          {
             "flag": "--pool",
             "param": "pool"
           },
           {
             "flag": "--kind",
             "param": "kind"
-          },
-          {
-            "flag": "--object",
-            "param": "object"
-          },
-          {
-            "lit": "--include-payload"
           }
         ],
         "kind": "cli",

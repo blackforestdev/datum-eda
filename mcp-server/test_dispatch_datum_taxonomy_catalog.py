@@ -32,6 +32,7 @@ class TestDispatchDatumTaxonomyCatalog(unittest.TestCase):
             "datum.component_instance",
             "datum.context",
             "datum.journal",
+            "datum.library",
             "datum.manufacturing",
             "datum.output_job",
             "datum.pool",

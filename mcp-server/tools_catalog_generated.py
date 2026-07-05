@@ -30,6 +30,7 @@ MIGRATED_PREFIXES: frozenset[str] = frozenset({
     "datum.component_instance",
     "datum.context",
     "datum.journal",
+    "datum.library",
     "datum.manufacturing",
     "datum.output_job",
     "datum.pool",
@@ -42,6 +43,65 @@ MIGRATED_PREFIXES: frozenset[str] = frozenset({
 })
 
 _CATALOG_PATH = Path(__file__).resolve().parent / "datum_tool_catalog.json"
+
+_PREFIX_ORDERS: dict[str, tuple[str, ...]] = {
+    "datum.library": (
+        "datum.library.list_objects",
+        "datum.library.show_object",
+        "datum.library.pool_models",
+        "datum.library.gc_pool_models",
+        "datum.library.create_object",
+        "datum.library.create_unit",
+        "datum.library.set_unit_pin",
+        "datum.library.create_symbol",
+        "datum.library.add_symbol_line",
+        "datum.library.add_symbol_rect",
+        "datum.library.add_symbol_circle",
+        "datum.library.add_symbol_arc",
+        "datum.library.add_symbol_polygon",
+        "datum.library.add_symbol_text",
+        "datum.library.set_symbol_pin_anchor",
+        "datum.library.create_entity",
+        "datum.library.create_padstack",
+        "datum.library.create_package",
+        "datum.library.create_footprint",
+        "datum.library.set_footprint_pad",
+        "datum.library.set_footprint_courtyard_rect",
+        "datum.library.set_footprint_courtyard_polygon",
+        "datum.library.add_footprint_silkscreen_line",
+        "datum.library.add_footprint_silkscreen_rect",
+        "datum.library.add_footprint_silkscreen_circle",
+        "datum.library.add_footprint_silkscreen_polygon",
+        "datum.library.set_package_pad",
+        "datum.library.set_package_courtyard_rect",
+        "datum.library.set_package_courtyard_polygon",
+        "datum.library.add_package_silkscreen_line",
+        "datum.library.add_package_silkscreen_rect",
+        "datum.library.add_package_silkscreen_polygon",
+        "datum.library.add_package_silkscreen_circle",
+        "datum.library.add_package_silkscreen_arc",
+        "datum.library.add_package_silkscreen_text",
+        "datum.library.add_package_model_3d",
+        "datum.library.set_package_body_heights",
+        "datum.library.create_part",
+        "datum.library.set_part_metadata",
+        "datum.library.set_part_parametric",
+        "datum.library.set_part_orderable_mpns",
+        "datum.library.set_part_tags",
+        "datum.library.set_part_packaging_options",
+        "datum.library.set_part_supply_chain",
+        "datum.library.set_part_behavioural_models",
+        "datum.library.attach_part_model",
+        "datum.library.detach_part_model",
+        "datum.library.set_part_thermal",
+        "datum.library.set_part_pad_map_entry",
+        "datum.library.set_part_pad_map",
+        "datum.library.create_pin_pad_map",
+        "datum.library.set_pin_pad_map",
+        "datum.library.set_object",
+        "datum.library.delete_object",
+    ),
+}
 
 
 def _tool_prefix(name: str) -> str:
@@ -101,12 +161,24 @@ GENERATED_TOOL_NAMES: frozenset[str] = frozenset(
 
 
 def generated_specs_for_prefix(prefix: str) -> list[dict[str, object]]:
-    """Tool specs for one migrated verb-family prefix, sorted by name."""
+    """Tool specs for one migrated verb-family prefix in public catalog order."""
     if prefix not in MIGRATED_PREFIXES:
         raise RuntimeError(f"prefix {prefix} is not migrated to the generated catalog")
-    return [
+    specs = [
         spec for spec in GENERATED_TOOL_SPECS if _tool_prefix(str(spec["name"])) == prefix
     ]
+    order = _PREFIX_ORDERS.get(prefix)
+    if order is None:
+        return specs
+    by_name = {str(spec["name"]): spec for spec in specs}
+    if set(by_name) != set(order):
+        missing = sorted(set(order) - set(by_name))
+        extra = sorted(set(by_name) - set(order))
+        raise RuntimeError(
+            f"generated order for {prefix} does not match specs; "
+            f"missing={missing}, extra={extra}"
+        )
+    return [by_name[name] for name in order]
 
 
 def reject_hand_written_duplicates(hand_written_names: list[str]) -> None:
