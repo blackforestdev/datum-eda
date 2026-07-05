@@ -1,6 +1,6 @@
 use super::*;
 
-pub(super) fn execute_move_board_component(
+pub(crate) fn execute_move_board_component(
     format: &OutputFormat,
     path: std::path::PathBuf,
     component_uuid: uuid::Uuid,
@@ -19,7 +19,7 @@ pub(super) fn execute_move_board_component(
     Ok((output, 0))
 }
 
-pub(super) fn execute_set_board_component_part(
+pub(crate) fn execute_set_board_component_part(
     format: &OutputFormat,
     path: std::path::PathBuf,
     component_uuid: uuid::Uuid,
@@ -33,7 +33,7 @@ pub(super) fn execute_set_board_component_part(
     Ok((output, 0))
 }
 
-pub(super) fn execute_set_board_component_package(
+pub(crate) fn execute_set_board_component_package(
     format: &OutputFormat,
     path: std::path::PathBuf,
     component_uuid: uuid::Uuid,
@@ -47,7 +47,7 @@ pub(super) fn execute_set_board_component_package(
     Ok((output, 0))
 }
 
-pub(super) fn execute_set_board_component_layer(
+pub(crate) fn execute_set_board_component_layer(
     format: &OutputFormat,
     path: std::path::PathBuf,
     component_uuid: uuid::Uuid,
@@ -61,7 +61,7 @@ pub(super) fn execute_set_board_component_layer(
     Ok((output, 0))
 }
 
-pub(super) fn execute_set_board_component_reference(
+pub(crate) fn execute_set_board_component_reference(
     format: &OutputFormat,
     path: std::path::PathBuf,
     component_uuid: uuid::Uuid,
@@ -75,7 +75,7 @@ pub(super) fn execute_set_board_component_reference(
     Ok((output, 0))
 }
 
-pub(super) fn execute_set_board_component_value(
+pub(crate) fn execute_set_board_component_value(
     format: &OutputFormat,
     path: std::path::PathBuf,
     component_uuid: uuid::Uuid,
@@ -89,7 +89,7 @@ pub(super) fn execute_set_board_component_value(
     Ok((output, 0))
 }
 
-pub(super) fn execute_rotate_board_component(
+pub(crate) fn execute_rotate_board_component(
     format: &OutputFormat,
     path: std::path::PathBuf,
     component_uuid: uuid::Uuid,
@@ -103,7 +103,7 @@ pub(super) fn execute_rotate_board_component(
     Ok((output, 0))
 }
 
-pub(super) fn execute_set_board_component_locked(
+pub(crate) fn execute_set_board_component_locked(
     format: &OutputFormat,
     path: std::path::PathBuf,
     component_uuid: uuid::Uuid,

@@ -1,6 +1,6 @@
 use super::*;
 
-pub(super) fn execute_place_board_component(
+pub(crate) fn execute_place_board_component(
     format: &OutputFormat,
     path: PathBuf,
     part_uuid: Uuid,
@@ -27,7 +27,7 @@ pub(super) fn execute_place_board_component(
     Ok((output, 0))
 }
 
-pub(super) fn execute_set_board_outline(
+pub(crate) fn execute_set_board_outline(
     format: &OutputFormat,
     path: PathBuf,
     vertices: Vec<String>,
@@ -41,7 +41,7 @@ pub(super) fn execute_set_board_outline(
     Ok((output, 0))
 }
 
-pub(super) fn execute_set_board_name(
+pub(crate) fn execute_set_board_name(
     format: &OutputFormat,
     path: PathBuf,
     name: String,
@@ -54,7 +54,7 @@ pub(super) fn execute_set_board_name(
     Ok((output, 0))
 }
 
-pub(super) fn execute_generate_board_components(
+pub(crate) fn execute_generate_board_components(
     format: &OutputFormat,
     args: ProjectGenerateBoardComponentsArgs,
 ) -> Result<(String, i32)> {

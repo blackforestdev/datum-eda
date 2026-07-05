@@ -1,6 +1,6 @@
 use super::*;
 
-pub(super) fn execute_place_board_net(
+pub(crate) fn execute_place_board_net(
     format: &OutputFormat,
     path: PathBuf,
     name: String,
@@ -24,7 +24,7 @@ pub(super) fn execute_place_board_net(
     Ok((output, 0))
 }
 
-pub(super) fn execute_edit_board_net(
+pub(crate) fn execute_edit_board_net(
     format: &OutputFormat,
     path: PathBuf,
     net_uuid: Uuid,
@@ -52,7 +52,7 @@ pub(super) fn execute_edit_board_net(
     Ok((output, 0))
 }
 
-pub(super) fn execute_delete_board_net(
+pub(crate) fn execute_delete_board_net(
     format: &OutputFormat,
     path: PathBuf,
     net_uuid: Uuid,
@@ -66,7 +66,7 @@ pub(super) fn execute_delete_board_net(
 }
 
 #[allow(clippy::too_many_arguments)]
-pub(super) fn execute_place_board_net_class(
+pub(crate) fn execute_place_board_net_class(
     format: &OutputFormat,
     path: PathBuf,
     name: String,
@@ -95,7 +95,7 @@ pub(super) fn execute_place_board_net_class(
 }
 
 #[allow(clippy::too_many_arguments)]
-pub(super) fn execute_edit_board_net_class(
+pub(crate) fn execute_edit_board_net_class(
     format: &OutputFormat,
     path: PathBuf,
     net_class_uuid: Uuid,
@@ -125,7 +125,7 @@ pub(super) fn execute_edit_board_net_class(
     Ok((output, 0))
 }
 
-pub(super) fn execute_delete_board_net_class(
+pub(crate) fn execute_delete_board_net_class(
     format: &OutputFormat,
     path: PathBuf,
     net_class_uuid: Uuid,

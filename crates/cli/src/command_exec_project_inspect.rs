@@ -4,7 +4,7 @@ use anyhow::Result;
 
 use super::*;
 
-pub(super) fn execute_project_excellon_drill_inspection(
+pub(crate) fn execute_project_excellon_drill_inspection(
     format: &OutputFormat,
     path: &Path,
 ) -> Result<(String, i32)> {
@@ -16,7 +16,7 @@ pub(super) fn execute_project_excellon_drill_inspection(
     Ok((output, 0))
 }
 
-pub(super) fn execute_project_gerber_inspection(
+pub(crate) fn execute_project_gerber_inspection(
     format: &OutputFormat,
     path: &Path,
 ) -> Result<(String, i32)> {

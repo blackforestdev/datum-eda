@@ -30,6 +30,9 @@ use super::*;
 mod artifacts;
 mod board;
 mod check;
+// Wave 3: the single exhaustive ProjectCommands router. pub(crate) because
+// the top-level Commands match (command_exec_dispatch.rs) calls it by path.
+pub(crate) mod dispatch;
 mod drill;
 mod forward_annotation;
 mod gerber;

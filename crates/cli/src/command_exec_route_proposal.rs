@@ -1,6 +1,6 @@
 use super::*;
 
-pub(super) fn execute_route_proposal_command(
+pub(crate) fn execute_route_proposal_command(
     format: &OutputFormat,
     command: ProjectCommands,
 ) -> Result<(String, i32)> {

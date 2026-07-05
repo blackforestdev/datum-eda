@@ -3,7 +3,7 @@ use super::command_exec_native_support::{
 };
 use super::*;
 
-pub(super) fn execute_project_schematic_symbols_command(
+pub(crate) fn execute_project_schematic_symbols_command(
     format: &OutputFormat,
     command: ProjectCommands,
 ) -> Result<(String, i32)> {

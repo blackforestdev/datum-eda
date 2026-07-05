@@ -1,20 +1,6 @@
 use super::*;
 
-pub(super) fn is_inventory_command(command: &ProjectCommands) -> bool {
-    matches!(
-        command,
-        ProjectCommands::ExportBom(_)
-            | ProjectCommands::CompareBom(_)
-            | ProjectCommands::ValidateBom(_)
-            | ProjectCommands::InspectBom(_)
-            | ProjectCommands::ExportPnp(_)
-            | ProjectCommands::ComparePnp(_)
-            | ProjectCommands::ValidatePnp(_)
-            | ProjectCommands::InspectPnp(_)
-    )
-}
-
-pub(super) fn execute_inventory_command(
+pub(crate) fn execute_inventory_command(
     format: &OutputFormat,
     command: ProjectCommands,
 ) -> Result<(String, i32)> {

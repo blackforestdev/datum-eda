@@ -1,6 +1,6 @@
 use super::*;
 
-pub(super) fn execute_manufacturing_command(
+pub(crate) fn execute_manufacturing_command(
     format: &OutputFormat,
     command: ProjectCommands,
 ) -> Result<(String, i32)> {

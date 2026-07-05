@@ -1,7 +1,7 @@
 use super::*;
 use eda_engine::schematic::{LabelKind, PortDirection};
 
-pub(super) fn execute_project_schematic_connectivity_command(
+pub(crate) fn execute_project_schematic_connectivity_command(
     format: &OutputFormat,
     command: ProjectCommands,
 ) -> Result<(String, i32)> {

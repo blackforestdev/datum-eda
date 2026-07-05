@@ -1,6 +1,6 @@
 use super::*;
 
-pub(super) fn execute_forward_annotation_command(
+pub(crate) fn execute_forward_annotation_command(
     format: &OutputFormat,
     command: ProjectCommands,
 ) -> Result<(String, i32)> {

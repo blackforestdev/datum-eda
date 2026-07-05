@@ -1,7 +1,7 @@
 use super::command_exec_project_query_route_graph::*;
 use super::*;
 use anyhow::anyhow;
-pub(super) fn execute_native_project_query_command(
+pub(crate) fn execute_native_project_query_command(
     format: &OutputFormat,
     path: PathBuf,
     what: NativeProjectQueryCommands,

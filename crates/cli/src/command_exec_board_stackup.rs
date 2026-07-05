@@ -1,6 +1,6 @@
 use super::*;
 
-pub(super) fn execute_set_board_stackup(
+pub(crate) fn execute_set_board_stackup(
     format: &OutputFormat,
     path: std::path::PathBuf,
     layers: Vec<String>,
@@ -14,7 +14,7 @@ pub(super) fn execute_set_board_stackup(
     Ok((output, 0))
 }
 
-pub(super) fn execute_add_default_top_stackup(
+pub(crate) fn execute_add_default_top_stackup(
     format: &OutputFormat,
     path: std::path::PathBuf,
 ) -> Result<(String, i32)> {
