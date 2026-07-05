@@ -36,6 +36,7 @@ class TestDispatchDatumTaxonomyCatalog(unittest.TestCase):
             "datum.output_job",
             "datum.pool",
             "datum.project",
+            "datum.proposal",
             "datum.query",
             "datum.replacement",
             "datum.session",

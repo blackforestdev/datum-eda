@@ -3643,6 +3643,499 @@
       }
     },
     {
+      "description": "Create a non-mutating draft proposal to append one native pool footprint silkscreen circle primitive.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "add-pool-footprint-silkscreen-circle"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "flag": "--center-x-nm",
+            "param": "center_x_nm"
+          },
+          {
+            "flag": "--center-y-nm",
+            "param": "center_y_nm"
+          },
+          {
+            "flag": "--radius-nm",
+            "param": "radius_nm"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_footprint_silkscreen_circle_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "footprint",
+        "center_x_nm",
+        "center_y_nm",
+        "radius_nm",
+        "width_nm",
+        "pool",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "center_x_nm": {
+            "type": "integer"
+          },
+          "center_y_nm": {
+            "type": "integer"
+          },
+          "footprint": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "radius_nm": {
+            "type": "integer"
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "width_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "footprint",
+          "center_x_nm",
+          "center_y_nm",
+          "radius_nm",
+          "width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.add_pool_footprint_silkscreen_circle",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to append one native pool footprint silkscreen line primitive.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "add-pool-footprint-silkscreen-line"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "flag": "--from-x-nm",
+            "param": "from_x_nm"
+          },
+          {
+            "flag": "--from-y-nm",
+            "param": "from_y_nm"
+          },
+          {
+            "flag": "--to-x-nm",
+            "param": "to_x_nm"
+          },
+          {
+            "flag": "--to-y-nm",
+            "param": "to_y_nm"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_footprint_silkscreen_line_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "footprint",
+        "from_x_nm",
+        "from_y_nm",
+        "to_x_nm",
+        "to_y_nm",
+        "width_nm",
+        "pool",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "footprint": {
+            "type": "string"
+          },
+          "from_x_nm": {
+            "type": "integer"
+          },
+          "from_y_nm": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "to_x_nm": {
+            "type": "integer"
+          },
+          "to_y_nm": {
+            "type": "integer"
+          },
+          "width_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "footprint",
+          "from_x_nm",
+          "from_y_nm",
+          "to_x_nm",
+          "to_y_nm",
+          "width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.add_pool_footprint_silkscreen_line",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to append one native pool footprint silkscreen polygon or polyline primitive.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "add-pool-footprint-silkscreen-polygon"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "flag": "--vertices",
+            "param": "vertices"
+          },
+          {
+            "flag": "--closed",
+            "param": "closed"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_footprint_silkscreen_polygon_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "footprint",
+        "vertices",
+        "closed",
+        "width_nm",
+        "pool",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "closed": {
+            "type": "boolean"
+          },
+          "footprint": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "vertices": {
+            "type": "string"
+          },
+          "width_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "footprint",
+          "vertices",
+          "closed",
+          "width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.add_pool_footprint_silkscreen_polygon",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to append one native pool footprint silkscreen rectangle primitive.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "add-pool-footprint-silkscreen-rect"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "flag": "--min-x-nm",
+            "param": "min_x_nm"
+          },
+          {
+            "flag": "--min-y-nm",
+            "param": "min_y_nm"
+          },
+          {
+            "flag": "--max-x-nm",
+            "param": "max_x_nm"
+          },
+          {
+            "flag": "--max-y-nm",
+            "param": "max_y_nm"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_pool_footprint_silkscreen_rect_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "footprint",
+        "min_x_nm",
+        "min_y_nm",
+        "max_x_nm",
+        "max_y_nm",
+        "width_nm",
+        "pool",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "footprint": {
+            "type": "string"
+          },
+          "max_x_nm": {
+            "type": "integer"
+          },
+          "max_y_nm": {
+            "type": "integer"
+          },
+          "min_x_nm": {
+            "type": "integer"
+          },
+          "min_y_nm": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "width_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "footprint",
+          "min_x_nm",
+          "min_y_nm",
+          "max_x_nm",
+          "max_y_nm",
+          "width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.add_pool_footprint_silkscreen_rect",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
       "description": "Apply one accepted persisted native-project proposal through the generic proposal gateway.",
       "dispatch": {
         "argv": [
@@ -3690,6 +4183,530 @@
       "write_surface": {
         "class": "proposal_gateway_apply",
         "evidence": "applies an accepted proposal through the generic proposal journal gateway"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal from an OperationBatch JSON file.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--batch",
+            "param": "batch"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--source",
+            "param": "source"
+          },
+          {
+            "param": "checks_run",
+            "repeated": "--check-run"
+          },
+          {
+            "param": "finding_fingerprints",
+            "repeated": "--finding-fingerprint"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "batch",
+        "rationale",
+        "proposal",
+        "source",
+        "checks_run",
+        "finding_fingerprints"
+      ],
+      "dispatch_defaults": {
+        "checks_run": [],
+        "finding_fingerprints": [],
+        "source": "tool"
+      },
+      "inputSchema": {
+        "properties": {
+          "batch": {
+            "type": "string"
+          },
+          "checks_run": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "finding_fingerprints": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "source": {
+            "enum": [
+              "manual",
+              "cli",
+              "tool",
+              "assistant",
+              "check",
+              "import"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "batch",
+          "rationale"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.create",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to replace one native-project board component package, part, and/or value.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-board-component-replacement"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--component",
+            "param": "component"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "flag": "--value",
+            "param": "value"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_board_component_replacement_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "component",
+        "package",
+        "part",
+        "value",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "component": {
+            "type": "string"
+          },
+          "package": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "part": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "component"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.create_board_component_replacement",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create one non-mutating draft proposal from replacement-plan shaped component selections.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-board-component-replacement-plan"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "param": "selections",
+            "repeated": "--selection"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_board_component_replacement_plan_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "selections",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "selections": {
+            "items": {
+              "properties": {
+                "package_uuid": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "part_uuid": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "uuid": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "uuid"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "path",
+          "selections"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.create_board_component_replacement_plan",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create one non-mutating draft proposal to replace multiple native-project board component package, part, and/or value sets.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-board-component-replacements"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "param": "replacements",
+            "repeated": "--replacement"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_board_component_replacements_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "replacements",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "replacements": {
+            "items": {
+              "properties": {
+                "component": {
+                  "type": "string"
+                },
+                "package": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "part": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "value": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "component"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "path",
+          "replacements"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.create_board_component_replacements",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to draw one native-project schematic wire.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-draw-wire"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--sheet",
+            "param": "sheet"
+          },
+          {
+            "flag": "--from-x-nm",
+            "param": "from_x_nm"
+          },
+          {
+            "flag": "--from-y-nm",
+            "param": "from_y_nm"
+          },
+          {
+            "flag": "--to-x-nm",
+            "param": "to_x_nm"
+          },
+          {
+            "flag": "--to-y-nm",
+            "param": "to_y_nm"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_draw_wire_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "sheet",
+        "from_x_nm",
+        "from_y_nm",
+        "to_x_nm",
+        "to_y_nm",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "from_x_nm": {
+            "type": "integer"
+          },
+          "from_y_nm": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sheet": {
+            "type": "string"
+          },
+          "to_x_nm": {
+            "type": "integer"
+          },
+          "to_y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "sheet",
+          "from_x_nm",
+          "from_y_nm",
+          "to_x_nm",
+          "to_y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.create_draw_wire",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
       }
     },
     {
@@ -4016,8 +5033,773 @@
             ]
           },
           "rotation_deg": {
+            "type": "integer"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "key"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.create_panel_projection",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to place one native-project schematic label.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-place-label"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--sheet",
+            "param": "sheet"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--kind",
+            "param": "kind"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_place_label_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "sheet",
+        "name",
+        "x_nm",
+        "y_nm",
+        "kind",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "kind": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sheet": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "sheet",
+          "name",
+          "x_nm",
+          "y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.create_place_label",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to place one native-project schematic symbol.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-place-symbol"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--sheet",
+            "param": "sheet"
+          },
+          {
+            "flag": "--reference",
+            "param": "reference"
+          },
+          {
+            "flag": "--value",
+            "param": "value"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--lib-id",
+            "param": "lib_id"
+          },
+          {
+            "flag": "--rotation-deg",
+            "param": "rotation_deg"
+          },
+          {
+            "param": "mirrored",
+            "switch": "--mirrored"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_place_symbol_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "sheet",
+        "reference",
+        "value",
+        "x_nm",
+        "y_nm",
+        "lib_id",
+        "rotation_deg",
+        "mirrored",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "lib_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "mirrored": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reference": {
+            "type": "string"
+          },
+          "rotation_deg": {
             "type": [
               "integer",
+              "null"
+            ]
+          },
+          "sheet": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "sheet",
+          "reference",
+          "value",
+          "x_nm",
+          "y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.create_place_symbol",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to author one native pool entity for an existing unit/symbol pair.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-pool-entity"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--entity",
+            "param": "entity"
+          },
+          {
+            "flag": "--gate",
+            "param": "gate"
+          },
+          {
+            "flag": "--unit",
+            "param": "unit"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--prefix",
+            "param": "prefix"
+          },
+          {
+            "flag": "--manufacturer",
+            "param": "manufacturer"
+          },
+          {
+            "flag": "--gate-name",
+            "param": "gate_name"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_pool_entity_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "entity",
+        "gate",
+        "unit",
+        "symbol",
+        "name",
+        "prefix",
+        "manufacturer",
+        "gate_name",
+        "pool",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "gate_name": "A",
+        "manufacturer": "",
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "entity": {
+            "type": "string"
+          },
+          "gate": {
+            "type": "string"
+          },
+          "gate_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "manufacturer": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "prefix": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "entity",
+          "gate",
+          "unit",
+          "symbol",
+          "name",
+          "prefix"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.create_pool_entity",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to author one native pool footprint.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-pool-footprint"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_pool_footprint_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "footprint",
+        "package",
+        "name",
+        "pool",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "footprint": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "package": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "footprint",
+          "package",
+          "name"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.create_pool_footprint",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to author one raw native pool-library object.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-pool-library-object"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--kind",
+            "param": "kind"
+          },
+          {
+            "flag": "--object",
+            "param": "object"
+          },
+          {
+            "flag": "--from-json",
+            "param": "from_json"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_pool_library_object_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "kind",
+        "object",
+        "from_json",
+        "pool",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "from_json": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "object": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "kind",
+          "object",
+          "from_json"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.create_pool_library_object",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to author one native pool package body record; optional pad/padstack fields are legacy land-pattern compatibility input.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-pool-package"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--pad",
+            "param": "pad"
+          },
+          {
+            "flag": "--padstack",
+            "param": "padstack"
+          },
+          {
+            "flag": "--pad-name",
+            "param": "pad_name"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--layer",
+            "param": "layer"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_pool_package_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "package",
+        "name",
+        "pad",
+        "padstack",
+        "pad_name",
+        "x_nm",
+        "y_nm",
+        "layer",
+        "pool",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "layer": 1,
+        "pad_name": "1",
+        "pool": "pool",
+        "x_nm": 0,
+        "y_nm": 0
+      },
+      "inputSchema": {
+        "properties": {
+          "layer": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "package": {
+            "type": "string"
+          },
+          "pad": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pad_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "padstack": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
               "null"
             ]
           },
@@ -4036,11 +5818,161 @@
         },
         "required": [
           "path",
-          "key"
+          "package",
+          "name"
         ],
         "type": "object"
       },
-      "name": "datum.proposal.create_panel_projection",
+      "name": "datum.proposal.create_pool_package",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to author one native pool padstack.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-pool-padstack"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--padstack",
+            "param": "padstack"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--aperture",
+            "param": "aperture"
+          },
+          {
+            "flag": "--diameter-nm",
+            "param": "diameter_nm"
+          },
+          {
+            "flag": "--width-nm",
+            "param": "width_nm"
+          },
+          {
+            "flag": "--height-nm",
+            "param": "height_nm"
+          },
+          {
+            "flag": "--drill-nm",
+            "param": "drill_nm"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_pool_padstack_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "padstack",
+        "name",
+        "aperture",
+        "diameter_nm",
+        "width_nm",
+        "height_nm",
+        "drill_nm",
+        "pool",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "aperture": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "diameter_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "drill_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "height_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "padstack": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "width_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "padstack",
+          "name"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.create_pool_padstack",
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -4170,6 +6102,215 @@
         "type": "object"
       },
       "name": "datum.proposal.create_pool_pin_pad_map",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to author one native pool symbol for an existing pool unit.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-pool-symbol"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--unit",
+            "param": "unit"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_pool_symbol_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol",
+        "unit",
+        "name",
+        "pool",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "unit",
+          "name"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.create_pool_symbol",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to author one native pool unit.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-pool-unit"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--unit",
+            "param": "unit"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--manufacturer",
+            "param": "manufacturer"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_pool_unit_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "unit",
+        "name",
+        "manufacturer",
+        "pool",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "manufacturer": "",
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "manufacturer": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "unit": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "unit",
+          "name"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.create_pool_unit",
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -4641,6 +6782,738 @@
       "write_surface": {
         "class": "proposal_review_state_write",
         "evidence": "updates persisted proposal review state without applying design mutations"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to set polygon native pool footprint courtyard geometry.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "set-pool-footprint-courtyard-polygon"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "flag": "--vertices",
+            "param": "vertices"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_footprint_courtyard_polygon_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "footprint",
+        "vertices",
+        "pool",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "footprint": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "vertices": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "footprint",
+          "vertices"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.set_pool_footprint_courtyard_polygon",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to set rectangular native pool footprint courtyard geometry.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "set-pool-footprint-courtyard-rect"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "flag": "--min-x-nm",
+            "param": "min_x_nm"
+          },
+          {
+            "flag": "--min-y-nm",
+            "param": "min_y_nm"
+          },
+          {
+            "flag": "--max-x-nm",
+            "param": "max_x_nm"
+          },
+          {
+            "flag": "--max-y-nm",
+            "param": "max_y_nm"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_footprint_courtyard_rect_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "footprint",
+        "min_x_nm",
+        "min_y_nm",
+        "max_x_nm",
+        "max_y_nm",
+        "pool",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "footprint": {
+            "type": "string"
+          },
+          "max_x_nm": {
+            "type": "integer"
+          },
+          "max_y_nm": {
+            "type": "integer"
+          },
+          "min_x_nm": {
+            "type": "integer"
+          },
+          "min_y_nm": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "footprint",
+          "min_x_nm",
+          "min_y_nm",
+          "max_x_nm",
+          "max_y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.set_pool_footprint_courtyard_rect",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to set one native pool footprint pad entry.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "set-pool-footprint-pad"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "flag": "--pad",
+            "param": "pad"
+          },
+          {
+            "flag": "--padstack",
+            "param": "padstack"
+          },
+          {
+            "flag": "--pad-name",
+            "param": "pad_name"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--layer",
+            "param": "layer"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_footprint_pad_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "footprint",
+        "pad",
+        "padstack",
+        "pad_name",
+        "x_nm",
+        "y_nm",
+        "layer",
+        "pool",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "layer": 1,
+        "pad_name": "1",
+        "pool": "pool",
+        "x_nm": 0,
+        "y_nm": 0
+      },
+      "inputSchema": {
+        "properties": {
+          "footprint": {
+            "type": "string"
+          },
+          "layer": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "pad": {
+            "type": "string"
+          },
+          "pad_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "padstack": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "footprint",
+          "pad",
+          "padstack"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.set_pool_footprint_pad",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to set polygon native pool package courtyard geometry.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "set-pool-package-courtyard-polygon"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--vertices",
+            "param": "vertices"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_package_courtyard_polygon_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "package",
+        "vertices",
+        "pool",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "package": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "vertices": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "package",
+          "vertices"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.set_pool_package_courtyard_polygon",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to set rectangular native pool package courtyard geometry.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "set-pool-package-courtyard-rect"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--min-x-nm",
+            "param": "min_x_nm"
+          },
+          {
+            "flag": "--min-y-nm",
+            "param": "min_y_nm"
+          },
+          {
+            "flag": "--max-x-nm",
+            "param": "max_x_nm"
+          },
+          {
+            "flag": "--max-y-nm",
+            "param": "max_y_nm"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_package_courtyard_rect_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "package",
+        "min_x_nm",
+        "min_y_nm",
+        "max_x_nm",
+        "max_y_nm",
+        "pool",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "max_x_nm": {
+            "type": "integer"
+          },
+          "max_y_nm": {
+            "type": "integer"
+          },
+          "min_x_nm": {
+            "type": "integer"
+          },
+          "min_y_nm": {
+            "type": "integer"
+          },
+          "package": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "package",
+          "min_x_nm",
+          "min_y_nm",
+          "max_x_nm",
+          "max_y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.set_pool_package_courtyard_rect",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to add one native pool package pad entry.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "set-pool-package-pad"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--pad",
+            "param": "pad"
+          },
+          {
+            "flag": "--padstack",
+            "param": "padstack"
+          },
+          {
+            "flag": "--pad-name",
+            "param": "pad_name"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--layer",
+            "param": "layer"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pool_package_pad_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "package",
+        "pad",
+        "padstack",
+        "pad_name",
+        "x_nm",
+        "y_nm",
+        "layer",
+        "pool",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "layer": 1,
+        "pad_name": "1",
+        "pool": "pool",
+        "x_nm": 0,
+        "y_nm": 0
+      },
+      "inputSchema": {
+        "properties": {
+          "layer": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "package": {
+            "type": "string"
+          },
+          "pad": {
+            "type": "string"
+          },
+          "pad_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "padstack": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "package",
+          "pad",
+          "padstack"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.set_pool_package_pad",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
       }
     },
     {

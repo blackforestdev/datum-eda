@@ -60,8 +60,73 @@ const RATIONALE: ParamSpec = ParamSpec {
     default_json: None,
 };
 
-const PROPOSAL_ID_ARGV: ArgvToken = ArgvToken::Flag { flag: "--proposal", param: "proposal" };
-const RATIONALE_ARGV: ArgvToken = ArgvToken::Flag { flag: "--rationale", param: "rationale" };
+const PROPOSAL_ID_ARGV: ArgvToken = ArgvToken::Flag {
+    flag: "--proposal",
+    param: "proposal",
+};
+const RATIONALE_ARGV: ArgvToken = ArgvToken::Flag {
+    flag: "--rationale",
+    param: "rationale",
+};
+
+macro_rules! proposal_param {
+    ($name:literal, $ty:ident, required) => {
+        ParamSpec {
+            name: $name,
+            ty: ParamType::$ty,
+            required: true,
+            doc: $name,
+            default_json: None,
+        }
+    };
+    ($name:literal, $ty:ident, optional) => {
+        ParamSpec {
+            name: $name,
+            ty: ParamType::$ty,
+            required: false,
+            doc: $name,
+            default_json: None,
+        }
+    };
+    ($name:literal, $ty:ident, default $default:literal) => {
+        ParamSpec {
+            name: $name,
+            ty: ParamType::$ty,
+            required: false,
+            doc: $name,
+            default_json: Some($default),
+        }
+    };
+}
+
+macro_rules! non_terminal_proposal_verb {
+    (
+        $id:literal,
+        $summary:literal,
+        $method:literal,
+        [$($argv:expr),* $(,)?],
+        [$($param:expr),* $(,)?],
+        $schema:expr $(,)?
+    ) => {
+        VerbSpec {
+            id: $id,
+            summary: $summary,
+            status: VerbStatus::Public,
+            replacements: &[],
+            retirement: None,
+            dispatch: Dispatch::Cli {
+                method: $method,
+                argv: &[$($argv),*],
+            },
+            params: &[$($param),*],
+            schema_json_override: Some($schema),
+            write_surface: Some(PROPOSAL_METADATA_WRITE),
+            terminal: false,
+            terminal_optional_params: &[],
+            terminal_argv_override: None,
+        }
+    };
+}
 
 pub(crate) static VERBS: &[VerbSpec] = &[
     VerbSpec {
@@ -120,10 +185,22 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("create-manufacturing-plan"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--prefix", param: "prefix" },
-                ArgvToken::Flag { flag: "--name", param: "name" },
-                ArgvToken::Flag { flag: "--variant", param: "variant" },
-                ArgvToken::Flag { flag: "--panel-projection", param: "panel_projection" },
+                ArgvToken::Flag {
+                    flag: "--prefix",
+                    param: "prefix",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+                ArgvToken::Flag {
+                    flag: "--variant",
+                    param: "variant",
+                },
+                ArgvToken::Flag {
+                    flag: "--panel-projection",
+                    param: "panel_projection",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
             ],
@@ -179,12 +256,30 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("create-output-job"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--prefix", param: "prefix" },
-                ArgvToken::Flag { flag: "--include", param: "include" },
-                ArgvToken::Flag { flag: "--output-dir", param: "output_dir" },
-                ArgvToken::Flag { flag: "--name", param: "name" },
-                ArgvToken::Flag { flag: "--manufacturing-plan", param: "manufacturing_plan" },
-                ArgvToken::Flag { flag: "--variant", param: "variant" },
+                ArgvToken::Flag {
+                    flag: "--prefix",
+                    param: "prefix",
+                },
+                ArgvToken::Flag {
+                    flag: "--include",
+                    param: "include",
+                },
+                ArgvToken::Flag {
+                    flag: "--output-dir",
+                    param: "output_dir",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+                ArgvToken::Flag {
+                    flag: "--manufacturing-plan",
+                    param: "manufacturing_plan",
+                },
+                ArgvToken::Flag {
+                    flag: "--variant",
+                    param: "variant",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
             ],
@@ -254,12 +349,30 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("create-panel-projection"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--key", param: "key" },
-                ArgvToken::Flag { flag: "--name", param: "name" },
-                ArgvToken::Flag { flag: "--board", param: "board" },
-                ArgvToken::Flag { flag: "--x-nm", param: "x_nm" },
-                ArgvToken::Flag { flag: "--y-nm", param: "y_nm" },
-                ArgvToken::Flag { flag: "--rotation-deg", param: "rotation_deg" },
+                ArgvToken::Flag {
+                    flag: "--key",
+                    param: "key",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+                ArgvToken::Flag {
+                    flag: "--board",
+                    param: "board",
+                },
+                ArgvToken::Flag {
+                    flag: "--x-nm",
+                    param: "x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--y-nm",
+                    param: "y_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--rotation-deg",
+                    param: "rotation_deg",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
             ],
@@ -311,7 +424,9 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             PROPOSAL_ID,
             RATIONALE,
         ],
-        schema_json_override: None,
+        schema_json_override: Some(
+            r#"{"type":"object","properties":{"path":{"type":"string"},"key":{"type":"string"},"name":{"type":["string","null"]},"board":{"type":["string","null"]},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"},"rotation_deg":{"type":"integer"},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","key"]}"#,
+        ),
         write_surface: Some(PROPOSAL_METADATA_WRITE),
         terminal: true,
         terminal_optional_params: &[],
@@ -329,12 +444,30 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("create-pool-pin-pad-map"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--pool", param: "pool" },
-                ArgvToken::Flag { flag: "--map", param: "map" },
-                ArgvToken::Flag { flag: "--part", param: "part" },
-                ArgvToken::Flag { flag: "--footprint", param: "footprint" },
-                ArgvToken::Switch { flag: "--set-default", param: "set_default" },
-                ArgvToken::Repeated { flag: "--entry", param: "entries" },
+                ArgvToken::Flag {
+                    flag: "--pool",
+                    param: "pool",
+                },
+                ArgvToken::Flag {
+                    flag: "--map",
+                    param: "map",
+                },
+                ArgvToken::Flag {
+                    flag: "--part",
+                    param: "part",
+                },
+                ArgvToken::Flag {
+                    flag: "--footprint",
+                    param: "footprint",
+                },
+                ArgvToken::Switch {
+                    flag: "--set-default",
+                    param: "set_default",
+                },
+                ArgvToken::Repeated {
+                    flag: "--entry",
+                    param: "entries",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
             ],
@@ -426,7 +559,10 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("delete-manufacturing-plan"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--manufacturing-plan", param: "manufacturing_plan" },
+                ArgvToken::Flag {
+                    flag: "--manufacturing-plan",
+                    param: "manufacturing_plan",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
             ],
@@ -461,7 +597,10 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("delete-output-job"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--output-job", param: "output_job" },
+                ArgvToken::Flag {
+                    flag: "--output-job",
+                    param: "output_job",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
             ],
@@ -496,7 +635,10 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("delete-panel-projection"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--panel-projection", param: "panel_projection" },
+                ArgvToken::Flag {
+                    flag: "--panel-projection",
+                    param: "panel_projection",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
             ],
@@ -597,7 +739,10 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("review"),
                 ArgvToken::Param("path"),
                 PROPOSAL_ID_ARGV,
-                ArgvToken::Flag { flag: "--status", param: "status" },
+                ArgvToken::Flag {
+                    flag: "--status",
+                    param: "status",
+                },
             ],
         },
         params: &[
@@ -631,10 +776,22 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("set-pool-pin-pad-map"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--pool", param: "pool" },
-                ArgvToken::Flag { flag: "--map", param: "map" },
-                ArgvToken::Flag { flag: "--mode", param: "mode" },
-                ArgvToken::Repeated { flag: "--entry", param: "entries" },
+                ArgvToken::Flag {
+                    flag: "--pool",
+                    param: "pool",
+                },
+                ArgvToken::Flag {
+                    flag: "--map",
+                    param: "map",
+                },
+                ArgvToken::Flag {
+                    flag: "--mode",
+                    param: "mode",
+                },
+                ArgvToken::Repeated {
+                    flag: "--entry",
+                    param: "entries",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
             ],
@@ -712,13 +869,34 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("update-manufacturing-plan"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--manufacturing-plan", param: "manufacturing_plan" },
-                ArgvToken::Flag { flag: "--name", param: "name" },
-                ArgvToken::Flag { flag: "--prefix", param: "prefix" },
-                ArgvToken::Flag { flag: "--variant", param: "variant" },
-                ArgvToken::Switch { flag: "--clear-variant", param: "clear_variant" },
-                ArgvToken::Flag { flag: "--panel-projection", param: "panel_projection" },
-                ArgvToken::Switch { flag: "--clear-panel-projection", param: "clear_panel_projection" },
+                ArgvToken::Flag {
+                    flag: "--manufacturing-plan",
+                    param: "manufacturing_plan",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+                ArgvToken::Flag {
+                    flag: "--prefix",
+                    param: "prefix",
+                },
+                ArgvToken::Flag {
+                    flag: "--variant",
+                    param: "variant",
+                },
+                ArgvToken::Switch {
+                    flag: "--clear-variant",
+                    param: "clear_variant",
+                },
+                ArgvToken::Flag {
+                    flag: "--panel-projection",
+                    param: "panel_projection",
+                },
+                ArgvToken::Switch {
+                    flag: "--clear-panel-projection",
+                    param: "clear_panel_projection",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
             ],
@@ -795,14 +973,38 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("update-output-job"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--output-job", param: "output_job" },
-                ArgvToken::Flag { flag: "--name", param: "name" },
-                ArgvToken::Flag { flag: "--output-dir", param: "output_dir" },
-                ArgvToken::Flag { flag: "--manufacturing-plan", param: "manufacturing_plan" },
-                ArgvToken::Flag { flag: "--variant", param: "variant" },
-                ArgvToken::Switch { flag: "--clear-manufacturing-plan", param: "clear_manufacturing_plan" },
-                ArgvToken::Switch { flag: "--clear-variant", param: "clear_variant" },
-                ArgvToken::Switch { flag: "--clear-output-dir", param: "clear_output_dir" },
+                ArgvToken::Flag {
+                    flag: "--output-job",
+                    param: "output_job",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+                ArgvToken::Flag {
+                    flag: "--output-dir",
+                    param: "output_dir",
+                },
+                ArgvToken::Flag {
+                    flag: "--manufacturing-plan",
+                    param: "manufacturing_plan",
+                },
+                ArgvToken::Flag {
+                    flag: "--variant",
+                    param: "variant",
+                },
+                ArgvToken::Switch {
+                    flag: "--clear-manufacturing-plan",
+                    param: "clear_manufacturing_plan",
+                },
+                ArgvToken::Switch {
+                    flag: "--clear-variant",
+                    param: "clear_variant",
+                },
+                ArgvToken::Switch {
+                    flag: "--clear-output-dir",
+                    param: "clear_output_dir",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
             ],
@@ -886,12 +1088,30 @@ pub(crate) static VERBS: &[VerbSpec] = &[
                 ArgvToken::Lit("proposal"),
                 ArgvToken::Lit("update-panel-projection"),
                 ArgvToken::Param("path"),
-                ArgvToken::Flag { flag: "--panel-projection", param: "panel_projection" },
-                ArgvToken::Flag { flag: "--name", param: "name" },
-                ArgvToken::Flag { flag: "--board", param: "board" },
-                ArgvToken::Flag { flag: "--x-nm", param: "x_nm" },
-                ArgvToken::Flag { flag: "--y-nm", param: "y_nm" },
-                ArgvToken::Flag { flag: "--rotation-deg", param: "rotation_deg" },
+                ArgvToken::Flag {
+                    flag: "--panel-projection",
+                    param: "panel_projection",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+                ArgvToken::Flag {
+                    flag: "--board",
+                    param: "board",
+                },
+                ArgvToken::Flag {
+                    flag: "--x-nm",
+                    param: "x_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--y-nm",
+                    param: "y_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--rotation-deg",
+                    param: "rotation_deg",
+                },
                 PROPOSAL_ID_ARGV,
                 RATIONALE_ARGV,
             ],
@@ -971,4 +1191,1084 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         terminal_optional_params: &[],
         terminal_argv_override: None,
     },
+    non_terminal_proposal_verb!(
+        "datum.proposal.add_pool_footprint_silkscreen_circle",
+        "Create a non-mutating draft proposal to append one native pool footprint silkscreen circle primitive.",
+        "add_pool_footprint_silkscreen_circle_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("add-pool-footprint-silkscreen-circle"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--footprint",
+                param: "footprint"
+            },
+            ArgvToken::Flag {
+                flag: "--center-x-nm",
+                param: "center_x_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--center-y-nm",
+                param: "center_y_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--radius-nm",
+                param: "radius_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--width-nm",
+                param: "width_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--pool",
+                param: "pool"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("footprint", Uuid, required),
+            proposal_param!("center_x_nm", Int, required),
+            proposal_param!("center_y_nm", Int, required),
+            proposal_param!("radius_nm", Int, required),
+            proposal_param!("width_nm", Int, required),
+            proposal_param!("pool", Str, default "\"pool\""),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":["string","null"]},"footprint":{"type":"string"},"center_x_nm":{"type":"integer"},"center_y_nm":{"type":"integer"},"radius_nm":{"type":"integer"},"width_nm":{"type":"integer"},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","footprint","center_x_nm","center_y_nm","radius_nm","width_nm"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.add_pool_footprint_silkscreen_line",
+        "Create a non-mutating draft proposal to append one native pool footprint silkscreen line primitive.",
+        "add_pool_footprint_silkscreen_line_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("add-pool-footprint-silkscreen-line"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--footprint",
+                param: "footprint"
+            },
+            ArgvToken::Flag {
+                flag: "--from-x-nm",
+                param: "from_x_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--from-y-nm",
+                param: "from_y_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--to-x-nm",
+                param: "to_x_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--to-y-nm",
+                param: "to_y_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--width-nm",
+                param: "width_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--pool",
+                param: "pool"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("footprint", Uuid, required),
+            proposal_param!("from_x_nm", Int, required),
+            proposal_param!("from_y_nm", Int, required),
+            proposal_param!("to_x_nm", Int, required),
+            proposal_param!("to_y_nm", Int, required),
+            proposal_param!("width_nm", Int, required),
+            proposal_param!("pool", Str, default "\"pool\""),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":["string","null"]},"footprint":{"type":"string"},"from_x_nm":{"type":"integer"},"from_y_nm":{"type":"integer"},"to_x_nm":{"type":"integer"},"to_y_nm":{"type":"integer"},"width_nm":{"type":"integer"},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","footprint","from_x_nm","from_y_nm","to_x_nm","to_y_nm","width_nm"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.add_pool_footprint_silkscreen_polygon",
+        "Create a non-mutating draft proposal to append one native pool footprint silkscreen polygon or polyline primitive.",
+        "add_pool_footprint_silkscreen_polygon_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("add-pool-footprint-silkscreen-polygon"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--footprint",
+                param: "footprint"
+            },
+            ArgvToken::Flag {
+                flag: "--vertices",
+                param: "vertices"
+            },
+            ArgvToken::Flag {
+                flag: "--closed",
+                param: "closed"
+            },
+            ArgvToken::Flag {
+                flag: "--width-nm",
+                param: "width_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--pool",
+                param: "pool"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("footprint", Uuid, required),
+            proposal_param!("vertices", Str, required),
+            proposal_param!("closed", Bool, required),
+            proposal_param!("width_nm", Int, required),
+            proposal_param!("pool", Str, default "\"pool\""),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":["string","null"]},"footprint":{"type":"string"},"vertices":{"type":"string"},"closed":{"type":"boolean"},"width_nm":{"type":"integer"},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","footprint","vertices","closed","width_nm"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.add_pool_footprint_silkscreen_rect",
+        "Create a non-mutating draft proposal to append one native pool footprint silkscreen rectangle primitive.",
+        "add_pool_footprint_silkscreen_rect_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("add-pool-footprint-silkscreen-rect"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--footprint",
+                param: "footprint"
+            },
+            ArgvToken::Flag {
+                flag: "--min-x-nm",
+                param: "min_x_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--min-y-nm",
+                param: "min_y_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--max-x-nm",
+                param: "max_x_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--max-y-nm",
+                param: "max_y_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--width-nm",
+                param: "width_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--pool",
+                param: "pool"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("footprint", Uuid, required),
+            proposal_param!("min_x_nm", Int, required),
+            proposal_param!("min_y_nm", Int, required),
+            proposal_param!("max_x_nm", Int, required),
+            proposal_param!("max_y_nm", Int, required),
+            proposal_param!("width_nm", Int, required),
+            proposal_param!("pool", Str, default "\"pool\""),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":["string","null"]},"footprint":{"type":"string"},"min_x_nm":{"type":"integer"},"min_y_nm":{"type":"integer"},"max_x_nm":{"type":"integer"},"max_y_nm":{"type":"integer"},"width_nm":{"type":"integer"},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","footprint","min_x_nm","min_y_nm","max_x_nm","max_y_nm","width_nm"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.create",
+        "Create a non-mutating draft proposal from an OperationBatch JSON file.",
+        "create_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("create"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--batch",
+                param: "batch"
+            },
+            ArgvToken::Flag {
+                flag: "--rationale",
+                param: "rationale"
+            },
+            PROPOSAL_ID_ARGV,
+            ArgvToken::Flag {
+                flag: "--source",
+                param: "source"
+            },
+            ArgvToken::Repeated {
+                flag: "--check-run",
+                param: "checks_run"
+            },
+            ArgvToken::Repeated {
+                flag: "--finding-fingerprint",
+                param: "finding_fingerprints"
+            },
+        ],
+        [
+            PATH,
+            proposal_param!("batch", Str, required),
+            proposal_param!("rationale", Str, required),
+            PROPOSAL_ID,
+            proposal_param!("source", Str, default "\"tool\""),
+            proposal_param!("checks_run", StrList, default "[]"),
+            proposal_param!("finding_fingerprints", StrList, default "[]"),
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"batch":{"type":"string"},"rationale":{"type":"string"},"proposal":{"type":"string"},"source":{"type":"string","enum":["manual","cli","tool","assistant","check","import"]},"checks_run":{"type":"array","items":{"type":"string"}},"finding_fingerprints":{"type":"array","items":{"type":"string"}}},"required":["path","batch","rationale"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.create_board_component_replacement",
+        "Create a non-mutating draft proposal to replace one native-project board component package, part, and/or value.",
+        "create_board_component_replacement_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("create-board-component-replacement"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--component",
+                param: "component"
+            },
+            ArgvToken::Flag {
+                flag: "--package",
+                param: "package"
+            },
+            ArgvToken::Flag {
+                flag: "--part",
+                param: "part"
+            },
+            ArgvToken::Flag {
+                flag: "--value",
+                param: "value"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("component", Uuid, required),
+            proposal_param!("package", Uuid, optional),
+            proposal_param!("part", Uuid, optional),
+            proposal_param!("value", Str, optional),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"component":{"type":"string"},"package":{"type":["string","null"]},"part":{"type":["string","null"]},"value":{"type":["string","null"]},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","component"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.create_board_component_replacement_plan",
+        "Create one non-mutating draft proposal from replacement-plan shaped component selections.",
+        "create_board_component_replacement_plan_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("create-board-component-replacement-plan"),
+            ArgvToken::Param("path"),
+            ArgvToken::Repeated {
+                flag: "--selection",
+                param: "selections"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("selections", Json, required),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"selections":{"type":"array","items":{"type":"object","properties":{"uuid":{"type":"string"},"package_uuid":{"type":["string","null"]},"part_uuid":{"type":["string","null"]},"value":{"type":["string","null"]}},"required":["uuid"]}},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","selections"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.create_board_component_replacements",
+        "Create one non-mutating draft proposal to replace multiple native-project board component package, part, and/or value sets.",
+        "create_board_component_replacements_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("create-board-component-replacements"),
+            ArgvToken::Param("path"),
+            ArgvToken::Repeated {
+                flag: "--replacement",
+                param: "replacements"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("replacements", Json, required),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"replacements":{"type":"array","items":{"type":"object","properties":{"component":{"type":"string"},"package":{"type":["string","null"]},"part":{"type":["string","null"]},"value":{"type":["string","null"]}},"required":["component"]}},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","replacements"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.create_draw_wire",
+        "Create a non-mutating draft proposal to draw one native-project schematic wire.",
+        "create_draw_wire_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("create-draw-wire"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--sheet",
+                param: "sheet"
+            },
+            ArgvToken::Flag {
+                flag: "--from-x-nm",
+                param: "from_x_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--from-y-nm",
+                param: "from_y_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--to-x-nm",
+                param: "to_x_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--to-y-nm",
+                param: "to_y_nm"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("sheet", Uuid, required),
+            proposal_param!("from_x_nm", Int, required),
+            proposal_param!("from_y_nm", Int, required),
+            proposal_param!("to_x_nm", Int, required),
+            proposal_param!("to_y_nm", Int, required),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"from_x_nm":{"type":"integer"},"from_y_nm":{"type":"integer"},"to_x_nm":{"type":"integer"},"to_y_nm":{"type":"integer"},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","sheet","from_x_nm","from_y_nm","to_x_nm","to_y_nm"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.create_place_label",
+        "Create a non-mutating draft proposal to place one native-project schematic label.",
+        "create_place_label_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("create-place-label"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--sheet",
+                param: "sheet"
+            },
+            ArgvToken::Flag {
+                flag: "--name",
+                param: "name"
+            },
+            ArgvToken::Flag {
+                flag: "--x-nm",
+                param: "x_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--y-nm",
+                param: "y_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--kind",
+                param: "kind"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("sheet", Uuid, required),
+            proposal_param!("name", Str, required),
+            proposal_param!("x_nm", Int, required),
+            proposal_param!("y_nm", Int, required),
+            proposal_param!("kind", Str, optional),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"name":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"},"kind":{"type":["string","null"]},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","sheet","name","x_nm","y_nm"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.create_place_symbol",
+        "Create a non-mutating draft proposal to place one native-project schematic symbol.",
+        "create_place_symbol_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("create-place-symbol"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--sheet",
+                param: "sheet"
+            },
+            ArgvToken::Flag {
+                flag: "--reference",
+                param: "reference"
+            },
+            ArgvToken::Flag {
+                flag: "--value",
+                param: "value"
+            },
+            ArgvToken::Flag {
+                flag: "--x-nm",
+                param: "x_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--y-nm",
+                param: "y_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--lib-id",
+                param: "lib_id"
+            },
+            ArgvToken::Flag {
+                flag: "--rotation-deg",
+                param: "rotation_deg"
+            },
+            ArgvToken::Switch {
+                flag: "--mirrored",
+                param: "mirrored"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("sheet", Uuid, required),
+            proposal_param!("reference", Str, required),
+            proposal_param!("value", Str, required),
+            proposal_param!("x_nm", Int, required),
+            proposal_param!("y_nm", Int, required),
+            proposal_param!("lib_id", Str, optional),
+            proposal_param!("rotation_deg", Int, optional),
+            proposal_param!("mirrored", Bool, optional),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"sheet":{"type":"string"},"reference":{"type":"string"},"value":{"type":"string"},"x_nm":{"type":"integer"},"y_nm":{"type":"integer"},"lib_id":{"type":["string","null"]},"rotation_deg":{"type":["integer","null"]},"mirrored":{"type":["boolean","null"]},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","sheet","reference","value","x_nm","y_nm"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.create_pool_entity",
+        "Create a non-mutating draft proposal to author one native pool entity for an existing unit/symbol pair.",
+        "create_pool_entity_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("create-pool-entity"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--entity",
+                param: "entity"
+            },
+            ArgvToken::Flag {
+                flag: "--gate",
+                param: "gate"
+            },
+            ArgvToken::Flag {
+                flag: "--unit",
+                param: "unit"
+            },
+            ArgvToken::Flag {
+                flag: "--symbol",
+                param: "symbol"
+            },
+            ArgvToken::Flag {
+                flag: "--name",
+                param: "name"
+            },
+            ArgvToken::Flag {
+                flag: "--prefix",
+                param: "prefix"
+            },
+            ArgvToken::Flag {
+                flag: "--manufacturer",
+                param: "manufacturer"
+            },
+            ArgvToken::Flag {
+                flag: "--gate-name",
+                param: "gate_name"
+            },
+            ArgvToken::Flag {
+                flag: "--pool",
+                param: "pool"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("entity", Uuid, required),
+            proposal_param!("gate", Uuid, required),
+            proposal_param!("unit", Uuid, required),
+            proposal_param!("symbol", Uuid, required),
+            proposal_param!("name", Str, required),
+            proposal_param!("prefix", Str, required),
+            proposal_param!("manufacturer", Str, default "\"\""),
+            proposal_param!("gate_name", Str, default "\"A\""),
+            proposal_param!("pool", Str, default "\"pool\""),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":["string","null"]},"entity":{"type":"string"},"gate":{"type":"string"},"unit":{"type":"string"},"symbol":{"type":"string"},"name":{"type":"string"},"prefix":{"type":"string"},"manufacturer":{"type":["string","null"]},"gate_name":{"type":["string","null"]},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","entity","gate","unit","symbol","name","prefix"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.create_pool_footprint",
+        "Create a non-mutating draft proposal to author one native pool footprint.",
+        "create_pool_footprint_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("create-pool-footprint"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--footprint",
+                param: "footprint"
+            },
+            ArgvToken::Flag {
+                flag: "--package",
+                param: "package"
+            },
+            ArgvToken::Flag {
+                flag: "--name",
+                param: "name"
+            },
+            ArgvToken::Flag {
+                flag: "--pool",
+                param: "pool"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("footprint", Uuid, required),
+            proposal_param!("package", Uuid, required),
+            proposal_param!("name", Str, required),
+            proposal_param!("pool", Str, default "\"pool\""),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":["string","null"]},"footprint":{"type":"string"},"package":{"type":"string"},"name":{"type":"string"},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","footprint","package","name"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.create_pool_library_object",
+        "Create a non-mutating draft proposal to author one raw native pool-library object.",
+        "create_pool_library_object_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("create-pool-library-object"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--kind",
+                param: "kind"
+            },
+            ArgvToken::Flag {
+                flag: "--object",
+                param: "object"
+            },
+            ArgvToken::Flag {
+                flag: "--from-json",
+                param: "from_json"
+            },
+            ArgvToken::Flag {
+                flag: "--pool",
+                param: "pool"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("kind", Str, required),
+            proposal_param!("object", Uuid, required),
+            proposal_param!("from_json", Str, required),
+            proposal_param!("pool", Str, default "\"pool\""),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":["string","null"]},"kind":{"type":"string"},"object":{"type":"string"},"from_json":{"type":"string"},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","kind","object","from_json"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.create_pool_package",
+        "Create a non-mutating draft proposal to author one native pool package body record; optional pad/padstack fields are legacy land-pattern compatibility input.",
+        "create_pool_package_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("create-pool-package"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--package",
+                param: "package"
+            },
+            ArgvToken::Flag {
+                flag: "--name",
+                param: "name"
+            },
+            ArgvToken::Flag {
+                flag: "--pad",
+                param: "pad"
+            },
+            ArgvToken::Flag {
+                flag: "--padstack",
+                param: "padstack"
+            },
+            ArgvToken::Flag {
+                flag: "--pad-name",
+                param: "pad_name"
+            },
+            ArgvToken::Flag {
+                flag: "--x-nm",
+                param: "x_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--y-nm",
+                param: "y_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--layer",
+                param: "layer"
+            },
+            ArgvToken::Flag {
+                flag: "--pool",
+                param: "pool"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("package", Uuid, required),
+            proposal_param!("name", Str, required),
+            proposal_param!("pad", Uuid, optional),
+            proposal_param!("padstack", Uuid, optional),
+            proposal_param!("pad_name", Str, default "\"1\""),
+            proposal_param!("x_nm", Int, default "0"),
+            proposal_param!("y_nm", Int, default "0"),
+            proposal_param!("layer", Int, default "1"),
+            proposal_param!("pool", Str, default "\"pool\""),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":["string","null"]},"package":{"type":"string"},"name":{"type":"string"},"pad":{"type":["string","null"]},"padstack":{"type":["string","null"]},"pad_name":{"type":["string","null"]},"x_nm":{"type":["integer","null"]},"y_nm":{"type":["integer","null"]},"layer":{"type":["integer","null"]},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","package","name"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.create_pool_padstack",
+        "Create a non-mutating draft proposal to author one native pool padstack.",
+        "create_pool_padstack_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("create-pool-padstack"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--padstack",
+                param: "padstack"
+            },
+            ArgvToken::Flag {
+                flag: "--name",
+                param: "name"
+            },
+            ArgvToken::Flag {
+                flag: "--aperture",
+                param: "aperture"
+            },
+            ArgvToken::Flag {
+                flag: "--diameter-nm",
+                param: "diameter_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--width-nm",
+                param: "width_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--height-nm",
+                param: "height_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--drill-nm",
+                param: "drill_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--pool",
+                param: "pool"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("padstack", Uuid, required),
+            proposal_param!("name", Str, required),
+            proposal_param!("aperture", Str, optional),
+            proposal_param!("diameter_nm", Int, optional),
+            proposal_param!("width_nm", Int, optional),
+            proposal_param!("height_nm", Int, optional),
+            proposal_param!("drill_nm", Int, optional),
+            proposal_param!("pool", Str, default "\"pool\""),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":["string","null"]},"padstack":{"type":"string"},"name":{"type":"string"},"aperture":{"type":["string","null"]},"diameter_nm":{"type":["integer","null"]},"width_nm":{"type":["integer","null"]},"height_nm":{"type":["integer","null"]},"drill_nm":{"type":["integer","null"]},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","padstack","name"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.create_pool_symbol",
+        "Create a non-mutating draft proposal to author one native pool symbol for an existing pool unit.",
+        "create_pool_symbol_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("create-pool-symbol"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--symbol",
+                param: "symbol"
+            },
+            ArgvToken::Flag {
+                flag: "--unit",
+                param: "unit"
+            },
+            ArgvToken::Flag {
+                flag: "--name",
+                param: "name"
+            },
+            ArgvToken::Flag {
+                flag: "--pool",
+                param: "pool"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("symbol", Uuid, required),
+            proposal_param!("unit", Uuid, required),
+            proposal_param!("name", Str, required),
+            proposal_param!("pool", Str, default "\"pool\""),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":["string","null"]},"symbol":{"type":"string"},"unit":{"type":"string"},"name":{"type":"string"},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","symbol","unit","name"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.create_pool_unit",
+        "Create a non-mutating draft proposal to author one native pool unit.",
+        "create_pool_unit_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("create-pool-unit"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--unit",
+                param: "unit"
+            },
+            ArgvToken::Flag {
+                flag: "--name",
+                param: "name"
+            },
+            ArgvToken::Flag {
+                flag: "--manufacturer",
+                param: "manufacturer"
+            },
+            ArgvToken::Flag {
+                flag: "--pool",
+                param: "pool"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("unit", Uuid, required),
+            proposal_param!("name", Str, required),
+            proposal_param!("manufacturer", Str, default "\"\""),
+            proposal_param!("pool", Str, default "\"pool\""),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":["string","null"]},"unit":{"type":"string"},"name":{"type":"string"},"manufacturer":{"type":["string","null"]},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","unit","name"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.set_pool_footprint_courtyard_polygon",
+        "Create a non-mutating draft proposal to set polygon native pool footprint courtyard geometry.",
+        "set_pool_footprint_courtyard_polygon_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("set-pool-footprint-courtyard-polygon"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--footprint",
+                param: "footprint"
+            },
+            ArgvToken::Flag {
+                flag: "--vertices",
+                param: "vertices"
+            },
+            ArgvToken::Flag {
+                flag: "--pool",
+                param: "pool"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("footprint", Uuid, required),
+            proposal_param!("vertices", Str, required),
+            proposal_param!("pool", Str, default "\"pool\""),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":["string","null"]},"footprint":{"type":"string"},"vertices":{"type":"string"},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","footprint","vertices"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.set_pool_footprint_courtyard_rect",
+        "Create a non-mutating draft proposal to set rectangular native pool footprint courtyard geometry.",
+        "set_pool_footprint_courtyard_rect_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("set-pool-footprint-courtyard-rect"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--footprint",
+                param: "footprint"
+            },
+            ArgvToken::Flag {
+                flag: "--min-x-nm",
+                param: "min_x_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--min-y-nm",
+                param: "min_y_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--max-x-nm",
+                param: "max_x_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--max-y-nm",
+                param: "max_y_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--pool",
+                param: "pool"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("footprint", Uuid, required),
+            proposal_param!("min_x_nm", Int, required),
+            proposal_param!("min_y_nm", Int, required),
+            proposal_param!("max_x_nm", Int, required),
+            proposal_param!("max_y_nm", Int, required),
+            proposal_param!("pool", Str, default "\"pool\""),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":["string","null"]},"footprint":{"type":"string"},"min_x_nm":{"type":"integer"},"min_y_nm":{"type":"integer"},"max_x_nm":{"type":"integer"},"max_y_nm":{"type":"integer"},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","footprint","min_x_nm","min_y_nm","max_x_nm","max_y_nm"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.set_pool_footprint_pad",
+        "Create a non-mutating draft proposal to set one native pool footprint pad entry.",
+        "set_pool_footprint_pad_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("set-pool-footprint-pad"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--footprint",
+                param: "footprint"
+            },
+            ArgvToken::Flag {
+                flag: "--pad",
+                param: "pad"
+            },
+            ArgvToken::Flag {
+                flag: "--padstack",
+                param: "padstack"
+            },
+            ArgvToken::Flag {
+                flag: "--pad-name",
+                param: "pad_name"
+            },
+            ArgvToken::Flag {
+                flag: "--x-nm",
+                param: "x_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--y-nm",
+                param: "y_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--layer",
+                param: "layer"
+            },
+            ArgvToken::Flag {
+                flag: "--pool",
+                param: "pool"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("footprint", Uuid, required),
+            proposal_param!("pad", Uuid, required),
+            proposal_param!("padstack", Uuid, required),
+            proposal_param!("pad_name", Str, default "\"1\""),
+            proposal_param!("x_nm", Int, default "0"),
+            proposal_param!("y_nm", Int, default "0"),
+            proposal_param!("layer", Int, default "1"),
+            proposal_param!("pool", Str, default "\"pool\""),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":["string","null"]},"footprint":{"type":"string"},"pad":{"type":"string"},"padstack":{"type":"string"},"pad_name":{"type":["string","null"]},"x_nm":{"type":["integer","null"]},"y_nm":{"type":["integer","null"]},"layer":{"type":["integer","null"]},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","footprint","pad","padstack"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.set_pool_package_courtyard_polygon",
+        "Create a non-mutating draft proposal to set polygon native pool package courtyard geometry.",
+        "set_pool_package_courtyard_polygon_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("set-pool-package-courtyard-polygon"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--package",
+                param: "package"
+            },
+            ArgvToken::Flag {
+                flag: "--vertices",
+                param: "vertices"
+            },
+            ArgvToken::Flag {
+                flag: "--pool",
+                param: "pool"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("package", Uuid, required),
+            proposal_param!("vertices", Str, required),
+            proposal_param!("pool", Str, default "\"pool\""),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":["string","null"]},"package":{"type":"string"},"vertices":{"type":"string"},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","package","vertices"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.set_pool_package_courtyard_rect",
+        "Create a non-mutating draft proposal to set rectangular native pool package courtyard geometry.",
+        "set_pool_package_courtyard_rect_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("set-pool-package-courtyard-rect"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--package",
+                param: "package"
+            },
+            ArgvToken::Flag {
+                flag: "--min-x-nm",
+                param: "min_x_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--min-y-nm",
+                param: "min_y_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--max-x-nm",
+                param: "max_x_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--max-y-nm",
+                param: "max_y_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--pool",
+                param: "pool"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("package", Uuid, required),
+            proposal_param!("min_x_nm", Int, required),
+            proposal_param!("min_y_nm", Int, required),
+            proposal_param!("max_x_nm", Int, required),
+            proposal_param!("max_y_nm", Int, required),
+            proposal_param!("pool", Str, default "\"pool\""),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":["string","null"]},"package":{"type":"string"},"min_x_nm":{"type":"integer"},"min_y_nm":{"type":"integer"},"max_x_nm":{"type":"integer"},"max_y_nm":{"type":"integer"},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","package","min_x_nm","min_y_nm","max_x_nm","max_y_nm"]}"#,
+    ),
+    non_terminal_proposal_verb!(
+        "datum.proposal.set_pool_package_pad",
+        "Create a non-mutating draft proposal to add one native pool package pad entry.",
+        "set_pool_package_pad_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("set-pool-package-pad"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--package",
+                param: "package"
+            },
+            ArgvToken::Flag {
+                flag: "--pad",
+                param: "pad"
+            },
+            ArgvToken::Flag {
+                flag: "--padstack",
+                param: "padstack"
+            },
+            ArgvToken::Flag {
+                flag: "--pad-name",
+                param: "pad_name"
+            },
+            ArgvToken::Flag {
+                flag: "--x-nm",
+                param: "x_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--y-nm",
+                param: "y_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--layer",
+                param: "layer"
+            },
+            ArgvToken::Flag {
+                flag: "--pool",
+                param: "pool"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("package", Uuid, required),
+            proposal_param!("pad", Uuid, required),
+            proposal_param!("padstack", Uuid, required),
+            proposal_param!("pad_name", Str, default "\"1\""),
+            proposal_param!("x_nm", Int, default "0"),
+            proposal_param!("y_nm", Int, default "0"),
+            proposal_param!("layer", Int, default "1"),
+            proposal_param!("pool", Str, default "\"pool\""),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":["string","null"]},"package":{"type":"string"},"pad":{"type":"string"},"padstack":{"type":"string"},"pad_name":{"type":["string","null"]},"x_nm":{"type":["integer","null"]},"y_nm":{"type":["integer","null"]},"layer":{"type":["integer","null"]},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","package","pad","padstack"]}"#,
+    ),
 ];

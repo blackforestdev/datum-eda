@@ -215,6 +215,7 @@ pub fn verbs() -> &'static [VerbSpec] {
         for family in families {
             verbs.extend_from_slice(family);
         }
+        verbs.sort_by_key(|verb| verb.id);
         verbs
     });
     &ALL

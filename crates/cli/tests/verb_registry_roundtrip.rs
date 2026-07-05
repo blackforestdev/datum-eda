@@ -30,6 +30,15 @@ fn dummy_value(param: &ParamSpec) -> &'static str {
     if param.name == "status" {
         return "accepted";
     }
+    if param.name == "source" {
+        return "tool";
+    }
+    if param.name == "kind" {
+        return "local";
+    }
+    if param.name == "checks_run" {
+        return "00000000-0000-0000-0000-000000000001";
+    }
     match param.ty {
         ParamType::Str => "verb-registry-roundtrip-dummy",
         ParamType::Int => "1",
