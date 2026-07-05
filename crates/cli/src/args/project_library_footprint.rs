@@ -77,6 +77,63 @@ pub(crate) struct ProjectGenerateIpc7351bTwoTerminalChipArgs {
 }
 
 #[derive(clap::Args)]
+pub(crate) struct ProjectGenerateIpc7351bSoicArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Project-local pool path; defaults to pool
+    #[arg(long, default_value = "pool")]
+    pub(crate) pool: String,
+    /// Generated Footprint UUID
+    #[arg(long = "footprint")]
+    pub(crate) footprint_uuid: Uuid,
+    /// Referenced package UUID
+    #[arg(long = "package")]
+    pub(crate) package_uuid: Uuid,
+    /// Generated Padstack UUID
+    #[arg(long = "padstack")]
+    pub(crate) padstack_uuid: Uuid,
+    /// Generated pad UUIDs in package pin order; count must equal --pin-count
+    #[arg(long = "pad", required = true)]
+    pub(crate) pad_uuids: Vec<Uuid>,
+    /// Optional human-readable footprint name
+    #[arg(long)]
+    pub(crate) name: Option<String>,
+    /// IPC package code, e.g. SOIC-8_NARROW
+    #[arg(long = "package-code")]
+    pub(crate) package_code: String,
+    /// SOIC pin count; must be even and at least 4
+    #[arg(long = "pin-count")]
+    pub(crate) pin_count: u32,
+    /// Lead pitch in nanometers
+    #[arg(long = "pitch-nm")]
+    pub(crate) pitch_nm: i64,
+    /// Component body length in nanometers
+    #[arg(long = "body-length-nm")]
+    pub(crate) body_length_nm: i64,
+    /// Component body width in nanometers
+    #[arg(long = "body-width-nm")]
+    pub(crate) body_width_nm: i64,
+    /// Overall lead span in nanometers
+    #[arg(long = "lead-span-nm")]
+    pub(crate) lead_span_nm: i64,
+    /// Terminal/lead land length in nanometers
+    #[arg(long = "terminal-length-nm")]
+    pub(crate) terminal_length_nm: i64,
+    /// Terminal/lead width in nanometers
+    #[arg(long = "terminal-width-nm")]
+    pub(crate) terminal_width_nm: i64,
+    /// IPC density level
+    #[arg(long = "density", value_enum, default_value = "nominal")]
+    pub(crate) density: IpcDensityLevelArg,
+    /// Solder-mask expansion in nanometers
+    #[arg(long = "mask-expansion-nm", default_value_t = 50_000)]
+    pub(crate) mask_expansion_nm: i64,
+    /// Paste aperture reduction in nanometers
+    #[arg(long = "paste-reduction-nm", default_value_t = 50_000)]
+    pub(crate) paste_reduction_nm: i64,
+}
+
+#[derive(clap::Args)]
 pub(crate) struct ProjectSetPoolFootprintPadArgs {
     /// Project root directory
     pub(crate) path: PathBuf,

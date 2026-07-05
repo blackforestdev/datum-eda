@@ -51,6 +51,9 @@ impl LibraryGraph {
         {
             self.validate_ipc_two_terminal_chip_footprint(footprint, &basis, subject, diagnostics);
         }
+        if basis.family == "IPC-7351" && basis.revision == "B" && basis.package_family == "soic" {
+            self.validate_ipc_soic_footprint(footprint, &basis, subject, diagnostics);
+        }
     }
 
     fn validate_ipc_basis_shape(
@@ -102,13 +105,36 @@ impl LibraryGraph {
             || basis.mask_expansion_nm < 0
             || basis.paste_reduction_nm < 0
         {
-            diagnostics.push(LibraryGraphDiagnostic {
-                severity: "error",
-                code: "invalid_ipc_footprint_basis",
-                subject: basis_subject,
-                message: "ipc_basis courtyard/mask/paste policy values must not be negative"
-                    .to_string(),
-            });
+                diagnostics.push(LibraryGraphDiagnostic {
+                    severity: "error",
+                    code: "invalid_ipc_footprint_basis",
+                    subject: basis_subject.clone(),
+                    message: "ipc_basis courtyard/mask/paste policy values must not be negative"
+                        .to_string(),
+                });
+        }
+        if let Some(pin_count) = basis.pin_count {
+            if pin_count < 4 || pin_count % 2 != 0 {
+                diagnostics.push(LibraryGraphDiagnostic {
+                    severity: "error",
+                    code: "invalid_ipc_footprint_basis",
+                    subject: basis_subject.clone(),
+                    message: "ipc_basis pin_count must be an even value of at least 4".to_string(),
+                });
+            }
+        }
+        for (field, value) in [
+            ("pitch_nm", basis.pitch_nm),
+            ("lead_span_nm", basis.lead_span_nm),
+        ] {
+            if value.is_some_and(|value| value <= 0) {
+                diagnostics.push(LibraryGraphDiagnostic {
+                    severity: "error",
+                    code: "invalid_ipc_footprint_basis",
+                    subject: basis_subject.clone(),
+                    message: format!("ipc_basis {field} must be positive when present"),
+                });
+            }
         }
     }
 
@@ -173,6 +199,104 @@ impl LibraryGraph {
                     subject: pad_subject.clone(),
                     message: "IPC padstack aperture does not match derived toe/heel/side geometry"
                         .to_string(),
+                });
+            }
+            if padstack.mask_policy != PadstackMaskPolicy::ExpansionNm(basis.mask_expansion_nm) {
+                diagnostics.push(LibraryGraphDiagnostic {
+                    severity: "error",
+                    code: "ipc_basis_process_policy_mismatch",
+                    subject: pad_subject.clone(),
+                    message: "IPC padstack mask policy does not match ipc_basis mask_expansion_nm"
+                        .to_string(),
+                });
+            }
+            if padstack.paste_policy
+                != PadstackPastePolicy::ExpansionNm(-basis.paste_reduction_nm.abs())
+            {
+                diagnostics.push(LibraryGraphDiagnostic {
+                    severity: "error",
+                    code: "ipc_basis_process_policy_mismatch",
+                    subject: pad_subject,
+                    message:
+                        "IPC padstack paste policy does not match ipc_basis paste_reduction_nm"
+                            .to_string(),
+                });
+            }
+        }
+    }
+
+    fn validate_ipc_soic_footprint(
+        &self,
+        footprint: &serde_json::Value,
+        basis: &IpcFootprintBasis,
+        subject: &str,
+        diagnostics: &mut Vec<LibraryGraphDiagnostic>,
+    ) {
+        let footprint = match serde_json::from_value::<Footprint>(footprint.clone()) {
+            Ok(footprint) => footprint,
+            Err(error) => {
+                diagnostics.push(LibraryGraphDiagnostic {
+                    severity: "error",
+                    code: "invalid_ipc_footprint_basis",
+                    subject: subject.to_string(),
+                    message: format!(
+                        "IPC footprint payload cannot be decoded for validation: {error}"
+                    ),
+                });
+                return;
+            }
+        };
+        let Some(pin_count) = basis.pin_count else {
+            diagnostics.push(LibraryGraphDiagnostic {
+                severity: "error",
+                code: "invalid_ipc_footprint_basis",
+                subject: format!("{subject}#ipc_basis"),
+                message: "IPC-7351B SOIC basis must include pin_count".to_string(),
+            });
+            return;
+        };
+        if footprint.pads.len() != pin_count as usize {
+            diagnostics.push(LibraryGraphDiagnostic {
+                severity: "error",
+                code: "ipc_basis_geometry_mismatch",
+                subject: subject.to_string(),
+                message: format!(
+                    "IPC-7351B SOIC footprint must contain exactly {pin_count} pads"
+                ),
+            });
+        }
+        let expected_pad_length = basis.source_dimensions.terminal_length_nm
+            + basis.source_j_values.toe_nm
+            + basis.source_j_values.heel_nm;
+        let expected_pad_width =
+            basis.source_dimensions.terminal_width_nm + (2 * basis.source_j_values.side_nm);
+        for (pad_id, pad) in &footprint.pads {
+            let Some(padstack_value) = self.padstacks.get(&pad.padstack) else {
+                continue;
+            };
+            let pad_subject = format!("{subject}#pads/{pad_id}");
+            let Ok(padstack) = serde_json::from_value::<Padstack>(padstack_value.clone()) else {
+                diagnostics.push(LibraryGraphDiagnostic {
+                    severity: "error",
+                    code: "invalid_ipc_footprint_basis",
+                    subject: pad_subject,
+                    message: "referenced IPC padstack cannot be decoded for validation".to_string(),
+                });
+                continue;
+            };
+            if padstack.aperture
+                != Some(PadstackAperture::Rect {
+                    width_nm: expected_pad_length,
+                    height_nm: expected_pad_width,
+                })
+            {
+                diagnostics.push(LibraryGraphDiagnostic {
+                    severity: "error",
+                    code: "ipc_basis_geometry_mismatch",
+                    subject: pad_subject.clone(),
+                    message:
+                        "IPC SOIC padstack aperture does not match derived toe/heel/side geometry"
+                            .to_string(),
                 });
             }
             if padstack.mask_policy != PadstackMaskPolicy::ExpansionNm(basis.mask_expansion_nm) {

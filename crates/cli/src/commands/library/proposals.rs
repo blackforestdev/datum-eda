@@ -751,6 +751,61 @@ impl ProposalGenerateIpc7351bTwoTerminalChipArgs {
     }
 }
 
+impl ProposalGenerateIpc7351bSoicArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            footprint,
+            package,
+            padstack,
+            pads,
+            name,
+            package_code,
+            pin_count,
+            pitch_nm,
+            body_length_nm,
+            body_width_nm,
+            lead_span_nm,
+            terminal_length_nm,
+            terminal_width_nm,
+            density,
+            mask_expansion_nm,
+            paste_reduction_nm,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_generate_native_project_ipc7351b_soic(
+                    &path,
+                    &pool,
+                    footprint,
+                    package,
+                    padstack,
+                    pads,
+                    name,
+                    package_code,
+                    pin_count,
+                    pitch_nm,
+                    body_length_nm,
+                    body_width_nm,
+                    lead_span_nm,
+                    terminal_length_nm,
+                    terminal_width_nm,
+                    density,
+                    mask_expansion_nm,
+                    paste_reduction_nm,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
 impl ProposalCreatePoolPinPadMapArgs {
     pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
         let Self {

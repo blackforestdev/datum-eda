@@ -1058,6 +1058,116 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         terminal_argv_override: None,
     },
     VerbSpec {
+        id: "datum.library.generate_ipc7351b_soic",
+        summary: "Generate an IPC-7351B SOIC footprint and padstack through the journaled project commit path.",
+        status: VerbStatus::Public,
+        replacements: &[],
+        retirement: None,
+        dispatch: Dispatch::Cli {
+            method: "generate_ipc7351b_soic",
+            argv: &[
+                ArgvToken::Lit("project"),
+                ArgvToken::Lit("generate-ipc7351b-soic"),
+                ArgvToken::Param("path"),
+                ArgvToken::Flag {
+                    flag: "--pool",
+                    param: "pool",
+                },
+                ArgvToken::Flag {
+                    flag: "--footprint",
+                    param: "footprint",
+                },
+                ArgvToken::Flag {
+                    flag: "--package",
+                    param: "package",
+                },
+                ArgvToken::Flag {
+                    flag: "--padstack",
+                    param: "padstack",
+                },
+                ArgvToken::Repeated {
+                    flag: "--pad",
+                    param: "pads",
+                },
+                ArgvToken::Flag {
+                    flag: "--package-code",
+                    param: "package_code",
+                },
+                ArgvToken::Flag {
+                    flag: "--pin-count",
+                    param: "pin_count",
+                },
+                ArgvToken::Flag {
+                    flag: "--pitch-nm",
+                    param: "pitch_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--body-length-nm",
+                    param: "body_length_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--body-width-nm",
+                    param: "body_width_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--lead-span-nm",
+                    param: "lead_span_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--terminal-length-nm",
+                    param: "terminal_length_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--terminal-width-nm",
+                    param: "terminal_width_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--density",
+                    param: "density",
+                },
+                ArgvToken::Flag {
+                    flag: "--mask-expansion-nm",
+                    param: "mask_expansion_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--paste-reduction-nm",
+                    param: "paste_reduction_nm",
+                },
+                ArgvToken::Flag {
+                    flag: "--name",
+                    param: "name",
+                },
+            ],
+        },
+        params: &[
+            p!("path", Str, true, None),
+            p!("pool", Str, false, Some("\"pool\"")),
+            p!("footprint", Uuid, true, None),
+            p!("package", Uuid, true, None),
+            p!("padstack", Uuid, true, None),
+            p!("pads", StrList, true, None),
+            p!("package_code", Str, true, None),
+            p!("pin_count", Int, true, None),
+            p!("pitch_nm", Int, true, None),
+            p!("body_length_nm", Int, true, None),
+            p!("body_width_nm", Int, true, None),
+            p!("lead_span_nm", Int, true, None),
+            p!("terminal_length_nm", Int, true, None),
+            p!("terminal_width_nm", Int, true, None),
+            p!("density", Str, false, Some("\"nominal\"")),
+            p!("mask_expansion_nm", Int, false, Some("50000")),
+            p!("paste_reduction_nm", Int, false, Some("50000")),
+            p!("name", Str, false, Some("null")),
+        ],
+        schema_json_override: Some(
+            r###"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":"string"},"footprint":{"type":"string"},"package":{"type":"string"},"padstack":{"type":"string"},"pads":{"type":"array","items":{"type":"string"},"minItems":4},"package_code":{"type":"string"},"pin_count":{"type":"integer"},"pitch_nm":{"type":"integer"},"body_length_nm":{"type":"integer"},"body_width_nm":{"type":"integer"},"lead_span_nm":{"type":"integer"},"terminal_length_nm":{"type":"integer"},"terminal_width_nm":{"type":"integer"},"density":{"type":"string","enum":["most","nominal","least"]},"mask_expansion_nm":{"type":"integer"},"paste_reduction_nm":{"type":"integer"},"name":{"type":["string","null"]}},"required":["path","footprint","package","padstack","pads","package_code","pin_count","pitch_nm","body_length_nm","body_width_nm","lead_span_nm","terminal_length_nm","terminal_width_nm"]}"###,
+        ),
+        write_surface: None,
+        terminal: false,
+        terminal_optional_params: &[],
+        terminal_argv_override: None,
+    },
+    VerbSpec {
         id: "datum.library.set_footprint_pad",
         summary: "Set one first-class typed native pool footprint pad entry referencing an existing padstack.",
         status: VerbStatus::Public,

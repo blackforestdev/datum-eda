@@ -4,7 +4,8 @@ pub(crate) use super::proposal_library::{
     ProposalCreatePoolEntityArgs, ProposalCreatePoolFootprintArgs,
     ProposalCreatePoolLibraryObjectArgs, ProposalCreatePoolPackageArgs,
     ProposalCreatePoolPadstackArgs, ProposalCreatePoolPinPadMapArgs, ProposalCreatePoolSymbolArgs,
-    ProposalCreatePoolUnitArgs, ProposalGenerateIpc7351bTwoTerminalChipArgs,
+    ProposalCreatePoolUnitArgs, ProposalGenerateIpc7351bSoicArgs,
+    ProposalGenerateIpc7351bTwoTerminalChipArgs,
     ProposalSetPoolFootprintCourtyardPolygonArgs, ProposalSetPoolFootprintCourtyardRectArgs,
     ProposalSetPoolFootprintPadArgs, ProposalSetPoolPackageCourtyardPolygonArgs,
     ProposalSetPoolPackageCourtyardRectArgs, ProposalSetPoolPackagePadArgs,
@@ -50,6 +51,8 @@ pub(crate) enum ProposalCommands {
     CreatePoolFootprint(ProposalCreatePoolFootprintArgs),
     /// Create a draft proposal to generate an IPC-7351B two-terminal chip footprint + padstack
     GenerateIpc7351bTwoTerminalChip(ProposalGenerateIpc7351bTwoTerminalChipArgs),
+    /// Create a draft proposal to generate an IPC-7351B SOIC footprint + padstack
+    GenerateIpc7351bSoic(ProposalGenerateIpc7351bSoicArgs),
     /// Create a draft proposal to author a native pool PinPadMap
     CreatePoolPinPadMap(ProposalCreatePoolPinPadMapArgs),
     /// Create a draft proposal to update native pool PinPadMap mappings

@@ -36,6 +36,7 @@ LIBRARY_AUTHORING_CLI_METHODS = {
     "create_pool_unit",
     "delete_pool_library_object",
     "detach_pool_part_model",
+    "generate_ipc7351b_soic",
     "set_pool_library_object",
     "set_pool_footprint_courtyard_polygon",
     "set_pool_footprint_courtyard_rect",

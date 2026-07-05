@@ -377,6 +377,7 @@ _GENERATED_LIBRARY_TOOL_ORDER = [
     "datum.library.create_padstack",
     "datum.library.create_package",
     "datum.library.create_footprint",
+    "datum.library.generate_ipc7351b_soic",
     "datum.library.set_footprint_pad",
     "datum.library.set_footprint_courtyard_rect",
     "datum.library.set_footprint_courtyard_polygon",

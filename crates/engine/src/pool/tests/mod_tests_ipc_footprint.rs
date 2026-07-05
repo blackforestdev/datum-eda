@@ -199,3 +199,155 @@ fn ipc7351b_library_graph_reports_basis_and_process_policy_mismatch() {
     assert!(codes.contains("ipc_basis_standards_mismatch"));
     assert!(codes.contains("ipc_basis_process_policy_mismatch"));
 }
+
+fn soic_spec(density_level: IpcDensityLevel) -> IpcSoicSpec {
+    IpcSoicSpec {
+        footprint_uuid: Uuid::from_u128(0x7351_5001),
+        package_uuid: Uuid::from_u128(0x5001),
+        padstack_uuid: Uuid::from_u128(0x5002),
+        pad_uuids: (1..=8).map(Uuid::from_u128).collect(),
+        name: None,
+        package_code: "SOIC-8_NARROW".to_string(),
+        pin_count: 8,
+        pitch_nm: 1_270_000,
+        body_length_nm: 4_900_000,
+        body_width_nm: 3_900_000,
+        lead_span_nm: 6_000_000,
+        terminal_length_nm: 600_000,
+        terminal_width_nm: 400_000,
+        density_level,
+        mask_expansion_nm: 50_000,
+        paste_reduction_nm: 50_000,
+    }
+}
+
+#[test]
+fn ipc7351b_soic_generates_structured_basis_and_two_pad_rows() {
+    let generated =
+        generate_ipc7351b_soic(soic_spec(IpcDensityLevel::Nominal)).expect("SOIC should generate");
+
+    assert_eq!(generated.footprint.name, "SOIC-8_NARROW_IPC7351B_B");
+    assert_eq!(
+        generated.footprint.standards_basis.as_deref(),
+        Some("IPC-7351B SOIC density B")
+    );
+    let basis = generated
+        .footprint
+        .ipc_basis
+        .as_ref()
+        .expect("SOIC footprint should carry structured IPC basis");
+    assert_eq!(basis.package_family, "soic");
+    assert_eq!(basis.package_code, "SOIC-8_NARROW");
+    assert_eq!(basis.pin_count, Some(8));
+    assert_eq!(basis.pitch_nm, Some(1_270_000));
+    assert_eq!(basis.lead_span_nm, Some(6_000_000));
+    assert_eq!(basis.derivation_version, "datum-ipc7351b-soic-v1");
+
+    assert_eq!(
+        generated.padstack.aperture,
+        Some(PadstackAperture::Rect {
+            width_nm: 1_300_000,
+            height_nm: 400_000,
+        })
+    );
+    assert_eq!(generated.footprint.pads.len(), 8);
+    let pad_1 = generated
+        .footprint
+        .pads
+        .get(&Uuid::from_u128(1))
+        .expect("pad 1 should exist");
+    let pad_4 = generated
+        .footprint
+        .pads
+        .get(&Uuid::from_u128(4))
+        .expect("pad 4 should exist");
+    let pad_5 = generated
+        .footprint
+        .pads
+        .get(&Uuid::from_u128(5))
+        .expect("pad 5 should exist");
+    let pad_8 = generated
+        .footprint
+        .pads
+        .get(&Uuid::from_u128(8))
+        .expect("pad 8 should exist");
+    assert_eq!(pad_1.name, "1");
+    assert_eq!(pad_1.position, Point::new(-2_700_000, 1_905_000));
+    assert_eq!(pad_4.position, Point::new(-2_700_000, -1_905_000));
+    assert_eq!(pad_5.position, Point::new(2_700_000, -1_905_000));
+    assert_eq!(pad_8.position, Point::new(2_700_000, 1_905_000));
+
+    assert_eq!(
+        generated.footprint.courtyard.vertices,
+        vec![
+            Point::new(-3_600_000, -2_700_000),
+            Point::new(3_600_000, -2_700_000),
+            Point::new(3_600_000, 2_700_000),
+            Point::new(-3_600_000, 2_700_000),
+        ]
+    );
+}
+
+#[test]
+fn ipc7351b_soic_rejects_invalid_pin_count_and_pad_ids() {
+    let mut odd = soic_spec(IpcDensityLevel::Nominal);
+    odd.pin_count = 7;
+    let error = generate_ipc7351b_soic(odd).expect_err("odd pin count should fail");
+    assert!(error.contains("pin_count must be an even value of at least 4"));
+
+    let mut missing_pad = soic_spec(IpcDensityLevel::Nominal);
+    missing_pad.pad_uuids.pop();
+    let error = generate_ipc7351b_soic(missing_pad).expect_err("missing pad id should fail");
+    assert!(error.contains("pad_uuids length must equal pin_count"));
+}
+
+#[test]
+fn ipc7351b_library_graph_reports_soic_geometry_mismatch() {
+    let generated =
+        generate_ipc7351b_soic(soic_spec(IpcDensityLevel::Nominal)).expect("SOIC should generate");
+    let mut graph = LibraryGraph::default();
+    graph.packages.insert(
+        generated.footprint.package,
+        serde_json::json!({
+            "uuid": generated.footprint.package,
+            "pads": {}
+        }),
+    );
+    let mut bad_padstack =
+        serde_json::to_value(&generated.padstack).expect("padstack should serialize");
+    bad_padstack
+        .as_object_mut()
+        .expect("padstack should be object")
+        .insert(
+            "aperture".to_string(),
+            serde_json::json!({"rect": {"width_nm": 999, "height_nm": 400000}}),
+        );
+    graph
+        .padstacks
+        .insert(generated.padstack.uuid, bad_padstack);
+    let mut bad_footprint =
+        serde_json::to_value(&generated.footprint).expect("footprint should serialize");
+    bad_footprint
+        .as_object_mut()
+        .expect("footprint should be object")
+        .get_mut("pads")
+        .expect("pads should exist")
+        .as_object_mut()
+        .expect("pads should be an object")
+        .remove(&Uuid::from_u128(8).to_string());
+    graph
+        .footprints
+        .insert(generated.footprint.uuid, bad_footprint);
+    graph.subjects.insert(
+        generated.footprint.uuid,
+        "pool/footprints/soic.json".to_string(),
+    );
+
+    let codes = graph
+        .dependency_diagnostics()
+        .into_iter()
+        .map(|diagnostic| diagnostic.code)
+        .collect::<std::collections::BTreeSet<_>>();
+
+    assert!(codes.contains("ipc_basis_geometry_mismatch"));
+}

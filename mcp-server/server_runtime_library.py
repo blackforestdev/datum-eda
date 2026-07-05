@@ -56,6 +56,95 @@ def install_library_methods(client_cls: type) -> None:
             ["project", "create-pool-footprint", path, "--pool", pool, "--footprint", footprint, "--package", package, "--name", name],
         )
 
+    def generate_ipc7351b_soic(
+        self,
+        path: str,
+        footprint: str,
+        package: str,
+        padstack: str,
+        pads: list[str],
+        package_code: str,
+        pin_count: int,
+        pitch_nm: int,
+        body_length_nm: int,
+        body_width_nm: int,
+        lead_span_nm: int,
+        terminal_length_nm: int,
+        terminal_width_nm: int,
+        pool: str = "pool",
+        density: str = "nominal",
+        mask_expansion_nm: int = 50000,
+        paste_reduction_nm: int = 50000,
+        name: str | None = None,
+    ):
+        args = [
+            "project",
+            "generate-ipc7351b-soic",
+            path,
+            "--pool",
+            pool,
+            "--footprint",
+            footprint,
+            "--package",
+            package,
+            "--padstack",
+            padstack,
+        ]
+        for pad in pads:
+            args.extend(["--pad", pad])
+        args.extend([
+            "--package-code",
+            package_code,
+            "--pin-count",
+            str(pin_count),
+            "--pitch-nm",
+            str(pitch_nm),
+            "--body-length-nm",
+            str(body_length_nm),
+            "--body-width-nm",
+            str(body_width_nm),
+            "--lead-span-nm",
+            str(lead_span_nm),
+            "--terminal-length-nm",
+            str(terminal_length_nm),
+            "--terminal-width-nm",
+            str(terminal_width_nm),
+            "--density",
+            density,
+            "--mask-expansion-nm",
+            str(mask_expansion_nm),
+            "--paste-reduction-nm",
+            str(paste_reduction_nm),
+        ])
+        if name is not None:
+            args.extend(["--name", name])
+        return self._run_cli_json(
+            self.build_request(
+                "generate_ipc7351b_soic",
+                {
+                    "path": path,
+                    "pool": pool,
+                    "footprint": footprint,
+                    "package": package,
+                    "padstack": padstack,
+                    "pads": pads,
+                    "package_code": package_code,
+                    "pin_count": pin_count,
+                    "pitch_nm": pitch_nm,
+                    "body_length_nm": body_length_nm,
+                    "body_width_nm": body_width_nm,
+                    "lead_span_nm": lead_span_nm,
+                    "terminal_length_nm": terminal_length_nm,
+                    "terminal_width_nm": terminal_width_nm,
+                    "density": density,
+                    "mask_expansion_nm": mask_expansion_nm,
+                    "paste_reduction_nm": paste_reduction_nm,
+                    "name": name,
+                },
+            ),
+            args,
+        )
+
     def set_pool_footprint_pad(self, path: str, pool: str, footprint: str, pad: str, padstack: str, pad_name: str, x_nm: int, y_nm: int, layer: int):
         return self._run_cli_json(
             self.build_request("set_pool_footprint_pad", {"path": path, "pool": pool, "footprint": footprint, "pad": pad, "padstack": padstack, "pad_name": pad_name, "x_nm": x_nm, "y_nm": y_nm, "layer": layer}),

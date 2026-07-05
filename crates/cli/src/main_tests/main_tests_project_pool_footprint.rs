@@ -10,6 +10,20 @@ pub(super) const IPC_FOOTPRINT_ID: Uuid = uuid::uuid!("77777777-7777-7777-7777-7
 pub(super) const IPC_PADSTACK_ID: Uuid = uuid::uuid!("88888888-8888-8888-8888-888888888888");
 pub(super) const IPC_PAD_A_ID: Uuid = uuid::uuid!("99999999-9999-9999-9999-999999999999");
 pub(super) const IPC_PAD_B_ID: Uuid = uuid::uuid!("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+pub(super) const IPC_SOIC_FOOTPRINT_ID: Uuid =
+    uuid::uuid!("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
+pub(super) const IPC_SOIC_PADSTACK_ID: Uuid =
+    uuid::uuid!("cccccccc-cccc-cccc-cccc-cccccccccccc");
+pub(super) const IPC_SOIC_PAD_IDS: [Uuid; 8] = [
+    uuid::uuid!("dddddddd-dddd-dddd-dddd-000000000001"),
+    uuid::uuid!("dddddddd-dddd-dddd-dddd-000000000002"),
+    uuid::uuid!("dddddddd-dddd-dddd-dddd-000000000003"),
+    uuid::uuid!("dddddddd-dddd-dddd-dddd-000000000004"),
+    uuid::uuid!("dddddddd-dddd-dddd-dddd-000000000005"),
+    uuid::uuid!("dddddddd-dddd-dddd-dddd-000000000006"),
+    uuid::uuid!("dddddddd-dddd-dddd-dddd-000000000007"),
+    uuid::uuid!("dddddddd-dddd-dddd-dddd-000000000008"),
+];
 
 #[test]
 fn project_create_pool_footprint_is_journaled_query_visible_and_undoable() {
@@ -211,6 +225,106 @@ fn project_generate_ipc7351b_two_terminal_chip_creates_footprint_and_padstack() 
     .expect("IPC footprint generation undo should succeed");
     assert!(!footprint_path.exists());
     assert!(!padstack_path.exists());
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_generate_ipc7351b_soic_creates_footprint_and_padstack() {
+    let root =
+        main_tests_project_pool_library::unique_project_root("datum-eda-cli-ipc-soic-footprint");
+    create_native_project(&root, Some("IPC SOIC Footprint Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    create_package_fixture(&root);
+    let footprint_path = root.join(format!("pool/footprints/{IPC_SOIC_FOOTPRINT_ID}.json"));
+    let padstack_path = root.join(format!("pool/padstacks/{IPC_SOIC_PADSTACK_ID}.json"));
+
+    let mut args = vec![
+        "eda".to_string(),
+        "--format".to_string(),
+        "json".to_string(),
+        "project".to_string(),
+        "generate-ipc7351b-soic".to_string(),
+        root.to_str().unwrap().to_string(),
+        "--footprint".to_string(),
+        IPC_SOIC_FOOTPRINT_ID.to_string(),
+        "--package".to_string(),
+        PACKAGE_ID.to_string(),
+        "--padstack".to_string(),
+        IPC_SOIC_PADSTACK_ID.to_string(),
+    ];
+    for pad_id in IPC_SOIC_PAD_IDS {
+        args.push("--pad".to_string());
+        args.push(pad_id.to_string());
+    }
+    args.extend([
+        "--package-code".to_string(),
+        "SOIC-8_NARROW".to_string(),
+        "--pin-count".to_string(),
+        "8".to_string(),
+        "--pitch-nm".to_string(),
+        "1270000".to_string(),
+        "--body-length-nm".to_string(),
+        "4900000".to_string(),
+        "--body-width-nm".to_string(),
+        "3900000".to_string(),
+        "--lead-span-nm".to_string(),
+        "6000000".to_string(),
+        "--terminal-length-nm".to_string(),
+        "600000".to_string(),
+        "--terminal-width-nm".to_string(),
+        "400000".to_string(),
+        "--density".to_string(),
+        "nominal".to_string(),
+    ]);
+
+    let output = execute(Cli::try_parse_from(args).expect("CLI should parse"))
+        .expect("IPC SOIC generation should succeed");
+    let report: serde_json::Value =
+        serde_json::from_str(&output).expect("generate report JSON should parse");
+    assert_eq!(report["action"], "generate_ipc7351b_soic");
+    assert!(footprint_path.exists());
+    assert!(padstack_path.exists());
+
+    let footprint = main_tests_project_pool_library::query_pool_object_payload(
+        &root,
+        "footprints",
+        IPC_SOIC_FOOTPRINT_ID,
+    );
+    assert_eq!(footprint["package"], PACKAGE_ID.to_string());
+    assert_eq!(footprint["ipc_basis"]["family"], "IPC-7351");
+    assert_eq!(footprint["ipc_basis"]["package_family"], "soic");
+    assert_eq!(footprint["ipc_basis"]["package_code"], "SOIC-8_NARROW");
+    assert_eq!(footprint["ipc_basis"]["pin_count"], 8);
+    assert_eq!(footprint["pads"].as_object().unwrap().len(), 8);
+    let pad_1 = &footprint["pads"][IPC_SOIC_PAD_IDS[0].to_string()];
+    assert_eq!(pad_1["name"], "1");
+    assert_eq!(pad_1["position"]["x"], -2_700_000);
+    assert_eq!(pad_1["position"]["y"], 1_905_000);
+
+    let padstack = main_tests_project_pool_library::query_pool_object_payload(
+        &root,
+        "padstacks",
+        IPC_SOIC_PADSTACK_ID,
+    );
+    assert_eq!(padstack["aperture"]["rect"]["width_nm"], 1_300_000);
+    assert_eq!(padstack["aperture"]["rect"]["height_nm"], 400_000);
+
+    let validate_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "validate",
+            root.to_str().unwrap(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("project validate should succeed");
+    let validate_report: serde_json::Value =
+        serde_json::from_str(&validate_output).expect("validate report JSON should parse");
+    assert_eq!(validate_report["valid"], true);
 
     let _ = std::fs::remove_dir_all(&root);
 }

@@ -16,7 +16,8 @@ use super::footprint::{
     courtyard_rect_vertices, footprint_object_with_appended_silkscreen,
     footprint_object_with_courtyard, footprint_silkscreen_circle_primitive,
     footprint_silkscreen_line_primitive, footprint_silkscreen_polygon_primitive,
-    footprint_silkscreen_rect_primitive, ipc7351b_two_terminal_chip_operations, parse_vertices,
+    footprint_silkscreen_rect_primitive, ipc7351b_soic_operations,
+    ipc7351b_two_terminal_chip_operations, parse_vertices,
 };
 use super::library::{pool_library_relative_path, validate_project_local_pool_path};
 use super::payload::read_project_pool_object_payload;
@@ -95,6 +96,59 @@ pub(crate) fn propose_generate_native_project_ipc7351b_two_terminal_chip(
         proposal_id,
         rationale.unwrap_or("Generate IPC-7351B two-terminal chip footprint"),
         "generate_ipc7351b_two_terminal_chip_proposal",
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn propose_generate_native_project_ipc7351b_soic(
+    root: &Path,
+    pool_path: &str,
+    footprint_id: Uuid,
+    package_id: Uuid,
+    padstack_id: Uuid,
+    pad_ids: Vec<Uuid>,
+    name: Option<String>,
+    package_code: String,
+    pin_count: u32,
+    pitch_nm: i64,
+    body_length_nm: i64,
+    body_width_nm: i64,
+    lead_span_nm: i64,
+    terminal_length_nm: i64,
+    terminal_width_nm: i64,
+    density: IpcDensityLevelArg,
+    mask_expansion_nm: i64,
+    paste_reduction_nm: i64,
+    proposal_id: Option<Uuid>,
+    rationale: Option<&str>,
+) -> Result<NativeProjectProposalCreateView> {
+    let operations = ipc7351b_soic_operations(
+        root,
+        pool_path,
+        footprint_id,
+        package_id,
+        padstack_id,
+        pad_ids,
+        name,
+        package_code,
+        pin_count,
+        pitch_nm,
+        body_length_nm,
+        body_width_nm,
+        lead_span_nm,
+        terminal_length_nm,
+        terminal_width_nm,
+        density,
+        mask_expansion_nm,
+        paste_reduction_nm,
+    )?;
+    create_pool_footprint_proposal_from_operations(
+        root,
+        Some(pool_path),
+        operations,
+        proposal_id,
+        rationale.unwrap_or("Generate IPC-7351B SOIC footprint"),
+        "generate_ipc7351b_soic_proposal",
     )
 }
 

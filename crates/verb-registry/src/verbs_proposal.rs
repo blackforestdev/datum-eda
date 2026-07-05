@@ -1973,6 +1973,109 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":["string","null"]},"footprint":{"type":"string"},"package":{"type":"string"},"name":{"type":"string"},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","footprint","package","name"]}"#,
     ),
     non_terminal_proposal_verb!(
+        "datum.proposal.generate_ipc7351b_soic",
+        "Create a non-mutating draft proposal to generate one IPC-7351B SOIC footprint and padstack.",
+        "generate_ipc7351b_soic_proposal",
+        [
+            ArgvToken::Lit("proposal"),
+            ArgvToken::Lit("generate-ipc7351b-soic"),
+            ArgvToken::Param("path"),
+            ArgvToken::Flag {
+                flag: "--footprint",
+                param: "footprint"
+            },
+            ArgvToken::Flag {
+                flag: "--package",
+                param: "package"
+            },
+            ArgvToken::Flag {
+                flag: "--padstack",
+                param: "padstack"
+            },
+            ArgvToken::Repeated {
+                flag: "--pad",
+                param: "pads"
+            },
+            ArgvToken::Flag {
+                flag: "--package-code",
+                param: "package_code"
+            },
+            ArgvToken::Flag {
+                flag: "--pin-count",
+                param: "pin_count"
+            },
+            ArgvToken::Flag {
+                flag: "--pitch-nm",
+                param: "pitch_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--body-length-nm",
+                param: "body_length_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--body-width-nm",
+                param: "body_width_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--lead-span-nm",
+                param: "lead_span_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--terminal-length-nm",
+                param: "terminal_length_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--terminal-width-nm",
+                param: "terminal_width_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--density",
+                param: "density"
+            },
+            ArgvToken::Flag {
+                flag: "--mask-expansion-nm",
+                param: "mask_expansion_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--paste-reduction-nm",
+                param: "paste_reduction_nm"
+            },
+            ArgvToken::Flag {
+                flag: "--name",
+                param: "name"
+            },
+            ArgvToken::Flag {
+                flag: "--pool",
+                param: "pool"
+            },
+            PROPOSAL_ID_ARGV,
+            RATIONALE_ARGV,
+        ],
+        [
+            PATH,
+            proposal_param!("footprint", Uuid, required),
+            proposal_param!("package", Uuid, required),
+            proposal_param!("padstack", Uuid, required),
+            proposal_param!("pads", StrList, required),
+            proposal_param!("package_code", Str, required),
+            proposal_param!("pin_count", Int, required),
+            proposal_param!("pitch_nm", Int, required),
+            proposal_param!("body_length_nm", Int, required),
+            proposal_param!("body_width_nm", Int, required),
+            proposal_param!("lead_span_nm", Int, required),
+            proposal_param!("terminal_length_nm", Int, required),
+            proposal_param!("terminal_width_nm", Int, required),
+            proposal_param!("density", Str, default "\"nominal\""),
+            proposal_param!("mask_expansion_nm", Int, default "50000"),
+            proposal_param!("paste_reduction_nm", Int, default "50000"),
+            proposal_param!("name", Str, default "null"),
+            proposal_param!("pool", Str, default "\"pool\""),
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        r#"{"type":"object","properties":{"path":{"type":"string"},"pool":{"type":["string","null"]},"footprint":{"type":"string"},"package":{"type":"string"},"padstack":{"type":"string"},"pads":{"type":"array","items":{"type":"string"},"minItems":4},"package_code":{"type":"string"},"pin_count":{"type":"integer"},"pitch_nm":{"type":"integer"},"body_length_nm":{"type":"integer"},"body_width_nm":{"type":"integer"},"lead_span_nm":{"type":"integer"},"terminal_length_nm":{"type":"integer"},"terminal_width_nm":{"type":"integer"},"density":{"type":["string","null"],"enum":["most","nominal","least",null]},"mask_expansion_nm":{"type":["integer","null"]},"paste_reduction_nm":{"type":["integer","null"]},"name":{"type":["string","null"]},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","footprint","package","padstack","pads","package_code","pin_count","pitch_nm","body_length_nm","body_width_nm","lead_span_nm","terminal_length_nm","terminal_width_nm"]}"#,
+    ),
+    non_terminal_proposal_verb!(
         "datum.proposal.create_pool_library_object",
         "Create a non-mutating draft proposal to author one raw native pool-library object.",
         "create_pool_library_object_proposal",

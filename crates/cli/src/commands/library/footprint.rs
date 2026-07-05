@@ -8,8 +8,8 @@ use eda_engine::api::native_write::library_footprint::{
     generated_ipc_footprint_specs, pool_footprint_payload,
 };
 use eda_engine::pool::{
-    IpcDensityLevel, IpcSourceDimensions, IpcTwoTerminalChipSpec,
-    generate_ipc7351b_two_terminal_chip,
+    IpcDensityLevel, IpcSoicSpec, IpcSourceDimensions, IpcTwoTerminalChipSpec,
+    generate_ipc7351b_soic, generate_ipc7351b_two_terminal_chip,
 };
 use eda_engine::substrate::ProjectResolver;
 use uuid::Uuid;
@@ -139,6 +139,109 @@ pub(crate) fn ipc7351b_two_terminal_chip_operations(
             terminal_length_nm,
             terminal_width_nm,
         },
+        density_level: ipc_density_level(density),
+        mask_expansion_nm,
+        paste_reduction_nm,
+    })
+    .map_err(anyhow::Error::msg)?;
+    Ok(generated_ipc_footprint_specs(pool_path, generated)?)
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn generate_native_project_ipc7351b_soic(
+    root: &Path,
+    pool_path: &str,
+    footprint_id: Uuid,
+    package_id: Uuid,
+    padstack_id: Uuid,
+    pad_ids: Vec<Uuid>,
+    name: Option<String>,
+    package_code: String,
+    pin_count: u32,
+    pitch_nm: i64,
+    body_length_nm: i64,
+    body_width_nm: i64,
+    lead_span_nm: i64,
+    terminal_length_nm: i64,
+    terminal_width_nm: i64,
+    density: IpcDensityLevelArg,
+    mask_expansion_nm: i64,
+    paste_reduction_nm: i64,
+) -> Result<NativeProjectPoolLibraryObjectMutationView> {
+    let operations = ipc7351b_soic_operations(
+        root,
+        pool_path,
+        footprint_id,
+        package_id,
+        padstack_id,
+        pad_ids,
+        name,
+        package_code,
+        pin_count,
+        pitch_nm,
+        body_length_nm,
+        body_width_nm,
+        lead_span_nm,
+        terminal_length_nm,
+        terminal_width_nm,
+        density,
+        mask_expansion_nm,
+        paste_reduction_nm,
+    )?;
+    commit_pool_library_operations(
+        root,
+        format!("generate IPC-7351B SOIC footprint {footprint_id}"),
+        Some(pool_path),
+        operations,
+    )?;
+    let relative_path = pool_library_relative_path(pool_path, "footprints", footprint_id);
+    pool_library_mutation_view(
+        root,
+        "generate_ipc7351b_soic",
+        pool_path,
+        "footprints",
+        footprint_id,
+        &relative_path,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn ipc7351b_soic_operations(
+    root: &Path,
+    pool_path: &str,
+    footprint_id: Uuid,
+    package_id: Uuid,
+    padstack_id: Uuid,
+    pad_ids: Vec<Uuid>,
+    name: Option<String>,
+    package_code: String,
+    pin_count: u32,
+    pitch_nm: i64,
+    body_length_nm: i64,
+    body_width_nm: i64,
+    lead_span_nm: i64,
+    terminal_length_nm: i64,
+    terminal_width_nm: i64,
+    density: IpcDensityLevelArg,
+    mask_expansion_nm: i64,
+    paste_reduction_nm: i64,
+) -> Result<Vec<PoolLibraryOperationSpec>> {
+    validate_project_local_pool_path(pool_path)?;
+    ensure_pool_object_exists(root, package_id, "packages", "package")?;
+    let generated = generate_ipc7351b_soic(IpcSoicSpec {
+        footprint_uuid: footprint_id,
+        package_uuid: package_id,
+        padstack_uuid: padstack_id,
+        pad_uuids: pad_ids,
+        name,
+        package_code,
+        pin_count,
+        pitch_nm,
+        body_length_nm,
+        body_width_nm,
+        lead_span_nm,
+        terminal_length_nm,
+        terminal_width_nm,
         density_level: ipc_density_level(density),
         mask_expansion_nm,
         paste_reduction_nm,
@@ -686,6 +789,57 @@ impl ProjectGenerateIpc7351bTwoTerminalChipArgs {
                     metric_code,
                     body_length_nm,
                     body_width_nm,
+                    terminal_length_nm,
+                    terminal_width_nm,
+                    density,
+                    mask_expansion_nm,
+                    paste_reduction_nm,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectGenerateIpc7351bSoicArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            footprint_uuid,
+            package_uuid,
+            padstack_uuid,
+            pad_uuids,
+            name,
+            package_code,
+            pin_count,
+            pitch_nm,
+            body_length_nm,
+            body_width_nm,
+            lead_span_nm,
+            terminal_length_nm,
+            terminal_width_nm,
+            density,
+            mask_expansion_nm,
+            paste_reduction_nm,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &generate_native_project_ipc7351b_soic(
+                    &path,
+                    &pool,
+                    footprint_uuid,
+                    package_uuid,
+                    padstack_uuid,
+                    pad_uuids,
+                    name,
+                    package_code,
+                    pin_count,
+                    pitch_nm,
+                    body_length_nm,
+                    body_width_nm,
+                    lead_span_nm,
                     terminal_length_nm,
                     terminal_width_nm,
                     density,

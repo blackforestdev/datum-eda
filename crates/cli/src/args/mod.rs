@@ -132,8 +132,9 @@ pub(crate) use self::project_library_footprint::{
     IpcDensityLevelArg, ProjectAddPoolFootprintSilkscreenCircleArgs,
     ProjectAddPoolFootprintSilkscreenLineArgs, ProjectAddPoolFootprintSilkscreenPolygonArgs,
     ProjectAddPoolFootprintSilkscreenRectArgs, ProjectCreatePoolFootprintArgs,
-    ProjectGenerateIpc7351bTwoTerminalChipArgs, ProjectSetPoolFootprintCourtyardPolygonArgs,
-    ProjectSetPoolFootprintCourtyardRectArgs, ProjectSetPoolFootprintPadArgs,
+    ProjectGenerateIpc7351bSoicArgs, ProjectGenerateIpc7351bTwoTerminalChipArgs,
+    ProjectSetPoolFootprintCourtyardPolygonArgs, ProjectSetPoolFootprintCourtyardRectArgs,
+    ProjectSetPoolFootprintPadArgs,
 };
 pub(crate) use self::project_library_part_bindings::ProjectSetPoolPartBindingsArgs;
 pub(crate) use self::project_library_pin_pad_map::{
@@ -160,7 +161,8 @@ pub(crate) use self::proposal_library::{
     ProposalCreatePoolEntityArgs, ProposalCreatePoolFootprintArgs,
     ProposalCreatePoolLibraryObjectArgs, ProposalCreatePoolPackageArgs,
     ProposalCreatePoolPadstackArgs, ProposalCreatePoolPinPadMapArgs, ProposalCreatePoolSymbolArgs,
-    ProposalCreatePoolUnitArgs, ProposalGenerateIpc7351bTwoTerminalChipArgs,
+    ProposalCreatePoolUnitArgs, ProposalGenerateIpc7351bSoicArgs,
+    ProposalGenerateIpc7351bTwoTerminalChipArgs,
     ProposalSetPoolFootprintCourtyardPolygonArgs, ProposalSetPoolFootprintCourtyardRectArgs,
     ProposalSetPoolFootprintPadArgs, ProposalSetPoolPackageCourtyardPolygonArgs,
     ProposalSetPoolPackageCourtyardRectArgs, ProposalSetPoolPackagePadArgs,

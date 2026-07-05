@@ -288,6 +288,20 @@ class TestDispatchProposals(unittest.TestCase):
         self.assertEqual(payload["action"], "create_pool_footprint_proposal")
         self.assertEqual(payload["footprint_uuid"], "footprint-uuid")
 
+    def test_tools_call_dispatches_generate_ipc7351b_soic_proposal(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        pads = ["pad-1", "pad-2", "pad-3", "pad-4", "pad-5", "pad-6", "pad-7", "pad-8"]
+        response = host.handle_message(
+            {"jsonrpc": "2.0", "id": 235, "method": "tools/call", "params": {"name": "datum.proposal.generate_ipc7351b_soic", "arguments": {"path": "/tmp/native-project", "footprint": "footprint-uuid", "package": "package-uuid", "padstack": "padstack-uuid", "pads": pads, "package_code": "SOIC-8_NARROW", "pin_count": 8, "pitch_nm": 1270000, "body_length_nm": 4900000, "body_width_nm": 3900000, "lead_span_nm": 6000000, "terminal_length_nm": 600000, "terminal_width_nm": 400000, "density": "nominal", "mask_expansion_nm": 50000, "paste_reduction_nm": 50000, "name": "SOIC-8_NARROW", "pool": "pool", "proposal": "proposal-soic", "rationale": "review generated SOIC"}}}
+        )
+        self.assertEqual(daemon.calls, [("generate_ipc7351b_soic_proposal", "/tmp/native-project", "footprint-uuid", "package-uuid", "padstack-uuid", pads, "SOIC-8_NARROW", 8, 1270000, 4900000, 3900000, 6000000, 600000, 400000, "nominal", 50000, 50000, "SOIC-8_NARROW", "pool", "proposal-soic", "review generated SOIC")])
+        payload = response["result"]["content"][0]["json"]
+        self.assertEqual(payload["contract"], "proposal_create_v1")
+        self.assertEqual(payload["action"], "generate_ipc7351b_soic_proposal")
+        self.assertEqual(payload["footprint_uuid"], "footprint-uuid")
+        self.assertEqual(payload["pad_uuids"], pads)
+
     def test_tools_call_dispatches_set_pool_package_pad_proposal(self) -> None:
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)

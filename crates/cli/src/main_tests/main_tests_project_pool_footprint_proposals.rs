@@ -180,6 +180,105 @@ fn proposal_generate_ipc7351b_two_terminal_chip_defers_until_accept_apply() {
 }
 
 #[test]
+fn proposal_generate_ipc7351b_soic_defers_until_accept_apply() {
+    let root = main_tests_project_pool_library::unique_project_root(
+        "datum-eda-cli-ipc-soic-footprint-proposal",
+    );
+    create_native_project(&root, Some("IPC SOIC Footprint Proposal Demo".to_string()))
+        .expect("initial scaffold should succeed");
+    seed_promoted_pool_padstack(
+        &root,
+        main_tests_project_pool_footprint::PACKAGE_PADSTACK_ID,
+    );
+    seed_promoted_pool_package(&root);
+    let proposal_id = Uuid::new_v4();
+    let footprint_path = root.join(format!(
+        "pool/footprints/{}.json",
+        main_tests_project_pool_footprint::IPC_SOIC_FOOTPRINT_ID
+    ));
+    let padstack_path = root.join(format!(
+        "pool/padstacks/{}.json",
+        main_tests_project_pool_footprint::IPC_SOIC_PADSTACK_ID
+    ));
+
+    let mut args = vec![
+        "eda".to_string(),
+        "--format".to_string(),
+        "json".to_string(),
+        "proposal".to_string(),
+        "generate-ipc7351b-soic".to_string(),
+        root.to_str().unwrap().to_string(),
+        "--footprint".to_string(),
+        main_tests_project_pool_footprint::IPC_SOIC_FOOTPRINT_ID.to_string(),
+        "--package".to_string(),
+        main_tests_project_pool_footprint::PACKAGE_ID.to_string(),
+        "--padstack".to_string(),
+        main_tests_project_pool_footprint::IPC_SOIC_PADSTACK_ID.to_string(),
+    ];
+    for pad_id in main_tests_project_pool_footprint::IPC_SOIC_PAD_IDS {
+        args.push("--pad".to_string());
+        args.push(pad_id.to_string());
+    }
+    args.extend([
+        "--package-code".to_string(),
+        "SOIC-8_NARROW".to_string(),
+        "--pin-count".to_string(),
+        "8".to_string(),
+        "--pitch-nm".to_string(),
+        "1270000".to_string(),
+        "--body-length-nm".to_string(),
+        "4900000".to_string(),
+        "--body-width-nm".to_string(),
+        "3900000".to_string(),
+        "--lead-span-nm".to_string(),
+        "6000000".to_string(),
+        "--terminal-length-nm".to_string(),
+        "600000".to_string(),
+        "--terminal-width-nm".to_string(),
+        "400000".to_string(),
+        "--density".to_string(),
+        "nominal".to_string(),
+        "--proposal".to_string(),
+        proposal_id.to_string(),
+    ]);
+
+    let output = execute(Cli::try_parse_from(args).expect("CLI should parse"))
+        .expect("IPC SOIC footprint proposal should succeed");
+    let report: serde_json::Value = serde_json::from_str(&output).expect("report should parse");
+    assert_eq!(report["action"], "generate_ipc7351b_soic_proposal");
+    assert_eq!(report["proposal_id"], proposal_id.to_string());
+    assert!(!footprint_path.exists());
+    assert!(!padstack_path.exists());
+
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "proposal",
+            "accept-apply",
+            root.to_str().unwrap(),
+            "--proposal",
+            &proposal_id.to_string(),
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("SOIC proposal accept-apply should succeed");
+
+    assert!(footprint_path.exists());
+    assert!(padstack_path.exists());
+    let payload = main_tests_project_pool_library::query_pool_object_payload(
+        &root,
+        "footprints",
+        main_tests_project_pool_footprint::IPC_SOIC_FOOTPRINT_ID,
+    );
+    assert_eq!(payload["ipc_basis"]["package_family"], "soic");
+    assert_eq!(payload["pads"].as_object().unwrap().len(), 8);
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
 fn proposal_set_pool_footprint_pad_defers_until_accept_apply() {
     let root = main_tests_project_pool_library::unique_project_root(
         "datum-eda-cli-footprint-pad-proposal",

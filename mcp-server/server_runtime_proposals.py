@@ -298,6 +298,49 @@ def install_proposal_authoring_methods(client_cls: type, append_optional: Any) -
         append_optional(args, "rationale", rationale)
         return run(self, "create_pool_footprint_proposal", locals_without_self(locals()), args)
 
+    def generate_ipc7351b_soic_proposal(
+        self,
+        path: str,
+        footprint: str,
+        package: str,
+        padstack: str,
+        pads: list[str],
+        package_code: str,
+        pin_count: int,
+        pitch_nm: int,
+        body_length_nm: int,
+        body_width_nm: int,
+        lead_span_nm: int,
+        terminal_length_nm: int,
+        terminal_width_nm: int,
+        density: str | None = None,
+        mask_expansion_nm: int | None = None,
+        paste_reduction_nm: int | None = None,
+        name: str | None = None,
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ):
+        args = ["proposal", "generate-ipc7351b-soic", path, "--footprint", footprint, "--package", package, "--padstack", padstack]
+        for pad in pads:
+            args.extend(["--pad", pad])
+        args.extend([
+            "--package-code", package_code,
+            "--pin-count", str(pin_count),
+            "--pitch-nm", str(pitch_nm),
+            "--body-length-nm", str(body_length_nm),
+            "--body-width-nm", str(body_width_nm),
+            "--lead-span-nm", str(lead_span_nm),
+            "--terminal-length-nm", str(terminal_length_nm),
+            "--terminal-width-nm", str(terminal_width_nm),
+        ])
+        append_optional(args, "pool", pool); append_optional(args, "density", density)
+        append_optional(args, "mask-expansion-nm", mask_expansion_nm)
+        append_optional(args, "paste-reduction-nm", paste_reduction_nm)
+        append_optional(args, "name", name); append_optional(args, "proposal", proposal)
+        append_optional(args, "rationale", rationale)
+        return run(self, "generate_ipc7351b_soic_proposal", locals_without_self(locals()), args)
+
     def create_pool_pin_pad_map_proposal(
         self,
         path: str,
@@ -510,7 +553,7 @@ def install_proposal_authoring_methods(client_cls: type, append_optional: Any) -
         append_optional(args, "rationale", rationale)
         return run(self, "set_pool_package_courtyard_polygon_proposal", locals_without_self(locals()), args)
 
-    for method in [create_draw_wire_proposal, create_place_label_proposal, create_place_symbol_proposal, create_board_component_replacement_proposal, create_board_component_replacements_proposal, create_board_component_replacement_plan_proposal, bind_component_instance_proposal, set_component_instance_proposal, delete_component_instance_proposal, create_pool_library_object_proposal, create_pool_unit_proposal, create_pool_symbol_proposal, create_pool_entity_proposal, create_pool_padstack_proposal, create_pool_package_proposal, create_pool_footprint_proposal, create_pool_pin_pad_map_proposal, set_pool_pin_pad_map_proposal, set_pool_footprint_pad_proposal, set_pool_footprint_courtyard_rect_proposal, set_pool_footprint_courtyard_polygon_proposal, add_pool_footprint_silkscreen_line_proposal, add_pool_footprint_silkscreen_rect_proposal, add_pool_footprint_silkscreen_circle_proposal, add_pool_footprint_silkscreen_polygon_proposal, set_pool_package_pad_proposal, set_pool_package_courtyard_rect_proposal, set_pool_package_courtyard_polygon_proposal]:
+    for method in [create_draw_wire_proposal, create_place_label_proposal, create_place_symbol_proposal, create_board_component_replacement_proposal, create_board_component_replacements_proposal, create_board_component_replacement_plan_proposal, bind_component_instance_proposal, set_component_instance_proposal, delete_component_instance_proposal, create_pool_library_object_proposal, create_pool_unit_proposal, create_pool_symbol_proposal, create_pool_entity_proposal, create_pool_padstack_proposal, create_pool_package_proposal, create_pool_footprint_proposal, generate_ipc7351b_soic_proposal, create_pool_pin_pad_map_proposal, set_pool_pin_pad_map_proposal, set_pool_footprint_pad_proposal, set_pool_footprint_courtyard_rect_proposal, set_pool_footprint_courtyard_polygon_proposal, add_pool_footprint_silkscreen_line_proposal, add_pool_footprint_silkscreen_rect_proposal, add_pool_footprint_silkscreen_circle_proposal, add_pool_footprint_silkscreen_polygon_proposal, set_pool_package_pad_proposal, set_pool_package_courtyard_rect_proposal, set_pool_package_courtyard_polygon_proposal]:
         setattr(client_cls, method.__name__, method)
 
 

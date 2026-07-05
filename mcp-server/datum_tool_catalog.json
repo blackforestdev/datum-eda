@@ -5026,6 +5026,211 @@
       "write_surface": null
     },
     {
+      "description": "Generate an IPC-7351B SOIC footprint and padstack through the journaled project commit path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "generate-ipc7351b-soic"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--padstack",
+            "param": "padstack"
+          },
+          {
+            "param": "pads",
+            "repeated": "--pad"
+          },
+          {
+            "flag": "--package-code",
+            "param": "package_code"
+          },
+          {
+            "flag": "--pin-count",
+            "param": "pin_count"
+          },
+          {
+            "flag": "--pitch-nm",
+            "param": "pitch_nm"
+          },
+          {
+            "flag": "--body-length-nm",
+            "param": "body_length_nm"
+          },
+          {
+            "flag": "--body-width-nm",
+            "param": "body_width_nm"
+          },
+          {
+            "flag": "--lead-span-nm",
+            "param": "lead_span_nm"
+          },
+          {
+            "flag": "--terminal-length-nm",
+            "param": "terminal_length_nm"
+          },
+          {
+            "flag": "--terminal-width-nm",
+            "param": "terminal_width_nm"
+          },
+          {
+            "flag": "--density",
+            "param": "density"
+          },
+          {
+            "flag": "--mask-expansion-nm",
+            "param": "mask_expansion_nm"
+          },
+          {
+            "flag": "--paste-reduction-nm",
+            "param": "paste_reduction_nm"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          }
+        ],
+        "kind": "cli",
+        "method": "generate_ipc7351b_soic"
+      },
+      "dispatch_args": [
+        "path",
+        "pool",
+        "footprint",
+        "package",
+        "padstack",
+        "pads",
+        "package_code",
+        "pin_count",
+        "pitch_nm",
+        "body_length_nm",
+        "body_width_nm",
+        "lead_span_nm",
+        "terminal_length_nm",
+        "terminal_width_nm",
+        "density",
+        "mask_expansion_nm",
+        "paste_reduction_nm",
+        "name"
+      ],
+      "dispatch_defaults": {
+        "density": "nominal",
+        "mask_expansion_nm": 50000,
+        "name": null,
+        "paste_reduction_nm": 50000,
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "body_length_nm": {
+            "type": "integer"
+          },
+          "body_width_nm": {
+            "type": "integer"
+          },
+          "density": {
+            "enum": [
+              "most",
+              "nominal",
+              "least"
+            ],
+            "type": "string"
+          },
+          "footprint": {
+            "type": "string"
+          },
+          "lead_span_nm": {
+            "type": "integer"
+          },
+          "mask_expansion_nm": {
+            "type": "integer"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "package": {
+            "type": "string"
+          },
+          "package_code": {
+            "type": "string"
+          },
+          "pads": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 4,
+            "type": "array"
+          },
+          "padstack": {
+            "type": "string"
+          },
+          "paste_reduction_nm": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "pin_count": {
+            "type": "integer"
+          },
+          "pitch_nm": {
+            "type": "integer"
+          },
+          "pool": {
+            "type": "string"
+          },
+          "terminal_length_nm": {
+            "type": "integer"
+          },
+          "terminal_width_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "footprint",
+          "package",
+          "padstack",
+          "pads",
+          "package_code",
+          "pin_count",
+          "pitch_nm",
+          "body_length_nm",
+          "body_width_nm",
+          "lead_span_nm",
+          "terminal_length_nm",
+          "terminal_width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.library.generate_ipc7351b_soic",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
       "description": "List resolver-discovered native pool-library objects.",
       "dispatch": {
         "argv": [
@@ -15702,6 +15907,249 @@
         "type": "object"
       },
       "name": "datum.proposal.delete_panel_projection",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a non-mutating draft proposal to generate one IPC-7351B SOIC footprint and padstack.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "generate-ipc7351b-soic"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--footprint",
+            "param": "footprint"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--padstack",
+            "param": "padstack"
+          },
+          {
+            "param": "pads",
+            "repeated": "--pad"
+          },
+          {
+            "flag": "--package-code",
+            "param": "package_code"
+          },
+          {
+            "flag": "--pin-count",
+            "param": "pin_count"
+          },
+          {
+            "flag": "--pitch-nm",
+            "param": "pitch_nm"
+          },
+          {
+            "flag": "--body-length-nm",
+            "param": "body_length_nm"
+          },
+          {
+            "flag": "--body-width-nm",
+            "param": "body_width_nm"
+          },
+          {
+            "flag": "--lead-span-nm",
+            "param": "lead_span_nm"
+          },
+          {
+            "flag": "--terminal-length-nm",
+            "param": "terminal_length_nm"
+          },
+          {
+            "flag": "--terminal-width-nm",
+            "param": "terminal_width_nm"
+          },
+          {
+            "flag": "--density",
+            "param": "density"
+          },
+          {
+            "flag": "--mask-expansion-nm",
+            "param": "mask_expansion_nm"
+          },
+          {
+            "flag": "--paste-reduction-nm",
+            "param": "paste_reduction_nm"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--pool",
+            "param": "pool"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "generate_ipc7351b_soic_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "footprint",
+        "package",
+        "padstack",
+        "pads",
+        "package_code",
+        "pin_count",
+        "pitch_nm",
+        "body_length_nm",
+        "body_width_nm",
+        "lead_span_nm",
+        "terminal_length_nm",
+        "terminal_width_nm",
+        "density",
+        "mask_expansion_nm",
+        "paste_reduction_nm",
+        "name",
+        "pool",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "density": "nominal",
+        "mask_expansion_nm": 50000,
+        "name": null,
+        "paste_reduction_nm": 50000,
+        "pool": "pool"
+      },
+      "inputSchema": {
+        "properties": {
+          "body_length_nm": {
+            "type": "integer"
+          },
+          "body_width_nm": {
+            "type": "integer"
+          },
+          "density": {
+            "enum": [
+              "most",
+              "nominal",
+              "least",
+              null
+            ],
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "footprint": {
+            "type": "string"
+          },
+          "lead_span_nm": {
+            "type": "integer"
+          },
+          "mask_expansion_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "package": {
+            "type": "string"
+          },
+          "package_code": {
+            "type": "string"
+          },
+          "pads": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 4,
+            "type": "array"
+          },
+          "padstack": {
+            "type": "string"
+          },
+          "paste_reduction_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "pin_count": {
+            "type": "integer"
+          },
+          "pitch_nm": {
+            "type": "integer"
+          },
+          "pool": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "terminal_length_nm": {
+            "type": "integer"
+          },
+          "terminal_width_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "footprint",
+          "package",
+          "padstack",
+          "pads",
+          "package_code",
+          "pin_count",
+          "pitch_nm",
+          "body_length_nm",
+          "body_width_nm",
+          "lead_span_nm",
+          "terminal_length_nm",
+          "terminal_width_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.generate_ipc7351b_soic",
       "public_metadata": null,
       "replacements": [],
       "retirement": null,

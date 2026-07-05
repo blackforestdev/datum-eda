@@ -46,6 +46,8 @@ pub(crate) enum ProjectCommands {
     CreatePoolFootprint(ProjectCreatePoolFootprintArgs),
     /// Generate an IPC-7351B two-terminal chip footprint + padstack through the project journal
     GenerateIpc7351bTwoTerminalChip(ProjectGenerateIpc7351bTwoTerminalChipArgs),
+    /// Generate an IPC-7351B SOIC footprint + padstack through the project journal
+    GenerateIpc7351bSoic(ProjectGenerateIpc7351bSoicArgs),
     /// Set one first-class typed native pool footprint pad through the project journal
     SetPoolFootprintPad(ProjectSetPoolFootprintPadArgs),
     /// Set first-class typed native pool footprint rectangular courtyard through the project journal

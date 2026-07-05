@@ -329,6 +329,69 @@ class FakeDaemonClientLibraryMixin:
             None,
         )
 
+    def generate_ipc7351b_soic(
+        self,
+        path: str,
+        pool: str,
+        footprint: str,
+        package: str,
+        padstack: str,
+        pads: list[str],
+        package_code: str,
+        pin_count: int,
+        pitch_nm: int,
+        body_length_nm: int,
+        body_width_nm: int,
+        lead_span_nm: int,
+        terminal_length_nm: int,
+        terminal_width_nm: int,
+        density: str = "nominal",
+        mask_expansion_nm: int = 50000,
+        paste_reduction_nm: int = 50000,
+        name: str | None = None,
+    ) -> JsonRpcResponse:
+        self.calls.append(
+            (
+                "generate_ipc7351b_soic",
+                path,
+                pool,
+                footprint,
+                package,
+                padstack,
+                pads,
+                package_code,
+                pin_count,
+                pitch_nm,
+                body_length_nm,
+                body_width_nm,
+                lead_span_nm,
+                terminal_length_nm,
+                terminal_width_nm,
+                density,
+                mask_expansion_nm,
+                paste_reduction_nm,
+                name,
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            189,
+            {
+                "contract": "native_project_pool_library_object_mutation_v1",
+                "action": "generate_ipc7351b_soic",
+                "project_root": path,
+                "pool": pool,
+                "object_kind": "footprints",
+                "object_uuid": footprint,
+                "package": package,
+                "padstack": padstack,
+                "pads": pads,
+                "package_code": package_code,
+                "pin_count": pin_count,
+            },
+            None,
+        )
+
     def create_pool_part(
         self,
         path: str,

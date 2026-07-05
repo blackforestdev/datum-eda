@@ -562,6 +562,74 @@ class FakeDaemonClientProposalsMixin:
             None,
         )
 
+    def generate_ipc7351b_soic_proposal(
+        self,
+        path: str,
+        footprint: str,
+        package: str,
+        padstack: str,
+        pads: list[str],
+        package_code: str,
+        pin_count: int,
+        pitch_nm: int,
+        body_length_nm: int,
+        body_width_nm: int,
+        lead_span_nm: int,
+        terminal_length_nm: int,
+        terminal_width_nm: int,
+        density: str | None = None,
+        mask_expansion_nm: int | None = None,
+        paste_reduction_nm: int | None = None,
+        name: str | None = None,
+        pool: str | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ) -> JsonRpcResponse:
+        proposal = proposal or "proposal-ipc-soic-test"
+        self.calls.append(
+            (
+                "generate_ipc7351b_soic_proposal",
+                path,
+                footprint,
+                package,
+                padstack,
+                pads,
+                package_code,
+                pin_count,
+                pitch_nm,
+                body_length_nm,
+                body_width_nm,
+                lead_span_nm,
+                terminal_length_nm,
+                terminal_width_nm,
+                density,
+                mask_expansion_nm,
+                paste_reduction_nm,
+                name,
+                pool,
+                proposal,
+                rationale,
+            )
+        )
+        return JsonRpcResponse(
+            "2.0",
+            165,
+            {
+                "contract": "proposal_create_v1",
+                "action": "generate_ipc7351b_soic_proposal",
+                "project_root": path,
+                "proposal_id": proposal,
+                "footprint_uuid": footprint,
+                "package_uuid": package,
+                "padstack_uuid": padstack,
+                "pad_uuids": pads,
+                "package_code": package_code,
+                "pin_count": pin_count,
+                "pool_path": pool or "pool",
+            },
+            None,
+        )
+
     def create_pool_pin_pad_map_proposal(
         self,
         path: str,
