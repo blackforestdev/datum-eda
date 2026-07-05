@@ -39,6 +39,9 @@ fn dummy_value(verb_id: &str, param: &ParamSpec) -> &'static str {
     if param.name == "direction" {
         return "input";
     }
+    if param.name == "density" {
+        return "nominal";
+    }
     if param.name == "mode" {
         return "library-default";
     }
@@ -46,6 +49,9 @@ fn dummy_value(verb_id: &str, param: &ParamSpec) -> &'static str {
         return "source-defined-implicit";
     }
     if param.name == "checks_run" {
+        return "00000000-0000-0000-0000-000000000001";
+    }
+    if param.name == "pads" && verb_id.contains("generate_ipc7351b_soic") {
         return "00000000-0000-0000-0000-000000000001";
     }
     if param.name == "candidate" {
