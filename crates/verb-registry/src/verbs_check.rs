@@ -1,8 +1,9 @@
-//! The `datum.check` verb family (9 verbs), transcribed from the hand-written
+//! The `datum.check` verb family (10 verbs), transcribed from the hand-written
 //! MCP catalog (`tools_catalog_checks.py` schemas via `tools_catalog_datum.py`
 //! aliases), the Python bridge argv builders (`server_runtime.py`), and
 //! cross-checked against the clap definitions in
-//! `crates/cli/src/cli_args_check.rs`.
+//! `crates/cli/src/cli_args_check.rs`. `explain_violation` dispatches straight
+//! to the daemon JSON-RPC method and is not a GUI terminal verb.
 //!
 //! Entries MUST stay sorted by id (asserted by lib tests).
 
@@ -84,6 +85,46 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         schema_json_override: None,
         write_surface: None,
         terminal: true,
+        terminal_optional_params: &[],
+        terminal_argv_override: None,
+    },
+    VerbSpec {
+        id: "datum.check.explain_violation",
+        summary: "Explain an ERC/DRC/check finding by stable fingerprint, with legacy positional index fallback for compatibility.",
+        status: VerbStatus::Public,
+        replacements: &[],
+        retirement: None,
+        dispatch: Dispatch::DaemonRpc { method: "explain_violation" },
+        params: &[
+            ParamSpec {
+                name: "domain",
+                ty: ParamType::Str,
+                required: true,
+                doc: "Finding domain: erc or drc",
+                default_json: None,
+            },
+            ParamSpec {
+                name: "index",
+                ty: ParamType::Int,
+                required: false,
+                doc: "Legacy positional finding index fallback",
+                default_json: None,
+            },
+            ParamSpec {
+                name: "fingerprint",
+                ty: ParamType::Str,
+                required: false,
+                doc: "Stable CheckFinding fingerprint",
+                default_json: None,
+            },
+        ],
+        // Exact hand-written MCP schema: the `domain` enum cannot be
+        // expressed through `ParamSpec` types.
+        schema_json_override: Some(
+            r#"{"type":"object","properties":{"domain":{"type":"string","enum":["erc","drc"]},"index":{"type":["integer","null"]},"fingerprint":{"type":["string","null"]}},"required":["domain"]}"#,
+        ),
+        write_surface: None,
+        terminal: false,
         terminal_optional_params: &[],
         terminal_argv_override: None,
     },

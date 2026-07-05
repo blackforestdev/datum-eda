@@ -87,9 +87,28 @@ def daemon_dispatch_methods() -> list[str]:
     return sorted(parse_daemon_methods())
 
 
+def mcp_migrated_prefixes() -> set[str]:
+    """Verb-family prefixes whose MCP tool dicts are generated from the
+    verb-registry catalog (``MIGRATED_PREFIXES`` in tools_catalog_generated.py)
+    instead of being hand-written in tools_catalog_datum.py."""
+    text = read_text(ROOT / "mcp-server/tools_catalog_generated.py")
+    match = re.search(r"MIGRATED_PREFIXES[^=]*=\s*frozenset\(\s*\{(.*?)\}\s*\)", text, flags=re.S)
+    if match is None:
+        return set()
+    return set(re.findall(r'"([^"]+)"', match.group(1)))
+
+
 def datum_tool_names(prefix: str) -> list[str]:
     text = read_text(ROOT / "mcp-server/tools_catalog_datum.py")
-    names = re.findall(r'"name":\s*"([^"]+)"', text)
+    names = set(re.findall(r'"name":\s*"([^"]+)"', text))
+    # Migrated families no longer appear as hand-written literals; derive
+    # their tool names from the generated verb-registry catalog instead.
+    migrated = mcp_migrated_prefixes()
+    catalog = json.loads(read_text(ROOT / "mcp-server/datum_tool_catalog.json"))
+    for verb in catalog.get("verbs", []):
+        name = str(verb["name"])
+        if ".".join(name.split(".")[:2]) in migrated:
+            names.add(name)
     return sorted(name for name in names if name.startswith(prefix))
 
 

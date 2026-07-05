@@ -32,6 +32,11 @@ const EXPECTED_TIP_TRANSACTION: ParamSpec = ParamSpec {
     default_json: None,
 };
 
+/// Exact hand-written MCP schema (`tools_catalog_journal.py`): the optional
+/// guard parameters are declared non-nullable `string` there, which the
+/// ParamSpec derivation (optional => nullable) cannot express.
+const UNDO_REDO_SCHEMA: &str = r#"{"type":"object","properties":{"path":{"type":"string"},"expected_model_revision":{"type":"string"},"expected_tip_transaction":{"type":"string"}},"required":["path"]}"#;
+
 pub(crate) static VERBS: &[VerbSpec] = &[
     VerbSpec {
         id: "datum.journal.list",
@@ -77,7 +82,7 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             ],
         },
         params: &[PATH, EXPECTED_MODEL_REVISION, EXPECTED_TIP_TRANSACTION],
-        schema_json_override: None,
+        schema_json_override: Some(UNDO_REDO_SCHEMA),
         write_surface: None,
         terminal: true,
         terminal_optional_params: &[],
@@ -137,7 +142,7 @@ pub(crate) static VERBS: &[VerbSpec] = &[
             ],
         },
         params: &[PATH, EXPECTED_MODEL_REVISION, EXPECTED_TIP_TRANSACTION],
-        schema_json_override: None,
+        schema_json_override: Some(UNDO_REDO_SCHEMA),
         write_surface: None,
         terminal: true,
         terminal_optional_params: &[],

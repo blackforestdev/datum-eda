@@ -24,7 +24,15 @@ import json
 from pathlib import Path
 
 # Verb-family prefixes whose tool specs come from the generated catalog.
-MIGRATED_PREFIXES: frozenset[str] = frozenset({"datum.artifact"})
+MIGRATED_PREFIXES: frozenset[str] = frozenset({
+    "datum.artifact",
+    "datum.check",
+    "datum.context",
+    "datum.journal",
+    "datum.manufacturing",
+    "datum.output_job",
+    "datum.session",
+})
 
 _CATALOG_PATH = Path(__file__).resolve().parent / "datum_tool_catalog.json"
 

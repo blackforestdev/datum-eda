@@ -663,6 +663,51 @@
       "write_surface": null
     },
     {
+      "description": "Explain an ERC/DRC/check finding by stable fingerprint, with legacy positional index fallback for compatibility.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "explain_violation"
+      },
+      "dispatch_args": [
+        "domain",
+        "index",
+        "fingerprint"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "domain": {
+            "enum": [
+              "erc",
+              "drc"
+            ],
+            "type": "string"
+          },
+          "fingerprint": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "index": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "domain"
+        ],
+        "type": "object"
+      },
+      "name": "datum.check.explain_violation",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
       "description": "Persist honest generated ZoneFill evidence for native board zones. The bounded solver fills closed same-net zones, supports one rectangular foreign pad/via cutout with positive netclass clearance, and records Unsupported evidence for thermals, keepouts, unresolved pads, tracks, or general pour cases.",
       "dispatch": {
         "argv": [
@@ -1049,6 +1094,360 @@
       "write_surface": null
     },
     {
+      "description": "Return the current Datum session/context envelope, including project identity, model revision, actor type, capabilities, visible artifacts/check runs, provenance seed, and refresh metadata.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "context"
+          },
+          {
+            "lit": "get"
+          },
+          {
+            "flag": "--session",
+            "param": "session"
+          },
+          {
+            "flag": "--path",
+            "param": "path"
+          },
+          {
+            "flag": "--project-root",
+            "param": "project_root"
+          }
+        ],
+        "kind": "cli",
+        "method": "datum_context_get"
+      },
+      "dispatch_args": [
+        "session",
+        "path",
+        "project_root"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "project_root": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "session": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "name": "datum.context.get",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Return the current Datum session/context envelope, including project identity, model revision, actor type, capabilities, visible artifacts/check runs, provenance seed, and refresh metadata.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "context"
+          },
+          {
+            "lit": "refresh"
+          },
+          {
+            "flag": "--session",
+            "param": "session"
+          },
+          {
+            "flag": "--path",
+            "param": "path"
+          },
+          {
+            "flag": "--project-root",
+            "param": "project_root"
+          }
+        ],
+        "kind": "cli",
+        "method": "datum_context_refresh"
+      },
+      "dispatch_args": [
+        "session",
+        "path",
+        "project_root"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "project_root": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "session": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "name": "datum.context.refresh",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Return a compact Datum tool-session activity summary for a terminal/session. The primary agent-facing result is executions[], with start/end/duration, lifecycle/exit status, and per-execution I/O totals/previews. Results can be filtered by event kind, origin, command id, or execution id.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "context"
+          },
+          {
+            "lit": "session-activity"
+          },
+          {
+            "flag": "--session",
+            "param": "session"
+          },
+          {
+            "flag": "--path",
+            "param": "path"
+          },
+          {
+            "flag": "--project-root",
+            "param": "project_root"
+          },
+          {
+            "flag": "--event-kind",
+            "param": "event_kind"
+          },
+          {
+            "flag": "--origin",
+            "param": "origin"
+          },
+          {
+            "flag": "--command-id",
+            "param": "command_id"
+          },
+          {
+            "flag": "--execution-id",
+            "param": "execution_id"
+          },
+          {
+            "flag": "--limit",
+            "param": "limit"
+          }
+        ],
+        "kind": "cli",
+        "method": "datum_context_session_activity"
+      },
+      "dispatch_args": [
+        "session",
+        "path",
+        "project_root",
+        "event_kind",
+        "origin",
+        "command_id",
+        "execution_id",
+        "limit"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "command_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "event_kind": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "execution_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "origin": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "project_root": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "session": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "name": "datum.context.session_activity",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Return recorded Datum tool-session events for a terminal/session, optionally filtered by event kind, origin, command id, or execution id.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "context"
+          },
+          {
+            "lit": "session-events"
+          },
+          {
+            "flag": "--session",
+            "param": "session"
+          },
+          {
+            "flag": "--path",
+            "param": "path"
+          },
+          {
+            "flag": "--project-root",
+            "param": "project_root"
+          },
+          {
+            "flag": "--event-kind",
+            "param": "event_kind"
+          },
+          {
+            "flag": "--origin",
+            "param": "origin"
+          },
+          {
+            "flag": "--command-id",
+            "param": "command_id"
+          },
+          {
+            "flag": "--execution-id",
+            "param": "execution_id"
+          },
+          {
+            "flag": "--limit",
+            "param": "limit"
+          }
+        ],
+        "kind": "cli",
+        "method": "datum_context_session_events"
+      },
+      "dispatch_args": [
+        "session",
+        "path",
+        "project_root",
+        "event_kind",
+        "origin",
+        "command_id",
+        "execution_id",
+        "limit"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "command_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "event_kind": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "execution_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "limit": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "origin": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "project_root": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "session": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "name": "datum.context.session_events",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
       "description": "Return the resolver-backed native project transaction journal summary.",
       "dispatch": {
         "argv": [
@@ -1120,16 +1519,10 @@
       "inputSchema": {
         "properties": {
           "expected_model_revision": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string"
           },
           "expected_tip_transaction": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string"
           },
           "path": {
             "type": "string"
@@ -1227,16 +1620,10 @@
       "inputSchema": {
         "properties": {
           "expected_model_revision": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string"
           },
           "expected_tip_transaction": {
-            "type": [
-              "string",
-              "null"
-            ]
+            "type": "string"
           },
           "path": {
             "type": "string"
@@ -1426,6 +1813,1155 @@
       "retirement": null,
       "status": "public",
       "write_surface": null
+    },
+    {
+      "description": "Create a draft proposal for a PanelProjection creation without mutating panel shards.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-panel-projection"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--key",
+            "param": "key"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--board",
+            "param": "board"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--rotation-deg",
+            "param": "rotation_deg"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_panel_projection_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "key",
+        "name",
+        "board",
+        "x_nm",
+        "y_nm",
+        "rotation_deg",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "board": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "key": {
+            "type": "string"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rotation_deg": {
+            "type": "integer"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "key"
+        ],
+        "type": "object"
+      },
+      "name": "datum.manufacturing.create_panel_projection",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a draft proposal for a ManufacturingPlan creation without mutating manufacturing plan shards.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-manufacturing-plan"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--prefix",
+            "param": "prefix"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--variant",
+            "param": "variant"
+          },
+          {
+            "flag": "--panel-projection",
+            "param": "panel_projection"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_manufacturing_plan_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "prefix",
+        "name",
+        "variant",
+        "panel_projection",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "panel_projection": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "prefix": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "variant": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "prefix"
+        ],
+        "type": "object"
+      },
+      "name": "datum.manufacturing.create_plan",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a draft proposal for deleting one PanelProjection without mutating panel shards.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "delete-panel-projection"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--panel-projection",
+            "param": "panel_projection"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_panel_projection_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "panel_projection",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "panel_projection": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "panel_projection"
+        ],
+        "type": "object"
+      },
+      "name": "datum.manufacturing.delete_panel_projection",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a draft proposal for deleting one ManufacturingPlan without mutating manufacturing plan shards.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "delete-manufacturing-plan"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--manufacturing-plan",
+            "param": "manufacturing_plan"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_manufacturing_plan_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "manufacturing_plan",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "manufacturing_plan": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "manufacturing_plan"
+        ],
+        "type": "object"
+      },
+      "name": "datum.manufacturing.delete_plan",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a draft proposal for a PanelProjection update without mutating panel shards.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "update-panel-projection"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--panel-projection",
+            "param": "panel_projection"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--board",
+            "param": "board"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--rotation-deg",
+            "param": "rotation_deg"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "update_panel_projection_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "panel_projection",
+        "name",
+        "board",
+        "x_nm",
+        "y_nm",
+        "rotation_deg",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "board": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "panel_projection": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rotation_deg": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "panel_projection"
+        ],
+        "type": "object"
+      },
+      "name": "datum.manufacturing.update_panel_projection",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a draft proposal for a ManufacturingPlan update without mutating manufacturing plan shards.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "update-manufacturing-plan"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--manufacturing-plan",
+            "param": "manufacturing_plan"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--prefix",
+            "param": "prefix"
+          },
+          {
+            "flag": "--variant",
+            "param": "variant"
+          },
+          {
+            "param": "clear_variant",
+            "switch": "--clear-variant"
+          },
+          {
+            "flag": "--panel-projection",
+            "param": "panel_projection"
+          },
+          {
+            "param": "clear_panel_projection",
+            "switch": "--clear-panel-projection"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "update_manufacturing_plan_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "manufacturing_plan",
+        "name",
+        "prefix",
+        "variant",
+        "clear_variant",
+        "panel_projection",
+        "clear_panel_projection",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "clear_panel_projection": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "clear_variant": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "manufacturing_plan": {
+            "type": "string"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "panel_projection": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "prefix": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "variant": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "manufacturing_plan"
+        ],
+        "type": "object"
+      },
+      "name": "datum.manufacturing.update_plan",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a draft proposal for an OutputJob creation without mutating the OutputJob shard.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-output-job"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--prefix",
+            "param": "prefix"
+          },
+          {
+            "flag": "--include",
+            "param": "include"
+          },
+          {
+            "flag": "--output-dir",
+            "param": "output_dir"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--manufacturing-plan",
+            "param": "manufacturing_plan"
+          },
+          {
+            "flag": "--variant",
+            "param": "variant"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_output_job_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "prefix",
+        "include",
+        "name",
+        "manufacturing_plan",
+        "output_dir",
+        "proposal",
+        "rationale",
+        "variant"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "include": {
+            "type": "string"
+          },
+          "manufacturing_plan": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "output_dir": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "prefix": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "variant": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "prefix",
+          "include"
+        ],
+        "type": "object"
+      },
+      "name": "datum.output_job.create",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a draft proposal for the deterministic Gerber-set OutputJob without mutating the OutputJob shard.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "create-output-job"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--prefix",
+            "param": "prefix"
+          },
+          {
+            "lit": "--include"
+          },
+          {
+            "lit": "gerber-set"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--manufacturing-plan",
+            "param": "manufacturing_plan"
+          },
+          {
+            "flag": "--output-dir",
+            "param": "output_dir"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          },
+          {
+            "flag": "--variant",
+            "param": "variant"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_output_job_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "prefix",
+        "include",
+        "name",
+        "manufacturing_plan",
+        "output_dir",
+        "proposal",
+        "rationale",
+        "variant"
+      ],
+      "dispatch_defaults": {
+        "include": "gerber-set"
+      },
+      "inputSchema": {
+        "properties": {
+          "manufacturing_plan": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "output_dir": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "prefix": {
+            "type": "string"
+          },
+          "variant": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "prefix"
+        ],
+        "type": "object"
+      },
+      "name": "datum.output_job.create_gerber_set",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Create a draft proposal for deleting one OutputJob without mutating the OutputJob shard.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "delete-output-job"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--output-job",
+            "param": "output_job"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_output_job_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "output_job",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "output_job": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "output_job"
+        ],
+        "type": "object"
+      },
+      "name": "datum.output_job.delete",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
+      "description": "Execute one authored OutputJob using its stored include, prefix, and output directory settings.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "artifact"
+          },
+          {
+            "lit": "generate"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--output-job",
+            "param": "output_job"
+          },
+          {
+            "flag": "--output-dir",
+            "param": "output_dir"
+          }
+        ],
+        "kind": "cli",
+        "method": "run_output_job"
+      },
+      "dispatch_args": [
+        "path",
+        "output_job",
+        "output_dir"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "output_dir": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "output_job": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "output_job"
+        ],
+        "type": "object"
+      },
+      "name": "datum.output_job.run",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Create a draft proposal for an OutputJob settings update without mutating the OutputJob shard.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "update-output-job"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--output-job",
+            "param": "output_job"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--output-dir",
+            "param": "output_dir"
+          },
+          {
+            "flag": "--manufacturing-plan",
+            "param": "manufacturing_plan"
+          },
+          {
+            "flag": "--variant",
+            "param": "variant"
+          },
+          {
+            "param": "clear_manufacturing_plan",
+            "switch": "--clear-manufacturing-plan"
+          },
+          {
+            "param": "clear_variant",
+            "switch": "--clear-variant"
+          },
+          {
+            "param": "clear_output_dir",
+            "switch": "--clear-output-dir"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "update_output_job_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "output_job",
+        "name",
+        "output_dir",
+        "manufacturing_plan",
+        "clear_manufacturing_plan",
+        "clear_output_dir",
+        "proposal",
+        "rationale",
+        "variant",
+        "clear_variant"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "clear_manufacturing_plan": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "clear_output_dir": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "clear_variant": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "manufacturing_plan": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "output_dir": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "output_job": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "variant": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "output_job"
+        ],
+        "type": "object"
+      },
+      "name": "datum.output_job.update",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
     },
     {
       "description": "Create one first-class native pool PinPadMap through the journaled project commit path.",
@@ -3376,6 +4912,116 @@
         "type": "object"
       },
       "name": "datum.query.source_shards",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Close the current in-memory project session.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "close_project"
+      },
+      "dispatch_args": [],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "datum.session.close",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Import a KiCad or Eagle design into the engine session.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "open_project"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.session.open",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Save the current imported design to a path or back to its original file.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "save"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "name": "datum.session.save",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Validate one native project directory for required files, supported schema versions, duplicate UUID consistency, and non-dangling persisted references.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "validate"
+          },
+          {
+            "param": "path"
+          }
+        ],
+        "kind": "cli",
+        "method": "validate_project"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.session.validate",
       "replacements": [],
       "retirement": null,
       "status": "public",

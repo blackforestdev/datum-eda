@@ -119,9 +119,9 @@ locked against the real CLI by `crates/cli/tests/verb_registry_roundtrip.rs`.
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Registry crate + generated catalog + drift gate + clap round-trip test | [x] | Landed; registry declares 50 verbs: the `datum.artifact` family (11 verbs) is registry-owned in the MCP catalog (hand-written entries deleted) and 39 further terminal verbs (check/journal/library/project/proposal/query) are registry-declared; registered tool set unchanged (530) |
-| All registered verbs registry-owned; hand-written MCP catalogs deleted | [ ] | Migrate per prefix via `MIGRATED_PREFIXES`; taxonomy/count gates keep their invariants during migration |
-| CLI clap / daemon dispatch / GUI terminal catalog generated from the registry | [~] | GUI terminal catalog is now a registry projection (`datum-gui-protocol` renders all 50 `terminal` verbs; hand-written table and regex parity test deleted, templates locked byte-identical by gui-protocol tests + clap round-trip); CLI clap and daemon dispatch remain target projections |
+| Registry crate + generated catalog + drift gate + clap round-trip test | [x] | Landed; registry declares 70 verbs; seven prefixes are registry-owned in the MCP catalog with their hand-written dicts deleted (`datum.artifact` 11, `datum.check` 10, `datum.context` 4, `datum.journal` 4, `datum.manufacturing` 6, `datum.output_job` 5, `datum.session` 4 — 44 tools, value-identity-diffed against the deleted dicts), plus 26 further terminal verbs (library/project/proposal/query) registry-declared; registered tool set unchanged (519) |
+| All registered verbs registry-owned; hand-written MCP catalogs deleted | [~] | 7 of the public `datum.*` prefixes migrated via `MIGRATED_PREFIXES` (44 of 332 public tools generated); remaining families (pcb/schematic/library/query/proposal/…) still hand-written; taxonomy/count gates keep their invariants during migration |
+| CLI clap / daemon dispatch / GUI terminal catalog generated from the registry | [~] | GUI terminal catalog is now a registry projection (`datum-gui-protocol` renders the 50 `terminal` verbs; hand-written table and regex parity test deleted, templates locked byte-identical by gui-protocol tests + clap round-trip); CLI clap and daemon dispatch remain target projections |
 
 ### Next Production Goals — Current / Target Ledger
 

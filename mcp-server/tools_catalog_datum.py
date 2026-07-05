@@ -3,45 +3,10 @@
 from tools_catalog_checks import CHECK_TOOL_SCHEMAS
 from tools_catalog_generated import generated_specs_for_prefix, reject_hand_written_duplicates
 from tools_catalog_import_map import IMPORT_MAP_TOOL_SCHEMAS
-from tools_catalog_journal import JOURNAL_TOOL_SCHEMAS
 from tools_catalog_library import LIBRARY_TOOL_SCHEMAS
 from tools_catalog_output_jobs import OUTPUT_JOB_TOOL_SCHEMAS
 from tools_catalog_proposals import PROPOSAL_TOOL_SCHEMAS
 from tools_catalog_relationships import RELATIONSHIP_TOOL_SCHEMAS
-
-DATUM_CONTEXT_SCHEMA = {
-    "description": "Return the current Datum session/context envelope, including project identity, model revision, actor type, capabilities, visible artifacts/check runs, provenance seed, and refresh metadata.",
-    "inputSchema": {
-        "type": "object",
-        "properties": {
-            "session": {"type": ["string", "null"]},
-            "path": {"type": ["string", "null"]},
-            "project_root": {"type": ["string", "null"]},
-        },
-    },
-}
-
-DATUM_CONTEXT_SESSION_EVENTS_SCHEMA = {
-    "description": "Return recorded Datum tool-session events for a terminal/session, optionally filtered by event kind, origin, command id, or execution id.",
-    "inputSchema": {
-        "type": "object",
-        "properties": {
-            "session": {"type": ["string", "null"]},
-            "path": {"type": ["string", "null"]},
-            "project_root": {"type": ["string", "null"]},
-            "event_kind": {"type": ["string", "null"]},
-            "origin": {"type": ["string", "null"]},
-            "command_id": {"type": ["string", "null"]},
-            "execution_id": {"type": ["string", "null"]},
-            "limit": {"type": ["integer", "null"]},
-        },
-    },
-}
-
-DATUM_CONTEXT_SESSION_ACTIVITY_SCHEMA = {
-    "description": "Return a compact Datum tool-session activity summary for a terminal/session. The primary agent-facing result is executions[], with start/end/duration, lifecycle/exit status, and per-execution I/O totals/previews. Results can be filtered by event kind, origin, command id, or execution id.",
-    "inputSchema": DATUM_CONTEXT_SESSION_EVENTS_SCHEMA["inputSchema"],
-}
 
 DATUM_EMPTY_QUERY_SCHEMA = {
     "description": "Canonical Datum read-only query alias over the current open session.",
@@ -281,32 +246,6 @@ def proposal_write_alias(
     return aliased
 
 
-def gerber_set_proposal_alias() -> dict[str, object]:
-    aliased = proposal_write_alias(
-        "create_output_job_proposal",
-        OUTPUT_JOB_TOOL_SCHEMAS["create_gerber_output_job"],
-        "proposal_metadata_write",
-        PROPOSAL_METADATA_EVIDENCE,
-    )
-    aliased["description"] = (
-        "Create a draft proposal for the deterministic Gerber-set OutputJob without "
-        "mutating the OutputJob shard."
-    )
-    aliased["x_dispatch_args"] = [
-        "path",
-        "prefix",
-        "include",
-        "name",
-        "manufacturing_plan",
-        "output_dir",
-        "proposal",
-        "rationale",
-        "variant",
-    ]
-    aliased["x_dispatch_defaults"] = {"include": "gerber-set"}
-    return aliased
-
-
 PROPOSAL_METADATA_EVIDENCE = (
     "writes only persisted proposal metadata for later review; does not mutate design shards"
 )
@@ -317,13 +256,6 @@ PROPOSAL_APPLY_EVIDENCE = (
     "applies an accepted proposal through the generic proposal journal gateway"
 )
 
-
-DATUM_TOOL_SCHEMAS = {
-    "datum.context.get": DATUM_CONTEXT_SCHEMA,
-    "datum.context.refresh": DATUM_CONTEXT_SCHEMA,
-    "datum.context.session_events": DATUM_CONTEXT_SESSION_EVENTS_SCHEMA,
-    "datum.context.session_activity": DATUM_CONTEXT_SESSION_ACTIVITY_SCHEMA,
-}
 
 DATUM_SCHEMATIC_PRIMITIVE_SCHEMAS = {
     "datum.schematic.create_sheet": {"description": "Create one native-project schematic sheet.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "name": {"type": "string"}, "sheet": {"type": ["string", "null"]}}, "required": ["path", "name"]}},
@@ -399,23 +331,27 @@ DATUM_SCHEMATIC_PRIMITIVE_SCHEMAS.update({
     "datum.schematic.delete_symbol_field": _symbol_schema("Delete one native-project schematic symbol field.", {"path": _STR, "field": _STR}, ["path", "field"]),
 })
 
-_GENERATED_ARTIFACT_TOOL_SPECS = generated_specs_for_prefix("datum.artifact")
+# Verb families owned by the generated single-source verb registry
+# (crates/verb-registry -> mcp-server/datum_tool_catalog.json); hand-written
+# entries for migrated prefixes are forbidden (duplicate guard below).
+# datum.session.* last keeps its aliases the winning public replacement for
+# the hidden flat session tools (last-wins dispatch-method map in
+# tools_catalog_data retirement metadata), as before migration.
+_GENERATED_TOOL_SPECS = [
+    spec
+    for prefix in (
+        "datum.artifact",
+        "datum.check",
+        "datum.context",
+        "datum.journal",
+        "datum.manufacturing",
+        "datum.output_job",
+        "datum.session",
+    )
+    for spec in generated_specs_for_prefix(prefix)
+]
 
 DATUM_TOOL_SPECS = [
-    {"name": "datum.context.get", **datum_alias("datum_context_get", DATUM_TOOL_SCHEMAS["datum.context.get"])},
-    {"name": "datum.context.refresh", **datum_alias("datum_context_refresh", DATUM_TOOL_SCHEMAS["datum.context.refresh"])},
-    {"name": "datum.context.session_events", **datum_alias("datum_context_session_events", DATUM_TOOL_SCHEMAS["datum.context.session_events"])},
-    {"name": "datum.context.session_activity", **datum_alias("datum_context_session_activity", DATUM_TOOL_SCHEMAS["datum.context.session_activity"])},
-    {"name": "datum.check.run", **datum_alias("get_check_run", CHECK_TOOL_SCHEMAS["get_check_run"])},
-    {"name": "datum.check.run_profile", **datum_alias("get_check_run", CHECK_TOOL_SCHEMAS["get_check_run"])},
-    {"name": "datum.check.list", **datum_alias("get_check_runs", CHECK_TOOL_SCHEMAS["get_check_runs"])},
-    {"name": "datum.check.show", **datum_alias("show_check_run", CHECK_TOOL_SCHEMAS["show_check_run"])},
-    {"name": "datum.check.profiles", **datum_alias("get_check_profiles", CHECK_TOOL_SCHEMAS["get_check_profiles"])},
-    {"name": "datum.check.fill_zones", **datum_alias("fill_zones", CHECK_TOOL_SCHEMAS["fill_zones"])},
-    {"name": "datum.check.repair_standards", **datum_alias("generate_standards_repair_proposals", CHECK_TOOL_SCHEMAS["generate_standards_repair_proposals"])},
-    {"name": "datum.check.waive", **datum_alias("waive_finding", CHECK_TOOL_SCHEMAS["waive_finding"])},
-    {"name": "datum.check.accept_deviation", **datum_alias("accept_deviation", CHECK_TOOL_SCHEMAS["accept_deviation"])},
-    {"name": "datum.check.explain_violation", **datum_alias("explain_violation", CHECK_TOOL_SCHEMAS["explain_violation"])},
     {"name": "datum.query.board_summary", **datum_alias("get_board_summary", DATUM_EMPTY_QUERY_SCHEMA)},
     {"name": "datum.query.components", **datum_alias("get_components", DATUM_EMPTY_QUERY_SCHEMA)},
     {"name": "datum.query.netlist", **datum_alias("get_netlist", DATUM_EMPTY_QUERY_SCHEMA)},
@@ -656,30 +592,12 @@ DATUM_TOOL_SPECS = [
     {"name": "datum.proposal.reject", **proposal_write_alias("reject_proposal", PROPOSAL_TOOL_SCHEMAS["reject_proposal"], "proposal_review_state_write", PROPOSAL_REVIEW_EVIDENCE)},
     {"name": "datum.proposal.accept_apply", **proposal_write_alias("accept_apply_proposal", PROPOSAL_TOOL_SCHEMAS["accept_apply_proposal"], "proposal_gateway_apply", PROPOSAL_APPLY_EVIDENCE)},
     {"name": "datum.proposal.apply", **proposal_write_alias("apply_proposal", PROPOSAL_TOOL_SCHEMAS["apply_proposal"], "proposal_gateway_apply", PROPOSAL_APPLY_EVIDENCE)},
-    {"name": "datum.journal.list", **datum_alias("get_journal_list", JOURNAL_TOOL_SCHEMAS["get_journal_list"])},
-    {"name": "datum.journal.show", **datum_alias("get_journal_transaction", JOURNAL_TOOL_SCHEMAS["get_journal_transaction"])},
-    {"name": "datum.journal.undo", **datum_alias("journal_undo", JOURNAL_TOOL_SCHEMAS["journal_undo"])},
-    {"name": "datum.journal.redo", **datum_alias("journal_redo", JOURNAL_TOOL_SCHEMAS["journal_redo"])},
-    # datum.artifact.* is generated from the single-source verb registry
-    # (crates/verb-registry -> mcp-server/datum_tool_catalog.json); hand-written
-    # entries for migrated prefixes are forbidden (duplicate guard below).
-    *_GENERATED_ARTIFACT_TOOL_SPECS,
-    {"name": "datum.manufacturing.create_panel_projection", **proposal_write_alias("create_panel_projection_proposal", OUTPUT_JOB_TOOL_SCHEMAS["create_panel_projection_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
-    {"name": "datum.manufacturing.update_panel_projection", **proposal_write_alias("update_panel_projection_proposal", OUTPUT_JOB_TOOL_SCHEMAS["update_panel_projection_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
-    {"name": "datum.manufacturing.delete_panel_projection", **proposal_write_alias("delete_panel_projection_proposal", OUTPUT_JOB_TOOL_SCHEMAS["delete_panel_projection_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
-    {"name": "datum.manufacturing.create_plan", **proposal_write_alias("create_manufacturing_plan_proposal", OUTPUT_JOB_TOOL_SCHEMAS["create_manufacturing_plan_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
-    {"name": "datum.manufacturing.update_plan", **proposal_write_alias("update_manufacturing_plan_proposal", OUTPUT_JOB_TOOL_SCHEMAS["update_manufacturing_plan_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
-    {"name": "datum.manufacturing.delete_plan", **proposal_write_alias("delete_manufacturing_plan_proposal", OUTPUT_JOB_TOOL_SCHEMAS["delete_manufacturing_plan_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
-    {"name": "datum.output_job.create_gerber_set", **gerber_set_proposal_alias()},
-    {"name": "datum.output_job.create", **proposal_write_alias("create_output_job_proposal", OUTPUT_JOB_TOOL_SCHEMAS["create_output_job_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
-    {"name": "datum.output_job.update", **proposal_write_alias("update_output_job_proposal", OUTPUT_JOB_TOOL_SCHEMAS["update_output_job_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
-    {"name": "datum.output_job.run", **datum_alias("run_output_job", OUTPUT_JOB_TOOL_SCHEMAS["run_output_job"])},
-    {"name": "datum.output_job.delete", **proposal_write_alias("delete_output_job_proposal", OUTPUT_JOB_TOOL_SCHEMAS["delete_output_job_proposal"], "proposal_metadata_write", PROPOSAL_METADATA_EVIDENCE)},
+    *_GENERATED_TOOL_SPECS,
 ]
 
 # Import-time guard: a hand-written entry for a verb the generated catalog
 # already owns is a defect and must fail loudly (caught by server.py --self-test).
-_GENERATED_SPEC_IDS = {id(spec) for spec in _GENERATED_ARTIFACT_TOOL_SPECS}
+_GENERATED_SPEC_IDS = {id(spec) for spec in _GENERATED_TOOL_SPECS}
 reject_hand_written_duplicates(
     [str(spec["name"]) for spec in DATUM_TOOL_SPECS if id(spec) not in _GENERATED_SPEC_IDS]
 )

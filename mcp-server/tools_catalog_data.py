@@ -3,6 +3,7 @@ from typing import Any
 from tools_catalog_checks import CHECK_TOOL_SCHEMAS
 from tools_catalog_drc import RUN_DRC_INPUT_SCHEMA
 from tools_catalog_datum import DATUM_TOOL_SPECS
+from tools_catalog_generated import GENERATED_TOOL_NAMES
 from tools_catalog_journal import JOURNAL_TOOL_SCHEMAS
 from tools_catalog_legacy_aliases import _LEGACY_CANONICAL_ALIAS_NAMES
 from tools_catalog_retirement import DEFAULT_HIDDEN_ALIAS_RETIREMENT_CRITERIA, canonical_replacements_for_hidden_alias, retirement_override_for_hidden_alias
@@ -745,8 +746,14 @@ def _alias_dispatches_to_non_journaled_write(alias_spec: dict[str, Any]) -> bool
     return alias_spec.get("x_dispatch_method") in NON_JOURNALED_DAEMON_WRITE_METHODS
 
 
+# Canonical aliases already owned by the generated verb-registry catalog
+# (e.g. datum.session.* served through tools_catalog_datum's generated block)
+# must not be rebuilt from their flat specs; the flat tools themselves stay
+# dispatchable as hidden compatibility entries below.
 _LEGACY_CANONICAL_ALIAS_SPECS: list[dict[str, object]] = [
-    _legacy_canonical_alias(spec) for spec in _LEGACY_FLAT_TOOL_SPECS
+    _legacy_canonical_alias(spec)
+    for spec in _LEGACY_FLAT_TOOL_SPECS
+    if _LEGACY_CANONICAL_ALIAS_NAMES[str(spec["name"])] not in GENERATED_TOOL_NAMES
 ]
 
 # Board-write aliases bridging to non-journaled arms stay dispatchable but are not
