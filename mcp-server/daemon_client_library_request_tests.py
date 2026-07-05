@@ -419,6 +419,49 @@ class TestDaemonClientLibraryRequests(unittest.TestCase):
         self.assertEqual(response.result["object_uuid"], "part-test")
 
     @patch("server_runtime.subprocess.run")
+    def test_generates_ipc7351b_soic_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(args=[], returncode=0, stdout='{"action":"generate_ipc7351b_soic","object_uuid":"footprint-test"}', stderr="")
+        response = EngineDaemonClient().generate_ipc7351b_soic(
+            "/tmp/native-project",
+            "footprint-test",
+            "package-test",
+            "padstack-test",
+            ["pad-1", "pad-2", "pad-3", "pad-4"],
+            "SOIC-4_TEST",
+            4,
+            1270000,
+            4900000,
+            3900000,
+            6000000,
+            600000,
+            400000,
+            pool="pool",
+            density="nominal",
+            mask_expansion_nm=50000,
+            paste_reduction_nm=50000,
+            name="SOIC-4_TEST",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "datum-eda", "--format", "json", "project", "generate-ipc7351b-soic",
+                "/tmp/native-project", "--pool", "pool", "--footprint", "footprint-test",
+                "--package", "package-test", "--padstack", "padstack-test",
+                "--pad", "pad-1", "--pad", "pad-2", "--pad", "pad-3", "--pad", "pad-4",
+                "--package-code", "SOIC-4_TEST", "--pin-count", "4", "--pitch-nm", "1270000",
+                "--body-length-nm", "4900000", "--body-width-nm", "3900000",
+                "--lead-span-nm", "6000000", "--terminal-length-nm", "600000",
+                "--terminal-width-nm", "400000", "--density", "nominal",
+                "--mask-expansion-nm", "50000", "--paste-reduction-nm", "50000",
+                "--name", "SOIC-4_TEST",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+            env=ANY,
+        )
+        self.assertEqual(response.result["object_uuid"], "footprint-test")
+
+    @patch("server_runtime.subprocess.run")
     def test_sets_pool_part_metadata_via_cli(self, run_mock) -> None:
         run_mock.return_value = subprocess.CompletedProcess(args=[], returncode=0, stdout='{"action":"set_part_metadata","object_uuid":"part-test"}', stderr="")
         response = EngineDaemonClient().set_pool_part_metadata("/tmp/native-project", "pool", "part-test", mpn="OPA1656ID", manufacturer_jep106=123, lifecycle="Active")

@@ -476,6 +476,7 @@ def install_library_methods(client_cls: type) -> None:
     setattr(client_cls, "set_pool_unit_pin", set_pool_unit_pin)
     setattr(client_cls, "set_pool_package_pad", set_pool_package_pad)
     setattr(client_cls, "create_pool_footprint", create_pool_footprint)
+    setattr(client_cls, "generate_ipc7351b_soic", generate_ipc7351b_soic)
     setattr(client_cls, "set_pool_footprint_pad", set_pool_footprint_pad)
     setattr(client_cls, "set_pool_footprint_courtyard_rect", set_pool_footprint_courtyard_rect)
     setattr(client_cls, "set_pool_footprint_courtyard_polygon", set_pool_footprint_courtyard_polygon)
