@@ -36,6 +36,15 @@ fn dummy_value(verb_id: &str, param: &ParamSpec) -> &'static str {
     if param.name == "kind" {
         return "local";
     }
+    if param.name == "direction" {
+        return "input";
+    }
+    if param.name == "mode" {
+        return "library-default";
+    }
+    if param.name == "behavior" {
+        return "source-defined-implicit";
+    }
     if param.name == "checks_run" {
         return "00000000-0000-0000-0000-000000000001";
     }

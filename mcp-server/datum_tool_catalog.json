@@ -20226,6 +20226,4129 @@
       "write_surface": null
     },
     {
+      "description": "Add one native-project schematic symbol field.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "add-symbol-field"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--key",
+            "param": "key"
+          },
+          {
+            "flag": "--value",
+            "param": "value"
+          },
+          {
+            "param": "hidden",
+            "switch": "--hidden"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "add_symbol_field"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol",
+        "key",
+        "value",
+        "hidden",
+        "x_nm",
+        "y_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "hidden": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "key": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "key",
+          "value"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.add_symbol_field",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Bind a parent-sheet hierarchical port to a sheet instance.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "bind-sheet-instance-port"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--instance",
+            "param": "instance"
+          },
+          {
+            "flag": "--port",
+            "param": "port"
+          }
+        ],
+        "kind": "cli",
+        "method": "bind_sheet_instance_port"
+      },
+      "dispatch_args": [
+        "path",
+        "instance",
+        "port"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "instance": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "port": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "instance",
+          "port"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.bind_sheet_instance_port",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Clear one native-project schematic symbol pin display override.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "clear-pin-override"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--pin",
+            "param": "pin"
+          }
+        ],
+        "kind": "cli",
+        "method": "clear_pin_override"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol",
+        "pin"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "pin": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "pin"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.clear_pin_override",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Clear one native-project schematic symbol entity UUID.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "clear-symbol-entity"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          }
+        ],
+        "kind": "cli",
+        "method": "clear_symbol_entity"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.clear_symbol_entity",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Clear one native-project schematic symbol gate UUID.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "clear-symbol-gate"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          }
+        ],
+        "kind": "cli",
+        "method": "clear_symbol_gate"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.clear_symbol_gate",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Clear one native-project schematic symbol library identifier.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "clear-symbol-lib-id"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          }
+        ],
+        "kind": "cli",
+        "method": "clear_symbol_lib_id"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.clear_symbol_lib_id",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Clear one native-project schematic symbol part UUID.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "clear-symbol-part"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          }
+        ],
+        "kind": "cli",
+        "method": "clear_symbol_part"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.clear_symbol_part",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Clear one native-project schematic symbol unit selection.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "clear-symbol-unit"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          }
+        ],
+        "kind": "cli",
+        "method": "clear_symbol_unit"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.clear_symbol_unit",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Create one native-project schematic bus.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "create-bus"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--sheet",
+            "param": "sheet"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "param": "members",
+            "repeated": "--member"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_bus"
+      },
+      "dispatch_args": [
+        "path",
+        "sheet",
+        "name",
+        "members"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "members": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "sheet": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "sheet",
+          "name",
+          "members"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.create_bus",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Create one native-project schematic sheet.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "create-sheet"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--sheet",
+            "param": "sheet"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_sheet"
+      },
+      "dispatch_args": [
+        "path",
+        "name",
+        "sheet"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "sheet": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "name"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.create_sheet",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Create one native-project schematic sheet definition through the journaled substrate path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "create-sheet-definition"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--root-sheet",
+            "param": "root_sheet"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--definition",
+            "param": "definition"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_sheet_definition"
+      },
+      "dispatch_args": [
+        "path",
+        "root_sheet",
+        "name",
+        "definition"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "definition": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "root_sheet": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "root_sheet",
+          "name"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.create_sheet_definition",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Create one native-project schematic sheet instance through the journaled substrate path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "create-sheet-instance"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--definition",
+            "param": "definition"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--parent-sheet",
+            "param": "parent_sheet"
+          },
+          {
+            "flag": "--instance",
+            "param": "instance"
+          }
+        ],
+        "kind": "cli",
+        "method": "create_sheet_instance"
+      },
+      "dispatch_args": [
+        "path",
+        "definition",
+        "name",
+        "x_nm",
+        "y_nm",
+        "parent_sheet",
+        "instance"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "definition": {
+            "type": "string"
+          },
+          "instance": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "parent_sheet": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "definition",
+          "name",
+          "x_nm",
+          "y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.create_sheet_instance",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project schematic bus.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-bus"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--bus",
+            "param": "bus"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_bus"
+      },
+      "dispatch_args": [
+        "path",
+        "bus"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "bus": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "bus"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.delete_bus",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project schematic bus entry.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-bus-entry"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--bus-entry",
+            "param": "bus_entry"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_bus_entry"
+      },
+      "dispatch_args": [
+        "path",
+        "bus_entry"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "bus_entry": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "bus_entry"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.delete_bus_entry",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one schematic drawing object.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-drawing"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--drawing",
+            "param": "drawing"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_drawing"
+      },
+      "dispatch_args": [
+        "path",
+        "drawing"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "drawing": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "drawing"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.delete_drawing",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project schematic junction.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-junction"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--junction",
+            "param": "junction"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_junction"
+      },
+      "dispatch_args": [
+        "path",
+        "junction"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "junction": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "junction"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.delete_junction",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project schematic label.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-label"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--label",
+            "param": "label"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_label"
+      },
+      "dispatch_args": [
+        "path",
+        "label"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "label"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.delete_label",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project schematic no-connect marker.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-noconnect"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--noconnect",
+            "param": "noconnect"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_noconnect"
+      },
+      "dispatch_args": [
+        "path",
+        "noconnect"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "noconnect": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "noconnect"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.delete_noconnect",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project schematic port.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-port"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--port",
+            "param": "port"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_port"
+      },
+      "dispatch_args": [
+        "path",
+        "port"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "port": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "port"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.delete_port",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project schematic sheet and its payload as one journaled operation.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-sheet"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--sheet",
+            "param": "sheet"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_sheet"
+      },
+      "dispatch_args": [
+        "path",
+        "sheet"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "sheet": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "sheet"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.delete_sheet",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project schematic sheet instance through the journaled substrate path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-sheet-instance"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--instance",
+            "param": "instance"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_sheet_instance"
+      },
+      "dispatch_args": [
+        "path",
+        "instance"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "instance": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "instance"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.delete_sheet_instance",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project schematic symbol.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-symbol"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_symbol"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.delete_symbol",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project schematic symbol field.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-symbol-field"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--field",
+            "param": "field"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_symbol_field"
+      },
+      "dispatch_args": [
+        "path",
+        "field"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "field"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.delete_symbol_field",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project schematic text object.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-text"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--text",
+            "param": "text"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_schematic_text"
+      },
+      "dispatch_args": [
+        "path",
+        "text"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "text"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.delete_text",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Delete one native-project schematic wire.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "delete-wire"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--wire",
+            "param": "wire"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_wire"
+      },
+      "dispatch_args": [
+        "path",
+        "wire"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "wire": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "wire"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.delete_wire",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Draw one native-project schematic wire.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "draw-wire"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--sheet",
+            "param": "sheet"
+          },
+          {
+            "flag": "--from-x-nm",
+            "param": "from_x_nm"
+          },
+          {
+            "flag": "--from-y-nm",
+            "param": "from_y_nm"
+          },
+          {
+            "flag": "--to-x-nm",
+            "param": "to_x_nm"
+          },
+          {
+            "flag": "--to-y-nm",
+            "param": "to_y_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "draw_wire"
+      },
+      "dispatch_args": [
+        "path",
+        "sheet",
+        "from_x_nm",
+        "from_y_nm",
+        "to_x_nm",
+        "to_y_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "from_x_nm": {
+            "type": "integer"
+          },
+          "from_y_nm": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "sheet": {
+            "type": "string"
+          },
+          "to_x_nm": {
+            "type": "integer"
+          },
+          "to_y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "sheet",
+          "from_x_nm",
+          "from_y_nm",
+          "to_x_nm",
+          "to_y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.draw_wire",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Replace native-project schematic bus members.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "edit-bus-members"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--bus",
+            "param": "bus"
+          },
+          {
+            "param": "members",
+            "repeated": "--member"
+          }
+        ],
+        "kind": "cli",
+        "method": "edit_bus_members"
+      },
+      "dispatch_args": [
+        "path",
+        "bus",
+        "members"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "bus": {
+            "type": "string"
+          },
+          "members": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "bus",
+          "members"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.edit_bus_members",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Edit one schematic drawing arc.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "edit-drawing-arc"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--drawing",
+            "param": "drawing"
+          },
+          {
+            "flag": "--center-x-nm",
+            "param": "center_x_nm"
+          },
+          {
+            "flag": "--center-y-nm",
+            "param": "center_y_nm"
+          },
+          {
+            "flag": "--radius-nm",
+            "param": "radius_nm"
+          },
+          {
+            "flag": "--start-angle-mdeg",
+            "param": "start_angle_mdeg"
+          },
+          {
+            "flag": "--end-angle-mdeg",
+            "param": "end_angle_mdeg"
+          }
+        ],
+        "kind": "cli",
+        "method": "edit_drawing_arc"
+      },
+      "dispatch_args": [
+        "path",
+        "drawing",
+        "center_x_nm",
+        "center_y_nm",
+        "radius_nm",
+        "start_angle_mdeg",
+        "end_angle_mdeg"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "center_x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "center_y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "drawing": {
+            "type": "string"
+          },
+          "end_angle_mdeg": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "radius_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "start_angle_mdeg": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "drawing"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.edit_drawing_arc",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Edit one schematic drawing circle.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "edit-drawing-circle"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--drawing",
+            "param": "drawing"
+          },
+          {
+            "flag": "--center-x-nm",
+            "param": "center_x_nm"
+          },
+          {
+            "flag": "--center-y-nm",
+            "param": "center_y_nm"
+          },
+          {
+            "flag": "--radius-nm",
+            "param": "radius_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "edit_drawing_circle"
+      },
+      "dispatch_args": [
+        "path",
+        "drawing",
+        "center_x_nm",
+        "center_y_nm",
+        "radius_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "center_x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "center_y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "drawing": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "radius_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "drawing"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.edit_drawing_circle",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Edit one schematic drawing line.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "edit-drawing-line"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--drawing",
+            "param": "drawing"
+          },
+          {
+            "flag": "--from-x-nm",
+            "param": "from_x_nm"
+          },
+          {
+            "flag": "--from-y-nm",
+            "param": "from_y_nm"
+          },
+          {
+            "flag": "--to-x-nm",
+            "param": "to_x_nm"
+          },
+          {
+            "flag": "--to-y-nm",
+            "param": "to_y_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "edit_drawing_line"
+      },
+      "dispatch_args": [
+        "path",
+        "drawing",
+        "from_x_nm",
+        "from_y_nm",
+        "to_x_nm",
+        "to_y_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "drawing": {
+            "type": "string"
+          },
+          "from_x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "from_y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "to_x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "to_y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "drawing"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.edit_drawing_line",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Edit one schematic drawing rectangle.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "edit-drawing-rect"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--drawing",
+            "param": "drawing"
+          },
+          {
+            "flag": "--min-x-nm",
+            "param": "min_x_nm"
+          },
+          {
+            "flag": "--min-y-nm",
+            "param": "min_y_nm"
+          },
+          {
+            "flag": "--max-x-nm",
+            "param": "max_x_nm"
+          },
+          {
+            "flag": "--max-y-nm",
+            "param": "max_y_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "edit_drawing_rect"
+      },
+      "dispatch_args": [
+        "path",
+        "drawing",
+        "min_x_nm",
+        "min_y_nm",
+        "max_x_nm",
+        "max_y_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "drawing": {
+            "type": "string"
+          },
+          "max_x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "max_y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "min_x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "min_y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "drawing"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.edit_drawing_rect",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Edit one native-project schematic port.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "edit-port"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--port",
+            "param": "port"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--direction",
+            "param": "direction"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "edit_port"
+      },
+      "dispatch_args": [
+        "path",
+        "port",
+        "name",
+        "direction",
+        "x_nm",
+        "y_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "direction": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "port": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "port"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.edit_port",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Edit one native-project schematic symbol field.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "edit-symbol-field"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--field",
+            "param": "field"
+          },
+          {
+            "flag": "--key",
+            "param": "key"
+          },
+          {
+            "flag": "--value",
+            "param": "value"
+          },
+          {
+            "flag": "--visible",
+            "param": "visible"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "edit_symbol_field"
+      },
+      "dispatch_args": [
+        "path",
+        "field",
+        "key",
+        "value",
+        "visible",
+        "x_nm",
+        "y_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "key": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "visible": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "field"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.edit_symbol_field",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Edit one native-project schematic text object.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "edit-text"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--text",
+            "param": "text"
+          },
+          {
+            "flag": "--value",
+            "param": "value"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--rotation-deg",
+            "param": "rotation_deg"
+          }
+        ],
+        "kind": "cli",
+        "method": "edit_schematic_text"
+      },
+      "dispatch_args": [
+        "path",
+        "text",
+        "value",
+        "x_nm",
+        "y_nm",
+        "rotation_deg"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "rotation_deg": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "text": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "text"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.edit_text",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Mirror one native-project schematic symbol.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "mirror-symbol"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          }
+        ],
+        "kind": "cli",
+        "method": "mirror_symbol"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.mirror_symbol",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Move one native-project schematic sheet instance through the journaled substrate path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "move-sheet-instance"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--instance",
+            "param": "instance"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "move_sheet_instance"
+      },
+      "dispatch_args": [
+        "path",
+        "instance",
+        "x_nm",
+        "y_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "instance": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "instance",
+          "x_nm",
+          "y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.move_sheet_instance",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Move one native-project schematic symbol.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "move-symbol"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "move_symbol"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol",
+        "x_nm",
+        "y_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "x_nm",
+          "y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.move_symbol",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Place one native-project schematic bus entry.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "place-bus-entry"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--sheet",
+            "param": "sheet"
+          },
+          {
+            "flag": "--bus",
+            "param": "bus"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--wire",
+            "param": "wire"
+          }
+        ],
+        "kind": "cli",
+        "method": "place_bus_entry"
+      },
+      "dispatch_args": [
+        "path",
+        "sheet",
+        "bus",
+        "x_nm",
+        "y_nm",
+        "wire"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "bus": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "sheet": {
+            "type": "string"
+          },
+          "wire": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "sheet",
+          "bus",
+          "x_nm",
+          "y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.place_bus_entry",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Place one schematic drawing arc.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "place-drawing-arc"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--sheet",
+            "param": "sheet"
+          },
+          {
+            "flag": "--center-x-nm",
+            "param": "center_x_nm"
+          },
+          {
+            "flag": "--center-y-nm",
+            "param": "center_y_nm"
+          },
+          {
+            "flag": "--radius-nm",
+            "param": "radius_nm"
+          },
+          {
+            "flag": "--start-angle-mdeg",
+            "param": "start_angle_mdeg"
+          },
+          {
+            "flag": "--end-angle-mdeg",
+            "param": "end_angle_mdeg"
+          }
+        ],
+        "kind": "cli",
+        "method": "place_drawing_arc"
+      },
+      "dispatch_args": [
+        "path",
+        "sheet",
+        "center_x_nm",
+        "center_y_nm",
+        "radius_nm",
+        "start_angle_mdeg",
+        "end_angle_mdeg"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "center_x_nm": {
+            "type": "integer"
+          },
+          "center_y_nm": {
+            "type": "integer"
+          },
+          "end_angle_mdeg": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "radius_nm": {
+            "type": "integer"
+          },
+          "sheet": {
+            "type": "string"
+          },
+          "start_angle_mdeg": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "sheet",
+          "center_x_nm",
+          "center_y_nm",
+          "radius_nm",
+          "start_angle_mdeg",
+          "end_angle_mdeg"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.place_drawing_arc",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Place one schematic drawing circle.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "place-drawing-circle"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--sheet",
+            "param": "sheet"
+          },
+          {
+            "flag": "--center-x-nm",
+            "param": "center_x_nm"
+          },
+          {
+            "flag": "--center-y-nm",
+            "param": "center_y_nm"
+          },
+          {
+            "flag": "--radius-nm",
+            "param": "radius_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "place_drawing_circle"
+      },
+      "dispatch_args": [
+        "path",
+        "sheet",
+        "center_x_nm",
+        "center_y_nm",
+        "radius_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "center_x_nm": {
+            "type": "integer"
+          },
+          "center_y_nm": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "radius_nm": {
+            "type": "integer"
+          },
+          "sheet": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "sheet",
+          "center_x_nm",
+          "center_y_nm",
+          "radius_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.place_drawing_circle",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Place one schematic drawing line.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "place-drawing-line"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--sheet",
+            "param": "sheet"
+          },
+          {
+            "flag": "--from-x-nm",
+            "param": "from_x_nm"
+          },
+          {
+            "flag": "--from-y-nm",
+            "param": "from_y_nm"
+          },
+          {
+            "flag": "--to-x-nm",
+            "param": "to_x_nm"
+          },
+          {
+            "flag": "--to-y-nm",
+            "param": "to_y_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "place_drawing_line"
+      },
+      "dispatch_args": [
+        "path",
+        "sheet",
+        "from_x_nm",
+        "from_y_nm",
+        "to_x_nm",
+        "to_y_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "from_x_nm": {
+            "type": "integer"
+          },
+          "from_y_nm": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "sheet": {
+            "type": "string"
+          },
+          "to_x_nm": {
+            "type": "integer"
+          },
+          "to_y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "sheet",
+          "from_x_nm",
+          "from_y_nm",
+          "to_x_nm",
+          "to_y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.place_drawing_line",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Place one schematic drawing rectangle.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "place-drawing-rect"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--sheet",
+            "param": "sheet"
+          },
+          {
+            "flag": "--min-x-nm",
+            "param": "min_x_nm"
+          },
+          {
+            "flag": "--min-y-nm",
+            "param": "min_y_nm"
+          },
+          {
+            "flag": "--max-x-nm",
+            "param": "max_x_nm"
+          },
+          {
+            "flag": "--max-y-nm",
+            "param": "max_y_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "place_drawing_rect"
+      },
+      "dispatch_args": [
+        "path",
+        "sheet",
+        "min_x_nm",
+        "min_y_nm",
+        "max_x_nm",
+        "max_y_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "max_x_nm": {
+            "type": "integer"
+          },
+          "max_y_nm": {
+            "type": "integer"
+          },
+          "min_x_nm": {
+            "type": "integer"
+          },
+          "min_y_nm": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "string"
+          },
+          "sheet": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "sheet",
+          "min_x_nm",
+          "min_y_nm",
+          "max_x_nm",
+          "max_y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.place_drawing_rect",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Place one native-project schematic junction.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "place-junction"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--sheet",
+            "param": "sheet"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "place_junction"
+      },
+      "dispatch_args": [
+        "path",
+        "sheet",
+        "x_nm",
+        "y_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "sheet": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "sheet",
+          "x_nm",
+          "y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.place_junction",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Place one native-project schematic label.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "place-label"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--sheet",
+            "param": "sheet"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--kind",
+            "param": "kind"
+          }
+        ],
+        "kind": "cli",
+        "method": "place_label"
+      },
+      "dispatch_args": [
+        "path",
+        "sheet",
+        "name",
+        "x_nm",
+        "y_nm",
+        "kind"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "kind": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "sheet": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "sheet",
+          "name",
+          "x_nm",
+          "y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.place_label",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Place one native-project schematic no-connect marker.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "place-noconnect"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--sheet",
+            "param": "sheet"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--pin",
+            "param": "pin"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "place_noconnect"
+      },
+      "dispatch_args": [
+        "path",
+        "sheet",
+        "symbol",
+        "pin",
+        "x_nm",
+        "y_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "pin": {
+            "type": "string"
+          },
+          "sheet": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "sheet",
+          "symbol",
+          "pin",
+          "x_nm",
+          "y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.place_noconnect",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Place one native-project schematic port.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "place-port"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--sheet",
+            "param": "sheet"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          },
+          {
+            "flag": "--direction",
+            "param": "direction"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "place_port"
+      },
+      "dispatch_args": [
+        "path",
+        "sheet",
+        "name",
+        "direction",
+        "x_nm",
+        "y_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "direction": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "sheet": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "sheet",
+          "name",
+          "direction",
+          "x_nm",
+          "y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.place_port",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Place one native-project schematic symbol.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "place-symbol"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--sheet",
+            "param": "sheet"
+          },
+          {
+            "flag": "--reference",
+            "param": "reference"
+          },
+          {
+            "flag": "--value",
+            "param": "value"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--lib-id",
+            "param": "lib_id"
+          },
+          {
+            "flag": "--rotation-deg",
+            "param": "rotation_deg"
+          },
+          {
+            "param": "mirrored",
+            "switch": "--mirrored"
+          }
+        ],
+        "kind": "cli",
+        "method": "place_symbol"
+      },
+      "dispatch_args": [
+        "path",
+        "sheet",
+        "reference",
+        "value",
+        "x_nm",
+        "y_nm",
+        "lib_id",
+        "rotation_deg",
+        "mirrored"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "lib_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "mirrored": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "rotation_deg": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "sheet": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "sheet",
+          "reference",
+          "value",
+          "x_nm",
+          "y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.place_symbol",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Place one native-project schematic text object.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "place-text"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--sheet",
+            "param": "sheet"
+          },
+          {
+            "flag": "--text",
+            "param": "text"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          },
+          {
+            "flag": "--rotation-deg",
+            "param": "rotation_deg"
+          }
+        ],
+        "kind": "cli",
+        "method": "place_schematic_text"
+      },
+      "dispatch_args": [
+        "path",
+        "sheet",
+        "text",
+        "x_nm",
+        "y_nm",
+        "rotation_deg"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "rotation_deg": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "sheet": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "x_nm": {
+            "type": "integer"
+          },
+          "y_nm": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "sheet",
+          "text",
+          "x_nm",
+          "y_nm"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.place_text",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Rename one native-project schematic label.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "rename-label"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--label",
+            "param": "label"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          }
+        ],
+        "kind": "cli",
+        "method": "rename_label"
+      },
+      "dispatch_args": [
+        "path",
+        "label",
+        "name"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "label",
+          "name"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.rename_label",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Rename one native-project schematic sheet through the journaled substrate path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "rename-sheet"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--sheet",
+            "param": "sheet"
+          },
+          {
+            "flag": "--name",
+            "param": "name"
+          }
+        ],
+        "kind": "cli",
+        "method": "rename_sheet"
+      },
+      "dispatch_args": [
+        "path",
+        "sheet",
+        "name"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "sheet": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "sheet",
+          "name"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.rename_sheet",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Rotate one native-project schematic symbol.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "rotate-symbol"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--rotation-deg",
+            "param": "rotation_deg"
+          }
+        ],
+        "kind": "cli",
+        "method": "rotate_symbol"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol",
+        "rotation_deg"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "rotation_deg": {
+            "type": "integer"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "rotation_deg"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.rotate_symbol",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set one native-project schematic symbol pin display override.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-pin-override"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--pin",
+            "param": "pin"
+          },
+          {
+            "flag": "--visible",
+            "param": "visible"
+          },
+          {
+            "flag": "--x-nm",
+            "param": "x_nm"
+          },
+          {
+            "flag": "--y-nm",
+            "param": "y_nm"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_pin_override"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol",
+        "pin",
+        "visible",
+        "x_nm",
+        "y_nm"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "pin": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "x_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "y_nm": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "pin",
+          "visible"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.set_pin_override",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set one native-project schematic symbol display mode.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-symbol-display-mode"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--mode",
+            "param": "mode"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_symbol_display_mode"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol",
+        "mode"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "mode": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "mode"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.set_symbol_display_mode",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set one native-project schematic symbol entity UUID.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-symbol-entity"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--entity",
+            "param": "entity"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_symbol_entity"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol",
+        "entity"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "entity": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "entity"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.set_symbol_entity",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set one native-project schematic symbol gate UUID.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-symbol-gate"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--gate",
+            "param": "gate"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_symbol_gate"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol",
+        "gate"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "gate": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "gate"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.set_symbol_gate",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set one native-project schematic symbol hidden-power behavior.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-symbol-hidden-power-behavior"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--behavior",
+            "param": "behavior"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_symbol_hidden_power_behavior"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol",
+        "behavior"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "behavior": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "behavior"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.set_symbol_hidden_power_behavior",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set one native-project schematic symbol library identifier.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-symbol-lib-id"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--lib-id",
+            "param": "lib_id"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_symbol_lib_id"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol",
+        "lib_id"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "lib_id": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "lib_id"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.set_symbol_lib_id",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set one native-project schematic symbol part UUID.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-symbol-part"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_symbol_part"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol",
+        "part"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "part": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "part"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.set_symbol_part",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set one native-project schematic symbol reference.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-symbol-reference"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--reference",
+            "param": "reference"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_symbol_reference"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol",
+        "reference"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "reference"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.set_symbol_reference",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set one native-project schematic symbol unit selection.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-symbol-unit"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--unit",
+            "param": "unit"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_symbol_unit"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol",
+        "unit"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "unit"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.set_symbol_unit",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Set one native-project schematic symbol value.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "set-symbol-value"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--symbol",
+            "param": "symbol"
+          },
+          {
+            "flag": "--value",
+            "param": "value"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_symbol_value"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol",
+        "value"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "symbol",
+          "value"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.set_symbol_value",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Remove a parent-sheet hierarchical port binding from a sheet instance.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "unbind-sheet-instance-port"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--instance",
+            "param": "instance"
+          },
+          {
+            "flag": "--port",
+            "param": "port"
+          }
+        ],
+        "kind": "cli",
+        "method": "unbind_sheet_instance_port"
+      },
+      "dispatch_args": [
+        "path",
+        "instance",
+        "port"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "instance": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "port": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "instance",
+          "port"
+        ],
+        "type": "object"
+      },
+      "name": "datum.schematic.unbind_sheet_instance_port",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
       "description": "Close the current in-memory project session.",
       "dispatch": {
         "kind": "daemon",
