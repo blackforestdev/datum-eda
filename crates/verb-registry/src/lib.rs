@@ -19,9 +19,11 @@ mod verbs_journal;
 mod verbs_library;
 mod verbs_manufacturing;
 mod verbs_output_job;
+mod verbs_pool;
 mod verbs_project;
 mod verbs_proposal;
 mod verbs_query;
+mod verbs_replacement;
 mod verbs_session;
 
 pub use catalog::{CATALOG_VERSION, catalog_json, catalog_string};
@@ -193,7 +195,7 @@ impl VerbSpec {
 /// The full verb table, assembled from per-family modules, sorted by id.
 pub fn verbs() -> &'static [VerbSpec] {
     static ALL: std::sync::LazyLock<Vec<VerbSpec>> = std::sync::LazyLock::new(|| {
-        let families: [&[VerbSpec]; 12] = [
+        let families: [&[VerbSpec]; 14] = [
             verbs_artifact::VERBS,
             verbs_check::VERBS,
             verbs_component_instance::VERBS,
@@ -202,9 +204,11 @@ pub fn verbs() -> &'static [VerbSpec] {
             verbs_library::VERBS,
             verbs_manufacturing::VERBS,
             verbs_output_job::VERBS,
+            verbs_pool::VERBS,
             verbs_project::VERBS,
             verbs_proposal::VERBS,
             verbs_query::VERBS,
+            verbs_replacement::VERBS,
             verbs_session::VERBS,
         ];
         let mut verbs = Vec::with_capacity(families.iter().map(|family| family.len()).sum());

@@ -201,12 +201,26 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         "get_import_map",
         "import-map"
     ),
+    daemon_query!(
+        "datum.query.imported_hierarchy",
+        "Return the imported schematic hierarchy for the open project.",
+        "get_hierarchy",
+        &[],
+        EMPTY_QUERY_SCHEMA
+    ),
     empty_query!("datum.query.labels", "get_labels"),
     native_query!(
         "datum.query.manufacturing_plans",
         "Return resolver-discovered native ManufacturingPlan entries for one project.",
         "get_manufacturing_plans",
         "manufacturing-plans"
+    ),
+    daemon_query!(
+        "datum.query.net_info",
+        "Return the current imported board net list and routing metrics.",
+        "get_net_info",
+        &[],
+        EMPTY_QUERY_SCHEMA
     ),
     empty_query!("datum.query.netlist", "get_netlist"),
     empty_query!("datum.query.noconnects", "get_noconnects"),
@@ -305,6 +319,13 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         SYMBOL_UUID_QUERY_SCHEMA
     ),
     empty_query!("datum.query.symbols", "get_symbols"),
+    daemon_query!(
+        "datum.query.unrouted",
+        "Return unrouted airwires for the current imported board.",
+        "get_unrouted",
+        &[],
+        EMPTY_QUERY_SCHEMA
+    ),
     native_query!(
         "datum.query.variants",
         "Read authored variant overlays plus derived population/applicability for a native project.",

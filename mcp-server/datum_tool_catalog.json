@@ -3267,6 +3267,87 @@
       }
     },
     {
+      "description": "Return package/body metadata plus legacy package land-pattern compatibility fields for a UUID.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_package"
+      },
+      "dispatch_args": [
+        "uuid"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "uuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "uuid"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pool.get_package",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Return detailed pool part metadata for a UUID.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_part"
+      },
+      "dispatch_args": [
+        "uuid"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "uuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "uuid"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pool.get_part",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Search imported pool parts by keyword.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "search_pool"
+      },
+      "dispatch_args": [
+        "query"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "query": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object"
+      },
+      "name": "datum.pool.search",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
       "description": "Create one first-class native pool PinPadMap through the journaled project commit path.",
       "dispatch": {
         "argv": [
@@ -5842,6 +5923,24 @@
       "write_surface": null
     },
     {
+      "description": "Return the imported schematic hierarchy for the open project.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_hierarchy"
+      },
+      "dispatch_args": [],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "datum.query.imported_hierarchy",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
       "description": "Canonical Datum read-only query alias over the current open session.",
       "dispatch": {
         "kind": "daemon",
@@ -5892,6 +5991,24 @@
         "type": "object"
       },
       "name": "datum.query.manufacturing_plans",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Return the current imported board net list and routing metrics.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_net_info"
+      },
+      "dispatch_args": [],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "datum.query.net_info",
       "replacements": [],
       "retirement": null,
       "status": "public",
@@ -6575,6 +6692,24 @@
       "write_surface": null
     },
     {
+      "description": "Return unrouted airwires for the current imported board.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_unrouted"
+      },
+      "dispatch_args": [],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "datum.query.unrouted",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
       "description": "Read authored variant overlays plus derived population/applicability for a native project.",
       "dispatch": {
         "argv": [
@@ -6645,6 +6780,209 @@
         "type": "object"
       },
       "name": "datum.query.zone_fills",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Exclude or override items in a scoped replacement preview without hand-editing raw JSON.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "edit_scoped_component_replacement_plan"
+      },
+      "dispatch_args": [
+        "plan",
+        "exclude_component_uuids",
+        "overrides"
+      ],
+      "dispatch_defaults": {
+        "exclude_component_uuids": [],
+        "overrides": []
+      },
+      "inputSchema": {
+        "properties": {
+          "exclude_component_uuids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "overrides": {
+            "items": {
+              "properties": {
+                "component_uuid": {
+                  "type": "string"
+                },
+                "target_package_uuid": {
+                  "type": "string"
+                },
+                "target_part_uuid": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "component_uuid",
+                "target_package_uuid",
+                "target_part_uuid"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "plan": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "plan"
+        ],
+        "type": "object"
+      },
+      "name": "datum.replacement.edit_scoped_plan",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Return a unified replacement-planning report for a board component UUID.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_component_replacement_plan"
+      },
+      "dispatch_args": [
+        "uuid"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "uuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "uuid"
+        ],
+        "type": "object"
+      },
+      "name": "datum.replacement.get_plan",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Preview the exact replacements a scoped compatibility policy would choose before mutation.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_scoped_component_replacement_plan"
+      },
+      "dispatch_args": [
+        "scope",
+        "policy"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "policy": {
+            "enum": [
+              "best_compatible_package",
+              "best_compatible_part"
+            ],
+            "type": "string"
+          },
+          "scope": {
+            "properties": {
+              "current_package_uuid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "current_part_uuid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reference_prefix": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "value_equals": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "scope",
+          "policy"
+        ],
+        "type": "object"
+      },
+      "name": "datum.replacement.get_scoped_plan",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Return compatible target-package candidates for a board component UUID.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_package_change_candidates"
+      },
+      "dispatch_args": [
+        "uuid"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "uuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "uuid"
+        ],
+        "type": "object"
+      },
+      "name": "datum.replacement.package_candidates",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Return compatible target-part candidates for a board component UUID.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_part_change_candidates"
+      },
+      "dispatch_args": [
+        "uuid"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "uuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "uuid"
+        ],
+        "type": "object"
+      },
+      "name": "datum.replacement.part_candidates",
       "replacements": [],
       "retirement": null,
       "status": "public",

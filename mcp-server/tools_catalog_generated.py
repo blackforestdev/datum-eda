@@ -32,8 +32,10 @@ MIGRATED_PREFIXES: frozenset[str] = frozenset({
     "datum.journal",
     "datum.manufacturing",
     "datum.output_job",
+    "datum.pool",
     "datum.project",
     "datum.query",
+    "datum.replacement",
     "datum.session",
 })
 

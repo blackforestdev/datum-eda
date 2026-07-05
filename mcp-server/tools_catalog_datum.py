@@ -347,8 +347,10 @@ _GENERATED_TOOL_SPECS = [
         "datum.journal",
         "datum.manufacturing",
         "datum.output_job",
+        "datum.pool",
         "datum.project",
         "datum.query",
+        "datum.replacement",
         "datum.session",
     )
     for spec in generated_specs_for_prefix(prefix)
