@@ -40,11 +40,10 @@ pub(crate) use self::mechanical::{
     export_native_project_gerber_mechanical_layer, validate_native_project_gerber_mechanical_layer,
 };
 pub(crate) use self::plan::{
-    compare_native_project_gerber_export_plan, compare_native_project_gerber_set,
     export_native_project_gerber_set, export_native_project_gerber_set_from_plan,
     export_native_project_gerber_set_without_output_run,
     export_native_project_gerber_set_without_output_run_for_output_job, panelize_rs274x_gerber,
-    plan_native_project_gerber_export, validate_native_project_gerber_set,
+    plan_native_project_gerber_export,
 };
 pub(crate) use self::semantics::{
     DEFAULT_GERBER_OUTLINE_APERTURE_NM, ParsedGerber, ParsedGerberAperture, ParsedGerberGeometry,

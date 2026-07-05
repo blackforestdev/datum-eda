@@ -1,3 +1,4 @@
+use crate::*;
 use std::collections::BTreeMap;
 use std::path::Path;
 
@@ -73,4 +74,35 @@ fn merge_default_top_stackup(project: &LoadedNativeProject) -> Result<Vec<Stacku
     }
 
     Ok(merged.into_values().collect())
+}
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl ProjectSetBoardStackupArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, layers } = self;
+        let stackup_layers = parse_native_stackup_layers(&layers)?;
+        let report = set_native_project_board_stackup(&path, stackup_layers)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_stackup_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectAddDefaultTopStackupArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path } = self;
+        let report = add_native_project_default_top_stackup(&path)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_stackup_mutation_text,
+        );
+        Ok((output, 0))
+    }
 }

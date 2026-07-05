@@ -35,8 +35,8 @@ use crate::NativeProjectRouteStrategyDeltaProfileView;
 use crate::NativeProjectRouteStrategyDeltaView;
 use crate::NativeProjectRouteStrategyReportView;
 use crate::NativeProjectSelectedRouteProposalExportView;
-use crate::cli_args::NativeProjectRouteStrategyBatchGatePolicyArg;
-use crate::cli_args::NativeRoutePathCandidateAuthoredCopperGraphPolicy;
+use crate::args::NativeProjectRouteStrategyBatchGatePolicyArg;
+use crate::args::NativeRoutePathCandidateAuthoredCopperGraphPolicy;
 use crate::*;
 use eda_engine::api::native_write::{WriteProvenance, commit_prepared};
 use eda_engine::board::RoutePathCandidateAuthoredCopperGraphPolicy as EngineAuthoredCopperGraphPolicy;
@@ -2800,4 +2800,394 @@ fn orthogonal_graph_route_proposal_artifact_inspection_segment_evidence(
             )
             .collect(),
     )
+}
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl ProjectReviewRouteProposalArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            profile,
+            artifact,
+        } = self;
+        let report = review_native_project_route_proposal(
+            path.as_deref(),
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            profile,
+            artifact.as_deref(),
+        )?;
+        let output = render_report(format, &report, render_native_route_proposal_review_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectRouteStrategyReportArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            objective,
+        } = self;
+        let report = report_native_project_route_strategy(
+            &path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            objective,
+        )?;
+        let output = render_report(format, &report, render_native_route_strategy_report_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectRouteStrategyCompareArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+        } = self;
+        let report = compare_native_project_route_strategy(
+            &path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+        )?;
+        let output = render_report(format, &report, render_native_route_strategy_compare_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectRouteStrategyDeltaArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+        } = self;
+        let report = report_native_project_route_strategy_delta(
+            &path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+        )?;
+        let output = render_report(format, &report, render_native_route_strategy_delta_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectWriteRouteStrategyCuratedFixtureSuiteArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { out_dir, manifest } = self;
+        let report = write_route_strategy_curated_fixture_suite(&out_dir, manifest.as_deref())?;
+        let output = match format {
+            OutputFormat::Text => render_native_route_strategy_curated_fixture_suite_text(&report),
+            OutputFormat::Json => render_output(format, &report),
+        };
+        Ok((output, 0))
+    }
+}
+
+impl ProjectCaptureRouteStrategyCuratedBaselineArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            out_dir,
+            manifest,
+            result,
+        } = self;
+        let report = capture_route_strategy_curated_baseline(
+            &out_dir,
+            manifest.as_deref(),
+            result.as_deref(),
+        )?;
+        let output = match format {
+            OutputFormat::Text => {
+                render_native_route_strategy_curated_baseline_capture_text(&report)
+            }
+            OutputFormat::Json => render_output(format, &report),
+        };
+        Ok((output, 0))
+    }
+}
+
+impl ProjectRouteStrategyBatchEvaluateArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { requests } = self;
+        let report = evaluate_native_project_route_strategy_batch(&requests)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_route_strategy_batch_evaluate_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectInspectRouteStrategyBatchResultArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path } = self;
+        let report = inspect_route_strategy_batch_result(&path)?;
+        let output = match format {
+            OutputFormat::Text => {
+                render_native_route_strategy_batch_result_inspection_text(&report)
+            }
+            OutputFormat::Json => render_output(format, &report),
+        };
+        Ok((output, 0))
+    }
+}
+
+impl ProjectValidateRouteStrategyBatchResultArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path } = self;
+        let report = validate_route_strategy_batch_result(&path)?;
+        let output = match format {
+            OutputFormat::Text => {
+                render_native_route_strategy_batch_result_validation_text(&report)
+            }
+            OutputFormat::Json => render_output(format, &report),
+        };
+        Ok((output, 0))
+    }
+}
+
+impl ProjectCompareRouteStrategyBatchResultArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { before, after } = self;
+        let report = compare_route_strategy_batch_result(&before, &after)?;
+        let output = match format {
+            OutputFormat::Text => {
+                render_native_route_strategy_batch_result_comparison_text(&report)
+            }
+            OutputFormat::Json => render_output(format, &report),
+        };
+        Ok((output, 0))
+    }
+}
+
+impl ProjectGateRouteStrategyBatchResultArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            before,
+            after,
+            policy,
+        } = self;
+        let report = gate_route_strategy_batch_result(&before, &after, policy)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_route_strategy_batch_result_gate_text,
+        );
+        let exit_code = if report.passed { 0 } else { 2 };
+        Ok((output, exit_code))
+    }
+}
+
+impl ProjectSummarizeRouteStrategyBatchResultsArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            dir,
+            artifacts,
+            baseline,
+            policy,
+        } = self;
+        let report = summarize_route_strategy_batch_results(
+            dir.as_deref(),
+            &artifacts,
+            baseline.as_deref(),
+            policy,
+        )?;
+        let output = match format {
+            OutputFormat::Text => render_native_route_strategy_batch_results_index_text(&report),
+            OutputFormat::Json => render_output(format, &report),
+        };
+        Ok((output, 0))
+    }
+}
+
+impl ProjectRouteProposalArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            profile,
+        } = self;
+        let report = select_native_project_route_proposal(
+            &path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            profile,
+        )?;
+        let output = render_report(format, &report, render_native_route_proposal_selection_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectRouteProposalExplainArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            profile,
+        } = self;
+        let report = explain_native_project_route_proposal(
+            &path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            profile,
+        )?;
+        let output = render_report(format, &report, render_native_route_proposal_explain_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectExportRouteProposalArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            profile,
+            out,
+        } = self;
+        let report = export_selected_native_project_route_proposal(
+            &path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            profile,
+            &out,
+        )?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_selected_route_proposal_export_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectExportRoutePathProposalArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            candidate,
+            policy,
+            out,
+        } = self;
+        let report = export_native_project_route_path_proposal(
+            &path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            candidate,
+            policy,
+            &out,
+        )?;
+        let output = render_report(format, &report, render_native_route_proposal_export_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectInspectRouteProposalArtifactArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path } = self;
+        let report = inspect_route_proposal_artifact(&path)?;
+        let output = match format {
+            OutputFormat::Text => render_native_route_proposal_artifact_inspection_text(&report),
+            OutputFormat::Json => render_output(format, &report),
+        };
+        Ok((output, 0))
+    }
+}
+
+impl ProjectRevalidateRouteProposalArtifactArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, artifact } = self;
+        let report = revalidate_route_proposal_artifact(&path, &artifact)?;
+        let output = match format {
+            OutputFormat::Text => render_native_route_proposal_artifact_revalidation_text(&report),
+            OutputFormat::Json => render_output(format, &report),
+        };
+        Ok((output, 0))
+    }
+}
+
+impl ProjectApplyRouteProposalArtifactArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, artifact } = self;
+        let report = apply_route_proposal_artifact(&path, &artifact)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_route_proposal_artifact_apply_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectRouteApplySelectedArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            profile,
+        } = self;
+        let report = apply_selected_native_project_route(
+            &path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            profile,
+        )?;
+        let output = render_report(format, &report, render_native_route_apply_selected_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectRouteApplyArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            candidate,
+            policy,
+        } = self;
+        let report = apply_native_project_route(
+            &path,
+            net_uuid,
+            from_anchor_pad_uuid,
+            to_anchor_pad_uuid,
+            candidate,
+            policy,
+        )?;
+        let output = render_report(format, &report, render_native_route_apply_text);
+        Ok((output, 0))
+    }
 }

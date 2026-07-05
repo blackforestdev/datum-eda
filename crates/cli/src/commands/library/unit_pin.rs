@@ -1,3 +1,4 @@
+use crate::*;
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
@@ -91,5 +92,42 @@ fn validate_pin_electrical_type(direction: String) -> Result<String> {
         other => bail!(
             "unsupported pin direction/electrical type {other}; expected Input, Output, Bidirectional, Passive, PowerIn, PowerOut, OpenCollector, OpenEmitter, TriState, or NoConnect"
         ),
+    }
+}
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl ProjectSetPoolSymbolPinAnchorArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            symbol_uuid,
+            pin_uuid,
+            x_nm,
+            y_nm,
+            orientation,
+            length_nm,
+            decoration,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_symbol_pin_anchor(
+                    &path,
+                    &pool,
+                    symbol_uuid,
+                    pin_uuid,
+                    x_nm,
+                    y_nm,
+                    orientation,
+                    length_nm,
+                    decoration,
+                )?,
+            ),
+            0,
+        ))
     }
 }

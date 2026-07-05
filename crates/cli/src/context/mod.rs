@@ -1,9 +1,7 @@
 // context/ — the terminal/session context family (formerly command_context.rs
-// + command_context_*.rs, sealed inside the exec layer's private subtree).
-// Wave 2 (context lane) complete: the family lives here; main.rs routes the
-// entry points to crate scope via `use context::*;`, and the exec dispatch
-// reaches them through the `command_context` compat alias in
-// command_exec_surface.rs until Wave 3 rewrites the exec layer.
+// + command_context_*.rs). The family lives here; main.rs routes the entry
+// points to crate scope via `use context::*;`, and the ContextCommands arms
+// in commands/dispatch.rs call them directly.
 use crate::*;
 
 mod active;

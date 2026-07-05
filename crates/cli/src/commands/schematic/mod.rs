@@ -39,24 +39,12 @@ mod text_drawing_mutations;
 mod views_mutations;
 mod views_symbol;
 
-pub(crate) use self::connectivity_mutations::{
-    create_native_project_bus, delete_native_project_bus, delete_native_project_bus_entry,
-    delete_native_project_junction, delete_native_project_label, delete_native_project_noconnect,
-    delete_native_project_port, delete_native_project_wire, draw_native_project_wire,
-    edit_native_project_bus_members, edit_native_project_port, place_native_project_bus_entry,
-    place_native_project_junction, place_native_project_label, place_native_project_noconnect,
-    place_native_project_port, rename_native_project_label,
-};
 pub(crate) use self::connectivity_queries::{
     query_native_project_bus_entries, query_native_project_buses, query_native_project_junctions,
     query_native_project_labels, query_native_project_noconnects, query_native_project_ports,
     query_native_project_wires,
 };
 pub(crate) use self::helpers::*;
-pub(crate) use self::proposals::{
-    propose_draw_native_project_wire, propose_place_native_project_label,
-    propose_place_native_project_symbol,
-};
 pub(crate) use self::queries::query_native_project_check_with_inputs;
 pub(crate) use self::queries::{
     query_native_project_check, query_native_project_diagnostics, query_native_project_drawings,
@@ -71,20 +59,6 @@ pub(crate) use self::sheet_mutations::{
     delete_native_project_sheet, delete_native_project_sheet_instance,
     move_native_project_sheet_instance, rename_native_project_sheet,
     unbind_native_project_sheet_instance_port,
-};
-pub(crate) use self::symbol_mutations::{
-    add_native_project_symbol_field, clear_native_project_symbol_entity,
-    clear_native_project_symbol_gate, clear_native_project_symbol_lib_id,
-    clear_native_project_symbol_part, clear_native_project_symbol_pin_override,
-    clear_native_project_symbol_unit, delete_native_project_symbol,
-    delete_native_project_symbol_field, edit_native_project_symbol_field,
-    mirror_native_project_symbol, move_native_project_symbol, place_native_project_symbol,
-    rotate_native_project_symbol, set_native_project_symbol_display_mode,
-    set_native_project_symbol_entity, set_native_project_symbol_gate,
-    set_native_project_symbol_hidden_power_behavior, set_native_project_symbol_lib_id,
-    set_native_project_symbol_part, set_native_project_symbol_pin_override,
-    set_native_project_symbol_reference, set_native_project_symbol_unit,
-    set_native_project_symbol_value,
 };
 pub(crate) use self::text_drawing_mutations::{
     delete_native_project_drawing, delete_native_project_text, edit_native_project_drawing_arc,

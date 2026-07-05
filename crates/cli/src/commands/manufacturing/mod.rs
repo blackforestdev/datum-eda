@@ -10,10 +10,8 @@ mod plans;
 mod views;
 
 pub(crate) use self::manufacturing::{
-    compare_native_project_manufacturing_set, export_native_project_manufacturing_set,
+    export_native_project_manufacturing_set,
     export_native_project_manufacturing_set_without_output_run,
-    inspect_native_project_manufacturing_set, manifest_native_project_manufacturing_set,
-    report_native_project_manufacturing, validate_native_project_manufacturing_set,
 };
 pub(crate) use self::plan_proposals::{
     propose_create_native_project_manufacturing_plan,

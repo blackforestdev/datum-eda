@@ -2,7 +2,9 @@ use super::*;
 
 mod modify_ops;
 mod parse_args;
+mod views;
 
+pub(crate) use self::views::*;
 pub(crate) use modify_ops::modify_board;
 pub(crate) use parse_args::{
     parse_apply_replacement_plan_arg, parse_apply_replacement_policy_arg,

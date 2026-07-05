@@ -1,3 +1,4 @@
+use crate::*;
 use std::{collections::BTreeSet, path::Path};
 
 use anyhow::{Context, Result};
@@ -696,5 +697,177 @@ fn manufacturing_set_output_job_run(
         exit_code: Some(0),
         provenance: terminal_origin_provenance_from(&env),
         log,
+    }
+}
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl ReportManufacturingArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, prefix } = self;
+        let report = report_native_project_manufacturing(&path, prefix.as_deref())?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_manufacturing_report_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ExportManufacturingSetArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            output_dir,
+            prefix,
+            output_job,
+            job,
+            include,
+            variant,
+        } = self;
+        let report = export_native_project_manufacturing_set(
+            &path,
+            &output_dir,
+            prefix.as_deref(),
+            variant,
+            include.as_deref(),
+            output_job,
+            job.as_deref(),
+        )?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_manufacturing_export_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ValidateManufacturingSetArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            output_dir,
+            prefix,
+            output_job,
+            job,
+            include,
+            variant,
+        } = self;
+        let report = validate_native_project_manufacturing_set(
+            &path,
+            &output_dir,
+            prefix.as_deref(),
+            variant,
+            include.as_deref(),
+            output_job,
+            job.as_deref(),
+        )?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_manufacturing_validation_text,
+        );
+        let exit_code =
+            if report.missing_count == 0 && report.mismatched_count == 0 && report.extra_count == 0
+            {
+                0
+            } else {
+                1
+            };
+        Ok((output, exit_code))
+    }
+}
+
+impl CompareManufacturingSetArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            output_dir,
+            prefix,
+            output_job,
+            job,
+            include,
+            variant,
+        } = self;
+        let report = compare_native_project_manufacturing_set(
+            &path,
+            &output_dir,
+            prefix.as_deref(),
+            variant,
+            include.as_deref(),
+            output_job,
+            job.as_deref(),
+        )?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_manufacturing_comparison_text,
+        );
+        let exit_code =
+            if report.missing_count == 0 && report.mismatched_count == 0 && report.extra_count == 0
+            {
+                0
+            } else {
+                1
+            };
+        Ok((output, exit_code))
+    }
+}
+
+impl ManifestManufacturingSetArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            output_dir,
+            prefix,
+            output_job,
+            job,
+            include,
+        } = self;
+        let report = manifest_native_project_manufacturing_set(
+            &path,
+            &output_dir,
+            prefix.as_deref(),
+            include.as_deref(),
+            output_job,
+            job.as_deref(),
+        )?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_manufacturing_manifest_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl InspectManufacturingSetArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            output_dir,
+            prefix,
+            output_job,
+            job,
+            include,
+        } = self;
+        let report = inspect_native_project_manufacturing_set(
+            &path,
+            &output_dir,
+            prefix.as_deref(),
+            include.as_deref(),
+            output_job,
+            job.as_deref(),
+        )?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_manufacturing_inspection_text,
+        );
+        Ok((output, 0))
     }
 }

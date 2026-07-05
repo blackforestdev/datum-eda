@@ -1,3 +1,4 @@
+use crate::*;
 use std::path::Path;
 
 use anyhow::{Context, Result};
@@ -256,4 +257,101 @@ fn validate_output_job_targets(
         }
     }
     Ok(())
+}
+
+// Phase 5: exec-layer dissolution — proposal-variant run() impls (the
+// former command_exec_proposal.rs arms, now inherent methods on the clap
+// args structs).
+
+impl ProposalCreateOutputJobArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            prefix,
+            include,
+            output_dir,
+            name,
+            manufacturing_plan,
+            variant,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_create_native_project_output_job(
+                    &path,
+                    &prefix,
+                    output_dir.as_deref(),
+                    &include,
+                    name.as_deref(),
+                    manufacturing_plan,
+                    variant,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalUpdateOutputJobArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            output_job,
+            name,
+            output_dir,
+            manufacturing_plan,
+            variant,
+            clear_manufacturing_plan,
+            clear_variant,
+            clear_output_dir,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_update_native_project_output_job(
+                    &path,
+                    output_job,
+                    name.as_deref(),
+                    output_dir.as_deref(),
+                    manufacturing_plan,
+                    variant,
+                    clear_manufacturing_plan,
+                    clear_variant,
+                    clear_output_dir,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalDeleteOutputJobArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            output_job,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_delete_native_project_output_job(
+                    &path,
+                    output_job,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
 }

@@ -11,14 +11,13 @@ use super::*;
 
 mod eagle_import_map;
 mod import_map;
+mod import_report;
 mod imports;
 mod kicad_footprint;
 mod schematic;
 mod schematic_identities;
 
 pub(crate) use self::import_map::query_native_project_import_map;
-pub(crate) use self::imports::{
-    import_native_project_eagle_library, import_native_project_kicad_board,
-};
+pub(crate) use self::import_report::*;
 pub(crate) use self::kicad_footprint::import_native_project_kicad_footprint;
 pub(crate) use self::schematic::import_native_project_kicad_schematic;

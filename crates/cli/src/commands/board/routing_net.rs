@@ -1,3 +1,4 @@
+use crate::*;
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
@@ -763,4 +764,159 @@ pub(crate) fn delete_native_project_board_net(
         &project,
         net,
     ))
+}
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl ProjectPlaceBoardNetArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            name,
+            class_uuid,
+            impedance_target_ohms,
+            impedance_tolerance_pct,
+            controlled_dielectric_layer,
+        } = self;
+        let report = place_native_project_board_net(
+            &path,
+            name,
+            class_uuid,
+            impedance_target_ohms,
+            impedance_tolerance_pct,
+            controlled_dielectric_layer,
+        )?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_net_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectEditBoardNetArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            net_uuid,
+            name,
+            class_uuid,
+            impedance_target_ohms,
+            impedance_tolerance_pct,
+            controlled_dielectric_layer,
+            clear_controlled_impedance,
+        } = self;
+        let report = edit_native_project_board_net(
+            &path,
+            net_uuid,
+            name,
+            class_uuid,
+            impedance_target_ohms,
+            impedance_tolerance_pct,
+            controlled_dielectric_layer,
+            clear_controlled_impedance,
+        )?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_net_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectDeleteBoardNetArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, net_uuid } = self;
+        let report = delete_native_project_board_net(&path, net_uuid)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_net_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectPlaceBoardNetClassArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            name,
+            clearance_nm,
+            track_width_nm,
+            via_drill_nm,
+            via_diameter_nm,
+            diffpair_width_nm,
+            diffpair_gap_nm,
+        } = self;
+        let report = place_native_project_board_net_class(
+            &path,
+            name,
+            clearance_nm,
+            track_width_nm,
+            via_drill_nm,
+            via_diameter_nm,
+            diffpair_width_nm,
+            diffpair_gap_nm,
+        )?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_net_class_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectEditBoardNetClassArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            net_class_uuid,
+            name,
+            clearance_nm,
+            track_width_nm,
+            via_drill_nm,
+            via_diameter_nm,
+            diffpair_width_nm,
+            diffpair_gap_nm,
+        } = self;
+        let report = edit_native_project_board_net_class(
+            &path,
+            net_class_uuid,
+            name,
+            clearance_nm,
+            track_width_nm,
+            via_drill_nm,
+            via_diameter_nm,
+            diffpair_width_nm,
+            diffpair_gap_nm,
+        )?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_net_class_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectDeleteBoardNetClassArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            net_class_uuid,
+        } = self;
+        let report = delete_native_project_board_net_class(&path, net_class_uuid)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_net_class_mutation_text,
+        );
+        Ok((output, 0))
+    }
 }

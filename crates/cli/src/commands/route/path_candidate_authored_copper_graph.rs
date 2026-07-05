@@ -7,7 +7,7 @@ use eda_engine::board::{
 };
 use uuid::Uuid;
 
-use crate::cli_args::NativeRoutePathCandidateAuthoredCopperGraphPolicy;
+use crate::args::NativeRoutePathCandidateAuthoredCopperGraphPolicy;
 
 use crate::{build_native_project_board, load_native_project_with_resolved_board};
 

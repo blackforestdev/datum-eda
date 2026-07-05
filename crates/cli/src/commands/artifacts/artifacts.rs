@@ -1,3 +1,4 @@
+use crate::*;
 use std::collections::BTreeMap;
 use std::path::{Component, Path, PathBuf};
 
@@ -728,4 +729,153 @@ fn artifact_file_path_is_safe(path: &Path) -> bool {
         && path
             .components()
             .all(|component| matches!(component, Component::Normal(_)))
+}
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl ArtifactGenerateArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            output_dir,
+            include,
+            prefix,
+            output_job,
+        } = self;
+        if let Some(output_job) = output_job {
+            let report = run_native_project_output_job(&path, output_job, output_dir.as_deref())?;
+            let exit_code = report.exit_code;
+            return Ok((render_output(format, &report), exit_code));
+        }
+        let output_dir = output_dir.as_deref().ok_or_else(|| {
+            anyhow::anyhow!(
+                "artifact generate requires --output-dir unless --output-job is provided"
+            )
+        })?;
+        let include = include.as_deref().ok_or_else(|| {
+            anyhow::anyhow!("artifact generate requires --include unless --output-job is provided")
+        })?;
+        Ok((
+            render_output(
+                format,
+                &generate_native_project_artifacts(
+                    &path,
+                    output_dir,
+                    include,
+                    prefix.as_deref(),
+                    None,
+                    None,
+                    true,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ArtifactStartOutputJobRunArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, output_job } = self;
+        Ok((
+            render_output(
+                format,
+                &start_native_project_output_job_run(&path, output_job)?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ArtifactCancelOutputJobRunArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, run } = self;
+        Ok((
+            render_output(format, &cancel_native_project_output_job_run(&path, run)?),
+            0,
+        ))
+    }
+}
+
+impl ArtifactListArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path } = self;
+        Ok((
+            render_output(format, &query_native_project_artifacts(&path)?),
+            0,
+        ))
+    }
+}
+
+impl ArtifactShowArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, artifact } = self;
+        Ok((
+            render_output(format, &query_native_project_artifact(&path, artifact)?),
+            0,
+        ))
+    }
+}
+
+impl ArtifactFilesArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, artifact } = self;
+        Ok((
+            render_output(
+                format,
+                &query_native_project_artifact_files(&path, artifact)?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ArtifactPreviewArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            artifact,
+            artifact_dir,
+            file,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &preview_native_project_artifact_file(
+                    &path,
+                    artifact,
+                    artifact_dir.as_deref(),
+                    &file,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ArtifactCompareArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            before,
+            after,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &compare_native_project_artifacts(&path, before, after)?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ArtifactValidateArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, artifact } = self;
+        let report = validate_native_project_artifact(&path, artifact)?;
+        let exit_code = if report.valid { 0 } else { 1 };
+        Ok((render_output(format, &report), exit_code))
+    }
 }

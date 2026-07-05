@@ -1,3 +1,4 @@
+use crate::*;
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
@@ -347,4 +348,56 @@ fn parse_uuid_value(value: &serde_json::Value, label: &str) -> Result<Uuid> {
         .as_str()
         .ok_or_else(|| anyhow::anyhow!("{label} must be a UUID string"))?;
     Uuid::parse_str(raw).with_context(|| format!("{label} is not a valid UUID: {raw}"))
+}
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl ProjectCreatePoolPinPadMapArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            map_uuid,
+            part_uuid,
+            footprint_uuid,
+            entries,
+            set_default,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &create_native_project_pool_pin_pad_map(
+                    &path,
+                    &pool,
+                    map_uuid,
+                    part_uuid,
+                    footprint_uuid,
+                    entries,
+                    set_default,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectSetPoolPinPadMapArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            map_uuid,
+            mode,
+            entries,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_pin_pad_map(&path, &pool, map_uuid, mode, entries)?,
+            ),
+            0,
+        ))
+    }
 }

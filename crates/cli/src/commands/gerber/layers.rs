@@ -3,10 +3,8 @@ use eda_engine::substrate::DesignModel;
 use std::collections::BTreeSet;
 #[path = "copper_projection.rs"]
 mod command_project_gerber_copper_projection;
-#[path = "../board/zone_fill_projection.rs"]
-mod command_project_zone_fill_projection;
 use command_project_gerber_copper_projection::render_native_project_gerber_copper_projection;
-use command_project_zone_fill_projection::zone_fill_copper_projection_zones;
+use eda_engine::substrate::zone_fill_copper_projection_zones;
 struct NativeCopperLayerContext {
     pads: Vec<PlacedPad>,
     tracks: Vec<Track>,

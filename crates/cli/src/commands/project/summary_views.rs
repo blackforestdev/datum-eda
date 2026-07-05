@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use super::NativeProjectInspectPoolRefView;
+use crate::NativeProjectInspectPoolRefView;
 
 #[derive(Debug, Clone, Serialize)]
 pub(crate) struct NativeProjectSummaryView {

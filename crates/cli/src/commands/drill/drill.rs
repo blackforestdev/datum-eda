@@ -1,3 +1,4 @@
+use crate::*;
 use std::collections::BTreeMap;
 use std::path::Path;
 
@@ -617,4 +618,111 @@ fn render_excellon_for_drill_hits(
         })
         .collect::<Vec<_>>();
     render_excellon_drill(&vias)
+}
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl ExportDrillArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, out } = self;
+        let report = export_native_project_drill(&path, &out)?;
+        let output = render_report(format, &report, render_native_project_drill_export_text);
+        Ok((output, 0))
+    }
+}
+
+impl ValidateDrillArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, drill } = self;
+        let report = validate_native_project_drill(&path, &drill)?;
+        let output = render_report(format, &report, render_native_project_drill_validation_text);
+        let exit_code = if report.matches_expected { 0 } else { 1 };
+        Ok((output, exit_code))
+    }
+}
+
+impl CompareDrillArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, drill } = self;
+        let report = compare_native_project_drill(&path, &drill)?;
+        let output = render_report(format, &report, render_native_project_drill_comparison_text);
+        Ok((output, 0))
+    }
+}
+
+impl ExportExcellonDrillArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, out } = self;
+        let report = export_native_project_excellon_drill(&path, &out)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_excellon_drill_export_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl InspectDrillArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path } = self;
+        let report = inspect_native_project_drill(&path)?;
+        let output = render_report(format, &report, render_native_project_drill_inspection_text);
+        Ok((output, 0))
+    }
+}
+
+impl CompareExcellonDrillArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, drill } = self;
+        let report = compare_native_project_excellon_drill(&path, &drill)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_excellon_drill_comparison_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ValidateExcellonDrillArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, drill } = self;
+        let report = validate_native_project_excellon_drill(&path, &drill)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_excellon_drill_validation_text,
+        );
+        let exit_code = if report.matches_expected { 0 } else { 1 };
+        Ok((output, exit_code))
+    }
+}
+
+impl ReportDrillHoleClassesArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path } = self;
+        let report = report_native_project_drill_hole_classes(&path)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_drill_hole_class_report_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectInspectExcellonDrillArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path } = self;
+        let report = inspect_excellon_drill(&path)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_excellon_drill_inspection_text,
+        );
+        Ok((output, 0))
+    }
 }

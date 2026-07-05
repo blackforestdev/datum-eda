@@ -1,3 +1,4 @@
+use crate::*;
 use std::collections::BTreeMap;
 use std::path::Path;
 
@@ -71,4 +72,21 @@ fn gerber_inspection_entries(gerber: &ParsedGerber) -> Vec<NativeProjectGerberGe
             },
         )
         .collect()
+}
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl ProjectInspectGerberArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path } = self;
+        let report = inspect_gerber(&path)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_gerber_inspection_text,
+        );
+        Ok((output, 0))
+    }
 }

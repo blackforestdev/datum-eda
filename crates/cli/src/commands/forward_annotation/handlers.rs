@@ -400,3 +400,266 @@ pub(crate) fn render_native_forward_annotation_artifact_review_replace_text(
     ]
     .join("\n")
 }
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl ProjectApplyForwardAnnotationActionArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            action_id,
+            package_uuid,
+            part_uuid,
+            x_nm,
+            y_nm,
+            layer,
+        } = self;
+        let report = apply_native_project_forward_annotation_action(
+            &path,
+            &action_id,
+            package_uuid,
+            part_uuid,
+            x_nm,
+            y_nm,
+            layer,
+        )?;
+        let output = render_report(format, &report, render_native_forward_annotation_apply_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectApplyForwardAnnotationReviewedArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path } = self;
+        let report = apply_native_project_forward_annotation_reviewed(&path)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_forward_annotation_batch_apply_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectExportForwardAnnotationProposalArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, out } = self;
+        let report = export_native_project_forward_annotation_proposal(&path, &out)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_forward_annotation_export_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectExportForwardAnnotationProposalSelectionArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            action_ids,
+            out,
+        } = self;
+        let report =
+            export_native_project_forward_annotation_proposal_selection(&path, &action_ids, &out)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_forward_annotation_export_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectSelectForwardAnnotationProposalArtifactArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            artifact,
+            action_ids,
+            out,
+        } = self;
+        let report = select_forward_annotation_proposal_artifact(&artifact, &action_ids, &out)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_forward_annotation_export_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectInspectForwardAnnotationProposalArtifactArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path } = self;
+        let report = inspect_forward_annotation_proposal_artifact(&path)?;
+        let output = match format {
+            OutputFormat::Text => {
+                render_native_forward_annotation_artifact_inspection_text(&report)
+            }
+            OutputFormat::Json => render_output(format, &report),
+        };
+        Ok((output, 0))
+    }
+}
+
+impl ProjectValidateForwardAnnotationProposalArtifactArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path } = self;
+        let report = validate_forward_annotation_proposal_artifact(&path)?;
+        let exit_code = if report.matches_expected { 0 } else { 1 };
+        let output = match format {
+            OutputFormat::Text => {
+                render_native_forward_annotation_artifact_validation_text(&report)
+            }
+            OutputFormat::Json => render_output(format, &report),
+        };
+        Ok((output, exit_code))
+    }
+}
+
+impl ProjectCompareForwardAnnotationProposalArtifactArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, artifact } = self;
+        let report = compare_forward_annotation_proposal_artifact(&path, &artifact)?;
+        let output = match format {
+            OutputFormat::Text => {
+                render_native_forward_annotation_artifact_comparison_text(&report)
+            }
+            OutputFormat::Json => render_output(format, &report),
+        };
+        Ok((output, 0))
+    }
+}
+
+impl ProjectFilterForwardAnnotationProposalArtifactArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            artifact,
+            out,
+        } = self;
+        let report = filter_forward_annotation_proposal_artifact(&path, &artifact, &out)?;
+        let output = match format {
+            OutputFormat::Text => render_native_forward_annotation_artifact_filter_text(&report),
+            OutputFormat::Json => render_output(format, &report),
+        };
+        Ok((output, 0))
+    }
+}
+
+impl ProjectPlanForwardAnnotationProposalArtifactApplyArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, artifact } = self;
+        let report = plan_forward_annotation_proposal_artifact_apply(&path, &artifact)?;
+        let output = match format {
+            OutputFormat::Text => {
+                render_native_forward_annotation_artifact_apply_plan_text(&report)
+            }
+            OutputFormat::Json => render_output(format, &report),
+        };
+        Ok((output, 0))
+    }
+}
+
+impl ProjectApplyForwardAnnotationProposalArtifactArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, artifact } = self;
+        let report = apply_forward_annotation_proposal_artifact(&path, &artifact)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_forward_annotation_artifact_apply_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectImportForwardAnnotationArtifactReviewArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, artifact } = self;
+        let report = import_forward_annotation_artifact_review(&path, &artifact)?;
+        let output = match format {
+            OutputFormat::Text => {
+                render_native_forward_annotation_artifact_review_import_text(&report)
+            }
+            OutputFormat::Json => render_output(format, &report),
+        };
+        Ok((output, 0))
+    }
+}
+
+impl ProjectReplaceForwardAnnotationArtifactReviewArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, artifact } = self;
+        let report = replace_forward_annotation_artifact_review(&path, &artifact)?;
+        let output = match format {
+            OutputFormat::Text => {
+                render_native_forward_annotation_artifact_review_replace_text(&report)
+            }
+            OutputFormat::Json => render_output(format, &report),
+        };
+        Ok((output, 0))
+    }
+}
+
+impl ProjectDeferForwardAnnotationActionArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, action_id } = self;
+        let report =
+            record_native_project_forward_annotation_review(&path, &action_id, "deferred")?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_forward_annotation_review_report_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectRejectForwardAnnotationActionArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, action_id } = self;
+        let report =
+            record_native_project_forward_annotation_review(&path, &action_id, "rejected")?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_forward_annotation_review_report_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectClearForwardAnnotationActionReviewArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, action_id } = self;
+        let report = clear_native_project_forward_annotation_review(&path, &action_id)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_forward_annotation_review_report_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+// Phase 5 note (preserved pre-existing behavior, NOT new): at the time the
+// exec layer dissolved, `project forward-annotation-audit` and
+// `project export-forward-annotation-audit` routed into the forward-
+// annotation dispatcher, which had no arms for them and panicked via
+// `unreachable!`. Byte-identical conversion keeps that behavior; the audit
+// data itself is reachable via `project query ... forward-annotation-audit`.
+impl ProjectForwardAnnotationAuditArgs {
+    pub(crate) fn run(self, _format: &OutputFormat) -> Result<(String, i32)> {
+        unreachable!("non-forward-annotation command passed to dispatcher")
+    }
+}
+
+impl ProjectExportForwardAnnotationAuditArgs {
+    pub(crate) fn run(self, _format: &OutputFormat) -> Result<(String, i32)> {
+        unreachable!("non-forward-annotation command passed to dispatcher")
+    }
+}

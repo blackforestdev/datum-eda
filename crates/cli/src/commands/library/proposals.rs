@@ -1,3 +1,4 @@
+use crate::*;
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
@@ -462,4 +463,680 @@ pub(super) fn propose_create_pool_library_object_value(
         proposal,
         validation,
     })
+}
+
+// Phase 5: exec-layer dissolution — proposal-variant run() impls (the
+// former command_exec_proposal_library.rs forwarding fns, now inherent
+// methods on the clap args structs).
+
+impl ProposalCreatePoolLibraryObjectArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            kind,
+            object,
+            from_json,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_create_native_project_pool_library_object(
+                    &path,
+                    &pool,
+                    &kind,
+                    object,
+                    &from_json,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalCreatePoolUnitArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            unit,
+            name,
+            manufacturer,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_create_native_project_pool_unit(
+                    &path,
+                    &pool,
+                    unit,
+                    name,
+                    manufacturer,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalCreatePoolSymbolArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            symbol,
+            unit,
+            name,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_create_native_project_pool_symbol(
+                    &path,
+                    &pool,
+                    symbol,
+                    unit,
+                    name,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalCreatePoolEntityArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            entity,
+            gate,
+            unit,
+            symbol,
+            name,
+            prefix,
+            manufacturer,
+            gate_name,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_create_native_project_pool_entity(
+                    &path,
+                    &pool,
+                    entity,
+                    gate,
+                    unit,
+                    symbol,
+                    name,
+                    prefix,
+                    manufacturer,
+                    gate_name,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalCreatePoolPadstackArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            padstack,
+            name,
+            aperture,
+            diameter_nm,
+            width_nm,
+            height_nm,
+            drill_nm,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_create_native_project_pool_padstack(
+                    &path,
+                    &pool,
+                    padstack,
+                    name,
+                    aperture,
+                    diameter_nm,
+                    width_nm,
+                    height_nm,
+                    drill_nm,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalCreatePoolPackageArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            package,
+            name,
+            pad,
+            padstack,
+            pad_name,
+            x_nm,
+            y_nm,
+            layer,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_create_native_project_pool_package(
+                    &path,
+                    &pool,
+                    package,
+                    name,
+                    pad,
+                    padstack,
+                    pad_name,
+                    x_nm,
+                    y_nm,
+                    layer,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalCreatePoolFootprintArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            footprint,
+            package,
+            name,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_create_native_project_pool_footprint(
+                    &path,
+                    &pool,
+                    footprint,
+                    package,
+                    name,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalGenerateIpc7351bTwoTerminalChipArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            footprint,
+            package,
+            padstack,
+            pad_a,
+            pad_b,
+            name,
+            metric_code,
+            body_length_nm,
+            body_width_nm,
+            terminal_length_nm,
+            terminal_width_nm,
+            density,
+            mask_expansion_nm,
+            paste_reduction_nm,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_generate_native_project_ipc7351b_two_terminal_chip(
+                    &path,
+                    &pool,
+                    footprint,
+                    package,
+                    padstack,
+                    pad_a,
+                    pad_b,
+                    name,
+                    metric_code,
+                    body_length_nm,
+                    body_width_nm,
+                    terminal_length_nm,
+                    terminal_width_nm,
+                    density,
+                    mask_expansion_nm,
+                    paste_reduction_nm,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalCreatePoolPinPadMapArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            map_uuid,
+            part_uuid,
+            footprint_uuid,
+            entries,
+            set_default,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_create_native_project_pool_pin_pad_map(
+                    &path,
+                    &pool,
+                    map_uuid,
+                    part_uuid,
+                    footprint_uuid,
+                    entries,
+                    set_default,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalSetPoolPinPadMapArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            map_uuid,
+            mode,
+            entries,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_set_native_project_pool_pin_pad_map(
+                    &path,
+                    &pool,
+                    map_uuid,
+                    mode,
+                    entries,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalSetPoolFootprintPadArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            footprint,
+            pad,
+            padstack,
+            pad_name,
+            x_nm,
+            y_nm,
+            layer,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_set_native_project_pool_footprint_pad(
+                    &path,
+                    &pool,
+                    footprint,
+                    pad,
+                    padstack,
+                    pad_name,
+                    x_nm,
+                    y_nm,
+                    layer,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalSetPoolPackagePadArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            package,
+            pad,
+            padstack,
+            pad_name,
+            x_nm,
+            y_nm,
+            layer,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_set_native_project_pool_package_pad(
+                    &path,
+                    &pool,
+                    package,
+                    pad,
+                    padstack,
+                    pad_name,
+                    x_nm,
+                    y_nm,
+                    layer,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalSetPoolFootprintCourtyardRectArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            footprint,
+            min_x_nm,
+            min_y_nm,
+            max_x_nm,
+            max_y_nm,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_set_native_project_pool_footprint_courtyard_rect(
+                    &path,
+                    &pool,
+                    footprint,
+                    min_x_nm,
+                    min_y_nm,
+                    max_x_nm,
+                    max_y_nm,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalSetPoolFootprintCourtyardPolygonArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            footprint,
+            vertices,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_set_native_project_pool_footprint_courtyard_polygon(
+                    &path,
+                    &pool,
+                    footprint,
+                    &vertices,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalAddPoolFootprintSilkscreenLineArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            footprint,
+            from_x_nm,
+            from_y_nm,
+            to_x_nm,
+            to_y_nm,
+            width_nm,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_add_native_project_pool_footprint_silkscreen_line(
+                    &path,
+                    &pool,
+                    footprint,
+                    from_x_nm,
+                    from_y_nm,
+                    to_x_nm,
+                    to_y_nm,
+                    width_nm,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalAddPoolFootprintSilkscreenRectArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            footprint,
+            min_x_nm,
+            min_y_nm,
+            max_x_nm,
+            max_y_nm,
+            width_nm,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_add_native_project_pool_footprint_silkscreen_rect(
+                    &path,
+                    &pool,
+                    footprint,
+                    min_x_nm,
+                    min_y_nm,
+                    max_x_nm,
+                    max_y_nm,
+                    width_nm,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalAddPoolFootprintSilkscreenCircleArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            footprint,
+            center_x_nm,
+            center_y_nm,
+            radius_nm,
+            width_nm,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_add_native_project_pool_footprint_silkscreen_circle(
+                    &path,
+                    &pool,
+                    footprint,
+                    center_x_nm,
+                    center_y_nm,
+                    radius_nm,
+                    width_nm,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalAddPoolFootprintSilkscreenPolygonArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            footprint,
+            vertices,
+            closed,
+            width_nm,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_add_native_project_pool_footprint_silkscreen_polygon(
+                    &path,
+                    &pool,
+                    footprint,
+                    &vertices,
+                    closed,
+                    width_nm,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalSetPoolPackageCourtyardRectArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            package,
+            min_x_nm,
+            min_y_nm,
+            max_x_nm,
+            max_y_nm,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_set_native_project_pool_package_courtyard_rect(
+                    &path,
+                    &pool,
+                    package,
+                    min_x_nm,
+                    min_y_nm,
+                    max_x_nm,
+                    max_y_nm,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalSetPoolPackageCourtyardPolygonArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            package,
+            vertices,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_set_native_project_pool_package_courtyard_polygon(
+                    &path,
+                    &pool,
+                    package,
+                    &vertices,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
 }

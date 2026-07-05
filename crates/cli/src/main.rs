@@ -29,39 +29,22 @@ use eda_engine::{board::Airwire, board::BoardNetInfo, board::ComponentInfo};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-// CLI reorg Wave 1: `args`, `commands`, and `context` are the target
-// directory modules; the flat legacy chains declared below still host every
-// file and are re-exported through them. Wave 2 lanes move families into the
-// directories without touching this block again; Wave 3 deletes the legacy
-// chains and the exec layer.
+// CLI reorg (Phase 5 complete): `args`, `commands`, and `context` are the
+// directory modules; the command_exec_* forwarding layer is dissolved into
+// inherent run() impls on the args structs, hosted by their owning
+// commands/<family>/ files, with commands/dispatch.rs as the single router.
 mod args;
-// Wave 2 compat alias: a handful of command_exec_*/command_project_* files
-// still import via `crate::cli_args::...`; Wave 3 rewrites those paths to
-// `crate::args::...` and deletes this line.
-use crate::args as cli_args;
-mod command_exec;
 mod command_modify;
 mod command_plan;
 mod command_query;
 mod commands;
 mod context;
-mod main_import_report;
-mod main_inspect;
-mod main_inventory;
-mod main_modify;
-mod main_project;
-mod main_summary;
 
 use args::*;
+use command_modify::{AppliedScopedReplacementManifestView, ModifyReportView};
 use commands::*;
 #[allow(unused_imports)] // Wave 2 anchor: context/ re-exports flow to crate scope here.
 use context::*;
-pub(crate) use main_import_report::*;
-pub(crate) use main_inspect::*;
-pub(crate) use main_inventory::*;
-pub(crate) use main_modify::*;
-pub(crate) use main_project::*;
-pub(crate) use main_summary::*;
 
 fn main() {
     match run() {
@@ -87,7 +70,7 @@ fn run() -> Result<i32> {
 }
 
 fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
-    command_exec::execute_with_exit_code(cli)
+    commands::dispatch::execute_with_exit_code(cli)
 }
 fn render_modify_report_text(report: &ModifyReportView) -> String {
     let mut lines = Vec::new();

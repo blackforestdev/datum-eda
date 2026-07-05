@@ -1,6 +1,8 @@
 use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 
+use crate::*;
+
 use crate::{
     NativeProjectGerberSetArtifactView, NativeProjectGerberSetComparisonView,
     NativeProjectGerberSetExportView, NativeProjectGerberSetValidationView,
@@ -765,5 +767,101 @@ mod tests {
             entries[1].message,
             "Datum terminal context /tmp/datum/context.json"
         );
+    }
+}
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl PlanGerberExportArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, prefix } = self;
+        let report = plan_native_project_gerber_export(&path, prefix.as_deref())?;
+        let output = render_report(format, &report, render_native_project_gerber_plan_text);
+        Ok((output, 0))
+    }
+}
+
+impl ExportGerberSetArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            output_dir,
+            prefix,
+        } = self;
+        let report = export_native_project_gerber_set(&path, &output_dir, prefix.as_deref())?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_gerber_set_export_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl CompareGerberExportPlanArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            output_dir,
+            prefix,
+        } = self;
+        let report =
+            compare_native_project_gerber_export_plan(&path, &output_dir, prefix.as_deref())?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_gerber_plan_comparison_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ValidateGerberSetArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            output_dir,
+            prefix,
+        } = self;
+        let report = validate_native_project_gerber_set(&path, &output_dir, prefix.as_deref())?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_gerber_set_validation_text,
+        );
+        let exit_code =
+            if report.missing_count == 0 && report.mismatched_count == 0 && report.extra_count == 0
+            {
+                0
+            } else {
+                1
+            };
+        Ok((output, exit_code))
+    }
+}
+
+impl CompareGerberSetArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            output_dir,
+            prefix,
+        } = self;
+        let report = compare_native_project_gerber_set(&path, &output_dir, prefix.as_deref())?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_gerber_set_comparison_text,
+        );
+        let exit_code =
+            if report.missing_count == 0 && report.mismatched_count == 0 && report.extra_count == 0
+            {
+                0
+            } else {
+                1
+            };
+        Ok((output, exit_code))
     }
 }

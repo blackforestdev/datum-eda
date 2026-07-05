@@ -636,3 +636,655 @@ pub(crate) fn delete_native_project_symbol_field(
         y_nm: field.position.map(|point| point.y),
     })
 }
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl ProjectPlaceSymbolArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            sheet,
+            reference,
+            value,
+            lib_id,
+            x_nm,
+            y_nm,
+            rotation_deg,
+            mirrored,
+        } = self;
+        let report = place_native_project_symbol(
+            &path,
+            sheet,
+            reference,
+            value,
+            lib_id,
+            eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
+            rotation_deg,
+            mirrored,
+        )?;
+        let output = render_report(format, &report, render_native_project_symbol_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectMoveSymbolArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            symbol,
+            x_nm,
+            y_nm,
+        } = self;
+        let report = move_native_project_symbol(
+            &path,
+            symbol,
+            eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
+        )?;
+        let output = render_report(format, &report, render_native_project_symbol_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectRotateSymbolArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            symbol,
+            rotation_deg,
+        } = self;
+        let report = rotate_native_project_symbol(&path, symbol, rotation_deg)?;
+        let output = render_report(format, &report, render_native_project_symbol_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectMirrorSymbolArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, symbol } = self;
+        let report = mirror_native_project_symbol(&path, symbol)?;
+        let output = render_report(format, &report, render_native_project_symbol_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectDeleteSymbolArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, symbol } = self;
+        let report = delete_native_project_symbol(&path, symbol)?;
+        let output = render_report(format, &report, render_native_project_symbol_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectSetSymbolReferenceArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            symbol,
+            reference,
+        } = self;
+        let report = set_native_project_symbol_reference(&path, symbol, reference)?;
+        let output = render_report(format, &report, render_native_project_symbol_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectSetSymbolValueArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            symbol,
+            value,
+        } = self;
+        let report = set_native_project_symbol_value(&path, symbol, value)?;
+        let output = render_report(format, &report, render_native_project_symbol_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectSetSymbolLibIdArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            symbol_uuid,
+            lib_id,
+        } = self;
+        let report = set_native_project_symbol_lib_id(&path, symbol_uuid, lib_id)?;
+        let output = render_report(format, &report, render_native_project_symbol_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectClearSymbolLibIdArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, symbol_uuid } = self;
+        let report = clear_native_project_symbol_lib_id(&path, symbol_uuid)?;
+        let output = render_report(format, &report, render_native_project_symbol_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectSetSymbolEntityArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            symbol,
+            entity_uuid,
+        } = self;
+        let report = set_native_project_symbol_entity(&path, symbol, entity_uuid)?;
+        let output = render_report(format, &report, render_native_project_symbol_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectClearSymbolEntityArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, symbol } = self;
+        let report = clear_native_project_symbol_entity(&path, symbol)?;
+        let output = render_report(format, &report, render_native_project_symbol_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectSetSymbolPartArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            symbol,
+            part_uuid,
+        } = self;
+        let report = set_native_project_symbol_part(&path, symbol, part_uuid)?;
+        let output = render_report(format, &report, render_native_project_symbol_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectClearSymbolPartArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, symbol } = self;
+        let report = clear_native_project_symbol_part(&path, symbol)?;
+        let output = render_report(format, &report, render_native_project_symbol_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectSetSymbolUnitArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            symbol,
+            unit_selection,
+        } = self;
+        let report = set_native_project_symbol_unit(&path, symbol, unit_selection)?;
+        let output = render_report(format, &report, render_native_project_symbol_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectClearSymbolUnitArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, symbol } = self;
+        let report = clear_native_project_symbol_unit(&path, symbol)?;
+        let output = render_report(format, &report, render_native_project_symbol_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectSetSymbolGateArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            symbol,
+            gate_uuid,
+        } = self;
+        let report = set_native_project_symbol_gate(&path, symbol, gate_uuid)?;
+        let output = render_report(format, &report, render_native_project_symbol_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectClearSymbolGateArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, symbol } = self;
+        let report = clear_native_project_symbol_gate(&path, symbol)?;
+        let output = render_report(format, &report, render_native_project_symbol_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectSetSymbolDisplayModeArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            symbol,
+            display_mode,
+        } = self;
+        let report = set_native_project_symbol_display_mode(
+            &path,
+            symbol,
+            parse_native_symbol_display_mode(display_mode),
+        )?;
+        let output = render_report(format, &report, render_native_project_symbol_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectSetPinOverrideArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            symbol,
+            pin_uuid,
+            visible,
+            x_nm,
+            y_nm,
+        } = self;
+        let position = parse_native_field_position(x_nm, y_nm)?;
+        let report =
+            set_native_project_symbol_pin_override(&path, symbol, pin_uuid, visible, position)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_pin_override_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectSetSymbolHiddenPowerBehaviorArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            symbol,
+            hidden_power_behavior,
+        } = self;
+        let report = set_native_project_symbol_hidden_power_behavior(
+            &path,
+            symbol,
+            parse_native_hidden_power_behavior(hidden_power_behavior),
+        )?;
+        let output = render_report(format, &report, render_native_project_symbol_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectClearPinOverrideArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            symbol,
+            pin_uuid,
+        } = self;
+        let report = clear_native_project_symbol_pin_override(&path, symbol, pin_uuid)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_pin_override_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectAddSymbolFieldArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            symbol,
+            key,
+            value,
+            hidden,
+            x_nm,
+            y_nm,
+        } = self;
+        let report = add_native_project_symbol_field(
+            &path,
+            symbol,
+            key,
+            value,
+            !hidden,
+            parse_native_field_position(x_nm, y_nm)?,
+        )?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_symbol_field_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectEditSymbolFieldArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            field,
+            key,
+            value,
+            visible,
+            x_nm,
+            y_nm,
+            ..
+        } = self;
+        let report = edit_native_project_symbol_field(
+            &path,
+            field,
+            key,
+            value,
+            visible,
+            parse_native_field_position(x_nm, y_nm)?,
+        )?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_symbol_field_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectDeleteSymbolFieldArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, field } = self;
+        let report = delete_native_project_symbol_field(&path, field)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_symbol_field_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectPlaceTextArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            sheet,
+            text,
+            x_nm,
+            y_nm,
+            rotation_deg,
+        } = self;
+        let report = place_native_project_text(
+            &path,
+            sheet,
+            text,
+            eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
+            rotation_deg,
+        )?;
+        let output = render_report(format, &report, render_native_project_text_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectEditTextArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            text,
+            value,
+            x_nm,
+            y_nm,
+            rotation_deg,
+        } = self;
+        let position = match (x_nm, y_nm) {
+            (None, None) => None,
+            (Some(x), Some(y)) => Some(eda_engine::ir::geometry::Point { x, y }),
+            _ => bail!("text position requires both --x-nm and --y-nm"),
+        };
+        let report = edit_native_project_text(&path, text, value, position, rotation_deg)?;
+        let output = render_report(format, &report, render_native_project_text_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectDeleteTextArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, text } = self;
+        let report = delete_native_project_text(&path, text)?;
+        let output = render_report(format, &report, render_native_project_text_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectPlaceDrawingLineArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            sheet,
+            from_x_nm,
+            from_y_nm,
+            to_x_nm,
+            to_y_nm,
+        } = self;
+        let report = place_native_project_drawing_line(
+            &path,
+            sheet,
+            eda_engine::ir::geometry::Point {
+                x: from_x_nm,
+                y: from_y_nm,
+            },
+            eda_engine::ir::geometry::Point {
+                x: to_x_nm,
+                y: to_y_nm,
+            },
+        )?;
+        let output = render_report(format, &report, render_native_project_drawing_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectPlaceDrawingRectArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            sheet,
+            min_x_nm,
+            min_y_nm,
+            max_x_nm,
+            max_y_nm,
+        } = self;
+        let report = place_native_project_drawing_rect(
+            &path,
+            sheet,
+            eda_engine::ir::geometry::Point {
+                x: min_x_nm,
+                y: min_y_nm,
+            },
+            eda_engine::ir::geometry::Point {
+                x: max_x_nm,
+                y: max_y_nm,
+            },
+        )?;
+        let output = render_report(format, &report, render_native_project_drawing_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectPlaceDrawingCircleArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            sheet,
+            center_x_nm,
+            center_y_nm,
+            radius_nm,
+        } = self;
+        let report = place_native_project_drawing_circle(
+            &path,
+            sheet,
+            eda_engine::ir::geometry::Point {
+                x: center_x_nm,
+                y: center_y_nm,
+            },
+            radius_nm,
+        )?;
+        let output = render_report(format, &report, render_native_project_drawing_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectPlaceDrawingArcArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            sheet,
+            center_x_nm,
+            center_y_nm,
+            radius_nm,
+            start_angle_mdeg,
+            end_angle_mdeg,
+        } = self;
+        let report = place_native_project_drawing_arc(
+            &path,
+            sheet,
+            eda_engine::ir::geometry::Arc {
+                center: eda_engine::ir::geometry::Point {
+                    x: center_x_nm,
+                    y: center_y_nm,
+                },
+                radius: radius_nm,
+                start_angle: start_angle_mdeg,
+                end_angle: end_angle_mdeg,
+            },
+        )?;
+        let output = render_report(format, &report, render_native_project_drawing_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectEditDrawingLineArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            drawing,
+            from_x_nm,
+            from_y_nm,
+            to_x_nm,
+            to_y_nm,
+        } = self;
+        let from = match (from_x_nm, from_y_nm) {
+            (None, None) => None,
+            (Some(x), Some(y)) => Some(eda_engine::ir::geometry::Point { x, y }),
+            _ => bail!("drawing start requires both --from-x-nm and --from-y-nm"),
+        };
+        let to = match (to_x_nm, to_y_nm) {
+            (None, None) => None,
+            (Some(x), Some(y)) => Some(eda_engine::ir::geometry::Point { x, y }),
+            _ => bail!("drawing end requires both --to-x-nm and --to-y-nm"),
+        };
+        let report = edit_native_project_drawing_line(&path, drawing, from, to)?;
+        let output = render_report(format, &report, render_native_project_drawing_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectEditDrawingRectArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            drawing,
+            min_x_nm,
+            min_y_nm,
+            max_x_nm,
+            max_y_nm,
+        } = self;
+        let min = match (min_x_nm, min_y_nm) {
+            (None, None) => None,
+            (Some(x), Some(y)) => Some(eda_engine::ir::geometry::Point { x, y }),
+            _ => bail!("rect min requires both --min-x-nm and --min-y-nm"),
+        };
+        let max = match (max_x_nm, max_y_nm) {
+            (None, None) => None,
+            (Some(x), Some(y)) => Some(eda_engine::ir::geometry::Point { x, y }),
+            _ => bail!("rect max requires both --max-x-nm and --max-y-nm"),
+        };
+        let report = edit_native_project_drawing_rect(&path, drawing, min, max)?;
+        let output = render_report(format, &report, render_native_project_drawing_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectEditDrawingCircleArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            drawing,
+            center_x_nm,
+            center_y_nm,
+            radius_nm,
+        } = self;
+        let center = match (center_x_nm, center_y_nm) {
+            (None, None) => None,
+            (Some(x), Some(y)) => Some(eda_engine::ir::geometry::Point { x, y }),
+            _ => bail!("circle center requires both --center-x-nm and --center-y-nm"),
+        };
+        let report = edit_native_project_drawing_circle(&path, drawing, center, radius_nm)?;
+        let output = render_report(format, &report, render_native_project_drawing_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectEditDrawingArcArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            drawing,
+            center_x_nm,
+            center_y_nm,
+            radius_nm,
+            start_angle_mdeg,
+            end_angle_mdeg,
+        } = self;
+        let center = match (center_x_nm, center_y_nm) {
+            (None, None) => None,
+            (Some(x), Some(y)) => Some(eda_engine::ir::geometry::Point { x, y }),
+            _ => bail!("arc center requires both --center-x-nm and --center-y-nm"),
+        };
+        let report = edit_native_project_drawing_arc(
+            &path,
+            drawing,
+            center,
+            radius_nm,
+            start_angle_mdeg,
+            end_angle_mdeg,
+        )?;
+        let output = render_report(format, &report, render_native_project_drawing_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+impl ProjectDeleteDrawingArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, drawing } = self;
+        let report = delete_native_project_drawing(&path, drawing)?;
+        let output = render_report(format, &report, render_native_project_drawing_mutation_text);
+        Ok((output, 0))
+    }
+}
+
+// Phase 5: display-mode/hidden-power parse helpers absorbed from the
+// dissolved command_exec_native_support.rs.
+fn parse_native_symbol_display_mode(value: NativeSymbolDisplayModeArg) -> SymbolDisplayMode {
+    match value {
+        NativeSymbolDisplayModeArg::LibraryDefault => SymbolDisplayMode::LibraryDefault,
+        NativeSymbolDisplayModeArg::ShowHiddenPins => SymbolDisplayMode::ShowHiddenPins,
+        NativeSymbolDisplayModeArg::HideOptionalPins => SymbolDisplayMode::HideOptionalPins,
+    }
+}
+
+fn parse_native_hidden_power_behavior(value: NativeHiddenPowerBehaviorArg) -> HiddenPowerBehavior {
+    match value {
+        NativeHiddenPowerBehaviorArg::SourceDefinedImplicit => {
+            HiddenPowerBehavior::SourceDefinedImplicit
+        }
+        NativeHiddenPowerBehaviorArg::ExplicitPowerObject => {
+            HiddenPowerBehavior::ExplicitPowerObject
+        }
+        NativeHiddenPowerBehaviorArg::PreservedAsImportedMetadata => {
+            HiddenPowerBehavior::PreservedAsImportedMetadata
+        }
+    }
+}

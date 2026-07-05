@@ -1,3 +1,4 @@
+use crate::*;
 use std::path::Path;
 
 use anyhow::{Context, Result, bail};
@@ -98,4 +99,37 @@ pub(crate) fn set_native_project_pool_part_bindings(
         part_id,
         &relative_path,
     )
+}
+
+// Phase 5: exec-layer dissolution — variant run() impl (the former
+// command_exec destructure-and-forward glue, now an inherent method on the
+// clap args struct).
+
+impl ProjectSetPoolPartBindingsArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            part_uuid,
+            default_footprint,
+            clear_default_footprint,
+            default_pin_pad_map,
+            clear_default_pin_pad_map,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_part_bindings(
+                    &path,
+                    &pool,
+                    part_uuid,
+                    default_footprint,
+                    clear_default_footprint,
+                    default_pin_pad_map,
+                    clear_default_pin_pad_map,
+                )?,
+            ),
+            0,
+        ))
+    }
 }

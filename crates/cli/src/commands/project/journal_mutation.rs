@@ -1,3 +1,4 @@
+use crate::*;
 use std::path::Path;
 
 use anyhow::{Result, anyhow};
@@ -158,4 +159,63 @@ fn validate_journal_mutation_guard(
         }
     }
     Ok(())
+}
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl JournalListArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path } = self;
+        Ok((
+            render_output(format, &query_native_project_journal_list(&path)?),
+            0,
+        ))
+    }
+}
+
+impl JournalShowArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, transaction } = self;
+        Ok((
+            render_output(
+                format,
+                &query_native_project_journal_show(&path, transaction)?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectUndoArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            expected_model_revision,
+            expected_tip_transaction,
+        } = self;
+        execute_native_project_journal_undo(
+            format,
+            &path,
+            expected_model_revision.as_deref(),
+            expected_tip_transaction,
+        )
+    }
+}
+
+impl ProjectRedoArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            expected_model_revision,
+            expected_tip_transaction,
+        } = self;
+        execute_native_project_journal_redo(
+            format,
+            &path,
+            expected_model_revision.as_deref(),
+            expected_tip_transaction,
+        )
+    }
 }

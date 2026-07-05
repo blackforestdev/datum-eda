@@ -1,3 +1,4 @@
+use crate::*;
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
@@ -370,4 +371,96 @@ fn pool_object_relative_path(
         .filter(|shard| shard.relative_path.ends_with(&suffix))
         .map(|shard| shard.relative_path.clone())
         .min()
+}
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl ProjectPlaceBoardComponentArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            part_uuid,
+            package_uuid,
+            reference,
+            value,
+            x_nm,
+            y_nm,
+            layer,
+        } = self;
+        let report = place_native_project_board_component(
+            &path,
+            part_uuid,
+            package_uuid,
+            reference,
+            value,
+            eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
+            layer,
+        )?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_component_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectSetBoardOutlineArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, vertices } = self;
+        let polygon = parse_native_polygon_vertices(&vertices)?;
+        let report = set_native_project_board_outline(&path, polygon)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_outline_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectSetBoardNameArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, name } = self;
+        let report = set_native_project_board_name(&path, name)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_name_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectGenerateBoardComponentsArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            apply,
+            as_proposal,
+            proposal,
+            rationale,
+            origin_x_nm,
+            origin_y_nm,
+            pitch_nm,
+            layer,
+        } = self;
+        let report = generate_native_project_board_components(
+            &path,
+            apply,
+            as_proposal,
+            proposal,
+            rationale,
+            eda_engine::ir::geometry::Point {
+                x: origin_x_nm,
+                y: origin_y_nm,
+            },
+            pitch_nm,
+            layer,
+        )?;
+        let output = render_report(format, &report, render_native_project_board_handoff_text);
+        Ok((output, 0))
+    }
 }

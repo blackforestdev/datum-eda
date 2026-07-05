@@ -6,9 +6,7 @@ use eda_engine::board::Board;
 use eda_engine::drc::DrcReport;
 use eda_engine::rules::ast::RuleType;
 
-#[path = "zone_fill_projection.rs"]
-mod zone_fill_projection;
-use zone_fill_projection::zone_fill_copper_projection_zones;
+use eda_engine::substrate::zone_fill_copper_projection_zones;
 
 use crate::{
     DiagnosticsView, UnroutedView, build_native_project_board, build_native_project_schematic,

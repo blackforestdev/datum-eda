@@ -1,3 +1,4 @@
+use crate::*;
 use std::path::Path;
 
 use crate::IpcDensityLevelArg;
@@ -619,4 +620,283 @@ fn append_silkscreen_primitive(
         .context("pool footprint silkscreen field must be an array")?
         .push(primitive);
     Ok(())
+}
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl ProjectCreatePoolFootprintArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            footprint_uuid,
+            package_uuid,
+            name,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &create_native_project_pool_footprint(
+                    &path,
+                    &pool,
+                    footprint_uuid,
+                    package_uuid,
+                    name,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectGenerateIpc7351bTwoTerminalChipArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            footprint_uuid,
+            package_uuid,
+            padstack_uuid,
+            pad_a_uuid,
+            pad_b_uuid,
+            name,
+            metric_code,
+            body_length_nm,
+            body_width_nm,
+            terminal_length_nm,
+            terminal_width_nm,
+            density,
+            mask_expansion_nm,
+            paste_reduction_nm,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &generate_native_project_ipc7351b_two_terminal_chip(
+                    &path,
+                    &pool,
+                    footprint_uuid,
+                    package_uuid,
+                    padstack_uuid,
+                    pad_a_uuid,
+                    pad_b_uuid,
+                    name,
+                    metric_code,
+                    body_length_nm,
+                    body_width_nm,
+                    terminal_length_nm,
+                    terminal_width_nm,
+                    density,
+                    mask_expansion_nm,
+                    paste_reduction_nm,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectSetPoolFootprintPadArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            footprint_uuid,
+            pad_uuid,
+            padstack_uuid,
+            pad_name,
+            x_nm,
+            y_nm,
+            layer,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_footprint_pad(
+                    &path,
+                    &pool,
+                    footprint_uuid,
+                    pad_uuid,
+                    padstack_uuid,
+                    pad_name,
+                    x_nm,
+                    y_nm,
+                    layer,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectSetPoolFootprintCourtyardRectArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            footprint_uuid,
+            min_x_nm,
+            min_y_nm,
+            max_x_nm,
+            max_y_nm,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_footprint_courtyard_rect(
+                    &path,
+                    &pool,
+                    footprint_uuid,
+                    min_x_nm,
+                    min_y_nm,
+                    max_x_nm,
+                    max_y_nm,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectSetPoolFootprintCourtyardPolygonArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            footprint_uuid,
+            vertices,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_footprint_courtyard_polygon(
+                    &path,
+                    &pool,
+                    footprint_uuid,
+                    &vertices,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectAddPoolFootprintSilkscreenLineArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            footprint_uuid,
+            from_x_nm,
+            from_y_nm,
+            to_x_nm,
+            to_y_nm,
+            width_nm,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &add_native_project_pool_footprint_silkscreen_line(
+                    &path,
+                    &pool,
+                    footprint_uuid,
+                    from_x_nm,
+                    from_y_nm,
+                    to_x_nm,
+                    to_y_nm,
+                    width_nm,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectAddPoolFootprintSilkscreenRectArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            footprint_uuid,
+            min_x_nm,
+            min_y_nm,
+            max_x_nm,
+            max_y_nm,
+            width_nm,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &add_native_project_pool_footprint_silkscreen_rect(
+                    &path,
+                    &pool,
+                    footprint_uuid,
+                    min_x_nm,
+                    min_y_nm,
+                    max_x_nm,
+                    max_y_nm,
+                    width_nm,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectAddPoolFootprintSilkscreenCircleArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            footprint_uuid,
+            center_x_nm,
+            center_y_nm,
+            radius_nm,
+            width_nm,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &add_native_project_pool_footprint_silkscreen_circle(
+                    &path,
+                    &pool,
+                    footprint_uuid,
+                    center_x_nm,
+                    center_y_nm,
+                    radius_nm,
+                    width_nm,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectAddPoolFootprintSilkscreenPolygonArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            footprint_uuid,
+            vertices,
+            closed,
+            width_nm,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &add_native_project_pool_footprint_silkscreen_polygon(
+                    &path,
+                    &pool,
+                    footprint_uuid,
+                    &vertices,
+                    closed,
+                    width_nm,
+                )?,
+            ),
+            0,
+        ))
+    }
 }

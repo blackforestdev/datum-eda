@@ -21,7 +21,6 @@ mod command_project_check_run_view;
 mod command_project_check_targets;
 
 use self::command_project_artifact_checks::*;
-pub(crate) use self::command_project_check_run_history::query_native_project_check_run_list;
 pub(crate) use self::command_project_check_run_view::{
     NativeProjectCheckFindingView, NativeProjectCheckProposalCommandTemplates,
     NativeProjectCheckProposalLinkView, NativeProjectCheckRunView, append_finding_values,

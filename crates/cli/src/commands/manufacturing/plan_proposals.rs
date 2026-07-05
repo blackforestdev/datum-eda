@@ -1,3 +1,4 @@
+use crate::*;
 use std::path::Path;
 
 use anyhow::{Context, Result};
@@ -504,4 +505,184 @@ fn write_proposal(
             finding_fingerprints: Vec::new(),
         },
     )?)
+}
+
+// Phase 5: exec-layer dissolution — proposal-variant run() impls (the
+// former command_exec_proposal.rs arms, now inherent methods on the clap
+// args structs).
+
+impl ProposalCreateManufacturingPlanArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            prefix,
+            name,
+            variant,
+            panel_projection,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_create_native_project_manufacturing_plan(
+                    &path,
+                    &prefix,
+                    name.as_deref(),
+                    variant,
+                    panel_projection,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalUpdateManufacturingPlanArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            manufacturing_plan,
+            name,
+            prefix,
+            variant,
+            clear_variant,
+            panel_projection,
+            clear_panel_projection,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_update_native_project_manufacturing_plan(
+                    &path,
+                    manufacturing_plan,
+                    name.as_deref(),
+                    prefix.as_deref(),
+                    variant,
+                    clear_variant,
+                    panel_projection,
+                    clear_panel_projection,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalDeleteManufacturingPlanArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            manufacturing_plan,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_delete_native_project_manufacturing_plan(
+                    &path,
+                    manufacturing_plan,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalCreatePanelProjectionArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            key,
+            name,
+            board,
+            x_nm,
+            y_nm,
+            rotation_deg,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_create_native_project_panel_projection(
+                    &path,
+                    &key,
+                    name.as_deref(),
+                    board,
+                    x_nm,
+                    y_nm,
+                    rotation_deg,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalUpdatePanelProjectionArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            panel_projection,
+            name,
+            board,
+            x_nm,
+            y_nm,
+            rotation_deg,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_update_native_project_panel_projection(
+                    &path,
+                    panel_projection,
+                    name.as_deref(),
+                    board,
+                    x_nm,
+                    y_nm,
+                    rotation_deg,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalDeletePanelProjectionArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            panel_projection,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_delete_native_project_panel_projection(
+                    &path,
+                    panel_projection,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
 }

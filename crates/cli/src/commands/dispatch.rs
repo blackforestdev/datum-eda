@@ -1,30 +1,18 @@
 // commands/dispatch.rs — the single exhaustive ProjectCommands router.
 //
-// Wave 3 of the CLI reorganization: replaces the legacy three-layer router
-// chain (command_exec_dispatch.rs Project arm + command_exec_project_command.rs
-// + command_exec_project_board_surface.rs) with ONE compiler-enforced
-// exhaustive match (no `_ =>` arm). Every arm still calls the existing
-// execute_* functions in the command_exec_* files; converting those to run()
-// impls is the next wave.
+// Phase 5 endgame: ONE compiler-enforced exhaustive match (no `_ =>` arm).
+// The command_exec_* forwarding layer is dissolved — arms either run their
+// family's `args.run(format)` inherent method (impls live in the owning
+// commands/<family>/ files) or inline the short destructure-and-render body
+// directly.
 
 use super::*;
-use crate::command_exec::command_exec_surface::{
-    execute_add_default_top_stackup, execute_delete_board_net, execute_delete_board_net_class,
-    execute_drill_command, execute_edit_board_net, execute_edit_board_net_class,
-    execute_forward_annotation_command, execute_generate_board_components,
-    execute_gerber_workflow_command, execute_inventory_command, execute_manufacturing_command,
-    execute_move_board_component, execute_native_project_query_command,
-    execute_place_board_component, execute_place_board_net, execute_place_board_net_class,
-    execute_project_excellon_drill_inspection, execute_project_gerber_inspection,
-    execute_project_import_or_part_binding_command, execute_project_library_command,
-    execute_project_library_footprint_command, execute_project_library_pin_pad_map_command,
-    execute_project_proposal_lifecycle_command, execute_project_schematic_connectivity_command,
-    execute_project_schematic_symbols_command, execute_rotate_board_component,
-    execute_route_proposal_command, execute_set_board_component_layer,
-    execute_set_board_component_locked, execute_set_board_component_package,
-    execute_set_board_component_part, execute_set_board_component_reference,
-    execute_set_board_component_value, execute_set_board_name, execute_set_board_outline,
-    execute_set_board_stackup,
+use crate::command_modify::{
+    parse_apply_replacement_plan_arg, parse_apply_replacement_policy_arg,
+    parse_apply_scoped_replacement_policy_arg, parse_assign_part_arg, parse_move_component_arg,
+    parse_replace_component_arg, parse_rotate_component_arg, parse_set_net_class_arg,
+    parse_set_package_arg, parse_set_package_with_part_arg, parse_set_reference_arg,
+    parse_set_value_arg,
 };
 
 pub(crate) fn execute_project_command(
@@ -56,25 +44,17 @@ pub(crate) fn execute_project_command(
             };
             Ok((output, if report.valid { 0 } else { 1 }))
         }
-        ProjectCommands::Query(ProjectQueryArgs { path, what }) => {
-            execute_native_project_query_command(format, path, what)
-        }
-        command @ ProjectCommands::ExportDrill(_)
-        | command @ ProjectCommands::ValidateDrill(_)
-        | command @ ProjectCommands::CompareDrill(_)
-        | command @ ProjectCommands::ExportExcellonDrill(_)
-        | command @ ProjectCommands::InspectDrill(_)
-        | command @ ProjectCommands::CompareExcellonDrill(_)
-        | command @ ProjectCommands::ValidateExcellonDrill(_)
-        | command @ ProjectCommands::ReportDrillHoleClasses(_) => {
-            execute_drill_command(format, command)
-        }
-        ProjectCommands::InspectExcellonDrill(ProjectInspectExcellonDrillArgs { path }) => {
-            execute_project_excellon_drill_inspection(format, &path)
-        }
-        ProjectCommands::InspectGerber(ProjectInspectGerberArgs { path }) => {
-            execute_project_gerber_inspection(format, &path)
-        }
+        ProjectCommands::Query(args) => args.run(format),
+        ProjectCommands::ExportDrill(args) => args.run(format),
+        ProjectCommands::ValidateDrill(args) => args.run(format),
+        ProjectCommands::CompareDrill(args) => args.run(format),
+        ProjectCommands::ExportExcellonDrill(args) => args.run(format),
+        ProjectCommands::InspectDrill(args) => args.run(format),
+        ProjectCommands::CompareExcellonDrill(args) => args.run(format),
+        ProjectCommands::ValidateExcellonDrill(args) => args.run(format),
+        ProjectCommands::ReportDrillHoleClasses(args) => args.run(format),
+        ProjectCommands::InspectExcellonDrill(args) => args.run(format),
+        ProjectCommands::InspectGerber(args) => args.run(format),
         ProjectCommands::ExportGerberOutline(ProjectExportGerberOutlineArgs { path, out }) => {
             let report = export_native_project_gerber_outline(&path, &out)?;
             let output = match format {
@@ -311,212 +291,126 @@ pub(crate) fn execute_project_command(
             };
             Ok((output, 0))
         }
-        command @ ProjectCommands::PlanGerberExport(_)
-        | command @ ProjectCommands::ExportGerberSet(_)
-        | command @ ProjectCommands::ValidateGerberSet(_)
-        | command @ ProjectCommands::CompareGerberSet(_)
-        | command @ ProjectCommands::CompareGerberExportPlan(_) => {
-            execute_gerber_workflow_command(format, command)
-        }
-        command @ ProjectCommands::ReportManufacturing(_)
-        | command @ ProjectCommands::ExportManufacturingSet(_)
-        | command @ ProjectCommands::InspectManufacturingSet(_)
-        | command @ ProjectCommands::ValidateManufacturingSet(_)
-        | command @ ProjectCommands::CompareManufacturingSet(_)
-        | command @ ProjectCommands::ManifestManufacturingSet(_) => {
-            execute_manufacturing_command(format, command)
-        }
-        command @ ProjectCommands::ExportForwardAnnotationAudit(
-            ProjectExportForwardAnnotationAuditArgs { .. },
-        )
-        | command @ ProjectCommands::ForwardAnnotationAudit(ProjectForwardAnnotationAuditArgs {
-            ..
-        })
-        | command @ ProjectCommands::ExportForwardAnnotationProposal(
-            ProjectExportForwardAnnotationProposalArgs { .. },
-        )
-        | command @ ProjectCommands::ApplyForwardAnnotationAction(
-            ProjectApplyForwardAnnotationActionArgs { .. },
-        )
-        | command @ ProjectCommands::ApplyForwardAnnotationReviewed(
-            ProjectApplyForwardAnnotationReviewedArgs { .. },
-        )
-        | command @ ProjectCommands::ExportForwardAnnotationProposalSelection(
-            ProjectExportForwardAnnotationProposalSelectionArgs { .. },
-        )
-        | command @ ProjectCommands::SelectForwardAnnotationProposalArtifact(
-            ProjectSelectForwardAnnotationProposalArtifactArgs { .. },
-        )
-        | command @ ProjectCommands::InspectForwardAnnotationProposalArtifact(
-            ProjectInspectForwardAnnotationProposalArtifactArgs { .. },
-        )
-        | command @ ProjectCommands::ValidateForwardAnnotationProposalArtifact(
-            ProjectValidateForwardAnnotationProposalArtifactArgs { .. },
-        )
-        | command @ ProjectCommands::CompareForwardAnnotationProposalArtifact(
-            ProjectCompareForwardAnnotationProposalArtifactArgs { .. },
-        )
-        | command @ ProjectCommands::FilterForwardAnnotationProposalArtifact(
-            ProjectFilterForwardAnnotationProposalArtifactArgs { .. },
-        )
-        | command @ ProjectCommands::PlanForwardAnnotationProposalArtifactApply(
-            ProjectPlanForwardAnnotationProposalArtifactApplyArgs { .. },
-        )
-        | command @ ProjectCommands::ApplyForwardAnnotationProposalArtifact(
-            ProjectApplyForwardAnnotationProposalArtifactArgs { .. },
-        )
-        | command @ ProjectCommands::ImportForwardAnnotationArtifactReview(
-            ProjectImportForwardAnnotationArtifactReviewArgs { .. },
-        )
-        | command @ ProjectCommands::ReplaceForwardAnnotationArtifactReview(
-            ProjectReplaceForwardAnnotationArtifactReviewArgs { .. },
-        )
-        | command @ ProjectCommands::DeferForwardAnnotationAction(
-            ProjectDeferForwardAnnotationActionArgs { .. },
-        )
-        | command @ ProjectCommands::RejectForwardAnnotationAction(
-            ProjectRejectForwardAnnotationActionArgs { .. },
-        )
-        | command @ ProjectCommands::ClearForwardAnnotationActionReview(
-            ProjectClearForwardAnnotationActionReviewArgs { .. },
-        ) => execute_forward_annotation_command(format, command),
-        command @ ProjectCommands::RouteProposal(ProjectRouteProposalArgs { .. })
-        | command @ ProjectCommands::ReviewRouteProposal(ProjectReviewRouteProposalArgs {
-            ..
-        })
-        | command @ ProjectCommands::RouteStrategyReport(ProjectRouteStrategyReportArgs {
-            ..
-        })
-        | command @ ProjectCommands::RouteStrategyCompare(ProjectRouteStrategyCompareArgs {
-            ..
-        })
-        | command @ ProjectCommands::RouteStrategyDelta(ProjectRouteStrategyDeltaArgs { .. })
-        | command @ ProjectCommands::WriteRouteStrategyCuratedFixtureSuite(
-            ProjectWriteRouteStrategyCuratedFixtureSuiteArgs { .. },
-        )
-        | command @ ProjectCommands::CaptureRouteStrategyCuratedBaseline(
-            ProjectCaptureRouteStrategyCuratedBaselineArgs { .. },
-        )
-        | command @ ProjectCommands::RouteStrategyBatchEvaluate(
-            ProjectRouteStrategyBatchEvaluateArgs { .. },
-        )
-        | command @ ProjectCommands::InspectRouteStrategyBatchResult(
-            ProjectInspectRouteStrategyBatchResultArgs { .. },
-        )
-        | command @ ProjectCommands::ValidateRouteStrategyBatchResult(
-            ProjectValidateRouteStrategyBatchResultArgs { .. },
-        )
-        | command @ ProjectCommands::CompareRouteStrategyBatchResult(
-            ProjectCompareRouteStrategyBatchResultArgs { .. },
-        )
-        | command @ ProjectCommands::GateRouteStrategyBatchResult(
-            ProjectGateRouteStrategyBatchResultArgs { .. },
-        )
-        | command @ ProjectCommands::SummarizeRouteStrategyBatchResults(
-            ProjectSummarizeRouteStrategyBatchResultsArgs { .. },
-        )
-        | command @ ProjectCommands::RouteProposalExplain(ProjectRouteProposalExplainArgs {
-            ..
-        })
-        | command @ ProjectCommands::ExportRouteProposal(ProjectExportRouteProposalArgs {
-            ..
-        })
-        | command @ ProjectCommands::ExportRoutePathProposal(ProjectExportRoutePathProposalArgs {
-            ..
-        })
-        | command @ ProjectCommands::InspectRouteProposalArtifact(
-            ProjectInspectRouteProposalArtifactArgs { .. },
-        )
-        | command @ ProjectCommands::RevalidateRouteProposalArtifact(
-            ProjectRevalidateRouteProposalArtifactArgs { .. },
-        )
-        | command @ ProjectCommands::ApplyRouteProposalArtifact(
-            ProjectApplyRouteProposalArtifactArgs { .. },
-        )
-        | command @ ProjectCommands::RouteApplySelected(ProjectRouteApplySelectedArgs { .. })
-        | command @ ProjectCommands::RouteApply(ProjectRouteApplyArgs { .. }) => {
-            execute_route_proposal_command(format, command)
-        }
-        command @ (ProjectCommands::ExportBom(_)
-        | ProjectCommands::CompareBom(_)
-        | ProjectCommands::ValidateBom(_)
-        | ProjectCommands::InspectBom(_)
-        | ProjectCommands::ExportPnp(_)
-        | ProjectCommands::ComparePnp(_)
-        | ProjectCommands::ValidatePnp(_)
-        | ProjectCommands::InspectPnp(_)) => execute_inventory_command(format, command),
-        command @ (ProjectCommands::ReviewProposal(_)
-        | ProjectCommands::ShowProposal(_)
-        | ProjectCommands::ValidateProposal(_)
-        | ProjectCommands::DeferProposal(_)
-        | ProjectCommands::ApplyProposal(_)) => {
-            execute_project_proposal_lifecycle_command(format, command)
-        }
-        command @ (ProjectCommands::ImportKicadFootprint(_)
-        | ProjectCommands::ImportKicadBoard(_)
-        | ProjectCommands::ImportKicadSchematic(_)
-        | ProjectCommands::ImportEagleLibrary(_)
-        | ProjectCommands::SetPoolPartBindings(_)
-        | ProjectCommands::SetPoolSymbolPinAnchor(_)) => {
-            execute_project_import_or_part_binding_command(format, command)
-        }
-        command @ (ProjectCommands::CreatePoolFootprint(_)
-        | ProjectCommands::GenerateIpc7351bTwoTerminalChip(_)
-        | ProjectCommands::SetPoolFootprintPad(_)
-        | ProjectCommands::SetPoolFootprintCourtyardRect(_)
-        | ProjectCommands::SetPoolFootprintCourtyardPolygon(_)
-        | ProjectCommands::AddPoolFootprintSilkscreenLine(_)
-        | ProjectCommands::AddPoolFootprintSilkscreenRect(_)
-        | ProjectCommands::AddPoolFootprintSilkscreenCircle(_)
-        | ProjectCommands::AddPoolFootprintSilkscreenPolygon(_)) => {
-            execute_project_library_footprint_command(format, command)
-        }
-        command @ (ProjectCommands::CreatePoolPinPadMap(_)
-        | ProjectCommands::SetPoolPinPadMap(_)) => {
-            execute_project_library_pin_pad_map_command(format, command)
-        }
-        command @ ProjectCommands::CreatePoolLibraryObject(_)
-        | command @ ProjectCommands::CreatePoolUnit(_)
-        | command @ ProjectCommands::SetPoolUnitPin(_)
-        | command @ ProjectCommands::CreatePoolSymbol(_)
-        | command @ ProjectCommands::AddPoolSymbolLine(_)
-        | command @ ProjectCommands::AddPoolSymbolPolygon(_)
-        | command @ ProjectCommands::AddPoolSymbolRect(_)
-        | command @ ProjectCommands::AddPoolSymbolCircle(_)
-        | command @ ProjectCommands::AddPoolSymbolText(_)
-        | command @ ProjectCommands::AddPoolSymbolArc(_)
-        | command @ ProjectCommands::CreatePoolEntity(_)
-        | command @ ProjectCommands::CreatePoolPadstack(_)
-        | command @ ProjectCommands::CreatePoolPackage(_)
-        | command @ ProjectCommands::SetPoolPackagePad(_)
-        | command @ ProjectCommands::SetPoolPackageCourtyardRect(_)
-        | command @ ProjectCommands::SetPoolPackageCourtyardPolygon(_)
-        | command @ ProjectCommands::AddPoolPackageSilkscreenLine(_)
-        | command @ ProjectCommands::AddPoolPackageSilkscreenRect(_)
-        | command @ ProjectCommands::AddPoolPackageSilkscreenCircle(_)
-        | command @ ProjectCommands::AddPoolPackageSilkscreenArc(_)
-        | command @ ProjectCommands::AddPoolPackageSilkscreenPolygon(_)
-        | command @ ProjectCommands::AddPoolPackageSilkscreenText(_)
-        | command @ ProjectCommands::AddPoolPackageModel3d(_)
-        | command @ ProjectCommands::SetPoolPackageBodyHeights(_)
-        | command @ ProjectCommands::CreatePoolPart(_)
-        | command @ ProjectCommands::SetPoolPartMetadata(_)
-        | command @ ProjectCommands::SetPoolPartParametric(_)
-        | command @ ProjectCommands::SetPoolPartOrderableMpns(_)
-        | command @ ProjectCommands::SetPoolPartPackagingOptions(_)
-        | command @ ProjectCommands::SetPoolPartBehaviouralModels(_)
-        | command @ ProjectCommands::AttachPoolPartModel(_)
-        | command @ ProjectCommands::DetachPoolPartModel(_)
-        | command @ ProjectCommands::GcPoolModels(_)
-        | command @ ProjectCommands::SetPoolPartThermal(_)
-        | command @ ProjectCommands::SetPoolPartSupplyChain(_)
-        | command @ ProjectCommands::SetPoolPartTags(_)
-        | command @ ProjectCommands::SetPoolPartPadMap(_)
-        | command @ ProjectCommands::SetPoolPartPadMapEntry(_)
-        | command @ ProjectCommands::SetPoolLibraryObject(_)
-        | command @ ProjectCommands::DeletePoolLibraryObject(_) => {
-            execute_project_library_command(format, command)
-        }
+        ProjectCommands::PlanGerberExport(args) => args.run(format),
+        ProjectCommands::ExportGerberSet(args) => args.run(format),
+        ProjectCommands::ValidateGerberSet(args) => args.run(format),
+        ProjectCommands::CompareGerberSet(args) => args.run(format),
+        ProjectCommands::CompareGerberExportPlan(args) => args.run(format),
+        ProjectCommands::ReportManufacturing(args) => args.run(format),
+        ProjectCommands::ExportManufacturingSet(args) => args.run(format),
+        ProjectCommands::InspectManufacturingSet(args) => args.run(format),
+        ProjectCommands::ValidateManufacturingSet(args) => args.run(format),
+        ProjectCommands::CompareManufacturingSet(args) => args.run(format),
+        ProjectCommands::ManifestManufacturingSet(args) => args.run(format),
+        ProjectCommands::ExportForwardAnnotationAudit(args) => args.run(format),
+        ProjectCommands::ForwardAnnotationAudit(args) => args.run(format),
+        ProjectCommands::ExportForwardAnnotationProposal(args) => args.run(format),
+        ProjectCommands::ApplyForwardAnnotationAction(args) => args.run(format),
+        ProjectCommands::ApplyForwardAnnotationReviewed(args) => args.run(format),
+        ProjectCommands::ExportForwardAnnotationProposalSelection(args) => args.run(format),
+        ProjectCommands::SelectForwardAnnotationProposalArtifact(args) => args.run(format),
+        ProjectCommands::InspectForwardAnnotationProposalArtifact(args) => args.run(format),
+        ProjectCommands::ValidateForwardAnnotationProposalArtifact(args) => args.run(format),
+        ProjectCommands::CompareForwardAnnotationProposalArtifact(args) => args.run(format),
+        ProjectCommands::FilterForwardAnnotationProposalArtifact(args) => args.run(format),
+        ProjectCommands::PlanForwardAnnotationProposalArtifactApply(args) => args.run(format),
+        ProjectCommands::ApplyForwardAnnotationProposalArtifact(args) => args.run(format),
+        ProjectCommands::ImportForwardAnnotationArtifactReview(args) => args.run(format),
+        ProjectCommands::ReplaceForwardAnnotationArtifactReview(args) => args.run(format),
+        ProjectCommands::DeferForwardAnnotationAction(args) => args.run(format),
+        ProjectCommands::RejectForwardAnnotationAction(args) => args.run(format),
+        ProjectCommands::ClearForwardAnnotationActionReview(args) => args.run(format),
+        ProjectCommands::RouteProposal(args) => args.run(format),
+        ProjectCommands::ReviewRouteProposal(args) => args.run(format),
+        ProjectCommands::RouteStrategyReport(args) => args.run(format),
+        ProjectCommands::RouteStrategyCompare(args) => args.run(format),
+        ProjectCommands::RouteStrategyDelta(args) => args.run(format),
+        ProjectCommands::WriteRouteStrategyCuratedFixtureSuite(args) => args.run(format),
+        ProjectCommands::CaptureRouteStrategyCuratedBaseline(args) => args.run(format),
+        ProjectCommands::RouteStrategyBatchEvaluate(args) => args.run(format),
+        ProjectCommands::InspectRouteStrategyBatchResult(args) => args.run(format),
+        ProjectCommands::ValidateRouteStrategyBatchResult(args) => args.run(format),
+        ProjectCommands::CompareRouteStrategyBatchResult(args) => args.run(format),
+        ProjectCommands::GateRouteStrategyBatchResult(args) => args.run(format),
+        ProjectCommands::SummarizeRouteStrategyBatchResults(args) => args.run(format),
+        ProjectCommands::RouteProposalExplain(args) => args.run(format),
+        ProjectCommands::ExportRouteProposal(args) => args.run(format),
+        ProjectCommands::ExportRoutePathProposal(args) => args.run(format),
+        ProjectCommands::InspectRouteProposalArtifact(args) => args.run(format),
+        ProjectCommands::RevalidateRouteProposalArtifact(args) => args.run(format),
+        ProjectCommands::ApplyRouteProposalArtifact(args) => args.run(format),
+        ProjectCommands::RouteApplySelected(args) => args.run(format),
+        ProjectCommands::RouteApply(args) => args.run(format),
+        ProjectCommands::ExportBom(args) => args.run(format),
+        ProjectCommands::CompareBom(args) => args.run(format),
+        ProjectCommands::ValidateBom(args) => args.run(format),
+        ProjectCommands::InspectBom(args) => args.run(format),
+        ProjectCommands::ExportPnp(args) => args.run(format),
+        ProjectCommands::ComparePnp(args) => args.run(format),
+        ProjectCommands::ValidatePnp(args) => args.run(format),
+        ProjectCommands::InspectPnp(args) => args.run(format),
+        ProjectCommands::ReviewProposal(args) => args.run(format),
+        ProjectCommands::ShowProposal(args) => args.run(format),
+        ProjectCommands::ValidateProposal(args) => args.run(format),
+        ProjectCommands::DeferProposal(args) => args.run(format),
+        ProjectCommands::ApplyProposal(args) => args.run(format),
+        ProjectCommands::ImportKicadFootprint(args) => args.run(format),
+        ProjectCommands::ImportKicadBoard(args) => args.run(format),
+        ProjectCommands::ImportKicadSchematic(args) => args.run(format),
+        ProjectCommands::ImportEagleLibrary(args) => args.run(format),
+        ProjectCommands::SetPoolPartBindings(args) => args.run(format),
+        ProjectCommands::SetPoolSymbolPinAnchor(args) => args.run(format),
+        ProjectCommands::CreatePoolFootprint(args) => args.run(format),
+        ProjectCommands::GenerateIpc7351bTwoTerminalChip(args) => args.run(format),
+        ProjectCommands::SetPoolFootprintPad(args) => args.run(format),
+        ProjectCommands::SetPoolFootprintCourtyardRect(args) => args.run(format),
+        ProjectCommands::SetPoolFootprintCourtyardPolygon(args) => args.run(format),
+        ProjectCommands::AddPoolFootprintSilkscreenLine(args) => args.run(format),
+        ProjectCommands::AddPoolFootprintSilkscreenRect(args) => args.run(format),
+        ProjectCommands::AddPoolFootprintSilkscreenCircle(args) => args.run(format),
+        ProjectCommands::AddPoolFootprintSilkscreenPolygon(args) => args.run(format),
+        ProjectCommands::CreatePoolPinPadMap(args) => args.run(format),
+        ProjectCommands::SetPoolPinPadMap(args) => args.run(format),
+        ProjectCommands::CreatePoolLibraryObject(args) => args.run(format),
+        ProjectCommands::CreatePoolUnit(args) => args.run(format),
+        ProjectCommands::SetPoolUnitPin(args) => args.run(format),
+        ProjectCommands::CreatePoolSymbol(args) => args.run(format),
+        ProjectCommands::AddPoolSymbolLine(args) => args.run(format),
+        ProjectCommands::AddPoolSymbolPolygon(args) => args.run(format),
+        ProjectCommands::AddPoolSymbolRect(args) => args.run(format),
+        ProjectCommands::AddPoolSymbolCircle(args) => args.run(format),
+        ProjectCommands::AddPoolSymbolText(args) => args.run(format),
+        ProjectCommands::AddPoolSymbolArc(args) => args.run(format),
+        ProjectCommands::CreatePoolEntity(args) => args.run(format),
+        ProjectCommands::CreatePoolPadstack(args) => args.run(format),
+        ProjectCommands::CreatePoolPackage(args) => args.run(format),
+        ProjectCommands::SetPoolPackagePad(args) => args.run(format),
+        ProjectCommands::SetPoolPackageCourtyardRect(args) => args.run(format),
+        ProjectCommands::SetPoolPackageCourtyardPolygon(args) => args.run(format),
+        ProjectCommands::AddPoolPackageSilkscreenLine(args) => args.run(format),
+        ProjectCommands::AddPoolPackageSilkscreenRect(args) => args.run(format),
+        ProjectCommands::AddPoolPackageSilkscreenCircle(args) => args.run(format),
+        ProjectCommands::AddPoolPackageSilkscreenArc(args) => args.run(format),
+        ProjectCommands::AddPoolPackageSilkscreenPolygon(args) => args.run(format),
+        ProjectCommands::AddPoolPackageSilkscreenText(args) => args.run(format),
+        ProjectCommands::AddPoolPackageModel3d(args) => args.run(format),
+        ProjectCommands::SetPoolPackageBodyHeights(args) => args.run(format),
+        ProjectCommands::CreatePoolPart(args) => args.run(format),
+        ProjectCommands::SetPoolPartMetadata(args) => args.run(format),
+        ProjectCommands::SetPoolPartParametric(args) => args.run(format),
+        ProjectCommands::SetPoolPartOrderableMpns(args) => args.run(format),
+        ProjectCommands::SetPoolPartPackagingOptions(args) => args.run(format),
+        ProjectCommands::SetPoolPartBehaviouralModels(args) => args.run(format),
+        ProjectCommands::AttachPoolPartModel(args) => args.run(format),
+        ProjectCommands::DetachPoolPartModel(args) => args.run(format),
+        ProjectCommands::GcPoolModels(args) => args.run(format),
+        ProjectCommands::SetPoolPartThermal(args) => args.run(format),
+        ProjectCommands::SetPoolPartSupplyChain(args) => args.run(format),
+        ProjectCommands::SetPoolPartTags(args) => args.run(format),
+        ProjectCommands::SetPoolPartPadMap(args) => args.run(format),
+        ProjectCommands::SetPoolPartPadMapEntry(args) => args.run(format),
+        ProjectCommands::SetPoolLibraryObject(args) => args.run(format),
+        ProjectCommands::DeletePoolLibraryObject(args) => args.run(format),
         ProjectCommands::SetProjectName(ProjectSetProjectNameArgs { path, name }) => {
             let report = set_native_project_name(&path, name)?;
             let output = match format {
@@ -977,86 +871,68 @@ pub(crate) fn execute_project_command(
             ),
             0,
         )),
-        command @ ProjectCommands::CreateSheet(ProjectCreateSheetArgs { .. })
-        | command @ ProjectCommands::DeleteSheet(ProjectDeleteSheetArgs { .. })
-        | command @ ProjectCommands::RenameSheet(ProjectRenameSheetArgs { .. })
-        | command @ ProjectCommands::CreateSheetDefinition(ProjectCreateSheetDefinitionArgs {
-            ..
-        })
-        | command @ ProjectCommands::CreateSheetInstance(ProjectCreateSheetInstanceArgs {
-            ..
-        })
-        | command @ ProjectCommands::DeleteSheetInstance(ProjectDeleteSheetInstanceArgs {
-            ..
-        })
-        | command @ ProjectCommands::MoveSheetInstance(ProjectMoveSheetInstanceArgs { .. })
-        | command @ ProjectCommands::BindSheetInstancePort(ProjectBindSheetInstancePortArgs {
-            ..
-        })
-        | command @ ProjectCommands::UnbindSheetInstancePort(ProjectUnbindSheetInstancePortArgs {
-            ..
-        })
-        | command @ ProjectCommands::PlaceLabel(ProjectPlaceLabelArgs { .. })
-        | command @ ProjectCommands::RenameLabel(ProjectRenameLabelArgs { .. })
-        | command @ ProjectCommands::DeleteLabel(ProjectDeleteLabelArgs { .. })
-        | command @ ProjectCommands::DrawWire(ProjectDrawWireArgs { .. })
-        | command @ ProjectCommands::DeleteWire(ProjectDeleteWireArgs { .. })
-        | command @ ProjectCommands::PlaceJunction(ProjectPlaceJunctionArgs { .. })
-        | command @ ProjectCommands::DeleteJunction(ProjectDeleteJunctionArgs { .. })
-        | command @ ProjectCommands::PlacePort(ProjectPlacePortArgs { .. })
-        | command @ ProjectCommands::EditPort(ProjectEditPortArgs { .. })
-        | command @ ProjectCommands::DeletePort(ProjectDeletePortArgs { .. })
-        | command @ ProjectCommands::CreateBus(ProjectCreateBusArgs { .. })
-        | command @ ProjectCommands::EditBusMembers(ProjectEditBusMembersArgs { .. })
-        | command @ ProjectCommands::DeleteBus(ProjectDeleteBusArgs { .. })
-        | command @ ProjectCommands::PlaceBusEntry(ProjectPlaceBusEntryArgs { .. })
-        | command @ ProjectCommands::DeleteBusEntry(ProjectDeleteBusEntryArgs { .. })
-        | command @ ProjectCommands::PlaceNoConnect(ProjectPlaceNoConnectArgs { .. })
-        | command @ ProjectCommands::DeleteNoConnect(ProjectDeleteNoConnectArgs { .. }) => {
-            execute_project_schematic_connectivity_command(format, command)
-        }
-        command @ ProjectCommands::PlaceSymbol(ProjectPlaceSymbolArgs { .. })
-        | command @ ProjectCommands::MoveSymbol(ProjectMoveSymbolArgs { .. })
-        | command @ ProjectCommands::RotateSymbol(ProjectRotateSymbolArgs { .. })
-        | command @ ProjectCommands::MirrorSymbol(ProjectMirrorSymbolArgs { .. })
-        | command @ ProjectCommands::DeleteSymbol(ProjectDeleteSymbolArgs { .. })
-        | command @ ProjectCommands::SetSymbolReference(ProjectSetSymbolReferenceArgs { .. })
-        | command @ ProjectCommands::SetSymbolValue(ProjectSetSymbolValueArgs { .. })
-        | command @ ProjectCommands::SetSymbolLibId(ProjectSetSymbolLibIdArgs { .. })
-        | command @ ProjectCommands::ClearSymbolLibId(ProjectClearSymbolLibIdArgs { .. })
-        | command @ ProjectCommands::SetSymbolEntity(ProjectSetSymbolEntityArgs { .. })
-        | command @ ProjectCommands::ClearSymbolEntity(ProjectClearSymbolEntityArgs { .. })
-        | command @ ProjectCommands::SetSymbolPart(ProjectSetSymbolPartArgs { .. })
-        | command @ ProjectCommands::ClearSymbolPart(ProjectClearSymbolPartArgs { .. })
-        | command @ ProjectCommands::SetSymbolUnit(ProjectSetSymbolUnitArgs { .. })
-        | command @ ProjectCommands::ClearSymbolUnit(ProjectClearSymbolUnitArgs { .. })
-        | command @ ProjectCommands::SetSymbolGate(ProjectSetSymbolGateArgs { .. })
-        | command @ ProjectCommands::ClearSymbolGate(ProjectClearSymbolGateArgs { .. })
-        | command @ ProjectCommands::SetSymbolDisplayMode(ProjectSetSymbolDisplayModeArgs {
-            ..
-        })
-        | command @ ProjectCommands::SetSymbolHiddenPowerBehavior(
-            ProjectSetSymbolHiddenPowerBehaviorArgs { .. },
-        )
-        | command @ ProjectCommands::SetPinOverride(ProjectSetPinOverrideArgs { .. })
-        | command @ ProjectCommands::ClearPinOverride(ProjectClearPinOverrideArgs { .. })
-        | command @ ProjectCommands::AddSymbolField(ProjectAddSymbolFieldArgs { .. })
-        | command @ ProjectCommands::EditSymbolField(ProjectEditSymbolFieldArgs { .. })
-        | command @ ProjectCommands::DeleteSymbolField(ProjectDeleteSymbolFieldArgs { .. })
-        | command @ ProjectCommands::PlaceText(ProjectPlaceTextArgs { .. })
-        | command @ ProjectCommands::EditText(ProjectEditTextArgs { .. })
-        | command @ ProjectCommands::DeleteText(ProjectDeleteTextArgs { .. })
-        | command @ ProjectCommands::PlaceDrawingLine(ProjectPlaceDrawingLineArgs { .. })
-        | command @ ProjectCommands::PlaceDrawingRect(ProjectPlaceDrawingRectArgs { .. })
-        | command @ ProjectCommands::PlaceDrawingCircle(ProjectPlaceDrawingCircleArgs { .. })
-        | command @ ProjectCommands::PlaceDrawingArc(ProjectPlaceDrawingArcArgs { .. })
-        | command @ ProjectCommands::EditDrawingLine(ProjectEditDrawingLineArgs { .. })
-        | command @ ProjectCommands::EditDrawingRect(ProjectEditDrawingRectArgs { .. })
-        | command @ ProjectCommands::EditDrawingCircle(ProjectEditDrawingCircleArgs { .. })
-        | command @ ProjectCommands::EditDrawingArc(ProjectEditDrawingArcArgs { .. })
-        | command @ ProjectCommands::DeleteDrawing(ProjectDeleteDrawingArgs { .. }) => {
-            execute_project_schematic_symbols_command(format, command)
-        }
+        ProjectCommands::CreateSheet(args) => args.run(format),
+        ProjectCommands::DeleteSheet(args) => args.run(format),
+        ProjectCommands::RenameSheet(args) => args.run(format),
+        ProjectCommands::CreateSheetDefinition(args) => args.run(format),
+        ProjectCommands::CreateSheetInstance(args) => args.run(format),
+        ProjectCommands::DeleteSheetInstance(args) => args.run(format),
+        ProjectCommands::MoveSheetInstance(args) => args.run(format),
+        ProjectCommands::BindSheetInstancePort(args) => args.run(format),
+        ProjectCommands::UnbindSheetInstancePort(args) => args.run(format),
+        ProjectCommands::PlaceLabel(args) => args.run(format),
+        ProjectCommands::RenameLabel(args) => args.run(format),
+        ProjectCommands::DeleteLabel(args) => args.run(format),
+        ProjectCommands::DrawWire(args) => args.run(format),
+        ProjectCommands::DeleteWire(args) => args.run(format),
+        ProjectCommands::PlaceJunction(args) => args.run(format),
+        ProjectCommands::DeleteJunction(args) => args.run(format),
+        ProjectCommands::PlacePort(args) => args.run(format),
+        ProjectCommands::EditPort(args) => args.run(format),
+        ProjectCommands::DeletePort(args) => args.run(format),
+        ProjectCommands::CreateBus(args) => args.run(format),
+        ProjectCommands::EditBusMembers(args) => args.run(format),
+        ProjectCommands::DeleteBus(args) => args.run(format),
+        ProjectCommands::PlaceBusEntry(args) => args.run(format),
+        ProjectCommands::DeleteBusEntry(args) => args.run(format),
+        ProjectCommands::PlaceNoConnect(args) => args.run(format),
+        ProjectCommands::DeleteNoConnect(args) => args.run(format),
+        ProjectCommands::PlaceSymbol(args) => args.run(format),
+        ProjectCommands::MoveSymbol(args) => args.run(format),
+        ProjectCommands::RotateSymbol(args) => args.run(format),
+        ProjectCommands::MirrorSymbol(args) => args.run(format),
+        ProjectCommands::DeleteSymbol(args) => args.run(format),
+        ProjectCommands::SetSymbolReference(args) => args.run(format),
+        ProjectCommands::SetSymbolValue(args) => args.run(format),
+        ProjectCommands::SetSymbolLibId(args) => args.run(format),
+        ProjectCommands::ClearSymbolLibId(args) => args.run(format),
+        ProjectCommands::SetSymbolEntity(args) => args.run(format),
+        ProjectCommands::ClearSymbolEntity(args) => args.run(format),
+        ProjectCommands::SetSymbolPart(args) => args.run(format),
+        ProjectCommands::ClearSymbolPart(args) => args.run(format),
+        ProjectCommands::SetSymbolUnit(args) => args.run(format),
+        ProjectCommands::ClearSymbolUnit(args) => args.run(format),
+        ProjectCommands::SetSymbolGate(args) => args.run(format),
+        ProjectCommands::ClearSymbolGate(args) => args.run(format),
+        ProjectCommands::SetSymbolDisplayMode(args) => args.run(format),
+        ProjectCommands::SetSymbolHiddenPowerBehavior(args) => args.run(format),
+        ProjectCommands::SetPinOverride(args) => args.run(format),
+        ProjectCommands::ClearPinOverride(args) => args.run(format),
+        ProjectCommands::AddSymbolField(args) => args.run(format),
+        ProjectCommands::EditSymbolField(args) => args.run(format),
+        ProjectCommands::DeleteSymbolField(args) => args.run(format),
+        ProjectCommands::PlaceText(args) => args.run(format),
+        ProjectCommands::EditText(args) => args.run(format),
+        ProjectCommands::DeleteText(args) => args.run(format),
+        ProjectCommands::PlaceDrawingLine(args) => args.run(format),
+        ProjectCommands::PlaceDrawingRect(args) => args.run(format),
+        ProjectCommands::PlaceDrawingCircle(args) => args.run(format),
+        ProjectCommands::PlaceDrawingArc(args) => args.run(format),
+        ProjectCommands::EditDrawingLine(args) => args.run(format),
+        ProjectCommands::EditDrawingRect(args) => args.run(format),
+        ProjectCommands::EditDrawingCircle(args) => args.run(format),
+        ProjectCommands::EditDrawingArc(args) => args.run(format),
+        ProjectCommands::DeleteDrawing(args) => args.run(format),
         ProjectCommands::PlaceBoardText(ProjectPlaceBoardTextArgs {
             path,
             text,
@@ -1207,35 +1083,10 @@ pub(crate) fn execute_project_command(
             };
             Ok((output, 0))
         }
-        ProjectCommands::SetBoardOutline(ProjectSetBoardOutlineArgs { path, vertices }) => {
-            execute_set_board_outline(format, path, vertices)
-        }
-        ProjectCommands::SetBoardName(ProjectSetBoardNameArgs { path, name }) => {
-            execute_set_board_name(format, path, name)
-        }
-        ProjectCommands::PlaceBoardComponent(ProjectPlaceBoardComponentArgs {
-            path,
-            part_uuid,
-            package_uuid,
-            reference,
-            value,
-            x_nm,
-            y_nm,
-            layer,
-        }) => execute_place_board_component(
-            format,
-            path,
-            part_uuid,
-            package_uuid,
-            reference,
-            value,
-            x_nm,
-            y_nm,
-            layer,
-        ),
-        ProjectCommands::GenerateBoardComponents(args) => {
-            execute_generate_board_components(format, args)
-        }
+        ProjectCommands::SetBoardOutline(args) => args.run(format),
+        ProjectCommands::SetBoardName(args) => args.run(format),
+        ProjectCommands::PlaceBoardComponent(args) => args.run(format),
+        ProjectCommands::GenerateBoardComponents(args) => args.run(format),
         ProjectCommands::DeleteBoardComponent(ProjectDeleteBoardComponentArgs {
             path,
             component_uuid,
@@ -1599,139 +1450,22 @@ pub(crate) fn execute_project_command(
             };
             Ok((output, 0))
         }
-        ProjectCommands::SetBoardStackup(ProjectSetBoardStackupArgs { path, layers }) => {
-            execute_set_board_stackup(format, path, layers)
-        }
-        ProjectCommands::AddDefaultTopStackup(ProjectAddDefaultTopStackupArgs { path }) => {
-            execute_add_default_top_stackup(format, path)
-        }
-        ProjectCommands::PlaceBoardNet(ProjectPlaceBoardNetArgs {
-            path,
-            name,
-            class_uuid,
-            impedance_target_ohms,
-            impedance_tolerance_pct,
-            controlled_dielectric_layer,
-        }) => execute_place_board_net(
-            format,
-            path,
-            name,
-            class_uuid,
-            impedance_target_ohms,
-            impedance_tolerance_pct,
-            controlled_dielectric_layer,
-        ),
-        ProjectCommands::PlaceBoardNetClass(ProjectPlaceBoardNetClassArgs {
-            path,
-            name,
-            clearance_nm,
-            track_width_nm,
-            via_drill_nm,
-            via_diameter_nm,
-            diffpair_width_nm,
-            diffpair_gap_nm,
-        }) => execute_place_board_net_class(
-            format,
-            path,
-            name,
-            clearance_nm,
-            track_width_nm,
-            via_drill_nm,
-            via_diameter_nm,
-            diffpair_width_nm,
-            diffpair_gap_nm,
-        ),
-        ProjectCommands::EditBoardNetClass(ProjectEditBoardNetClassArgs {
-            path,
-            net_class_uuid,
-            name,
-            clearance_nm,
-            track_width_nm,
-            via_drill_nm,
-            via_diameter_nm,
-            diffpair_width_nm,
-            diffpair_gap_nm,
-        }) => execute_edit_board_net_class(
-            format,
-            path,
-            net_class_uuid,
-            name,
-            clearance_nm,
-            track_width_nm,
-            via_drill_nm,
-            via_diameter_nm,
-            diffpair_width_nm,
-            diffpair_gap_nm,
-        ),
-        ProjectCommands::EditBoardNet(ProjectEditBoardNetArgs {
-            path,
-            net_uuid,
-            name,
-            class_uuid,
-            impedance_target_ohms,
-            impedance_tolerance_pct,
-            controlled_dielectric_layer,
-            clear_controlled_impedance,
-        }) => execute_edit_board_net(
-            format,
-            path,
-            net_uuid,
-            name,
-            class_uuid,
-            impedance_target_ohms,
-            impedance_tolerance_pct,
-            controlled_dielectric_layer,
-            clear_controlled_impedance,
-        ),
-        ProjectCommands::MoveBoardComponent(ProjectMoveBoardComponentArgs {
-            path,
-            component_uuid,
-            x_nm,
-            y_nm,
-        }) => execute_move_board_component(format, path, component_uuid, x_nm, y_nm),
-        ProjectCommands::SetBoardComponentPart(SetBoardComponentPartArgs {
-            path,
-            component_uuid,
-            part_uuid,
-        }) => execute_set_board_component_part(format, path, component_uuid, part_uuid),
-        ProjectCommands::SetBoardComponentPackage(SetBoardComponentPackageArgs {
-            path,
-            component_uuid,
-            package_uuid,
-        }) => execute_set_board_component_package(format, path, component_uuid, package_uuid),
-        ProjectCommands::SetBoardComponentLayer(SetBoardComponentLayerArgs {
-            path,
-            component_uuid,
-            layer,
-        })
-        | ProjectCommands::FlipBoardComponent(SetBoardComponentLayerArgs {
-            path,
-            component_uuid,
-            layer,
-        }) => execute_set_board_component_layer(format, path, component_uuid, layer),
-        ProjectCommands::SetBoardComponentReference(SetBoardComponentReferenceArgs {
-            path,
-            component_uuid,
-            reference,
-        }) => execute_set_board_component_reference(format, path, component_uuid, reference),
-        ProjectCommands::SetBoardComponentValue(SetBoardComponentValueArgs {
-            path,
-            component_uuid,
-            value,
-        }) => execute_set_board_component_value(format, path, component_uuid, value),
-        ProjectCommands::RotateBoardComponent(ProjectRotateBoardComponentArgs {
-            path,
-            component_uuid,
-            rotation_deg,
-        }) => execute_rotate_board_component(format, path, component_uuid, rotation_deg),
-        ProjectCommands::SetBoardComponentLocked(ProjectSetBoardComponentLockedArgs {
-            path,
-            component_uuid,
-        }) => execute_set_board_component_locked(format, path, component_uuid, true),
-        ProjectCommands::ClearBoardComponentLocked(ProjectClearBoardComponentLockedArgs {
-            path,
-            component_uuid,
-        }) => execute_set_board_component_locked(format, path, component_uuid, false),
+        ProjectCommands::SetBoardStackup(args) => args.run(format),
+        ProjectCommands::AddDefaultTopStackup(args) => args.run(format),
+        ProjectCommands::PlaceBoardNet(args) => args.run(format),
+        ProjectCommands::PlaceBoardNetClass(args) => args.run(format),
+        ProjectCommands::EditBoardNetClass(args) => args.run(format),
+        ProjectCommands::EditBoardNet(args) => args.run(format),
+        ProjectCommands::MoveBoardComponent(args) => args.run(format),
+        ProjectCommands::SetBoardComponentPart(args) => args.run(format),
+        ProjectCommands::SetBoardComponentPackage(args) => args.run(format),
+        ProjectCommands::SetBoardComponentLayer(args)
+        | ProjectCommands::FlipBoardComponent(args) => args.run(format),
+        ProjectCommands::SetBoardComponentReference(args) => args.run(format),
+        ProjectCommands::SetBoardComponentValue(args) => args.run(format),
+        ProjectCommands::RotateBoardComponent(args) => args.run(format),
+        ProjectCommands::SetBoardComponentLocked(args) => args.run(format),
+        ProjectCommands::ClearBoardComponentLocked(args) => args.run(format),
         ProjectCommands::BindComponentInstance(args) => {
             let view = bind_native_project_component_instance(
                 &args.path,
@@ -1766,12 +1500,298 @@ pub(crate) fn execute_project_command(
             ),
             0,
         )),
-        ProjectCommands::DeleteBoardNetClass(ProjectDeleteBoardNetClassArgs {
+        ProjectCommands::DeleteBoardNetClass(args) => args.run(format),
+        ProjectCommands::DeleteBoardNet(args) => args.run(format),
+    }
+}
+
+/// Top-level Commands router (Phase 5 fold of command_exec_dispatch.rs):
+/// every subcommand family dispatches to `args.run(format)` inherent
+/// methods or the family fn that owns its sub-enum.
+pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
+    let format = &cli.format;
+    match cli.command {
+        Commands::Context { action } => match action {
+            ContextCommands::Get(args) => {
+                Ok((render_output(format, &query_context_envelope(&args)?), 0))
+            }
+            ContextCommands::Refresh(args) => {
+                Ok((render_output(format, &refresh_context_envelope(&args)?), 0))
+            }
+            ContextCommands::SessionEvents(args) => Ok((
+                render_output(format, &query_context_session_events(&args)?),
+                0,
+            )),
+            ContextCommands::SessionActivity(args) => Ok((
+                render_output(format, &query_context_session_activity(&args)?),
+                0,
+            )),
+        },
+        Commands::Import { path } => {
+            let report = import_path(&path)?;
+            let view = ImportReportView::from(report);
+            Ok((render_output(format, &view), 0))
+        }
+        Commands::Query { action } => execute_query_command(format, action),
+        Commands::Drc { path } => {
+            let report = run_drc(Path::new(&path))?;
+            let output = match *format {
+                OutputFormat::Text => render_drc_report_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            let exit_code = if report.passed { 0 } else { 1 };
+            Ok((output, exit_code))
+        }
+        Commands::Erc { path } => {
+            let findings = run_erc(&path)?;
+            let exit_code = if findings.iter().any(|finding| !finding.waived) {
+                1
+            } else {
+                0
+            };
+            Ok((render_output(format, &findings), exit_code))
+        }
+        Commands::Check { action } => match action {
+            CheckCommands::Run(args) => args.run(format),
+            CheckCommands::List(args) => args.run(format),
+            CheckCommands::Show(args) => args.run(format),
+            CheckCommands::Profiles(args) => args.run(format),
+            CheckCommands::FillZones(args) => args.run(format),
+            CheckCommands::RepairStandards(args) => args.run(format),
+            CheckCommands::Waive(args) => args.run(format),
+            CheckCommands::AcceptDeviation(args) => args.run(format),
+            CheckCommands::Imported(args) => args.run(format),
+        },
+        Commands::Pool { action } => match action {
+            PoolCommands::Search { query, libraries } => {
+                let results = search_pool(&query, &libraries)?;
+                Ok((render_output(format, &results), 0))
+            }
+        },
+        Commands::Proposal { action } => match action {
+            ProposalCommands::Create(args) => args.run(format),
+            ProposalCommands::CreatePlaceLabel(args) => args.run(format),
+            ProposalCommands::CreatePlaceSymbol(args) => args.run(format),
+            ProposalCommands::CreateDrawWire(args) => args.run(format),
+            ProposalCommands::CreateBoardComponentReplacement(args) => args.run(format),
+            ProposalCommands::CreateBoardComponentReplacements(args) => args.run(format),
+            ProposalCommands::CreateBoardComponentReplacementPlan(args) => args.run(format),
+            ProposalCommands::CreatePoolLibraryObject(args) => args.run(format),
+            ProposalCommands::CreatePoolUnit(args) => args.run(format),
+            ProposalCommands::CreatePoolSymbol(args) => args.run(format),
+            ProposalCommands::CreatePoolEntity(args) => args.run(format),
+            ProposalCommands::CreatePoolPadstack(args) => args.run(format),
+            ProposalCommands::CreatePoolPackage(args) => args.run(format),
+            ProposalCommands::CreatePoolFootprint(args) => args.run(format),
+            ProposalCommands::GenerateIpc7351bTwoTerminalChip(args) => args.run(format),
+            ProposalCommands::CreatePoolPinPadMap(args) => args.run(format),
+            ProposalCommands::SetPoolPinPadMap(args) => args.run(format),
+            ProposalCommands::SetPoolFootprintPad(args) => args.run(format),
+            ProposalCommands::SetPoolFootprintCourtyardRect(args) => args.run(format),
+            ProposalCommands::SetPoolFootprintCourtyardPolygon(args) => args.run(format),
+            ProposalCommands::AddPoolFootprintSilkscreenLine(args) => args.run(format),
+            ProposalCommands::AddPoolFootprintSilkscreenRect(args) => args.run(format),
+            ProposalCommands::AddPoolFootprintSilkscreenCircle(args) => args.run(format),
+            ProposalCommands::AddPoolFootprintSilkscreenPolygon(args) => args.run(format),
+            ProposalCommands::SetPoolPackagePad(args) => args.run(format),
+            ProposalCommands::SetPoolPackageCourtyardRect(args) => args.run(format),
+            ProposalCommands::SetPoolPackageCourtyardPolygon(args) => args.run(format),
+            ProposalCommands::CreateOutputJob(args) => args.run(format),
+            ProposalCommands::UpdateOutputJob(args) => args.run(format),
+            ProposalCommands::DeleteOutputJob(args) => args.run(format),
+            ProposalCommands::CreateManufacturingPlan(args) => args.run(format),
+            ProposalCommands::UpdateManufacturingPlan(args) => args.run(format),
+            ProposalCommands::DeleteManufacturingPlan(args) => args.run(format),
+            ProposalCommands::CreatePanelProjection(args) => args.run(format),
+            ProposalCommands::UpdatePanelProjection(args) => args.run(format),
+            ProposalCommands::DeletePanelProjection(args) => args.run(format),
+            ProposalCommands::Preview(args) => args.run(format),
+            ProposalCommands::List(args) => args.run(format),
+            ProposalCommands::Show(args) => args.run(format),
+            ProposalCommands::Validate(args) => args.run(format),
+            ProposalCommands::Review(args) => args.run(format),
+            ProposalCommands::Defer(args) => args.run(format),
+            ProposalCommands::Reject(args) => args.run(format),
+            ProposalCommands::AcceptApply(args) => args.run_accept_apply(format),
+            ProposalCommands::Apply(args) => args.run(format),
+        },
+        Commands::Journal { action } => match action {
+            JournalCommands::List(args) => args.run(format),
+            JournalCommands::Show(args) => args.run(format),
+            JournalCommands::Undo(args) => args.run(format),
+            JournalCommands::Redo(args) => args.run(format),
+        },
+        Commands::Artifact { action } => match action {
+            ArtifactCommands::Generate(args) => args.run(format),
+            ArtifactCommands::StartOutputJobRun(args) => args.run(format),
+            ArtifactCommands::CancelOutputJobRun(args) => args.run(format),
+            ArtifactCommands::List(args) => args.run(format),
+            ArtifactCommands::Show(args) => args.run(format),
+            ArtifactCommands::Files(args) => args.run(format),
+            ArtifactCommands::Preview(args) => args.run(format),
+            ArtifactCommands::Compare(args) => args.run(format),
+            ArtifactCommands::Validate(args) => args.run(format),
+            ArtifactCommands::ExportManufacturingSet(args) => args.run(format),
+            ArtifactCommands::ValidateManufacturingSet(args) => args.run(format),
+        },
+        Commands::Project { action } => execute_project_command(format, *action),
+        Commands::Plan { action } => execute_plan_command(format, action),
+        Commands::Modify {
             path,
-            net_class_uuid,
-        }) => execute_delete_board_net_class(format, path, net_class_uuid),
-        ProjectCommands::DeleteBoardNet(ProjectDeleteBoardNetArgs { path, net_uuid }) => {
-            execute_delete_board_net(format, path, net_uuid)
+            delete_track,
+            delete_via,
+            delete_component,
+            libraries,
+            move_component,
+            rotate_component,
+            set_value,
+            assign_part,
+            set_package,
+            set_package_with_part,
+            replace_component,
+            apply_replacement_plan,
+            apply_replacement_policy,
+            apply_scoped_replacement_policy,
+            apply_scoped_replacement_plan_file,
+            apply_scoped_replacement_manifest,
+            set_net_class,
+            set_reference,
+            undo,
+            redo,
+            save,
+            set_clearance_min_nm,
+            save_original,
+        } => {
+            let move_component = move_component
+                .iter()
+                .map(|value| parse_move_component_arg(value))
+                .collect::<Result<Vec<_>>>()?;
+            let rotate_component = rotate_component
+                .iter()
+                .map(|value| parse_rotate_component_arg(value))
+                .collect::<Result<Vec<_>>>()?;
+            let set_value = set_value
+                .iter()
+                .map(|value| parse_set_value_arg(value))
+                .collect::<Result<Vec<_>>>()?;
+            let assign_part = assign_part
+                .iter()
+                .map(|value| parse_assign_part_arg(value))
+                .collect::<Result<Vec<_>>>()?;
+            let set_package = set_package
+                .iter()
+                .map(|value| parse_set_package_arg(value))
+                .collect::<Result<Vec<_>>>()?;
+            let set_package_with_part = set_package_with_part
+                .iter()
+                .map(|value| parse_set_package_with_part_arg(value))
+                .collect::<Result<Vec<_>>>()?;
+            let replace_component = replace_component
+                .iter()
+                .map(|value| parse_replace_component_arg(value))
+                .collect::<Result<Vec<_>>>()?;
+            let apply_replacement_plan = apply_replacement_plan
+                .iter()
+                .map(|value| parse_apply_replacement_plan_arg(value))
+                .collect::<Result<Vec<_>>>()?;
+            let apply_replacement_policy = apply_replacement_policy
+                .iter()
+                .map(|value| parse_apply_replacement_policy_arg(value))
+                .collect::<Result<Vec<_>>>()?;
+            let apply_scoped_replacement_policy = apply_scoped_replacement_policy
+                .iter()
+                .map(|value| parse_apply_scoped_replacement_policy_arg(value))
+                .collect::<Result<Vec<_>>>()?;
+            let apply_scoped_replacement_plan = apply_scoped_replacement_plan_file
+                .iter()
+                .map(|plan_path| {
+                    let plan_text = std::fs::read_to_string(plan_path).with_context(|| {
+                        format!(
+                            "failed to read scoped replacement plan file {}",
+                            plan_path.display()
+                        )
+                    })?;
+                    serde_json::from_str::<ScopedComponentReplacementPlan>(&plan_text).with_context(
+                        || {
+                            format!(
+                                "failed to parse scoped replacement plan file {}",
+                                plan_path.display()
+                            )
+                        },
+                    )
+                })
+                .collect::<Result<Vec<_>>>()?;
+            let scoped_replacement_manifests = apply_scoped_replacement_manifest
+                .iter()
+                .map(|manifest_path| {
+                    let loaded = load_scoped_replacement_manifest_with_metadata(manifest_path)?;
+                    validate_scoped_replacement_manifest(&loaded.manifest, &path)?;
+                    Ok(loaded)
+                })
+                .collect::<Result<Vec<LoadedScopedReplacementManifest>>>()?;
+            let mut libraries = libraries;
+            for manifest in &scoped_replacement_manifests {
+                for library in &manifest.manifest.libraries {
+                    if !libraries.iter().any(|existing| existing == &library.path) {
+                        libraries.push(library.path.clone());
+                    }
+                }
+            }
+            let mut apply_scoped_replacement_plan = apply_scoped_replacement_plan;
+            apply_scoped_replacement_plan.extend(
+                scoped_replacement_manifests
+                    .iter()
+                    .map(|loaded| loaded.manifest.plan.clone()),
+            );
+            let applied_scoped_replacement_manifests = scoped_replacement_manifests
+                .iter()
+                .map(|loaded| AppliedScopedReplacementManifestView {
+                    path: loaded.manifest_path.display().to_string(),
+                    source_version: loaded.source_version,
+                    version: loaded.manifest.version,
+                    migration_applied: loaded.source_version != loaded.manifest.version,
+                    replacements: loaded.manifest.plan.replacements.len(),
+                })
+                .collect::<Vec<_>>();
+            let set_net_class = set_net_class
+                .iter()
+                .map(|value| parse_set_net_class_arg(value))
+                .collect::<Result<Vec<_>>>()?;
+            let set_reference = set_reference
+                .iter()
+                .map(|value| parse_set_reference_arg(value))
+                .collect::<Result<Vec<_>>>()?;
+            let mut report = modify_board_with_plan(
+                &path,
+                &delete_track,
+                &delete_via,
+                &delete_component,
+                &libraries,
+                &move_component,
+                &rotate_component,
+                &set_value,
+                &assign_part,
+                &set_package,
+                &set_package_with_part,
+                &replace_component,
+                &set_net_class,
+                &set_reference,
+                set_clearance_min_nm,
+                undo,
+                redo,
+                save.as_deref(),
+                save_original,
+                &apply_replacement_plan,
+                &apply_replacement_policy,
+                &apply_scoped_replacement_policy,
+                &apply_scoped_replacement_plan,
+            )?;
+            report.applied_scoped_replacement_manifests = applied_scoped_replacement_manifests;
+            let output = match *format {
+                OutputFormat::Text => render_modify_report_text(&report),
+                OutputFormat::Json => render_output(format, &report),
+            };
+            Ok((output, 0))
         }
     }
 }

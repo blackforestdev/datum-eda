@@ -1,37 +1,33 @@
-// commands/ — target home for command implementations, one subdirectory per
-// family (e.g. commands/<family>/mod.rs + its split files), following the
-// existing command_query/ and command_modify/ directory-module pattern.
+// commands/ — home of the command implementations, one subdirectory per
+// family (commands/<family>/mod.rs + its split files), alongside the
+// command_query/ and command_modify/ directory modules at the crate root.
 //
-// Wave 2 complete: every command_project_* family has moved into a
-// commands/<family>/ directory module, and the legacy command_project.rs /
-// command_project_surface.rs hosts are dissolved (their scope prelude and
-// shared core files live here as prelude / support / project_core /
-// native_types). `crate::commands` is the routing surface main.rs consumes
-// (`use commands::*;`).
+// Phase 5 complete: the command_exec_* forwarding layer is dissolved. Each
+// clap args struct carries an inherent `run(self, format)` method in its
+// owning family, and commands/dispatch.rs is the single router — the
+// exhaustive ProjectCommands match plus the top-level Commands match
+// (execute_with_exit_code). Shared core files live here as prelude /
+// support / project_core / native_types.
 //
 // Notes:
-//   - command_modify is deliberately NOT glob-re-exported: main.rs never
-//     glob-used it (its items are reached by `command_modify::` paths). The
-//     modify lane adds `pub(crate) use self::modify::*;` (or a named list)
-//     when it moves that directory here.
-//   - The command_exec_* layer is NOT moved into commands/; Wave 3 deletes it.
+//   - command_modify is deliberately NOT glob-re-exported: its items are
+//     reached by `command_modify::` paths (main.rs names the two view types
+//     it re-exports).
 //   - command_plan.rs / command_query/ still live at the crate root and are
-//     re-exported below; Wave 3 (or a follow-up lane) folds them in.
+//     re-exported below.
 //
-// Wave 3 deletes the emptied legacy chain files and the shim re-exports below.
-//
-// `use super::*;` is the scope prelude for moved families: their
+// `use super::*;` is the scope prelude for the families: their
 // `use super::*;` chains resolve here, keeping crate-root names visible
 // exactly as the old chains did.
 
-#[allow(unused_imports)] // Wave 2 anchor: scope prelude for moved family files.
+#[allow(unused_imports)] // scope prelude anchor for family files.
 use super::*;
 
 mod artifacts;
 mod board;
 mod check;
-// Wave 3: the single exhaustive ProjectCommands router. pub(crate) because
-// the top-level Commands match (command_exec_dispatch.rs) calls it by path.
+// The single router: the exhaustive ProjectCommands match and the top-level
+// Commands match (execute_with_exit_code, called by path from main.rs).
 pub(crate) mod dispatch;
 mod drill;
 mod forward_annotation;

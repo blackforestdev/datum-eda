@@ -1,3 +1,4 @@
+use crate::*;
 use anyhow::Result;
 use eda_engine::substrate::ProjectResolver;
 use serde::Serialize;
@@ -96,4 +97,129 @@ pub(crate) fn query_native_project_check_run_list(
         profile_latest_check_runs,
         check_runs,
     })
+}
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl CheckRunArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, profile } = self;
+        Ok((
+            render_output(
+                format,
+                &run_native_project_check_with_profile(&path, profile.as_deref())?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl CheckListArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path } = self;
+        Ok((
+            render_output(format, &query_native_project_check_run_list(&path)?),
+            0,
+        ))
+    }
+}
+
+impl CheckShowArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, check_run } = self;
+        Ok((
+            render_output(
+                format,
+                &query_native_project_check_run_show(&path, check_run)?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl CheckProfilesArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path } = self;
+        Ok((
+            render_output(format, &query_native_project_check_profiles(&path)?),
+            0,
+        ))
+    }
+}
+
+impl CheckFillZonesArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            zone_uuid,
+            net_uuid,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &fill_native_project_zones(&path, zone_uuid, net_uuid)?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl CheckRepairStandardsArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path } = self;
+        Ok((
+            render_output(
+                format,
+                &generate_native_project_standards_repair_proposals(&path)?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl CheckWaiveArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            fingerprint,
+            rationale,
+            created_by,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &waive_native_project_finding(&path, &fingerprint, &rationale, created_by)?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl CheckAcceptDeviationArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            fingerprint,
+            rationale,
+            accepted_by,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &accept_native_project_deviation(&path, &fingerprint, &rationale, accepted_by)?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl CheckImportedArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, fail_on } = self;
+        let report = run_check(&path)?;
+        let output = render_report(format, &report, render_check_report_text);
+        Ok((output, check_exit_code(&report, fail_on)))
+    }
 }

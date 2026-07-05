@@ -1,7 +1,7 @@
 use crate::NativeProjectRouteAppliedTrackReportView;
 use crate::NativeProjectRouteApplyCandidateArg;
 use crate::NativeProjectRouteApplyView;
-use crate::cli_args::NativeRoutePathCandidateAuthoredCopperGraphPolicy;
+use crate::args::NativeRoutePathCandidateAuthoredCopperGraphPolicy;
 use crate::*;
 use eda_engine::board::route_proposal::{self, RouteProposalCandidate};
 

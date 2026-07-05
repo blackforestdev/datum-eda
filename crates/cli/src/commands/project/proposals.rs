@@ -1,3 +1,4 @@
+use crate::*;
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
@@ -579,4 +580,253 @@ pub(crate) fn accept_and_apply_native_project_proposal(
 ) -> Result<NativeProjectProposalApplyView> {
     review_native_project_proposal(root, proposal_id, ProposalStatus::Accepted)?;
     apply_native_project_proposal(root, proposal_id)
+}
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl ProjectReviewProposalArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            proposal,
+            status,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &review_native_project_proposal(
+                    &path,
+                    proposal,
+                    match status {
+                        ProposalReviewStatusArg::Accepted => {
+                            eda_engine::substrate::ProposalStatus::Accepted
+                        }
+                        ProposalReviewStatusArg::Deferred => {
+                            eda_engine::substrate::ProposalStatus::Deferred
+                        }
+                        ProposalReviewStatusArg::Rejected => {
+                            eda_engine::substrate::ProposalStatus::Rejected
+                        }
+                    },
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectShowProposalArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, proposal } = self;
+        Ok((
+            render_output(format, &show_native_project_proposal(&path, proposal)?),
+            0,
+        ))
+    }
+}
+
+impl ProjectValidateProposalArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, proposal } = self;
+        Ok((
+            render_output(format, &validate_native_project_proposal(&path, proposal)?),
+            0,
+        ))
+    }
+}
+
+impl ProjectDeferProposalArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, proposal } = self;
+        Ok((
+            render_output(format, &defer_native_project_proposal(&path, proposal)?),
+            0,
+        ))
+    }
+}
+
+impl ProjectApplyProposalArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, proposal } = self;
+        Ok((
+            render_output(format, &apply_native_project_proposal(&path, proposal)?),
+            0,
+        ))
+    }
+}
+
+// Phase 5: exec-layer dissolution — proposal-variant run() impls (the
+// former command_exec_proposal.rs arms, now inherent methods on the clap
+// args structs).
+
+impl ProjectCreateProposalArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            batch,
+            rationale,
+            proposal,
+            source,
+            checks_run,
+            finding_fingerprints,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &create_native_project_proposal(
+                    &path,
+                    &batch,
+                    rationale,
+                    proposal,
+                    source,
+                    checks_run,
+                    finding_fingerprints,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalCreateBoardComponentReplacementArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            component,
+            package,
+            part,
+            value,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_native_project_board_component_replacement(
+                    &path,
+                    component,
+                    package,
+                    part,
+                    value,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalCreateBoardComponentReplacementsArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            replacements,
+            proposal,
+            rationale,
+        } = self;
+        let replacements = replacements
+            .into_iter()
+            .map(|replacement| {
+                serde_json::from_str::<BoardComponentReplacementSpec>(&replacement)
+                    .with_context(|| format!("invalid --replacement JSON: {replacement}"))
+            })
+            .collect::<Result<Vec<_>>>()?;
+        Ok((
+            render_output(
+                format,
+                &propose_native_project_board_component_replacements(
+                    &path,
+                    replacements,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalCreateBoardComponentReplacementPlanArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            selections,
+            proposal,
+            rationale,
+        } = self;
+        let selections = selections
+            .into_iter()
+            .map(|selection| {
+                serde_json::from_str::<BoardComponentReplacementPlanSelectionSpec>(&selection)
+                    .with_context(|| format!("invalid --selection JSON: {selection}"))
+            })
+            .collect::<Result<Vec<_>>>()?;
+        Ok((
+            render_output(
+                format,
+                &propose_native_project_board_component_replacement_plan(
+                    &path,
+                    selections,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectPreviewProposalArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, proposal } = self;
+        Ok((
+            render_output(format, &preview_native_project_proposal(&path, proposal)?),
+            0,
+        ))
+    }
+}
+
+impl ProjectProposalListArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path } = self;
+        Ok((
+            render_output(format, &query_native_project_proposals(&path)?),
+            0,
+        ))
+    }
+}
+
+impl ProjectRejectProposalArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, proposal } = self;
+        Ok((
+            render_output(
+                format,
+                &review_native_project_proposal(
+                    &path,
+                    proposal,
+                    eda_engine::substrate::ProposalStatus::Rejected,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectApplyProposalArgs {
+    /// `proposal accept-apply`: review-accept then apply in one step (the
+    /// `apply` verb on the same args struct is `run`).
+    pub(crate) fn run_accept_apply(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, proposal } = self;
+        Ok((
+            render_output(
+                format,
+                &accept_and_apply_native_project_proposal(&path, proposal)?,
+            ),
+            0,
+        ))
+    }
 }

@@ -1,5 +1,20 @@
 use super::*;
 
+/// Render a report in the requested output format: the family-specific text
+/// renderer for `--format text`, deterministic JSON for `--format json`.
+/// Phase 5 hoist of the repeated four-line Text/Json render match that every
+/// command body carried through the dissolved exec layer.
+pub(crate) fn render_report<T: Serialize>(
+    format: &OutputFormat,
+    report: &T,
+    render_text: impl FnOnce(&T) -> String,
+) -> String {
+    match format {
+        OutputFormat::Text => render_text(report),
+        OutputFormat::Json => render_output(format, report),
+    }
+}
+
 /// Resolve the `CommitSource` recorded in CLI-facade write provenance.
 ///
 /// Reads `DATUM_COMMIT_SOURCE` so wrapping surfaces (MCP tools, agent shells)

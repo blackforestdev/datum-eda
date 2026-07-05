@@ -333,3 +333,114 @@ pub(crate) fn propose_draw_native_project_wire(
         proposal,
     })
 }
+
+// Phase 5: exec-layer dissolution — proposal-variant run() impls (the
+// former command_exec_proposal.rs arms, now inherent methods on the clap
+// args structs).
+
+impl ProposalPlaceLabelArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            sheet,
+            name,
+            kind,
+            x_nm,
+            y_nm,
+            proposal,
+            rationale,
+        } = self;
+        let kind = match kind {
+            NativeLabelKindArg::Local => eda_engine::schematic::LabelKind::Local,
+            NativeLabelKindArg::Global => eda_engine::schematic::LabelKind::Global,
+            NativeLabelKindArg::Hierarchical => eda_engine::schematic::LabelKind::Hierarchical,
+            NativeLabelKindArg::Power => eda_engine::schematic::LabelKind::Power,
+        };
+        Ok((
+            render_output(
+                format,
+                &propose_place_native_project_label(
+                    &path,
+                    sheet,
+                    name,
+                    kind,
+                    Point { x: x_nm, y: y_nm },
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalPlaceSymbolArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            sheet,
+            reference,
+            value,
+            lib_id,
+            x_nm,
+            y_nm,
+            rotation_deg,
+            mirrored,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_place_native_project_symbol(
+                    &path,
+                    sheet,
+                    reference,
+                    value,
+                    lib_id,
+                    Point { x: x_nm, y: y_nm },
+                    rotation_deg,
+                    mirrored,
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProposalDrawWireArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            sheet,
+            from_x_nm,
+            from_y_nm,
+            to_x_nm,
+            to_y_nm,
+            proposal,
+            rationale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &propose_draw_native_project_wire(
+                    &path,
+                    sheet,
+                    Point {
+                        x: from_x_nm,
+                        y: from_y_nm,
+                    },
+                    Point {
+                        x: to_x_nm,
+                        y: to_y_nm,
+                    },
+                    proposal,
+                    rationale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}

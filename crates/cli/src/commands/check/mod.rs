@@ -25,7 +25,7 @@ pub(crate) use self::native_inspect::{
     NativeProjectJournalMutationGuardView, NativeProjectJournalMutationView,
     execute_native_project_resolve_debug_query, inspect_native_project, journal_tip_availability,
     query_native_project_check_profiles, query_native_project_check_run,
-    query_native_project_check_run_list, query_native_project_check_run_show,
-    query_native_project_check_run_with_profile, query_native_project_journal_list,
-    query_native_project_journal_show, run_native_project_check_with_profile,
+    query_native_project_check_run_show, query_native_project_check_run_with_profile,
+    query_native_project_journal_list, query_native_project_journal_show,
+    run_native_project_check_with_profile,
 };

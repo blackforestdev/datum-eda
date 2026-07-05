@@ -1,3 +1,4 @@
+use crate::*;
 use std::fs;
 use std::path::{Component, Path, PathBuf};
 
@@ -1532,4 +1533,1121 @@ pub(super) fn pool_library_relative_path(
         object_kind,
         object_id,
     )
+}
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl ProjectCreatePoolLibraryObjectArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            kind,
+            object_uuid,
+            from_json,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &create_native_project_pool_library_object(
+                    &path,
+                    &pool,
+                    &kind,
+                    object_uuid,
+                    &from_json,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectDeletePoolLibraryObjectArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            kind,
+            object_uuid,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &delete_native_project_pool_library_object(&path, &pool, &kind, object_uuid)?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectCreatePoolUnitArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            unit_uuid,
+            name,
+            manufacturer,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &create_native_project_pool_unit(&path, &pool, unit_uuid, name, manufacturer)?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectSetPoolUnitPinArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            unit_uuid,
+            pin_uuid,
+            name,
+            direction,
+            electrical_type,
+            swap_group,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_unit_pin(
+                    &path,
+                    &pool,
+                    unit_uuid,
+                    pin_uuid,
+                    name,
+                    direction,
+                    electrical_type,
+                    swap_group,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectCreatePoolSymbolArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            symbol_uuid,
+            unit_uuid,
+            name,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &create_native_project_pool_symbol(&path, &pool, symbol_uuid, unit_uuid, name)?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectAddPoolSymbolLineArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            symbol_uuid,
+            from_x_nm,
+            from_y_nm,
+            to_x_nm,
+            to_y_nm,
+            width_nm,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &add_native_project_pool_symbol_line(
+                    &path,
+                    &pool,
+                    symbol_uuid,
+                    from_x_nm,
+                    from_y_nm,
+                    to_x_nm,
+                    to_y_nm,
+                    width_nm,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectAddPoolSymbolPolygonArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            symbol_uuid,
+            vertices,
+            closed,
+            width_nm,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &add_native_project_pool_symbol_polygon(
+                    &path,
+                    &pool,
+                    symbol_uuid,
+                    &vertices,
+                    closed,
+                    width_nm,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectAddPoolSymbolRectArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            symbol_uuid,
+            min_x_nm,
+            min_y_nm,
+            max_x_nm,
+            max_y_nm,
+            width_nm,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &add_native_project_pool_symbol_rect(
+                    &path,
+                    &pool,
+                    symbol_uuid,
+                    min_x_nm,
+                    min_y_nm,
+                    max_x_nm,
+                    max_y_nm,
+                    width_nm,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectAddPoolSymbolCircleArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            symbol_uuid,
+            center_x_nm,
+            center_y_nm,
+            radius_nm,
+            width_nm,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &add_native_project_pool_symbol_circle(
+                    &path,
+                    &pool,
+                    symbol_uuid,
+                    center_x_nm,
+                    center_y_nm,
+                    radius_nm,
+                    width_nm,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectAddPoolSymbolArcArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            symbol_uuid,
+            x_nm,
+            y_nm,
+            radius_nm,
+            start_angle,
+            end_angle,
+            width_nm,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &add_native_project_pool_symbol_arc(
+                    &path,
+                    &pool,
+                    symbol_uuid,
+                    x_nm,
+                    y_nm,
+                    radius_nm,
+                    start_angle,
+                    end_angle,
+                    width_nm,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectAddPoolSymbolTextArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            symbol_uuid,
+            text,
+            x_nm,
+            y_nm,
+            rotation,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &add_native_project_pool_symbol_text(
+                    &path,
+                    &pool,
+                    symbol_uuid,
+                    text,
+                    x_nm,
+                    y_nm,
+                    rotation,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectCreatePoolEntityArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            entity_uuid,
+            gate_uuid,
+            unit_uuid,
+            symbol_uuid,
+            name,
+            prefix,
+            manufacturer,
+            gate_name,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &create_native_project_pool_entity(
+                    &path,
+                    &pool,
+                    entity_uuid,
+                    gate_uuid,
+                    unit_uuid,
+                    symbol_uuid,
+                    name,
+                    prefix,
+                    manufacturer,
+                    gate_name,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectCreatePoolPadstackArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            padstack_uuid,
+            name,
+            aperture,
+            diameter_nm,
+            width_nm,
+            height_nm,
+            drill_nm,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &create_native_project_pool_padstack(
+                    &path,
+                    &pool,
+                    padstack_uuid,
+                    name,
+                    aperture,
+                    diameter_nm,
+                    width_nm,
+                    height_nm,
+                    drill_nm,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectCreatePoolPackageArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            package_uuid,
+            name,
+            pad_uuid,
+            padstack_uuid,
+            pad_name,
+            x_nm,
+            y_nm,
+            layer,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &create_native_project_pool_package(
+                    &path,
+                    &pool,
+                    package_uuid,
+                    name,
+                    pad_uuid,
+                    padstack_uuid,
+                    pad_name,
+                    x_nm,
+                    y_nm,
+                    layer,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectSetPoolPackagePadArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            package_uuid,
+            pad_uuid,
+            padstack_uuid,
+            pad_name,
+            x_nm,
+            y_nm,
+            layer,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_package_pad(
+                    &path,
+                    &pool,
+                    package_uuid,
+                    pad_uuid,
+                    padstack_uuid,
+                    pad_name,
+                    x_nm,
+                    y_nm,
+                    layer,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectSetPoolPackageCourtyardRectArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            package_uuid,
+            min_x_nm,
+            min_y_nm,
+            max_x_nm,
+            max_y_nm,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_package_courtyard_rect(
+                    &path,
+                    &pool,
+                    package_uuid,
+                    min_x_nm,
+                    min_y_nm,
+                    max_x_nm,
+                    max_y_nm,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectSetPoolPackageCourtyardPolygonArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            package_uuid,
+            vertices,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_package_courtyard_polygon(
+                    &path,
+                    &pool,
+                    package_uuid,
+                    &vertices,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectAddPoolPackageSilkscreenLineArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            package_uuid,
+            from_x_nm,
+            from_y_nm,
+            to_x_nm,
+            to_y_nm,
+            width_nm,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &add_native_project_pool_package_silkscreen_line(
+                    &path,
+                    &pool,
+                    package_uuid,
+                    from_x_nm,
+                    from_y_nm,
+                    to_x_nm,
+                    to_y_nm,
+                    width_nm,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectAddPoolPackageSilkscreenRectArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            package_uuid,
+            min_x_nm,
+            min_y_nm,
+            max_x_nm,
+            max_y_nm,
+            width_nm,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &add_native_project_pool_package_silkscreen_rect(
+                    &path,
+                    &pool,
+                    package_uuid,
+                    min_x_nm,
+                    min_y_nm,
+                    max_x_nm,
+                    max_y_nm,
+                    width_nm,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectAddPoolPackageSilkscreenCircleArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            package_uuid,
+            center_x_nm,
+            center_y_nm,
+            radius_nm,
+            width_nm,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &add_native_project_pool_package_silkscreen_circle(
+                    &path,
+                    &pool,
+                    package_uuid,
+                    center_x_nm,
+                    center_y_nm,
+                    radius_nm,
+                    width_nm,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectAddPoolPackageSilkscreenArcArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            package_uuid,
+            x_nm,
+            y_nm,
+            radius_nm,
+            start_angle,
+            end_angle,
+            width_nm,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &add_native_project_pool_package_silkscreen_arc(
+                    &path,
+                    &pool,
+                    package_uuid,
+                    x_nm,
+                    y_nm,
+                    radius_nm,
+                    start_angle,
+                    end_angle,
+                    width_nm,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectAddPoolPackageSilkscreenPolygonArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            package_uuid,
+            vertices,
+            closed,
+            width_nm,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &add_native_project_pool_package_silkscreen_polygon(
+                    &path,
+                    &pool,
+                    package_uuid,
+                    &vertices,
+                    closed,
+                    width_nm,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectAddPoolPackageSilkscreenTextArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            package_uuid,
+            text,
+            x_nm,
+            y_nm,
+            rotation,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &add_native_project_pool_package_silkscreen_text(
+                    &path,
+                    &pool,
+                    package_uuid,
+                    text,
+                    x_nm,
+                    y_nm,
+                    rotation,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectAddPoolPackageModel3dArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            package_uuid,
+            model_path,
+            format: model_format,
+            transform_json,
+            tx_nm,
+            ty_nm,
+            tz_nm,
+            roll_tenths_deg,
+            pitch_tenths_deg,
+            yaw_tenths_deg,
+            scale,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &add_native_project_pool_package_model_3d(
+                    &path,
+                    &pool,
+                    package_uuid,
+                    &model_path,
+                    model_format,
+                    transform_json.as_deref(),
+                    tx_nm,
+                    ty_nm,
+                    tz_nm,
+                    roll_tenths_deg,
+                    pitch_tenths_deg,
+                    yaw_tenths_deg,
+                    scale.as_deref(),
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectSetPoolPackageBodyHeightsArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            package_uuid,
+            clear,
+            body_height_nm,
+            body_height_mounted_nm,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_package_body_heights(
+                    &path,
+                    &pool,
+                    package_uuid,
+                    clear,
+                    body_height_nm,
+                    body_height_mounted_nm,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectCreatePoolPartArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            part_uuid,
+            entity_uuid,
+            package_uuid,
+            mpn,
+            manufacturer,
+            value,
+            description,
+            datasheet,
+            lifecycle,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &create_native_project_pool_part(
+                    &path,
+                    &pool,
+                    part_uuid,
+                    entity_uuid,
+                    package_uuid,
+                    mpn,
+                    manufacturer,
+                    value,
+                    description,
+                    datasheet,
+                    lifecycle,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectSetPoolPartMetadataArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            part_uuid,
+            mpn,
+            manufacturer,
+            manufacturer_jep106,
+            value,
+            description,
+            datasheet,
+            lifecycle,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_part_metadata(
+                    &path,
+                    &pool,
+                    part_uuid,
+                    mpn,
+                    manufacturer,
+                    manufacturer_jep106,
+                    value,
+                    description,
+                    datasheet,
+                    lifecycle,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectSetPoolPartParametricArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            part_uuid,
+            mode,
+            params,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_part_parametric(&path, &pool, part_uuid, mode, params)?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectSetPoolPartOrderableMpnsArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            part_uuid,
+            mode,
+            mpns,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_part_orderable_mpns(&path, &pool, part_uuid, mode, mpns)?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectSetPoolPartPackagingOptionsArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            part_uuid,
+            mode,
+            options,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_part_packaging_options(
+                    &path, &pool, part_uuid, mode, options,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectSetPoolPartBehaviouralModelsArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            part_uuid,
+            mode,
+            models,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_part_behavioural_models(
+                    &path, &pool, part_uuid, mode, models,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectAttachPoolPartModelArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            part_uuid,
+            source,
+            role,
+            dialect,
+            model_names,
+            encrypted,
+            encryption_scheme,
+            vendor,
+            fetched_at,
+            format_metadata_json,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &attach_native_project_pool_part_model(
+                    &path,
+                    &pool,
+                    part_uuid,
+                    &source,
+                    role,
+                    dialect,
+                    model_names,
+                    encrypted,
+                    encryption_scheme,
+                    vendor,
+                    fetched_at,
+                    format_metadata_json,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectDetachPoolPartModelArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            part_uuid,
+            attachment_uuid,
+            model_uuid,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &detach_native_project_pool_part_model(
+                    &path,
+                    &pool,
+                    part_uuid,
+                    attachment_uuid,
+                    model_uuid,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectGcPoolModelsArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            role,
+            sha256,
+            apply,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &gc_native_project_pool_models(
+                    &path,
+                    &pool,
+                    role.as_deref(),
+                    sha256.as_deref(),
+                    apply,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectSetPoolPartThermalArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            part_uuid,
+            clear,
+            theta_ja_c_per_w,
+            theta_jc_top_c_per_w,
+            theta_jc_bot_c_per_w,
+            theta_jb_c_per_w,
+            max_junction_c,
+            thermal_reference,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_part_thermal(
+                    &path,
+                    &pool,
+                    part_uuid,
+                    clear,
+                    theta_ja_c_per_w,
+                    theta_jc_top_c_per_w,
+                    theta_jc_bot_c_per_w,
+                    theta_jb_c_per_w,
+                    max_junction_c,
+                    thermal_reference,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectSetPoolPartSupplyChainArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            part_uuid,
+            clear,
+            checked_at,
+            offers,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_part_supply_chain(
+                    &path, &pool, part_uuid, clear, checked_at, offers,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectSetPoolPartTagsArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            part_uuid,
+            mode,
+            tags,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_part_tags(&path, &pool, part_uuid, mode, tags)?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectSetPoolPartPadMapArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            part_uuid,
+            mode,
+            entries,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_part_pad_map_from_entries(
+                    &path, &pool, part_uuid, mode, entries,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectSetPoolPartPadMapEntryArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            part_uuid,
+            pad_uuid,
+            gate_uuid,
+            pin_uuid,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_part_pad_map_entry(
+                    &path, &pool, part_uuid, pad_uuid, gate_uuid, pin_uuid,
+                )?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectSetPoolLibraryObjectArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            pool,
+            kind,
+            object_uuid,
+            from_json,
+        } = self;
+        Ok((
+            render_output(
+                format,
+                &set_native_project_pool_library_object(
+                    &path,
+                    &pool,
+                    &kind,
+                    object_uuid,
+                    &from_json,
+                )?,
+            ),
+            0,
+        ))
+    }
 }

@@ -1,3 +1,4 @@
+use crate::*;
 use std::path::Path;
 
 use anyhow::{Context, Result};
@@ -447,4 +448,166 @@ pub(crate) fn delete_native_project_board_component(
     )?;
     commit_prepared(&mut model, root, prepared)?;
     Ok(report)
+}
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl ProjectMoveBoardComponentArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            component_uuid,
+            x_nm,
+            y_nm,
+        } = self;
+        let report = move_native_project_board_component(
+            &path,
+            component_uuid,
+            eda_engine::ir::geometry::Point { x: x_nm, y: y_nm },
+        )?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_component_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl SetBoardComponentPartArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            component_uuid,
+            part_uuid,
+        } = self;
+        let report = set_native_project_board_component_part(&path, component_uuid, part_uuid)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_component_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl SetBoardComponentPackageArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            component_uuid,
+            package_uuid,
+        } = self;
+        let report =
+            set_native_project_board_component_package(&path, component_uuid, package_uuid)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_component_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl SetBoardComponentLayerArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            component_uuid,
+            layer,
+        } = self;
+        let report = set_native_project_board_component_layer(&path, component_uuid, layer)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_component_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl SetBoardComponentReferenceArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            component_uuid,
+            reference,
+        } = self;
+        let report =
+            set_native_project_board_component_reference(&path, component_uuid, reference)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_component_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl SetBoardComponentValueArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            component_uuid,
+            value,
+        } = self;
+        let report = set_native_project_board_component_value(&path, component_uuid, value)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_component_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectRotateBoardComponentArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            component_uuid,
+            rotation_deg,
+        } = self;
+        let report = rotate_native_project_board_component(&path, component_uuid, rotation_deg)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_component_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectSetBoardComponentLockedArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            component_uuid,
+        } = self;
+        let report = set_native_project_board_component_locked(&path, component_uuid, true)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_component_mutation_text,
+        );
+        Ok((output, 0))
+    }
+}
+
+impl ProjectClearBoardComponentLockedArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self {
+            path,
+            component_uuid,
+        } = self;
+        let report = set_native_project_board_component_locked(&path, component_uuid, false)?;
+        let output = render_report(
+            format,
+            &report,
+            render_native_project_board_component_mutation_text,
+        );
+        Ok((output, 0))
+    }
 }

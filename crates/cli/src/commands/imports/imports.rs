@@ -1,3 +1,4 @@
+use crate::*;
 use std::path::{Component, Path, PathBuf};
 
 use anyhow::{Context, Result, bail};
@@ -303,4 +304,57 @@ pub(super) fn validate_project_local_pool_path(pool_path: &str) -> Result<()> {
         bail!("project pool path must not contain parent-directory components");
     }
     Ok(())
+}
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl ProjectImportKiCadFootprintArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, source, pool } = self;
+        Ok((
+            render_output(
+                format,
+                &import_native_project_kicad_footprint(&path, &source, &pool)?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectImportKiCadBoardArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, source } = self;
+        Ok((
+            render_output(format, &import_native_project_kicad_board(&path, &source)?),
+            0,
+        ))
+    }
+}
+
+impl ProjectImportKiCadSchematicArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, source } = self;
+        Ok((
+            render_output(
+                format,
+                &import_native_project_kicad_schematic(&path, &source)?,
+            ),
+            0,
+        ))
+    }
+}
+
+impl ProjectImportEagleLibraryArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, source, pool } = self;
+        Ok((
+            render_output(
+                format,
+                &import_native_project_eagle_library(&path, &source, &pool)?,
+            ),
+            0,
+        ))
+    }
 }

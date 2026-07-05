@@ -1,3 +1,4 @@
+use crate::*;
 use std::collections::BTreeMap;
 use std::path::Path;
 
@@ -654,4 +655,82 @@ fn pnp_rows_by_identity(rows: &[NativePnpRow]) -> (BTreeMap<String, NativePnpRow
         }
     }
     (by_identity, duplicates)
+}
+
+// Phase 5: exec-layer dissolution — variant run() impls (the former
+// command_exec destructure-and-forward glue, now inherent methods on the
+// clap args structs).
+
+impl ExportBomArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, out, variant } = self;
+        let report = export_native_project_bom(&path, &out, variant)?;
+        let output = render_report(format, &report, render_native_project_bom_export_text);
+        Ok((output, 0))
+    }
+}
+
+impl CompareBomArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, bom, variant } = self;
+        let report = compare_native_project_bom(&path, &bom, variant)?;
+        let output = render_report(format, &report, render_native_project_bom_comparison_text);
+        Ok((output, 0))
+    }
+}
+
+impl ValidateBomArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, bom, variant } = self;
+        let report = validate_native_project_bom(&path, &bom, variant)?;
+        let output = render_report(format, &report, render_native_project_bom_validation_text);
+        let exit_code = if report.matches_expected { 0 } else { 1 };
+        Ok((output, exit_code))
+    }
+}
+
+impl InspectBomArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path } = self;
+        let report = inspect_native_project_bom(&path)?;
+        let output = render_report(format, &report, render_native_project_bom_inspection_text);
+        Ok((output, 0))
+    }
+}
+
+impl ExportPnpArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, out, variant } = self;
+        let report = export_native_project_pnp(&path, &out, variant)?;
+        let output = render_report(format, &report, render_native_project_pnp_export_text);
+        Ok((output, 0))
+    }
+}
+
+impl ComparePnpArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, pnp, variant } = self;
+        let report = compare_native_project_pnp(&path, &pnp, variant)?;
+        let output = render_report(format, &report, render_native_project_pnp_comparison_text);
+        Ok((output, 0))
+    }
+}
+
+impl ValidatePnpArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path, pnp, variant } = self;
+        let report = validate_native_project_pnp(&path, &pnp, variant)?;
+        let output = render_report(format, &report, render_native_project_pnp_validation_text);
+        let exit_code = if report.matches_expected { 0 } else { 1 };
+        Ok((output, exit_code))
+    }
+}
+
+impl InspectPnpArgs {
+    pub(crate) fn run(self, format: &OutputFormat) -> Result<(String, i32)> {
+        let Self { path } = self;
+        let report = inspect_native_project_pnp(&path)?;
+        let output = render_report(format, &report, render_native_project_pnp_inspection_text);
+        Ok((output, 0))
+    }
 }
