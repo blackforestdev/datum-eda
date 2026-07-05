@@ -3,8 +3,9 @@ use std::collections::BTreeSet;
 use uuid::Uuid;
 
 use super::{
-    CommitDiff, ComponentInstance, DesignModel, DomainObject, EngineError, ObjectId, Operation,
-    RevisionedRef, SourceShardDirtyState, SourceShardKind, SourceShardRef,
+    CommitDiff, ComponentInstance, DesignModel, DomainObject, EngineError, LibraryBinding,
+    LibraryBindingRole, ObjectId, Operation, RevisionedRef, SourceShardDirtyState, SourceShardKind,
+    SourceShardRef,
     component_instance::{
         PersistedComponentInstance, persisted_component_instance_from_value, validate_role_map,
     },
@@ -180,25 +181,121 @@ fn validate_component_instance_refs(
         ))
     })?;
     if let Some(part_ref) = part_ref {
-        let Some(object) = model.objects.get(&part_ref.object_id) else {
-            return Err(EngineError::NotFound {
-                object_type: "component_instance_part_ref",
-                uuid: part_ref.object_id,
-            });
-        };
-        if object.object_revision != part_ref.object_revision
-            || object.domain != "pool"
-            || object.kind != "parts"
-        {
+        validate_revisioned_pool_ref(
+            model,
+            component_instance.id,
+            "part_ref",
+            part_ref.object_id,
+            part_ref.object_revision,
+            "parts",
+        )?;
+    }
+    validate_library_bindings(component_instance, model, part_ref)?;
+    Ok(())
+}
+
+fn validate_library_bindings(
+    component_instance: &ComponentInstance,
+    model: &DesignModel,
+    part_ref: Option<&RevisionedRef>,
+) -> Result<(), EngineError> {
+    let mut part_binding = None;
+    for (binding_id, binding) in &component_instance.library_bindings {
+        if *binding_id == binding.target_object_id {
             return Err(EngineError::Validation(format!(
-                "component instance {} part_ref {} must target a current pool/parts object, got {}/{} revision {:?}",
-                component_instance.id,
-                part_ref.object_id,
-                object.domain,
-                object.kind,
-                object.object_revision
+                "component instance {} library binding {} must have a stable binding id distinct from target object id",
+                component_instance.id, binding_id
             )));
         }
+        validate_library_binding(component_instance.id, *binding_id, binding, model)?;
+        if binding.binding_role == LibraryBindingRole::Part {
+            if part_binding.replace(binding).is_some() {
+                return Err(EngineError::Validation(format!(
+                    "component instance {} must not contain multiple part LibraryBindings",
+                    component_instance.id
+                )));
+            }
+        }
+    }
+    if let (Some(part_ref), Some(part_binding)) = (part_ref, part_binding) {
+        if part_ref.object_id != part_binding.target_object_id
+            || part_ref.object_revision != part_binding.pinned_object_revision
+        {
+            return Err(EngineError::Validation(format!(
+                "component instance {} part_ref {}@{} does not match part LibraryBinding {}@{}",
+                component_instance.id,
+                part_ref.object_id,
+                part_ref.object_revision.0,
+                part_binding.target_object_id,
+                part_binding.pinned_object_revision.0
+            )));
+        }
+    }
+    Ok(())
+}
+
+fn validate_library_binding(
+    component_instance_id: ObjectId,
+    binding_id: ObjectId,
+    binding: &LibraryBinding,
+    model: &DesignModel,
+) -> Result<(), EngineError> {
+    let expected_kind = match binding.binding_role {
+        LibraryBindingRole::Part => "parts",
+        LibraryBindingRole::Symbol => "symbols",
+        LibraryBindingRole::Package => "packages",
+        LibraryBindingRole::Footprint => "footprints",
+        LibraryBindingRole::PinPadMap => "pin_pad_maps",
+        LibraryBindingRole::ModelAttachment => "models",
+    };
+    validate_revisioned_pool_ref(
+        model,
+        component_instance_id,
+        "library binding target",
+        binding.target_object_id,
+        binding.pinned_object_revision,
+        expected_kind,
+    )?;
+    for reference in &binding.local_override_refs {
+        validate_revisioned_pool_ref(
+            model,
+            component_instance_id,
+            "library binding local override",
+            reference.object_id,
+            reference.object_revision,
+            expected_kind,
+        )?;
+    }
+    if binding_id == Uuid::nil() {
+        return Err(EngineError::Validation(format!(
+            "component instance {component_instance_id} library binding id must not be nil"
+        )));
+    }
+    Ok(())
+}
+
+fn validate_revisioned_pool_ref(
+    model: &DesignModel,
+    component_instance_id: ObjectId,
+    label: &str,
+    object_id: ObjectId,
+    object_revision: super::ObjectRevision,
+    expected_kind: &str,
+) -> Result<(), EngineError> {
+    let Some(object) = model.objects.get(&object_id) else {
+        return Err(EngineError::NotFound {
+            object_type: "component_instance_library_ref",
+            uuid: object_id,
+        });
+    };
+    if object.object_revision != object_revision
+        || object.domain != "pool"
+        || object.kind != expected_kind
+    {
+        return Err(EngineError::Validation(format!(
+            "component instance {component_instance_id} {label} {object_id} must target a current pool/{expected_kind} object, got {}/{} revision {:?}",
+            object.domain, object.kind, object.object_revision
+        )));
     }
     Ok(())
 }

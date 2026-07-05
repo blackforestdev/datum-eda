@@ -146,12 +146,14 @@ pub fn build_placed_symbol_component_instance_op(
             placed_symbol_id.to_string(),
         ],
     );
+    let library_bindings = part_library_binding_payload(model, component_instance_id, part_id)?;
     Ok(Operation::CreateComponentInstance {
         component_instance_id,
         component_instance: serde_json::json!({
             "uuid": component_instance_id,
             "object_revision": 0,
             "part_ref": part_ref,
+            "library_bindings": library_bindings,
             "placed_symbol_refs": [{
                 "object_id": placed_symbol_id,
                 "object_revision": 0
@@ -209,6 +211,7 @@ fn component_instance_payload_from_instance(
         "uuid": instance.id,
         "object_revision": instance.object_revision.0,
         "part_ref": part_ref,
+        "library_bindings": instance.library_bindings,
         "placed_symbol_refs": symbol_refs,
         "placed_package_refs": package_refs,
         "placed_symbol_roles": instance.placed_symbol_roles,
@@ -241,6 +244,11 @@ fn component_instance_payload(
         .part_id
         .map(|part_id| revisioned_ref(model, part_id))
         .transpose()?;
+    let library_bindings = spec
+        .part_id
+        .map(|part_id| part_library_binding_payload(model, component_instance_id, part_id))
+        .transpose()?
+        .unwrap_or_default();
     let placed_symbol_roles =
         component_role_map(&spec.symbol_ids, &spec.symbol_roles, "primary", "unit")?;
     let placed_package_roles =
@@ -249,11 +257,39 @@ fn component_instance_payload(
         "uuid": component_instance_id,
         "object_revision": object_revision,
         "part_ref": part_ref,
+        "library_bindings": library_bindings,
         "placed_symbol_refs": symbol_refs,
         "placed_package_refs": package_refs,
         "placed_symbol_roles": placed_symbol_roles,
         "placed_package_roles": placed_package_roles
     }))
+}
+
+fn part_library_binding_payload(
+    model: &DesignModel,
+    component_instance_id: ComponentInstanceId,
+    part_id: ObjectId,
+) -> Result<BTreeMap<Uuid, serde_json::Value>, EngineError> {
+    let part_ref = revisioned_ref(model, part_id)?;
+    let binding_id = ids::derive_object_id(
+        &model.project.project_id,
+        "library-binding",
+        &[
+            component_instance_id.to_string(),
+            "part".to_string(),
+            part_id.to_string(),
+        ],
+    );
+    let mut bindings = BTreeMap::new();
+    bindings.insert(
+        binding_id,
+        serde_json::json!({
+            "target_object_id": part_ref["object_id"],
+            "pinned_object_revision": part_ref["object_revision"],
+            "binding_role": "part"
+        }),
+    );
+    Ok(bindings)
 }
 
 fn component_role_map(
@@ -431,6 +467,7 @@ mod tests {
                 "uuid": component_instance_id,
                 "object_revision": 0,
                 "part_ref": null,
+                "library_bindings": {},
                 "placed_symbol_refs": [
                     { "object_id": symbol_id, "object_revision": 0 }
                 ],
@@ -490,11 +527,9 @@ mod tests {
 
         let error = build_bind_component_instance(&model, test_provenance(), None, &spec)
             .expect_err("stray role assignment should fail");
-        assert!(
-            error
-                .to_string()
-                .contains(&format!("component role spec {stray} does not match a selected ref"))
-        );
+        assert!(error.to_string().contains(&format!(
+            "component role spec {stray} does not match a selected ref"
+        )));
     }
 
     #[test]
@@ -597,18 +632,21 @@ mod tests {
         let missing = Uuid::new_v4();
         let spec = fixture_spec(symbol_id, package_id);
 
-        let set_error =
-            build_set_component_instance(&model, test_provenance(), missing, &spec)
-                .expect_err("set of unknown instance should fail");
-        assert!(set_error
-            .to_string()
-            .contains(&format!("component instance {missing} was not found")));
+        let set_error = build_set_component_instance(&model, test_provenance(), missing, &spec)
+            .expect_err("set of unknown instance should fail");
+        assert!(
+            set_error
+                .to_string()
+                .contains(&format!("component instance {missing} was not found"))
+        );
 
         let delete_error = build_delete_component_instance(&model, test_provenance(), missing)
             .expect_err("delete of unknown instance should fail");
-        assert!(delete_error
-            .to_string()
-            .contains(&format!("component instance {missing} was not found")));
+        assert!(
+            delete_error
+                .to_string()
+                .contains(&format!("component instance {missing} was not found"))
+        );
     }
 
     #[test]
@@ -643,12 +681,28 @@ mod tests {
             panic!("expected CreateComponentInstance");
         };
         assert_eq!(*component_instance_id, expected_id);
+        let expected_binding_id = ids::derive_object_id(
+            &model.project.project_id,
+            "library-binding",
+            &[
+                expected_id.to_string(),
+                "part".to_string(),
+                part_id.to_string(),
+            ],
+        );
         assert_eq!(
             component_instance,
             &serde_json::json!({
                 "uuid": expected_id,
                 "object_revision": 0,
                 "part_ref": { "object_id": part_id, "object_revision": 0 },
+                "library_bindings": {
+                    (expected_binding_id.to_string()): {
+                        "target_object_id": part_id,
+                        "pinned_object_revision": 0,
+                        "binding_role": "part"
+                    }
+                },
                 "placed_symbol_refs": [
                     { "object_id": placed_symbol_id, "object_revision": 0 }
                 ],

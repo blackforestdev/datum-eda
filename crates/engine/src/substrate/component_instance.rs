@@ -6,9 +6,9 @@ use uuid::Uuid;
 
 use super::{
     ComponentInstance, ComponentInstanceAuthority, ComponentInstanceId,
-    ComponentInstanceRoleMetadata, DomainObject, EngineError, ObjectId, ObjectRevision,
-    ResolveDiagnostic, RevisionedRef, SourceShardKind, SourceShardRef, TransactionRecord,
-    read_json_value, source_shard::validate_source_shard_schema_version,
+    ComponentInstanceRoleMetadata, DomainObject, EngineError, LibraryBinding, LibraryBindingRole,
+    ObjectId, ObjectRevision, ResolveDiagnostic, RevisionedRef, SourceShardKind, SourceShardRef,
+    TransactionRecord, read_json_value, source_shard::validate_source_shard_schema_version,
     source_shard_ref_builders::source_shard_ref_for_bytes,
 };
 
@@ -33,6 +33,8 @@ pub struct PersistedComponentInstance {
     pub object_revision: ObjectRevision,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub part_ref: Option<RevisionedRef>,
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub library_bindings: BTreeMap<ObjectId, LibraryBinding>,
     pub placed_symbol_refs: Vec<RevisionedRef>,
     pub placed_package_refs: Vec<RevisionedRef>,
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
@@ -68,12 +70,21 @@ pub(super) fn component_instance_from_persisted(
         part_ref: persisted
             .part_ref
             .as_ref()
-            .map(|reference| reference.object_id),
+            .map(|reference| reference.object_id)
+            .or_else(|| part_binding(persisted).map(|binding| binding.target_object_id)),
+        library_bindings: persisted.library_bindings.clone(),
         placed_symbol_roles: persisted.placed_symbol_roles.clone(),
         placed_package_roles: persisted.placed_package_roles.clone(),
         placed_symbol_refs,
         placed_package_refs,
     }
+}
+
+fn part_binding(persisted: &PersistedComponentInstance) -> Option<&LibraryBinding> {
+    persisted
+        .library_bindings
+        .values()
+        .find(|binding| binding.binding_role == LibraryBindingRole::Part)
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -369,21 +380,12 @@ fn insert_component_instance(
         return;
     }
     if let Some(part_ref) = &input.part_ref {
-        let Some(object) = objects.get(&part_ref.object_id) else {
-            diagnostics.push(ResolveDiagnostic {
-                code: "component_instance_unresolved_part_ref".to_string(),
-                message: format!(
-                    "component instance {} references missing part object {}",
-                    input.uuid, part_ref.object_id
-                ),
-                path: Some(shard.path.clone()),
-            });
-            return;
-        };
-        if object.object_revision != part_ref.object_revision
-            || object.domain != "pool"
-            || object.kind != "parts"
-        {
+        if !revisioned_pool_ref_matches(
+            part_ref.object_id,
+            part_ref.object_revision,
+            objects,
+            "parts",
+        ) {
             diagnostics.push(ResolveDiagnostic {
                 code: "component_instance_invalid_part_ref".to_string(),
                 message: format!(
@@ -394,6 +396,14 @@ fn insert_component_instance(
             });
             return;
         }
+    }
+    if let Err(message) = validate_library_bindings(&input, objects) {
+        diagnostics.push(ResolveDiagnostic {
+            code: "component_instance_invalid_library_binding".to_string(),
+            message: format!("component instance {} {message}", input.uuid),
+            path: Some(shard.path.clone()),
+        });
+        return;
     }
     objects.insert(
         input.uuid,
@@ -406,6 +416,71 @@ fn insert_component_instance(
         },
     );
     instances.insert(input.uuid, component_instance_from_persisted(&input));
+}
+
+fn validate_library_bindings(
+    input: &PersistedComponentInstance,
+    objects: &BTreeMap<ObjectId, DomainObject>,
+) -> Result<(), String> {
+    let mut part_binding = None;
+    for (binding_id, binding) in &input.library_bindings {
+        if *binding_id == Uuid::nil() || *binding_id == binding.target_object_id {
+            return Err(format!(
+                "library binding {binding_id} has invalid binding identity"
+            ));
+        }
+        let expected_kind = match binding.binding_role {
+            LibraryBindingRole::Part => "parts",
+            LibraryBindingRole::Symbol => "symbols",
+            LibraryBindingRole::Package => "packages",
+            LibraryBindingRole::Footprint => "footprints",
+            LibraryBindingRole::PinPadMap => "pin_pad_maps",
+            LibraryBindingRole::ModelAttachment => "models",
+        };
+        if !revisioned_pool_ref_matches(
+            binding.target_object_id,
+            binding.pinned_object_revision,
+            objects,
+            expected_kind,
+        ) {
+            return Err(format!(
+                "library binding {binding_id} target {} must resolve to current pool {expected_kind}",
+                binding.target_object_id
+            ));
+        }
+        for reference in &binding.local_override_refs {
+            if !revisioned_pool_ref_matches(
+                reference.object_id,
+                reference.object_revision,
+                objects,
+                expected_kind,
+            ) {
+                return Err(format!(
+                    "library binding {binding_id} local override {} must resolve to current pool {expected_kind}",
+                    reference.object_id
+                ));
+            }
+        }
+        if binding.binding_role == LibraryBindingRole::Part
+            && part_binding.replace(binding).is_some()
+        {
+            return Err("must not contain multiple part LibraryBindings".to_string());
+        }
+    }
+    if let (Some(part_ref), Some(part_binding)) = (&input.part_ref, part_binding) {
+        if part_ref.object_id != part_binding.target_object_id
+            || part_ref.object_revision != part_binding.pinned_object_revision
+        {
+            return Err(format!(
+                "part_ref {}@{} does not match part LibraryBinding {}@{}",
+                part_ref.object_id,
+                part_ref.object_revision.0,
+                part_binding.target_object_id,
+                part_binding.pinned_object_revision.0
+            ));
+        }
+    }
+    Ok(())
 }
 
 pub(super) fn validate_role_map(
@@ -559,11 +634,35 @@ fn uncovered_live_object_refs(
 
 fn refs_match_objects(refs: &[RevisionedRef], objects: &BTreeMap<ObjectId, DomainObject>) -> bool {
     refs.iter().all(|reference| {
-        objects
-            .get(&reference.object_id)
-            .map(|object| object.object_revision == reference.object_revision)
-            .unwrap_or(false)
+        revisioned_object_matches(reference.object_id, reference.object_revision, objects)
     })
+}
+
+fn revisioned_object_matches(
+    object_id: ObjectId,
+    object_revision: ObjectRevision,
+    objects: &BTreeMap<ObjectId, DomainObject>,
+) -> bool {
+    objects
+        .get(&object_id)
+        .map(|object| object.object_revision == object_revision)
+        .unwrap_or(false)
+}
+
+fn revisioned_pool_ref_matches(
+    object_id: ObjectId,
+    object_revision: ObjectRevision,
+    objects: &BTreeMap<ObjectId, DomainObject>,
+    expected_kind: &str,
+) -> bool {
+    objects
+        .get(&object_id)
+        .map(|object| {
+            object.object_revision == object_revision
+                && object.domain == "pool"
+                && object.kind == expected_kind
+        })
+        .unwrap_or(false)
 }
 
 fn value_uuid(value: &serde_json::Value, key: &str) -> Option<Uuid> {

@@ -234,6 +234,8 @@ pub struct ComponentInstance {
     pub authority: ComponentInstanceAuthority,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub part_ref: Option<ObjectId>,
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub library_bindings: BTreeMap<ObjectId, LibraryBinding>,
     pub placed_symbol_refs: Vec<ObjectId>,
     pub placed_package_refs: Vec<ObjectId>,
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
@@ -247,6 +249,30 @@ pub struct ComponentInstanceRoleMetadata {
     pub role: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub label: Option<String>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum LibraryBindingRole {
+    Part,
+    Symbol,
+    Package,
+    Footprint,
+    PinPadMap,
+    ModelAttachment,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct LibraryBinding {
+    pub target_object_id: ObjectId,
+    pub pinned_object_revision: ObjectRevision,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub pool_ref: Option<String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub local_override_refs: Vec<RevisionedRef>,
+    pub binding_role: LibraryBindingRole,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub provenance: Option<serde_json::Value>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
