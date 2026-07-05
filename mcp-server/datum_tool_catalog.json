@@ -4890,6 +4890,1315 @@
             "param": "path"
           },
           {
+            "lit": "board-dimensions"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_board_dimensions"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.board_dimensions",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "board-keepouts"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_board_keepouts"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.board_keepouts",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "board-net-classes"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_board_net_classes"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.board_net_classes",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "board-nets"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_board_nets"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.board_nets",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "board-outline"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_board_outline"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.board_outline",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "board-pads"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_board_pads"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.board_pads",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "board-stackup"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_board_stackup"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.board_stackup",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias over the current open session.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_board_summary"
+      },
+      "dispatch_args": [],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "datum.query.board_summary",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "board-texts"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_board_texts"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.board_texts",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "board-tracks"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_board_tracks"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.board_tracks",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "board-vias"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_board_vias"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.board_vias",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "board-zones"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_board_zones"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.board_zones",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias over the current open session.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_bus_entries"
+      },
+      "dispatch_args": [],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "datum.query.bus_entries",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias over the current open session.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_buses"
+      },
+      "dispatch_args": [],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "datum.query.buses",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Read authored ComponentInstance records plus resolver-bound symbol/package refs for a native project.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "query"
+          },
+          {
+            "lit": "component-instances"
+          },
+          {
+            "param": "path"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_component_instances"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.component_instances",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias over the current open session.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_components"
+      },
+      "dispatch_args": [],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "datum.query.components",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias over the current open session.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_connectivity_diagnostics"
+      },
+      "dispatch_args": [],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "datum.query.connectivity_diagnostics",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias over the current open session.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_design_rules"
+      },
+      "dispatch_args": [],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "datum.query.design_rules",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum hierarchy query. With path, reads native project hierarchy; without path, uses legacy open-session hierarchy.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_project_hierarchy"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "name": "datum.query.hierarchy",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Read resolver-validated import-key identity mappings for a native project.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "query"
+          },
+          {
+            "lit": "import-map"
+          },
+          {
+            "param": "path"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_import_map"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.import_map",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias over the current open session.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_labels"
+      },
+      "dispatch_args": [],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "datum.query.labels",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Return resolver-discovered native ManufacturingPlan entries for one project.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "query"
+          },
+          {
+            "lit": "manufacturing-plans"
+          },
+          {
+            "param": "path"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_manufacturing_plans"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.manufacturing_plans",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias over the current open session.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_netlist"
+      },
+      "dispatch_args": [],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "datum.query.netlist",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias over the current open session.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_noconnects"
+      },
+      "dispatch_args": [],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "datum.query.noconnects",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Return resolver-discovered native OutputJob entries for one project.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "query"
+          },
+          {
+            "lit": "output-jobs"
+          },
+          {
+            "param": "path"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_output_jobs"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.output_jobs",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Return resolver-discovered native PanelProjection entries for one project.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "query"
+          },
+          {
+            "lit": "panel-projections"
+          },
+          {
+            "param": "path"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_panel_projections"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.panel_projections",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias over the current open session.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_ports"
+      },
+      "dispatch_args": [],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "datum.query.ports",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Read authored relationship records plus derived resolver status for a native project.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "query"
+          },
+          {
+            "lit": "relationships"
+          },
+          {
+            "param": "path"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_relationships"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.relationships",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "bus-entries"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_schematic_bus_entries"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.schematic_bus_entries",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "buses"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_schematic_buses"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.schematic_buses",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "drawings"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_schematic_drawings"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.schematic_drawings",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "junctions"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_schematic_junctions"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.schematic_junctions",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "labels"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_schematic_labels"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.schematic_labels",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias over the current open session.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_schematic_net_info"
+      },
+      "dispatch_args": [],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "datum.query.schematic_nets",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "noconnects"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_schematic_noconnects"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.schematic_noconnects",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "ports"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_schematic_ports"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.schematic_ports",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias over the current open session.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_schematic_summary"
+      },
+      "dispatch_args": [],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "datum.query.schematic_summary",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "texts"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_schematic_texts"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.schematic_texts",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "lit": "wires"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_schematic_wires"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.schematic_wires",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias over the current open session.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_sheets"
+      },
+      "dispatch_args": [],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "datum.query.sheets",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one native project path.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "project"
+          },
+          {
+            "lit": "query"
+          },
+          {
+            "param": "path"
+          },
+          {
             "lit": "resolve-debug"
           }
         ],
@@ -4912,6 +6221,127 @@
         "type": "object"
       },
       "name": "datum.query.source_shards",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias for one schematic symbol object.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_symbol_fields"
+      },
+      "dispatch_args": [
+        "symbol_uuid"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "symbol_uuid": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "symbol_uuid"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.symbol_fields",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Canonical Datum read-only query alias over the current open session.",
+      "dispatch": {
+        "kind": "daemon",
+        "method": "get_symbols"
+      },
+      "dispatch_args": [],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "datum.query.symbols",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Read authored variant overlays plus derived population/applicability for a native project.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "query"
+          },
+          {
+            "lit": "variants"
+          },
+          {
+            "param": "path"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_variants"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.variants",
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": null
+    },
+    {
+      "description": "Return resolver-derived native board zone-fill state without pretending unfilled zones are copper.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "query"
+          },
+          {
+            "lit": "zone-fills"
+          },
+          {
+            "param": "path"
+          }
+        ],
+        "kind": "cli",
+        "method": "get_zone_fills"
+      },
+      "dispatch_args": [
+        "path"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "datum.query.zone_fills",
       "replacements": [],
       "retirement": null,
       "status": "public",
