@@ -17,7 +17,7 @@ class TestDispatchDatumTaxonomyCatalog(unittest.TestCase):
     def test_catalog_lists_canonical_datum_tools_first(self) -> None:
         tool_names = registered_tool_names()
         first_compatibility = next(index for index, name in enumerate(tool_names) if not name.startswith("datum."))
-        self.assertEqual(first_compatibility, 332)
+        self.assertEqual(first_compatibility, 335)
         self.assertTrue(all(name.startswith("datum.") for name in tool_names[:first_compatibility]))
 
         # Hand-written canonical specs still lead the catalog until their

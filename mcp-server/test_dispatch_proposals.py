@@ -100,6 +100,96 @@ class TestDispatchProposals(unittest.TestCase):
         self.assertEqual(payload["action"], "propose_board_component_replacement")
         self.assertEqual(payload["selection_count"], 2)
 
+    def test_tools_call_dispatches_component_instance_proposal_twins(self) -> None:
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        for tool_name, arguments, expected_call, expected_action in [
+            (
+                "datum.proposal.bind_component_instance",
+                {
+                    "path": "/tmp/native-project",
+                    "symbols": ["sym-a", "sym-b"],
+                    "package": "pkg-test",
+                    "component_instance": "ci-test",
+                    "part": "part-test",
+                    "symbol_roles": {"sym-a": {"role": "logical_unit", "label": "A"}},
+                    "package_roles": {"pkg-test": {"role": "physical_package", "label": "main"}},
+                    "proposal": "proposal-bind",
+                    "rationale": "review bind",
+                },
+                (
+                    "bind_component_instance_proposal",
+                    "/tmp/native-project",
+                    None,
+                    "pkg-test",
+                    "ci-test",
+                    ["sym-a", "sym-b"],
+                    "part-test",
+                    {"sym-a": {"role": "logical_unit", "label": "A"}},
+                    {"pkg-test": {"role": "physical_package", "label": "main"}},
+                    "proposal-bind",
+                    "review bind",
+                ),
+                "propose_bind_component_instance",
+            ),
+            (
+                "datum.proposal.set_component_instance",
+                {
+                    "path": "/tmp/native-project",
+                    "component_instance": "ci-test",
+                    "symbol": "sym-next",
+                    "package": "pkg-next",
+                    "proposal": "proposal-set",
+                    "rationale": "review set",
+                },
+                (
+                    "set_component_instance_proposal",
+                    "/tmp/native-project",
+                    "ci-test",
+                    "sym-next",
+                    "pkg-next",
+                    None,
+                    None,
+                    None,
+                    None,
+                    "proposal-set",
+                    "review set",
+                ),
+                "propose_set_component_instance",
+            ),
+            (
+                "datum.proposal.delete_component_instance",
+                {
+                    "path": "/tmp/native-project",
+                    "component_instance": "ci-test",
+                    "proposal": "proposal-delete",
+                    "rationale": "review delete",
+                },
+                (
+                    "delete_component_instance_proposal",
+                    "/tmp/native-project",
+                    "ci-test",
+                    "proposal-delete",
+                    "review delete",
+                ),
+                "propose_delete_component_instance",
+            ),
+        ]:
+            daemon.calls.clear()
+            response = host.handle_message(
+                {
+                    "jsonrpc": "2.0",
+                    "id": 223,
+                    "method": "tools/call",
+                    "params": {"name": tool_name, "arguments": arguments},
+                }
+            )
+            self.assertEqual(daemon.calls, [expected_call])
+            payload = response["result"]["content"][0]["json"]
+            self.assertEqual(payload["contract"], "proposal_create_v1")
+            self.assertEqual(payload["action"], expected_action)
+            self.assertEqual(payload["component_instance_id"], "ci-test")
+
     def test_tools_call_dispatches_create_pool_library_object_proposal(self) -> None:
         daemon = FakeDaemonClient()
         host = StdioToolHost(daemon)

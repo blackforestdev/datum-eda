@@ -28,6 +28,12 @@ pub(crate) enum ProposalCommands {
     CreateBoardComponentReplacements(ProposalCreateBoardComponentReplacementsArgs),
     /// Create one draft proposal from replacement-plan shaped selections
     CreateBoardComponentReplacementPlan(ProposalCreateBoardComponentReplacementPlanArgs),
+    /// Create a draft proposal to bind a ComponentInstance
+    BindComponentInstance(ProposalBindComponentInstanceArgs),
+    /// Create a draft proposal to update a ComponentInstance binding
+    SetComponentInstance(ProposalSetComponentInstanceArgs),
+    /// Create a draft proposal to delete a ComponentInstance binding
+    DeleteComponentInstance(ProposalDeleteComponentInstanceArgs),
     /// Create a draft proposal to author a raw native pool-library object
     CreatePoolLibraryObject(ProposalCreatePoolLibraryObjectArgs),
     /// Create a draft proposal to author a native pool unit
@@ -252,6 +258,81 @@ pub(crate) struct ProposalCreateBoardComponentReplacementPlanArgs {
     /// Example: {"uuid":"<component>","package_uuid":"<package>","part_uuid":"<part>","value":"10k"}
     #[arg(long = "selection", required = true)]
     pub(crate) selections: Vec<String>,
+    /// Optional stable proposal UUID
+    #[arg(long = "proposal")]
+    pub(crate) proposal: Option<Uuid>,
+    /// Proposal review rationale
+    #[arg(long = "rationale")]
+    pub(crate) rationale: Option<String>,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProposalBindComponentInstanceArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// Optional ComponentInstance UUID
+    #[arg(long = "component-instance")]
+    pub(crate) component_instance: Option<Uuid>,
+    /// Schematic symbol UUID to bind; repeat for multi-symbol bindings
+    #[arg(long = "symbol", required = true)]
+    pub(crate) symbols: Vec<Uuid>,
+    /// Board package UUID to bind
+    #[arg(long = "package")]
+    pub(crate) package: Uuid,
+    /// Optional native pool part UUID
+    #[arg(long = "part")]
+    pub(crate) part: Option<Uuid>,
+    /// Optional per-symbol role metadata as <uuid>=<role>[:label]
+    #[arg(long = "symbol-role")]
+    pub(crate) symbol_roles: Vec<String>,
+    /// Optional per-package role metadata as <uuid>=<role>[:label]
+    #[arg(long = "package-role")]
+    pub(crate) package_roles: Vec<String>,
+    /// Optional stable proposal UUID
+    #[arg(long = "proposal")]
+    pub(crate) proposal: Option<Uuid>,
+    /// Proposal review rationale
+    #[arg(long = "rationale")]
+    pub(crate) rationale: Option<String>,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProposalSetComponentInstanceArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// ComponentInstance UUID
+    #[arg(long = "component-instance")]
+    pub(crate) component_instance: Uuid,
+    /// Schematic symbol UUID to bind; repeat for multi-symbol bindings
+    #[arg(long = "symbol", required = true)]
+    pub(crate) symbols: Vec<Uuid>,
+    /// Board package UUID to bind
+    #[arg(long = "package")]
+    pub(crate) package: Uuid,
+    /// Optional native pool part UUID
+    #[arg(long = "part")]
+    pub(crate) part: Option<Uuid>,
+    /// Optional per-symbol role metadata as <uuid>=<role>[:label]
+    #[arg(long = "symbol-role")]
+    pub(crate) symbol_roles: Vec<String>,
+    /// Optional per-package role metadata as <uuid>=<role>[:label]
+    #[arg(long = "package-role")]
+    pub(crate) package_roles: Vec<String>,
+    /// Optional stable proposal UUID
+    #[arg(long = "proposal")]
+    pub(crate) proposal: Option<Uuid>,
+    /// Proposal review rationale
+    #[arg(long = "rationale")]
+    pub(crate) rationale: Option<String>,
+}
+
+#[derive(clap::Args)]
+pub(crate) struct ProposalDeleteComponentInstanceArgs {
+    /// Project root directory
+    pub(crate) path: PathBuf,
+    /// ComponentInstance UUID
+    #[arg(long = "component-instance")]
+    pub(crate) component_instance: Uuid,
     /// Optional stable proposal UUID
     #[arg(long = "proposal")]
     pub(crate) proposal: Option<Uuid>,

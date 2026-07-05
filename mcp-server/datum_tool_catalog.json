@@ -13062,6 +13062,161 @@
       }
     },
     {
+      "description": "Create a draft proposal for a ComponentInstance binding without mutating component-instance shards.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "bind-component-instance"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "param": "symbol",
+            "repeated": "--symbol"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "flag": "--component-instance",
+            "param": "component_instance"
+          },
+          {
+            "param": "symbols",
+            "repeated": "--symbol"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "param": "symbol_roles",
+            "repeated": "--symbol-role"
+          },
+          {
+            "param": "package_roles",
+            "repeated": "--package-role"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "bind_component_instance_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "symbol",
+        "package",
+        "component_instance",
+        "symbols",
+        "part",
+        "symbol_roles",
+        "package_roles",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "package_roles": null,
+        "part": null,
+        "symbol_roles": null
+      },
+      "inputSchema": {
+        "anyOf": [
+          {
+            "required": [
+              "symbol"
+            ]
+          },
+          {
+            "required": [
+              "symbols"
+            ]
+          }
+        ],
+        "properties": {
+          "component_instance": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "package": {
+            "type": "string"
+          },
+          "package_roles": {
+            "type": [
+              "object",
+              "array",
+              "null"
+            ]
+          },
+          "part": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "symbol_roles": {
+            "type": [
+              "object",
+              "array",
+              "null"
+            ]
+          },
+          "symbols": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "path",
+          "package"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.bind_component_instance",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
       "description": "Create a non-mutating draft proposal from an OperationBatch JSON file.",
       "dispatch": {
         "argv": [
@@ -15265,6 +15420,79 @@
       }
     },
     {
+      "description": "Create a draft proposal to delete one ComponentInstance binding without mutating component-instance shards.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "delete-component-instance"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--component-instance",
+            "param": "component_instance"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "delete_component_instance_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "component_instance",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {},
+      "inputSchema": {
+        "properties": {
+          "component_instance": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "component_instance"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.delete_component_instance",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
+      }
+    },
+    {
       "description": "Create a draft proposal for deleting one ManufacturingPlan without mutating manufacturing plan shards.",
       "dispatch": {
         "argv": [
@@ -15684,6 +15912,159 @@
       "write_surface": {
         "class": "proposal_review_state_write",
         "evidence": "updates persisted proposal review state without applying design mutations"
+      }
+    },
+    {
+      "description": "Create a draft proposal to update a ComponentInstance binding without mutating component-instance shards.",
+      "dispatch": {
+        "argv": [
+          {
+            "lit": "proposal"
+          },
+          {
+            "lit": "set-component-instance"
+          },
+          {
+            "param": "path"
+          },
+          {
+            "flag": "--component-instance",
+            "param": "component_instance"
+          },
+          {
+            "param": "symbol",
+            "repeated": "--symbol"
+          },
+          {
+            "flag": "--package",
+            "param": "package"
+          },
+          {
+            "param": "symbols",
+            "repeated": "--symbol"
+          },
+          {
+            "flag": "--part",
+            "param": "part"
+          },
+          {
+            "param": "symbol_roles",
+            "repeated": "--symbol-role"
+          },
+          {
+            "param": "package_roles",
+            "repeated": "--package-role"
+          },
+          {
+            "flag": "--proposal",
+            "param": "proposal"
+          },
+          {
+            "flag": "--rationale",
+            "param": "rationale"
+          }
+        ],
+        "kind": "cli",
+        "method": "set_component_instance_proposal"
+      },
+      "dispatch_args": [
+        "path",
+        "component_instance",
+        "symbol",
+        "package",
+        "symbols",
+        "part",
+        "symbol_roles",
+        "package_roles",
+        "proposal",
+        "rationale"
+      ],
+      "dispatch_defaults": {
+        "package_roles": null,
+        "part": null,
+        "symbol_roles": null
+      },
+      "inputSchema": {
+        "anyOf": [
+          {
+            "required": [
+              "symbol"
+            ]
+          },
+          {
+            "required": [
+              "symbols"
+            ]
+          }
+        ],
+        "properties": {
+          "component_instance": {
+            "type": "string"
+          },
+          "package": {
+            "type": "string"
+          },
+          "package_roles": {
+            "type": [
+              "object",
+              "array",
+              "null"
+            ]
+          },
+          "part": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "proposal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rationale": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "symbol_roles": {
+            "type": [
+              "object",
+              "array",
+              "null"
+            ]
+          },
+          "symbols": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "path",
+          "component_instance",
+          "package"
+        ],
+        "type": "object"
+      },
+      "name": "datum.proposal.set_component_instance",
+      "public_metadata": null,
+      "replacements": [],
+      "retirement": null,
+      "status": "public",
+      "write_surface": {
+        "class": "proposal_metadata_write",
+        "evidence": "writes only persisted proposal metadata for later review; does not mutate design shards"
       }
     },
     {

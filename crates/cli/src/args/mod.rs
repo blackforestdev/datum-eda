@@ -167,14 +167,15 @@ pub(crate) use self::proposal_library::{
     ProposalSetPoolPinPadMapArgs,
 };
 pub(crate) use self::proposals::{
-    ProjectProposalListArgs, ProjectRejectProposalArgs, ProposalCommands,
-    ProposalCreateBoardComponentReplacementArgs, ProposalCreateBoardComponentReplacementPlanArgs,
-    ProposalCreateBoardComponentReplacementsArgs, ProposalCreateManufacturingPlanArgs,
-    ProposalCreateOutputJobArgs, ProposalCreatePanelProjectionArgs,
+    ProjectProposalListArgs, ProjectRejectProposalArgs, ProposalBindComponentInstanceArgs,
+    ProposalCommands, ProposalCreateBoardComponentReplacementArgs,
+    ProposalCreateBoardComponentReplacementPlanArgs, ProposalCreateBoardComponentReplacementsArgs,
+    ProposalCreateManufacturingPlanArgs, ProposalCreateOutputJobArgs,
+    ProposalCreatePanelProjectionArgs, ProposalDeleteComponentInstanceArgs,
     ProposalDeleteManufacturingPlanArgs, ProposalDeleteOutputJobArgs,
     ProposalDeletePanelProjectionArgs, ProposalDrawWireArgs, ProposalPlaceLabelArgs,
-    ProposalPlaceSymbolArgs, ProposalUpdateManufacturingPlanArgs, ProposalUpdateOutputJobArgs,
-    ProposalUpdatePanelProjectionArgs,
+    ProposalPlaceSymbolArgs, ProposalSetComponentInstanceArgs, ProposalUpdateManufacturingPlanArgs,
+    ProposalUpdateOutputJobArgs, ProposalUpdatePanelProjectionArgs,
 };
 pub(crate) use self::root::{
     Cli, Commands, ImportedQueryCommandParser, ImportedQueryCommands, QueryCommands, QueryPathArgs,

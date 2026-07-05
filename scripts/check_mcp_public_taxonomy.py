@@ -34,7 +34,7 @@ EXPECTED_PUBLIC_PREFIX_COUNTS = {
     "datum.pcb": 45,
     "datum.pool": 3,
     "datum.project": 3,
-    "datum.proposal": 44,
+    "datum.proposal": 47,
     "datum.query": 48,
     "datum.replacement": 5,
     "datum.route": 21,
@@ -43,7 +43,7 @@ EXPECTED_PUBLIC_PREFIX_COUNTS = {
 }
 
 EXPECTED_PUBLIC_COUNT = sum(EXPECTED_PUBLIC_PREFIX_COUNTS.values())
-EXPECTED_REGISTERED_COUNT = 519
+EXPECTED_REGISTERED_COUNT = 522
 EXPECTED_HIDDEN_COMPATIBILITY_COUNT = 187
 ALLOWED_HIDDEN_RETIREMENT_STATUSES = {
     "retained_until_migration_plan",
@@ -68,6 +68,9 @@ PROPOSAL_WRITE_TOOLS = {
     "datum.proposal.create_board_component_replacement": "proposal_metadata_write",
     "datum.proposal.create_board_component_replacements": "proposal_metadata_write",
     "datum.proposal.create_board_component_replacement_plan": "proposal_metadata_write",
+    "datum.proposal.bind_component_instance": "proposal_metadata_write",
+    "datum.proposal.set_component_instance": "proposal_metadata_write",
+    "datum.proposal.delete_component_instance": "proposal_metadata_write",
     "datum.proposal.create_pool_library_object": "proposal_metadata_write",
     "datum.proposal.create_pool_unit": "proposal_metadata_write",
     "datum.proposal.create_pool_symbol": "proposal_metadata_write",

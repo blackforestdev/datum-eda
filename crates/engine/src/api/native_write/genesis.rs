@@ -19,17 +19,13 @@
 //! fixture transcribed from the historical CLI bootstrap, a repeat-bootstrap
 //! idempotence check, and a resolver roundtrip.
 //!
-//! Genesis is deliberately **not journaled**. A provenance record at t=0 was
-//! evaluated and rejected for now: `commit()` refuses empty operation
-//! batches, `validate_transaction_links` and the undo/redo surfaces match
-//! exhaustively on `TransactionKind`, and — decisively — the CLI contract
-//! (locked by untouchable CLI tests) counts journal transactions from zero
-//! after `project new` and requires repeat bootstraps to be byte-identical
-//! on disk. Recording genesis therefore needs a ratified substrate decision
-//! (e.g. a `TransactionKind::Genesis` zero-operation record excluded from
-//! the mutation count, or a dedicated genesis evidence sidecar), not a
-//! side-effect of this migration. Until then provenance starts at the first
-//! committed mutation, exactly as before.
+//! Genesis is deliberately **not journaled**. Decision 018 ratifies this
+//! boundary: there is no `TransactionKind::Genesis`, no zero-operation
+//! `TransactionRecord`, and no reserved t=0 entry in the mutation journal.
+//! Provenance starts at the first committed typed operation batch. If visible
+//! genesis evidence is ever required, it must be a dedicated non-mutation
+//! sidecar excluded from transaction counts, undo/redo, object revisions,
+//! model revisions, and journal replay.
 
 use std::collections::BTreeMap;
 use std::io::Write as _;
@@ -353,8 +349,9 @@ fn write_genesis_shard<T: Serialize>(path: &Path, value: &T) -> Result<(), Engin
     if write_result.is_err() {
         let _ = std::fs::remove_file(&temp_path);
     }
-    write_result
-        .map_err(|error| EngineError::Operation(format!("failed to write {}: {error}", path.display())))
+    write_result.map_err(|error| {
+        EngineError::Operation(format!("failed to write {}: {error}", path.display()))
+    })
 }
 
 fn genesis_temp_path(path: &Path) -> Result<PathBuf, EngineError> {
@@ -438,8 +435,8 @@ mod tests {
             ("board/board.json", "board.json"),
             ("rules/rules.json", "rules.json"),
         ] {
-            let actual = std::fs::read_to_string(root.join(written))
-                .expect("genesis shard should read");
+            let actual =
+                std::fs::read_to_string(root.join(written)).expect("genesis shard should read");
             assert_eq!(
                 actual,
                 read_fixture(fixture),
@@ -527,8 +524,8 @@ mod tests {
     #[test]
     fn genesis_writer_schemas_roundtrip_their_own_output() {
         let (root, _report) = bootstrap_fixture_project("genesis_roundtrip");
-        let manifest_text = std::fs::read_to_string(root.join("project.json"))
-            .expect("manifest should read");
+        let manifest_text =
+            std::fs::read_to_string(root.join("project.json")).expect("manifest should read");
         let manifest: GenesisProjectManifest =
             serde_json::from_str(&manifest_text).expect("manifest should roundtrip");
         assert_eq!(

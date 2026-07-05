@@ -75,6 +75,10 @@ Boundaries of the window:
 4. Use `specs/PROGRESS.md` as the source for the next bounded slice; do not
    let local worktree momentum redefine roadmap priority.
 
+Tier A substrate close-out is tracked in `specs/PROGRESS.md`: component-instance
+proposal twins are the governed assistant path, and decision 018 is the ratified
+genesis provenance boundary.
+
 ## Milestones
 
 ### M0: Canonical IR + Foundation

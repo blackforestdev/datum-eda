@@ -1,4 +1,4 @@
-//! The `datum.proposal` terminal verb family (20 verbs), transcribed from the
+//! The `datum.proposal` terminal verb family (23 verbs), transcribed from the
 //! hand-written MCP catalog (`tools_catalog_proposals.py` /
 //! `tools_catalog_output_jobs.py` schemas via `tools_catalog_datum.py`
 //! aliases), the Python bridge argv builders (`server_runtime.py` /
@@ -60,6 +60,62 @@ const RATIONALE: ParamSpec = ParamSpec {
     default_json: None,
 };
 
+const COMPONENT_INSTANCE: ParamSpec = ParamSpec {
+    name: "component_instance",
+    ty: ParamType::Uuid,
+    required: true,
+    doc: "ComponentInstance UUID",
+    default_json: None,
+};
+
+const SYMBOL: ParamSpec = ParamSpec {
+    name: "symbol",
+    ty: ParamType::Uuid,
+    required: true,
+    doc: "Schematic symbol UUID to bind",
+    default_json: None,
+};
+
+const SYMBOLS: ParamSpec = ParamSpec {
+    name: "symbols",
+    ty: ParamType::Uuid,
+    required: false,
+    doc: "Additional schematic symbol UUIDs for a multi-symbol binding",
+    default_json: None,
+};
+
+const PACKAGE: ParamSpec = ParamSpec {
+    name: "package",
+    ty: ParamType::Uuid,
+    required: true,
+    doc: "Board package UUID to bind",
+    default_json: None,
+};
+
+const PART: ParamSpec = ParamSpec {
+    name: "part",
+    ty: ParamType::Uuid,
+    required: false,
+    doc: "Optional native pool part UUID",
+    default_json: Some("null"),
+};
+
+const SYMBOL_ROLES: ParamSpec = ParamSpec {
+    name: "symbol_roles",
+    ty: ParamType::StrList,
+    required: false,
+    doc: "Optional per-symbol role metadata",
+    default_json: Some("null"),
+};
+
+const PACKAGE_ROLES: ParamSpec = ParamSpec {
+    name: "package_roles",
+    ty: ParamType::StrList,
+    required: false,
+    doc: "Optional per-package role metadata",
+    default_json: Some("null"),
+};
+
 const PROPOSAL_ID_ARGV: ArgvToken = ArgvToken::Flag {
     flag: "--proposal",
     param: "proposal",
@@ -68,6 +124,10 @@ const RATIONALE_ARGV: ArgvToken = ArgvToken::Flag {
     flag: "--rationale",
     param: "rationale",
 };
+
+const BIND_COMPONENT_INSTANCE_SCHEMA: &str = r#"{"type":"object","properties":{"path":{"type":"string"},"symbol":{"type":"string"},"package":{"type":"string"},"part":{"type":["string","null"]},"symbol_roles":{"type":["object","array","null"]},"package_roles":{"type":["object","array","null"]},"component_instance":{"type":["string","null"]},"symbols":{"type":"array","items":{"type":"string"},"minItems":1},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","package"],"anyOf":[{"required":["symbol"]},{"required":["symbols"]}]}"#;
+
+const SET_COMPONENT_INSTANCE_SCHEMA: &str = r#"{"type":"object","properties":{"path":{"type":"string"},"component_instance":{"type":"string"},"symbol":{"type":"string"},"package":{"type":"string"},"part":{"type":["string","null"]},"symbol_roles":{"type":["object","array","null"]},"package_roles":{"type":["object","array","null"]},"symbols":{"type":"array","items":{"type":"string"},"minItems":1},"proposal":{"type":["string","null"]},"rationale":{"type":["string","null"]}},"required":["path","component_instance","package"],"anyOf":[{"required":["symbol"]},{"required":["symbols"]}]}"#;
 
 macro_rules! proposal_param {
     ($name:literal, $ty:ident, required) => {
@@ -170,6 +230,71 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         schema_json_override: None,
         write_surface: Some(PROPOSAL_GATEWAY_APPLY),
         terminal: true,
+        terminal_optional_params: &[],
+        terminal_argv_override: None,
+    },
+    VerbSpec {
+        id: "datum.proposal.bind_component_instance",
+        summary: "Create a draft proposal for a ComponentInstance binding without mutating component-instance shards.",
+        status: VerbStatus::Public,
+        replacements: &[],
+        retirement: None,
+        dispatch: Dispatch::Cli {
+            method: "bind_component_instance_proposal",
+            argv: &[
+                ArgvToken::Lit("proposal"),
+                ArgvToken::Lit("bind-component-instance"),
+                ArgvToken::Param("path"),
+                ArgvToken::Repeated {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
+                ArgvToken::Flag {
+                    flag: "--package",
+                    param: "package",
+                },
+                ArgvToken::Flag {
+                    flag: "--component-instance",
+                    param: "component_instance",
+                },
+                ArgvToken::Repeated {
+                    flag: "--symbol",
+                    param: "symbols",
+                },
+                ArgvToken::Flag {
+                    flag: "--part",
+                    param: "part",
+                },
+                ArgvToken::Repeated {
+                    flag: "--symbol-role",
+                    param: "symbol_roles",
+                },
+                ArgvToken::Repeated {
+                    flag: "--package-role",
+                    param: "package_roles",
+                },
+                PROPOSAL_ID_ARGV,
+                RATIONALE_ARGV,
+            ],
+        },
+        params: &[
+            PATH,
+            SYMBOL,
+            PACKAGE,
+            ParamSpec {
+                required: false,
+                ..COMPONENT_INSTANCE
+            },
+            SYMBOLS,
+            PART,
+            SYMBOL_ROLES,
+            PACKAGE_ROLES,
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        schema_json_override: Some(BIND_COMPONENT_INSTANCE_SCHEMA),
+        write_surface: Some(PROPOSAL_METADATA_WRITE),
+        terminal: false,
         terminal_optional_params: &[],
         terminal_argv_override: None,
     },
@@ -548,6 +673,33 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         terminal_argv_override: None,
     },
     VerbSpec {
+        id: "datum.proposal.delete_component_instance",
+        summary: "Create a draft proposal to delete one ComponentInstance binding without mutating component-instance shards.",
+        status: VerbStatus::Public,
+        replacements: &[],
+        retirement: None,
+        dispatch: Dispatch::Cli {
+            method: "delete_component_instance_proposal",
+            argv: &[
+                ArgvToken::Lit("proposal"),
+                ArgvToken::Lit("delete-component-instance"),
+                ArgvToken::Param("path"),
+                ArgvToken::Flag {
+                    flag: "--component-instance",
+                    param: "component_instance",
+                },
+                PROPOSAL_ID_ARGV,
+                RATIONALE_ARGV,
+            ],
+        },
+        params: &[PATH, COMPONENT_INSTANCE, PROPOSAL_ID, RATIONALE],
+        schema_json_override: None,
+        write_surface: Some(PROPOSAL_METADATA_WRITE),
+        terminal: false,
+        terminal_optional_params: &[],
+        terminal_argv_override: None,
+    },
+    VerbSpec {
         id: "datum.proposal.delete_manufacturing_plan",
         summary: "Create a draft proposal for deleting one ManufacturingPlan without mutating manufacturing plan shards.",
         status: VerbStatus::Public,
@@ -761,6 +913,68 @@ pub(crate) static VERBS: &[VerbSpec] = &[
         ),
         write_surface: Some(PROPOSAL_REVIEW_STATE_WRITE),
         terminal: true,
+        terminal_optional_params: &[],
+        terminal_argv_override: None,
+    },
+    VerbSpec {
+        id: "datum.proposal.set_component_instance",
+        summary: "Create a draft proposal to update a ComponentInstance binding without mutating component-instance shards.",
+        status: VerbStatus::Public,
+        replacements: &[],
+        retirement: None,
+        dispatch: Dispatch::Cli {
+            method: "set_component_instance_proposal",
+            argv: &[
+                ArgvToken::Lit("proposal"),
+                ArgvToken::Lit("set-component-instance"),
+                ArgvToken::Param("path"),
+                ArgvToken::Flag {
+                    flag: "--component-instance",
+                    param: "component_instance",
+                },
+                ArgvToken::Repeated {
+                    flag: "--symbol",
+                    param: "symbol",
+                },
+                ArgvToken::Flag {
+                    flag: "--package",
+                    param: "package",
+                },
+                ArgvToken::Repeated {
+                    flag: "--symbol",
+                    param: "symbols",
+                },
+                ArgvToken::Flag {
+                    flag: "--part",
+                    param: "part",
+                },
+                ArgvToken::Repeated {
+                    flag: "--symbol-role",
+                    param: "symbol_roles",
+                },
+                ArgvToken::Repeated {
+                    flag: "--package-role",
+                    param: "package_roles",
+                },
+                PROPOSAL_ID_ARGV,
+                RATIONALE_ARGV,
+            ],
+        },
+        params: &[
+            PATH,
+            COMPONENT_INSTANCE,
+            SYMBOL,
+            PACKAGE,
+            SYMBOLS,
+            PART,
+            SYMBOL_ROLES,
+            PACKAGE_ROLES,
+            PROPOSAL_ID,
+            RATIONALE,
+        ],
+        schema_json_override: Some(SET_COMPONENT_INSTANCE_SCHEMA),
+        write_surface: Some(PROPOSAL_METADATA_WRITE),
+        terminal: false,
         terminal_optional_params: &[],
         terminal_argv_override: None,
     },

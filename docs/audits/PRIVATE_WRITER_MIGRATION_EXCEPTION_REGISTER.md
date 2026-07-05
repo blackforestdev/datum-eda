@@ -17,7 +17,7 @@ must use the substrate.
 
 | Class | Owner | Allowed Surface | Retirement / Tightening Condition |
 | --- | --- | --- | --- |
-| Project bootstrap | Native project creation | Initial `project.json`, schematic root, board root, and rules root creation in `command_project_roots.rs` | Keep only as genesis creation. Any post-create mutation must be journaled. |
+| Project bootstrap | Native project creation | Initial `project.json`, schematic root, board root, and rules root creation delegated to `native_write/genesis.rs` | Keep only as engine-owned genesis creation per decision 018. Genesis is non-journaled; any post-create authored mutation must be journaled. |
 | Route-strategy fixture generation | Deterministic regression fixtures | Generated route-strategy fixture and artifact files in `command_project_route_proposal.rs` | Keep only for deterministic test fixture generation. Production project mutation must not use this path. |
 | Legacy KiCad modify persistence | Retired compatibility island | Save/save-original calls in `command_modify/modify_ops.rs`, guarded to tests | Remove when legacy KiCad modify compatibility tests are replaced by native Datum project authoring tests. |
 | Proposal apply bridge | Proposal substrate | Proposal apply files may call journaled proposal helpers, not mutate proposal sidecars directly | Retire bridge-only helpers when proposal apply is entirely modeled as typed domain operations. |

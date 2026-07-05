@@ -203,6 +203,51 @@ class FakeDaemonClientProposalsMixin:
         self.calls.append(("create_board_component_replacement_plan_proposal", path, selections, proposal, rationale))
         return JsonRpcResponse("2.0", 156, {"contract": "proposal_create_v1", "action": "propose_board_component_replacement", "project_root": path, "proposal_id": proposal, "selection_count": len(selections)}, None)
 
+    def bind_component_instance_proposal(
+        self,
+        path: str,
+        symbol: str | None,
+        package: str,
+        component_instance: str | None = None,
+        symbols: list[str] | None = None,
+        part: str | None = None,
+        symbol_roles: object | None = None,
+        package_roles: object | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ) -> JsonRpcResponse:
+        proposal = proposal or "proposal-component-instance-bind-test"
+        self.calls.append(("bind_component_instance_proposal", path, symbol, package, component_instance, symbols, part, symbol_roles, package_roles, proposal, rationale))
+        return JsonRpcResponse("2.0", 157, {"contract": "proposal_create_v1", "action": "propose_bind_component_instance", "project_root": path, "proposal_id": proposal, "component_instance_id": component_instance or "ci-generated"}, None)
+
+    def set_component_instance_proposal(
+        self,
+        path: str,
+        component_instance: str,
+        symbol: str | None,
+        package: str,
+        symbols: list[str] | None = None,
+        part: str | None = None,
+        symbol_roles: object | None = None,
+        package_roles: object | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ) -> JsonRpcResponse:
+        proposal = proposal or "proposal-component-instance-set-test"
+        self.calls.append(("set_component_instance_proposal", path, component_instance, symbol, package, symbols, part, symbol_roles, package_roles, proposal, rationale))
+        return JsonRpcResponse("2.0", 158, {"contract": "proposal_create_v1", "action": "propose_set_component_instance", "project_root": path, "proposal_id": proposal, "component_instance_id": component_instance}, None)
+
+    def delete_component_instance_proposal(
+        self,
+        path: str,
+        component_instance: str,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ) -> JsonRpcResponse:
+        proposal = proposal or "proposal-component-instance-delete-test"
+        self.calls.append(("delete_component_instance_proposal", path, component_instance, proposal, rationale))
+        return JsonRpcResponse("2.0", 159, {"contract": "proposal_create_v1", "action": "propose_delete_component_instance", "project_root": path, "proposal_id": proposal, "component_instance_id": component_instance}, None)
+
     def create_pool_library_object_proposal(
         self,
         path: str,

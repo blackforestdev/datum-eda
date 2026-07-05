@@ -125,13 +125,14 @@ Write-surface convergence is COMPLETE — do not resurrect the old
   session keeps 4 legacy mutator methods + `Engine::save` with a private
   in-memory `ImportedSessionUndoRecord` memo (never journaled); terminally
   frozen, dies with the one-time converter (decision 011).
-- **MCP proposal twins:** a few proposal-gated families expose direct tools
-  without proposal twins — `component_instance` bind/set/delete are
-  unreachable under assistant provenance. Follow-up surface work.
-- **Genesis t=0 record:** genesis is deliberately not journaled; a t=0 record
-  is pending an owner decision (options in `native_write/genesis.rs`).
+- **Tier A substrate close-out:** `component_instance` bind/set/delete have
+  governed proposal twins (`datum.proposal.bind_component_instance`,
+  `.set_component_instance`, `.delete_component_instance`), so assistant
+  provenance can create proposals instead of direct writes. Genesis t=0 is
+  ratified by decision 018: no mutation-journal record; future visible genesis
+  evidence must be a non-mutation sidecar.
 - **Verb registry migration complete for public `datum.*` tools (decision 017):**
-  all 17 public prefixes are registry-generated (332/332 public tools);
+  all 17 public prefixes are registry-generated (335/335 public tools);
   hidden compatibility tools remain fenced outside the public generated surface.
 - **Library:** decision-008 `Footprint`/`PinPadMap` are now engine Rust types
   and the first IPC-7351B two-terminal generator landed; `LibraryBinding` is

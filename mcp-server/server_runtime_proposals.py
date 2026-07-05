@@ -4,6 +4,27 @@ import json
 from typing import Any
 
 
+def _component_instance_symbols(symbol: str | None, symbols: list[str] | None) -> list[str]:
+    result = [str(value) for value in symbols] if symbols is not None else ([] if symbol is None else [symbol])
+    if not result:
+        raise ValueError("symbol or symbols is required")
+    return result
+
+
+def _component_role_spec(object_id: str, value: Any) -> str:
+    role, label = (value.get("role"), value.get("label")) if isinstance(value, dict) else (value, None)
+    return f"{object_id}={role}:{label}" if label is not None else f"{object_id}={role}"
+
+
+def _append_component_role_args(args: list[str], flag: str, roles: Any | None) -> None:
+    if isinstance(roles, dict):
+        for object_id, value in roles.items():
+            args.extend([f"--{flag}", _component_role_spec(str(object_id), value)])
+        return
+    for value in [] if roles is None else roles:
+        args.extend([f"--{flag}", str(value)])
+
+
 def install_proposal_authoring_methods(client_cls: type, append_optional: Any) -> None:
     def run(self, method: str, params: dict[str, Any], args: list[str]):
         return self._run_cli_json(self.build_request(method, params), args)
@@ -98,6 +119,61 @@ def install_proposal_authoring_methods(client_cls: type, append_optional: Any) -
             args.extend(["--selection", json.dumps(selection, separators=(",", ":"))])
         append_optional(args, "proposal", proposal); append_optional(args, "rationale", rationale)
         return run(self, "create_board_component_replacement_plan_proposal", locals_without_self(locals()), args)
+
+    def bind_component_instance_proposal(
+        self,
+        path: str,
+        symbol: str | None,
+        package: str,
+        component_instance: str | None = None,
+        symbols: list[str] | None = None,
+        part: str | None = None,
+        symbol_roles: Any | None = None,
+        package_roles: Any | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ):
+        args = ["proposal", "bind-component-instance", path]
+        for value in _component_instance_symbols(symbol, symbols):
+            args.extend(["--symbol", value])
+        args.extend(["--package", package])
+        append_optional(args, "component-instance", component_instance); append_optional(args, "part", part)
+        _append_component_role_args(args, "symbol-role", symbol_roles); _append_component_role_args(args, "package-role", package_roles)
+        append_optional(args, "proposal", proposal); append_optional(args, "rationale", rationale)
+        return run(self, "bind_component_instance_proposal", locals_without_self(locals()), args)
+
+    def set_component_instance_proposal(
+        self,
+        path: str,
+        component_instance: str,
+        symbol: str | None,
+        package: str,
+        symbols: list[str] | None = None,
+        part: str | None = None,
+        symbol_roles: Any | None = None,
+        package_roles: Any | None = None,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ):
+        args = ["proposal", "set-component-instance", path, "--component-instance", component_instance]
+        for value in _component_instance_symbols(symbol, symbols):
+            args.extend(["--symbol", value])
+        args.extend(["--package", package])
+        append_optional(args, "part", part)
+        _append_component_role_args(args, "symbol-role", symbol_roles); _append_component_role_args(args, "package-role", package_roles)
+        append_optional(args, "proposal", proposal); append_optional(args, "rationale", rationale)
+        return run(self, "set_component_instance_proposal", locals_without_self(locals()), args)
+
+    def delete_component_instance_proposal(
+        self,
+        path: str,
+        component_instance: str,
+        proposal: str | None = None,
+        rationale: str | None = None,
+    ):
+        args = ["proposal", "delete-component-instance", path, "--component-instance", component_instance]
+        append_optional(args, "proposal", proposal); append_optional(args, "rationale", rationale)
+        return run(self, "delete_component_instance_proposal", locals_without_self(locals()), args)
 
     def create_pool_library_object_proposal(
         self,
@@ -434,7 +510,7 @@ def install_proposal_authoring_methods(client_cls: type, append_optional: Any) -
         append_optional(args, "rationale", rationale)
         return run(self, "set_pool_package_courtyard_polygon_proposal", locals_without_self(locals()), args)
 
-    for method in [create_draw_wire_proposal, create_place_label_proposal, create_place_symbol_proposal, create_board_component_replacement_proposal, create_board_component_replacements_proposal, create_board_component_replacement_plan_proposal, create_pool_library_object_proposal, create_pool_unit_proposal, create_pool_symbol_proposal, create_pool_entity_proposal, create_pool_padstack_proposal, create_pool_package_proposal, create_pool_footprint_proposal, create_pool_pin_pad_map_proposal, set_pool_pin_pad_map_proposal, set_pool_footprint_pad_proposal, set_pool_footprint_courtyard_rect_proposal, set_pool_footprint_courtyard_polygon_proposal, add_pool_footprint_silkscreen_line_proposal, add_pool_footprint_silkscreen_rect_proposal, add_pool_footprint_silkscreen_circle_proposal, add_pool_footprint_silkscreen_polygon_proposal, set_pool_package_pad_proposal, set_pool_package_courtyard_rect_proposal, set_pool_package_courtyard_polygon_proposal]:
+    for method in [create_draw_wire_proposal, create_place_label_proposal, create_place_symbol_proposal, create_board_component_replacement_proposal, create_board_component_replacements_proposal, create_board_component_replacement_plan_proposal, bind_component_instance_proposal, set_component_instance_proposal, delete_component_instance_proposal, create_pool_library_object_proposal, create_pool_unit_proposal, create_pool_symbol_proposal, create_pool_entity_proposal, create_pool_padstack_proposal, create_pool_package_proposal, create_pool_footprint_proposal, create_pool_pin_pad_map_proposal, set_pool_pin_pad_map_proposal, set_pool_footprint_pad_proposal, set_pool_footprint_courtyard_rect_proposal, set_pool_footprint_courtyard_polygon_proposal, add_pool_footprint_silkscreen_line_proposal, add_pool_footprint_silkscreen_rect_proposal, add_pool_footprint_silkscreen_circle_proposal, add_pool_footprint_silkscreen_polygon_proposal, set_pool_package_pad_proposal, set_pool_package_courtyard_rect_proposal, set_pool_package_courtyard_polygon_proposal]:
         setattr(client_cls, method.__name__, method)
 
 

@@ -147,6 +147,120 @@ class TestDaemonClientProposalRequests(unittest.TestCase):
         self.assertEqual(response.result["action"], "propose_board_component_replacement")
 
     @patch("server_runtime.subprocess.run")
+    def test_binds_component_instance_proposal_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(args=[], returncode=0, stdout='{"contract":"proposal_create_v1","action":"propose_bind_component_instance"}', stderr="")
+        response = EngineDaemonClient().bind_component_instance_proposal(
+            "/tmp/native-project",
+            None,
+            "pkg-test",
+            "ci-test",
+            ["sym-a", "sym-b"],
+            "part-test",
+            {"sym-a": {"role": "logical_unit", "label": "A"}},
+            {"pkg-test": {"role": "physical_package", "label": "main"}},
+            "proposal-bind",
+            "review bind",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "datum-eda",
+                "--format",
+                "json",
+                "proposal",
+                "bind-component-instance",
+                "/tmp/native-project",
+                "--symbol",
+                "sym-a",
+                "--symbol",
+                "sym-b",
+                "--package",
+                "pkg-test",
+                "--component-instance",
+                "ci-test",
+                "--part",
+                "part-test",
+                "--symbol-role",
+                "sym-a=logical_unit:A",
+                "--package-role",
+                "pkg-test=physical_package:main",
+                "--proposal",
+                "proposal-bind",
+                "--rationale",
+                "review bind",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "propose_bind_component_instance")
+
+    @patch("server_runtime.subprocess.run")
+    def test_sets_component_instance_proposal_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(args=[], returncode=0, stdout='{"contract":"proposal_create_v1","action":"propose_set_component_instance"}', stderr="")
+        response = EngineDaemonClient().set_component_instance_proposal(
+            "/tmp/native-project",
+            "ci-test",
+            "sym-next",
+            "pkg-next",
+            proposal="proposal-set",
+            rationale="review set",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "datum-eda",
+                "--format",
+                "json",
+                "proposal",
+                "set-component-instance",
+                "/tmp/native-project",
+                "--component-instance",
+                "ci-test",
+                "--symbol",
+                "sym-next",
+                "--package",
+                "pkg-next",
+                "--proposal",
+                "proposal-set",
+                "--rationale",
+                "review set",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "propose_set_component_instance")
+
+    @patch("server_runtime.subprocess.run")
+    def test_deletes_component_instance_proposal_via_cli(self, run_mock) -> None:
+        run_mock.return_value = subprocess.CompletedProcess(args=[], returncode=0, stdout='{"contract":"proposal_create_v1","action":"propose_delete_component_instance"}', stderr="")
+        response = EngineDaemonClient().delete_component_instance_proposal(
+            "/tmp/native-project",
+            "ci-test",
+            "proposal-delete",
+            "review delete",
+        )
+        run_mock.assert_called_once_with(
+            [
+                "datum-eda",
+                "--format",
+                "json",
+                "proposal",
+                "delete-component-instance",
+                "/tmp/native-project",
+                "--component-instance",
+                "ci-test",
+                "--proposal",
+                "proposal-delete",
+                "--rationale",
+                "review delete",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(response.result["action"], "propose_delete_component_instance")
+
+    @patch("server_runtime.subprocess.run")
     def test_creates_pool_pin_pad_map_proposal_via_cli(self, run_mock) -> None:
         run_mock.return_value = subprocess.CompletedProcess(args=[], returncode=0, stdout='{"contract":"proposal_create_v1","action":"create_pool_pin_pad_map_proposal"}', stderr="")
         response = EngineDaemonClient().create_pool_pin_pad_map_proposal("/tmp/native-project", "map-uuid", "part-uuid", ["pin-uuid:pad-uuid"], "footprint-uuid", True, "pool", "proposal-pin-pad-map", "review pin pad map")
